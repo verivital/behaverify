@@ -1,0 +1,104 @@
+MODULE main
+	DEFINE
+		max_active_node := 12;
+		statuses := [root.status, Dummy.status, Dummy1.status, Dummy2.status, Dummy3.status, Dummy4.status, Dummy5.status, Dummy6.status, Dummy7.status, Dummy8.status, Dummy9.status, Dummy10.status, Dummy11.status];
+		parents := [-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+		leafs := {-3, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+		selectors := {-3, 0};
+		sequences := {-3};
+		parallels_synchronised_all := {-3};
+		parallels_unsynchronised_all := {-3};
+		parallels_synchronised_one := {-3};
+		parallels_unsynchronised_one := {-3};
+		parallels := {-3};
+		decorators := {-3};
+		first_child := [1, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2];
+		last_child := [12, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1];
+	VAR
+		active_node : -2..max_active_node;
+		previous_node : -1..max_active_node;
+		resume_node : -1..max_active_node;
+		previous_status : {running, success, failure, invalid};		root : node_selector(active_node, 0, previous_status, 12, previous_node);
+		Dummy : node_default(active_node, 1);
+		Dummy1 : node_default(active_node, 2);
+		Dummy2 : node_default(active_node, 3);
+		Dummy3 : node_default(active_node, 4);
+		Dummy4 : node_default(active_node, 5);
+		Dummy5 : node_default(active_node, 6);
+		Dummy6 : node_default(active_node, 7);
+		Dummy7 : node_default(active_node, 8);
+		Dummy8 : node_default(active_node, 9);
+		Dummy9 : node_default(active_node, 10);
+		Dummy10 : node_default(active_node, 11);
+		Dummy11 : node_default(active_node, 12);
+		node_names : define_nodes;
+	ASSIGN
+		init(active_node) := -1;
+		init(previous_node) := -1;
+		init(resume_node) := -1;
+		init(previous_status) := invalid;
+		next(previous_node) :=
+			case
+				(active_node < 0) : -1;
+				TRUE : active_node;
+			esac;
+		next(resume_node) :=
+			case
+				(previous_node < 0) : resume_node;
+				!(previous_status = running) : -1;
+				(resume_node = -1) : previous_node;
+				(previous_node in parallels) : previous_node;
+				TRUE : resume_node;
+			esac;
+		next(previous_status) :=
+			case
+				(active_node < 0) : invalid;
+				TRUE : statuses[active_node];
+			esac;
+		next(active_node) :=
+			case
+				(active_node = -2) : -2;
+				(active_node = -1) & (resume_node = -1) : 0;
+				(active_node = -1) & !(resume_node = -1) : resume_node;
+				(active_node in leafs) : parents[active_node];
+				(previous_status = invalid) : first_child[active_node];
+				(previous_node = last_child[active_node]) : parents[active_node];
+				(active_node in parallels_unsynchronised_all) | (active_node in parallels_unsynchronised_one) : previous_node + 1;
+				(active_node in sequences) & (previous_status = success) : previous_node + 1;
+				(active_node in selectors) & (previous_status = failure) : previous_node + 1;
+				TRUE : parents[active_node];
+			esac;
+MODULE node_selector(active_node, id, previous_status, last_child, previous_node)
+	DEFINE
+		status :=
+			case
+				(id = active_node) & (previous_status = invalid) : invalid;
+				(id = active_node) & (previous_status = running) : running;
+				(id = active_node) & (previous_status = success) : success;
+				(id = active_node) & (last_child = previous_node) : failure;
+				(id = active_node) : invalid;
+				TRUE : invalid;
+			esac;
+MODULE node_default(active_node, id)
+	DEFINE
+		status :=
+			case
+				(id = active_node) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE define_nodes
+	DEFINE
+		root := 0;
+		Dummy := 1;
+		Dummy1 := 2;
+		Dummy2 := 3;
+		Dummy3 := 4;
+		Dummy4 := 5;
+		Dummy5 := 6;
+		Dummy6 := 7;
+		Dummy7 := 8;
+		Dummy8 := 9;
+		Dummy9 := 10;
+		Dummy10 := 11;
+		Dummy11 := 12;
+
