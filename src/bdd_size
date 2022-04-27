@@ -1,0 +1,12 @@
+#!/bin/bash
+
+rm ./size_models/stats
+
+for i in {2..20}
+do
+  python3 btree_serene.py btree_creator.py create_root --root_args $i False --min_val 0 --max_val 1 > ./size_models/$i.smv
+  ./nuXmv -source command_list ./size_models/$i.smv >> ./size_models/stats
+  echo $i
+done
+
+python3 process_stats.py

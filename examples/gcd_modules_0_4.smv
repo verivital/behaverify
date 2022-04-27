@@ -1,0 +1,132 @@
+MODULE a_SET_module(active_node, access_nodes, variables, variable_exists, node_names, variable_names)
+	FROZENVAR
+		a : 0..4;
+	VAR
+		a_exists : boolean;
+	ASSIGN
+		init(a_exists) := FALSE;
+		next(a_exists) :=
+			case
+				(active_node in access_nodes) : TRUE;
+				TRUE : a_exists;
+			esac;
+MODULE b_SET_module(active_node, access_nodes, variables, variable_exists, node_names, variable_names)
+	FROZENVAR
+		b : 0..4;
+	VAR
+		b_exists : boolean;
+	ASSIGN
+		init(b_exists) := FALSE;
+		next(b_exists) :=
+			case
+				(active_node in access_nodes) : TRUE;
+				TRUE : b_exists;
+			esac;
+
+MODULE r_SET_module(active_node, access_nodes, variables, variable_exists, node_names, variable_names)
+	VAR
+		r : 0..4;
+		r_exists : boolean;
+	ASSIGN
+		init(r_exists) := FALSE;
+		next(r_exists) :=
+			case
+				(active_node in access_nodes) : TRUE;
+				TRUE : r_exists;
+			esac;
+		next(r) :=
+			case
+				(active_node = node_names.update_r) & (r_exists) : variables[variable_names.q];
+				(active_node = node_names.update_r) & !(r_exists) : max(variables[variable_names.a], variables[variable_names.b]);
+				(active_node = node_names.r_minus_q) : max(0, r - variables[variable_names.q]);
+				TRUE : r;
+			esac;
+
+MODULE q_SET_module(active_node, access_nodes, variables, variable_exists, node_names, variable_names)
+	VAR
+		q : 0..4;
+		q_exists : boolean;
+	ASSIGN
+		init(q_exists) := FALSE;
+		next(q_exists) :=
+			case
+				(active_node in access_nodes) : TRUE;
+				TRUE : q_exists;
+			esac;
+		next(q) :=
+			case
+				(active_node = node_names.update_q) & (q_exists) : variables[variable_names.temp];
+				(active_node = node_names.update_q) & !(q_exists) : min(variables[variable_names.a], variables[variable_names.b]);
+				TRUE : q;
+			esac;
+MODULE temp_SET_module(active_node, access_nodes, variables, variable_exists, node_names, variable_names)
+	VAR
+		temp : 0..4;
+		temp_exists : boolean;
+	ASSIGN
+		init(temp_exists) := FALSE;
+		next(temp_exists) :=
+			case
+				(active_node in access_nodes) : TRUE;
+				TRUE : temp_exists;
+			esac;
+		next(temp) :=
+			case
+				(active_node = node_names.store_r) : variables[variable_names.r];
+				TRUE : temp;
+			esac;
+
+
+MODULE check_r_gt_q_CHECK_r_module(active_node, node_id, blackboard, variable_names)
+	DEFINE
+		result := ((blackboard.variables[variable_names.r] >= blackboard.variables[variable_names.q]) & (blackboard.variable_exists[variable_names.r]) & (blackboard.variable_exists[variable_names.q]));
+
+
+
+MODULE init_a_SET_status_module(active_node, node_id, blackboard, node_names, variable_names)
+	DEFINE
+		status :=
+			case
+				(active_node = node_id) : success;
+				TRUE : invalid;
+			esac;
+
+MODULE init_b_SET_status_module(active_node, node_id, blackboard, node_names, variable_names)
+	DEFINE
+		status :=
+			case
+				(active_node = node_id) : success;
+				TRUE : invalid;
+			esac;
+
+
+MODULE r_minus_q_SET_status_module(active_node, node_id, blackboard, node_names, variable_names)
+	DEFINE
+		status :=
+			case
+				(active_node = node_id) : success;
+				TRUE : invalid;
+			esac;
+MODULE store_r_SET_status_module(active_node, node_id, blackboard, node_names, variable_names)
+	DEFINE
+		status :=
+			case
+				(active_node = node_id) : success;
+				TRUE : invalid;
+			esac;
+
+MODULE update_r_SET_status_module(active_node, node_id, blackboard, node_names, variable_names)
+	DEFINE
+		status :=
+			case
+				(active_node = node_id) : success;
+				TRUE : invalid;
+			esac;
+
+MODULE update_q_SET_status_module(active_node, node_id, blackboard, node_names, variable_names)
+	DEFINE
+		status :=
+			case
+				(active_node = node_id) : success;
+				TRUE : invalid;
+			esac;
