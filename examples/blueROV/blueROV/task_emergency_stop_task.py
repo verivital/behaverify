@@ -54,6 +54,9 @@ class TaskHandler(py_trees.behaviour.Behaviour):
         #self.logger.debug("%s.update()" % self.__class__.__name__)
 """        
 ############<<USER UPDATE CODE BEGINS>>##############################
+        tfunc = ThrusterFunction() 
+        tfunc.emergency_stop()        
+        return py_trees.common.Status.SUCCESS
 ############<<USER UPDATE CODE ENDS>>################################
 """
          # Return always running                

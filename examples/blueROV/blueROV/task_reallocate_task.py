@@ -41,6 +41,9 @@ class TaskHandler(py_trees.behaviour.Behaviour):
                               [2,3]]
         #self.total_degradation = 0.0
         self.reallocations = np.ones(6)
+
+        self.thruster_reallocation_pub = rospy.Publisher(
+            '/iver0/thruster_reallocation', Float32MultiArray, queue_size=1)
 ############<<USER INIT CODE ENDS>>################################
 """
     #def setup(self, timeout):
@@ -60,26 +63,33 @@ class TaskHandler(py_trees.behaviour.Behaviour):
 """        
 ############<<USER UPDATE CODE BEGINS>>##############################
         rospy.loginfo_throttle(1, "\033[1;32m[BT] " + str(self.task)+" \033[0m")
-        
         if len(self.blackboard.dd_output.data) > 0:
-            [prediction, credibility, confidence, decision, degraded_id, efficiency] = np.array(self.blackboard.dd_output.data)
-                
+            [degraded_id, efficiency, _, _, _, _, _, _, _, _] = np.array(self.blackboard.dd_output.data)
+    
             if (
                 self.blackboard.dd_xy_axis_degradation 
                 # and abs(self.blackboard.HSD_out.heading) < 10.0   
             ):
+                # Publish reallocation info for evaluation
+                msg = Float32MultiArray()             
                 if (efficiency == 0):
                     # Efficiency is between 0.0 to 0.5, classified as 0.0 - severe degradation
                     # Turn off thruster and its pair
                     rospy.logwarn_throttle(1, "[%s] Severe degradation detected - Turning off faulty thrusters" % self.name)
                     self.reallocate(int(degraded_id), efficiency)   
                     pair_id = self.get_thruster_pair(degraded_id)
-                    self.reallocate(int(pair_id), efficiency)                            
+                    self.reallocate(int(pair_id), efficiency)   
+
+                    msg.data = [rospy.Time.now().to_sec(), degraded_id, -1.0 ] # 200% loss (2 complete thruster)
+                    self.thruster_reallocation_pub.publish(msg)                 
                 else:
                     # Efficiency is between 0.5 to 0.9 - mild degradation
                     # Reallocate thruster's pair
                     rospy.logwarn_throttle(1, "[%s] Mild degradation detected - Reallocation" % self.name)
                     self.reallocate(int(degraded_id), efficiency)   
+                    
+                    msg.data = [rospy.Time.now().to_sec(), degraded_id, efficiency]
+                    self.thruster_reallocation_pub.publish(msg) 
 ############<<USER UPDATE CODE ENDS>>################################
 """
          # Return always running                
@@ -114,7 +124,7 @@ class TaskHandler(py_trees.behaviour.Behaviour):
         return True
     
     def get_thruster_pair(self, degraded_id):
-        return self.thruster_pairs[degraded_id // 2][1 - degraded_id % 2]
+        return self.thruster_pairs[int(degraded_id // 2)][int(1 - degraded_id % 2)]
 
     def get_TAM(self):
         try:

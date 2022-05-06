@@ -28,7 +28,7 @@ class TaskHandler(py_trees.behaviour.Behaviour):
     
     def __init__(self, 
                  name ,  
-                 enable_obstacle_avoidance=None,#<textx:btree.DefaultBBType instance at 0x7f9b3ea84f10>
+                 enable_obstacle_avoidance=None,#<textx:btree.DefaultBBType instance at 0x7f698ed91f10>
                 ):                 
         super(TaskHandler, self).__init__(name=name)
         self.serene_info_variable="BlueROV_Task_Node"
@@ -67,6 +67,7 @@ class TaskHandler(py_trees.behaviour.Behaviour):
         self.blackboard.HSD_out.heading = 0.0
         self.blackboard.HSD_out.speed = 0.9
         self.blackboard.HSD_out.depth = 45 #?
+        self.obstacle_avoidance_margin = 10.0
 
 ############<<USER INIT CODE ENDS>>################################
 """
@@ -116,7 +117,9 @@ class TaskHandler(py_trees.behaviour.Behaviour):
 """        
 ############<<USER UPDATE CODE BEGINS>>##############################
         self.feedback_message = "task {0}".format(self.task)
-        if abs(self.hsd_obstacle_avoidance__msg.heading) >= 10.0:
+        if (abs(self.hsd_obstacle_avoidance__msg.heading) >= self.obstacle_avoidance_margin
+           and self.enable_obstacle_avoidance
+        ):
                 # Obstacle avoidance
                 self.blackboard.bb_obstacle_warning = True
                 self.hsd_pub_msg.heading = self.hsd_obstacle_avoidance__msg.heading

@@ -88,6 +88,11 @@ class ToBlackboard(py_trees.behaviours.SetBlackboardVariable):
             
 """
 ############<<USER UPDATE CODE BEGINS>>##############################
+        if 0.5 < self.blackboard.fls_range.range <= self.blackboard.obstacle_min_standoff:
+            self.blackboard.obstacle_standoff_warning = True
+            rospy.logwarn_throttle(1, "%s: obstacle_standoff_warning triggered!" % self.name)
+        # else:
+        #     self.blackboard.obstacle_standoff_warning = False
 ############<<USER UPDATE CODE ENDS>>################################
 """
         #return status

@@ -57,10 +57,10 @@ class ToBlackboard(py_trees.behaviours.SetBlackboardVariable):
     def __init__(self, 
                     name, 
                     topic_name="degradation_detector",         
-                    total_degradation_threshold=None,#<textx:btree.DefaultBBType instance at 0x7f9b3ea7faf0>,         
-                    num_classes=None,#<textx:btree.DefaultBBType instance at 0x7f9b3ea7fc40>,         
-                    enable_fault_detection=None,#<textx:btree.DefaultBBType instance at 0x7f9b3ea7fd90>,         
-                    decision_source=None,#<textx:btree.DefaultBBType instance at 0x7f9b3ea7fee0>        
+                    total_degradation_threshold=None,#<textx:btree.DefaultBBType instance at 0x7f698ed8caf0>,         
+                    num_classes=None,#<textx:btree.DefaultBBType instance at 0x7f698ed8cc40>,         
+                    enable_fault_detection=None,#<textx:btree.DefaultBBType instance at 0x7f698ed8cd90>,         
+                    decision_source=None,#<textx:btree.DefaultBBType instance at 0x7f698ed8cee0>        
                 ):
                 
         super(ToBlackboard, self).__init__(name=name,
@@ -101,29 +101,39 @@ class ToBlackboard(py_trees.behaviours.SetBlackboardVariable):
             
 """
 ############<<USER UPDATE CODE BEGINS>>##############################
-        [prediction, credibility, confidence, decision, degraded_id, efficiency] = np.array(self.blackboard.dd_output.data)
-        
-        # threshold = -0.145
-        a = 0.9 # Magic numbers?
-        b = -0.3 # Magic numbers?
+        [degraded_id, efficiency, prediction, _, _, snapshot_decision, combined_decision, _, softmax, _] = np.array(self.blackboard.dd_output.data)
 
-        custom_decision = False
-        if a * credibility + b * confidence >= self.blackboard.decision_threshold: # Can we make a decision?
-            custom_decision = True
+        fdir_decision = False
+        if self.decision_source == "snapshot_am":
+            if snapshot_decision: # Can we make a decision?
+                fdir_decision = True
+        elif self.decision_source == "combination_am":
+            if combined_decision: # Can we make a decision?
+                fdir_decision = True
+        else:
+            # self.decision_source == "softmax":
+            # fixed threshold for softmax
+            if softmax > 0.99:
+                fdir_decision = True
+
         if (
-            prediction < self.num_classes-1 
-            and custom_decision
+            prediction < self.num_classes - 1 
+            and fdir_decision
             and self.blackboard.total_degradation <= self.total_degradation_threshold
         ):
             # degraded
-            if prediction == self.num_classes-2:
+            if prediction == self.num_classes - 2:
                 # Z axis
-                self.blackboard.dd_z_axis_warning = True
+                if self.enable_fault_detection:
+                    self.blackboard.dd_z_axis_warning = True
                 rospy.logwarn_throttle(1, "Z axis thruster degradation detected")
+                rospy.logwarn_throttle(1, "FDIR decision source: %s" %(self.decision_source))
             else:
                 # XY axis
-                self.blackboard.dd_xy_axis_degradation = True
+                if self.enable_fault_detection:
+                    self.blackboard.dd_xy_axis_degradation = True
                 rospy.logwarn_throttle(1, "XY axis thruster severe degradation detected")
+                rospy.logwarn_throttle(1, "FDIR decision source: %s" %(self.decision_source))
         else:
             self.blackboard.dd_z_axis_warning = False
             self.blackboard.dd_xy_axis_degradation = False

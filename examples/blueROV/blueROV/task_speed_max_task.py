@@ -27,7 +27,7 @@ class TaskHandler(py_trees.behaviour.Behaviour):
     
     def __init__(self, 
                  name ,  
-                 uuv_max_speed=None,#<textx:btree.DefaultBBType instance at 0x7f9b3ea86c10>
+                 uuv_max_speed=None,#<textx:btree.DefaultBBType instance at 0x7f698ed93c10>
                 ):                 
         super(TaskHandler, self).__init__(name=name)
         self.serene_info_variable="BlueROV_Task_Node"
