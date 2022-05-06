@@ -52,7 +52,7 @@ class ToBlackboard(py_trees.behaviours.SetBlackboardVariable):
     def __init__(self, 
                     name, 
                     topic_name="pixhawk_hw",         
-                    failsafe_battery_low_threshold=None,#<textx:btree.DefaultBBType instance at 0x7f9b3ea7bbb0>        
+                    failsafe_battery_low_threshold=None,#<textx:btree.DefaultBBType instance at 0x7f698ed88bb0>        
                 ):
                 
         super(ToBlackboard, self).__init__(name=name,
@@ -75,7 +75,6 @@ class ToBlackboard(py_trees.behaviours.SetBlackboardVariable):
 """        
 ############<<USER INIT CODE BEGINS>>##############################
         self.blackboard.battery.batt_charge_remaining = 0.0
-        #serene_note
 ############<<USER INIT CODE ENDS>>################################
 """
 

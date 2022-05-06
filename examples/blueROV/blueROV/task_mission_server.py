@@ -26,8 +26,8 @@ class TaskHandler(py_trees.behaviour.Behaviour):
     
     def __init__(self, 
                  name ,  
-                 uuv_max_speed=None,#<textx:btree.DefaultBBType instance at 0x7f9b3ea86610>, 
-                 mission_file=None,#<textx:btree.DefaultBBType instance at 0x7f9b3ea86760>
+                 uuv_max_speed=None,#<textx:btree.DefaultBBType instance at 0x7f698ed93610>, 
+                 mission_file=None,#<textx:btree.DefaultBBType instance at 0x7f698ed93760>
                 ):                 
         super(TaskHandler, self).__init__(name=name)
         self.serene_info_variable="BlueROV_Task_Node"
@@ -53,6 +53,9 @@ class TaskHandler(py_trees.behaviour.Behaviour):
         self.waypoints = []
         self.markerArray = MarkerArray()
         self.wa = waypoint_actions.WaypointAction
+        self.wp = waypoint_actions.WaypointParams
+        self.hc = heading.HeadingCalculator()
+        
         self.default_loiter_n = 3
         self.default_loiter_radius = 20
         self.default_rth_depth = 5
@@ -67,7 +70,8 @@ class TaskHandler(py_trees.behaviour.Behaviour):
             "path_following": 3,
             "collision_avoidance": 4,
             "assurance": 5,
-            "terminal": 6
+            "terminal": 6,
+            "e_stop": 7
         }
 
         self.mission_idx = -1
@@ -85,9 +89,19 @@ class TaskHandler(py_trees.behaviour.Behaviour):
 
         self.fdr_location_sub = rospy.Subscriber(
             '/iver0/fdr_pos_est', Point, self.callback_fdr)
-
+        
+        self.next_wp_pub = rospy.Publisher(
+            "/iver0/next_wp", Bool, queue_size = 1)
+        
         self.new_wp_sub = rospy.Subscriber(
             '/iver0/new_waypoint', Point, self.callback_new_wp)  
+
+        self.obstacle_near_wp_sub = rospy.Subscriber(
+            "/iver0/obstacle_near_wp", Bool, self.callback_obstacle_near_wp, queue_size = 1)
+
+        self.target_id_sub = rospy.Subscriber(
+            '/iver0/target_waypoint_id', Int32, self.callback_target_wp_id, queue_size=1) 
+        self.target_wp_id = -1
 
         self.odometry_sub = rospy.Subscriber(
              '/iver0/pose_gt_noisy_ned', Odometry, self.callback_odometry, queue_size=1) 
@@ -231,6 +245,11 @@ class TaskHandler(py_trees.behaviour.Behaviour):
             for waypoint in mission_data['waypoints']:
                 # print(np.array(waypoint, dtype = float))
                 self.add_waypoint_from_mission(waypoint)
+
+        elif (mission_data['type'] == 'e_stop'):           
+            print'Mission type: ' + (str(mission_data['type']))
+            self.blackboard.emergency_stop_warning = True
+            rospy.logwarn_throttle(1, "%s: emergency_stop_warning!" % self.name)
 
         elif (mission_data['type'] == 'pipe_following'):
             # mission_entry = [
@@ -435,6 +454,44 @@ class TaskHandler(py_trees.behaviour.Behaviour):
 
     def vector_to_np(self, v):
         return np.array([v.x, v.y, v.z])
+
+    def callback_obstacle_near_wp(self, msg):
+        if (msg.data
+            and self.target_wp_id >= 0
+            and len(self.waypoints) > self.target_wp_id
+        ):
+            next_heading = self.hc.get_wp_heading(
+                self.waypoints[self.target_wp_id][self.wp.X:2], 
+                self.waypoints[self.target_wp_id + 1][self.wp.X:2]
+            )
+            next_distance = self.hc.planar_distance(
+                self.waypoints[self.target_wp_id][self.wp.X:2], 
+                self.waypoints[self.target_wp_id + 1][self.wp.X:2]
+            )
+            # print(self.waypoints[self.target_wp_id])
+            # print(self.waypoints[self.target_wp_id + 1])
+            # print(next_heading)
+            new_wp_distance = 25
+
+            if next_distance <= new_wp_distance:
+                self.next_wp_pub.publish(Bool(True))
+            else:
+                self.waypoints[self.target_wp_id][self.wp.X] = self.waypoints[self.target_wp_id][self.wp.X] + new_wp_distance * math.sin(math.radians(next_heading))
+                self.waypoints[self.target_wp_id][self.wp.Y] = self.waypoints[self.target_wp_id][self.wp.Y] + new_wp_distance * math.cos(math.radians(next_heading))
+
+                print(self.waypoints[self.target_wp_id])
+
+                self.waypoint_pub.publish(Float64MultiArray(data = np.array(self.waypoints).flatten()))     
+
+                self.markerArray.markers[self.target_wp_id].pose.position.x = self.waypoints[self.target_wp_id][self.wp.X]
+                self.markerArray.markers[self.target_wp_id].pose.position.y = self.waypoints[self.target_wp_id][self.wp.Y]
+                
+                self.waypoint_marker_pub.publish(self.markerArray)
+
+            rospy.logwarn('--- Waypoint Altered due to obstacle---')
+
+    def callback_target_wp_id(self, msg):
+        self.target_wp_id = msg.data
 
 if __name__=='__main__':
     print('Starting BT MissionServer')

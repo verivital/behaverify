@@ -52,7 +52,7 @@ class ToBlackboard(py_trees.behaviours.SetBlackboardVariable):
     def __init__(self, 
                     name, 
                     topic_name="rtreach",         
-                    enable_emergency_stop=None,#<textx:btree.DefaultBBType instance at 0x7f9b3ea82250>        
+                    enable_emergency_stop=None,#<textx:btree.DefaultBBType instance at 0x7f698ed8f250>        
                 ):
                 
         super(ToBlackboard, self).__init__(name=name,
@@ -89,6 +89,11 @@ class ToBlackboard(py_trees.behaviours.SetBlackboardVariable):
             
 """
 ############<<USER UPDATE CODE BEGINS>>##############################
+        if self.blackboard.rtreach_out.data < 1.0:
+            self.blackboard.emergency_stop_warning = True
+            rospy.logwarn_throttle(1, "%s: emergency_stop_warning!" % self.name)
+
+
 ############<<USER UPDATE CODE ENDS>>################################
 """
         #return status

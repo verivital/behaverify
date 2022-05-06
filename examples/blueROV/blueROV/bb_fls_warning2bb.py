@@ -23,6 +23,8 @@ import py_trees
 
 """
 ############<<USER IMPORT CODE BEGINS>>##############################
+from collections import deque
+import numpy as np
 ############<<USER IMPORT CODE ENDS>>################################
 """
 
@@ -53,8 +55,8 @@ class ToBlackboard(py_trees.behaviours.SetBlackboardVariable):
     def __init__(self, 
                     name, 
                     topic_name="obstacle_in_view",         
-                    fls_in_view_window=None,#<textx:btree.DefaultBBType instance at 0x7f9b3ea7b730>,         
-                    fls_in_view_limit=None,#<textx:btree.DefaultBBType instance at 0x7f9b3ea7b880>        
+                    fls_in_view_window=None,#<textx:btree.DefaultBBType instance at 0x7f698ed88730>,         
+                    fls_in_view_limit=None,#<textx:btree.DefaultBBType instance at 0x7f698ed88880>        
                 ):
                 
         super(ToBlackboard, self).__init__(name=name,
@@ -77,6 +79,7 @@ class ToBlackboard(py_trees.behaviours.SetBlackboardVariable):
         #self.fls_in_view_limit=fls_in_view_limit
 """        
 ############<<USER INIT CODE BEGINS>>##############################
+        self.obstacle_in_view_list = deque(maxlen=self.fls_in_view_window)
 ############<<USER INIT CODE ENDS>>################################
 """
 
@@ -92,6 +95,21 @@ class ToBlackboard(py_trees.behaviours.SetBlackboardVariable):
             
 """
 ############<<USER UPDATE CODE BEGINS>>##############################
+        # This runs with the tree update - 1 Hz, might be little slow
+        if rospy.Time.now() - self.blackboard.obstacle_in_view.stamp < rospy.Duration.from_sec(1.0):
+            # Obstacle was observed during the last update        
+            self.obstacle_in_view_list.append(1)            
+        else:
+            self.obstacle_in_view_list.append(0)
+        if np.sum(self.obstacle_in_view_list) > self.fls_in_view_limit:
+            # Obstacle in view at least x seconds in the last n second window
+            self.blackboard.bb_fls_warning = True
+            rospy.logwarn_throttle(1, "%s: fls_warning triggered!" % self.name)
+            # For now, trigger and do some e-stop
+            self.blackboard.emergency_stop_warning = True
+            rospy.logwarn_throttle(1, "%s: emergency_stop_warning!" % self.name)
+
+
 ############<<USER UPDATE CODE ENDS>>################################
 """
         #return status

@@ -1,4 +1,4 @@
-#python3 btree_serene.py create_root_FILE create_root_METHOD --root_args create_root_ARGS  --min_val min_val_INT --max_val max_val_INT --modules additional_modules_FILE --specs specs_FILE --gen_modules gen_modules_BOOL
+#python3 btree_serene.py create_root_FILE create_root_METHOD --root_args create_root_ARGS  --min_val min_val_INT --max_val max_val_INT --modules additional_modules_FILE --specs specs_FILE --gen_modules gen_modules_BOOL --gen_modules2 -- gen_modules2_BOOL
 
 
 
@@ -493,6 +493,7 @@ def main():
     arg_parser.add_argument('--modules')
     arg_parser.add_argument('--specs')
     arg_parser.add_argument('--gen_modules', default=False, type=bool)
+    arg_parser.add_argument('--gen_modules2', default=False, type=bool)
     args=arg_parser.parse_args()
     root_file=args.root_file
     root_method=args.root_method
@@ -502,6 +503,7 @@ def main():
     modules=args.modules
     specifications=args.specs
     gen_modules=args.gen_modules
+    gen_modules2=args.gen_modules2
 
     module = __import__(root_file.replace('.py', ''))
 
@@ -540,6 +542,9 @@ def main():
                         variable_access[variable_to_int[child_variable]].append(access_node)
                         
 
+    int_to_variable = {}
+    for variable in variable_to_int:
+        int_to_variable[variable_to_int[variable]] = variable
     #print(node_count)
     #print(children)
     #print(nodes)
@@ -713,7 +718,7 @@ def main():
                     + "\t\tnode_names : define_nodes;" + os.linesep)
     if blackboard_needed:
         nuxmv_string = (nuxmv_string
-                        + "\t\tblackboard : blackboard_module(active_node, node_names, variable_names);" + os.linesep)
+                        + "\t\tblackboard : blackboard_module(active_node, node_names, variable_names, previous_status);" + os.linesep)
 
     for node_id in range(0, node_count):
         if node_id in additional_arguments:
@@ -817,7 +822,9 @@ def main():
                 nuxmv_string += ('----' + nodes[access_node][2] + os.linesep)
     
     if blackboard_needed:
-        nuxmv_string = nuxmv_string + node_creator.create_blackboard(variable_to_int, variable_access, nodes)
+        #nuxmv_string = nuxmv_string + node_creator.create_blackboard(variable_to_int, variable_access, nodes)
+        #nuxmv_string = nuxmv_string + node_creator.create_blackboard(int_to_variable, variable_access, nodes)
+        nuxmv_string = nuxmv_string + node_creator.create_blackboard(int_to_variable, variable_to_int, variable_access, nodes)
 
     if gen_modules:
         set_string = "{"
@@ -830,7 +837,7 @@ def main():
                 set_string += ", " + str(i)
         set_string += "}"
         for variable in variable_to_int:
-            nuxmv_string += ("MODULE " + variable + "_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names)" + os.linesep
+            nuxmv_string += ("MODULE " + variable + "_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)" + os.linesep
                              + "\tVAR" + os.linesep
                              + "\t\t" + variable + " : " + str(min_val) + ".." + str(max_val) + ";" + os.linesep
                              + "\t\t" + variable + "_exists" + " : boolean;" + os.linesep
@@ -862,6 +869,37 @@ def main():
                 nuxmv_string += ("MODULE " + nodes[node_id][2] + "_CHECK_" + variable + "_module(active_node, id, variables, variable_exists, node_names, variable_names)" + os.linesep
                                  + "\tDEFINE" + os.linesep
                                  + "\t\tresult := ((variable_exists[variable_names." + variable + "]) & (variables[variable_names." + variable + "] = " + str(max_val) + "));" + os.linesep
+                )
+    if gen_modules2:
+        set_string = "{"
+        first = True;
+        for i in range(min_val, max_val + 1):
+            if first:
+                first = False;
+                set_string += str(i)
+            else:
+                set_string += ", " + str(i)
+        set_string += "}"
+        for variable in variable_to_int:
+            nuxmv_string += ("MODULE " + variable + "_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)" + os.linesep
+                             + "\tDEFINE" + os.linesep
+                             + "\t\t" + variable + " := " + str(min_val) + ";" + os.linesep
+                             + "\t\t" + variable + "_exists" + " := TRUE;" + os.linesep
+            )
+        for node in external_status_req:
+            nuxmv_string += ("MODULE " + node + "_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)" + os.linesep
+                             + "\tDEFINE" + os.linesep
+                             + "\t\tstatus := " + os.linesep
+                             + "\t\t\tcase" + os.linesep
+                             + "\t\t\t\t(active_node = id) : {success, failure, running};" + os.linesep
+                             + "\t\t\t\tTRUE : invalid;" + os.linesep
+                             + "\t\t\tesac;" + os.linesep
+            )
+        for variable in variable_check:
+            for node_id in variable_check[variable]:
+                nuxmv_string += ("MODULE " + nodes[node_id][2] + "_CHECK_" + variable + "_module(active_node, id, variables, variable_exists, node_names, variable_names)" + os.linesep
+                                 + "\tDEFINE" + os.linesep
+                                 + "\t\tresult := (variables[variable_names." + variable + "] = " + str(max_val) + ");" + os.linesep
                 )
 
         

@@ -52,7 +52,7 @@ class ToBlackboard(py_trees.behaviours.SetBlackboardVariable):
     def __init__(self, 
                     name, 
                     topic_name="bb_home_dist",         
-                    home_reached_threshold=None,#<textx:btree.DefaultBBType instance at 0x7f9b3ea7f5e0>        
+                    home_reached_threshold=None,#<textx:btree.DefaultBBType instance at 0x7f698ed8c5e0>        
                 ):
                 
         super(ToBlackboard, self).__init__(name=name,

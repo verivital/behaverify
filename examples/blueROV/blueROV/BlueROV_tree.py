@@ -1063,6 +1063,8 @@ def create_root():
     else:
         clone_storage[loiter_task]=copy.copy(loiter_task)
         waypoint_end.add_child(loiter_task)
+    #py_trees.display.render_dot_tree(BlueROV, with_blackboard_variables=True)#doesn't work
+    #py_trees.display.render_dot_tree(BlueROV)#works
 
 
 
@@ -1409,6 +1411,7 @@ def create_root():
 
 #
 #
+
     return BlueROV
 
     

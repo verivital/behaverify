@@ -52,7 +52,7 @@ class ToBlackboard(py_trees.behaviours.SetBlackboardVariable):
     def __init__(self, 
                     name, 
                     topic_name="bb_rth",         
-                    failsafe_rth_enable=None,#<textx:btree.DefaultBBType instance at 0x7f9b3ea7d100>        
+                    failsafe_rth_enable=None,#<textx:btree.DefaultBBType instance at 0x7f698ed8a100>        
                 ):
                 
         super(ToBlackboard, self).__init__(name=name,

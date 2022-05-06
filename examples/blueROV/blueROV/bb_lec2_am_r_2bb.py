@@ -55,8 +55,8 @@ class ToBlackboard(py_trees.behaviours.SetBlackboardVariable):
     def __init__(self, 
                     name, 
                     topic_name="lec2_right_am",         
-                    pipe_estimation_good_log_val=None,#<textx:btree.DefaultBBType instance at 0x7f9b3ea7dc70>,         
-                    speed_good_log_val=None,#<textx:btree.DefaultBBType instance at 0x7f9b3ea7ddc0>        
+                    pipe_estimation_good_log_val=None,#<textx:btree.DefaultBBType instance at 0x7f698ed8ac70>,         
+                    speed_good_log_val=None,#<textx:btree.DefaultBBType instance at 0x7f698ed8adc0>        
                 ):
                 
         super(ToBlackboard, self).__init__(name=name,

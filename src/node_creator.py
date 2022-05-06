@@ -142,21 +142,25 @@ def create_names_module(variable_to_int, nodes):
         return_string += ("\t\t" + nodes[i][2] + " := " + str(i) + ";" + os.linesep)
                           
     return return_string
-def create_blackboard(variable_to_int, variable_access, nodes):
+#def create_blackboard(variable_to_int, variable_access, nodes):
+def create_blackboard(int_to_variable, variable_to_int, variable_access, nodes):
     return_string=''
-    return_string += ("MODULE blackboard_module(active_node, node_names, variable_names)" + os.linesep
+    return_string += ("MODULE blackboard_module(active_node, node_names, variable_names, previous_status)" + os.linesep
                       + "\tDEFINE" + os.linesep)
-    if variable_to_int:
+    #if variable_to_int:
+    if int_to_variable:
         var_array_string = ("\t\tvariables := [")
         var_exist_string = ("\t\tvariable_exists := [")
         decl_string = ("\tVAR" + os.linesep)
-        for variable in variable_to_int:
-            var_array_string += (variable + "_SET."+variable + ", ")
-            var_exist_string += (variable + "_SET."+variable + "_exists, ")
+        #for variable in variable_to_int:
+        for i in range(len(int_to_variable)):
+            variable = int_to_variable[i]
+            var_array_string += (variable + "_SET." + variable + ", ")
+            var_exist_string += (variable + "_SET." + variable + "_exists, ")
             set_string="{"
             for node in variable_access[variable_to_int[variable]]:
                 set_string += str(node) + ", "
-            decl_string += ("\t\t" + variable + "_SET : " + variable + "_SET_module(active_node, " + set_string[0:-2] + "}, variables, variable_exists, node_names, variable_names);" + os.linesep)
+            decl_string += ("\t\t" + variable + "_SET : " + variable + "_SET_module(active_node, " + set_string[0:-2] + "}, variables, variable_exists, node_names, variable_names, previous_status);" + os.linesep)
         return_string += (var_array_string[0:-2] + "];" + os.linesep
                           + var_exist_string[0:-2] + "];" + os.linesep
                           + decl_string)
