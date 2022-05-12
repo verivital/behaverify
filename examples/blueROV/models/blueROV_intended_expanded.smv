@@ -1,13 +1,13 @@
 MODULE main
 	DEFINE
 		max_active_node := 102;
-		statuses := [BlueROV.status, topics2bb.status, dd_tasks.status, mission_server.status, obstacle_avoidance.status, priorities.status, battery2bb.status, rth2bb.status, geofence2bb.status, lec2_am_r_2bb.status, lec2_am_l_2bb.status, pipe_lost2bb.status, sensor_failure2bb.status, waypoints_completed2bb.status, mission2bb.status, ddlec2bb.status, fls2bb.status, fls_warning2bb.status, hsd_pipe2bb.status, hsd_wp2bb.status, hsd_rth2bb.status, hsd_surface2bb.status, rtreach2bb.status, reallocate_check_SIF.status, dd_lec_task.status, reallocate_check.status, is_reallocation_requested.status, reallocate_task.status, battery_check_SIF.status, sensor_failure_selector_SIF.status, emergency_stop_check_SIF.status, home_reached_selector_SIF.status, obstacle_standoff_check_SIF.status, rth_selector_SIF.status, geofence_selector_SIF.status, pipe_lost_selector_SIF.status, track_pipe_mission.status, waypoint_mission.status, loiter_task2.status, battery_check.status, battery_low_fs.status, surface_task.status, sensor_failure_selector.status, check_sensor_failure.status, surface_task1.status, emergency_stop_check.status, emergency_stop_fs.status, emergency_stop_tasks.status, emergency_stop_task.status, surface_task2.status, home_reached_selector.status, check_surface.status, surface_task3.status, obstacle_standoff_check.status, obstacle_standoff_fs.status, surface_task4.status, rth_selector.status, check_rth.status, rth_par.status, rth_task.status, home2bb.status, geofence_selector.status, check_geofence.status, rth_par1.status, rth_task1.status, home2bb1.status, pipe_lost_selector.status, check_pipe_post.status, loiter_task.status, is_track_pipe_mission_requested.status, tracking.status, track_pipe_mission_end.status, tracking_task.status, lec2am_speed_cmd.status, lec2am_mapping_cmd.status, lec2am_l_speed_check_SIF.status, lec2am_r_speed_check_SIF.status, speed_max_task.status, lec2am_l_speed_check.status, check_lec2am_ls.status, speed_min_task.status, lec2am_r_speed_check.status, check_lec2am_rs.status, speed_min_task1.status, lec2am_l_mapping_check_SIF.status, lec2am_r_mapping_check_SIF.status, pipe_mapping_enable_task.status, lec2am_l_mapping_check.status, check_lec2am_lp.status, pipe_mapping_disable_task.status, lec2am_r_mapping_check.status, check_lec2am_rp.status, pipe_mapping_disable_task1.status, evaluate.status, is_waypoint_requested.status, waypoint_selector.status, waypoints_sif_SIF.status, waypoint_task.status, waypoints_sif.status, check_waypoints_completed.status, waypoint_end.status, next_mission.status, loiter_task1.status];
+		statuses := [BlueROV.status, topics2bb.status, dd_tasks.status, mission_server.status, obstacle_avoidance.status, priorities.status, battery2bb.status, rth2bb.status, geofence2bb.status, lec2_am_r_2bb.status, lec2_am_l_2bb.status, pipe_lost2bb.status, sensor_failure2bb.status, waypoints_completed2bb.status, mission2bb.status, ddlec2bb.status, fls2bb.status, fls_warning2bb.status, hsd_pipe2bb.status, hsd_wp2bb.status, hsd_rth2bb.status, hsd_surface2bb.status, rtreach2bb.status, reallocate_check_SIF.status, dd_lec_task.status, reallocate_check.status, is_reallocation_requested.status, reallocate_task.status, battery_check_SIF.status, sensor_failure_selector_SIF.status, emergency_stop_check_SIF.status, home_reached_selector_SIF.status, obstacle_standoff_check_SIF.status, rth_selector_SIF.status, geofence_selector_SIF.status, pipe_lost_selector_SIF.status, track_pipe_mission.status, waypoint_mission.status, loiter_task.status, battery_check.status, battery_low_fs.status, surface_task.status, sensor_failure_selector.status, check_sensor_failure.status, surface_task1.status, emergency_stop_check.status, emergency_stop_fs.status, emergency_stop_tasks.status, emergency_stop_task.status, surface_task2.status, home_reached_selector.status, check_surface.status, surface_task3.status, obstacle_standoff_check.status, obstacle_standoff_fs.status, surface_task4.status, rth_selector.status, check_rth.status, rth_par.status, rth_task.status, home2bb.status, geofence_selector.status, check_geofence.status, rth_par1.status, rth_task1.status, home2bb1.status, pipe_lost_selector.status, check_pipe_post.status, loiter_task1.status, is_track_pipe_mission_requested.status, tracking.status, track_pipe_mission_end.status, tracking_task.status, lec2am_speed_cmd.status, lec2am_mapping_cmd.status, lec2am_l_speed_check_SIF.status, lec2am_r_speed_check_SIF.status, speed_max_task.status, lec2am_l_speed_check.status, check_lec2am_ls.status, speed_min_task.status, lec2am_r_speed_check.status, check_lec2am_rs.status, speed_min_task1.status, lec2am_l_mapping_check_SIF.status, lec2am_r_mapping_check_SIF.status, pipe_mapping_enable_task.status, lec2am_l_mapping_check.status, check_lec2am_lp.status, pipe_mapping_disable_task.status, lec2am_r_mapping_check.status, check_lec2am_rp.status, pipe_mapping_disable_task1.status, evaluate.status, is_waypoint_requested.status, waypoint_selector.status, waypoints_sif_SIF.status, waypoint_task.status, waypoints_sif.status, check_waypoints_completed.status, waypoint_end.status, next_mission.status, loiter_task2.status];
 		parents := [-1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 23, 25, 25, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 28, 39, 39, 29, 42, 42, 30, 45, 45, 47, 47, 31, 50, 50, 32, 53, 53, 33, 56, 56, 58, 58, 34, 61, 61, 63, 63, 35, 66, 66, 36, 36, 36, 70, 70, 70, 73, 73, 73, 75, 78, 78, 76, 81, 81, 74, 74, 74, 84, 87, 87, 85, 90, 90, 71, 37, 37, 95, 95, 96, 98, 98, 100, 100];
 		leafs := {-3, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24, 26, 27, 38, 40, 41, 43, 44, 46, 48, 49, 51, 52, 54, 55, 57, 59, 60, 62, 64, 65, 67, 68, 69, 72, 77, 79, 80, 82, 83, 86, 88, 89, 91, 92, 93, 94, 97, 99, 101, 102};
 		selectors := {-3, 2, 5, 25, 39, 42, 45, 50, 53, 56, 61, 66, 73, 74, 78, 81, 87, 90, 95, 98};
 		sequences := {-3, 36, 37, 47, 71, 100};
-		parallels_synchronised_all := {-3, 0, 1, 58, 63, 70};
-		parallels_unsynchronised_all := {-3};
+		parallels_synchronised_all := {-3};
+		parallels_unsynchronised_all := {-3, 0, 1, 58, 63, 70};
 		parallels_synchronised_one := {-3};
 		parallels_unsynchronised_one := {-3};
 		parallels := {-3, 0, 1, 58, 63, 70};
@@ -64,42 +64,42 @@ MODULE main
 				(previous_node < 74) & !(parallel_resume_70_74 = -2) : parallel_resume_70_74;
 				TRUE : parents[70];
 			esac;
+		parallel_resume_0_1 := 1;
+		parallel_resume_0_3 := 3;
+		parallel_resume_0_4 := 4;
+		parallel_resume_1_6 := 6;
+		parallel_resume_1_7 := 7;
+		parallel_resume_1_8 := 8;
+		parallel_resume_1_9 := 9;
+		parallel_resume_1_10 := 10;
+		parallel_resume_1_11 := 11;
+		parallel_resume_1_12 := 12;
+		parallel_resume_1_13 := 13;
+		parallel_resume_1_14 := 14;
+		parallel_resume_1_15 := 15;
+		parallel_resume_1_16 := 16;
+		parallel_resume_1_17 := 17;
+		parallel_resume_1_18 := 18;
+		parallel_resume_1_19 := 19;
+		parallel_resume_1_20 := 20;
+		parallel_resume_1_21 := 21;
+		parallel_resume_1_22 := 22;
+		parallel_resume_58_59 := 59;
+		parallel_resume_58_60 := 60;
+		parallel_resume_63_64 := 64;
+		parallel_resume_63_65 := 65;
+		parallel_resume_70_72 := 72;
 	VAR
 		active_node : -2..max_active_node;
 		previous_node : -1..max_active_node;
 		resume_node : -1..max_active_node;
 		previous_status : {running, success, failure, invalid};
-		parallel_resume_0_1 : {-2, 1};
-		parallel_resume_0_2 : {-2, 2, 23, 25, 26, 27, 24};
-		parallel_resume_0_3 : {-2, 3};
-		parallel_resume_0_4 : {-2, 4};
-		parallel_resume_0_5 : {-2, 5, 28, 39, 40, 41, 29, 42, 43, 44, 30, 45, 46, 47, 48, 49, 31, 50, 51, 52, 32, 53, 54, 55, 33, 56, 57, 58, 34, 61, 62, 63, 35, 66, 67, 68, 36, 69, 70, 71, 93, 37, 94, 95, 96, 98, 99, 100, 101, 102, 97, 38};
-		parallel_resume_1_6 : {-2, 6};
-		parallel_resume_1_7 : {-2, 7};
-		parallel_resume_1_8 : {-2, 8};
-		parallel_resume_1_9 : {-2, 9};
-		parallel_resume_1_10 : {-2, 10};
-		parallel_resume_1_11 : {-2, 11};
-		parallel_resume_1_12 : {-2, 12};
-		parallel_resume_1_13 : {-2, 13};
-		parallel_resume_1_14 : {-2, 14};
-		parallel_resume_1_15 : {-2, 15};
-		parallel_resume_1_16 : {-2, 16};
-		parallel_resume_1_17 : {-2, 17};
-		parallel_resume_1_18 : {-2, 18};
-		parallel_resume_1_19 : {-2, 19};
-		parallel_resume_1_20 : {-2, 20};
-		parallel_resume_1_21 : {-2, 21};
-		parallel_resume_1_22 : {-2, 22};
-		parallel_resume_58_59 : {-2, 59};
-		parallel_resume_58_60 : {-2, 60};
-		parallel_resume_63_64 : {-2, 64};
-		parallel_resume_63_65 : {-2, 65};
-		parallel_resume_70_72 : {-2, 72};
-		parallel_resume_70_73 : {-2, 73, 75, 78, 79, 80, 76, 81, 82, 83, 77};
-		parallel_resume_70_74 : {-2, 74, 84, 87, 88, 89, 85, 90, 91, 92, 86};
-		BlueROV : node_parallel(active_node, 0, previous_status, 5, previous_node, TRUE, TRUE, parallel_resume_0);
-		topics2bb : node_parallel(active_node, 1, previous_status, 22, previous_node, TRUE, TRUE, parallel_resume_1);
+		parallel_resume_0_2 : {2, 23, 25, 26, 27, 24};
+		parallel_resume_0_5 : {5, 28, 39, 40, 41, 29, 42, 43, 44, 30, 45, 46, 47, 48, 49, 31, 50, 51, 52, 32, 53, 54, 55, 33, 56, 57, 58, 34, 61, 62, 63, 35, 66, 67, 68, 36, 69, 70, 71, 93, 37, 94, 95, 96, 98, 99, 100, 101, 102, 97, 38};
+		parallel_resume_70_73 : {73, 75, 78, 79, 80, 76, 81, 82, 83, 77};
+		parallel_resume_70_74 : {74, 84, 87, 88, 89, 85, 90, 91, 92, 86};
+		BlueROV : node_parallel(active_node, 0, previous_status, 5, previous_node, FALSE, TRUE, parallel_resume_0);
+		topics2bb : node_parallel(active_node, 1, previous_status, 22, previous_node, FALSE, TRUE, parallel_resume_1);
 		dd_tasks : node_selector(active_node, 2, previous_status, 24, previous_node);
 		mission_server : node_set_blackboard_variables(active_node, 3, mission_server_SET_status);
 		mission_server_SET_status : mission_server_SET_status_module(active_node, 3, blackboard.variables, blackboard.variable_exists, node_names, variable_names);
@@ -158,8 +158,8 @@ MODULE main
 		pipe_lost_selector_SIF : decorator_success_is_failure(active_node, 35, previous_status);
 		track_pipe_mission : node_sequence(active_node, 36, previous_status, 71, previous_node);
 		waypoint_mission : node_sequence(active_node, 37, previous_status, 95, previous_node);
-		loiter_task2 : node_set_blackboard_variables(active_node, 38, loiter_task2_SET_status);
-		loiter_task2_SET_status : loiter_task2_SET_status_module(active_node, 38, blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		loiter_task : node_set_blackboard_variables(active_node, 38, loiter_task_SET_status);
+		loiter_task_SET_status : loiter_task_SET_status_module(active_node, 38, blackboard.variables, blackboard.variable_exists, node_names, variable_names);
 		battery_check : node_selector(active_node, 39, previous_status, 41, previous_node);
 		battery_low_fs : node_check_blackboard_variable_value(active_node, 40, blackboard, 1, battery_low_fs_CHECK_battery_low_warning);
 		battery_low_fs_CHECK_battery_low_warning : battery_low_fs_CHECK_battery_low_warning_module(active_node, 40, blackboard.variables, blackboard.variable_exists, node_names, variable_names);
@@ -191,7 +191,7 @@ MODULE main
 		rth_selector : node_selector(active_node, 56, previous_status, 58, previous_node);
 		check_rth : node_check_blackboard_variable_value(active_node, 57, blackboard, 4, check_rth_CHECK_bb_rth_warning);
 		check_rth_CHECK_bb_rth_warning : check_rth_CHECK_bb_rth_warning_module(active_node, 57, blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		rth_par : node_parallel(active_node, 58, previous_status, 60, previous_node, TRUE, TRUE, parallel_resume_58);
+		rth_par : node_parallel(active_node, 58, previous_status, 60, previous_node, FALSE, TRUE, parallel_resume_58);
 		rth_task : node_set_blackboard_variables(active_node, 59, rth_task_SET_status);
 		rth_task_SET_status : rth_task_SET_status_module(active_node, 59, blackboard.variables, blackboard.variable_exists, node_names, variable_names);
 		home2bb : node_set_blackboard_variables(active_node, 60, home2bb_SET_status);
@@ -199,7 +199,7 @@ MODULE main
 		geofence_selector : node_selector(active_node, 61, previous_status, 63, previous_node);
 		check_geofence : node_check_blackboard_variable_value(active_node, 62, blackboard, 7, check_geofence_CHECK_bb_geofence_warning);
 		check_geofence_CHECK_bb_geofence_warning : check_geofence_CHECK_bb_geofence_warning_module(active_node, 62, blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		rth_par1 : node_parallel(active_node, 63, previous_status, 65, previous_node, TRUE, TRUE, parallel_resume_63);
+		rth_par1 : node_parallel(active_node, 63, previous_status, 65, previous_node, FALSE, TRUE, parallel_resume_63);
 		rth_task1 : node_set_blackboard_variables(active_node, 64, rth_task1_SET_status);
 		rth_task1_SET_status : rth_task1_SET_status_module(active_node, 64, blackboard.variables, blackboard.variable_exists, node_names, variable_names);
 		home2bb1 : node_set_blackboard_variables(active_node, 65, home2bb1_SET_status);
@@ -207,11 +207,11 @@ MODULE main
 		pipe_lost_selector : node_selector(active_node, 66, previous_status, 68, previous_node);
 		check_pipe_post : node_check_blackboard_variable_value(active_node, 67, blackboard, 16, check_pipe_post_CHECK_bb_pipe_lost_warning);
 		check_pipe_post_CHECK_bb_pipe_lost_warning : check_pipe_post_CHECK_bb_pipe_lost_warning_module(active_node, 67, blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		loiter_task : node_set_blackboard_variables(active_node, 68, loiter_task_SET_status);
-		loiter_task_SET_status : loiter_task_SET_status_module(active_node, 68, blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		loiter_task1 : node_set_blackboard_variables(active_node, 68, loiter_task1_SET_status);
+		loiter_task1_SET_status : loiter_task1_SET_status_module(active_node, 68, blackboard.variables, blackboard.variable_exists, node_names, variable_names);
 		is_track_pipe_mission_requested : node_check_blackboard_variable_value(active_node, 69, blackboard, 18, is_track_pipe_mission_requested_CHECK_bb_mission_dot_data);
 		is_track_pipe_mission_requested_CHECK_bb_mission_dot_data : is_track_pipe_mission_requested_CHECK_bb_mission_dot_data_module(active_node, 69, blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		tracking : node_parallel(active_node, 70, previous_status, 74, previous_node, TRUE, TRUE, parallel_resume_70);
+		tracking : node_parallel(active_node, 70, previous_status, 74, previous_node, FALSE, TRUE, parallel_resume_70);
 		track_pipe_mission_end : node_sequence(active_node, 71, previous_status, 93, previous_node);
 		tracking_task : node_set_blackboard_variables(active_node, 72, tracking_task_SET_status);
 		tracking_task_SET_status : tracking_task_SET_status_module(active_node, 72, blackboard.variables, blackboard.variable_exists, node_names, variable_names);
@@ -245,7 +245,7 @@ MODULE main
 		check_lec2am_rp_CHECK_lec2_am_r_pipe_warning : check_lec2am_rp_CHECK_lec2_am_r_pipe_warning_module(active_node, 91, blackboard.variables, blackboard.variable_exists, node_names, variable_names);
 		pipe_mapping_disable_task1 : node_set_blackboard_variables(active_node, 92, pipe_mapping_disable_task1_SET_status);
 		pipe_mapping_disable_task1_SET_status : pipe_mapping_disable_task1_SET_status_module(active_node, 92, blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		evaluate : node_default(active_node, 93);
+		evaluate : node_timer(active_node, 93);
 		is_waypoint_requested : node_check_blackboard_variable_value(active_node, 94, blackboard, 18, is_waypoint_requested_CHECK_bb_mission_dot_data);
 		is_waypoint_requested_CHECK_bb_mission_dot_data : is_waypoint_requested_CHECK_bb_mission_dot_data_module(active_node, 94, blackboard.variables, blackboard.variable_exists, node_names, variable_names);
 		waypoint_selector : node_selector(active_node, 95, previous_status, 97, previous_node);
@@ -258,8 +258,8 @@ MODULE main
 		waypoint_end : node_sequence(active_node, 100, previous_status, 102, previous_node);
 		next_mission : node_set_blackboard_variables(active_node, 101, next_mission_SET_status);
 		next_mission_SET_status : next_mission_SET_status_module(active_node, 101, blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		loiter_task1 : node_set_blackboard_variables(active_node, 102, loiter_task1_SET_status);
-		loiter_task1_SET_status : loiter_task1_SET_status_module(active_node, 102, blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		loiter_task2 : node_set_blackboard_variables(active_node, 102, loiter_task2_SET_status);
+		loiter_task2_SET_status : loiter_task2_SET_status_module(active_node, 102, blackboard.variables, blackboard.variable_exists, node_names, variable_names);
 		variable_names : define_variables;
 		node_names : define_nodes;
 		blackboard : blackboard_module(active_node, node_names, variable_names, previous_status);
@@ -268,33 +268,8 @@ MODULE main
 		init(previous_node) := -1;
 		init(resume_node) := -1;
 		init(previous_status) := invalid;
-		init(parallel_resume_0_1) := 1;
 		init(parallel_resume_0_2) := 2;
-		init(parallel_resume_0_3) := 3;
-		init(parallel_resume_0_4) := 4;
 		init(parallel_resume_0_5) := 5;
-		init(parallel_resume_1_6) := 6;
-		init(parallel_resume_1_7) := 7;
-		init(parallel_resume_1_8) := 8;
-		init(parallel_resume_1_9) := 9;
-		init(parallel_resume_1_10) := 10;
-		init(parallel_resume_1_11) := 11;
-		init(parallel_resume_1_12) := 12;
-		init(parallel_resume_1_13) := 13;
-		init(parallel_resume_1_14) := 14;
-		init(parallel_resume_1_15) := 15;
-		init(parallel_resume_1_16) := 16;
-		init(parallel_resume_1_17) := 17;
-		init(parallel_resume_1_18) := 18;
-		init(parallel_resume_1_19) := 19;
-		init(parallel_resume_1_20) := 20;
-		init(parallel_resume_1_21) := 21;
-		init(parallel_resume_1_22) := 22;
-		init(parallel_resume_58_59) := 59;
-		init(parallel_resume_58_60) := 60;
-		init(parallel_resume_63_64) := 64;
-		init(parallel_resume_63_65) := 65;
-		init(parallel_resume_70_72) := 72;
 		init(parallel_resume_70_73) := 73;
 		init(parallel_resume_70_74) := 74;
 		next(previous_node) :=
@@ -307,7 +282,7 @@ MODULE main
 				(previous_node < 0) : resume_node;
 				!(previous_status = running) : -1;
 				(resume_node = -1) : previous_node;
-				(previous_node in parallels) : previous_node;
+				(previous_node in parallels) | (previous_node in selectors) : previous_node;
 				TRUE : resume_node;
 			esac;
 		next(previous_status) :=
@@ -328,265 +303,177 @@ MODULE main
 				(active_node in selectors) & (previous_status = failure) : min(max_active_node, previous_node + 1);
 				TRUE : parents[active_node];
 			esac;
-		next(parallel_resume_0_1) :=
-			case
-				(parallel_resume_0_1 = 1) & (previous_node in {-2, 1}) & (previous_status = running) : previous_node;
-				(previous_node = 1) & (previous_status = success | previous_status = failure) : -2;
-				(previous_node = 0) & (previous_status = success | previous_status = failure) : 1;
-				TRUE : parallel_resume_0_1;
-			esac;
-
 		next(parallel_resume_0_2) :=
 			case
-				(parallel_resume_0_2 = 2) & (previous_node in {-2, 2, 23, 25, 26, 27, 24}) & (previous_status = running) : previous_node;
-				(previous_node = 2) & (previous_status = success | previous_status = failure) : -2;
+				(parallel_resume_0_2 = 2) & (previous_node in {2, 23, 25, 26, 27, 24}) & (previous_status = running) : previous_node;
+				(previous_node = 2) & (previous_status = success | previous_status = failure) : 2;
 				(previous_node = 0) & (previous_status = success | previous_status = failure) : 2;
 				TRUE : parallel_resume_0_2;
 			esac;
 
-		next(parallel_resume_0_3) :=
-			case
-				(parallel_resume_0_3 = 3) & (previous_node in {-2, 3}) & (previous_status = running) : previous_node;
-				(previous_node = 3) & (previous_status = success | previous_status = failure) : -2;
-				(previous_node = 0) & (previous_status = success | previous_status = failure) : 3;
-				TRUE : parallel_resume_0_3;
-			esac;
-
-		next(parallel_resume_0_4) :=
-			case
-				(parallel_resume_0_4 = 4) & (previous_node in {-2, 4}) & (previous_status = running) : previous_node;
-				(previous_node = 4) & (previous_status = success | previous_status = failure) : -2;
-				(previous_node = 0) & (previous_status = success | previous_status = failure) : 4;
-				TRUE : parallel_resume_0_4;
-			esac;
-
 		next(parallel_resume_0_5) :=
 			case
-				(parallel_resume_0_5 = 5) & (previous_node in {-2, 5, 28, 39, 40, 41, 29, 42, 43, 44, 30, 45, 46, 47, 48, 49, 31, 50, 51, 52, 32, 53, 54, 55, 33, 56, 57, 58, 34, 61, 62, 63, 35, 66, 67, 68, 36, 69, 70, 71, 93, 37, 94, 95, 96, 98, 99, 100, 101, 102, 97, 38}) & (previous_status = running) : previous_node;
-				(previous_node = 5) & (previous_status = success | previous_status = failure) : -2;
+				(parallel_resume_0_5 = 5) & (previous_node in {5, 28, 39, 40, 41, 29, 42, 43, 44, 30, 45, 46, 47, 48, 49, 31, 50, 51, 52, 32, 53, 54, 55, 33, 56, 57, 58, 34, 61, 62, 63, 35, 66, 67, 68, 36, 69, 70, 71, 93, 37, 94, 95, 96, 98, 99, 100, 101, 102, 97, 38}) & (previous_status = running) : previous_node;
+				(previous_node = 5) & (previous_status = success | previous_status = failure) : 5;
 				(previous_node = 0) & (previous_status = success | previous_status = failure) : 5;
 				TRUE : parallel_resume_0_5;
 			esac;
 
-		next(parallel_resume_1_6) :=
-			case
-				(parallel_resume_1_6 = 6) & (previous_node in {-2, 6}) & (previous_status = running) : previous_node;
-				(previous_node = 6) & (previous_status = success | previous_status = failure) : -2;
-				(previous_node = 0) & (previous_status = success | previous_status = failure) : 6;
-				TRUE : parallel_resume_1_6;
-			esac;
-
-		next(parallel_resume_1_7) :=
-			case
-				(parallel_resume_1_7 = 7) & (previous_node in {-2, 7}) & (previous_status = running) : previous_node;
-				(previous_node = 7) & (previous_status = success | previous_status = failure) : -2;
-				(previous_node = 0) & (previous_status = success | previous_status = failure) : 7;
-				TRUE : parallel_resume_1_7;
-			esac;
-
-		next(parallel_resume_1_8) :=
-			case
-				(parallel_resume_1_8 = 8) & (previous_node in {-2, 8}) & (previous_status = running) : previous_node;
-				(previous_node = 8) & (previous_status = success | previous_status = failure) : -2;
-				(previous_node = 0) & (previous_status = success | previous_status = failure) : 8;
-				TRUE : parallel_resume_1_8;
-			esac;
-
-		next(parallel_resume_1_9) :=
-			case
-				(parallel_resume_1_9 = 9) & (previous_node in {-2, 9}) & (previous_status = running) : previous_node;
-				(previous_node = 9) & (previous_status = success | previous_status = failure) : -2;
-				(previous_node = 0) & (previous_status = success | previous_status = failure) : 9;
-				TRUE : parallel_resume_1_9;
-			esac;
-
-		next(parallel_resume_1_10) :=
-			case
-				(parallel_resume_1_10 = 10) & (previous_node in {-2, 10}) & (previous_status = running) : previous_node;
-				(previous_node = 10) & (previous_status = success | previous_status = failure) : -2;
-				(previous_node = 0) & (previous_status = success | previous_status = failure) : 10;
-				TRUE : parallel_resume_1_10;
-			esac;
-
-		next(parallel_resume_1_11) :=
-			case
-				(parallel_resume_1_11 = 11) & (previous_node in {-2, 11}) & (previous_status = running) : previous_node;
-				(previous_node = 11) & (previous_status = success | previous_status = failure) : -2;
-				(previous_node = 0) & (previous_status = success | previous_status = failure) : 11;
-				TRUE : parallel_resume_1_11;
-			esac;
-
-		next(parallel_resume_1_12) :=
-			case
-				(parallel_resume_1_12 = 12) & (previous_node in {-2, 12}) & (previous_status = running) : previous_node;
-				(previous_node = 12) & (previous_status = success | previous_status = failure) : -2;
-				(previous_node = 0) & (previous_status = success | previous_status = failure) : 12;
-				TRUE : parallel_resume_1_12;
-			esac;
-
-		next(parallel_resume_1_13) :=
-			case
-				(parallel_resume_1_13 = 13) & (previous_node in {-2, 13}) & (previous_status = running) : previous_node;
-				(previous_node = 13) & (previous_status = success | previous_status = failure) : -2;
-				(previous_node = 0) & (previous_status = success | previous_status = failure) : 13;
-				TRUE : parallel_resume_1_13;
-			esac;
-
-		next(parallel_resume_1_14) :=
-			case
-				(parallel_resume_1_14 = 14) & (previous_node in {-2, 14}) & (previous_status = running) : previous_node;
-				(previous_node = 14) & (previous_status = success | previous_status = failure) : -2;
-				(previous_node = 0) & (previous_status = success | previous_status = failure) : 14;
-				TRUE : parallel_resume_1_14;
-			esac;
-
-		next(parallel_resume_1_15) :=
-			case
-				(parallel_resume_1_15 = 15) & (previous_node in {-2, 15}) & (previous_status = running) : previous_node;
-				(previous_node = 15) & (previous_status = success | previous_status = failure) : -2;
-				(previous_node = 0) & (previous_status = success | previous_status = failure) : 15;
-				TRUE : parallel_resume_1_15;
-			esac;
-
-		next(parallel_resume_1_16) :=
-			case
-				(parallel_resume_1_16 = 16) & (previous_node in {-2, 16}) & (previous_status = running) : previous_node;
-				(previous_node = 16) & (previous_status = success | previous_status = failure) : -2;
-				(previous_node = 0) & (previous_status = success | previous_status = failure) : 16;
-				TRUE : parallel_resume_1_16;
-			esac;
-
-		next(parallel_resume_1_17) :=
-			case
-				(parallel_resume_1_17 = 17) & (previous_node in {-2, 17}) & (previous_status = running) : previous_node;
-				(previous_node = 17) & (previous_status = success | previous_status = failure) : -2;
-				(previous_node = 0) & (previous_status = success | previous_status = failure) : 17;
-				TRUE : parallel_resume_1_17;
-			esac;
-
-		next(parallel_resume_1_18) :=
-			case
-				(parallel_resume_1_18 = 18) & (previous_node in {-2, 18}) & (previous_status = running) : previous_node;
-				(previous_node = 18) & (previous_status = success | previous_status = failure) : -2;
-				(previous_node = 0) & (previous_status = success | previous_status = failure) : 18;
-				TRUE : parallel_resume_1_18;
-			esac;
-
-		next(parallel_resume_1_19) :=
-			case
-				(parallel_resume_1_19 = 19) & (previous_node in {-2, 19}) & (previous_status = running) : previous_node;
-				(previous_node = 19) & (previous_status = success | previous_status = failure) : -2;
-				(previous_node = 0) & (previous_status = success | previous_status = failure) : 19;
-				TRUE : parallel_resume_1_19;
-			esac;
-
-		next(parallel_resume_1_20) :=
-			case
-				(parallel_resume_1_20 = 20) & (previous_node in {-2, 20}) & (previous_status = running) : previous_node;
-				(previous_node = 20) & (previous_status = success | previous_status = failure) : -2;
-				(previous_node = 0) & (previous_status = success | previous_status = failure) : 20;
-				TRUE : parallel_resume_1_20;
-			esac;
-
-		next(parallel_resume_1_21) :=
-			case
-				(parallel_resume_1_21 = 21) & (previous_node in {-2, 21}) & (previous_status = running) : previous_node;
-				(previous_node = 21) & (previous_status = success | previous_status = failure) : -2;
-				(previous_node = 0) & (previous_status = success | previous_status = failure) : 21;
-				TRUE : parallel_resume_1_21;
-			esac;
-
-		next(parallel_resume_1_22) :=
-			case
-				(parallel_resume_1_22 = 22) & (previous_node in {-2, 22}) & (previous_status = running) : previous_node;
-				(previous_node = 22) & (previous_status = success | previous_status = failure) : -2;
-				(previous_node = 0) & (previous_status = success | previous_status = failure) : 22;
-				TRUE : parallel_resume_1_22;
-			esac;
-
-		next(parallel_resume_58_59) :=
-			case
-				(parallel_resume_58_59 = 59) & (previous_node in {-2, 59}) & (previous_status = running) : previous_node;
-				(previous_node = 59) & (previous_status = success | previous_status = failure) : -2;
-				(previous_node = 0) & (previous_status = success | previous_status = failure) : 59;
-				TRUE : parallel_resume_58_59;
-			esac;
-
-		next(parallel_resume_58_60) :=
-			case
-				(parallel_resume_58_60 = 60) & (previous_node in {-2, 60}) & (previous_status = running) : previous_node;
-				(previous_node = 60) & (previous_status = success | previous_status = failure) : -2;
-				(previous_node = 0) & (previous_status = success | previous_status = failure) : 60;
-				TRUE : parallel_resume_58_60;
-			esac;
-
-		next(parallel_resume_63_64) :=
-			case
-				(parallel_resume_63_64 = 64) & (previous_node in {-2, 64}) & (previous_status = running) : previous_node;
-				(previous_node = 64) & (previous_status = success | previous_status = failure) : -2;
-				(previous_node = 0) & (previous_status = success | previous_status = failure) : 64;
-				TRUE : parallel_resume_63_64;
-			esac;
-
-		next(parallel_resume_63_65) :=
-			case
-				(parallel_resume_63_65 = 65) & (previous_node in {-2, 65}) & (previous_status = running) : previous_node;
-				(previous_node = 65) & (previous_status = success | previous_status = failure) : -2;
-				(previous_node = 0) & (previous_status = success | previous_status = failure) : 65;
-				TRUE : parallel_resume_63_65;
-			esac;
-
-		next(parallel_resume_70_72) :=
-			case
-				(parallel_resume_70_72 = 72) & (previous_node in {-2, 72}) & (previous_status = running) : previous_node;
-				(previous_node = 72) & (previous_status = success | previous_status = failure) : -2;
-				(previous_node = 0) & (previous_status = success | previous_status = failure) : 72;
-				TRUE : parallel_resume_70_72;
-			esac;
-
 		next(parallel_resume_70_73) :=
 			case
-				(parallel_resume_70_73 = 73) & (previous_node in {-2, 73, 75, 78, 79, 80, 76, 81, 82, 83, 77}) & (previous_status = running) : previous_node;
-				(previous_node = 73) & (previous_status = success | previous_status = failure) : -2;
+				(parallel_resume_70_73 = 73) & (previous_node in {73, 75, 78, 79, 80, 76, 81, 82, 83, 77}) & (previous_status = running) : previous_node;
+				(previous_node = 73) & (previous_status = success | previous_status = failure) : 73;
 				(previous_node = 0) & (previous_status = success | previous_status = failure) : 73;
 				TRUE : parallel_resume_70_73;
 			esac;
 
 		next(parallel_resume_70_74) :=
 			case
-				(parallel_resume_70_74 = 74) & (previous_node in {-2, 74, 84, 87, 88, 89, 85, 90, 91, 92, 86}) & (previous_status = running) : previous_node;
-				(previous_node = 74) & (previous_status = success | previous_status = failure) : -2;
+				(parallel_resume_70_74 = 74) & (previous_node in {74, 84, 87, 88, 89, 85, 90, 91, 92, 86}) & (previous_status = running) : previous_node;
+				(previous_node = 74) & (previous_status = success | previous_status = failure) : 74;
 				(previous_node = 0) & (previous_status = success | previous_status = failure) : 74;
 				TRUE : parallel_resume_70_74;
 			esac;
 
+-------------------------------------------------------------------------------------
 LTLSPEC G (!(active_node = -2));
 --we never enter the error state.
 
---LTLSPEC G( (blackboard.variables[variable_names.battery_low_warning] = 1)  -> F (active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4}));
+LTLSPEC (active_node = -1) U (active_node = 1);
+--this should fail, obvious
+
+LTLSPEC (active_node = -1) U (active_node = 0);
+--this should succeed, but only because the root node is parallel, therefore we can't ever skip over it by resuming a run.
+
+-------------------------------------------------------------------------------------
+
+LTLSPEC G( (blackboard.variables[variable_names.battery_low_warning] = 1)  -> F (active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4}));
 --proves that if low warning, then surface (eventually)
+
+
+LTLSPEC G( (blackboard.variables[variable_names.battery_low_warning] = 1)  -> ((!(active_node = -1))  U (active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4})));
+--if low warning, than surface task before active_node reaches -1. (this should fail, because it doesn't consider that G means it needs to be true after we leave a surface task)
+
+LTLSPEC G( ((blackboard.variables[variable_names.battery_low_warning] = 1) & (previous_node = node_names.battery2bb))  -> (((active_node > -1))  U (active_node = node_names.surface_task)));
+--this one is true, but only for battery_warning
+
+LTLSPEC G( ((blackboard.variables[variable_names.battery_low_warning] = 1) & (previous_node = node_names.battery2bb))  -> (((active_node > -1))  U (active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4})));
+--this one should be true.
+
+-------------------------------------------------------------------------------------
+
+LTLSPEC G( (blackboard.variables[variable_names.bb_sensor_failure_warning] = 1)  -> F (active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4}));
+--proves that if low warning, then surface (eventually)
+
+
+LTLSPEC G( (blackboard.variables[variable_names.bb_sensor_failure_warning] = 1)  -> ((!(active_node = -1))  U (active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4})));
+--if low warning, than surface task before active_node reaches -1. (this should fail, because it doesn't consider that G means it needs to be true after we leave a surface task)
+
+LTLSPEC G( ((blackboard.variables[variable_names.bb_sensor_failure_warning] = 1) & (previous_node = node_names.sensor_failure2bb))  -> (((active_node > -1))  U (active_node = node_names.surface_task1)));
+--this one is true, but only for battery_warning
+
+LTLSPEC G( ((blackboard.variables[variable_names.bb_sensor_failure_warning] = 1) & (previous_node = node_names.sensor_failure2bb))  -> (((active_node > -1))  U (active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4})));
+--this one should be true.
+
+-------------------------------------------------------------------------------------
+
+LTLSPEC G( (blackboard.variables[variable_names.emergency_stop_warning] = 1)  -> F (active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4}));
+--proves that if low warning, then surface (eventually)
+
+
+LTLSPEC G( (blackboard.variables[variable_names.emergency_stop_warning] = 1)  -> ((!(active_node = -1))  U (active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4})));
+--if low warning, than surface task before active_node reaches -1. (this should fail, because it doesn't consider that G means it needs to be true after we leave a surface task)
+
+LTLSPEC G( ((blackboard.variables[variable_names.emergency_stop_warning] = 1) & (previous_node in {node_names.fls_warning2bb, node_names.rtreach2bb, node_names.mission_server}))  -> (((active_node > -1))  U (active_node = node_names.surface_task2)));
+--this one is true, but only for battery_warning
+
+LTLSPEC G( ((blackboard.variables[variable_names.emergency_stop_warning] = 1) & (previous_node in {node_names.fls_warning2bb, node_names.rtreach2bb, node_names.mission_server}))  -> (((active_node > -1))  U (active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4})));
+--this one should be true.
+
+-------------------------------------------------------------------------------------
+
+LTLSPEC G( (blackboard.variables[variable_names.bb_home_reached] = 1)  -> F (active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4}));
+--proves that if low warning, then surface (eventually)
+
+
+LTLSPEC G( (blackboard.variables[variable_names.bb_home_reached] = 1)  -> ((!(active_node = -1))  U (active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4})));
+--if low warning, than surface task before active_node reaches -1. (this should fail, because it doesn't consider that G means it needs to be true after we leave a surface task)
+
+LTLSPEC G( ((blackboard.variables[variable_names.bb_home_reached] = 1) & (previous_node in {node_names.home2bb, node_names.home2bb1}))  -> (((active_node > -1))  U (active_node = node_names.surface_task3)));
+--this one is true, but only for battery_warning
+
+LTLSPEC G( ((blackboard.variables[variable_names.bb_home_reached] = 1) & (previous_node in {node_names.home2bb, node_names.home2bb1}))  -> (((active_node > -1))  U (active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4})));
+--this one should be true.
+
+-------------------------------------------------------------------------------------
+
+LTLSPEC G( (blackboard.variables[variable_names.obstacle_standoff_warning] = 1)  -> F (active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4}));
+--proves that if low warning, then surface (eventually)
+
+
+LTLSPEC G( (blackboard.variables[variable_names.obstacle_standoff_warning] = 1)  -> ((!(active_node = -1))  U (active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4})));
+--if low warning, than surface task before active_node reaches -1. (this should fail, because it doesn't consider that G means it needs to be true after we leave a surface task)
+
+LTLSPEC G( ((blackboard.variables[variable_names.obstacle_standoff_warning] = 1) & (previous_node = node_names.fls2bb))  -> (((active_node > -1))  U (active_node = node_names.surface_task4)));
+--this one is true, but only for battery_warning
+
+LTLSPEC G( ((blackboard.variables[variable_names.obstacle_standoff_warning] = 1) & (previous_node = node_names.fls2bb))  -> (((active_node > -1))  U (active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4})));
+--this one should be true.
+
+-------------------------------------------------------------------------------------
+
+
+
+CTLSPEC EG(!(active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4}));
+--should be true. there's always a way to avoid surfacing. (until we introduce some specs that force battery to eventually decrease or something).
+
+CTLSPEC AF((active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4}));
+--this is the same as above, except inverted. it says we will always surface. should be false.
+
+-------------------------------------------------------------------------------------
+--this is a set of ctlspecs that i was using to debug an error in the model.
+--ignore truth values attached.
 
 --CTLSPEC EG(!(active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4}));
 --does surface task always have to trigger?
-CTLSPEC EG(!(active_node = node_names.surface_task));
-CTLSPEC EG(!(active_node = node_names.surface_task1));
-CTLSPEC EG(!(active_node = node_names.surface_task2));
-CTLSPEC EG(!(active_node = node_names.surface_task3));
-CTLSPEC EG(!(active_node = node_names.surface_task4));
-CTLSPEC EG(!(active_node = node_names.surface_task) & !(active_node = node_names.surface_task1));
-CTLSPEC EG(!(active_node = node_names.surface_task) & !(active_node = node_names.surface_task1) & !(active_node = node_names.surface_task2));
-CTLSPEC EG(!(active_node = node_names.surface_task) & !(active_node = node_names.surface_task1) & !(active_node = node_names.surface_task2) & !(active_node = node_names.surface_task3));
-CTLSPEC EG(!(active_node = node_names.surface_task) & !(active_node = node_names.surface_task1) & !(active_node = node_names.surface_task2) & !(active_node = node_names.surface_task3) & !(active_node = node_names.surface_task4));
 
-CTLSPEC EG(!(active_node = 41));
-CTLSPEC EG(!(active_node = 44));
-CTLSPEC EG(!(active_node = 49));
-CTLSPEC EG(!(active_node = 52));
-CTLSPEC EG(!(active_node = 55));
-CTLSPEC EG(!(active_node = 41) & !(active_node = 44));
-CTLSPEC EG(!(active_node = 41) & !(active_node = 44) & !(active_node = 49));
-CTLSPEC EG(!(active_node = 41) & !(active_node = 44) & !(active_node = 49) & !(active_node = 52));
-CTLSPEC EG(!(active_node = 41) & !(active_node = 44) & !(active_node = 49) & !(active_node = 52) & !(active_node = 55));
+--CTLSPEC EG(!(active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3}));
+--CTLSPEC EG(!(active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task4}));
+--CTLSPEC EG(!(active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task3, node_names.surface_task4}));
+--CTLSPEC EG(!(active_node in {node_names.surface_task, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4}));
+--CTLSPEC EG(!(active_node in {node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4}));
+
+--CTLSPEC AF((active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4}));
+
+--CTLSPEC AF((active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3}));
+--CTLSPEC AF((active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task4}));
+--CTLSPEC AF((active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task3, node_names.surface_task4}));
+--CTLSPEC AF((active_node in {node_names.surface_task, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4}));
+--CTLSPEC AF((active_node in {node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4}));
+
+
+--CTLSPEC EG((active_node in {node_names.surface_task4})); --FALSE --this was probably should have been EF
+--LTLSPEC G(!(active_node = node_names.surface_task4)); --TRUE
+--CTLSPEC EF(blackboard.variables[blackboard.variable_names.obstacle_standoff_warning] = 1); -- TRUE
+--CTLSPEC EF(blackboard.variables[blackboard.variable_names.obstacle_standoff_warning] = 0); -- TRUE
+--CTLSPEC EF(blackboard.variables[blackboard.variable_names.obstacle_standoff_warning] = -1); -- TRUE
+
+--CTLSPEC EF(active_node = node_names.obstacle_standoff_fs); -- FALSE (5)
+--CTLSPEC AG(!(active_node = node_names.obstacle_standoff_fs)); --TRUE (5)
+--so we literally never enter the obstacle_standoff_fs. time to check if we reach the node above it.
+--CTLSPEC EF(active_node = node_names.obstacle_standoff_check); --FALSE (6)
+--CTLSPEC AG(!(active_node = node_names.obstacle_standoff_check)); --TRUE (6)
+
+--CTLSPEC EF(active_node = node_names.obstacle_standoff_check_SIF); --FALSE (7)
+--CTLSPEC AG(!(active_node = node_names.obstacle_standoff_check_SIF)); --TRUE (7)
+--ok, that's the end of that tree, can't reach that whole area. gonna check if home_reached_selector, the branch before it, can be reached
+
+
+--CTLSPEC EF(active_node = node_names.home_reached_selector_SIF); --TRUE (8)
+--CTLSPEC AG(!(active_node = node_names.home_reached_selector_SIF)); --FALSE (8)
+--yup, previous one is reachable.
+
+-------------------------------------------------------------------------------------
 
 MODULE node_parallel(active_node, id, previous_status, last_child, previous_node, synchronized, parallel_policy_all, resumer)
 	DEFINE
@@ -663,11 +550,11 @@ MODULE node_sequence(active_node, id, previous_status, last_child, previous_node
 				(id = active_node) : invalid;
 				TRUE : invalid;
 			esac;
-MODULE node_default(active_node, id)
+MODULE node_timer(active_node, id)
 	DEFINE
 		status :=
 			case
-				(id = active_node) : {success, failure, running};
+				(id = active_node) : {success, running};
 				TRUE : invalid;
 			esac;
 MODULE define_variables
@@ -768,7 +655,7 @@ MODULE define_nodes
 		pipe_lost_selector_SIF := 35;
 		track_pipe_mission := 36;
 		waypoint_mission := 37;
-		loiter_task2 := 38;
+		loiter_task := 38;
 		battery_check := 39;
 		battery_low_fs := 40;
 		surface_task := 41;
@@ -798,7 +685,7 @@ MODULE define_nodes
 		home2bb1 := 65;
 		pipe_lost_selector := 66;
 		check_pipe_post := 67;
-		loiter_task := 68;
+		loiter_task1 := 68;
 		is_track_pipe_mission_requested := 69;
 		tracking := 70;
 		track_pipe_mission_end := 71;
@@ -832,7 +719,7 @@ MODULE define_nodes
 		check_waypoints_completed := 99;
 		waypoint_end := 100;
 		next_mission := 101;
-		loiter_task1 := 102;
+		loiter_task2 := 102;
 --battery : 0
 ----battery2bb
 --battery_low_warning : 1
@@ -942,14 +829,14 @@ MODULE define_nodes
 ----surface_task4
 ----rth_task
 ----rth_task1
-----loiter_task
+----loiter_task1
 ----tracking_task
 ----speed_min_task
 ----speed_min_task1
 ----speed_max_task
-----loiter_task1
-----waypoint_task
 ----loiter_task2
+----waypoint_task
+----loiter_task
 --bb_obstacle_warning : 47
 ----obstacle_avoidance
 --cm_hsd_input : 48
@@ -961,11 +848,11 @@ MODULE define_nodes
 ----surface_task4
 ----rth_task
 ----rth_task1
-----loiter_task
-----tracking_task
 ----loiter_task1
-----waypoint_task
+----tracking_task
 ----loiter_task2
+----waypoint_task
+----loiter_task
 --HSD_out_dot_heading : 49
 ----obstacle_avoidance
 ----surface_task
@@ -975,14 +862,14 @@ MODULE define_nodes
 ----surface_task4
 ----rth_task
 ----rth_task1
-----loiter_task
+----loiter_task1
 ----tracking_task
 ----speed_min_task
 ----speed_min_task1
 ----speed_max_task
-----loiter_task1
-----waypoint_task
 ----loiter_task2
+----waypoint_task
+----loiter_task
 --HSD_out_dot_speed : 50
 ----obstacle_avoidance
 ----surface_task
@@ -992,14 +879,14 @@ MODULE define_nodes
 ----surface_task4
 ----rth_task
 ----rth_task1
-----loiter_task
+----loiter_task1
 ----tracking_task
 ----speed_min_task
 ----speed_min_task1
 ----speed_max_task
-----loiter_task1
-----waypoint_task
 ----loiter_task2
+----waypoint_task
+----loiter_task
 --HSD_out_dot_depth : 51
 ----obstacle_avoidance
 ----surface_task
@@ -1009,14 +896,14 @@ MODULE define_nodes
 ----surface_task4
 ----rth_task
 ----rth_task1
-----loiter_task
+----loiter_task1
 ----tracking_task
 ----speed_min_task
 ----speed_min_task1
 ----speed_max_task
-----loiter_task1
-----waypoint_task
 ----loiter_task2
+----waypoint_task
+----loiter_task
 --bb_home_reached : 52
 ----home2bb
 ----home2bb1
@@ -1100,9 +987,9 @@ MODULE battery_low_warning_SET_module(active_node, nodes_with_access, variables,
 	DEFINE
 		battery_low_warning_exists := TRUE;
 	VAR
-		battery_low_warning : -1..1;
+		battery_low_warning : 0..1;
 	ASSIGN
-		init(battery_low_warning) := -1; -- -1 means unset 
+		init(battery_low_warning) := 0;
 		next(battery_low_warning) :=
 			case
 				(active_node in nodes_with_access) & (next(previous_status) = success) : {0, 1};
@@ -1120,13 +1007,13 @@ MODULE bb_rth_warning_SET_module(active_node, nodes_with_access, variables, vari
 	DEFINE
 		bb_rth_warning_exists := TRUE;
 	VAR
-		bb_rth_warning : -1..1;
+		bb_rth_warning : 0..1;
 	ASSIGN
-		init(bb_rth_warning) := -1;
+		init(bb_rth_warning) := 0;
 		next(bb_rth_warning) := 
 			case
 				(bb_rth_warning = 1) : 1; -- can't be unset.
-				(active_node = node_names.rth2bb) : {0, 1};
+				(active_node = node_names.rth2bb) & (next(previous_status) = success) : {0, 1};
 				(active_node = node_names.mission_server) & (variables[variable_names.next_mission] = 1) : {0, 1}; -- can be either, but only runs if next mission is true.
 				TRUE : bb_rth_warning;
 			esac;
@@ -1142,13 +1029,13 @@ MODULE bb_geofence_warning_SET_module(active_node, nodes_with_access, variables,
 	DEFINE
 		bb_geofence_warning_exists := TRUE;
 	VAR
-		bb_geofence_warning : -1..1;
+		bb_geofence_warning : 0..1;
 	ASSIGN
-		init(bb_geofence_warning) := -1;
+		init(bb_geofence_warning) := 0;
 		next(bb_geofence_warning) := 
 			case
 				(bb_geofence_warning = 1) : 1;
-				(active_node in nodes_with_access) : {0, 1};
+				(active_node in nodes_with_access) & (next(previous_status) = success) : {0, 1};
 				TRUE : bb_geofence_warning;
 			esac;
 MODULE bb_geofence_dot_data_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
@@ -1163,24 +1050,24 @@ MODULE lec2_am_r_speed_warning_SET_module(active_node, nodes_with_access, variab
 	DEFINE
 		lec2_am_r_speed_warning_exists := TRUE;
 	VAR
-		lec2_am_r_speed_warning : -1..1;
+		lec2_am_r_speed_warning : 0..1;
 	ASSIGN
-		init(lec2_am_r_speed_warning) := -1;
+		init(lec2_am_r_speed_warning) := 0;
 		next(lec2_am_r_speed_warning) := 
 			case
-				(active_node in nodes_with_access) : {0, 1};
+				(active_node in nodes_with_access) & (next(previous_status) = success) : {0, 1};
 				TRUE : lec2_am_r_speed_warning;
 			esac;
 MODULE lec2_am_r_pipe_warning_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
 	DEFINE
 		lec2_am_r_pipe_warning_exists := TRUE;
 	VAR
-		lec2_am_r_pipe_warning : -1..1;
+		lec2_am_r_pipe_warning : 0..1;
 	ASSIGN
-		init(lec2_am_r_pipe_warning) := -1;
+		init(lec2_am_r_pipe_warning) := 0;
 		next(lec2_am_r_pipe_warning) := 
 			case
-				(active_node in nodes_with_access) : {0, 1};
+				(active_node in nodes_with_access) & (next(previous_status) = success) : {0, 1};
 				TRUE : lec2_am_r_pipe_warning;
 			esac;
 MODULE lec2_am_l_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
@@ -1191,24 +1078,24 @@ MODULE lec2_am_l_speed_warning_SET_module(active_node, nodes_with_access, variab
 	DEFINE
 		lec2_am_l_speed_warning_exists := TRUE;
 	VAR
-		lec2_am_l_speed_warning : -1..1;
+		lec2_am_l_speed_warning : 0..1;
 	ASSIGN
-		init(lec2_am_l_speed_warning) := -1;
+		init(lec2_am_l_speed_warning) := 0;
 		next(lec2_am_l_speed_warning) := 
 			case
-				(active_node in nodes_with_access) : {0, 1};
+				(active_node in nodes_with_access) & (next(previous_status) = success) : {0, 1};
 				TRUE : lec2_am_l_speed_warning;
 			esac;
 MODULE lec2_am_l_pipe_warning_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
 	DEFINE
 		lec2_am_l_pipe_warning_exists := TRUE;
 	VAR
-		lec2_am_l_pipe_warning : -1..1;
+		lec2_am_l_pipe_warning : 0..1;
 	ASSIGN
-		init(lec2_am_l_pipe_warning) := -1;
+		init(lec2_am_l_pipe_warning) := 0;
 		next(lec2_am_l_pipe_warning) := 
 			case
-				(active_node in nodes_with_access) : {0, 1};
+				(active_node in nodes_with_access) & (next(previous_status) = success) : {0, 1};
 				TRUE : lec2_am_l_pipe_warning;
 			esac;
 MODULE bb_pipelost_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
@@ -1219,12 +1106,12 @@ MODULE bb_pipe_lost_warning_SET_module(active_node, nodes_with_access, variables
 	DEFINE
 		bb_pipe_lost_warning_exists := TRUE;
 	VAR
-		bb_pipe_lost_warning : -1..1;
+		bb_pipe_lost_warning : 0..1;
 	ASSIGN
-		init(bb_pipe_lost_warning) := -1;
+		init(bb_pipe_lost_warning) := 0;
 		next(bb_pipe_lost_warning) := 
 			case
-				(active_node in nodes_with_access) & (variables[variable_names.bb_mission_dot_data] = 1) : {0, 1}; -- only set it if mission_dot_data is pipe-tracking
+				(active_node in nodes_with_access) & (variables[variable_names.bb_mission_dot_data] = 1) & (next(previous_status) = success) : {0, 1}; -- only set it if mission_dot_data is pipe-tracking
 				TRUE : bb_pipe_lost_warning;
 			esac;
 MODULE bb_pipelost_dot_data_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
@@ -1239,13 +1126,13 @@ MODULE bb_sensor_failure_warning_SET_module(active_node, nodes_with_access, vari
 	DEFINE
 		bb_sensor_failure_warning_exists := TRUE;
 	VAR
-		bb_sensor_failure_warning : -1..1;
+		bb_sensor_failure_warning : 0..1;
 	ASSIGN
-		init(bb_sensor_failure_warning) := -1;
+		init(bb_sensor_failure_warning) := 0;
 		next(bb_sensor_failure_warning) := 
 			case
 				(bb_sensor_failure_warning = 1) : 1;
-				(active_node in nodes_with_access) : {0, 1};
+				(active_node in nodes_with_access) & (next(previous_status) = success) : {0, 1};
 				TRUE : bb_sensor_failure_warning;
 			esac;
 MODULE bb_sensor_failure_dot_data_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
@@ -1265,7 +1152,7 @@ MODULE bb_waypoints_completed_dot_data_SET_module(active_node, nodes_with_access
 		init(bb_waypoints_completed_dot_data) := 0;
 		next(bb_waypoints_completed_dot_data) := 
 			case
-				(active_node in nodes_with_access) : {0, 1};
+				(active_node in nodes_with_access) & (next(previous_status) = success) : {0, 1};
 				TRUE : bb_waypoints_completed_dot_data;
 			esac;
 MODULE bb_mission_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
@@ -1281,7 +1168,8 @@ MODULE bb_mission_dot_data_SET_module(active_node, nodes_with_access, variables,
 		init(bb_mission_dot_data) := 1;
 		next(bb_mission_dot_data) := 
 			case
-				(active_node in {node_names.mission2bb, node_names.mission_server}) : {0, 4};
+				(active_node = node_names.mission2bb) & (next(previous_status) = success) : {0, 4};
+				(active_node = node_names.mission_server) : {0, 4};
 				TRUE : bb_mission_dot_data;
 			esac;
 MODULE dd_output_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
@@ -1292,24 +1180,24 @@ MODULE dd_z_axis_warning_SET_module(active_node, nodes_with_access, variables, v
 	DEFINE
 		dd_z_axis_warning_exists := TRUE;
 	VAR
-		dd_z_axis_warning : -1..1;
+		dd_z_axis_warning : 0..1;
 	ASSIGN
-		init(dd_z_axis_warning) := -1;
+		init(dd_z_axis_warning) := 0;
 		next(dd_z_axis_warning) := 
 			case
-				(active_node in nodes_with_access) : {0, 1};
+				(active_node in nodes_with_access) & (next(previous_status) = success) : {0, 1};
 				TRUE : dd_z_axis_warning;
 			esac;
 MODULE dd_xy_axis_degradation_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
 	DEFINE
 		dd_xy_axis_degradation_exists := TRUE;
 	VAR
-		dd_xy_axis_degradation : -1..1;
+		dd_xy_axis_degradation : 0..1;
 	ASSIGN
-		init(dd_xy_axis_degradation) := -1;
+		init(dd_xy_axis_degradation) := 0;
 		next(dd_xy_axis_degradation) := 
 			case
-				(active_node in nodes_with_access) : {0, 1};
+				(active_node in nodes_with_access) & (next(previous_status) = success) : {0, 1};
 				TRUE : dd_xy_axis_degradation;
 			esac;
 MODULE fls_range_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
@@ -1320,13 +1208,13 @@ MODULE obstacle_standoff_warning_SET_module(active_node, nodes_with_access, vari
 	DEFINE
 		obstacle_standoff_warning_exists := TRUE;
 	VAR
-		obstacle_standoff_warning : -1..1;
+		obstacle_standoff_warning : 0..1;
 	ASSIGN
-		init(obstacle_standoff_warning) := -1;
+		init(obstacle_standoff_warning) := 0;
 		next(obstacle_standoff_warning) := 
 			case
 				(obstacle_standoff_warning = 1) : 1;
-				(active_node in nodes_with_access) : {0, 1};
+				(active_node in nodes_with_access) & (next(previous_status) = success) : {0, 1};
 				TRUE : obstacle_standoff_warning;
 			esac;
 MODULE obstacle_min_standoff_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
@@ -1341,13 +1229,13 @@ MODULE bb_fls_warning_SET_module(active_node, nodes_with_access, variables, vari
 	DEFINE
 		bb_fls_warning_exists := TRUE;
 	VAR
-		bb_fls_warning : -1..1;
+		bb_fls_warning : 0..1;
 	ASSIGN
-		init(bb_fls_warning) := -1;
+		init(bb_fls_warning) := 0;
 		next(bb_fls_warning) := 
 			case
 				(bb_fls_warning = 1 ) : 1;
-				(active_node in nodes_with_access) : {0, 1};
+				(active_node in nodes_with_access) & (next(previous_status) = success) : {0, 1};
 				TRUE : bb_fls_warning;
 			esac;
 MODULE hsd_pipeline_mapping_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
@@ -1374,13 +1262,14 @@ MODULE emergency_stop_warning_SET_module(active_node, nodes_with_access, variabl
 	DEFINE
 		emergency_stop_warning_exists := TRUE;
 	VAR
-		emergency_stop_warning : -1..1;
+		emergency_stop_warning : 0..1;
 	ASSIGN
-		init(emergency_stop_warning) := -1;
+		init(emergency_stop_warning) := 0;
 		next(emergency_stop_warning) := 
 			case
 				(emergency_stop_warning = 1) : 1;
-				(active_node in nodes_with_access) : {0, 1};
+				(active_node = node_names.mission_server) : {0, 1};
+				(active_node in nodes_with_access) & (next(previous_status) = success) : {0, 1};--this means we're not in mission server, so only update if success
 				TRUE : emergency_stop_warning;
 			esac;
 MODULE total_degradation_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
@@ -1404,13 +1293,12 @@ MODULE refLon_SET_module(active_node, nodes_with_access, variables, variable_exi
 		refLon := 0;
 		refLon_exists := TRUE; --not sure what this is either. pretty sure it's storing longitude
 MODULE next_mission_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
---NOT DONE
 	DEFINE
 		next_mission_exists := TRUE;
 	VAR
 		next_mission : 0..1;
 	ASSIGN
-		init(next_mission) := 1; -- starts out as true.
+		init(next_mission) := 0; -- starts out as false.
 		next(next_mission) := 
 			case
 				(active_node = node_names.next_mission) : 1;
@@ -1457,12 +1345,12 @@ MODULE bb_home_reached_SET_module(active_node, nodes_with_access, variables, var
 	DEFINE
 		bb_home_reached_exists := TRUE;
 	VAR
-		bb_home_reached : -1..1;
+		bb_home_reached : 0..1;
 	ASSIGN
-		init(bb_home_reached) := -1;
+		init(bb_home_reached) := 0;--starts at false
 		next(bb_home_reached) := 
 			case
-				(active_node in nodes_with_access) : {0, 1};
+				(active_node in nodes_with_access) & (next(previous_status) = success) : {0, 1};
 				TRUE : bb_home_reached;
 			esac;
 MODULE bb_home_dist_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
@@ -1804,7 +1692,7 @@ MODULE check_surface_CHECK_bb_home_reached_module(active_node, id, variables, va
 		result := (variables[variable_names.bb_home_reached] = 0);
 MODULE obstacle_standoff_fs_CHECK_obstacle_standoff_warning_module(active_node, id, variables, variable_exists, node_names, variable_names)
 	DEFINE
-		result := !(variables[variable_names.obstacle_standoff_warning] = 0);
+		result := (variables[variable_names.obstacle_standoff_warning] = 0);
 MODULE check_rth_CHECK_bb_rth_warning_module(active_node, id, variables, variable_exists, node_names, variable_names)
 	DEFINE
 		result := (variables[variable_names.bb_rth_warning] = 0);

@@ -1,6 +1,0 @@
-LTLSPEC F(G(blackboard.variables[variable_names.q] = 0));
-
-LTLSPEC G(((blackboard.variables[variable_names.a] = 2) & (blackboard.variables[variable_names.b] = 4)) -> (F(blackboard.variables[variable_names.r] = 2)));
-
---LTLSPEC F(G((blackboard.variables[variable_names.a] mod blackboard.variables[variable_names.r] = 0) & (blackboard.variables[variable_names.b] mod blackboard.variables[variable_names.r] = 0)));
-

@@ -1,0 +1,60 @@
+
+LTLSPEC G(F(G(blackboard.variables[variable_names.q] = 0)));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 8) & (blackboard.variables[variable_names.b] = 7)) -> F(G((blackboard.variables[variable_names.r] = 1) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 8) & (blackboard.variables[variable_names.b] = 6)) -> F(G((blackboard.variables[variable_names.r] = 2) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 8) & (blackboard.variables[variable_names.b] = 5)) -> F(G((blackboard.variables[variable_names.r] = 1) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 8) & (blackboard.variables[variable_names.b] = 4)) -> F(G((blackboard.variables[variable_names.r] = 4) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 8) & (blackboard.variables[variable_names.b] = 3)) -> F(G((blackboard.variables[variable_names.r] = 1) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 8) & (blackboard.variables[variable_names.b] = 2)) -> F(G((blackboard.variables[variable_names.r] = 2) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 8) & (blackboard.variables[variable_names.b] = 1)) -> F(G((blackboard.variables[variable_names.r] = 1) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 6) & (blackboard.variables[variable_names.b] = 7)) -> F(G((blackboard.variables[variable_names.r] = 1) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 5) & (blackboard.variables[variable_names.b] = 7)) -> F(G((blackboard.variables[variable_names.r] = 1) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 4) & (blackboard.variables[variable_names.b] = 7)) -> F(G((blackboard.variables[variable_names.r] = 1) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 3) & (blackboard.variables[variable_names.b] = 7)) -> F(G((blackboard.variables[variable_names.r] = 1) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 2) & (blackboard.variables[variable_names.b] = 7)) -> F(G((blackboard.variables[variable_names.r] = 1) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 1) & (blackboard.variables[variable_names.b] = 7)) -> F(G((blackboard.variables[variable_names.r] = 1) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 6) & (blackboard.variables[variable_names.b] = 5)) -> F(G((blackboard.variables[variable_names.r] = 1) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 6) & (blackboard.variables[variable_names.b] = 4)) -> F(G((blackboard.variables[variable_names.r] = 2) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 6) & (blackboard.variables[variable_names.b] = 3)) -> F(G((blackboard.variables[variable_names.r] = 3) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 6) & (blackboard.variables[variable_names.b] = 2)) -> F(G((blackboard.variables[variable_names.r] = 2) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 6) & (blackboard.variables[variable_names.b] = 1)) -> F(G((blackboard.variables[variable_names.r] = 1) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 5) & (blackboard.variables[variable_names.b] = 4)) -> F(G((blackboard.variables[variable_names.r] = 1) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 5) & (blackboard.variables[variable_names.b] = 3)) -> F(G((blackboard.variables[variable_names.r] = 1) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 5) & (blackboard.variables[variable_names.b] = 2)) -> F(G((blackboard.variables[variable_names.r] = 1) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 5) & (blackboard.variables[variable_names.b] = 1)) -> F(G((blackboard.variables[variable_names.r] = 1) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 4) & (blackboard.variables[variable_names.b] = 4)) -> F(G((blackboard.variables[variable_names.r] = 4) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 4) & (blackboard.variables[variable_names.b] = 3)) -> F(G((blackboard.variables[variable_names.r] = 1) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 4) & (blackboard.variables[variable_names.b] = 2)) -> F(G((blackboard.variables[variable_names.r] = 2) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 4) & (blackboard.variables[variable_names.b] = 1)) -> F(G((blackboard.variables[variable_names.r] = 1) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 3) & (blackboard.variables[variable_names.b] = 2)) -> F(G((blackboard.variables[variable_names.r] = 1) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 3) & (blackboard.variables[variable_names.b] = 1)) -> F(G((blackboard.variables[variable_names.r] = 1) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 2) & (blackboard.variables[variable_names.b] = 1)) -> F(G((blackboard.variables[variable_names.r] = 1) & (blackboard.variables[variable_names.q] = 0))));

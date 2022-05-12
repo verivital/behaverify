@@ -1,0 +1,249 @@
+*** This is nuXmv 2.0.0 (compiled on Mon Oct 14 17:48:12 2019)
+*** Copyright (c) 2014-2019, Fondazione Bruno Kessler
+*** For more information on nuXmv see https://nuxmv.fbk.eu
+*** or email to <nuxmv@list.fbk.eu>.
+*** Please report bugs at https://nuxmv.fbk.eu/bugs
+*** (click on "Login Anonymously" to access)
+*** Alternatively write to <nuxmv@list.fbk.eu>.
+
+*** This version of nuXmv is linked to NuSMV 2.6.0.
+*** For more information on NuSMV see <http://nusmv.fbk.eu>
+*** or email to <nusmv-users@list.fbk.eu>.
+*** Copyright (C) 2010-2019, Fondazione Bruno Kessler
+
+*** This version of nuXmv is linked to the CUDD library version 2.4.1
+*** Copyright (c) 1995-2004, Regents of the University of Colorado
+
+*** This version of nuXmv is linked to the MiniSat SAT solver. 
+*** See http://minisat.se/MiniSat.html
+*** Copyright (c) 2003-2006, Niklas Een, Niklas Sorensson
+*** Copyright (c) 2007-2010, Niklas Sorensson
+
+*** This version of nuXmv is linked to MathSAT
+*** Copyright (C) 2009-2019 by Fondazione Bruno Kessler
+*** Copyright (C) 2009-2019 by University of Trento and others
+*** See http://mathsat.fbk.eu
+
+**** CUDD modifiable parameters ****
+Hard limit for cache size: 699050
+Cache hit threshold for resizing: 30%
+Garbage collection enabled: yes
+Limit for fast unique table growth: 419430
+Maximum number of variables sifted per reordering: 1000
+Maximum number of variable swaps per reordering: 2000000
+Maximum growth while sifting a variable: 1.2
+Dynamic reordering of BDDs enabled: no
+Default BDD reordering method: 4
+Dynamic reordering of ZDDs enabled: no
+Default ZDD reordering method: 4
+Realignment of ZDDs to BDDs enabled: no
+Realignment of BDDs to ZDDs enabled: no
+Dead nodes counted in triggering reordering: no
+Group checking criterion: 7
+Recombination threshold: 0
+Symmetry violation threshold: 0
+Arc violation threshold: 0
+GA population size: 0
+Number of crossovers for GA: 0
+Next reordering threshold: 4004
+**** CUDD non-modifiable parameters ****
+Memory in use: 9057976
+Peak number of nodes: 3066
+Peak number of live nodes: 1483
+Number of BDD variables: 27
+Number of ZDD variables: 0
+Number of cache entries: 262144
+Number of cache look-ups: 3285
+Number of cache hits: 1196
+Number of cache insertions: 2155
+Number of cache collisions: 35
+Number of cache deletions: 0
+Cache used slots = 0.81% (expected 0.82%)
+Soft limit for cache size: 28672
+Number of buckets in unique table: 7168
+Used buckets in unique table: 27.23% (expected 27.08%)
+Number of BDD and ADD nodes: 2447
+Number of ZDD nodes: 0
+Number of dead BDD and ADD nodes: 1310
+Number of dead ZDD nodes: 0
+Number of LIVE BDD and ADD nodes: 1137
+Number of LIVE ZDD nodes: 0
+Total number of nodes allocated: 2447
+Total number of nodes reclaimed: 691
+Garbage collections so far: 0
+Time for garbage collection: 0.00 sec
+Reorderings so far: 0
+Time for reordering: 0.00 sec
+
+More detailed information about the semantics and values of these parameters
+can be found in the documentation about the CU Decision Diagram Package.
+######################################################################
+system diameter: 15
+reachable states: 73 (2^6.18982) out of 3840 (2^11.9069)
+######################################################################
+*** This is nuXmv 2.0.0 (compiled on Mon Oct 14 17:48:12 2019)
+*** Copyright (c) 2014-2019, Fondazione Bruno Kessler
+*** For more information on nuXmv see https://nuxmv.fbk.eu
+*** or email to <nuxmv@list.fbk.eu>.
+*** Please report bugs at https://nuxmv.fbk.eu/bugs
+*** (click on "Login Anonymously" to access)
+*** Alternatively write to <nuxmv@list.fbk.eu>.
+
+*** This version of nuXmv is linked to NuSMV 2.6.0.
+*** For more information on NuSMV see <http://nusmv.fbk.eu>
+*** or email to <nusmv-users@list.fbk.eu>.
+*** Copyright (C) 2010-2019, Fondazione Bruno Kessler
+
+*** This version of nuXmv is linked to the CUDD library version 2.4.1
+*** Copyright (c) 1995-2004, Regents of the University of Colorado
+
+*** This version of nuXmv is linked to the MiniSat SAT solver. 
+*** See http://minisat.se/MiniSat.html
+*** Copyright (c) 2003-2006, Niklas Een, Niklas Sorensson
+*** Copyright (c) 2007-2010, Niklas Sorensson
+
+*** This version of nuXmv is linked to MathSAT
+*** Copyright (C) 2009-2019 by Fondazione Bruno Kessler
+*** Copyright (C) 2009-2019 by University of Trento and others
+*** See http://mathsat.fbk.eu
+
+**** CUDD modifiable parameters ****
+Hard limit for cache size: 699050
+Cache hit threshold for resizing: 30%
+Garbage collection enabled: yes
+Limit for fast unique table growth: 419430
+Maximum number of variables sifted per reordering: 1000
+Maximum number of variable swaps per reordering: 2000000
+Maximum growth while sifting a variable: 1.2
+Dynamic reordering of BDDs enabled: no
+Default BDD reordering method: 4
+Dynamic reordering of ZDDs enabled: no
+Default ZDD reordering method: 4
+Realignment of ZDDs to BDDs enabled: no
+Realignment of BDDs to ZDDs enabled: no
+Dead nodes counted in triggering reordering: no
+Group checking criterion: 7
+Recombination threshold: 0
+Symmetry violation threshold: 0
+Arc violation threshold: 0
+GA population size: 0
+Number of crossovers for GA: 0
+Next reordering threshold: 4004
+**** CUDD non-modifiable parameters ****
+Memory in use: 9231480
+Peak number of nodes: 7154
+Peak number of live nodes: 4025
+Number of BDD variables: 49
+Number of ZDD variables: 0
+Number of cache entries: 262144
+Number of cache look-ups: 11136
+Number of cache hits: 4952
+Number of cache insertions: 6621
+Number of cache collisions: 181
+Number of cache deletions: 0
+Cache used slots = 2.46% (expected 2.49%)
+Soft limit for cache size: 51200
+Number of buckets in unique table: 12800
+Used buckets in unique table: 35.84% (expected 35.59%)
+Number of BDD and ADD nodes: 7002
+Number of ZDD nodes: 0
+Number of dead BDD and ADD nodes: 3307
+Number of dead ZDD nodes: 0
+Number of LIVE BDD and ADD nodes: 3695
+Number of LIVE ZDD nodes: 0
+Total number of nodes allocated: 7002
+Total number of nodes reclaimed: 3332
+Garbage collections so far: 0
+Time for garbage collection: 0.00 sec
+Reorderings so far: 0
+Time for reordering: 0.00 sec
+
+More detailed information about the semantics and values of these parameters
+can be found in the documentation about the CU Decision Diagram Package.
+######################################################################
+system diameter: 31
+reachable states: 502 (2^8.97154) out of 3.98131e+06 (2^21.9248)
+######################################################################
+*** This is nuXmv 2.0.0 (compiled on Mon Oct 14 17:48:12 2019)
+*** Copyright (c) 2014-2019, Fondazione Bruno Kessler
+*** For more information on nuXmv see https://nuxmv.fbk.eu
+*** or email to <nuxmv@list.fbk.eu>.
+*** Please report bugs at https://nuxmv.fbk.eu/bugs
+*** (click on "Login Anonymously" to access)
+*** Alternatively write to <nuxmv@list.fbk.eu>.
+
+*** This version of nuXmv is linked to NuSMV 2.6.0.
+*** For more information on NuSMV see <http://nusmv.fbk.eu>
+*** or email to <nusmv-users@list.fbk.eu>.
+*** Copyright (C) 2010-2019, Fondazione Bruno Kessler
+
+*** This version of nuXmv is linked to the CUDD library version 2.4.1
+*** Copyright (c) 1995-2004, Regents of the University of Colorado
+
+*** This version of nuXmv is linked to the MiniSat SAT solver. 
+*** See http://minisat.se/MiniSat.html
+*** Copyright (c) 2003-2006, Niklas Een, Niklas Sorensson
+*** Copyright (c) 2007-2010, Niklas Sorensson
+
+*** This version of nuXmv is linked to MathSAT
+*** Copyright (C) 2009-2019 by Fondazione Bruno Kessler
+*** Copyright (C) 2009-2019 by University of Trento and others
+*** See http://mathsat.fbk.eu
+
+**** CUDD modifiable parameters ****
+Hard limit for cache size: 699050
+Cache hit threshold for resizing: 30%
+Garbage collection enabled: yes
+Limit for fast unique table growth: 419430
+Maximum number of variables sifted per reordering: 1000
+Maximum number of variable swaps per reordering: 2000000
+Maximum growth while sifting a variable: 1.2
+Dynamic reordering of BDDs enabled: no
+Default BDD reordering method: 4
+Dynamic reordering of ZDDs enabled: no
+Default ZDD reordering method: 4
+Realignment of ZDDs to BDDs enabled: no
+Realignment of BDDs to ZDDs enabled: no
+Dead nodes counted in triggering reordering: no
+Group checking criterion: 7
+Recombination threshold: 0
+Symmetry violation threshold: 0
+Arc violation threshold: 0
+GA population size: 0
+Number of crossovers for GA: 0
+Next reordering threshold: 4004
+**** CUDD non-modifiable parameters ****
+Memory in use: 9946776
+Peak number of nodes: 26572
+Peak number of live nodes: 14008
+Number of BDD variables: 87
+Number of ZDD variables: 0
+Number of cache entries: 262144
+Number of cache look-ups: 43630
+Number of cache hits: 21426
+Number of cache insertions: 24368
+Number of cache collisions: 1553
+Number of cache deletions: 0
+Cache used slots = 8.70% (expected 8.88%)
+Soft limit for cache size: 94208
+Number of buckets in unique table: 23552
+Used buckets in unique table: 53.73% (expected 53.67%)
+Number of BDD and ADD nodes: 25831
+Number of ZDD nodes: 0
+Number of dead BDD and ADD nodes: 12367
+Number of dead ZDD nodes: 0
+Number of LIVE BDD and ADD nodes: 13464
+Number of LIVE ZDD nodes: 0
+Total number of nodes allocated: 25831
+Total number of nodes reclaimed: 15629
+Garbage collections so far: 0
+Time for garbage collection: 0.00 sec
+Reorderings so far: 0
+Time for reordering: 0.00 sec
+
+More detailed information about the semantics and values of these parameters
+can be found in the documentation about the CU Decision Diagram Package.
+######################################################################
+system diameter: 70
+reachable states: 26671 (2^14.703) out of 6.2376e+11 (2^39.1822)
+######################################################################
