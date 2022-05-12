@@ -1,0 +1,102 @@
+-- specification  G !(active_node = -2)  is true
+^this specification is just a sanity check. -2 is an error state that shouldn't be reached. ever.
+
+-- specification (active_node = -1 U active_node = 1)  is false
+^this specification is another sanity check. because the root node is parallel, we are guaranteed to always start at the root node, even if we returned running.
+
+-- specification (active_node = -1 U active_node = 0)  is true
+^another sanity check.
+
+-----------------------------------------------------------------------------------------
+
+-- specification  G (blackboard.variables[variable_names.battery_low_warning] = 1 ->  F active_node in (((node_names.surface_task union node_names.surface_task1) union node_names.surface_task2) union node_names.surface_task3) union node_names.surface_task4)  is true
+readable version:  G (battery_low_warning = 1 ->  F active_node in {all surface tasks})
+^if we get a battery warning, we eventually surface.
+
+-- specification  G (blackboard.variables[variable_names.battery_low_warning] = 1 -> (!(active_node = -1) U active_node in (((node_names.surface_task union node_names.surface_task1) union node_names.surface_task2) union node_names.surface_task3) union node_names.surface_task4))  is false
+readable version:  G (battery_low_warning = 1 -> (!(active_node = -1) U active_node in {all_surface_tasks})
+^if battery_low_warning is true, then we will reach a surface_task before the tree returns. this is FALSE because G means all the time, even after we just left a surface_task, at which point we are going to go to -1 without entering another surface_task
+
+-- specification  G ((blackboard.variables[variable_names.battery_low_warning] = 1 & previous_node = node_names.battery2bb) -> (active_node > -1 U active_node = node_names.surface_task))  is true
+readable version:  G ((battery_low_warning = 1 & previous_node = battery2bb) -> (active_node > -1 U active_node = surface_task))
+^if we just set the battery_low_warning, we will trigger surface_task (specificly the one related to the battery) before the tree returns.
+
+-- specification  G ((blackboard.variables[variable_names.battery_low_warning] = 1 & previous_node = node_names.battery2bb) -> (active_node > -1 U active_node in (((node_names.surface_task union node_names.surface_task1) union node_names.surface_task2) union node_names.surface_task3) union node_names.surface_task4))  is true
+readable version: ((battery_low_warning = 1 & previous_node = battery2bb) -> (active_node > -1 U active_node in {all surface tasks}))
+^if we just set the battery_low_warning, we will trigger any surface task before the tree returns (basically, we will trigger the surface task as soon as possible)
+
+-----------------------------------------------------------------------------------------
+
+-- specification  G (blackboard.variables[variable_names.bb_sensor_failure_warning] = 1 ->  F active_node in (((node_names.surface_task union node_names.surface_task1) union node_names.surface_task2) union node_names.surface_task3) union node_names.surface_task4)  is true
+readable version:  G (bb_sensor_failure_warning = 1 ->  F active_node in {all surface tasks})  is true
+^if we get a sensor failure, we eventually surface.
+
+-- specification  G (blackboard.variables[variable_names.bb_sensor_failure_warning] = 1 -> (!(active_node = -1) U active_node in (((node_names.surface_task union node_names.surface_task1) union node_names.surface_task2) union node_names.surface_task3) union node_names.surface_task4))  is false
+readable version: G (bb_sensor_failure_warning = 1 -> (!(active_node = -1) U active_node in {all surface tasks})  is false
+^if sensor failure is true, then we will reach a surface_task before the tree returns. this is FALSE because G means all the time, even after we just left a surface_task, at which point we are going to go to -1 without entering another surface_task
+
+ 
+-- specification  G ((blackboard.variables[variable_names.bb_sensor_failure_warning] = 1 & previous_node = node_names.sensor_failure2bb) -> (active_node > -1 U active_node = node_names.surface_task1))  is false
+readable version:  G ((bb_sensor_failure_warning = 1 & previous_node = sensor_failure2bb) -> (active_node > -1 U active_node = node_names.surface_task1))
+^if we jsut set the sensor_failure, the tree doesn't return until it enters the surface task associated with sensor failure: This fails because the battery surface task takes precedence. If the battery_low_warning is set to true, we will enter surface_task instead of surface_task1, and then the tree will return.
+
+-- specification  G ((blackboard.variables[variable_names.bb_sensor_failure_warning] = 1 & previous_node = node_names.sensor_failure2bb) -> (active_node > -1 U active_node in (((node_names.surface_task union node_names.surface_task1) union node_names.surface_task2) union node_names.surface_task3) union node_names.surface_task4))  is true
+readable version: ((bb_sensor_failure_warning = 1 & previous_node = sensor_failure2bb) -> (active_node > -1 U active_node in {all surface tasks}))  is true
+^if we just set the sensor failure, we will surface 'immediately'
+
+-----------------------------------------------------------------------------------------
+
+-- specification  G (blackboard.variables[variable_names.emergency_stop_warning] = 1 ->  F active_node in (((node_names.surface_task union node_names.surface_task1) union node_names.surface_task2) union node_names.surface_task3) union node_names.surface_task4)  is true
+readable version:  G (emergency_stop_warning = 1 ->  F active_node in {all surface tasks})  is true
+^if emergency stop, then eventually surface.
+
+
+-- specification  G (blackboard.variables[variable_names.emergency_stop_warning] = 1 -> (!(active_node = -1) U active_node in (((node_names.surface_task union node_names.surface_task1) union node_names.surface_task2) union node_names.surface_task3) union node_names.surface_task4))  is false
+-- specification  G (emergency_stop_warning = 1 -> (!(active_node = -1) U active_node in {all surface tasks}))  is false
+^if emergency stop, then immediately surface. Fails because doesn't consider that emergency stop will still be true after we leave the surface task and the tree prepares for the next iteration.
+
+-- specification  G ((blackboard.variables[variable_names.emergency_stop_warning] = 1 & previous_node in (node_names.fls_warning2bb union node_names.rtreach2bb) union node_names.mission_server) -> (active_node > -1 U active_node = node_names.surface_task2))  is false
+-- specification  G ((emergency_stop_warning = 1 & previous_node in {set emergency nodes} -> (active_node > -1 U active_node = surface_task2))  is false
+^if we just set the emergecny stop warning, then immediately surface with the emergency stop surface task. fails because battery warning takes precedence. might surface there instead.
+
+
+-- specification  G ((blackboard.variables[variable_names.emergency_stop_warning] = 1 & previous_node in (node_names.fls_warning2bb union node_names.rtreach2bb) union node_names.mission_server) -> (active_node > -1 U active_node in (((node_names.surface_task union node_names.surface_task1) union node_names.surface_task2) union node_names.surface_task3) union node_names.surface_task4))  is true
+-- specification  G ((emergency_stop_warning = 1 & previous_node in {set emergency nodes} -> (active_node > -1 U active_node in {all surface tasks}))  is true
+^if we just set the emergency stop warning, then immediately surface using any surface task.
+
+-----------------------------------------------------------------------------------------
+
+-- specification  G (blackboard.variables[variable_names.bb_home_reached] = 1 ->  F active_node in (((node_names.surface_task union node_names.surface_task1) union node_names.surface_task2) union node_names.surface_task3) union node_names.surface_task4)  is true
+readable version:  G (bb_home_reached = 1 ->  F active_node in {all surface tasks})  is true
+^if we've reached home, eventually surface.
+
+-- specification  G (blackboard.variables[variable_names.bb_home_reached] = 1 -> (!(active_node = -1) U active_node in (((node_names.surface_task union node_names.surface_task1) union node_names.surface_task2) union node_names.surface_task3) union node_names.surface_task4))  is false
+-- specification  G (bb_home_reached = 1 -> (!(active_node = -1) U active_node in {all surface tasks})  is false
+^if home reached, then immediately surface. Fails because doesn't consider that home reached is true after surface task is left and tree prepares for next iteration
+
+
+-- specification  G ((blackboard.variables[variable_names.bb_home_reached] = 1 & previous_node in node_names.home2bb union node_names.home2bb1) -> (active_node > -1 U active_node = node_names.surface_task3))  is false
+-- specification  G ((bb_home_reached = 1 & previous_node in {set home nodes}) -> (active_node > -1 U active_node = surface_task3))  is false
+^if we just set home_reached, then immediately surface using the home_reached surface task. Fails because other surface tasks take priority. might surface using those
+
+
+-- specification  G ((blackboard.variables[variable_names.bb_home_reached] = 1 & previous_node in node_names.home2bb union node_names.home2bb1) -> (active_node > -1 U active_node in (((node_names.surface_task union node_names.surface_task1) union node_names.surface_task2) union node_names.surface_task3) union node_names.surface_task4))  is false
+-- specification  G ((bb_home_reached = 1 & previous_node in {set home nodes}) -> (active_node > -1 U active_node in {all surface tasks})  is false
+^if we jsut set home_reached, then immediately surface using any surface task. Fails because home reached is set AFTER we check surface tasks, so we will end up surfacing on the next iteration instead.
+
+-----------------------------------------------------------------------------------------
+-- specification  G (blackboard.variables[variable_names.obstacle_standoff_warning] = 1 ->  F active_node in (((node_names.surface_task union node_names.surface_task1) union node_names.surface_task2) union node_names.surface_task3) union node_names.surface_task4)  is true
+readable version:  G (obstacle_standoff_warning = 1 ->  F active_node in {all surface tasks})  is true
+^if obstacle warning, eventually surface
+
+-- specification  G (blackboard.variables[variable_names.obstacle_standoff_warning] = 1 -> (!(active_node = -1) U active_node in (((node_names.surface_task union node_names.surface_task1) union node_names.surface_task2) union node_names.surface_task3) union node_names.surface_task4))  is false
+-- specification  G (obstacle_standoff_warning = 1 -> (!(active_node = -1) U active_node in {all surface tasks}))  is false
+^if obstacle warning, then immediately surface. Fails because doesn't consider that after we leave the surface tasks, we will need to reset the tree for the next iteration.
+
+-- specification  G ((blackboard.variables[variable_names.obstacle_standoff_warning] = 1 & previous_node = node_names.fls2bb) -> (active_node > -1 U active_node = node_names.surface_task4))  is false
+-- specification  G ((obstacle_standoff_warning = 1 & previous_node = fls2bb) -> (active_node > -1 U active_node = surface_task4))  is false
+^if obstacle standoff warning was just set, surface using the related surface task. fails because other surface tasks have priority.
+
+-- specification  G ((blackboard.variables[variable_names.obstacle_standoff_warning] = 1 & previous_node = node_names.fls2bb) -> (active_node > -1 U active_node in (((node_names.surface_task union node_names.surface_task1) union node_names.surface_task2) union node_names.surface_task3) union node_names.surface_task4))  is true
+-- specification  G ((obstacle_standoff_warning = 1 & previous_node = fls2bb) -> (active_node > -1 U active_node in {all surface tasks}))  is true
+^if we jsut set obstacle_standoff_warning, immediately surface using any task.

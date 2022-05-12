@@ -1,9 +1,139 @@
+-------------------------------------------------------------------------------------
 LTLSPEC G (!(active_node = -2));
 --we never enter the error state.
+
+LTLSPEC (active_node = -1) U (active_node = 1);
+--this should fail, obvious
+
+LTLSPEC (active_node = -1) U (active_node = 0);
+--this should succeed, but only because the root node is parallel, therefore we can't ever skip over it by resuming a run.
+
+-------------------------------------------------------------------------------------
 
 LTLSPEC G( (blackboard.variables[variable_names.battery_low_warning] = 1)  -> F (active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4}));
 --proves that if low warning, then surface (eventually)
 
 
+LTLSPEC G( (blackboard.variables[variable_names.battery_low_warning] = 1)  -> ((!(active_node = -1))  U (active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4})));
+--if low warning, than surface task before active_node reaches -1. (this should fail, because it doesn't consider that G means it needs to be true after we leave a surface task)
+
+LTLSPEC G( ((blackboard.variables[variable_names.battery_low_warning] = 1) & (previous_node = node_names.battery2bb))  -> (((active_node > -1))  U (active_node = node_names.surface_task)));
+--this one is true, but only for battery_warning
+
+LTLSPEC G( ((blackboard.variables[variable_names.battery_low_warning] = 1) & (previous_node = node_names.battery2bb))  -> (((active_node > -1))  U (active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4})));
+--this one should be true.
+
+-------------------------------------------------------------------------------------
+
+LTLSPEC G( (blackboard.variables[variable_names.bb_sensor_failure_warning] = 1)  -> F (active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4}));
+--proves that if low warning, then surface (eventually)
+
+
+LTLSPEC G( (blackboard.variables[variable_names.bb_sensor_failure_warning] = 1)  -> ((!(active_node = -1))  U (active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4})));
+--if low warning, than surface task before active_node reaches -1. (this should fail, because it doesn't consider that G means it needs to be true after we leave a surface task)
+
+LTLSPEC G( ((blackboard.variables[variable_names.bb_sensor_failure_warning] = 1) & (previous_node = node_names.sensor_failure2bb))  -> (((active_node > -1))  U (active_node = node_names.surface_task1)));
+--this one is true, but only for battery_warning
+
+LTLSPEC G( ((blackboard.variables[variable_names.bb_sensor_failure_warning] = 1) & (previous_node = node_names.sensor_failure2bb))  -> (((active_node > -1))  U (active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4})));
+--this one should be true.
+
+-------------------------------------------------------------------------------------
+
+LTLSPEC G( (blackboard.variables[variable_names.emergency_stop_warning] = 1)  -> F (active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4}));
+--proves that if low warning, then surface (eventually)
+
+
+LTLSPEC G( (blackboard.variables[variable_names.emergency_stop_warning] = 1)  -> ((!(active_node = -1))  U (active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4})));
+--if low warning, than surface task before active_node reaches -1. (this should fail, because it doesn't consider that G means it needs to be true after we leave a surface task)
+
+LTLSPEC G( ((blackboard.variables[variable_names.emergency_stop_warning] = 1) & (previous_node in {node_names.fls_warning2bb, node_names.rtreach2bb, node_names.mission_server}))  -> (((active_node > -1))  U (active_node = node_names.surface_task2)));
+--this one is true, but only for battery_warning
+
+LTLSPEC G( ((blackboard.variables[variable_names.emergency_stop_warning] = 1) & (previous_node in {node_names.fls_warning2bb, node_names.rtreach2bb, node_names.mission_server}))  -> (((active_node > -1))  U (active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4})));
+--this one should be true.
+
+-------------------------------------------------------------------------------------
+
+LTLSPEC G( (blackboard.variables[variable_names.bb_home_reached] = 1)  -> F (active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4}));
+--proves that if low warning, then surface (eventually)
+
+
+LTLSPEC G( (blackboard.variables[variable_names.bb_home_reached] = 1)  -> ((!(active_node = -1))  U (active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4})));
+--if low warning, than surface task before active_node reaches -1. (this should fail, because it doesn't consider that G means it needs to be true after we leave a surface task)
+
+LTLSPEC G( ((blackboard.variables[variable_names.bb_home_reached] = 1) & (previous_node in {node_names.home2bb, node_names.home2bb1}))  -> (((active_node > -1))  U (active_node = node_names.surface_task3)));
+--this one is true, but only for battery_warning
+
+LTLSPEC G( ((blackboard.variables[variable_names.bb_home_reached] = 1) & (previous_node in {node_names.home2bb, node_names.home2bb1}))  -> (((active_node > -1))  U (active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4})));
+--this one should be true.
+
+-------------------------------------------------------------------------------------
+
+LTLSPEC G( (blackboard.variables[variable_names.obstacle_standoff_warning] = 1)  -> F (active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4}));
+--proves that if low warning, then surface (eventually)
+
+
+LTLSPEC G( (blackboard.variables[variable_names.obstacle_standoff_warning] = 1)  -> ((!(active_node = -1))  U (active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4})));
+--if low warning, than surface task before active_node reaches -1. (this should fail, because it doesn't consider that G means it needs to be true after we leave a surface task)
+
+LTLSPEC G( ((blackboard.variables[variable_names.obstacle_standoff_warning] = 1) & (previous_node = node_names.fls2bb))  -> (((active_node > -1))  U (active_node = node_names.surface_task4)));
+--this one is true, but only for battery_warning
+
+LTLSPEC G( ((blackboard.variables[variable_names.obstacle_standoff_warning] = 1) & (previous_node = node_names.fls2bb))  -> (((active_node > -1))  U (active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4})));
+--this one should be true.
+
+-------------------------------------------------------------------------------------
+
+
+
 CTLSPEC EG(!(active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4}));
+--should be true. there's always a way to avoid surfacing. (until we introduce some specs that force battery to eventually decrease or something).
+
+CTLSPEC AF((active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4}));
+--this is the same as above, except inverted. it says we will always surface. should be false.
+
+-------------------------------------------------------------------------------------
+--this is a set of ctlspecs that i was using to debug an error in the model.
+--ignore truth values attached.
+
+--CTLSPEC EG(!(active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4}));
 --does surface task always have to trigger?
+
+--CTLSPEC EG(!(active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3}));
+--CTLSPEC EG(!(active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task4}));
+--CTLSPEC EG(!(active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task3, node_names.surface_task4}));
+--CTLSPEC EG(!(active_node in {node_names.surface_task, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4}));
+--CTLSPEC EG(!(active_node in {node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4}));
+
+--CTLSPEC AF((active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4}));
+
+--CTLSPEC AF((active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3}));
+--CTLSPEC AF((active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task4}));
+--CTLSPEC AF((active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task3, node_names.surface_task4}));
+--CTLSPEC AF((active_node in {node_names.surface_task, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4}));
+--CTLSPEC AF((active_node in {node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4}));
+
+
+--CTLSPEC EG((active_node in {node_names.surface_task4})); --FALSE --this was probably should have been EF
+--LTLSPEC G(!(active_node = node_names.surface_task4)); --TRUE
+--CTLSPEC EF(blackboard.variables[blackboard.variable_names.obstacle_standoff_warning] = 1); -- TRUE
+--CTLSPEC EF(blackboard.variables[blackboard.variable_names.obstacle_standoff_warning] = 0); -- TRUE
+--CTLSPEC EF(blackboard.variables[blackboard.variable_names.obstacle_standoff_warning] = -1); -- TRUE
+
+--CTLSPEC EF(active_node = node_names.obstacle_standoff_fs); -- FALSE (5)
+--CTLSPEC AG(!(active_node = node_names.obstacle_standoff_fs)); --TRUE (5)
+--so we literally never enter the obstacle_standoff_fs. time to check if we reach the node above it.
+--CTLSPEC EF(active_node = node_names.obstacle_standoff_check); --FALSE (6)
+--CTLSPEC AG(!(active_node = node_names.obstacle_standoff_check)); --TRUE (6)
+
+--CTLSPEC EF(active_node = node_names.obstacle_standoff_check_SIF); --FALSE (7)
+--CTLSPEC AG(!(active_node = node_names.obstacle_standoff_check_SIF)); --TRUE (7)
+--ok, that's the end of that tree, can't reach that whole area. gonna check if home_reached_selector, the branch before it, can be reached
+
+
+--CTLSPEC EF(active_node = node_names.home_reached_selector_SIF); --TRUE (8)
+--CTLSPEC AG(!(active_node = node_names.home_reached_selector_SIF)); --FALSE (8)
+--yup, previous one is reachable.
+
+-------------------------------------------------------------------------------------

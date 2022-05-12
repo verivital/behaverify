@@ -1,0 +1,342 @@
+MODULE main
+	DEFINE
+		max_active_node := 14;
+		statuses := [root.status, guard_node.status, guard_node1.status, gcd_root.status, check_a_exists.status, init_a.status, check_b_exists.status, init_b.status, subtract_seq.status, swap_seq.status, check_r_gt_q.status, r_minus_q.status, store_r.status, update_r.status, update_q.status];
+		parents := [-1, 0, 0, 0, 1, 1, 2, 2, 3, 3, 8, 8, 9, 9, 9];
+		leafs := {-3, 4, 5, 6, 7, 10, 11, 12, 13, 14};
+		selectors := {-3, 1, 2, 3};
+		sequences := {-3, 0, 8, 9};
+		parallels_synchronised_all := {-3};
+		parallels_unsynchronised_all := {-3};
+		parallels_synchronised_one := {-3};
+		parallels_unsynchronised_one := {-3};
+		parallels := {-3};
+		decorators := {-3};
+		first_child := [1, 4, 6, 8, -2, -2, -2, -2, 10, 12, -2, -2, -2, -2, -2];
+		last_child := [3, 5, 7, 9, -1, -1, -1, -1, 11, 14, -1, -1, -1, -1, -1];
+	VAR
+		active_node : -2..max_active_node;
+		previous_node : -1..max_active_node;
+		resume_node : -1..max_active_node;
+		previous_status : {running, success, failure, invalid};
+		root : node_sequence(active_node, 0, previous_status, 3, previous_node);
+		guard_node : node_selector(active_node, 1, previous_status, 5, previous_node);
+		guard_node1 : node_selector(active_node, 2, previous_status, 7, previous_node);
+		gcd_root : node_selector(active_node, 3, previous_status, 9, previous_node);
+		check_a_exists : node_check_blackboard_variable_exists(active_node, 4, blackboard, 0);
+		init_a : node_set_blackboard_variables(active_node, 5, init_a_SET_status);
+		init_a_SET_status : init_a_SET_status_module(active_node, 5, blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		check_b_exists : node_check_blackboard_variable_exists(active_node, 6, blackboard, 1);
+		init_b : node_set_blackboard_variables(active_node, 7, init_b_SET_status);
+		init_b_SET_status : init_b_SET_status_module(active_node, 7, blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		subtract_seq : node_sequence(active_node, 8, previous_status, 11, previous_node);
+		swap_seq : node_sequence(active_node, 9, previous_status, 14, previous_node);
+		check_r_gt_q : node_check_blackboard_variable_value(active_node, 10, blackboard, 2, check_r_gt_q_CHECK_r);
+		check_r_gt_q_CHECK_r : check_r_gt_q_CHECK_r_module(active_node, 10, blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		r_minus_q : node_set_blackboard_variables(active_node, 11, r_minus_q_SET_status);
+		r_minus_q_SET_status : r_minus_q_SET_status_module(active_node, 11, blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		store_r : node_set_blackboard_variables(active_node, 12, store_r_SET_status);
+		store_r_SET_status : store_r_SET_status_module(active_node, 12, blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		update_r : node_set_blackboard_variables(active_node, 13, update_r_SET_status);
+		update_r_SET_status : update_r_SET_status_module(active_node, 13, blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		update_q : node_set_blackboard_variables(active_node, 14, update_q_SET_status);
+		update_q_SET_status : update_q_SET_status_module(active_node, 14, blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		variable_names : define_variables;
+		node_names : define_nodes;
+		blackboard : blackboard_module(active_node, node_names, variable_names, previous_status);
+	ASSIGN
+		init(active_node) := -1;
+		init(previous_node) := -1;
+		init(resume_node) := -1;
+		init(previous_status) := invalid;
+		next(previous_node) :=
+			case
+				(active_node < 0) : -1;
+				TRUE : active_node;
+			esac;
+		next(resume_node) :=
+			case
+				(previous_node < 0) : resume_node;
+				!(previous_status = running) : -1;
+				(resume_node = -1) : previous_node;
+				(previous_node in parallels) : previous_node;
+				TRUE : resume_node;
+			esac;
+		next(previous_status) :=
+			case
+				(active_node < 0) : invalid;
+				TRUE : statuses[active_node];
+			esac;
+		next(active_node) :=
+			case
+				(active_node = -2) : -2;
+				(active_node = -1) & (resume_node = -1) : 0;
+				(active_node = -1) & !(resume_node = -1) : resume_node;
+				(active_node in leafs) : parents[active_node];
+				(previous_status = invalid) : first_child[active_node];
+				(previous_node = last_child[active_node]) : parents[active_node];
+				(active_node in sequences) & (previous_status = success) : min(max_active_node, previous_node + 1);
+				(active_node in selectors) & (previous_status = failure) : min(max_active_node, previous_node + 1);
+				TRUE : parents[active_node];
+			esac;
+
+LTLSPEC G(F(G(blackboard.variables[variable_names.q] = 0)));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 8) & (blackboard.variables[variable_names.b] = 7)) -> F(G((blackboard.variables[variable_names.r] = 1) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 8) & (blackboard.variables[variable_names.b] = 6)) -> F(G((blackboard.variables[variable_names.r] = 2) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 8) & (blackboard.variables[variable_names.b] = 5)) -> F(G((blackboard.variables[variable_names.r] = 1) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 8) & (blackboard.variables[variable_names.b] = 4)) -> F(G((blackboard.variables[variable_names.r] = 4) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 8) & (blackboard.variables[variable_names.b] = 3)) -> F(G((blackboard.variables[variable_names.r] = 1) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 8) & (blackboard.variables[variable_names.b] = 2)) -> F(G((blackboard.variables[variable_names.r] = 2) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 8) & (blackboard.variables[variable_names.b] = 1)) -> F(G((blackboard.variables[variable_names.r] = 1) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 6) & (blackboard.variables[variable_names.b] = 7)) -> F(G((blackboard.variables[variable_names.r] = 1) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 5) & (blackboard.variables[variable_names.b] = 7)) -> F(G((blackboard.variables[variable_names.r] = 1) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 4) & (blackboard.variables[variable_names.b] = 7)) -> F(G((blackboard.variables[variable_names.r] = 1) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 3) & (blackboard.variables[variable_names.b] = 7)) -> F(G((blackboard.variables[variable_names.r] = 1) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 2) & (blackboard.variables[variable_names.b] = 7)) -> F(G((blackboard.variables[variable_names.r] = 1) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 1) & (blackboard.variables[variable_names.b] = 7)) -> F(G((blackboard.variables[variable_names.r] = 1) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 6) & (blackboard.variables[variable_names.b] = 5)) -> F(G((blackboard.variables[variable_names.r] = 1) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 6) & (blackboard.variables[variable_names.b] = 4)) -> F(G((blackboard.variables[variable_names.r] = 2) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 6) & (blackboard.variables[variable_names.b] = 3)) -> F(G((blackboard.variables[variable_names.r] = 3) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 6) & (blackboard.variables[variable_names.b] = 2)) -> F(G((blackboard.variables[variable_names.r] = 2) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 6) & (blackboard.variables[variable_names.b] = 1)) -> F(G((blackboard.variables[variable_names.r] = 1) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 5) & (blackboard.variables[variable_names.b] = 4)) -> F(G((blackboard.variables[variable_names.r] = 1) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 5) & (blackboard.variables[variable_names.b] = 3)) -> F(G((blackboard.variables[variable_names.r] = 1) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 5) & (blackboard.variables[variable_names.b] = 2)) -> F(G((blackboard.variables[variable_names.r] = 1) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 5) & (blackboard.variables[variable_names.b] = 1)) -> F(G((blackboard.variables[variable_names.r] = 1) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 4) & (blackboard.variables[variable_names.b] = 4)) -> F(G((blackboard.variables[variable_names.r] = 4) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 4) & (blackboard.variables[variable_names.b] = 3)) -> F(G((blackboard.variables[variable_names.r] = 1) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 4) & (blackboard.variables[variable_names.b] = 2)) -> F(G((blackboard.variables[variable_names.r] = 2) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 4) & (blackboard.variables[variable_names.b] = 1)) -> F(G((blackboard.variables[variable_names.r] = 1) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 3) & (blackboard.variables[variable_names.b] = 2)) -> F(G((blackboard.variables[variable_names.r] = 1) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 3) & (blackboard.variables[variable_names.b] = 1)) -> F(G((blackboard.variables[variable_names.r] = 1) & (blackboard.variables[variable_names.q] = 0))));
+
+LTLSPEC G( ((blackboard.variables[variable_names.a] = 2) & (blackboard.variables[variable_names.b] = 1)) -> F(G((blackboard.variables[variable_names.r] = 1) & (blackboard.variables[variable_names.q] = 0))));
+
+MODULE node_sequence(active_node, id, previous_status, last_child, previous_node)
+	DEFINE
+		status :=
+			case
+				(id = active_node) & (previous_status = invalid) : invalid;
+				(id = active_node) & (previous_status = running) : running;
+				(id = active_node) & (previous_status = failure) : failure;
+				(id = active_node) & (last_child = previous_node) : success;
+				(id = active_node) : invalid;
+				TRUE : invalid;
+			esac;
+MODULE node_selector(active_node, id, previous_status, last_child, previous_node)
+	DEFINE
+		status :=
+			case
+				(id = active_node) & (previous_status = invalid) : invalid;
+				(id = active_node) & (previous_status = running) : running;
+				(id = active_node) & (previous_status = success) : success;
+				(id = active_node) & (last_child = previous_node) : failure;
+				(id = active_node) : invalid;
+				TRUE : invalid;
+			esac;
+MODULE node_check_blackboard_variable_exists(active_node, id, blackboard, variable)
+	DEFINE
+		status :=
+			case
+				(id = active_node) & (blackboard.variable_exists[variable]) : success;
+				(id = active_node) & !(blackboard.variable_exists[variable]) : failure;
+				TRUE : invalid;
+			esac;
+MODULE node_set_blackboard_variables(active_node, id, status_module)
+	DEFINE
+		status := status_module.status;
+MODULE node_check_blackboard_variable_value(active_node, id, blackboard, variable, check)
+	DEFINE
+		status :=
+			case
+				(id = active_node) & !(blackboard.variable_exists[variable]) : failure;
+				(id = active_node) & (blackboard.variable_exists[variable]) & (check.result) : success;
+				(id = active_node) & (blackboard.variable_exists[variable]) & !(check.result) : failure;
+				TRUE : invalid;
+			esac;
+MODULE define_variables
+	DEFINE
+		a := 0;
+		b := 1;
+		r := 2;
+		temp := 3;
+		q := 4;
+MODULE define_nodes
+	DEFINE
+		root := 0;
+		guard_node := 1;
+		guard_node1 := 2;
+		gcd_root := 3;
+		check_a_exists := 4;
+		init_a := 5;
+		check_b_exists := 6;
+		init_b := 7;
+		subtract_seq := 8;
+		swap_seq := 9;
+		check_r_gt_q := 10;
+		r_minus_q := 11;
+		store_r := 12;
+		update_r := 13;
+		update_q := 14;
+--a : 0
+----init_a
+--b : 1
+----init_b
+--r : 2
+----r_minus_q
+----update_r
+--temp : 3
+----store_r
+--q : 4
+----update_q
+MODULE blackboard_module(active_node, node_names, variable_names, previous_status)
+	DEFINE
+		variables := [a_SET.a, b_SET.b, r_SET.r, temp_SET.temp, q_SET.q];
+		variable_exists := [a_SET.a_exists, b_SET.b_exists, r_SET.r_exists, temp_SET.temp_exists, q_SET.q_exists];
+	VAR
+		a_SET : a_SET_module(active_node, {5}, variables, variable_exists, node_names, variable_names, previous_status);
+		b_SET : b_SET_module(active_node, {7}, variables, variable_exists, node_names, variable_names, previous_status);
+		r_SET : r_SET_module(active_node, {11, 13}, variables, variable_exists, node_names, variable_names, previous_status);
+		temp_SET : temp_SET_module(active_node, {12}, variables, variable_exists, node_names, variable_names, previous_status);
+		q_SET : q_SET_module(active_node, {14}, variables, variable_exists, node_names, variable_names, previous_status);
+
+MODULE a_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	FROZENVAR
+		a : 1..8;
+	VAR
+		a_exists : boolean;
+	ASSIGN
+		init(a_exists) := FALSE;
+		next(a_exists) :=
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : a_exists;
+			esac;
+MODULE b_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	FROZENVAR
+		b : 1..8;
+	VAR
+		b_exists : boolean;
+	ASSIGN
+		init(b_exists) := FALSE;
+		next(b_exists) :=
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : b_exists;
+			esac;
+MODULE r_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	DEFINE
+		--r := 0;
+		r_exists := TRUE;
+	VAR
+		r : -1..8;
+	ASSIGN
+		init(r) := -1;
+		next(r) :=
+			case
+				(active_node = node_names.update_r) & (r = -1) : max(variables[variable_names.a], variables[variable_names.b]); --initial value
+				(active_node = node_names.update_r) : variables[variable_names.q];
+				(active_node = node_names.r_minus_q) : min(8, max(0, r - variables[variable_names.q]));
+				TRUE : r;
+			esac;
+				
+MODULE temp_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	DEFINE
+		temp_exists := TRUE;
+	VAR
+		temp : 0..8;
+	ASSIGN
+		init(temp) := 0;
+		next(temp) :=
+			case
+				(active_node = node_names.store_r) : max(0, variables[variable_names.r]);
+				TRUE : temp;
+			esac;
+MODULE q_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	DEFINE
+		q_exists := TRUE;
+	VAR
+		q : -1..8;
+	ASSIGN
+		init(q) := -1;
+		next(q) :=
+			case
+				(active_node = node_names.update_q) & (q = -1) : min(variables[variable_names.a], variables[variable_names.b]);
+				(active_node = node_names.update_q) : variables[variable_names.temp];
+				TRUE : q;
+			esac;
+MODULE init_a_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : success;
+				TRUE : invalid;
+			esac;
+MODULE init_b_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : success;
+				TRUE : invalid;
+			esac;
+MODULE r_minus_q_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : success;
+				TRUE : invalid;
+			esac;
+MODULE store_r_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : success;
+				TRUE : invalid;
+			esac;
+MODULE update_r_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : success;
+				TRUE : invalid;
+			esac;
+MODULE update_q_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : success;
+				TRUE : invalid;
+			esac;
+MODULE check_r_gt_q_CHECK_r_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		result := ((variables[variable_names.r] > -1) &(variables[variable_names.r] >= variables[variable_names.q]));
+
+

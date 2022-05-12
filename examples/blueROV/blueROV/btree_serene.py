@@ -1,5 +1,4 @@
-#python3 btree_serene.py create_root_FILE create_root_METHOD --root_args create_root_ARGS  --min_val min_val_INT --max_val max_val_INT --modules additional_modules_FILE --specs specs_FILE --gen_modules gen_modules_BOOL --gen_modules2 -- gen_modules2_BOOL
-
+#python3 btree_serene.py create_root_FILE create_root_METHOD --root_args create_root_ARGS  --min_val min_val_INT --max_val max_val_INT --parallel_unsynch parallel_unsych_BOOL --modules additional_modules_FILE --specs specs_FILE --gen_modules gen_modules_BOOL --gen_modules2 -- gen_modules2_BOOL
 
 
 #TODO: neither parallel works correctly right now. implement both. DONE.
@@ -100,9 +99,10 @@ external_status_req = []#list of nodes that require external status. each entry 
 blackboard_name_pattern = re.compile(r"#*(?P<blackboard_name>[^\s=]+)\s*=\s*py_trees\.blackboard\.Blackboard\(\)")
 #----------------------------------------------------------------------------------------------------------------
 
-def walk_tree(t,parent_id, assigned_id, sub_parallel = -1, sub_child = -1):
+def walk_tree(t, parent_id, assigned_id, sub_parallel = -1, sub_child = -1, parallel_unsynch = False):
     global node_count, children, nodes, additional_arguments, needed_nodes, variable_to_int, variable_access, blackboard_needed, last_child, parallel_resume, parallel_synch_list, parallel_unsych_list, variable_check, external_status_req;
     this_id=assigned_id
+    #print(parallel_unsynch)
     try:
         children[parent_id].append(assigned_id)#if this fails, it means the parent is a decorator, which means there is only one child and no reason to track multiple
         #actually, this should never fail at this point.
@@ -206,7 +206,7 @@ def walk_tree(t,parent_id, assigned_id, sub_parallel = -1, sub_child = -1):
     elif isinstance(t, py_trees.composites.Parallel):
         sub_parallel=this_id
         #children[this_id]=[]
-        if t.policy.synchronise:
+        if t.policy.synchronise and (not parallel_unsynch):
             parallel_synch_list[this_id]=True
             #nodes[this_id]=('node_parallel_synchronised', parent_id, node_name)
             nodes[this_id]=('node_parallel', parent_id, node_name)
@@ -451,6 +451,10 @@ def walk_tree(t,parent_id, assigned_id, sub_parallel = -1, sub_child = -1):
         needed_nodes['node_tick_counter']=True
         additional_arguments[this_id]=[{'arg' : str(t.duration)}, {'arg' : t.completion_status.name.lower()}]
         return
+    elif isinstance(t, py_trees.timers.Timer):
+        nodes[this_id]=('node_timer', parent_id, node_name)
+        needed_nodes['node_timer']=True
+        return
     else:#currently defaulting to default. will rework this later probably
         nodes[this_id]=('node_default', parent_id, node_name)
         needed_nodes['node_default']=True
@@ -464,9 +468,11 @@ def walk_tree(t,parent_id, assigned_id, sub_parallel = -1, sub_child = -1):
     for child in t.children:
         node_count_now = node_count_now + 1
         if this_id == sub_parallel:#this means we are currently in a parallel node, which means we need to go through each child and create a resume tree
-            walk_tree(child, this_id, node_count_now, sub_parallel, node_count_now)#which is why we're setting sub_child to be node_count_now
+            walk_tree(child, this_id, node_count_now, sub_parallel, node_count_now, parallel_unsynch)#which is why we're setting sub_child to be node_count_now
+        elif nodes[this_id] == 'node_selector':
+            walk_tree(child, this_id, node_count_now, -1, -1, parallel_unsynch)#can't resume from within a selector node. always resume from the selector node itself.
         else:
-            walk_tree(child, this_id, node_count_now, sub_parallel, sub_child)
+            walk_tree(child, this_id, node_count_now, sub_parallel, sub_child, parallel_unsynch)
     last_child[this_id]=node_count_now
 
     #-----------------------------------------------------------------------------------------------------------------------
@@ -484,12 +490,13 @@ def main():
     global node_count, children, nodes, additional_arguments, needed_nodes, variable_to_int, variable_access, blackboard_needed, last_child, parallel_resume, parallel_synch_list, parallel_unsych_list, variable_check, external_status_req;
 
     arg_parser=argparse.ArgumentParser()
-    #python3 btree_serene.py create_root_FILE create_root_METHOD --root_args create_root_ARGS  --min_val min_val_INT --max_val max_val_INT --modules additional_modules_FILE --specs specs_FILE --gen_modules gen_modules_BOOL
+    #python3 btree_serene.py create_root_FILE create_root_METHOD --root_args create_root_ARGS  --min_val min_val_INT --max_val max_val_INT --parallel_unsynch parallel_unsych_BOOL --modules additional_modules_FILE --specs specs_FILE --gen_modules gen_modules_BOOL
     arg_parser.add_argument('root_file')
     arg_parser.add_argument('root_method')
     arg_parser.add_argument('--root_args', default='', nargs='*')
     arg_parser.add_argument('--min_val', default=0, type=int)
     arg_parser.add_argument('--max_val', default=1, type=int)
+    arg_parser.add_argument('--parallel_unsynch', default=False, type=bool)
     arg_parser.add_argument('--modules')
     arg_parser.add_argument('--specs')
     arg_parser.add_argument('--gen_modules', default=False, type=bool)
@@ -500,6 +507,7 @@ def main():
     root_args=args.root_args
     min_val=args.min_val
     max_val=args.max_val
+    parallel_unsynch = args.parallel_unsynch
     modules=args.modules
     specifications=args.specs
     gen_modules=args.gen_modules
@@ -517,8 +525,9 @@ def main():
             root_string += ', ' + root_arg
     root_string += ')'
     root = eval(root_string)
-    
-    walk_tree(root, -1, 0)
+
+    #print(parallel_unsynch)
+    walk_tree(root, -1, 0, -1, -1, parallel_unsynch)
     node_count=node_count+1#this is included because it used to happen as part of walk_tree, and there's a lot of logic to update if this value is different now.
     
     
@@ -762,7 +771,7 @@ def main():
                     #at this point, previous_node >= 0, and previous_status = running
                     + "\t\t\t\t(resume_node = -1) : previous_node;" + os.linesep#we encountered running, and weren't planning on resuming. plan to resume from running
                     #at this point, previous_node >= 0, previous_status = running, and we were planning on resuming
-                    + "\t\t\t\t(previous_node in parallels) : previous_node;" + os.linesep #we were planning on resuming, but we should resume from here instead.
+                    + "\t\t\t\t(previous_node in parallels) | (previous_node in selectors) : previous_node;" + os.linesep #we were planning on resuming, but we should resume from here instead.
                     + "\t\t\t\tTRUE : resume_node;" + os.linesep #we encountered nodes that were running, but none of them were parallel, so we don't change our plan.
                     + "\t\t\tesac;" + os.linesep)
 

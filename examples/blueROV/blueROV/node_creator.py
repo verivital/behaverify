@@ -158,8 +158,11 @@ def create_blackboard(int_to_variable, variable_to_int, variable_access, nodes):
             var_array_string += (variable + "_SET." + variable + ", ")
             var_exist_string += (variable + "_SET." + variable + "_exists, ")
             set_string="{"
-            for node in variable_access[variable_to_int[variable]]:
-                set_string += str(node) + ", "
+            if variable_to_int[variable] in variable_access:
+                for node in variable_access[variable_to_int[variable]]:
+                    set_string += str(node) + ", "
+            else:
+                set_string += "-1, "
             decl_string += ("\t\t" + variable + "_SET : " + variable + "_SET_module(active_node, " + set_string[0:-2] + "}, variables, variable_exists, node_names, variable_names, previous_status);" + os.linesep)
         return_string += (var_array_string[0:-2] + "];" + os.linesep
                           + var_exist_string[0:-2] + "];" + os.linesep
@@ -418,6 +421,19 @@ def create_node_tick_counter(number_of_nodes):
                       + "\t\t\t\tTRUE : internal_node_count;" + os.linesep #in all othercases, stay the same.
                       + "\t\t\tesac;" + os.linesep)
     return return_string
+
+
+#-----------------------------------------------------------------
+
+def create_node_timer(number_of_nodes):
+    return_string=''
+    (status_define, status_end) = common_string(number_of_nodes)
+    return_string += ("MODULE node_timer(active_node, id)" + os.linesep
+                      + status_define
+                      + "\t\t\t\t(id = active_node) : {success, running};" + os.linesep  #return any status
+                      + status_end)
+    return return_string
+
 
 #-----------------------------------------------------------------
 #a default node

@@ -1,0 +1,65 @@
+MODULE a_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	DEFINE
+		a := 0;
+		a_exists := TRUE;
+MODULE b_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	DEFINE
+		b := 0;
+		b_exists := TRUE;
+MODULE r_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	DEFINE
+		r := 0;
+		r_exists := TRUE;
+MODULE temp_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	DEFINE
+		temp := 0;
+		temp_exists := TRUE;
+MODULE q_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	DEFINE
+		q := 0;
+		q_exists := TRUE;
+MODULE init_a_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE init_b_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE r_minus_q_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE store_r_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE update_r_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE update_q_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE check_r_gt_q_CHECK_r_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		result := (variables[variable_names.r] = 10);
