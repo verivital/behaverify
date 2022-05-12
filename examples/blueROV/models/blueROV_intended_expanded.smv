@@ -360,7 +360,7 @@ LTLSPEC G( ((blackboard.variables[variable_names.battery_low_warning] = 1) & (pr
 LTLSPEC G( ((blackboard.variables[variable_names.battery_low_warning] = 1) & (previous_node = node_names.battery2bb))  -> (((active_node > -1))  U (active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4})));
 --this one should be true.
 
--------------------------------------------------------------------------------------
+
 
 LTLSPEC G( (blackboard.variables[variable_names.bb_sensor_failure_warning] = 1)  -> F (active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4}));
 --proves that if low warning, then surface (eventually)

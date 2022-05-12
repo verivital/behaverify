@@ -1,0 +1,131 @@
+MODULE a_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		a : 0..8;
+		a_exists : boolean;
+	ASSIGN
+		init(a) := 0;
+		init(a_exists) := FALSE;
+		next(a) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8};
+				TRUE : a;
+			esac;
+		next(a_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : a_exists;
+			esac;
+MODULE b_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		b : 0..8;
+		b_exists : boolean;
+	ASSIGN
+		init(b) := 0;
+		init(b_exists) := FALSE;
+		next(b) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8};
+				TRUE : b;
+			esac;
+		next(b_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : b_exists;
+			esac;
+MODULE r_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		r : 0..8;
+		r_exists : boolean;
+	ASSIGN
+		init(r) := 0;
+		init(r_exists) := FALSE;
+		next(r) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8};
+				TRUE : r;
+			esac;
+		next(r_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : r_exists;
+			esac;
+MODULE temp_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		temp : 0..8;
+		temp_exists : boolean;
+	ASSIGN
+		init(temp) := 0;
+		init(temp_exists) := FALSE;
+		next(temp) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8};
+				TRUE : temp;
+			esac;
+		next(temp_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : temp_exists;
+			esac;
+MODULE q_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		q : 0..8;
+		q_exists : boolean;
+	ASSIGN
+		init(q) := 0;
+		init(q_exists) := FALSE;
+		next(q) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8};
+				TRUE : q;
+			esac;
+		next(q_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : q_exists;
+			esac;
+MODULE init_a_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE init_b_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE r_minus_q_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE store_r_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE update_r_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE update_q_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE check_r_gt_q_CHECK_r_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		result := ((variable_exists[variable_names.r]) & (variables[variable_names.r] = 8));
+
