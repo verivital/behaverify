@@ -1,0 +1,1301 @@
+MODULE battery_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		battery : 0..10;
+		battery_exists : boolean;
+	ASSIGN
+		init(battery) := 0;
+		init(battery_exists) := FALSE;
+		next(battery) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : battery;
+			esac;
+		next(battery_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : battery_exists;
+			esac;
+MODULE battery_low_warning_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		battery_low_warning : 0..10;
+		battery_low_warning_exists : boolean;
+	ASSIGN
+		init(battery_low_warning) := 0;
+		init(battery_low_warning_exists) := FALSE;
+		next(battery_low_warning) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : battery_low_warning;
+			esac;
+		next(battery_low_warning_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : battery_low_warning_exists;
+			esac;
+MODULE battery_dot_batt_charge_remaining_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		battery_dot_batt_charge_remaining : 0..10;
+		battery_dot_batt_charge_remaining_exists : boolean;
+	ASSIGN
+		init(battery_dot_batt_charge_remaining) := 0;
+		init(battery_dot_batt_charge_remaining_exists) := FALSE;
+		next(battery_dot_batt_charge_remaining) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : battery_dot_batt_charge_remaining;
+			esac;
+		next(battery_dot_batt_charge_remaining_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : battery_dot_batt_charge_remaining_exists;
+			esac;
+MODULE bb_rth_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		bb_rth : 0..10;
+		bb_rth_exists : boolean;
+	ASSIGN
+		init(bb_rth) := 0;
+		init(bb_rth_exists) := FALSE;
+		next(bb_rth) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : bb_rth;
+			esac;
+		next(bb_rth_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : bb_rth_exists;
+			esac;
+MODULE bb_rth_warning_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		bb_rth_warning : 0..10;
+		bb_rth_warning_exists : boolean;
+	ASSIGN
+		init(bb_rth_warning) := 0;
+		init(bb_rth_warning_exists) := FALSE;
+		next(bb_rth_warning) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : bb_rth_warning;
+			esac;
+		next(bb_rth_warning_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : bb_rth_warning_exists;
+			esac;
+MODULE bb_rth_dot_data_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		bb_rth_dot_data : 0..10;
+		bb_rth_dot_data_exists : boolean;
+	ASSIGN
+		init(bb_rth_dot_data) := 0;
+		init(bb_rth_dot_data_exists) := FALSE;
+		next(bb_rth_dot_data) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : bb_rth_dot_data;
+			esac;
+		next(bb_rth_dot_data_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : bb_rth_dot_data_exists;
+			esac;
+MODULE bb_geofence_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		bb_geofence : 0..10;
+		bb_geofence_exists : boolean;
+	ASSIGN
+		init(bb_geofence) := 0;
+		init(bb_geofence_exists) := FALSE;
+		next(bb_geofence) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : bb_geofence;
+			esac;
+		next(bb_geofence_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : bb_geofence_exists;
+			esac;
+MODULE bb_geofence_warning_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		bb_geofence_warning : 0..10;
+		bb_geofence_warning_exists : boolean;
+	ASSIGN
+		init(bb_geofence_warning) := 0;
+		init(bb_geofence_warning_exists) := FALSE;
+		next(bb_geofence_warning) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : bb_geofence_warning;
+			esac;
+		next(bb_geofence_warning_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : bb_geofence_warning_exists;
+			esac;
+MODULE bb_geofence_dot_data_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		bb_geofence_dot_data : 0..10;
+		bb_geofence_dot_data_exists : boolean;
+	ASSIGN
+		init(bb_geofence_dot_data) := 0;
+		init(bb_geofence_dot_data_exists) := FALSE;
+		next(bb_geofence_dot_data) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : bb_geofence_dot_data;
+			esac;
+		next(bb_geofence_dot_data_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : bb_geofence_dot_data_exists;
+			esac;
+MODULE lec2_am_r_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		lec2_am_r : 0..10;
+		lec2_am_r_exists : boolean;
+	ASSIGN
+		init(lec2_am_r) := 0;
+		init(lec2_am_r_exists) := FALSE;
+		next(lec2_am_r) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : lec2_am_r;
+			esac;
+		next(lec2_am_r_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : lec2_am_r_exists;
+			esac;
+MODULE lec2_am_r_speed_warning_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		lec2_am_r_speed_warning : 0..10;
+		lec2_am_r_speed_warning_exists : boolean;
+	ASSIGN
+		init(lec2_am_r_speed_warning) := 0;
+		init(lec2_am_r_speed_warning_exists) := FALSE;
+		next(lec2_am_r_speed_warning) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : lec2_am_r_speed_warning;
+			esac;
+		next(lec2_am_r_speed_warning_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : lec2_am_r_speed_warning_exists;
+			esac;
+MODULE lec2_am_r_pipe_warning_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		lec2_am_r_pipe_warning : 0..10;
+		lec2_am_r_pipe_warning_exists : boolean;
+	ASSIGN
+		init(lec2_am_r_pipe_warning) := 0;
+		init(lec2_am_r_pipe_warning_exists) := FALSE;
+		next(lec2_am_r_pipe_warning) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : lec2_am_r_pipe_warning;
+			esac;
+		next(lec2_am_r_pipe_warning_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : lec2_am_r_pipe_warning_exists;
+			esac;
+MODULE lec2_am_l_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		lec2_am_l : 0..10;
+		lec2_am_l_exists : boolean;
+	ASSIGN
+		init(lec2_am_l) := 0;
+		init(lec2_am_l_exists) := FALSE;
+		next(lec2_am_l) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : lec2_am_l;
+			esac;
+		next(lec2_am_l_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : lec2_am_l_exists;
+			esac;
+MODULE lec2_am_l_speed_warning_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		lec2_am_l_speed_warning : 0..10;
+		lec2_am_l_speed_warning_exists : boolean;
+	ASSIGN
+		init(lec2_am_l_speed_warning) := 0;
+		init(lec2_am_l_speed_warning_exists) := FALSE;
+		next(lec2_am_l_speed_warning) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : lec2_am_l_speed_warning;
+			esac;
+		next(lec2_am_l_speed_warning_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : lec2_am_l_speed_warning_exists;
+			esac;
+MODULE lec2_am_l_pipe_warning_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		lec2_am_l_pipe_warning : 0..10;
+		lec2_am_l_pipe_warning_exists : boolean;
+	ASSIGN
+		init(lec2_am_l_pipe_warning) := 0;
+		init(lec2_am_l_pipe_warning_exists) := FALSE;
+		next(lec2_am_l_pipe_warning) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : lec2_am_l_pipe_warning;
+			esac;
+		next(lec2_am_l_pipe_warning_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : lec2_am_l_pipe_warning_exists;
+			esac;
+MODULE bb_pipelost_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		bb_pipelost : 0..10;
+		bb_pipelost_exists : boolean;
+	ASSIGN
+		init(bb_pipelost) := 0;
+		init(bb_pipelost_exists) := FALSE;
+		next(bb_pipelost) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : bb_pipelost;
+			esac;
+		next(bb_pipelost_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : bb_pipelost_exists;
+			esac;
+MODULE bb_pipe_lost_warning_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		bb_pipe_lost_warning : 0..10;
+		bb_pipe_lost_warning_exists : boolean;
+	ASSIGN
+		init(bb_pipe_lost_warning) := 0;
+		init(bb_pipe_lost_warning_exists) := FALSE;
+		next(bb_pipe_lost_warning) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : bb_pipe_lost_warning;
+			esac;
+		next(bb_pipe_lost_warning_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : bb_pipe_lost_warning_exists;
+			esac;
+MODULE bb_pipelost_dot_data_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		bb_pipelost_dot_data : 0..10;
+		bb_pipelost_dot_data_exists : boolean;
+	ASSIGN
+		init(bb_pipelost_dot_data) := 0;
+		init(bb_pipelost_dot_data_exists) := FALSE;
+		next(bb_pipelost_dot_data) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : bb_pipelost_dot_data;
+			esac;
+		next(bb_pipelost_dot_data_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : bb_pipelost_dot_data_exists;
+			esac;
+MODULE bb_mission_dot_data_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		bb_mission_dot_data : 0..10;
+		bb_mission_dot_data_exists : boolean;
+	ASSIGN
+		init(bb_mission_dot_data) := 0;
+		init(bb_mission_dot_data_exists) := FALSE;
+		next(bb_mission_dot_data) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : bb_mission_dot_data;
+			esac;
+		next(bb_mission_dot_data_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : bb_mission_dot_data_exists;
+			esac;
+MODULE bb_sensor_failure_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		bb_sensor_failure : 0..10;
+		bb_sensor_failure_exists : boolean;
+	ASSIGN
+		init(bb_sensor_failure) := 0;
+		init(bb_sensor_failure_exists) := FALSE;
+		next(bb_sensor_failure) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : bb_sensor_failure;
+			esac;
+		next(bb_sensor_failure_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : bb_sensor_failure_exists;
+			esac;
+MODULE bb_sensor_failure_warning_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		bb_sensor_failure_warning : 0..10;
+		bb_sensor_failure_warning_exists : boolean;
+	ASSIGN
+		init(bb_sensor_failure_warning) := 0;
+		init(bb_sensor_failure_warning_exists) := FALSE;
+		next(bb_sensor_failure_warning) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : bb_sensor_failure_warning;
+			esac;
+		next(bb_sensor_failure_warning_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : bb_sensor_failure_warning_exists;
+			esac;
+MODULE bb_sensor_failure_dot_data_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		bb_sensor_failure_dot_data : 0..10;
+		bb_sensor_failure_dot_data_exists : boolean;
+	ASSIGN
+		init(bb_sensor_failure_dot_data) := 0;
+		init(bb_sensor_failure_dot_data_exists) := FALSE;
+		next(bb_sensor_failure_dot_data) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : bb_sensor_failure_dot_data;
+			esac;
+		next(bb_sensor_failure_dot_data_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : bb_sensor_failure_dot_data_exists;
+			esac;
+MODULE bb_waypoints_completed_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		bb_waypoints_completed : 0..10;
+		bb_waypoints_completed_exists : boolean;
+	ASSIGN
+		init(bb_waypoints_completed) := 0;
+		init(bb_waypoints_completed_exists) := FALSE;
+		next(bb_waypoints_completed) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : bb_waypoints_completed;
+			esac;
+		next(bb_waypoints_completed_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : bb_waypoints_completed_exists;
+			esac;
+MODULE bb_waypoints_completed_dot_data_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		bb_waypoints_completed_dot_data : 0..10;
+		bb_waypoints_completed_dot_data_exists : boolean;
+	ASSIGN
+		init(bb_waypoints_completed_dot_data) := 0;
+		init(bb_waypoints_completed_dot_data_exists) := FALSE;
+		next(bb_waypoints_completed_dot_data) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : bb_waypoints_completed_dot_data;
+			esac;
+		next(bb_waypoints_completed_dot_data_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : bb_waypoints_completed_dot_data_exists;
+			esac;
+MODULE bb_mission_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		bb_mission : 0..10;
+		bb_mission_exists : boolean;
+	ASSIGN
+		init(bb_mission) := 0;
+		init(bb_mission_exists) := FALSE;
+		next(bb_mission) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : bb_mission;
+			esac;
+		next(bb_mission_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : bb_mission_exists;
+			esac;
+MODULE dd_output_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		dd_output : 0..10;
+		dd_output_exists : boolean;
+	ASSIGN
+		init(dd_output) := 0;
+		init(dd_output_exists) := FALSE;
+		next(dd_output) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : dd_output;
+			esac;
+		next(dd_output_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : dd_output_exists;
+			esac;
+MODULE dd_z_axis_warning_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		dd_z_axis_warning : 0..10;
+		dd_z_axis_warning_exists : boolean;
+	ASSIGN
+		init(dd_z_axis_warning) := 0;
+		init(dd_z_axis_warning_exists) := FALSE;
+		next(dd_z_axis_warning) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : dd_z_axis_warning;
+			esac;
+		next(dd_z_axis_warning_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : dd_z_axis_warning_exists;
+			esac;
+MODULE dd_xy_axis_degradation_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		dd_xy_axis_degradation : 0..10;
+		dd_xy_axis_degradation_exists : boolean;
+	ASSIGN
+		init(dd_xy_axis_degradation) := 0;
+		init(dd_xy_axis_degradation_exists) := FALSE;
+		next(dd_xy_axis_degradation) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : dd_xy_axis_degradation;
+			esac;
+		next(dd_xy_axis_degradation_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : dd_xy_axis_degradation_exists;
+			esac;
+MODULE fls_range_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		fls_range : 0..10;
+		fls_range_exists : boolean;
+	ASSIGN
+		init(fls_range) := 0;
+		init(fls_range_exists) := FALSE;
+		next(fls_range) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : fls_range;
+			esac;
+		next(fls_range_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : fls_range_exists;
+			esac;
+MODULE obstacle_standoff_warning_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		obstacle_standoff_warning : 0..10;
+		obstacle_standoff_warning_exists : boolean;
+	ASSIGN
+		init(obstacle_standoff_warning) := 0;
+		init(obstacle_standoff_warning_exists) := FALSE;
+		next(obstacle_standoff_warning) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : obstacle_standoff_warning;
+			esac;
+		next(obstacle_standoff_warning_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : obstacle_standoff_warning_exists;
+			esac;
+MODULE obstacle_min_standoff_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		obstacle_min_standoff : 0..10;
+		obstacle_min_standoff_exists : boolean;
+	ASSIGN
+		init(obstacle_min_standoff) := 0;
+		init(obstacle_min_standoff_exists) := FALSE;
+		next(obstacle_min_standoff) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : obstacle_min_standoff;
+			esac;
+		next(obstacle_min_standoff_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : obstacle_min_standoff_exists;
+			esac;
+MODULE obstacle_in_view_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		obstacle_in_view : 0..10;
+		obstacle_in_view_exists : boolean;
+	ASSIGN
+		init(obstacle_in_view) := 0;
+		init(obstacle_in_view_exists) := FALSE;
+		next(obstacle_in_view) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : obstacle_in_view;
+			esac;
+		next(obstacle_in_view_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : obstacle_in_view_exists;
+			esac;
+MODULE bb_fls_warning_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		bb_fls_warning : 0..10;
+		bb_fls_warning_exists : boolean;
+	ASSIGN
+		init(bb_fls_warning) := 0;
+		init(bb_fls_warning_exists) := FALSE;
+		next(bb_fls_warning) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : bb_fls_warning;
+			esac;
+		next(bb_fls_warning_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : bb_fls_warning_exists;
+			esac;
+MODULE emergency_stop_warning_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		emergency_stop_warning : 0..10;
+		emergency_stop_warning_exists : boolean;
+	ASSIGN
+		init(emergency_stop_warning) := 0;
+		init(emergency_stop_warning_exists) := FALSE;
+		next(emergency_stop_warning) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : emergency_stop_warning;
+			esac;
+		next(emergency_stop_warning_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : emergency_stop_warning_exists;
+			esac;
+MODULE hsd_pipeline_mapping_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		hsd_pipeline_mapping : 0..10;
+		hsd_pipeline_mapping_exists : boolean;
+	ASSIGN
+		init(hsd_pipeline_mapping) := 0;
+		init(hsd_pipeline_mapping_exists) := FALSE;
+		next(hsd_pipeline_mapping) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : hsd_pipeline_mapping;
+			esac;
+		next(hsd_pipeline_mapping_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : hsd_pipeline_mapping_exists;
+			esac;
+MODULE hsd_to_waypoint_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		hsd_to_waypoint : 0..10;
+		hsd_to_waypoint_exists : boolean;
+	ASSIGN
+		init(hsd_to_waypoint) := 0;
+		init(hsd_to_waypoint_exists) := FALSE;
+		next(hsd_to_waypoint) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : hsd_to_waypoint;
+			esac;
+		next(hsd_to_waypoint_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : hsd_to_waypoint_exists;
+			esac;
+MODULE hsd_to_rth_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		hsd_to_rth : 0..10;
+		hsd_to_rth_exists : boolean;
+	ASSIGN
+		init(hsd_to_rth) := 0;
+		init(hsd_to_rth_exists) := FALSE;
+		next(hsd_to_rth) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : hsd_to_rth;
+			esac;
+		next(hsd_to_rth_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : hsd_to_rth_exists;
+			esac;
+MODULE hsd_to_surface_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		hsd_to_surface : 0..10;
+		hsd_to_surface_exists : boolean;
+	ASSIGN
+		init(hsd_to_surface) := 0;
+		init(hsd_to_surface_exists) := FALSE;
+		next(hsd_to_surface) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : hsd_to_surface;
+			esac;
+		next(hsd_to_surface_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : hsd_to_surface_exists;
+			esac;
+MODULE rtreach_out_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		rtreach_out : 0..10;
+		rtreach_out_exists : boolean;
+	ASSIGN
+		init(rtreach_out) := 0;
+		init(rtreach_out_exists) := FALSE;
+		next(rtreach_out) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : rtreach_out;
+			esac;
+		next(rtreach_out_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : rtreach_out_exists;
+			esac;
+MODULE total_degradation_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		total_degradation : 0..10;
+		total_degradation_exists : boolean;
+	ASSIGN
+		init(total_degradation) := 0;
+		init(total_degradation_exists) := FALSE;
+		next(total_degradation) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : total_degradation;
+			esac;
+		next(total_degradation_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : total_degradation_exists;
+			esac;
+MODULE uuv_max_speed_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		uuv_max_speed : 0..10;
+		uuv_max_speed_exists : boolean;
+	ASSIGN
+		init(uuv_max_speed) := 0;
+		init(uuv_max_speed_exists) := FALSE;
+		next(uuv_max_speed) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : uuv_max_speed;
+			esac;
+		next(uuv_max_speed_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : uuv_max_speed_exists;
+			esac;
+MODULE mission_file_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		mission_file : 0..10;
+		mission_file_exists : boolean;
+	ASSIGN
+		init(mission_file) := 0;
+		init(mission_file_exists) := FALSE;
+		next(mission_file) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : mission_file;
+			esac;
+		next(mission_file_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : mission_file_exists;
+			esac;
+MODULE refLat_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		refLat : 0..10;
+		refLat_exists : boolean;
+	ASSIGN
+		init(refLat) := 0;
+		init(refLat_exists) := FALSE;
+		next(refLat) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : refLat;
+			esac;
+		next(refLat_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : refLat_exists;
+			esac;
+MODULE refLon_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		refLon : 0..10;
+		refLon_exists : boolean;
+	ASSIGN
+		init(refLon) := 0;
+		init(refLon_exists) := FALSE;
+		next(refLon) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : refLon;
+			esac;
+		next(refLon_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : refLon_exists;
+			esac;
+MODULE next_mission_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		next_mission : 0..10;
+		next_mission_exists : boolean;
+	ASSIGN
+		init(next_mission) := 0;
+		init(next_mission_exists) := FALSE;
+		next(next_mission) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : next_mission;
+			esac;
+		next(next_mission_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : next_mission_exists;
+			esac;
+MODULE decision_threshold_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		decision_threshold : 0..10;
+		decision_threshold_exists : boolean;
+	ASSIGN
+		init(decision_threshold) := 0;
+		init(decision_threshold_exists) := FALSE;
+		next(decision_threshold) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : decision_threshold;
+			esac;
+		next(decision_threshold_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : decision_threshold_exists;
+			esac;
+MODULE HSD_out_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		HSD_out : 0..10;
+		HSD_out_exists : boolean;
+	ASSIGN
+		init(HSD_out) := 0;
+		init(HSD_out_exists) := FALSE;
+		next(HSD_out) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : HSD_out;
+			esac;
+		next(HSD_out_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : HSD_out_exists;
+			esac;
+MODULE bb_obstacle_warning_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		bb_obstacle_warning : 0..10;
+		bb_obstacle_warning_exists : boolean;
+	ASSIGN
+		init(bb_obstacle_warning) := 0;
+		init(bb_obstacle_warning_exists) := FALSE;
+		next(bb_obstacle_warning) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : bb_obstacle_warning;
+			esac;
+		next(bb_obstacle_warning_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : bb_obstacle_warning_exists;
+			esac;
+MODULE cm_hsd_input_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		cm_hsd_input : 0..10;
+		cm_hsd_input_exists : boolean;
+	ASSIGN
+		init(cm_hsd_input) := 0;
+		init(cm_hsd_input_exists) := FALSE;
+		next(cm_hsd_input) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : cm_hsd_input;
+			esac;
+		next(cm_hsd_input_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : cm_hsd_input_exists;
+			esac;
+MODULE HSD_out_dot_heading_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		HSD_out_dot_heading : 0..10;
+		HSD_out_dot_heading_exists : boolean;
+	ASSIGN
+		init(HSD_out_dot_heading) := 0;
+		init(HSD_out_dot_heading_exists) := FALSE;
+		next(HSD_out_dot_heading) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : HSD_out_dot_heading;
+			esac;
+		next(HSD_out_dot_heading_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : HSD_out_dot_heading_exists;
+			esac;
+MODULE HSD_out_dot_speed_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		HSD_out_dot_speed : 0..10;
+		HSD_out_dot_speed_exists : boolean;
+	ASSIGN
+		init(HSD_out_dot_speed) := 0;
+		init(HSD_out_dot_speed_exists) := FALSE;
+		next(HSD_out_dot_speed) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : HSD_out_dot_speed;
+			esac;
+		next(HSD_out_dot_speed_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : HSD_out_dot_speed_exists;
+			esac;
+MODULE HSD_out_dot_depth_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		HSD_out_dot_depth : 0..10;
+		HSD_out_dot_depth_exists : boolean;
+	ASSIGN
+		init(HSD_out_dot_depth) := 0;
+		init(HSD_out_dot_depth_exists) := FALSE;
+		next(HSD_out_dot_depth) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : HSD_out_dot_depth;
+			esac;
+		next(HSD_out_dot_depth_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : HSD_out_dot_depth_exists;
+			esac;
+MODULE bb_home_reached_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		bb_home_reached : 0..10;
+		bb_home_reached_exists : boolean;
+	ASSIGN
+		init(bb_home_reached) := 0;
+		init(bb_home_reached_exists) := FALSE;
+		next(bb_home_reached) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : bb_home_reached;
+			esac;
+		next(bb_home_reached_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : bb_home_reached_exists;
+			esac;
+MODULE bb_home_dist_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		bb_home_dist : 0..10;
+		bb_home_dist_exists : boolean;
+	ASSIGN
+		init(bb_home_dist) := 0;
+		init(bb_home_dist_exists) := FALSE;
+		next(bb_home_dist) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : bb_home_dist;
+			esac;
+		next(bb_home_dist_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : bb_home_dist_exists;
+			esac;
+MODULE bb_home_dist_dot_data_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		bb_home_dist_dot_data : 0..10;
+		bb_home_dist_dot_data_exists : boolean;
+	ASSIGN
+		init(bb_home_dist_dot_data) := 0;
+		init(bb_home_dist_dot_data_exists) := FALSE;
+		next(bb_home_dist_dot_data) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : bb_home_dist_dot_data;
+			esac;
+		next(bb_home_dist_dot_data_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : bb_home_dist_dot_data_exists;
+			esac;
+MODULE pipe_mapping_enable_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	VAR
+		pipe_mapping_enable : 0..10;
+		pipe_mapping_enable_exists : boolean;
+	ASSIGN
+		init(pipe_mapping_enable) := 0;
+		init(pipe_mapping_enable_exists) := FALSE;
+		next(pipe_mapping_enable) := 
+			case
+				(active_node in nodes_with_access) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+				TRUE : pipe_mapping_enable;
+			esac;
+		next(pipe_mapping_enable_exists) := 
+			case
+				(active_node in nodes_with_access) : TRUE;
+				TRUE : pipe_mapping_enable_exists;
+			esac;
+MODULE battery2bb_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE rth2bb_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE geofence2bb_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE lec2_am_r_2bb_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE lec2_am_l_2bb_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE pipe_lost2bb_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE sensor_failure2bb_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE waypoints_completed2bb_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE mission2bb_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE ddlec2bb_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE fls2bb_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE fls_warning2bb_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE hsd_pipe2bb_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE hsd_wp2bb_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE hsd_rth2bb_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE hsd_surface2bb_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE rtreach2bb_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE reallocate_task_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE dd_lec_task_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE mission_server_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE obstacle_avoidance_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE surface_task_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE surface_task1_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE emergency_stop_task_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE surface_task2_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE surface_task3_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE surface_task4_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE rth_task_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE home2bb_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE rth_task1_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE home2bb1_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE loiter_task1_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE tracking_task_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE speed_min_task_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE speed_min_task1_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE speed_max_task_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE pipe_mapping_disable_task_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE pipe_mapping_disable_task1_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE pipe_mapping_enable_task_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE next_mission_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE loiter_task2_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE waypoint_task_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE loiter_task_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE is_reallocation_requested_CHECK_dd_xy_axis_degradation_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		result := ((variable_exists[variable_names.dd_xy_axis_degradation]) & (variables[variable_names.dd_xy_axis_degradation] = 10));
+MODULE battery_low_fs_CHECK_battery_low_warning_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		result := ((variable_exists[variable_names.battery_low_warning]) & (variables[variable_names.battery_low_warning] = 10));
+MODULE check_sensor_failure_CHECK_bb_sensor_failure_warning_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		result := ((variable_exists[variable_names.bb_sensor_failure_warning]) & (variables[variable_names.bb_sensor_failure_warning] = 10));
+MODULE emergency_stop_fs_CHECK_emergency_stop_warning_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		result := ((variable_exists[variable_names.emergency_stop_warning]) & (variables[variable_names.emergency_stop_warning] = 10));
+MODULE check_surface_CHECK_bb_home_reached_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		result := ((variable_exists[variable_names.bb_home_reached]) & (variables[variable_names.bb_home_reached] = 10));
+MODULE obstacle_standoff_fs_CHECK_obstacle_standoff_warning_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		result := ((variable_exists[variable_names.obstacle_standoff_warning]) & (variables[variable_names.obstacle_standoff_warning] = 10));
+MODULE check_rth_CHECK_bb_rth_warning_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		result := ((variable_exists[variable_names.bb_rth_warning]) & (variables[variable_names.bb_rth_warning] = 10));
+MODULE check_geofence_CHECK_bb_geofence_warning_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		result := ((variable_exists[variable_names.bb_geofence_warning]) & (variables[variable_names.bb_geofence_warning] = 10));
+MODULE check_pipe_post_CHECK_bb_pipe_lost_warning_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		result := ((variable_exists[variable_names.bb_pipe_lost_warning]) & (variables[variable_names.bb_pipe_lost_warning] = 10));
+MODULE is_track_pipe_mission_requested_CHECK_bb_mission_dot_data_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		result := ((variable_exists[variable_names.bb_mission_dot_data]) & (variables[variable_names.bb_mission_dot_data] = 10));
+MODULE is_waypoint_requested_CHECK_bb_mission_dot_data_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		result := ((variable_exists[variable_names.bb_mission_dot_data]) & (variables[variable_names.bb_mission_dot_data] = 10));
+MODULE check_lec2am_ls_CHECK_lec2_am_l_speed_warning_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		result := ((variable_exists[variable_names.lec2_am_l_speed_warning]) & (variables[variable_names.lec2_am_l_speed_warning] = 10));
+MODULE check_lec2am_rs_CHECK_lec2_am_r_speed_warning_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		result := ((variable_exists[variable_names.lec2_am_r_speed_warning]) & (variables[variable_names.lec2_am_r_speed_warning] = 10));
+MODULE check_lec2am_lp_CHECK_lec2_am_l_pipe_warning_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		result := ((variable_exists[variable_names.lec2_am_l_pipe_warning]) & (variables[variable_names.lec2_am_l_pipe_warning] = 10));
+MODULE check_lec2am_rp_CHECK_lec2_am_r_pipe_warning_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		result := ((variable_exists[variable_names.lec2_am_r_pipe_warning]) & (variables[variable_names.lec2_am_r_pipe_warning] = 10));
+MODULE check_waypoints_completed_CHECK_bb_waypoints_completed_dot_data_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		result := ((variable_exists[variable_names.bb_waypoints_completed_dot_data]) & (variables[variable_names.bb_waypoints_completed_dot_data] = 10));

@@ -1,0 +1,13 @@
+MODULE battery_low_warning_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	DEFINE
+		battery_low_warning_exists := TRUE;
+	VAR
+		battery_low_warning : 0..1;
+	ASSIGN
+		init(battery_low_warning) := 0; -- warning initially off
+		next(battery_low_warning) :=
+			case
+				(active_node in nodes_with_access) & (next(variables[variable_names.battery_level]) > 0) & (next(previous_status) = success) : 0; --if the battery level is above the threshold, 0 in this case, no warning
+				(active_node in nodes_with_access) & (next(previous_status) = success) : 1; --otherwise, warning
+				TRUE : battery_low_warning; -- don't change value unless we're in a node that is allowed to and returned success.
+			esac;

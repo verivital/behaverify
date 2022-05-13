@@ -1,3 +1,6 @@
+#FIGURE OUT WHY --parallel_unsynch False ACTS AS THOUGH YOU SET IT TO TRUE.
+
+
 #python3 btree_serene.py create_root_FILE create_root_METHOD --root_args create_root_ARGS  --min_val min_val_INT --max_val max_val_INT --parallel_unsynch parallel_unsych_BOOL --modules additional_modules_FILE --specs specs_FILE --gen_modules gen_modules_BOOL --gen_modules2 -- gen_modules2_BOOL
 
 
