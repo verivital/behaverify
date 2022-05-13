@@ -1,5 +1,4 @@
-#python3 btree_serene.py create_root_FILE create_root_METHOD --root_args create_root_ARGS  --min_val min_val_INT --max_val max_val_INT --parallel_unsynch parallel_unsych_BOOL --modules additional_modules_FILE --specs specs_FILE --gen_modules gen_modules_BOOL --gen_modules2 -- gen_modules2_BOOL
-
+#python3 btree_serene.py create_root_FILE create_root_METHOD --root_args create_root_ARGS  --min_val min_val_INT --max_val max_val_INT --parallel_unsynch --modules additional_modules_FILE --specs specs_FILE --gen_modules gen_modules_INT --output_file ouput_file_FILE --gen_module_file gen_module_file_FILE --overwrite
 
 #TODO: neither parallel works correctly right now. implement both. DONE.
 
@@ -490,34 +489,26 @@ def main():
     global node_count, children, nodes, additional_arguments, needed_nodes, variable_to_int, variable_access, blackboard_needed, last_child, parallel_resume, parallel_synch_list, parallel_unsych_list, variable_check, external_status_req;
 
     arg_parser=argparse.ArgumentParser()
-    #python3 btree_serene.py create_root_FILE create_root_METHOD --root_args create_root_ARGS  --min_val min_val_INT --max_val max_val_INT --parallel_unsynch parallel_unsych_BOOL --modules additional_modules_FILE --specs specs_FILE --gen_modules gen_modules_BOOL
+    #python3 btree_serene.py create_root_FILE create_root_METHOD --root_args create_root_ARGS  --min_val min_val_INT --max_val max_val_INT --parallel_unsynch --modules additional_modules_FILE --specs specs_FILE --gen_modules gen_modules_INT --output_file ouput_file_FILE --gen_module_file gen_module_file_FILE --overwrite
     arg_parser.add_argument('root_file')
     arg_parser.add_argument('root_method')
     arg_parser.add_argument('--root_args', default='', nargs='*')
     arg_parser.add_argument('--min_val', default=0, type=int)
     arg_parser.add_argument('--max_val', default=1, type=int)
-    arg_parser.add_argument('--parallel_unsynch', default=False, type=bool)
+    arg_parser.add_argument('--parallel_unsynch', action='store_true')
     arg_parser.add_argument('--modules')
     arg_parser.add_argument('--specs')
-    arg_parser.add_argument('--gen_modules', default=False, type=bool)
-    arg_parser.add_argument('--gen_modules2', default=False, type=bool)
+    arg_parser.add_argument('--gen_modules', default=0, type=int)
+    arg_parser.add_argument('--output_file', default=None)
+    arg_parser.add_argument('--gen_module_file', default=None)
+    arg_parser.add_argument('--overwrite', action='store_true')
     args=arg_parser.parse_args()
-    root_file=args.root_file
-    root_method=args.root_method
-    root_args=args.root_args
-    min_val=args.min_val
-    max_val=args.max_val
-    parallel_unsynch = args.parallel_unsynch
-    modules=args.modules
-    specifications=args.specs
-    gen_modules=args.gen_modules
-    gen_modules2=args.gen_modules2
 
-    module = __import__(root_file.replace('.py', ''))
+    module = __import__(args.root_file.replace('.py', ''))
 
-    root_string = 'module.' + root_method + '('
+    root_string = 'module.' + args.root_method + '('
     first = True
-    for root_arg in root_args:
+    for root_arg in args.root_args:
         if first:
             root_string += root_arg
             first=False
@@ -527,7 +518,7 @@ def main():
     root = eval(root_string)
 
     #print(parallel_unsynch)
-    walk_tree(root, -1, 0, -1, -1, parallel_unsynch)
+    walk_tree(root, -1, 0, -1, -1, args.parallel_unsynch)
     node_count=node_count+1#this is included because it used to happen as part of walk_tree, and there's a lot of logic to update if this value is different now.
     
     
@@ -535,6 +526,7 @@ def main():
     #i.e., if a variable in the original was just "meh = Object"
     #but other places use meh.val1, meh.val2, etc, then the original "meh" needs to handle those.
     #note: currently not handling recursive things, like meh.val1.val3
+    #should maybe look into this a bit more. 
     for variable in variable_to_int:
         blackboard_name_pattern = re.compile(r"#(?P<blackboard_name>[^\s=]+)\s*=\s*py_trees\.blackboard\.Blackboard\(\)")
         variable_regex=re.compile(r""+variable+"_dot_")
@@ -814,8 +806,8 @@ def main():
         nuxmv_string += parallel_next
 
                     
-    if specifications:
-        nuxmv_string += open(specifications).read() + os.linesep + os.linesep
+    if args.specs:
+        nuxmv_string += open(args.specs).read() + os.linesep + os.linesep
 
     for needed in needed_nodes:
         nuxmv_string = nuxmv_string +  eval('node_creator.create_'+needed+'(node_count-1)')
@@ -831,14 +823,14 @@ def main():
                 nuxmv_string += ('----' + nodes[access_node][2] + os.linesep)
     
     if blackboard_needed:
-        #nuxmv_string = nuxmv_string + node_creator.create_blackboard(variable_to_int, variable_access, nodes)
-        #nuxmv_string = nuxmv_string + node_creator.create_blackboard(int_to_variable, variable_access, nodes)
         nuxmv_string = nuxmv_string + node_creator.create_blackboard(int_to_variable, variable_to_int, variable_access, nodes)
 
-    if gen_modules:
+    module_string = ''
+
+    if args.gen_modules == 1:
         set_string = "{"
         first = True;
-        for i in range(min_val, max_val + 1):
+        for i in range(args.min_val, args.max_val + 1):
             if first:
                 first = False;
                 set_string += str(i)
@@ -846,12 +838,12 @@ def main():
                 set_string += ", " + str(i)
         set_string += "}"
         for variable in variable_to_int:
-            nuxmv_string += ("MODULE " + variable + "_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)" + os.linesep
+            module_string += ("MODULE " + variable + "_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)" + os.linesep
                              + "\tVAR" + os.linesep
-                             + "\t\t" + variable + " : " + str(min_val) + ".." + str(max_val) + ";" + os.linesep
+                             + "\t\t" + variable + " : " + str(args.min_val) + ".." + str(args.max_val) + ";" + os.linesep
                              + "\t\t" + variable + "_exists" + " : boolean;" + os.linesep
                              + "\tASSIGN" + os.linesep
-                             + "\t\tinit(" + variable + ") := " + str(min_val) + ";" + os.linesep
+                             + "\t\tinit(" + variable + ") := " + str(args.min_val) + ";" + os.linesep
                              + "\t\tinit(" + variable + "_exists) := FALSE;" + os.linesep
                              + "\t\tnext(" + variable + ") := " + os.linesep
                              + "\t\t\tcase" + os.linesep
@@ -865,7 +857,7 @@ def main():
                              + "\t\t\tesac;" + os.linesep
             )
         for node in external_status_req:
-            nuxmv_string += ("MODULE " + node + "_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)" + os.linesep
+            module_string += ("MODULE " + node + "_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)" + os.linesep
                              + "\tDEFINE" + os.linesep
                              + "\t\tstatus := " + os.linesep
                              + "\t\t\tcase" + os.linesep
@@ -875,14 +867,14 @@ def main():
             )
         for variable in variable_check:
             for node_id in variable_check[variable]:
-                nuxmv_string += ("MODULE " + nodes[node_id][2] + "_CHECK_" + variable + "_module(active_node, id, variables, variable_exists, node_names, variable_names)" + os.linesep
+                module_string += ("MODULE " + nodes[node_id][2] + "_CHECK_" + variable + "_module(active_node, id, variables, variable_exists, node_names, variable_names)" + os.linesep
                                  + "\tDEFINE" + os.linesep
-                                 + "\t\tresult := ((variable_exists[variable_names." + variable + "]) & (variables[variable_names." + variable + "] = " + str(max_val) + "));" + os.linesep
+                                 + "\t\tresult := ((variable_exists[variable_names." + variable + "]) & (variables[variable_names." + variable + "] = " + str(args.max_val) + "));" + os.linesep
                 )
-    if gen_modules2:
+    elif args.gen_modules == 2:
         set_string = "{"
         first = True;
-        for i in range(min_val, max_val + 1):
+        for i in range(args.min_val, args.max_val + 1):
             if first:
                 first = False;
                 set_string += str(i)
@@ -890,13 +882,13 @@ def main():
                 set_string += ", " + str(i)
         set_string += "}"
         for variable in variable_to_int:
-            nuxmv_string += ("MODULE " + variable + "_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)" + os.linesep
+            module_string += ("MODULE " + variable + "_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)" + os.linesep
                              + "\tDEFINE" + os.linesep
-                             + "\t\t" + variable + " := " + str(min_val) + ";" + os.linesep
+                             + "\t\t" + variable + " := " + str(args.min_val) + ";" + os.linesep
                              + "\t\t" + variable + "_exists" + " := TRUE;" + os.linesep
             )
         for node in external_status_req:
-            nuxmv_string += ("MODULE " + node + "_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)" + os.linesep
+            module_string += ("MODULE " + node + "_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)" + os.linesep
                              + "\tDEFINE" + os.linesep
                              + "\t\tstatus := " + os.linesep
                              + "\t\t\tcase" + os.linesep
@@ -906,16 +898,40 @@ def main():
             )
         for variable in variable_check:
             for node_id in variable_check[variable]:
-                nuxmv_string += ("MODULE " + nodes[node_id][2] + "_CHECK_" + variable + "_module(active_node, id, variables, variable_exists, node_names, variable_names)" + os.linesep
+                module_string += ("MODULE " + nodes[node_id][2] + "_CHECK_" + variable + "_module(active_node, id, variables, variable_exists, node_names, variable_names)" + os.linesep
                                  + "\tDEFINE" + os.linesep
                                  + "\t\tresult := (variables[variable_names." + variable + "] = " + str(max_val) + ");" + os.linesep
                 )
 
+    if args.gen_module_file is None:
+        nuxmv_string = nuxmv_string + module_string
+    else:
+        if args.overwrite:
+            with open(args.gen_module_file, 'w') as f:
+                f.write(module_string)
+        else:
+            try:
+                with open(args.gen_module_file, 'x') as f:
+                    f.write(module_string)
+            except FileExistsError:
+                print('The specified module file already exists. To overwrite the file, rerun the command with --overwrite True')
+    if args.modules:
+        #print(open(modules).read())
+        nuxmv_string = nuxmv_string + open(modules.read())
+    if args.output_file is None:
+        print(nuxmv_string)
+    else:
+        if args.overwrite:
+            with open(args.output_file, 'w') as f:
+                f.write(nuxmv_string)
+        else:
+            try:
+                with open(args.output_file, 'x') as f:
+                    f.write(nuxmv_string)
+            except FileExistsError:
+                print('The specified output file already exists. To overwrite the file, rerun the command with --overwrite True')
         
-    print(nuxmv_string)
     
-    if modules:
-        print(open(modules).read())
     
     return
     
