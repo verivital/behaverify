@@ -4,18 +4,29 @@ rm ./size_models/wide_selector/stats
 
 for i in {2..20}
 do
-  python3 btree_serene.py btree_creator.py create_root --root_args $i 0 False --min_val 0 --max_val 1 > ./size_models/wide_selector/$i.smv
+  python3 behaverify.py btree_creator.py create_root --root_args $i 0 False --string_args './size_models/wide_selector/models' --min_val 0 --max_val 1 --output_file ./size_models/wide_selector/$i.smv --overwrite
   ~/nuXmv -source command_list ./size_models/wide_selector/$i.smv >> ./size_models/wide_selector/stats
   echo $i
 done
 
 python3 process_stats.py ./size_models/wide_selector
 
+rm ./size_models/wide_sequence/stats
+
+for i in {2..20}
+do
+  python3 behaverify.py btree_creator.py create_root --root_args $i 1 False --string_args './size_models/wide_sequence/models' --min_val 0 --max_val 1 --output_file ./size_models/wide_sequence/$i.smv --overwrite
+  ~/nuXmv -source command_list ./size_models/wide_sequence/$i.smv >> ./size_models/wide_sequence/stats
+  echo $i
+done
+
+python3 process_stats.py ./size_models/wide_sequence
+
 rm ./size_models/wide_parallel_synch/stats
 
 for i in {2..20}
 do
-  python3 btree_serene.py btree_creator.py create_root --root_args $i 1 False --min_val 0 --max_val 1 > ./size_models/wide_parallel_synch/$i.smv
+  python3 behaverify.py btree_creator.py create_root --root_args $i 2 False --string_args './size_models/wide_parallel_synch/models' --min_val 0 --max_val 1 --output_file ./size_models/wide_parallel_synch/$i.smv --overwrite
   ~/nuXmv -source command_list ./size_models/wide_parallel_synch/$i.smv >> ./size_models/wide_parallel_synch/stats
   echo $i
 done
@@ -26,7 +37,7 @@ rm ./size_models/wide_parallel_unsynch/stats
 
 for i in {2..20}
 do
-  python3 btree_serene.py btree_creator.py create_root --root_args $i 1 False --min_val 0 --max_val 1 > ./size_models/wide_parallel_unsynch/$i.smv
+  python3 behaverify.py btree_creator.py create_root --root_args $i 3 False --string_args './size_models/wide_parallel_unsynch/models' --min_val 0 --max_val 1 --output_file ./size_models/wide_parallel_unsynch/$i.smv --overwrite
   ~/nuXmv -source command_list ./size_models/wide_parallel_unsynch/$i.smv >> ./size_models/wide_parallel_unsynch/stats
   echo $i
 done
@@ -35,21 +46,32 @@ python3 process_stats.py ./size_models/wide_parallel_unsynch
 
 rm ./size_models/binary_selector/stats
 
-for i in {1..3}
+for i in {1..4}
 do
-  python3 btree_serene.py btree_creator.py create_root --root_args $i 0 True --min_val 0 --max_val 1 > ./size_models/binary_selector/$i.smv
+  python3 behaverify.py btree_creator.py create_root --root_args $i 0 True --string_args './size_models/binary_selector/models' --min_val 0 --max_val 1 --output_file ./size_models/binary_selector/$i.smv --overwrite
   ~/nuXmv -source command_list ./size_models/binary_selector/$i.smv >> ./size_models/binary_selector/stats
   echo $i
 done
 
 python3 process_stats.py ./size_models/binary_selector
 
+rm ./size_models/binary_sequence/stats
+
+for i in {1..4}
+do
+  python3 behaverify.py btree_creator.py create_root --root_args $i 1 True --string_args './size_models/binary_sequence/models' --min_val 0 --max_val 1 --output_file ./size_models/binary_sequence/$i.smv --overwrite
+  ~/nuXmv -source command_list ./size_models/binary_sequence/$i.smv >> ./size_models/binary_sequence/stats
+  echo $i
+done
+
+python3 process_stats.py ./size_models/binary_sequence
+
 
 rm ./size_models/binary_parallel_synch/stats
 
-for i in {1..3}
+for i in {1..4}
 do
-  python3 btree_serene.py btree_creator.py create_root --root_args $i 1 True --min_val 0 --max_val 1 > ./size_models/binary_parallel_synch/$i.smv
+  python3 behaverify.py btree_creator.py create_root --root_args $i 2 True --string_args './size_models/binary_parallel_synch/models' --min_val 0 --max_val 1 --output_file ./size_models/binary_parallel_synch/$i.smv --overwrite
   ~/nuXmv -source command_list ./size_models/binary_parallel_synch/$i.smv >> ./size_models/binary_parallel_synch/stats
   echo $i
 done
@@ -60,9 +82,9 @@ python3 process_stats.py ./size_models/binary_parallel_synch
 
 rm ./size_models/binary_parallel_unsynch/stats
 
-for i in {1..3}
+for i in {1..4}
 do
-  python3 btree_serene.py btree_creator.py create_root --root_args $i 2 True --min_val 0 --max_val 1 > ./size_models/binary_parallel_unsynch/$i.smv
+  python3 behaverify.py btree_creator.py create_root --root_args $i 3 True --string_args './size_models/binary_parallel_unsynch/models' --min_val 0 --max_val 1 --output_file ./size_models/binary_parallel_unsynch/$i.smv --overwrite
   ~/nuXmv -source command_list ./size_models/binary_parallel_unsynch/$i.smv >> ./size_models/binary_parallel_unsynch/stats
   echo $i
 done
@@ -71,49 +93,96 @@ python3 process_stats.py ./size_models/binary_parallel_unsynch
 
 
 
-rm ./size_models/binary_parallel_unsynch_mix1/stats
+rm ./size_models/binary_parallel_unsynch_mix1_selector/stats
 
-for i in {1..3}
+for i in {1..4}
 do
-  python3 btree_serene.py btree_creator.py create_root --root_args $i 3 True --min_val 0 --max_val 1 > ./size_models/binary_parallel_unsynch_mix1/$i.smv
-  ~/nuXmv -source command_list ./size_models/binary_parallel_unsynch_mix1/$i.smv >> ./size_models/binary_parallel_unsynch_mix1/stats
+  python3 behaverify.py btree_creator.py create_root --root_args $i 4 True --string_args './size_models/binary_parallel_unsynch_mix1_selector/models' --min_val 0 --max_val 1 --output_file ./size_models/binary_parallel_unsynch_mix1_selector/$i.smv --overwrite
+  ~/nuXmv -source command_list ./size_models/binary_parallel_unsynch_mix1_selector/$i.smv >> ./size_models/binary_parallel_unsynch_mix1/stats
   echo $i
 done
 
-python3 process_stats.py ./size_models/binary_parallel_unsynch_mix1
+python3 process_stats.py ./size_models/binary_parallel_unsynch_mix1_selector
 
 
-rm ./size_models/binary_parallel_synch_mix1/stats
+rm ./size_models/binary_parallel_synch_mix1_selector/stats
 
-for i in {1..3}
+for i in {1..4}
 do
-  python3 btree_serene.py btree_creator.py create_root --root_args $i 4 True --min_val 0 --max_val 1 > ./size_models/binary_parallel_synch_mix1/$i.smv
-  ~/nuXmv -source command_list ./size_models/binary_parallel_synch_mix1/$i.smv >> ./size_models/binary_parallel_synch_mix1/stats
+  python3 behaverify.py btree_creator.py create_root --root_args $i 5 True --string_args './size_models/binary_parallel_synch_mix1_selector/models' --min_val 0 --max_val 1 --output_file ./size_models/binary_parallel_synch_mix1_selector/$i.smv --overwrite
+  ~/nuXmv -source command_list ./size_models/binary_parallel_synch_mix1_selector/$i.smv >> ./size_models/binary_parallel_synch_mix1_selector/stats
   echo $i
 done
 
-python3 process_stats.py ./size_models/binary_parallel_synch_mix1
+python3 process_stats.py ./size_models/binary_parallel_synch_mix1_selector
 
 
-rm ./size_models/binary_parallel_synch_mix2/stats
+rm ./size_models/binary_parallel_unsynch_mix1_sequence/stats
 
-for i in {1..3}
+for i in {1..4}
 do
-  python3 btree_serene.py btree_creator.py create_root --root_args $i 5 True --min_val 0 --max_val 1 > ./size_models/binary_parallel_synch_mix2/$i.smv
-  ~/nuXmv -source command_list ./size_models/binary_parallel_synch_mix2/$i.smv >> ./size_models/binary_parallel_synch_mix2/stats
+  python3 behaverify.py btree_creator.py create_root --root_args $i 6 True --string_args './size_models/binary_parallel_unsynch_mix1_sequence/models' --min_val 0 --max_val 1 --output_file ./size_models/binary_parallel_unsynch_mix1_sequence/$i.smv --overwrite
+  ~/nuXmv -source command_list ./size_models/binary_parallel_unsynch_mix1_sequence/$i.smv >> ./size_models/binary_parallel_unsynch_mix1/stats
   echo $i
 done
 
-python3 process_stats.py ./size_models/binary_parallel_synch_mix2
+python3 process_stats.py ./size_models/binary_parallel_unsynch_mix1_sequence
 
 
-rm ./size_models/binary_parallel_unsynch_mix2/stats
+rm ./size_models/binary_parallel_synch_mix1_sequence/stats
 
-for i in {1..3}
+for i in {1..4}
 do
-  python3 btree_serene.py btree_creator.py create_root --root_args $i 6 True --min_val 0 --max_val 1 > ./size_models/binary_parallel_unsynch_mix2/$i.smv
-  ~/nuXmv -source command_list ./size_models/binary_parallel_unsynch_mix2/$i.smv >> ./size_models/binary_parallel_unsynch_mix2/stats
+  python3 behaverify.py btree_creator.py create_root --root_args $i 7 True --string_args './size_models/binary_parallel_synch_mix1_sequence/models' --min_val 0 --max_val 1 --output_file ./size_models/binary_parallel_synch_mix1_sequence/$i.smv --overwrite
+  ~/nuXmv -source command_list ./size_models/binary_parallel_synch_mix1_sequence/$i.smv >> ./size_models/binary_parallel_synch_mix1_sequence/stats
   echo $i
 done
 
-python3 process_stats.py ./size_models/binary_parallel_unsynch_mix2
+python3 process_stats.py ./size_models/binary_parallel_synch_mix1_sequence
+
+
+rm ./size_models/binary_parallel_synch_mix2_selector/stats
+
+for i in {1..4}
+do
+  python3 behaverify.py btree_creator.py create_root --root_args $i 8 True --string_args './size_models/binary_parallel_synch_mix2_selector/models' --min_val 0 --max_val 1 --output_file ./size_models/binary_parallel_synch_mix2_selector/$i.smv --overwrite
+  ~/nuXmv -source command_list ./size_models/binary_parallel_synch_mix2_selector/$i.smv >> ./size_models/binary_parallel_synch_mix2_selector/stats
+  echo $i
+done
+
+python3 process_stats.py ./size_models/binary_parallel_synch_mix2_selector
+
+
+rm ./size_models/binary_parallel_unsynch_mix2_selector/stats
+
+for i in {1..4}
+do
+  python3 behaverify.py btree_creator.py create_root --root_args $i 9 True --string_args './size_models/binary_parallel_unsynch_mix2_selector/models' --min_val 0 --max_val 1 --output_file ./size_models/binary_parallel_unsynch_mix2_selector/$i.smv --overwrite
+  ~/nuXmv -source command_list ./size_models/binary_parallel_unsynch_mix2_selector/$i.smv >> ./size_models/binary_parallel_unsynch_mix2_selector/stats
+  echo $i
+done
+
+python3 process_stats.py ./size_models/binary_parallel_unsynch_mix2_selector
+
+rm ./size_models/binary_parallel_synch_mix2_sequence/stats
+
+for i in {1..4}
+do
+  python3 behaverify.py btree_creator.py create_root --root_args $i 10 True --string_args './size_models/binary_parallel_synch_mix2_sequence/models' --min_val 0 --max_val 1 --output_file ./size_models/binary_parallel_synch_mix2_sequence/$i.smv --overwrite
+  ~/nuXmv -source command_list ./size_models/binary_parallel_synch_mix2_sequence/$i.smv >> ./size_models/binary_parallel_synch_mix2_sequence/stats
+  echo $i
+done
+
+python3 process_stats.py ./size_models/binary_parallel_synch_mix2_sequence
+
+
+rm ./size_models/binary_parallel_unsynch_mix2_sequence/stats
+
+for i in {1..4}
+do
+  python3 behaverify.py btree_creator.py create_root --root_args $i 11 True --string_args './size_models/binary_parallel_unsynch_mix2_sequence/models' --min_val 0 --max_val 1 --output_file ./size_models/binary_parallel_unsynch_mix2_sequence/$i.smv --overwrite
+  ~/nuXmv -source command_list ./size_models/binary_parallel_unsynch_mix2_sequence/$i.smv >> ./size_models/binary_parallel_unsynch_mix2_sequence/stats
+  echo $i
+done
+
+python3 process_stats.py ./size_models/binary_parallel_unsynch_mix2_sequence

@@ -6,8 +6,8 @@ MODULE main
 		leafs := {-3, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
 		selectors := {-3};
 		sequences := {-3};
-		parallels_synchronised_all := {-3, 0};
-		parallels_unsynchronised_all := {-3};
+		parallels_synchronised_all := {-3};
+		parallels_unsynchronised_all := {-3, 0};
 		parallels_synchronised_one := {-3};
 		parallels_unsynchronised_one := {-3};
 		parallels := {-3, 0};
@@ -32,25 +32,25 @@ MODULE main
 				(previous_node < 13) & !(parallel_resume_0_13 = -2) : parallel_resume_0_13;
 				TRUE : parents[0];
 			esac;
+		parallel_resume_0_1 := 1;
+		parallel_resume_0_2 := 2;
+		parallel_resume_0_3 := 3;
+		parallel_resume_0_4 := 4;
+		parallel_resume_0_5 := 5;
+		parallel_resume_0_6 := 6;
+		parallel_resume_0_7 := 7;
+		parallel_resume_0_8 := 8;
+		parallel_resume_0_9 := 9;
+		parallel_resume_0_10 := 10;
+		parallel_resume_0_11 := 11;
+		parallel_resume_0_12 := 12;
+		parallel_resume_0_13 := 13;
 	VAR
 		active_node : -2..max_active_node;
 		previous_node : -1..max_active_node;
 		resume_node : -1..max_active_node;
 		previous_status : {running, success, failure, invalid};
-		parallel_resume_0_1 : {-2, 1};
-		parallel_resume_0_2 : {-2, 2};
-		parallel_resume_0_3 : {-2, 3};
-		parallel_resume_0_4 : {-2, 4};
-		parallel_resume_0_5 : {-2, 5};
-		parallel_resume_0_6 : {-2, 6};
-		parallel_resume_0_7 : {-2, 7};
-		parallel_resume_0_8 : {-2, 8};
-		parallel_resume_0_9 : {-2, 9};
-		parallel_resume_0_10 : {-2, 10};
-		parallel_resume_0_11 : {-2, 11};
-		parallel_resume_0_12 : {-2, 12};
-		parallel_resume_0_13 : {-2, 13};
-		root : node_parallel(active_node, 0, previous_status, 13, previous_node, TRUE, TRUE, parallel_resume_0);
+		root : node_parallel(active_node, 0, previous_status, 13, previous_node, FALSE, TRUE, parallel_resume_0);
 		Dummy : node_default(active_node, 1);
 		Dummy1 : node_default(active_node, 2);
 		Dummy2 : node_default(active_node, 3);
@@ -70,19 +70,6 @@ MODULE main
 		init(previous_node) := -1;
 		init(resume_node) := -1;
 		init(previous_status) := invalid;
-		init(parallel_resume_0_1) := 1;
-		init(parallel_resume_0_2) := 2;
-		init(parallel_resume_0_3) := 3;
-		init(parallel_resume_0_4) := 4;
-		init(parallel_resume_0_5) := 5;
-		init(parallel_resume_0_6) := 6;
-		init(parallel_resume_0_7) := 7;
-		init(parallel_resume_0_8) := 8;
-		init(parallel_resume_0_9) := 9;
-		init(parallel_resume_0_10) := 10;
-		init(parallel_resume_0_11) := 11;
-		init(parallel_resume_0_12) := 12;
-		init(parallel_resume_0_13) := 13;
 		next(previous_node) :=
 			case
 				(active_node < 0) : -1;
@@ -93,7 +80,7 @@ MODULE main
 				(previous_node < 0) : resume_node;
 				!(previous_status = running) : -1;
 				(resume_node = -1) : previous_node;
-				(previous_node in parallels) : previous_node;
+				(previous_node in parallels) | (previous_node in selectors) : previous_node;
 				TRUE : resume_node;
 			esac;
 		next(previous_status) :=
@@ -114,110 +101,6 @@ MODULE main
 				(active_node in selectors) & (previous_status = failure) : min(max_active_node, previous_node + 1);
 				TRUE : parents[active_node];
 			esac;
-		next(parallel_resume_0_1) :=
-			case
-				(parallel_resume_0_1 = 1) & (previous_node in {-2, 1}) & (previous_status = running) : previous_node;
-				(previous_node = 1) & (previous_status = success | previous_status = failure) : -2;
-				(previous_node = 0) & (previous_status = success | previous_status = failure) : 1;
-				TRUE : parallel_resume_0_1;
-			esac;
-
-		next(parallel_resume_0_2) :=
-			case
-				(parallel_resume_0_2 = 2) & (previous_node in {-2, 2}) & (previous_status = running) : previous_node;
-				(previous_node = 2) & (previous_status = success | previous_status = failure) : -2;
-				(previous_node = 0) & (previous_status = success | previous_status = failure) : 2;
-				TRUE : parallel_resume_0_2;
-			esac;
-
-		next(parallel_resume_0_3) :=
-			case
-				(parallel_resume_0_3 = 3) & (previous_node in {-2, 3}) & (previous_status = running) : previous_node;
-				(previous_node = 3) & (previous_status = success | previous_status = failure) : -2;
-				(previous_node = 0) & (previous_status = success | previous_status = failure) : 3;
-				TRUE : parallel_resume_0_3;
-			esac;
-
-		next(parallel_resume_0_4) :=
-			case
-				(parallel_resume_0_4 = 4) & (previous_node in {-2, 4}) & (previous_status = running) : previous_node;
-				(previous_node = 4) & (previous_status = success | previous_status = failure) : -2;
-				(previous_node = 0) & (previous_status = success | previous_status = failure) : 4;
-				TRUE : parallel_resume_0_4;
-			esac;
-
-		next(parallel_resume_0_5) :=
-			case
-				(parallel_resume_0_5 = 5) & (previous_node in {-2, 5}) & (previous_status = running) : previous_node;
-				(previous_node = 5) & (previous_status = success | previous_status = failure) : -2;
-				(previous_node = 0) & (previous_status = success | previous_status = failure) : 5;
-				TRUE : parallel_resume_0_5;
-			esac;
-
-		next(parallel_resume_0_6) :=
-			case
-				(parallel_resume_0_6 = 6) & (previous_node in {-2, 6}) & (previous_status = running) : previous_node;
-				(previous_node = 6) & (previous_status = success | previous_status = failure) : -2;
-				(previous_node = 0) & (previous_status = success | previous_status = failure) : 6;
-				TRUE : parallel_resume_0_6;
-			esac;
-
-		next(parallel_resume_0_7) :=
-			case
-				(parallel_resume_0_7 = 7) & (previous_node in {-2, 7}) & (previous_status = running) : previous_node;
-				(previous_node = 7) & (previous_status = success | previous_status = failure) : -2;
-				(previous_node = 0) & (previous_status = success | previous_status = failure) : 7;
-				TRUE : parallel_resume_0_7;
-			esac;
-
-		next(parallel_resume_0_8) :=
-			case
-				(parallel_resume_0_8 = 8) & (previous_node in {-2, 8}) & (previous_status = running) : previous_node;
-				(previous_node = 8) & (previous_status = success | previous_status = failure) : -2;
-				(previous_node = 0) & (previous_status = success | previous_status = failure) : 8;
-				TRUE : parallel_resume_0_8;
-			esac;
-
-		next(parallel_resume_0_9) :=
-			case
-				(parallel_resume_0_9 = 9) & (previous_node in {-2, 9}) & (previous_status = running) : previous_node;
-				(previous_node = 9) & (previous_status = success | previous_status = failure) : -2;
-				(previous_node = 0) & (previous_status = success | previous_status = failure) : 9;
-				TRUE : parallel_resume_0_9;
-			esac;
-
-		next(parallel_resume_0_10) :=
-			case
-				(parallel_resume_0_10 = 10) & (previous_node in {-2, 10}) & (previous_status = running) : previous_node;
-				(previous_node = 10) & (previous_status = success | previous_status = failure) : -2;
-				(previous_node = 0) & (previous_status = success | previous_status = failure) : 10;
-				TRUE : parallel_resume_0_10;
-			esac;
-
-		next(parallel_resume_0_11) :=
-			case
-				(parallel_resume_0_11 = 11) & (previous_node in {-2, 11}) & (previous_status = running) : previous_node;
-				(previous_node = 11) & (previous_status = success | previous_status = failure) : -2;
-				(previous_node = 0) & (previous_status = success | previous_status = failure) : 11;
-				TRUE : parallel_resume_0_11;
-			esac;
-
-		next(parallel_resume_0_12) :=
-			case
-				(parallel_resume_0_12 = 12) & (previous_node in {-2, 12}) & (previous_status = running) : previous_node;
-				(previous_node = 12) & (previous_status = success | previous_status = failure) : -2;
-				(previous_node = 0) & (previous_status = success | previous_status = failure) : 12;
-				TRUE : parallel_resume_0_12;
-			esac;
-
-		next(parallel_resume_0_13) :=
-			case
-				(parallel_resume_0_13 = 13) & (previous_node in {-2, 13}) & (previous_status = running) : previous_node;
-				(previous_node = 13) & (previous_status = success | previous_status = failure) : -2;
-				(previous_node = 0) & (previous_status = success | previous_status = failure) : 13;
-				TRUE : parallel_resume_0_13;
-			esac;
-
 MODULE node_parallel(active_node, id, previous_status, last_child, previous_node, synchronized, parallel_policy_all, resumer)
 	DEFINE
 		status :=
@@ -274,4 +157,3 @@ MODULE define_nodes
 		Dummy10 := 11;
 		Dummy11 := 12;
 		Dummy12 := 13;
-

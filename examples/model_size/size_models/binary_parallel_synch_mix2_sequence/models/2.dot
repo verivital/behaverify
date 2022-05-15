@@ -1,0 +1,19 @@
+digraph pastafarianism {
+ordering=out;
+graph [fontname="times-roman"];
+node [fontname="times-roman"];
+edge [fontname="times-roman"];
+node1 [fillcolor=orange, fontcolor=black, fontsize=9, label="Ⓜ node1", shape=box, style=filled];
+node2 [fillcolor=gold, fontcolor=black, fontsize=9, label="node2\nSuccessOnAll", shape=parallelogram, style=filled];
+node1 -> node2;
+Dummy [fillcolor=gray, fontcolor=black, fontsize=9, label=Dummy, shape=ellipse, style=filled];
+node2 -> Dummy;
+"Dummy*" [fillcolor=gray, fontcolor=black, fontsize=9, label="Dummy*", shape=ellipse, style=filled];
+node2 -> "Dummy*";
+node5 [fillcolor=gold, fontcolor=black, fontsize=9, label="node5\nSuccessOnAll", shape=parallelogram, style=filled];
+node1 -> node5;
+"Dummy**" [fillcolor=gray, fontcolor=black, fontsize=9, label="Dummy**", shape=ellipse, style=filled];
+node5 -> "Dummy**";
+"Dummy***" [fillcolor=gray, fontcolor=black, fontsize=9, label="Dummy***", shape=ellipse, style=filled];
+node5 -> "Dummy***";
+}

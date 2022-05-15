@@ -1,9 +1,0 @@
-CTLSPEC CTL1 AG(((blackboard.variable[2] = 1) & (blackboard.variable_exists[2] = TRUE)) -> AF(active_node = 7))
-
---the above is actually just straight forward trying to prove that if we hit low battery, we eventually hit active_node=7 (surface task)
-
-
-
-CTLSPEC CTL2 EG(((blackboard.variable[2] = 1) & (blackboard.variable_exists[2] = TRUE)) -> AF(!(active_node = 7)))
-
---the above is a counterexample attempt. there exists a 

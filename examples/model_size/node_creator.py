@@ -158,8 +158,11 @@ def create_blackboard(int_to_variable, variable_to_int, variable_access, nodes):
             var_array_string += (variable + "_SET." + variable + ", ")
             var_exist_string += (variable + "_SET." + variable + "_exists, ")
             set_string="{"
-            for node in variable_access[variable_to_int[variable]]:
-                set_string += str(node) + ", "
+            if variable_to_int[variable] in variable_access:
+                for node in variable_access[variable_to_int[variable]]:
+                    set_string += str(node) + ", "
+            else:
+                set_string += "-1, "
             decl_string += ("\t\t" + variable + "_SET : " + variable + "_SET_module(active_node, " + set_string[0:-2] + "}, variables, variable_exists, node_names, variable_names, previous_status);" + os.linesep)
         return_string += (var_array_string[0:-2] + "];" + os.linesep
                           + var_exist_string[0:-2] + "];" + os.linesep

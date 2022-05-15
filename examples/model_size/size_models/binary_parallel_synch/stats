@@ -53,15 +53,15 @@ Peak number of live nodes: 1483
 Number of BDD variables: 27
 Number of ZDD variables: 0
 Number of cache entries: 262144
-Number of cache look-ups: 3285
+Number of cache look-ups: 3289
 Number of cache hits: 1196
-Number of cache insertions: 2155
-Number of cache collisions: 35
+Number of cache insertions: 2159
+Number of cache collisions: 28
 Number of cache deletions: 0
 Cache used slots = 0.81% (expected 0.82%)
 Soft limit for cache size: 28672
 Number of buckets in unique table: 7168
-Used buckets in unique table: 27.23% (expected 27.08%)
+Used buckets in unique table: 27.40% (expected 27.08%)
 Number of BDD and ADD nodes: 2447
 Number of ZDD nodes: 0
 Number of dead BDD and ADD nodes: 1310
@@ -136,15 +136,15 @@ Peak number of live nodes: 4025
 Number of BDD variables: 49
 Number of ZDD variables: 0
 Number of cache entries: 262144
-Number of cache look-ups: 11136
-Number of cache hits: 4952
-Number of cache insertions: 6621
-Number of cache collisions: 181
+Number of cache look-ups: 11156
+Number of cache hits: 4959
+Number of cache insertions: 6634
+Number of cache collisions: 224
 Number of cache deletions: 0
-Cache used slots = 2.46% (expected 2.49%)
+Cache used slots = 2.45% (expected 2.50%)
 Soft limit for cache size: 51200
 Number of buckets in unique table: 12800
-Used buckets in unique table: 35.84% (expected 35.59%)
+Used buckets in unique table: 35.55% (expected 35.59%)
 Number of BDD and ADD nodes: 7002
 Number of ZDD nodes: 0
 Number of dead BDD and ADD nodes: 3307
@@ -219,15 +219,15 @@ Peak number of live nodes: 14008
 Number of BDD variables: 87
 Number of ZDD variables: 0
 Number of cache entries: 262144
-Number of cache look-ups: 43630
-Number of cache hits: 21426
-Number of cache insertions: 24368
-Number of cache collisions: 1553
+Number of cache look-ups: 43648
+Number of cache hits: 21427
+Number of cache insertions: 24385
+Number of cache collisions: 1675
 Number of cache deletions: 0
-Cache used slots = 8.70% (expected 8.88%)
+Cache used slots = 8.66% (expected 8.88%)
 Soft limit for cache size: 94208
 Number of buckets in unique table: 23552
-Used buckets in unique table: 53.73% (expected 53.67%)
+Used buckets in unique table: 53.74% (expected 53.67%)
 Number of BDD and ADD nodes: 25831
 Number of ZDD nodes: 0
 Number of dead BDD and ADD nodes: 12367
@@ -246,4 +246,87 @@ can be found in the documentation about the CU Decision Diagram Package.
 ######################################################################
 system diameter: 70
 reachable states: 26671 (2^14.703) out of 6.2376e+11 (2^39.1822)
+######################################################################
+*** This is nuXmv 2.0.0 (compiled on Mon Oct 14 17:48:12 2019)
+*** Copyright (c) 2014-2019, Fondazione Bruno Kessler
+*** For more information on nuXmv see https://nuxmv.fbk.eu
+*** or email to <nuxmv@list.fbk.eu>.
+*** Please report bugs at https://nuxmv.fbk.eu/bugs
+*** (click on "Login Anonymously" to access)
+*** Alternatively write to <nuxmv@list.fbk.eu>.
+
+*** This version of nuXmv is linked to NuSMV 2.6.0.
+*** For more information on NuSMV see <http://nusmv.fbk.eu>
+*** or email to <nusmv-users@list.fbk.eu>.
+*** Copyright (C) 2010-2019, Fondazione Bruno Kessler
+
+*** This version of nuXmv is linked to the CUDD library version 2.4.1
+*** Copyright (c) 1995-2004, Regents of the University of Colorado
+
+*** This version of nuXmv is linked to the MiniSat SAT solver. 
+*** See http://minisat.se/MiniSat.html
+*** Copyright (c) 2003-2006, Niklas Een, Niklas Sorensson
+*** Copyright (c) 2007-2010, Niklas Sorensson
+
+*** This version of nuXmv is linked to MathSAT
+*** Copyright (C) 2009-2019 by Fondazione Bruno Kessler
+*** Copyright (C) 2009-2019 by University of Trento and others
+*** See http://mathsat.fbk.eu
+
+**** CUDD modifiable parameters ****
+Hard limit for cache size: 699050
+Cache hit threshold for resizing: 30%
+Garbage collection enabled: yes
+Limit for fast unique table growth: 419430
+Maximum number of variables sifted per reordering: 1000
+Maximum number of variable swaps per reordering: 2000000
+Maximum growth while sifting a variable: 1.2
+Dynamic reordering of BDDs enabled: no
+Default BDD reordering method: 4
+Dynamic reordering of ZDDs enabled: no
+Default ZDD reordering method: 4
+Realignment of ZDDs to BDDs enabled: no
+Realignment of BDDs to ZDDs enabled: no
+Dead nodes counted in triggering reordering: no
+Group checking criterion: 7
+Recombination threshold: 0
+Symmetry violation threshold: 0
+Arc violation threshold: 0
+GA population size: 0
+Number of crossovers for GA: 0
+Next reordering threshold: 4004
+**** CUDD non-modifiable parameters ****
+Memory in use: 11196536
+Peak number of nodes: 59276
+Peak number of live nodes: 17551
+Number of BDD variables: 157
+Number of ZDD variables: 0
+Number of cache entries: 262144
+Number of cache look-ups: 127595
+Number of cache hits: 72145
+Number of cache insertions: 65406
+Number of cache collisions: 9094
+Number of cache deletions: 0
+Cache used slots = 21.48% (expected 22.08%)
+Soft limit for cache size: 192512
+Number of buckets in unique table: 48128
+Used buckets in unique table: 59.23% (expected 59.20%)
+Number of BDD and ADD nodes: 58898
+Number of ZDD nodes: 0
+Number of dead BDD and ADD nodes: 42816
+Number of dead ZDD nodes: 0
+Number of LIVE BDD and ADD nodes: 16082
+Number of LIVE ZDD nodes: 0
+Total number of nodes allocated: 58898
+Total number of nodes reclaimed: 65319
+Garbage collections so far: 0
+Time for garbage collection: 0.00 sec
+Reorderings so far: 0
+Time for reordering: 0.00 sec
+
+More detailed information about the semantics and values of these parameters
+can be found in the documentation about the CU Decision Diagram Package.
+######################################################################
+system diameter: 149
+reachable states: 5.98401e+07 (2^25.8346) out of 2.08254e+21 (2^70.8188)
 ######################################################################

@@ -1,0 +1,35 @@
+digraph pastafarianism {
+ordering=out;
+graph [fontname="times-roman"];
+node [fontname="times-roman"];
+edge [fontname="times-roman"];
+node1 [fillcolor=gold, fontcolor=black, fontsize=9, label="⚡ node1\nSuccessOnAll", shape=parallelogram, style=filled];
+node2 [fillcolor=orange, fontcolor=black, fontsize=9, label="Ⓜ node2", shape=box, style=filled];
+node1 -> node2;
+node3 [fillcolor=gold, fontcolor=black, fontsize=9, label="⚡ node3\nSuccessOnAll", shape=parallelogram, style=filled];
+node2 -> node3;
+Dummy [fillcolor=gray, fontcolor=black, fontsize=9, label=Dummy, shape=ellipse, style=filled];
+node3 -> Dummy;
+"Dummy*" [fillcolor=gray, fontcolor=black, fontsize=9, label="Dummy*", shape=ellipse, style=filled];
+node3 -> "Dummy*";
+node6 [fillcolor=orange, fontcolor=black, fontsize=9, label="Ⓜ node6", shape=box, style=filled];
+node2 -> node6;
+"Dummy**" [fillcolor=gray, fontcolor=black, fontsize=9, label="Dummy**", shape=ellipse, style=filled];
+node6 -> "Dummy**";
+"Dummy***" [fillcolor=gray, fontcolor=black, fontsize=9, label="Dummy***", shape=ellipse, style=filled];
+node6 -> "Dummy***";
+node9 [fillcolor=gold, fontcolor=black, fontsize=9, label="⚡ node9\nSuccessOnAll", shape=parallelogram, style=filled];
+node1 -> node9;
+node10 [fillcolor=orange, fontcolor=black, fontsize=9, label="Ⓜ node10", shape=box, style=filled];
+node9 -> node10;
+"Dummy****" [fillcolor=gray, fontcolor=black, fontsize=9, label="Dummy****", shape=ellipse, style=filled];
+node10 -> "Dummy****";
+"Dummy*****" [fillcolor=gray, fontcolor=black, fontsize=9, label="Dummy*****", shape=ellipse, style=filled];
+node10 -> "Dummy*****";
+node13 [fillcolor=gold, fontcolor=black, fontsize=9, label="⚡ node13\nSuccessOnAll", shape=parallelogram, style=filled];
+node9 -> node13;
+"Dummy******" [fillcolor=gray, fontcolor=black, fontsize=9, label="Dummy******", shape=ellipse, style=filled];
+node13 -> "Dummy******";
+"Dummy*******" [fillcolor=gray, fontcolor=black, fontsize=9, label="Dummy*******", shape=ellipse, style=filled];
+node13 -> "Dummy*******";
+}

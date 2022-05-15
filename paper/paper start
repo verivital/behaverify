@@ -1,4 +1,6 @@
-
+latex symbols to consider
+\bigvee
+\bigwedge
 
 Model outline
 
@@ -42,4 +44,35 @@ Parallel Resume
 Unfortunately, while the prior encoding works well for trees without parallel nodes, it fails when they are introduced. Suppose we tried resuming in the same fashion as before. If we resume in a leaf node that is
 The problems are that the behavior of a parallel node is different when resuming a run then when starting fresh and that multiple nodes may have been left in a running state, where previously there was a single running source.
 Consider a tree with a parallel node as it's root, and no other parallel nodes. If we remove the parallel node, then we have a forest with no parallel nodes, and we already have an efficient Resume strategy for trees with no parallel nodes. Therefore, we can reuse that Resume strategy, storing a value for each child of the parallel node. We can then expand this to work with trees in general. First let us consider the case where the parallel node is not the root. In this case, if the parallel node returns running, then we need to resume from the parallel node, and begin using.
-Consider again the tree with a parallel node as it's root, and no other parallel nodes. Let us now replace one of the children with a parallel node like so. We know how the new parallel node will resume, but how does this affect the resume of the 
+Consider again the tree with a parallel node as it's root, and no other parallel nodes. Let us now replace one of the children with a parallel node like so. We know how the new parallel node will resume, but how does this affect the resume of the
+
+
+
+
+
+Sequence Nodes
+
+Sequence Nodes run their children in order. There are three conditions under which a Sequence Node will return a value.
+1. A child returned Failure. In this case, the Sequence Node returns Failure.
+2. A child returned Running. In this case, the Sequence Node returns Running.
+3. All children returned Success. In this case, the Sequence Node returns Success.
+When a Sequence Node Resumes after returning Running, it will not rerun any children that had already returned success.
+
+
+Selector Nodes
+
+Selector Nodes run their children in order. There are three conditions under which a Selector Node will return a value.
+1. A child returned Success. In this case, the Selector Node returns Success.
+2. A child returned Running. In this case, the Selector Node returns Running.
+3. All children returned Failure. In this case, the Selector Node returns Failure.
+When a Selector Node Resumes after returning Running, it will start with it's first child, regardless of what it previously returned.
+
+
+Parallel Nodes
+
+There are 2 kinds of parallel Nodes: Synchronized and Unsynchronized. Both run their children in order.  They will only return a value once all their children have returned a value, with the following conditions.
+1. If any child returned Failure, the Parallel Node will return Failure.
+2. If no children returned Failure and the set of children that returned Success was satisfactory, the Parallel Node will return Success.
+3. If no children returned Failure and the set of children that returned Success was unsatisfactory, the Parallel Node will return Running.
+A set is satisfactory if it satisfies the policy of the Parallel Node. py_trees provides two built-in basic policies, SuccessOnOne and SuccessOnAll. SuccessOnOne requires that at least one child return Success, while SuccessOnAll requires all children to return Success. py_trees also allows the user to specify a list of children under the SuccessOnSelected policy. In this case, the parallel node will only return success if all children in the specified list return Success. While no other policies are directly supported by py_trees, one could modify the parallel class to accept sets of sets of children, such that the Parallel Node returns Success if and only if the set of children that returned success belongs to the set of sets the Parallel node was created with.
+The difference between Synchronized and Unsynchronized nodes lies in how they Resume after returning Running. A Synchronized Parallel Node will not rerun any children that returned Success, and will instead resume only the children that returned Running. An Unsynchronized Parallel Node will rerun any children that returned Success and resume any children that returned Running. 

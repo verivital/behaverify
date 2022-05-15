@@ -24,4 +24,8 @@
 *** Copyright (C) 2009-2019 by University of Trento and others
 *** See http://mathsat.fbk.eu
 
-2.89 user, 0.02 system, 3.00 elapsed -- Max VSize = 135200KB, Max RSS = 90356KB
+######################################################################
+system diameter: 313
+reachable states: 1.1118e+11 (2^36.6941) out of 1.04896e+22 (2^73.1514)
+######################################################################
+429.67 user, 0.80 system, 431.89 elapsed -- Max VSize = 1119960KB, Max RSS = 1075264KB

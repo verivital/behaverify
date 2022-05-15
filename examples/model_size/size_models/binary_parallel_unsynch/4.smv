@@ -1,0 +1,283 @@
+MODULE main
+	DEFINE
+		max_active_node := 30;
+		statuses := [node1.status, node2.status, node17.status, node3.status, node10.status, node4.status, node7.status, Dummy.status, Dummy1.status, Dummy2.status, Dummy3.status, node11.status, node14.status, Dummy4.status, Dummy5.status, Dummy6.status, Dummy7.status, node18.status, node25.status, node19.status, node22.status, Dummy8.status, Dummy9.status, Dummy10.status, Dummy11.status, node26.status, node29.status, Dummy12.status, Dummy13.status, Dummy14.status, Dummy15.status];
+		parents := [-1, 0, 0, 1, 1, 3, 3, 5, 5, 6, 6, 4, 4, 11, 11, 12, 12, 2, 2, 17, 17, 19, 19, 20, 20, 18, 18, 25, 25, 26, 26];
+		leafs := {-3, 7, 8, 9, 10, 13, 14, 15, 16, 21, 22, 23, 24, 27, 28, 29, 30};
+		selectors := {-3};
+		sequences := {-3};
+		parallels_synchronised_all := {-3};
+		parallels_unsynchronised_all := {-3, 0, 1, 2, 3, 4, 5, 6, 11, 12, 17, 18, 19, 20, 25, 26};
+		parallels_synchronised_one := {-3};
+		parallels_unsynchronised_one := {-3};
+		parallels := {-3, 0, 1, 2, 3, 4, 5, 6, 11, 12, 17, 18, 19, 20, 25, 26};
+		decorators := {-3};
+		first_child := [1, 3, 17, 5, 11, 7, 9, -2, -2, -2, -2, 13, 15, -2, -2, -2, -2, 19, 25, 21, 23, -2, -2, -2, -2, 27, 29, -2, -2, -2, -2];
+		last_child := [2, 4, 18, 6, 12, 8, 10, -1, -1, -1, -1, 14, 16, -1, -1, -1, -1, 20, 26, 22, 24, -1, -1, -1, -1, 28, 30, -1, -1, -1, -1];
+		parallel_resume := [parallel_resume_0, parallel_resume_1, parallel_resume_2, parallel_resume_3, parallel_resume_4, parallel_resume_5, parallel_resume_6, -2, -2, -2, -2, parallel_resume_11, parallel_resume_12, -2, -2, -2, -2, parallel_resume_17, parallel_resume_18, parallel_resume_19, parallel_resume_20, -2, -2, -2, -2, parallel_resume_25, parallel_resume_26, -2, -2, -2, -2];
+		parallel_resume_0 := 
+			case
+				(previous_node < 1) & !(parallel_resume_0_1 = -2) : parallel_resume_0_1;
+				(previous_node < 2) & !(parallel_resume_0_2 = -2) : parallel_resume_0_2;
+				TRUE : parents[0];
+			esac;
+		parallel_resume_1 := 
+			case
+				(previous_node < 3) & !(parallel_resume_1_3 = -2) : parallel_resume_1_3;
+				(previous_node < 4) & !(parallel_resume_1_4 = -2) : parallel_resume_1_4;
+				TRUE : parents[1];
+			esac;
+		parallel_resume_3 := 
+			case
+				(previous_node < 5) & !(parallel_resume_3_5 = -2) : parallel_resume_3_5;
+				(previous_node < 6) & !(parallel_resume_3_6 = -2) : parallel_resume_3_6;
+				TRUE : parents[3];
+			esac;
+		parallel_resume_5 := 
+			case
+				(previous_node < 7) & !(parallel_resume_5_7 = -2) : parallel_resume_5_7;
+				(previous_node < 8) & !(parallel_resume_5_8 = -2) : parallel_resume_5_8;
+				TRUE : parents[5];
+			esac;
+		parallel_resume_6 := 
+			case
+				(previous_node < 9) & !(parallel_resume_6_9 = -2) : parallel_resume_6_9;
+				(previous_node < 10) & !(parallel_resume_6_10 = -2) : parallel_resume_6_10;
+				TRUE : parents[6];
+			esac;
+		parallel_resume_4 := 
+			case
+				(previous_node < 11) & !(parallel_resume_4_11 = -2) : parallel_resume_4_11;
+				(previous_node < 12) & !(parallel_resume_4_12 = -2) : parallel_resume_4_12;
+				TRUE : parents[4];
+			esac;
+		parallel_resume_11 := 
+			case
+				(previous_node < 13) & !(parallel_resume_11_13 = -2) : parallel_resume_11_13;
+				(previous_node < 14) & !(parallel_resume_11_14 = -2) : parallel_resume_11_14;
+				TRUE : parents[11];
+			esac;
+		parallel_resume_12 := 
+			case
+				(previous_node < 15) & !(parallel_resume_12_15 = -2) : parallel_resume_12_15;
+				(previous_node < 16) & !(parallel_resume_12_16 = -2) : parallel_resume_12_16;
+				TRUE : parents[12];
+			esac;
+		parallel_resume_2 := 
+			case
+				(previous_node < 17) & !(parallel_resume_2_17 = -2) : parallel_resume_2_17;
+				(previous_node < 18) & !(parallel_resume_2_18 = -2) : parallel_resume_2_18;
+				TRUE : parents[2];
+			esac;
+		parallel_resume_17 := 
+			case
+				(previous_node < 19) & !(parallel_resume_17_19 = -2) : parallel_resume_17_19;
+				(previous_node < 20) & !(parallel_resume_17_20 = -2) : parallel_resume_17_20;
+				TRUE : parents[17];
+			esac;
+		parallel_resume_19 := 
+			case
+				(previous_node < 21) & !(parallel_resume_19_21 = -2) : parallel_resume_19_21;
+				(previous_node < 22) & !(parallel_resume_19_22 = -2) : parallel_resume_19_22;
+				TRUE : parents[19];
+			esac;
+		parallel_resume_20 := 
+			case
+				(previous_node < 23) & !(parallel_resume_20_23 = -2) : parallel_resume_20_23;
+				(previous_node < 24) & !(parallel_resume_20_24 = -2) : parallel_resume_20_24;
+				TRUE : parents[20];
+			esac;
+		parallel_resume_18 := 
+			case
+				(previous_node < 25) & !(parallel_resume_18_25 = -2) : parallel_resume_18_25;
+				(previous_node < 26) & !(parallel_resume_18_26 = -2) : parallel_resume_18_26;
+				TRUE : parents[18];
+			esac;
+		parallel_resume_25 := 
+			case
+				(previous_node < 27) & !(parallel_resume_25_27 = -2) : parallel_resume_25_27;
+				(previous_node < 28) & !(parallel_resume_25_28 = -2) : parallel_resume_25_28;
+				TRUE : parents[25];
+			esac;
+		parallel_resume_26 := 
+			case
+				(previous_node < 29) & !(parallel_resume_26_29 = -2) : parallel_resume_26_29;
+				(previous_node < 30) & !(parallel_resume_26_30 = -2) : parallel_resume_26_30;
+				TRUE : parents[26];
+			esac;
+		parallel_resume_0_1 := 1;
+		parallel_resume_0_2 := 2;
+		parallel_resume_1_3 := 3;
+		parallel_resume_1_4 := 4;
+		parallel_resume_3_5 := 5;
+		parallel_resume_3_6 := 6;
+		parallel_resume_5_7 := 7;
+		parallel_resume_5_8 := 8;
+		parallel_resume_6_9 := 9;
+		parallel_resume_6_10 := 10;
+		parallel_resume_4_11 := 11;
+		parallel_resume_4_12 := 12;
+		parallel_resume_11_13 := 13;
+		parallel_resume_11_14 := 14;
+		parallel_resume_12_15 := 15;
+		parallel_resume_12_16 := 16;
+		parallel_resume_2_17 := 17;
+		parallel_resume_2_18 := 18;
+		parallel_resume_17_19 := 19;
+		parallel_resume_17_20 := 20;
+		parallel_resume_19_21 := 21;
+		parallel_resume_19_22 := 22;
+		parallel_resume_20_23 := 23;
+		parallel_resume_20_24 := 24;
+		parallel_resume_18_25 := 25;
+		parallel_resume_18_26 := 26;
+		parallel_resume_25_27 := 27;
+		parallel_resume_25_28 := 28;
+		parallel_resume_26_29 := 29;
+		parallel_resume_26_30 := 30;
+	VAR
+		active_node : -2..max_active_node;
+		previous_node : -1..max_active_node;
+		resume_node : -1..max_active_node;
+		previous_status : {running, success, failure, invalid};
+		node1 : node_parallel(active_node, 0, previous_status, 2, previous_node, FALSE, TRUE, parallel_resume_0);
+		node2 : node_parallel(active_node, 1, previous_status, 4, previous_node, FALSE, TRUE, parallel_resume_1);
+		node17 : node_parallel(active_node, 2, previous_status, 18, previous_node, FALSE, TRUE, parallel_resume_2);
+		node3 : node_parallel(active_node, 3, previous_status, 6, previous_node, FALSE, TRUE, parallel_resume_3);
+		node10 : node_parallel(active_node, 4, previous_status, 12, previous_node, FALSE, TRUE, parallel_resume_4);
+		node4 : node_parallel(active_node, 5, previous_status, 8, previous_node, FALSE, TRUE, parallel_resume_5);
+		node7 : node_parallel(active_node, 6, previous_status, 10, previous_node, FALSE, TRUE, parallel_resume_6);
+		Dummy : node_default(active_node, 7);
+		Dummy1 : node_default(active_node, 8);
+		Dummy2 : node_default(active_node, 9);
+		Dummy3 : node_default(active_node, 10);
+		node11 : node_parallel(active_node, 11, previous_status, 14, previous_node, FALSE, TRUE, parallel_resume_11);
+		node14 : node_parallel(active_node, 12, previous_status, 16, previous_node, FALSE, TRUE, parallel_resume_12);
+		Dummy4 : node_default(active_node, 13);
+		Dummy5 : node_default(active_node, 14);
+		Dummy6 : node_default(active_node, 15);
+		Dummy7 : node_default(active_node, 16);
+		node18 : node_parallel(active_node, 17, previous_status, 20, previous_node, FALSE, TRUE, parallel_resume_17);
+		node25 : node_parallel(active_node, 18, previous_status, 26, previous_node, FALSE, TRUE, parallel_resume_18);
+		node19 : node_parallel(active_node, 19, previous_status, 22, previous_node, FALSE, TRUE, parallel_resume_19);
+		node22 : node_parallel(active_node, 20, previous_status, 24, previous_node, FALSE, TRUE, parallel_resume_20);
+		Dummy8 : node_default(active_node, 21);
+		Dummy9 : node_default(active_node, 22);
+		Dummy10 : node_default(active_node, 23);
+		Dummy11 : node_default(active_node, 24);
+		node26 : node_parallel(active_node, 25, previous_status, 28, previous_node, FALSE, TRUE, parallel_resume_25);
+		node29 : node_parallel(active_node, 26, previous_status, 30, previous_node, FALSE, TRUE, parallel_resume_26);
+		Dummy12 : node_default(active_node, 27);
+		Dummy13 : node_default(active_node, 28);
+		Dummy14 : node_default(active_node, 29);
+		Dummy15 : node_default(active_node, 30);
+		node_names : define_nodes;
+	ASSIGN
+		init(active_node) := -1;
+		init(previous_node) := -1;
+		init(resume_node) := -1;
+		init(previous_status) := invalid;
+		next(previous_node) :=
+			case
+				(active_node < 0) : -1;
+				TRUE : active_node;
+			esac;
+		next(resume_node) :=
+			case
+				(previous_node < 0) : resume_node;
+				!(previous_status = running) : -1;
+				(resume_node = -1) : previous_node;
+				(previous_node in parallels) | (previous_node in selectors) : previous_node;
+				TRUE : resume_node;
+			esac;
+		next(previous_status) :=
+			case
+				(active_node < 0) : invalid;
+				TRUE : statuses[active_node];
+			esac;
+		next(active_node) :=
+			case
+				(active_node = -2) : -2;
+				(active_node = -1) & (resume_node = -1) : 0;
+				(active_node = -1) & !(resume_node = -1) : resume_node;
+				(active_node in leafs) : parents[active_node];
+				(previous_status = invalid) : first_child[active_node];
+				(previous_node = last_child[active_node]) : parents[active_node];
+				(active_node in parallels) : parallel_resume[active_node];
+				(active_node in sequences) & (previous_status = success) : min(max_active_node, previous_node + 1);
+				(active_node in selectors) & (previous_status = failure) : min(max_active_node, previous_node + 1);
+				TRUE : parents[active_node];
+			esac;
+MODULE node_parallel(active_node, id, previous_status, last_child, previous_node, synchronized, parallel_policy_all, resumer)
+	DEFINE
+		status :=
+			case
+				(id = active_node) & (resumer > id) : invalid;
+				(id = active_node) & ((cur_status = failure) | (previous_status = failure)) : failure;
+				(id = active_node) & (cur_status = running) & (previous_status = running) : running;
+				(id = active_node) & !(parallel_policy_all) : success;
+				(id = active_node) & (cur_status = success) & (previous_status = success) : success;
+				(id = active_node) : running;
+				TRUE : invalid;
+			esac;
+	VAR
+		cur_status : {failure, running, success};
+	ASSIGN
+		init(cur_status) :=
+			case
+				(parallel_policy_all) : success;
+				TRUE : running;
+			esac;
+		next(cur_status) :=
+			case
+				(id = active_node) & ((previous_status = failure) | (cur_status = failure)) : failure;
+				(id = active_node) & (parallel_policy_all) & (previous_status = success) : cur_status;
+				(id = active_node) & (parallel_policy_all) & (previous_status = running) : running;
+				(id = active_node) & !(parallel_policy_all) & (previous_status = success) : success;
+				(id = active_node) & !(parallel_policy_all) & (previous_status = running) : cur_status;
+				(active_node = -1) & synchronized & (parallel_policy_all) & !(previous_status = running) : success;
+				(active_node = -1) & synchronized & !(parallel_policy_all) & !(previous_status = running) : running;
+				(active_node = -1) & !(synchronized) & (parallel_policy_all) : success;
+				(active_node = -1) & !(synchronized) & !(parallel_policy_all) : running;
+				TRUE : cur_status;
+			esac;
+MODULE node_default(active_node, id)
+	DEFINE
+		status :=
+			case
+				(id = active_node) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE define_nodes
+	DEFINE
+		node1 := 0;
+		node2 := 1;
+		node17 := 2;
+		node3 := 3;
+		node10 := 4;
+		node4 := 5;
+		node7 := 6;
+		Dummy := 7;
+		Dummy1 := 8;
+		Dummy2 := 9;
+		Dummy3 := 10;
+		node11 := 11;
+		node14 := 12;
+		Dummy4 := 13;
+		Dummy5 := 14;
+		Dummy6 := 15;
+		Dummy7 := 16;
+		node18 := 17;
+		node25 := 18;
+		node19 := 19;
+		node22 := 20;
+		Dummy8 := 21;
+		Dummy9 := 22;
+		Dummy10 := 23;
+		Dummy11 := 24;
+		node26 := 25;
+		node29 := 26;
+		Dummy12 := 27;
+		Dummy13 := 28;
+		Dummy14 := 29;
+		Dummy15 := 30;
