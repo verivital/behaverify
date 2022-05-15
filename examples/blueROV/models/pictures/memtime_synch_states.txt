@@ -24,4 +24,4 @@
 *** Copyright (C) 2009-2019 by University of Trento and others
 *** See http://mathsat.fbk.eu
 
-10.11 user, 0.02 system, 10.21 elapsed -- Max VSize = 166628KB, Max RSS = 121820KB
+1021.48 user, 1.61 system, 1026.63 elapsed -- Max VSize = 1545524KB, Max RSS = 1500788KB

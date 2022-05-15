@@ -69,7 +69,7 @@ MODULE main
 				(previous_node < 0) : resume_node;
 				!(previous_status = running) : -1;
 				(resume_node = -1) : previous_node;
-				(previous_node in parallels) : previous_node;
+				(previous_node in parallels) | (previous_node in selectors) : previous_node;
 				TRUE : resume_node;
 			esac;
 		next(previous_status) :=
@@ -196,4 +196,3 @@ MODULE define_nodes
 		Dummy4 := 5;
 		Dummy5 := 6;
 		Dummy6 := 7;
-

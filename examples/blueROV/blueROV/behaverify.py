@@ -1,7 +1,4 @@
-#FIGURE OUT WHY --parallel_unsynch False ACTS AS THOUGH YOU SET IT TO TRUE.
-
-#python3 btree_serene.py create_root_FILE create_root_METHOD --root_args create_root_ARGS  --min_val min_val_INT --max_val max_val_INT --parallel_unsynch parallel_unsych_BOOL --modules additional_modules_FILE --specs specs_FILE --gen_modules gen_modules_INT --output_file ouput_file_FILE --gen_module_file gen_module_file_FILE --overwrite overwriteBOOL
-
+#python3 btree_serene.py create_root_FILE create_root_METHOD --root_args create_root_ARGS  --min_val min_val_INT --max_val max_val_INT --parallel_unsynch --modules additional_modules_FILE --specs specs_FILE --gen_modules gen_modules_INT --output_file ouput_file_FILE --gen_module_file gen_module_file_FILE --overwrite
 
 #TODO: neither parallel works correctly right now. implement both. DONE.
 
@@ -92,7 +89,8 @@ variable_check={}#for each variable, a list of nodes that check that variable. i
 blackboard_needed=False#stores if we need the blackboard
 node_names={}#a list of node names. each name is also associated with an integer that indicates how many times it has been seen, allowing us to automatically create a new name.
 last_child={}#a list of the last child index for each node
-parallel_resume={}#each parallel node_id indexes to a dict. this dict is indexed by the direct children of the parallel node, and stores a list of all their descendents (though when it reaches a new parallel node that counts as a leaf)
+advanced_resume={}#each parallel or selector node_id indexes to a dict. this dict is indexed by the direct children of the parallel or selector node, and stores a list of all their descendents (though when it reaches a new parallel node or selector node,  that counts as a leaf)
+default_resume=[]#this is just a list of nodes the overall tree can resume from. it's the type of list that that is  stored in advanced_resume.
 parallel_synch_list = {}#list of parallel_synch
 parallel_unsynch_list = {}
 external_status_req = []#list of nodes that require external status. each entry is the node name.
@@ -101,8 +99,8 @@ external_status_req = []#list of nodes that require external status. each entry 
 blackboard_name_pattern = re.compile(r"#*(?P<blackboard_name>[^\s=]+)\s*=\s*py_trees\.blackboard\.Blackboard\(\)")
 #----------------------------------------------------------------------------------------------------------------
 
-def walk_tree(t, parent_id, assigned_id, sub_parallel = -1, sub_child = -1, parallel_unsynch = False):
-    global node_count, children, nodes, additional_arguments, needed_nodes, variable_to_int, variable_access, blackboard_needed, last_child, parallel_resume, parallel_synch_list, parallel_unsych_list, variable_check, external_status_req;
+def walk_tree(t, parent_id, assigned_id, resume_node = -1, resume_child = -1, parallel_unsynch = False):
+    global node_count, children, nodes, additional_arguments, needed_nodes, variable_to_int, variable_access, blackboard_needed, last_child, advanced_resume, default_resume, parallel_synch_list, parallel_unsych_list, variable_check, external_status_req;
     this_id=assigned_id
     #print(parallel_unsynch)
     try:
@@ -120,14 +118,16 @@ def walk_tree(t, parent_id, assigned_id, sub_parallel = -1, sub_child = -1, para
 
     last_child[this_id]=-1
 
-    if sub_parallel >= 0:
-        if sub_parallel in parallel_resume:
-            if sub_child in parallel_resume[sub_parallel]:
-                parallel_resume[sub_parallel][sub_child].append(this_id)
+    if resume_node >= 0:
+        if resume_node in advanced_resume:
+            if resume_child in advanced_resume[resume_node]:
+                advanced_resume[resume_node][resume_child].append(this_id)
             else:
-                parallel_resume[sub_parallel][sub_child] = [this_id]
+                advanced_resume[resume_node][resume_child] = [this_id]
         else:
-            parallel_resume[sub_parallel]={ sub_child : [this_id] }
+            advanced_resume[resume_node]={ resume_child : [this_id] }
+    else:#if we aren't in an advanced resume scenario, then we're in the default resume scenario!
+        default_resume.append(this_id)
 
 
     try:
@@ -202,11 +202,12 @@ def walk_tree(t, parent_id, assigned_id, sub_parallel = -1, sub_child = -1, para
         nodes[this_id]=('node_sequence', parent_id, node_name)
         needed_nodes['node_sequence']=True
     elif isinstance(t, py_trees.composites.Selector):
+        resume_node=this_id
         #children[this_id]=[]
         nodes[this_id]=('node_selector', parent_id, node_name)
         needed_nodes['node_selector']=True
     elif isinstance(t, py_trees.composites.Parallel):
-        sub_parallel=this_id
+        resume_node=this_id
         #children[this_id]=[]
         if t.policy.synchronise and (not parallel_unsynch):
             parallel_synch_list[this_id]=True
@@ -215,9 +216,9 @@ def walk_tree(t, parent_id, assigned_id, sub_parallel = -1, sub_child = -1, para
             #needed_nodes['node_parallel_synchronised']=True
             needed_nodes['node_parallel']=True
             if isinstance(t.policy, py_trees.common.ParallelPolicy.SuccessOnAll):
-                additional_arguments[this_id]=[{'arg' : "TRUE, TRUE, parallel_resume_" + str(this_id)}, ]
+                additional_arguments[this_id]=[{'arg' : "TRUE, TRUE, advanced_resume_" + str(this_id)}, ]
             elif isinstance(t.policy, py_trees.common.ParallelPolicy.SuccessOnOne):
-                additional_arguments[this_id]=[{'arg' : "TRUE, FALSE, parallel_resume_" + str(this_id)}, ]
+                additional_arguments[this_id]=[{'arg' : "TRUE, FALSE, advanced_resume_" + str(this_id)}, ]
             else:
                 print('ERROR: the following parallel policy is not supported: ' + str(t.policy))
                 sys.exit('Unsupported Parallel Policy')
@@ -228,9 +229,9 @@ def walk_tree(t, parent_id, assigned_id, sub_parallel = -1, sub_child = -1, para
             #needed_nodes['node_parallel_unsynchronised']=True
             needed_nodes['node_parallel']=True
             if isinstance(t.policy, py_trees.common.ParallelPolicy.SuccessOnAll):
-                additional_arguments[this_id]=[{'arg' : "FALSE, TRUE, parallel_resume_" + str(this_id)}, ]
+                additional_arguments[this_id]=[{'arg' : "FALSE, TRUE, advanced_resume_" + str(this_id)}, ]
             elif isinstance(t.policy, py_trees.common.ParallelPolicy.SuccessOnOne):
-                additional_arguments[this_id]=[{'arg' : "FALSE, FALSE, parallel_resume_" + str(this_id)}, ]
+                additional_arguments[this_id]=[{'arg' : "FALSE, FALSE, advanced_resume_" + str(this_id)}, ]
             else:
                 print('ERROR: the following parallel policy is not supported: ' + str(t.policy))
                 sys.exit('Unsupported Parallel Policy')
@@ -467,14 +468,20 @@ def walk_tree(t, parent_id, assigned_id, sub_parallel = -1, sub_child = -1, para
     node_count_now=node_count
     node_count=node_count+len(t.children)
     #----------------------------------------------------------------------------------------------------------------------
+
+    if not (this_id == resume_node):#we are in a sequence or decorator node
+        #we can't actually resume from a sequence or decorator node. remove ourselves
+        #we didn't change resume_node
+        if resume_node >= 0:#check if we modified advanced_resume or default_resume
+            advanced_resume[resume_node][resume_child].pop()#it was the last thing added, so remove it
+        else:
+            default_resume.pop()#it was the last thing added, so remove it
     for child in t.children:
         node_count_now = node_count_now + 1
-        if this_id == sub_parallel:#this means we are currently in a parallel node, which means we need to go through each child and create a resume tree
-            walk_tree(child, this_id, node_count_now, sub_parallel, node_count_now, parallel_unsynch)#which is why we're setting sub_child to be node_count_now
-        elif nodes[this_id] == 'node_selector':
-            walk_tree(child, this_id, node_count_now, -1, -1, parallel_unsynch)#can't resume from within a selector node. always resume from the selector node itself.
-        else:
-            walk_tree(child, this_id, node_count_now, sub_parallel, sub_child, parallel_unsynch)
+        if this_id == resume_node:#this means we are currently in a parallel or selector node, which means we need to go through each child and create a resume tree
+            walk_tree(child, this_id, node_count_now, resume_node, node_count_now, parallel_unsynch)#which is why we're setting resume_child to be node_count_now
+        else:#we are in a sequence or decorator node
+            walk_tree(child, this_id, node_count_now, resume_node, resume_child, parallel_unsynch)
     last_child[this_id]=node_count_now
 
     #-----------------------------------------------------------------------------------------------------------------------
@@ -489,23 +496,22 @@ def main():
     """
     Entry point for the demo script.
     """
-    global node_count, children, nodes, additional_arguments, needed_nodes, variable_to_int, variable_access, blackboard_needed, last_child, parallel_resume, parallel_synch_list, parallel_unsych_list, variable_check, external_status_req;
+    global node_count, children, nodes, additional_arguments, needed_nodes, variable_to_int, variable_access, blackboard_needed, last_child, advanced_resume, default_resume, parallel_synch_list, parallel_unsych_list, variable_check, external_status_req;
 
     arg_parser=argparse.ArgumentParser()
-    #python3 btree_serene.py create_root_FILE create_root_METHOD --root_args create_root_ARGS  --min_val min_val_INT --max_val max_val_INT --parallel_unsynch parallel_unsych_BOOL --modules additional_modules_FILE --specs specs_FILE --gen_modules gen_modules_INT --output_file ouput_file_FILE --gen_module_file gen_module_file_FILE --overwrite overwriteBOOL
+    #python3 btree_serene.py create_root_FILE create_root_METHOD --root_args create_root_ARGS  --min_val min_val_INT --max_val max_val_INT --parallel_unsynch --modules additional_modules_FILE --specs specs_FILE --gen_modules gen_modules_INT --output_file ouput_file_FILE --gen_module_file gen_module_file_FILE --overwrite
     arg_parser.add_argument('root_file')
     arg_parser.add_argument('root_method')
     arg_parser.add_argument('--root_args', default='', nargs='*')
+    arg_parser.add_argument('--string_args', default='', nargs='*')
     arg_parser.add_argument('--min_val', default=0, type=int)
     arg_parser.add_argument('--max_val', default=1, type=int)
-    #arg_parser.add_argument('--parallel_unsynch', default=False, type=bool)
     arg_parser.add_argument('--parallel_unsynch', action='store_true')
     arg_parser.add_argument('--modules')
     arg_parser.add_argument('--specs')
     arg_parser.add_argument('--gen_modules', default=0, type=int)
     arg_parser.add_argument('--output_file', default=None)
     arg_parser.add_argument('--gen_module_file', default=None)
-    #arg_parser.add_argument('--overwrite', default=False, type=bool)
     arg_parser.add_argument('--overwrite', action='store_true')
     args=arg_parser.parse_args()
 
@@ -519,6 +525,12 @@ def main():
             first=False
         else:
             root_string += ', ' + root_arg
+    for string_arg in args.string_args:
+        if first:
+            root_string += '\'' + string_arg + '\''
+            first=False
+        else:
+            root_string += ', ' + '\'' + string_arg + '\''
     root_string += ')'
     root = eval(root_string)
 
@@ -531,6 +543,7 @@ def main():
     #i.e., if a variable in the original was just "meh = Object"
     #but other places use meh.val1, meh.val2, etc, then the original "meh" needs to handle those.
     #note: currently not handling recursive things, like meh.val1.val3
+    #should maybe look into this a bit more. 
     for variable in variable_to_int:
         blackboard_name_pattern = re.compile(r"#(?P<blackboard_name>[^\s=]+)\s*=\s*py_trees\.blackboard\.Blackboard\(\)")
         variable_regex=re.compile(r""+variable+"_dot_")
@@ -626,59 +639,83 @@ def main():
                          + last_child_str[0:-2] + "];" + os.linesep)
 
     #------------------------------------------------------------------------------------------------------------------------
+    default_resume_valid_set = '{' + str(default_resume)[1 : -1] + '}'
     nuxmv_string = (""
                     + "\tVAR" + os.linesep 
                     + "\t\tactive_node : -2..max_active_node;" + os.linesep
                     + "\t\tprevious_node : -1..max_active_node;" + os.linesep
-                    + "\t\tresume_node : -1..max_active_node;" + os.linesep
+                    + "\t\tresume_node : {-1, " + str(default_resume)[1 : -1] + "};" + os.linesep
                     + "\t\tprevious_status : {running, success, failure, invalid};" + os.linesep)
 
     #------------------------------------------------------------------------------------------------------------------------
-    if len(parallel_resume) > 0:
-        pre_nuxmv_string += ("\t\tparallel_resume := [")
+    if len(advanced_resume) > 0:
+        pre_nuxmv_string += ("\t\tadvanced_resume := [")
         first = True
         for node_id in range(0, node_count):
             if first:
                 first = False
             else:
                 pre_nuxmv_string += ", "
-            if node_id in parallel_resume: #this means it's a parallel_node
-                pre_nuxmv_string += ("parallel_resume_" + str(node_id))
+            if node_id in advanced_resume: #this means it's a parallel_node or selector node
+                pre_nuxmv_string += ("advanced_resume_" + str(node_id))
             else:
                 pre_nuxmv_string += "-2"
         pre_nuxmv_string += "];" + os.linesep
         parallel_init = ""
         parallel_next = ""
         pre_post_nuxmv_string = ""
-        for parallel_node in parallel_resume:
-            pre_nuxmv_string += ("\t\tparallel_resume_" + str(parallel_node) + " := " + os.linesep
-                                      + "\t\t\tcase" + os.linesep)
-            #for direct_child in parallel_resume[parallel_node]:#order guaranteed in python3.7, but just in case swapping to the list set of children, which is guaranteed to iterate correctly
-            for direct_child in children[parallel_node]:
-                if parallel_node in parallel_unsynch_list:
+        for advanced_node in advanced_resume:#parallel or selector nodes
+            pre_nuxmv_string += ("\t\tadvanced_resume_" + str(advanced_node) + " := " + os.linesep
+                                 + "\t\t\tcase" + os.linesep
+                                 + "\t\t\t\t(" + str(advanced_node) + " in selectors) & (previous_status = success | previous_status = running) : parents[active_node];" + os.linesep #selectors have a terminate early condition
+            )
+            #for direct_child in advanced_resume[advanced_node]:#order guaranteed in python3.7, but just in case swapping to the list set of children, which is guaranteed to iterate correctly
+            for direct_child in children[advanced_node]:
+                #valid set is going to describe the list of places we can actually resume from
+                #state set is valid_set UNION direct_child, because if we're not actually resuming than we need to start from direct child.
+                if advanced_node in parallel_synch_list:
+                    valid_set = "{-2, "#need the extra state if synched. marks a skippable node 
+                else:#unsynched or selector
                     valid_set = "{"#don't need an extra state if unsynched. every descendant of an unsyched is always used for resume
+                    
+                if direct_child == advanced_resume[advanced_node][direct_child][0]:#direct child can only be the first thing, since that's when it would have been added.
+                    state_set = valid_set + str(advanced_resume[advanced_node][direct_child])[1 : -1] + "}" #direct child is already in there, no need to do anything
                 else:
-                    valid_set = "{-2, "#need the extra state if synched. marks a skippable node
-                valid_set += str(parallel_resume[parallel_node][direct_child])[1 : -1] + "}"
+                    state_set = valid_set + str(direct_child) + ',' + str(advanced_resume[advanced_node][direct_child])[1 : -1] + "}" #direct child must be a valid location. add it back manually
+                ##############################################################################################################################################################
+                #important note!
+                #it is possible to have a case where there is only 1 node in the valid_set, and 2 nodes in the state_set. In this case
+                #we STILL store the value as a constant. Now, it's important to note what this means
+                #this means that during simulations, the model will JUMP to the child, even if it's not actually resuming.
+                #THIS HAS BEEN CHANGED. in tha same case, we now isntead always go to the direct child, even when resuming.
+                #this combines the clarity and state saving features of both versions.
+                
+                
+                valid_set += str(advanced_resume[advanced_node][direct_child])[1 : -1] + "}"
                 if ',' in valid_set:
-                    nuxmv_string += ("\t\tparallel_resume_" + str(parallel_node) + "_" + str(direct_child) + " : " + valid_set + ";" + os.linesep)
-                    parallel_init += ("\t\tinit(parallel_resume_" + str(parallel_node) + "_" + str(direct_child) + ") := " + str(direct_child) + ";" + os.linesep)
-                    parallel_next += ("\t\tnext(parallel_resume_" + str(parallel_node) + "_" + str(direct_child) + ") :=" + os.linesep
+                    nuxmv_string += ("\t\tadvanced_resume_" + str(advanced_node) + "_" + str(direct_child) + " : " + state_set + ";" + os.linesep)
+                    parallel_init += ("\t\tinit(advanced_resume_" + str(advanced_node) + "_" + str(direct_child) + ") := " + str(direct_child) + ";" + os.linesep)
+                    parallel_next += ("\t\tnext(advanced_resume_" + str(advanced_node) + "_" + str(direct_child) + ") :=" + os.linesep
                                       + "\t\t\tcase" + os.linesep
-                                      + "\t\t\t\t(parallel_resume_" + str(parallel_node) + "_" + str(direct_child) + " = " + str(direct_child) + ") & (previous_node in " + valid_set + ") & (previous_status = running) : previous_node;" + os.linesep #if we are currently pointing to the direct descendant and we encounter something that returned running, point to that instead.
-                                      + "\t\t\t\t(previous_node = " + str(direct_child) + ") & (previous_status = success | previous_status = failure) : ")
-                    if parallel_node in parallel_unsynch_list:
-                        parallel_next += (str(direct_child) + ";" + os.linesep) #if it's unsynched, success means we point at direct descendant
-                    else:
-                        parallel_next += "-2;" + os.linesep #if it's synched, success means we mark it as finished
+                                      + "\t\t\t\t(previous_node = " + str(advanced_node) + ") & (previous_status = failure | previous_status = success) : " + str(direct_child) + ";" + os.linesep #reset if the advanced node actually returned
+                                      + "\t\t\t\t(advanced_resume_" + str(advanced_node) + "_" + str(direct_child) + " = " + str(direct_child) + ") & (previous_node in " + valid_set + ") & (previous_status = running) : previous_node;" + os.linesep #if we are currently pointing to the direct descendant and we encounter something that returned running, point to that instead.
+                                      + "\t\t\t\t(previous_node = " + str(direct_child) + ") & (previous_status = failure | previous_status = success) : "
+                    )
+                    if advanced_node in parallel_synch_list:#means it's synched
+                        parallel_next += "-2;" + os.linesep #if it's synched, success means we mark it as finished. if it's failure, we'll reset when the node returns failure. see first case
+                    else:#means it's unsynched or selector
+                        parallel_next += (str(direct_child) + ";" + os.linesep) #if it's unsynched, success or failure means we point at direct descendant
                     parallel_next += ("\t\t\t\t(previous_node = 0) & (previous_status = success | previous_status = failure) : " + str(direct_child) + ";" + os.linesep#reset if we didn't end up on running
-                                      + "\t\t\t\tTRUE : parallel_resume_" + str(parallel_node) + "_" + str(direct_child) + ";" + os.linesep
-                                      + "\t\t\tesac;" + os.linesep + os.linesep)
+                                      + "\t\t\t\tTRUE : advanced_resume_" + str(advanced_node) + "_" + str(direct_child) + ";" + os.linesep
+                                      + "\t\t\tesac;" + os.linesep + os.linesep
+                    )
                 else:#we're storing it as a constant
-                    pre_post_nuxmv_string += ("\t\tparallel_resume_" + str(parallel_node) + "_" + str(direct_child) + " := " + valid_set[ 1 : -1] + ";" + os.linesep)
-                pre_nuxmv_string += "\t\t\t\t(previous_node < " + str(direct_child) + ") & !(parallel_resume_" + str(parallel_node) + "_" + str(direct_child) + " = -2) : parallel_resume_" + str(parallel_node) + "_" + str(direct_child) + ";" + os.linesep #if the previous_node is less than this direct child, check if we're supposed to use it for a resume.
-            pre_nuxmv_string += ("\t\t\t\tTRUE : parents[" + str(parallel_node) + "];" + os.linesep
-                                 + "\t\t\tesac;" + os.linesep)
+                    #pre_post_nuxmv_string += ("\t\tadvanced_resume_" + str(advanced_node) + "_" + str(direct_child) + " := " + valid_set[ 1 : -1] + ";" + os.linesep)
+                    pre_post_nuxmv_string += ("\t\tadvanced_resume_" + str(advanced_node) + "_" + str(direct_child) + " := " + str(direct_child) + ";" + os.linesep)
+                pre_nuxmv_string += "\t\t\t\t(previous_node < " + str(direct_child) + ") & !(advanced_resume_" + str(advanced_node) + "_" + str(direct_child) + " = -2) : advanced_resume_" + str(advanced_node) + "_" + str(direct_child) + ";" + os.linesep #if the previous_node is less than this direct child, check if we're supposed to use it for a resume.
+            pre_nuxmv_string += ("\t\t\t\tTRUE : parents[" + str(advanced_node) + "];" + os.linesep
+                                 + "\t\t\tesac;" + os.linesep
+            )
         pre_nuxmv_string += pre_post_nuxmv_string
                 
     
@@ -738,7 +775,7 @@ def main():
                     + "\t\tinit(previous_node) := -1;" + os.linesep
                     + "\t\tinit(resume_node) := -1;" + os.linesep
                     + "\t\tinit(previous_status) := invalid;" + os.linesep)
-    if len(parallel_resume) > 0:
+    if len(advanced_resume) > 0:
         nuxmv_string += parallel_init
     for node_id in range(0, node_count):
         if node_id in additional_arguments:
@@ -761,14 +798,21 @@ def main():
     nuxmv_string = (nuxmv_string
                     + "\t\tnext(resume_node) :=" + os.linesep
                     + "\t\t\tcase" + os.linesep
-                    + "\t\t\t\t(previous_node < 0) : resume_node;" + os.linesep #don't change if the previous node wasn't a real place
-                    #at this point, previous_node >= 0
-                    + "\t\t\t\t!(previous_status = running) : -1;" + os.linesep #if we encounter a node that isn't running, then we clearly don't need to resume.
-                    #at this point, previous_node >= 0, and previous_status = running
-                    + "\t\t\t\t(resume_node = -1) : previous_node;" + os.linesep#we encountered running, and weren't planning on resuming. plan to resume from running
-                    #at this point, previous_node >= 0, previous_status = running, and we were planning on resuming
-                    + "\t\t\t\t(previous_node in parallels) | (previous_node in selectors) : previous_node;" + os.linesep #we were planning on resuming, but we should resume from here instead.
-                    + "\t\t\t\tTRUE : resume_node;" + os.linesep #we encountered nodes that were running, but none of them were parallel, so we don't change our plan.
+                    + "\t\t\t\t(previous_node < 0) : resume_node;" + os.linesep #do not change if we arn't looking at actual nodes.
+                    #at this point must be looking at actual nodes
+                    + "\t\t\t\t!(previous_status = running) : -1;" + os.linesep #if we are to resume, we are taking a straight line to the root of running nodes. we hit not running. aren't resuming
+                    #at this point must be looking at actual nodes that returned running
+                    + "\t\t\t\t(previous_node in" + default_resume_valid_set + ") : previous_node;" + os.linesep #confirm it's a node we can resume from.
+                    #the only case in which we change is if the previous node was running and a valid resume target. there is no possible way this can trigger more than once.
+                    + "\t\t\t\tTRUE : resume_node;" + os.linesep #remain unchanged otherwise.
+                    # + "\t\t\t\t(previous_node < 0) : resume_node;" + os.linesep #don't change if the previous node wasn't a real place
+                    # #at this point, previous_node >= 0
+                    # + "\t\t\t\t!(previous_status = running) : -1;" + os.linesep #if we encounter a node that isn't running, then we clearly don't need to resume.
+                    # #at this point, previous_node >= 0, and previous_status = running
+                    # + "\t\t\t\t(resume_node = -1) : previous_node;" + os.linesep#we encountered running, and weren't planning on resuming. plan to resume from running
+                    # #at this point, previous_node >= 0, previous_status = running, and we were planning on resuming
+                    # + "\t\t\t\t(previous_node in parallels) | (previous_node in selectors) : previous_node;" + os.linesep #we were planning on resuming, but we should resume from here instead.
+                    # + "\t\t\t\tTRUE : resume_node;" + os.linesep #we encountered nodes that were running, but none of them were parallel, so we don't change our plan.
                     + "\t\t\tesac;" + os.linesep)
 
     nuxmv_string = (nuxmv_string
@@ -787,26 +831,23 @@ def main():
                     #ok, we've handled the edge cases
                     + "\t\t\t\t(active_node in leafs) : parents[active_node];" + os.linesep#leaf always goes back to parent
                     #we are now in the case of a node with children
-                    + "\t\t\t\t(previous_status = invalid) : first_child[active_node];" + os.linesep#previous node was invalid, means we entered from a parent, not a child. start at first child
-                    #we are now in the case of a node with children, and have returned from a child
-                    + "\t\t\t\t(previous_node = last_child[active_node]) : parents[active_node];" + os.linesep)#that was the last child, we're done.
-                    #we are now in the case of a node with children, have returned from a child, and have more children
-    if len(parallel_resume) > 0:
-        nuxmv_string = (nuxmv_string
-                        + "\t\t\t\t(active_node in parallels) : parallel_resume[active_node];" + os.linesep)
-    nuxmv_string = (nuxmv_string
+                    + "\t\t\t\t(previous_node = last_child[active_node]) : parents[active_node];" + os.linesep#that was the last child, we're done.
+                    #we are now in the case of a node with children, and have not reached the last child
+                    + "\t\t\t\t(active_node in (parallels union selectors)) : advanced_resume[active_node];" + os.linesep#advanced resume if we're in parallels or selectors
+                    #we are now in the case of a node with children, haven't reached last child, and don't need to do resume stuff
+                    + "\t\t\t\t(previous_status = invalid) : first_child[active_node];" + os.linesep#previous node was invalid, means we entered from above, not a child. start at first child
+                    #we are now in the case of a node with children, haven't reached last child, don't need to do resume stuff, and have returned from a child.
                     + "\t\t\t\t(active_node in sequences) & (previous_status = success) : min(max_active_node, previous_node + 1);" + os.linesep #if this is a sequence node and we succeeded, just go to the next child
-                    + "\t\t\t\t(active_node in selectors) & (previous_status = failure) : min(max_active_node, previous_node + 1);" + os.linesep #if this is a selector node and we failed, just go to the next child
-                    #we have handled all cases where we go to the next child
-                    #parallel_unsyhc->have another child
-                    #parallel_sych ->uh...see custom code above in the if statement.
-                    #sequence->succeeded previous child
-                    #selector->failed previous child
+                    #if leaf, handled
+                    #if parallel, handled by advanced_resume
+                    #if selector, handled by advanced_resume
+                    #if decorator, ran out of children and already handled
+                    #if sequence, must have running or failure, must go to parent.
                     #so at this point, we must go to parent
                     + "\t\t\t\tTRUE : parents[active_node];" + os.linesep
                     + "\t\t\tesac;" + os.linesep)
     
-    if len(parallel_resume) > 0:
+    if len(advanced_resume) > 0:
         nuxmv_string += parallel_next
 
                     
@@ -827,8 +868,6 @@ def main():
                 nuxmv_string += ('----' + nodes[access_node][2] + os.linesep)
     
     if blackboard_needed:
-        #nuxmv_string = nuxmv_string + node_creator.create_blackboard(variable_to_int, variable_access, nodes)
-        #nuxmv_string = nuxmv_string + node_creator.create_blackboard(int_to_variable, variable_access, nodes)
         nuxmv_string = nuxmv_string + node_creator.create_blackboard(int_to_variable, variable_to_int, variable_access, nodes)
 
     module_string = ''
@@ -923,7 +962,7 @@ def main():
                 print('The specified module file already exists. To overwrite the file, rerun the command with --overwrite True')
     if args.modules:
         #print(open(modules).read())
-        nuxmv_string = nuxmv_string + open(modules.read())
+        nuxmv_string = nuxmv_string + open(args.modules).read()
     if args.output_file is None:
         print(nuxmv_string)
     else:

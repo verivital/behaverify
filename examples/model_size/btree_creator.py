@@ -5,29 +5,51 @@ def node_return(mode, depth, count):
     if mode == 0:
         return py_trees.composites.Selector('node'+str(count))
     elif mode == 1:
-        return py_trees.composites.Parallel('node'+str(count), py_trees.common.ParallelPolicy.SuccessOnAll())
+        return py_trees.composites.Sequence('node'+str(count))
     elif mode == 2:
-        return py_trees.composites.Parallel('node'+str(count), py_trees.common.ParallelPolicy.SuccessOnAll(synchronise = False))
+        return py_trees.composites.Parallel('node'+str(count), py_trees.common.ParallelPolicy.SuccessOnAll())
     elif mode == 3:
-        if (count % 2) == 0:
-            return py_trees.composites.Selector('node'+str(count))
-        else:
-            return py_trees.composites.Parallel('node'+str(count), py_trees.common.ParallelPolicy.SuccessOnAll(synchronise = False))
+        return py_trees.composites.Parallel('node'+str(count), py_trees.common.ParallelPolicy.SuccessOnAll(synchronise = False))
     elif mode == 4:
         if (count % 2) == 0:
             return py_trees.composites.Selector('node'+str(count))
         else:
-            return py_trees.composites.Parallel('node'+str(count), py_trees.common.ParallelPolicy.SuccessOnAll())
+            return py_trees.composites.Parallel('node'+str(count), py_trees.common.ParallelPolicy.SuccessOnAll(synchronise = False))
     elif mode == 5:
-        if (depth % 2) == 0:
+        if (count % 2) == 0:
             return py_trees.composites.Selector('node'+str(count))
         else:
             return py_trees.composites.Parallel('node'+str(count), py_trees.common.ParallelPolicy.SuccessOnAll())
     elif mode == 6:
+        if (count % 2) == 0:
+            return py_trees.composites.Sequence('node'+str(count))
+        else:
+            return py_trees.composites.Parallel('node'+str(count), py_trees.common.ParallelPolicy.SuccessOnAll(synchronise = False))
+    elif mode == 7:
+        if (count % 2) == 0:
+            return py_trees.composites.Sequence('node'+str(count))
+        else:
+            return py_trees.composites.Parallel('node'+str(count), py_trees.common.ParallelPolicy.SuccessOnAll())
+    elif mode == 8:
         if (depth % 2) == 0:
             return py_trees.composites.Selector('node'+str(count))
         else:
             return py_trees.composites.Parallel('node'+str(count), py_trees.common.ParallelPolicy.SuccessOnAll(synchronise = False))
+    elif mode == 9:
+        if (depth % 2) == 0:
+            return py_trees.composites.Selector('node'+str(count))
+        else:
+            return py_trees.composites.Parallel('node'+str(count), py_trees.common.ParallelPolicy.SuccessOnAll())
+    elif mode == 10:
+        if (depth % 2) == 0:
+            return py_trees.composites.Sequence('node'+str(count))
+        else:
+            return py_trees.composites.Parallel('node'+str(count), py_trees.common.ParallelPolicy.SuccessOnAll(synchronise = False))
+    elif mode == 11:
+        if (depth % 2) == 0:
+            return py_trees.composites.Sequence('node'+str(count))
+        else:
+            return py_trees.composites.Parallel('node'+str(count), py_trees.common.ParallelPolicy.SuccessOnAll())
 
 def full_binary_mode(max_depth, mode=0, count=0):
     count=count+1
@@ -43,9 +65,11 @@ def full_binary_mode(max_depth, mode=0, count=0):
 def wide_mode(num_nodes, mode=0):
     if mode == 0:
         root_node=py_trees.composites.Selector('root')
-    elif mode == 1:
-        root_node=py_trees.composites.Parallel('root', py_trees.common.ParallelPolicy.SuccessOnAll())
+    if mode == 1:
+        root_node=py_trees.composites.Sequence('root')
     elif mode == 2:
+        root_node=py_trees.composites.Parallel('root', py_trees.common.ParallelPolicy.SuccessOnAll())
+    elif mode == 3:
         root_node=py_trees.composites.Parallel('root', py_trees.common.ParallelPolicy.SuccessOnAll(synchronise = False))
     children=[]
     for i in range(num_nodes):
@@ -56,8 +80,10 @@ def wide_mode(num_nodes, mode=0):
 
 
 
-def create_root(num_nodes, mode, binary):
+def create_root(num_nodes, mode, binary, directory_name):
     if binary:
-        return full_binary_mode(num_nodes, mode)[0]
+        tree = full_binary_mode(num_nodes, mode)[0]
     else:
-        return wide_mode(num_nodes, mode)
+        tree = wide_mode(num_nodes, mode)
+    py_trees.display.render_dot_tree(tree, name = str(num_nodes), target_directory = directory_name)
+    return tree

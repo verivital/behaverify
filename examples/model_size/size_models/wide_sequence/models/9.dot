@@ -1,0 +1,25 @@
+digraph pastafarianism {
+ordering=out;
+graph [fontname="times-roman"];
+node [fontname="times-roman"];
+edge [fontname="times-roman"];
+root [fillcolor=orange, fontcolor=black, fontsize=9, label="Ⓜ root", shape=box, style=filled];
+Dummy [fillcolor=gray, fontcolor=black, fontsize=9, label=Dummy, shape=ellipse, style=filled];
+root -> Dummy;
+"Dummy*" [fillcolor=gray, fontcolor=black, fontsize=9, label="Dummy*", shape=ellipse, style=filled];
+root -> "Dummy*";
+"Dummy**" [fillcolor=gray, fontcolor=black, fontsize=9, label="Dummy**", shape=ellipse, style=filled];
+root -> "Dummy**";
+"Dummy***" [fillcolor=gray, fontcolor=black, fontsize=9, label="Dummy***", shape=ellipse, style=filled];
+root -> "Dummy***";
+"Dummy****" [fillcolor=gray, fontcolor=black, fontsize=9, label="Dummy****", shape=ellipse, style=filled];
+root -> "Dummy****";
+"Dummy*****" [fillcolor=gray, fontcolor=black, fontsize=9, label="Dummy*****", shape=ellipse, style=filled];
+root -> "Dummy*****";
+"Dummy******" [fillcolor=gray, fontcolor=black, fontsize=9, label="Dummy******", shape=ellipse, style=filled];
+root -> "Dummy******";
+"Dummy*******" [fillcolor=gray, fontcolor=black, fontsize=9, label="Dummy*******", shape=ellipse, style=filled];
+root -> "Dummy*******";
+"Dummy********" [fillcolor=gray, fontcolor=black, fontsize=9, label="Dummy********", shape=ellipse, style=filled];
+root -> "Dummy********";
+}
