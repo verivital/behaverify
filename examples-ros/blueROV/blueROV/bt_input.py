@@ -3,7 +3,7 @@
 # Description: contingency management a.k.a. mission controller 0.1
 
 
-import rospy
+import rospy2 as rospy
 import numpy as np
 import math
 import uuv_waypoints

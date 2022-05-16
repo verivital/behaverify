@@ -28,7 +28,7 @@ means of interacting with the watching services.
 import operator
 import py_trees
 import py_trees_msgs.srv as py_trees_srvs
-import rospy
+import rospy2 as rospy
 import py_trees.console as console
 import std_msgs.msg as std_msgs
 

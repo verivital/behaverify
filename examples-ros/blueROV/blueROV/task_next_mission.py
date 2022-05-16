@@ -13,7 +13,7 @@
 
 import dynamic_reconfigure.client
 import py_trees
-import rospy            
+import rospy2 as rospy            
 
  
 from std_msgs.msg import String 

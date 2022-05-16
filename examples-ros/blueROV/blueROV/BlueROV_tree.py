@@ -13,7 +13,7 @@ import py_trees
 import py_trees_ros
 import py_trees.console as console
 import py_trees_msgs.msg as py_trees_msgs
-import rospy
+import rospy2 as rospy
 import sys
 
   
