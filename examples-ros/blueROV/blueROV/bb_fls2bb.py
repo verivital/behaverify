@@ -16,7 +16,7 @@ This node captures the FLS ranges
 ##############################################################################
 
 import py_trees
-import rospy
+import rospy2 as rospy
 import sensor_msgs.msg as sensor_msgs
 from sensor_msgs.msg import Range
 from py_trees_ros import subscribers

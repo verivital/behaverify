@@ -16,7 +16,7 @@ This node captures HSD input from rth node
 ##############################################################################
 
 import py_trees
-import rospy
+import rospy2 as rospy
 import sensor_msgs.msg as sensor_msgs
 from ng_msgs.msg import HSDCommand
 from py_trees_ros import subscribers

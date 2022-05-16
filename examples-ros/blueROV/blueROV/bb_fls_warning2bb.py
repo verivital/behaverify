@@ -16,7 +16,7 @@ This node captures the FLS obstacle in view information
 ##############################################################################
 
 import py_trees
-import rospy
+import rospy2 as rospy
 import sensor_msgs.msg as sensor_msgs
 from std_msgs.msg import Header
 from py_trees_ros import subscribers

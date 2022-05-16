@@ -16,7 +16,7 @@ This node captures if the waypoints are completed
 ##############################################################################
 
 import py_trees
-import rospy
+import rospy2 as rospy
 import sensor_msgs.msg as sensor_msgs
 from std_msgs.msg import Bool
 from py_trees_ros import subscribers

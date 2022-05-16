@@ -16,7 +16,7 @@ This node captures the output of the lec2 assurance monitor right
 ##############################################################################
 
 import py_trees
-import rospy
+import rospy2 as rospy
 import sensor_msgs.msg as sensor_msgs
 from ng_msgs.msg import LEC1OutputAssuredStamped
 from py_trees_ros import subscribers

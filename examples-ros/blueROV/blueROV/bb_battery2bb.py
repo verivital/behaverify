@@ -16,7 +16,7 @@ This node captures the state of the battery
 ##############################################################################
 
 import py_trees
-import rospy
+import rospy2 as rospy
 import sensor_msgs.msg as sensor_msgs
 from vandy_bluerov.msg import PixhawkHW
 from py_trees_ros import subscribers
