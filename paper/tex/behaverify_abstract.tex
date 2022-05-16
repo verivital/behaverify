@@ -1,0 +1,31 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+% The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\begin{document}
+
+\title{BehaVerify: A Tool for Verifying Behavior Trees with NUXMV\\
+\thanks{DARPA}
+}
+
+\author{\IEEEauthorblockN{1\textsuperscript{st} Bernard Serbinowski}
+\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
+\textit{name of organization (of Aff.)}\\
+Nashville, TN, United States \\
+bernard.serbinowski@vanderbilt.edu}
+}
+
+\maketitle
+
+\begin{abstract}
+Behavior Trees, which originated in video games as a method for controlling NPCs but have since gained traction within the robotics community, are a framework for describing the execution of a task. BehaVerify is a tool that creates a nuXmv model when given a py\_tree. For composite nodes this process is automatic and requires no additional user input, as these nodes are provided out of the box by py\_trees. A wide variety of leaf nodes are automatically supported and require no additional user input, but customized leaf nodes will require additional user input to be correctly modeled. BehaVerify can provide a template to make this easier. BehaVerify was able to create a nuXmv model with over 100 nodes and nuXmv was able to verify various non-trivial LTL and CTL properties on this model, both directly and via counterexample. The model in question features parallel nodes, selector, and sequence nodes.
+\end{abstract}
+
+\end{document}

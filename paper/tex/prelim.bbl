@@ -1,0 +1,57 @@
+\begin{thebibliography}{6}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Tuncali et~al.(2018)Tuncali, Kapinski, Ito, and
+  Deshmukh]{tuncali2018lyapunov}
+Cumhur~Erkan Tuncali, James Kapinski, Hisahiro Ito, and Jyotirmoy~V. Deshmukh.
+\newblock Reasoning about safety of learning-enabled components in autonomous
+  cyber-physical systems.
+\newblock \emph{CoRR}, abs/1804.03973, 2018.
+\newblock URL \url{http://arxiv.org/abs/1804.03973}.
+
+\bibitem[R.~Clarkson and B.~Schneider(2008)]{clarkson2008hyperproperties}
+Michael R.~Clarkson and Fred B.~Schneider.
+\newblock Hyperproperties.
+\newblock pages 51--65, 07 2008.
+\newblock ISBN 978-0-7695-3182-3.
+\newblock \doi{10.1109/CSF.2008.7}.
+
+\bibitem[Boopathy et~al.(2018)Boopathy, Weng, Chen, Liu, and
+  Daniel]{boopathy2018cnncert}
+Akhilan Boopathy, Tsui-Wei Weng, Pin-Yu Chen, Sijia Liu, and Luca Daniel.
+\newblock Cnn-cert: An efficient framework for certifying robustness of
+  convolutional neural networks, 2018.
+
+\bibitem[Katz et~al.(2017)Katz, Barrett, Dill, Julian, and
+  Kochenderfer]{katz2017reluplex}
+Guy Katz, Clark~W. Barrett, David~L. Dill, Kyle Julian, and Mykel~J.
+  Kochenderfer.
+\newblock Reluplex: An efficient {SMT} solver for verifying deep neural
+  networks.
+\newblock \emph{CoRR}, abs/1702.01135, 2017.
+\newblock URL \url{http://arxiv.org/abs/1702.01135}.
+
+\bibitem[Szegedy et~al.(2013)Szegedy, Zaremba, Sutskever, Bruna, Erhan,
+  Goodfellow, and Fergus]{szegedy2013lipschitz}
+Christian Szegedy, Wojciech Zaremba, Ilya Sutskever, Joan Bruna, Dumitru Erhan,
+  Ian~J. Goodfellow, and Rob Fergus.
+\newblock Intriguing properties of neural networks.
+\newblock \emph{CoRR}, abs/1312.6199, 2013.
+
+\bibitem[Kapinski et~al.(2014)Kapinski, Deshmukh, Sankaranarayanan, and
+  Arechiga]{kapinski2014lyapunov}
+James Kapinski, Jyotirmoy~V. Deshmukh, Sriram Sankaranarayanan, and Nikos
+  Arechiga.
+\newblock Simulation-guided lyapunov analysis for hybrid dynamical systems.
+\newblock In \emph{Proceedings of the 17th International Conference on Hybrid
+  Systems: Computation and Control}, HSCC '14, pages 133--142, New York, NY,
+  USA, 2014. ACM.
+\newblock ISBN 978-1-4503-2732-9.
+\newblock \doi{10.1145/2562059.2562139}.
+\newblock URL \url{http://doi.acm.org/10.1145/2562059.2562139}.
+
+\end{thebibliography}

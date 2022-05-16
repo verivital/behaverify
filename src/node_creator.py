@@ -283,24 +283,28 @@ def create_node_wait_for_blackboard_variable_value(number_of_nodes, variable, va
 #basic example nodes
 def create_node_count(number_of_nodes):
     #variables needed: fail_until, running_until, success_until, reset
+    print('WARNING: reset currently resets whenever the root node ticks with success or failure. This does not match the behavior of py_trees')
     return_string=''
     (status_define, status_end) = common_string(number_of_nodes)
     return_string += ("MODULE node_count(active_node, id, fail_until, running_until, success_until, reset)" + os.linesep
                       + status_define
                       + "\t\t\t\t(id = active_node) & (internal_node_count < fail_until) : failure;" + os.linesep  #internal_node_count <fail_until means we return failure
-                      + "\t\t\t\t(id = active_node) & (internal_node_count >= fail_until) & (internal_node_count < running_until) : running;" + os.linesep #internal_node_count <running_until means we return running
-                      + "\t\t\t\t(id = active_node) & (internal_node_count >= fail_until) & (internal_node_count >= running_until) & (internal_node_count < success_until) : success;" + os.linesep #internal_node_count <success_until means we return running
-                      + "\t\t\t\t(id = active_node) & (internal_node_count >= fail_until) & (internal_node_count >= running_until) & (internal_node_count >= success_until) : failure;" + os.linesep #max val exceeded.
+                      #if we reached this point, internal_node_count >= fail_until
+                      + "\t\t\t\t(id = active_node) & (internal_node_count < running_until) : running;" + os.linesep #internal_node_count <running_until means we return running
+                      #if we reached this point, internal_node_count >= fail_until and internal_node_count >= running_until
+                      + "\t\t\t\t(id = active_node) & (internal_node_count < success_until) : success;" + os.linesep #internal_node_count <success_until means we return running
+                      #if we reached this point, internal_node_count >= fail_until and internal_node_count >= running_until and internal_node_count >= success_until
+                      + "\t\t\t\t(id = active_node) : failure;" + os.linesep #internal_node_count = max_internal at this point
                       + status_end
+                      + "\t\tmax_internal := max(fail_until, max(running_until, success_until));" + os.linesep#define this so we don't have to have it copied everywhere.
                       + "\tVAR" + os.linesep 
-                      + "\t\tinternal_node_count : 0..max(fail_until, max(running_until, success_until));" + os.linesep  #define the internal count
+                      + "\t\tinternal_node_count : 0..max_internal;" + os.linesep  #define the internal count
                       + "\tASSIGN" + os.linesep
                       + "\t\tinit(internal_node_count) := 0;" + os.linesep  #initiate the internal internal_node_count to 0
                       + "\t\tnext(internal_node_count) :=" + os.linesep
                       + "\t\t\tcase" + os.linesep
                       + "\t\t\t\t(active_node = -1) & !(statuses[0] = running) & (reset) : 0;" + os.linesep #reset the internal_node_count if reset is true, and we invalidate the node
-                      + "\t\t\t\t(id = active_node) & (internal_node_count = max(fail_until, max(running_until, success_until))) : internal_node_count;" + os.linesep #it's reached the max value
-                      + "\t\t\t\t(id = active_node) & (internal_node_count < max(fail_until, max(running_until, success_until))) : internal_node_count+1;" + os.linesep #not at maximum value, increase by 1
+                      + "\t\t\t\t(id = active_node) : min(internal_node_count + 1, max_internal);" + os.linesep #update the internal node.
                       + "\t\t\t\tTRUE : internal_node_count;" + os.linesep #don't change the value otherwise
                       + "\t\t\tesac;" + os.linesep)
     return return_string
@@ -337,7 +341,7 @@ def create_node_periodic(number_of_nodes):
                       + "\t\tnext(internal_node_count) :=" + os.linesep
                       + "\t\t\tcase" + os.linesep
                       + "\t\t\t\t(id = active_node) & (internal_node_count = period) : 1;" + os.linesep #if we reached the max, then we need to reset.
-                      + "\t\t\t\t(id = active_node) & (internal_node_count < period) : internal_node_count + 1;" + os.linesep #if we haven't reached it, internal_node_count up
+                      + "\t\t\t\t(id = active_node) & (internal_node_count < period) : min(internal_node_count + 1, period);" + os.linesep #if we haven't reached it, internal_node_count up
                       + "\t\t\t\tTRUE : internal_node_count;" + os.linesep
                       + "\t\t\tesac;" + os.linesep)
     return return_string
@@ -358,7 +362,7 @@ def create_node_status_sequence(number_of_nodes):
     return_string += ("MODULE node_status_sequence(active_node, id, sequence, sequence_length, eventually)" + os.linesep
                       + status_define
                       + "\t\t\t\t(id = active_node) & (internal_node_count < sequence_length) : sequence[internal_node_count];" + os.linesep  #return where we are in the sequence
-                      + "\t\t\t\t(id = active_node) & (internal_node_count = sequence_length) : eventually;" + os.linesep  #return where we are in the sequence
+                      + "\t\t\t\t(id = active_node) : eventually;" + os.linesep  #return where we are in the sequence
                       + status_end
                       + "\tVAR" + os.linesep
                       + "\t\tinternal_node_count : 0..sequence_length;" + os.linesep
@@ -367,9 +371,7 @@ def create_node_status_sequence(number_of_nodes):
                       + "\t\tnext(internal_node_count) :=" + os.linesep
                       + "\t\t\tcase" + os.linesep
                       + "\t\t\t\t(id = active_node) & (eventually = invalid) & (internal_node_count+1 = sequence_length) : 0;" + os.linesep #if we reached the max and we don't have an eventuality, reset
-                      + "\t\t\t\t(id = active_node) & !(eventually = invalid) & (internal_node_count+1 = sequence_length) : sequence_length;" + os.linesep
-                      + "\t\t\t\t(id = active_node) & (internal_node_count = sequence_length) : sequence_length;" + os.linesep #well, there was no eventuality
-                      + "\t\t\t\t(id = active_node) & (internal_node_count + 1 < sequence_length) : internal_node_count + 1;" + os.linesep #if we haven't reached it, internal_node_count up
+                      + "\t\t\t\t(id = active_node) : min(internal_node_count + 1, sequence_length);" + os.linesep #if we aren't resetting, then increase
                       + "\t\t\t\tTRUE : internal_node_count;" + os.linesep
                       + "\t\t\tesac;" + os.linesep)
     return return_string
@@ -379,7 +381,7 @@ def create_node_success(number_of_nodes):
     (status_define, status_end) = common_string(number_of_nodes)
     return_string += ("MODULE node_success(active_node, id)" + os.linesep
                       + status_define
-                      + "\t\t\t\t(id = active_node) : success;" + os.linesep  #this always returns failure
+                      + "\t\t\t\t(id = active_node) : success;" + os.linesep  #this always returns success
                       + status_end)
     return return_string
 
@@ -398,7 +400,7 @@ def create_node_success_every_n(number_of_nodes):
                       + "\t\tnext(internal_node_count) :=" + os.linesep
                       + "\t\t\tcase" + os.linesep
                       + "\t\t\t\t(id = active_node) & (internal_node_count = n) : 1;" + os.linesep #if we reached the max, then we need to reset.
-                      + "\t\t\t\t(id = active_node) & (internal_node_count < n) : internal_node_count + 1;" + os.linesep #if we haven't reached it, internal_node_count up
+                      + "\t\t\t\t(id = active_node) : min(internal_node_count + 1, n);" + os.linesep #if we haven't reached it, internal_node_count up
                       + "\t\t\t\tTRUE : internal_node_count;" + os.linesep
                       + "\t\t\tesac;" + os.linesep)
     return return_string
