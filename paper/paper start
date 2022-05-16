@@ -65,7 +65,7 @@ Selector Nodes run their children in order. There are three conditions under whi
 1. A child returned Success. In this case, the Selector Node returns Success.
 2. A child returned Running. In this case, the Selector Node returns Running.
 3. All children returned Failure. In this case, the Selector Node returns Failure.
-When a Selector Node Resumes after returning Running, it will start with it's first child, regardless of what it previously returned.
+When a Selector Node Resumes after returning Running, it will start with it's first child, regardless of what it previously returned. The child that returned running will be resumed.
 
 
 Parallel Nodes
