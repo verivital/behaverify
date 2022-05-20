@@ -89,6 +89,10 @@ MODULE lec2_am_r_pipe_warning_SET_module(active_node, nodes_with_access, variabl
 				(active_node in nodes_with_access) & (next(previous_status) = success) : {0, 1};
 				TRUE : lec2_am_r_pipe_warning;
 			esac;
+MODULE lec2_am_r_dot_confs_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	DEFINE
+		lec2_am_r_dot_confs := 0;
+		lec2_am_r_dot_confs_exists := TRUE;
 MODULE lec2_am_l_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
 	DEFINE
 		lec2_am_l_exists := TRUE;
@@ -117,6 +121,11 @@ MODULE lec2_am_l_pipe_warning_SET_module(active_node, nodes_with_access, variabl
 				(active_node in nodes_with_access) & (next(previous_status) = success) : {0, 1};
 				TRUE : lec2_am_l_pipe_warning;
 			esac;
+
+MODULE lec2_am_l_dot_confs_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	DEFINE
+		lec2_am_l_dot_confs := 0;
+		lec2_am_l_dot_confs_exists := TRUE;
 MODULE bb_pipelost_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
 	DEFINE
 		bb_pipelost := 0;
@@ -195,6 +204,10 @@ MODULE dd_output_SET_module(active_node, nodes_with_access, variables, variable_
 	DEFINE
 		dd_output_exists := TRUE;
 		dd_output := 0;
+MODULE dd_output_dot_data_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	DEFINE
+		dd_output_dot_data_exists := TRUE;
+		dd_output_dot_data := 0;
 MODULE dd_z_axis_warning_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
 	DEFINE
 		dd_z_axis_warning_exists := TRUE;
@@ -223,6 +236,10 @@ MODULE fls_range_SET_module(active_node, nodes_with_access, variables, variable_
 	DEFINE
 		fls_range := 0;
 		fls_range_exists := TRUE;
+MODULE fls_range_dot_range_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	DEFINE
+		fls_range_dot_range := 0;
+		fls_range_dot_range_exists := TRUE;
 MODULE obstacle_standoff_warning_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
 	DEFINE
 		obstacle_standoff_warning_exists := TRUE;
@@ -240,6 +257,10 @@ MODULE obstacle_min_standoff_SET_module(active_node, nodes_with_access, variable
 	DEFINE
 		obstacle_min_standoff_exists := TRUE;
 		obstacle_min_standoff := 0; -- currently not dealing with this, as it's just used to set the standoff warning, which is just nondeterministic anyways
+MODULE obstacle_in_view_dot_stamp_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	DEFINE
+		obstacle_in_view_dot_stamp := 0;
+		obstacle_in_view_dot_stamp_exists := TRUE;
 MODULE obstacle_in_view_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
 	DEFINE
 		obstacle_in_view := 0;
@@ -277,6 +298,10 @@ MODULE rtreach_out_SET_module(active_node, nodes_with_access, variables, variabl
 	DEFINE
 		rtreach_out := 0;
 		rtreach_out_exists := TRUE;
+MODULE rtreach_out_dot_data_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
+	DEFINE
+		rtreach_out_dot_data := 0;
+		rtreach_out_dot_data_exists := TRUE;
 MODULE emergency_stop_warning_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)
 	DEFINE
 		emergency_stop_warning_exists := TRUE;

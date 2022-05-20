@@ -1,0 +1,156 @@
+MODULE main
+	DEFINE
+		max_active_node := 15;
+		statuses := [example_7_sel1.status, seq1.status, seq2.status, leaf_1.status, leaf_2.status, leaf_3.status, leaf_4.status, leaf_5.status, sel2.status, seq3.status, leaf_6.status, seq4.status, leaf_7.status, leaf_8.status, leaf_9.status, leaf_10.status];
+		parents := [-1, 0, 0, 1, 1, 1, 1, 2, 2, 2, 8, 8, 11, 11, 9, 9];
+		leafs := {-3, 3, 4, 5, 6, 7, 10, 12, 13, 14, 15};
+		selectors := {-3, 0, 8};
+		selectors_parallel := {-3};
+		selectors_non_parallel := {-3, 0, 8};
+		sequences := {-3, 1, 2, 9, 11};
+		parallels_synchronised_all := {-3};
+		parallels_unsynchronised_all := {-3};
+		parallels_synchronised_one := {-3};
+		parallels_unsynchronised_one := {-3};
+		parallels := {-3};
+		decorators := {-3};
+		first_child := [1, 3, 7, -2, -2, -2, -2, -2, 10, 14, -2, 12, -2, -2, -2, -2];
+		last_child := [2, 6, 9, -1, -1, -1, -1, -1, 11, 15, -1, 13, -1, -1, -1, -1];
+		advanced_resume := [advanced_resume_0, -2, -2, -2, -2, -2, -2, -2, advanced_resume_8, -2, -2, -2, -2, -2, -2, -2];
+		advanced_resume_0 := 
+			case
+				(0 in selectors) & (previous_status = success | previous_status = running) : parents[active_node];
+				(previous_node < 1) & (advanced_resume_non_parallel_0 in {3, 4, 5, 6}) : advanced_resume_non_parallel_0;
+				(previous_node < 1) : 1;
+				(previous_node < 2) & (advanced_resume_non_parallel_0 in {7, 8, 14, 15}) : advanced_resume_non_parallel_0;
+				(previous_node < 2) : 2;
+				TRUE : parents[0];
+			esac;
+		advanced_resume_8 := 
+			case
+				(8 in selectors) & (previous_status = success | previous_status = running) : parents[active_node];
+				(previous_node < 10) & (advanced_resume_non_parallel_8 in {10}) : advanced_resume_non_parallel_8;
+				(previous_node < 10) : 10;
+				(previous_node < 11) & (advanced_resume_non_parallel_8 in {12, 13}) : advanced_resume_non_parallel_8;
+				(previous_node < 11) : 11;
+				TRUE : parents[8];
+			esac;
+	VAR
+		active_node : -2..max_active_node;
+		previous_node : -1..max_active_node;
+		resume_node : {-1, 0};
+		previous_status : {running, success, failure, invalid};
+		advanced_resume_non_parallel_0 : {-2, 3, 4, 5, 6, 7, 8, 14, 15};
+		advanced_resume_non_parallel_8 : {-2, 10, 12, 13};
+		example_7_sel1 : node_selector(active_node, 0, previous_status, 2, previous_node);
+		seq1 : node_sequence(active_node, 1, previous_status, 6, previous_node);
+		seq2 : node_sequence(active_node, 2, previous_status, 9, previous_node);
+		leaf_1 : node_default(active_node, 3);
+		leaf_2 : node_default(active_node, 4);
+		leaf_3 : node_default(active_node, 5);
+		leaf_4 : node_default(active_node, 6);
+		leaf_5 : node_default(active_node, 7);
+		sel2 : node_selector(active_node, 8, previous_status, 11, previous_node);
+		seq3 : node_sequence(active_node, 9, previous_status, 15, previous_node);
+		leaf_6 : node_default(active_node, 10);
+		seq4 : node_sequence(active_node, 11, previous_status, 13, previous_node);
+		leaf_7 : node_default(active_node, 12);
+		leaf_8 : node_default(active_node, 13);
+		leaf_9 : node_default(active_node, 14);
+		leaf_10 : node_default(active_node, 15);
+		node_names : define_nodes;
+	ASSIGN
+		init(active_node) := -1;
+		init(previous_node) := -1;
+		init(resume_node) := -1;
+		init(previous_status) := invalid;
+		init(advanced_resume_non_parallel_0) := -2;
+		init(advanced_resume_non_parallel_8) := -2;
+		next(previous_node) :=
+			case
+				(active_node < 0) : -1;
+				TRUE : active_node;
+			esac;
+		next(resume_node) :=
+			case
+				(previous_node < 0) : resume_node;
+				!(previous_status = running) : -1;
+				(previous_node in{0}) : previous_node;
+				TRUE : resume_node;
+			esac;
+		next(previous_status) :=
+			case
+				(active_node < 0) : invalid;
+				TRUE : statuses[active_node];
+			esac;
+		next(active_node) :=
+			case
+				(active_node = -2) : -2;
+				(active_node = -1) & (resume_node = -1) : 0;
+				(active_node = -1) & !(resume_node = -1) : resume_node;
+				(active_node in leafs) : parents[active_node];
+				(previous_node = last_child[active_node]) : parents[active_node];
+				(active_node in (parallels union selectors)) : advanced_resume[active_node];
+				(previous_status = invalid) : first_child[active_node];
+				(active_node in sequences) & (previous_status = success) : min(max_active_node, previous_node + 1);
+				TRUE : parents[active_node];
+			esac;
+		next(advanced_resume_non_parallel_0) := 
+			case
+				(previous_node = 0) & (previous_status = success | previous_status = failure) : -2;
+				(previous_node in {-2, 3, 4, 5, 6, 7, 8, 14, 15}) & (previous_status = running) : previous_node;
+				TRUE : advanced_resume_non_parallel_0;
+			esac;
+		next(advanced_resume_non_parallel_8) := 
+			case
+				(previous_node = 0) & (previous_status = success | previous_status = failure) : -2;
+				(previous_node in {-2, 10, 12, 13}) & (previous_status = running) : previous_node;
+				TRUE : advanced_resume_non_parallel_8;
+			esac;
+MODULE node_selector(active_node, id, previous_status, last_child, previous_node)
+	DEFINE
+		status :=
+			case
+				(id = active_node) & (previous_status = invalid) : invalid;
+				(id = active_node) & (previous_status = running) : running;
+				(id = active_node) & (previous_status = success) : success;
+				(id = active_node) & (last_child = previous_node) : failure;
+				(id = active_node) : invalid;
+				TRUE : invalid;
+			esac;
+MODULE node_sequence(active_node, id, previous_status, last_child, previous_node)
+	DEFINE
+		status :=
+			case
+				(id = active_node) & (previous_status = invalid) : invalid;
+				(id = active_node) & (previous_status = running) : running;
+				(id = active_node) & (previous_status = failure) : failure;
+				(id = active_node) & (last_child = previous_node) : success;
+				(id = active_node) : invalid;
+				TRUE : invalid;
+			esac;
+MODULE node_default(active_node, id)
+	DEFINE
+		status :=
+			case
+				(id = active_node) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE define_nodes
+	DEFINE
+		example_7_sel1 := 0;
+		seq1 := 1;
+		seq2 := 2;
+		leaf_1 := 3;
+		leaf_2 := 4;
+		leaf_3 := 5;
+		leaf_4 := 6;
+		leaf_5 := 7;
+		sel2 := 8;
+		seq3 := 9;
+		leaf_6 := 10;
+		seq4 := 11;
+		leaf_7 := 12;
+		leaf_8 := 13;
+		leaf_9 := 14;
+		leaf_10 := 15;
