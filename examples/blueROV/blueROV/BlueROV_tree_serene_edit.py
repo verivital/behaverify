@@ -811,7 +811,7 @@ def create_root():
 
 
     #py_trees.display.render_dot_tree(BlueROV, with_blackboard_variables=True)#doesn't work
-    py_trees.display.render_dot_tree(BlueROV, target_directory = '../models/pictures')#works
+    #py_trees.display.render_dot_tree(BlueROV, target_directory = '../pictures')#works
 
     return BlueROV
 

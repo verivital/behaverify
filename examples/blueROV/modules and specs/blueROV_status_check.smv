@@ -1,0 +1,350 @@
+MODULE battery2bb_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, running};
+				TRUE : invalid;
+			esac;
+MODULE rth2bb_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, running};
+				TRUE : invalid;
+			esac;
+MODULE geofence2bb_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, running};
+				TRUE : invalid;
+			esac;
+MODULE lec2_am_r_2bb_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, running};
+				TRUE : invalid;
+			esac;
+MODULE lec2_am_l_2bb_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, running};
+				TRUE : invalid;
+			esac;
+MODULE pipe_lost2bb_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, running};
+				TRUE : invalid;
+			esac;
+MODULE sensor_failure2bb_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, running};
+				TRUE : invalid;
+			esac;
+MODULE waypoints_completed2bb_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, running};
+				TRUE : invalid;
+			esac;
+MODULE mission2bb_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, running};
+				TRUE : invalid;
+			esac;
+MODULE ddlec2bb_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, running};
+				TRUE : invalid;
+			esac;
+MODULE fls2bb_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, running};
+				TRUE : invalid;
+			esac;
+MODULE fls_warning2bb_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, running};
+				TRUE : invalid;
+			esac;
+MODULE hsd_pipe2bb_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, running};
+				TRUE : invalid;
+			esac;
+MODULE hsd_wp2bb_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, running};
+				TRUE : invalid;
+			esac;
+MODULE hsd_rth2bb_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, running};
+				TRUE : invalid;
+			esac;
+MODULE hsd_surface2bb_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, running};
+				TRUE : invalid;
+			esac;
+MODULE rtreach2bb_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, running};
+				TRUE : invalid;
+			esac;
+MODULE reallocate_task_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : running;
+				TRUE : invalid;
+			esac;
+MODULE dd_lec_task_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : running;
+				TRUE : invalid;
+			esac;
+MODULE mission_server_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : running;
+				TRUE : invalid;
+			esac;
+MODULE obstacle_avoidance_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : running;
+				TRUE : invalid;
+			esac;
+MODULE surface_task_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : running;
+				TRUE : invalid;
+			esac;
+MODULE surface_task1_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : running;
+				TRUE : invalid;
+			esac;
+MODULE emergency_stop_task_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : success;
+				TRUE : invalid;
+			esac;
+MODULE surface_task2_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : running;
+				TRUE : invalid;
+			esac;
+MODULE surface_task3_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : running;
+				TRUE : invalid;
+			esac;
+MODULE surface_task4_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : running;
+				TRUE : invalid;
+			esac;
+MODULE rth_task_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : running;
+				TRUE : invalid;
+			esac;
+MODULE home2bb_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, running};
+				TRUE : invalid;
+			esac;
+MODULE rth_task1_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : running;
+				TRUE : invalid;
+			esac;
+MODULE home2bb1_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, running};
+				TRUE : invalid;
+			esac;
+MODULE loiter_task_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : running;
+				TRUE : invalid;
+			esac;
+MODULE tracking_task_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : running;
+				TRUE : invalid;
+			esac;
+MODULE speed_min_task_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : running;
+				TRUE : invalid;
+			esac;
+MODULE speed_min_task1_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : running;
+				TRUE : invalid;
+			esac;
+MODULE speed_max_task_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : running;
+				TRUE : invalid;
+			esac;
+MODULE pipe_mapping_disable_task_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : running;
+				TRUE : invalid;
+			esac;
+MODULE pipe_mapping_disable_task1_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : running;
+				TRUE : invalid;
+			esac;
+MODULE pipe_mapping_enable_task_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : running;
+				TRUE : invalid;
+			esac;
+MODULE next_mission_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : success;
+				TRUE : invalid;
+			esac;
+MODULE loiter_task1_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : running;
+				TRUE : invalid;
+			esac;
+MODULE waypoint_task_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : running;
+				TRUE : invalid;
+			esac;
+MODULE loiter_task2_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : running;
+				TRUE : invalid;
+			esac;
+MODULE is_reallocation_requested_CHECK_dd_xy_axis_degradation_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		result := (variables[variable_names.dd_xy_axis_degradation] = 0);
+MODULE battery_low_fs_CHECK_battery_low_warning_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		result := (variables[variable_names.battery_low_warning] = 0);
+MODULE check_sensor_failure_CHECK_bb_sensor_failure_warning_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		result := (variables[variable_names.bb_sensor_failure_warning] = 0);
+MODULE emergency_stop_fs_CHECK_emergency_stop_warning_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		result := (variables[variable_names.emergency_stop_warning] = 0);
+MODULE check_surface_CHECK_bb_home_reached_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		result := (variables[variable_names.bb_home_reached] = 0);
+MODULE obstacle_standoff_fs_CHECK_obstacle_standoff_warning_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		result := (variables[variable_names.obstacle_standoff_warning] = 0);
+MODULE check_rth_CHECK_bb_rth_warning_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		result := (variables[variable_names.bb_rth_warning] = 0);
+MODULE check_geofence_CHECK_bb_geofence_warning_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		result := (variables[variable_names.bb_geofence_warning] = 0);
+MODULE check_pipe_post_CHECK_bb_pipe_lost_warning_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		result := (variables[variable_names.bb_pipe_lost_warning] = 0);
+MODULE is_track_pipe_mission_requested_CHECK_bb_mission_dot_data_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		result := (variables[variable_names.bb_mission_dot_data] = 1);
+MODULE is_waypoint_requested_CHECK_bb_mission_dot_data_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		result := (variables[variable_names.bb_mission_dot_data] = 2);
+MODULE check_lec2am_ls_CHECK_lec2_am_l_speed_warning_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		result := (variables[variable_names.lec2_am_l_speed_warning] = 0);
+MODULE check_lec2am_rs_CHECK_lec2_am_r_speed_warning_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		result := (variables[variable_names.lec2_am_r_speed_warning] = 0);
+MODULE check_lec2am_lp_CHECK_lec2_am_l_pipe_warning_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		result := (variables[variable_names.lec2_am_l_pipe_warning] = 0);
+MODULE check_lec2am_rp_CHECK_lec2_am_r_pipe_warning_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		result := (variables[variable_names.lec2_am_r_pipe_warning] = 0);
+MODULE check_waypoints_completed_CHECK_bb_waypoints_completed_dot_data_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		result := (variables[variable_names.bb_waypoints_completed_dot_data] = 0);
+

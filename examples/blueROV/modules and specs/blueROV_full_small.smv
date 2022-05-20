@@ -1,0 +1,614 @@
+MODULE blackboard_module(active_node, node_names, variable_names, previous_status)
+	DEFINE
+		variables := [battery, battery_low_warning, battery_dot_batt_charge_remaining, bb_rth, bb_rth_warning, bb_rth_dot_data, bb_geofence, bb_geofence_warning, bb_geofence_dot_data, lec2_am_r, lec2_am_r_speed_warning, lec2_am_r_pipe_warning, lec2_am_r_dot_confs, lec2_am_l, lec2_am_l_speed_warning, lec2_am_l_pipe_warning, lec2_am_l_dot_confs, bb_pipelost, bb_pipe_lost_warning, bb_pipelost_dot_data, bb_mission_dot_data, bb_sensor_failure, bb_sensor_failure_warning, bb_sensor_failure_dot_data, bb_waypoints_completed, bb_waypoints_completed_dot_data, bb_mission, dd_output, dd_z_axis_warning, dd_xy_axis_degradation, dd_output_dot_data, total_degradation, fls_range, obstacle_standoff_warning, obstacle_min_standoff, fls_range_dot_range, obstacle_in_view, bb_fls_warning, obstacle_in_view_dot_stamp, emergency_stop_warning, hsd_pipeline_mapping, hsd_to_waypoint, hsd_to_rth, hsd_to_surface, rtreach_out, rtreach_out_dot_data, HSD_out_dot_heading, uuv_max_speed, mission_file, refLat, refLon, next_mission, decision_threshold, HSD_out, bb_obstacle_warning, cm_hsd_input, HSD_out_dot_speed, HSD_out_dot_depth, bb_home_reached, bb_home_dist, bb_home_dist_dot_data, pipe_mapping_enable];
+		variable_exists := [battery_exists, battery_low_warning_exists, battery_dot_batt_charge_remaining_exists, bb_rth_exists, bb_rth_warning_exists, bb_rth_dot_data_exists, bb_geofence_exists, bb_geofence_warning_exists, bb_geofence_dot_data_exists, lec2_am_r_exists, lec2_am_r_speed_warning_exists, lec2_am_r_pipe_warning_exists, lec2_am_r_dot_confs_exists, lec2_am_l_exists, lec2_am_l_speed_warning_exists, lec2_am_l_pipe_warning_exists, lec2_am_l_dot_confs_exists, bb_pipelost_exists, bb_pipe_lost_warning_exists, bb_pipelost_dot_data_exists, bb_mission_dot_data_exists, bb_sensor_failure_exists, bb_sensor_failure_warning_exists, bb_sensor_failure_dot_data_exists, bb_waypoints_completed_exists, bb_waypoints_completed_dot_data_exists, bb_mission_exists, dd_output_exists, dd_z_axis_warning_exists, dd_xy_axis_degradation_exists, dd_output_dot_data_exists, total_degradation_exists, fls_range_exists, obstacle_standoff_warning_exists, obstacle_min_standoff_exists, fls_range_dot_range_exists, obstacle_in_view_exists, bb_fls_warning_exists, obstacle_in_view_dot_stamp_exists, emergency_stop_warning_exists, hsd_pipeline_mapping_exists, hsd_to_waypoint_exists, hsd_to_rth_exists, hsd_to_surface_exists, rtreach_out_exists, rtreach_out_dot_data_exists, HSD_out_dot_heading_exists, uuv_max_speed_exists, mission_file_exists, refLat_exists, refLon_exists, next_mission_exists, decision_threshold_exists, HSD_out_exists, bb_obstacle_warning_exists, cm_hsd_input_exists, HSD_out_dot_speed_exists, HSD_out_dot_depth_exists, bb_home_reached_exists, bb_home_dist_exists, bb_home_dist_dot_data_exists, pipe_mapping_enable_exists];
+		battery_exists := TRUE;
+		battery_low_warning_exists := TRUE;
+		battery_dot_batt_charge_remaining_exists := TRUE;
+		bb_rth_exists := TRUE;
+		bb_rth_warning_exists := TRUE;
+		bb_rth_dot_data_exists := TRUE;
+		bb_geofence_exists := TRUE;
+		bb_geofence_warning_exists := TRUE;
+		bb_geofence_dot_data_exists := TRUE;
+		lec2_am_r_exists := TRUE;
+		lec2_am_r_speed_warning_exists := TRUE;
+		lec2_am_r_pipe_warning_exists := TRUE;
+		lec2_am_r_dot_confs_exists := TRUE;
+		lec2_am_l_exists := TRUE;
+		lec2_am_l_speed_warning_exists := TRUE;
+		lec2_am_l_pipe_warning_exists := TRUE;
+		lec2_am_l_dot_confs_exists := TRUE;
+		bb_pipelost_exists := TRUE;
+		bb_pipe_lost_warning_exists := TRUE;
+		bb_pipelost_dot_data_exists := TRUE;
+		bb_mission_dot_data_exists := TRUE;
+		bb_pipe_lost_dot_data_exists := TRUE;
+		bb_sensor_failure_exists := TRUE;
+		bb_sensor_failure_warning_exists := TRUE;
+		bb_sensor_failure_dot_data_exists := TRUE;
+		bb_waypoints_completed_exists := TRUE;
+		bb_waypoints_completed_dot_data_exists := TRUE;
+		bb_mission_exists := TRUE;
+		dd_output_exists := TRUE;
+		dd_z_axis_warning_exists := TRUE;
+		dd_xy_axis_degradation_exists := TRUE;
+		dd_output_dot_data_exists := TRUE;
+		total_degradation_exists := TRUE;
+		fls_range_exists := TRUE;
+		obstacle_standoff_warning_exists := TRUE;
+		obstacle_min_standoff_exists := TRUE;
+		fls_range_dot_range_exists := TRUE;
+		obstacle_in_view_exists := TRUE;
+		bb_fls_warning_exists := TRUE;
+		obstacle_in_view_dot_stamp_exists := TRUE;
+		emergency_stop_warning_exists := TRUE;
+		hsd_pipeline_mapping_exists := TRUE;
+		hsd_to_waypoint_exists := TRUE;
+		hsd_to_rth_exists := TRUE;
+		hsd_to_surface_exists := TRUE;
+		rtreach_out_exists := TRUE;
+		rtreach_out_dot_data_exists := TRUE;
+		HSD_out_dot_heading_exists := TRUE;
+		uuv_max_speed_exists := TRUE;
+		mission_file_exists := TRUE;
+		refLat_exists := TRUE;
+		refLon_exists := TRUE;
+		next_mission_exists := TRUE;
+		decision_threshold_exists := TRUE;
+		HSD_out_exists := TRUE;
+		bb_obstacle_warning_exists := TRUE;
+		cm_hsd_input_exists := TRUE;
+		HSD_out_dot_speed_exists := TRUE;
+		HSD_out_dot_depth_exists := TRUE;
+		bb_home_reached_exists := TRUE;
+		bb_home_dist_exists := TRUE;
+		bb_home_dist_dot_data_exists := TRUE;
+		pipe_mapping_enable_exists := TRUE;
+		--
+		--
+		--
+		task_mission_server_mission_len := 2;--must be >=1
+		--task_mission_server_mission_type_list := [mission_type_0, mission_type_1, mission_type_2];--list of missions here.
+		task_mission_server_mission_type_list := [mission_type_0, mission_type_1];--list of missions here.
+		--task_mission_server_mission_distance_list := [mission_distance_0, mission_distance_1, mission_distance_2];--list of min distances here. between 0 and 2 for each value
+		task_mission_server_mission_distance_list := [mission_distance_0, mission_distance_1];--list of min distances here. between 0 and 2 for each value
+		mission_type_path_following := 0;
+		mission_type_waypoint_following := 1;
+		mission_type_e_stop := 2;
+		mission_type_pipe_following := 3;
+		mission_type_unknown := 4;
+		--
+		total_degradation_threshold := 0;
+		--
+		heading_default := 0;
+		heading_surface := 1;
+		heading_rth := 2;
+		heading_loiter := 3;--this value explicitly listed as 30 in loiter tasks, unlike the other ones which i have no idea what they are.
+		heading_pipeline_mapping := 4;
+		heading_waypoint := 5;
+		--
+		home_reached_threshold := 1;
+		name_default := 0;
+		name_surface_task := 1;
+		name_rth_task := 2;
+		name_loiter_task := 3;
+		name_tracking_task := 4;
+		name_waypoint_task := 5;
+		--
+		depth_default := 0;
+		depth_surface_task := 1;
+		depth_rth_task := 2;
+		depth_pipeline_mapping := 3;
+		depth_waypoint :=4;
+		--
+		battery_low_warning :=
+			case
+				battery_dot_batt_charge_remaining = 0 : 1;
+				TRUE : 0;
+			esac;
+		
+		lec2_am_r_speed_warning :=
+			case
+				(lec2_am_r_dot_confs = 1) | (lec2_am_r_dot_confs = 3) : 1;
+				TRUE : 0;
+			esac;
+		lec2_am_r_pipe_warning :=
+			case
+				(lec2_am_r_dot_confs = 2) | (lec2_am_r_dot_confs = 3) : 1;
+				TRUE : 0;
+			esac;
+		lec2_am_l_speed_warning :=
+			case
+				(lec2_am_l_dot_confs = 1) | (lec2_am_l_dot_confs = 3) : 1;
+				TRUE : 0;
+			esac;
+		lec2_am_l_pipe_warning :=
+			case
+				(lec2_am_l_dot_confs = 2) | (lec2_am_l_dot_confs = 3) : 1;
+				TRUE : 0;
+			esac;
+		battery := 0;--fake variable
+		bb_rth := 0;--fake variable
+		bb_geofence := 0;--fake variable
+		lec2_am_r := 0;
+		lec2_am_l := 0;
+		bb_pipelost := 0;--fake variable
+		bb_sensor_failure := 0;--fake variable
+		bb_waypoints_completed := 0;--fake variable
+		bb_mission := 0;--fake variable
+		dd_output := 0;--fake variable
+		fls_range := 0;--fake variable
+		obstacle_in_view := 0;--abstraced away
+		rtreach_out := 0;--fake variable
+		mission_file := 0;--not actually used
+		HSD_out := 0;--fake variable
+		bb_home_dist := 0;--fake variable
+		decision_threshold := 0; --not actually used
+		hsd_pipeline_mapping := 0;--unknown
+		hsd_to_waypoint := 0;--unknown
+		hsd_to_rth := 0;--unknown
+		hsd_to_surface := 0;--unknown
+		uuv_min_speed := 0;--does not change (frozen var it?)
+		uuv_max_speed := 1;--does not change (frozen var it?)
+		refLat := 0;--does not change (frozen var it?)
+		refLon := 0;--does not change (frozen var it?)
+		--
+		--these have been abstracted away
+		bb_rth_dot_data := 0;
+		bb_geofence_dot_data := 0;
+		bb_pipelost_dot_data := 0;
+		bb_pipe_lost_dot_data := 0;
+		bb_sensor_failure_dot_data := 0;
+		bb_home_dist_dot_data := 0;
+	FROZENVAR
+		--mission_type_0 : {mission_type_path_following, mission_type_waypoint_following, mission_type_e_stop, mission_type_pipe_following, mission_type_unknown};
+		--mission_type_1 : {mission_type_path_following, mission_type_waypoint_following, mission_type_e_stop, mission_type_pipe_following, mission_type_unknown};
+		--mission_type_2 : {mission_type_path_following, mission_type_waypoint_following, mission_type_e_stop, mission_type_pipe_following, mission_type_unknown};
+		mission_type_0 : {0, 1, 2, 3, 4};
+		mission_type_1 : {0, 1, 2, 3, 4};
+		--mission_type_2 : {0, 1, 2, 3, 4};
+		mission_distance_0 : {0, 1};
+		mission_distance_1 : {0, 1};
+		--mission_distance_2 : {0, 1};
+		
+	VAR
+		task_mission_server_mission_idx : 0..task_mission_server_mission_len;
+		--battery : 0..1;
+		--battery_low_warning : 0..1;
+		battery_dot_batt_charge_remaining : 0..1;
+		--bb_rth : 0..1;
+		bb_rth_warning : 0..1;
+		--bb_rth_dot_data : 0..1;
+		--bb_geofence : 0..1;
+		bb_geofence_warning : 0..1;
+		--bb_geofence_dot_data : 0..1;
+		--lec2_am_r : 0..1;
+		--lec2_am_r_speed_warning : 0..1;
+		--lec2_am_r_pipe_warning : 0..1;
+		lec2_am_r_dot_confs : 0..3;
+		--lec2_am_l : 0..1;
+		--lec2_am_l_speed_warning : 0..1;
+		--lec2_am_l_pipe_warning : 0..1;
+		lec2_am_l_dot_confs : 0..3;
+		--bb_pipelost : 0..1;
+		bb_pipe_lost_warning : 0..1;
+		--bb_pipelost_dot_data : 0..1;
+		--bb_mission_dot_data : {mission_type_path_following, mission_type_waypoint_following, mission_type_e_stop, mission_type_pipe_following, mission_type_unknown};
+		bb_mission_dot_data : {0, 1, 2, 3, 4}; 
+		--bb_pipe_lost_dot_data : 0..1;
+		--bb_sensor_failure : 0..1;
+		bb_sensor_failure_warning : 0..1;
+		--bb_sensor_failure_dot_data : 0..1;
+		--bb_waypoints_completed : 0..1;
+		bb_waypoints_completed_dot_data : 0..1;
+		--bb_mission : 0..1;
+		--dd_output : 0..1;
+		dd_z_axis_warning : 0..1;
+		dd_xy_axis_degradation : 0..1;
+		dd_output_dot_data : 0..2;
+		total_degradation : 0..1;
+		--fls_range : 0..1;
+		obstacle_standoff_warning : 0..1;
+		obstacle_min_standoff : 0..1;
+		fls_range_dot_range : 0..1;
+		--obstacle_in_view : 0..1;
+		bb_fls_warning : 0..1;
+		obstacle_in_view_dot_stamp : 0..1;
+		emergency_stop_warning : 0..1;
+		--hsd_pipeline_mapping : 0..1;
+		--hsd_to_waypoint : 0..1;
+		--hsd_to_rth : 0..1;
+		--hsd_to_surface : 0..1; --these should maybe be used in the HSD_out variables
+		--rtreach_out : 0..1;
+		--HSD_out_dot_heading : {heading_default, heading_surface, heading_rth, heading_loiter, heading_pipeline_mapping, heading_waypoint};
+		HSD_out_dot_heading : {0, 1, 2, 3, 4, 5};
+		rtreach_out_dot_data : 0..1;
+		--uuv_max_speed : 0..1;
+		--mission_file : 0..1;
+		--refLat : 0..1;
+		--refLon : 0..1;
+		next_mission : 0..1;
+		--decision_threshold : 0..1;
+		--HSD_out : 0..1;
+		bb_obstacle_warning : 0..1;
+		--cm_hsd_input : {name_default, name_surface_task, name_rth_task, name_loiter_task, name_tracking_task, name_waypoint_task};
+		cm_hsd_input : {0, 1, 2, 3, 4, 5};
+		--HSD_out_dot_speed : {uuv_min_speed, uuv_max_speed};
+		HSD_out_dot_speed : {0, 1};
+		--HSD_out_dot_depth : {depth_default, depth_surface_task, depth_rth_task, depth_pipeline_mapping, depth_waypoint};
+		HSD_out_dot_depth : {0, 1, 2, 3, 4};
+		bb_home_reached : 0..1;
+		--bb_home_dist : 0..1;
+		--bb_home_dist_dot_data : 0..1;
+		pipe_mapping_enable : 0..1;
+		
+	ASSIGN
+		---
+		init(task_mission_server_mission_idx) := 0;
+		next(task_mission_server_mission_idx) :=
+			case
+				(active_node = node_names.mission_server) & (next_mission = 1) : min(task_mission_server_mission_idx + 1, task_mission_server_mission_len);
+				TRUE : task_mission_server_mission_idx;
+			esac;
+		---
+		init(battery_dot_batt_charge_remaining) := 0;
+		next(battery_dot_batt_charge_remaining) := 
+			case
+				(active_node in {node_names.battery2bb}) & (next(previous_status) = success) : {0, 1};
+				TRUE : battery_dot_batt_charge_remaining;
+			esac;
+		init(bb_rth_warning) := 0;
+		next(bb_rth_warning) := 
+			case
+				(bb_rth_warning = 1) : 1; -- can't be unset.
+				--(active_node = node_names.rth2bb) & (next(previous_status) = success) : next(bb_rth_dot_data);
+				(active_node = node_names.rth2bb) & (next(previous_status) = success) : {0, 1};
+				(active_node = node_names.mission_server) & (next_mission = 1) & (next(task_mission_server_mission_idx) = task_mission_server_mission_len)  : 1;
+				TRUE : bb_rth_warning;
+			esac;
+		-- init(bb_rth_dot_data) := 0;
+		-- next(bb_rth_dot_data) := 
+		-- 	case
+		-- 		(active_node in {node_names.rth2bb}) & (next(previous_status) = success) : {0, 1};
+		-- 		TRUE : bb_rth_dot_data;
+		-- 	esac;
+		init(bb_geofence_warning) := 0;
+		next(bb_geofence_warning) := 
+			case
+				(bb_geofence_warning = 1) : 1;
+				--(active_node in {node_names.geofence2bb}) & (next(previous_status) = success) : next(bb_geofence_dot_data);
+				(active_node in {node_names.geofence2bb}) & (next(previous_status) = success) : {0, 1};
+				TRUE : bb_geofence_warning;
+			esac;
+		-- init(bb_geofence_dot_data) := 0;
+		-- next(bb_geofence_dot_data) := 
+		-- 	case
+		-- 		(active_node in {node_names.geofence2bb}) & (next(previous_status) = success) : {0, 1};
+		-- 		TRUE : bb_geofence_dot_data;
+		-- 	esac;
+		-- init(lec2_am_r) := 0;
+		-- next(lec2_am_r) := 
+		-- 	case
+		-- 		(active_node in {node_names.lec2_am_r_2bb}) & (next(previous_status) = success) : {0, 1};
+		-- 		TRUE : lec2_am_r;
+		-- 	esac;
+		-- init(lec2_am_r_speed_warning) := 0;
+		-- next(lec2_am_r_speed_warning) := 
+		-- 	case
+		-- 		(active_node in {node_names.lec2_am_r_2bb}) & (next(previous_status) = success) : {0, 1};
+		-- 		TRUE : lec2_am_r_speed_warning;
+		-- 	esac;
+		-- init(lec2_am_r_pipe_warning) := 0;
+		-- next(lec2_am_r_pipe_warning) := 
+		-- 	case
+		-- 		(active_node in {node_names.lec2_am_r_2bb}) & (next(previous_status) = success) : {0, 1};
+		-- 		TRUE : lec2_am_r_pipe_warning;
+		-- 	esac;
+		init(lec2_am_r_dot_confs) := 0; -- 0 means no warning, 1 means speed, 2 means pipe, 3 means both
+		next(lec2_am_r_dot_confs) := 
+			case
+				(active_node in {node_names.lec2_am_r_2bb}) & (next(previous_status) = success) : {0, 1, 2, 3};
+				TRUE : lec2_am_r_dot_confs;
+			esac;
+		-- init(lec2_am_l) := 0;
+		-- next(lec2_am_l) := 
+		-- 	case
+		-- 		(active_node in {node_names.lec2_am_l_2bb}) & (next(previous_status) = success) : {0, 1};
+		-- 		TRUE : lec2_am_l;
+		-- 	esac;
+		-- init(lec2_am_l_speed_warning) := 0;
+		-- next(lec2_am_l_speed_warning) := 
+		-- 	case
+		-- 		(active_node in {node_names.lec2_am_l_2bb}) & (next(previous_status) = success) : {0, 1};
+		-- 		TRUE : lec2_am_l_speed_warning;
+		-- 	esac;
+		-- init(lec2_am_l_pipe_warning) := 0;
+		-- next(lec2_am_l_pipe_warning) := 
+		-- 	case
+		-- 		(active_node in {node_names.lec2_am_l_2bb}) & (next(previous_status) = success) : {0, 1};
+		-- 		TRUE : lec2_am_l_pipe_warning;
+		-- 	esac;
+		init(lec2_am_l_dot_confs) := 0; -- 0 means no warning, 1 means speed, 2 means pipe, 3 means both
+		next(lec2_am_l_dot_confs) := 
+			case
+				(active_node in {node_names.lec2_am_l_2bb}) & (next(previous_status) = success) : {0, 1, 2, 3};
+				TRUE : lec2_am_l_dot_confs;
+			esac;
+		init(bb_pipe_lost_warning) := 0;
+		next(bb_pipe_lost_warning) := 
+			case
+				--(active_node in {node_names.pipe_lost2bb}) & (next(previous_status) = success) & (bb_mission_dot_data = mission_type_pipe_following) : next(bb_pipe_lost_dot_data);
+				(active_node in {node_names.pipe_lost2bb}) & (next(previous_status) = success) & (bb_mission_dot_data = mission_type_pipe_following) : {0, 1};
+				TRUE : bb_pipe_lost_warning;
+			esac;
+		-- init(bb_pipelost_dot_data) := 0;
+		-- next(bb_pipelost_dot_data) := 
+		-- 	case
+		-- 		(active_node in {node_names.pipe_lost2bb}) & (next(previous_status) = success) & (bb_mission_dot_data = mission_type_pipe_following) : {0, 1};
+		-- 		TRUE : bb_pipelost_dot_data;
+		-- 	esac;
+		init(bb_mission_dot_data) := task_mission_server_mission_type_list[0];
+		next(bb_mission_dot_data) := 
+			case
+				(active_node in {node_names.mission2bb}) & (next(previous_status) = success) : {mission_type_path_following, mission_type_waypoint_following, mission_type_e_stop, mission_type_pipe_following, mission_type_unknown};--this seems wildly incorrect, but for some reason this is how the tree is setup. it makes negative sense to me.
+				(active_node in {node_names.mission_server}) & (next_mission = 1) & (next(task_mission_server_mission_idx) < task_mission_server_mission_len) : task_mission_server_mission_type_list[next(task_mission_server_mission_idx)];
+				TRUE : bb_mission_dot_data;
+			esac;
+		-- init(bb_pipe_lost_dot_data) := 0;
+		-- next(bb_pipe_lost_dot_data) := 
+		-- 	case
+		-- 		(active_node in {node_names.pipe_lost2bb}) & (next(previous_status) = success) : {0, 1};
+		-- 		TRUE : bb_pipe_lost_dot_data;
+		-- 	esac;
+		init(bb_sensor_failure_warning) := 0;
+		next(bb_sensor_failure_warning) := 
+			case
+				(bb_sensor_failure_warning = 1) : 1;
+				--(active_node in {node_names.sensor_failure2bb}) & (next(previous_status) = success) : next(bb_sensor_failure_dot_data);
+				(active_node in {node_names.sensor_failure2bb}) & (next(previous_status) = success) : {0, 1};
+				TRUE : bb_sensor_failure_warning;
+			esac;
+		-- init(bb_sensor_failure_dot_data) := 0;
+		-- next(bb_sensor_failure_dot_data) := 
+		-- 	case
+		-- 		(active_node in {node_names.sensor_failure2bb}) & (next(previous_status) = success) : {0, 1};
+		-- 		TRUE : bb_sensor_failure_dot_data;
+		-- 	esac;
+		init(bb_waypoints_completed_dot_data) := 0;
+		next(bb_waypoints_completed_dot_data) := 
+			case
+				(active_node in {node_names.waypoints_completed2bb}) & (next(previous_status) = success) : {0, 1};
+				TRUE : bb_waypoints_completed_dot_data;
+			esac;
+		init(dd_z_axis_warning) := 0;
+		next(dd_z_axis_warning) := 
+			case
+				(active_node in {node_names.ddlec2bb}) & (total_degradation <= total_degradation_threshold) & (next(dd_output_dot_data) = 1) & (next(previous_status) = success) : 1;
+				(active_node in {node_names.ddlec2bb}) & ((total_degradation > total_degradation_threshold) | (next(dd_output_dot_data) = 0)) & (next(previous_status) = success) : 0;
+				TRUE : dd_z_axis_warning;
+			esac;
+		init(dd_xy_axis_degradation) := 0;
+		next(dd_xy_axis_degradation) := 
+			case
+				(active_node in {node_names.ddlec2bb}) & (total_degradation <= total_degradation_threshold) & (next(dd_output_dot_data) = 2) & (next(previous_status) = success) : 1;
+				(active_node in {node_names.ddlec2bb}) & ((total_degradation > total_degradation_threshold) | (next(dd_output_dot_data) = 0)) & (next(previous_status) = success) : 0;
+				TRUE : dd_xy_axis_degradation;
+			esac;
+		init(dd_output_dot_data) := 0; --0 means nothing, 1 means z, 2 means xy
+		next(dd_output_dot_data) := 
+			case
+				(active_node in {node_names.ddlec2bb, node_names.reallocate_task}) & (next(previous_status) = success) : {0, 1, 2};
+				TRUE : dd_output_dot_data;
+			esac;
+		init(total_degradation) := 0;
+		next(total_degradation) := 
+			case
+				(active_node in {node_names.reallocate_task}) & (dd_xy_axis_degradation = 1) : 1;
+				TRUE : total_degradation;
+			esac;
+		init(obstacle_standoff_warning) := 0;
+		next(obstacle_standoff_warning) := 
+			case
+				(active_node in {node_names.fls2bb}) & (0 < next(fls_range_dot_range)) & (next(fls_range_dot_range) <= obstacle_min_standoff) & (next(previous_status) = success) : 1;--the 0 represents 0.5
+				TRUE : obstacle_standoff_warning;
+			esac;
+		init(obstacle_min_standoff) :=
+			case
+				(task_mission_server_mission_type_list[0] = mission_type_unknown) : 1;
+				TRUE : task_mission_server_mission_distance_list[0];
+			esac;
+		next(obstacle_min_standoff) := 
+			case
+				(active_node in {node_names.mission_server}) & (next_mission = 1) & (next(task_mission_server_mission_idx) < task_mission_server_mission_len) : task_mission_server_mission_distance_list[next(task_mission_server_mission_idx)];
+				TRUE : obstacle_min_standoff;
+			esac;
+		init(fls_range_dot_range) := 0;
+		next(fls_range_dot_range) := 
+			case
+				(active_node in {node_names.fls2bb}) & (next(previous_status) = success) : {0, 1};
+				TRUE : fls_range_dot_range;
+			esac;
+		init(bb_fls_warning) := 0;
+		next(bb_fls_warning) := 
+			case
+				(bb_fls_warning = 1) : 1;
+				(active_node in {node_names.fls_warning2bb}) & (next(obstacle_in_view_dot_stamp) = 1) & (next(previous_status) = success) : 1;
+				TRUE : bb_fls_warning;
+			esac;
+		init(obstacle_in_view_dot_stamp) := 0;
+		next(obstacle_in_view_dot_stamp) := 
+			case
+				(active_node in {node_names.fls_warning2bb}) & (next(previous_status) = success) : {0, 1};
+				TRUE : obstacle_in_view_dot_stamp;
+			esac;
+		init(emergency_stop_warning) :=
+			case
+				(task_mission_server_mission_type_list[0] = mission_type_e_stop) : 1;
+				TRUE : 0;
+			esac;
+		next(emergency_stop_warning) := 
+			case
+				(emergency_stop_warning = 1) : 1;
+				(active_node in {node_names.fls_warning2bb}) & (next(obstacle_in_view_dot_stamp) = 1) & (next(previous_status) = success) : 1;
+				(active_node in {node_names.rtreach2bb}) & (rtreach_out_dot_data < 1) & (next(previous_status) = success) : 1;
+				(active_node in {node_names.mission_server}) & (next_mission = 1) & (next(task_mission_server_mission_idx) < task_mission_server_mission_len) & (task_mission_server_mission_type_list[next(task_mission_server_mission_idx)] = mission_type_e_stop) : 1;
+				TRUE : emergency_stop_warning;
+			esac;
+		-- init(hsd_pipeline_mapping) := 0;
+		-- next(hsd_pipeline_mapping) := 
+		-- 	case
+		-- 		(active_node in {node_names.hsd_pipe2bb}) & (next(previous_status) = success) : {0, 1};
+		-- 		TRUE : hsd_pipeline_mapping;
+		-- 	esac;
+		-- init(hsd_to_waypoint) := 0;
+		-- next(hsd_to_waypoint) := 
+		-- 	case
+		-- 		(active_node in {node_names.hsd_wp2bb}) & (next(previous_status) = success) : {0, 1};
+		-- 		TRUE : hsd_to_waypoint;
+		-- 	esac;
+		-- init(hsd_to_rth) := 0;
+		-- next(hsd_to_rth) := 
+		-- 	case
+		-- 		(active_node in {node_names.hsd_rth2bb}) & (next(previous_status) = success) : {0, 1};
+		-- 		TRUE : hsd_to_rth;
+		-- 	esac;
+		-- init(hsd_to_surface) := 0;
+		-- next(hsd_to_surface) := 
+		-- 	case
+		-- 		(active_node in {node_names.hsd_surface2bb}) & (next(previous_status) = success) : {0, 1};
+		-- 		TRUE : hsd_to_surface;
+		-- 	esac;
+		-- init(rtreach_out) := 0;
+		-- next(rtreach_out) := 
+		-- 	case
+		-- 		(active_node in {node_names.rtreach2bb}) & (next(previous_status) = success) : {0, 1};
+		-- 		TRUE : rtreach_out;
+		-- 	esac;
+		init(rtreach_out_dot_data) := 1;
+		next(rtreach_out_dot_data) := 
+			case
+				(active_node in {node_names.rtreach2bb}) & (next(previous_status) = success) : {0, 1};
+				TRUE : rtreach_out_dot_data;
+			esac;
+		init(HSD_out_dot_heading) := heading_default;
+		next(HSD_out_dot_heading) := 
+			case
+				--(active_node in {node_names.reallocate_task, node_names.obstacle_avoidance, node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4, node_names.rth_task, node_names.rth_task1, node_names.loiter_task1, node_names.tracking_task, node_names.speed_min_task, node_names.speed_min_task1, node_names.speed_max_task, node_names.loiter_task2, node_names.waypoint_task, node_names.loiter_task}) & (next(previous_status) = success) : {0, 1};
+				(active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4}) : heading_surface;
+				(active_node in {node_names.rth_task, node_names.rth_task1}) : heading_rth;
+				(active_node in {node_names.loiter_task1,node_names.loiter_task2, node_names.loiter_task}) : heading_loiter;
+				(active_node in {node_names.tracking_task}) : heading_pipeline_mapping;
+				(active_node in {node_names.waypoint_task}) : heading_waypoint;
+				TRUE : HSD_out_dot_heading;
+			esac;
+		-- init(uuv_max_speed) := 1;--default value, can be changed by passing stuff in
+		-- next(uuv_max_speed) := 
+		-- 	case
+		-- 		(active_node in {node_names.speed_max_task}) & (next(previous_status) = success) : {0, 1};
+		-- 		TRUE : uuv_max_speed;
+		-- 	esac;
+		-- init(mission_file) := 0;
+		-- next(mission_file) := 
+		-- 	case
+		-- 		(active_node in {node_names.mission_server}) & (next(previous_status) = success) : {0, 1};
+		-- 		TRUE : mission_file;
+		-- 	esac;
+		-- init(refLat) := 0;
+		-- next(refLat) := 
+		-- 	case
+		-- 		(active_node in {node_names.mission_server}) & (next(previous_status) = success) : {0, 1};
+		-- 		TRUE : refLat;
+		-- 	esac;
+		-- init(refLon) := 0;
+		-- next(refLon) := 
+		-- 	case
+		-- 		(active_node in {node_names.mission_server}) & (next(previous_status) = success) : {0, 1};
+		-- 		TRUE : refLon;
+		-- 	esac;
+		init(next_mission) := 0;
+		next(next_mission) := 
+			case
+				(active_node in {node_names.mission_server}) : 0;
+				(active_node in {node_names.next_mission}) : 1;
+				TRUE : next_mission;
+			esac;
+		-- init(decision_threshold) :=
+		-- 	case
+		-- 		(task_mission_server_mission_type_list[0] = mission_type_unknown) : ?;--NOT DONE. Fill in a default value here
+		-- 		TRUE : ?; --NOT DONE. figure out how this should actually be set
+		-- 	esac;
+				
+		-- next(decision_threshold) := --NOT DONE
+		-- 	case
+		-- 		(active_node in {node_names.mission_server}) & (next(previous_status) = success) : {0, 1};
+		-- 		TRUE : decision_threshold;
+		-- 	esac;
+		-- init(HSD_out) := 0;
+		-- next(HSD_out) := 
+		-- 	case
+		-- 		(active_node in {node_names.obstacle_avoidance, node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4, node_names.rth_task, node_names.rth_task1, node_names.loiter_task1, node_names.tracking_task, node_names.speed_min_task, node_names.speed_min_task1, node_names.speed_max_task, node_names.loiter_task2, node_names.waypoint_task, node_names.loiter_task}) & (next(previous_status) = success) : {0, 1};
+		-- 		TRUE : HSD_out;
+		-- 	esac;
+		init(bb_obstacle_warning) := 0;
+		next(bb_obstacle_warning) := 
+			case
+				(active_node in {node_names.obstacle_avoidance}) : {0, 1};
+				TRUE : bb_obstacle_warning;
+			esac;
+		init(cm_hsd_input) := name_default;
+		next(cm_hsd_input) := 
+			case
+				--(active_node in {node_names.obstacle_avoidance, node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4, node_names.rth_task, node_names.rth_task1, node_names.loiter_task1, node_names.tracking_task, node_names.loiter_task2, node_names.waypoint_task, node_names.loiter_task}) & (next(previous_status) = success) : {0, 1};
+				(active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4}) : name_surface_task;
+				(active_node in {node_names.rth_task, node_names.rth_task1}) : name_rth_task;
+				(active_node in {node_names.loiter_task1, node_names.loiter_task2, node_names.loiter_task}) : name_loiter_task;
+				(active_node in {node_names.tracking_task}) : name_tracking_task;
+				(active_node in {node_names.waypoint_task}) : name_waypoint_task;
+				TRUE : cm_hsd_input;
+			esac;
+		init(HSD_out_dot_speed) := uuv_max_speed;
+		next(HSD_out_dot_speed) := 
+			case
+				--(active_node in {node_names.obstacle_avoidance, node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4, node_names.rth_task, node_names.rth_task1, node_names.loiter_task1, node_names.tracking_task, node_names.speed_min_task, node_names.speed_min_task1, node_names.speed_max_task, node_names.loiter_task2, node_names.waypoint_task, node_names.loiter_task}) & (next(previous_status) = success) : {0, 1};
+				(active_node in {node_names.speed_min_task, node_names.speed_min_task1}) : uuv_min_speed;--the min speed
+				(active_node in {node_names.speed_max_task}) : uuv_max_speed;--the max speed
+				TRUE : HSD_out_dot_speed;
+			esac;
+		init(HSD_out_dot_depth) := depth_default;
+		next(HSD_out_dot_depth) := 
+			case
+				--(active_node in {node_names.obstacle_avoidance, node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4, node_names.rth_task, node_names.rth_task1, node_names.loiter_task1, node_names.tracking_task, node_names.speed_min_task, node_names.speed_min_task1, node_names.speed_max_task, node_names.loiter_task2, node_names.waypoint_task, node_names.loiter_task}) & (next(previous_status) = success) : {0, 1};
+				(active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4}) : depth_surface_task;
+				(active_node in {node_names.rth_task, node_names.rth_task1}) : depth_rth_task;
+				(active_node in {node_names.loiter_task1, node_names.loiter_task2,node_names.loiter_task, node_names.tracking_task}) : depth_pipeline_mapping;
+				(active_node in {node_names.waypoint_task}) : depth_waypoint;
+				TRUE : HSD_out_dot_depth;
+			esac;
+		init(bb_home_reached) := 0;
+		next(bb_home_reached) := 
+			case
+				(bb_home_reached = 1) : 1;
+				--(active_node in {node_names.home2bb, node_names.home2bb1}) & (next(bb_home_dist_dot_data) < home_reached_threshold) & (next(previous_status) = success) : 1;
+				(active_node in {node_names.home2bb, node_names.home2bb1}) & (next(previous_status) = success) : {0, 1};
+				TRUE : bb_home_reached;
+			esac;
+		-- init(bb_home_dist) := 0;
+		-- next(bb_home_dist) := 
+		-- 	case
+		-- 		(active_node in {node_names.home2bb, node_names.home2bb1}) & (next(previous_status) = success) : {0, 1};
+		-- 		TRUE : bb_home_dist;
+		-- 	esac;
+		-- init(bb_home_dist_dot_data) := 0;
+		-- next(bb_home_dist_dot_data) := 
+		-- 	case
+		-- 		(active_node in {node_names.home2bb, node_names.home2bb1}) & (next(previous_status) = success) : {0, 1};
+		-- 		TRUE : bb_home_dist_dot_data;
+		-- 	esac;
+		init(pipe_mapping_enable) := 1;
+		next(pipe_mapping_enable) := 
+			case
+				(active_node in {node_names.pipe_mapping_enable_task}) : 1;
+				(active_node in {node_names.pipe_mapping_disable_task, node_names.pipe_mapping_disable_task1}) : 0;
+				TRUE : pipe_mapping_enable;
+			esac;

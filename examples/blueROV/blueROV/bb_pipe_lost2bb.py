@@ -87,7 +87,7 @@ class ToBlackboard(py_trees.behaviours.SetBlackboardVariable):
 """
 ############<<USER UPDATE CODE BEGINS>>##############################
         if self.blackboard.bb_mission.data == 'pipe_track': 
-            self.blackboard.bb_pipe_lost_warning = self.blackboard.bb_pipe_lost.data
+            self.blackboard.bb_pipe_lost_warning = self.blackboard.bb_pipelost.data
 ############<<USER UPDATE CODE ENDS>>################################
 """
         #return status
