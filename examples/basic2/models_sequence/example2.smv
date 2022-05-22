@@ -14,18 +14,43 @@ MODULE main
 		decorators := {-3};
 		first_child := [1, -2, 3, -2, -2, -2];
 		last_child := [2, -1, 5, -1, -1, -1];
-		next_node := [next_node_0, parents[1], next_node_2, parents[3], parents[4], parents[5]];
+		next_node := [next_node_0, next_node_1, next_node_2, next_node_3, next_node_4, next_node_5];
 		next_node_0 := 
 			case
-				(previous_status = running | previous_status = failure) : parents[0];
-				(previous_node <= sequence_resume_0) : sequence_resume_0;
+				(previous_status = running | previous_status = failure) & (active_node = 0) : parents[0];
+				(previous_node = 2) & (active_node = 0) : parents[0];
+				(active_node <= 0) & (1 = sequence_resume_0) : next_node_1;
+				(active_node <= 0) & (2 = sequence_resume_0) : next_node_2;
 				TRUE : parents[0];
+			esac;
+		next_node_1 := 
+			case
+				!(active_node = 1) : 1;
+				TRUE : parents[1];
 			esac;
 		next_node_2 := 
 			case
-				(previous_status = running | previous_status = failure) : parents[2];
-				(previous_node <= sequence_resume_2) : sequence_resume_2;
+				(previous_status = running | previous_status = failure) & (active_node = 2) : parents[2];
+				(previous_node = 5) & (active_node = 2) : parents[2];
+				(active_node <= 2) & (3 = sequence_resume_2) : next_node_3;
+				(active_node <= 2) & (4 = sequence_resume_2) : next_node_4;
+				(active_node <= 2) & (5 = sequence_resume_2) : next_node_5;
 				TRUE : parents[2];
+			esac;
+		next_node_3 := 
+			case
+				!(active_node = 3) : 3;
+				TRUE : parents[3];
+			esac;
+		next_node_4 := 
+			case
+				!(active_node = 4) : 4;
+				TRUE : parents[4];
+			esac;
+		next_node_5 := 
+			case
+				!(active_node = 5) : 5;
+				TRUE : parents[5];
 			esac;
 	VAR
 		active_node : -2..max_active_node;

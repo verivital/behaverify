@@ -50,9 +50,9 @@ MODULE main
 	VAR
 		active_node : -2..max_active_node;
 		previous_node : -1..max_active_node;
-		resume_node : {-1, 1, 2};
+		resume_node : {1, 2};
 		previous_status : {running, success, failure, invalid};
-		advanced_resume_non_parallel_2 : {-2, 13, 14, 15, 16, 17, 18, 19, 20};
+		advanced_resume_non_parallel_2 : {13, 14, 15, 16, 17, 18, 19, 20};
 		example_8_seq1 : node_sequence(active_node, 0, previous_status, 2, previous_node);
 		sel1 : node_selector(active_node, 1, previous_status, 10, previous_node);
 		sel2 : node_selector(active_node, 2, previous_status, 12, previous_node);
@@ -78,9 +78,9 @@ MODULE main
 	ASSIGN
 		init(active_node) := -1;
 		init(previous_node) := -1;
-		init(resume_node) := -1;
+		init(resume_node) := 1;
 		init(previous_status) := invalid;
-		init(advanced_resume_non_parallel_2) := -2;
+		init(advanced_resume_non_parallel_2) := 13;
 		next(previous_node) :=
 			case
 				(active_node < 0) : -1;
@@ -89,7 +89,7 @@ MODULE main
 		next(resume_node) :=
 			case
 				(previous_node < 0) : resume_node;
-				!(previous_status = running) : -1;
+				!(previous_status = running) : 1;
 				(previous_node in{1, 2}) : previous_node;
 				TRUE : resume_node;
 			esac;
@@ -101,8 +101,7 @@ MODULE main
 		next(active_node) :=
 			case
 				(active_node = -2) : -2;
-				(active_node = -1) & (resume_node = -1) : 0;
-				(active_node = -1) & !(resume_node = -1) : resume_node;
+				(active_node = -1) : resume_node;
 				(active_node in leafs) : parents[active_node];
 				(previous_node = last_child[active_node]) : parents[active_node];
 				(active_node in (parallels union selectors)) : advanced_resume[active_node];
@@ -112,8 +111,8 @@ MODULE main
 			esac;
 		next(advanced_resume_non_parallel_2) := 
 			case
-				(previous_node = 0) & (previous_status = success | previous_status = failure) : -2;
-				(previous_node in {-2, 13, 14, 15, 16, 17, 18, 19, 20}) & (previous_status = running) : previous_node;
+				(previous_node = 0) & (previous_status = success | previous_status = failure) : 13;
+				(previous_node in {13, 14, 15, 16, 17, 18, 19, 20}) & (previous_status = running) : previous_node;
 				TRUE : advanced_resume_non_parallel_2;
 			esac;
 MODULE node_sequence(active_node, id, previous_status, last_child, previous_node)

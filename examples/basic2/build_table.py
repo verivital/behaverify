@@ -3,9 +3,12 @@ import pandas as pd
 #import matplotlib.pyplot as plt
 import re
 
-folders = ["./models_selector_mixed", "./models_selector_mixed2", "./models_selector_parallel",  "./models_selector_parallel2", "./models_selector_non_parallel", "./models_selector_non_parallel2", "./models_sequence", "./models_sequence2", "./models_ultimate"]
-folders2 = ["selector_mixed", "selector_mixed2", "selector_parallel",  "selector_parallel2", "selector_non_parallel", "selector_non_parallel2", "sequence", "sequence2", "ultimate"]
+folders = ["./models_selector_mixed", "./models_selector_parallel", "./models_selector_non_parallel", "./models_sequence",  "./models_path"]
+folders2 = ["selector_mixed", "selector_parallel", "selector_non_parallel",  "sequence", "path"]
 files = ["example1", "example2", "example3", "example4", "example5", "example6", "example7", "example8"]
+
+foldersShort = ["SelMixed", "SelParallel", "SelNonParallel", "Sequence", "Path"]
+filesShort = ["ex1", "ex2", "ex3", "ex4", "ex5", "ex6", "ex7", "ex8"]
 
 #diameters = {}
 #reachable_states = {}
@@ -46,12 +49,12 @@ for i in range(len(files)):
                     #vals_total_pow.append(float(match.group('val4')))
 
 
-df = pd.DataFrame(diameters, columns=folders2, index=files)
-df.to_latex('./processed_data/diameters.tex')
+df = pd.DataFrame(diameters, columns=foldersShort, index=filesShort)
+df.to_latex('./processed_data/diameters.tex', caption='Basic Examples, System Diameter', label='b_e_diam')
 
-df = pd.DataFrame(reachable_states, columns=folders2, index=files)
-df.to_latex('./processed_data/reachable_states.tex')
+df = pd.DataFrame(reachable_states, columns=foldersShort, index=filesShort)
+df.to_latex('./processed_data/reachable_states.tex', caption='Basic Examples, Reachable States', label='b_e_reach')
 
 
-df = pd.DataFrame(total_states, columns=folders2, index=files)
-df.to_latex('./processed_data/total_states.tex')
+df = pd.DataFrame(total_states, columns=foldersShort, index=filesShort)
+df.to_latex('./processed_data/total_states.tex', caption='Basic Examples, Total States', label='b_e_total')

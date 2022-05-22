@@ -1,14 +1,19 @@
-\begin{tabular}{lrrrrrrrrr}
+\begin{table}
+\centering
+\caption{Basic Examples, Total States}
+\label{b_e_total}
+\begin{tabular}{lrrrrr}
 \toprule
-{} &  selector\_mixed &  selector\_mixed2 &  selector\_parallel &  selector\_parallel2 &  selector\_non\_parallel &  selector\_non\_parallel2 &  sequence &  sequence2 &  ultimate \\
+{} &  SelMixed &  SelParallel &  SelNonParallel &  Sequence &   Path \\
 \midrule
-example1 &             672 &              448 &                672 &                 448 &                   2688 &                    1344 &       448 &        448 &       448 \\
-example2 &            1120 &              896 &               1120 &                 896 &                   1120 &                     896 &      1344 &       1344 &       672 \\
-example3 &            1792 &              672 &               1792 &                 672 &                   2240 &                     896 &       672 &        672 &       672 \\
-example4 &             880 &              440 &                880 &                 440 &                   7920 &                    3520 &       440 &        440 &       440 \\
-example5 &           19584 &             8704 &              54400 &               17408 &                  19584 &                    8704 &     69632 &      69632 &      5440 \\
-example6 &           75816 &            44928 &             210600 &               89856 &                 682344 &                  359424 &    359424 &     359424 &     16848 \\
-example7 &           66096 &            19584 &             183600 &               39168 &                  88128 &                   29376 &     58752 &      58752 &      8568 \\
-example8 &           54648 &            32384 &             151800 &               64768 &                 491832 &                  259072 &     64768 &      64768 &     16192 \\
+ex1 &       448 &          448 &            1344 &       448 &    448 \\
+ex2 &       896 &          896 &             896 &      1344 &    896 \\
+ex3 &       672 &          672 &             896 &       672 &    672 \\
+ex4 &       440 &          440 &            3520 &       440 &    440 \\
+ex5 &      8704 &        17408 &            8704 &     69632 &   7616 \\
+ex6 &     44928 &        89856 &          359424 &    359424 &  25272 \\
+ex7 &     19584 &        39168 &           29376 &     58752 &  11016 \\
+ex8 &     32384 &        64768 &          259072 &     64768 &  18216 \\
 \bottomrule
 \end{tabular}
+\end{table}
