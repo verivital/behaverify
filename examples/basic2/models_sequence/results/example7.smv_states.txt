@@ -25,7 +25,7 @@
 *** See http://mathsat.fbk.eu
 
 ######################################################################
-system diameter: 73
-reachable states: 905 (2^9.82177) out of 58752 (2^15.8424)
+system diameter: 43
+reachable states: 427 (2^8.73809) out of 58752 (2^15.8424)
 ######################################################################
-0.01 user, 0.01 system, 0.10 elapsed -- Max VSize = 2364KB, Max RSS = 72KB
+0.01 user, 0.01 system, 0.10 elapsed -- Max VSize = 2364KB, Max RSS = 80KB

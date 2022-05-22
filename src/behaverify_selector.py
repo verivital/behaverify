@@ -553,6 +553,11 @@ def main():
     #print(parallel_unsynch)
     walk_tree(root, -1, 0, -1, -1, args.force_parallel_unsynch)
     node_count=node_count+1#this is included because it used to happen as part of walk_tree, and there's a lot of logic to update if this value is different now.
+    
+    if len(default_resume) == 1:
+        constant_resume_node = True
+    else:
+        constant_resume_node = False
 
     selector_mode={}#each selector node will map to parallel_mode or non_parallel_mode
     for node in advanced_resume:
@@ -691,13 +696,19 @@ def main():
                          + last_child_str[0:-2] + "];" + os.linesep)
 
     #------------------------------------------------------------------------------------------------------------------------
+    if constant_resume_node:
+        pre_nuxmv_string += "\t\tresume_node := " + str(default_resume[0]) + ";" + os.linesep
     default_resume_valid_set = '{' + str(default_resume)[1 : -1] + '}'
     nuxmv_string = (""
                     + "\tVAR" + os.linesep 
                     + "\t\tactive_node : -2..max_active_node;" + os.linesep
                     + "\t\tprevious_node : -1..max_active_node;" + os.linesep
-                    + "\t\tresume_node : {-1, " + str(default_resume)[1 : -1] + "};" + os.linesep
-                    + "\t\tprevious_status : {running, success, failure, invalid};" + os.linesep)
+    )
+    if not constant_resume_node:
+        nuxmv_string += ( "\t\tresume_node : {" + str(default_resume)[1 : -1] + "};" + os.linesep
+                          #"\t\tresume_node : {-1, " + str(default_resume)[1 : -1] + "};" + os.linesep
+        )
+    nuxmv_string += "\t\tprevious_status : {running, success, failure, invalid};" + os.linesep
 
     #------------------------------------------------------------------------------------------------------------------------
     #if len(advanced_resume) > 0:
@@ -733,10 +744,10 @@ def main():
                 else:#unsynched or selector
                     valid_set = "{"#don't need an extra state if unsynched. every leaf descendant of an unsyched is always used for resume
 
-                if direct_child == advanced_resume[advanced_node][direct_child][0]:#direct child can only be the first thing, since that's when it would have been added.
-                    state_set = valid_set + str(advanced_resume[advanced_node][direct_child])[1 : -1] + "}" #direct child is already in there, no need to do anything
-                else:
-                    state_set = valid_set + str(direct_child) + ',' + str(advanced_resume[advanced_node][direct_child])[1 : -1] + "}" #direct child must be a valid location. add it back manually
+                #if direct_child == advanced_resume[advanced_node][direct_child][0]:#direct child can only be the first thing, since that's when it would have been added.
+                #    state_set = valid_set + str(advanced_resume[advanced_node][direct_child])[1 : -1] + "}" #direct child is already in there, no need to do anything
+                #else:
+                #    state_set = valid_set + str(direct_child) + ',' + str(advanced_resume[advanced_node][direct_child])[1 : -1] + "}" #direct child must be a valid location. add it back manually
                 ##############################################################################################################################################################
                 #important note!
                 #it is possible to have a case where there is only 1 node in the valid_set, and 2 nodes in the state_set. In this case
@@ -745,45 +756,54 @@ def main():
                 #THIS HAS BEEN CHANGED. in tha same case, we now isntead always go to the direct child, even when resuming.
                 #this combines the clarity and state saving features of both versions.
 
+                first_in_line = advanced_resume[advanced_node][direct_child][0]
+
 
                 valid_set += str(advanced_resume[advanced_node][direct_child])[1 : -1] + "}"
                 if ',' in valid_set:
-                    nuxmv_string += ("\t\tadvanced_resume_" + str(advanced_node) + "_" + str(direct_child) + " : " + state_set + ";" + os.linesep)
-                    parallel_init += ("\t\tinit(advanced_resume_" + str(advanced_node) + "_" + str(direct_child) + ") := " + str(direct_child) + ";" + os.linesep)
+                    nuxmv_string += ("\t\tadvanced_resume_" + str(advanced_node) + "_" + str(direct_child) + " : " + valid_set + ";" + os.linesep)
+                    parallel_init += ("\t\tinit(advanced_resume_" + str(advanced_node) + "_" + str(direct_child) + ") := " + str(first_in_line) + ";" + os.linesep)#point to first_in_line by default
                     parallel_next += ("\t\tnext(advanced_resume_" + str(advanced_node) + "_" + str(direct_child) + ") :=" + os.linesep
                                       + "\t\t\tcase" + os.linesep
-                                      + "\t\t\t\t(previous_node = " + str(advanced_node) + ") & (previous_status = failure | previous_status = success) : " + str(direct_child) + ";" + os.linesep #reset if the advanced node actually returned
-                                      + "\t\t\t\t(advanced_resume_" + str(advanced_node) + "_" + str(direct_child) + " = " + str(direct_child) + ") & (previous_node in " + valid_set + ") & (previous_status = running) : previous_node;" + os.linesep #if we are currently pointing to the direct descendant and we encounter something that returned running, point to that instead.
+                                      + "\t\t\t\t(previous_node = " + str(advanced_node) + ") & (previous_status = failure | previous_status = success) : " + str(first_in_line) + ";" + os.linesep #reset if the advanced node actually returned
+                                      + "\t\t\t\t(previous_node in " + valid_set + ") & (previous_status = running) : previous_node;" + os.linesep #if we encounter something that returned running and cand point to it, point to that instead.
                                       + "\t\t\t\t(previous_node = " + str(direct_child) + ") & (previous_status = failure | previous_status = success) : "
                     )
                     if advanced_node in parallel_synch_list:#means it's synched
                         parallel_next += "-2;" + os.linesep #if it's synched, success means we mark it as finished. if it's failure, we'll reset when the node returns failure. see first case
                     else:#means it's unsynched or selector
-                        parallel_next += (str(direct_child) + ";" + os.linesep) #if it's unsynched, success or failure means we point at direct descendant
-                    parallel_next += ("\t\t\t\t(previous_node = 0) & (previous_status = success | previous_status = failure) : " + str(direct_child) + ";" + os.linesep#reset if we didn't end up on running
+                        parallel_next += (str(first_in_line) + ";" + os.linesep) #if it's unsynched, success or failure means we point at direct descendant
+                    parallel_next += ("\t\t\t\t(previous_node = 0) & (previous_status = success | previous_status = failure) : " + str(first_in_line) + ";" + os.linesep#reset if we didn't end up on running
                                       + "\t\t\t\tTRUE : advanced_resume_" + str(advanced_node) + "_" + str(direct_child) + ";" + os.linesep
                                       + "\t\t\tesac;" + os.linesep + os.linesep
                     )
                 else:#we're storing it as a constant
                     #pre_post_nuxmv_string += ("\t\tadvanced_resume_" + str(advanced_node) + "_" + str(direct_child) + " := " + valid_set[ 1 : -1] + ";" + os.linesep)
-                    pre_post_nuxmv_string += ("\t\tadvanced_resume_" + str(advanced_node) + "_" + str(direct_child) + " := " + str(direct_child) + ";" + os.linesep)
+                    pre_post_nuxmv_string += ("\t\tadvanced_resume_" + str(advanced_node) + "_" + str(direct_child) + " := " + str(first_in_line) + ";" + os.linesep)
                 pre_nuxmv_string += "\t\t\t\t(previous_node < " + str(direct_child) + ") & !(advanced_resume_" + str(advanced_node) + "_" + str(direct_child) + " = -2) : advanced_resume_" + str(advanced_node) + "_" + str(direct_child) + ";" + os.linesep #if the previous_node is less than this direct child, check if we're supposed to use it for a resume.
         else:
+            if advanced_node not in children:
+                continue
             #non_parallel selector resume
-            total_set="-2"
+            total_set=""
+            first_in_line = -2
             for direct_child in children[advanced_node]:
                 #valid set is going to describe the list of descendants of the child, it's going to be used to confirm if the resume node is a descendant of the direct child
                 #state set is valid_set UNION direct_child, because if we're not actually resuming than we need to start from direct child.
-                total_set = total_set + ", " + str(advanced_resume[advanced_node][direct_child])[1 : -1] #add all the leaf descendants to the list
+                total_set = total_set + str(advanced_resume[advanced_node][direct_child])[1 : -1] + ", " #add all the leaf descendants to the list
                 valid_set = "{" + str(advanced_resume[advanced_node][direct_child])[1 : -1] + "}"
                 pre_nuxmv_string += "\t\t\t\t(previous_node < " + str(direct_child) + ") & (advanced_resume_non_parallel_" + str(advanced_node) + " in " + valid_set +") : advanced_resume_non_parallel_" + str(advanced_node) + ";" + os.linesep #if the previous_node is less than this direct child, check if the resume node is a descendant of the child if it is, we need to use it
                 pre_nuxmv_string += "\t\t\t\t(previous_node < " + str(direct_child) + ") : " + str(direct_child) + ";" + os.linesep#otherwise, if it's less but not in the set, just use the direct child.
-            nuxmv_string += ("\t\tadvanced_resume_non_parallel_" + str(advanced_node) + " : {" + total_set + "};" + os.linesep) 
-            parallel_init += ("\t\tinit(advanced_resume_non_parallel_" + str(advanced_node) +") := -2;" + os.linesep)
+                if first_in_line == -2:
+
+                    #print(advanced_resume[advanced_node][direct_child])
+                    first_in_line = advanced_resume[advanced_node][direct_child][0]
+            nuxmv_string += ("\t\tadvanced_resume_non_parallel_" + str(advanced_node) + " : {" + total_set[0:-2] + "};" + os.linesep) 
+            parallel_init += ("\t\tinit(advanced_resume_non_parallel_" + str(advanced_node) +") := " + str(first_in_line) + ";" + os.linesep)
             parallel_next += ("\t\tnext(advanced_resume_non_parallel_" + str(advanced_node) +") := " + os.linesep
                               + "\t\t\tcase" + os.linesep
-                              + "\t\t\t\t(previous_node = 0) & (previous_status = success | previous_status = failure) : -2;" + os.linesep#reset if we didn't end up on running
-                              + "\t\t\t\t(previous_node in {" + total_set + "}) & (previous_status = running) : previous_node;" + os.linesep#if we encounter something that returned running in our domain, point to it
+                              + "\t\t\t\t(previous_node \in {0, " + str(advanced_node) + "}) & (previous_status = success | previous_status = failure) : " + str(first_in_line) + ";" + os.linesep#reset if we didn't end up on running
+                              + "\t\t\t\t(previous_node in {" + total_set[0:-2] + "}) & (previous_status = running) : previous_node;" + os.linesep#if we encounter something that returned running in our domain, point to it
                               + "\t\t\t\tTRUE : advanced_resume_non_parallel_" + str(advanced_node) +";" + os.linesep
                               + "\t\t\tesac;" + os.linesep
             )
@@ -792,7 +812,8 @@ def main():
                              + "\t\t\tesac;" + os.linesep
         )#this is ending the advanced_resume_ID define macro
     pre_nuxmv_string += pre_post_nuxmv_string
-    #------------------------------------------------------------------------------------------------------------------
+    #----------------------------------------------------------------------------------------------------------------------------------------
+                
     
     for node_id in range(0, node_count):
         #print(node_id)
@@ -848,8 +869,12 @@ def main():
                     + "\tASSIGN" + os.linesep
                     + "\t\tinit(active_node) := -1;" + os.linesep
                     + "\t\tinit(previous_node) := -1;" + os.linesep
-                    + "\t\tinit(resume_node) := -1;" + os.linesep
-                    + "\t\tinit(previous_status) := invalid;" + os.linesep)
+    )
+    if not constant_resume_node:
+        nuxmv_string +=( "\t\tinit(resume_node) := " + str(default_resume[0]) + ";" + os.linesep
+                         # "\t\tinit(resume_node) := -1;" + os.linesep
+        )
+    nuxmv_string += ("\t\tinit(previous_status) := invalid;" + os.linesep)
     #if len(advanced_resume) > 0:
     nuxmv_string += parallel_init
     for node_id in range(0, node_count):
@@ -869,26 +894,21 @@ def main():
                     + "\t\t\t\t(active_node < 0) : -1;" + os.linesep
                     + "\t\t\t\tTRUE : active_node;" + os.linesep
                     + "\t\t\tesac;" + os.linesep)
-
-    nuxmv_string = (nuxmv_string
-                    + "\t\tnext(resume_node) :=" + os.linesep
-                    + "\t\t\tcase" + os.linesep
-                    + "\t\t\t\t(previous_node < 0) : resume_node;" + os.linesep #do not change if we arn't looking at actual nodes.
-                    #at this point must be looking at actual nodes
-                    + "\t\t\t\t!(previous_status = running) : -1;" + os.linesep #if we are to resume, we are taking a straight line to the root of running nodes. we hit not running. aren't resuming
-                    #at this point must be looking at actual nodes that returned running
-                    + "\t\t\t\t(previous_node in" + default_resume_valid_set + ") : previous_node;" + os.linesep #confirm it's a node we can resume from.
-                    #the only case in which we change is if the previous node was running and a valid resume target. there is no possible way this can trigger more than once.
-                    + "\t\t\t\tTRUE : resume_node;" + os.linesep #remain unchanged otherwise.
-                    # + "\t\t\t\t(previous_node < 0) : resume_node;" + os.linesep #don't change if the previous node wasn't a real place
-                    # #at this point, previous_node >= 0
-                    # + "\t\t\t\t!(previous_status = running) : -1;" + os.linesep #if we encounter a node that isn't running, then we clearly don't need to resume.
-                    # #at this point, previous_node >= 0, and previous_status = running
-                    # + "\t\t\t\t(resume_node = -1) : previous_node;" + os.linesep#we encountered running, and weren't planning on resuming. plan to resume from running
-                    # #at this point, previous_node >= 0, previous_status = running, and we were planning on resuming
-                    # + "\t\t\t\t(previous_node in parallels) | (previous_node in selectors) : previous_node;" + os.linesep #we were planning on resuming, but we should resume from here instead.
-                    # + "\t\t\t\tTRUE : resume_node;" + os.linesep #we encountered nodes that were running, but none of them were parallel, so we don't change our plan.
-                    + "\t\t\tesac;" + os.linesep)
+    
+    if not constant_resume_node:
+        nuxmv_string = (nuxmv_string
+                        + "\t\tnext(resume_node) :=" + os.linesep
+                        + "\t\t\tcase" + os.linesep
+                        + "\t\t\t\t(previous_node < 0) : resume_node;" + os.linesep #do not change if we arn't looking at actual nodes.
+                        #at this point must be looking at actual nodes
+                        #+ "\t\t\t\t!(previous_status = running) : -1;" + os.linesep #if we are to resume, we are taking a straight line to the root of running nodes. we hit not running. aren't resuming
+                        + "\t\t\t\t!(previous_status = running) : " + str(default_resume[0]) + ";" + os.linesep #if we are to resume, we are taking a straight line to the root of running nodes. we hit not running. aren't resuming
+                        #at this point must be looking at actual nodes that returned running
+                        + "\t\t\t\t(previous_node in" + default_resume_valid_set + ") : previous_node;" + os.linesep #confirm it's a node we can resume from.
+                        #the only case in which we change is if the previous node was running and a valid resume target. there is no possible way this can trigger more than once.
+                        + "\t\t\t\tTRUE : resume_node;" + os.linesep #remain unchanged otherwise.
+                        + "\t\t\tesac;" + os.linesep
+        )
 
     nuxmv_string = (nuxmv_string
                     + "\t\tnext(previous_status) :=" + os.linesep
@@ -901,8 +921,9 @@ def main():
                     + "\t\tnext(active_node) :=" + os.linesep
                     + "\t\t\tcase" + os.linesep
                     + "\t\t\t\t(active_node = -2) : -2;" + os.linesep#stay in error state
-                    + "\t\t\t\t(active_node = -1) & (resume_node = -1) : 0;" + os.linesep#go to root
-                    + "\t\t\t\t(active_node = -1) & !(resume_node = -1) : resume_node;" + os.linesep #resume, because apparently we need to resume. 
+                    #+ "\t\t\t\t(active_node = -1) & (resume_node = -1) : 0;" + os.linesep#go to root
+                    #+ "\t\t\t\t(active_node = -1) & !(resume_node = -1) : resume_node;" + os.linesep #resume, because apparently we need to resume.
+                    + "\t\t\t\t(active_node = -1) : resume_node;" + os.linesep #resume, because apparently we need to resume. if we don't resume node will point to the first thing we were gonna do anyways
                     #ok, we've handled the edge cases
                     + "\t\t\t\t(active_node in leafs) : parents[active_node];" + os.linesep#leaf always goes back to parent
                     #we are now in the case of a node with children

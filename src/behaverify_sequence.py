@@ -650,56 +650,57 @@ def main():
     parallel_init = ""
     parallel_next = ""
     for node_id in range(0, node_count):
-        if node_id not in children:
-            #this is a node without children. always go to parent lol
-            pre_nuxmv_string += "parents[" + str(node_id) +"], "
-        else:
-            pre_nuxmv_string += "next_node_" + str(node_id) + ", "
-            post_pre_nuxmv_string += ("\t\tnext_node_" + str(node_id) + " := " + os.linesep
-                                      + "\t\t\tcase" + os.linesep
-            )
-            if len(children[node_id]) == 1:
-                post_pre_nuxmv_string += ("\t\t\t\t(previous_status = invalid) : " + str(children[node_id][0]) + ";" + os.linesep)
-            elif node_id in parallel_synch_list:
-                for child in children[node_id]:
-                    post_pre_nuxmv_string += ("\t\t\t\t(previous_node <" + str(child) + ") & !(parallel_skip_" + str(node_id) + "_" + str(child) + ") : " + str(child) + ";" + os.linesep)
-                    nuxmv_string += ("\t\tparallel_skip_" + str(node_id) + "_" + str(child) + " : boolean;" + os.linesep)
-                    parallel_init += ("\t\tinit(parallel_skip_" + str(node_id) + "_" + str(child) + ") := FALSE;" + os.linesep)
-                    parallel_next += ("\t\tnext(parallel_skip_" + str(node_id) + "_" + str(child) + ") := " + os.linesep
-                                      + "\t\t\tcase" + os.linesep
-                                      + "\t\t\t\t(previous_node = " + str(child) + ") & (previous_status = success) : TRUE;" + os.linesep
-                                      + "\t\t\t\t(previous_node = " + str(node_id) + ") & (previous_status = success | previous_status = failure) : FALSE;" + os.linesep
-                                      + "\t\t\t\t(previous_node = 0) & (previous_status = success | previous_status = failure) : FALSE;" + os.linesep
-                                      + "\t\t\t\tTRUE : parallel_skip_" + str(node_id) + "_" + str(child) + ";" + os.linesep
-                                      + "\t\t\tesac;" + os.linesep
-                    )
-            elif node_id in parallel_unsynch_list:
-                for child in children[node_id]:
-                    post_pre_nuxmv_string += ("\t\t\t\t(previous_node <" + str(child) + ") : " + str(child) + ";" + os.linesep)
-            elif node_id in selector_list:
-                post_pre_nuxmv_string += ("\t\t\t\t(previous_status = running | previous_status = success) : parents[" + str(node_id) + "];" + os.linesep) #early termination condition for selector
-                for child in children[node_id]:
-                    post_pre_nuxmv_string += ("\t\t\t\t(previous_node <" + str(child) + ") : " + str(child) + ";" + os.linesep)#otherwise, go through each child in order
-            elif node_id in sequence_list:
-                post_pre_nuxmv_string += ("\t\t\t\t(previous_status = running | previous_status = failure) : parents[" + str(node_id) + "];" + os.linesep#early termination condition for selector
-                                          + "\t\t\t\t(previous_node <= sequence_resume_" + str(node_id) + ") : sequence_resume_" + str(node_id) + ";" + os.linesep #otherwise, go where the resume says, unless it's pointing before us in which case we're done
-                )
-                nuxmv_string += ("\t\tsequence_resume_" + str(node_id) + " : {" + str(children[node_id])[1:-1] + "};" + os.linesep)
-                parallel_init += ("\t\tinit(sequence_resume_" + str(node_id) + ") := " + str(children[node_id][0]) + ";" + os.linesep)
-                parallel_next += ("\t\tnext(sequence_resume_" + str(node_id) + ") := " + os.linesep
+        pre_nuxmv_string += "next_node_" + str(node_id) + ", "
+        post_pre_nuxmv_string += ("\t\tnext_node_" + str(node_id) + " := " + os.linesep
                                   + "\t\t\tcase" + os.linesep
-                                  + "\t\t\t\t(previous_node = 0) & (previous_status = failure | previous_status = success) : " + str(children[node_id][0]) + ";" + os.linesep #reset if not running
-                                  + "\t\t\t\t(active_node = " + str(node_id) + ") & (previous_status = running) : " + "sequence_resume_" + str(node_id) + ";" + os.linesep #hold on running
-                                  + "\t\t\t\t(active_node = " + str(node_id) + ") & (previous_status = failure) : " + str(children[node_id][0]) + ";" + os.linesep #always reset on failure
-                                  + "\t\t\t\t(active_node = " + str(node_id) + ") & (previous_status = success) & (previous_node = " + str(last_child[node_id]) + ") : " + str(children[node_id][0]) + ";" + os.linesep #if we're on the last child and we get success, reset
-                                  + "\t\t\t\t(active_node = " + str(node_id) + ") & (previous_status = success) : min(sequence_resume_" + str(node_id) + " + 1, " + str(last_child[node_id]) + ");" + os.linesep #otherwise, increment by 1
-                                  + "\t\t\t\tTRUE : sequence_resume_" + str(node_id) + ";" + os.linesep
+        )
+        if node_id not in children:
+            post_pre_nuxmv_string += ("\t\t\t\t!(active_node = " + str(node_id) + ") : " + str(node_id) + ";" + os.linesep)#point to this node unless we're at this node.
+            #else, point to parent
+        elif len(children[node_id]) == 1:
+            post_pre_nuxmv_string += ("\t\t\t\t(active_node < " + str(node_id) + ") : next_node_" + str(children[node_id][0]) + ";" + os.linesep)#point to where the direct child is pointing
+        elif node_id in parallel_synch_list:
+            for child in children[node_id]:
+                post_pre_nuxmv_string += ("\t\t\t\t(previous_node <" + str(child) + ") & !(parallel_skip_" + str(node_id) + "_" + str(child) + ") : next_node_" + str(child) + ";" + os.linesep)
+                nuxmv_string += ("\t\tparallel_skip_" + str(node_id) + "_" + str(child) + " : boolean;" + os.linesep)
+                parallel_init += ("\t\tinit(parallel_skip_" + str(node_id) + "_" + str(child) + ") := FALSE;" + os.linesep)
+                parallel_next += ("\t\tnext(parallel_skip_" + str(node_id) + "_" + str(child) + ") := " + os.linesep
+                                  + "\t\t\tcase" + os.linesep
+                                  + "\t\t\t\t(previous_node = " + str(child) + ") & (previous_status = success) : TRUE;" + os.linesep
+                                  + "\t\t\t\t(previous_node = " + str(node_id) + ") & (previous_status = success | previous_status = failure) : FALSE;" + os.linesep
+                                  + "\t\t\t\t(previous_node = 0) & (previous_status = success | previous_status = failure) : FALSE;" + os.linesep
+                                  + "\t\t\t\tTRUE : parallel_skip_" + str(node_id) + "_" + str(child) + ";" + os.linesep
                                   + "\t\t\tesac;" + os.linesep
                 )
-                
-            post_pre_nuxmv_string += ("\t\t\t\tTRUE : parents[" + str(node_id) + "];" + os.linesep
-                                      + "\t\t\tesac;" + os.linesep
+        elif node_id in parallel_unsynch_list:
+            for child in children[node_id]:
+                post_pre_nuxmv_string += ("\t\t\t\t(previous_node <" + str(child) + ") : next_node_" + str(child) + ";" + os.linesep)
+        elif node_id in selector_list:
+            post_pre_nuxmv_string += ("\t\t\t\t(previous_status = running | previous_status = success) & (active_node = " + str(node_id) + ") : parents[" + str(node_id) + "];" + os.linesep) #early termination condition for selector
+            for child in children[node_id]:
+                post_pre_nuxmv_string += ("\t\t\t\t(previous_node <" + str(child) + ") : next_node_" + str(child) + ";" + os.linesep)#otherwise, go through each child in order
+        elif node_id in sequence_list:
+            post_pre_nuxmv_string += ("\t\t\t\t(previous_status = running | previous_status = failure) & (active_node = " + str(node_id) + ") : parents[" + str(node_id) + "];" + os.linesep#early termination condition for selector
+                                      + "\t\t\t\t(previous_node = " + str(last_child[node_id]) + ") & (active_node = " + str(node_id) + ") : parents[" + str(node_id) + "];" + os.linesep#ran out of nodes to look through. return
             )
+            for child in children[node_id]:
+                post_pre_nuxmv_string += ("\t\t\t\t(active_node <= " + str(node_id) +") & (" + str(child) + " = sequence_resume_" + str(node_id) + ") : next_node_" + str(child) + ";" + os.linesep)#if active_node is before or in this node, check which child sequence_resume_node_id is pointing to, and then point wherever that child is pointing.
+            nuxmv_string += ("\t\tsequence_resume_" + str(node_id) + " : {" + str(children[node_id])[1:-1] + "};" + os.linesep)
+            parallel_init += ("\t\tinit(sequence_resume_" + str(node_id) + ") := " + str(children[node_id][0]) + ";" + os.linesep)
+            parallel_next += ("\t\tnext(sequence_resume_" + str(node_id) + ") := " + os.linesep
+                              + "\t\t\tcase" + os.linesep
+                              + "\t\t\t\t(previous_node = 0) & (previous_status = failure | previous_status = success) : " + str(children[node_id][0]) + ";" + os.linesep #reset if not running
+                              + "\t\t\t\t(active_node = " + str(node_id) + ") & (previous_status = running) : " + "sequence_resume_" + str(node_id) + ";" + os.linesep #hold if running
+                              + "\t\t\t\t(active_node = " + str(node_id) + ") & (previous_status = failure) : " + str(children[node_id][0]) + ";" + os.linesep #reset on failure
+                              + "\t\t\t\t(active_node = " + str(node_id) + ") & (previous_status = success) & (previous_node = " + str(last_child[node_id]) + ") : " + str(children[node_id][0]) + ";" + os.linesep #reset if last child success
+                              + "\t\t\t\t(active_node = " + str(node_id) + ") & (previous_status = success) : min(sequence_resume_" + str(node_id) + " + 1, " + str(last_child[node_id]) + ");" + os.linesep #increment if not last child but still success
+                              + "\t\t\t\tTRUE : sequence_resume_" + str(node_id) + ";" + os.linesep
+                              + "\t\t\tesac;" + os.linesep
+            )
+
+        post_pre_nuxmv_string += ("\t\t\t\tTRUE : parents[" + str(node_id) + "];" + os.linesep
+                                  + "\t\t\tesac;" + os.linesep
+        )
     pre_nuxmv_string = (pre_nuxmv_string[0:-2] + "];" + os.linesep
                      + post_pre_nuxmv_string
     )
@@ -774,6 +775,7 @@ def main():
             for i in range(0, len(additional_arguments[node_id])):
                 if 'next' in additional_arguments[node_id][i]:
                     nuxmv_string = nuxmv_string + additional_arguments[node_id][i]['next']
+    #print(parallel_next)
     nuxmv_string = (nuxmv_string + parallel_next)
 
     nuxmv_string = (nuxmv_string

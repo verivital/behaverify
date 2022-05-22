@@ -16,6 +16,7 @@ MODULE main
 		decorators := {-3};
 		first_child := [1, -2, 3, -2, -2, -2];
 		last_child := [2, -1, 5, -1, -1, -1];
+		resume_node := 0;
 		advanced_resume := [advanced_resume_0, -2, -2, -2, -2, -2];
 		advanced_resume_0 := 
 			case
@@ -28,9 +29,8 @@ MODULE main
 	VAR
 		active_node : -2..max_active_node;
 		previous_node : -1..max_active_node;
-		resume_node : {-1, 0};
 		previous_status : {running, success, failure, invalid};
-		advanced_resume_0_2 : {2,3, 4, 5};
+		advanced_resume_0_2 : {3, 4, 5};
 		example_3_sel1 : node_selector(active_node, 0, previous_status, 2, previous_node);
 		node_z : node_default(active_node, 1);
 		seq1 : node_sequence(active_node, 2, previous_status, 5, previous_node);
@@ -41,20 +41,12 @@ MODULE main
 	ASSIGN
 		init(active_node) := -1;
 		init(previous_node) := -1;
-		init(resume_node) := -1;
 		init(previous_status) := invalid;
-		init(advanced_resume_0_2) := 2;
+		init(advanced_resume_0_2) := 3;
 		next(previous_node) :=
 			case
 				(active_node < 0) : -1;
 				TRUE : active_node;
-			esac;
-		next(resume_node) :=
-			case
-				(previous_node < 0) : resume_node;
-				!(previous_status = running) : -1;
-				(previous_node in{0}) : previous_node;
-				TRUE : resume_node;
 			esac;
 		next(previous_status) :=
 			case
@@ -64,8 +56,7 @@ MODULE main
 		next(active_node) :=
 			case
 				(active_node = -2) : -2;
-				(active_node = -1) & (resume_node = -1) : 0;
-				(active_node = -1) & !(resume_node = -1) : resume_node;
+				(active_node = -1) : resume_node;
 				(active_node in leafs) : parents[active_node];
 				(previous_node = last_child[active_node]) : parents[active_node];
 				(active_node in (parallels union selectors)) : advanced_resume[active_node];
@@ -75,10 +66,10 @@ MODULE main
 			esac;
 		next(advanced_resume_0_2) :=
 			case
-				(previous_node = 0) & (previous_status = failure | previous_status = success) : 2;
-				(advanced_resume_0_2 = 2) & (previous_node in {3, 4, 5}) & (previous_status = running) : previous_node;
-				(previous_node = 2) & (previous_status = failure | previous_status = success) : 2;
-				(previous_node = 0) & (previous_status = success | previous_status = failure) : 2;
+				(previous_node = 0) & (previous_status = failure | previous_status = success) : 3;
+				(previous_node in {3, 4, 5}) & (previous_status = running) : previous_node;
+				(previous_node = 2) & (previous_status = failure | previous_status = success) : 3;
+				(previous_node = 0) & (previous_status = success | previous_status = failure) : 3;
 				TRUE : advanced_resume_0_2;
 			esac;
 

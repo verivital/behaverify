@@ -14,68 +14,162 @@ MODULE main
 		decorators := {-3};
 		first_child := [1, 3, 11, -2, -2, -2, -2, -2, -2, -2, -2, 13, 19, 15, 17, -2, -2, -2, -2, 21, 23, -2, -2, -2, -2];
 		last_child := [2, 10, 12, -1, -1, -1, -1, -1, -1, -1, -1, 14, 20, 16, 18, -1, -1, -1, -1, 22, 24, -1, -1, -1, -1];
-		next_node := [next_node_0, next_node_1, next_node_2, parents[3], parents[4], parents[5], parents[6], parents[7], parents[8], parents[9], parents[10], next_node_11, next_node_12, next_node_13, next_node_14, parents[15], parents[16], parents[17], parents[18], next_node_19, next_node_20, parents[21], parents[22], parents[23], parents[24]];
+		next_node := [next_node_0, next_node_1, next_node_2, next_node_3, next_node_4, next_node_5, next_node_6, next_node_7, next_node_8, next_node_9, next_node_10, next_node_11, next_node_12, next_node_13, next_node_14, next_node_15, next_node_16, next_node_17, next_node_18, next_node_19, next_node_20, next_node_21, next_node_22, next_node_23, next_node_24];
 		next_node_0 := 
 			case
-				(previous_status = running | previous_status = failure) : parents[0];
-				(previous_node <= sequence_resume_0) : sequence_resume_0;
+				(previous_status = running | previous_status = failure) & (active_node = 0) : parents[0];
+				(previous_node = 2) & (active_node = 0) : parents[0];
+				(active_node <= 0) & (1 = sequence_resume_0) : next_node_1;
+				(active_node <= 0) & (2 = sequence_resume_0) : next_node_2;
 				TRUE : parents[0];
 			esac;
 		next_node_1 := 
 			case
-				(previous_status = running | previous_status = success) : parents[1];
-				(previous_node <3) : 3;
-				(previous_node <4) : 4;
-				(previous_node <5) : 5;
-				(previous_node <6) : 6;
-				(previous_node <7) : 7;
-				(previous_node <8) : 8;
-				(previous_node <9) : 9;
-				(previous_node <10) : 10;
+				(previous_status = running | previous_status = success) & (active_node = 1) : parents[1];
+				(previous_node <3) : next_node_3;
+				(previous_node <4) : next_node_4;
+				(previous_node <5) : next_node_5;
+				(previous_node <6) : next_node_6;
+				(previous_node <7) : next_node_7;
+				(previous_node <8) : next_node_8;
+				(previous_node <9) : next_node_9;
+				(previous_node <10) : next_node_10;
 				TRUE : parents[1];
 			esac;
 		next_node_2 := 
 			case
-				(previous_status = running | previous_status = success) : parents[2];
-				(previous_node <11) : 11;
-				(previous_node <12) : 12;
+				(previous_status = running | previous_status = success) & (active_node = 2) : parents[2];
+				(previous_node <11) : next_node_11;
+				(previous_node <12) : next_node_12;
 				TRUE : parents[2];
+			esac;
+		next_node_3 := 
+			case
+				!(active_node = 3) : 3;
+				TRUE : parents[3];
+			esac;
+		next_node_4 := 
+			case
+				!(active_node = 4) : 4;
+				TRUE : parents[4];
+			esac;
+		next_node_5 := 
+			case
+				!(active_node = 5) : 5;
+				TRUE : parents[5];
+			esac;
+		next_node_6 := 
+			case
+				!(active_node = 6) : 6;
+				TRUE : parents[6];
+			esac;
+		next_node_7 := 
+			case
+				!(active_node = 7) : 7;
+				TRUE : parents[7];
+			esac;
+		next_node_8 := 
+			case
+				!(active_node = 8) : 8;
+				TRUE : parents[8];
+			esac;
+		next_node_9 := 
+			case
+				!(active_node = 9) : 9;
+				TRUE : parents[9];
+			esac;
+		next_node_10 := 
+			case
+				!(active_node = 10) : 10;
+				TRUE : parents[10];
 			esac;
 		next_node_11 := 
 			case
-				(previous_status = running | previous_status = failure) : parents[11];
-				(previous_node <= sequence_resume_11) : sequence_resume_11;
+				(previous_status = running | previous_status = failure) & (active_node = 11) : parents[11];
+				(previous_node = 14) & (active_node = 11) : parents[11];
+				(active_node <= 11) & (13 = sequence_resume_11) : next_node_13;
+				(active_node <= 11) & (14 = sequence_resume_11) : next_node_14;
 				TRUE : parents[11];
 			esac;
 		next_node_12 := 
 			case
-				(previous_status = running | previous_status = failure) : parents[12];
-				(previous_node <= sequence_resume_12) : sequence_resume_12;
+				(previous_status = running | previous_status = failure) & (active_node = 12) : parents[12];
+				(previous_node = 20) & (active_node = 12) : parents[12];
+				(active_node <= 12) & (19 = sequence_resume_12) : next_node_19;
+				(active_node <= 12) & (20 = sequence_resume_12) : next_node_20;
 				TRUE : parents[12];
 			esac;
 		next_node_13 := 
 			case
-				(previous_status = running | previous_status = failure) : parents[13];
-				(previous_node <= sequence_resume_13) : sequence_resume_13;
+				(previous_status = running | previous_status = failure) & (active_node = 13) : parents[13];
+				(previous_node = 16) & (active_node = 13) : parents[13];
+				(active_node <= 13) & (15 = sequence_resume_13) : next_node_15;
+				(active_node <= 13) & (16 = sequence_resume_13) : next_node_16;
 				TRUE : parents[13];
 			esac;
 		next_node_14 := 
 			case
-				(previous_status = running | previous_status = failure) : parents[14];
-				(previous_node <= sequence_resume_14) : sequence_resume_14;
+				(previous_status = running | previous_status = failure) & (active_node = 14) : parents[14];
+				(previous_node = 18) & (active_node = 14) : parents[14];
+				(active_node <= 14) & (17 = sequence_resume_14) : next_node_17;
+				(active_node <= 14) & (18 = sequence_resume_14) : next_node_18;
 				TRUE : parents[14];
+			esac;
+		next_node_15 := 
+			case
+				!(active_node = 15) : 15;
+				TRUE : parents[15];
+			esac;
+		next_node_16 := 
+			case
+				!(active_node = 16) : 16;
+				TRUE : parents[16];
+			esac;
+		next_node_17 := 
+			case
+				!(active_node = 17) : 17;
+				TRUE : parents[17];
+			esac;
+		next_node_18 := 
+			case
+				!(active_node = 18) : 18;
+				TRUE : parents[18];
 			esac;
 		next_node_19 := 
 			case
-				(previous_status = running | previous_status = failure) : parents[19];
-				(previous_node <= sequence_resume_19) : sequence_resume_19;
+				(previous_status = running | previous_status = failure) & (active_node = 19) : parents[19];
+				(previous_node = 22) & (active_node = 19) : parents[19];
+				(active_node <= 19) & (21 = sequence_resume_19) : next_node_21;
+				(active_node <= 19) & (22 = sequence_resume_19) : next_node_22;
 				TRUE : parents[19];
 			esac;
 		next_node_20 := 
 			case
-				(previous_status = running | previous_status = failure) : parents[20];
-				(previous_node <= sequence_resume_20) : sequence_resume_20;
+				(previous_status = running | previous_status = failure) & (active_node = 20) : parents[20];
+				(previous_node = 24) & (active_node = 20) : parents[20];
+				(active_node <= 20) & (23 = sequence_resume_20) : next_node_23;
+				(active_node <= 20) & (24 = sequence_resume_20) : next_node_24;
 				TRUE : parents[20];
+			esac;
+		next_node_21 := 
+			case
+				!(active_node = 21) : 21;
+				TRUE : parents[21];
+			esac;
+		next_node_22 := 
+			case
+				!(active_node = 22) : 22;
+				TRUE : parents[22];
+			esac;
+		next_node_23 := 
+			case
+				!(active_node = 23) : 23;
+				TRUE : parents[23];
+			esac;
+		next_node_24 := 
+			case
+				!(active_node = 24) : 24;
+				TRUE : parents[24];
 			esac;
 	VAR
 		active_node : -2..max_active_node;
