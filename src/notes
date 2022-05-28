@@ -1,3 +1,19 @@
+CURRENT FLAW
+double path resume_status needs to reset slightly more aggressively
+
+ok. new plan. require that resume cannot take us backwards. that'll solve the issue without dealing with the reset problem.
+
+
+
+
+
+
+
+
+
+
+
+
 need to update all version to more properly reset (they currently reset when we reach the root/self and status =success | failure, but it should actually be whenever any ancestor does that).
 
 need to implement new version that 'jumps' to next leaf always. allows deletion of previous_node, previous_status. allow non-determinism of status via a passed status variable.

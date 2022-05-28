@@ -196,8 +196,8 @@ MODULE bb_mission_dot_data_SET_module(active_node, nodes_with_access, variables,
 		init(bb_mission_dot_data) := 1;
 		next(bb_mission_dot_data) := 
 			case
-				(active_node = node_names.mission2bb) & (next(previous_status) = success) : {0, 4};
-				(active_node = node_names.mission_server) : {0, 4};
+				(active_node = node_names.mission2bb) & (next(previous_status) = success) : {0, 1, 2, 3, 4};
+				(active_node = node_names.mission_server) : {0, 1, 2, 3, 4};
 				TRUE : bb_mission_dot_data;
 			esac;
 MODULE dd_output_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)

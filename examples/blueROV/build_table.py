@@ -3,13 +3,13 @@ import pandas as pd
 #import matplotlib.pyplot as plt
 import re
 
-folders = ["./models_selector_mixed", "./models_selector_parallel", "./models_selector_non_parallel", "./models_sequence",  "./models_path"]
+folders = ["./models_selector_mixed", "./models_selector_parallel", "./models_selector_non_parallel", "./models_sequence",  "./models_path", "./models_double_path"]
 #folders2 = ["selector_mixed", "selector_parallel", "selector_non_parallel",  "sequence", "path"]
-folders2 = ["selector_parallel", "selector_non_parallel",  "sequence", "path"]
+folders2 = ["selector_parallel", "selector_non_parallel",  "sequence", "path", "double_path"]
 files = ["blueROV_full", "blueROV_full_small", "blueROV_warnings_only"]
 filesShort = ["blueROV1", "blueROV2", "blueROV3"]
 
-foldersShort = ["SelParallel", "SelNonParallel", "Sequence", "Path"]
+foldersShort = ["SelParallel", "SelNonParallel", "Sequence", "Path", "DoublePath"]
 
 #diameters = {}
 #reachable_states = {}
@@ -98,7 +98,7 @@ for i in range(len(files)):
 
 
 df = pd.DataFrame(elapsed_time, columns=foldersShort, index=filesShort)
-df.to_latex('./processed_data/elapsed_full.tex', caption='BlueROV, Time in Seconds for all LTL Specs', label='ROV_LTL_battery_time')
+df.to_latex('./processed_data/elapsed_full.tex', caption='BlueROV, Time in Seconds for all LTL Specs', label='ROV_LTL_full_time')
 
 
 elapsed_time = []
@@ -118,6 +118,66 @@ for i in range(len(files)):
         except FileNotFoundError as e:
             elapsed_time[i].append('-')
 
-
+print(elapsed_time)
 df = pd.DataFrame(elapsed_time, columns=foldersShort, index=filesShort)
 df.to_latex('./processed_data/elapsed_battery.tex', caption='BlueROV, Time in Seconds to for Battery LTL', label='ROV_LTL_battery_time')
+
+
+
+
+#-----------------------------------------------------------------------------------------------------------------------------------------
+
+elapsed=re.compile("elapse: (?P<val1>[\.\d]+) seconds,")
+
+elapsed_time = []
+
+
+for i in range(len(files)):
+    file_name = files[i]
+    elapsed_time.append([])
+    for j in range(len(folders2)):
+        folder = folders2[j]
+
+        first = True
+        try:
+            with open('./models_' + folder + '/results/SILENT_' + file_name + '_ltl_full.txt', 'r') as cur_file:
+                for line in cur_file:
+                    match=elapsed.search(line)
+                    if match:
+                        if first:
+                            first = False
+                        else:
+                            elapsed_time[i].append(match.group('val1'))
+        except FileNotFoundError as e:
+            elapsed_time[i].append('-')
+
+df = pd.DataFrame(elapsed_time, columns=foldersShort, index=filesShort)
+df.to_latex('./processed_data/silent/elapsed_full.tex', caption='BlueROV, Time in Seconds for all LTL Specs', label='ROV_LTL_full_time')
+
+
+elapsed_time = []
+
+
+for i in range(len(files)):
+    file_name = files[i]
+    elapsed_time.append([])
+    for j in range(len(folders2)):
+        folder = folders2[j]
+
+        first = True
+        try:
+            with open('./models_' + folder + '/results/SILENT_' + file_name + '_ltl_battery_only.txt', 'r') as cur_file:
+                for line in cur_file:
+                    match=elapsed.search(line)
+                    if match:
+                        if first:
+                            first = False
+                        else:
+                            elapsed_time[i].append(match.group('val1'))
+        except FileNotFoundError as e:
+            elapsed_time[i].append('-')
+
+
+df = pd.DataFrame(elapsed_time, columns=foldersShort, index=filesShort)
+df.to_latex('./processed_data/silent/elapsed_battery.tex', caption='BlueROV, Time in Seconds to for Battery LTL', label='ROV_LTL_battery_time')
+

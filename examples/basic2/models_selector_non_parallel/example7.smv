@@ -88,13 +88,13 @@ MODULE main
 			esac;
 		next(advanced_resume_non_parallel_0) := 
 			case
-				(previous_node = 0) & (previous_status = success | previous_status = failure) : 3;
+				(previous_node in {-1, 0}) & (previous_status = success | previous_status = failure) : 3;
 				(previous_node in {3, 4, 5, 6, 7, 8, 14, 15}) & (previous_status = running) : previous_node;
 				TRUE : advanced_resume_non_parallel_0;
 			esac;
 		next(advanced_resume_non_parallel_8) := 
 			case
-				(previous_node = 0) & (previous_status = success | previous_status = failure) : 10;
+				(previous_node in {-1, 8}) & (previous_status = success | previous_status = failure) : 10;
 				(previous_node in {10, 12, 13}) & (previous_status = running) : previous_node;
 				TRUE : advanced_resume_non_parallel_8;
 			esac;

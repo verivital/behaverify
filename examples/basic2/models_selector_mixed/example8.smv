@@ -111,7 +111,7 @@ MODULE main
 			esac;
 		next(advanced_resume_non_parallel_2) := 
 			case
-				(previous_node = 0) & (previous_status = success | previous_status = failure) : 13;
+				(previous_node in {-1, 2}) & (previous_status = success | previous_status = failure) : 13;
 				(previous_node in {13, 14, 15, 16, 17, 18, 19, 20}) & (previous_status = running) : previous_node;
 				TRUE : advanced_resume_non_parallel_2;
 			esac;

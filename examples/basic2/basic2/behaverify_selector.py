@@ -802,7 +802,7 @@ def main():
             parallel_init += ("\t\tinit(advanced_resume_non_parallel_" + str(advanced_node) +") := " + str(first_in_line) + ";" + os.linesep)
             parallel_next += ("\t\tnext(advanced_resume_non_parallel_" + str(advanced_node) +") := " + os.linesep
                               + "\t\t\tcase" + os.linesep
-                              + "\t\t\t\t(previous_node = 0) & (previous_status = success | previous_status = failure) : " + str(first_in_line) + ";" + os.linesep#reset if we didn't end up on running
+                              + "\t\t\t\t(previous_node in {-1, " + str(advanced_node) + "}) & (previous_status = success | previous_status = failure) : " + str(first_in_line) + ";" + os.linesep#reset if we didn't end up on running
                               + "\t\t\t\t(previous_node in {" + total_set[0:-2] + "}) & (previous_status = running) : previous_node;" + os.linesep#if we encounter something that returned running in our domain, point to it
                               + "\t\t\t\tTRUE : advanced_resume_non_parallel_" + str(advanced_node) +";" + os.linesep
                               + "\t\t\tesac;" + os.linesep

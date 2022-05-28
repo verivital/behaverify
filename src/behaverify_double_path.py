@@ -11,17 +11,17 @@ import inspect
 
 import py_trees.console as console
 
-import node_creator
+import node_creator_double as node_creator
 
-
+blackboard_needed = False
 #----------------------------------------------------------------------------------------------------------------
 #regex stuff
 blackboard_name_pattern = re.compile(r"#*(?P<blackboard_name>[^\s=]+)\s*=\s*py_trees\.blackboard\.Blackboard\(\s*\)")
 #----------------------------------------------------------------------------------------------------------------
         
 #-----------------------------------------------------------------------------------------------------------------------
-def walk_tree(t, parent_id, next_available_id, children, nodes, additional_arguments, needed_nodes, variable_access, variable_check, variable_name_to_int, external_status_req, parallel_synch_set, parallel_unsynch_set, sequence_set, selector_set, decorator_set, leaf_set, parallel_unsynch = False):
-    
+def walk_tree(t, parent_id, next_available_id, children, nodes, additional_arguments, needed_nodes, node_names, variable_access, variable_check, variable_name_to_int, external_status_req, parallel_synch_set, parallel_unsynch_set, sequence_set, selector_set, decorator_set, leaf_set, parallel_unsynch = False):
+    global blackboard_needed
     this_id=next_available_id
     next_available_id = next_available_id + 1
     children[parent_id].append(this_id)
@@ -92,7 +92,7 @@ def walk_tree(t, parent_id, next_available_id, children, nodes, additional_argum
                     variable_access[var_num].append(this_id)
                 else:
                     variable_access[var_num]=[this_id]
-            decl_string = ("\t\t" + node_name + "_SET_status : " + node_name + "_SET_status_module(active_node, " + str(this_id) + ", blackboard.variables, blackboard.variable_exists, node_names, variable_names);" + os.linesep)
+            decl_string = ("\t\t" + node_name + "_SET_status : " + node_name + "_SET_status_module(active_node, " + str(this_id) + ", random_status, blackboard.variables, blackboard.variable_exists, node_names, variable_names);" + os.linesep)
             additional_arguments[this_id]=[{'arg': node_name + "_SET_status", 'decl' : decl_string},]
             #leaf_node_exit(this_id)
             return next_available_id
@@ -129,9 +129,9 @@ def walk_tree(t, parent_id, next_available_id, children, nodes, additional_argum
             #needed_nodes.add('node_parallel_synchronised')
             needed_nodes.add('node_parallel')
             if isinstance(t.policy, py_trees.common.ParallelPolicy.SuccessOnAll):
-                additional_arguments[this_id]=[{'arg' : "TRUE, TRUE, next_node_" + str(this_id)}, ]
+                additional_arguments[this_id]=[{'arg' : "TRUE, TRUE"}]
             elif isinstance(t.policy, py_trees.common.ParallelPolicy.SuccessOnOne):
-                additional_arguments[this_id]=[{'arg' : "TRUE, FALSE, next_node_" + str(this_id)}, ]
+                additional_arguments[this_id]=[{'arg' : "TRUE, FALSE"}]
             else:
                 print('ERROR: the following parallel policy is not supported: ' + str(t.policy))
                 sys.exit('Unsupported Parallel Policy')
@@ -142,9 +142,9 @@ def walk_tree(t, parent_id, next_available_id, children, nodes, additional_argum
             #needed_nodes.add('node_parallel_unsynchronised')
             needed_nodes.add('node_parallel')
             if isinstance(t.policy, py_trees.common.ParallelPolicy.SuccessOnAll):
-                additional_arguments[this_id]=[{'arg' : "FALSE, TRUE, next_node_" + str(this_id)}, ]
+                additional_arguments[this_id]=[{'arg' : "FALSE, TRUE"}]
             elif isinstance(t.policy, py_trees.common.ParallelPolicy.SuccessOnOne):
-                additional_arguments[this_id]=[{'arg' : "FALSE, FALSE, next_node_" + str(this_id)}, ]
+                additional_arguments[this_id]=[{'arg' : "FALSE, FALSE"}]
             else:
                 print('ERROR: the following parallel policy is not supported: ' + str(t.policy))
                 sys.exit('Unsupported Parallel Policy')
@@ -258,7 +258,7 @@ def walk_tree(t, parent_id, next_available_id, children, nodes, additional_argum
             variable_access[var_num].append(this_id)
         else:
             variable_access[var_num]=[this_id]
-        decl_string = ("\t\t" + node_name + "_SET_status : " + node_name + "_SET_status_module(active_node, " + str(this_id) + ", blackboard.variables, blackboard.variable_exists, node_names, variable_names);" + os.linesep)
+        decl_string = ("\t\t" + node_name + "_SET_status : " + node_name + "_SET_status_module(active_node, " + str(this_id) + ", random_status, blackboard.variables, blackboard.variable_exists, node_names, variable_names);" + os.linesep)
         additional_arguments[this_id]=[{'arg': node_name + "_SET_status", 'decl' : decl_string},]
         #leaf_node_exit(this_id)
         return next_available_id
@@ -385,24 +385,25 @@ def walk_tree(t, parent_id, next_available_id, children, nodes, additional_argum
     elif isinstance(t, py_trees.timers.Timer):
         nodes[this_id]=('node_timer', parent_id, node_name)
         needed_nodes.add('node_timer')
+        additional_arguments[this_id] = [{'arg' : 'random_status'}]
         #leaf_node_exit(this_id)
         return next_available_id
     else:#currently defaulting to default. will rework this later probably
         nodes[this_id]=('node_default', parent_id, node_name)
         needed_nodes.add('node_default')
+        additional_arguments[this_id] = [{'arg' : 'random_status'}]
         #leaf_node_exit(this_id)
         return next_available_id
 
     leaf_set.remove(this_id)
     if is_decorator:
         decorator_set.add(this_id)
-    children[assigned_id] = []#if we've reached this point, then this node has children, and we are going to set up an empty list for it.
+    children[this_id] = []#if we've reached this point, then this node has children, and we are going to set up an empty list for it.
     for child in t.children:
-        next_available_id = walk_tree(child, this_id, assigned_id, next_available_id, children, nodes, additional_arguments, needed_nodes, variable_access, variable_check, variable_name_to_int, external_status_req, parallel_synch_set, parallel_unsynch_set, sequence_set, selector_set, decorator_set, leaf_set, parallel_unsynch)
-
+        next_available_id = walk_tree(child, this_id, next_available_id, children, nodes, additional_arguments, needed_nodes, node_names, variable_access, variable_check, variable_name_to_int, external_status_req, parallel_synch_set, parallel_unsynch_set, sequence_set, selector_set, decorator_set, leaf_set, parallel_unsynch)
+    return next_available_id
 
 #-----------------------------------------------------------------------------------------------------------------------
-
 def variable_name_cleanup(variable_name_to_int, variable_access):
     #this segment is to detect and create sub-variables
     #i.e., if a variable in the original was just "meh = Object"
@@ -421,7 +422,6 @@ def variable_name_cleanup(variable_name_to_int, variable_access):
                     else:#otherwise, add it.
                         variable_access[variable_name_to_int[child_variable]].append(access_node)
 
-
 #return node_to_local_root_map
 def create_node_to_local_root_map(nodes, parallel_synch_set, parallel_unsynch_set, sequence_set, selector_set, decorator_set, leaf_set):
     node_to_local_root_map = {0: 0}# a map from node_id to the local root for that node_id
@@ -434,7 +434,6 @@ def create_node_to_local_root_map(nodes, parallel_synch_set, parallel_unsynch_se
             node_to_local_root_map[node_id] = node_to_local_root_map[nodes[node_id][1]]
     #return (node_to_local_root_map, local_roots)
     return node_to_local_root_map
-
 
 #returns Bool
 def can_create_running(nodes, node_id, parallel_synch_set, parallel_unsynch_set, sequence_set, selector_set, decorator_set, leaf_set):
@@ -452,66 +451,171 @@ def can_create_running(nodes, node_id, parallel_synch_set, parallel_unsynch_set,
     else:
         return True#selector and parallel can, everything else covered above
         
-
-#return (local_root_to_relevant_set_map, sequence_to_relevant_descendants_map)
-def create_local_root_to_relevant_set_map(nodes, node_to_local_root_map, parallel_synch_set, parallel_unsynch_set, sequence_set, selector_set, decorator_set, leaf_set):
-    local_root_to_relevant_set_map = {} # a map from local_root to the set of relevant things to track in terms of running
+#return (local_root_to_relevant_list_map, sequence_to_relevant_descendants_map)
+def create_local_root_to_relevant_list_map(nodes, children, node_to_local_root_map, parallel_synch_set, parallel_unsynch_set, sequence_set, selector_set, decorator_set, leaf_set):
+    local_root_to_relevant_list_map = {} # a map from local_root to the list of relevant things to track in terms of running
     sequence_to_relevant_descendants_map = {} # a map from each sequence to the set of relevant descendants
-    for node_id in len(nodes):
-        if node_id == node_to_local_root_map:
+    for node_id in range(len(nodes)):
+        if node_id == node_to_local_root_map[node_id]:
             #this is a local_root
             if nodes[node_id][1] in parallel_synch_set:
                 #the local root's parent is a parallel_synch node, so we have to track if it's skippable
-                local_root_to_relevant_set_map[node_id] = {-2}
+                local_root_to_relevant_list_map[node_id] = [-2]
             else:
                 #the local root's parent is not a parallel_synch node, so we don't have to track if it's skippable
-                local_root_to_relevant_set_map[node_id] = set()
+                local_root_to_relevant_list_map[node_id] = []
         elif can_create_running(nodes, node_id, parallel_synch_set, parallel_unsynch_set, sequence_set, selector_set, decorator_set, leaf_set):
             cur_id = node_id
             #encountered_sequences = []
             first_child = True
             done = False
+            true_done = False
             end_target=nodes[node_to_local_root_map[node_id]][1]#we end at the parent of the local root.
+            sequences_found = []
+            to_add = False
             while not done:
                 previous_id=cur_id
                 cur_id=nodes[cur_id][1]#get the parent
                 if cur_id == end_target:
                     done = True
+                    true_done = True
+                elif cur_id in decorator_set:
+                    if "running_is" in nodes[cur_id][0]:#if we encounter a decorator that undoes running, we no longer care. TODO: update so it hits all decorators that can do this.
+                        done = True
+                        true_done = True
+                        to_add=False
+                        #if node_id in local_root_to_relevant_list_map[node_to_local_root_map[node_id]]:#check if we added it in
+                            #local_root_to_relevant_list_map[node_to_local_root_map[node_id]].pop()#if we added it in, it must be at the end.
+                        for sequence in sequences_found:#this sequence cannot resume. indicate as such.
+                            sequence_to_relevant_descendants_map[sequence] = set()
                 elif cur_id in selector_set or cur_id in parallel_synch_set or cur_id in parallel_unsynch_set:
                     done = True#nothing above us will care. they will track the selector or nothing.
                 elif cur_id in sequence_set:
+                    sequences_found.append(cur_id)
                     if cur_id not in sequence_to_relevant_descendants_map:
-                       sequence_to_relevant_descendants_map[cur_id] = {}
+                       sequence_to_relevant_descendants_map[cur_id] = set()
                     if children[cur_id][0] == previous_id:
                         pass
                     else:
                         #we encountered proof that this node is relevant. add it to the sequence
                         first_child = False#keep running. there might be sequences above us that care though.
-                        local_root_to_relevant_set_map[node_to_local_root_map[node_id]].add(node_id)#this is a valid resume point. tell the local root about it.
+                        to_add = True
+                        #local_root_to_relevant_list_map[node_to_local_root_map[node_id]].append(node_id)#this is a valid resume point. tell the local root about it.
                     if not first_child:
                         sequence_to_relevant_descendants_map[cur_id].add(node_id)
+            #make sure there's not a decorator above the end point that invalidates our need to track running.
+            while not true_done:
+                previous_id = cur_id
+                cur_id = nodes[cur_id][1]
+                if cur_id == end_target:
+                    true_done = True
+                elif cur_id in decorator_set:
+                    if "running_is" in nodes[cur_id][0]:#if we encounter a decorator that undoes running, we no longer care. TODO: update so it hits all decorators that can do this.
+                        true_done = True
+                        to_add = False
+                        #if node_id in local_root_to_relevant_list_map[node_to_local_root_map[node_id]]:#check if we added it in
+                            #local_root_to_relevant_list_map[node_to_local_root_map[node_id]].pop()#if we added it in, it must be at the end. 
+                        for sequence in sequences_found:#this sequence cannot resume. indicate as such.
+                            sequence_to_relevant_descendants_map[sequence] = set()
+            if to_add:
+                local_root_to_relevant_list_map[node_to_local_root_map[node_id]].append(node_id)#this is a valid resume point. tell the local root about it. 
 
-    return (local_root_to_relevant_set_map, sequence_to_relevant_descendants_map)
+    return (local_root_to_relevant_list_map, sequence_to_relevant_descendants_map)
 
-
-    
-
-
+#return node_to_descendants_map
+def create_node_to_descendants_map(nodes, children, leaf_set):
+    node_to_descendants_map={}
+    for node_id in range(len(nodes)):
+        node_to_descendants_map[node_id] = set()
+        if node_id in leaf_set or node_id not in children or len(children[node_id]) == 0:
+            #this is a terminus point
+            cur_id = nodes[node_id][1]
+            while not cur_id == -1:
+                node_to_descendants_map[cur_id].add(node_id)
+                cur_id=nodes[cur_id][1]
+    return node_to_descendants_map
 
 #-----------------------------------------------------------------------------------------------------------------------
-
 def create_nodes(nodes, children, additional_arguments, parallel_synch_set, parallel_unsynch_set, sequence_set, selector_set, decorator_set, leaf_set):
+    define_string = ""
+    init_string = ""
+    next_string =  ""
+    var_string = ""
+    for parallel_node in parallel_synch_set:
+        cur_node = parallel_node
+        ancestor_string = ("\t\tparallel_reset_" + str(parallel_node) + " := " + os.linesep
+                           + "\t\t\tcase" + os.linesep)
+        
+        while not cur_node == -1:
+            ancestor_string += ("\t\t\t\t(statuses[" + str(cur_node) + "] in {success, failure}) : TRUE;" + os.linesep#reset on success, failure
+            )
+            cur_node=nodes[cur_node][1]
+        define_string += (ancestor_string
+                          + "\t\t\t\tTRUE : FALSE;" + os.linesep
+                          + "\t\t\tesac;" + os.linesep
+        )
+        if parallel_node in children and len(children[parallel_node]) >= 0:
+            define_string += "\t\tlast_child_" + str(parallel_node) + " := " + str(children[-1]) + ";" + os.linesep
+            define_string += ("\t\tlast_child_" + str(parallel_node) + " := ;" + os.linesep
+                              + "\t\t\tcase" + os.linesep
+            )
+            for child_index in range(len(children[parallel_node])-1, -1, -1):
+                define_string += "\t\t\t\t(resume_status_" + str(children[parallel_node][child_index]) + ") : " + children[parallel_node][child_index] + ";" + os.linesep
+                
+            define_string += ("\t\t\t\tTRUE: -2;" + os.linesep
+                              + "\t\t\tesac;" + os.linesep
+            )
+        else:
+            define_string += "\t\tlast_child_" + str(parallel_node) + " := -2;" + os.linesep
+    for parallel_node in parallel_unsynch_set:
+        cur_node = parallel_node
+        ancestor_string = ("\t\tparallel_reset_" + str(parallel_node) + " := " + os.linesep
+                           + "\t\t\tcase" + os.linesep)
+        
+        while not cur_node == -1:
+            ancestor_string += ("\t\t\t\t(statuses[" + str(cur_node) + "] in {success, failure, running}) : TRUE;" + os.linesep#reset always.
+            )
+            cur_node=nodes[cur_node][1]
+        define_string += (ancestor_string
+                          + "\t\t\t\tTRUE : FALSE;" + os.linesep
+                          + "\t\t\tesac;" + os.linesep
+        )
+        if parallel_node in children and len(children[parallel_node]) >= 0:
+            define_string += "\t\tlast_child_" + str(parallel_node) + " := " + str(children[parallel_node][-1]) + ";" + os.linesep
+        else:
+            define_string += "\t\tlast_child_" + str(parallel_node) + " := -2;" + os.linesep
+    for selector_node in selector_set:
+        if selector_node in children and len(children[selector_node]) >= 0:
+            define_string += "\t\tlast_child_" + str(selector_node) + " := " + str(children[selector_node][-1]) + ";" + os.linesep
+        else:
+            define_string += "\t\tlast_child_" + str(selector_node) + " := -2;" + os.linesep
+    for sequence_node in sequence_set:
+        if sequence_node in children and len(children[sequence_node]) >= 0:
+            define_string += "\t\tlast_child_" + str(sequence_node) + " := " + str(children[sequence_node][-1]) + ";" + os.linesep
+        else:
+            define_string += "\t\tlast_child_" + str(sequence_node) + " := -2;" + os.linesep
+        
     for node_id in range(0, len(nodes)):
         #print(node_id)
         var_string = (var_string
-                        + "\t\t" + nodes[node_id][2] + " : " + nodes[node_id][0] + "(active_node, " + str(node_id))
-                        #              node_name         :     node_type        active_node,      node_number
-        if node_id in children : #has children in module argument
-            if node_id not in decorator_set:
-                var_string = (var_string + ", previous_status, " + str(children[node_id][0]) + ", previous_node")
-            else:
-                var_string = (var_string + ", previous_status")
-                
+                        + "\t\t" + nodes[node_id][2] + " : " + nodes[node_id][0] + "("
+        )
+        if node_id in leaf_set:
+            var_string += "active_node, " + str(node_id)
+        elif node_id in selector_set:
+            var_string += "relevant_child_" + str(node_id) + ", statuses_" + str(node_id) + ", last_child_" + str(node_id)
+        elif node_id in sequence_set:
+            var_string += "relevant_child_" + str(node_id) + ", statuses_" + str(node_id) + ", last_child_" + str(node_id)
+        elif node_id in decorator_set:
+            var_string += "relevant_child_" + str(node_id) + ", statuses_" + str(node_id) + ""
+        elif node_id in parallel_synch_set or node_id in parallel_unsynch_set:
+            var_string += "relevant_child_" + str(node_id) + ", statuses_" + str(node_id) + ", last_child_" + str(node_id) + ", parallel_reset_" + str(node_id)
+
+        else:
+            print('ERROR: node is not leaf, selector, sequence, decorator, or parallel. This should not be possible. Node information follows')
+            print(nodes[node_id])
+            var_string += "0"
+        
         if node_id in additional_arguments:
             for i in range(0, len(additional_arguments[node_id])):
                 if 'arg' in additional_arguments[node_id][i]:
@@ -531,9 +635,7 @@ def create_nodes(nodes, children, additional_arguments, parallel_synch_set, para
                     var_string = var_string + additional_arguments[node_id][i]['decl']       
         else:#does not have  additional arguments
             var_string = (var_string + ");" + os.linesep)
-    define_string = ""
-    init_string = ""
-    next_string =  ""
+
     return (define_string, var_string, init_string, next_string)
 
 def create_additional_arguments(nodes, additional_arguments):
@@ -546,60 +648,59 @@ def create_additional_arguments(nodes, additional_arguments):
             for i in range(0, len(additional_arguments[node_id])):
                 if 'invar' in additional_arguments[node_id][i]:
                     var_string = (var_string + additional_arguments[node_id][i]['invar'])
-    for node_id in range(0, next_available_id):
+    for node_id in range(len(nodes)):
         if node_id in additional_arguments:
             for i in range(0, len(additional_arguments[node_id])):
                 if 'init' in additional_arguments[node_id][i]:
                     init_string = init_string + additional_arguments[node_id][i]['init']
-    for node_id in range(0, next_available_id):
+    for node_id in range(len(nodes)):
         if node_id in additional_arguments:
             for i in range(0, len(additional_arguments[node_id])):
                 if 'next' in additional_arguments[node_id][i]:
                     next_string = next_string + additional_arguments[node_id][i]['next']
     return(var_string, define_string, init_string, next_string)
-def create_resume_structure(nodes, local_root_to_relevant_set_map):
+
+
+def create_resume_structure(nodes, local_root_to_relevant_list_map):
     var_resume_status_string = "" #this is a variable that actually stores what running state we're in
     init_resume_status_string = ""
     next_resume_status_string = ""
-    resume_from_string = "" #this is a macro that points us to where we're going
-    for local_root in local_root_to_relevant_set_map:
-        relevant_set = local_root_to_relevant_set_map[local_root]
-        if len(relevant_set) == 0:
+    for local_root in local_root_to_relevant_list_map:
+        relevant_list = local_root_to_relevant_list_map[local_root]
+        if len(relevant_list) == 0:
             #there's nothing to resume from. if we have a sequence node, then it apparently only had 0 or 1 children, and we don't need any special resume for it.
             continue
-        var_resume_status_string += "\t\tresume_status_" + str(local_root) + " : {" + str(local_root) + "} union " + str(relevant_set) + ";" + os.linesep
+        var_resume_status_string += "\t\tresume_status_" + str(local_root) + " : {" + str(local_root) + ", " + str(relevant_list)[1:-1] + "};" + os.linesep
         init_resume_status_string += "\t\tinit(resume_status_" + str(local_root) + ") := " + str(local_root) + ";" + os.linesep
-        if -2 in relevant_set:
-            inject_string = "\t\t\t\t(active_node = " + str(local_root) + ") & (statuses[active_node] = success) : -2;" + os.linesep
-            relevant_set.remove(-2)#don't actually want it in the relevant set going forward
+        if -2 in relevant_list:
+            inject_string = ("\t\t\t\t(statuses[" + str(local_root) + "] = success) : -2;" + os.linesep#if the local root returns success, this is skippable. note that this is checked after the reset condition, so we don't over-write the reset.
+                             + "\t\t\t\t(statuses[" + str(local_root) + "] = failure) : " + str(local_root) + ";" + os.linesep#failure is still a reset though
+            )
+            relevant_list.remove(-2)#don't actually want it in the relevant set going forward
         else:
-            inject_string = ""
-        ancestor_set = set()
-        cur_node = local_root
+            inject_string = "\t\t\t\t(statuses[" + str(local_root) + "] in {success, failure}) : " + str(local_root) + ";" + os.linesep#reset since this isn't skippable.
+        cur_node = nodes[local_root][1]#we've manually handled the root case using inject_string
+        ancestor_string = ""
         while not cur_node == -1:
-            ancestor_set.add(cur_node)
+            ancestor_string += "\t\t\t\t(statuses[" + str(cur_node) + "] in {success, failure}) : " + str(local_root) + ";" + os.linesep
             cur_node=nodes[cur_node][1]
         #go through and add all the ancestors of the local root to a set for the purpose of resetting.
-        next_resume_status_string += ("\t\next(resume_status_" + str(local_root) + ") := " + os.linesep
+        next_resume_status_string += ("\t\tnext(resume_status_" + str(local_root) + ") := " + os.linesep
                                       + "\t\t\tcase" + os.linesep
-                                      + "\t\t\t\t(active_node in " + str(relevant_set) + ") & (statuses[active_node] = running) : active_node;" + os.linesep#if running, set to that location
+                                      + ancestor_string #highest priority is reset
                                       + inject_string #parallel_synch nodes have a special condition
-                                      + "\t\t\t\t(active_node in " + str(ancestor_set) + ") & (statuses[active_node] in {success, failure}) : " + str(local_root) + ";" + os.linesep#if this node or any ancestor node hits success/failure, then we're resetting.
-                                      + "\t\t\t\tTRUE : resume_status_" + str(local_root) + ";" + os.linesep#otherwise, hold
+        )
+        for resume_point in reversed(relevant_list):
+            #this list is ordered so that selectors will not override their children returning running.
+            next_resume_status_string +="\t\t\t\t(statuses[" + str(resume_point) + "] = running) : " + str(resume_point) + ";" + os.linesep#if running, set to that location
+        next_resume_status_string +="\t\t\t\t(statuses[resume_status_" + str(local_root) + "] in {success, failure}) : " + str(local_root) + ";" + os.linesep#if the node we were planning to resume from has returned success or failure, then reset
+        next_resume_status_string += ("\t\t\t\tTRUE : resume_status_" + str(local_root) + ";" + os.linesep#otherwise, hold
                                       + "\t\t\tesac;" + os.linesep
         )
-        resume_from_string += ("\t\tresume_from_" + str(local_root) + " := " + os.linesep
-                               + "\t\t\tcase" + os.linesep
-        )
-        for resume_point in relevant_set:
-            resume_from_string += "\t\t\t\t(resume_status_" + str(local_root) + " = " + str(resume_point) + ") : descent_from_" + str(resume_point) + ";" + os.linesep#point to where we need to point to
-        resume_from_string += ("TRUE : -2;" + os.linesep#this is an error state
-                               + "\t\t\tesac;" + os.linesep
-        )
         
         
         
-    define_string = resume_from_string
+    define_string = ""
     var_string = var_resume_status_string
     init_string = init_resume_status_string
     next_string =  next_resume_status_string
@@ -641,7 +742,7 @@ def create_next_node_structure(nodes, children, node_to_local_root_map, sequence
             continue
             #descent_string += ("\t\t\t\t(active_node < " + str(node_id) + ") : next_node_" + str(children[node_id][0]) + ";" + os.linesep)#point to where the direct child is pointing
             #otherwise point to parent
-        ascent_string += ("\t\tdescent_from_" + str(node_id) + " := " + os.linesep
+        descent_string += ("\t\tdescent_from_" + str(node_id) + " := " + os.linesep
                           + "\t\t\tcase" + os.linesep
         )
         if node_id in parallel_synch_set:
@@ -650,13 +751,18 @@ def create_next_node_structure(nodes, children, node_to_local_root_map, sequence
         elif node_id in parallel_unsynch_set:
             for child in children[node_id]:
                 descent_string += ("\t\t\t\t(active_node <" + str(child) + ") : descent_from_" + str(child) + ";" + os.linesep)
-        elif node_id in selector_list:
+        elif node_id in selector_set:
             #no need for early termination. it's handled by ascent
             for child in children[node_id]:
                 descent_string += ("\t\t\t\t(active_node <" + str(child) + ") : descent_from_" + str(child) + ";" + os.linesep)#otherwise, go through each child in order
         elif node_id in sequence_set:
             #no need for early termination. it's handled by ascent
-            descent_string +=("\t\t\t\t(resume_status_" + str(node_to_local_root_map[node_id]) + " in " + str(sequence_to_relevant_descendants_map[node_id]) + ") : resume_from_" + str(node_to_local_root_map[node_id]) + ";" + os.linesep)#if the relevant resume status is indicating a node that is our descendent, then jump to wherever it points to
+            #the previous version of this causes recursion errors. instead, do this
+            #for descendant in sequence_to_relevant_descendants_map[node_id]:
+                #descent_string +=("\t\t\t\t(resume_status_" + str(node_to_local_root_map[node_id]) + " = " + str(descendant) + ") : descent_from_" + str(descendant) + ";" + os.linesep)#if the relevant resume status is indicating a node that is our descendent, then jump to wherever it points to
+            for child in children[node_id]:
+                descent_string += "\t\t\t\t(resume_relevant_child_" + str(child) + ") : descent_from_" + str(child) + ";" + os.linesep
+                #ok, so if the resume_relevant_child_X is true, then we need to resume from X, so point to it.
             for child in children[node_id]:
                 descent_string += ("\t\t\t\t(active_node <" + str(child) + ") : descent_from_" + str(child) + ";" + os.linesep)#otherwise, go through each child in order
         descent_string += ("\t\t\t\tTRUE : -2;" + os.linesep#error state, because descent should never trigger this
@@ -672,14 +778,45 @@ def create_next_node_structure(nodes, children, node_to_local_root_map, sequence
     
     return (define_string, var_string, init_string, next_string)
 
-
-
+def create_unknown(children, node_to_descendants_map, node_to_local_root_map):
+    item_string = ""
+    for node_id in range(len(node_to_descendants_map)):
+        if node_id not in children or len(children[node_id]) == 0:
+            #item_string += "\t\trelevant_child_" + str(node_id) + " := -1;" + os.linesep
+            item_string += "\t\trelevant_child_" + str(node_id) + " := (active_node = " + str(node_id) + ") ? -1 : -2 ;" + os.linesep
+            
+        else:
+            item_string += ("\t\trelevant_child_" + str(node_id) + " := " + os.linesep
+                            + "\t\t\tcase" + os.linesep)
+            for child in children[node_id]:
+                item_string += "\t\t\t\t !(relevant_child_" + str(child) + " = -2) : " + str(child) + ";" + os.linesep
+            item_string += ("\t\t\t\tTRUE : -2;" + os.linesep
+                            + "\t\t\tesac;" + os.linesep
+            )
+        local_root = node_to_local_root_map[node_id]
+        if node_id not in children or len(children[node_id]) == 0:
+            item_string += "\t\tresume_relevant_child_" + str(node_id) + " := (resume_status_" + str(local_root) + " = " + str(node_id) + ") ? TRUE : FALSE ;" + os.linesep
+        else:
+            item_string += ("\t\tresume_relevant_child_" + str(node_id) + " := " + os.linesep
+                            + "\t\t\tcase" + os.linesep
+                            + "\t\t\t\t(resume_status_" + str(local_root) + " = " + str(node_id) + ") : TRUE ;" + os.linesep#if it's poiting directly to us, true regardless.
+            )
+            for child in children[node_id]:
+                item_string += "\t\t\t\t(resume_relevant_child_" + str(child) + ") : TRUE;" + os.linesep#if it's pointing to a child of ours, TRUE
+            item_string += ("\t\t\t\tTRUE : FALSE;" + os.linesep#wasn't. therefore, false
+                            + "\t\t\tesac;" + os.linesep
+            )
+    define_string = item_string
+    var_string = ""
+    init_string = ""
+    next_string =  ""
+    return (define_string, var_string, init_string, next_string)
 ##############################################################################
 # Main
 ##############################################################################
 
 def main():
-    global next_available_id, children, nodes, additional_arguments, needed_nodes, variable_name_to_int, variable_access, blackboard_needed, last_child, advanced_resume, sequence_point, sequence_map, parallel_synch_set, parallel_unsych_list, variable_check, external_status_req;
+    global blackboard_needed
 
     arg_parser=argparse.ArgumentParser()
     #python3 behaverify.py create_root_FILE create_root_METHOD --root_args root_args_ARGS --string_args string_args_ARGS --min_val min_val_INT --max_val max_val_INT --force_parallel_unsynch --no_seperate_variable_modules --module_input_file module_input_file --specs_input_file specs_FILE --gen_modules gen_modules_INT --output_file ouput_file_FILE --module_output_file module_output_file_FILE --blackboard_output_file blackboard_output_file_FILE --overwrite 
@@ -743,10 +880,12 @@ def main():
     external_status_req = []#list of nodes that require external status. each entry is the node name.
     needed_nodes=set()#the set of node types needed
     
-    next_available_id = walk_tree(root, -1, 0, children, nodes, additional_arguments, needed_nodes, variable_access, variable_check, variable_name_to_int, external_status_req, parallel_synch_set, parallel_unsynch_set, sequence_set, selector_set, decorator_set, leaf_set, parallel_unsynch)
+    next_available_id = walk_tree(root, -1, 0, children, nodes, additional_arguments, needed_nodes, node_names, variable_access, variable_check, variable_name_to_int, external_status_req, parallel_synch_set, parallel_unsynch_set, sequence_set, selector_set, decorator_set, leaf_set, args.force_parallel_unsynch)
+    #print(nodes)
     node_to_local_root_map = create_node_to_local_root_map(nodes, parallel_synch_set, parallel_unsynch_set, sequence_set, selector_set, decorator_set, leaf_set)
-    (local_root_to_relevant_set_map, sequence_to_relevant_descendants_map) = create_local_root_to_relevant_set_map(nodes, node_to_local_root_map, parallel_synch_set, parallel_unsynch_set, sequence_set, selector_set, decorator_set, leaf_set)
+    (local_root_to_relevant_list_map, sequence_to_relevant_descendants_map) = create_local_root_to_relevant_list_map(nodes, children, node_to_local_root_map, parallel_synch_set, parallel_unsynch_set, sequence_set, selector_set, decorator_set, leaf_set)
     variable_name_cleanup(variable_name_to_int, variable_access)
+    node_to_descendants_map = create_node_to_descendants_map(nodes, children, leaf_set)
 
     
     int_to_variable = {}
@@ -758,26 +897,39 @@ def main():
 
         
     define_string = ("MODULE main" + os.linesep
-                        + "\tDEFINE" + os.linesep
-                        + "\t\tstatuses := [")
-    for node_id in range(0, next_available_id):
+                     + "\tCONSTANTS" + os.linesep
+                     + "\t\tsuccess, failure, running, invalid;" + os.linesep
+                     + "\tDEFINE" + os.linesep
+                     + "\t\tstatuses := ["
+    )
+    for node_id in range(len(nodes)):
         if node_id==0:
             define_string += nodes[node_id][2] + ".status"
         else:
             define_string += ", " + nodes[node_id][2] + ".status"
     define_string += "];" + os.linesep
+    for split_point in range(len(nodes)):
+        define_string += "\t\tstatuses_" + str(split_point) + " := ["
+        for invalid in range(split_point + 1):
+            if invalid == 0:
+                define_string += "invalid"
+            else:
+                define_string += ", invalid"
+        for node_id in range(split_point + 1, len(nodes)):
+            define_string += ", " + nodes[node_id][2] + ".status"
+        define_string += "];" + os.linesep
 
     #------------------------------------------------------------------------------------------------------------------------
     var_string = (""
                     + "\tVAR" + os.linesep 
-                    + "\t\tactive_node : {-2, -1} union" + str(leaf_set)  + ";" + os.linesep#NOTE: this needs to be expanded to include some decorators, like one shot.
+                    + "\t\tactive_node : {-2, -1," + str(leaf_set)[1:]  + ";" + os.linesep#NOTE: this needs to be expanded to include some decorators, like one shot.
                     + "\t\trandom_status : {running, success, failure};" + os.linesep
     )       
     if variable_name_to_int:
         var_string += "\t\tvariable_names : define_variables;" + os.linesep
     var_string += "\t\tnode_names : define_nodes;" + os.linesep
     if blackboard_needed:
-        var_string = "\t\tblackboard : blackboard_module(active_node, node_names, variable_names, random_status);" + os.linesep
+        var_string += "\t\tblackboard : blackboard_module(active_node, node_names, variable_names, random_status, statuses);" + os.linesep
     #------------------------------------------------------------------------------------------------------------------------
     init_string = ("\tASSIGN" + os.linesep
                    + "\t\tinit(active_node) := -1;" + os.linesep
@@ -791,12 +943,17 @@ def main():
     )
     #------------------------------------------------------------------------------------------------------------------------
     
-    (new_define, new_var, new_init, new_next) = create_resume_structure(nodes, local_root_to_relevant_set_map)
+    (new_define, new_var, new_init, new_next) = create_resume_structure(nodes, local_root_to_relevant_list_map)
     define_string += new_define
     var_string += new_var
     init_string += new_init
     next_string += new_next
     (new_define, new_var, new_init, new_next) = create_next_node_structure(nodes, children, node_to_local_root_map, sequence_to_relevant_descendants_map, parallel_synch_set, parallel_unsynch_set, sequence_set, selector_set, decorator_set, leaf_set)
+    define_string += new_define
+    var_string += new_var
+    init_string += new_init
+    next_string += new_next
+    (new_define, new_var, new_init, new_next) = create_unknown(children, node_to_descendants_map, node_to_local_root_map)
     define_string += new_define
     var_string += new_var
     init_string += new_init
@@ -867,7 +1024,7 @@ def main():
                     set_string += "}"
             if not args.no_seperate_variable_modules:
                 for variable in variable_name_to_int:
-                    module_string += ("MODULE " + variable + "_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)" + os.linesep
+                    module_string += ("MODULE " + variable + "_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, statuses)" + os.linesep
                                       + "\tVAR" + os.linesep
                                       + "\t\t" + variable + " : " + str(args.min_val) + ".." + str(args.max_val) + ";" + os.linesep
                                       + "\t\t" + variable + "_exists" + " : boolean;" + os.linesep
@@ -886,7 +1043,7 @@ def main():
                                       + "\t\t\tesac;" + os.linesep
                     )
             for node in external_status_req:
-                module_string += ("MODULE " + node + "_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)" + os.linesep
+                module_string += ("MODULE " + node + "_SET_status_module(active_node, id, random_status, variables, variable_exists, node_names, variable_names)" + os.linesep
                                   + "\tDEFINE" + os.linesep
                                   + "\t\tstatus := " + os.linesep
                                   + "\t\t\tcase" + os.linesep
@@ -913,13 +1070,13 @@ def main():
 
             if not args.no_seperate_variable_modules:
                 for variable in variable_name_to_int:
-                    module_string += ("MODULE " + variable + "_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, previous_status)" + os.linesep
+                    module_string += ("MODULE " + variable + "_SET_module(active_node, nodes_with_access, variables, variable_exists, node_names, variable_names, statuses)" + os.linesep
                                       + "\tDEFINE" + os.linesep
                                       + "\t\t" + variable + " := " + str(args.min_val) + ";" + os.linesep
                                       + "\t\t" + variable + "_exists" + " := TRUE;" + os.linesep
                     )
             for node in external_status_req:
-                module_string += ("MODULE " + node + "_SET_status_module(active_node, id, variables, variable_exists, node_names, variable_names)" + os.linesep
+                module_string += ("MODULE " + node + "_SET_status_module(active_node, id, random_status, variables, variable_exists, node_names, variable_names)" + os.linesep
                                   + "\tDEFINE" + os.linesep
                                   + "\t\tstatus := " + os.linesep
                                   + "\t\t\tcase" + os.linesep

@@ -28,4 +28,4 @@
 system diameter: 524
 reachable states: 1.79677e+12 (2^40.7085) out of 6.92365e+21 (2^72.552)
 ######################################################################
-2.47 user, 0.02 system, 2.60 elapsed -- Max VSize = 137268KB, Max RSS = 92664KB
+2.09 user, 0.04 system, 2.20 elapsed -- Max VSize = 137264KB, Max RSS = 92588KB
