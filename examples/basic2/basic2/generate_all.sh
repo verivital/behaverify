@@ -13,5 +13,7 @@ for cur_file in ${files[@]}; do
     python3 behaverify_sequence.py $cur_file create_root --output_file ../models_sequence/$cur_file.smv --overwrite
     
     python3 behaverify_path.py $cur_file create_root --output_file ../models_path/$cur_file.smv --overwrite
+    
+    python3 behaverify_double_path.py $cur_file create_root --output_file ../models_double_path/$cur_file.smv --overwrite
 done
 

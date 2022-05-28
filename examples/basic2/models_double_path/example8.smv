@@ -1,0 +1,362 @@
+MODULE main
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		statuses := [example_8_seq1.status, sel1.status, leaf_1.status, leaf_2.status, leaf_3.status, leaf_4.status, leaf_5.status, leaf_6.status, leaf_7.status, leaf_8.status, sel2.status, seq2.status, leaf_9.status, leaf_10.status, leaf_11.status, leaf_12.status, seq3.status, leaf_13.status, leaf_14.status, leaf_15.status, leaf_16.status];
+		statuses_0 := [invalid, sel1.status, leaf_1.status, leaf_2.status, leaf_3.status, leaf_4.status, leaf_5.status, leaf_6.status, leaf_7.status, leaf_8.status, sel2.status, seq2.status, leaf_9.status, leaf_10.status, leaf_11.status, leaf_12.status, seq3.status, leaf_13.status, leaf_14.status, leaf_15.status, leaf_16.status];
+		statuses_1 := [invalid, invalid, leaf_1.status, leaf_2.status, leaf_3.status, leaf_4.status, leaf_5.status, leaf_6.status, leaf_7.status, leaf_8.status, sel2.status, seq2.status, leaf_9.status, leaf_10.status, leaf_11.status, leaf_12.status, seq3.status, leaf_13.status, leaf_14.status, leaf_15.status, leaf_16.status];
+		statuses_2 := [invalid, invalid, invalid, leaf_2.status, leaf_3.status, leaf_4.status, leaf_5.status, leaf_6.status, leaf_7.status, leaf_8.status, sel2.status, seq2.status, leaf_9.status, leaf_10.status, leaf_11.status, leaf_12.status, seq3.status, leaf_13.status, leaf_14.status, leaf_15.status, leaf_16.status];
+		statuses_3 := [invalid, invalid, invalid, invalid, leaf_3.status, leaf_4.status, leaf_5.status, leaf_6.status, leaf_7.status, leaf_8.status, sel2.status, seq2.status, leaf_9.status, leaf_10.status, leaf_11.status, leaf_12.status, seq3.status, leaf_13.status, leaf_14.status, leaf_15.status, leaf_16.status];
+		statuses_4 := [invalid, invalid, invalid, invalid, invalid, leaf_4.status, leaf_5.status, leaf_6.status, leaf_7.status, leaf_8.status, sel2.status, seq2.status, leaf_9.status, leaf_10.status, leaf_11.status, leaf_12.status, seq3.status, leaf_13.status, leaf_14.status, leaf_15.status, leaf_16.status];
+		statuses_5 := [invalid, invalid, invalid, invalid, invalid, invalid, leaf_5.status, leaf_6.status, leaf_7.status, leaf_8.status, sel2.status, seq2.status, leaf_9.status, leaf_10.status, leaf_11.status, leaf_12.status, seq3.status, leaf_13.status, leaf_14.status, leaf_15.status, leaf_16.status];
+		statuses_6 := [invalid, invalid, invalid, invalid, invalid, invalid, invalid, leaf_6.status, leaf_7.status, leaf_8.status, sel2.status, seq2.status, leaf_9.status, leaf_10.status, leaf_11.status, leaf_12.status, seq3.status, leaf_13.status, leaf_14.status, leaf_15.status, leaf_16.status];
+		statuses_7 := [invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, leaf_7.status, leaf_8.status, sel2.status, seq2.status, leaf_9.status, leaf_10.status, leaf_11.status, leaf_12.status, seq3.status, leaf_13.status, leaf_14.status, leaf_15.status, leaf_16.status];
+		statuses_8 := [invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, leaf_8.status, sel2.status, seq2.status, leaf_9.status, leaf_10.status, leaf_11.status, leaf_12.status, seq3.status, leaf_13.status, leaf_14.status, leaf_15.status, leaf_16.status];
+		statuses_9 := [invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, sel2.status, seq2.status, leaf_9.status, leaf_10.status, leaf_11.status, leaf_12.status, seq3.status, leaf_13.status, leaf_14.status, leaf_15.status, leaf_16.status];
+		statuses_10 := [invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, seq2.status, leaf_9.status, leaf_10.status, leaf_11.status, leaf_12.status, seq3.status, leaf_13.status, leaf_14.status, leaf_15.status, leaf_16.status];
+		statuses_11 := [invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, leaf_9.status, leaf_10.status, leaf_11.status, leaf_12.status, seq3.status, leaf_13.status, leaf_14.status, leaf_15.status, leaf_16.status];
+		statuses_12 := [invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, leaf_10.status, leaf_11.status, leaf_12.status, seq3.status, leaf_13.status, leaf_14.status, leaf_15.status, leaf_16.status];
+		statuses_13 := [invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, leaf_11.status, leaf_12.status, seq3.status, leaf_13.status, leaf_14.status, leaf_15.status, leaf_16.status];
+		statuses_14 := [invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, leaf_12.status, seq3.status, leaf_13.status, leaf_14.status, leaf_15.status, leaf_16.status];
+		statuses_15 := [invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, seq3.status, leaf_13.status, leaf_14.status, leaf_15.status, leaf_16.status];
+		statuses_16 := [invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, leaf_13.status, leaf_14.status, leaf_15.status, leaf_16.status];
+		statuses_17 := [invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, leaf_14.status, leaf_15.status, leaf_16.status];
+		statuses_18 := [invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, leaf_15.status, leaf_16.status];
+		statuses_19 := [invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, leaf_16.status];
+		statuses_20 := [invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid];
+		next_node := [ascent_from_0, ascent_from_1, ascent_from_2, ascent_from_3, ascent_from_4, ascent_from_5, ascent_from_6, ascent_from_7, ascent_from_8, ascent_from_9, ascent_from_10, ascent_from_11, ascent_from_12, ascent_from_13, ascent_from_14, ascent_from_15, ascent_from_16, ascent_from_17, ascent_from_18, ascent_from_19, ascent_from_20];
+		descent_from_0 := 
+			case
+				(resume_relevant_child_1) : descent_from_1;
+				(resume_relevant_child_10) : descent_from_10;
+				(active_node <1) : descent_from_1;
+				(active_node <10) : descent_from_10;
+				TRUE : -2;
+			esac;
+		descent_from_1 := 
+			case
+				(active_node <2) : descent_from_2;
+				(active_node <3) : descent_from_3;
+				(active_node <4) : descent_from_4;
+				(active_node <5) : descent_from_5;
+				(active_node <6) : descent_from_6;
+				(active_node <7) : descent_from_7;
+				(active_node <8) : descent_from_8;
+				(active_node <9) : descent_from_9;
+				TRUE : -2;
+			esac;
+		descent_from_2 := 2;
+		descent_from_3 := 3;
+		descent_from_4 := 4;
+		descent_from_5 := 5;
+		descent_from_6 := 6;
+		descent_from_7 := 7;
+		descent_from_8 := 8;
+		descent_from_9 := 9;
+		descent_from_10 := 
+			case
+				(active_node <11) : descent_from_11;
+				(active_node <16) : descent_from_16;
+				TRUE : -2;
+			esac;
+		descent_from_11 := 
+			case
+				(resume_relevant_child_12) : descent_from_12;
+				(resume_relevant_child_13) : descent_from_13;
+				(resume_relevant_child_14) : descent_from_14;
+				(resume_relevant_child_15) : descent_from_15;
+				(active_node <12) : descent_from_12;
+				(active_node <13) : descent_from_13;
+				(active_node <14) : descent_from_14;
+				(active_node <15) : descent_from_15;
+				TRUE : -2;
+			esac;
+		descent_from_12 := 12;
+		descent_from_13 := 13;
+		descent_from_14 := 14;
+		descent_from_15 := 15;
+		descent_from_16 := 
+			case
+				(resume_relevant_child_17) : descent_from_17;
+				(resume_relevant_child_18) : descent_from_18;
+				(resume_relevant_child_19) : descent_from_19;
+				(resume_relevant_child_20) : descent_from_20;
+				(active_node <17) : descent_from_17;
+				(active_node <18) : descent_from_18;
+				(active_node <19) : descent_from_19;
+				(active_node <20) : descent_from_20;
+				TRUE : -2;
+			esac;
+		descent_from_17 := 17;
+		descent_from_18 := 18;
+		descent_from_19 := 19;
+		descent_from_20 := 20;
+		ascent_from_0 := 
+			case
+				(statuses[0] = invalid) : descent_from_0;
+				TRUE : -1;
+			esac;
+		ascent_from_1 := 
+			case
+				(statuses[1] = invalid) : descent_from_1;
+				TRUE : ascent_from_0;
+			esac;
+		ascent_from_2 := ascent_from_1;
+		ascent_from_3 := ascent_from_1;
+		ascent_from_4 := ascent_from_1;
+		ascent_from_5 := ascent_from_1;
+		ascent_from_6 := ascent_from_1;
+		ascent_from_7 := ascent_from_1;
+		ascent_from_8 := ascent_from_1;
+		ascent_from_9 := ascent_from_1;
+		ascent_from_10 := 
+			case
+				(statuses[10] = invalid) : descent_from_10;
+				TRUE : ascent_from_0;
+			esac;
+		ascent_from_11 := 
+			case
+				(statuses[11] = invalid) : descent_from_11;
+				TRUE : ascent_from_10;
+			esac;
+		ascent_from_12 := ascent_from_11;
+		ascent_from_13 := ascent_from_11;
+		ascent_from_14 := ascent_from_11;
+		ascent_from_15 := ascent_from_11;
+		ascent_from_16 := 
+			case
+				(statuses[16] = invalid) : descent_from_16;
+				TRUE : ascent_from_10;
+			esac;
+		ascent_from_17 := ascent_from_16;
+		ascent_from_18 := ascent_from_16;
+		ascent_from_19 := ascent_from_16;
+		ascent_from_20 := ascent_from_16;
+		relevant_child_0 := 
+			case
+				 !(relevant_child_1 = -2) : 1;
+				 !(relevant_child_10 = -2) : 10;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_0 := 
+			case
+				(resume_status_0 = 0) : TRUE ;
+				(resume_relevant_child_1) : TRUE;
+				(resume_relevant_child_10) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_child_1 := 
+			case
+				 !(relevant_child_2 = -2) : 2;
+				 !(relevant_child_3 = -2) : 3;
+				 !(relevant_child_4 = -2) : 4;
+				 !(relevant_child_5 = -2) : 5;
+				 !(relevant_child_6 = -2) : 6;
+				 !(relevant_child_7 = -2) : 7;
+				 !(relevant_child_8 = -2) : 8;
+				 !(relevant_child_9 = -2) : 9;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_1 := 
+			case
+				(resume_status_0 = 1) : TRUE ;
+				(resume_relevant_child_2) : TRUE;
+				(resume_relevant_child_3) : TRUE;
+				(resume_relevant_child_4) : TRUE;
+				(resume_relevant_child_5) : TRUE;
+				(resume_relevant_child_6) : TRUE;
+				(resume_relevant_child_7) : TRUE;
+				(resume_relevant_child_8) : TRUE;
+				(resume_relevant_child_9) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_child_2 := (active_node = 2) ? -1 : -2 ;
+		resume_relevant_child_2 := (resume_status_0 = 2) ? TRUE : FALSE ;
+		relevant_child_3 := (active_node = 3) ? -1 : -2 ;
+		resume_relevant_child_3 := (resume_status_0 = 3) ? TRUE : FALSE ;
+		relevant_child_4 := (active_node = 4) ? -1 : -2 ;
+		resume_relevant_child_4 := (resume_status_0 = 4) ? TRUE : FALSE ;
+		relevant_child_5 := (active_node = 5) ? -1 : -2 ;
+		resume_relevant_child_5 := (resume_status_0 = 5) ? TRUE : FALSE ;
+		relevant_child_6 := (active_node = 6) ? -1 : -2 ;
+		resume_relevant_child_6 := (resume_status_0 = 6) ? TRUE : FALSE ;
+		relevant_child_7 := (active_node = 7) ? -1 : -2 ;
+		resume_relevant_child_7 := (resume_status_0 = 7) ? TRUE : FALSE ;
+		relevant_child_8 := (active_node = 8) ? -1 : -2 ;
+		resume_relevant_child_8 := (resume_status_0 = 8) ? TRUE : FALSE ;
+		relevant_child_9 := (active_node = 9) ? -1 : -2 ;
+		resume_relevant_child_9 := (resume_status_0 = 9) ? TRUE : FALSE ;
+		relevant_child_10 := 
+			case
+				 !(relevant_child_11 = -2) : 11;
+				 !(relevant_child_16 = -2) : 16;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_10 := 
+			case
+				(resume_status_0 = 10) : TRUE ;
+				(resume_relevant_child_11) : TRUE;
+				(resume_relevant_child_16) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_child_11 := 
+			case
+				 !(relevant_child_12 = -2) : 12;
+				 !(relevant_child_13 = -2) : 13;
+				 !(relevant_child_14 = -2) : 14;
+				 !(relevant_child_15 = -2) : 15;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_11 := 
+			case
+				(resume_status_0 = 11) : TRUE ;
+				(resume_relevant_child_12) : TRUE;
+				(resume_relevant_child_13) : TRUE;
+				(resume_relevant_child_14) : TRUE;
+				(resume_relevant_child_15) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_child_12 := (active_node = 12) ? -1 : -2 ;
+		resume_relevant_child_12 := (resume_status_0 = 12) ? TRUE : FALSE ;
+		relevant_child_13 := (active_node = 13) ? -1 : -2 ;
+		resume_relevant_child_13 := (resume_status_0 = 13) ? TRUE : FALSE ;
+		relevant_child_14 := (active_node = 14) ? -1 : -2 ;
+		resume_relevant_child_14 := (resume_status_0 = 14) ? TRUE : FALSE ;
+		relevant_child_15 := (active_node = 15) ? -1 : -2 ;
+		resume_relevant_child_15 := (resume_status_0 = 15) ? TRUE : FALSE ;
+		relevant_child_16 := 
+			case
+				 !(relevant_child_17 = -2) : 17;
+				 !(relevant_child_18 = -2) : 18;
+				 !(relevant_child_19 = -2) : 19;
+				 !(relevant_child_20 = -2) : 20;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_16 := 
+			case
+				(resume_status_0 = 16) : TRUE ;
+				(resume_relevant_child_17) : TRUE;
+				(resume_relevant_child_18) : TRUE;
+				(resume_relevant_child_19) : TRUE;
+				(resume_relevant_child_20) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_child_17 := (active_node = 17) ? -1 : -2 ;
+		resume_relevant_child_17 := (resume_status_0 = 17) ? TRUE : FALSE ;
+		relevant_child_18 := (active_node = 18) ? -1 : -2 ;
+		resume_relevant_child_18 := (resume_status_0 = 18) ? TRUE : FALSE ;
+		relevant_child_19 := (active_node = 19) ? -1 : -2 ;
+		resume_relevant_child_19 := (resume_status_0 = 19) ? TRUE : FALSE ;
+		relevant_child_20 := (active_node = 20) ? -1 : -2 ;
+		resume_relevant_child_20 := (resume_status_0 = 20) ? TRUE : FALSE ;
+		last_child_1 := 9;
+		last_child_10 := 16;
+		last_child_0 := 10;
+		last_child_16 := 20;
+		last_child_11 := 15;
+	VAR
+		active_node : {-2, -1,2, 3, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 17, 18, 19, 20};
+		random_status : {running, success, failure};
+		node_names : define_nodes;
+		resume_status_0 : {0, 10, 13, 14, 15, 18, 19, 20};
+		example_8_seq1 : node_sequence(relevant_child_0, statuses_0, last_child_0);
+		sel1 : node_selector(relevant_child_1, statuses_1, last_child_1);
+		leaf_1 : node_default(active_node, 2, random_status);
+		leaf_2 : node_default(active_node, 3, random_status);
+		leaf_3 : node_default(active_node, 4, random_status);
+		leaf_4 : node_default(active_node, 5, random_status);
+		leaf_5 : node_default(active_node, 6, random_status);
+		leaf_6 : node_default(active_node, 7, random_status);
+		leaf_7 : node_default(active_node, 8, random_status);
+		leaf_8 : node_default(active_node, 9, random_status);
+		sel2 : node_selector(relevant_child_10, statuses_10, last_child_10);
+		seq2 : node_sequence(relevant_child_11, statuses_11, last_child_11);
+		leaf_9 : node_default(active_node, 12, random_status);
+		leaf_10 : node_default(active_node, 13, random_status);
+		leaf_11 : node_default(active_node, 14, random_status);
+		leaf_12 : node_default(active_node, 15, random_status);
+		seq3 : node_sequence(relevant_child_16, statuses_16, last_child_16);
+		leaf_13 : node_default(active_node, 17, random_status);
+		leaf_14 : node_default(active_node, 18, random_status);
+		leaf_15 : node_default(active_node, 19, random_status);
+		leaf_16 : node_default(active_node, 20, random_status);
+	ASSIGN
+		init(active_node) := -1;
+		init(resume_status_0) := 0;
+		next(active_node) :=
+			case
+				(active_node = -2) : -2;
+				(active_node = -1) : next_node[0];
+				TRUE : next_node[active_node];
+			esac;
+		next(resume_status_0) := 
+			case
+				(statuses[0] in {success, failure}) : 0;
+				(statuses[20] = running) : 20;
+				(statuses[19] = running) : 19;
+				(statuses[18] = running) : 18;
+				(statuses[15] = running) : 15;
+				(statuses[14] = running) : 14;
+				(statuses[13] = running) : 13;
+				(statuses[10] = running) : 10;
+				(statuses[resume_status_0] in {success, failure}) : 0;
+				TRUE : resume_status_0;
+			esac;
+MODULE node_selector(relevant_child, statuses, last_child)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status :=
+			case
+				(last_child = -2) : failure;
+				(relevant_child <= 0) : invalid;
+				(statuses[max(relevant_child, 0)] = running) : running;
+				(statuses[max(relevant_child, 0)] = success) : success;
+				(last_child = relevant_child) & (statuses[max(relevant_child, 0)] = failure) : failure;
+				TRUE : invalid;
+			esac;
+MODULE node_default(active_node, id, random_status)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status :=
+			case
+				(active_node = id) : random_status;
+				TRUE : invalid;
+			esac;
+MODULE node_sequence(relevant_child, statuses, last_child)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status :=
+			case
+				(last_child = -2) : success;
+				(relevant_child <= 0) : invalid;
+				(statuses[max(relevant_child, 0)] = running) : running;
+				(statuses[max(relevant_child, 0)] = failure) : failure;
+				(last_child = relevant_child) & (statuses[max(relevant_child, 0)] = success) : success;
+				TRUE : invalid;
+			esac;
+MODULE define_nodes
+	DEFINE
+		example_8_seq1 := 0;
+		sel1 := 1;
+		leaf_1 := 2;
+		leaf_2 := 3;
+		leaf_3 := 4;
+		leaf_4 := 5;
+		leaf_5 := 6;
+		leaf_6 := 7;
+		leaf_7 := 8;
+		leaf_8 := 9;
+		sel2 := 10;
+		seq2 := 11;
+		leaf_9 := 12;
+		leaf_10 := 13;
+		leaf_11 := 14;
+		leaf_12 := 15;
+		seq3 := 16;
+		leaf_13 := 17;
+		leaf_14 := 18;
+		leaf_15 := 19;
+		leaf_16 := 20;
