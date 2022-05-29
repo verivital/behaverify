@@ -665,10 +665,12 @@ def create_resume_structure(nodes, local_root_to_relevant_list_map):
     var_resume_status_string = "" #this is a variable that actually stores what running state we're in
     init_resume_status_string = ""
     next_resume_status_string = ""
+    var_define_status_string = "" #this is for storing the define versions that are constants.
     for local_root in local_root_to_relevant_list_map:
         relevant_list = local_root_to_relevant_list_map[local_root]
         if len(relevant_list) == 0:
             #there's nothing to resume from. if we have a sequence node, then it apparently only had 0 or 1 children, and we don't need any special resume for it.
+            var_define_status_string += "\t\tresume_status_" + str(local_root) + " := -3;" + os.linesep
             continue
         var_resume_status_string += "\t\tresume_status_" + str(local_root) + " : {" + str(local_root) + ", " + str(relevant_list)[1:-1] + "};" + os.linesep
         init_resume_status_string += "\t\tinit(resume_status_" + str(local_root) + ") := " + str(local_root) + ";" + os.linesep
@@ -700,7 +702,7 @@ def create_resume_structure(nodes, local_root_to_relevant_list_map):
         
         
         
-    define_string = ""
+    define_string = var_define_status_string
     var_string = var_resume_status_string
     init_string = init_resume_status_string
     next_string =  next_resume_status_string
@@ -761,7 +763,7 @@ def create_next_node_structure(nodes, children, node_to_local_root_map, sequence
             #for descendant in sequence_to_relevant_descendants_map[node_id]:
                 #descent_string +=("\t\t\t\t(resume_status_" + str(node_to_local_root_map[node_id]) + " = " + str(descendant) + ") : descent_from_" + str(descendant) + ";" + os.linesep)#if the relevant resume status is indicating a node that is our descendent, then jump to wherever it points to
             for child in children[node_id]:
-                descent_string += "\t\t\t\t(resume_relevant_child_" + str(child) + ") : descent_from_" + str(child) + ";" + os.linesep
+                descent_string += "\t\t\t\t(active_node <" + str(child) + ") & (resume_relevant_child_" + str(child) + ") : descent_from_" + str(child) + ";" + os.linesep
                 #ok, so if the resume_relevant_child_X is true, then we need to resume from X, so point to it.
             for child in children[node_id]:
                 descent_string += ("\t\t\t\t(active_node <" + str(child) + ") : descent_from_" + str(child) + ";" + os.linesep)#otherwise, go through each child in order
@@ -931,7 +933,9 @@ def main():
     if blackboard_needed:
         var_string += "\t\tblackboard : blackboard_module(active_node, node_names, variable_names, random_status, statuses);" + os.linesep
     #------------------------------------------------------------------------------------------------------------------------
-    init_string = ("\tASSIGN" + os.linesep
+    init_string = ("\tINVAR" + os.linesep
+                   + "\t\tactive_node = -1 -> random_status = running;" + os.linesep
+                   + "\tASSIGN" + os.linesep
                    + "\t\tinit(active_node) := -1;" + os.linesep
     )
     next_string = ("\t\tnext(active_node) :=" + os.linesep
