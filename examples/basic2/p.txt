@@ -332,7 +332,7 @@ reachable states: 147 (2^7.19967) out of 18216 (2^14.1529)
   previous_node = 2
   previous_status = running
   resume_status_0 = 14
-  ------- State   62 ------1
+  ------- State   62 ------
   active_node = -1
   previous_node = -1
   previous_status = invalid
@@ -537,32 +537,32 @@ reachable states: 147 (2^7.19967) out of 18216 (2^14.1529)
   previous_node = 1
   previous_status = invalid
   resume_status_0 = 0
-  ------- State  103 ------2
+  ------- State  103 ------
   active_node = -1
   previous_node = 0
   previous_status = running
   resume_status_0 = 13
-  ------- State  104 ------3
+  ------- State  104 ------
   active_node = -1
   previous_node = 0
   previous_status = failure
   resume_status_0 = 0
-  ------- State  105 ------4
+  ------- State  105 ------
   active_node = -1
   previous_node = 0
   previous_status = running
   resume_status_0 = 0
-  ------- State  106 ------5
+  ------- State  106 ------
   active_node = -1
   previous_node = 0
   previous_status = success
   resume_status_0 = 0
-  ------- State  107 ------6
+  ------- State  107 ------
   active_node = -1
   previous_node = 0
   previous_status = running
   resume_status_0 = 17
-  ------- State  108 ------7
+  ------- State  108 ------
   active_node = -1
   previous_node = 0
   previous_status = running
@@ -572,7 +572,7 @@ reachable states: 147 (2^7.19967) out of 18216 (2^14.1529)
   previous_node = 0
   previous_status = invalid
   resume_status_0 = 15
-  ------- State  110 ------8
+  ------- State  110 ------
   active_node = -1
   previous_node = 0
   previous_status = running
@@ -602,22 +602,22 @@ reachable states: 147 (2^7.19967) out of 18216 (2^14.1529)
   previous_node = 12
   previous_status = invalid
   resume_status_0 = 0
-  ------- State  116 ------9
+  ------- State  116 ------
   active_node = -1
   previous_node = 0
   previous_status = running
   resume_status_0 = 20
-  ------- State  117 ------10
+  ------- State  117 ------
   active_node = -1
   previous_node = 0
   previous_status = running
   resume_status_0 = 18
-  ------- State  118 ------11
+  ------- State  118 ------
   active_node = -1
   previous_node = 0
   previous_status = running
   resume_status_0 = 16
-  ------- State  119 ------12
+  ------- State  119 ------
   active_node = -1
   previous_node = 0
   previous_status = running

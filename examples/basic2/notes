@@ -1,2 +1,5 @@
-d, a=-1 -> 21 # slight increase from the fact random status can be w/e here.
-p, a=-1 -> 12
+d, a=-1 -> 8
+p, a=-1 -> 12 (slight increase because of previous node, increase because holding previous_status)
+
+d, a=2 -> 3
+d, a=3 -> 3
