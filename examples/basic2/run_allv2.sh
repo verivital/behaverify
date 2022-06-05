@@ -1,6 +1,6 @@
 #!/bin/bash
 
-folders=("./models_selector_mixed" "./models_selector_parallel"  "./models_selector_non_parallel" "./models_sequence" "./models_path" "./models_double_path")
+folders=("./models_selector_mixed" "./models_selector_parallel"  "./models_selector_non_parallel" "./models_sequence" "./models_path" "./models_double_path" "./models_double_path_clean")
 files=("example1" "example2" "example3" "example4" "example5" "example6" "example7" "example8")
 
 for cur_folder in ${folders[@]}; do
