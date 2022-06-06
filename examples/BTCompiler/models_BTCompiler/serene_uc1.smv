@@ -1,0 +1,285 @@
+-- // This document contains no USA or EU export controlled technical data.
+--
+-- // CARVE has received funding from the European Union's Horizon 2020 research and
+-- // innovation programme under grant agreement No 732410, in the form of financial
+-- // support to third parties of the RobMoSys project.
+
+
+-- // This document contains no USA or EU export controlled technical data.
+--
+-- // CARVE has received funding from the European Union's Horizon 2020 research and
+-- // innovation programme under grant agreement No 732410, in the form of financial
+-- // support to third parties of the RobMoSys project.
+
+/-- BT constructors --/
+
+/--
+  Generates tick events for the BT. The argument `top_level_bt` is the BT root
+  node.
+--/
+MODULE bt_tick_generator(top_level_bt)
+  ASSIGN
+    init(top_level_bt.enable) := TRUE;
+    next(top_level_bt.enable) := (top_level_bt.output != bt_output_none);
+
+MODULE bt_single_tick_generator(top_level_bt)
+  ASSIGN
+    init(top_level_bt.enable) := TRUE;
+    next(top_level_bt.enable) := FALSE;
+
+/--
+  Abstraction of a skill node:
+  The `input` abstracts the response from the skill implementation. The node
+  output is one of the classical 'running', 'true', or 'false', plus the 'none'
+  that encodes that the skill is currently inactive.
+
+  The propagation from the input to the output consumes 1 time step.
+--/
+MODULE bt_skill
+  IVAR
+    input : { bt_input_running, bt_input_false, bt_input_true };
+  VAR
+    output : { bt_output_none, bt_output_running, bt_output_false,
+              bt_output_true};
+    enable : boolean;
+  ASSIGN
+    init(output) := bt_output_none;
+    next(output) :=
+      case
+        ! enable : bt_output_none;
+        input = bt_input_running : bt_output_running;
+        input = bt_input_false : bt_output_false;
+        input = bt_input_true : bt_output_true;
+      esac;
+
+/--
+  Binary fallback.
+  The `left_bt` and `right_bt` parameters represent the left and right child,
+  respectively.
+--/
+MODULE bt_fallback(left_bt, right_bt)
+  VAR
+    enable : boolean;
+  ASSIGN
+    left_bt.enable := enable;
+    right_bt.enable := (left_bt.output = bt_output_false);
+  DEFINE
+    output :=
+      case
+        left_bt.output in { bt_output_running, bt_output_true } : left_bt.output;
+        TRUE : right_bt.output;
+      esac;
+
+/--
+  Binary sequence.
+  The `left_bt` and `right_bt` parameters represent the left and right child,
+  respectively.
+--/
+MODULE bt_sequence(left_bt, right_bt)
+  VAR
+    enable : boolean;
+  ASSIGN
+    left_bt.enable := enable;
+    right_bt.enable := (left_bt.output = bt_output_true);
+  DEFINE
+    output :=
+      case
+        left_bt.output in { bt_output_running, bt_output_false } : left_bt.output;
+        TRUE : right_bt.output;
+      esac;
+
+/--
+  Binary sequence with memory.
+  It tracks when the left child completes with success so that it gets executed
+  only once. The tracking is reset when the sequence completes 
+--/
+MODULE bt_sequence_with_memory(left_bt, right_bt)
+  VAR
+    enable : boolean;
+    has_left_bt_succeded : boolean;
+  ASSIGN
+    init(has_left_bt_succeded) := FALSE;
+    next(has_left_bt_succeded) :=
+      case
+        right_bt.output in { bt_output_true, bt_output_false } : FALSE; -- Reset.
+        left_bt.output = bt_output_true : TRUE; -- Engage.
+        TRUE : has_left_bt_succeded; -- Hold.
+      esac;
+    left_bt.enable := enable & !has_left_bt_succeded;
+    right_bt.enable := (left_bt.output = bt_output_true)
+      | (enable & has_left_bt_succeded);
+  DEFINE
+    output :=
+      case
+        left_bt.output in { bt_output_running, bt_output_false } : left_bt.output;
+        TRUE : right_bt.output;
+      esac;
+
+/--
+  Binary fallback with memory.
+  It tracks when the left child fails so that it gets executed only once. The
+  tracking is reset when the sequence completes.
+--/
+MODULE bt_fallback_with_memory(left_bt, right_bt)
+  VAR
+    enable : boolean;
+    has_left_bt_failed : boolean;
+  ASSIGN
+    init(has_left_bt_failed) := FALSE;
+    next(has_left_bt_failed) :=
+      case
+        right_bt.output in { bt_output_true, bt_output_false } : FALSE; -- Reset.
+        left_bt.output = bt_output_false : TRUE; -- Engage.
+        TRUE : has_left_bt_failed;
+      esac;
+    left_bt.enable := enable & !has_left_bt_failed;
+    right_bt.enable := (left_bt.output = bt_output_false)
+      | (enable & has_left_bt_failed);
+  DEFINE
+    output :=
+      case
+        left_bt.output in { bt_output_running, bt_output_true } : left_bt.output;
+        TRUE : right_bt.output;
+      esac;
+
+
+/--
+  Binary parallel constructor.
+  The `left_bt` and `right_bt` parameters represent the left and right child,
+  respectively.
+  Due to the limitations of the SMV language, it is not possible to express a
+  MODULE to represent parallel constructor with arbitrary arity.
+--/
+MODULE bt_parallel(success_threshold, left_bt, right_bt)
+  VAR
+    enable : boolean;
+    left_bt_stored_output : { bt_output_none, bt_output_running, bt_output_false, bt_output_true};
+  ASSIGN
+    left_bt.enable := enable;
+    right_bt.enable := is_left_bt_active;
+    init(left_bt_stored_output) := bt_output_none;
+    next(left_bt_stored_output) :=
+      case
+        is_left_bt_active : left_bt.output;
+        TRUE : left_bt_stored_output;
+      esac;
+  DEFINE
+    is_left_bt_active := (left_bt.output != bt_output_none);
+    is_right_bt_active := (right_bt.output != bt_output_none);
+    true_output_count :=
+      count(left_bt_stored_output = bt_output_true,
+            right_bt.output = bt_output_true);
+    running_output_count :=
+      count(left_bt_stored_output = bt_output_running,
+            right_bt.output = bt_output_running);
+    output :=
+      case
+        is_right_bt_active & true_output_count >= success_threshold : bt_output_true;
+        is_right_bt_active & success_threshold > true_output_count + running_output_count : bt_output_false;
+        is_right_bt_active : bt_output_running;
+        TRUE : bt_output_none;
+      esac;
+
+/--
+  Unary constructor that returns `true` as long as the child `child_bt` is
+  `running` and then switches to `false` as soon as the child becomes either
+  `true` or `false`.
+--/
+MODULE bt_is_running(child_bt)
+  VAR
+    enable : boolean;
+  ASSIGN
+    child_bt.enable := enable;
+  DEFINE
+    output :=
+      case
+        child_bt.output in { bt_output_false, bt_output_true } : bt_output_false;
+        child_bt.output = bt_output_running : bt_output_true;
+        TRUE : bt_output_none;
+      esac;
+
+/--
+  Unary negation operator. Running as long as the child `child_bt` is running.
+  Then it swaps `true` with `false`.
+--/
+MODULE bt_not(child_bt)
+  VAR
+    enable : boolean;
+  ASSIGN
+    child_bt.enable := enable;
+  DEFINE
+    output :=
+      case
+        child_bt.output = bt_output_false : bt_output_true;
+        child_bt.output = bt_output_true : bt_output_false;
+        TRUE : child_bt.output;
+      esac;
+
+MODULE bt_placeholder
+  VAR
+    enable : boolean;
+  DEFINE
+    output := bt_output_true;
+
+/--
+  Unary operator that ticks its child `child_bt` while it is `running`. Then it
+  caches the child success and it returns true to the parent without further
+  ticking the child. If the child fails, no caching happens.
+--/
+MODULE bt_do_once(child_bt, reset_bt)
+  VAR
+    succeded : boolean;
+  ASSIGN
+    init(succeded) := FALSE;
+    next(succeded) :=
+      case
+        reset_bt.enable : FALSE;
+        child_bt.output = bt_output_true : TRUE;
+        TRUE : succeded;
+      esac;
+  DEFINE
+    output :=
+      case
+        succeed : bt_output_true;
+        TRUE : child_bt.output;
+      esac;
+
+-- Use case 1 with the classic BT formulation.
+MODULE main
+  VAR
+--#include "uc1_bt.smv"
+skill_goto_kitchen : bt_skill;
+skill_find_bottle : bt_skill;
+skill_fetch_bottle : bt_skill;
+skill_find_glass : bt_skill;
+skill_fetch_glass : bt_skill;
+skill_pour_drink : bt_skill;
+skill_ask_for_help : bt_skill;
+--
+do_bottle : bt_sequence(skill_find_bottle, skill_fetch_bottle);
+do_glass : bt_sequence(skill_find_glass, skill_fetch_glass);
+do_pour_drink : bt_sequence(do_bottle_and_glass, skill_pour_drink);
+do_pour_drink_in_kitchen : bt_sequence(skill_goto_kitchen, do_pour_drink);
+bt_root : bt_fallback(do_pour_drink_in_kitchen, skill_ask_for_help);
+
+    do_bottle_and_glass : bt_sequence(do_bottle, do_glass);
+    tick_generator : bt_tick_generator(bt_root);
+
+  /--
+    The BT can succeed. The returned counterexample is trivial: The
+    `goto-kitchen` action fails and the `ask-for-help` succeeds.
+  --/
+  SPEC EF bt_root.output = bt_output_true
+  -- Uncomment the LTL to get a counterexample.
+  -- LTLSPEC G !(bt_root.output = bt_output_true)
+
+  -- The BT can succesfully pour a drink.
+  SPEC EF do_pour_drink_in_kitchen.output = bt_output_true
+  -- Uncomment the LTL to get a trace.
+  -- LTLSPEC G !(do_pour_drink_in_kitchen.output = bt_output_true)
+
+  -- Mutual exclusion of robotic arm use.
+  -- This property fails if `do_bottle` and `do_glass` are parallel.
+  LTLSPEC G (skill_fetch_bottle.output = bt_output_running ->
+    (skill_fetch_glass.output != bt_output_running U bt_root.enable))
+

@@ -4,10 +4,10 @@ import pandas as pd
 import re
 
 folders = ["./models_selector_mixed", "./models_selector_parallel", "./models_selector_non_parallel", "./models_sequence",  "./models_path", "./models_path"]
-folders2 = ["selector_mixed", "selector_parallel", "selector_non_parallel",  "sequence", "path", "double_path"]
+folders2 = ["selector_mixed", "selector_parallel", "selector_non_parallel",  "sequence", "path", "double_path", "double_path_clean", "double_path_cleaner"]
 files = ["example1", "example2", "example3", "example4", "example5", "example6", "example7", "example8"]
 
-foldersShort = ["SelMixed", "SelParallel", "SelNonParallel", "Sequence", "Path", "Double Path"]
+foldersShort = ["SelMixed", "SelParallel", "SelNonParallel", "Sequence", "Path", "Double Path", "D P Clean", "D P Cleaner"]
 filesShort = ["ex1", "ex2", "ex3", "ex4", "ex5", "ex6", "ex7", "ex8"]
 
 #diameters = {}

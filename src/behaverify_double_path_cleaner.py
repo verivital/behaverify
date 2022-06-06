@@ -701,8 +701,11 @@ def create_resume_structure(nodes, local_root_to_relevant_list_map):
         )
         for resume_point in reversed(relevant_list):
             #this list is ordered so that selectors will not override their children returning running.
-            next_resume_from_node_string +="\t\t\t\t(statuses[" + str(resume_point) + "] = running) : " + str(resume_point) + ";" + os.linesep#if running, set to that location
-        next_resume_from_node_string +="\t\t\t\t(statuses[resume_from_node_" + str(local_root) + "] in {success, failure}) : " + str(local_root) + ";" + os.linesep#if the node we were planning to resume from has returned success or failure, then reset
+            next_resume_from_node_string += "\t\t\t\t(statuses[" + str(resume_point) + "] = running) : " + str(resume_point) + ";" + os.linesep#if running, set to that location
+        for resume_point in relevant_list:
+            next_resume_from_node_string += "\t\t\t\t(resume_from_node_" + str(local_root) + " = " + str(resume_point) + ") & !(next(relevant_child_" + str(resume_point) + ") = -2) : " + str(local_root) + ";" + os.linesep #reset if we
+        next_resume_from_node_string += "\t\t\t\t(statuses[resume_from_node_" + str(local_root) + "] in {success, failure}) : " + str(local_root) + ";" + os.linesep#if the node we were planning to resume from has returned success or failure, then reset
+        #next_resume_from_node_string += "\t\t\t\t(next(active_node)" + os.linesep
         next_resume_from_node_string += ("\t\t\t\tTRUE : resume_from_node_" + str(local_root) + ";" + os.linesep#otherwise, hold
                                       + "\t\t\tesac;" + os.linesep
         )
