@@ -2,6 +2,7 @@ MODULE main
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
+		potato := next(descent_from_0);
 		statuses := [example_1_seq1.status, node_z.status, sel1.status, node_x.status, node_y.status, current_node.status];
 		next_node := [ascent_from_0, ascent_from_1, ascent_from_2, ascent_from_3, ascent_from_4, ascent_from_5];
 		descent_from_0 := 
@@ -114,6 +115,8 @@ MODULE main
 			case
 				(statuses[0] in {success, failure}) : 0;
 				(statuses[2] = running) : 2;
+				(resume_status_0 = 0) & !(next(relevant_child_0) = -2) : 0;
+				(resume_status_0 = 2) & !(next(relevant_child_0) = -2) : 0;
 				(statuses[resume_status_0] in {success, failure}) : 0;
 				TRUE : resume_status_0;
 			esac;

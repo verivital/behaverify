@@ -2,13 +2,8 @@ MODULE main
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
+		potato := next(descent_from_0);
 		statuses := [example_1_seq1.status, node_z.status, sel1.status, node_x.status, node_y.status, current_node.status];
-		statuses_0 := [invalid, node_z.status, sel1.status, node_x.status, node_y.status, current_node.status];
-		statuses_1 := [invalid, invalid, sel1.status, node_x.status, node_y.status, current_node.status];
-		statuses_2 := [invalid, invalid, invalid, node_x.status, node_y.status, current_node.status];
-		statuses_3 := [invalid, invalid, invalid, invalid, node_y.status, current_node.status];
-		statuses_4 := [invalid, invalid, invalid, invalid, invalid, current_node.status];
-		statuses_5 := [invalid, invalid, invalid, invalid, invalid, invalid];
 		next_node := [ascent_from_0, ascent_from_1, ascent_from_2, ascent_from_3, ascent_from_4, ascent_from_5];
 		descent_from_0 := 
 			case
@@ -56,6 +51,12 @@ MODULE main
 				(resume_relevant_child_2) : TRUE;
 				TRUE : FALSE;
 			esac;
+		relevant_status_0 := 
+			case
+				(relevant_child_0 = 1) : node_z.status;
+				(relevant_child_0 = 2) : sel1.status;
+				TRUE : invalid;
+			esac;
 		relevant_child_1 := (active_node = 1) ? -1 : -2 ;
 		resume_relevant_child_1 := (resume_status_0 = 1) ? TRUE : FALSE ;
 		relevant_child_2 := 
@@ -73,6 +74,13 @@ MODULE main
 				(resume_relevant_child_5) : TRUE;
 				TRUE : FALSE;
 			esac;
+		relevant_status_2 := 
+			case
+				(relevant_child_2 = 3) : node_x.status;
+				(relevant_child_2 = 4) : node_y.status;
+				(relevant_child_2 = 5) : current_node.status;
+				TRUE : invalid;
+			esac;
 		relevant_child_3 := (active_node = 3) ? -1 : -2 ;
 		resume_relevant_child_3 := (resume_status_0 = 3) ? TRUE : FALSE ;
 		relevant_child_4 := (active_node = 4) ? -1 : -2 ;
@@ -86,9 +94,9 @@ MODULE main
 		random_status : {running, success, failure};
 		node_names : define_nodes;
 		resume_status_0 : {0, 2};
-		example_1_seq1 : node_sequence(relevant_child_0, statuses_0, last_child_0);
+		example_1_seq1 : node_sequence(relevant_child_0, relevant_status_0, last_child_0);
 		node_z : node_default(active_node, 1, random_status);
-		sel1 : node_selector(relevant_child_2, statuses_2, last_child_2);
+		sel1 : node_selector(relevant_child_2, relevant_status_2, last_child_2);
 		node_x : node_default(active_node, 3, random_status);
 		node_y : node_default(active_node, 4, random_status);
 		current_node : node_default(active_node, 5, random_status);
@@ -107,10 +115,12 @@ MODULE main
 			case
 				(statuses[0] in {success, failure}) : 0;
 				(statuses[2] = running) : 2;
+				--(resume_status_0 = 0) & !(next(relevant_child_0) = -2) : 0;
+				--(resume_status_0 = 2) & !(next(relevant_child_0) = -2) : 0;
 				(statuses[resume_status_0] in {success, failure}) : 0;
 				TRUE : resume_status_0;
 			esac;
-MODULE node_selector(relevant_child, statuses, last_child)
+MODULE node_selector(relevant_child, relevant_status, last_child)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
@@ -118,9 +128,9 @@ MODULE node_selector(relevant_child, statuses, last_child)
 			case
 				(last_child = -2) : failure;
 				(relevant_child <= 0) : invalid;
-				(statuses[max(relevant_child, 0)] = running) : running;
-				(statuses[max(relevant_child, 0)] = success) : success;
-				(last_child = relevant_child) & (statuses[max(relevant_child, 0)] = failure) : failure;
+				(relevant_status = running) : running;
+				(relevant_status = success) : success;
+				(last_child = relevant_child) & (relevant_status = failure) : failure;
 				TRUE : invalid;
 			esac;
 MODULE node_default(active_node, id, random_status)
@@ -132,7 +142,7 @@ MODULE node_default(active_node, id, random_status)
 				(active_node = id) : random_status;
 				TRUE : invalid;
 			esac;
-MODULE node_sequence(relevant_child, statuses, last_child)
+MODULE node_sequence(relevant_child, relevant_status, last_child)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
@@ -140,9 +150,9 @@ MODULE node_sequence(relevant_child, statuses, last_child)
 			case
 				(last_child = -2) : success;
 				(relevant_child <= 0) : invalid;
-				(statuses[max(relevant_child, 0)] = running) : running;
-				(statuses[max(relevant_child, 0)] = failure) : failure;
-				(last_child = relevant_child) & (statuses[max(relevant_child, 0)] = success) : success;
+				(relevant_status = running) : running;
+				(relevant_status = failure) : failure;
+				(last_child = relevant_child) & (relevant_status = success) : success;
 				TRUE : invalid;
 			esac;
 MODULE define_nodes

@@ -560,7 +560,7 @@ def create_nodes(nodes, children, additional_arguments, parallel_synch_set, para
                               + "\t\t\tcase" + os.linesep
             )
             for child_index in range(len(children[parallel_node])-1, -1, -1):
-                define_string += "\t\t\t\t(resume_status_" + str(children[parallel_node][child_index]) + ") : " + children[parallel_node][child_index] + ";" + os.linesep
+                define_string += "\t\t\t\t(resume_from_node_" + str(children[parallel_node][child_index]) + ") : " + children[parallel_node][child_index] + ";" + os.linesep
                 
             define_string += ("\t\t\t\tTRUE: -2;" + os.linesep
                               + "\t\t\tesac;" + os.linesep
@@ -662,18 +662,18 @@ def create_additional_arguments(nodes, additional_arguments):
 
 
 def create_resume_structure(nodes, local_root_to_relevant_list_map):
-    var_resume_status_string = "" #this is a variable that actually stores what running state we're in
-    init_resume_status_string = ""
-    next_resume_status_string = ""
+    var_resume_from_node_string = "" #this is a variable that actually stores what running state we're in
+    init_resume_from_node_string = ""
+    next_resume_from_node_string = ""
     var_define_status_string = "" #this is for storing the define versions that are constants.
     for local_root in local_root_to_relevant_list_map:
         relevant_list = local_root_to_relevant_list_map[local_root]
         if len(relevant_list) == 0:
             #there's nothing to resume from. if we have a sequence node, then it apparently only had 0 or 1 children, and we don't need any special resume for it.
-            var_define_status_string += "\t\tresume_status_" + str(local_root) + " := -3;" + os.linesep
+            var_define_status_string += "\t\tresume_from_node_" + str(local_root) + " := -3;" + os.linesep
             continue
-        var_resume_status_string += "\t\tresume_status_" + str(local_root) + " : {" + str(local_root) + ", " + str(relevant_list)[1:-1] + "};" + os.linesep
-        init_resume_status_string += "\t\tinit(resume_status_" + str(local_root) + ") := " + str(local_root) + ";" + os.linesep
+        var_resume_from_node_string += "\t\tresume_from_node_" + str(local_root) + " : {" + str(local_root) + ", " + str(relevant_list)[1:-1] + "};" + os.linesep
+        init_resume_from_node_string += "\t\tinit(resume_from_node_" + str(local_root) + ") := " + str(local_root) + ";" + os.linesep
         if -2 in relevant_list:
             inject_string = ("\t\t\t\t(statuses[" + str(local_root) + "] = success) : -2;" + os.linesep#if the local root returns success, this is skippable. note that this is checked after the reset condition, so we don't over-write the reset.
                              + "\t\t\t\t(statuses[" + str(local_root) + "] = failure) : " + str(local_root) + ";" + os.linesep#failure is still a reset though
@@ -687,25 +687,25 @@ def create_resume_structure(nodes, local_root_to_relevant_list_map):
             ancestor_string += "\t\t\t\t(statuses[" + str(cur_node) + "] in {success, failure}) : " + str(local_root) + ";" + os.linesep
             cur_node=nodes[cur_node][1]
         #go through and add all the ancestors of the local root to a set for the purpose of resetting.
-        next_resume_status_string += ("\t\tnext(resume_status_" + str(local_root) + ") := " + os.linesep
+        next_resume_from_node_string += ("\t\tnext(resume_from_node_" + str(local_root) + ") := " + os.linesep
                                       + "\t\t\tcase" + os.linesep
                                       + ancestor_string #highest priority is reset
                                       + inject_string #parallel_synch nodes have a special condition
         )
         for resume_point in reversed(relevant_list):
             #this list is ordered so that selectors will not override their children returning running.
-            next_resume_status_string +="\t\t\t\t(statuses[" + str(resume_point) + "] = running) : " + str(resume_point) + ";" + os.linesep#if running, set to that location
-        next_resume_status_string +="\t\t\t\t(statuses[resume_status_" + str(local_root) + "] in {success, failure}) : " + str(local_root) + ";" + os.linesep#if the node we were planning to resume from has returned success or failure, then reset
-        next_resume_status_string += ("\t\t\t\tTRUE : resume_status_" + str(local_root) + ";" + os.linesep#otherwise, hold
+            next_resume_from_node_string +="\t\t\t\t(statuses[" + str(resume_point) + "] = running) : " + str(resume_point) + ";" + os.linesep#if running, set to that location
+        next_resume_from_node_string +="\t\t\t\t(statuses[resume_from_node_" + str(local_root) + "] in {success, failure}) : " + str(local_root) + ";" + os.linesep#if the node we were planning to resume from has returned success or failure, then reset
+        next_resume_from_node_string += ("\t\t\t\tTRUE : resume_from_node_" + str(local_root) + ";" + os.linesep#otherwise, hold
                                       + "\t\t\tesac;" + os.linesep
         )
         
         
         
     define_string = var_define_status_string
-    var_string = var_resume_status_string
-    init_string = init_resume_status_string
-    next_string =  next_resume_status_string
+    var_string = var_resume_from_node_string
+    init_string = init_resume_from_node_string
+    next_string =  next_resume_from_node_string
     return (define_string, var_string, init_string, next_string)
 
 def create_next_node_structure(nodes, children, node_to_local_root_map, sequence_to_relevant_descendants_map, parallel_synch_set, parallel_unsynch_set, sequence_set, selector_set, decorator_set, leaf_set):
@@ -749,7 +749,7 @@ def create_next_node_structure(nodes, children, node_to_local_root_map, sequence
         )
         if node_id in parallel_synch_set:
             for child in children[node_id]:
-                descent_string += ("\t\t\t\t(active_node <" + str(child) + ") & !(resume_status_" + str(child) + " = -2) : descent_from_" + str(child) + ";" + os.linesep)#if resume_status_ = -2, then we were instructed to skip this child. otherwise, if we're infront of it, point to w/e the child is pointing.
+                descent_string += ("\t\t\t\t(active_node <" + str(child) + ") & !(resume_from_node_" + str(child) + " = -2) : descent_from_" + str(child) + ";" + os.linesep)#if resume_from_node_ = -2, then we were instructed to skip this child. otherwise, if we're infront of it, point to w/e the child is pointing.
         elif node_id in parallel_unsynch_set:
             for child in children[node_id]:
                 descent_string += ("\t\t\t\t(active_node <" + str(child) + ") : descent_from_" + str(child) + ";" + os.linesep)
@@ -761,7 +761,7 @@ def create_next_node_structure(nodes, children, node_to_local_root_map, sequence
             #no need for early termination. it's handled by ascent
             #the previous version of this causes recursion errors. instead, do this
             #for descendant in sequence_to_relevant_descendants_map[node_id]:
-                #descent_string +=("\t\t\t\t(resume_status_" + str(node_to_local_root_map[node_id]) + " = " + str(descendant) + ") : descent_from_" + str(descendant) + ";" + os.linesep)#if the relevant resume status is indicating a node that is our descendent, then jump to wherever it points to
+                #descent_string +=("\t\t\t\t(resume_from_node_" + str(node_to_local_root_map[node_id]) + " = " + str(descendant) + ") : descent_from_" + str(descendant) + ";" + os.linesep)#if the relevant resume status is indicating a node that is our descendent, then jump to wherever it points to
             for child in children[node_id]:
                 descent_string += "\t\t\t\t(active_node <" + str(child) + ") & (resume_relevant_child_" + str(child) + ") : descent_from_" + str(child) + ";" + os.linesep
                 #ok, so if the resume_relevant_child_X is true, then we need to resume from X, so point to it.
@@ -797,11 +797,11 @@ def create_unknown(children, node_to_descendants_map, node_to_local_root_map):
             )
         local_root = node_to_local_root_map[node_id]
         if node_id not in children or len(children[node_id]) == 0:
-            item_string += "\t\tresume_relevant_child_" + str(node_id) + " := (resume_status_" + str(local_root) + " = " + str(node_id) + ") ? TRUE : FALSE ;" + os.linesep
+            item_string += "\t\tresume_relevant_child_" + str(node_id) + " := (resume_from_node_" + str(local_root) + " = " + str(node_id) + ") ? TRUE : FALSE ;" + os.linesep
         else:
             item_string += ("\t\tresume_relevant_child_" + str(node_id) + " := " + os.linesep
                             + "\t\t\tcase" + os.linesep
-                            + "\t\t\t\t(resume_status_" + str(local_root) + " = " + str(node_id) + ") : TRUE ;" + os.linesep#if it's poiting directly to us, true regardless.
+                            + "\t\t\t\t(resume_from_node_" + str(local_root) + " = " + str(node_id) + ") : TRUE ;" + os.linesep#if it's poiting directly to us, true regardless.
             )
             for child in children[node_id]:
                 item_string += "\t\t\t\t(resume_relevant_child_" + str(child) + ") : TRUE;" + os.linesep#if it's pointing to a child of ours, TRUE
