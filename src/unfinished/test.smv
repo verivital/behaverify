@@ -1,0 +1,16 @@
+MODULE main
+	IVAR
+		status : {running, failure, success};
+	DEFINE
+		cur_status := status;
+		f := [];
+	VAR
+		bruh : meh(cur_status, f);
+
+MODULE meh(s, f)
+	DEFINE
+		b :=
+			case
+				s = success : 0;
+				TRUE : 1;
+			esac;

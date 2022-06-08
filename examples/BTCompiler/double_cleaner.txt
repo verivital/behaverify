@@ -1,0 +1,139 @@
+*** This is nuXmv 2.0.0 (compiled on Mon Oct 14 17:48:12 2019)
+*** Copyright (c) 2014-2019, Fondazione Bruno Kessler
+*** For more information on nuXmv see https://nuxmv.fbk.eu
+*** or email to <nuxmv@list.fbk.eu>.
+*** Please report bugs at https://nuxmv.fbk.eu/bugs
+*** (click on "Login Anonymously" to access)
+*** Alternatively write to <nuxmv@list.fbk.eu>.
+
+*** This version of nuXmv is linked to NuSMV 2.6.0.
+*** For more information on NuSMV see <http://nusmv.fbk.eu>
+*** or email to <nusmv-users@list.fbk.eu>.
+*** Copyright (C) 2010-2019, Fondazione Bruno Kessler
+
+*** This version of nuXmv is linked to the CUDD library version 2.4.1
+*** Copyright (c) 1995-2004, Regents of the University of Colorado
+
+*** This version of nuXmv is linked to the MiniSat SAT solver. 
+*** See http://minisat.se/MiniSat.html
+*** Copyright (c) 2003-2006, Niklas Een, Niklas Sorensson
+*** Copyright (c) 2007-2010, Niklas Sorensson
+
+*** This version of nuXmv is linked to MathSAT
+*** Copyright (C) 2009-2019 by Fondazione Bruno Kessler
+*** Copyright (C) 2009-2019 by University of Trento and others
+*** See http://mathsat.fbk.eu
+
+######################################################################
+system diameter: 8
+reachable states: 27 (2^4.75489) out of 162 (2^7.33985)
+  ------- State    1 ------
+  active_node = 12
+  random_status = failure
+  resume_from_node_0 = 0
+  ------- State    2 ------
+  active_node = 12
+  random_status = running
+  resume_from_node_0 = 0
+  ------- State    3 ------
+  active_node = 12
+  random_status = success
+  resume_from_node_0 = 0
+  ------- State    4 ------
+  active_node = 7
+  random_status = failure
+  resume_from_node_0 = 0
+  ------- State    5 ------
+  active_node = 7
+  random_status = running
+  resume_from_node_0 = 0
+  ------- State    6 ------
+  active_node = 7
+  random_status = success
+  resume_from_node_0 = 0
+  ------- State    7 ------
+  active_node = 10
+  random_status = failure
+  resume_from_node_0 = 0
+  ------- State    8 ------
+  active_node = 2
+  random_status = failure
+  resume_from_node_0 = 0
+  ------- State    9 ------
+  active_node = 10
+  random_status = running
+  resume_from_node_0 = 0
+  ------- State   10 ------
+  active_node = 2
+  random_status = running
+  resume_from_node_0 = 0
+  ------- State   11 ------
+  active_node = 10
+  random_status = success
+  resume_from_node_0 = 0
+  ------- State   12 ------
+  active_node = 2
+  random_status = success
+  resume_from_node_0 = 0
+  ------- State   13 ------
+  active_node = -1
+  random_status = running
+  resume_from_node_0 = 11
+  ------- State   14 ------
+  active_node = -1
+  random_status = running
+  resume_from_node_0 = 10
+  ------- State   15 ------
+  active_node = -1
+  random_status = running
+  resume_from_node_0 = 6
+  ------- State   16 ------
+  active_node = -1
+  random_status = running
+  resume_from_node_0 = 0
+  ------- State   17 ------
+  active_node = -1
+  random_status = running
+  resume_from_node_0 = 9
+  ------- State   18 ------
+  active_node = -1
+  random_status = running
+  resume_from_node_0 = 7
+  ------- State   19 ------
+  active_node = 9
+  random_status = failure
+  resume_from_node_0 = 0
+  ------- State   20 ------
+  active_node = 9
+  random_status = running
+  resume_from_node_0 = 0
+  ------- State   21 ------
+  active_node = 9
+  random_status = success
+  resume_from_node_0 = 0
+  ------- State   22 ------
+  active_node = 11
+  random_status = failure
+  resume_from_node_0 = 0
+  ------- State   23 ------
+  active_node = 6
+  random_status = failure
+  resume_from_node_0 = 0
+  ------- State   24 ------
+  active_node = 11
+  random_status = running
+  resume_from_node_0 = 0
+  ------- State   25 ------
+  active_node = 6
+  random_status = running
+  resume_from_node_0 = 0
+  ------- State   26 ------
+  active_node = 11
+  random_status = success
+  resume_from_node_0 = 0
+  ------- State   27 ------
+  active_node = 6
+  random_status = success
+  resume_from_node_0 = 0
+  -------------------------
+######################################################################
