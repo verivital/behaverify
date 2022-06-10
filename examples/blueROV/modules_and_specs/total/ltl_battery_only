@@ -1,0 +1,2 @@
+LTLSPEC G( (next(blackboard.variables[variable_names.battery_low_warning]) = 1)   -> (surface_task.active | surface_task2.active | surface_task3.active | surface_task4.active));
+-- --this one should be true.

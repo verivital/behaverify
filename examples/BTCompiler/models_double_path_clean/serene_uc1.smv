@@ -102,7 +102,7 @@ MODULE main
 			esac;
 		resume_relevant_child_0 := 
 			case
-				(resume_status_0 = 0) : TRUE ;
+				(resume_from_node_0 = 0) : TRUE ;
 				(resume_relevant_child_1) : TRUE;
 				(resume_relevant_child_12) : TRUE;
 				TRUE : FALSE;
@@ -121,7 +121,7 @@ MODULE main
 			esac;
 		resume_relevant_child_1 := 
 			case
-				(resume_status_0 = 1) : TRUE ;
+				(resume_from_node_0 = 1) : TRUE ;
 				(resume_relevant_child_2) : TRUE;
 				(resume_relevant_child_3) : TRUE;
 				TRUE : FALSE;
@@ -133,7 +133,7 @@ MODULE main
 				TRUE : invalid;
 			esac;
 		relevant_child_2 := (active_node = 2) ? -1 : -2 ;
-		resume_relevant_child_2 := (resume_status_0 = 2) ? TRUE : FALSE ;
+		resume_relevant_child_2 := (resume_from_node_0 = 2) ? TRUE : FALSE ;
 		relevant_child_3 := 
 			case
 				 !(relevant_child_4 = -2) : 4;
@@ -142,7 +142,7 @@ MODULE main
 			esac;
 		resume_relevant_child_3 := 
 			case
-				(resume_status_0 = 3) : TRUE ;
+				(resume_from_node_0 = 3) : TRUE ;
 				(resume_relevant_child_4) : TRUE;
 				(resume_relevant_child_11) : TRUE;
 				TRUE : FALSE;
@@ -161,7 +161,7 @@ MODULE main
 			esac;
 		resume_relevant_child_4 := 
 			case
-				(resume_status_0 = 4) : TRUE ;
+				(resume_from_node_0 = 4) : TRUE ;
 				(resume_relevant_child_5) : TRUE;
 				(resume_relevant_child_8) : TRUE;
 				TRUE : FALSE;
@@ -180,7 +180,7 @@ MODULE main
 			esac;
 		resume_relevant_child_5 := 
 			case
-				(resume_status_0 = 5) : TRUE ;
+				(resume_from_node_0 = 5) : TRUE ;
 				(resume_relevant_child_6) : TRUE;
 				(resume_relevant_child_7) : TRUE;
 				TRUE : FALSE;
@@ -192,9 +192,9 @@ MODULE main
 				TRUE : invalid;
 			esac;
 		relevant_child_6 := (active_node = 6) ? -1 : -2 ;
-		resume_relevant_child_6 := (resume_status_0 = 6) ? TRUE : FALSE ;
+		resume_relevant_child_6 := (resume_from_node_0 = 6) ? TRUE : FALSE ;
 		relevant_child_7 := (active_node = 7) ? -1 : -2 ;
-		resume_relevant_child_7 := (resume_status_0 = 7) ? TRUE : FALSE ;
+		resume_relevant_child_7 := (resume_from_node_0 = 7) ? TRUE : FALSE ;
 		relevant_child_8 := 
 			case
 				 !(relevant_child_9 = -2) : 9;
@@ -203,7 +203,7 @@ MODULE main
 			esac;
 		resume_relevant_child_8 := 
 			case
-				(resume_status_0 = 8) : TRUE ;
+				(resume_from_node_0 = 8) : TRUE ;
 				(resume_relevant_child_9) : TRUE;
 				(resume_relevant_child_10) : TRUE;
 				TRUE : FALSE;
@@ -215,13 +215,13 @@ MODULE main
 				TRUE : invalid;
 			esac;
 		relevant_child_9 := (active_node = 9) ? -1 : -2 ;
-		resume_relevant_child_9 := (resume_status_0 = 9) ? TRUE : FALSE ;
+		resume_relevant_child_9 := (resume_from_node_0 = 9) ? TRUE : FALSE ;
 		relevant_child_10 := (active_node = 10) ? -1 : -2 ;
-		resume_relevant_child_10 := (resume_status_0 = 10) ? TRUE : FALSE ;
+		resume_relevant_child_10 := (resume_from_node_0 = 10) ? TRUE : FALSE ;
 		relevant_child_11 := (active_node = 11) ? -1 : -2 ;
-		resume_relevant_child_11 := (resume_status_0 = 11) ? TRUE : FALSE ;
+		resume_relevant_child_11 := (resume_from_node_0 = 11) ? TRUE : FALSE ;
 		relevant_child_12 := (active_node = 12) ? -1 : -2 ;
-		resume_relevant_child_12 := (resume_status_0 = 12) ? TRUE : FALSE ;
+		resume_relevant_child_12 := (resume_from_node_0 = 12) ? TRUE : FALSE ;
 		last_child_0 := 12;
 		last_child_1 := 3;
 		last_child_3 := 11;
@@ -232,7 +232,7 @@ MODULE main
 		active_node : {-2, -1,2, 6, 7, 9, 10, 11, 12};
 		random_status : {running, success, failure};
 		node_names : define_nodes;
-		resume_status_0 : {0, 6, 7, 9, 10, 11};
+		resume_from_node_0 : {0, 6, 7, 9, 10, 11};
 		bt_root : node_selector(relevant_child_0, relevant_status_0, last_child_0);
 		do_pour_drink_in_kitchen : node_sequence(relevant_child_1, relevant_status_1, last_child_1);
 		skill_goto_kitchen : node_default(active_node, 2, random_status);
@@ -250,14 +250,14 @@ MODULE main
 		active_node = -1 -> random_status = running;
 	ASSIGN
 		init(active_node) := -1;
-		init(resume_status_0) := 0;
+		init(resume_from_node_0) := 0;
 		next(active_node) :=
 			case
 				(active_node = -2) : -2;
 				(active_node = -1) : next_node[0];
 				TRUE : next_node[active_node];
 			esac;
-		next(resume_status_0) := 
+		next(resume_from_node_0) := 
 			case
 				(statuses[0] in {success, failure}) : 0;
 				(statuses[11] = running) : 11;
@@ -265,21 +265,8 @@ MODULE main
 				(statuses[9] = running) : 9;
 				(statuses[7] = running) : 7;
 				(statuses[6] = running) : 6;
-				(statuses[resume_status_0] in {success, failure}) : 0;
-				TRUE : resume_status_0;
-			esac;
-MODULE node_sequence(relevant_child, relevant_status, last_child)
-	CONSTANTS
-		success, failure, running, invalid;
-	DEFINE
-		status :=
-			case
-				(last_child = -2) : success;
-				(relevant_child <= 0) : invalid;
-				(relevant_status = running) : running;
-				(relevant_status = failure) : failure;
-				(last_child = relevant_child) & (relevant_status = success) : success;
-				TRUE : invalid;
+				(statuses[resume_from_node_0] in {success, failure}) : 0;
+				TRUE : resume_from_node_0;
 			esac;
 MODULE node_default(active_node, id, random_status)
 	CONSTANTS
@@ -301,6 +288,19 @@ MODULE node_selector(relevant_child, relevant_status, last_child)
 				(relevant_status = running) : running;
 				(relevant_status = success) : success;
 				(last_child = relevant_child) & (relevant_status = failure) : failure;
+				TRUE : invalid;
+			esac;
+MODULE node_sequence(relevant_child, relevant_status, last_child)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status :=
+			case
+				(last_child = -2) : success;
+				(relevant_child <= 0) : invalid;
+				(relevant_status = running) : running;
+				(relevant_status = failure) : failure;
+				(last_child = relevant_child) & (relevant_status = success) : success;
 				TRUE : invalid;
 			esac;
 MODULE define_nodes

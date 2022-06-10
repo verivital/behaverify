@@ -125,6 +125,15 @@ MODULE main
 				(statuses[resume_from_node_0] in {success, failure}) : 0;
 				TRUE : resume_from_node_0;
 			esac;
+MODULE node_default(active_node, id, random_status)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status :=
+			case
+				(active_node = id) : random_status;
+				TRUE : invalid;
+			esac;
 MODULE node_sequence(relevant_child, relevant_status, last_child)
 	CONSTANTS
 		success, failure, running, invalid;
@@ -136,15 +145,6 @@ MODULE node_sequence(relevant_child, relevant_status, last_child)
 				(relevant_status = running) : running;
 				(relevant_status = failure) : failure;
 				(last_child = relevant_child) & (relevant_status = success) : success;
-				TRUE : invalid;
-			esac;
-MODULE node_default(active_node, id, random_status)
-	CONSTANTS
-		success, failure, running, invalid;
-	DEFINE
-		status :=
-			case
-				(active_node = id) : random_status;
 				TRUE : invalid;
 			esac;
 MODULE define_nodes

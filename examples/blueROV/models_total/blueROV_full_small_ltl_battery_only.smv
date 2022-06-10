@@ -1,0 +1,2794 @@
+MODULE main
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		statuses := [BlueROV.status, topics2bb.status, battery2bb.status, rth2bb.status, geofence2bb.status, lec2_am_r_2bb.status, lec2_am_l_2bb.status, pipe_lost2bb.status, sensor_failure2bb.status, waypoints_completed2bb.status, mission2bb.status, ddlec2bb.status, fls2bb.status, fls_warning2bb.status, hsd_pipe2bb.status, hsd_wp2bb.status, hsd_rth2bb.status, hsd_surface2bb.status, rtreach2bb.status, dd_tasks.status, reallocate_check_SIF.status, reallocate_check.status, is_reallocation_requested.status, reallocate_task.status, dd_lec_task.status, mission_server.status, obstacle_avoidance.status, priorities.status, battery_check_SIF.status, battery_check.status, battery_low_fs.status, surface_task.status, sensor_failure_selector_SIF.status, sensor_failure_selector.status, check_sensor_failure.status, surface_task1.status, emergency_stop_check_SIF.status, emergency_stop_check.status, emergency_stop_fs.status, emergency_stop_tasks.status, emergency_stop_task.status, surface_task2.status, home_reached_selector_SIF.status, home_reached_selector.status, check_surface.status, surface_task3.status, obstacle_standoff_check_SIF.status, obstacle_standoff_check.status, obstacle_standoff_fs.status, surface_task4.status, rth_selector_SIF.status, rth_selector.status, check_rth.status, rth_par.status, rth_task.status, home2bb.status, geofence_selector_SIF.status, geofence_selector.status, check_geofence.status, rth_par1.status, rth_task1.status, home2bb1.status, pipe_lost_selector_SIF.status, pipe_lost_selector.status, check_pipe_post.status, loiter_task1.status, track_pipe_mission.status, is_track_pipe_mission_requested.status, tracking.status, tracking_task.status, lec2am_speed_cmd.status, lec2am_l_speed_check_SIF.status, lec2am_l_speed_check.status, check_lec2am_ls.status, speed_min_task.status, lec2am_r_speed_check_SIF.status, lec2am_r_speed_check.status, check_lec2am_rs.status, speed_min_task1.status, speed_max_task.status, lec2am_mapping_cmd.status, lec2am_l_mapping_check_SIF.status, lec2am_l_mapping_check.status, check_lec2am_lp.status, pipe_mapping_disable_task.status, lec2am_r_mapping_check_SIF.status, lec2am_r_mapping_check.status, check_lec2am_rp.status, pipe_mapping_disable_task1.status, pipe_mapping_enable_task.status, track_pipe_mission_end.status, evaluate.status, waypoint_mission.status, is_waypoint_requested.status, waypoint_selector.status, waypoints_sif_SIF.status, waypoints_sif.status, check_waypoints_completed.status, waypoint_end.status, next_mission.status, loiter_task2.status, waypoint_task.status, loiter_task.status];
+		resume_from_node_0 := -3;
+		resume_from_node_1 := -3;
+		resume_from_node_2 := -3;
+		resume_from_node_3 := -3;
+		resume_from_node_4 := -3;
+		resume_from_node_5 := -3;
+		resume_from_node_6 := -3;
+		resume_from_node_7 := -3;
+		resume_from_node_8 := -3;
+		resume_from_node_9 := -3;
+		resume_from_node_10 := -3;
+		resume_from_node_11 := -3;
+		resume_from_node_12 := -3;
+		resume_from_node_13 := -3;
+		resume_from_node_14 := -3;
+		resume_from_node_15 := -3;
+		resume_from_node_16 := -3;
+		resume_from_node_17 := -3;
+		resume_from_node_18 := -3;
+		resume_from_node_19 := -3;
+		resume_from_node_25 := -3;
+		resume_from_node_26 := -3;
+		resume_from_node_54 := -3;
+		resume_from_node_55 := -3;
+		resume_from_node_60 := -3;
+		resume_from_node_61 := -3;
+		resume_from_node_69 := -3;
+		resume_from_node_70 := -3;
+		resume_from_node_80 := -3;
+		trace_running_source_41 := (statuses[41] = running) ? 41 : -2;
+		trace_running_source_39 := 
+			case
+				!(trace_running_source_41 = -2) : trace_running_source_41;
+				TRUE : -2;
+			esac;
+		trace_running_source_37 := 
+			case
+				!(trace_running_source_39 = -2) : trace_running_source_39;
+				TRUE : -2;
+			esac;
+		trace_running_source_36 := 
+			case
+				!(trace_running_source_37 = -2) : trace_running_source_37;
+				TRUE : -2;
+			esac;
+		trace_running_source_68 := (statuses[68] = running) ? 68 : -2;
+		trace_running_source_91 := (statuses[91] = running) ? 91 : -2;
+		trace_running_source_90 := 
+			case
+				!(trace_running_source_91 = -2) : trace_running_source_91;
+				TRUE : -2;
+			esac;
+		trace_running_source_66 := 
+			case
+				!(trace_running_source_68 = -2) : trace_running_source_68;
+				!(trace_running_source_90 = -2) : trace_running_source_90;
+				TRUE : -2;
+			esac;
+		trace_running_source_100 := (statuses[100] = running) ? 100 : -2;
+		trace_running_source_98 := 
+			case
+				!(trace_running_source_100 = -2) : trace_running_source_100;
+				TRUE : -2;
+			esac;
+		trace_running_source_96 := 
+			case
+				!(trace_running_source_98 = -2) : trace_running_source_98;
+				TRUE : -2;
+			esac;
+		trace_running_source_95 := 
+			case
+				!(trace_running_source_96 = -2) : trace_running_source_96;
+				TRUE : -2;
+			esac;
+		trace_running_source_94 := 
+			case
+				!(trace_running_source_95 = -2) : trace_running_source_95;
+				(statuses[94] = running) : 94;
+				TRUE : -2;
+			esac;
+		trace_running_source_92 := 
+			case
+				!(trace_running_source_94 = -2) : trace_running_source_94;
+				TRUE : -2;
+			esac;
+		trace_running_source_27 := 
+			case
+				!(trace_running_source_36 = -2) : trace_running_source_36;
+				!(trace_running_source_66 = -2) : trace_running_source_66;
+				!(trace_running_source_92 = -2) : trace_running_source_92;
+				TRUE : -2;
+			esac;
+		resume_point_66 := 
+			case
+				(resume_from_node_27 in {91}) : 2;
+				TRUE : -2;
+			esac;
+		resume_point_98 := 
+			case
+				(resume_from_node_27 in {100}) : 1;
+				TRUE : -2;
+			esac;
+		resume_point_39 := 
+			case
+				(resume_from_node_27 in {41}) : 1;
+				TRUE : -2;
+			esac;
+		resume_point_92 := 
+			case
+				(resume_from_node_27 in {100}) : 1;
+				TRUE : -2;
+			esac;
+		BlueROV.active := TRUE;
+		parallel_skip_0 := [resume_from_node_1, resume_from_node_19, resume_from_node_25, resume_from_node_26, resume_from_node_27];
+		parallel_skip_1 := [resume_from_node_2, resume_from_node_3, resume_from_node_4, resume_from_node_5, resume_from_node_6, resume_from_node_7, resume_from_node_8, resume_from_node_9, resume_from_node_10, resume_from_node_11, resume_from_node_12, resume_from_node_13, resume_from_node_14, resume_from_node_15, resume_from_node_16, resume_from_node_17, resume_from_node_18];
+		parallel_skip_53 := [resume_from_node_54, resume_from_node_55];
+		parallel_skip_59 := [resume_from_node_60, resume_from_node_61];
+		parallel_skip_68 := [resume_from_node_69, resume_from_node_70, resume_from_node_80];
+	VAR
+		variable_names : define_variables;
+		node_names : define_nodes;
+		blackboard : blackboard_module(node_names, variable_names, statuses);
+		resume_from_node_27 : {27, 41, 68, 91, 94, 100};
+		fake_node_98_16 : fake_node();
+		fake_node_98_15 : fake_node();
+		fake_node_98_14 : fake_node();
+		fake_node_98_13 : fake_node();
+		fake_node_98_12 : fake_node();
+		fake_node_98_11 : fake_node();
+		fake_node_98_10 : fake_node();
+		fake_node_98_9 : fake_node();
+		fake_node_98_8 : fake_node();
+		fake_node_98_7 : fake_node();
+		fake_node_98_6 : fake_node();
+		fake_node_98_5 : fake_node();
+		fake_node_98_4 : fake_node();
+		fake_node_98_3 : fake_node();
+		fake_node_98_2 : fake_node();
+		fake_node_96_16 : fake_node();
+		fake_node_96_15 : fake_node();
+		fake_node_96_14 : fake_node();
+		fake_node_96_13 : fake_node();
+		fake_node_96_12 : fake_node();
+		fake_node_96_11 : fake_node();
+		fake_node_96_10 : fake_node();
+		fake_node_96_9 : fake_node();
+		fake_node_96_8 : fake_node();
+		fake_node_96_7 : fake_node();
+		fake_node_96_6 : fake_node();
+		fake_node_96_5 : fake_node();
+		fake_node_96_4 : fake_node();
+		fake_node_96_3 : fake_node();
+		fake_node_96_2 : fake_node();
+		fake_node_94_16 : fake_node();
+		fake_node_94_15 : fake_node();
+		fake_node_94_14 : fake_node();
+		fake_node_94_13 : fake_node();
+		fake_node_94_12 : fake_node();
+		fake_node_94_11 : fake_node();
+		fake_node_94_10 : fake_node();
+		fake_node_94_9 : fake_node();
+		fake_node_94_8 : fake_node();
+		fake_node_94_7 : fake_node();
+		fake_node_94_6 : fake_node();
+		fake_node_94_5 : fake_node();
+		fake_node_94_4 : fake_node();
+		fake_node_94_3 : fake_node();
+		fake_node_94_2 : fake_node();
+		fake_node_92_16 : fake_node();
+		fake_node_92_15 : fake_node();
+		fake_node_92_14 : fake_node();
+		fake_node_92_13 : fake_node();
+		fake_node_92_12 : fake_node();
+		fake_node_92_11 : fake_node();
+		fake_node_92_10 : fake_node();
+		fake_node_92_9 : fake_node();
+		fake_node_92_8 : fake_node();
+		fake_node_92_7 : fake_node();
+		fake_node_92_6 : fake_node();
+		fake_node_92_5 : fake_node();
+		fake_node_92_4 : fake_node();
+		fake_node_92_3 : fake_node();
+		fake_node_92_2 : fake_node();
+		fake_node_90_16 : fake_node();
+		fake_node_90_15 : fake_node();
+		fake_node_90_14 : fake_node();
+		fake_node_90_13 : fake_node();
+		fake_node_90_12 : fake_node();
+		fake_node_90_11 : fake_node();
+		fake_node_90_10 : fake_node();
+		fake_node_90_9 : fake_node();
+		fake_node_90_8 : fake_node();
+		fake_node_90_7 : fake_node();
+		fake_node_90_6 : fake_node();
+		fake_node_90_5 : fake_node();
+		fake_node_90_4 : fake_node();
+		fake_node_90_3 : fake_node();
+		fake_node_90_2 : fake_node();
+		fake_node_90_1 : fake_node();
+		fake_node_86_16 : fake_node();
+		fake_node_86_15 : fake_node();
+		fake_node_86_14 : fake_node();
+		fake_node_86_13 : fake_node();
+		fake_node_86_12 : fake_node();
+		fake_node_86_11 : fake_node();
+		fake_node_86_10 : fake_node();
+		fake_node_86_9 : fake_node();
+		fake_node_86_8 : fake_node();
+		fake_node_86_7 : fake_node();
+		fake_node_86_6 : fake_node();
+		fake_node_86_5 : fake_node();
+		fake_node_86_4 : fake_node();
+		fake_node_86_3 : fake_node();
+		fake_node_86_2 : fake_node();
+		fake_node_82_16 : fake_node();
+		fake_node_82_15 : fake_node();
+		fake_node_82_14 : fake_node();
+		fake_node_82_13 : fake_node();
+		fake_node_82_12 : fake_node();
+		fake_node_82_11 : fake_node();
+		fake_node_82_10 : fake_node();
+		fake_node_82_9 : fake_node();
+		fake_node_82_8 : fake_node();
+		fake_node_82_7 : fake_node();
+		fake_node_82_6 : fake_node();
+		fake_node_82_5 : fake_node();
+		fake_node_82_4 : fake_node();
+		fake_node_82_3 : fake_node();
+		fake_node_82_2 : fake_node();
+		fake_node_80_16 : fake_node();
+		fake_node_80_15 : fake_node();
+		fake_node_80_14 : fake_node();
+		fake_node_80_13 : fake_node();
+		fake_node_80_12 : fake_node();
+		fake_node_80_11 : fake_node();
+		fake_node_80_10 : fake_node();
+		fake_node_80_9 : fake_node();
+		fake_node_80_8 : fake_node();
+		fake_node_80_7 : fake_node();
+		fake_node_80_6 : fake_node();
+		fake_node_80_5 : fake_node();
+		fake_node_80_4 : fake_node();
+		fake_node_80_3 : fake_node();
+		fake_node_76_16 : fake_node();
+		fake_node_76_15 : fake_node();
+		fake_node_76_14 : fake_node();
+		fake_node_76_13 : fake_node();
+		fake_node_76_12 : fake_node();
+		fake_node_76_11 : fake_node();
+		fake_node_76_10 : fake_node();
+		fake_node_76_9 : fake_node();
+		fake_node_76_8 : fake_node();
+		fake_node_76_7 : fake_node();
+		fake_node_76_6 : fake_node();
+		fake_node_76_5 : fake_node();
+		fake_node_76_4 : fake_node();
+		fake_node_76_3 : fake_node();
+		fake_node_76_2 : fake_node();
+		fake_node_72_16 : fake_node();
+		fake_node_72_15 : fake_node();
+		fake_node_72_14 : fake_node();
+		fake_node_72_13 : fake_node();
+		fake_node_72_12 : fake_node();
+		fake_node_72_11 : fake_node();
+		fake_node_72_10 : fake_node();
+		fake_node_72_9 : fake_node();
+		fake_node_72_8 : fake_node();
+		fake_node_72_7 : fake_node();
+		fake_node_72_6 : fake_node();
+		fake_node_72_5 : fake_node();
+		fake_node_72_4 : fake_node();
+		fake_node_72_3 : fake_node();
+		fake_node_72_2 : fake_node();
+		fake_node_70_16 : fake_node();
+		fake_node_70_15 : fake_node();
+		fake_node_70_14 : fake_node();
+		fake_node_70_13 : fake_node();
+		fake_node_70_12 : fake_node();
+		fake_node_70_11 : fake_node();
+		fake_node_70_10 : fake_node();
+		fake_node_70_9 : fake_node();
+		fake_node_70_8 : fake_node();
+		fake_node_70_7 : fake_node();
+		fake_node_70_6 : fake_node();
+		fake_node_70_5 : fake_node();
+		fake_node_70_4 : fake_node();
+		fake_node_70_3 : fake_node();
+		fake_node_68_16 : fake_node();
+		fake_node_68_15 : fake_node();
+		fake_node_68_14 : fake_node();
+		fake_node_68_13 : fake_node();
+		fake_node_68_12 : fake_node();
+		fake_node_68_11 : fake_node();
+		fake_node_68_10 : fake_node();
+		fake_node_68_9 : fake_node();
+		fake_node_68_8 : fake_node();
+		fake_node_68_7 : fake_node();
+		fake_node_68_6 : fake_node();
+		fake_node_68_5 : fake_node();
+		fake_node_68_4 : fake_node();
+		fake_node_68_3 : fake_node();
+		fake_node_66_16 : fake_node();
+		fake_node_66_15 : fake_node();
+		fake_node_66_14 : fake_node();
+		fake_node_66_13 : fake_node();
+		fake_node_66_12 : fake_node();
+		fake_node_66_11 : fake_node();
+		fake_node_66_10 : fake_node();
+		fake_node_66_9 : fake_node();
+		fake_node_66_8 : fake_node();
+		fake_node_66_7 : fake_node();
+		fake_node_66_6 : fake_node();
+		fake_node_66_5 : fake_node();
+		fake_node_66_4 : fake_node();
+		fake_node_66_3 : fake_node();
+		fake_node_63_16 : fake_node();
+		fake_node_63_15 : fake_node();
+		fake_node_63_14 : fake_node();
+		fake_node_63_13 : fake_node();
+		fake_node_63_12 : fake_node();
+		fake_node_63_11 : fake_node();
+		fake_node_63_10 : fake_node();
+		fake_node_63_9 : fake_node();
+		fake_node_63_8 : fake_node();
+		fake_node_63_7 : fake_node();
+		fake_node_63_6 : fake_node();
+		fake_node_63_5 : fake_node();
+		fake_node_63_4 : fake_node();
+		fake_node_63_3 : fake_node();
+		fake_node_63_2 : fake_node();
+		fake_node_59_16 : fake_node();
+		fake_node_59_15 : fake_node();
+		fake_node_59_14 : fake_node();
+		fake_node_59_13 : fake_node();
+		fake_node_59_12 : fake_node();
+		fake_node_59_11 : fake_node();
+		fake_node_59_10 : fake_node();
+		fake_node_59_9 : fake_node();
+		fake_node_59_8 : fake_node();
+		fake_node_59_7 : fake_node();
+		fake_node_59_6 : fake_node();
+		fake_node_59_5 : fake_node();
+		fake_node_59_4 : fake_node();
+		fake_node_59_3 : fake_node();
+		fake_node_59_2 : fake_node();
+		fake_node_57_16 : fake_node();
+		fake_node_57_15 : fake_node();
+		fake_node_57_14 : fake_node();
+		fake_node_57_13 : fake_node();
+		fake_node_57_12 : fake_node();
+		fake_node_57_11 : fake_node();
+		fake_node_57_10 : fake_node();
+		fake_node_57_9 : fake_node();
+		fake_node_57_8 : fake_node();
+		fake_node_57_7 : fake_node();
+		fake_node_57_6 : fake_node();
+		fake_node_57_5 : fake_node();
+		fake_node_57_4 : fake_node();
+		fake_node_57_3 : fake_node();
+		fake_node_57_2 : fake_node();
+		fake_node_53_16 : fake_node();
+		fake_node_53_15 : fake_node();
+		fake_node_53_14 : fake_node();
+		fake_node_53_13 : fake_node();
+		fake_node_53_12 : fake_node();
+		fake_node_53_11 : fake_node();
+		fake_node_53_10 : fake_node();
+		fake_node_53_9 : fake_node();
+		fake_node_53_8 : fake_node();
+		fake_node_53_7 : fake_node();
+		fake_node_53_6 : fake_node();
+		fake_node_53_5 : fake_node();
+		fake_node_53_4 : fake_node();
+		fake_node_53_3 : fake_node();
+		fake_node_53_2 : fake_node();
+		fake_node_51_16 : fake_node();
+		fake_node_51_15 : fake_node();
+		fake_node_51_14 : fake_node();
+		fake_node_51_13 : fake_node();
+		fake_node_51_12 : fake_node();
+		fake_node_51_11 : fake_node();
+		fake_node_51_10 : fake_node();
+		fake_node_51_9 : fake_node();
+		fake_node_51_8 : fake_node();
+		fake_node_51_7 : fake_node();
+		fake_node_51_6 : fake_node();
+		fake_node_51_5 : fake_node();
+		fake_node_51_4 : fake_node();
+		fake_node_51_3 : fake_node();
+		fake_node_51_2 : fake_node();
+		fake_node_47_16 : fake_node();
+		fake_node_47_15 : fake_node();
+		fake_node_47_14 : fake_node();
+		fake_node_47_13 : fake_node();
+		fake_node_47_12 : fake_node();
+		fake_node_47_11 : fake_node();
+		fake_node_47_10 : fake_node();
+		fake_node_47_9 : fake_node();
+		fake_node_47_8 : fake_node();
+		fake_node_47_7 : fake_node();
+		fake_node_47_6 : fake_node();
+		fake_node_47_5 : fake_node();
+		fake_node_47_4 : fake_node();
+		fake_node_47_3 : fake_node();
+		fake_node_47_2 : fake_node();
+		fake_node_43_16 : fake_node();
+		fake_node_43_15 : fake_node();
+		fake_node_43_14 : fake_node();
+		fake_node_43_13 : fake_node();
+		fake_node_43_12 : fake_node();
+		fake_node_43_11 : fake_node();
+		fake_node_43_10 : fake_node();
+		fake_node_43_9 : fake_node();
+		fake_node_43_8 : fake_node();
+		fake_node_43_7 : fake_node();
+		fake_node_43_6 : fake_node();
+		fake_node_43_5 : fake_node();
+		fake_node_43_4 : fake_node();
+		fake_node_43_3 : fake_node();
+		fake_node_43_2 : fake_node();
+		fake_node_39_16 : fake_node();
+		fake_node_39_15 : fake_node();
+		fake_node_39_14 : fake_node();
+		fake_node_39_13 : fake_node();
+		fake_node_39_12 : fake_node();
+		fake_node_39_11 : fake_node();
+		fake_node_39_10 : fake_node();
+		fake_node_39_9 : fake_node();
+		fake_node_39_8 : fake_node();
+		fake_node_39_7 : fake_node();
+		fake_node_39_6 : fake_node();
+		fake_node_39_5 : fake_node();
+		fake_node_39_4 : fake_node();
+		fake_node_39_3 : fake_node();
+		fake_node_39_2 : fake_node();
+		fake_node_37_16 : fake_node();
+		fake_node_37_15 : fake_node();
+		fake_node_37_14 : fake_node();
+		fake_node_37_13 : fake_node();
+		fake_node_37_12 : fake_node();
+		fake_node_37_11 : fake_node();
+		fake_node_37_10 : fake_node();
+		fake_node_37_9 : fake_node();
+		fake_node_37_8 : fake_node();
+		fake_node_37_7 : fake_node();
+		fake_node_37_6 : fake_node();
+		fake_node_37_5 : fake_node();
+		fake_node_37_4 : fake_node();
+		fake_node_37_3 : fake_node();
+		fake_node_37_2 : fake_node();
+		fake_node_33_16 : fake_node();
+		fake_node_33_15 : fake_node();
+		fake_node_33_14 : fake_node();
+		fake_node_33_13 : fake_node();
+		fake_node_33_12 : fake_node();
+		fake_node_33_11 : fake_node();
+		fake_node_33_10 : fake_node();
+		fake_node_33_9 : fake_node();
+		fake_node_33_8 : fake_node();
+		fake_node_33_7 : fake_node();
+		fake_node_33_6 : fake_node();
+		fake_node_33_5 : fake_node();
+		fake_node_33_4 : fake_node();
+		fake_node_33_3 : fake_node();
+		fake_node_33_2 : fake_node();
+		fake_node_29_16 : fake_node();
+		fake_node_29_15 : fake_node();
+		fake_node_29_14 : fake_node();
+		fake_node_29_13 : fake_node();
+		fake_node_29_12 : fake_node();
+		fake_node_29_11 : fake_node();
+		fake_node_29_10 : fake_node();
+		fake_node_29_9 : fake_node();
+		fake_node_29_8 : fake_node();
+		fake_node_29_7 : fake_node();
+		fake_node_29_6 : fake_node();
+		fake_node_29_5 : fake_node();
+		fake_node_29_4 : fake_node();
+		fake_node_29_3 : fake_node();
+		fake_node_29_2 : fake_node();
+		fake_node_27_16 : fake_node();
+		fake_node_27_15 : fake_node();
+		fake_node_27_14 : fake_node();
+		fake_node_27_13 : fake_node();
+		fake_node_27_12 : fake_node();
+		fake_node_27_11 : fake_node();
+		fake_node_21_16 : fake_node();
+		fake_node_21_15 : fake_node();
+		fake_node_21_14 : fake_node();
+		fake_node_21_13 : fake_node();
+		fake_node_21_12 : fake_node();
+		fake_node_21_11 : fake_node();
+		fake_node_21_10 : fake_node();
+		fake_node_21_9 : fake_node();
+		fake_node_21_8 : fake_node();
+		fake_node_21_7 : fake_node();
+		fake_node_21_6 : fake_node();
+		fake_node_21_5 : fake_node();
+		fake_node_21_4 : fake_node();
+		fake_node_21_3 : fake_node();
+		fake_node_21_2 : fake_node();
+		fake_node_19_16 : fake_node();
+		fake_node_19_15 : fake_node();
+		fake_node_19_14 : fake_node();
+		fake_node_19_13 : fake_node();
+		fake_node_19_12 : fake_node();
+		fake_node_19_11 : fake_node();
+		fake_node_19_10 : fake_node();
+		fake_node_19_9 : fake_node();
+		fake_node_19_8 : fake_node();
+		fake_node_19_7 : fake_node();
+		fake_node_19_6 : fake_node();
+		fake_node_19_5 : fake_node();
+		fake_node_19_4 : fake_node();
+		fake_node_19_3 : fake_node();
+		fake_node_19_2 : fake_node();
+		fake_node_0_16 : fake_node();
+		fake_node_0_15 : fake_node();
+		fake_node_0_14 : fake_node();
+		fake_node_0_13 : fake_node();
+		fake_node_0_12 : fake_node();
+		fake_node_0_11 : fake_node();
+		fake_node_0_10 : fake_node();
+		fake_node_0_9 : fake_node();
+		fake_node_0_8 : fake_node();
+		fake_node_0_7 : fake_node();
+		fake_node_0_6 : fake_node();
+		fake_node_0_5 : fake_node();
+		BlueROV : node_parallel(4, topics2bb, dd_tasks, mission_server, obstacle_avoidance, priorities, fake_node_0_5, fake_node_0_6, fake_node_0_7, fake_node_0_8, fake_node_0_9, fake_node_0_10, fake_node_0_11, fake_node_0_12, fake_node_0_13, fake_node_0_14, fake_node_0_15, fake_node_0_16, parallel_skip_0, TRUE);
+		topics2bb : node_parallel(16, battery2bb, rth2bb, geofence2bb, lec2_am_r_2bb, lec2_am_l_2bb, pipe_lost2bb, sensor_failure2bb, waypoints_completed2bb, mission2bb, ddlec2bb, fls2bb, fls_warning2bb, hsd_pipe2bb, hsd_wp2bb, hsd_rth2bb, hsd_surface2bb, rtreach2bb, parallel_skip_1, TRUE);
+		battery2bb : node_set_blackboard_variables(battery2bb_SET_status);
+		battery2bb_SET_status : battery2bb_SET_status_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		rth2bb : node_set_blackboard_variables(rth2bb_SET_status);
+		rth2bb_SET_status : rth2bb_SET_status_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		geofence2bb : node_set_blackboard_variables(geofence2bb_SET_status);
+		geofence2bb_SET_status : geofence2bb_SET_status_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		lec2_am_r_2bb : node_set_blackboard_variables(lec2_am_r_2bb_SET_status);
+		lec2_am_r_2bb_SET_status : lec2_am_r_2bb_SET_status_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		lec2_am_l_2bb : node_set_blackboard_variables(lec2_am_l_2bb_SET_status);
+		lec2_am_l_2bb_SET_status : lec2_am_l_2bb_SET_status_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		pipe_lost2bb : node_set_blackboard_variables(pipe_lost2bb_SET_status);
+		pipe_lost2bb_SET_status : pipe_lost2bb_SET_status_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		sensor_failure2bb : node_set_blackboard_variables(sensor_failure2bb_SET_status);
+		sensor_failure2bb_SET_status : sensor_failure2bb_SET_status_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		waypoints_completed2bb : node_set_blackboard_variables(waypoints_completed2bb_SET_status);
+		waypoints_completed2bb_SET_status : waypoints_completed2bb_SET_status_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		mission2bb : node_set_blackboard_variables(mission2bb_SET_status);
+		mission2bb_SET_status : mission2bb_SET_status_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		ddlec2bb : node_set_blackboard_variables(ddlec2bb_SET_status);
+		ddlec2bb_SET_status : ddlec2bb_SET_status_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		fls2bb : node_set_blackboard_variables(fls2bb_SET_status);
+		fls2bb_SET_status : fls2bb_SET_status_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		fls_warning2bb : node_set_blackboard_variables(fls_warning2bb_SET_status);
+		fls_warning2bb_SET_status : fls_warning2bb_SET_status_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		hsd_pipe2bb : node_set_blackboard_variables(hsd_pipe2bb_SET_status);
+		hsd_pipe2bb_SET_status : hsd_pipe2bb_SET_status_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		hsd_wp2bb : node_set_blackboard_variables(hsd_wp2bb_SET_status);
+		hsd_wp2bb_SET_status : hsd_wp2bb_SET_status_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		hsd_rth2bb : node_set_blackboard_variables(hsd_rth2bb_SET_status);
+		hsd_rth2bb_SET_status : hsd_rth2bb_SET_status_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		hsd_surface2bb : node_set_blackboard_variables(hsd_surface2bb_SET_status);
+		hsd_surface2bb_SET_status : hsd_surface2bb_SET_status_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		rtreach2bb : node_set_blackboard_variables(rtreach2bb_SET_status);
+		rtreach2bb_SET_status : rtreach2bb_SET_status_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		dd_tasks : node_selector(1, reallocate_check_SIF, dd_lec_task, fake_node_19_2, fake_node_19_3, fake_node_19_4, fake_node_19_5, fake_node_19_6, fake_node_19_7, fake_node_19_8, fake_node_19_9, fake_node_19_10, fake_node_19_11, fake_node_19_12, fake_node_19_13, fake_node_19_14, fake_node_19_15, fake_node_19_16);
+		reallocate_check_SIF : decorator_success_is_failure(reallocate_check);
+		reallocate_check : node_selector(1, is_reallocation_requested, reallocate_task, fake_node_21_2, fake_node_21_3, fake_node_21_4, fake_node_21_5, fake_node_21_6, fake_node_21_7, fake_node_21_8, fake_node_21_9, fake_node_21_10, fake_node_21_11, fake_node_21_12, fake_node_21_13, fake_node_21_14, fake_node_21_15, fake_node_21_16);
+		is_reallocation_requested : node_check_blackboard_variable_value(blackboard, 29, is_reallocation_requested_CHECK_dd_xy_axis_degradation);
+		is_reallocation_requested_CHECK_dd_xy_axis_degradation : is_reallocation_requested_CHECK_dd_xy_axis_degradation_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		reallocate_task : node_set_blackboard_variables(reallocate_task_SET_status);
+		reallocate_task_SET_status : reallocate_task_SET_status_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		dd_lec_task : node_set_blackboard_variables(dd_lec_task_SET_status);
+		dd_lec_task_SET_status : dd_lec_task_SET_status_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		mission_server : node_set_blackboard_variables(mission_server_SET_status);
+		mission_server_SET_status : mission_server_SET_status_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		obstacle_avoidance : node_set_blackboard_variables(obstacle_avoidance_SET_status);
+		obstacle_avoidance_SET_status : obstacle_avoidance_SET_status_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		priorities : node_selector(10, battery_check_SIF, sensor_failure_selector_SIF, emergency_stop_check_SIF, home_reached_selector_SIF, obstacle_standoff_check_SIF, rth_selector_SIF, geofence_selector_SIF, pipe_lost_selector_SIF, track_pipe_mission, waypoint_mission, loiter_task, fake_node_27_11, fake_node_27_12, fake_node_27_13, fake_node_27_14, fake_node_27_15, fake_node_27_16);
+		battery_check_SIF : decorator_success_is_failure(battery_check);
+		battery_check : node_selector(1, battery_low_fs, surface_task, fake_node_29_2, fake_node_29_3, fake_node_29_4, fake_node_29_5, fake_node_29_6, fake_node_29_7, fake_node_29_8, fake_node_29_9, fake_node_29_10, fake_node_29_11, fake_node_29_12, fake_node_29_13, fake_node_29_14, fake_node_29_15, fake_node_29_16);
+		battery_low_fs : node_check_blackboard_variable_value(blackboard, 1, battery_low_fs_CHECK_battery_low_warning);
+		battery_low_fs_CHECK_battery_low_warning : battery_low_fs_CHECK_battery_low_warning_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		surface_task : node_set_blackboard_variables(surface_task_SET_status);
+		surface_task_SET_status : surface_task_SET_status_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		sensor_failure_selector_SIF : decorator_success_is_failure(sensor_failure_selector);
+		sensor_failure_selector : node_selector(1, check_sensor_failure, surface_task1, fake_node_33_2, fake_node_33_3, fake_node_33_4, fake_node_33_5, fake_node_33_6, fake_node_33_7, fake_node_33_8, fake_node_33_9, fake_node_33_10, fake_node_33_11, fake_node_33_12, fake_node_33_13, fake_node_33_14, fake_node_33_15, fake_node_33_16);
+		check_sensor_failure : node_check_blackboard_variable_value(blackboard, 22, check_sensor_failure_CHECK_bb_sensor_failure_warning);
+		check_sensor_failure_CHECK_bb_sensor_failure_warning : check_sensor_failure_CHECK_bb_sensor_failure_warning_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		surface_task1 : node_set_blackboard_variables(surface_task1_SET_status);
+		surface_task1_SET_status : surface_task1_SET_status_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		emergency_stop_check_SIF : decorator_success_is_failure(emergency_stop_check);
+		emergency_stop_check : node_selector(1, emergency_stop_fs, emergency_stop_tasks, fake_node_37_2, fake_node_37_3, fake_node_37_4, fake_node_37_5, fake_node_37_6, fake_node_37_7, fake_node_37_8, fake_node_37_9, fake_node_37_10, fake_node_37_11, fake_node_37_12, fake_node_37_13, fake_node_37_14, fake_node_37_15, fake_node_37_16);
+		emergency_stop_fs : node_check_blackboard_variable_value(blackboard, 39, emergency_stop_fs_CHECK_emergency_stop_warning);
+		emergency_stop_fs_CHECK_emergency_stop_warning : emergency_stop_fs_CHECK_emergency_stop_warning_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		emergency_stop_tasks : node_sequence(1, emergency_stop_task, surface_task2, fake_node_39_2, fake_node_39_3, fake_node_39_4, fake_node_39_5, fake_node_39_6, fake_node_39_7, fake_node_39_8, fake_node_39_9, fake_node_39_10, fake_node_39_11, fake_node_39_12, fake_node_39_13, fake_node_39_14, fake_node_39_15, fake_node_39_16, resume_point_39);
+		emergency_stop_task : node_set_blackboard_variables(emergency_stop_task_SET_status);
+		emergency_stop_task_SET_status : emergency_stop_task_SET_status_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		surface_task2 : node_set_blackboard_variables(surface_task2_SET_status);
+		surface_task2_SET_status : surface_task2_SET_status_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		home_reached_selector_SIF : decorator_success_is_failure(home_reached_selector);
+		home_reached_selector : node_selector(1, check_surface, surface_task3, fake_node_43_2, fake_node_43_3, fake_node_43_4, fake_node_43_5, fake_node_43_6, fake_node_43_7, fake_node_43_8, fake_node_43_9, fake_node_43_10, fake_node_43_11, fake_node_43_12, fake_node_43_13, fake_node_43_14, fake_node_43_15, fake_node_43_16);
+		check_surface : node_check_blackboard_variable_value(blackboard, 58, check_surface_CHECK_bb_home_reached);
+		check_surface_CHECK_bb_home_reached : check_surface_CHECK_bb_home_reached_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		surface_task3 : node_set_blackboard_variables(surface_task3_SET_status);
+		surface_task3_SET_status : surface_task3_SET_status_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		obstacle_standoff_check_SIF : decorator_success_is_failure(obstacle_standoff_check);
+		obstacle_standoff_check : node_selector(1, obstacle_standoff_fs, surface_task4, fake_node_47_2, fake_node_47_3, fake_node_47_4, fake_node_47_5, fake_node_47_6, fake_node_47_7, fake_node_47_8, fake_node_47_9, fake_node_47_10, fake_node_47_11, fake_node_47_12, fake_node_47_13, fake_node_47_14, fake_node_47_15, fake_node_47_16);
+		obstacle_standoff_fs : node_check_blackboard_variable_value(blackboard, 33, obstacle_standoff_fs_CHECK_obstacle_standoff_warning);
+		obstacle_standoff_fs_CHECK_obstacle_standoff_warning : obstacle_standoff_fs_CHECK_obstacle_standoff_warning_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		surface_task4 : node_set_blackboard_variables(surface_task4_SET_status);
+		surface_task4_SET_status : surface_task4_SET_status_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		rth_selector_SIF : decorator_success_is_failure(rth_selector);
+		rth_selector : node_selector(1, check_rth, rth_par, fake_node_51_2, fake_node_51_3, fake_node_51_4, fake_node_51_5, fake_node_51_6, fake_node_51_7, fake_node_51_8, fake_node_51_9, fake_node_51_10, fake_node_51_11, fake_node_51_12, fake_node_51_13, fake_node_51_14, fake_node_51_15, fake_node_51_16);
+		check_rth : node_check_blackboard_variable_value(blackboard, 4, check_rth_CHECK_bb_rth_warning);
+		check_rth_CHECK_bb_rth_warning : check_rth_CHECK_bb_rth_warning_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		rth_par : node_parallel(1, rth_task, home2bb, fake_node_53_2, fake_node_53_3, fake_node_53_4, fake_node_53_5, fake_node_53_6, fake_node_53_7, fake_node_53_8, fake_node_53_9, fake_node_53_10, fake_node_53_11, fake_node_53_12, fake_node_53_13, fake_node_53_14, fake_node_53_15, fake_node_53_16, parallel_skip_53, TRUE);
+		rth_task : node_set_blackboard_variables(rth_task_SET_status);
+		rth_task_SET_status : rth_task_SET_status_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		home2bb : node_set_blackboard_variables(home2bb_SET_status);
+		home2bb_SET_status : home2bb_SET_status_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		geofence_selector_SIF : decorator_success_is_failure(geofence_selector);
+		geofence_selector : node_selector(1, check_geofence, rth_par1, fake_node_57_2, fake_node_57_3, fake_node_57_4, fake_node_57_5, fake_node_57_6, fake_node_57_7, fake_node_57_8, fake_node_57_9, fake_node_57_10, fake_node_57_11, fake_node_57_12, fake_node_57_13, fake_node_57_14, fake_node_57_15, fake_node_57_16);
+		check_geofence : node_check_blackboard_variable_value(blackboard, 7, check_geofence_CHECK_bb_geofence_warning);
+		check_geofence_CHECK_bb_geofence_warning : check_geofence_CHECK_bb_geofence_warning_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		rth_par1 : node_parallel(1, rth_task1, home2bb1, fake_node_59_2, fake_node_59_3, fake_node_59_4, fake_node_59_5, fake_node_59_6, fake_node_59_7, fake_node_59_8, fake_node_59_9, fake_node_59_10, fake_node_59_11, fake_node_59_12, fake_node_59_13, fake_node_59_14, fake_node_59_15, fake_node_59_16, parallel_skip_59, TRUE);
+		rth_task1 : node_set_blackboard_variables(rth_task1_SET_status);
+		rth_task1_SET_status : rth_task1_SET_status_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		home2bb1 : node_set_blackboard_variables(home2bb1_SET_status);
+		home2bb1_SET_status : home2bb1_SET_status_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		pipe_lost_selector_SIF : decorator_success_is_failure(pipe_lost_selector);
+		pipe_lost_selector : node_selector(1, check_pipe_post, loiter_task1, fake_node_63_2, fake_node_63_3, fake_node_63_4, fake_node_63_5, fake_node_63_6, fake_node_63_7, fake_node_63_8, fake_node_63_9, fake_node_63_10, fake_node_63_11, fake_node_63_12, fake_node_63_13, fake_node_63_14, fake_node_63_15, fake_node_63_16);
+		check_pipe_post : node_check_blackboard_variable_value(blackboard, 18, check_pipe_post_CHECK_bb_pipe_lost_warning);
+		check_pipe_post_CHECK_bb_pipe_lost_warning : check_pipe_post_CHECK_bb_pipe_lost_warning_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		loiter_task1 : node_set_blackboard_variables(loiter_task1_SET_status);
+		loiter_task1_SET_status : loiter_task1_SET_status_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		track_pipe_mission : node_sequence(2, is_track_pipe_mission_requested, tracking, track_pipe_mission_end, fake_node_66_3, fake_node_66_4, fake_node_66_5, fake_node_66_6, fake_node_66_7, fake_node_66_8, fake_node_66_9, fake_node_66_10, fake_node_66_11, fake_node_66_12, fake_node_66_13, fake_node_66_14, fake_node_66_15, fake_node_66_16, resume_point_66);
+		is_track_pipe_mission_requested : node_check_blackboard_variable_value(blackboard, 20, is_track_pipe_mission_requested_CHECK_bb_mission_dot_data);
+		is_track_pipe_mission_requested_CHECK_bb_mission_dot_data : is_track_pipe_mission_requested_CHECK_bb_mission_dot_data_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		tracking : node_parallel(2, tracking_task, lec2am_speed_cmd, lec2am_mapping_cmd, fake_node_68_3, fake_node_68_4, fake_node_68_5, fake_node_68_6, fake_node_68_7, fake_node_68_8, fake_node_68_9, fake_node_68_10, fake_node_68_11, fake_node_68_12, fake_node_68_13, fake_node_68_14, fake_node_68_15, fake_node_68_16, parallel_skip_68, TRUE);
+		tracking_task : node_set_blackboard_variables(tracking_task_SET_status);
+		tracking_task_SET_status : tracking_task_SET_status_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		lec2am_speed_cmd : node_selector(2, lec2am_l_speed_check_SIF, lec2am_r_speed_check_SIF, speed_max_task, fake_node_70_3, fake_node_70_4, fake_node_70_5, fake_node_70_6, fake_node_70_7, fake_node_70_8, fake_node_70_9, fake_node_70_10, fake_node_70_11, fake_node_70_12, fake_node_70_13, fake_node_70_14, fake_node_70_15, fake_node_70_16);
+		lec2am_l_speed_check_SIF : decorator_success_is_failure(lec2am_l_speed_check);
+		lec2am_l_speed_check : node_selector(1, check_lec2am_ls, speed_min_task, fake_node_72_2, fake_node_72_3, fake_node_72_4, fake_node_72_5, fake_node_72_6, fake_node_72_7, fake_node_72_8, fake_node_72_9, fake_node_72_10, fake_node_72_11, fake_node_72_12, fake_node_72_13, fake_node_72_14, fake_node_72_15, fake_node_72_16);
+		check_lec2am_ls : node_check_blackboard_variable_value(blackboard, 14, check_lec2am_ls_CHECK_lec2_am_l_speed_warning);
+		check_lec2am_ls_CHECK_lec2_am_l_speed_warning : check_lec2am_ls_CHECK_lec2_am_l_speed_warning_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		speed_min_task : node_set_blackboard_variables(speed_min_task_SET_status);
+		speed_min_task_SET_status : speed_min_task_SET_status_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		lec2am_r_speed_check_SIF : decorator_success_is_failure(lec2am_r_speed_check);
+		lec2am_r_speed_check : node_selector(1, check_lec2am_rs, speed_min_task1, fake_node_76_2, fake_node_76_3, fake_node_76_4, fake_node_76_5, fake_node_76_6, fake_node_76_7, fake_node_76_8, fake_node_76_9, fake_node_76_10, fake_node_76_11, fake_node_76_12, fake_node_76_13, fake_node_76_14, fake_node_76_15, fake_node_76_16);
+		check_lec2am_rs : node_check_blackboard_variable_value(blackboard, 10, check_lec2am_rs_CHECK_lec2_am_r_speed_warning);
+		check_lec2am_rs_CHECK_lec2_am_r_speed_warning : check_lec2am_rs_CHECK_lec2_am_r_speed_warning_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		speed_min_task1 : node_set_blackboard_variables(speed_min_task1_SET_status);
+		speed_min_task1_SET_status : speed_min_task1_SET_status_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		speed_max_task : node_set_blackboard_variables(speed_max_task_SET_status);
+		speed_max_task_SET_status : speed_max_task_SET_status_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		lec2am_mapping_cmd : node_selector(2, lec2am_l_mapping_check_SIF, lec2am_r_mapping_check_SIF, pipe_mapping_enable_task, fake_node_80_3, fake_node_80_4, fake_node_80_5, fake_node_80_6, fake_node_80_7, fake_node_80_8, fake_node_80_9, fake_node_80_10, fake_node_80_11, fake_node_80_12, fake_node_80_13, fake_node_80_14, fake_node_80_15, fake_node_80_16);
+		lec2am_l_mapping_check_SIF : decorator_success_is_failure(lec2am_l_mapping_check);
+		lec2am_l_mapping_check : node_selector(1, check_lec2am_lp, pipe_mapping_disable_task, fake_node_82_2, fake_node_82_3, fake_node_82_4, fake_node_82_5, fake_node_82_6, fake_node_82_7, fake_node_82_8, fake_node_82_9, fake_node_82_10, fake_node_82_11, fake_node_82_12, fake_node_82_13, fake_node_82_14, fake_node_82_15, fake_node_82_16);
+		check_lec2am_lp : node_check_blackboard_variable_value(blackboard, 15, check_lec2am_lp_CHECK_lec2_am_l_pipe_warning);
+		check_lec2am_lp_CHECK_lec2_am_l_pipe_warning : check_lec2am_lp_CHECK_lec2_am_l_pipe_warning_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		pipe_mapping_disable_task : node_set_blackboard_variables(pipe_mapping_disable_task_SET_status);
+		pipe_mapping_disable_task_SET_status : pipe_mapping_disable_task_SET_status_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		lec2am_r_mapping_check_SIF : decorator_success_is_failure(lec2am_r_mapping_check);
+		lec2am_r_mapping_check : node_selector(1, check_lec2am_rp, pipe_mapping_disable_task1, fake_node_86_2, fake_node_86_3, fake_node_86_4, fake_node_86_5, fake_node_86_6, fake_node_86_7, fake_node_86_8, fake_node_86_9, fake_node_86_10, fake_node_86_11, fake_node_86_12, fake_node_86_13, fake_node_86_14, fake_node_86_15, fake_node_86_16);
+		check_lec2am_rp : node_check_blackboard_variable_value(blackboard, 11, check_lec2am_rp_CHECK_lec2_am_r_pipe_warning);
+		check_lec2am_rp_CHECK_lec2_am_r_pipe_warning : check_lec2am_rp_CHECK_lec2_am_r_pipe_warning_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		pipe_mapping_disable_task1 : node_set_blackboard_variables(pipe_mapping_disable_task1_SET_status);
+		pipe_mapping_disable_task1_SET_status : pipe_mapping_disable_task1_SET_status_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		pipe_mapping_enable_task : node_set_blackboard_variables(pipe_mapping_enable_task_SET_status);
+		pipe_mapping_enable_task_SET_status : pipe_mapping_enable_task_SET_status_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		track_pipe_mission_end : node_sequence(0, evaluate, fake_node_90_1, fake_node_90_2, fake_node_90_3, fake_node_90_4, fake_node_90_5, fake_node_90_6, fake_node_90_7, fake_node_90_8, fake_node_90_9, fake_node_90_10, fake_node_90_11, fake_node_90_12, fake_node_90_13, fake_node_90_14, fake_node_90_15, fake_node_90_16, -2);
+		evaluate : node_timer();
+		waypoint_mission : node_sequence(1, is_waypoint_requested, waypoint_selector, fake_node_92_2, fake_node_92_3, fake_node_92_4, fake_node_92_5, fake_node_92_6, fake_node_92_7, fake_node_92_8, fake_node_92_9, fake_node_92_10, fake_node_92_11, fake_node_92_12, fake_node_92_13, fake_node_92_14, fake_node_92_15, fake_node_92_16, resume_point_92);
+		is_waypoint_requested : node_check_blackboard_variable_value(blackboard, 20, is_waypoint_requested_CHECK_bb_mission_dot_data);
+		is_waypoint_requested_CHECK_bb_mission_dot_data : is_waypoint_requested_CHECK_bb_mission_dot_data_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		waypoint_selector : node_selector(1, waypoints_sif_SIF, waypoint_task, fake_node_94_2, fake_node_94_3, fake_node_94_4, fake_node_94_5, fake_node_94_6, fake_node_94_7, fake_node_94_8, fake_node_94_9, fake_node_94_10, fake_node_94_11, fake_node_94_12, fake_node_94_13, fake_node_94_14, fake_node_94_15, fake_node_94_16);
+		waypoints_sif_SIF : decorator_success_is_failure(waypoints_sif);
+		waypoints_sif : node_selector(1, check_waypoints_completed, waypoint_end, fake_node_96_2, fake_node_96_3, fake_node_96_4, fake_node_96_5, fake_node_96_6, fake_node_96_7, fake_node_96_8, fake_node_96_9, fake_node_96_10, fake_node_96_11, fake_node_96_12, fake_node_96_13, fake_node_96_14, fake_node_96_15, fake_node_96_16);
+		check_waypoints_completed : node_check_blackboard_variable_value(blackboard, 25, check_waypoints_completed_CHECK_bb_waypoints_completed_dot_data);
+		check_waypoints_completed_CHECK_bb_waypoints_completed_dot_data : check_waypoints_completed_CHECK_bb_waypoints_completed_dot_data_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		waypoint_end : node_sequence(1, next_mission, loiter_task2, fake_node_98_2, fake_node_98_3, fake_node_98_4, fake_node_98_5, fake_node_98_6, fake_node_98_7, fake_node_98_8, fake_node_98_9, fake_node_98_10, fake_node_98_11, fake_node_98_12, fake_node_98_13, fake_node_98_14, fake_node_98_15, fake_node_98_16, resume_point_98);
+		next_mission : node_set_blackboard_variables(next_mission_SET_status);
+		next_mission_SET_status : next_mission_SET_status_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		loiter_task2 : node_set_blackboard_variables(loiter_task2_SET_status);
+		loiter_task2_SET_status : loiter_task2_SET_status_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		waypoint_task : node_set_blackboard_variables(waypoint_task_SET_status);
+		waypoint_task_SET_status : waypoint_task_SET_status_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		loiter_task : node_set_blackboard_variables(loiter_task_SET_status);
+		loiter_task_SET_status : loiter_task_SET_status_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+	ASSIGN
+		init(resume_from_node_27) := 27;
+		next(resume_from_node_27) := 
+			case
+				(statuses[0] in {success, failure}) : 27;
+				(statuses[27] in {success, failure}) : 27;
+				TRUE : max(trace_running_source_27, 27);
+			esac;
+LTLSPEC G( (next(blackboard.variables[variable_names.battery_low_warning]) = 1)   -> (surface_task.active | surface_task2.active | surface_task3.active | surface_task4.active));
+-- --this one should be true.
+
+
+MODULE fake_node()
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		status := error;
+MODULE node_set_blackboard_variables(status_module)
+	DEFINE
+		status :=
+			case
+				!(active) : invalid;
+				TRUE : status_module.status;
+			esac;
+MODULE node_parallel(last_child, child_0, child_1, child_2, child_3, child_4, child_5, child_6, child_7, child_8, child_9, child_10, child_11, child_12, child_13, child_14, child_15, child_16, skip_child, parallel_policy_all)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		status :=
+			case
+				!(active) : invalid;
+				(last_child < 0) : success;
+				(0 <= last_child) & (child_0.status = error) : error;
+				(0 <= last_child) & (child_0.status = invalid) & !(skip_child[min(0, max(last_child, 0))] = -2) : error;
+				(1 <= last_child) & (child_1.status = error) : error;
+				(1 <= last_child) & (child_1.status = invalid) & !(skip_child[min(1, max(last_child, 0))] = -2) : error;
+				(2 <= last_child) & (child_2.status = error) : error;
+				(2 <= last_child) & (child_2.status = invalid) & !(skip_child[min(2, max(last_child, 0))] = -2) : error;
+				(3 <= last_child) & (child_3.status = error) : error;
+				(3 <= last_child) & (child_3.status = invalid) & !(skip_child[min(3, max(last_child, 0))] = -2) : error;
+				(4 <= last_child) & (child_4.status = error) : error;
+				(4 <= last_child) & (child_4.status = invalid) & !(skip_child[min(4, max(last_child, 0))] = -2) : error;
+				(5 <= last_child) & (child_5.status = error) : error;
+				(5 <= last_child) & (child_5.status = invalid) & !(skip_child[min(5, max(last_child, 0))] = -2) : error;
+				(6 <= last_child) & (child_6.status = error) : error;
+				(6 <= last_child) & (child_6.status = invalid) & !(skip_child[min(6, max(last_child, 0))] = -2) : error;
+				(7 <= last_child) & (child_7.status = error) : error;
+				(7 <= last_child) & (child_7.status = invalid) & !(skip_child[min(7, max(last_child, 0))] = -2) : error;
+				(8 <= last_child) & (child_8.status = error) : error;
+				(8 <= last_child) & (child_8.status = invalid) & !(skip_child[min(8, max(last_child, 0))] = -2) : error;
+				(9 <= last_child) & (child_9.status = error) : error;
+				(9 <= last_child) & (child_9.status = invalid) & !(skip_child[min(9, max(last_child, 0))] = -2) : error;
+				(10 <= last_child) & (child_10.status = error) : error;
+				(10 <= last_child) & (child_10.status = invalid) & !(skip_child[min(10, max(last_child, 0))] = -2) : error;
+				(11 <= last_child) & (child_11.status = error) : error;
+				(11 <= last_child) & (child_11.status = invalid) & !(skip_child[min(11, max(last_child, 0))] = -2) : error;
+				(12 <= last_child) & (child_12.status = error) : error;
+				(12 <= last_child) & (child_12.status = invalid) & !(skip_child[min(12, max(last_child, 0))] = -2) : error;
+				(13 <= last_child) & (child_13.status = error) : error;
+				(13 <= last_child) & (child_13.status = invalid) & !(skip_child[min(13, max(last_child, 0))] = -2) : error;
+				(14 <= last_child) & (child_14.status = error) : error;
+				(14 <= last_child) & (child_14.status = invalid) & !(skip_child[min(14, max(last_child, 0))] = -2) : error;
+				(15 <= last_child) & (child_15.status = error) : error;
+				(15 <= last_child) & (child_15.status = invalid) & !(skip_child[min(15, max(last_child, 0))] = -2) : error;
+				(16 <= last_child) & (child_16.status = error) : error;
+				(16 <= last_child) & (child_16.status = invalid) & !(skip_child[min(16, max(last_child, 0))] = -2) : error;
+				(0 <= last_child) & (child_0.status = failure) : failure;
+				(1 <= last_child) & (child_1.status = failure) : failure;
+				(2 <= last_child) & (child_2.status = failure) : failure;
+				(3 <= last_child) & (child_3.status = failure) : failure;
+				(4 <= last_child) & (child_4.status = failure) : failure;
+				(5 <= last_child) & (child_5.status = failure) : failure;
+				(6 <= last_child) & (child_6.status = failure) : failure;
+				(7 <= last_child) & (child_7.status = failure) : failure;
+				(8 <= last_child) & (child_8.status = failure) : failure;
+				(9 <= last_child) & (child_9.status = failure) : failure;
+				(10 <= last_child) & (child_10.status = failure) : failure;
+				(11 <= last_child) & (child_11.status = failure) : failure;
+				(12 <= last_child) & (child_12.status = failure) : failure;
+				(13 <= last_child) & (child_13.status = failure) : failure;
+				(14 <= last_child) & (child_14.status = failure) : failure;
+				(15 <= last_child) & (child_15.status = failure) : failure;
+				(16 <= last_child) & (child_16.status = failure) : failure;
+				(0 <= last_child) & (parallel_policy_all) & (child_0.status = running) : running;
+				(0 <= last_child) & !(parallel_policy_all) & (child_0.status = success) : success;
+				(1 <= last_child) & (parallel_policy_all) & (child_1.status = running) : running;
+				(1 <= last_child) & !(parallel_policy_all) & (child_1.status = success) : success;
+				(2 <= last_child) & (parallel_policy_all) & (child_2.status = running) : running;
+				(2 <= last_child) & !(parallel_policy_all) & (child_2.status = success) : success;
+				(3 <= last_child) & (parallel_policy_all) & (child_3.status = running) : running;
+				(3 <= last_child) & !(parallel_policy_all) & (child_3.status = success) : success;
+				(4 <= last_child) & (parallel_policy_all) & (child_4.status = running) : running;
+				(4 <= last_child) & !(parallel_policy_all) & (child_4.status = success) : success;
+				(5 <= last_child) & (parallel_policy_all) & (child_5.status = running) : running;
+				(5 <= last_child) & !(parallel_policy_all) & (child_5.status = success) : success;
+				(6 <= last_child) & (parallel_policy_all) & (child_6.status = running) : running;
+				(6 <= last_child) & !(parallel_policy_all) & (child_6.status = success) : success;
+				(7 <= last_child) & (parallel_policy_all) & (child_7.status = running) : running;
+				(7 <= last_child) & !(parallel_policy_all) & (child_7.status = success) : success;
+				(8 <= last_child) & (parallel_policy_all) & (child_8.status = running) : running;
+				(8 <= last_child) & !(parallel_policy_all) & (child_8.status = success) : success;
+				(9 <= last_child) & (parallel_policy_all) & (child_9.status = running) : running;
+				(9 <= last_child) & !(parallel_policy_all) & (child_9.status = success) : success;
+				(10 <= last_child) & (parallel_policy_all) & (child_10.status = running) : running;
+				(10 <= last_child) & !(parallel_policy_all) & (child_10.status = success) : success;
+				(11 <= last_child) & (parallel_policy_all) & (child_11.status = running) : running;
+				(11 <= last_child) & !(parallel_policy_all) & (child_11.status = success) : success;
+				(12 <= last_child) & (parallel_policy_all) & (child_12.status = running) : running;
+				(12 <= last_child) & !(parallel_policy_all) & (child_12.status = success) : success;
+				(13 <= last_child) & (parallel_policy_all) & (child_13.status = running) : running;
+				(13 <= last_child) & !(parallel_policy_all) & (child_13.status = success) : success;
+				(14 <= last_child) & (parallel_policy_all) & (child_14.status = running) : running;
+				(14 <= last_child) & !(parallel_policy_all) & (child_14.status = success) : success;
+				(15 <= last_child) & (parallel_policy_all) & (child_15.status = running) : running;
+				(15 <= last_child) & !(parallel_policy_all) & (child_15.status = success) : success;
+				(16 <= last_child) & (parallel_policy_all) & (child_16.status = running) : running;
+				(16 <= last_child) & !(parallel_policy_all) & (child_16.status = success) : success;
+				(parallel_policy_all) : success;
+				TRUE : running;
+			esac;
+		child_0.active :=
+			case
+				!(active) : FALSE;
+				(0 > last_child) : FALSE;
+				(skip_child[min(0, max(last_child, 0))] = -2) : FALSE;
+				TRUE : TRUE;
+			esac;
+		child_1.active :=
+			case
+				!(active) : FALSE;
+				(1 > last_child) : FALSE;
+				(skip_child[min(1, max(last_child, 0))] = -2) : FALSE;
+				TRUE : TRUE;
+			esac;
+		child_2.active :=
+			case
+				!(active) : FALSE;
+				(2 > last_child) : FALSE;
+				(skip_child[min(2, max(last_child, 0))] = -2) : FALSE;
+				TRUE : TRUE;
+			esac;
+		child_3.active :=
+			case
+				!(active) : FALSE;
+				(3 > last_child) : FALSE;
+				(skip_child[min(3, max(last_child, 0))] = -2) : FALSE;
+				TRUE : TRUE;
+			esac;
+		child_4.active :=
+			case
+				!(active) : FALSE;
+				(4 > last_child) : FALSE;
+				(skip_child[min(4, max(last_child, 0))] = -2) : FALSE;
+				TRUE : TRUE;
+			esac;
+		child_5.active :=
+			case
+				!(active) : FALSE;
+				(5 > last_child) : FALSE;
+				(skip_child[min(5, max(last_child, 0))] = -2) : FALSE;
+				TRUE : TRUE;
+			esac;
+		child_6.active :=
+			case
+				!(active) : FALSE;
+				(6 > last_child) : FALSE;
+				(skip_child[min(6, max(last_child, 0))] = -2) : FALSE;
+				TRUE : TRUE;
+			esac;
+		child_7.active :=
+			case
+				!(active) : FALSE;
+				(7 > last_child) : FALSE;
+				(skip_child[min(7, max(last_child, 0))] = -2) : FALSE;
+				TRUE : TRUE;
+			esac;
+		child_8.active :=
+			case
+				!(active) : FALSE;
+				(8 > last_child) : FALSE;
+				(skip_child[min(8, max(last_child, 0))] = -2) : FALSE;
+				TRUE : TRUE;
+			esac;
+		child_9.active :=
+			case
+				!(active) : FALSE;
+				(9 > last_child) : FALSE;
+				(skip_child[min(9, max(last_child, 0))] = -2) : FALSE;
+				TRUE : TRUE;
+			esac;
+		child_10.active :=
+			case
+				!(active) : FALSE;
+				(10 > last_child) : FALSE;
+				(skip_child[min(10, max(last_child, 0))] = -2) : FALSE;
+				TRUE : TRUE;
+			esac;
+		child_11.active :=
+			case
+				!(active) : FALSE;
+				(11 > last_child) : FALSE;
+				(skip_child[min(11, max(last_child, 0))] = -2) : FALSE;
+				TRUE : TRUE;
+			esac;
+		child_12.active :=
+			case
+				!(active) : FALSE;
+				(12 > last_child) : FALSE;
+				(skip_child[min(12, max(last_child, 0))] = -2) : FALSE;
+				TRUE : TRUE;
+			esac;
+		child_13.active :=
+			case
+				!(active) : FALSE;
+				(13 > last_child) : FALSE;
+				(skip_child[min(13, max(last_child, 0))] = -2) : FALSE;
+				TRUE : TRUE;
+			esac;
+		child_14.active :=
+			case
+				!(active) : FALSE;
+				(14 > last_child) : FALSE;
+				(skip_child[min(14, max(last_child, 0))] = -2) : FALSE;
+				TRUE : TRUE;
+			esac;
+		child_15.active :=
+			case
+				!(active) : FALSE;
+				(15 > last_child) : FALSE;
+				(skip_child[min(15, max(last_child, 0))] = -2) : FALSE;
+				TRUE : TRUE;
+			esac;
+		child_16.active :=
+			case
+				!(active) : FALSE;
+				(16 > last_child) : FALSE;
+				(skip_child[min(16, max(last_child, 0))] = -2) : FALSE;
+				TRUE : TRUE;
+			esac;
+MODULE node_timer()
+	CONSTANTS
+		success, failure, running, invalid, error;
+	IVAR
+		input_status : {success, running};
+	DEFINE
+		status :=
+			case
+				!(active) : invalid;
+				TRUE : input_status;
+			esac;
+MODULE node_selector(last_child, child_0, child_1, child_2, child_3, child_4, child_5, child_6, child_7, child_8, child_9, child_10, child_11, child_12, child_13, child_14, child_15, child_16)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		status :=
+			case
+				!(active) : invalid;
+				(last_child < 0) : failure;
+				(0 <= last_child) & (child_0.status = error) : error;
+				(1 <= last_child) & (child_1.status = error) : error;
+				(2 <= last_child) & (child_2.status = error) : error;
+				(3 <= last_child) & (child_3.status = error) : error;
+				(4 <= last_child) & (child_4.status = error) : error;
+				(5 <= last_child) & (child_5.status = error) : error;
+				(6 <= last_child) & (child_6.status = error) : error;
+				(7 <= last_child) & (child_7.status = error) : error;
+				(8 <= last_child) & (child_8.status = error) : error;
+				(9 <= last_child) & (child_9.status = error) : error;
+				(10 <= last_child) & (child_10.status = error) : error;
+				(11 <= last_child) & (child_11.status = error) : error;
+				(12 <= last_child) & (child_12.status = error) : error;
+				(13 <= last_child) & (child_13.status = error) : error;
+				(14 <= last_child) & (child_14.status = error) : error;
+				(15 <= last_child) & (child_15.status = error) : error;
+				(16 <= last_child) & (child_16.status = error) : error;
+				(0 <= last_child) & (child_0.status = success) : success;
+				(0 <= last_child) & (child_0.status = running) : running;
+				(0 <= last_child) & (child_0.status = invalid) : error;
+				(1 <= last_child) & (child_1.status = success) : success;
+				(1 <= last_child) & (child_1.status = running) : running;
+				(1 <= last_child) & (child_1.status = invalid) : error;
+				(2 <= last_child) & (child_2.status = success) : success;
+				(2 <= last_child) & (child_2.status = running) : running;
+				(2 <= last_child) & (child_2.status = invalid) : error;
+				(3 <= last_child) & (child_3.status = success) : success;
+				(3 <= last_child) & (child_3.status = running) : running;
+				(3 <= last_child) & (child_3.status = invalid) : error;
+				(4 <= last_child) & (child_4.status = success) : success;
+				(4 <= last_child) & (child_4.status = running) : running;
+				(4 <= last_child) & (child_4.status = invalid) : error;
+				(5 <= last_child) & (child_5.status = success) : success;
+				(5 <= last_child) & (child_5.status = running) : running;
+				(5 <= last_child) & (child_5.status = invalid) : error;
+				(6 <= last_child) & (child_6.status = success) : success;
+				(6 <= last_child) & (child_6.status = running) : running;
+				(6 <= last_child) & (child_6.status = invalid) : error;
+				(7 <= last_child) & (child_7.status = success) : success;
+				(7 <= last_child) & (child_7.status = running) : running;
+				(7 <= last_child) & (child_7.status = invalid) : error;
+				(8 <= last_child) & (child_8.status = success) : success;
+				(8 <= last_child) & (child_8.status = running) : running;
+				(8 <= last_child) & (child_8.status = invalid) : error;
+				(9 <= last_child) & (child_9.status = success) : success;
+				(9 <= last_child) & (child_9.status = running) : running;
+				(9 <= last_child) & (child_9.status = invalid) : error;
+				(10 <= last_child) & (child_10.status = success) : success;
+				(10 <= last_child) & (child_10.status = running) : running;
+				(10 <= last_child) & (child_10.status = invalid) : error;
+				(11 <= last_child) & (child_11.status = success) : success;
+				(11 <= last_child) & (child_11.status = running) : running;
+				(11 <= last_child) & (child_11.status = invalid) : error;
+				(12 <= last_child) & (child_12.status = success) : success;
+				(12 <= last_child) & (child_12.status = running) : running;
+				(12 <= last_child) & (child_12.status = invalid) : error;
+				(13 <= last_child) & (child_13.status = success) : success;
+				(13 <= last_child) & (child_13.status = running) : running;
+				(13 <= last_child) & (child_13.status = invalid) : error;
+				(14 <= last_child) & (child_14.status = success) : success;
+				(14 <= last_child) & (child_14.status = running) : running;
+				(14 <= last_child) & (child_14.status = invalid) : error;
+				(15 <= last_child) & (child_15.status = success) : success;
+				(15 <= last_child) & (child_15.status = running) : running;
+				(15 <= last_child) & (child_15.status = invalid) : error;
+				(16 <= last_child) & (child_16.status = success) : success;
+				(16 <= last_child) & (child_16.status = running) : running;
+				(16 <= last_child) & (child_16.status = invalid) : error;
+				TRUE : failure;
+			esac;
+		child_0.active :=
+			case
+				!(active) : FALSE;
+				(0 > last_child) : FALSE;
+				TRUE : TRUE;
+				esac;
+		child_1.active :=
+			case
+				!(active) : FALSE;
+				(1 > last_child) : FALSE;
+				!(child_0.active) : FALSE;
+				!(child_0.status = failure) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_2.active :=
+			case
+				!(active) : FALSE;
+				(2 > last_child) : FALSE;
+				!(child_1.active) : FALSE;
+				!(child_1.status = failure) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_3.active :=
+			case
+				!(active) : FALSE;
+				(3 > last_child) : FALSE;
+				!(child_2.active) : FALSE;
+				!(child_2.status = failure) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_4.active :=
+			case
+				!(active) : FALSE;
+				(4 > last_child) : FALSE;
+				!(child_3.active) : FALSE;
+				!(child_3.status = failure) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_5.active :=
+			case
+				!(active) : FALSE;
+				(5 > last_child) : FALSE;
+				!(child_4.active) : FALSE;
+				!(child_4.status = failure) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_6.active :=
+			case
+				!(active) : FALSE;
+				(6 > last_child) : FALSE;
+				!(child_5.active) : FALSE;
+				!(child_5.status = failure) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_7.active :=
+			case
+				!(active) : FALSE;
+				(7 > last_child) : FALSE;
+				!(child_6.active) : FALSE;
+				!(child_6.status = failure) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_8.active :=
+			case
+				!(active) : FALSE;
+				(8 > last_child) : FALSE;
+				!(child_7.active) : FALSE;
+				!(child_7.status = failure) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_9.active :=
+			case
+				!(active) : FALSE;
+				(9 > last_child) : FALSE;
+				!(child_8.active) : FALSE;
+				!(child_8.status = failure) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_10.active :=
+			case
+				!(active) : FALSE;
+				(10 > last_child) : FALSE;
+				!(child_9.active) : FALSE;
+				!(child_9.status = failure) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_11.active :=
+			case
+				!(active) : FALSE;
+				(11 > last_child) : FALSE;
+				!(child_10.active) : FALSE;
+				!(child_10.status = failure) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_12.active :=
+			case
+				!(active) : FALSE;
+				(12 > last_child) : FALSE;
+				!(child_11.active) : FALSE;
+				!(child_11.status = failure) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_13.active :=
+			case
+				!(active) : FALSE;
+				(13 > last_child) : FALSE;
+				!(child_12.active) : FALSE;
+				!(child_12.status = failure) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_14.active :=
+			case
+				!(active) : FALSE;
+				(14 > last_child) : FALSE;
+				!(child_13.active) : FALSE;
+				!(child_13.status = failure) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_15.active :=
+			case
+				!(active) : FALSE;
+				(15 > last_child) : FALSE;
+				!(child_14.active) : FALSE;
+				!(child_14.status = failure) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_16.active :=
+			case
+				!(active) : FALSE;
+				(16 > last_child) : FALSE;
+				!(child_15.active) : FALSE;
+				!(child_15.status = failure) : FALSE;
+				TRUE: TRUE;
+			esac;
+MODULE node_check_blackboard_variable_value(blackboard, variable, check)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		status :=
+			case
+				!(active) : invalid;
+				(blackboard.variable_exists[variable]) & (check.result) : success;
+				TRUE : failure;
+			esac;
+MODULE decorator_success_is_failure(child_0)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		status :=
+			case
+				!(active) : invalid;
+				(child_0.status in {invalid, error}) : error;
+				!(child_0.status = success) : child_0.status;
+				TRUE : failure;
+			esac;
+		child_0.active :=
+			case
+				!(active) : FALSE;
+				TRUE : TRUE;
+			esac;
+MODULE node_sequence(last_child, child_0, child_1, child_2, child_3, child_4, child_5, child_6, child_7, child_8, child_9, child_10, child_11, child_12, child_13, child_14, child_15, child_16, resume_point)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		status :=
+			case
+				!(active) : invalid;
+				(last_child < 0) : success;
+				(0 <= last_child) & (child_0.status = error) : error;
+				(1 <= last_child) & (child_1.status = error) : error;
+				(2 <= last_child) & (child_2.status = error) : error;
+				(3 <= last_child) & (child_3.status = error) : error;
+				(4 <= last_child) & (child_4.status = error) : error;
+				(5 <= last_child) & (child_5.status = error) : error;
+				(6 <= last_child) & (child_6.status = error) : error;
+				(7 <= last_child) & (child_7.status = error) : error;
+				(8 <= last_child) & (child_8.status = error) : error;
+				(9 <= last_child) & (child_9.status = error) : error;
+				(10 <= last_child) & (child_10.status = error) : error;
+				(11 <= last_child) & (child_11.status = error) : error;
+				(12 <= last_child) & (child_12.status = error) : error;
+				(13 <= last_child) & (child_13.status = error) : error;
+				(14 <= last_child) & (child_14.status = error) : error;
+				(15 <= last_child) & (child_15.status = error) : error;
+				(16 <= last_child) & (child_16.status = error) : error;
+				(0 >= resume_point) & (0 <= last_child) & (child_0.status = failure) : failure;
+				(0 >= resume_point) & (0 <= last_child) & (child_0.status = running) : running;
+				(0 >= resume_point) & (0 <= last_child) & (child_0.status = invalid) : error;
+				(1 >= resume_point) & (1 <= last_child) & (child_1.status = failure) : failure;
+				(1 >= resume_point) & (1 <= last_child) & (child_1.status = running) : running;
+				(1 >= resume_point) & (1 <= last_child) & (child_1.status = invalid) : error;
+				(2 >= resume_point) & (2 <= last_child) & (child_2.status = failure) : failure;
+				(2 >= resume_point) & (2 <= last_child) & (child_2.status = running) : running;
+				(2 >= resume_point) & (2 <= last_child) & (child_2.status = invalid) : error;
+				(3 >= resume_point) & (3 <= last_child) & (child_3.status = failure) : failure;
+				(3 >= resume_point) & (3 <= last_child) & (child_3.status = running) : running;
+				(3 >= resume_point) & (3 <= last_child) & (child_3.status = invalid) : error;
+				(4 >= resume_point) & (4 <= last_child) & (child_4.status = failure) : failure;
+				(4 >= resume_point) & (4 <= last_child) & (child_4.status = running) : running;
+				(4 >= resume_point) & (4 <= last_child) & (child_4.status = invalid) : error;
+				(5 >= resume_point) & (5 <= last_child) & (child_5.status = failure) : failure;
+				(5 >= resume_point) & (5 <= last_child) & (child_5.status = running) : running;
+				(5 >= resume_point) & (5 <= last_child) & (child_5.status = invalid) : error;
+				(6 >= resume_point) & (6 <= last_child) & (child_6.status = failure) : failure;
+				(6 >= resume_point) & (6 <= last_child) & (child_6.status = running) : running;
+				(6 >= resume_point) & (6 <= last_child) & (child_6.status = invalid) : error;
+				(7 >= resume_point) & (7 <= last_child) & (child_7.status = failure) : failure;
+				(7 >= resume_point) & (7 <= last_child) & (child_7.status = running) : running;
+				(7 >= resume_point) & (7 <= last_child) & (child_7.status = invalid) : error;
+				(8 >= resume_point) & (8 <= last_child) & (child_8.status = failure) : failure;
+				(8 >= resume_point) & (8 <= last_child) & (child_8.status = running) : running;
+				(8 >= resume_point) & (8 <= last_child) & (child_8.status = invalid) : error;
+				(9 >= resume_point) & (9 <= last_child) & (child_9.status = failure) : failure;
+				(9 >= resume_point) & (9 <= last_child) & (child_9.status = running) : running;
+				(9 >= resume_point) & (9 <= last_child) & (child_9.status = invalid) : error;
+				(10 >= resume_point) & (10 <= last_child) & (child_10.status = failure) : failure;
+				(10 >= resume_point) & (10 <= last_child) & (child_10.status = running) : running;
+				(10 >= resume_point) & (10 <= last_child) & (child_10.status = invalid) : error;
+				(11 >= resume_point) & (11 <= last_child) & (child_11.status = failure) : failure;
+				(11 >= resume_point) & (11 <= last_child) & (child_11.status = running) : running;
+				(11 >= resume_point) & (11 <= last_child) & (child_11.status = invalid) : error;
+				(12 >= resume_point) & (12 <= last_child) & (child_12.status = failure) : failure;
+				(12 >= resume_point) & (12 <= last_child) & (child_12.status = running) : running;
+				(12 >= resume_point) & (12 <= last_child) & (child_12.status = invalid) : error;
+				(13 >= resume_point) & (13 <= last_child) & (child_13.status = failure) : failure;
+				(13 >= resume_point) & (13 <= last_child) & (child_13.status = running) : running;
+				(13 >= resume_point) & (13 <= last_child) & (child_13.status = invalid) : error;
+				(14 >= resume_point) & (14 <= last_child) & (child_14.status = failure) : failure;
+				(14 >= resume_point) & (14 <= last_child) & (child_14.status = running) : running;
+				(14 >= resume_point) & (14 <= last_child) & (child_14.status = invalid) : error;
+				(15 >= resume_point) & (15 <= last_child) & (child_15.status = failure) : failure;
+				(15 >= resume_point) & (15 <= last_child) & (child_15.status = running) : running;
+				(15 >= resume_point) & (15 <= last_child) & (child_15.status = invalid) : error;
+				(16 >= resume_point) & (16 <= last_child) & (child_16.status = failure) : failure;
+				(16 >= resume_point) & (16 <= last_child) & (child_16.status = running) : running;
+				(16 >= resume_point) & (16 <= last_child) & (child_16.status = invalid) : error;
+				TRUE : success;
+			esac;
+		child_0.active :=
+			case
+				!(active) : FALSE;
+				(0 > last_child) : FALSE;
+				(0 < resume_point) : FALSE;
+				(0 = resume_point) : TRUE;
+				TRUE : TRUE;
+				esac;
+		child_1.active :=
+			case
+				!(active) : FALSE;
+				(1 > last_child) : FALSE;
+				(1 < resume_point) : FALSE;
+				(1 = resume_point) : TRUE;
+				!(child_0.active) : FALSE;
+				!(child_0.status = success) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_2.active :=
+			case
+				!(active) : FALSE;
+				(2 > last_child) : FALSE;
+				(2 < resume_point) : FALSE;
+				(2 = resume_point) : TRUE;
+				!(child_1.active) : FALSE;
+				!(child_1.status = success) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_3.active :=
+			case
+				!(active) : FALSE;
+				(3 > last_child) : FALSE;
+				(3 < resume_point) : FALSE;
+				(3 = resume_point) : TRUE;
+				!(child_2.active) : FALSE;
+				!(child_2.status = success) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_4.active :=
+			case
+				!(active) : FALSE;
+				(4 > last_child) : FALSE;
+				(4 < resume_point) : FALSE;
+				(4 = resume_point) : TRUE;
+				!(child_3.active) : FALSE;
+				!(child_3.status = success) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_5.active :=
+			case
+				!(active) : FALSE;
+				(5 > last_child) : FALSE;
+				(5 < resume_point) : FALSE;
+				(5 = resume_point) : TRUE;
+				!(child_4.active) : FALSE;
+				!(child_4.status = success) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_6.active :=
+			case
+				!(active) : FALSE;
+				(6 > last_child) : FALSE;
+				(6 < resume_point) : FALSE;
+				(6 = resume_point) : TRUE;
+				!(child_5.active) : FALSE;
+				!(child_5.status = success) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_7.active :=
+			case
+				!(active) : FALSE;
+				(7 > last_child) : FALSE;
+				(7 < resume_point) : FALSE;
+				(7 = resume_point) : TRUE;
+				!(child_6.active) : FALSE;
+				!(child_6.status = success) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_8.active :=
+			case
+				!(active) : FALSE;
+				(8 > last_child) : FALSE;
+				(8 < resume_point) : FALSE;
+				(8 = resume_point) : TRUE;
+				!(child_7.active) : FALSE;
+				!(child_7.status = success) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_9.active :=
+			case
+				!(active) : FALSE;
+				(9 > last_child) : FALSE;
+				(9 < resume_point) : FALSE;
+				(9 = resume_point) : TRUE;
+				!(child_8.active) : FALSE;
+				!(child_8.status = success) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_10.active :=
+			case
+				!(active) : FALSE;
+				(10 > last_child) : FALSE;
+				(10 < resume_point) : FALSE;
+				(10 = resume_point) : TRUE;
+				!(child_9.active) : FALSE;
+				!(child_9.status = success) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_11.active :=
+			case
+				!(active) : FALSE;
+				(11 > last_child) : FALSE;
+				(11 < resume_point) : FALSE;
+				(11 = resume_point) : TRUE;
+				!(child_10.active) : FALSE;
+				!(child_10.status = success) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_12.active :=
+			case
+				!(active) : FALSE;
+				(12 > last_child) : FALSE;
+				(12 < resume_point) : FALSE;
+				(12 = resume_point) : TRUE;
+				!(child_11.active) : FALSE;
+				!(child_11.status = success) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_13.active :=
+			case
+				!(active) : FALSE;
+				(13 > last_child) : FALSE;
+				(13 < resume_point) : FALSE;
+				(13 = resume_point) : TRUE;
+				!(child_12.active) : FALSE;
+				!(child_12.status = success) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_14.active :=
+			case
+				!(active) : FALSE;
+				(14 > last_child) : FALSE;
+				(14 < resume_point) : FALSE;
+				(14 = resume_point) : TRUE;
+				!(child_13.active) : FALSE;
+				!(child_13.status = success) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_15.active :=
+			case
+				!(active) : FALSE;
+				(15 > last_child) : FALSE;
+				(15 < resume_point) : FALSE;
+				(15 = resume_point) : TRUE;
+				!(child_14.active) : FALSE;
+				!(child_14.status = success) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_16.active :=
+			case
+				!(active) : FALSE;
+				(16 > last_child) : FALSE;
+				(16 < resume_point) : FALSE;
+				(16 = resume_point) : TRUE;
+				!(child_15.active) : FALSE;
+				!(child_15.status = success) : FALSE;
+				TRUE: TRUE;
+			esac;
+MODULE define_variables
+	DEFINE
+		battery := 0;
+		battery_low_warning := 1;
+		battery_dot_batt_charge_remaining := 2;
+		bb_rth := 3;
+		bb_rth_warning := 4;
+		bb_rth_dot_data := 5;
+		bb_geofence := 6;
+		bb_geofence_warning := 7;
+		bb_geofence_dot_data := 8;
+		lec2_am_r := 9;
+		lec2_am_r_speed_warning := 10;
+		lec2_am_r_pipe_warning := 11;
+		lec2_am_r_dot_confs := 12;
+		lec2_am_l := 13;
+		lec2_am_l_speed_warning := 14;
+		lec2_am_l_pipe_warning := 15;
+		lec2_am_l_dot_confs := 16;
+		bb_pipelost := 17;
+		bb_pipe_lost_warning := 18;
+		bb_pipelost_dot_data := 19;
+		bb_mission_dot_data := 20;
+		bb_sensor_failure := 21;
+		bb_sensor_failure_warning := 22;
+		bb_sensor_failure_dot_data := 23;
+		bb_waypoints_completed := 24;
+		bb_waypoints_completed_dot_data := 25;
+		bb_mission := 26;
+		dd_output := 27;
+		dd_z_axis_warning := 28;
+		dd_xy_axis_degradation := 29;
+		dd_output_dot_data := 30;
+		total_degradation := 31;
+		fls_range := 32;
+		obstacle_standoff_warning := 33;
+		obstacle_min_standoff := 34;
+		fls_range_dot_range := 35;
+		obstacle_in_view := 36;
+		bb_fls_warning := 37;
+		obstacle_in_view_dot_stamp := 38;
+		emergency_stop_warning := 39;
+		hsd_pipeline_mapping := 40;
+		hsd_to_waypoint := 41;
+		hsd_to_rth := 42;
+		hsd_to_surface := 43;
+		rtreach_out := 44;
+		rtreach_out_dot_data := 45;
+		HSD_out_dot_heading := 46;
+		uuv_max_speed := 47;
+		mission_file := 48;
+		refLat := 49;
+		refLon := 50;
+		next_mission := 51;
+		decision_threshold := 52;
+		HSD_out := 53;
+		bb_obstacle_warning := 54;
+		cm_hsd_input := 55;
+		HSD_out_dot_speed := 56;
+		HSD_out_dot_depth := 57;
+		bb_home_reached := 58;
+		bb_home_dist := 59;
+		bb_home_dist_dot_data := 60;
+		pipe_mapping_enable := 61;
+MODULE define_nodes
+	DEFINE
+		BlueROV := 0;
+		topics2bb := 1;
+		battery2bb := 2;
+		rth2bb := 3;
+		geofence2bb := 4;
+		lec2_am_r_2bb := 5;
+		lec2_am_l_2bb := 6;
+		pipe_lost2bb := 7;
+		sensor_failure2bb := 8;
+		waypoints_completed2bb := 9;
+		mission2bb := 10;
+		ddlec2bb := 11;
+		fls2bb := 12;
+		fls_warning2bb := 13;
+		hsd_pipe2bb := 14;
+		hsd_wp2bb := 15;
+		hsd_rth2bb := 16;
+		hsd_surface2bb := 17;
+		rtreach2bb := 18;
+		dd_tasks := 19;
+		reallocate_check_SIF := 20;
+		reallocate_check := 21;
+		is_reallocation_requested := 22;
+		reallocate_task := 23;
+		dd_lec_task := 24;
+		mission_server := 25;
+		obstacle_avoidance := 26;
+		priorities := 27;
+		battery_check_SIF := 28;
+		battery_check := 29;
+		battery_low_fs := 30;
+		surface_task := 31;
+		sensor_failure_selector_SIF := 32;
+		sensor_failure_selector := 33;
+		check_sensor_failure := 34;
+		surface_task1 := 35;
+		emergency_stop_check_SIF := 36;
+		emergency_stop_check := 37;
+		emergency_stop_fs := 38;
+		emergency_stop_tasks := 39;
+		emergency_stop_task := 40;
+		surface_task2 := 41;
+		home_reached_selector_SIF := 42;
+		home_reached_selector := 43;
+		check_surface := 44;
+		surface_task3 := 45;
+		obstacle_standoff_check_SIF := 46;
+		obstacle_standoff_check := 47;
+		obstacle_standoff_fs := 48;
+		surface_task4 := 49;
+		rth_selector_SIF := 50;
+		rth_selector := 51;
+		check_rth := 52;
+		rth_par := 53;
+		rth_task := 54;
+		home2bb := 55;
+		geofence_selector_SIF := 56;
+		geofence_selector := 57;
+		check_geofence := 58;
+		rth_par1 := 59;
+		rth_task1 := 60;
+		home2bb1 := 61;
+		pipe_lost_selector_SIF := 62;
+		pipe_lost_selector := 63;
+		check_pipe_post := 64;
+		loiter_task1 := 65;
+		track_pipe_mission := 66;
+		is_track_pipe_mission_requested := 67;
+		tracking := 68;
+		tracking_task := 69;
+		lec2am_speed_cmd := 70;
+		lec2am_l_speed_check_SIF := 71;
+		lec2am_l_speed_check := 72;
+		check_lec2am_ls := 73;
+		speed_min_task := 74;
+		lec2am_r_speed_check_SIF := 75;
+		lec2am_r_speed_check := 76;
+		check_lec2am_rs := 77;
+		speed_min_task1 := 78;
+		speed_max_task := 79;
+		lec2am_mapping_cmd := 80;
+		lec2am_l_mapping_check_SIF := 81;
+		lec2am_l_mapping_check := 82;
+		check_lec2am_lp := 83;
+		pipe_mapping_disable_task := 84;
+		lec2am_r_mapping_check_SIF := 85;
+		lec2am_r_mapping_check := 86;
+		check_lec2am_rp := 87;
+		pipe_mapping_disable_task1 := 88;
+		pipe_mapping_enable_task := 89;
+		track_pipe_mission_end := 90;
+		evaluate := 91;
+		waypoint_mission := 92;
+		is_waypoint_requested := 93;
+		waypoint_selector := 94;
+		waypoints_sif_SIF := 95;
+		waypoints_sif := 96;
+		check_waypoints_completed := 97;
+		waypoint_end := 98;
+		next_mission := 99;
+		loiter_task2 := 100;
+		waypoint_task := 101;
+		loiter_task := 102;
+--battery : 0
+----battery2bb
+--battery_low_warning : 1
+----battery2bb
+--battery_dot_batt_charge_remaining : 2
+----battery2bb
+--bb_rth : 3
+----rth2bb
+--bb_rth_warning : 4
+----rth2bb
+----mission_server
+--bb_rth_dot_data : 5
+----rth2bb
+--bb_geofence : 6
+----geofence2bb
+--bb_geofence_warning : 7
+----geofence2bb
+--bb_geofence_dot_data : 8
+----geofence2bb
+--lec2_am_r : 9
+----lec2_am_r_2bb
+--lec2_am_r_speed_warning : 10
+----lec2_am_r_2bb
+--lec2_am_r_pipe_warning : 11
+----lec2_am_r_2bb
+--lec2_am_r_dot_confs : 12
+----lec2_am_r_2bb
+--lec2_am_l : 13
+----lec2_am_l_2bb
+--lec2_am_l_speed_warning : 14
+----lec2_am_l_2bb
+--lec2_am_l_pipe_warning : 15
+----lec2_am_l_2bb
+--lec2_am_l_dot_confs : 16
+----lec2_am_l_2bb
+--bb_pipelost : 17
+----pipe_lost2bb
+--bb_pipe_lost_warning : 18
+----pipe_lost2bb
+--bb_pipelost_dot_data : 19
+----pipe_lost2bb
+--bb_mission_dot_data : 20
+----pipe_lost2bb
+----mission2bb
+----mission_server
+--bb_sensor_failure : 21
+----sensor_failure2bb
+--bb_sensor_failure_warning : 22
+----sensor_failure2bb
+--bb_sensor_failure_dot_data : 23
+----sensor_failure2bb
+--bb_waypoints_completed : 24
+----waypoints_completed2bb
+--bb_waypoints_completed_dot_data : 25
+----waypoints_completed2bb
+--bb_mission : 26
+----mission2bb
+--dd_output : 27
+----ddlec2bb
+--dd_z_axis_warning : 28
+----ddlec2bb
+--dd_xy_axis_degradation : 29
+----ddlec2bb
+----reallocate_task
+--dd_output_dot_data : 30
+----ddlec2bb
+----reallocate_task
+--total_degradation : 31
+----ddlec2bb
+----reallocate_task
+--fls_range : 32
+----fls2bb
+--obstacle_standoff_warning : 33
+----fls2bb
+--obstacle_min_standoff : 34
+----fls2bb
+----mission_server
+--fls_range_dot_range : 35
+----fls2bb
+--obstacle_in_view : 36
+----fls_warning2bb
+--bb_fls_warning : 37
+----fls_warning2bb
+--obstacle_in_view_dot_stamp : 38
+----fls_warning2bb
+--emergency_stop_warning : 39
+----fls_warning2bb
+----rtreach2bb
+----mission_server
+--hsd_pipeline_mapping : 40
+----hsd_pipe2bb
+--hsd_to_waypoint : 41
+----hsd_wp2bb
+--hsd_to_rth : 42
+----hsd_rth2bb
+--hsd_to_surface : 43
+----hsd_surface2bb
+--rtreach_out : 44
+----rtreach2bb
+--rtreach_out_dot_data : 45
+----rtreach2bb
+--HSD_out_dot_heading : 46
+----reallocate_task
+----obstacle_avoidance
+----surface_task
+----surface_task1
+----surface_task2
+----surface_task3
+----surface_task4
+----rth_task
+----rth_task1
+----loiter_task1
+----tracking_task
+----speed_min_task
+----speed_min_task1
+----speed_max_task
+----loiter_task2
+----waypoint_task
+----loiter_task
+--uuv_max_speed : 47
+----mission_server
+----speed_max_task
+--mission_file : 48
+----mission_server
+--refLat : 49
+----mission_server
+--refLon : 50
+----mission_server
+--next_mission : 51
+----mission_server
+----next_mission
+--decision_threshold : 52
+----mission_server
+--HSD_out : 53
+----obstacle_avoidance
+----surface_task
+----surface_task1
+----surface_task2
+----surface_task3
+----surface_task4
+----rth_task
+----rth_task1
+----loiter_task1
+----tracking_task
+----speed_min_task
+----speed_min_task1
+----speed_max_task
+----loiter_task2
+----waypoint_task
+----loiter_task
+--bb_obstacle_warning : 54
+----obstacle_avoidance
+--cm_hsd_input : 55
+----obstacle_avoidance
+----surface_task
+----surface_task1
+----surface_task2
+----surface_task3
+----surface_task4
+----rth_task
+----rth_task1
+----loiter_task1
+----tracking_task
+----loiter_task2
+----waypoint_task
+----loiter_task
+--HSD_out_dot_speed : 56
+----obstacle_avoidance
+----surface_task
+----surface_task1
+----surface_task2
+----surface_task3
+----surface_task4
+----rth_task
+----rth_task1
+----loiter_task1
+----tracking_task
+----speed_min_task
+----speed_min_task1
+----speed_max_task
+----loiter_task2
+----waypoint_task
+----loiter_task
+--HSD_out_dot_depth : 57
+----obstacle_avoidance
+----surface_task
+----surface_task1
+----surface_task2
+----surface_task3
+----surface_task4
+----rth_task
+----rth_task1
+----loiter_task1
+----tracking_task
+----speed_min_task
+----speed_min_task1
+----speed_max_task
+----loiter_task2
+----waypoint_task
+----loiter_task
+--bb_home_reached : 58
+----home2bb
+----home2bb1
+--bb_home_dist : 59
+----home2bb
+----home2bb1
+--bb_home_dist_dot_data : 60
+----home2bb
+----home2bb1
+--pipe_mapping_enable : 61
+----pipe_mapping_disable_task
+----pipe_mapping_disable_task1
+----pipe_mapping_enable_task
+MODULE blackboard_module(node_names, variable_names, statuses)
+	DEFINE
+		variables := [battery, battery_low_warning, battery_dot_batt_charge_remaining, bb_rth, bb_rth_warning, bb_rth_dot_data, bb_geofence, bb_geofence_warning, bb_geofence_dot_data, lec2_am_r, lec2_am_r_speed_warning, lec2_am_r_pipe_warning, lec2_am_r_dot_confs, lec2_am_l, lec2_am_l_speed_warning, lec2_am_l_pipe_warning, lec2_am_l_dot_confs, bb_pipelost, bb_pipe_lost_warning, bb_pipelost_dot_data, bb_mission_dot_data, bb_sensor_failure, bb_sensor_failure_warning, bb_sensor_failure_dot_data, bb_waypoints_completed, bb_waypoints_completed_dot_data, bb_mission, dd_output, dd_z_axis_warning, dd_xy_axis_degradation, dd_output_dot_data, total_degradation, fls_range, obstacle_standoff_warning, obstacle_min_standoff, fls_range_dot_range, obstacle_in_view, bb_fls_warning, obstacle_in_view_dot_stamp, emergency_stop_warning, hsd_pipeline_mapping, hsd_to_waypoint, hsd_to_rth, hsd_to_surface, rtreach_out, rtreach_out_dot_data, HSD_out_dot_heading, uuv_max_speed, mission_file, refLat, refLon, next_mission, decision_threshold, HSD_out, bb_obstacle_warning, cm_hsd_input, HSD_out_dot_speed, HSD_out_dot_depth, bb_home_reached, bb_home_dist, bb_home_dist_dot_data, pipe_mapping_enable];
+		variable_exists := [battery_exists, battery_low_warning_exists, battery_dot_batt_charge_remaining_exists, bb_rth_exists, bb_rth_warning_exists, bb_rth_dot_data_exists, bb_geofence_exists, bb_geofence_warning_exists, bb_geofence_dot_data_exists, lec2_am_r_exists, lec2_am_r_speed_warning_exists, lec2_am_r_pipe_warning_exists, lec2_am_r_dot_confs_exists, lec2_am_l_exists, lec2_am_l_speed_warning_exists, lec2_am_l_pipe_warning_exists, lec2_am_l_dot_confs_exists, bb_pipelost_exists, bb_pipe_lost_warning_exists, bb_pipelost_dot_data_exists, bb_mission_dot_data_exists, bb_sensor_failure_exists, bb_sensor_failure_warning_exists, bb_sensor_failure_dot_data_exists, bb_waypoints_completed_exists, bb_waypoints_completed_dot_data_exists, bb_mission_exists, dd_output_exists, dd_z_axis_warning_exists, dd_xy_axis_degradation_exists, dd_output_dot_data_exists, total_degradation_exists, fls_range_exists, obstacle_standoff_warning_exists, obstacle_min_standoff_exists, fls_range_dot_range_exists, obstacle_in_view_exists, bb_fls_warning_exists, obstacle_in_view_dot_stamp_exists, emergency_stop_warning_exists, hsd_pipeline_mapping_exists, hsd_to_waypoint_exists, hsd_to_rth_exists, hsd_to_surface_exists, rtreach_out_exists, rtreach_out_dot_data_exists, HSD_out_dot_heading_exists, uuv_max_speed_exists, mission_file_exists, refLat_exists, refLon_exists, next_mission_exists, decision_threshold_exists, HSD_out_exists, bb_obstacle_warning_exists, cm_hsd_input_exists, HSD_out_dot_speed_exists, HSD_out_dot_depth_exists, bb_home_reached_exists, bb_home_dist_exists, bb_home_dist_dot_data_exists, pipe_mapping_enable_exists];
+		battery_exists := TRUE;
+		battery_low_warning_exists := TRUE;
+		battery_dot_batt_charge_remaining_exists := TRUE;
+		bb_rth_exists := TRUE;
+		bb_rth_warning_exists := TRUE;
+		bb_rth_dot_data_exists := TRUE;
+		bb_geofence_exists := TRUE;
+		bb_geofence_warning_exists := TRUE;
+		bb_geofence_dot_data_exists := TRUE;
+		lec2_am_r_exists := TRUE;
+		lec2_am_r_speed_warning_exists := TRUE;
+		lec2_am_r_pipe_warning_exists := TRUE;
+		lec2_am_r_dot_confs_exists := TRUE;
+		lec2_am_l_exists := TRUE;
+		lec2_am_l_speed_warning_exists := TRUE;
+		lec2_am_l_pipe_warning_exists := TRUE;
+		lec2_am_l_dot_confs_exists := TRUE;
+		bb_pipelost_exists := TRUE;
+		bb_pipe_lost_warning_exists := TRUE;
+		bb_pipelost_dot_data_exists := TRUE;
+		bb_mission_dot_data_exists := TRUE;
+		bb_pipe_lost_dot_data_exists := TRUE;
+		bb_sensor_failure_exists := TRUE;
+		bb_sensor_failure_warning_exists := TRUE;
+		bb_sensor_failure_dot_data_exists := TRUE;
+		bb_waypoints_completed_exists := TRUE;
+		bb_waypoints_completed_dot_data_exists := TRUE;
+		bb_mission_exists := TRUE;
+		dd_output_exists := TRUE;
+		dd_z_axis_warning_exists := TRUE;
+		dd_xy_axis_degradation_exists := TRUE;
+		dd_output_dot_data_exists := TRUE;
+		total_degradation_exists := TRUE;
+		fls_range_exists := TRUE;
+		obstacle_standoff_warning_exists := TRUE;
+		obstacle_min_standoff_exists := TRUE;
+		fls_range_dot_range_exists := TRUE;
+		obstacle_in_view_exists := TRUE;
+		bb_fls_warning_exists := TRUE;
+		obstacle_in_view_dot_stamp_exists := TRUE;
+		emergency_stop_warning_exists := TRUE;
+		hsd_pipeline_mapping_exists := TRUE;
+		hsd_to_waypoint_exists := TRUE;
+		hsd_to_rth_exists := TRUE;
+		hsd_to_surface_exists := TRUE;
+		rtreach_out_exists := TRUE;
+		rtreach_out_dot_data_exists := TRUE;
+		HSD_out_dot_heading_exists := TRUE;
+		uuv_max_speed_exists := TRUE;
+		mission_file_exists := TRUE;
+		refLat_exists := TRUE;
+		refLon_exists := TRUE;
+		next_mission_exists := TRUE;
+		decision_threshold_exists := TRUE;
+		HSD_out_exists := TRUE;
+		bb_obstacle_warning_exists := TRUE;
+		cm_hsd_input_exists := TRUE;
+		HSD_out_dot_speed_exists := TRUE;
+		HSD_out_dot_depth_exists := TRUE;
+		bb_home_reached_exists := TRUE;
+		bb_home_dist_exists := TRUE;
+		bb_home_dist_dot_data_exists := TRUE;
+		pipe_mapping_enable_exists := TRUE;
+		--
+		--
+		--
+		task_mission_server_mission_len := 2;--must be >=1
+		--task_mission_server_mission_type_list := [mission_type_0, mission_type_1, mission_type_2];--list of missions here.
+		task_mission_server_mission_type_list := [mission_type_0, mission_type_1];--list of missions here.
+		--task_mission_server_mission_distance_list := [mission_distance_0, mission_distance_1, mission_distance_2];--list of min distances here. between 0 and 2 for each value
+		task_mission_server_mission_distance_list := [mission_distance_0, mission_distance_1];--list of min distances here. between 0 and 2 for each value
+		mission_type_path_following := 0;
+		mission_type_waypoint_following := 1;
+		mission_type_e_stop := 2;
+		mission_type_pipe_following := 3;
+		mission_type_unknown := 4;
+		--
+		total_degradation_threshold := 0;
+		--
+		heading_default := 0;
+		heading_surface := 1;
+		heading_rth := 2;
+		heading_loiter := 3;--this value explicitly listed as 30 in loiter tasks, unlike the other ones which i have no idea what they are.
+		heading_pipeline_mapping := 4;
+		heading_waypoint := 5;
+		--
+		home_reached_threshold := 1;
+		name_default := 0;
+		name_surface_task := 1;
+		name_rth_task := 2;
+		name_loiter_task := 3;
+		name_tracking_task := 4;
+		name_waypoint_task := 5;
+		--
+		depth_default := 0;
+		depth_surface_task := 1;
+		depth_rth_task := 2;
+		depth_pipeline_mapping := 3;
+		depth_waypoint :=4;
+		--
+		battery_low_warning :=
+			case
+				battery_dot_batt_charge_remaining = 0 : 1;
+				TRUE : 0;
+			esac;
+		
+		lec2_am_r_speed_warning :=
+			case
+				(lec2_am_r_dot_confs = 1) | (lec2_am_r_dot_confs = 3) : 1;
+				TRUE : 0;
+			esac;
+		lec2_am_r_pipe_warning :=
+			case
+				(lec2_am_r_dot_confs = 2) | (lec2_am_r_dot_confs = 3) : 1;
+				TRUE : 0;
+			esac;
+		lec2_am_l_speed_warning :=
+			case
+				(lec2_am_l_dot_confs = 1) | (lec2_am_l_dot_confs = 3) : 1;
+				TRUE : 0;
+			esac;
+		lec2_am_l_pipe_warning :=
+			case
+				(lec2_am_l_dot_confs = 2) | (lec2_am_l_dot_confs = 3) : 1;
+				TRUE : 0;
+			esac;
+		battery := 0;--fake variable
+		bb_rth := 0;--fake variable
+		bb_geofence := 0;--fake variable
+		lec2_am_r := 0;
+		lec2_am_l := 0;
+		bb_pipelost := 0;--fake variable
+		bb_sensor_failure := 0;--fake variable
+		bb_waypoints_completed := 0;--fake variable
+		bb_mission := 0;--fake variable
+		dd_output := 0;--fake variable
+		fls_range := 0;--fake variable
+		obstacle_in_view := 0;--abstraced away
+		rtreach_out := 0;--fake variable
+		mission_file := 0;--not actually used
+		HSD_out := 0;--fake variable
+		bb_home_dist := 0;--fake variable
+		decision_threshold := 0; --not actually used
+		hsd_pipeline_mapping := 0;--unknown
+		hsd_to_waypoint := 0;--unknown
+		hsd_to_rth := 0;--unknown
+		hsd_to_surface := 0;--unknown
+		uuv_min_speed := 0;--does not change (frozen var it?)
+		uuv_max_speed := 1;--does not change (frozen var it?)
+		refLat := 0;--does not change (frozen var it?)
+		refLon := 0;--does not change (frozen var it?)
+		--
+		--these have been abstracted away
+		bb_rth_dot_data := 0;
+		bb_geofence_dot_data := 0;
+		bb_pipelost_dot_data := 0;
+		bb_pipe_lost_dot_data := 0;
+		bb_sensor_failure_dot_data := 0;
+		bb_home_dist_dot_data := 0;
+	FROZENVAR
+		--mission_type_0 : {mission_type_path_following, mission_type_waypoint_following, mission_type_e_stop, mission_type_pipe_following, mission_type_unknown};
+		--mission_type_1 : {mission_type_path_following, mission_type_waypoint_following, mission_type_e_stop, mission_type_pipe_following, mission_type_unknown};
+		--mission_type_2 : {mission_type_path_following, mission_type_waypoint_following, mission_type_e_stop, mission_type_pipe_following, mission_type_unknown};
+		mission_type_0 : {0, 1, 2, 3, 4};
+		mission_type_1 : {0, 1, 2, 3, 4};
+		--mission_type_2 : {0, 1, 2, 3, 4};
+		mission_distance_0 : {0, 1};
+		mission_distance_1 : {0, 1};
+		--mission_distance_2 : {0, 1};
+		
+	VAR
+		task_mission_server_mission_idx : 0..task_mission_server_mission_len;
+		--battery : 0..1;
+		--battery_low_warning : 0..1;
+		battery_dot_batt_charge_remaining : 0..1;
+		--bb_rth : 0..1;
+		bb_rth_warning : 0..1;
+		--bb_rth_dot_data : 0..1;
+		--bb_geofence : 0..1;
+		bb_geofence_warning : 0..1;
+		--bb_geofence_dot_data : 0..1;
+		--lec2_am_r : 0..1;
+		--lec2_am_r_speed_warning : 0..1;
+		--lec2_am_r_pipe_warning : 0..1;
+		lec2_am_r_dot_confs : 0..3;
+		--lec2_am_l : 0..1;
+		--lec2_am_l_speed_warning : 0..1;
+		--lec2_am_l_pipe_warning : 0..1;
+		lec2_am_l_dot_confs : 0..3;
+		--bb_pipelost : 0..1;
+		bb_pipe_lost_warning : 0..1;
+		--bb_pipelost_dot_data : 0..1;
+		--bb_mission_dot_data : {mission_type_path_following, mission_type_waypoint_following, mission_type_e_stop, mission_type_pipe_following, mission_type_unknown};
+		bb_mission_dot_data : {0, 1, 2, 3, 4}; 
+		--bb_pipe_lost_dot_data : 0..1;
+		--bb_sensor_failure : 0..1;
+		bb_sensor_failure_warning : 0..1;
+		--bb_sensor_failure_dot_data : 0..1;
+		--bb_waypoints_completed : 0..1;
+		bb_waypoints_completed_dot_data : 0..1;
+		--bb_mission : 0..1;
+		--dd_output : 0..1;
+		dd_z_axis_warning : 0..1;
+		dd_xy_axis_degradation : 0..1;
+		dd_output_dot_data : 0..2;
+		total_degradation : 0..1;
+		--fls_range : 0..1;
+		obstacle_standoff_warning : 0..1;
+		obstacle_min_standoff : 0..1;
+		fls_range_dot_range : 0..1;
+		--obstacle_in_view : 0..1;
+		bb_fls_warning : 0..1;
+		obstacle_in_view_dot_stamp : 0..1;
+		emergency_stop_warning : 0..1;
+		--hsd_pipeline_mapping : 0..1;
+		--hsd_to_waypoint : 0..1;
+		--hsd_to_rth : 0..1;
+		--hsd_to_surface : 0..1; --these should maybe be used in the HSD_out variables
+		--rtreach_out : 0..1;
+		--HSD_out_dot_heading : {heading_default, heading_surface, heading_rth, heading_loiter, heading_pipeline_mapping, heading_waypoint};
+		HSD_out_dot_heading : {0, 1, 2, 3, 4, 5};
+		rtreach_out_dot_data : 0..1;
+		--uuv_max_speed : 0..1;
+		--mission_file : 0..1;
+		--refLat : 0..1;
+		--refLon : 0..1;
+		next_mission : 0..1;
+		--decision_threshold : 0..1;
+		--HSD_out : 0..1;
+		bb_obstacle_warning : 0..1;
+		--cm_hsd_input : {name_default, name_surface_task, name_rth_task, name_loiter_task, name_tracking_task, name_waypoint_task};
+		cm_hsd_input : {0, 1, 2, 3, 4, 5};
+		--HSD_out_dot_speed : {uuv_min_speed, uuv_max_speed};
+		HSD_out_dot_speed : {0, 1};
+		--HSD_out_dot_depth : {depth_default, depth_surface_task, depth_rth_task, depth_pipeline_mapping, depth_waypoint};
+		HSD_out_dot_depth : {0, 1, 2, 3, 4};
+		bb_home_reached : 0..1;
+		--bb_home_dist : 0..1;
+		--bb_home_dist_dot_data : 0..1;
+		pipe_mapping_enable : 0..1;
+		
+	ASSIGN
+		---
+		init(task_mission_server_mission_idx) := 0;
+		next(task_mission_server_mission_idx) :=
+			case
+				!(statuses[node_names.mission_server] in {invalid, failure}) & (next_mission = 1) : min(task_mission_server_mission_idx + 1, task_mission_server_mission_len);
+				--we care if next_mission = 1 at the start of the tree run, so no need to use a next() statement.
+				TRUE : task_mission_server_mission_idx;
+			esac;
+		---
+		init(battery_dot_batt_charge_remaining) := 0;
+		next(battery_dot_batt_charge_remaining) := 
+			case
+				(statuses[node_names.battery2bb] = success) : {0, 1};
+				TRUE : battery_dot_batt_charge_remaining;
+			esac;
+		init(bb_rth_warning) := 0;
+		next(bb_rth_warning) := 
+			case
+				(bb_rth_warning = 1) : 1; -- can't be unset.
+				--(active_node = node_names.rth2bb) & (statuses[node_names.] = success) : next(bb_rth_dot_data);
+				(statuses[node_names.rth2bb] = success) : {0, 1};
+				!(statuses[node_names.mission_server] in {invalid, failure}) & (next_mission = 1) & (next(task_mission_server_mission_idx) = task_mission_server_mission_len)  : 1;
+				--we care if next_mission = 1 at the start of the tree run, so no need to use a next() statement.
+				TRUE : bb_rth_warning;
+			esac;
+		-- init(bb_rth_dot_data) := 0;
+		-- next(bb_rth_dot_data) := 
+		-- 	case
+		-- 		(active_node in {node_names.rth2bb}) & (statuses[node_names.rth2bb] = success) : {0, 1};
+		-- 		TRUE : bb_rth_dot_data;
+		-- 	esac;
+		init(bb_geofence_warning) := 0;
+		next(bb_geofence_warning) := 
+			case
+				(bb_geofence_warning = 1) : 1;
+				--(active_node in {node_names.geofence2bb}) & (statuses[node_names.] = success) : next(bb_geofence_dot_data);
+				(statuses[node_names.geofence2bb] = success) : {0, 1};
+				TRUE : bb_geofence_warning;
+			esac;
+		-- init(bb_geofence_dot_data) := 0;
+		-- next(bb_geofence_dot_data) := 
+		-- 	case
+		-- 		(active_node in {node_names.geofence2bb}) & (statuses[node_names.geofence2bb] = success) : {0, 1};
+		-- 		TRUE : bb_geofence_dot_data;
+		-- 	esac;
+		-- init(lec2_am_r) := 0;
+		-- next(lec2_am_r) := 
+		-- 	case
+		-- 		(active_node in {node_names.lec2_am_r_2bb}) & (statuses[node_names.lec2_am_r_2bb] = success) : {0, 1};
+		-- 		TRUE : lec2_am_r;
+		-- 	esac;
+		-- init(lec2_am_r_speed_warning) := 0;
+		-- next(lec2_am_r_speed_warning) := 
+		-- 	case
+		-- 		(active_node in {node_names.lec2_am_r_2bb}) & (statuses[node_names.] = success) : {0, 1};
+		-- 		TRUE : lec2_am_r_speed_warning;
+		-- 	esac;
+		-- init(lec2_am_r_pipe_warning) := 0;
+		-- next(lec2_am_r_pipe_warning) := 
+		-- 	case
+		-- 		(active_node in {node_names.lec2_am_r_2bb}) & (statuses[node_names.] = success) : {0, 1};
+		-- 		TRUE : lec2_am_r_pipe_warning;
+		-- 	esac;
+		init(lec2_am_r_dot_confs) := 0; -- 0 means no warning, 1 means speed, 2 means pipe, 3 means both
+		next(lec2_am_r_dot_confs) := 
+			case
+				(statuses[node_names.lec2_am_r_2bb] = success) : {0, 1, 2, 3};
+				TRUE : lec2_am_r_dot_confs;
+			esac;
+		-- init(lec2_am_l) := 0;
+		-- next(lec2_am_l) := 
+		-- 	case
+		-- 		(active_node in {node_names.lec2_am_l_2bb}) & (statuses[node_names.] = success) : {0, 1};
+		-- 		TRUE : lec2_am_l;
+		-- 	esac;
+		-- init(lec2_am_l_speed_warning) := 0;
+		-- next(lec2_am_l_speed_warning) := 
+		-- 	case
+		-- 		(active_node in {node_names.lec2_am_l_2bb}) & (statuses[node_names.] = success) : {0, 1};
+		-- 		TRUE : lec2_am_l_speed_warning;
+		-- 	esac;
+		-- init(lec2_am_l_pipe_warning) := 0;
+		-- next(lec2_am_l_pipe_warning) := 
+		-- 	case
+		-- 		(active_node in {node_names.lec2_am_l_2bb}) & (statuses[node_names.] = success) : {0, 1};
+		-- 		TRUE : lec2_am_l_pipe_warning;
+		-- 	esac;
+		init(lec2_am_l_dot_confs) := 0; -- 0 means no warning, 1 means speed, 2 means pipe, 3 means both
+		next(lec2_am_l_dot_confs) := 
+			case
+				(statuses[node_names.lec2_am_l_2bb] = success) : {0, 1, 2, 3};
+				TRUE : lec2_am_l_dot_confs;
+			esac;
+		init(bb_pipe_lost_warning) := 0;
+		next(bb_pipe_lost_warning) := 
+			case
+				--(active_node in {node_names.pipe_lost2bb}) & (statuses[node_names.] = success) & (bb_mission_dot_data = mission_type_pipe_following) : next(bb_pipe_lost_dot_data);
+				(statuses[node_names.pipe_lost2bb] = success) & (bb_mission_dot_data = mission_type_pipe_following) : {0, 1};
+				--pipe_lost2bb occurs before either mission2bb or mission_server, therefore the value of bb_mission_dot_data is correcyt as is.
+				TRUE : bb_pipe_lost_warning;
+			esac;
+		-- init(bb_pipelost_dot_data) := 0;
+		-- next(bb_pipelost_dot_data) := 
+		-- 	case
+		-- 		(active_node in {node_names.pipe_lost2bb}) & (statuses[node_names.] = success) & (bb_mission_dot_data = mission_type_pipe_following) : {0, 1};
+		-- 		TRUE : bb_pipelost_dot_data;
+		-- 	esac;
+		init(bb_mission_dot_data) := task_mission_server_mission_type_list[0];
+		next(bb_mission_dot_data) := 
+			case
+				(statuses[node_names.mission2bb] = success) : {mission_type_path_following, mission_type_waypoint_following, mission_type_e_stop, mission_type_pipe_following, mission_type_unknown};--this seems wildly incorrect, but for some reason this is how the tree is setup. it makes negative sense to me.
+				!(statuses[node_names.mission_server] in {invalid, failure}) & (next_mission = 1) & (next(task_mission_server_mission_idx) < task_mission_server_mission_len) : task_mission_server_mission_type_list[next(task_mission_server_mission_idx)];
+				--care about next_mission value at start of run, no need for next()
+				--care if we are about to set task_mission_server_mission_idx to overflow, need to use next() (couild maybe use complicated math, but w.e)
+				TRUE : bb_mission_dot_data;
+			esac;
+		-- init(bb_pipe_lost_dot_data) := 0;
+		-- next(bb_pipe_lost_dot_data) := 
+		-- 	case
+		-- 		(active_node in {node_names.pipe_lost2bb}) & (statuses[node_names.] = success) : {0, 1};
+		-- 		TRUE : bb_pipe_lost_dot_data;
+		-- 	esac;
+		init(bb_sensor_failure_warning) := 0;
+		next(bb_sensor_failure_warning) := 
+			case
+				(bb_sensor_failure_warning = 1) : 1;
+				--(active_node in {node_names.sensor_failure2bb}) & (statuses[node_names.] = success) : next(bb_sensor_failure_dot_data);
+				(statuses[node_names.sensor_failure2bb] = success) : {0, 1};
+				TRUE : bb_sensor_failure_warning;
+			esac;
+		-- init(bb_sensor_failure_dot_data) := 0;
+		-- next(bb_sensor_failure_dot_data) := 
+		-- 	case
+		-- 		(active_node in {node_names.sensor_failure2bb}) & (statuses[node_names.] = success) : {0, 1};
+		-- 		TRUE : bb_sensor_failure_dot_data;
+		-- 	esac;
+		init(bb_waypoints_completed_dot_data) := 0;
+		next(bb_waypoints_completed_dot_data) := 
+			case
+				(statuses[node_names.waypoints_completed2bb] = success) : {0, 1};
+				TRUE : bb_waypoints_completed_dot_data;
+			esac;
+		init(dd_z_axis_warning) := 0;
+		next(dd_z_axis_warning) := 
+			case
+				--ddlec2bb occurs BEFORE reallocation task (which is what sets total_degradation. therefore, no next() call needed for total_degradation.
+				--unfortunately, dd_output_dot_data is a bit more complicated
+				--we care about the value of dd_output_dot_data 'after' ddlec2bb runs
+				--however, the next() call will cause us to consider the value set by reallocation task, which we don't care about (yet).
+				--WAIT. NO. reallocate task USES dd_output_dot_data, but doesn't set it. we're safe. ok.
+				(total_degradation <= total_degradation_threshold) & (next(dd_output_dot_data) = 1) & (statuses[node_names.ddlec2bb] = success) : 1;
+				((total_degradation > total_degradation_threshold) | (next(dd_output_dot_data) = 0)) & (statuses[node_names.ddlec2bb] = success) : 0;
+				TRUE : dd_z_axis_warning;
+			esac;
+		init(dd_xy_axis_degradation) := 0;
+		next(dd_xy_axis_degradation) := 
+			case
+				(total_degradation <= total_degradation_threshold) & (next(dd_output_dot_data) = 2) & (statuses[node_names.ddlec2bb] = success) : 1;
+				((total_degradation > total_degradation_threshold) | (next(dd_output_dot_data) = 0)) & (statuses[node_names.ddlec2bb] = success) : 0;
+				TRUE : dd_xy_axis_degradation;
+			esac;
+		init(dd_output_dot_data) := 0; --0 means nothing, 1 means z, 2 means xy
+		next(dd_output_dot_data) := 
+			case
+				--!(statuses[node_names.reallocate_task] in {invalid, error}) : {0, 1, 2};
+				(statuses[node_names.ddlec2bb] = success) : {0, 1, 2};
+				TRUE : dd_output_dot_data;
+			esac;
+		init(total_degradation) := 0;
+		next(total_degradation) := 
+			case
+				--dd_xy_axis_degradation is set before we enter reallocate task (always), so we can safely use next for it.
+				!(statuses[node_names.reallocate_task] in {invalid, error}) & (next(dd_xy_axis_degradation) = 1) : 1;
+				TRUE : total_degradation;
+			esac;
+		init(obstacle_standoff_warning) := 0;
+		next(obstacle_standoff_warning) := 
+			case
+				--fls_range_dot_range is set in fls2bb (which also sets this node), and nowhere else. we can safely use next() for this
+				--obstacle_min_standoff is set in mission_server, which occurs after. we want the current value, so no need for next()
+				(0 < next(fls_range_dot_range)) & (next(fls_range_dot_range) <= obstacle_min_standoff) & (statuses[node_names.fls2bb] = success) : 1;--the 0 represents 0.5
+				TRUE : obstacle_standoff_warning;
+			esac;
+		init(obstacle_min_standoff) :=
+			case
+				(task_mission_server_mission_type_list[0] = mission_type_unknown) : 1;
+				TRUE : task_mission_server_mission_distance_list[0];
+			esac;
+		next(obstacle_min_standoff) := 
+			case
+				--we care about the value of next_mission going into this run. no need for next
+				--we are checking if we incrememnted task-mission_server_mission_idx to above a certain value
+				--rest is good
+				!(statuses[node_names.mission_server] in {invalid, error}) & (next_mission = 1) & (next(task_mission_server_mission_idx) < task_mission_server_mission_len) : task_mission_server_mission_distance_list[next(task_mission_server_mission_idx)];
+				TRUE : obstacle_min_standoff;
+			esac;
+		init(fls_range_dot_range) := 0;
+		next(fls_range_dot_range) := 
+			case
+				(statuses[node_names.fls2bb] = success) : {0, 1};
+				TRUE : fls_range_dot_range;
+			esac;
+		init(bb_fls_warning) := 0;
+		next(bb_fls_warning) := 
+			case
+				(bb_fls_warning = 1) : 1;
+				--obstacle_in_view_dot_stamp is set by flw_warning2bb and nowhere else, which is also where this value is set. so, we can safely use next()
+				(next(obstacle_in_view_dot_stamp) = 1) & (statuses[node_names.fls_warning2bb] = success) : 1;
+				TRUE : bb_fls_warning;
+			esac;
+		init(obstacle_in_view_dot_stamp) := 0;
+		next(obstacle_in_view_dot_stamp) := 
+			case
+				(statuses[node_names.fls_warning2bb] = success) : {0, 1};
+				TRUE : obstacle_in_view_dot_stamp;
+			esac;
+		init(emergency_stop_warning) :=
+			case
+				(task_mission_server_mission_type_list[0] = mission_type_e_stop) : 1;
+				TRUE : 0;
+			esac;
+		next(emergency_stop_warning) := 
+			case
+				(emergency_stop_warning = 1) : 1;
+				--yup, this works.
+				(next(obstacle_in_view_dot_stamp) = 1) & (statuses[node_names.fls_warning2bb] = success) : 1;
+				--rtreach_out_dot_data is only updated in rtreach2bb. we want the value after the update. using next()
+				(next(rtreach_out_dot_data) < 1) & (statuses[node_names.rtreach2bb] = success) : 1;
+				!(statuses[node_names.mission_server] in {invalid, failure}) & (next_mission = 1) & (next(task_mission_server_mission_idx) < task_mission_server_mission_len) & (task_mission_server_mission_type_list[next(task_mission_server_mission_idx)] = mission_type_e_stop) : 1;
+				TRUE : emergency_stop_warning;
+			esac;
+		-- init(hsd_pipeline_mapping) := 0;
+		-- next(hsd_pipeline_mapping) := 
+		-- 	case
+		-- 		(active_node in {node_names.hsd_pipe2bb}) & (statuses[node_names.] = success) : {0, 1};
+		-- 		TRUE : hsd_pipeline_mapping;
+		-- 	esac;
+		-- init(hsd_to_waypoint) := 0;
+		-- next(hsd_to_waypoint) := 
+		-- 	case
+		-- 		(active_node in {node_names.hsd_wp2bb}) & (statuses[node_names.] = success) : {0, 1};
+		-- 		TRUE : hsd_to_waypoint;
+		-- 	esac;
+		-- init(hsd_to_rth) := 0;
+		-- next(hsd_to_rth) := 
+		-- 	case
+		-- 		(active_node in {node_names.hsd_rth2bb}) & (statuses[node_names.] = success) : {0, 1};
+		-- 		TRUE : hsd_to_rth;
+		-- 	esac;
+		-- init(hsd_to_surface) := 0;
+		-- next(hsd_to_surface) := 
+		-- 	case
+		-- 		(active_node in {node_names.hsd_surface2bb}) & (statuses[node_names.] = success) : {0, 1};
+		-- 		TRUE : hsd_to_surface;
+		-- 	esac;
+		-- init(rtreach_out) := 0;
+		-- next(rtreach_out) := 
+		-- 	case
+		-- 		(active_node in {node_names.rtreach2bb}) & (statuses[node_names.] = success) : {0, 1};
+		-- 		TRUE : rtreach_out;
+		-- 	esac;
+		init(rtreach_out_dot_data) := 1;
+		next(rtreach_out_dot_data) := 
+			case
+				(statuses[node_names.rtreach2bb] = success) : {0, 1};
+				TRUE : rtreach_out_dot_data;
+			esac;
+		init(HSD_out_dot_heading) := heading_default;
+		next(HSD_out_dot_heading) := 
+			case
+				--(active_node in {node_names.reallocate_task, node_names.obstacle_avoidance, node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4, node_names.rth_task, node_names.rth_task1, node_names.loiter_task1, node_names.tracking_task, node_names.speed_min_task, node_names.speed_min_task1, node_names.speed_max_task, node_names.loiter_task2, node_names.waypoint_task, node_names.loiter_task}) & (statuses[node_names.] = success) : {0, 1};
+				!(statuses[node_names.loiter_task] in {invalid, error}) : heading_loiter;
+				!(statuses[node_names.waypoint_task] in {invalid, error}) : heading_waypoint;
+				!(statuses[node_names.loiter_task2] in {invalid, error}) : heading_loiter;
+				!(statuses[node_names.tracking_task] in {invalid, error}) : heading_pipeline_mapping;
+				!(statuses[node_names.loiter_task1] in {invalid, error}) : heading_loiter;
+				!(statuses[node_names.rth_task1] in {invalid, error}) : heading_rth;
+				!(statuses[node_names.rth_task] in {invalid, error}) : heading_rth;
+				!(statuses[node_names.surface_task4] in {invalid, error}) : heading_surface;
+				!(statuses[node_names.surface_task3] in {invalid, error}) : heading_surface;
+				!(statuses[node_names.surface_task2] in {invalid, error}) : heading_surface;
+				!(statuses[node_names.surface_task1] in {invalid, error}) : heading_surface;
+				!(statuses[node_names.surface_task] in {invalid, error}) : heading_surface;
+				TRUE : HSD_out_dot_heading;
+			esac;
+		-- init(uuv_max_speed) := 1;--default value, can be changed by passing stuff in
+		-- next(uuv_max_speed) := 
+		-- 	case
+		-- 		(active_node in {node_names.speed_max_task}) & (statuses[node_names.] = success) : {0, 1};
+		-- 		TRUE : uuv_max_speed;
+		-- 	esac;
+		-- init(mission_file) := 0;
+		-- next(mission_file) := 
+		-- 	case
+		-- 		(active_node in {node_names.mission_server}) & (statuses[node_names.] = success) : {0, 1};
+		-- 		TRUE : mission_file;
+		-- 	esac;
+		-- init(refLat) := 0;
+		-- next(refLat) := 
+		-- 	case
+		-- 		(active_node in {node_names.mission_server}) & (statuses[node_names.] = success) : {0, 1};
+		-- 		TRUE : refLat;
+		-- 	esac;
+		-- init(refLon) := 0;
+		-- next(refLon) := 
+		-- 	case
+		-- 		(active_node in {node_names.mission_server}) & (statuses[node_names.] = success) : {0, 1};
+		-- 		TRUE : refLon;
+		-- 	esac;
+		init(next_mission) := 0;
+		next(next_mission) := 
+			case
+				!(statuses[node_names.next_mission] in {invalid, error}) : 1;
+				!(statuses[node_names.mission_server] in {invalid, error}) : 0;
+				TRUE : next_mission;
+			esac;
+		-- init(decision_threshold) :=
+		-- 	case
+		-- 		(task_mission_server_mission_type_list[0] = mission_type_unknown) : ?;--NOT DONE. Fill in a default value here
+		-- 		TRUE : ?; --NOT DONE. figure out how this should actually be set
+		-- 	esac;
+				
+		-- next(decision_threshold) := --NOT DONE
+		-- 	case
+		-- 		(active_node in {node_names.mission_server}) & (statuses[node_names.] = success) : {0, 1};
+		-- 		TRUE : decision_threshold;
+		-- 	esac;
+		-- init(HSD_out) := 0;
+		-- next(HSD_out) := 
+		-- 	case
+		-- 		(active_node in {node_names.obstacle_avoidance, node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4, node_names.rth_task, node_names.rth_task1, node_names.loiter_task1, node_names.tracking_task, node_names.speed_min_task, node_names.speed_min_task1, node_names.speed_max_task, node_names.loiter_task2, node_names.waypoint_task, node_names.loiter_task}) & (statuses[node_names.] = success) : {0, 1};
+		-- 		TRUE : HSD_out;
+		-- 	esac;
+		init(bb_obstacle_warning) := 0;
+		next(bb_obstacle_warning) := 
+			case
+				!(statuses[node_names.obstacle_avoidance] in {invalid, error}) : {0, 1};
+				TRUE : bb_obstacle_warning;
+			esac;
+		init(cm_hsd_input) := name_default;
+		next(cm_hsd_input) := 
+			case
+				--(active_node in {node_names.obstacle_avoidance, node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4, node_names.rth_task, node_names.rth_task1, node_names.loiter_task1, node_names.tracking_task, node_names.loiter_task2, node_names.waypoint_task, node_names.loiter_task}) & (statuses[node_names.] = success) : {0, 1};
+				!(statuses[node_names.loiter_task] in {invalid, error}) : name_loiter_task;
+				!(statuses[node_names.waypoint_task] in {invalid, error}) : name_waypoint_task;
+				!(statuses[node_names.loiter_task2] in {invalid, error}) : name_loiter_task;
+				!(statuses[node_names.tracking_task] in {invalid, error}) : name_pipeline_mapping_task;
+				!(statuses[node_names.loiter_task1] in {invalid, error}) : name_loiter_task;
+				!(statuses[node_names.rth_task1] in {invalid, error}) : name_rth_task;
+				!(statuses[node_names.rth_task] in {invalid, error}) : name_rth_task;
+				!(statuses[node_names.surface_task4] in {invalid, error}) : name_surface_task;
+				!(statuses[node_names.surface_task3] in {invalid, error}) : name_surface_task;
+				!(statuses[node_names.surface_task2] in {invalid, error}) : name_surface_task;
+				!(statuses[node_names.surface_task1] in {invalid, error}) : name_surface_task;
+				!(statuses[node_names.surface_task] in {invalid, error}) : name_surface_task;
+				TRUE : cm_hsd_input;
+			esac;
+		init(HSD_out_dot_speed) := uuv_max_speed;
+		next(HSD_out_dot_speed) := 
+			case
+				--(active_node in {node_names.obstacle_avoidance, node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4, node_names.rth_task, node_names.rth_task1, node_names.loiter_task1, node_names.tracking_task, node_names.speed_min_task, node_names.speed_min_task1, node_names.speed_max_task, node_names.loiter_task2, node_names.waypoint_task, node_names.loiter_task}) & (statuses[node_names.] = success) : {0, 1};
+				!(statuses[node_names.speed_max_task] in {invalid, error}) : uuv_max_speed; -- the max speed
+				!(statuses[node_names.speed_min_task1] in {invalid, error}) : uuv_max_speed; -- the min speed
+				!(statuses[node_names.speed_min_task] in {invalid, error}) : uuv_max_speed; -- the min speed
+				TRUE : HSD_out_dot_speed;
+			esac;
+		init(HSD_out_dot_depth) := depth_default;
+		next(HSD_out_dot_depth) := 
+			case
+				--(active_node in {node_names.obstacle_avoidance, node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4, node_names.rth_task, node_names.rth_task1, node_names.loiter_task1, node_names.tracking_task, node_names.speed_min_task, node_names.speed_min_task1, node_names.speed_max_task, node_names.loiter_task2, node_names.waypoint_task, node_names.loiter_task}) & (statuses[node_names.] = success) : {0, 1};
+				!(statuses[node_names.loiter_task] in {invalid, error}) : depth_pipeline_mapping;
+				!(statuses[node_names.waypoint_task] in {invalid, error}) : depth_waypoint;
+				!(statuses[node_names.loiter_task2] in {invalid, error}) : depth_pipeline_mapping;
+				!(statuses[node_names.tracking_task] in {invalid, error}) : depth_pipeline_mapping;
+				!(statuses[node_names.loiter_task1] in {invalid, error}) : depth_pipeline_mapping;
+				!(statuses[node_names.rth_task1] in {invalid, error}) : depth_rth_task;
+				!(statuses[node_names.rth_task] in {invalid, error}) : depth_rth_task;
+				!(statuses[node_names.surface_task4] in {invalid, error}) : depth_surface_task;
+				!(statuses[node_names.surface_task3] in {invalid, error}) : depth_surface_task;
+				!(statuses[node_names.surface_task2] in {invalid, error}) : depth_surface_task;
+				!(statuses[node_names.surface_task1] in {invalid, error}) : depth_surface_task;
+				!(statuses[node_names.surface_task] in {invalid, error}) : depth_surface_task;
+				TRUE : HSD_out_dot_depth;
+			esac;
+		init(bb_home_reached) := 0;
+		next(bb_home_reached) := 
+			case
+				(bb_home_reached = 1) : 1;
+				--(active_node in {node_names.home2bb, node_names.home2bb1}) & (next(bb_home_dist_dot_data) < home_reached_threshold) & (statuses[node_names.] = success) : 1;
+				(statuses[node_names.home2bb] = success | statuses[node_names.home2bb1] = success) : {0, 1};
+				TRUE : bb_home_reached;
+			esac;
+		-- init(bb_home_dist) := 0;
+		-- next(bb_home_dist) := 
+		-- 	case
+		-- 		(active_node in {node_names.home2bb, node_names.home2bb1}) & (statuses[node_names.] = success) : {0, 1};
+		-- 		TRUE : bb_home_dist;
+		-- 	esac;
+		-- init(bb_home_dist_dot_data) := 0;
+		-- next(bb_home_dist_dot_data) := 
+		-- 	case
+		-- 		(active_node in {node_names.home2bb, node_names.home2bb1}) & (statuses[node_names.] = success) : {0, 1};
+		-- 		TRUE : bb_home_dist_dot_data;
+		-- 	esac;
+		init(pipe_mapping_enable) := 1;
+		next(pipe_mapping_enable) := 
+			case
+				!(statuses[node_names.pipe_mapping_enable_task] in {invalid, error}) : 1;
+				!(statuses[node_names.pipe_mapping_disable_task1] in {invalid, error}) : 0;
+				!(statuses[node_names.pipe_mapping_disable_task] in {invalid, error}) : 0;
+				TRUE : pipe_mapping_enable;
+			esac;
+MODULE battery2bb_SET_status_module(variables, variable_exists, node_names, variable_names)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	IVAR
+		random_status : {success, running};
+	DEFINE
+		status := random_status;
+MODULE rth2bb_SET_status_module(variables, variable_exists, node_names, variable_names)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	IVAR
+		random_status : {success, running};
+	DEFINE
+		status := random_status;
+MODULE geofence2bb_SET_status_module(variables, variable_exists, node_names, variable_names)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	IVAR
+		random_status : {success, running};
+	DEFINE
+		status := random_status;
+MODULE lec2_am_r_2bb_SET_status_module(variables, variable_exists, node_names, variable_names)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	IVAR
+		random_status : {success, running};
+	DEFINE
+		status := random_status;
+MODULE lec2_am_l_2bb_SET_status_module(variables, variable_exists, node_names, variable_names)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	IVAR
+		random_status : {success, running};
+	DEFINE
+		status := random_status;
+MODULE pipe_lost2bb_SET_status_module(variables, variable_exists, node_names, variable_names)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	IVAR
+		random_status : {success, running};
+	DEFINE
+		status := random_status;
+MODULE sensor_failure2bb_SET_status_module(variables, variable_exists, node_names, variable_names)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	IVAR
+		random_status : {success, running};
+	DEFINE
+		status := random_status;
+MODULE waypoints_completed2bb_SET_status_module(variables, variable_exists, node_names, variable_names)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	IVAR
+		random_status : {success, running};
+	DEFINE
+		status := random_status;
+MODULE mission2bb_SET_status_module(variables, variable_exists, node_names, variable_names)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	IVAR
+		random_status : {success, running};
+	DEFINE
+		status := random_status;
+MODULE ddlec2bb_SET_status_module(variables, variable_exists, node_names, variable_names)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	IVAR
+		random_status : {success, running};
+	DEFINE
+		status := random_status;
+MODULE fls2bb_SET_status_module(variables, variable_exists, node_names, variable_names)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	IVAR
+		random_status : {success, running};
+	DEFINE
+		status := random_status; 
+MODULE fls_warning2bb_SET_status_module(variables, variable_exists, node_names, variable_names)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	IVAR
+		random_status : {success, running};
+	DEFINE
+		status := random_status;
+MODULE hsd_pipe2bb_SET_status_module(variables, variable_exists, node_names, variable_names)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	IVAR
+		random_status : {success, running};
+	DEFINE
+		status := random_status;
+MODULE hsd_wp2bb_SET_status_module(variables, variable_exists, node_names, variable_names)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	IVAR
+		random_status : {success, running};
+	DEFINE
+		status := random_status;
+MODULE hsd_rth2bb_SET_status_module(variables, variable_exists, node_names, variable_names)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	IVAR
+		random_status : {success, running};
+	DEFINE
+		status := random_status;
+MODULE hsd_surface2bb_SET_status_module(variables, variable_exists, node_names, variable_names)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	IVAR
+		random_status : {success, running};
+	DEFINE
+		status := random_status;
+MODULE rtreach2bb_SET_status_module(variables, variable_exists, node_names, variable_names)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	IVAR
+		random_status : {success, running};
+	DEFINE
+		status := random_status; 
+MODULE reallocate_task_SET_status_module(variables, variable_exists, node_names, variable_names)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		status := running;
+MODULE dd_lec_task_SET_status_module(variables, variable_exists, node_names, variable_names)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		status := running;
+MODULE mission_server_SET_status_module(variables, variable_exists, node_names, variable_names)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		status := running;
+MODULE obstacle_avoidance_SET_status_module(variables, variable_exists, node_names, variable_names)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		status := running;
+MODULE surface_task_SET_status_module(variables, variable_exists, node_names, variable_names)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		status := running;
+MODULE surface_task1_SET_status_module(variables, variable_exists, node_names, variable_names)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		status := running;
+MODULE emergency_stop_task_SET_status_module(variables, variable_exists, node_names, variable_names)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		status := success;
+MODULE surface_task2_SET_status_module(variables, variable_exists, node_names, variable_names)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		status := running;
+MODULE surface_task3_SET_status_module(variables, variable_exists, node_names, variable_names)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		status := running;
+MODULE surface_task4_SET_status_module(variables, variable_exists, node_names, variable_names)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		status := running;
+MODULE rth_task_SET_status_module(variables, variable_exists, node_names, variable_names)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		status := running;
+MODULE home2bb_SET_status_module(variables, variable_exists, node_names, variable_names)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	IVAR
+		random_status : {success, running};
+	DEFINE
+		status := random_status;
+MODULE rth_task1_SET_status_module(variables, variable_exists, node_names, variable_names)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		status := running;
+MODULE home2bb1_SET_status_module(variables, variable_exists, node_names, variable_names)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	IVAR
+		random_status : {success, running};
+	DEFINE
+		status := random_status;
+MODULE loiter_task_SET_status_module(variables, variable_exists, node_names, variable_names)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		status := running;
+MODULE tracking_task_SET_status_module(variables, variable_exists, node_names, variable_names)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		status := running;
+MODULE speed_min_task_SET_status_module(variables, variable_exists, node_names, variable_names)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		status := running;
+MODULE speed_min_task1_SET_status_module(variables, variable_exists, node_names, variable_names)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		status := running;
+MODULE speed_max_task_SET_status_module(variables, variable_exists, node_names, variable_names)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		status := running;
+MODULE pipe_mapping_disable_task_SET_status_module(variables, variable_exists, node_names, variable_names)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		status := running;
+MODULE pipe_mapping_disable_task1_SET_status_module(variables, variable_exists, node_names, variable_names)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		status := running;
+MODULE pipe_mapping_enable_task_SET_status_module(variables, variable_exists, node_names, variable_names)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		status := running;
+MODULE next_mission_SET_status_module(variables, variable_exists, node_names, variable_names)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		status := success;
+MODULE loiter_task1_SET_status_module(variables, variable_exists, node_names, variable_names)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		status := running;
+MODULE waypoint_task_SET_status_module(variables, variable_exists, node_names, variable_names)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		status := running;
+MODULE loiter_task2_SET_status_module(variables, variable_exists, node_names, variable_names)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		status := running;
+MODULE is_reallocation_requested_CHECK_dd_xy_axis_degradation_module(variables, variable_exists, node_names, variable_names)
+	DEFINE
+		--dd_xy_axis_degradation is set before this check is made. therefore, we need to use next() value
+		result := (next(variables[variable_names.dd_xy_axis_degradation]) = 0);
+MODULE battery_low_fs_CHECK_battery_low_warning_module(variables, variable_exists, node_names, variable_names)
+	DEFINE
+		--battery_low_warning is set before this check is made. need next()
+		result := (next(variables[variable_names.battery_low_warning]) = 0);
+MODULE check_sensor_failure_CHECK_bb_sensor_failure_warning_module(variables, variable_exists, node_names, variable_names)
+	DEFINE
+		--bb_sensor_failure-warning is set before this check. need next()
+		result := (next(variables[variable_names.bb_sensor_failure_warning]) = 0);
+MODULE emergency_stop_fs_CHECK_emergency_stop_warning_module(variables, variable_exists, node_names, variable_names)
+	DEFINE
+		--fls_warning2bb comes before
+		--rtreach2bb comes before
+		--mission_server comes before.
+		--therefore, the value will be set before we enter this check, and will not be changed afterwards.
+		--safe to use next()
+		result := (next(variables[variable_names.emergency_stop_warning]) = 0);
+MODULE check_surface_CHECK_bb_home_reached_module(variables, variable_exists, node_names, variable_names)
+	DEFINE
+		--set in home2bb and home2bb1, both of which occur AFTER this check. use value as is. no next()
+		result := (variables[variable_names.bb_home_reached] = 0);
+MODULE obstacle_standoff_fs_CHECK_obstacle_standoff_warning_module(variables, variable_exists, node_names, variable_names)
+	DEFINE
+		--set in fls2bb, which is before. use next
+		result := (next(variables[variable_names.obstacle_standoff_warning]) = 0);
+MODULE check_rth_CHECK_bb_rth_warning_module(variables, variable_exists, node_names, variable_names)
+	DEFINE
+		--set in rth2bb and mission_server. both before check_rth. use next()
+		result := (next(variables[variable_names.bb_rth_warning]) = 0);
+MODULE check_geofence_CHECK_bb_geofence_warning_module(variables, variable_exists, node_names, variable_names)
+	DEFINE
+		--set in geofence2bb. occurs before check_geofence. use next() value
+		result := (next(variables[variable_names.bb_geofence_warning]) = 0);
+MODULE check_pipe_post_CHECK_bb_pipe_lost_warning_module(variables, variable_exists, node_names, variable_names)
+	DEFINE
+		--set in pipe_lost2bb. occurs before check_pipe_post. use next()
+		result := (next(variables[variable_names.bb_pipe_lost_warning]) = 0);
+MODULE is_track_pipe_mission_requested_CHECK_bb_mission_dot_data_module(variables, variable_exists, node_names, variable_names)
+	DEFINE
+		--set in mission2bb
+		--set in mission_server
+		--both occur before this check
+		--use next()
+		result := (next(variables[variable_names.bb_mission_dot_data]) = 1);
+MODULE is_waypoint_requested_CHECK_bb_mission_dot_data_module(variables, variable_exists, node_names, variable_names)
+	DEFINE
+		--as above
+		result := (next(variables[variable_names.bb_mission_dot_data]) = 2);
+MODULE check_lec2am_ls_CHECK_lec2_am_l_speed_warning_module(variables, variable_exists, node_names, variable_names)
+	DEFINE
+		--set in lec2_am_l_2bb. occurs before this check. use next()
+		result := (next(variables[variable_names.lec2_am_l_speed_warning]) = 0);
+MODULE check_lec2am_rs_CHECK_lec2_am_r_speed_warning_module(variables, variable_exists, node_names, variable_names)
+	DEFINE
+		--as above
+		result := (next(variables[variable_names.lec2_am_r_speed_warning]) = 0);
+MODULE check_lec2am_lp_CHECK_lec2_am_l_pipe_warning_module(variables, variable_exists, node_names, variable_names)
+	DEFINE
+		--as above
+		result := (next(variables[variable_names.lec2_am_l_pipe_warning]) = 0);
+MODULE check_lec2am_rp_CHECK_lec2_am_r_pipe_warning_module(variables, variable_exists, node_names, variable_names)
+	DEFINE
+		--as above
+		result := (next(variables[variable_names.lec2_am_r_pipe_warning]) = 0);
+MODULE check_waypoints_completed_CHECK_bb_waypoints_completed_dot_data_module(variables, variable_exists, node_names, variable_names)
+	DEFINE
+		--set in waypoints_completed2bb. occurs before this check. use next()
+		result := (next(variables[variable_names.bb_waypoints_completed_dot_data]) = 0);
+

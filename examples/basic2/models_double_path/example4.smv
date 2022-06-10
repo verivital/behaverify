@@ -12,7 +12,7 @@ MODULE main
 		statuses_6 := [invalid, invalid, invalid, invalid, invalid, invalid, invalid, leaf_7.status, leaf_8.status];
 		statuses_7 := [invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, leaf_8.status];
 		statuses_8 := [invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid, invalid];
-		resume_status_0 := -3;
+		resume_from_node_0 := -3;
 		next_node := [ascent_from_0, ascent_from_1, ascent_from_2, ascent_from_3, ascent_from_4, ascent_from_5, ascent_from_6, ascent_from_7, ascent_from_8];
 		descent_from_0 := 
 			case
@@ -61,7 +61,7 @@ MODULE main
 			esac;
 		resume_relevant_child_0 := 
 			case
-				(resume_status_0 = 0) : TRUE ;
+				(resume_from_node_0 = 0) : TRUE ;
 				(resume_relevant_child_1) : TRUE;
 				(resume_relevant_child_2) : TRUE;
 				(resume_relevant_child_3) : TRUE;
@@ -73,21 +73,21 @@ MODULE main
 				TRUE : FALSE;
 			esac;
 		relevant_child_1 := (active_node = 1) ? -1 : -2 ;
-		resume_relevant_child_1 := (resume_status_0 = 1) ? TRUE : FALSE ;
+		resume_relevant_child_1 := (resume_from_node_0 = 1) ? TRUE : FALSE ;
 		relevant_child_2 := (active_node = 2) ? -1 : -2 ;
-		resume_relevant_child_2 := (resume_status_0 = 2) ? TRUE : FALSE ;
+		resume_relevant_child_2 := (resume_from_node_0 = 2) ? TRUE : FALSE ;
 		relevant_child_3 := (active_node = 3) ? -1 : -2 ;
-		resume_relevant_child_3 := (resume_status_0 = 3) ? TRUE : FALSE ;
+		resume_relevant_child_3 := (resume_from_node_0 = 3) ? TRUE : FALSE ;
 		relevant_child_4 := (active_node = 4) ? -1 : -2 ;
-		resume_relevant_child_4 := (resume_status_0 = 4) ? TRUE : FALSE ;
+		resume_relevant_child_4 := (resume_from_node_0 = 4) ? TRUE : FALSE ;
 		relevant_child_5 := (active_node = 5) ? -1 : -2 ;
-		resume_relevant_child_5 := (resume_status_0 = 5) ? TRUE : FALSE ;
+		resume_relevant_child_5 := (resume_from_node_0 = 5) ? TRUE : FALSE ;
 		relevant_child_6 := (active_node = 6) ? -1 : -2 ;
-		resume_relevant_child_6 := (resume_status_0 = 6) ? TRUE : FALSE ;
+		resume_relevant_child_6 := (resume_from_node_0 = 6) ? TRUE : FALSE ;
 		relevant_child_7 := (active_node = 7) ? -1 : -2 ;
-		resume_relevant_child_7 := (resume_status_0 = 7) ? TRUE : FALSE ;
+		resume_relevant_child_7 := (resume_from_node_0 = 7) ? TRUE : FALSE ;
 		relevant_child_8 := (active_node = 8) ? -1 : -2 ;
-		resume_relevant_child_8 := (resume_status_0 = 8) ? TRUE : FALSE ;
+		resume_relevant_child_8 := (resume_from_node_0 = 8) ? TRUE : FALSE ;
 		last_child_0 := 8;
 	VAR
 		active_node : {-2, -1,1, 2, 3, 4, 5, 6, 7, 8};
