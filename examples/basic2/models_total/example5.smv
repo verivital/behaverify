@@ -1,6 +1,6 @@
 MODULE main
 	CONSTANTS
-		success, failure, running, invalid;
+		success, failure, running, invalid, error;
 	DEFINE
 		statuses := [example_5_sel1.status, seq1.status, seq3.status, leaf_1.status, leaf_2.status, seq4.status, leaf_3.status, leaf_4.status, seq2.status, seq5.status, leaf_5.status, leaf_6.status, seq6.status, leaf_7.status, leaf_8.status];
 		trace_running_source_4 := (statuses[4] = running) ? 4 : -2;
@@ -57,10 +57,13 @@ MODULE main
 			esac;
 		resume_point_2 := 
 			case
+				(resume_from_node_0 in {4}) : 1;
 				TRUE : -2;
 			esac;
 		resume_point_5 := 
 			case
+				(resume_from_node_0 in {6}) : 0;
+				(resume_from_node_0 in {7}) : 1;
 				TRUE : -2;
 			esac;
 		resume_point_8 := 
@@ -71,37 +74,34 @@ MODULE main
 			esac;
 		resume_point_9 := 
 			case
+				(resume_from_node_0 in {11}) : 1;
 				TRUE : -2;
 			esac;
 		resume_point_12 := 
 			case
+				(resume_from_node_0 in {13}) : 0;
+				(resume_from_node_0 in {14}) : 1;
 				TRUE : -2;
 			esac;
-		children_statuses_0 := [seq1.status, seq2.status];
-		children_statuses_1 := [seq3.status, seq4.status];
-		children_statuses_2 := [leaf_1.status, leaf_2.status];
-		children_statuses_5 := [leaf_3.status, leaf_4.status];
-		children_statuses_8 := [seq5.status, seq6.status];
-		children_statuses_9 := [leaf_5.status, leaf_6.status];
-		children_statuses_12 := [leaf_7.status, leaf_8.status];
+		example_5_sel1.active := TRUE;
 	VAR
 		node_names : define_nodes;
 		resume_from_node_0 : {0, 4, 6, 7, 11, 13, 14};
-		example_5_sel1 : node_selector(TRUE, children_statuses_0, 2);
-		seq1 : node_sequence(example_5_sel1.active_0, children_statuses_1, 2, resume_point_1);
-		seq3 : node_sequence(seq1.active_0, children_statuses_2, 2, resume_point_2);
-		leaf_1 : node_default(seq3.active_0);
-		leaf_2 : node_default(seq3.active_1);
-		seq4 : node_sequence(seq1.active_1, children_statuses_5, 2, resume_point_5);
-		leaf_3 : node_default(seq4.active_0);
-		leaf_4 : node_default(seq4.active_1);
-		seq2 : node_sequence(example_5_sel1.active_1, children_statuses_8, 2, resume_point_8);
-		seq5 : node_sequence(seq2.active_0, children_statuses_9, 2, resume_point_9);
-		leaf_5 : node_default(seq5.active_0);
-		leaf_6 : node_default(seq5.active_1);
-		seq6 : node_sequence(seq2.active_1, children_statuses_12, 2, resume_point_12);
-		leaf_7 : node_default(seq6.active_0);
-		leaf_8 : node_default(seq6.active_1);
+		example_5_sel1 : node_selector(1, seq1, seq2);
+		seq1 : node_sequence(1, seq3, seq4, resume_point_1);
+		seq3 : node_sequence(1, leaf_1, leaf_2, resume_point_2);
+		leaf_1 : node_default();
+		leaf_2 : node_default();
+		seq4 : node_sequence(1, leaf_3, leaf_4, resume_point_5);
+		leaf_3 : node_default();
+		leaf_4 : node_default();
+		seq2 : node_sequence(1, seq5, seq6, resume_point_8);
+		seq5 : node_sequence(1, leaf_5, leaf_6, resume_point_9);
+		leaf_5 : node_default();
+		leaf_6 : node_default();
+		seq6 : node_sequence(1, leaf_7, leaf_8, resume_point_12);
+		leaf_7 : node_default();
+		leaf_8 : node_default();
 	ASSIGN
 		init(resume_from_node_0) := 0;
 		next(resume_from_node_0) := 
@@ -109,7 +109,12 @@ MODULE main
 				(statuses[0] in {success, failure}) : 0;
 				TRUE : max(trace_running_source_0, 0);
 			esac;
-MODULE node_default(active)
+MODULE fake_node()
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		status := error;
+MODULE node_default()
 	CONSTANTS
 		success, failure, running, invalid, error;
 	IVAR
@@ -117,81 +122,75 @@ MODULE node_default(active)
 	DEFINE
 		status :=
 			case
-				(active = FALSE) : invalid;
+				!(active) : invalid;
 				TRUE : input_status;
 			esac;
-MODULE node_selector(active, children_statuses, last_child)
+MODULE node_sequence(last_child, child_0, child_1, resume_point)
 	CONSTANTS
 		success, failure, running, invalid, error;
 	DEFINE
 		status :=
 			case
-				(active = FALSE) : invalid;
-				(active = FALSE) : invalid;
-				(last_child < 0) : failure;
-				(children_statuses[min(0, max(last_child, 0))] = error) : error;
-				(children_statuses[min(1, max(last_child, 0))] = error) : error;
-				(children_statuses[min(0, max(last_child, 0))] = success) : success;
-				(children_statuses[min(0, max(last_child, 0))] = running) : running;
-				(children_statuses[min(0, max(last_child, 0))] = invalid) : error;
-				(children_statuses[min(1, max(last_child, 0))] = success) : success;
-				(children_statuses[min(1, max(last_child, 0))] = running) : running;
-				(children_statuses[min(1, max(last_child, 0))] = invalid) : error;
-				TRUE : failure;
-			esac;
-		active_0 :=
-			case
-				!(active) : FALSE;
-				(active = FALSE) : FALSE;
-				(0 > last_child) : FALSE;
-				TRUE : TRUE;
-				esac;
-		active_1 :=
-			case
-				!(active) : FALSE;
-				(active = FALSE) : FALSE;
-				(1 > last_child) : FALSE;
-				!(active_0) : FALSE;
-				!(children_statuses[min(0, max(last_child, 0))] = failure) : FALSE;
-				TRUE: TRUE;
-			esac;
-MODULE node_sequence(active, children_statuses, last_child, resume_point)
-	CONSTANTS
-		success, failure, running, invalid, error;
-	DEFINE
-		status :=
-			case
-				(active = FALSE) : invalid;
-				(active = FALSE) : invalid;
+				!(active) : invalid;
 				(last_child < 0) : success;
-				(children_statuses[min(0, max(last_child, 0))] = error) : error;
-				(children_statuses[min(1, max(last_child, 0))] = error) : error;
-				(resume_point <= 0) & (children_statuses[min(0, max(last_child, 0))] = failure) : failure;
-				(resume_point <= 0) & (children_statuses[min(0, max(last_child, 0))] = running) : running;
-				(resume_point <= 0) & (children_statuses[min(0, max(last_child, 0))] = invalid) : error;
-				(resume_point <= 1) & (children_statuses[min(1, max(last_child, 0))] = failure) : failure;
-				(resume_point <= 1) & (children_statuses[min(1, max(last_child, 0))] = running) : running;
-				(resume_point <= 1) & (children_statuses[min(1, max(last_child, 0))] = invalid) : error;
+				(0 <= last_child) & (child_0.status = error) : error;
+				(1 <= last_child) & (child_1.status = error) : error;
+				(0 >= resume_point) & (0 <= last_child) & (child_0.status = failure) : failure;
+				(0 >= resume_point) & (0 <= last_child) & (child_0.status = running) : running;
+				(0 >= resume_point) & (0 <= last_child) & (child_0.status = invalid) : error;
+				(1 >= resume_point) & (1 <= last_child) & (child_1.status = failure) : failure;
+				(1 >= resume_point) & (1 <= last_child) & (child_1.status = running) : running;
+				(1 >= resume_point) & (1 <= last_child) & (child_1.status = invalid) : error;
 				TRUE : success;
 			esac;
-		active_0 :=
+		child_0.active :=
 			case
 				!(active) : FALSE;
-				(active = FALSE) : FALSE;
 				(0 > last_child) : FALSE;
 				(0 < resume_point) : FALSE;
 				(0 = resume_point) : TRUE;
 				TRUE : TRUE;
 				esac;
-		active_1 :=
+		child_1.active :=
 			case
 				!(active) : FALSE;
-				(active = FALSE) : FALSE;
 				(1 > last_child) : FALSE;
 				(1 < resume_point) : FALSE;
 				(1 = resume_point) : TRUE;
-				!(active_0) : FALSE;
-				!(children_statuses[min(0, max(last_child, 0))] = success) : FALSE;
+				!(child_0.active) : FALSE;
+				!(child_0.status = success) : FALSE;
+				TRUE: TRUE;
+			esac;
+MODULE node_selector(last_child, child_0, child_1)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		status :=
+			case
+				!(active) : invalid;
+				(last_child < 0) : failure;
+				(0 <= last_child) & (child_0.status = error) : error;
+				(1 <= last_child) & (child_1.status = error) : error;
+				(0 <= last_child) & (child_0.status = success) : success;
+				(0 <= last_child) & (child_0.status = running) : running;
+				(0 <= last_child) & (child_0.status = invalid) : error;
+				(1 <= last_child) & (child_1.status = success) : success;
+				(1 <= last_child) & (child_1.status = running) : running;
+				(1 <= last_child) & (child_1.status = invalid) : error;
+				TRUE : failure;
+			esac;
+		child_0.active :=
+			case
+				!(active) : FALSE;
+				(0 > last_child) : FALSE;
+				TRUE : TRUE;
+				esac;
+		child_1.active :=
+			case
+				!(active) : FALSE;
+				(1 > last_child) : FALSE;
+				!(child_0.active) : FALSE;
+				!(child_0.status = failure) : FALSE;
 				TRUE: TRUE;
 			esac;
 MODULE define_nodes

@@ -1,8 +1,8 @@
 #!/bin/bash
 
 #files=("serene_uc1")
-#files=("example1" "example2" "example3" "example4" "example5" "example6" "example7" "example8")
-files=("example0")
+files=("example1" "example2" "example3" "example4" "example5" "example6" "example7" "example8")
+#files=("example0")
 #files=("example1")
 
 #versions=("double_path_clean" "double_path_cleaner")

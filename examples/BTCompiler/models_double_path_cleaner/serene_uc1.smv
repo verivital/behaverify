@@ -282,19 +282,6 @@ MODULE node_default(active_node, id, random_status)
 				(active_node = id) : random_status;
 				TRUE : invalid;
 			esac;
-MODULE node_sequence(relevant_child, relevant_status, last_child)
-	CONSTANTS
-		success, failure, running, invalid;
-	DEFINE
-		status :=
-			case
-				(last_child = -2) : success;
-				(relevant_child <= 0) : invalid;
-				(relevant_status = running) : running;
-				(relevant_status = failure) : failure;
-				(last_child = relevant_child) & (relevant_status = success) : success;
-				TRUE : invalid;
-			esac;
 MODULE node_selector(relevant_child, relevant_status, last_child)
 	CONSTANTS
 		success, failure, running, invalid;
@@ -306,6 +293,19 @@ MODULE node_selector(relevant_child, relevant_status, last_child)
 				(relevant_status = running) : running;
 				(relevant_status = success) : success;
 				(last_child = relevant_child) & (relevant_status = failure) : failure;
+				TRUE : invalid;
+			esac;
+MODULE node_sequence(relevant_child, relevant_status, last_child)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status :=
+			case
+				(last_child = -2) : success;
+				(relevant_child <= 0) : invalid;
+				(relevant_status = running) : running;
+				(relevant_status = failure) : failure;
+				(last_child = relevant_child) & (relevant_status = success) : success;
 				TRUE : invalid;
 			esac;
 MODULE define_nodes

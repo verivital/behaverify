@@ -3,11 +3,11 @@ import pandas as pd
 #import matplotlib.pyplot as plt
 import re
 
-folders = ["./models_selector_mixed", "./models_selector_parallel", "./models_selector_non_parallel", "./models_sequence",  "./models_path", "./models_path"]
-folders2 = ["selector_mixed", "selector_parallel", "selector_non_parallel",  "sequence", "path", "double_path", "double_path_clean", "double_path_cleaner"]
+#folders = ["./models_selector_mixed", "./models_selector_parallel", "./models_selector_non_parallel", "./models_sequence",  "./models_path", "./models_path"]
+folders2 = ["selector_mixed", "selector_parallel", "selector_non_parallel",  "sequence", "path", "double_path", "double_path_clean", "double_path_cleaner", "double_path_ivar", "total"]
 files = ["example1", "example2", "example3", "example4", "example5", "example6", "example7", "example8"]
 
-foldersShort = ["SelMixed", "SelParallel", "SelNonParallel", "Sequence", "Path", "Double Path", "D P Clean", "D P Cleaner"]
+foldersShort = ["SelMixed", "SelParallel", "SelNonParallel", "Sequence", "Path", "Double Path", "D P Clean", "D P Cleaner", "D P IVAR", "Total"]
 filesShort = ["ex1", "ex2", "ex3", "ex4", "ex5", "ex6", "ex7", "ex8"]
 
 #diameters = {}

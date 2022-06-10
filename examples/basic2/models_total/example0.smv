@@ -11,11 +11,11 @@ MODULE main
 			esac;
 		resume_point_0 := 
 			case
+				(resume_from_node_0 in {2}) : 1;
 				TRUE : -2;
 			esac;
 		example_0_seq1.active := TRUE;
 	VAR
-		fake_node : fake_node();
 		node_names : define_nodes;
 		resume_from_node_0 : {0, 2};
 		example_0_seq1 : node_sequence(1, node_2, node_3, resume_point_0);
@@ -33,17 +33,6 @@ MODULE fake_node()
 		success, failure, running, invalid, error;
 	DEFINE
 		status := error;
-MODULE node_default()
-	CONSTANTS
-		success, failure, running, invalid, error;
-	IVAR
-		input_status : {success, running, failure};
-	DEFINE
-		status :=
-			case
-				!(active) : invalid;
-				TRUE : input_status;
-			esac;
 MODULE node_sequence(last_child, child_0, child_1, resume_point)
 	CONSTANTS
 		success, failure, running, invalid, error;
@@ -54,12 +43,12 @@ MODULE node_sequence(last_child, child_0, child_1, resume_point)
 				(last_child < 0) : success;
 				(0 <= last_child) & (child_0.status = error) : error;
 				(1 <= last_child) & (child_1.status = error) : error;
-				(0 < resume_point) & (0 <= last_child) & (child_0.status = failure) : failure;
-				(0 < resume_point) & (0 <= last_child) & (child_0.status = running) : running;
-				(0 < resume_point) & (0 <= last_child) & (child_0.status = invalid) : error;
-				(1 < resume_point) & (1 <= last_child) & (child_1.status = failure) : failure;
-				(1 < resume_point) & (1 <= last_child) & (child_1.status = running) : running;
-				(1 < resume_point) & (1 <= last_child) & (child_1.status = invalid) : error;
+				(0 >= resume_point) & (0 <= last_child) & (child_0.status = failure) : failure;
+				(0 >= resume_point) & (0 <= last_child) & (child_0.status = running) : running;
+				(0 >= resume_point) & (0 <= last_child) & (child_0.status = invalid) : error;
+				(1 >= resume_point) & (1 <= last_child) & (child_1.status = failure) : failure;
+				(1 >= resume_point) & (1 <= last_child) & (child_1.status = running) : running;
+				(1 >= resume_point) & (1 <= last_child) & (child_1.status = invalid) : error;
 				TRUE : success;
 			esac;
 		child_0.active :=
@@ -79,6 +68,17 @@ MODULE node_sequence(last_child, child_0, child_1, resume_point)
 				!(child_0.active) : FALSE;
 				!(child_0.status = success) : FALSE;
 				TRUE: TRUE;
+			esac;
+MODULE node_default()
+	CONSTANTS
+		success, failure, running, invalid, error;
+	IVAR
+		input_status : {success, running, failure};
+	DEFINE
+		status :=
+			case
+				!(active) : invalid;
+				TRUE : input_status;
 			esac;
 MODULE define_nodes
 	DEFINE
