@@ -1,0 +1,38 @@
+MODULE set_comparison_value_SET_status_module(active_node, id, random_status, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE r_minus_q_SET_status_module(active_node, id, random_status, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE store_r_SET_status_module(active_node, id, random_status, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE update_r_SET_status_module(active_node, id, random_status, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE update_q_SET_status_module(active_node, id, random_status, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		status := 
+			case
+				(active_node = id) : {success, failure, running};
+				TRUE : invalid;
+			esac;
+MODULE check_r_gte_q_CHECK_r_q_compare_module(active_node, id, variables, variable_exists, node_names, variable_names)
+	DEFINE
+		result := (variables[variable_names.r_q_compare] = 100);

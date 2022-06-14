@@ -1,0 +1,150 @@
+MODULE main
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		statuses := [example_4_sel1.status, leaf_1.status, leaf_2.status, leaf_3.status, leaf_4.status, leaf_5.status, leaf_6.status, leaf_7.status, leaf_8.status];
+		resume_from_node_0 := -3;
+		example_4_sel1.active := TRUE;
+	VAR
+		node_names : define_nodes;
+		example_4_sel1 : node_selector(7, leaf_1, leaf_2, leaf_3, leaf_4, leaf_5, leaf_6, leaf_7, leaf_8);
+		leaf_1 : node_default();
+		leaf_2 : node_default();
+		leaf_3 : node_default();
+		leaf_4 : node_default();
+		leaf_5 : node_default();
+		leaf_6 : node_default();
+		leaf_7 : node_default();
+		leaf_8 : node_default();
+	ASSIGN
+MODULE fake_node()
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		status := error;
+MODULE node_default()
+	CONSTANTS
+		success, failure, running, invalid, error;
+	IVAR
+		input_status : {success, running, failure};
+	DEFINE
+		status :=
+			case
+				!(active) : invalid;
+				TRUE : input_status;
+			esac;
+MODULE node_selector(last_child, child_0, child_1, child_2, child_3, child_4, child_5, child_6, child_7)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		status :=
+			case
+				!(active) : invalid;
+				(last_child < 0) : failure;
+				(0 <= last_child) & (child_0.status = error) : error;
+				(1 <= last_child) & (child_1.status = error) : error;
+				(2 <= last_child) & (child_2.status = error) : error;
+				(3 <= last_child) & (child_3.status = error) : error;
+				(4 <= last_child) & (child_4.status = error) : error;
+				(5 <= last_child) & (child_5.status = error) : error;
+				(6 <= last_child) & (child_6.status = error) : error;
+				(7 <= last_child) & (child_7.status = error) : error;
+				(0 <= last_child) & (child_0.status = success) : success;
+				(0 <= last_child) & (child_0.status = running) : running;
+				(0 <= last_child) & (child_0.status = invalid) : error;
+				(1 <= last_child) & (child_1.status = success) : success;
+				(1 <= last_child) & (child_1.status = running) : running;
+				(1 <= last_child) & (child_1.status = invalid) : error;
+				(2 <= last_child) & (child_2.status = success) : success;
+				(2 <= last_child) & (child_2.status = running) : running;
+				(2 <= last_child) & (child_2.status = invalid) : error;
+				(3 <= last_child) & (child_3.status = success) : success;
+				(3 <= last_child) & (child_3.status = running) : running;
+				(3 <= last_child) & (child_3.status = invalid) : error;
+				(4 <= last_child) & (child_4.status = success) : success;
+				(4 <= last_child) & (child_4.status = running) : running;
+				(4 <= last_child) & (child_4.status = invalid) : error;
+				(5 <= last_child) & (child_5.status = success) : success;
+				(5 <= last_child) & (child_5.status = running) : running;
+				(5 <= last_child) & (child_5.status = invalid) : error;
+				(6 <= last_child) & (child_6.status = success) : success;
+				(6 <= last_child) & (child_6.status = running) : running;
+				(6 <= last_child) & (child_6.status = invalid) : error;
+				(7 <= last_child) & (child_7.status = success) : success;
+				(7 <= last_child) & (child_7.status = running) : running;
+				(7 <= last_child) & (child_7.status = invalid) : error;
+				TRUE : failure;
+			esac;
+		child_0.active :=
+			case
+				!(active) : FALSE;
+				(0 > last_child) : FALSE;
+				TRUE : TRUE;
+				esac;
+		child_1.active :=
+			case
+				!(active) : FALSE;
+				(1 > last_child) : FALSE;
+				!(child_0.active) : FALSE;
+				!(child_0.status = failure) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_2.active :=
+			case
+				!(active) : FALSE;
+				(2 > last_child) : FALSE;
+				!(child_1.active) : FALSE;
+				!(child_1.status = failure) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_3.active :=
+			case
+				!(active) : FALSE;
+				(3 > last_child) : FALSE;
+				!(child_2.active) : FALSE;
+				!(child_2.status = failure) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_4.active :=
+			case
+				!(active) : FALSE;
+				(4 > last_child) : FALSE;
+				!(child_3.active) : FALSE;
+				!(child_3.status = failure) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_5.active :=
+			case
+				!(active) : FALSE;
+				(5 > last_child) : FALSE;
+				!(child_4.active) : FALSE;
+				!(child_4.status = failure) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_6.active :=
+			case
+				!(active) : FALSE;
+				(6 > last_child) : FALSE;
+				!(child_5.active) : FALSE;
+				!(child_5.status = failure) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_7.active :=
+			case
+				!(active) : FALSE;
+				(7 > last_child) : FALSE;
+				!(child_6.active) : FALSE;
+				!(child_6.status = failure) : FALSE;
+				TRUE: TRUE;
+			esac;
+MODULE define_nodes
+	DEFINE
+		example_4_sel1 := 0;
+		leaf_1 := 1;
+		leaf_2 := 2;
+		leaf_3 := 3;
+		leaf_4 := 4;
+		leaf_5 := 5;
+		leaf_6 := 6;
+		leaf_7 := 7;
+		leaf_8 := 8;

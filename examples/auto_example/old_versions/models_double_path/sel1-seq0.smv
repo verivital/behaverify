@@ -1,0 +1,87 @@
+MODULE main
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		statuses := [sel_root.status, leaf0.status, leaf1.status];
+		statuses_0 := [invalid, leaf0.status, leaf1.status];
+		statuses_1 := [invalid, invalid, leaf1.status];
+		statuses_2 := [invalid, invalid, invalid];
+		resume_from_node_0 := -3;
+		next_node := [ascent_from_0, ascent_from_1, ascent_from_2];
+		descent_from_0 := 
+			case
+				(active_node <1) : descent_from_1;
+				(active_node <2) : descent_from_2;
+				TRUE : -2;
+			esac;
+		descent_from_1 := 1;
+		descent_from_2 := 2;
+		ascent_from_0 := 
+			case
+				(statuses[0] = invalid) : descent_from_0;
+				TRUE : -1;
+			esac;
+		ascent_from_1 := ascent_from_0;
+		ascent_from_2 := ascent_from_0;
+		relevant_child_0 := 
+			case
+				 !(relevant_child_1 = -2) : 1;
+				 !(relevant_child_2 = -2) : 2;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_0 := 
+			case
+				(resume_from_node_0 = 0) : TRUE ;
+				(resume_relevant_child_1) : TRUE;
+				(resume_relevant_child_2) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_child_1 := (active_node = 1) ? -1 : -2 ;
+		resume_relevant_child_1 := (resume_from_node_0 = 1) ? TRUE : FALSE ;
+		relevant_child_2 := (active_node = 2) ? -1 : -2 ;
+		resume_relevant_child_2 := (resume_from_node_0 = 2) ? TRUE : FALSE ;
+		last_child_0 := 2;
+	VAR
+		active_node : {-2, -1,1, 2};
+		random_status : {running, success, failure};
+		node_names : define_nodes;
+		sel_root : node_selector(relevant_child_0, statuses_0, last_child_0);
+		leaf0 : node_default(active_node, 1, random_status);
+		leaf1 : node_default(active_node, 2, random_status);
+	INVAR
+		active_node = -1 -> random_status = running;
+	ASSIGN
+		init(active_node) := -1;
+		next(active_node) :=
+			case
+				(active_node = -2) : -2;
+				(active_node = -1) : next_node[0];
+				TRUE : next_node[active_node];
+			esac;
+MODULE node_selector(relevant_child, statuses, last_child)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status :=
+			case
+				(last_child = -2) : failure;
+				(relevant_child <= 0) : invalid;
+				(statuses[max(relevant_child, 0)] = running) : running;
+				(statuses[max(relevant_child, 0)] = success) : success;
+				(last_child = relevant_child) & (statuses[max(relevant_child, 0)] = failure) : failure;
+				TRUE : invalid;
+			esac;
+MODULE node_default(active_node, id, random_status)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status :=
+			case
+				(active_node = id) : random_status;
+				TRUE : invalid;
+			esac;
+MODULE define_nodes
+	DEFINE
+		sel_root := 0;
+		leaf0 := 1;
+		leaf1 := 2;
