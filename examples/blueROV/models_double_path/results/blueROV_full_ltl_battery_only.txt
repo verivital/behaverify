@@ -25,4 +25,4 @@
 *** See http://mathsat.fbk.eu
 
 -- specification  G ((next(blackboard.variables[variable_names.battery_low_warning]) = 1 & active_node = node_names.battery2bb) -> (active_node > -1 U active_node in (((node_names.surface_task union node_names.surface_task1) union node_names.surface_task2) union node_names.surface_task3) union node_names.surface_task4))  is true
-16.00 user, 0.14 system, 16.21 elapsed -- Max VSize = 541008KB, Max RSS = 496132KB
+48.34 user, 0.26 system, 48.64 elapsed -- Max VSize = 673524KB, Max RSS = 628724KB
