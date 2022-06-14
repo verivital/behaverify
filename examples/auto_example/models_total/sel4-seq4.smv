@@ -1,0 +1,190 @@
+MODULE main
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		statuses := [seq_root.status, sel4.status, sel3.status, sel1.status, leaf7.status, leaf8.status, leaf0.status, seq2.status, leaf1.status, leaf2.status, seq3.status, sel2.status, leaf3.status, leaf4.status, seq1.status, leaf5.status, leaf6.status];
+		trace_running_source_9 := (statuses[9] = running) ? 9 : -2;
+		trace_running_source_7 := 
+			case
+				!(trace_running_source_9 = -2) : trace_running_source_9;
+				TRUE : -2;
+			esac;
+		trace_running_source_1 := 
+			case
+				!(trace_running_source_7 = -2) : trace_running_source_7;
+				TRUE : -2;
+			esac;
+		trace_running_source_11 := (statuses[11] = running) ? 11 : -2;
+		trace_running_source_15 := (statuses[15] = running) ? 15 : -2;
+		trace_running_source_16 := (statuses[16] = running) ? 16 : -2;
+		trace_running_source_14 := 
+			case
+				!(trace_running_source_15 = -2) : trace_running_source_15;
+				!(trace_running_source_16 = -2) : trace_running_source_16;
+				TRUE : -2;
+			esac;
+		trace_running_source_10 := 
+			case
+				!(trace_running_source_11 = -2) : trace_running_source_11;
+				!(trace_running_source_14 = -2) : trace_running_source_14;
+				TRUE : -2;
+			esac;
+		trace_running_source_0 := 
+			case
+				!(trace_running_source_1 = -2) : trace_running_source_1;
+				!(trace_running_source_10 = -2) : trace_running_source_10;
+				TRUE : -2;
+			esac;
+		resume_point_0 := 
+			case
+				(resume_from_node_0 in {9}) : 0;
+				(resume_from_node_0 in {16}) : 1;
+				TRUE : -2;
+			esac;
+		resume_point_10 := 
+			case
+				(resume_from_node_0 in {16}) : 1;
+				TRUE : -2;
+			esac;
+		resume_point_14 := 
+			case
+				(resume_from_node_0 in {15}) : 0;
+				(resume_from_node_0 in {16}) : 1;
+				TRUE : -2;
+			esac;
+		resume_point_7 := 
+			case
+				(resume_from_node_0 in {9}) : 1;
+				TRUE : -2;
+			esac;
+		seq_root.active := TRUE;
+	VAR
+		node_names : define_nodes;
+		resume_from_node_0 : {0, 9, 11, 15, 16};
+		seq_root : node_sequence(1, sel4, seq3, resume_point_0);
+		sel4 : node_selector(1, sel3, seq2);
+		sel3 : node_selector(1, sel1, leaf0);
+		sel1 : node_selector(1, leaf7, leaf8);
+		leaf7 : node_default();
+		leaf8 : node_default();
+		leaf0 : node_default();
+		seq2 : node_sequence(1, leaf1, leaf2, resume_point_7);
+		leaf1 : node_default();
+		leaf2 : node_default();
+		seq3 : node_sequence(1, sel2, seq1, resume_point_10);
+		sel2 : node_selector(1, leaf3, leaf4);
+		leaf3 : node_default();
+		leaf4 : node_default();
+		seq1 : node_sequence(1, leaf5, leaf6, resume_point_14);
+		leaf5 : node_default();
+		leaf6 : node_default();
+	ASSIGN
+		init(resume_from_node_0) := 0;
+		next(resume_from_node_0) := 
+			case
+				(statuses[0] in {success, failure}) : 0;
+				TRUE : max(trace_running_source_0, 0);
+			esac;
+MODULE fake_node()
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		status := error;
+MODULE node_default()
+	CONSTANTS
+		success, failure, running, invalid, error;
+	IVAR
+		input_status : {success, running, failure};
+	DEFINE
+		status :=
+			case
+				!(active) : invalid;
+				TRUE : input_status;
+			esac;
+MODULE node_sequence(last_child, child_0, child_1, resume_point)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		status :=
+			case
+				!(active) : invalid;
+				(last_child < 0) : success;
+				(0 <= last_child) & (child_0.status = error) : error;
+				(1 <= last_child) & (child_1.status = error) : error;
+				(0 >= resume_point) & (0 <= last_child) & (child_0.status = failure) : failure;
+				(0 >= resume_point) & (0 <= last_child) & (child_0.status = running) : running;
+				(0 >= resume_point) & (0 <= last_child) & (child_0.status = invalid) : error;
+				(1 >= resume_point) & (1 <= last_child) & (child_1.status = failure) : failure;
+				(1 >= resume_point) & (1 <= last_child) & (child_1.status = running) : running;
+				(1 >= resume_point) & (1 <= last_child) & (child_1.status = invalid) : error;
+				TRUE : success;
+			esac;
+		child_0.active :=
+			case
+				!(active) : FALSE;
+				(0 > last_child) : FALSE;
+				(0 < resume_point) : FALSE;
+				(0 = resume_point) : TRUE;
+				TRUE : TRUE;
+				esac;
+		child_1.active :=
+			case
+				!(active) : FALSE;
+				(1 > last_child) : FALSE;
+				(1 < resume_point) : FALSE;
+				(1 = resume_point) : TRUE;
+				!(child_0.active) : FALSE;
+				!(child_0.status = success) : FALSE;
+				TRUE: TRUE;
+			esac;
+MODULE node_selector(last_child, child_0, child_1)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		status :=
+			case
+				!(active) : invalid;
+				(last_child < 0) : failure;
+				(0 <= last_child) & (child_0.status = error) : error;
+				(1 <= last_child) & (child_1.status = error) : error;
+				(0 <= last_child) & (child_0.status = success) : success;
+				(0 <= last_child) & (child_0.status = running) : running;
+				(0 <= last_child) & (child_0.status = invalid) : error;
+				(1 <= last_child) & (child_1.status = success) : success;
+				(1 <= last_child) & (child_1.status = running) : running;
+				(1 <= last_child) & (child_1.status = invalid) : error;
+				TRUE : failure;
+			esac;
+		child_0.active :=
+			case
+				!(active) : FALSE;
+				(0 > last_child) : FALSE;
+				TRUE : TRUE;
+				esac;
+		child_1.active :=
+			case
+				!(active) : FALSE;
+				(1 > last_child) : FALSE;
+				!(child_0.active) : FALSE;
+				!(child_0.status = failure) : FALSE;
+				TRUE: TRUE;
+			esac;
+MODULE define_nodes
+	DEFINE
+		seq_root := 0;
+		sel4 := 1;
+		sel3 := 2;
+		sel1 := 3;
+		leaf7 := 4;
+		leaf8 := 5;
+		leaf0 := 6;
+		seq2 := 7;
+		leaf1 := 8;
+		leaf2 := 9;
+		seq3 := 10;
+		sel2 := 11;
+		leaf3 := 12;
+		leaf4 := 13;
+		seq1 := 14;
+		leaf5 := 15;
+		leaf6 := 16;
