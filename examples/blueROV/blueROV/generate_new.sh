@@ -5,6 +5,7 @@ files=("BlueROV_tree_serene_edit")
 versions=("total")
 #versions=("selector_mixed" "selector_parallel" "selector_non_parallel" "sequence" "path" "total" "double_path" "double_path_clean" "double_path_cleaner" "double_path_ivar")
 
+
 for cur_file in ${files[@]}; do
     for cur_version in ${versions[@]}; do
 	arguments=()
@@ -15,7 +16,7 @@ for cur_file in ${files[@]}; do
 	fi
 	for arg in "${arguments[@]}"; do
 	    echo python3 behaverify_$cur_version.py $cur_file create_root $arg
-	    python3 behaverify_$cur_version.py $cur_file create_root $arg 
+	    python3 behaverify_$cur_version.py $cur_file create_root $arg
 	done
     done
 done

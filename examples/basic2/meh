@@ -1,3 +1,0 @@
-go
-print_reachable_states -v
-quit

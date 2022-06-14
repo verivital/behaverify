@@ -1,5 +1,0 @@
-d, a=-1 -> 8
-p, a=-1 -> 12 (slight increase because of previous node, increase because holding previous_status)
-
-d, a=2 -> 3
-d, a=3 -> 3

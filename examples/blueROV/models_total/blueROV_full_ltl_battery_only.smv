@@ -710,34 +710,6 @@ MODULE fake_node()
 		success, failure, running, invalid, error;
 	DEFINE
 		status := error;
-MODULE node_set_blackboard_variables(status_module)
-	DEFINE
-		status :=
-			case
-				!(active) : invalid;
-				TRUE : status_module.status;
-			esac;
-MODULE node_timer()
-	CONSTANTS
-		success, failure, running, invalid, error;
-	IVAR
-		input_status : {success, running};
-	DEFINE
-		status :=
-			case
-				!(active) : invalid;
-				TRUE : input_status;
-			esac;
-MODULE node_check_blackboard_variable_value(blackboard, variable, check)
-	CONSTANTS
-		success, failure, running, invalid, error;
-	DEFINE
-		status :=
-			case
-				!(active) : invalid;
-				(blackboard.variable_exists[variable]) & (check.result) : success;
-				TRUE : failure;
-			esac;
 MODULE node_selector(last_child, child_0, child_1, child_2, child_3, child_4, child_5, child_6, child_7, child_8, child_9, child_10, child_11, child_12, child_13, child_14, child_15, child_16)
 	CONSTANTS
 		success, failure, running, invalid, error;
@@ -950,220 +922,12 @@ MODULE node_selector(last_child, child_0, child_1, child_2, child_3, child_4, ch
 				!(child_15.status = failure) : FALSE;
 				TRUE: TRUE;
 			esac;
-MODULE node_parallel(last_child, child_0, child_1, child_2, child_3, child_4, child_5, child_6, child_7, child_8, child_9, child_10, child_11, child_12, child_13, child_14, child_15, child_16, skip_child, parallel_policy_all)
-	CONSTANTS
-		success, failure, running, invalid, error;
+MODULE node_set_blackboard_variables(status_module)
 	DEFINE
 		status :=
 			case
 				!(active) : invalid;
-				(last_child < 0) : success;
-				(0 <= last_child) & (child_0.status = error) : error;
-				(0 <= last_child) & (child_0.status = invalid) & !(skip_child[min(0, max(last_child, 0))] = -2) : error;
-				(1 <= last_child) & (child_1.status = error) : error;
-				(1 <= last_child) & (child_1.status = invalid) & !(skip_child[min(1, max(last_child, 0))] = -2) : error;
-				(2 <= last_child) & (child_2.status = error) : error;
-				(2 <= last_child) & (child_2.status = invalid) & !(skip_child[min(2, max(last_child, 0))] = -2) : error;
-				(3 <= last_child) & (child_3.status = error) : error;
-				(3 <= last_child) & (child_3.status = invalid) & !(skip_child[min(3, max(last_child, 0))] = -2) : error;
-				(4 <= last_child) & (child_4.status = error) : error;
-				(4 <= last_child) & (child_4.status = invalid) & !(skip_child[min(4, max(last_child, 0))] = -2) : error;
-				(5 <= last_child) & (child_5.status = error) : error;
-				(5 <= last_child) & (child_5.status = invalid) & !(skip_child[min(5, max(last_child, 0))] = -2) : error;
-				(6 <= last_child) & (child_6.status = error) : error;
-				(6 <= last_child) & (child_6.status = invalid) & !(skip_child[min(6, max(last_child, 0))] = -2) : error;
-				(7 <= last_child) & (child_7.status = error) : error;
-				(7 <= last_child) & (child_7.status = invalid) & !(skip_child[min(7, max(last_child, 0))] = -2) : error;
-				(8 <= last_child) & (child_8.status = error) : error;
-				(8 <= last_child) & (child_8.status = invalid) & !(skip_child[min(8, max(last_child, 0))] = -2) : error;
-				(9 <= last_child) & (child_9.status = error) : error;
-				(9 <= last_child) & (child_9.status = invalid) & !(skip_child[min(9, max(last_child, 0))] = -2) : error;
-				(10 <= last_child) & (child_10.status = error) : error;
-				(10 <= last_child) & (child_10.status = invalid) & !(skip_child[min(10, max(last_child, 0))] = -2) : error;
-				(11 <= last_child) & (child_11.status = error) : error;
-				(11 <= last_child) & (child_11.status = invalid) & !(skip_child[min(11, max(last_child, 0))] = -2) : error;
-				(12 <= last_child) & (child_12.status = error) : error;
-				(12 <= last_child) & (child_12.status = invalid) & !(skip_child[min(12, max(last_child, 0))] = -2) : error;
-				(13 <= last_child) & (child_13.status = error) : error;
-				(13 <= last_child) & (child_13.status = invalid) & !(skip_child[min(13, max(last_child, 0))] = -2) : error;
-				(14 <= last_child) & (child_14.status = error) : error;
-				(14 <= last_child) & (child_14.status = invalid) & !(skip_child[min(14, max(last_child, 0))] = -2) : error;
-				(15 <= last_child) & (child_15.status = error) : error;
-				(15 <= last_child) & (child_15.status = invalid) & !(skip_child[min(15, max(last_child, 0))] = -2) : error;
-				(16 <= last_child) & (child_16.status = error) : error;
-				(16 <= last_child) & (child_16.status = invalid) & !(skip_child[min(16, max(last_child, 0))] = -2) : error;
-				(0 <= last_child) & (child_0.status = failure) : failure;
-				(1 <= last_child) & (child_1.status = failure) : failure;
-				(2 <= last_child) & (child_2.status = failure) : failure;
-				(3 <= last_child) & (child_3.status = failure) : failure;
-				(4 <= last_child) & (child_4.status = failure) : failure;
-				(5 <= last_child) & (child_5.status = failure) : failure;
-				(6 <= last_child) & (child_6.status = failure) : failure;
-				(7 <= last_child) & (child_7.status = failure) : failure;
-				(8 <= last_child) & (child_8.status = failure) : failure;
-				(9 <= last_child) & (child_9.status = failure) : failure;
-				(10 <= last_child) & (child_10.status = failure) : failure;
-				(11 <= last_child) & (child_11.status = failure) : failure;
-				(12 <= last_child) & (child_12.status = failure) : failure;
-				(13 <= last_child) & (child_13.status = failure) : failure;
-				(14 <= last_child) & (child_14.status = failure) : failure;
-				(15 <= last_child) & (child_15.status = failure) : failure;
-				(16 <= last_child) & (child_16.status = failure) : failure;
-				(0 <= last_child) & (parallel_policy_all) & (child_0.status = running) : running;
-				(0 <= last_child) & !(parallel_policy_all) & (child_0.status = success) : success;
-				(1 <= last_child) & (parallel_policy_all) & (child_1.status = running) : running;
-				(1 <= last_child) & !(parallel_policy_all) & (child_1.status = success) : success;
-				(2 <= last_child) & (parallel_policy_all) & (child_2.status = running) : running;
-				(2 <= last_child) & !(parallel_policy_all) & (child_2.status = success) : success;
-				(3 <= last_child) & (parallel_policy_all) & (child_3.status = running) : running;
-				(3 <= last_child) & !(parallel_policy_all) & (child_3.status = success) : success;
-				(4 <= last_child) & (parallel_policy_all) & (child_4.status = running) : running;
-				(4 <= last_child) & !(parallel_policy_all) & (child_4.status = success) : success;
-				(5 <= last_child) & (parallel_policy_all) & (child_5.status = running) : running;
-				(5 <= last_child) & !(parallel_policy_all) & (child_5.status = success) : success;
-				(6 <= last_child) & (parallel_policy_all) & (child_6.status = running) : running;
-				(6 <= last_child) & !(parallel_policy_all) & (child_6.status = success) : success;
-				(7 <= last_child) & (parallel_policy_all) & (child_7.status = running) : running;
-				(7 <= last_child) & !(parallel_policy_all) & (child_7.status = success) : success;
-				(8 <= last_child) & (parallel_policy_all) & (child_8.status = running) : running;
-				(8 <= last_child) & !(parallel_policy_all) & (child_8.status = success) : success;
-				(9 <= last_child) & (parallel_policy_all) & (child_9.status = running) : running;
-				(9 <= last_child) & !(parallel_policy_all) & (child_9.status = success) : success;
-				(10 <= last_child) & (parallel_policy_all) & (child_10.status = running) : running;
-				(10 <= last_child) & !(parallel_policy_all) & (child_10.status = success) : success;
-				(11 <= last_child) & (parallel_policy_all) & (child_11.status = running) : running;
-				(11 <= last_child) & !(parallel_policy_all) & (child_11.status = success) : success;
-				(12 <= last_child) & (parallel_policy_all) & (child_12.status = running) : running;
-				(12 <= last_child) & !(parallel_policy_all) & (child_12.status = success) : success;
-				(13 <= last_child) & (parallel_policy_all) & (child_13.status = running) : running;
-				(13 <= last_child) & !(parallel_policy_all) & (child_13.status = success) : success;
-				(14 <= last_child) & (parallel_policy_all) & (child_14.status = running) : running;
-				(14 <= last_child) & !(parallel_policy_all) & (child_14.status = success) : success;
-				(15 <= last_child) & (parallel_policy_all) & (child_15.status = running) : running;
-				(15 <= last_child) & !(parallel_policy_all) & (child_15.status = success) : success;
-				(16 <= last_child) & (parallel_policy_all) & (child_16.status = running) : running;
-				(16 <= last_child) & !(parallel_policy_all) & (child_16.status = success) : success;
-				(parallel_policy_all) : success;
-				TRUE : running;
-			esac;
-		child_0.active :=
-			case
-				!(active) : FALSE;
-				(0 > last_child) : FALSE;
-				(skip_child[min(0, max(last_child, 0))] = -2) : FALSE;
-				TRUE : TRUE;
-			esac;
-		child_1.active :=
-			case
-				!(active) : FALSE;
-				(1 > last_child) : FALSE;
-				(skip_child[min(1, max(last_child, 0))] = -2) : FALSE;
-				TRUE : TRUE;
-			esac;
-		child_2.active :=
-			case
-				!(active) : FALSE;
-				(2 > last_child) : FALSE;
-				(skip_child[min(2, max(last_child, 0))] = -2) : FALSE;
-				TRUE : TRUE;
-			esac;
-		child_3.active :=
-			case
-				!(active) : FALSE;
-				(3 > last_child) : FALSE;
-				(skip_child[min(3, max(last_child, 0))] = -2) : FALSE;
-				TRUE : TRUE;
-			esac;
-		child_4.active :=
-			case
-				!(active) : FALSE;
-				(4 > last_child) : FALSE;
-				(skip_child[min(4, max(last_child, 0))] = -2) : FALSE;
-				TRUE : TRUE;
-			esac;
-		child_5.active :=
-			case
-				!(active) : FALSE;
-				(5 > last_child) : FALSE;
-				(skip_child[min(5, max(last_child, 0))] = -2) : FALSE;
-				TRUE : TRUE;
-			esac;
-		child_6.active :=
-			case
-				!(active) : FALSE;
-				(6 > last_child) : FALSE;
-				(skip_child[min(6, max(last_child, 0))] = -2) : FALSE;
-				TRUE : TRUE;
-			esac;
-		child_7.active :=
-			case
-				!(active) : FALSE;
-				(7 > last_child) : FALSE;
-				(skip_child[min(7, max(last_child, 0))] = -2) : FALSE;
-				TRUE : TRUE;
-			esac;
-		child_8.active :=
-			case
-				!(active) : FALSE;
-				(8 > last_child) : FALSE;
-				(skip_child[min(8, max(last_child, 0))] = -2) : FALSE;
-				TRUE : TRUE;
-			esac;
-		child_9.active :=
-			case
-				!(active) : FALSE;
-				(9 > last_child) : FALSE;
-				(skip_child[min(9, max(last_child, 0))] = -2) : FALSE;
-				TRUE : TRUE;
-			esac;
-		child_10.active :=
-			case
-				!(active) : FALSE;
-				(10 > last_child) : FALSE;
-				(skip_child[min(10, max(last_child, 0))] = -2) : FALSE;
-				TRUE : TRUE;
-			esac;
-		child_11.active :=
-			case
-				!(active) : FALSE;
-				(11 > last_child) : FALSE;
-				(skip_child[min(11, max(last_child, 0))] = -2) : FALSE;
-				TRUE : TRUE;
-			esac;
-		child_12.active :=
-			case
-				!(active) : FALSE;
-				(12 > last_child) : FALSE;
-				(skip_child[min(12, max(last_child, 0))] = -2) : FALSE;
-				TRUE : TRUE;
-			esac;
-		child_13.active :=
-			case
-				!(active) : FALSE;
-				(13 > last_child) : FALSE;
-				(skip_child[min(13, max(last_child, 0))] = -2) : FALSE;
-				TRUE : TRUE;
-			esac;
-		child_14.active :=
-			case
-				!(active) : FALSE;
-				(14 > last_child) : FALSE;
-				(skip_child[min(14, max(last_child, 0))] = -2) : FALSE;
-				TRUE : TRUE;
-			esac;
-		child_15.active :=
-			case
-				!(active) : FALSE;
-				(15 > last_child) : FALSE;
-				(skip_child[min(15, max(last_child, 0))] = -2) : FALSE;
-				TRUE : TRUE;
-			esac;
-		child_16.active :=
-			case
-				!(active) : FALSE;
-				(16 > last_child) : FALSE;
-				(skip_child[min(16, max(last_child, 0))] = -2) : FALSE;
-				TRUE : TRUE;
+				TRUE : status_module.status;
 			esac;
 MODULE node_sequence(last_child, child_0, child_1, child_2, child_3, child_4, child_5, child_6, child_7, child_8, child_9, child_10, child_11, child_12, child_13, child_14, child_15, child_16, resume_point)
 	CONSTANTS
@@ -1426,6 +1190,242 @@ MODULE decorator_success_is_failure(child_0)
 			case
 				!(active) : FALSE;
 				TRUE : TRUE;
+			esac;
+MODULE node_timer()
+	CONSTANTS
+		success, failure, running, invalid, error;
+	IVAR
+		input_status : {success, running};
+	DEFINE
+		status :=
+			case
+				!(active) : invalid;
+				TRUE : input_status;
+			esac;
+MODULE node_parallel(last_child, child_0, child_1, child_2, child_3, child_4, child_5, child_6, child_7, child_8, child_9, child_10, child_11, child_12, child_13, child_14, child_15, child_16, skip_child, parallel_policy_all)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		status :=
+			case
+				!(active) : invalid;
+				(last_child < 0) : success;
+				(0 <= last_child) & (child_0.status = error) : error;
+				(0 <= last_child) & (child_0.status = invalid) & !(skip_child[min(0, max(last_child, 0))] = -2) : error;
+				(1 <= last_child) & (child_1.status = error) : error;
+				(1 <= last_child) & (child_1.status = invalid) & !(skip_child[min(1, max(last_child, 0))] = -2) : error;
+				(2 <= last_child) & (child_2.status = error) : error;
+				(2 <= last_child) & (child_2.status = invalid) & !(skip_child[min(2, max(last_child, 0))] = -2) : error;
+				(3 <= last_child) & (child_3.status = error) : error;
+				(3 <= last_child) & (child_3.status = invalid) & !(skip_child[min(3, max(last_child, 0))] = -2) : error;
+				(4 <= last_child) & (child_4.status = error) : error;
+				(4 <= last_child) & (child_4.status = invalid) & !(skip_child[min(4, max(last_child, 0))] = -2) : error;
+				(5 <= last_child) & (child_5.status = error) : error;
+				(5 <= last_child) & (child_5.status = invalid) & !(skip_child[min(5, max(last_child, 0))] = -2) : error;
+				(6 <= last_child) & (child_6.status = error) : error;
+				(6 <= last_child) & (child_6.status = invalid) & !(skip_child[min(6, max(last_child, 0))] = -2) : error;
+				(7 <= last_child) & (child_7.status = error) : error;
+				(7 <= last_child) & (child_7.status = invalid) & !(skip_child[min(7, max(last_child, 0))] = -2) : error;
+				(8 <= last_child) & (child_8.status = error) : error;
+				(8 <= last_child) & (child_8.status = invalid) & !(skip_child[min(8, max(last_child, 0))] = -2) : error;
+				(9 <= last_child) & (child_9.status = error) : error;
+				(9 <= last_child) & (child_9.status = invalid) & !(skip_child[min(9, max(last_child, 0))] = -2) : error;
+				(10 <= last_child) & (child_10.status = error) : error;
+				(10 <= last_child) & (child_10.status = invalid) & !(skip_child[min(10, max(last_child, 0))] = -2) : error;
+				(11 <= last_child) & (child_11.status = error) : error;
+				(11 <= last_child) & (child_11.status = invalid) & !(skip_child[min(11, max(last_child, 0))] = -2) : error;
+				(12 <= last_child) & (child_12.status = error) : error;
+				(12 <= last_child) & (child_12.status = invalid) & !(skip_child[min(12, max(last_child, 0))] = -2) : error;
+				(13 <= last_child) & (child_13.status = error) : error;
+				(13 <= last_child) & (child_13.status = invalid) & !(skip_child[min(13, max(last_child, 0))] = -2) : error;
+				(14 <= last_child) & (child_14.status = error) : error;
+				(14 <= last_child) & (child_14.status = invalid) & !(skip_child[min(14, max(last_child, 0))] = -2) : error;
+				(15 <= last_child) & (child_15.status = error) : error;
+				(15 <= last_child) & (child_15.status = invalid) & !(skip_child[min(15, max(last_child, 0))] = -2) : error;
+				(16 <= last_child) & (child_16.status = error) : error;
+				(16 <= last_child) & (child_16.status = invalid) & !(skip_child[min(16, max(last_child, 0))] = -2) : error;
+				(0 <= last_child) & (child_0.status = failure) : failure;
+				(1 <= last_child) & (child_1.status = failure) : failure;
+				(2 <= last_child) & (child_2.status = failure) : failure;
+				(3 <= last_child) & (child_3.status = failure) : failure;
+				(4 <= last_child) & (child_4.status = failure) : failure;
+				(5 <= last_child) & (child_5.status = failure) : failure;
+				(6 <= last_child) & (child_6.status = failure) : failure;
+				(7 <= last_child) & (child_7.status = failure) : failure;
+				(8 <= last_child) & (child_8.status = failure) : failure;
+				(9 <= last_child) & (child_9.status = failure) : failure;
+				(10 <= last_child) & (child_10.status = failure) : failure;
+				(11 <= last_child) & (child_11.status = failure) : failure;
+				(12 <= last_child) & (child_12.status = failure) : failure;
+				(13 <= last_child) & (child_13.status = failure) : failure;
+				(14 <= last_child) & (child_14.status = failure) : failure;
+				(15 <= last_child) & (child_15.status = failure) : failure;
+				(16 <= last_child) & (child_16.status = failure) : failure;
+				(0 <= last_child) & (parallel_policy_all) & (child_0.status = running) : running;
+				(0 <= last_child) & !(parallel_policy_all) & (child_0.status = success) : success;
+				(1 <= last_child) & (parallel_policy_all) & (child_1.status = running) : running;
+				(1 <= last_child) & !(parallel_policy_all) & (child_1.status = success) : success;
+				(2 <= last_child) & (parallel_policy_all) & (child_2.status = running) : running;
+				(2 <= last_child) & !(parallel_policy_all) & (child_2.status = success) : success;
+				(3 <= last_child) & (parallel_policy_all) & (child_3.status = running) : running;
+				(3 <= last_child) & !(parallel_policy_all) & (child_3.status = success) : success;
+				(4 <= last_child) & (parallel_policy_all) & (child_4.status = running) : running;
+				(4 <= last_child) & !(parallel_policy_all) & (child_4.status = success) : success;
+				(5 <= last_child) & (parallel_policy_all) & (child_5.status = running) : running;
+				(5 <= last_child) & !(parallel_policy_all) & (child_5.status = success) : success;
+				(6 <= last_child) & (parallel_policy_all) & (child_6.status = running) : running;
+				(6 <= last_child) & !(parallel_policy_all) & (child_6.status = success) : success;
+				(7 <= last_child) & (parallel_policy_all) & (child_7.status = running) : running;
+				(7 <= last_child) & !(parallel_policy_all) & (child_7.status = success) : success;
+				(8 <= last_child) & (parallel_policy_all) & (child_8.status = running) : running;
+				(8 <= last_child) & !(parallel_policy_all) & (child_8.status = success) : success;
+				(9 <= last_child) & (parallel_policy_all) & (child_9.status = running) : running;
+				(9 <= last_child) & !(parallel_policy_all) & (child_9.status = success) : success;
+				(10 <= last_child) & (parallel_policy_all) & (child_10.status = running) : running;
+				(10 <= last_child) & !(parallel_policy_all) & (child_10.status = success) : success;
+				(11 <= last_child) & (parallel_policy_all) & (child_11.status = running) : running;
+				(11 <= last_child) & !(parallel_policy_all) & (child_11.status = success) : success;
+				(12 <= last_child) & (parallel_policy_all) & (child_12.status = running) : running;
+				(12 <= last_child) & !(parallel_policy_all) & (child_12.status = success) : success;
+				(13 <= last_child) & (parallel_policy_all) & (child_13.status = running) : running;
+				(13 <= last_child) & !(parallel_policy_all) & (child_13.status = success) : success;
+				(14 <= last_child) & (parallel_policy_all) & (child_14.status = running) : running;
+				(14 <= last_child) & !(parallel_policy_all) & (child_14.status = success) : success;
+				(15 <= last_child) & (parallel_policy_all) & (child_15.status = running) : running;
+				(15 <= last_child) & !(parallel_policy_all) & (child_15.status = success) : success;
+				(16 <= last_child) & (parallel_policy_all) & (child_16.status = running) : running;
+				(16 <= last_child) & !(parallel_policy_all) & (child_16.status = success) : success;
+				(parallel_policy_all) : success;
+				TRUE : running;
+			esac;
+		child_0.active :=
+			case
+				!(active) : FALSE;
+				(0 > last_child) : FALSE;
+				(skip_child[min(0, max(last_child, 0))] = -2) : FALSE;
+				TRUE : TRUE;
+			esac;
+		child_1.active :=
+			case
+				!(active) : FALSE;
+				(1 > last_child) : FALSE;
+				(skip_child[min(1, max(last_child, 0))] = -2) : FALSE;
+				TRUE : TRUE;
+			esac;
+		child_2.active :=
+			case
+				!(active) : FALSE;
+				(2 > last_child) : FALSE;
+				(skip_child[min(2, max(last_child, 0))] = -2) : FALSE;
+				TRUE : TRUE;
+			esac;
+		child_3.active :=
+			case
+				!(active) : FALSE;
+				(3 > last_child) : FALSE;
+				(skip_child[min(3, max(last_child, 0))] = -2) : FALSE;
+				TRUE : TRUE;
+			esac;
+		child_4.active :=
+			case
+				!(active) : FALSE;
+				(4 > last_child) : FALSE;
+				(skip_child[min(4, max(last_child, 0))] = -2) : FALSE;
+				TRUE : TRUE;
+			esac;
+		child_5.active :=
+			case
+				!(active) : FALSE;
+				(5 > last_child) : FALSE;
+				(skip_child[min(5, max(last_child, 0))] = -2) : FALSE;
+				TRUE : TRUE;
+			esac;
+		child_6.active :=
+			case
+				!(active) : FALSE;
+				(6 > last_child) : FALSE;
+				(skip_child[min(6, max(last_child, 0))] = -2) : FALSE;
+				TRUE : TRUE;
+			esac;
+		child_7.active :=
+			case
+				!(active) : FALSE;
+				(7 > last_child) : FALSE;
+				(skip_child[min(7, max(last_child, 0))] = -2) : FALSE;
+				TRUE : TRUE;
+			esac;
+		child_8.active :=
+			case
+				!(active) : FALSE;
+				(8 > last_child) : FALSE;
+				(skip_child[min(8, max(last_child, 0))] = -2) : FALSE;
+				TRUE : TRUE;
+			esac;
+		child_9.active :=
+			case
+				!(active) : FALSE;
+				(9 > last_child) : FALSE;
+				(skip_child[min(9, max(last_child, 0))] = -2) : FALSE;
+				TRUE : TRUE;
+			esac;
+		child_10.active :=
+			case
+				!(active) : FALSE;
+				(10 > last_child) : FALSE;
+				(skip_child[min(10, max(last_child, 0))] = -2) : FALSE;
+				TRUE : TRUE;
+			esac;
+		child_11.active :=
+			case
+				!(active) : FALSE;
+				(11 > last_child) : FALSE;
+				(skip_child[min(11, max(last_child, 0))] = -2) : FALSE;
+				TRUE : TRUE;
+			esac;
+		child_12.active :=
+			case
+				!(active) : FALSE;
+				(12 > last_child) : FALSE;
+				(skip_child[min(12, max(last_child, 0))] = -2) : FALSE;
+				TRUE : TRUE;
+			esac;
+		child_13.active :=
+			case
+				!(active) : FALSE;
+				(13 > last_child) : FALSE;
+				(skip_child[min(13, max(last_child, 0))] = -2) : FALSE;
+				TRUE : TRUE;
+			esac;
+		child_14.active :=
+			case
+				!(active) : FALSE;
+				(14 > last_child) : FALSE;
+				(skip_child[min(14, max(last_child, 0))] = -2) : FALSE;
+				TRUE : TRUE;
+			esac;
+		child_15.active :=
+			case
+				!(active) : FALSE;
+				(15 > last_child) : FALSE;
+				(skip_child[min(15, max(last_child, 0))] = -2) : FALSE;
+				TRUE : TRUE;
+			esac;
+		child_16.active :=
+			case
+				!(active) : FALSE;
+				(16 > last_child) : FALSE;
+				(skip_child[min(16, max(last_child, 0))] = -2) : FALSE;
+				TRUE : TRUE;
+			esac;
+MODULE node_check_blackboard_variable_value(blackboard, variable, check)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		status :=
+			case
+				!(active) : invalid;
+				(blackboard.variable_exists[variable]) & (check.result) : success;
+				TRUE : failure;
 			esac;
 MODULE define_variables
 	DEFINE
@@ -1810,6 +1810,8 @@ MODULE define_nodes
 ----pipe_mapping_disable_task1
 ----pipe_mapping_enable_task
 MODULE blackboard_module(node_names, variable_names, statuses)
+	CONSTANTS
+		heading_default, heading_surface, heading_rth, heading_loiter, heading_pipeline_mapping, heading_waypoint, name_default, name_surface_task, name_rth_task, name_loiter_task, name_tracking_task, name_waypoint_task, depth_default, depth_surface_task, depth_rth_task, depth_pipeline_mapping, depth_waypoint, mission_type_path_following, mission_type_waypoint_following, mission_type_e_stop, mission_type_pipe_following, mission_type_unknown;
 	DEFINE
 		variables := [battery, battery_low_warning, battery_dot_batt_charge_remaining, bb_rth, bb_rth_warning, bb_rth_dot_data, bb_geofence, bb_geofence_warning, bb_geofence_dot_data, lec2_am_r, lec2_am_r_speed_warning, lec2_am_r_pipe_warning, lec2_am_r_dot_confs, lec2_am_l, lec2_am_l_speed_warning, lec2_am_l_pipe_warning, lec2_am_l_dot_confs, bb_pipelost, bb_pipe_lost_warning, bb_pipelost_dot_data, bb_mission_dot_data, bb_sensor_failure, bb_sensor_failure_warning, bb_sensor_failure_dot_data, bb_waypoints_completed, bb_waypoints_completed_dot_data, bb_mission, dd_output, dd_z_axis_warning, dd_xy_axis_degradation, dd_output_dot_data, total_degradation, fls_range, obstacle_standoff_warning, obstacle_min_standoff, fls_range_dot_range, obstacle_in_view, bb_fls_warning, obstacle_in_view_dot_stamp, emergency_stop_warning, hsd_pipeline_mapping, hsd_to_waypoint, hsd_to_rth, hsd_to_surface, rtreach_out, rtreach_out_dot_data, HSD_out_dot_heading, uuv_max_speed, mission_file, refLat, refLon, next_mission, decision_threshold, HSD_out, bb_obstacle_warning, cm_hsd_input, HSD_out_dot_speed, HSD_out_dot_depth, bb_home_reached, bb_home_dist, bb_home_dist_dot_data, pipe_mapping_enable];
 		variable_exists := [battery_exists, battery_low_warning_exists, battery_dot_batt_charge_remaining_exists, bb_rth_exists, bb_rth_warning_exists, bb_rth_dot_data_exists, bb_geofence_exists, bb_geofence_warning_exists, bb_geofence_dot_data_exists, lec2_am_r_exists, lec2_am_r_speed_warning_exists, lec2_am_r_pipe_warning_exists, lec2_am_r_dot_confs_exists, lec2_am_l_exists, lec2_am_l_speed_warning_exists, lec2_am_l_pipe_warning_exists, lec2_am_l_dot_confs_exists, bb_pipelost_exists, bb_pipe_lost_warning_exists, bb_pipelost_dot_data_exists, bb_mission_dot_data_exists,  bb_sensor_failure_exists, bb_sensor_failure_warning_exists, bb_sensor_failure_dot_data_exists, bb_waypoints_completed_exists, bb_waypoints_completed_dot_data_exists, bb_mission_exists, dd_output_exists, dd_z_axis_warning_exists, dd_xy_axis_degradation_exists, dd_output_dot_data_exists, total_degradation_exists, fls_range_exists, obstacle_standoff_warning_exists, obstacle_min_standoff_exists, fls_range_dot_range_exists, obstacle_in_view_exists, bb_fls_warning_exists, obstacle_in_view_dot_stamp_exists, emergency_stop_warning_exists, hsd_pipeline_mapping_exists, hsd_to_waypoint_exists, hsd_to_rth_exists, hsd_to_surface_exists, rtreach_out_exists, rtreach_out_dot_data_exists, HSD_out_dot_heading_exists, uuv_max_speed_exists, mission_file_exists, refLat_exists, refLon_exists, next_mission_exists, decision_threshold_exists, HSD_out_exists, bb_obstacle_warning_exists, cm_hsd_input_exists, HSD_out_dot_speed_exists, HSD_out_dot_depth_exists, bb_home_reached_exists, bb_home_dist_exists, bb_home_dist_dot_data_exists, pipe_mapping_enable_exists];
@@ -1882,34 +1884,35 @@ MODULE blackboard_module(node_names, variable_names, statuses)
 		task_mission_server_mission_len := 3;--must be >=1
 		task_mission_server_mission_type_list := [mission_type_0, mission_type_1, mission_type_2];--list of missions here.
 		task_mission_server_mission_distance_list := [mission_distance_0, mission_distance_1, mission_distance_2];--list of min distances here. between 0 and 2 for each value
-		mission_type_path_following := 0;
-		mission_type_waypoint_following := 1;
-		mission_type_e_stop := 2;
-		mission_type_pipe_following := 3;
-		mission_type_unknown := 4;
+		--
+		-- mission_type_path_following := 0;
+		-- mission_type_waypoint_following := 1;
+		-- mission_type_e_stop := 2;
+		-- mission_type_pipe_following := 3;
+		-- mission_type_unknown := 4;
 		--
 		total_degradation_threshold := 0;
-		--
-		heading_default := 0;
-		heading_surface := 1;
-		heading_rth := 2;
-		heading_loiter := 3;--this value explicitly listed as 30 in loiter tasks, unlike the other ones which i have no idea what they are.
-		heading_pipeline_mapping := 4;
-		heading_waypoint := 5;
-		--
 		home_reached_threshold := 1;
-		name_default := 0;
-		name_surface_task := 1;
-		name_rth_task := 2;
-		name_loiter_task := 3;
-		name_tracking_task := 4;
-		name_waypoint_task := 5;
 		--
-		depth_default := 0;
-		depth_surface_task := 1;
-		depth_rth_task := 2;
-		depth_pipeline_mapping := 3;
-		depth_waypoint :=4;
+		-- heading_default := 0;
+		-- heading_surface := 1;
+		-- heading_rth := 2;
+		-- heading_loiter := 3;--this value explicitly listed as 30 in loiter tasks, unlike the other ones which i have no idea what they are.
+		-- heading_pipeline_mapping := 4;
+		-- heading_waypoint := 5;
+		-- --
+		-- name_default := 0;
+		-- name_surface_task := 1;
+		-- name_rth_task := 2;
+		-- name_loiter_task := 3;
+		-- name_tracking_task := 4;
+		-- name_waypoint_task := 5;
+		-- --
+		-- depth_default := 0;
+		-- depth_surface_task := 1;
+		-- depth_rth_task := 2;
+		-- depth_pipeline_mapping := 3;
+		-- depth_waypoint :=4;
 		--
 		battery_low_warning :=
 			case
@@ -1963,12 +1966,12 @@ MODULE blackboard_module(node_names, variable_names, statuses)
 		refLat := 0;--does not change (frozen var it?)
 		refLon := 0;--does not change (frozen var it?)
 	FROZENVAR
-		--mission_type_0 : {mission_type_path_following, mission_type_waypoint_following, mission_type_e_stop, mission_type_pipe_following, mission_type_unknown};
-		--mission_type_1 : {mission_type_path_following, mission_type_waypoint_following, mission_type_e_stop, mission_type_pipe_following, mission_type_unknown};
-		--mission_type_2 : {mission_type_path_following, mission_type_waypoint_following, mission_type_e_stop, mission_type_pipe_following, mission_type_unknown};
-		mission_type_0 : {0, 1, 2, 3, 4};
-		mission_type_1 : {0, 1, 2, 3, 4};
-		mission_type_2 : {0, 1, 2, 3, 4};
+		mission_type_0 : {mission_type_path_following, mission_type_waypoint_following, mission_type_e_stop, mission_type_pipe_following, mission_type_unknown};
+		mission_type_1 : {mission_type_path_following, mission_type_waypoint_following, mission_type_e_stop, mission_type_pipe_following, mission_type_unknown};
+		mission_type_2 : {mission_type_path_following, mission_type_waypoint_following, mission_type_e_stop, mission_type_pipe_following, mission_type_unknown};
+		--mission_type_0 : {0, 1, 2, 3, 4};
+		--mission_type_1 : {0, 1, 2, 3, 4};
+		--mission_type_2 : {0, 1, 2, 3, 4};
 		mission_distance_0 : {0, 1, 2};
 		mission_distance_1 : {0, 1, 2};
 		mission_distance_2 : {0, 1, 2};
@@ -1995,8 +1998,8 @@ MODULE blackboard_module(node_names, variable_names, statuses)
 		--bb_pipelost : 0..1;
 		bb_pipe_lost_warning : 0..1;
 		bb_pipelost_dot_data : 0..1;
-		--bb_mission_dot_data : {mission_type_path_following, mission_type_waypoint_following, mission_type_e_stop, mission_type_pipe_following, mission_type_unknown};
-		bb_mission_dot_data : {0, 1, 2, 3, 4}; 
+		bb_mission_dot_data : {mission_type_path_following, mission_type_waypoint_following, mission_type_e_stop, mission_type_pipe_following, mission_type_unknown};
+		--bb_mission_dot_data : {0, 1, 2, 3, 4}; 
 		bb_pipe_lost_dot_data : 0..1;
 		--bb_sensor_failure : 0..1;
 		bb_sensor_failure_warning : 0..1;
@@ -2022,8 +2025,8 @@ MODULE blackboard_module(node_names, variable_names, statuses)
 		--hsd_to_rth : 0..1;
 		--hsd_to_surface : 0..1; --these should maybe be used in the HSD_out variables
 		--rtreach_out : 0..1;
-		--HSD_out_dot_heading : {heading_default, heading_surface, heading_rth, heading_loiter, heading_pipeline_mapping, heading_waypoint};
-		HSD_out_dot_heading : {0, 1, 2, 3, 4, 5};
+		HSD_out_dot_heading : {heading_default, heading_surface, heading_rth, heading_loiter, heading_pipeline_mapping, heading_waypoint};
+		--HSD_out_dot_heading : {0, 1, 2, 3, 4, 5};
 		rtreach_out_dot_data : 0..1;
 		--uuv_max_speed : 0..1;
 		--mission_file : 0..1;
@@ -2033,12 +2036,12 @@ MODULE blackboard_module(node_names, variable_names, statuses)
 		--decision_threshold : 0..1;
 		--HSD_out : 0..1;
 		bb_obstacle_warning : 0..1;
-		--cm_hsd_input : {name_default, name_surface_task, name_rth_task, name_loiter_task, name_tracking_task, name_waypoint_task};
-		cm_hsd_input : {0, 1, 2, 3, 4, 5};
+		cm_hsd_input : {name_default, name_surface_task, name_rth_task, name_loiter_task, name_tracking_task, name_waypoint_task};
+		--cm_hsd_input : {0, 1, 2, 3, 4, 5};
 		--HSD_out_dot_speed : {uuv_min_speed, uuv_max_speed};
 		HSD_out_dot_speed : {0, 1};
-		--HSD_out_dot_depth : {depth_default, depth_surface_task, depth_rth_task, depth_pipeline_mapping, depth_waypoint};
-		HSD_out_dot_depth : {0, 1, 2, 3, 4};
+		HSD_out_dot_depth : {depth_default, depth_surface_task, depth_rth_task, depth_pipeline_mapping, depth_waypoint};
+		--HSD_out_dot_depth : {0, 1, 2, 3, 4};
 		bb_home_reached : 0..1;
 		--bb_home_dist : 0..1;
 		bb_home_dist_dot_data : 0..1;
@@ -2383,7 +2386,7 @@ MODULE blackboard_module(node_names, variable_names, statuses)
 				!(statuses[node_names.loiter_task] in {invalid, error}) : name_loiter_task;
 				!(statuses[node_names.waypoint_task] in {invalid, error}) : name_waypoint_task;
 				!(statuses[node_names.loiter_task2] in {invalid, error}) : name_loiter_task;
-				!(statuses[node_names.tracking_task] in {invalid, error}) : name_pipeline_mapping_task;
+				!(statuses[node_names.tracking_task] in {invalid, error}) : name_tracking_task;
 				!(statuses[node_names.loiter_task1] in {invalid, error}) : name_loiter_task;
 				!(statuses[node_names.rth_task1] in {invalid, error}) : name_rth_task;
 				!(statuses[node_names.rth_task] in {invalid, error}) : name_rth_task;

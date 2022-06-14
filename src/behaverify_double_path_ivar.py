@@ -728,6 +728,9 @@ def create_next_node_structure(nodes, children, node_to_local_root_map, sequence
         if node_id not in children or len(children[node_id]) == 0:
             #if there are no childredn, descent always points to self. ascent always points to parent.
             descent_string += ("\t\tdescent_from_" + str(node_id) + " := " + str(node_id) + ";" + os.linesep)
+            if node_id == 0:
+                ascent_string += ("\t\tascent_from_" + str(node_id) + " := active_node = 0 ? -1 : 0;" + os.linesep)#silly edge case
+                continue
             ascent_string += ("\t\tascent_from_" + str(node_id) + " := ascent_from_" + str(nodes[node_id][1]) + ";" + os.linesep)
             continue
         if node_id == 0:
@@ -1077,7 +1080,7 @@ def main():
                                   + "\tDEFINE" + os.linesep
                                   + "\t\tstatus := " + os.linesep
                                   + "\t\t\tcase" + os.linesep
-                                  + "\t\t\t\t(active_node = id) : {success, failure, running};" + os.linesep
+                                  + "\t\t\t\t(active_node = id) : random_status;" + os.linesep
                                   + "\t\t\t\tTRUE : invalid;" + os.linesep
                                   + "\t\t\tesac;" + os.linesep
                 )
@@ -1110,7 +1113,7 @@ def main():
                                   + "\tDEFINE" + os.linesep
                                   + "\t\tstatus := " + os.linesep
                                   + "\t\t\tcase" + os.linesep
-                                  + "\t\t\t\t(active_node = id) : {success, failure, running};" + os.linesep
+                                  + "\t\t\t\t(active_node = id) : random_status;" + os.linesep
                                   + "\t\t\t\tTRUE : invalid;" + os.linesep
                                   + "\t\t\tesac;" + os.linesep
                 )

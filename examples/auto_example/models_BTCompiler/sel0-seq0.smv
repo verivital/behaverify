@@ -1,0 +1,32 @@
+MODULE main
+	VAR
+		root : bt_skill;
+		tick_generator : bt_tick_generator(root);
+MODULE fake_node()
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		status := error;
+MODULE bt_skill
+	IVAR
+		input : { bt_input_running, bt_input_false, bt_input_true };
+	VAR
+		output : { bt_output_none, bt_output_running, bt_output_false, bt_output_true};
+		enable : boolean;
+	ASSIGN
+		init(output) := bt_output_none;
+		next(output) :=
+			case
+				! enable : bt_output_none;
+				input = bt_input_running : bt_output_running;
+				input = bt_input_false : bt_output_false;
+				input = bt_input_true : bt_output_true;
+			esac;
+MODULE bt_tick_generator(top_level_bt)
+	ASSIGN
+		init(top_level_bt.enable) := TRUE;
+		next(top_level_bt.enable) := (top_level_bt.output != bt_output_none);
+MODULE bt_single_tick_generator(top_level_bt)
+	ASSIGN
+		init(top_level_bt.enable) := TRUE;
+		next(top_level_bt.enable) := FALSE;
