@@ -1,0 +1,138 @@
+MODULE main
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		statuses := [seq_root.status, seq0.status, seq01.status, leaf3.status, leaf4.status, leaf0.status, seq02.status, leaf1.status, leaf2.status];
+		trace_running_source_4 := (statuses[4] = running) ? 4 : -2;
+		trace_running_source_2 := 
+			case
+				!(trace_running_source_4 = -2) : trace_running_source_4;
+				TRUE : -2;
+			esac;
+		trace_running_source_5 := (statuses[5] = running) ? 5 : -2;
+		trace_running_source_1 := 
+			case
+				!(trace_running_source_2 = -2) : trace_running_source_2;
+				!(trace_running_source_5 = -2) : trace_running_source_5;
+				TRUE : -2;
+			esac;
+		trace_running_source_7 := (statuses[7] = running) ? 7 : -2;
+		trace_running_source_8 := (statuses[8] = running) ? 8 : -2;
+		trace_running_source_6 := 
+			case
+				!(trace_running_source_7 = -2) : trace_running_source_7;
+				!(trace_running_source_8 = -2) : trace_running_source_8;
+				TRUE : -2;
+			esac;
+		trace_running_source_0 := 
+			case
+				!(trace_running_source_1 = -2) : trace_running_source_1;
+				!(trace_running_source_6 = -2) : trace_running_source_6;
+				TRUE : -2;
+			esac;
+		resume_point_0 := 
+			case
+				(resume_from_node_0 in {5}) : 0;
+				(resume_from_node_0 in {8}) : 1;
+				TRUE : -2;
+			esac;
+		resume_point_1 := 
+			case
+				(resume_from_node_0 in {4}) : 0;
+				(resume_from_node_0 in {5}) : 1;
+				TRUE : -2;
+			esac;
+		resume_point_2 := 
+			case
+				(resume_from_node_0 in {4}) : 1;
+				TRUE : -2;
+			esac;
+		resume_point_6 := 
+			case
+				(resume_from_node_0 in {7}) : 0;
+				(resume_from_node_0 in {8}) : 1;
+				TRUE : -2;
+			esac;
+		seq_root.active := TRUE;
+	VAR
+		node_names : define_nodes;
+		resume_from_node_0 : {0, 4, 5, 7, 8};
+		seq_root : node_sequence(1, seq0, seq02, resume_point_0);
+		seq0 : node_sequence(1, seq01, leaf0, resume_point_1);
+		seq01 : node_sequence(1, leaf3, leaf4, resume_point_2);
+		leaf3 : node_default();
+		leaf4 : node_default();
+		leaf0 : node_default();
+		seq02 : node_sequence(1, leaf1, leaf2, resume_point_6);
+		leaf1 : node_default();
+		leaf2 : node_default();
+	ASSIGN
+		init(resume_from_node_0) := 0;
+		next(resume_from_node_0) := 
+			case
+				(statuses[0] in {success, failure}) : 0;
+				TRUE : max(trace_running_source_0, 0);
+			esac;
+MODULE fake_node()
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		status := error;
+MODULE node_default()
+	CONSTANTS
+		success, failure, running, invalid, error;
+	IVAR
+		input_status : {success, running, failure};
+	DEFINE
+		status :=
+			case
+				!(active) : invalid;
+				TRUE : input_status;
+			esac;
+MODULE node_sequence(last_child, child_0, child_1, resume_point)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		status :=
+			case
+				!(active) : invalid;
+				(last_child < 0) : success;
+				(0 <= last_child) & (child_0.status = error) : error;
+				(1 <= last_child) & (child_1.status = error) : error;
+				(0 >= resume_point) & (0 <= last_child) & (child_0.status = failure) : failure;
+				(0 >= resume_point) & (0 <= last_child) & (child_0.status = running) : running;
+				(0 >= resume_point) & (0 <= last_child) & (child_0.status = invalid) : error;
+				(1 >= resume_point) & (1 <= last_child) & (child_1.status = failure) : failure;
+				(1 >= resume_point) & (1 <= last_child) & (child_1.status = running) : running;
+				(1 >= resume_point) & (1 <= last_child) & (child_1.status = invalid) : error;
+				TRUE : success;
+			esac;
+		child_0.active :=
+			case
+				!(active) : FALSE;
+				(0 > last_child) : FALSE;
+				(0 < resume_point) : FALSE;
+				(0 = resume_point) : TRUE;
+				TRUE : TRUE;
+				esac;
+		child_1.active :=
+			case
+				!(active) : FALSE;
+				(1 > last_child) : FALSE;
+				(1 < resume_point) : FALSE;
+				(1 = resume_point) : TRUE;
+				!(child_0.active) : FALSE;
+				!(child_0.status = success) : FALSE;
+				TRUE: TRUE;
+			esac;
+MODULE define_nodes
+	DEFINE
+		seq_root := 0;
+		seq0 := 1;
+		seq01 := 2;
+		leaf3 := 3;
+		leaf4 := 4;
+		leaf0 := 5;
+		seq02 := 6;
+		leaf1 := 7;
+		leaf2 := 8;

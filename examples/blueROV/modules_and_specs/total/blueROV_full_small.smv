@@ -1,4 +1,6 @@
 MODULE blackboard_module(node_names, variable_names, statuses)
+	CONSTANTS
+		heading_default, heading_surface, heading_rth, heading_loiter, heading_pipeline_mapping, heading_waypoint, name_default, name_surface_task, name_rth_task, name_loiter_task, name_tracking_task, name_waypoint_task, depth_default, depth_surface_task, depth_rth_task, depth_pipeline_mapping, depth_waypoint, mission_type_path_following, mission_type_waypoint_following, mission_type_e_stop, mission_type_pipe_following, mission_type_unknown;
 	DEFINE
 		variables := [battery, battery_low_warning, battery_dot_batt_charge_remaining, bb_rth, bb_rth_warning, bb_rth_dot_data, bb_geofence, bb_geofence_warning, bb_geofence_dot_data, lec2_am_r, lec2_am_r_speed_warning, lec2_am_r_pipe_warning, lec2_am_r_dot_confs, lec2_am_l, lec2_am_l_speed_warning, lec2_am_l_pipe_warning, lec2_am_l_dot_confs, bb_pipelost, bb_pipe_lost_warning, bb_pipelost_dot_data, bb_mission_dot_data, bb_sensor_failure, bb_sensor_failure_warning, bb_sensor_failure_dot_data, bb_waypoints_completed, bb_waypoints_completed_dot_data, bb_mission, dd_output, dd_z_axis_warning, dd_xy_axis_degradation, dd_output_dot_data, total_degradation, fls_range, obstacle_standoff_warning, obstacle_min_standoff, fls_range_dot_range, obstacle_in_view, bb_fls_warning, obstacle_in_view_dot_stamp, emergency_stop_warning, hsd_pipeline_mapping, hsd_to_waypoint, hsd_to_rth, hsd_to_surface, rtreach_out, rtreach_out_dot_data, HSD_out_dot_heading, uuv_max_speed, mission_file, refLat, refLon, next_mission, decision_threshold, HSD_out, bb_obstacle_warning, cm_hsd_input, HSD_out_dot_speed, HSD_out_dot_depth, bb_home_reached, bb_home_dist, bb_home_dist_dot_data, pipe_mapping_enable];
 		variable_exists := [battery_exists, battery_low_warning_exists, battery_dot_batt_charge_remaining_exists, bb_rth_exists, bb_rth_warning_exists, bb_rth_dot_data_exists, bb_geofence_exists, bb_geofence_warning_exists, bb_geofence_dot_data_exists, lec2_am_r_exists, lec2_am_r_speed_warning_exists, lec2_am_r_pipe_warning_exists, lec2_am_r_dot_confs_exists, lec2_am_l_exists, lec2_am_l_speed_warning_exists, lec2_am_l_pipe_warning_exists, lec2_am_l_dot_confs_exists, bb_pipelost_exists, bb_pipe_lost_warning_exists, bb_pipelost_dot_data_exists, bb_mission_dot_data_exists, bb_sensor_failure_exists, bb_sensor_failure_warning_exists, bb_sensor_failure_dot_data_exists, bb_waypoints_completed_exists, bb_waypoints_completed_dot_data_exists, bb_mission_exists, dd_output_exists, dd_z_axis_warning_exists, dd_xy_axis_degradation_exists, dd_output_dot_data_exists, total_degradation_exists, fls_range_exists, obstacle_standoff_warning_exists, obstacle_min_standoff_exists, fls_range_dot_range_exists, obstacle_in_view_exists, bb_fls_warning_exists, obstacle_in_view_dot_stamp_exists, emergency_stop_warning_exists, hsd_pipeline_mapping_exists, hsd_to_waypoint_exists, hsd_to_rth_exists, hsd_to_surface_exists, rtreach_out_exists, rtreach_out_dot_data_exists, HSD_out_dot_heading_exists, uuv_max_speed_exists, mission_file_exists, refLat_exists, refLon_exists, next_mission_exists, decision_threshold_exists, HSD_out_exists, bb_obstacle_warning_exists, cm_hsd_input_exists, HSD_out_dot_speed_exists, HSD_out_dot_depth_exists, bb_home_reached_exists, bb_home_dist_exists, bb_home_dist_dot_data_exists, pipe_mapping_enable_exists];
@@ -73,34 +75,35 @@ MODULE blackboard_module(node_names, variable_names, statuses)
 		task_mission_server_mission_type_list := [mission_type_0, mission_type_1];--list of missions here.
 		--task_mission_server_mission_distance_list := [mission_distance_0, mission_distance_1, mission_distance_2];--list of min distances here. between 0 and 2 for each value
 		task_mission_server_mission_distance_list := [mission_distance_0, mission_distance_1];--list of min distances here. between 0 and 2 for each value
-		mission_type_path_following := 0;
-		mission_type_waypoint_following := 1;
-		mission_type_e_stop := 2;
-		mission_type_pipe_following := 3;
-		mission_type_unknown := 4;
+		--
+		-- mission_type_path_following := 0;
+		-- mission_type_waypoint_following := 1;
+		-- mission_type_e_stop := 2;
+		-- mission_type_pipe_following := 3;
+		-- mission_type_unknown := 4;
 		--
 		total_degradation_threshold := 0;
-		--
-		heading_default := 0;
-		heading_surface := 1;
-		heading_rth := 2;
-		heading_loiter := 3;--this value explicitly listed as 30 in loiter tasks, unlike the other ones which i have no idea what they are.
-		heading_pipeline_mapping := 4;
-		heading_waypoint := 5;
-		--
 		home_reached_threshold := 1;
-		name_default := 0;
-		name_surface_task := 1;
-		name_rth_task := 2;
-		name_loiter_task := 3;
-		name_tracking_task := 4;
-		name_waypoint_task := 5;
 		--
-		depth_default := 0;
-		depth_surface_task := 1;
-		depth_rth_task := 2;
-		depth_pipeline_mapping := 3;
-		depth_waypoint :=4;
+		-- heading_default := 0;
+		-- heading_surface := 1;
+		-- heading_rth := 2;
+		-- heading_loiter := 3;--this value explicitly listed as 30 in loiter tasks, unlike the other ones which i have no idea what they are.
+		-- heading_pipeline_mapping := 4;
+		-- heading_waypoint := 5;
+		--
+		-- name_default := 0;
+		-- name_surface_task := 1;
+		-- name_rth_task := 2;
+		-- name_loiter_task := 3;
+		-- name_tracking_task := 4;
+		-- name_waypoint_task := 5;
+		-- --
+		-- depth_default := 0;
+		-- depth_surface_task := 1;
+		-- depth_rth_task := 2;
+		-- depth_pipeline_mapping := 3;
+		-- depth_waypoint :=4;
 		--
 		battery_low_warning :=
 			case
@@ -162,11 +165,11 @@ MODULE blackboard_module(node_names, variable_names, statuses)
 		bb_sensor_failure_dot_data := 0;
 		bb_home_dist_dot_data := 0;
 	FROZENVAR
-		--mission_type_0 : {mission_type_path_following, mission_type_waypoint_following, mission_type_e_stop, mission_type_pipe_following, mission_type_unknown};
-		--mission_type_1 : {mission_type_path_following, mission_type_waypoint_following, mission_type_e_stop, mission_type_pipe_following, mission_type_unknown};
+		mission_type_0 : {mission_type_path_following, mission_type_waypoint_following, mission_type_e_stop, mission_type_pipe_following, mission_type_unknown};
+		mission_type_1 : {mission_type_path_following, mission_type_waypoint_following, mission_type_e_stop, mission_type_pipe_following, mission_type_unknown};
 		--mission_type_2 : {mission_type_path_following, mission_type_waypoint_following, mission_type_e_stop, mission_type_pipe_following, mission_type_unknown};
-		mission_type_0 : {0, 1, 2, 3, 4};
-		mission_type_1 : {0, 1, 2, 3, 4};
+		--mission_type_0 : {0, 1, 2, 3, 4};
+		--mission_type_1 : {0, 1, 2, 3, 4};
 		--mission_type_2 : {0, 1, 2, 3, 4};
 		mission_distance_0 : {0, 1};
 		mission_distance_1 : {0, 1};
@@ -194,8 +197,8 @@ MODULE blackboard_module(node_names, variable_names, statuses)
 		--bb_pipelost : 0..1;
 		bb_pipe_lost_warning : 0..1;
 		--bb_pipelost_dot_data : 0..1;
-		--bb_mission_dot_data : {mission_type_path_following, mission_type_waypoint_following, mission_type_e_stop, mission_type_pipe_following, mission_type_unknown};
-		bb_mission_dot_data : {0, 1, 2, 3, 4}; 
+		bb_mission_dot_data : {mission_type_path_following, mission_type_waypoint_following, mission_type_e_stop, mission_type_pipe_following, mission_type_unknown};
+		--bb_mission_dot_data : {0, 1, 2, 3, 4}; 
 		--bb_pipe_lost_dot_data : 0..1;
 		--bb_sensor_failure : 0..1;
 		bb_sensor_failure_warning : 0..1;
@@ -221,8 +224,8 @@ MODULE blackboard_module(node_names, variable_names, statuses)
 		--hsd_to_rth : 0..1;
 		--hsd_to_surface : 0..1; --these should maybe be used in the HSD_out variables
 		--rtreach_out : 0..1;
-		--HSD_out_dot_heading : {heading_default, heading_surface, heading_rth, heading_loiter, heading_pipeline_mapping, heading_waypoint};
-		HSD_out_dot_heading : {0, 1, 2, 3, 4, 5};
+		HSD_out_dot_heading : {heading_default, heading_surface, heading_rth, heading_loiter, heading_pipeline_mapping, heading_waypoint};
+		--HSD_out_dot_heading : {0, 1, 2, 3, 4, 5};
 		rtreach_out_dot_data : 0..1;
 		--uuv_max_speed : 0..1;
 		--mission_file : 0..1;
@@ -232,12 +235,12 @@ MODULE blackboard_module(node_names, variable_names, statuses)
 		--decision_threshold : 0..1;
 		--HSD_out : 0..1;
 		bb_obstacle_warning : 0..1;
-		--cm_hsd_input : {name_default, name_surface_task, name_rth_task, name_loiter_task, name_tracking_task, name_waypoint_task};
-		cm_hsd_input : {0, 1, 2, 3, 4, 5};
+		cm_hsd_input : {name_default, name_surface_task, name_rth_task, name_loiter_task, name_tracking_task, name_waypoint_task};
+		--cm_hsd_input : {0, 1, 2, 3, 4, 5};
 		--HSD_out_dot_speed : {uuv_min_speed, uuv_max_speed};
 		HSD_out_dot_speed : {0, 1};
-		--HSD_out_dot_depth : {depth_default, depth_surface_task, depth_rth_task, depth_pipeline_mapping, depth_waypoint};
-		HSD_out_dot_depth : {0, 1, 2, 3, 4};
+		HSD_out_dot_depth : {depth_default, depth_surface_task, depth_rth_task, depth_pipeline_mapping, depth_waypoint};
+		--HSD_out_dot_depth : {0, 1, 2, 3, 4};
 		bb_home_reached : 0..1;
 		--bb_home_dist : 0..1;
 		--bb_home_dist_dot_data : 0..1;
@@ -590,7 +593,7 @@ MODULE blackboard_module(node_names, variable_names, statuses)
 				!(statuses[node_names.loiter_task] in {invalid, error}) : name_loiter_task;
 				!(statuses[node_names.waypoint_task] in {invalid, error}) : name_waypoint_task;
 				!(statuses[node_names.loiter_task2] in {invalid, error}) : name_loiter_task;
-				!(statuses[node_names.tracking_task] in {invalid, error}) : name_pipeline_mapping_task;
+				!(statuses[node_names.tracking_task] in {invalid, error}) : name_tracking_task;
 				!(statuses[node_names.loiter_task1] in {invalid, error}) : name_loiter_task;
 				!(statuses[node_names.rth_task1] in {invalid, error}) : name_rth_task;
 				!(statuses[node_names.rth_task] in {invalid, error}) : name_rth_task;

@@ -1,0 +1,38 @@
+MODULE main
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		statuses := [root.status];
+		resume_from_node_0 := -3;
+		next_node := [ascent_from_0];
+		descent_from_0 := 0;
+		ascent_from_0 := active_node = 0 ? -1 : 0;
+		relevant_child_0 := (active_node = 0) ? -1 : -2 ;
+		resume_relevant_child_0 := (resume_from_node_0 = 0) ? TRUE : FALSE ;
+	VAR
+		active_node : {-2, -1,0};
+		random_status : {running, success, failure};
+		node_names : define_nodes;
+		root : node_default(active_node, 0, random_status);
+	INVAR
+		active_node = -1 -> random_status = running;
+	ASSIGN
+		init(active_node) := -1;
+		next(active_node) :=
+			case
+				(active_node = -2) : -2;
+				(active_node = -1) : next_node[0];
+				TRUE : next_node[active_node];
+			esac;
+MODULE node_default(active_node, id, random_status)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status :=
+			case
+				(active_node = id) : random_status;
+				TRUE : invalid;
+			esac;
+MODULE define_nodes
+	DEFINE
+		root := 0;

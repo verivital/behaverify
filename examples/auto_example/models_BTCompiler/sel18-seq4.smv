@@ -1,0 +1,108 @@
+MODULE main
+	VAR
+		sel_root : bt_fallback(sel17, sel16);
+		sel17 : bt_fallback(sel15, sel14);
+		sel15 : bt_fallback(sel11, sel10);
+		sel11 : bt_fallback(sel4, seq3);
+		sel4 : bt_fallback(leaf9, leaf10);
+		leaf9 : bt_skill;
+		leaf10 : bt_skill;
+		seq3 : bt_sequence_with_memory(leaf11, leaf12);
+		leaf11 : bt_skill;
+		leaf12 : bt_skill;
+		sel10 : bt_fallback(sel3, seq2);
+		sel3 : bt_fallback(leaf13, leaf14);
+		leaf13 : bt_skill;
+		leaf14 : bt_skill;
+		seq2 : bt_sequence_with_memory(leaf15, leaf16);
+		leaf15 : bt_skill;
+		leaf16 : bt_skill;
+		sel14 : bt_fallback(sel9, sel8);
+		sel9 : bt_fallback(sel2, seq1);
+		sel2 : bt_fallback(leaf17, leaf18);
+		leaf17 : bt_skill;
+		leaf18 : bt_skill;
+		seq1 : bt_sequence_with_memory(leaf19, leaf20);
+		leaf19 : bt_skill;
+		leaf20 : bt_skill;
+		sel8 : bt_fallback(sel1, leaf0);
+		sel1 : bt_fallback(leaf21, leaf22);
+		leaf21 : bt_skill;
+		leaf22 : bt_skill;
+		leaf0 : bt_skill;
+		sel16 : bt_fallback(sel13, sel12);
+		sel13 : bt_fallback(sel7, sel6);
+		sel7 : bt_fallback(leaf1, leaf2);
+		leaf1 : bt_skill;
+		leaf2 : bt_skill;
+		sel6 : bt_fallback(leaf3, leaf4);
+		leaf3 : bt_skill;
+		leaf4 : bt_skill;
+		sel12 : bt_fallback(sel5, seq4);
+		sel5 : bt_fallback(leaf5, leaf6);
+		leaf5 : bt_skill;
+		leaf6 : bt_skill;
+		seq4 : bt_sequence_with_memory(leaf7, leaf8);
+		leaf7 : bt_skill;
+		leaf8 : bt_skill;
+		tick_generator : bt_tick_generator(sel_root);
+MODULE fake_node()
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		status := error;
+MODULE bt_fallback(left_bt, right_bt)
+	VAR
+		enable : boolean;
+	ASSIGN
+		left_bt.enable := enable;
+		right_bt.enable := (left_bt.output = bt_output_false);
+	DEFINE
+		output :=
+			case
+				left_bt.output in { bt_output_running, bt_output_true } : left_bt.output;
+				TRUE : right_bt.output;
+			esac;
+MODULE bt_sequence_with_memory(left_bt, right_bt)
+	VAR
+		enable : boolean;
+		has_left_bt_succeded : boolean;
+	ASSIGN
+		init(has_left_bt_succeded) := FALSE;
+		next(has_left_bt_succeded) :=
+			case
+				right_bt.output in { bt_output_true, bt_output_false } : FALSE; -- Reset.
+				left_bt.output = bt_output_true : TRUE; -- Engage.
+				TRUE : has_left_bt_succeded; -- Hold.
+			esac;
+		left_bt.enable := enable & !has_left_bt_succeded;
+		right_bt.enable := (left_bt.output = bt_output_true) | (enable & has_left_bt_succeded);
+	DEFINE
+		output :=
+			case
+				left_bt.output in { bt_output_running, bt_output_false } : left_bt.output;
+				TRUE : right_bt.output;
+			esac;
+MODULE bt_skill
+	IVAR
+		input : { bt_input_running, bt_input_false, bt_input_true };
+	VAR
+		output : { bt_output_none, bt_output_running, bt_output_false, bt_output_true};
+		enable : boolean;
+	ASSIGN
+		init(output) := bt_output_none;
+		next(output) :=
+			case
+				! enable : bt_output_none;
+				input = bt_input_running : bt_output_running;
+				input = bt_input_false : bt_output_false;
+				input = bt_input_true : bt_output_true;
+			esac;
+MODULE bt_tick_generator(top_level_bt)
+	ASSIGN
+		init(top_level_bt.enable) := TRUE;
+		next(top_level_bt.enable) := (top_level_bt.output != bt_output_none);
+MODULE bt_single_tick_generator(top_level_bt)
+	ASSIGN
+		init(top_level_bt.enable) := TRUE;
+		next(top_level_bt.enable) := FALSE;

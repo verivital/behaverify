@@ -1,0 +1,78 @@
+MODULE main
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		statuses := [sel_root.status, sel3.status, sel1.status, leaf3.status, leaf4.status, leaf0.status, sel2.status, leaf1.status, leaf2.status];
+		resume_from_node_0 := -3;
+		sel_root.active := TRUE;
+	VAR
+		node_names : define_nodes;
+		sel_root : node_selector(1, sel3, sel2);
+		sel3 : node_selector(1, sel1, leaf0);
+		sel1 : node_selector(1, leaf3, leaf4);
+		leaf3 : node_default();
+		leaf4 : node_default();
+		leaf0 : node_default();
+		sel2 : node_selector(1, leaf1, leaf2);
+		leaf1 : node_default();
+		leaf2 : node_default();
+	ASSIGN
+MODULE fake_node()
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		status := error;
+MODULE node_selector(last_child, child_0, child_1)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		status :=
+			case
+				!(active) : invalid;
+				(last_child < 0) : failure;
+				(0 <= last_child) & (child_0.status = error) : error;
+				(1 <= last_child) & (child_1.status = error) : error;
+				(0 <= last_child) & (child_0.status = success) : success;
+				(0 <= last_child) & (child_0.status = running) : running;
+				(0 <= last_child) & (child_0.status = invalid) : error;
+				(1 <= last_child) & (child_1.status = success) : success;
+				(1 <= last_child) & (child_1.status = running) : running;
+				(1 <= last_child) & (child_1.status = invalid) : error;
+				TRUE : failure;
+			esac;
+		child_0.active :=
+			case
+				!(active) : FALSE;
+				(0 > last_child) : FALSE;
+				TRUE : TRUE;
+				esac;
+		child_1.active :=
+			case
+				!(active) : FALSE;
+				(1 > last_child) : FALSE;
+				!(child_0.active) : FALSE;
+				!(child_0.status = failure) : FALSE;
+				TRUE: TRUE;
+			esac;
+MODULE node_default()
+	CONSTANTS
+		success, failure, running, invalid, error;
+	IVAR
+		input_status : {success, running, failure};
+	DEFINE
+		status :=
+			case
+				!(active) : invalid;
+				TRUE : input_status;
+			esac;
+MODULE define_nodes
+	DEFINE
+		sel_root := 0;
+		sel3 := 1;
+		sel1 := 2;
+		leaf3 := 3;
+		leaf4 := 4;
+		leaf0 := 5;
+		sel2 := 6;
+		leaf1 := 7;
+		leaf2 := 8;
