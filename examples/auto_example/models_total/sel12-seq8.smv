@@ -2,7 +2,7 @@ MODULE main
 	CONSTANTS
 		success, failure, running, invalid, error;
 	DEFINE
-		statuses := [sel_root.status, sel11.status, sel9.status, sel7.status, sel3.status, leaf11.status, leaf12.status, seq2.status, leaf13.status, leaf14.status, seq6.status, sel2.status, leaf15.status, leaf16.status, seq1.status, leaf17.status, leaf18.status, seq8.status, sel6.status, sel1.status, leaf19.status, leaf20.status, leaf0.status, seq5.status, leaf1.status, leaf2.status, sel10.status, sel8.status, sel5.status, leaf3.status, leaf4.status, seq4.status, leaf5.status, leaf6.status, seq7.status, sel4.status, leaf7.status, leaf8.status, seq3.status, leaf9.status, leaf10.status];
+		statuses := [root.status, sel11.status, sel9.status, sel7.status, sel3.status, leaf11.status, leaf12.status, seq2.status, leaf13.status, leaf14.status, seq6.status, sel2.status, leaf15.status, leaf16.status, seq1.status, leaf17.status, leaf18.status, seq8.status, sel6.status, sel1.status, leaf19.status, leaf20.status, leaf0.status, seq5.status, leaf1.status, leaf2.status, sel10.status, sel8.status, sel5.status, leaf3.status, leaf4.status, seq4.status, leaf5.status, leaf6.status, seq7.status, sel4.status, leaf7.status, leaf8.status, seq3.status, leaf9.status, leaf10.status];
 		trace_running_source_9 := (statuses[9] = running) ? 9 : -2;
 		trace_running_source_7 := 
 			case
@@ -131,11 +131,11 @@ MODULE main
 				(resume_from_node_0 in {33}) : 1;
 				TRUE : -2;
 			esac;
-		sel_root.active := TRUE;
+		root.active := TRUE;
 	VAR
 		node_names : define_nodes;
 		resume_from_node_0 : {0, 9, 15, 16, 24, 25, 33, 39, 40};
-		sel_root : node_selector(1, sel11, sel10);
+		root : node_selector(1, sel11, sel10);
 		sel11 : node_selector(1, sel9, seq8);
 		sel9 : node_selector(1, sel7, seq6);
 		sel7 : node_selector(1, sel3, seq2);
@@ -188,16 +188,37 @@ MODULE fake_node()
 		success, failure, running, invalid, error;
 	DEFINE
 		status := error;
-MODULE node_default()
+MODULE node_selector(last_child, child_0, child_1)
 	CONSTANTS
 		success, failure, running, invalid, error;
-	IVAR
-		input_status : {success, running, failure};
 	DEFINE
 		status :=
 			case
 				!(active) : invalid;
-				TRUE : input_status;
+				(last_child < 0) : failure;
+				(0 <= last_child) & (child_0.status = error) : error;
+				(1 <= last_child) & (child_1.status = error) : error;
+				(0 <= last_child) & (child_0.status = success) : success;
+				(0 <= last_child) & (child_0.status = running) : running;
+				(0 <= last_child) & (child_0.status = invalid) : error;
+				(1 <= last_child) & (child_1.status = success) : success;
+				(1 <= last_child) & (child_1.status = running) : running;
+				(1 <= last_child) & (child_1.status = invalid) : error;
+				TRUE : failure;
+			esac;
+		child_0.active :=
+			case
+				!(active) : FALSE;
+				(0 > last_child) : FALSE;
+				TRUE : TRUE;
+				esac;
+		child_1.active :=
+			case
+				!(active) : FALSE;
+				(1 > last_child) : FALSE;
+				!(child_0.active) : FALSE;
+				!(child_0.status = failure) : FALSE;
+				TRUE: TRUE;
 			esac;
 MODULE node_sequence(last_child, child_0, child_1, resume_point)
 	CONSTANTS
@@ -235,41 +256,16 @@ MODULE node_sequence(last_child, child_0, child_1, resume_point)
 				!(child_0.status = success) : FALSE;
 				TRUE: TRUE;
 			esac;
-MODULE node_selector(last_child, child_0, child_1)
+MODULE node_default()
 	CONSTANTS
 		success, failure, running, invalid, error;
+	IVAR
+		input_status : {success, running, failure};
 	DEFINE
-		status :=
-			case
-				!(active) : invalid;
-				(last_child < 0) : failure;
-				(0 <= last_child) & (child_0.status = error) : error;
-				(1 <= last_child) & (child_1.status = error) : error;
-				(0 <= last_child) & (child_0.status = success) : success;
-				(0 <= last_child) & (child_0.status = running) : running;
-				(0 <= last_child) & (child_0.status = invalid) : error;
-				(1 <= last_child) & (child_1.status = success) : success;
-				(1 <= last_child) & (child_1.status = running) : running;
-				(1 <= last_child) & (child_1.status = invalid) : error;
-				TRUE : failure;
-			esac;
-		child_0.active :=
-			case
-				!(active) : FALSE;
-				(0 > last_child) : FALSE;
-				TRUE : TRUE;
-				esac;
-		child_1.active :=
-			case
-				!(active) : FALSE;
-				(1 > last_child) : FALSE;
-				!(child_0.active) : FALSE;
-				!(child_0.status = failure) : FALSE;
-				TRUE: TRUE;
-			esac;
+		status := active ? input_status : invalid;
 MODULE define_nodes
 	DEFINE
-		sel_root := 0;
+		root := 0;
 		sel11 := 1;
 		sel9 := 2;
 		sel7 := 3;

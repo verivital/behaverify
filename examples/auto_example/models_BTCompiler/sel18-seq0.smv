@@ -1,6 +1,6 @@
 MODULE main
 	VAR
-		sel_root : bt_fallback(sel17, sel16);
+		root : bt_fallback(sel17, sel16);
 		sel17 : bt_fallback(sel15, sel14);
 		sel15 : bt_fallback(sel11, sel10);
 		sel11 : bt_fallback(sel3, sel2);
@@ -37,12 +37,7 @@ MODULE main
 		sel4 : bt_fallback(leaf11, leaf12);
 		leaf11 : bt_skill;
 		leaf12 : bt_skill;
-		tick_generator : bt_tick_generator(sel_root);
-MODULE fake_node()
-	CONSTANTS
-		success, failure, running, invalid, error;
-	DEFINE
-		status := error;
+		tick_generator : bt_tick_generator(root);
 MODULE bt_fallback(left_bt, right_bt)
 	VAR
 		enable : boolean;

@@ -11,10 +11,10 @@ def create_root(print_pic, num_selector, num_sequence):
         root = py_trees.behaviours.Dummy('root')
     else:
         if num_selector > num_sequence:
-            root = py_trees.composites.Selector('sel_root')
+            root = py_trees.composites.Selector('root')
             num_selector = num_selector - 1
         else:
-            root = py_trees.composites.Sequence('seq_root')
+            root = py_trees.composites.Sequence('root')
             num_sequence = num_sequence - 1
         need_children.put(root)
     leaf_count = 0

@@ -26,6 +26,18 @@ def walk_tree(t, parent_id, next_available_id, children, nodes, needed_nodes, no
     else:
         node_names[node_name]=0
 
+    try:
+        #this is to overwrite the later checks in order to directly create a specific type of node.
+        if t.serene_info_variable == "non_blocking":
+            nodes[this_id]=('bt_non_blocking_skill', parent_id, node_name)
+            needed_nodes.add('bt_non_blocking_skill')
+            leaf_set.add(this_id)
+            return next_available_id
+    except AttributeError as e:
+        #print(e)
+        #print(node_name+ " ERROR?")
+        pass
+
     if isinstance(t, py_trees.composites.Sequence):
         nodes[this_id]=('bt_sequence_with_memory', parent_id, node_name)
         needed_nodes.add('bt_sequence_with_memory')
@@ -34,6 +46,11 @@ def walk_tree(t, parent_id, next_available_id, children, nodes, needed_nodes, no
         nodes[this_id]=('bt_fallback', parent_id, node_name)
         needed_nodes.add('bt_fallback')
         fallback_set.add(this_id)
+    elif isinstance(t, py_trees.behaviours.Success):
+        nodes[this_id] = ('bt_placeholder', parent_id, node_name)
+        needed_nodes.add('bt_placeholder')
+        leaf_set.add(this_id)
+        return next_available_id
     else:#currently defaulting to default. will rework this later probably
         nodes[this_id]=('bt_skill', parent_id, node_name)
         needed_nodes.add('bt_skill')
@@ -50,11 +67,15 @@ def walk_tree(t, parent_id, next_available_id, children, nodes, needed_nodes, no
 
 #fixes some _dot_ variable nesting problems
 def create_nodes(nodes, children, leaf_set, fallback_set, sequence_set):
+    #print(nodes)
+    #print(children)
+    #print(leaf_set)
     define_string = ""
     init_string = ""
     next_string = ""
     var_string = ""
     for node_id in range(0, len(nodes)):
+        #print(node_id)
         var_string += "\t\t" + nodes[node_id][2] + " : " + nodes[node_id][0]
         if node_id in leaf_set:
             pass
@@ -137,12 +158,7 @@ def main():
     if args.specs_input_file:
         nuxmv_string += open(args.specs_input_file).read() + os.linesep + os.linesep
 
-    nuxmv_string += ("MODULE fake_node()" + os.linesep
-                     + "\tCONSTANTS" + os.linesep
-                     + "\t\tsuccess, failure, running, invalid, error;" + os.linesep
-                     + "\tDEFINE" + os.linesep
-                     + "\t\tstatus := error;" + os.linesep
-    )
+
     for needed in needed_nodes:
         nuxmv_string +=  eval('node_creator.create_'+needed+'()')
     nuxmv_string += node_creator.create_bt_tick_generator()

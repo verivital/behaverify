@@ -1,0 +1,1040 @@
+MODULE main
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		statuses := [linkSeq45.status, linkSeq43.status, linkSeq39.status, linkSeq31.status, linkSeq15.status, sel30.status, safety_check30.status, backup30.status, sel31.status, safety_check31.status, backup31.status, linkSeq16.status, sel32.status, safety_check32.status, backup32.status, sel33.status, safety_check33.status, backup33.status, linkSeq32.status, linkSeq17.status, sel34.status, safety_check34.status, backup34.status, sel35.status, safety_check35.status, backup35.status, linkSeq18.status, sel36.status, safety_check36.status, backup36.status, sel37.status, safety_check37.status, backup37.status, linkSeq40.status, linkSeq33.status, linkSeq19.status, sel38.status, safety_check38.status, backup38.status, sel39.status, safety_check39.status, backup39.status, linkSeq20.status, sel40.status, safety_check40.status, backup40.status, sel41.status, safety_check41.status, backup41.status, linkSeq34.status, linkSeq21.status, sel42.status, safety_check42.status, backup42.status, sel43.status, safety_check43.status, backup43.status, linkSeq22.status, sel44.status, safety_check44.status, backup44.status, sel45.status, safety_check45.status, backup45.status, linkSeq44.status, linkSeq41.status, linkSeq35.status, linkSeq23.status, sel46.status, safety_check46.status, backup46.status, linkSeq0.status, sel0.status, safety_check0.status, backup0.status, sel1.status, safety_check1.status, backup1.status, linkSeq24.status, linkSeq1.status, sel2.status, safety_check2.status, backup2.status, sel3.status, safety_check3.status, backup3.status, linkSeq2.status, sel4.status, safety_check4.status, backup4.status, sel5.status, safety_check5.status, backup5.status, linkSeq36.status, linkSeq25.status, linkSeq3.status, sel6.status, safety_check6.status, backup6.status, sel7.status, safety_check7.status, backup7.status, linkSeq4.status, sel8.status, safety_check8.status, backup8.status, sel9.status, safety_check9.status, backup9.status, linkSeq26.status, linkSeq5.status, sel10.status, safety_check10.status, backup10.status, sel11.status, safety_check11.status, backup11.status, linkSeq6.status, sel12.status, safety_check12.status, backup12.status, sel13.status, safety_check13.status, backup13.status, linkSeq42.status, linkSeq37.status, linkSeq27.status, linkSeq7.status, sel14.status, safety_check14.status, backup14.status, sel15.status, safety_check15.status, backup15.status, linkSeq8.status, sel16.status, safety_check16.status, backup16.status, sel17.status, safety_check17.status, backup17.status, linkSeq28.status, linkSeq9.status, sel18.status, safety_check18.status, backup18.status, sel19.status, safety_check19.status, backup19.status, linkSeq10.status, sel20.status, safety_check20.status, backup20.status, sel21.status, safety_check21.status, backup21.status, linkSeq38.status, linkSeq29.status, linkSeq11.status, sel22.status, safety_check22.status, backup22.status, sel23.status, safety_check23.status, backup23.status, linkSeq12.status, sel24.status, safety_check24.status, backup24.status, sel25.status, safety_check25.status, backup25.status, linkSeq30.status, linkSeq13.status, sel26.status, safety_check26.status, backup26.status, sel27.status, safety_check27.status, backup27.status, linkSeq14.status, sel28.status, safety_check28.status, backup28.status, sel29.status, safety_check29.status, backup29.status];
+		trace_running_source_8 := (statuses[8] = running) ? 8 : -2;
+		trace_running_source_4 := 
+			case
+				!(trace_running_source_8 = -2) : trace_running_source_8;
+				TRUE : -2;
+			esac;
+		trace_running_source_12 := (statuses[12] = running) ? 12 : -2;
+		trace_running_source_15 := (statuses[15] = running) ? 15 : -2;
+		trace_running_source_11 := 
+			case
+				!(trace_running_source_12 = -2) : trace_running_source_12;
+				!(trace_running_source_15 = -2) : trace_running_source_15;
+				TRUE : -2;
+			esac;
+		trace_running_source_3 := 
+			case
+				!(trace_running_source_4 = -2) : trace_running_source_4;
+				!(trace_running_source_11 = -2) : trace_running_source_11;
+				TRUE : -2;
+			esac;
+		trace_running_source_20 := (statuses[20] = running) ? 20 : -2;
+		trace_running_source_23 := (statuses[23] = running) ? 23 : -2;
+		trace_running_source_19 := 
+			case
+				!(trace_running_source_20 = -2) : trace_running_source_20;
+				!(trace_running_source_23 = -2) : trace_running_source_23;
+				TRUE : -2;
+			esac;
+		trace_running_source_27 := (statuses[27] = running) ? 27 : -2;
+		trace_running_source_30 := (statuses[30] = running) ? 30 : -2;
+		trace_running_source_26 := 
+			case
+				!(trace_running_source_27 = -2) : trace_running_source_27;
+				!(trace_running_source_30 = -2) : trace_running_source_30;
+				TRUE : -2;
+			esac;
+		trace_running_source_18 := 
+			case
+				!(trace_running_source_19 = -2) : trace_running_source_19;
+				!(trace_running_source_26 = -2) : trace_running_source_26;
+				TRUE : -2;
+			esac;
+		trace_running_source_2 := 
+			case
+				!(trace_running_source_3 = -2) : trace_running_source_3;
+				!(trace_running_source_18 = -2) : trace_running_source_18;
+				TRUE : -2;
+			esac;
+		trace_running_source_36 := (statuses[36] = running) ? 36 : -2;
+		trace_running_source_39 := (statuses[39] = running) ? 39 : -2;
+		trace_running_source_35 := 
+			case
+				!(trace_running_source_36 = -2) : trace_running_source_36;
+				!(trace_running_source_39 = -2) : trace_running_source_39;
+				TRUE : -2;
+			esac;
+		trace_running_source_43 := (statuses[43] = running) ? 43 : -2;
+		trace_running_source_46 := (statuses[46] = running) ? 46 : -2;
+		trace_running_source_42 := 
+			case
+				!(trace_running_source_43 = -2) : trace_running_source_43;
+				!(trace_running_source_46 = -2) : trace_running_source_46;
+				TRUE : -2;
+			esac;
+		trace_running_source_34 := 
+			case
+				!(trace_running_source_35 = -2) : trace_running_source_35;
+				!(trace_running_source_42 = -2) : trace_running_source_42;
+				TRUE : -2;
+			esac;
+		trace_running_source_51 := (statuses[51] = running) ? 51 : -2;
+		trace_running_source_54 := (statuses[54] = running) ? 54 : -2;
+		trace_running_source_50 := 
+			case
+				!(trace_running_source_51 = -2) : trace_running_source_51;
+				!(trace_running_source_54 = -2) : trace_running_source_54;
+				TRUE : -2;
+			esac;
+		trace_running_source_58 := (statuses[58] = running) ? 58 : -2;
+		trace_running_source_61 := (statuses[61] = running) ? 61 : -2;
+		trace_running_source_57 := 
+			case
+				!(trace_running_source_58 = -2) : trace_running_source_58;
+				!(trace_running_source_61 = -2) : trace_running_source_61;
+				TRUE : -2;
+			esac;
+		trace_running_source_49 := 
+			case
+				!(trace_running_source_50 = -2) : trace_running_source_50;
+				!(trace_running_source_57 = -2) : trace_running_source_57;
+				TRUE : -2;
+			esac;
+		trace_running_source_33 := 
+			case
+				!(trace_running_source_34 = -2) : trace_running_source_34;
+				!(trace_running_source_49 = -2) : trace_running_source_49;
+				TRUE : -2;
+			esac;
+		trace_running_source_1 := 
+			case
+				!(trace_running_source_2 = -2) : trace_running_source_2;
+				!(trace_running_source_33 = -2) : trace_running_source_33;
+				TRUE : -2;
+			esac;
+		trace_running_source_68 := (statuses[68] = running) ? 68 : -2;
+		trace_running_source_72 := (statuses[72] = running) ? 72 : -2;
+		trace_running_source_75 := (statuses[75] = running) ? 75 : -2;
+		trace_running_source_71 := 
+			case
+				!(trace_running_source_72 = -2) : trace_running_source_72;
+				!(trace_running_source_75 = -2) : trace_running_source_75;
+				TRUE : -2;
+			esac;
+		trace_running_source_67 := 
+			case
+				!(trace_running_source_68 = -2) : trace_running_source_68;
+				!(trace_running_source_71 = -2) : trace_running_source_71;
+				TRUE : -2;
+			esac;
+		trace_running_source_80 := (statuses[80] = running) ? 80 : -2;
+		trace_running_source_83 := (statuses[83] = running) ? 83 : -2;
+		trace_running_source_79 := 
+			case
+				!(trace_running_source_80 = -2) : trace_running_source_80;
+				!(trace_running_source_83 = -2) : trace_running_source_83;
+				TRUE : -2;
+			esac;
+		trace_running_source_87 := (statuses[87] = running) ? 87 : -2;
+		trace_running_source_90 := (statuses[90] = running) ? 90 : -2;
+		trace_running_source_86 := 
+			case
+				!(trace_running_source_87 = -2) : trace_running_source_87;
+				!(trace_running_source_90 = -2) : trace_running_source_90;
+				TRUE : -2;
+			esac;
+		trace_running_source_78 := 
+			case
+				!(trace_running_source_79 = -2) : trace_running_source_79;
+				!(trace_running_source_86 = -2) : trace_running_source_86;
+				TRUE : -2;
+			esac;
+		trace_running_source_66 := 
+			case
+				!(trace_running_source_67 = -2) : trace_running_source_67;
+				!(trace_running_source_78 = -2) : trace_running_source_78;
+				TRUE : -2;
+			esac;
+		trace_running_source_96 := (statuses[96] = running) ? 96 : -2;
+		trace_running_source_99 := (statuses[99] = running) ? 99 : -2;
+		trace_running_source_95 := 
+			case
+				!(trace_running_source_96 = -2) : trace_running_source_96;
+				!(trace_running_source_99 = -2) : trace_running_source_99;
+				TRUE : -2;
+			esac;
+		trace_running_source_103 := (statuses[103] = running) ? 103 : -2;
+		trace_running_source_106 := (statuses[106] = running) ? 106 : -2;
+		trace_running_source_102 := 
+			case
+				!(trace_running_source_103 = -2) : trace_running_source_103;
+				!(trace_running_source_106 = -2) : trace_running_source_106;
+				TRUE : -2;
+			esac;
+		trace_running_source_94 := 
+			case
+				!(trace_running_source_95 = -2) : trace_running_source_95;
+				!(trace_running_source_102 = -2) : trace_running_source_102;
+				TRUE : -2;
+			esac;
+		trace_running_source_111 := (statuses[111] = running) ? 111 : -2;
+		trace_running_source_114 := (statuses[114] = running) ? 114 : -2;
+		trace_running_source_110 := 
+			case
+				!(trace_running_source_111 = -2) : trace_running_source_111;
+				!(trace_running_source_114 = -2) : trace_running_source_114;
+				TRUE : -2;
+			esac;
+		trace_running_source_118 := (statuses[118] = running) ? 118 : -2;
+		trace_running_source_121 := (statuses[121] = running) ? 121 : -2;
+		trace_running_source_117 := 
+			case
+				!(trace_running_source_118 = -2) : trace_running_source_118;
+				!(trace_running_source_121 = -2) : trace_running_source_121;
+				TRUE : -2;
+			esac;
+		trace_running_source_109 := 
+			case
+				!(trace_running_source_110 = -2) : trace_running_source_110;
+				!(trace_running_source_117 = -2) : trace_running_source_117;
+				TRUE : -2;
+			esac;
+		trace_running_source_93 := 
+			case
+				!(trace_running_source_94 = -2) : trace_running_source_94;
+				!(trace_running_source_109 = -2) : trace_running_source_109;
+				TRUE : -2;
+			esac;
+		trace_running_source_65 := 
+			case
+				!(trace_running_source_66 = -2) : trace_running_source_66;
+				!(trace_running_source_93 = -2) : trace_running_source_93;
+				TRUE : -2;
+			esac;
+		trace_running_source_128 := (statuses[128] = running) ? 128 : -2;
+		trace_running_source_131 := (statuses[131] = running) ? 131 : -2;
+		trace_running_source_127 := 
+			case
+				!(trace_running_source_128 = -2) : trace_running_source_128;
+				!(trace_running_source_131 = -2) : trace_running_source_131;
+				TRUE : -2;
+			esac;
+		trace_running_source_135 := (statuses[135] = running) ? 135 : -2;
+		trace_running_source_138 := (statuses[138] = running) ? 138 : -2;
+		trace_running_source_134 := 
+			case
+				!(trace_running_source_135 = -2) : trace_running_source_135;
+				!(trace_running_source_138 = -2) : trace_running_source_138;
+				TRUE : -2;
+			esac;
+		trace_running_source_126 := 
+			case
+				!(trace_running_source_127 = -2) : trace_running_source_127;
+				!(trace_running_source_134 = -2) : trace_running_source_134;
+				TRUE : -2;
+			esac;
+		trace_running_source_143 := (statuses[143] = running) ? 143 : -2;
+		trace_running_source_146 := (statuses[146] = running) ? 146 : -2;
+		trace_running_source_142 := 
+			case
+				!(trace_running_source_143 = -2) : trace_running_source_143;
+				!(trace_running_source_146 = -2) : trace_running_source_146;
+				TRUE : -2;
+			esac;
+		trace_running_source_150 := (statuses[150] = running) ? 150 : -2;
+		trace_running_source_153 := (statuses[153] = running) ? 153 : -2;
+		trace_running_source_149 := 
+			case
+				!(trace_running_source_150 = -2) : trace_running_source_150;
+				!(trace_running_source_153 = -2) : trace_running_source_153;
+				TRUE : -2;
+			esac;
+		trace_running_source_141 := 
+			case
+				!(trace_running_source_142 = -2) : trace_running_source_142;
+				!(trace_running_source_149 = -2) : trace_running_source_149;
+				TRUE : -2;
+			esac;
+		trace_running_source_125 := 
+			case
+				!(trace_running_source_126 = -2) : trace_running_source_126;
+				!(trace_running_source_141 = -2) : trace_running_source_141;
+				TRUE : -2;
+			esac;
+		trace_running_source_159 := (statuses[159] = running) ? 159 : -2;
+		trace_running_source_162 := (statuses[162] = running) ? 162 : -2;
+		trace_running_source_158 := 
+			case
+				!(trace_running_source_159 = -2) : trace_running_source_159;
+				!(trace_running_source_162 = -2) : trace_running_source_162;
+				TRUE : -2;
+			esac;
+		trace_running_source_166 := (statuses[166] = running) ? 166 : -2;
+		trace_running_source_169 := (statuses[169] = running) ? 169 : -2;
+		trace_running_source_165 := 
+			case
+				!(trace_running_source_166 = -2) : trace_running_source_166;
+				!(trace_running_source_169 = -2) : trace_running_source_169;
+				TRUE : -2;
+			esac;
+		trace_running_source_157 := 
+			case
+				!(trace_running_source_158 = -2) : trace_running_source_158;
+				!(trace_running_source_165 = -2) : trace_running_source_165;
+				TRUE : -2;
+			esac;
+		trace_running_source_174 := (statuses[174] = running) ? 174 : -2;
+		trace_running_source_177 := (statuses[177] = running) ? 177 : -2;
+		trace_running_source_173 := 
+			case
+				!(trace_running_source_174 = -2) : trace_running_source_174;
+				!(trace_running_source_177 = -2) : trace_running_source_177;
+				TRUE : -2;
+			esac;
+		trace_running_source_181 := (statuses[181] = running) ? 181 : -2;
+		trace_running_source_184 := (statuses[184] = running) ? 184 : -2;
+		trace_running_source_180 := 
+			case
+				!(trace_running_source_181 = -2) : trace_running_source_181;
+				!(trace_running_source_184 = -2) : trace_running_source_184;
+				TRUE : -2;
+			esac;
+		trace_running_source_172 := 
+			case
+				!(trace_running_source_173 = -2) : trace_running_source_173;
+				!(trace_running_source_180 = -2) : trace_running_source_180;
+				TRUE : -2;
+			esac;
+		trace_running_source_156 := 
+			case
+				!(trace_running_source_157 = -2) : trace_running_source_157;
+				!(trace_running_source_172 = -2) : trace_running_source_172;
+				TRUE : -2;
+			esac;
+		trace_running_source_124 := 
+			case
+				!(trace_running_source_125 = -2) : trace_running_source_125;
+				!(trace_running_source_156 = -2) : trace_running_source_156;
+				TRUE : -2;
+			esac;
+		trace_running_source_64 := 
+			case
+				!(trace_running_source_65 = -2) : trace_running_source_65;
+				!(trace_running_source_124 = -2) : trace_running_source_124;
+				TRUE : -2;
+			esac;
+		trace_running_source_0 := 
+			case
+				!(trace_running_source_1 = -2) : trace_running_source_1;
+				!(trace_running_source_64 = -2) : trace_running_source_64;
+				TRUE : -2;
+			esac;
+		resume_point_0 := 
+			case
+				TRUE : -2;
+			esac;
+		resume_point_1 := 
+			case
+				TRUE : -2;
+			esac;
+		resume_point_2 := 
+			case
+				TRUE : -2;
+			esac;
+		resume_point_3 := 
+			case
+				TRUE : -2;
+			esac;
+		resume_point_4 := 
+			case
+				TRUE : -2;
+			esac;
+		resume_point_134 := 
+			case
+				TRUE : -2;
+			esac;
+		resume_point_11 := 
+			case
+				TRUE : -2;
+			esac;
+		resume_point_141 := 
+			case
+				TRUE : -2;
+			esac;
+		resume_point_142 := 
+			case
+				TRUE : -2;
+			esac;
+		resume_point_18 := 
+			case
+				TRUE : -2;
+			esac;
+		resume_point_19 := 
+			case
+				TRUE : -2;
+			esac;
+		resume_point_149 := 
+			case
+				TRUE : -2;
+			esac;
+		resume_point_26 := 
+			case
+				TRUE : -2;
+			esac;
+		resume_point_156 := 
+			case
+				TRUE : -2;
+			esac;
+		resume_point_157 := 
+			case
+				TRUE : -2;
+			esac;
+		resume_point_158 := 
+			case
+				TRUE : -2;
+			esac;
+		resume_point_33 := 
+			case
+				TRUE : -2;
+			esac;
+		resume_point_34 := 
+			case
+				TRUE : -2;
+			esac;
+		resume_point_35 := 
+			case
+				TRUE : -2;
+			esac;
+		resume_point_165 := 
+			case
+				TRUE : -2;
+			esac;
+		resume_point_42 := 
+			case
+				TRUE : -2;
+			esac;
+		resume_point_172 := 
+			case
+				TRUE : -2;
+			esac;
+		resume_point_173 := 
+			case
+				TRUE : -2;
+			esac;
+		resume_point_49 := 
+			case
+				TRUE : -2;
+			esac;
+		resume_point_50 := 
+			case
+				TRUE : -2;
+			esac;
+		resume_point_180 := 
+			case
+				TRUE : -2;
+			esac;
+		resume_point_57 := 
+			case
+				TRUE : -2;
+			esac;
+		resume_point_64 := 
+			case
+				TRUE : -2;
+			esac;
+		resume_point_65 := 
+			case
+				TRUE : -2;
+			esac;
+		resume_point_66 := 
+			case
+				TRUE : -2;
+			esac;
+		resume_point_67 := 
+			case
+				TRUE : -2;
+			esac;
+		resume_point_71 := 
+			case
+				TRUE : -2;
+			esac;
+		resume_point_78 := 
+			case
+				TRUE : -2;
+			esac;
+		resume_point_79 := 
+			case
+				TRUE : -2;
+			esac;
+		resume_point_86 := 
+			case
+				TRUE : -2;
+			esac;
+		resume_point_93 := 
+			case
+				TRUE : -2;
+			esac;
+		resume_point_94 := 
+			case
+				TRUE : -2;
+			esac;
+		resume_point_95 := 
+			case
+				TRUE : -2;
+			esac;
+		resume_point_102 := 
+			case
+				TRUE : -2;
+			esac;
+		resume_point_109 := 
+			case
+				TRUE : -2;
+			esac;
+		resume_point_110 := 
+			case
+				TRUE : -2;
+			esac;
+		resume_point_117 := 
+			case
+				TRUE : -2;
+			esac;
+		resume_point_124 := 
+			case
+				TRUE : -2;
+			esac;
+		resume_point_125 := 
+			case
+				TRUE : -2;
+			esac;
+		resume_point_126 := 
+			case
+				TRUE : -2;
+			esac;
+		resume_point_127 := 
+			case
+				TRUE : -2;
+			esac;
+		linkSeq45.active := TRUE;
+	VAR
+		node_names : define_nodes;
+		resume_from_node_0 : {0, 8, 12, 15, 20, 23, 27, 30, 36, 39, 43, 46, 51, 54, 58, 61, 68, 72, 75, 80, 83, 87, 90, 96, 99, 103, 106, 111, 114, 118, 121, 128, 131, 135, 138, 143, 146, 150, 153, 159, 162, 166, 169, 174, 177, 181, 184};
+		linkSeq45 : node_sequence2(linkSeq43, linkSeq44, resume_point_0);
+		linkSeq43 : node_sequence2(linkSeq39, linkSeq40, resume_point_1);
+		linkSeq39 : node_sequence2(linkSeq31, linkSeq32, resume_point_2);
+		linkSeq31 : node_sequence2(linkSeq15, linkSeq16, resume_point_3);
+		linkSeq15 : node_sequence2(sel30, sel31, resume_point_4);
+		sel30 : node_selector2(safety_check30, backup30);
+		safety_check30 : node_non_blocking();
+		backup30 : node_success();
+		sel31 : node_selector2(safety_check31, backup31);
+		safety_check31 : node_non_blocking();
+		backup31 : node_success();
+		linkSeq16 : node_sequence2(sel32, sel33, resume_point_11);
+		sel32 : node_selector2(safety_check32, backup32);
+		safety_check32 : node_non_blocking();
+		backup32 : node_success();
+		sel33 : node_selector2(safety_check33, backup33);
+		safety_check33 : node_non_blocking();
+		backup33 : node_success();
+		linkSeq32 : node_sequence2(linkSeq17, linkSeq18, resume_point_18);
+		linkSeq17 : node_sequence2(sel34, sel35, resume_point_19);
+		sel34 : node_selector2(safety_check34, backup34);
+		safety_check34 : node_non_blocking();
+		backup34 : node_success();
+		sel35 : node_selector2(safety_check35, backup35);
+		safety_check35 : node_non_blocking();
+		backup35 : node_success();
+		linkSeq18 : node_sequence2(sel36, sel37, resume_point_26);
+		sel36 : node_selector2(safety_check36, backup36);
+		safety_check36 : node_non_blocking();
+		backup36 : node_success();
+		sel37 : node_selector2(safety_check37, backup37);
+		safety_check37 : node_non_blocking();
+		backup37 : node_success();
+		linkSeq40 : node_sequence2(linkSeq33, linkSeq34, resume_point_33);
+		linkSeq33 : node_sequence2(linkSeq19, linkSeq20, resume_point_34);
+		linkSeq19 : node_sequence2(sel38, sel39, resume_point_35);
+		sel38 : node_selector2(safety_check38, backup38);
+		safety_check38 : node_non_blocking();
+		backup38 : node_success();
+		sel39 : node_selector2(safety_check39, backup39);
+		safety_check39 : node_non_blocking();
+		backup39 : node_success();
+		linkSeq20 : node_sequence2(sel40, sel41, resume_point_42);
+		sel40 : node_selector2(safety_check40, backup40);
+		safety_check40 : node_non_blocking();
+		backup40 : node_success();
+		sel41 : node_selector2(safety_check41, backup41);
+		safety_check41 : node_non_blocking();
+		backup41 : node_success();
+		linkSeq34 : node_sequence2(linkSeq21, linkSeq22, resume_point_49);
+		linkSeq21 : node_sequence2(sel42, sel43, resume_point_50);
+		sel42 : node_selector2(safety_check42, backup42);
+		safety_check42 : node_non_blocking();
+		backup42 : node_success();
+		sel43 : node_selector2(safety_check43, backup43);
+		safety_check43 : node_non_blocking();
+		backup43 : node_success();
+		linkSeq22 : node_sequence2(sel44, sel45, resume_point_57);
+		sel44 : node_selector2(safety_check44, backup44);
+		safety_check44 : node_non_blocking();
+		backup44 : node_success();
+		sel45 : node_selector2(safety_check45, backup45);
+		safety_check45 : node_non_blocking();
+		backup45 : node_success();
+		linkSeq44 : node_sequence2(linkSeq41, linkSeq42, resume_point_64);
+		linkSeq41 : node_sequence2(linkSeq35, linkSeq36, resume_point_65);
+		linkSeq35 : node_sequence2(linkSeq23, linkSeq24, resume_point_66);
+		linkSeq23 : node_sequence2(sel46, linkSeq0, resume_point_67);
+		sel46 : node_selector2(safety_check46, backup46);
+		safety_check46 : node_non_blocking();
+		backup46 : node_success();
+		linkSeq0 : node_sequence2(sel0, sel1, resume_point_71);
+		sel0 : node_selector2(safety_check0, backup0);
+		safety_check0 : node_non_blocking();
+		backup0 : node_success();
+		sel1 : node_selector2(safety_check1, backup1);
+		safety_check1 : node_non_blocking();
+		backup1 : node_success();
+		linkSeq24 : node_sequence2(linkSeq1, linkSeq2, resume_point_78);
+		linkSeq1 : node_sequence2(sel2, sel3, resume_point_79);
+		sel2 : node_selector2(safety_check2, backup2);
+		safety_check2 : node_non_blocking();
+		backup2 : node_success();
+		sel3 : node_selector2(safety_check3, backup3);
+		safety_check3 : node_non_blocking();
+		backup3 : node_success();
+		linkSeq2 : node_sequence2(sel4, sel5, resume_point_86);
+		sel4 : node_selector2(safety_check4, backup4);
+		safety_check4 : node_non_blocking();
+		backup4 : node_success();
+		sel5 : node_selector2(safety_check5, backup5);
+		safety_check5 : node_non_blocking();
+		backup5 : node_success();
+		linkSeq36 : node_sequence2(linkSeq25, linkSeq26, resume_point_93);
+		linkSeq25 : node_sequence2(linkSeq3, linkSeq4, resume_point_94);
+		linkSeq3 : node_sequence2(sel6, sel7, resume_point_95);
+		sel6 : node_selector2(safety_check6, backup6);
+		safety_check6 : node_non_blocking();
+		backup6 : node_success();
+		sel7 : node_selector2(safety_check7, backup7);
+		safety_check7 : node_non_blocking();
+		backup7 : node_success();
+		linkSeq4 : node_sequence2(sel8, sel9, resume_point_102);
+		sel8 : node_selector2(safety_check8, backup8);
+		safety_check8 : node_non_blocking();
+		backup8 : node_success();
+		sel9 : node_selector2(safety_check9, backup9);
+		safety_check9 : node_non_blocking();
+		backup9 : node_success();
+		linkSeq26 : node_sequence2(linkSeq5, linkSeq6, resume_point_109);
+		linkSeq5 : node_sequence2(sel10, sel11, resume_point_110);
+		sel10 : node_selector2(safety_check10, backup10);
+		safety_check10 : node_non_blocking();
+		backup10 : node_success();
+		sel11 : node_selector2(safety_check11, backup11);
+		safety_check11 : node_non_blocking();
+		backup11 : node_success();
+		linkSeq6 : node_sequence2(sel12, sel13, resume_point_117);
+		sel12 : node_selector2(safety_check12, backup12);
+		safety_check12 : node_non_blocking();
+		backup12 : node_success();
+		sel13 : node_selector2(safety_check13, backup13);
+		safety_check13 : node_non_blocking();
+		backup13 : node_success();
+		linkSeq42 : node_sequence2(linkSeq37, linkSeq38, resume_point_124);
+		linkSeq37 : node_sequence2(linkSeq27, linkSeq28, resume_point_125);
+		linkSeq27 : node_sequence2(linkSeq7, linkSeq8, resume_point_126);
+		linkSeq7 : node_sequence2(sel14, sel15, resume_point_127);
+		sel14 : node_selector2(safety_check14, backup14);
+		safety_check14 : node_non_blocking();
+		backup14 : node_success();
+		sel15 : node_selector2(safety_check15, backup15);
+		safety_check15 : node_non_blocking();
+		backup15 : node_success();
+		linkSeq8 : node_sequence2(sel16, sel17, resume_point_134);
+		sel16 : node_selector2(safety_check16, backup16);
+		safety_check16 : node_non_blocking();
+		backup16 : node_success();
+		sel17 : node_selector2(safety_check17, backup17);
+		safety_check17 : node_non_blocking();
+		backup17 : node_success();
+		linkSeq28 : node_sequence2(linkSeq9, linkSeq10, resume_point_141);
+		linkSeq9 : node_sequence2(sel18, sel19, resume_point_142);
+		sel18 : node_selector2(safety_check18, backup18);
+		safety_check18 : node_non_blocking();
+		backup18 : node_success();
+		sel19 : node_selector2(safety_check19, backup19);
+		safety_check19 : node_non_blocking();
+		backup19 : node_success();
+		linkSeq10 : node_sequence2(sel20, sel21, resume_point_149);
+		sel20 : node_selector2(safety_check20, backup20);
+		safety_check20 : node_non_blocking();
+		backup20 : node_success();
+		sel21 : node_selector2(safety_check21, backup21);
+		safety_check21 : node_non_blocking();
+		backup21 : node_success();
+		linkSeq38 : node_sequence2(linkSeq29, linkSeq30, resume_point_156);
+		linkSeq29 : node_sequence2(linkSeq11, linkSeq12, resume_point_157);
+		linkSeq11 : node_sequence2(sel22, sel23, resume_point_158);
+		sel22 : node_selector2(safety_check22, backup22);
+		safety_check22 : node_non_blocking();
+		backup22 : node_success();
+		sel23 : node_selector2(safety_check23, backup23);
+		safety_check23 : node_non_blocking();
+		backup23 : node_success();
+		linkSeq12 : node_sequence2(sel24, sel25, resume_point_165);
+		sel24 : node_selector2(safety_check24, backup24);
+		safety_check24 : node_non_blocking();
+		backup24 : node_success();
+		sel25 : node_selector2(safety_check25, backup25);
+		safety_check25 : node_non_blocking();
+		backup25 : node_success();
+		linkSeq30 : node_sequence2(linkSeq13, linkSeq14, resume_point_172);
+		linkSeq13 : node_sequence2(sel26, sel27, resume_point_173);
+		sel26 : node_selector2(safety_check26, backup26);
+		safety_check26 : node_non_blocking();
+		backup26 : node_success();
+		sel27 : node_selector2(safety_check27, backup27);
+		safety_check27 : node_non_blocking();
+		backup27 : node_success();
+		linkSeq14 : node_sequence2(sel28, sel29, resume_point_180);
+		sel28 : node_selector2(safety_check28, backup28);
+		safety_check28 : node_non_blocking();
+		backup28 : node_success();
+		sel29 : node_selector2(safety_check29, backup29);
+		safety_check29 : node_non_blocking();
+		backup29 : node_success();
+	ASSIGN
+		init(resume_from_node_0) := 0;
+		next(resume_from_node_0) := 
+			case
+				(statuses[0] in {success, failure}) : 0;
+				TRUE : max(trace_running_source_0, 0);
+			esac;
+LTLSPEC G (safety_check0.status = failure -> backup0.status = success);
+LTLSPEC G (safety_check0.status = failure -> !(backup0.status = success));
+LTLSPEC G (safety_check1.status = failure -> backup1.status = success);
+LTLSPEC G (safety_check1.status = failure -> !(backup1.status = success));
+LTLSPEC G (safety_check2.status = failure -> backup2.status = success);
+LTLSPEC G (safety_check2.status = failure -> !(backup2.status = success));
+LTLSPEC G (safety_check3.status = failure -> backup3.status = success);
+LTLSPEC G (safety_check3.status = failure -> !(backup3.status = success));
+LTLSPEC G (safety_check4.status = failure -> backup4.status = success);
+LTLSPEC G (safety_check4.status = failure -> !(backup4.status = success));
+LTLSPEC G (safety_check5.status = failure -> backup5.status = success);
+LTLSPEC G (safety_check5.status = failure -> !(backup5.status = success));
+LTLSPEC G (safety_check6.status = failure -> backup6.status = success);
+LTLSPEC G (safety_check6.status = failure -> !(backup6.status = success));
+LTLSPEC G (safety_check7.status = failure -> backup7.status = success);
+LTLSPEC G (safety_check7.status = failure -> !(backup7.status = success));
+LTLSPEC G (safety_check8.status = failure -> backup8.status = success);
+LTLSPEC G (safety_check8.status = failure -> !(backup8.status = success));
+LTLSPEC G (safety_check9.status = failure -> backup9.status = success);
+LTLSPEC G (safety_check9.status = failure -> !(backup9.status = success));
+LTLSPEC G (safety_check10.status = failure -> backup10.status = success);
+LTLSPEC G (safety_check10.status = failure -> !(backup10.status = success));
+LTLSPEC G (safety_check11.status = failure -> backup11.status = success);
+LTLSPEC G (safety_check11.status = failure -> !(backup11.status = success));
+LTLSPEC G (safety_check12.status = failure -> backup12.status = success);
+LTLSPEC G (safety_check12.status = failure -> !(backup12.status = success));
+LTLSPEC G (safety_check13.status = failure -> backup13.status = success);
+LTLSPEC G (safety_check13.status = failure -> !(backup13.status = success));
+LTLSPEC G (safety_check14.status = failure -> backup14.status = success);
+LTLSPEC G (safety_check14.status = failure -> !(backup14.status = success));
+LTLSPEC G (safety_check15.status = failure -> backup15.status = success);
+LTLSPEC G (safety_check15.status = failure -> !(backup15.status = success));
+LTLSPEC G (safety_check16.status = failure -> backup16.status = success);
+LTLSPEC G (safety_check16.status = failure -> !(backup16.status = success));
+LTLSPEC G (safety_check17.status = failure -> backup17.status = success);
+LTLSPEC G (safety_check17.status = failure -> !(backup17.status = success));
+LTLSPEC G (safety_check18.status = failure -> backup18.status = success);
+LTLSPEC G (safety_check18.status = failure -> !(backup18.status = success));
+LTLSPEC G (safety_check19.status = failure -> backup19.status = success);
+LTLSPEC G (safety_check19.status = failure -> !(backup19.status = success));
+LTLSPEC G (safety_check20.status = failure -> backup20.status = success);
+LTLSPEC G (safety_check20.status = failure -> !(backup20.status = success));
+LTLSPEC G (safety_check21.status = failure -> backup21.status = success);
+LTLSPEC G (safety_check21.status = failure -> !(backup21.status = success));
+LTLSPEC G (safety_check22.status = failure -> backup22.status = success);
+LTLSPEC G (safety_check22.status = failure -> !(backup22.status = success));
+LTLSPEC G (safety_check23.status = failure -> backup23.status = success);
+LTLSPEC G (safety_check23.status = failure -> !(backup23.status = success));
+LTLSPEC G (safety_check24.status = failure -> backup24.status = success);
+LTLSPEC G (safety_check24.status = failure -> !(backup24.status = success));
+LTLSPEC G (safety_check25.status = failure -> backup25.status = success);
+LTLSPEC G (safety_check25.status = failure -> !(backup25.status = success));
+LTLSPEC G (safety_check26.status = failure -> backup26.status = success);
+LTLSPEC G (safety_check26.status = failure -> !(backup26.status = success));
+LTLSPEC G (safety_check27.status = failure -> backup27.status = success);
+LTLSPEC G (safety_check27.status = failure -> !(backup27.status = success));
+LTLSPEC G (safety_check28.status = failure -> backup28.status = success);
+LTLSPEC G (safety_check28.status = failure -> !(backup28.status = success));
+LTLSPEC G (safety_check29.status = failure -> backup29.status = success);
+LTLSPEC G (safety_check29.status = failure -> !(backup29.status = success));
+LTLSPEC G (safety_check30.status = failure -> backup30.status = success);
+LTLSPEC G (safety_check30.status = failure -> !(backup30.status = success));
+LTLSPEC G (safety_check31.status = failure -> backup31.status = success);
+LTLSPEC G (safety_check31.status = failure -> !(backup31.status = success));
+LTLSPEC G (safety_check32.status = failure -> backup32.status = success);
+LTLSPEC G (safety_check32.status = failure -> !(backup32.status = success));
+LTLSPEC G (safety_check33.status = failure -> backup33.status = success);
+LTLSPEC G (safety_check33.status = failure -> !(backup33.status = success));
+LTLSPEC G (safety_check34.status = failure -> backup34.status = success);
+LTLSPEC G (safety_check34.status = failure -> !(backup34.status = success));
+LTLSPEC G (safety_check35.status = failure -> backup35.status = success);
+LTLSPEC G (safety_check35.status = failure -> !(backup35.status = success));
+LTLSPEC G (safety_check36.status = failure -> backup36.status = success);
+LTLSPEC G (safety_check36.status = failure -> !(backup36.status = success));
+LTLSPEC G (safety_check37.status = failure -> backup37.status = success);
+LTLSPEC G (safety_check37.status = failure -> !(backup37.status = success));
+LTLSPEC G (safety_check38.status = failure -> backup38.status = success);
+LTLSPEC G (safety_check38.status = failure -> !(backup38.status = success));
+LTLSPEC G (safety_check39.status = failure -> backup39.status = success);
+LTLSPEC G (safety_check39.status = failure -> !(backup39.status = success));
+LTLSPEC G (safety_check40.status = failure -> backup40.status = success);
+LTLSPEC G (safety_check40.status = failure -> !(backup40.status = success));
+LTLSPEC G (safety_check41.status = failure -> backup41.status = success);
+LTLSPEC G (safety_check41.status = failure -> !(backup41.status = success));
+LTLSPEC G (safety_check42.status = failure -> backup42.status = success);
+LTLSPEC G (safety_check42.status = failure -> !(backup42.status = success));
+LTLSPEC G (safety_check43.status = failure -> backup43.status = success);
+LTLSPEC G (safety_check43.status = failure -> !(backup43.status = success));
+LTLSPEC G (safety_check44.status = failure -> backup44.status = success);
+LTLSPEC G (safety_check44.status = failure -> !(backup44.status = success));
+LTLSPEC G (safety_check45.status = failure -> backup45.status = success);
+LTLSPEC G (safety_check45.status = failure -> !(backup45.status = success));
+LTLSPEC G (safety_check46.status = failure -> backup46.status = success);
+LTLSPEC G (safety_check46.status = failure -> !(backup46.status = success));
+
+
+MODULE fake_node()
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := invalid;
+MODULE node_non_blocking()
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		input_status : {success, failure};
+	DEFINE
+		status := active ? input_status : invalid;
+MODULE node_success()
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status :=
+			case
+				!(active) : invalid;
+				TRUE : success;
+			esac;
+MODULE node_selector2(child_0, child_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status :=
+			case
+				!(active) : invalid;
+				!(child_0.status = failure) : child_0.status;
+				!(child_1.status = failure) : child_1.status;
+				TRUE : failure;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = failure;
+MODULE node_sequence2(child_0, child_1, resume_point)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status :=
+			case
+				!(active) : invalid;
+				(0 >= resume_point) & !(child_0.status = success) : child_0.status;
+				(1 >= resume_point) & !(child_1.status = success) : child_1.status;
+				TRUE : success;
+			esac;
+		child_0.active := active & (0 >= resume_point);
+		child_1.active := active & (1 >= resume_point) & ((1 = resume_point) | (child_0.status = success));
+MODULE define_nodes
+	DEFINE
+		linkSeq45 := 0;
+		linkSeq43 := 1;
+		linkSeq39 := 2;
+		linkSeq31 := 3;
+		linkSeq15 := 4;
+		sel30 := 5;
+		safety_check30 := 6;
+		backup30 := 7;
+		sel31 := 8;
+		safety_check31 := 9;
+		backup31 := 10;
+		linkSeq16 := 11;
+		sel32 := 12;
+		safety_check32 := 13;
+		backup32 := 14;
+		sel33 := 15;
+		safety_check33 := 16;
+		backup33 := 17;
+		linkSeq32 := 18;
+		linkSeq17 := 19;
+		sel34 := 20;
+		safety_check34 := 21;
+		backup34 := 22;
+		sel35 := 23;
+		safety_check35 := 24;
+		backup35 := 25;
+		linkSeq18 := 26;
+		sel36 := 27;
+		safety_check36 := 28;
+		backup36 := 29;
+		sel37 := 30;
+		safety_check37 := 31;
+		backup37 := 32;
+		linkSeq40 := 33;
+		linkSeq33 := 34;
+		linkSeq19 := 35;
+		sel38 := 36;
+		safety_check38 := 37;
+		backup38 := 38;
+		sel39 := 39;
+		safety_check39 := 40;
+		backup39 := 41;
+		linkSeq20 := 42;
+		sel40 := 43;
+		safety_check40 := 44;
+		backup40 := 45;
+		sel41 := 46;
+		safety_check41 := 47;
+		backup41 := 48;
+		linkSeq34 := 49;
+		linkSeq21 := 50;
+		sel42 := 51;
+		safety_check42 := 52;
+		backup42 := 53;
+		sel43 := 54;
+		safety_check43 := 55;
+		backup43 := 56;
+		linkSeq22 := 57;
+		sel44 := 58;
+		safety_check44 := 59;
+		backup44 := 60;
+		sel45 := 61;
+		safety_check45 := 62;
+		backup45 := 63;
+		linkSeq44 := 64;
+		linkSeq41 := 65;
+		linkSeq35 := 66;
+		linkSeq23 := 67;
+		sel46 := 68;
+		safety_check46 := 69;
+		backup46 := 70;
+		linkSeq0 := 71;
+		sel0 := 72;
+		safety_check0 := 73;
+		backup0 := 74;
+		sel1 := 75;
+		safety_check1 := 76;
+		backup1 := 77;
+		linkSeq24 := 78;
+		linkSeq1 := 79;
+		sel2 := 80;
+		safety_check2 := 81;
+		backup2 := 82;
+		sel3 := 83;
+		safety_check3 := 84;
+		backup3 := 85;
+		linkSeq2 := 86;
+		sel4 := 87;
+		safety_check4 := 88;
+		backup4 := 89;
+		sel5 := 90;
+		safety_check5 := 91;
+		backup5 := 92;
+		linkSeq36 := 93;
+		linkSeq25 := 94;
+		linkSeq3 := 95;
+		sel6 := 96;
+		safety_check6 := 97;
+		backup6 := 98;
+		sel7 := 99;
+		safety_check7 := 100;
+		backup7 := 101;
+		linkSeq4 := 102;
+		sel8 := 103;
+		safety_check8 := 104;
+		backup8 := 105;
+		sel9 := 106;
+		safety_check9 := 107;
+		backup9 := 108;
+		linkSeq26 := 109;
+		linkSeq5 := 110;
+		sel10 := 111;
+		safety_check10 := 112;
+		backup10 := 113;
+		sel11 := 114;
+		safety_check11 := 115;
+		backup11 := 116;
+		linkSeq6 := 117;
+		sel12 := 118;
+		safety_check12 := 119;
+		backup12 := 120;
+		sel13 := 121;
+		safety_check13 := 122;
+		backup13 := 123;
+		linkSeq42 := 124;
+		linkSeq37 := 125;
+		linkSeq27 := 126;
+		linkSeq7 := 127;
+		sel14 := 128;
+		safety_check14 := 129;
+		backup14 := 130;
+		sel15 := 131;
+		safety_check15 := 132;
+		backup15 := 133;
+		linkSeq8 := 134;
+		sel16 := 135;
+		safety_check16 := 136;
+		backup16 := 137;
+		sel17 := 138;
+		safety_check17 := 139;
+		backup17 := 140;
+		linkSeq28 := 141;
+		linkSeq9 := 142;
+		sel18 := 143;
+		safety_check18 := 144;
+		backup18 := 145;
+		sel19 := 146;
+		safety_check19 := 147;
+		backup19 := 148;
+		linkSeq10 := 149;
+		sel20 := 150;
+		safety_check20 := 151;
+		backup20 := 152;
+		sel21 := 153;
+		safety_check21 := 154;
+		backup21 := 155;
+		linkSeq38 := 156;
+		linkSeq29 := 157;
+		linkSeq11 := 158;
+		sel22 := 159;
+		safety_check22 := 160;
+		backup22 := 161;
+		sel23 := 162;
+		safety_check23 := 163;
+		backup23 := 164;
+		linkSeq12 := 165;
+		sel24 := 166;
+		safety_check24 := 167;
+		backup24 := 168;
+		sel25 := 169;
+		safety_check25 := 170;
+		backup25 := 171;
+		linkSeq30 := 172;
+		linkSeq13 := 173;
+		sel26 := 174;
+		safety_check26 := 175;
+		backup26 := 176;
+		sel27 := 177;
+		safety_check27 := 178;
+		backup27 := 179;
+		linkSeq14 := 180;
+		sel28 := 181;
+		safety_check28 := 182;
+		backup28 := 183;
+		sel29 := 184;
+		safety_check29 := 185;
+		backup29 := 186;

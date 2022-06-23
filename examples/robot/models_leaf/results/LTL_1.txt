@@ -1,0 +1,174 @@
+*** This is nuXmv 2.0.0 (compiled on Mon Oct 14 17:48:12 2019)
+*** Copyright (c) 2014-2019, Fondazione Bruno Kessler
+*** For more information on nuXmv see https://nuxmv.fbk.eu
+*** or email to <nuxmv@list.fbk.eu>.
+*** Please report bugs at https://nuxmv.fbk.eu/bugs
+*** (click on "Login Anonymously" to access)
+*** Alternatively write to <nuxmv@list.fbk.eu>.
+
+*** This version of nuXmv is linked to NuSMV 2.6.0.
+*** For more information on NuSMV see <http://nusmv.fbk.eu>
+*** or email to <nusmv-users@list.fbk.eu>.
+*** Copyright (C) 2010-2019, Fondazione Bruno Kessler
+
+*** This version of nuXmv is linked to the CUDD library version 2.4.1
+*** Copyright (c) 1995-2004, Regents of the University of Colorado
+
+*** This version of nuXmv is linked to the MiniSat SAT solver. 
+*** See http://minisat.se/MiniSat.html
+*** Copyright (c) 2003-2006, Niklas Een, Niklas Sorensson
+*** Copyright (c) 2007-2010, Niklas Sorensson
+
+*** This version of nuXmv is linked to MathSAT
+*** Copyright (C) 2009-2019 by Fondazione Bruno Kessler
+*** Copyright (C) 2009-2019 by University of Trento and others
+*** See http://mathsat.fbk.eu
+
+-- specification  G (safety_check0.status = failure -> (!(active_node = -1) U backup0.status = success))  is true
+-- specification  G (safety_check0.status = failure -> !(!(active_node = -1) U backup0.status = success))  is false
+-- as demonstrated by the following execution sequence
+Trace Description: LTL Counterexample 
+Trace Type: Counterexample 
+  -> State: 1.1 <-
+    active_node = -1
+    last_child_0 = 2
+    resume_relevant_child_2 = FALSE
+    relevant_child_2 = -2
+    resume_relevant_child_1 = FALSE
+    relevant_child_1 = -2
+    resume_relevant_child_0 = FALSE
+    relevant_child_0 = -2
+    descent_from_2 = 2
+    descent_from_1 = 1
+    descent_from_0 = 1
+    resume_from_node_0 = -3
+    statuses[2] = invalid
+    node_names.backup0 = 2
+    node_names.safety_check0 = 1
+    node_names.sel0 = 0
+    backup0.status = invalid
+    relevant_status_0 = invalid
+    ascent_from_2 = 1
+    ascent_from_1 = 1
+    ascent_from_0 = 1
+    next_node[0] = 1
+    next_node[1] = 1
+    next_node[2] = 1
+    statuses[0] = invalid
+    statuses[1] = invalid
+    sel0.status = invalid
+    safety_check0.status = invalid
+  -> Input: 1.2 <-
+    random_status = running
+  -> State: 1.2 <-
+    active_node = 1
+    relevant_child_1 = -1
+    relevant_child_0 = 1
+    descent_from_0 = 2
+    relevant_status_0 = success
+    ascent_from_2 = -1
+    ascent_from_1 = -1
+    ascent_from_0 = -1
+    next_node[0] = -1
+    next_node[1] = -1
+    next_node[2] = -1
+    statuses[0] = success
+    statuses[1] = success
+    sel0.status = success
+    safety_check0.status = success
+  -> Input: 1.3 <-
+    random_status = success
+  -> State: 1.3 <-
+    active_node = -1
+    relevant_child_1 = -2
+    relevant_child_0 = -2
+    descent_from_0 = 1
+    relevant_status_0 = invalid
+    ascent_from_2 = 1
+    ascent_from_1 = 1
+    ascent_from_0 = 1
+    next_node[0] = 1
+    next_node[1] = 1
+    next_node[2] = 1
+    statuses[0] = invalid
+    statuses[1] = invalid
+    sel0.status = invalid
+    safety_check0.status = invalid
+  -> Input: 1.4 <-
+    random_status = running
+  -> State: 1.4 <-
+    active_node = 1
+    relevant_child_1 = -1
+    relevant_child_0 = 1
+    descent_from_0 = 2
+    relevant_status_0 = failure
+    ascent_from_2 = 2
+    ascent_from_1 = 2
+    ascent_from_0 = 2
+    next_node[0] = 2
+    next_node[1] = 2
+    next_node[2] = 2
+    statuses[1] = failure
+    safety_check0.status = failure
+  -> Input: 1.5 <-
+  -> State: 1.5 <-
+    active_node = 2
+    relevant_child_2 = -1
+    relevant_child_1 = -2
+    relevant_child_0 = 2
+    descent_from_0 = -2
+    statuses[2] = success
+    backup0.status = success
+    relevant_status_0 = success
+    ascent_from_2 = -1
+    ascent_from_1 = -1
+    ascent_from_0 = -1
+    next_node[0] = -1
+    next_node[1] = -1
+    next_node[2] = -1
+    statuses[0] = success
+    statuses[1] = invalid
+    sel0.status = success
+    safety_check0.status = invalid
+  -> Input: 1.6 <-
+  -- Loop starts here
+  -> State: 1.6 <-
+    active_node = -1
+    relevant_child_2 = -2
+    relevant_child_0 = -2
+    descent_from_0 = 1
+    statuses[2] = invalid
+    backup0.status = invalid
+    relevant_status_0 = invalid
+    ascent_from_2 = 1
+    ascent_from_1 = 1
+    ascent_from_0 = 1
+    next_node[0] = 1
+    next_node[1] = 1
+    next_node[2] = 1
+    statuses[0] = invalid
+    sel0.status = invalid
+  -> Input: 1.7 <-
+  -> State: 1.7 <-
+    active_node = 1
+    relevant_child_1 = -1
+    relevant_child_0 = 1
+    descent_from_0 = 2
+    relevant_status_0 = success
+    ascent_from_2 = -1
+    ascent_from_1 = -1
+    ascent_from_0 = -1
+    next_node[0] = -1
+    next_node[1] = -1
+    next_node[2] = -1
+    statuses[0] = success
+    statuses[1] = success
+    sel0.status = success
+    safety_check0.status = success
+  -> Input: 1.8 <-
+    random_status = success
+  -> State: 1.8 <-
+    active_node = -1
+    relevant_child_1 = -2
+    relevant_child_0 = -2
+    descent_from_0 = 1

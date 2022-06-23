@@ -28,11 +28,7 @@ MODULE node_default()
 	IVAR
 		input_status : {success, running, failure};
 	DEFINE
-		status :=
-			case
-				!(active) : invalid;
-				TRUE : input_status;
-			esac;
+		status := active ? input_status : invalid;
 MODULE node_selector(last_child, child_0, child_1, child_2, child_3, child_4, child_5, child_6, child_7)
 	CONSTANTS
 		success, failure, running, invalid, error;

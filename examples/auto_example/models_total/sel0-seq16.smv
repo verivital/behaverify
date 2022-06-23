@@ -2,7 +2,7 @@ MODULE main
 	CONSTANTS
 		success, failure, running, invalid, error;
 	DEFINE
-		statuses := [seq_root.status, seq0.status, seq01.status, seq02.status, seq03.status, leaf15.status, leaf16.status, leaf0.status, seq04.status, leaf1.status, leaf2.status, seq05.status, seq06.status, leaf3.status, leaf4.status, seq07.status, leaf5.status, leaf6.status, seq08.status, seq09.status, seq010.status, leaf7.status, leaf8.status, seq011.status, leaf9.status, leaf10.status, seq012.status, seq013.status, leaf11.status, leaf12.status, seq014.status, leaf13.status, leaf14.status];
+		statuses := [root.status, seq0.status, seq01.status, seq02.status, seq03.status, leaf15.status, leaf16.status, leaf0.status, seq04.status, leaf1.status, leaf2.status, seq05.status, seq06.status, leaf3.status, leaf4.status, seq07.status, leaf5.status, leaf6.status, seq08.status, seq09.status, seq010.status, leaf7.status, leaf8.status, seq011.status, leaf9.status, leaf10.status, seq012.status, seq013.status, leaf11.status, leaf12.status, seq014.status, leaf13.status, leaf14.status];
 		trace_running_source_6 := (statuses[6] = running) ? 6 : -2;
 		trace_running_source_4 := 
 			case
@@ -209,11 +209,11 @@ MODULE main
 				(resume_from_node_0 in {32}) : 1;
 				TRUE : -2;
 			esac;
-		seq_root.active := TRUE;
+		root.active := TRUE;
 	VAR
 		node_names : define_nodes;
 		resume_from_node_0 : {0, 6, 7, 9, 10, 13, 14, 16, 17, 21, 22, 24, 25, 28, 29, 31, 32};
-		seq_root : node_sequence(1, seq0, seq08, resume_point_0);
+		root : node_sequence(1, seq0, seq08, resume_point_0);
 		seq0 : node_sequence(1, seq01, seq05, resume_point_1);
 		seq01 : node_sequence(1, seq02, seq04, resume_point_2);
 		seq02 : node_sequence(1, seq03, leaf0, resume_point_3);
@@ -300,14 +300,10 @@ MODULE node_default()
 	IVAR
 		input_status : {success, running, failure};
 	DEFINE
-		status :=
-			case
-				!(active) : invalid;
-				TRUE : input_status;
-			esac;
+		status := active ? input_status : invalid;
 MODULE define_nodes
 	DEFINE
-		seq_root := 0;
+		root := 0;
 		seq0 := 1;
 		seq01 := 2;
 		seq02 := 3;

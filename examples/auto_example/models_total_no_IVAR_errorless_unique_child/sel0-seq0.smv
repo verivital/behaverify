@@ -1,0 +1,26 @@
+MODULE main
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		statuses := [root.status];
+		resume_from_node_0 := -3;
+		root.active := TRUE;
+	VAR
+		node_names : define_nodes;
+		root : node_default();
+	ASSIGN
+MODULE fake_node()
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := invalid;
+MODULE node_default()
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		input_status : {success, running, failure};
+	DEFINE
+		status := active ? input_status : invalid;
+MODULE define_nodes
+	DEFINE
+		root := 0;

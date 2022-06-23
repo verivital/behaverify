@@ -2,7 +2,7 @@ MODULE main
 	CONSTANTS
 		success, failure, running, invalid, error;
 	DEFINE
-		statuses := [sel_root.status, sel10.status, sel8.status, sel4.status, leaf2.status, leaf3.status, sel3.status, leaf4.status, leaf5.status, sel7.status, seq2.status, leaf6.status, leaf7.status, sel2.status, leaf8.status, leaf9.status, sel9.status, sel6.status, seq1.status, leaf10.status, leaf11.status, sel1.status, leaf12.status, leaf13.status, sel5.status, leaf0.status, leaf1.status];
+		statuses := [root.status, sel10.status, sel8.status, sel4.status, leaf2.status, leaf3.status, sel3.status, leaf4.status, leaf5.status, sel7.status, seq2.status, leaf6.status, leaf7.status, sel2.status, leaf8.status, leaf9.status, sel9.status, sel6.status, seq1.status, leaf10.status, leaf11.status, sel1.status, leaf12.status, leaf13.status, sel5.status, leaf0.status, leaf1.status];
 		trace_running_source_12 := (statuses[12] = running) ? 12 : -2;
 		trace_running_source_10 := 
 			case
@@ -51,11 +51,11 @@ MODULE main
 				(resume_from_node_0 in {20}) : 1;
 				TRUE : -2;
 			esac;
-		sel_root.active := TRUE;
+		root.active := TRUE;
 	VAR
 		node_names : define_nodes;
 		resume_from_node_0 : {0, 12, 20};
-		sel_root : node_selector(1, sel10, sel9);
+		root : node_selector(1, sel10, sel9);
 		sel10 : node_selector(1, sel8, sel7);
 		sel8 : node_selector(1, sel4, sel3);
 		sel4 : node_selector(1, leaf2, leaf3);
@@ -130,6 +130,13 @@ MODULE node_sequence(last_child, child_0, child_1, resume_point)
 				!(child_0.status = success) : FALSE;
 				TRUE: TRUE;
 			esac;
+MODULE node_default()
+	CONSTANTS
+		success, failure, running, invalid, error;
+	IVAR
+		input_status : {success, running, failure};
+	DEFINE
+		status := active ? input_status : invalid;
 MODULE node_selector(last_child, child_0, child_1)
 	CONSTANTS
 		success, failure, running, invalid, error;
@@ -162,20 +169,9 @@ MODULE node_selector(last_child, child_0, child_1)
 				!(child_0.status = failure) : FALSE;
 				TRUE: TRUE;
 			esac;
-MODULE node_default()
-	CONSTANTS
-		success, failure, running, invalid, error;
-	IVAR
-		input_status : {success, running, failure};
-	DEFINE
-		status :=
-			case
-				!(active) : invalid;
-				TRUE : input_status;
-			esac;
 MODULE define_nodes
 	DEFINE
-		sel_root := 0;
+		root := 0;
 		sel10 := 1;
 		sel8 := 2;
 		sel4 := 3;

@@ -1,6 +1,6 @@
 MODULE main
 	VAR
-		seq_root : bt_sequence_with_memory(seq10, seq106);
+		root : bt_sequence_with_memory(seq10, seq106);
 		seq10 : bt_sequence_with_memory(seq101, seq104);
 		seq101 : bt_sequence_with_memory(seq102, seq103);
 		seq102 : bt_sequence_with_memory(seq7, sel7);
@@ -59,12 +59,22 @@ MODULE main
 		sel8 : bt_fallback(leaf0, leaf1);
 		leaf0 : bt_skill;
 		leaf1 : bt_skill;
-		tick_generator : bt_tick_generator(seq_root);
-MODULE fake_node()
-	CONSTANTS
-		success, failure, running, invalid, error;
-	DEFINE
-		status := error;
+		tick_generator : bt_tick_generator(root);
+MODULE bt_skill
+	IVAR
+		input : { bt_input_running, bt_input_false, bt_input_true };
+	VAR
+		output : { bt_output_none, bt_output_running, bt_output_false, bt_output_true};
+		enable : boolean;
+	ASSIGN
+		init(output) := bt_output_none;
+		next(output) :=
+			case
+				! enable : bt_output_none;
+				input = bt_input_running : bt_output_running;
+				input = bt_input_false : bt_output_false;
+				input = bt_input_true : bt_output_true;
+			esac;
 MODULE bt_sequence_with_memory(left_bt, right_bt)
 	VAR
 		enable : boolean;
@@ -84,21 +94,6 @@ MODULE bt_sequence_with_memory(left_bt, right_bt)
 			case
 				left_bt.output in { bt_output_running, bt_output_false } : left_bt.output;
 				TRUE : right_bt.output;
-			esac;
-MODULE bt_skill
-	IVAR
-		input : { bt_input_running, bt_input_false, bt_input_true };
-	VAR
-		output : { bt_output_none, bt_output_running, bt_output_false, bt_output_true};
-		enable : boolean;
-	ASSIGN
-		init(output) := bt_output_none;
-		next(output) :=
-			case
-				! enable : bt_output_none;
-				input = bt_input_running : bt_output_running;
-				input = bt_input_false : bt_output_false;
-				input = bt_input_true : bt_output_true;
 			esac;
 MODULE bt_fallback(left_bt, right_bt)
 	VAR

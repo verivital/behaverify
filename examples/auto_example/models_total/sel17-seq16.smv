@@ -2,7 +2,7 @@ MODULE main
 	CONSTANTS
 		success, failure, running, invalid, error;
 	DEFINE
-		statuses := [sel_root.status, seq16.status, seq15.status, seq13.status, seq9.status, seq1.status, leaf30.status, leaf31.status, sel1.status, leaf32.status, leaf33.status, sel9.status, leaf0.status, leaf1.status, sel13.status, seq8.status, leaf2.status, leaf3.status, sel8.status, leaf4.status, leaf5.status, sel15.status, seq12.status, seq7.status, leaf6.status, leaf7.status, sel7.status, leaf8.status, leaf9.status, sel12.status, seq6.status, leaf10.status, leaf11.status, sel6.status, leaf12.status, leaf13.status, sel16.status, seq14.status, seq11.status, seq5.status, leaf14.status, leaf15.status, sel5.status, leaf16.status, leaf17.status, sel11.status, seq4.status, leaf18.status, leaf19.status, sel4.status, leaf20.status, leaf21.status, sel14.status, seq10.status, seq3.status, leaf22.status, leaf23.status, sel3.status, leaf24.status, leaf25.status, sel10.status, seq2.status, leaf26.status, leaf27.status, sel2.status, leaf28.status, leaf29.status];
+		statuses := [root.status, seq16.status, seq15.status, seq13.status, seq9.status, seq1.status, leaf30.status, leaf31.status, sel1.status, leaf32.status, leaf33.status, sel9.status, leaf0.status, leaf1.status, sel13.status, seq8.status, leaf2.status, leaf3.status, sel8.status, leaf4.status, leaf5.status, sel15.status, seq12.status, seq7.status, leaf6.status, leaf7.status, sel7.status, leaf8.status, leaf9.status, sel12.status, seq6.status, leaf10.status, leaf11.status, sel6.status, leaf12.status, leaf13.status, sel16.status, seq14.status, seq11.status, seq5.status, leaf14.status, leaf15.status, sel5.status, leaf16.status, leaf17.status, sel11.status, seq4.status, leaf18.status, leaf19.status, sel4.status, leaf20.status, leaf21.status, sel14.status, seq10.status, seq3.status, leaf22.status, leaf23.status, sel3.status, leaf24.status, leaf25.status, sel10.status, seq2.status, leaf26.status, leaf27.status, sel2.status, leaf28.status, leaf29.status];
 		trace_running_source_7 := (statuses[7] = running) ? 7 : -2;
 		trace_running_source_5 := 
 			case
@@ -234,11 +234,11 @@ MODULE main
 				(resume_from_node_0 in {32}) : 1;
 				TRUE : -2;
 			esac;
-		sel_root.active := TRUE;
+		root.active := TRUE;
 	VAR
 		node_names : define_nodes;
 		resume_from_node_0 : {0, 7, 8, 11, 14, 17, 21, 25, 26, 32, 41, 42, 45, 48, 56, 57, 63};
-		sel_root : node_selector(1, seq16, sel16);
+		root : node_selector(1, seq16, sel16);
 		seq16 : node_sequence(1, seq15, sel15, resume_point_1);
 		seq15 : node_sequence(1, seq13, sel13, resume_point_2);
 		seq13 : node_sequence(1, seq9, sel9, resume_point_3);
@@ -323,11 +323,7 @@ MODULE node_default()
 	IVAR
 		input_status : {success, running, failure};
 	DEFINE
-		status :=
-			case
-				!(active) : invalid;
-				TRUE : input_status;
-			esac;
+		status := active ? input_status : invalid;
 MODULE node_sequence(last_child, child_0, child_1, resume_point)
 	CONSTANTS
 		success, failure, running, invalid, error;
@@ -398,7 +394,7 @@ MODULE node_selector(last_child, child_0, child_1)
 			esac;
 MODULE define_nodes
 	DEFINE
-		sel_root := 0;
+		root := 0;
 		seq16 := 1;
 		seq15 := 2;
 		seq13 := 3;

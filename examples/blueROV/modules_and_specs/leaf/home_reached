@@ -1,0 +1,5 @@
+LTLSPEC G( ((next(blackboard.variables[variable_names.bb_home_reached]) = 1) & (active_node in {node_names.home2bb, node_names.home2bb1}))  -> (((active_node > -1))  U (active_node = node_names.surface_task3)));
+--this one is true, but only for battery_warning
+
+LTLSPEC G( ((next(blackboard.variables[variable_names.bb_home_reached]) = 1) & (active_node in {node_names.home2bb, node_names.home2bb1}))  -> (((active_node > -1))  U (active_node in {node_names.surface_task, node_names.surface_task1, node_names.surface_task2, node_names.surface_task3, node_names.surface_task4})));
+--this one should is false, unlike the rest. this is because we set bb_home_reached after checking the relevant task.

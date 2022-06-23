@@ -1,0 +1,165 @@
+MODULE main
+	VAR
+		linkSeq15 : bt_sequence_with_memory(linkSeq13, linkSeq14);
+		linkSeq13 : bt_sequence_with_memory(linkSeq9, linkSeq10);
+		linkSeq9 : bt_sequence_with_memory(linkSeq1, linkSeq2);
+		linkSeq1 : bt_sequence_with_memory(sel2, sel3);
+		sel2 : bt_fallback(safety_check2, backup2);
+		safety_check2 : bt_non_blocking_skill;
+		backup2 : bt_placeholder;
+		sel3 : bt_fallback(safety_check3, backup3);
+		safety_check3 : bt_non_blocking_skill;
+		backup3 : bt_placeholder;
+		linkSeq2 : bt_sequence_with_memory(sel4, sel5);
+		sel4 : bt_fallback(safety_check4, backup4);
+		safety_check4 : bt_non_blocking_skill;
+		backup4 : bt_placeholder;
+		sel5 : bt_fallback(safety_check5, backup5);
+		safety_check5 : bt_non_blocking_skill;
+		backup5 : bt_placeholder;
+		linkSeq10 : bt_sequence_with_memory(linkSeq3, linkSeq4);
+		linkSeq3 : bt_sequence_with_memory(sel6, sel7);
+		sel6 : bt_fallback(safety_check6, backup6);
+		safety_check6 : bt_non_blocking_skill;
+		backup6 : bt_placeholder;
+		sel7 : bt_fallback(safety_check7, backup7);
+		safety_check7 : bt_non_blocking_skill;
+		backup7 : bt_placeholder;
+		linkSeq4 : bt_sequence_with_memory(sel8, sel9);
+		sel8 : bt_fallback(safety_check8, backup8);
+		safety_check8 : bt_non_blocking_skill;
+		backup8 : bt_placeholder;
+		sel9 : bt_fallback(safety_check9, backup9);
+		safety_check9 : bt_non_blocking_skill;
+		backup9 : bt_placeholder;
+		linkSeq14 : bt_sequence_with_memory(linkSeq11, linkSeq12);
+		linkSeq11 : bt_sequence_with_memory(linkSeq5, linkSeq6);
+		linkSeq5 : bt_sequence_with_memory(sel10, sel11);
+		sel10 : bt_fallback(safety_check10, backup10);
+		safety_check10 : bt_non_blocking_skill;
+		backup10 : bt_placeholder;
+		sel11 : bt_fallback(safety_check11, backup11);
+		safety_check11 : bt_non_blocking_skill;
+		backup11 : bt_placeholder;
+		linkSeq6 : bt_sequence_with_memory(sel12, sel13);
+		sel12 : bt_fallback(safety_check12, backup12);
+		safety_check12 : bt_non_blocking_skill;
+		backup12 : bt_placeholder;
+		sel13 : bt_fallback(safety_check13, backup13);
+		safety_check13 : bt_non_blocking_skill;
+		backup13 : bt_placeholder;
+		linkSeq12 : bt_sequence_with_memory(linkSeq7, linkSeq8);
+		linkSeq7 : bt_sequence_with_memory(sel14, sel15);
+		sel14 : bt_fallback(safety_check14, backup14);
+		safety_check14 : bt_non_blocking_skill;
+		backup14 : bt_placeholder;
+		sel15 : bt_fallback(safety_check15, backup15);
+		safety_check15 : bt_non_blocking_skill;
+		backup15 : bt_placeholder;
+		linkSeq8 : bt_sequence_with_memory(sel16, linkSeq0);
+		sel16 : bt_fallback(safety_check16, backup16);
+		safety_check16 : bt_non_blocking_skill;
+		backup16 : bt_placeholder;
+		linkSeq0 : bt_sequence_with_memory(sel0, sel1);
+		sel0 : bt_fallback(safety_check0, backup0);
+		safety_check0 : bt_non_blocking_skill;
+		backup0 : bt_placeholder;
+		sel1 : bt_fallback(safety_check1, backup1);
+		safety_check1 : bt_non_blocking_skill;
+		backup1 : bt_placeholder;
+		tick_generator : bt_tick_generator(linkSeq15);
+LTLSPEC G (safety_check0.output = bt_output_false -> backup0.enable = TRUE);
+LTLSPEC G (safety_check0.output = bt_output_false -> backup0.enable = FALSE);
+LTLSPEC G (safety_check1.output = bt_output_false -> backup1.enable = TRUE);
+LTLSPEC G (safety_check1.output = bt_output_false -> backup1.enable = FALSE);
+LTLSPEC G (safety_check2.output = bt_output_false -> backup2.enable = TRUE);
+LTLSPEC G (safety_check2.output = bt_output_false -> backup2.enable = FALSE);
+LTLSPEC G (safety_check3.output = bt_output_false -> backup3.enable = TRUE);
+LTLSPEC G (safety_check3.output = bt_output_false -> backup3.enable = FALSE);
+LTLSPEC G (safety_check4.output = bt_output_false -> backup4.enable = TRUE);
+LTLSPEC G (safety_check4.output = bt_output_false -> backup4.enable = FALSE);
+LTLSPEC G (safety_check5.output = bt_output_false -> backup5.enable = TRUE);
+LTLSPEC G (safety_check5.output = bt_output_false -> backup5.enable = FALSE);
+LTLSPEC G (safety_check6.output = bt_output_false -> backup6.enable = TRUE);
+LTLSPEC G (safety_check6.output = bt_output_false -> backup6.enable = FALSE);
+LTLSPEC G (safety_check7.output = bt_output_false -> backup7.enable = TRUE);
+LTLSPEC G (safety_check7.output = bt_output_false -> backup7.enable = FALSE);
+LTLSPEC G (safety_check8.output = bt_output_false -> backup8.enable = TRUE);
+LTLSPEC G (safety_check8.output = bt_output_false -> backup8.enable = FALSE);
+LTLSPEC G (safety_check9.output = bt_output_false -> backup9.enable = TRUE);
+LTLSPEC G (safety_check9.output = bt_output_false -> backup9.enable = FALSE);
+LTLSPEC G (safety_check10.output = bt_output_false -> backup10.enable = TRUE);
+LTLSPEC G (safety_check10.output = bt_output_false -> backup10.enable = FALSE);
+LTLSPEC G (safety_check11.output = bt_output_false -> backup11.enable = TRUE);
+LTLSPEC G (safety_check11.output = bt_output_false -> backup11.enable = FALSE);
+LTLSPEC G (safety_check12.output = bt_output_false -> backup12.enable = TRUE);
+LTLSPEC G (safety_check12.output = bt_output_false -> backup12.enable = FALSE);
+LTLSPEC G (safety_check13.output = bt_output_false -> backup13.enable = TRUE);
+LTLSPEC G (safety_check13.output = bt_output_false -> backup13.enable = FALSE);
+LTLSPEC G (safety_check14.output = bt_output_false -> backup14.enable = TRUE);
+LTLSPEC G (safety_check14.output = bt_output_false -> backup14.enable = FALSE);
+LTLSPEC G (safety_check15.output = bt_output_false -> backup15.enable = TRUE);
+LTLSPEC G (safety_check15.output = bt_output_false -> backup15.enable = FALSE);
+LTLSPEC G (safety_check16.output = bt_output_false -> backup16.enable = TRUE);
+LTLSPEC G (safety_check16.output = bt_output_false -> backup16.enable = FALSE);
+
+
+MODULE bt_placeholder
+	VAR
+		enable : boolean;
+	DEFINE
+		output := bt_output_true;
+MODULE bt_fallback(left_bt, right_bt)
+	VAR
+		enable : boolean;
+	ASSIGN
+		left_bt.enable := enable;
+		right_bt.enable := (left_bt.output = bt_output_false);
+	DEFINE
+		output :=
+			case
+				left_bt.output in { bt_output_running, bt_output_true } : left_bt.output;
+				TRUE : right_bt.output;
+			esac;
+MODULE bt_sequence_with_memory(left_bt, right_bt)
+	VAR
+		enable : boolean;
+		has_left_bt_succeded : boolean;
+	ASSIGN
+		init(has_left_bt_succeded) := FALSE;
+		next(has_left_bt_succeded) :=
+			case
+				right_bt.output in { bt_output_true, bt_output_false } : FALSE; -- Reset.
+				left_bt.output = bt_output_true : TRUE; -- Engage.
+				TRUE : has_left_bt_succeded; -- Hold.
+			esac;
+		left_bt.enable := enable & !has_left_bt_succeded;
+		right_bt.enable := (left_bt.output = bt_output_true) | (enable & has_left_bt_succeded);
+	DEFINE
+		output :=
+			case
+				left_bt.output in { bt_output_running, bt_output_false } : left_bt.output;
+				TRUE : right_bt.output;
+			esac;
+MODULE bt_non_blocking_skill
+	IVAR
+		input : {bt_input_false, bt_input_true };
+	VAR
+		output : { bt_output_none, bt_output_running, bt_output_false, bt_output_true};
+		enable : boolean;
+	ASSIGN
+		init(output) := bt_output_none;
+		next(output) :=
+			case
+				! enable : bt_output_none;
+				input = bt_input_false : bt_output_false;
+				input = bt_input_true : bt_output_true;
+			esac;
+MODULE bt_tick_generator(top_level_bt)
+	ASSIGN
+		init(top_level_bt.enable) := TRUE;
+		next(top_level_bt.enable) := (top_level_bt.output != bt_output_none);
+MODULE bt_single_tick_generator(top_level_bt)
+	ASSIGN
+		init(top_level_bt.enable) := TRUE;
+		next(top_level_bt.enable) := FALSE;

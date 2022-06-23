@@ -2,11 +2,6 @@ MODULE main
 	VAR
 		root : bt_skill;
 		tick_generator : bt_tick_generator(root);
-MODULE fake_node()
-	CONSTANTS
-		success, failure, running, invalid, error;
-	DEFINE
-		status := error;
 MODULE bt_skill
 	IVAR
 		input : { bt_input_running, bt_input_false, bt_input_true };

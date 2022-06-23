@@ -2,12 +2,12 @@ MODULE main
 	CONSTANTS
 		success, failure, running, invalid, error;
 	DEFINE
-		statuses := [sel_root.status, leaf0.status, leaf1.status];
+		statuses := [root.status, leaf0.status, leaf1.status];
 		resume_from_node_0 := -3;
-		sel_root.active := TRUE;
+		root.active := TRUE;
 	VAR
 		node_names : define_nodes;
-		sel_root : node_selector(1, leaf0, leaf1);
+		root : node_selector(1, leaf0, leaf1);
 		leaf0 : node_default();
 		leaf1 : node_default();
 	ASSIGN
@@ -54,13 +54,9 @@ MODULE node_default()
 	IVAR
 		input_status : {success, running, failure};
 	DEFINE
-		status :=
-			case
-				!(active) : invalid;
-				TRUE : input_status;
-			esac;
+		status := active ? input_status : invalid;
 MODULE define_nodes
 	DEFINE
-		sel_root := 0;
+		root := 0;
 		leaf0 := 1;
 		leaf1 := 2;

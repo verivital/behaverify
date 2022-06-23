@@ -2,12 +2,12 @@ MODULE main
 	CONSTANTS
 		success, failure, running, invalid, error;
 	DEFINE
-		statuses := [sel_root.status, sel5.status, sel3.status, leaf1.status, leaf2.status, sel2.status, leaf3.status, leaf4.status, sel4.status, sel1.status, leaf5.status, leaf6.status, leaf0.status];
+		statuses := [root.status, sel5.status, sel3.status, leaf1.status, leaf2.status, sel2.status, leaf3.status, leaf4.status, sel4.status, sel1.status, leaf5.status, leaf6.status, leaf0.status];
 		resume_from_node_0 := -3;
-		sel_root.active := TRUE;
+		root.active := TRUE;
 	VAR
 		node_names : define_nodes;
-		sel_root : node_selector(1, sel5, sel4);
+		root : node_selector(1, sel5, sel4);
 		sel5 : node_selector(1, sel3, sel2);
 		sel3 : node_selector(1, leaf1, leaf2);
 		leaf1 : node_default();
@@ -26,17 +26,6 @@ MODULE fake_node()
 		success, failure, running, invalid, error;
 	DEFINE
 		status := error;
-MODULE node_default()
-	CONSTANTS
-		success, failure, running, invalid, error;
-	IVAR
-		input_status : {success, running, failure};
-	DEFINE
-		status :=
-			case
-				!(active) : invalid;
-				TRUE : input_status;
-			esac;
 MODULE node_selector(last_child, child_0, child_1)
 	CONSTANTS
 		success, failure, running, invalid, error;
@@ -69,9 +58,16 @@ MODULE node_selector(last_child, child_0, child_1)
 				!(child_0.status = failure) : FALSE;
 				TRUE: TRUE;
 			esac;
+MODULE node_default()
+	CONSTANTS
+		success, failure, running, invalid, error;
+	IVAR
+		input_status : {success, running, failure};
+	DEFINE
+		status := active ? input_status : invalid;
 MODULE define_nodes
 	DEFINE
-		sel_root := 0;
+		root := 0;
 		sel5 := 1;
 		sel3 := 2;
 		leaf1 := 3;

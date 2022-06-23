@@ -1,0 +1,5 @@
+LTLSPEC G( ((next(blackboard.variables[variable_names.obstacle_standoff_warning]) = 1) & (fls2bb.active)) -> (surface_task4.active));
+--this one is true, but only for battery_warning
+
+LTLSPEC G( ((next(blackboard.variables[variable_names.obstacle_standoff_warning]) = 1) & (fls2bb.active)) -> (surface_task.active | surface_task1.active | surface_task2.active | surface_task3.active | surface_task4.active));
+--this one should be true.
