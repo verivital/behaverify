@@ -2,11 +2,11 @@
 
 
 ./generate_all.sh
-mkdir -p ./results/gcd/processed_data
-mkdir -p ./results/basic/processed_data
-mkdir -p ./results/blueROV/processed_data
-mkdir -p ./results/auto_example/processed_data
-mkdir -p ./results/robot/processed_data
+mkdir -p ./results/gcd
+mkdir -p ./results/basic
+mkdir -p ./results/blueROV
+mkdir -p ./results/auto_example
+mkdir -p ./results/robot
 mkdir -p ./processed_data/gcd
 mkdir -p ./processed_data/basic
 mkdir -p ./processed_data/blueROV
