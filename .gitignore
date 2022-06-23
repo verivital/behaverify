@@ -1,5 +1,7 @@
-**/**~
-**/**.svg
-**/**.dot
-**/**.fuse
-**/**.goutputstream-**
+*~
+*.svg
+*.dot
+*.fuse
+*.goutputstream-*
+**/models_*/**
+**/results/**
