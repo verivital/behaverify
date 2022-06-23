@@ -7,7 +7,7 @@ files=("gcd_example")
 for cur_folder in ${folders[@]}; do
     for cur_file in ${files[@]}; do
 	echo $cur_folder $cur_file
-	timeout 1h ./run_tests.sh gcd $cur_folder $cur_file
+	timeout 15m ./run_tests.sh gcd $cur_folder $cur_file
     done
 done
 

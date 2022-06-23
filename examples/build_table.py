@@ -43,8 +43,14 @@ elif sys.argv[1] == "auto_example":
     foldersShort = ["BTC", "Leaf",  "L_no", "Total", "T_unique"]
     files = []
     filesShort = []
-    for sel in range(0, 21):
+    for sel in [0, 5, 10, 15, 20]:
         for seq in range(0, 21):
+            files.append("sel" + str(sel) + "-" + "seq" + str(seq))
+            filesShort.append(str(sel) + ", " + str(seq))
+    for seq in [0, 5, 10, 15, 20]:
+        for sel in range(0, 21):
+            if sel in [0, 5, 10, 15, 20]:
+                continue
             files.append("sel" + str(sel) + "-" + "seq" + str(seq))
             filesShort.append(str(sel) + ", " + str(seq))
 
