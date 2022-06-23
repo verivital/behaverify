@@ -1,0 +1,10 @@
+LTLSPEC G (safety_check0.output = bt_output_false -> backup0.enable = TRUE);
+LTLSPEC G (safety_check0.output = bt_output_false -> backup0.enable = FALSE);
+LTLSPEC G (safety_check1.output = bt_output_false -> backup1.enable = TRUE);
+LTLSPEC G (safety_check1.output = bt_output_false -> backup1.enable = FALSE);
+LTLSPEC G (safety_check2.output = bt_output_false -> backup2.enable = TRUE);
+LTLSPEC G (safety_check2.output = bt_output_false -> backup2.enable = FALSE);
+LTLSPEC G (safety_check3.output = bt_output_false -> backup3.enable = TRUE);
+LTLSPEC G (safety_check3.output = bt_output_false -> backup3.enable = FALSE);
+LTLSPEC G (safety_check4.output = bt_output_false -> backup4.enable = TRUE);
+LTLSPEC G (safety_check4.output = bt_output_false -> backup4.enable = FALSE);

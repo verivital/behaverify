@@ -1,0 +1,207 @@
+MODULE main
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		statuses := [linkSeq0.status, sel0.status, safety_check0.status, backup0.status, sel1.status, safety_check1.status, backup1.status];
+		next_node := [ascent_from_0, ascent_from_1, ascent_from_2, ascent_from_3, ascent_from_4, ascent_from_5, ascent_from_6];
+		descent_from_0 := 
+			case
+				(active_node <1) & (resume_relevant_child_1) : descent_from_1;
+				(active_node <4) & (resume_relevant_child_4) : descent_from_4;
+				(active_node <1) : descent_from_1;
+				(active_node <4) : descent_from_4;
+				TRUE : -2;
+			esac;
+		descent_from_1 := 
+			case
+				(active_node <2) : descent_from_2;
+				(active_node <3) : descent_from_3;
+				TRUE : -2;
+			esac;
+		descent_from_2 := 2;
+		descent_from_3 := 3;
+		descent_from_4 := 
+			case
+				(active_node <5) : descent_from_5;
+				(active_node <6) : descent_from_6;
+				TRUE : -2;
+			esac;
+		descent_from_5 := 5;
+		descent_from_6 := 6;
+		ascent_from_0 := 
+			case
+				(statuses[0] = invalid) : descent_from_0;
+				TRUE : -1;
+			esac;
+		ascent_from_1 := 
+			case
+				(statuses[1] = invalid) : descent_from_1;
+				TRUE : ascent_from_0;
+			esac;
+		ascent_from_2 := ascent_from_1;
+		ascent_from_3 := ascent_from_1;
+		ascent_from_4 := 
+			case
+				(statuses[4] = invalid) : descent_from_4;
+				TRUE : ascent_from_0;
+			esac;
+		ascent_from_5 := ascent_from_4;
+		ascent_from_6 := ascent_from_4;
+		relevant_child_0 := 
+			case
+				 !(relevant_child_1 = -2) : 1;
+				 !(relevant_child_4 = -2) : 4;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_0 := 
+			case
+				(resume_from_node_0 = 0) : TRUE ;
+				(resume_relevant_child_1) : TRUE;
+				(resume_relevant_child_4) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_0 := 
+			case
+				(relevant_child_0 = 1) : sel0.status;
+				(relevant_child_0 = 4) : sel1.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_1 := 
+			case
+				 !(relevant_child_2 = -2) : 2;
+				 !(relevant_child_3 = -2) : 3;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_1 := 
+			case
+				(resume_from_node_0 = 1) : TRUE ;
+				(resume_relevant_child_2) : TRUE;
+				(resume_relevant_child_3) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_1 := 
+			case
+				(relevant_child_1 = 2) : safety_check0.status;
+				(relevant_child_1 = 3) : backup0.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_2 := (active_node = 2) ? -1 : -2 ;
+		resume_relevant_child_2 := (resume_from_node_0 = 2) ? TRUE : FALSE ;
+		relevant_child_3 := (active_node = 3) ? -1 : -2 ;
+		resume_relevant_child_3 := (resume_from_node_0 = 3) ? TRUE : FALSE ;
+		relevant_child_4 := 
+			case
+				 !(relevant_child_5 = -2) : 5;
+				 !(relevant_child_6 = -2) : 6;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_4 := 
+			case
+				(resume_from_node_0 = 4) : TRUE ;
+				(resume_relevant_child_5) : TRUE;
+				(resume_relevant_child_6) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_4 := 
+			case
+				(relevant_child_4 = 5) : safety_check1.status;
+				(relevant_child_4 = 6) : backup1.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_5 := (active_node = 5) ? -1 : -2 ;
+		resume_relevant_child_5 := (resume_from_node_0 = 5) ? TRUE : FALSE ;
+		relevant_child_6 := (active_node = 6) ? -1 : -2 ;
+		resume_relevant_child_6 := (resume_from_node_0 = 6) ? TRUE : FALSE ;
+		last_child_1 := 3;
+		last_child_4 := 6;
+		last_child_0 := 4;
+	VAR
+		active_node : {-2, -1,2, 3, 5, 6};
+		random_status : {running, success, failure};
+		node_names : define_nodes;
+		resume_from_node_0 : {0, 4};
+		linkSeq0 : node_sequence(relevant_child_0, relevant_status_0, last_child_0);
+		sel0 : node_selector(relevant_child_1, relevant_status_1, last_child_1);
+		safety_check0 : node_default(active_node, 2, random_status);
+		backup0 : node_success(active_node, 3);
+		sel1 : node_selector(relevant_child_4, relevant_status_4, last_child_4);
+		safety_check1 : node_default(active_node, 5, random_status);
+		backup1 : node_success(active_node, 6);
+	INVAR
+		active_node = -1 -> random_status = running;
+	ASSIGN
+		init(active_node) := -1;
+		init(resume_from_node_0) := 0;
+		next(active_node) :=
+			case
+				(active_node = -2) : -2;
+				(active_node = -1) : next_node[0];
+				TRUE : next_node[active_node];
+			esac;
+		next(resume_from_node_0) := 
+			case
+				(statuses[0] in {success, failure}) : 0;
+				(statuses[4] = running) : 4;
+				(resume_from_node_0 = 4) & !(next(relevant_child_4) = -2) : 0;
+				(statuses[resume_from_node_0] in {success, failure}) : 0;
+				TRUE : resume_from_node_0;
+			esac;
+LTLSPEC G (safety_check0.status = failure -> !(active_node = -1) U backup0.status = success);
+LTLSPEC G (safety_check0.status = failure -> !(!(active_node = -1) U backup0.status = success));
+LTLSPEC G (safety_check1.status = failure -> !(active_node = -1) U backup1.status = success);
+LTLSPEC G (safety_check1.status = failure -> !(!(active_node = -1) U backup1.status = success));
+
+
+MODULE node_selector(relevant_child, relevant_status, last_child)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status :=
+			case
+				(last_child = -2) : failure;
+				(relevant_child <= 0) : invalid;
+				(relevant_status = running) : running;
+				(relevant_status = success) : success;
+				(last_child = relevant_child) & (relevant_status = failure) : failure;
+				TRUE : invalid;
+			esac;
+MODULE node_sequence(relevant_child, relevant_status, last_child)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status :=
+			case
+				(last_child = -2) : success;
+				(relevant_child <= 0) : invalid;
+				(relevant_status = running) : running;
+				(relevant_status = failure) : failure;
+				(last_child = relevant_child) & (relevant_status = success) : success;
+				TRUE : invalid;
+			esac;
+MODULE node_default(active_node, id, random_status)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status :=
+			case
+				(active_node = id) : random_status;
+				TRUE : invalid;
+			esac;
+MODULE node_success(active_node, id)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status :=
+			case
+				(active_node = id) : success;
+				TRUE : invalid;
+			esac;
+MODULE define_nodes
+	DEFINE
+		linkSeq0 := 0;
+		sel0 := 1;
+		safety_check0 := 2;
+		backup0 := 3;
+		sel1 := 4;
+		safety_check1 := 5;
+		backup1 := 6;

@@ -508,6 +508,21 @@ def create_node_tick_counter(ignored_value):
 
 #-----------------------------------------------------------------
 
+def create_node_non_blocking(ignored_value):
+    (status_start, status_end, active, active_end, children) = common_string()
+    return_string = ("MODULE node_non_blocking()" + os.linesep
+                     + "\tCONSTANTS" + os.linesep
+                     + "\t\tsuccess, failure, running, invalid, error;" + os.linesep
+                     + "\tIVAR" + os.linesep
+                     + "\t\tinput_status : {success, failure};" + os.linesep
+                     + "\tDEFINE" + os.linesep
+                     + "\t\tstatus := active ? input_status : invalid;" + os.linesep
+                     )
+    return return_string
+
+
+#-----------------------------------------------------------------
+
 def create_node_timer(ignored_value): 
     (status_start, status_end, active, active_end, children) = common_string()
     return_string = ("MODULE node_timer()" + os.linesep
@@ -515,12 +530,9 @@ def create_node_timer(ignored_value):
                      + "\t\tsuccess, failure, running, invalid, error;" + os.linesep
                      + "\tIVAR" + os.linesep
                      + "\t\tinput_status : {success, running};" + os.linesep
-                     + "\tDEFINE" + os.linesep 
-                     + "\t\tstatus :=" + os.linesep 
-                     + "\t\t\tcase" + os.linesep
-                     + "\t\t\t\t!(active) : invalid;" + os.linesep #this should be the only invalid case.
-                     + "\t\t\t\tTRUE : input_status;" + os.linesep#success or running only.  
-                     + status_end)
+                     + "\tDEFINE" + os.linesep
+                     + "\t\tstatus := active ? input_status : invalid;" + os.linesep
+                     )
     return return_string
 
 
@@ -534,12 +546,9 @@ def create_node_default(ignored_value):
                      + "\t\tsuccess, failure, running, invalid, error;" + os.linesep
                      + "\tIVAR" + os.linesep
                      + "\t\tinput_status : {success, running, failure};" + os.linesep
-                     + "\tDEFINE" + os.linesep 
-                     + "\t\tstatus :=" + os.linesep 
-                     + "\t\t\tcase" + os.linesep
-                     + "\t\t\t\t!(active) : invalid;" + os.linesep #this should be the only invalid case.
-                     + "\t\t\t\tTRUE : input_status;" + os.linesep#success, running, or failure  
-                     + status_end)
+                     + "\tDEFINE" + os.linesep
+                     + "\t\tstatus := active ? input_status : invalid;" + os.linesep
+                     )
     return return_string
 
 

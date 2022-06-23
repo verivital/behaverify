@@ -2,7 +2,7 @@ MODULE main
 	CONSTANTS
 		success, failure, running, invalid, error;
 	DEFINE
-		statuses := [seq_root.status, seq11.status, seq111.status, seq112.status, seq7.status, leaf2.status, leaf3.status, sel7.status, leaf4.status, leaf5.status, sel11.status, seq6.status, leaf6.status, leaf7.status, sel6.status, leaf8.status, leaf9.status, seq113.status, seq10.status, seq5.status, leaf10.status, leaf11.status, sel5.status, leaf12.status, leaf13.status, sel10.status, seq4.status, leaf14.status, leaf15.status, sel4.status, leaf16.status, leaf17.status, seq114.status, seq115.status, seq9.status, seq3.status, leaf18.status, leaf19.status, sel3.status, leaf20.status, leaf21.status, sel9.status, seq2.status, leaf22.status, leaf23.status, sel2.status, leaf24.status, leaf25.status, seq116.status, seq8.status, seq1.status, leaf26.status, leaf27.status, sel1.status, leaf28.status, leaf29.status, sel8.status, leaf0.status, leaf1.status];
+		statuses := [root.status, seq11.status, seq111.status, seq112.status, seq7.status, leaf2.status, leaf3.status, sel7.status, leaf4.status, leaf5.status, sel11.status, seq6.status, leaf6.status, leaf7.status, sel6.status, leaf8.status, leaf9.status, seq113.status, seq10.status, seq5.status, leaf10.status, leaf11.status, sel5.status, leaf12.status, leaf13.status, sel10.status, seq4.status, leaf14.status, leaf15.status, sel4.status, leaf16.status, leaf17.status, seq114.status, seq115.status, seq9.status, seq3.status, leaf18.status, leaf19.status, sel3.status, leaf20.status, leaf21.status, sel9.status, seq2.status, leaf22.status, leaf23.status, sel2.status, leaf24.status, leaf25.status, seq116.status, seq8.status, seq1.status, leaf26.status, leaf27.status, sel1.status, leaf28.status, leaf29.status, sel8.status, leaf0.status, leaf1.status];
 		trace_running_source_6 := (statuses[6] = running) ? 6 : -2;
 		trace_running_source_4 := 
 			case
@@ -239,11 +239,11 @@ MODULE main
 				(resume_from_node_0 in {28}) : 1;
 				TRUE : -2;
 			esac;
-		seq_root.active := TRUE;
+		root.active := TRUE;
 	VAR
 		node_names : define_nodes;
 		resume_from_node_0 : {0, 6, 7, 10, 13, 20, 21, 22, 25, 28, 36, 37, 38, 41, 44, 51, 52, 53, 56};
-		seq_root : node_sequence(1, seq11, seq114, resume_point_0);
+		root : node_sequence(1, seq11, seq114, resume_point_0);
 		seq11 : node_sequence(1, seq111, seq113, resume_point_1);
 		seq111 : node_sequence(1, seq112, sel11, resume_point_2);
 		seq112 : node_sequence(1, seq7, sel7, resume_point_3);
@@ -350,6 +350,13 @@ MODULE node_sequence(last_child, child_0, child_1, resume_point)
 				!(child_0.status = success) : FALSE;
 				TRUE: TRUE;
 			esac;
+MODULE node_default()
+	CONSTANTS
+		success, failure, running, invalid, error;
+	IVAR
+		input_status : {success, running, failure};
+	DEFINE
+		status := active ? input_status : invalid;
 MODULE node_selector(last_child, child_0, child_1)
 	CONSTANTS
 		success, failure, running, invalid, error;
@@ -382,20 +389,9 @@ MODULE node_selector(last_child, child_0, child_1)
 				!(child_0.status = failure) : FALSE;
 				TRUE: TRUE;
 			esac;
-MODULE node_default()
-	CONSTANTS
-		success, failure, running, invalid, error;
-	IVAR
-		input_status : {success, running, failure};
-	DEFINE
-		status :=
-			case
-				!(active) : invalid;
-				TRUE : input_status;
-			esac;
 MODULE define_nodes
 	DEFINE
-		seq_root := 0;
+		root := 0;
 		seq11 := 1;
 		seq111 := 2;
 		seq112 := 3;

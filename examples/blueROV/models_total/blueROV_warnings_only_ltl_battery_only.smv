@@ -925,23 +925,224 @@ MODULE node_parallel(last_child, child_0, child_1, child_2, child_3, child_4, ch
 				(skip_child[min(16, max(last_child, 0))] = -2) : FALSE;
 				TRUE : TRUE;
 			esac;
-MODULE node_set_blackboard_variables(status_module)
-	DEFINE
-		status :=
-			case
-				!(active) : invalid;
-				TRUE : status_module.status;
-			esac;
 MODULE node_timer()
 	CONSTANTS
 		success, failure, running, invalid, error;
 	IVAR
 		input_status : {success, running};
 	DEFINE
+		status := active ? input_status : invalid;
+MODULE node_selector(last_child, child_0, child_1, child_2, child_3, child_4, child_5, child_6, child_7, child_8, child_9, child_10, child_11, child_12, child_13, child_14, child_15, child_16)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
 		status :=
 			case
 				!(active) : invalid;
-				TRUE : input_status;
+				(last_child < 0) : failure;
+				(0 <= last_child) & (child_0.status = error) : error;
+				(1 <= last_child) & (child_1.status = error) : error;
+				(2 <= last_child) & (child_2.status = error) : error;
+				(3 <= last_child) & (child_3.status = error) : error;
+				(4 <= last_child) & (child_4.status = error) : error;
+				(5 <= last_child) & (child_5.status = error) : error;
+				(6 <= last_child) & (child_6.status = error) : error;
+				(7 <= last_child) & (child_7.status = error) : error;
+				(8 <= last_child) & (child_8.status = error) : error;
+				(9 <= last_child) & (child_9.status = error) : error;
+				(10 <= last_child) & (child_10.status = error) : error;
+				(11 <= last_child) & (child_11.status = error) : error;
+				(12 <= last_child) & (child_12.status = error) : error;
+				(13 <= last_child) & (child_13.status = error) : error;
+				(14 <= last_child) & (child_14.status = error) : error;
+				(15 <= last_child) & (child_15.status = error) : error;
+				(16 <= last_child) & (child_16.status = error) : error;
+				(0 <= last_child) & (child_0.status = success) : success;
+				(0 <= last_child) & (child_0.status = running) : running;
+				(0 <= last_child) & (child_0.status = invalid) : error;
+				(1 <= last_child) & (child_1.status = success) : success;
+				(1 <= last_child) & (child_1.status = running) : running;
+				(1 <= last_child) & (child_1.status = invalid) : error;
+				(2 <= last_child) & (child_2.status = success) : success;
+				(2 <= last_child) & (child_2.status = running) : running;
+				(2 <= last_child) & (child_2.status = invalid) : error;
+				(3 <= last_child) & (child_3.status = success) : success;
+				(3 <= last_child) & (child_3.status = running) : running;
+				(3 <= last_child) & (child_3.status = invalid) : error;
+				(4 <= last_child) & (child_4.status = success) : success;
+				(4 <= last_child) & (child_4.status = running) : running;
+				(4 <= last_child) & (child_4.status = invalid) : error;
+				(5 <= last_child) & (child_5.status = success) : success;
+				(5 <= last_child) & (child_5.status = running) : running;
+				(5 <= last_child) & (child_5.status = invalid) : error;
+				(6 <= last_child) & (child_6.status = success) : success;
+				(6 <= last_child) & (child_6.status = running) : running;
+				(6 <= last_child) & (child_6.status = invalid) : error;
+				(7 <= last_child) & (child_7.status = success) : success;
+				(7 <= last_child) & (child_7.status = running) : running;
+				(7 <= last_child) & (child_7.status = invalid) : error;
+				(8 <= last_child) & (child_8.status = success) : success;
+				(8 <= last_child) & (child_8.status = running) : running;
+				(8 <= last_child) & (child_8.status = invalid) : error;
+				(9 <= last_child) & (child_9.status = success) : success;
+				(9 <= last_child) & (child_9.status = running) : running;
+				(9 <= last_child) & (child_9.status = invalid) : error;
+				(10 <= last_child) & (child_10.status = success) : success;
+				(10 <= last_child) & (child_10.status = running) : running;
+				(10 <= last_child) & (child_10.status = invalid) : error;
+				(11 <= last_child) & (child_11.status = success) : success;
+				(11 <= last_child) & (child_11.status = running) : running;
+				(11 <= last_child) & (child_11.status = invalid) : error;
+				(12 <= last_child) & (child_12.status = success) : success;
+				(12 <= last_child) & (child_12.status = running) : running;
+				(12 <= last_child) & (child_12.status = invalid) : error;
+				(13 <= last_child) & (child_13.status = success) : success;
+				(13 <= last_child) & (child_13.status = running) : running;
+				(13 <= last_child) & (child_13.status = invalid) : error;
+				(14 <= last_child) & (child_14.status = success) : success;
+				(14 <= last_child) & (child_14.status = running) : running;
+				(14 <= last_child) & (child_14.status = invalid) : error;
+				(15 <= last_child) & (child_15.status = success) : success;
+				(15 <= last_child) & (child_15.status = running) : running;
+				(15 <= last_child) & (child_15.status = invalid) : error;
+				(16 <= last_child) & (child_16.status = success) : success;
+				(16 <= last_child) & (child_16.status = running) : running;
+				(16 <= last_child) & (child_16.status = invalid) : error;
+				TRUE : failure;
+			esac;
+		child_0.active :=
+			case
+				!(active) : FALSE;
+				(0 > last_child) : FALSE;
+				TRUE : TRUE;
+				esac;
+		child_1.active :=
+			case
+				!(active) : FALSE;
+				(1 > last_child) : FALSE;
+				!(child_0.active) : FALSE;
+				!(child_0.status = failure) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_2.active :=
+			case
+				!(active) : FALSE;
+				(2 > last_child) : FALSE;
+				!(child_1.active) : FALSE;
+				!(child_1.status = failure) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_3.active :=
+			case
+				!(active) : FALSE;
+				(3 > last_child) : FALSE;
+				!(child_2.active) : FALSE;
+				!(child_2.status = failure) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_4.active :=
+			case
+				!(active) : FALSE;
+				(4 > last_child) : FALSE;
+				!(child_3.active) : FALSE;
+				!(child_3.status = failure) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_5.active :=
+			case
+				!(active) : FALSE;
+				(5 > last_child) : FALSE;
+				!(child_4.active) : FALSE;
+				!(child_4.status = failure) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_6.active :=
+			case
+				!(active) : FALSE;
+				(6 > last_child) : FALSE;
+				!(child_5.active) : FALSE;
+				!(child_5.status = failure) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_7.active :=
+			case
+				!(active) : FALSE;
+				(7 > last_child) : FALSE;
+				!(child_6.active) : FALSE;
+				!(child_6.status = failure) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_8.active :=
+			case
+				!(active) : FALSE;
+				(8 > last_child) : FALSE;
+				!(child_7.active) : FALSE;
+				!(child_7.status = failure) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_9.active :=
+			case
+				!(active) : FALSE;
+				(9 > last_child) : FALSE;
+				!(child_8.active) : FALSE;
+				!(child_8.status = failure) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_10.active :=
+			case
+				!(active) : FALSE;
+				(10 > last_child) : FALSE;
+				!(child_9.active) : FALSE;
+				!(child_9.status = failure) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_11.active :=
+			case
+				!(active) : FALSE;
+				(11 > last_child) : FALSE;
+				!(child_10.active) : FALSE;
+				!(child_10.status = failure) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_12.active :=
+			case
+				!(active) : FALSE;
+				(12 > last_child) : FALSE;
+				!(child_11.active) : FALSE;
+				!(child_11.status = failure) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_13.active :=
+			case
+				!(active) : FALSE;
+				(13 > last_child) : FALSE;
+				!(child_12.active) : FALSE;
+				!(child_12.status = failure) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_14.active :=
+			case
+				!(active) : FALSE;
+				(14 > last_child) : FALSE;
+				!(child_13.active) : FALSE;
+				!(child_13.status = failure) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_15.active :=
+			case
+				!(active) : FALSE;
+				(15 > last_child) : FALSE;
+				!(child_14.active) : FALSE;
+				!(child_14.status = failure) : FALSE;
+				TRUE: TRUE;
+			esac;
+		child_16.active :=
+			case
+				!(active) : FALSE;
+				(16 > last_child) : FALSE;
+				!(child_15.active) : FALSE;
+				!(child_15.status = failure) : FALSE;
+				TRUE: TRUE;
 			esac;
 MODULE node_check_blackboard_variable_value(blackboard, variable, check)
 	CONSTANTS
@@ -952,6 +1153,22 @@ MODULE node_check_blackboard_variable_value(blackboard, variable, check)
 				!(active) : invalid;
 				(blackboard.variable_exists[variable]) & (check.result) : success;
 				TRUE : failure;
+			esac;
+MODULE decorator_success_is_failure(child_0)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		status :=
+			case
+				!(active) : invalid;
+				(child_0.status in {invalid, error}) : error;
+				!(child_0.status = success) : child_0.status;
+				TRUE : failure;
+			esac;
+		child_0.active :=
+			case
+				!(active) : FALSE;
+				TRUE : TRUE;
 			esac;
 MODULE node_sequence(last_child, child_0, child_1, child_2, child_3, child_4, child_5, child_6, child_7, child_8, child_9, child_10, child_11, child_12, child_13, child_14, child_15, child_16, resume_point)
 	CONSTANTS
@@ -1199,233 +1416,12 @@ MODULE node_sequence(last_child, child_0, child_1, child_2, child_3, child_4, ch
 				!(child_15.status = success) : FALSE;
 				TRUE: TRUE;
 			esac;
-MODULE node_selector(last_child, child_0, child_1, child_2, child_3, child_4, child_5, child_6, child_7, child_8, child_9, child_10, child_11, child_12, child_13, child_14, child_15, child_16)
-	CONSTANTS
-		success, failure, running, invalid, error;
+MODULE node_set_blackboard_variables(status_module)
 	DEFINE
 		status :=
 			case
 				!(active) : invalid;
-				(last_child < 0) : failure;
-				(0 <= last_child) & (child_0.status = error) : error;
-				(1 <= last_child) & (child_1.status = error) : error;
-				(2 <= last_child) & (child_2.status = error) : error;
-				(3 <= last_child) & (child_3.status = error) : error;
-				(4 <= last_child) & (child_4.status = error) : error;
-				(5 <= last_child) & (child_5.status = error) : error;
-				(6 <= last_child) & (child_6.status = error) : error;
-				(7 <= last_child) & (child_7.status = error) : error;
-				(8 <= last_child) & (child_8.status = error) : error;
-				(9 <= last_child) & (child_9.status = error) : error;
-				(10 <= last_child) & (child_10.status = error) : error;
-				(11 <= last_child) & (child_11.status = error) : error;
-				(12 <= last_child) & (child_12.status = error) : error;
-				(13 <= last_child) & (child_13.status = error) : error;
-				(14 <= last_child) & (child_14.status = error) : error;
-				(15 <= last_child) & (child_15.status = error) : error;
-				(16 <= last_child) & (child_16.status = error) : error;
-				(0 <= last_child) & (child_0.status = success) : success;
-				(0 <= last_child) & (child_0.status = running) : running;
-				(0 <= last_child) & (child_0.status = invalid) : error;
-				(1 <= last_child) & (child_1.status = success) : success;
-				(1 <= last_child) & (child_1.status = running) : running;
-				(1 <= last_child) & (child_1.status = invalid) : error;
-				(2 <= last_child) & (child_2.status = success) : success;
-				(2 <= last_child) & (child_2.status = running) : running;
-				(2 <= last_child) & (child_2.status = invalid) : error;
-				(3 <= last_child) & (child_3.status = success) : success;
-				(3 <= last_child) & (child_3.status = running) : running;
-				(3 <= last_child) & (child_3.status = invalid) : error;
-				(4 <= last_child) & (child_4.status = success) : success;
-				(4 <= last_child) & (child_4.status = running) : running;
-				(4 <= last_child) & (child_4.status = invalid) : error;
-				(5 <= last_child) & (child_5.status = success) : success;
-				(5 <= last_child) & (child_5.status = running) : running;
-				(5 <= last_child) & (child_5.status = invalid) : error;
-				(6 <= last_child) & (child_6.status = success) : success;
-				(6 <= last_child) & (child_6.status = running) : running;
-				(6 <= last_child) & (child_6.status = invalid) : error;
-				(7 <= last_child) & (child_7.status = success) : success;
-				(7 <= last_child) & (child_7.status = running) : running;
-				(7 <= last_child) & (child_7.status = invalid) : error;
-				(8 <= last_child) & (child_8.status = success) : success;
-				(8 <= last_child) & (child_8.status = running) : running;
-				(8 <= last_child) & (child_8.status = invalid) : error;
-				(9 <= last_child) & (child_9.status = success) : success;
-				(9 <= last_child) & (child_9.status = running) : running;
-				(9 <= last_child) & (child_9.status = invalid) : error;
-				(10 <= last_child) & (child_10.status = success) : success;
-				(10 <= last_child) & (child_10.status = running) : running;
-				(10 <= last_child) & (child_10.status = invalid) : error;
-				(11 <= last_child) & (child_11.status = success) : success;
-				(11 <= last_child) & (child_11.status = running) : running;
-				(11 <= last_child) & (child_11.status = invalid) : error;
-				(12 <= last_child) & (child_12.status = success) : success;
-				(12 <= last_child) & (child_12.status = running) : running;
-				(12 <= last_child) & (child_12.status = invalid) : error;
-				(13 <= last_child) & (child_13.status = success) : success;
-				(13 <= last_child) & (child_13.status = running) : running;
-				(13 <= last_child) & (child_13.status = invalid) : error;
-				(14 <= last_child) & (child_14.status = success) : success;
-				(14 <= last_child) & (child_14.status = running) : running;
-				(14 <= last_child) & (child_14.status = invalid) : error;
-				(15 <= last_child) & (child_15.status = success) : success;
-				(15 <= last_child) & (child_15.status = running) : running;
-				(15 <= last_child) & (child_15.status = invalid) : error;
-				(16 <= last_child) & (child_16.status = success) : success;
-				(16 <= last_child) & (child_16.status = running) : running;
-				(16 <= last_child) & (child_16.status = invalid) : error;
-				TRUE : failure;
-			esac;
-		child_0.active :=
-			case
-				!(active) : FALSE;
-				(0 > last_child) : FALSE;
-				TRUE : TRUE;
-				esac;
-		child_1.active :=
-			case
-				!(active) : FALSE;
-				(1 > last_child) : FALSE;
-				!(child_0.active) : FALSE;
-				!(child_0.status = failure) : FALSE;
-				TRUE: TRUE;
-			esac;
-		child_2.active :=
-			case
-				!(active) : FALSE;
-				(2 > last_child) : FALSE;
-				!(child_1.active) : FALSE;
-				!(child_1.status = failure) : FALSE;
-				TRUE: TRUE;
-			esac;
-		child_3.active :=
-			case
-				!(active) : FALSE;
-				(3 > last_child) : FALSE;
-				!(child_2.active) : FALSE;
-				!(child_2.status = failure) : FALSE;
-				TRUE: TRUE;
-			esac;
-		child_4.active :=
-			case
-				!(active) : FALSE;
-				(4 > last_child) : FALSE;
-				!(child_3.active) : FALSE;
-				!(child_3.status = failure) : FALSE;
-				TRUE: TRUE;
-			esac;
-		child_5.active :=
-			case
-				!(active) : FALSE;
-				(5 > last_child) : FALSE;
-				!(child_4.active) : FALSE;
-				!(child_4.status = failure) : FALSE;
-				TRUE: TRUE;
-			esac;
-		child_6.active :=
-			case
-				!(active) : FALSE;
-				(6 > last_child) : FALSE;
-				!(child_5.active) : FALSE;
-				!(child_5.status = failure) : FALSE;
-				TRUE: TRUE;
-			esac;
-		child_7.active :=
-			case
-				!(active) : FALSE;
-				(7 > last_child) : FALSE;
-				!(child_6.active) : FALSE;
-				!(child_6.status = failure) : FALSE;
-				TRUE: TRUE;
-			esac;
-		child_8.active :=
-			case
-				!(active) : FALSE;
-				(8 > last_child) : FALSE;
-				!(child_7.active) : FALSE;
-				!(child_7.status = failure) : FALSE;
-				TRUE: TRUE;
-			esac;
-		child_9.active :=
-			case
-				!(active) : FALSE;
-				(9 > last_child) : FALSE;
-				!(child_8.active) : FALSE;
-				!(child_8.status = failure) : FALSE;
-				TRUE: TRUE;
-			esac;
-		child_10.active :=
-			case
-				!(active) : FALSE;
-				(10 > last_child) : FALSE;
-				!(child_9.active) : FALSE;
-				!(child_9.status = failure) : FALSE;
-				TRUE: TRUE;
-			esac;
-		child_11.active :=
-			case
-				!(active) : FALSE;
-				(11 > last_child) : FALSE;
-				!(child_10.active) : FALSE;
-				!(child_10.status = failure) : FALSE;
-				TRUE: TRUE;
-			esac;
-		child_12.active :=
-			case
-				!(active) : FALSE;
-				(12 > last_child) : FALSE;
-				!(child_11.active) : FALSE;
-				!(child_11.status = failure) : FALSE;
-				TRUE: TRUE;
-			esac;
-		child_13.active :=
-			case
-				!(active) : FALSE;
-				(13 > last_child) : FALSE;
-				!(child_12.active) : FALSE;
-				!(child_12.status = failure) : FALSE;
-				TRUE: TRUE;
-			esac;
-		child_14.active :=
-			case
-				!(active) : FALSE;
-				(14 > last_child) : FALSE;
-				!(child_13.active) : FALSE;
-				!(child_13.status = failure) : FALSE;
-				TRUE: TRUE;
-			esac;
-		child_15.active :=
-			case
-				!(active) : FALSE;
-				(15 > last_child) : FALSE;
-				!(child_14.active) : FALSE;
-				!(child_14.status = failure) : FALSE;
-				TRUE: TRUE;
-			esac;
-		child_16.active :=
-			case
-				!(active) : FALSE;
-				(16 > last_child) : FALSE;
-				!(child_15.active) : FALSE;
-				!(child_15.status = failure) : FALSE;
-				TRUE: TRUE;
-			esac;
-MODULE decorator_success_is_failure(child_0)
-	CONSTANTS
-		success, failure, running, invalid, error;
-	DEFINE
-		status :=
-			case
-				!(active) : invalid;
-				(child_0.status in {invalid, error}) : error;
-				!(child_0.status = success) : child_0.status;
-				TRUE : failure;
-			esac;
-		child_0.active :=
-			case
-				!(active) : FALSE;
-				TRUE : TRUE;
+				TRUE : status_module.status;
 			esac;
 MODULE define_variables
 	DEFINE

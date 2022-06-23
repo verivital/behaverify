@@ -229,12 +229,6 @@ def create_blackboard(int_to_variable, variable_to_int, variable_access, nodes, 
             variable = int_to_variable[i]
             var_array_string += (variable + ", ")
             var_exist_string += (variable + "_exists, ")
-            set_string=""
-            if variable_to_int[variable] in variable_access:
-                for node in variable_access[variable_to_int[variable]]:
-                    set_string += "node_names." + nodes[node][2] + ", "
-            else:
-                set_string += "-1, "
             exist_define += "\t\t" + variable + "_exists := TRUE;" + os.linesep
             decl_string += ("\t\t" + variable + " : " + str(min_val) + ".." + str(max_val) + ";" + os.linesep)
             assign_string += ("\t\tinit(" + variable + ") := " + str(min_val) +";" + os.linesep
@@ -243,9 +237,8 @@ def create_blackboard(int_to_variable, variable_to_int, variable_access, nodes, 
             )
             if variable_to_int[variable] in variable_access:
                 for node in variable_access[variable_to_int[variable]]:
-                    assign_string += "\t\t\t\t(statuses[" + str(node) + "] = success) : " + poss_values + ";" + os.linesep
-            assign_string +=(
-                + "\t\t\t\tTRUE : " + variable + ";" + os.linesep
+                    assign_string += "\t\t\t\t(statuses[node_names." + nodes[node][2] + "] = success) : " + poss_values + ";" + os.linesep
+            assign_string +=("\t\t\t\tTRUE : " + variable + ";" + os.linesep
                 + "\t\t\tesac;" + os.linesep
             )
         return_string += (var_array_string[0:-2] + "];" + os.linesep
@@ -515,6 +508,21 @@ def create_node_tick_counter(ignored_value):
 
 #-----------------------------------------------------------------
 
+def create_node_non_blocking(ignored_value):
+    (status_start, status_end, active, active_end, children) = common_string()
+    return_string = ("MODULE node_non_blocking()" + os.linesep
+                     + "\tCONSTANTS" + os.linesep
+                     + "\t\tsuccess, failure, running, invalid, error;" + os.linesep
+                     + "\tIVAR" + os.linesep
+                     + "\t\tinput_status : {success, failure};" + os.linesep
+                     + "\tDEFINE" + os.linesep
+                     + "\t\tstatus := active ? input_status : invalid;" + os.linesep
+                     )
+    return return_string
+
+
+#-----------------------------------------------------------------
+
 def create_node_timer(ignored_value): 
     (status_start, status_end, active, active_end, children) = common_string()
     return_string = ("MODULE node_timer()" + os.linesep
@@ -522,12 +530,9 @@ def create_node_timer(ignored_value):
                      + "\t\tsuccess, failure, running, invalid, error;" + os.linesep
                      + "\tIVAR" + os.linesep
                      + "\t\tinput_status : {success, running};" + os.linesep
-                     + "\tDEFINE" + os.linesep 
-                     + "\t\tstatus :=" + os.linesep 
-                     + "\t\t\tcase" + os.linesep
-                     + "\t\t\t\t!(active) : invalid;" + os.linesep #this should be the only invalid case.
-                     + "\t\t\t\tTRUE : input_status;" + os.linesep#success or running only.  
-                     + status_end)
+                     + "\tDEFINE" + os.linesep
+                     + "\t\tstatus := active ? input_status : invalid;" + os.linesep
+                     )
     return return_string
 
 
@@ -541,12 +546,9 @@ def create_node_default(ignored_value):
                      + "\t\tsuccess, failure, running, invalid, error;" + os.linesep
                      + "\tIVAR" + os.linesep
                      + "\t\tinput_status : {success, running, failure};" + os.linesep
-                     + "\tDEFINE" + os.linesep 
-                     + "\t\tstatus :=" + os.linesep 
-                     + "\t\t\tcase" + os.linesep
-                     + "\t\t\t\t!(active) : invalid;" + os.linesep #this should be the only invalid case.
-                     + "\t\t\t\tTRUE : input_status;" + os.linesep#success, running, or failure  
-                     + status_end)
+                     + "\tDEFINE" + os.linesep
+                     + "\t\tstatus := active ? input_status : invalid;" + os.linesep
+                     )
     return return_string
 
 

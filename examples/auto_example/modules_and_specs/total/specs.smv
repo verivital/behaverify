@@ -1,0 +1,4 @@
+CTLSPEC EF (statuses[0] = running);
+CTLSPEC EF (statuses[0] = success);
+CTLSPEC EF (statuses[0] = failure);
+LTLSPEC G (statuses[0] = success | statuses[0] = invalid);

@@ -10069,20 +10069,13 @@ LTLSPEC (blackboard.r = 100 & blackboard.q = 99) -> F(blackboard.r = 1);
 LTLSPEC (blackboard.r = 100 & blackboard.q = 100) -> F(blackboard.r = 100);
 LTLSPEC blackboard.r = 17 & blackboard.q = 25 -> F(blackboard.r = 10);
 LTLSPEC G(F(blackboard.q = 1));
-
+CTLSPEC EF(blackboard.q = 0);
 
 MODULE fake_node()
 	CONSTANTS
 		success, failure, running, invalid, error;
 	DEFINE
 		status := error;
-MODULE node_set_blackboard_variables(status_module)
-	DEFINE
-		status :=
-			case
-				!(active) : invalid;
-				TRUE : status_module.status;
-			esac;
 MODULE node_selector(last_child, child_0, child_1, child_2)
 	CONSTANTS
 		success, failure, running, invalid, error;
@@ -10186,6 +10179,13 @@ MODULE node_check_blackboard_variable_value(blackboard, variable, check)
 				!(active) : invalid;
 				(blackboard.variable_exists[variable]) & (check.result) : success;
 				TRUE : failure;
+			esac;
+MODULE node_set_blackboard_variables(status_module)
+	DEFINE
+		status :=
+			case
+				!(active) : invalid;
+				TRUE : status_module.status;
 			esac;
 MODULE define_variables
 	DEFINE

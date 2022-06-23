@@ -2,7 +2,7 @@ MODULE main
 	CONSTANTS
 		success, failure, running, invalid, error;
 	DEFINE
-		statuses := [sel_root.status, sel3.status, sel2.status, leaf1.status, leaf2.status, seq1.status, leaf3.status, leaf4.status, seq2.status, sel1.status, leaf5.status, leaf6.status, leaf0.status];
+		statuses := [root.status, sel3.status, sel2.status, leaf1.status, leaf2.status, seq1.status, leaf3.status, leaf4.status, seq2.status, sel1.status, leaf5.status, leaf6.status, leaf0.status];
 		trace_running_source_7 := (statuses[7] = running) ? 7 : -2;
 		trace_running_source_5 := 
 			case
@@ -36,11 +36,11 @@ MODULE main
 				(resume_from_node_0 in {7}) : 1;
 				TRUE : -2;
 			esac;
-		sel_root.active := TRUE;
+		root.active := TRUE;
 	VAR
 		node_names : define_nodes;
 		resume_from_node_0 : {0, 7, 12};
-		sel_root : node_selector(1, sel3, seq2);
+		root : node_selector(1, sel3, seq2);
 		sel3 : node_selector(1, sel2, seq1);
 		sel2 : node_selector(1, leaf1, leaf2);
 		leaf1 : node_default();
@@ -65,17 +65,6 @@ MODULE fake_node()
 		success, failure, running, invalid, error;
 	DEFINE
 		status := error;
-MODULE node_default()
-	CONSTANTS
-		success, failure, running, invalid, error;
-	IVAR
-		input_status : {success, running, failure};
-	DEFINE
-		status :=
-			case
-				!(active) : invalid;
-				TRUE : input_status;
-			esac;
 MODULE node_sequence(last_child, child_0, child_1, resume_point)
 	CONSTANTS
 		success, failure, running, invalid, error;
@@ -112,6 +101,13 @@ MODULE node_sequence(last_child, child_0, child_1, resume_point)
 				!(child_0.status = success) : FALSE;
 				TRUE: TRUE;
 			esac;
+MODULE node_default()
+	CONSTANTS
+		success, failure, running, invalid, error;
+	IVAR
+		input_status : {success, running, failure};
+	DEFINE
+		status := active ? input_status : invalid;
 MODULE node_selector(last_child, child_0, child_1)
 	CONSTANTS
 		success, failure, running, invalid, error;
@@ -146,7 +142,7 @@ MODULE node_selector(last_child, child_0, child_1)
 			esac;
 MODULE define_nodes
 	DEFINE
-		sel_root := 0;
+		root := 0;
 		sel3 := 1;
 		sel2 := 2;
 		leaf1 := 3;

@@ -1,6 +1,6 @@
 MODULE main
 	VAR
-		sel_root : bt_fallback(sel17, sel16);
+		root : bt_fallback(sel17, sel16);
 		sel17 : bt_fallback(sel15, sel14);
 		sel15 : bt_fallback(sel11, sel10);
 		sel11 : bt_fallback(sel3, seq2);
@@ -41,26 +41,18 @@ MODULE main
 		sel4 : bt_fallback(leaf9, leaf10);
 		leaf9 : bt_skill;
 		leaf10 : bt_skill;
-		tick_generator : bt_tick_generator(sel_root);
-MODULE fake_node()
-	CONSTANTS
-		success, failure, running, invalid, error;
-	DEFINE
-		status := error;
-MODULE bt_skill
-	IVAR
-		input : { bt_input_running, bt_input_false, bt_input_true };
+		tick_generator : bt_tick_generator(root);
+MODULE bt_fallback(left_bt, right_bt)
 	VAR
-		output : { bt_output_none, bt_output_running, bt_output_false, bt_output_true};
 		enable : boolean;
 	ASSIGN
-		init(output) := bt_output_none;
-		next(output) :=
+		left_bt.enable := enable;
+		right_bt.enable := (left_bt.output = bt_output_false);
+	DEFINE
+		output :=
 			case
-				! enable : bt_output_none;
-				input = bt_input_running : bt_output_running;
-				input = bt_input_false : bt_output_false;
-				input = bt_input_true : bt_output_true;
+				left_bt.output in { bt_output_running, bt_output_true } : left_bt.output;
+				TRUE : right_bt.output;
 			esac;
 MODULE bt_sequence_with_memory(left_bt, right_bt)
 	VAR
@@ -82,17 +74,20 @@ MODULE bt_sequence_with_memory(left_bt, right_bt)
 				left_bt.output in { bt_output_running, bt_output_false } : left_bt.output;
 				TRUE : right_bt.output;
 			esac;
-MODULE bt_fallback(left_bt, right_bt)
+MODULE bt_skill
+	IVAR
+		input : { bt_input_running, bt_input_false, bt_input_true };
 	VAR
+		output : { bt_output_none, bt_output_running, bt_output_false, bt_output_true};
 		enable : boolean;
 	ASSIGN
-		left_bt.enable := enable;
-		right_bt.enable := (left_bt.output = bt_output_false);
-	DEFINE
-		output :=
+		init(output) := bt_output_none;
+		next(output) :=
 			case
-				left_bt.output in { bt_output_running, bt_output_true } : left_bt.output;
-				TRUE : right_bt.output;
+				! enable : bt_output_none;
+				input = bt_input_running : bt_output_running;
+				input = bt_input_false : bt_output_false;
+				input = bt_input_true : bt_output_true;
 			esac;
 MODULE bt_tick_generator(top_level_bt)
 	ASSIGN

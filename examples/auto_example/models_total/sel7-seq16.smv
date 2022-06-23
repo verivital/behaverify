@@ -2,7 +2,7 @@ MODULE main
 	CONSTANTS
 		success, failure, running, invalid, error;
 	DEFINE
-		statuses := [seq_root.status, seq7.status, seq71.status, seq72.status, seq4.status, leaf8.status, leaf9.status, sel4.status, leaf10.status, leaf11.status, seq73.status, seq3.status, leaf12.status, leaf13.status, sel3.status, leaf14.status, leaf15.status, seq74.status, seq75.status, seq2.status, leaf16.status, leaf17.status, sel2.status, leaf18.status, leaf19.status, sel7.status, seq1.status, leaf20.status, leaf21.status, sel1.status, leaf22.status, leaf23.status, seq76.status, seq77.status, seq6.status, leaf0.status, leaf1.status, sel6.status, leaf2.status, leaf3.status, seq78.status, seq5.status, leaf4.status, leaf5.status, sel5.status, leaf6.status, leaf7.status];
+		statuses := [root.status, seq7.status, seq71.status, seq72.status, seq4.status, leaf8.status, leaf9.status, sel4.status, leaf10.status, leaf11.status, seq73.status, seq3.status, leaf12.status, leaf13.status, sel3.status, leaf14.status, leaf15.status, seq74.status, seq75.status, seq2.status, leaf16.status, leaf17.status, sel2.status, leaf18.status, leaf19.status, sel7.status, seq1.status, leaf20.status, leaf21.status, sel1.status, leaf22.status, leaf23.status, seq76.status, seq77.status, seq6.status, leaf0.status, leaf1.status, sel6.status, leaf2.status, leaf3.status, seq78.status, seq5.status, leaf4.status, leaf5.status, sel5.status, leaf6.status, leaf7.status];
 		trace_running_source_6 := (statuses[6] = running) ? 6 : -2;
 		trace_running_source_4 := 
 			case
@@ -207,11 +207,11 @@ MODULE main
 				(resume_from_node_0 in {28}) : 1;
 				TRUE : -2;
 			esac;
-		seq_root.active := TRUE;
+		root.active := TRUE;
 	VAR
 		node_names : define_nodes;
 		resume_from_node_0 : {0, 6, 7, 12, 13, 14, 20, 21, 22, 25, 28, 35, 36, 37, 42, 43, 44};
-		seq_root : node_sequence(1, seq7, seq76, resume_point_0);
+		root : node_sequence(1, seq7, seq76, resume_point_0);
 		seq7 : node_sequence(1, seq71, seq74, resume_point_1);
 		seq71 : node_sequence(1, seq72, seq73, resume_point_2);
 		seq72 : node_sequence(1, seq4, sel4, resume_point_3);
@@ -312,11 +312,7 @@ MODULE node_default()
 	IVAR
 		input_status : {success, running, failure};
 	DEFINE
-		status :=
-			case
-				!(active) : invalid;
-				TRUE : input_status;
-			esac;
+		status := active ? input_status : invalid;
 MODULE node_selector(last_child, child_0, child_1)
 	CONSTANTS
 		success, failure, running, invalid, error;
@@ -351,7 +347,7 @@ MODULE node_selector(last_child, child_0, child_1)
 			esac;
 MODULE define_nodes
 	DEFINE
-		seq_root := 0;
+		root := 0;
 		seq7 := 1;
 		seq71 := 2;
 		seq72 := 3;

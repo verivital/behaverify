@@ -1,0 +1,4 @@
+CTLSPEC EF (root.output = bt_output_running);
+CTLSPEC EF (root.output = bt_output_true);
+CTLSPEC EF (root.output = bt_output_false);
+LTLSPEC G (root.output = bt_output_true | root.output = bt_output_none);

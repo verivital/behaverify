@@ -1,0 +1,12 @@
+LTLSPEC G (safety_check0.status = failure -> !(active_node = -1) U backup0.status = success);
+LTLSPEC G (safety_check0.status = failure -> !(!(active_node = -1) U backup0.status = success));
+LTLSPEC G (safety_check1.status = failure -> !(active_node = -1) U backup1.status = success);
+LTLSPEC G (safety_check1.status = failure -> !(!(active_node = -1) U backup1.status = success));
+LTLSPEC G (safety_check2.status = failure -> !(active_node = -1) U backup2.status = success);
+LTLSPEC G (safety_check2.status = failure -> !(!(active_node = -1) U backup2.status = success));
+LTLSPEC G (safety_check3.status = failure -> !(active_node = -1) U backup3.status = success);
+LTLSPEC G (safety_check3.status = failure -> !(!(active_node = -1) U backup3.status = success));
+LTLSPEC G (safety_check4.status = failure -> !(active_node = -1) U backup4.status = success);
+LTLSPEC G (safety_check4.status = failure -> !(!(active_node = -1) U backup4.status = success));
+LTLSPEC G (safety_check5.status = failure -> !(active_node = -1) U backup5.status = success);
+LTLSPEC G (safety_check5.status = failure -> !(!(active_node = -1) U backup5.status = success));

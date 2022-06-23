@@ -1,27 +1,30 @@
 import py_trees
-import operator
-import random
+import additional_leafs
+import queue
 
-def create_root(print_pic = False, val1 = -2, val2 = -2):
+def create_root(to_create = 1):
 
-    robot = py_trees.composites.Selector('robot')
-    
-    battery_seq = py_trees.composites.Sequence('battery_seq')
-    battery_level_good = py_trees.behaviours.Dummy('battery_level_good')
-    recharge_seq = py_trees.composites.Sequence('recharge_seq')
-    nav_to_station = py_trees.composites.Selector('nav_to_station')
-    station_reached = py_trees.behaviours.Dummy('station_reached')
-    move_to_station = py_trees.behaviours.Dummy('move_to_station')
-    recharge = py_trees.behaviours.Dummy('recharge')
+    to_create = max(1, int(to_create))
 
-    confirm_mission = 
-    mission_ = py_trees.composites.??()
-    nav_to_target = py_trees.composites.Selector('nav_to_target')
-    target_reached = py_trees.behaviours.Dummy('target_reached')
-    move_to_target = py_trees.behaviours.Dummy('move_to_target')
-    
-    interact
-    if print_pic:
-        py_trees.display.render_dot_tree(gcd_root, with_blackboard_variables=True)
+    children = queue.Queue(0)
 
-    return gcd_root
+    for i in range(to_create):
+        local_root = py_trees.composites.Selector('sel' + str(i))
+        check = additional_leafs.Non_Blocking_Leaf('safety_check' + str(i))
+        safety = py_trees.behaviours.Success('backup' + str(i))
+        local_root.add_children([check, safety])
+        children.put(local_root)
+
+    count = 0
+    while not children.empty():
+        child1 = children.get()
+
+        if children.empty():
+            break
+        child2 = children.get()
+
+        new_parent = py_trees.composites.Sequence('linkSeq' + str(count))
+        count = count + 1
+        new_parent.add_children([child1, child2])
+        children.put(new_parent)
+    return child1

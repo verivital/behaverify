@@ -2,7 +2,7 @@ MODULE main
 	CONSTANTS
 		success, failure, running, invalid, error;
 	DEFINE
-		statuses := [seq_root.status, seq3.status, seq31.status, seq2.status, leaf4.status, leaf5.status, sel2.status, leaf6.status, leaf7.status, seq32.status, seq1.status, leaf8.status, leaf9.status, sel1.status, leaf10.status, leaf11.status, seq33.status, seq34.status, leaf0.status, leaf1.status, sel3.status, leaf2.status, leaf3.status];
+		statuses := [root.status, seq3.status, seq31.status, seq2.status, leaf4.status, leaf5.status, sel2.status, leaf6.status, leaf7.status, seq32.status, seq1.status, leaf8.status, leaf9.status, sel1.status, leaf10.status, leaf11.status, seq33.status, seq34.status, leaf0.status, leaf1.status, sel3.status, leaf2.status, leaf3.status];
 		trace_running_source_5 := (statuses[5] = running) ? 5 : -2;
 		trace_running_source_3 := 
 			case
@@ -102,11 +102,11 @@ MODULE main
 				(resume_from_node_0 in {19}) : 1;
 				TRUE : -2;
 			esac;
-		seq_root.active := TRUE;
+		root.active := TRUE;
 	VAR
 		node_names : define_nodes;
 		resume_from_node_0 : {0, 5, 6, 11, 12, 13, 18, 19, 20};
-		seq_root : node_sequence(1, seq3, seq33, resume_point_0);
+		root : node_sequence(1, seq3, seq33, resume_point_0);
 		seq3 : node_sequence(1, seq31, seq32, resume_point_1);
 		seq31 : node_sequence(1, seq2, sel2, resume_point_2);
 		seq2 : node_sequence(1, leaf4, leaf5, resume_point_3);
@@ -177,17 +177,6 @@ MODULE node_sequence(last_child, child_0, child_1, resume_point)
 				!(child_0.status = success) : FALSE;
 				TRUE: TRUE;
 			esac;
-MODULE node_default()
-	CONSTANTS
-		success, failure, running, invalid, error;
-	IVAR
-		input_status : {success, running, failure};
-	DEFINE
-		status :=
-			case
-				!(active) : invalid;
-				TRUE : input_status;
-			esac;
 MODULE node_selector(last_child, child_0, child_1)
 	CONSTANTS
 		success, failure, running, invalid, error;
@@ -220,9 +209,16 @@ MODULE node_selector(last_child, child_0, child_1)
 				!(child_0.status = failure) : FALSE;
 				TRUE: TRUE;
 			esac;
+MODULE node_default()
+	CONSTANTS
+		success, failure, running, invalid, error;
+	IVAR
+		input_status : {success, running, failure};
+	DEFINE
+		status := active ? input_status : invalid;
 MODULE define_nodes
 	DEFINE
-		seq_root := 0;
+		root := 0;
 		seq3 := 1;
 		seq31 := 2;
 		seq2 := 3;

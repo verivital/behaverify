@@ -145,6 +145,10 @@ def walk_tree(t, parent_id, next_available_id, children, nodes, additional_argum
         elif t.serene_info_variable == "BlueROV_Task_Node":
             #currently this is beign used in the same way as the one above.
             pass
+        elif t.serene_info_variable == "non_blocking":
+            nodes[this_id]=('node_non_blocking', parent_id, node_name)
+            needed_nodes.add('node_non_blocking')
+            return next_available_id
     except AttributeError as e:
         #print(e)
         #print(node_name+ " ERROR?")

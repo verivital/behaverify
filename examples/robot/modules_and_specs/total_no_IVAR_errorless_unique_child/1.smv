@@ -1,0 +1,2 @@
+LTLSPEC G (safety_check0.status = failure -> backup0.status = success);
+LTLSPEC G (safety_check0.status = failure -> !(backup0.status = success));

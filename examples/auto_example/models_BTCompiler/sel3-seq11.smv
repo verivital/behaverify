@@ -1,6 +1,6 @@
 MODULE main
 	VAR
-		seq_root : bt_sequence_with_memory(seq3, seq35);
+		root : bt_sequence_with_memory(seq3, seq35);
 		seq3 : bt_sequence_with_memory(seq31, seq34);
 		seq31 : bt_sequence_with_memory(seq32, seq33);
 		seq32 : bt_sequence_with_memory(leaf1, leaf2);
@@ -29,12 +29,27 @@ MODULE main
 		leaf13 : bt_skill;
 		leaf14 : bt_skill;
 		leaf0 : bt_skill;
-		tick_generator : bt_tick_generator(seq_root);
-MODULE fake_node()
-	CONSTANTS
-		success, failure, running, invalid, error;
+		tick_generator : bt_tick_generator(root);
+MODULE bt_sequence_with_memory(left_bt, right_bt)
+	VAR
+		enable : boolean;
+		has_left_bt_succeded : boolean;
+	ASSIGN
+		init(has_left_bt_succeded) := FALSE;
+		next(has_left_bt_succeded) :=
+			case
+				right_bt.output in { bt_output_true, bt_output_false } : FALSE; -- Reset.
+				left_bt.output = bt_output_true : TRUE; -- Engage.
+				TRUE : has_left_bt_succeded; -- Hold.
+			esac;
+		left_bt.enable := enable & !has_left_bt_succeded;
+		right_bt.enable := (left_bt.output = bt_output_true) | (enable & has_left_bt_succeded);
 	DEFINE
-		status := error;
+		output :=
+			case
+				left_bt.output in { bt_output_running, bt_output_false } : left_bt.output;
+				TRUE : right_bt.output;
+			esac;
 MODULE bt_skill
 	IVAR
 		input : { bt_input_running, bt_input_false, bt_input_true };
@@ -60,26 +75,6 @@ MODULE bt_fallback(left_bt, right_bt)
 		output :=
 			case
 				left_bt.output in { bt_output_running, bt_output_true } : left_bt.output;
-				TRUE : right_bt.output;
-			esac;
-MODULE bt_sequence_with_memory(left_bt, right_bt)
-	VAR
-		enable : boolean;
-		has_left_bt_succeded : boolean;
-	ASSIGN
-		init(has_left_bt_succeded) := FALSE;
-		next(has_left_bt_succeded) :=
-			case
-				right_bt.output in { bt_output_true, bt_output_false } : FALSE; -- Reset.
-				left_bt.output = bt_output_true : TRUE; -- Engage.
-				TRUE : has_left_bt_succeded; -- Hold.
-			esac;
-		left_bt.enable := enable & !has_left_bt_succeded;
-		right_bt.enable := (left_bt.output = bt_output_true) | (enable & has_left_bt_succeded);
-	DEFINE
-		output :=
-			case
-				left_bt.output in { bt_output_running, bt_output_false } : left_bt.output;
 				TRUE : right_bt.output;
 			esac;
 MODULE bt_tick_generator(top_level_bt)

@@ -1,0 +1,73 @@
+MODULE main
+	VAR
+		example_5_sel1 : bt_fallback(seq1, seq2);
+		seq1 : bt_sequence_with_memory(seq3, seq4);
+		seq3 : bt_sequence_with_memory(leaf_1, leaf_2);
+		leaf_1 : bt_skill;
+		leaf_2 : bt_skill;
+		seq4 : bt_sequence_with_memory(leaf_3, leaf_4);
+		leaf_3 : bt_skill;
+		leaf_4 : bt_skill;
+		seq2 : bt_sequence_with_memory(seq5, seq6);
+		seq5 : bt_sequence_with_memory(leaf_5, leaf_6);
+		leaf_5 : bt_skill;
+		leaf_6 : bt_skill;
+		seq6 : bt_sequence_with_memory(leaf_7, leaf_8);
+		leaf_7 : bt_skill;
+		leaf_8 : bt_skill;
+		tick_generator : bt_tick_generator(example_5_sel1);
+MODULE bt_skill
+	IVAR
+		input : { bt_input_running, bt_input_false, bt_input_true };
+	VAR
+		output : { bt_output_none, bt_output_running, bt_output_false, bt_output_true};
+		enable : boolean;
+	ASSIGN
+		init(output) := bt_output_none;
+		next(output) :=
+			case
+				! enable : bt_output_none;
+				input = bt_input_running : bt_output_running;
+				input = bt_input_false : bt_output_false;
+				input = bt_input_true : bt_output_true;
+			esac;
+MODULE bt_fallback(left_bt, right_bt)
+	VAR
+		enable : boolean;
+	ASSIGN
+		left_bt.enable := enable;
+		right_bt.enable := (left_bt.output = bt_output_false);
+	DEFINE
+		output :=
+			case
+				left_bt.output in { bt_output_running, bt_output_true } : left_bt.output;
+				TRUE : right_bt.output;
+			esac;
+MODULE bt_sequence_with_memory(left_bt, right_bt)
+	VAR
+		enable : boolean;
+		has_left_bt_succeded : boolean;
+	ASSIGN
+		init(has_left_bt_succeded) := FALSE;
+		next(has_left_bt_succeded) :=
+			case
+				right_bt.output in { bt_output_true, bt_output_false } : FALSE; -- Reset.
+				left_bt.output = bt_output_true : TRUE; -- Engage.
+				TRUE : has_left_bt_succeded; -- Hold.
+			esac;
+		left_bt.enable := enable & !has_left_bt_succeded;
+		right_bt.enable := (left_bt.output = bt_output_true) | (enable & has_left_bt_succeded);
+	DEFINE
+		output :=
+			case
+				left_bt.output in { bt_output_running, bt_output_false } : left_bt.output;
+				TRUE : right_bt.output;
+			esac;
+MODULE bt_tick_generator(top_level_bt)
+	ASSIGN
+		init(top_level_bt.enable) := TRUE;
+		next(top_level_bt.enable) := (top_level_bt.output != bt_output_none);
+MODULE bt_single_tick_generator(top_level_bt)
+	ASSIGN
+		init(top_level_bt.enable) := TRUE;
+		next(top_level_bt.enable) := FALSE;

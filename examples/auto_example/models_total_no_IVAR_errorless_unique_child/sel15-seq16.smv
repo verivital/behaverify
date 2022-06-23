@@ -1,0 +1,408 @@
+MODULE main
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		statuses := [root.status, seq15.status, seq14.status, seq12.status, seq8.status, leaf0.status, leaf1.status, sel8.status, leaf2.status, leaf3.status, sel12.status, seq7.status, leaf4.status, leaf5.status, sel7.status, leaf6.status, leaf7.status, sel14.status, seq11.status, seq6.status, leaf8.status, leaf9.status, sel6.status, leaf10.status, leaf11.status, sel11.status, seq5.status, leaf12.status, leaf13.status, sel5.status, leaf14.status, leaf15.status, sel15.status, seq13.status, seq10.status, seq4.status, leaf16.status, leaf17.status, sel4.status, leaf18.status, leaf19.status, sel10.status, seq3.status, leaf20.status, leaf21.status, sel3.status, leaf22.status, leaf23.status, sel13.status, seq9.status, seq2.status, leaf24.status, leaf25.status, sel2.status, leaf26.status, leaf27.status, sel9.status, seq1.status, leaf28.status, leaf29.status, sel1.status, leaf30.status, leaf31.status];
+		trace_running_source_6 := (statuses[6] = running) ? 6 : -2;
+		trace_running_source_4 := 
+			case
+				!(trace_running_source_6 = -2) : trace_running_source_6;
+				TRUE : -2;
+			esac;
+		trace_running_source_7 := (statuses[7] = running) ? 7 : -2;
+		trace_running_source_3 := 
+			case
+				!(trace_running_source_4 = -2) : trace_running_source_4;
+				!(trace_running_source_7 = -2) : trace_running_source_7;
+				TRUE : -2;
+			esac;
+		trace_running_source_13 := (statuses[13] = running) ? 13 : -2;
+		trace_running_source_11 := 
+			case
+				!(trace_running_source_13 = -2) : trace_running_source_13;
+				TRUE : -2;
+			esac;
+		trace_running_source_10 := 
+			case
+				!(trace_running_source_11 = -2) : trace_running_source_11;
+				(statuses[10] = running) : 10;
+				TRUE : -2;
+			esac;
+		trace_running_source_2 := 
+			case
+				!(trace_running_source_3 = -2) : trace_running_source_3;
+				!(trace_running_source_10 = -2) : trace_running_source_10;
+				TRUE : -2;
+			esac;
+		trace_running_source_21 := (statuses[21] = running) ? 21 : -2;
+		trace_running_source_19 := 
+			case
+				!(trace_running_source_21 = -2) : trace_running_source_21;
+				TRUE : -2;
+			esac;
+		trace_running_source_22 := (statuses[22] = running) ? 22 : -2;
+		trace_running_source_18 := 
+			case
+				!(trace_running_source_19 = -2) : trace_running_source_19;
+				!(trace_running_source_22 = -2) : trace_running_source_22;
+				TRUE : -2;
+			esac;
+		trace_running_source_28 := (statuses[28] = running) ? 28 : -2;
+		trace_running_source_26 := 
+			case
+				!(trace_running_source_28 = -2) : trace_running_source_28;
+				TRUE : -2;
+			esac;
+		trace_running_source_25 := 
+			case
+				!(trace_running_source_26 = -2) : trace_running_source_26;
+				TRUE : -2;
+			esac;
+		trace_running_source_17 := 
+			case
+				!(trace_running_source_18 = -2) : trace_running_source_18;
+				!(trace_running_source_25 = -2) : trace_running_source_25;
+				(statuses[17] = running) : 17;
+				TRUE : -2;
+			esac;
+		trace_running_source_1 := 
+			case
+				!(trace_running_source_2 = -2) : trace_running_source_2;
+				!(trace_running_source_17 = -2) : trace_running_source_17;
+				TRUE : -2;
+			esac;
+		trace_running_source_37 := (statuses[37] = running) ? 37 : -2;
+		trace_running_source_35 := 
+			case
+				!(trace_running_source_37 = -2) : trace_running_source_37;
+				TRUE : -2;
+			esac;
+		trace_running_source_38 := (statuses[38] = running) ? 38 : -2;
+		trace_running_source_34 := 
+			case
+				!(trace_running_source_35 = -2) : trace_running_source_35;
+				!(trace_running_source_38 = -2) : trace_running_source_38;
+				TRUE : -2;
+			esac;
+		trace_running_source_44 := (statuses[44] = running) ? 44 : -2;
+		trace_running_source_42 := 
+			case
+				!(trace_running_source_44 = -2) : trace_running_source_44;
+				TRUE : -2;
+			esac;
+		trace_running_source_41 := 
+			case
+				!(trace_running_source_42 = -2) : trace_running_source_42;
+				(statuses[41] = running) : 41;
+				TRUE : -2;
+			esac;
+		trace_running_source_33 := 
+			case
+				!(trace_running_source_34 = -2) : trace_running_source_34;
+				!(trace_running_source_41 = -2) : trace_running_source_41;
+				TRUE : -2;
+			esac;
+		trace_running_source_52 := (statuses[52] = running) ? 52 : -2;
+		trace_running_source_50 := 
+			case
+				!(trace_running_source_52 = -2) : trace_running_source_52;
+				TRUE : -2;
+			esac;
+		trace_running_source_53 := (statuses[53] = running) ? 53 : -2;
+		trace_running_source_49 := 
+			case
+				!(trace_running_source_50 = -2) : trace_running_source_50;
+				!(trace_running_source_53 = -2) : trace_running_source_53;
+				TRUE : -2;
+			esac;
+		trace_running_source_59 := (statuses[59] = running) ? 59 : -2;
+		trace_running_source_57 := 
+			case
+				!(trace_running_source_59 = -2) : trace_running_source_59;
+				TRUE : -2;
+			esac;
+		trace_running_source_56 := 
+			case
+				!(trace_running_source_57 = -2) : trace_running_source_57;
+				TRUE : -2;
+			esac;
+		trace_running_source_48 := 
+			case
+				!(trace_running_source_49 = -2) : trace_running_source_49;
+				!(trace_running_source_56 = -2) : trace_running_source_56;
+				TRUE : -2;
+			esac;
+		trace_running_source_32 := 
+			case
+				!(trace_running_source_33 = -2) : trace_running_source_33;
+				!(trace_running_source_48 = -2) : trace_running_source_48;
+				(statuses[32] = running) : 32;
+				TRUE : -2;
+			esac;
+		trace_running_source_0 := 
+			case
+				!(trace_running_source_1 = -2) : trace_running_source_1;
+				!(trace_running_source_32 = -2) : trace_running_source_32;
+				TRUE : -2;
+			esac;
+		resume_point_0 := 
+			case
+				(resume_from_node_0 in {28}) : 0;
+				(resume_from_node_0 in {59}) : 1;
+				TRUE : -2;
+			esac;
+		resume_point_1 := 
+			case
+				(resume_from_node_0 in {13}) : 0;
+				(resume_from_node_0 in {28}) : 1;
+				TRUE : -2;
+			esac;
+		resume_point_2 := 
+			case
+				(resume_from_node_0 in {6}) : 0;
+				(resume_from_node_0 in {13}) : 1;
+				TRUE : -2;
+			esac;
+		resume_point_3 := 
+			case
+				(resume_from_node_0 in {6}) : 0;
+				TRUE : -2;
+			esac;
+		resume_point_4 := 
+			case
+				(resume_from_node_0 in {6}) : 1;
+				TRUE : -2;
+			esac;
+		resume_point_33 := 
+			case
+				(resume_from_node_0 in {37}) : 0;
+				(resume_from_node_0 in {44}) : 1;
+				TRUE : -2;
+			esac;
+		resume_point_34 := 
+			case
+				(resume_from_node_0 in {37}) : 0;
+				TRUE : -2;
+			esac;
+		resume_point_35 := 
+			case
+				(resume_from_node_0 in {37}) : 1;
+				TRUE : -2;
+			esac;
+		resume_point_42 := 
+			case
+				(resume_from_node_0 in {44}) : 1;
+				TRUE : -2;
+			esac;
+		resume_point_11 := 
+			case
+				(resume_from_node_0 in {13}) : 1;
+				TRUE : -2;
+			esac;
+		resume_point_49 := 
+			case
+				(resume_from_node_0 in {52}) : 0;
+				TRUE : -2;
+			esac;
+		resume_point_18 := 
+			case
+				(resume_from_node_0 in {21}) : 0;
+				TRUE : -2;
+			esac;
+		resume_point_19 := 
+			case
+				(resume_from_node_0 in {21}) : 1;
+				TRUE : -2;
+			esac;
+		resume_point_50 := 
+			case
+				(resume_from_node_0 in {52}) : 1;
+				TRUE : -2;
+			esac;
+		resume_point_57 := 
+			case
+				(resume_from_node_0 in {59}) : 1;
+				TRUE : -2;
+			esac;
+		resume_point_26 := 
+			case
+				(resume_from_node_0 in {28}) : 1;
+				TRUE : -2;
+			esac;
+		root.active := TRUE;
+	VAR
+		node_names : define_nodes;
+		resume_from_node_0 : {0, 6, 7, 10, 13, 17, 21, 22, 28, 32, 37, 38, 41, 44, 52, 53, 59};
+		root : node_sequence2(seq15, sel15, resume_point_0);
+		seq15 : node_sequence2(seq14, sel14, resume_point_1);
+		seq14 : node_sequence2(seq12, sel12, resume_point_2);
+		seq12 : node_sequence2(seq8, sel8, resume_point_3);
+		seq8 : node_sequence2(leaf0, leaf1, resume_point_4);
+		leaf0 : node_default();
+		leaf1 : node_default();
+		sel8 : node_selector2(leaf2, leaf3);
+		leaf2 : node_default();
+		leaf3 : node_default();
+		sel12 : node_selector2(seq7, sel7);
+		seq7 : node_sequence2(leaf4, leaf5, resume_point_11);
+		leaf4 : node_default();
+		leaf5 : node_default();
+		sel7 : node_selector2(leaf6, leaf7);
+		leaf6 : node_default();
+		leaf7 : node_default();
+		sel14 : node_selector2(seq11, sel11);
+		seq11 : node_sequence2(seq6, sel6, resume_point_18);
+		seq6 : node_sequence2(leaf8, leaf9, resume_point_19);
+		leaf8 : node_default();
+		leaf9 : node_default();
+		sel6 : node_selector2(leaf10, leaf11);
+		leaf10 : node_default();
+		leaf11 : node_default();
+		sel11 : node_selector2(seq5, sel5);
+		seq5 : node_sequence2(leaf12, leaf13, resume_point_26);
+		leaf12 : node_default();
+		leaf13 : node_default();
+		sel5 : node_selector2(leaf14, leaf15);
+		leaf14 : node_default();
+		leaf15 : node_default();
+		sel15 : node_selector2(seq13, sel13);
+		seq13 : node_sequence2(seq10, sel10, resume_point_33);
+		seq10 : node_sequence2(seq4, sel4, resume_point_34);
+		seq4 : node_sequence2(leaf16, leaf17, resume_point_35);
+		leaf16 : node_default();
+		leaf17 : node_default();
+		sel4 : node_selector2(leaf18, leaf19);
+		leaf18 : node_default();
+		leaf19 : node_default();
+		sel10 : node_selector2(seq3, sel3);
+		seq3 : node_sequence2(leaf20, leaf21, resume_point_42);
+		leaf20 : node_default();
+		leaf21 : node_default();
+		sel3 : node_selector2(leaf22, leaf23);
+		leaf22 : node_default();
+		leaf23 : node_default();
+		sel13 : node_selector2(seq9, sel9);
+		seq9 : node_sequence2(seq2, sel2, resume_point_49);
+		seq2 : node_sequence2(leaf24, leaf25, resume_point_50);
+		leaf24 : node_default();
+		leaf25 : node_default();
+		sel2 : node_selector2(leaf26, leaf27);
+		leaf26 : node_default();
+		leaf27 : node_default();
+		sel9 : node_selector2(seq1, sel1);
+		seq1 : node_sequence2(leaf28, leaf29, resume_point_57);
+		leaf28 : node_default();
+		leaf29 : node_default();
+		sel1 : node_selector2(leaf30, leaf31);
+		leaf30 : node_default();
+		leaf31 : node_default();
+	ASSIGN
+		init(resume_from_node_0) := 0;
+		next(resume_from_node_0) := 
+			case
+				(statuses[0] in {success, failure}) : 0;
+				TRUE : max(trace_running_source_0, 0);
+			esac;
+MODULE fake_node()
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := invalid;
+MODULE node_default()
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		input_status : {success, running, failure};
+	DEFINE
+		status := active ? input_status : invalid;
+MODULE node_selector2(child_0, child_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status :=
+			case
+				!(active) : invalid;
+				!(child_0.status = failure) : child_0.status;
+				!(child_1.status = failure) : child_1.status;
+				TRUE : failure;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = failure;
+MODULE node_sequence2(child_0, child_1, resume_point)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status :=
+			case
+				!(active) : invalid;
+				(0 >= resume_point) & !(child_0.status = success) : child_0.status;
+				(1 >= resume_point) & !(child_1.status = success) : child_1.status;
+				TRUE : success;
+			esac;
+		child_0.active := active & (0 >= resume_point);
+		child_1.active := active & (1 >= resume_point) & ((1 = resume_point) | (child_0.status = success));
+MODULE define_nodes
+	DEFINE
+		root := 0;
+		seq15 := 1;
+		seq14 := 2;
+		seq12 := 3;
+		seq8 := 4;
+		leaf0 := 5;
+		leaf1 := 6;
+		sel8 := 7;
+		leaf2 := 8;
+		leaf3 := 9;
+		sel12 := 10;
+		seq7 := 11;
+		leaf4 := 12;
+		leaf5 := 13;
+		sel7 := 14;
+		leaf6 := 15;
+		leaf7 := 16;
+		sel14 := 17;
+		seq11 := 18;
+		seq6 := 19;
+		leaf8 := 20;
+		leaf9 := 21;
+		sel6 := 22;
+		leaf10 := 23;
+		leaf11 := 24;
+		sel11 := 25;
+		seq5 := 26;
+		leaf12 := 27;
+		leaf13 := 28;
+		sel5 := 29;
+		leaf14 := 30;
+		leaf15 := 31;
+		sel15 := 32;
+		seq13 := 33;
+		seq10 := 34;
+		seq4 := 35;
+		leaf16 := 36;
+		leaf17 := 37;
+		sel4 := 38;
+		leaf18 := 39;
+		leaf19 := 40;
+		sel10 := 41;
+		seq3 := 42;
+		leaf20 := 43;
+		leaf21 := 44;
+		sel3 := 45;
+		leaf22 := 46;
+		leaf23 := 47;
+		sel13 := 48;
+		seq9 := 49;
+		seq2 := 50;
+		leaf24 := 51;
+		leaf25 := 52;
+		sel2 := 53;
+		leaf26 := 54;
+		leaf27 := 55;
+		sel9 := 56;
+		seq1 := 57;
+		leaf28 := 58;
+		leaf29 := 59;
+		sel1 := 60;
+		leaf30 := 61;
+		leaf31 := 62;

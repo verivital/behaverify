@@ -1,6 +1,6 @@
 MODULE main
 	VAR
-		sel_root : bt_fallback(sel14, sel13);
+		root : bt_fallback(sel14, sel13);
 		sel14 : bt_fallback(sel12, sel11);
 		sel12 : bt_fallback(sel9, seq8);
 		sel9 : bt_fallback(sel5, seq4);
@@ -49,12 +49,7 @@ MODULE main
 		seq5 : bt_sequence_with_memory(leaf5, leaf6);
 		leaf5 : bt_skill;
 		leaf6 : bt_skill;
-		tick_generator : bt_tick_generator(sel_root);
-MODULE fake_node()
-	CONSTANTS
-		success, failure, running, invalid, error;
-	DEFINE
-		status := error;
+		tick_generator : bt_tick_generator(root);
 MODULE bt_skill
 	IVAR
 		input : { bt_input_running, bt_input_false, bt_input_true };

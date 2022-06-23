@@ -1,0 +1,79 @@
+-------------------------------------------------------------------------------------
+
+LTLSPEC G( (blackboard.variables[variable_names.battery_low_warning] = 1)  -> F (surface_task.active | surface_task1.active | surface_task2.active | surface_task3.active | surface_task4.active ));
+--proves that if low warning, then surface (eventually)
+--pretty sure this is false, because we can set battery, enter surface task, leave (global triggers now), go to -1, unset battery, and never re-enter surface.
+
+LTLSPEC G( (next(blackboard.variables[variable_names.battery_low_warning]) = 1)  -> (surface_task.active | surface_task1.active | surface_task2.active | surface_task3.active | surface_task4.active ) );
+--if low warning, than surface task before active_node reaches -1. (this should fail, because it doesn't consider that G means it needs to be true after we leave a surface task)
+
+LTLSPEC G( ((next(blackboard.variables[variable_names.battery_low_warning]) = 1) & (battery2bb.active)) -> (surface_task.active));
+--this one is true, but only for battery_warning
+
+LTLSPEC G( ((next(blackboard.variables[variable_names.battery_low_warning]) = 1) & (battery2bb.active)) -> (surface_task.active | surface_task1.active | surface_task2.active | surface_task3.active | surface_task4.active));
+--this one should be true.
+
+-------------------------------------------------------------------------------------
+
+LTLSPEC G( (blackboard.variables[variable_names.bb_sensor_failure_warning] = 1)  -> F (surface_task.active | surface_task1.active | surface_task2.active | surface_task3.active | surface_task4.active ));
+--proves that if low warning, then surface (eventually)
+--this one is true, because we can't unset the warning, unlike battery.
+
+LTLSPEC G( (next(blackboard.variables[variable_names.bb_sensor_failure_warning]) = 1)  -> (surface_task.active | surface_task1.active | surface_task2.active | surface_task3.active | surface_task4.active ) );
+--if low warning, than surface task before active_node reaches -1. (this should fail, because it doesn't consider that G means it needs to be true after we leave a surface task)
+
+LTLSPEC G( ((next(blackboard.variables[variable_names.bb_sensor_failure_warning]) = 1) & (sensor_failure2bb.active)) -> (surface_task1.active));
+--this one is true, but only for battery_warning
+
+LTLSPEC G( ((next(blackboard.variables[variable_names.bb_sensor_failure_warning]) = 1) & (sensor_failure2bb.active)) -> (surface_task.active | surface_task1.active | surface_task2.active | surface_task3.active | surface_task4.active));
+--this one should be true.
+
+-------------------------------------------------------------------------------------
+
+LTLSPEC G( (blackboard.variables[variable_names.emergency_stop_warning] = 1)  -> F (surface_task.active | surface_task1.active | surface_task2.active | surface_task3.active | surface_task4.active ));
+--proves that if low warning, then surface (eventually)
+--this one is true, because we can't unset the warning, unlike battery.
+
+LTLSPEC G( (next(blackboard.variables[variable_names.emergency_stop_warning]) = 1)  -> (surface_task.active | surface_task1.active | surface_task2.active | surface_task3.active | surface_task4.active ) );
+--if low warning, than surface task before active_node reaches -1. (this should fail, because it doesn't consider that G means it needs to be true after we leave a surface task)
+
+LTLSPEC G( ((next(blackboard.variables[variable_names.emergency_stop_warning]) = 1) & (fls_warning2bb.active | rtreach2bb.active | mission_server.active)) -> (surface_task2.active));
+--this one is true, but only for battery_warning
+
+LTLSPEC G( ((next(blackboard.variables[variable_names.emergency_stop_warning]) = 1) & (fls_warning2bb.active | rtreach2bb.active | mission_server.active)) -> (surface_task.active | surface_task1.active | surface_task2.active | surface_task3.active | surface_task4.active));
+--this one should be true.
+
+-------------------------------------------------------------------------------------
+
+LTLSPEC G( (blackboard.variables[variable_names.bb_home_reached] = 1)  -> F (surface_task.active | surface_task1.active | surface_task2.active | surface_task3.active | surface_task4.active ));
+--proves that if low warning, then surface (eventually)
+--pretty sure this is false, because we can set battery, enter surface task, leave (global triggers now), go to -1, unset battery, and never re-enter surface.
+
+LTLSPEC G( (next(blackboard.variables[variable_names.bb_home_reached]) = 1)  -> (surface_task.active | surface_task1.active | surface_task2.active | surface_task3.active | surface_task4.active ) );
+--if low warning, than surface task before active_node reaches -1. (this should fail, because it doesn't consider that G means it needs to be true after we leave a surface task)
+
+LTLSPEC G( ((next(blackboard.variables[variable_names.bb_home_reached]) = 1) & (home2bb.active | home2bb1.active)) -> (surface_task3.active));
+--this one is true, but only for battery_warning
+
+LTLSPEC G( ((next(blackboard.variables[variable_names.bb_home_reached]) = 1) & (home2bb.active | home2bb1.active)) -> (surface_task.active | surface_task1.active | surface_task2.active | surface_task3.active | surface_task4.active));
+--this one should be true.
+
+
+-------------------------------------------------------------------------------------
+
+
+LTLSPEC G( (blackboard.variables[variable_names.obstacle_standoff_warning] = 1)  -> F (surface_task.active | surface_task1.active | surface_task2.active | surface_task3.active | surface_task4.active ));
+--proves that if low warning, then surface (eventually)
+--this one is true, because we can't unset the warning, unlike battery.
+
+LTLSPEC G( (next(blackboard.variables[variable_names.obstacle_standoff_warning]) = 1)  -> (surface_task.active | surface_task1.active | surface_task2.active | surface_task3.active | surface_task4.active ) );
+--if low warning, than surface task before active_node reaches -1. (this should fail, because it doesn't consider that G means it needs to be true after we leave a surface task)
+
+LTLSPEC G( ((next(blackboard.variables[variable_names.obstacle_standoff_warning]) = 1) & (fls2bb.active)) -> (surface_task4.active));
+--this one is true, but only for battery_warning
+
+LTLSPEC G( ((next(blackboard.variables[variable_names.obstacle_standoff_warning]) = 1) & (fls2bb.active)) -> (surface_task.active | surface_task1.active | surface_task2.active | surface_task3.active | surface_task4.active));
+--this one should be true.
+
+
+-------------------------------------------------------------------------------------
