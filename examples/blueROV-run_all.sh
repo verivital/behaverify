@@ -5,7 +5,7 @@ files=("blueROV_warnings_only" "blueROV_full_small" "blueROV_full")
 ltls=("_battery" "_emergency" "_home_reached" "_obstacle" "_sensor")
 
 for cur_folder in ${folders[@]}; do
-    timeout_val=5h
+    timeout_val=2h
     for ltl in ${ltls[@]}; do
 	for cur_file in ${files[@]}; do
 	    echo $cur_folder $cur_file$ltl

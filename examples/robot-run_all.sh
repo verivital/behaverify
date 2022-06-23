@@ -10,7 +10,7 @@ for cur_val in {0..7}; do
 	echo $sel_num $cur_folder
 	timeout $timeout_val ./run_tests.sh robot $cur_folder $sel_num
 	if [ $? == 0 ]; then
-	    timeout_val=15s
+	    timeout_val=7s
 	fi
     done
 done

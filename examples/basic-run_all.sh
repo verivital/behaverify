@@ -7,7 +7,7 @@ files=("example0" "example1" "example2" "example3" "example4" "example5" "exampl
 for cur_folder in ${folders[@]}; do
     for cur_file in ${files[@]}; do
 	echo $cur_folder $cur_file
-	timeout 5m ./run_tests.sh basic $cur_folder $cur_file
+	timeout 2m ./run_tests.sh basic $cur_folder $cur_file
 	if [ $? == 0 ]; then
 	    break
 	fi
