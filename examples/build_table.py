@@ -8,7 +8,7 @@ if sys.argv[1] == "gcd":
 
     group_name = "gcd"
 
-    folders2 = ["leaf", "leaf_no_IVAR", "total", "total_no_IVAR_errorless_unique_child"]
+    folders = ["leaf", "leaf_no_IVAR", "total", "total_no_IVAR_errorless_unique_child"]
     foldersShort = ["Leaf",  "L_no", "Total", "T_unique"]
     files = ["gcd_example"]
     filesShort = ["gcd"]
@@ -17,7 +17,7 @@ elif sys.argv[1] == "basic":
 
     group_name = "basic"
     
-    folders2 = ["BTCompiler", "leaf",  "leaf_no_IVAR", "total", "total_no_IVAR_errorless_unique_child"]
+    folders = ["BTCompiler", "leaf",  "leaf_no_IVAR", "total", "total_no_IVAR_errorless_unique_child"]
     foldersShort = ["BTC", "Leaf",  "L_no", "Total", "T_unique"]
     files = ["example0", "example1", "example2", "example3", "example4", "example5", "example6", "example7", "example8"]
     filesShort = ["Ex0", "Ex1", "Ex2", "Ex3", "Ex4", "Ex5", "Ex6", "Ex7", "Ex8"]
@@ -25,8 +25,8 @@ elif sys.argv[1] == "blueROV":
 
     group_name = "blueROV"
 
-    folders2 = ["leaf", "leaf_no_IVAR", "total", "total_no_IVAR_errorless_unique_child"]
-    foldersShort = ["Leaf", "L_no", "Total" "T_unique"]
+    folders = ["leaf", "leaf_no_IVAR", "total", "total_no_IVAR_errorless_unique_child"]
+    foldersShort = ["Leaf", "L_no", "Total", "T_unique"]
     files = []
     filesShort = []
     base1 = ['blueROV_warnings_only', 'blueROV_small', 'blueROV_full']
@@ -39,7 +39,7 @@ elif sys.argv[1] == "auto_example":
 
     group_name = "auto_example"
 
-    folders2 = ["BTCompiler", "leaf",  "leaf_no_IVAR", "total", "total_no_IVAR_errorless_unique_child"]
+    folders = ["BTCompiler", "leaf",  "leaf_no_IVAR", "total", "total_no_IVAR_errorless_unique_child"]
     foldersShort = ["BTC", "Leaf",  "L_no", "Total", "T_unique"]
     files = []
     filesShort = []
@@ -52,7 +52,7 @@ elif sys.argv[1] == "robot":
 
     group_name = "robot"
 
-    folders2 = ["BTCompiler", "leaf",  "leaf_no_IVAR", "total", "total_no_IVAR_errorless_unique_child"]
+    folders = ["BTCompiler", "leaf",  "leaf_no_IVAR", "total", "total_no_IVAR_errorless_unique_child"]
     foldersShort = ["BTC", "Leaf",  "L_no", "Total", "T_unique"]
     files = []
     filesShort = []
@@ -85,8 +85,8 @@ for i in range(len(files)):
     elapsed_time_ctl.append([])
     elapsed_time_states.append([])
     elapsed_time_model.append([])
-    for j in range(len(folders2)):
-        folder = folders2[j]
+    for j in range(len(folders)):
+        folder = folders[j]
         found_states = False
         found_states_silent = False
         found_ctl_silent = False
@@ -119,19 +119,19 @@ for i in range(len(files)):
                             found_states_silent = True
         except FileNotFoundError as e:
             pass
-        try:
-            with open('./results/' + group_name + '/models_' + folder + '-CTL_SILENT_' + file_name + '.txt', 'r') as cur_file:
-                decoy = True
-                for line in cur_file:
-                    match=elapsed.search(line)
-                    if match:
-                        if decoy:
-                            decoy = False
-                        else:
-                            elapsed_time_ctl[i].append(match.group('val1'))
-                            found_ctl_silent = True
-        except FileNotFoundError as e:
-            pass
+        # try:
+        #     with open('./results/' + group_name + '/models_' + folder + '-CTL_SILENT_' + file_name + '.txt', 'r') as cur_file:
+        #         decoy = True
+        #         for line in cur_file:
+        #             match=elapsed.search(line)
+        #             if match:
+        #                 if decoy:
+        #                     decoy = False
+        #                 else:
+        #                     elapsed_time_ctl[i].append(match.group('val1'))
+        #                     found_ctl_silent = True
+        # except FileNotFoundError as e:
+        #     pass
         try:
             with open('./results/' + group_name + '/models_' + folder + '-LTL_SILENT_' + file_name + '.txt', 'r') as cur_file:
                 decoy = True
@@ -164,8 +164,8 @@ for i in range(len(files)):
             total_states[i].append('-')
         if not found_states_silent:
             elapsed_time_states[i].append('-')
-        if not found_ctl_silent:
-            elapsed_time_ctl[i].append('-')
+        #if not found_ctl_silent:
+            #elapsed_time_ctl[i].append('-')
         if not found_ltl_silent:
             elapsed_time_ltl[i].append('-')
         if not found_model:
@@ -187,8 +187,8 @@ df = pd.DataFrame(elapsed_time_states, columns=foldersShort, index=filesShort)
 df.to_latex('./processed_data/' + group_name + '/elapsed_states.tex', caption=group_name + ', Time in Seconds to Compute Reachability', label=group_name + '_states_time')
 
 
-df = pd.DataFrame(elapsed_time_ctl, columns=foldersShort, index=filesShort)
-df.to_latex('./processed_data/' + group_name + '/elapsed_ctl.tex', caption=group_name + ', Time in Seconds to Compute CTL', label=group_name + '_CTL_time')
+#df = pd.DataFrame(elapsed_time_ctl, columns=foldersShort, index=filesShort)
+#df.to_latex('./processed_data/' + group_name + '/elapsed_ctl.tex', caption=group_name + ', Time in Seconds to Compute CTL', label=group_name + '_CTL_time')
 
 
 df = pd.DataFrame(elapsed_time_ltl, columns=foldersShort, index=filesShort)
