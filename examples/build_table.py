@@ -8,32 +8,39 @@ if sys.argv[1] == "gcd":
 
     group_name = "gcd"
 
-    folders2 = ["leaf", "total", "leaf_no_IVAR", "total_no_IVAR", "total_errorless", "total_no_IVAR_errorless", "total_no_IVAR_errorless_unique_child"]
-    foldersShort = ["Leaf", "Total", "L_no", "T_no", "T_err", "T_no_err", "T_unique"]
+    folders2 = ["leaf", "leaf_no_IVAR", "total", "total_no_IVAR_errorless_unique_child"]
+    foldersShort = ["Leaf",  "L_no", "Total", "T_unique"]
     files = ["gcd_example"]
     filesShort = ["gcd"]
+    
 elif sys.argv[1] == "basic":
 
     group_name = "basic"
     
-    folders2 = ["BTCompiler", "leaf", "total", "leaf_no_IVAR", "total_no_IVAR", "total_errorless", "total_no_IVAR_errorless", "total_no_IVAR_errorless_unique_child"]
-    foldersShort = ["BTC", "Leaf", "Total", "L_no", "T_no", "T_err", "T_no_err", "T_unique"]
+    folders2 = ["BTCompiler", "leaf",  "leaf_no_IVAR", "total", "total_no_IVAR_errorless_unique_child"]
+    foldersShort = ["BTC", "Leaf",  "L_no", "Total", "T_unique"]
     files = ["example0", "example1", "example2", "example3", "example4", "example5", "example6", "example7", "example8"]
     filesShort = ["Ex0", "Ex1", "Ex2", "Ex3", "Ex4", "Ex5", "Ex6", "Ex7", "Ex8"]
 elif sys.argv[1] == "blueROV":
 
     group_name = "blueROV"
 
-    folders2 = ["leaf", "leaf_no_IVAR", "total_no_IVAR", "total_errorless", "total_no_IVAR_errorless", "total_no_IVAR_errorless_unique_child"]
-    foldersShort = ["Leaf", "L_no", "T_no", "T_err", "T_no_err", "T_unique"]
-    files = ["blueROV_full_ltl_battery_only", "blueROV_full_ltl_full", "blueROV_full_small_ltl_battery_only", "blueROV_full_small_ltl_full", "blueROV_warnings_only_ltl_battery_only", "blueROV_warnings_only_ltl_full"]
-    filesShort = ["Full Batt", "Full Full", "Small Batt", "Small Full", "Warn Batt", "Warn Full"]
+    folders2 = ["leaf", "leaf_no_IVAR", "total", "total_no_IVAR_errorless_unique_child"]
+    foldersShort = ["Leaf", "L_no", "Total" "T_unique"]
+    files = []
+    filesShort = []
+    base1 = ['blueROV_warnings_only', 'blueROV_small', 'blueROV_full']
+    base2 = ['battery', 'emergency', 'home_reached', 'obstacle', 'sensor']
+    for b1 in base1:
+        for b2 in base2:
+            files.append(b1 + "_" + b2)
+            filesShort.append(b1[8] + " " + b2[0:4])
 elif sys.argv[1] == "auto_example":
 
     group_name = "auto_example"
 
-    folders2 = ["BTCompiler", "leaf", "total", "leaf_no_IVAR", "total_no_IVAR", "total_errorless", "total_no_IVAR_errorless", "total_no_IVAR_errorless_unique_child"]
-    foldersShort = ["BTC", "Leaf", "Total", "L_no", "T_no", "T_err", "T_no_err", "T_unique"]
+    folders2 = ["BTCompiler", "leaf",  "leaf_no_IVAR", "total", "total_no_IVAR_errorless_unique_child"]
+    foldersShort = ["BTC", "Leaf",  "L_no", "Total", "T_unique"]
     files = []
     filesShort = []
     for sel in range(0, 21):
@@ -45,11 +52,11 @@ elif sys.argv[1] == "robot":
 
     group_name = "robot"
 
-    folders2 = ["BTCompiler", "leaf", "total", "leaf_no_IVAR", "total_no_IVAR", "total_errorless", "total_no_IVAR_errorless", "total_no_IVAR_errorless_unique_child"]
-    foldersShort = ["BTC", "Leaf", "Total", "L_no", "T_no", "T_err", "T_no_err", "T_unique"]
+    folders2 = ["BTCompiler", "leaf",  "leaf_no_IVAR", "total", "total_no_IVAR_errorless_unique_child"]
+    foldersShort = ["BTC", "Leaf",  "L_no", "Total", "T_unique"]
     files = []
     filesShort = []
-    for sel in range(1, 26):
+    for sel in range(1, 51):
             files.append(str(sel))
             filesShort.append(str(sel))
 else:
@@ -86,7 +93,7 @@ for i in range(len(files)):
         found_ltl_silent = False
         found_model = False
         try:
-            with open('./' + group_name + '/models_' + folder + '/results/STATES_' + file_name + '.txt', 'r') as cur_file:
+            with open('./results/' + group_name + '/models_' + folder + '-STATES_' + file_name + '.txt', 'r') as cur_file:
                 for line in cur_file:
                     if "system diameter:" in line:
                         val=line.split(':')[1]
@@ -100,7 +107,7 @@ for i in range(len(files)):
         except FileNotFoundError as e:
             pass
         try:
-            with open('./' + group_name + '/models_' + folder + '/results/STATES_SILENT_' + file_name + '.txt', 'r') as cur_file:
+            with open('./results/' + group_name + '/models_' + folder + '-STATES_SILENT_' + file_name + '.txt', 'r') as cur_file:
                 decoy = True
                 for line in cur_file:
                     match=elapsed.search(line)
@@ -113,7 +120,7 @@ for i in range(len(files)):
         except FileNotFoundError as e:
             pass
         try:
-            with open('./' + group_name + '/models_' + folder + '/results/CTL_SILENT_' + file_name + '.txt', 'r') as cur_file:
+            with open('./results/' + group_name + '/models_' + folder + '-CTL_SILENT_' + file_name + '.txt', 'r') as cur_file:
                 decoy = True
                 for line in cur_file:
                     match=elapsed.search(line)
@@ -126,7 +133,7 @@ for i in range(len(files)):
         except FileNotFoundError as e:
             pass
         try:
-            with open('./' + group_name + '/models_' + folder + '/results/LTL_SILENT_' + file_name + '.txt', 'r') as cur_file:
+            with open('./results/' + group_name + '/models_' + folder + '-LTL_SILENT_' + file_name + '.txt', 'r') as cur_file:
                 decoy = True
                 for line in cur_file:
                     match=elapsed.search(line)
@@ -139,7 +146,7 @@ for i in range(len(files)):
         except FileNotFoundError as e:
             pass
         try:
-            with open('./' + group_name + '/models_' + folder + '/results/MODEL_' + file_name + '.txt', 'r') as cur_file:
+            with open('./results/' + group_name + '/models_' + folder + '-MODEL_' + file_name + '.txt', 'r') as cur_file:
                 decoy = True
                 for line in cur_file:
                     match=elapsed.search(line)
@@ -167,26 +174,26 @@ for i in range(len(files)):
 
 
 df = pd.DataFrame(diameters, columns=foldersShort, index=filesShort)
-df.to_latex('./' + group_name + '/processed_data/diameters.tex', caption=group_name + ', System Diameter', label=group_name + '_diam')
+df.to_latex('./processed_data/' + group_name + '/diameters.tex', caption=group_name + ', System Diameter', label=group_name + '_diam')
 
 df = pd.DataFrame(reachable_states, columns=foldersShort, index=filesShort)
-df.to_latex('./' + group_name + '/processed_data/reachable_states.tex', caption=group_name + ', Reachable States', label=group_name + '_reach')
+df.to_latex('./processed_data/' + group_name + '/reachable_states.tex', caption=group_name + ', Reachable States', label=group_name + '_reach')
 
 
 df = pd.DataFrame(total_states, columns=foldersShort, index=filesShort)
-df.to_latex('./' + group_name + '/processed_data/total_states.tex', caption=group_name + ', Total States', label=group_name + '_total')
+df.to_latex('./processed_data/' + group_name + '/total_states.tex', caption=group_name + ', Total States', label=group_name + '_total')
 
 df = pd.DataFrame(elapsed_time_states, columns=foldersShort, index=filesShort)
-df.to_latex('./' + group_name + '/processed_data/elapsed_states.tex', caption=group_name + ', Time in Seconds to Compute Reachability', label=group_name + '_states_time')
+df.to_latex('./processed_data/' + group_name + '/elapsed_states.tex', caption=group_name + ', Time in Seconds to Compute Reachability', label=group_name + '_states_time')
 
 
 df = pd.DataFrame(elapsed_time_ctl, columns=foldersShort, index=filesShort)
-df.to_latex('./' + group_name + '/processed_data/elapsed_ctl.tex', caption=group_name + ', Time in Seconds to Compute CTL', label=group_name + '_CTL_time')
+df.to_latex('./processed_data/' + group_name + '/elapsed_ctl.tex', caption=group_name + ', Time in Seconds to Compute CTL', label=group_name + '_CTL_time')
 
 
 df = pd.DataFrame(elapsed_time_ltl, columns=foldersShort, index=filesShort)
-df.to_latex('./' + group_name + '/processed_data/elapsed_ltl.tex', caption=group_name + ', Time in Seconds to Compute LTL', label=group_name + '_LTL_time')
+df.to_latex('./processed_data/' + group_name + '/elapsed_ltl.tex', caption=group_name + ', Time in Seconds to Compute LTL', label=group_name + '_LTL_time')
 
 
 df = pd.DataFrame(elapsed_time_model, columns=foldersShort, index=filesShort)
-df.to_latex('./' + group_name + '/processed_data/elapsed_model.tex', caption=group_name + ', Time in Seconds to Build Model', label=group_name + '_model_time')
+df.to_latex('./processed_data/' + group_name + '/elapsed_model.tex', caption=group_name + ', Time in Seconds to Build Model', label=group_name + '_model_time')
