@@ -561,7 +561,12 @@ def create_node_selector(number_of_children):
     (status_start, status_end, active, active_end, children) = common_string(number_of_children)
     
     return_string = ("MODULE node_selector" + str(number_of_children) + "(" + children + ")" + os.linesep 
-                      + status_start
+                     #+ status_start
+                     + "\tCONSTANTS" + os.linesep
+                     + "\t\tsuccess, failure, running, invalid;" + os.linesep
+                     + "\tDEFINE" + os.linesep 
+                     + "\t\tstatus :=" + os.linesep 
+                     + "\t\t\tcase" + os.linesep
     )
     for child in range(number_of_children):
         #we return on first success, first running, or if everything is failure
@@ -589,7 +594,12 @@ def create_node_sequence(number_of_children):
     else:
         inject_string = ", resume_point"
     return_string = ("MODULE node_sequence" + str(number_of_children) + "(" + children + inject_string + ")" + os.linesep 
-                      + status_start
+                     #+ status_start
+                     + "\tCONSTANTS" + os.linesep
+                     + "\t\tsuccess, failure, running, invalid;" + os.linesep
+                     + "\tDEFINE" + os.linesep 
+                     + "\t\tstatus :=" + os.linesep 
+                     + "\t\t\tcase" + os.linesep
     )
     for child in range(number_of_children):
         #we return on first failure, first running, or if everything is success, but we skip over stuff if resuming

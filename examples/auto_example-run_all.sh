@@ -1,6 +1,6 @@
 #!/bin/bash
 
-folders=("models_BTCompiler" "models_leaf" "models_total" "models_leaf_no_IVAR" "models_total_no_IVAR_errorless_unique_child")
+folders=("models_BTCompiler" "models_leaf" "models_total" "models_leaf_no_IVAR" "models_total_no_IVAR_errorless_unique_child" "models_total_internal_status")
 files=("serene_uc1")
 
 for cur_folder in ${folders[@]}; do

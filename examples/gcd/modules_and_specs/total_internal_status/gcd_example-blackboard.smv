@@ -1,0 +1,38 @@
+MODULE blackboard_module(node_names, variable_names, statuses)
+	CONSTANTS
+		success, failure, running, invalid, error;
+	DEFINE
+		variables := [r_q_compare, r, temp, q];
+		variable_exists := [r_q_compare_exists, r_exists, temp_exists, q_exists];
+		r_q_compare_exists := TRUE;
+		r_exists := TRUE;
+		temp_exists := TRUE;
+		q_exists := TRUE;
+
+		r_q_compare := r >= q ? 1 : 0;
+	VAR
+		r : -1..100;
+		temp : -1..100;
+		q : -1..100;
+	INIT
+		r >= 1;
+	INIT
+		q >= 1;
+	ASSIGN
+		next(r) := 
+			case
+				(statuses[node_names.r_minus_q] = success) : min(max(r - q, 0), 100);
+				(statuses[node_names.update_r] = success) : q;
+				TRUE : r;
+			esac;
+		init(temp) := -1;
+		next(temp) := 
+			case
+				(statuses[node_names.store_r] = success) : r;
+				TRUE : temp;
+			esac;
+		next(q) := 
+			case
+				(statuses[node_names.update_q] = success) : next(temp);
+				TRUE : q;
+			esac;

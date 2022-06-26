@@ -1,6 +1,6 @@
 #!/bin/bash
 
-folders=("models_leaf" "models_total" "models_leaf_no_IVAR" "models_total_no_IVAR_errorless_unique_child")
+folders=("models_leaf" "models_total" "models_leaf_no_IVAR" "models_total_no_IVAR_errorless_unique_child" "models_total_internal_status")
 files=("gcd_example")
 
 

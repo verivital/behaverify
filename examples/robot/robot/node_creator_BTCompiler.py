@@ -46,12 +46,37 @@ def create_bt_non_blocking_skill():
             + "\t\t\tesac;" + os.linesep
     )
 
+def create_bt_non_failing_skill():
+    return ("MODULE bt_non_failing_skill" + os.linesep
+            + "\tIVAR" + os.linesep
+            + "\t\tinput : {bt_input_running, bt_input_true };" + os.linesep
+            + "\tVAR" + os.linesep
+            + "\t\toutput : { bt_output_none, bt_output_running, bt_output_false, bt_output_true};" + os.linesep
+            + "\t\tenable : boolean;" + os.linesep
+            + "\tASSIGN" + os.linesep
+            + "\t\tinit(output) := bt_output_none;" + os.linesep
+            + "\t\tnext(output) :=" + os.linesep
+            + "\t\t\tcase" + os.linesep
+            + "\t\t\t\t! enable : bt_output_none;" + os.linesep
+            + "\t\t\t\tinput = bt_input_running : bt_output_running;" + os.linesep
+            + "\t\t\t\tinput = bt_input_true : bt_output_true;" + os.linesep
+            + "\t\t\tesac;" + os.linesep
+    )
+
 def create_bt_placeholder():
     return("MODULE bt_placeholder" + os.linesep
            + "\tVAR" + os.linesep
            + "\t\tenable : boolean;" + os.linesep
            + "\tDEFINE" + os.linesep
            + "\t\toutput := bt_output_true;" + os.linesep
+    )
+
+def create_bt_success():
+    return("MODULE bt_success" + os.linesep
+           + "\tVAR" + os.linesep
+           + "\t\tenable : boolean;" + os.linesep
+           + "\tDEFINE" + os.linesep
+           + "\t\toutput := enable ? bt_output_true : bt_output_none;" + os.linesep
     )
 #----------------------------------------------------------------------
 
