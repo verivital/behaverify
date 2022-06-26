@@ -47,8 +47,10 @@ def walk_tree(t, parent_id, next_available_id, children, nodes, needed_nodes, no
         needed_nodes.add('bt_fallback')
         fallback_set.add(this_id)
     elif isinstance(t, py_trees.behaviours.Success):
-        nodes[this_id] = ('bt_placeholder', parent_id, node_name)
-        needed_nodes.add('bt_placeholder')
+        #nodes[this_id] = ('bt_placeholder', parent_id, node_name)
+        #needed_nodes.add('bt_placeholder')
+        nodes[this_id] = ('bt_success', parent_id, node_name)
+        needed_nodes.add('bt_success')
         leaf_set.add(this_id)
         return next_available_id
     else:#currently defaulting to default. will rework this later probably

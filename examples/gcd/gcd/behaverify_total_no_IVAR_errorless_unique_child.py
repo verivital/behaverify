@@ -511,13 +511,66 @@ def can_create_running(nodes, node_id, parallel_synch_set, parallel_unsynch_set,
         else:
             return False
     elif node_id in leaf_set:
-        #this needs to encompass all cases where a leaf node can return Running
-        return True#currently being lazy, and just going to assume they can all return Running, even though this is not the case
+        return True
     else:
         return True#selector and parallel can, everything else covered above
+
+def map_can_return_running(nodes, node_id, running_map, children, parallel_synch_set, parallel_unsynch_set, sequence_set, selector_set, decorator_set, leaf_set):
+    #print(running_map)
+    if node_id in leaf_set:
+        #this needs to encompass all cases where a leaf node can return Running
+        if nodes[node_id][0] == "node_success":
+            running_map[node_id] = False
+            return False
+        elif nodes[node_id][0] == "node_failure":
+            running_map[node_id] = False
+            return False
+        elif nodes[node_id][0] == "node_non_blocking":
+            running_map[node_id] = False
+            return False
+        elif nodes[node_id][0] == "node_check_blackboard_variable_exists":
+            running_map[node_id] = False
+            return False
+        elif nodes[node_id][0] == "node_check_blackboard_variable_value":
+            running_map[node_id] = False
+            return False
+        else:
+            running_map[node_id] = True
+            return True#currently being lazy, and just going to assume they can all return Running, even though this is not the case
+    elif node_id in decorator_set:
+        if 'running_is' in nodes[node_id][0]:
+            map_can_return_running(nodes, children[node_id][0], running_map, children, parallel_synch_set, parallel_unsynch_set, sequence_set, selector_set, decorator_set, leaf_set)
+            running_map[node_id] = False
+            return False
+        elif 'is_running' in nodes[node_id][0]:
+            map_can_return_running(nodes, children[node_id][0], running_map, children, parallel_synch_set, parallel_unsynch_set, sequence_set, selector_set, decorator_set, leaf_set)
+            running_map[node_id] = True
+            return True
+        else:
+            running_map[node_id] = map_can_return_running(nodes, children[node_id][0], running_map, children, parallel_synch_set, parallel_unsynch_set, sequence_set, selector_set, decorator_set, leaf_set)
+            return running_map[node_id]
+    else:
+        #it's a parallel, selector, or sequence node
+        running = False
+        for child in children[node_id]:
+            running = map_can_return_running(nodes, child, running_map, children, parallel_synch_set, parallel_unsynch_set, sequence_set, selector_set, decorator_set, leaf_set) or running
+            #print(child)
+            #print(running_map)
+        if len(children[node_id]) == 0:
+            if node_id in parallel_synch_set or node_id in parallel_unsynch_set:
+                running_map[node_id] = True
+                return True
+            else:
+                running_map[node_id] = False
+                return False
+        running_map[node_id] = running
+        return running
         
 #return (local_root_to_relevant_list_map, sequence_to_relevant_descendants_map)
 def create_local_root_to_relevant_list_map(nodes, children, node_to_local_root_map, parallel_synch_set, parallel_unsynch_set, sequence_set, selector_set, decorator_set, leaf_set):
+    running_map = {}
+    map_can_return_running(nodes, 0, running_map, children, parallel_synch_set, parallel_unsynch_set, sequence_set, selector_set, decorator_set, leaf_set)
+    #print(running_map)
     local_root_to_relevant_list_map = {} # a map from local_root to the list of relevant things to track in terms of running
     sequence_to_relevant_descendants_map = {} # a map from each sequence to the set of relevant descendants
     for node_id in range(len(nodes)):
@@ -529,7 +582,7 @@ def create_local_root_to_relevant_list_map(nodes, children, node_to_local_root_m
             else:
                 #the local root's parent is not a parallel_synch node, so we don't have to track if it's skippable
                 local_root_to_relevant_list_map[node_id] = []
-        elif can_create_running(nodes, node_id, parallel_synch_set, parallel_unsynch_set, sequence_set, selector_set, decorator_set, leaf_set):
+        elif running_map[node_id] and can_create_running(nodes, node_id, parallel_synch_set, parallel_unsynch_set, sequence_set, selector_set, decorator_set, leaf_set):
             cur_id = node_id
             #encountered_sequences = []
             first_child = True
@@ -1039,12 +1092,12 @@ def main():
     if args.specs_input_file:
         nuxmv_string += open(args.specs_input_file).read() + os.linesep + os.linesep
 
-    nuxmv_string += ("MODULE fake_node()" + os.linesep
-                     + "\tCONSTANTS" + os.linesep
-                     + "\t\tsuccess, failure, running, invalid;" + os.linesep
-                     + "\tDEFINE" + os.linesep
-                     + "\t\tstatus := invalid;" + os.linesep
-    )
+    # nuxmv_string += ("MODULE fake_node()" + os.linesep
+    #                  + "\tCONSTANTS" + os.linesep
+    #                  + "\t\tsuccess, failure, running, invalid;" + os.linesep
+    #                  + "\tDEFINE" + os.linesep
+    #                  + "\t\tstatus := invalid;" + os.linesep
+    # )
     for needed in needed_nodes:
         nuxmv_string = nuxmv_string +  eval('node_creator.create_'+needed+'()')
     seen_children = set()

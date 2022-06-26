@@ -1,0 +1,2 @@
+LTLSPEC G (safety_check0.output = bt_output_false -> backup0.enable = TRUE);
+LTLSPEC G (safety_check0.output = bt_output_false -> backup0.enable = FALSE);

@@ -8,8 +8,8 @@ if sys.argv[1] == "gcd":
 
     group_name = "gcd"
 
-    folders = ["leaf", "leaf_no_IVAR", "total", "total_no_IVAR_errorless_unique_child"]
-    foldersShort = ["Leaf",  "L_no", "Total", "T_unique"]
+    folders = ["leaf", "leaf_no_IVAR", "total", "total_no_IVAR_errorless_unique_child", "total_internal_status"]
+    foldersShort = ["Leaf",  "L_no", "Total", "T_unique", "T_status"]
     files = ["gcd_example"]
     filesShort = ["gcd"]
     
@@ -17,16 +17,16 @@ elif sys.argv[1] == "basic":
 
     group_name = "basic"
     
-    folders = ["BTCompiler", "leaf",  "leaf_no_IVAR", "total", "total_no_IVAR_errorless_unique_child"]
-    foldersShort = ["BTC", "Leaf",  "L_no", "Total", "T_unique"]
+    folders = ["BTCompiler", "leaf",  "leaf_no_IVAR", "total", "total_no_IVAR_errorless_unique_child", "total_internal_status"]
+    foldersShort = ["BTC", "Leaf",  "L_no", "Total", "T_unique", "T_status"]
     files = ["example0", "example1", "example2", "example3", "example4", "example5", "example6", "example7", "example8"]
     filesShort = ["Ex0", "Ex1", "Ex2", "Ex3", "Ex4", "Ex5", "Ex6", "Ex7", "Ex8"]
 elif sys.argv[1] == "blueROV":
 
     group_name = "blueROV"
 
-    folders = ["leaf", "leaf_no_IVAR", "total", "total_no_IVAR_errorless_unique_child"]
-    foldersShort = ["Leaf", "L_no", "Total", "T_unique"]
+    folders = ["leaf", "leaf_no_IVAR", "total", "total_no_IVAR_errorless_unique_child", "total_internal_status"]
+    foldersShort = ["Leaf", "L_no", "Total", "T_unique", "T_status"]
     files = []
     filesShort = []
     base1 = ['blueROV_warnings_only', 'blueROV_small', 'blueROV_full']
@@ -39,8 +39,8 @@ elif sys.argv[1] == "auto_example":
 
     group_name = "auto_example"
 
-    folders = ["BTCompiler", "leaf",  "leaf_no_IVAR", "total", "total_no_IVAR_errorless_unique_child"]
-    foldersShort = ["BTC", "Leaf",  "L_no", "Total", "T_unique"]
+    folders = ["BTCompiler", "leaf",  "leaf_no_IVAR", "total", "total_no_IVAR_errorless_unique_child", "total_internal_status"]
+    foldersShort = ["BTC", "Leaf",  "L_no", "Total", "T_unique", "T_status"]
     files = []
     filesShort = []
     for sel in [0, 5, 10, 15, 20]:
@@ -58,8 +58,18 @@ elif sys.argv[1] == "robot":
 
     group_name = "robot"
 
-    folders = ["BTCompiler", "leaf",  "leaf_no_IVAR", "total", "total_no_IVAR_errorless_unique_child"]
-    foldersShort = ["BTC", "Leaf",  "L_no", "Total", "T_unique"]
+    folders = ["BTCompiler", "leaf",  "leaf_no_IVAR", "total", "total_no_IVAR_errorless_unique_child", "total_internal_status"]
+    foldersShort = ["BTC", "Leaf",  "L_no", "Total", "T_unique", "T_status"]
+    files = []
+    filesShort = []
+    for sel in range(1, 51):
+            files.append(str(sel))
+            filesShort.append(str(sel))
+elif sys.argv[1] == "robot-v2":            
+    group_name = "robot-v2"
+
+    folders = ["leaf",  "leaf_no_IVAR", "total", "total_no_IVAR_errorless_unique_child", "total_internal_status"]
+    foldersShort = ["Leaf",  "L_no", "Total", "T_unique", "T_status"]
     files = []
     filesShort = []
     for sel in range(1, 51):

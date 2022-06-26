@@ -1,7 +1,7 @@
 #!/bin/bash
 
 files=("example0" "example1" "example2" "example3" "example4" "example5" "example6" "example7" "example8")
-versions=("BTCompiler" "leaf" "leaf_no_IVAR" "total" "total_no_IVAR_errorless_unique_child")
+versions=("BTCompiler" "leaf" "leaf_no_IVAR" "total" "total_no_IVAR_errorless_unique_child" "total_internal_status")
 
 
 for cur_version in ${versions[@]}; do
