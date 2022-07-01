@@ -1,6 +1,6 @@
 #!/bin/bash
 
-versions=("BTCompiler" "leaf" "leaf_no_IVAR" "total" "total_no_IVAR_errorless_unique_child" "total_internal_status")
+versions=("BTCompiler" "leaf_v1" "leaf_v2" "total_v1" "total_v2" "total_v3")
 
 
 for cur_version in ${versions[@]}; do

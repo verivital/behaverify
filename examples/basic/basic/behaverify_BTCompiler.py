@@ -13,7 +13,7 @@ import inspect
 import py_trees.console as console
 import node_creator_BTCompiler as node_creator
 
-def walk_tree(t, parent_id, next_available_id, children, nodes, needed_nodes, node_names, leaf_set, fallback_set, sequence_set):
+def walk_tree(t, parent_id, next_available_id, children, nodes, needed_nodes, node_names, leaf_set, fallback_set, sequence_set, parallel_set, parallel_threshold):
     global blackboard_needed
     this_id=next_available_id
     next_available_id = next_available_id + 1
@@ -46,6 +46,14 @@ def walk_tree(t, parent_id, next_available_id, children, nodes, needed_nodes, no
         nodes[this_id]=('bt_fallback', parent_id, node_name)
         needed_nodes.add('bt_fallback')
         fallback_set.add(this_id)
+    elif isinstance(t, py_trees.composites.Parallel):
+        nodes[this_id]=('bt_parallel', parent_id, node_name)
+        needed_nodes.add('bt_parallel')
+        parallel_set.add(this_id)
+        if isinstance(t.policy, py_trees.common.ParallelPolicy.SuccessOnAll):
+            parallel_threshold[this_id] = 2
+        else:
+            parallel_threshold[this_id] = 1
     elif isinstance(t, py_trees.behaviours.Success):
         #nodes[this_id] = ('bt_placeholder', parent_id, node_name)
         #needed_nodes.add('bt_placeholder')
@@ -61,14 +69,14 @@ def walk_tree(t, parent_id, next_available_id, children, nodes, needed_nodes, no
     
     children[this_id] = []#if we've reached this point, then this node has children, and we are going to set up an empty list for it.
     for child in t.children:
-        next_available_id = walk_tree(child, this_id, next_available_id, children, nodes, needed_nodes, node_names, leaf_set, fallback_set, sequence_set)
+        next_available_id = walk_tree(child, this_id, next_available_id, children, nodes, needed_nodes, node_names, leaf_set, fallback_set, sequence_set, parallel_set, parallel_threshold)
     return next_available_id
 
 
 #-----------------------------------------------------------------------------------------------------------------------
 
 #fixes some _dot_ variable nesting problems
-def create_nodes(nodes, children, leaf_set, fallback_set, sequence_set):
+def create_nodes(nodes, children, leaf_set, fallback_set, sequence_set, parallel_set, parallel_threshold):
     #print(nodes)
     #print(children)
     #print(leaf_set)
@@ -81,6 +89,8 @@ def create_nodes(nodes, children, leaf_set, fallback_set, sequence_set):
         var_string += "\t\t" + nodes[node_id][2] + " : " + nodes[node_id][0]
         if node_id in leaf_set:
             pass
+        elif node_id in parallel_set:
+            var_string += "(" + str(parallel_threshold[node_id]) + ", " + nodes[children[node_id][0]][2] + ", " + nodes[children[node_id][1]][2] + ")"
         else:
             var_string += "(" + nodes[children[node_id][0]][2] + ", " + nodes[children[node_id][1]][2] + ")"
             #all nodes are guaranteed to have 2 children. 
@@ -130,15 +140,17 @@ def main():
     children={-1:[]}#stores a list of children ID. is indexed via node id
     nodes={}#stores a tuple, (type, parent_id, node_name), where type informs us of the node type, and parent of the parent id, and node_name. it's indexed via node id
     node_names={}#a list of node names. each name is also associated with an integer that indicates how many times it has been seen, allowing us to automatically create a new name.
+    parallel_threshold = {} #map from parallel nodes to threshold
     #-------------------------------------------------------------------------------
     #sets
     sequence_set = set()
     fallback_set = set()
     leaf_set = set()
+    parallel_set = set()
     #-------------------------------------------------------------------------------
     needed_nodes=set()#the set of node types needed
     
-    next_available_id = walk_tree(root, -1, 0, children, nodes, needed_nodes, node_names, leaf_set, fallback_set, sequence_set)
+    next_available_id = walk_tree(root, -1, 0, children, nodes, needed_nodes, node_names, leaf_set, fallback_set, sequence_set, parallel_set, parallel_threshold)
         
     define_string = ("MODULE main" + os.linesep
     )
@@ -149,7 +161,7 @@ def main():
     )
     next_string = ""
 
-    (new_define, new_var, new_init, new_next) = create_nodes(nodes, children, leaf_set, fallback_set, sequence_set)
+    (new_define, new_var, new_init, new_next) = create_nodes(nodes, children, leaf_set, fallback_set, sequence_set, parallel_set, parallel_threshold)
     define_string += new_define
     var_string += new_var
     init_string += new_init

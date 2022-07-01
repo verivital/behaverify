@@ -1,7 +1,7 @@
 #!/bin/bash
 
 files=("BlueROV_tree_serene_edit")
-versions=("leaf" "leaf_no_IVAR" "total" "total_no_IVAR_errorless_unique_child" "total_internal_status")
+versions=("leaf_v1" "leaf_v2" "total_v1" "total_v2" "total_v3")
 
 constant_arg="--force_parallel_unsynch --overwrite"
 ltl_versions=("battery" "emergency" "home_reached" "obstacle" "sensor")

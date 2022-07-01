@@ -1,7 +1,6 @@
 #!/bin/bash
 
-folders=("auto_example" "basic" "blueROV" "gcd" "robot" "robot-v2")
-#folders=("robot-v2")
+folders=("auto_example" "basic" "blueROV" "gcd" "checklist" "parallel-checklist")
 
 for folder in ${folders[@]}; do
     echo $folder

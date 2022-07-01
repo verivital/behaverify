@@ -2,7 +2,7 @@
 
 files=("gcd_example")
 
-versions=("leaf" "leaf_no_IVAR" "total" "total_no_IVAR_errorless_unique_child" "total_internal_status")
+versions=("leaf_v1" "leaf_v2" "total_v1" "total_v2" "total_v3")
 
 #gen_mode=2
 gen_mode=0
