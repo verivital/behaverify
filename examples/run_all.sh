@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-folders=("auto_example" "basic" "blueROV" "gcd" "robot" "robot-v2")
+folders=("auto_example" "basic" "blueROV" "gcd" "checklist" "parallel-checklist")
 #folders=("basic" "blueROV")
 #folders=("robot")
 #folders=("blueROV")
