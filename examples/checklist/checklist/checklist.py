@@ -36,3 +36,11 @@ def create_root(to_create = 1, print_pic = False):
 #create_root(5, True)
 #create_root(10, True)
 #create_root(50, True)
+#create_root(18, True)
+#create_root(19, True)
+#create_root(20, True)
+
+# create_root(14, True)
+# create_root(15, True)
+# create_root(16, True)
+# create_root(17, True)

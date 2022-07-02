@@ -3,8 +3,8 @@
 folders=("models_BTCompiler" "models_leaf_v1" "models_leaf_v2" "models_total_v1" "models_total_v2" "models_total_v3")
 
 for cur_folder in ${folders[@]}; do
-    timeout_val=3m
-    timeout_val_silent=3m
+    timeout_val=1m
+    timeout_val_silent=5m
     fail_count=3
     fail_count_silent=3
     for sel_num in {1..50}; do
@@ -21,7 +21,7 @@ for cur_folder in ${folders[@]}; do
 	if [ $? == 124 ]; then
 	    fail_count_silent=$(($fail_count_silent-1))
 	    if [ $fail_count_silent == 0 ]; then
-		timeout_val_silent=3s
+		timeout_val_silent=1s
 	    fi
 	fi
 	echo "ltl"
@@ -29,7 +29,7 @@ for cur_folder in ${folders[@]}; do
 	if [ $? == 124 ]; then
 	    fail_count=$(($fail_count-1))
 	    if [ $fail_count == 0 ]; then
-		timeout_val=3s
+		timeout_val=1s
 	    fi
 	fi
     done
