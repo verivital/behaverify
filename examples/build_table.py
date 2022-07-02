@@ -98,6 +98,9 @@ if minimal:
     folders[:] = [x for x in folders if not 'v1' in x]
     foldersShort[:] = [x for x in foldersShort if not 'v1' in x]
 
+folders = ["BTCompiler"]
+foldersShort = ["BTC"]
+
     
 
     
@@ -264,7 +267,8 @@ if 'checklist' in group_name:
         for x in range(50):
             val = elapsed_time_ltl[x][i]
             if val == '-':
-                y_range.append(350)
+                #y_range.append(350)
+                y_range.append(500)
             else:
                 y_range.append(float(val))
         if foldersShort[i] == 'BTC':
