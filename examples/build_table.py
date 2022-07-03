@@ -98,8 +98,8 @@ if minimal:
     folders[:] = [x for x in folders if not 'v1' in x]
     foldersShort[:] = [x for x in foldersShort if not 'v1' in x]
 
-folders = ["BTCompiler"]
-foldersShort = ["BTC"]
+#folders = ["BTCompiler"]
+#foldersShort = ["BTC"]
 
     
 
