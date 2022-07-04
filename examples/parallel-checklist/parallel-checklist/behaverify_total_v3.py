@@ -67,7 +67,7 @@ blackboard_name_pattern = re.compile(r"#*(?P<blackboard_name>[^\s=]+)\s*=\s*py_t
         
 #-----------------------------------------------------------------------------------------------------------------------
 
-def walk_tree(t, parent_id, next_available_id, children, nodes, additional_arguments, needed_nodes, node_names, variable_access, variable_check, variable_name_to_int, external_status_req, parallel_synch_set, parallel_unsynch_set, sequence_set, selector_set, decorator_set, leaf_set, parallel_policies, parallel_unsynch = False):
+def walk_tree(t, parent_id, next_available_id, children, nodes, additional_arguments, needed_nodes, node_names, variable_access, variable_check, variable_name_to_int, external_status_req, parallel_synch_set, parallel_unsynch_set, sequence_with_memory_set, sequence_without_memory_set, selector_with_memory_set, selector_without_memory_set, decorator_set, leaf_set, parallel_policies, parallel_unsynch = False):
     global blackboard_needed
     this_id=next_available_id
     next_available_id = next_available_id + 1
@@ -157,17 +157,20 @@ def walk_tree(t, parent_id, next_available_id, children, nodes, additional_argum
 
     is_decorator = True
     if isinstance(t, py_trees.composites.Sequence):
-        #children[this_id]=[]
-        nodes[this_id]=('node_sequence', parent_id, node_name)
-        #needed_nodes.add('node_sequence')
-        sequence_set.add(this_id)
+        if t.memory:
+            nodes[this_id]=('node_sequence_with_memory', parent_id, node_name)
+            sequence_with_memory_set.add(this_id)
+        else:
+            nodes[this_id]=('node_sequence_without_memory', parent_id, node_name)
+            sequence_without_memory_set.add(this_id)
         is_decorator = False
     elif isinstance(t, py_trees.composites.Selector):
-        #resume_node=this_id
-        #children[this_id]=[]
-        nodes[this_id]=('node_selector', parent_id, node_name)
-        #needed_nodes.add('node_selector')
-        selector_set.add(this_id)
+        if t.memory:
+            nodes[this_id]=('node_selector_with_memory', parent_id, node_name)
+            selector_with_memory_set.add(this_id)
+        else:
+            nodes[this_id]=('node_selector_without_memory', parent_id, node_name)
+            selector_without_memory_set.add(this_id)
         is_decorator = False
     elif isinstance(t, py_trees.composites.Parallel):
         is_decorator = False
@@ -463,7 +466,7 @@ def walk_tree(t, parent_id, next_available_id, children, nodes, additional_argum
         decorator_set.add(this_id)
     children[this_id] = []#if we've reached this point, then this node has children, and we are going to set up an empty list for it.
     for child in t.children:
-        next_available_id = walk_tree(child, this_id, next_available_id, children, nodes, additional_arguments, needed_nodes, node_names, variable_access, variable_check, variable_name_to_int, external_status_req, parallel_synch_set, parallel_unsynch_set, sequence_set, selector_set, decorator_set, leaf_set, parallel_policies, parallel_unsynch)
+        next_available_id = walk_tree(child, this_id, next_available_id, children, nodes, additional_arguments, needed_nodes, node_names, variable_access, variable_check, variable_name_to_int, external_status_req, parallel_synch_set, parallel_unsynch_set, sequence_with_memory_set, sequence_without_memory_set, selector_with_memory_set, selector_without_memory_set, decorator_set, leaf_set, parallel_policies, parallel_unsynch)
     return next_available_id
 
 
@@ -489,7 +492,7 @@ def variable_name_cleanup(variable_name_to_int, variable_access):
                         variable_access[variable_name_to_int[child_variable]].append(access_node)
 
 #return node_to_local_root_map
-def create_node_to_local_root_map(nodes, parallel_synch_set, parallel_unsynch_set, sequence_set, selector_set, decorator_set, leaf_set):
+def create_node_to_local_root_map(nodes, parallel_synch_set, parallel_unsynch_set, decorator_set, leaf_set):
     node_to_local_root_map = {0: 0}# a map from node_id to the local root for that node_id
     #local_roots = {0}
     for node_id in range(1, len(nodes)):
@@ -502,8 +505,8 @@ def create_node_to_local_root_map(nodes, parallel_synch_set, parallel_unsynch_se
     return node_to_local_root_map
 
 #returns Bool
-def can_create_running(nodes, node_id, parallel_synch_set, parallel_unsynch_set, sequence_set, selector_set, decorator_set, leaf_set):
-    if node_id in sequence_set:
+def can_create_running(nodes, node_id, parallel_synch_set, parallel_unsynch_set, sequence_with_memory_set, selector_with_memory_set, decorator_set, leaf_set):
+    if node_id in sequence_with_memory_set or node_id in selector_with_memory_set:
         return False#even if it has no children, it will not create running
     elif node_id in decorator_set:
         #this needs to encompass all cases where a decorator can return Running
@@ -514,9 +517,9 @@ def can_create_running(nodes, node_id, parallel_synch_set, parallel_unsynch_set,
     elif node_id in leaf_set:
         return True
     else:
-        return True#selector and parallel can, everything else covered above
+        return True#without memory and parallel can, everything else covered above
 
-def map_can_return_running(nodes, node_id, running_map, children, parallel_synch_set, parallel_unsynch_set, sequence_set, selector_set, decorator_set, leaf_set):
+def map_can_return_running(nodes, node_id, running_map, children, parallel_synch_set, parallel_unsynch_set, decorator_set, leaf_set):
     #print(running_map)
     if node_id in leaf_set:
         #this needs to encompass all cases where a leaf node can return Running
@@ -540,23 +543,21 @@ def map_can_return_running(nodes, node_id, running_map, children, parallel_synch
             return True#currently being lazy, and just going to assume they can all return Running, even though this is not the case
     elif node_id in decorator_set:
         if 'running_is' in nodes[node_id][0]:
-            map_can_return_running(nodes, children[node_id][0], running_map, children, parallel_synch_set, parallel_unsynch_set, sequence_set, selector_set, decorator_set, leaf_set)
+            map_can_return_running(nodes, children[node_id][0], running_map, children, parallel_synch_set, parallel_unsynch_set, decorator_set, leaf_set)
             running_map[node_id] = False
             return False
         elif 'is_running' in nodes[node_id][0]:
-            map_can_return_running(nodes, children[node_id][0], running_map, children, parallel_synch_set, parallel_unsynch_set, sequence_set, selector_set, decorator_set, leaf_set)
+            map_can_return_running(nodes, children[node_id][0], running_map, children, parallel_synch_set, parallel_unsynch_set, decorator_set, leaf_set)
             running_map[node_id] = True
             return True
         else:
-            running_map[node_id] = map_can_return_running(nodes, children[node_id][0], running_map, children, parallel_synch_set, parallel_unsynch_set, sequence_set, selector_set, decorator_set, leaf_set)
+            running_map[node_id] = map_can_return_running(nodes, children[node_id][0], running_map, children, parallel_synch_set, parallel_unsynch_set, decorator_set, leaf_set)
             return running_map[node_id]
     else:
         #it's a parallel, selector, or sequence node
         running = False
         for child in children[node_id]:
-            running = map_can_return_running(nodes, child, running_map, children, parallel_synch_set, parallel_unsynch_set, sequence_set, selector_set, decorator_set, leaf_set) or running
-            #print(child)
-            #print(running_map)
+            running = map_can_return_running(nodes, child, running_map, children, parallel_synch_set, parallel_unsynch_set, decorator_set, leaf_set) or running
         if len(children[node_id]) == 0:
             if node_id in parallel_synch_set or node_id in parallel_unsynch_set:
                 running_map[node_id] = True
@@ -568,12 +569,12 @@ def map_can_return_running(nodes, node_id, running_map, children, parallel_synch
         return running
         
 #return (local_root_to_relevant_list_map, sequence_to_relevant_descendants_map)
-def create_local_root_to_relevant_list_map(nodes, children, node_to_local_root_map, parallel_synch_set, parallel_unsynch_set, sequence_set, selector_set, decorator_set, leaf_set):
+def create_local_root_to_relevant_list_map(nodes, children, node_to_local_root_map, parallel_synch_set, parallel_unsynch_set, sequence_with_memory_set, sequence_without_memory_set, selector_with_memory_set, selector_without_memory_set, decorator_set, leaf_set):
     running_map = {}
-    map_can_return_running(nodes, 0, running_map, children, parallel_synch_set, parallel_unsynch_set, sequence_set, selector_set, decorator_set, leaf_set)
+    map_can_return_running(nodes, 0, running_map, children, parallel_synch_set, parallel_unsynch_set, decorator_set, leaf_set)
     #print(running_map)
     local_root_to_relevant_list_map = {} # a map from local_root to the list of relevant things to track in terms of running
-    sequence_to_relevant_descendants_map = {} # a map from each sequence to the set of relevant descendants
+    nodes_with_memory_to_relevant_descendants_map = {} # a map from each node_with_memory to the set of relevant descendants
     for node_id in range(len(nodes)):
         if node_id == node_to_local_root_map[node_id]:
             #this is a local_root
@@ -583,14 +584,13 @@ def create_local_root_to_relevant_list_map(nodes, children, node_to_local_root_m
             else:
                 #the local root's parent is not a parallel_synch node, so we don't have to track if it's skippable
                 local_root_to_relevant_list_map[node_id] = []
-        elif running_map[node_id] and can_create_running(nodes, node_id, parallel_synch_set, parallel_unsynch_set, sequence_set, selector_set, decorator_set, leaf_set):
+        elif running_map[node_id] and can_create_running(nodes, node_id, parallel_synch_set, parallel_unsynch_set, sequence_with_memory_set, selector_with_memory_set, decorator_set, leaf_set):
             cur_id = node_id
-            #encountered_sequences = []
             first_child = True
             done = False
             true_done = False
             end_target=nodes[node_to_local_root_map[node_id]][1]#we end at the parent of the local root.
-            sequences_found = []
+            nodes_with_memory_found = []
             to_add = False
             while not done:
                 previous_id=cur_id
@@ -605,23 +605,23 @@ def create_local_root_to_relevant_list_map(nodes, children, node_to_local_root_m
                         to_add=False
                         #if node_id in local_root_to_relevant_list_map[node_to_local_root_map[node_id]]:#check if we added it in
                             #local_root_to_relevant_list_map[node_to_local_root_map[node_id]].pop()#if we added it in, it must be at the end.
-                        for sequence in sequences_found:#this sequence cannot resume. indicate as such.
-                            sequence_to_relevant_descendants_map[sequence] = set()
-                elif cur_id in selector_set or cur_id in parallel_synch_set or cur_id in parallel_unsynch_set:
-                    done = True#nothing above us will care. they will track the selector or nothing.
-                elif cur_id in sequence_set:
-                    sequences_found.append(cur_id)
-                    if cur_id not in sequence_to_relevant_descendants_map:
-                       sequence_to_relevant_descendants_map[cur_id] = set()
+                        for node_with_memory in nodes_with_memory_found:#this node_with_memory cannot resume. indicate as such.
+                            nodes_with_memory_to_relevant_descendants_map[node_with_memory] = set()
+                elif cur_id in selector_without_memory_set or cur_id in sequence_without_memory_set or cur_id in parallel_synch_set or cur_id in parallel_unsynch_set:
+                    done = True#nothing above us will care. without memory collapses everything. either this location will be tracked, or nothing will be tracked.
+                elif cur_id in sequence_with_memory_set or cur_id in selector_with_memory_set:
+                    nodes_with_memory_found.append(cur_id)
+                    if cur_id not in nodes_with_memory_to_relevant_descendants_map:
+                       nodes_with_memory_to_relevant_descendants_map[cur_id] = set()
                     if children[cur_id][0] == previous_id:
+                        #this is the first child. change nothing
                         pass
                     else:
-                        #we encountered proof that this node is relevant. add it to the sequence
-                        first_child = False#keep running. there might be sequences above us that care though.
+                        #this was not the first child. mark this down
+                        first_child = False
                         to_add = True
-                        #local_root_to_relevant_list_map[node_to_local_root_map[node_id]].append(node_id)#this is a valid resume point. tell the local root about it.
-                    if not first_child:
-                        sequence_to_relevant_descendants_map[cur_id].add(node_id)
+                    if not first_child:#if at some point we encountered a not first child, then this node is relevant.
+                        nodes_with_memory_to_relevant_descendants_map[cur_id].add(node_id)
             #make sure there's not a decorator above the end point that invalidates our need to track running.
             while not true_done:
                 previous_id = cur_id
@@ -632,33 +632,50 @@ def create_local_root_to_relevant_list_map(nodes, children, node_to_local_root_m
                     if "running_is" in nodes[cur_id][0]:#if we encounter a decorator that undoes running, we no longer care. TODO: update so it hits all decorators that can do this.
                         true_done = True
                         to_add = False
-                        #if node_id in local_root_to_relevant_list_map[node_to_local_root_map[node_id]]:#check if we added it in
-                            #local_root_to_relevant_list_map[node_to_local_root_map[node_id]].pop()#if we added it in, it must be at the end. 
-                        for sequence in sequences_found:#this sequence cannot resume. indicate as such.
-                            sequence_to_relevant_descendants_map[sequence] = set()
+                        for node_with_memory in nodes_with_memory_found:#this node_with_memory cannot resume. indicate as such.
+                            nodes_with_memory_to_relevant_descendants_map[node_with_memory] = set()
             if to_add:
                 local_root_to_relevant_list_map[node_to_local_root_map[node_id]].append(node_id)#this is a valid resume point. tell the local root about it. 
 
-    return (local_root_to_relevant_list_map, sequence_to_relevant_descendants_map)
+    return (local_root_to_relevant_list_map, nodes_with_memory_to_relevant_descendants_map)
 
 #return node_to_descendants_map. this maps each node to the set of all of it's descendants. leaf nodes map to an empty set. a node is not it's own descendant
 def create_node_to_descendants_map(nodes, children, leaf_set):
+    #method explanation
+    #go through all the nodes in order
+    #add a set() for each node
+    #if we find a node without children, go back up until we reach -1. for each stop along the way, add the node without children.
+
+    #so this method only adds leaf nodes????
     node_to_descendants_map={}
     for node_id in range(len(nodes)):
         node_to_descendants_map[node_id] = set()
-        if node_id in leaf_set or node_id not in children or len(children[node_id]) == 0:
-            #this is a terminus point
-            cur_id = nodes[node_id][1]
-            while not cur_id == -1:
-                node_to_descendants_map[cur_id].add(node_id)
-                cur_id=nodes[cur_id][1]
+        # if node_id in leaf_set or node_id not in children or len(children[node_id]) == 0:
+        #     #this is a terminus point
+        #     cur_id = nodes[node_id][1]
+        #     while not cur_id == -1:
+        #         node_to_descendants_map[cur_id].add(node_id)
+        #         cur_id=nodes[cur_id][1]
+        cur_id = nodes[node_id][1]
+        while not cur_id == -1:
+            node_to_descendants_map[cur_id].add(node_id)
+            cur_id=nodes[cur_id][1]
     return node_to_descendants_map
+
 
 
 #-----------------------------------------------------------------------------------------------------------------------
 
+def create_leaf_to_status(nodes, children, node_to_local_root_map, parallel_synch_set, parallel_unsynch_set, sequence_with_memory_set, sequence_without_memory_set, selector_with_memory_set, selector_without_memory_set, decorator_set, leaf_set):
+    #plan. create an ordered set of leafs, then cascade them through.
+    #probably just go through the nodes in order, which will cause us to hit the leaf nodes in order.
+    
+    pass
+
+#-----------------------------------------------------------------------------------------------------------------------
+
 #creates the strings necessary for initialization stuff
-def create_nodes(nodes, children, additional_arguments, parallel_synch_set, parallel_unsynch_set, sequence_set, selector_set, decorator_set, leaf_set, parallel_policies):
+def create_nodes(nodes, children, additional_arguments, parallel_synch_set, parallel_unsynch_set, sequence_with_memory_set, sequence_without_memory_set, selector_with_memory_set, selector_without_memory_set, decorator_set, leaf_set, parallel_policies):
     define_string = ""
     init_string = ""
     next_string = ""
@@ -667,27 +684,22 @@ def create_nodes(nodes, children, additional_arguments, parallel_synch_set, para
         #print(node_id)
         if node_id == 0:
             define_string += "\t\t" + nodes[node_id][2] + ".active := TRUE;" + os.linesep
-        """
-        if node_id == 0:
-            active_val = "TRUE"
+        children_string = ""
+        #if node_id in selector_without_memory_set or node_id in sequence_without_memory_set or node_id in selector_with_memory_set or node_id in sequence_with_memory_set or node_id in parallel_synch_set or node_id in parallel_unsynch_set:
+        if node_id not in children or len(children[node_id]) == 0:
+            #this node has no children
+            children_string = ""
         else:
-            active_val = nodes[nodes[node_id][1]][2] + ".active_" + str(children[nodes[node_id][1]].index(node_id))
-        """
-        if node_id in selector_set or node_id in sequence_set or node_id in parallel_synch_set or node_id in parallel_unsynch_set:
-            if node_id not in children or len(children[node_id]) == 0:
-                #this node has no children
-                children_string = ""
-            else:
-                children_string = ""
-                for child in children[node_id]:
-                    children_string += ", " + nodes[child][2]
-                children_string = children_string[2:]
+            children_string = ""
+            for child in children[node_id]:
+                children_string += ", " + nodes[child][2]
+            children_string = children_string[2:]
         #---------------------------------
         if node_id in leaf_set:
             var_string += "\t\t" + nodes[node_id][2] + " : " + nodes[node_id][0] + "("
-        elif node_id in selector_set:
+        elif node_id in selector_without_memory_set or node_id in sequence_without_memory_set:
             var_string += "\t\t" + nodes[node_id][2] + " : " + nodes[node_id][0] + str(len(children[node_id])) + "(" + children_string
-        elif node_id in sequence_set:
+        elif node_id in selector_with_memory_set or node_id in sequence_with_memory_set:
             if node_id not in children or len(children[node_id]) < 2:
                 resume_point = "-2"
             else:
@@ -873,22 +885,6 @@ def create_resume_structure(nodes, local_root_to_relevant_list_map, children):
                                #note that since we are always executing the entire tree, if we returned running last time we will definitely resume this time.
                                + "\t\t\tesac;" + os.linesep
         )
-        #below is the old version
-        '''
-        for resume_point in reversed(relevant_list):
-            #this list is ordered so that selectors will not override their children returning running.
-            next_resume_from_node_string += "\t\t\t\t(statuses[" + str(resume_point) + "] = running) : " + str(resume_point) + ";" + os.linesep#if running, set to that location
-        for resume_point in relevant_list:
-            next_resume_from_node_string += "\t\t\t\t(resume_from_node_" + str(local_root) + " = " + str(resume_point) + ") & !(next(relevant_child_" + str(resume_point) + ") = -2) : " + str(local_root) + ";" + os.linesep #reset if we
-        next_resume_from_node_string += "\t\t\t\t(statuses[resume_from_node_" + str(local_root) + "] in {success, failure}) : " + str(local_root) + ";" + os.linesep#if the node we were planning to resume from has returned success or failure, then reset
-        #next_resume_from_node_string += "\t\t\t\t(next(active_node)" + os.linesep
-        next_resume_from_node_string += ("\t\t\t\tTRUE : resume_from_node_" + str(local_root) + ";" + os.linesep#otherwise, hold
-                                      + "\t\t\tesac;" + os.linesep
-        )
-        '''
-        
-        
-        
     define_string = var_define_status_string + define_trace_running_source
     var_string = var_resume_from_node_string
     init_string = init_resume_from_node_string
@@ -896,49 +892,60 @@ def create_resume_structure(nodes, local_root_to_relevant_list_map, children):
     return (define_string, var_string, init_string, next_string)
 
 #create the resume_point variable that tells sequence nodes which child to start at
-def create_resume_point(sequence_set, node_to_local_root_map, local_root_to_relevant_list_map, node_to_descendants_map, children):
+def create_resume_point(sequence_with_memory_set, selector_with_memory_set, node_to_local_root_map, local_root_to_relevant_list_map, node_to_descendants_map, children):
     resume_point_string = ""
-    for sequence in sequence_set:
-        #print('new sequence:')
-        #print(sequence)
-        if sequence not in children or len(children[sequence]) < 2:
+    nodes_with_memory_set = sequence_with_memory_set.union(selector_with_memory_set)
+    for node_with_memory in nodes_with_memory_set:
+        #print('new node_with_memory:')
+        #print(node_with_memory)
+        if node_with_memory not in children or len(children[node_with_memory]) < 2:
             #print('few children. skipping')
             #we have 0 or 1 children
             #if there are no children, then resume_point really doesn't matter, but we need to pass a value
             #if there is 1 child, then we never skip it, so resume_point really doesn't matter, but we need to pass a value
-            #hard code -2 into the sequence in this case
+            #hard code -2 into the node_with_memory in this case
             pass
         else:
             #print('multiple children')
             #have an actual quantity of children
-            local_root = node_to_local_root_map[sequence]
+            local_root = node_to_local_root_map[node_with_memory]
             relevant_list = local_root_to_relevant_list_map[local_root]
+            #print(relevant_list)
             if len(relevant_list) == 0:
                 #print('no real resume children. hard coding -2')
-                resume_point_string += "\t\tresume_point_" + str(sequence) + " := -2;" + os.linesep
+                resume_point_string += "\t\tresume_point_" + str(node_with_memory) + " := -2;" + os.linesep
             else:
                 #print('real resume target present. initiating')
-                resume_point_string += ("\t\tresume_point_" + str(sequence) + " := " + os.linesep
+                resume_point_string += ("\t\tresume_point_" + str(node_with_memory) + " := " + os.linesep
                                         + "\t\t\tcase" + os.linesep
                 )
-                descendants = node_to_descendants_map[sequence]
-                child_index_to_relevant_descendants_map = {} 
+                descendants = node_to_descendants_map[node_with_memory]
+                child_index_to_relevant_descendants_map = {} #basically, we are going to use this to figure out where we need to point.
+                #i.e., if resume_from_node is pointing to 400, which of our children, if any, needs to be resumed? this is what this map answers.
                 #print(descendants)
                 for relevant_node in relevant_list:
                     #print(relevant_node)
                     if relevant_node in descendants:
-                        for child_index in range(len(children[sequence])):
-                            child = children[sequence][child_index]
-                            if relevant_node in node_to_descendants_map[child]:
-                                if child in child_index_to_relevant_descendants_map:
+                        for child_index in range(len(children[node_with_memory])):
+                            #so we're gonna map this based on relative children
+                            #i.e, do i resume from my first child? second child?
+                            #print('---------------------------')
+                            #print(child_index)
+                            #print(child_index_to_relevant_descendants_map)
+                            child = children[node_with_memory][child_index]
+                            #print(child)
+                            if relevant_node in node_to_descendants_map[child]:#if the relevant node is a descendant of this child, then we need to mark that down. if it's not, continue
+                                if child_index in child_index_to_relevant_descendants_map:
                                     child_index_to_relevant_descendants_map[child_index].add(relevant_node)
                                 else:
                                     child_index_to_relevant_descendants_map[child_index] = {relevant_node}
-                            elif child == relevant_node:
-                                if child in child_index_to_relevant_descendants_map:
+                            elif child == relevant_node:#unless of course, the relevant node IS the child, then we also need to mark that down.
+                                if child_index in child_index_to_relevant_descendants_map:
                                     child_index_to_relevant_descendants_map[child_index].add(relevant_node)
                                 else:
                                     child_index_to_relevant_descendants_map[child_index] = {relevant_node}
+                            
+                            #print(child_index_to_relevant_descendants_map)
                 for child_index in child_index_to_relevant_descendants_map:
                     resume_point_string += "\t\t\t\t(resume_from_node_" + str(local_root) + " in " + str(child_index_to_relevant_descendants_map[child_index]) + ") : " + str(child_index) + ";" + os.linesep
                 resume_point_string += ("\t\t\t\tTRUE : -2;" + os.linesep
@@ -1013,8 +1020,10 @@ def main():
     #sets
     parallel_synch_set = set()
     parallel_unsynch_set = set()
-    sequence_set = set()
-    selector_set = set()
+    sequence_with_memory_set = set()
+    sequence_without_memory_set = set()
+    selector_with_memory_set = set()
+    selector_without_memory_set = set()
     decorator_set = set()
     leaf_set = set()
     #-------------------------------------------------------------------------------
@@ -1023,14 +1032,14 @@ def main():
     external_status_req = []#list of nodes that require external status. each entry is the node name.
     needed_nodes=set()#the set of node types needed
     
-    next_available_id = walk_tree(root, -1, 0, children, nodes, additional_arguments, needed_nodes, node_names, variable_access, variable_check, variable_name_to_int, external_status_req, parallel_synch_set, parallel_unsynch_set, sequence_set, selector_set, decorator_set, leaf_set, parallel_policies, args.force_parallel_unsynch)
-    #print(nodes)
-    #for parent in children:
-    #    max_children = max(max_children, len(children[parent]) - 1)
+    next_available_id = walk_tree(root, -1, 0, children, nodes, additional_arguments, needed_nodes, node_names, variable_access, variable_check, variable_name_to_int, external_status_req, parallel_synch_set, parallel_unsynch_set, sequence_with_memory_set, sequence_without_memory_set, selector_with_memory_set, selector_without_memory_set, decorator_set, leaf_set, parallel_policies, args.force_parallel_unsynch)
     
-    node_to_local_root_map = create_node_to_local_root_map(nodes, parallel_synch_set, parallel_unsynch_set, sequence_set, selector_set, decorator_set, leaf_set)
-    (local_root_to_relevant_list_map, sequence_to_relevant_descendants_map) = create_local_root_to_relevant_list_map(nodes, children, node_to_local_root_map, parallel_synch_set, parallel_unsynch_set, sequence_set, selector_set, decorator_set, leaf_set)
+    node_to_local_root_map = create_node_to_local_root_map(nodes, parallel_synch_set, parallel_unsynch_set, decorator_set, leaf_set)
+
+    (local_root_to_relevant_list_map, nodes_with_memory_to_relevant_descendants_map) = create_local_root_to_relevant_list_map(nodes, children, node_to_local_root_map, parallel_synch_set, parallel_unsynch_set, sequence_with_memory_set, sequence_without_memory_set, selector_with_memory_set, selector_without_memory_set, decorator_set, leaf_set)
+    
     variable_name_cleanup(variable_name_to_int, variable_access)
+
     node_to_descendants_map = create_node_to_descendants_map(nodes, children, leaf_set)
 
     
@@ -1078,13 +1087,13 @@ def main():
     next_string += new_next
 
     
-    (new_define, new_var, new_init, new_next) = create_resume_point(sequence_set, node_to_local_root_map, local_root_to_relevant_list_map, node_to_descendants_map, children)
+    (new_define, new_var, new_init, new_next) = create_resume_point(sequence_with_memory_set, selector_with_memory_set, node_to_local_root_map, local_root_to_relevant_list_map, node_to_descendants_map, children)
     define_string += new_define
     var_string += new_var
     init_string += new_init
     next_string += new_next
 
-    (new_define, new_var, new_init, new_next) = create_nodes(nodes, children, additional_arguments, parallel_synch_set, parallel_unsynch_set, sequence_set, selector_set, decorator_set, leaf_set, parallel_policies)
+    (new_define, new_var, new_init, new_next) = create_nodes(nodes, children, additional_arguments, parallel_synch_set, parallel_unsynch_set, sequence_with_memory_set, sequence_without_memory_set, selector_with_memory_set, selector_without_memory_set, decorator_set, leaf_set, parallel_policies)
     define_string += new_define
     var_string += new_var
     init_string += new_init
@@ -1110,19 +1119,33 @@ def main():
     for needed in needed_nodes:
         nuxmv_string = nuxmv_string +  eval('node_creator.create_'+needed+'()')
     seen_children = set()
-    for selector in selector_set:
+    for selector in selector_with_memory_set:
         if len(children[selector]) in seen_children:
             pass
         else:
             seen_children.add(len(children[selector]))
-            nuxmv_string += node_creator.create_node_selector(len(children[selector]))
+            nuxmv_string += node_creator.create_node_selector_with_memory(len(children[selector]))
     seen_children = set()
-    for sequence in sequence_set:
+    for selector in selector_without_memory_set:
+        if len(children[selector]) in seen_children:
+            pass
+        else:
+            seen_children.add(len(children[selector]))
+            nuxmv_string += node_creator.create_node_selector_without_memory(len(children[selector]))
+    seen_children = set()
+    for sequence in sequence_with_memory_set:
         if len(children[sequence]) in seen_children:
             pass
         else:
             seen_children.add(len(children[sequence]))
-            nuxmv_string += node_creator.create_node_sequence(len(children[sequence]))
+            nuxmv_string += node_creator.create_node_sequence_with_memory(len(children[sequence]))
+    seen_children = set()
+    for sequence in sequence_without_memory_set:
+        if len(children[sequence]) in seen_children:
+            pass
+        else:
+            seen_children.add(len(children[sequence]))
+            nuxmv_string += node_creator.create_node_sequence_without_memory(len(children[sequence]))
     seen_children_all = set()
     seen_children_one = set()
     for parallel in (parallel_synch_set.union(parallel_unsynch_set)):

@@ -15,4 +15,4 @@ def create_root(print_pic=False):
         py_trees.display.render_dot_tree(seq1, target_directory = '../pictures')#works
     return seq1
 
-create_root(True)
+#create_root(True)

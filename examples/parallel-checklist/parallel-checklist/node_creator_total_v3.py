@@ -586,6 +586,8 @@ def create_node_non_blocking(ignored_value = 0):
                      + "\t\tinternal_status := input_status;" + os.linesep
                      + "\tVAR" + os.linesep
                      + "\t\tinput_status : {success, failure};" + os.linesep
+                     #+ "\tASSIGN" + os.linesep
+                     #+ "\t\tinit(input_status) := success;" + os.linesep
                      # + "\tCONSTANTS" + os.linesep
                      # + "\t\tsuccess, failure, running, invalid;" + os.linesep
                      # + "\tVAR" + os.linesep
@@ -606,6 +608,8 @@ def create_node_timer(ignored_value = 0):
                      + "\t\tinternal_status := input_status;" + os.linesep
                      + "\tVAR" + os.linesep
                      + "\t\tinput_status : {success, running};" + os.linesep
+                     #+ "\tASSIGN" + os.linesep
+                     #+ "\t\tinit(input_status) := success;" + os.linesep
                      # + "\tCONSTANTS" + os.linesep
                      # + "\t\tsuccess, failure, running, invalid;" + os.linesep
                      # + "\tVAR" + os.linesep
@@ -627,6 +631,8 @@ def create_node_default(ignored_value = 0):
                      + "\t\tinternal_status := input_status;" + os.linesep
                      + "\tVAR" + os.linesep
                      + "\t\tinput_status : {success, running, failure};" + os.linesep
+                     #+ "\tASSIGN" + os.linesep
+                     #+ "\t\tinit(input_status) := success;" + os.linesep
                      # + "\tCONSTANTS" + os.linesep
                      # + "\t\tsuccess, failure, running, invalid;" + os.linesep
                      # + "\tVAR" + os.linesep
@@ -640,11 +646,39 @@ def create_node_default(ignored_value = 0):
 
 #-----------------------------------------------------------------
 #composite nodes
-
-def create_node_selector(number_of_children):
+def create_node_selector_with_memory(number_of_children):
+    (status_start, status_end, active, active_end, children) = common_string_composite(number_of_children)
+    #note that resume_point is an integer between 0 and last_child (inclusive)
+    if number_of_children == 0:
+        inject_string = "resume_point"
+    else:
+        inject_string = ", resume_point"
+    return_string = ("MODULE node_selector_with_memory" + str(number_of_children) + "(" + children + inject_string + ")" + os.linesep 
+                     + status_start
+    )
+    for child in range(number_of_children):
+        #we return on first success, first running, or if everything is failure, but we skip over stuff if resuming
+        #if none of these occur, it is an error.
+        return_string += ("\t\t\t\t(" + str(child) + " >= resume_point) & !(child_" + str(child) + ".internal_status = failure) : child_" + str(child) + ".internal_status;" + os.linesep
+                          #we found something that wasn't failure, so return here.
+        )
+    return_string += ("\t\t\t\tTRUE : failure;" + os.linesep
+                      #none of our children returned success or running, which means either there was an error we caught, or we failed
+                      + status_end
+    )
+    for child in range(number_of_children):
+        if child == 0:
+            return_string += ("\t\tchild_0.active := active & (0 >= resume_point);" + os.linesep)
+            #first child is active if we are active and didn't skip it via resume_point
+        else:
+            #NEW MODIFICATION?
+            return_string += ("\t\tchild_" + str(child) + ".active := (" + str(child) + " >= resume_point) & ((" + str(child) + " = resume_point) | (child_" + str(child-1) + ".status = failure));" + os.linesep)
+            #other children are active if we are active, we didn't skip it via resume_point, and the previous child returned failure or we're resuming from this child specifically
+    return return_string
+def create_node_selector_without_memory(number_of_children):
     (status_start, status_end, active, active_end, children) = common_string_composite(number_of_children)
     
-    return_string = ("MODULE node_selector" + str(number_of_children) + "(" + children + ")" + os.linesep 
+    return_string = ("MODULE node_selector_without_memory" + str(number_of_children) + "(" + children + ")" + os.linesep 
                      + status_start
     )
     for child in range(number_of_children):
@@ -661,18 +695,17 @@ def create_node_selector(number_of_children):
             return_string += ("\t\tchild_0.active := active;" + os.linesep)
             #first child is just based on active status in a selector
         else:
-            return_string += ("\t\tchild_" + str(child) + ".active := active & child_" + str(child-1) + ".internal_status = failure;" + os.linesep)
+            return_string += ("\t\tchild_" + str(child) + ".active := child_" + str(child-1) + ".status = failure;" + os.linesep)
             #if it's not the first child, then the only thing that matters is was did the child before this one return failure?
     return return_string
-
-def create_node_sequence(number_of_children):
+def create_node_sequence_with_memory(number_of_children):
     (status_start, status_end, active, active_end, children) = common_string_composite(number_of_children)
     #note that resume_point is an integer between 0 and last_child (inclusive)
     if number_of_children == 0:
         inject_string = "resume_point"
     else:
         inject_string = ", resume_point"
-    return_string = ("MODULE node_sequence" + str(number_of_children) + "(" + children + inject_string + ")" + os.linesep 
+    return_string = ("MODULE node_sequence_with_memory" + str(number_of_children) + "(" + children + inject_string + ")" + os.linesep 
                      + status_start
     )
     for child in range(number_of_children):
@@ -690,8 +723,32 @@ def create_node_sequence(number_of_children):
             return_string += ("\t\tchild_0.active := active & (0 >= resume_point);" + os.linesep)
             #first child is active if we are active and didn't skip it via resume_point
         else:
-            return_string += ("\t\tchild_" + str(child) + ".active := active & (" + str(child) + " >= resume_point) & ((" + str(child) + " = resume_point) | (child_" + str(child-1) + ".internal_status = success));" + os.linesep)
+            return_string += ("\t\tchild_" + str(child) + ".active := (" + str(child) + " >= resume_point) & ((" + str(child) + " = resume_point) | (child_" + str(child-1) + ".status = success));" + os.linesep)
             #other children are active if we are active, we didn't skip it via resume_point, and the previous child returned success or we're resuming from this child specifically
+    return return_string
+
+def create_node_sequence_without_memory(number_of_children):
+    (status_start, status_end, active, active_end, children) = common_string_composite(number_of_children)
+    
+    return_string = ("MODULE node_sequence_without_memory" + str(number_of_children) + "(" + children + ")" + os.linesep 
+                     + status_start
+    )
+    for child in range(number_of_children):
+        #we return on first failure, first running, or if everything is success
+        return_string += ("\t\t\t\t!(child_" + str(child) + ".internal_status = success) : child_" + str(child) + ".internal_status;" + os.linesep
+                          #we found something that wasn't success, so we return here.
+        )
+    return_string += ("\t\t\t\tTRUE : success;" + os.linesep
+                      #none of our children returned failure or running, which means either there was an error we caught, or we Succeeded.
+                      + status_end
+    )
+    for child in range(number_of_children):
+        if child == 0:
+            return_string += ("\t\tchild_0.active := active;" + os.linesep)
+            #first child is just based on active status in a sequence without memory
+        else:
+            return_string += ("\t\tchild_" + str(child) + ".active := child_" + str(child-1) + ".status = success;" + os.linesep)
+            #if it's not the first child, then the only thing that matters is was did the child before this one return success (is parent active also matters)
     return return_string
 
 def create_node_parallel(number_of_children, parallel_policy_all):
