@@ -1,0 +1,7 @@
+
+LTLSPEC G( node1.status = running -> X (node1.active = TRUE));
+LTLSPEC G( node2.status = running -> X (node2.active = TRUE));
+LTLSPEC G( node_w.status = running -> X (node_w.active = TRUE));
+LTLSPEC G( node_x.status = running -> X (node_x.active = TRUE));
+LTLSPEC G( node_y.status = running -> X (node_y.active = TRUE));
+LTLSPEC G( node_z.status = running -> X (node_z.active = TRUE));
