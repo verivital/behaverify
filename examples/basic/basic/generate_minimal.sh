@@ -1,7 +1,10 @@
 #!/bin/bash
 
-files=("example0" "example1" "example2" "example3" "example4" "example5" "example6" "example7" "example8")
+files=("example0" "example1" "example2" "example3" "example4" "example5" "example6" "example7" "example8" "example9")
 versions=("BTCompiler" "leaf_v2" "total_v2" "total_v3")
+
+files=("example10")
+versions=("total_v3")
 
 
 for cur_version in ${versions[@]}; do

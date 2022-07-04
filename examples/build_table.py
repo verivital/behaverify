@@ -91,6 +91,18 @@ elif sys.argv[1] == "parallel-checklist":
     for sel in range(1, 51):
             files.append(str(sel))
             filesShort.append(str(sel))
+elif sys.argv[1] == "adv":
+
+    group_name = "checklist"
+
+    folders = ["total_adv"]
+    foldersShort = ["Total_adv"]
+    files = []
+    filesShort = []
+    for sel in range(1, 51):
+            files.append(str(sel))
+            filesShort.append(str(sel))
+    
 else:
     sys.exit("unknown arg")
 
@@ -282,6 +294,8 @@ if 'checklist' in group_name:
         elif foldersShort[i] == 'Total_v2':
             plt.plot(x_range, y_range, color = 'magenta', marker = 'x')
         elif foldersShort[i] == 'Total_v3':
+            plt.plot(x_range, y_range, color = 'black', marker = '.')
+        elif foldersShort[i] == 'Total_adv':
             plt.plot(x_range, y_range, color = 'black', marker = '.')
     plt.ylabel('Time in Seconds')
     plt.xlabel('Number of Checks in ' + group_name)
