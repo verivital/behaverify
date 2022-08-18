@@ -1,0 +1,921 @@
+#FORMERLY _internal_status
+
+#python3 behaverify.py create_root_FILE create_root_METHOD --root_args root_args_ARGS --string_args string_args_ARGS --min_val min_val_INT --max_val max_val_INT --force_parallel_unsynch --no_seperate_variable_modules --module_input_file module_input_file --specs_input_file specs_FILE --gen_modules gen_modules_INT --output_file ouput_file_FILE --module_output_file module_output_file_FILE --blackboard_output_file blackboard_output_file_FILE --overwrite 
+
+#----------------------------------------------------------------------------------------------------------------
+import argparse
+import py_trees
+import sys
+import time
+import os
+import re
+import inspect
+import operator
+import json
+#----------------------------------------------------------------------------------------------------------------
+import py_trees.console as console
+#----------------------------------------------------------------------------------------------------------------
+blackboard_needed = False
+#----------------------------------------------------------------------------------------------------------------
+#regex stuff
+blackboard_name_pattern = re.compile(r"#*(?P<blackboard_name>[^\s= ]+)\s*= \s*py_trees\.blackboard\.Blackboard\(\s*\)")
+#----------------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------------------
+'''
+root : the root node of the tree being considered
+--
+returns nodes
+nodes : a map (dictionary) from node number to a dictionary of information. contains the following information
+ name : the node's name
+ parent_id : the node_id of the parent
+ children : a list of children (node_id)
+ category : leaf, decorator, or composite
+ type : a string indicating the node type
+ variables : a list of blackboard variables the node has access to. each variable is a pair (variable_number, variable_name)
+ additional_arguments :
+'''
+def walk_tree(root, file_name = None):
+    nodes = {-1 : {'children' : []}}
+    variables = {}
+    walk_tree_recursive(root, -1, 0, nodes, {}, {}, variables)
+    variable_name_cleanup(nodes, variables)
+    if file_name:
+        with open(file_name, 'w') as f:
+            f.write(json.dump({'nodes' : nodes, 'variables' : variables}))
+    else:
+        print(nodes)
+        print(variables)
+
+def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_names, variables):
+    this_id = next_available_id #set what the current id is
+    next_available_id = next_available_id + 1 #increment what is available
+    nodes[parent_id]['children'].append(this_id) #update parent's list of children
+
+    #next, we get the name of this node, and correct for duplication
+    node_name = current_node.name
+    if node_name in node_names:
+        node_names[node_name] = node_names[node_name] + 1
+        node_name = node_name + str(node_names[node_name])
+    else:
+        node_names[node_name] = 0
+
+
+    def attempt_to_read_file():
+        nonlocal nodes,  variables
+        try:
+            try:
+                file_name = inspect.getfile(current_node.__class__)
+                with open(file_name, 'r') as f:
+                    code = f.read()
+            except:
+                code = inspect.getsource(current_node.__class__)
+        except:
+            return
+        additional_arguments = []
+        additional_initialization = []
+        additional_declaration = []
+        additional_modules = []
+        
+        blackboard_match = blackboard_name_pattern.search(code)
+        invar_string = ""
+        decl_string = ""
+        local_variables = []
+        if blackboard_match:
+            blackboard_name = blackboard_match.groupdict()['blackboard_name'].strip()
+            variable_name_pattern = re.compile(r"#*\s*" + blackboard_name + "\.(?P<variable_name>[_a-zA-Z][\w\.]+)")
+            start_loc = 0
+            done = False
+            local_variable_set = set()
+            while not done:
+                variable_match = variable_name_pattern.search(code, start_loc)
+                if variable_match:
+                    start_loc = variable_match.span()[1]
+                    variable_name = variable_match.groupdict()['variable_name'].strip()
+                    variable_name = variable_name.replace('.', '_dot_')
+                    if variable_name in local_variable_set:#already dealt with
+                        continue
+                    else:
+                        local_variable_set.add(variable_name)
+                    if variable_name in variables:
+                        var_num = variables['variable_id']
+                        variables[variable]['access'].add(this_id)
+                        variables[variable]['next_val'][this_id] = None
+                        variables[variable]['next_exist'][this_id] = True
+                    else:
+                        var_num = len(variables)
+                        variables[variable] = {
+                            'variable_id' = var_num,
+                            'min_val' = 0,
+                            'max_val' = 1,
+                            'init_val' = None,
+                            'always_exists' = True,
+                            'init_exist' = True,
+                            'global_next_mode' = True,
+                            'global_next_val' = None,
+                            'global_next_exist' = True,
+                            'next_val' = {this_id : None},
+                            'next_exist' = {this_id : True},
+                            'access' = {this_id}
+                        }
+                    local_variables.append((var_num, variable_name))
+                else:
+                    done = True
+        else:
+            variable_name = current_node.variable_name
+            variable_name = variable_name.replace('.', '_dot_')
+            if variable_name in variables:
+                var_num = variables['variable_id']
+                variables[variable]['access'].add(this_id)
+                variables[variable]['next_val'][this_id] = None
+                variables[variable]['next_exist'][this_id] = True
+            else:
+                var_num = len(variables)
+                variables[variable] = {
+                    'variable_id' = var_num,
+                    'min_val' = 0,
+                    'max_val' = 1,
+                    'init_val' = None,
+                    'always_exists' = True,
+                    'init_exist' = True,
+                    'global_next_mode' = True,
+                    'global_next_val' = None,
+                    'global_next_exist' = True,
+                    'next_val' = {this_id : None},
+                    'next_exist' = {this_id : True},
+                    'access' = {this_id}
+                }
+            local_variables.append((var_num, variable_name))
+
+        
+            
+        nodes[this_id] = {
+            'name' : node_name,
+            'parent_id' : parent_id,
+            'children' : [],
+            'category' : 'leaf',
+            'type' : 'set_blackboard_variables',
+            'variables' : local_variables,
+            'additional_arguments' : [node_name + "_STATUS"],
+            'additional_definitions' : [],
+            'additional_declaration' : ['\t\t' + node_name + '_STATUS : ' + node_name + '_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);' + os.linesep],
+            'additional_initialization' : [],
+            'additional_modules' : [
+                {
+                    'name' : node_name + '_STATUS_module',
+                    'args' : ['variables', 'variable_exists', 'node_names', 'variable_names'],
+                    'possible_values' : ['success', 'failure', 'running']
+                    'initial_value' : None,
+                    'next_value' : None
+                }
+            ]
+        }
+        return
+        
+        
+    dealt_with = False
+    try:
+        #this is to overwrite the later checks in order to directly create a specific type of node based on a variable
+        if current_node.serene_info_variable == "BlueROV_Blackboard_Node" or current_node.serene_info_variable == "BlueROV_Task_Node":
+            attempt_to_read_file()
+        elif current_node.serene_info_variable == "non_blocking":
+            nodes[this_id] = {
+                'name' : node_name,
+                'parent_id' : parent_id,
+                'children' : [],
+                'category' : 'leaf',
+                'type' : 'node_non_blocking',
+                'variables' : [],
+                'additional_arguments' : [],
+                'additional_definitions' : [],
+                'additional_declaration' : [],
+                'additional_initialization' : [],
+                'additional_modules' : []
+            }
+        dealt_with = True
+    except AttributeError as e:
+        dealt_with = False
+
+
+    try:
+        #this attemptys to detect custom blackboard code.
+        attempt_to_read_file()
+        dealt_with = True
+    except Exception:
+        dealt_with = False
+
+
+    
+
+    if dealt_with:
+        pass
+    elif isinstance(current_node, py_trees.composites.Sequence):
+        if current_node.memory:
+            nodes[this_id] = {
+                'name' : name,
+                'parent_id' : parent_id,
+                'children' : [],
+                'category' : 'composite',
+                'type' : 'sequence_with_memory',
+                'variables' : [],
+                'additional_arguments' : [],
+                'additional_definitions' : [],
+                'additional_declaration' : [],
+                'additional_initialization' : [],
+                'additional_modules' : []
+            }
+        else:
+            nodes[this_id] = {
+                'name' : name,
+                'parent_id' : parent_id,
+                'children' : [],
+                'category' : 'composite',
+                'type' : 'sequence_without_memory',
+                'variables' : [],
+                'additional_arguments' : [],
+                'additional_definitions' : [],
+                'additional_declaration' : [],
+                'additional_initialization' : [],
+                'additional_modules' : []
+            }
+    elif isinstance(current_node, py_trees.composites.Selector):
+        if current_node.memory:
+            nodes[this_id] = {
+                'name' : name,
+                'parent_id' : parent_id,
+                'children' : [],
+                'category' : 'composite',
+                'type' : 'selector_with_memory',
+                'variables' : [],
+                'additional_arguments' : [],
+                'additional_definitions' : [],
+                'additional_declaration' : [],
+                'additional_initialization' : [],
+                'additional_modules' : []
+            }
+        else:
+            nodes[this_id] = {
+                'name' : name,
+                'parent_id' : parent_id,
+                'children' : [],
+                'category' : 'composite',
+                'type' : 'selector_without_memory',
+                'variables' : [],
+                'additional_arguments' : [],
+                'additional_definitions' : [],
+                'additional_declaration' : [],
+                'additional_initialization' : [],
+                'additional_modules' : []
+            }
+    elif isinstance(current_node, py_trees.composites.Parallel):
+        cur_type = 'parallel'
+        if parallel_override == 1 or (current_node.policy.synchronise and parallel_override == 0):
+            cur_type += '_synchronized'
+            if isinstance(current_node.policy, py_trees.common.ParallelPolicy.SuccessOnAll):
+                cur_type += '_success_on_all'
+
+            elif isinstance(current_node.policy, py_trees.common.ParallelPolicy.SuccessOnOne):
+                cur_type += '_success_on_one'
+            else:
+                print('ERROR: the following parallel policy is not supported: ' + str(current_node.policy))
+                sys.exit('Unsupported Parallel Policy')
+        else:
+            cur_type += '_unsynchronized'
+            if isinstance(current_node.policy, py_trees.common.ParallelPolicy.SuccessOnAll):
+                cur_type += '_success_on_all'
+            elif isinstance(current_node.policy, py_trees.common.ParallelPolicy.SuccessOnOne):
+                cur_type += '_success_on_one'
+            else:
+                print('ERROR: the following parallel policy is not supported: ' + str(current_node.policy))
+                sys.exit('Unsupported Parallel Policy')
+        nodes[this_id] = {
+            'name' : name,
+            'parent_id' : parent_id,
+            'children' : [],
+            'category' : 'composite',
+            'type' : cur_type,
+            'variables' : [],
+            'additional_arguments' : [],
+            'additional_definitions' : [],
+            'additional_declaration' : [],
+            'additional_initialization' : [],
+            'additional_modules' : []
+        }
+    elif isinstance(current_node, py_trees.decorators.Condition):
+        nodes[this_id] = {
+            'name' : node_name,
+            'parent_id' : parent_id,
+            'children' : [],
+            'category' : 'decorator',
+            'type' : 'condition',
+            'variables' : [],
+            'additional_arguments' : [current_node.succeed_status.name.lower()],
+            'additional_definitions' : [],
+            'additional_declaration' : [],
+            'additional_initialization' : [],
+            'additional_modules' : []
+        }
+    elif isinstance(current_node, py_trees.decorators.Inverter):
+        nodes[this_id] = {
+            'name' : node_name,
+            'parent_id' : parent_id,
+            'children' : [],
+            'category' : 'decorator',
+            'type' : 'inverter',
+            'variables' : [],
+            'additional_arguments' : [],
+            'additional_definitions' : [],
+            'additional_declaration' : [],
+            'additional_initialization' : [],
+            'additional_modules' : []
+        }
+    elif isinstance(current_node, py_trees.decorators.OneShot):
+        needed_nodes.add('decorator_one_shot')
+        if current_node.policy.name == "ON_SUCCESSFUL_COMPLETION":
+            policy = 'TRUE'
+        else:
+            policy = 'FALSE'
+        nodes[this_id] = {
+            'name' : node_name,
+            'parent_id' : parent_id,
+            'children' : [],
+            'category' : 'decorator',
+            'type' : 'one_shot',
+            'variables' : [],
+            'additional_arguments' : [policy],
+            'additional_definitions' : [],
+            'additional_declaration' : [],
+            'additional_initialization' : [],
+            'additional_modules' : []
+        }
+    #there's a solid argument for combining all the X is Y types into one module, and just having 2 additional arguments for that module.
+    elif isinstance(current_node, py_trees.decorators.FailureIsRunning):
+        nodes[this_id] = {
+            'name' : node_name,
+            'parent_id' : parent_id,
+            'children' : [],
+            'category' : 'decorator',
+            'type' : 'X_is_Y',
+            'variables' : [],
+            'additional_arguments' : ['failure', 'running'],
+            'additional_definitions' : [],
+            'additional_declaration' : [],
+            'additional_initialization' : [],
+            'additional_modules' : []
+        }
+    elif isinstance(current_node, py_trees.decorators.FailureIsSuccess):
+        nodes[this_id] = {
+            'name' : node_name,
+            'parent_id' : parent_id,
+            'children' : [],
+            'category' : 'decorator',
+            'type' : 'X_is_Y',
+            'variables' : [],
+            'additional_arguments' : ['failure', 'success'],
+            'additional_definitions' : [],
+            'additional_declaration' : [],
+            'additional_initialization' : [],
+            'additional_modules' : []
+        }
+    elif isinstance(current_node, py_trees.decorators.RunningIsFailure):
+        nodes[this_id] = {
+            'name' : node_name,
+            'parent_id' : parent_id,
+            'children' : [],
+            'category' : 'decorator',
+            'type' : 'X_is_Y',
+            'variables' : [],
+            'additional_arguments' : ['running', 'failure'],
+            'additional_definitions' : [],
+            'additional_declaration' : [],
+            'additional_initialization' : [],
+            'additional_modules' : []
+        }
+    elif isinstance(current_node, py_trees.decorators.RunningIsSuccess):
+        nodes[this_id] = {
+            'name' : node_name,
+            'parent_id' : parent_id,
+            'children' : [],
+            'category' : 'decorator',
+            'type' : 'X_is_Y',
+            'variables' : [],
+            'additional_arguments' : ['running', 'success'],
+            'additional_definitions' : [],
+            'additional_declaration' : [],
+            'additional_initialization' : [],
+            'additional_modules' : []
+        }
+    elif isinstance(current_node, py_trees.decorators.SuccessIsFailure):
+        nodes[this_id] = {
+            'name' : node_name,
+            'parent_id' : parent_id,
+            'children' : [],
+            'category' : 'decorator',
+            'type' : 'X_is_Y',
+            'variables' : [],
+            'additional_arguments' : ['success', 'failure'],
+            'additional_definitions' : [],
+            'additional_declaration' : [],
+            'additional_initialization' : [],
+            'additional_modules' : []
+        }
+    elif isinstance(current_node, py_trees.decorators.SuccessIsRunning):
+        nodes[this_id] = {
+            'name' : node_name,
+            'parent_id' : parent_id,
+            'children' : [],
+            'category' : 'decorator',
+            'type' : 'X_is_Y',
+            'variables' : [],
+            'additional_arguments' : ['success', 'running'],
+            'additional_definitions' : [],
+            'additional_declaration' : [],
+            'additional_initialization' : [],
+            'additional_modules' : []
+        }
+    elif isinstance(current_node, py_trees.behaviours.CheckBlackboardVariableExists):
+        variable_name = current_node.variable_name
+        variable_name = variable_name.replace('.', '_dot_')
+        
+        if (variable_name in variables):
+            variables[variable_name]['always_exists'] = False
+            var_num = variables[variable_name]['variable_id']
+        else:
+            var_num = len(variables)
+            variables[variable_name] = {
+                'variable_id' = var_num,
+                'min_val' = 0,
+                'max_val' = 1,
+                'init_val' = None,
+                'always_exists' = True,
+                'init_exist' = True,
+                'global_next_mode' = True,
+                'global_next_val' = None,
+                'global_next_exist' = True,
+                'next_val' = {this_id : None},
+                'next_exist' = {this_id : True},
+                'access' = {this_id}
+            }
+            
+        nodes[this_id] = {
+            'name' : node_name,
+            'parent_id' : parent_id,
+            'children' : [],
+            'category' : 'leaf',
+            'type' : 'check_blackboard_variable_exists',
+            'variables' : [],
+            'additional_arguments' : ['blackboard', var_num],
+            'additional_definitions' : [],
+            'additional_declaration' : [],
+            'additional_initialization' : [],
+            'additional_modules' : []
+        }
+            
+        
+    elif isinstance(current_node, py_trees.behaviours.CheckBlackboardVariableValue):
+        variable_name = current_node.check.variable
+        variable_name = variable_name.replace('.', '_dot_')
+        
+        if (variable_name in variables):
+            var_num = variables[variable_name]['variable_id']
+        else:
+            var_num = len(variables)
+            variables[variable_name] = {
+                'variable_id' = var_num,
+                'min_val' = 0,
+                'max_val' = 1,
+                'init_val' = None,
+                'always_exists' = True,
+                'init_exist' = True,
+                'global_next_mode' = True,
+                'global_next_val' = None,
+                'global_next_exist' = True,
+                'next_val' = {},
+                'next_exist' = {},
+                'access' = {}
+            }
+        try:
+            rhs = str(int(current_node.check.value))
+        except:
+            rhs = '0'
+
+        try:
+            if current_node.check.operator is operator.eq:
+                op = '='
+            elif current_node.check.operator is operator.le:
+                op = '<='
+            elif current_node.check.operator is operator.lt:
+                op = '<'
+            elif current_node.check.operator is operator.ge:
+                op = '>='
+            elif current_node.check.operator is operator.gt:
+                op = '>'
+            elif current_node.check.operator is operator.ne:
+                op = '!='
+            else:
+                op = '='
+        except:
+            op = '='
+            
+        nodes[this_id] = {
+            'name' : node_name,
+            'parent_id' : parent_id,
+            'children' : [],
+            'category' : 'leaf',
+            'type' : 'check_blackboard_variable_value',
+            'variables' : [],
+            'additional_arguments' : ['blackboard', str(var_num), '\t\t' + node_name + '_CHECK_' + variable_name],
+            'additional_definitions' : [],
+            'additional_declaration' : ['\t\t' + node_name + '_CHECK_' + variable_name  + ' : '+ node_name + '_CHECK_' + variable_name + '_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);' + os.linesep],
+            'additional_initialization' : [],
+            'additional_modules' : [
+                {
+                    'name' : node_name + '_CHECK_' + variable_name + '_module',
+                    'args' : ['variables', 'variable_exists', 'node_names', 'variable_names'],
+                    'left_hand_side' : 'variables[variable_names.' + variable_name + ']',
+                    'operator' : op,
+                    'right_hand_side' : rhs
+                }
+            ]
+        }
+        
+    elif isinstance(current_node, py_trees.behaviours.CheckBlackboardVariableValues):
+        #leaf_node_exit(this_id)
+         #not doing the below right now. it's way too much of a pain. don't know how to deal with operator
+    elif isinstance(current_node, py_trees.behaviours.SetBlackboardVariable):
+        variable_name = current_node.variable_name
+        variable_name = variable_name.replace('.', '_dot_')
+        if variable_name in variables:
+            variables[variable_name]['access'].add(this_id)
+            variables[variable_name]['next_val'][this_id] = None
+            var_num = variables[variable_name]['variable_id']
+        else:
+            var_num = len(variables)
+            variables[variable_name] = {
+                'variable_id' = var_num,
+                'min_val' = 0,
+                'max_val' = 1,
+                'init_val' = None,
+                'always_exists' = True,
+                'init_exist' = True,
+                'global_next_mode' = True,
+                'global_next_val' = None,
+                'global_next_exist' = True,
+                'next_val' = {this_id : None},
+                'next_exist' = {this_id : True},
+                'access' = {this_id}
+            }
+
+        nodes[this_id] = {
+            'name' : node_name,
+            'parent_id' : parent_id,
+            'children' : [],
+            'category' : 'leaf',
+            'type' : 'set_blackboard_variables',
+            'variables' : [(var_num, variable_name)],
+            'additional_arguments' : [node_name + "_STATUS"],
+            'additional_definitions' : [],
+            'additional_declaration' : ['\t\t' + node_name + '_STATUS : ' + node_name + '_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);' + os.linesep],
+            'additional_initialization' : [],
+            'additional_modules' : [
+                {
+                    'name' : node_name + '_STATUS_module',
+                    'args' : ['variables', 'variable_exists', 'node_names', 'variable_names'],
+                    'possible_values' : ['success', 'failure', 'running']
+                    'initial_value' : None,
+                    'next_value' : None
+                }
+            ]
+        }
+        
+    
+    elif isinstance(current_node, py_trees.behaviours.UnsetBlackboardVariable):
+        variable_name = current_node.key
+        variable_name = variable_name.replace('.', '_dot_')
+        if variable_name in variables:
+            variables[variable_name]['access'].add(this_id)
+            variables[variable_name]['next_val'][this_id] = None
+            variables[variable_name]['always_exists'] = False
+            variables[variable_name]['next_exist'][this_id] = False
+            variables[variable_name]['global_next_exist'] = False
+            var_num = variables[variable_name]['variable_id']
+        else:
+            var_num = len(variables)
+            variables[variable_name] = {
+                'variable_id' = var_num,
+                'min_val' = 0,
+                'max_val' = 1,
+                'init_val' = None,
+                'always_exists' = False,
+                'init_exist' = True,
+                'global_next_mode' = True,
+                'global_next_val' = None,
+                'global_next_exist' = False,
+                'next_val' = {this_id : None},
+                'next_exist' = {this_id : False},
+                'access' = {this_id}
+            }
+
+        nodes[this_id] = {
+            'name' : node_name,
+            'parent_id' : parent_id,
+            'children' : [],
+            'category' : 'leaf',
+            'type' : 'unset_blackboard_variables',
+            'variables' : [(var_num, variable_name)],
+            'additional_arguments' : [],
+            'additional_definitions' : [],
+            'additional_declaration' : [],
+            'additional_initialization' : [],
+            'additional_modules' : []
+        }
+        
+    elif isinstance(current_node, py_trees.behaviours.WaitForBlackboardVariable):
+        variable_name = current_node.variable_name
+        variable_name = variable_name.replace('.', '_dot_')
+        
+        if (variable_name in variables):
+            variables[variable_name]['always_exists'] = False
+            var_num = variables[variable_name]['variable_id']
+        else:
+            var_num = len(variables)
+            variables[variable_name] = {
+                'variable_id' = var_num,
+                'min_val' = 0,
+                'max_val' = 1,
+                'init_val' = None,
+                'always_exists' = True,
+                'init_exist' = True,
+                'global_next_mode' = True,
+                'global_next_val' = None,
+                'global_next_exist' = True,
+                'next_val' = {this_id : None},
+                'next_exist' = {this_id : True},
+                'access' = {this_id}
+            }
+            
+        nodes[this_id] = {
+            'name' : node_name,
+            'parent_id' : parent_id,
+            'children' : [],
+            'category' : 'leaf',
+            'type' : 'wait_for_blackboard_variable',
+            'variables' : [],
+            'additional_arguments' : ['blackboard', var_num],
+            'additional_definitions' : [],
+            'additional_declaration' : [],
+            'additional_initialization' : [],
+            'additional_modules' : []
+        }
+            
+        
+    elif isinstance(current_node, py_trees.behaviours.WaitForBlackboardVariableValue):
+        variable_name = current_node.check.variable
+        variable_name = variable_name.replace('.', '_dot_')
+        if (variable_name in variables):
+            var_num = variables[variable_name]['variable_id']
+        else:
+            var_num = len(variables)
+            variables[variable_name] = {
+                'variable_id' = var_num,
+                'min_val' = 0,
+                'max_val' = 1,
+                'init_val' = None,
+                'always_exists' = True,
+                'init_exist' = True,
+                'global_next_mode' = True,
+                'global_next_val' = None,
+                'global_next_exist' = True,
+                'next_val' = {},
+                'next_exist' = {},
+                'access' = {}
+            }
+        try:
+            rhs = str(int(current_node.check.value))
+        except:
+            rhs = '0'
+
+        try:
+            if current_node.check.operator is operator.eq:
+                op = '='
+            elif current_node.check.operator is operator.le:
+                op = '<='
+            elif current_node.check.operator is operator.lt:
+                op = '<'
+            elif current_node.check.operator is operator.ge:
+                op = '>='
+            elif current_node.check.operator is operator.gt:
+                op = '>'
+            elif current_node.check.operator is operator.ne:
+                op = '!='
+            else:
+                op = '='
+        except:
+            op = '='
+            
+        nodes[this_id] = {
+            'name' : node_name,
+            'parent_id' : parent_id,
+            'children' : [],
+            'category' : 'leaf',
+            'type' : 'wait_for_blackboard_variable_value',
+            'variables' : [],
+            'additional_arguments' : ['blackboard', str(var_num), '\t\t' + node_name + '_CHECK_' + variable_name],
+            'additional_definitions' : [],
+            'additional_declaration' : ['\t\t' + node_name + '_CHECK_' + variable_name  + ' : '+ node_name + '_CHECK_' + variable_name + '_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);' + os.linesep],
+            'additional_initialization' : [],
+            'additional_modules' : [
+                {
+                    'name' : node_name + '_CHECK_' + variable_name + '_module',
+                    'args' : ['variables', 'variable_exists', 'node_names', 'variable_names'],
+                    'left_hand_side' : 'variables[variable_names.' + variable_name + ']',
+                    'operator' : op,
+                    'right_hand_side' : rhs
+                }
+            ]
+        }
+        
+    elif isinstance(current_node, py_trees.behaviours.Count):
+        nodes[this_id] = {
+            'name' : node_name,
+            'parent_id' : parent_id,
+            'children' : [],
+            'category' : 'leaf',
+            'type' : 'count',
+            'variables' : [],
+            'additional_arguments' : [str(current_node.fail_until), str(current_node.running_until), str(current_node.success_until), str(current_node.reset).upper()],
+            'additional_definitions' : [],
+            'additional_declaration' : [],
+            'additional_initialization' : [],
+            'additional_modules' : []
+        }
+        
+    elif isinstance(current_node, py_trees.behaviours.Failure):
+        nodes[this_id] = {
+            'name' : node_name,
+            'parent_id' : parent_id,
+            'children' : [],
+            'category' : 'leaf',
+            'type' : 'failure',
+            'variables' : [],
+            'additional_arguments' : [],
+            'additional_definitions' : [],
+            'additional_declaration' : [],
+            'additional_initialization' : [],
+            'additional_modules' : []
+        }
+        
+    elif isinstance(current_node, py_trees.behaviours.Periodic):
+        nodes[this_id] = {
+            'name' : node_name,
+            'parent_id' : parent_id,
+            'children' : [],
+            'category' : 'leaf',
+            'type' : 'periodic',
+            'variables' : [],
+            'additional_arguments' : [str(current_node.period)],
+            'additional_definitions' : [],
+            'additional_declaration' : [],
+            'additional_initialization' : [],
+            'additional_modules' : []
+        }
+        
+    elif isinstance(current_node, py_trees.behaviours.Running):
+        nodes[this_id] = {
+            'name' : node_name,
+            'parent_id' : parent_id,
+            'children' : [],
+            'category' : 'leaf',
+            'type' : 'running',
+            'variables' : [],
+            'additional_arguments' : [],
+            'additional_definitions' : [],
+            'additional_declaration' : [],
+            'additional_initialization' : [],
+            'additional_modules' : []
+        }
+        
+    elif isinstance(current_node, py_trees.behaviours.StatusSequence):
+        sequence_definition = "\t\tsequence_for_" + node_name + '_' + str(this_id) + " := " + str(current_node.sequence) + ";" + os.linesep
+        if current_node.eventually is None:
+            eventually = 'invalid'
+        else:
+            eventually = current_node.eventually.name.lower()
+        nodes[this_id] = {
+            'name' : node_name,
+            'parent_id' : parent_id,
+            'children' : [],
+            'category' : 'leaf',
+            'type' : 'status_sequence',
+            'variables' : [],
+            'additional_arguments' : ['sequence_for_' + node_name + '_' + str(this_id), str(len(current_node.sequence)), eventually],
+            'additional_definitions' : [sequence_definition],
+            'additional_declaration' : [],
+            'additional_initialization' : [],
+            'additional_modules' : []
+        }
+        
+    elif isinstance(current_node, py_trees.behaviours.Success):
+        nodes[this_id] = {
+            'name' : node_name,
+            'parent_id' : parent_id,
+            'children' : [],
+            'category' : 'leaf',
+            'type' : 'success',
+            'variables' : [],
+            'additional_arguments' : [],
+            'additional_definitions' : [],
+            'additional_declaration' : [],
+            'additional_initialization' : [],
+            'additional_modules' : []
+        }
+        
+    elif isinstance(current_node, py_trees.behaviours.SuccessEveryN):
+        nodes[this_id] = {
+            'name' : node_name,
+            'parent_id' : parent_id,
+            'children' : [],
+            'category' : 'leaf',
+            'type' : 'success_every_n',
+            'variables' : [],
+            'additional_arguments' : [str(current_node.every_n)],
+            'additional_definitions' : [],
+            'additional_declaration' : [],
+            'additional_initialization' : [],
+            'additional_modules' : []
+        }
+        
+    elif isinstance(current_node, py_trees.behaviours.TickCounter):
+        nodes[this_id] = {
+            'name' : node_name,
+            'parent_id' : parent_id,
+            'children' : [],
+            'category' : 'leaf',
+            'type' : 'tick_counter',
+            'variables' : [],
+            'additional_arguments' : [str(current_node.duration), current_node.completion_status.name.lower()],
+            'additional_definitions' : [],
+            'additional_declaration' : [],
+            'additional_initialization' : [],
+            'additional_modules' : []
+        }
+        
+    elif isinstance(current_node, py_trees.timers.Timer):
+        nodes[this_id] = {
+            'name' : node_name,
+            'parent_id' : parent_id,
+            'children' : [],
+            'category' : 'leaf',
+            'type' : 'timer',
+            'variables' : [],
+            'additional_arguments' : [],
+            'additional_definitions' : [],
+            'additional_declaration' : [],
+            'additional_initialization' : [],
+            'additional_modules' : []
+        }
+        
+    else:#currently defaulting to default. will rework this later probably
+        nodes[this_id] = {
+            'name' : node_name,
+            'parent_id' : parent_id,
+            'children' : [],
+            'category' : 'leaf',
+            'type' : 'default',
+            'variables' : [],
+            'additional_arguments' : [],
+            'additional_definitions' : [],
+            'additional_declaration' : [],
+            'additional_initialization' : [],
+            'additional_modules' : []
+        }
+        
+
+    if nodes[this_id]['type'] == 'leaf':
+        pass
+    else:
+        for child in current_node.children:
+            next_available_id = walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_names,  variables)
+    return next_available_id
+
+
+
+#CONSIDER REPLACING THIS ON THE FLY?
+#fixes some _dot_ variable nesting problems
+"""
+does not return anything. simply modifies the existing structures.
+this segment is to detect and create sub-variables
+i.e., if a variable in the original was just "meh = Object"
+but other places use meh.val1, meh.val2, etc, then the original "meh" needs to handle those.
+"""
+def variable_name_cleanup(variables, nodes):
+    for variable in variables:
+        variable_regex = re.compile(r""+variable+"_dot_")#if out variable is meh, we are now matching meh_dot_
+        for child_variable in variables:
+            if variable_regex.match(child_variable):#if this is true, then is means we are looking at meh_dot_something
+                for access_node in variables[variable]['access']:#we are now going to tell everything that can change meh, that it can change meh_dot_something
+                    nodes[access_node]['variables'].append((variables[child_variable]['variable_id'], child_variable))#told the node it can access this variable
+                    variables[child_variable]['access'].add(access_node)#told the variable it can be accessed by this node
+                    variables[child_variable]['next_val'][access_node] = None#updated what the next value for this specific node is
+                    variables[child_variable]['next_exist'][access_node] = True #updated what the next exist value is for this specific node
+
+
