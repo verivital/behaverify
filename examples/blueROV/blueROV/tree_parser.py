@@ -56,12 +56,19 @@ variables : a map (dictionary) from variable name to information about the varia
  'access' = a set of node_ids that have access to change the value of the variable
 
 '''
+
+def set_default(obj):
+    if isinstance(obj, set):
+        return list(obj)
+
 def walk_tree(root, file_name = None):
     nodes = {-1 : {'children' : []}}
     variables = {}
     walk_tree_recursive(root, -1, 0, nodes, {}, variables)
     variable_name_cleanup(nodes, variables)
     nodes.pop(-1)
+    #print(nodes)
+    #print(nodes[0])
     if file_name:
         with open(file_name, 'w') as f:
             printer = pprint.PrettyPrinter(indent = 4, sort_dicts = False, stream = f)
@@ -954,7 +961,7 @@ def main():
     arg_parser.add_argument('root_method')
     arg_parser.add_argument('--root_args', default='', nargs='*')
     arg_parser.add_argument('--string_args', default='', nargs='*')
-    arg_parser.add_argument('--output_file', default = None)
+    arg_parser.add_argument('--json_file', default = None)
     args=arg_parser.parse_args()
 
     module = __import__(args.root_file.replace('.py', ''))
@@ -975,6 +982,6 @@ def main():
             root_string += ', ' + '\'' + string_arg + '\''
     root_string += ')'
     root = eval(root_string)
-    walk_tree(root, args.output_file)
+    walk_tree(root, args.json_file)
 
 main()
