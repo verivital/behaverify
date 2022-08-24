@@ -4,7 +4,7 @@ import os
 import re
 import pprint
 #----------------------------------------------------------------------------------------------------------------
-#todo: add a way to delete variables and change access
+#todo: add a way to delete variables
 
 def main():
 
@@ -12,28 +12,8 @@ def main():
     #python3 behaverify.py create_root_FILE create_root_METHOD --root_args root_args_ARGS --string_args string_args_ARGS --min_val min_val_INT --max_val max_val_INT --force_parallel_unsynch --no_seperate_variable_modules --module_input_file module_input_file --specs_input_file specs_FILE --gen_modules gen_modules_INT --output_file ouput_file_FILE --module_output_file module_output_file_FILE --blackboard_output_file blackboard_output_file_FILE --overwrite 
     arg_parser.add_argument('input_file') 
     arg_parser.add_argument('--output_file', default = None)
-    
     arg_parser.add_argument('--interactive_mode', action = 'store_true')
     arg_parser.add_argument('--instruction_file', action = 'store_true')
-    
-    arg_parser.add_argument('--force_parallel_unsynch', action = 'store_true')
-    arg_parser.add_argument('--force_parallel_synch', action = 'store_true')
-    arg_parser.add_argument('--force_selector_memory', action = 'store_true')
-    arg_parser.add_argument('--force_selector_memoryless', action = 'store_true')
-    arg_parser.add_argument('--force_sequence_memory', action = 'store_true')
-    arg_parser.add_argument('--force_sequence_memoryless', action = 'store_true')
-    
-    arg_parser.add_argument('--min_val', default = None)
-    arg_parser.add_argument('--max_val', default = None)
-    arg_parser.add_argument('--init_value', default = None)
-    arg_parser.add_argument('--next_value', default = None)
-    arg_parser.add_argument('--use_global_value', action = 'store_true')
-    arg_parser.add_argument('--use_individual_value', action = 'store_true')
-    arg_parser.add_argument('--always_exist', action = 'store_true')
-    arg_parser.add_argument('--sometimes_exist', action = 'store_true')
-    arg_parser.add_argument('--init_exist', default = None)
-    arg_parser.add_argument('--next_exist', default = None)
-    
     args = arg_parser.parse_args()
 
 
@@ -42,18 +22,6 @@ def main():
         temp = eval(f.read())
     nodes = temp['nodes']
     variables = temp['variables']
-
-    if args.force_parallel_synch:
-        for node_id in nodes:
-            node = nodes[node_id]
-            if node['category'] == 'composite' and 'parallel_synchronized' in node['type']:
-                node['type'] = node['type'].replace('_synchronized', '_unsynchronized')
-    if args.force_parallel_unsynch:
-        for node_id in nodes:
-            node = nodes[node_id]
-            if node['category'] == 'composite' and 'parallel_unsynchronized' in node['type']:
-                node['type'] = node['type'].replace('_unsynchronized', '_synchronized')
-            
 
     if args.interactive_mode:
         done = False
@@ -110,7 +78,9 @@ def main():
                 done = True
             else:
                 print('input was not y or n')
-    if args.instruction_file:
+    elif args.instruction_file:
+        pass
+    else:
         pass
 
     if args.output_file:
