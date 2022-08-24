@@ -233,33 +233,13 @@ def create_names_module(variable_to_int, nodes):
                           
     return return_string
 #def create_blackboard(variable_to_int, variable_access, nodes):
-def create_blackboard(int_to_variable, variable_to_int, variable_access, nodes, no_seperate_modules, min_val = 0, max_val = 1):
+def create_blackboard(nodes, variables):
     
     return_string = ("MODULE blackboard_module(node_names, variable_names, statuses)" + os.linesep
                       + "\tCONSTANTS" + os.linesep
-                      + "\t\tsuccess, failure, running, invalid;" + os.linesep
-                      + "\tDEFINE" + os.linesep)
-    #if variable_to_int:
-    if int_to_variable and not no_seperate_modules:
-        var_array_string = ("\t\tvariables := [")
-        var_exist_string = ("\t\tvariable_exists := [")
-        decl_string = ("\tVAR" + os.linesep)
-        #for variable in variable_to_int:
-        for i in range(len(int_to_variable)):
-            variable = int_to_variable[i]
-            var_array_string += (variable + "_SET." + variable + ", ")
-            var_exist_string += (variable + "_SET." + variable + "_exists, ")
-            set_string="{"
-            if variable_to_int[variable] in variable_access:
-                for node in variable_access[variable]:
-                    set_string += str(node) + ", "
-            else:
-                set_string += "-1, "
-            decl_string += ("\t\t" + variable + "_SET : " + variable + "_SET_module(variables, variable_exists, node_names, variable_names, statuses);" + os.linesep)
-        return_string += (var_array_string[0:-2] + "];" + os.linesep
-                          + var_exist_string[0:-2] + "];" + os.linesep
-                          + decl_string)
-    elif int_to_variable:
+                      + "\t\tsuccess, failure, running, invalid;" + os.linesep)
+    if variables:
+        return_string += "\tDEFINE" + os.linesep
         var_array_string = ("\t\tvariables := [")
         var_exist_string = ("\t\tvariable_exists := [")
         exist_define = ""
@@ -270,16 +250,40 @@ def create_blackboard(int_to_variable, variable_to_int, variable_access, nodes, 
             poss_values = poss_values + str(i) + ", "
         poss_values = poss_values[0:-2] + "}"
         #for variable in variable_to_int:
-        for i in range(len(int_to_variable)):
-            variable = int_to_variable[i]
-            var_array_string += (variable + ", ")
-            var_exist_string += (variable + "_exists, ")
-            exist_define += "\t\t" + variable + "_exists := TRUE;" + os.linesep
-            decl_string += ("\t\t" + variable + " : " + str(min_val) + ".." + str(max_val) + ";" + os.linesep)
-            assign_string += ("\t\tinit(" + variable + ") := " + str(min_val) +";" + os.linesep
-                              + "\t\tnext(" + variable + ") := " + os.linesep
-                              + "\t\t\tcase" + os.linesep
-            )
+        for variable_name in variables:
+            variable = variables[variable_name]
+            var_array_string += (variable_name + ", ")
+            var_exist_string += (variable_name + "_exists, ")
+            if variable['min_val'] < variable['max_val']:
+                poss_values="{"
+                for i in range(min_val, max_val+1):
+                    poss_values = poss_values + str(i) + ", "
+                poss_values = poss_values[0:-2] + "}"
+                decl_string += ("\t\t" + variable_name + " : " + str(variable['min_val']) + ".." + str(variable['max_val']) + ";" + os.linesep)
+                if variable['init_val']:
+                    assign_string += ("\t\tinit(" + variable_name + ") := " + str(min_val) +";" + os.linesep)
+                if variable['global_next_mode']:
+                    if variable['global_next_val']:
+                        assign_string += "\t\tnext(" + variable_name + ") := " + poss_values + ';' os.linesep
+                else:
+                    assign_this = False
+                    assign_string2 = ("\t\tnext(" + variable_name + ") := " + os.linesep
+                                       + "\t\t\tcase" + os.linesep
+                                    )
+                    for node_id in variable['next_val']:
+                        if variable['next_val'][node_id]:
+                            assign_this = True
+                            for condition_pair in variable['next_val'][node_id]:
+                                assign_string2 += "\t\t\t\t" + condition[0] + ' : ' + condition[1] + ';' + os.linesep
+                    assign_string2 += "\t\t\tesac;" + os.linesep
+                    if assign_this:
+                        assign_string += assign_string2
+                if variable['always_exists']:
+                    exist_define += "\t\t" + variable + "_exists := TRUE;" + os.linesep
+                else:
+                    if variable['global_next_mode']:
+                        assign_string += "\t\t" + variable + "_exists := " + variable['next_exist'] + ';' + os.linesep
+                        
             if variable_to_int[variable] in variable_access:
                 for node in variable_access[variable]:
                     assign_string += "\t\t\t\t(statuses[node_names." + nodes[node][2] + "] = success) : " + poss_values + ";" + os.linesep
