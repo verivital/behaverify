@@ -43,8 +43,8 @@ nodes : a map (dictionary) from node number to a dictionary of information. cont
 
 variables : a map (dictionary) from variable name to information about the variable
  'variable_id' = the id (int) associated with the variable. used for ordering the blackboard
- 'min_val' = the minimum value (int) the variable can be. default '0'
- 'max_val' = the maximum value (int) the variable can be. default '1
+ 'min_val' = the minimum value (int) the variable can be. default 0
+ 'max_val' = the maximum value (int) the variable can be. default 1
  'init_val' = the value used at the very start. default None
  'always_exists' = whether this variable always exists. default True
  'init_exist' = whether this variable initially exists. default True
