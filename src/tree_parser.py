@@ -51,10 +51,9 @@ variables : a map (dictionary) from variable name to information about the varia
  'global_next_mode' = whether this variable uses only on next statement for everything. default True
  'global_next_val' = what the next value for this variable is when using only one statement for everything. default True
  'global_next_exist' = whether this variable exists by default at the next step. default True,
- 'next_val' = a map (dictionary) from node id to what value that node assigns, default, each node maps to None
- 'next_exist' = a map (dictionary) from node id to if that node makes the variable exist, default, each node maps to True
+ 'next_val' = a map (dictionary) from node id to what value that node assign. each node maps to a list of pairs (condition, value). default, each node maps to None. 
+ 'next_exist' = a map (dictionary) from node id to if that node makes the variable exist. each node maps to a list of pairs (condition, value). default, each node maps to True
  'access' = a set of node_ids that have access to change the value of the variable
-
 '''
 def walk_tree(root, file_name = None):
     nodes = {-1 : {'children' : []}}
