@@ -240,15 +240,19 @@ def create_blackboard(nodes, variables):
                       + "\t\tsuccess, failure, running, invalid;" + os.linesep)
     if variables:
         return_string += "\tDEFINE" + os.linesep
-        var_array_string = ("\t\tvariables := [")
-        var_exist_string = ("\t\tvariable_exists := [")
+        var_array_string = ("\t\tvariables := ")
+        var_exist_stringx = ("\t\tvariable_exists := ")
         exist_define = ""
         decl_string = ("\tVAR" + os.linesep)
         assign_string = ("\tASSIGN" + os.linesep)
+
+        var_array = ['']*len(variables)
+        var_exist_array = ['']*len(variables)
+        
         for variable_name in variables:
             variable = variables[variable_name]
-            var_array_string += (variable_name + ", ")
-            var_exist_string += (variable_name + "_exists, ")
+            var_array[variable['variable_id']] = variable_name
+            var_exist_array[variable['variable_id']] = variable_name + "_exists"
             if variable['min_val'] < variable['max_val']:
                 poss_values="{"
                 for i in range(min_val, max_val+1):
@@ -276,8 +280,23 @@ def create_blackboard(nodes, variables):
                 if variable['always_exists']:
                     exist_define += "\t\t" + variable + "_exists := TRUE;" + os.linesep
                 else:
+                    if variable['init_exist']:
+                        assign_string += "\t\tinit(" + variable + "_exists) := " + variable['init_exist'] + ";" + os.linesep
                     if variable['global_next_mode']:
-                        assign_string += "\t\t" + variable + "_exists := " + variable['next_exist'] + ';' + os.linesep
+                        assign_string += "\t\tnext(" + variable + "_exists) := " + variable['next_exist'] + ';' + os.linesep
+                    else:
+                        assign_this = False
+                        assign_string2 = ("\t\tnext(" + variable_name + ") := " + os.linesep
+                                           + "\t\t\tcase" + os.linesep
+                                        )
+                        for node_id in variable['next_exist']:
+                            if variable['next_exist'][node_id]:
+                                assign_this = True
+                                for condition_pair in variable['next_exist'][node_id]:
+                                    assign_string2 += "\t\t\t\t" + condition[0] + ' : ' + condition[1] + ';' + os.linesep
+                        assign_string2 += "\t\t\tesac;" + os.linesep
+                        if assign_this:
+                            assign_string += assign_string2
                         
             if variable_to_int[variable] in variable_access:
                 for node in variable_access[variable]:
@@ -285,8 +304,8 @@ def create_blackboard(nodes, variables):
             assign_string +=("\t\t\t\tTRUE : " + variable + ";" + os.linesep
                 + "\t\t\tesac;" + os.linesep
             )
-        return_string += (var_array_string[0:-2] + "];" + os.linesep
-                          + var_exist_string[0:-2] + "];" + os.linesep
+        return_string += (var_array_string + str(var_array) + ";" + os.linesep
+                          + var_exist_string + str(var_exist_array) + ";" + os.linesep
                           + exist_define
                           + decl_string
                           + assign_string

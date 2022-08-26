@@ -23,16 +23,20 @@ def main():
     arg_parser.add_argument('--force_sequence_memory', action = 'store_true')
     arg_parser.add_argument('--force_sequence_memoryless', action = 'store_true')
     
-    arg_parser.add_argument('--min_val', default = None)
-    arg_parser.add_argument('--max_val', default = None)
+    arg_parser.add_argument('--min_value', default = None)
+    arg_parser.add_argument('--max_value', default = None)
     arg_parser.add_argument('--init_value', default = None)
+    arg_parser.add_argument('--no_init_value', action = 'store_true')
     arg_parser.add_argument('--next_value', default = None)
+    arg_parser.add_argument('--no_next_value', action = 'store_true')
     arg_parser.add_argument('--use_global_value', action = 'store_true')
     arg_parser.add_argument('--use_individual_value', action = 'store_true')
     arg_parser.add_argument('--always_exist', action = 'store_true')
     arg_parser.add_argument('--sometimes_exist', action = 'store_true')
     arg_parser.add_argument('--init_exist', default = None)
+    arg_parser.add_argument('--no_init_exist', action = 'store_true')
     arg_parser.add_argument('--next_exist', default = None)
+    arg_parser.add_argument('--no_next_exist', action = 'store_true')
     
     args = arg_parser.parse_args()
 
@@ -53,8 +57,55 @@ def main():
             node = nodes[node_id]
             if node['category'] == 'composite' and 'parallel_unsynchronized' in node['type']:
                 node['type'] = node['type'].replace('_unsynchronized', '_synchronized')
-            
+    if args.force_selector_memory:
+        for node_id in nodes:
+            node = nodes[node_id]
+            if node['category'] == 'composite' and 'selector_without_memory' == node['type']:
+                node['type'] = 'selector_with_memory'
+    if args.force_selector_memoryless:
+        for node_id in nodes:
+            node = nodes[node_id]
+            if node['category'] == 'composite' and 'selector_with_memory' == node['type']:
+                node['type'] = 'selector_without_memory'
+    if args.force_sequence_memory:
+        for node_id in nodes:
+            node = nodes[node_id]
+            if node['category'] == 'composite' and 'sequence_without_memory' == node['type']:
+                node['type'] = 'sequence_with_memory'
+    if args.force_sequence_memoryless:
+        for node_id in nodes:
+            node = nodes[node_id]
+            if node['category'] == 'composite' and 'sequence_with_memory' == node['type']:
+                node['type'] = 'sequence_without_memory'
 
+
+    for variable_name in variables:
+        variable = variables[variable_name]
+        if args.min_value:
+            variable['min_val'] = int(args.min_value)
+        if args.max_value:
+            variable['max_val'] = int(args.max_value)
+        if args.init_value:
+            variable['init_val'] = int(args.init_value)
+        if args.no_init_value:
+            variable['init_val'] = None
+        if args.next_value:
+            variable['global_next_value'] = args.next_value
+        if args.no_next_value:
+            variable['global_next_value'] = None
+        if args.use_global_value:
+            variable['global_next_mode'] = True
+        if args.use_individual_value:
+            variable['global_next_mode'] = False
+        if args.always_exist:
+            variable['always_exists'] = True
+    arg_parser.add_argument('--always_exist', action = 'store_true')
+    arg_parser.add_argument('--sometimes_exist', action = 'store_true')
+    arg_parser.add_argument('--init_exist', default = None)
+    arg_parser.add_argument('--no_init_exist', action = 'store_true')
+    arg_parser.add_argument('--next_exist', default = None)
+    arg_parser.add_argument('--no_next_exist', action = 'store_true')
+        
     if args.interactive_mode:
         done = False
         while not done:
