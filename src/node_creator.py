@@ -245,11 +245,6 @@ def create_blackboard(nodes, variables):
         exist_define = ""
         decl_string = ("\tVAR" + os.linesep)
         assign_string = ("\tASSIGN" + os.linesep)
-        poss_values="{"
-        for i in range(min_val, max_val+1):
-            poss_values = poss_values + str(i) + ", "
-        poss_values = poss_values[0:-2] + "}"
-        #for variable in variable_to_int:
         for variable_name in variables:
             variable = variables[variable_name]
             var_array_string += (variable_name + ", ")
