@@ -1,0 +1,17 @@
+[
+	{
+		'target' : 'global_flags',
+		'instructions' : [
+					'--force_parallel_unsynch',
+					'--force_selector_memoryless',
+					'--force_sequence_memory'
+				]	
+	},
+	{
+		'target' : 'variable',
+		'name' : 'battery',
+		'instructions' : [
+			       ]
+
+	}
+]
