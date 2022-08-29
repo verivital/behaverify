@@ -9,7 +9,6 @@ import pprint
 def main():
 
     arg_parser = argparse.ArgumentParser()
-    #python3 behaverify.py create_root_FILE create_root_METHOD --root_args root_args_ARGS --string_args string_args_ARGS --min_val min_val_INT --max_val max_val_INT --force_parallel_unsynch --no_seperate_variable_modules --module_input_file module_input_file --specs_input_file specs_FILE --gen_modules gen_modules_INT --output_file ouput_file_FILE --module_output_file module_output_file_FILE --blackboard_output_file blackboard_output_file_FILE --overwrite 
     arg_parser.add_argument('input_file') 
     arg_parser.add_argument('--output_file', default = None)
     
@@ -47,12 +46,13 @@ def main():
     nodes = temp['nodes']
     variables = temp['variables']
 
-    if args.force_parallel_synch:
+    if args.force_parallel_unsynch:
         for node_id in nodes:
             node = nodes[node_id]
             if node['category'] == 'composite' and 'parallel_synchronized' in node['type']:
                 node['type'] = node['type'].replace('_synchronized', '_unsynchronized')
-    if args.force_parallel_unsynch:
+                node['type'] = node['type'].replace('success_on_one', 'success_on_all')
+    if args.force_parallel_synch:
         for node_id in nodes:
             node = nodes[node_id]
             if node['category'] == 'composite' and 'parallel_unsynchronized' in node['type']:
@@ -98,13 +98,17 @@ def main():
         if args.use_individual_value:
             variable['global_next_mode'] = False
         if args.always_exist:
-            variable['always_exists'] = True
-    arg_parser.add_argument('--always_exist', action = 'store_true')
-    arg_parser.add_argument('--sometimes_exist', action = 'store_true')
-    arg_parser.add_argument('--init_exist', default = None)
-    arg_parser.add_argument('--no_init_exist', action = 'store_true')
-    arg_parser.add_argument('--next_exist', default = None)
-    arg_parser.add_argument('--no_next_exist', action = 'store_true')
+            variable['always_exist'] = True
+        if args.sometimes_exist:
+            variable['always_exist'] = False
+        if args.init_exist:
+            variable['init_exist'] = bool(args.init_exist)
+        if args.no_init_exist:
+            variable['init_exist'] = None
+        if args.next_exist:
+            variable['next_exist'] = bool(args.next_exist)
+        if args.no_next_exist:
+            variable['no_next_exist'] = None
         
     if args.interactive_mode:
         done = False

@@ -1,6 +1,4 @@
-#FORMERLY _internal_status
-
-#python3 behaverify.py create_root_FILE create_root_METHOD --root_args root_args_ARGS --string_args string_args_ARGS --min_val min_val_INT --max_val max_val_INT --force_parallel_unsynch --no_seperate_variable_modules --module_input_file module_input_file --specs_input_file specs_FILE --gen_modules gen_modules_INT --output_file ouput_file_FILE --module_output_file module_output_file_FILE --blackboard_output_file blackboard_output_file_FILE --overwrite 
+#python3 tree_parser.py root_file root_method --root_args ROOT_ARGS --string_args STRING_ARGS --output_file OUTPUT_FILE
 
 #----------------------------------------------------------------------------------------------------------------
 import argparse
@@ -37,21 +35,21 @@ nodes : a map (dictionary) from node number to a dictionary of information. cont
  'variables' : a list of blackboard variables the node has access to. each variable is a pair (variable_number, variable_name)
  'additional_arguments' : a list of additional arguments that the node will need,
  'additional_definitions' : a list of additional definitions needed by the node (declared in MAIN),
- 'additional_declaration' : a list of additional variables to declare,
- 'additional_initialization' : a list of assignments for variables,
+ 'additional_declarations' : a list of additional variables to declare,
+ 'additional_initializations' : a list of assignments for variables,
  'additional_modules' : a list of additional modules to be created
 
 variables : a map (dictionary) from variable name to information about the variable
  'variable_id' = the id (int) associated with the variable. used for ordering the blackboard
- 'min_val' = the minimum value (int) the variable can be. default 0
- 'max_val' = the maximum value (int) the variable can be. default 1
- 'init_val' = the value used at the very start. default None
- 'always_exists' = whether this variable always exists. default True
+ 'min_value' = the minimum value (int) the variable can be. default 0
+ 'max_value' = the maximum value (int) the variable can be. default 1
+ 'init_value' = the value used at the very start. default None
+ 'always_exist' = whether this variable always exists. default True
  'init_exist' = whether this variable initially exists. default True
  'global_next_mode' = whether this variable uses only on next statement for everything. default True
- 'global_next_val' = what the next value for this variable is when using only one statement for everything. default True
+ 'global_next_value' = what the next value for this variable is when using only one statement for everything. default True
  'global_next_exist' = whether this variable exists by default at the next step. default True,
- 'next_val' = a map (dictionary) from node id to what value that node assign. each node maps to a list of pairs (condition, value). default, each node maps to None. 
+ 'next_value' = a map (dictionary) from node id to what value that node assign. each node maps to a list of pairs (condition, value). default, each node maps to None. 
  'next_exist' = a map (dictionary) from node id to if that node makes the variable exist. each node maps to a list of pairs (condition, value). default, each node maps to True
  'access' = a set of node_ids that have access to change the value of the variable
 '''
@@ -95,8 +93,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
         except:
             return
         additional_arguments = []
-        additional_initialization = []
-        additional_declaration = []
+        additional_initializations = []
+        additional_declarations = []
         additional_modules = []
         
         blackboard_match = blackboard_name_pattern.search(code)
@@ -122,21 +120,21 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                     if variable_name in variables:
                         var_num = variables[variable_name]['variable_id']
                         variables[variable_name]['access'].add(this_id)
-                        variables[variable_name]['next_val'][this_id] = None
+                        variables[variable_name]['next_value'][this_id] = None
                         variables[variable_name]['next_exist'][this_id] = True
                     else:
                         var_num = len(variables)
                         variables[variable_name] = {
                             'variable_id' : var_num,
-                            'min_val' : 0,
-                            'max_val' : 1,
-                            'init_val' : None,
-                            'always_exists' : True,
+                            'min_value' : 0,
+                            'max_value' : 1,
+                            'init_value' : None,
+                            'always_exist' : True,
                             'init_exist' : True,
                             'global_next_mode' : True,
-                            'global_next_val' : None,
+                            'global_next_value' : None,
                             'global_next_exist' : True,
-                            'next_val' : {this_id : None},
+                            'next_value' : {this_id : None},
                             'next_exist' : {this_id : True},
                             'access' : {this_id}
                         }
@@ -149,21 +147,21 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             if variable_name in variables:
                 var_num = variables[variable_name]['variable_id']
                 variables[variable_name]['access'].add(this_id)
-                variables[variable_name]['next_val'][this_id] = None
+                variables[variable_name]['next_value'][this_id] = None
                 variables[variable_name]['next_exist'][this_id] = True
             else:
                 var_num = len(variables)
                 variables[variable_name] = {
                     'variable_id' : var_num,
-                    'min_val' : 0,
-                    'max_val' : 1,
-                    'init_val' : None,
-                    'always_exists' : True,
+                    'min_value' : 0,
+                    'max_value' : 1,
+                    'init_value' : None,
+                    'always_exist' : True,
                     'init_exist' : True,
                     'global_next_mode' : True,
-                    'global_next_val' : None,
+                    'global_next_value' : None,
                     'global_next_exist' : True,
-                    'next_val' : {this_id : None},
+                    'next_value' : {this_id : None},
                     'next_exist' : {this_id : True},
                     'access' : {this_id}
                 }
@@ -179,8 +177,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'variables' : local_variables,
             'additional_arguments' : [node_name + "_STATUS"],
             'additional_definitions' : [],
-            'additional_declaration' : ['\t\t' + node_name + '_STATUS : ' + node_name + '_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);' + os.linesep],
-            'additional_initialization' : [],
+            'additional_declarations' : ['\t\t' + node_name + '_STATUS : ' + node_name + '_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);' + os.linesep],
+            'additional_initializations' : [],
             'additional_modules' : [
                 {
                     'name' : node_name + '_STATUS_module',
@@ -210,8 +208,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                 'variables' : [],
                 'additional_arguments' : [],
                 'additional_definitions' : [],
-                'additional_declaration' : [],
-                'additional_initialization' : [],
+                'additional_declarations' : [],
+                'additional_initializations' : [],
                 'additional_modules' : []
             }
         dealt_with = True
@@ -242,8 +240,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                 'variables' : [],
                 'additional_arguments' : [],
                 'additional_definitions' : [],
-                'additional_declaration' : [],
-                'additional_initialization' : [],
+                'additional_declarations' : [],
+                'additional_initializations' : [],
                 'additional_modules' : []
             }
         else:
@@ -256,8 +254,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                 'variables' : [],
                 'additional_arguments' : [],
                 'additional_definitions' : [],
-                'additional_declaration' : [],
-                'additional_initialization' : [],
+                'additional_declarations' : [],
+                'additional_initializations' : [],
                 'additional_modules' : []
             }
     elif isinstance(current_node, py_trees.composites.Selector):
@@ -271,8 +269,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                 'variables' : [],
                 'additional_arguments' : [],
                 'additional_definitions' : [],
-                'additional_declaration' : [],
-                'additional_initialization' : [],
+                'additional_declarations' : [],
+                'additional_initializations' : [],
                 'additional_modules' : []
             }
         else:
@@ -285,19 +283,21 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                 'variables' : [],
                 'additional_arguments' : [],
                 'additional_definitions' : [],
-                'additional_declaration' : [],
-                'additional_initialization' : [],
+                'additional_declarations' : [],
+                'additional_initializations' : [],
                 'additional_modules' : []
             }
     elif isinstance(current_node, py_trees.composites.Parallel):
         cur_type = 'parallel'
         if current_node.policy.synchronise:
-            cur_type += '_synchronized'
+            cur_type += '_synchronized_success_on_all'
             if isinstance(current_node.policy, py_trees.common.ParallelPolicy.SuccessOnAll):
-                cur_type += '_success_on_all'
+                #cur_type += '_success_on_all'
+                pass
 
             elif isinstance(current_node.policy, py_trees.common.ParallelPolicy.SuccessOnOne):
-                cur_type += '_success_on_one'
+                #cur_type += '_success_on_one'
+                print('success on one with synchronised does not make sense. defaulted to success on all.')
             else:
                 print('ERROR: the following parallel policy is not supported: ' + str(current_node.policy))
                 sys.exit('Unsupported Parallel Policy')
@@ -319,8 +319,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'variables' : [],
             'additional_arguments' : [],
             'additional_definitions' : [],
-            'additional_declaration' : [],
-            'additional_initialization' : [],
+            'additional_declarations' : [],
+            'additional_initializations' : [],
             'additional_modules' : []
         }
     elif isinstance(current_node, py_trees.decorators.Condition):
@@ -333,8 +333,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'variables' : [],
             'additional_arguments' : [current_node.succeed_status.name.lower()],
             'additional_definitions' : [],
-            'additional_declaration' : [],
-            'additional_initialization' : [],
+            'additional_declarations' : [],
+            'additional_initializations' : [],
             'additional_modules' : []
         }
     elif isinstance(current_node, py_trees.decorators.Inverter):
@@ -347,8 +347,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'variables' : [],
             'additional_arguments' : [],
             'additional_definitions' : [],
-            'additional_declaration' : [],
-            'additional_initialization' : [],
+            'additional_declarations' : [],
+            'additional_initializations' : [],
             'additional_modules' : []
         }
     elif isinstance(current_node, py_trees.decorators.OneShot):
@@ -366,8 +366,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'variables' : [],
             'additional_arguments' : [policy],
             'additional_definitions' : [],
-            'additional_declaration' : [],
-            'additional_initialization' : [],
+            'additional_declarations' : [],
+            'additional_initializations' : [],
             'additional_modules' : []
         }
     #there's a solid argument for combining all the X is Y types into one module, and just having 2 additional arguments for that module.
@@ -381,8 +381,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'variables' : [],
             'additional_arguments' : ['failure', 'running'],
             'additional_definitions' : [],
-            'additional_declaration' : [],
-            'additional_initialization' : [],
+            'additional_declarations' : [],
+            'additional_initializations' : [],
             'additional_modules' : []
         }
     elif isinstance(current_node, py_trees.decorators.FailureIsSuccess):
@@ -395,8 +395,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'variables' : [],
             'additional_arguments' : ['failure', 'success'],
             'additional_definitions' : [],
-            'additional_declaration' : [],
-            'additional_initialization' : [],
+            'additional_declarations' : [],
+            'additional_initializations' : [],
             'additional_modules' : []
         }
     elif isinstance(current_node, py_trees.decorators.RunningIsFailure):
@@ -409,8 +409,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'variables' : [],
             'additional_arguments' : ['running', 'failure'],
             'additional_definitions' : [],
-            'additional_declaration' : [],
-            'additional_initialization' : [],
+            'additional_declarations' : [],
+            'additional_initializations' : [],
             'additional_modules' : []
         }
     elif isinstance(current_node, py_trees.decorators.RunningIsSuccess):
@@ -423,8 +423,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'variables' : [],
             'additional_arguments' : ['running', 'success'],
             'additional_definitions' : [],
-            'additional_declaration' : [],
-            'additional_initialization' : [],
+            'additional_declarations' : [],
+            'additional_initializations' : [],
             'additional_modules' : []
         }
     elif isinstance(current_node, py_trees.decorators.SuccessIsFailure):
@@ -437,8 +437,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'variables' : [],
             'additional_arguments' : ['success', 'failure'],
             'additional_definitions' : [],
-            'additional_declaration' : [],
-            'additional_initialization' : [],
+            'additional_declarations' : [],
+            'additional_initializations' : [],
             'additional_modules' : []
         }
     elif isinstance(current_node, py_trees.decorators.SuccessIsRunning):
@@ -451,8 +451,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'variables' : [],
             'additional_arguments' : ['success', 'running'],
             'additional_definitions' : [],
-            'additional_declaration' : [],
-            'additional_initialization' : [],
+            'additional_declarations' : [],
+            'additional_initializations' : [],
             'additional_modules' : []
         }
     elif isinstance(current_node, py_trees.behaviours.CheckBlackboardVariableExists):
@@ -460,21 +460,21 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
         variable_name = variable_name.replace('.', '_dot_')
         
         if (variable_name in variables):
-            variables[variable_name]['always_exists'] = False
+            variables[variable_name]['always_exist'] = False
             var_num = variables[variable_name]['variable_id']
         else:
             var_num = len(variables)
             variables[variable_name] = {
                 'variable_id' : var_num,
-                'min_val' : 0,
-                'max_val' : 1,
-                'init_val' : None,
-                'always_exists' : True,
+                'min_value' : 0,
+                'max_value' : 1,
+                'init_value' : None,
+                'always_exist' : True,
                 'init_exist' : True,
                 'global_next_mode' : True,
-                'global_next_val' : None,
+                'global_next_value' : None,
                 'global_next_exist' : True,
-                'next_val' : {this_id : None},
+                'next_value' : {this_id : None},
                 'next_exist' : {this_id : True},
                 'access' : {this_id}
             }
@@ -488,8 +488,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'variables' : [],
             'additional_arguments' : ['blackboard', var_num],
             'additional_definitions' : [],
-            'additional_declaration' : [],
-            'additional_initialization' : [],
+            'additional_declarations' : [],
+            'additional_initializations' : [],
             'additional_modules' : []
         }
             
@@ -504,15 +504,15 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             var_num = len(variables)
             variables[variable_name] = {
                 'variable_id' : var_num,
-                'min_val' : 0,
-                'max_val' : 1,
-                'init_val' : None,
-                'always_exists' : True,
+                'min_value' : 0,
+                'max_value' : 1,
+                'init_value' : None,
+                'always_exist' : True,
                 'init_exist' : True,
                 'global_next_mode' : True,
-                'global_next_val' : None,
+                'global_next_value' : None,
                 'global_next_exist' : True,
-                'next_val' : {this_id : None},
+                'next_value' : {this_id : None},
                 'next_exist' : {this_id : True},
                 'access' : {this_id}
             }
@@ -548,8 +548,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'variables' : [],
             'additional_arguments' : ['blackboard', str(var_num), '\t\t' + node_name + '_CHECK_' + variable_name],
             'additional_definitions' : [],
-            'additional_declaration' : ['\t\t' + node_name + '_CHECK_' + variable_name  + ' : '+ node_name + '_CHECK_' + variable_name + '_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);' + os.linesep],
-            'additional_initialization' : [],
+            'additional_declarations' : ['\t\t' + node_name + '_CHECK_' + variable_name  + ' : '+ node_name + '_CHECK_' + variable_name + '_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);' + os.linesep],
+            'additional_initializations' : [],
             'additional_modules' : [
                 {
                     'name' : node_name + '_CHECK_' + variable_name + '_module',
@@ -557,7 +557,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                     'args' : ['variables', 'variable_exists', 'node_names', 'variable_names'],
                     'left_hand_side' : 'variables[variable_names.' + variable_name + ']',
                     'operator' : op,
-                    'right_hand_side' : rhs
+                    'right_hand_side' : rhs,
+                    'variable_name' : variable_name
                 }
             ]
         }
@@ -571,21 +572,21 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
         variable_name = variable_name.replace('.', '_dot_')
         if variable_name in variables:
             variables[variable_name]['access'].add(this_id)
-            variables[variable_name]['next_val'][this_id] = None
+            variables[variable_name]['next_value'][this_id] = None
             var_num = variables[variable_name]['variable_id']
         else:
             var_num = len(variables)
             variables[variable_name] = {
                 'variable_id' : var_num,
-                'min_val' : 0,
-                'max_val' : 1,
-                'init_val' : None,
-                'always_exists' : True,
+                'min_value' : 0,
+                'max_value' : 1,
+                'init_value' : None,
+                'always_exist' : True,
                 'init_exist' : True,
                 'global_next_mode' : True,
-                'global_next_val' : None,
+                'global_next_value' : None,
                 'global_next_exist' : True,
-                'next_val' : {this_id : None},
+                'next_value' : {this_id : None},
                 'next_exist' : {this_id : True},
                 'access' : {this_id}
             }
@@ -599,8 +600,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'variables' : [(var_num, variable_name)],
             'additional_arguments' : [node_name + "_STATUS"],
             'additional_definitions' : [],
-            'additional_declaration' : ['\t\t' + node_name + '_STATUS : ' + node_name + '_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);' + os.linesep],
-            'additional_initialization' : [],
+            'additional_declarations' : ['\t\t' + node_name + '_STATUS : ' + node_name + '_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);' + os.linesep],
+            'additional_initializations' : [],
             'additional_modules' : [
                 {
                     'name' : node_name + '_STATUS_module',
@@ -619,8 +620,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
         variable_name = variable_name.replace('.', '_dot_')
         if variable_name in variables:
             variables[variable_name]['access'].add(this_id)
-            variables[variable_name]['next_val'][this_id] = None
-            variables[variable_name]['always_exists'] = False
+            variables[variable_name]['next_value'][this_id] = None
+            variables[variable_name]['always_exist'] = False
             variables[variable_name]['next_exist'][this_id] = False
             variables[variable_name]['global_next_exist'] = False
             var_num = variables[variable_name]['variable_id']
@@ -628,15 +629,15 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             var_num = len(variables)
             variables[variable_name] = {
                 'variable_id' : var_num,
-                'min_val' : 0,
-                'max_val' : 1,
-                'init_val' : None,
-                'always_exists' : False,
+                'min_value' : 0,
+                'max_value' : 1,
+                'init_value' : None,
+                'always_exist' : False,
                 'init_exist' : True,
                 'global_next_mode' : True,
-                'global_next_val' : None,
+                'global_next_value' : None,
                 'global_next_exist' : False,
-                'next_val' : {this_id : None},
+                'next_value' : {this_id : None},
                 'next_exist' : {this_id : False},
                 'access' : {this_id}
             }
@@ -650,8 +651,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'variables' : [(var_num, variable_name)],
             'additional_arguments' : [],
             'additional_definitions' : [],
-            'additional_declaration' : [],
-            'additional_initialization' : [],
+            'additional_declarations' : [],
+            'additional_initializations' : [],
             'additional_modules' : []
         }
         
@@ -660,21 +661,21 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
         variable_name = variable_name.replace('.', '_dot_')
         
         if (variable_name in variables):
-            variables[variable_name]['always_exists'] = False
+            variables[variable_name]['always_exist'] = False
             var_num = variables[variable_name]['variable_id']
         else:
             var_num = len(variables)
             variables[variable_name] = {
                 'variable_id' : var_num,
-                'min_val' : 0,
-                'max_val' : 1,
-                'init_val' : None,
-                'always_exists' : True,
+                'min_value' : 0,
+                'max_value' : 1,
+                'init_value' : None,
+                'always_exist' : True,
                 'init_exist' : True,
                 'global_next_mode' : True,
-                'global_next_val' : None,
+                'global_next_value' : None,
                 'global_next_exist' : True,
-                'next_val' : {this_id : None},
+                'next_value' : {this_id : None},
                 'next_exist' : {this_id : True},
                 'access' : {this_id}
             }
@@ -688,8 +689,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'variables' : [],
             'additional_arguments' : ['blackboard', var_num],
             'additional_definitions' : [],
-            'additional_declaration' : [],
-            'additional_initialization' : [],
+            'additional_declarations' : [],
+            'additional_initializations' : [],
             'additional_modules' : []
         }
             
@@ -703,15 +704,15 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             var_num = len(variables)
             variables[variable_name] = {
                 'variable_id' : var_num,
-                'min_val' : 0,
-                'max_val' : 1,
-                'init_val' : None,
-                'always_exists' : True,
+                'min_value' : 0,
+                'max_value' : 1,
+                'init_value' : None,
+                'always_exist' : True,
                 'init_exist' : True,
                 'global_next_mode' : True,
-                'global_next_val' : None,
+                'global_next_value' : None,
                 'global_next_exist' : True,
-                'next_val' : {},
+                'next_value' : {},
                 'next_exist' : {},
                 'access' : {}
             }
@@ -747,8 +748,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'variables' : [],
             'additional_arguments' : ['blackboard', str(var_num), '\t\t' + node_name + '_CHECK_' + variable_name],
             'additional_definitions' : [],
-            'additional_declaration' : ['\t\t' + node_name + '_CHECK_' + variable_name  + ' : '+ node_name + '_CHECK_' + variable_name + '_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);' + os.linesep],
-            'additional_initialization' : [],
+            'additional_declarations' : ['\t\t' + node_name + '_CHECK_' + variable_name  + ' : '+ node_name + '_CHECK_' + variable_name + '_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);' + os.linesep],
+            'additional_initializations' : [],
             'additional_modules' : [
                 {
                     'name' : node_name + '_CHECK_' + variable_name + '_module',
@@ -757,7 +758,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                     'variable_name' : variable_name,
                     'left_hand_side' : 'variables[variable_names.' + variable_name + ']',
                     'operator' : op,
-                    'right_hand_side' : rhs
+                    'right_hand_side' : rhs,
+                    'variable_name' : variable_name
                 }
             ]
         }
@@ -772,8 +774,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'variables' : [],
             'additional_arguments' : [str(current_node.fail_until), str(current_node.running_until), str(current_node.success_until), str(current_node.reset).upper()],
             'additional_definitions' : [],
-            'additional_declaration' : [],
-            'additional_initialization' : [],
+            'additional_declarations' : [],
+            'additional_initializations' : [],
             'additional_modules' : []
         }
         
@@ -787,8 +789,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'variables' : [],
             'additional_arguments' : [],
             'additional_definitions' : [],
-            'additional_declaration' : [],
-            'additional_initialization' : [],
+            'additional_declarations' : [],
+            'additional_initializations' : [],
             'additional_modules' : []
         }
         
@@ -802,8 +804,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'variables' : [],
             'additional_arguments' : [str(current_node.period)],
             'additional_definitions' : [],
-            'additional_declaration' : [],
-            'additional_initialization' : [],
+            'additional_declarations' : [],
+            'additional_initializations' : [],
             'additional_modules' : []
         }
         
@@ -817,8 +819,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'variables' : [],
             'additional_arguments' : [],
             'additional_definitions' : [],
-            'additional_declaration' : [],
-            'additional_initialization' : [],
+            'additional_declarations' : [],
+            'additional_initializations' : [],
             'additional_modules' : []
         }
         
@@ -837,8 +839,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'variables' : [],
             'additional_arguments' : ['sequence_for_' + node_name + '_' + str(this_id), str(len(current_node.sequence)), eventually],
             'additional_definitions' : [sequence_definition],
-            'additional_declaration' : [],
-            'additional_initialization' : [],
+            'additional_declarations' : [],
+            'additional_initializations' : [],
             'additional_modules' : []
         }
         
@@ -852,8 +854,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'variables' : [],
             'additional_arguments' : [],
             'additional_definitions' : [],
-            'additional_declaration' : [],
-            'additional_initialization' : [],
+            'additional_declarations' : [],
+            'additional_initializations' : [],
             'additional_modules' : []
         }
         
@@ -867,8 +869,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'variables' : [],
             'additional_arguments' : [str(current_node.every_n)],
             'additional_definitions' : [],
-            'additional_declaration' : [],
-            'additional_initialization' : [],
+            'additional_declarations' : [],
+            'additional_initializations' : [],
             'additional_modules' : []
         }
         
@@ -882,8 +884,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'variables' : [],
             'additional_arguments' : [str(current_node.duration), current_node.completion_status.name.lower()],
             'additional_definitions' : [],
-            'additional_declaration' : [],
-            'additional_initialization' : [],
+            'additional_declarations' : [],
+            'additional_initializations' : [],
             'additional_modules' : []
         }
         
@@ -897,8 +899,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'variables' : [],
             'additional_arguments' : [],
             'additional_definitions' : [],
-            'additional_declaration' : [],
-            'additional_initialization' : [],
+            'additional_declarations' : [],
+            'additional_initializations' : [],
             'additional_modules' : []
         }
         
@@ -912,8 +914,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'variables' : [],
             'additional_arguments' : [],
             'additional_definitions' : [],
-            'additional_declaration' : [],
-            'additional_initialization' : [],
+            'additional_declarations' : [],
+            'additional_initializations' : [],
             'additional_modules' : []
         }
         
@@ -942,13 +944,12 @@ def variable_name_cleanup(nodes, variables):
                 for access_node in variables[variable]['access']:#we are now going to tell everything that can change meh, that it can change meh_dot_something
                     nodes[access_node]['variables'].append((variables[child_variable]['variable_id'], child_variable))#told the node it can access this variable
                     variables[child_variable]['access'].add(access_node)#told the variable it can be accessed by this node
-                    variables[child_variable]['next_val'][access_node] = None#updated what the next value for this specific node is
+                    variables[child_variable]['next_value'][access_node] = None#updated what the next value for this specific node is
                     variables[child_variable]['next_exist'][access_node] = True #updated what the next exist value is for this specific node
 
 
 def main():
     arg_parser = argparse.ArgumentParser()
-    #python3 behaverify.py create_root_FILE create_root_METHOD --root_args root_args_ARGS --string_args string_args_ARGS --min_val min_val_INT --max_val max_val_INT --force_parallel_unsynch --no_seperate_variable_modules --module_input_file module_input_file --specs_input_file specs_FILE --gen_modules gen_modules_INT --output_file ouput_file_FILE --module_output_file module_output_file_FILE --blackboard_output_file blackboard_output_file_FILE --overwrite 
     arg_parser.add_argument('root_file')
     arg_parser.add_argument('root_method')
     arg_parser.add_argument('--root_args', default='', nargs='*')

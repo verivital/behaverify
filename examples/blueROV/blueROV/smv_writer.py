@@ -1,13 +1,3 @@
-
-# arg_parser.add_argument('input_file')
-# arg_parser.add_argument('--blackboard_input_file', default = None)
-# arg_parser.add_argument('--module_input_file', default = None)
-# arg_parser.add_argument('--specs_input_file', default = None)
-# arg_parser.add_argument('--output_file', default = None)
-# arg_parser.add_argument('--blackboard_output_file', default = None)
-# arg_parser.add_argument('--module_output_file', default = None)
-# arg_parser.add_argument('--overwrite', action = 'store_true')
-
 #-----------------------------------------------------------------------------------------------------------------------
 import argparse
 import py_trees

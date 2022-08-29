@@ -25,3 +25,8 @@ to do all of this at once, navigate to the ./examples folder and then run
 
 models will be built in ./examples/EXAMPLE_NAME/models_MODEL_NAME/ where EXAMPLE_NAME is the relevant example, and MODEL_NAME is based on the encoding
 results will be placed in ./examples/results/EXAMPLE_NAME/
+
+
+
+The most recent version is not being used in these tests.
+
