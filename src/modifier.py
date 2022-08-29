@@ -6,79 +6,29 @@ import pprint
 #----------------------------------------------------------------------------------------------------------------
 #todo: add a way to delete variables and change access
 
-def main():
 
-    arg_parser = argparse.ArgumentParser()
-    arg_parser.add_argument('input_file') 
-    arg_parser.add_argument('--output_file', default = None)
-    
-    arg_parser.add_argument('--interactive_mode', action = 'store_true')
-    arg_parser.add_argument('--instruction_file', action = 'store_true')
-    
-    arg_parser.add_argument('--force_parallel_unsynch', action = 'store_true')
-    arg_parser.add_argument('--force_parallel_synch', action = 'store_true')
-    arg_parser.add_argument('--force_selector_memory', action = 'store_true')
-    arg_parser.add_argument('--force_selector_memoryless', action = 'store_true')
-    arg_parser.add_argument('--force_sequence_memory', action = 'store_true')
-    arg_parser.add_argument('--force_sequence_memoryless', action = 'store_true')
-    
-    arg_parser.add_argument('--min_value', default = None)
-    arg_parser.add_argument('--max_value', default = None)
-    arg_parser.add_argument('--init_value', default = None)
-    arg_parser.add_argument('--no_init_value', action = 'store_true')
-    arg_parser.add_argument('--next_value', default = None)
-    arg_parser.add_argument('--no_next_value', action = 'store_true')
-    arg_parser.add_argument('--use_global_value', action = 'store_true')
-    arg_parser.add_argument('--use_individual_value', action = 'store_true')
-    arg_parser.add_argument('--always_exist', action = 'store_true')
-    arg_parser.add_argument('--sometimes_exist', action = 'store_true')
-    arg_parser.add_argument('--init_exist', default = None)
-    arg_parser.add_argument('--no_init_exist', action = 'store_true')
-    arg_parser.add_argument('--next_exist', default = None)
-    arg_parser.add_argument('--no_next_exist', action = 'store_true')
-    
-    args = arg_parser.parse_args()
-
-
-
-    with open(args.input_file, 'r') as f:
-        temp = eval(f.read())
-    nodes = temp['nodes']
-    variables = temp['variables']
-
-    if args.force_parallel_unsynch:
+def arg_modification(args):
         for node_id in nodes:
-            node = nodes[node_id]
+        node = nodes[node_id]
+        if args.force_parallel_unsynch:
             if node['category'] == 'composite' and 'parallel_synchronized' in node['type']:
                 node['type'] = node['type'].replace('_synchronized', '_unsynchronized')
                 node['type'] = node['type'].replace('success_on_one', 'success_on_all')
-    if args.force_parallel_synch:
-        for node_id in nodes:
-            node = nodes[node_id]
+        if args.force_parallel_synch:
             if node['category'] == 'composite' and 'parallel_unsynchronized' in node['type']:
                 node['type'] = node['type'].replace('_unsynchronized', '_synchronized')
-    if args.force_selector_memory:
-        for node_id in nodes:
-            node = nodes[node_id]
+        if args.force_selector_memory:
             if node['category'] == 'composite' and 'selector_without_memory' == node['type']:
                 node['type'] = 'selector_with_memory'
-    if args.force_selector_memoryless:
-        for node_id in nodes:
-            node = nodes[node_id]
+        if args.force_selector_memoryless:
             if node['category'] == 'composite' and 'selector_with_memory' == node['type']:
                 node['type'] = 'selector_without_memory'
-    if args.force_sequence_memory:
-        for node_id in nodes:
-            node = nodes[node_id]
+        if args.force_sequence_memory:
             if node['category'] == 'composite' and 'sequence_without_memory' == node['type']:
                 node['type'] = 'sequence_with_memory'
-    if args.force_sequence_memoryless:
-        for node_id in nodes:
-            node = nodes[node_id]
+        if args.force_sequence_memoryless:
             if node['category'] == 'composite' and 'sequence_with_memory' == node['type']:
                 node['type'] = 'sequence_without_memory'
-
-
     for variable_name in variables:
         variable = variables[variable_name]
         if args.min_value:
@@ -109,6 +59,53 @@ def main():
             variable['next_exist'] = bool(args.next_exist)
         if args.no_next_exist:
             variable['no_next_exist'] = None
+
+
+def main():
+
+    arg_parser = argparse.ArgumentParser()
+    arg_parser.add_argument('input_file') 
+    arg_parser.add_argument('--output_file', default = None)
+    
+    arg_parser.add_argument('--interactive_mode', action = 'store_true')
+    arg_parser.add_argument('--instruction_file', action = 'store_true')
+    
+    arg_parser.add_argument('--force_parallel_unsynch', action = 'store_true')
+    arg_parser.add_argument('--force_parallel_synch', action = 'store_true')
+    arg_parser.add_argument('--force_selector_memory', action = 'store_true')
+    arg_parser.add_argument('--force_selector_memoryless', action = 'store_true')
+    arg_parser.add_argument('--force_sequence_memory', action = 'store_true')
+    arg_parser.add_argument('--force_sequence_memoryless', action = 'store_true')
+    
+    arg_parser.add_argument('--min_value', default = None)
+    arg_parser.add_argument('--max_value', default = None)
+    arg_parser.add_argument('--init_value', default = None)
+    arg_parser.add_argument('--no_init_value', action = 'store_true')
+    arg_parser.add_argument('--next_value', default = None)
+    arg_parser.add_argument('--no_next_value', action = 'store_true')
+    arg_parser.add_argument('--use_global_value', action = 'store_true')
+    arg_parser.add_argument('--use_individual_value', action = 'store_true')
+    arg_parser.add_argument('--always_exist', action = 'store_true')
+    arg_parser.add_argument('--sometimes_exist', action = 'store_true')
+    arg_parser.add_argument('--init_exist', default = None)
+    arg_parser.add_argument('--no_init_exist', action = 'store_true')
+    arg_parser.add_argument('--next_exist', default = None)
+    arg_parser.add_argument('--no_next_exist', action = 'store_true')
+
+
+    
+    args = arg_parser.parse_args()
+
+
+
+    with open(args.input_file, 'r') as f:
+        temp = eval(f.read())
+    nodes = temp['nodes']
+    variables = temp['variables']
+
+    if args.force_parallel_synch or args.force_parallel_unsynch or args.force_selector_memory or args.force_selector_memoryless or args.force_sequence_memory or args.force_sequence_memoryless or args.min_value or args.max_value or args.init_value or args.no_init_value or args.next_value or args.no_next_value or args.use_global_value or args.use_individual_value or args.always_exist or args.sometimes_exist or args.init_exist or args.no_init_exist or args.next_exist or args.no_next_eixst:
+        arg_modification(args)
+
         
     if args.interactive_mode:
         done = False
@@ -166,6 +163,26 @@ def main():
             else:
                 print('input was not y or n')
     if args.instruction_file:
+        node_name_to_id = {}
+        for node_id in nodes:
+            node_name_to_id[nodes[node_id]['name']] = node_id
+        with open(args.instruction_file, 'r') as f:
+            instructions = eval(f.read())
+        for instruction in instructions:
+            if instruction['target'].strip().lower() == 'global_flags':
+                args = arg_parser.parse_args(instruction['instruction'])
+                arg_modification(args)
+            elif instruction['target'].strip().lower() == 'variable':
+                if instruction['instruction'].strip().lower() == 'delete':
+                    continue
+                    variabeles.pop(instruction['name'])
+                    #this isn't actually correct. need to update all other variabels ids, and need to update access, and nodes
+                else:
+                    variables[instruction['name']][instruction['field']] = instruction['value']
+            elif instruction['target'].strip().lower() == 'node':
+                nodes[node_name_to_id[instruction['name']]][instruction['field']] = instruction['value']
+            else:
+                print('instruction file contains unknown modification target: ' + str(instruction['target']))
         pass
 
     if args.output_file:
