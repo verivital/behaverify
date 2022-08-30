@@ -10,8 +10,230 @@
 	{
 		'target' : 'variable',
 		'name' : 'battery',
-		'instructions' : [
-			       ]
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'battery_low_warning',
+		'instructions' : {
+					'init_value' : 0,
+					'global_next_mode' : False 
+					
+			       }
+	},
+	{
+		'target' : 'variable',
+		'name' : 'battery_dot_batt_charge_remaining',
+		'delete' : True
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_rth',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_rth_warning',
+		'instructions' : {
+					'init_value' : 0,
+					'global_next_mode' : False 
+					
+			       }
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_rth_dot_data',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_geofence',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_geofence_warning',
+		'instructions' : {
+					'init_value' : 0,
+					'global_next_mode' : False 
+					
+			       }
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_geofence_dot_data',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'lec2_am_r',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'lec2_am_r_speed_warning',
+		'instructions' : {
+					'init_value' : 0,
+					'global_next_mode' : False 
+					
+			       }
+	},
+	{
+		'target' : 'variable',
+		'name' : 'lec2_arm_r_pipe_warning',
+		'instructions' : {
+					'init_value' : 0,
+					'global_next_mode' : False 
+					
+			       }
+	},
+	{
+		'target' : 'variable',
+		'name' : 'lec2_am_r_dot_confs',
+		'delete' : True
+	},
+	{
+		'target' : 'variable',
+		'name' : 'lec2_am_l',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'lec2_am_l_speed_warning',
+		'instructions' : {
+					'init_value' : 0,
+					'global_next_mode' : False 
+					
+			       }
+	},
+	{
+		'target' : 'variable',
+		'name' : 'lec2_arm_r_pipe_warning',
+		'instructions' : {
+					'init_value' : 0,
+					'global_next_mode' : False 
+					
+			       }
+	},
+	{
+		'target' : 'variable',
+		'name' : 'lec2_am_l_dot_confs',
+		'delete' : True
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_pipelost',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_pipe_lost_warning',
+		'instructions' : {
+					'init_value' : 0,
+					'global_next_mode' : False 
+					
+			       }
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_pipelost_data',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_mission_data',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_sensor_failure',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_sensor_failure_warning',
+		'instructions' : {
+					'init_value' : 0,
+					'global_next_mode' : False 
+					
+			       }
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_sensor_failure_dot_data',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_waypoints_completed',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_waypoints_completed_dot_data',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_mission',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'dd_output',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'dd_z_axis_warning',
+		'instructions' : {
+					'init_value' : 0,
+					'global_next_mode' : False 
+					
+			       }
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'dd_xy_axis_degradation',
+		'instructions' : {
+					'init_value' : 0,
+					'global_next_mode' : False 
+					
+			       }
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'dd_output_dot_data',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'total_degradation',
+		'instructions' : {
+					'init_value' : 0,
+					'global_next_mode' : False 
+					
+			       }
 
 	}
+	
 ]
