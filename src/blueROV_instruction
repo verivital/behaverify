@@ -4,7 +4,8 @@
 		'instructions' : [
 					'--force_parallel_unsynch',
 					'--force_selector_memoryless',
-					'--force_sequence_memory'
+					'--force_sequence_memory',
+					'--use_next_checks'
 				]	
 	},
 	{
@@ -228,6 +229,230 @@
 	{
 		'target' : 'variable',
 		'name' : 'total_degradation',
+		'instructions' : {
+					'init_value' : 0,
+					'global_next_mode' : False 
+					
+			       }
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'fls_range',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'obstacle_standoff_warning',
+		'instructions' : {
+					'init_value' : 0,
+					'global_next_mode' : False 
+					
+			       }
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'obstacle_min_standoff',
+		'instructions' : {
+					'init_value' : 0,
+					'global_next_mode' : False 
+					
+			       }
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'fls_range_dot_range',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'obstacle_in_view',
+		'instructions' : {
+					'init_value' : 0,
+					'global_next_mode' : False 
+					
+			       }
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_fls_warning',
+		'instructions' : {
+					'init_value' : 0,
+					'global_next_mode' : False 
+					
+			       }
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'obstacle_in_view_dot_stamp',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'emergency_stop_warning',
+		'instructions' : {
+					'init_value' : 0,
+					'global_next_mode' : False 
+					
+			       }
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'hsd_pipeline_mapping',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'hsd_to_waypoint',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'hsd_to_rth',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'hsd_to_surface',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'rtreach_out',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'rtreach_out_dot_data',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'HSD_out_dot_heading',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'uuv_max_speed',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'mission_file',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'refLat',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'refLon',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'next_mission',
+		'instructions' : {
+					'init_value' : 0,
+					'global_next_mode' : False 
+					
+			       }
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'decision_threshold',
+		'instructions' : {
+					'init_value' : 0,
+					'global_next_mode' : False 
+					
+			       }
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'HSD_out',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_obstacle_warning',
+		'instructions' : {
+					'init_value' : 0,
+					'global_next_mode' : False 
+					
+			       }
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'cm_hsd_input',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'HSD_out_dot_speed',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'HSD_out_dot_depth',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_home_reached',
+		'instructions' : {
+					'init_value' : 0,
+					'global_next_mode' : False 
+					
+			       }
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_home_dist',
+		'instructions' : {
+					'init_value' : 0,
+					'global_next_mode' : False 
+					
+			       }
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_home_dist_dot_data',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'pipe_mapping_enable',
 		'instructions' : {
 					'init_value' : 0,
 					'global_next_mode' : False 
