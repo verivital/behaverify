@@ -8,27 +8,6 @@ import pprint
 
 
 def arg_modification(args):
-        for node_id in nodes:
-        node = nodes[node_id]
-        if args.force_parallel_unsynch:
-            if node['category'] == 'composite' and 'parallel_synchronized' in node['type']:
-                node['type'] = node['type'].replace('_synchronized', '_unsynchronized')
-                node['type'] = node['type'].replace('success_on_one', 'success_on_all')
-        if args.force_parallel_synch:
-            if node['category'] == 'composite' and 'parallel_unsynchronized' in node['type']:
-                node['type'] = node['type'].replace('_unsynchronized', '_synchronized')
-        if args.force_selector_memory:
-            if node['category'] == 'composite' and 'selector_without_memory' == node['type']:
-                node['type'] = 'selector_with_memory'
-        if args.force_selector_memoryless:
-            if node['category'] == 'composite' and 'selector_with_memory' == node['type']:
-                node['type'] = 'selector_without_memory'
-        if args.force_sequence_memory:
-            if node['category'] == 'composite' and 'sequence_without_memory' == node['type']:
-                node['type'] = 'sequence_with_memory'
-        if args.force_sequence_memoryless:
-            if node['category'] == 'composite' and 'sequence_with_memory' == node['type']:
-                node['type'] = 'sequence_without_memory'
     for variable_name in variables:
         variable = variables[variable_name]
         if args.min_value:
@@ -59,7 +38,33 @@ def arg_modification(args):
             variable['next_exist'] = bool(args.next_exist)
         if args.no_next_exist:
             variable['no_next_exist'] = None
-
+    for node_id in nodes:
+        node = nodes[node_id]
+        if args.force_parallel_unsynch:
+            if node['category'] == 'composite' and 'parallel_synchronized' in node['type']:
+                node['type'] = node['type'].replace('_synchronized', '_unsynchronized')
+                node['type'] = node['type'].replace('success_on_one', 'success_on_all')
+        if args.force_parallel_synch:
+            if node['category'] == 'composite' and 'parallel_unsynchronized' in node['type']:
+                node['type'] = node['type'].replace('_unsynchronized', '_synchronized')
+        if args.force_selector_memory:
+            if node['category'] == 'composite' and 'selector_without_memory' == node['type']:
+                node['type'] = 'selector_with_memory'
+        if args.force_selector_memoryless:
+            if node['category'] == 'composite' and 'selector_with_memory' == node['type']:
+                node['type'] = 'selector_without_memory'
+        if args.force_sequence_memory:
+            if node['category'] == 'composite' and 'sequence_without_memory' == node['type']:
+                node['type'] = 'sequence_with_memory'
+        if args.force_sequence_memoryless:
+            if node['category'] == 'composite' and 'sequence_with_memory' == node['type']:
+                node['type'] = 'sequence_without_memory'
+        if args.use_next_checks:
+            if node['type'] == 'check_blackboard_variable_value':
+                node['use_next'] = True
+        if args.use_current_checks:
+            if node['type'] == 'check_blackboard_variable_value':
+                node['use_next'] = False
 
 def main():
 
@@ -76,6 +81,9 @@ def main():
     arg_parser.add_argument('--force_selector_memoryless', action = 'store_true')
     arg_parser.add_argument('--force_sequence_memory', action = 'store_true')
     arg_parser.add_argument('--force_sequence_memoryless', action = 'store_true')
+    arg_parser.add_argument('--use_next_checks', action = 'store_true')
+    arg_parser.add_argument('--use_current_checks', action = 'store_true')
+    
     
     arg_parser.add_argument('--min_value', default = None)
     arg_parser.add_argument('--max_value', default = None)
@@ -106,7 +114,8 @@ def main():
     if args.force_parallel_synch or args.force_parallel_unsynch or args.force_selector_memory or args.force_selector_memoryless or args.force_sequence_memory or args.force_sequence_memoryless or args.min_value or args.max_value or args.init_value or args.no_init_value or args.next_value or args.no_next_value or args.use_global_value or args.use_individual_value or args.always_exist or args.sometimes_exist or args.init_exist or args.no_init_exist or args.next_exist or args.no_next_eixst:
         arg_modification(args)
 
-        
+
+    deletions = False
     if args.interactive_mode:
         done = False
         while not done:
@@ -140,20 +149,27 @@ def main():
             modify_variables = input("Modify variables? (Enter y for yes, n for no)")
             if modify_variables == "y":
                 done = True
-                for variable in variables:
+                for variable_name in variables:
                     done2 = False
                     while not done2:
-                        print(variable)
-                        print(variables[variable])
+                        print(variable_name)
+                        print(variables[variable_name])
                         modify_variable = input("Modify this variable? (Enter y for yes, n for no)")
                         if modify_variable == 'y':
                             modify_key = input("Enter key to modify: ")
-                            try:
-                                print("current value: " + str(variables[variable][modify_key]))
-                                modify_value = input("Enter new value: ")
-                                variables[variable][modify_key] = modify_value
-                            except KeyValueError:
-                                print(modify_key + " is not a valid key")
+                            modify_key = modify_key.strip()
+                            if modify_key == 'delete':
+                                variable = variables.pop(variable_name)
+                                for node_id in variable['access']:
+                                    nodes[node_id]['variables'].remove(variable_name)
+                                deletions = True
+                            else:
+                                try:
+                                    print("current value: " + str(variables[variable_name][modify_key]))
+                                    modify_value = input("Enter new value: ")
+                                    variables[variable][modify_key] = modify_value
+                                except KeyValueError:
+                                    print(modify_key + " is not a valid key")
                         elif modify_variable == 'n':
                             done2 = True
                         else:
@@ -174,9 +190,10 @@ def main():
                 arg_modification(args)
             elif instruction['target'].strip().lower() == 'variable':
                 if instruction['instruction'].strip().lower() == 'delete':
-                    continue
-                    variabeles.pop(instruction['name'])
-                    #this isn't actually correct. need to update all other variabels ids, and need to update access, and nodes
+                    variable = variabeles.pop(instruction['name'])
+                    for node_id in variable['access']:
+                        nodes[node_id]['variables'].remove(instruction['name'])
+                    deletions = True
                 else:
                     variables[instruction['name']][instruction['field']] = instruction['value']
             elif instruction['target'].strip().lower() == 'node':
@@ -184,6 +201,13 @@ def main():
             else:
                 print('instruction file contains unknown modification target: ' + str(instruction['target']))
         pass
+    #oh thank god indenting is working agian
+
+    if deletions:
+        count = 0
+        for variable_name in variables:
+            variables[variable_name]['variable_id'] = count
+            count = count + 1
 
     if args.output_file:
         with open(args.output_file, 'w') as f:
