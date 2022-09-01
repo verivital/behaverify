@@ -277,7 +277,7 @@ def create_blackboard(nodes, variables):
                     assign_string += ("\t\tinit(" + variable_name + ") := " + variable['init_value'] +";" + os.linesep)
                 
                 assign_this = False
-                assign_string2 += ("\t\tnext(" + variable_name + ") := " + os.linesep
+                assign_string2 = ("\t\tnext(" + variable_name + ") := " + os.linesep
                                    + "\t\t\tcase" + os.linesep)
                 
                 if variable['global_next_mode']:
@@ -298,7 +298,9 @@ def create_blackboard(nodes, variables):
                                     assign_string2 += "\t\t\t\tstatuses[" + str(node_id) + "] in {success, failure, running} : " + condition[1] + ';' + os.linesep
                         else:
                             assign_string2 += "\t\t\tstatuses[" + str(node_id) + "] in {success, failure, running} : " + poss_values + ';' + os.linesep
-                assign_string2 += "\t\t\tesac;" + os.linesep
+                assign_string2 += ("\t\t\t\tTRUE : " + variable_name + ";" + os.linesep
+                                   + "\t\t\tesac;" + os.linesep
+                                   )
                 if assign_this:
                     assign_string += assign_string2
             else:
@@ -339,22 +341,23 @@ def create_blackboard(nodes, variables):
 
 def create_leaf_blackboard_to_status(number_of_nodes, variable):
     pass
-def create_leaf_check_blackboard_variable_exists(ignored_value = 0): 
-    (status_start, status_end) = common_string_leaf()
-    return_string = ("MODULE leaf_check_blackboard_variable_exists(blackboard, variable)" + os.linesep
-                     + status_start
-                     + "\t\tinternal_status := blackboard.variable_exists[variable] ? success : failure;" + os.linesep
-                     #+ "\t\t\t\t(blackboard.variable_exists[variable]) : success;" + os.linesep  #the variable exists
-                     #+ "\t\t\t\tTRUE : failure;" + os.linesep  #it doesn't
-                     #+ status_end
-                     )
-    return return_string
+def create_leaf_check_blackboard_variable_exists(ignored_value = 0):
+    return
+    # (status_start, status_end) = common_string_leaf()
+    # return_string = ("MODULE leaf_check_blackboard_variable_exists(blackboard, variable_num)" + os.linesep
+    #                  + status_start
+    #                  + "\t\tinternal_status := blackboard.variable_exists[variable] ? success : failure;" + os.linesep
+    #                  #+ "\t\t\t\t(blackboard.variable_exists[variable]) : success;" + os.linesep  #the variable exists
+    #                  #+ "\t\t\t\tTRUE : failure;" + os.linesep  #it doesn't
+    #                  #+ status_end
+    #                  )
+    # return return_string
 
 def create_leaf_check_blackboard_variable_value(ignored_value = 0):
     (status_start, status_end) = common_string_leaf()
-    return_string = ("MODULE leaf_check_blackboard_variable_value(blackboard, variable, check)" + os.linesep
+    return_string = ("MODULE leaf_check_blackboard_variable_value(check)" + os.linesep
                      + status_start
-                     + "\t\tinternal_status := (blackboard.variable_exists[variable]) & (check.result) ? success : failure;" + os.linesep  #passes the check
+                     + "\t\tinternal_status := (check.result) ? success : failure;" + os.linesep  #passes the check
                      #+ "\t\t\t\t(blackboard.variable_exists[variable]) & (check.result) : success;" + os.linesep  #passes the check
                      #+ "\t\t\t\tTRUE : failure;" + os.linesep  #the variable doesn't exist or fails the check
                      #+ status_end
@@ -365,45 +368,45 @@ def create_leaf_check_blackboard_variable_values(number_of_nodes, variables, che
     pass
     #NOT ACTUALLY DONE. OPERATORS CONFUSING.
     
-    (status_start, status_end) = common_string_leaf()
-    return_string = ("MODULE leaf_check_blackboard_variable_values(variables_exist, checks)" + os.linesep
-                      + status_start
-                      + "\t\t\t\t!(variables_exist) : failure;" + os.linesep  #at least some of the variables don't exist
-                      + "\t\t\t\t(variables_exist) & (checks.result) : success;" + os.linesep  #passes the check
-                      + "\t\t\t\t(variables_exist)) & !(checks.result) : failure;" + os.linesep  #fails the check
-                      + status_end)
-    return return_string
+    # (status_start, status_end) = common_string_leaf()
+    # return_string = ("MODULE leaf_check_blackboard_variable_values(variables_exist, checks)" + os.linesep
+    #                   + status_start
+    #                   + "\t\t\t\t!(variables_exist) : failure;" + os.linesep  #at least some of the variables don't exist
+    #                   + "\t\t\t\t(variables_exist) & (checks.result) : success;" + os.linesep  #passes the check
+    #                   + "\t\t\t\t(variables_exist)) & !(checks.result) : failure;" + os.linesep  #fails the check
+    #                   + status_end)
+    # return return_string
 def create_leaf_set_blackboard_variable(ignored_value = 0):
     pass
     
-    (status_start, status_end) = common_string_leaf()
-    return_string = ("MODULE leaf_set_blackboard_variable(blackboard, variable, nodes_with_access, value_creator, overwrite)" + os.linesep
-                      + status_start
-                      + "\t\tblackboard_var : integer;" + os.linesep
-                      + "\t\tblackboard_var_exists : boolean;" + os.linesep
-                      + "\t\tfree_var : integer;" + os.linesep
-                      + "\tINVAR" + os.linesep
-                      + "\t\tfree_var = blackboard_var;" + os.linesep
-                      + "\t\tnext(blackboard_var) :=" + os.linesep
-                      + "\t\t\tcase" + os.linesep
-                      + "\t\t\t\t(overwrite) : value_creator.blackboard_var;" + os.linesep
-                      + "\t\t\t\t!(blackboard_var_exists) : value_creator.blackboard_var;" + os.linesep
-                      + "\t\t\t\t!(overwrite) & (blackboard_var_exists) : blackboard_var;" + os.linesep
-                      #+ "\t\t\t\t!(active_leaf in nodes_with_access) : free_var;" + os.linesep
-                      + "\t\t\t\t!(active_node in nodes_with_access) : next(free_var);" + os.linesep #so. the options are to use next(free_var), or remove the INVAR for free_var
-                      + "\t\t\t\tTRUE : blackboard_var;" + os.linesep
-                      + "\t\t\tesac;" + os.linesep
-                      + "\t\tnext(blackboard_var_exists) :=" + os.linesep
-                      + "\t\t\tcase" + os.linesep
-                      + "\t\t\t\t(active_node = id) : TRUE;" + os.linesep
-                      + "\t\t\t\t!(active_node in nodes_with_access) : {FALSE, TRUE};" + os.linesep
-                      + "\t\t\t\tTRUE : blackboard_var_exists;" + os.linesep
-                      + "\t\t\tesac;" + os.linesep
-                      + "\t\t\t\t(overwrite) : success;" + os.linesep  #success if it actually set the value
-                      + "\t\t\t\t!(blackboard_var_exists) : success;" + os.linesep  #success if it actually set the value
-                      + "\t\t\t\t!(overwrite) & (blackboard_var_exists) : failure;" + os.linesep #failure if it didn't set anything
-                      + status_end)
-    return return_string
+    # (status_start, status_end) = common_string_leaf()
+    # return_string = ("MODULE leaf_set_blackboard_variable(blackboard, variable, nodes_with_access, value_creator, overwrite)" + os.linesep
+    #                   + status_start
+    #                   + "\t\tblackboard_var : integer;" + os.linesep
+    #                   + "\t\tblackboard_var_exists : boolean;" + os.linesep
+    #                   + "\t\tfree_var : integer;" + os.linesep
+    #                   + "\tINVAR" + os.linesep
+    #                   + "\t\tfree_var = blackboard_var;" + os.linesep
+    #                   + "\t\tnext(blackboard_var) :=" + os.linesep
+    #                   + "\t\t\tcase" + os.linesep
+    #                   + "\t\t\t\t(overwrite) : value_creator.blackboard_var;" + os.linesep
+    #                   + "\t\t\t\t!(blackboard_var_exists) : value_creator.blackboard_var;" + os.linesep
+    #                   + "\t\t\t\t!(overwrite) & (blackboard_var_exists) : blackboard_var;" + os.linesep
+    #                   #+ "\t\t\t\t!(active_leaf in nodes_with_access) : free_var;" + os.linesep
+    #                   + "\t\t\t\t!(active_node in nodes_with_access) : next(free_var);" + os.linesep #so. the options are to use next(free_var), or remove the INVAR for free_var
+    #                   + "\t\t\t\tTRUE : blackboard_var;" + os.linesep
+    #                   + "\t\t\tesac;" + os.linesep
+    #                   + "\t\tnext(blackboard_var_exists) :=" + os.linesep
+    #                   + "\t\t\tcase" + os.linesep
+    #                   + "\t\t\t\t(active_node = id) : TRUE;" + os.linesep
+    #                   + "\t\t\t\t!(active_node in nodes_with_access) : {FALSE, TRUE};" + os.linesep
+    #                   + "\t\t\t\tTRUE : blackboard_var_exists;" + os.linesep
+    #                   + "\t\t\tesac;" + os.linesep
+    #                   + "\t\t\t\t(overwrite) : success;" + os.linesep  #success if it actually set the value
+    #                   + "\t\t\t\t!(blackboard_var_exists) : success;" + os.linesep  #success if it actually set the value
+    #                   + "\t\t\t\t!(overwrite) & (blackboard_var_exists) : failure;" + os.linesep #failure if it didn't set anything
+    #                   + status_end)
+    # return return_string
 def create_leaf_set_blackboard_variables(ignored_value = 0):
     (status_start, status_end) = common_string_leaf()
     return_string = ("MODULE leaf_set_blackboard_variables(status_module)" + os.linesep
@@ -420,21 +423,21 @@ def create_leaf_set_blackboard_variables(ignored_value = 0):
 def create_leaf_unset_blackboard_variable(ignored_value = 0):
     pass
     
-    (status_start, status_end) = common_string_leaf()
-    return_string = ("MODULE leaf_unset_blackboard_variable(variable, nodes_with_access)" + os.linesep
-                      + status_start
-                      + "\t\t\t\t(active_node = id) : success;" + os.linesep  #this always returns success
-                      + status_end
-                      + "\tVAR" + os.linesep
-                      + "\t\tblackboard_var_exists : boolean;" + os.linesep #this is so we can set that the variable doesn't exist
-                      + "\tASSIGN" + os.linesep
-                      + "\t\tnext(blackboard_var_exists) :=" +os.linesep
-                      + "\t\t\tcase" + os.linesep
-                      + "\t\t\t\t(active_node = id) : FALSE;" + os.linesep #we just unset it
-                      + "\t\t\t\t!(active_node in nodes_with_access) : {FALSE, TRUE};" + os.linesep #well, someone else with access might be setting or unsetting it.
-                      + "\t\t\t\tTRUE : blackboard_var_exists;" + os.linesep #in a state with no access, so it won't change.
-                      + "\t\t\tesac;" + os.linesep)
-    return return_string
+    # (status_start, status_end) = common_string_leaf()
+    # return_string = ("MODULE leaf_unset_blackboard_variable(variable, nodes_with_access)" + os.linesep
+    #                   + status_start
+    #                   + "\t\t\t\t(active_node = id) : success;" + os.linesep  #this always returns success
+    #                   + status_end
+    #                   + "\tVAR" + os.linesep
+    #                   + "\t\tblackboard_var_exists : boolean;" + os.linesep #this is so we can set that the variable doesn't exist
+    #                   + "\tASSIGN" + os.linesep
+    #                   + "\t\tnext(blackboard_var_exists) :=" +os.linesep
+    #                   + "\t\t\tcase" + os.linesep
+    #                   + "\t\t\t\t(active_node = id) : FALSE;" + os.linesep #we just unset it
+    #                   + "\t\t\t\t!(active_node in nodes_with_access) : {FALSE, TRUE};" + os.linesep #well, someone else with access might be setting or unsetting it.
+    #                   + "\t\t\t\tTRUE : blackboard_var_exists;" + os.linesep #in a state with no access, so it won't change.
+    #                   + "\t\t\tesac;" + os.linesep)
+    # return return_string
 def create_leaf_wait_for_blackboard_variable(ignored_value = 0):
     (status_start, status_end) = common_string_leaf()
     return_string = ("MODULE leaf_wait_for_blackboard_variable(variable, blackboard)" + os.linesep
@@ -463,31 +466,31 @@ def create_leaf_wait_for_blackboard_variable_value(ignored_value = 0):
 def create_leaf_count(ignored_value = 0):
     pass
     #variables needed: fail_until, running_until, success_until, reset
-    print('WARNING: reset currently resets whenever the root node ticks with success or failure. This does not match the behavior of py_trees')
+    # print('WARNING: reset currently resets whenever the root node ticks with success or failure. This does not match the behavior of py_trees')
     
-    (status_start, status_end) = common_string_leaf()
-    return_string = ("MODULE leaf_count(fail_until, running_until, success_until, reset)" + os.linesep
-                      + status_start
-                      + "\t\t\t\t(internal_node_count < fail_until) : failure;" + os.linesep  #internal_node_count <fail_until means we return failure
-                      #if we reached this point, internal_node_count >= fail_until
-                      + "\t\t\t\t(internal_node_count < running_until) : running;" + os.linesep #internal_node_count <running_until means we return running
-                      #if we reached this point, internal_node_count >= fail_until and internal_node_count >= running_until
-                      + "\t\t\t\t(internal_node_count < success_until) : success;" + os.linesep #internal_node_count <success_until means we return running
-                      #if we reached this point, internal_node_count >= fail_until and internal_node_count >= running_until and internal_node_count >= success_until
-                      + "\t\t\t\t(active_node = id) : failure;" + os.linesep #internal_node_count = max_internal at this point
-                      + status_end
-                      + "\t\tmax_internal := max(fail_until, max(running_until, success_until));" + os.linesep#define this so we don't have to have it copied everywhere.
-                      + "\tVAR" + os.linesep 
-                      + "\t\tinternal_node_count : 0..max_internal;" + os.linesep  #define the internal count
-                      + "\tASSIGN" + os.linesep
-                      + "\t\tinit(internal_node_count) := 0;" + os.linesep  #initiate the internal internal_node_count to 0
-                      + "\t\tnext(internal_node_count) :=" + os.linesep
-                      + "\t\t\tcase" + os.linesep
-                      + "\t\t\t\t(active_node = -1) & !(child_status[0] = running) & (reset) : 0;" + os.linesep #reset the internal_node_count if reset is true, and we invalidate the node
-                      + "\t\t\t\t(active_node = id) : min(internal_node_count + 1, max_internal);" + os.linesep #update the internal node.
-                      + "\t\t\t\tTRUE : internal_node_count;" + os.linesep #don't change the value otherwise
-                      + "\t\t\tesac;" + os.linesep)
-    return return_string
+    # (status_start, status_end) = common_string_leaf()
+    # return_string = ("MODULE leaf_count(fail_until, running_until, success_until, reset)" + os.linesep
+    #                   + status_start
+    #                   + "\t\t\t\t(internal_node_count < fail_until) : failure;" + os.linesep  #internal_node_count <fail_until means we return failure
+    #                   #if we reached this point, internal_node_count >= fail_until
+    #                   + "\t\t\t\t(internal_node_count < running_until) : running;" + os.linesep #internal_node_count <running_until means we return running
+    #                   #if we reached this point, internal_node_count >= fail_until and internal_node_count >= running_until
+    #                   + "\t\t\t\t(internal_node_count < success_until) : success;" + os.linesep #internal_node_count <success_until means we return running
+    #                   #if we reached this point, internal_node_count >= fail_until and internal_node_count >= running_until and internal_node_count >= success_until
+    #                   + "\t\t\t\t(active_node = id) : failure;" + os.linesep #internal_node_count = max_internal at this point
+    #                   + status_end
+    #                   + "\t\tmax_internal := max(fail_until, max(running_until, success_until));" + os.linesep#define this so we don't have to have it copied everywhere.
+    #                   + "\tVAR" + os.linesep 
+    #                   + "\t\tinternal_node_count : 0..max_internal;" + os.linesep  #define the internal count
+    #                   + "\tASSIGN" + os.linesep
+    #                   + "\t\tinit(internal_node_count) := 0;" + os.linesep  #initiate the internal internal_node_count to 0
+    #                   + "\t\tnext(internal_node_count) :=" + os.linesep
+    #                   + "\t\t\tcase" + os.linesep
+    #                   + "\t\t\t\t(active_node = -1) & !(child_status[0] = running) & (reset) : 0;" + os.linesep #reset the internal_node_count if reset is true, and we invalidate the node
+    #                   + "\t\t\t\t(active_node = id) : min(internal_node_count + 1, max_internal);" + os.linesep #update the internal node.
+    #                   + "\t\t\t\tTRUE : internal_node_count;" + os.linesep #don't change the value otherwise
+    #                   + "\t\t\tesac;" + os.linesep)
+    # return return_string
 
 def create_leaf_failure(ignored_value = 0): 
     (status_start, status_end) = common_string_leaf()

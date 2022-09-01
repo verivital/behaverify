@@ -87,7 +87,7 @@
 	},
 	{
 		'target' : 'variable',
-		'name' : 'lec2_arm_r_pipe_warning',
+		'name' : 'lec2_am_r_pipe_warning',
 		'instructions' : {
 					'init_value' : 0,
 					'global_next_mode' : False 
@@ -116,7 +116,7 @@
 	},
 	{
 		'target' : 'variable',
-		'name' : 'lec2_arm_r_pipe_warning',
+		'name' : 'lec2_am_r_pipe_warning',
 		'instructions' : {
 					'init_value' : 0,
 					'global_next_mode' : False 
@@ -145,14 +145,18 @@
 	},
 	{
 		'target' : 'variable',
-		'name' : 'bb_pipelost_data',
+		'name' : 'bb_pipelost_dot_data',
 		'delete' : True
 
 	},
 	{
 		'target' : 'variable',
-		'name' : 'bb_mission_data',
-		'delete' : True
+		'name' : 'bb_mission_dot_data',
+		'instructions' : {
+					'init_value' : 0,
+					'global_next_mode' : False 
+					
+			       }
 
 	},
 	{
@@ -185,7 +189,11 @@
 	{
 		'target' : 'variable',
 		'name' : 'bb_waypoints_completed_dot_data',
-		'delete' : True
+		'instructions' : {
+					'init_value' : 0,
+					'global_next_mode' : False 
+					
+			       }
 
 	},
 	{
