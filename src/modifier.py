@@ -7,7 +7,7 @@ import pprint
 #todo: add a way to delete variables and change access
 
 
-def arg_modification(args):
+def arg_modification(args, nodes, variables):
     for variable_name in variables:
         variable = variables[variable_name]
         if args.min_value:
@@ -61,10 +61,12 @@ def arg_modification(args):
                 node['type'] = 'sequence_without_memory'
         if args.use_next_checks:
             if node['type'] == 'check_blackboard_variable_value':
-                node['use_next'] = True
+                for module in node['additional_modules']:
+                    module['use_next'] = True
         if args.use_current_checks:
             if node['type'] == 'check_blackboard_variable_value':
-                node['use_next'] = False
+                for module in node['additional_modules']:
+                    module['use_next'] = True
 
 def main():
 
@@ -73,7 +75,7 @@ def main():
     arg_parser.add_argument('--output_file', default = None)
     
     arg_parser.add_argument('--interactive_mode', action = 'store_true')
-    arg_parser.add_argument('--instruction_file', action = 'store_true')
+    arg_parser.add_argument('--instruction_file', default = None)
     
     arg_parser.add_argument('--force_parallel_unsynch', action = 'store_true')
     arg_parser.add_argument('--force_parallel_synch', action = 'store_true')
@@ -111,8 +113,8 @@ def main():
     nodes = temp['nodes']
     variables = temp['variables']
 
-    if args.force_parallel_synch or args.force_parallel_unsynch or args.force_selector_memory or args.force_selector_memoryless or args.force_sequence_memory or args.force_sequence_memoryless or args.min_value or args.max_value or args.init_value or args.no_init_value or args.next_value or args.no_next_value or args.use_global_value or args.use_individual_value or args.always_exist or args.sometimes_exist or args.init_exist or args.no_init_exist or args.next_exist or args.no_next_eixst:
-        arg_modification(args)
+    if args.force_parallel_synch or args.force_parallel_unsynch or args.force_selector_memory or args.force_selector_memoryless or args.force_sequence_memory or args.force_sequence_memoryless or args.min_value or args.max_value or args.init_value or args.no_init_value or args.next_value or args.no_next_value or args.use_global_value or args.use_individual_value or args.always_exist or args.sometimes_exist or args.init_exist or args.no_init_exist or args.next_exist or args.no_next_exist:
+        arg_modification(args, nodes, variables)
 
 
     deletions = False
@@ -178,28 +180,60 @@ def main():
                 done = True
             else:
                 print('input was not y or n')
+
+
+    arg_parser = argparse.ArgumentParser()
+    
+    arg_parser.add_argument('--force_parallel_unsynch', action = 'store_true')
+    arg_parser.add_argument('--force_parallel_synch', action = 'store_true')
+    arg_parser.add_argument('--force_selector_memory', action = 'store_true')
+    arg_parser.add_argument('--force_selector_memoryless', action = 'store_true')
+    arg_parser.add_argument('--force_sequence_memory', action = 'store_true')
+    arg_parser.add_argument('--force_sequence_memoryless', action = 'store_true')
+    arg_parser.add_argument('--use_next_checks', action = 'store_true')
+    arg_parser.add_argument('--use_current_checks', action = 'store_true')
+    
+    arg_parser.add_argument('--min_value', default = None)
+    arg_parser.add_argument('--max_value', default = None)
+    arg_parser.add_argument('--init_value', default = None)
+    arg_parser.add_argument('--no_init_value', action = 'store_true')
+    arg_parser.add_argument('--next_value', default = None)
+    arg_parser.add_argument('--no_next_value', action = 'store_true')
+    arg_parser.add_argument('--use_global_value', action = 'store_true')
+    arg_parser.add_argument('--use_individual_value', action = 'store_true')
+    arg_parser.add_argument('--always_exist', action = 'store_true')
+    arg_parser.add_argument('--sometimes_exist', action = 'store_true')
+    arg_parser.add_argument('--init_exist', default = None)
+    arg_parser.add_argument('--no_init_exist', action = 'store_true')
+    arg_parser.add_argument('--next_exist', default = None)
+    arg_parser.add_argument('--no_next_exist', action = 'store_true')
+    
     if args.instruction_file:
         node_name_to_id = {}
         for node_id in nodes:
             node_name_to_id[nodes[node_id]['name']] = node_id
+        modifications = []
         with open(args.instruction_file, 'r') as f:
-            instructions = eval(f.read())
-        for instruction in instructions:
-            if instruction['target'].strip().lower() == 'global_flags':
-                args = arg_parser.parse_args(instruction['instruction'])
-                arg_modification(args)
-            elif instruction['target'].strip().lower() == 'variable':
-                if instruction['instruction'].strip().lower() == 'delete':
-                    variable = variabeles.pop(instruction['name'])
-                    for node_id in variable['access']:
-                        nodes[node_id]['variables'].remove(instruction['name'])
-                    deletions = True
-                else:
-                    variables[instruction['name']][instruction['field']] = instruction['value']
-            elif instruction['target'].strip().lower() == 'node':
-                nodes[node_name_to_id[instruction['name']]][instruction['field']] = instruction['value']
+            modifications = eval(f.read())
+        for modification in modifications:
+            if modification['target'].strip().lower() == 'global_flags':
+                args2 = arg_parser.parse_args(modification['instructions'])
+                arg_modification(args2, nodes, variables)
+            elif modification['target'].strip().lower() == 'variable':
+                try:
+                    if modification['delete']:
+                        variable = variables.pop(modification['name'])
+                        for node_id in variable['access']:
+                            nodes[node_id]['variables'].remove(modification['name'])
+                        deletions = True
+                except KeyError:
+                    instructions = modification['instructions']
+                    for key_to_mod in instructions:
+                        variables[modification['name']][key_to_mod] = instructions[key_to_mod]
+            elif modification['target'].strip().lower() == 'node':
+                nodes[node_name_to_id[modification['name']]][modification['field']] = modification['value']
             else:
-                print('instruction file contains unknown modification target: ' + str(instruction['target']))
+                print('modification file contains unknown modification target: ' + str(modification['target']))
         pass
     #oh thank god indenting is working agian
 
