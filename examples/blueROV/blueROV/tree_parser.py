@@ -1,3 +1,4 @@
+
 #python3 tree_parser.py root_file root_method --root_args ROOT_ARGS --string_args STRING_ARGS --output_file OUTPUT_FILE
 
 #----------------------------------------------------------------------------------------------------------------
@@ -32,7 +33,7 @@ nodes : a map (dictionary) from node number to a dictionary of information. cont
  'children' : a list of children (node_id)
  'category' : leaf, decorator, or composite
  'type' : a string indicating the node type
- 'variables' : a list of blackboard variables the node has access to. each variable is a pair (variable_number, variable_name)
+ 'variables' : a list of blackboard variables the node has access to (variable_name)
  'additional_arguments' : a list of additional arguments that the node will need,
  'additional_definitions' : a list of additional definitions needed by the node (declared in MAIN),
  'additional_declarations' : a list of additional variables to declare,
@@ -138,7 +139,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                             'next_exist' : {this_id : True},
                             'access' : {this_id}
                         }
-                    local_variables.append((var_num, variable_name))
+                    local_variables.append(variable_name)
                 else:
                     done = True
         else:
@@ -165,7 +166,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                     'next_exist' : {this_id : True},
                     'access' : {this_id}
                 }
-            local_variables.append((var_num, variable_name))
+            local_variables.append(variable_name)
 
             
         nodes[this_id] = {
@@ -486,7 +487,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'category' : 'leaf',
             'type' : 'check_blackboard_variable_exists',
             'variables' : [],
-            'additional_arguments' : ['blackboard', var_num],
+            'additional_arguments' : ['blackboard', variable_name],
             'additional_definitions' : [],
             'additional_declarations' : [],
             'additional_initializations' : [],
@@ -546,7 +547,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'category' : 'leaf',
             'type' : 'check_blackboard_variable_value',
             'variables' : [],
-            'additional_arguments' : ['blackboard', str(var_num), '\t\t' + node_name + '_CHECK_' + variable_name],
+            'additional_arguments' : [node_name + '_CHECK_' + variable_name],
             'additional_definitions' : [],
             'additional_declarations' : ['\t\t' + node_name + '_CHECK_' + variable_name  + ' : '+ node_name + '_CHECK_' + variable_name + '_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);' + os.linesep],
             'additional_initializations' : [],
@@ -555,6 +556,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                     'name' : node_name + '_CHECK_' + variable_name + '_module',
                     'type' : 'check',
                     'args' : ['variables', 'variable_exists', 'node_names', 'variable_names'],
+                    'use_next' : False,
                     'left_hand_side' : 'variables[variable_names.' + variable_name + ']',
                     'operator' : op,
                     'right_hand_side' : rhs,
@@ -597,7 +599,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'children' : [],
             'category' : 'leaf',
             'type' : 'set_blackboard_variables',
-            'variables' : [(var_num, variable_name)],
+            'variables' : [variable_name],
             'additional_arguments' : [node_name + "_STATUS"],
             'additional_definitions' : [],
             'additional_declarations' : ['\t\t' + node_name + '_STATUS : ' + node_name + '_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);' + os.linesep],
