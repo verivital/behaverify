@@ -674,10 +674,23 @@ def main():
                                               
                         
                 elif module['type'] == 'check':
+
                     module_string += ("MODULE " + module['name'] + '(' + str(module['args'])[1:-1].replace("'", "") + ')' + os.linesep
                                       + "\tDEFINE" + os.linesep
-                                      + "\t\t result := variable_exists[variable_names." + module['variable_name'] + "] & (" + module['left_hand_side'] + module['operator'] + module['right_hand_side'] + ");" + os.linesep
+                                      + "\t\tresult := "
                                       )
+                    if module['use_next']:
+                        module_string += "next("
+                    module_string += "variable_exists[variable_names." + module['variable_name'] + "]"
+                    if module['use_next']:
+                        module_string += ")"
+                    module_string += " & ("
+                    if module['use_next']:
+                        module_string += 'next('
+                    module_string += module['left_hand_side']
+                    if module['use_next']:
+                        module_string += ') '
+                    module_string += module['operator'] + module['right_hand_side'] + ");" + os.linesep
                 else:
                     module_string += module['custom_module']
                 module_string += os.linesep
