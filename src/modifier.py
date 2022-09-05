@@ -229,7 +229,11 @@ def main():
                 except KeyError:
                     instructions = modification['instructions']
                     for key_to_mod in instructions:
-                        variables[modification['name']][key_to_mod] = instructions[key_to_mod]
+                        if key_to_mod.strip() == 'next_value':
+                            for node_name in instructions['next_value']:
+                                variables[modification['name']]['next_value']
+                        else:
+                            variables[modification['name']][key_to_mod] = instructions[key_to_mod]
             elif modification['target'].strip().lower() == 'node':
                 nodes[node_name_to_id[modification['name']]][modification['field']] = modification['value']
             else:
