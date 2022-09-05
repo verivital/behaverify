@@ -959,6 +959,11 @@ def main():
     arg_parser.add_argument('--output_file', default = None)
     args=arg_parser.parse_args()
 
+    if '/' in args.root_file:
+        sys.path.append( re.sub(r'/[^/]*$', '', args.root_file))
+        args.root_file = re.sub(r'.*/', '', args.root_file)
+        #print(args.root_file)
+
     module = __import__(args.root_file.replace('.py', ''))
 
     root_string = 'module.' + args.root_method + '('
