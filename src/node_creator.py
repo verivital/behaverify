@@ -246,6 +246,9 @@ def create_names_module(nodes, variables):
     return return_string
 
 def create_blackboard(nodes, variables):
+    node_name_to_id = {}
+    for node_id in nodes:
+        node_name_to_id[nodes[node_id]['name']] = node_id
     
     return_string = ("MODULE blackboard_module(node_names, variable_names, statuses)" + os.linesep
                       + "\tCONSTANTS" + os.linesep
@@ -281,23 +284,30 @@ def create_blackboard(nodes, variables):
                                    + "\t\t\tcase" + os.linesep)
                 
                 if variable['global_next_mode']:
-                    for node_id in variable['access']:
+                    for node_name in variable['access']:
+                        #node_id = node_name_to_id[node_name]
                         assign_this = True
                         if variable['global_next_value']:
-                            assign_string2 += "\t\t\tstatuses[" + str(node_id) + "] in {success, failure, running} : " + variable['global_next_value'] + ';' + os.linesep
+                            assign_string2 += "\t\t\tstatuses[node_names." + node_name + "] in {success, failure, running} : " + variable['global_next_value'] + ';' + os.linesep
                         else:
-                            assign_string2 += "\t\t\tstatuses[" + str(node_id) + "] in {success, failure, running} : " + poss_values + ';' + os.linesep
+                            assign_string2 += "\t\t\tstatuses[node_names." + node_name + "] in {success, failure, running} : " + poss_values + ';' + os.linesep
                 else:
-                    for node_id in variable['next_value']:
+                    if 0 in variable['next_value']:
+                        assign_this = True
+                        for condition_pair in variable['next_value'][node_id]:
+                            assign_string2 += "\t\t\t\t" + condition[0] + ' : ' + condition[1] + ';' + os.linesep
+                        
+                    for node_name in variable['next_value']:
+                        node_id = node_name_to_id[node_name]
                         assign_this = True
                         if variable['next_value'][node_id]:
                             for condition_pair in variable['next_value'][node_id]:
                                 if condition[0]:
-                                    assign_string2 += "\t\t\t\tstatuses[" + str(node_id) + "] in {success, failure, running} & (" + condition[0] + ') : ' + condition[1] + ';' + os.linesep
+                                    assign_string2 += "\t\t\t\t" + condition[0] + ' : ' + condition[1] + ';' + os.linesep
                                 else:
-                                    assign_string2 += "\t\t\t\tstatuses[" + str(node_id) + "] in {success, failure, running} : " + condition[1] + ';' + os.linesep
+                                    assign_string2 += "\t\t\t\tstatuses[node_names." + node_name + "] in {success, failure, running} : " + condition[1] + ';' + os.linesep
                         else:
-                            assign_string2 += "\t\t\tstatuses[" + str(node_id) + "] in {success, failure, running} : " + poss_values + ';' + os.linesep
+                            assign_string2 += "\t\t\tstatuses[node_names" + node_name + "] in {success, failure, running} : " + poss_values + ';' + os.linesep
                 assign_string2 += ("\t\t\t\tTRUE : " + variable_name + ";" + os.linesep
                                    + "\t\t\tesac;" + os.linesep
                                    )
@@ -317,10 +327,10 @@ def create_blackboard(nodes, variables):
                     assign_string2 = ("\t\tnext(" + variable_name + ") := " + os.linesep
                                        + "\t\t\tcase" + os.linesep
                                     )
-                    for node_id in variable['next_exist']:
-                        if variable['next_exist'][node_id]:
+                    for node_name in variable['next_exist']:
+                        if variable['next_exist'][node_name]:
                             assign_this = True
-                            for condition_pair in variable['next_exist'][node_id]:
+                            for condition_pair in variable['next_exist'][node_name]:
                                 assign_string2 += "\t\t\t\t" + condition[0] + ' : ' + condition[1] + ';' + os.linesep
                     assign_string2 += "\t\t\tesac;" + os.linesep
                     if assign_this:

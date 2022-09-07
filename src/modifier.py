@@ -117,6 +117,12 @@ def main():
         arg_modification(args, nodes, variables)
 
 
+        
+    node_name_to_id = {}
+    for node_id in nodes:
+        node_name_to_id[nodes[node_id]['name']] = node_id
+
+
     deletions = False
     if args.interactive_mode:
         done = False
@@ -124,17 +130,17 @@ def main():
             modify_nodes = input("Modify nodes? (Enter y for yes, n for no)")
             if modify_nodes == "y":
                 done = True
-                for node in nodes:
+                for node_id in nodes:
                     done2 = False
                     while not done2:
-                        print(nodes[node])
+                        print(nodes[node_id])
                         modify_node = input("Modify this node? (Enter y for yes, n for no)")
                         if modify_node == 'y':
                             modify_key = input("Enter key to modify: ")
                             try:
-                                print("current value: " + str(nodes[node][modify_key]))
+                                print("current value: " + str(nodes[node_id][modify_key]))
                                 modify_value = input("Enter new value: ")
-                                nodes[node][modify_key] = modify_value
+                                nodes[node_id][modify_key] = modify_value
                             except KeyValueError:
                                 print(modify_key + " is not a valid key")
                         elif modify_node == 'n':
@@ -162,8 +168,8 @@ def main():
                             modify_key = modify_key.strip()
                             if modify_key == 'delete':
                                 variable = variables.pop(variable_name)
-                                for node_id in variable['access']:
-                                    nodes[node_id]['variables'].remove(variable_name)
+                                for node_name in variable['access']:
+                                    nodes[node_name_to_id[node_name]]['variables'].remove(variable_name)
                                 deletions = True
                             else:
                                 try:
@@ -209,9 +215,6 @@ def main():
     arg_parser.add_argument('--no_next_exist', action = 'store_true')
     
     if args.instruction_file:
-        node_name_to_id = {}
-        for node_id in nodes:
-            node_name_to_id[nodes[node_id]['name']] = node_id
         modifications = []
         with open(args.instruction_file, 'r') as f:
             modifications = eval(f.read())
@@ -231,7 +234,7 @@ def main():
                     for key_to_mod in instructions:
                         if key_to_mod.strip() == 'next_value':
                             for node_name in instructions['next_value']:
-                                variables[modification['name']]['next_value']
+                                variables[modification['name']]['next_value'][node_name] = instructions['next_value'][node_name]
                         else:
                             variables[modification['name']][key_to_mod] = instructions[key_to_mod]
             elif modification['target'].strip().lower() == 'node':

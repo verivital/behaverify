@@ -19,8 +19,12 @@
 		'name' : 'battery_low_warning',
 		'instructions' : {
 					'init_value' : 0,
-					'global_next_mode' : False 
-					
+					'global_next_mode' : False,
+					'next_value' : {
+								'battery2bb' : [
+									('statuses[node_names.battery2bb] = success', '{0, 1}')
+								]
+							}
 			       }
 	},
 	{
@@ -39,7 +43,19 @@
 		'name' : 'bb_rth_warning',
 		'instructions' : {
 					'init_value' : 0,
-					'global_next_mode' : False 
+					'global_next_mode' : False,
+					'next_value' : {
+								0 : [
+									('bb_rth_warning = 1', 1)
+								],
+								'rth2bb' : [
+									('statuses[node_names.rth2bb] = success', '{0, 1}')
+								]
+								'mission_server' : [
+									('(statuses[node_names.mission_server] = running) & (next_mission = 1)', '{0, 1}')
+								]
+								
+							} 
 					
 			       }
 	},
@@ -60,8 +76,15 @@
 		'name' : 'bb_geofence_warning',
 		'instructions' : {
 					'init_value' : 0,
-					'global_next_mode' : False 
-					
+					'global_next_mode' : False,
+					'next_value' : {
+								0 : [
+									('bb_geofence_warning = 1', 1)
+								],
+								'geofence2bb' : [
+									('statuses[node_names.geofence2bb] = success', '{0, 1}')
+								]
+							} 
 			       }
 	},
 	{
@@ -81,7 +104,12 @@
 		'name' : 'lec2_am_r_speed_warning',
 		'instructions' : {
 					'init_value' : 0,
-					'global_next_mode' : False 
+					'global_next_mode' : False,
+					'next_value' : {
+								'lec2_am_r_2bb' : [
+									('statuses[node_names.lec2_am_r_2bb] = success', '{0, 1}')
+								]
+							}
 					
 			       }
 	},
