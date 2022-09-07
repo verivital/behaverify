@@ -306,6 +306,9 @@ def create_blackboard(nodes, variables):
                                     assign_string2 += "\t\t\t\t" + condition[0] + ' : ' + condition[1] + ';' + os.linesep
                                 else:
                                     assign_string2 += "\t\t\t\tstatuses[node_names." + node_name + "] in {success, failure, running} : " + condition[1] + ';' + os.linesep
+                        elif variable['auto_change'] == False:
+                            #doing nothing for this variable
+                            pass
                         else:
                             assign_string2 += "\t\t\tstatuses[node_names" + node_name + "] in {success, failure, running} : " + poss_values + ';' + os.linesep
                 assign_string2 += ("\t\t\t\tTRUE : " + variable_name + ";" + os.linesep
