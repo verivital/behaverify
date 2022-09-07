@@ -40,6 +40,11 @@ nodes : a map (dictionary) from node id to a dictionary of information. contains
  'additional_initializations' : a list of assignments for variables,
  'additional_modules' : a list of additional modules to be created
 
+
+TODO: Change the variables so that they are modified in reverse node_id order. I.E the last node_id that is active is the one that should be considered first. Slightly complex. Will have to think on how to order this better
+
+idea: add option to 'stage' variables for variables that are updated more than once per run
+
 variables : a map (dictionary) from variable name to information about the variable
  'variable_id' : the id (int) associated with the variable. used for ordering the blackboard
  'variable_name' : the name of the variable (identical to the key)
@@ -51,6 +56,7 @@ variables : a map (dictionary) from variable name to information about the varia
  'global_next_mode' : whether this variable uses only on next statement for everything. default True
  'global_next_value' : what the next value for this variable is when using only one statement for everything. default True
  'global_next_exist' : whether this variable exists by default at the next step. default True,
+ 'auto_change' : Only relevant if global_next_mode is False. If auto_change is True, then by default the variable will be assigned a new value where possible. If False, it will remain constant unless explicitly changed. Default False
  'next_value' : a map (dictionary) from node name to what value that node assign. each node maps to a list of pairs (condition, value). default, each node maps to None. 
  'next_exist' : a map (dictionary) from node name to if that node makes the variable exist. each node maps to a list of pairs (condition, value). default, each node maps to True
  'access' : a set of node names that have access to change the value of the variable
@@ -137,6 +143,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                             'global_next_mode' : True,
                             'global_next_value' : None,
                             'global_next_exist' : True,
+                            'auto_change' : False,
                             'next_value' : {node_name : None},
                             'next_exist' : {node_name : True},
                             'access' : {node_name}
@@ -164,6 +171,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                     'global_next_mode' : True,
                     'global_next_value' : None,
                     'global_next_exist' : True,
+                    'auto_change' : False,
                     'next_value' : {node_name : None},
                     'next_exist' : {node_name : True},
                     'access' : {node_name}
@@ -477,6 +485,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                 'global_next_mode' : True,
                 'global_next_value' : None,
                 'global_next_exist' : True,
+                'auto_change' : False,
                 'next_value' : {node_name : None},
                 'next_exist' : {node_name : True},
                 'access' : {node_name}
@@ -515,6 +524,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                 'global_next_mode' : True,
                 'global_next_value' : None,
                 'global_next_exist' : True,
+                'auto_change' : False,
                 'next_value' : {node_name : None},
                 'next_exist' : {node_name : True},
                 'access' : {node_name}
@@ -590,6 +600,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                 'global_next_mode' : True,
                 'global_next_value' : None,
                 'global_next_exist' : True,
+                'auto_change' : False,
                 'next_value' : {node_name : None},
                 'next_exist' : {node_name : True},
                 'access' : {node_name}
@@ -641,6 +652,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                 'global_next_mode' : True,
                 'global_next_value' : None,
                 'global_next_exist' : False,
+                'auto_change' : False,
                 'next_value' : {node_name : None},
                 'next_exist' : {node_name : False},
                 'access' : {node_name}
@@ -679,6 +691,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                 'global_next_mode' : True,
                 'global_next_value' : None,
                 'global_next_exist' : True,
+                'auto_change' : False,
                 'next_value' : {node_name : None},
                 'next_exist' : {node_name : True},
                 'access' : {node_name}
@@ -716,6 +729,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                 'global_next_mode' : True,
                 'global_next_value' : None,
                 'global_next_exist' : True,
+                'auto_change' : False,
                 'next_value' : {},
                 'next_exist' : {},
                 'access' : {}

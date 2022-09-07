@@ -50,7 +50,7 @@
 								],
 								'rth2bb' : [
 									('statuses[node_names.rth2bb] = success', '{0, 1}')
-								]
+								],
 								'mission_server' : [
 									('(statuses[node_names.mission_server] = running) & (next_mission = 1)', '{0, 1}')
 								]
@@ -118,7 +118,12 @@
 		'name' : 'lec2_am_r_pipe_warning',
 		'instructions' : {
 					'init_value' : 0,
-					'global_next_mode' : False 
+					'global_next_mode' : False,
+					'next_value' : {
+								'lec2_am_r_2bb' : [
+									('statuses[node_names.lec2_am_r_2bb] = success', '{0, 1}')
+								]
+							} 
 					
 			       }
 	},
@@ -138,7 +143,12 @@
 		'name' : 'lec2_am_l_speed_warning',
 		'instructions' : {
 					'init_value' : 0,
-					'global_next_mode' : False 
+					'global_next_mode' : False,
+					'next_value' : {
+								'lec2_am_l_2bb' : [
+									('statuses[node_names.lec2_am_l_2bb] = success', '{0, 1}')
+								]
+							}
 					
 			       }
 	},
@@ -147,7 +157,12 @@
 		'name' : 'lec2_am_r_pipe_warning',
 		'instructions' : {
 					'init_value' : 0,
-					'global_next_mode' : False 
+					'global_next_mode' : False,
+					'next_value' : {
+								'lec2_am_l_2bb' : [
+									('statuses[node_names.lec2_am_l_2bb] = success', '{0, 1}')
+								]
+							}
 					
 			       }
 	},
@@ -167,7 +182,12 @@
 		'name' : 'bb_pipe_lost_warning',
 		'instructions' : {
 					'init_value' : 0,
-					'global_next_mode' : False 
+					'global_next_mode' : False,
+					'next_value' : {
+								'pipe_lost_2bb' : [
+									('statuses[node_names.pipe_lost2bb] = success' & bb_mission_dot_data = 1, '{0, 1}')
+								]
+							}
 					
 			       }
 	},
@@ -181,8 +201,17 @@
 		'target' : 'variable',
 		'name' : 'bb_mission_dot_data',
 		'instructions' : {
-					'init_value' : 0,
-					'global_next_mode' : False 
+					'init_value' : 1,
+					'max_value' : 4,
+					'global_next_mode' : False,
+					'next_value' : {
+								'mission_server' : [
+									('statuses[node_names.sensor_failure2bb] = running', '{0, 1, 2, 3, 4}')
+								]
+								'mission2bb' : [
+									('statuses[node_names.mission2bb] = success', {0, 1, 2, 3, 4})
+									]
+							}
 					
 			       }
 
@@ -198,7 +227,15 @@
 		'name' : 'bb_sensor_failure_warning',
 		'instructions' : {
 					'init_value' : 0,
-					'global_next_mode' : False 
+					'global_next_mode' : False,
+					'next_value' : {
+								'sensor_failure2bb' : [
+									('statuses[node_names.sensor_failure2bb] = success', '{0, 1}')
+								],
+								0 : [
+									('bb_sensor_failure_warning = 1', 1)
+									]
+							} 
 					
 			       }
 	},
@@ -219,7 +256,12 @@
 		'name' : 'bb_waypoints_completed_dot_data',
 		'instructions' : {
 					'init_value' : 0,
-					'global_next_mode' : False 
+					'global_next_mode' : False,
+					'next_value' : {
+								'waypoints_completed2bb' : [
+									('statuses[node_names.waypoints_completed2bb] = success', '{0, 1}')
+								]
+							} 
 					
 			       }
 
@@ -241,7 +283,12 @@
 		'name' : 'dd_z_axis_warning',
 		'instructions' : {
 					'init_value' : 0,
-					'global_next_mode' : False 
+					'global_next_mode' : False,
+					'next_value' : {
+								'ddlec2bb' : [
+									('statuses[node_names.ddlec2bb] = success', '{0, 1}')
+								]
+							}
 					
 			       }
 
@@ -251,7 +298,12 @@
 		'name' : 'dd_xy_axis_degradation',
 		'instructions' : {
 					'init_value' : 0,
-					'global_next_mode' : False 
+					'global_next_mode' : False,
+					'next_value' : {
+								'ddlec2bb' : [
+									('statuses[node_names.ddlec2bb] = success', '{0, 1}')
+								]
+							}
 					
 			       }
 
@@ -265,11 +317,7 @@
 	{
 		'target' : 'variable',
 		'name' : 'total_degradation',
-		'instructions' : {
-					'init_value' : 0,
-					'global_next_mode' : False 
-					
-			       }
+		'delete' : True
 
 	},
 	{
@@ -283,7 +331,15 @@
 		'name' : 'obstacle_standoff_warning',
 		'instructions' : {
 					'init_value' : 0,
-					'global_next_mode' : False 
+					'global_next_mode' : False,
+					'next_value' : {
+								0 : [
+									('obstacle_standoff_warning = 1', 1)
+									]
+								'fls2bb' : [
+									('statuses[node_names.fls2bb] = success', '{0, 1}')
+								]
+							}
 					
 			       }
 
