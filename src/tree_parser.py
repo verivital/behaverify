@@ -41,25 +41,25 @@ nodes : a map (dictionary) from node id to a dictionary of information. contains
  'additional_modules' : a list of additional modules to be created
 
 variables : a map (dictionary) from variable name to information about the variable
- 'variable_id' = the id (int) associated with the variable. used for ordering the blackboard
- 'min_value' = the minimum value (int) the variable can be. default 0
- 'max_value' = the maximum value (int) the variable can be. default 1
- 'init_value' = the value used at the very start. default None
- 'always_exist' = whether this variable always exists. default True
- 'init_exist' = whether this variable initially exists. default True
- 'global_next_mode' = whether this variable uses only on next statement for everything. default True
- 'global_next_value' = what the next value for this variable is when using only one statement for everything. default True
- 'global_next_exist' = whether this variable exists by default at the next step. default True,
- 'next_value' = a map (dictionary) from node id to what value that node assign. each node maps to a list of pairs (condition, value). default, each node maps to None. 
- 'next_exist' = a map (dictionary) from node id to if that node makes the variable exist. each node maps to a list of pairs (condition, value). default, each node maps to True
- 'access' = a set of node_ids that have access to change the value of the variable
+ 'variable_id' : the id (int) associated with the variable. used for ordering the blackboard
+ 'variable_name' : the name of the variable (identical to the key)
+ 'min_value' : the minimum value (int) the variable can be. default 0
+ 'max_value' : the maximum value (int) the variable can be. default 1
+ 'init_value' : the value used at the very start. default None
+ 'always_exist' : whether this variable always exists. default True
+ 'init_exist' : whether this variable initially exists. default True
+ 'global_next_mode' : whether this variable uses only on next statement for everything. default True
+ 'global_next_value' : what the next value for this variable is when using only one statement for everything. default True
+ 'global_next_exist' : whether this variable exists by default at the next step. default True,
+ 'next_value' : a map (dictionary) from node name to what value that node assign. each node maps to a list of pairs (condition, value). default, each node maps to None. 
+ 'next_exist' : a map (dictionary) from node name to if that node makes the variable exist. each node maps to a list of pairs (condition, value). default, each node maps to True
+ 'access' : a set of node names that have access to change the value of the variable
 '''
 def walk_tree(root, file_name = None):
-    nodes = {-1 : {'children' : []}}
+    nodes = {}
     variables = {}
     walk_tree_recursive(root, -1, 0, nodes, {}, variables)
     variable_name_cleanup(nodes, variables)
-    nodes.pop(-1)
     if file_name:
         with open(file_name, 'w') as f:
             printer = pprint.PrettyPrinter(indent = 4, sort_dicts = False, stream = f)
@@ -71,7 +71,9 @@ def walk_tree(root, file_name = None):
 def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_names, variables):
     this_id = next_available_id #set what the current id is
     next_available_id = next_available_id + 1 #increment what is available
-    nodes[parent_id]['children'].append(this_id) #update parent's list of children
+
+    if parent_id >= 0:
+        nodes[parent_id]['children'].append(this_id) #update parent's list of children
 
     #next, we get the name of this node, and correct for duplication
     node_name = current_node.name
@@ -120,9 +122,9 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                         local_variable_set.add(variable_name)
                     if variable_name in variables:
                         var_num = variables[variable_name]['variable_id']
-                        variables[variable_name]['access'].add(this_id)
-                        variables[variable_name]['next_value'][this_id] = None
-                        variables[variable_name]['next_exist'][this_id] = True
+                        variables[variable_name]['access'].add(node_name)
+                        variables[variable_name]['next_value'][node_name] = None
+                        variables[variable_name]['next_exist'][node_name] = True
                     else:
                         var_num = len(variables)
                         variables[variable_name] = {
@@ -135,9 +137,9 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                             'global_next_mode' : True,
                             'global_next_value' : None,
                             'global_next_exist' : True,
-                            'next_value' : {this_id : None},
-                            'next_exist' : {this_id : True},
-                            'access' : {this_id}
+                            'next_value' : {node_name : None},
+                            'next_exist' : {node_name : True},
+                            'access' : {node_name}
                         }
                     local_variables.append(variable_name)
                 else:
@@ -147,9 +149,9 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             variable_name = variable_name.replace('.', '_dot_')
             if variable_name in variables:
                 var_num = variables[variable_name]['variable_id']
-                variables[variable_name]['access'].add(this_id)
-                variables[variable_name]['next_value'][this_id] = None
-                variables[variable_name]['next_exist'][this_id] = True
+                variables[variable_name]['access'].add(node_name)
+                variables[variable_name]['next_value'][node_name] = None
+                variables[variable_name]['next_exist'][node_name] = True
             else:
                 var_num = len(variables)
                 variables[variable_name] = {
@@ -162,9 +164,9 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                     'global_next_mode' : True,
                     'global_next_value' : None,
                     'global_next_exist' : True,
-                    'next_value' : {this_id : None},
-                    'next_exist' : {this_id : True},
-                    'access' : {this_id}
+                    'next_value' : {node_name : None},
+                    'next_exist' : {node_name : True},
+                    'access' : {node_name}
                 }
             local_variables.append(variable_name)
 
@@ -475,9 +477,9 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                 'global_next_mode' : True,
                 'global_next_value' : None,
                 'global_next_exist' : True,
-                'next_value' : {this_id : None},
-                'next_exist' : {this_id : True},
-                'access' : {this_id}
+                'next_value' : {node_name : None},
+                'next_exist' : {node_name : True},
+                'access' : {node_name}
             }
             
         nodes[this_id] = {
@@ -513,9 +515,9 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                 'global_next_mode' : True,
                 'global_next_value' : None,
                 'global_next_exist' : True,
-                'next_value' : {this_id : None},
-                'next_exist' : {this_id : True},
-                'access' : {this_id}
+                'next_value' : {node_name : None},
+                'next_exist' : {node_name : True},
+                'access' : {node_name}
             }
         try:
             rhs = str(int(current_node.check.value))
@@ -573,8 +575,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
         variable_name = current_node.variable_name
         variable_name = variable_name.replace('.', '_dot_')
         if variable_name in variables:
-            variables[variable_name]['access'].add(this_id)
-            variables[variable_name]['next_value'][this_id] = None
+            variables[variable_name]['access'].add(node_name)
+            variables[variable_name]['next_value'][node_name] = None
             var_num = variables[variable_name]['variable_id']
         else:
             var_num = len(variables)
@@ -588,9 +590,9 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                 'global_next_mode' : True,
                 'global_next_value' : None,
                 'global_next_exist' : True,
-                'next_value' : {this_id : None},
-                'next_exist' : {this_id : True},
-                'access' : {this_id}
+                'next_value' : {node_name : None},
+                'next_exist' : {node_name : True},
+                'access' : {node_name}
             }
 
         nodes[this_id] = {
@@ -621,10 +623,10 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
         variable_name = current_node.key
         variable_name = variable_name.replace('.', '_dot_')
         if variable_name in variables:
-            variables[variable_name]['access'].add(this_id)
-            variables[variable_name]['next_value'][this_id] = None
+            variables[variable_name]['access'].add(node_name)
+            variables[variable_name]['next_value'][node_name] = None
             variables[variable_name]['always_exist'] = False
-            variables[variable_name]['next_exist'][this_id] = False
+            variables[variable_name]['next_exist'][node_name] = False
             variables[variable_name]['global_next_exist'] = False
             var_num = variables[variable_name]['variable_id']
         else:
@@ -639,9 +641,9 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                 'global_next_mode' : True,
                 'global_next_value' : None,
                 'global_next_exist' : False,
-                'next_value' : {this_id : None},
-                'next_exist' : {this_id : False},
-                'access' : {this_id}
+                'next_value' : {node_name : None},
+                'next_exist' : {node_name : False},
+                'access' : {node_name}
             }
 
         nodes[this_id] = {
@@ -677,9 +679,9 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                 'global_next_mode' : True,
                 'global_next_value' : None,
                 'global_next_exist' : True,
-                'next_value' : {this_id : None},
-                'next_exist' : {this_id : True},
-                'access' : {this_id}
+                'next_value' : {node_name : None},
+                'next_exist' : {node_name : True},
+                'access' : {node_name}
             }
             
         nodes[this_id] = {
@@ -827,7 +829,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
         }
         
     elif isinstance(current_node, py_trees.behaviours.StatusSequence):
-        sequence_definition = "\t\tsequence_for_" + node_name + '_' + str(this_id) + " := " + str(current_node.sequence) + ";" + os.linesep
+        sequence_definition = "\t\tsequence_for_" + node_name + " := " + str(current_node.sequence) + ";" + os.linesep
         if current_node.eventually is None:
             eventually = 'invalid'
         else:
@@ -839,7 +841,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'category' : 'leaf',
             'type' : 'status_sequence',
             'variables' : [],
-            'additional_arguments' : ['sequence_for_' + node_name + '_' + str(this_id), str(len(current_node.sequence)), eventually],
+            'additional_arguments' : ['sequence_for_' + node_name, str(len(current_node.sequence)), eventually],
             'additional_definitions' : [sequence_definition],
             'additional_declarations' : [],
             'additional_initializations' : [],
@@ -938,16 +940,19 @@ but other places use meh.val1, meh.val2, etc, then the original "meh" needs to h
 """
 def variable_name_cleanup(nodes, variables):
     #print(variables)
+    node_name_to_id = {}
+    for node_id in nodes:
+        node_name_to_id[nodes[node_id]['name']] = node_id
     for variable in variables:
         #print(variable)
         variable_regex = re.compile(r""+variable+"_dot_")#if out variable is meh, we are now matching meh_dot_
         for child_variable in variables:
             if variable_regex.match(child_variable):#if this is true, then is means we are looking at meh_dot_something
-                for access_node in variables[variable]['access']:#we are now going to tell everything that can change meh, that it can change meh_dot_something
-                    nodes[access_node]['variables'].append((variables[child_variable]['variable_id'], child_variable))#told the node it can access this variable
-                    variables[child_variable]['access'].add(access_node)#told the variable it can be accessed by this node
-                    variables[child_variable]['next_value'][access_node] = None#updated what the next value for this specific node is
-                    variables[child_variable]['next_exist'][access_node] = True #updated what the next exist value is for this specific node
+                for access_node_name in variables[variable]['access']:#we are now going to tell everything that can change meh, that it can change meh_dot_something
+                    nodes[node_name_to_id[access_node_name]]['variables'].append((variables[child_variable]['variable_id'], child_variable))#told the node it can access this variable
+                    variables[child_variable]['access'].add(access_node_name)#told the variable it can be accessed by this node
+                    variables[child_variable]['next_value'][access_node_name] = None#updated what the next value for this specific node is
+                    variables[child_variable]['next_exist'][access_node_name] = True #updated what the next exist value is for this specific node
 
 
 def main():
