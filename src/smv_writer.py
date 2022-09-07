@@ -607,7 +607,7 @@ def main():
     for variable in variables:
         nuxmv_string += ('--' + variable + ' : ' + str(variables[variable]['variable_id']) + os.linesep)
         for access_node in variables[variable]['access']:
-            nuxmv_string += ('----' + nodes[access_node]['name'] + os.linesep)
+            nuxmv_string += ('----' + access_node + os.linesep)
 
     
     if args.blackboard_input_file:
