@@ -38,6 +38,13 @@ def arg_modification(args, nodes, variables):
             variable['next_exist'] = bool(args.next_exist)
         if args.no_next_exist:
             variable['no_next_exist'] = None
+        if args.variables_auto_stay:
+            variable['auto_change'] = False
+        if args.variables_auto_change:
+            variable['auto_change'] = True
+    
+    arg_parser.add_argument('--variables_auto_stay', action = 'store_true')
+    arg_parser.add_argument('--variables_auto_change', action = 'store_true')
     for node_id in nodes:
         node = nodes[node_id]
         if args.force_parallel_unsynch:
@@ -87,6 +94,7 @@ def main():
     arg_parser.add_argument('--use_current_checks', action = 'store_true')
     
     
+    
     arg_parser.add_argument('--min_value', default = None)
     arg_parser.add_argument('--max_value', default = None)
     arg_parser.add_argument('--init_value', default = None)
@@ -101,6 +109,8 @@ def main():
     arg_parser.add_argument('--no_init_exist', action = 'store_true')
     arg_parser.add_argument('--next_exist', default = None)
     arg_parser.add_argument('--no_next_exist', action = 'store_true')
+    arg_parser.add_argument('--variables_auto_stay', action = 'store_true')
+    arg_parser.add_argument('--variables_auto_change', action = 'store_true')
 
 
     
@@ -113,7 +123,7 @@ def main():
     nodes = temp['nodes']
     variables = temp['variables']
 
-    if args.force_parallel_synch or args.force_parallel_unsynch or args.force_selector_memory or args.force_selector_memoryless or args.force_sequence_memory or args.force_sequence_memoryless or args.min_value or args.max_value or args.init_value or args.no_init_value or args.next_value or args.no_next_value or args.use_global_value or args.use_individual_value or args.always_exist or args.sometimes_exist or args.init_exist or args.no_init_exist or args.next_exist or args.no_next_exist:
+    if args.force_parallel_synch or args.force_parallel_unsynch or args.force_selector_memory or args.force_selector_memoryless or args.force_sequence_memory or args.force_sequence_memoryless or args.min_value or args.max_value or args.init_value or args.no_init_value or args.next_value or args.no_next_value or args.use_global_value or args.use_individual_value or args.always_exist or args.sometimes_exist or args.init_exist or args.no_init_exist or args.next_exist or args.no_next_exist or args.variables_auto_stay or args.variable_auto_change:
         arg_modification(args, nodes, variables)
 
 
@@ -213,6 +223,8 @@ def main():
     arg_parser.add_argument('--no_init_exist', action = 'store_true')
     arg_parser.add_argument('--next_exist', default = None)
     arg_parser.add_argument('--no_next_exist', action = 'store_true')
+    arg_parser.add_argument('--variables_auto_stay', action = 'store_true')
+    arg_parser.add_argument('--variables_auto_change', action = 'store_true')
     
     if args.instruction_file:
         modifications = []
