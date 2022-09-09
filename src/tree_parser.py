@@ -53,11 +53,8 @@ variables : a map (dictionary) from variable name to information about the varia
  'init_value' : the value used at the very start. default None
  'always_exist' : whether this variable always exists. default True
  'init_exist' : whether this variable initially exists. default True
- 'global_next_mode' : whether this variable uses only on next statement for everything. default True
- 'global_next_value' : what the next value for this variable is when using only one statement for everything. default True
- 'global_next_exist' : whether this variable exists by default at the next step. default True,
  'auto_change' : Only relevant if global_next_mode is False. If auto_change is True, then by default the variable will be assigned a new value where possible. If False, it will remain constant unless explicitly changed. Default False
- 'next_value' : a map (dictionary) from node name to what value that node assign. each node maps to a list of pairs (condition, value). default, each node maps to None. 
+ 'next_value' : a list of pairs (condition, value) such that if the condition is met, then the value is assigned. Order matters. Default, None 
  'next_exist' : a map (dictionary) from node name to if that node makes the variable exist. each node maps to a list of pairs (condition, value). default, each node maps to True
  'access' : a set of node names that have access to change the value of the variable
 '''
@@ -129,7 +126,6 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                     if variable_name in variables:
                         var_num = variables[variable_name]['variable_id']
                         variables[variable_name]['access'].add(node_name)
-                        variables[variable_name]['next_value'][node_name] = None
                         variables[variable_name]['next_exist'][node_name] = True
                     else:
                         var_num = len(variables)
@@ -140,11 +136,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                             'init_value' : None,
                             'always_exist' : True,
                             'init_exist' : True,
-                            'global_next_mode' : True,
-                            'global_next_value' : None,
-                            'global_next_exist' : True,
                             'auto_change' : False,
-                            'next_value' : {node_name : None},
+                            'next_value' : None,
                             'next_exist' : {node_name : True},
                             'access' : {node_name}
                         }
@@ -157,7 +150,6 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             if variable_name in variables:
                 var_num = variables[variable_name]['variable_id']
                 variables[variable_name]['access'].add(node_name)
-                variables[variable_name]['next_value'][node_name] = None
                 variables[variable_name]['next_exist'][node_name] = True
             else:
                 var_num = len(variables)
@@ -168,11 +160,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                     'init_value' : None,
                     'always_exist' : True,
                     'init_exist' : True,
-                    'global_next_mode' : True,
-                    'global_next_value' : None,
-                    'global_next_exist' : True,
                     'auto_change' : False,
-                    'next_value' : {node_name : None},
+                    'next_value' : None,
                     'next_exist' : {node_name : True},
                     'access' : {node_name}
                 }
@@ -482,11 +471,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                 'init_value' : None,
                 'always_exist' : True,
                 'init_exist' : True,
-                'global_next_mode' : True,
-                'global_next_value' : None,
-                'global_next_exist' : True,
                 'auto_change' : False,
-                'next_value' : {node_name : None},
+                'next_value' : None,
                 'next_exist' : {node_name : True},
                 'access' : {node_name}
             }
@@ -521,11 +507,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                 'init_value' : None,
                 'always_exist' : True,
                 'init_exist' : True,
-                'global_next_mode' : True,
-                'global_next_value' : None,
-                'global_next_exist' : True,
                 'auto_change' : False,
-                'next_value' : {node_name : None},
+                'next_value' : None,
                 'next_exist' : {node_name : True},
                 'access' : {node_name}
             }
@@ -586,7 +569,6 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
         variable_name = variable_name.replace('.', '_dot_')
         if variable_name in variables:
             variables[variable_name]['access'].add(node_name)
-            variables[variable_name]['next_value'][node_name] = None
             var_num = variables[variable_name]['variable_id']
         else:
             var_num = len(variables)
@@ -597,11 +579,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                 'init_value' : None,
                 'always_exist' : True,
                 'init_exist' : True,
-                'global_next_mode' : True,
-                'global_next_value' : None,
-                'global_next_exist' : True,
                 'auto_change' : False,
-                'next_value' : {node_name : None},
+                'next_value' : None,
                 'next_exist' : {node_name : True},
                 'access' : {node_name}
             }
@@ -635,10 +614,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
         variable_name = variable_name.replace('.', '_dot_')
         if variable_name in variables:
             variables[variable_name]['access'].add(node_name)
-            variables[variable_name]['next_value'][node_name] = None
             variables[variable_name]['always_exist'] = False
             variables[variable_name]['next_exist'][node_name] = False
-            variables[variable_name]['global_next_exist'] = False
             var_num = variables[variable_name]['variable_id']
         else:
             var_num = len(variables)
@@ -649,11 +626,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                 'init_value' : None,
                 'always_exist' : False,
                 'init_exist' : True,
-                'global_next_mode' : True,
-                'global_next_value' : None,
-                'global_next_exist' : False,
                 'auto_change' : False,
-                'next_value' : {node_name : None},
+                'next_value' : None,
                 'next_exist' : {node_name : False},
                 'access' : {node_name}
             }
@@ -688,11 +662,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                 'init_value' : None,
                 'always_exist' : True,
                 'init_exist' : True,
-                'global_next_mode' : True,
-                'global_next_value' : None,
-                'global_next_exist' : True,
                 'auto_change' : False,
-                'next_value' : {node_name : None},
+                'next_value' : None,
                 'next_exist' : {node_name : True},
                 'access' : {node_name}
             }
@@ -726,11 +697,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                 'init_value' : None,
                 'always_exist' : True,
                 'init_exist' : True,
-                'global_next_mode' : True,
-                'global_next_value' : None,
-                'global_next_exist' : True,
                 'auto_change' : False,
-                'next_value' : {},
+                'next_value' : None,
                 'next_exist' : {},
                 'access' : {}
             }
@@ -965,7 +933,6 @@ def variable_name_cleanup(nodes, variables):
                 for access_node_name in variables[variable]['access']:#we are now going to tell everything that can change meh, that it can change meh_dot_something
                     nodes[node_name_to_id[access_node_name]]['variables'].append((variables[child_variable]['variable_id'], child_variable))#told the node it can access this variable
                     variables[child_variable]['access'].add(access_node_name)#told the variable it can be accessed by this node
-                    variables[child_variable]['next_value'][access_node_name] = None#updated what the next value for this specific node is
                     variables[child_variable]['next_exist'][access_node_name] = True #updated what the next exist value is for this specific node
 
 
