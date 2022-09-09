@@ -20,11 +20,9 @@
 		'instructions' : {
 					'init_value' : 0,
 					'global_next_mode' : False,
-					'next_value' : {
-								'battery2bb' : [
-									('statuses[node_names.battery2bb] = success', '{0, 1}')
-								]
-							}
+					'next_value' :  [
+								('statuses[node_names.battery2bb] = success', '{0, 1}')
+							]
 			       }
 	},
 	{
@@ -44,19 +42,11 @@
 		'instructions' : {
 					'init_value' : 0,
 					'global_next_mode' : False,
-					'next_value' : {
-								0 : [
-									('bb_rth_warning = 1', 1)
-								],
-								'rth2bb' : [
-									('statuses[node_names.rth2bb] = success', '{0, 1}')
-								],
-								'mission_server' : [
-									('(statuses[node_names.mission_server] = running) & (next_mission = 1)', '{0, 1}')
-								]
-								
-							} 
-					
+					'next_value' : [
+								('bb_rth_warning = 1', 1),
+								('statuses[node_names.rth2bb] = success', '{0, 1}'),
+								('(statuses[node_names.mission_server] = running) & (next_mission = 1)', '{0, 1}')
+							]
 			       }
 	},
 	{
@@ -77,14 +67,10 @@
 		'instructions' : {
 					'init_value' : 0,
 					'global_next_mode' : False,
-					'next_value' : {
-								0 : [
-									('bb_geofence_warning = 1', 1)
-								],
-								'geofence2bb' : [
-									('statuses[node_names.geofence2bb] = success', '{0, 1}')
-								]
-							} 
+					'next_value' : [
+								('bb_geofence_warning = 1', 1),
+								('statuses[node_names.geofence2bb] = success', '{0, 1}')
+							]
 			       }
 	},
 	{
@@ -105,12 +91,9 @@
 		'instructions' : {
 					'init_value' : 0,
 					'global_next_mode' : False,
-					'next_value' : {
-								'lec2_am_r_2bb' : [
-									('statuses[node_names.lec2_am_r_2bb] = success', '{0, 1}')
-								]
-							}
-					
+					'next_value' : [
+								('statuses[node_names.lec2_am_r_2bb] = success', '{0, 1}')
+							]
 			       }
 	},
 	{
@@ -119,11 +102,9 @@
 		'instructions' : {
 					'init_value' : 0,
 					'global_next_mode' : False,
-					'next_value' : {
-								'lec2_am_r_2bb' : [
-									('statuses[node_names.lec2_am_r_2bb] = success', '{0, 1}')
-								]
-							} 
+					'next_value' : [
+								('statuses[node_names.lec2_am_r_2bb] = success', '{0, 1}')
+							]
 					
 			       }
 	},
@@ -144,12 +125,9 @@
 		'instructions' : {
 					'init_value' : 0,
 					'global_next_mode' : False,
-					'next_value' : {
-								'lec2_am_l_2bb' : [
-									('statuses[node_names.lec2_am_l_2bb] = success', '{0, 1}')
-								]
-							}
-					
+					'next_value' : [
+								('statuses[node_names.lec2_am_l_2bb] = success', '{0, 1}')
+							]					
 			       }
 	},
 	{
@@ -158,12 +136,9 @@
 		'instructions' : {
 					'init_value' : 0,
 					'global_next_mode' : False,
-					'next_value' : {
-								'lec2_am_l_2bb' : [
-									('statuses[node_names.lec2_am_l_2bb] = success', '{0, 1}')
-								]
-							}
-					
+					'next_value' : [
+								('statuses[node_names.lec2_am_l_2bb] = success', '{0, 1}')
+							]
 			       }
 	},
 	{
@@ -183,11 +158,9 @@
 		'instructions' : {
 					'init_value' : 0,
 					'global_next_mode' : False,
-					'next_value' : {
-								'pipe_lost_2bb' : [
-									('statuses[node_names.pipe_lost2bb] = success' & bb_mission_dot_data = 1, '{0, 1}')
-								]
-							}
+					'next_value' : [
+								('statuses[node_names.pipe_lost2bb] = success' & bb_mission_dot_data = 1, '{0, 1}')
+							]
 					
 			       }
 	},
@@ -204,17 +177,11 @@
 					'init_value' : 1,
 					'max_value' : 4,
 					'global_next_mode' : False,
-					'next_value' : {
-								'mission_server' : [
-									('statuses[node_names.sensor_failure2bb] = running', '{0, 1, 2, 3, 4}')
-								]
-								'mission2bb' : [
-									('statuses[node_names.mission2bb] = success', {0, 1, 2, 3, 4})
-									]
-							}
-					
+					'next_value' : [
+								('statuses[node_names.sensor_failure2bb] = running', '{0, 1, 2, 3, 4}'),
+								('statuses[node_names.mission2bb] = success', '{0, 1, 2, 3, 4}')
+							]
 			       }
-
 	},
 	{
 		'target' : 'variable',
@@ -228,15 +195,10 @@
 		'instructions' : {
 					'init_value' : 0,
 					'global_next_mode' : False,
-					'next_value' : {
-								'sensor_failure2bb' : [
-									('statuses[node_names.sensor_failure2bb] = success', '{0, 1}')
-								],
-								0 : [
-									('bb_sensor_failure_warning = 1', 1)
-									]
-							} 
-					
+					'next_value' : [
+								('bb_sensor_failure_warning = 1', '1'),
+								('statuses[node_names.sensor_failure2bb] = success', '{0, 1}')
+							]
 			       }
 	},
 	{
@@ -257,11 +219,9 @@
 		'instructions' : {
 					'init_value' : 0,
 					'global_next_mode' : False,
-					'next_value' : {
-								'waypoints_completed2bb' : [
-									('statuses[node_names.waypoints_completed2bb] = success', '{0, 1}')
-								]
-							} 
+					'next_value' : [
+								('statuses[node_names.waypoints_completed2bb] = success', '{0, 1}')
+							]
 					
 			       }
 
@@ -284,14 +244,10 @@
 		'instructions' : {
 					'init_value' : 0,
 					'global_next_mode' : False,
-					'next_value' : {
-								'ddlec2bb' : [
+					'next_value' : [
 									('statuses[node_names.ddlec2bb] = success', '{0, 1}')
-								]
-							}
-					
+							]
 			       }
-
 	},
 	{
 		'target' : 'variable',
@@ -299,12 +255,9 @@
 		'instructions' : {
 					'init_value' : 0,
 					'global_next_mode' : False,
-					'next_value' : {
-								'ddlec2bb' : [
-									('statuses[node_names.ddlec2bb] = success', '{0, 1}')
-								]
-							}
-					
+					'next_value' : [
+								('statuses[node_names.ddlec2bb] = success', '{0, 1}')
+							]
 			       }
 
 	},
@@ -332,26 +285,16 @@
 		'instructions' : {
 					'init_value' : 0,
 					'global_next_mode' : False,
-					'next_value' : {
-								0 : [
-									('obstacle_standoff_warning = 1', 1)
-									]
-								'fls2bb' : [
-									('statuses[node_names.fls2bb] = success', '{0, 1}')
-								]
-							}
-					
+					'next_value' : [
+								('obstacle_standoff_warning = 1', '1'),
+								('statuses[node_names.fls2bb] = success', '{0, 1}')
+							]
 			       }
-
 	},
 	{
 		'target' : 'variable',
 		'name' : 'obstacle_min_standoff',
-		'instructions' : {
-					'init_value' : 0,
-					'global_next_mode' : False 
-					
-			       }
+		'delete' : True
 
 	},
 	{
@@ -363,11 +306,7 @@
 	{
 		'target' : 'variable',
 		'name' : 'obstacle_in_view',
-		'instructions' : {
-					'init_value' : 0,
-					'global_next_mode' : False 
-					
-			       }
+		'delete' : True
 
 	},
 	{
@@ -375,10 +314,12 @@
 		'name' : 'bb_fls_warning',
 		'instructions' : {
 					'init_value' : 0,
-					'global_next_mode' : False 
-					
+					'global_next_mode' : False,
+					'next_value' : [
+								('bb_fls_warning = 1', '1'),
+								('statuses[node_names.fls_warning2bb] = success', '{0, 1}')
+							]
 			       }
-
 	},
 	{
 		'target' : 'variable',
@@ -391,10 +332,13 @@
 		'name' : 'emergency_stop_warning',
 		'instructions' : {
 					'init_value' : 0,
-					'global_next_mode' : False 
-					
+					'global_next_mode' : False,
+					'next_value' : [
+								('emergency_stop_warning = 1', '1'),
+								('statuses[node_names.mission_server] = running', '{0, 1}'),
+								('statuses[node_names.fls_warning2bb] = success | statuses[node_names.rtreach2bb] = success', '{0, 1}')
+							]
 			       }
-
 	},
 	{
 		'target' : 'variable',
@@ -467,7 +411,11 @@
 		'name' : 'next_mission',
 		'instructions' : {
 					'init_value' : 0,
-					'global_next_mode' : False 
+					'global_next_mode' : False,
+					'next_value' : [
+								('statuses[node_names.next_mission] = running', '1'),
+								('statuses[node_names.mission_server] = running', '0')
+							]
 					
 			       }
 
@@ -475,11 +423,7 @@
 	{
 		'target' : 'variable',
 		'name' : 'decision_threshold',
-		'instructions' : {
-					'init_value' : 0,
-					'global_next_mode' : False 
-					
-			       }
+		'delete' : True
 
 	},
 	{
@@ -493,7 +437,10 @@
 		'name' : 'bb_obstacle_warning',
 		'instructions' : {
 					'init_value' : 0,
-					'global_next_mode' : False 
+					'global_next_mode' : False,
+					'next_value' : [
+								('statuses[node_names.obstacle_avoidance] = running', '{0, 1}')
+							]
 					
 			       }
 
@@ -521,7 +468,10 @@
 		'name' : 'bb_home_reached',
 		'instructions' : {
 					'init_value' : 0,
-					'global_next_mode' : False 
+					'global_next_mode' : False,
+					'next_value' : [
+								('statuses[node_names.home2bb] = success | statuses[node_names.home2bb1] = success', '{0, 1}')
+							] 
 					
 			       }
 
@@ -529,11 +479,7 @@
 	{
 		'target' : 'variable',
 		'name' : 'bb_home_dist',
-		'instructions' : {
-					'init_value' : 0,
-					'global_next_mode' : False 
-					
-			       }
+		'delete' : True
 
 	},
 	{
@@ -546,8 +492,13 @@
 		'target' : 'variable',
 		'name' : 'pipe_mapping_enable',
 		'instructions' : {
-					'init_value' : 0,
-					'global_next_mode' : False 
+					'init_value' : 1,
+					'global_next_mode' : False,
+					'next_value' : [
+								('statuses[node_names.pipe_mapping_enable_task] != invalid, '1'),
+								('statuses[node_names.pipe_mapping_disable_task1] != invalid, '0'),
+								('statuses[node_names.pipe_mapping_disable_task] != invalid, '0'),
+							] 
 					
 			       }
 

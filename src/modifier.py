@@ -18,14 +18,6 @@ def arg_modification(args, nodes, variables):
             variable['init_val'] = int(args.init_value)
         if args.no_init_value:
             variable['init_val'] = None
-        if args.next_value:
-            variable['global_next_value'] = args.next_value
-        if args.no_next_value:
-            variable['global_next_value'] = None
-        if args.use_global_value:
-            variable['global_next_mode'] = True
-        if args.use_individual_value:
-            variable['global_next_mode'] = False
         if args.always_exist:
             variable['always_exist'] = True
         if args.sometimes_exist:
@@ -42,9 +34,7 @@ def arg_modification(args, nodes, variables):
             variable['auto_change'] = False
         if args.variables_auto_change:
             variable['auto_change'] = True
-    
-    arg_parser.add_argument('--variables_auto_stay', action = 'store_true')
-    arg_parser.add_argument('--variables_auto_change', action = 'store_true')
+            
     for node_id in nodes:
         node = nodes[node_id]
         if args.force_parallel_unsynch:
@@ -99,10 +89,6 @@ def main():
     arg_parser.add_argument('--max_value', default = None)
     arg_parser.add_argument('--init_value', default = None)
     arg_parser.add_argument('--no_init_value', action = 'store_true')
-    arg_parser.add_argument('--next_value', default = None)
-    arg_parser.add_argument('--no_next_value', action = 'store_true')
-    arg_parser.add_argument('--use_global_value', action = 'store_true')
-    arg_parser.add_argument('--use_individual_value', action = 'store_true')
     arg_parser.add_argument('--always_exist', action = 'store_true')
     arg_parser.add_argument('--sometimes_exist', action = 'store_true')
     arg_parser.add_argument('--init_exist', default = None)
@@ -123,7 +109,7 @@ def main():
     nodes = temp['nodes']
     variables = temp['variables']
 
-    if args.force_parallel_synch or args.force_parallel_unsynch or args.force_selector_memory or args.force_selector_memoryless or args.force_sequence_memory or args.force_sequence_memoryless or args.min_value or args.max_value or args.init_value or args.no_init_value or args.next_value or args.no_next_value or args.use_global_value or args.use_individual_value or args.always_exist or args.sometimes_exist or args.init_exist or args.no_init_exist or args.next_exist or args.no_next_exist or args.variables_auto_stay or args.variable_auto_change:
+    if args.force_parallel_synch or args.force_parallel_unsynch or args.force_selector_memory or args.force_selector_memoryless or args.force_sequence_memory or args.force_sequence_memoryless or args.min_value or args.max_value or args.init_value or args.no_init_value or args.always_exist or args.sometimes_exist or args.init_exist or args.no_init_exist or args.next_exist or args.no_next_exist or args.variables_auto_stay or args.variable_auto_change:
         arg_modification(args, nodes, variables)
 
 
@@ -213,10 +199,6 @@ def main():
     arg_parser.add_argument('--max_value', default = None)
     arg_parser.add_argument('--init_value', default = None)
     arg_parser.add_argument('--no_init_value', action = 'store_true')
-    arg_parser.add_argument('--next_value', default = None)
-    arg_parser.add_argument('--no_next_value', action = 'store_true')
-    arg_parser.add_argument('--use_global_value', action = 'store_true')
-    arg_parser.add_argument('--use_individual_value', action = 'store_true')
     arg_parser.add_argument('--always_exist', action = 'store_true')
     arg_parser.add_argument('--sometimes_exist', action = 'store_true')
     arg_parser.add_argument('--init_exist', default = None)
@@ -244,11 +226,7 @@ def main():
                 except KeyError:
                     instructions = modification['instructions']
                     for key_to_mod in instructions:
-                        if key_to_mod.strip() == 'next_value':
-                            for node_name in instructions['next_value']:
-                                variables[modification['name']]['next_value'][node_name] = instructions['next_value'][node_name]
-                        else:
-                            variables[modification['name']][key_to_mod] = instructions[key_to_mod]
+                        variables[modification['name']][key_to_mod] = instructions[key_to_mod]
             elif modification['target'].strip().lower() == 'node':
                 nodes[node_name_to_id[modification['name']]][modification['field']] = modification['value']
             else:
