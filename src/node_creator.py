@@ -52,14 +52,14 @@ def create_blackboard(nodes, variables):
                 poss_values = poss_values[0:-2] + "}"
                 decl_string += ("\t\t" + variable_name + " : " + str(variable['min_value']) + ".." + str(variable['max_value']) + ";" + os.linesep)
                 if variable['init_value']:
-                    assign_string += ("\t\tinit(" + variable_name + ") := " + variable['init_value'] +";" + os.linesep)
+                    assign_string += ("\t\tinit(" + variable_name + ") := " + str(variable['init_value']) +";" + os.linesep)
                 
                 assign_this = False
                 assign_string += ("\t\tnext(" + variable_name + ") := " + os.linesep
                                    + "\t\t\tcase" + os.linesep)
                 if variable['next_value'] and len(variable['next_value']) > 0:
                     for condition_pair in variable['next_value']:
-                        assign_string += "\t\t\t\t" + condition_pair[0] + " : " condition_pair[1] + ";" + os.linesep
+                        assign_string += "\t\t\t\t" + str(condition_pair[0]) + " : " + str(condition_pair[1]) + ";" + os.linesep
                 if variable['auto_change'] == False:
                     pass
                 else:
@@ -74,7 +74,7 @@ def create_blackboard(nodes, variables):
                 exist_define += "\t\t" + variable_name + "_exists := TRUE;" + os.linesep
             else:
                 if variable['init_exist']:
-                    assign_string += "\t\tinit(" + variable_name + "_exists) := " + variable['init_exist'] + ";" + os.linesep
+                    assign_string += "\t\tinit(" + variable_name + "_exists) := " + str(variable['init_exist']) + ";" + os.linesep
                 assign_string += ("\t\tnext(" + variable_name + ") := " + os.linesep
                                    + "\t\t\tcase" + os.linesep
                                 )
@@ -82,7 +82,7 @@ def create_blackboard(nodes, variables):
                     if variable['next_exist'][node_name]:
                         assign_this = True
                         for condition_pair in variable['next_exist'][node_name]:
-                            assign_string2 += "\t\t\t\t" + condition[0] + ' : ' + condition[1] + ';' + os.linesep
+                            assign_string2 += "\t\t\t\t" + str(condition[0]) + ' : ' + str(condition[1]) + ';' + os.linesep
                 assign_string += ("\t\t\t\tTRUE : " + variable_name + "_exists;" + os.linesep
                                 + "\t\t\tesac;" + os.linesep
                                 )
