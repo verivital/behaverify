@@ -186,6 +186,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                     'args' : ['variables', 'variable_exists', 'node_names', 'variable_names'],
                     'possible_values' : ['success', 'failure', 'running'],
                     'initial_value' : None,
+                    'current_value' : None,
                     'next_value' : None
                 }
             ]
@@ -603,6 +604,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                     'args' : ['variables', 'variable_exists', 'node_names', 'variable_names'],
                     'possible_values' : ['success', 'failure', 'running'],
                     'initial_value' : None,
+                    'current_value' : None,
                     'next_value' : None
                 }
             ]

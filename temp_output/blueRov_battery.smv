@@ -681,8 +681,8 @@ MODULE define_nodes
 --battery_low_warning : 0
 ----battery2bb
 --bb_rth_warning : 1
-----mission_server
 ----rth2bb
+----mission_server
 --bb_geofence_warning : 2
 ----geofence2bb
 --lec2_am_r_speed_warning : 3
@@ -696,9 +696,9 @@ MODULE define_nodes
 --bb_pipe_lost_warning : 7
 ----pipe_lost2bb
 --bb_mission_dot_data : 8
+----mission2bb
 ----pipe_lost2bb
 ----mission_server
-----mission2bb
 --bb_sensor_failure_warning : 9
 ----sensor_failure2bb
 --bb_waypoints_completed_dot_data : 10
@@ -706,29 +706,29 @@ MODULE define_nodes
 --dd_z_axis_warning : 11
 ----ddlec2bb
 --dd_xy_axis_degradation : 12
-----reallocate_task
 ----ddlec2bb
+----reallocate_task
 --obstacle_standoff_warning : 13
 ----fls2bb
 --bb_fls_warning : 14
 ----fls_warning2bb
 --emergency_stop_warning : 15
+----rtreach2bb
 ----fls_warning2bb
 ----mission_server
-----rtreach2bb
 --next_mission : 16
-----mission_server
 ----next_mission
+----mission_server
 --bb_obstacle_warning : 17
 ----obstacle_avoidance
 --bb_home_reached : 18
-----home2bb1
 ----home2bb
+----home2bb1
 ----check_surface
 --pipe_mapping_enable : 19
-----pipe_mapping_enable_task
-----pipe_mapping_disable_task
 ----pipe_mapping_disable_task1
+----pipe_mapping_disable_task
+----pipe_mapping_enable_task
 MODULE blackboard_module(node_names, variable_names, statuses)
 	CONSTANTS
 		success, failure, running, invalid;
