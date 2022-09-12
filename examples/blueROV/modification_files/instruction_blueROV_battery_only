@@ -159,7 +159,7 @@
 					'init_value' : 0,
 					'global_next_mode' : False,
 					'next_value' : [
-								('statuses[node_names.pipe_lost2bb] = success' & bb_mission_dot_data = 1, '{0, 1}')
+								('statuses[node_names.pipe_lost2bb] = success & bb_mission_dot_data = 1', '{0, 1}')
 							]
 					
 			       }
@@ -495,9 +495,9 @@
 					'init_value' : 1,
 					'global_next_mode' : False,
 					'next_value' : [
-								('statuses[node_names.pipe_mapping_enable_task] != invalid, '1'),
-								('statuses[node_names.pipe_mapping_disable_task1] != invalid, '0'),
-								('statuses[node_names.pipe_mapping_disable_task] != invalid, '0'),
+								('statuses[node_names.pipe_mapping_enable_task] != invalid', '1'),
+								('statuses[node_names.pipe_mapping_disable_task1] != invalid', '0'),
+								('statuses[node_names.pipe_mapping_disable_task] != invalid', '0'),
 							] 
 					
 			       }
