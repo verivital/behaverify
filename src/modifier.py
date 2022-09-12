@@ -230,7 +230,9 @@ def main():
                     for key_to_mod in instructions:
                         variables[modification['name']][key_to_mod] = instructions[key_to_mod]
             elif modification['target'].strip().lower() == 'node':
-                nodes[node_name_to_id[modification['name']]][modification['field']] = modification['value']
+                instructions = modification['instructions']
+                for key_to_mod in instructions:
+                    nodes[node_name_to_id[modification['name']]][key_to_mod] = instructions[key_to_mod]
             else:
                 print('modification file contains unknown modification target: ' + str(modification['target']))
         pass

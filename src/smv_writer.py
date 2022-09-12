@@ -648,30 +648,51 @@ def main():
                         if len(module['possible_values']) == 0:
                             print('no possible values for module, defaulting to all values acceptable')
                             print(nodes[node_id])
+                            module['possible_values'] = ['success', 'failure', 'running']
+                        possible_values = "{" + str(module['possible_values'])[1:-1].replace("'", "") +"}"
                         module_string += ("MODULE " + module['name'] + '(' + str(module['args'])[1:-1].replace("'", "") + ')' + os.linesep
                                           + "\tCONSTANTS" + os.linesep
                                           + "\t\tsuccess, failure, running;" + os.linesep
                                           + "\tVAR" + os.linesep
-                                          + "\t\tstatus : {" + str(module['possible_values'])[1:-1].replace("'", "") +"};" + os.linesep
+                                          + "\t\tstatus : " + possible_values + ";" + os.linesep
                                           )
                         assigned = False
                         if not module['initial_value'] is None:
-                            assigned = True
-                            semicolon = ';'
-                            if module['initial_value'].rstrip()[-1] == ';':
-                                semicolon = ''
-                            module_string += ("\tASSIGN" + os.linesep
-                                              + "\t\tinit(status) := " + module['initial_value'] + semicolon + os.linesep
+                            if not assigned:
+                                module_string += "\tASSIGN" + os.linesep
+                                assigned = True
+                            module_string += ("\t\tinit(status) := " + os.linesep
+                                              + "\t\t\tcase" + os.linesep
+                                              )
+                            for condition_pair in module['init_value']:
+                                module_string += "\t\t\t\t" + condition_pair[0] + " : " + condition_pair[1] + ";" + os.linesep
+                            module_string += ("\t\t\t\tTRUE : " + possible_values + ";" + os.linesep
+                                              + "\t\t\tesac;" + os.linesep
                                               )
                         if not module['next_value'] is None:
-                            if assigned:
+                            if not assigned:
                                 module_string += "\tASSIGN" + os.linesep
-                                
-                            semicolon = ';'
-                            if module['next_value'].rstrip()[-1] == ';':
-                                semicolon = ''
-                            module_string += "\t\t(status) := " + module['next_value'] + semicolon + os.linesep
-                                              
+                                assigned = True
+                            module_string += ("\t\tnext(status) := " + os.linesep
+                                              + "\t\t\tcase" + os.linesep
+                                              )
+                            for condition_pair in module['next_value']:
+                                module_string += "\t\t\t\t" + condition_pair[0] + " : " + condition_pair[1] + ";" + os.linesep
+                            module_string += ("\t\t\t\tTRUE : " + possible_values + ";" + os.linesep
+                                              + "\t\t\tesac;" + os.linesep
+                                              )
+                        if not module['current_value'] is None:
+                            if not assigned:
+                                module_string += "\tASSIGN" + os.linesep
+                                assigned = True
+                            module_string += ("\t\tstatus := " + os.linesep
+                                              + "\t\t\tcase" + os.linesep
+                                              )
+                            for condition_pair in module['current_value']:
+                                module_string += "\t\t\t\t" + condition_pair[0] + " : " + condition_pair[1] + ";" + os.linesep
+                            module_string += ("\t\t\t\tTRUE : " + possible_values + ";" + os.linesep
+                                              + "\t\t\tesac;" + os.linesep
+                                              )
                         
                 elif module['type'] == 'check':
 
