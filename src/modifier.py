@@ -109,13 +109,14 @@ def main():
     nodes = temp['nodes']
     variables = temp['variables']
 
-    if args.force_parallel_synch or args.force_parallel_unsynch or args.force_selector_memory or args.force_selector_memoryless or args.force_sequence_memory or args.force_sequence_memoryless or args.min_value or args.max_value or args.init_value or args.no_init_value or args.always_exist or args.sometimes_exist or args.init_exist or args.no_init_exist or args.next_exist or args.no_next_exist or args.variables_auto_stay or args.variable_auto_change:
+    if args.force_parallel_synch or args.force_parallel_unsynch or args.force_selector_memory or args.force_selector_memoryless or args.force_sequence_memory or args.force_sequence_memoryless or args.min_value or args.max_value or args.init_value or args.no_init_value or args.always_exist or args.sometimes_exist or args.init_exist or args.no_init_exist or args.next_exist or args.no_next_exist or args.variables_auto_stay or args.variables_auto_change:
         arg_modification(args, nodes, variables)
 
 
         
     node_name_to_id = {}
     for node_id in nodes:
+        #print(node_id)
         node_name_to_id[nodes[node_id]['name']] = node_id
 
 
@@ -220,7 +221,8 @@ def main():
                 try:
                     if modification['delete']:
                         variable = variables.pop(modification['name'])
-                        for node_id in variable['access']:
+                        for node_name in variable['access']:
+                            node_id = node_name_to_id[node_name]
                             nodes[node_id]['variables'].remove(modification['name'])
                         deletions = True
                 except KeyError:
