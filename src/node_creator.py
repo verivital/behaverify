@@ -9,17 +9,9 @@ def create_names_module(nodes, variables):
     if variables:
         return_string = ("MODULE define_variables" + os.linesep
                           + "\tDEFINE" + os.linesep)
-        extra_count = len(variables)
         for variable_name in variables:
             variable = variables[variable_name]
-            if variable['use_staging']:
-                return_string += ("\t\t" + variable_name + "_stage_0 := " + str(variable['variable_id']) + ";" + os.linesep)
-                for stage_count in range(1, len(variable['stages']) + 1):
-                    #the +1 is to account for the final stage which has no end marker
-                    return_string += ("\t\t" + variable_name + "_stage_" + str(stage_count) + " := " + str(extra_count) + ";" + os.linesep)
-                    extra_count = extra_count + 1
-            else:
-                return_string += ("\t\t" + variable_name + " := " + str(variable['variable_id']) + ";" + os.linesep)
+            return_string += ("\t\t" + variable_name + " := " + str(variable['variable_id']) + ";" + os.linesep)
     else:
         return_string = ""
     return_string += ("MODULE define_nodes" + os.linesep

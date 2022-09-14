@@ -3,11 +3,66 @@ import sys
 import os
 import re
 import pprint
+import copy
 #----------------------------------------------------------------------------------------------------------------
 #todo: add a way to delete variables and change access
 
+def create_stages(variable, variables, node_name_to_id):
+    prev_stage_name = variable['variable_name']
+    for stage_count in range(1, len(variable['stages']) + 1):
+        stage_start = variable['stages'][stage_count]
+        try:
+            stage_end = variable['stages'][stage_count + 1]
+        except:
+            stage_end = len(node_name_to_id)
+        variable_name = variable['variable_name'] + "_stage_" + str(stage_count)
+        variable_number = len(variables)
+        variables[variable_name] = copy.deepcopy(variable)
+        variables[variable_name]['variable_name'] = variable_name
+        variables[variable_name]['variable_id'] = variable_number
+        new_access = set()
+        for access_node_name in variables[variable_name]['access']:
+            access_node_id = node_name_to_id[access_node_name]
+            if stage_start <= access_node_id and access_node_id < stage_end:
+                new_access.add(access_node_name)
+        variables[variable_name]['access'] = new_access
+        variables[variable_name]['next_stage'] = None
+        variables[prev_stage_name]['next_stage'] = variable_name
+        prev_stage_name = variable_name
+    new_access = set()
+    for access_node_name in variable['access']:
+        access_node_id = node_name_to_id[access_node_name]
+        if stage_start <= access_node_id and access_node_id < stage_end:
+            new_access.add(access_node_name)
+    variable['access'] = new_access
+    variable['next_value'] = [('TRUE', prev_stage_name)]
+    
 
-def arg_modification(args, nodes, variables):
+def delete_stages(variable, variables):
+    name_to_pop = variable['next_stage']
+    while name_to_pop:
+        popped = variables.pop(name_to_pop)
+        name_to_pop = popped['next_stage']
+        variable['access'].union(popped['access'])
+
+def arg_modification(args, nodes, variables, node_name_to_id):
+    if args.use_stages:
+        variable_name_list = list(variables.keys())
+        for variable_name in variable_name_list:
+            variable = variables[variable_name]
+            variable['use_stages'] = True
+            try:
+                if variable['next_stage'] in variables:
+                    continue
+            except:
+                pass
+            create_stages(variable, variables, node_name_to_id)
+    if args.no_stages:
+        variable_name_list = list(variables.keys())
+        for variable_name in variable_name_list:
+            variable = variables[variable_name]
+            variable['use_stages'] = False
+            delete_stages(variable, variables)
     for variable_name in variables:
         variable = variables[variable_name]
         if args.min_value:
@@ -34,10 +89,6 @@ def arg_modification(args, nodes, variables):
             variable['auto_change'] = False
         if args.variables_auto_change:
             variable['auto_change'] = True
-        if arg.use_stages:
-            variable['use_stages'] = True
-        if arg.no_stages:
-            variable['use_stages'] = False
             
     for node_id in nodes:
         node = nodes[node_id]
@@ -115,15 +166,18 @@ def main():
     nodes = temp['nodes']
     variables = temp['variables']
 
-    if args.force_parallel_synch or args.force_parallel_unsynch or args.force_selector_memory or args.force_selector_memoryless or args.force_sequence_memory or args.force_sequence_memoryless or args.min_value or args.max_value or args.init_value or args.no_init_value or args.always_exist or args.sometimes_exist or args.init_exist or args.no_init_exist or args.next_exist or args.no_next_exist or args.variables_auto_stay or args.variables_auto_change or args.use_stages or args.no_stages :
-        arg_modification(args, nodes, variables)
-
-
-        
     node_name_to_id = {}
     for node_id in nodes:
         #print(node_id)
         node_name_to_id[nodes[node_id]['name']] = node_id
+
+    
+    if args.force_parallel_synch or args.force_parallel_unsynch or args.force_selector_memory or args.force_selector_memoryless or args.force_sequence_memory or args.force_sequence_memoryless or args.min_value or args.max_value or args.init_value or args.no_init_value or args.always_exist or args.sometimes_exist or args.init_exist or args.no_init_exist or args.next_exist or args.no_next_exist or args.variables_auto_stay or args.variables_auto_change or args.use_stages or args.no_stages :
+        arg_modification(args, nodes, variables, node_name_to_id)
+
+
+        
+
 
 
     deletions = False
@@ -225,20 +279,32 @@ def main():
         for modification in modifications:
             if modification['target'].strip().lower() == 'global_flags':
                 args2 = arg_parser.parse_args(modification['instructions'])
-                arg_modification(args2, nodes, variables)
+                arg_modification(args2, nodes, variables, node_name_to_id)
             elif modification['target'].strip().lower() == 'variable':
                 try:
                     if modification['delete']:
                         variable = variables.pop(modification['name'])
-                        for node_name in variable['access']:
-                            node_id = node_name_to_id[node_name]
-                            nodes[node_id]['variables'].remove(modification['name'])
+                        delete_stages(variable, variables)
                         deletions = True
                 except KeyError:
                     instructions = modification['instructions']
                     for key_to_mod in instructions:
-                        if key_to_mod in variables[modification['name']]:
-                            variables[modification['name']][key_to_mod] = instructions[key_to_mod]
+                        if key_to_mod.strip() == "use_stages":
+                                if instructions[key_to_mod.strip()]:
+                                    variable = variables[modification['name']]
+                                    variable['use_stages'] = True
+                                    try:
+                                        if variable['next_stage'] in variables:
+                                            continue
+                                    except:
+                                        pass
+                                    create_stages(variable, variables, node_name_to_id)
+                                else:
+                                    variable = variables[modification['name']]
+                                    variable['use_stages'] = False
+                                    delete_stages(variable, variables)
+                        elif key_to_mod.strip() in variables[modification['name']]:
+                            variables[modification['name']][key_to_mod.strip()] = instructions[key_to_mod.strip()]
                         else:
                             print("unknown modification key while trying to modify variables: " + str(key_to_mod))
             elif modification['target'].strip().lower() == 'node':
@@ -255,11 +321,10 @@ def main():
         pass
     #oh thank god indenting is working agian
 
-    if deletions:
-        count = 0
-        for variable_name in variables:
-            variables[variable_name]['variable_id'] = count
-            count = count + 1
+    count = 0
+    for variable_name in variables:
+        variables[variable_name]['variable_id'] = count
+        count = count + 1
 
     if args.output_file:
         with open(args.output_file, 'w') as f:
