@@ -9,8 +9,17 @@ def create_names_module(nodes, variables):
     if variables:
         return_string = ("MODULE define_variables" + os.linesep
                           + "\tDEFINE" + os.linesep)
-        for variable in variables:
-            return_string += ("\t\t" + variable + " := " + str(variables[variable]['variable_id']) + ";" + os.linesep)
+        extra_count = len(variables)
+        for variable_name in variables:
+            variable = variables[variable_name]
+            if variable['use_staging']:
+                return_string += ("\t\t" + variable_name + "_stage_0 := " + str(variable['variable_id']) + ";" + os.linesep)
+                for stage_count in range(1, len(variable['stages']) + 1):
+                    #the +1 is to account for the final stage which has no end marker
+                    return_string += ("\t\t" + variable_name + "_stage_" + str(stage_count) + " := " + str(extra_count) + ";" + os.linesep)
+                    extra_count = extra_count + 1
+            else:
+                return_string += ("\t\t" + variable_name + " := " + str(variable['variable_id']) + ";" + os.linesep)
     else:
         return_string = ""
     return_string += ("MODULE define_nodes" + os.linesep
@@ -36,13 +45,14 @@ def create_blackboard(nodes, variables):
         decl_string = ("\tVAR" + os.linesep)
         assign_string = ("\tASSIGN" + os.linesep)
 
-        var_array = ['']*len(variables)
-        var_exist_array = ['']*len(variables)
+        var_array = [''] * len(variables)
+        var_exist_array = [''] * len(variables)
         
         for variable_name in variables:
             variable = variables[variable_name]
             var_array[variable['variable_id']] = variable_name
             var_exist_array[variable['variable_id']] = variable_name + "_exists"
+                
             if variable['min_value'] < variable['max_value']:
                 min_val = variable['min_value']
                 max_val = variable['max_value']
@@ -119,7 +129,7 @@ def common_string_decorator(number_of_children = 0):
                     + "\t\tstatus := active ? internal_status : invalid;" + os.linesep
                     + "\t\tinternal_status :=" + os.linesep 
                     + "\t\t\tcase" + os.linesep
-                    + "\t\t\t\t!(active) : invalid;" + os.linesep #this should be the only invalid case.
+                    #+ "\t\t\t\t!(active) : invalid;" + os.linesep #this should be the only invalid case.
     )
     status_end = ("\t\t\tesac;" + os.linesep)
     active = []

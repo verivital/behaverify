@@ -630,15 +630,19 @@ def main():
                 except FileExistsError:
                     print('The specified blackboard file already exists. To overwrite the file, rerun the command with --overwrite True')
     module_string = ''
+    status_module_string = ''
+    check_module_string = ''
+    other_module_string = ''
     if args.module_input_file:
         #print(open(modules).read())
         nuxmv_string = nuxmv_string + open(args.module_input_file).read()
     else:
         for node_id in nodes:
-            for module in nodes[node_id]['additional_modules']:
+            for module_sig in nodes[node_id]['additional_modules']:
+                module = nodes[node_id]['additional_modules'][module_sig]
                 if module['type'] == 'status':
                     if len(module['possible_values']) == 1:
-                        module_string += ("MODULE " + module['name'] + '(' + str(module['args'])[1:-1].replace("'", "") + ')' + os.linesep
+                        status_module_string += ("MODULE " + module['name'] + '(' + str(module['args'])[1:-1].replace("'", "") + ')' + os.linesep
                                         + "\tCONSTANTS" + os.linesep
                                         + "\t\tsuccess, failure, running;" + os.linesep
                                         + "\tDEFINE" + os.linesep
@@ -650,7 +654,7 @@ def main():
                             print(nodes[node_id])
                             module['possible_values'] = ['success', 'failure', 'running']
                         possible_values = "{" + str(module['possible_values'])[1:-1].replace("'", "") +"}"
-                        module_string += ("MODULE " + module['name'] + '(' + str(module['args'])[1:-1].replace("'", "") + ')' + os.linesep
+                        status_module_string += ("MODULE " + module['name'] + '(' + str(module['args'])[1:-1].replace("'", "") + ')' + os.linesep
                                           + "\tCONSTANTS" + os.linesep
                                           + "\t\tsuccess, failure, running;" + os.linesep
                                           + "\tVAR" + os.linesep
@@ -659,62 +663,80 @@ def main():
                         assigned = False
                         if not module['initial_value'] is None:
                             if not assigned:
-                                module_string += "\tASSIGN" + os.linesep
+                                status_module_string += "\tASSIGN" + os.linesep
                                 assigned = True
-                            module_string += ("\t\tinit(status) := " + os.linesep
+                            status_module_string += ("\t\tinit(status) := " + os.linesep
                                               + "\t\t\tcase" + os.linesep
                                               )
                             for condition_pair in module['init_value']:
-                                module_string += "\t\t\t\t" + condition_pair[0] + " : " + condition_pair[1] + ";" + os.linesep
-                            module_string += ("\t\t\t\tTRUE : " + possible_values + ";" + os.linesep
+                                status_module_string += "\t\t\t\t" + condition_pair[0] + " : " + condition_pair[1] + ";" + os.linesep
+                            status_module_string += ("\t\t\t\tTRUE : " + possible_values + ";" + os.linesep
                                               + "\t\t\tesac;" + os.linesep
                                               )
                         if not module['next_value'] is None:
                             if not assigned:
-                                module_string += "\tASSIGN" + os.linesep
+                                status_module_string += "\tASSIGN" + os.linesep
                                 assigned = True
-                            module_string += ("\t\tnext(status) := " + os.linesep
+                            status_module_string += ("\t\tnext(status) := " + os.linesep
                                               + "\t\t\tcase" + os.linesep
                                               )
                             for condition_pair in module['next_value']:
-                                module_string += "\t\t\t\t" + condition_pair[0] + " : " + condition_pair[1] + ";" + os.linesep
-                            module_string += ("\t\t\t\tTRUE : " + possible_values + ";" + os.linesep
+                                status_module_string += "\t\t\t\t" + condition_pair[0] + " : " + condition_pair[1] + ";" + os.linesep
+                            status_module_string += ("\t\t\t\tTRUE : " + possible_values + ";" + os.linesep
                                               + "\t\t\tesac;" + os.linesep
                                               )
                         if not module['current_value'] is None:
                             if not assigned:
-                                module_string += "\tASSIGN" + os.linesep
+                                status_module_string += "\tASSIGN" + os.linesep
                                 assigned = True
-                            module_string += ("\t\tstatus := " + os.linesep
+                            status_module_string += ("\t\tstatus := " + os.linesep
                                               + "\t\t\tcase" + os.linesep
                                               )
                             for condition_pair in module['current_value']:
-                                module_string += "\t\t\t\t" + condition_pair[0] + " : " + condition_pair[1] + ";" + os.linesep
-                            module_string += ("\t\t\t\tTRUE : " + possible_values + ";" + os.linesep
+                                status_module_string += "\t\t\t\t" + condition_pair[0] + " : " + condition_pair[1] + ";" + os.linesep
+                            status_module_string += ("\t\t\t\tTRUE : " + possible_values + ";" + os.linesep
                                               + "\t\t\tesac;" + os.linesep
                                               )
-                        
+                    status_module_string += os.linesep
                 elif module['type'] == 'check':
 
-                    module_string += ("MODULE " + module['name'] + '(' + str(module['args'])[1:-1].replace("'", "") + ')' + os.linesep
+                    check_module_string += ("MODULE " + module['name'] + '(' + str(module['args'])[1:-1].replace("'", "") + ')' + os.linesep
                                       + "\tDEFINE" + os.linesep
                                       + "\t\tresult := "
                                       )
-                    if module['use_next']:
-                        module_string += "next("
-                    module_string += "variable_exists[variable_names." + module['variable_name'] + "]"
-                    if module['use_next']:
-                        module_string += ")"
-                    module_string += " & ("
-                    if module['use_next']:
-                        module_string += 'next('
-                    module_string += module['left_hand_side']
-                    if module['use_next']:
-                        module_string += ') '
-                    module_string += module['operator'] + module['right_hand_side'] + ");" + os.linesep
+                    if module['left_hand_side']:
+                        #user provided a left hand side, using that.
+                        check_module_string += module['left_hand_side'] + module['operator'] + module['right_hand_side'] + ';' + os.linesep
+                    else:
+                        #gotta default it
+                        if module['use_stages']:
+                            stage = 0
+                            for stage_end in module['stages']:
+                                if stage_end > node_id:
+                                    break
+                                stage = stage + 1
+                            stage = str(stage)
+                            check_module_string += ("variable_exists[variable_names." + module['variable_name'] + "_stage_" + stage + "]"
+                                                    + " & (variables[variable_names." + module['variable_name'] + "_stage_" + stage + "]" + module['operator'] + module['right_hand_side'] + ');' + os.linesep
+                                                    )
+                        else:
+                            if module['use_next']:
+                                check_module_string += "next("
+                            check_module_string += "variable_exists[variable_names." + module['variable_name'] + "]"
+                            if module['use_next']:
+                                check_module_string += ")"
+                            check_module_string += " & ("
+                            if module['use_next']:
+                                check_module_string += 'next('
+                            check_module_string += "variables[variable_names." + module['variable_name'] + "]"
+                            if module['use_next']:
+                                check_module_string += ') '
+                            check_module_string += module['operator'] + module['right_hand_side'] + ");" + os.linesep
+                            check_module_string += os.linesep
                 else:
-                    module_string += module['custom_module']
-                module_string += os.linesep
+                    other_module_string += module['custom_module']
+                    other_module_string += os.linesep
+        module_string = status_module_string + check_module_string + other_module_string
         nuxmv_string += module_string
         if args.module_output_file is None:
             pass
