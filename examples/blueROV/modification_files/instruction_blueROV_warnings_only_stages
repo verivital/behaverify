@@ -5,7 +5,7 @@
 					'--force_parallel_unsynch',
 					'--force_selector_memoryless',
 					'--force_sequence_memory',
-					'--use_next_checks'
+					'--use_stages'
 				]	
 	},
 	{
@@ -507,301 +507,301 @@
 		'target' : 'node',
 		'name' : 'battery2bb',
 		'instructions' : {
-			"possible_values" : ["success", "running"]
+			"additional_modules::status::possible_values" : ["success", "running"]
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'rth2bb',
 		'instructions' : {
-			"possible_values" : ["success", "running"]
+			"additional_modules::status::possible_values" : ["success", "running"]
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'geofence2bb',
 		'instructions' : {
-			"possible_values" : ["success", "running"]
+			"additional_modules::status::possible_values" : ["success", "running"]
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'lec2_am_r_2bb',
 		'instructions' : {
-			"possible_values" : ["success", "running"]
+			"additional_modules::status::possible_values" : ["success", "running"]
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'lec2_am_l_2bb',
 		'instructions' : {
-			"possible_values" : ["success", "running"]
+			"additional_modules::status::possible_values" : ["success", "running"]
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'pipe_lost2bb',
 		'instructions' : {
-			"possible_values" : ["success", "running"]
+			"additional_modules::status::possible_values" : ["success", "running"]
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'sensor_failure2bb',
 		'instructions' : {
-			"possible_values" : ["success", "running"]
+			"additional_modules::status::possible_values" : ["success", "running"]
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'waypoints_completed2bb',
 		'instructions' : {
-			"possible_values" : ["success", "running"]
+			"additional_modules::status::possible_values" : ["success", "running"]
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'mission2bb',
 		'instructions' : {
-			"possible_values" : ["success", "running"]
+			"additional_modules::status::possible_values" : ["success", "running"]
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'ddlec2bb',
 		'instructions' : {
-			"possible_values" : ["success", "running"]
+			"additional_modules::status::possible_values" : ["success", "running"]
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'fls2bb',
 		'instructions' : {
-			"possible_values" : ["success", "running"]
+			"additional_modules::status::possible_values" : ["success", "running"]
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'fls_warning2bb',
 		'instructions' : {
-			"possible_values" : ["success", "running"]
+			"additional_modules::status::possible_values" : ["success", "running"]
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'hsd_pipe2bb',
 		'instructions' : {
-			"possible_values" : ["success", "running"]
+			"additional_modules::status::possible_values" : ["success", "running"]
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'hsd_wp2bb',
 		'instructions' : {
-			"possible_values" : ["success", "running"]
+			"additional_modules::status::possible_values" : ["success", "running"]
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'hsd_rth2bb',
 		'instructions' : {
-			"possible_values" : ["success", "running"]
+			"additional_modules::status::possible_values" : ["success", "running"]
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'hsd_surface2bb',
 		'instructions' : {
-			"possible_values" : ["success", "running"]
+			"additional_modules::status::possible_values" : ["success", "running"]
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'rtreach2bb',
 		'instructions' : {
-			"possible_values" : ["success", "running"]
+			"additional_modules::status::possible_values" : ["success", "running"]
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'reallocate_task',
 		'instructions' : {
-			"possible_values" : ["running"]
+			"additional_modules::status::possible_values" : ["running"]
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'dd_lec_task',
 		'instructions' : {
-			"possible_values" : ["running"]
+			"additional_modules::status::possible_values" : ["running"]
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'mission_server',
 		'instructions' : {
-			"possible_values" : ["running"]
+			"additional_modules::status::possible_values" : ["running"]
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'obstacle_avoidance',
 		'instructions' : {
-			"possible_values" : ["running"]
+			"additional_modules::status::possible_values" : ["running"]
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'surface_task',
 		'instructions' : {
-			"possible_values" : ["running"]
+			"additional_modules::status::possible_values" : ["running"]
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'surface_task1',
 		'instructions' : {
-			"possible_values" : ["running"]
+			"additional_modules::status::possible_values" : ["running"]
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'emergency_stop_task',
 		'instructions' : {
-			"possible_values" : ["running"]
+			"additional_modules::status::possible_values" : ["running"]
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'surface_task2',
 		'instructions' : {
-			"possible_values" : ["running"]
+			"additional_modules::status::possible_values" : ["running"]
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'surface_task3',
 		'instructions' : {
-			"possible_values" : ["running"]
+			"additional_modules::status::possible_values" : ["running"]
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'surface_task4',
 		'instructions' : {
-			"possible_values" : ["running"]
+			"additional_modules::status::possible_values" : ["running"]
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'rth_task',
 		'instructions' : {
-			"possible_values" : ["running"]
+			"additional_modules::status::possible_values" : ["running"]
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'home2bb',
 		'instructions' : {
-			"possible_values" : ["success", "running"]
+			"additional_modules::status::possible_values" : ["success", "running"]
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'rth_task1',
 		'instructions' : {
-			"possible_values" : ["running"]
+			"additional_modules::status::possible_values" : ["running"]
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'home2bb1',
 		'instructions' : {
-			"possible_values" : ["success", "running"]
+			"additional_modules::status::possible_values" : ["success", "running"]
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'loiter_task',
 		'instructions' : {
-			"possible_values" : ["running"]
+			"additional_modules::status::possible_values" : ["running"]
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'tracking_task',
 		'instructions' : {
-			"possible_values" : ["running"]
+			"additional_modules::status::possible_values" : ["running"]
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'speed_min_task',
 		'instructions' : {
-			"possible_values" : ["running"]
+			"additional_modules::status::possible_values" : ["running"]
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'speed_min_task1',
 		'instructions' : {
-			"possible_values" : ["running"]
+			"additional_modules::status::possible_values" : ["running"]
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'speed_max_task',
 		'instructions' : {
-			"possible_values" : ["running"]
+			"additional_modules::status::possible_values" : ["running"]
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'pipe_mapping_disable_task',
 		'instructions' : {
-			"possible_values" : ["running"]
+			"additional_modules::status::possible_values" : ["running"]
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'pipe_mapping_disable_task1',
 		'instructions' : {
-			"possible_values" : ["running"]
+			"additional_modules::status::possible_values" : ["running"]
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'pipe_mapping_enable_task',
 		'instructions' : {
-			"possible_values" : ["running"]
+			"additional_modules::status::possible_values" : ["running"]
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'next_mission',
 		'instructions' : {
-			"possible_values" : ["success"]
+			"additional_modules::status::possible_values" : ["success"]
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'loiter_task1',
 		'instructions' : {
-			"possible_values" : ["running"]
+			"additional_modules::status::possible_values" : ["running"]
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'waypoint_task',
 		'instructions' : {
-			"possible_values" : ["running"]
+			"additional_modules::status::possible_values" : ["running"]
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'loiter_task2',
 		'instructions' : {
-			"possible_values" : ["running"]
+			"additional_modules::status::possible_values" : ["running"]
 		}
 	}
 	
