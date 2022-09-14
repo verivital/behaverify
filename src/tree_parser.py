@@ -930,9 +930,8 @@ def variable_name_cleanup(nodes, variables):
                     variables[child_variable_name]['next_exist'][access_node_name] = True #updated what the next exist value is for this specific node
                     variables[child_variable_name]['stages'].append(node_name_to_id[access_node_name])
     for variable_name in variables:
-        variables[variable_name['stages'].sort()
-
-
+        variables[variable_name['stages']].sort()
+        
 def main():
     arg_parser = argparse.ArgumentParser()
     arg_parser.add_argument('root_file')
