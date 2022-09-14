@@ -34,6 +34,10 @@ def arg_modification(args, nodes, variables):
             variable['auto_change'] = False
         if args.variables_auto_change:
             variable['auto_change'] = True
+        if arg.use_stages:
+            variable['use_stages'] = True
+        if arg.no_stages:
+            variable['use_stages'] = False
             
     for node_id in nodes:
         node = nodes[node_id]
@@ -58,12 +62,12 @@ def arg_modification(args, nodes, variables):
                 node['type'] = 'sequence_without_memory'
         if args.use_next_checks:
             if node['type'] == 'check_blackboard_variable_value':
-                for module in node['additional_modules']:
-                    module['use_next'] = True
+                for module_sig in node['additional_modules']:
+                    node['additional_modules'][module_sig]['use_next'] = True
         if args.use_current_checks:
             if node['type'] == 'check_blackboard_variable_value':
                 for module in node['additional_modules']:
-                    module['use_next'] = True
+                    node['additional_modules'][module_sig]['use_next'] = False
 
 def main():
 
@@ -97,6 +101,8 @@ def main():
     arg_parser.add_argument('--no_next_exist', action = 'store_true')
     arg_parser.add_argument('--variables_auto_stay', action = 'store_true')
     arg_parser.add_argument('--variables_auto_change', action = 'store_true')
+    arg_parser.add_argument('--use_stages', action = 'store_true')
+    arg_parser.add_argument('--no_stages', action = 'store_true')
 
 
     
@@ -109,7 +115,7 @@ def main():
     nodes = temp['nodes']
     variables = temp['variables']
 
-    if args.force_parallel_synch or args.force_parallel_unsynch or args.force_selector_memory or args.force_selector_memoryless or args.force_sequence_memory or args.force_sequence_memoryless or args.min_value or args.max_value or args.init_value or args.no_init_value or args.always_exist or args.sometimes_exist or args.init_exist or args.no_init_exist or args.next_exist or args.no_next_exist or args.variables_auto_stay or args.variables_auto_change:
+    if args.force_parallel_synch or args.force_parallel_unsynch or args.force_selector_memory or args.force_selector_memoryless or args.force_sequence_memory or args.force_sequence_memoryless or args.min_value or args.max_value or args.init_value or args.no_init_value or args.always_exist or args.sometimes_exist or args.init_exist or args.no_init_exist or args.next_exist or args.no_next_exist or args.variables_auto_stay or args.variables_auto_change or args.use_stages or args.no_stages :
         arg_modification(args, nodes, variables)
 
 
@@ -208,6 +214,9 @@ def main():
     arg_parser.add_argument('--no_next_exist', action = 'store_true')
     arg_parser.add_argument('--variables_auto_stay', action = 'store_true')
     arg_parser.add_argument('--variables_auto_change', action = 'store_true')
+    arg_parser.add_argument('--use_stages', action = 'store_true')
+    arg_parser.add_argument('--no_stages', action = 'store_true')
+
     
     if args.instruction_file:
         modifications = []
@@ -228,11 +237,19 @@ def main():
                 except KeyError:
                     instructions = modification['instructions']
                     for key_to_mod in instructions:
-                        variables[modification['name']][key_to_mod] = instructions[key_to_mod]
+                        if key_to_mod in variables[modification['name']]:
+                            variables[modification['name']][key_to_mod] = instructions[key_to_mod]
+                        else:
+                            print("unknown modification key while trying to modify variables: " + str(key_to_mod))
             elif modification['target'].strip().lower() == 'node':
                 instructions = modification['instructions']
                 for key_to_mod in instructions:
-                    nodes[node_name_to_id[modification['name']]][key_to_mod] = instructions[key_to_mod]
+                    key_to_mod_list = key_to_mod.split('::')
+                    to_modify = nodes[node_name_to_id[modification['name']]]
+                    final_key = key_to_mod_list.pop().strip()
+                    for key in key_to_mod_list:
+                        to_modify = to_modify[key.strip()]
+                    to_modify[final_key] = instructions[key_to_mod]
             else:
                 print('modification file contains unknown modification target: ' + str(modification['target']))
         pass
