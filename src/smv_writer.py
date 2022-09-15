@@ -709,16 +709,21 @@ def main():
                         check_module_string += module['left_hand_side'] + module['operator'] + module['right_hand_side'] + ';' + os.linesep
                     else:
                         #gotta default it
-                        if module['use_stages']:
+                        if variables[module['variable_name']]['use_stages']:
                             stage = 0
-                            for stage_end in module['stages']:
+                            for stage_end in variables[module['variable_name']]['stages']:
                                 if stage_end > node_id:
                                     break
                                 stage = stage + 1
-                            stage = str(stage)
-                            check_module_string += ("variable_exists[variable_names." + module['variable_name'] + "_stage_" + stage + "]"
-                                                    + " & (variables[variable_names." + module['variable_name'] + "_stage_" + stage + "]" + module['operator'] + module['right_hand_side'] + ');' + os.linesep
-                                                    )
+                            if stage == 0:
+                                check_module_string += ("variable_exists[variable_names." + module['variable_name'] + "]"
+                                                        + " & (variables[variable_names." + module['variable_name'] + "]" + module['operator'] + module['right_hand_side'] + ');' + os.linesep
+                                                        )
+                            else:
+                                stage = str(stage)
+                                check_module_string += ("variable_exists[variable_names." + module['variable_name'] + "_stage_" + stage + "]"
+                                                        + " & (variables[variable_names." + module['variable_name'] + "_stage_" + stage + "]" + module['operator'] + module['right_hand_side'] + ');' + os.linesep
+                                                        )
                         else:
                             if module['use_next']:
                                 check_module_string += "next("

@@ -133,6 +133,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                         var_num = len(variables)
                         variables[variable_name] = {
                             'variable_id' : var_num,
+                            'variable_name' : variable_name,
                             'min_value' : 0,
                             'max_value' : 1,
                             'init_value' : None,
@@ -160,6 +161,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                 var_num = len(variables)
                 variables[variable_name] = {
                     'variable_id' : var_num,
+                    'variable_name' : variable_name,
                     'min_value' : 0,
                     'max_value' : 1,
                     'init_value' : None,
@@ -458,6 +460,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             var_num = len(variables)
             variables[variable_name] = {
                 'variable_id' : var_num,
+                'variable_name' : variable_name,
                 'min_value' : 0,
                 'max_value' : 1,
                 'init_value' : None,
@@ -495,6 +498,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             var_num = len(variables)
             variables[variable_name] = {
                 'variable_id' : var_num,
+                'variable_name' : variable_name,
                 'min_value' : 0,
                 'max_value' : 1,
                 'init_value' : None,
@@ -570,6 +574,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             var_num = len(variables)
             variables[variable_name] = {
                 'variable_id' : var_num,
+                'variable_name' : variable_name,
                 'min_value' : 0,
                 'max_value' : 1,
                 'init_value' : None,
@@ -620,6 +625,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             var_num = len(variables)
             variables[variable_name] = {
                 'variable_id' : var_num,
+                'variable_name' : variable_name,
                 'min_value' : 0,
                 'max_value' : 1,
                 'init_value' : None,
@@ -658,6 +664,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             var_num = len(variables)
             variables[variable_name] = {
                 'variable_id' : var_num,
+                'variable_name' : variable_name,
                 'min_value' : 0,
                 'max_value' : 1,
                 'init_value' : None,
@@ -695,6 +702,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             var_num = len(variables)
             variables[variable_name] = {
                 'variable_id' : var_num,
+                'variable_name' : variable_name,
                 'min_value' : 0,
                 'max_value' : 1,
                 'init_value' : None,
@@ -921,16 +929,16 @@ def variable_name_cleanup(nodes, variables):
     for node_id in nodes:
         node_name_to_id[nodes[node_id]['name']] = node_id
     for variable_name in variables:
-        #print(variable)
-        variable_regex = re.compile(r""+variable+"_dot_")#if out variable is meh, we are now matching meh_dot_
+        variable_regex = re.compile(r""+variable_name+"_dot_")#if out variable_name is meh, we are now matching meh_dot_
         for child_variable_name in variables:
-            if variable_regex.match(child_variable):#if this is true, then is means we are looking at meh_dot_something
+            if variable_regex.match(child_variable_name):#if this is true, then is means we are looking at meh_dot_something
                 for access_node_name in variables[variable_name]['access']:#we are now going to tell everything that can change meh, that it can change meh_dot_something
                     variables[child_variable_name]['access'].add(access_node_name)#told the variable it can be accessed by this node
                     variables[child_variable_name]['next_exist'][access_node_name] = True #updated what the next exist value is for this specific node
                     variables[child_variable_name]['stages'].append(node_name_to_id[access_node_name])
     for variable_name in variables:
-        variables[variable_name['stages']].sort()
+        variables[variable_name]['stages'] = list(set(variables[variable_name]['stages']))
+        variables[variable_name]['stages'].sort()
         
 def main():
     arg_parser = argparse.ArgumentParser()

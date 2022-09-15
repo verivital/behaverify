@@ -10,9 +10,9 @@ import copy
 def create_stages(variable, variables, node_name_to_id):
     prev_stage_name = variable['variable_name']
     for stage_count in range(1, len(variable['stages']) + 1):
-        stage_start = variable['stages'][stage_count]
+        stage_start = variable['stages'][stage_count - 1]
         try:
-            stage_end = variable['stages'][stage_count + 1]
+            stage_end = variable['stages'][stage_count]
         except:
             stage_end = len(node_name_to_id)
         variable_name = variable['variable_name'] + "_stage_" + str(stage_count)
@@ -28,6 +28,8 @@ def create_stages(variable, variables, node_name_to_id):
         variables[variable_name]['access'] = new_access
         variables[variable_name]['next_stage'] = None
         variables[prev_stage_name]['next_stage'] = variable_name
+        variables[variable_name]['prev_stage'] = prev_stage_name
+        
         prev_stage_name = variable_name
     new_access = set()
     for access_node_name in variable['access']:
@@ -35,7 +37,10 @@ def create_stages(variable, variables, node_name_to_id):
         if stage_start <= access_node_id and access_node_id < stage_end:
             new_access.add(access_node_name)
     variable['access'] = new_access
-    variable['next_value'] = [('TRUE', prev_stage_name)]
+    variable['prev_stage'] = None
+    variable['last_stage'] = prev_stage_name
+    #variable['next_value'] = [('TRUE', prev_stage_name)]
+    #this is going to be handled in node_creator
     
 
 def delete_stages(variable, variables):
