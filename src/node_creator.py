@@ -53,7 +53,7 @@ def create_blackboard(nodes, variables):
                     poss_values = poss_values + str(i) + ", "
                 poss_values = poss_values[0:-2] + "}"
                 decl_string += ("\t\t" + variable_name + " : " + str(variable['min_value']) + ".." + str(variable['max_value']) + ";" + os.linesep)
-                if variable['init_value']:
+                if not (variable['init_value'] is None):
                     assign_string += ("\t\tinit(" + variable_name + ") := " + str(variable['init_value']) +";" + os.linesep)
                 
                 assign_this = False
@@ -67,9 +67,19 @@ def create_blackboard(nodes, variables):
                 else:
                     for node_name in variable['access']:
                         assign_string += "\t\t\tstatuses[node_names." + node_name + "] in {success, failure, running} : " + poss_values + ';' + os.linesep
-                assign_string += ("\t\t\t\tTRUE : " + variable_name + ";" + os.linesep
-                                + "\t\t\tesac;" + os.linesep
-                                )
+                if variable['use_stages']:
+                    if variable['prev_stage']:
+                        assign_string += ("\t\t\t\tTRUE : next(" + variable['prev_stage'] + ");" + os.linesep
+                                          + "\t\t\tesac;" + os.linesep
+                                          )
+                    else:
+                        assign_string += ("\t\t\t\tTRUE : " + variable['last_stage'] + ";" + os.linesep
+                                          + "\t\t\tesac;" + os.linesep
+                                          )
+                else:
+                    assign_string += ("\t\t\t\tTRUE : " + variable_name + ";" + os.linesep
+                                      + "\t\t\tesac;" + os.linesep
+                                      )
             else:
                 exist_define += "\t\t" + variable_name + " := " + str(variable['min_value']) + ';' + os.linesep
             if variable['always_exist']:
