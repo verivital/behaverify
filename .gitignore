@@ -5,3 +5,4 @@
 *.goutputstream-*
 **/models_*/**
 **/results/**
+**/__pycache__/**
