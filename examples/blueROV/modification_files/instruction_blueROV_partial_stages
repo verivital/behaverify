@@ -1,0 +1,1279 @@
+[
+	{
+		'target' : 'variable',
+		'name' : 'bb_mission_dot_data',
+		'instructions' : {
+			'stages' : [10, 25]
+			}
+	},	{
+		'target' : 'variable',
+		'name' : 'dd_output_dot_data',
+		'instructions' : {
+			'stages' : [11]
+			}
+	},
+	{
+		'target' : 'global_flags',
+		'instructions' : [
+					'--force_parallel_unsynch',
+					'--force_selector_memoryless',
+					'--force_sequence_memory',
+					'--use_stages'
+				]	
+	},
+	{
+		'target' : 'variable',
+		'name' : 'task_mission_server_mission_len',
+		'create' : True,
+		'instructions' : {
+				'mode' : 'DEFINE',
+				'init_value' : '3'
+				}
+	},
+	{
+		'target' : 'variable',
+		'name' : 'task_mission_server_mission_type_list',
+		'create' : True,
+		'instructions' : {
+				'mode' : 'DEFINE',
+				'non-variable' : True,
+				'init_value' : '[mission_type_0, mission_type_1, mission_type_2]'
+				}
+	},
+	{
+		'target' : 'variable',
+		'name' : 'task_mission_server_mission_distance_list',
+		'create' : True,
+		'instructions' : {
+				'mode' : 'DEFINE',
+				'non-variable' : True,
+				'init_value' : '[mission_distance_0, mission_distance_1, mission_distance_2]'
+				}
+	},
+	{
+		'target' : 'variable',
+		'name' : 'total_degradation_threshold',
+		'create' : True,
+		'instructions' : {
+				'mode' : 'DEFINE',
+				'init_value' : '0'
+				}
+	},
+	{
+		'target' : 'variable',
+		'name' : 'home_reached_threshold',
+		'create' : True,
+		'instructions' : {
+				'mode' : 'DEFINE',
+				'init_value' : '0'
+				}
+	},
+	{
+		'target' : 'variable',
+		'name' : 'mission_type_0',
+		'create' : True,
+		'instructions' : {
+				'mode' : 'FROZENVAR',
+				'custom_value_range' : '{mission_type_path_following, mission_type_waypoint_following, mission_type_e_stop, mission_type_pipe_following, mission_type_unknown}'
+				}
+	},
+	{
+		'target' : 'variable',
+		'name' : 'mission_type_1',
+		'create' : True,
+		'instructions' : {
+				'mode' : 'FROZENVAR',
+				'custom_value_range' : '{mission_type_path_following, mission_type_waypoint_following, mission_type_e_stop, mission_type_pipe_following, mission_type_unknown}'
+				}
+	},
+	{
+		'target' : 'variable',
+		'name' : 'mission_type_2',
+		'create' : True,
+		'instructions' : {
+				'mode' : 'FROZENVAR',
+				'custom_value_range' : '{mission_type_path_following, mission_type_waypoint_following, mission_type_e_stop, mission_type_pipe_following, mission_type_unknown}'
+				}
+	},
+	
+	{
+		'target' : 'variable',
+		'name' : 'mission_distance_0',
+		'create' : True,
+		'instructions' : {
+				'mode' : 'FROZENVAR',
+				'max_value' : 2
+				}
+	},
+	
+	{
+		'target' : 'variable',
+		'name' : 'mission_distance_1',
+		'create' : True,
+		'instructions' : {
+				'mode' : 'FROZENVAR',
+				'max_value' : 2
+				}
+	},
+	
+	{
+		'target' : 'variable',
+		'name' : 'mission_distance_2',
+		'create' : True,
+		'instructions' : {
+				'mode' : 'FROZENVAR',
+				'max_value' : 2
+				}
+	},
+	{
+		'target' : 'variable',
+		'name' : 'task_mission_server_mission_idx',
+		'create' : True,
+		'instructions' : {
+				'stages' : [25],
+				'use_stages' : True,
+				'custom_value_range' : '0..task_mission_server_mission_len'
+				}
+	},
+	{
+		'target' : 'variable',
+		'name' : 'task_mission_server_mission_idx_stage_1',
+		'instructions' : {
+				'custom_value_range' : '0..task_mission_server_mission_len',
+				'next_value' : [
+					('!(statuses[node_names.mission_server] in {invalid, failure}) & (next_mission = 1)' , 'min(task_mission_server_mission_idx + 1, task_mission_server_mission_len)')
+				]
+				}
+	},
+	{
+		'target' : 'variable',
+		'name' : 'battery',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'battery_low_warning',
+		'instructions' : {
+					'init_value' : 0
+			       }
+	},
+	{
+		'target' : 'variable',
+		'name' : 'battery_low_warning_stage_1',
+		'instructions' : {
+					'init_value' : 0,
+					'next_value' :  [
+								('statuses[node_names.battery2bb] = success', '{0, 1}')
+							]
+			       }
+	},
+	{
+		'target' : 'variable',
+		'name' : 'battery_dot_batt_charge_remaining',
+		'delete' : True
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_rth',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_rth_warning',
+		'instructions' : {
+					'init_value' : 0
+			       }
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_rth_warning_stage_1',
+		'instructions' : {
+					'init_value' : 0,
+					'next_value' : [
+								('bb_rth_warning = 1', 1),
+								('(statuses[node_names.mission_server] = running) & (next_mission = 1) & (task_mission_server_mission_idx_stage_1 = task_mission_server_mission_len)', '1')
+							]
+			       }
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_rth_warning_stage_2',
+		'instructions' : {
+					'init_value' : 0,
+					'next_value' : [
+								('bb_rth_warning = 1', 1),
+								('statuses[node_names.rth2bb] = success', '{0, 1}')
+							]
+			       }
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_rth_dot_data',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_geofence',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_geofence_warning',
+		'instructions' : {
+					'init_value' : 0
+			       }
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_geofence_warning_stage_1',
+		'instructions' : {
+					'init_value' : 0,
+					'next_value' : [
+								('bb_geofence_warning = 1', 1),
+								('statuses[node_names.geofence2bb] = success', '{0, 1}')
+							]
+			       }
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_geofence_dot_data',
+		'delete' : True
+	},
+	{
+		'target' : 'variable',
+		'name' : 'lec2_am_r',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'lec2_am_r_speed_warning',
+		'instructions' : {
+					'mode' : 'DEFINE',
+					'next_value' : [
+							('(lec2_am_r_dot_confs = 1) | (lec2_am_r_dot_confs = 3)', '1'),
+							('TRUE', '0')
+						]
+			       }
+	},
+	{
+		'target' : 'variable',
+		'name' : 'lec2_am_r_speed_warning_stage_1',
+		'instructions' : {
+					'mode' : 'DEFINE',
+					'next_value' : [
+							('(lec2_am_r_dot_confs_stage_1 = 1) | (lec2_am_r_dot_confs_stage_1 = 3)', '1'),
+							('TRUE', '0')
+						]
+			       }
+	},
+		{
+		'target' : 'variable',
+		'name' : 'lec2_am_r_pipe_warning',
+		'instructions' : {
+					'mode' : 'DEFINE',
+					'next_value' : [
+							('(lec2_am_r_dot_confs = 2) | (lec2_am_r_dot_confs = 3)', '1'),
+							('TRUE', '0')
+						]
+			       }
+	},
+	{
+		'target' : 'variable',
+		'name' : 'lec2_am_r_pipe_warning_stage_1',
+		'instructions' : {
+					'mode' : 'DEFINE',
+					'next_value' : [
+							('(lec2_am_r_dot_confs_stage_1 = 2) | (lec2_am_r_dot_confs_stage_1 = 3)', '1'),
+							('TRUE', '0')
+						]
+			       }
+	},
+	{
+		'target' : 'variable',
+		'name' : 'lec2_am_r_dot_confs',
+		'instructions' : {
+					'init_value' : 0,
+					'max_value' : 3
+			       }
+	},
+	{
+		'target' : 'variable',
+		'name' : 'lec2_am_r_dot_confs_stage_1',
+		'instructions' : {
+					'init_value' : 0,
+					'next_value' : [
+						     	('statuses[node_names.lec2_am_r_2bb] = success', '{0, 1, 2, 3}')
+						]
+			       }
+	},
+	{
+		'target' : 'variable',
+		'name' : 'lec2_am_l',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'lec2_am_l_speed_warning',
+		'instructions' : {
+					'mode' : 'DEFINE',
+					'next_value' : [
+							('(lec2_am_l_dot_confs = 1) | (lec2_am_l_dot_confs = 3)', '1'),
+							('TRUE', '0')
+						]
+			       }
+	},
+	{
+		'target' : 'variable',
+		'name' : 'lec2_am_l_speed_warning_stage_1',
+		'instructions' : {
+					'mode' : 'DEFINE',
+					'next_value' : [
+							('(lec2_am_l_dot_confs_stage_1 = 1) | (lec2_am_l_dot_confs_stage_1 = 3)', '1'),
+							('TRUE', '0')
+						]
+			       }
+	},
+		{
+		'target' : 'variable',
+		'name' : 'lec2_am_l_pipe_warning',
+		'instructions' : {
+					'mode' : 'DEFINE',
+					'next_value' : [
+							('(lec2_am_l_dot_confs = 2) | (lec2_am_l_dot_confs = 3)', '1'),
+							('TRUE', '0')
+						]
+			       }
+	},
+	{
+		'target' : 'variable',
+		'name' : 'lec2_am_l_pipe_warning_stage_1',
+		'instructions' : {
+					'mode' : 'DEFINE',
+					'next_value' : [
+							('(lec2_am_l_dot_confs_stage_1 = 2) | (lec2_am_l_dot_confs_stage_1 = 3)', '1'),
+							('TRUE', '0')
+						]
+			       }
+	},
+	{
+		'target' : 'variable',
+		'name' : 'lec2_am_l_dot_confs',
+		'instructions' : {
+					'init_value' : 0,
+					'max_value' : 3					
+			       }
+	},
+	{
+		'target' : 'variable',
+		'name' : 'lec2_am_l_dot_confs_stage_1',
+		'instructions' : {
+					'init_value' : 0,
+					'next_value' : [
+						     	('statuses[node_names.lec2_am_l_2bb] = success', '{0, 1, 2, 3}')
+						]
+			       }
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_pipelost',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_pipe_lost_warning',
+		'instructions' : {
+					'init_value' : 0
+					
+			       }
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_pipe_lost_warning_stage_1',
+		'instructions' : {
+					'init_value' : 0,
+					'next_value' : [
+								('statuses[node_names.pipe_lost2bb] = success & bb_mission_dot_data = mission_type_pipe_following', '{0, 1}')
+							]
+					
+			       }
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_pipelost_dot_data',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_mission_dot_data',
+		'instructions' : {
+					'init_value' : 'task_mission_server_mission_type_list[0]',
+					'custom_value_range' : '{mission_type_path_following, mission_type_waypoint_following, mission_type_e_stop, mission_type_pipe_following, mission_type_unknown}'
+			       }
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_mission_dot_data_stage_1',
+		'instructions' : {
+					'init_value' : 'task_mission_server_mission_type_list[0]',
+					'custom_value_range' : '{mission_type_path_following, mission_type_waypoint_following, mission_type_e_stop, mission_type_pipe_following, mission_type_unknown}',
+					'next_value' : [
+								('statuses[node_names.mission2bb] = success', '{mission_type_path_following, mission_type_waypoint_following, mission_type_e_stop, mission_type_pipe_following, mission_type_unknown}')
+							]
+			       }
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_mission_dot_data_stage_2',
+		'instructions' : {
+					'init_value' : 'task_mission_server_mission_type_list[0]',
+					'custom_value_range' : '{mission_type_path_following, mission_type_waypoint_following, mission_type_e_stop, mission_type_pipe_following, mission_type_unknown}',
+					'next_value' : [
+								('!(statuses[node_names.mission_server] in {invalid, failure}) & (next_mission = 1) & (task_mission_server_mission_idx_stage_1 < task_mission_server_mission_len)' , 'task_mission_server_mission_type_list[task_mission_server_mission_idx_stage_1]')
+							]
+			       }
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_sensor_failure',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_sensor_failure_warning',
+		'instructions' : {
+					'init_value' : 0
+			       }
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_sensor_failure_warning_stage_1',
+		'instructions' : {
+					'init_value' : 0,
+					'next_value' : [
+								('bb_sensor_failure_warning = 1', '1'),
+								('statuses[node_names.sensor_failure2bb] = success', '{0, 1}')
+							]
+			       }
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_sensor_failure_dot_data',
+		'delete' : True
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_waypoints_completed',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_waypoints_completed_dot_data',
+		'instructions' : {
+					'init_value' : 0
+					
+			       }
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_waypoints_completed_dot_data_stage_1',
+		'instructions' : {
+					'init_value' : 0,
+					'next_value' : [
+								('statuses[node_names.waypoints_completed2bb] = success', '{0, 1}')
+							]
+					
+			       }
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_mission',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'dd_output',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'dd_z_axis_warning',
+		'instructions' : {
+					'init_value' : 0
+			       }
+	},
+	{
+		'target' : 'variable',
+		'name' : 'dd_z_axis_warning_stage_1',
+		'instructions' : {
+					'init_value' : 0,
+					'next_value' : [
+				('(total_degradation <= total_degradation_threshold) & (dd_output_dot_data_stage_1 = 1) & (statuses[node_names.ddlec2bb] = success)', '1'),
+				('((total_degradation > total_degradation_threshold) | (dd_output_dot_data_stage_1 = 0)) & (statuses[node_names.ddlec2bb] = success)', '0')
+							]
+			       }
+	},
+	{
+		'target' : 'variable',
+		'name' : 'dd_xy_axis_degradation',
+		'instructions' : {
+					'init_value' : 0
+			       }
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'dd_xy_axis_degradation_stage_1',
+		'instructions' : {
+					'init_value' : 0,
+					'next_value' : [
+						('(total_degradation <= total_degradation_threshold) & (dd_output_dot_data_stage_1 = 2) & (statuses[node_names.ddlec2bb] = success)' , '1'),
+						('(total_degradation > total_degradation_threshold) | (dd_output_dot_data_stage_1 = 0) & (statuses[node_names.ddlec2bb] = success)' , '0')
+							]
+			       }
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'dd_output_dot_data',
+		'instructions' : {
+			'init_value' : 0,
+			'max_value' : 2
+		}
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'dd_output_dot_data_stage_1',
+		'instructions' : {
+			'init_value' : 0,
+			'max_value' : 2,
+			'next_value' : [
+				('(statuses[node_names.ddlec2bb] = success)', '{0, 1, 2}')
+			]
+		}
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'total_degradation',
+		'instructions' : {
+			'init_value' : 0
+		}
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'total_degradation_stage_1',
+		'instructions' : {
+			'init_value' : 0,
+			'next_value' : [
+				('!(statuses[node_names.reallocate_task] in {invalid}) & (dd_xy_axis_degradation_stage_1 = 1)', '1')
+			]
+
+		}
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'fls_range',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'obstacle_standoff_warning',
+		'instructions' : {
+					'init_value' : 0
+			       }
+	},
+	{
+		'target' : 'variable',
+		'name' : 'obstacle_standoff_warning_stage_1',
+		'instructions' : {
+					'init_value' : 0,
+					'next_value' : [
+						('(0 < fls_range_dot_range_stage_1) & (fls_range_dot_range_stage_1 <= obstacle_min_standoff) & (statuses[node_names.fls2bb] = success)' , '1')
+							]
+			       }
+	},
+	{
+		'target' : 'variable',
+		'name' : 'obstacle_min_standoff',
+		'instructions' : {
+			'max_value' : 2,
+			'init_value' : '\t\t\tcase\n\t\t\t\t(task_mission_server_mission_type_list[0] = mission_type_unknown) : 1;\n\t\t\t\tTRUE : task_mission_server_mission_distance_list[0];\n\t\t\tesac;'
+			
+		}
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'obstacle_min_standoff_stage_1',
+		'instructions' : {
+			'max_value' : 2,
+			'init_value' : '\t\t\tcase\n\t\t\t\t(task_mission_server_mission_type_list[0] = mission_type_unknown) : 1;\n\t\t\t\tTRUE : task_mission_server_mission_distance_list[0];\n\t\t\tesac;',
+			'next_value' : [
+				('!(statuses[node_names.mission_server] in {invalid}) & (next_mission = 1) & (task_mission_server_mission_idx_stage_1 < task_mission_server_mission_len)' , 'task_mission_server_mission_distance_list[task_mission_server_mission_idx_stage_1]')
+			]
+		}
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'fls_range_dot_range',
+		'instructions' : {
+			'max_value' : 3,
+			'init_value' : 0
+			}
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'fls_range_dot_range_stage_1',
+		'instructions' : {
+			'max_value' : 3,
+			'init_value' : 0,
+			'next_value' : [('(statuses[node_names.fls2bb] = success)' , '{0, 1, 2, 3}')]
+			}
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'obstacle_in_view',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_fls_warning',
+		'instructions' : {
+					'init_value' : 0,
+			       }
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_fls_warning_stage_1',
+		'instructions' : {
+					'init_value' : 0,
+					'next_value' : [
+								('bb_fls_warning = 1', '1'),
+								('(obstacle_in_view_dot_stamp_stage_1 = 1) & (statuses[node_names.fls_warning2bb] = success)', '1')
+							]
+			       }
+	},
+	{
+		'target' : 'variable',
+		'name' : 'obstacle_in_view_dot_stamp',
+		'instructions' : {
+					'init_value' : 0,
+			       }
+	},
+	{
+		'target' : 'variable',
+		'name' : 'obstacle_in_view_dot_stamp_stage_1',
+		'instructions' : {
+					'init_value' : 0,
+					'next_value' : [
+								('(statuses[node_names.fls_warning2bb] = success)', '{0, 1}')
+							]
+			       }
+	},
+	{
+		'target' : 'variable',
+		'name' : 'emergency_stop_warning',
+		'instructions' : {
+					'init_value' : 0
+			       }
+	},
+	{
+		'target' : 'variable',
+		'name' : 'emergency_stop_warning_stage_1',
+		'instructions' : {
+					'init_value' : 0,
+					'global_next_mode' : False,
+					'next_value' : [
+								('emergency_stop_warning = 1', '1'),
+								('statuses[node_names.fls_warning2bb] = success & obstacle_in_view_dot_stamp_stage_1 = 1', '1')
+							]
+			       }
+	},
+	{
+		'target' : 'variable',
+		'name' : 'emergency_stop_warning_stage_2',
+		'instructions' : {
+					'init_value' : 0,
+					'global_next_mode' : False,
+					'next_value' : [
+								('emergency_stop_warning = 1', '1'),
+								('statuses[node_names.rtreach2bb] = success & rtreach_out_dot_data < 1', '1')
+							]
+			       }
+	},
+	{
+		'target' : 'variable',
+		'name' : 'emergency_stop_warning_stage_3',
+		'instructions' : {
+					'init_value' : 0,
+					'global_next_mode' : False,
+					'next_value' : [
+								('emergency_stop_warning = 1', '1'),
+								('!(statuses[node_names.mission_server] in {invalid, failure}) & (next_mission = 1) & (task_mission_server_mission_idx_stage_1 < task_mission_server_mission_len) & (task_mission_server_mission_type_list[task_mission_server_mission_idx_stage_1] = mission_type_e_stop)' , '1')
+							]
+			       }
+	},
+	{
+		'target' : 'variable',
+		'name' : 'hsd_pipeline_mapping',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'hsd_to_waypoint',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'hsd_to_rth',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'hsd_to_surface',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'rtreach_out',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'rtreach_out_dot_data',
+		'instructions' : {
+			'init_value' : 1
+		}
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'rtreach_out_dot_data_stage_1',
+		'instructions' : {
+			'init_value' : 1,
+			'next_value' : [('(statuses[node_names.rtreach2bb] = success)', '{0, 1}')]
+		}
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'HSD_out_dot_heading',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'uuv_max_speed',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'mission_file',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'refLat',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'refLon',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'next_mission',
+		'instructions' : {
+					'init_value' : 0
+					
+			       }
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'next_mission_stage_1',
+		'instructions' : {
+					'init_value' : 0,
+					'next_value' : [
+								('statuses[node_names.mission_server] = running', '0')
+							]
+					
+			       }
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'next_mission_stage_2',
+		'instructions' : {
+					'init_value' : 0,
+					'next_value' : [
+								('statuses[node_names.next_mission] = running', '1')
+							]
+					
+			       }
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'decision_threshold',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'HSD_out',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_obstacle_warning',
+		'instructions' : {
+					'init_value' : 0
+					
+			       }
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_obstacle_warning_stage_1',
+		'instructions' : {
+					'init_value' : 0,
+					'next_value' : [
+								('statuses[node_names.obstacle_avoidance] = running', '{0, 1}')
+							]
+					
+			       }
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'cm_hsd_input',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'HSD_out_dot_speed',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'HSD_out_dot_depth',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_home_reached',
+		'instructions' : {
+					'init_value' : 0
+					
+			       }
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_home_reached_stage_1',
+		'instructions' : {
+					'init_value' : 0,
+					'next_value' : [
+								('statuses[node_names.home2bb] = success | statuses[node_names.home2bb1] = success', '{0, 1}')
+							] 
+					
+			       }
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_home_dist',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'bb_home_dist_dot_data',
+		'delete' : True
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'pipe_mapping_enable',
+		'instructions' : {
+					'init_value' : 1
+					
+			       }
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'pipe_mapping_enable_stage_1',
+		'instructions' : {
+					'init_value' : 1,
+					'next_value' : [
+								('statuses[node_names.pipe_mapping_disable_task] != invalid', '0')
+							] 
+					
+			       }
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'pipe_mapping_enable_stage_2',
+		'instructions' : {
+					'init_value' : 1,
+					'next_value' : [
+								('statuses[node_names.pipe_mapping_disable_task1] != invalid', '0')
+							] 
+					
+			       }
+
+	},
+	{
+		'target' : 'variable',
+		'name' : 'pipe_mapping_enable_stage_3',
+		'instructions' : {
+					'init_value' : 1,
+					'next_value' : [
+								('statuses[node_names.pipe_mapping_enable_task] != invalid', '1')
+							] 
+					
+			       }
+
+	},
+	{
+		'target' : 'node',
+		'name' : 'battery2bb',
+		'instructions' : {
+			"additional_modules::status::possible_values" : ["success", "running"]
+		}
+	},
+	{
+		'target' : 'node',
+		'name' : 'rth2bb',
+		'instructions' : {
+			"additional_modules::status::possible_values" : ["success", "running"]
+		}
+	},
+	{
+		'target' : 'node',
+		'name' : 'geofence2bb',
+		'instructions' : {
+			"additional_modules::status::possible_values" : ["success", "running"]
+		}
+	},
+	{
+		'target' : 'node',
+		'name' : 'lec2_am_r_2bb',
+		'instructions' : {
+			"additional_modules::status::possible_values" : ["success", "running"]
+		}
+	},
+	{
+		'target' : 'node',
+		'name' : 'lec2_am_l_2bb',
+		'instructions' : {
+			"additional_modules::status::possible_values" : ["success", "running"]
+		}
+	},
+	{
+		'target' : 'node',
+		'name' : 'pipe_lost2bb',
+		'instructions' : {
+			"additional_modules::status::possible_values" : ["success", "running"]
+		}
+	},
+	{
+		'target' : 'node',
+		'name' : 'sensor_failure2bb',
+		'instructions' : {
+			"additional_modules::status::possible_values" : ["success", "running"]
+		}
+	},
+	{
+		'target' : 'node',
+		'name' : 'waypoints_completed2bb',
+		'instructions' : {
+			"additional_modules::status::possible_values" : ["success", "running"]
+		}
+	},
+	{
+		'target' : 'node',
+		'name' : 'mission2bb',
+		'instructions' : {
+			"additional_modules::status::possible_values" : ["success", "running"]
+		}
+	},
+	{
+		'target' : 'node',
+		'name' : 'ddlec2bb',
+		'instructions' : {
+			"additional_modules::status::possible_values" : ["success", "running"]
+		}
+	},
+	{
+		'target' : 'node',
+		'name' : 'fls2bb',
+		'instructions' : {
+			"additional_modules::status::possible_values" : ["success", "running"]
+		}
+	},
+	{
+		'target' : 'node',
+		'name' : 'fls_warning2bb',
+		'instructions' : {
+			"additional_modules::status::possible_values" : ["success", "running"]
+		}
+	},
+	{
+		'target' : 'node',
+		'name' : 'hsd_pipe2bb',
+		'instructions' : {
+			"additional_modules::status::possible_values" : ["success", "running"]
+		}
+	},
+	{
+		'target' : 'node',
+		'name' : 'hsd_wp2bb',
+		'instructions' : {
+			"additional_modules::status::possible_values" : ["success", "running"]
+		}
+	},
+	{
+		'target' : 'node',
+		'name' : 'hsd_rth2bb',
+		'instructions' : {
+			"additional_modules::status::possible_values" : ["success", "running"]
+		}
+	},
+	{
+		'target' : 'node',
+		'name' : 'hsd_surface2bb',
+		'instructions' : {
+			"additional_modules::status::possible_values" : ["success", "running"]
+		}
+	},
+	{
+		'target' : 'node',
+		'name' : 'rtreach2bb',
+		'instructions' : {
+			"additional_modules::status::possible_values" : ["success", "running"]
+		}
+	},
+	{
+		'target' : 'node',
+		'name' : 'reallocate_task',
+		'instructions' : {
+			"additional_modules::status::possible_values" : ["running"]
+		}
+	},
+	{
+		'target' : 'node',
+		'name' : 'dd_lec_task',
+		'instructions' : {
+			"additional_modules::status::possible_values" : ["running"]
+		}
+	},
+	{
+		'target' : 'node',
+		'name' : 'mission_server',
+		'instructions' : {
+			"additional_modules::status::possible_values" : ["running"]
+		}
+	},
+	{
+		'target' : 'node',
+		'name' : 'obstacle_avoidance',
+		'instructions' : {
+			"additional_modules::status::possible_values" : ["running"]
+		}
+	},
+	{
+		'target' : 'node',
+		'name' : 'surface_task',
+		'instructions' : {
+			"additional_modules::status::possible_values" : ["running"]
+		}
+	},
+	{
+		'target' : 'node',
+		'name' : 'surface_task1',
+		'instructions' : {
+			"additional_modules::status::possible_values" : ["running"]
+		}
+	},
+	{
+		'target' : 'node',
+		'name' : 'emergency_stop_task',
+		'instructions' : {
+			"additional_modules::status::possible_values" : ["running"]
+		}
+	},
+	{
+		'target' : 'node',
+		'name' : 'surface_task2',
+		'instructions' : {
+			"additional_modules::status::possible_values" : ["running"]
+		}
+	},
+	{
+		'target' : 'node',
+		'name' : 'surface_task3',
+		'instructions' : {
+			"additional_modules::status::possible_values" : ["running"]
+		}
+	},
+	{
+		'target' : 'node',
+		'name' : 'surface_task4',
+		'instructions' : {
+			"additional_modules::status::possible_values" : ["running"]
+		}
+	},
+	{
+		'target' : 'node',
+		'name' : 'rth_task',
+		'instructions' : {
+			"additional_modules::status::possible_values" : ["running"]
+		}
+	},
+	{
+		'target' : 'node',
+		'name' : 'home2bb',
+		'instructions' : {
+			"additional_modules::status::possible_values" : ["success", "running"]
+		}
+	},
+	{
+		'target' : 'node',
+		'name' : 'rth_task1',
+		'instructions' : {
+			"additional_modules::status::possible_values" : ["running"]
+		}
+	},
+	{
+		'target' : 'node',
+		'name' : 'home2bb1',
+		'instructions' : {
+			"additional_modules::status::possible_values" : ["success", "running"]
+		}
+	},
+	{
+		'target' : 'node',
+		'name' : 'loiter_task',
+		'instructions' : {
+			"additional_modules::status::possible_values" : ["running"]
+		}
+	},
+	{
+		'target' : 'node',
+		'name' : 'tracking_task',
+		'instructions' : {
+			"additional_modules::status::possible_values" : ["running"]
+		}
+	},
+	{
+		'target' : 'node',
+		'name' : 'speed_min_task',
+		'instructions' : {
+			"additional_modules::status::possible_values" : ["running"]
+		}
+	},
+	{
+		'target' : 'node',
+		'name' : 'speed_min_task1',
+		'instructions' : {
+			"additional_modules::status::possible_values" : ["running"]
+		}
+	},
+	{
+		'target' : 'node',
+		'name' : 'speed_max_task',
+		'instructions' : {
+			"additional_modules::status::possible_values" : ["running"]
+		}
+	},
+	{
+		'target' : 'node',
+		'name' : 'pipe_mapping_disable_task',
+		'instructions' : {
+			"additional_modules::status::possible_values" : ["running"]
+		}
+	},
+	{
+		'target' : 'node',
+		'name' : 'pipe_mapping_disable_task1',
+		'instructions' : {
+			"additional_modules::status::possible_values" : ["running"]
+		}
+	},
+	{
+		'target' : 'node',
+		'name' : 'pipe_mapping_enable_task',
+		'instructions' : {
+			"additional_modules::status::possible_values" : ["running"]
+		}
+	},
+	{
+		'target' : 'node',
+		'name' : 'next_mission',
+		'instructions' : {
+			"additional_modules::status::possible_values" : ["success"]
+		}
+	},
+	{
+		'target' : 'node',
+		'name' : 'loiter_task1',
+		'instructions' : {
+			"additional_modules::status::possible_values" : ["running"]
+		}
+	},
+	{
+		'target' : 'node',
+		'name' : 'waypoint_task',
+		'instructions' : {
+			"additional_modules::status::possible_values" : ["running"]
+		}
+	},
+	{
+		'target' : 'node',
+		'name' : 'loiter_task2',
+		'instructions' : {
+			"additional_modules::status::possible_values" : ["running"]
+		}
+	}
+	
+]

@@ -542,11 +542,9 @@ def main():
     var_string = (""
                   + "\tVAR" + os.linesep
     )       
-    if variables:
-        var_string += "\t\tvariable_names : define_variables;" + os.linesep
+    var_string += "\t\tvariable_names : define_variables;" + os.linesep
     var_string += "\t\tnode_names : define_nodes;" + os.linesep
-    if variables:
-        var_string += "\t\tblackboard : blackboard_module(node_names, variable_names, statuses);" + os.linesep
+    var_string += "\t\tblackboard : blackboard_module(node_names, variable_names, statuses);" + os.linesep
     #------------------------------------------------------------------------------------------------------------------------
     init_string = "\tASSIGN" + os.linesep
     next_string = ""
@@ -614,8 +612,7 @@ def main():
         nuxmv_string += open(args.blackboard_input_file).read()
     else:
         blackboard_string = ''
-        if variables:
-            blackboard_string += node_creator.create_blackboard(nodes, variables)
+        blackboard_string += node_creator.create_blackboard(nodes, variables)
         nuxmv_string += blackboard_string
         if args.blackboard_output_file is None:
             pass
