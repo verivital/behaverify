@@ -118,9 +118,8 @@ MODULE main
 			esac;
 		BlueROV.active := TRUE;
 	VAR
-		variable_names : define_variables;
 		node_names : define_nodes;
-		blackboard : blackboard_module(node_names, variable_names, statuses);
+		blackboard : blackboard_module(node_names, statuses);
 		resume_from_node_27 : {27, 41, 68, 91, 94, 100};
 		BlueROV : composite_parallel_unsynchronized_success_on_all_5(topics2bb, dd_tasks, mission_server, obstacle_avoidance, priorities);
 		topics2bb : composite_parallel_unsynchronized_success_on_all_17(battery2bb, rth2bb, geofence2bb, lec2_am_r_2bb, lec2_am_l_2bb, pipe_lost2bb, sensor_failure2bb, waypoints_completed2bb, mission2bb, ddlec2bb, fls2bb, fls_warning2bb, hsd_pipe2bb, hsd_wp2bb, hsd_rth2bb, hsd_surface2bb, rtreach2bb);
@@ -225,65 +224,65 @@ MODULE main
 		loiter_task2 : leaf_set_blackboard_variables(loiter_task2_STATUS);
 		waypoint_task : leaf_set_blackboard_variables(waypoint_task_STATUS);
 		loiter_task : leaf_set_blackboard_variables(loiter_task_STATUS);
-		battery2bb_STATUS : battery2bb_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		rth2bb_STATUS : rth2bb_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		geofence2bb_STATUS : geofence2bb_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		lec2_am_r_2bb_STATUS : lec2_am_r_2bb_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		lec2_am_l_2bb_STATUS : lec2_am_l_2bb_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		pipe_lost2bb_STATUS : pipe_lost2bb_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		sensor_failure2bb_STATUS : sensor_failure2bb_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		waypoints_completed2bb_STATUS : waypoints_completed2bb_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		mission2bb_STATUS : mission2bb_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		ddlec2bb_STATUS : ddlec2bb_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		fls2bb_STATUS : fls2bb_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		fls_warning2bb_STATUS : fls_warning2bb_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		hsd_pipe2bb_STATUS : hsd_pipe2bb_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		hsd_wp2bb_STATUS : hsd_wp2bb_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		hsd_rth2bb_STATUS : hsd_rth2bb_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		hsd_surface2bb_STATUS : hsd_surface2bb_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		rtreach2bb_STATUS : rtreach2bb_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		is_reallocation_requested_CHECK_dd_xy_axis_degradation : is_reallocation_requested_CHECK_dd_xy_axis_degradation_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		reallocate_task_STATUS : reallocate_task_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		dd_lec_task_STATUS : dd_lec_task_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		mission_server_STATUS : mission_server_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		obstacle_avoidance_STATUS : obstacle_avoidance_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		battery_low_fs_CHECK_battery_low_warning : battery_low_fs_CHECK_battery_low_warning_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		surface_task_STATUS : surface_task_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		check_sensor_failure_CHECK_bb_sensor_failure_warning : check_sensor_failure_CHECK_bb_sensor_failure_warning_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		surface_task1_STATUS : surface_task1_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		emergency_stop_fs_CHECK_emergency_stop_warning : emergency_stop_fs_CHECK_emergency_stop_warning_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		emergency_stop_task_STATUS : emergency_stop_task_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		surface_task2_STATUS : surface_task2_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		check_surface_CHECK_bb_home_reached : check_surface_CHECK_bb_home_reached_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		surface_task3_STATUS : surface_task3_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		obstacle_standoff_fs_CHECK_obstacle_standoff_warning : obstacle_standoff_fs_CHECK_obstacle_standoff_warning_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		surface_task4_STATUS : surface_task4_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		check_rth_CHECK_bb_rth_warning : check_rth_CHECK_bb_rth_warning_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		rth_task_STATUS : rth_task_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		home2bb_STATUS : home2bb_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		check_geofence_CHECK_bb_geofence_warning : check_geofence_CHECK_bb_geofence_warning_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		rth_task1_STATUS : rth_task1_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		home2bb1_STATUS : home2bb1_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		check_pipe_post_CHECK_bb_pipe_lost_warning : check_pipe_post_CHECK_bb_pipe_lost_warning_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		loiter_task1_STATUS : loiter_task1_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		is_track_pipe_mission_requested_CHECK_bb_mission_dot_data : is_track_pipe_mission_requested_CHECK_bb_mission_dot_data_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		tracking_task_STATUS : tracking_task_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		check_lec2am_ls_CHECK_lec2_am_l_speed_warning : check_lec2am_ls_CHECK_lec2_am_l_speed_warning_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		speed_min_task_STATUS : speed_min_task_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		check_lec2am_rs_CHECK_lec2_am_r_speed_warning : check_lec2am_rs_CHECK_lec2_am_r_speed_warning_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		speed_min_task1_STATUS : speed_min_task1_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		speed_max_task_STATUS : speed_max_task_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		check_lec2am_lp_CHECK_lec2_am_l_pipe_warning : check_lec2am_lp_CHECK_lec2_am_l_pipe_warning_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		pipe_mapping_disable_task_STATUS : pipe_mapping_disable_task_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		check_lec2am_rp_CHECK_lec2_am_r_pipe_warning : check_lec2am_rp_CHECK_lec2_am_r_pipe_warning_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		pipe_mapping_disable_task1_STATUS : pipe_mapping_disable_task1_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		pipe_mapping_enable_task_STATUS : pipe_mapping_enable_task_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		is_waypoint_requested_CHECK_bb_mission_dot_data : is_waypoint_requested_CHECK_bb_mission_dot_data_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		check_waypoints_completed_CHECK_bb_waypoints_completed_dot_data : check_waypoints_completed_CHECK_bb_waypoints_completed_dot_data_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		next_mission_STATUS : next_mission_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		loiter_task2_STATUS : loiter_task2_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		waypoint_task_STATUS : waypoint_task_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
-		loiter_task_STATUS : loiter_task_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);
+		battery2bb_STATUS : battery2bb_STATUS_module(blackboard, node_names);
+		rth2bb_STATUS : rth2bb_STATUS_module(blackboard, node_names);
+		geofence2bb_STATUS : geofence2bb_STATUS_module(blackboard, node_names);
+		lec2_am_r_2bb_STATUS : lec2_am_r_2bb_STATUS_module(blackboard, node_names);
+		lec2_am_l_2bb_STATUS : lec2_am_l_2bb_STATUS_module(blackboard, node_names);
+		pipe_lost2bb_STATUS : pipe_lost2bb_STATUS_module(blackboard, node_names);
+		sensor_failure2bb_STATUS : sensor_failure2bb_STATUS_module(blackboard, node_names);
+		waypoints_completed2bb_STATUS : waypoints_completed2bb_STATUS_module(blackboard, node_names);
+		mission2bb_STATUS : mission2bb_STATUS_module(blackboard, node_names);
+		ddlec2bb_STATUS : ddlec2bb_STATUS_module(blackboard, node_names);
+		fls2bb_STATUS : fls2bb_STATUS_module(blackboard, node_names);
+		fls_warning2bb_STATUS : fls_warning2bb_STATUS_module(blackboard, node_names);
+		hsd_pipe2bb_STATUS : hsd_pipe2bb_STATUS_module(blackboard, node_names);
+		hsd_wp2bb_STATUS : hsd_wp2bb_STATUS_module(blackboard, node_names);
+		hsd_rth2bb_STATUS : hsd_rth2bb_STATUS_module(blackboard, node_names);
+		hsd_surface2bb_STATUS : hsd_surface2bb_STATUS_module(blackboard, node_names);
+		rtreach2bb_STATUS : rtreach2bb_STATUS_module(blackboard, node_names);
+		is_reallocation_requested_CHECK_dd_xy_axis_degradation : is_reallocation_requested_CHECK_dd_xy_axis_degradation_module(blackboard, node_names);
+		reallocate_task_STATUS : reallocate_task_STATUS_module(blackboard, node_names);
+		dd_lec_task_STATUS : dd_lec_task_STATUS_module(blackboard, node_names);
+		mission_server_STATUS : mission_server_STATUS_module(blackboard, node_names);
+		obstacle_avoidance_STATUS : obstacle_avoidance_STATUS_module(blackboard, node_names);
+		battery_low_fs_CHECK_battery_low_warning : battery_low_fs_CHECK_battery_low_warning_module(blackboard, node_names);
+		surface_task_STATUS : surface_task_STATUS_module(blackboard, node_names);
+		check_sensor_failure_CHECK_bb_sensor_failure_warning : check_sensor_failure_CHECK_bb_sensor_failure_warning_module(blackboard, node_names);
+		surface_task1_STATUS : surface_task1_STATUS_module(blackboard, node_names);
+		emergency_stop_fs_CHECK_emergency_stop_warning : emergency_stop_fs_CHECK_emergency_stop_warning_module(blackboard, node_names);
+		emergency_stop_task_STATUS : emergency_stop_task_STATUS_module(blackboard, node_names);
+		surface_task2_STATUS : surface_task2_STATUS_module(blackboard, node_names);
+		check_surface_CHECK_bb_home_reached : check_surface_CHECK_bb_home_reached_module(blackboard, node_names);
+		surface_task3_STATUS : surface_task3_STATUS_module(blackboard, node_names);
+		obstacle_standoff_fs_CHECK_obstacle_standoff_warning : obstacle_standoff_fs_CHECK_obstacle_standoff_warning_module(blackboard, node_names);
+		surface_task4_STATUS : surface_task4_STATUS_module(blackboard, node_names);
+		check_rth_CHECK_bb_rth_warning : check_rth_CHECK_bb_rth_warning_module(blackboard, node_names);
+		rth_task_STATUS : rth_task_STATUS_module(blackboard, node_names);
+		home2bb_STATUS : home2bb_STATUS_module(blackboard, node_names);
+		check_geofence_CHECK_bb_geofence_warning : check_geofence_CHECK_bb_geofence_warning_module(blackboard, node_names);
+		rth_task1_STATUS : rth_task1_STATUS_module(blackboard, node_names);
+		home2bb1_STATUS : home2bb1_STATUS_module(blackboard, node_names);
+		check_pipe_post_CHECK_bb_pipe_lost_warning : check_pipe_post_CHECK_bb_pipe_lost_warning_module(blackboard, node_names);
+		loiter_task1_STATUS : loiter_task1_STATUS_module(blackboard, node_names);
+		is_track_pipe_mission_requested_CHECK_bb_mission_dot_data : is_track_pipe_mission_requested_CHECK_bb_mission_dot_data_module(blackboard, node_names);
+		tracking_task_STATUS : tracking_task_STATUS_module(blackboard, node_names);
+		check_lec2am_ls_CHECK_lec2_am_l_speed_warning : check_lec2am_ls_CHECK_lec2_am_l_speed_warning_module(blackboard, node_names);
+		speed_min_task_STATUS : speed_min_task_STATUS_module(blackboard, node_names);
+		check_lec2am_rs_CHECK_lec2_am_r_speed_warning : check_lec2am_rs_CHECK_lec2_am_r_speed_warning_module(blackboard, node_names);
+		speed_min_task1_STATUS : speed_min_task1_STATUS_module(blackboard, node_names);
+		speed_max_task_STATUS : speed_max_task_STATUS_module(blackboard, node_names);
+		check_lec2am_lp_CHECK_lec2_am_l_pipe_warning : check_lec2am_lp_CHECK_lec2_am_l_pipe_warning_module(blackboard, node_names);
+		pipe_mapping_disable_task_STATUS : pipe_mapping_disable_task_STATUS_module(blackboard, node_names);
+		check_lec2am_rp_CHECK_lec2_am_r_pipe_warning : check_lec2am_rp_CHECK_lec2_am_r_pipe_warning_module(blackboard, node_names);
+		pipe_mapping_disable_task1_STATUS : pipe_mapping_disable_task1_STATUS_module(blackboard, node_names);
+		pipe_mapping_enable_task_STATUS : pipe_mapping_enable_task_STATUS_module(blackboard, node_names);
+		is_waypoint_requested_CHECK_bb_mission_dot_data : is_waypoint_requested_CHECK_bb_mission_dot_data_module(blackboard, node_names);
+		check_waypoints_completed_CHECK_bb_waypoints_completed_dot_data : check_waypoints_completed_CHECK_bb_waypoints_completed_dot_data_module(blackboard, node_names);
+		next_mission_STATUS : next_mission_STATUS_module(blackboard, node_names);
+		loiter_task2_STATUS : loiter_task2_STATUS_module(blackboard, node_names);
+		waypoint_task_STATUS : waypoint_task_STATUS_module(blackboard, node_names);
+		loiter_task_STATUS : loiter_task_STATUS_module(blackboard, node_names);
 	ASSIGN
 		init(resume_from_node_27) := 27;
 		next(resume_from_node_27) := 
@@ -292,10 +291,10 @@ MODULE main
 				(statuses[27] in {success, failure}) : 27;
 				TRUE : max(trace_running_source_27, 27);
 			esac;
-LTLSPEC G( ((next(blackboard.variables[variable_names.battery_low_warning]) = 1) & (battery2bb.active)) -> (surface_task.active));
+LTLSPEC G( ((blackboard.battery_low_warning_stage_1 = 1) & (battery2bb.active)) -> (surface_task.active));
 --this one is true, but only for battery_warning
 
-LTLSPEC G( ((next(blackboard.variables[variable_names.battery_low_warning]) = 1) & (battery2bb.active)) -> (surface_task.active | surface_task1.active | surface_task2.active | surface_task3.active | surface_task4.active));
+LTLSPEC G( ((blackboard.battery_low_warning_stage_1 = 1) & (battery2bb.active)) -> (surface_task.active | surface_task1.active | surface_task2.active | surface_task3.active | surface_task4.active));
 --this one should be true.
 
 
@@ -550,64 +549,6 @@ MODULE leaf_timer()
 		internal_status := input_status;
 	VAR
 		input_status : {success, running};
-MODULE define_variables
-	DEFINE
-		battery_low_warning := 0;
-		bb_rth_warning := 1;
-		bb_geofence_warning := 2;
-		lec2_am_r_speed_warning := 3;
-		lec2_am_r_pipe_warning := 4;
-		lec2_am_r_dot_confs := 5;
-		lec2_am_l_speed_warning := 6;
-		lec2_am_l_pipe_warning := 7;
-		lec2_am_l_dot_confs := 8;
-		bb_pipe_lost_warning := 9;
-		bb_mission_dot_data := 10;
-		bb_sensor_failure_warning := 11;
-		bb_waypoints_completed_dot_data := 12;
-		dd_z_axis_warning := 13;
-		dd_xy_axis_degradation := 14;
-		dd_output_dot_data := 15;
-		total_degradation := 16;
-		obstacle_standoff_warning := 17;
-		obstacle_min_standoff := 18;
-		fls_range_dot_range := 19;
-		bb_fls_warning := 20;
-		obstacle_in_view_dot_stamp := 21;
-		emergency_stop_warning := 22;
-		rtreach_out_dot_data := 23;
-		next_mission := 24;
-		bb_obstacle_warning := 25;
-		bb_home_reached := 26;
-		pipe_mapping_enable := 27;
-		task_mission_server_mission_len := 28;
-		task_mission_server_mission_type_list := -1;
-		task_mission_server_mission_distance_list := -1;
-		total_degradation_threshold := 29;
-		home_reached_threshold := 30;
-		mission_type_0 := 31;
-		mission_type_1 := 32;
-		mission_type_2 := 33;
-		mission_distance_0 := 34;
-		mission_distance_1 := 35;
-		mission_distance_2 := 36;
-		task_mission_server_mission_idx := 37;
-		bb_rth_warning_stage_1 := 38;
-		bb_rth_warning_stage_2 := 39;
-		lec2_am_r_speed_warning_stage_1 := 40;
-		lec2_am_r_pipe_warning_stage_1 := 41;
-		lec2_am_l_speed_warning_stage_1 := 42;
-		lec2_am_l_pipe_warning_stage_1 := 43;
-		bb_mission_dot_data_stage_1 := 44;
-		bb_mission_dot_data_stage_2 := 45;
-		emergency_stop_warning_stage_1 := 46;
-		emergency_stop_warning_stage_2 := 47;
-		emergency_stop_warning_stage_3 := 48;
-		next_mission_stage_1 := 49;
-		next_mission_stage_2 := 50;
-		pipe_mapping_enable_stage_1 := 51;
-		pipe_mapping_enable_stage_2 := 52;
-		pipe_mapping_enable_stage_3 := 53;
 MODULE define_nodes
 	DEFINE
 		BlueROV := 0;
@@ -724,395 +665,307 @@ MODULE define_nodes
 ----lec2_am_r_2bb
 --lec2_am_r_pipe_warning : 4
 ----lec2_am_r_2bb
---lec2_am_r_dot_confs : 5
-----lec2_am_r_2bb
---lec2_am_l_speed_warning : 6
+--lec2_am_l_speed_warning : 5
 ----lec2_am_l_2bb
---lec2_am_l_pipe_warning : 7
+--lec2_am_l_pipe_warning : 6
 ----lec2_am_l_2bb
---lec2_am_l_dot_confs : 8
-----lec2_am_l_2bb
---bb_pipe_lost_warning : 9
+--bb_pipe_lost_warning : 7
 ----pipe_lost2bb
---bb_mission_dot_data : 10
-----mission2bb
+--bb_mission_dot_data : 8
 ----pipe_lost2bb
---bb_sensor_failure_warning : 11
+--bb_sensor_failure_warning : 9
 ----sensor_failure2bb
---bb_waypoints_completed_dot_data : 12
+--bb_waypoints_completed_dot_data : 10
 ----waypoints_completed2bb
---dd_z_axis_warning : 13
+--dd_z_axis_warning : 11
 ----ddlec2bb
---dd_xy_axis_degradation : 14
+--dd_xy_axis_degradation : 12
 ----ddlec2bb
-----reallocate_task
---dd_output_dot_data : 15
-----ddlec2bb
-----reallocate_task
---total_degradation : 16
-----ddlec2bb
-----reallocate_task
---obstacle_standoff_warning : 17
+--obstacle_standoff_warning : 13
 ----fls2bb
---obstacle_min_standoff : 18
-----fls2bb
+--bb_fls_warning : 14
+----fls_warning2bb
+--emergency_stop_warning : 15
+----fls_warning2bb
+--next_mission : 16
 ----mission_server
---fls_range_dot_range : 19
-----fls2bb
---bb_fls_warning : 20
-----fls_warning2bb
---obstacle_in_view_dot_stamp : 21
-----fls_warning2bb
---emergency_stop_warning : 22
-----fls_warning2bb
---rtreach_out_dot_data : 23
-----rtreach2bb
---next_mission : 24
-----mission_server
---bb_obstacle_warning : 25
+--bb_obstacle_warning : 17
 ----obstacle_avoidance
---bb_home_reached : 26
-----home2bb1
+--bb_home_reached : 18
 ----check_surface
-----home2bb
---pipe_mapping_enable : 27
+--pipe_mapping_enable : 19
 ----pipe_mapping_disable_task
---task_mission_server_mission_len : 28
---task_mission_server_mission_type_list : -1
---task_mission_server_mission_distance_list : -1
---total_degradation_threshold : 29
---home_reached_threshold : 30
---mission_type_0 : 31
---mission_type_1 : 32
---mission_type_2 : 33
---mission_distance_0 : 34
---mission_distance_1 : 35
---mission_distance_2 : 36
---task_mission_server_mission_idx : 37
---bb_rth_warning_stage_1 : 38
+--battery_low_warning_stage_1 : 20
+----battery2bb
+--bb_rth_warning_stage_1 : 21
+----mission_server
 ----rth2bb
+--bb_rth_warning_stage_2 : 22
 ----mission_server
---bb_rth_warning_stage_2 : 39
-----mission_server
---lec2_am_r_speed_warning_stage_1 : 40
+--bb_geofence_warning_stage_1 : 23
+----geofence2bb
+--lec2_am_r_speed_warning_stage_1 : 24
 ----lec2_am_r_2bb
---lec2_am_r_pipe_warning_stage_1 : 41
+--lec2_am_r_pipe_warning_stage_1 : 25
 ----lec2_am_r_2bb
---lec2_am_l_speed_warning_stage_1 : 42
+--lec2_am_l_speed_warning_stage_1 : 26
 ----lec2_am_l_2bb
---lec2_am_l_pipe_warning_stage_1 : 43
+--lec2_am_l_pipe_warning_stage_1 : 27
 ----lec2_am_l_2bb
---bb_mission_dot_data_stage_1 : 44
+--bb_pipe_lost_warning_stage_1 : 28
+----pipe_lost2bb
+--bb_mission_dot_data_stage_1 : 29
+----pipe_lost2bb
 ----mission2bb
+--bb_mission_dot_data_stage_2 : 30
 ----mission_server
---bb_mission_dot_data_stage_2 : 45
+----mission2bb
+--bb_mission_dot_data_stage_3 : 31
 ----mission_server
---emergency_stop_warning_stage_1 : 46
+--bb_sensor_failure_warning_stage_1 : 32
+----sensor_failure2bb
+--bb_waypoints_completed_dot_data_stage_1 : 33
+----waypoints_completed2bb
+--dd_z_axis_warning_stage_1 : 34
+----ddlec2bb
+--dd_xy_axis_degradation_stage_1 : 35
+----ddlec2bb
+----reallocate_task
+--dd_xy_axis_degradation_stage_2 : 36
+----reallocate_task
+--obstacle_standoff_warning_stage_1 : 37
+----fls2bb
+--bb_fls_warning_stage_1 : 38
 ----fls_warning2bb
+--emergency_stop_warning_stage_1 : 39
 ----rtreach2bb
---emergency_stop_warning_stage_2 : 47
+----fls_warning2bb
+--emergency_stop_warning_stage_2 : 40
+----mission_server
 ----rtreach2bb
+--emergency_stop_warning_stage_3 : 41
 ----mission_server
---emergency_stop_warning_stage_3 : 48
+--next_mission_stage_1 : 42
 ----mission_server
---next_mission_stage_1 : 49
 ----next_mission
-----mission_server
---next_mission_stage_2 : 50
+--next_mission_stage_2 : 43
 ----next_mission
---pipe_mapping_enable_stage_1 : 51
+--bb_obstacle_warning_stage_1 : 44
+----obstacle_avoidance
+--bb_home_reached_stage_1 : 45
+----home2bb
+----check_surface
+--bb_home_reached_stage_2 : 46
+----home2bb
+----home2bb1
+--bb_home_reached_stage_3 : 47
+----home2bb1
+--pipe_mapping_enable_stage_1 : 48
 ----pipe_mapping_disable_task1
 ----pipe_mapping_disable_task
---pipe_mapping_enable_stage_2 : 52
+--pipe_mapping_enable_stage_2 : 49
 ----pipe_mapping_disable_task1
 ----pipe_mapping_enable_task
---pipe_mapping_enable_stage_3 : 53
+--pipe_mapping_enable_stage_3 : 50
 ----pipe_mapping_enable_task
-MODULE blackboard_module(node_names, variable_names, statuses)
+MODULE blackboard_module(node_names, statuses)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
-		variables := [battery_low_warning, bb_rth_warning, bb_geofence_warning, lec2_am_r_speed_warning, lec2_am_r_pipe_warning, lec2_am_r_dot_confs, lec2_am_l_speed_warning, lec2_am_l_pipe_warning, lec2_am_l_dot_confs, bb_pipe_lost_warning, bb_mission_dot_data, bb_sensor_failure_warning, bb_waypoints_completed_dot_data, dd_z_axis_warning, dd_xy_axis_degradation, dd_output_dot_data, total_degradation, obstacle_standoff_warning, obstacle_min_standoff, fls_range_dot_range, bb_fls_warning, obstacle_in_view_dot_stamp, emergency_stop_warning, rtreach_out_dot_data, next_mission, bb_obstacle_warning, bb_home_reached, pipe_mapping_enable, task_mission_server_mission_len, total_degradation_threshold, home_reached_threshold, mission_type_0, mission_type_1, mission_type_2, mission_distance_0, mission_distance_1, mission_distance_2, task_mission_server_mission_idx, bb_rth_warning_stage_1, bb_rth_warning_stage_2, lec2_am_r_speed_warning_stage_1, lec2_am_r_pipe_warning_stage_1, lec2_am_l_speed_warning_stage_1, lec2_am_l_pipe_warning_stage_1, bb_mission_dot_data_stage_1, bb_mission_dot_data_stage_2, emergency_stop_warning_stage_1, emergency_stop_warning_stage_2, emergency_stop_warning_stage_3, next_mission_stage_1, next_mission_stage_2, pipe_mapping_enable_stage_1, pipe_mapping_enable_stage_2, pipe_mapping_enable_stage_3];
-		variable_exists := [battery_low_warning_exists, bb_rth_warning_exists, bb_geofence_warning_exists, lec2_am_r_speed_warning_exists, lec2_am_r_pipe_warning_exists, lec2_am_r_dot_confs_exists, lec2_am_l_speed_warning_exists, lec2_am_l_pipe_warning_exists, lec2_am_l_dot_confs_exists, bb_pipe_lost_warning_exists, bb_mission_dot_data_exists, bb_sensor_failure_warning_exists, bb_waypoints_completed_dot_data_exists, dd_z_axis_warning_exists, dd_xy_axis_degradation_exists, dd_output_dot_data_exists, total_degradation_exists, obstacle_standoff_warning_exists, obstacle_min_standoff_exists, fls_range_dot_range_exists, bb_fls_warning_exists, obstacle_in_view_dot_stamp_exists, emergency_stop_warning_exists, rtreach_out_dot_data_exists, next_mission_exists, bb_obstacle_warning_exists, bb_home_reached_exists, pipe_mapping_enable_exists, task_mission_server_mission_len_exists, total_degradation_threshold_exists, home_reached_threshold_exists, mission_type_0_exists, mission_type_1_exists, mission_type_2_exists, mission_distance_0_exists, mission_distance_1_exists, mission_distance_2_exists, task_mission_server_mission_idx_exists, bb_rth_warning_stage_1_exists, bb_rth_warning_stage_2_exists, lec2_am_r_speed_warning_stage_1_exists, lec2_am_r_pipe_warning_stage_1_exists, lec2_am_l_speed_warning_stage_1_exists, lec2_am_l_pipe_warning_stage_1_exists, bb_mission_dot_data_stage_1_exists, bb_mission_dot_data_stage_2_exists, emergency_stop_warning_stage_1_exists, emergency_stop_warning_stage_2_exists, emergency_stop_warning_stage_3_exists, next_mission_stage_1_exists, next_mission_stage_2_exists, pipe_mapping_enable_stage_1_exists, pipe_mapping_enable_stage_2_exists, pipe_mapping_enable_stage_3_exists];
 		battery_low_warning_exists := TRUE;
-		bb_rth_warning := bb_rth_warning_stage_2;
-		bb_rth_warning_exists := bb_rth_warning_stage_2_exists;
+		bb_rth_warning_exists := TRUE;
 		bb_geofence_warning_exists := TRUE;
-		lec2_am_r_speed_warning := 
-			case
-				(lec2_am_r_dot_confs = 1) | (lec2_am_r_dot_confs = 3) : 1;
-				TRUE : 0;
-			esac;
 		lec2_am_r_speed_warning_exists := TRUE;
-		lec2_am_r_pipe_warning := 
-			case
-				(lec2_am_r_dot_confs = 2) | (lec2_am_r_dot_confs = 3) : 1;
-				TRUE : 0;
-			esac;
 		lec2_am_r_pipe_warning_exists := TRUE;
-		lec2_am_r_dot_confs_exists := TRUE;
-		lec2_am_l_speed_warning := 
-			case
-				(lec2_am_l_dot_confs = 1) | (lec2_am_l_dot_confs = 3) : 1;
-				TRUE : 0;
-			esac;
 		lec2_am_l_speed_warning_exists := TRUE;
-		lec2_am_l_pipe_warning := 
-			case
-				(lec2_am_l_dot_confs = 2) | (lec2_am_l_dot_confs = 3) : 1;
-				TRUE : 0;
-			esac;
 		lec2_am_l_pipe_warning_exists := TRUE;
-		lec2_am_l_dot_confs_exists := TRUE;
 		bb_pipe_lost_warning_exists := TRUE;
-		bb_mission_dot_data := bb_mission_dot_data_stage_2;
-		bb_mission_dot_data_exists := bb_mission_dot_data_stage_2_exists;
+		bb_mission_dot_data_exists := TRUE;
 		bb_sensor_failure_warning_exists := TRUE;
 		bb_waypoints_completed_dot_data_exists := TRUE;
 		dd_z_axis_warning_exists := TRUE;
 		dd_xy_axis_degradation_exists := TRUE;
-		dd_output_dot_data_exists := TRUE;
-		total_degradation_exists := TRUE;
 		obstacle_standoff_warning_exists := TRUE;
-		obstacle_min_standoff_exists := TRUE;
-		fls_range_dot_range_exists := TRUE;
 		bb_fls_warning_exists := TRUE;
-		obstacle_in_view_dot_stamp_exists := TRUE;
-		emergency_stop_warning := emergency_stop_warning_stage_3;
-		emergency_stop_warning_exists := emergency_stop_warning_stage_3_exists;
-		rtreach_out_dot_data_exists := TRUE;
-		next_mission := next_mission_stage_2;
-		next_mission_exists := next_mission_stage_2_exists;
+		emergency_stop_warning_exists := TRUE;
+		next_mission_exists := TRUE;
 		bb_obstacle_warning_exists := TRUE;
 		bb_home_reached_exists := TRUE;
-		pipe_mapping_enable := pipe_mapping_enable_stage_3;
-		pipe_mapping_enable_exists := pipe_mapping_enable_stage_3_exists;
-		task_mission_server_mission_len := 3;
-		task_mission_server_mission_len_exists := TRUE;
-		task_mission_server_mission_type_list := [mission_type_0, mission_type_1, mission_type_2];
-		task_mission_server_mission_type_list_exists := TRUE;
-		task_mission_server_mission_distance_list := [mission_distance_0, mission_distance_1, mission_distance_2];
-		task_mission_server_mission_distance_list_exists := TRUE;
-		total_degradation_threshold := 0;
-		total_degradation_threshold_exists := TRUE;
-		home_reached_threshold := 0;
-		home_reached_threshold_exists := TRUE;
-		mission_type_0_exists := TRUE;
-		mission_type_1_exists := TRUE;
-		mission_type_2_exists := TRUE;
-		mission_distance_0_exists := TRUE;
-		mission_distance_1_exists := TRUE;
-		mission_distance_2_exists := TRUE;
-		task_mission_server_mission_idx_exists := TRUE;
+		pipe_mapping_enable_exists := TRUE;
+		battery_low_warning_stage_1_exists := TRUE;
 		bb_rth_warning_stage_1_exists := TRUE;
 		bb_rth_warning_stage_2_exists := TRUE;
-		lec2_am_r_speed_warning_stage_1 := 
-			case
-				(lec2_am_r_dot_confs = 1) | (lec2_am_r_dot_confs = 3) : 1;
-				TRUE : 0;
-			esac;
+		bb_geofence_warning_stage_1_exists := TRUE;
 		lec2_am_r_speed_warning_stage_1_exists := TRUE;
-		lec2_am_r_pipe_warning_stage_1 := 
-			case
-				(lec2_am_r_dot_confs = 2) | (lec2_am_r_dot_confs = 3) : 1;
-				TRUE : 0;
-			esac;
 		lec2_am_r_pipe_warning_stage_1_exists := TRUE;
-		lec2_am_l_speed_warning_stage_1 := 
-			case
-				(lec2_am_l_dot_confs = 1) | (lec2_am_l_dot_confs = 3) : 1;
-				TRUE : 0;
-			esac;
 		lec2_am_l_speed_warning_stage_1_exists := TRUE;
-		lec2_am_l_pipe_warning_stage_1 := 
-			case
-				(lec2_am_l_dot_confs = 2) | (lec2_am_l_dot_confs = 3) : 1;
-				TRUE : 0;
-			esac;
 		lec2_am_l_pipe_warning_stage_1_exists := TRUE;
+		bb_pipe_lost_warning_stage_1_exists := TRUE;
 		bb_mission_dot_data_stage_1_exists := TRUE;
 		bb_mission_dot_data_stage_2_exists := TRUE;
+		bb_mission_dot_data_stage_3_exists := TRUE;
+		bb_sensor_failure_warning_stage_1_exists := TRUE;
+		bb_waypoints_completed_dot_data_stage_1_exists := TRUE;
+		dd_z_axis_warning_stage_1_exists := TRUE;
+		dd_xy_axis_degradation_stage_1_exists := TRUE;
+		dd_xy_axis_degradation_stage_2_exists := TRUE;
+		obstacle_standoff_warning_stage_1_exists := TRUE;
+		bb_fls_warning_stage_1_exists := TRUE;
 		emergency_stop_warning_stage_1_exists := TRUE;
 		emergency_stop_warning_stage_2_exists := TRUE;
 		emergency_stop_warning_stage_3_exists := TRUE;
 		next_mission_stage_1_exists := TRUE;
 		next_mission_stage_2_exists := TRUE;
+		bb_obstacle_warning_stage_1_exists := TRUE;
+		bb_home_reached_stage_1_exists := TRUE;
+		bb_home_reached_stage_2_exists := TRUE;
+		bb_home_reached_stage_3_exists := TRUE;
 		pipe_mapping_enable_stage_1_exists := TRUE;
 		pipe_mapping_enable_stage_2_exists := TRUE;
 		pipe_mapping_enable_stage_3_exists := TRUE;
 	FROZENVAR
-		mission_type_0 : {mission_type_path_following, mission_type_waypoint_following, mission_type_e_stop, mission_type_pipe_following, mission_type_unknown};
-		mission_type_1 : {mission_type_path_following, mission_type_waypoint_following, mission_type_e_stop, mission_type_pipe_following, mission_type_unknown};
-		mission_type_2 : {mission_type_path_following, mission_type_waypoint_following, mission_type_e_stop, mission_type_pipe_following, mission_type_unknown};
-		mission_distance_0 : 0..2;
-		mission_distance_1 : 0..2;
-		mission_distance_2 : 0..2;
 	VAR
 		battery_low_warning : 0..1;
+		bb_rth_warning : 0..1;
 		bb_geofence_warning : 0..1;
-		lec2_am_r_dot_confs : 0..3;
-		lec2_am_l_dot_confs : 0..3;
+		lec2_am_r_speed_warning : 0..1;
+		lec2_am_r_pipe_warning : 0..1;
+		lec2_am_l_speed_warning : 0..1;
+		lec2_am_l_pipe_warning : 0..1;
 		bb_pipe_lost_warning : 0..1;
+		bb_mission_dot_data : 0..4;
 		bb_sensor_failure_warning : 0..1;
 		bb_waypoints_completed_dot_data : 0..1;
 		dd_z_axis_warning : 0..1;
 		dd_xy_axis_degradation : 0..1;
-		dd_output_dot_data : 0..2;
-		total_degradation : 0..1;
 		obstacle_standoff_warning : 0..1;
-		obstacle_min_standoff : 0..2;
-		fls_range_dot_range : 0..3;
 		bb_fls_warning : 0..1;
-		obstacle_in_view_dot_stamp : 0..1;
-		rtreach_out_dot_data : 0..1;
+		emergency_stop_warning : 0..1;
+		next_mission : 0..1;
 		bb_obstacle_warning : 0..1;
 		bb_home_reached : 0..1;
-		task_mission_server_mission_idx : 0..task_mission_server_mission_len;
+		pipe_mapping_enable : 0..1;
+		battery_low_warning_stage_1 : 0..1;
 		bb_rth_warning_stage_1 : 0..1;
 		bb_rth_warning_stage_2 : 0..1;
-		bb_mission_dot_data_stage_1 : {mission_type_path_following, mission_type_waypoint_following, mission_type_e_stop, mission_type_pipe_following, mission_type_unknown};
-		bb_mission_dot_data_stage_2 : {mission_type_path_following, mission_type_waypoint_following, mission_type_e_stop, mission_type_pipe_following, mission_type_unknown};
+		bb_geofence_warning_stage_1 : 0..1;
+		lec2_am_r_speed_warning_stage_1 : 0..1;
+		lec2_am_r_pipe_warning_stage_1 : 0..1;
+		lec2_am_l_speed_warning_stage_1 : 0..1;
+		lec2_am_l_pipe_warning_stage_1 : 0..1;
+		bb_pipe_lost_warning_stage_1 : 0..1;
+		bb_mission_dot_data_stage_1 : 0..4;
+		bb_mission_dot_data_stage_2 : 0..4;
+		bb_mission_dot_data_stage_3 : 0..4;
+		bb_sensor_failure_warning_stage_1 : 0..1;
+		bb_waypoints_completed_dot_data_stage_1 : 0..1;
+		dd_z_axis_warning_stage_1 : 0..1;
+		dd_xy_axis_degradation_stage_1 : 0..1;
+		dd_xy_axis_degradation_stage_2 : 0..1;
+		obstacle_standoff_warning_stage_1 : 0..1;
+		bb_fls_warning_stage_1 : 0..1;
 		emergency_stop_warning_stage_1 : 0..1;
 		emergency_stop_warning_stage_2 : 0..1;
 		emergency_stop_warning_stage_3 : 0..1;
 		next_mission_stage_1 : 0..1;
 		next_mission_stage_2 : 0..1;
+		bb_obstacle_warning_stage_1 : 0..1;
+		bb_home_reached_stage_1 : 0..1;
+		bb_home_reached_stage_2 : 0..1;
+		bb_home_reached_stage_3 : 0..1;
 		pipe_mapping_enable_stage_1 : 0..1;
 		pipe_mapping_enable_stage_2 : 0..1;
 		pipe_mapping_enable_stage_3 : 0..1;
 	ASSIGN
-		init(battery_low_warning) := 0;
 		next(battery_low_warning) := 
 			case
-				statuses[node_names.battery2bb] = success : {0, 1};
-				TRUE : battery_low_warning;
+				TRUE : battery_low_warning_stage_1;
 			esac;
-		init(bb_geofence_warning) := 0;
+		next(bb_rth_warning) := 
+			case
+				TRUE : bb_rth_warning_stage_2;
+			esac;
 		next(bb_geofence_warning) := 
 			case
-				bb_geofence_warning = 1 : 1;
-				statuses[node_names.geofence2bb] = success : {0, 1};
-				TRUE : bb_geofence_warning;
+				TRUE : bb_geofence_warning_stage_1;
 			esac;
-		init(lec2_am_r_dot_confs) := 0;
-		next(lec2_am_r_dot_confs) := 
+		next(lec2_am_r_speed_warning) := 
 			case
-				statuses[node_names.lec2_am_r_2bb] = success : {0, 1, 2, 3};
-				TRUE : lec2_am_r_dot_confs;
+				TRUE : lec2_am_r_speed_warning_stage_1;
 			esac;
-		init(lec2_am_l_dot_confs) := 0;
-		next(lec2_am_l_dot_confs) := 
+		next(lec2_am_r_pipe_warning) := 
 			case
-				statuses[node_names.lec2_am_l_2bb] = success : {0, 1, 2, 3};
-				TRUE : lec2_am_l_dot_confs;
+				TRUE : lec2_am_r_pipe_warning_stage_1;
 			esac;
-		init(bb_pipe_lost_warning) := 0;
+		next(lec2_am_l_speed_warning) := 
+			case
+				TRUE : lec2_am_l_speed_warning_stage_1;
+			esac;
+		next(lec2_am_l_pipe_warning) := 
+			case
+				TRUE : lec2_am_l_pipe_warning_stage_1;
+			esac;
 		next(bb_pipe_lost_warning) := 
 			case
-				statuses[node_names.pipe_lost2bb] = success & bb_mission_dot_data = mission_type_pipe_following : {0, 1};
-				TRUE : bb_pipe_lost_warning;
+				TRUE : bb_pipe_lost_warning_stage_1;
 			esac;
-		init(bb_sensor_failure_warning) := 0;
+		next(bb_mission_dot_data) := 
+			case
+				TRUE : bb_mission_dot_data_stage_3;
+			esac;
 		next(bb_sensor_failure_warning) := 
 			case
-				bb_sensor_failure_warning = 1 : 1;
-				statuses[node_names.sensor_failure2bb] = success : {0, 1};
-				TRUE : bb_sensor_failure_warning;
+				TRUE : bb_sensor_failure_warning_stage_1;
 			esac;
-		init(bb_waypoints_completed_dot_data) := 0;
 		next(bb_waypoints_completed_dot_data) := 
 			case
-				statuses[node_names.waypoints_completed2bb] = success : {0, 1};
-				TRUE : bb_waypoints_completed_dot_data;
+				TRUE : bb_waypoints_completed_dot_data_stage_1;
 			esac;
-		init(dd_z_axis_warning) := 0;
 		next(dd_z_axis_warning) := 
 			case
-				(total_degradation <= total_degradation_threshold) & (next(dd_output_dot_data) = 1) & (statuses[node_names.ddlec2bb] = success) : 1;
-				((total_degradation > total_degradation_threshold) | (next(dd_output_dot_data) = 0)) & (statuses[node_names.ddlec2bb] = success) : 0;
-				TRUE : dd_z_axis_warning;
+				TRUE : dd_z_axis_warning_stage_1;
 			esac;
-		init(dd_xy_axis_degradation) := 0;
 		next(dd_xy_axis_degradation) := 
 			case
-				(total_degradation <= total_degradation_threshold) & (next(dd_output_dot_data) = 2) & (statuses[node_names.ddlec2bb] = success) : 1;
-				(total_degradation > total_degradation_threshold) | (next(dd_output_dot_data) = 0) & (statuses[node_names.ddlec2bb] = success) : 0;
-				TRUE : dd_xy_axis_degradation;
+				TRUE : dd_xy_axis_degradation_stage_2;
 			esac;
-		init(dd_output_dot_data) := 0;
-		next(dd_output_dot_data) := 
-			case
-				(statuses[node_names.ddlec2bb] = success) : {0, 1, 2};
-				TRUE : dd_output_dot_data;
-			esac;
-		init(total_degradation) := 0;
-		next(total_degradation) := 
-			case
-				!(statuses[node_names.reallocate_task] in {invalid}) & (next(dd_xy_axis_degradation) = 1) : 1;
-				TRUE : total_degradation;
-			esac;
-		init(obstacle_standoff_warning) := 0;
 		next(obstacle_standoff_warning) := 
 			case
-				(0 < next(fls_range_dot_range)) & (next(fls_range_dot_range) <= obstacle_min_standoff) & (statuses[node_names.fls2bb] = success) : 1;
-				TRUE : obstacle_standoff_warning;
+				TRUE : obstacle_standoff_warning_stage_1;
 			esac;
-		init(obstacle_min_standoff) := 
-			case
-				(task_mission_server_mission_type_list[0] = mission_type_unknown) : 1;
-				TRUE : task_mission_server_mission_distance_list[0];
-			esac;
-		next(obstacle_min_standoff) := 
-			case
-				!(statuses[node_names.mission_server] in {invalid}) & (next_mission = 1) & (next(task_mission_server_mission_idx) < task_mission_server_mission_len) : task_mission_server_mission_distance_list[next(task_mission_server_mission_idx)];
-				TRUE : obstacle_min_standoff;
-			esac;
-		init(fls_range_dot_range) := 0;
-		next(fls_range_dot_range) := 
-			case
-				(statuses[node_names.fls2bb] = success) : {0, 1, 2, 3};
-				TRUE : fls_range_dot_range;
-			esac;
-		init(bb_fls_warning) := 0;
 		next(bb_fls_warning) := 
 			case
-				bb_fls_warning = 1 : 1;
-				(next(obstacle_in_view_dot_stamp) = 1) & (statuses[node_names.fls_warning2bb] = success) : 1;
-				TRUE : bb_fls_warning;
+				TRUE : bb_fls_warning_stage_1;
 			esac;
-		init(obstacle_in_view_dot_stamp) := 0;
-		next(obstacle_in_view_dot_stamp) := 
+		next(emergency_stop_warning) := 
 			case
-				(statuses[node_names.fls_warning2bb] = success) : {0, 1};
-				TRUE : obstacle_in_view_dot_stamp;
+				TRUE : emergency_stop_warning_stage_3;
 			esac;
-		init(rtreach_out_dot_data) := 1;
-		next(rtreach_out_dot_data) := 
+		next(next_mission) := 
 			case
-				(statuses[node_names.rtreach2bb] = success) : {0, 1};
-				TRUE : rtreach_out_dot_data;
+				TRUE : next_mission_stage_2;
 			esac;
-		init(bb_obstacle_warning) := 0;
 		next(bb_obstacle_warning) := 
 			case
-				statuses[node_names.obstacle_avoidance] = running : {0, 1};
-				TRUE : bb_obstacle_warning;
+				TRUE : bb_obstacle_warning_stage_1;
 			esac;
-		init(bb_home_reached) := 0;
 		next(bb_home_reached) := 
 			case
-				statuses[node_names.home2bb] = success | statuses[node_names.home2bb1] = success : {0, 1};
-				TRUE : bb_home_reached;
+				TRUE : bb_home_reached_stage_3;
 			esac;
-		next(task_mission_server_mission_idx) := 
+		next(pipe_mapping_enable) := 
 			case
-				!(statuses[node_names.mission_server] in {invalid, failure}) & (next_mission = 1) : min(task_mission_server_mission_idx + 1, task_mission_server_mission_len);
-				TRUE : task_mission_server_mission_idx;
+				TRUE : pipe_mapping_enable_stage_3;
+			esac;
+		next(battery_low_warning_stage_1) := 
+			case
+				statuses[node_names.battery2bb] = success : {0, 1};
+				TRUE : battery_low_warning_stage_1;
 			esac;
 		next(bb_rth_warning_stage_1) := 
 			case
 				bb_rth_warning = 1 : 1;
-				(statuses[node_names.mission_server] = running) & (next_mission = 1) & (next(task_mission_server_mission_idx) = task_mission_server_mission_len) : 1;
+				(statuses[node_names.mission_server] = running) & (next_mission = 1) : {0, 1};
 				TRUE : bb_rth_warning_stage_1;
 			esac;
 		init(bb_rth_warning_stage_2) := bb_rth_warning_stage_1;
@@ -1122,36 +975,108 @@ MODULE blackboard_module(node_names, variable_names, statuses)
 				statuses[node_names.rth2bb] = success : {0, 1};
 				TRUE : next(bb_rth_warning_stage_1);
 			esac;
-		init(bb_mission_dot_data_stage_1) := task_mission_server_mission_type_list[0];
+		next(bb_geofence_warning_stage_1) := 
+			case
+				bb_geofence_warning = 1 : 1;
+				statuses[node_names.geofence2bb] = success : {0, 1};
+				TRUE : bb_geofence_warning_stage_1;
+			esac;
+		next(lec2_am_r_speed_warning_stage_1) := 
+			case
+				statuses[node_names.lec2_am_r_2bb] = success : {0, 1};
+				TRUE : lec2_am_r_speed_warning_stage_1;
+			esac;
+		next(lec2_am_r_pipe_warning_stage_1) := 
+			case
+				statuses[node_names.lec2_am_l_2bb] = success : {0, 1};
+				TRUE : lec2_am_r_pipe_warning_stage_1;
+			esac;
+		next(lec2_am_l_speed_warning_stage_1) := 
+			case
+				statuses[node_names.lec2_am_l_2bb] = success : {0, 1};
+				TRUE : lec2_am_l_speed_warning_stage_1;
+			esac;
+		next(lec2_am_l_pipe_warning_stage_1) := 
+			case
+				TRUE : lec2_am_l_pipe_warning_stage_1;
+			esac;
+		next(bb_pipe_lost_warning_stage_1) := 
+			case
+				statuses[node_names.pipe_lost2bb] = success & bb_mission_dot_data = 1 : {0, 1};
+				TRUE : bb_pipe_lost_warning_stage_1;
+			esac;
+		init(bb_mission_dot_data_stage_1) := 1;
 		next(bb_mission_dot_data_stage_1) := 
 			case
-				statuses[node_names.mission2bb] = success : {mission_type_path_following, mission_type_waypoint_following, mission_type_e_stop, mission_type_pipe_following, mission_type_unknown};
+				statuses[node_names.mission2bb] = success : {0, 1, 2, 3, 4};
 				TRUE : bb_mission_dot_data_stage_1;
 			esac;
 		init(bb_mission_dot_data_stage_2) := bb_mission_dot_data_stage_1;
 		next(bb_mission_dot_data_stage_2) := 
 			case
-				!(statuses[node_names.mission_server] in {invalid, failure}) & (next_mission = 1) & (next(task_mission_server_mission_idx) < task_mission_server_mission_len) : task_mission_server_mission_type_list[next(task_mission_server_mission_idx)];
+				statuses[node_names.sensor_failure2bb] = running : {0, 1, 2, 3, 4};
 				TRUE : next(bb_mission_dot_data_stage_1);
+			esac;
+		init(bb_mission_dot_data_stage_3) := bb_mission_dot_data_stage_2;
+		next(bb_mission_dot_data_stage_3) := 
+			case
+				statuses[node_names.mission_server] = running : {0, 1, 2, 3, 4};
+				TRUE : next(bb_mission_dot_data_stage_2);
+			esac;
+		next(bb_sensor_failure_warning_stage_1) := 
+			case
+				bb_sensor_failure_warning = 1 : 1;
+				statuses[node_names.sensor_failure2bb] = success : {0, 1};
+				TRUE : bb_sensor_failure_warning_stage_1;
+			esac;
+		next(bb_waypoints_completed_dot_data_stage_1) := 
+			case
+				statuses[node_names.waypoints_completed2bb] = success : {0, 1};
+				TRUE : bb_waypoints_completed_dot_data_stage_1;
+			esac;
+		next(dd_z_axis_warning_stage_1) := 
+			case
+				statuses[node_names.ddlec2bb] = success : {0, 1};
+				TRUE : dd_z_axis_warning_stage_1;
+			esac;
+		next(dd_xy_axis_degradation_stage_1) := 
+			case
+				statuses[node_names.ddlec2bb] = success : {0, 1};
+				TRUE : dd_xy_axis_degradation_stage_1;
+			esac;
+		init(dd_xy_axis_degradation_stage_2) := dd_xy_axis_degradation_stage_1;
+		next(dd_xy_axis_degradation_stage_2) := 
+			case
+				TRUE : next(dd_xy_axis_degradation_stage_1);
+			esac;
+		next(obstacle_standoff_warning_stage_1) := 
+			case
+				obstacle_standoff_warning = 1 : 1;
+				statuses[node_names.fls2bb] = success : {0, 1};
+				TRUE : obstacle_standoff_warning_stage_1;
+			esac;
+		next(bb_fls_warning_stage_1) := 
+			case
+				bb_fls_warning = 1 : 1;
+				statuses[node_names.fls_warning2bb] = success : {0, 1};
+				TRUE : bb_fls_warning_stage_1;
 			esac;
 		next(emergency_stop_warning_stage_1) := 
 			case
 				emergency_stop_warning = 1 : 1;
-				statuses[node_names.fls_warning2bb] = success & next(obstacle_in_view_dot_stamp) = 1 : 1;
+				statuses[node_names.fls_warning2bb] = success | statuses[node_names.rtreach2bb] = success : {0, 1};
 				TRUE : emergency_stop_warning_stage_1;
 			esac;
 		init(emergency_stop_warning_stage_2) := emergency_stop_warning_stage_1;
 		next(emergency_stop_warning_stage_2) := 
 			case
 				emergency_stop_warning = 1 : 1;
-				statuses[node_names.rtreach2bb] = success & rtreach_out_dot_data < 1 : 1;
+				statuses[node_names.mission_server] = running : {0, 1};
 				TRUE : next(emergency_stop_warning_stage_1);
 			esac;
 		init(emergency_stop_warning_stage_3) := emergency_stop_warning_stage_2;
 		next(emergency_stop_warning_stage_3) := 
 			case
-				emergency_stop_warning = 1 : 1;
-				!(statuses[node_names.mission_server] in {invalid, failure}) & (next_mission = 1) & (next(task_mission_server_mission_idx) < task_mission_server_mission_len) & (task_mission_server_mission_type_list[next(task_mission_server_mission_idx)] = mission_type_e_stop) : 1;
 				TRUE : next(emergency_stop_warning_stage_2);
 			esac;
 		next(next_mission_stage_1) := 
@@ -1164,6 +1089,26 @@ MODULE blackboard_module(node_names, variable_names, statuses)
 			case
 				statuses[node_names.next_mission] = running : 1;
 				TRUE : next(next_mission_stage_1);
+			esac;
+		next(bb_obstacle_warning_stage_1) := 
+			case
+				statuses[node_names.obstacle_avoidance] = running : {0, 1};
+				TRUE : bb_obstacle_warning_stage_1;
+			esac;
+		next(bb_home_reached_stage_1) := 
+			case
+				statuses[node_names.home2bb] = success | statuses[node_names.home2bb1] = success : {0, 1};
+				TRUE : bb_home_reached_stage_1;
+			esac;
+		init(bb_home_reached_stage_2) := bb_home_reached_stage_1;
+		next(bb_home_reached_stage_2) := 
+			case
+				TRUE : next(bb_home_reached_stage_1);
+			esac;
+		init(bb_home_reached_stage_3) := bb_home_reached_stage_2;
+		next(bb_home_reached_stage_3) := 
+			case
+				TRUE : next(bb_home_reached_stage_2);
 			esac;
 		init(pipe_mapping_enable_stage_1) := 1;
 		next(pipe_mapping_enable_stage_1) := 
@@ -1184,317 +1129,309 @@ MODULE blackboard_module(node_names, variable_names, statuses)
 				TRUE : next(pipe_mapping_enable_stage_2);
 			esac;
 
-MODULE battery2bb_STATUS_module(variables, variable_exists, node_names, variable_names)
+MODULE battery2bb_STATUS_module(blackboard, node_names)
 	CONSTANTS
 		success, failure, running;
 	VAR
 		status : {success, running};
 
-MODULE rth2bb_STATUS_module(variables, variable_exists, node_names, variable_names)
+MODULE rth2bb_STATUS_module(blackboard, node_names)
 	CONSTANTS
 		success, failure, running;
 	VAR
 		status : {success, running};
 
-MODULE geofence2bb_STATUS_module(variables, variable_exists, node_names, variable_names)
+MODULE geofence2bb_STATUS_module(blackboard, node_names)
 	CONSTANTS
 		success, failure, running;
 	VAR
 		status : {success, running};
 
-MODULE lec2_am_r_2bb_STATUS_module(variables, variable_exists, node_names, variable_names)
+MODULE lec2_am_r_2bb_STATUS_module(blackboard, node_names)
 	CONSTANTS
 		success, failure, running;
 	VAR
 		status : {success, running};
 
-MODULE lec2_am_l_2bb_STATUS_module(variables, variable_exists, node_names, variable_names)
+MODULE lec2_am_l_2bb_STATUS_module(blackboard, node_names)
 	CONSTANTS
 		success, failure, running;
 	VAR
 		status : {success, running};
 
-MODULE pipe_lost2bb_STATUS_module(variables, variable_exists, node_names, variable_names)
+MODULE pipe_lost2bb_STATUS_module(blackboard, node_names)
 	CONSTANTS
 		success, failure, running;
 	VAR
 		status : {success, running};
 
-MODULE sensor_failure2bb_STATUS_module(variables, variable_exists, node_names, variable_names)
+MODULE sensor_failure2bb_STATUS_module(blackboard, node_names)
 	CONSTANTS
 		success, failure, running;
 	VAR
 		status : {success, running};
 
-MODULE waypoints_completed2bb_STATUS_module(variables, variable_exists, node_names, variable_names)
+MODULE waypoints_completed2bb_STATUS_module(blackboard, node_names)
 	CONSTANTS
 		success, failure, running;
 	VAR
 		status : {success, running};
 
-MODULE mission2bb_STATUS_module(variables, variable_exists, node_names, variable_names)
+MODULE mission2bb_STATUS_module(blackboard, node_names)
 	CONSTANTS
 		success, failure, running;
 	VAR
 		status : {success, running};
 
-MODULE ddlec2bb_STATUS_module(variables, variable_exists, node_names, variable_names)
+MODULE ddlec2bb_STATUS_module(blackboard, node_names)
 	CONSTANTS
 		success, failure, running;
 	VAR
 		status : {success, running};
 
-MODULE fls2bb_STATUS_module(variables, variable_exists, node_names, variable_names)
+MODULE fls2bb_STATUS_module(blackboard, node_names)
 	CONSTANTS
 		success, failure, running;
 	VAR
 		status : {success, running};
 
-MODULE fls_warning2bb_STATUS_module(variables, variable_exists, node_names, variable_names)
+MODULE fls_warning2bb_STATUS_module(blackboard, node_names)
 	CONSTANTS
 		success, failure, running;
 	VAR
 		status : {success, running};
 
-MODULE hsd_pipe2bb_STATUS_module(variables, variable_exists, node_names, variable_names)
+MODULE hsd_pipe2bb_STATUS_module(blackboard, node_names)
 	CONSTANTS
 		success, failure, running;
 	VAR
 		status : {success, running};
 
-MODULE hsd_wp2bb_STATUS_module(variables, variable_exists, node_names, variable_names)
+MODULE hsd_wp2bb_STATUS_module(blackboard, node_names)
 	CONSTANTS
 		success, failure, running;
 	VAR
 		status : {success, running};
 
-MODULE hsd_rth2bb_STATUS_module(variables, variable_exists, node_names, variable_names)
+MODULE hsd_rth2bb_STATUS_module(blackboard, node_names)
 	CONSTANTS
 		success, failure, running;
 	VAR
 		status : {success, running};
 
-MODULE hsd_surface2bb_STATUS_module(variables, variable_exists, node_names, variable_names)
+MODULE hsd_surface2bb_STATUS_module(blackboard, node_names)
 	CONSTANTS
 		success, failure, running;
 	VAR
 		status : {success, running};
 
-MODULE rtreach2bb_STATUS_module(variables, variable_exists, node_names, variable_names)
+MODULE rtreach2bb_STATUS_module(blackboard, node_names)
 	CONSTANTS
 		success, failure, running;
 	VAR
 		status : {success, running};
 
-MODULE reallocate_task_STATUS_module(variables, variable_exists, node_names, variable_names)
+MODULE reallocate_task_STATUS_module(blackboard, node_names)
 	CONSTANTS
 		success, failure, running;
 	DEFINE
 		status := running;
 
-MODULE dd_lec_task_STATUS_module(variables, variable_exists, node_names, variable_names)
+MODULE dd_lec_task_STATUS_module(blackboard, node_names)
 	CONSTANTS
 		success, failure, running;
 	DEFINE
 		status := running;
 
-MODULE mission_server_STATUS_module(variables, variable_exists, node_names, variable_names)
+MODULE mission_server_STATUS_module(blackboard, node_names)
 	CONSTANTS
 		success, failure, running;
 	DEFINE
 		status := running;
 
-MODULE obstacle_avoidance_STATUS_module(variables, variable_exists, node_names, variable_names)
+MODULE obstacle_avoidance_STATUS_module(blackboard, node_names)
 	CONSTANTS
 		success, failure, running;
 	DEFINE
 		status := running;
 
-MODULE surface_task_STATUS_module(variables, variable_exists, node_names, variable_names)
+MODULE surface_task_STATUS_module(blackboard, node_names)
 	CONSTANTS
 		success, failure, running;
 	DEFINE
 		status := running;
 
-MODULE surface_task1_STATUS_module(variables, variable_exists, node_names, variable_names)
+MODULE surface_task1_STATUS_module(blackboard, node_names)
 	CONSTANTS
 		success, failure, running;
 	DEFINE
 		status := running;
 
-MODULE emergency_stop_task_STATUS_module(variables, variable_exists, node_names, variable_names)
+MODULE emergency_stop_task_STATUS_module(blackboard, node_names)
 	CONSTANTS
 		success, failure, running;
 	DEFINE
 		status := running;
 
-MODULE surface_task2_STATUS_module(variables, variable_exists, node_names, variable_names)
+MODULE surface_task2_STATUS_module(blackboard, node_names)
 	CONSTANTS
 		success, failure, running;
 	DEFINE
 		status := running;
 
-MODULE surface_task3_STATUS_module(variables, variable_exists, node_names, variable_names)
+MODULE surface_task3_STATUS_module(blackboard, node_names)
 	CONSTANTS
 		success, failure, running;
 	DEFINE
 		status := running;
 
-MODULE surface_task4_STATUS_module(variables, variable_exists, node_names, variable_names)
+MODULE surface_task4_STATUS_module(blackboard, node_names)
 	CONSTANTS
 		success, failure, running;
 	DEFINE
 		status := running;
 
-MODULE rth_task_STATUS_module(variables, variable_exists, node_names, variable_names)
+MODULE rth_task_STATUS_module(blackboard, node_names)
 	CONSTANTS
 		success, failure, running;
 	DEFINE
 		status := running;
 
-MODULE home2bb_STATUS_module(variables, variable_exists, node_names, variable_names)
+MODULE home2bb_STATUS_module(blackboard, node_names)
 	CONSTANTS
 		success, failure, running;
 	VAR
 		status : {success, running};
 
-MODULE rth_task1_STATUS_module(variables, variable_exists, node_names, variable_names)
+MODULE rth_task1_STATUS_module(blackboard, node_names)
 	CONSTANTS
 		success, failure, running;
 	DEFINE
 		status := running;
 
-MODULE home2bb1_STATUS_module(variables, variable_exists, node_names, variable_names)
+MODULE home2bb1_STATUS_module(blackboard, node_names)
 	CONSTANTS
 		success, failure, running;
 	VAR
 		status : {success, running};
 
-MODULE loiter_task1_STATUS_module(variables, variable_exists, node_names, variable_names)
+MODULE loiter_task1_STATUS_module(blackboard, node_names)
 	CONSTANTS
 		success, failure, running;
 	DEFINE
 		status := running;
 
-MODULE tracking_task_STATUS_module(variables, variable_exists, node_names, variable_names)
+MODULE tracking_task_STATUS_module(blackboard, node_names)
 	CONSTANTS
 		success, failure, running;
 	DEFINE
 		status := running;
 
-MODULE speed_min_task_STATUS_module(variables, variable_exists, node_names, variable_names)
+MODULE speed_min_task_STATUS_module(blackboard, node_names)
 	CONSTANTS
 		success, failure, running;
 	DEFINE
 		status := running;
 
-MODULE speed_min_task1_STATUS_module(variables, variable_exists, node_names, variable_names)
+MODULE speed_min_task1_STATUS_module(blackboard, node_names)
 	CONSTANTS
 		success, failure, running;
 	DEFINE
 		status := running;
 
-MODULE speed_max_task_STATUS_module(variables, variable_exists, node_names, variable_names)
+MODULE speed_max_task_STATUS_module(blackboard, node_names)
 	CONSTANTS
 		success, failure, running;
 	DEFINE
 		status := running;
 
-MODULE pipe_mapping_disable_task_STATUS_module(variables, variable_exists, node_names, variable_names)
+MODULE pipe_mapping_disable_task_STATUS_module(blackboard, node_names)
 	CONSTANTS
 		success, failure, running;
 	DEFINE
 		status := running;
 
-MODULE pipe_mapping_disable_task1_STATUS_module(variables, variable_exists, node_names, variable_names)
+MODULE pipe_mapping_disable_task1_STATUS_module(blackboard, node_names)
 	CONSTANTS
 		success, failure, running;
 	DEFINE
 		status := running;
 
-MODULE pipe_mapping_enable_task_STATUS_module(variables, variable_exists, node_names, variable_names)
+MODULE pipe_mapping_enable_task_STATUS_module(blackboard, node_names)
 	CONSTANTS
 		success, failure, running;
 	DEFINE
 		status := running;
 
-MODULE next_mission_STATUS_module(variables, variable_exists, node_names, variable_names)
+MODULE next_mission_STATUS_module(blackboard, node_names)
 	CONSTANTS
 		success, failure, running;
 	DEFINE
 		status := success;
 
-MODULE loiter_task2_STATUS_module(variables, variable_exists, node_names, variable_names)
+MODULE loiter_task2_STATUS_module(blackboard, node_names)
 	CONSTANTS
 		success, failure, running;
 	DEFINE
 		status := running;
 
-MODULE waypoint_task_STATUS_module(variables, variable_exists, node_names, variable_names)
+MODULE waypoint_task_STATUS_module(blackboard, node_names)
 	CONSTANTS
 		success, failure, running;
 	DEFINE
 		status := running;
 
-MODULE loiter_task_STATUS_module(variables, variable_exists, node_names, variable_names)
+MODULE loiter_task_STATUS_module(blackboard, node_names)
 	CONSTANTS
 		success, failure, running;
 	DEFINE
 		status := running;
 
-MODULE is_reallocation_requested_CHECK_dd_xy_axis_degradation_module(variables, variable_exists, node_names, variable_names)
+MODULE is_reallocation_requested_CHECK_dd_xy_axis_degradation_module(blackboard, node_names)
 	DEFINE
-		result := next(variable_exists[variable_names.dd_xy_axis_degradation]) & (next(variables[variable_names.dd_xy_axis_degradation]) =0);
-
-MODULE battery_low_fs_CHECK_battery_low_warning_module(variables, variable_exists, node_names, variable_names)
+		result := blackboard.dd_xy_axis_degradation_stage_1_exists & (blackboard.dd_xy_axis_degradation_stage_1=0);
+MODULE battery_low_fs_CHECK_battery_low_warning_module(blackboard, node_names)
 	DEFINE
-		result := next(variable_exists[variable_names.battery_low_warning]) & (next(variables[variable_names.battery_low_warning]) =0);
-
-MODULE check_sensor_failure_CHECK_bb_sensor_failure_warning_module(variables, variable_exists, node_names, variable_names)
+		result := blackboard.battery_low_warning_stage_1_exists & (blackboard.battery_low_warning_stage_1=0);
+MODULE check_sensor_failure_CHECK_bb_sensor_failure_warning_module(blackboard, node_names)
 	DEFINE
-		result := next(variable_exists[variable_names.bb_sensor_failure_warning]) & (next(variables[variable_names.bb_sensor_failure_warning]) =0);
-
-MODULE emergency_stop_fs_CHECK_emergency_stop_warning_module(variables, variable_exists, node_names, variable_names)
+		result := blackboard.bb_sensor_failure_warning_stage_1_exists & (blackboard.bb_sensor_failure_warning_stage_1=0);
+MODULE emergency_stop_fs_CHECK_emergency_stop_warning_module(blackboard, node_names)
 	DEFINE
-		result := variable_exists[variable_names.emergency_stop_warning_stage_3] & (variables[variable_names.emergency_stop_warning_stage_3]=0);
-MODULE check_surface_CHECK_bb_home_reached_module(variables, variable_exists, node_names, variable_names)
+		result := blackboard.emergency_stop_warning_stage_3_exists & (blackboard.emergency_stop_warning_stage_3=0);
+MODULE check_surface_CHECK_bb_home_reached_module(blackboard, node_names)
 	DEFINE
-		result := next(variable_exists[variable_names.bb_home_reached]) & (next(variables[variable_names.bb_home_reached]) =0);
-
-MODULE obstacle_standoff_fs_CHECK_obstacle_standoff_warning_module(variables, variable_exists, node_names, variable_names)
+		result := blackboard.bb_home_reached_stage_1_exists & (blackboard.bb_home_reached_stage_1=0);
+MODULE obstacle_standoff_fs_CHECK_obstacle_standoff_warning_module(blackboard, node_names)
 	DEFINE
-		result := next(variable_exists[variable_names.obstacle_standoff_warning]) & (next(variables[variable_names.obstacle_standoff_warning]) =0);
-
-MODULE check_rth_CHECK_bb_rth_warning_module(variables, variable_exists, node_names, variable_names)
+		result := blackboard.obstacle_standoff_warning_stage_1_exists & (blackboard.obstacle_standoff_warning_stage_1=0);
+MODULE check_rth_CHECK_bb_rth_warning_module(blackboard, node_names)
 	DEFINE
-		result := variable_exists[variable_names.bb_rth_warning_stage_2] & (variables[variable_names.bb_rth_warning_stage_2]=0);
-MODULE check_geofence_CHECK_bb_geofence_warning_module(variables, variable_exists, node_names, variable_names)
+		result := blackboard.bb_rth_warning_stage_2_exists & (blackboard.bb_rth_warning_stage_2=0);
+MODULE check_geofence_CHECK_bb_geofence_warning_module(blackboard, node_names)
 	DEFINE
-		result := next(variable_exists[variable_names.bb_geofence_warning]) & (next(variables[variable_names.bb_geofence_warning]) =0);
-
-MODULE check_pipe_post_CHECK_bb_pipe_lost_warning_module(variables, variable_exists, node_names, variable_names)
+		result := blackboard.bb_geofence_warning_stage_1_exists & (blackboard.bb_geofence_warning_stage_1=0);
+MODULE check_pipe_post_CHECK_bb_pipe_lost_warning_module(blackboard, node_names)
 	DEFINE
-		result := next(variable_exists[variable_names.bb_pipe_lost_warning]) & (next(variables[variable_names.bb_pipe_lost_warning]) =0);
-
-MODULE is_track_pipe_mission_requested_CHECK_bb_mission_dot_data_module(variables, variable_exists, node_names, variable_names)
+		result := blackboard.bb_pipe_lost_warning_stage_1_exists & (blackboard.bb_pipe_lost_warning_stage_1=0);
+MODULE is_track_pipe_mission_requested_CHECK_bb_mission_dot_data_module(blackboard, node_names)
 	DEFINE
-		result := variable_exists[variable_names.bb_mission_dot_data_stage_2] & (variables[variable_names.bb_mission_dot_data_stage_2]=0);
-MODULE check_lec2am_ls_CHECK_lec2_am_l_speed_warning_module(variables, variable_exists, node_names, variable_names)
+		result := blackboard.bb_mission_dot_data_stage_3_exists & (blackboard.bb_mission_dot_data_stage_3=0);
+MODULE check_lec2am_ls_CHECK_lec2_am_l_speed_warning_module(blackboard, node_names)
 	DEFINE
-		result := variable_exists[variable_names.lec2_am_l_speed_warning_stage_1] & (variables[variable_names.lec2_am_l_speed_warning_stage_1]=0);
-MODULE check_lec2am_rs_CHECK_lec2_am_r_speed_warning_module(variables, variable_exists, node_names, variable_names)
+		result := blackboard.lec2_am_l_speed_warning_stage_1_exists & (blackboard.lec2_am_l_speed_warning_stage_1=0);
+MODULE check_lec2am_rs_CHECK_lec2_am_r_speed_warning_module(blackboard, node_names)
 	DEFINE
-		result := variable_exists[variable_names.lec2_am_r_speed_warning_stage_1] & (variables[variable_names.lec2_am_r_speed_warning_stage_1]=0);
-MODULE check_lec2am_lp_CHECK_lec2_am_l_pipe_warning_module(variables, variable_exists, node_names, variable_names)
+		result := blackboard.lec2_am_r_speed_warning_stage_1_exists & (blackboard.lec2_am_r_speed_warning_stage_1=0);
+MODULE check_lec2am_lp_CHECK_lec2_am_l_pipe_warning_module(blackboard, node_names)
 	DEFINE
-		result := variable_exists[variable_names.lec2_am_l_pipe_warning_stage_1] & (variables[variable_names.lec2_am_l_pipe_warning_stage_1]=0);
-MODULE check_lec2am_rp_CHECK_lec2_am_r_pipe_warning_module(variables, variable_exists, node_names, variable_names)
+		result := blackboard.lec2_am_l_pipe_warning_stage_1_exists & (blackboard.lec2_am_l_pipe_warning_stage_1=0);
+MODULE check_lec2am_rp_CHECK_lec2_am_r_pipe_warning_module(blackboard, node_names)
 	DEFINE
-		result := variable_exists[variable_names.lec2_am_r_pipe_warning_stage_1] & (variables[variable_names.lec2_am_r_pipe_warning_stage_1]=0);
-MODULE is_waypoint_requested_CHECK_bb_mission_dot_data_module(variables, variable_exists, node_names, variable_names)
+		result := blackboard.lec2_am_r_pipe_warning_stage_1_exists & (blackboard.lec2_am_r_pipe_warning_stage_1=0);
+MODULE is_waypoint_requested_CHECK_bb_mission_dot_data_module(blackboard, node_names)
 	DEFINE
-		result := variable_exists[variable_names.bb_mission_dot_data_stage_2] & (variables[variable_names.bb_mission_dot_data_stage_2]=0);
-MODULE check_waypoints_completed_CHECK_bb_waypoints_completed_dot_data_module(variables, variable_exists, node_names, variable_names)
+		result := blackboard.bb_mission_dot_data_stage_3_exists & (blackboard.bb_mission_dot_data_stage_3=0);
+MODULE check_waypoints_completed_CHECK_bb_waypoints_completed_dot_data_module(blackboard, node_names)
 	DEFINE
-		result := next(variable_exists[variable_names.bb_waypoints_completed_dot_data]) & (next(variables[variable_names.bb_waypoints_completed_dot_data]) =0);
-
+		result := blackboard.bb_waypoints_completed_dot_data_stage_1_exists & (blackboard.bb_waypoints_completed_dot_data_stage_1=0);

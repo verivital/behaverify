@@ -43,17 +43,13 @@
                         'additional_definitions': [],
                         'additional_declarations': [   '\t\tbattery2bb_STATUS '
                                                        ': '
-                                                       'battery2bb_STATUS_module(blackboard.variables, '
-                                                       'blackboard.variable_exists, '
-                                                       'node_names, '
-                                                       'variable_names);\n'],
+                                                       'battery2bb_STATUS_module(blackboard, '
+                                                       'node_names);\n'],
                         'additional_initializations': [],
                         'additional_modules': {   'status': {   'name': 'battery2bb_STATUS_module',
                                                                 'type': 'status',
-                                                                'args': [   'variables',
-                                                                            'variable_exists',
-                                                                            'node_names',
-                                                                            'variable_names'],
+                                                                'args': [   'blackboard',
+                                                                            'node_names'],
                                                                 'possible_values': [   'success',
                                                                                        'failure',
                                                                                        'running'],
@@ -68,17 +64,13 @@
                         'additional_arguments': ['rth2bb_STATUS'],
                         'additional_definitions': [],
                         'additional_declarations': [   '\t\trth2bb_STATUS : '
-                                                       'rth2bb_STATUS_module(blackboard.variables, '
-                                                       'blackboard.variable_exists, '
-                                                       'node_names, '
-                                                       'variable_names);\n'],
+                                                       'rth2bb_STATUS_module(blackboard, '
+                                                       'node_names);\n'],
                         'additional_initializations': [],
                         'additional_modules': {   'status': {   'name': 'rth2bb_STATUS_module',
                                                                 'type': 'status',
-                                                                'args': [   'variables',
-                                                                            'variable_exists',
-                                                                            'node_names',
-                                                                            'variable_names'],
+                                                                'args': [   'blackboard',
+                                                                            'node_names'],
                                                                 'possible_values': [   'success',
                                                                                        'failure',
                                                                                        'running'],
@@ -94,17 +86,13 @@
                         'additional_definitions': [],
                         'additional_declarations': [   '\t\tgeofence2bb_STATUS '
                                                        ': '
-                                                       'geofence2bb_STATUS_module(blackboard.variables, '
-                                                       'blackboard.variable_exists, '
-                                                       'node_names, '
-                                                       'variable_names);\n'],
+                                                       'geofence2bb_STATUS_module(blackboard, '
+                                                       'node_names);\n'],
                         'additional_initializations': [],
                         'additional_modules': {   'status': {   'name': 'geofence2bb_STATUS_module',
                                                                 'type': 'status',
-                                                                'args': [   'variables',
-                                                                            'variable_exists',
-                                                                            'node_names',
-                                                                            'variable_names'],
+                                                                'args': [   'blackboard',
+                                                                            'node_names'],
                                                                 'possible_values': [   'success',
                                                                                        'failure',
                                                                                        'running'],
@@ -120,17 +108,13 @@
                         'additional_definitions': [],
                         'additional_declarations': [   '\t\t'
                                                        'lec2_am_r_2bb_STATUS : '
-                                                       'lec2_am_r_2bb_STATUS_module(blackboard.variables, '
-                                                       'blackboard.variable_exists, '
-                                                       'node_names, '
-                                                       'variable_names);\n'],
+                                                       'lec2_am_r_2bb_STATUS_module(blackboard, '
+                                                       'node_names);\n'],
                         'additional_initializations': [],
                         'additional_modules': {   'status': {   'name': 'lec2_am_r_2bb_STATUS_module',
                                                                 'type': 'status',
-                                                                'args': [   'variables',
-                                                                            'variable_exists',
-                                                                            'node_names',
-                                                                            'variable_names'],
+                                                                'args': [   'blackboard',
+                                                                            'node_names'],
                                                                 'possible_values': [   'success',
                                                                                        'failure',
                                                                                        'running'],
@@ -146,17 +130,13 @@
                         'additional_definitions': [],
                         'additional_declarations': [   '\t\t'
                                                        'lec2_am_l_2bb_STATUS : '
-                                                       'lec2_am_l_2bb_STATUS_module(blackboard.variables, '
-                                                       'blackboard.variable_exists, '
-                                                       'node_names, '
-                                                       'variable_names);\n'],
+                                                       'lec2_am_l_2bb_STATUS_module(blackboard, '
+                                                       'node_names);\n'],
                         'additional_initializations': [],
                         'additional_modules': {   'status': {   'name': 'lec2_am_l_2bb_STATUS_module',
                                                                 'type': 'status',
-                                                                'args': [   'variables',
-                                                                            'variable_exists',
-                                                                            'node_names',
-                                                                            'variable_names'],
+                                                                'args': [   'blackboard',
+                                                                            'node_names'],
                                                                 'possible_values': [   'success',
                                                                                        'failure',
                                                                                        'running'],
@@ -172,17 +152,13 @@
                         'additional_definitions': [],
                         'additional_declarations': [   '\t\t'
                                                        'pipe_lost2bb_STATUS : '
-                                                       'pipe_lost2bb_STATUS_module(blackboard.variables, '
-                                                       'blackboard.variable_exists, '
-                                                       'node_names, '
-                                                       'variable_names);\n'],
+                                                       'pipe_lost2bb_STATUS_module(blackboard, '
+                                                       'node_names);\n'],
                         'additional_initializations': [],
                         'additional_modules': {   'status': {   'name': 'pipe_lost2bb_STATUS_module',
                                                                 'type': 'status',
-                                                                'args': [   'variables',
-                                                                            'variable_exists',
-                                                                            'node_names',
-                                                                            'variable_names'],
+                                                                'args': [   'blackboard',
+                                                                            'node_names'],
                                                                 'possible_values': [   'success',
                                                                                        'failure',
                                                                                        'running'],
@@ -199,17 +175,13 @@
                         'additional_declarations': [   '\t\t'
                                                        'sensor_failure2bb_STATUS '
                                                        ': '
-                                                       'sensor_failure2bb_STATUS_module(blackboard.variables, '
-                                                       'blackboard.variable_exists, '
-                                                       'node_names, '
-                                                       'variable_names);\n'],
+                                                       'sensor_failure2bb_STATUS_module(blackboard, '
+                                                       'node_names);\n'],
                         'additional_initializations': [],
                         'additional_modules': {   'status': {   'name': 'sensor_failure2bb_STATUS_module',
                                                                 'type': 'status',
-                                                                'args': [   'variables',
-                                                                            'variable_exists',
-                                                                            'node_names',
-                                                                            'variable_names'],
+                                                                'args': [   'blackboard',
+                                                                            'node_names'],
                                                                 'possible_values': [   'success',
                                                                                        'failure',
                                                                                        'running'],
@@ -226,17 +198,13 @@
                         'additional_declarations': [   '\t\t'
                                                        'waypoints_completed2bb_STATUS '
                                                        ': '
-                                                       'waypoints_completed2bb_STATUS_module(blackboard.variables, '
-                                                       'blackboard.variable_exists, '
-                                                       'node_names, '
-                                                       'variable_names);\n'],
+                                                       'waypoints_completed2bb_STATUS_module(blackboard, '
+                                                       'node_names);\n'],
                         'additional_initializations': [],
                         'additional_modules': {   'status': {   'name': 'waypoints_completed2bb_STATUS_module',
                                                                 'type': 'status',
-                                                                'args': [   'variables',
-                                                                            'variable_exists',
-                                                                            'node_names',
-                                                                            'variable_names'],
+                                                                'args': [   'blackboard',
+                                                                            'node_names'],
                                                                 'possible_values': [   'success',
                                                                                        'failure',
                                                                                        'running'],
@@ -252,17 +220,13 @@
                          'additional_definitions': [],
                          'additional_declarations': [   '\t\tmission2bb_STATUS '
                                                         ': '
-                                                        'mission2bb_STATUS_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'mission2bb_STATUS_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'status': {   'name': 'mission2bb_STATUS_module',
                                                                  'type': 'status',
-                                                                 'args': [   'variables',
-                                                                             'variable_exists',
-                                                                             'node_names',
-                                                                             'variable_names'],
+                                                                 'args': [   'blackboard',
+                                                                             'node_names'],
                                                                  'possible_values': [   'success',
                                                                                         'failure',
                                                                                         'running'],
@@ -277,17 +241,13 @@
                          'additional_arguments': ['ddlec2bb_STATUS'],
                          'additional_definitions': [],
                          'additional_declarations': [   '\t\tddlec2bb_STATUS : '
-                                                        'ddlec2bb_STATUS_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'ddlec2bb_STATUS_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'status': {   'name': 'ddlec2bb_STATUS_module',
                                                                  'type': 'status',
-                                                                 'args': [   'variables',
-                                                                             'variable_exists',
-                                                                             'node_names',
-                                                                             'variable_names'],
+                                                                 'args': [   'blackboard',
+                                                                             'node_names'],
                                                                  'possible_values': [   'success',
                                                                                         'failure',
                                                                                         'running'],
@@ -302,17 +262,13 @@
                          'additional_arguments': ['fls2bb_STATUS'],
                          'additional_definitions': [],
                          'additional_declarations': [   '\t\tfls2bb_STATUS : '
-                                                        'fls2bb_STATUS_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'fls2bb_STATUS_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'status': {   'name': 'fls2bb_STATUS_module',
                                                                  'type': 'status',
-                                                                 'args': [   'variables',
-                                                                             'variable_exists',
-                                                                             'node_names',
-                                                                             'variable_names'],
+                                                                 'args': [   'blackboard',
+                                                                             'node_names'],
                                                                  'possible_values': [   'success',
                                                                                         'failure',
                                                                                         'running'],
@@ -329,17 +285,13 @@
                          'additional_declarations': [   '\t\t'
                                                         'fls_warning2bb_STATUS '
                                                         ': '
-                                                        'fls_warning2bb_STATUS_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'fls_warning2bb_STATUS_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'status': {   'name': 'fls_warning2bb_STATUS_module',
                                                                  'type': 'status',
-                                                                 'args': [   'variables',
-                                                                             'variable_exists',
-                                                                             'node_names',
-                                                                             'variable_names'],
+                                                                 'args': [   'blackboard',
+                                                                             'node_names'],
                                                                  'possible_values': [   'success',
                                                                                         'failure',
                                                                                         'running'],
@@ -355,17 +307,13 @@
                          'additional_definitions': [],
                          'additional_declarations': [   '\t\t'
                                                         'hsd_pipe2bb_STATUS : '
-                                                        'hsd_pipe2bb_STATUS_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'hsd_pipe2bb_STATUS_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'status': {   'name': 'hsd_pipe2bb_STATUS_module',
                                                                  'type': 'status',
-                                                                 'args': [   'variables',
-                                                                             'variable_exists',
-                                                                             'node_names',
-                                                                             'variable_names'],
+                                                                 'args': [   'blackboard',
+                                                                             'node_names'],
                                                                  'possible_values': [   'success',
                                                                                         'failure',
                                                                                         'running'],
@@ -381,17 +329,13 @@
                          'additional_definitions': [],
                          'additional_declarations': [   '\t\thsd_wp2bb_STATUS '
                                                         ': '
-                                                        'hsd_wp2bb_STATUS_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'hsd_wp2bb_STATUS_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'status': {   'name': 'hsd_wp2bb_STATUS_module',
                                                                  'type': 'status',
-                                                                 'args': [   'variables',
-                                                                             'variable_exists',
-                                                                             'node_names',
-                                                                             'variable_names'],
+                                                                 'args': [   'blackboard',
+                                                                             'node_names'],
                                                                  'possible_values': [   'success',
                                                                                         'failure',
                                                                                         'running'],
@@ -407,17 +351,13 @@
                          'additional_definitions': [],
                          'additional_declarations': [   '\t\thsd_rth2bb_STATUS '
                                                         ': '
-                                                        'hsd_rth2bb_STATUS_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'hsd_rth2bb_STATUS_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'status': {   'name': 'hsd_rth2bb_STATUS_module',
                                                                  'type': 'status',
-                                                                 'args': [   'variables',
-                                                                             'variable_exists',
-                                                                             'node_names',
-                                                                             'variable_names'],
+                                                                 'args': [   'blackboard',
+                                                                             'node_names'],
                                                                  'possible_values': [   'success',
                                                                                         'failure',
                                                                                         'running'],
@@ -434,17 +374,13 @@
                          'additional_declarations': [   '\t\t'
                                                         'hsd_surface2bb_STATUS '
                                                         ': '
-                                                        'hsd_surface2bb_STATUS_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'hsd_surface2bb_STATUS_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'status': {   'name': 'hsd_surface2bb_STATUS_module',
                                                                  'type': 'status',
-                                                                 'args': [   'variables',
-                                                                             'variable_exists',
-                                                                             'node_names',
-                                                                             'variable_names'],
+                                                                 'args': [   'blackboard',
+                                                                             'node_names'],
                                                                  'possible_values': [   'success',
                                                                                         'failure',
                                                                                         'running'],
@@ -460,17 +396,13 @@
                          'additional_definitions': [],
                          'additional_declarations': [   '\t\trtreach2bb_STATUS '
                                                         ': '
-                                                        'rtreach2bb_STATUS_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'rtreach2bb_STATUS_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'status': {   'name': 'rtreach2bb_STATUS_module',
                                                                  'type': 'status',
-                                                                 'args': [   'variables',
-                                                                             'variable_exists',
-                                                                             'node_names',
-                                                                             'variable_names'],
+                                                                 'args': [   'blackboard',
+                                                                             'node_names'],
                                                                  'possible_values': [   'success',
                                                                                         'failure',
                                                                                         'running'],
@@ -517,17 +449,13 @@
                          'additional_declarations': [   '\t\t'
                                                         'is_reallocation_requested_CHECK_dd_xy_axis_degradation '
                                                         ': '
-                                                        'is_reallocation_requested_CHECK_dd_xy_axis_degradation_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'is_reallocation_requested_CHECK_dd_xy_axis_degradation_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'check': {   'name': 'is_reallocation_requested_CHECK_dd_xy_axis_degradation_module',
                                                                 'type': 'check',
-                                                                'args': [   'variables',
-                                                                            'variable_exists',
-                                                                            'node_names',
-                                                                            'variable_names'],
+                                                                'args': [   'blackboard',
+                                                                            'node_names'],
                                                                 'use_next': False,
                                                                 'left_hand_side': None,
                                                                 'operator': '=',
@@ -543,17 +471,13 @@
                          'additional_declarations': [   '\t\t'
                                                         'reallocate_task_STATUS '
                                                         ': '
-                                                        'reallocate_task_STATUS_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'reallocate_task_STATUS_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'status': {   'name': 'reallocate_task_STATUS_module',
                                                                  'type': 'status',
-                                                                 'args': [   'variables',
-                                                                             'variable_exists',
-                                                                             'node_names',
-                                                                             'variable_names'],
+                                                                 'args': [   'blackboard',
+                                                                             'node_names'],
                                                                  'possible_values': [   'success',
                                                                                         'failure',
                                                                                         'running'],
@@ -569,17 +493,13 @@
                          'additional_definitions': [],
                          'additional_declarations': [   '\t\t'
                                                         'dd_lec_task_STATUS : '
-                                                        'dd_lec_task_STATUS_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'dd_lec_task_STATUS_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'status': {   'name': 'dd_lec_task_STATUS_module',
                                                                  'type': 'status',
-                                                                 'args': [   'variables',
-                                                                             'variable_exists',
-                                                                             'node_names',
-                                                                             'variable_names'],
+                                                                 'args': [   'blackboard',
+                                                                             'node_names'],
                                                                  'possible_values': [   'success',
                                                                                         'failure',
                                                                                         'running'],
@@ -596,17 +516,13 @@
                          'additional_declarations': [   '\t\t'
                                                         'mission_server_STATUS '
                                                         ': '
-                                                        'mission_server_STATUS_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'mission_server_STATUS_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'status': {   'name': 'mission_server_STATUS_module',
                                                                  'type': 'status',
-                                                                 'args': [   'variables',
-                                                                             'variable_exists',
-                                                                             'node_names',
-                                                                             'variable_names'],
+                                                                 'args': [   'blackboard',
+                                                                             'node_names'],
                                                                  'possible_values': [   'success',
                                                                                         'failure',
                                                                                         'running'],
@@ -623,17 +539,13 @@
                          'additional_declarations': [   '\t\t'
                                                         'obstacle_avoidance_STATUS '
                                                         ': '
-                                                        'obstacle_avoidance_STATUS_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'obstacle_avoidance_STATUS_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'status': {   'name': 'obstacle_avoidance_STATUS_module',
                                                                  'type': 'status',
-                                                                 'args': [   'variables',
-                                                                             'variable_exists',
-                                                                             'node_names',
-                                                                             'variable_names'],
+                                                                 'args': [   'blackboard',
+                                                                             'node_names'],
                                                                  'possible_values': [   'success',
                                                                                         'failure',
                                                                                         'running'],
@@ -690,17 +602,13 @@
                          'additional_declarations': [   '\t\t'
                                                         'battery_low_fs_CHECK_battery_low_warning '
                                                         ': '
-                                                        'battery_low_fs_CHECK_battery_low_warning_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'battery_low_fs_CHECK_battery_low_warning_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'check': {   'name': 'battery_low_fs_CHECK_battery_low_warning_module',
                                                                 'type': 'check',
-                                                                'args': [   'variables',
-                                                                            'variable_exists',
-                                                                            'node_names',
-                                                                            'variable_names'],
+                                                                'args': [   'blackboard',
+                                                                            'node_names'],
                                                                 'use_next': False,
                                                                 'left_hand_side': None,
                                                                 'operator': '=',
@@ -715,17 +623,13 @@
                          'additional_definitions': [],
                          'additional_declarations': [   '\t\t'
                                                         'surface_task_STATUS : '
-                                                        'surface_task_STATUS_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'surface_task_STATUS_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'status': {   'name': 'surface_task_STATUS_module',
                                                                  'type': 'status',
-                                                                 'args': [   'variables',
-                                                                             'variable_exists',
-                                                                             'node_names',
-                                                                             'variable_names'],
+                                                                 'args': [   'blackboard',
+                                                                             'node_names'],
                                                                  'possible_values': [   'success',
                                                                                         'failure',
                                                                                         'running'],
@@ -762,17 +666,13 @@
                          'additional_declarations': [   '\t\t'
                                                         'check_sensor_failure_CHECK_bb_sensor_failure_warning '
                                                         ': '
-                                                        'check_sensor_failure_CHECK_bb_sensor_failure_warning_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'check_sensor_failure_CHECK_bb_sensor_failure_warning_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'check': {   'name': 'check_sensor_failure_CHECK_bb_sensor_failure_warning_module',
                                                                 'type': 'check',
-                                                                'args': [   'variables',
-                                                                            'variable_exists',
-                                                                            'node_names',
-                                                                            'variable_names'],
+                                                                'args': [   'blackboard',
+                                                                            'node_names'],
                                                                 'use_next': False,
                                                                 'left_hand_side': None,
                                                                 'operator': '=',
@@ -788,17 +688,13 @@
                          'additional_declarations': [   '\t\t'
                                                         'surface_task1_STATUS '
                                                         ': '
-                                                        'surface_task1_STATUS_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'surface_task1_STATUS_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'status': {   'name': 'surface_task1_STATUS_module',
                                                                  'type': 'status',
-                                                                 'args': [   'variables',
-                                                                             'variable_exists',
-                                                                             'node_names',
-                                                                             'variable_names'],
+                                                                 'args': [   'blackboard',
+                                                                             'node_names'],
                                                                  'possible_values': [   'success',
                                                                                         'failure',
                                                                                         'running'],
@@ -835,17 +731,13 @@
                          'additional_declarations': [   '\t\t'
                                                         'emergency_stop_fs_CHECK_emergency_stop_warning '
                                                         ': '
-                                                        'emergency_stop_fs_CHECK_emergency_stop_warning_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'emergency_stop_fs_CHECK_emergency_stop_warning_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'check': {   'name': 'emergency_stop_fs_CHECK_emergency_stop_warning_module',
                                                                 'type': 'check',
-                                                                'args': [   'variables',
-                                                                            'variable_exists',
-                                                                            'node_names',
-                                                                            'variable_names'],
+                                                                'args': [   'blackboard',
+                                                                            'node_names'],
                                                                 'use_next': False,
                                                                 'left_hand_side': None,
                                                                 'operator': '=',
@@ -871,17 +763,13 @@
                          'additional_declarations': [   '\t\t'
                                                         'emergency_stop_task_STATUS '
                                                         ': '
-                                                        'emergency_stop_task_STATUS_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'emergency_stop_task_STATUS_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'status': {   'name': 'emergency_stop_task_STATUS_module',
                                                                  'type': 'status',
-                                                                 'args': [   'variables',
-                                                                             'variable_exists',
-                                                                             'node_names',
-                                                                             'variable_names'],
+                                                                 'args': [   'blackboard',
+                                                                             'node_names'],
                                                                  'possible_values': [   'success',
                                                                                         'failure',
                                                                                         'running'],
@@ -898,17 +786,13 @@
                          'additional_declarations': [   '\t\t'
                                                         'surface_task2_STATUS '
                                                         ': '
-                                                        'surface_task2_STATUS_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'surface_task2_STATUS_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'status': {   'name': 'surface_task2_STATUS_module',
                                                                  'type': 'status',
-                                                                 'args': [   'variables',
-                                                                             'variable_exists',
-                                                                             'node_names',
-                                                                             'variable_names'],
+                                                                 'args': [   'blackboard',
+                                                                             'node_names'],
                                                                  'possible_values': [   'success',
                                                                                         'failure',
                                                                                         'running'],
@@ -945,17 +829,13 @@
                          'additional_declarations': [   '\t\t'
                                                         'check_surface_CHECK_bb_home_reached '
                                                         ': '
-                                                        'check_surface_CHECK_bb_home_reached_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'check_surface_CHECK_bb_home_reached_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'check': {   'name': 'check_surface_CHECK_bb_home_reached_module',
                                                                 'type': 'check',
-                                                                'args': [   'variables',
-                                                                            'variable_exists',
-                                                                            'node_names',
-                                                                            'variable_names'],
+                                                                'args': [   'blackboard',
+                                                                            'node_names'],
                                                                 'use_next': False,
                                                                 'left_hand_side': None,
                                                                 'operator': '=',
@@ -971,17 +851,13 @@
                          'additional_declarations': [   '\t\t'
                                                         'surface_task3_STATUS '
                                                         ': '
-                                                        'surface_task3_STATUS_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'surface_task3_STATUS_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'status': {   'name': 'surface_task3_STATUS_module',
                                                                  'type': 'status',
-                                                                 'args': [   'variables',
-                                                                             'variable_exists',
-                                                                             'node_names',
-                                                                             'variable_names'],
+                                                                 'args': [   'blackboard',
+                                                                             'node_names'],
                                                                  'possible_values': [   'success',
                                                                                         'failure',
                                                                                         'running'],
@@ -1018,17 +894,13 @@
                          'additional_declarations': [   '\t\t'
                                                         'obstacle_standoff_fs_CHECK_obstacle_standoff_warning '
                                                         ': '
-                                                        'obstacle_standoff_fs_CHECK_obstacle_standoff_warning_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'obstacle_standoff_fs_CHECK_obstacle_standoff_warning_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'check': {   'name': 'obstacle_standoff_fs_CHECK_obstacle_standoff_warning_module',
                                                                 'type': 'check',
-                                                                'args': [   'variables',
-                                                                            'variable_exists',
-                                                                            'node_names',
-                                                                            'variable_names'],
+                                                                'args': [   'blackboard',
+                                                                            'node_names'],
                                                                 'use_next': False,
                                                                 'left_hand_side': None,
                                                                 'operator': '=',
@@ -1044,17 +916,13 @@
                          'additional_declarations': [   '\t\t'
                                                         'surface_task4_STATUS '
                                                         ': '
-                                                        'surface_task4_STATUS_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'surface_task4_STATUS_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'status': {   'name': 'surface_task4_STATUS_module',
                                                                  'type': 'status',
-                                                                 'args': [   'variables',
-                                                                             'variable_exists',
-                                                                             'node_names',
-                                                                             'variable_names'],
+                                                                 'args': [   'blackboard',
+                                                                             'node_names'],
                                                                  'possible_values': [   'success',
                                                                                         'failure',
                                                                                         'running'],
@@ -1091,17 +959,13 @@
                          'additional_declarations': [   '\t\t'
                                                         'check_rth_CHECK_bb_rth_warning '
                                                         ': '
-                                                        'check_rth_CHECK_bb_rth_warning_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'check_rth_CHECK_bb_rth_warning_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'check': {   'name': 'check_rth_CHECK_bb_rth_warning_module',
                                                                 'type': 'check',
-                                                                'args': [   'variables',
-                                                                            'variable_exists',
-                                                                            'node_names',
-                                                                            'variable_names'],
+                                                                'args': [   'blackboard',
+                                                                            'node_names'],
                                                                 'use_next': False,
                                                                 'left_hand_side': None,
                                                                 'operator': '=',
@@ -1125,17 +989,13 @@
                          'additional_arguments': ['rth_task_STATUS'],
                          'additional_definitions': [],
                          'additional_declarations': [   '\t\trth_task_STATUS : '
-                                                        'rth_task_STATUS_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'rth_task_STATUS_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'status': {   'name': 'rth_task_STATUS_module',
                                                                  'type': 'status',
-                                                                 'args': [   'variables',
-                                                                             'variable_exists',
-                                                                             'node_names',
-                                                                             'variable_names'],
+                                                                 'args': [   'blackboard',
+                                                                             'node_names'],
                                                                  'possible_values': [   'success',
                                                                                         'failure',
                                                                                         'running'],
@@ -1150,17 +1010,13 @@
                          'additional_arguments': ['home2bb_STATUS'],
                          'additional_definitions': [],
                          'additional_declarations': [   '\t\thome2bb_STATUS : '
-                                                        'home2bb_STATUS_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'home2bb_STATUS_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'status': {   'name': 'home2bb_STATUS_module',
                                                                  'type': 'status',
-                                                                 'args': [   'variables',
-                                                                             'variable_exists',
-                                                                             'node_names',
-                                                                             'variable_names'],
+                                                                 'args': [   'blackboard',
+                                                                             'node_names'],
                                                                  'possible_values': [   'success',
                                                                                         'failure',
                                                                                         'running'],
@@ -1197,17 +1053,13 @@
                          'additional_declarations': [   '\t\t'
                                                         'check_geofence_CHECK_bb_geofence_warning '
                                                         ': '
-                                                        'check_geofence_CHECK_bb_geofence_warning_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'check_geofence_CHECK_bb_geofence_warning_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'check': {   'name': 'check_geofence_CHECK_bb_geofence_warning_module',
                                                                 'type': 'check',
-                                                                'args': [   'variables',
-                                                                            'variable_exists',
-                                                                            'node_names',
-                                                                            'variable_names'],
+                                                                'args': [   'blackboard',
+                                                                            'node_names'],
                                                                 'use_next': False,
                                                                 'left_hand_side': None,
                                                                 'operator': '=',
@@ -1232,17 +1084,13 @@
                          'additional_definitions': [],
                          'additional_declarations': [   '\t\trth_task1_STATUS '
                                                         ': '
-                                                        'rth_task1_STATUS_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'rth_task1_STATUS_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'status': {   'name': 'rth_task1_STATUS_module',
                                                                  'type': 'status',
-                                                                 'args': [   'variables',
-                                                                             'variable_exists',
-                                                                             'node_names',
-                                                                             'variable_names'],
+                                                                 'args': [   'blackboard',
+                                                                             'node_names'],
                                                                  'possible_values': [   'success',
                                                                                         'failure',
                                                                                         'running'],
@@ -1257,17 +1105,13 @@
                          'additional_arguments': ['home2bb1_STATUS'],
                          'additional_definitions': [],
                          'additional_declarations': [   '\t\thome2bb1_STATUS : '
-                                                        'home2bb1_STATUS_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'home2bb1_STATUS_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'status': {   'name': 'home2bb1_STATUS_module',
                                                                  'type': 'status',
-                                                                 'args': [   'variables',
-                                                                             'variable_exists',
-                                                                             'node_names',
-                                                                             'variable_names'],
+                                                                 'args': [   'blackboard',
+                                                                             'node_names'],
                                                                  'possible_values': [   'success',
                                                                                         'failure',
                                                                                         'running'],
@@ -1304,17 +1148,13 @@
                          'additional_declarations': [   '\t\t'
                                                         'check_pipe_post_CHECK_bb_pipe_lost_warning '
                                                         ': '
-                                                        'check_pipe_post_CHECK_bb_pipe_lost_warning_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'check_pipe_post_CHECK_bb_pipe_lost_warning_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'check': {   'name': 'check_pipe_post_CHECK_bb_pipe_lost_warning_module',
                                                                 'type': 'check',
-                                                                'args': [   'variables',
-                                                                            'variable_exists',
-                                                                            'node_names',
-                                                                            'variable_names'],
+                                                                'args': [   'blackboard',
+                                                                            'node_names'],
                                                                 'use_next': False,
                                                                 'left_hand_side': None,
                                                                 'operator': '=',
@@ -1329,17 +1169,13 @@
                          'additional_definitions': [],
                          'additional_declarations': [   '\t\t'
                                                         'loiter_task1_STATUS : '
-                                                        'loiter_task1_STATUS_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'loiter_task1_STATUS_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'status': {   'name': 'loiter_task1_STATUS_module',
                                                                  'type': 'status',
-                                                                 'args': [   'variables',
-                                                                             'variable_exists',
-                                                                             'node_names',
-                                                                             'variable_names'],
+                                                                 'args': [   'blackboard',
+                                                                             'node_names'],
                                                                  'possible_values': [   'success',
                                                                                         'failure',
                                                                                         'running'],
@@ -1366,17 +1202,13 @@
                          'additional_declarations': [   '\t\t'
                                                         'is_track_pipe_mission_requested_CHECK_bb_mission_dot_data '
                                                         ': '
-                                                        'is_track_pipe_mission_requested_CHECK_bb_mission_dot_data_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'is_track_pipe_mission_requested_CHECK_bb_mission_dot_data_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'check': {   'name': 'is_track_pipe_mission_requested_CHECK_bb_mission_dot_data_module',
                                                                 'type': 'check',
-                                                                'args': [   'variables',
-                                                                            'variable_exists',
-                                                                            'node_names',
-                                                                            'variable_names'],
+                                                                'args': [   'blackboard',
+                                                                            'node_names'],
                                                                 'use_next': False,
                                                                 'left_hand_side': None,
                                                                 'operator': '=',
@@ -1402,17 +1234,13 @@
                          'additional_declarations': [   '\t\t'
                                                         'tracking_task_STATUS '
                                                         ': '
-                                                        'tracking_task_STATUS_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'tracking_task_STATUS_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'status': {   'name': 'tracking_task_STATUS_module',
                                                                  'type': 'status',
-                                                                 'args': [   'variables',
-                                                                             'variable_exists',
-                                                                             'node_names',
-                                                                             'variable_names'],
+                                                                 'args': [   'blackboard',
+                                                                             'node_names'],
                                                                  'possible_values': [   'success',
                                                                                         'failure',
                                                                                         'running'],
@@ -1459,17 +1287,13 @@
                          'additional_declarations': [   '\t\t'
                                                         'check_lec2am_ls_CHECK_lec2_am_l_speed_warning '
                                                         ': '
-                                                        'check_lec2am_ls_CHECK_lec2_am_l_speed_warning_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'check_lec2am_ls_CHECK_lec2_am_l_speed_warning_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'check': {   'name': 'check_lec2am_ls_CHECK_lec2_am_l_speed_warning_module',
                                                                 'type': 'check',
-                                                                'args': [   'variables',
-                                                                            'variable_exists',
-                                                                            'node_names',
-                                                                            'variable_names'],
+                                                                'args': [   'blackboard',
+                                                                            'node_names'],
                                                                 'use_next': False,
                                                                 'left_hand_side': None,
                                                                 'operator': '=',
@@ -1485,17 +1309,13 @@
                          'additional_declarations': [   '\t\t'
                                                         'speed_min_task_STATUS '
                                                         ': '
-                                                        'speed_min_task_STATUS_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'speed_min_task_STATUS_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'status': {   'name': 'speed_min_task_STATUS_module',
                                                                  'type': 'status',
-                                                                 'args': [   'variables',
-                                                                             'variable_exists',
-                                                                             'node_names',
-                                                                             'variable_names'],
+                                                                 'args': [   'blackboard',
+                                                                             'node_names'],
                                                                  'possible_values': [   'success',
                                                                                         'failure',
                                                                                         'running'],
@@ -1532,17 +1352,13 @@
                          'additional_declarations': [   '\t\t'
                                                         'check_lec2am_rs_CHECK_lec2_am_r_speed_warning '
                                                         ': '
-                                                        'check_lec2am_rs_CHECK_lec2_am_r_speed_warning_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'check_lec2am_rs_CHECK_lec2_am_r_speed_warning_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'check': {   'name': 'check_lec2am_rs_CHECK_lec2_am_r_speed_warning_module',
                                                                 'type': 'check',
-                                                                'args': [   'variables',
-                                                                            'variable_exists',
-                                                                            'node_names',
-                                                                            'variable_names'],
+                                                                'args': [   'blackboard',
+                                                                            'node_names'],
                                                                 'use_next': False,
                                                                 'left_hand_side': None,
                                                                 'operator': '=',
@@ -1558,17 +1374,13 @@
                          'additional_declarations': [   '\t\t'
                                                         'speed_min_task1_STATUS '
                                                         ': '
-                                                        'speed_min_task1_STATUS_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'speed_min_task1_STATUS_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'status': {   'name': 'speed_min_task1_STATUS_module',
                                                                  'type': 'status',
-                                                                 'args': [   'variables',
-                                                                             'variable_exists',
-                                                                             'node_names',
-                                                                             'variable_names'],
+                                                                 'args': [   'blackboard',
+                                                                             'node_names'],
                                                                  'possible_values': [   'success',
                                                                                         'failure',
                                                                                         'running'],
@@ -1585,17 +1397,13 @@
                          'additional_declarations': [   '\t\t'
                                                         'speed_max_task_STATUS '
                                                         ': '
-                                                        'speed_max_task_STATUS_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'speed_max_task_STATUS_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'status': {   'name': 'speed_max_task_STATUS_module',
                                                                  'type': 'status',
-                                                                 'args': [   'variables',
-                                                                             'variable_exists',
-                                                                             'node_names',
-                                                                             'variable_names'],
+                                                                 'args': [   'blackboard',
+                                                                             'node_names'],
                                                                  'possible_values': [   'success',
                                                                                         'failure',
                                                                                         'running'],
@@ -1642,17 +1450,13 @@
                          'additional_declarations': [   '\t\t'
                                                         'check_lec2am_lp_CHECK_lec2_am_l_pipe_warning '
                                                         ': '
-                                                        'check_lec2am_lp_CHECK_lec2_am_l_pipe_warning_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'check_lec2am_lp_CHECK_lec2_am_l_pipe_warning_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'check': {   'name': 'check_lec2am_lp_CHECK_lec2_am_l_pipe_warning_module',
                                                                 'type': 'check',
-                                                                'args': [   'variables',
-                                                                            'variable_exists',
-                                                                            'node_names',
-                                                                            'variable_names'],
+                                                                'args': [   'blackboard',
+                                                                            'node_names'],
                                                                 'use_next': False,
                                                                 'left_hand_side': None,
                                                                 'operator': '=',
@@ -1668,17 +1472,13 @@
                          'additional_declarations': [   '\t\t'
                                                         'pipe_mapping_disable_task_STATUS '
                                                         ': '
-                                                        'pipe_mapping_disable_task_STATUS_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'pipe_mapping_disable_task_STATUS_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'status': {   'name': 'pipe_mapping_disable_task_STATUS_module',
                                                                  'type': 'status',
-                                                                 'args': [   'variables',
-                                                                             'variable_exists',
-                                                                             'node_names',
-                                                                             'variable_names'],
+                                                                 'args': [   'blackboard',
+                                                                             'node_names'],
                                                                  'possible_values': [   'success',
                                                                                         'failure',
                                                                                         'running'],
@@ -1715,17 +1515,13 @@
                          'additional_declarations': [   '\t\t'
                                                         'check_lec2am_rp_CHECK_lec2_am_r_pipe_warning '
                                                         ': '
-                                                        'check_lec2am_rp_CHECK_lec2_am_r_pipe_warning_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'check_lec2am_rp_CHECK_lec2_am_r_pipe_warning_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'check': {   'name': 'check_lec2am_rp_CHECK_lec2_am_r_pipe_warning_module',
                                                                 'type': 'check',
-                                                                'args': [   'variables',
-                                                                            'variable_exists',
-                                                                            'node_names',
-                                                                            'variable_names'],
+                                                                'args': [   'blackboard',
+                                                                            'node_names'],
                                                                 'use_next': False,
                                                                 'left_hand_side': None,
                                                                 'operator': '=',
@@ -1741,17 +1537,13 @@
                          'additional_declarations': [   '\t\t'
                                                         'pipe_mapping_disable_task1_STATUS '
                                                         ': '
-                                                        'pipe_mapping_disable_task1_STATUS_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'pipe_mapping_disable_task1_STATUS_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'status': {   'name': 'pipe_mapping_disable_task1_STATUS_module',
                                                                  'type': 'status',
-                                                                 'args': [   'variables',
-                                                                             'variable_exists',
-                                                                             'node_names',
-                                                                             'variable_names'],
+                                                                 'args': [   'blackboard',
+                                                                             'node_names'],
                                                                  'possible_values': [   'success',
                                                                                         'failure',
                                                                                         'running'],
@@ -1768,17 +1560,13 @@
                          'additional_declarations': [   '\t\t'
                                                         'pipe_mapping_enable_task_STATUS '
                                                         ': '
-                                                        'pipe_mapping_enable_task_STATUS_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'pipe_mapping_enable_task_STATUS_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'status': {   'name': 'pipe_mapping_enable_task_STATUS_module',
                                                                  'type': 'status',
-                                                                 'args': [   'variables',
-                                                                             'variable_exists',
-                                                                             'node_names',
-                                                                             'variable_names'],
+                                                                 'args': [   'blackboard',
+                                                                             'node_names'],
                                                                  'possible_values': [   'success',
                                                                                         'failure',
                                                                                         'running'],
@@ -1825,17 +1613,13 @@
                          'additional_declarations': [   '\t\t'
                                                         'is_waypoint_requested_CHECK_bb_mission_dot_data '
                                                         ': '
-                                                        'is_waypoint_requested_CHECK_bb_mission_dot_data_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'is_waypoint_requested_CHECK_bb_mission_dot_data_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'check': {   'name': 'is_waypoint_requested_CHECK_bb_mission_dot_data_module',
                                                                 'type': 'check',
-                                                                'args': [   'variables',
-                                                                            'variable_exists',
-                                                                            'node_names',
-                                                                            'variable_names'],
+                                                                'args': [   'blackboard',
+                                                                            'node_names'],
                                                                 'use_next': False,
                                                                 'left_hand_side': None,
                                                                 'operator': '=',
@@ -1881,17 +1665,13 @@
                          'additional_declarations': [   '\t\t'
                                                         'check_waypoints_completed_CHECK_bb_waypoints_completed_dot_data '
                                                         ': '
-                                                        'check_waypoints_completed_CHECK_bb_waypoints_completed_dot_data_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'check_waypoints_completed_CHECK_bb_waypoints_completed_dot_data_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'check': {   'name': 'check_waypoints_completed_CHECK_bb_waypoints_completed_dot_data_module',
                                                                 'type': 'check',
-                                                                'args': [   'variables',
-                                                                            'variable_exists',
-                                                                            'node_names',
-                                                                            'variable_names'],
+                                                                'args': [   'blackboard',
+                                                                            'node_names'],
                                                                 'use_next': False,
                                                                 'left_hand_side': None,
                                                                 'operator': '=',
@@ -1916,17 +1696,13 @@
                          'additional_definitions': [],
                          'additional_declarations': [   '\t\t'
                                                         'next_mission_STATUS : '
-                                                        'next_mission_STATUS_module(blackboard.variables, '
-                                                        'blackboard.variable_exists, '
-                                                        'node_names, '
-                                                        'variable_names);\n'],
+                                                        'next_mission_STATUS_module(blackboard, '
+                                                        'node_names);\n'],
                          'additional_initializations': [],
                          'additional_modules': {   'status': {   'name': 'next_mission_STATUS_module',
                                                                  'type': 'status',
-                                                                 'args': [   'variables',
-                                                                             'variable_exists',
-                                                                             'node_names',
-                                                                             'variable_names'],
+                                                                 'args': [   'blackboard',
+                                                                             'node_names'],
                                                                  'possible_values': [   'success',
                                                                                         'failure',
                                                                                         'running'],
@@ -1943,17 +1719,13 @@
                           'additional_declarations': [   '\t\t'
                                                          'loiter_task2_STATUS '
                                                          ': '
-                                                         'loiter_task2_STATUS_module(blackboard.variables, '
-                                                         'blackboard.variable_exists, '
-                                                         'node_names, '
-                                                         'variable_names);\n'],
+                                                         'loiter_task2_STATUS_module(blackboard, '
+                                                         'node_names);\n'],
                           'additional_initializations': [],
                           'additional_modules': {   'status': {   'name': 'loiter_task2_STATUS_module',
                                                                   'type': 'status',
-                                                                  'args': [   'variables',
-                                                                              'variable_exists',
-                                                                              'node_names',
-                                                                              'variable_names'],
+                                                                  'args': [   'blackboard',
+                                                                              'node_names'],
                                                                   'possible_values': [   'success',
                                                                                          'failure',
                                                                                          'running'],
@@ -1970,17 +1742,13 @@
                           'additional_declarations': [   '\t\t'
                                                          'waypoint_task_STATUS '
                                                          ': '
-                                                         'waypoint_task_STATUS_module(blackboard.variables, '
-                                                         'blackboard.variable_exists, '
-                                                         'node_names, '
-                                                         'variable_names);\n'],
+                                                         'waypoint_task_STATUS_module(blackboard, '
+                                                         'node_names);\n'],
                           'additional_initializations': [],
                           'additional_modules': {   'status': {   'name': 'waypoint_task_STATUS_module',
                                                                   'type': 'status',
-                                                                  'args': [   'variables',
-                                                                              'variable_exists',
-                                                                              'node_names',
-                                                                              'variable_names'],
+                                                                  'args': [   'blackboard',
+                                                                              'node_names'],
                                                                   'possible_values': [   'success',
                                                                                          'failure',
                                                                                          'running'],
@@ -1996,17 +1764,13 @@
                           'additional_definitions': [],
                           'additional_declarations': [   '\t\t'
                                                          'loiter_task_STATUS : '
-                                                         'loiter_task_STATUS_module(blackboard.variables, '
-                                                         'blackboard.variable_exists, '
-                                                         'node_names, '
-                                                         'variable_names);\n'],
+                                                         'loiter_task_STATUS_module(blackboard, '
+                                                         'node_names);\n'],
                           'additional_initializations': [],
                           'additional_modules': {   'status': {   'name': 'loiter_task_STATUS_module',
                                                                   'type': 'status',
-                                                                  'args': [   'variables',
-                                                                              'variable_exists',
-                                                                              'node_names',
-                                                                              'variable_names'],
+                                                                  'args': [   'blackboard',
+                                                                              'node_names'],
                                                                   'possible_values': [   'success',
                                                                                          'failure',
                                                                                          'running'],

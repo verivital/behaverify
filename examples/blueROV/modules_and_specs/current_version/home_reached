@@ -1,0 +1,5 @@
+LTLSPEC G( ((next(blackboard.variables[variable_names.bb_home_reached]) = 1) & (home2bb.active | home2bb1.active)) -> (surface_task3.active));
+--this one is true, but only for battery_warning
+
+LTLSPEC G( ((next(blackboard.variables[variable_names.bb_home_reached]) = 1) & (home2bb.active | home2bb1.active)) -> (surface_task.active | surface_task1.active | surface_task2.active | surface_task3.active | surface_task4.active));
+--this one is false, because home_reached is set after the check.
