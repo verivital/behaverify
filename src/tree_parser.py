@@ -47,6 +47,8 @@ idea: add option to 'stage' variables for variables that are updated more than o
 variables : a map (dictionary) from variable name to information about the variable
  'variable_id' : the id (int) associated with the variable. used for ordering the blackboard
  'variable_name' : the name of the variable (identical to the key)
+ 'mode' : 'VAR', 'FROZENVAR', or 'DEFINE'. default 'VAR'
+ 'custom_value_range' : a string indicating a custom range of values. Default: None
  'min_value' : the minimum value (int) the variable can be. default 0
  'max_value' : the maximum value (int) the variable can be. default 1
  'init_value' : the value used at the very start. default None
@@ -134,6 +136,9 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                         variables[variable_name] = {
                             'variable_id' : var_num,
                             'variable_name' : variable_name,
+                            'non-variable' : False,
+                            'mode' : 'VAR',
+                            'custom_value_range' : None,
                             'min_value' : 0,
                             'max_value' : 1,
                             'init_value' : None,
@@ -162,6 +167,9 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                 variables[variable_name] = {
                     'variable_id' : var_num,
                     'variable_name' : variable_name,
+                    'non-variable' : False,
+                    'mode' : 'VAR',
+                    'custom_value_range' : None,
                     'min_value' : 0,
                     'max_value' : 1,
                     'init_value' : None,
@@ -461,6 +469,9 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             variables[variable_name] = {
                 'variable_id' : var_num,
                 'variable_name' : variable_name,
+                'non-variable' : False,
+                'mode' : 'VAR',
+                'custom_value_range' : None,
                 'min_value' : 0,
                 'max_value' : 1,
                 'init_value' : None,
@@ -499,6 +510,9 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             variables[variable_name] = {
                 'variable_id' : var_num,
                 'variable_name' : variable_name,
+                'non-variable' : False,
+                'mode' : 'VAR',
+                'custom_value_range' : None,
                 'min_value' : 0,
                 'max_value' : 1,
                 'init_value' : None,
@@ -575,6 +589,9 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             variables[variable_name] = {
                 'variable_id' : var_num,
                 'variable_name' : variable_name,
+                'non-variable' : False,
+                'mode' : 'VAR',
+                'custom_value_range' : None,
                 'min_value' : 0,
                 'max_value' : 1,
                 'init_value' : None,
@@ -626,6 +643,9 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             variables[variable_name] = {
                 'variable_id' : var_num,
                 'variable_name' : variable_name,
+                'non-variable' : False,
+                'mode' : 'VAR',
+                'custom_value_range' : None,
                 'min_value' : 0,
                 'max_value' : 1,
                 'init_value' : None,
@@ -665,6 +685,9 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             variables[variable_name] = {
                 'variable_id' : var_num,
                 'variable_name' : variable_name,
+                'non-variable' : False,
+                'mode' : 'VAR',
+                'custom_value_range' : None,
                 'min_value' : 0,
                 'max_value' : 1,
                 'init_value' : None,
@@ -703,6 +726,9 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             variables[variable_name] = {
                 'variable_id' : var_num,
                 'variable_name' : variable_name,
+                'non-variable' : False,
+                'mode' : 'VAR',
+                'custom_value_range' : None,
                 'min_value' : 0,
                 'max_value' : 1,
                 'init_value' : None,
@@ -893,7 +919,29 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'additional_initializations' : [],
             'additional_modules' : {}
         }
-        
+    # else:
+    #     nodes[this_id] = {
+    #         'name' : node_name,
+    #         'parent_id' : parent_id,
+    #         'children' : [],
+    #         'category' : 'leaf',
+    #         'type' : 'set_blackboard_variables',
+    #         'additional_arguments' : [node_name + "_STATUS"],
+    #         'additional_definitions' : [],
+    #         'additional_declarations' : ['\t\t' + node_name + '_STATUS : ' + node_name + '_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);' + os.linesep],
+    #         'additional_initializations' : [],
+    #         'additional_modules' : {
+    #             'status' : {
+    #                 'name' : node_name + '_STATUS_module',
+    #                 'type' : 'status',
+    #                 'args' : ['variables', 'variable_exists', 'node_names', 'variable_names'],
+    #                 'possible_values' : ['success', 'failure', 'running'],
+    #                 'initial_value' : None,
+    #                 'current_value' : None,
+    #                 'next_value' : None
+    #             }
+    #         }
+    #     }
     else:#currently defaulting to default. will rework this later probably
         nodes[this_id] = {
             'name' : node_name,

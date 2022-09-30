@@ -23,7 +23,7 @@ def create_stages(variable, variables, node_name_to_id):
         new_access = set()
         for access_node_name in variables[variable_name]['access']:
             access_node_id = node_name_to_id[access_node_name]
-            if stage_start <= access_node_id and access_node_id < stage_end:
+            if stage_start <= access_node_id and access_node_id <= stage_end:
                 new_access.add(access_node_name)
         variables[variable_name]['access'] = new_access
         variables[variable_name]['next_stage'] = None
@@ -32,9 +32,11 @@ def create_stages(variable, variables, node_name_to_id):
         
         prev_stage_name = variable_name
     new_access = set()
+    stage_start = 0
+    stage_end = variable['stages'][0]
     for access_node_name in variable['access']:
         access_node_id = node_name_to_id[access_node_name]
-        if stage_start <= access_node_id and access_node_id < stage_end:
+        if stage_start <= access_node_id and access_node_id <= stage_end:
             new_access.add(access_node_name)
     variable['access'] = new_access
     variable['prev_stage'] = None
@@ -122,9 +124,23 @@ def arg_modification(args, nodes, variables, node_name_to_id):
                     node['additional_modules'][module_sig]['use_next'] = True
         if args.use_current_checks:
             if node['type'] == 'check_blackboard_variable_value':
-                for module in node['additional_modules']:
+                for module_sig in node['additional_modules']:
                     node['additional_modules'][module_sig]['use_next'] = False
+        if args.best_guess_checks:
+            best_guess(node, node_id, variables)
 
+def best_guess(node, node_id, variables):
+    if node['type'] == 'check_blackboard_variable_value':
+        for module_sig in node['additional_modules']:
+            module = node['additional_modules'][module_sig]
+            variable = variables[module['variable_name']]
+            try:
+                if node_id < variable['stages'][0]:
+                    node['additional_modules'][module_sig]['use_next'] = False
+                else:
+                    node['additional_modules'][module_sig]['use_next'] = True
+            except:
+                node['additional_modules'][module_sig]['use_next'] = False
 def main():
 
     arg_parser = argparse.ArgumentParser()
@@ -142,6 +158,7 @@ def main():
     arg_parser.add_argument('--force_sequence_memoryless', action = 'store_true')
     arg_parser.add_argument('--use_next_checks', action = 'store_true')
     arg_parser.add_argument('--use_current_checks', action = 'store_true')
+    arg_parser.add_argument('--best_guess_checks', action = 'store_true')
     
     
     
@@ -177,7 +194,7 @@ def main():
         node_name_to_id[nodes[node_id]['name']] = node_id
 
     
-    if args.force_parallel_synch or args.force_parallel_unsynch or args.force_selector_memory or args.force_selector_memoryless or args.force_sequence_memory or args.force_sequence_memoryless or args.min_value or args.max_value or args.init_value or args.no_init_value or args.always_exist or args.sometimes_exist or args.init_exist or args.no_init_exist or args.next_exist or args.no_next_exist or args.variables_auto_stay or args.variables_auto_change or args.use_stages or args.no_stages :
+    if args.force_parallel_synch or args.force_parallel_unsynch or args.force_selector_memory or args.force_selector_memoryless or args.force_sequence_memory or args.force_sequence_memoryless or args.min_value or args.max_value or args.init_value or args.no_init_value or args.always_exist or args.sometimes_exist or args.init_exist or args.no_init_exist or args.next_exist or args.no_next_exist or args.variables_auto_stay or args.variables_auto_change or args.use_stages or args.no_stages or args.best_guess_checks :
         arg_modification(args, nodes, variables, node_name_to_id)
 
 
@@ -260,6 +277,7 @@ def main():
     arg_parser.add_argument('--force_sequence_memoryless', action = 'store_true')
     arg_parser.add_argument('--use_next_checks', action = 'store_true')
     arg_parser.add_argument('--use_current_checks', action = 'store_true')
+    arg_parser.add_argument('--best_guess_checks', action = 'store_true')
     
     arg_parser.add_argument('--min_value', default = None)
     arg_parser.add_argument('--max_value', default = None)
@@ -292,29 +310,59 @@ def main():
                         delete_stages(variable, variables)
                         deletions = True
                 except KeyError:
-                    instructions = modification['instructions']
-                    for key_to_mod in instructions:
-                        if key_to_mod.strip() == "use_stages":
-                                if instructions[key_to_mod.strip()]:
-                                    variable = variables[modification['name']]
-                                    variable['use_stages'] = True
-                                    try:
-                                        if variable['next_stage'] in variables:
-                                            continue
-                                    except:
-                                        pass
-                                    create_stages(variable, variables, node_name_to_id)
+                    try:
+                        if modification['create']:
+                            #print('created variable: ' + modification['name'])
+                            #print('------------------------------------------------------------------------------------------------')
+                            variables[modification['name']] = {
+                                'variable_id' : -1,
+                                'variable_name' : modification['name'],
+                                'non-variable' : False,
+                                'mode' : 'VAR',
+                                'custom_value_range' : None,
+                                'min_value' : 0,
+                                'max_value' : 1,
+                                'init_value' : None,
+                                'always_exist' : True,
+                                'init_exist' : True,
+                                'auto_change' : False,
+                                'next_value' : None,
+                                'next_exist' : {},
+                                'access' : {},
+                                'use_stages' : False,
+                                'stages' : []
+                            }
+                    except KeyError:
+                        pass
+                    finally:
+                        #print('modded variable: ' + modification['name'])
+                        try:
+                            instructions = modification['instructions']
+                            for key_to_mod in instructions:
+                                if key_to_mod.strip() == "use_stages":
+                                        if instructions[key_to_mod.strip()]:
+                                            variable = variables[modification['name']]
+                                            variable['use_stages'] = True
+                                            try:
+                                                if variable['next_stage'] in variables:
+                                                    continue
+                                            except:
+                                                pass
+                                            create_stages(variable, variables, node_name_to_id)
+                                        else:
+                                            variable = variables[modification['name']]
+                                            variable['use_stages'] = False
+                                            delete_stages(variable, variables)
+                                elif key_to_mod.strip() in variables[modification['name']]:
+                                    variables[modification['name']][key_to_mod.strip()] = instructions[key_to_mod.strip()]
                                 else:
-                                    variable = variables[modification['name']]
-                                    variable['use_stages'] = False
-                                    delete_stages(variable, variables)
-                        elif key_to_mod.strip() in variables[modification['name']]:
-                            variables[modification['name']][key_to_mod.strip()] = instructions[key_to_mod.strip()]
-                        else:
-                            print("unknown modification key while trying to modify variables: " + str(key_to_mod))
+                                    print("unknown modification key while trying to modify variables. Variable: " + modification['name'] + ". Key: " + str(key_to_mod))
+                        except KeyError:
+                            pass
             elif modification['target'].strip().lower() == 'node':
                 instructions = modification['instructions']
                 for key_to_mod in instructions:
+                    #TODO-add best guess here, and also fix this.
                     key_to_mod_list = key_to_mod.split('::')
                     to_modify = nodes[node_name_to_id[modification['name']]]
                     final_key = key_to_mod_list.pop().strip()
@@ -328,8 +376,17 @@ def main():
 
     count = 0
     for variable_name in variables:
-        variables[variable_name]['variable_id'] = count
-        count = count + 1
+        if variables[variable_name]['non-variable']:
+            variables[variable_name]['variable_id'] = -1
+        else:
+            variables[variable_name]['variable_id'] = count
+            count = count + 1
+        if variables[variable_name]['use_stages']:
+            if variables[variable_name]['next_stage']:
+                variables[variables[variable_name]['next_stage']]['min_value'] = variables[variable_name]['min_value']
+                variables[variables[variable_name]['next_stage']]['max_value'] = variables[variable_name]['max_value']
+                variables[variables[variable_name]['next_stage']]['init_value'] = variables[variable_name]['init_value']
+                variables[variables[variable_name]['next_stage']]['custom_value_range'] = variables[variable_name]['custom_value_range']
 
     if args.output_file:
         with open(args.output_file, 'w') as f:

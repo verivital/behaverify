@@ -6,19 +6,17 @@ import os
 
 def create_names_module(nodes, variables):
     
-    if variables:
-        return_string = ("MODULE define_variables" + os.linesep
-                          + "\tDEFINE" + os.linesep)
-        for variable_name in variables:
-            variable = variables[variable_name]
-            return_string += ("\t\t" + variable_name + " := " + str(variable['variable_id']) + ";" + os.linesep)
-    else:
-        return_string = ""
+
+    return_string = ("MODULE define_variables" + os.linesep
+                     + "\tDEFINE" + os.linesep)
+    for variable_name in variables:
+        variable = variables[variable_name]
+        return_string += ("\t\t" + variable_name + " := " + str(variable['variable_id']) + ";" + os.linesep)
     return_string += ("MODULE define_nodes" + os.linesep
                       + "\tDEFINE" + os.linesep)
     for i in range(len(nodes)):
         return_string += ("\t\t" + nodes[i]['name'] + " := " + str(i) + ";" + os.linesep)
-                          
+    return_string += os.linesep                      
     return return_string
 
 def create_blackboard(nodes, variables):
@@ -29,59 +27,125 @@ def create_blackboard(nodes, variables):
     return_string = ("MODULE blackboard_module(node_names, variable_names, statuses)" + os.linesep
                       + "\tCONSTANTS" + os.linesep
                       + "\t\tsuccess, failure, running, invalid;" + os.linesep)
-    if variables:
-        return_string += "\tDEFINE" + os.linesep
-        var_array_string = ("\t\tvariables := ")
-        var_exist_string = ("\t\tvariable_exists := ")
-        exist_define = ""
-        decl_string = ("\tVAR" + os.linesep)
-        assign_string = ("\tASSIGN" + os.linesep)
+    return_string += "\tDEFINE" + os.linesep
+    var_array_string = ("\t\tvariables := ")
+    var_exist_string = ("\t\tvariable_exists := ")
+    exist_define = ""
+    frozen_decl_string = "\tFROZENVAR" + os.linesep
+    decl_string = ("\tVAR" + os.linesep)
+    assign_string = ("\tASSIGN" + os.linesep)
 
-        var_array = [''] * len(variables)
-        var_exist_array = [''] * len(variables)
-        
-        for variable_name in variables:
-            variable = variables[variable_name]
+    var_array = [''] * len(variables)
+    var_exist_array = [''] * len(variables)
+
+    for variable_name in variables:
+        variable = variables[variable_name]
+        if not variable['non-variable']:
             var_array[variable['variable_id']] = variable_name
             var_exist_array[variable['variable_id']] = variable_name + "_exists"
+        else:
+            var_array.pop()
+            var_exist_array.pop()
+        if variable['mode'].strip() == 'DEFINE':
+            if variable['init_value']:
+                exist_define += ("\t\t" + variable_name + " := " + variable['init_value'] + ";" + os.linesep)
+            else:
+                exist_define += ("\t\t" + variable_name + " := "  + os.linesep
+                                 + "\t\t\tcase" + os.linesep
+                                 )
+                for condition_pair in variable['next_value']:
+                    exist_define += "\t\t\t\t" + condition_pair[0] + " : " + condition_pair[1] + ";" + os.linesep
+                    pass
+                exist_define += ("\t\t\tesac;" + os.linesep)
+            exist_define += "\t\t" + variable_name + "_exists := TRUE;" + os.linesep
+                                 
                 
-            if variable['min_value'] < variable['max_value']:
-                min_val = variable['min_value']
-                max_val = variable['max_value']
+        elif variable['mode'].strip() == 'FROZENVAR':
+                try:
+                    min_val = int(variable['min_value'])
+                except:
+                    min_val = 0
+                try:
+                    max_val = int(variable['max_value'])
+                except:
+                    max_val = 1
+                if max_val <= min_val:
+                    max_val = min_val + 1
                 poss_values="{"
                 for i in range(min_val, max_val+1):
                     poss_values = poss_values + str(i) + ", "
                 poss_values = poss_values[0:-2] + "}"
-                decl_string += ("\t\t" + variable_name + " : " + str(variable['min_value']) + ".." + str(variable['max_value']) + ";" + os.linesep)
+                if variable['custom_value_range']:
+                    frozen_decl_string += ("\t\t" + variable_name + " : " + variable['custom_value_range'] + ";" + os.linesep)
+                else:
+                    frozen_decl_string += ("\t\t" + variable_name + " : " + str(min_val) + ".." + str(max_val) + ";" + os.linesep)
+
                 if not (variable['init_value'] is None):
                     assign_string += ("\t\tinit(" + variable_name + ") := " + str(variable['init_value']) +";" + os.linesep)
+                exist_define += "\t\t" + variable_name + "_exists := TRUE;" + os.linesep
+        else:
+            if variable['use_stages']:
+                if not variable['prev_stage']:
+                    exist_define += ("\t\t" + variable_name + " := " + variable['last_stage'] + ";" + os.linesep
+                                     + "\t\t" + variable_name + "_exists := " + variable['last_stage'] + "_exists;" + os.linesep
+                                     )
+                    continue
+            try:
+                min_val = int(variable['min_value'])
+            except:
+                min_val = 0
+            try:
+                max_val = int(variable['max_value'])
+            except:
+                max_val = 1
+            if max_val <= min_val:
+                max_val = min_val + 1
+            poss_values="{"
+            for i in range(min_val, max_val+1):
+                poss_values = poss_values + str(i) + ", "
+            poss_values = poss_values[0:-2] + "}"
+            if variable['custom_value_range']:
+                decl_string += ("\t\t" + variable_name + " : " + variable['custom_value_range'] + ";" + os.linesep)
+            else:
+                decl_string += ("\t\t" + variable_name + " : " + str(min_val) + ".." + str(max_val) + ";" + os.linesep)
+
+            if variable['use_stages']:
+                if variable['prev_stage']:
+                    if variables[variable['prev_stage']]['prev_stage']:
+                        assign_string += ("\t\tinit(" + variable_name + ") := " + variable['prev_stage'] + ";" + os.linesep)
+                    elif variables[variable['prev_stage']]['init_value']:
+                        assign_string += ("\t\tinit(" + variable_name + ") := " + str(variables[variable['prev_stage']]['init_value']) +";" + os.linesep)
+            elif not (variable['init_value'] is None):
+                assign_string += ("\t\tinit(" + variable_name + ") := " + str(variable['init_value']) +";" + os.linesep)
                 
-                assign_this = False
-                assign_string += ("\t\tnext(" + variable_name + ") := " + os.linesep
-                                   + "\t\t\tcase" + os.linesep)
-                if variable['next_value'] and len(variable['next_value']) > 0:
-                    for condition_pair in variable['next_value']:
-                        assign_string += "\t\t\t\t" + str(condition_pair[0]) + " : " + str(condition_pair[1]) + ";" + os.linesep
-                if variable['auto_change'] == False:
-                    pass
-                else:
-                    for node_name in variable['access']:
-                        assign_string += "\t\t\tstatuses[node_names." + node_name + "] in {success, failure, running} : " + poss_values + ';' + os.linesep
-                if variable['use_stages']:
-                    if variable['prev_stage']:
+            assign_string += ("\t\tnext(" + variable_name + ") := " + os.linesep
+                               + "\t\t\tcase" + os.linesep)
+            if variable['next_value'] and len(variable['next_value']) > 0:
+                for condition_pair in variable['next_value']:
+                    assign_string += "\t\t\t\t" + str(condition_pair[0]) + " : " + str(condition_pair[1]) + ";" + os.linesep
+            if variable['auto_change'] == False or variable['custom_value_range']:
+                pass
+            else:
+                for node_name in variable['access']:
+                    assign_string += "\t\t\tstatuses[node_names." + node_name + "] in {success, failure, running} : " + poss_values + ';' + os.linesep
+            if variable['use_stages']:
+                if variable['prev_stage']:
+                    if variables[variable['prev_stage']]['prev_stage']:
                         assign_string += ("\t\t\t\tTRUE : next(" + variable['prev_stage'] + ");" + os.linesep
                                           + "\t\t\tesac;" + os.linesep
                                           )
                     else:
-                        assign_string += ("\t\t\t\tTRUE : " + variable['last_stage'] + ";" + os.linesep
-                                          + "\t\t\tesac;" + os.linesep
-                                          )
+                        assign_string += ("\t\t\t\tTRUE : " + variable_name + ";" + os.linesep
+                                         + "\t\t\tesac;" + os.linesep
+                                         )
                 else:
-                    assign_string += ("\t\t\t\tTRUE : " + variable_name + ";" + os.linesep
+                    assign_string += ("\t\t\t\tTRUE : " + variable['last_stage'] + ";" + os.linesep
                                       + "\t\t\tesac;" + os.linesep
                                       )
             else:
-                exist_define += "\t\t" + variable_name + " := " + str(variable['min_value']) + ';' + os.linesep
+                assign_string += ("\t\t\t\tTRUE : " + variable_name + ";" + os.linesep
+                                  + "\t\t\tesac;" + os.linesep
+                                  )
             if variable['always_exist']:
                 exist_define += "\t\t" + variable_name + "_exists := TRUE;" + os.linesep
             else:
@@ -92,18 +156,19 @@ def create_blackboard(nodes, variables):
                                 )
                 for node_name in variable['next_exist']:
                     if variable['next_exist'][node_name]:
-                        assign_this = True
                         for condition_pair in variable['next_exist'][node_name]:
-                            assign_string2 += "\t\t\t\t" + str(condition[0]) + ' : ' + str(condition[1]) + ';' + os.linesep
+                            assign_string += "\t\t\t\t" + str(condition[0]) + ' : ' + str(condition[1]) + ';' + os.linesep
                 assign_string += ("\t\t\t\tTRUE : " + variable_name + "_exists;" + os.linesep
                                 + "\t\t\tesac;" + os.linesep
                                 )
-        return_string += (var_array_string + str(var_array).replace("'", "") + ";" + os.linesep
-                          + var_exist_string + str(var_exist_array).replace("'", "") + ";" + os.linesep
-                          + exist_define
-                          + decl_string
-                          + assign_string
-        )
+    return_string += (var_array_string + str(var_array).replace("'", "") + ";" + os.linesep
+                      + var_exist_string + str(var_exist_array).replace("'", "") + ";" + os.linesep
+                      + exist_define
+                      + frozen_decl_string
+                      + decl_string
+                      + assign_string
+                      + os.linesep
+    )
         
                           
     return return_string

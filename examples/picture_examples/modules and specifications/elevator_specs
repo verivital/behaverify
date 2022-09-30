@@ -1,0 +1,9 @@
+LTLSPEC G(ACTION_close_doors.status = running -> GUARD_doors_are_closed.status = failure);
+
+LTLSPEC G(ACTION_move.status = running -> GUARD_doors_are_closed.status = success);
+LTLSPEC G(ACTION_move.status = running -> GUARD_elevator_is_called.status = success);
+
+LTLSPEC G(ACTION_open_doors.status = running -> GUARD_doors_are_closed.status = invalid);
+LTLSPEC G(ACTION_open_doors.status = running -> GUARD_elevator_is_called.status = failure);
+LTLSPEC G(ACTION_open_doors.status = running -> GUARD_at_rest_at_floor.status = success);
+LTLSPEC G(ACTION_open_doors.status = running -> GUARD_doors_are_closed1.status = success);
