@@ -6,9 +6,13 @@ MODULE main
 		resume_from_node_0 := -3;
 		selector.active := TRUE;
 	VAR
+		variable_names : define_variables;
+		node_names : define_nodes;
+		blackboard : blackboard_module(node_names, variable_names, statuses);
 		selector : composite_selector_without_memory_2(child1, child2);
 		child1 : leaf_default();
 		child2 : leaf_default();
+	ASSIGN
 MODULE composite_selector_without_memory_2(child_0, child_1)
 	CONSTANTS
 		success, failure, running, invalid;
@@ -30,5 +34,19 @@ MODULE leaf_default()
 		internal_status := input_status;
 	VAR
 		input_status : {success, running, failure};
+MODULE define_variables
+	DEFINE
+MODULE define_nodes
+	DEFINE
+		selector := 0;
+		child1 := 1;
+		child2 := 2;
 
+MODULE blackboard_module(node_names, variable_names, statuses)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+	FROZENVAR
+	VAR
+	ASSIGN
 
