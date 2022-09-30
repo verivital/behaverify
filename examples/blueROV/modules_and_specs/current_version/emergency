@@ -1,0 +1,6 @@
+LTLSPEC G( ((next(blackboard.variables[variable_names.emergency_stop_warning]) = 1) & (fls_warning2bb.active | rtreach2bb.active | mission_server.active)) -> (surface_task2.active));
+--this one is true, but only for battery_warning
+
+LTLSPEC G( ((next(blackboard.variables[variable_names.emergency_stop_warning]) = 1) & (fls_warning2bb.active | rtreach2bb.active | mission_server.active)) -> (surface_task.active | surface_task1.active | surface_task2.active | surface_task3.active | surface_task4.active));
+--this one should be true.
+

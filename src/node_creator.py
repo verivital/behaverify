@@ -6,12 +6,12 @@ import os
 
 def create_names_module(nodes, variables):
     
-
-    return_string = ("MODULE define_variables" + os.linesep
-                     + "\tDEFINE" + os.linesep)
-    for variable_name in variables:
-        variable = variables[variable_name]
-        return_string += ("\t\t" + variable_name + " := " + str(variable['variable_id']) + ";" + os.linesep)
+    return_string = ""
+    # return_string += ("MODULE define_variables" + os.linesep
+    #                  + "\tDEFINE" + os.linesep)
+    # for variable_name in variables:
+    #     variable = variables[variable_name]
+    #     return_string += ("\t\t" + variable_name + " := " + str(variable['variable_id']) + ";" + os.linesep)
     return_string += ("MODULE define_nodes" + os.linesep
                       + "\tDEFINE" + os.linesep)
     for i in range(len(nodes)):
@@ -24,7 +24,10 @@ def create_blackboard(nodes, variables):
     for node_id in nodes:
         node_name_to_id[nodes[node_id]['name']] = node_id
     
-    return_string = ("MODULE blackboard_module(node_names, variable_names, statuses)" + os.linesep
+    # return_string = ("MODULE blackboard_module(node_names, variable_names, statuses)" + os.linesep
+    #                   + "\tCONSTANTS" + os.linesep
+    #                   + "\t\tsuccess, failure, running, invalid;" + os.linesep)
+    return_string = ("MODULE blackboard_module(node_names, statuses)" + os.linesep
                       + "\tCONSTANTS" + os.linesep
                       + "\t\tsuccess, failure, running, invalid;" + os.linesep)
     return_string += "\tDEFINE" + os.linesep
@@ -35,17 +38,17 @@ def create_blackboard(nodes, variables):
     decl_string = ("\tVAR" + os.linesep)
     assign_string = ("\tASSIGN" + os.linesep)
 
-    var_array = [''] * len(variables)
-    var_exist_array = [''] * len(variables)
+    #var_array = [''] * len(variables)
+    #var_exist_array = [''] * len(variables)
 
     for variable_name in variables:
         variable = variables[variable_name]
-        if not variable['non-variable']:
-            var_array[variable['variable_id']] = variable_name
-            var_exist_array[variable['variable_id']] = variable_name + "_exists"
-        else:
-            var_array.pop()
-            var_exist_array.pop()
+        # if not variable['non-variable']:
+        #     var_array[variable['variable_id']] = variable_name
+        #     var_exist_array[variable['variable_id']] = variable_name + "_exists"
+        # else:
+        #     var_array.pop()
+        #     var_exist_array.pop()
         if variable['mode'].strip() == 'DEFINE':
             if variable['init_value']:
                 exist_define += ("\t\t" + variable_name + " := " + variable['init_value'] + ";" + os.linesep)
@@ -84,12 +87,17 @@ def create_blackboard(nodes, variables):
                     assign_string += ("\t\tinit(" + variable_name + ") := " + str(variable['init_value']) +";" + os.linesep)
                 exist_define += "\t\t" + variable_name + "_exists := TRUE;" + os.linesep
         else:
-            if variable['use_stages']:
-                if not variable['prev_stage']:
-                    exist_define += ("\t\t" + variable_name + " := " + variable['last_stage'] + ";" + os.linesep
-                                     + "\t\t" + variable_name + "_exists := " + variable['last_stage'] + "_exists;" + os.linesep
-                                     )
-                    continue
+            #the below section was wrong
+            #it replaced stage_0 with a macro, which is not right
+            
+            # if variable['use_stages']:
+            #     if not variable['prev_stage']:
+            #         exist_define += ("\t\t" + variable_name + " := " + variable['last_stage'] + ";" + os.linesep
+            #                          + "\t\t" + variable_name + "_exists := " + variable['last_stage'] + "_exists;" + os.linesep
+            #                          )
+            #         continue
+
+            
             try:
                 min_val = int(variable['min_value'])
             except:
@@ -161,26 +169,28 @@ def create_blackboard(nodes, variables):
                 assign_string += ("\t\t\t\tTRUE : " + variable_name + "_exists;" + os.linesep
                                 + "\t\t\tesac;" + os.linesep
                                 )
-
-    if len(var_array) == 0:
-        return_string += (exist_define
-                          + frozen_decl_string
-                          + decl_string
-                          + assign_string
-                          + os.linesep
-                          )
-    else:
-        return_string += (var_array_string + str(var_array).replace("'", "") + ";" + os.linesep
-                          + var_exist_string + str(var_exist_array).replace("'", "") + ";" + os.linesep
-                          + exist_define
-                          + frozen_decl_string
-                          + decl_string
-                          + assign_string
-                          + os.linesep
-                          )
-        
-        
-                          
+    # if len(var_array) == 0:
+    #     return_string += (exist_define
+    #                       + frozen_decl_string
+    #                       + decl_string
+    #                       + assign_string
+    #                       + os.linesep
+    #                       )
+    # else:
+    #     return_string += (var_array_string + str(var_array).replace("'", "") + ";" + os.linesep
+    #                       + var_exist_string + str(var_exist_array).replace("'", "") + ";" + os.linesep
+    #                       + exist_define
+    #                       + frozen_decl_string
+    #                       + decl_string
+    #                       + assign_string
+    #                       + os.linesep
+    #                       )
+    return_string += (exist_define
+                      + frozen_decl_string
+                      + decl_string
+                      + assign_string
+                      + os.linesep
+                      )    
     return return_string
 
 #-----------------------------------------------------------------
