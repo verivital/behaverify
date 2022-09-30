@@ -542,9 +542,10 @@ def main():
     var_string = (""
                   + "\tVAR" + os.linesep
     )       
-    var_string += "\t\tvariable_names : define_variables;" + os.linesep
+    #var_string += "\t\tvariable_names : define_variables;" + os.linesep
     var_string += "\t\tnode_names : define_nodes;" + os.linesep
-    var_string += "\t\tblackboard : blackboard_module(node_names, variable_names, statuses);" + os.linesep
+    #var_string += "\t\tblackboard : blackboard_module(node_names, variable_names, statuses);" + os.linesep
+    var_string += "\t\tblackboard : blackboard_module(node_names, statuses);" + os.linesep
     #------------------------------------------------------------------------------------------------------------------------
     init_string = "\tASSIGN" + os.linesep
     next_string = ""
@@ -713,24 +714,32 @@ def main():
                                     break
                                 stage = stage + 1
                             if stage == 0:
-                                check_module_string += ("variable_exists[variable_names." + module['variable_name'] + "]"
-                                                        + " & (variables[variable_names." + module['variable_name'] + "]" + module['operator'] + module['right_hand_side'] + ');' + os.linesep
+                                # check_module_string += ("variable_exists[variable_names." + module['variable_name'] + "]"
+                                #                         + " & (variables[variable_names." + module['variable_name'] + "]" + module['operator'] + module['right_hand_side'] + ');' + os.linesep
+                                #                         )
+                                check_module_string += ("blackboard." + module['variable_name'] + "_exists"
+                                                        + " & (blackboard." + module['variable_name'] + module['operator'] + module['right_hand_side'] + ');' + os.linesep
                                                         )
                             else:
                                 stage = str(stage)
-                                check_module_string += ("variable_exists[variable_names." + module['variable_name'] + "_stage_" + stage + "]"
-                                                        + " & (variables[variable_names." + module['variable_name'] + "_stage_" + stage + "]" + module['operator'] + module['right_hand_side'] + ');' + os.linesep
+                                # check_module_string += ("variable_exists[variable_names." + module['variable_name'] + "_stage_" + stage + "]"
+                                #                         + " & (variables[variable_names." + module['variable_name'] + "_stage_" + stage + "]" + module['operator'] + module['right_hand_side'] + ');' + os.linesep
+                                #                         )
+                                check_module_string += ("blackboard." + module['variable_name'] + "_stage_" + stage + "_exists"
+                                                        + " & (blackboard." + module['variable_name'] + "_stage_" + stage + module['operator'] + module['right_hand_side'] + ');' + os.linesep
                                                         )
                         else:
                             if module['use_next']:
                                 check_module_string += "next("
-                            check_module_string += "variable_exists[variable_names." + module['variable_name'] + "]"
+                            #check_module_string += "variable_exists[variable_names." + module['variable_name'] + "]"
+                            check_module_string += "blackboard." + module['variable_name'] + "_exists"
                             if module['use_next']:
                                 check_module_string += ")"
                             check_module_string += " & ("
                             if module['use_next']:
                                 check_module_string += 'next('
-                            check_module_string += "variables[variable_names." + module['variable_name'] + "]"
+                            #check_module_string += "variables[variable_names." + module['variable_name'] + "]"
+                            check_module_string += "blackboard." + module['variable_name']
                             if module['use_next']:
                                 check_module_string += ') '
                             check_module_string += module['operator'] + module['right_hand_side'] + ");" + os.linesep
