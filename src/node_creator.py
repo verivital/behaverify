@@ -161,14 +161,24 @@ def create_blackboard(nodes, variables):
                 assign_string += ("\t\t\t\tTRUE : " + variable_name + "_exists;" + os.linesep
                                 + "\t\t\tesac;" + os.linesep
                                 )
-    return_string += (var_array_string + str(var_array).replace("'", "") + ";" + os.linesep
-                      + var_exist_string + str(var_exist_array).replace("'", "") + ";" + os.linesep
-                      + exist_define
-                      + frozen_decl_string
-                      + decl_string
-                      + assign_string
-                      + os.linesep
-    )
+
+    if len(var_array) == 0:
+        return_string += (exist_define
+                          + frozen_decl_string
+                          + decl_string
+                          + assign_string
+                          + os.linesep
+                          )
+    else:
+        return_string += (var_array_string + str(var_array).replace("'", "") + ";" + os.linesep
+                          + var_exist_string + str(var_exist_array).replace("'", "") + ";" + os.linesep
+                          + exist_define
+                          + frozen_decl_string
+                          + decl_string
+                          + assign_string
+                          + os.linesep
+                          )
+        
         
                           
     return return_string
