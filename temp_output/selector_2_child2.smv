@@ -46,8 +46,6 @@ MODULE blackboard_module(node_names, variable_names, statuses)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
-		variables := [];
-		variable_exists := [];
 	FROZENVAR
 	VAR
 	ASSIGN
