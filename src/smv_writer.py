@@ -508,7 +508,7 @@ def main():
     arg_parser.add_argument('--output_file', default = None)
     arg_parser.add_argument('--blackboard_output_file', default = None)
     arg_parser.add_argument('--module_output_file', default = None)
-    arg_parser.add_argument('--overwrite', action = 'store_true')
+    #arg_parser.add_argument('--overwrite', action = 'store_true')
     args = arg_parser.parse_args()
 
 
@@ -618,15 +618,17 @@ def main():
         if args.blackboard_output_file is None:
             pass
         else:
-            if args.overwrite:
-                with open(args.blackboard_output_file, 'w') as f:
-                    f.write(blackboard_string)
-            else:
-                try:
-                    with open(args.blackboard_output_file, 'x') as f:
-                        f.write(blackboard_string)
-                except FileExistsError:
-                    print('The specified blackboard file already exists. To overwrite the file, rerun the command with --overwrite True')
+            with open(args.blackboard_output_file, 'w') as f:
+                f.write(blackboard_string)
+            # if args.overwrite:
+            #     with open(args.blackboard_output_file, 'w') as f:
+            #         f.write(blackboard_string)
+            # else:
+            #     try:
+            #         with open(args.blackboard_output_file, 'x') as f:
+            #             f.write(blackboard_string)
+            #     except FileExistsError:
+            #         print('The specified blackboard file already exists. To overwrite the file, rerun the command with --overwrite True')
     module_string = ''
     status_module_string = ''
     check_module_string = ''
@@ -752,27 +754,31 @@ def main():
         if args.module_output_file is None:
             pass
         else:
-            if args.overwrite:
-                with open(args.module_output_file, 'w') as f:
-                    f.write(module_string)
-            else:
-                try:
-                    with open(args.module_output_file, 'x') as f:
-                        f.write(module_string)
-                except FileExistsError:
-                    print('The specified module file already exists. To overwrite the file, rerun the command with --overwrite True')
+            with open(args.module_output_file, 'w') as f:
+                f.write(module_string)
+            # if args.overwrite:
+            #     with open(args.module_output_file, 'w') as f:
+            #         f.write(module_string)
+            # else:
+            #     try:
+            #         with open(args.module_output_file, 'x') as f:
+            #             f.write(module_string)
+            #     except FileExistsError:
+            #         print('The specified module file already exists. To overwrite the file, rerun the command with --overwrite True')
     if args.output_file is None:
         print(nuxmv_string)
     else:
-        if args.overwrite:
-            with open(args.output_file, 'w') as f:
-                f.write(nuxmv_string)
-        else:
-            try:
-                with open(args.output_file, 'x') as f:
-                    f.write(nuxmv_string)
-            except FileExistsError:
-                print('The specified output file already exists. To overwrite the file, rerun the command with --overwrite True')
+        with open(args.output_file, 'w') as f:
+            f.write(nuxmv_string)
+        # if args.overwrite:
+        #     with open(args.output_file, 'w') as f:
+        #         f.write(nuxmv_string)
+        # else:
+        #     try:
+        #         with open(args.output_file, 'x') as f:
+        #             f.write(nuxmv_string)
+        #     except FileExistsError:
+        #         print('The specified output file already exists. To overwrite the file, rerun the command with --overwrite True')
         
     
     
