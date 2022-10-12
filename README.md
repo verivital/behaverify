@@ -275,3 +275,45 @@ If this argument is provided, smv_writer.py will also write the additional modul
 
 
 # Instruction File Documentation
+
+The instruction file should be formatted as a list of dictionaries.
+
+## target
+
+Each dictionary needs to contain a 'target' key. There are three valid targets: 'global_flags', 'variable', and 'node'.
+
+### global_flags
+
+If 'target' maps to 'global_flags', then the only other entry in the dictionary should be 'instructions' which maps to a list of global flags to be applied. Most optional arguments (as described above) are accepted.
+
+### variable
+
+If 'target' maps to 'variable', then this dictionary is going to describe what variable is to be modified and how. The dictionary should have the following entries:
+
+#### name
+
+The name of the variable to be modified. This is a string.
+
+#### create (optional)
+
+This indicates that the variable needs to be created. Should map to True
+
+### delete (optional)
+
+This indicates that the variable needs to be deleted. Should map to True
+
+### instructions
+
+A dictionary of modifications to make.
+
+### node
+
+If 'target' maps to 'node', then this dictionary is going to describe what node is to be modified and how. This dictionary should have the following entries:
+
+#### name
+
+The name of the node to be modified
+
+#### instructions
+
+A dictionary of modifications to apply to the node.
