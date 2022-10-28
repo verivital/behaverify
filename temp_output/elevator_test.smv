@@ -1,0 +1,101 @@
+MODULE main
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		statuses := [SELECTOR_elevator_2.status, SEQUENCE_call.status, GUARD_elevator_is_called.status, SELECTOR_closed_doors.status, GUARD_doors_are_closed.status, ACTION_close_doors.status, ACTION_move.status, SEQUENCE_open_doors.status, GUARD_at_rest_at_floor.status, GUARD_doors_are_closed1.status, ACTION_open_doors.status];
+		resume_from_node_0 := -3;
+		SELECTOR_elevator_2.active := TRUE;
+		possible_Values := {success, running, failure};
+	VAR
+		node_names : define_nodes;
+		blackboard : blackboard_module(node_names, statuses);
+		SELECTOR_elevator_2 : composite_selector_without_memory_2(SEQUENCE_call, SEQUENCE_open_doors);
+		SEQUENCE_call : composite_sequence_without_memory_3(GUARD_elevator_is_called, SELECTOR_closed_doors, ACTION_move);
+		GUARD_elevator_is_called : leaf_default(possible_values);
+		SELECTOR_closed_doors : composite_selector_without_memory_2(GUARD_doors_are_closed, ACTION_close_doors);
+		GUARD_doors_are_closed : leaf_default(possible_values);
+		ACTION_close_doors : leaf_running();
+		ACTION_move : leaf_running();
+		SEQUENCE_open_doors : composite_sequence_without_memory_3(GUARD_at_rest_at_floor, GUARD_doors_are_closed1, ACTION_open_doors);
+		GUARD_at_rest_at_floor : leaf_default(possible_values);
+		GUARD_doors_are_closed1 : leaf_default(possible_values);
+		ACTION_open_doors : leaf_running();
+	ASSIGN
+LTLSPEC G(ACTION_close_doors.status = running -> GUARD_doors_are_closed.status = failure);
+
+LTLSPEC G(ACTION_move.status = running -> GUARD_doors_are_closed.status = success);
+LTLSPEC G(ACTION_move.status = running -> GUARD_elevator_is_called.status = success);
+
+LTLSPEC G(ACTION_open_doors.status = running -> GUARD_doors_are_closed.status = invalid);
+LTLSPEC G(ACTION_open_doors.status = running -> GUARD_elevator_is_called.status = failure);
+LTLSPEC G(ACTION_open_doors.status = running -> GUARD_at_rest_at_floor.status = success);
+LTLSPEC G(ACTION_open_doors.status = running -> GUARD_doors_are_closed1.status = success);
+
+MODULE composite_selector_without_memory_2(child_0, child_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				!(child_0.internal_status = failure) : child_0.internal_status;
+				!(child_1.internal_status = failure) : child_1.internal_status;
+				TRUE : failure;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = failure;
+MODULE composite_sequence_without_memory_3(child_0, child_1, child_2)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				!(child_0.internal_status = success) : child_0.internal_status;
+				!(child_1.internal_status = success) : child_1.internal_status;
+				!(child_2.internal_status = success) : child_2.internal_status;
+				TRUE : success;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = success;
+		child_2.active := child_1.status = success;
+MODULE leaf_default(possible_values)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := input_status;
+		--my_values := possible_values;
+		my_values := {success, running, failure};
+		meh := 2;
+	VAR
+		input_status : {success, running, failure};
+		bweh : 0.;
+MODULE leaf_running()
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := running;
+MODULE define_nodes
+	DEFINE
+		SELECTOR_elevator_2 := 0;
+		SEQUENCE_call := 1;
+		GUARD_elevator_is_called := 2;
+		SELECTOR_closed_doors := 3;
+		GUARD_doors_are_closed := 4;
+		ACTION_close_doors := 5;
+		ACTION_move := 6;
+		SEQUENCE_open_doors := 7;
+		GUARD_at_rest_at_floor := 8;
+		GUARD_doors_are_closed1 := 9;
+		ACTION_open_doors := 10;
+
+MODULE blackboard_module(node_names, statuses)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+	FROZENVAR
+	VAR
+	ASSIGN
+
