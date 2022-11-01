@@ -58,12 +58,12 @@ def main():
 
     while len(recursion_stack) > 0:
         node_id = recursion_stack.pop()
-        if 'smt' in nodes[node_id]:
+        if 'success_smt' in nodes[node_id]:
             continue
         first = True
         if node_id not in nodes_seen:
             for child_id in nodes[node_id]['children']:
-                if 'smt' in nodes[child_id]:
+                if 'success_smt' in nodes[child_id]:
                     continue
                 elif first:
                     recursion_stack.append(node_id)
@@ -107,6 +107,14 @@ def main():
                 node['success_smt'] = '(and ' + node['name'] + 'S (not ' + node['name'] + 'F))'
                 node['failure_smt'] = '(and ' + node['name'] + 'F (not ' + node['name'] + 'S))'
                 node['running_smt'] = '(and ' + node['name'] + 'S ' + node['name'] + 'F)'
+            if not node['return_arguments']['success']:
+                node['success_smt'] = 'false'
+            if not node['return_arguments']['running']:
+                node['running_smt'] = 'false'
+            if not node['return_arguments']['failure']:
+                node['failure_smt'] = 'false'
+            
+            
     nodes[0]['valid_smt'] = 'true'
     for node_id in nodes:
         node = nodes[node_id]
@@ -136,6 +144,16 @@ def main():
             smt_declarations += nodes[node_id]['smt_create']
         smt_assertions += '(assert (= ' + nodes[node_id]['valid_smt'] + ' (or ' + nodes[node_id]['success_smt'] + ' ' + nodes[node_id]['running_smt'] + ' ' + nodes[node_id]['failure_smt'] + ')))' + os.linesep
 
+    smt_specs = []
+    if args.specs_input_file:
+        with open(args.specs_input_file, 'r') as f:
+            specs = eval(f.read())
+            for spec in specs:
+                cur_spec = '(assert '
+                
+                if spec['type'] == 'and':
+                    cur_spec
+                pass
     smt_string = ('(set-option :print-success false)' + os.linesep
                   + '(set-logic QF_UF)' + os.linesep
                   + os.linesep
