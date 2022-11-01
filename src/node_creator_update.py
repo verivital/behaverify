@@ -212,11 +212,11 @@ def create_status_modules(statuses):
                       )
     if len(possibilties) == 1:
         status_module += ('\tDEFINE' + os.linesep
-                          + '\t\tinternal_status := ' + possibilities[0] + ';' + os.linesep
+                          + '\t\status := ' + possibilities[0] + ';' + os.linesep
                           )
     else:
         status_module += ('\tVAR' + os.linesep
-                          + '\t\tinternal_status : {' + str(possibilities)[1:-1] + '};' + os.linesep
+                          + '\t\tstatus : {' + str(possibilities)[1:-1] + '};' + os.linesep
                           )
     return status_module
 
@@ -734,11 +734,11 @@ def create_leaf_tick_counter(ignored_value = 0):
 
 def create_leaf_non_blocking(ignored_value = 0):
     (status_start, status_end) = common_string_leaf()
-    return_string = ("MODULE leaf_non_blocking()" + os.linesep
+    return_string = ("MODULE leaf_non_blocking(status_module)" + os.linesep
                      + status_start
-                     + "\t\tinternal_status := input_status;" + os.linesep
-                     + "\tVAR" + os.linesep
-                     + "\t\tinput_status : {success, failure};" + os.linesep
+                     + "\t\tinternal_status := status_module.status;" + os.linesep
+                     #+ "\tVAR" + os.linesep
+                     #+ "\t\tinput_status : {success, failure};" + os.linesep
                      #+ "\tASSIGN" + os.linesep
                      #+ "\t\tinit(input_status) := success;" + os.linesep
                      # + "\tCONSTANTS" + os.linesep
@@ -756,11 +756,11 @@ def create_leaf_non_blocking(ignored_value = 0):
 
 def create_leaf_timer(ignored_value = 0): 
     (status_start, status_end) = common_string_leaf()
-    return_string = ("MODULE leaf_timer()" + os.linesep
+    return_string = ("MODULE leaf_timer(status_module)" + os.linesep
                      + status_start
-                     + "\t\tinternal_status := input_status;" + os.linesep
-                     + "\tVAR" + os.linesep
-                     + "\t\tinput_status : {success, running};" + os.linesep
+                     + "\t\tinternal_status := status_module.status;" + os.linesep
+                     #+ "\tVAR" + os.linesep
+                     #+ "\t\tinput_status : {success, running};" + os.linesep
                      #+ "\tASSIGN" + os.linesep
                      #+ "\t\tinit(input_status) := success;" + os.linesep
                      # + "\tCONSTANTS" + os.linesep
@@ -779,11 +779,11 @@ def create_leaf_timer(ignored_value = 0):
 
 def create_leaf_default(ignored_value = 0):
     (status_start, status_end) = common_string_leaf()
-    return_string = ("MODULE leaf_default()" + os.linesep
+    return_string = ("MODULE leaf_default(status_module)" + os.linesep
                      + status_start
-                     + "\t\tinternal_status := input_status;" + os.linesep
-                     + "\tVAR" + os.linesep
-                     + "\t\tinput_status : {success, running, failure};" + os.linesep
+                     + "\t\tinternal_status := status_module.status;" + os.linesep
+                     #+ "\tVAR" + os.linesep
+                     #+ "\t\tinput_status : {success, running, failure};" + os.linesep
                      #+ "\tASSIGN" + os.linesep
                      #+ "\t\tinit(input_status) := success;" + os.linesep
                      # + "\tCONSTANTS" + os.linesep
