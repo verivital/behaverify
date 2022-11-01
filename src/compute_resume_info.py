@@ -63,6 +63,7 @@ def can_create_running(node):
         return True
     else:
         return True#without memory and parallel can, everything else covered above
+
 """
 used to create a map from node id to booleans, indicating if a node can return running. Process is done recursively from whichever node is passed.
 the true 'result' will be contained in running_map
@@ -74,25 +75,26 @@ def map_can_return_running(nodes, node_id, running_map):
     #print(running_map)
     node = nodes[node_id]
     if node['category'] == 'leaf':
+        return node['return_arguments']['running']
         #this needs to encompass all cases where a leaf node can return Running
-        if node['type'] == "success":
-            running_map[node_id] = False
-            return False
-        elif node['type'] == "failure":
-            running_map[node_id] = False
-            return False
-        elif node['type'] == "non_blocking":
-            running_map[node_id] = False
-            return False
-        elif node['type'] == "check_blackboard_variable_exists":
-            running_map[node_id] = False
-            return False
-        elif node['type'] == "check_blackboard_variable_value":
-            running_map[node_id] = False
-            return False
-        else:
-            running_map[node_id] = True
-            return True#currently being lazy, and just going to assume they can all return Running, even though this is not the case
+        # if node['type'] == "success":
+        #     running_map[node_id] = False
+        #     return False
+        # elif node['type'] == "failure":
+        #     running_map[node_id] = False
+        #     return False
+        # elif node['type'] == "non_blocking":
+        #     running_map[node_id] = False
+        #     return False
+        # elif node['type'] == "check_blackboard_variable_exists":
+        #     running_map[node_id] = False
+        #     return False
+        # elif node['type'] == "check_blackboard_variable_value":
+        #     running_map[node_id] = False
+        #     return False
+        # else:
+        #     running_map[node_id] = True
+        #     return True#currently being lazy, and just going to assume they can all return Running, even though this is not the case
     elif node['category'] == 'decorator':
         if node['type'] == 'X_is_Y':
             if node['additional_arguments'][0] == 'running':
@@ -119,7 +121,96 @@ def map_can_return_running(nodes, node_id, running_map):
                 return False
         running_map[node_id] = running
         return running
-        
+
+def refine_return_types(nodes, node_id):
+    node = nodes[node_id]
+    if node['category'] == 'leaf':
+        return
+    elif node['category'] == 'composite':
+        if 'selector' in node['type']:
+            can_return_success = False
+            can_return_failure = True
+            can_return_running = False
+            for child_id in node['children']:
+                refine_return_types(nodes, child_id)
+                can_return_success = can_return_success or nodes[child_id]['return_arguments']['success']
+                can_return_running = can_return_running or nodes[child_id]['return_arguments']['running']
+                can_return_failure = can_return_failure and nodes[child_id]['return_arguments']['failure']
+            node['return_arguments'] = {'success' : can_return_success, 'running' : can_return_running, 'failure' : can_return_failure}
+            return
+        elif 'sequence' in node['type']:
+            can_return_success = True
+            can_return_failure = False
+            can_return_running = False
+            for child_id in node['children']:
+                refine_return_types(nodes, child_id)
+                can_return_success = can_return_success and nodes[child_id]['return_arguments']['success']
+                can_return_running = can_return_running or nodes[child_id]['return_arguments']['running']
+                can_return_failure = can_return_failure or nodes[child_id]['return_arguments']['failure']
+            node['return_arguments'] = {'success' : can_return_success, 'running' : can_return_running, 'failure' : can_return_failure}
+            return
+        elif 'success_on_all' in node['type']:
+            can_return_success = True
+            can_return_failure = False
+            can_return_running = False
+            for child_id in node['children']:
+                refine_return_types(nodes, child_id)
+                can_return_success = can_return_success and nodes[child_id]['return_arguments']['success']
+                can_return_running = can_return_running or nodes[child_id]['return_arguments']['running']
+                can_return_failure = can_return_failure or nodes[child_id]['return_arguments']['failure']
+            node['return_arguments'] = {'success' : can_return_success, 'running' : can_return_running, 'failure' : can_return_failure}
+            return
+        elif 'success_on_one' in node['type']:
+            can_return_success = False
+            can_return_failure = False
+            can_return_running = True
+            for child_id in node['children']:
+                refine_return_types(nodes, child_id)
+                can_return_success = can_return_success or nodes[child_id]['return_arguments']['success']
+                can_return_running = can_return_running and nodes[child_id]['return_arguments']['running']
+                can_return_failure = can_return_failure or nodes[child_id]['return_arguments']['failure']
+            node['return_arguments'] = {'success' : can_return_success, 'running' : can_return_running, 'failure' : can_return_failure}
+            return
+        else:
+            print('unknown composite type!!! ', node['type'])
+            return
+    elif node['category'] == 'decorator':
+        child_id = node['children'][0]
+        child = nodes[child_id]
+        refine_return_types(nodes, child_id)
+        if node['type'] == 'X_is_Y':
+            node['return_arguments'][node['additional_arguments'][1]] = False
+            for return_val in ('success', 'failure', 'running'):
+                if return_val in node['additional_arguments']:
+                    node['return_arguments'][node['additional_arguments'][1]] = node['return_arguments'][node['additional_arguments'][1]] or child['return_arguments'][return_val]
+                else:
+                    node['return_arguments'][return_val] = child['return_arguments'][return_val]
+        elif node['type'] == 'inverter':
+            node['return_arguments'] = {'success' : child['return_arguments']['failure'], 'failure' : child['return_arguments']['success'], 'running' : child['return_arguments']['running']}
+        return
+    else:
+        print('unknown node category!!! ', node['category'])
+        return
+
+def refine_invalid(nodes, node_id = 0, is_root = True):
+    node = nodes[node_id]
+    if is_root:
+        node['can_be_invalid'] = False
+        for child_id in node['children']:
+            refine_invalid(nodes, child_id, False)
+        return
+    parent = nodes[node['parent_id']]
+    if parent['can_be_invalid']:
+        node['can_be_invalid'] = True
+    elif 'unsynchronized' in parent['type']:
+        node['can_be_invalid'] = False
+    elif 'synchronized' in parent['type']:
+        if node['return_arguments']['success'] == False:
+            node['can_be_invalid'] = False
+        else:
+            node['can_be_invalid'] = True
+    elif parent['type'] == 'selector_without_memory':
+        pass
 #return (local_root_to_relevant_list_map, sequence_to_relevant_descendants_map)
 #TODO. consider replacing relevant_list with relevant_map, though i think it might have been done this way for efficiencyh reasons, because lists are better with "for each" operations.
 """
@@ -220,15 +311,5 @@ def create_node_to_descendants_map(nodes):
             node_to_descendants_map[cur_id].add(node_id)
             cur_id = nodes[cur_id]['parent_id']
     return node_to_descendants_map
-
-
-
-#-----------------------------------------------------------------------------------------------------------------------
-
-def create_leaf_to_status(nodes, children, node_to_local_root_map, parallel_synch_set, parallel_unsynch_set, sequence_with_memory_set, sequence_without_memory_set, selector_with_memory_set, selector_without_memory_set, decorator_set, leaf_set):
-    #plan. create an ordered set of leafs, then cascade them through.
-    #probably just go through the nodes in order, which will cause us to hit the leaf nodes in order.
-    
-    pass
 
 #-----------------------------------------------------------------------------------------------------------------------

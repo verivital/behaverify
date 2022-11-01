@@ -48,7 +48,18 @@ def create_nodes(nodes):
             children_string = children_string[2:]
         #---------------------------------
         if node['category'] == 'leaf':
-            var_string += "\t\t" + node['name'] + " : " + node['category'] + '_' + node['type'] + "("
+            if node['type'] in ('timer', 'default', 'non-blocking'):
+                status_string = ''
+                for status in ('success', 'failure', 'running'):
+                    if node['return_arguments']['status']:
+                        status_string += '_' + status
+                var_string += ('\t\t' + node['name'] + '_internal_status : internal_status' + status_string + ';' + os.linesep
+                               + "\t\t" + node['name'] + " : " + node['category'] + '_' + node['type'] + "(" + node['name'] + '_internal_status'
+                               )
+            else:
+                var_string += ("\t\t" + node['name'] + " : " + node['category'] + '_' + node['type'] + "("
+                               )
+                
         elif node['category'] == 'decorator':
             var_string += "\t\t" + node['name'] + " : " + node['category'] + '_' + node['type'] + "(" + children_string
         elif node['category'] == 'composite':
