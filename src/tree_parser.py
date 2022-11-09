@@ -62,6 +62,8 @@ variables : a map (dictionary) from variable name to information about the varia
  'use_stages' : a boolean that indicates if variable stages are to be used. Default: False
  'stages' : a list of stages. Each stage corresponds to a range of nodes where that stage is being used. Each stage is represented using a single number indicating the last node where that stage is used. The next stage starts from the next node. The first stage starts at 0. The last stage always ends at the last node, and is omitted from the list. Even if stages are not being used, this should still be correct.
 '''
+
+
 def walk_tree(root, file_name = None):
     nodes = {}
     variables = {}
@@ -69,7 +71,8 @@ def walk_tree(root, file_name = None):
     variable_name_cleanup(nodes, variables)
     if file_name:
         with open(file_name, 'w') as f:
-            printer = pprint.PrettyPrinter(indent = 4, sort_dicts = False, stream = f)
+            printer = pprint.PrettyPrinter(indent = 4, sort_dicts = False,
+                                           stream = f)
             printer.pprint({'nodes' : nodes, 'variables' : variables})
     else:
         printer = pprint.PrettyPrinter(indent = 4, sort_dicts = False)
