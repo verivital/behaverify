@@ -1,6 +1,8 @@
 
 #python3 tree_parser.py root_file root_method --root_args ROOT_ARGS --string_args STRING_ARGS --output_file OUTPUT_FILE
 
+#WARNING: OneShot not supported in this verison.
+
 #----------------------------------------------------------------------------------------------------------------
 import argparse
 import py_trees
@@ -11,6 +13,7 @@ import os
 import re
 import inspect
 import operator
+#import json
 import pprint
 #----------------------------------------------------------------------------------------------------------------
 import py_trees.console as console
@@ -33,6 +36,7 @@ nodes : a map (dictionary) from node id to a dictionary of information. contains
  'children' : a list of children (node_id)
  'category' : leaf, decorator, or composite
  'type' : a string indicating the node type
+ 'return_arguments' : a map from {'success', 'running', 'failure'} to {True, False}, indicating if the type can be returned by the node
  'additional_arguments' : a list of additional arguments that the node will need,
  'additional_definitions' : a list of additional definitions needed by the node (declared in MAIN),
  'additional_declarations' : a list of additional variables to declare,
@@ -73,6 +77,9 @@ def walk_tree(root, file_name = None):
     else:
         printer = pprint.PrettyPrinter(indent = 4, sort_dicts = False)
         printer.pprint({'nodes' : nodes, 'variables' : variables})
+
+
+
 
 def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_names, variables):
     this_id = next_available_id #set what the current id is
@@ -184,13 +191,14 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                 }
             local_variables.append(variable_name)
 
-            
+        
         nodes[this_id] = {
             'name' : node_name,
             'parent_id' : parent_id,
             'children' : [],
             'category' : 'leaf',
             'type' : 'set_blackboard_variables',
+            'return_arguments' : {'success' : True, 'running' : True, 'failure' : True}, 
             'additional_arguments' : [node_name + "_STATUS"],
             'additional_definitions' : [],
             #'additional_declarations' : ['\t\t' + node_name + '_STATUS : ' + node_name + '_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);' + os.linesep],
@@ -224,6 +232,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                 'children' : [],
                 'category' : 'leaf',
                 'type' : 'node_non_blocking',
+                'return_arguments' : {'success' : True, 'running' : False, 'failure' : True},
                 'additional_arguments' : [],
                 'additional_definitions' : [],
                 'additional_declarations' : [],
@@ -255,6 +264,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                 'children' : [],
                 'category' : 'composite',
                 'type' : 'sequence_with_memory',
+                'return_arguments' : {'success' : True, 'running' : True, 'failure' : True},
                 'additional_arguments' : [],
                 'additional_definitions' : [],
                 'additional_declarations' : [],
@@ -268,6 +278,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                 'children' : [],
                 'category' : 'composite',
                 'type' : 'sequence_without_memory',
+                'return_arguments' : {'success' : True, 'running' : True, 'failure' : True},
                 'additional_arguments' : [],
                 'additional_definitions' : [],
                 'additional_declarations' : [],
@@ -282,6 +293,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                 'children' : [],
                 'category' : 'composite',
                 'type' : 'selector_with_memory',
+                'return_arguments' : {'success' : True, 'running' : True, 'failure' : True},
                 'additional_arguments' : [],
                 'additional_definitions' : [],
                 'additional_declarations' : [],
@@ -295,6 +307,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                 'children' : [],
                 'category' : 'composite',
                 'type' : 'selector_without_memory',
+                'return_arguments' : {'success' : True, 'running' : True, 'failure' : True},
                 'additional_arguments' : [],
                 'additional_definitions' : [],
                 'additional_declarations' : [],
@@ -330,129 +343,139 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'children' : [],
             'category' : 'composite',
             'type' : cur_type,
+            'return_arguments' : {'success' : True, 'running' : True, 'failure' : True},
             'additional_arguments' : [],
             'additional_definitions' : [],
             'additional_declarations' : [],
             'additional_initializations' : [],
             'additional_modules' : {}
         }
-    elif isinstance(current_node, py_trees.decorators.Condition):
+    elif 'meta.Condition' in str(current_node.__class__):
         nodes[this_id] = {
             'name' : node_name,
             'parent_id' : parent_id,
             'children' : [],
             'category' : 'decorator',
             'type' : 'condition',
+            'return_arguments' : {'success' : True, 'running' : True, 'failure' : True},
             'additional_arguments' : [current_node.succeed_status.name.lower()],
             'additional_definitions' : [],
             'additional_declarations' : [],
             'additional_initializations' : [],
             'additional_modules' : {}
         }
-    elif isinstance(current_node, py_trees.decorators.Inverter):
+    elif 'meta.Imposter' in str(current_node.__class__):
         nodes[this_id] = {
             'name' : node_name,
             'parent_id' : parent_id,
             'children' : [],
             'category' : 'decorator',
             'type' : 'inverter',
+            'return_arguments' : {'success' : True, 'running' : True, 'failure' : True},
             'additional_arguments' : [],
             'additional_definitions' : [],
             'additional_declarations' : [],
             'additional_initializations' : [],
             'additional_modules' : {}
         }
-    elif isinstance(current_node, py_trees.decorators.OneShot):
-        needed_nodes.add('decorator_one_shot')
-        if current_node.policy.name == "ON_SUCCESSFUL_COMPLETION":
-            policy = 'TRUE'
-        else:
-            policy = 'FALSE'
-        nodes[this_id] = {
-            'name' : node_name,
-            'parent_id' : parent_id,
-            'children' : [],
-            'category' : 'decorator',
-            'type' : 'one_shot',
-            'additional_arguments' : [policy],
-            'additional_definitions' : [],
-            'additional_declarations' : [],
-            'additional_initializations' : [],
-            'additional_modules' : {}
-        }
+    # elif isinstance(current_node, py_trees.decorators.OneShot):
+    #     needed_nodes.add('decorator_one_shot')
+    #     if current_node.policy.name == "ON_SUCCESSFUL_COMPLETION":
+    #         policy = 'TRUE'
+    #     else:
+    #         policy = 'FALSE'
+    #     nodes[this_id] = {
+    #         'name' : node_name,
+    #         'parent_id' : parent_id,
+    #         'children' : [],
+    #         'category' : 'decorator',
+    #         'type' : 'one_shot',
+    #         'return_arguments' : {'success' : True, 'running' : True, 'failure' : True},
+    #         'additional_arguments' : [policy],
+    #         'additional_definitions' : [],
+    #         'additional_declarations' : [],
+    #         'additional_initializations' : [],
+    #         'additional_modules' : {}
+    #     }
     #there's a solid argument for combining all the X is Y types into one module, and just having 2 additional arguments for that module.
-    elif isinstance(current_node, py_trees.decorators.FailureIsRunning):
+    elif 'meta.failure_is_running' in str(current_node.__class__):
         nodes[this_id] = {
             'name' : node_name,
             'parent_id' : parent_id,
             'children' : [],
             'category' : 'decorator',
             'type' : 'X_is_Y',
+            'return_arguments' : {'success' : True, 'running' : True, 'failure' : False},
             'additional_arguments' : ['failure', 'running'],
             'additional_definitions' : [],
             'additional_declarations' : [],
             'additional_initializations' : [],
             'additional_modules' : {}
         }
-    elif isinstance(current_node, py_trees.decorators.FailureIsSuccess):
+    elif 'meta.failure_is_success' in str(current_node.__class__):
         nodes[this_id] = {
             'name' : node_name,
             'parent_id' : parent_id,
             'children' : [],
             'category' : 'decorator',
             'type' : 'X_is_Y',
+            'return_arguments' : {'success' : True, 'running' : True, 'failure' : False},
             'additional_arguments' : ['failure', 'success'],
             'additional_definitions' : [],
             'additional_declarations' : [],
             'additional_initializations' : [],
             'additional_modules' : {}
         }
-    elif isinstance(current_node, py_trees.decorators.RunningIsFailure):
+    elif 'meta.running_is_failure' in str(current_node.__class__):
         nodes[this_id] = {
             'name' : node_name,
             'parent_id' : parent_id,
             'children' : [],
             'category' : 'decorator',
             'type' : 'X_is_Y',
+            'return_arguments' : {'success' : True, 'running' : False, 'failure' : True},
             'additional_arguments' : ['running', 'failure'],
             'additional_definitions' : [],
             'additional_declarations' : [],
             'additional_initializations' : [],
             'additional_modules' : {}
         }
-    elif isinstance(current_node, py_trees.decorators.RunningIsSuccess):
+    elif 'meta.running_is_success' in str(current_node.__class__):
         nodes[this_id] = {
             'name' : node_name,
             'parent_id' : parent_id,
             'children' : [],
             'category' : 'decorator',
             'type' : 'X_is_Y',
+            'return_arguments' : {'success' : True, 'running' : False, 'failure' : True},
             'additional_arguments' : ['running', 'success'],
             'additional_definitions' : [],
             'additional_declarations' : [],
             'additional_initializations' : [],
             'additional_modules' : {}
         }
-    elif isinstance(current_node, py_trees.decorators.SuccessIsFailure):
+    elif 'meta.success_is_failure' in str(current_node.__class__):
         nodes[this_id] = {
             'name' : node_name,
             'parent_id' : parent_id,
             'children' : [],
             'category' : 'decorator',
             'type' : 'X_is_Y',
+            'return_arguments' : {'success' : False, 'running' : True, 'failure' : True},
             'additional_arguments' : ['success', 'failure'],
             'additional_definitions' : [],
             'additional_declarations' : [],
             'additional_initializations' : [],
             'additional_modules' : {}
         }
-    elif isinstance(current_node, py_trees.decorators.SuccessIsRunning):
+    elif 'meta.success_is_running' in str(current_node.__class__):
         nodes[this_id] = {
             'name' : node_name,
             'parent_id' : parent_id,
             'children' : [],
             'category' : 'decorator',
             'type' : 'X_is_Y',
+            'return_arguments' : {'success' : False, 'running' : True, 'failure' : True},
             'additional_arguments' : ['success', 'running'],
             'additional_definitions' : [],
             'additional_declarations' : [],
@@ -493,6 +516,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'children' : [],
             'category' : 'leaf',
             'type' : 'check_blackboard_variable_exists',
+            'return_arguments' : {'success' : True, 'running' : False, 'failure' : True},
             'additional_arguments' : ['blackboard', variable_name],
             'additional_definitions' : [],
             'additional_declarations' : [],
@@ -556,6 +580,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'children' : [],
             'category' : 'leaf',
             'type' : 'check_blackboard_variable_value',
+            'return_arguments' : {'success' : True, 'running' : False, 'failure' : True},
             'additional_arguments' : [node_name + '_CHECK_' + variable_name],
             'additional_definitions' : [],
             #'additional_declarations' : ['\t\t' + node_name + '_CHECK_' + variable_name  + ' : '+ node_name + '_CHECK_' + variable_name + '_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);' + os.linesep],
@@ -615,6 +640,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'children' : [],
             'category' : 'leaf',
             'type' : 'set_blackboard_variables',
+            'return_arguments' : {'success' : True, 'running' : True, 'failure' : True},
             'additional_arguments' : [node_name + "_STATUS"],
             'additional_definitions' : [],
             #'additional_declarations' : ['\t\t' + node_name + '_STATUS : ' + node_name + '_STATUS_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);' + os.linesep],
@@ -671,6 +697,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'children' : [],
             'category' : 'leaf',
             'type' : 'unset_blackboard_variables',
+            'return_arguments' : {'success' : True, 'running' : True, 'failure' : True},
             'additional_arguments' : [],
             'additional_definitions' : [],
             'additional_declarations' : [],
@@ -713,6 +740,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'children' : [],
             'category' : 'leaf',
             'type' : 'wait_for_blackboard_variable',
+            'return_arguments' : {'success' : True, 'running' : True, 'failure' : True},
             'additional_arguments' : ['blackboard', var_num],
             'additional_definitions' : [],
             'additional_declarations' : [],
@@ -776,6 +804,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'children' : [],
             'category' : 'leaf',
             'type' : 'wait_for_blackboard_variable_value',
+            'return_arguments' : {'success' : True, 'running' : True, 'failure' : True},
             'additional_arguments' : ['blackboard', str(var_num), '\t\t' + node_name + '_CHECK_' + variable_name],
             'additional_definitions' : [],
             #'additional_declarations' : ['\t\t' + node_name + '_CHECK_' + variable_name  + ' : '+ node_name + '_CHECK_' + variable_name + '_module(blackboard.variables, blackboard.variable_exists, node_names, variable_names);' + os.linesep],
@@ -804,6 +833,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'children' : [],
             'category' : 'leaf',
             'type' : 'count',
+            'return_arguments' : {'success' : True, 'running' : True, 'failure' : True},
             'additional_arguments' : [str(current_node.fail_until), str(current_node.running_until), str(current_node.success_until), str(current_node.reset).upper()],
             'additional_definitions' : [],
             'additional_declarations' : [],
@@ -818,6 +848,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'children' : [],
             'category' : 'leaf',
             'type' : 'failure',
+            'return_arguments' : {'success' : False, 'running' : False, 'failure' : True},
             'additional_arguments' : [],
             'additional_definitions' : [],
             'additional_declarations' : [],
@@ -832,6 +863,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'children' : [],
             'category' : 'leaf',
             'type' : 'periodic',
+            'return_arguments' : {'success' : True, 'running' : True, 'failure' : True},
             'additional_arguments' : [str(current_node.period)],
             'additional_definitions' : [],
             'additional_declarations' : [],
@@ -846,6 +878,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'children' : [],
             'category' : 'leaf',
             'type' : 'running',
+            'return_arguments' : {'success' : False, 'running' : True, 'failure' : False},
             'additional_arguments' : [],
             'additional_definitions' : [],
             'additional_declarations' : [],
@@ -865,6 +898,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'children' : [],
             'category' : 'leaf',
             'type' : 'status_sequence',
+            'return_arguments' : {'success' : True, 'running' : True, 'failure' : True},
             'additional_arguments' : ['sequence_for_' + node_name, str(len(current_node.sequence)), eventually],
             'additional_definitions' : [sequence_definition],
             'additional_declarations' : [],
@@ -879,6 +913,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'children' : [],
             'category' : 'leaf',
             'type' : 'success',
+            'return_arguments' : {'success' : True, 'running' : False, 'failure' : False},
             'additional_arguments' : [],
             'additional_definitions' : [],
             'additional_declarations' : [],
@@ -893,6 +928,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'children' : [],
             'category' : 'leaf',
             'type' : 'success_every_n',
+            'return_arguments' : {'success' : True, 'running' : False, 'failure' : True},
             'additional_arguments' : [str(current_node.every_n)],
             'additional_definitions' : [],
             'additional_declarations' : [],
@@ -907,12 +943,14 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'children' : [],
             'category' : 'leaf',
             'type' : 'tick_counter',
+            'return_arguments' : {'success' : False, 'running' : True, 'failure' : False},
             'additional_arguments' : [str(current_node.duration), current_node.completion_status.name.lower()],
             'additional_definitions' : [],
             'additional_declarations' : [],
             'additional_initializations' : [],
             'additional_modules' : {}
         }
+        nodes[this_id]['return_arguments'][current_node.completion_status.name.lower()] = True
         
     elif isinstance(current_node, py_trees.timers.Timer):
         nodes[this_id] = {
@@ -921,6 +959,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'children' : [],
             'category' : 'leaf',
             'type' : 'timer',
+            'return_arguments' : {'success' : True, 'running' : True, 'failure' : False},
             'additional_arguments' : [],
             'additional_definitions' : [],
             'additional_declarations' : [],
@@ -957,6 +996,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             'children' : [],
             'category' : 'leaf',
             'type' : 'default',
+            'return_arguments' : {'success' : True, 'running' : True, 'failure' : True},
             'additional_arguments' : [],
             'additional_definitions' : [],
             'additional_declarations' : [],
@@ -965,8 +1005,10 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
         }
         
 
-    if nodes[this_id]['type'] == 'leaf':
+    if nodes[this_id]['category'] == 'leaf':
         pass
+    elif nodes[this_id]['category'] == 'decorator':
+        next_available_id = walk_tree_recursive(current_node.original, this_id, next_available_id, nodes, node_names, variables)
     else:
         for child in current_node.children:
             next_available_id = walk_tree_recursive(child, this_id, next_available_id, nodes, node_names,  variables)
