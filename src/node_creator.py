@@ -15,7 +15,7 @@ def create_names_module(nodes, variables):
                       + "\tDEFINE" + os.linesep)
     for i in range(len(nodes)):
         return_string += ("\t\t" + nodes[i]['name'] + " := " + str(i) + ";" + os.linesep)
-    return_string += os.linesep                      
+    return_string += os.linesep
     return return_string
 
 
@@ -28,8 +28,8 @@ def create_blackboard(nodes, variables):
     #                   + "\tCONSTANTS" + os.linesep
     #                   + "\t\tsuccess, failure, running, invalid;" + os.linesep)
     return_string = ("MODULE blackboard_module(node_names, statuses)" + os.linesep
-                      + "\tCONSTANTS" + os.linesep
-                      + "\t\tsuccess, failure, running, invalid;" + os.linesep)
+                     + "\tCONSTANTS" + os.linesep
+                     + "\t\tsuccess, failure, running, invalid;" + os.linesep)
     return_string += "\tDEFINE" + os.linesep
     # var_array_string = ("\t\tvariables := ")
     # var_exist_string = ("\t\tvariable_exists := ")
@@ -53,7 +53,7 @@ def create_blackboard(nodes, variables):
             if variable['init_value']:
                 exist_define += ("\t\t" + variable_name + " := " + variable['init_value'] + ";" + os.linesep)
             else:
-                exist_define += ("\t\t" + variable_name + " := "  + os.linesep
+                exist_define += ("\t\t" + variable_name + " := " + os.linesep
                                  + "\t\t\tcase" + os.linesep
                                  )
                 for condition_pair in variable['next_value']:
@@ -64,15 +64,15 @@ def create_blackboard(nodes, variables):
         elif variable['mode'].strip() == 'FROZENVAR':
             try:
                 min_val = int(variable['min_value'])
-            except:
+            except ValueError:
                 min_val = 0
             try:
                 max_val = int(variable['max_value'])
-            except:
+            except ValueError:
                 max_val = 1
             if max_val <= min_val:
                 max_val = min_val + 1
-            poss_values="{"
+            poss_values = "{"
             for i in range(min_val, max_val+1):
                 poss_values = poss_values + str(i) + ", "
             poss_values = poss_values[0:-2] + "}"
@@ -82,7 +82,7 @@ def create_blackboard(nodes, variables):
                 frozen_decl_string += ("\t\t" + variable_name + " : " + str(min_val) + ".." + str(max_val) + ";" + os.linesep)
 
             if not (variable['init_value'] is None):
-                assign_string += ("\t\tinit(" + variable_name + ") := " + str(variable['init_value']) +";" + os.linesep)
+                assign_string += ("\t\tinit(" + variable_name + ") := " + str(variable['init_value']) + ";" + os.linesep)
             exist_define += "\t\t" + variable_name + "_exists := TRUE;" + os.linesep
         else:
             # the below section was wrong
@@ -95,11 +95,11 @@ def create_blackboard(nodes, variables):
             #         continue
             try:
                 min_val = int(variable['min_value'])
-            except:
+            except ValueError:
                 min_val = 0
             try:
                 max_val = int(variable['max_value'])
-            except:
+            except ValueError:
                 max_val = 1
             if max_val <= min_val:
                 max_val = min_val + 1
@@ -117,16 +117,16 @@ def create_blackboard(nodes, variables):
                     if variables[variable['prev_stage']]['prev_stage']:
                         assign_string += ("\t\tinit(" + variable_name + ") := " + variable['prev_stage'] + ";" + os.linesep)
                     elif variables[variable['prev_stage']]['init_value']:
-                        assign_string += ("\t\tinit(" + variable_name + ") := " + str(variables[variable['prev_stage']]['init_value']) +";" + os.linesep)
+                        assign_string += ("\t\tinit(" + variable_name + ") := " + str(variables[variable['prev_stage']]['init_value']) + ";" + os.linesep)
             elif not (variable['init_value'] is None):
-                assign_string += ("\t\tinit(" + variable_name + ") := " + str(variable['init_value']) +";" + os.linesep)
+                assign_string += ("\t\tinit(" + variable_name + ") := " + str(variable['init_value']) + ";" + os.linesep)
 
             assign_string += ("\t\tnext(" + variable_name + ") := " + os.linesep
-                               + "\t\t\tcase" + os.linesep)
+                              + "\t\t\tcase" + os.linesep)
             if variable['next_value'] and len(variable['next_value']) > 0:
                 for condition_pair in variable['next_value']:
                     assign_string += "\t\t\t\t" + str(condition_pair[0]) + " : " + str(condition_pair[1]) + ";" + os.linesep
-            if variable['auto_change'] == False or variable['custom_value_range']:
+            if variable['auto_change'] is False or variable['custom_value_range']:
                 pass
             else:
                 for node_name in variable['access']:
@@ -155,12 +155,12 @@ def create_blackboard(nodes, variables):
                 if variable['init_exist']:
                     assign_string += "\t\tinit(" + variable_name + "_exists) := " + str(variable['init_exist']) + ";" + os.linesep
                 assign_string += ("\t\tnext(" + variable_name + ") := " + os.linesep
-                                   + "\t\t\tcase" + os.linesep
-                                )
+                                  + "\t\t\tcase" + os.linesep
+                                  )
                 for node_name in variable['next_exist']:
                     if variable['next_exist'][node_name]:
                         for condition_pair in variable['next_exist'][node_name]:
-                            assign_string += "\t\t\t\t" + str(condition[0]) + ' : ' + str(condition[1]) + ';' + os.linesep
+                            assign_string += "\t\t\t\t" + str(condition_pair[0]) + ' : ' + str(condition_pair[1]) + ';' + os.linesep
                 assign_string += ("\t\t\t\tTRUE : " + variable_name + "_exists;" + os.linesep
                                   + "\t\t\tesac;" + os.linesep
                                   )
@@ -240,8 +240,8 @@ def common_string_decorator(number_of_children = 0):
                     + "\t\tstatus := active ? internal_status : invalid;" + os.linesep
                     + "\t\tinternal_status :=" + os.linesep
                     + "\t\t\tcase" + os.linesep
-                    #+ "\t\t\t\t!(active) : invalid;" + os.linesep #this should be the only invalid case.
-    )
+                    # + "\t\t\t\t!(active) : invalid;" + os.linesep #this should be the only invalid case.
+                    )
     status_end = ("\t\t\tesac;" + os.linesep)
     active = []
     for child in range(number_of_children):
@@ -298,13 +298,13 @@ def create_decorator_condition(ignored_value = 0):
     (status_start, status_end, active, active_end, children) = common_string_decorator(1)
     return_string = ("MODULE decorator_condition(child_0, status)" + os.linesep
                      + status_start
-                     #+ "\t\t\t\t(child_0.status in {invalid, error}) : error;" + os.linesep  #we found an error
-                     + "\t\t\t\t(child_0.status = status) : success;" + os.linesep  #it matches the status
-                     + "\t\t\t\tTRUE : running;" + os.linesep  #it doesn't match the status
+                     # + "\t\t\t\t(child_0.status in {invalid, error}) : error;" + os.linesep  #we found an error
+                     + "\t\t\t\t(child_0.status = status) : success;" + os.linesep  # it matches the status
+                     + "\t\t\t\tTRUE : running;" + os.linesep  # it doesn't match the status
                      + status_end
-                     + active[0]#handles (if this node not active, child_0 not active)
-                     + active_end#handle (otherwise, child_0 active)
-    )
+                     + active[0]  # handles (if this node not active, child_0 not active)
+                     + active_end  # handle (otherwise, child_0 active)
+                     )
     return return_string
 
 
@@ -312,18 +312,18 @@ def create_decorator_eternal_guard(ignored_value = 0):
     pass
 
 
-def create_decorator_inverter(ignored_value = 0):    
+def create_decorator_inverter(ignored_value = 0):
     (status_start, status_end, active, active_end, children) = common_string_decorator(1)
     return_string = ("MODULE decorator_inverter(child_0)" + os.linesep
                      + status_start
-                     #+ "\t\t\t\t(child_0.status in {invalid, error}) : error;" + os.linesep  #we found an error
-                     + "\t\t\t\t(child_0.status = failure) : success;" + os.linesep  #failure becomes success
-                     + "\t\t\t\t(child_0.status = success) : failure;" + os.linesep  #success becomes failure
-                     + "\t\t\t\tTRUE : running;" + os.linesep #must have been running
+                     # + "\t\t\t\t(child_0.status in {invalid, error}) : error;" + os.linesep  #we found an error
+                     + "\t\t\t\t(child_0.status = failure) : success;" + os.linesep  # failure becomes success
+                     + "\t\t\t\t(child_0.status = success) : failure;" + os.linesep  # success becomes failure
+                     + "\t\t\t\tTRUE : running;" + os.linesep  # must have been running
                      + status_end
-                     + active[0]#handles (if this node not active, child_0 not active)
-                     + active_end#handle (otherwise, child_0 active)
-    )
+                     + active[0]  # handles (if this node not active, child_0 not active)
+                     + active_end  # handle (otherwise, child_0 active)
+                     )
     return return_string
 
 
@@ -355,7 +355,7 @@ def create_decorator_one_shot(ignored_value = 0):
     #                   + "\t\t\t\t!(child_0_completed) & (child_0.status = invalid) : child_0;" + os.linesep #if the child_0 has not yet been ran, go run the child_0.
     #                   + "\t\t\t\t!(child_0_completed) & !(child_0.status = invalid) : parent;" + os.linesep # child_0 already ran. time to return to parent
     #                   + "\t\t\t\tTRUE : -1.." + str(number_of_nodes) + ";" + os.linesep #if this isn't the active node, allow it to bounce around
-    #                   + "\t\t\tesac;" + os.linesep 
+    #                   + "\t\t\tesac;" + os.linesep
     #                   + os.linesep)
     # return return_string
 
@@ -372,13 +372,13 @@ def create_decorator_failure_is_running(ignored_value = 0):
     (status_start, status_end, active, active_end, children) = common_string_decorator(1)
     return_string = ("MODULE decorator_failure_is_running(child_0)" + os.linesep
                      + status_start
-                     #+ "\t\t\t\t(child_0.status in {invalid, error}) : error;" + os.linesep  #we found an error
-                     + "\t\t\t\t!(child_0.status = failure) : child_0.status;" + os.linesep  #no matter what, we match the child_0
-                     + "\t\t\t\tTRUE : running;" + os.linesep  #unless it failed. then we pretend it's still running
+                     # + "\t\t\t\t(child_0.status in {invalid, error}) : error;" + os.linesep  #we found an error
+                     + "\t\t\t\t!(child_0.status = failure) : child_0.status;" + os.linesep  # no matter what, we match the child_0
+                     + "\t\t\t\tTRUE : running;" + os.linesep  # unless it failed. then we pretend it's still running
                      + status_end
-                     + active[0]#handles (if this node not active, child_0 not active)
-                     + active_end#handle (otherwise, child_0 active)
-    )
+                     + active[0]  # handles (if this node not active, child_0 not active)
+                     + active_end  # handle (otherwise, child_0 active)
+                     )
     return return_string
 
 
@@ -386,21 +386,23 @@ def create_decorator_failure_is_success(ignored_value = 0):
     (status_start, status_end, active, active_end, children) = common_string_decorator(1)
     return_string = ("MODULE decorator_failure_is_success(child_0)" + os.linesep
                      + status_start
-                     #+ "\t\t\t\t(child_0.status in {invalid, error}) : error;" + os.linesep  #we found an error
-                     + "\t\t\t\t!(child_0.status = failure) : child_0.status;" + os.linesep  #no matter what, we match the child_0
-                     + "\t\t\t\tTRUE : success;" + os.linesep  #unless it failed. then we pretend it success
+                     # + "\t\t\t\t(child_0.status in {invalid, error}) : error;" + os.linesep  # we found an error
+                     + "\t\t\t\t!(child_0.status = failure) : child_0.status;" + os.linesep  # no matter what, we match the child_0
+                     + "\t\t\t\tTRUE : success;" + os.linesep  # unless it failed. then we pretend it success
                      + status_end
-                     + active[0]#handles (if this node not active, child_0 not active)
-                     + active_end#handle (otherwise, child_0 active)
-    )
+                     + active[0]  # handles (if this node not active, child_0 not active)
+                     + active_end  # handle (otherwise, child_0 active)
+                     )
     return return_string
+
+
 def create_decorator_running_is_failure(ignored_value = 0):
     (status_start, status_end, active, active_end, children) = common_string_decorator(1)
     return_string = ("MODULE decorator_running_is_failure(child_0)" + os.linesep
                      + status_start
-                     # + "\t\t\t\t(child_0.status in {invalid, error}) : error;" + os.linesep  #we found an error
-                     + "\t\t\t\t!(child_0.status = running) : child_0.status;" + os.linesep  #no matter what, we match the child_0
-                     + "\t\t\t\tTRUE : failure;" + os.linesep  #unless it's running. then we pretend it failed
+                     # + "\t\t\t\t(child_0.status in {invalid, error}) : error;" + os.linesep  # we found an error
+                     + "\t\t\t\t!(child_0.status = running) : child_0.status;" + os.linesep  # no matter what, we match the child_0
+                     + "\t\t\t\tTRUE : failure;" + os.linesep  # unless it's running. then we pretend it failed
                      + status_end
                      + active[0]  # handles (if this node not active, child_0 not active)
                      + active_end  # handle (otherwise, child_0 active)
@@ -412,12 +414,12 @@ def create_decorator_running_is_success(ignored_value = 0):
     (status_start, status_end, active, active_end, children) = common_string_decorator(1)
     return_string = ("MODULE decorator_running_is_success(child_0)" + os.linesep
                      + status_start
-                     # + "\t\t\t\t(child_0.status in {invalid, error}) : error;" + os.linesep  #we found an error
-                     + "\t\t\t\t!(child_0.status = running) : child_0.status;" + os.linesep  #no matter what, we match the child_0
-                     + "\t\t\t\tTRUE : success;" + os.linesep  #unless it's running. then we pretend it success
+                     # + "\t\t\t\t(child_0.status in {invalid, error}) : error;" + os.linesep  # we found an error
+                     + "\t\t\t\t!(child_0.status = running) : child_0.status;" + os.linesep  # no matter what, we match the child_0
+                     + "\t\t\t\tTRUE : success;" + os.linesep  # unless it's running. then we pretend it success
                      + status_end
-                     + active[0]#handles (if this node not active, child_0 not active)
-                     + active_end#handle (otherwise, child_0 active)
+                     + active[0]  # handles (if this node not active, child_0 not active)
+                     + active_end  # handle (otherwise, child_0 active)
                      )
     return return_string
 
@@ -427,11 +429,11 @@ def create_decorator_success_is_failure(ignored_value = 0):
     return_string = ("MODULE decorator_success_is_failure(child_0)" + os.linesep
                      + status_start
                      # + "\t\t\t\t(child_0.status in {invalid, error}) : error;" + os.linesep  #we found an error
-                     + "\t\t\t\t!(child_0.status = success) : child_0.status;" + os.linesep  #no matter what, we match the child_0
-                     + "\t\t\t\tTRUE : failure;" + os.linesep  #unless it's success. then we pretend it failed
+                     + "\t\t\t\t!(child_0.status = success) : child_0.status;" + os.linesep  # no matter what, we match the child_0
+                     + "\t\t\t\tTRUE : failure;" + os.linesep  # unless it's success. then we pretend it failed
                      + status_end
-                     + active[0]#handles (if this node not active, child_0 not active)
-                     + active_end#handle (otherwise, child_0 active)
+                     + active[0]  # handles (if this node not active, child_0 not active)
+                     + active_end  # handle (otherwise, child_0 active)
                      )
     return return_string
 
@@ -440,12 +442,12 @@ def create_decorator_success_is_running(ignored_value = 0):
     (status_start, status_end, active, active_end, children) = common_string_decorator(1)
     return_string = ("MODULE decorator_success_is_running(child_0)" + os.linesep
                      + status_start
-                     # + "\t\t\t\t(child_0.status in {invalid, error}) : error;" + os.linesep  #we found an error
-                     + "\t\t\t\t!(child_0.status = success) : child_0.status;" + os.linesep  #no matter what, we match the child_0
-                     + "\t\t\t\tTRUE : running;" + os.linesep  #unless it's success. then we pretend it running
+                     # + "\t\t\t\t(child_0.status in {invalid, error}) : error;" + os.linesep  # we found an error
+                     + "\t\t\t\t!(child_0.status = success) : child_0.status;" + os.linesep  # no matter what, we match the child_0
+                     + "\t\t\t\tTRUE : running;" + os.linesep  # unless it's success. then we pretend it running
                      + status_end
-                     + active[0]#handles (if this node not active, child_0 not active)
-                     + active_end#handle (otherwise, child_0 active)
+                     + active[0]  # handles (if this node not active, child_0 not active)
+                     + active_end  # handle (otherwise, child_0 active)
                      )
     return return_string
 
@@ -454,17 +456,13 @@ def create_decorator_X_is_Y(ignored_value = 0):
     (status_start, status_end, active, active_end, children) = common_string_decorator(1)
     return_string = ("MODULE decorator_X_is_Y(child_0, incoming_status, outgoing_status)" + os.linesep
                      + status_start
-                     + "\t\t\t\tchild_0.status = incoming_status : outgoing_status;" + os.linesep  #if we detect the incoming status, use outgoing_status
-                     + "\t\t\t\tTRUE : child_0.status;" + os.linesep  #otherwise matcch the child
+                     + "\t\t\t\tchild_0.status = incoming_status : outgoing_status;" + os.linesep  # if we detect the incoming status, use outgoing_status
+                     + "\t\t\t\tTRUE : child_0.status;" + os.linesep  # otherwise matcch the child
                      + status_end
-                     + active[0]#handles (if this node not active, child_0 not active)
-                     + active_end#handle (otherwise, child_0 active)
+                     + active[0]  # handles (if this node not active, child_0 not active)
+                     + active_end  # handle (otherwise, child_0 active)
                      )
     return return_string
-
-
-
-
 
 # -----------------------------------------------------------------
 # blackboard nodes
@@ -491,17 +489,17 @@ def create_leaf_check_blackboard_variable_value(ignored_value = 0):
     (status_start, status_end) = common_string_leaf()
     return_string = ("MODULE leaf_check_blackboard_variable_value(check)" + os.linesep
                      + status_start
-                     + "\t\tinternal_status := (check.result) ? success : failure;" + os.linesep  #passes the check
-                     #+ "\t\t\t\t(blackboard.variable_exists[variable]) & (check.result) : success;" + os.linesep  #passes the check
-                     #+ "\t\t\t\tTRUE : failure;" + os.linesep  #the variable doesn't exist or fails the check
-                     #+ status_end
+                     + "\t\tinternal_status := (check.result) ? success : failure;" + os.linesep  # passes the check
+                     # + "\t\t\t\t(blackboard.variable_exists[variable]) & (check.result) : success;" + os.linesep  #passes the check
+                     # + "\t\t\t\tTRUE : failure;" + os.linesep  #the variable doesn't exist or fails the check
+                     # + status_end
                      )
     return return_string
 
 
 def create_leaf_check_blackboard_variable_values(number_of_nodes, variables, checks, operators):
     pass
-    # NOT ACTUALLY DONE. OPERATORS CONFUSING.   
+    # NOT ACTUALLY DONE. OPERATORS CONFUSING.
     # (status_start, status_end) = common_string_leaf()
     # return_string = ("MODULE leaf_check_blackboard_variable_values(variables_exist, checks)" + os.linesep
     #                   + status_start
@@ -513,7 +511,7 @@ def create_leaf_check_blackboard_variable_values(number_of_nodes, variables, che
 
 
 def create_leaf_set_blackboard_variable(ignored_value = 0):
-    pass   
+    pass
     # (status_start, status_end) = common_string_leaf()
     # return_string = ("MODULE leaf_set_blackboard_variable(blackboard, variable, nodes_with_access, value_creator, overwrite)" + os.linesep
     #                   + status_start
@@ -582,7 +580,7 @@ def create_leaf_wait_for_blackboard_variable(ignored_value = 0):
     (status_start, status_end) = common_string_leaf()
     return_string = ("MODULE leaf_wait_for_blackboard_variable(variable, blackboard)" + os.linesep
                      + status_start
-                     + "\t\tinternal_status := blackboard.variable_exists[variable] ? success : running;" + os.linesep  #passes the check
+                     + "\t\tinternal_status := blackboard.variable_exists[variable] ? success : running;" + os.linesep  # passes the check
                      # + "\t\t\t\t(blackboard.variable_exists[variable]) : success;" + os.linesep  #variable exists
                      # + "\t\t\t\tTRUE : running;" + os.linesep  #variable does not yet exist
                      # + status_end
@@ -594,7 +592,7 @@ def create_leaf_wait_for_blackboard_variable_value(ignored_value = 0):
     (status_start, status_end) = common_string_leaf()
     return_string = ("MODULE leaf_wait_for_blackboard_variable_value(blackboard, variable, check)" + os.linesep
                      + status_start
-                     + "\t\tinternal_status := (blackboard.variable_exists[variable]) & (check.result) ? success : running;" + os.linesep  #passes the check
+                     + "\t\tinternal_status := (blackboard.variable_exists[variable]) & (check.result) ? success : running;" + os.linesep  # passes the check
                      # + "\t\t\t\t(blackboard.variable_exists[variable]) & (check.result) : success;" + os.linesep  #passes the check
                      # + "\t\t\t\tTRUE : running;" + os.linesep  #fails the check or doesn't exist
                      # + status_end
@@ -651,27 +649,27 @@ def create_leaf_periodic(ignored_value = 0):
     return_string = ("MODULE leaf_periodic(period)" + os.linesep
                      + status_start
                      + "\t\tinternal_status := cycle;" + os.linesep
-                     #+ "\t\t\t\tTRUE : cycle;" + os.linesep  #this always returns cycle
-                     #+ status_end
+                     # + "\t\t\t\tTRUE : cycle;" + os.linesep  #this always returns cycle
+                     # + status_end
                      + "\tVAR" + os.linesep
-                     + "\t\tcycle : {running, success, failure};" + os.linesep #keep track of where we are in the cycle
-                     + "\t\tinternal_node_count : 1..period;" + os.linesep #keep track of where we are in the internal_node_count
+                     + "\t\tcycle : {running, success, failure};" + os.linesep  # keep track of where we are in the cycle
+                     + "\t\tinternal_node_count : 1..period;" + os.linesep  # keep track of where we are in the internal_node_count
                      + "\tASSIGN" + os.linesep
-                     + "\t\tinit(cycle) := running;" + os.linesep #initiate cycle
-                     + "\t\tinit(internal_node_count) := 1;" + os.linesep #initiate internal_node_count
+                     + "\t\tinit(cycle) := running;" + os.linesep  # initiate cycle
+                     + "\t\tinit(internal_node_count) := 1;" + os.linesep  # initiate internal_node_count
                      + "\t\tnext(cycle) :=" + os.linesep
                      + "\t\t\tcase" + os.linesep
-                     + "\t\t\t\t!(active) : cycle;" + os.linesep #do nothing if not active
-                     + "\t\t\t\t(internal_node_count = period) & (cycle = running) : success;" + os.linesep #if we've internal_node_counted up, time to go to success
-                     + "\t\t\t\t(internal_node_count = period) & (cycle = success) : failure;" + os.linesep #if we've internal_node_counted up, time to go to failure
-                     + "\t\t\t\t(internal_node_count = period) & (cycle = failure) : running;" + os.linesep #if we've internal_node_counted up, time to go to running
+                     + "\t\t\t\t!(active) : cycle;" + os.linesep  # do nothing if not active
+                     + "\t\t\t\t(internal_node_count = period) & (cycle = running) : success;" + os.linesep  # if we've internal_node_counted up, time to go to success
+                     + "\t\t\t\t(internal_node_count = period) & (cycle = success) : failure;" + os.linesep  # if we've internal_node_counted up, time to go to failure
+                     + "\t\t\t\t(internal_node_count = period) & (cycle = failure) : running;" + os.linesep  # if we've internal_node_counted up, time to go to running
                      + "\t\t\t\tTRUE : cycle;" + os.linesep
                      + "\t\t\tesac;" + os.linesep
                      + "\t\tnext(internal_node_count) :=" + os.linesep
                      + "\t\t\tcase" + os.linesep
-                     + "\t\t\t\t!(active) : internal_node_count;" + os.linesep #do nothing if not active
-                     + "\t\t\t\t(internal_node_count = period) : 1;" + os.linesep #if we reached the max, then we need to reset.
-                     + "\t\t\t\t(internal_node_count < period) : min(internal_node_count + 1, period);" + os.linesep #if we haven't reached it, internal_node_count up
+                     + "\t\t\t\t!(active) : internal_node_count;" + os.linesep  # do nothing if not active
+                     + "\t\t\t\t(internal_node_count = period) : 1;" + os.linesep  # if we reached the max, then we need to reset.
+                     + "\t\t\t\t(internal_node_count < period) : min(internal_node_count + 1, period);" + os.linesep  # if we haven't reached it, internal_node_count up
                      + "\t\t\t\tTRUE : internal_node_count;" + os.linesep
                      + "\t\t\tesac;" + os.linesep
                      )
@@ -703,9 +701,9 @@ def create_leaf_status_sequence(ignored_value = 0):
                      + "\t\tinit(internal_node_count) := 0;" + os.linesep
                      + "\t\tnext(internal_node_count) :=" + os.linesep
                      + "\t\t\tcase" + os.linesep
-                     + "\t\t\t\t!(active) : internal_node_count;" + os.linesep #do nothing if not active
-                     + "\t\t\t\t(eventually = invalid) & (internal_node_count + 1 = sequence_length) : 0;" + os.linesep #if we reached the max and we don't have an eventuality, reset
-                     + "\t\t\t\tTRUE : min(internal_node_count + 1, sequence_length);" + os.linesep #if we aren't resetting, then increase
+                     + "\t\t\t\t!(active) : internal_node_count;" + os.linesep  # do nothing if not active
+                     + "\t\t\t\t(eventually = invalid) & (internal_node_count + 1 = sequence_length) : 0;" + os.linesep  # if we reached the max and we don't have an eventuality, reset
+                     + "\t\t\t\tTRUE : min(internal_node_count + 1, sequence_length);" + os.linesep  # if we aren't resetting, then increase
                      + "\t\t\tesac;" + os.linesep
                      )
     return return_string
@@ -739,9 +737,9 @@ def create_leaf_success_every_n(ignored_value = 0):
                      + "\t\tinit(internal_node_count) := 1;" + os.linesep
                      + "\t\tnext(internal_node_count) :=" + os.linesep
                      + "\t\t\tcase" + os.linesep
-                     + "\t\t\t\t!(active) : internal_node_count;" + os.linesep #hold if not active
-                     + "\t\t\t\t(internal_node_count = n) : 1;" + os.linesep #if we reached the max, then we need to reset.
-                     + "\t\t\t\tTRUE : min(internal_node_count + 1, n);" + os.linesep #if we haven't reached it, internal_node_count up
+                     + "\t\t\t\t!(active) : internal_node_count;" + os.linesep  # hold if not active
+                     + "\t\t\t\t(internal_node_count = n) : 1;" + os.linesep  # if we reached the max, then we need to reset.
+                     + "\t\t\t\tTRUE : min(internal_node_count + 1, n);" + os.linesep  # if we haven't reached it, internal_node_count up
                      + "\t\t\tesac;" + os.linesep)
     return return_string
 
@@ -760,8 +758,8 @@ def create_leaf_tick_counter(ignored_value = 0):
                      + "\t\tinit(internal_node_count) := 0;" + os.linesep
                      + "\t\tnext(internal_node_count) :=" + os.linesep
                      + "\t\t\tcase" + os.linesep
-                     + "\t\t\t\t!(active) : internal_node_count;" + os.linesep #hold if not active
-                     + "\t\t\t\tTRUE : min(internal_node_count + 1, duration);" + os.linesep #if we haven't reached it, internal_node_count up
+                     + "\t\t\t\t!(active) : internal_node_count;" + os.linesep  # hold if not active
+                     + "\t\t\t\tTRUE : min(internal_node_count + 1, duration);" + os.linesep  # if we haven't reached it, internal_node_count up
                      + "\t\t\tesac;" + os.linesep)
     return return_string
 
@@ -776,8 +774,8 @@ def create_leaf_non_blocking(ignored_value = 0):
                      + "\t\tinternal_status := input_status;" + os.linesep
                      + "\tVAR" + os.linesep
                      + "\t\tinput_status : {success, failure};" + os.linesep
-                     #+ "\tASSIGN" + os.linesep
-                     #+ "\t\tinit(input_status) := success;" + os.linesep
+                     # + "\tASSIGN" + os.linesep
+                     # + "\t\tinit(input_status) := success;" + os.linesep
                      # + "\tCONSTANTS" + os.linesep
                      # + "\t\tsuccess, failure, running, invalid;" + os.linesep
                      # + "\tVAR" + os.linesep
@@ -799,8 +797,8 @@ def create_leaf_timer(ignored_value = 0):
                      + "\t\tinternal_status := input_status;" + os.linesep
                      + "\tVAR" + os.linesep
                      + "\t\tinput_status : {success, running};" + os.linesep
-                     #+ "\tASSIGN" + os.linesep
-                     #+ "\t\tinit(input_status) := success;" + os.linesep
+                     # + "\tASSIGN" + os.linesep
+                     # + "\t\tinit(input_status) := success;" + os.linesep
                      # + "\tCONSTANTS" + os.linesep
                      # + "\t\tsuccess, failure, running, invalid;" + os.linesep
                      # + "\tVAR" + os.linesep
@@ -842,7 +840,7 @@ def create_leaf_default(ignored_value = 0):
 
 def create_composite_selector_with_memory(number_of_children):
     (status_start, status_end, active, active_end, children) = common_string_composite(number_of_children)
-    #note that resume_point is an integer between 0 and last_child (inclusive)
+    # note that resume_point is an integer between 0 and last_child (inclusive)
     if number_of_children == 0:
         inject_string = "resume_point"
     else:
@@ -872,7 +870,7 @@ def create_composite_selector_with_memory(number_of_children):
 
 
 def create_composite_selector_without_memory(number_of_children):
-    (status_start, status_end, active, active_end, children) = common_string_composite(number_of_children)  
+    (status_start, status_end, active, active_end, children) = common_string_composite(number_of_children)
     return_string = ("MODULE composite_selector_without_memory_" + str(number_of_children) + "(" + children + ")" + os.linesep
                      + status_start
                      )
@@ -897,7 +895,7 @@ def create_composite_selector_without_memory(number_of_children):
 
 def create_composite_sequence_with_memory(number_of_children):
     (status_start, status_end, active, active_end, children) = common_string_composite(number_of_children)
-    #note that resume_point is an integer between 0 and last_child (inclusive)
+    # note that resume_point is an integer between 0 and last_child (inclusive)
     if number_of_children == 0:
         inject_string = "resume_point"
     else:
@@ -926,7 +924,7 @@ def create_composite_sequence_with_memory(number_of_children):
 
 
 def create_composite_sequence_without_memory(number_of_children):
-    (status_start, status_end, active, active_end, children) = common_string_composite(number_of_children)   
+    (status_start, status_end, active, active_end, children) = common_string_composite(number_of_children)
     return_string = ("MODULE composite_sequence_without_memory_" + str(number_of_children) + "(" + children + ")" + os.linesep
                      + status_start
                      )
@@ -1017,7 +1015,7 @@ def create_composite_parallel_unsynchronized_success_on_all(number_of_children):
                           )
     return_string += ("\t\t\t\tTRUE : success;" + os.linesep
                       + status_end
-    )
+                      )
     for child in range(number_of_children):
         return_string += ("\t\tchild_" + str(child) + ".active := active;" + os.linesep)
         # all children are active
@@ -1040,7 +1038,7 @@ def create_composite_parallel_unsynchronized_success_on_one(number_of_children):
                           )
     return_string += ("\t\t\t\tTRUE : running;" + os.linesep
                       + status_end
-    )
+                      )
     for child in range(number_of_children):
         return_string += ("\t\tchild_" + str(child) + ".active := active;" + os.linesep)
         # all children are active if they are not skipped

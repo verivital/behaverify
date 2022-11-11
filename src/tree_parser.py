@@ -693,7 +693,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes,
             }
         try:
             rhs = str(int(current_node.check.value))
-        except:
+        except ValueError:
             rhs = '0'
         try:
             if current_node.check.operator is operator.eq:
@@ -710,7 +710,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes,
                 op = '!='
             else:
                 op = '='
-        except:
+        except Exception:
             op = '='
         nodes[this_id] = {
             'name' : node_name,
@@ -931,7 +931,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes,
             }
         try:
             rhs = str(int(current_node.check.value))
-        except:
+        except ValueError:
             rhs = '0'
         try:
             if current_node.check.operator is operator.eq:
@@ -948,7 +948,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes,
                 op = ' != '
             else:
                 op = ' = '
-        except:
+        except Exception:
             op = ' = '
         nodes[this_id] = {
             'name' : node_name,
@@ -1298,7 +1298,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes,
             }
         try:
             rhs = str(int(current_node.expected_value))
-        except:
+        except (ValueError, AttributeError):
             rhs = '0'
         op = ' = '
         nodes[this_id] = {
@@ -1575,7 +1575,8 @@ def variable_name_cleanup(nodes, variables):
     does not return anything. simply modifies the existing structures.
     this segment is to detect and create sub-variables
     i.e., if a variable in the original was just "meh = Object"
-    but other places use meh.val1, meh.val2, etc, then the original "meh" needs to handle those.
+    but other places use meh.val1, meh.val2, etc, then the original "meh"
+    needs to handle those.
     """
     node_name_to_id = {}
 
