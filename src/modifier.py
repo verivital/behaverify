@@ -11,7 +11,7 @@ def create_stages(variable, variables, node_name_to_id):
         stage_start = variable['stages'][stage_count - 1]
         try:
             stage_end = variable['stages'][stage_count]
-        except:
+        except KeyError:
             stage_end = len(node_name_to_id)
         variable_name = variable['variable_name'] + "_stage_" + str(stage_count)
         variable_number = len(variables)
@@ -60,7 +60,7 @@ def arg_modification(args, nodes, variables, node_name_to_id):
             try:
                 if variable['next_stage'] in variables:
                     continue
-            except:
+            except KeyError:
                 pass
             create_stages(variable, variables, node_name_to_id)
     if args.no_stages:
@@ -148,7 +148,7 @@ def best_guess(node, node_id, variables):
                     node['additional_modules'][module_sig]['use_next'] = False
                 else:
                     node['additional_modules'][module_sig]['use_next'] = True
-            except:
+            except KeyError:
                 node['additional_modules'][module_sig]['use_next'] = False
 
 
@@ -246,7 +246,7 @@ def main():
           or args.best_guess_checks))):
         arg_modification(args, nodes, variables, node_name_to_id)
 
-    deletions = False
+    # deletions = False
     if args.interactive_mode:
         done = False
         while not done:
@@ -297,7 +297,7 @@ def main():
                                 variable = variables.pop(variable_name)
                                 for node_name in variable['access']:
                                     nodes[node_name_to_id[node_name]]['variables'].remove(variable_name)
-                                deletions = True
+                                # deletions = True
                             else:
                                 try:
                                     print("current value: "
@@ -413,7 +413,7 @@ def main():
                                         try:
                                             if variable['next_stage'] in variables:
                                                 continue
-                                        except:
+                                        except KeyError:
                                             pass
                                         create_stages(variable, variables, node_name_to_id)
                                     else:
