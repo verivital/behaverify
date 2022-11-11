@@ -171,19 +171,19 @@ def create_resume_structure(nodes, local_root_to_relevant_list_map):
         var_resume_from_node_string += "\t\tresume_from_node_" + str(local_root) + " : {" + str(local_root) + ", " + str(relevant_list)[1:-1] + "};" + os.linesep
         init_resume_from_node_string += "\t\tinit(resume_from_node_" + str(local_root) + ") := " + str(local_root) + ";" + os.linesep
         if -2 in relevant_list:
-            inject_string = ("\t\t\t\t(statuses[" + str(local_root) + "] = success) : -2;" + os.linesep#if the local root returns success, this is skippable. note that this is checked after the reset condition, so we don't over-write the reset.
-                             + "\t\t\t\t(statuses[" + str(local_root) + "] = failure) : " + str(local_root) + ";" + os.linesep#failure is still a reset though
-            )
-            relevant_list.remove(-2)#don't actually want it in the relevant set going forward
+            inject_string = ("\t\t\t\t(statuses[" + str(local_root) + "] = success) : -2;" + os.linesep  # if the local root returns success, this is skippable. note that this is checked after the reset condition, so we don't over-write the reset.
+                             + "\t\t\t\t(statuses[" + str(local_root) + "] = failure) : " + str(local_root) + ";" + os.linesep  # failure is still a reset though
+                             )
+            relevant_list.remove(-2)  # don't actually want it in the relevant set going forward
         else:
-            inject_string = "\t\t\t\t(statuses[" + str(local_root) + "] in {success, failure}) : " + str(local_root) + ";" + os.linesep#reset since this isn't skippable.
-        #we've manually handled the root case using inject_string
-        cur_node = nodes[local_root]['parent_id']#start from the parent.
+            inject_string = "\t\t\t\t(statuses[" + str(local_root) + "] in {success, failure}) : " + str(local_root) + ";" + os.linesep  # reset since this isn't skippable.
+        # we've manually handled the root case using inject_string
+        cur_node = nodes[local_root]['parent_id']  # start from the parent.
         ancestor_string = ""
         while not cur_node == -1:
             ancestor_string += "\t\t\t\t(statuses[" + str(cur_node) + "] in {success, failure}) : " + str(local_root) + ";" + os.linesep
             cur_node = nodes[cur_node]['parent_id']
-        #go through and add all the ancestors of the local root to a set for the purpose of resetting.
+        # go through and add all the ancestors of the local root to a set for the purpose of resetting.
         next_resume_from_node_string += ("\t\tnext(resume_from_node_" + str(local_root) + ") := " + os.linesep
                                          + "\t\t\tcase" + os.linesep
                                          + ancestor_string  # highest priority is reset
@@ -231,7 +231,7 @@ def create_resume_structure(nodes, local_root_to_relevant_list_map):
     define_string = var_define_status_string + define_trace_running_source
     var_string = var_resume_from_node_string
     init_string = init_resume_from_node_string
-    next_string =  next_resume_from_node_string
+    next_string = next_resume_from_node_string
     return (define_string, var_string, init_string, next_string)
 
 
@@ -356,7 +356,7 @@ def main():
     # ------------------------------------------------------------------------------------------------------------------------
     var_string = (""
                   + "\tVAR" + os.linesep
-                  )       
+                  )
     # var_string += "\t\tvariable_names : define_variables;" + os.linesep
     var_string += "\t\tnode_names : define_nodes;" + os.linesep
     # var_string += "\t\tblackboard : blackboard_module(node_names, variable_names, statuses);" + os.linesep
