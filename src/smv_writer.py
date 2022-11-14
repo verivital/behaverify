@@ -20,7 +20,19 @@ import compute_resume_info
 
 def create_nodes(nodes):
     '''
-    creates the strings necessary for initialization stuff
+    creates strings with neccessary information based on nodes.
+    --
+    arguments
+    @ nodes -> a map (dictionary) from integers (node_id) to node information
+    --
+    return
+    @ define_string -> a string with defintions
+    @ init_string -> a string with initializations
+    @ next_string -> a string with next conditions
+    @ var_string -> a string with variable declarations
+    --
+    effects
+    returns 4 strings, each for a specific section which each node requires.
     '''
     define_string = ""
     init_string = ""
@@ -56,7 +68,8 @@ def create_nodes(nodes):
         elif node['category'] == 'composite':
             if 'without_memory' in node['type']:
                 var_string += ("\t\t" + node['name'] + " : "
-                               + node['category'] + '_' + node['type'] + "_" + str(len(node['children'])) + "("
+                               + node['category'] + '_' + node['type']
+                               + "_" + str(len(node['children'])) + "("
                                + children_string)
             elif 'with_memory' in node['type']:
                 if len(node['children']) < 2:
@@ -68,12 +81,14 @@ def create_nodes(nodes):
                 else:
                     children_string = children_string + ', '
                 var_string += ("\t\t" + node['name'] + " : "
-                               + node['category'] + '_' + node['type'] + "_" + str(len(node['children'])) + "("
+                               + node['category'] + '_' + node['type']
+                               + "_" + str(len(node['children'])) + "("
                                + children_string + resume_point)
             elif 'parallel' in node['type']:
                 if 'unsynchronized' in node['type']:
                     var_string += ("\t\t" + node['name'] + " : "
-                                   + node['category'] + '_' + node['type'] + "_" + str(len(node['children'])) + "("
+                                   + node['category'] + '_' + node['type']
+                                   + "_" + str(len(node['children'])) + "("
                                    + children_string)
                 else:
                     if len(node['children']) < 2:
@@ -91,7 +106,8 @@ def create_nodes(nodes):
                     else:
                         children_string = children_string + ', '
                     var_string += ("\t\t" + node['name'] + " : "
-                                   + node['category'] + '_' + node['type'] + "_" + str(len(node['children'])) + "("
+                                   + node['category'] + '_' + node['type']
+                                   + "_" + str(len(node['children'])) + "("
                                    + children_string + " parallel_skip_" + str(node_id))
             else:
                 print('composite node of unknown type. is not parallel.',
@@ -120,7 +136,20 @@ def create_nodes(nodes):
 
 def create_additional_arguments(nodes):
     '''
-    runs through additional arguments
+    creates strings with additional neccessary information based on nodes.
+    --
+    arguments
+    @ nodes -> a map (dictionary) from integers (node_id) to node information
+    --
+    return
+    @ define_string -> a string with defintions
+    @ init_string -> a string with initializations
+    @ next_string -> a string with next conditions
+    @ var_string -> a string with variable declarations
+    --
+    effects
+    returns 4 strings, each for a specific section which each node requires.
+    this is based on additional arguments
     '''
     define_string = ""
     var_string = ""
@@ -140,6 +169,23 @@ def create_additional_arguments(nodes):
 def create_resume_structure(nodes, local_root_to_relevant_list_map):
     '''
     responsible for creating the resume structure
+    --
+    arguments
+    @ nodes -> a map (dictionary) from integers (node_id) to node information
+    @ local_root_to_relevant_list_map
+      -> a map (dictionary) from local roots to list of relevant nodes
+      @@ local roots -> nodes that are the root or whose parents are synchronized parallel nodes
+      @@ relevant nodes -> nodes which can be resumed from
+    --
+    return
+    @ define_string -> a string with defintions
+    @ init_string -> a string with initializations
+    @ next_string -> a string with next conditions
+    @ var_string -> a string with variable declarations
+    --
+    effects
+    returns 4 strings, each for a specific section.
+    these are used to allow nodes to resume after running was returned.
     '''
     # things to still implement: new resume structure
 
@@ -238,6 +284,26 @@ def create_resume_structure(nodes, local_root_to_relevant_list_map):
 def create_resume_point(nodes, node_to_local_root_map, local_root_to_relevant_list_map, node_to_descendants_map):
     '''
     create the resume_point variable that tells sequence nodes which child to start at
+    --
+    arguments
+    @ nodes -> a map (dictionary) from integers (node_id) to node information
+    @ node_to_local_root_map -> a map (dictionary) from a node to it's local root
+      @@ local roots -> nodes that are the root or whose parents are synchronized parallel nodes
+    @ local_root_to_relevant_list_map
+      -> a map (dictionary) from local roots to list of relevant nodes
+      @@ local roots -> nodes that are the root or whose parents are synchronized parallel nodes
+      @@ relevant nodes -> nodes which can be resumed from
+    @ node_to_descendants_map -> a map (dictionary) from a node 
+    --
+    return
+    @ define_string -> a string with defintions
+    @ init_string -> a string with initializations
+    @ next_string -> a string with next conditions
+    @ var_string -> a string with variable declarations
+    --
+    effects
+    returns 4 strings, each for a specific section.
+    these are used to allow nodes to resume after running was returned.
     '''
     resume_point_string = ""
     for node_id in nodes:
@@ -249,8 +315,11 @@ def create_resume_point(nodes, node_to_local_root_map, local_root_to_relevant_li
         if len(node['children']) < 2:
             # print('few children. skipping')
             # we have 0 or 1 children
-            # if there are no children, then resume_point really doesn't matter, but we need to pass a value
-            # if there is 1 child, then we never skip it, so resume_point really doesn't matter, but we need to pass a value
+            # if there are no children, then resume_point really doesn't matter,
+            # but we need to pass a value
+            # if there is 1 child, then we never skip it, so resume_point really doesn't matter,
+            # but we need to pass a value
+            # so regardless, we need to pass a value.
             # hard code -2 into the node_with_memory in this case
             pass
         else:
@@ -282,12 +351,16 @@ def create_resume_point(nodes, node_to_local_root_map, local_root_to_relevant_li
                             # print(child_index_to_relevant_descendants_map)
                             child = node['children'][child_index]
                             # print(child)
-                            if relevant_node in node_to_descendants_map[child]:  # if the relevant node is a descendant of this child, then we need to mark that down. if it's not, continue
+                            if relevant_node in node_to_descendants_map[child]:
+                                # if the relevant node is a descendant of this child,
+                                # then we need to mark that down. if it's not, continue
                                 if child_index in child_index_to_relevant_descendants_map:
                                     child_index_to_relevant_descendants_map[child_index].add(relevant_node)
                                 else:
                                     child_index_to_relevant_descendants_map[child_index] = {relevant_node}
-                            elif child == relevant_node:  # unless of course, the relevant node IS the child, then we also need to mark that down.
+                            elif child == relevant_node:
+                                # unless of course, the relevant node IS the child,
+                                # then we also need to mark that down.
                                 if child_index in child_index_to_relevant_descendants_map:
                                     child_index_to_relevant_descendants_map[child_index].add(relevant_node)
                                 else:
