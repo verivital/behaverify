@@ -25,8 +25,8 @@ blackboard_needed = False
 # -----------------------------------------------------------------------------
 # regex stuff
 blackboard_name_pattern = re.compile(r'#*(?P<blackboard_name>[^\s= ]+)'
-                                     '\s*= \s*'
-                                     'py_trees\.blackboard\.Blackboard\(\s*\)')
+                                     r'\s*= \s*'
+                                     r'py_trees\.blackboard\.Blackboard\(\s*\)')
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
 
@@ -170,10 +170,9 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes,
             if blackboard_match:
                 blackboard_name = \
                     blackboard_match.groupdict()['blackboard_name'].strip()
-                variable_name_pattern = re.compile(r'#*\s*'
-                                                   + blackboard_name
-                                                   + '\.'
-                                                   '(?P<variable_name>[_a-zA-Z][\w\.]+)')
+                variable_name_pattern = re.compile(r'#*\s*' + blackboard_name
+                                                   + r'\.'
+                                                   r'(?P<variable_name>[_a-zA-Z][\w\.]+)')
                 start_loc = 0
                 done = False
                 local_variable_set = set()
