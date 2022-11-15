@@ -1637,6 +1637,8 @@ def main():
     root_string += ')'
     root = eval(root_string)
     walk_tree(root, args.output_file)
+    return
 
 
-main()
+if __name__ == '__main__':
+    main()
