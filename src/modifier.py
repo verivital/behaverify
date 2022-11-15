@@ -464,6 +464,8 @@ def main():
     else:
         printer = pprint.PrettyPrinter(indent = 4, sort_dicts = False)
         printer.pprint({'nodes' : nodes, 'variables' : variables})
+    return
 
 
-main()
+if __name__ == '__main__':
+    main()
