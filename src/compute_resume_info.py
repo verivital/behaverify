@@ -14,12 +14,19 @@ def create_node_to_local_root_map(nodes):
     """
     used to create a map from nodes to local root
     --
-    return
-    node_to_local_root_map : a map (dictionary) from node id to the node id of
-    the local root.
+    arguments
+    @ nodes -> a map (dictionary) from node_id to node information
     --
-    the local root is defined as the most recent ancestor
-    s.t. EXPLAIN DETAILS HERE.
+    return
+    @ node_to_local_root_map -> a map (dictionary) from node id to the
+      node id of the local root.
+      @ local_root -> the local root of a node N is a node M such that
+        M is an ancestor of N and M is the root node or M's parent
+        is a parallel synchronised node and there is no P between N and M
+        such that P's parent is a parallel synchronised node.
+    --
+    effects
+    goes through all the nodes in
     """
     node_to_local_root_map = {0: 0}
     # a map from node_id to the local root for that node_id
@@ -347,7 +354,6 @@ def create_node_to_descendants_map(nodes):
     go back up until we reach -1.
     for each stop along the way, add the current node
     '''
-
     node_to_descendants_map = {}
     for node_id in range(len(nodes)):
         node_to_descendants_map[node_id] = set()
