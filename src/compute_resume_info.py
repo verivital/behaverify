@@ -22,18 +22,24 @@ def create_node_to_local_root_map(nodes):
       node id of the local root.
       @ local_root -> the local root of a node N is a node M such that
         M is an ancestor of N and M is the root node or M's parent
-        is a parallel synchronised node and there is no P between N and M
-        such that P's parent is a parallel synchronised node.
+        is a parallel node and there is no P between N and M
+        such that P's parent is a parallel node.
     --
-    effects
-    goes through all the nodes in
+    effects and method
+    begin by marking the root as the local root of the root.
+    for each other node N, check if N's parent is a parallel node
+    if it is, N is a local root, and N's local root is N
+    otherwise, N's local root is N's parent's local root.
     """
-    node_to_local_root_map = {0: 0}
+    node_to_local_root_map = {0 : 0}
     # a map from node_id to the local root for that node_id
     for node_id in range(1, len(nodes)):
+        # start at 1 to avoid the root, which was covered above.
         if 'parallel' in nodes[nodes[node_id]['parent_id']]['type']:
+            # if the parent is a parallel node, then this it the local root
             node_to_local_root_map[node_id] = node_id
         else:
+            # otherwise, the local root is w/e my parent's local root is
             node_to_local_root_map[node_id] = node_to_local_root_map[nodes[node_id]['parent_id']]
     return node_to_local_root_map
 
@@ -45,9 +51,15 @@ def can_create_running(node):
     a decorator might return running solely because it's child returned running.
     The child created running in this case, not the decorator
     --
+    arguments
+    @ nodes -> a map (dictionary) from node_id to node information
+    --
     return
-    A boolean. True indicates the node in question can create running.
-    False indicates it cannot.
+    @ Boolean. True indicates the node in question can create running.
+      False indicates it cannot.
+    --
+    effects and method
+    the node type is checked. based on the node type, we return a value.
     """
     if node['category'] == 'composite' and 'with_memory' in node['type']:
         # nodes with memory do not create running;
@@ -77,8 +89,21 @@ def map_can_return_running(nodes, node_id, running_map):
     Process is done recursively from whichever node is passed.
     the true 'result' will be contained in running_map
     --
-    returns
-    a boolean indicating if the given node can return running
+    arguments
+    @ nodes -> a map (dictionary) from node_id to node information
+    @ node_id -> the id of the node we are currently considering
+    @ running_map -> a map (dictionary) from node_id to booleans
+      each node id maps to True if the node can return running
+      and False otherwise
+    --
+    return
+    @ Boolean indicating if the given node can return running
+    --
+    effects and methods
+    the node category and type are considered. each child is ran.
+    note that in some cases advanced techniques are considered.
+    for instance, a selector can only return running if one of it's children
+    can return running.
     """
     node = nodes[node_id]
     if node['category'] == 'leaf':
@@ -104,6 +129,7 @@ def map_can_return_running(nodes, node_id, running_map):
         for child in node['children']:
             running = map_can_return_running(nodes, child, running_map) or running
         if len(node['children']) == 0:
+            # this is an edge case check.
             if 'parallel' in node['type']:
                 running_map[node_id] = True
                 return True
@@ -115,6 +141,22 @@ def map_can_return_running(nodes, node_id, running_map):
 
 
 def refine_return_types(nodes, node_id):
+    """
+    used to refine the possible return types of each node.
+    --
+    arguments
+    @ nodes -> a map (dictionary) from node_id to node information
+    @ node_id -> the id of the node we are currently considering
+    --
+    return
+    @ Boolean indicating if the given node can return running
+    --
+    effects and methods
+    From the node indicated by node_id, we recursively consider
+    all descendants. Based on what the children can return,
+    the nodes have their return types updated.
+    """
+    # TODO: add a check to see if a node can even be run.
     node = nodes[node_id]
     if node['category'] == 'leaf':
         return
@@ -201,23 +243,51 @@ def refine_return_types(nodes, node_id):
 
 
 def refine_invalid(nodes, node_id = 0, is_root = True):
+    """
+    used to refine the possiblity of being invalid
+    --
+    arguments
+    @ nodes -> a map (dictionary) from node_id to node information
+    @ node_id -> the id of the node we are currently considering
+    @ is_root -> true if node_id is the root,  False otherwise.
+    --
+    return
+    @ Boolean indicating if the given node can return running
+    --
+    effects and methods
+    From the node indicated by node_id, we recursively consider
+    all descendants. Based on what the children can return,
+    the nodes have their invalidity updated
+    """
+    # TODO: finish this method!!!!!
     node = nodes[node_id]
     if is_root:
+        # root is never invalid.
         node['can_be_invalid'] = False
         for child_id in node['children']:
             refine_invalid(nodes, child_id, False)
         return
     parent = nodes[node['parent_id']]
     if parent['can_be_invalid']:
+        # if the parent can be invalid, this can be invalid
         node['can_be_invalid'] = True
+    # at this point, parent is always valid
     elif 'unsynchronized' in parent['type']:
+        # parallel unsynchronized always runs all children
+        # so...never invalid.
         node['can_be_invalid'] = False
     elif 'synchronized' in parent['type']:
         if node['return_arguments']['success'] is False:
+            # this node cannot return succes.
+            # it will never be skipped.
+            # therefore, it can never be invalid.
             node['can_be_invalid'] = False
         else:
+            # this node can return success, so it can be
+            # skipped
             node['can_be_invalid'] = True
     elif parent['type'] == 'selector_without_memory':
+        # this seems wildly unfinsihed.
         pass
 
 
@@ -225,18 +295,26 @@ def create_local_root_to_relevant_list_map(nodes, node_to_local_root_map):
     """
     creates a map from a local root to a lit of relevant nodes
     --
-    returns
-    local_root_to_relevant_list_map,
-    nodes_with_memory_to_relevant_descendants_map
+    arguments
+    @ nodes -> a map (dictionary) from node_id to node information
+    @ node_to_local_root_map -> a map (dictionary) from node_id to the local root
+      @ local_root -> the local root of a node N is a node M such that
+        M is an ancestor of N and M is the root node or M's parent
+        is a parallel node and there is no P between N and M
+        such that P's parent is a parallel node.
     --
-    local_root_to_relevant_list_map ->
-     a map (dictionary) that maps the
-     local root's node id to a list of node ids. Each node id in
-     the list is a 'relevant' node to that local root,
-     meaning it must track it as a possible location to resume from
-    nodes_with_memory_to_relevant_descendants_map ->
-     a map (dictionary) that maps a node with memory
-     to a set of relevant descendants.
+    returns
+    @ local_root_to_relevant_list_map -> a map (dictionary) from
+      local roots to a list of nodes that can be resumed from
+    @ nodes_with_memory_to_relevant_descendants_map -> a map (dictionary)
+      from node id of nodes with memory to nodes that can be resumed from
+    --
+    effects and methods
+    for each node N, if it's a local root, do basically nothing.
+    if it's NOT a local root, begin a track back up the tree.
+    based on what we encounter, we can either discount the thing as being
+    relevant, or we reach the local root. If we reach the local root,
+    then we started from a relevant point.
     """
 
     running_map = {}
@@ -340,20 +418,21 @@ def create_local_root_to_relevant_list_map(nodes, node_to_local_root_map):
 
 
 def create_node_to_descendants_map(nodes):
-    '''
+    """
+    used to create a map from nodes to their descendants
+    --
+    arguments
+    @ nodes -> a map (dictionary) from node_id to node information
+    --
     return
-    node_to_descendants_map.
-    ---
-    node_to_descendants_map ->
-    this maps each node to the set of all of it's descendants.
-    leaf nodes map to an empty set. a node is not it's own descendant
-    ---
-    method explanation
-    go through all the nodes in order
-    add a set() for each node
-    go back up until we reach -1.
-    for each stop along the way, add the current node
-    '''
+    @ node_to_descendants_map -> a map (dictionary) from node_id to
+      the descendents of the node (not just children). A node is NOT
+      it's own descendant.
+    --
+    effects and methods
+    For each node N, traverse the tree until we pass the root.
+    For each visited node M, tell M that N is a descendant.
+    """
     node_to_descendants_map = {}
     for node_id in range(len(nodes)):
         node_to_descendants_map[node_id] = set()
