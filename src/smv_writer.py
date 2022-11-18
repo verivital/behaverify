@@ -19,7 +19,7 @@ import compute_resume_info
 
 
 def create_nodes(nodes):
-    '''
+    """
     creates strings with neccessary information based on nodes.
     --
     arguments
@@ -33,7 +33,7 @@ def create_nodes(nodes):
     --
     effects
     returns 4 strings, each for a specific section which each node requires.
-    '''
+    """
     define_string = ""
     init_string = ""
     next_string = ""
@@ -135,7 +135,7 @@ def create_nodes(nodes):
 
 
 def create_additional_arguments(nodes):
-    '''
+    """
     creates strings with additional neccessary information based on nodes.
     --
     arguments
@@ -150,7 +150,7 @@ def create_additional_arguments(nodes):
     effects
     returns 4 strings, each for a specific section which each node requires.
     this is based on additional arguments
-    '''
+    """
     define_string = ""
     var_string = ""
     init_string = ""
@@ -167,7 +167,7 @@ def create_additional_arguments(nodes):
 
 
 def create_resume_structure(nodes, local_root_to_relevant_list_map):
-    '''
+    """
     responsible for creating the resume structure
     --
     arguments
@@ -186,7 +186,7 @@ def create_resume_structure(nodes, local_root_to_relevant_list_map):
     effects
     returns 4 strings, each for a specific section.
     these are used to allow nodes to resume after running was returned.
-    '''
+    """
     # things to still implement: new resume structure
 
     # each local root tracks it's possible resume locations. unchanged from previous versions
@@ -282,7 +282,7 @@ def create_resume_structure(nodes, local_root_to_relevant_list_map):
 
 
 def create_resume_point(nodes, node_to_local_root_map, local_root_to_relevant_list_map, node_to_descendants_map):
-    '''
+    """
     create the resume_point variable that tells sequence nodes which child to start at
     --
     arguments
@@ -305,7 +305,7 @@ def create_resume_point(nodes, node_to_local_root_map, local_root_to_relevant_li
     effects
     returns 4 strings, each for a specific section.
     these are used to allow nodes to resume after running was returned.
-    '''
+    """
     resume_point_string = ""
     for node_id in nodes:
         node = nodes[node_id]
@@ -388,7 +388,7 @@ def create_resume_point(nodes, node_to_local_root_map, local_root_to_relevant_li
 
 
 def main():
-    '''
+    """
     basically a script to write the necessary information.
     --
     arguments
@@ -414,7 +414,7 @@ def main():
     effects
     creates a string that can be used with nuXmv. Output printed either to a
     specified file, or to the terminal.
-    '''
+    """
     arg_parser = argparse.ArgumentParser()
     # python3 behaverify.py create_root_FILE create_root_METHOD --root_args root_args_ARGS --string_args string_args_ARGS --min_val min_val_INT --max_val max_val_INT --force_parallel_unsynch --no_seperate_variable_modules --module_input_file module_input_file --specs_input_file specs_FILE --gen_modules gen_modules_INT --output_file ouput_file_FILE --module_output_file module_output_file_FILE --blackboard_output_file blackboard_output_file_FILE --overwrite
     arg_parser.add_argument('input_file')
@@ -432,10 +432,16 @@ def main():
     nodes = temp['nodes']
     variables = temp['variables']
 
+    compute_resume_info.refine_invalid(nodes, 0, True)
+    compute_resume_info.refine_return_types(nodes, 0)
+    # repeating this here to propagate some changes in it.
+    # TODO: refine both methods (or combine them?) so that this isn't necessary
+    compute_resume_info.refine_invalid(nodes, 0, True)
     compute_resume_info.refine_return_types(nodes, 0)
 
     node_to_local_root_map = compute_resume_info.create_node_to_local_root_map(nodes)
-    (local_root_to_relevant_list_map, nodes_with_memory_to_relevant_descendants_map) = compute_resume_info.create_local_root_to_relevant_list_map(nodes, node_to_local_root_map)
+    (local_root_to_relevant_list_map, nodes_with_memory_to_relevant_descendants_map) = \
+        compute_resume_info.create_local_root_to_relevant_list_map(nodes, node_to_local_root_map)
     node_to_descendants_map = compute_resume_info.create_node_to_descendants_map(nodes)
 
     # ------------------------------------------------------------------------------------------------------------------------

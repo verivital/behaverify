@@ -75,7 +75,6 @@ def can_create_running(node):
                 return True
         return False
     elif node['type'] == 'leaf':
-        # TODO: modify this so that it's more accurate.
         return node['return_arguments']['running']
     else:
         # without memory and parallel can, everything else covered above
@@ -158,6 +157,14 @@ def refine_return_types(nodes, node_id):
     """
     # TODO: add a check to see if a node can even be run.
     node = nodes[node_id]
+    if 'always_invalid' in node and node['always_invalid']:
+        node['return_arguments'] = {
+            'success' : False,
+            'running' : False,
+            'failure' : False}
+        for child_id in node['children']:
+            refine_return_types(nodes, child_id)
+        return
     if node['category'] == 'leaf':
         return
     elif node['category'] == 'composite':
@@ -228,7 +235,10 @@ def refine_return_types(nodes, node_id):
             node['return_arguments'][node['additional_arguments'][1]] = False
             for return_val in ('success', 'failure', 'running'):
                 if return_val in node['additional_arguments']:
-                    node['return_arguments'][node['additional_arguments'][1]] = node['return_arguments'][node['additional_arguments'][1]] or child['return_arguments'][return_val]
+                    node['return_arguments'][node['additional_arguments'][1]] = (
+                        node['return_arguments'][node['additional_arguments'][1]]
+                        or child['return_arguments'][return_val]
+                    )
                 else:
                     node['return_arguments'][return_val] = child['return_arguments'][return_val]
         elif node['type'] == 'inverter':
@@ -259,36 +269,104 @@ def refine_invalid(nodes, node_id = 0, is_root = True):
     all descendants. Based on what the children can return,
     the nodes have their invalidity updated
     """
-    # TODO: finish this method!!!!!
     node = nodes[node_id]
     if is_root:
         # root is never invalid.
         node['can_be_invalid'] = False
+        node['always_invalid'] = False
         for child_id in node['children']:
             refine_invalid(nodes, child_id, False)
         return
     parent = nodes[node['parent_id']]
-    if parent['can_be_invalid']:
-        # if the parent can be invalid, this can be invalid
+    if parent['always_invalid']:
         node['can_be_invalid'] = True
-    # at this point, parent is always valid
-    elif 'unsynchronized' in parent['type']:
+        node['always_invalid'] = True
+    # at this point, parent is sometimes valid
+    elif parent['category'] == 'composite' and 'unsynchronized' in parent['type']:
+        node['can_be_invalid'] = parent['can_be_invalid']
+        node['always_invalid'] = False
         # parallel unsynchronized always runs all children
-        # so...never invalid.
-        node['can_be_invalid'] = False
-    elif 'synchronized' in parent['type']:
+    elif parent['category'] == 'composite' and 'synchronized' in parent['type']:
         if node['return_arguments']['success'] is False:
-            # this node cannot return succes.
+            # this node cannot return success.
             # it will never be skipped.
             # therefore, it can never be invalid.
-            node['can_be_invalid'] = False
+            node['can_be_invalid'] = parent['can_be_invalid']
         else:
             # this node can return success, so it can be
             # skipped
             node['can_be_invalid'] = True
-    elif parent['type'] == 'selector_without_memory':
-        # this seems wildly unfinsihed.
-        pass
+        node['always_invalid'] = False
+    elif parent['category'] == 'composite' and 'selector' in parent['type']:
+        done = False
+        done_always = False
+        for sibling_id in range(0, parent['children'].index(node_id)):
+            if nodes['sibling_id']['return_arguments']['success'] \
+               or nodes['sibling_id']['return_arguments']['running']:
+                # if a left neighbor can cause the parent to return, then this
+                # node can be invalid
+                done = True
+                node['can_be_invalid'] = True
+                if not nodes['sibling_id']['return_arguments']['failure']:
+                    # a node to the left of this always returns running or success.
+                    # we cannot possibly reach this node.
+                    done_always = True
+                    node['always_invalid'] = True
+                    break
+        if not done:
+            # we weren't done.
+            if 'with_memory' in parent['type']:
+                # check if a right neighbor can cause us to be skipped.
+                for sibling_id in range(parent['children'].index(node_id) + 1,
+                                        len(parent['children'])):
+                    if nodes[sibling_id]['return_arguments']['running']:
+                        # a sibling to the right can return running
+                        # that means this can be invalid
+                        done = True
+                        node['can_be_invalid'] = True
+                        break
+            if not done:
+                node['can_be_invalid'] = parent['can_be_invalid']
+            if not done_always:
+                node['always_invalid'] = False
+    elif parent['category'] == 'composite' and 'sequence' in parent['type']:
+        done = False
+        done_always = False
+        for sibling_id in range(0, parent['children'].index(node_id)):
+            if nodes['sibling_id']['return_arguments']['failure'] \
+               or nodes['sibling_id']['return_arguments']['running']:
+                # if a left neighbor can cause the parent to return, then this
+                # node can be invalid
+                done = True
+                node['can_be_invalid'] = True
+                if not nodes['sibling_id']['return_arguments']['success']:
+                    # a node to the left of this always returns running or failure.
+                    # we cannot possibly reach this node.
+                    done_always = True
+                    node['always_invalid'] = True
+                    break
+        if not done:
+            # we weren't done.
+            if 'with_memory' in parent['type']:
+                # check if a right neighbor can cause us to be skipped.
+                for sibling_id in range(parent['children'].index(node_id) + 1,
+                                        len(parent['children'])):
+                    if nodes[sibling_id]['return_arguments']['running']:
+                        # a sibling to the right can return running
+                        # that means this can be invalid
+                        done = True
+                        node['can_be_invalid'] = True
+                        break
+            if not done:
+                node['can_be_invalid'] = parent['can_be_invalid']
+            if not done_always:
+                node['always_invalid'] = False
+    else:
+        # assume decorator nodes always run their children.
+        node['can_be_invalid'] = True
+    for child_id in node['children']:
+        refine_invalid(nodes, child_id, False)
+    return
 
 
 def create_local_root_to_relevant_list_map(nodes, node_to_local_root_map):
