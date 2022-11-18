@@ -32,7 +32,7 @@ blackboard_name_pattern = re.compile(r'#*(?P<blackboard_name>[^\s= ]+)'
 
 
 def walk_tree(root, file_name = None):
-    '''
+    """
     TODO: Change the variables so that they are modified in reverse node_id
     order. I.E the last node_id that is active is the one that should be
     considered first. Slightly complex. Will have to think on how to order
@@ -96,7 +96,7 @@ def walk_tree(root, file_name = None):
         The next stage starts from the next node. The first stage starts at 0.
         The last stage always ends at the last node, and is omitted from the
         list. Even if stages are not being used, this should still be correct.
-    '''
+    """
     nodes = {}
     variables = {}
     walk_tree_recursive(root, -1, 0, nodes, {}, variables)
@@ -133,13 +133,13 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes,
     # read custom nodes
 
     def attempt_to_read_file():
-        '''
+        """
         return: True if success, False otherwise.
         arguments: none
         This method uses nodes, variables, and this_id in order to check
         if a file exists with a custom definition. If such a file exists,
         then we attempt to parse it to determine blackboard variable info.
-        '''
+        """
         # nonlocal nodes, variables, this_id
         # the nonlocal explicitly doesn't work with python2, and I don't
         # think it's actually necessary in the python3 version, since
@@ -216,35 +216,39 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes,
                     else:
                         done = True
             else:
-                variable_name = current_node.variable_name
-                variable_name = variable_name.replace('.', '_dot_')
-                if variable_name in variables:
-                    var_num = variables[variable_name]['variable_id']
-                    variables[variable_name]['access'].add(node_name)
-                    variables[variable_name]['next_exist'][node_name] = True
-                    variables[variable_name]['stages'].append(this_id)
-                else:
-                    var_num = len(variables)
-                    variables[variable_name] = {
-                        'variable_id' : var_num,
-                        'variable_name' : variable_name,
-                        'non-variable' : False,
-                        'mode' : 'VAR',
-                        'custom_value_range' : None,
-                        'min_value' : 0,
-                        'max_value' : 1,
-                        'init_value' : None,
-                        'always_exist' : True,
-                        'init_exist' : True,
-                        'auto_change' : False,
-                        'next_value' : None,
-                        'next_exist' : {node_name : True},
-                        'access' : {node_name},
-                        'use_stages' : False,
-                        'stages' : [this_id]
-                    }
-                local_variables.append(variable_name)
+                # if we don't find blackboard info, then just continue normally. don't use this.
+                return False
+                # if hasattr(current_node, 'variable_name'):
+                #     variable_name = current_node.variable_name
+                #     variable_name = variable_name.replace('.', '_dot_')
+                #     if variable_name in variables:
+                #         var_num = variables[variable_name]['variable_id']
+                #         variables[variable_name]['access'].add(node_name)
+                #         variables[variable_name]['next_exist'][node_name] = True
+                #         variables[variable_name]['stages'].append(this_id)
+                #     else:
+                #         var_num = len(variables)
+                #         variables[variable_name] = {
+                #             'variable_id' : var_num,
+                #             'variable_name' : variable_name,
+                #             'non-variable' : False,
+                #             'mode' : 'VAR',
+                #             'custom_value_range' : None,
+                #             'min_value' : 0,
+                #             'max_value' : 1,
+                #             'init_value' : None,
+                #             'always_exist' : True,
+                #             'init_exist' : True,
+                #             'auto_change' : False,
+                #             'next_value' : None,
+                #             'next_exist' : {node_name : True},
+                #             'access' : {node_name},
+                #             'use_stages' : False,
+                #             'stages' : [this_id]
+                #         }
+                #     local_variables.append(variable_name)
             nodes[this_id] = {
+                'DEBUG_INFO' : True,
                 'name' : node_name,
                 'parent_id' : parent_id,
                 'children' : [],
