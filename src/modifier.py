@@ -11,7 +11,8 @@ def create_stages(variable, variables, node_name_to_id):
         stage_start = variable['stages'][stage_count - 1]
         try:
             stage_end = variable['stages'][stage_count]
-        except KeyError:
+        except IndexError:
+            # this is actually expected. the last one will fail.
             stage_end = len(node_name_to_id)
         variable_name = variable['variable_name'] + "_stage_" + str(stage_count)
         variable_number = len(variables)
