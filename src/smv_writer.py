@@ -439,6 +439,11 @@ def main():
     compute_resume_info.refine_invalid(nodes, 0, True)
     compute_resume_info.refine_return_types(nodes, 0)
 
+    for node_id in nodes:
+        node = nodes[node_id]
+        if node['always_invalid']:
+            print(node_id)
+
     node_to_local_root_map = compute_resume_info.create_node_to_local_root_map(nodes)
     (local_root_to_relevant_list_map, nodes_with_memory_to_relevant_descendants_map) = \
         compute_resume_info.create_local_root_to_relevant_list_map(nodes, node_to_local_root_map)

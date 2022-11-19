@@ -1054,301 +1054,301 @@
 		'target' : 'node',
 		'name' : 'battery2bb',
 		'instructions' : {
-			"additional_modules::status::possible_values" : ["success", "running"]
+			'return_arguments' : { 'success' : True, 'running' : True, 'failure' : False }
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'rth2bb',
 		'instructions' : {
-			"additional_modules::status::possible_values" : ["success", "running"]
+			'return_arguments' : { 'success' : True, 'running' : True, 'failure' : False }
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'geofence2bb',
 		'instructions' : {
-			"additional_modules::status::possible_values" : ["success", "running"]
+			'return_arguments' : { 'success' : True, 'running' : True, 'failure' : False }
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'lec2_am_r_2bb',
 		'instructions' : {
-			"additional_modules::status::possible_values" : ["success", "running"]
+			'return_arguments' : { 'success' : True, 'running' : True, 'failure' : False }
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'lec2_am_l_2bb',
 		'instructions' : {
-			"additional_modules::status::possible_values" : ["success", "running"]
+			'return_arguments' : { 'success' : True, 'running' : True, 'failure' : False }
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'pipe_lost2bb',
 		'instructions' : {
-			"additional_modules::status::possible_values" : ["success", "running"]
+			'return_arguments' : { 'success' : True, 'running' : True, 'failure' : False }
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'sensor_failure2bb',
 		'instructions' : {
-			"additional_modules::status::possible_values" : ["success", "running"]
+			'return_arguments' : { 'success' : True, 'running' : True, 'failure' : False }
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'waypoints_completed2bb',
 		'instructions' : {
-			"additional_modules::status::possible_values" : ["success", "running"]
+			'return_arguments' : { 'success' : True, 'running' : True, 'failure' : False }
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'mission2bb',
 		'instructions' : {
-			"additional_modules::status::possible_values" : ["success", "running"]
+			'return_arguments' : { 'success' : True, 'running' : True, 'failure' : False }
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'ddlec2bb',
 		'instructions' : {
-			"additional_modules::status::possible_values" : ["success", "running"]
+			'return_arguments' : { 'success' : True, 'running' : True, 'failure' : False }
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'fls2bb',
 		'instructions' : {
-			"additional_modules::status::possible_values" : ["success", "running"]
+			'return_arguments' : { 'success' : True, 'running' : True, 'failure' : False }
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'fls_warning2bb',
 		'instructions' : {
-			"additional_modules::status::possible_values" : ["success", "running"]
+			'return_arguments' : { 'success' : True, 'running' : True, 'failure' : False }
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'hsd_pipe2bb',
 		'instructions' : {
-			"additional_modules::status::possible_values" : ["success", "running"]
+			'return_arguments' : { 'success' : True, 'running' : True, 'failure' : False }
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'hsd_wp2bb',
 		'instructions' : {
-			"additional_modules::status::possible_values" : ["success", "running"]
+			'return_arguments' : { 'success' : True, 'running' : True, 'failure' : False }
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'hsd_rth2bb',
 		'instructions' : {
-			"additional_modules::status::possible_values" : ["success", "running"]
+			'return_arguments' : { 'success' : True, 'running' : True, 'failure' : False }
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'hsd_surface2bb',
 		'instructions' : {
-			"additional_modules::status::possible_values" : ["success", "running"]
+			'return_arguments' : { 'success' : True, 'running' : True, 'failure' : False }
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'rtreach2bb',
 		'instructions' : {
-			"additional_modules::status::possible_values" : ["success", "running"]
+			'return_arguments' : { 'success' : True, 'running' : True, 'failure' : False }
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'reallocate_task',
 		'instructions' : {
-			"additional_modules::status::possible_values" : ["running"]
+			'return_arguments' : { 'success' : False, 'running' : True, 'failure' : False }
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'dd_lec_task',
 		'instructions' : {
-			"additional_modules::status::possible_values" : ["running"]
+			'return_arguments' : { 'success' : False, 'running' : True, 'failure' : False }
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'mission_server',
 		'instructions' : {
-			"additional_modules::status::possible_values" : ["running"]
+			'return_arguments' : { 'success' : False, 'running' : True, 'failure' : False }
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'obstacle_avoidance',
 		'instructions' : {
-			"additional_modules::status::possible_values" : ["running"]
+			'return_arguments' : { 'success' : False, 'running' : True, 'failure' : False }
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'surface_task',
 		'instructions' : {
-			"additional_modules::status::possible_values" : ["running"]
+			'return_arguments' : { 'success' : False, 'running' : True, 'failure' : False }
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'surface_task1',
 		'instructions' : {
-			"additional_modules::status::possible_values" : ["running"]
+			'return_arguments' : { 'success' : False, 'running' : True, 'failure' : False }
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'emergency_stop_task',
 		'instructions' : {
-			"additional_modules::status::possible_values" : ["running"]
+			'return_arguments' : { 'success' : True, 'running' : False, 'failure' : False }
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'surface_task2',
 		'instructions' : {
-			"additional_modules::status::possible_values" : ["running"]
+			'return_arguments' : { 'success' : False, 'running' : True, 'failure' : False }
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'surface_task3',
 		'instructions' : {
-			"additional_modules::status::possible_values" : ["running"]
+			'return_arguments' : { 'success' : False, 'running' : True, 'failure' : False }
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'surface_task4',
 		'instructions' : {
-			"additional_modules::status::possible_values" : ["running"]
+			'return_arguments' : { 'success' : False, 'running' : True, 'failure' : False }
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'rth_task',
 		'instructions' : {
-			"additional_modules::status::possible_values" : ["running"]
+			'return_arguments' : { 'success' : False, 'running' : True, 'failure' : False }
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'home2bb',
 		'instructions' : {
-			"additional_modules::status::possible_values" : ["success", "running"]
+			'return_arguments' : { 'success' : True, 'running' : True, 'failure' : False }
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'rth_task1',
 		'instructions' : {
-			"additional_modules::status::possible_values" : ["running"]
+			'return_arguments' : { 'success' : False, 'running' : True, 'failure' : False }
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'home2bb1',
 		'instructions' : {
-			"additional_modules::status::possible_values" : ["success", "running"]
+			'return_arguments' : { 'success' : True, 'running' : True, 'failure' : False }
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'loiter_task',
 		'instructions' : {
-			"additional_modules::status::possible_values" : ["running"]
+			'return_arguments' : { 'success' : False, 'running' : True, 'failure' : False }
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'tracking_task',
 		'instructions' : {
-			"additional_modules::status::possible_values" : ["running"]
+			'return_arguments' : { 'success' : False, 'running' : True, 'failure' : False }
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'speed_min_task',
 		'instructions' : {
-			"additional_modules::status::possible_values" : ["running"]
+			'return_arguments' : { 'success' : False, 'running' : True, 'failure' : False }
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'speed_min_task1',
 		'instructions' : {
-			"additional_modules::status::possible_values" : ["running"]
+			'return_arguments' : { 'success' : False, 'running' : True, 'failure' : False }
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'speed_max_task',
 		'instructions' : {
-			"additional_modules::status::possible_values" : ["running"]
+			'return_arguments' : { 'success' : False, 'running' : True, 'failure' : False }
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'pipe_mapping_disable_task',
 		'instructions' : {
-			"additional_modules::status::possible_values" : ["running"]
+			'return_arguments' : { 'success' : False, 'running' : True, 'failure' : False }
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'pipe_mapping_disable_task1',
 		'instructions' : {
-			"additional_modules::status::possible_values" : ["running"]
+			'return_arguments' : { 'success' : False, 'running' : True, 'failure' : False }
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'pipe_mapping_enable_task',
 		'instructions' : {
-			"additional_modules::status::possible_values" : ["running"]
+			'return_arguments' : { 'success' : False, 'running' : True, 'failure' : False }
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'next_mission',
 		'instructions' : {
-			"additional_modules::status::possible_values" : ["success"]
+			'return_arguments' : { 'success' : True, 'running' : False, 'failure' : False }
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'loiter_task1',
 		'instructions' : {
-			"additional_modules::status::possible_values" : ["running"]
+			'return_arguments' : { 'success' : False, 'running' : True, 'failure' : False }
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'waypoint_task',
 		'instructions' : {
-			"additional_modules::status::possible_values" : ["running"]
+			'return_arguments' : { 'success' : False, 'running' : True, 'failure' : False }
 		}
 	},
 	{
 		'target' : 'node',
 		'name' : 'loiter_task2',
 		'instructions' : {
-			"additional_modules::status::possible_values" : ["running"]
+			'return_arguments' : { 'success' : False, 'running' : True, 'failure' : False }
 		}
 	}
 	
