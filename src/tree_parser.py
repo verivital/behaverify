@@ -33,11 +33,6 @@ blackboard_name_pattern = re.compile(r'#*(?P<blackboard_name>[^\s= ]+)'
 
 def walk_tree(root, file_name = None):
     """
-    TODO: Change the variables so that they are modified in reverse node_id
-    order. I.E the last node_id that is active is the one that should be
-    considered first. Slightly complex. Will have to think on how to order
-    this better
-
     root : the root node of the tree being considered
     file_name : the output file
     --
