@@ -81,22 +81,21 @@ def can_create_running(node):
         return True
 
 
-def map_can_return_running(nodes, node_id, running_map):
+def map_can_return_running(nodes, node_id):
     """
     used to create a map from node id to booleans,
     indicating if a node can return running.
     Process is done recursively from whichever node is passed.
-    the true 'result' will be contained in running_map
     --
     arguments
     @ nodes -> a map (dictionary) from node_id to node information
     @ node_id -> the id of the node we are currently considering
-    @ running_map -> a map (dictionary) from node_id to booleans
-      each node id maps to True if the node can return running
-      and False otherwise
     --
     return
-    @ Boolean indicating if the given node can return running
+    @ running_map -> a map (dictionary) from node union descendents
+      to booleans. nodes and descendents are represented via node_id
+      each node id maps to True if the node can return running
+      and False otherwise
     --
     effects and methods
     the node category and type are considered. each child is ran.
@@ -106,27 +105,26 @@ def map_can_return_running(nodes, node_id, running_map):
     """
     node = nodes[node_id]
     if node['category'] == 'leaf':
-        running_map[node_id] = node['return_arguments']['running']
-        return node['return_arguments']['running']
+        return {node_id : node['return_arguments']['running']}
     elif node['category'] == 'decorator':
+        running_map = map_can_return_running(nodes, node['children'][0])
         if node['type'] == 'X_is_Y':
             if node['additional_arguments'][0] == 'running':
-                map_can_return_running(nodes, node['children'][0], running_map)
                 running_map[node_id] = False
-                return False
             elif node['additional_arguments'][1] == 'running':
-                map_can_return_running(nodes, node['children'][0], running_map)
                 running_map[node_id] = True
-                return True
-        running_map[node_id] = map_can_return_running(nodes,
-                                                      node['children'][0],
-                                                      running_map)
-        return running_map[node_id]
+            else:
+                running_map[node_id] = running_map[node['children'][0]]
+        else:
+            running_map[node_id] = running_map[node['children'][0]]
+        return running_map
     else:
         # it's a parallel, selector, or sequence node
         running = False
+        running_map = {}
         for child in node['children']:
-            running = map_can_return_running(nodes, child, running_map) or running
+            running_map.update(map_can_return_running(nodes, child))
+            running = running or running_map[child]
         if len(node['children']) == 0:
             # this is an edge case check.
             if 'parallel' in node['type']:
@@ -136,7 +134,7 @@ def map_can_return_running(nodes, node_id, running_map):
                 running_map[node_id] = False
                 return False
         running_map[node_id] = running
-        return running
+        return running_map
 
 
 def refine_return_types(nodes, node_id):
@@ -320,7 +318,7 @@ def refine_invalid(nodes, node_id = 0, is_root = True):
             if 'with_memory' in parent['type']:
                 # check if a right neighbor can cause us to be skipped.
                 for sibling_index in range(parent['children'].index(node_id) + 1,
-                                        len(parent['children'])):
+                                           len(parent['children'])):
                     sibling_id = parent['children'][sibling_index]
                     if nodes[sibling_id]['return_arguments']['running']:
                         # a sibling to the right can return running
@@ -353,7 +351,7 @@ def refine_invalid(nodes, node_id = 0, is_root = True):
             if 'with_memory' in parent['type']:
                 # check if a right neighbor can cause us to be skipped.
                 for sibling_index in range(parent['children'].index(node_id) + 1,
-                                        len(parent['children'])):
+                                           len(parent['children'])):
                     sibling_id = parent['children'][sibling_index]
                     if nodes[sibling_id]['return_arguments']['running']:
                         # a sibling to the right can return running
@@ -398,8 +396,7 @@ def create_local_root_to_relevant_list_map(nodes, node_to_local_root_map):
     then we started from a relevant point.
     """
 
-    running_map = {}
-    map_can_return_running(nodes, 0, running_map)
+    running_map = map_can_return_running(nodes, 0)
 
     local_root_to_relevant_list_map = {}
     # a map from local_root to the list of relevant things
