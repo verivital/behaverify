@@ -397,7 +397,7 @@ def main():
     command_line_arguments
     REQUIRED
     @ input_file -> the file containing the nodes and variables.
-    optional
+    OPTIONAL
     @ blackboard_input_file -> a file containing a blackboard. Overwrites
       the default blackbaord creation
     @ module_input_file -> a file containing additional modules. Overwrites
@@ -407,6 +407,7 @@ def main():
       This includes the blackboard, modules, and specifications
     @ blackboard_output_file -> a file where the blackboard will be written
     @ module_output_file -> a file where the additional modules will be written
+    @ do_not_trim -> if set, prevents the automatic removal of nodes that cannot run
     --
     return
     NONE
@@ -424,6 +425,7 @@ def main():
     arg_parser.add_argument('--output_file', default = None)
     arg_parser.add_argument('--blackboard_output_file', default = None)
     arg_parser.add_argument('--module_output_file', default = None)
+    arg_parser.add_argument('--do_not_trim', action = 'store_true')
     # arg_parser.add_argument('--overwrite', action = 'store_true')
     args = arg_parser.parse_args()
 
@@ -432,17 +434,18 @@ def main():
     nodes = temp['nodes']
     variables = temp['variables']
 
-    compute_resume_info.refine_invalid(nodes, 0, True)
     compute_resume_info.refine_return_types(nodes, 0)
-    # repeating this here to propagate some changes in it.
-    # TODO: refine both methods (or combine them?) so that this isn't necessary
     compute_resume_info.refine_invalid(nodes, 0, True)
-    compute_resume_info.refine_return_types(nodes, 0)
 
-    for node_id in nodes:
-        node = nodes[node_id]
-        if node['always_invalid']:
-            print(node_id)
+    if not args.do_not_trim:
+        node_ids = list(nodes.keys())
+        for node_id in node_ids:
+            node = nodes[node_id]
+            if node['always_invalid']:
+                print(node_id)
+                if node['parent_id'] in nodes:
+                    nodes[node['parent_id']]['children'].remove(node_id)
+                nodes.pop(node_id)
 
     node_to_local_root_map = compute_resume_info.create_node_to_local_root_map(nodes)
     (local_root_to_relevant_list_map, nodes_with_memory_to_relevant_descendants_map) = \
