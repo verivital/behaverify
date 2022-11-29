@@ -437,15 +437,17 @@ def main():
     compute_resume_info.refine_return_types(nodes, 0)
     compute_resume_info.refine_invalid(nodes, 0, True)
 
-    if not args.do_not_trim:
-        node_ids = list(nodes.keys())
-        for node_id in node_ids:
-            node = nodes[node_id]
-            if node['always_invalid']:
-                print(node_id)
-                if node['parent_id'] in nodes:
-                    nodes[node['parent_id']]['children'].remove(node_id)
-                nodes.pop(node_id)
+    # if not args.do_not_trim:
+    #     node_ids = list(nodes.keys())
+    #     deletion_modifier = 0
+    #     for node_id in node_ids:
+    #         node = nodes[node_id]
+    #         if node['always_invalid']:
+    #             print(node_id)
+    #             if node['parent_id'] in nodes:
+    #                 nodes[node['parent_id']]['children'].remove(node_id)
+    #             nodes.pop(node_id)
+    # print(nodes.keys())
 
     node_to_local_root_map = compute_resume_info.create_node_to_local_root_map(nodes)
     (local_root_to_relevant_list_map, nodes_with_memory_to_relevant_descendants_map) = \
