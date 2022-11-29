@@ -139,14 +139,15 @@ def map_can_return_running(nodes, node_id):
 
 def refine_return_types(nodes, node_id):
     """
-    used to refine the possible return types of each node.
+    used to refine the possible return types of each node. This
+    should be called BEFORE refine_invalid
     --
     arguments
     @ nodes -> a map (dictionary) from node_id to node information
     @ node_id -> the id of the node we are currently considering
     --
     return
-    @ Boolean indicating if the given node can return running
+    NONE
     --
     effects and methods
     From the node indicated by node_id, we recursively consider
@@ -155,15 +156,43 @@ def refine_return_types(nodes, node_id):
     """
     # TODO: add a check to see if a node can even be run.
     node = nodes[node_id]
-    if 'always_invalid' in node and node['always_invalid']:
-        node['return_arguments'] = {
-            'success' : False,
-            'running' : False,
-            'failure' : False}
+
+    cannot_run = False
+
+    # first we are going to check if the node cannot run.
+    # the node cannot run if it's parent is a selector/sequence
+    # and it's left sibling cannot return the relevant type
+    if node['parent_id'] in nodes:
+        # not the root
+        parent = nodes[node['parent_id']]
+        if parent['category'] == 'composite':
+            # we don't care about decorators
+            left_sibling_index = parent['children'].index(node_id) - 1
+            if left_sibling_index >= 0:
+                # if sibling_index is >= 0, then we have a left sibling
+                # that left sibling might prevent us from running.
+                left_sibling_id = parent['children'][left_sibling_index]
+                left_sibling = nodes[left_sibling_id]
+                if 'selector' in parent['type']:
+                    if not left_sibling['return_arguments']['failure']:
+                        node['return_arguments'] = {
+                            'success' : False,
+                            'running' : False,
+                            'failure' : False}
+                        cannot_run = True
+                elif 'sequence' in parent['type']:
+                    if not left_sibling['return_arguments']['success']:
+                        node['return_arguments'] = {
+                            'success' : False,
+                            'running' : False,
+                            'failure' : False}
+                        cannot_run = True
+
+    if cannot_run:
         for child_id in node['children']:
             refine_return_types(nodes, child_id)
         return
-    if node['category'] == 'leaf':
+    elif node['category'] == 'leaf':
         return
     elif node['category'] == 'composite':
         if 'selector' in node['type']:
@@ -247,12 +276,13 @@ def refine_return_types(nodes, node_id):
         return
     else:
         print('unknown node category!!!', node['category'])
-        return
+    return
 
 
 def refine_invalid(nodes, node_id = 0, is_root = True):
     """
-    used to refine the possiblity of being invalid
+    used to refine the possiblity of being invalid. This should be
+    called AFTER refine_return_types
     --
     arguments
     @ nodes -> a map (dictionary) from node_id to node information
@@ -260,7 +290,7 @@ def refine_invalid(nodes, node_id = 0, is_root = True):
     @ is_root -> true if node_id is the root,  False otherwise.
     --
     return
-    @ Boolean indicating if the given node can return running
+    NONE
     --
     effects and methods
     From the node indicated by node_id, we recursively consider
