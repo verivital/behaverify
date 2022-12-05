@@ -1,0 +1,531 @@
+
+
+system BlueROV;  //system name
+
+//-----------------------------------
+//basic types 
+//-----------------------------------
+
+type string;
+type bool;
+type integer;
+type float;
+type float32;
+type float64;
+
+
+//-----------------------------------
+//message types
+//-----------------------------------
+message Bool std_msgs
+	bool value;
+end
+
+message Float32 std_msgs
+	float value;
+end
+
+message String std_msgs
+	string value;
+end
+
+message PixhawkHW vandy_bluerov
+	float64 thrusters_power;
+	float64 batt_capacity_remaining;
+	float64 batt_voltage_remaining;
+	float64 batt_charge_remaining;
+	float32[] rpm;
+end
+
+message AssuranceMonitorConfidence ng_msgs
+	float32 confidence_level;
+	float32[] values;
+end
+
+message HSDCommand ng_msgs
+	float64 heading;
+	float64 speed;
+	float64 depth;
+end
+
+
+message LEC1OutputAssuredStamped ng_msgs
+    AssuranceMonitorConfidence[] confs;
+    HSDCommand cmd;
+    float64 current_heading;
+end
+
+message Float32MultiArray std_msgs
+    float32[] data;
+end
+
+//-----------------------------------
+//topics
+//-----------------------------------
+
+topic PixhawkHW pixhawk_hw /iver0/pixhawk_hw;
+topic LEC1OutputAssuredStamped lec_dd_am /lec_dd_am/p_value;
+topic Bool bb_geofence /iver0/bb_geofence;
+topic Bool bb_pipelost /iver0/bb_pipe_lost;
+topic Float32 bb_home_dist /iver0/bb_home_dist;
+topic LEC1OutputAssuredStamped lec2_left_am /lec2_am/left/p_value;
+topic LEC1OutputAssuredStamped lec2_right_am /lec2_am/right/p_value; 
+topic String bb_mission /bb_mission;
+topic Bool bb_rth /iver0/bb_rth;
+topic Bool bb_sensor_failure /iver0/sensor_failure_rpm;
+topic Bool bb_waypoints_completed /iver0/waypoints_completed;
+topic HSDCommand hsd_pipeline_mapping /iver0/hsd_pipeline_mapping;
+topic HSDCommand hsd_to_surface /iver0/hsd_to_surface;
+topic HSDCommand hsd_to_rth /iver0/hsd_to_rth;
+topic HSDCommand hsd_to_waypoint /iver0/hsd_to_waypoint;
+topic HSDCommand hsd_obstacle_avoidance /iver0/hsd_obstacle_avoidance;
+topic HSDCommand hsd_command /iver0/hsd_command;
+topic String cm_hsd_input /iver0/cm_hsd_input;
+topic Float32MultiArray degradation_detector /iver0/degradation_detector;
+topic Float32MultiArray degradation_detector_am /iver0/degradation_detector_am/p_value;
+topic Float32MultiArray lec_input /iver0/thruster_cmd_logging;
+
+//-----------------------------------
+//Blackboard variables
+//-----------------------------------
+
+var PixhawkHW battery;
+    init 1;
+    min 0;
+    max 1;
+    nodes_that_set {
+    		   node_name  battery2bb;
+		   }
+end_var
+var LEC1OutputAssuredStamped lec_dd_am;
+end_var
+var Bool bb_geofence = False;
+end_var
+var Bool bb_pipelost = False;
+end_var
+var Float32 bb_home_dist = 1000;
+end_var
+var LEC1OutputAssuredStamped lec2_am_l;
+end_var
+var LEC1OutputAssuredStamped lec2_am_r;
+end_var
+var String bb_mission = "";
+end_var
+var Bool bb_rth = False;
+end_var
+var Bool bb_sensor_failure = False;
+end_var
+var Bool bb_waypoints_completed = False;
+end_var
+var HSDCommand bb_HSD_out;
+end_var
+var Bool bb_pipe_mapping_enable = False;
+end_var
+var bool bb_obstacle_warning = False;
+end_var
+var bool event_reallocate_button = False;
+end_var
+var Float32MultiArray dd_output;
+end_var
+var Float32MultiArray lec_input;
+end_var
+
+
+
+var Bool battery_low_warning;
+    init 0;
+    min 0;
+    max 1;
+    nodes_that_set {
+    		   node_name  battery2bb;
+		   }
+end_var
+var Bool lec_dd_am_warning;
+end_var
+var Bool bb_rth_warning;
+end_var
+var Bool bb_geofence_warning;
+end_var
+var Bool lec2_am_l_pipe_warning;
+end_var
+var Bool lec2_am_l_speed_warning;
+end_var
+var Bool lec2_am_r_pipe_warning;
+end_var
+var Bool lec2_am_r_speed_warning;
+end_var
+var Bool bb_pipe_lost_warning;
+end_var
+var Bool bb_sensor_failure_warning;
+end_var
+var Bool bb_home_reached;
+end_var
+var Bool dd_z_axis_warning;
+end_var
+var Bool dd_xy_axis_degradation;
+end_var
+
+//-----------------------------------
+//Blackboard nodes
+//-----------------------------------
+
+input battery2bb pixhawk_hw -> battery 
+    var bool battery_low_warning = False;
+    arg float failsafe_battery_low_threshold=0.1;
+    comment  "This node captures the state of the battery"
+end
+
+input ddlecam2bb lec_dd_am -> lec_dd_am
+    var bool lec_dd_am_warning = False ;
+    arg float dd_threshold = 5.0 ;
+    comment  "This node captures the state of the lec dd assurance monitor"
+end
+
+input rth2bb bb_rth -> bb_rth
+    var bool bb_rth_warning = False;
+    arg bool failsafe_rth_enable =True;
+    comment  "This node captures if the uuv is commanded to return to home"
+end 
+
+input geofence2bb bb_geofence -> bb_geofence
+    var bool bb_geofence_warning = False;
+    comment  "This node captures if the uuv is within  the geofence"
+end
+
+input lec2_am_l_2bb  lec2_left_am -> lec2_am_l
+    var bool lec2_am_l_speed_warning = False;
+    var bool lec2_am_l_pipe_warning = False;
+    arg float pipe_estimation_good_log_val = 5.0;
+    arg float speed_good_log_val  = 2.5;
+    comment  "This node captures the output of the lec2 assurance monitor left"
+end
+
+input lec2_am_r_2bb lec2_right_am -> lec2_am_r
+    var bool lec2_am_r_speed_warning = False;
+    var bool lec2_am_r_pipe_warning = False;
+    arg float pipe_estimation_good_log_val =5.0;
+    arg float speed_good_log_val =2.5;
+    comment  "This node captures the output of the lec2 assurance monitor right"
+end
+
+input pipe_lost2bb bb_pipelost -> bb_pipelost
+    var bool bb_pipe_lost_warning =False;
+    comment  "This node captures if the pipe is not in visibility of UUV"
+end
+
+
+input sensor_failure2bb  bb_sensor_failure -> bb_sensor_failure
+    var bool bb_sensor_failure_warning =False;
+    comment  "This node captures sensor failure"
+end
+
+input waypoints_completed2bb  bb_waypoints_completed -> bb_waypoints_completed
+    comment "This node captures if the waypoints are completed"
+end 
+
+input home2bb bb_home_dist -> bb_home_dist
+    var bool bb_home_reached =False;
+    arg float home_reached_threshold =15;
+    comment "This node captures if the uuv is home" 
+end
+
+input mission2bb bb_mission -> bb_mission
+    arg bool enable_waypoint_following = False;
+    comment  "This node captures the current mission"
+end
+
+input ddlec2bb degradation_detector -> dd_output 
+    var bool dd_z_axis_warning = False;
+    var bool dd_xy_axis_degradation = False;
+    arg float decision_threshold = 0.7;
+    arg float total_degradation_threshold=0.0;
+    arg integer num_classes=22;
+    comment  "This node captures the output of the DD LEC"
+end   
+
+
+//-----------------------------------
+//checkers for blackboard variables
+//-----------------------------------
+
+//check is_reallocation_requested 
+//        event_reallocate_button==False;
+
+check is_reallocation_requested 
+        dd_xy_axis_degradation==False;
+
+check check_dd_am 
+        lec_dd_am_warning == False;
+
+
+check check_lec2am_ls 
+        lec2_am_l_speed_warning == False;
+
+
+check check_lec2am_rs 
+        lec2_am_r_speed_warning == False;
+
+
+check check_lec2am_lp 
+        lec2_am_l_pipe_warning == False;
+
+
+check check_lec2am_rp 
+        lec2_am_r_pipe_warning == False;
+
+
+check check_geofence 
+        bb_geofence_warning == False;
+
+
+check check_rth 
+        bb_rth_warning == False;
+
+
+check check_surface 
+        bb_home_reached ==False;
+
+
+check check_pipe_post 
+        bb_pipe_lost_warning == False;
+
+
+check check_waypoints_completed 
+        bb_waypoints_completed == True;
+
+
+check check_sensor_failure 
+        bb_sensor_failure_warning == False;
+
+
+check battery_low_fs 
+        battery_low_warning == False;
+
+
+check is_track_pipe_mission_requested 
+        bb_mission  == "pipe_track";
+
+check is_waypoint_requested 
+        bb_mission  == "waypoint";
+
+check is_snr_requested 
+        bb_mission  == "fdr";
+
+check dd_z_axis
+        dd_z_axis_warning == False;
+
+check dd_xy_axis
+        dd_xy_axis_degradation == False;
+
+//-----------------------------------
+//standard behavioral nodes
+//-----------------------------------
+
+success success_node;
+failure failure_node;
+running running_node;
+running idle;
+//running reallocate_task;
+//running  dd_lec_task; 
+
+//-----------------------------------
+//custom behavioral nodes
+//-----------------------------------
+
+task surface_task
+     in hsd_to_surface hsd_to_surface_;
+     out cm_hsd_input cm_hsd_input_;
+     var HSDCommand HSD_out;
+end     
+
+task  rth_task 
+    in  hsd_to_rth hsd_to_rth_;
+    out cm_hsd_input cm_hsd_input_;
+    var HSDCommand HSD_out;
+end
+
+task  loiter_task 
+    in hsd_pipeline_mapping  hsd_pipeline_mapping_;
+    out cm_hsd_input  cm_hsd_input_;
+    var HSDCommand HSD_out ;
+end    
+
+
+task obstacle_avoidance
+     in hsd_obstacle_avoidance hsd_obstacle_avoidance_;
+     out hsd_command hsd_pub;
+     var HSDCommand HSD_out;
+     var bool bb_obstacle_warning = False ;
+end     
+
+task  speed_max_task 
+    var HSDCommand HSD_out;
+    arg float uuv_max_speed=0.9;
+end    
+
+task  speed_min_task 
+    var HSDCommand HSD_out;
+    arg float uuv_min_speed=0.4;
+end
+
+task  pipe_mapping_enable_task 
+    var Bool pipe_mapping_enable;
+end    
+
+task  pipe_mapping_disable_task 
+    var Bool pipe_mapping_enable;
+end
+
+task  tracking_task 
+    in hsd_pipeline_mapping  hsd_pipeline_mapping_;
+    out cm_hsd_input cm_hsd_input_;
+    var HSDCommand HSD_out ;
+end    
+
+task  waypoint_task 
+    in hsd_to_waypoint hsd_waypoint_, bb_waypoints_completed hsd_waypoint_completed_;
+	out cm_hsd_input cm_hsd_input_;
+    var HSDCommand HSD_out ;
+end   
+
+task  reallocate_task 
+    var float total_degradation=0;
+end   
+
+task dd_lec_task
+    in lec_input lec_input_;
+    out degradation_detector degradation_detector_, degradation_detector_am degradation_detector_am_;
+    arg float[] normalizer=[1000, 1000, 1000, 1000, 1000, 1000, 6000, 6000, 6000, 6000, 6000, 6000, 30]; //why not working?
+    arg float threshold=0.7;
+    arg integer num_classes=22;
+    arg integer ann_input_len=13;
+end
+
+//-----------------------------------
+//tree definition
+//-----------------------------------
+
+tree(updatetime=500,timeout=15)
+par BlueROV {
+    par topics2bb {
+		mon battery2bb, rth2bb, geofence2bb
+        mon lec2_am_r_2bb, lec2_am_l_2bb, pipe_lost2bb
+		mon sensor_failure2bb, waypoints_completed2bb
+        mon mission2bb, ddlec2bb
+	}
+    sel dd_tasks {
+        do reallocate_check {
+			if is_reallocation_requested
+			then {
+				exec reallocate_task
+			}
+		}
+        exec dd_lec_task
+
+	}
+    exec obstacle_avoidance
+    sel priorities {
+		do battery_check {
+			if battery_low_fs 
+			then {
+				exec surface_task
+			}
+		}
+        do sensor_failure_selector {
+			if check_sensor_failure
+			then {
+				exec surface_task
+			}
+		}
+
+		do home_reached_selector  {
+			if check_surface  
+			then {
+				exec surface_task 
+			}
+		}
+		do rth_selector  {
+			if check_rth  
+			then {
+				par rth_par {
+					exec rth_task  
+					mon home2bb
+				}
+			}
+		}
+		do geofence_selector  {
+			if check_geofence  
+			then {
+				par rth_par {
+					exec rth_task  
+					mon home2bb
+				} 
+			}
+		}
+		do pipe_lost_selector  {
+			if check_pipe_post  
+			then {
+				exec loiter_task
+			}
+		}
+        seq track_pipe_mission  {
+			chk is_track_pipe_mission_requested
+	        par tracking  {
+                exec tracking_task  
+                sel lec2am_speed_cmd {
+                    do lec2am_l_speed_check {
+                        if check_lec2am_ls
+                        then {
+                            exec speed_min_task 
+                        }
+                    } 
+                    do lec2am_r_speed_check  {
+                        if check_lec2am_rs  
+                        then {
+                            exec speed_min_task
+                        }
+                    }
+                    exec speed_max_task 
+                }
+                sel lec2am_mapping_cmd {
+                    do lec2am_l_mapping_check  {
+                        if check_lec2am_lp  
+                        then {
+                            exec pipe_mapping_disable_task
+                        }
+                    }
+                    do lec2am_r_mapping_check  {
+                        if check_lec2am_rp  
+                        then {
+                            exec pipe_mapping_disable_task
+                        }
+                    }
+                    exec pipe_mapping_enable_task
+                }
+            }
+            seq track_pipe_mission_end {
+                timer evaluate(0.5)
+            }
+        }
+        seq waypoint_mission  {
+			chk is_waypoint_requested 
+            sel waypoint_selector {
+                sel waypoints_condition(failure)  {
+                    do waypoints_sif {
+                        if check_waypoints_completed
+                        then { 
+                            exec waypoint_task
+                        }
+                    }
+                }
+                seq waypoint_end {
+                    exec loiter_task
+                    exec running_node
+                }
+            }
+		}
+        exec idle
+    }
+}
+
+//-------done------------------
