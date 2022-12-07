@@ -32,25 +32,38 @@ Field:	type=[Type](array='['(count=INT)?']')?  name=ID ';'
 Topic:	'topic' type=[MessageType] name=ID topic_string=/([^\s;]+)/ ';'
 	;
 
+
+
+    
 BBVar:
-	'var' type=[Type] name=ID ('=' default=BASETYPE)? ';'
-	('init' initial_value=INT ';')?
-	('min' min_value=INT ';')?
-	('max' max_value=INT ';')?
-	('nodes_that_set' '{'
-			 nodes_with_access *= AccessNode 
-			 '}')?
-	'end_var' (';')?
-	;
+    'var' type=[Type] name=ID ('=' default=BASETYPE)? ';'
+    ('do_not_model' do_not_model=BOOL ';')?
+    ('variable_type'  variable_type=VariableModelType';')?
+    ('init' initial_value=STRING ';')?
+    ('min' min_value=INT ';')?
+    ('max' max_value=INT ';')?
+    ('use_stages' use_stages=BOOL ';')?
+    ('nodes_that_set' '{'
+    nodes_with_access *= AccessNode 
+    '}')?
+    'end_var' (';')?
+;
 
 BBEvent:
 	'event' name=ID topic=[Topic]';'
-	;
+;
+
+VariableModelType:
+    'DEFINE' | 'FROZENVAR' | 'VAR'
+;
 
 AccessNode:
-	'node_name' name=ID ';'
-	;
+    'node_name' name=ID ('('next_val=STRING')')? ';'
+;
 
+ParallelPolicy:
+    'success_on_all' | 'success_on_one'
+;
 Arg:          
     'arg' type=[Type](array='['(count=INT)?']')? name=ID ('=' default=DefaultType)? ';'
 	;
@@ -68,19 +81,19 @@ BBNode:
 		 input_topic=[Topic] '->' topic_bbvar=[BBVar]
 		 bb_vars *= BBVar
 		 args *= Arg
-		 'success' can_succeed=BOOL
-		 'failure' can_failure=BOOL
-		 'running' can_running=BOOL
+		 'success' can_succeed=BOOL';'
+		 'failure' can_failure=BOOL';'
+		 'running' can_running=BOOL';'
 		 ('comment' comment=STRING)?
     'end'(';')?
 	;
 
 
 CheckNode:
-	'check' name=ID	bbvar=[BBVar] '==' default=BASETYPE ';'
-	'integer_representation' int_rep=INT ';'
-    'end'(';')?
-    ;
+    'check' name=ID	bbvar=[BBVar] '==' default=BASETYPE ';'
+    'integer_representation' int_rep=INT ';'
+    'end_check'(';')?
+;
 	
 BehaviorNode:
 	StdBehaviorNode |
@@ -131,25 +144,25 @@ ChildNode:
 	;
 	
 ParBTNode:
-	'par' name=ID ('('cond=Status')')?'{'
+	'par' name=ID ('('cond=Status')')? ('('par_policy=ParallelPolicy','synchronized=BOOL')')?'{'
 	      nodes *= ChildNode
 	 '}'
 	 ;
 
 SeqBTNode:
-	'seq' name=ID ('('cond=Status')')?'{'
+	'seq' name=ID ('('cond=Status')')? ('('memory=BOOL')')?'{'
 	      nodes *= ChildNode
 	'}'
 	;
 
 SelBTNode:
-	'sel' name=ID ('('cond=Status')')?'{'
+	'sel' name=ID ('('cond=Status')')? ('('memory=BOOL')')?'{'
 	      nodes *= ChildNode
 	'}'
 	;
 
 SIFBTNode:
-	'do' name=ID '{'
+	'do' name=ID ('('memory=BOOL')')?'{'
 	       'if' checks+=[CheckNode][',']
 	       'then' '{'
 		    	nodes *= ChildNode

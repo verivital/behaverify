@@ -1,0 +1,164 @@
+#!/usr/bin/env python
+#
+# License: BSD
+#   https://raw.githubusercontent.com/stonier/py_trees/devel/LICENSE
+#
+
+##############################################################################
+# Imports
+##############################################################################
+
+import functools
+import py_trees
+import py_trees_ros
+import py_trees.console as console
+import py_trees_msgs.msg as py_trees_msgs
+import rospy
+import sys
+
+{% for bb_node in btree.bbNodes %}  
+import bb_{{bb_node.name}}
+{%- endfor -%}
+{% for task_node in task_nodes %}  
+import task_{{task_node.name}}
+{%- endfor %}
+
+
+##############################################################################
+# Behaviour Tree output interface
+##############################################################################
+
+class {{btree.name}}_BT(object):
+    def __init__(self):
+{%- set argnames = [] %}            
+{% for bb_node in btree.bbNodes %}   
+{%- for arg in bb_node.args %}
+{%if arg.name not in argnames %}
+{{ argnames.append( arg.name ) or "" }} 
+{%- if arg.default is defined %}
+        self.{{arg.name}} = rospy.get_param('~{{arg.name}}', {{arg.default}})
+{%-else%}
+        self.{{arg.name}} = rospy.get_param('~{{arg.name}}')
+{%endif %}         
+{%endif %}
+{% endfor %}         
+{%- endfor %}
+{% for task_node in btree.taskNodes %}          
+{%- for arg in task_node.args %}
+{%if arg.name not in argnames %}
+{{ argnames.append( arg.name ) or "" }}
+{%- if arg.default is defined %}
+{%- if is_basearraytype(arg.default) %}
+        self.{{arg.name}} = rospy.get_param('~{{arg.name}}', [{{arg.default.values|join(', ')}}])
+{%else%}
+        self.{{arg.name}} = rospy.get_param('~{{arg.name}}', {{arg.default}})
+{%endif %}                 
+{%-else%}
+        self.{{arg.name}} = rospy.get_param('~{{arg.name}}')
+{%endif %}
+{%endif %}         
+{%-endfor %}         
+{%- endfor %}
+
+        rospy.loginfo('[BT] Tree Params: ')
+{% for name in argnames %}          
+        rospy.loginfo('[BT] {{name}}: {0}'.format(self.{{name}}))
+{%- endfor %} 
+
+        root = self.create_root()
+        behaviour_tree = py_trees_ros.trees.BehaviourTree(root)
+        rospy.on_shutdown(functools.partial(self.shutdown, behaviour_tree))
+        if not behaviour_tree.setup(timeout={{btree.timeout}}):
+            console.logerror("failed to setup the tree, aborting.")
+            sys.exit(1)
+        behaviour_tree.tick_tock({{btree.updatetime}})
+
+    def create_root(self):
+
+{%+ for composite_node in composite_nodes %}
+        {{composite_node.name}} = py_trees.composites.{{composite_node.type}}("{{composite_node.name}}")
+{% endfor %}
+
+{%+ for sif_node in sif_nodes %}
+        {{sif_node.name}} = py_trees.meta.success_is_failure(py_trees.composites.Selector)(name="{{sif_node.name}}")
+{% endfor %}
+
+{%+ for bb_node in btree.bb_events %}
+        {{bb_node.name}} = py_trees_ros.subscribers.EventToBlackboard(
+            name="{{bb_node.name}}",
+            topic_name="{{bb_node.topic.topic_string}}",
+            variable_name="{{bb_node.name}}"
+        )
+{% endfor %}
+
+{% for bb_node in btree.bbNodes %}
+        {{bb_node.name}} = bb_{{bb_node.name}}.ToBlackboard(
+            name="{{bb_node.name}}",
+            topic_name="{{bb_node.input_topic.topic_string}}"{{ "," if bb_node.args|length > 0 else "" }} 
+{% for arg in bb_node.args %}
+            {{arg.name}} = self.{{arg.name}}{{ ", " if not loop.last else "" }} 
+{% endfor %}
+        )
+{% endfor %}
+
+{% for check_node in btree.checkNodes %}
+        {{check_node.name}} = py_trees.blackboard.CheckBlackboardVariable(
+            name="{{check_node.name}}",
+            variable_name={%if check_node.name in check_nodes_w_data %}'{{check_node.bbvar.name}}.data'{%else%}'{{check_node.bbvar.name}}'{%endif%},
+            expected_value= {%if check_node.default is string %} '{{check_node.default}}' {%else%}{{check_node.default}}{%endif%})
+{% endfor %}
+
+{% for condition_node in condition_nodes %}
+        {{condition_node.name}} =py_trees.meta.condition(
+            py_trees.composites.{{condition_node.type}},
+            status=py_trees.common.Status.{{condition_node.expected_status}})(name="{{condition_node.name}}")
+{% endfor %}
+
+{%+ for task_node in std_task_nodes %}
+        {{task_node.name}} = py_trees.behaviours.{{task_node.type}}(
+            name="{{task_node.name}}")
+{%  endfor %}
+
+{%+ for task_node in task_nodes %}
+        {{task_node.name}} =task_{{task_node.name}}.TaskHandler(
+            name="{{task_node.name}}"{{ "," if task_node.args|length > 0 else ")" }} 
+{% for arg in task_node.args %}
+            {{arg.name}} = self.{{arg.name}}{{ ", " if not loop.last else ")" }} 
+{% endfor %}            
+{% endfor %}                                    
+
+{% for timer_node in timer_nodes %}
+        {{timer_node.name}} =py_trees.timers.Timer(
+            "{{timer_node.name}}",
+            duration={{timer_node.duration}})
+{% endfor %}
+
+{%+ for node in parent_nodes %}
+
+        {{node['name']}}.add_children([
+{%- for child_name in node['child_names'] %}                
+            {{child_name}}{{ ", " if not loop.last else "])" }}
+{%- endfor %}
+
+{%+ endfor %}
+
+        return {{btree.tree.btree.name}}
+
+
+    def shutdown(self, behaviour_tree):
+        behaviour_tree.interrupt()
+
+##############################################################################
+# Main
+##############################################################################
+
+
+if __name__=='__main__':
+    rospy.init_node('{{btree.name}}', log_level=rospy.INFO)
+    try:
+        node = {{btree.name}}_BT()
+        rospy.spin()
+    except rospy.ROSInterruptException:
+        print('caught exception')
+
+    
