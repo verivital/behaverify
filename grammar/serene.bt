@@ -90,6 +90,46 @@ topic Float32MultiArray lec_input /iver0/thruster_cmd_logging;
 //-----------------------------------
 
 var PixhawkHW battery;
+
+var LEC1OutputAssuredStamped lec_dd_am;
+
+var Bool bb_geofence = False;
+
+var Bool bb_pipelost = False;
+
+var Float32 bb_home_dist = 1000;
+
+var LEC1OutputAssuredStamped lec2_am_l;
+
+var LEC1OutputAssuredStamped lec2_am_r;
+
+var String bb_mission = "";
+
+var Bool bb_rth = False;
+
+var Bool bb_sensor_failure = False;
+
+var Bool bb_waypoints_completed = False;
+
+var HSDCommand bb_HSD_out;
+
+var Bool bb_pipe_mapping_enable = False;
+
+var bool bb_obstacle_warning = False;
+
+var bool event_reallocate_button = False;
+
+var Float32MultiArray dd_output;
+
+var Float32MultiArray lec_input;
+
+
+
+//-----------------------------------
+//Modeling Variables
+//-----------------------------------
+
+var battery;
     init '1';
     min 0;
     max 1;
@@ -97,7 +137,7 @@ var PixhawkHW battery;
     		   node_name  battery2bb;
 		   }
 end_var
-var LEC1OutputAssuredStamped lec_dd_am;
+var lec_dd_am;
 end_var
 var Bool bb_geofence = False;
 end_var
@@ -132,42 +172,38 @@ end_var
 
 
 
-var Bool battery_low_warning;
-    init '0';
-    min 0;
-    max 1;
-    nodes_that_set {
-    		   node_name  battery2bb;
-		   }
-end_var
-var Bool lec_dd_am_warning;
-end_var
-var Bool bb_rth_warning;
-end_var
-var Bool bb_geofence_warning;
-end_var
-var Bool lec2_am_l_pipe_warning;
-end_var
-var Bool lec2_am_l_speed_warning;
-end_var
-var Bool lec2_am_r_pipe_warning;
-end_var
-var Bool lec2_am_r_speed_warning;
-end_var
-var Bool bb_pipe_lost_warning;
-end_var
-var Bool bb_sensor_failure_warning;
-end_var
-var Bool bb_home_reached;
-end_var
-var Bool dd_z_axis_warning;
-end_var
-var Bool dd_xy_axis_degradation;
-end_var
-
-//-----------------------------------
-//Modeling Only Variables
-//-----------------------------------
+// var Bool battery_low_warning;
+//     init '0';
+//     min 0;
+//     max 1;
+//     nodes_that_set {
+//     		   node_name  battery2bb;
+// 		   }
+// end_var
+// var Bool lec_dd_am_warning;
+// end_var
+// var Bool bb_rth_warning;
+// end_var
+// var Bool bb_geofence_warning;
+// end_var
+// var Bool lec2_am_l_pipe_warning;
+// end_var
+// var Bool lec2_am_l_speed_warning;
+// end_var
+// var Bool lec2_am_r_pipe_warning;
+// end_var
+// var Bool lec2_am_r_speed_warning;
+// end_var
+// var Bool bb_pipe_lost_warning;
+// end_var
+// var Bool bb_sensor_failure_warning;
+// end_var
+// var Bool bb_home_reached;
+// end_var
+// var Bool dd_z_axis_warning;
+// end_var
+// var Bool dd_xy_axis_degradation;
+// end_var
 
 var Bool task_mission_server_mission_len;
     variable_type DEFINE;
@@ -221,14 +257,20 @@ end_var
 //Blackboard nodes
 //-----------------------------------
 
-input battery2bb pixhawk_hw -> battery 
-    var bool battery_low_warning = False;
-    end_var
-    arg float failsafe_battery_low_threshold=0.1;
-    success True;
-    failure False;
-    running True;
-    comment  "This node captures the state of the battery"
+input battery2bb pixhawk_hw -> battery
+	var Bool battery_low_warning;
+      	init '0';
+      	min 0;
+      	max 1;
+      	nodes_that_set {
+		node_name  battery2bb;
+		}
+	end_var
+	arg float failsafe_battery_low_threshold=0.1;
+	success True;
+	failure False;
+	running True;
+	comment  "This node captures the state of the battery"
 end
 
 input ddlecam2bb lec_dd_am -> lec_dd_am
@@ -473,7 +515,7 @@ task surface_task
      in hsd_to_surface hsd_to_surface_;
      out cm_hsd_input cm_hsd_input_;
      var HSDCommand HSD_out;
-     end_var
+     end_var;
      success False;
      failure False;
      running True;	
