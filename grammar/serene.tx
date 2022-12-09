@@ -3,7 +3,8 @@ BehaviorModel:
 	simpleTypes *= SimpleType
 	messageTypes *= MessageType
 	rosTopics *= Topic
-	bbVariables *= BBVar
+    bbVariables *= BBVar
+    (modeling_variables=modeling_variables)?
 	bbEvents *= BBEvent
 	bbNodes *= BBNode
 	checkNodes *= CheckNode
@@ -34,9 +35,9 @@ Topic:	'topic' type=[MessageType] name=ID topic_string=/([^\s;]+)/ ';'
 
 
 
-    
-BBVar:
-    'var' type=[Type] name=ID ('=' default=BASETYPE)? ';'
+
+    modeling_variable:
+    'variable' name=ID
     ('do_not_model' do_not_model=BOOL ';')?
     ('variable_type'  variable_type=VariableModelType';')?
     ('init' initial_value=STRING ';')?
@@ -47,6 +48,78 @@ BBVar:
     nodes_with_access *= AccessNode 
     '}')?
     'end_var' (';')?
+;
+
+    variable_name:
+    "'"ID"'" | '"'ID'"'
+;
+    access_node_name:
+    ("'"ID"'" | '"'ID'"') (',')?
+;
+    
+    
+    modeling_variables:
+    'variables' ':' '{'
+    variables *= modeling_variable
+    '}'
+;
+    modeling_variable:
+    name=variable_name ':' '{'
+    'access' ':' '{'
+    nodes_with_access *= access_node_name
+    '}' (',')?
+    'always_exist': True,
+                                    'auto_change': False,
+                                    'custom_value_range': None,
+                                    'init_exist': True,
+                                    'init_value': None,
+                                    'max_value': 1,
+                                    'min_value': 0,
+                                    'mode': 'VAR',
+                                    'next_exist': {   'loiter_task': True,
+                                                      'loiter_task1': True,
+                                                      'loiter_task2': True,
+                                                      'obstacle_avoidance': True,
+                                                      'rth_task': True,
+                                                      'rth_task1': True,
+                                                      'speed_max_task': True,
+                                                      'speed_min_task': True,
+                                                      'speed_min_task1': True,
+                                                      'surface_task': True,
+                                                      'surface_task1': True,
+                                                      'surface_task2': True,
+                                                      'surface_task3': True,
+                                                      'surface_task4': True,
+                                                      'tracking_task': True,
+                                                      'waypoint_task': True},
+                                    'next_value': None,
+                                    'non-variable': False,
+                                    'stages': [   26,
+                                                  31,
+                                                  35,
+                                                  41,
+                                                  45,
+                                                  49,
+                                                  54,
+                                                  60,
+                                                  65,
+                                                  69,
+                                                  74,
+                                                  78,
+                                                  79,
+                                                  100,
+                                                  101,
+                                                  102],
+                                    'use_stages': False,
+                                    'variable_id': 53,
+    'variable_name': 'HSD_out'}
+    '}' (',')?
+;
+    
+    
+
+BBVar:
+    'var' type=[Type] name=ID ('=' default=BASETYPE)? ';'
 ;
 
 BBEvent:
@@ -81,9 +154,9 @@ BBNode:
 		 input_topic=[Topic] '->' topic_bbvar=[BBVar]
 		 bb_vars *= BBVar
 		 args *= Arg
-		 'success' can_succeed=BOOL';'
-		 'failure' can_failure=BOOL';'
-		 'running' can_running=BOOL';'
+		 'success' can_succeed=BOOL ';'
+		 'failure' can_failure=BOOL ';'
+		 'running' can_running=BOOL ';'
 		 ('comment' comment=STRING)?
     'end'(';')?
 	;
@@ -114,9 +187,9 @@ TaskNode:
 	('out' output_topics+=TopicArg[','] ';')?
 	bb_vars*=BBVar
 	args*=Arg
-	'success' can_succeed=BOOL
-	'failure' can_failure=BOOL
-	'running' can_running=BOOL
+	'success' can_succeed=BOOL ';'
+	'failure' can_failure=BOOL ';'
+	'running' can_running=BOOL ';'
 	('comment' comment=STRING (';')?)?
     'end'(';')?
 	;
