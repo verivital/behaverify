@@ -34,85 +34,60 @@ Topic:	'topic' type=[MessageType] name=ID topic_string=/([^\s;]+)/ ';'
 	;
 
 
-
-
-    modeling_variable:
-    'variable' name=ID
-    ('do_not_model' do_not_model=BOOL ';')?
-    ('variable_type'  variable_type=VariableModelType';')?
-    ('init' initial_value=STRING ';')?
-    ('min' min_value=INT ';')?
-    ('max' max_value=INT ';')?
-    ('use_stages' use_stages=BOOL ';')?
-    ('nodes_that_set' '{'
-    nodes_with_access *= AccessNode 
-    '}')?
-    'end_var' (';')?
-;
-
     variable_name:
-    "'"ID"'" | '"'ID'"'
+    "'"ID"'" | '"'ID'"' | 'None'
 ;
     access_node_name:
     ("'"ID"'" | '"'ID'"') (',')?
 ;
+
+    next_exist_line:
+    variable_name=variable_name ':' exist_val=BOOL (',')?
+;
     
     
     modeling_variables:
-    'variables' ':' '{'
+    "'variables'" ':' '{'
     variables *= modeling_variable
     '}'
 ;
+    string_or_none:
+    (STRING | 'None')
+;
+    int_or_none:
+    (INT | 'None')
+;
+    int_comma:
+    INT (',')?
+;
     modeling_variable:
     name=variable_name ':' '{'
-    'access' ':' '{'
+    ("'access'" | '"access"') ':' (('set' '(' '[') | '{')
     nodes_with_access *= access_node_name
+    ((']' ')') | '}') (',')?
+    ("'always_exist'" | '"always_exist"') ':' always_exist=BOOL (',')?
+    ("'auto_change'" | '"auto_change"') ':' auto_change=BOOL (',')?
+    ("'custom_value_range'" | '"custom_value_range"') ':' custom_value_range=string_or_none (',')?
+    ("'init_exist'" | '"init_exist"') ':' init_exist=BOOL (',')?
+    ("'init_value'" | '"init_value"') ':' init_value=int_or_none (',')?
+    ("'max_value'" | '"max_value"') ':' max_value=INT (',')?
+    ("'min_value'" | '"min_value"') ':' min_value=INT (',')?
+    ("'mode'" | '"mode"') ':' mode=VariableModelType (',')?
+    ("'next_exist'" | '"next_exist"') ':' '{'
+    nodes_next_exist *= next_exist_line
     '}' (',')?
-    'always_exist': True,
-                                    'auto_change': False,
-                                    'custom_value_range': None,
-                                    'init_exist': True,
-                                    'init_value': None,
-                                    'max_value': 1,
-                                    'min_value': 0,
-                                    'mode': 'VAR',
-                                    'next_exist': {   'loiter_task': True,
-                                                      'loiter_task1': True,
-                                                      'loiter_task2': True,
-                                                      'obstacle_avoidance': True,
-                                                      'rth_task': True,
-                                                      'rth_task1': True,
-                                                      'speed_max_task': True,
-                                                      'speed_min_task': True,
-                                                      'speed_min_task1': True,
-                                                      'surface_task': True,
-                                                      'surface_task1': True,
-                                                      'surface_task2': True,
-                                                      'surface_task3': True,
-                                                      'surface_task4': True,
-                                                      'tracking_task': True,
-                                                      'waypoint_task': True},
-                                    'next_value': None,
-                                    'non-variable': False,
-                                    'stages': [   26,
-                                                  31,
-                                                  35,
-                                                  41,
-                                                  45,
-                                                  49,
-                                                  54,
-                                                  60,
-                                                  65,
-                                                  69,
-                                                  74,
-                                                  78,
-                                                  79,
-                                                  100,
-                                                  101,
-                                                  102],
-                                    'use_stages': False,
-                                    'variable_id': 53,
-    'variable_name': 'HSD_out'}
+    ("'next_value'" | '"next_value"') ':' next_value=string_or_none (',')?
+    ("'non-variable'" | '"non-variable"') ':' non_variable=BOOL (',')?
+    ("'stages'" | '"stages"') ':' '['
+    stages *= int_comma
+    ']' (',')?
+    ("'use_stages'" | '"use_stages"') ':' use_stages=BOOL (',')?
+    ("'variable_id'" | '"variable_id"') ':' variable_id=INT (',')?
+    ("'variable_name'" | '"variable_name"') ':' variable_name=variable_name (',')?
+    ("'initial_stage'" | '"initial_stage"') ':' initial_stage=variable_name (',')?
+    ("'next_stage'" | '"next_stage"') ':' next_stage=variable_name (',')?
+    ("'prev_stage'" | '"prev_stage"') ':' prev_stage=variable_name (',')?
+    ("'last_stage'" | '"last_stage"') ':' last_stage=variable_name (',')?
     '}' (',')?
 ;
     
@@ -127,7 +102,7 @@ BBEvent:
 ;
 
 VariableModelType:
-    'DEFINE' | 'FROZENVAR' | 'VAR'
+    "'DEFINE'" | "'FROZENVAR'" | "'VAR'" | '"DEFINE"' | '"FROZENVAR"' | '"VAR"' 
 ;
 
 AccessNode:
