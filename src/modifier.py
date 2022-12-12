@@ -7,6 +7,7 @@ import copy
 
 def create_stages(variable, variables, node_name_to_id):
     prev_stage_name = variable['variable_name']
+    variable['initial_stage'] = variable['variable_name']
     for stage_count in range(1, len(variable['stages']) + 1):
         stage_start = variable['stages'][stage_count - 1]
         try:
@@ -15,11 +16,14 @@ def create_stages(variable, variables, node_name_to_id):
             # this is actually expected. the last one will fail.
             stage_end = len(node_name_to_id)
         variable_name = variable['variable_name'] + "_stage_" + str(stage_count)
-        variable_number = len(variables)
-        variables[variable_name] = copy.deepcopy(variable)
-        variables[variable_name]['variable_name'] = variable_name
+        # this is potentially unsafe, but i'm lazy atm
+        if variable_name in variables:
+            print('WARNING: the auto generated stage name "' + variable + '" is already an existing variable. this may cause unexpected issues')
+        variable_number = len(variables)  # not super important, but just add it to the end atm. we'll renumber things later
+        variables[variable_name] = copy.deepcopy(variable)  # by default nothing changes from the base really
+        variables[variable_name]['variable_name'] = variable_name  # now we set the new name and id
         variables[variable_name]['variable_id'] = variable_number
-        new_access = set()
+        new_access = set()  # create the new access set.
         for access_node_name in variables[variable_name]['access']:
             access_node_id = node_name_to_id[access_node_name]
             if stage_start <= access_node_id and access_node_id <= stage_end:
@@ -28,9 +32,9 @@ def create_stages(variable, variables, node_name_to_id):
         variables[variable_name]['next_stage'] = None
         variables[prev_stage_name]['next_stage'] = variable_name
         variables[variable_name]['prev_stage'] = prev_stage_name
-
+        variables[variable_name]['initial_stage'] = variable['variable_name']  # initial stage is still the first variable.
         prev_stage_name = variable_name
-    new_access = set()
+    new_access = set()  # now we update access for the original node.
     stage_start = 0
     stage_end = variable['stages'][0]
     for access_node_name in variable['access']:

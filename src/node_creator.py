@@ -24,31 +24,19 @@ def create_blackboard(nodes, variables):
     for node_id in nodes:
         node_name_to_id[nodes[node_id]['name']] = node_id
 
-    # return_string = ("MODULE blackboard_module(node_names, variable_names, statuses)" + os.linesep
-    #                   + "\tCONSTANTS" + os.linesep
-    #                   + "\t\tsuccess, failure, running, invalid;" + os.linesep)
     return_string = ("MODULE blackboard_module(node_names, statuses)" + os.linesep
                      + "\tCONSTANTS" + os.linesep
                      + "\t\tsuccess, failure, running, invalid;" + os.linesep)
     return_string += "\tDEFINE" + os.linesep
-    # var_array_string = ("\t\tvariables := ")
-    # var_exist_string = ("\t\tvariable_exists := ")
     exist_define = ""
     frozen_decl_string = "\tFROZENVAR" + os.linesep
     decl_string = ("\tVAR" + os.linesep)
     assign_string = ("\tASSIGN" + os.linesep)
 
-    # var_array = [''] * len(variables)
-    # var_exist_array = [''] * len(variables)
-
     for variable_name in variables:
         variable = variables[variable_name]
-        # if not variable['non-variable']:
-        #     var_array[variable['variable_id']] = variable_name
-        #     var_exist_array[variable['variable_id']] = variable_name + "_exists"
-        # else:
-        #     var_array.pop()
-        #     var_exist_array.pop()
+        # -----------------------------------
+        # define are static.
         if variable['mode'].strip() == 'DEFINE':
             if variable['init_value']:
                 exist_define += ("\t\t" + variable_name + " := " + variable['init_value'] + ";" + os.linesep)
@@ -84,6 +72,9 @@ def create_blackboard(nodes, variables):
             if not (variable['init_value'] is None):
                 assign_string += ("\t\tinit(" + variable_name + ") := " + str(variable['init_value']) + ";" + os.linesep)
             exist_define += "\t\t" + variable_name + "_exists := TRUE;" + os.linesep
+        # --------------------------------
+        # ok, so we've handled define and frozenvar, so all that's left
+        # is actual variable.
         else:
             # the below section was wrong
             # it replaced stage_0 with a macro, which is not right
@@ -103,52 +94,59 @@ def create_blackboard(nodes, variables):
                 max_val = 1
             if max_val <= min_val:
                 max_val = min_val + 1
-            poss_values = "{"
-            for i in range(min_val, max_val+1):
-                poss_values = poss_values + str(i) + ", "
-            poss_values = poss_values[0:-2] + "}"
+
+            # establish possible values, for use later
+            if variable['custom_value_range']:
+                poss_values = variable['custom_value_range']
+            else:
+                poss_values = "{"
+                for i in range(min_val, max_val+1):
+                    poss_values = poss_values + str(i) + ", "
+                poss_values = poss_values[0:-2] + "}"
+
+            # declare the variable.
             if variable['custom_value_range']:
                 decl_string += ("\t\t" + variable_name + " : " + variable['custom_value_range'] + ";" + os.linesep)
             else:
                 decl_string += ("\t\t" + variable_name + " : " + str(min_val) + ".." + str(max_val) + ";" + os.linesep)
 
-            if variable['use_stages']:
-                if variable['prev_stage']:
-                    if variables[variable['prev_stage']]['prev_stage']:
-                        assign_string += ("\t\tinit(" + variable_name + ") := " + variable['prev_stage'] + ";" + os.linesep)
-                    elif variables[variable['prev_stage']]['init_value']:
-                        assign_string += ("\t\tinit(" + variable_name + ") := " + str(variables[variable['prev_stage']]['init_value']) + ";" + os.linesep)
+            if variable['use_stages'] and variable['prev_stage'] is not None:
+                # the variable uses stages and has a previous stage. therefore, our initial value will be based on that
+                assign_string += ("\t\tinit(" + variable_name + ") := " + variable['initial_stage'] + ";" + os.linesep)
             elif not (variable['init_value'] is None):
+                # we ran into a variable that is either the base stage or doesn't use stages
+                # either way, we just use the initial value.
                 assign_string += ("\t\tinit(" + variable_name + ") := " + str(variable['init_value']) + ";" + os.linesep)
 
+            # start of NEXT
             assign_string += ("\t\tnext(" + variable_name + ") := " + os.linesep
                               + "\t\t\tcase" + os.linesep)
             if variable['next_value'] and len(variable['next_value']) > 0:
                 for condition_pair in variable['next_value']:
                     assign_string += "\t\t\t\t" + str(condition_pair[0]) + " : " + str(condition_pair[1]) + ";" + os.linesep
-            if variable['auto_change'] is False or variable['custom_value_range']:
-                pass
-            else:
+            # if variable['auto_change'] is False or variable['custom_value_range']:
+            # not sure why i was excluding custom value range
+            if variable['auto_change']:
                 for node_name in variable['access']:
                     assign_string += "\t\t\tstatuses[node_names." + node_name + "] in {success, failure, running} : " + poss_values + ';' + os.linesep
             if variable['use_stages']:
                 if variable['prev_stage']:
-                    if variables[variable['prev_stage']]['prev_stage']:
-                        assign_string += ("\t\t\t\tTRUE : next(" + variable['prev_stage'] + ");" + os.linesep
-                                          + "\t\t\tesac;" + os.linesep
-                                          )
-                    else:
-                        assign_string += ("\t\t\t\tTRUE : " + variable_name + ";" + os.linesep
-                                          + "\t\t\tesac;" + os.linesep
-                                          )
+                    # if we have a previous stage, then we default to using that value.
+                    assign_string += ("\t\t\t\tTRUE : next(" + variable['prev_stage'] + ");" + os.linesep
+                                      + "\t\t\tesac;" + os.linesep
+                                      )
                 else:
+                    # if we don't have a previous stage, then we are the base variable
+                    # the next value of the base variable is the current value of the last stage
                     assign_string += ("\t\t\t\tTRUE : " + variable['last_stage'] + ";" + os.linesep
                                       + "\t\t\tesac;" + os.linesep
                                       )
             else:
+                # there are no stages, so just stay the same as the default case
                 assign_string += ("\t\t\t\tTRUE : " + variable_name + ";" + os.linesep
                                   + "\t\t\tesac;" + os.linesep
                                   )
+            # end of NEXT
             if variable['always_exist']:
                 exist_define += "\t\t" + variable_name + "_exists := TRUE;" + os.linesep
             else:
@@ -164,22 +162,6 @@ def create_blackboard(nodes, variables):
                 assign_string += ("\t\t\t\tTRUE : " + variable_name + "_exists;" + os.linesep
                                   + "\t\t\tesac;" + os.linesep
                                   )
-    # if len(var_array) == 0:
-    #     return_string += (exist_define
-    #                       + frozen_decl_string
-    #                       + decl_string
-    #                       + assign_string
-    #                       + os.linesep
-    #                       )
-    # else:
-    #     return_string += (var_array_string + str(var_array).replace("'", "") + ";" + os.linesep
-    #                       + var_exist_string + str(var_exist_array).replace("'", "") + ";" + os.linesep
-    #                       + exist_define
-    #                       + frozen_decl_string
-    #                       + decl_string
-    #                       + assign_string
-    #                       + os.linesep
-    #                       )
     return_string += (exist_define
                       + frozen_decl_string
                       + decl_string

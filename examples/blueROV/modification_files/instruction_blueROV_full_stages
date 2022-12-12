@@ -691,7 +691,7 @@
 		'name' : 'obstacle_min_standoff',
 		'instructions' : {
 			'max_value' : 2,
-			'init_value' : '\t\t\tcase\n\t\t\t\t(task_mission_server_mission_type_list[0] = mission_type_unknown) : 1;\n\t\t\t\tTRUE : task_mission_server_mission_distance_list[0];\n\t\t\tesac;'
+			'init_value' : '\n\t\t\tcase\n\t\t\t\t(task_mission_server_mission_type_list[0] = mission_type_unknown) : 1;\n\t\t\t\tTRUE : task_mission_server_mission_distance_list[0];\n\t\t\tesac'
 			
 		}
 
@@ -1349,6 +1349,20 @@
 		'name' : 'loiter_task2',
 		'instructions' : {
 			'return_arguments' : { 'success' : False, 'running' : True, 'failure' : False }
+		}
+	},
+	{
+		'target' : 'node',
+		'name' : 'is_waypoint_requested',
+		'instructions' : {
+			'additional_modules::check::right_hand_side' : 'mission_type_waypoint_following'
+		}
+	},
+	{
+		'target' : 'node',
+		'name' : 'is_track_pipe_mission_requested',
+		'instructions' : {
+			'additional_modules::check::right_hand_side' : 'mission_type_pipe_following'
 		}
 	}
 	
