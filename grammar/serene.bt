@@ -129,46 +129,69 @@ var Float32MultiArray lec_input;
 //Modeling Variables
 //-----------------------------------
 
-var battery;
-    init '1';
-    min 0;
-    max 1;
-    nodes_that_set {
-    		   node_name  battery2bb;
-		   }
-end_var
-var lec_dd_am;
-end_var
-var Bool bb_geofence = False;
-end_var
-var Bool bb_pipelost = False;
-end_var
-var Float32 bb_home_dist = 1000;
-end_var
-var LEC1OutputAssuredStamped lec2_am_l;
-end_var
-var LEC1OutputAssuredStamped lec2_am_r;
-end_var
-var String bb_mission = "";
-end_var
-var Bool bb_rth = False;
-end_var
-var Bool bb_sensor_failure = False;
-end_var
-var Bool bb_waypoints_completed = False;
-end_var
-var HSDCommand bb_HSD_out;
-end_var
-var Bool bb_pipe_mapping_enable = False;
-end_var
-var bool bb_obstacle_warning = False;
-end_var
-var bool event_reallocate_button = False;
-end_var
-var Float32MultiArray dd_output;
-end_var
-var Float32MultiArray lec_input;
-end_var
+'variables' : { 
+                     'next_mission': {   'access': {'mission_server'},
+                                         'always_exist': True,
+                                         'auto_change': False,
+                                         'custom_value_range': None,
+                                         'init_exist': True,
+                                         'init_value': 0,
+                                         'max_value': 1,
+                                         'min_value': 0,
+                                         'mode': 'VAR',
+                                         'next_exist': {   'mission_server': True,
+                                                           'next_mission': True},
+                                         'next_value': None,
+                                         'non-variable': False,
+                                         'stages': [25, 99],
+                                         'use_stages': True,
+                                         'variable_id': 26,
+                                         'variable_name': 'next_mission',
+                                         'initial_stage': 'next_mission',
+                                         'next_stage': 'next_mission_stage_1',
+                                         'prev_stage': None,
+                                         'last_stage': 'next_mission_stage_2'}
+}
+// var battery;
+//     init '1';
+//     min 0;
+//     max 1;
+//     nodes_that_set {
+//     		   node_name  battery2bb;
+// 		   }
+// end_var
+// var lec_dd_am;
+// end_var
+// var Bool bb_geofence = False;
+// end_var
+// var Bool bb_pipelost = False;
+// end_var
+// var Float32 bb_home_dist = 1000;
+// end_var
+// var LEC1OutputAssuredStamped lec2_am_l;
+// end_var
+// var LEC1OutputAssuredStamped lec2_am_r;
+// end_var
+// var String bb_mission = "";
+// end_var
+// var Bool bb_rth = False;
+// end_var
+// var Bool bb_sensor_failure = False;
+// end_var
+// var Bool bb_waypoints_completed = False;
+// end_var
+// var HSDCommand bb_HSD_out;
+// end_var
+// var Bool bb_pipe_mapping_enable = False;
+// end_var
+// var bool bb_obstacle_warning = False;
+// end_var
+// var bool event_reallocate_button = False;
+// end_var
+// var Float32MultiArray dd_output;
+// end_var
+// var Float32MultiArray lec_input;
+// end_var
 
 
 
@@ -205,52 +228,52 @@ end_var
 // var Bool dd_xy_axis_degradation;
 // end_var
 
-var Bool task_mission_server_mission_len;
-    variable_type DEFINE;
-    init "3";
-end_var
+// var Bool task_mission_server_mission_len;
+//     variable_type DEFINE;
+//     init "3";
+// end_var
 
-var Bool task_mission_server_mission_type_list;
-    variable_type DEFINE;
-    init "[mission_type_0, mission_type_1, mission_type_2]";
-end_var
+// var Bool task_mission_server_mission_type_list;
+//     variable_type DEFINE;
+//     init "[mission_type_0, mission_type_1, mission_type_2]";
+// end_var
 
-var Bool task_mission_server_mission_distance_list;
-    variable_type DEFINE;
-    init "[mission_distance_0, mission_distance_1, mission_distance_2]";
-end_var
-var Bool total_degradation_threshold;
-    variable_type DEFINE;
-    init "0";
-end_var
-var Bool home_reached_threshold;
-    variable_type DEFINE;
-    init "0";
-end_var
-var Bool mission_type_0;
-    variable_type FROZENVAR;
-    //custom_value_range  '{mission_type_path_following, mission_type_waypoint_following, mission_type_e_stop, mission_type_pipe_following, mission_type_unknown}'
-end_var
-var Bool mission_type_1;
-    variable_type FROZENVAR;
-    //custom_value_range  '{mission_type_path_following, mission_type_waypoint_following, mission_type_e_stop, mission_type_pipe_following, mission_type_unknown}'
-end_var
-var Bool mission_type_2;
-    variable_type FROZENVAR;
-    //custom_value_range  '{mission_type_path_following, mission_type_waypoint_following, mission_type_e_stop, mission_type_pipe_following, mission_type_unknown}'
-end_var
-var Bool mission_distance_0;
-    variable_type FROZENVAR;
-    max 2;
-end_var
-var Bool mission_distance_1;
-    variable_type FROZENVAR;
-    max 2;
-end_var
-var Bool mission_distance_2;
-    variable_type FROZENVAR;
-    max 2;
-end_var
+// var Bool task_mission_server_mission_distance_list;
+//     variable_type DEFINE;
+//     init "[mission_distance_0, mission_distance_1, mission_distance_2]";
+// end_var
+// var Bool total_degradation_threshold;
+//     variable_type DEFINE;
+//     init "0";
+// end_var
+// var Bool home_reached_threshold;
+//     variable_type DEFINE;
+//     init "0";
+// end_var
+// var Bool mission_type_0;
+//     variable_type FROZENVAR;
+//     //custom_value_range  '{mission_type_path_following, mission_type_waypoint_following, mission_type_e_stop, mission_type_pipe_following, mission_type_unknown}'
+// end_var
+// var Bool mission_type_1;
+//     variable_type FROZENVAR;
+//     //custom_value_range  '{mission_type_path_following, mission_type_waypoint_following, mission_type_e_stop, mission_type_pipe_following, mission_type_unknown}'
+// end_var
+// var Bool mission_type_2;
+//     variable_type FROZENVAR;
+//     //custom_value_range  '{mission_type_path_following, mission_type_waypoint_following, mission_type_e_stop, mission_type_pipe_following, mission_type_unknown}'
+// end_var
+// var Bool mission_distance_0;
+//     variable_type FROZENVAR;
+//     max 2;
+// end_var
+// var Bool mission_distance_1;
+//     variable_type FROZENVAR;
+//     max 2;
+// end_var
+// var Bool mission_distance_2;
+//     variable_type FROZENVAR;
+//     max 2;
+// end_var
 
 
 //-----------------------------------
@@ -259,13 +282,6 @@ end_var
 
 input battery2bb pixhawk_hw -> battery
 	var Bool battery_low_warning;
-      	init '0';
-      	min 0;
-      	max 1;
-      	nodes_that_set {
-		node_name  battery2bb;
-		}
-	end_var
 	arg float failsafe_battery_low_threshold=0.1;
 	success True;
 	failure False;
@@ -275,7 +291,6 @@ end
 
 input ddlecam2bb lec_dd_am -> lec_dd_am
     var bool lec_dd_am_warning = False ;
-    end_var
     arg float dd_threshold = 5.0 ;
     success True;
     failure False;
@@ -285,7 +300,6 @@ end
 
 input rth2bb bb_rth -> bb_rth
     var bool bb_rth_warning = False;
-    end_var
     arg bool failsafe_rth_enable =True;
     success True;
     failure False;
@@ -295,7 +309,6 @@ end
 
 input geofence2bb bb_geofence -> bb_geofence
     var bool bb_geofence_warning = False;
-    end_var
     success True;
     failure False;
     running True;
@@ -304,9 +317,7 @@ end
 
 input lec2_am_l_2bb  lec2_left_am -> lec2_am_l
     var bool lec2_am_l_speed_warning = False;
-    end_var
     var bool lec2_am_l_pipe_warning = False;
-    end_var
     arg float pipe_estimation_good_log_val = 5.0;
     arg float speed_good_log_val  = 2.5;
     success True;
@@ -317,9 +328,7 @@ end
 
 input lec2_am_r_2bb lec2_right_am -> lec2_am_r
     var bool lec2_am_r_speed_warning = False;
-    end_var
     var bool lec2_am_r_pipe_warning = False;
-    end_var
     arg float pipe_estimation_good_log_val =5.0;
     arg float speed_good_log_val =2.5;
     success True;
@@ -330,7 +339,6 @@ end
 
 input pipe_lost2bb bb_pipelost -> bb_pipelost
     var bool bb_pipe_lost_warning =False;
-    end_var
     success True;
     failure False;
     running True;
@@ -340,7 +348,6 @@ end
 
 input sensor_failure2bb  bb_sensor_failure -> bb_sensor_failure
     var bool bb_sensor_failure_warning =False;
-    end_var
     success True;
     failure False;
     running True;
@@ -356,7 +363,6 @@ end
 
 input home2bb bb_home_dist -> bb_home_dist
     var bool bb_home_reached =False;
-    end_var
     arg float home_reached_threshold =15;
     success True;
     failure False;
@@ -374,9 +380,7 @@ end
 
 input ddlec2bb degradation_detector -> dd_output 
     var bool dd_z_axis_warning = False;
-    end_var
     var bool dd_xy_axis_degradation = False;
-    end_var
     arg float decision_threshold = 0.7;
     arg float total_degradation_threshold=0.0;
     arg integer num_classes=22;
@@ -515,7 +519,6 @@ task surface_task
      in hsd_to_surface hsd_to_surface_;
      out cm_hsd_input cm_hsd_input_;
      var HSDCommand HSD_out;
-     end_var;
      success False;
      failure False;
      running True;	
@@ -525,7 +528,6 @@ task  rth_task
     in  hsd_to_rth hsd_to_rth_;
     out cm_hsd_input cm_hsd_input_;
     var HSDCommand HSD_out;
-    end_var
      success False;
      failure False;
      running True;
@@ -535,7 +537,6 @@ task  loiter_task
     in hsd_pipeline_mapping  hsd_pipeline_mapping_;
     out cm_hsd_input  cm_hsd_input_;
     var HSDCommand HSD_out ;
-    end_var
      success False;
      failure False;
      running True;
@@ -546,9 +547,7 @@ task obstacle_avoidance
      in hsd_obstacle_avoidance hsd_obstacle_avoidance_;
      out hsd_command hsd_pub;
      var HSDCommand HSD_out;
-     end_var
      var bool bb_obstacle_warning = False ;
-     end_var
      success False;
      failure False;
      running True;
@@ -556,7 +555,6 @@ end
 
 task  speed_max_task 
     var HSDCommand HSD_out;
-    end_var
     arg float uuv_max_speed=0.9;
      success False;
      failure False;
@@ -565,7 +563,6 @@ end
 
 task  speed_min_task 
     var HSDCommand HSD_out;
-    end_var
     arg float uuv_min_speed=0.4;
      success False;
      failure False;
@@ -574,7 +571,6 @@ end
 
 task  pipe_mapping_enable_task 
     var Bool pipe_mapping_enable;
-    end_var
      success False;
      failure False;
      running True;
@@ -582,7 +578,6 @@ end
 
 task  pipe_mapping_disable_task 
     var Bool pipe_mapping_enable;
-    end_var
      success False;
      failure False;
      running True;
@@ -592,7 +587,6 @@ task  tracking_task
     in hsd_pipeline_mapping  hsd_pipeline_mapping_;
     out cm_hsd_input cm_hsd_input_;
     var HSDCommand HSD_out ;
-    end_var
      success False;
      failure False;
      running True;
@@ -602,7 +596,6 @@ task  waypoint_task
     in hsd_to_waypoint hsd_waypoint_, bb_waypoints_completed hsd_waypoint_completed_;
 	out cm_hsd_input cm_hsd_input_;
     var HSDCommand HSD_out ;
-    end_var
      success False;
      failure False;
      running True;
@@ -610,7 +603,6 @@ end
 
 task  reallocate_task 
     var float total_degradation=0;
-    end_var
      success False;
      failure False;
      running True;
