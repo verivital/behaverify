@@ -35,12 +35,15 @@ Topic:	'topic' type=[MessageType] name=ID topic_string=/([^\s;]+)/ ';'
 	;
 
 
+
+    
+
     variable_name:
     "'"variable_name=ID"'" | '"'variable_name=ID'"' | variable_name=ID | variable_name='None'
 ;
 
-    stage_node_name:
-    ("'"node_name=ID"'" | '"'node_name=ID'"' | node_name=ID)
+    access_node_name:
+    ("'"node_name=ID"'" | '"'node_name=ID'"' | node_name=ID) (',')?
 ;
     next_exist_line:
     variable_name=variable_name ':' exist_val=BOOL (',')?
@@ -75,7 +78,106 @@ VariableModelType:
     variables *= modeling_variable
     '}'
 ;
-    internal_value:
+    
+keyword_access:  
+    "'access'" | '"access"' | 'access'
+;
+    keyword_always_exist:
+    "'always_exist'" | '"always_exist"' | 'always_exist'
+;
+    keyword_auto_change:
+    "'auto_change'" | '"auto_change"' | 'auto_change'
+;
+    keyword_custom_value_range:
+    "'custom_value_range'" | '"custom_value_range"' | 'custom_value_range'
+;
+    keyword_init_exist:
+    "'init_exist'" | '"init_exist"' | 'init_exist'
+;
+    keyword_init_value:
+    "'init_value'" | '"init_value"' | 'init_value'
+;
+    keyword_max_value:
+    "'max_value'" | '"max_value"' | 'max_value'
+;
+    keyword_min_value:
+    "'min_value'" | '"min_value"' | 'min_value'
+;
+    keyword_mode:
+    "'mode'" | '"mode"' | 'mode'
+;
+    keyword_next_exist:
+    "'next_exist'" | '"next_exist"' | 'next_exist'
+;
+    keyword_next_value:
+    "'next_value'" | '"next_value"' | 'next_value'
+;
+    keyword_non_variable:
+    "'non-variable'" | '"non-variable"' | 'non-variable'
+;
+    keyword_stages:
+    "'stages'" | '"stages"' | 'stages'
+;
+    keyword_use_stages:
+    "'use_stages'" | '"use_stages"' | 'use_stages'
+;
+    keyword_variable_id:
+    "'variable_id'" | '"variable_id"' | 'variable_id'
+;
+    keyword_variable_name:
+    "'variable_name'" | '"variable_name"' | 'variable_name'
+;
+    keyword_initial_stage:
+    "'initial_stage'" | '"initial_stage"' | 'initial_stage'
+;
+    keyword_next_stage:
+    "'next_stage'" | '"next_stage"' | 'next_stage'
+;
+    keyword_prev_stage:
+    "'prev_stage'" | '"prev_stage"' | 'prev_stage'
+;
+    keyword_last_stage:
+    "'last_stage'" | '"last_stage"' | 'last_stage'
+;
+    
+
+    internal_value_old:   
+    (('"')? ("'")? keyword=keyword_access ("'")? ('"')? ':' (('set' '(' ('[')?) | '{')
+    value *=  access_node_name
+    (((']')? ')') | '}') (',')?) |
+    (('"')? ("'")? keyword=keyword_always_exist ("'")? ('"')? ':' value=BOOL (',')?) |
+    (('"')? ("'")? keyword=keyword_auto_change ("'")? ('"')? ':' value=BOOL (',')?) |
+    (('"')? ("'")? keyword=keyword_custom_value_range ("'")? ('"')? ':' value='None' (',')?) |
+    (('"')? ("'")? keyword=keyword_custom_value_range ("'")? ('"')? ':' value+=STRING (',')?) |
+    (('"')? ("'")? keyword=keyword_init_exist ("'")? ('"')? ':' value=BOOL (',')?) |
+    (('"')? ("'")? keyword=keyword_init_value ("'")? ('"')? ':' value='None' (',')?) |
+    (('"')? ("'")? keyword=keyword_init_value ("'")? ('"')? ':' value=INT (',')?) |
+    (('"')? ("'")? keyword=keyword_init_value ("'")? ('"')? ':' value+=STRING (',')?) |
+    (('"')? ("'")? keyword=keyword_max_value ("'")? ('"')? ':' value=INT (',')?) |
+    (('"')? ("'")? keyword=keyword_min_value ("'")? ('"')? ':' value=INT (',')?) |
+    (('"')? ("'")? keyword=keyword_mode ("'")? ('"')? ':' ('"')? ("'")? value=VariableModelType ("'")? ('"')? (',')?)  |
+    (('"')? ("'")? keyword=keyword_next_exist ("'")? ('"')? ':' '{'
+    value *= next_exist_line
+    '}' (',')?) |
+    (('"')? ("'")? keyword=keyword_next_value ("'")? ('"')? ':' value='None' (',')?) |
+    (('"')? ("'")? keyword=keyword_next_value ("'")? ('"')? ':' '[' value+=condition_pair[','] ']' (',')?) |
+    (('"')? ("'")? keyword=keyword_non_variable ("'")? ('"')? ':' value=BOOL (',')?) |
+    (('"')? ("'")? keyword=keyword_stages ("'")? ('"')? ':' '['
+    value *= INT[',']
+    ']' (',')?) |
+    (('"')? ("'")? keyword=keyword_use_stages ("'")? ('"')? ':' value=BOOL (',')?) |
+    (('"')? ("'")? keyword=keyword_variable_id ("'")? ('"')? ':' value=INT (',')?) |
+    (('"')? ("'")? keyword=keyword_variable_name ("'")? ('"')? ':' value=variable_name (',')?) |
+    (('"')? ("'")? keyword=keyword_initial_stage ("'")? ('"')? ':' value=variable_name (',')?) |
+    (('"')? ("'")? keyword=keyword_next_stage ("'")? ('"')? ':' value=variable_name (',')?) |
+    (('"')? ("'")? keyword=keyword_prev_stage ("'")? ('"')? ':' value=variable_name (',')?) |
+    (('"')? ("'")? keyword=keyword_last_stage ("'")? ('"')? ':' value=variable_name (',')?)
+;
+
+    internal_value:   
+    (('"')? ("'")? keyword='access' ("'")? ('"')? ':' (('set' '(' ('[')?) | '{')
+    value *=  access_node_name
+    (((']')? ')') | '}') (',')?) |
     (('"')? ("'")? keyword='always_exist' ("'")? ('"')? ':' value=BOOL (',')?) |
     (('"')? ("'")? keyword='auto_change' ("'")? ('"')? ':' value=BOOL (',')?) |
     (('"')? ("'")? keyword='custom_value_range' ("'")? ('"')? ':' value='None' (',')?) |
@@ -94,7 +196,7 @@ VariableModelType:
     (('"')? ("'")? keyword='next_value' ("'")? ('"')? ':' '[' value+=condition_pair[','] ']' (',')?) |
     (('"')? ("'")? keyword='non-variable' ("'")? ('"')? ':' value=BOOL (',')?) |
     (('"')? ("'")? keyword='stages' ("'")? ('"')? ':' '['
-    value *= stage_node_name[',']
+    value *= INT[',']
     ']' (',')?) |
     (('"')? ("'")? keyword='use_stages' ("'")? ('"')? ':' value=BOOL (',')?) |
     (('"')? ("'")? keyword='variable_id' ("'")? ('"')? ':' value=INT (',')?) |
@@ -112,6 +214,10 @@ VariableModelType:
     '}' (',')?
 ;
 
+    
+AccessNode:
+    'node_name' name=ID ('('next_val=STRING')')? ';'
+;
 
 ParallelPolicy:
     'success_on_all' | 'success_on_one'
