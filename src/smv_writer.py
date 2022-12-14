@@ -532,7 +532,7 @@ def main():
     # print a blackboard variable chart
     for variable in variables:
         nuxmv_string += ('--' + variable + ' : ' + str(variables[variable]['variable_id']) + os.linesep)
-        for access_node in variables[variable]['access']:
+        for access_node in variables[variable]['stages']:
             nuxmv_string += ('----' + access_node + os.linesep)
 
     if args.blackboard_input_file:
@@ -637,7 +637,7 @@ def main():
                         check_module_string += module['left_hand_side'] + module['operator'] + module['right_hand_side'] + ';' + os.linesep
                     else:
                         # gotta default it
-                        if variables[module['variable_name']]['use_stages']:
+                        if variables[module['variable_name']]['use_separate_stages']:
                             stage = 0
                             for stage_end in variables[module['variable_name']]['stages']:
                                 if stage_end > node_id:
@@ -648,7 +648,7 @@ def main():
                                 #                         + " & (variables[variable_names." + module['variable_name'] + "]" + module['operator'] + module['right_hand_side'] + ');' + os.linesep
                                 #                         )
                                 check_module_string += ("blackboard." + module['variable_name'] + "_exists"
-                                                        + " & (blackboard." + module['variable_name'] + module['operator'] + module['right_hand_side'] + ');' + os.linesep
+                                                        + " & (blackboard." + module['variable_name'] + module['operator'] + str(module['right_hand_side']) + ');' + os.linesep
                                                         )
                             else:
                                 stage = str(stage)
@@ -656,8 +656,21 @@ def main():
                                 #                         + " & (variables[variable_names." + module['variable_name'] + "_stage_" + stage + "]" + module['operator'] + module['right_hand_side'] + ');' + os.linesep
                                 #                         )
                                 check_module_string += ("blackboard." + module['variable_name'] + "_stage_" + stage + "_exists"
-                                                        + " & (blackboard." + module['variable_name'] + "_stage_" + stage + module['operator'] + module['right_hand_side'] + ');' + os.linesep
+                                                        + " & (blackboard." + module['variable_name'] + "_stage_" + stage + module['operator'] + str(module['right_hand_side']) + ');' + os.linesep
                                                         )
+                                # check_module_string += "blackboard."
+                                # check_module_string += module['variable_name']
+                                # check_module_string += "_stage_"
+                                # check_module_string += stage
+                                # check_module_string += "_exists"
+                                # check_module_string += " & (blackboard."
+                                # check_module_string += module['variable_name']
+                                # check_module_string += "_stage_"
+                                # check_module_string += stage
+                                # check_module_string += module['operator']
+                                # check_module_string += module['right_hand_side']
+                                # check_module_string += ');'
+                                # check_module_string += os.linesep
                         else:
                             if module['use_next']:
                                 check_module_string += "next("

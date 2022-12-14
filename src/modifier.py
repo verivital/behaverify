@@ -1,20 +1,14 @@
 import argparse
 import pprint
+# import modified_pretty_print
 import copy
 # ----------------------------------------------------------------------------------------------------------------
-# todo: add a way to delete variables and change access
 
 
 def create_stages(variable, variables, node_name_to_id):
     prev_stage_name = variable['variable_name']
     variable['initial_stage'] = variable['variable_name']
     for stage_count in range(1, len(variable['stages']) + 1):
-        stage_start = variable['stages'][stage_count - 1]
-        try:
-            stage_end = variable['stages'][stage_count]
-        except IndexError:
-            # this is actually expected. the last one will fail.
-            stage_end = len(node_name_to_id)
         variable_name = variable['variable_name'] + "_stage_" + str(stage_count)
         # this is potentially unsafe, but i'm lazy atm
         if variable_name in variables:
@@ -23,25 +17,11 @@ def create_stages(variable, variables, node_name_to_id):
         variables[variable_name] = copy.deepcopy(variable)  # by default nothing changes from the base really
         variables[variable_name]['variable_name'] = variable_name  # now we set the new name and id
         variables[variable_name]['variable_id'] = variable_number
-        new_access = set()  # create the new access set.
-        for access_node_name in variables[variable_name]['access']:
-            access_node_id = node_name_to_id[access_node_name]
-            if stage_start <= access_node_id and access_node_id <= stage_end:
-                new_access.add(access_node_name)
-        variables[variable_name]['access'] = new_access
         variables[variable_name]['next_stage'] = None
         variables[prev_stage_name]['next_stage'] = variable_name
         variables[variable_name]['prev_stage'] = prev_stage_name
         variables[variable_name]['initial_stage'] = variable['variable_name']  # initial stage is still the first variable.
         prev_stage_name = variable_name
-    new_access = set()  # now we update access for the original node.
-    stage_start = 0
-    stage_end = variable['stages'][0]
-    for access_node_name in variable['access']:
-        access_node_id = node_name_to_id[access_node_name]
-        if stage_start <= access_node_id and access_node_id <= stage_end:
-            new_access.add(access_node_name)
-    variable['access'] = new_access
     variable['prev_stage'] = None
     variable['last_stage'] = prev_stage_name
     # variable['next_value'] = [('TRUE', prev_stage_name)]
@@ -53,7 +33,8 @@ def delete_stages(variable, variables):
     while name_to_pop:
         popped = variables.pop(name_to_pop)
         name_to_pop = popped['next_stage']
-        variable['access'].union(popped['access'])
+    variable['next_stage'] = None
+    variable['last_stage'] = variable['variable_name']
 
 
 def arg_modification(args, nodes, variables, node_name_to_id):
@@ -61,7 +42,7 @@ def arg_modification(args, nodes, variables, node_name_to_id):
         variable_name_list = list(variables.keys())
         for variable_name in variable_name_list:
             variable = variables[variable_name]
-            variable['use_stages'] = True
+            variable['use_separate_stages'] = True
             try:
                 if variable['next_stage'] in variables:
                     continue
@@ -72,7 +53,7 @@ def arg_modification(args, nodes, variables, node_name_to_id):
         variable_name_list = list(variables.keys())
         for variable_name in variable_name_list:
             variable = variables[variable_name]
-            variable['use_stages'] = False
+            variable['use_separate_stages'] = False
             delete_stages(variable, variables)
     for variable_name in variables:
         variable = variables[variable_name]
@@ -300,9 +281,6 @@ def main():
                             modify_key = modify_key.strip()
                             if modify_key == 'delete':
                                 variable = variables.pop(variable_name)
-                                for node_name in variable['access']:
-                                    nodes[node_name_to_id[node_name]]['variables'].remove(variable_name)
-                                # deletions = True
                             else:
                                 try:
                                     print("current value: "
@@ -400,8 +378,7 @@ def main():
                                 'auto_change' : False,
                                 'next_value' : None,
                                 'next_exist' : {},
-                                'access' : {},
-                                'use_stages' : False,
+                                'use_separate_stages' : False,
                                 'stages' : []
                             }
                     except KeyError:
@@ -414,7 +391,7 @@ def main():
                                 if key_to_mod.strip() == "use_stages":
                                     if instructions[key_to_mod.strip()]:
                                         variable = variables[modification['name']]
-                                        variable['use_stages'] = True
+                                        variable['use_separate_stages'] = True
                                         try:
                                             if variable['next_stage'] in variables:
                                                 continue
@@ -423,7 +400,7 @@ def main():
                                         create_stages(variable, variables, node_name_to_id)
                                     else:
                                         variable = variables[modification['name']]
-                                        variable['use_stages'] = False
+                                        variable['use_separate_stages'] = False
                                         delete_stages(variable, variables)
                                 elif key_to_mod.strip() in variables[modification['name']]:
                                     variables[modification['name']][key_to_mod.strip()] = instructions[key_to_mod.strip()]
@@ -454,21 +431,23 @@ def main():
         else:
             variables[variable_name]['variable_id'] = count
             count = count + 1
-        if variables[variable_name]['use_stages']:
+        if variables[variable_name]['use_separate_stages']:
             if variables[variable_name]['next_stage']:
                 variables[variables[variable_name]['next_stage']]['min_value'] = variables[variable_name]['min_value']
                 variables[variables[variable_name]['next_stage']]['max_value'] = variables[variable_name]['max_value']
                 variables[variables[variable_name]['next_stage']]['init_value'] = variables[variable_name]['init_value']
                 variables[variables[variable_name]['next_stage']]['custom_value_range'] = variables[variable_name]['custom_value_range']
 
-    if args.output_file:
-        with open(args.output_file, 'w') as f:
-            printer = pprint.PrettyPrinter(indent = 4,
-                                           sort_dicts = False, stream = f)
-            printer.pprint({'nodes' : nodes, 'variables' : variables})
-    else:
-        printer = pprint.PrettyPrinter(indent = 4, sort_dicts = False)
+    if args.output_file is None:
+        printer = pprint.PrettyPrinter(indent = 4)
+        # printer = modified_pretty_print.modified_pprinter(indent = 4)
         printer.pprint({'nodes' : nodes, 'variables' : variables})
+
+    else:
+        with open(args.output_file, 'w') as f:
+            printer = pprint.PrettyPrinter(indent = 4, stream = f)
+            # printer = modified_pretty_print.modified_pprinter(indent = 4, stream = f)
+            printer.pprint({'nodes' : nodes, 'variables' : variables})
     return
 
 
