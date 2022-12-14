@@ -78,7 +78,7 @@ def create_blackboard(nodes, variables):
         else:
             # the below section was wrong
             # it replaced stage_0 with a macro, which is not right
-            # if variable['use_stages']:
+            # if variable['use_separate_stages']:
             #     if not variable['prev_stage']:
             #         exist_define += ("\t\t" + variable_name + " := " + variable['last_stage'] + ";" + os.linesep
             #                          + "\t\t" + variable_name + "_exists := " + variable['last_stage'] + "_exists;" + os.linesep
@@ -110,7 +110,7 @@ def create_blackboard(nodes, variables):
             else:
                 decl_string += ("\t\t" + variable_name + " : " + str(min_val) + ".." + str(max_val) + ";" + os.linesep)
 
-            if variable['use_stages'] and variable['prev_stage'] is not None:
+            if variable['use_separate_stages'] and variable['prev_stage'] is not None:
                 # the variable uses stages and has a previous stage. therefore, our initial value will be based on that
                 assign_string += ("\t\tinit(" + variable_name + ") := " + variable['initial_stage'] + ";" + os.linesep)
             elif not (variable['init_value'] is None):
@@ -127,9 +127,9 @@ def create_blackboard(nodes, variables):
             # if variable['auto_change'] is False or variable['custom_value_range']:
             # not sure why i was excluding custom value range
             if variable['auto_change']:
-                for node_name in variable['access']:
+                for node_name in reversed(variable['stages']):
                     assign_string += "\t\t\tstatuses[node_names." + node_name + "] in {success, failure, running} : " + poss_values + ';' + os.linesep
-            if variable['use_stages']:
+            if variable['use_separate_stages']:
                 if variable['prev_stage']:
                     # if we have a previous stage, then we default to using that value.
                     assign_string += ("\t\t\t\tTRUE : next(" + variable['prev_stage'] + ");" + os.linesep

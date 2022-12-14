@@ -13,6 +13,7 @@ import re
 import inspect
 import operator
 import pprint
+# import modified_pretty_print
 
 try:
     import py_trees_ros
@@ -81,9 +82,7 @@ def walk_tree(root, file_name = None):
      'next_exist' : a map (dictionary) from node name to if that node makes the
         variable exist. each node maps to a list of pairs (condition, value).
         default, each node maps to True
-     'access' : a set of node names that have access to change the
-        value of the variable
-     'use_stages' : a boolean that indicates if variable stages are to be used.
+     'use_separate_stages' : a boolean that indicates if variable stages are to be used.
         Default: False
      'stages' : a list of stages. Each stage corresponds to a range of nodes
         where that stage is being used. Each stage is represented using a
@@ -96,17 +95,15 @@ def walk_tree(root, file_name = None):
     variables = {}
     walk_tree_recursive(root, -1, 0, nodes, {}, variables)
     variable_name_cleanup(nodes, variables)
-    if file_name:
-        with open(file_name, 'w') as f:
-            # printer = pprint.PrettyPrinter(indent = 4,
-            #                                sort_dicts = False, stream = f)
-            printer = pprint.PrettyPrinter(indent = 4, stream = f)
-            printer.pprint({'nodes' : nodes, 'variables' : variables})
-
-    else:
-        # printer = pprint.PrettyPrinter(indent = 4, sort_dicts = False)
+    if file_name is None:
         printer = pprint.PrettyPrinter(indent = 4)
+        # printer = modified_pretty_print.modified_pprinter(indent = 4)
         printer.pprint({'nodes' : nodes, 'variables' : variables})
+    else:
+        with open(file_name, 'w') as f:
+            printer = pprint.PrettyPrinter(indent = 4, stream = f)
+            # printer = modified_pretty_print.modified_pprinter(indent = 4, stream = f)
+            printer.pprint({'nodes' : nodes, 'variables' : variables})
 
 
 def walk_tree_recursive(current_node, parent_id, next_available_id, nodes,
@@ -184,9 +181,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes,
                             local_variable_set.add(variable_name)
                         if variable_name in variables:
                             var_num = variables[variable_name]['variable_id']
-                            variables[variable_name]['access'].add(node_name)
                             variables[variable_name]['next_exist'][node_name] = True
-                            variables[variable_name]['stages'].append(this_id)
+                            variables[variable_name]['stages'].append(node_name)
                         else:
                             var_num = len(variables)
                             variables[variable_name] = {
@@ -203,9 +199,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes,
                                 'auto_change' : False,
                                 'next_value' : None,
                                 'next_exist' : {node_name : True},
-                                'access' : {node_name},
-                                'use_stages' : False,
-                                'stages' : [this_id]
+                                'use_separate_stages' : False,
+                                'stages' : [node_name]
                             }
                         local_variables.append(variable_name)
                     else:
@@ -213,37 +208,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes,
             else:
                 # if we don't find blackboard info, then just continue normally. don't use this.
                 return False
-                # if hasattr(current_node, 'variable_name'):
-                #     variable_name = current_node.variable_name
-                #     variable_name = variable_name.replace('.', '_dot_')
-                #     if variable_name in variables:
-                #         var_num = variables[variable_name]['variable_id']
-                #         variables[variable_name]['access'].add(node_name)
-                #         variables[variable_name]['next_exist'][node_name] = True
-                #         variables[variable_name]['stages'].append(this_id)
-                #     else:
-                #         var_num = len(variables)
-                #         variables[variable_name] = {
-                #             'variable_id' : var_num,
-                #             'variable_name' : variable_name,
-                #             'non-variable' : False,
-                #             'mode' : 'VAR',
-                #             'custom_value_range' : None,
-                #             'min_value' : 0,
-                #             'max_value' : 1,
-                #             'init_value' : None,
-                #             'always_exist' : True,
-                #             'init_exist' : True,
-                #             'auto_change' : False,
-                #             'next_value' : None,
-                #             'next_exist' : {node_name : True},
-                #             'access' : {node_name},
-                #             'use_stages' : False,
-                #             'stages' : [this_id]
-                #         }
-                #     local_variables.append(variable_name)
             nodes[this_id] = {
-                'DEBUG_INFO' : True,
                 'name' : node_name,
                 'parent_id' : parent_id,
                 'children' : [],
@@ -642,9 +607,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes,
                 'auto_change' : False,
                 'next_value' : None,
                 'next_exist' : {node_name : True},
-                'access' : {node_name},
-                'use_stages' : False,
-                'stages' : [this_id]
+                'use_separate_stages' : False,
+                'stages' : [node_name]
             }
         nodes[this_id] = {
             'name' : node_name,
@@ -685,9 +649,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes,
                 'auto_change' : False,
                 'next_value' : None,
                 'next_exist' : {node_name : True},
-                'access' : {node_name},
-                'use_stages' : False,
-                'stages' : [this_id]
+                'use_separate_stages' : False,
+                'stages' : [node_name]
             }
         try:
             rhs = str(int(current_node.check.value))
@@ -755,9 +718,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes,
         variable_name = current_node.variable_name
         variable_name = variable_name.replace('.', '_dot_')
         if variable_name in variables:
-            variables[variable_name]['access'].add(node_name)
             var_num = variables[variable_name]['variable_id']
-            variables[variable_name]['stages'].append(this_id)
+            variables[variable_name]['stages'].append(node_name)
         else:
             var_num = len(variables)
             variables[variable_name] = {
@@ -774,9 +736,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes,
                 'auto_change' : False,
                 'next_value' : None,
                 'next_exist' : {node_name : True},
-                'access' : {node_name},
-                'use_stages' : False,
-                'stages' : [this_id]
+                'use_separate_stages' : False,
+                'stages' : [node_name]
             }
         nodes[this_id] = {
             'name' : node_name,
@@ -815,11 +776,10 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes,
         variable_name = current_node.key
         variable_name = variable_name.replace('.', '_dot_')
         if variable_name in variables:
-            variables[variable_name]['access'].add(node_name)
             variables[variable_name]['always_exist'] = False
             variables[variable_name]['next_exist'][node_name] = False
             var_num = variables[variable_name]['variable_id']
-            variables[variable_name]['stages'].append(this_id)
+            variables[variable_name]['stages'].append(node_name)
         else:
             var_num = len(variables)
             variables[variable_name] = {
@@ -836,9 +796,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes,
                 'auto_change' : False,
                 'next_value' : None,
                 'next_exist' : {node_name : False},
-                'access' : {node_name},
-                'use_stages' : False,
-                'stages' : [this_id]
+                'use_separate_stages' : False,
+                'stages' : [node_name]
             }
         nodes[this_id] = {
             'name' : node_name,
@@ -882,9 +841,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes,
                 'auto_change' : False,
                 'next_value' : None,
                 'next_exist' : {node_name : True},
-                'access' : {node_name},
-                'use_stages' : False,
-                'stages' : [this_id]
+                'use_separate_stages' : False,
+                'stages' : [node_name]
             }
         nodes[this_id] = {
             'name' : node_name,
@@ -923,9 +881,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes,
                 'auto_change' : False,
                 'next_value' : None,
                 'next_exist' : {},
-                'access' : {},
-                'use_stages' : False,
-                'stages' : [this_id]
+                'use_separate_stages' : False,
+                'stages' : []
             }
         try:
             rhs = str(int(current_node.check.value))
@@ -1208,9 +1165,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes,
         for variable_name in {'battery', 'battery_low_warning'}:
             variable_name = variable_name.replace('.', '_dot_')
             if variable_name in variables:
-                variables[variable_name]['access'].add(node_name)
                 var_num = variables[variable_name]['variable_id']
-                variables[variable_name]['stages'].append(this_id)
+                variables[variable_name]['stages'].append(node_name)
             else:
                 var_num = len(variables)
                 variables[variable_name] = {
@@ -1227,9 +1183,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes,
                     'auto_change' : False,
                     'next_value' : None,
                     'next_exist' : {node_name : True},
-                    'access' : {node_name},
-                    'use_stages' : False,
-                    'stages' : [this_id]
+                    'use_separate_stages' : False,
+                    'stages' : [node_name]
                 }
 
         nodes[this_id] = {
@@ -1290,9 +1245,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes,
                 'auto_change' : False,
                 'next_value' : None,
                 'next_exist' : {},
-                'access' : {},
-                'use_stages' : False,
-                'stages' : [this_id]
+                'use_separate_stages' : False,
+                'stages' : [node_name]
             }
         try:
             rhs = str(int(current_node.expected_value))
@@ -1345,9 +1299,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes,
         variable_name = current_node.variable_name
         variable_name = variable_name.replace('.', '_dot_')
         if variable_name in variables:
-            variables[variable_name]['access'].add(node_name)
             var_num = variables[variable_name]['variable_id']
-            variables[variable_name]['stages'].append(this_id)
+            variables[variable_name]['stages'].append(node_name)
         else:
             var_num = len(variables)
             variables[variable_name] = {
@@ -1364,9 +1317,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes,
                 'auto_change' : False,
                 'next_value' : None,
                 'next_exist' : {node_name : True},
-                'access' : {node_name},
-                'use_stages' : False,
-                'stages' : [this_id]
+                'use_separate_stages' : False,
+                'stages' : [node_name]
             }
 
         nodes[this_id] = {
@@ -1406,9 +1358,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes,
         for variable_name in current_node.blackboard_variable_mapping:
             variable_name = variable_name.replace('.', '_dot_')
             if variable_name in variables:
-                variables[variable_name]['access'].add(node_name)
                 var_num = variables[variable_name]['variable_id']
-                variables[variable_name]['stages'].append(this_id)
+                variables[variable_name]['stages'].append(node_name)
             else:
                 var_num = len(variables)
                 variables[variable_name] = {
@@ -1425,9 +1376,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes,
                     'auto_change' : False,
                     'next_value' : None,
                     'next_exist' : {node_name : True},
-                    'access' : {node_name},
-                    'use_stages' : False,
-                    'stages' : [this_id]
+                    'use_separate_stages' : False,
+                    'stages' : [node_name]
                 }
 
         nodes[this_id] = {
@@ -1591,7 +1541,6 @@ def variable_name_cleanup(nodes, variables):
                 for access_node_name in variables[variable_name]['access']:
                     # we are now going to tell everything that can change meh,
                     # that it can change meh_dot_something
-                    variables[child_variable_name]['access'].add(access_node_name)
                     # told the variable it can be accessed by this node
                     variables[child_variable_name]['next_exist'][access_node_name] = True
                     # updated what the next exist value is for this specific node
@@ -1599,7 +1548,13 @@ def variable_name_cleanup(nodes, variables):
 
     for variable_name in variables:
         variables[variable_name]['stages'] = list(set(variables[variable_name]['stages']))
-        variables[variable_name]['stages'].sort()
+        # remove duplicates
+        variables[variable_name]['stages'].sort(key =
+                                                lambda node_name :
+                                                node_name_to_id[node_name]
+                                                )
+        # sort based on node_id
+    return
 
 
 def main():
