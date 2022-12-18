@@ -1,0 +1,117 @@
+variable local(a) {
+DEFINE
+[1, 1]
+used_before_tick False
+used_after_tick False
+} end_variable
+
+variable local(b) {
+VAR
+[0, 2]
+used_before_tick False
+used_after_tick False
+} end_variable
+
+variable c {
+VAR
+BOOLEAN
+used_before_tick False
+used_after_tick False
+} end_variable
+
+check guard {
+	comparison_operator ==
+	left_hand_side c
+	right_hand_side c
+} end_check
+
+action action {
+	init {
+		variable local(a) {
+			result {
+				'1'
+			} end_result
+		} end_variable_statement
+		variable local(b) {
+			result {
+				local(a) '+ 1'
+			} end_result
+		} end_variable_statement
+		variable c {
+			case {
+				comparison_operator ==
+				left_hand_side local(a)
+				right_hand_side local(b)
+			} end_case
+			result {
+				'True'
+			} end_result
+			result {
+				'False'
+			} end_result
+		} end_variable_statement
+	} end_init
+	update {
+		variable local(b) {
+			result {
+				local(a),
+				local(a) '+ 1'
+			} end_result
+		} end_variable_statement
+		variable c {
+			case {
+				comparison_operator ==
+				left_hand_side local(a)
+				right_hand_side local(b)
+			} end_case
+			result {
+				True
+			} end_result
+			result {
+				False
+			} end_result
+		} end_variable_statement
+		return {
+			case {
+				comparison_operator ==
+				left_hand_side c
+				right_hand_side True
+			} end_case
+			result {
+				'success' True
+				'failure' False
+				'running' False
+			} end_result
+			result {
+				'success' False
+				'failure' True
+				'running' True
+			} end_result
+		} end_return
+	} end_update
+} end_action
+
+root_node root parallel {
+	policy success_on_all
+	memory False
+	children {
+		sel selector {
+			memory False
+			children {
+				dec X_is_Y {
+					X running
+					Y success
+					child guard
+				} end_decorator
+				action
+			} end_children
+		} end_composite
+		seq sequence {
+			memory False
+			children {
+				guard
+				action
+			} end_children
+		} end_composite
+	} end_children
+} end_composite
