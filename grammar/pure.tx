@@ -1,0 +1,125 @@
+BehaviorModel:
+    'variables' '{'
+    variables *= variable
+    '}' 'end_variables'
+    'checks' '{'
+    check_nodes *= check_node
+    '}' 'end_checks'
+    'actions' '{'
+    action_nodes *= action_node
+    '}' 'end_actions'
+    'root_node' root = node
+;
+    
+    
+variable:
+    local ?= 'local' variable_name = ID '{'
+    ((model_as = 'VAR') | (model_as = 'FROZENVAR') | (model_as = 'DEFINE'))
+    range = variable_range
+    (variable_case_results += variable_case_result) ?
+    'used_before_tick' used_before_tick = BOOL
+    'used_after_tick' used_after_tick = BOOL
+    '}' 'end_variable'
+
+;
+    variable_range:
+    ('[' min_val = INT ',' max_val = INT ']') | 'BOOLEAN' | ('{' enums += STRING[','] '}')
+;
+    
+    
+    
+node:
+    node_name = ID
+    composite_node | decorator_node | leaf_node
+;
+    composite_node:
+    ((type = 'parallel' '{' 'policy' (parallel_policy = 'success_on_all' | parallel_policy = 'success_on_one')) | (type = 'sequence' '{') | (type = 'selector' '{'))
+    ('memory' memory=BOOL)
+    'children' '{'
+    children += node
+    '}' 'end_children'
+    '}' 'end_composite'
+;
+    
+    decorator_node:
+    type = 'X_is_Y' '{'
+    'X' x=status
+    'Y' y=status
+    'child' child = node 
+    '}' 'end_decorator'
+;
+    
+    leaf_node:
+    (bruh = [check_node]) | (bruh = [action_node])
+;
+    
+    check_node:
+    'check' '{'
+    ('start_python_code' '{' python_code = STRING '}' 'end_python_code')?
+    blackbox ?= condition_statement
+    '}' 'end_check'
+;
+    
+    action_node:
+    'action' node_name = ID '{'
+    'init' '{'
+    init_statements *= variable_statement
+    '}' 'end_init'
+    'update' '{'
+    update_statements *= variable_statement
+    return_statement = return_statement
+    update_statements *= variable_statement
+    '}' 'end_update'
+    '}' 'end_action'
+;
+
+    comparison_symbol:
+    '==' | '<' | '>' | '>=' | '<=' | '!='
+;
+    
+    variable_statement:
+    'variable' local ?= 'local' variable = [variable] '{'
+    variable_case_results += variable_case_result
+    '}' 'end_variable_statement'
+;
+    
+    return_statement:
+    'return' '{'
+    status_case_results +=  status_case_result
+    '}' 'end_return'
+;
+
+    pointless_case:
+    ( 'case' '{' condition_statement '}' 'end_case')
+;
+    
+
+    variable_case_result:
+    ('start_python_code' '{' python_code = STRING '}' 'end_python_code')?
+    default ?= pointless_case
+    'result' '{'
+    values += code_statement[',']
+    '}' 'end_result'
+;
+
+    status_case_result:
+    ('start_python_code' '{' python_code = STRING '}' 'end_python_code')?
+    default ?= ( 'case' '{' condition_statement '}' 'end_case') 
+    'result' '{'
+    'success' can_success = BOOL ','
+    'failure' can_failure = BOOL ','
+    'running' can_running = BOOL ','
+    '}' 'end_result'
+;
+    
+    condition_statement:
+    'comparison_operator' operator = comparison_symbol
+    'left_hand_side' left_hand_side = code_statement
+    'right_hand_side' right_hand_side = code_statement
+;
+
+    code_statement:
+    (local ?= 'local' variable = [variable]) | (code = BOOL) | (code = INT) | (code = STRING)
+    (code_statement)?
+;
+    
