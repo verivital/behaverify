@@ -160,16 +160,19 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                 'running' : False,
                 'failure' : True
             },
-            'internal_status_module_name' : None if current_node.condition is None else current_node.name.replace(' ', '') + '_module',
+            'internal_status_module_name' : None if current_node.condition is None else node_name + '_module',
             'internal_status_module_code' : None if current_node.condition is None else (
-                'MODULE ' + current_node.name.replace(' ', '') + '_module(blackboard)'
-                '\tDEFINE' + os.linesep
-                + 'internal_status := ('
+                'MODULE ' + node_name + '_module(blackboard)' + os.linesep
+                + '\tCONSTANTS' + os.linesep
+                + '\t\tsuccess, failure, running, invalid;' + os.linesep
+                + '\tDEFINE' + os.linesep
+                + '\t\tstatus := active ? internal_status : invalid;' + os.linesep
+                + '\t\tinternal_status := ('
                 + ' '.join([(('blackboard.' + x.variable.name + current_variable_stage[x.variable.name]) if x.code is None else
                              (str(x.code).upper() if isinstance(x.code, bool) else str(x.code))
                              )
                             for x in current_node.condition.left_hand_side.fragments])
-                + ' ' + current_node.condition.operator + ' '
+                + ' ' + current_node.condition.operator.replace('==', '=') + ' '
                 + ' '.join([(('blackboard.' + x.variable.name + current_variable_stage[x.variable.name]) if x.code is None else
                              (str(x.code).upper() if isinstance(x.code, bool) else str(x.code))
                              )
@@ -225,7 +228,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                                        (str(x.code).upper() if isinstance(x.code, bool) else str(x.code))
                                        )
                                       for x in case_result.condition.left_hand_side.fragments])
-                            + ' ' + case_result.condition.operator + ' '
+                            + ' ' + case_result.condition.operator.replace('==', '=') + ' '
                             + ' '.join([(((node_name + '_DOT_' if x.variable.is_local else '') + x.variable.name + ('' if init_statement else current_variable_stage[(node_name + '_DOT_' if x.variable.is_local else '') + x.variable.name])) if x.code is None else
                                        (str(x.code).upper() if isinstance(x.code, bool) else str(x.code))
                                        )
@@ -290,13 +293,6 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                         current_variable_stage[variable_name] = ('' if len(variables[variable_name]['next_value']) == 0 else '_stage_' + str(len(variables[variable_name]['next_value'])))
             return
 
-        statuses = []
-        if success:
-            statuses.append('success')
-        if running:
-            statuses.append('running')
-        if failure:
-            statuses.append('failure')
         handle_statements(current_node.init_statements, True, True)
         handle_statements(current_node.pre_update_statements)
         handle_statements([current_node.return_statement], False)
@@ -315,38 +311,43 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             },
             'internal_status_module_name' : None if (len(current_node.return_statement.case_results) == 0 or [success, running, failure].count(True) == 1) else node_name + '_module',
             'internal_status_module_code' : None if (len(current_node.return_statement.case_results) == 0 or [success, running, failure].count(True) == 1) else (
-                'MODULE ' + node_name + '_module(blackboard)'
+                'MODULE ' + node_name + '_module(blackboard)' + os.linesep
+                + '\tCONSTANTS' + os.linesep
+                + '\t\tsuccess, failure, running, invalid;' + os.linesep
+                + '\tDEFINE' + os.linesep
+                + '\t\tstatus := active ? internal_status : invalid;' + os.linesep
                 + '\tVAR' + os.linesep
-                + '\t\tinternal_status : {' + [', '].join(statuses) + '};' + os.linesep
+                + '\t\tinternal_status : {' + ', '.join([status for (status, possible) in [('success', success), ('running', running), ('failure', failure)] if possible]) + '};' + os.linesep
                 + '\tASSIGN' + os.linesep
-                + '\t\tinit(internal_status) := ' + statuses[0] + ';' + os.linesep
+                + '\t\tinit(internal_status) := ' + [status for (status, possible) in [('success', success), ('running', running), ('failure', failure)] if possible][0] + ';' + os.linesep
                 + '\t\tnext(internal_status) := ' + os.linesep
                 + '\t\t\tcase' + os.linesep
-                + (';' + os.linesep).join([('\t\t\t\t('
-                                            + ' '.join([(('blackboard.' + x.variable.name + current_variable_stage[x.variable.name]) if x.code is None else
-                                                         (str(x.code).upper() if isinstance(x.code, bool) else str(x.code))
-                                                         )
-                                                        for x in case_result.condition.left_hand_side.fragments])
-                                            + ') ' + case_result.condition.operator + ' ('
-                                            + ' '.join([(('blackboard.' + x.variable.name + current_variable_stage[x.variable.name]) if x.code is None else
-                                                         (str(x.code).upper() if isinstance(x.code, bool) else str(x.code))
-                                                         )
-                                                        for x in case_result.condition.right_hand_side.fragments])
-                                            + ') : '
-                                            + ('{' if [case_result.can_success, case_result.can_running, case_result.can_failure].count(True) > 1 else '')
-                                            + str([status for (status, possible) in [('success', case_result.can_success), ('running', case_result.can_running), ('failure', case_result.can_failure)] if possible])[1:-1]
-                                            + ('}' if [case_result.can_success, case_result.can_running, case_result.can_failure].count(True) > 1 else '')
-                                            )
-                                           for case_result in current_node.return_statement.case_results]
-                                          )
-                + '' if current_node.return_statement.case_results is None else (';' + os.linesep)
+                + ('').join([('\t\t\t\t('
+                              + ' '.join([(('blackboard.' + x.variable.name + current_variable_stage[x.variable.name]) if x.code is None else
+                                           (str(x.code).upper() if isinstance(x.code, bool) else str(x.code))
+                                           )
+                                          for x in case_result.condition.left_hand_side.fragments])
+                              + ') ' + case_result.condition.operator.replace('==', '=') + ' ('
+                              + ' '.join([(('blackboard.' + x.variable.name + current_variable_stage[x.variable.name]) if x.code is None else
+                                           (str(x.code).upper() if isinstance(x.code, bool) else str(x.code))
+                                           )
+                                          for x in case_result.condition.right_hand_side.fragments])
+                              + ') : '
+                              + ('{' if [case_result.can_success, case_result.can_running, case_result.can_failure].count(True) > 1 else '')
+                              + ', '.join([status for (status, possible) in [('success', case_result.can_success), ('running', case_result.can_running), ('failure', case_result.can_failure)] if possible])
+                              + ('}' if [case_result.can_success, case_result.can_running, case_result.can_failure].count(True) > 1 else '')
+                              + ';' + os.linesep
+                              )
+                             for case_result in current_node.return_statement.case_results]
+                            )
+                # + '' if current_node.return_statement.case_results is None else (';' + os.linesep)
                 + '\t\t\t\tTRUE : '
                 + ('{' if [current_node.return_statement.default_result.can_success,
                            current_node.return_statement.default_result.can_running,
                            current_node.return_statement.default_result.can_failure].count(True) > 1 else '')
-                + str([status for (status, possible) in [('success', current_node.return_statement.default_result.can_success),
-                                                         ('running', current_node.return_statement.default_result.can_running),
-                                                         ('failure', current_node.return_statement.default_result.can_failure)] if possible])[1:-1]
+                + ', '.join([status for (status, possible) in [('success', current_node.return_statement.default_result.can_success),
+                                                               ('running', current_node.return_statement.default_result.can_running),
+                                                               ('failure', current_node.return_statement.default_result.can_failure)] if possible])
                 + ('}' if [current_node.return_statement.default_result.can_success,
                            current_node.return_statement.default_result.can_running,
                            current_node.return_statement.default_result.can_failure].count(True) > 1 else '')

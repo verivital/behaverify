@@ -29,10 +29,16 @@
                  3: {   'category': 'leaf',
                         'children': [],
                         'internal_status_module_code': 'MODULE '
-                                                       'guard_module(blackboard)\t'
-                                                       'DEFINE\n'
-                                                       'internal_status := '
-                                                       '(blackboard.c == '
+                                                       'guard_module(blackboard)\n'
+                                                       '\tCONSTANTS\n'
+                                                       '\t\tsuccess, failure, '
+                                                       'running, invalid;\n'
+                                                       '\tDEFINE\n'
+                                                       '\t\tstatus := active ? '
+                                                       'internal_status : '
+                                                       'invalid;\n'
+                                                       '\t\tinternal_status := '
+                                                       '(blackboard.c = '
                                                        'blackboard.c) ? '
                                                        'success : failure;\n',
                         'internal_status_module_name': 'guard_module',
@@ -45,10 +51,32 @@
                         'type': 'check'},
                  4: {   'category': 'leaf',
                         'children': [],
-                        'internal_status_module_code': ';\n'
+                        'internal_status_module_code': 'MODULE '
+                                                       'action_module(blackboard)\n'
+                                                       '\tCONSTANTS\n'
+                                                       '\t\tsuccess, failure, '
+                                                       'running, invalid;\n'
+                                                       '\tDEFINE\n'
+                                                       '\t\tstatus := active ? '
+                                                       'internal_status : '
+                                                       'invalid;\n'
+                                                       '\tVAR\n'
+                                                       '\t\tinternal_status : '
+                                                       '{success, running, '
+                                                       'failure};\n'
+                                                       '\tASSIGN\n'
+                                                       '\t\t'
+                                                       'init(internal_status) '
+                                                       ':= success;\n'
+                                                       '\t\t'
+                                                       'next(internal_status) '
+                                                       ':= \n'
+                                                       '\t\t\tcase\n'
+                                                       '\t\t\t\t'
+                                                       '(blackboard.c_stage_1) '
+                                                       '= (TRUE) : success;\n'
                                                        '\t\t\t\tTRUE : '
-                                                       "{'running', "
-                                                       "'failure'};\n"
+                                                       '{running, failure};\n'
                                                        '\t\t\tesac;\n',
                         'internal_status_module_name': 'action_module',
                         'name': 'action',
@@ -70,14 +98,20 @@
                  6: {   'category': 'leaf',
                         'children': [],
                         'internal_status_module_code': 'MODULE '
-                                                       'guard_module(blackboard)\t'
-                                                       'DEFINE\n'
-                                                       'internal_status := '
+                                                       'guard1_module(blackboard)\n'
+                                                       '\tCONSTANTS\n'
+                                                       '\t\tsuccess, failure, '
+                                                       'running, invalid;\n'
+                                                       '\tDEFINE\n'
+                                                       '\t\tstatus := active ? '
+                                                       'internal_status : '
+                                                       'invalid;\n'
+                                                       '\t\tinternal_status := '
                                                        '(blackboard.c_stage_1 '
-                                                       '== '
+                                                       '= '
                                                        'blackboard.c_stage_1) '
                                                        '? success : failure;\n',
-                        'internal_status_module_name': 'guard_module',
+                        'internal_status_module_name': 'guard1_module',
                         'name': 'guard1',
                         'node_id': 6,
                         'parent_id': 5,
@@ -87,10 +121,32 @@
                         'type': 'check'},
                  7: {   'category': 'leaf',
                         'children': [],
-                        'internal_status_module_code': ';\n'
+                        'internal_status_module_code': 'MODULE '
+                                                       'action1_module(blackboard)\n'
+                                                       '\tCONSTANTS\n'
+                                                       '\t\tsuccess, failure, '
+                                                       'running, invalid;\n'
+                                                       '\tDEFINE\n'
+                                                       '\t\tstatus := active ? '
+                                                       'internal_status : '
+                                                       'invalid;\n'
+                                                       '\tVAR\n'
+                                                       '\t\tinternal_status : '
+                                                       '{success, running, '
+                                                       'failure};\n'
+                                                       '\tASSIGN\n'
+                                                       '\t\t'
+                                                       'init(internal_status) '
+                                                       ':= success;\n'
+                                                       '\t\t'
+                                                       'next(internal_status) '
+                                                       ':= \n'
+                                                       '\t\t\tcase\n'
+                                                       '\t\t\t\t'
+                                                       '(blackboard.c_stage_2) '
+                                                       '= (TRUE) : success;\n'
                                                        '\t\t\t\tTRUE : '
-                                                       "{'running', "
-                                                       "'failure'};\n"
+                                                       '{running, failure};\n'
                                                        '\t\t\tesac;\n',
                         'internal_status_module_name': 'action1_module',
                         'name': 'action1',
@@ -152,20 +208,20 @@
                                          'read_by_init': ['action'],
                                          'variable_name': 'action_DOT_b'},
                      'c': {   'custom_value_range': '{TRUE, FALSE}',
-                              'init_value': [   (   'action1_DOT_a == '
+                              'init_value': [   (   'action1_DOT_a = '
                                                     'action1_DOT_b',
-                                                    'True'),
-                                                ('TRUE', 'False')],
+                                                    'TRUE'),
+                                                ('TRUE', 'FALSE')],
                               'max_value': 1,
                               'min_value': 0,
                               'mode': 'VAR',
                               'next_value': [   (   'action',
-                                                    [   (   'action_DOT_a == '
+                                                    [   (   'action_DOT_a = '
                                                             'action_DOT_b_stage_1',
                                                             'TRUE'),
                                                         ('TRUE', 'FALSE')]),
                                                 (   'action1',
-                                                    [   (   'action1_DOT_a == '
+                                                    [   (   'action1_DOT_a = '
                                                             'action1_DOT_b_stage_1',
                                                             'TRUE'),
                                                         ('TRUE', 'FALSE')])],

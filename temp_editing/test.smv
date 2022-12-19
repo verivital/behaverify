@@ -1,0 +1,206 @@
+MODULE main
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		statuses := [root.status, sel.status, dec.status, guard.status, action.status, seq.status, guard1.status, action1.status];
+		resume_from_node_0 := -3;
+		resume_from_node_1 := -3;
+		resume_from_node_5 := -3;
+		root.active := TRUE;
+	VAR
+		node_names : define_nodes;
+		blackboard : blackboard_module(node_names, statuses);
+		root : composite_parallel_without_memory_success_on_all_2(sel, seq);
+		sel : composite_selector_without_memory_2(dec, action);
+		dec : decorator_X_is_Y(guard, running, success);
+		guard : guard_module(blackboard);
+		action : action_module(blackboard);
+		seq : composite_sequence_without_memory_2(guard1, action1);
+		guard1 : guard1_module(blackboard);
+		action1 : action1_module(blackboard);
+	ASSIGN
+MODULE define_nodes
+	DEFINE
+		root := 0;
+		sel := 1;
+		dec := 2;
+		guard := 3;
+		action := 4;
+		seq := 5;
+		guard1 := 6;
+		action1 := 7;
+MODULE leaf_module(internal_status_module)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status_module.internal_status : invalid;
+MODULE composite_sequence_without_memory_2(child_0, child_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				!(child_0.internal_status = success) : child_0.internal_status;
+				!(child_1.internal_status = success) : child_1.internal_status;
+				TRUE : success;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = success;
+MODULE decorator_X_is_Y(child_0, incoming_status, outgoing_status)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				child_0.status = incoming_status : outgoing_status;
+				TRUE : child_0.status;
+			esac;
+		child_0.active :=
+			case
+				!(active) : FALSE;
+				TRUE : TRUE;
+			esac;
+MODULE composite_parallel_without_memory_success_on_all_2(child_0, child_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				(child_0.internal_status = failure) : failure;
+				(child_1.internal_status = failure) : failure;
+				!(child_0.internal_status = success) : child_0.internal_status;
+				!(child_1.internal_status = success) : child_1.internal_status;
+				TRUE : success;
+			esac;
+		child_0.active := active;
+		child_1.active := active;
+MODULE composite_selector_without_memory_2(child_0, child_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				!(child_0.internal_status = failure) : child_0.internal_status;
+				!(child_1.internal_status = failure) : child_1.internal_status;
+				TRUE : failure;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = failure;
+MODULE guard_module(blackboard)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := (blackboard.c = blackboard.c) ? success : failure;
+MODULE action_module(blackboard)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+	VAR
+		internal_status : {success, running, failure};
+	ASSIGN
+		init(internal_status) := success;
+		next(internal_status) := 
+			case
+				(blackboard.c_stage_1) = (TRUE) : success;
+				TRUE : {running, failure};
+			esac;
+MODULE guard1_module(blackboard)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := (blackboard.c_stage_1 = blackboard.c_stage_1) ? success : failure;
+MODULE action1_module(blackboard)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+	VAR
+		internal_status : {success, running, failure};
+	ASSIGN
+		init(internal_status) := success;
+		next(internal_status) := 
+			case
+				(blackboard.c_stage_2) = (TRUE) : success;
+				TRUE : {running, failure};
+			esac;
+MODULE blackboard_module(node_names, statuses)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		action1_DOT_a := 
+			case
+				TRUE : 1;
+			esac;
+		action1_DOT_a_exists := TRUE;
+		action1_DOT_b_exists := TRUE;
+		action1_DOT_b_stage_1_exists := TRUE;
+		action_DOT_a := 
+			case
+				TRUE : 1;
+			esac;
+		action_DOT_a_exists := TRUE;
+		action_DOT_b_exists := TRUE;
+		action_DOT_b_stage_1_exists := TRUE;
+		c_exists := TRUE;
+		c_stage_1_exists := TRUE;
+		c_stage_2_exists := TRUE;
+	FROZENVAR
+	VAR
+		action1_DOT_b : 0..2;
+		action1_DOT_b_stage_1 : 0..2;
+		action_DOT_b : 0..2;
+		action_DOT_b_stage_1 : 0..2;
+		c : boolean;
+		c_stage_1 : boolean;
+		c_stage_2 : boolean;
+	ASSIGN
+		init(action1_DOT_b) := 
+			case
+				TRUE : action1_DOT_a + 1;
+			esac;
+		next(action1_DOT_b) := action1_DOT_b_stage_1;
+		init(action1_DOT_b_stage_1) := action1_DOT_b;
+		next(action1_DOT_b_stage_1) := 
+			case
+				statuses[node_names.action1] = invalid : action1_DOT_b;
+				TRUE : {action1_DOT_a, action1_DOT_a + 1};
+			esac;
+		init(action_DOT_b) := 
+			case
+				TRUE : action_DOT_a + 1;
+			esac;
+		next(action_DOT_b) := action_DOT_b_stage_1;
+		init(action_DOT_b_stage_1) := action_DOT_b;
+		next(action_DOT_b_stage_1) := 
+			case
+				statuses[node_names.action] = invalid : action_DOT_b;
+				TRUE : {action_DOT_a, action_DOT_a + 1};
+			esac;
+		init(c) := 
+			case
+				action1_DOT_a = action1_DOT_b : TRUE;
+				TRUE : FALSE;
+			esac;
+		next(c) := c_stage_2;
+		init(c_stage_1) := c;
+		next(c_stage_1) := 
+			case
+				statuses[node_names.action] = invalid : c;
+				action_DOT_a = action_DOT_b_stage_1 : TRUE;
+				TRUE : FALSE;
+			esac;
+		init(c_stage_2) := c;
+		next(c_stage_2) := 
+			case
+				statuses[node_names.action1] = invalid : c_stage_1;
+				action1_DOT_a = action1_DOT_b_stage_1 : TRUE;
+				TRUE : FALSE;
+			esac;
+
