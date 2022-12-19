@@ -40,86 +40,29 @@ def create_nodes(nodes):
                                  + ('[-2]' if len(node['children']) < 2 else (
                                      '[' + ', '.join(['resume_from_node_' + str(child) for child in node['children']]) + ']')
                                     )
-                                 + ';' + os.linesep) for node in filter(lambda node: 'parallel_with_memory' in node['type'] , nodes)])
+                                 + ';' + os.linesep) for node in filter(lambda node: 'parallel_with_memory' in node['type'] , nodes.values())])
                      )
     init_string = ''
     next_string = ''
-    # var_string = ''
-    var_string = ''.join([('\t\t' + node['name'] + ' : ' + node['category'] + '_'
-                           + ('' if node['category'] == 'leaf' else (node['type'] + '_'))
-                           + ((str(len(node['children'])) + '_') if node['category'] == 'composite' else '')
-                           + 'module('
-                           + ((('_'.join([status for (status, possible) in [('success', node['return_arguments']['success']), ('running', node['return_arguments']['running']), ('failure', node['return_arguments']['failure'])] if possible]) + '_DEFAULT') if node['internal_status_module_name'] is None else (
-                               node['internal_status_module_name'])) if node['category'] == 'leaf' else (
-                                   ((', '.join([nodes[node['children'][0]]['name']] + node['additional_arguments'])) if node['category'] == 'decorator' else (
-                                       ', '.join([child['name'] for child in node['children']].extend(
-                                           ([] if 'without_memory' in node['type'] else (
-                                               [
-                                                   ('parallel_skip_' + str(node['node_id'])) if 'parallel' in node['type'] else (
-                                                       '-2' if len(node['children']) < 2 else (', resume_point_' + str(node['node_id']))
-                                                   )
-                                               ]
-                                           )))))))))
-                          for node in nodes]
+    var_string = ''.join([('\t\t' + node['name'] + ' : '
+                           + ((('_'.join([status for (status, possible) in [('success', node['return_arguments']['success']), ('running', node['return_arguments']['running']), ('failure', node['return_arguments']['failure'])] if possible]) + '_DEFAULT_module(') if node['internal_status_module_name'] is None else (
+                                   node['internal_status_module_name'] + '(blackboard')) if node['category'] == 'leaf' else (
+                                       node['category'] + '_' + node['type']
+                                       + ('_' + (str(len(node['children']))) if node['category'] == 'composite' else '')
+                                       + '('
+                                       + ((', '.join([nodes[node['children'][0]]['name']] + node['additional_arguments'])) if node['category'] == 'decorator' else (
+                                           ', '.join([(nodes[child_id]['name']) for child_id in node['children']] + (
+                                               ([] if 'without_memory' in node['type'] else (
+                                                   [
+                                                       ('parallel_skip_' + str(node['node_id'])) if 'parallel' in node['type'] else (
+                                                           '-2' if len(node['children']) < 2 else (', resume_point_' + str(node['node_id']))
+                                                       )
+                                                   ]
+                                               ))))))))
+                           + ');' + os.linesep
+                           )
+                          for node in nodes.values()]
                          )
-    '''
-    for node_id in range(0, len(nodes)):
-        node = nodes[node_id]
-        children_string = ''
-        # if node_id in selector_without_memory_set or node_id in
-        # sequence_without_memory_set or node_id in selector_with_memory_set
-        # or node_id in sequence_with_memory_set or node_id in
-        # parallel_synch_set or node_id in parallel_unsynch_set:
-        if len(node['children']) == 0:
-            # this node has no children
-            children_string = ''
-        else:
-            children_string = ''
-            for child in node['children']:
-                children_string += ", " + nodes[child]['name']
-            children_string = children_string[2:]
-        # ---------------------------------
-        if node['category'] == 'leaf':
-            var_string += ('\t\t' + node['name'] + ' : leaf_module('
-                           + ('_'.join([status for (status, possible) in [('success', node['return_arguments']['success']), ('running', node['return_arguments']['running']), ('failure', node['return_arguments']['failure'])] if possible]) + '_DEFAULT') if node['internal_status_module_name'] is None else (node['internal_status_module_name'])
-                           + ');' + os.linesep
-                           )
-        elif node['category'] == 'decorator':
-            var_string += ('\t\t' + node['name'] + ' : decorator_' + node['type'] + '(' +
-                           + ', '.join([children_string] + node['additional_arguments'])
-                           + ');' + os.linesep
-                           )
-        elif node['category'] == 'composite':
-            if 'selector' in node['type'] or 'sequence' in node['type']:
-                var_string += ('\t\t' + node['name'] + ' : composite_' + node['type'] + '_' + str(len(node['children'])) + '('
-                               + children_string
-                               + '' if 'without_memory' in node['type'] else (', -2' if len(node['children']) < 2 else (', resume_point_' + str(node_id)))
-                               + ');' + os.linesep
-                               )
-            elif 'parallel' in node['type']:
-                var_string += ('\t\t' + node['name'] + ' : composite_' + node['type'] + '_' + str(len(node['children'])) + '('
-                               + children_string
-                               + ('' if 'without_memory' in node['type'] else ('parallel_skip_' + str(node_id)))
-                               + ');' + os.linesep
-                               )
-                if 'with_memory' in node['type']:
-                    define_string += ('\t\tparallel_skip_' + str(node_id) + ' := '
-                                      + ('[-2]' if len(node['children']) < 2 else (
-                                          '[' + ', '.join(['resume_from_node_' + str(child) for child in node['children']]) + ']')
-                                         )
-                                      + ';' + os.linesep)
-            else:
-                print('composite node of unknown type. is not parallel.',
-                      ' is not with_memory. is not without_memory.',
-                      'Node infromation follows')
-                print(node)
-                sys.exit()
-        else:
-            print('ERROR: node is not leaf, decorator, or composite.',
-                  'This should not be possible. Node information follows')
-            print(node)
-            sys.exit()
-    '''
     return (define_string, var_string, init_string, next_string)
 
 
@@ -419,7 +362,7 @@ def main():
                      + '\tCONSTANTS' + os.linesep
                      + '\t\tsuccess, failure, running, invalid;' + os.linesep
                      + '\tDEFINE' + os.linesep
-                     + '\t\tstatuses := ' + str([(node['name'] + '.status') for node in nodes]) + ';' + os.linesep
+                     + '\t\tstatuses := [' + ', '.join([(node['name'] + '.status') for node in nodes.values()]) + '];' + os.linesep
                      )
 
     # ------------------------------------------------------------------------------------------------------------------------
@@ -455,19 +398,22 @@ def main():
     if args.specs_input_file:
         nuxmv_string += open(args.specs_input_file).read() + os.linesep + os.linesep
 
-    nuxmv_string += node_creator.create_names_module(nodes, variables)
+    nuxmv_string += node_creator.create_names_module(nodes)
     nuxmv_string += node_creator.create_leaf()
     nuxmv_string += ''.join([eval('node_creator.create_' + cur_thing[0] + '(' + cur_thing[1] + ')') for cur_thing in
-                             [*set([('composite' + node['type'], len(node['children'])) if node['category'] == 'composite' else (
-                                 ('decorator' + node['type'], None) if node['category'] == 'decorator' else (
-                                     ('status_module', '_'.join([status for (status, possible) in [('success', node['return_arguments']['success']), ('running', node['return_arguments']['running']), ('failure', node['return_arguments']['failure'])] if possible]))))
-                                    for node in nodes if ((node['category'] != 'leaf') or (node['internal_status_module_name'] is None))])]])
+                             [*set([('composite_' + node['type'], str(len(node['children']))) if node['category'] == 'composite' else (
+                                 ('decorator_' + node['type'], '0'))
+                                    for node in nodes.values() if (node['category'] != 'leaf')])]])
 
     if args.module_input_file:
         nuxmv_string = nuxmv_string + open(args.module_input_file).read()
     else:
+
         module_string = ''.join([node['internal_status_module_code']
-                                 for node in nodes if ((node['category'] == 'leaf') and (node['internal_status_module_name'] is not None))])
+                                 for node in nodes.values() if ((node['category'] == 'leaf') and (node['internal_status_module_name'] is not None))])
+
+        module_string += ''.join([node_creator.create_status_module(statuses) for statuses in [*set([('_'.join([status for (status, possible) in [('success', node['return_arguments']['success']), ('running', node['return_arguments']['running']), ('failure', node['return_arguments']['failure'])] if possible])) for node in nodes.values() if ((node['category'] == 'leaf') and (node['internal_status_module_name'] is None))])]])
+
         nuxmv_string += module_string
         if args.module_output_file is None:
             pass
@@ -476,10 +422,10 @@ def main():
                 f.write(module_string)
 
     # print a blackboard variable chart
-    for variable in variables:
-        nuxmv_string += ('--' + variable + ' : ' + str(variables[variable]['variable_id']) + os.linesep)
-        for access_node in variables[variable]['stages']:
-            nuxmv_string += ('----' + access_node + os.linesep)
+    # for variable in variables:
+    #     nuxmv_string += ('--' + variable + ' : ' + str(variables[variable]['variable_id']) + os.linesep)
+    #     for access_node in variables[variable]['stages']:
+    #         nuxmv_string += ('----' + access_node + os.linesep)
 
     if args.blackboard_input_file:
         nuxmv_string += open(args.blackboard_input_file).read()
