@@ -57,10 +57,10 @@ actions {
 					right_hand_side {local b} end_right_hand_side
 				} end_case
 				result {
-					'True'
+					True
 				} end_result
 				result {
-					'False'
+					False
 				} end_result
 			} end_variable_statement
 		} end_init
