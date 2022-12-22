@@ -73,8 +73,8 @@
                                                        ':= \n'
                                                        '\t\t\tcase\n'
                                                        '\t\t\t\t'
-                                                       'next(blackboard.c_stage_1) '
-                                                       ': success;\n'
+                                                       '(blackboard.c_stage_1) '
+                                                       '= (TRUE) : success;\n'
                                                        '\t\t\t\tTRUE : '
                                                        '{running, failure};\n'
                                                        '\t\t\tesac;\n',
@@ -107,9 +107,9 @@
                                                        'internal_status : '
                                                        'invalid;\n'
                                                        '\t\tinternal_status := '
-                                                       '(next(blackboard.c_stage_1) '
+                                                       '(blackboard.c_stage_1 '
                                                        '= '
-                                                       'next(blackboard.c_stage_1)) '
+                                                       'blackboard.c_stage_1) '
                                                        '? success : failure;\n',
                         'internal_status_module_name': 'guard1_module',
                         'name': 'guard1',
@@ -143,8 +143,8 @@
                                                        ':= \n'
                                                        '\t\t\tcase\n'
                                                        '\t\t\t\t'
-                                                       'next(blackboard.c_stage_2) '
-                                                       ': success;\n'
+                                                       '(blackboard.c_stage_2) '
+                                                       '= (TRUE) : success;\n'
                                                        '\t\t\t\tTRUE : '
                                                        '{running, failure};\n'
                                                        '\t\t\tesac;\n',
@@ -157,15 +157,16 @@
                                                 'success': True},
                         'type': 'action'}},
     'variables': {   'action1_DOT_a': {   'custom_value_range': None,
-                                          'environment_update': None,
                                           'init_value': [('TRUE', '1')],
                                           'max_value': 1,
                                           'min_value': 1,
                                           'mode': 'DEFINE',
                                           'next_value': [],
+                                          'read_by': [(0, 'action1')],
+                                          'read_by_init': [   'action1',
+                                                              'action1'],
                                           'variable_name': 'action1_DOT_a'},
                      'action1_DOT_b': {   'custom_value_range': None,
-                                          'environment_update': None,
                                           'init_value': [   (   'TRUE',
                                                                 'action1_DOT_a '
                                                                 '+ 1')],
@@ -178,17 +179,19 @@
                                                                         'action1_DOT_a '
                                                                         '+ '
                                                                         '1}')])],
+                                          'read_by': [(1, 'action1')],
+                                          'read_by_init': ['action1'],
                                           'variable_name': 'action1_DOT_b'},
                      'action_DOT_a': {   'custom_value_range': None,
-                                         'environment_update': None,
                                          'init_value': [('TRUE', '1')],
                                          'max_value': 1,
                                          'min_value': 1,
                                          'mode': 'DEFINE',
                                          'next_value': [],
+                                         'read_by': [(0, 'action')],
+                                         'read_by_init': ['action', 'action'],
                                          'variable_name': 'action_DOT_a'},
                      'action_DOT_b': {   'custom_value_range': None,
-                                         'environment_update': None,
                                          'init_value': [   (   'TRUE',
                                                                'action_DOT_a + '
                                                                '1')],
@@ -201,9 +204,10 @@
                                                                        'action_DOT_a '
                                                                        '+ '
                                                                        '1}')])],
+                                         'read_by': [(1, 'action')],
+                                         'read_by_init': ['action'],
                                          'variable_name': 'action_DOT_b'},
                      'c': {   'custom_value_range': '{TRUE, FALSE}',
-                              'environment_update': None,
                               'init_value': [   (   'action1_DOT_a = '
                                                     'action1_DOT_b',
                                                     'TRUE'),
@@ -212,13 +216,18 @@
                               'min_value': 0,
                               'mode': 'VAR',
                               'next_value': [   (   'action',
-                                                    [   (   'action_DOT_a <= '
-                                                            'next(action_DOT_b_stage_1)',
+                                                    [   (   'action_DOT_a = '
+                                                            'action_DOT_b_stage_1',
                                                             'TRUE'),
                                                         ('TRUE', 'FALSE')]),
                                                 (   'action1',
-                                                    [   (   'action1_DOT_a <= '
-                                                            'next(action1_DOT_b_stage_1)',
+                                                    [   (   'action1_DOT_a = '
+                                                            'action1_DOT_b_stage_1',
                                                             'TRUE'),
                                                         ('TRUE', 'FALSE')])],
+                              'read_by': [   (0, 'guard'),
+                                             (1, 'action'),
+                                             (1, 'guard1'),
+                                             (2, 'action1')],
+                              'read_by_init': [],
                               'variable_name': 'c'}}}

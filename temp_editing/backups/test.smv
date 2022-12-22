@@ -10,18 +10,14 @@ MODULE main
 	VAR
 		node_names : define_nodes;
 		blackboard : blackboard_module(node_names, statuses);
-		root : composite_parallel_without_memory_success_on_all_2_module(sel, seq);
-		sel : composite_selector_without_memory_2_module(dec, action);
-		dec : decorator_X_is_Y_module(guard, running, success);
-		guard : leaf_module(guard_internal_status);
-		guard_internal_status : guard_module(blackboard);
-		action : leaf_module(action_internal_status);
-		action_internal_status : action_module(blackboard);
-		seq : composite_sequence_without_memory_2_module(guard1, action1);
-		guard1 : leaf_module(guard1_internal_status);
-		guard1_internal_status : guard1_module(blackboard);
-		action1 : leaf_module(action1_internal_status);
-		action1_internal_status : action1_module(blackboard);
+		root : composite_parallel_without_memory_success_on_all_2(sel, seq);
+		sel : composite_selector_without_memory_2(dec, action);
+		dec : decorator_X_is_Y(guard, running, success);
+		guard : guard_module(blackboard);
+		action : action_module(blackboard);
+		seq : composite_sequence_without_memory_2(guard1, action1);
+		guard1 : guard1_module(blackboard);
+		action1 : action1_module(blackboard);
 	ASSIGN
 MODULE define_nodes
 	DEFINE
@@ -33,40 +29,24 @@ MODULE define_nodes
 		seq := 5;
 		guard1 := 6;
 		action1 := 7;
-MODULE leaf_module(internal_status)
+MODULE leaf_module(internal_status_module)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
-		status := active ? internal_status.internal_status : invalid;
-MODULE composite_selector_without_memory_2(child_0, child_1)
-	CONSTANTS
-		success, failure, running, invalid;
-	DEFINE
-		status := active ? internal_status : invalid;
-		internal_status :=
-			case
-				!(child_0.internal_status = failure) : child_0.internal_status;
-				!(child_1.internal_status = failure) : child_1.internal_status;
-				TRUE : failure;
-			esac;
-		child_0.active := active;
-		child_1.active := child_0.status = failure;
-MODULE composite_parallel_without_memory_success_on_all_2_module(sel, seq);
-MODULE composite_parallel_without_memory_success_on_all_2(child_0, child_1)
+		status := active ? internal_status_module.internal_status : invalid;
+MODULE composite_sequence_without_memory_2(child_0, child_1)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
 		internal_status :=
 			case
-				(child_0.internal_status = failure) : failure;
-				(child_1.internal_status = failure) : failure;
 				!(child_0.internal_status = success) : child_0.internal_status;
 				!(child_1.internal_status = success) : child_1.internal_status;
 				TRUE : success;
 			esac;
 		child_0.active := active;
-		child_1.active := active;
+		child_1.active := child_0.status = success;
 MODULE decorator_X_is_Y(child_0, incoming_status, outgoing_status)
 	CONSTANTS
 		success, failure, running, invalid;
@@ -82,23 +62,45 @@ MODULE decorator_X_is_Y(child_0, incoming_status, outgoing_status)
 				!(active) : FALSE;
 				TRUE : TRUE;
 			esac;
-MODULE composite_sequence_without_memory_2(child_0, child_1)
+MODULE composite_parallel_without_memory_success_on_all_2(child_0, child_1)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
 		internal_status :=
 			case
+				(child_0.internal_status = failure) : failure;
+				(child_1.internal_status = failure) : failure;
 				!(child_0.internal_status = success) : child_0.internal_status;
 				!(child_1.internal_status = success) : child_1.internal_status;
 				TRUE : success;
 			esac;
 		child_0.active := active;
-		child_1.active := child_0.status = success;
-MODULE guard_module(blackboard)
+		child_1.active := active;
+MODULE composite_selector_without_memory_2(child_0, child_1)
+	CONSTANTS
+		success, failure, running, invalid;
 	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				!(child_0.internal_status = failure) : child_0.internal_status;
+				!(child_1.internal_status = failure) : child_1.internal_status;
+				TRUE : failure;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = failure;
+MODULE guard_module(blackboard)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
 		internal_status := (blackboard.c = blackboard.c) ? success : failure;
 MODULE action_module(blackboard)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
 	VAR
 		internal_status : {success, running, failure};
 	ASSIGN
@@ -109,9 +111,16 @@ MODULE action_module(blackboard)
 				TRUE : {running, failure};
 			esac;
 MODULE guard1_module(blackboard)
+	CONSTANTS
+		success, failure, running, invalid;
 	DEFINE
+		status := active ? internal_status : invalid;
 		internal_status := (blackboard.c_stage_1 = blackboard.c_stage_1) ? success : failure;
 MODULE action1_module(blackboard)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
 	VAR
 		internal_status : {success, running, failure};
 	ASSIGN
@@ -176,8 +185,8 @@ MODULE blackboard_module(node_names, statuses)
 			esac;
 		init(c) := 
 			case
-				action1_DOT_a = action1_DOT_b : True;
-				TRUE : False;
+				action1_DOT_a = action1_DOT_b : TRUE;
+				TRUE : FALSE;
 			esac;
 		next(c) := c_stage_2;
 		init(c_stage_1) := c;
