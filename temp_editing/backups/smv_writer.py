@@ -363,13 +363,12 @@ def main():
                      + '\t\tsuccess, failure, running, invalid;' + os.linesep
                      + '\tDEFINE' + os.linesep
                      + '\t\tstatuses := [' + ', '.join([(node['name'] + '.status') for node in nodes.values()]) + '];' + os.linesep
-                     + '\t\tactive := [' + ', '.join([(node['name'] + '.active') for node in nodes.values()]) + '];' + os.linesep
                      )
 
     # ------------------------------------------------------------------------------------------------------------------------
     var_string = ('\tVAR' + os.linesep
                   + '\t\tnode_names : define_nodes;' + os.linesep
-                  + '\t\tblackboard : blackboard_module(node_names, active);' + os.linesep
+                  + '\t\tblackboard : blackboard_module(node_names, statuses);' + os.linesep
                   )
     # ------------------------------------------------------------------------------------------------------------------------
     init_string = '\tASSIGN' + os.linesep

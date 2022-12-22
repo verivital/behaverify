@@ -1,0 +1,521 @@
+variables {
+	variable { battery VAR [0, 2] } end_variable
+	variable { battery_low_warning VAR BOOLEAN } end_variable
+} end_variables
+
+checks {
+check emergency_stop_fs
+        emergency_stop_warning==False;
+	right_hand_side 'FALSE';
+end_check;
+
+check obstacle_standoff_fs
+        obstacle_standoff_warning==False;
+	right_hand_side 'FALSE';
+end_check;
+
+check is_reallocation_requested 
+        dd_xy_axis_degradation==False;
+	right_hand_side 'FALSE';
+end_check;
+
+check check_dd_am 
+        lec_dd_am_warning == False;
+	right_hand_side 0;
+end_check;
+
+
+check check_lec2am_ls 
+        lec2_am_l_speed_warning == False;
+	right_hand_side 'FALSE';
+end_check;
+
+
+check check_lec2am_rs 
+        lec2_am_r_speed_warning == False;
+	right_hand_side 'FALSE';
+end_check;
+
+
+check check_lec2am_lp 
+        lec2_am_l_pipe_warning == False;
+	right_hand_side 'FALSE';
+end_check;
+
+
+check check_lec2am_rp 
+        lec2_am_r_pipe_warning == False;
+	right_hand_side 'FALSE';
+end_check;
+
+
+check check_geofence 
+        bb_geofence_warning == False;
+	right_hand_side 'FALSE';
+end_check;
+
+
+check check_rth 
+        bb_rth_warning == False;
+	right_hand_side 'FALSE';
+end_check;
+
+
+check check_surface 
+        bb_home_reached ==False;
+	right_hand_side 'FALSE';
+end_check;
+
+
+check check_pipe_post 
+        bb_pipe_lost_warning == False;
+	right_hand_side 'FALSE';
+end_check;
+
+
+check check_waypoints_completed 
+        bb_waypoints_completed == False;
+	right_hand_side 'FALSE';
+end_check;
+
+
+check check_sensor_failure 
+        bb_sensor_failure_warning == False;
+	right_hand_side 'FALSE';
+end_check;
+
+
+check battery_low_fs 
+        battery_low_warning == False;
+	right_hand_side 'FALSE';
+end_check;
+
+
+check is_track_pipe_mission_requested 
+        bb_mission  == "pipe_following";
+	right_hand_side "pipe_following";
+end_check;
+
+check is_waypoint_requested 
+        bb_mission  == "waypoint_following";
+	right_hand_side "waypoint_following";
+end_check;
+
+check is_snr_requested 
+        bb_mission  == "fdr";
+	right_hand_side "fdr";
+end_check;
+
+check is_loiter_requested 
+        bb_mission  == "loitering";
+	right_hand_side "loitering";
+end_check;
+
+check dd_z_axis
+        dd_z_axis_warning == False;
+	right_hand_side 0;
+end_check;
+
+check dd_xy_axis
+        dd_xy_axis_degradation == False;
+	right_hand_side 0;
+end_check;
+
+check rtreach_check
+    rtreach_warning==False;
+	right_hand_side 0;
+end_check;
+
+check rtreach_fence_check
+    rtreach_fence_warning == False;
+	right_hand_side 0;
+end_check;
+
+check rtreach_obstacle_check    
+    rtreach_obstacle_warning == False;    
+	right_hand_side 0;
+end_check;
+
+check rtreach_long_term_check
+    rtreach_long_term_warning == False;
+	right_hand_side 0;
+end_check;
+} end_checks
+
+actions {
+	action {
+		battery2bb
+		init {
+			variable_statement {
+				battery
+				result {
+					0
+				} end_result
+			} end_variable_statement
+			variable_statement {
+				battery_low_warning
+				result {
+					False
+				} end_result
+			} end_variable_statement
+		} end_init
+		update {
+			variable_statement {
+				battery
+				statuses {
+					success
+				} end_statuses
+				result {
+					battery,
+					'max(0,' battery '- 1)'
+				} end_result
+			} end_variable_statement
+			variable_statement {
+				battery_low_warning
+				statuses {
+					success
+				} end_statuses
+				result {
+					battery < battery_low_threshold
+				} end_result
+			} end_variable_statement
+		} end_update
+		returns { success failure } end_returns
+	} end_action
+	action {
+		ddlec2bb
+		init {
+			variable_statment {
+				dd_z_axis_warning
+				result { False } end_result
+			} end_variable_statement
+			variable_statment {
+				dd_xy_axis_degradation
+				result { False } end_result
+			} end_variable_statement
+			variable_statement {
+				local total_degradation_threshold
+				result { 1 } end_result
+			} end_variable_statement
+			variable_statement {
+				local num_classes
+				result { 2 } end_result
+			} end_variable_statement
+			variable_statement {
+				local enable_fault_detection
+				result { True, False } end_result
+			} end_variable_statment
+			variable_statement {
+				local decision_source
+				result { 'snapshot_am', 'combination_am' } end_result
+			} end_variable_statement
+		} end_init
+		update {
+			variable_statement {
+				local prediction
+				statuses { success } end_statuses
+				result { 0, 1, 2 } end_result
+			} end_variable_statement
+			variable_statment {
+				local snapshot_decision
+				statuses { success } end_statuses
+				result { True, False } end_result
+			} end_variable_statement
+			variable_statment {
+				local combined_decision
+				statuses { success } end_statuses
+				result { True, False } end_result
+			} end_variable_statement
+			variable_statment {
+				local fdir_decision
+				statuses { success } end_statuses
+				condition {
+					comparison_operator ==
+					left_hand_side {
+						'(' local decision_source == 'snapshot_am & ' local snapshot_decision ') | (' local decision_source == 'combination_am & ' local snapshot_decision ')' } end_left_hand_side
+					right_hand_side {
+						True
+					} end_right_hand_side
+				} end_condition
+				result { True } end_result
+				statuses { success } end_statuses
+				condition {
+					comparison_operator ==
+					left_hand_side {
+						'(' local decision_source != 'snapshot_am) & (' local decision_source != 'combination_am) & (' local softmax
+				statuses { success } end_statuses
+				condition { False } end_condition
+			} end_variable_statement
+				
+} end_actions
+
+
+root_node composite_node{
+	BlueROV parallel policy success_on_all memory False
+	children {
+		composite {
+			topics2bb parallel policy success_on_all memory False
+			children {
+				battery2bb rth2bb geofence2bb
+        			lec2_am_r_2bb lec2_am_l_2bb pipe_lost2bb
+				sensor_failure2bb waypoints_completed2bb
+        			mission2bb ddlec2bb
+        			fls2bb fls_warning2bb
+        			hsd_pipe2bb hsd_wp2bb hsd_rth2bb hsd_surface2bb
+        			rtreach2bb, rtreach_unsafe_value2bb, rtreach_index2bb
+			} end_children
+		} end_composite
+    		composite {
+			dd_tasks selector memory False
+			children {
+				decorator {
+					reallocate_check_SIF X_is_Y
+					X success
+					Y failure
+					child composite {
+						reallocate_check selector memory False
+						children {
+							is_reallocation_requested
+							reallocate_task
+						} end_children
+					} end_composite
+				} end_decorator
+        			dd_lec_task
+			} end_children
+		} end_composite
+    		mission_server
+    		obstacle_avoidance
+		composite {
+    			priorities selector memory False
+			children {
+				decorator {
+					battery_check_SIF X_is_Y
+					X success
+					Y failure
+					child composite {
+						battery_check selector memory False
+						children {
+							battery_low_fs
+							surface_task
+						} end_children
+					} end_composite
+				} end_decorator
+				decorator {
+					sensor_failure_selector_SIF X_is_Y
+					X success
+					Y failure
+					child composite {
+						sensor_failure_selector selector memory False
+						children {
+							check_sensor_failure
+							surface_task
+						} end_children
+					} end_composite
+				} end_decorator
+				decorator {
+					emergency_stop_check X_is_Y
+					X success
+					Y failure
+					child composite {
+						emergency_stop_check selector memory False
+						children {
+							emergency_stop_fs
+							emergency_stop_task
+							surface_task
+						} end_children
+					} end_composite
+				} end_decorator
+				decorator {
+					home_reached_selector_SIF X_is_Y
+					X success
+					Y failure
+					child composite {
+						home_reached_selector selector memory False
+						children {
+							check_surface
+							surface_task
+						} end_children
+					} end_composite
+				} end_decorator
+				decorator {
+					obstacle_standoff_check_SIF X_is_Y
+					X success
+					Y failure
+					child composite {
+						obstacle_standoff_check selector memory False
+						children {
+							obstacle_standoff_fs
+							surface_task
+						} end_children
+					} end_composite
+				} end_decorator
+				decorator {
+					rth_selector_SIF X_is_Y
+					X success
+					Y failure
+					child composite {
+						rth_selector selector memory False
+						children {
+							check_rth
+							composite {
+								rth_par
+								parallel
+								policy success_on_all
+								memory False
+								children {
+									rth_task
+									home2bb
+								} end_children
+							} end_composite
+						} end_children
+					} end_composite
+				} end_decorator
+				decorator {
+					geofence_selector_SIF X_is_Y
+					X success
+					Y failure
+					child composite {
+						geofence_selector selector memory False
+						children {
+							check_geofence
+							composite {
+								rth_par
+								parallel
+								policy success_on_all
+								memory False
+								children {
+									rth_task
+									home2bb
+								} end_children
+							} end_composite
+						} end_children
+					} end_composite
+				} end_decorator
+				decorator {
+					pipe_lost_selector_SIF X_is_Y
+					X success
+					Y failure
+					child composite {
+						pipe_lost_selector selector memory False
+						children {
+							check_pipe_lost
+							loiter_task
+						} end_children
+					} end_composite
+				} end_decorator
+				composite {
+					track_pipe_mission sequence memory True
+					children {
+						is_track_pipe_mission_requested
+	        				composite {
+							tracking
+							parallel
+							policy success_on_all
+							memory False
+							children {
+                						tracking_task  
+                						composite {
+									lec2am_speed_cmd selector memory False
+									children {
+										decorator {
+											lec2am_l_speed_check_SIF X_is_Y
+											X success
+											Y failure
+											child composite {
+												lec2am_l_speed_check selector memory False
+												children {
+													check_lec2am_ls
+													speed_min_task
+												} end_children
+											} end_composite
+										} end_decorator
+										decorator {
+											lec2am_r_speed_check_SIF X_is_Y
+											X success
+											Y failure
+											child composite {
+												lec2am_l_speed_check selector memory False
+												children {
+													check_lec2am_rs
+													speed_min_task
+												} end_children
+											} end_composite
+										} end_decorator
+										speed_max_task
+                							} end_children
+								} end_composite
+                						composite {
+									lec2am_mapping_cmd selector memory False
+									children {
+										decorator {
+											lec2am_l_mapping_check_SIF X_is_Y
+											X success
+											Y failure
+											child composite {
+												lec2am_l_mapping_check selector memory False
+												children {
+													check_lec2am_lp
+													pipe_mapping_diable_task
+												} end_children
+											} end_composite
+										} end_decorator
+										decorator {
+											lec2am_r_mapping_check_SIF X_is_Y
+											X success
+											Y failure
+											child composite {
+												lec2am_r_mapping_check selector memory False
+												children {
+													check_lec2am_rp
+													pipe_mapping_diable_task
+												} end_children
+											} end_composite
+										} end_decorator
+                    								pipe_mapping_enable_task
+                							} end_children
+            							} end_composite
+							} end_children
+						} end_composite
+            					composite {
+							track_pipe_mission_end sequence memory True
+							children {
+                						evaluate
+            						} end_children
+        					} end_composite
+					} end_children
+				} end_composite
+        			composite {
+					waypoint_mission sequence memory True
+					children {
+            					is_waypoint_requested
+            					composite {
+							  waypoint_selector selector memory False
+							  children {
+								decorator {
+									waypoints_SIF X_is_Y
+									X success
+									Y failure
+									child composite {
+										waypoints selector memory False
+										children {
+											check_waypoints_completed
+											composite {
+												waypoint_end sequence memory True
+												children {
+													next_mission
+													loiter_task
+												} end_children
+											} end_composite
+										} end_children
+									} end_composite
+								} end_decorator
+            							waypoint_task
+            						} end_children
+						} end_composite
+					} end_children
+				} end_composite
+        			loiter_task
+    			} end_children
+		} end_composite
+	} end_children
+} end_composite
