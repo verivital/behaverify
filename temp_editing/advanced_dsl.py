@@ -45,12 +45,12 @@ def get_variables(model):
     return (variables, local_variables)
 
 
-def make_new_stage(statement, node_name, variables, local_variables, use_stages, call_blackboard):
-    new_stage = [(format_code(case_result.condition, node_name, variables, local_variables, use_stages, call_blackboard)
+def make_new_stage(statement, node_name, variables, local_variables, use_stages, call_blackboard, use_next):
+    new_stage = [(format_code(case_result.condition, node_name, variables, local_variables, use_stages, call_blackboard, use_next)
                   ,
                   (
                       ('{' if len(case_result.values) > 1 else '')
-                      + ', '.join([format_code(value, node_name, variables, local_variables, use_stages, call_blackboard)
+                      + ', '.join([format_code(value, node_name, variables, local_variables, use_stages, call_blackboard, use_next)
                                    for value in case_result.values])
                       + ('}' if len(case_result.values) > 1 else '')
                   )
@@ -62,7 +62,7 @@ def make_new_stage(statement, node_name, variables, local_variables, use_stages,
          ,
          (
              ('{' if len(statement.default_result.values) > 1 else '')
-             + ', '.join([format_code(value, node_name, variables, local_variables, use_stages, call_blackboard)
+             + ', '.join([format_code(value, node_name, variables, local_variables, use_stages, call_blackboard, use_next)
                           for value in statement.default_result.values])
              + ('}' if len(statement.default_result.values) > 1 else '')
          )
@@ -71,13 +71,27 @@ def make_new_stage(statement, node_name, variables, local_variables, use_stages,
     return new_stage
 
 
-def update_variables(model, variables):
-    for variable in model.environment_variables:
-        if variable.initial is not None:
-            variables[variable.name]['init_value'] = make_new_stage(variable.initial, None, variables, {}, False, False)
-        if variable.statement is not None:
-            variables[variable.name]['environment_update'] = make_new_stage(variable.statement, None, variables, {}, True, False)
-    return
+def create_environment_variables(model, variables):
+    inits = {statement.variable.name : make_new_stage(statement, None, variables, {}, False, False, False) for statement in model.initial}
+    updates = {statement.variable.name : make_new_stage(statement, None, variables, {}, True, False, True) for statement in model.update}
+
+    return {variable.name : {
+        'variable_name' : variable.name,
+        'mode' : variable.model_as,
+        'custom_value_range' : (None if variable.domain.min_val is not None else ('{TRUE, FALSE}' if variable.domain.boolean is not None else ('{' + ', '.join(variable.domain.enums) + '}'))),
+        'min_value' : 0 if variable.domain.min_val is None else variable.domain.min_val,
+        'max_value' : 1 if variable.domain.min_val is None else variable.domain.max_val,
+        'init_value' : (None if variable.name not in inits else inits[variable.name]),
+        # 'always_exist' : True,
+        # 'init_exist' : True,
+        # 'auto_change' : False,
+        'next_value' : [],
+        'environment_update' : (None if variable.name not in inits else updates[variable.name]),
+        # 'next_exist' : {},
+        # 'use_separate_stages' : True,
+        # 'read_by' : [],
+        # 'read_by_init' : []
+    } for variable in model.environment_variables}
 
 
 FUNCTION_FORMAT = {
@@ -119,33 +133,25 @@ def add_local_variable(variables, local_variables, variable_name, local_variable
     return
 
 
-def format_variable(variable, is_local, node_name, variables, local_variables, use_stages, call_blackboard):
+def format_variable(variable, is_local, node_name, variables, local_variables, use_stages, call_blackboard, use_next):
     variable_name = ((node_name + '_DOT_') if is_local else ('')) + variable.name
-    try:
-        return (('' if len(variables[variable_name]['next_value']) == 0 else 'next('),
-                (('blackboard.') if call_blackboard else (''))
-                + variable_name
-                + compute_stage(variable_name, variables, use_stages),
-                ('' if len(variables[variable_name]['next_value']) == 0 else ')')
-                )
-    except KeyError:
+    if variable_name not in variables:
         add_local_variable(variables, local_variables, variable.name, variable_name)
-        return (('' if len(variables[variable_name]['next_value']) == 0 else 'next('),
-                (('blackboard.') if call_blackboard else (''))
-                + variable_name
-                + compute_stage(variable_name, variables, use_stages),
-                ('' if len(variables[variable_name]['next_value']) == 0 else ')')
-                )
+    return (('' if (len(variables[variable_name]['next_value']) == 0 or not use_next) else 'next(')
+            + (('blackboard.') if call_blackboard else (''))
+            + variable_name
+            + compute_stage(variable_name, variables, use_stages)
+            + ('' if (len(variables[variable_name]['next_value']) == 0 or not use_next) else ')'))
 
 
-def format_code(code, node_name, variables, local_variables, use_stages, call_blackboard):
+def format_code(code, node_name, variables, local_variables, use_stages, call_blackboard, use_next):
     return (
         (str(code.constant).upper() if isinstance(code.constant, bool) else str(code.constant)) if code.constant is not None else (
-            (''.join(format_variable(code.variable, code.is_local, node_name, variables, local_variables, use_stages, call_blackboard))) if code.variable is not None else (
-                ('(' + format_code(code.code_statement, node_name, variables, local_variables, use_stages, call_blackboard) + ')') if code.code_statement is not None else (
-                    (FUNCTION_FORMAT[code.function_call.function_name][0] + '(' + format_code(code.function_call.value1, node_name, variables, local_variables, use_stages, call_blackboard) + ')') if FUNCTION_FORMAT[code.function_call.function_name][1] == 0 else (
-                        (FUNCTION_FORMAT[code.function_call.function_name][0] + '(' + format_code(code.function_call.value1, node_name, variables, local_variables, use_stages, call_blackboard) + ', ' + format_code(code.function_call.value2, node_name, variables, local_variables, use_stages, call_blackboard) + ')') if FUNCTION_FORMAT[code.function_call.function_name][1] == 1 else (
-                            format_code(code.function_call.value1, node_name, variables, local_variables, use_stages, call_blackboard) + ' ' + FUNCTION_FORMAT[code.function_call.function_name][0] + ' ' + format_code(code.function_call.value2, node_name, variables, local_variables, use_stages, call_blackboard)
+            (format_variable(code.variable, code.is_local, node_name, variables, local_variables, use_stages, call_blackboard, use_next)) if code.variable is not None else (
+                ('(' + format_code(code.code_statement, node_name, variables, local_variables, use_stages, call_blackboard, use_next) + ')') if code.code_statement is not None else (
+                    (FUNCTION_FORMAT[code.function_call.function_name][0] + '(' + format_code(code.function_call.value1, node_name, variables, local_variables, use_stages, call_blackboard, use_next) + ')') if FUNCTION_FORMAT[code.function_call.function_name][1] == 0 else (
+                        (FUNCTION_FORMAT[code.function_call.function_name][0] + '(' + format_code(code.function_call.value1, node_name, variables, local_variables, use_stages, call_blackboard, use_next) + ', ' + format_code(code.function_call.value2, node_name, variables, local_variables, use_stages, call_blackboard, use_next) + ')') if FUNCTION_FORMAT[code.function_call.function_name][1] == 1 else (
+                            format_code(code.function_call.value1, node_name, variables, local_variables, use_stages, call_blackboard, use_next) + ' ' + FUNCTION_FORMAT[code.function_call.function_name][0] + ' ' + format_code(code.function_call.value2, node_name, variables, local_variables, use_stages, call_blackboard, use_next)
                         )
                     )
                 )
@@ -278,7 +284,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                 + '\tDEFINE' + os.linesep
                 + '\t\tstatus := active ? internal_status : invalid;' + os.linesep
                 + '\t\tinternal_status := ('
-                + format_code(current_node.condition, node_name, variables, local_variables, True, True)
+                + format_code(current_node.condition, node_name, variables, local_variables, True, True, False)
                 + ') ? success : failure;' + os.linesep
                 )
         }
@@ -297,30 +303,8 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
 
         def handle_statements(statements, init_statement = False):
             for statement in statements:
-                new_stage = make_new_stage(statement, node_name, variables, local_variables, not (init_statement), False)
-                # new_stage = [(format_code(case_result.condition, node_name, variables, local_variables, not (init_statement), False)
-                #               ,
-                #               (
-                #                   ('{' if len(case_result.values) > 1 else '')
-                #                   + ', '.join([format_code(value, node_name, variables, local_variables, not (init_statement), False)
-                #                                for value in case_result.values])
-                #                   + ('}' if len(case_result.values) > 1 else '')
-                #               )
-                #               )
-                #              for case_result in statement.case_results
-                #              ]
-                # new_stage.append(
-                #     ('TRUE'
-                #      ,
-                #      (
-                #          ('{' if len(statement.default_result.values) > 1 else '')
-                #          + ', '.join([format_code(value, node_name, variables, local_variables, not (init_statement), False)
-                #                       for value in statement.default_result.values])
-                #          + ('}' if len(statement.default_result.values) > 1 else '')
-                #      )
-                #      )
-                # )
-                variable_name = format_variable(statement.variable, statement.is_local, node_name, variables, local_variables, False, False)[1]
+                new_stage = make_new_stage(statement, node_name, variables, local_variables, not (init_statement), False, True)
+                variable_name = format_variable(statement.variable, statement.is_local, node_name, variables, local_variables, False, False, False)
                 if init_statement:
                     variables[variable_name]['init_value'] = new_stage
                 else:
@@ -356,7 +340,7 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                 + '\t\tnext(internal_status) := ' + os.linesep
                 + '\t\t\tcase' + os.linesep
                 + ('').join([('\t\t\t\t'
-                              + format_code(case_result.condition, node_name, variables, local_variables, True, True)
+                              + format_code(case_result.condition, node_name, variables, local_variables, True, True, True)
                               + ' : '
                               + ('{' if [case_result.can_success, case_result.can_running, case_result.can_failure].count(True) > 1 else '')
                               + ', '.join([status for (status, possible) in [('success', case_result.can_success), ('running', case_result.can_running), ('failure', case_result.can_failure)] if possible])
@@ -414,7 +398,7 @@ def main():
 
     (variables, local_variables) = get_variables(model)
     nodes = walk_tree(model, variables, local_variables)
-    update_variables(model, variables)
+    variables.update(create_environment_variables(model, variables))
 
     if args.output_file is None:
         printer = pprint.PrettyPrinter(indent = 4)

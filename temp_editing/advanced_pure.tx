@@ -6,8 +6,16 @@ BehaviorModel:
     local_variables *= variable
     '}' 'end_local_variables'
     'environment_variables' '{'
-    environment_variables *= environment_variable
+    environment_variables *= variable
     '}' 'end_environment_variables'
+    'environment' '{'
+    'initial_values' '{'
+    initial *= variable_statement
+    '}' 'end_initial_values'
+    'update_values' '{'
+    update *= variable_statement
+    '}' 'end_update_values'
+    '}' 'end_environment'
     'checks' '{'
     check_nodes *= check_node
     '}' 'end_checks'
@@ -24,15 +32,6 @@ variable:
     ((model_as = 'VAR') | (model_as = 'FROZENVAR') | (model_as = 'DEFINE'))
     domain = variable_domain
     '}' 'end_variable'
-;
-    environment_variable:
-    'environment_variable' '{'
-    name = ID
-    ((model_as = 'VAR') | (model_as = 'FROZENVAR') | (model_as = 'DEFINE'))
-    domain = variable_domain
-    ('initial_value' '{' initial = variable_statement '}' 'end_initial_value')?
-    ('between_tick' '{' statement = variable_statement '}' 'end_between_tick')?
-    '}' 'end_enviroment_variable'
 ;
     
     variable_domain:
@@ -74,8 +73,8 @@ status:
     check_node:
     (node_type = 'check') '{'
     name = ID
-    ('start_python_code' '{' python_code = STRING '}' 'end_python_code')?
-    ('start_condition' '{' condition = code_statement '}' 'end_condition')?
+    ('python_code' '{' python_code = STRING '}' 'end_python_code')?
+    ('condition' '{' condition = code_statement '}' 'end_condition')?
     '}' 'end_check'
 ;
     
@@ -109,7 +108,7 @@ status:
 ;
 
     variable_case_result:
-    ('start_python_code' '{' python_code = STRING '}' 'end_python_code')?
+    ('python_code' '{' python_code = STRING '}' 'end_python_code')?
     ('case' '{' condition = code_statement '}' 'end_case')
     'result' '{'
     values += code_statement[',']
@@ -117,14 +116,14 @@ status:
 ;
         
     variable_default_result:
-    ('start_python_code' '{' python_code = STRING '}' 'end_python_code')?
+    ('python_code' '{' python_code = STRING '}' 'end_python_code')?
     'result' '{'
     values += code_statement[',']
     '}' 'end_result'
 ;
 
     status_case_result:
-    ('start_python_code' '{' python_code = STRING '}' 'end_python_code')?
+    ('python_code' '{' python_code = STRING '}' 'end_python_code')?
     ('case' '{' condition = code_statement '}' 'end_case')
     'result' '{'
     'success' can_success = BOOL
@@ -134,7 +133,7 @@ status:
 ;
     
     status_default_result:
-    ('start_python_code' '{' python_code = STRING '}' 'end_python_code')?
+    ('python_code' '{' python_code = STRING '}' 'end_python_code')?
     'result' '{'
     'success' can_success = BOOL
     'failure' can_failure = BOOL
