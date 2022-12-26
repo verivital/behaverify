@@ -1,0 +1,97 @@
+MODULE main
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		statuses := [robot.status, read_battery.status, low_battery_reading.status, execute.status];
+		active := [robot.active, read_battery.active, low_battery_reading.active, execute.active];
+		resume_from_node_0 := -3;
+		robot.active := TRUE;
+	VAR
+		node_names : define_nodes;
+		blackboard : blackboard_module(node_names, active);
+		robot : composite_sequence_without_memory_3(read_battery, low_battery_reading, execute);
+		read_battery : read_battery_module(blackboard);
+		low_battery_reading : low_battery_reading_module(blackboard);
+		execute : success_DEFAULT_module();
+	ASSIGN
+	LTLSPEC G (execute.active -> blackboard.read_battery >= blackboard.battery_threshold);
+MODULE define_nodes
+	DEFINE
+		robot := 0;
+		read_battery := 1;
+		low_battery_reading := 2;
+		execute := 3;
+MODULE leaf_module(internal_status_module)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status_module.internal_status : invalid;
+MODULE composite_sequence_without_memory_3(child_0, child_1, child_2)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				!(child_0.internal_status = success) : child_0.internal_status;
+				!(child_1.internal_status = success) : child_1.internal_status;
+				!(child_2.internal_status = success) : child_2.internal_status;
+				TRUE : success;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = success;
+		child_2.active := child_1.status = success;
+MODULE read_battery_module(blackboard)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+	VAR
+		internal_status : {success, failure};
+	ASSIGN
+		init(internal_status) := success;
+		next(internal_status) := 
+			case
+				blackboard.reading_successful : success;
+				TRUE : failure;
+			esac;
+MODULE low_battery_reading_module(blackboard)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := (next(blackboard.battery_reading_stage_1) < blackboard.battery_threshold) ? success : failure;
+MODULE success_DEFAULT_module
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status_module.internal_status : invalid;
+		internal_status := success;
+MODULE blackboard_module(node_names, active)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		battery_exists := TRUE;
+		battery_reading := battery_reading_stage_1;
+		battery_reading_exists := TRUE;
+		battery_reading_stage_1_exists := TRUE;
+		battery_threshold_exists := TRUE;
+		reading_successful_exists := TRUE;
+	FROZENVAR
+		battery : 0..10;
+		battery_threshold : 0..10;
+		reading_successful : boolean;
+	VAR
+		battery_reading_stage_1 : 0..10;
+	ASSIGN
+		init(battery_reading_stage_1) := 
+			case
+				TRUE : 10;
+			esac;
+		next(battery_reading_stage_1) := 
+			case
+				!(active[node_names.read_battery]) : battery_reading;
+				reading_successful : battery;
+				TRUE : battery_reading;
+			esac;
+
