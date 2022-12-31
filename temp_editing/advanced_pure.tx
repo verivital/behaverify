@@ -73,7 +73,8 @@ status:
     check_node:
     (node_type = 'check') '{'
     name = ID
-    ('python_code' '{' python_code = STRING '}' 'end_python_code')?
+    ('imports' '{' imports *= STRING[','] '}' 'end_imports')?
+    ('python_code' '{' python_code += STRING '}' 'end_python_code')?
     ('condition' '{' condition = code_statement '}' 'end_condition')?
     '}' 'end_check'
 ;
@@ -81,6 +82,7 @@ status:
     action_node:
     (node_type = 'action') '{'
     name = ID
+    ('imports' '{' imports *= STRING[','] '}' 'end_imports')?
     'init' '{'
     init_statements *= variable_statement
     '}' 'end_init'
@@ -95,6 +97,7 @@ status:
     variable_statement:
     'variable_statement' '{'
     is_local ?= 'local' variable = [variable]
+    ('python_code' '{' python_code += STRING '}' 'end_python_code')?
     case_results *= variable_case_result
     default_result = variable_default_result
     '}' 'end_variable_statement'
@@ -102,13 +105,13 @@ status:
     
     return_statement:
     'return_statement' '{'
+    ('python_code' '{' python_code += STRING '}' 'end_python_code')?
     case_results *=  status_case_result
     default_result = status_default_result
     '}' 'end_return_statement'
 ;
 
     variable_case_result:
-    ('python_code' '{' python_code = STRING '}' 'end_python_code')?
     ('case' '{' condition = code_statement '}' 'end_case')
     'result' '{'
     values += code_statement[',']
@@ -116,14 +119,12 @@ status:
 ;
         
     variable_default_result:
-    ('python_code' '{' python_code = STRING '}' 'end_python_code')?
     'result' '{'
     values += code_statement[',']
     '}' 'end_result'
 ;
 
     status_case_result:
-    ('python_code' '{' python_code = STRING '}' 'end_python_code')?
     ('case' '{' condition = code_statement '}' 'end_case')
     'result' '{'
     'success' can_success = BOOL
@@ -133,7 +134,6 @@ status:
 ;
     
     status_default_result:
-    ('python_code' '{' python_code = STRING '}' 'end_python_code')?
     'result' '{'
     'success' can_success = BOOL
     'failure' can_failure = BOOL

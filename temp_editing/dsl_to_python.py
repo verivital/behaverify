@@ -33,6 +33,10 @@ FUNCTION_FORMAT = {
 }
 
 
+def indent(n):
+    return (' '*n*4)
+
+
 def format_variable(variable, is_local):
     return ('self.' + ('' if is_local else 'blackboard.') + variable.name)
 
@@ -57,8 +61,7 @@ def format_code(code):
 STANDARD_IMPORTS = ('import py_trees' + os.linesep
                     + 'import math' + os.linesep
                     + 'import operator' + os.linesep
-                    + 'import random' + os.linesep
-                    + os.linesep + os.linesep)
+                    + 'import random' + os.linesep)
 
 
 def class_definition(node_name):
@@ -66,38 +69,41 @@ def class_definition(node_name):
 
 
 def init_method_check(node):
-    return ('\tdef __init__(self, name):' + os.linesep
-            + '\t\tsuper(' + node.name + ', self).__init__(name)' + os.linesep
-            + '\t\tself.name = name' + os.linesep
-            + '\t\tself.blackboard = py_trees.blackboard.Blackboard()' + os.linesep
-            + os.linesep + os.linesep)
+    return (indent(1) + 'def __init__(self, name):' + os.linesep
+            + indent(2) + 'super(' + node.name + ', self).__init__(name)' + os.linesep
+            + indent(2) + 'self.name = name' + os.linesep
+            + indent(2) + 'self.blackboard = py_trees.blackboard.Blackboard()' + os.linesep
+            + os.linesep)
 
 
 def update_method_check(node):
-    return ('\tdef update(self):' + os.linesep
-            + '\t\treturn ((py_trees.common.Status.SUCCESS) if ('
-            + format_code(node.condition)
+    return (indent(1) + 'def update(self):' + os.linesep
+            + indent(2) + 'return ((py_trees.common.Status.SUCCESS) if ('
+            + (format_code(node.condition) if (node.python_code is None or len(node.python_code) == 0) else ''.join(node.python_code))
             + ') else (py_trees.common.Status.FAILURE))' + os.linesep
             + os.linesep)
 
 
 def handle_variable_statement(statement):
+    if statement.python_code is not None and len(statement.python_code) > 0:
+        return (os.linesep + (os.linesep).join(statement.python_code) + os.linesep)
     variable_name = format_variable(statement.variable, statement.is_local)
-    if len(statement.case_results) > 0:
-        return ('\t\t' + variable_name + ' = random.choice('
+    if len(statement.case_results) == 0:
+        return (indent(2) + variable_name + ' = random.choice('
                 + '['
                 + ', '.join([format_code(value) for value in statement.default_result.values])
                 + ']'
                 + ')' + os.linesep)
     return ((''.join([
-        ('\t\telif ' + format_code(case_result.condition) + ':' + os.linesep
-         + ('\t\t\t' + variable_name + ' = random.choice('
+        (indent(2) + 'elif ' + format_code(case_result.condition) + ':' + os.linesep
+         + (indent(3) + variable_name + ' = random.choice('
             + '['
             + ', '.join([format_code(value) for value in case_result.values])
             + ']'
             + ')' + os.linesep)
          ) for case_result in statement.case_results])).replace('elif', 'if', 1)
-            + ('\t\t' + variable_name + ' = random.choice('
+            + (indent(2) + 'else:' + os.linesep
+               + indent(3) + variable_name + ' = random.choice('
                + '['
                + ', '.join([format_code(value) for value in statement.default_result.values])
                + ']'
@@ -115,22 +121,25 @@ def format_returns(status_result):
 
 
 def handle_return_statement(statement):
+    if statement.python_code is not None and len(statement.python_code) > 0:
+        return (os.linesep + (os.linesep).join(statement.python_code) + os.linesep)
     variable_name = 'return_status'
-    if len(statement.case_results) > 0:
-        return ('\t\t' + variable_name + ' = random.choice('
+    if len(statement.case_results) == 0:
+        return (indent(2) + variable_name + ' = random.choice('
                 + '['
                 + format_returns(statement.default_result)
                 + ']'
                 + ')' + os.linesep)
     return ((''.join([
-        ('\t\telif ' + format_code(case_result.condition) + ':' + os.linesep
-         + ('\t\t\t' + variable_name + ' = random.choice('
+        (indent(2) + 'elif ' + format_code(case_result.condition) + ':' + os.linesep
+         + (indent(3) + variable_name + ' = random.choice('
             + '['
             + format_returns(case_result)
             + ']'
             + ')' + os.linesep)
          ) for case_result in statement.case_results])).replace('elif', 'if', 1)
-            + ('\t\t' + variable_name + ' = random.choice('
+            + (indent(2) + 'else:' + os.linesep
+               + indent(3) + variable_name + ' = random.choice('
                + '['
                + format_returns(statement.default_result)
                + ']'
@@ -139,26 +148,31 @@ def handle_return_statement(statement):
 
 
 def init_method_action(node):
-    return ('\tdef __init__(self, name):' + os.linesep
-            + '\t\tsuper(' + node.name + ', self).__init__(name)' + os.linesep
-            + '\t\tself.name = name' + os.linesep
-            + '\t\tself.blackboard = py_trees.blackboard.Blackboard()' + os.linesep
+    return (indent(1) + 'def __init__(self, name):' + os.linesep
+            + indent(2) + 'super(' + node.name + ', self).__init__(name)' + os.linesep
+            + indent(2) + 'self.name = name' + os.linesep
+            + indent(2) + 'self.blackboard = py_trees.blackboard.Blackboard()' + os.linesep
             + ''.join([handle_variable_statement(statement) for statement in node.init_statements])
-            + os.linesep + os.linesep + os.linesep)
+            + os.linesep)
 
 
 def update_method_action(node):
-    return ('\tdef update(self):' + os.linesep
+    return (indent(1) + 'def update(self):' + os.linesep
             + ''.join([handle_variable_statement(statement) for statement in node.pre_update_statements])
             + handle_return_statement(node.return_statement)
             + ''.join([handle_variable_statement(statement) for statement in node.post_update_statements])
-            + '\t\treturn return_status' + os.linesep
+            + indent(2) + 'return return_status' + os.linesep
             )
+
+
+def custom_imports(node):
+    return ((('import ' + (os.linesep + 'import ').join(node.imports) + os.linesep) if node.imports is not None and len(node.imports) > 0 else '')
+            + os.linesep + os.linesep)
 
 
 def build_check_node(node):
     return (STANDARD_IMPORTS
-            # + custom_imports()
+            + custom_imports(node)
             + class_definition(node.name)
             + init_method_check(node)
             + update_method_check(node)
@@ -167,7 +181,7 @@ def build_check_node(node):
 
 def build_action_node(node):
     return (STANDARD_IMPORTS
-            # + custom_imports()
+            + custom_imports(node)
             + class_definition(node.name)
             + init_method_action(node)
             + update_method_action(node)
@@ -199,7 +213,7 @@ def walk_tree_recursive(current_node, node_names, file_name, location):
             with open(location + node_name + '_file.py', 'w') as f:
                 f.write(build_check_node(current_node))
         with open(file_name, 'a') as f:
-            f.write('\t' + node_name + ' = ' + node_name + '_file.' + node_name + '(' + "'" + node_name + "'" + ')' + os.linesep)
+            f.write(indent(1) + node_name + ' = ' + node_name + '_file.' + node_name + '(' + "'" + node_name + "'" + ')' + os.linesep)
         return node_name
     elif current_node.node_type == 'action':
         if node_names[node_name] == 0:
@@ -207,7 +221,7 @@ def walk_tree_recursive(current_node, node_names, file_name, location):
             with open(location + node_name + '_file.py', 'w') as f:
                 f.write(build_action_node(current_node))
         with open(file_name, 'a') as f:
-            f.write('\t' + node_name + ' = ' + node_name + '_file.' + node_name + '(' + "'" + node_name + "'" + ')' + os.linesep)
+            f.write(indent(1) + node_name + ' = ' + node_name + '_file.' + node_name + '(' + "'" + node_name + "'" + ')' + os.linesep)
         return node_name
     elif current_node.node_type == 'X_is_Y':
         if current_node.x == current_node.y:
@@ -218,7 +232,7 @@ def walk_tree_recursive(current_node, node_names, file_name, location):
                           + current_node.y.capitalize())
         child = walk_tree_recursive(current_node.child, node_names, file_name, location)
         with open(file_name, 'a') as f:
-            f.write('\t' + node_name + ' = py_trees.decorators.' + decorator_type + '('
+            f.write(indent(1) + node_name + ' = py_trees.decorators.' + decorator_type + '('
                     + child
                     + ', ' + node_name + ')' + os.linesep)
         return node_name
@@ -227,18 +241,18 @@ def walk_tree_recursive(current_node, node_names, file_name, location):
 
     if current_node.node_type == 'sequence':
         with open(file_name, 'a') as f:
-            f.write('\t' + node_name + ' = py_trees.composites.Sequence(' + "'" + node_name + "'" + ', ' + str(current_node.memory) + ')' + os.linesep)
+            f.write(indent(1) + node_name + ' = py_trees.composites.Sequence(' + "'" + node_name + "'" + ', ' + str(current_node.memory) + ')' + os.linesep)
     elif current_node.node_type == 'selector':
         with open(file_name, 'a') as f:
-            f.write('\t' + node_name + ' = py_trees.composites.Selector(' + "'" + node_name + "'" + ', ' + str(current_node.memory) + ')' + os.linesep)
+            f.write(indent(1) + node_name + ' = py_trees.composites.Selector(' + "'" + node_name + "'" + ', ' + str(current_node.memory) + ')' + os.linesep)
     elif current_node.node_type == 'parallel':
         with open(file_name, 'a') as f:
-            f.write('\t' + node_name + ' = py_trees.composites.Parallel(' + "'" + node_name + "'" + ', ' + str(current_node.memory) + ')' + os.linesep)
+            f.write(indent(1) + node_name + ' = py_trees.composites.Parallel(' + "'" + node_name + "'" + ', ' + str(current_node.memory) + ')' + os.linesep)
 
     children = '[' + ', '.join([walk_tree_recursive(child, node_names, file_name, location) for child in current_node.children]) + ']'
 
     with open(file_name, 'a') as f:
-        f.write('\t' + node_name + '.add_children('
+        f.write(indent(1) + node_name + '.add_children('
                 + children
                 + ')'
                 + os.linesep)
@@ -266,7 +280,7 @@ def main():
     root_name = walk_tree(model, args.location + args.output_file, args.location)
 
     with open(args.location + args.output_file, 'a') as f:
-        f.write('\treturn ' + root_name + os.linesep)
+        f.write(indent(1) + 'return ' + root_name + os.linesep)
 
     return
 

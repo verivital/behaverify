@@ -50,6 +50,7 @@ checks {
 actions {
 	action {
 		read_battery
+		imports { 'robot_environ' } end_imports
 		init {
 			variable_statement {
 				battery_reading
@@ -59,11 +60,19 @@ actions {
 		update {
 			variable_statement {
 				battery_reading
+				python_code {
+					'        (got_value, new_value) = robot_environ.get_battery()'
+					'        if got_value: self.blackboard.battery_reading = new_value'
+				} end_python_code
 				case { reading_successful } end_case
 				result { battery } end_result
 				result { battery_reading } end_result
 			} end_variable_statement
 			return_statement {
+				python_code {
+					'        if got_value: return_status = py_trees.common.Status.SUCCESS'
+					'        else: return_status = py_trees.common.Status.FAILURE'
+				} end_python_code
 				case { reading_successful } end_case
 				result { success True failure False running False } end_result
 				result { success False failure True running False } end_result
