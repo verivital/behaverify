@@ -1,0 +1,1 @@
+Each folder in REPRODUCIBILITY contains a Dockerfile which can be used to create the results. This will be updated periodically, but once a folder exists it should remain unchanged (except for fixes to the Dockerfile in order to ensure the correct version of packages are being pulled).
