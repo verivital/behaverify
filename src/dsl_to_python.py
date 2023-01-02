@@ -29,7 +29,8 @@ FUNCTION_FORMAT = {
     'addition' : ('+', 2),
     'subtraction' : ('-', 2),
     'multiplication' : ('*', 2),
-    'division' : ('/', 2)
+    'division' : ('/', 2),
+    'mod' : ('%', 2)
 }
 
 
