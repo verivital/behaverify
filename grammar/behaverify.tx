@@ -58,7 +58,7 @@ node:
     node_type = 'X_is_Y'
     'X' x = status
     'Y' y = status
-    'child' child = node 
+    'child' child = node
     '}' 'end_decorator'
 ;
 status:
@@ -157,6 +157,7 @@ function:
     (function_name = 'min' ',' value1 = code_statement ',' value2 = code_statement) |
     (function_name = 'sin' ',' value1 = code_statement) |
     (function_name = 'cos' ',' value1 = code_statement) |
+    (function_name = 'exp' ',' value1 = code_statement) |
     (function_name = 'tan' ',' value1 = code_statement) |
     (function_name = 'ln' ',' value1 = code_statement) |
     (function_name = 'not' ',' value1 = code_statement) |
@@ -176,6 +177,7 @@ function:
     (function_name = 'addition' ',' value1 = code_statement ',' value2 = code_statement) |
     (function_name = 'subtraction' ',' value1 = code_statement ',' value2 = code_statement) |
     (function_name = 'multiplication' ',' value1 = code_statement ',' value2 = code_statement) |
-    (function_name = 'division' ',' value1 = code_statement ',' value2 = code_statement)
+    (function_name = 'division' ',' value1 = code_statement ',' value2 = code_statement) |
+    (function_name = 'mod' ',' value1 = code_statement ',' value2 = code_statement)
 ;
     

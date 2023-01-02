@@ -12,11 +12,17 @@ To recreate tests, see REPRODUCIBILITY.
 The following files make up BehaVerify
 
 --compute_resume_info.py (internal use only. do not interact with)
+
 --dsl_to_behaverify.py
+
 --dsl_to_python.py
+
 --modifier.py (NOT CURRENTLY WORKING)
+
 --node_creator.py (internal use only. do not interact with)
+
 --smv_writer.py
+
 --tree_parser.py (NOT CURRENTLY CORRECT)
 
 These files are located in ./src. Please note that this version is still being tested. There are errors and inefficiencies.
