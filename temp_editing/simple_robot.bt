@@ -43,6 +43,7 @@ environment {
 checks {
 	check {
 		safe_battery
+		read_variables {battery_reading battery_threshold} end_read_variables
 		condition { (greater_than_or_equal, battery_reading, battery_threshold) } end_condition
 	} end_check
 } end_checks
@@ -51,10 +52,16 @@ actions {
 	action {
 		read_battery
 		imports { 'robot_environ' } end_imports
+		read_variables {} end_read_variables
+		write_variables {battery_reading battery_threshold} end_write_variables
 		init {
 			variable_statement {
 				battery_reading
 				result { 10 } end_result
+			} end_variable_statement
+			variable_statement {
+				battery_threshold
+				result { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 } end_result
 			} end_variable_statement
 		} end_init
 		update {
@@ -81,6 +88,8 @@ actions {
 	} end_action
 	action {
 		execute
+		read_variables {} end_read_variables
+		write_variables {} end_write_variables
 		init {} end_init
 		update {
 			return_statement { result { success True failure False running False } end_result } end_return_statement
