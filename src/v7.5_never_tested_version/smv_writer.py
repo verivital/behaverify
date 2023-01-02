@@ -11,7 +11,6 @@
 # -----------------------------------------------------------------------------------------------------------------------
 import argparse
 import os
-# import sys
 # ----------------------------------------------------------------------------------------------------------------
 # serene custom imports
 import node_creator
@@ -35,34 +34,135 @@ def create_nodes(nodes):
     effects
     returns 4 strings, each for a specific section which each node requires.
     """
-    define_string = ('\t\t' + nodes[0]['name'] + '.active := TRUE;' + os.linesep
-                     + ''.join([('\t\tparallel_skip_' + str(node['node_id']) + ' := '
-                                 + ('[-2]' if len(node['children']) < 2 else (
-                                     '[' + ', '.join(['resume_from_node_' + str(child) for child in node['children']]) + ']')
-                                    )
-                                 + ';' + os.linesep) for node in filter(lambda node: 'parallel_with_memory' in node['type'] , nodes.values())])
-                     )
-    init_string = ''
-    next_string = ''
-    var_string = ''.join([('\t\t' + node['name'] + ' : '
-                           + ((('_'.join([status for (status, possible) in [('success', node['return_arguments']['success']), ('running', node['return_arguments']['running']), ('failure', node['return_arguments']['failure'])] if possible]) + '_DEFAULT_module(') if node['internal_status_module_name'] is None else (
-                                   node['internal_status_module_name'] + '(blackboard')) if node['category'] == 'leaf' else (
-                                       node['category'] + '_' + node['type']
-                                       + ('_' + (str(len(node['children']))) if node['category'] == 'composite' else '')
-                                       + '('
-                                       + ((', '.join([nodes[node['children'][0]]['name']] + node['additional_arguments'])) if node['category'] == 'decorator' else (
-                                           ', '.join([(nodes[child_id]['name']) for child_id in node['children']] + (
-                                               ([] if 'without_memory' in node['type'] else (
-                                                   [
-                                                       ('parallel_skip_' + str(node['node_id'])) if 'parallel' in node['type'] else (
-                                                           '-2' if len(node['children']) < 2 else (', resume_point_' + str(node['node_id']))
-                                                       )
-                                                   ]
-                                               ))))))))
-                           + ');' + os.linesep
-                           )
-                          for node in nodes.values()]
-                         )
+    define_string = ""
+    init_string = ""
+    next_string = ""
+    var_string = ""
+    for node_id in range(0, len(nodes)):
+        node = nodes[node_id]
+        # print(node_id)
+        if node_id == 0:
+            define_string += ("\t\t" + node['name'] + ".active := TRUE;"
+                              + os.linesep)
+        children_string = ''
+        # if node_id in selector_without_memory_set or node_id in
+        # sequence_without_memory_set or node_id in selector_with_memory_set
+        # or node_id in sequence_with_memory_set or node_id in
+        # parallel_synch_set or node_id in parallel_unsynch_set:
+        if len(node['children']) == 0:
+            # this node has no children
+            children_string = ''
+        else:
+            children_string = ''
+            for child in node['children']:
+                children_string += ", " + nodes[child]['name']
+            children_string = children_string[2:]
+        # ---------------------------------
+        if node['category'] == 'leaf':
+            var_string += ("\t\t" + node['name'] + " : "
+                           + node['category'] + '_' + node['type'] + "(")
+        elif node['category'] == 'decorator':
+            var_string += ("\t\t" + node['name'] + " : "
+                           + node['category'] + '_' + node['type'] + "("
+                           + children_string)
+        elif node['category'] == 'composite':
+            if 'without_memory' in node['type']:
+                var_string += ("\t\t" + node['name'] + " : "
+                               + node['category'] + '_' + node['type']
+                               + "_" + str(len(node['children'])) + "("
+                               + children_string)
+            elif 'with_memory' in node['type']:
+                if len(node['children']) < 2:
+                    resume_point = "-2"
+                else:
+                    resume_point = "resume_point_" + str(node_id)
+                if children_string == '':
+                    pass
+                else:
+                    children_string = children_string + ', '
+                var_string += ("\t\t" + node['name'] + " : "
+                               + node['category'] + '_' + node['type']
+                               + "_" + str(len(node['children'])) + "("
+                               + children_string + resume_point)
+            elif 'parallel' in node['type']:
+                if 'unsynchronized' in node['type']:
+                    var_string += ("\t\t" + node['name'] + " : "
+                                   + node['category'] + '_' + node['type']
+                                   + "_" + str(len(node['children'])) + "("
+                                   + children_string)
+                else:
+                    if len(node['children']) < 2:
+                        skip_string = "[-2]"
+                    else:
+                        skip_string = "["
+                        for child in node['children']:
+                            skip_string += ("resume_from_node_" + str(child) + ", ")
+                        skip_string = skip_string[0:-2] + "]"
+                    define_string += ("\t\tparallel_skip_" + str(node_id) + " := "
+                                      + skip_string + ";" + os.linesep)
+
+                    if children_string == "":
+                        pass
+                    else:
+                        children_string = children_string + ', '
+                    var_string += ("\t\t" + node['name'] + " : "
+                                   + node['category'] + '_' + node['type']
+                                   + "_" + str(len(node['children'])) + "("
+                                   + children_string + " parallel_skip_" + str(node_id))
+            else:
+                print('composite node of unknown type. is not parallel.',
+                      ' is not with_memory. is not without_memory.',
+                      'Node infromation follows')
+                print(node)
+        else:
+            print('ERROR: node is not leaf, decorator, or composite.',
+                  'This should not be possible. Node information follows')
+            print(node)
+            var_string += "0"
+        # ---------------------------------
+        if node['category'] == 'leaf':
+            first = True
+        else:
+            first = False
+        for arg in node['additional_arguments']:
+            if first:
+                first = False
+                var_string += arg
+            else:
+                var_string += ', ' + arg
+        var_string = var_string + ");" + os.linesep
+    return (define_string, var_string, init_string, next_string)
+
+
+def create_additional_arguments(nodes):
+    """
+    creates strings with additional neccessary information based on nodes.
+    --
+    arguments
+    @ nodes -> a map (dictionary) from integers (node_id) to node information
+    --
+    return
+    @ define_string -> a string with defintions
+    @ init_string -> a string with initializations
+    @ next_string -> a string with next conditions
+    @ var_string -> a string with variable declarations
+    --
+    effects
+    returns 4 strings, each for a specific section which each node requires.
+    this is based on additional arguments
+    """
+    define_string = ""
+    var_string = ""
+    init_string = ""
+    next_string = ""
+    for node_id in nodes:
+        node = nodes[node_id]
+        for arg in node['additional_definitions']:
+            define_string += arg
+        for arg in node['additional_declarations']:
+            var_string += arg
+        for arg in node['additional_initializations']:
+            init_string += arg
     return (define_string, var_string, init_string, next_string)
 
 
@@ -103,11 +203,11 @@ def create_resume_structure(nodes, local_root_to_relevant_list_map):
 
     # so, resume_from_node_LOCAL_ROOT tracks the actual value that we need to resume from.
 
-    var_resume_from_node_string = ''  # this is a variable that actually stores what running state we're in
-    init_resume_from_node_string = ''
-    next_resume_from_node_string = ''
-    var_define_status_string = ''  # this is for storing the define versions that are constants.
-    define_trace_running_source = ''  # this is storing for the propagation mechanism. rename everything later lmao.
+    var_resume_from_node_string = ""  # this is a variable that actually stores what running state we're in
+    init_resume_from_node_string = ""
+    next_resume_from_node_string = ""
+    var_define_status_string = ""  # this is for storing the define versions that are constants.
+    define_trace_running_source = ""  # this is storing for the propagation mechanism. rename everything later lmao.
     for local_root in local_root_to_relevant_list_map:
         relevant_list = local_root_to_relevant_list_map[local_root]
         if len(relevant_list) == 0:
@@ -210,8 +310,6 @@ def create_resume_point(nodes, node_to_local_root_map, local_root_to_relevant_li
     for node_id in nodes:
         node = nodes[node_id]
         if not node['category'] == 'composite':
-            continue
-        if 'parallel' in node['type']:
             continue
         if 'with_memory' not in node['type']:
             continue
@@ -352,28 +450,37 @@ def main():
     # print(nodes.keys())
 
     node_to_local_root_map = compute_resume_info.create_node_to_local_root_map(nodes)
-    (local_root_to_relevant_list_map, nodes_with_memory_to_relevant_descendants_map) = compute_resume_info.create_local_root_to_relevant_list_map(nodes, node_to_local_root_map)
+    (local_root_to_relevant_list_map, nodes_with_memory_to_relevant_descendants_map) = \
+        compute_resume_info.create_local_root_to_relevant_list_map(nodes, node_to_local_root_map)
     node_to_descendants_map = compute_resume_info.create_node_to_descendants_map(nodes)
 
     # ------------------------------------------------------------------------------------------------------------------------
     # done with variable decleration, moving into string building.
 
-    define_string = ('MODULE main' + os.linesep
-                     + '\tCONSTANTS' + os.linesep
-                     + '\t\tsuccess, failure, running, invalid;' + os.linesep
-                     + '\tDEFINE' + os.linesep
-                     + '\t\tstatuses := [' + ', '.join([(node['name'] + '.status') for node in nodes.values()]) + '];' + os.linesep
-                     + '\t\tactive := [' + ', '.join([(node['name'] + '.active') for node in nodes.values()]) + '];' + os.linesep
+    define_string = ("MODULE main" + os.linesep
+                     + "\tCONSTANTS" + os.linesep
+                     + "\t\tsuccess, failure, running, invalid;" + os.linesep
+                     + "\tDEFINE" + os.linesep
+                     + "\t\tstatuses := ["
                      )
+    for node_id in range(len(nodes)):
+        if node_id == 0:
+            define_string += nodes[node_id]['name'] + ".status"
+        else:
+            define_string += ", " + nodes[node_id]['name'] + ".status"
+    define_string += "];" + os.linesep
 
     # ------------------------------------------------------------------------------------------------------------------------
-    var_string = ('\tVAR' + os.linesep
-                  + '\t\tnode_names : define_nodes;' + os.linesep
-                  + '\t\tblackboard : blackboard_module(node_names, active);' + os.linesep
+    var_string = (""
+                  + "\tVAR" + os.linesep
                   )
+    # var_string += "\t\tvariable_names : define_variables;" + os.linesep
+    var_string += "\t\tnode_names : define_nodes;" + os.linesep
+    # var_string += "\t\tblackboard : blackboard_module(node_names, variable_names, statuses);" + os.linesep
+    var_string += "\t\tblackboard : blackboard_module(node_names, statuses);" + os.linesep
     # ------------------------------------------------------------------------------------------------------------------------
-    init_string = '\tASSIGN' + os.linesep
-    next_string = ''
+    init_string = "\tASSIGN" + os.linesep
+    next_string = ""
     # ------------------------------------------------------------------------------------------------------------------------
 
     (new_define, new_var, new_init, new_next) = create_resume_structure(nodes, local_root_to_relevant_list_map)
@@ -394,39 +501,39 @@ def main():
     init_string += new_init
     next_string += new_next
 
+    (new_define, new_var, new_init, new_next) = create_additional_arguments(nodes)
+    define_string += new_define
+    var_string += new_var
+    init_string += new_init
+    next_string += new_next
+
     nuxmv_string = define_string + var_string + init_string + next_string
     # ------------------------------------------------------------------------------------------------------------------------
     if args.specs_input_file:
         nuxmv_string += open(args.specs_input_file).read() + os.linesep + os.linesep
 
-    nuxmv_string += node_creator.create_names_module(nodes)
-    nuxmv_string += node_creator.create_leaf()
-    nuxmv_string += ''.join([eval('node_creator.create_' + cur_thing[0] + '(' + cur_thing[1] + ')') for cur_thing in
-                             [*set([('composite_' + node['type'], str(len(node['children']))) if node['category'] == 'composite' else (
-                                 ('decorator_' + node['type'], '0'))
-                                    for node in nodes.values() if (node['category'] != 'leaf')])]])
-
-    if args.module_input_file:
-        nuxmv_string = nuxmv_string + open(args.module_input_file).read()
-    else:
-
-        module_string = ''.join([node['internal_status_module_code']
-                                 for node in nodes.values() if ((node['category'] == 'leaf') and (node['internal_status_module_name'] is not None))])
-
-        module_string += ''.join([node_creator.create_status_module(statuses) for statuses in [*set([('_'.join([status for (status, possible) in [('success', node['return_arguments']['success']), ('running', node['return_arguments']['running']), ('failure', node['return_arguments']['failure'])] if possible])) for node in nodes.values() if ((node['category'] == 'leaf') and (node['internal_status_module_name'] is None))])]])
-
-        nuxmv_string += module_string
-        if args.module_output_file is None:
-            pass
+    created_types = set()
+    for node in nodes:
+        if nodes[node]['category'] == 'leaf' or nodes[node]['category'] == 'decorator':
+            if not nodes[node]['type'] in created_types:
+                created_types.add(nodes[node]['type'])
+                nuxmv_string += eval('node_creator.create_' + nodes[node]['category'] + '_' + nodes[node]['type'] + '()')
+        elif nodes[node]['category'] == 'composite':
+            cur_type = nodes[node]['type'] + "_" + str(len(nodes[node]['children']))
+            if cur_type not in created_types:
+                created_types.add(cur_type)
+                nuxmv_string += eval('node_creator.create_' + nodes[node]['category'] + '_' + nodes[node]['type'] + '(' + str(len(nodes[node]['children'])) + ')')
         else:
-            with open(args.module_output_file, 'w') as f:
-                f.write(module_string)
+            print('unknown node category')
+            print(nodes[node])
+
+    nuxmv_string += node_creator.create_names_module(nodes, variables)
 
     # print a blackboard variable chart
-    # for variable in variables:
-    #     nuxmv_string += ('--' + variable + ' : ' + str(variables[variable]['variable_id']) + os.linesep)
-    #     for access_node in variables[variable]['stages']:
-    #         nuxmv_string += ('----' + access_node + os.linesep)
+    for variable in variables:
+        nuxmv_string += ('--' + variable + ' : ' + str(variables[variable]['variable_id']) + os.linesep)
+        for access_node in variables[variable]['stages']:
+            nuxmv_string += ('----' + access_node + os.linesep)
 
     if args.blackboard_input_file:
         nuxmv_string += open(args.blackboard_input_file).read()
@@ -440,11 +547,181 @@ def main():
             with open(args.blackboard_output_file, 'w') as f:
                 f.write(blackboard_string)
 
+    module_string = ''
+    status_module_string = ''
+    check_module_string = ''
+    other_module_string = ''
+    if args.module_input_file:
+        nuxmv_string = nuxmv_string + open(args.module_input_file).read()
+    else:
+        for node_id in nodes:
+            for module_sig in nodes[node_id]['additional_modules']:
+                module = nodes[node_id]['additional_modules'][module_sig]
+                if module['type'] == 'status':
+                    possible_values = []
+                    for status in nodes[node_id]['return_arguments']:
+                        if nodes[node_id]['return_arguments'][status]:
+                            possible_values.append(status)
+                    if len(possible_values) == 1:
+                        status_module_string += ("MODULE " + module['name']
+                                                 + '(' + str(module['args'])[1:-1].replace("'", "") + ')' + os.linesep
+                                                 + "\tCONSTANTS" + os.linesep
+                                                 + "\t\tsuccess, failure, running;" + os.linesep
+                                                 + "\tDEFINE" + os.linesep
+                                                 + "\t\tstatus := " + possible_values[0].replace("'", "") + ";"
+                                                 + os.linesep
+                                                 )
+                    else:
+                        if len(possible_values) == 0:
+                            print('no possible values for module,',
+                                  'defaulting to all values acceptable')
+                            print(nodes[node_id])
+                            possible_values = [
+                                'success',
+                                'failure',
+                                'running']
+                        possible_values = "{" + str(possible_values)[1:-1].replace("'", "") + "}"
+                        status_module_string += ("MODULE " + module['name']
+                                                 + '(' + str(module['args'])[1:-1].replace("'", "") + ')' + os.linesep
+                                                 + "\tCONSTANTS" + os.linesep
+                                                 + "\t\tsuccess, failure, running;" + os.linesep
+                                                 + "\tVAR" + os.linesep
+                                                 + "\t\tstatus : " + possible_values + ";" + os.linesep
+                                                 )
+                        assigned = False
+                        if not module['initial_value'] is None:
+                            if not assigned:
+                                status_module_string += "\tASSIGN" + os.linesep
+                                assigned = True
+                            status_module_string += ("\t\tinit(status) := " + os.linesep
+                                                     + "\t\t\tcase" + os.linesep
+                                                     )
+                            for condition_pair in module['init_value']:
+                                status_module_string += "\t\t\t\t" + condition_pair[0] + " : " + condition_pair[1] + ";" + os.linesep
+                            status_module_string += ("\t\t\t\tTRUE : " + possible_values + ";" + os.linesep
+                                                     + "\t\t\tesac;" + os.linesep
+                                                     )
+                        if not module['next_value'] is None:
+                            if not assigned:
+                                status_module_string += "\tASSIGN" + os.linesep
+                                assigned = True
+                            status_module_string += ("\t\tnext(status) := " + os.linesep
+                                                     + "\t\t\tcase" + os.linesep
+                                                     )
+                            for condition_pair in module['next_value']:
+                                status_module_string += "\t\t\t\t" + condition_pair[0] + " : " + condition_pair[1] + ";" + os.linesep
+                            status_module_string += ("\t\t\t\tTRUE : " + possible_values + ";" + os.linesep
+                                                     + "\t\t\tesac;" + os.linesep
+                                                     )
+                        if not module['current_value'] is None:
+                            if not assigned:
+                                status_module_string += "\tASSIGN" + os.linesep
+                                assigned = True
+                            status_module_string += ("\t\tstatus := " + os.linesep
+                                                     + "\t\t\tcase" + os.linesep
+                                                     )
+                            for condition_pair in module['current_value']:
+                                status_module_string += "\t\t\t\t" + condition_pair[0] + " : " + condition_pair[1] + ";" + os.linesep
+                            status_module_string += ("\t\t\t\tTRUE : " + possible_values + ";" + os.linesep
+                                                     + "\t\t\tesac;" + os.linesep
+                                                     )
+                    status_module_string += os.linesep
+                elif module['type'] == 'check':
+
+                    check_module_string += ("MODULE " + module['name'] + '(' + str(module['args'])[1:-1].replace("'", "") + ')' + os.linesep
+                                            + "\tDEFINE" + os.linesep
+                                            + "\t\tresult := "
+                                            )
+                    if module['left_hand_side']:
+                        # user provided a left hand side, using that.
+                        check_module_string += module['left_hand_side'] + module['operator'] + module['right_hand_side'] + ';' + os.linesep
+                    else:
+                        # gotta default it
+                        if variables[module['variable_name']]['use_separate_stages']:
+                            stage = 0
+                            for stage_end in variables[module['variable_name']]['stages']:
+                                if stage_end > node_id:
+                                    break
+                                stage = stage + 1
+                            if stage == 0:
+                                # check_module_string += ("variable_exists[variable_names." + module['variable_name'] + "]"
+                                #                         + " & (variables[variable_names." + module['variable_name'] + "]" + module['operator'] + module['right_hand_side'] + ');' + os.linesep
+                                #                         )
+                                check_module_string += ("blackboard." + module['variable_name'] + "_exists"
+                                                        + " & (blackboard." + module['variable_name'] + module['operator'] + str(module['right_hand_side']) + ');' + os.linesep
+                                                        )
+                            else:
+                                stage = str(stage)
+                                # check_module_string += ("variable_exists[variable_names." + module['variable_name'] + "_stage_" + stage + "]"
+                                #                         + " & (variables[variable_names." + module['variable_name'] + "_stage_" + stage + "]" + module['operator'] + module['right_hand_side'] + ');' + os.linesep
+                                #                         )
+                                check_module_string += ("blackboard." + module['variable_name'] + "_stage_" + stage + "_exists"
+                                                        + " & (blackboard." + module['variable_name'] + "_stage_" + stage + module['operator'] + str(module['right_hand_side']) + ');' + os.linesep
+                                                        )
+                                # check_module_string += "blackboard."
+                                # check_module_string += module['variable_name']
+                                # check_module_string += "_stage_"
+                                # check_module_string += stage
+                                # check_module_string += "_exists"
+                                # check_module_string += " & (blackboard."
+                                # check_module_string += module['variable_name']
+                                # check_module_string += "_stage_"
+                                # check_module_string += stage
+                                # check_module_string += module['operator']
+                                # check_module_string += module['right_hand_side']
+                                # check_module_string += ');'
+                                # check_module_string += os.linesep
+                        else:
+                            if module['use_next']:
+                                check_module_string += "next("
+                            # check_module_string += "variable_exists[variable_names." + module['variable_name'] + "]"
+                            check_module_string += "blackboard." + module['variable_name'] + "_exists"
+                            if module['use_next']:
+                                check_module_string += ")"
+                            check_module_string += " & ("
+                            if module['use_next']:
+                                check_module_string += 'next('
+                            # check_module_string += "variables[variable_names." + module['variable_name'] + "]"
+                            check_module_string += "blackboard." + module['variable_name']
+                            if module['use_next']:
+                                check_module_string += ') '
+                            check_module_string += module['operator'] + module['right_hand_side'] + ");" + os.linesep
+                            check_module_string += os.linesep
+                else:
+                    other_module_string += module['custom_module']
+                    other_module_string += os.linesep
+        module_string = (status_module_string
+                         + check_module_string
+                         + other_module_string)
+        nuxmv_string += module_string
+        if args.module_output_file is None:
+            pass
+        else:
+            with open(args.module_output_file, 'w') as f:
+                f.write(module_string)
+            # if args.overwrite:
+            #     with open(args.module_output_file, 'w') as f:
+            #         f.write(module_string)
+            # else:
+            #     try:
+            #         with open(args.module_output_file, 'x') as f:
+            #             f.write(module_string)
+            #     except FileExistsError:
+            #         print('The specified module file already exists. To overwrite the file, rerun the command with --overwrite True')
     if args.output_file is None:
         print(nuxmv_string)
     else:
         with open(args.output_file, 'w') as f:
             f.write(nuxmv_string)
+        # if args.overwrite:
+        #     with open(args.output_file, 'w') as f:
+        #         f.write(nuxmv_string)
+        # else:
+        #     try:
+        #         with open(args.output_file, 'x') as f:
+        #             f.write(nuxmv_string)
+        #     except FileExistsError:
+        #         print('The specified output file already exists. To overwrite the file, rerun the command with --overwrite True')
     return
 
 
