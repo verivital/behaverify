@@ -1,0 +1,85 @@
+{   'nodes': {   0: {   'category': 'composite',
+                        'children': [1, 2],
+                        'name': 'collatz',
+                        'node_id': 0,
+                        'parent_id': -1,
+                        'return_arguments': {   'failure': True,
+                                                'running': True,
+                                                'success': True},
+                        'type': 'sequence_without_memory'},
+                 1: {   'category': 'leaf',
+                        'children': [],
+                        'internal_status_module_code': 'MODULE '
+                                                       'not_finished_module(blackboard)\n'
+                                                       '\tCONSTANTS\n'
+                                                       '\t\tsuccess, failure, '
+                                                       'running, invalid;\n'
+                                                       '\tDEFINE\n'
+                                                       '\t\tstatus := active ? '
+                                                       'internal_status : '
+                                                       'invalid;\n'
+                                                       '\t\tinternal_status := '
+                                                       '(!(blackboard.finished) '
+                                                       '& '
+                                                       '!(blackboard.overflow_failure)) '
+                                                       '? success : failure;\n',
+                        'internal_status_module_name': 'not_finished_module',
+                        'name': 'not_finished',
+                        'node_id': 1,
+                        'parent_id': 0,
+                        'return_arguments': {   'failure': True,
+                                                'running': False,
+                                                'success': True},
+                        'type': 'check'},
+                 2: {   'category': 'leaf',
+                        'children': [],
+                        'internal_status_module_code': None,
+                        'internal_status_module_name': None,
+                        'name': 'next_value',
+                        'node_id': 2,
+                        'parent_id': 0,
+                        'return_arguments': {   'failure': False,
+                                                'running': False,
+                                                'success': True},
+                        'type': 'action'}},
+    'variables': {   'finished': {   'custom_value_range': '{TRUE, FALSE}',
+                                     'environment_update': None,
+                                     'init_value': [('TRUE', 'FALSE')],
+                                     'max_value': 1,
+                                     'min_value': 0,
+                                     'mode': 'VAR',
+                                     'next_value': [   (   'next_value',
+                                                           [   (   'TRUE',
+                                                                   'next(value_stage_1) '
+                                                                   '= 1')])],
+                                     'variable_name': 'finished'},
+                     'overflow_failure': {   'custom_value_range': '{TRUE, '
+                                                                   'FALSE}',
+                                             'environment_update': None,
+                                             'init_value': [('TRUE', 'FALSE')],
+                                             'max_value': 1,
+                                             'min_value': 0,
+                                             'mode': 'VAR',
+                                             'next_value': [   (   'next_value',
+                                                                   [   (   'TRUE',
+                                                                           'next(value_stage_1) '
+                                                                           '= '
+                                                                           '1000')])],
+                                             'variable_name': 'overflow_failure'},
+                     'value': {   'custom_value_range': None,
+                                  'environment_update': None,
+                                  'init_value': [   (   'TRUE',
+                                                        '{2, 3, 4, 5, 6, 7, 8, '
+                                                        '9, 10, 11, 12}')],
+                                  'max_value': 1000,
+                                  'min_value': 1,
+                                  'mode': 'VAR',
+                                  'next_value': [   (   'next_value',
+                                                        [   (   'value mod 2 = '
+                                                                '0',
+                                                                'value / 2'),
+                                                            (   'TRUE',
+                                                                'min(value * 3 '
+                                                                '+ 1, '
+                                                                '1000)')])],
+                                  'variable_name': 'value'}}}

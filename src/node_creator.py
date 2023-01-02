@@ -28,8 +28,8 @@ def create_blackboard(nodes, variables):
         variable = variables[variable_name]
         # -----------------------------------
         # define are static.
-        if variable['mode'].strip() == 'DEFINE' or (variable['custom_value_range'] is None and variable['environment_update'] is None and variable['min_value'] >= variable['max_value']):
-            # if variable['mode'].strip() == 'DEFINE':
+        if variable['mode'].strip() == 'DEFINE':
+            # if variable['mode'].strip() == 'DEFINE' or (variable['custom_value_range'] is None and variable['environment_update'] is None and variable['min_value'] >= variable['max_value']):
             if variable['init_value'] is None:
                 if variable['custom_value_range'] is None:
                     exist_define += ('\t\t' + variable_name + ' := ' + str(variable['min_value']) + ';' + os.linesep)
@@ -42,8 +42,8 @@ def create_blackboard(nodes, variables):
                                  + '\t\t\tesac;' + os.linesep
                                  )
             exist_define += "\t\t" + variable_name + "_exists := TRUE;" + os.linesep
-        elif variable['mode'].strip() == 'FROZENVAR' or (len(variable['next_value']) == 0 and variable['environment_update'] is None):
-            # elif variable['mode'].strip() == 'FROZENVAR':e
+        elif variable['mode'].strip() == 'FROZENVAR':
+            # elif variable['mode'].strip() == 'FROZENVAR' or (len(variable['next_value']) == 0 and variable['environment_update'] is None):
             frozen_decl_string += ('\t\t' + variable_name + ' : '
                                    + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean')))
                                    + ';' + os.linesep)
