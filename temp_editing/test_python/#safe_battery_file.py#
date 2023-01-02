@@ -14,4 +14,3 @@ class safe_battery(py_trees.behaviour.Behaviour):
 
     def update(self):
         return ((py_trees.common.Status.SUCCESS) if (self.blackboard.battery_reading >= self.blackboard.battery_threshold) else (py_trees.common.Status.FAILURE))
-

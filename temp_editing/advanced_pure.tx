@@ -73,6 +73,7 @@ status:
     check_node:
     (node_type = 'check') '{'
     name = ID
+    'read_variables' '{' read_variables *= [variable]  '}' 'end_read_variables'
     ('imports' '{' imports *= STRING[','] '}' 'end_imports')?
     ('python_code' '{' python_code += STRING '}' 'end_python_code')?
     ('condition' '{' condition = code_statement '}' 'end_condition')?
@@ -83,6 +84,8 @@ status:
     (node_type = 'action') '{'
     name = ID
     ('imports' '{' imports *= STRING[','] '}' 'end_imports')?
+    'read_variables' '{' read_variables *= [variable]  '}' 'end_read_variables'
+    'write_variables' '{' write_variables *= [variable]  '}' 'end_write_variables'
     'init' '{'
     init_statements *= variable_statement
     '}' 'end_init'

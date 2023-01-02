@@ -72,7 +72,8 @@ def init_method_check(node):
     return (indent(1) + 'def __init__(self, name):' + os.linesep
             + indent(2) + 'super(' + node.name + ', self).__init__(name)' + os.linesep
             + indent(2) + 'self.name = name' + os.linesep
-            + indent(2) + 'self.blackboard = py_trees.blackboard.Blackboard()' + os.linesep
+            + indent(2) + 'self.blackboard = self.attach_blackboard_client(name = name)' + os.linesep
+            + ''.join([(indent(2) + 'self.blackboard.register_key(key = (' + "'" + variable.name + "'" + '), access = py_trees.common.Access.READ)' + os.linesep) for variable in node.read_variables])
             + os.linesep)
 
 
@@ -151,7 +152,9 @@ def init_method_action(node):
     return (indent(1) + 'def __init__(self, name):' + os.linesep
             + indent(2) + 'super(' + node.name + ', self).__init__(name)' + os.linesep
             + indent(2) + 'self.name = name' + os.linesep
-            + indent(2) + 'self.blackboard = py_trees.blackboard.Blackboard()' + os.linesep
+            + indent(2) + 'self.blackboard = self.attach_blackboard_client(name = name)' + os.linesep
+            + ''.join([(indent(2) + 'self.blackboard.register_key(key = (' + "'" + variable.name + "'" + '), access = py_trees.common.Access.READ)' + os.linesep) for variable in node.read_variables])
+            + ''.join([(indent(2) + 'self.blackboard.register_key(key = (' + "'" + variable.name + "'" + '), access = py_trees.common.Access.WRITE)' + os.linesep) for variable in node.write_variables])
             + ''.join([handle_variable_statement(statement) for statement in node.init_statements])
             + os.linesep)
 
@@ -264,8 +267,8 @@ def main():
     arg_parser = argparse.ArgumentParser()
     arg_parser.add_argument('metamodel_file')
     arg_parser.add_argument('model_file')
-    arg_parser.add_argument('output_file', default = None)
-    arg_parser.add_argument('location', default = None)
+    arg_parser.add_argument('output_file', default = 'main.py')
+    arg_parser.add_argument('location', default = './')
     args = arg_parser.parse_args()
 
     metamodel = textx.metamodel_from_file(args.metamodel_file, auto_init_attributes = False)
