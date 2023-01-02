@@ -6,4 +6,5 @@
 **/models_*/**
 **/results/**
 **/__pycache__/**
+__pycache__/
 temp_output/**
