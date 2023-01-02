@@ -3,44 +3,32 @@ behavior tree verification
 
 
 
-To recreate tests, download the docker file and run the following commands
-
-docker build -t behaverify_img:latest - < Dockerfile
-docker container create -i -t --name behaverify behaverify_img
-docker start behaverify
-docker exec behaverify /minimal_script.sh
-docker cp behaverify:/root/behaverify/examples/processed_data/. ./processed_data
-docker cp behaverify:/root/behaverify/examples/results/. ./results
-
-
-to locally recreate models, navigate to the ./examples folder, and then run
-./generate_minimal.sh
-
-to locally run the tests (once models have been built), navigate to the ./examples folder, and then run
-./run_minimal.sh
-
-to do all of this at once, navigate to the ./examples folder and then run
-./do_minimal.sh
-
-
-models will be built in ./examples/EXAMPLE_NAME/models_MODEL_NAME/ where EXAMPLE_NAME is the relevant example, and MODEL_NAME is based on the encoding
-results will be placed in ./examples/results/EXAMPLE_NAME/
-
-These tests run using the code version found in ./src/v6_paper_last_second_fix
-The version in v6.5_input_recheck is identical to the total_v3 version in v6, except that it uses IVAR instead of a VAR in some places. Performance is very similar, but slightly favors the VAR variation.
+To recreate tests, see REPRODUCIBILITY.
 
 
 
 # General Usage
 
-For the most current version, there are 4 python files neccessary to execute BehaVerify. They are
+The following files make up BehaVerify
 
---modifier.py
---node_creator.py
+--compute_resume_info.py (internal use only. do not interact with)
+--dsl_to_behaverify.py
+--dsl_to_python.py
+--modifier.py (NOT CURRENTLY WORKING)
+--node_creator.py (internal use only. do not interact with)
 --smv_writer.py
---tree_parser.py
+--tree_parser.py (NOT CURRENTLY CORRECT)
 
 These files are located in ./src. Please note that this version is still being tested. There are errors and inefficiencies.
+
+
+# WARNING
+
+Information below is not accurate and has not been updated to the most recent version. 
+
+Quick overview: the newest version utilizes a Domain Specific Language (DSL) as defined in the grammar folder. Eventually, the plan is to be able to create a DSL template from an existing py_trees implementation, but that functionality does not yet exist. Furthermore, owing to some re-writes, it is currently not possible to utilize tree_parser.py to create a modeol directly from an existing py_trees implementation.
+
+Current usage: use dsl_to_python.py in order to create an intermediate file that is used with smv_writer.py to create an smv file for use with nuXmv. 
 
 ## tree_parser.py
 
