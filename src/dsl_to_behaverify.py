@@ -163,19 +163,13 @@ def format_code(code, node_name, variables, local_variables, use_stages, call_bl
 
 def walk_tree(model, variables, local_variables):
     nodes = {}
-    walk_tree_recursive(model.root, -1, 0, nodes, {}, variables, local_variables)
+    walk_tree_recursive(model.root, None, nodes, {}, variables, local_variables)
     return nodes
 
 
-def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_names, variables, local_variables):
+def walk_tree_recursive(current_node, parent_name, nodes, node_names, variables, local_variables):
     if not hasattr(current_node, 'name'):
         current_node = current_node.leaf
-    this_id = next_available_id
-    next_available_id = next_available_id + 1
-    # increment what is available
-    if parent_id >= 0:
-        nodes[parent_id]['children'].append(this_id)
-        # update parent's list of children
     # next, we get the name of this node, and correct for duplication
     node_name = current_node.name.replace(' ', '')
     if node_name in node_names:
@@ -183,6 +177,10 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
         node_name = node_name + str(node_names[node_name])
     else:
         node_names[node_name] = 0
+
+    if parent_name is not None:
+        nodes[parent_name]['children'].append(node_name)
+        # update parent's list of children
 
     # ----------------------------------------------------------------------------------
     # start of massive if statements, starting with composites
@@ -193,10 +191,9 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             memory_string = 'sequence_with_memory'
         else:
             memory_string = 'sequence_without_memory'
-        nodes[this_id] = {
-            'node_id' : this_id,
+        nodes[node_name] = {
             'name' : node_name,
-            'parent_id' : parent_id,
+            'parent' : parent_name,
             'children' : [],
             'category' : 'composite',
             'type' : memory_string,
@@ -204,17 +201,19 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                 'success' : True,
                 'running' : True,
                 'failure' : True
-            }
+            },
+            'additional_arguments' : None,
+            'internal_status_module_name' : None,
+            'internal_status_module_code' : None
         }
     elif current_node.node_type == 'selector':
         if current_node.memory:
             memory_string = 'selector_with_memory'
         else:
             memory_string = 'selector_without_memory'
-        nodes[this_id] = {
-            'node_id' : this_id,
+        nodes[node_name] = {
             'name' : node_name,
-            'parent_id' : parent_id,
+            'parent' : parent_name,
             'children' : [],
             'category' : 'composite',
             'type' : memory_string,
@@ -222,18 +221,20 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                 'success' : True,
                 'running' : True,
                 'failure' : True
-            }
+            },
+            'additional_arguments' : None,
+            'internal_status_module_name' : None,
+            'internal_status_module_code' : None
         }
     elif current_node.node_type == 'parallel':
         cur_type = 'parallel'
         if current_node.memory:
-            cur_type += '_with_memory_' + current_node.parallel_policy
+            cur_type += '_' + current_node.parallel_policy + '_with_memory'
         else:
-            cur_type += '_without_memory_success_on_all'
-        nodes[this_id] = {
-            'node_id' : this_id,
+            cur_type += '_success_on_all_without_memory'
+        nodes[node_name] = {
             'name' : node_name,
-            'parent_id' : parent_id,
+            'parent' : parent_name,
             'children' : [],
             'category' : 'composite',
             'type' : cur_type,
@@ -241,7 +242,10 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                 'success' : True,
                 'running' : True,
                 'failure' : True
-            }
+            },
+            'additional_arguments' : None,
+            'internal_status_module_name' : None,
+            'internal_status_module_code' : None
         }
 
     elif current_node.node_type == 'X_is_Y':
@@ -249,10 +253,9 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
             print('Decorator ' + current_node.name + ' has the same X and Y. Exiting.')
             sys.exit()
 
-        nodes[this_id] = {
-            'node_id' : this_id,
+        nodes[node_name] = {
             'name' : node_name,
-            'parent_id' : parent_id,
+            'parent' : parent_name,
             'children' : [],
             'category' : 'decorator',
             'type' : 'X_is_Y',
@@ -261,14 +264,15 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
                 'running' : not current_node.x == 'running',
                 'failure' : not current_node.x == 'failure'
             },
-            'additional_arguments' : [current_node.x, current_node.y]
+            'additional_arguments' : [current_node.x, current_node.y],
+            'internal_status_module_name' : None,
+            'internal_status_module_code' : None
         }
 
     elif current_node.node_type == 'check':
-        nodes[this_id] = {
-            'node_id' : this_id,
+        nodes[node_name] = {
             'name' : node_name,
-            'parent_id' : parent_id,
+            'parent' : parent_name,
             'children' : [],
             'category' : 'leaf',
             'type' : 'check',
@@ -315,10 +319,9 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
         handle_statements(current_node.init_statements, True)
         handle_statements(current_node.pre_update_statements, False)
 
-        nodes[this_id] = {
-            'node_id' : this_id,
+        nodes[node_name] = {
             'name' : node_name,
-            'parent_id' : parent_id,
+            'parent' : parent_name,
             'children' : [],
             'category' : 'leaf',
             'type' : 'action',
@@ -364,26 +367,26 @@ def walk_tree_recursive(current_node, parent_id, next_available_id, nodes, node_
         }
         handle_statements(current_node.post_update_statements, False)
 
-    if nodes[this_id]['category'] == 'leaf':
+    if nodes[node_name]['category'] == 'leaf':
         pass
-    elif nodes[this_id]['category'] == 'decorator':
+    elif nodes[node_name]['category'] == 'decorator':
         # currently there are no decorators. not really.
-        next_available_id = walk_tree_recursive(
+        walk_tree_recursive(
             current_node.child,
-            this_id, next_available_id,
+            node_name,
             nodes, node_names,
             variables, local_variables
             )
     else:
         for child in current_node.children:
-            next_available_id = walk_tree_recursive(
+            walk_tree_recursive(
                 child,
-                this_id, next_available_id,
+                node_name,
                 nodes, node_names,
                 variables, local_variables
             )
 
-    return next_available_id
+    return
 
 
 def main():
