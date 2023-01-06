@@ -4,10 +4,10 @@ import os
 # -----------------------------------------------------------------
 # the blackboard
 
-def create_names_module(nodes):
+def create_names_module(node_name_to_number):
     return ('MODULE define_nodes' + os.linesep
             + '\tDEFINE' + os.linesep
-            + ''.join([('\t\t' + node['name'] + ' := ' + str(node['node_id']) + ';' + os.linesep) for node in nodes.values()])
+            + ''.join([('\t\t' + node_name + ' := ' + str(node_name_to_number[node_name]) + ';' + os.linesep) for node_name in node_name_to_number])
             )
 
 
@@ -337,9 +337,9 @@ def create_composite_sequence_without_memory(number_of_children):
     return return_string
 
 
-def create_composite_parallel_with_memory_success_on_all(number_of_children):
+def create_composite_parallel_success_on_all_with_memory(number_of_children):
     (status_start, status_end, active, active_end, children) = common_string_composite(number_of_children)
-    return_string = ("MODULE composite_parallel_with_memory_success_on_all_" + str(number_of_children) + "(" + children + ", skip_child)" + os.linesep
+    return_string = ("MODULE composite_parallel_success_on_all_with_memory_" + str(number_of_children) + "(" + children + ", skip_child)" + os.linesep
                      + status_start
                      )
     for child in range(number_of_children):
@@ -389,9 +389,9 @@ def create_composite_parallel_with_memory_success_on_one(number_of_children):
 # no skipping in the below
 
 
-def create_composite_parallel_without_memory_success_on_all(number_of_children):
+def create_composite_parallel_success_on_all_without_memory(number_of_children):
     (status_start, status_end, active, active_end, children) = common_string_composite(number_of_children)
-    return_string = ("MODULE composite_parallel_without_memory_success_on_all_" + str(number_of_children) + "(" + children + ")" + os.linesep
+    return_string = ("MODULE composite_parallel_success_on_all_without_memory_" + str(number_of_children) + "(" + children + ")" + os.linesep
                      + status_start
                      )
     for child in range(number_of_children):
@@ -412,9 +412,9 @@ def create_composite_parallel_without_memory_success_on_all(number_of_children):
     return return_string
 
 
-def create_composite_parallel_without_memory_success_on_one(number_of_children):
+def create_composite_parallel_success_on_one_without_memory(number_of_children):
     (status_start, status_end, active, active_end, children) = common_string_composite(number_of_children)
-    return_string = ("MODULE composite_parallel_without_memory_success_on_one_" + str(number_of_children) + "(" + children + ")" + os.linesep
+    return_string = ("MODULE composite_parallel_success_on_one_without_memory_" + str(number_of_children) + "(" + children + ")" + os.linesep
                      + status_start
                      )
     for child in range(number_of_children):
