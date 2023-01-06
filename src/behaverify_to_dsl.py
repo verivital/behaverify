@@ -39,7 +39,7 @@ contains the following information
 
 variables : a map (dictionary) from variable name to information
 about the variable
- 'variable_name' : the name of the variable (identical to the key)
+ 'name' : the name of the variable (identical to the key)
  'mode' : 'VAR', 'FROZENVAR', or 'DEFINE'. default 'VAR'
  'custom_value_range' : a string indicating a custom range of values.
     Default: None
@@ -67,7 +67,8 @@ def variable_string(variable):
                     variable['custom_value_range'].replace('{TRUE, FALSE}', 'BOOLEAN')
                 )
             ) + os.linesep
-            + indent(1) + '} end_variable')
+            + indent(1) + '} end_variable' + os.linesep
+            )
 
 
 def variables_string(variables):
@@ -82,7 +83,7 @@ def check_string(node, variables):
             + indent(2) + node['name'] + os.linesep
             + indent(2) + 'read_variables { } end_read_variables' + os.linesep
             + indent(2) + 'condition { True } end_condition' + os.linesep
-            + indent(1) + '} end_acheck' + os.linsep
+            + indent(1) + '} end_check' + os.linesep
             )
 
 
@@ -92,12 +93,12 @@ def action_string(node, variables):
             + indent(2) + 'read_variables { } end_read_variables' + os.linesep
             + indent(2) + 'write_variables { } end_write_variables' + os.linesep
             + indent(2) + 'init { } end_init' + os.linesep
-            + indent(2) + 'update {' + os.linsep
-            + indent(3) + 'success ' + node['return_possibilities']['success'] + os.linesep
-            + indent(3) + 'failure ' + node['return_possibilities']['failure'] + os.linesep
-            + indent(3) + 'running ' + node['return_possibilities']['running'] + os.linesep
+            + indent(2) + 'update {' + os.linesep
+            + indent(3) + 'success ' + str(node['return_possibilities']['success']) + os.linesep
+            + indent(3) + 'failure ' + str(node['return_possibilities']['failure']) + os.linesep
+            + indent(3) + 'running ' + str(node['return_possibilities']['running']) + os.linesep
             + indent(2) + '} end_update' + os.linesep
-            + indent(1) + '} end_action' + os.linsep
+            + indent(1) + '} end_action' + os.linesep
             )
 
 

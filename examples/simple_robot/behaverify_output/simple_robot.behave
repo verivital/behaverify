@@ -1,0 +1,148 @@
+{   'nodes': {   'execute': {   'category': 'leaf',
+                                'children': [],
+                                'internal_status_module_code': None,
+                                'internal_status_module_name': None,
+                                'name': 'execute',
+                                'parent': 'robot',
+                                'return_possibilities': {   'failure': False,
+                                                            'running': False,
+                                                            'success': True},
+                                'type': 'action'},
+                 'read_battery': {   'category': 'leaf',
+                                     'children': [],
+                                     'internal_status_module_code': 'MODULE '
+                                                                    'read_battery_module(blackboard)\n'
+                                                                    '\t'
+                                                                    'CONSTANTS\n'
+                                                                    '\t\t'
+                                                                    'success, '
+                                                                    'failure, '
+                                                                    'running, '
+                                                                    'invalid;\n'
+                                                                    '\tDEFINE\n'
+                                                                    '\t\t'
+                                                                    'status := '
+                                                                    'active ? '
+                                                                    'internal_status '
+                                                                    ': '
+                                                                    'invalid;\n'
+                                                                    '\tVAR\n'
+                                                                    '\t\t'
+                                                                    'internal_status '
+                                                                    ': '
+                                                                    '{success, '
+                                                                    'failure};\n'
+                                                                    '\tASSIGN\n'
+                                                                    '\t\t'
+                                                                    'init(internal_status) '
+                                                                    ':= '
+                                                                    'success;\n'
+                                                                    '\t\t'
+                                                                    'next(internal_status) '
+                                                                    ':= \n'
+                                                                    '\t\t\t'
+                                                                    'case\n'
+                                                                    '\t\t\t\t'
+                                                                    'blackboard.reading_successful '
+                                                                    ': '
+                                                                    'success;\n'
+                                                                    '\t\t\t\t'
+                                                                    'TRUE : '
+                                                                    'failure;\n'
+                                                                    '\t\t\t'
+                                                                    'esac;\n',
+                                     'internal_status_module_name': 'read_battery_module',
+                                     'name': 'read_battery',
+                                     'parent': 'robot',
+                                     'return_possibilities': {   'failure': True,
+                                                                 'running': False,
+                                                                 'success': True},
+                                     'type': 'action'},
+                 'robot': {   'additional_arguments': None,
+                              'category': 'composite',
+                              'children': [   'read_battery',
+                                              'safe_battery',
+                                              'execute'],
+                              'internal_status_module_code': None,
+                              'internal_status_module_name': None,
+                              'name': 'robot',
+                              'parent': None,
+                              'return_possibilities': {   'failure': True,
+                                                          'running': True,
+                                                          'success': True},
+                              'type': 'sequence_without_memory'},
+                 'safe_battery': {   'category': 'leaf',
+                                     'children': [],
+                                     'internal_status_module_code': 'MODULE '
+                                                                    'safe_battery_module(blackboard)\n'
+                                                                    '\t'
+                                                                    'CONSTANTS\n'
+                                                                    '\t\t'
+                                                                    'success, '
+                                                                    'failure, '
+                                                                    'running, '
+                                                                    'invalid;\n'
+                                                                    '\tDEFINE\n'
+                                                                    '\t\t'
+                                                                    'status := '
+                                                                    'active ? '
+                                                                    'internal_status '
+                                                                    ': '
+                                                                    'invalid;\n'
+                                                                    '\t\t'
+                                                                    'internal_status '
+                                                                    ':= '
+                                                                    '(blackboard.battery_reading_stage_1 '
+                                                                    '>= '
+                                                                    'blackboard.battery_threshold) '
+                                                                    '? success '
+                                                                    ': '
+                                                                    'failure;\n',
+                                     'internal_status_module_name': 'safe_battery_module',
+                                     'name': 'safe_battery',
+                                     'parent': 'robot',
+                                     'return_possibilities': {   'failure': True,
+                                                                 'running': False,
+                                                                 'success': True},
+                                     'type': 'check'}},
+    'variables': {   'battery': {   'custom_value_range': None,
+                                    'environment_update': None,
+                                    'init_value': None,
+                                    'max_value': 10,
+                                    'min_value': 0,
+                                    'mode': 'VAR',
+                                    'name': 'battery',
+                                    'next_value': []},
+                     'battery_reading': {   'custom_value_range': None,
+                                            'environment_update': None,
+                                            'init_value': [('TRUE', '10')],
+                                            'max_value': 10,
+                                            'min_value': 0,
+                                            'mode': 'VAR',
+                                            'name': 'battery_reading',
+                                            'next_value': [   (   'read_battery',
+                                                                  [   (   'reading_successful',
+                                                                          'battery'),
+                                                                      (   'TRUE',
+                                                                          'battery_reading')])]},
+                     'battery_threshold': {   'custom_value_range': None,
+                                              'environment_update': None,
+                                              'init_value': [   (   'TRUE',
+                                                                    '{0, 1, 2, '
+                                                                    '3, 4, 5, '
+                                                                    '6, 7, 8, '
+                                                                    '9, 10}')],
+                                              'max_value': 10,
+                                              'min_value': 0,
+                                              'mode': 'FROZENVAR',
+                                              'name': 'battery_threshold',
+                                              'next_value': []},
+                     'reading_successful': {   'custom_value_range': '{TRUE, '
+                                                                     'FALSE}',
+                                               'environment_update': None,
+                                               'init_value': None,
+                                               'max_value': 1,
+                                               'min_value': 0,
+                                               'mode': 'VAR',
+                                               'name': 'reading_successful',
+                                               'next_value': []}}}

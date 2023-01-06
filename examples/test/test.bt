@@ -20,20 +20,23 @@ local_variables {
 	} end_variable
 } end_local_variables
 
-environment_variables {
+environment_variables { } end_environment_variables
 
-} end_environment_variables
+environment { initial_values { } end_initial_values update_values { } end_update_values } end_environment
 
 checks {
 	check {
 		guard
-		start_condition { (equal, c, c) } end_condition
+		read_variables { c } end_read_variables
+		condition { (equal, c, c) } end_condition
 	} end_check
 } end_checks
 
 actions {
 	action {
 		action
+		read_variables {} end_read_variables
+		write_variables {c} end_write_variables
 		init {
 			variable_statement {
 				local a
