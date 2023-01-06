@@ -15,7 +15,7 @@ import re
 import pprint
 import itertools
 # import read_files
-from compute_resume_info import get_root_node, order_nodes, map_node_name_to_number
+from behaverify_common import get_root_node, order_nodes, map_node_name_to_number
 
 # try:
 #     import py_trees_ros
