@@ -189,40 +189,28 @@ def build_action_node(node):
             )
 
 
-def walk_tree(model, file_name, location):
-    return walk_tree_recursive(model.root, {}, file_name, location)
+def walk_tree(model, file_name):
+    return walk_tree_recursive(model.root, set(), file_name)
 
 
-def walk_tree_recursive(current_node, node_names, file_name, location):
+def walk_tree_recursive(current_node, node_names, file_name):
     if not hasattr(current_node, 'name'):
         current_node = current_node.leaf
 
     node_name = current_node.name
-    if node_name in node_names:
-        node_names[node_name] = node_names[node_name] + 1
-        node_name = node_name + str(node_names[node_name])
-    else:
-        node_names[node_name] = 0
+    node_modifier = 1
+    while node_name in node_names:
+        node_name = current_node.name + '_' + str(node_modifier)
+        node_modifier = node_modifier + 1
+    node_names.add(node_name)
 
     # ----------------------------------------------------------------------------------
     # start of massive if statements, starting with composites
     # -----------------------------------------------------------------------------------
     # start of composite nodes
-    if current_node.node_type == 'check':
-        if node_names[node_name] == 0:
-            # we need to create the node file
-            with open(location + node_name + '_file.py', 'w') as f:
-                f.write(build_check_node(current_node))
+    if current_node.node_type == 'check' or current_node.node_type == 'action':
         with open(file_name, 'a') as f:
-            f.write(indent(1) + node_name + ' = ' + node_name + '_file.' + node_name + '(' + "'" + node_name + "'" + ')' + os.linesep)
-        return node_name
-    elif current_node.node_type == 'action':
-        if node_names[node_name] == 0:
-            # we need to create the node file
-            with open(location + node_name + '_file.py', 'w') as f:
-                f.write(build_action_node(current_node))
-        with open(file_name, 'a') as f:
-            f.write(indent(1) + node_name + ' = ' + node_name + '_file.' + node_name + '(' + "'" + node_name + "'" + ')' + os.linesep)
+            f.write(indent(1) + node_name + ' = ' + current_node.name + '_file.' + current_node.name + '(' + "'" + node_name + "'" + ')' + os.linesep)
         return node_name
     elif current_node.node_type == 'X_is_Y':
         if current_node.x == current_node.y:
@@ -231,11 +219,11 @@ def walk_tree_recursive(current_node, node_names, file_name, location):
         decorator_type = (current_node.x.capitalize()
                           + 'Is'
                           + current_node.y.capitalize())
-        child = walk_tree_recursive(current_node.child, node_names, file_name, location)
+        child = walk_tree_recursive(current_node.child, node_names, file_name)
         with open(file_name, 'a') as f:
             f.write(indent(1) + node_name + ' = py_trees.decorators.' + decorator_type + '('
                     + child
-                    + ', ' + node_name + ')' + os.linesep)
+                    + ', ' + "'" + node_name + "'" + ')' + os.linesep)
         return node_name
 
     # so at this point, we're in composite node territory
@@ -248,9 +236,11 @@ def walk_tree_recursive(current_node, node_names, file_name, location):
             f.write(indent(1) + node_name + ' = py_trees.composites.Selector(' + "'" + node_name + "'" + ', ' + str(current_node.memory) + ')' + os.linesep)
     elif current_node.node_type == 'parallel':
         with open(file_name, 'a') as f:
-            f.write(indent(1) + node_name + ' = py_trees.composites.Parallel(' + "'" + node_name + "'" + ', ' + str(current_node.memory) + ')' + os.linesep)
+            f.write(indent(1) + node_name + ' = py_trees.composites.Parallel(' + "'" + node_name + "'" + ', py_trees.common.ParallelPolicy.'
+                    + (('SuccessOnAll(' + str(current_node.memory) + ')') if current_node.parallel_policy == 'success_on_all' else ('SuccessOnOne()'))
+                    + ')' + os.linesep)
 
-    children = '[' + ', '.join([walk_tree_recursive(child, node_names, file_name, location) for child in current_node.children]) + ']'
+    children = '[' + ', '.join([walk_tree_recursive(child, node_names, file_name) for child in current_node.children]) + ']'
 
     with open(file_name, 'a') as f:
         f.write(indent(1) + node_name + '.add_children('
@@ -272,13 +262,20 @@ def main():
     metamodel = textx.metamodel_from_file(args.metamodel_file, auto_init_attributes = False)
     model = metamodel.model_from_file(args.model_file)
 
+    for action in model.action_nodes:
+        with open(args.location + action.name + '_file.py', 'w') as f:
+            f.write(build_action_node(action))
+    for check in model.check_nodes:
+        with open(args.location + check.name + '_file.py', 'w') as f:
+            f.write(build_check_node(check))
+
     with open(args.location + args.output_file, 'w') as f:
         f.write(''.join([('import ' + node.name + '_file' + os.linesep) for node in itertools.chain(model.check_nodes, model.action_nodes)])
                 + 'import py_trees' + os.linesep
                 + os.linesep + os.linesep
                 + 'def create_tree():' + os.linesep
                 )
-    root_name = walk_tree(model, args.location + args.output_file, args.location)
+    root_name = walk_tree(model, args.location + args.output_file)
 
     with open(args.location + args.output_file, 'a') as f:
         f.write(indent(1) + 'return ' + root_name + os.linesep)

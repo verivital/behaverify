@@ -2,22 +2,16 @@ MODULE main
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
-		statuses := [collatz.status, not_finished.status, next_value.status];
 		active := [collatz.active, not_finished.active, next_value.active];
-		resume_from_node_0 := -3;
+		resume_from_here_in_subtree__collatz := -3;
 		collatz.active := TRUE;
 	VAR
 		node_names : define_nodes;
 		blackboard : blackboard_module(node_names, active);
 		collatz : composite_sequence_without_memory_2(not_finished, next_value);
-		not_finished : not_finished_module(blackboard);
 		next_value : success_DEFAULT_module();
+		not_finished : not_finished_module(blackboard);
 	ASSIGN
-
-LTLSPEC F blackboard.value = 1;
-LTLSPEC (blackboard.value != 1) U (G (blackboard.value = 1));
-LTLSPEC G blackboard.overflow_failure = FALSE;
-LTLSPEC G (blackboard.value = 1 -> blackboard.finished);
 MODULE define_nodes
 	DEFINE
 		collatz := 0;

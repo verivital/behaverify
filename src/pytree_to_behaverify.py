@@ -39,7 +39,7 @@ contains the following information
 
 variables : a map (dictionary) from variable name to information
 about the variable
- 'variable_name' : the name of the variable (identical to the key)
+ 'name' : the name of the variable (identical to the key)
  'mode' : 'VAR', 'FROZENVAR', or 'DEFINE'. default 'VAR'
  'custom_value_range' : a string indicating a custom range of values.
     Default: None
@@ -134,7 +134,7 @@ def merge_variables(list_of_variable_maps, node_name_to_number):
 
 def template_variable(variable_name, node_name, update, next_value = None):
     return {
-        'variable_name' : variable_name,
+        'name' : variable_name,
         'mode' : 'VAR',
         'custom_value_range' : None,
         'min_value' : 0,

@@ -1,0 +1,250 @@
+{   'nodes': {   'action': {   'category': 'leaf',
+                               'children': [],
+                               'internal_status_module_code': 'MODULE '
+                                                              'action_module(blackboard)\n'
+                                                              '\tCONSTANTS\n'
+                                                              '\t\tsuccess, '
+                                                              'failure, '
+                                                              'running, '
+                                                              'invalid;\n'
+                                                              '\tDEFINE\n'
+                                                              '\t\tstatus := '
+                                                              'active ? '
+                                                              'internal_status '
+                                                              ': invalid;\n'
+                                                              '\tVAR\n'
+                                                              '\t\t'
+                                                              'internal_status '
+                                                              ': {success, '
+                                                              'running, '
+                                                              'failure};\n'
+                                                              '\tASSIGN\n'
+                                                              '\t\t'
+                                                              'init(internal_status) '
+                                                              ':= success;\n'
+                                                              '\t\t'
+                                                              'next(internal_status) '
+                                                              ':= \n'
+                                                              '\t\t\tcase\n'
+                                                              '\t\t\t\t'
+                                                              'next(blackboard.c_stage_1) '
+                                                              ': success;\n'
+                                                              '\t\t\t\tTRUE : '
+                                                              '{running, '
+                                                              'failure};\n'
+                                                              '\t\t\tesac;\n',
+                               'internal_status_module_name': 'action_module',
+                               'name': 'action',
+                               'parent': 'sel',
+                               'return_possibilities': {   'failure': True,
+                                                           'running': True,
+                                                           'success': True},
+                               'type': 'action'},
+                 'action1': {   'category': 'leaf',
+                                'children': [],
+                                'internal_status_module_code': 'MODULE '
+                                                               'action1_module(blackboard)\n'
+                                                               '\tCONSTANTS\n'
+                                                               '\t\tsuccess, '
+                                                               'failure, '
+                                                               'running, '
+                                                               'invalid;\n'
+                                                               '\tDEFINE\n'
+                                                               '\t\tstatus := '
+                                                               'active ? '
+                                                               'internal_status '
+                                                               ': invalid;\n'
+                                                               '\tVAR\n'
+                                                               '\t\t'
+                                                               'internal_status '
+                                                               ': {success, '
+                                                               'running, '
+                                                               'failure};\n'
+                                                               '\tASSIGN\n'
+                                                               '\t\t'
+                                                               'init(internal_status) '
+                                                               ':= success;\n'
+                                                               '\t\t'
+                                                               'next(internal_status) '
+                                                               ':= \n'
+                                                               '\t\t\tcase\n'
+                                                               '\t\t\t\t'
+                                                               'next(blackboard.c_stage_2) '
+                                                               ': success;\n'
+                                                               '\t\t\t\tTRUE : '
+                                                               '{running, '
+                                                               'failure};\n'
+                                                               '\t\t\tesac;\n',
+                                'internal_status_module_name': 'action1_module',
+                                'name': 'action1',
+                                'parent': 'seq',
+                                'return_possibilities': {   'failure': True,
+                                                            'running': True,
+                                                            'success': True},
+                                'type': 'action'},
+                 'dec': {   'additional_arguments': ['running', 'success'],
+                            'category': 'decorator',
+                            'children': ['guard'],
+                            'internal_status_module_code': None,
+                            'internal_status_module_name': None,
+                            'name': 'dec',
+                            'parent': 'sel',
+                            'return_possibilities': {   'failure': True,
+                                                        'running': False,
+                                                        'success': True},
+                            'type': 'X_is_Y'},
+                 'guard': {   'category': 'leaf',
+                              'children': [],
+                              'internal_status_module_code': 'MODULE '
+                                                             'guard_module(blackboard)\n'
+                                                             '\tCONSTANTS\n'
+                                                             '\t\tsuccess, '
+                                                             'failure, '
+                                                             'running, '
+                                                             'invalid;\n'
+                                                             '\tDEFINE\n'
+                                                             '\t\tstatus := '
+                                                             'active ? '
+                                                             'internal_status '
+                                                             ': invalid;\n'
+                                                             '\t\t'
+                                                             'internal_status '
+                                                             ':= (blackboard.c '
+                                                             '= blackboard.c) '
+                                                             '? success : '
+                                                             'failure;\n',
+                              'internal_status_module_name': 'guard_module',
+                              'name': 'guard',
+                              'parent': 'dec',
+                              'return_possibilities': {   'failure': True,
+                                                          'running': False,
+                                                          'success': True},
+                              'type': 'check'},
+                 'guard1': {   'category': 'leaf',
+                               'children': [],
+                               'internal_status_module_code': 'MODULE '
+                                                              'guard1_module(blackboard)\n'
+                                                              '\tCONSTANTS\n'
+                                                              '\t\tsuccess, '
+                                                              'failure, '
+                                                              'running, '
+                                                              'invalid;\n'
+                                                              '\tDEFINE\n'
+                                                              '\t\tstatus := '
+                                                              'active ? '
+                                                              'internal_status '
+                                                              ': invalid;\n'
+                                                              '\t\t'
+                                                              'internal_status '
+                                                              ':= '
+                                                              '(blackboard.c_stage_1 '
+                                                              '= '
+                                                              'blackboard.c_stage_1) '
+                                                              '? success : '
+                                                              'failure;\n',
+                               'internal_status_module_name': 'guard1_module',
+                               'name': 'guard1',
+                               'parent': 'seq',
+                               'return_possibilities': {   'failure': True,
+                                                           'running': False,
+                                                           'success': True},
+                               'type': 'check'},
+                 'root': {   'additional_arguments': None,
+                             'category': 'composite',
+                             'children': ['sel', 'seq'],
+                             'internal_status_module_code': None,
+                             'internal_status_module_name': None,
+                             'name': 'root',
+                             'parent': None,
+                             'return_possibilities': {   'failure': True,
+                                                         'running': True,
+                                                         'success': True},
+                             'type': 'parallel_success_on_all_without_memory'},
+                 'sel': {   'additional_arguments': None,
+                            'category': 'composite',
+                            'children': ['dec', 'action'],
+                            'internal_status_module_code': None,
+                            'internal_status_module_name': None,
+                            'name': 'sel',
+                            'parent': 'root',
+                            'return_possibilities': {   'failure': True,
+                                                        'running': True,
+                                                        'success': True},
+                            'type': 'selector_without_memory'},
+                 'seq': {   'additional_arguments': None,
+                            'category': 'composite',
+                            'children': ['guard1', 'action1'],
+                            'internal_status_module_code': None,
+                            'internal_status_module_name': None,
+                            'name': 'seq',
+                            'parent': 'root',
+                            'return_possibilities': {   'failure': True,
+                                                        'running': True,
+                                                        'success': True},
+                            'type': 'sequence_without_memory'}},
+    'variables': {   'action1_DOT_a': {   'custom_value_range': None,
+                                          'environment_update': None,
+                                          'init_value': [('TRUE', '1')],
+                                          'max_value': 1,
+                                          'min_value': 1,
+                                          'mode': 'DEFINE',
+                                          'name': 'action1_DOT_a',
+                                          'next_value': []},
+                     'action1_DOT_b': {   'custom_value_range': None,
+                                          'environment_update': None,
+                                          'init_value': [   (   'TRUE',
+                                                                'action1_DOT_a '
+                                                                '+ 1')],
+                                          'max_value': 2,
+                                          'min_value': 0,
+                                          'mode': 'VAR',
+                                          'name': 'action1_DOT_b',
+                                          'next_value': [   (   'action1',
+                                                                [   (   'TRUE',
+                                                                        '{action1_DOT_a, '
+                                                                        'action1_DOT_a '
+                                                                        '+ '
+                                                                        '1}')])]},
+                     'action_DOT_a': {   'custom_value_range': None,
+                                         'environment_update': None,
+                                         'init_value': [('TRUE', '1')],
+                                         'max_value': 1,
+                                         'min_value': 1,
+                                         'mode': 'DEFINE',
+                                         'name': 'action_DOT_a',
+                                         'next_value': []},
+                     'action_DOT_b': {   'custom_value_range': None,
+                                         'environment_update': None,
+                                         'init_value': [   (   'TRUE',
+                                                               'action_DOT_a + '
+                                                               '1')],
+                                         'max_value': 2,
+                                         'min_value': 0,
+                                         'mode': 'VAR',
+                                         'name': 'action_DOT_b',
+                                         'next_value': [   (   'action',
+                                                               [   (   'TRUE',
+                                                                       '{action_DOT_a, '
+                                                                       'action_DOT_a '
+                                                                       '+ '
+                                                                       '1}')])]},
+                     'c': {   'custom_value_range': '{TRUE, FALSE}',
+                              'environment_update': None,
+                              'init_value': [   (   'action1_DOT_a = '
+                                                    'action1_DOT_b',
+                                                    'TRUE'),
+                                                ('TRUE', 'FALSE')],
+                              'max_value': 1,
+                              'min_value': 0,
+                              'mode': 'VAR',
+                              'name': 'c',
+                              'next_value': [   (   'action',
+                                                    [   (   'action_DOT_a <= '
+                                                            'next(action_DOT_b_stage_1)',
+                                                            'TRUE'),
+                                                        ('TRUE', 'FALSE')]),
+                                                (   'action1',
+                                                    [   (   'action1_DOT_a <= '
+                                                            'next(action1_DOT_b_stage_1)',
+                                                            'TRUE'),
+                                                        ('TRUE', 'FALSE')])]}}}

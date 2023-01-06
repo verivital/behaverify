@@ -2,21 +2,17 @@ MODULE main
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
-		statuses := [robot.status, read_battery.status, safe_battery.status, execute.status];
 		active := [robot.active, read_battery.active, safe_battery.active, execute.active];
-		resume_from_node_0 := -3;
+		resume_from_here_in_subtree__robot := -3;
 		robot.active := TRUE;
 	VAR
 		node_names : define_nodes;
 		blackboard : blackboard_module(node_names, active);
-		robot : composite_sequence_without_memory_3(read_battery, safe_battery, execute);
-		read_battery : read_battery_module(blackboard);
-		safe_battery : safe_battery_module(blackboard);
 		execute : success_DEFAULT_module();
+		read_battery : read_battery_module(blackboard);
+		robot : composite_sequence_without_memory_3(read_battery, safe_battery, execute);
+		safe_battery : safe_battery_module(blackboard);
 	ASSIGN
-LTLSPEC G (execute.active -> blackboard.battery_reading < blackboard.battery_threshold);
-LTLSPEC G (execute.active -> blackboard.battery_reading >= blackboard.battery_threshold);
-LTLSPEC G (execute.active -> blackboard.battery_reading_stage_1 >= blackboard.battery_threshold);
 MODULE define_nodes
 	DEFINE
 		robot := 0;
@@ -73,18 +69,18 @@ MODULE blackboard_module(node_names, active)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
-		battery_exists := TRUE;
+		battery := battery_stage_0;
 		battery_reading := battery_reading_stage_1;
 		battery_reading_exists := TRUE;
 		battery_reading_stage_1_exists := TRUE;
 		battery_threshold_exists := TRUE;
-		reading_successful_exists := TRUE;
+		reading_successful := reading_successful_stage_0;
 	FROZENVAR
-		battery : 0..10;
 		battery_threshold : 0..10;
-		reading_successful : boolean;
 	VAR
+		battery : 0..10;
 		battery_reading_stage_1 : 0..10;
+		reading_successful : boolean;
 	ASSIGN
 		init(battery_reading_stage_1) := 
 			case
@@ -95,5 +91,9 @@ MODULE blackboard_module(node_names, active)
 				!(active[node_names.read_battery]) : battery_reading;
 				reading_successful : battery;
 				TRUE : battery_reading;
+			esac;
+		init(battery_threshold) := 
+			case
+				TRUE : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 			esac;
 
