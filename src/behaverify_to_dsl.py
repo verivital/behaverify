@@ -15,7 +15,7 @@ import os
 # import pprint
 # import itertools
 # import read_files
-from compute_resume_info import get_root_node, indent
+from behaverify_common import get_root_node, indent
 
 # try:
 #     import py_trees_ros

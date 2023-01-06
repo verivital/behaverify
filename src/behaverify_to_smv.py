@@ -14,14 +14,14 @@ import os
 # ----------------------------------------------------------------------------------------------------------------
 # serene custom imports
 import node_creator
-from compute_resume_info import (get_root_node,
-                                 refine_return_types,
-                                 refine_invalid,
-                                 prune_nodes, order_nodes,
-                                 map_node_name_to_number,
-                                 create_node_to_local_root_map,
-                                 create_local_root_to_relevant_list_map,
-                                 create_node_to_descendants_map)
+from behaverify_common import (get_root_node,
+                               refine_return_types,
+                               refine_invalid,
+                               prune_nodes, order_nodes,
+                               map_node_name_to_number,
+                               create_node_to_local_root_map,
+                               create_local_root_to_relevant_list_map,
+                               create_node_to_descendants_map)
 # -----------------------------------------------------------------------------------------------------------------------
 
 LOCAL_ROOT_TREE_STRING = 'resume_from_here_in_subtree__'

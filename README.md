@@ -11,19 +11,23 @@ To recreate tests, see REPRODUCIBILITY.
 
 The following files make up BehaVerify
 
---compute_resume_info.py (internal use only. do not interact with)
+--behaverify_common.py (internal use only. do not interact with)
 
---dsl_to_behaverify.py
+--behaverify_to_dsl.py - Converts behaverify files to DSL templates
 
---dsl_to_python.py
+--behaverify_to_smv.py - Converts behaverify files to SMV files (for use with nuXmv)
+
+--dsl_to_behaverify.py - Converts DSL files to behaverify files
+
+--dsl_to_python.py - Converts DSL files to python (py_trees)
 
 --modifier.py (NOT CURRENTLY WORKING)
 
 --node_creator.py (internal use only. do not interact with)
 
---smv_writer.py
+--pytree_to_behaverify.py - Converts a py_tree to Behaverify Files
 
---tree_parser.py (NOT CURRENTLY CORRECT)
+--read_files.py (internal use only. do not interact with)
 
 These files are located in ./src. Please note that this version is still being tested. There are errors and inefficiencies.
 
