@@ -3,7 +3,7 @@ import argparse
 import os
 import sys
 import itertools
-from compute_resume_info import indent
+from behaverify_common import indent
 
 FUNCTION_FORMAT = {
     'abs' : ('abs', 0),
