@@ -9,7 +9,7 @@ import copy
 
 def get_variables(model):
     variables = {variable.name : {
-        'variable_name' : variable.name,
+        'name' : variable.name,
         'mode' : variable.model_as,
         'custom_value_range' : (None if variable.domain.min_val is not None else ('{TRUE, FALSE}' if variable.domain.boolean is not None else ('{' + ', '.join(variable.domain.enums) + '}'))),
         'min_value' : 0 if variable.domain.min_val is None else variable.domain.min_val,
@@ -26,7 +26,7 @@ def get_variables(model):
         # 'read_by_init' : []
     } for variable in itertools.chain(model.variables, model.environment_variables)}
     local_variables = {variable.name : {
-        'variable_name' : variable.name,
+        'name' : variable.name,
         'mode' : variable.model_as,
         'custom_value_range' : (None if variable.domain.min_val is not None else ('{TRUE, FALSE}' if variable.domain.boolean is not None else ('{' + ', '.join(variable.domain.enums) + '}'))),
         'min_value' : 0 if variable.domain.min_val is None else variable.domain.min_val,
@@ -76,7 +76,7 @@ def create_environment_variables(model, variables):
     updates = {statement.variable.name : make_new_stage(statement, None, variables, {}, True, False, True) for statement in model.update}
 
     return {variable.name : {
-        'variable_name' : variable.name,
+        'name' : variable.name,
         'mode' : variable.model_as,
         'custom_value_range' : (None if variable.domain.min_val is not None else ('{TRUE, FALSE}' if variable.domain.boolean is not None else ('{' + ', '.join(variable.domain.enums) + '}'))),
         'min_value' : 0 if variable.domain.min_val is None else variable.domain.min_val,
@@ -130,7 +130,7 @@ def compute_stage(variable_name, variables, use_stages):
 
 def add_local_variable(variables, local_variables, variable_name, local_variable_name):
     variables[local_variable_name] = copy.deepcopy(local_variables[variable_name])
-    variables[local_variable_name]['variable_name'] = local_variable_name
+    variables[local_variable_name]['name'] = local_variable_name
     return
 
 
@@ -197,7 +197,7 @@ def walk_tree_recursive(current_node, parent_name, nodes, node_names, variables,
             'children' : [],
             'category' : 'composite',
             'type' : memory_string,
-            'return_arguments' : {
+            'return_possibilities' : {
                 'success' : True,
                 'running' : True,
                 'failure' : True
@@ -217,7 +217,7 @@ def walk_tree_recursive(current_node, parent_name, nodes, node_names, variables,
             'children' : [],
             'category' : 'composite',
             'type' : memory_string,
-            'return_arguments' : {
+            'return_possibilities' : {
                 'success' : True,
                 'running' : True,
                 'failure' : True
@@ -238,7 +238,7 @@ def walk_tree_recursive(current_node, parent_name, nodes, node_names, variables,
             'children' : [],
             'category' : 'composite',
             'type' : cur_type,
-            'return_arguments' : {
+            'return_possibilities' : {
                 'success' : True,
                 'running' : True,
                 'failure' : True
@@ -259,7 +259,7 @@ def walk_tree_recursive(current_node, parent_name, nodes, node_names, variables,
             'children' : [],
             'category' : 'decorator',
             'type' : 'X_is_Y',
-            'return_arguments' : {
+            'return_possibilities' : {
                 'success' : not current_node.x == 'success',
                 'running' : not current_node.x == 'running',
                 'failure' : not current_node.x == 'failure'
@@ -276,7 +276,7 @@ def walk_tree_recursive(current_node, parent_name, nodes, node_names, variables,
             'children' : [],
             'category' : 'leaf',
             'type' : 'check',
-            'return_arguments' : {
+            'return_possibilities' : {
                 'success' : True,
                 'running' : False,
                 'failure' : True
@@ -325,7 +325,7 @@ def walk_tree_recursive(current_node, parent_name, nodes, node_names, variables,
             'children' : [],
             'category' : 'leaf',
             'type' : 'action',
-            'return_arguments' : {
+            'return_possibilities' : {
                 'success' : success,
                 'running' : running,
                 'failure' : failure

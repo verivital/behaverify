@@ -1,0 +1,96 @@
+{   'nodes': {   'collatz': {   'additional_arguments': None,
+                                'category': 'composite',
+                                'children': ['not_finished', 'next_value'],
+                                'internal_status_module_code': None,
+                                'internal_status_module_name': None,
+                                'name': 'collatz',
+                                'parent': None,
+                                'return_possibilities': {   'failure': True,
+                                                            'running': True,
+                                                            'success': True},
+                                'type': 'sequence_without_memory'},
+                 'next_value': {   'category': 'leaf',
+                                   'children': [],
+                                   'internal_status_module_code': None,
+                                   'internal_status_module_name': None,
+                                   'name': 'next_value',
+                                   'parent': 'collatz',
+                                   'return_possibilities': {   'failure': False,
+                                                               'running': False,
+                                                               'success': True},
+                                   'type': 'action'},
+                 'not_finished': {   'category': 'leaf',
+                                     'children': [],
+                                     'internal_status_module_code': 'MODULE '
+                                                                    'not_finished_module(blackboard)\n'
+                                                                    '\t'
+                                                                    'CONSTANTS\n'
+                                                                    '\t\t'
+                                                                    'success, '
+                                                                    'failure, '
+                                                                    'running, '
+                                                                    'invalid;\n'
+                                                                    '\tDEFINE\n'
+                                                                    '\t\t'
+                                                                    'status := '
+                                                                    'active ? '
+                                                                    'internal_status '
+                                                                    ': '
+                                                                    'invalid;\n'
+                                                                    '\t\t'
+                                                                    'internal_status '
+                                                                    ':= '
+                                                                    '(!(blackboard.finished) '
+                                                                    '& '
+                                                                    '!(blackboard.overflow_failure)) '
+                                                                    '? success '
+                                                                    ': '
+                                                                    'failure;\n',
+                                     'internal_status_module_name': 'not_finished_module',
+                                     'name': 'not_finished',
+                                     'parent': 'collatz',
+                                     'return_possibilities': {   'failure': True,
+                                                                 'running': False,
+                                                                 'success': True},
+                                     'type': 'check'}},
+    'variables': {   'finished': {   'custom_value_range': '{TRUE, FALSE}',
+                                     'environment_update': None,
+                                     'init_value': [('TRUE', 'FALSE')],
+                                     'max_value': 1,
+                                     'min_value': 0,
+                                     'mode': 'VAR',
+                                     'name': 'finished',
+                                     'next_value': [   (   'next_value',
+                                                           [   (   'TRUE',
+                                                                   'next(value_stage_1) '
+                                                                   '= 1')])]},
+                     'overflow_failure': {   'custom_value_range': '{TRUE, '
+                                                                   'FALSE}',
+                                             'environment_update': None,
+                                             'init_value': [('TRUE', 'FALSE')],
+                                             'max_value': 1,
+                                             'min_value': 0,
+                                             'mode': 'VAR',
+                                             'name': 'overflow_failure',
+                                             'next_value': [   (   'next_value',
+                                                                   [   (   'TRUE',
+                                                                           'next(value_stage_1) '
+                                                                           '= '
+                                                                           '1000')])]},
+                     'value': {   'custom_value_range': None,
+                                  'environment_update': None,
+                                  'init_value': [   (   'TRUE',
+                                                        '{2, 3, 4, 5, 6, 7, 8, '
+                                                        '9, 10, 11, 12}')],
+                                  'max_value': 1000,
+                                  'min_value': 1,
+                                  'mode': 'VAR',
+                                  'name': 'value',
+                                  'next_value': [   (   'next_value',
+                                                        [   (   'value mod 2 = '
+                                                                '0',
+                                                                'value / 2'),
+                                                            (   'TRUE',
+                                                                'min(value * 3 '
+                                                                '+ 1, '
+                                                                '1000)')])]}}}
