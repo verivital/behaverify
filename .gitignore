@@ -7,4 +7,5 @@
 **/results/**
 **/__pycache__/**
 __pycache__/
+IGNORE/
 temp_output/**

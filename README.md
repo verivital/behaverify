@@ -36,6 +36,10 @@ Quick overview: the newest version utilizes a Domain Specific Language (DSL) as 
 
 Current usage: use dsl_to_python.py in order to create an intermediate file that is used with smv_writer.py to create an smv file for use with nuXmv. 
 
+# NOTE
+
+Some nuXmv functions currently not supported, like exp and ln, because I don't actually know how those functions work. I can't make them work in any examples.
+
 ## tree_parser.py
 
 This is the first file that will be used. It will create a tree object based on the input arguments it receives and the walk this object, gathering relevant information. If an output file is provided, it will write the output to that file. Otherwise, it will print the output.

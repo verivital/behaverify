@@ -3,6 +3,7 @@ import argparse
 import os
 import sys
 import itertools
+from compute_resume_info import indent
 
 FUNCTION_FORMAT = {
     'abs' : ('abs', 0),
@@ -32,10 +33,6 @@ FUNCTION_FORMAT = {
     'division' : ('/', 2),
     'mod' : ('%', 2)
 }
-
-
-def indent(n):
-    return (' '*n*4)
 
 
 def format_variable(variable, is_local):
