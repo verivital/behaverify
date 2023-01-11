@@ -1,0 +1,739 @@
+
+
+system BlueROV;  //system name
+
+//-----------------------------------
+//basic types 
+//-----------------------------------
+
+type string;
+type bool;
+type integer;
+type float;
+type float32;
+type float64;
+type time;
+
+
+//-----------------------------------
+//message types
+//-----------------------------------
+message Bool std_msgs
+	bool value;
+end
+
+message Float32 std_msgs
+	float value;
+end
+
+message String std_msgs
+	string value;
+end
+
+message PixhawkHW vandy_bluerov
+	float64 thrusters_power;
+	float64 batt_capacity_remaining;
+	float64 batt_voltage_remaining;
+	float64 batt_charge_remaining;
+	float32[] rpm;
+end
+
+message AssuranceMonitorConfidence ng_msgs
+	float32 confidence_level;
+	float32[] values;
+end
+
+message HSDCommand ng_msgs
+	float64 heading;
+	float64 speed;
+	float64 depth;
+end
+
+
+message LEC1OutputAssuredStamped ng_msgs
+    AssuranceMonitorConfidence[] confs;
+    HSDCommand cmd;
+    float64 current_heading;
+end
+
+message Float32MultiArray std_msgs
+    float32[] data;
+end
+
+message PoseWithCovariance geometry_msgs
+    float64[36] covariance;
+end
+
+message TwistWithCovariance geometry_msgs
+    float64[36] covariance;
+end
+
+message Odometry nav_msgs
+    string child_frame_id;
+    PoseWithCovariance pose;
+    TwistWithCovariance twist;
+end
+
+message Range sensor_msgs
+    integer radiation_type;
+    float32 field_of_view;
+    float32 min_range;
+    float32 max_range;
+    float32 range;
+end
+
+message Time std_msgs
+    integer sec;
+    integer nsec;
+end
+
+message Header std_msgs
+    integer seq;
+    Time stamp;
+    string frame_id;
+end
+
+//-----------------------------------
+//topics
+//-----------------------------------
+topic PixhawkHW pixhawk_hw /iver0/pixhawk_hw;
+topic Bool bb_geofence /iver0/bb_geofence;
+topic Bool bb_pipelost /iver0/bb_pipe_lost;
+topic Float32 bb_home_dist /iver0/bb_home_dist;
+topic LEC1OutputAssuredStamped lec2_left_am /lec2_am/left/p_value;
+topic LEC1OutputAssuredStamped lec2_right_am /lec2_am/right/p_value; 
+topic String bb_mission /iver0/bb_mission;
+topic Bool bb_rth /iver0/bb_rth;
+topic Bool bb_sensor_failure /iver0/sensor_failure_rpm;
+topic Bool bb_waypoints_completed /iver0/waypoints_completed;
+topic HSDCommand hsd_pipeline_mapping /iver0/hsd_pipeline_mapping;
+topic HSDCommand hsd_to_surface /iver0/hsd_to_surface;
+topic HSDCommand hsd_to_rth /iver0/hsd_to_rth;
+topic HSDCommand hsd_to_waypoint /iver0/hsd_to_waypoint;
+topic HSDCommand hsd_to_waypoint_rrt /iver0/hsd_to_waypoint_rrt;
+topic HSDCommand hsd_obstacle_avoidance /iver0/hsd_obstacle_avoidance;
+topic HSDCommand hsd_command /iver0/hsd_command;
+topic String cm_hsd_input /iver0/cm_hsd_input;
+topic Float32MultiArray degradation_detector_am /iver0/degradation_detector_am/p_value;
+topic Float32MultiArray lec_input /iver0/thruster_cmd_logging;
+topic Bool next_wp /iver0/next_wp;
+topic Odometry odom /iver0/pose_gt_noisy_ned;
+topic Range fls_range /iver0/fls_echosunder;
+
+topic LEC1OutputAssuredStamped  lec_dd_am               /lec_dd_am/p_value;
+topic Float32MultiArray         degradation_detector    /iver0/degradation_detector;
+topic Header                    obstacle_in_view        /iver0/obstacle_in_view;
+topic Float32                   rtreach_result          /reachability_result;
+topic Float32                   rtreach_unsafe_value    /unsafe_grid_value;
+topic Float32                   rtreach_index           /unsafe_hyperrectangle_index;
+
+//-----------------------------------
+//Blackboard variables
+//-----------------------------------
+
+var PixhawkHW battery;
+var LEC1OutputAssuredStamped lec_dd_am;
+var Bool bb_geofence = False;
+var Bool bb_pipelost = False;
+var Float32 bb_home_dist = 1000; 
+var LEC1OutputAssuredStamped lec2_am_l;
+var LEC1OutputAssuredStamped lec2_am_r;
+var String bb_mission = "";
+var Bool bb_rth = False;
+var Bool bb_sensor_failure = False;
+var Bool bb_waypoints_completed = False;
+var HSDCommand bb_HSD_out;
+var Bool bb_pipe_mapping_enable = False;
+var bool bb_obstacle_warning = False;
+var bool event_reallocate_button = False;
+var Float32MultiArray dd_output;
+var Float32MultiArray lec_input;
+var bool next_mission;
+var float uuv_max_speed;
+var string mission_file;
+var string ddlec_am_path;
+var Odometry odom;
+var Range fls_range;
+var float obstacle_min_standoff;
+var float decision_threshold;
+var HSDCommand hsd_pipeline_mapping;
+var HSDCommand hsd_to_surface;
+var HSDCommand hsd_to_rth;
+var HSDCommand hsd_to_waypoint;
+var HSDCommand hsd_to_waypoint_rrt;
+var String cm_hsd_input;
+var Header obstacle_in_view;
+var Bool bb_fls_warning =  False;
+var Float32             rtreach_unsafe_value;
+var Float32             rtreach_result;
+var Float32             rtreach_index;
+//----------------------------------
+//Arguments
+//----------------------------------
+arg float failsafe_battery_low_threshold = 0.1;
+arg bool failsafe_rth_enable =True;
+arg float pipe_estimation_good_log_val = 5.0;
+arg float speed_good_log_val  = 2.5;
+arg float total_degradation_threshold=0.0;
+arg float home_reached_threshold =15;
+arg integer num_classes=22;
+arg float uuv_max_speed = 0.9;
+arg float uuv_min_speed = 0.4;
+arg string mission_file = "mission_04.yaml";
+arg integer ann_input_len=13;
+arg bool enable_fault_detection = True;
+arg string decision_source="snapshot_am";
+arg bool enable_obstacle_avoidance=True;
+arg bool enable_emergency_stop=True;
+arg integer fls_in_view_window=20;
+arg integer fls_in_view_limit=10;
+arg string ddlec_am_path="jupyter/admin_BlueROV/FDIR_ALC/SLModel";
+arg string ddlec_am_params="{'user_choice':'override_threshold','am_s_threshold':0.5, 'am_threshold':0.5}";
+arg integer rtreach_window_size = 25;
+arg float rtreach_window_threshold = 0.75;
+//-----------------------------------
+//Blackboard nodes
+//-----------------------------------
+input hsd_pipe2bb hsd_pipeline_mapping -> hsd_pipeline_mapping
+    comment  "This node captures HSD input from pipeline tracking node"
+end
+
+input hsd_surface2bb hsd_to_surface -> hsd_to_surface
+    comment  "This node captures HSD input from surface node"
+end
+
+input hsd_rth2bb hsd_to_rth -> hsd_to_rth
+    comment  "This node captures HSD input from rth node"
+end
+
+input hsd_wp2bb hsd_to_waypoint -> hsd_to_waypoint
+    comment  "This node captures HSD input from waypoint node"
+end
+
+input hsd_wp_rrt2bb hsd_to_waypoint_rrt -> hsd_to_waypoint_rrt
+    comment  "This node captures HSD input from waypoint node"
+end
+
+input fls2bb fls_range -> fls_range
+    var bool obstacle_standoff_warning = False;
+    var float obstacle_min_standoff = 1.0;
+    comment  "This node captures the FLS ranges"
+end
+
+input fls_warning2bb obstacle_in_view -> obstacle_in_view
+    var bool bb_fls_warning = False;
+    arg integer fls_in_view_window = fls_in_view_window;
+    arg integer fls_in_view_limit = fls_in_view_limit;
+    comment  "This node captures the FLS obstacle in view information"
+end
+
+input battery2bb pixhawk_hw -> battery 
+    var bool battery_low_warning = False;
+    arg float failsafe_battery_low_threshold = failsafe_battery_low_threshold;
+    comment  "This node captures the state of the battery"
+end
+
+input ddlecam2bb lec_dd_am -> lec_dd_am
+    var bool lec_dd_am_warning = False ;
+    comment  "This node captures the state of the lec dd assurance monitor"
+end
+
+input rth2bb bb_rth -> bb_rth
+    var bool bb_rth_warning = False;
+    arg bool failsafe_rth_enable = failsafe_rth_enable;
+    comment  "This node captures if the uuv is commanded to return to home"
+end 
+
+input geofence2bb bb_geofence -> bb_geofence
+    var bool bb_geofence_warning = False;
+    comment  "This node captures if the uuv is within  the geofence"
+end
+
+input lec2_am_l_2bb  lec2_left_am -> lec2_am_l
+    var bool lec2_am_l_speed_warning = False;
+    var bool lec2_am_l_pipe_warning = False;
+    arg float pipe_estimation_good_log_val = pipe_estimation_good_log_val;
+    arg float speed_good_log_val  = speed_good_log_val;
+    comment  "This node captures the output of the lec2 assurance monitor left"
+end
+
+input lec2_am_r_2bb lec2_right_am -> lec2_am_r
+    var bool lec2_am_r_speed_warning = False;
+    var bool lec2_am_r_pipe_warning = False;
+    arg float pipe_estimation_good_log_val = pipe_estimation_good_log_val ;
+    arg float speed_good_log_val = speed_good_log_val;
+    comment  "This node captures the output of the lec2 assurance monitor right"
+end
+
+input pipe_lost2bb bb_pipelost -> bb_pipelost
+    var bool bb_pipe_lost_warning =False;
+    comment  "This node captures if the pipe is not in visibility of UUV"
+end
+
+
+input sensor_failure2bb  bb_sensor_failure -> bb_sensor_failure
+    var bool bb_sensor_failure_warning =False;
+    comment  "This node captures sensor failure"
+end
+
+input waypoints_completed2bb  bb_waypoints_completed -> bb_waypoints_completed
+    comment "This node captures if the waypoints are completed"
+end 
+
+input home2bb bb_home_dist -> bb_home_dist
+    var bool bb_home_reached =False;
+    arg float home_reached_threshold = home_reached_threshold;
+    comment "This node captures if the uuv is home" 
+end
+
+input mission2bb bb_mission -> bb_mission
+//    arg bool enable_waypoint_following = False;
+    comment  "This node captures the current mission"
+end
+
+input ddlec2bb degradation_detector -> dd_output 
+    var bool dd_z_axis_warning = False;
+    var bool dd_xy_axis_degradation = False;
+    arg float total_degradation_threshold= total_degradation_threshold;
+    arg integer num_classes = num_classes;
+    arg bool enable_fault_detection = enable_fault_detection;
+    arg string decision_source = decision_source;
+    comment  "This node captures the output of the DD LEC"
+end   
+
+//input rtreach2bb rtreach -> rtreach_out
+//    var bool emergency_stop_warning = False;
+//    arg bool enable_emergency_stop = enable_emergency_stop;
+//    comment "This node captures the rtreachabiliy decision over safety"
+//end
+
+input rtreach_index2bb rtreach_index-> rtreach_index
+    comment "This node captures the rtreachability unsafe hyperrectangle index scaled to 0.0 to 1.0 range"
+end
+
+input rtreach2bb rtreach_result -> rtreach_result
+    var bool emergency_stop_warning = False;
+    var bool rtreach_warning = False;
+    var bool rtreach_long_term_warning = False;
+    arg bool enable_emergency_stop = enable_emergency_stop;
+    arg integer rtreach_window_size = 25;
+    arg float rtreach_window_threshold = 0.75;
+    comment "This node captures the rtreachabiliy decision result over safety"
+end
+
+input rtreach_unsafe_value2bb rtreach_unsafe_value -> rtreach_unsafe_value
+    var bool rtreach_fence_warning = False;
+    var bool rtreach_obstacle_warning = False;
+    comment "This node captures the rtreachabiliy decision value over safety"
+end
+
+
+//-----------------------------------
+//checkers for blackboard variables
+//-----------------------------------
+
+//check is_reallocation_requested 
+//        event_reallocate_button==False;
+
+check emergency_stop_fs
+        emergency_stop_warning==False;
+
+check obstacle_standoff_fs
+        obstacle_standoff_warning==False;
+
+check is_reallocation_requested 
+        dd_xy_axis_degradation==False;
+
+check check_dd_am 
+        lec_dd_am_warning == False;
+
+
+check check_lec2am_ls 
+        lec2_am_l_speed_warning == False;
+
+
+check check_lec2am_rs 
+        lec2_am_r_speed_warning == False;
+
+
+check check_lec2am_lp 
+        lec2_am_l_pipe_warning == False;
+
+
+check check_lec2am_rp 
+        lec2_am_r_pipe_warning == False;
+
+
+check check_geofence 
+        bb_geofence_warning == False;
+
+
+check check_rth 
+        bb_rth_warning == False;
+
+
+check check_surface 
+        bb_home_reached ==False;
+
+
+check check_pipe_post 
+        bb_pipe_lost_warning == False;
+
+
+check check_waypoints_completed 
+        bb_waypoints_completed == False;
+
+
+check check_sensor_failure 
+        bb_sensor_failure_warning == False;
+
+
+check battery_low_fs 
+        battery_low_warning == False;
+
+
+check is_track_pipe_mission_requested 
+        bb_mission  == "pipe_following";
+
+check is_waypoint_requested 
+        bb_mission  == "waypoint_following";
+
+check is_snr_requested 
+        bb_mission  == "fdr";
+
+check is_loiter_requested 
+        bb_mission  == "loitering";
+
+check dd_z_axis
+        dd_z_axis_warning == False;
+
+check dd_xy_axis
+        dd_xy_axis_degradation == False;
+
+check rtreach_check
+    rtreach_warning==False;
+
+check rtreach_fence_check
+    rtreach_fence_warning == False;
+
+check rtreach_obstacle_check    
+    rtreach_obstacle_warning == False;    
+
+check rtreach_long_term_check
+    rtreach_long_term_warning == False;
+
+//-----------------------------------
+//standard behavioral nodes
+//-----------------------------------
+
+success success_node;
+failure failure_node;
+running running_node;
+running idle;
+//running reallocate_task;
+//running  dd_lec_task; 
+
+//-----------------------------------
+//custom behavioral nodes
+//-----------------------------------
+
+//CURRENTLY NOT HANDLING IN/OUT
+//ONLY CONSIDERING ACTUAL BLACKBOARD VARIABLES
+
+task emergency_stop_task
+//always returns success
+end
+
+task surface_task
+    in hsd_to_surface hsd_to_surface_;
+    out cm_hsd_input cm_hsd_input_;
+    var HSDCommand HSD_out;
+    var String cm_hsd_input;
+    //cm_hsd_input = surface_task		|i don't know if we really need this for modeling. it seems more like information tracking
+    //HSD_out.heading = "to_surface"   		|presumably there is some way to effectively enumerate the headings.
+    //HSD_out.depth = depth	       		|not sure how closely i can model depth.
+    //----------------
+    //always returns running
+end     
+
+task  rth_task 
+    in  hsd_to_rth hsd_to_rth_;
+    out cm_hsd_input cm_hsd_input_;
+    var HSDCommand HSD_out;
+    var String cm_hsd_input;
+    //cm_hsd_input = rth_task			|i don't know if we really need this for modeling. it seems more like information tracking
+    //HSD_out.heading = "to_rth"   		|presumably there is some way to effectively enumerate the headings.
+    //HSD_out.depth = depth	       		|not sure how closely i can model depth.
+    //----------------
+    //always returns running
+end
+
+task  loiter_task 
+    in hsd_pipeline_mapping  hsd_pipeline_mapping_;
+    out cm_hsd_input  cm_hsd_input_;
+    var HSDCommand HSD_out ;
+    var String cm_hsd_input;
+    //cm_hsd_input = loiter_task		|i don't know if we really need this for modeling. it seems more like information tracking
+    //HSD_out.heading = 30		   	|presumably there is some way to effectively enumerate the headings.
+    //HSD_out.depth = depth	       		|not sure how closely i can model depth.
+    //----------------
+    //always returns running
+end    
+
+
+task obstacle_avoidance
+    in hsd_obstacle_avoidance hsd_obstacle_avoidance_, hsd_pipeline_mapping  hsd_pipeline_mapping_, hsd_to_waypoint hsd_waypoint_, hsd_to_waypoint_rrt hsd_waypoint_rrt_;
+    out hsd_command hsd_pub;
+    var HSDCommand HSD_out;
+    var bool bb_obstacle_warning = False ;
+    var String cm_hsd_input;
+    arg bool enable_obstacle_avoidance = enable_obstacle_avoidance;
+    //bb_obstacle_warning = {True, False}	|can be either
+    //----------------
+    //always returns running
+    //----------------
+    //other blackboard variables do not appear to be set here.
+end     
+
+//THIS ONE NOT FINISHED.
+task mission_server
+    out bb_mission bb_mission;
+    var float uuv_max_speed = uuv_max_speed;
+    var string mission_file = mission_file;
+    var float refLat = 38.971203;
+    var float refLon = -76.398464;
+    arg float uuv_max_speed = uuv_max_speed;
+    arg string mission_file = mission_file;
+    //THIS NODE HAS UNDECLARED VARIABLES BEING MODIFIED. 
+
+    //bb_obstacle_warning = {True, False}	|can be either
+    //----------------
+    //always returns running
+end     
+
+task next_mission
+    in bb_mission bb_mission;
+    out next_wp next_wp_;
+    var bool next_mission = False;
+    //net_mission = True
+    //-----------------
+    //always returns success
+end  
+
+task  speed_max_task 
+    var HSDCommand HSD_out;
+    arg float uuv_max_speed = uuv_max_speed;
+    //hsd_out.speed = max_speed
+    //-------------------
+    //always returns running
+end    
+
+task  speed_min_task 
+    var HSDCommand HSD_out;
+    arg float uuv_min_speed=uuv_min_speed;
+    //hsd_out.speed = min_speed
+    //-------------------
+    //always returns running
+end
+
+task  pipe_mapping_enable_task 
+    var Bool pipe_mapping_enable;
+    //pipe_mapping_enable = True
+    //-------------------
+    //always returns running
+end    
+
+task  pipe_mapping_disable_task 
+    var Bool pipe_mapping_enable;
+    //pipe_mapping_enable = False
+    //-------------------
+    //always returns running
+end
+
+task  tracking_task 
+    in hsd_pipeline_mapping  hsd_pipeline_mapping_;
+    out cm_hsd_input cm_hsd_input_;
+    var HSDCommand HSD_out ;
+    var String cm_hsd_input;
+    //cm_hsd_input = tracking_task		|i don't know if we really need this for modeling. it seems more like information tracking
+    //HSD_out.heading = pipelinemapping		|presumably there is some way to effectively enumerate the headings.
+    //HSD_out.depth = depth	       		|not sure how closely i can model depth.
+    //----------------
+    //always returns running
+end    
+
+task  waypoint_task 
+    in hsd_to_waypoint hsd_waypoint_, bb_waypoints_completed hsd_waypoint_completed_;
+	out cm_hsd_input cm_hsd_input_, next_wp next_wp_;
+    var HSDCommand HSD_out ;
+    var String cm_hsd_input;
+    //cm_hsd_input = waypoint_task		|i don't know if we really need this for modeling. it seems more like information tracking
+    //HSD_out.heading = waypoint		|presumably there is some way to effectively enumerate the headings.
+    //HSD_out.depth = depth	       		|not sure how closely i can model depth.
+    //----------------
+    //always returns running
+end   
+
+//THIS ONE NOT DONE. not quite sure how to model this. feel like it just starts at 0, and climbs towards 6 as degradation happens?
+task  reallocate_task 
+    var float total_degradation=0;
+end   
+
+task dd_lec_task
+    in lec_input lec_input_;
+    out degradation_detector degradation_detector_, degradation_detector_am degradation_detector_am_;        
+    arg integer num_classes= num_classes;
+    arg integer ann_input_len= ann_input_len;
+    arg string ddlec_am_path= ddlec_am_path;
+    arg string ddlec_am_params= ddlec_am_params;
+    //always returns running, no blackboard variables.
+end
+
+//-----------------------------------
+//tree definition
+//-----------------------------------
+
+tree(updatetime=1000,timeout=15)
+par BlueROV {
+    par topics2bb {
+		mon battery2bb, rth2bb, geofence2bb
+        mon lec2_am_r_2bb, lec2_am_l_2bb, pipe_lost2bb
+		mon sensor_failure2bb, waypoints_completed2bb
+        mon mission2bb, ddlec2bb
+        mon fls2bb, fls_warning2bb
+        mon hsd_pipe2bb, hsd_wp2bb, hsd_rth2bb, hsd_surface2bb
+        mon rtreach2bb, rtreach_unsafe_value2bb, rtreach_index2bb
+
+	}
+    sel dd_tasks {
+        do reallocate_check {
+			if is_reallocation_requested
+			then {
+				exec reallocate_task
+			}
+		}
+        exec dd_lec_task
+	}
+    exec mission_server
+    exec obstacle_avoidance
+    sel priorities {
+		do battery_check {
+			if battery_low_fs 
+			then {
+				exec surface_task
+			}
+		}
+        do sensor_failure_selector {
+			if check_sensor_failure
+			then {
+				exec surface_task
+			}
+		}
+
+        do emergency_stop_check{
+            if emergency_stop_fs
+            then{
+                seq emergency_stop_tasks {
+                    exec emergency_stop_task
+                    exec surface_task
+                }
+            }
+        }
+
+		do home_reached_selector  {
+			if check_surface  
+			then {
+				exec surface_task 
+			}
+		}
+
+        do obstacle_standoff_check{
+            if obstacle_standoff_fs
+            then{
+                exec surface_task
+            }
+        }
+
+		do rth_selector  {
+			if check_rth  
+			then {
+				par rth_par {
+					exec rth_task  
+					mon home2bb
+				}
+			}
+		}
+		do geofence_selector  {
+			if check_geofence  
+			then {
+				par rth_par {
+					exec rth_task  
+					mon home2bb
+				} 
+			}
+		}
+		do pipe_lost_selector  {
+			if check_pipe_post  
+			then {
+				exec loiter_task
+			}
+		}
+        seq track_pipe_mission  {
+			chk is_track_pipe_mission_requested
+	        par tracking  {
+                exec tracking_task  
+                sel lec2am_speed_cmd {
+                    do lec2am_l_speed_check {
+                        if check_lec2am_ls
+                        then {
+                            exec speed_min_task 
+                        }
+                    } 
+                    do lec2am_r_speed_check  {
+                        if check_lec2am_rs  
+                        then {
+                            exec speed_min_task
+                        }
+                    }
+                    exec speed_max_task 
+                }
+                sel lec2am_mapping_cmd {
+                    do lec2am_l_mapping_check  {
+                        if check_lec2am_lp  
+                        then {
+                            exec pipe_mapping_disable_task
+                        }
+                    }
+                    do lec2am_r_mapping_check  {
+                        if check_lec2am_rp  
+                        then {
+                            exec pipe_mapping_disable_task
+                        }
+                    }
+                    exec pipe_mapping_enable_task
+                }
+            }
+            seq track_pipe_mission_end {
+                timer evaluate(0.5)
+            }
+        }
+        seq waypoint_mission  {
+            chk is_waypoint_requested
+            sel waypoint_selector {
+                do waypoints_sif {
+                    if check_waypoints_completed
+                    then {
+                        seq waypoint_end {
+                            exec next_mission
+                            exec  loiter_task
+                        } 
+                    }
+                }
+            exec waypoint_task
+            } 
+		}
+        exec loiter_task
+    }
+}
+
+//-------done------------------

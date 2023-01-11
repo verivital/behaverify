@@ -1,0 +1,165 @@
+BehaviorModel:
+	'system' name=ID';'
+	simpleTypes *= SimpleType
+	messageTypes *= MessageType
+	rosTopics *= Topic
+	bbVariables *= BBVar
+	bbEvents *= BBEvent
+	bbNodes *= BBNode
+	checkNodes *= CheckNode
+	taskNodes *= BehaviorNode
+    'tree' '(' 'updatetime' '=' updatetime=FLOAT ',' 'timeout' '=' timeout=FLOAT ')' tree=BTree
+;
+
+
+
+SimpleType:
+	'type' name=ID ';'
+	;
+
+MessageType:
+	'message' name=ID package=ID
+		  fields *= Field
+    'end'(';')?
+	;
+
+Type:	SimpleType | MessageType
+	;
+
+Field:	type=[Type](array='['(count=INT)?']')?  name=ID ';'
+	;
+
+Topic:	'topic' type=[MessageType] name=ID topic_string=/([^\s;]+)/ ';'
+	;
+
+BBVar:
+	'var' type=[Type] name=ID ('=' default=BASETYPE)? ';'
+	;
+
+BBEvent:
+	'event' name=ID topic=[Topic]';'
+	;
+
+Arg:          
+    'arg' type=[Type](array='['(count=INT)?']')? name=ID ('=' default=DefaultType)? ';'
+	;
+
+DefaultType:
+    BASETYPE | BaseArrayType
+    ;
+
+BaseArrayType:
+    '[' values+=BASETYPE[','] ']'
+	;
+
+BBNode:
+	'input' name=ID
+		 input_topic=[Topic] '->' topic_bbvar=[BBVar]
+		 bb_vars *= BBVar
+		 args *= Arg
+		 ('comment' comment=STRING)?
+    'end'(';')?
+	;
+
+
+CheckNode:
+	'check' name=ID	bbvar=[BBVar] '==' default=BASETYPE ';'
+	;
+	
+BehaviorNode:
+	StdBehaviorNode |
+	TaskNode
+	;
+
+StdBehaviorNode:
+    type=[StdBehaviorType] name=ID ';'
+	;
+
+StdBehaviorType:
+	'success' | 'failure' | 'running'
+	;
+	
+TaskNode:
+	'task' name=ID 
+	('in' input_topics+=TopicArg[','] ';')?
+	('out' output_topics+=TopicArg[','] ';')?
+	bb_vars*=BBVar
+	args*=Arg
+	('comment' comment=STRING (';')?)?
+    'end'(';')?
+	;
+	
+TopicArg:
+	type=[Topic] name=ID
+	;
+
+BTree:	btree=BTreeNode
+	;
+
+BTreeNode:
+	ParBTNode
+	| SeqBTNode
+	| SelBTNode
+	| SIFBTNode
+	| MonBTNode
+	| TaskBTNode
+	| TimerBTNode
+    | CheckBTNode
+	;
+
+ChildNode:
+    BTreeNode
+	;
+	
+ParBTNode:
+	'par' name=ID ('('cond=Status')')?'{'
+	      nodes *= ChildNode
+	 '}'
+	 ;
+
+SeqBTNode:
+	'seq' name=ID ('('cond=Status')')?'{'
+	      nodes *= ChildNode
+	'}'
+	;
+
+SelBTNode:
+	'sel' name=ID ('('cond=Status')')?'{'
+	      nodes *= ChildNode
+	'}'
+	;
+
+SIFBTNode:
+	'do' name=ID '{'
+	       'if' checks+=[CheckNode][',']
+	       'then' '{'
+		    	nodes *= ChildNode
+			'}'
+	'}'
+	;
+
+MonBTNode:
+	'mon' mon+=[BBNode][',']
+	;
+
+TaskBTNode:
+	'exec' task+=[BehaviorNode][',']
+	;
+
+TimerBTNode:
+	'timer' name=ID '('duration=NUMBER')'	
+	;
+
+CheckBTNode:
+    'chk' check+=[CheckNode][',']
+    ;
+
+Status: 
+    'success' | 'failure' | 'running' | 'invalid'
+    ;
+
+Comment:
+    /\/\/.*$/
+    ;
+
+
