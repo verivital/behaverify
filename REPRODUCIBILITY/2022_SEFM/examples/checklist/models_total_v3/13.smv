@@ -1,0 +1,194 @@
+MODULE main
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		statuses := [linkSeq11.status, linkSeq9.status, linkSeq5.status, sel10.status, safety_check10.status, backup10.status, sel11.status, safety_check11.status, backup11.status, linkSeq6.status, sel12.status, safety_check12.status, backup12.status, linkSeq0.status, sel0.status, safety_check0.status, backup0.status, sel1.status, safety_check1.status, backup1.status, linkSeq10.status, linkSeq7.status, linkSeq1.status, sel2.status, safety_check2.status, backup2.status, sel3.status, safety_check3.status, backup3.status, linkSeq2.status, sel4.status, safety_check4.status, backup4.status, sel5.status, safety_check5.status, backup5.status, linkSeq8.status, linkSeq3.status, sel6.status, safety_check6.status, backup6.status, sel7.status, safety_check7.status, backup7.status, linkSeq4.status, sel8.status, safety_check8.status, backup8.status, sel9.status, safety_check9.status, backup9.status];
+		resume_from_node_0 := -3;
+		resume_point_0 := -2;
+		resume_point_1 := -2;
+		resume_point_2 := -2;
+		resume_point_36 := -2;
+		resume_point_37 := -2;
+		resume_point_9 := -2;
+		resume_point_44 := -2;
+		resume_point_13 := -2;
+		resume_point_20 := -2;
+		resume_point_21 := -2;
+		resume_point_22 := -2;
+		resume_point_29 := -2;
+		linkSeq11.active := TRUE;
+	VAR
+		node_names : define_nodes;
+		linkSeq11 : node_sequence_with_memory2(linkSeq9, linkSeq10, resume_point_0);
+		linkSeq9 : node_sequence_with_memory2(linkSeq5, linkSeq6, resume_point_1);
+		linkSeq5 : node_sequence_with_memory2(sel10, sel11, resume_point_2);
+		sel10 : node_selector_without_memory2(safety_check10, backup10);
+		safety_check10 : node_non_blocking();
+		backup10 : node_success();
+		sel11 : node_selector_without_memory2(safety_check11, backup11);
+		safety_check11 : node_non_blocking();
+		backup11 : node_success();
+		linkSeq6 : node_sequence_with_memory2(sel12, linkSeq0, resume_point_9);
+		sel12 : node_selector_without_memory2(safety_check12, backup12);
+		safety_check12 : node_non_blocking();
+		backup12 : node_success();
+		linkSeq0 : node_sequence_with_memory2(sel0, sel1, resume_point_13);
+		sel0 : node_selector_without_memory2(safety_check0, backup0);
+		safety_check0 : node_non_blocking();
+		backup0 : node_success();
+		sel1 : node_selector_without_memory2(safety_check1, backup1);
+		safety_check1 : node_non_blocking();
+		backup1 : node_success();
+		linkSeq10 : node_sequence_with_memory2(linkSeq7, linkSeq8, resume_point_20);
+		linkSeq7 : node_sequence_with_memory2(linkSeq1, linkSeq2, resume_point_21);
+		linkSeq1 : node_sequence_with_memory2(sel2, sel3, resume_point_22);
+		sel2 : node_selector_without_memory2(safety_check2, backup2);
+		safety_check2 : node_non_blocking();
+		backup2 : node_success();
+		sel3 : node_selector_without_memory2(safety_check3, backup3);
+		safety_check3 : node_non_blocking();
+		backup3 : node_success();
+		linkSeq2 : node_sequence_with_memory2(sel4, sel5, resume_point_29);
+		sel4 : node_selector_without_memory2(safety_check4, backup4);
+		safety_check4 : node_non_blocking();
+		backup4 : node_success();
+		sel5 : node_selector_without_memory2(safety_check5, backup5);
+		safety_check5 : node_non_blocking();
+		backup5 : node_success();
+		linkSeq8 : node_sequence_with_memory2(linkSeq3, linkSeq4, resume_point_36);
+		linkSeq3 : node_sequence_with_memory2(sel6, sel7, resume_point_37);
+		sel6 : node_selector_without_memory2(safety_check6, backup6);
+		safety_check6 : node_non_blocking();
+		backup6 : node_success();
+		sel7 : node_selector_without_memory2(safety_check7, backup7);
+		safety_check7 : node_non_blocking();
+		backup7 : node_success();
+		linkSeq4 : node_sequence_with_memory2(sel8, sel9, resume_point_44);
+		sel8 : node_selector_without_memory2(safety_check8, backup8);
+		safety_check8 : node_non_blocking();
+		backup8 : node_success();
+		sel9 : node_selector_without_memory2(safety_check9, backup9);
+		safety_check9 : node_non_blocking();
+		backup9 : node_success();
+	ASSIGN
+LTLSPEC G (safety_check0.status = failure -> backup0.status = success);
+LTLSPEC G (safety_check0.status = failure -> !(backup0.status = success));
+LTLSPEC G (safety_check1.status = failure -> backup1.status = success);
+LTLSPEC G (safety_check1.status = failure -> !(backup1.status = success));
+LTLSPEC G (safety_check2.status = failure -> backup2.status = success);
+LTLSPEC G (safety_check2.status = failure -> !(backup2.status = success));
+LTLSPEC G (safety_check3.status = failure -> backup3.status = success);
+LTLSPEC G (safety_check3.status = failure -> !(backup3.status = success));
+LTLSPEC G (safety_check4.status = failure -> backup4.status = success);
+LTLSPEC G (safety_check4.status = failure -> !(backup4.status = success));
+LTLSPEC G (safety_check5.status = failure -> backup5.status = success);
+LTLSPEC G (safety_check5.status = failure -> !(backup5.status = success));
+LTLSPEC G (safety_check6.status = failure -> backup6.status = success);
+LTLSPEC G (safety_check6.status = failure -> !(backup6.status = success));
+LTLSPEC G (safety_check7.status = failure -> backup7.status = success);
+LTLSPEC G (safety_check7.status = failure -> !(backup7.status = success));
+LTLSPEC G (safety_check8.status = failure -> backup8.status = success);
+LTLSPEC G (safety_check8.status = failure -> !(backup8.status = success));
+LTLSPEC G (safety_check9.status = failure -> backup9.status = success);
+LTLSPEC G (safety_check9.status = failure -> !(backup9.status = success));
+LTLSPEC G (safety_check10.status = failure -> backup10.status = success);
+LTLSPEC G (safety_check10.status = failure -> !(backup10.status = success));
+LTLSPEC G (safety_check11.status = failure -> backup11.status = success);
+LTLSPEC G (safety_check11.status = failure -> !(backup11.status = success));
+LTLSPEC G (safety_check12.status = failure -> backup12.status = success);
+LTLSPEC G (safety_check12.status = failure -> !(backup12.status = success));
+
+
+MODULE node_non_blocking()
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := input_status;
+	VAR
+		input_status : {success, failure};
+MODULE node_success()
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := success;
+MODULE node_selector_without_memory2(child_0, child_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				!(child_0.internal_status = failure) : child_0.internal_status;
+				!(child_1.internal_status = failure) : child_1.internal_status;
+				TRUE : failure;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = failure;
+MODULE node_sequence_with_memory2(child_0, child_1, resume_point)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				(0 >= resume_point) & !(child_0.internal_status = success) : child_0.internal_status;
+				(1 >= resume_point) & !(child_1.internal_status = success) : child_1.internal_status;
+				TRUE : success;
+			esac;
+		child_0.active := active & (0 >= resume_point);
+		child_1.active := (1 >= resume_point) & ((1 = resume_point) | (child_0.status = success));
+MODULE define_nodes
+	DEFINE
+		linkSeq11 := 0;
+		linkSeq9 := 1;
+		linkSeq5 := 2;
+		sel10 := 3;
+		safety_check10 := 4;
+		backup10 := 5;
+		sel11 := 6;
+		safety_check11 := 7;
+		backup11 := 8;
+		linkSeq6 := 9;
+		sel12 := 10;
+		safety_check12 := 11;
+		backup12 := 12;
+		linkSeq0 := 13;
+		sel0 := 14;
+		safety_check0 := 15;
+		backup0 := 16;
+		sel1 := 17;
+		safety_check1 := 18;
+		backup1 := 19;
+		linkSeq10 := 20;
+		linkSeq7 := 21;
+		linkSeq1 := 22;
+		sel2 := 23;
+		safety_check2 := 24;
+		backup2 := 25;
+		sel3 := 26;
+		safety_check3 := 27;
+		backup3 := 28;
+		linkSeq2 := 29;
+		sel4 := 30;
+		safety_check4 := 31;
+		backup4 := 32;
+		sel5 := 33;
+		safety_check5 := 34;
+		backup5 := 35;
+		linkSeq8 := 36;
+		linkSeq3 := 37;
+		sel6 := 38;
+		safety_check6 := 39;
+		backup6 := 40;
+		sel7 := 41;
+		safety_check7 := 42;
+		backup7 := 43;
+		linkSeq4 := 44;
+		sel8 := 45;
+		safety_check8 := 46;
+		backup8 := 47;
+		sel9 := 48;
+		safety_check9 := 49;
+		backup9 := 50;

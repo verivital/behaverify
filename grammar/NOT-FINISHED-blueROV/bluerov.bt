@@ -18,8 +18,13 @@ type time;
 //-----------------------------------
 //message types
 //-----------------------------------
+
+
+//ASK ABOUT THIS. Might be useful to have the ability to EITHER specify information here, or utilize a more specific value in a variable.
+//that way, things like String, which are not going to have a generally applicable thing, can be specified on a per variable basis.
+
 message Bool std_msgs
-	bool value;
+	bool value; //no additional info needed.
 end
 
 message Float32 std_msgs
@@ -31,11 +36,11 @@ message String std_msgs
 end
 
 message PixhawkHW vandy_bluerov
-	float64 thrusters_power;
-	float64 batt_capacity_remaining;
-	float64 batt_voltage_remaining;
-	float64 batt_charge_remaining;
-	float32[] rpm;
+	float64 thrusters_power; //not being used by model. model as anything, or drop
+	float64 batt_capacity_remaining; //not being used by model. model as anything, or drop
+	float64 batt_voltage_remaining; //not being used by model. model as anything, or drop
+	float64 batt_charge_remaining; //model as int. 0 to 10?
+	float32[] rpm; //not being used by model. model as anything, or drop
 end
 
 message AssuranceMonitorConfidence ng_msgs
@@ -44,9 +49,9 @@ message AssuranceMonitorConfidence ng_msgs
 end
 
 message HSDCommand ng_msgs
-	float64 heading;
-	float64 speed;
-	float64 depth;
+	float64 heading; //enumeration?
+	float64 speed; // {uuv_min_speed, uuv_max_speed}
+	float64 depth; //enumeration? or constant? (= 45?)
 end
 
 
@@ -131,32 +136,32 @@ topic Float32                   rtreach_index           /unsafe_hyperrectangle_i
 //Blackboard variables
 //-----------------------------------
 
-var PixhawkHW battery;
-var LEC1OutputAssuredStamped lec_dd_am;
+var PixhawkHW battery; //handled via topic
+var LEC1OutputAssuredStamped lec_dd_am; //here lec_dd_am.confs will be modeled as a boolean.
 var Bool bb_geofence = False;
 var Bool bb_pipelost = False;
-var Float32 bb_home_dist = 1000; 
-var LEC1OutputAssuredStamped lec2_am_l;
-var LEC1OutputAssuredStamped lec2_am_r;
-var String bb_mission = "";
+var Float32 bb_home_dist = 1000; //ASK ABOUT THIS. Init value in bb_home2bb.py is 0.0 and not 1000?
+var LEC1OutputAssuredStamped lec2_am_l; //here lec2_am_l.confs will be modeled as an enum {safe, speed, pipe, speed_pipe}
+var LEC1OutputAssuredStamped lec2_am_r; //here lec2_am_r.confs will be modeled as an enum {safe, speed, pipe, speed_pipe}
+var String bb_mission = ""; //modeled as enum {unknown, loitering, pipe_following, waypoint_following, path_following, collision_avoidance, assurance, terminal, e_stop}
 var Bool bb_rth = False;
 var Bool bb_sensor_failure = False;
 var Bool bb_waypoints_completed = False;
-var HSDCommand bb_HSD_out;
+var HSDCommand bb_HSD_out; //ASK ABOUT THIS. not used anywhere?
 var Bool bb_pipe_mapping_enable = False;
 var bool bb_obstacle_warning = False;
 var bool event_reallocate_button = False;
-var Float32MultiArray dd_output;
-var Float32MultiArray lec_input;
+var Float32MultiArray dd_output; // {safe, xy_warn, z_warn}
+var Float32MultiArray lec_input; //ASK ABOUT THIS. used as a in, but not as a var?
 var bool next_mission;
-var float uuv_max_speed;
-var string mission_file;
-var string ddlec_am_path;
-var Odometry odom;
-var Range fls_range;
-var float obstacle_min_standoff;
+var float uuv_max_speed; //ASK ABOUT THIS. Does this determine what the maximum speed actually is? is this based on degradation?
+var string mission_file; //this i assume does not need to be modeled. 
+var string ddlec_am_path; //as above?
+var Odometry odom; //ASK ABOUT THIS. Not used?
+var Range fls_range; //integer representation. not sure how the 0.5 thing interacts.
+var float obstacle_min_standoff; //ASK ABOUT THIS. appears to be a constant?
 var float decision_threshold;
-var HSDCommand hsd_pipeline_mapping;
+var HSDCommand hsd_pipeline_mapping; //not sure how to handle these yet. since speed is always the same possibilities, depth is constant, that leaves heading?
 var HSDCommand hsd_to_surface;
 var HSDCommand hsd_to_rth;
 var HSDCommand hsd_to_waypoint;
@@ -194,59 +199,82 @@ arg float rtreach_window_threshold = 0.75;
 //-----------------------------------
 //Blackboard nodes
 //-----------------------------------
+
+//in general, each input node will update the variable receiving the topic. this sort of update is already contained within the information present
+//the added information describes how additional variables are updated
+
+
+//all input nodes return success if the update happens, and running otherwise. no need to provide additional information about this
+
 input hsd_pipe2bb hsd_pipeline_mapping -> hsd_pipeline_mapping
     comment  "This node captures HSD input from pipeline tracking node"
+    //finished. nothing to add.
 end
 
 input hsd_surface2bb hsd_to_surface -> hsd_to_surface
     comment  "This node captures HSD input from surface node"
+    //finished. nothing to add.
 end
 
 input hsd_rth2bb hsd_to_rth -> hsd_to_rth
     comment  "This node captures HSD input from rth node"
+    //finished. nothing to add.
 end
 
 input hsd_wp2bb hsd_to_waypoint -> hsd_to_waypoint
     comment  "This node captures HSD input from waypoint node"
+    //finished. nothing to add.
 end
 
 input hsd_wp_rrt2bb hsd_to_waypoint_rrt -> hsd_to_waypoint_rrt
     comment  "This node captures HSD input from waypoint node"
+    //finished. nothing to add.
 end
 
+//ASK ABOUT THIS: why is there a 0.5 condition in this? Is it so that if no obstacle is detected there's no weirdness?
 input fls2bb fls_range -> fls_range
     var bool obstacle_standoff_warning = False;
     var float obstacle_min_standoff = 1.0;
     comment  "This node captures the FLS ranges"
+    //obstacle_standoff_warning = (fls_range <= obstacle_min_standoff) //might need to be changed.
 end
 
+//could model the entire window of events, but is that really helpful? currently erring on the side of no.
 input fls_warning2bb obstacle_in_view -> obstacle_in_view
     var bool bb_fls_warning = False;
     arg integer fls_in_view_window = fls_in_view_window;
     arg integer fls_in_view_limit = fls_in_view_limit;
     comment  "This node captures the FLS obstacle in view information"
+    //bb_fls_warning = (bb_fls_warning | obstacle_in_view) //modeling obstacle_in_view as a boolean probably.
+    //emergency_stop_warning = (emergency_stop_warning | obstacle_in_view)
 end
 
+//strictly speaking, this has a bit more complexity, in that there's some threshold thing to prevent ping pong problems
+//but that's probably beyond what should be modeled.
 input battery2bb pixhawk_hw -> battery 
     var bool battery_low_warning = False;
     arg float failsafe_battery_low_threshold = failsafe_battery_low_threshold;
     comment  "This node captures the state of the battery"
+    // battery_low_warning = (battery.batt_charge_remaining <= failsafe_battery_low_threshold)
 end
 
 input ddlecam2bb lec_dd_am -> lec_dd_am
     var bool lec_dd_am_warning = False ;
     comment  "This node captures the state of the lec dd assurance monitor"
+    //lec_dd_am_warning = lec_dd_am.confs //modeling lec_dd_am.confs as a boolean, probably
 end
 
 input rth2bb bb_rth -> bb_rth
     var bool bb_rth_warning = False;
     arg bool failsafe_rth_enable = failsafe_rth_enable;
     comment  "This node captures if the uuv is commanded to return to home"
+    //bb_rth_warning = (bb_rth_warning | bb_rth)
 end 
 
 input geofence2bb bb_geofence -> bb_geofence
     var bool bb_geofence_warning = False;
     comment  "This node captures if the uuv is within  the geofence"
+    //bb_geofence_warning = (bb_geofence_warning | bb_geofence)
 end
 
 input lec2_am_l_2bb  lec2_left_am -> lec2_am_l
@@ -255,6 +283,8 @@ input lec2_am_l_2bb  lec2_left_am -> lec2_am_l
     arg float pipe_estimation_good_log_val = pipe_estimation_good_log_val;
     arg float speed_good_log_val  = speed_good_log_val;
     comment  "This node captures the output of the lec2 assurance monitor left"
+    //lec2_am_l_speed_warning = (lec_2_am_l.confs in {speed, speed_pipe} ) //modeling lec_2_am_l.confs as an enum of {safe, speed, pipe, speed_pipe}
+    //lec2_am_l_pipe_warning = (lec_2_am_l.confs in {pipe, speed_pipe} )
 end
 
 input lec2_am_r_2bb lec2_right_am -> lec2_am_r
@@ -263,32 +293,40 @@ input lec2_am_r_2bb lec2_right_am -> lec2_am_r
     arg float pipe_estimation_good_log_val = pipe_estimation_good_log_val ;
     arg float speed_good_log_val = speed_good_log_val;
     comment  "This node captures the output of the lec2 assurance monitor right"
+    //lec2_am_r_speed_warning = (lec_2_am_r.confs in {speed, speed_pipe} ) //modeling lec_2_am_r.confs as an enum of {safe, speed, pipe, speed_pipe}
+    //lec2_am_r_pipe_warning = (lec_2_am_r.confs in {pipe, speed_pipe} )
 end
 
+//ASK ABOUT THIS: implies that if the pipe is lost and mission switches pipe_lost_warning will stay true?
 input pipe_lost2bb bb_pipelost -> bb_pipelost
     var bool bb_pipe_lost_warning =False;
     comment  "This node captures if the pipe is not in visibility of UUV"
+    //bb_pipe_lost_warning = (bb_mission.data == pipe_track & bb_pipelost.data)
 end
 
 
 input sensor_failure2bb  bb_sensor_failure -> bb_sensor_failure
     var bool bb_sensor_failure_warning =False;
     comment  "This node captures sensor failure"
+    //bb_sensor_failure_warning = (bb_sensor_failure_warning | bb_sensor_failure.data)
 end
 
 input waypoints_completed2bb  bb_waypoints_completed -> bb_waypoints_completed
     comment "This node captures if the waypoints are completed"
+    //finished. nothing to add.
 end 
 
 input home2bb bb_home_dist -> bb_home_dist
     var bool bb_home_reached =False;
     arg float home_reached_threshold = home_reached_threshold;
-    comment "This node captures if the uuv is home" 
+    comment "This node captures if the uuv is home"
+    //bb_home_reached = (bb_home_reached | bb_home_dist.data < home_reached_threshold) //can store arguments as hard coded define, so that's fine. alternatively, could abstract bb_home_dist as bool
 end
 
 input mission2bb bb_mission -> bb_mission
 //    arg bool enable_waypoint_following = False;
     comment  "This node captures the current mission"
+    //finished. nothing to add.
 end
 
 input ddlec2bb degradation_detector -> dd_output 
@@ -299,6 +337,8 @@ input ddlec2bb degradation_detector -> dd_output
     arg bool enable_fault_detection = enable_fault_detection;
     arg string decision_source = decision_source;
     comment  "This node captures the output of the DD LEC"
+    // dd_z_axis_warning = (dd_output = z_warn) | (dd_z_axis_warning & !(dd_output = safe))		| set to true if Flag, False if Safe, otherwise keep value
+    // dd_xy_axis_degradation = (dd_output = xy_warn) | (dd_xy_axis_degradation & !(dd_output = safe)) // modeling dd_output as enum {safe, xy_warn, z_warn}
 end   
 
 //input rtreach2bb rtreach -> rtreach_out
@@ -309,8 +349,11 @@ end
 
 input rtreach_index2bb rtreach_index-> rtreach_index
     comment "This node captures the rtreachability unsafe hyperrectangle index scaled to 0.0 to 1.0 range"
+    //finished. nothing to add.
 end
 
+
+//ASK ABOUT THIS. emergency stop seems depricated within this node?
 input rtreach2bb rtreach_result -> rtreach_result
     var bool emergency_stop_warning = False;
     var bool rtreach_warning = False;
@@ -319,12 +362,17 @@ input rtreach2bb rtreach_result -> rtreach_result
     arg integer rtreach_window_size = 25;
     arg float rtreach_window_threshold = 0.75;
     comment "This node captures the rtreachabiliy decision result over safety"
+    //rtreach_long_term_warning = (rtreach_result.data in {long, short_long}) //modeling rtreach_result.data as {safe, short, long, short_long}. again, could model the full window. but eh.
+    //rtreach_warning = (rtreach_result.data in {short, short_long})
 end
 
+
+//ASK ABOUT THIS. initializes, but does nothing with them?
 input rtreach_unsafe_value2bb rtreach_unsafe_value -> rtreach_unsafe_value
     var bool rtreach_fence_warning = False;
     var bool rtreach_obstacle_warning = False;
     comment "This node captures the rtreachabiliy decision value over safety"
+    //finished. nothing to add.
 end
 
 
@@ -474,7 +522,7 @@ task  loiter_task
     var HSDCommand HSD_out ;
     var String cm_hsd_input;
     //cm_hsd_input = loiter_task		|i don't know if we really need this for modeling. it seems more like information tracking
-    //HSD_out.heading = 30		   	|presumably there is some way to effectively enumerate the headings.
+    //HSD_out.heading = 30, "to_loiter"		   	|presumably there is some way to effectively enumerate the headings.
     //HSD_out.depth = depth	       		|not sure how closely i can model depth.
     //----------------
     //always returns running
@@ -502,11 +550,11 @@ task mission_server
     var string mission_file = mission_file;
     var float refLat = 38.971203;
     var float refLon = -76.398464;
+    //var bool next_mission = False;
     arg float uuv_max_speed = uuv_max_speed;
     arg string mission_file = mission_file;
     //THIS NODE HAS UNDECLARED VARIABLES BEING MODIFIED. 
 
-    //bb_obstacle_warning = {True, False}	|can be either
     //----------------
     //always returns running
 end     
@@ -515,7 +563,7 @@ task next_mission
     in bb_mission bb_mission;
     out next_wp next_wp_;
     var bool next_mission = False;
-    //net_mission = True
+    //next_mission = True
     //-----------------
     //always returns success
 end  
@@ -523,7 +571,7 @@ end
 task  speed_max_task 
     var HSDCommand HSD_out;
     arg float uuv_max_speed = uuv_max_speed;
-    //hsd_out.speed = max_speed
+    //HSD_out.speed = max_speed
     //-------------------
     //always returns running
 end    

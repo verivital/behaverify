@@ -1,0 +1,68 @@
+MODULE main
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		statuses := [node1.status, node_w.status, node2.status, node_x.status, node_y.status, node_z.status];
+		resume_from_node_0 := -3;
+		node1.active := TRUE;
+	VAR
+		node_names : define_nodes;
+		node1 : node_sequence_without_memory2(node_w, node2);
+		node_w : node_default();
+		node2 : node_selector_without_memory3(node_x, node_y, node_z);
+		node_x : node_default();
+		node_y : node_default();
+		node_z : node_default();
+	ASSIGN
+
+LTLSPEC G( node1.status = running -> X (node1.active = TRUE));
+LTLSPEC G( node2.status = running -> X (node2.active = TRUE));
+LTLSPEC G( node_w.status = running -> X (node_w.active = TRUE));
+LTLSPEC G( node_x.status = running -> X (node_x.active = TRUE));
+LTLSPEC G( node_y.status = running -> X (node_y.active = TRUE));
+LTLSPEC G( node_z.status = running -> X (node_z.active = TRUE));
+
+MODULE node_default()
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := input_status;
+	VAR
+		input_status : {success, running, failure};
+MODULE node_selector_without_memory3(child_0, child_1, child_2)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				!(child_0.internal_status = failure) : child_0.internal_status;
+				!(child_1.internal_status = failure) : child_1.internal_status;
+				!(child_2.internal_status = failure) : child_2.internal_status;
+				TRUE : failure;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = failure;
+		child_2.active := child_1.status = failure;
+MODULE node_sequence_without_memory2(child_0, child_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				!(child_0.internal_status = success) : child_0.internal_status;
+				!(child_1.internal_status = success) : child_1.internal_status;
+				TRUE : success;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = success;
+MODULE define_nodes
+	DEFINE
+		node1 := 0;
+		node_w := 1;
+		node2 := 2;
+		node_x := 3;
+		node_y := 4;
+		node_z := 5;

@@ -3,8 +3,6 @@
 *.dot
 *.fuse
 *.goutputstream-*
-**/models_*/**
-**/results/**
 **/__pycache__/**
 __pycache__/
 IGNORE/
