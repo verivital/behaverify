@@ -1,0 +1,89 @@
+MODULE main
+	VAR
+		linkSeq2 : bt_sequence_with_memory(linkSeq0, linkSeq1);
+		linkSeq0 : bt_sequence_with_memory(sel0, sel1);
+		sel0 : bt_fallback(safety_check0, backup0);
+		safety_check0 : bt_non_blocking_skill;
+		backup0 : bt_success;
+		sel1 : bt_fallback(safety_check1, backup1);
+		safety_check1 : bt_non_blocking_skill;
+		backup1 : bt_success;
+		linkSeq1 : bt_sequence_with_memory(sel2, sel3);
+		sel2 : bt_fallback(safety_check2, backup2);
+		safety_check2 : bt_non_blocking_skill;
+		backup2 : bt_success;
+		sel3 : bt_fallback(safety_check3, backup3);
+		safety_check3 : bt_non_blocking_skill;
+		backup3 : bt_success;
+		tick_generator : bt_tick_generator(linkSeq2);
+LTLSPEC G (safety_check0.output = bt_output_false -> backup0.enable = TRUE);
+LTLSPEC G (safety_check0.output = bt_output_false -> backup0.enable = FALSE);
+LTLSPEC G (safety_check1.output = bt_output_false -> backup1.enable = TRUE);
+LTLSPEC G (safety_check1.output = bt_output_false -> backup1.enable = FALSE);
+LTLSPEC G (safety_check2.output = bt_output_false -> backup2.enable = TRUE);
+LTLSPEC G (safety_check2.output = bt_output_false -> backup2.enable = FALSE);
+LTLSPEC G (safety_check3.output = bt_output_false -> backup3.enable = TRUE);
+LTLSPEC G (safety_check3.output = bt_output_false -> backup3.enable = FALSE);
+
+LTLSPEC G (tick_generator.top_level_bt.enable);
+
+
+MODULE bt_non_blocking_skill
+	IVAR
+		input : {bt_input_false, bt_input_true };
+	VAR
+		output : { bt_output_none, bt_output_running, bt_output_false, bt_output_true};
+		enable : boolean;
+	ASSIGN
+		init(output) := bt_output_none;
+		next(output) :=
+			case
+				! enable : bt_output_none;
+				input = bt_input_false : bt_output_false;
+				input = bt_input_true : bt_output_true;
+			esac;
+MODULE bt_fallback(left_bt, right_bt)
+	VAR
+		enable : boolean;
+	ASSIGN
+		left_bt.enable := enable;
+		right_bt.enable := (left_bt.output = bt_output_false);
+	DEFINE
+		output :=
+			case
+				left_bt.output in { bt_output_running, bt_output_true } : left_bt.output;
+				TRUE : right_bt.output;
+			esac;
+MODULE bt_success
+	VAR
+		enable : boolean;
+	DEFINE
+		output := enable ? bt_output_true : bt_output_none;
+MODULE bt_sequence_with_memory(left_bt, right_bt)
+	VAR
+		enable : boolean;
+		has_left_bt_succeded : boolean;
+	ASSIGN
+		init(has_left_bt_succeded) := FALSE;
+		next(has_left_bt_succeded) :=
+			case
+				right_bt.output in { bt_output_true, bt_output_false } : FALSE; -- Reset.
+				left_bt.output = bt_output_true : TRUE; -- Engage.
+				TRUE : has_left_bt_succeded; -- Hold.
+			esac;
+		left_bt.enable := enable & !has_left_bt_succeded;
+		right_bt.enable := (left_bt.output = bt_output_true) | (enable & has_left_bt_succeded);
+	DEFINE
+		output :=
+			case
+				left_bt.output in { bt_output_running, bt_output_false } : left_bt.output;
+				TRUE : right_bt.output;
+			esac;
+MODULE bt_tick_generator(top_level_bt)
+	ASSIGN
+		init(top_level_bt.enable) := TRUE;
+		next(top_level_bt.enable) := (top_level_bt.output != bt_output_none);
+MODULE bt_single_tick_generator(top_level_bt)
+	ASSIGN
+		init(top_level_bt.enable) := TRUE;
+		next(top_level_bt.enable) := FALSE;

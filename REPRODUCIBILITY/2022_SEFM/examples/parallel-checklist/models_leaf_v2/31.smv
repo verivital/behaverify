@@ -1,0 +1,2843 @@
+MODULE main
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		statuses := [linkPar29.status, linkPar27.status, linkPar23.status, linkPar15.status, sel30.status, safety_check30.status, backup30.status, linkPar0.status, sel0.status, safety_check0.status, backup0.status, sel1.status, safety_check1.status, backup1.status, linkPar16.status, linkPar1.status, sel2.status, safety_check2.status, backup2.status, sel3.status, safety_check3.status, backup3.status, linkPar2.status, sel4.status, safety_check4.status, backup4.status, sel5.status, safety_check5.status, backup5.status, linkPar24.status, linkPar17.status, linkPar3.status, sel6.status, safety_check6.status, backup6.status, sel7.status, safety_check7.status, backup7.status, linkPar4.status, sel8.status, safety_check8.status, backup8.status, sel9.status, safety_check9.status, backup9.status, linkPar18.status, linkPar5.status, sel10.status, safety_check10.status, backup10.status, sel11.status, safety_check11.status, backup11.status, linkPar6.status, sel12.status, safety_check12.status, backup12.status, sel13.status, safety_check13.status, backup13.status, linkPar28.status, linkPar25.status, linkPar19.status, linkPar7.status, sel14.status, safety_check14.status, backup14.status, sel15.status, safety_check15.status, backup15.status, linkPar8.status, sel16.status, safety_check16.status, backup16.status, sel17.status, safety_check17.status, backup17.status, linkPar20.status, linkPar9.status, sel18.status, safety_check18.status, backup18.status, sel19.status, safety_check19.status, backup19.status, linkPar10.status, sel20.status, safety_check20.status, backup20.status, sel21.status, safety_check21.status, backup21.status, linkPar26.status, linkPar21.status, linkPar11.status, sel22.status, safety_check22.status, backup22.status, sel23.status, safety_check23.status, backup23.status, linkPar12.status, sel24.status, safety_check24.status, backup24.status, sel25.status, safety_check25.status, backup25.status, linkPar22.status, linkPar13.status, sel26.status, safety_check26.status, backup26.status, sel27.status, safety_check27.status, backup27.status, linkPar14.status, sel28.status, safety_check28.status, backup28.status, sel29.status, safety_check29.status, backup29.status];
+		resume_from_node_0 := -3;
+		resume_from_node_1 := -3;
+		resume_from_node_2 := -3;
+		resume_from_node_3 := -3;
+		resume_from_node_4 := -3;
+		resume_from_node_7 := -3;
+		resume_from_node_8 := -3;
+		resume_from_node_11 := -3;
+		resume_from_node_14 := -3;
+		resume_from_node_15 := -3;
+		resume_from_node_16 := -3;
+		resume_from_node_19 := -3;
+		resume_from_node_22 := -3;
+		resume_from_node_23 := -3;
+		resume_from_node_26 := -3;
+		resume_from_node_29 := -3;
+		resume_from_node_30 := -3;
+		resume_from_node_31 := -3;
+		resume_from_node_32 := -3;
+		resume_from_node_35 := -3;
+		resume_from_node_38 := -3;
+		resume_from_node_39 := -3;
+		resume_from_node_42 := -3;
+		resume_from_node_45 := -3;
+		resume_from_node_46 := -3;
+		resume_from_node_47 := -3;
+		resume_from_node_50 := -3;
+		resume_from_node_53 := -3;
+		resume_from_node_54 := -3;
+		resume_from_node_57 := -3;
+		resume_from_node_60 := -3;
+		resume_from_node_61 := -3;
+		resume_from_node_62 := -3;
+		resume_from_node_63 := -3;
+		resume_from_node_64 := -3;
+		resume_from_node_67 := -3;
+		resume_from_node_70 := -3;
+		resume_from_node_71 := -3;
+		resume_from_node_74 := -3;
+		resume_from_node_77 := -3;
+		resume_from_node_78 := -3;
+		resume_from_node_79 := -3;
+		resume_from_node_82 := -3;
+		resume_from_node_85 := -3;
+		resume_from_node_86 := -3;
+		resume_from_node_89 := -3;
+		resume_from_node_92 := -3;
+		resume_from_node_93 := -3;
+		resume_from_node_94 := -3;
+		resume_from_node_95 := -3;
+		resume_from_node_98 := -3;
+		resume_from_node_101 := -3;
+		resume_from_node_102 := -3;
+		resume_from_node_105 := -3;
+		resume_from_node_108 := -3;
+		resume_from_node_109 := -3;
+		resume_from_node_110 := -3;
+		resume_from_node_113 := -3;
+		resume_from_node_116 := -3;
+		resume_from_node_117 := -3;
+		resume_from_node_120 := -3;
+		next_node := [ascent_from_0, ascent_from_1, ascent_from_2, ascent_from_3, ascent_from_4, ascent_from_5, ascent_from_6, ascent_from_7, ascent_from_8, ascent_from_9, ascent_from_10, ascent_from_11, ascent_from_12, ascent_from_13, ascent_from_14, ascent_from_15, ascent_from_16, ascent_from_17, ascent_from_18, ascent_from_19, ascent_from_20, ascent_from_21, ascent_from_22, ascent_from_23, ascent_from_24, ascent_from_25, ascent_from_26, ascent_from_27, ascent_from_28, ascent_from_29, ascent_from_30, ascent_from_31, ascent_from_32, ascent_from_33, ascent_from_34, ascent_from_35, ascent_from_36, ascent_from_37, ascent_from_38, ascent_from_39, ascent_from_40, ascent_from_41, ascent_from_42, ascent_from_43, ascent_from_44, ascent_from_45, ascent_from_46, ascent_from_47, ascent_from_48, ascent_from_49, ascent_from_50, ascent_from_51, ascent_from_52, ascent_from_53, ascent_from_54, ascent_from_55, ascent_from_56, ascent_from_57, ascent_from_58, ascent_from_59, ascent_from_60, ascent_from_61, ascent_from_62, ascent_from_63, ascent_from_64, ascent_from_65, ascent_from_66, ascent_from_67, ascent_from_68, ascent_from_69, ascent_from_70, ascent_from_71, ascent_from_72, ascent_from_73, ascent_from_74, ascent_from_75, ascent_from_76, ascent_from_77, ascent_from_78, ascent_from_79, ascent_from_80, ascent_from_81, ascent_from_82, ascent_from_83, ascent_from_84, ascent_from_85, ascent_from_86, ascent_from_87, ascent_from_88, ascent_from_89, ascent_from_90, ascent_from_91, ascent_from_92, ascent_from_93, ascent_from_94, ascent_from_95, ascent_from_96, ascent_from_97, ascent_from_98, ascent_from_99, ascent_from_100, ascent_from_101, ascent_from_102, ascent_from_103, ascent_from_104, ascent_from_105, ascent_from_106, ascent_from_107, ascent_from_108, ascent_from_109, ascent_from_110, ascent_from_111, ascent_from_112, ascent_from_113, ascent_from_114, ascent_from_115, ascent_from_116, ascent_from_117, ascent_from_118, ascent_from_119, ascent_from_120, ascent_from_121, ascent_from_122];
+		descent_from_0 := 
+			case
+				(active_node <1) : descent_from_1;
+				(active_node <60) : descent_from_60;
+				TRUE : -2;
+			esac;
+		descent_from_1 := 
+			case
+				(active_node <2) : descent_from_2;
+				(active_node <29) : descent_from_29;
+				TRUE : -2;
+			esac;
+		descent_from_2 := 
+			case
+				(active_node <3) : descent_from_3;
+				(active_node <14) : descent_from_14;
+				TRUE : -2;
+			esac;
+		descent_from_3 := 
+			case
+				(active_node <4) : descent_from_4;
+				(active_node <7) : descent_from_7;
+				TRUE : -2;
+			esac;
+		descent_from_4 := 
+			case
+				(active_node <5) : descent_from_5;
+				(active_node <6) : descent_from_6;
+				TRUE : -2;
+			esac;
+		descent_from_5 := 5;
+		descent_from_6 := 6;
+		descent_from_7 := 
+			case
+				(active_node <8) : descent_from_8;
+				(active_node <11) : descent_from_11;
+				TRUE : -2;
+			esac;
+		descent_from_8 := 
+			case
+				(active_node <9) : descent_from_9;
+				(active_node <10) : descent_from_10;
+				TRUE : -2;
+			esac;
+		descent_from_9 := 9;
+		descent_from_10 := 10;
+		descent_from_11 := 
+			case
+				(active_node <12) : descent_from_12;
+				(active_node <13) : descent_from_13;
+				TRUE : -2;
+			esac;
+		descent_from_12 := 12;
+		descent_from_13 := 13;
+		descent_from_14 := 
+			case
+				(active_node <15) : descent_from_15;
+				(active_node <22) : descent_from_22;
+				TRUE : -2;
+			esac;
+		descent_from_15 := 
+			case
+				(active_node <16) : descent_from_16;
+				(active_node <19) : descent_from_19;
+				TRUE : -2;
+			esac;
+		descent_from_16 := 
+			case
+				(active_node <17) : descent_from_17;
+				(active_node <18) : descent_from_18;
+				TRUE : -2;
+			esac;
+		descent_from_17 := 17;
+		descent_from_18 := 18;
+		descent_from_19 := 
+			case
+				(active_node <20) : descent_from_20;
+				(active_node <21) : descent_from_21;
+				TRUE : -2;
+			esac;
+		descent_from_20 := 20;
+		descent_from_21 := 21;
+		descent_from_22 := 
+			case
+				(active_node <23) : descent_from_23;
+				(active_node <26) : descent_from_26;
+				TRUE : -2;
+			esac;
+		descent_from_23 := 
+			case
+				(active_node <24) : descent_from_24;
+				(active_node <25) : descent_from_25;
+				TRUE : -2;
+			esac;
+		descent_from_24 := 24;
+		descent_from_25 := 25;
+		descent_from_26 := 
+			case
+				(active_node <27) : descent_from_27;
+				(active_node <28) : descent_from_28;
+				TRUE : -2;
+			esac;
+		descent_from_27 := 27;
+		descent_from_28 := 28;
+		descent_from_29 := 
+			case
+				(active_node <30) : descent_from_30;
+				(active_node <45) : descent_from_45;
+				TRUE : -2;
+			esac;
+		descent_from_30 := 
+			case
+				(active_node <31) : descent_from_31;
+				(active_node <38) : descent_from_38;
+				TRUE : -2;
+			esac;
+		descent_from_31 := 
+			case
+				(active_node <32) : descent_from_32;
+				(active_node <35) : descent_from_35;
+				TRUE : -2;
+			esac;
+		descent_from_32 := 
+			case
+				(active_node <33) : descent_from_33;
+				(active_node <34) : descent_from_34;
+				TRUE : -2;
+			esac;
+		descent_from_33 := 33;
+		descent_from_34 := 34;
+		descent_from_35 := 
+			case
+				(active_node <36) : descent_from_36;
+				(active_node <37) : descent_from_37;
+				TRUE : -2;
+			esac;
+		descent_from_36 := 36;
+		descent_from_37 := 37;
+		descent_from_38 := 
+			case
+				(active_node <39) : descent_from_39;
+				(active_node <42) : descent_from_42;
+				TRUE : -2;
+			esac;
+		descent_from_39 := 
+			case
+				(active_node <40) : descent_from_40;
+				(active_node <41) : descent_from_41;
+				TRUE : -2;
+			esac;
+		descent_from_40 := 40;
+		descent_from_41 := 41;
+		descent_from_42 := 
+			case
+				(active_node <43) : descent_from_43;
+				(active_node <44) : descent_from_44;
+				TRUE : -2;
+			esac;
+		descent_from_43 := 43;
+		descent_from_44 := 44;
+		descent_from_45 := 
+			case
+				(active_node <46) : descent_from_46;
+				(active_node <53) : descent_from_53;
+				TRUE : -2;
+			esac;
+		descent_from_46 := 
+			case
+				(active_node <47) : descent_from_47;
+				(active_node <50) : descent_from_50;
+				TRUE : -2;
+			esac;
+		descent_from_47 := 
+			case
+				(active_node <48) : descent_from_48;
+				(active_node <49) : descent_from_49;
+				TRUE : -2;
+			esac;
+		descent_from_48 := 48;
+		descent_from_49 := 49;
+		descent_from_50 := 
+			case
+				(active_node <51) : descent_from_51;
+				(active_node <52) : descent_from_52;
+				TRUE : -2;
+			esac;
+		descent_from_51 := 51;
+		descent_from_52 := 52;
+		descent_from_53 := 
+			case
+				(active_node <54) : descent_from_54;
+				(active_node <57) : descent_from_57;
+				TRUE : -2;
+			esac;
+		descent_from_54 := 
+			case
+				(active_node <55) : descent_from_55;
+				(active_node <56) : descent_from_56;
+				TRUE : -2;
+			esac;
+		descent_from_55 := 55;
+		descent_from_56 := 56;
+		descent_from_57 := 
+			case
+				(active_node <58) : descent_from_58;
+				(active_node <59) : descent_from_59;
+				TRUE : -2;
+			esac;
+		descent_from_58 := 58;
+		descent_from_59 := 59;
+		descent_from_60 := 
+			case
+				(active_node <61) : descent_from_61;
+				(active_node <92) : descent_from_92;
+				TRUE : -2;
+			esac;
+		descent_from_61 := 
+			case
+				(active_node <62) : descent_from_62;
+				(active_node <77) : descent_from_77;
+				TRUE : -2;
+			esac;
+		descent_from_62 := 
+			case
+				(active_node <63) : descent_from_63;
+				(active_node <70) : descent_from_70;
+				TRUE : -2;
+			esac;
+		descent_from_63 := 
+			case
+				(active_node <64) : descent_from_64;
+				(active_node <67) : descent_from_67;
+				TRUE : -2;
+			esac;
+		descent_from_64 := 
+			case
+				(active_node <65) : descent_from_65;
+				(active_node <66) : descent_from_66;
+				TRUE : -2;
+			esac;
+		descent_from_65 := 65;
+		descent_from_66 := 66;
+		descent_from_67 := 
+			case
+				(active_node <68) : descent_from_68;
+				(active_node <69) : descent_from_69;
+				TRUE : -2;
+			esac;
+		descent_from_68 := 68;
+		descent_from_69 := 69;
+		descent_from_70 := 
+			case
+				(active_node <71) : descent_from_71;
+				(active_node <74) : descent_from_74;
+				TRUE : -2;
+			esac;
+		descent_from_71 := 
+			case
+				(active_node <72) : descent_from_72;
+				(active_node <73) : descent_from_73;
+				TRUE : -2;
+			esac;
+		descent_from_72 := 72;
+		descent_from_73 := 73;
+		descent_from_74 := 
+			case
+				(active_node <75) : descent_from_75;
+				(active_node <76) : descent_from_76;
+				TRUE : -2;
+			esac;
+		descent_from_75 := 75;
+		descent_from_76 := 76;
+		descent_from_77 := 
+			case
+				(active_node <78) : descent_from_78;
+				(active_node <85) : descent_from_85;
+				TRUE : -2;
+			esac;
+		descent_from_78 := 
+			case
+				(active_node <79) : descent_from_79;
+				(active_node <82) : descent_from_82;
+				TRUE : -2;
+			esac;
+		descent_from_79 := 
+			case
+				(active_node <80) : descent_from_80;
+				(active_node <81) : descent_from_81;
+				TRUE : -2;
+			esac;
+		descent_from_80 := 80;
+		descent_from_81 := 81;
+		descent_from_82 := 
+			case
+				(active_node <83) : descent_from_83;
+				(active_node <84) : descent_from_84;
+				TRUE : -2;
+			esac;
+		descent_from_83 := 83;
+		descent_from_84 := 84;
+		descent_from_85 := 
+			case
+				(active_node <86) : descent_from_86;
+				(active_node <89) : descent_from_89;
+				TRUE : -2;
+			esac;
+		descent_from_86 := 
+			case
+				(active_node <87) : descent_from_87;
+				(active_node <88) : descent_from_88;
+				TRUE : -2;
+			esac;
+		descent_from_87 := 87;
+		descent_from_88 := 88;
+		descent_from_89 := 
+			case
+				(active_node <90) : descent_from_90;
+				(active_node <91) : descent_from_91;
+				TRUE : -2;
+			esac;
+		descent_from_90 := 90;
+		descent_from_91 := 91;
+		descent_from_92 := 
+			case
+				(active_node <93) : descent_from_93;
+				(active_node <108) : descent_from_108;
+				TRUE : -2;
+			esac;
+		descent_from_93 := 
+			case
+				(active_node <94) : descent_from_94;
+				(active_node <101) : descent_from_101;
+				TRUE : -2;
+			esac;
+		descent_from_94 := 
+			case
+				(active_node <95) : descent_from_95;
+				(active_node <98) : descent_from_98;
+				TRUE : -2;
+			esac;
+		descent_from_95 := 
+			case
+				(active_node <96) : descent_from_96;
+				(active_node <97) : descent_from_97;
+				TRUE : -2;
+			esac;
+		descent_from_96 := 96;
+		descent_from_97 := 97;
+		descent_from_98 := 
+			case
+				(active_node <99) : descent_from_99;
+				(active_node <100) : descent_from_100;
+				TRUE : -2;
+			esac;
+		descent_from_99 := 99;
+		descent_from_100 := 100;
+		descent_from_101 := 
+			case
+				(active_node <102) : descent_from_102;
+				(active_node <105) : descent_from_105;
+				TRUE : -2;
+			esac;
+		descent_from_102 := 
+			case
+				(active_node <103) : descent_from_103;
+				(active_node <104) : descent_from_104;
+				TRUE : -2;
+			esac;
+		descent_from_103 := 103;
+		descent_from_104 := 104;
+		descent_from_105 := 
+			case
+				(active_node <106) : descent_from_106;
+				(active_node <107) : descent_from_107;
+				TRUE : -2;
+			esac;
+		descent_from_106 := 106;
+		descent_from_107 := 107;
+		descent_from_108 := 
+			case
+				(active_node <109) : descent_from_109;
+				(active_node <116) : descent_from_116;
+				TRUE : -2;
+			esac;
+		descent_from_109 := 
+			case
+				(active_node <110) : descent_from_110;
+				(active_node <113) : descent_from_113;
+				TRUE : -2;
+			esac;
+		descent_from_110 := 
+			case
+				(active_node <111) : descent_from_111;
+				(active_node <112) : descent_from_112;
+				TRUE : -2;
+			esac;
+		descent_from_111 := 111;
+		descent_from_112 := 112;
+		descent_from_113 := 
+			case
+				(active_node <114) : descent_from_114;
+				(active_node <115) : descent_from_115;
+				TRUE : -2;
+			esac;
+		descent_from_114 := 114;
+		descent_from_115 := 115;
+		descent_from_116 := 
+			case
+				(active_node <117) : descent_from_117;
+				(active_node <120) : descent_from_120;
+				TRUE : -2;
+			esac;
+		descent_from_117 := 
+			case
+				(active_node <118) : descent_from_118;
+				(active_node <119) : descent_from_119;
+				TRUE : -2;
+			esac;
+		descent_from_118 := 118;
+		descent_from_119 := 119;
+		descent_from_120 := 
+			case
+				(active_node <121) : descent_from_121;
+				(active_node <122) : descent_from_122;
+				TRUE : -2;
+			esac;
+		descent_from_121 := 121;
+		descent_from_122 := 122;
+		ascent_from_0 := 
+			case
+				(statuses[0] = invalid) : descent_from_0;
+				TRUE : -1;
+			esac;
+		ascent_from_1 := 
+			case
+				(statuses[1] = invalid) : descent_from_1;
+				TRUE : ascent_from_0;
+			esac;
+		ascent_from_2 := 
+			case
+				(statuses[2] = invalid) : descent_from_2;
+				TRUE : ascent_from_1;
+			esac;
+		ascent_from_3 := 
+			case
+				(statuses[3] = invalid) : descent_from_3;
+				TRUE : ascent_from_2;
+			esac;
+		ascent_from_4 := 
+			case
+				(statuses[4] = invalid) : descent_from_4;
+				TRUE : ascent_from_3;
+			esac;
+		ascent_from_5 := ascent_from_4;
+		ascent_from_6 := ascent_from_4;
+		ascent_from_7 := 
+			case
+				(statuses[7] = invalid) : descent_from_7;
+				TRUE : ascent_from_3;
+			esac;
+		ascent_from_8 := 
+			case
+				(statuses[8] = invalid) : descent_from_8;
+				TRUE : ascent_from_7;
+			esac;
+		ascent_from_9 := ascent_from_8;
+		ascent_from_10 := ascent_from_8;
+		ascent_from_11 := 
+			case
+				(statuses[11] = invalid) : descent_from_11;
+				TRUE : ascent_from_7;
+			esac;
+		ascent_from_12 := ascent_from_11;
+		ascent_from_13 := ascent_from_11;
+		ascent_from_14 := 
+			case
+				(statuses[14] = invalid) : descent_from_14;
+				TRUE : ascent_from_2;
+			esac;
+		ascent_from_15 := 
+			case
+				(statuses[15] = invalid) : descent_from_15;
+				TRUE : ascent_from_14;
+			esac;
+		ascent_from_16 := 
+			case
+				(statuses[16] = invalid) : descent_from_16;
+				TRUE : ascent_from_15;
+			esac;
+		ascent_from_17 := ascent_from_16;
+		ascent_from_18 := ascent_from_16;
+		ascent_from_19 := 
+			case
+				(statuses[19] = invalid) : descent_from_19;
+				TRUE : ascent_from_15;
+			esac;
+		ascent_from_20 := ascent_from_19;
+		ascent_from_21 := ascent_from_19;
+		ascent_from_22 := 
+			case
+				(statuses[22] = invalid) : descent_from_22;
+				TRUE : ascent_from_14;
+			esac;
+		ascent_from_23 := 
+			case
+				(statuses[23] = invalid) : descent_from_23;
+				TRUE : ascent_from_22;
+			esac;
+		ascent_from_24 := ascent_from_23;
+		ascent_from_25 := ascent_from_23;
+		ascent_from_26 := 
+			case
+				(statuses[26] = invalid) : descent_from_26;
+				TRUE : ascent_from_22;
+			esac;
+		ascent_from_27 := ascent_from_26;
+		ascent_from_28 := ascent_from_26;
+		ascent_from_29 := 
+			case
+				(statuses[29] = invalid) : descent_from_29;
+				TRUE : ascent_from_1;
+			esac;
+		ascent_from_30 := 
+			case
+				(statuses[30] = invalid) : descent_from_30;
+				TRUE : ascent_from_29;
+			esac;
+		ascent_from_31 := 
+			case
+				(statuses[31] = invalid) : descent_from_31;
+				TRUE : ascent_from_30;
+			esac;
+		ascent_from_32 := 
+			case
+				(statuses[32] = invalid) : descent_from_32;
+				TRUE : ascent_from_31;
+			esac;
+		ascent_from_33 := ascent_from_32;
+		ascent_from_34 := ascent_from_32;
+		ascent_from_35 := 
+			case
+				(statuses[35] = invalid) : descent_from_35;
+				TRUE : ascent_from_31;
+			esac;
+		ascent_from_36 := ascent_from_35;
+		ascent_from_37 := ascent_from_35;
+		ascent_from_38 := 
+			case
+				(statuses[38] = invalid) : descent_from_38;
+				TRUE : ascent_from_30;
+			esac;
+		ascent_from_39 := 
+			case
+				(statuses[39] = invalid) : descent_from_39;
+				TRUE : ascent_from_38;
+			esac;
+		ascent_from_40 := ascent_from_39;
+		ascent_from_41 := ascent_from_39;
+		ascent_from_42 := 
+			case
+				(statuses[42] = invalid) : descent_from_42;
+				TRUE : ascent_from_38;
+			esac;
+		ascent_from_43 := ascent_from_42;
+		ascent_from_44 := ascent_from_42;
+		ascent_from_45 := 
+			case
+				(statuses[45] = invalid) : descent_from_45;
+				TRUE : ascent_from_29;
+			esac;
+		ascent_from_46 := 
+			case
+				(statuses[46] = invalid) : descent_from_46;
+				TRUE : ascent_from_45;
+			esac;
+		ascent_from_47 := 
+			case
+				(statuses[47] = invalid) : descent_from_47;
+				TRUE : ascent_from_46;
+			esac;
+		ascent_from_48 := ascent_from_47;
+		ascent_from_49 := ascent_from_47;
+		ascent_from_50 := 
+			case
+				(statuses[50] = invalid) : descent_from_50;
+				TRUE : ascent_from_46;
+			esac;
+		ascent_from_51 := ascent_from_50;
+		ascent_from_52 := ascent_from_50;
+		ascent_from_53 := 
+			case
+				(statuses[53] = invalid) : descent_from_53;
+				TRUE : ascent_from_45;
+			esac;
+		ascent_from_54 := 
+			case
+				(statuses[54] = invalid) : descent_from_54;
+				TRUE : ascent_from_53;
+			esac;
+		ascent_from_55 := ascent_from_54;
+		ascent_from_56 := ascent_from_54;
+		ascent_from_57 := 
+			case
+				(statuses[57] = invalid) : descent_from_57;
+				TRUE : ascent_from_53;
+			esac;
+		ascent_from_58 := ascent_from_57;
+		ascent_from_59 := ascent_from_57;
+		ascent_from_60 := 
+			case
+				(statuses[60] = invalid) : descent_from_60;
+				TRUE : ascent_from_0;
+			esac;
+		ascent_from_61 := 
+			case
+				(statuses[61] = invalid) : descent_from_61;
+				TRUE : ascent_from_60;
+			esac;
+		ascent_from_62 := 
+			case
+				(statuses[62] = invalid) : descent_from_62;
+				TRUE : ascent_from_61;
+			esac;
+		ascent_from_63 := 
+			case
+				(statuses[63] = invalid) : descent_from_63;
+				TRUE : ascent_from_62;
+			esac;
+		ascent_from_64 := 
+			case
+				(statuses[64] = invalid) : descent_from_64;
+				TRUE : ascent_from_63;
+			esac;
+		ascent_from_65 := ascent_from_64;
+		ascent_from_66 := ascent_from_64;
+		ascent_from_67 := 
+			case
+				(statuses[67] = invalid) : descent_from_67;
+				TRUE : ascent_from_63;
+			esac;
+		ascent_from_68 := ascent_from_67;
+		ascent_from_69 := ascent_from_67;
+		ascent_from_70 := 
+			case
+				(statuses[70] = invalid) : descent_from_70;
+				TRUE : ascent_from_62;
+			esac;
+		ascent_from_71 := 
+			case
+				(statuses[71] = invalid) : descent_from_71;
+				TRUE : ascent_from_70;
+			esac;
+		ascent_from_72 := ascent_from_71;
+		ascent_from_73 := ascent_from_71;
+		ascent_from_74 := 
+			case
+				(statuses[74] = invalid) : descent_from_74;
+				TRUE : ascent_from_70;
+			esac;
+		ascent_from_75 := ascent_from_74;
+		ascent_from_76 := ascent_from_74;
+		ascent_from_77 := 
+			case
+				(statuses[77] = invalid) : descent_from_77;
+				TRUE : ascent_from_61;
+			esac;
+		ascent_from_78 := 
+			case
+				(statuses[78] = invalid) : descent_from_78;
+				TRUE : ascent_from_77;
+			esac;
+		ascent_from_79 := 
+			case
+				(statuses[79] = invalid) : descent_from_79;
+				TRUE : ascent_from_78;
+			esac;
+		ascent_from_80 := ascent_from_79;
+		ascent_from_81 := ascent_from_79;
+		ascent_from_82 := 
+			case
+				(statuses[82] = invalid) : descent_from_82;
+				TRUE : ascent_from_78;
+			esac;
+		ascent_from_83 := ascent_from_82;
+		ascent_from_84 := ascent_from_82;
+		ascent_from_85 := 
+			case
+				(statuses[85] = invalid) : descent_from_85;
+				TRUE : ascent_from_77;
+			esac;
+		ascent_from_86 := 
+			case
+				(statuses[86] = invalid) : descent_from_86;
+				TRUE : ascent_from_85;
+			esac;
+		ascent_from_87 := ascent_from_86;
+		ascent_from_88 := ascent_from_86;
+		ascent_from_89 := 
+			case
+				(statuses[89] = invalid) : descent_from_89;
+				TRUE : ascent_from_85;
+			esac;
+		ascent_from_90 := ascent_from_89;
+		ascent_from_91 := ascent_from_89;
+		ascent_from_92 := 
+			case
+				(statuses[92] = invalid) : descent_from_92;
+				TRUE : ascent_from_60;
+			esac;
+		ascent_from_93 := 
+			case
+				(statuses[93] = invalid) : descent_from_93;
+				TRUE : ascent_from_92;
+			esac;
+		ascent_from_94 := 
+			case
+				(statuses[94] = invalid) : descent_from_94;
+				TRUE : ascent_from_93;
+			esac;
+		ascent_from_95 := 
+			case
+				(statuses[95] = invalid) : descent_from_95;
+				TRUE : ascent_from_94;
+			esac;
+		ascent_from_96 := ascent_from_95;
+		ascent_from_97 := ascent_from_95;
+		ascent_from_98 := 
+			case
+				(statuses[98] = invalid) : descent_from_98;
+				TRUE : ascent_from_94;
+			esac;
+		ascent_from_99 := ascent_from_98;
+		ascent_from_100 := ascent_from_98;
+		ascent_from_101 := 
+			case
+				(statuses[101] = invalid) : descent_from_101;
+				TRUE : ascent_from_93;
+			esac;
+		ascent_from_102 := 
+			case
+				(statuses[102] = invalid) : descent_from_102;
+				TRUE : ascent_from_101;
+			esac;
+		ascent_from_103 := ascent_from_102;
+		ascent_from_104 := ascent_from_102;
+		ascent_from_105 := 
+			case
+				(statuses[105] = invalid) : descent_from_105;
+				TRUE : ascent_from_101;
+			esac;
+		ascent_from_106 := ascent_from_105;
+		ascent_from_107 := ascent_from_105;
+		ascent_from_108 := 
+			case
+				(statuses[108] = invalid) : descent_from_108;
+				TRUE : ascent_from_92;
+			esac;
+		ascent_from_109 := 
+			case
+				(statuses[109] = invalid) : descent_from_109;
+				TRUE : ascent_from_108;
+			esac;
+		ascent_from_110 := 
+			case
+				(statuses[110] = invalid) : descent_from_110;
+				TRUE : ascent_from_109;
+			esac;
+		ascent_from_111 := ascent_from_110;
+		ascent_from_112 := ascent_from_110;
+		ascent_from_113 := 
+			case
+				(statuses[113] = invalid) : descent_from_113;
+				TRUE : ascent_from_109;
+			esac;
+		ascent_from_114 := ascent_from_113;
+		ascent_from_115 := ascent_from_113;
+		ascent_from_116 := 
+			case
+				(statuses[116] = invalid) : descent_from_116;
+				TRUE : ascent_from_108;
+			esac;
+		ascent_from_117 := 
+			case
+				(statuses[117] = invalid) : descent_from_117;
+				TRUE : ascent_from_116;
+			esac;
+		ascent_from_118 := ascent_from_117;
+		ascent_from_119 := ascent_from_117;
+		ascent_from_120 := 
+			case
+				(statuses[120] = invalid) : descent_from_120;
+				TRUE : ascent_from_116;
+			esac;
+		ascent_from_121 := ascent_from_120;
+		ascent_from_122 := ascent_from_120;
+		relevant_child_0 := 
+			case
+				 !(relevant_child_1 = -2) : 1;
+				 !(relevant_child_60 = -2) : 60;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_0 := 
+			case
+				(resume_from_node_0 = 0) : TRUE ;
+				(resume_relevant_child_1) : TRUE;
+				(resume_relevant_child_60) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_0 := 
+			case
+				(relevant_child_0 = 1) : linkPar27.status;
+				(relevant_child_0 = 60) : linkPar28.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_1 := 
+			case
+				 !(relevant_child_2 = -2) : 2;
+				 !(relevant_child_29 = -2) : 29;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_1 := 
+			case
+				(resume_from_node_1 = 1) : TRUE ;
+				(resume_relevant_child_2) : TRUE;
+				(resume_relevant_child_29) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_1 := 
+			case
+				(relevant_child_1 = 2) : linkPar23.status;
+				(relevant_child_1 = 29) : linkPar24.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_2 := 
+			case
+				 !(relevant_child_3 = -2) : 3;
+				 !(relevant_child_14 = -2) : 14;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_2 := 
+			case
+				(resume_from_node_2 = 2) : TRUE ;
+				(resume_relevant_child_3) : TRUE;
+				(resume_relevant_child_14) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_2 := 
+			case
+				(relevant_child_2 = 3) : linkPar15.status;
+				(relevant_child_2 = 14) : linkPar16.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_3 := 
+			case
+				 !(relevant_child_4 = -2) : 4;
+				 !(relevant_child_7 = -2) : 7;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_3 := 
+			case
+				(resume_from_node_3 = 3) : TRUE ;
+				(resume_relevant_child_4) : TRUE;
+				(resume_relevant_child_7) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_3 := 
+			case
+				(relevant_child_3 = 4) : sel30.status;
+				(relevant_child_3 = 7) : linkPar0.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_4 := 
+			case
+				 !(relevant_child_5 = -2) : 5;
+				 !(relevant_child_6 = -2) : 6;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_4 := 
+			case
+				(resume_from_node_4 = 4) : TRUE ;
+				(resume_relevant_child_5) : TRUE;
+				(resume_relevant_child_6) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_4 := 
+			case
+				(relevant_child_4 = 5) : safety_check30.status;
+				(relevant_child_4 = 6) : backup30.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_5 := (active_node = 5) ? -1 : -2 ;
+		resume_relevant_child_5 := (resume_from_node_4 = 5) ? TRUE : FALSE ;
+		relevant_child_6 := (active_node = 6) ? -1 : -2 ;
+		resume_relevant_child_6 := (resume_from_node_4 = 6) ? TRUE : FALSE ;
+		relevant_child_7 := 
+			case
+				 !(relevant_child_8 = -2) : 8;
+				 !(relevant_child_11 = -2) : 11;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_7 := 
+			case
+				(resume_from_node_7 = 7) : TRUE ;
+				(resume_relevant_child_8) : TRUE;
+				(resume_relevant_child_11) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_7 := 
+			case
+				(relevant_child_7 = 8) : sel0.status;
+				(relevant_child_7 = 11) : sel1.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_8 := 
+			case
+				 !(relevant_child_9 = -2) : 9;
+				 !(relevant_child_10 = -2) : 10;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_8 := 
+			case
+				(resume_from_node_8 = 8) : TRUE ;
+				(resume_relevant_child_9) : TRUE;
+				(resume_relevant_child_10) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_8 := 
+			case
+				(relevant_child_8 = 9) : safety_check0.status;
+				(relevant_child_8 = 10) : backup0.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_9 := (active_node = 9) ? -1 : -2 ;
+		resume_relevant_child_9 := (resume_from_node_8 = 9) ? TRUE : FALSE ;
+		relevant_child_10 := (active_node = 10) ? -1 : -2 ;
+		resume_relevant_child_10 := (resume_from_node_8 = 10) ? TRUE : FALSE ;
+		relevant_child_11 := 
+			case
+				 !(relevant_child_12 = -2) : 12;
+				 !(relevant_child_13 = -2) : 13;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_11 := 
+			case
+				(resume_from_node_11 = 11) : TRUE ;
+				(resume_relevant_child_12) : TRUE;
+				(resume_relevant_child_13) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_11 := 
+			case
+				(relevant_child_11 = 12) : safety_check1.status;
+				(relevant_child_11 = 13) : backup1.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_12 := (active_node = 12) ? -1 : -2 ;
+		resume_relevant_child_12 := (resume_from_node_11 = 12) ? TRUE : FALSE ;
+		relevant_child_13 := (active_node = 13) ? -1 : -2 ;
+		resume_relevant_child_13 := (resume_from_node_11 = 13) ? TRUE : FALSE ;
+		relevant_child_14 := 
+			case
+				 !(relevant_child_15 = -2) : 15;
+				 !(relevant_child_22 = -2) : 22;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_14 := 
+			case
+				(resume_from_node_14 = 14) : TRUE ;
+				(resume_relevant_child_15) : TRUE;
+				(resume_relevant_child_22) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_14 := 
+			case
+				(relevant_child_14 = 15) : linkPar1.status;
+				(relevant_child_14 = 22) : linkPar2.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_15 := 
+			case
+				 !(relevant_child_16 = -2) : 16;
+				 !(relevant_child_19 = -2) : 19;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_15 := 
+			case
+				(resume_from_node_15 = 15) : TRUE ;
+				(resume_relevant_child_16) : TRUE;
+				(resume_relevant_child_19) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_15 := 
+			case
+				(relevant_child_15 = 16) : sel2.status;
+				(relevant_child_15 = 19) : sel3.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_16 := 
+			case
+				 !(relevant_child_17 = -2) : 17;
+				 !(relevant_child_18 = -2) : 18;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_16 := 
+			case
+				(resume_from_node_16 = 16) : TRUE ;
+				(resume_relevant_child_17) : TRUE;
+				(resume_relevant_child_18) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_16 := 
+			case
+				(relevant_child_16 = 17) : safety_check2.status;
+				(relevant_child_16 = 18) : backup2.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_17 := (active_node = 17) ? -1 : -2 ;
+		resume_relevant_child_17 := (resume_from_node_16 = 17) ? TRUE : FALSE ;
+		relevant_child_18 := (active_node = 18) ? -1 : -2 ;
+		resume_relevant_child_18 := (resume_from_node_16 = 18) ? TRUE : FALSE ;
+		relevant_child_19 := 
+			case
+				 !(relevant_child_20 = -2) : 20;
+				 !(relevant_child_21 = -2) : 21;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_19 := 
+			case
+				(resume_from_node_19 = 19) : TRUE ;
+				(resume_relevant_child_20) : TRUE;
+				(resume_relevant_child_21) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_19 := 
+			case
+				(relevant_child_19 = 20) : safety_check3.status;
+				(relevant_child_19 = 21) : backup3.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_20 := (active_node = 20) ? -1 : -2 ;
+		resume_relevant_child_20 := (resume_from_node_19 = 20) ? TRUE : FALSE ;
+		relevant_child_21 := (active_node = 21) ? -1 : -2 ;
+		resume_relevant_child_21 := (resume_from_node_19 = 21) ? TRUE : FALSE ;
+		relevant_child_22 := 
+			case
+				 !(relevant_child_23 = -2) : 23;
+				 !(relevant_child_26 = -2) : 26;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_22 := 
+			case
+				(resume_from_node_22 = 22) : TRUE ;
+				(resume_relevant_child_23) : TRUE;
+				(resume_relevant_child_26) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_22 := 
+			case
+				(relevant_child_22 = 23) : sel4.status;
+				(relevant_child_22 = 26) : sel5.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_23 := 
+			case
+				 !(relevant_child_24 = -2) : 24;
+				 !(relevant_child_25 = -2) : 25;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_23 := 
+			case
+				(resume_from_node_23 = 23) : TRUE ;
+				(resume_relevant_child_24) : TRUE;
+				(resume_relevant_child_25) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_23 := 
+			case
+				(relevant_child_23 = 24) : safety_check4.status;
+				(relevant_child_23 = 25) : backup4.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_24 := (active_node = 24) ? -1 : -2 ;
+		resume_relevant_child_24 := (resume_from_node_23 = 24) ? TRUE : FALSE ;
+		relevant_child_25 := (active_node = 25) ? -1 : -2 ;
+		resume_relevant_child_25 := (resume_from_node_23 = 25) ? TRUE : FALSE ;
+		relevant_child_26 := 
+			case
+				 !(relevant_child_27 = -2) : 27;
+				 !(relevant_child_28 = -2) : 28;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_26 := 
+			case
+				(resume_from_node_26 = 26) : TRUE ;
+				(resume_relevant_child_27) : TRUE;
+				(resume_relevant_child_28) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_26 := 
+			case
+				(relevant_child_26 = 27) : safety_check5.status;
+				(relevant_child_26 = 28) : backup5.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_27 := (active_node = 27) ? -1 : -2 ;
+		resume_relevant_child_27 := (resume_from_node_26 = 27) ? TRUE : FALSE ;
+		relevant_child_28 := (active_node = 28) ? -1 : -2 ;
+		resume_relevant_child_28 := (resume_from_node_26 = 28) ? TRUE : FALSE ;
+		relevant_child_29 := 
+			case
+				 !(relevant_child_30 = -2) : 30;
+				 !(relevant_child_45 = -2) : 45;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_29 := 
+			case
+				(resume_from_node_29 = 29) : TRUE ;
+				(resume_relevant_child_30) : TRUE;
+				(resume_relevant_child_45) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_29 := 
+			case
+				(relevant_child_29 = 30) : linkPar17.status;
+				(relevant_child_29 = 45) : linkPar18.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_30 := 
+			case
+				 !(relevant_child_31 = -2) : 31;
+				 !(relevant_child_38 = -2) : 38;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_30 := 
+			case
+				(resume_from_node_30 = 30) : TRUE ;
+				(resume_relevant_child_31) : TRUE;
+				(resume_relevant_child_38) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_30 := 
+			case
+				(relevant_child_30 = 31) : linkPar3.status;
+				(relevant_child_30 = 38) : linkPar4.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_31 := 
+			case
+				 !(relevant_child_32 = -2) : 32;
+				 !(relevant_child_35 = -2) : 35;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_31 := 
+			case
+				(resume_from_node_31 = 31) : TRUE ;
+				(resume_relevant_child_32) : TRUE;
+				(resume_relevant_child_35) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_31 := 
+			case
+				(relevant_child_31 = 32) : sel6.status;
+				(relevant_child_31 = 35) : sel7.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_32 := 
+			case
+				 !(relevant_child_33 = -2) : 33;
+				 !(relevant_child_34 = -2) : 34;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_32 := 
+			case
+				(resume_from_node_32 = 32) : TRUE ;
+				(resume_relevant_child_33) : TRUE;
+				(resume_relevant_child_34) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_32 := 
+			case
+				(relevant_child_32 = 33) : safety_check6.status;
+				(relevant_child_32 = 34) : backup6.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_33 := (active_node = 33) ? -1 : -2 ;
+		resume_relevant_child_33 := (resume_from_node_32 = 33) ? TRUE : FALSE ;
+		relevant_child_34 := (active_node = 34) ? -1 : -2 ;
+		resume_relevant_child_34 := (resume_from_node_32 = 34) ? TRUE : FALSE ;
+		relevant_child_35 := 
+			case
+				 !(relevant_child_36 = -2) : 36;
+				 !(relevant_child_37 = -2) : 37;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_35 := 
+			case
+				(resume_from_node_35 = 35) : TRUE ;
+				(resume_relevant_child_36) : TRUE;
+				(resume_relevant_child_37) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_35 := 
+			case
+				(relevant_child_35 = 36) : safety_check7.status;
+				(relevant_child_35 = 37) : backup7.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_36 := (active_node = 36) ? -1 : -2 ;
+		resume_relevant_child_36 := (resume_from_node_35 = 36) ? TRUE : FALSE ;
+		relevant_child_37 := (active_node = 37) ? -1 : -2 ;
+		resume_relevant_child_37 := (resume_from_node_35 = 37) ? TRUE : FALSE ;
+		relevant_child_38 := 
+			case
+				 !(relevant_child_39 = -2) : 39;
+				 !(relevant_child_42 = -2) : 42;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_38 := 
+			case
+				(resume_from_node_38 = 38) : TRUE ;
+				(resume_relevant_child_39) : TRUE;
+				(resume_relevant_child_42) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_38 := 
+			case
+				(relevant_child_38 = 39) : sel8.status;
+				(relevant_child_38 = 42) : sel9.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_39 := 
+			case
+				 !(relevant_child_40 = -2) : 40;
+				 !(relevant_child_41 = -2) : 41;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_39 := 
+			case
+				(resume_from_node_39 = 39) : TRUE ;
+				(resume_relevant_child_40) : TRUE;
+				(resume_relevant_child_41) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_39 := 
+			case
+				(relevant_child_39 = 40) : safety_check8.status;
+				(relevant_child_39 = 41) : backup8.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_40 := (active_node = 40) ? -1 : -2 ;
+		resume_relevant_child_40 := (resume_from_node_39 = 40) ? TRUE : FALSE ;
+		relevant_child_41 := (active_node = 41) ? -1 : -2 ;
+		resume_relevant_child_41 := (resume_from_node_39 = 41) ? TRUE : FALSE ;
+		relevant_child_42 := 
+			case
+				 !(relevant_child_43 = -2) : 43;
+				 !(relevant_child_44 = -2) : 44;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_42 := 
+			case
+				(resume_from_node_42 = 42) : TRUE ;
+				(resume_relevant_child_43) : TRUE;
+				(resume_relevant_child_44) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_42 := 
+			case
+				(relevant_child_42 = 43) : safety_check9.status;
+				(relevant_child_42 = 44) : backup9.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_43 := (active_node = 43) ? -1 : -2 ;
+		resume_relevant_child_43 := (resume_from_node_42 = 43) ? TRUE : FALSE ;
+		relevant_child_44 := (active_node = 44) ? -1 : -2 ;
+		resume_relevant_child_44 := (resume_from_node_42 = 44) ? TRUE : FALSE ;
+		relevant_child_45 := 
+			case
+				 !(relevant_child_46 = -2) : 46;
+				 !(relevant_child_53 = -2) : 53;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_45 := 
+			case
+				(resume_from_node_45 = 45) : TRUE ;
+				(resume_relevant_child_46) : TRUE;
+				(resume_relevant_child_53) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_45 := 
+			case
+				(relevant_child_45 = 46) : linkPar5.status;
+				(relevant_child_45 = 53) : linkPar6.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_46 := 
+			case
+				 !(relevant_child_47 = -2) : 47;
+				 !(relevant_child_50 = -2) : 50;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_46 := 
+			case
+				(resume_from_node_46 = 46) : TRUE ;
+				(resume_relevant_child_47) : TRUE;
+				(resume_relevant_child_50) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_46 := 
+			case
+				(relevant_child_46 = 47) : sel10.status;
+				(relevant_child_46 = 50) : sel11.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_47 := 
+			case
+				 !(relevant_child_48 = -2) : 48;
+				 !(relevant_child_49 = -2) : 49;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_47 := 
+			case
+				(resume_from_node_47 = 47) : TRUE ;
+				(resume_relevant_child_48) : TRUE;
+				(resume_relevant_child_49) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_47 := 
+			case
+				(relevant_child_47 = 48) : safety_check10.status;
+				(relevant_child_47 = 49) : backup10.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_48 := (active_node = 48) ? -1 : -2 ;
+		resume_relevant_child_48 := (resume_from_node_47 = 48) ? TRUE : FALSE ;
+		relevant_child_49 := (active_node = 49) ? -1 : -2 ;
+		resume_relevant_child_49 := (resume_from_node_47 = 49) ? TRUE : FALSE ;
+		relevant_child_50 := 
+			case
+				 !(relevant_child_51 = -2) : 51;
+				 !(relevant_child_52 = -2) : 52;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_50 := 
+			case
+				(resume_from_node_50 = 50) : TRUE ;
+				(resume_relevant_child_51) : TRUE;
+				(resume_relevant_child_52) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_50 := 
+			case
+				(relevant_child_50 = 51) : safety_check11.status;
+				(relevant_child_50 = 52) : backup11.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_51 := (active_node = 51) ? -1 : -2 ;
+		resume_relevant_child_51 := (resume_from_node_50 = 51) ? TRUE : FALSE ;
+		relevant_child_52 := (active_node = 52) ? -1 : -2 ;
+		resume_relevant_child_52 := (resume_from_node_50 = 52) ? TRUE : FALSE ;
+		relevant_child_53 := 
+			case
+				 !(relevant_child_54 = -2) : 54;
+				 !(relevant_child_57 = -2) : 57;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_53 := 
+			case
+				(resume_from_node_53 = 53) : TRUE ;
+				(resume_relevant_child_54) : TRUE;
+				(resume_relevant_child_57) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_53 := 
+			case
+				(relevant_child_53 = 54) : sel12.status;
+				(relevant_child_53 = 57) : sel13.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_54 := 
+			case
+				 !(relevant_child_55 = -2) : 55;
+				 !(relevant_child_56 = -2) : 56;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_54 := 
+			case
+				(resume_from_node_54 = 54) : TRUE ;
+				(resume_relevant_child_55) : TRUE;
+				(resume_relevant_child_56) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_54 := 
+			case
+				(relevant_child_54 = 55) : safety_check12.status;
+				(relevant_child_54 = 56) : backup12.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_55 := (active_node = 55) ? -1 : -2 ;
+		resume_relevant_child_55 := (resume_from_node_54 = 55) ? TRUE : FALSE ;
+		relevant_child_56 := (active_node = 56) ? -1 : -2 ;
+		resume_relevant_child_56 := (resume_from_node_54 = 56) ? TRUE : FALSE ;
+		relevant_child_57 := 
+			case
+				 !(relevant_child_58 = -2) : 58;
+				 !(relevant_child_59 = -2) : 59;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_57 := 
+			case
+				(resume_from_node_57 = 57) : TRUE ;
+				(resume_relevant_child_58) : TRUE;
+				(resume_relevant_child_59) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_57 := 
+			case
+				(relevant_child_57 = 58) : safety_check13.status;
+				(relevant_child_57 = 59) : backup13.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_58 := (active_node = 58) ? -1 : -2 ;
+		resume_relevant_child_58 := (resume_from_node_57 = 58) ? TRUE : FALSE ;
+		relevant_child_59 := (active_node = 59) ? -1 : -2 ;
+		resume_relevant_child_59 := (resume_from_node_57 = 59) ? TRUE : FALSE ;
+		relevant_child_60 := 
+			case
+				 !(relevant_child_61 = -2) : 61;
+				 !(relevant_child_92 = -2) : 92;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_60 := 
+			case
+				(resume_from_node_60 = 60) : TRUE ;
+				(resume_relevant_child_61) : TRUE;
+				(resume_relevant_child_92) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_60 := 
+			case
+				(relevant_child_60 = 61) : linkPar25.status;
+				(relevant_child_60 = 92) : linkPar26.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_61 := 
+			case
+				 !(relevant_child_62 = -2) : 62;
+				 !(relevant_child_77 = -2) : 77;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_61 := 
+			case
+				(resume_from_node_61 = 61) : TRUE ;
+				(resume_relevant_child_62) : TRUE;
+				(resume_relevant_child_77) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_61 := 
+			case
+				(relevant_child_61 = 62) : linkPar19.status;
+				(relevant_child_61 = 77) : linkPar20.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_62 := 
+			case
+				 !(relevant_child_63 = -2) : 63;
+				 !(relevant_child_70 = -2) : 70;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_62 := 
+			case
+				(resume_from_node_62 = 62) : TRUE ;
+				(resume_relevant_child_63) : TRUE;
+				(resume_relevant_child_70) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_62 := 
+			case
+				(relevant_child_62 = 63) : linkPar7.status;
+				(relevant_child_62 = 70) : linkPar8.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_63 := 
+			case
+				 !(relevant_child_64 = -2) : 64;
+				 !(relevant_child_67 = -2) : 67;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_63 := 
+			case
+				(resume_from_node_63 = 63) : TRUE ;
+				(resume_relevant_child_64) : TRUE;
+				(resume_relevant_child_67) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_63 := 
+			case
+				(relevant_child_63 = 64) : sel14.status;
+				(relevant_child_63 = 67) : sel15.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_64 := 
+			case
+				 !(relevant_child_65 = -2) : 65;
+				 !(relevant_child_66 = -2) : 66;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_64 := 
+			case
+				(resume_from_node_64 = 64) : TRUE ;
+				(resume_relevant_child_65) : TRUE;
+				(resume_relevant_child_66) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_64 := 
+			case
+				(relevant_child_64 = 65) : safety_check14.status;
+				(relevant_child_64 = 66) : backup14.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_65 := (active_node = 65) ? -1 : -2 ;
+		resume_relevant_child_65 := (resume_from_node_64 = 65) ? TRUE : FALSE ;
+		relevant_child_66 := (active_node = 66) ? -1 : -2 ;
+		resume_relevant_child_66 := (resume_from_node_64 = 66) ? TRUE : FALSE ;
+		relevant_child_67 := 
+			case
+				 !(relevant_child_68 = -2) : 68;
+				 !(relevant_child_69 = -2) : 69;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_67 := 
+			case
+				(resume_from_node_67 = 67) : TRUE ;
+				(resume_relevant_child_68) : TRUE;
+				(resume_relevant_child_69) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_67 := 
+			case
+				(relevant_child_67 = 68) : safety_check15.status;
+				(relevant_child_67 = 69) : backup15.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_68 := (active_node = 68) ? -1 : -2 ;
+		resume_relevant_child_68 := (resume_from_node_67 = 68) ? TRUE : FALSE ;
+		relevant_child_69 := (active_node = 69) ? -1 : -2 ;
+		resume_relevant_child_69 := (resume_from_node_67 = 69) ? TRUE : FALSE ;
+		relevant_child_70 := 
+			case
+				 !(relevant_child_71 = -2) : 71;
+				 !(relevant_child_74 = -2) : 74;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_70 := 
+			case
+				(resume_from_node_70 = 70) : TRUE ;
+				(resume_relevant_child_71) : TRUE;
+				(resume_relevant_child_74) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_70 := 
+			case
+				(relevant_child_70 = 71) : sel16.status;
+				(relevant_child_70 = 74) : sel17.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_71 := 
+			case
+				 !(relevant_child_72 = -2) : 72;
+				 !(relevant_child_73 = -2) : 73;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_71 := 
+			case
+				(resume_from_node_71 = 71) : TRUE ;
+				(resume_relevant_child_72) : TRUE;
+				(resume_relevant_child_73) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_71 := 
+			case
+				(relevant_child_71 = 72) : safety_check16.status;
+				(relevant_child_71 = 73) : backup16.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_72 := (active_node = 72) ? -1 : -2 ;
+		resume_relevant_child_72 := (resume_from_node_71 = 72) ? TRUE : FALSE ;
+		relevant_child_73 := (active_node = 73) ? -1 : -2 ;
+		resume_relevant_child_73 := (resume_from_node_71 = 73) ? TRUE : FALSE ;
+		relevant_child_74 := 
+			case
+				 !(relevant_child_75 = -2) : 75;
+				 !(relevant_child_76 = -2) : 76;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_74 := 
+			case
+				(resume_from_node_74 = 74) : TRUE ;
+				(resume_relevant_child_75) : TRUE;
+				(resume_relevant_child_76) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_74 := 
+			case
+				(relevant_child_74 = 75) : safety_check17.status;
+				(relevant_child_74 = 76) : backup17.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_75 := (active_node = 75) ? -1 : -2 ;
+		resume_relevant_child_75 := (resume_from_node_74 = 75) ? TRUE : FALSE ;
+		relevant_child_76 := (active_node = 76) ? -1 : -2 ;
+		resume_relevant_child_76 := (resume_from_node_74 = 76) ? TRUE : FALSE ;
+		relevant_child_77 := 
+			case
+				 !(relevant_child_78 = -2) : 78;
+				 !(relevant_child_85 = -2) : 85;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_77 := 
+			case
+				(resume_from_node_77 = 77) : TRUE ;
+				(resume_relevant_child_78) : TRUE;
+				(resume_relevant_child_85) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_77 := 
+			case
+				(relevant_child_77 = 78) : linkPar9.status;
+				(relevant_child_77 = 85) : linkPar10.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_78 := 
+			case
+				 !(relevant_child_79 = -2) : 79;
+				 !(relevant_child_82 = -2) : 82;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_78 := 
+			case
+				(resume_from_node_78 = 78) : TRUE ;
+				(resume_relevant_child_79) : TRUE;
+				(resume_relevant_child_82) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_78 := 
+			case
+				(relevant_child_78 = 79) : sel18.status;
+				(relevant_child_78 = 82) : sel19.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_79 := 
+			case
+				 !(relevant_child_80 = -2) : 80;
+				 !(relevant_child_81 = -2) : 81;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_79 := 
+			case
+				(resume_from_node_79 = 79) : TRUE ;
+				(resume_relevant_child_80) : TRUE;
+				(resume_relevant_child_81) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_79 := 
+			case
+				(relevant_child_79 = 80) : safety_check18.status;
+				(relevant_child_79 = 81) : backup18.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_80 := (active_node = 80) ? -1 : -2 ;
+		resume_relevant_child_80 := (resume_from_node_79 = 80) ? TRUE : FALSE ;
+		relevant_child_81 := (active_node = 81) ? -1 : -2 ;
+		resume_relevant_child_81 := (resume_from_node_79 = 81) ? TRUE : FALSE ;
+		relevant_child_82 := 
+			case
+				 !(relevant_child_83 = -2) : 83;
+				 !(relevant_child_84 = -2) : 84;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_82 := 
+			case
+				(resume_from_node_82 = 82) : TRUE ;
+				(resume_relevant_child_83) : TRUE;
+				(resume_relevant_child_84) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_82 := 
+			case
+				(relevant_child_82 = 83) : safety_check19.status;
+				(relevant_child_82 = 84) : backup19.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_83 := (active_node = 83) ? -1 : -2 ;
+		resume_relevant_child_83 := (resume_from_node_82 = 83) ? TRUE : FALSE ;
+		relevant_child_84 := (active_node = 84) ? -1 : -2 ;
+		resume_relevant_child_84 := (resume_from_node_82 = 84) ? TRUE : FALSE ;
+		relevant_child_85 := 
+			case
+				 !(relevant_child_86 = -2) : 86;
+				 !(relevant_child_89 = -2) : 89;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_85 := 
+			case
+				(resume_from_node_85 = 85) : TRUE ;
+				(resume_relevant_child_86) : TRUE;
+				(resume_relevant_child_89) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_85 := 
+			case
+				(relevant_child_85 = 86) : sel20.status;
+				(relevant_child_85 = 89) : sel21.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_86 := 
+			case
+				 !(relevant_child_87 = -2) : 87;
+				 !(relevant_child_88 = -2) : 88;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_86 := 
+			case
+				(resume_from_node_86 = 86) : TRUE ;
+				(resume_relevant_child_87) : TRUE;
+				(resume_relevant_child_88) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_86 := 
+			case
+				(relevant_child_86 = 87) : safety_check20.status;
+				(relevant_child_86 = 88) : backup20.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_87 := (active_node = 87) ? -1 : -2 ;
+		resume_relevant_child_87 := (resume_from_node_86 = 87) ? TRUE : FALSE ;
+		relevant_child_88 := (active_node = 88) ? -1 : -2 ;
+		resume_relevant_child_88 := (resume_from_node_86 = 88) ? TRUE : FALSE ;
+		relevant_child_89 := 
+			case
+				 !(relevant_child_90 = -2) : 90;
+				 !(relevant_child_91 = -2) : 91;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_89 := 
+			case
+				(resume_from_node_89 = 89) : TRUE ;
+				(resume_relevant_child_90) : TRUE;
+				(resume_relevant_child_91) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_89 := 
+			case
+				(relevant_child_89 = 90) : safety_check21.status;
+				(relevant_child_89 = 91) : backup21.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_90 := (active_node = 90) ? -1 : -2 ;
+		resume_relevant_child_90 := (resume_from_node_89 = 90) ? TRUE : FALSE ;
+		relevant_child_91 := (active_node = 91) ? -1 : -2 ;
+		resume_relevant_child_91 := (resume_from_node_89 = 91) ? TRUE : FALSE ;
+		relevant_child_92 := 
+			case
+				 !(relevant_child_93 = -2) : 93;
+				 !(relevant_child_108 = -2) : 108;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_92 := 
+			case
+				(resume_from_node_92 = 92) : TRUE ;
+				(resume_relevant_child_93) : TRUE;
+				(resume_relevant_child_108) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_92 := 
+			case
+				(relevant_child_92 = 93) : linkPar21.status;
+				(relevant_child_92 = 108) : linkPar22.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_93 := 
+			case
+				 !(relevant_child_94 = -2) : 94;
+				 !(relevant_child_101 = -2) : 101;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_93 := 
+			case
+				(resume_from_node_93 = 93) : TRUE ;
+				(resume_relevant_child_94) : TRUE;
+				(resume_relevant_child_101) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_93 := 
+			case
+				(relevant_child_93 = 94) : linkPar11.status;
+				(relevant_child_93 = 101) : linkPar12.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_94 := 
+			case
+				 !(relevant_child_95 = -2) : 95;
+				 !(relevant_child_98 = -2) : 98;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_94 := 
+			case
+				(resume_from_node_94 = 94) : TRUE ;
+				(resume_relevant_child_95) : TRUE;
+				(resume_relevant_child_98) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_94 := 
+			case
+				(relevant_child_94 = 95) : sel22.status;
+				(relevant_child_94 = 98) : sel23.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_95 := 
+			case
+				 !(relevant_child_96 = -2) : 96;
+				 !(relevant_child_97 = -2) : 97;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_95 := 
+			case
+				(resume_from_node_95 = 95) : TRUE ;
+				(resume_relevant_child_96) : TRUE;
+				(resume_relevant_child_97) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_95 := 
+			case
+				(relevant_child_95 = 96) : safety_check22.status;
+				(relevant_child_95 = 97) : backup22.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_96 := (active_node = 96) ? -1 : -2 ;
+		resume_relevant_child_96 := (resume_from_node_95 = 96) ? TRUE : FALSE ;
+		relevant_child_97 := (active_node = 97) ? -1 : -2 ;
+		resume_relevant_child_97 := (resume_from_node_95 = 97) ? TRUE : FALSE ;
+		relevant_child_98 := 
+			case
+				 !(relevant_child_99 = -2) : 99;
+				 !(relevant_child_100 = -2) : 100;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_98 := 
+			case
+				(resume_from_node_98 = 98) : TRUE ;
+				(resume_relevant_child_99) : TRUE;
+				(resume_relevant_child_100) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_98 := 
+			case
+				(relevant_child_98 = 99) : safety_check23.status;
+				(relevant_child_98 = 100) : backup23.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_99 := (active_node = 99) ? -1 : -2 ;
+		resume_relevant_child_99 := (resume_from_node_98 = 99) ? TRUE : FALSE ;
+		relevant_child_100 := (active_node = 100) ? -1 : -2 ;
+		resume_relevant_child_100 := (resume_from_node_98 = 100) ? TRUE : FALSE ;
+		relevant_child_101 := 
+			case
+				 !(relevant_child_102 = -2) : 102;
+				 !(relevant_child_105 = -2) : 105;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_101 := 
+			case
+				(resume_from_node_101 = 101) : TRUE ;
+				(resume_relevant_child_102) : TRUE;
+				(resume_relevant_child_105) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_101 := 
+			case
+				(relevant_child_101 = 102) : sel24.status;
+				(relevant_child_101 = 105) : sel25.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_102 := 
+			case
+				 !(relevant_child_103 = -2) : 103;
+				 !(relevant_child_104 = -2) : 104;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_102 := 
+			case
+				(resume_from_node_102 = 102) : TRUE ;
+				(resume_relevant_child_103) : TRUE;
+				(resume_relevant_child_104) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_102 := 
+			case
+				(relevant_child_102 = 103) : safety_check24.status;
+				(relevant_child_102 = 104) : backup24.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_103 := (active_node = 103) ? -1 : -2 ;
+		resume_relevant_child_103 := (resume_from_node_102 = 103) ? TRUE : FALSE ;
+		relevant_child_104 := (active_node = 104) ? -1 : -2 ;
+		resume_relevant_child_104 := (resume_from_node_102 = 104) ? TRUE : FALSE ;
+		relevant_child_105 := 
+			case
+				 !(relevant_child_106 = -2) : 106;
+				 !(relevant_child_107 = -2) : 107;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_105 := 
+			case
+				(resume_from_node_105 = 105) : TRUE ;
+				(resume_relevant_child_106) : TRUE;
+				(resume_relevant_child_107) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_105 := 
+			case
+				(relevant_child_105 = 106) : safety_check25.status;
+				(relevant_child_105 = 107) : backup25.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_106 := (active_node = 106) ? -1 : -2 ;
+		resume_relevant_child_106 := (resume_from_node_105 = 106) ? TRUE : FALSE ;
+		relevant_child_107 := (active_node = 107) ? -1 : -2 ;
+		resume_relevant_child_107 := (resume_from_node_105 = 107) ? TRUE : FALSE ;
+		relevant_child_108 := 
+			case
+				 !(relevant_child_109 = -2) : 109;
+				 !(relevant_child_116 = -2) : 116;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_108 := 
+			case
+				(resume_from_node_108 = 108) : TRUE ;
+				(resume_relevant_child_109) : TRUE;
+				(resume_relevant_child_116) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_108 := 
+			case
+				(relevant_child_108 = 109) : linkPar13.status;
+				(relevant_child_108 = 116) : linkPar14.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_109 := 
+			case
+				 !(relevant_child_110 = -2) : 110;
+				 !(relevant_child_113 = -2) : 113;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_109 := 
+			case
+				(resume_from_node_109 = 109) : TRUE ;
+				(resume_relevant_child_110) : TRUE;
+				(resume_relevant_child_113) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_109 := 
+			case
+				(relevant_child_109 = 110) : sel26.status;
+				(relevant_child_109 = 113) : sel27.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_110 := 
+			case
+				 !(relevant_child_111 = -2) : 111;
+				 !(relevant_child_112 = -2) : 112;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_110 := 
+			case
+				(resume_from_node_110 = 110) : TRUE ;
+				(resume_relevant_child_111) : TRUE;
+				(resume_relevant_child_112) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_110 := 
+			case
+				(relevant_child_110 = 111) : safety_check26.status;
+				(relevant_child_110 = 112) : backup26.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_111 := (active_node = 111) ? -1 : -2 ;
+		resume_relevant_child_111 := (resume_from_node_110 = 111) ? TRUE : FALSE ;
+		relevant_child_112 := (active_node = 112) ? -1 : -2 ;
+		resume_relevant_child_112 := (resume_from_node_110 = 112) ? TRUE : FALSE ;
+		relevant_child_113 := 
+			case
+				 !(relevant_child_114 = -2) : 114;
+				 !(relevant_child_115 = -2) : 115;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_113 := 
+			case
+				(resume_from_node_113 = 113) : TRUE ;
+				(resume_relevant_child_114) : TRUE;
+				(resume_relevant_child_115) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_113 := 
+			case
+				(relevant_child_113 = 114) : safety_check27.status;
+				(relevant_child_113 = 115) : backup27.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_114 := (active_node = 114) ? -1 : -2 ;
+		resume_relevant_child_114 := (resume_from_node_113 = 114) ? TRUE : FALSE ;
+		relevant_child_115 := (active_node = 115) ? -1 : -2 ;
+		resume_relevant_child_115 := (resume_from_node_113 = 115) ? TRUE : FALSE ;
+		relevant_child_116 := 
+			case
+				 !(relevant_child_117 = -2) : 117;
+				 !(relevant_child_120 = -2) : 120;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_116 := 
+			case
+				(resume_from_node_116 = 116) : TRUE ;
+				(resume_relevant_child_117) : TRUE;
+				(resume_relevant_child_120) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_116 := 
+			case
+				(relevant_child_116 = 117) : sel28.status;
+				(relevant_child_116 = 120) : sel29.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_117 := 
+			case
+				 !(relevant_child_118 = -2) : 118;
+				 !(relevant_child_119 = -2) : 119;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_117 := 
+			case
+				(resume_from_node_117 = 117) : TRUE ;
+				(resume_relevant_child_118) : TRUE;
+				(resume_relevant_child_119) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_117 := 
+			case
+				(relevant_child_117 = 118) : safety_check28.status;
+				(relevant_child_117 = 119) : backup28.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_118 := (active_node = 118) ? -1 : -2 ;
+		resume_relevant_child_118 := (resume_from_node_117 = 118) ? TRUE : FALSE ;
+		relevant_child_119 := (active_node = 119) ? -1 : -2 ;
+		resume_relevant_child_119 := (resume_from_node_117 = 119) ? TRUE : FALSE ;
+		relevant_child_120 := 
+			case
+				 !(relevant_child_121 = -2) : 121;
+				 !(relevant_child_122 = -2) : 122;
+				TRUE : -2;
+			esac;
+		resume_relevant_child_120 := 
+			case
+				(resume_from_node_120 = 120) : TRUE ;
+				(resume_relevant_child_121) : TRUE;
+				(resume_relevant_child_122) : TRUE;
+				TRUE : FALSE;
+			esac;
+		relevant_status_120 := 
+			case
+				(relevant_child_120 = 121) : safety_check29.status;
+				(relevant_child_120 = 122) : backup29.status;
+				TRUE : invalid;
+			esac;
+		relevant_child_121 := (active_node = 121) ? -1 : -2 ;
+		resume_relevant_child_121 := (resume_from_node_120 = 121) ? TRUE : FALSE ;
+		relevant_child_122 := (active_node = 122) ? -1 : -2 ;
+		resume_relevant_child_122 := (resume_from_node_120 = 122) ? TRUE : FALSE ;
+		parallel_reset_0 := 
+			case
+				(statuses[0] in {success, failure, running}) : TRUE;
+				TRUE : FALSE;
+			esac;
+		last_child_0 := 60;
+		parallel_reset_1 := 
+			case
+				(statuses[1] in {success, failure, running}) : TRUE;
+				(statuses[0] in {success, failure, running}) : TRUE;
+				TRUE : FALSE;
+			esac;
+		last_child_1 := 29;
+		parallel_reset_2 := 
+			case
+				(statuses[2] in {success, failure, running}) : TRUE;
+				(statuses[1] in {success, failure, running}) : TRUE;
+				(statuses[0] in {success, failure, running}) : TRUE;
+				TRUE : FALSE;
+			esac;
+		last_child_2 := 14;
+		parallel_reset_3 := 
+			case
+				(statuses[3] in {success, failure, running}) : TRUE;
+				(statuses[2] in {success, failure, running}) : TRUE;
+				(statuses[1] in {success, failure, running}) : TRUE;
+				(statuses[0] in {success, failure, running}) : TRUE;
+				TRUE : FALSE;
+			esac;
+		last_child_3 := 7;
+		parallel_reset_7 := 
+			case
+				(statuses[7] in {success, failure, running}) : TRUE;
+				(statuses[3] in {success, failure, running}) : TRUE;
+				(statuses[2] in {success, failure, running}) : TRUE;
+				(statuses[1] in {success, failure, running}) : TRUE;
+				(statuses[0] in {success, failure, running}) : TRUE;
+				TRUE : FALSE;
+			esac;
+		last_child_7 := 11;
+		parallel_reset_14 := 
+			case
+				(statuses[14] in {success, failure, running}) : TRUE;
+				(statuses[2] in {success, failure, running}) : TRUE;
+				(statuses[1] in {success, failure, running}) : TRUE;
+				(statuses[0] in {success, failure, running}) : TRUE;
+				TRUE : FALSE;
+			esac;
+		last_child_14 := 22;
+		parallel_reset_15 := 
+			case
+				(statuses[15] in {success, failure, running}) : TRUE;
+				(statuses[14] in {success, failure, running}) : TRUE;
+				(statuses[2] in {success, failure, running}) : TRUE;
+				(statuses[1] in {success, failure, running}) : TRUE;
+				(statuses[0] in {success, failure, running}) : TRUE;
+				TRUE : FALSE;
+			esac;
+		last_child_15 := 19;
+		parallel_reset_22 := 
+			case
+				(statuses[22] in {success, failure, running}) : TRUE;
+				(statuses[14] in {success, failure, running}) : TRUE;
+				(statuses[2] in {success, failure, running}) : TRUE;
+				(statuses[1] in {success, failure, running}) : TRUE;
+				(statuses[0] in {success, failure, running}) : TRUE;
+				TRUE : FALSE;
+			esac;
+		last_child_22 := 26;
+		parallel_reset_29 := 
+			case
+				(statuses[29] in {success, failure, running}) : TRUE;
+				(statuses[1] in {success, failure, running}) : TRUE;
+				(statuses[0] in {success, failure, running}) : TRUE;
+				TRUE : FALSE;
+			esac;
+		last_child_29 := 45;
+		parallel_reset_30 := 
+			case
+				(statuses[30] in {success, failure, running}) : TRUE;
+				(statuses[29] in {success, failure, running}) : TRUE;
+				(statuses[1] in {success, failure, running}) : TRUE;
+				(statuses[0] in {success, failure, running}) : TRUE;
+				TRUE : FALSE;
+			esac;
+		last_child_30 := 38;
+		parallel_reset_31 := 
+			case
+				(statuses[31] in {success, failure, running}) : TRUE;
+				(statuses[30] in {success, failure, running}) : TRUE;
+				(statuses[29] in {success, failure, running}) : TRUE;
+				(statuses[1] in {success, failure, running}) : TRUE;
+				(statuses[0] in {success, failure, running}) : TRUE;
+				TRUE : FALSE;
+			esac;
+		last_child_31 := 35;
+		parallel_reset_38 := 
+			case
+				(statuses[38] in {success, failure, running}) : TRUE;
+				(statuses[30] in {success, failure, running}) : TRUE;
+				(statuses[29] in {success, failure, running}) : TRUE;
+				(statuses[1] in {success, failure, running}) : TRUE;
+				(statuses[0] in {success, failure, running}) : TRUE;
+				TRUE : FALSE;
+			esac;
+		last_child_38 := 42;
+		parallel_reset_45 := 
+			case
+				(statuses[45] in {success, failure, running}) : TRUE;
+				(statuses[29] in {success, failure, running}) : TRUE;
+				(statuses[1] in {success, failure, running}) : TRUE;
+				(statuses[0] in {success, failure, running}) : TRUE;
+				TRUE : FALSE;
+			esac;
+		last_child_45 := 53;
+		parallel_reset_46 := 
+			case
+				(statuses[46] in {success, failure, running}) : TRUE;
+				(statuses[45] in {success, failure, running}) : TRUE;
+				(statuses[29] in {success, failure, running}) : TRUE;
+				(statuses[1] in {success, failure, running}) : TRUE;
+				(statuses[0] in {success, failure, running}) : TRUE;
+				TRUE : FALSE;
+			esac;
+		last_child_46 := 50;
+		parallel_reset_53 := 
+			case
+				(statuses[53] in {success, failure, running}) : TRUE;
+				(statuses[45] in {success, failure, running}) : TRUE;
+				(statuses[29] in {success, failure, running}) : TRUE;
+				(statuses[1] in {success, failure, running}) : TRUE;
+				(statuses[0] in {success, failure, running}) : TRUE;
+				TRUE : FALSE;
+			esac;
+		last_child_53 := 57;
+		parallel_reset_60 := 
+			case
+				(statuses[60] in {success, failure, running}) : TRUE;
+				(statuses[0] in {success, failure, running}) : TRUE;
+				TRUE : FALSE;
+			esac;
+		last_child_60 := 92;
+		parallel_reset_61 := 
+			case
+				(statuses[61] in {success, failure, running}) : TRUE;
+				(statuses[60] in {success, failure, running}) : TRUE;
+				(statuses[0] in {success, failure, running}) : TRUE;
+				TRUE : FALSE;
+			esac;
+		last_child_61 := 77;
+		parallel_reset_62 := 
+			case
+				(statuses[62] in {success, failure, running}) : TRUE;
+				(statuses[61] in {success, failure, running}) : TRUE;
+				(statuses[60] in {success, failure, running}) : TRUE;
+				(statuses[0] in {success, failure, running}) : TRUE;
+				TRUE : FALSE;
+			esac;
+		last_child_62 := 70;
+		parallel_reset_63 := 
+			case
+				(statuses[63] in {success, failure, running}) : TRUE;
+				(statuses[62] in {success, failure, running}) : TRUE;
+				(statuses[61] in {success, failure, running}) : TRUE;
+				(statuses[60] in {success, failure, running}) : TRUE;
+				(statuses[0] in {success, failure, running}) : TRUE;
+				TRUE : FALSE;
+			esac;
+		last_child_63 := 67;
+		parallel_reset_70 := 
+			case
+				(statuses[70] in {success, failure, running}) : TRUE;
+				(statuses[62] in {success, failure, running}) : TRUE;
+				(statuses[61] in {success, failure, running}) : TRUE;
+				(statuses[60] in {success, failure, running}) : TRUE;
+				(statuses[0] in {success, failure, running}) : TRUE;
+				TRUE : FALSE;
+			esac;
+		last_child_70 := 74;
+		parallel_reset_77 := 
+			case
+				(statuses[77] in {success, failure, running}) : TRUE;
+				(statuses[61] in {success, failure, running}) : TRUE;
+				(statuses[60] in {success, failure, running}) : TRUE;
+				(statuses[0] in {success, failure, running}) : TRUE;
+				TRUE : FALSE;
+			esac;
+		last_child_77 := 85;
+		parallel_reset_78 := 
+			case
+				(statuses[78] in {success, failure, running}) : TRUE;
+				(statuses[77] in {success, failure, running}) : TRUE;
+				(statuses[61] in {success, failure, running}) : TRUE;
+				(statuses[60] in {success, failure, running}) : TRUE;
+				(statuses[0] in {success, failure, running}) : TRUE;
+				TRUE : FALSE;
+			esac;
+		last_child_78 := 82;
+		parallel_reset_85 := 
+			case
+				(statuses[85] in {success, failure, running}) : TRUE;
+				(statuses[77] in {success, failure, running}) : TRUE;
+				(statuses[61] in {success, failure, running}) : TRUE;
+				(statuses[60] in {success, failure, running}) : TRUE;
+				(statuses[0] in {success, failure, running}) : TRUE;
+				TRUE : FALSE;
+			esac;
+		last_child_85 := 89;
+		parallel_reset_92 := 
+			case
+				(statuses[92] in {success, failure, running}) : TRUE;
+				(statuses[60] in {success, failure, running}) : TRUE;
+				(statuses[0] in {success, failure, running}) : TRUE;
+				TRUE : FALSE;
+			esac;
+		last_child_92 := 108;
+		parallel_reset_93 := 
+			case
+				(statuses[93] in {success, failure, running}) : TRUE;
+				(statuses[92] in {success, failure, running}) : TRUE;
+				(statuses[60] in {success, failure, running}) : TRUE;
+				(statuses[0] in {success, failure, running}) : TRUE;
+				TRUE : FALSE;
+			esac;
+		last_child_93 := 101;
+		parallel_reset_94 := 
+			case
+				(statuses[94] in {success, failure, running}) : TRUE;
+				(statuses[93] in {success, failure, running}) : TRUE;
+				(statuses[92] in {success, failure, running}) : TRUE;
+				(statuses[60] in {success, failure, running}) : TRUE;
+				(statuses[0] in {success, failure, running}) : TRUE;
+				TRUE : FALSE;
+			esac;
+		last_child_94 := 98;
+		parallel_reset_101 := 
+			case
+				(statuses[101] in {success, failure, running}) : TRUE;
+				(statuses[93] in {success, failure, running}) : TRUE;
+				(statuses[92] in {success, failure, running}) : TRUE;
+				(statuses[60] in {success, failure, running}) : TRUE;
+				(statuses[0] in {success, failure, running}) : TRUE;
+				TRUE : FALSE;
+			esac;
+		last_child_101 := 105;
+		parallel_reset_108 := 
+			case
+				(statuses[108] in {success, failure, running}) : TRUE;
+				(statuses[92] in {success, failure, running}) : TRUE;
+				(statuses[60] in {success, failure, running}) : TRUE;
+				(statuses[0] in {success, failure, running}) : TRUE;
+				TRUE : FALSE;
+			esac;
+		last_child_108 := 116;
+		parallel_reset_109 := 
+			case
+				(statuses[109] in {success, failure, running}) : TRUE;
+				(statuses[108] in {success, failure, running}) : TRUE;
+				(statuses[92] in {success, failure, running}) : TRUE;
+				(statuses[60] in {success, failure, running}) : TRUE;
+				(statuses[0] in {success, failure, running}) : TRUE;
+				TRUE : FALSE;
+			esac;
+		last_child_109 := 113;
+		parallel_reset_116 := 
+			case
+				(statuses[116] in {success, failure, running}) : TRUE;
+				(statuses[108] in {success, failure, running}) : TRUE;
+				(statuses[92] in {success, failure, running}) : TRUE;
+				(statuses[60] in {success, failure, running}) : TRUE;
+				(statuses[0] in {success, failure, running}) : TRUE;
+				TRUE : FALSE;
+			esac;
+		last_child_116 := 120;
+		last_child_4 := 6;
+		last_child_8 := 10;
+		last_child_11 := 13;
+		last_child_16 := 18;
+		last_child_19 := 21;
+		last_child_23 := 25;
+		last_child_26 := 28;
+		last_child_32 := 34;
+		last_child_35 := 37;
+		last_child_39 := 41;
+		last_child_42 := 44;
+		last_child_47 := 49;
+		last_child_50 := 52;
+		last_child_54 := 56;
+		last_child_57 := 59;
+		last_child_64 := 66;
+		last_child_67 := 69;
+		last_child_71 := 73;
+		last_child_74 := 76;
+		last_child_79 := 81;
+		last_child_82 := 84;
+		last_child_86 := 88;
+		last_child_89 := 91;
+		last_child_95 := 97;
+		last_child_98 := 100;
+		last_child_102 := 104;
+		last_child_105 := 107;
+		last_child_110 := 112;
+		last_child_113 := 115;
+		last_child_117 := 119;
+		last_child_120 := 122;
+	VAR
+		active_node : {-2, -1,5, 6, 9, 10, 12, 13, 17, 18, 20, 21, 24, 25, 27, 28, 33, 34, 36, 37, 40, 41, 43, 44, 48, 49, 51, 52, 55, 56, 58, 59, 65, 66, 68, 69, 72, 73, 75, 76, 80, 81, 83, 84, 87, 88, 90, 91, 96, 97, 99, 100, 103, 104, 106, 107, 111, 112, 114, 115, 118, 119, 121, 122};
+		random_status : {running, success, failure};
+		node_names : define_nodes;
+		linkPar29 : node_parallel(relevant_child_0, relevant_status_0, last_child_0, parallel_reset_0, FALSE, TRUE);
+		linkPar27 : node_parallel(relevant_child_1, relevant_status_1, last_child_1, parallel_reset_1, FALSE, TRUE);
+		linkPar23 : node_parallel(relevant_child_2, relevant_status_2, last_child_2, parallel_reset_2, FALSE, TRUE);
+		linkPar15 : node_parallel(relevant_child_3, relevant_status_3, last_child_3, parallel_reset_3, FALSE, TRUE);
+		sel30 : node_selector(relevant_child_4, relevant_status_4, last_child_4);
+		safety_check30 : node_default(active_node, 5, random_status);
+		backup30 : node_success(active_node, 6);
+		linkPar0 : node_parallel(relevant_child_7, relevant_status_7, last_child_7, parallel_reset_7, FALSE, TRUE);
+		sel0 : node_selector(relevant_child_8, relevant_status_8, last_child_8);
+		safety_check0 : node_default(active_node, 9, random_status);
+		backup0 : node_success(active_node, 10);
+		sel1 : node_selector(relevant_child_11, relevant_status_11, last_child_11);
+		safety_check1 : node_default(active_node, 12, random_status);
+		backup1 : node_success(active_node, 13);
+		linkPar16 : node_parallel(relevant_child_14, relevant_status_14, last_child_14, parallel_reset_14, FALSE, TRUE);
+		linkPar1 : node_parallel(relevant_child_15, relevant_status_15, last_child_15, parallel_reset_15, FALSE, TRUE);
+		sel2 : node_selector(relevant_child_16, relevant_status_16, last_child_16);
+		safety_check2 : node_default(active_node, 17, random_status);
+		backup2 : node_success(active_node, 18);
+		sel3 : node_selector(relevant_child_19, relevant_status_19, last_child_19);
+		safety_check3 : node_default(active_node, 20, random_status);
+		backup3 : node_success(active_node, 21);
+		linkPar2 : node_parallel(relevant_child_22, relevant_status_22, last_child_22, parallel_reset_22, FALSE, TRUE);
+		sel4 : node_selector(relevant_child_23, relevant_status_23, last_child_23);
+		safety_check4 : node_default(active_node, 24, random_status);
+		backup4 : node_success(active_node, 25);
+		sel5 : node_selector(relevant_child_26, relevant_status_26, last_child_26);
+		safety_check5 : node_default(active_node, 27, random_status);
+		backup5 : node_success(active_node, 28);
+		linkPar24 : node_parallel(relevant_child_29, relevant_status_29, last_child_29, parallel_reset_29, FALSE, TRUE);
+		linkPar17 : node_parallel(relevant_child_30, relevant_status_30, last_child_30, parallel_reset_30, FALSE, TRUE);
+		linkPar3 : node_parallel(relevant_child_31, relevant_status_31, last_child_31, parallel_reset_31, FALSE, TRUE);
+		sel6 : node_selector(relevant_child_32, relevant_status_32, last_child_32);
+		safety_check6 : node_default(active_node, 33, random_status);
+		backup6 : node_success(active_node, 34);
+		sel7 : node_selector(relevant_child_35, relevant_status_35, last_child_35);
+		safety_check7 : node_default(active_node, 36, random_status);
+		backup7 : node_success(active_node, 37);
+		linkPar4 : node_parallel(relevant_child_38, relevant_status_38, last_child_38, parallel_reset_38, FALSE, TRUE);
+		sel8 : node_selector(relevant_child_39, relevant_status_39, last_child_39);
+		safety_check8 : node_default(active_node, 40, random_status);
+		backup8 : node_success(active_node, 41);
+		sel9 : node_selector(relevant_child_42, relevant_status_42, last_child_42);
+		safety_check9 : node_default(active_node, 43, random_status);
+		backup9 : node_success(active_node, 44);
+		linkPar18 : node_parallel(relevant_child_45, relevant_status_45, last_child_45, parallel_reset_45, FALSE, TRUE);
+		linkPar5 : node_parallel(relevant_child_46, relevant_status_46, last_child_46, parallel_reset_46, FALSE, TRUE);
+		sel10 : node_selector(relevant_child_47, relevant_status_47, last_child_47);
+		safety_check10 : node_default(active_node, 48, random_status);
+		backup10 : node_success(active_node, 49);
+		sel11 : node_selector(relevant_child_50, relevant_status_50, last_child_50);
+		safety_check11 : node_default(active_node, 51, random_status);
+		backup11 : node_success(active_node, 52);
+		linkPar6 : node_parallel(relevant_child_53, relevant_status_53, last_child_53, parallel_reset_53, FALSE, TRUE);
+		sel12 : node_selector(relevant_child_54, relevant_status_54, last_child_54);
+		safety_check12 : node_default(active_node, 55, random_status);
+		backup12 : node_success(active_node, 56);
+		sel13 : node_selector(relevant_child_57, relevant_status_57, last_child_57);
+		safety_check13 : node_default(active_node, 58, random_status);
+		backup13 : node_success(active_node, 59);
+		linkPar28 : node_parallel(relevant_child_60, relevant_status_60, last_child_60, parallel_reset_60, FALSE, TRUE);
+		linkPar25 : node_parallel(relevant_child_61, relevant_status_61, last_child_61, parallel_reset_61, FALSE, TRUE);
+		linkPar19 : node_parallel(relevant_child_62, relevant_status_62, last_child_62, parallel_reset_62, FALSE, TRUE);
+		linkPar7 : node_parallel(relevant_child_63, relevant_status_63, last_child_63, parallel_reset_63, FALSE, TRUE);
+		sel14 : node_selector(relevant_child_64, relevant_status_64, last_child_64);
+		safety_check14 : node_default(active_node, 65, random_status);
+		backup14 : node_success(active_node, 66);
+		sel15 : node_selector(relevant_child_67, relevant_status_67, last_child_67);
+		safety_check15 : node_default(active_node, 68, random_status);
+		backup15 : node_success(active_node, 69);
+		linkPar8 : node_parallel(relevant_child_70, relevant_status_70, last_child_70, parallel_reset_70, FALSE, TRUE);
+		sel16 : node_selector(relevant_child_71, relevant_status_71, last_child_71);
+		safety_check16 : node_default(active_node, 72, random_status);
+		backup16 : node_success(active_node, 73);
+		sel17 : node_selector(relevant_child_74, relevant_status_74, last_child_74);
+		safety_check17 : node_default(active_node, 75, random_status);
+		backup17 : node_success(active_node, 76);
+		linkPar20 : node_parallel(relevant_child_77, relevant_status_77, last_child_77, parallel_reset_77, FALSE, TRUE);
+		linkPar9 : node_parallel(relevant_child_78, relevant_status_78, last_child_78, parallel_reset_78, FALSE, TRUE);
+		sel18 : node_selector(relevant_child_79, relevant_status_79, last_child_79);
+		safety_check18 : node_default(active_node, 80, random_status);
+		backup18 : node_success(active_node, 81);
+		sel19 : node_selector(relevant_child_82, relevant_status_82, last_child_82);
+		safety_check19 : node_default(active_node, 83, random_status);
+		backup19 : node_success(active_node, 84);
+		linkPar10 : node_parallel(relevant_child_85, relevant_status_85, last_child_85, parallel_reset_85, FALSE, TRUE);
+		sel20 : node_selector(relevant_child_86, relevant_status_86, last_child_86);
+		safety_check20 : node_default(active_node, 87, random_status);
+		backup20 : node_success(active_node, 88);
+		sel21 : node_selector(relevant_child_89, relevant_status_89, last_child_89);
+		safety_check21 : node_default(active_node, 90, random_status);
+		backup21 : node_success(active_node, 91);
+		linkPar26 : node_parallel(relevant_child_92, relevant_status_92, last_child_92, parallel_reset_92, FALSE, TRUE);
+		linkPar21 : node_parallel(relevant_child_93, relevant_status_93, last_child_93, parallel_reset_93, FALSE, TRUE);
+		linkPar11 : node_parallel(relevant_child_94, relevant_status_94, last_child_94, parallel_reset_94, FALSE, TRUE);
+		sel22 : node_selector(relevant_child_95, relevant_status_95, last_child_95);
+		safety_check22 : node_default(active_node, 96, random_status);
+		backup22 : node_success(active_node, 97);
+		sel23 : node_selector(relevant_child_98, relevant_status_98, last_child_98);
+		safety_check23 : node_default(active_node, 99, random_status);
+		backup23 : node_success(active_node, 100);
+		linkPar12 : node_parallel(relevant_child_101, relevant_status_101, last_child_101, parallel_reset_101, FALSE, TRUE);
+		sel24 : node_selector(relevant_child_102, relevant_status_102, last_child_102);
+		safety_check24 : node_default(active_node, 103, random_status);
+		backup24 : node_success(active_node, 104);
+		sel25 : node_selector(relevant_child_105, relevant_status_105, last_child_105);
+		safety_check25 : node_default(active_node, 106, random_status);
+		backup25 : node_success(active_node, 107);
+		linkPar22 : node_parallel(relevant_child_108, relevant_status_108, last_child_108, parallel_reset_108, FALSE, TRUE);
+		linkPar13 : node_parallel(relevant_child_109, relevant_status_109, last_child_109, parallel_reset_109, FALSE, TRUE);
+		sel26 : node_selector(relevant_child_110, relevant_status_110, last_child_110);
+		safety_check26 : node_default(active_node, 111, random_status);
+		backup26 : node_success(active_node, 112);
+		sel27 : node_selector(relevant_child_113, relevant_status_113, last_child_113);
+		safety_check27 : node_default(active_node, 114, random_status);
+		backup27 : node_success(active_node, 115);
+		linkPar14 : node_parallel(relevant_child_116, relevant_status_116, last_child_116, parallel_reset_116, FALSE, TRUE);
+		sel28 : node_selector(relevant_child_117, relevant_status_117, last_child_117);
+		safety_check28 : node_default(active_node, 118, random_status);
+		backup28 : node_success(active_node, 119);
+		sel29 : node_selector(relevant_child_120, relevant_status_120, last_child_120);
+		safety_check29 : node_default(active_node, 121, random_status);
+		backup29 : node_success(active_node, 122);
+	INVAR
+		active_node = -1 -> random_status = running;
+	ASSIGN
+		init(active_node) := -1;
+		next(active_node) :=
+			case
+				(active_node = -2) : -2;
+				(active_node = -1) : next_node[0];
+				TRUE : next_node[active_node];
+			esac;
+LTLSPEC G (safety_check0.status = failure -> !(active_node = -1) U backup0.status = success);
+LTLSPEC G (safety_check0.status = failure -> !(!(active_node = -1) U backup0.status = success));
+LTLSPEC G (safety_check1.status = failure -> !(active_node = -1) U backup1.status = success);
+LTLSPEC G (safety_check1.status = failure -> !(!(active_node = -1) U backup1.status = success));
+LTLSPEC G (safety_check2.status = failure -> !(active_node = -1) U backup2.status = success);
+LTLSPEC G (safety_check2.status = failure -> !(!(active_node = -1) U backup2.status = success));
+LTLSPEC G (safety_check3.status = failure -> !(active_node = -1) U backup3.status = success);
+LTLSPEC G (safety_check3.status = failure -> !(!(active_node = -1) U backup3.status = success));
+LTLSPEC G (safety_check4.status = failure -> !(active_node = -1) U backup4.status = success);
+LTLSPEC G (safety_check4.status = failure -> !(!(active_node = -1) U backup4.status = success));
+LTLSPEC G (safety_check5.status = failure -> !(active_node = -1) U backup5.status = success);
+LTLSPEC G (safety_check5.status = failure -> !(!(active_node = -1) U backup5.status = success));
+LTLSPEC G (safety_check6.status = failure -> !(active_node = -1) U backup6.status = success);
+LTLSPEC G (safety_check6.status = failure -> !(!(active_node = -1) U backup6.status = success));
+LTLSPEC G (safety_check7.status = failure -> !(active_node = -1) U backup7.status = success);
+LTLSPEC G (safety_check7.status = failure -> !(!(active_node = -1) U backup7.status = success));
+LTLSPEC G (safety_check8.status = failure -> !(active_node = -1) U backup8.status = success);
+LTLSPEC G (safety_check8.status = failure -> !(!(active_node = -1) U backup8.status = success));
+LTLSPEC G (safety_check9.status = failure -> !(active_node = -1) U backup9.status = success);
+LTLSPEC G (safety_check9.status = failure -> !(!(active_node = -1) U backup9.status = success));
+LTLSPEC G (safety_check10.status = failure -> !(active_node = -1) U backup10.status = success);
+LTLSPEC G (safety_check10.status = failure -> !(!(active_node = -1) U backup10.status = success));
+LTLSPEC G (safety_check11.status = failure -> !(active_node = -1) U backup11.status = success);
+LTLSPEC G (safety_check11.status = failure -> !(!(active_node = -1) U backup11.status = success));
+LTLSPEC G (safety_check12.status = failure -> !(active_node = -1) U backup12.status = success);
+LTLSPEC G (safety_check12.status = failure -> !(!(active_node = -1) U backup12.status = success));
+LTLSPEC G (safety_check13.status = failure -> !(active_node = -1) U backup13.status = success);
+LTLSPEC G (safety_check13.status = failure -> !(!(active_node = -1) U backup13.status = success));
+LTLSPEC G (safety_check14.status = failure -> !(active_node = -1) U backup14.status = success);
+LTLSPEC G (safety_check14.status = failure -> !(!(active_node = -1) U backup14.status = success));
+LTLSPEC G (safety_check15.status = failure -> !(active_node = -1) U backup15.status = success);
+LTLSPEC G (safety_check15.status = failure -> !(!(active_node = -1) U backup15.status = success));
+LTLSPEC G (safety_check16.status = failure -> !(active_node = -1) U backup16.status = success);
+LTLSPEC G (safety_check16.status = failure -> !(!(active_node = -1) U backup16.status = success));
+LTLSPEC G (safety_check17.status = failure -> !(active_node = -1) U backup17.status = success);
+LTLSPEC G (safety_check17.status = failure -> !(!(active_node = -1) U backup17.status = success));
+LTLSPEC G (safety_check18.status = failure -> !(active_node = -1) U backup18.status = success);
+LTLSPEC G (safety_check18.status = failure -> !(!(active_node = -1) U backup18.status = success));
+LTLSPEC G (safety_check19.status = failure -> !(active_node = -1) U backup19.status = success);
+LTLSPEC G (safety_check19.status = failure -> !(!(active_node = -1) U backup19.status = success));
+LTLSPEC G (safety_check20.status = failure -> !(active_node = -1) U backup20.status = success);
+LTLSPEC G (safety_check20.status = failure -> !(!(active_node = -1) U backup20.status = success));
+LTLSPEC G (safety_check21.status = failure -> !(active_node = -1) U backup21.status = success);
+LTLSPEC G (safety_check21.status = failure -> !(!(active_node = -1) U backup21.status = success));
+LTLSPEC G (safety_check22.status = failure -> !(active_node = -1) U backup22.status = success);
+LTLSPEC G (safety_check22.status = failure -> !(!(active_node = -1) U backup22.status = success));
+LTLSPEC G (safety_check23.status = failure -> !(active_node = -1) U backup23.status = success);
+LTLSPEC G (safety_check23.status = failure -> !(!(active_node = -1) U backup23.status = success));
+LTLSPEC G (safety_check24.status = failure -> !(active_node = -1) U backup24.status = success);
+LTLSPEC G (safety_check24.status = failure -> !(!(active_node = -1) U backup24.status = success));
+LTLSPEC G (safety_check25.status = failure -> !(active_node = -1) U backup25.status = success);
+LTLSPEC G (safety_check25.status = failure -> !(!(active_node = -1) U backup25.status = success));
+LTLSPEC G (safety_check26.status = failure -> !(active_node = -1) U backup26.status = success);
+LTLSPEC G (safety_check26.status = failure -> !(!(active_node = -1) U backup26.status = success));
+LTLSPEC G (safety_check27.status = failure -> !(active_node = -1) U backup27.status = success);
+LTLSPEC G (safety_check27.status = failure -> !(!(active_node = -1) U backup27.status = success));
+LTLSPEC G (safety_check28.status = failure -> !(active_node = -1) U backup28.status = success);
+LTLSPEC G (safety_check28.status = failure -> !(!(active_node = -1) U backup28.status = success));
+LTLSPEC G (safety_check29.status = failure -> !(active_node = -1) U backup29.status = success);
+LTLSPEC G (safety_check29.status = failure -> !(!(active_node = -1) U backup29.status = success));
+LTLSPEC G (safety_check30.status = failure -> !(active_node = -1) U backup30.status = success);
+LTLSPEC G (safety_check30.status = failure -> !(!(active_node = -1) U backup30.status = success));
+
+
+MODULE node_success(active_node, id)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status :=
+			case
+				(active_node = id) : success;
+				TRUE : invalid;
+			esac;
+MODULE node_parallel(relevant_child, relevant_status, last_child, reset, synchronized, parallel_policy_all)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status :=
+			case
+				(last_child = -2) : success;
+				(relevant_child <= 0) : invalid;
+				!(relevant_child = last_child) : invalid;
+				(relevant_status = invalid) : invalid;
+				((cur_status = failure) | (relevant_status = failure)) : failure;
+				(cur_status = running) & (relevant_status = running) : running;
+				!(parallel_policy_all) : success;
+				(cur_status = success) & (relevant_status = success) : success;
+				TRUE : running;
+			esac;
+	VAR
+		cur_status : {failure, running, success};
+	ASSIGN
+		init(cur_status) :=
+			case
+				(parallel_policy_all) : success;
+				TRUE : running;
+			esac;
+		next(cur_status) :=
+			case
+				reset & (parallel_policy_all) : success;
+				reset & !(parallel_policy_all) : running;
+				(relevant_child < 0) : cur_status;
+				((relevant_status = failure) | (cur_status = failure)) : failure;
+				(parallel_policy_all) & (relevant_status = success) : cur_status;
+				(parallel_policy_all) & (relevant_status = running) : running;
+				!(parallel_policy_all) & (relevant_status = success) : success;
+				!(parallel_policy_all) & (relevant_status = running) : cur_status;
+				TRUE : cur_status;
+			esac;
+MODULE node_default(active_node, id, random_status)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status :=
+			case
+				(active_node = id) : random_status;
+				TRUE : invalid;
+			esac;
+MODULE node_selector(relevant_child, relevant_status, last_child)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status :=
+			case
+				(last_child = -2) : failure;
+				(relevant_child <= 0) : invalid;
+				(relevant_status = running) : running;
+				(relevant_status = success) : success;
+				(last_child = relevant_child) & (relevant_status = failure) : failure;
+				TRUE : invalid;
+			esac;
+MODULE define_nodes
+	DEFINE
+		linkPar29 := 0;
+		linkPar27 := 1;
+		linkPar23 := 2;
+		linkPar15 := 3;
+		sel30 := 4;
+		safety_check30 := 5;
+		backup30 := 6;
+		linkPar0 := 7;
+		sel0 := 8;
+		safety_check0 := 9;
+		backup0 := 10;
+		sel1 := 11;
+		safety_check1 := 12;
+		backup1 := 13;
+		linkPar16 := 14;
+		linkPar1 := 15;
+		sel2 := 16;
+		safety_check2 := 17;
+		backup2 := 18;
+		sel3 := 19;
+		safety_check3 := 20;
+		backup3 := 21;
+		linkPar2 := 22;
+		sel4 := 23;
+		safety_check4 := 24;
+		backup4 := 25;
+		sel5 := 26;
+		safety_check5 := 27;
+		backup5 := 28;
+		linkPar24 := 29;
+		linkPar17 := 30;
+		linkPar3 := 31;
+		sel6 := 32;
+		safety_check6 := 33;
+		backup6 := 34;
+		sel7 := 35;
+		safety_check7 := 36;
+		backup7 := 37;
+		linkPar4 := 38;
+		sel8 := 39;
+		safety_check8 := 40;
+		backup8 := 41;
+		sel9 := 42;
+		safety_check9 := 43;
+		backup9 := 44;
+		linkPar18 := 45;
+		linkPar5 := 46;
+		sel10 := 47;
+		safety_check10 := 48;
+		backup10 := 49;
+		sel11 := 50;
+		safety_check11 := 51;
+		backup11 := 52;
+		linkPar6 := 53;
+		sel12 := 54;
+		safety_check12 := 55;
+		backup12 := 56;
+		sel13 := 57;
+		safety_check13 := 58;
+		backup13 := 59;
+		linkPar28 := 60;
+		linkPar25 := 61;
+		linkPar19 := 62;
+		linkPar7 := 63;
+		sel14 := 64;
+		safety_check14 := 65;
+		backup14 := 66;
+		sel15 := 67;
+		safety_check15 := 68;
+		backup15 := 69;
+		linkPar8 := 70;
+		sel16 := 71;
+		safety_check16 := 72;
+		backup16 := 73;
+		sel17 := 74;
+		safety_check17 := 75;
+		backup17 := 76;
+		linkPar20 := 77;
+		linkPar9 := 78;
+		sel18 := 79;
+		safety_check18 := 80;
+		backup18 := 81;
+		sel19 := 82;
+		safety_check19 := 83;
+		backup19 := 84;
+		linkPar10 := 85;
+		sel20 := 86;
+		safety_check20 := 87;
+		backup20 := 88;
+		sel21 := 89;
+		safety_check21 := 90;
+		backup21 := 91;
+		linkPar26 := 92;
+		linkPar21 := 93;
+		linkPar11 := 94;
+		sel22 := 95;
+		safety_check22 := 96;
+		backup22 := 97;
+		sel23 := 98;
+		safety_check23 := 99;
+		backup23 := 100;
+		linkPar12 := 101;
+		sel24 := 102;
+		safety_check24 := 103;
+		backup24 := 104;
+		sel25 := 105;
+		safety_check25 := 106;
+		backup25 := 107;
+		linkPar22 := 108;
+		linkPar13 := 109;
+		sel26 := 110;
+		safety_check26 := 111;
+		backup26 := 112;
+		sel27 := 113;
+		safety_check27 := 114;
+		backup27 := 115;
+		linkPar14 := 116;
+		sel28 := 117;
+		safety_check28 := 118;
+		backup28 := 119;
+		sel29 := 120;
+		safety_check29 := 121;
+		backup29 := 122;

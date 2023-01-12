@@ -1,0 +1,57 @@
+MODULE main
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		statuses := [example_2_seq1.status, node_z.status, seq2.status, node_x.status, node_y.status, current_node.status];
+		resume_from_node_0 := -3;
+		example_2_seq1.active := TRUE;
+	VAR
+		node_names : define_nodes;
+		example_2_seq1 : node_selector2(node_z, seq2);
+		node_z : node_default();
+		seq2 : node_selector3(node_x, node_y, current_node);
+		node_x : node_default();
+		node_y : node_default();
+		current_node : node_default();
+	ASSIGN
+MODULE node_default()
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		input_status : {success, running, failure};
+	DEFINE
+		status := active ? input_status : invalid;
+MODULE node_selector2(child_0, child_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status :=
+			case
+				!(child_0.status = failure) : child_0.status;
+				!(child_1.status = failure) : child_1.status;
+				TRUE : failure;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = failure;
+MODULE node_selector3(child_0, child_1, child_2)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status :=
+			case
+				!(child_0.status = failure) : child_0.status;
+				!(child_1.status = failure) : child_1.status;
+				!(child_2.status = failure) : child_2.status;
+				TRUE : failure;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = failure;
+		child_2.active := child_1.status = failure;
+MODULE define_nodes
+	DEFINE
+		example_2_seq1 := 0;
+		node_z := 1;
+		seq2 := 2;
+		node_x := 3;
+		node_y := 4;
+		current_node := 5;

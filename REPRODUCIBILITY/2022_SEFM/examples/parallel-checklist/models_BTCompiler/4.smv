@@ -1,0 +1,94 @@
+MODULE main
+	VAR
+		linkPar2 : bt_parallel(2, linkPar0, linkPar1);
+		linkPar0 : bt_parallel(2, sel0, sel1);
+		sel0 : bt_fallback(safety_check0, backup0);
+		safety_check0 : bt_non_blocking_skill;
+		backup0 : bt_success;
+		sel1 : bt_fallback(safety_check1, backup1);
+		safety_check1 : bt_non_blocking_skill;
+		backup1 : bt_success;
+		linkPar1 : bt_parallel(2, sel2, sel3);
+		sel2 : bt_fallback(safety_check2, backup2);
+		safety_check2 : bt_non_blocking_skill;
+		backup2 : bt_success;
+		sel3 : bt_fallback(safety_check3, backup3);
+		safety_check3 : bt_non_blocking_skill;
+		backup3 : bt_success;
+		tick_generator : bt_tick_generator(linkPar2);
+LTLSPEC G (safety_check0.output = bt_output_false -> backup0.enable = TRUE);
+LTLSPEC G (safety_check0.output = bt_output_false -> backup0.enable = FALSE);
+LTLSPEC G (safety_check1.output = bt_output_false -> backup1.enable = TRUE);
+LTLSPEC G (safety_check1.output = bt_output_false -> backup1.enable = FALSE);
+LTLSPEC G (safety_check2.output = bt_output_false -> backup2.enable = TRUE);
+LTLSPEC G (safety_check2.output = bt_output_false -> backup2.enable = FALSE);
+LTLSPEC G (safety_check3.output = bt_output_false -> backup3.enable = TRUE);
+LTLSPEC G (safety_check3.output = bt_output_false -> backup3.enable = FALSE);
+
+
+MODULE bt_fallback(left_bt, right_bt)
+	VAR
+		enable : boolean;
+	ASSIGN
+		left_bt.enable := enable;
+		right_bt.enable := (left_bt.output = bt_output_false);
+	DEFINE
+		output :=
+			case
+				left_bt.output in { bt_output_running, bt_output_true } : left_bt.output;
+				TRUE : right_bt.output;
+			esac;
+MODULE bt_success
+	VAR
+		enable : boolean;
+	DEFINE
+		output := enable ? bt_output_true : bt_output_none;
+MODULE bt_parallel(success_threshold, left_bt, right_bt)
+	VAR
+		enable : boolean;
+		left_bt_stored_output : { bt_output_none, bt_output_running, bt_output_false, bt_output_true};
+	ASSIGN
+		left_bt.enable := enable;
+		right_bt.enable := is_left_bt_active;
+		init(left_bt_stored_output) := bt_output_none;
+		next(left_bt_stored_output) :=
+			case
+				is_left_bt_active : left_bt.output;
+				TRUE : left_bt_stored_output;
+			esac;
+	DEFINE
+		is_left_bt_active := (left_bt.output != bt_output_none);
+		is_right_bt_active := (right_bt.output != bt_output_none);
+		true_output_count :=
+		count(left_bt_stored_output = bt_output_true, right_bt.output = bt_output_true);
+		running_output_count :=
+		count(left_bt_stored_output = bt_output_running, right_bt.output = bt_output_running);
+		output :=
+			case
+				is_right_bt_active & true_output_count >= success_threshold : bt_output_true;
+				is_right_bt_active & success_threshold > true_output_count + running_output_count : bt_output_false;
+				is_right_bt_active : bt_output_running;
+				TRUE : bt_output_none;
+			esac;
+MODULE bt_non_blocking_skill
+	IVAR
+		input : {bt_input_false, bt_input_true };
+	VAR
+		output : { bt_output_none, bt_output_running, bt_output_false, bt_output_true};
+		enable : boolean;
+	ASSIGN
+		init(output) := bt_output_none;
+		next(output) :=
+			case
+				! enable : bt_output_none;
+				input = bt_input_false : bt_output_false;
+				input = bt_input_true : bt_output_true;
+			esac;
+MODULE bt_tick_generator(top_level_bt)
+	ASSIGN
+		init(top_level_bt.enable) := TRUE;
+		next(top_level_bt.enable) := (top_level_bt.output != bt_output_none);
+MODULE bt_single_tick_generator(top_level_bt)
+	ASSIGN
+		init(top_level_bt.enable) := TRUE;
+		next(top_level_bt.enable) := FALSE;

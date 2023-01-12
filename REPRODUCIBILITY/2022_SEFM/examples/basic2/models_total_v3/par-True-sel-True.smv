@@ -1,0 +1,103 @@
+MODULE main
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		statuses := [node1.status, node_w.status, node2.status, node_x.status, node_y.status, node_z.status];
+		resume_from_node_0 := -3;
+		trace_running_source_4 := (statuses[4] = running) ? 4 : -2;
+		trace_running_source_5 := (statuses[5] = running) ? 5 : -2;
+		trace_running_source_2 := 
+			case
+				!(trace_running_source_4 = -2) : trace_running_source_4;
+				!(trace_running_source_5 = -2) : trace_running_source_5;
+				TRUE : -2;
+			esac;
+		resume_point_2 := 
+			case
+				(resume_from_node_2 in {4}) : 1;
+				(resume_from_node_2 in {5}) : 2;
+				TRUE : -2;
+			esac;
+		node1.active := TRUE;
+		parallel_skip_0 := [resume_from_node_1, resume_from_node_2];
+	VAR
+		node_names : define_nodes;
+		resume_from_node_1 : {1, -2};
+		resume_from_node_2 : {2, -2, 4, 5};
+		node1 : node_parallel_success_on_all2(node_w, node2,  parallel_skip_0);
+		node_w : node_default();
+		node2 : node_selector_with_memory3(node_x, node_y, node_z, resume_point_2);
+		node_x : node_default();
+		node_y : node_default();
+		node_z : node_default();
+	ASSIGN
+		init(resume_from_node_1) := 1;
+		init(resume_from_node_2) := 2;
+		next(resume_from_node_1) := 
+			case
+				(statuses[0] in {success, failure}) : 1;
+				(statuses[1] = success) : -2;
+				(statuses[1] = failure) : 1;
+				TRUE : 1;
+			esac;
+		next(resume_from_node_2) := 
+			case
+				(statuses[0] in {success, failure}) : 2;
+				(statuses[2] = success) : -2;
+				(statuses[2] = failure) : 2;
+				TRUE : max(trace_running_source_2, 2);
+			esac;
+
+LTLSPEC G( node1.status = running -> X (node1.active = TRUE));
+LTLSPEC G( node2.status = running -> X (node2.active = TRUE));
+LTLSPEC G( node_w.status = running -> X (node_w.active = TRUE));
+LTLSPEC G( node_x.status = running -> X (node_x.active = TRUE));
+LTLSPEC G( node_y.status = running -> X (node_y.active = TRUE));
+LTLSPEC G( node_z.status = running -> X (node_z.active = TRUE));
+
+MODULE node_default()
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := input_status;
+	VAR
+		input_status : {success, running, failure};
+MODULE node_selector_with_memory3(child_0, child_1, child_2, resume_point)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				(0 >= resume_point) & !(child_0.internal_status = failure) : child_0.internal_status;
+				(1 >= resume_point) & !(child_1.internal_status = failure) : child_1.internal_status;
+				(2 >= resume_point) & !(child_2.internal_status = failure) : child_2.internal_status;
+				TRUE : failure;
+			esac;
+		child_0.active := active & (0 >= resume_point);
+		child_1.active := (1 >= resume_point) & ((1 = resume_point) | (child_0.status = failure));
+		child_2.active := (2 >= resume_point) & ((2 = resume_point) | (child_1.status = failure));
+MODULE node_parallel_success_on_all2(child_0, child_1, skip_child)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				(child_0.internal_status = failure) : failure;
+				(child_1.internal_status = failure) : failure;
+				!(child_0.internal_status = success) : child_0.internal_status;
+				!(child_1.internal_status = success) : child_1.internal_status;
+				TRUE : success;
+			esac;
+		child_0.active := active & !(skip_child[0] = -2);
+		child_1.active := active & !(skip_child[1] = -2);
+MODULE define_nodes
+	DEFINE
+		node1 := 0;
+		node_w := 1;
+		node2 := 2;
+		node_x := 3;
+		node_y := 4;
+		node_z := 5;
