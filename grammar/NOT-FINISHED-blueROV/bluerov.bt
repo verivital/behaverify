@@ -136,11 +136,24 @@ topic Float32                   rtreach_index           /unsafe_hyperrectangle_i
 //Blackboard variables
 //-----------------------------------
 
+// battery.batt_charge_remaining = 0 (at start)
+// battery_low_warning = False (at start)
+// battery_low_warning needs to be set to True in order to surface
+// battery_low_warning is only set IF battery.batt_charge_remaining is UPDATED in the battery2bb input node
+
+
+
+// battery.batt_charge_remaining = {max(0, battery.batt_charge_remaining - 1), battery.batt_charge_remaining} if UPDATE_SUCCESS else battery.batt_charge_remaining
+// battery_low_warning = (battery.batt_charge_remaining <= battery_low_threshold) if UPDATE_SUCCESS else battery_low_warning
+
+
+
 var PixhawkHW battery; //handled via topic
 var LEC1OutputAssuredStamped lec_dd_am; //here lec_dd_am.confs will be modeled as a boolean.
 var Bool bb_geofence = False;
 var Bool bb_pipelost = False;
 var Float32 bb_home_dist = 1000; //ASK ABOUT THIS. Init value in bb_home2bb.py is 0.0 and not 1000?
+//var Float32 bb_home_dist = 0.0; // model as {0, 1, 10, 100, 1000}
 var LEC1OutputAssuredStamped lec2_am_l; //here lec2_am_l.confs will be modeled as an enum {safe, speed, pipe, speed_pipe}
 var LEC1OutputAssuredStamped lec2_am_r; //here lec2_am_r.confs will be modeled as an enum {safe, speed, pipe, speed_pipe}
 var String bb_mission = ""; //modeled as enum {unknown, loitering, pipe_following, waypoint_following, path_following, collision_avoidance, assurance, terminal, e_stop}
@@ -148,30 +161,31 @@ var Bool bb_rth = False;
 var Bool bb_sensor_failure = False;
 var Bool bb_waypoints_completed = False;
 var HSDCommand bb_HSD_out; //ASK ABOUT THIS. not used anywhere?
+//var HSDCommand HSD_out; 
 var Bool bb_pipe_mapping_enable = False;
 var bool bb_obstacle_warning = False;
 var bool event_reallocate_button = False;
 var Float32MultiArray dd_output; // {safe, xy_warn, z_warn}
-var Float32MultiArray lec_input; //ASK ABOUT THIS. used as a in, but not as a var?
+var Float32MultiArray lec_input; //ASK ABOUT THIS. used as a in, but not as a var? (potentially safe to remove)
 var bool next_mission;
-var float uuv_max_speed; //ASK ABOUT THIS. Does this determine what the maximum speed actually is? is this based on degradation?
+var float uuv_max_speed; //ASK ABOUT THIS. (potentially safe to remove? used in task_mission_server.py as a blackboard variable, but is constant.)
 var string mission_file; //this i assume does not need to be modeled. 
 var string ddlec_am_path; //as above?
-var Odometry odom; //ASK ABOUT THIS. Not used?
-var Range fls_range; //integer representation. not sure how the 0.5 thing interacts.
-var float obstacle_min_standoff; //ASK ABOUT THIS. appears to be a constant?
-var float decision_threshold;
-var HSDCommand hsd_pipeline_mapping; //not sure how to handle these yet. since speed is always the same possibilities, depth is constant, that leaves heading?
+var Odometry odom; //ASK ABOUT THIS. Not used? (potentially safe to remove)
+var Range fls_range; // {value below 0.5(junk value),  value between 0.5 and obstacle_min_standoff, value above obstacle_min_standoff and below 30 (max sensor reach or something)}
+var float obstacle_min_standoff; //ASK ABOUT THIS. appears to be a constant? (model as constant = 1)
+var float decision_threshold; //potentially safe to remove.
+var HSDCommand hsd_pipeline_mapping; //not sure how to handle these yet. since speed is always the same possibilities, depth is constant (mostly), that leaves heading (-180, 180. might be better to model as an enum). 
 var HSDCommand hsd_to_surface;
 var HSDCommand hsd_to_rth;
 var HSDCommand hsd_to_waypoint;
 var HSDCommand hsd_to_waypoint_rrt;
-var String cm_hsd_input;
-var Header obstacle_in_view;
-var Bool bb_fls_warning =  False;
-var Float32             rtreach_unsafe_value;
-var Float32             rtreach_result;
-var Float32             rtreach_index;
+var String cm_hsd_input; // helps tell ros nodes what type of mission is currently active.
+var Header obstacle_in_view; // boolean
+var Bool bb_fls_warning =  False; 
+var Float32             rtreach_unsafe_value; // not used right now?
+var Float32             rtreach_result; // this is used in bb_rtreach2bb.py, model as 4 state enum
+var Float32             rtreach_index; // this is used in bb_rtreach2bb.py, but might only use rtreach_result for modeling.
 //----------------------------------
 //Arguments
 //----------------------------------
@@ -231,7 +245,7 @@ input hsd_wp_rrt2bb hsd_to_waypoint_rrt -> hsd_to_waypoint_rrt
     //finished. nothing to add.
 end
 
-//ASK ABOUT THIS: why is there a 0.5 condition in this? Is it so that if no obstacle is detected there's no weirdness?
+
 input fls2bb fls_range -> fls_range
     var bool obstacle_standoff_warning = False;
     var float obstacle_min_standoff = 1.0;
@@ -297,7 +311,7 @@ input lec2_am_r_2bb lec2_right_am -> lec2_am_r
     //lec2_am_r_pipe_warning = (lec_2_am_r.confs in {pipe, speed_pipe} )
 end
 
-//ASK ABOUT THIS: implies that if the pipe is lost and mission switches pipe_lost_warning will stay true?
+
 input pipe_lost2bb bb_pipelost -> bb_pipelost
     var bool bb_pipe_lost_warning =False;
     comment  "This node captures if the pipe is not in visibility of UUV"
@@ -355,7 +369,7 @@ end
 
 //ASK ABOUT THIS. emergency stop seems depricated within this node?
 input rtreach2bb rtreach_result -> rtreach_result
-    var bool emergency_stop_warning = False;
+    var bool emergency_stop_warning = False; // is this actually used? (potentially remove from within node. not relevant either way).
     var bool rtreach_warning = False;
     var bool rtreach_long_term_warning = False;
     arg bool enable_emergency_stop = enable_emergency_stop;
@@ -369,7 +383,7 @@ end
 
 //ASK ABOUT THIS. initializes, but does nothing with them?
 input rtreach_unsafe_value2bb rtreach_unsafe_value -> rtreach_unsafe_value
-    var bool rtreach_fence_warning = False;
+    var bool rtreach_fence_warning = False; //value not used anywhere because
     var bool rtreach_obstacle_warning = False;
     comment "This node captures the rtreachabiliy decision value over safety"
     //finished. nothing to add.
@@ -461,6 +475,7 @@ check dd_xy_axis
 check rtreach_check
     rtreach_warning==False;
 
+//this check is not in the tree
 check rtreach_fence_check
     rtreach_fence_warning == False;
 
@@ -543,7 +558,7 @@ task obstacle_avoidance
     //other blackboard variables do not appear to be set here.
 end     
 
-//THIS ONE NOT FINISHED.
+
 task mission_server
     out bb_mission bb_mission;
     var float uuv_max_speed = uuv_max_speed;
@@ -553,8 +568,10 @@ task mission_server
     //var bool next_mission = False;
     arg float uuv_max_speed = uuv_max_speed;
     arg string mission_file = mission_file;
-    //THIS NODE HAS UNDECLARED VARIABLES BEING MODIFIED. 
-
+    //mission_idx = min(mission_idx + 1, max_mission) if next_mission else mission_idx
+    //bb_rth_warning = (mission_idx == max_mission) if next_mission else bb_rth_warning
+    //bb_mission.data = {any valid enum} if (mission_idx < max_mission & next_mission) else bb_mission.data
+    //next_mission = False
     //----------------
     //always returns running
 end     
@@ -622,9 +639,10 @@ task  waypoint_task
     //always returns running
 end   
 
-//THIS ONE NOT DONE. not quite sure how to model this. feel like it just starts at 0, and climbs towards 6 as degradation happens?
+
 task  reallocate_task 
     var float total_degradation=0;
+    //total_degradation = {total_degradation, min(total_degradation + 1, 6)}
 end   
 
 task dd_lec_task
