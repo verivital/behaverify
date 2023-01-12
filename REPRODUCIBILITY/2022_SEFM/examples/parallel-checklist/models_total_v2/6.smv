@@ -1,0 +1,130 @@
+MODULE main
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		statuses := [linkPar4.status, linkPar2.status, sel4.status, safety_check4.status, backup4.status, sel5.status, safety_check5.status, backup5.status, linkPar3.status, linkPar0.status, sel0.status, safety_check0.status, backup0.status, sel1.status, safety_check1.status, backup1.status, linkPar1.status, sel2.status, safety_check2.status, backup2.status, sel3.status, safety_check3.status, backup3.status];
+		resume_from_node_0 := -3;
+		resume_from_node_1 := -3;
+		resume_from_node_2 := -3;
+		resume_from_node_5 := -3;
+		resume_from_node_8 := -3;
+		resume_from_node_9 := -3;
+		resume_from_node_10 := -3;
+		resume_from_node_13 := -3;
+		resume_from_node_16 := -3;
+		resume_from_node_17 := -3;
+		resume_from_node_20 := -3;
+		linkPar4.active := TRUE;
+		parallel_skip_0 := [resume_from_node_1, resume_from_node_8];
+		parallel_skip_1 := [resume_from_node_2, resume_from_node_5];
+		parallel_skip_8 := [resume_from_node_9, resume_from_node_16];
+		parallel_skip_9 := [resume_from_node_10, resume_from_node_13];
+		parallel_skip_16 := [resume_from_node_17, resume_from_node_20];
+	VAR
+		node_names : define_nodes;
+		linkPar4 : node_parallel_success_on_all2(linkPar2, linkPar3,  parallel_skip_0);
+		linkPar2 : node_parallel_success_on_all2(sel4, sel5,  parallel_skip_1);
+		sel4 : node_selector2(safety_check4, backup4);
+		safety_check4 : node_non_blocking();
+		backup4 : node_success();
+		sel5 : node_selector2(safety_check5, backup5);
+		safety_check5 : node_non_blocking();
+		backup5 : node_success();
+		linkPar3 : node_parallel_success_on_all2(linkPar0, linkPar1,  parallel_skip_8);
+		linkPar0 : node_parallel_success_on_all2(sel0, sel1,  parallel_skip_9);
+		sel0 : node_selector2(safety_check0, backup0);
+		safety_check0 : node_non_blocking();
+		backup0 : node_success();
+		sel1 : node_selector2(safety_check1, backup1);
+		safety_check1 : node_non_blocking();
+		backup1 : node_success();
+		linkPar1 : node_parallel_success_on_all2(sel2, sel3,  parallel_skip_16);
+		sel2 : node_selector2(safety_check2, backup2);
+		safety_check2 : node_non_blocking();
+		backup2 : node_success();
+		sel3 : node_selector2(safety_check3, backup3);
+		safety_check3 : node_non_blocking();
+		backup3 : node_success();
+	ASSIGN
+LTLSPEC G (safety_check0.status = failure -> backup0.status = success);
+LTLSPEC G (safety_check0.status = failure -> !(backup0.status = success));
+LTLSPEC G (safety_check1.status = failure -> backup1.status = success);
+LTLSPEC G (safety_check1.status = failure -> !(backup1.status = success));
+LTLSPEC G (safety_check2.status = failure -> backup2.status = success);
+LTLSPEC G (safety_check2.status = failure -> !(backup2.status = success));
+LTLSPEC G (safety_check3.status = failure -> backup3.status = success);
+LTLSPEC G (safety_check3.status = failure -> !(backup3.status = success));
+LTLSPEC G (safety_check4.status = failure -> backup4.status = success);
+LTLSPEC G (safety_check4.status = failure -> !(backup4.status = success));
+LTLSPEC G (safety_check5.status = failure -> backup5.status = success);
+LTLSPEC G (safety_check5.status = failure -> !(backup5.status = success));
+
+
+MODULE node_non_blocking()
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		input_status : {success, failure};
+	DEFINE
+		status := active ? input_status : invalid;
+MODULE node_success()
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status :=
+			case
+				!(active) : invalid;
+				TRUE : success;
+			esac;
+MODULE node_selector2(child_0, child_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status :=
+			case
+				!(child_0.status = failure) : child_0.status;
+				!(child_1.status = failure) : child_1.status;
+				TRUE : failure;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = failure;
+MODULE node_parallel_success_on_all2(child_0, child_1, skip_child)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status :=
+			case
+				!(active) : invalid;
+				(child_0.status = failure) : failure;
+				(child_1.status = failure) : failure;
+				!(child_0.status = success) : child_0.status;
+				!(child_1.status = success) : child_1.status;
+				TRUE : success;
+			esac;
+		child_0.active := active & !(skip_child[0] = -2);
+		child_1.active := active & !(skip_child[1] = -2);
+MODULE define_nodes
+	DEFINE
+		linkPar4 := 0;
+		linkPar2 := 1;
+		sel4 := 2;
+		safety_check4 := 3;
+		backup4 := 4;
+		sel5 := 5;
+		safety_check5 := 6;
+		backup5 := 7;
+		linkPar3 := 8;
+		linkPar0 := 9;
+		sel0 := 10;
+		safety_check0 := 11;
+		backup0 := 12;
+		sel1 := 13;
+		safety_check1 := 14;
+		backup1 := 15;
+		linkPar1 := 16;
+		sel2 := 17;
+		safety_check2 := 18;
+		backup2 := 19;
+		sel3 := 20;
+		safety_check3 := 21;
+		backup3 := 22;

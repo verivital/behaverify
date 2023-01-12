@@ -1,0 +1,79 @@
+MODULE main
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		statuses := [example_10_sel1.status, node_z.status, sel2.status, node_x.status, node_y.status, current_node.status];
+		trace_running_source_2 := (statuses[2] = running) ? 2 : -2;
+		trace_running_source_0 := 
+			case
+				!(trace_running_source_2 = -2) : trace_running_source_2;
+				TRUE : -2;
+			esac;
+		resume_point_0 := 
+			case
+				(resume_from_node_0 in {2}) : 1;
+				TRUE : -2;
+			esac;
+		example_10_sel1.active := TRUE;
+	VAR
+		node_names : define_nodes;
+		resume_from_node_0 : {0, 2};
+		example_10_sel1 : node_selector_with_memory2(node_z, sel2, resume_point_0);
+		node_z : node_default();
+		sel2 : node_selector_without_memory3(node_x, node_y, current_node);
+		node_x : node_default();
+		node_y : node_default();
+		current_node : node_default();
+	ASSIGN
+		init(resume_from_node_0) := 0;
+		next(resume_from_node_0) := 
+			case
+				(statuses[0] in {success, failure}) : 0;
+				TRUE : max(trace_running_source_0, 0);
+			esac;
+LTLSPEC G(sel2.status = running -> X (sel2.active = TRUE));
+LTLSPEC G(node_y.status = running -> X (node_y.active = TRUE));
+MODULE node_default()
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := input_status;
+	VAR
+		input_status : {success, running, failure};
+MODULE node_selector_with_memory2(child_0, child_1, resume_point)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				(0 >= resume_point) & !(child_0.internal_status = failure) : child_0.internal_status;
+				(1 >= resume_point) & !(child_1.internal_status = failure) : child_1.internal_status;
+				TRUE : failure;
+			esac;
+		child_0.active := active & (0 >= resume_point);
+		child_1.active := (1 >= resume_point) & ((1 = resume_point) | (child_0.status = failure));
+MODULE node_selector_without_memory3(child_0, child_1, child_2)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				!(child_0.internal_status = failure) : child_0.internal_status;
+				!(child_1.internal_status = failure) : child_1.internal_status;
+				!(child_2.internal_status = failure) : child_2.internal_status;
+				TRUE : failure;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = failure;
+		child_2.active := child_1.status = failure;
+MODULE define_nodes
+	DEFINE
+		example_10_sel1 := 0;
+		node_z := 1;
+		sel2 := 2;
+		node_x := 3;
+		node_y := 4;
+		current_node := 5;
