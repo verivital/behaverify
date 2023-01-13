@@ -11,14 +11,63 @@ BehaviorModel:
     'tree' '(' 'updatetime' '=' updatetime=FLOAT ',' 'timeout' '=' timeout=FLOAT ')' tree=BTree
 ;
 
+CodeStatement:
+    (constant = INT) | (constant = FLOAT) | (constant = BOOL) | (constant = STRING) |
+    (variable = [variable]) |
+    ('(' function_call = function ')') |
+    ('(' CodeStatement = CodeStatement ')')
+;
+
+function:
+    (function_name = 'abs' ',' value1 = CodeStatement) |
+    (function_name = 'max' ',' value1 = CodeStatement ',' value2 = CodeStatement) |
+    (function_name = 'min' ',' value1 = CodeStatement ',' value2 = CodeStatement) |
+    (function_name = 'sin' ',' value1 = CodeStatement) |
+    (function_name = 'cos' ',' value1 = CodeStatement) |
+    (function_name = 'exp' ',' value1 = CodeStatement) |
+    (function_name = 'tan' ',' value1 = CodeStatement) |
+    (function_name = 'ln' ',' value1 = CodeStatement) |
+    (function_name = 'not' ',' value1 = CodeStatement) |
+    (function_name = 'and' ',' value1 = CodeStatement ',' value2 = CodeStatement) |
+    (function_name = 'or' ',' value1 = CodeStatement ',' value2 = CodeStatement) |
+    (function_name = 'xor' ',' value1 = CodeStatement ',' value2 = CodeStatement) |
+    (function_name = 'xnor' ',' value1 = CodeStatement ',' value2 = CodeStatement) |
+    (function_name = 'implies' ',' value1 = CodeStatement ',' value2 = CodeStatement) |
+    (function_name = 'equivalent' ',' value1 = CodeStatement ',' value2 = CodeStatement) |
+    (function_name = 'equal' ',' value1 = CodeStatement ',' value2 = CodeStatement) |
+    (function_name = 'not_equal' ',' value1 = CodeStatement ',' value2 = CodeStatement) |
+    (function_name = 'less_than' ',' value1 = CodeStatement ',' value2 = CodeStatement) |
+    (function_name = 'greater_than' ',' value1 = CodeStatement ',' value2 = CodeStatement) |
+    (function_name = 'less_than_or_equal' ',' value1 = CodeStatement ',' value2 = CodeStatement) |
+    (function_name = 'greater_than_or_equal' ',' value1 = CodeStatement ',' value2 = CodeStatement) |
+    (function_name = 'negative' ',' value1 = CodeStatement) |
+    (function_name = 'addition' ',' value1 = CodeStatement ',' value2 = CodeStatement) |
+    (function_name = 'subtraction' ',' value1 = CodeStatement ',' value2 = CodeStatement) |
+    (function_name = 'multiplication' ',' value1 = CodeStatement ',' value2 = CodeStatement) |
+    (function_name = 'division' ',' value1 = CodeStatement ',' value2 = CodeStatement) |
+    (function_name = 'mod' ',' value1 = CodeStatement ',' value2 = CodeStatement) |
+    (function_name = 'any' ',' values += CodeStatement[','])
+;
+
 Enumeration:
     ID | INT | FLOAT | BOOL | STRING
 ;
 
 ModelOptions:
-    (is_bool = 'bool') | ('{' enums +=Enumeration[','] '}')
+    (is_bool = 'bool') | ('{' enums += Enumeration[','] '}')
+;
+
+CreateVar:
+    'create' '(' variable_name = ID ',' (('['minimum_value = INT ',' maximum_value = INT ']') | ('{' enums += Enumeration[','] '}')) ',' initial_value = Enumeration ')'
+;
+
+UpdateStatement:
+    '(' condition = CodeStatement ',' update_value = CodeStatement ')' ','
 ;
     
+SetVar:
+    'set' '(' variable = [BBVar] ',' update *= UpdateStatement default_update = CodeStatement')'
+;
 
 SimpleType:
 	'type' name=ID ';'
@@ -63,7 +112,8 @@ BBNode:
 	'input' name=ID
 		 input_topic=[Topic] '->' topic_bbvar=[BBVar]
 		 bb_vars *= BBVar
-		 args *= Arg
+    args *= Arg
+    set_vars *= SetVar
 		 ('comment' comment=STRING)?
     'end'(';')?
 	;
@@ -87,14 +137,17 @@ StdBehaviorType:
 	;
 	
 TaskNode:
-	'task' name=ID 
-	('in' input_topics+=TopicArg[','] ';')?
-	('out' output_topics+=TopicArg[','] ';')?
-	bb_vars*=BBVar
-	args*=Arg
-	('comment' comment=STRING (';')?)?
+    'task' name=ID 
+    ('in' input_topics+=TopicArg[','] ';')?
+    ('out' output_topics+=TopicArg[','] ';')?
+    bb_vars *= BBVar
+    args*=[Arg]
+    created_vars *= CreateVar
+    set_vars *= SetVar
+    'return' return_status = StdBehaviorType
+    ('comment' comment=STRING (';')?)?
     'end'(';')?
-	;
+;
 	
 TopicArg:
 	type=[Topic] name=ID
