@@ -3,7 +3,7 @@ import argparse
 import os
 import sys
 import itertools
-from behaverify_common import indent
+from behaverify_common import indent, create_node_name
 
 FUNCTION_FORMAT = {
     'abs' : ('abs', 0),
@@ -197,11 +197,7 @@ def walk_tree_recursive(current_node, node_names, file_name):
     if not hasattr(current_node, 'name'):
         current_node = current_node.leaf
 
-    node_name = current_node.name
-    node_modifier = 1
-    while node_name in node_names:
-        node_name = current_node.name + '_' + str(node_modifier)
-        node_modifier = node_modifier + 1
+    node_name = create_node_name(current_node.name.replace(' ', ''), node_names)
     node_names.add(node_name)
 
     # ----------------------------------------------------------------------------------
