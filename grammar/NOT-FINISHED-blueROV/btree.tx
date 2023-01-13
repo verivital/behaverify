@@ -11,7 +11,14 @@ BehaviorModel:
     'tree' '(' 'updatetime' '=' updatetime=FLOAT ',' 'timeout' '=' timeout=FLOAT ')' tree=BTree
 ;
 
+Enumeration:
+    ID | INT | FLOAT | BOOL | STRING
+;
 
+ModelOptions:
+    (is_bool = 'bool') | ('{' enums +=Enumeration[','] '}')
+;
+    
 
 SimpleType:
 	'type' name=ID ';'
@@ -33,7 +40,7 @@ Topic:	'topic' type=[MessageType] name=ID topic_string=/([^\s;]+)/ ';'
 	;
 
 BBVar:
-	'var' type=[Type] name=ID ('=' default=BASETYPE)? ';'
+	'var' type=[Type] name=ID ('=' default=BASETYPE)? (',' 'model_as' '(' ')')? ';'
 	;
 
 BBEvent:
