@@ -507,7 +507,7 @@ task obstacle_avoidance
     var String cm_hsd_input;
     arg bool enable_obstacle_avoidance = enable_obstacle_avoidance;
     set(bb_obstacle_warning, (any, True, False))
-    set(cm_hsd_input, (if_else, bb_obstacle_warning, obstacle_avoidance_task, cm_hsd_input))
+    set(cm_hsd_input, (bb_obstacle_warning, obstacle_avoidance_task), cm_hsd_input)
     return running
 end     
 
@@ -521,13 +521,13 @@ task mission_server
     //var bool next_mission = False;
     arg float uuv_max_speed = uuv_max_speed;
     arg string mission_file = mission_file;
-    create(max_mission, 4)
+    create(max_mission, {4}, 4)
     create(mission_idx, [0, max_mission], 0)
-    set(mission_idx, (if_else, next_mission, (min, max_mission, (addition, mission_idx, 1)), mission_idx))
-    set(bb_rth_warning, (if_else, next_mission, (equal, mission_idx, max_mission), bb_rth_warning))
+    set(mission_idx, (next_mission, (min, max_mission, (addition, mission_idx, 1))), mission_idx)
+    set(bb_rth_warning, (next_mission, (equal, mission_idx, max_mission)), bb_rth_warning)
     set(next_mission, False)
     return running
-end     
+end
 
 task next_mission
     in bb_mission bb_mission;

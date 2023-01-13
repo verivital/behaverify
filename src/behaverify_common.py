@@ -10,6 +10,36 @@
 
 # -----------------------------------------------------------------------------------------------------------------------
 
+def create_node_template(node_name, parent_name, category, node_type,
+                         success, running, failure,
+                         additional_arguments = None,
+                         internal_status_module_name = None,
+                         internal_status_module_code = None):
+    return {
+            'name' : node_name,
+            'parent' : parent_name,
+            'children' : [],
+            'category' : category,
+            'type' : node_type,
+            'return_possibilities' : {
+                'success' : success,
+                'running' : running,
+                'failure' : failure
+            },
+            'additional_arguments' : additional_arguments,
+            'internal_status_module_name' : internal_status_module_name,
+            'internal_status_module_code' : internal_status_module_code
+        }
+
+
+def create_node_name(base_name, node_names, modifier = 0):
+    formatted_name = base_name + (('_' + str(modifier)) if modifier > 0 else '')
+    return (create_node_name(base_name, node_names, modifier + 1)
+            if formatted_name in node_names else (
+                    formatted_name
+                    )
+            )
+
 
 def get_root_node(nodes):
     return next(filter((lambda x : nodes[x]['parent'] is None), nodes))

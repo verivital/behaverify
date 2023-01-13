@@ -6,7 +6,7 @@ import sys
 import itertools
 import copy
 
-from behaverify_common import create_node_name
+from behaverify_common import create_node_name, create_node_template
 
 
 def get_variables(model):
@@ -26,25 +26,8 @@ def get_variables(model):
         # 'use_separate_stages' : True,
         # 'read_by' : [],
         # 'read_by_init' : []
-    } for variable in itertools.chain(model.variables, model.environment_variables)}
-    local_variables = {variable.name : {
-        'name' : variable.name,
-        'mode' : variable.model_as,
-        'custom_value_range' : (None if variable.domain.min_val is not None else ('{TRUE, FALSE}' if variable.domain.boolean is not None else ('{' + ', '.join(variable.domain.enums) + '}'))),
-        'min_value' : 0 if variable.domain.min_val is None else variable.domain.min_val,
-        'max_value' : 1 if variable.domain.min_val is None else variable.domain.max_val,
-        'init_value' : None,
-        # 'always_exist' : True,
-        # 'init_exist' : True,
-        # 'auto_change' : False,
-        'next_value' : [],
-        'environment_update' : None
-        # 'next_exist' : {},
-        # 'use_separate_stages' : True,
-        # 'read_by' : [],
-        # 'read_by_init' : []
-    } for variable in model.local_variables}
-    return (variables, local_variables)
+    } for variable in model.variables}
+    return variables
 
 
 def make_new_stage(statement, node_name, variables, local_variables, use_stages, call_blackboard, use_next):
@@ -71,29 +54,6 @@ def make_new_stage(statement, node_name, variables, local_variables, use_stages,
          )
     )
     return new_stage
-
-
-def create_environment_variables(model, variables):
-    inits = {statement.variable.name : make_new_stage(statement, None, variables, {}, False, False, False) for statement in model.initial}
-    updates = {statement.variable.name : make_new_stage(statement, None, variables, {}, True, False, True) for statement in model.update}
-
-    return {variable.name : {
-        'name' : variable.name,
-        'mode' : variable.model_as,
-        'custom_value_range' : (None if variable.domain.min_val is not None else ('{TRUE, FALSE}' if variable.domain.boolean is not None else ('{' + ', '.join(variable.domain.enums) + '}'))),
-        'min_value' : 0 if variable.domain.min_val is None else variable.domain.min_val,
-        'max_value' : 1 if variable.domain.min_val is None else variable.domain.max_val,
-        'init_value' : (None if variable.name not in inits else inits[variable.name]),
-        # 'always_exist' : True,
-        # 'init_exist' : True,
-        # 'auto_change' : False,
-        'next_value' : [],
-        'environment_update' : (None if variable.name not in inits else updates[variable.name]),
-        # 'next_exist' : {},
-        # 'use_separate_stages' : True,
-        # 'read_by' : [],
-        # 'read_by_init' : []
-    } for variable in model.environment_variables}
 
 
 FUNCTION_FORMAT = {
@@ -137,14 +97,11 @@ def add_local_variable(variables, local_variables, variable_name, local_variable
 
 
 def format_variable(variable, is_local, node_name, variables, local_variables, use_stages, call_blackboard, use_next):
-    variable_name = ((node_name + '_DOT_') if is_local else ('')) + variable.name
-    if variable_name not in variables:
-        add_local_variable(variables, local_variables, variable.name, variable_name)
-    return (('' if (len(variables[variable_name]['next_value']) == 0 or not use_next) else 'next(')
+    return (('' if (len(variables[variable.name]['next_value']) == 0 or not use_next) else 'next(')
             + (('blackboard.') if call_blackboard else (''))
-            + variable_name
-            + compute_stage(variable_name, variables, use_stages)
-            + ('' if (len(variables[variable_name]['next_value']) == 0 or not use_next) else ')'))
+            + variable.name
+            + compute_stage(variable.name, variables, use_stages)
+            + ('' if (len(variables[variable.name]['next_value']) == 0 or not use_next) else ')'))
 
 
 def format_code(code, node_name, variables, local_variables, use_stages, call_blackboard, use_next):
@@ -163,135 +120,125 @@ def format_code(code, node_name, variables, local_variables, use_stages, call_bl
     )
 
 
-def walk_tree(model, variables, local_variables):
+def walk_tree(metamodel, model, variables):
     nodes = {}
-    walk_tree_recursive(model.root, None, nodes, {}, variables, local_variables)
+    walk_tree_recursive(metamodel, model.root, None, nodes, {}, variables)
     return nodes
 
 
-def walk_tree_recursive(current_node, parent_name, nodes, node_names, variables, local_variables):
-    if not hasattr(current_node, 'name'):
-        current_node = current_node.leaf
-    # next, we get the name of this node, and correct for duplication
+def walk_tree_recursive(metamodel, current_node, parent_name, nodes, node_names, variables):
+    if hasattr(current_node, 'name'):
+        # next, we get the name of this node, and correct for duplication
+        node_name = create_node_name(current_node.name.replace(' ', ''), node_names)
+        node_names.add(node_name)
 
-    node_name = create_node_name(current_node.name.replace(' ', ''), node_names)
-    node_names.add(node_name)
-
-    if parent_name is not None:
-        nodes[parent_name]['children'].append(node_name)
-        # update parent's list of children
+        if parent_name is not None:
+            nodes[parent_name]['children'].append(node_name)
+            # update parent's list of children
 
     # ----------------------------------------------------------------------------------
     # start of massive if statements, starting with composites
     # -----------------------------------------------------------------------------------
     # start of composite nodes
-    if current_node.node_type == 'sequence':
-        if current_node.memory:
-            memory_string = 'sequence_with_memory'
-        else:
-            memory_string = 'sequence_without_memory'
-        nodes[node_name] = {
-            'name' : node_name,
-            'parent' : parent_name,
-            'children' : [],
-            'category' : 'composite',
-            'type' : memory_string,
-            'return_possibilities' : {
-                'success' : True,
-                'running' : True,
-                'failure' : True
-            },
-            'additional_arguments' : None,
-            'internal_status_module_name' : None,
-            'internal_status_module_code' : None
-        }
-    elif current_node.node_type == 'selector':
-        if current_node.memory:
-            memory_string = 'selector_with_memory'
-        else:
-            memory_string = 'selector_without_memory'
-        nodes[node_name] = {
-            'name' : node_name,
-            'parent' : parent_name,
-            'children' : [],
-            'category' : 'composite',
-            'type' : memory_string,
-            'return_possibilities' : {
-                'success' : True,
-                'running' : True,
-                'failure' : True
-            },
-            'additional_arguments' : None,
-            'internal_status_module_name' : None,
-            'internal_status_module_code' : None
-        }
-    elif current_node.node_type == 'parallel':
-        cur_type = 'parallel'
-        if current_node.memory:
-            cur_type += '_' + current_node.parallel_policy + '_with_memory'
-        else:
-            cur_type += '_success_on_all_without_memory'
-        nodes[node_name] = {
-            'name' : node_name,
-            'parent' : parent_name,
-            'children' : [],
-            'category' : 'composite',
-            'type' : cur_type,
-            'return_possibilities' : {
-                'success' : True,
-                'running' : True,
-                'failure' : True
-            },
-            'additional_arguments' : None,
-            'internal_status_module_name' : None,
-            'internal_status_module_code' : None
-        }
+    if textx.textx_isinstance(current_node, metamodel['SeqBTNode']):
+        nodes[node_name] = create_node_template(node_name, parent_name,
+                                                'composite', 'sequence_with_memory',
+                                                True, True, True)
+    elif textx.textx_isinstance(current_node, metamodel['SelBTNode']):
+        nodes[node_name] = create_node_template(node_name, parent_name,
+                                                'composite', 'selector_without_memory',
+                                                True, True, True)
+    elif textx.textx_isinstance(current_node, metamodel['ParBTNode']):
+        nodes[node_name] = create_node_template(node_name, parent_name,
+                                                'composite', 'parallel_success_on_all_without_memory',
+                                                True, True, True)
 
-    elif current_node.node_type == 'X_is_Y':
-        if current_node.x == current_node.y:
-            print('Decorator ' + current_node.name + ' has the same X and Y. Exiting.')
-            sys.exit()
+    elif textx.textx_isinstance(current_node, metamodel['SIFBTNode']):
+        nodes[node_name] = create_node_template(node_name, parent_name,
+                                                'decorator', 'X_is_Y',
+                                                False, True, True,
+                                                additional_arguments = ['success', 'failure'])
 
-        nodes[node_name] = {
-            'name' : node_name,
-            'parent' : parent_name,
-            'children' : [],
-            'category' : 'decorator',
-            'type' : 'X_is_Y',
-            'return_possibilities' : {
-                'success' : not current_node.x == 'success',
-                'running' : not current_node.x == 'running',
-                'failure' : not current_node.x == 'failure'
-            },
-            'additional_arguments' : [current_node.x, current_node.y],
-            'internal_status_module_name' : None,
-            'internal_status_module_code' : None
-        }
+        # ok, we've added the decorator. now we add in the selector node
+        parent_name = node_name
+        # selector is going to use the same name as the decorator.
+        # next, we get the name of this node, and correct for duplication
+        node_name = create_node_name(current_node.name.replace(' ', ''), node_names)
+        node_names.add(node_name)
 
-    elif current_node.node_type == 'check':
-        nodes[node_name] = {
-            'name' : node_name,
-            'parent' : parent_name,
-            'children' : [],
-            'category' : 'leaf',
-            'type' : 'check',
-            'return_possibilities' : {
-                'success' : True,
-                'running' : False,
-                'failure' : True
-            },
-            'internal_status_module_name' : None if current_node.condition is None else node_name + '_module',
-            'internal_status_module_code' : None if current_node.condition is None else (
-                'MODULE ' + node_name + '_module(blackboard)' + os.linesep
-                + '\tCONSTANTS' + os.linesep
-                + '\t\tsuccess, failure, running, invalid;' + os.linesep
-                + '\tDEFINE' + os.linesep
-                + '\t\tstatus := active ? internal_status : invalid;' + os.linesep
-                + '\t\tinternal_status := ('
-                + format_code(current_node.condition, node_name, variables, local_variables, True, True, False)
-                + ') ? success : failure;' + os.linesep
-                )
-        }
+        if parent_name is not None:
+            nodes[parent_name]['children'].append(node_name)
+            # update parent's list of children
+        nodes[node_name] = create_node_template(node_name, parent_name,
+                                                'composite', 'selector_without_memory',
+                                                True, True, True)
+        # selector added
+        selector_name = node_name  # store this. we will restore it after adding the checks in
+        decorator_name = parent_name
+
+        parent_name = node_name
+        # ok, now we add all the checks, which are here for some reason.
+        for check in current_node.checks:
+            node_name = create_node_name(check.name.replace(' ', ''), node_names)
+            node_names.add(node_name)
+
+            nodes[node_name] = create_node_template(node_name, parent_name,
+                                                    'leaf', 'check',
+                                                    True, False, True,
+                                                    internal_status_module_name = node_name + '_module',
+                                                    internal_status_module_code = (
+                                                        'MODULE ' + node_name + '_module(blackboard)' + os.linesep
+                                                        + '\tCONSTANTS' + os.linesep
+                                                        + '\t\tsuccess, failure, running, invalid;' + os.linesep
+                                                        + '\tDEFINE' + os.linesep
+                                                        + '\t\tstatus := active ? internal_status : invalid;' + os.linesep
+                                                        + '\t\tinternal_status := ('
+                                                        + 'blackboard.' + check.bbvar.name + ' = ' + check.default
+                                                        + ') ? success : failure;' + os.linesep
+                                                    ))
+        # all checks added in, so now we restore back up to the selector
+        node_name = selector_name
+        parent_name = decorator_name
+
+    elif textx.textx_isinstance(current_node, metamodel['CheckBTNode']):
+        for check in current_node.check:
+            node_name = create_node_name(check.name.replace(' ', ''), node_names)
+            node_names.add(node_name)
+
+            nodes[node_name] = create_node_template(node_name, parent_name,
+                                                    'leaf', 'check',
+                                                    True, False, True,
+                                                    internal_status_module_name = node_name + '_module',
+                                                    internal_status_module_code = (
+                                                        'MODULE ' + node_name + '_module(blackboard)' + os.linesep
+                                                        + '\tCONSTANTS' + os.linesep
+                                                        + '\t\tsuccess, failure, running, invalid;' + os.linesep
+                                                        + '\tDEFINE' + os.linesep
+                                                        + '\t\tstatus := active ? internal_status : invalid;' + os.linesep
+                                                        + '\t\tinternal_status := ('
+                                                        + 'blackboard.' + check.bbvar.name + ' = ' + check.default
+                                                        + ') ? success : failure;' + os.linesep
+                                                    ))
+
+    elif textx.textx_isinstance(current_node, metamodel['TaskBTNode']):
+        for task in current_node.task:
+            node_name = create_node_name(task.name.replace(' ', ''), node_names)
+            node_names.add(node_name)
+
+            nodes[node_name] = create_node_template(node_name, parent_name,
+                                                    'leaf', 'check',
+                                                    task.return_status == 'success', task.return_status == 'running', task.return_status == 'failure',
+                                                    internal_status_module_name = node_name + '_module',
+                                                    internal_status_module_code = (
+                                                        'MODULE ' + node_name + '_module(blackboard)' + os.linesep
+                                                        + '\tCONSTANTS' + os.linesep
+                                                        + '\t\tsuccess, failure, running, invalid;' + os.linesep
+                                                        + '\tDEFINE' + os.linesep
+                                                        + '\t\tstatus := active ? internal_status : invalid;' + os.linesep
+                                                        + '\t\tinternal_status := ('
+                                                        + 'blackboard.' + check.bbvar.name + ' = ' + check.default
+                                                        + ') ? success : failure;' + os.linesep
+                                                    ))
 
     elif current_node.node_type == 'action':
         success = current_node.return_statement.default_result.can_success
@@ -307,8 +254,8 @@ def walk_tree_recursive(current_node, parent_name, nodes, node_names, variables,
 
         def handle_statements(statements, init_statement = False):
             for statement in statements:
-                new_stage = make_new_stage(statement, node_name, variables, local_variables, not (init_statement), False, True)
-                variable_name = format_variable(statement.variable, statement.is_local, node_name, variables, local_variables, False, False, False)
+                new_stage = make_new_stage(statement, node_name, variables, not (init_statement), False, True)
+                variable_name = format_variable(statement.variable, statement.is_local, node_name, variables, False, False, False)
                 if init_statement:
                     variables[variable_name]['init_value'] = new_stage
                 else:
@@ -371,18 +318,20 @@ def walk_tree_recursive(current_node, parent_name, nodes, node_names, variables,
     elif nodes[node_name]['category'] == 'decorator':
         # currently there are no decorators. not really.
         walk_tree_recursive(
+            metamodel,
             current_node.child,
             node_name,
             nodes, node_names,
-            variables, local_variables
+            variables
             )
     else:
         for child in current_node.children:
             walk_tree_recursive(
+                metamodel,
                 child,
                 node_name,
                 nodes, node_names,
-                variables, local_variables
+                variables
             )
 
     return
@@ -399,9 +348,8 @@ def main():
     metamodel = textx.metamodel_from_file(args.metamodel_file, auto_init_attributes = False)
     model = metamodel.model_from_file(args.model_file)
 
-    (variables, local_variables) = get_variables(model)
-    nodes = walk_tree(model, variables, local_variables)
-    variables.update(create_environment_variables(model, variables))
+    variables = get_variables(model)
+    nodes = walk_tree(metamodel, model, variables)
 
     if args.output_file is None:
         printer = pprint.PrettyPrinter(indent = 4)

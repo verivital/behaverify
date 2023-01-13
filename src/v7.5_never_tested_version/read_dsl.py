@@ -74,7 +74,6 @@ def walk_tree_recursive_dsl(metamodel, current_node, parent_id, next_available_i
                             node_names):
 
     # for w.e reason, checks, tasks, and monitors are combined into a single 'node'
-    # i assume this is done to make this task slightly more difficult for me, as there is no other reason to do this (more seriously it saves about 3 seconds of typing in a mdetamodel file....for a bunch of headaches here)
     # if the current node has the attribute name, it's a real 'node'
     # if it doesn't, then it stores a bunch of real nodes (checks, tasks, or monitors).
     # in that case, we will handlen this below.
