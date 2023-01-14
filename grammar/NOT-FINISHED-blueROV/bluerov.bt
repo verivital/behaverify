@@ -132,44 +132,71 @@ topic Float32                   rtreach_index           /unsafe_hyperrectangle_i
 //Blackboard variables
 //-----------------------------------
 
-
-var PixhawkHW battery, model_as(bool);
-var LEC1OutputAssuredStamped lec_dd_am, model_as(bool);
-var Bool bb_geofence = False, model_as(bool);
-var Bool bb_pipelost = False, model_as(bool);
-var Float32 bb_home_dist = 1000, model_as({10, 100});
-var LEC1OutputAssuredStamped lec2_am_l, model_as({safe, speed, pipe, speed_pipe});
-var LEC1OutputAssuredStamped lec2_am_r, model_as({safe, speed, pipe, speed_pipe});
-var String bb_mission = "", model_as({unknown, loitering, pipe_following, waypoint_following, path_following, collision_avoidance, assurance, terminal, e_stop}); 
-var Bool bb_rth = False, model_as(bool);
-var Bool bb_sensor_failure = False, model_as(bool);
-var Bool bb_waypoints_completed = False, model_as(bool);
-//var HSDCommand bb_HSD_out; //ASK ABOUT THIS. not used anywhere?
-var HSDCommand HSD_out, model_as({uuv_min_speed, uuv_max_speed}); 
-var Bool bb_pipe_mapping_enable = False, model_as(bool);
-var bool bb_obstacle_warning = False, model_as(bool);
-var bool event_reallocate_button = False, model_as(bool);
-var Float32MultiArray dd_output, model_as({safe, xy_warn, z_warn});
-var Float32MultiArray lec_input;
-var bool next_mission, model_as(bool);
-var float uuv_max_speed, model_as({.9});
-var string mission_file, do_not_model;
-var string ddlec_am_path, do_not_model;
-var Odometry odom, do_not_model;
-var Range fls_range, model_as({0.25, .75, 1.25});
-var float obstacle_min_standoff, model_as({1.0});
-var float decision_threshold, do_not_model;
-var HSDCommand hsd_pipeline_mapping, model_as({uuv_min_speed, uuv_max_speed});
-var HSDCommand hsd_to_surface, model_as({uuv_min_speed, uuv_max_speed});
-var HSDCommand hsd_to_rth, model_as({uuv_min_speed, uuv_max_speed});
-var HSDCommand hsd_to_waypoint, model_as({uuv_min_speed, uuv_max_speed});
-var HSDCommand hsd_to_waypoint_rrt, model_as({uuv_min_speed, uuv_max_speed});
-var String cm_hsd_input, model_as({surface_task, rth_task, loiter_task, obstacle_avoidance_task, tracking_task, waypoint_task});
-var Header obstacle_in_view, model_as(bool);
-var Bool bb_fls_warning =  False, model_as(bool); 
-var Float32             rtreach_unsafe_value, do_not_model;
-var Float32             rtreach_result, model_as({safe, short, long, short_long});
-var Float32             rtreach_index, do_not_model;
+var PixhawkHW				battery, model_as([0, 1], 1);
+var bool 				battery_low_warning = False, model_as(bool, False);
+var Bool 				bb_fls_warning =  False, model_as(bool, False); 
+var Bool 				bb_geofence = False, model_as(bool, False);
+var bool 				bb_geofence_warning = False, model_as(bool, False);
+var Float32 				bb_home_dist = 1000, model_as({10, 100}, 10);
+var bool 				bb_home_reached =False, model_as(bool, False);
+var String 				bb_mission = "", model_as({'unknown', 'loitering', 'pipe_following', 'waypoint_following', 'path_following', 'collision_avoidance', 'assurance', 'terminal', 'e_stop'}, 'unknown');
+var bool 				bb_obstacle_warning = False, model_as(bool, False);
+var Bool 				bb_pipelost = False, model_as(bool, False);
+var bool 				bb_pipe_lost_warning = False, model_as(bool, False);
+var Bool 				bb_pipe_mapping_enable = False, model_as(bool, False);
+var Bool 				bb_rth = False, model_as(bool, False);
+var bool 				bb_rth_warning = False, model_as(bool, False);
+var Bool 				bb_sensor_failure = False, model_as(bool, False);
+var Bool 				bb_sensor_failure_warning = False, model_as(bool, False);
+var Bool 				bb_waypoints_completed = False, model_as(bool, False);
+//var String 				cm_hsd_input, model_as({'cm_surface_task', 'cm_rth_task', 'cm_loiter_task', 'cm_obstacle_avoidance_task', 'cm_tracking_task', 'cm_waypoint_task'}, 'cm_surface_task');
+var String 				cm_hsd_input;
+var string 				ddlec_am_path;
+var Float32MultiArray 			dd_output, model_as({'safe', 'xy_warn', 'z_warn'}, 'safe');
+var bool 				dd_xy_axis_degradation = False, model_as(bool, False);
+var bool 				dd_z_axis_warning = False, model_as(bool, False);
+var float 				decision_threshold;
+var bool 				emergency_stop_warning = False, model_as(bool, False);
+var bool 				event_reallocate_button = False;
+var Range 				fls_range, model_as({'danger_zone', 'safe'}, 'safe');
+var HSDCommand 				hsd_pipeline_mapping, model_as({'uuv_min_speed', 'uuv_max_speed'}, 'uuv_min_speed');
+var HSDCommand 				hsd_to_surface;
+var HSDCommand 				hsd_to_rth;
+var HSDCommand 				hsd_to_waypoint;
+var HSDCommand 				hsd_to_waypoint_rrt;
+var HSDCommand 				HSD_out, model_as({'uuv_min_speed', 'uuv_max_speed'}, 'uuv_min_speed'); 
+var LEC1OutputAssuredStamped 		lec_dd_am, model_as(bool, False);
+var bool 				lec_dd_am_warning = False, model_as(bool, False);
+var LEC1OutputAssuredStamped 		lec2_am_l, model_as({'safe', 'speed', 'pipe', 'speed_pipe'}, 'safe');
+var bool 				lec2_am_l_speed_warning = False, model_as(bool, False);
+var bool 				lec2_am_l_pipe_warning = False, model_as(bool, False);
+var LEC1OutputAssuredStamped 		lec2_am_r, model_as({'safe', 'speed', 'pipe', 'speed_pipe'}, 'safe');
+var bool 				lec2_am_r_speed_warning = False, model_as(bool, False);
+var bool 				lec2_am_r_pipe_warning = False, model_as(bool, False);
+var Float32MultiArray 			lec_input;
+var string 				mission_file = mission_file; 
+var bool 				next_mission, model_as(bool, False);
+var Bool 				pipe_mapping_enable, model_as(bool, False);
+var float 				obstacle_min_standoff;
+var Header 				obstacle_in_view, model_as(bool, False);
+var bool 				obstacle_standoff_warning = False, model_as(bool, False);
+var Odometry 				odom;
+var float 				refLat = 38.971203;
+var float 				refLon = -76.398464;
+var bool 				rtreach_fence_warning = False;
+var Float32             		rtreach_index;
+var bool 		 		rtreach_long_term_warning = False, model_as(bool, False);
+var bool 				rtreach_obstacle_warning = False;
+var Float32             		rtreach_result, model_as({'safe', 'short', 'long', 'short_long'}, 'safe');
+var Float32             		rtreach_unsafe_value;
+var bool 				rtreach_warning = False, model_as(bool, False);
+var float 				total_degradation=0;
+var float 				uuv_max_speed;
+//----------------------------------
+//MODELING VARIABLES ONLY
+//----------------------------------
+var bool				max_mission = 4, model_as({4}, 4);
+var bool				mission_idx = 0, model_as([0, 4], 0);
 //----------------------------------
 //Arguments
 //----------------------------------
@@ -221,15 +248,14 @@ end
 
 
 input fls2bb fls_range -> fls_range
-    var bool obstacle_standoff_warning = False, model_as(bool);
-    var float obstacle_min_standoff = 1.0, model_as({1.0});
+    vars obstacle_standoff_warning, obstacle_min_standoff;
     comment  "This node captures the FLS ranges"
-    set(obstacle_standoff_warning, (less_than_equal, fls_range, obstacle_min_standoff)) 
+    set(obstacle_standoff_warning, (equal, fls_range, 'danger_zone')) 
 end
 
 
 input fls_warning2bb obstacle_in_view -> obstacle_in_view
-    var bool bb_fls_warning = False, model_as(bool);
+    vars bb_fls_warning;
     arg integer fls_in_view_window = fls_in_view_window;
     arg integer fls_in_view_limit = fls_in_view_limit;
     comment  "This node captures the FLS obstacle in view information"
@@ -239,61 +265,59 @@ end
 
 
 input battery2bb pixhawk_hw -> battery 
-    var bool battery_low_warning = False, model_as(bool);
+    vars battery_low_warning;
     arg float failsafe_battery_low_threshold = failsafe_battery_low_threshold;
     comment  "This node captures the state of the battery"
-    set(battery_low_warning, (less_than_equal, battery, failsafe_battery_low_threshold))
+    set(battery_low_warning, (less_than_or_equal, battery, 0))
 end
 
 input ddlecam2bb lec_dd_am -> lec_dd_am
-    var bool lec_dd_am_warning = False, model_as(bool);
+    vars lec_dd_am_warning;
     comment  "This node captures the state of the lec dd assurance monitor"
     set(lec_dd_am_warning, lec_dd_am)
 end
 
 input rth2bb bb_rth -> bb_rth
-    var bool bb_rth_warning = False, model_as(bool);
+    vars bb_rth_warning;
     arg bool failsafe_rth_enable = failsafe_rth_enable;
     comment  "This node captures if the uuv is commanded to return to home"
     set(bb_rth_warning, (or, bb_rth_warning, bb_rth))
 end 
 
 input geofence2bb bb_geofence -> bb_geofence
-    var bool bb_geofence_warning = False, model_as(bool);
+    vars bb_geofence_warning;
     comment  "This node captures if the uuv is within  the geofence"
     set(bb_geofence_warning, (or, bb_geofence_warning, bb_geofence))
 end
 
 input lec2_am_l_2bb  lec2_left_am -> lec2_am_l
-    var bool lec2_am_l_speed_warning = False, model_as(bool);
-    var bool lec2_am_l_pipe_warning = False, model_as(bool);
+    vars lec2_am_l_speed_warning, lec2_am_l_pipe_warning;
     arg float pipe_estimation_good_log_val = pipe_estimation_good_log_val;
     arg float speed_good_log_val  = speed_good_log_val;
     comment  "This node captures the output of the lec2 assurance monitor left"
-    set(lec2_am_l_speed_warning, (or, (equal, lec_2_am_l, speed), (equal, lec_2_am_l, speed_pipe)))
-    set(lec2_am_l_pipe_warning, (or, (equal, lec_2_am_l, pipe), (equal, lec_2_am_l, speed_pipe)))
+    set(lec2_am_l_speed_warning, (or, (equal, lec2_am_l, 'speed'), (equal, lec2_am_l, 'speed_pipe')))
+    set(lec2_am_l_pipe_warning, (or, (equal, lec2_am_l, 'pipe'), (equal, lec2_am_l, 'speed_pipe')))
 end
 
 input lec2_am_r_2bb lec2_right_am -> lec2_am_r
-    var bool lec2_am_r_speed_warning = False, model_as(bool);
-    var bool lec2_am_r_pipe_warning = False, model_as(bool);
+    vars lec2_am_r_speed_warning, lec2_am_r_pipe_warning;
     arg float pipe_estimation_good_log_val = pipe_estimation_good_log_val ;
     arg float speed_good_log_val = speed_good_log_val;
     comment  "This node captures the output of the lec2 assurance monitor right"
-    set(lec2_am_r_speed_warning, (or, (equal, lec_2_am_r, speed), (equal, lec_2_am_r, speed_pipe)))
-    set(lec2_am_r_pipe_warning, (or, (equal, lec_2_am_r, pipe), (equal, lec_2_am_r, speed_pipe)))
+    set(lec2_am_r_speed_warning, (or, (equal, lec2_am_r, 'speed'), (equal, lec2_am_r, 'speed_pipe')))
+    set(lec2_am_r_pipe_warning, (or, (equal, lec2_am_r, 'pipe'), (equal, lec2_am_r, 'speed_pipe')))
 end
 
 
 input pipe_lost2bb bb_pipelost -> bb_pipelost
-    var bool bb_pipe_lost_warning =False, model_as(bool);
+    vars bb_pipe_lost_warning;
     comment  "This node captures if the pipe is not in visibility of UUV"
-    set(bb_pipe_lost_warning, (and, bb_pipelost, (equal, bb_mission, pipe_track)))
+    set(bb_pipe_lost_warning, (and, bb_pipelost, (equal, bb_mission, 'pipe_following')))
 end
 
 
 input sensor_failure2bb  bb_sensor_failure -> bb_sensor_failure
-    var bool bb_sensor_failure_warning =False, model_as(bool);
+    vars bb_sensor_failure_warning;
     comment  "This node captures sensor failure"
     set(bb_sensor_failure_warning, (or, bb_sensor_failure_warning, bb_sensor_failure))
 end
@@ -303,10 +327,10 @@ input waypoints_completed2bb  bb_waypoints_completed -> bb_waypoints_completed
 end 
 
 input home2bb bb_home_dist -> bb_home_dist
-    var bool bb_home_reached =False, model_as(bool);
+    vars bb_home_reached;
     arg float home_reached_threshold = home_reached_threshold;
     comment "This node captures if the uuv is home"
-    set(bb_home_reached, (or, bb_home_reached, (less_than, bb_home_dist, home_reached_threshold)))
+    set(bb_home_reached, (or, bb_home_reached, (less_than, bb_home_dist, 15)))
 end
 
 input mission2bb bb_mission -> bb_mission
@@ -315,15 +339,14 @@ input mission2bb bb_mission -> bb_mission
 end
 
 input ddlec2bb degradation_detector -> dd_output 
-    var bool dd_z_axis_warning = False, model_as(bool);
-    var bool dd_xy_axis_degradation = False, model_as(bool);
+    vars dd_z_axis_warning, dd_xy_axis_degradation;
     arg float total_degradation_threshold= total_degradation_threshold;
     arg integer num_classes = num_classes;
     arg bool enable_fault_detection = enable_fault_detection;
     arg string decision_source = decision_source;
     comment  "This node captures the output of the DD LEC"
-    set(dd_z_axis_warning, (or, (equal, dd_output, z_warn), (and, dd_z_axis_warning, (not, (equal, dd_output, safe)))))
-    set(dd_z_axis_warning, (or, (equal, dd_output, zy_warn), (and, dd_xy_axis_degradation, (not, (equal, dd_output, safe)))))
+    set(dd_z_axis_warning, (or, (equal, dd_output, 'z_warn'), (and, dd_z_axis_warning, (not, (equal, dd_output, 'safe')))))
+    set(dd_xy_axis_degradation, (or, (equal, dd_output, 'xy_warn'), (and, dd_xy_axis_degradation, (not, (equal, dd_output, 'safe')))))
 end   
 
 //input rtreach2bb rtreach -> rtreach_out
@@ -338,21 +361,18 @@ end
 
 
 input rtreach2bb rtreach_result -> rtreach_result
-    var bool emergency_stop_warning = False, model_as(bool);
-    var bool rtreach_warning = False, model_as(bool);
-    var bool rtreach_long_term_warning = False, model_as(bool);
+    vars emergency_stop_warning, rtreach_warning, rtreach_long_term_warning;
     arg bool enable_emergency_stop = enable_emergency_stop;
     arg integer rtreach_window_size = 25;
     arg float rtreach_window_threshold = 0.75;
     comment "This node captures the rtreachabiliy decision result over safety"
-    set(rtreach_long_term_warning, (or, (equal, rtreach_result, long), (equal, rtreach_result, short_long)))
-    set(rtreach_warning, (or, (equal, rtreach_result, short), (equal, rtreach_result, short_long)))
+    set(rtreach_long_term_warning, (or, (equal, rtreach_result, 'long'), (equal, rtreach_result, 'short_long')))
+    set(rtreach_warning, (or, (equal, rtreach_result, 'short'), (equal, rtreach_result, 'short_long')))
 end
 
 
 input rtreach_unsafe_value2bb rtreach_unsafe_value -> rtreach_unsafe_value
-    var bool rtreach_fence_warning = False, do_not_model;
-    var bool rtreach_obstacle_warning = False, do_not_model;
+    vars rtreach_fence_warning, rtreach_obstacle_warning;
     comment "This node captures the rtreachabiliy decision value over safety"
 end
 
@@ -474,27 +494,24 @@ end
 task surface_task
     in hsd_to_surface hsd_to_surface_;
     out cm_hsd_input cm_hsd_input_;
-    var HSDCommand HSD_out;
-    var String cm_hsd_input;
-    set(cm_hsd_input, surface_task)
+    vars HSD_out, cm_hsd_input;
+    //set(cm_hsd_input, 'cm_surface_task')
     return running
 end     
 
 task  rth_task 
     in  hsd_to_rth hsd_to_rth_;
     out cm_hsd_input cm_hsd_input_;
-    var HSDCommand HSD_out;
-    var String cm_hsd_input;
-    set(cm_hsd_input, rth_task)
+    vars HSD_out, cm_hsd_input;
+    //set(cm_hsd_input, 'cm_rth_task')
     return running
 end
 
 task  loiter_task 
     in hsd_pipeline_mapping  hsd_pipeline_mapping_;
     out cm_hsd_input  cm_hsd_input_;
-    var HSDCommand HSD_out ;
-    var String cm_hsd_input;
-    set(cm_hsd_input, loiter_task)
+    vars HSD_out, cm_hsd_input;
+    //set(cm_hsd_input, 'cm_loiter_task')
     return running
 end    
 
@@ -502,29 +519,22 @@ end
 task obstacle_avoidance
     in hsd_obstacle_avoidance hsd_obstacle_avoidance_, hsd_pipeline_mapping  hsd_pipeline_mapping_, hsd_to_waypoint hsd_waypoint_, hsd_to_waypoint_rrt hsd_waypoint_rrt_;
     out hsd_command hsd_pub;
-    var HSDCommand HSD_out;
-    var bool bb_obstacle_warning = False ;
-    var String cm_hsd_input;
+    vars HSD_out, bb_obstacle_warning, cm_hsd_input;
     arg bool enable_obstacle_avoidance = enable_obstacle_avoidance;
     set(bb_obstacle_warning, (any, True, False))
-    set(cm_hsd_input, (bb_obstacle_warning, obstacle_avoidance_task), cm_hsd_input)
+    //set(cm_hsd_input, try(bb_obstacle_warning, 'cm_obstacle_avoidance_task'), cm_hsd_input)
     return running
 end     
 
 
 task mission_server
     out bb_mission bb_mission;
-    var float uuv_max_speed = uuv_max_speed;
-    var string mission_file = mission_file;
-    var float refLat = 38.971203;
-    var float refLon = -76.398464;
+    vars uuv_max_speed, mission_file, refLat, refLon;
     //var bool next_mission = False;
     arg float uuv_max_speed = uuv_max_speed;
     arg string mission_file = mission_file;
-    create(max_mission, {4}, 4)
-    create(mission_idx, [0, max_mission], 0)
-    set(mission_idx, (next_mission, (min, max_mission, (addition, mission_idx, 1))), mission_idx)
-    set(bb_rth_warning, (next_mission, (equal, mission_idx, max_mission)), bb_rth_warning)
+    set(mission_idx, try(next_mission, (min, max_mission, (addition, mission_idx, 1))), mission_idx)
+    set(bb_rth_warning, try(next_mission, (equal, mission_idx, max_mission)), bb_rth_warning)
     set(next_mission, False)
     return running
 end
@@ -532,33 +542,33 @@ end
 task next_mission
     in bb_mission bb_mission;
     out next_wp next_wp_;
-    var bool next_mission = False;
+    vars next_mission;
     set(next_mission, True)
     return success
 end  
 
 task  speed_max_task 
-    var HSDCommand HSD_out;
+    vars HSD_out;
     arg float uuv_max_speed = uuv_max_speed;
-    set(HSD_out, uuv_max_speed)
+    set(HSD_out, 'uuv_max_speed')
     return running
 end    
 
 task  speed_min_task 
-    var HSDCommand HSD_out;
+    vars HSD_out;
     arg float uuv_min_speed=uuv_min_speed;
-    set(HSD_out, uuv_min_speed)
+    set(HSD_out, 'uuv_min_speed')
     return running
 end
 
 task  pipe_mapping_enable_task 
-    var Bool pipe_mapping_enable;
+    vars pipe_mapping_enable;
     set(pipe_mapping_enable, True)
     return success
 end    
 
 task  pipe_mapping_disable_task 
-    var Bool pipe_mapping_enable;
+    vars pipe_mapping_enable;
     set(pipe_mapping_enable, False)
     return running
 end
@@ -566,25 +576,23 @@ end
 task  tracking_task 
     in hsd_pipeline_mapping  hsd_pipeline_mapping_;
     out cm_hsd_input cm_hsd_input_;
-    var HSDCommand HSD_out ;
-    var String cm_hsd_input;
-    set(cm_hsd_input, tracking_task)
+    vars HSD_out, cm_hsd_input;
+    //set(cm_hsd_input, 'cm_tracking_task')
     return running
 end    
 
 task  waypoint_task 
     in hsd_to_waypoint hsd_waypoint_, bb_waypoints_completed hsd_waypoint_completed_;
 	out cm_hsd_input cm_hsd_input_, next_wp next_wp_;
-    var HSDCommand HSD_out ;
-    var String cm_hsd_input;
-    set(cm_hsd_input, waypoint_task)
+    vars HSD_out, cm_hsd_input;
+    //set(cm_hsd_input, 'cm_waypoint_task')
     return running
 end   
 
 
 task  reallocate_task 
-    var float total_degradation=0;
-    set(total_degradation, (any, total_degradation, (min, (addition, total_degradation, 1), 6)))
+    vars total_degradation;
+    //set(total_degradation, (any, total_degradation, (min, (addition, total_degradation, 1), 6)))
     return running
 end   
 
