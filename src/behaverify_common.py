@@ -228,7 +228,6 @@ def prune_nodes(nodes):
     def find_new_child(nodes, node_name):
         return (node_name if (nodes[node_name]['category'] != 'composite' or len(nodes[node_name]['children']) > 1) else (find_new_child(nodes, nodes[node_name]['children'][0])))
 
-    # print(nodes['node2'])
     nodes = {node_name : {field :
                           (
                               (
@@ -250,8 +249,6 @@ def prune_nodes(nodes):
              for node_name in filter((lambda x : (nodes[x]['category'] != 'composite' or len(nodes[x]['children']) > 1)),
                                      nodes)}
     # we've now removed all composite nodes that had less than 2 children.
-    print(nodes['return_failure'])
-    # print(nodes['node2'])
     return nodes
 
 
@@ -294,6 +291,7 @@ def refine_return_types(nodes, node_name):
                 'failure' : False
             }
             cannot_run = True
+            print(node['name'] + ' : my parents failed me')
         elif parent['category'] == 'composite':
             # we don't care about decorators
             left_sibling_index = parent['children'].index(node_name) - 1
@@ -309,6 +307,8 @@ def refine_return_types(nodes, node_name):
                             'running' : False,
                             'failure' : False}
                         cannot_run = True
+                        print(node['name'] + ' : SIBLING = ' + left_sibling_name)
+                        print(left_sibling)
                 elif 'sequence' in parent['type']:
                     if not left_sibling['return_possibilities']['success']:
                         node['return_possibilities'] = {
@@ -316,6 +316,7 @@ def refine_return_types(nodes, node_name):
                             'running' : False,
                             'failure' : False}
                         cannot_run = True
+                        print(node['name'] + ' : SIBLING')
 
     if cannot_run:
         for child_id in node['children']:
@@ -388,7 +389,7 @@ def refine_return_types(nodes, node_name):
         child = nodes[child_name]
         refine_return_types(nodes, child_name)
         if node['type'] == 'X_is_Y':
-            node['return_possibilities'][node['additional_arguments'][1]] = (child['return_possibilities'][node['additional_arguments'][1]]
+            node['return_possibilities'][node['additional_arguments'][1]] = (child['return_possibilities'][node['additional_arguments'][0]]
                                                                              or child['return_possibilities'][node['additional_arguments'][1]])
             for return_val in ('success', 'failure', 'running'):
                 if return_val not in node['additional_arguments']:

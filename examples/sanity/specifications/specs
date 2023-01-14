@@ -1,0 +1,4 @@
+LTLSPEC F blackboard.value = 1;
+LTLSPEC (blackboard.value != 1) U (G (blackboard.value = 1));
+LTLSPEC G blackboard.overflow_failure = FALSE;
+LTLSPEC G (blackboard.value = 1 -> blackboard.finished);

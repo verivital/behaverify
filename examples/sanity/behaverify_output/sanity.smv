@@ -1,0 +1,82 @@
+MODULE main
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		active := [collatz.active, not_finished.active, add_1.active, add_2.active];
+		resume_from_here_in_subtree__collatz := -3;
+		collatz.active := TRUE;
+	VAR
+		node_names : define_nodes;
+		blackboard : blackboard_module(node_names, active);
+		add_1 : success_DEFAULT_module();
+		add_2 : success_DEFAULT_module();
+		collatz : composite_sequence_without_memory_3(not_finished, add_1, add_2);
+		not_finished : not_finished_module(blackboard);
+	ASSIGN
+MODULE define_nodes
+	DEFINE
+		collatz := 0;
+		not_finished := 1;
+		add_1 := 2;
+		add_2 := 3;
+MODULE leaf_module(internal_status_module)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status_module.internal_status : invalid;
+MODULE composite_sequence_without_memory_3(child_0, child_1, child_2)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				!(child_0.internal_status = success) : child_0.internal_status;
+				!(child_1.internal_status = success) : child_1.internal_status;
+				!(child_2.internal_status = success) : child_2.internal_status;
+				TRUE : success;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = success;
+		child_2.active := child_1.status = success;
+MODULE not_finished_module(blackboard)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := (blackboard.value < 400) ? success : failure;
+MODULE success_DEFAULT_module
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := success;
+MODULE blackboard_module(node_names, active)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		value := value_stage_2;
+		value_exists := TRUE;
+		value_stage_1_exists := TRUE;
+		value_stage_2_exists := TRUE;
+	FROZENVAR
+	VAR
+		value_stage_1 : 1..400;
+		value_stage_2 : 1..400;
+	ASSIGN
+		init(value_stage_1) := 
+			case
+				TRUE : 1;
+			esac;
+		next(value_stage_1) := 
+			case
+				!(active[node_names.add_1]) : value;
+				TRUE : min(value + 1, 400);
+			esac;
+		init(value_stage_2) := value_stage_1;
+		next(value_stage_2) := 
+			case
+				!(active[node_names.add_2]) : value_stage_1;
+				TRUE : min(next(value_stage_1) + 2, 400);
+			esac;
+
