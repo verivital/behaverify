@@ -165,7 +165,7 @@ def format_code(code, node_name, variables, local_variables, use_stages, call_bl
 
 def walk_tree(model, variables, local_variables):
     nodes = {}
-    walk_tree_recursive(model.root, None, nodes, {}, variables, local_variables)
+    walk_tree_recursive(model.root, None, nodes, set(), variables, local_variables)
     return nodes
 
 

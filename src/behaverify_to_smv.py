@@ -376,12 +376,16 @@ def main():
     nodes = temp['nodes']
     variables = temp['variables']
 
+    print(len(nodes))
+
     root_node_name = get_root_node(nodes)
     refine_return_types(nodes, root_node_name)
     refine_invalid(nodes, root_node_name)
 
     if not args.do_not_trim:
         nodes = prune_nodes(nodes)
+
+    print(len(nodes))
 
     nodes_in_order = order_nodes(root_node_name, nodes)
     node_name_to_number = map_node_name_to_number(nodes, nodes_in_order)
