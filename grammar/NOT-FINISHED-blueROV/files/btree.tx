@@ -63,7 +63,7 @@ BaseArrayType:
 
 BBNode:
 	'input' name=ID
-    input_topic=[Topic] '->' topic_bbvar=[BBVar]
+		 input_topic=[Topic] '->' topic_bbvar=[BBVar]
     ('vars' bb_vars *= [BBVar][','] ';')?
     args *= Param
 		 ('comment' comment=STRING)?
@@ -191,7 +191,7 @@ CodeStatement:
     ('(' function_call = function ')') |
     ('(' CodeStatement = CodeStatement ')')
 ;
-    
+
 function:
     (function_name = 'abs' ',' value1 = CodeStatement) |
     (function_name = 'max' ',' value1 = CodeStatement ',' value2 = CodeStatement) |

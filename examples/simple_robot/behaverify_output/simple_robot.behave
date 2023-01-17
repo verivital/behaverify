@@ -1,80 +1,126 @@
-{   'nodes': {   'execute': {   'category': 'leaf',
+{   'nodes': {   'clear_mission': {   'additional_arguments': [],
+                                      'category': 'leaf',
+                                      'children': [],
+                                      'internal_status_module_code': None,
+                                      'internal_status_module_name': None,
+                                      'name': 'clear_mission',
+                                      'parent': 'reset_completed_mission',
+                                      'return_possibilities': {   'failure': False,
+                                                                  'running': False,
+                                                                  'success': True},
+                                      'type': 'action'},
+                 'confirm_mission': {   'additional_arguments': None,
+                                        'category': 'composite',
+                                        'children': [   'have_mission',
+                                                        'get_mission'],
+                                        'internal_status_module_code': None,
+                                        'internal_status_module_name': None,
+                                        'name': 'confirm_mission',
+                                        'parent': 'robot_control',
+                                        'return_possibilities': {   'failure': True,
+                                                                    'running': True,
+                                                                    'success': True},
+                                        'type': 'selector_without_memory'},
+                 'get_mission': {   'additional_arguments': [   'get_mission_DOT_saw_target_stage_1'],
+                                    'category': 'leaf',
+                                    'children': [],
+                                    'internal_status_module_code': 'MODULE '
+                                                                   'get_mission_module(get_mission_DOT_saw_target_stage_1)\n'
+                                                                   '\t'
+                                                                   'CONSTANTS\n'
+                                                                   '\t\t'
+                                                                   'success, '
+                                                                   'failure, '
+                                                                   'running, '
+                                                                   'invalid;\n'
+                                                                   '\tDEFINE\n'
+                                                                   '\t\tstatus '
+                                                                   ':= active '
+                                                                   '? '
+                                                                   'internal_status '
+                                                                   ': '
+                                                                   'invalid;\n'
+                                                                   '\t\t'
+                                                                   'internal_status '
+                                                                   ':= \n'
+                                                                   '\t\t\t'
+                                                                   'case\n'
+                                                                   '\t\t\t\t'
+                                                                   'get_mission_DOT_saw_target_stage_1 '
+                                                                   ': '
+                                                                   'success;\n'
+                                                                   '\t\t\t\t'
+                                                                   'TRUE : '
+                                                                   'failure;\n'
+                                                                   '\t\t\t'
+                                                                   'esac;\n',
+                                    'internal_status_module_name': 'get_mission_module',
+                                    'name': 'get_mission',
+                                    'parent': 'confirm_mission',
+                                    'return_possibilities': {   'failure': True,
+                                                                'running': False,
+                                                                'success': True},
+                                    'type': 'action'},
+                 'get_position': {   'additional_arguments': [],
+                                     'category': 'leaf',
+                                     'children': [],
+                                     'internal_status_module_code': None,
+                                     'internal_status_module_name': None,
+                                     'name': 'get_position',
+                                     'parent': 'robot_control',
+                                     'return_possibilities': {   'failure': False,
+                                                                 'running': False,
+                                                                 'success': True},
+                                     'type': 'action'},
+                 'go_down': {   'additional_arguments': [],
+                                'category': 'leaf',
                                 'children': [],
                                 'internal_status_module_code': None,
                                 'internal_status_module_name': None,
-                                'name': 'execute',
-                                'parent': 'robot',
+                                'name': 'go_down',
+                                'parent': 'try_down',
                                 'return_possibilities': {   'failure': False,
                                                             'running': False,
                                                             'success': True},
                                 'type': 'action'},
-                 'read_battery': {   'category': 'leaf',
-                                     'children': [],
-                                     'internal_status_module_code': 'MODULE '
-                                                                    'read_battery_module(blackboard)\n'
-                                                                    '\t'
-                                                                    'CONSTANTS\n'
-                                                                    '\t\t'
-                                                                    'success, '
-                                                                    'failure, '
-                                                                    'running, '
-                                                                    'invalid;\n'
-                                                                    '\tDEFINE\n'
-                                                                    '\t\t'
-                                                                    'status := '
-                                                                    'active ? '
-                                                                    'internal_status '
-                                                                    ': '
-                                                                    'invalid;\n'
-                                                                    '\tVAR\n'
-                                                                    '\t\t'
-                                                                    'internal_status '
-                                                                    ': '
-                                                                    '{success, '
-                                                                    'failure};\n'
-                                                                    '\tASSIGN\n'
-                                                                    '\t\t'
-                                                                    'init(internal_status) '
-                                                                    ':= '
-                                                                    'success;\n'
-                                                                    '\t\t'
-                                                                    'next(internal_status) '
-                                                                    ':= \n'
-                                                                    '\t\t\t'
-                                                                    'case\n'
-                                                                    '\t\t\t\t'
-                                                                    'blackboard.reading_successful '
-                                                                    ': '
-                                                                    'success;\n'
-                                                                    '\t\t\t\t'
-                                                                    'TRUE : '
-                                                                    'failure;\n'
-                                                                    '\t\t\t'
-                                                                    'esac;\n',
-                                     'internal_status_module_name': 'read_battery_module',
-                                     'name': 'read_battery',
-                                     'parent': 'robot',
-                                     'return_possibilities': {   'failure': True,
-                                                                 'running': False,
-                                                                 'success': True},
-                                     'type': 'action'},
-                 'robot': {   'additional_arguments': None,
-                              'category': 'composite',
-                              'children': [   'read_battery',
-                                              'safe_battery',
-                                              'execute'],
+                 'go_left': {   'additional_arguments': [],
+                                'category': 'leaf',
+                                'children': [],
+                                'internal_status_module_code': None,
+                                'internal_status_module_name': None,
+                                'name': 'go_left',
+                                'parent': 'try_left',
+                                'return_possibilities': {   'failure': False,
+                                                            'running': False,
+                                                            'success': True},
+                                'type': 'action'},
+                 'go_right': {   'additional_arguments': [],
+                                 'category': 'leaf',
+                                 'children': [],
+                                 'internal_status_module_code': None,
+                                 'internal_status_module_name': None,
+                                 'name': 'go_right',
+                                 'parent': 'try_right',
+                                 'return_possibilities': {   'failure': False,
+                                                             'running': False,
+                                                             'success': True},
+                                 'type': 'action'},
+                 'go_up': {   'additional_arguments': [],
+                              'category': 'leaf',
+                              'children': [],
                               'internal_status_module_code': None,
                               'internal_status_module_name': None,
-                              'name': 'robot',
-                              'parent': None,
-                              'return_possibilities': {   'failure': True,
-                                                          'running': True,
+                              'name': 'go_up',
+                              'parent': 'try_up',
+                              'return_possibilities': {   'failure': False,
+                                                          'running': False,
                                                           'success': True},
-                              'type': 'sequence_without_memory'},
-                 'safe_battery': {   'category': 'leaf',
+                              'type': 'action'},
+                 'have_mission': {   'additional_arguments': [   'mission_stage_1'],
+                                     'category': 'leaf',
                                      'children': [],
                                      'internal_status_module_code': 'MODULE '
-                                                                    'safe_battery_module(blackboard)\n'
+                                                                    'have_mission_module(mission_stage_1)\n'
                                                                     '\t'
                                                                     'CONSTANTS\n'
                                                                     '\t\t'
@@ -92,57 +138,464 @@
                                                                     '\t\t'
                                                                     'internal_status '
                                                                     ':= '
-                                                                    '(blackboard.battery_reading_stage_1 '
-                                                                    '>= '
-                                                                    'blackboard.battery_threshold) '
+                                                                    '(mission_stage_1) '
                                                                     '? success '
                                                                     ': '
                                                                     'failure;\n',
-                                     'internal_status_module_name': 'safe_battery_module',
-                                     'name': 'safe_battery',
-                                     'parent': 'robot',
+                                     'internal_status_module_name': 'have_mission_module',
+                                     'name': 'have_mission',
+                                     'parent': 'confirm_mission',
                                      'return_possibilities': {   'failure': True,
                                                                  'running': False,
                                                                  'success': True},
-                                     'type': 'check'}},
-    'variables': {   'battery': {   'custom_value_range': None,
-                                    'environment_update': None,
-                                    'init_value': None,
-                                    'max_value': 10,
+                                     'type': 'check'},
+                 'move_robot': {   'additional_arguments': None,
+                                   'category': 'composite',
+                                   'children': [   'try_right',
+                                                   'try_left',
+                                                   'try_up',
+                                                   'try_down'],
+                                   'internal_status_module_code': None,
+                                   'internal_status_module_name': None,
+                                   'name': 'move_robot',
+                                   'parent': 'robot_control',
+                                   'return_possibilities': {   'failure': True,
+                                                               'running': True,
+                                                               'success': True},
+                                   'type': 'selector_without_memory'},
+                 'reset_completed_mission': {   'additional_arguments': None,
+                                                'category': 'composite',
+                                                'children': [   'target_reached',
+                                                                'clear_mission'],
+                                                'internal_status_module_code': None,
+                                                'internal_status_module_name': None,
+                                                'name': 'reset_completed_mission',
+                                                'parent': 'reset_completed_mission_FiS',
+                                                'return_possibilities': {   'failure': True,
+                                                                            'running': True,
+                                                                            'success': True},
+                                                'type': 'sequence_without_memory'},
+                 'reset_completed_mission_FiS': {   'additional_arguments': [   'failure',
+                                                                                'success'],
+                                                    'category': 'decorator',
+                                                    'children': [   'reset_completed_mission'],
+                                                    'internal_status_module_code': None,
+                                                    'internal_status_module_name': None,
+                                                    'name': 'reset_completed_mission_FiS',
+                                                    'parent': 'robot_control',
+                                                    'return_possibilities': {   'failure': True,
+                                                                                'running': True,
+                                                                                'success': True},
+                                                    'type': 'X_is_Y'},
+                 'robot_control': {   'additional_arguments': None,
+                                      'category': 'composite',
+                                      'children': [   'get_position',
+                                                      'reset_completed_mission_FiS',
+                                                      'confirm_mission',
+                                                      'move_robot'],
+                                      'internal_status_module_code': None,
+                                      'internal_status_module_name': None,
+                                      'name': 'robot_control',
+                                      'parent': None,
+                                      'return_possibilities': {   'failure': True,
+                                                                  'running': True,
+                                                                  'success': True},
+                                      'type': 'sequence_without_memory'},
+                 'target_reached': {   'additional_arguments': [   'target_y',
+                                                                   'y_stage_1',
+                                                                   'target_x',
+                                                                   'x_stage_1'],
+                                       'category': 'leaf',
+                                       'children': [],
+                                       'internal_status_module_code': 'MODULE '
+                                                                      'target_reached_module(target_y, '
+                                                                      'y_stage_1, '
+                                                                      'target_x, '
+                                                                      'x_stage_1)\n'
+                                                                      '\t'
+                                                                      'CONSTANTS\n'
+                                                                      '\t\t'
+                                                                      'success, '
+                                                                      'failure, '
+                                                                      'running, '
+                                                                      'invalid;\n'
+                                                                      '\t'
+                                                                      'DEFINE\n'
+                                                                      '\t\t'
+                                                                      'status '
+                                                                      ':= '
+                                                                      'active '
+                                                                      '? '
+                                                                      'internal_status '
+                                                                      ': '
+                                                                      'invalid;\n'
+                                                                      '\t\t'
+                                                                      'internal_status '
+                                                                      ':= '
+                                                                      '(((x_stage_1 '
+                                                                      '= '
+                                                                      'target_x) '
+                                                                      '& '
+                                                                      '(y_stage_1 '
+                                                                      '= '
+                                                                      'target_y))) '
+                                                                      '? '
+                                                                      'success '
+                                                                      ': '
+                                                                      'failure;\n',
+                                       'internal_status_module_name': 'target_reached_module',
+                                       'name': 'target_reached',
+                                       'parent': 'reset_completed_mission',
+                                       'return_possibilities': {   'failure': True,
+                                                                   'running': False,
+                                                                   'success': True},
+                                       'type': 'check'},
+                 'try_down': {   'additional_arguments': None,
+                                 'category': 'composite',
+                                 'children': ['y_too_big', 'go_down'],
+                                 'internal_status_module_code': None,
+                                 'internal_status_module_name': None,
+                                 'name': 'try_down',
+                                 'parent': 'move_robot',
+                                 'return_possibilities': {   'failure': True,
+                                                             'running': True,
+                                                             'success': True},
+                                 'type': 'sequence_without_memory'},
+                 'try_left': {   'additional_arguments': None,
+                                 'category': 'composite',
+                                 'children': ['x_too_big', 'go_left'],
+                                 'internal_status_module_code': None,
+                                 'internal_status_module_name': None,
+                                 'name': 'try_left',
+                                 'parent': 'move_robot',
+                                 'return_possibilities': {   'failure': True,
+                                                             'running': True,
+                                                             'success': True},
+                                 'type': 'sequence_without_memory'},
+                 'try_right': {   'additional_arguments': None,
+                                  'category': 'composite',
+                                  'children': ['x_too_small', 'go_right'],
+                                  'internal_status_module_code': None,
+                                  'internal_status_module_name': None,
+                                  'name': 'try_right',
+                                  'parent': 'move_robot',
+                                  'return_possibilities': {   'failure': True,
+                                                              'running': True,
+                                                              'success': True},
+                                  'type': 'sequence_without_memory'},
+                 'try_up': {   'additional_arguments': None,
+                               'category': 'composite',
+                               'children': ['y_too_small', 'go_up'],
+                               'internal_status_module_code': None,
+                               'internal_status_module_name': None,
+                               'name': 'try_up',
+                               'parent': 'move_robot',
+                               'return_possibilities': {   'failure': True,
+                                                           'running': True,
+                                                           'success': True},
+                               'type': 'sequence_without_memory'},
+                 'x_too_big': {   'additional_arguments': [   'target_x_stage_1',
+                                                              'x_stage_1'],
+                                  'category': 'leaf',
+                                  'children': [],
+                                  'internal_status_module_code': 'MODULE '
+                                                                 'x_too_big_module(target_x_stage_1, '
+                                                                 'x_stage_1)\n'
+                                                                 '\tCONSTANTS\n'
+                                                                 '\t\tsuccess, '
+                                                                 'failure, '
+                                                                 'running, '
+                                                                 'invalid;\n'
+                                                                 '\tDEFINE\n'
+                                                                 '\t\tstatus '
+                                                                 ':= active ? '
+                                                                 'internal_status '
+                                                                 ': invalid;\n'
+                                                                 '\t\t'
+                                                                 'internal_status '
+                                                                 ':= '
+                                                                 '((x_stage_1 '
+                                                                 '> '
+                                                                 'target_x_stage_1)) '
+                                                                 '? success : '
+                                                                 'failure;\n',
+                                  'internal_status_module_name': 'x_too_big_module',
+                                  'name': 'x_too_big',
+                                  'parent': 'try_left',
+                                  'return_possibilities': {   'failure': True,
+                                                              'running': False,
+                                                              'success': True},
+                                  'type': 'check'},
+                 'x_too_small': {   'additional_arguments': [   'target_x_stage_1',
+                                                                'x_stage_1'],
+                                    'category': 'leaf',
+                                    'children': [],
+                                    'internal_status_module_code': 'MODULE '
+                                                                   'x_too_small_module(target_x_stage_1, '
+                                                                   'x_stage_1)\n'
+                                                                   '\t'
+                                                                   'CONSTANTS\n'
+                                                                   '\t\t'
+                                                                   'success, '
+                                                                   'failure, '
+                                                                   'running, '
+                                                                   'invalid;\n'
+                                                                   '\tDEFINE\n'
+                                                                   '\t\tstatus '
+                                                                   ':= active '
+                                                                   '? '
+                                                                   'internal_status '
+                                                                   ': '
+                                                                   'invalid;\n'
+                                                                   '\t\t'
+                                                                   'internal_status '
+                                                                   ':= '
+                                                                   '((x_stage_1 '
+                                                                   '< '
+                                                                   'target_x_stage_1)) '
+                                                                   '? success '
+                                                                   ': '
+                                                                   'failure;\n',
+                                    'internal_status_module_name': 'x_too_small_module',
+                                    'name': 'x_too_small',
+                                    'parent': 'try_right',
+                                    'return_possibilities': {   'failure': True,
+                                                                'running': False,
+                                                                'success': True},
+                                    'type': 'check'},
+                 'y_too_big': {   'additional_arguments': [   'target_y_stage_1',
+                                                              'y_stage_1'],
+                                  'category': 'leaf',
+                                  'children': [],
+                                  'internal_status_module_code': 'MODULE '
+                                                                 'y_too_big_module(target_y_stage_1, '
+                                                                 'y_stage_1)\n'
+                                                                 '\tCONSTANTS\n'
+                                                                 '\t\tsuccess, '
+                                                                 'failure, '
+                                                                 'running, '
+                                                                 'invalid;\n'
+                                                                 '\tDEFINE\n'
+                                                                 '\t\tstatus '
+                                                                 ':= active ? '
+                                                                 'internal_status '
+                                                                 ': invalid;\n'
+                                                                 '\t\t'
+                                                                 'internal_status '
+                                                                 ':= '
+                                                                 '((y_stage_1 '
+                                                                 '> '
+                                                                 'target_y_stage_1)) '
+                                                                 '? success : '
+                                                                 'failure;\n',
+                                  'internal_status_module_name': 'y_too_big_module',
+                                  'name': 'y_too_big',
+                                  'parent': 'try_down',
+                                  'return_possibilities': {   'failure': True,
+                                                              'running': False,
+                                                              'success': True},
+                                  'type': 'check'},
+                 'y_too_small': {   'additional_arguments': [   'target_y_stage_1',
+                                                                'y_stage_1'],
+                                    'category': 'leaf',
+                                    'children': [],
+                                    'internal_status_module_code': 'MODULE '
+                                                                   'y_too_small_module(target_y_stage_1, '
+                                                                   'y_stage_1)\n'
+                                                                   '\t'
+                                                                   'CONSTANTS\n'
+                                                                   '\t\t'
+                                                                   'success, '
+                                                                   'failure, '
+                                                                   'running, '
+                                                                   'invalid;\n'
+                                                                   '\tDEFINE\n'
+                                                                   '\t\tstatus '
+                                                                   ':= active '
+                                                                   '? '
+                                                                   'internal_status '
+                                                                   ': '
+                                                                   'invalid;\n'
+                                                                   '\t\t'
+                                                                   'internal_status '
+                                                                   ':= '
+                                                                   '((y_stage_1 '
+                                                                   '< '
+                                                                   'target_y_stage_1)) '
+                                                                   '? success '
+                                                                   ': '
+                                                                   'failure;\n',
+                                    'internal_status_module_name': 'y_too_small_module',
+                                    'name': 'y_too_small',
+                                    'parent': 'try_up',
+                                    'return_possibilities': {   'failure': True,
+                                                                'running': False,
+                                                                'success': True},
+                                    'type': 'check'}},
+    'variables': {   'get_mission_DOT_saw_target': {   'custom_value_range': '{TRUE, '
+                                                                             'FALSE}',
+                                                       'initial_value': None,
+                                                       'max_value': 1,
+                                                       'min_value': 0,
+                                                       'mode': 'VAR',
+                                                       'name': 'get_mission_DOT_saw_target',
+                                                       'next_value': [   (   'get_mission',
+                                                                             True,
+                                                                             [   (   'TRUE',
+                                                                                     '{TRUE, '
+                                                                                     'FALSE}')])]},
+                     'mission': {   'custom_value_range': '{TRUE, FALSE}',
+                                    'initial_value': [('TRUE', 'FALSE')],
+                                    'max_value': 1,
                                     'min_value': 0,
                                     'mode': 'VAR',
-                                    'name': 'battery',
-                                    'next_value': []},
-                     'battery_reading': {   'custom_value_range': None,
-                                            'environment_update': None,
-                                            'init_value': [('TRUE', '10')],
+                                    'name': 'mission',
+                                    'next_value': [   (   'clear_mission',
+                                                          False,
+                                                          [('TRUE', 'FALSE')]),
+                                                      (   'get_mission',
+                                                          False,
+                                                          [   (   'get_mission_DOT_saw_target_stage_1',
+                                                                  'TRUE'),
+                                                              (   'TRUE',
+                                                                  'FALSE')])]},
+                     'remaining_goals': {   'custom_value_range': None,
+                                            'initial_value': None,
                                             'max_value': 10,
                                             'min_value': 0,
                                             'mode': 'VAR',
-                                            'name': 'battery_reading',
-                                            'next_value': [   (   'read_battery',
-                                                                  [   (   'reading_successful',
-                                                                          'battery'),
+                                            'name': 'remaining_goals',
+                                            'next_value': [   (   None,
+                                                                  False,
+                                                                  [   (   '((x_goal '
+                                                                          '= '
+                                                                          'x_true_stage_2) '
+                                                                          '& '
+                                                                          '(y_goal '
+                                                                          '= '
+                                                                          'y_true_stage_2))',
+                                                                          'max(0, '
+                                                                          '(remaining_goals '
+                                                                          '- '
+                                                                          '1))'),
                                                                       (   'TRUE',
-                                                                          'battery_reading')])]},
-                     'battery_threshold': {   'custom_value_range': None,
-                                              'environment_update': None,
-                                              'init_value': [   (   'TRUE',
-                                                                    '{0, 1, 2, '
-                                                                    '3, 4, 5, '
-                                                                    '6, 7, 8, '
-                                                                    '9, 10}')],
-                                              'max_value': 10,
-                                              'min_value': 0,
-                                              'mode': 'FROZENVAR',
-                                              'name': 'battery_threshold',
-                                              'next_value': []},
-                     'reading_successful': {   'custom_value_range': '{TRUE, '
-                                                                     'FALSE}',
-                                               'environment_update': None,
-                                               'init_value': None,
-                                               'max_value': 1,
-                                               'min_value': 0,
-                                               'mode': 'VAR',
-                                               'name': 'reading_successful',
-                                               'next_value': []}}}
+                                                                          'remaining_goals')])]},
+                     'target_x': {   'custom_value_range': None,
+                                     'initial_value': [('TRUE', '0')],
+                                     'max_value': 4,
+                                     'min_value': 0,
+                                     'mode': 'VAR',
+                                     'name': 'target_x',
+                                     'next_value': [   (   'get_mission',
+                                                           False,
+                                                           [   (   'get_mission_DOT_saw_target_stage_1',
+                                                                   'x_goal'),
+                                                               (   'TRUE',
+                                                                   'target_x')])]},
+                     'target_y': {   'custom_value_range': None,
+                                     'initial_value': [('TRUE', '0')],
+                                     'max_value': 4,
+                                     'min_value': 0,
+                                     'mode': 'VAR',
+                                     'name': 'target_y',
+                                     'next_value': [   (   'get_mission',
+                                                           False,
+                                                           [   (   'get_mission_DOT_saw_target_stage_1',
+                                                                   'y_goal'),
+                                                               (   'TRUE',
+                                                                   'target_y')])]},
+                     'x': {   'custom_value_range': None,
+                              'initial_value': [('TRUE', '0')],
+                              'max_value': 4,
+                              'min_value': 0,
+                              'mode': 'VAR',
+                              'name': 'x',
+                              'next_value': [   (   'get_position',
+                                                    False,
+                                                    [   ('TRUE', 'x_true'),
+                                                        ('TRUE', 'x')])]},
+                     'x_goal': {   'custom_value_range': None,
+                                   'initial_value': None,
+                                   'max_value': 4,
+                                   'min_value': 0,
+                                   'mode': 'VAR',
+                                   'name': 'x_goal',
+                                   'next_value': [   (   None,
+                                                         True,
+                                                         [   (   '(0 = '
+                                                                 'remaining_goals_stage_1)',
+                                                                 'x_goal'),
+                                                             (   '((x_goal = '
+                                                                 'x_true_stage_2) '
+                                                                 '& (y_goal = '
+                                                                 'y_true_stage_2))',
+                                                                 '{0, 1, 2, 3, '
+                                                                 '4}'),
+                                                             (   'TRUE',
+                                                                 'x_goal')])]},
+                     'x_true': {   'custom_value_range': None,
+                                   'initial_value': None,
+                                   'max_value': 4,
+                                   'min_value': 0,
+                                   'mode': 'VAR',
+                                   'name': 'x_true',
+                                   'next_value': [   (   'go_right',
+                                                         False,
+                                                         [   (   'TRUE',
+                                                                 'min(4, '
+                                                                 '(x_true + '
+                                                                 '1))')]),
+                                                     (   'go_left',
+                                                         False,
+                                                         [   (   'TRUE',
+                                                                 'max(0, '
+                                                                 '(x_true_stage_1 '
+                                                                 '- 1))')])]},
+                     'y': {   'custom_value_range': None,
+                              'initial_value': [('TRUE', '0')],
+                              'max_value': 4,
+                              'min_value': 0,
+                              'mode': 'VAR',
+                              'name': 'y',
+                              'next_value': [   (   'get_position',
+                                                    False,
+                                                    [   ('TRUE', 'y_true'),
+                                                        ('TRUE', 'y')])]},
+                     'y_goal': {   'custom_value_range': None,
+                                   'initial_value': None,
+                                   'max_value': 4,
+                                   'min_value': 0,
+                                   'mode': 'VAR',
+                                   'name': 'y_goal',
+                                   'next_value': [   (   None,
+                                                         True,
+                                                         [   (   '(0 = '
+                                                                 'remaining_goals_stage_1)',
+                                                                 'y_goal'),
+                                                             (   '((x_goal_stage_1 '
+                                                                 '= '
+                                                                 'x_true_stage_2) '
+                                                                 '& (y_goal = '
+                                                                 'y_true_stage_2))',
+                                                                 '{0, 1, 2, 3, '
+                                                                 '4}'),
+                                                             (   'TRUE',
+                                                                 'y_goal')])]},
+                     'y_true': {   'custom_value_range': None,
+                                   'initial_value': None,
+                                   'max_value': 4,
+                                   'min_value': 0,
+                                   'mode': 'VAR',
+                                   'name': 'y_true',
+                                   'next_value': [   (   'go_up',
+                                                         False,
+                                                         [   (   'TRUE',
+                                                                 'min(4, '
+                                                                 '(y_true + '
+                                                                 '1))')]),
+                                                     (   'go_down',
+                                                         False,
+                                                         [   (   'TRUE',
+                                                                 'max(0, '
+                                                                 '(y_true_stage_1 '
+                                                                 '- 1))')])]}}}
