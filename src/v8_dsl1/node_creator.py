@@ -12,11 +12,17 @@ def create_names_module(node_name_to_number):
 
 
 def create_blackboard(nodes, variables):
-    define_string = ''
-    frozenvar_string = ''
-    var_string = ''
-    init_string = ''
-    next_string = ''
+
+    # node_name_to_id = {nodes[node_id]['name'] : node_id for node_id in nodes}
+
+    return_string = ('MODULE blackboard_module(node_names, active)' + os.linesep
+                     + '\tCONSTANTS' + os.linesep
+                     + '\t\tsuccess, failure, running, invalid;' + os.linesep
+                     + '\tDEFINE' + os.linesep)
+    exist_define = ''
+    frozen_decl_string = '\tFROZENVAR' + os.linesep
+    decl_string = ('\tVAR' + os.linesep)
+    assign_string = ('\tASSIGN' + os.linesep)
 
     use_exist = False
 
@@ -26,99 +32,121 @@ def create_blackboard(nodes, variables):
         # -----------------------------------
         # define are static.
         if variable['mode'].strip() == 'DEFINE':
-            if variable['initial_value'] is None:
+            # if variable['mode'].strip() == 'DEFINE' or (variable['custom_value_range'] is None and variable['environment_update'] is None and variable['min_value'] >= variable['max_value']):
+            if variable['init_value'] is None:
                 if variable['custom_value_range'] is None:
-                    define_string += ('\t\t' + variable_name + ' := ' + str(variable['min_value']) + ';' + os.linesep)
+                    exist_define += ('\t\t' + variable_name + ' := ' + str(variable['min_value']) + ';' + os.linesep)
                 else:
-                    define_string += ('\t\t' + variable_name + ' := ' + variable['custom_value_range'].split(',')[0].replace('{', '').strip() + ";" + os.linesep)
+                    exist_define += ('\t\t' + variable_name + ' := ' + variable['custom_value_range'].split(',')[0].replace('{', '').strip() + ";" + os.linesep)
             else:
-                define_string += ('\t\t' + variable_name + ' := ' + os.linesep
+                exist_define += ('\t\t' + variable_name + ' := ' + os.linesep
+                                 + '\t\t\tcase' + os.linesep
+                                 + ''.join([('\t\t\t\t' + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in variable['init_value']])
+                                 + '\t\t\tesac;' + os.linesep
+                                 )
+            if use_exist:
+                exist_define += "\t\t" + variable_name + "_exists := TRUE;" + os.linesep
+        elif variable['mode'].strip() == 'FROZENVAR':
+            # elif variable['mode'].strip() == 'FROZENVAR' or (len(variable['next_value']) == 0 and variable['environment_update'] is None):
+            frozen_decl_string += ('\t\t' + variable_name + ' : '
+                                   + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean')))
+                                   + ';' + os.linesep)
+            if variable['init_value'] is not None:
+                assign_string += ('\t\tinit(' + variable_name + ') := ' + os.linesep
                                   + '\t\t\tcase' + os.linesep
-                                  + ''.join([('\t\t\t\t' + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in variable['initial_value']])
+                                  + ''.join([('\t\t\t\t' + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in variable['init_value']])
                                   + '\t\t\tesac;' + os.linesep
                                   )
             if use_exist:
-                define_string += "\t\t" + variable_name + "_exists := TRUE;" + os.linesep
-        elif variable['mode'].strip() == 'FROZENVAR':
-            frozenvar_string += ('\t\t' + variable_name + ' : '
-                                 + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean')))
-                                 + ';' + os.linesep)
-            if variable['initial_value'] is not None:
-                init_string += ('\t\tinit(' + variable_name + ') := ' + os.linesep
-                                + '\t\t\tcase' + os.linesep
-                                + ''.join([('\t\t\t\t' + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in variable['initial_value']])
-                                + '\t\t\tesac;' + os.linesep
-                                )
-            if use_exist:
-                define_string += "\t\t" + variable_name + "_exists := TRUE;" + os.linesep
+                exist_define += "\t\t" + variable_name + "_exists := TRUE;" + os.linesep
         # --------------------------------
         # ok, so we've handled define and frozenvar, so all that's left
         # is actual variable.
+        elif variable['environment_update'] is not None:
+            decl_string += ('\t\t' + variable_name + ' : '
+                            + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (
+                                variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean')))
+                            + ';' + os.linesep)
+            assign_string += (
+                ('' if variable['init_value'] is None else (
+                    '\t\tinit(' + variable_name + ') := ' + os.linesep
+                    + '\t\t\tcase' + os.linesep
+                    + ''.join([('\t\t\t\t' + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in variable['init_value']])
+                    + '\t\t\tesac;' + os.linesep
+                ))
+                + '\t\tnext(' + variable_name + ') := ' + os.linesep
+                + '\t\t\tcase' + os.linesep
+                + ''.join([('\t\t\t\t' + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in variable['environment_update']])
+                + '\t\t\tesac;' + os.linesep
+            )
         else:
             if len(variable['next_value']) == 0:
-                var_string += ('\t\t' + variable_name + ' : '
-                               + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (
-                                   variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean')))
-                               + ';' + os.linesep)
-                init_string += (
-                    ('' if variable['initial_value'] is None else (
+                # exist_define += ('\t\t' + variable_name + ' := ' + variable_name + '_stage_' + str(len(variable['next_value'])) + ';' + os.linesep)
+                decl_string += ('\t\t' + variable_name + ' : '
+                                + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (
+                                    variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean')))
+                                + ';' + os.linesep)
+                assign_string += (
+                    ('' if variable['init_value'] is None else (
                         '\t\tinit(' + variable_name + ') := ' + os.linesep
                         + '\t\t\tcase' + os.linesep
-                        + ''.join([('\t\t\t\t' + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in variable['initial_value']])
+                        + ''.join([('\t\t\t\t' + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in variable['init_value']])
                         + '\t\t\tesac;' + os.linesep
                     ))
                 )
                 continue
-            var_string += ('\t\t' + variable_name + ' : '
-                           + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean')))
-                           + ';' + os.linesep)
-            init_string += (
-                ('' if variable['initial_value'] is None else (
-                    '\t\tinit(' + variable_name + ') := ' + os.linesep
+            exist_define += ('\t\t' + variable_name + ' := ' + variable_name + '_stage_' + str(len(variable['next_value'])) + ';' + os.linesep)
+            if use_exist:
+                exist_define += '\t\t' + variable_name + '_exists := TRUE;' + os.linesep
+            previous_stage = variable_name
+            # the base variable is just a macro for the last stage.
+            index = 0
+            stage_num = str(index + 1)
+            (node_name, stage) = variable['next_value'][index]
+            decl_string += ('\t\t' + variable_name + '_stage_' + stage_num + ' : '
+                            + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean')))
+                            + ';' + os.linesep)
+            assign_string += (
+                ('' if variable['init_value'] is None else (
+                    '\t\tinit(' + variable_name + '_stage_' + stage_num + ') := ' + os.linesep
                     + '\t\t\tcase' + os.linesep
-                    + ''.join([('\t\t\t\t' + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in variable['initial_value']])
+                    + ''.join([('\t\t\t\t' + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in variable['init_value']])
                     + '\t\t\tesac;' + os.linesep
                 ))
+                + '\t\tnext(' + variable_name + '_stage_' + stage_num + ') := ' + os.linesep
+                + '\t\t\tcase' + os.linesep
+                + '\t\t\t\t!(active[node_names.' + node_name + ']) : ' + previous_stage + ';' + os.linesep
+                + ''.join([('\t\t\t\t' + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in stage])
+                + '\t\t\tesac;' + os.linesep
             )
-            next_string += '\t\tnext(' + variable_name + ') := ' + variable_name + '_stage_' + str(len(variable['next_value'])) + ';' + os.linesep
-
-            previous_stage = variable_name
+            previous_stage = variable_name + '_stage_' + stage_num
             if use_exist:
-                define_string += '\t\t' + variable_name + '_exists := TRUE;' + os.linesep
+                exist_define += '\t\t' + variable_name + '_stage_' + stage_num + '_exists := TRUE;' + os.linesep
 
-            for index in range(0, len(variable['next_value'])):
+            for index in range(1, len(variable['next_value'])):
                 stage_num = str(index + 1)
-                (node_name, non_determinism, stage) = variable['next_value'][index]
-                if non_determinism:
-                    var_string += ('\t\t' + variable_name + '_stage_' + stage_num + ' : '
-                                   + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean')))
-                                   + ';' + os.linesep)
-                    # init_string += '\t\tinit(' + variable_name + '_stage_' + stage_num + ') := ' + variable_name + ';' + os.linesep
-                    next_string += (
-                        # '\t\tnext(' + variable_name + '_stage_' + stage_num + ') := ' + os.linesep
-                        '\t\t' + variable_name + '_stage_' + stage_num + ' := ' + os.linesep
-                        + '\t\t\tcase' + os.linesep
-                        + (('\t\t\t\t!(' + node_name + '.active) : ' + previous_stage + ';' + os.linesep) if node_name is not None else '')
-                        + ''.join([('\t\t\t\t' + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in stage])
-                        + '\t\t\tesac;' + os.linesep
-                    )
-                else:
-                    define_string += (
-                        '\t\t' + variable_name + '_stage_' + stage_num + ' := ' + os.linesep
-                        + '\t\t\tcase' + os.linesep
-                        + (('\t\t\t\t!(' + node_name + '.active) : ' + previous_stage + ';' + os.linesep) if node_name is not None else '')
-                        + ''.join([('\t\t\t\t' + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in stage])
-                        + '\t\t\tesac;' + os.linesep
-                    )
+                (node_name, stage) = variable['next_value'][index]
+                decl_string += ('\t\t' + variable_name + '_stage_' + stage_num + ' : '
+                                + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean')))
+                                + ';' + os.linesep)
+                assign_string += (
+                    '\t\tinit(' + variable_name + '_stage_' + stage_num + ') := ' + variable_name + '_stage_1;' + os.linesep
+                    + '\t\tnext(' + variable_name + '_stage_' + stage_num + ') := ' + os.linesep
+                    + '\t\t\tcase' + os.linesep
+                    + '\t\t\t\t!(active[node_names.' + node_name + ']) : ' + previous_stage + ';' + os.linesep
+                    + ''.join([('\t\t\t\t' + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in stage])
+                    + '\t\t\tesac;' + os.linesep
+                )
                 previous_stage = variable_name + '_stage_' + stage_num
                 if use_exist:
-                    define_string += '\t\t' + variable_name + '_stage_' + stage_num + '_exists := TRUE;' + os.linesep
-    return (define_string,
-            frozenvar_string,
-            var_string,
-            init_string,
-            next_string
-            )
+                    exist_define += '\t\t' + variable_name + '_stage_' + stage_num + '_exists := TRUE;' + os.linesep
+    return_string += (exist_define
+                      + frozen_decl_string
+                      + decl_string
+                      + assign_string
+                      + os.linesep
+                      )
+    return return_string
 
 # -----------------------------------------------------------------
 # status module

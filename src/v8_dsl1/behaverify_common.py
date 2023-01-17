@@ -10,18 +10,6 @@
 
 # -----------------------------------------------------------------------------------------------------------------------
 
-def create_variable_template(name, mode, custom_value_range, min_value, max_value, initial_value, next_value):
-    return {
-        'name' : name,
-        'mode' : mode,
-        'custom_value_range' : custom_value_range,
-        'min_value' : min_value,
-        'max_value' : max_value,
-        'initial_value' : initial_value,
-        'next_value' : next_value
-    }
-
-
 def create_node_template(node_name, parent_name, category, node_type,
                          success, running, failure,
                          additional_arguments = None,

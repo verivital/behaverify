@@ -66,7 +66,7 @@ def create_nodes(nodes, root_node_name, node_name_to_number):
     # (also the base case of we need to make the root_node active).
     var_string = ''.join([('\t\t' + node['name'] + ' : '
                            + ((('_'.join([status for (status, possible) in [('success', node['return_possibilities']['success']), ('running', node['return_possibilities']['running']), ('failure', node['return_possibilities']['failure'])] if possible]) + '_DEFAULT_module(') if node['internal_status_module_name'] is None else (
-                                   node['internal_status_module_name'] + '(' + ', '.join(node['additional_arguments']))) if node['category'] == 'leaf' else (
+                                   node['internal_status_module_name'] + '(blackboard')) if node['category'] == 'leaf' else (
                                        node['category'] + '_' + node['type']
                                        + ('_' + (str(len(node['children']))) if node['category'] == 'composite' else '')
                                        + '('
@@ -402,13 +402,13 @@ def main():
                      + '\t\tsuccess, failure, running, invalid;' + os.linesep
                      + '\tDEFINE' + os.linesep
                      # + '\t\tstatuses := [' + ', '.join([(node_name + '.status') for node_name in nodes_in_order]) + '];' + os.linesep
-                     # + '\t\tactive := [' + ', '.join([(node_name + '.active') for node_name in nodes_in_order]) + '];' + os.linesep
+                     + '\t\tactive := [' + ', '.join([(node_name + '.active') for node_name in nodes_in_order]) + '];' + os.linesep
                      )
 
     # ------------------------------------------------------------------------------------------------------------------------
     var_string = ('\tVAR' + os.linesep
-                  # + '\t\tnode_names : define_nodes;' + os.linesep
-                  # + '\t\tblackboard : blackboard_module(node_names, active);' + os.linesep
+                  + '\t\tnode_names : define_nodes;' + os.linesep
+                  + '\t\tblackboard : blackboard_module(node_names, active);' + os.linesep
                   )
     # ------------------------------------------------------------------------------------------------------------------------
     init_string = '\tASSIGN' + os.linesep
@@ -433,33 +433,12 @@ def main():
     init_string += new_init
     next_string += new_next
 
-    (new_define, new_frozen_var, new_var, new_init, new_next) = node_creator.create_blackboard(nodes, variables)
-    define_string += ('\t\t--START OF BLACKBOARD DEFINITIONS' + os.linesep
-                      + new_define
-                      + '\t\t--END OF BLACKBOARD DEFINITIONS' + os.linesep
-                      + (
-                          (
-                              '\tFROZENVAR' + os.linesep
-                              + '\t\t--START OF BLACKBOARD FROZENVAR' + os.linesep
-                              + new_frozen_var
-                              + '\t\t--END OF BLACKBOARD FROZENVAR' + os.linesep) if len(new_frozen_var) > 0 else '')
-                      )
-    var_string += ('\t\t--START OF BLACKBOARD VARIABLES DECLARATION' + os.linesep
-                   + new_var
-                   + '\t\t--END OF BLACKBOARD VARIABLES DECLARATION' + os.linesep)
-    init_string += ('\t\t--START OF BLACKBOARD VARIABLES INITIALIZATION' + os.linesep
-                    + new_init
-                    + '\t\t--END OF BLACKBOARD VARIABLES INITIALIZATION' + os.linesep)
-    next_string += ('\t\t--START OF BLACKBOARD VARIABLES TRANSITION' + os.linesep
-                    + new_next
-                    + '\t\t--END OF BLACKBOARD VARIABLES TRANSITION' + os.linesep)
-
     nuxmv_string = define_string + var_string + init_string + next_string
     # ------------------------------------------------------------------------------------------------------------------------
     if args.specs_input_file:
         nuxmv_string += open(args.specs_input_file).read() + os.linesep + os.linesep
 
-    # nuxmv_string += node_creator.create_names_module(node_name_to_number)
+    nuxmv_string += node_creator.create_names_module(node_name_to_number)
     nuxmv_string += node_creator.create_leaf()
     nuxmv_string += ''.join([eval('node_creator.create_' + cur_thing[0] + '(' + cur_thing[1] + ')') for cur_thing in
                              [*set([('composite_' + node['type'], str(len(node['children']))) if node['category'] == 'composite' else (
@@ -482,17 +461,17 @@ def main():
             with open(args.module_output_file, 'w') as f:
                 f.write(module_string)
 
-    # if args.blackboard_input_file:
-    #     nuxmv_string += open(args.blackboard_input_file).read()
-    # else:
-    #     blackboard_string = ''
-    #     blackboard_string += node_creator.create_blackboard(nodes, variables)
-    #     nuxmv_string += blackboard_string
-    #     if args.blackboard_output_file is None:
-    #         pass
-    #     else:
-    #         with open(args.blackboard_output_file, 'w') as f:
-    #             f.write(blackboard_string)
+    if args.blackboard_input_file:
+        nuxmv_string += open(args.blackboard_input_file).read()
+    else:
+        blackboard_string = ''
+        blackboard_string += node_creator.create_blackboard(nodes, variables)
+        nuxmv_string += blackboard_string
+        if args.blackboard_output_file is None:
+            pass
+        else:
+            with open(args.blackboard_output_file, 'w') as f:
+                f.write(blackboard_string)
 
     if args.output_file is None:
         print(nuxmv_string)
