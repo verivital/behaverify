@@ -140,7 +140,7 @@ def template_variable(variable_name, node_name, update, next_value = None):
         'min_value' : 0,
         'max_value' : 1,
         'init_value' : None,
-        'next_value' : ([(node_name, [('TRUE', '{0, 1}')])] if update else []) if next_value is None else next_value,
+        'next_value' : ([(node_name, True, [('TRUE', '{0, 1}')])] if update else []) if next_value is None else next_value,
         'environment_update' : None
     }
 

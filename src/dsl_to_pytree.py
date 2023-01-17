@@ -78,71 +78,65 @@ def init_method_check(node):
 def update_method_check(node):
     return (indent(1) + 'def update(self):' + os.linesep
             + indent(2) + 'return ((py_trees.common.Status.SUCCESS) if ('
-            + (format_code(node.condition) if (node.python_code is None or len(node.python_code) == 0) else ''.join(node.python_code))
+            + format_code(node.condition)
             + ') else (py_trees.common.Status.FAILURE))' + os.linesep
             + os.linesep)
 
 
+def variable_assignment(values):
+    if len(values) > 1 :
+        return ('random.choice('
+                + '['
+                + ', '.join([format_code(value) for value in values])
+                + ']'
+                + ')')
+    return format_code(values[0])
+
+
 def handle_variable_statement(statement):
-    if statement.python_code is not None and len(statement.python_code) > 0:
-        return (os.linesep + (os.linesep).join(statement.python_code) + os.linesep)
     variable_name = format_variable(statement.variable, statement.is_local)
     if len(statement.case_results) == 0:
-        return (indent(2) + variable_name + ' = random.choice('
-                + '['
-                + ', '.join([format_code(value) for value in statement.default_result.values])
-                + ']'
-                + ')' + os.linesep)
+        return (indent(2) + variable_name + ' = ' + variable_assignment(statement.default_result.values) + os.linesep)
     return ((''.join([
         (indent(2) + 'elif ' + format_code(case_result.condition) + ':' + os.linesep
-         + (indent(3) + variable_name + ' = random.choice('
-            + '['
-            + ', '.join([format_code(value) for value in case_result.values])
-            + ']'
-            + ')' + os.linesep)
+         + (indent(3) + variable_name + ' = ' + variable_assignment(case_result.values) + os.linesep)
          ) for case_result in statement.case_results])).replace('elif', 'if', 1)
             + (indent(2) + 'else:' + os.linesep
-               + indent(3) + variable_name + ' = random.choice('
-               + '['
-               + ', '.join([format_code(value) for value in statement.default_result.values])
-               + ']'
-               + ')' + os.linesep)
+               + indent(3) + variable_name + ' = ' + variable_assignment(statement.default_result.values) + os.linesep)
             )
 
 
+def handle_read_statement(statement):
+    if statement.python_function is None:
+        if statement.condition_variable is not None:
+            return (indent(2) + format_variable(statement.condition_variable, True) + ' = random.choice([True, False]);' + os.linesep)
+        return ''
+    return (indent(2) + '('
+            + ', '.join(
+                ([] if statement.condition_variable is None else [format_variable(statement.condition_variable, True)])
+                +
+                [format_variable(var_env_pair.variable, var_env_pair.is_local) for var_env_pair in statement.variable_environment_pairs])
+            + ') = ' + statement.python_function + os.linesep)
+
+
+def handle_write_statement(statement):
+    return ((indent(2) + statement.python_function + os.linesep) if statement.python_function is not None else '')
+
+
 def format_returns(status_result):
-    return ', '.join(
-        [('py_trees.common.Status.' + string) for (value, string) in (
-            (status_result.can_success, 'SUCCESS'),
-            (status_result.can_failure, 'FAILURE'),
-            (status_result.can_running, 'RUNNING')
-        ) if value])
+    return 'py_trees.common.Status.' + status_result.status.upper()
 
 
 def handle_return_statement(statement):
-    if statement.python_code is not None and len(statement.python_code) > 0:
-        return (os.linesep + (os.linesep).join(statement.python_code) + os.linesep)
     variable_name = 'return_status'
     if len(statement.case_results) == 0:
-        return (indent(2) + variable_name + ' = random.choice('
-                + '['
-                + format_returns(statement.default_result)
-                + ']'
-                + ')' + os.linesep)
+        return (indent(2) + variable_name + ' = ' + format_returns(statement.default_result) + os.linesep)
     return ((''.join([
         (indent(2) + 'elif ' + format_code(case_result.condition) + ':' + os.linesep
-         + (indent(3) + variable_name + ' = random.choice('
-            + '['
-            + format_returns(case_result)
-            + ']'
-            + ')' + os.linesep)
+         + (indent(3) + variable_name + ' = ' + format_returns(statement.default_result) + os.linesep)
          ) for case_result in statement.case_results])).replace('elif', 'if', 1)
             + (indent(2) + 'else:' + os.linesep
-               + indent(3) + variable_name + ' = random.choice('
-               + '['
-               + format_returns(statement.default_result)
-               + ']'
-               + ')' + os.linesep)
+               + indent(3) + variable_name + ' = ' + format_returns(statement.default_result) + os.linesep)
             )
 
 
@@ -157,11 +151,21 @@ def init_method_action(node):
             + os.linesep)
 
 
+def handle_statement(statement):
+    return (
+        handle_variable_statement(statement.variable_statement) if statement.variable_statement is not None else (
+            handle_read_statement(statement.read_statement) if statement.read_statement is not None else (
+                handle_write_statement(statement.write_statement)
+                )
+            )
+        )
+
+
 def update_method_action(node):
     return (indent(1) + 'def update(self):' + os.linesep
-            + ''.join([handle_variable_statement(statement) for statement in node.pre_update_statements])
+            + ''.join([handle_statement(statement) for statement in node.pre_update_statements])
             + handle_return_statement(node.return_statement)
-            + ''.join([handle_variable_statement(statement) for statement in node.post_update_statements])
+            + ''.join([handle_statement(statement) for statement in node.post_update_statements])
             + indent(2) + 'return return_status' + os.linesep
             )
 
@@ -173,7 +177,7 @@ def custom_imports(node):
 
 def build_check_node(node):
     return (STANDARD_IMPORTS
-            + custom_imports(node)
+            # + custom_imports(node)
             + class_definition(node.name)
             + init_method_check(node)
             + update_method_check(node)

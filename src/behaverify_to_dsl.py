@@ -168,8 +168,7 @@ def write_to_file(nodes, variables, file_name):
                   + variables_string(variables)
                   + '} end_variables' + os.linesep
                   + 'local_variables { } end_local_variables' + os.linesep
-                  + 'environment_variables { } end_environment_variables' + os.linesep
-                  + 'environment { initial_values { } end_initial_values update_values { } end_update_values } end_environment' + os.linesep
+                  + 'environment { environment_variables { } end_environment_variables initial_values { } end_initial_values update_values { } end_update_values } end_environment' + os.linesep
                   + 'checks {' + os.linesep
                   + checks_string(nodes, variables)
                   + '} end_checks' + os.linesep
