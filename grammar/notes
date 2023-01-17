@@ -1,0 +1,23 @@
+
+ok, so we know we want to isolate the environment from the blackboard, sort of.
+
+things we need
+
+1. READ
+2. WRITE
+
+
+READ -> we need to be able to read from the environment and set variables accordingly
+WRITE -> we need to be able to effect the environment.
+
+
+READ and WRITE should be distinct: i.e, a function either does READ or WRITE, not both
+
+
+READ is therefore probably pretty simple. just declare a list of variable-environment pairs to set.
+complication: could be good to let this fail! i.e., we tried to read the message, but no new message arrived.
+solution:
+READ -> if read_success : update all variable-environment pairs. else : do nothing.
+|-> OPTIONAL: assign an environment variable to 
+
+WRITE is more complicated. 

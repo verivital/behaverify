@@ -1,107 +1,299 @@
 variables {
-	variable {
-		battery_reading
-		VAR
-		[0, 10]
-	} end_variable
-	variable {
-		battery_threshold
-		FROZENVAR
-		[0, 10]
-	} end_variable
+	variable { x VAR [0, 4] } end_variable
+	variable { y VAR [0, 4] } end_variable
+	variable { target_x VAR [0, 4] } end_variable
+	variable { target_y VAR [0, 4] } end_variable
+	variable { mission VAR BOOLEAN } end_variable
 } end_variables
 
-local_variables {} end_local_variables
-
-environment_variables {
-	variable {
-		battery
-		VAR
-		[0, 10]
-	} end_variable
-	variable {
-		reading_successful
-		VAR
-		BOOLEAN
-	} end_variable
-} end_environment_variables
+local_variables {
+	variable { saw_target VAR BOOLEAN } end_variable
+} end_local_variables
 
 environment {
-	initial_values {} end_initial_values
+	environment_variables {
+		environment_variable { x_goal VAR [0, 4] } end_environment_variable
+		environment_variable { y_goal VAR [0, 4] } end_environment_variable
+		environment_variable { x_true VAR [0, 4] } end_environment_variable
+		environment_variable { y_true VAR [0, 4] } end_environment_variable
+		environment_variable { remaining_goals VAR [0, 10] } end_environment_variable
+	} end_environment_variables
+	initial_values { } end_initial_values
 	update_values {
-			variable_statement {
-				battery
-				result { (subtraction, battery, 2), (subtraction, battery, 1) } end_result
-			} end_variable_statement
-			variable_statement {
-				reading_successful
-				result { True, False } end_result
-			} end_variable_statement
+		environment_statement {
+			remaining_goals
+			case { (and, (equal, x_goal, x_true), (equal, y_goal, y_true)) } end_case
+			result { (max, 0, (subtraction, remaining_goals, 1)) } end_result
+			result { remaining_goals } end_result
+		} end_environment_statement
+		environment_statement {
+			x_goal
+			case { (equal, 0, remaining_goals ) } end_case
+			result { x_goal } end_result
+			case { (and, (equal, x_goal, x_true), (equal, y_goal, y_true)) } end_case
+			result { 0, 1, 2, 3, 4 } end_result
+			result { x_goal } end_result
+		} end_environment_statement
+		environment_statement {
+			y_goal
+			case { (equal, 0, remaining_goals) } end_case
+			result { y_goal } end_result
+			case { (and, (equal, x_goal, x_true), (equal, y_goal, y_true)) } end_case
+			result { 0, 1, 2, 3, 4 } end_result
+			result { y_goal } end_result
+		} end_environment_statement
 	} end_update_values
 } end_environment
 
 checks {
 	check {
-		safe_battery
-		read_variables {battery_reading battery_threshold} end_read_variables
-		condition { (greater_than_or_equal, battery_reading, battery_threshold) } end_condition
+		have_mission
+		read_variables { mission } end_read_variables
+		condition { mission } end_condition
+	} end_check
+	check {
+		target_reached
+		read_variables { x y target_x target_y } end_read_variables
+		condition { (and, (equal, x, target_x), (equal, y, target_y)) } end_condition
+	} end_check
+	check {
+		x_too_small
+		read_variables { target_x x } end_read_variables
+		condition { (less_than, x, target_x) } end_condition
+	} end_check
+	check {
+		x_too_big
+		read_variables { target_x x } end_read_variables
+		condition { (greater_than, x, target_x) } end_condition
+	} end_check
+	check {
+		y_too_small
+		read_variables { target_y y } end_read_variables
+		condition { (less_than, y, target_y) } end_condition
+	} end_check
+	check {
+		y_too_big
+		read_variables { target_y y } end_read_variables
+		condition { (greater_than, y, target_y) } end_condition
 	} end_check
 } end_checks
 
 actions {
 	action {
-		read_battery
-		imports { 'robot_environ' } end_imports
+		get_mission
+		imports {'robot'} end_imports
 		read_variables {} end_read_variables
-		write_variables {battery_reading battery_threshold} end_write_variables
-		init {
+		write_variables {mission target_x target_y} end_write_variables
+		initial_values {
 			variable_statement {
-				battery_reading
-				result { 10 } end_result
+				mission result { False } end_result
 			} end_variable_statement
 			variable_statement {
-				battery_threshold
-				result { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 } end_result
+				target_x result { 0 } end_result
 			} end_variable_statement
-		} end_init
+			variable_statement {
+				target_y result { 0 } end_result
+			} end_variable_statement
+		} end_initial_values
 		update {
+			read_environment {
+				python_function { 'robot.get_mission()' } end_python_function
+				local saw_target
+				set_variables { (target_x, x_goal), (target_y, y_goal) } end_set_variables
+			} end_read_environment
 			variable_statement {
-				battery_reading
-				python_code {
-					'        (got_value, new_value) = robot_environ.get_battery()'
-					'        if got_value: self.blackboard.battery_reading = new_value'
-				} end_python_code
-				case { reading_successful } end_case
-				result { battery } end_result
-				result { battery_reading } end_result
+				mission
+				case { local saw_target } end_case result { True } end_result
+				result { False } end_result
 			} end_variable_statement
 			return_statement {
-				python_code {
-					'        if got_value: return_status = py_trees.common.Status.SUCCESS'
-					'        else: return_status = py_trees.common.Status.FAILURE'
-				} end_python_code
-				case { reading_successful } end_case
-				result { success True failure False running False } end_result
-				result { success False failure True running False } end_result
+				case { local saw_target } end_case result { success } end_result
+				result { failure } end_result
 			} end_return_statement
 		} end_update
 	} end_action
+
+
 	action {
-		execute
+		get_position
+		imports {'robot'} end_imports
+		read_variables {} end_read_variables
+		write_variables { x y } end_write_variables
+		initial_values {
+			variable_statement {
+				x result { 0 } end_result
+			} end_variable_statement
+			variable_statement {
+				y result { 0 } end_result
+			} end_variable_statement
+		} end_initial_values
+		update {
+			read_environment {
+				python_function { 'robot.get_position()' } end_python_function
+				condition { True } end_condition
+				set_variables { (x, x_true), (y, y_true) } end_set_variables
+			} end_read_environment
+			return_statement { result { success } end_result } end_return_statement
+		} end_update
+	} end_action
+
+	action {
+		clear_mission
+		read_variables {} end_read_variables
+		write_variables { mission } end_write_variables
+		initial_values {} end_initial_values
+		update {
+			variable_statement {
+				mission
+				result { False } end_result
+			} end_variable_statement
+			return_statement { result { success } end_result } end_return_statement
+		} end_update
+	} end_action
+
+	action {
+		go_right
+		imports { 'robot' } end_imports
 		read_variables {} end_read_variables
 		write_variables {} end_write_variables
-		init {} end_init
+		initial_values {} end_initial_values
 		update {
-			return_statement { result { success True failure False running False } end_result } end_return_statement
+			write_environment {
+				python_function { 'robot.go_right()' } end_python_function
+				update_values {
+					environment_statement {
+						x_true result { (min, 4, (addition, x_true, 1)) } end_result
+					} end_environment_statement
+				} end_update_values
+			} end_write_environment
+			return_statement { result { success } end_result } end_return_statement
+		} end_update
+	} end_action
+
+	action {
+		go_left
+		imports { 'robot' } end_imports
+		read_variables {} end_read_variables
+		write_variables {} end_write_variables
+		initial_values {} end_initial_values
+		update {
+			write_environment {
+				python_function { 'robot.go_left()' } end_python_function
+				update_values {
+					environment_statement {
+						x_true result { (max, 0, (subtraction, x_true, 1)) } end_result
+					} end_environment_statement
+				} end_update_values
+			} end_write_environment
+			return_statement { result { success } end_result } end_return_statement
+		} end_update
+	} end_action
+
+	action {
+		go_up
+		imports { 'robot' } end_imports
+		read_variables {} end_read_variables
+		write_variables {} end_write_variables
+		initial_values {} end_initial_values
+		update {
+			write_environment {
+				python_function { 'robot.go_up()' } end_python_function
+				update_values {
+					environment_statement {
+						y_true result { (min, 4, (addition, y_true, 1)) } end_result
+					} end_environment_statement
+				} end_update_values
+			} end_write_environment
+			return_statement { result { success } end_result } end_return_statement
+		} end_update
+	} end_action
+
+	action {
+		go_down
+		imports { 'robot' } end_imports
+		read_variables {} end_read_variables
+		write_variables {} end_write_variables
+		initial_values {} end_initial_values
+		update {
+			write_environment {
+				python_function { 'robot.go_down()' } end_python_function
+				update_values {
+					environment_statement {
+						y_true result { (max, 0, (subtraction, y_true, 1)) } end_result
+					} end_environment_statement
+				} end_update_values
+			} end_write_environment
+			return_statement { result { success } end_result } end_return_statement
 		} end_update
 	} end_action
 } end_actions
 
-root_node composite {
-	robot sequence memory False
+root_node
+composite {
+	robot_control
+	sequence
 	children {
-		read_battery
-		safe_battery
-		execute
+		get_position
+		decorator {
+			reset_completed_mission_FiS
+			X_is_Y
+			X failure
+			Y success
+			child
+			composite {
+				reset_completed_mission
+				sequence
+				children {
+					target_reached
+					clear_mission
+				} end_children
+			} end_composite
+		} end_decorator
+		composite {
+			confirm_mission
+			selector
+			children {
+				have_mission
+				get_mission
+			} end_children
+		} end_composite
+		composite {
+			move_robot
+			selector
+			children {
+				composite {
+					try_right
+					sequence
+					children {
+						x_too_small
+						go_right
+					} end_children
+				} end_composite
+				composite {
+					try_left
+					sequence
+					children {
+						x_too_big
+						go_left
+					} end_children
+				} end_composite
+				composite {
+					try_up
+					sequence
+					children {
+						y_too_small
+						go_up
+					} end_children
+				} end_composite
+				composite {
+					try_down
+					sequence
+					children {
+						y_too_big
+						go_down
+					} end_children
+				} end_composite
+			} end_children
+		} end_composite
 	} end_children
 } end_composite

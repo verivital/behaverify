@@ -1,0 +1,107 @@
+variables {
+	variable {
+		battery_reading
+		VAR
+		[0, 10]
+	} end_variable
+	variable {
+		battery_threshold
+		FROZENVAR
+		[0, 10]
+	} end_variable
+} end_variables
+
+local_variables {} end_local_variables
+
+environment_variables {
+	variable {
+		battery
+		VAR
+		[0, 10]
+	} end_variable
+	variable {
+		reading_successful
+		VAR
+		BOOLEAN
+	} end_variable
+} end_environment_variables
+
+environment {
+	initial_values {} end_initial_values
+	update_values {
+			variable_statement {
+				battery
+				result { (subtraction, battery, 2), (subtraction, battery, 1) } end_result
+			} end_variable_statement
+			variable_statement {
+				reading_successful
+				result { True, False } end_result
+			} end_variable_statement
+	} end_update_values
+} end_environment
+
+checks {
+	check {
+		safe_battery
+		read_variables {battery_reading battery_threshold} end_read_variables
+		condition { (greater_than_or_equal, battery_reading, battery_threshold) } end_condition
+	} end_check
+} end_checks
+
+actions {
+	action {
+		read_battery
+		imports { 'robot_environ' } end_imports
+		read_variables {} end_read_variables
+		write_variables {battery_reading battery_threshold} end_write_variables
+		init {
+			variable_statement {
+				battery_reading
+				result { 10 } end_result
+			} end_variable_statement
+			variable_statement {
+				battery_threshold
+				result { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 } end_result
+			} end_variable_statement
+		} end_init
+		update {
+			variable_statement {
+				battery_reading
+				python_code {
+					'        (got_value, new_value) = robot_environ.get_battery()'
+					'        if got_value: self.blackboard.battery_reading = new_value'
+				} end_python_code
+				case { reading_successful } end_case
+				result { battery } end_result
+				result { battery_reading } end_result
+			} end_variable_statement
+			return_statement {
+				python_code {
+					'        if got_value: return_status = py_trees.common.Status.SUCCESS'
+					'        else: return_status = py_trees.common.Status.FAILURE'
+				} end_python_code
+				case { reading_successful } end_case
+				result { success True failure False running False } end_result
+				result { success False failure True running False } end_result
+			} end_return_statement
+		} end_update
+	} end_action
+	action {
+		execute
+		read_variables {} end_read_variables
+		write_variables {} end_write_variables
+		init {} end_init
+		update {
+			return_statement { result { success True failure False running False } end_result } end_return_statement
+		} end_update
+	} end_action
+} end_actions
+
+root_node composite {
+	robot sequence memory False
+	children {
+		read_battery
+		safe_battery
+		execute
+	} end_children
+} end_composite

@@ -2,29 +2,173 @@ MODULE main
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
-		active := [robot.active, read_battery.active, safe_battery.active, execute.active];
-		resume_from_here_in_subtree__robot := -3;
-		robot.active := TRUE;
+		resume_from_here_in_subtree__robot_control := -3;
+		robot_control.active := TRUE;
+		--START OF BLACKBOARD DEFINITIONS
+		mission_stage_1 := 
+			case
+				!(clear_mission.active) : mission;
+				TRUE : FALSE;
+			esac;
+		mission_stage_2 := 
+			case
+				!(get_mission.active) : mission_stage_1;
+				get_mission_DOT_saw_target_stage_1 : TRUE;
+				TRUE : FALSE;
+			esac;
+		remaining_goals_stage_1 := 
+			case
+				((x_goal = x_true_stage_2) & (y_goal = y_true_stage_2)) : max(0, (remaining_goals - 1));
+				TRUE : remaining_goals;
+			esac;
+		target_x_stage_1 := 
+			case
+				!(get_mission.active) : target_x;
+				get_mission_DOT_saw_target_stage_1 : x_goal;
+				TRUE : target_x;
+			esac;
+		target_y_stage_1 := 
+			case
+				!(get_mission.active) : target_y;
+				get_mission_DOT_saw_target_stage_1 : y_goal;
+				TRUE : target_y;
+			esac;
+		x_stage_1 := 
+			case
+				!(get_position.active) : x;
+				TRUE : x_true;
+				TRUE : x;
+			esac;
+		x_true_stage_1 := 
+			case
+				!(go_right.active) : x_true;
+				TRUE : min(4, (x_true + 1));
+			esac;
+		x_true_stage_2 := 
+			case
+				!(go_left.active) : x_true_stage_1;
+				TRUE : max(0, (x_true_stage_1 - 1));
+			esac;
+		y_stage_1 := 
+			case
+				!(get_position.active) : y;
+				TRUE : y_true;
+				TRUE : y;
+			esac;
+		y_true_stage_1 := 
+			case
+				!(go_up.active) : y_true;
+				TRUE : min(4, (y_true + 1));
+			esac;
+		y_true_stage_2 := 
+			case
+				!(go_down.active) : y_true_stage_1;
+				TRUE : max(0, (y_true_stage_1 - 1));
+			esac;
+		--END OF BLACKBOARD DEFINITIONS
 	VAR
-		node_names : define_nodes;
-		blackboard : blackboard_module(node_names, active);
-		execute : success_DEFAULT_module();
-		read_battery : read_battery_module(blackboard);
-		robot : composite_sequence_without_memory_3(read_battery, safe_battery, execute);
-		safe_battery : safe_battery_module(blackboard);
+		clear_mission : success_DEFAULT_module();
+		confirm_mission : composite_selector_without_memory_2(have_mission, get_mission);
+		get_mission : get_mission_module(get_mission_DOT_saw_target_stage_1);
+		get_position : success_DEFAULT_module();
+		go_down : success_DEFAULT_module();
+		go_left : success_DEFAULT_module();
+		go_right : success_DEFAULT_module();
+		go_up : success_DEFAULT_module();
+		have_mission : have_mission_module(mission_stage_1);
+		move_robot : composite_selector_without_memory_4(try_right, try_left, try_up, try_down);
+		reset_completed_mission : composite_sequence_without_memory_2(target_reached, clear_mission);
+		reset_completed_mission_FiS : decorator_X_is_Y(reset_completed_mission, failure, success);
+		robot_control : composite_sequence_without_memory_4(get_position, reset_completed_mission_FiS, confirm_mission, move_robot);
+		target_reached : target_reached_module(target_y, y_stage_1, target_x, x_stage_1);
+		try_down : composite_sequence_without_memory_2(y_too_big, go_down);
+		try_left : composite_sequence_without_memory_2(x_too_big, go_left);
+		try_right : composite_sequence_without_memory_2(x_too_small, go_right);
+		try_up : composite_sequence_without_memory_2(y_too_small, go_up);
+		x_too_big : x_too_big_module(target_x_stage_1, x_stage_1);
+		x_too_small : x_too_small_module(target_x_stage_1, x_stage_1);
+		y_too_big : y_too_big_module(target_y_stage_1, y_stage_1);
+		y_too_small : y_too_small_module(target_y_stage_1, y_stage_1);
+		--START OF BLACKBOARD VARIABLES DECLARATION
+		get_mission_DOT_saw_target : boolean;
+		get_mission_DOT_saw_target_stage_1 : boolean;
+		mission : boolean;
+		remaining_goals : 0..10;
+		target_x : 0..4;
+		target_y : 0..4;
+		x : 0..4;
+		x_goal : 0..4;
+		x_goal_stage_1 : 0..4;
+		x_true : 0..4;
+		y : 0..4;
+		y_goal : 0..4;
+		y_goal_stage_1 : 0..4;
+		y_true : 0..4;
+		--END OF BLACKBOARD VARIABLES DECLARATION
 	ASSIGN
-MODULE define_nodes
-	DEFINE
-		robot := 0;
-		read_battery := 1;
-		safe_battery := 2;
-		execute := 3;
+		--START OF BLACKBOARD VARIABLES INITIALIZATION
+		init(mission) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(target_x) := 
+			case
+				TRUE : 0;
+			esac;
+		init(target_y) := 
+			case
+				TRUE : 0;
+			esac;
+		init(x) := 
+			case
+				TRUE : 0;
+			esac;
+		init(y) := 
+			case
+				TRUE : 0;
+			esac;
+		--END OF BLACKBOARD VARIABLES INITIALIZATION
+		--START OF BLACKBOARD VARIABLES TRANSITION
+		next(get_mission_DOT_saw_target) := get_mission_DOT_saw_target_stage_1;
+		get_mission_DOT_saw_target_stage_1 := 
+			case
+				!(get_mission.active) : get_mission_DOT_saw_target;
+				TRUE : {TRUE, FALSE};
+			esac;
+		next(mission) := mission_stage_2;
+		next(remaining_goals) := remaining_goals_stage_1;
+		next(target_x) := target_x_stage_1;
+		next(target_y) := target_y_stage_1;
+		next(x) := x_stage_1;
+		next(x_goal) := x_goal_stage_1;
+		x_goal_stage_1 := 
+			case
+				(0 = remaining_goals_stage_1) : x_goal;
+				((x_goal = x_true_stage_2) & (y_goal = y_true_stage_2)) : {0, 1, 2, 3, 4};
+				TRUE : x_goal;
+			esac;
+		next(x_true) := x_true_stage_2;
+		next(y) := y_stage_1;
+		next(y_goal) := y_goal_stage_1;
+		y_goal_stage_1 := 
+			case
+				(0 = remaining_goals_stage_1) : y_goal;
+				((x_goal_stage_1 = x_true_stage_2) & (y_goal = y_true_stage_2)) : {0, 1, 2, 3, 4};
+				TRUE : y_goal;
+			esac;
+		next(y_true) := y_true_stage_2;
+		--END OF BLACKBOARD VARIABLES TRANSITION
+FAIRNESS (get_mission_DOT_saw_target);
+LTLSPEC G (count(go_down.active, go_left.active, go_right.active, go_up.active) <= 1);
+LTLSPEC F (remaining_goals = 0);
+
+
 MODULE leaf_module(internal_status_module)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status_module.internal_status : invalid;
-MODULE composite_sequence_without_memory_3(child_0, child_1, child_2)
+MODULE composite_sequence_without_memory_4(child_0, child_1, child_2, child_3)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
@@ -34,66 +178,120 @@ MODULE composite_sequence_without_memory_3(child_0, child_1, child_2)
 				!(child_0.internal_status = success) : child_0.internal_status;
 				!(child_1.internal_status = success) : child_1.internal_status;
 				!(child_2.internal_status = success) : child_2.internal_status;
+				!(child_3.internal_status = success) : child_3.internal_status;
 				TRUE : success;
 			esac;
 		child_0.active := active;
 		child_1.active := child_0.status = success;
 		child_2.active := child_1.status = success;
-MODULE read_battery_module(blackboard)
+		child_3.active := child_2.status = success;
+MODULE composite_selector_without_memory_4(child_0, child_1, child_2, child_3)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
-	VAR
-		internal_status : {success, failure};
-	ASSIGN
-		init(internal_status) := success;
-		next(internal_status) := 
+		internal_status :=
 			case
-				blackboard.reading_successful : success;
+				!(child_0.internal_status = failure) : child_0.internal_status;
+				!(child_1.internal_status = failure) : child_1.internal_status;
+				!(child_2.internal_status = failure) : child_2.internal_status;
+				!(child_3.internal_status = failure) : child_3.internal_status;
 				TRUE : failure;
 			esac;
-MODULE safe_battery_module(blackboard)
+		child_0.active := active;
+		child_1.active := child_0.status = failure;
+		child_2.active := child_1.status = failure;
+		child_3.active := child_2.status = failure;
+MODULE composite_sequence_without_memory_2(child_0, child_1)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
-		internal_status := (blackboard.battery_reading_stage_1 >= blackboard.battery_threshold) ? success : failure;
+		internal_status :=
+			case
+				!(child_0.internal_status = success) : child_0.internal_status;
+				!(child_1.internal_status = success) : child_1.internal_status;
+				TRUE : success;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = success;
+MODULE composite_selector_without_memory_2(child_0, child_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				!(child_0.internal_status = failure) : child_0.internal_status;
+				!(child_1.internal_status = failure) : child_1.internal_status;
+				TRUE : failure;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = failure;
+MODULE decorator_X_is_Y(child_0, incoming_status, outgoing_status)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				child_0.status = incoming_status : outgoing_status;
+				TRUE : child_0.status;
+			esac;
+		child_0.active :=
+			case
+				!(active) : FALSE;
+				TRUE : TRUE;
+			esac;
+MODULE get_mission_module(get_mission_DOT_saw_target_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := 
+			case
+				get_mission_DOT_saw_target_stage_1 : success;
+				TRUE : failure;
+			esac;
+MODULE have_mission_module(mission_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := (mission_stage_1) ? success : failure;
+MODULE target_reached_module(target_y, y_stage_1, target_x, x_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := (((x_stage_1 = target_x) & (y_stage_1 = target_y))) ? success : failure;
+MODULE x_too_big_module(target_x_stage_1, x_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((x_stage_1 > target_x_stage_1)) ? success : failure;
+MODULE x_too_small_module(target_x_stage_1, x_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((x_stage_1 < target_x_stage_1)) ? success : failure;
+MODULE y_too_big_module(target_y_stage_1, y_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((y_stage_1 > target_y_stage_1)) ? success : failure;
+MODULE y_too_small_module(target_y_stage_1, y_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((y_stage_1 < target_y_stage_1)) ? success : failure;
 MODULE success_DEFAULT_module
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
 		internal_status := success;
-MODULE blackboard_module(node_names, active)
-	CONSTANTS
-		success, failure, running, invalid;
-	DEFINE
-		battery := battery_stage_0;
-		battery_reading := battery_reading_stage_1;
-		battery_reading_exists := TRUE;
-		battery_reading_stage_1_exists := TRUE;
-		battery_threshold_exists := TRUE;
-		reading_successful := reading_successful_stage_0;
-	FROZENVAR
-		battery_threshold : 0..10;
-	VAR
-		battery : 0..10;
-		battery_reading_stage_1 : 0..10;
-		reading_successful : boolean;
-	ASSIGN
-		init(battery_reading_stage_1) := 
-			case
-				TRUE : 10;
-			esac;
-		next(battery_reading_stage_1) := 
-			case
-				!(active[node_names.read_battery]) : battery_reading;
-				reading_successful : battery;
-				TRUE : battery_reading;
-			esac;
-		init(battery_threshold) := 
-			case
-				TRUE : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-			esac;
-
