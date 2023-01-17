@@ -407,7 +407,7 @@ def main():
 
     # ------------------------------------------------------------------------------------------------------------------------
     var_string = ('\tVAR' + os.linesep
-                  # + '\t\tnode_names : define_nodes;' + os.linesep
+                  + '\t\tnode_names : define_nodes;' + os.linesep
                   # + '\t\tblackboard : blackboard_module(node_names, active);' + os.linesep
                   )
     # ------------------------------------------------------------------------------------------------------------------------
@@ -459,7 +459,7 @@ def main():
     if args.specs_input_file:
         nuxmv_string += open(args.specs_input_file).read() + os.linesep + os.linesep
 
-    # nuxmv_string += node_creator.create_names_module(node_name_to_number)
+    nuxmv_string += node_creator.create_names_module(node_name_to_number)
     nuxmv_string += node_creator.create_leaf()
     nuxmv_string += ''.join([eval('node_creator.create_' + cur_thing[0] + '(' + cur_thing[1] + ')') for cur_thing in
                              [*set([('composite_' + node['type'], str(len(node['children']))) if node['category'] == 'composite' else (

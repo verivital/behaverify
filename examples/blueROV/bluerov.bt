@@ -132,14 +132,17 @@ topic Float32                   rtreach_index           /unsafe_hyperrectangle_i
 //Blackboard variables
 //-----------------------------------
 
-var PixhawkHW				battery, model_as([0, 1], 1);
+//model_as indicates that the variable is being modeled in behaverify
+//model_as is formated as model_as(DOMAIN, initial_value), where domain can be [min_int, max_int], bool, or {enums}
+
+var PixhawkHW				battery, model_as([0, 1], 1); //while battery is a topic variable with many fields, in modeling we only care about battery.batt_charge_remaining. for modeling, it is being treated as an integer. 
 var bool 				battery_low_warning = False, model_as(bool, False);
 var Bool 				bb_fls_warning =  False, model_as(bool, False); 
 var Bool 				bb_geofence = False, model_as(bool, False);
 var bool 				bb_geofence_warning = False, model_as(bool, False);
-var Float32 				bb_home_dist = 1000, model_as({10, 100}, 10);
+var Float32 				bb_home_dist = 1000, model_as({10, 100}, 10); //for clarity, we are modeling the bb_home_dist as beihng either close, or far
 var bool 				bb_home_reached =False, model_as(bool, False);
-var String 				bb_mission = "", model_as({'unknown', 'loitering', 'pipe_following', 'waypoint_following', 'path_following', 'collision_avoidance', 'assurance', 'terminal', 'e_stop'}, 'unknown');
+var String 				bb_mission = "", model_as({'unknown', 'loitering', 'pipe_following', 'waypoint_following', 'path_following', 'collision_avoidance', 'assurance', 'terminal', 'e_stop'}, 'unknown'); //mission can be any of these types
 var bool 				bb_obstacle_warning = False, model_as(bool, False);
 var Bool 				bb_pipelost = False, model_as(bool, False);
 var bool 				bb_pipe_lost_warning = False, model_as(bool, False);
@@ -149,22 +152,22 @@ var bool 				bb_rth_warning = False, model_as(bool, False);
 var Bool 				bb_sensor_failure = False, model_as(bool, False);
 var Bool 				bb_sensor_failure_warning = False, model_as(bool, False);
 var Bool 				bb_waypoints_completed = False, model_as(bool, False);
-//var String 				cm_hsd_input, model_as({'cm_surface_task', 'cm_rth_task', 'cm_loiter_task', 'cm_obstacle_avoidance_task', 'cm_tracking_task', 'cm_waypoint_task'}, 'cm_surface_task');
-var String 				cm_hsd_input;
-var string 				ddlec_am_path;
-var Float32MultiArray 			dd_output, model_as({'safe', 'xy_warn', 'z_warn'}, 'safe');
+var String 				cm_hsd_input, model_as({'cm_surface_task', 'cm_rth_task', 'cm_loiter_task', 'cm_obstacle_avoidance_task', 'cm_tracking_task', 'cm_waypoint_task'}, 'cm_surface_task'); //cm_hsd_input is a variable that informs the ros nodes what task set the information.
+//var String 				cm_hsd_input;
+var string 				ddlec_am_path; //this is not being modeled.
+var Float32MultiArray 			dd_output, model_as({'safe', 'xy_warn', 'z_warn'}, 'safe'); //these 3 enumerations represent the possible paths in the node
 var bool 				dd_xy_axis_degradation = False, model_as(bool, False);
 var bool 				dd_z_axis_warning = False, model_as(bool, False);
-var float 				decision_threshold;
+var float 				decision_threshold; // not being modeled
 var bool 				emergency_stop_warning = False, model_as(bool, False);
-var bool 				event_reallocate_button = False;
-var Range 				fls_range, model_as({'danger_zone', 'safe'}, 'safe');
-var HSDCommand 				hsd_pipeline_mapping, model_as({'uuv_min_speed', 'uuv_max_speed'}, 'uuv_min_speed');
+var bool 				event_reallocate_button = False; // node being modeled. this appears to be unused???????
+var Range 				fls_range, model_as({'danger_zone', 'safe'}, 'safe'); // represents if we are in the clear or in danger. note: not considering junk_values.
+var HSDCommand 				hsd_pipeline_mapping; // these variables are basically not being used in the current model.
 var HSDCommand 				hsd_to_surface;
 var HSDCommand 				hsd_to_rth;
 var HSDCommand 				hsd_to_waypoint;
 var HSDCommand 				hsd_to_waypoint_rrt;
-var HSDCommand 				HSD_out, model_as({'uuv_min_speed', 'uuv_max_speed'}, 'uuv_min_speed'); 
+var HSDCommand 				HSD_out, model_as({'uuv_min_speed', 'uuv_max_speed'}, 'uuv_min_speed'); //HSD_out contains far more information (specifically, heading and depth). however, heading is handled as an enum, and redundant given cm_hsd_input, and depth is basically a constant.
 var LEC1OutputAssuredStamped 		lec_dd_am, model_as(bool, False);
 var bool 				lec_dd_am_warning = False, model_as(bool, False);
 var LEC1OutputAssuredStamped 		lec2_am_l, model_as({'safe', 'speed', 'pipe', 'speed_pipe'}, 'safe');
@@ -173,28 +176,29 @@ var bool 				lec2_am_l_pipe_warning = False, model_as(bool, False);
 var LEC1OutputAssuredStamped 		lec2_am_r, model_as({'safe', 'speed', 'pipe', 'speed_pipe'}, 'safe');
 var bool 				lec2_am_r_speed_warning = False, model_as(bool, False);
 var bool 				lec2_am_r_pipe_warning = False, model_as(bool, False);
-var Float32MultiArray 			lec_input;
-var string 				mission_file = mission_file; 
+var Float32MultiArray 			lec_input; // not modeled
+var string 				mission_file = mission_file; //not modeled 
 var bool 				next_mission, model_as(bool, False);
 var Bool 				pipe_mapping_enable, model_as(bool, False);
-var float 				obstacle_min_standoff;
+var float 				obstacle_min_standoff; //not modeled
 var Header 				obstacle_in_view, model_as(bool, False);
 var bool 				obstacle_standoff_warning = False, model_as(bool, False);
-var Odometry 				odom;
-var float 				refLat = 38.971203;
-var float 				refLon = -76.398464;
-var bool 				rtreach_fence_warning = False;
-var Float32             		rtreach_index;
+var Odometry 				odom; // not modeled
+var float 				refLat = 38.971203; //not modeled
+var float 				refLon = -76.398464; // not modeled
+var bool 				rtreach_fence_warning = False; //not modeled....possibly unused?
+var Float32             		rtreach_index; //not modeled. redundant in model given rtreach_result
 var bool 		 		rtreach_long_term_warning = False, model_as(bool, False);
-var bool 				rtreach_obstacle_warning = False;
+var bool 				rtreach_obstacle_warning = False; // not modeled.....possibly unused?
 var Float32             		rtreach_result, model_as({'safe', 'short', 'long', 'short_long'}, 'safe');
-var Float32             		rtreach_unsafe_value;
+var Float32             		rtreach_unsafe_value; // not modeled....possibly unused?
 var bool 				rtreach_warning = False, model_as(bool, False);
-var float 				total_degradation=0;
-var float 				uuv_max_speed;
+var float 				total_degradation=0; // not modeled
+var float 				uuv_max_speed; //not modeled. not sure why this is in here but min speed isn't.
 //----------------------------------
 //MODELING VARIABLES ONLY
 //----------------------------------
+//these are variables that are not used in code generation. just in the modeling side.
 var bool				max_mission = 4, model_as({4}, 4);
 var bool				mission_idx = 0, model_as([0, 4], 0);
 //----------------------------------
