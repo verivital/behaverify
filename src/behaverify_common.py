@@ -320,7 +320,7 @@ def refine_return_types(nodes, node_name):
                             'failure' : False}
                         cannot_run = True
                         print(node['name'] + ' : SIBLING = ' + left_sibling_name)
-                        print(left_sibling)
+                        # print(left_sibling)
                 elif 'sequence' in parent['type']:
                     if not left_sibling['return_possibilities']['success']:
                         node['return_possibilities'] = {
@@ -328,7 +328,7 @@ def refine_return_types(nodes, node_name):
                             'running' : False,
                             'failure' : False}
                         cannot_run = True
-                        print(node['name'] + ' : SIBLING')
+                        print(node['name'] + ' : SIBLING = ' + left_sibling_name)
 
     if cannot_run:
         for child_id in node['children']:
@@ -478,7 +478,7 @@ def refine_invalid(nodes, node_name):
                     # a node to the left of this always returns running or success.
                     # we cannot possibly reach this node.
                     done_always = True
-                    print('the source???? ' + node_name + ' : ' + str(sibling_id))
+                    # print('the source???? ' + node_name + ' : ' + str(sibling_id))
                     break
         node['always_invalid'] = done_always
         if not done:
@@ -511,7 +511,7 @@ def refine_invalid(nodes, node_name):
                     # a node to the left of this always returns running or failure.
                     # we cannot possibly reach this node.
                     done_always = True
-                    print('the source2????')
+                    # print('the source2????')
                     break
         node['always_invalid'] = done_always
         if not done:

@@ -558,7 +558,6 @@ task mission_server
     set(mission_idx, try(next_mission, (min, max_mission, (addition, mission_idx, 1))), mission_idx)
     set(bb_rth_warning, try(next_mission, (equal, mission_idx, max_mission)), bb_rth_warning)
     set(next_mission, False)
-    //while this node does not modify bb_mission as a VAR. it does PUBLISH information on mission. which is what everything else uses.
     return running
 end
 
@@ -655,8 +654,8 @@ par BlueROV {
         exec dd_lec_task
 	}
     exec mission_server
-    exec obstacle_avoidance // this needs to be highest priority, to make sure obstacle avoidance happens before any other priorities or missions.
-    sel priorities {
+    exec obstacle_avoidance
+    par priorities {
 		do battery_check {
 			if battery_low_fs 
 			then {
