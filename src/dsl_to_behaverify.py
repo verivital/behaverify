@@ -10,6 +10,17 @@ from behaverify_common import create_node_name, create_variable_template, create
 
 
 def get_variables(model):
+    '''
+    this constructs and returns variables and local variables.
+    variables are constructed based on variables and environment_variables
+    -- arguments
+    @ model := a model. one created using behaverify.tx as the metamodel (probably)
+    -- return
+    @ variables := a dictionary from variable_name (string) to variable informaion
+    @ local_variables := a dictionary from variable_name (string) to variable informaion
+    -- side effects
+    none. purely functional.
+    '''
     variables = {variable.name :
                  create_variable_template(variable.name, variable.model_as,
                                           (None if variable.domain.min_val is not None else ('{TRUE, FALSE}' if variable.domain.boolean is not None else ('{' + ', '.join(variable.domain.enums) + '}'))),
@@ -30,32 +41,64 @@ def get_variables(model):
 
 
 def make_new_stage(statement, node_name, variables, local_variables, use_stages, call_blackboard, use_next):
-    new_stage = [(format_code(case_result.condition, node_name, variables, local_variables, use_stages, call_blackboard, use_next)
-                  ,
-                  (
-                      ('{' if len(case_result.values) > 1 else '')
-                      + ', '.join([format_code(value, node_name, variables, local_variables, use_stages, call_blackboard, use_next)
-                                   for value in case_result.values])
-                      + ('}' if len(case_result.values) > 1 else '')
-                  )
-                  )
-                 for case_result in statement.case_results
-                 ]
-    new_stage.append(
-        ('TRUE'
-         ,
-         (
-             ('{' if len(statement.default_result.values) > 1 else '')
-             + ', '.join([format_code(value, node_name, variables, local_variables, use_stages, call_blackboard, use_next)
-                          for value in statement.default_result.values])
-             + ('}' if len(statement.default_result.values) > 1 else '')
-         )
-         )
-    )
-    return new_stage
+    '''
+    this creates a new_stage and returns it.
+    the stage consists of (conditions, results) pairs in order.
+    if a condition is met, that value is used.
+    the last condition is always TRUE, ensuring at least one condition will be met.
+    -- @ arguments
+    statement := a code statement (see grammar defined in behaverify.tx)
+     -> the statement contains the information we need.
+    node_name := the name of the node to use string usually, can be None.
+     -> this is used by methods called by make_new_stage.
+    variables := a dictionary of variables_names to variable_info
+    local_variables := a dictionary of variable_names to variable_info
+    use_stages := a boolean.
+     -> if true, variables will be formattted to use their current stage.
+     -> if false, variables will just use their name
+    call_blackboard := a boolean
+     -> WARNING. DEPRICATED. should always be false.
+     -> in older versions, blackboard was seperate.
+     -> this necessitated some things calling the blackboard. this is no longer accurate.
+    use_next := a boolean
+     -> WARNING. DEPRICATED. should always be false
+     -> in older versions it was sometimes useful to call next value instead of current
+     -> that was mostly because i overthought it and made a bad and complicated encoding.
+    -- side effects
+    none directly. however, this method calls format_code which calls format_variable
+    format_variable has side effects. can modify variables.
+    '''
+    return ([(format_code(case_result.condition, node_name, variables, local_variables, use_stages, call_blackboard, use_next)
+              ,
+              (
+                  ('{' if len(case_result.values) > 1 else '')
+                  + ', '.join([format_code(value, node_name, variables, local_variables, use_stages, call_blackboard, use_next)
+                               for value in case_result.values])
+                  + ('}' if len(case_result.values) > 1 else '')
+              )
+              )
+             for case_result in statement.case_results
+             ]
+            +
+            [('TRUE'
+              ,
+              (
+                  ('{' if len(statement.default_result.values) > 1 else '')
+                  + ', '.join([format_code(value, node_name, variables, local_variables, use_stages, call_blackboard, use_next)
+                               for value in statement.default_result.values])
+                  + ('}' if len(statement.default_result.values) > 1 else '')
+              )
+              )
+             ]
+            )
 
 
-def create_environment_variables(model, variables, local_variables, delayed_statements):
+def complete_environment_variables(model, variables, local_variables, delayed_statements):
+    '''
+    completes the environment variables.
+    --arguments
+    @ model :=
+    '''
     for (node_name, statement) in delayed_statements:
         new_stage = make_new_stage(statement, node_name, variables, local_variables, True, False, False)
         variable_name = format_variable(statement.variable, False, node_name, variables, local_variables, False, False, False)
@@ -375,7 +418,7 @@ def main():
 
     (variables, local_variables) = get_variables(model)
     (nodes, delayed_statements) = walk_tree(model, variables, local_variables)
-    create_environment_variables(model, variables, local_variables, delayed_statements)
+    complete_environment_variables(model, variables, local_variables, delayed_statements)
 
     if args.output_file is None:
         printer = pprint.PrettyPrinter(indent = 4)
