@@ -34,7 +34,7 @@ Topic:	'topic' type=[MessageType] name=ID topic_string=/([^\s;]+)/ ';'
 	;
 
 BBVar:
-	'var' type=[Type] name=ID ('=' default=DefaultBBType)? (',' 'model_as' '(' model = ModelOptions ',' initial_value = Enumeration ')')? ';'
+	'var' type=[Type] name=ID ('=' default=DefaultBBType)? (',' 'model_as' '(' model = ModelOptions (',' initial_value = Enumeration)? ')')? ';'
 	;
 
 DefaultBBType:
@@ -66,7 +66,9 @@ BBNode:
     input_topic=[Topic] '->' topic_bbvar=[BBVar]
     ('vars' bb_vars *= [BBVar][','] ';')?
     args *= Param
-		 ('comment' comment=STRING)?
+    ('comment' comment=STRING)?
+    ignore_topic ?= 'model_ignore_topic'
+    ignore_node ?= 'model_ignore'
     set_vars *= SetVar
     'end'(';')?
 	;
