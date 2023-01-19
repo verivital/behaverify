@@ -12,9 +12,14 @@ MODULE main
 		resume_from_here_in_subtree__pipe_lost2bb := -3;
 		resume_from_here_in_subtree__sensor_failure2bb := -3;
 		resume_from_here_in_subtree__waypoints_completed2bb := -3;
+		resume_from_here_in_subtree__mission2bb := -3;
 		resume_from_here_in_subtree__ddlec2bb := -3;
 		resume_from_here_in_subtree__fls2bb := -3;
 		resume_from_here_in_subtree__fls_warning2bb := -3;
+		resume_from_here_in_subtree__hsd_pipe2bb := -3;
+		resume_from_here_in_subtree__hsd_wp2bb := -3;
+		resume_from_here_in_subtree__hsd_rth2bb := -3;
+		resume_from_here_in_subtree__hsd_surface2bb := -3;
 		resume_from_here_in_subtree__rtreach2bb := -3;
 		resume_from_here_in_subtree__rtreach_unsafe_value2bb := -3;
 		resume_from_here_in_subtree__rtreach_index2bb := -3;
@@ -86,22 +91,22 @@ MODULE main
 			esac;
 		child_index_to_resume_from__emergency_stop_tasks := 
 			case
-				(resume_from_here_in_subtree__priorities in {38}) : 1;
+				(resume_from_here_in_subtree__priorities in {43}) : 1;
 				TRUE : -2;
 			esac;
 		child_index_to_resume_from__track_pipe_mission := 
 			case
-				(resume_from_here_in_subtree__priorities in {65}) : 1;
+				(resume_from_here_in_subtree__priorities in {70}) : 1;
 				TRUE : -2;
 			esac;
 		child_index_to_resume_from__waypoint_end := 
 			case
-				(resume_from_here_in_subtree__priorities in {95}) : 1;
+				(resume_from_here_in_subtree__priorities in {100}) : 1;
 				TRUE : -2;
 			esac;
 		child_index_to_resume_from__waypoint_mission := 
 			case
-				(resume_from_here_in_subtree__priorities in {89, 95}) : 1;
+				(resume_from_here_in_subtree__priorities in {100, 94}) : 1;
 				TRUE : -2;
 			esac;
 		BlueROV.active := TRUE;
@@ -166,7 +171,7 @@ MODULE main
 		var_bb_rth_warning_stage_2 := 
 			case
 				!(mission_server.active) : var_bb_rth_warning_stage_1;
-				var_next_mission : var_finished_missions_stage_1;
+				var_next_mission : var_mission_idx_stage_1 = var_max_mission;
 				TRUE : var_bb_rth_warning_stage_1;
 			esac;
 		var_bb_sensor_failure_warning_stage_1 := 
@@ -262,7 +267,7 @@ MODULE main
 		var_emergency_stop_warning_stage_2 := 
 			case
 				!(mission_server.active) : var_emergency_stop_warning_stage_1;
-				var_next_mission & !(var_finished_missions_stage_1) & e_stop = var_bb_mission_stage_1 : TRUE;
+				var_next_mission & var_mission_idx_stage_1 < var_max_mission & e_stop = var_bb_mission_stage_1 : TRUE;
 				TRUE : var_emergency_stop_warning_stage_1;
 			esac;
 		var_lec2_am_l_pipe_warning_stage_1 := 
@@ -288,6 +293,16 @@ MODULE main
 				!(lec2_am_r_2bb.active) : var_lec2_am_r_speed_warning;
 				(lec2_am_r_2bb_update_success = FALSE) : var_lec2_am_r_speed_warning;
 				TRUE : var_lec2_am_r_stage_1 = speed | var_lec2_am_r_stage_1 = speed_pipe;
+			esac;
+		var_max_mission := 
+			case
+				TRUE : 4;
+			esac;
+		var_mission_idx_stage_1 := 
+			case
+				!(mission_server.active) : var_mission_idx;
+				var_next_mission : min(var_max_mission, var_mission_idx + 1);
+				TRUE : var_mission_idx;
 			esac;
 		var_next_mission_stage_1 := 
 			case
@@ -335,7 +350,7 @@ MODULE main
 		--END OF BLACKBOARD DEFINITIONS
 	VAR
 		node_names : define_nodes;
-		resume_from_here_in_subtree__priorities : {24, 38, 65, 89, 95};
+		resume_from_here_in_subtree__priorities : {29, 43, 70, 94, 100};
 		BlueROV : composite_parallel_success_on_all_without_memory_5(topics2bb, dd_tasks, mission_server, obstacle_avoidance, priorities);
 		battery2bb : battery2bb_module(battery2bb_update_success);
 		battery_check : decorator_X_is_Y(battery_check_1, success, failure);
@@ -368,6 +383,10 @@ MODULE main
 		home2bb_1 : home2bb_1_module(home2bb_1_update_success);
 		home_reached_selector : decorator_X_is_Y(home_reached_selector_1, success, failure);
 		home_reached_selector_1 : composite_selector_without_memory_2(check_surface, surface_task_3);
+		hsd_pipe2bb : hsd_pipe2bb_module(hsd_pipe2bb_update_success);
+		hsd_rth2bb : hsd_rth2bb_module(hsd_rth2bb_update_success);
+		hsd_surface2bb : hsd_surface2bb_module(hsd_surface2bb_update_success);
+		hsd_wp2bb : hsd_wp2bb_module(hsd_wp2bb_update_success);
 		is_reallocation_requested : is_reallocation_requested_module(var_dd_xy_axis_degradation_stage_1);
 		is_track_pipe_mission_requested : is_track_pipe_mission_requested_module(var_bb_mission_stage_1);
 		is_waypoint_requested : is_waypoint_requested_module(var_bb_mission_stage_1);
@@ -386,6 +405,7 @@ MODULE main
 		loiter_task : running_DEFAULT_module();
 		loiter_task_1 : running_DEFAULT_module();
 		loiter_task_2 : running_DEFAULT_module();
+		mission2bb : mission2bb_module(mission2bb_update_success);
 		mission_server : running_DEFAULT_module();
 		next_mission : success_DEFAULT_module();
 		obstacle_avoidance : running_DEFAULT_module();
@@ -423,7 +443,7 @@ MODULE main
 		surface_task_2 : running_DEFAULT_module();
 		surface_task_3 : running_DEFAULT_module();
 		surface_task_4 : running_DEFAULT_module();
-		topics2bb : composite_parallel_success_on_all_without_memory_14(battery2bb, rth2bb, geofence2bb, lec2_am_r_2bb, lec2_am_l_2bb, pipe_lost2bb, sensor_failure2bb, waypoints_completed2bb, ddlec2bb, fls2bb, fls_warning2bb, rtreach2bb, rtreach_unsafe_value2bb, rtreach_index2bb);
+		topics2bb : composite_parallel_success_on_all_without_memory_19(battery2bb, rth2bb, geofence2bb, lec2_am_r_2bb, lec2_am_l_2bb, pipe_lost2bb, sensor_failure2bb, waypoints_completed2bb, mission2bb, ddlec2bb, fls2bb, fls_warning2bb, hsd_pipe2bb, hsd_wp2bb, hsd_rth2bb, hsd_surface2bb, rtreach2bb, rtreach_unsafe_value2bb, rtreach_index2bb);
 		track_pipe_mission : composite_sequence_with_memory_2(is_track_pipe_mission_requested, tracking, child_index_to_resume_from__track_pipe_mission);
 		tracking : composite_parallel_success_on_all_without_memory_3(tracking_task, lec2am_speed_cmd, lec2am_mapping_cmd);
 		tracking_task : running_DEFAULT_module();
@@ -448,8 +468,8 @@ MODULE main
 		var_bb_home_dist_stage_1 : {10, 100};
 		var_bb_home_dist_stage_2 : {10, 100};
 		var_bb_home_reached : boolean;
-		var_bb_mission : {waypoint_following, e_stop, pipe_following};
-		var_bb_mission_stage_1 : {waypoint_following, e_stop, pipe_following};
+		var_bb_mission : {unknown, waypoint_following, e_stop, pipe_following};
+		var_bb_mission_stage_1 : {unknown, waypoint_following, e_stop, pipe_following};
 		var_bb_obstacle_warning : boolean;
 		var_bb_obstacle_warning_stage_1 : boolean;
 		var_bb_pipe_lost_warning : boolean;
@@ -471,8 +491,6 @@ MODULE main
 		var_dd_z_axis_warning : boolean;
 		ddlec2bb_update_success : boolean;
 		var_emergency_stop_warning : boolean;
-		var_finished_missions : boolean;
-		var_finished_missions_stage_1 : boolean;
 		fls2bb_update_success : boolean;
 		var_fls_range : {danger_zone, safe};
 		var_fls_range_stage_1 : {danger_zone, safe};
@@ -480,6 +498,10 @@ MODULE main
 		geofence2bb_update_success : boolean;
 		home2bb_1_update_success : boolean;
 		home2bb_update_success : boolean;
+		hsd_pipe2bb_update_success : boolean;
+		hsd_rth2bb_update_success : boolean;
+		hsd_surface2bb_update_success : boolean;
+		hsd_wp2bb_update_success : boolean;
 		var_lec2_am_l : {safe, speed, pipe, speed_pipe};
 		var_lec2_am_l_stage_1 : {safe, speed, pipe, speed_pipe};
 		lec2_am_l_2bb_update_success : boolean;
@@ -492,6 +514,8 @@ MODULE main
 		var_lec2_am_r_speed_warning : boolean;
 		var_lec_dd_am : boolean;
 		var_lec_dd_am_warning : boolean;
+		mission2bb_update_success : boolean;
+		var_mission_idx : 0..4;
 		var_next_mission : boolean;
 		var_obstacle_in_view : boolean;
 		var_obstacle_in_view_stage_1 : boolean;
@@ -510,8 +534,12 @@ MODULE main
 		waypoints_completed2bb_update_success : boolean;
 		--END OF BLACKBOARD VARIABLES DECLARATION
 	ASSIGN
-		init(resume_from_here_in_subtree__priorities) := 24;
+		init(resume_from_here_in_subtree__priorities) := 29;
 		--START OF BLACKBOARD VARIABLES INITIALIZATION
+		init(var_HSD_out) := 
+			case
+				TRUE : uuv_min_speed;
+			esac;
 		init(var_battery) := 
 			case
 				TRUE : 1;
@@ -539,6 +567,10 @@ MODULE main
 		init(var_bb_home_reached) := 
 			case
 				TRUE : FALSE;
+			esac;
+		init(var_bb_mission) := 
+			case
+				TRUE : unknown;
 			esac;
 		init(var_bb_obstacle_warning) := 
 			case
@@ -576,6 +608,14 @@ MODULE main
 			case
 				TRUE : FALSE;
 			esac;
+		init(var_cm_hsd_input) := 
+			case
+				TRUE : cm_surface_task;
+			esac;
+		init(var_dd_output) := 
+			case
+				TRUE : safe;
+			esac;
 		init(var_dd_xy_axis_degradation) := 
 			case
 				TRUE : FALSE;
@@ -588,11 +628,11 @@ MODULE main
 			case
 				TRUE : FALSE;
 			esac;
-		init(var_finished_missions) := 
-			case
-				TRUE : FALSE;
-			esac;
 		init(var_fls_range) := 
+			case
+				TRUE : safe;
+			esac;
+		init(var_lec2_am_l) := 
 			case
 				TRUE : safe;
 			esac;
@@ -603,6 +643,10 @@ MODULE main
 		init(var_lec2_am_l_speed_warning) := 
 			case
 				TRUE : FALSE;
+			esac;
+		init(var_lec2_am_r) := 
+			case
+				TRUE : safe;
 			esac;
 		init(var_lec2_am_r_pipe_warning) := 
 			case
@@ -619,6 +663,10 @@ MODULE main
 		init(var_lec_dd_am_warning) := 
 			case
 				TRUE : FALSE;
+			esac;
+		init(var_mission_idx) := 
+			case
+				TRUE : 0;
 			esac;
 		init(var_next_mission) := 
 			case
@@ -639,6 +687,10 @@ MODULE main
 		init(var_rtreach_long_term_warning) := 
 			case
 				TRUE : FALSE;
+			esac;
+		init(var_rtreach_result) := 
+			case
+				TRUE : safe;
 			esac;
 		init(var_rtreach_warning) := 
 			case
@@ -688,7 +740,7 @@ MODULE main
 		var_bb_mission_stage_1 := 
 			case
 				!(mission_server.active) : var_bb_mission;
-				var_next_mission & !(var_finished_missions_stage_1) : {waypoint_following, e_stop, pipe_following};
+				var_next_mission & var_mission_idx_stage_1 < var_max_mission : {waypoint_following, e_stop, pipe_following, var_bb_mission};
 				TRUE : var_bb_mission;
 			esac;
 		next(var_bb_obstacle_warning) := var_bb_obstacle_warning_stage_1;
@@ -739,13 +791,6 @@ MODULE main
 		next(var_dd_xy_axis_degradation) := var_dd_xy_axis_degradation_stage_1;
 		next(var_dd_z_axis_warning) := var_dd_z_axis_warning_stage_1;
 		next(var_emergency_stop_warning) := var_emergency_stop_warning_stage_2;
-		next(var_finished_missions) := var_finished_missions_stage_1;
-		var_finished_missions_stage_1 := 
-			case
-				!(mission_server.active) : var_finished_missions;
-				var_next_mission & var_finished_missions : {TRUE, FALSE};
-				TRUE : var_finished_missions;
-			esac;
 		next(var_fls_range) := var_fls_range_stage_1;
 		var_fls_range_stage_1 := 
 			case
@@ -771,6 +816,7 @@ MODULE main
 			esac;
 		next(var_lec2_am_r_pipe_warning) := var_lec2_am_r_pipe_warning_stage_1;
 		next(var_lec2_am_r_speed_warning) := var_lec2_am_r_speed_warning_stage_1;
+		next(var_mission_idx) := var_mission_idx_stage_1;
 		next(var_next_mission) := var_next_mission_stage_2;
 		next(var_obstacle_in_view) := var_obstacle_in_view_stage_1;
 		var_obstacle_in_view_stage_1 := 
@@ -791,11 +837,23 @@ MODULE main
 			esac;
 		next(var_rtreach_warning) := var_rtreach_warning_stage_1;
 		--END OF BLACKBOARD VARIABLES TRANSITION
+-- LTLSPEC G (var_battery_low_warning -> (surface_task.active | surface_task_1.active | surface_task_2.active | surface_task_3.active | surface_task_4.active)); -- false
+-- LTLSPEC G (var_battery_low_warning_stage_1 -> (surface_task.active | surface_task_1.active | surface_task_2.active | surface_task_3.active | surface_task_4.active)); -- true
+LTLSPEC G (count(surface_task.active , surface_task_1.active , surface_task_2.active , surface_task_3.active , surface_task_4.active) < 2); -- true
+-- LTLSPEC G (speed_max_task.active -> (!(speed_min_task.active) & !(speed_min_task_1.active))); -- true
+-- LTLSPEC G (speed_min_task.active -> (!(speed_max_task.active) & !(speed_min_task_1.active))); -- true
+-- LTLSPEC G (speed_min_task_1.active -> (!(speed_min_task.active) & !(speed_max_task.active))); -- true
+-- LTLSPEC F (var_mission_idx = 4); -- false
+-- LTLSPEC G (!(var_battery_low_warning_stage_1 & var_bb_geofence_warning_stage_1)); -- both can be set, this spec should be false.
+-- LTLSPEC G (var_bb_geofence_warning_stage_1 -> rth_par_1.active); -- returns False (correct, but kinda slow).
+
+-- LTLSPEC G (var_battery_low_warning -> G (var_battery_low_warning)); -- this is false, var_battery_low_warning can be unset
+
+
 -- mission is pipetracking, obstacle avoidance triggered, prove pipetracking/waypoint is resumed?
 -- intentionally break trees in order to prove these specs are actually relevant. make more .bt files in order to do this.
 
--- see what happens if pipe mission actually ends. NO WAY TO DO THIS.
--- the only way to set a new mission is if waypoint_mission completes.
+-- see what happens if pipe mission actually ends.
 
 -- differentiate between failsafes that end the mission vs bad states that can be recovered from
 -- mission endings probably cause the surface and we just end
@@ -808,33 +866,6 @@ MODULE main
 -- emergency_stop_warning
 -- home reached?????
 -- obstacle_standoff_warning???
-
--- --battery failsafe always results in a surface task
--- LTLSPEC G (var_battery_low_warning_stage_1 -> (surface_task.active | surface_task_1.active | surface_task_2.active | surface_task_3.active | surface_task_4.active)); -- true
--- --battery failsafe is pernament
--- LTLSPEC G (var_battery_low_warning_stage_1 -> G (var_battery_low_warning_stage_1)); -- this is false, var_battery_low_warning can be unset
-
--- --sensor failsafe always results in a surface task
--- LTLSPEC G (var_bb_sensor_failure_warning_stage_1 -> (surface_task.active | surface_task_1.active | surface_task_2.active | surface_task_3.active | surface_task_4.active)); -- true
--- --sensor failsafe is pernament
--- LTLSPEC G (var_bb_sensor_failure_warning_stage_1 -> G (var_bb_sensor_failure_warning_stage_1)); -- true, it's pernament
-
--- --battery failsafe always results in a surface task
--- LTLSPEC G (var_emergency_stop_warning_stage_1 -> (surface_task.active | surface_task_1.active | surface_task_2.active | surface_task_3.active | surface_task_4.active)); -- true
--- --battery failsafe is pernament
--- LTLSPEC G (var_emergency_stop_warning_stage_1 -> G (var_emergency_stop_warning_stage_1)); -- true, it's pernament
-
-
--- --surface task cannot be entered multiple times during a single tick
--- LTLSPEC G (count(surface_task.active, surface_task_1.active, surface_task_2.active, surface_task_3.active, surface_task_4.active) < 2); -- true
-
--- --speed_min is only set once and speed_min and max are mutually exclusive
--- LTLSPEC G (speed_max_task.active -> (!(speed_min_task.active) & !(speed_min_task_1.active))); -- true
--- LTLSPEC G (speed_min_task.active -> (!(speed_max_task.active) & !(speed_min_task_1.active))); -- true
--- LTLSPEC G (speed_min_task_1.active -> (!(speed_min_task.active) & !(speed_max_task.active))); -- true
-
--- --multiple failsafes can be activated
--- LTLSPEC G (!(var_battery_low_warning_stage_1 & var_bb_geofence_warning_stage_1)); -- both can be set, this spec should be false.
 
 
 MODULE define_nodes
@@ -849,263 +880,104 @@ MODULE define_nodes
 		pipe_lost2bb := 7;
 		sensor_failure2bb := 8;
 		waypoints_completed2bb := 9;
-		ddlec2bb := 10;
-		fls2bb := 11;
-		fls_warning2bb := 12;
-		rtreach2bb := 13;
-		rtreach_unsafe_value2bb := 14;
-		rtreach_index2bb := 15;
-		dd_tasks := 16;
-		reallocate_check := 17;
-		reallocate_check_1 := 18;
-		is_reallocation_requested := 19;
-		reallocate_task := 20;
-		dd_lec_task := 21;
-		mission_server := 22;
-		obstacle_avoidance := 23;
-		priorities := 24;
-		battery_check := 25;
-		battery_check_1 := 26;
-		battery_low_fs := 27;
-		surface_task := 28;
-		sensor_failure_selector := 29;
-		sensor_failure_selector_1 := 30;
-		check_sensor_failure := 31;
-		surface_task_1 := 32;
-		emergency_stop_check := 33;
-		emergency_stop_check_1 := 34;
-		emergency_stop_fs := 35;
-		emergency_stop_tasks := 36;
-		emergency_stop_task := 37;
-		surface_task_2 := 38;
-		home_reached_selector := 39;
-		home_reached_selector_1 := 40;
-		check_surface := 41;
-		surface_task_3 := 42;
-		obstacle_standoff_check := 43;
-		obstacle_standoff_check_1 := 44;
-		obstacle_standoff_fs := 45;
-		surface_task_4 := 46;
-		rth_selector := 47;
-		rth_selector_1 := 48;
-		check_rth := 49;
-		rth_par := 50;
-		rth_task := 51;
-		home2bb := 52;
-		geofence_selector := 53;
-		geofence_selector_1 := 54;
-		check_geofence := 55;
-		rth_par_1 := 56;
-		rth_task_1 := 57;
-		home2bb_1 := 58;
-		pipe_lost_selector := 59;
-		pipe_lost_selector_1 := 60;
-		check_pipe_post := 61;
-		loiter_task := 62;
-		track_pipe_mission := 63;
-		is_track_pipe_mission_requested := 64;
-		tracking := 65;
-		tracking_task := 66;
-		lec2am_speed_cmd := 67;
-		lec2am_l_speed_check := 68;
-		lec2am_l_speed_check_1 := 69;
-		check_lec2am_ls := 70;
-		speed_min_task := 71;
-		lec2am_r_speed_check := 72;
-		lec2am_r_speed_check_1 := 73;
-		check_lec2am_rs := 74;
-		speed_min_task_1 := 75;
-		speed_max_task := 76;
-		lec2am_mapping_cmd := 77;
-		lec2am_l_mapping_check := 78;
-		lec2am_l_mapping_check_1 := 79;
-		check_lec2am_lp := 80;
-		pipe_mapping_disable_task := 81;
-		lec2am_r_mapping_check := 82;
-		lec2am_r_mapping_check_1 := 83;
-		check_lec2am_rp := 84;
-		pipe_mapping_disable_task_1 := 85;
-		pipe_mapping_enable_task := 86;
-		waypoint_mission := 87;
-		is_waypoint_requested := 88;
-		waypoint_selector := 89;
-		waypoints_sif := 90;
-		waypoints_sif_1 := 91;
-		check_waypoints_completed := 92;
-		waypoint_end := 93;
-		next_mission := 94;
-		loiter_task_1 := 95;
-		waypoint_task := 96;
-		loiter_task_2 := 97;
+		mission2bb := 10;
+		ddlec2bb := 11;
+		fls2bb := 12;
+		fls_warning2bb := 13;
+		hsd_pipe2bb := 14;
+		hsd_wp2bb := 15;
+		hsd_rth2bb := 16;
+		hsd_surface2bb := 17;
+		rtreach2bb := 18;
+		rtreach_unsafe_value2bb := 19;
+		rtreach_index2bb := 20;
+		dd_tasks := 21;
+		reallocate_check := 22;
+		reallocate_check_1 := 23;
+		is_reallocation_requested := 24;
+		reallocate_task := 25;
+		dd_lec_task := 26;
+		mission_server := 27;
+		obstacle_avoidance := 28;
+		priorities := 29;
+		battery_check := 30;
+		battery_check_1 := 31;
+		battery_low_fs := 32;
+		surface_task := 33;
+		sensor_failure_selector := 34;
+		sensor_failure_selector_1 := 35;
+		check_sensor_failure := 36;
+		surface_task_1 := 37;
+		emergency_stop_check := 38;
+		emergency_stop_check_1 := 39;
+		emergency_stop_fs := 40;
+		emergency_stop_tasks := 41;
+		emergency_stop_task := 42;
+		surface_task_2 := 43;
+		home_reached_selector := 44;
+		home_reached_selector_1 := 45;
+		check_surface := 46;
+		surface_task_3 := 47;
+		obstacle_standoff_check := 48;
+		obstacle_standoff_check_1 := 49;
+		obstacle_standoff_fs := 50;
+		surface_task_4 := 51;
+		rth_selector := 52;
+		rth_selector_1 := 53;
+		check_rth := 54;
+		rth_par := 55;
+		rth_task := 56;
+		home2bb := 57;
+		geofence_selector := 58;
+		geofence_selector_1 := 59;
+		check_geofence := 60;
+		rth_par_1 := 61;
+		rth_task_1 := 62;
+		home2bb_1 := 63;
+		pipe_lost_selector := 64;
+		pipe_lost_selector_1 := 65;
+		check_pipe_post := 66;
+		loiter_task := 67;
+		track_pipe_mission := 68;
+		is_track_pipe_mission_requested := 69;
+		tracking := 70;
+		tracking_task := 71;
+		lec2am_speed_cmd := 72;
+		lec2am_l_speed_check := 73;
+		lec2am_l_speed_check_1 := 74;
+		check_lec2am_ls := 75;
+		speed_min_task := 76;
+		lec2am_r_speed_check := 77;
+		lec2am_r_speed_check_1 := 78;
+		check_lec2am_rs := 79;
+		speed_min_task_1 := 80;
+		speed_max_task := 81;
+		lec2am_mapping_cmd := 82;
+		lec2am_l_mapping_check := 83;
+		lec2am_l_mapping_check_1 := 84;
+		check_lec2am_lp := 85;
+		pipe_mapping_disable_task := 86;
+		lec2am_r_mapping_check := 87;
+		lec2am_r_mapping_check_1 := 88;
+		check_lec2am_rp := 89;
+		pipe_mapping_disable_task_1 := 90;
+		pipe_mapping_enable_task := 91;
+		waypoint_mission := 92;
+		is_waypoint_requested := 93;
+		waypoint_selector := 94;
+		waypoints_sif := 95;
+		waypoints_sif_1 := 96;
+		check_waypoints_completed := 97;
+		waypoint_end := 98;
+		next_mission := 99;
+		loiter_task_1 := 100;
+		waypoint_task := 101;
+		loiter_task_2 := 102;
 MODULE leaf_module(internal_status_module)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status_module.internal_status : invalid;
-MODULE composite_parallel_success_on_all_without_memory_2(child_0, child_1)
-	CONSTANTS
-		success, failure, running, invalid;
-	DEFINE
-		status := active ? internal_status : invalid;
-		internal_status :=
-			case
-				(child_0.internal_status = failure) : failure;
-				(child_1.internal_status = failure) : failure;
-				!(child_0.internal_status = success) : child_0.internal_status;
-				!(child_1.internal_status = success) : child_1.internal_status;
-				TRUE : success;
-			esac;
-		child_0.active := active;
-		child_1.active := active;
-MODULE composite_selector_without_memory_2(child_0, child_1)
-	CONSTANTS
-		success, failure, running, invalid;
-	DEFINE
-		status := active ? internal_status : invalid;
-		internal_status :=
-			case
-				!(child_0.internal_status = failure) : child_0.internal_status;
-				!(child_1.internal_status = failure) : child_1.internal_status;
-				TRUE : failure;
-			esac;
-		child_0.active := active;
-		child_1.active := child_0.status = failure;
-MODULE composite_parallel_success_on_all_without_memory_14(child_0, child_1, child_2, child_3, child_4, child_5, child_6, child_7, child_8, child_9, child_10, child_11, child_12, child_13)
-	CONSTANTS
-		success, failure, running, invalid;
-	DEFINE
-		status := active ? internal_status : invalid;
-		internal_status :=
-			case
-				(child_0.internal_status = failure) : failure;
-				(child_1.internal_status = failure) : failure;
-				(child_2.internal_status = failure) : failure;
-				(child_3.internal_status = failure) : failure;
-				(child_4.internal_status = failure) : failure;
-				(child_5.internal_status = failure) : failure;
-				(child_6.internal_status = failure) : failure;
-				(child_7.internal_status = failure) : failure;
-				(child_8.internal_status = failure) : failure;
-				(child_9.internal_status = failure) : failure;
-				(child_10.internal_status = failure) : failure;
-				(child_11.internal_status = failure) : failure;
-				(child_12.internal_status = failure) : failure;
-				(child_13.internal_status = failure) : failure;
-				!(child_0.internal_status = success) : child_0.internal_status;
-				!(child_1.internal_status = success) : child_1.internal_status;
-				!(child_2.internal_status = success) : child_2.internal_status;
-				!(child_3.internal_status = success) : child_3.internal_status;
-				!(child_4.internal_status = success) : child_4.internal_status;
-				!(child_5.internal_status = success) : child_5.internal_status;
-				!(child_6.internal_status = success) : child_6.internal_status;
-				!(child_7.internal_status = success) : child_7.internal_status;
-				!(child_8.internal_status = success) : child_8.internal_status;
-				!(child_9.internal_status = success) : child_9.internal_status;
-				!(child_10.internal_status = success) : child_10.internal_status;
-				!(child_11.internal_status = success) : child_11.internal_status;
-				!(child_12.internal_status = success) : child_12.internal_status;
-				!(child_13.internal_status = success) : child_13.internal_status;
-				TRUE : success;
-			esac;
-		child_0.active := active;
-		child_1.active := active;
-		child_2.active := active;
-		child_3.active := active;
-		child_4.active := active;
-		child_5.active := active;
-		child_6.active := active;
-		child_7.active := active;
-		child_8.active := active;
-		child_9.active := active;
-		child_10.active := active;
-		child_11.active := active;
-		child_12.active := active;
-		child_13.active := active;
-MODULE composite_parallel_success_on_all_without_memory_3(child_0, child_1, child_2)
-	CONSTANTS
-		success, failure, running, invalid;
-	DEFINE
-		status := active ? internal_status : invalid;
-		internal_status :=
-			case
-				(child_0.internal_status = failure) : failure;
-				(child_1.internal_status = failure) : failure;
-				(child_2.internal_status = failure) : failure;
-				!(child_0.internal_status = success) : child_0.internal_status;
-				!(child_1.internal_status = success) : child_1.internal_status;
-				!(child_2.internal_status = success) : child_2.internal_status;
-				TRUE : success;
-			esac;
-		child_0.active := active;
-		child_1.active := active;
-		child_2.active := active;
-MODULE decorator_X_is_Y(child_0, incoming_status, outgoing_status)
-	CONSTANTS
-		success, failure, running, invalid;
-	DEFINE
-		status := active ? internal_status : invalid;
-		internal_status :=
-			case
-				child_0.status = incoming_status : outgoing_status;
-				TRUE : child_0.status;
-			esac;
-		child_0.active :=
-			case
-				!(active) : FALSE;
-				TRUE : TRUE;
-			esac;
-MODULE composite_selector_without_memory_3(child_0, child_1, child_2)
-	CONSTANTS
-		success, failure, running, invalid;
-	DEFINE
-		status := active ? internal_status : invalid;
-		internal_status :=
-			case
-				!(child_0.internal_status = failure) : child_0.internal_status;
-				!(child_1.internal_status = failure) : child_1.internal_status;
-				!(child_2.internal_status = failure) : child_2.internal_status;
-				TRUE : failure;
-			esac;
-		child_0.active := active;
-		child_1.active := child_0.status = failure;
-		child_2.active := child_1.status = failure;
-MODULE composite_sequence_with_memory_2(child_0, child_1, resume_point)
-	CONSTANTS
-		success, failure, running, invalid;
-	DEFINE
-		status := active ? internal_status : invalid;
-		internal_status :=
-			case
-				(0 >= resume_point) & !(child_0.internal_status = success) : child_0.internal_status;
-				(1 >= resume_point) & !(child_1.internal_status = success) : child_1.internal_status;
-				TRUE : success;
-			esac;
-		child_0.active := active & (0 >= resume_point);
-		child_1.active := (1 >= resume_point) & ((1 = resume_point) | (child_0.status = success));
-MODULE composite_parallel_success_on_all_without_memory_5(child_0, child_1, child_2, child_3, child_4)
-	CONSTANTS
-		success, failure, running, invalid;
-	DEFINE
-		status := active ? internal_status : invalid;
-		internal_status :=
-			case
-				(child_0.internal_status = failure) : failure;
-				(child_1.internal_status = failure) : failure;
-				(child_2.internal_status = failure) : failure;
-				(child_3.internal_status = failure) : failure;
-				(child_4.internal_status = failure) : failure;
-				!(child_0.internal_status = success) : child_0.internal_status;
-				!(child_1.internal_status = success) : child_1.internal_status;
-				!(child_2.internal_status = success) : child_2.internal_status;
-				!(child_3.internal_status = success) : child_3.internal_status;
-				!(child_4.internal_status = success) : child_4.internal_status;
-				TRUE : success;
-			esac;
-		child_0.active := active;
-		child_1.active := active;
-		child_2.active := active;
-		child_3.active := active;
-		child_4.active := active;
 MODULE composite_selector_without_memory_11(child_0, child_1, child_2, child_3, child_4, child_5, child_6, child_7, child_8, child_9, child_10)
 	CONSTANTS
 		success, failure, running, invalid;
@@ -1137,6 +1009,185 @@ MODULE composite_selector_without_memory_11(child_0, child_1, child_2, child_3, 
 		child_8.active := child_7.status = failure;
 		child_9.active := child_8.status = failure;
 		child_10.active := child_9.status = failure;
+MODULE composite_selector_without_memory_2(child_0, child_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				!(child_0.internal_status = failure) : child_0.internal_status;
+				!(child_1.internal_status = failure) : child_1.internal_status;
+				TRUE : failure;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = failure;
+MODULE composite_selector_without_memory_3(child_0, child_1, child_2)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				!(child_0.internal_status = failure) : child_0.internal_status;
+				!(child_1.internal_status = failure) : child_1.internal_status;
+				!(child_2.internal_status = failure) : child_2.internal_status;
+				TRUE : failure;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = failure;
+		child_2.active := child_1.status = failure;
+MODULE composite_parallel_success_on_all_without_memory_2(child_0, child_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				(child_0.internal_status = failure) : failure;
+				(child_1.internal_status = failure) : failure;
+				!(child_0.internal_status = success) : child_0.internal_status;
+				!(child_1.internal_status = success) : child_1.internal_status;
+				TRUE : success;
+			esac;
+		child_0.active := active;
+		child_1.active := active;
+MODULE decorator_X_is_Y(child_0, incoming_status, outgoing_status)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				child_0.status = incoming_status : outgoing_status;
+				TRUE : child_0.status;
+			esac;
+		child_0.active :=
+			case
+				!(active) : FALSE;
+				TRUE : TRUE;
+			esac;
+MODULE composite_parallel_success_on_all_without_memory_3(child_0, child_1, child_2)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				(child_0.internal_status = failure) : failure;
+				(child_1.internal_status = failure) : failure;
+				(child_2.internal_status = failure) : failure;
+				!(child_0.internal_status = success) : child_0.internal_status;
+				!(child_1.internal_status = success) : child_1.internal_status;
+				!(child_2.internal_status = success) : child_2.internal_status;
+				TRUE : success;
+			esac;
+		child_0.active := active;
+		child_1.active := active;
+		child_2.active := active;
+MODULE composite_parallel_success_on_all_without_memory_5(child_0, child_1, child_2, child_3, child_4)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				(child_0.internal_status = failure) : failure;
+				(child_1.internal_status = failure) : failure;
+				(child_2.internal_status = failure) : failure;
+				(child_3.internal_status = failure) : failure;
+				(child_4.internal_status = failure) : failure;
+				!(child_0.internal_status = success) : child_0.internal_status;
+				!(child_1.internal_status = success) : child_1.internal_status;
+				!(child_2.internal_status = success) : child_2.internal_status;
+				!(child_3.internal_status = success) : child_3.internal_status;
+				!(child_4.internal_status = success) : child_4.internal_status;
+				TRUE : success;
+			esac;
+		child_0.active := active;
+		child_1.active := active;
+		child_2.active := active;
+		child_3.active := active;
+		child_4.active := active;
+MODULE composite_sequence_with_memory_2(child_0, child_1, resume_point)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				(0 >= resume_point) & !(child_0.internal_status = success) : child_0.internal_status;
+				(1 >= resume_point) & !(child_1.internal_status = success) : child_1.internal_status;
+				TRUE : success;
+			esac;
+		child_0.active := active & (0 >= resume_point);
+		child_1.active := (1 >= resume_point) & ((1 = resume_point) | (child_0.status = success));
+MODULE composite_parallel_success_on_all_without_memory_19(child_0, child_1, child_2, child_3, child_4, child_5, child_6, child_7, child_8, child_9, child_10, child_11, child_12, child_13, child_14, child_15, child_16, child_17, child_18)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				(child_0.internal_status = failure) : failure;
+				(child_1.internal_status = failure) : failure;
+				(child_2.internal_status = failure) : failure;
+				(child_3.internal_status = failure) : failure;
+				(child_4.internal_status = failure) : failure;
+				(child_5.internal_status = failure) : failure;
+				(child_6.internal_status = failure) : failure;
+				(child_7.internal_status = failure) : failure;
+				(child_8.internal_status = failure) : failure;
+				(child_9.internal_status = failure) : failure;
+				(child_10.internal_status = failure) : failure;
+				(child_11.internal_status = failure) : failure;
+				(child_12.internal_status = failure) : failure;
+				(child_13.internal_status = failure) : failure;
+				(child_14.internal_status = failure) : failure;
+				(child_15.internal_status = failure) : failure;
+				(child_16.internal_status = failure) : failure;
+				(child_17.internal_status = failure) : failure;
+				(child_18.internal_status = failure) : failure;
+				!(child_0.internal_status = success) : child_0.internal_status;
+				!(child_1.internal_status = success) : child_1.internal_status;
+				!(child_2.internal_status = success) : child_2.internal_status;
+				!(child_3.internal_status = success) : child_3.internal_status;
+				!(child_4.internal_status = success) : child_4.internal_status;
+				!(child_5.internal_status = success) : child_5.internal_status;
+				!(child_6.internal_status = success) : child_6.internal_status;
+				!(child_7.internal_status = success) : child_7.internal_status;
+				!(child_8.internal_status = success) : child_8.internal_status;
+				!(child_9.internal_status = success) : child_9.internal_status;
+				!(child_10.internal_status = success) : child_10.internal_status;
+				!(child_11.internal_status = success) : child_11.internal_status;
+				!(child_12.internal_status = success) : child_12.internal_status;
+				!(child_13.internal_status = success) : child_13.internal_status;
+				!(child_14.internal_status = success) : child_14.internal_status;
+				!(child_15.internal_status = success) : child_15.internal_status;
+				!(child_16.internal_status = success) : child_16.internal_status;
+				!(child_17.internal_status = success) : child_17.internal_status;
+				!(child_18.internal_status = success) : child_18.internal_status;
+				TRUE : success;
+			esac;
+		child_0.active := active;
+		child_1.active := active;
+		child_2.active := active;
+		child_3.active := active;
+		child_4.active := active;
+		child_5.active := active;
+		child_6.active := active;
+		child_7.active := active;
+		child_8.active := active;
+		child_9.active := active;
+		child_10.active := active;
+		child_11.active := active;
+		child_12.active := active;
+		child_13.active := active;
+		child_14.active := active;
+		child_15.active := active;
+		child_16.active := active;
+		child_17.active := active;
+		child_18.active := active;
 MODULE battery2bb_module(battery2bb_update_success)
 	CONSTANTS
 		success, failure, running, invalid;
@@ -1251,6 +1302,30 @@ MODULE home2bb_1_module(home2bb_1_update_success)
 	DEFINE
 		status := active ? internal_status : invalid;
 		internal_status := home2bb_1_update_success ? success : running;
+MODULE hsd_pipe2bb_module(hsd_pipe2bb_update_success)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := hsd_pipe2bb_update_success ? success : running;
+MODULE hsd_rth2bb_module(hsd_rth2bb_update_success)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := hsd_rth2bb_update_success ? success : running;
+MODULE hsd_surface2bb_module(hsd_surface2bb_update_success)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := hsd_surface2bb_update_success ? success : running;
+MODULE hsd_wp2bb_module(hsd_wp2bb_update_success)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := hsd_wp2bb_update_success ? success : running;
 MODULE is_reallocation_requested_module(var_dd_xy_axis_degradation_stage_1)
 	CONSTANTS
 		success, failure, running, invalid;
@@ -1281,6 +1356,12 @@ MODULE lec2_am_r_2bb_module(lec2_am_r_2bb_update_success)
 	DEFINE
 		status := active ? internal_status : invalid;
 		internal_status := lec2_am_r_2bb_update_success ? success : running;
+MODULE mission2bb_module(mission2bb_update_success)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := mission2bb_update_success ? success : running;
 MODULE obstacle_standoff_fs_module(var_obstacle_standoff_warning_stage_1)
 	CONSTANTS
 		success, failure, running, invalid;

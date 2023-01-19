@@ -6,7 +6,7 @@ import os
 # import itertools
 # import copy
 
-from behaverify_common import create_node_name, create_node_template, create_variable_template
+from behaverify_common import create_node_name, create_node_template, create_variable_template_keep_stage as create_variable_template
 
 
 def get_variables(model):
@@ -19,18 +19,18 @@ def get_variables(model):
                                          [('TRUE', (str(variable.initial_value).upper() if isinstance(variable.initial_value, bool) else str(variable.initial_value)))]
                                          )
                                       ),
-                                     [], prefix = 'var_')
+                                     [], prefix = 'var_', keep_stage_0 = False)
             for variable in model.bbVariables if variable.model is not None}
 
 
-def make_new_stage(statement, node_name, variables, use_stages, call_blackboard, use_next):
+def make_new_stage(statement, node_name, variables, use_next, not_next):
     return (
-        [(format_code(case_result.condition, node_name, variables, use_stages, call_blackboard, use_next),
-          format_code(case_result.update_value, node_name, variables, use_stages, call_blackboard, use_next))
+        [(format_code(case_result.condition, node_name, variables, use_next, not_next),
+          format_code(case_result.update_value, node_name, variables, use_next, not_next))
          for case_result in statement.updates]
         +
         [('TRUE',
-          format_code(statement.default_update, node_name, variables, use_stages, call_blackboard, use_next))]
+          format_code(statement.default_update, node_name, variables, use_next, not_next))]
     )
 
 
@@ -79,27 +79,30 @@ def is_nondeterministic(code):
         )
 
 
-def compute_stage(variable_name, variables, use_stages):
-    return (('_stage_' + str(len(variables[variable_name]['next_value']))) if (use_stages and len(variables[variable_name]['next_value']) > 0) else (''))
+def compute_stage(variable_name, variables):
+    return (('_stage_' + str(len(variables[variable_name]['next_value']))) if (len(variables[variable_name]['next_value']) > 0) else '')
 
 
-def format_variable(variable, node_name, variables, use_stages, call_blackboard, use_next):
-    return (('' if (len(variables[variable.name]['next_value']) == 0 or not use_next) else 'next(')
-            + (('blackboard.') if call_blackboard else (''))
+def format_variable(variable, node_name, variables, use_next, not_next):
+    if len(variables[variable.name]['next_value']) == 0:
+        variables[variable.name]['keep_stage_0'] = True
+    if use_next and variable.name == not_next:
+        return 'LINK_TO_PREVIOUS_FINAL_' + variables[variable.name]['prefix'] + variable.name
+    return (('' if not use_next else 'next(')
             + variables[variable.name]['prefix']
             + variable.name
-            + compute_stage(variable.name, variables, use_stages)
-            + ('' if (len(variables[variable.name]['next_value']) == 0 or not use_next) else ')'))
+            + compute_stage(variable.name, variables)
+            + ('' if not use_next else ')'))
 
 
-def format_function(code, node_name, variables, use_stages, call_blackboard, use_next):
+def format_function(code, node_name, variables, use_next, not_next):
     return (
-        (FUNCTION_FORMAT[code.function_call.function_name][0] + '(' + format_code(code.function_call.value1, node_name, variables, use_stages, call_blackboard, use_next) + ')') if FUNCTION_FORMAT[code.function_call.function_name][1] == 0 else (
-            (FUNCTION_FORMAT[code.function_call.function_name][0] + '(' + format_code(code.function_call.value1, node_name, variables, use_stages, call_blackboard, use_next) + ', ' + format_code(code.function_call.value2, node_name, variables, use_stages, call_blackboard, use_next) + ')') if FUNCTION_FORMAT[code.function_call.function_name][1] == 1 else (
-                format_code(code.function_call.value1, node_name, variables, use_stages, call_blackboard, use_next) + ' ' + FUNCTION_FORMAT[code.function_call.function_name][0] + ' ' + format_code(code.function_call.value2, node_name, variables, use_stages, call_blackboard, use_next) if FUNCTION_FORMAT[code.function_call.function_name][1] == 2 else (
+        (FUNCTION_FORMAT[code.function_call.function_name][0] + '(' + format_code(code.function_call.value1, node_name, variables, use_next, not_next) + ')') if FUNCTION_FORMAT[code.function_call.function_name][1] == 0 else (
+            (FUNCTION_FORMAT[code.function_call.function_name][0] + '(' + format_code(code.function_call.value1, node_name, variables, use_next, not_next) + ', ' + format_code(code.function_call.value2, node_name, variables, use_next, not_next) + ')') if FUNCTION_FORMAT[code.function_call.function_name][1] == 1 else (
+                format_code(code.function_call.value1, node_name, variables, use_next, not_next) + ' ' + FUNCTION_FORMAT[code.function_call.function_name][0] + ' ' + format_code(code.function_call.value2, node_name, variables, use_next, not_next) if FUNCTION_FORMAT[code.function_call.function_name][1] == 2 else (
                     '{'
                     +
-                    ', '.join([format_code(value, node_name, variables, use_stages, call_blackboard, use_next) for value in code.function_call.values])
+                    ', '.join([format_code(value, node_name, variables, use_next, not_next) for value in code.function_call.values])
                     +
                     '}'
                 )
@@ -108,12 +111,12 @@ def format_function(code, node_name, variables, use_stages, call_blackboard, use
     )
 
 
-def format_code(code, node_name, variables, use_stages, call_blackboard, use_next):
+def format_code(code, node_name, variables, use_next, not_next):
     return (
         (str(code.constant).upper() if isinstance(code.constant, bool) else str(code.constant)) if code.constant is not None else (
-            (format_variable(code.variable, node_name, variables, use_stages, call_blackboard, use_next)) if code.variable is not None else (
-                ('(' + format_code(code.CodeStatement, node_name, variables, use_stages, call_blackboard, use_next) + ')') if code.CodeStatement is not None else (
-                    format_function(code, node_name, variables, use_stages, call_blackboard, use_next)
+            (format_variable(code.variable, node_name, variables, use_next, not_next)) if code.variable is not None else (
+                ('(' + format_code(code.CodeStatement, node_name, variables, use_next, not_next) + ')') if code.CodeStatement is not None else (
+                    format_function(code, node_name, variables, use_next, not_next)
                 )
             )
         )
@@ -186,7 +189,7 @@ def walk_tree_recursive(metamodel, current_node, parent_name, nodes, node_names,
             if parent_name is not None:
                 nodes[parent_name]['children'].append(node_name)
 
-            variable_name = format_variable(check.bbvar, node_name, variables, True, False, False)
+            variable_name = format_variable(check.bbvar, node_name, variables, False, None)
 
             nodes[node_name] = create_node_template(node_name, parent_name,
                                                     'leaf', 'check',
@@ -214,7 +217,7 @@ def walk_tree_recursive(metamodel, current_node, parent_name, nodes, node_names,
             if parent_name is not None:
                 nodes[parent_name]['children'].append(node_name)
 
-            variable_name = format_variable(check.bbvar, node_name, variables, True, False, False)
+            variable_name = format_variable(check.bbvar, node_name, variables, False, None)
 
             nodes[node_name] = create_node_template(node_name, parent_name,
                                                     'leaf', 'check',
@@ -248,10 +251,19 @@ def walk_tree_recursive(metamodel, current_node, parent_name, nodes, node_names,
 
             for set_var in task.set_vars:
                 variable_name = set_var.variable.name
+                keep_stage_0 = variables[variable_name]['keep_stage_0']
                 non_determinism = is_nondeterministic(set_var.default_update) or any([is_nondeterministic(update.update_value) for update in set_var.updates])
-                variables[variable_name]['next_value'].append((node_name,
-                                                               non_determinism,
-                                                               make_new_stage(set_var, node_name, variables, True, False, False)))
+                keep_stage_0 = keep_stage_0 or (not non_determinism)  # if stage_1 is deterministic, then we keep stage 0.
+                if (keep_stage_0 or len(variables[variable_name]['next_value']) > 0):
+                    # nothing fancy, just add it
+                    variables[variable_name]['next_value'].append((node_name,
+                                                                   non_determinism,
+                                                                   make_new_stage(set_var, node_name, variables, False, None)))
+                else:
+                    variables[variable_name]['next_value'].append((node_name,
+                                                                   non_determinism,
+                                                                   make_new_stage(set_var, node_name, variables, True, variable_name)))
+                variables[variable_name]['keep_stage_0'] = keep_stage_0  # reset keep_stage_0 (or properly mark it if non_determinism changed it)
 
     elif textx.textx_isinstance(current_node, metamodel['MonBTNode']):
         for mon in current_node.mon:
@@ -278,36 +290,44 @@ def walk_tree_recursive(metamodel, current_node, parent_name, nodes, node_names,
             variables[node_name + '_update_success'] = create_variable_template(node_name + '_update_success', 'VAR',
                                                                                 '{TRUE, FALSE}', 0, 1, None,
                                                                                 [])
-            # this version doesn't use stages. it can update to whatever it wants.
-
-            # variables[node_name + '_update_success'] = create_variable_template(node_name + '_update_success', 'VAR',
-            #                                                                     '{TRUE, FALSE}', 0, 1, None,
-            #                                                                     [(node_name, True, [('TRUE', '{TRUE, FALSE}')])])
-            # this version uses node_name to reduce reachable_states
-
-            # variables[node_name + '_update_success'] = create_variable_template(node_name + '_update_success', 'VAR',
-            #                                                                     '{TRUE, FALSE}', 0, 1, None,
-            #                                                                     [(None, True, [('TRUE', '{TRUE, FALSE}')])])
-            # no node name so that it always updates. this hopefully reduces the number of dependencies.
 
             if (mon.topic_bbvar.name) in variables and (not mon.ignore_topic):
                 variable = variables[mon.topic_bbvar.name]
-                variable['next_value'].append((node_name,
-                                               True,  # this is assumed to be non_deterministic
-                                               [(node_name + '_update_success',
-                                                 (('{' + ', '.join(map(str, range(variable['min_value'], variable['max_value'] + 1))) + '}') if variable['custom_value_range'] is None else (
-                                                     variable['custom_value_range']))),
-                                                ('TRUE',
-                                                 format_variable(mon.topic_bbvar, node_name, variables, True, False, False))
-                                                ]))
+                if variable['keep_stage_0'] or len(variable['next_value']) > 0:
+                    variable['next_value'].append((node_name,
+                                                   True,  # this is assumed to be non_deterministic
+                                                   [(node_name + '_update_success',
+                                                     (('{' + ', '.join(map(str, range(variable['min_value'], variable['max_value'] + 1))) + '}') if variable['custom_value_range'] is None else (
+                                                         variable['custom_value_range']))),
+                                                    ('TRUE',
+                                                     format_variable(mon.topic_bbvar, node_name, variables, False, None))
+                                                    ]))
+                else:
+                    variable['next_value'].append((node_name,
+                                                   True,  # this is assumed to be non_deterministic
+                                                   [('next(' + node_name + '_update_success)',
+                                                     (('{' + ', '.join(map(str, range(variable['min_value'], variable['max_value'] + 1))) + '}') if variable['custom_value_range'] is None else (
+                                                         variable['custom_value_range']))),
+                                                    ('TRUE',
+                                                     format_variable(mon.topic_bbvar, node_name, variables, True, mon.topic_bbvar.name))
+                                                    ]))
+                    variable['keep_stage_0'] = False
 
             for set_var in mon.set_vars:
                 variable_name = set_var.variable.name
+                keep_stage_0 = variables[variable_name]['keep_stage_0']
                 non_determinism = is_nondeterministic(set_var.default_update) or any([is_nondeterministic(update.update_value) for update in set_var.updates])
-                variables[variable_name]['next_value'].append((node_name,
-                                                               non_determinism,
-                                                               [('(' + node_name + '_update_success = FALSE)', format_variable(set_var.variable, node_name, variables, True, False, False))]
-                                                               + make_new_stage(set_var, node_name, variables, True, False, False)))
+                keep_stage_0 = keep_stage_0 or (not non_determinism)  # if stage_1 is deterministic, then we keep stage 0.
+                if (keep_stage_0 or len(variables[variable_name]['next_value']) > 0):
+                    # nothing fancy, just add it
+                    variables[variable_name]['next_value'].append((node_name,
+                                                                   non_determinism,
+                                                                   make_new_stage(set_var, node_name, variables, False, None)))
+                else:
+                    variables[variable_name]['next_value'].append((node_name,
+                                                                   non_determinism,
+                                                                   make_new_stage(set_var, node_name, variables, True, variable_name)))
+                variables[variable_name]['keep_stage_0'] = keep_stage_0  # reset keep_stage_0 (or properly mark it if non_determinism changed it)
 
     elif textx.textx_isinstance(current_node, metamodel['TimerBTNode']):
         nodes[node_name] = create_node_template(node_name, parent_name,

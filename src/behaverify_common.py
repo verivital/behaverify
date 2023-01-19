@@ -10,8 +10,9 @@
 
 # -----------------------------------------------------------------------------------------------------------------------
 
-def create_variable_template(name, mode, custom_value_range, min_value, max_value, initial_value, next_value):
+def create_variable_template(name, mode, custom_value_range, min_value, max_value, initial_value, next_value, prefix = ''):
     return {
+        'prefix' : prefix,
         'name' : name,
         'mode' : mode,
         'custom_value_range' : custom_value_range,
@@ -19,6 +20,20 @@ def create_variable_template(name, mode, custom_value_range, min_value, max_valu
         'max_value' : max_value,
         'initial_value' : initial_value,
         'next_value' : next_value
+    }
+
+
+def create_variable_template_keep_stage(name, mode, custom_value_range, min_value, max_value, initial_value, next_value, prefix = '', keep_stage_0 = True):
+    return {
+        'prefix' : prefix,
+        'name' : name,
+        'mode' : mode,
+        'custom_value_range' : custom_value_range,
+        'min_value' : min_value,
+        'max_value' : max_value,
+        'initial_value' : initial_value,
+        'next_value' : next_value,
+        'keep_stage_0' : keep_stage_0
     }
 
 

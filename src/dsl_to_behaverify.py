@@ -26,7 +26,7 @@ def get_variables(model):
                                           (None if variable.domain.min_val is not None else ('{TRUE, FALSE}' if variable.domain.boolean is not None else ('{' + ', '.join(variable.domain.enums) + '}'))),
                                           0 if variable.domain.min_val is None else variable.domain.min_val,
                                           1 if variable.domain.min_val is None else variable.domain.max_val,
-                                          None, []
+                                          None, [], 'var_'
                                           )
                  for variable in itertools.chain(model.variables, model.environment_variables)}
     local_variables = {variable.name :
@@ -34,7 +34,7 @@ def get_variables(model):
                                                 (None if variable.domain.min_val is not None else ('{TRUE, FALSE}' if variable.domain.boolean is not None else ('{' + ', '.join(variable.domain.enums) + '}'))),
                                                 0 if variable.domain.min_val is None else variable.domain.min_val,
                                                 1 if variable.domain.min_val is None else variable.domain.max_val,
-                                                None, []
+                                                None, [], 'local'
                                                 )
                        for variable in model.local_variables}
     return (variables, local_variables)

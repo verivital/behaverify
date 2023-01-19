@@ -121,46 +121,45 @@ MODULE main
 				!(speed_max_task.active) : var_HSD_out_stage_2;
 				TRUE : uuv_max_speed;
 			esac;
+		LINK_TO_PREVIOUS_FINAL_var_battery := var_battery_stage_1;
 		var_battery_low_warning_stage_1 := 
 			case
 				!(battery2bb.active) : var_battery_low_warning;
-				(battery2bb_update_success = FALSE) : var_battery_low_warning;
 				TRUE : var_battery_stage_1 <= 0;
 			esac;
 		var_bb_fls_warning_stage_1 := 
 			case
 				!(fls_warning2bb.active) : var_bb_fls_warning;
-				(fls_warning2bb_update_success = FALSE) : var_bb_fls_warning;
 				TRUE : var_bb_fls_warning | var_obstacle_in_view_stage_1;
 			esac;
+		LINK_TO_PREVIOUS_FINAL_var_bb_geofence := var_bb_geofence_stage_1;
 		var_bb_geofence_warning_stage_1 := 
 			case
 				!(geofence2bb.active) : var_bb_geofence_warning;
-				(geofence2bb_update_success = FALSE) : var_bb_geofence_warning;
 				TRUE : var_bb_geofence_warning | var_bb_geofence_stage_1;
 			esac;
+		LINK_TO_PREVIOUS_FINAL_var_bb_home_dist := var_bb_home_dist_stage_2;
 		var_bb_home_reached_stage_1 := 
 			case
 				!(home2bb.active) : var_bb_home_reached;
-				(home2bb_update_success = FALSE) : var_bb_home_reached;
 				TRUE : var_bb_home_reached | var_bb_home_dist_stage_1 < 15;
 			esac;
 		var_bb_home_reached_stage_2 := 
 			case
 				!(home2bb_1.active) : var_bb_home_reached_stage_1;
-				(home2bb_1_update_success = FALSE) : var_bb_home_reached_stage_1;
 				TRUE : var_bb_home_reached_stage_1 | var_bb_home_dist_stage_2 < 15;
 			esac;
+		LINK_TO_PREVIOUS_FINAL_var_bb_obstacle_warning := var_bb_obstacle_warning_stage_1;
 		var_bb_pipe_lost_warning_stage_1 := 
 			case
 				!(pipe_lost2bb.active) : var_bb_pipe_lost_warning;
-				(pipe_lost2bb_update_success = FALSE) : var_bb_pipe_lost_warning;
 				TRUE : var_bb_pipelost_stage_1 & var_bb_mission = pipe_following;
 			esac;
+		LINK_TO_PREVIOUS_FINAL_var_bb_pipelost := var_bb_pipelost_stage_1;
+		LINK_TO_PREVIOUS_FINAL_var_bb_rth := var_bb_rth_stage_1;
 		var_bb_rth_warning_stage_1 := 
 			case
 				!(rth2bb.active) : var_bb_rth_warning;
-				(rth2bb_update_success = FALSE) : var_bb_rth_warning;
 				TRUE : var_bb_rth_warning | var_bb_rth_stage_1;
 			esac;
 		var_bb_rth_warning_stage_2 := 
@@ -169,12 +168,13 @@ MODULE main
 				var_next_mission : var_finished_missions_stage_1;
 				TRUE : var_bb_rth_warning_stage_1;
 			esac;
+		LINK_TO_PREVIOUS_FINAL_var_bb_sensor_failure := var_bb_sensor_failure_stage_1;
 		var_bb_sensor_failure_warning_stage_1 := 
 			case
 				!(sensor_failure2bb.active) : var_bb_sensor_failure_warning;
-				(sensor_failure2bb_update_success = FALSE) : var_bb_sensor_failure_warning;
 				TRUE : var_bb_sensor_failure_warning | var_bb_sensor_failure_stage_1;
 			esac;
+		LINK_TO_PREVIOUS_FINAL_var_bb_waypoints_completed := var_bb_waypoints_completed_stage_1;
 		var_cm_hsd_input_stage_1 := 
 			case
 				!(obstacle_avoidance.active) : var_cm_hsd_input;
@@ -241,22 +241,20 @@ MODULE main
 				!(loiter_task_2.active) : var_cm_hsd_input_stage_12;
 				TRUE : cm_loiter_task;
 			esac;
+		LINK_TO_PREVIOUS_FINAL_var_dd_output := var_dd_output_stage_1;
 		var_dd_xy_axis_degradation_stage_1 := 
 			case
 				!(ddlec2bb.active) : var_dd_xy_axis_degradation;
-				(ddlec2bb_update_success = FALSE) : var_dd_xy_axis_degradation;
 				TRUE : var_dd_output_stage_1 = xy_warn | var_dd_xy_axis_degradation & !(var_dd_output_stage_1 = safe);
 			esac;
 		var_dd_z_axis_warning_stage_1 := 
 			case
 				!(ddlec2bb.active) : var_dd_z_axis_warning;
-				(ddlec2bb_update_success = FALSE) : var_dd_z_axis_warning;
 				TRUE : var_dd_output_stage_1 = z_warn | var_dd_z_axis_warning & !(var_dd_output_stage_1 = safe);
 			esac;
 		var_emergency_stop_warning_stage_1 := 
 			case
 				!(fls_warning2bb.active) : var_emergency_stop_warning;
-				(fls_warning2bb_update_success = FALSE) : var_emergency_stop_warning;
 				TRUE : var_emergency_stop_warning | var_obstacle_in_view_stage_1;
 			esac;
 		var_emergency_stop_warning_stage_2 := 
@@ -265,28 +263,28 @@ MODULE main
 				var_next_mission & !(var_finished_missions_stage_1) & e_stop = var_bb_mission_stage_1 : TRUE;
 				TRUE : var_emergency_stop_warning_stage_1;
 			esac;
+		LINK_TO_PREVIOUS_FINAL_var_finished_missions := var_finished_missions_stage_1;
+		LINK_TO_PREVIOUS_FINAL_var_fls_range := var_fls_range_stage_1;
+		LINK_TO_PREVIOUS_FINAL_var_lec2_am_l := var_lec2_am_l_stage_1;
 		var_lec2_am_l_pipe_warning_stage_1 := 
 			case
 				!(lec2_am_l_2bb.active) : var_lec2_am_l_pipe_warning;
-				(lec2_am_l_2bb_update_success = FALSE) : var_lec2_am_l_pipe_warning;
 				TRUE : var_lec2_am_l_stage_1 = pipe | var_lec2_am_l_stage_1 = speed_pipe;
 			esac;
 		var_lec2_am_l_speed_warning_stage_1 := 
 			case
 				!(lec2_am_l_2bb.active) : var_lec2_am_l_speed_warning;
-				(lec2_am_l_2bb_update_success = FALSE) : var_lec2_am_l_speed_warning;
 				TRUE : var_lec2_am_l_stage_1 = speed | var_lec2_am_l_stage_1 = speed_pipe;
 			esac;
+		LINK_TO_PREVIOUS_FINAL_var_lec2_am_r := var_lec2_am_r_stage_1;
 		var_lec2_am_r_pipe_warning_stage_1 := 
 			case
 				!(lec2_am_r_2bb.active) : var_lec2_am_r_pipe_warning;
-				(lec2_am_r_2bb_update_success = FALSE) : var_lec2_am_r_pipe_warning;
 				TRUE : var_lec2_am_r_stage_1 = pipe | var_lec2_am_r_stage_1 = speed_pipe;
 			esac;
 		var_lec2_am_r_speed_warning_stage_1 := 
 			case
 				!(lec2_am_r_2bb.active) : var_lec2_am_r_speed_warning;
-				(lec2_am_r_2bb_update_success = FALSE) : var_lec2_am_r_speed_warning;
 				TRUE : var_lec2_am_r_stage_1 = speed | var_lec2_am_r_stage_1 = speed_pipe;
 			esac;
 		var_next_mission_stage_1 := 
@@ -299,10 +297,10 @@ MODULE main
 				!(next_mission.active) : var_next_mission_stage_1;
 				TRUE : TRUE;
 			esac;
+		LINK_TO_PREVIOUS_FINAL_var_obstacle_in_view := var_obstacle_in_view_stage_1;
 		var_obstacle_standoff_warning_stage_1 := 
 			case
 				!(fls2bb.active) : var_obstacle_standoff_warning;
-				(fls2bb_update_success = FALSE) : var_obstacle_standoff_warning;
 				TRUE : var_fls_range_stage_1 = danger_zone;
 			esac;
 		var_pipe_mapping_enable_stage_1 := 
@@ -323,13 +321,12 @@ MODULE main
 		var_rtreach_long_term_warning_stage_1 := 
 			case
 				!(rtreach2bb.active) : var_rtreach_long_term_warning;
-				(rtreach2bb_update_success = FALSE) : var_rtreach_long_term_warning;
 				TRUE : var_rtreach_result_stage_1 = long | var_rtreach_result_stage_1 = short_long;
 			esac;
+		LINK_TO_PREVIOUS_FINAL_var_rtreach_result := var_rtreach_result_stage_1;
 		var_rtreach_warning_stage_1 := 
 			case
 				!(rtreach2bb.active) : var_rtreach_warning;
-				(rtreach2bb_update_success = FALSE) : var_rtreach_warning;
 				TRUE : var_rtreach_result_stage_1 = short | var_rtreach_result_stage_1 = short_long;
 			esac;
 		--END OF BLACKBOARD DEFINITIONS
@@ -436,56 +433,43 @@ MODULE main
 		waypoints_sif_1 : composite_selector_without_memory_2(check_waypoints_completed, waypoint_end);
 		--START OF BLACKBOARD VARIABLES DECLARATION
 		var_HSD_out : {uuv_min_speed, uuv_max_speed};
-		var_battery : 0..1;
 		var_battery_stage_1 : 0..1;
 		battery2bb_update_success : boolean;
 		var_battery_low_warning : boolean;
 		var_bb_fls_warning : boolean;
-		var_bb_geofence : boolean;
 		var_bb_geofence_stage_1 : boolean;
 		var_bb_geofence_warning : boolean;
-		var_bb_home_dist : {10, 100};
 		var_bb_home_dist_stage_1 : {10, 100};
 		var_bb_home_dist_stage_2 : {10, 100};
 		var_bb_home_reached : boolean;
 		var_bb_mission : {waypoint_following, e_stop, pipe_following};
 		var_bb_mission_stage_1 : {waypoint_following, e_stop, pipe_following};
-		var_bb_obstacle_warning : boolean;
 		var_bb_obstacle_warning_stage_1 : boolean;
 		var_bb_pipe_lost_warning : boolean;
 		var_bb_pipe_mapping_enable : boolean;
-		var_bb_pipelost : boolean;
 		var_bb_pipelost_stage_1 : boolean;
-		var_bb_rth : boolean;
 		var_bb_rth_stage_1 : boolean;
 		var_bb_rth_warning : boolean;
-		var_bb_sensor_failure : boolean;
 		var_bb_sensor_failure_stage_1 : boolean;
 		var_bb_sensor_failure_warning : boolean;
-		var_bb_waypoints_completed : boolean;
 		var_bb_waypoints_completed_stage_1 : boolean;
 		var_cm_hsd_input : {cm_surface_task, cm_rth_task, cm_loiter_task, cm_obstacle_avoidance_task, cm_tracking_task, cm_waypoint_task};
-		var_dd_output : {safe, xy_warn, z_warn};
 		var_dd_output_stage_1 : {safe, xy_warn, z_warn};
 		var_dd_xy_axis_degradation : boolean;
 		var_dd_z_axis_warning : boolean;
 		ddlec2bb_update_success : boolean;
 		var_emergency_stop_warning : boolean;
-		var_finished_missions : boolean;
 		var_finished_missions_stage_1 : boolean;
 		fls2bb_update_success : boolean;
-		var_fls_range : {danger_zone, safe};
 		var_fls_range_stage_1 : {danger_zone, safe};
 		fls_warning2bb_update_success : boolean;
 		geofence2bb_update_success : boolean;
 		home2bb_1_update_success : boolean;
 		home2bb_update_success : boolean;
-		var_lec2_am_l : {safe, speed, pipe, speed_pipe};
 		var_lec2_am_l_stage_1 : {safe, speed, pipe, speed_pipe};
 		lec2_am_l_2bb_update_success : boolean;
 		var_lec2_am_l_pipe_warning : boolean;
 		var_lec2_am_l_speed_warning : boolean;
-		var_lec2_am_r : {safe, speed, pipe, speed_pipe};
 		var_lec2_am_r_stage_1 : {safe, speed, pipe, speed_pipe};
 		lec2_am_r_2bb_update_success : boolean;
 		var_lec2_am_r_pipe_warning : boolean;
@@ -493,7 +477,6 @@ MODULE main
 		var_lec_dd_am : boolean;
 		var_lec_dd_am_warning : boolean;
 		var_next_mission : boolean;
-		var_obstacle_in_view : boolean;
 		var_obstacle_in_view_stage_1 : boolean;
 		var_obstacle_standoff_warning : boolean;
 		pipe_lost2bb_update_success : boolean;
@@ -502,7 +485,6 @@ MODULE main
 		rtreach2bb_update_success : boolean;
 		rtreach_index2bb_update_success : boolean;
 		var_rtreach_long_term_warning : boolean;
-		var_rtreach_result : {safe, short, long, short_long};
 		var_rtreach_result_stage_1 : {safe, short, long, short_long};
 		rtreach_unsafe_value2bb_update_success : boolean;
 		var_rtreach_warning : boolean;
@@ -512,7 +494,7 @@ MODULE main
 	ASSIGN
 		init(resume_from_here_in_subtree__priorities) := 24;
 		--START OF BLACKBOARD VARIABLES INITIALIZATION
-		init(var_battery) := 
+		init(var_battery_stage_1) := 
 			case
 				TRUE : 1;
 			esac;
@@ -524,7 +506,7 @@ MODULE main
 			case
 				TRUE : FALSE;
 			esac;
-		init(var_bb_geofence) := 
+		init(var_bb_geofence_stage_1) := 
 			case
 				TRUE : FALSE;
 			esac;
@@ -532,7 +514,7 @@ MODULE main
 			case
 				TRUE : FALSE;
 			esac;
-		init(var_bb_home_dist) := 
+		init(var_bb_home_dist_stage_1) := 
 			case
 				TRUE : 10;
 			esac;
@@ -540,7 +522,7 @@ MODULE main
 			case
 				TRUE : FALSE;
 			esac;
-		init(var_bb_obstacle_warning) := 
+		init(var_bb_obstacle_warning_stage_1) := 
 			case
 				TRUE : FALSE;
 			esac;
@@ -552,11 +534,11 @@ MODULE main
 			case
 				TRUE : FALSE;
 			esac;
-		init(var_bb_pipelost) := 
+		init(var_bb_pipelost_stage_1) := 
 			case
 				TRUE : FALSE;
 			esac;
-		init(var_bb_rth) := 
+		init(var_bb_rth_stage_1) := 
 			case
 				TRUE : FALSE;
 			esac;
@@ -564,7 +546,7 @@ MODULE main
 			case
 				TRUE : FALSE;
 			esac;
-		init(var_bb_sensor_failure) := 
+		init(var_bb_sensor_failure_stage_1) := 
 			case
 				TRUE : FALSE;
 			esac;
@@ -572,7 +554,7 @@ MODULE main
 			case
 				TRUE : FALSE;
 			esac;
-		init(var_bb_waypoints_completed) := 
+		init(var_bb_waypoints_completed_stage_1) := 
 			case
 				TRUE : FALSE;
 			esac;
@@ -588,11 +570,11 @@ MODULE main
 			case
 				TRUE : FALSE;
 			esac;
-		init(var_finished_missions) := 
+		init(var_finished_missions_stage_1) := 
 			case
 				TRUE : FALSE;
 			esac;
-		init(var_fls_range) := 
+		init(var_fls_range_stage_1) := 
 			case
 				TRUE : safe;
 			esac;
@@ -624,7 +606,7 @@ MODULE main
 			case
 				TRUE : FALSE;
 			esac;
-		init(var_obstacle_in_view) := 
+		init(var_obstacle_in_view_stage_1) := 
 			case
 				TRUE : FALSE;
 			esac;
@@ -653,29 +635,26 @@ MODULE main
 			esac;
 		--START OF BLACKBOARD VARIABLES TRANSITION
 		next(var_HSD_out) := var_HSD_out_stage_3;
-		next(var_battery) := var_battery_stage_1;
-		var_battery_stage_1 := 
+		next(var_battery_stage_1) := 
 			case
-				!(battery2bb.active) : var_battery;
-				battery2bb_update_success : {0, 1};
-				TRUE : var_battery;
+				next(!(battery2bb.active)) : LINK_TO_PREVIOUS_FINAL_var_battery;
+				next(battery2bb_update_success) : {0, 1};
+				TRUE : LINK_TO_PREVIOUS_FINAL_var_battery;
 			esac;
 		next(var_battery_low_warning) := var_battery_low_warning_stage_1;
 		next(var_bb_fls_warning) := var_bb_fls_warning_stage_1;
-		next(var_bb_geofence) := var_bb_geofence_stage_1;
-		var_bb_geofence_stage_1 := 
+		next(var_bb_geofence_stage_1) := 
 			case
-				!(geofence2bb.active) : var_bb_geofence;
-				geofence2bb_update_success : {TRUE, FALSE};
-				TRUE : var_bb_geofence;
+				next(!(geofence2bb.active)) : LINK_TO_PREVIOUS_FINAL_var_bb_geofence;
+				next(geofence2bb_update_success) : {TRUE, FALSE};
+				TRUE : LINK_TO_PREVIOUS_FINAL_var_bb_geofence;
 			esac;
 		next(var_bb_geofence_warning) := var_bb_geofence_warning_stage_1;
-		next(var_bb_home_dist) := var_bb_home_dist_stage_2;
-		var_bb_home_dist_stage_1 := 
+		next(var_bb_home_dist_stage_1) := 
 			case
-				!(home2bb.active) : var_bb_home_dist;
-				home2bb_update_success : {10, 100};
-				TRUE : var_bb_home_dist;
+				next(!(home2bb.active)) : LINK_TO_PREVIOUS_FINAL_var_bb_home_dist;
+				next(home2bb_update_success) : {10, 100};
+				TRUE : LINK_TO_PREVIOUS_FINAL_var_bb_home_dist;
 			esac;
 		var_bb_home_dist_stage_2 := 
 			case
@@ -691,107 +670,97 @@ MODULE main
 				var_next_mission & !(var_finished_missions_stage_1) : {waypoint_following, e_stop, pipe_following};
 				TRUE : var_bb_mission;
 			esac;
-		next(var_bb_obstacle_warning) := var_bb_obstacle_warning_stage_1;
-		var_bb_obstacle_warning_stage_1 := 
+		next(var_bb_obstacle_warning_stage_1) := 
 			case
-				!(obstacle_avoidance.active) : var_bb_obstacle_warning;
+				next(!(obstacle_avoidance.active)) : LINK_TO_PREVIOUS_FINAL_var_bb_obstacle_warning;
 				TRUE : {TRUE, FALSE};
 			esac;
 		next(var_bb_pipe_lost_warning) := var_bb_pipe_lost_warning_stage_1;
-		next(var_bb_pipelost) := var_bb_pipelost_stage_1;
-		var_bb_pipelost_stage_1 := 
+		next(var_bb_pipelost_stage_1) := 
 			case
-				!(pipe_lost2bb.active) : var_bb_pipelost;
-				pipe_lost2bb_update_success : {TRUE, FALSE};
-				TRUE : var_bb_pipelost;
+				next(!(pipe_lost2bb.active)) : LINK_TO_PREVIOUS_FINAL_var_bb_pipelost;
+				next(pipe_lost2bb_update_success) : {TRUE, FALSE};
+				TRUE : LINK_TO_PREVIOUS_FINAL_var_bb_pipelost;
 			esac;
-		next(var_bb_rth) := var_bb_rth_stage_1;
-		var_bb_rth_stage_1 := 
+		next(var_bb_rth_stage_1) := 
 			case
-				!(rth2bb.active) : var_bb_rth;
-				rth2bb_update_success : {TRUE, FALSE};
-				TRUE : var_bb_rth;
+				next(!(rth2bb.active)) : LINK_TO_PREVIOUS_FINAL_var_bb_rth;
+				next(rth2bb_update_success) : {TRUE, FALSE};
+				TRUE : LINK_TO_PREVIOUS_FINAL_var_bb_rth;
 			esac;
 		next(var_bb_rth_warning) := var_bb_rth_warning_stage_2;
-		next(var_bb_sensor_failure) := var_bb_sensor_failure_stage_1;
-		var_bb_sensor_failure_stage_1 := 
+		next(var_bb_sensor_failure_stage_1) := 
 			case
-				!(sensor_failure2bb.active) : var_bb_sensor_failure;
-				sensor_failure2bb_update_success : {TRUE, FALSE};
-				TRUE : var_bb_sensor_failure;
+				next(!(sensor_failure2bb.active)) : LINK_TO_PREVIOUS_FINAL_var_bb_sensor_failure;
+				next(sensor_failure2bb_update_success) : {TRUE, FALSE};
+				TRUE : LINK_TO_PREVIOUS_FINAL_var_bb_sensor_failure;
 			esac;
 		next(var_bb_sensor_failure_warning) := var_bb_sensor_failure_warning_stage_1;
-		next(var_bb_waypoints_completed) := var_bb_waypoints_completed_stage_1;
-		var_bb_waypoints_completed_stage_1 := 
+		next(var_bb_waypoints_completed_stage_1) := 
 			case
-				!(waypoints_completed2bb.active) : var_bb_waypoints_completed;
-				waypoints_completed2bb_update_success : {TRUE, FALSE};
-				TRUE : var_bb_waypoints_completed;
+				next(!(waypoints_completed2bb.active)) : LINK_TO_PREVIOUS_FINAL_var_bb_waypoints_completed;
+				next(waypoints_completed2bb_update_success) : {TRUE, FALSE};
+				TRUE : LINK_TO_PREVIOUS_FINAL_var_bb_waypoints_completed;
 			esac;
 		next(var_cm_hsd_input) := var_cm_hsd_input_stage_13;
-		next(var_dd_output) := var_dd_output_stage_1;
-		var_dd_output_stage_1 := 
+		next(var_dd_output_stage_1) := 
 			case
-				!(ddlec2bb.active) : var_dd_output;
-				ddlec2bb_update_success : {safe, xy_warn, z_warn};
-				TRUE : var_dd_output;
+				next(!(ddlec2bb.active)) : LINK_TO_PREVIOUS_FINAL_var_dd_output;
+				next(ddlec2bb_update_success) : {safe, xy_warn, z_warn};
+				TRUE : LINK_TO_PREVIOUS_FINAL_var_dd_output;
 			esac;
 		next(var_dd_xy_axis_degradation) := var_dd_xy_axis_degradation_stage_1;
 		next(var_dd_z_axis_warning) := var_dd_z_axis_warning_stage_1;
 		next(var_emergency_stop_warning) := var_emergency_stop_warning_stage_2;
-		next(var_finished_missions) := var_finished_missions_stage_1;
-		var_finished_missions_stage_1 := 
+		next(var_finished_missions_stage_1) := 
 			case
-				!(mission_server.active) : var_finished_missions;
-				var_next_mission & var_finished_missions : {TRUE, FALSE};
-				TRUE : var_finished_missions;
+				next(!(mission_server.active)) : LINK_TO_PREVIOUS_FINAL_var_finished_missions;
+				next(var_next_mission) & LINK_TO_PREVIOUS_FINAL_var_finished_missions : {TRUE, FALSE};
+				TRUE : LINK_TO_PREVIOUS_FINAL_var_finished_missions;
 			esac;
-		next(var_fls_range) := var_fls_range_stage_1;
-		var_fls_range_stage_1 := 
+		next(var_fls_range_stage_1) := 
 			case
-				!(fls2bb.active) : var_fls_range;
-				fls2bb_update_success : {danger_zone, safe};
-				TRUE : var_fls_range;
+				next(!(fls2bb.active)) : LINK_TO_PREVIOUS_FINAL_var_fls_range;
+				next(fls2bb_update_success) : {danger_zone, safe};
+				TRUE : LINK_TO_PREVIOUS_FINAL_var_fls_range;
 			esac;
-		next(var_lec2_am_l) := var_lec2_am_l_stage_1;
-		var_lec2_am_l_stage_1 := 
+		next(var_lec2_am_l_stage_1) := 
 			case
-				!(lec2_am_l_2bb.active) : var_lec2_am_l;
-				lec2_am_l_2bb_update_success : {safe, speed, pipe, speed_pipe};
-				TRUE : var_lec2_am_l;
+				next(!(lec2_am_l_2bb.active)) : LINK_TO_PREVIOUS_FINAL_var_lec2_am_l;
+				next(lec2_am_l_2bb_update_success) : {safe, speed, pipe, speed_pipe};
+				TRUE : LINK_TO_PREVIOUS_FINAL_var_lec2_am_l;
 			esac;
 		next(var_lec2_am_l_pipe_warning) := var_lec2_am_l_pipe_warning_stage_1;
 		next(var_lec2_am_l_speed_warning) := var_lec2_am_l_speed_warning_stage_1;
-		next(var_lec2_am_r) := var_lec2_am_r_stage_1;
-		var_lec2_am_r_stage_1 := 
+		next(var_lec2_am_r_stage_1) := 
 			case
-				!(lec2_am_r_2bb.active) : var_lec2_am_r;
-				lec2_am_r_2bb_update_success : {safe, speed, pipe, speed_pipe};
-				TRUE : var_lec2_am_r;
+				next(!(lec2_am_r_2bb.active)) : LINK_TO_PREVIOUS_FINAL_var_lec2_am_r;
+				next(lec2_am_r_2bb_update_success) : {safe, speed, pipe, speed_pipe};
+				TRUE : LINK_TO_PREVIOUS_FINAL_var_lec2_am_r;
 			esac;
 		next(var_lec2_am_r_pipe_warning) := var_lec2_am_r_pipe_warning_stage_1;
 		next(var_lec2_am_r_speed_warning) := var_lec2_am_r_speed_warning_stage_1;
 		next(var_next_mission) := var_next_mission_stage_2;
-		next(var_obstacle_in_view) := var_obstacle_in_view_stage_1;
-		var_obstacle_in_view_stage_1 := 
+		next(var_obstacle_in_view_stage_1) := 
 			case
-				!(fls_warning2bb.active) : var_obstacle_in_view;
-				fls_warning2bb_update_success : {TRUE, FALSE};
-				TRUE : var_obstacle_in_view;
+				next(!(fls_warning2bb.active)) : LINK_TO_PREVIOUS_FINAL_var_obstacle_in_view;
+				next(fls_warning2bb_update_success) : {TRUE, FALSE};
+				TRUE : LINK_TO_PREVIOUS_FINAL_var_obstacle_in_view;
 			esac;
 		next(var_obstacle_standoff_warning) := var_obstacle_standoff_warning_stage_1;
 		next(var_pipe_mapping_enable) := var_pipe_mapping_enable_stage_3;
 		next(var_rtreach_long_term_warning) := var_rtreach_long_term_warning_stage_1;
-		next(var_rtreach_result) := var_rtreach_result_stage_1;
-		var_rtreach_result_stage_1 := 
+		next(var_rtreach_result_stage_1) := 
 			case
-				!(rtreach2bb.active) : var_rtreach_result;
-				rtreach2bb_update_success : {safe, short, long, short_long};
-				TRUE : var_rtreach_result;
+				next(!(rtreach2bb.active)) : LINK_TO_PREVIOUS_FINAL_var_rtreach_result;
+				next(rtreach2bb_update_success) : {safe, short, long, short_long};
+				TRUE : LINK_TO_PREVIOUS_FINAL_var_rtreach_result;
 			esac;
 		next(var_rtreach_warning) := var_rtreach_warning_stage_1;
 		--END OF BLACKBOARD VARIABLES TRANSITION
 -- mission is pipetracking, obstacle avoidance triggered, prove pipetracking/waypoint is resumed?
+-- the mission isn't really suspended by obstacle avoidance.....
+
 -- intentionally break trees in order to prove these specs are actually relevant. make more .bt files in order to do this.
 
 -- see what happens if pipe mission actually ends. NO WAY TO DO THIS.
@@ -819,10 +788,22 @@ MODULE main
 -- --sensor failsafe is pernament
 -- LTLSPEC G (var_bb_sensor_failure_warning_stage_1 -> G (var_bb_sensor_failure_warning_stage_1)); -- true, it's pernament
 
--- --battery failsafe always results in a surface task
+-- --emergency failsafe always results in a surface task
 -- LTLSPEC G (var_emergency_stop_warning_stage_1 -> (surface_task.active | surface_task_1.active | surface_task_2.active | surface_task_3.active | surface_task_4.active)); -- true
--- --battery failsafe is pernament
+-- --emergency failsafe is pernament
 -- LTLSPEC G (var_emergency_stop_warning_stage_1 -> G (var_emergency_stop_warning_stage_1)); -- true, it's pernament
+
+-- --home_reached always results in a surface task
+-- LTLSPEC G (var_bb_home_reached_stage_1 -> (surface_task.active | surface_task_1.active | surface_task_2.active | surface_task_3.active | surface_task_4.active)); -- false
+-- LTLSPEC G (var_bb_home_reached_stage_1 -> X(surface_task.active | surface_task_1.active | surface_task_2.active | surface_task_3.active | surface_task_4.active)); -- true
+-- --home_reached is pernament
+-- LTLSPEC G (var_bb_home_reached_stage_1 -> G (var_bb_home_reached_stage_1)); -- true, it's pernament
+
+-- --obstacle_standoff always results in a surface task
+-- LTLSPEC G (var_obstacle_standoff_warning_stage_1 -> (surface_task.active | surface_task_1.active | surface_task_2.active | surface_task_3.active | surface_task_4.active)); -- true
+-- --obstacle_standoff is pernament
+-- LTLSPEC G (var_obstacle_standoff_warning_stage_1 -> G (var_obstacle_standoff_warning_stage_1)); -- this is false, var_obstacle_standoff_warning can be unset
+
 
 
 -- --surface task cannot be entered multiple times during a single tick
@@ -835,6 +816,18 @@ MODULE main
 
 -- --multiple failsafes can be activated
 -- LTLSPEC G (!(var_battery_low_warning_stage_1 & var_bb_geofence_warning_stage_1)); -- both can be set, this spec should be false.
+
+
+
+-- --the missions eventually run out
+-- LTLSPEC F (var_finished_missions_stage_1); -- this should be false.
+-- --honestly, no good way to do this without a bunch of restrictions.
+
+
+
+
+-- --the blueROV surfaces eventually
+-- LTLSPEC F (surface_task.active | surface_task_1.active | surface_task_2.active | surface_task_3.active | surface_task_4.active); -- this should be false, because missions don't need to end
 
 
 MODULE define_nodes
@@ -942,7 +935,7 @@ MODULE leaf_module(internal_status_module)
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status_module.internal_status : invalid;
-MODULE composite_parallel_success_on_all_without_memory_2(child_0, child_1)
+MODULE composite_parallel_success_on_all_without_memory_5(child_0, child_1, child_2, child_3, child_4)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
@@ -951,12 +944,98 @@ MODULE composite_parallel_success_on_all_without_memory_2(child_0, child_1)
 			case
 				(child_0.internal_status = failure) : failure;
 				(child_1.internal_status = failure) : failure;
+				(child_2.internal_status = failure) : failure;
+				(child_3.internal_status = failure) : failure;
+				(child_4.internal_status = failure) : failure;
 				!(child_0.internal_status = success) : child_0.internal_status;
 				!(child_1.internal_status = success) : child_1.internal_status;
+				!(child_2.internal_status = success) : child_2.internal_status;
+				!(child_3.internal_status = success) : child_3.internal_status;
+				!(child_4.internal_status = success) : child_4.internal_status;
 				TRUE : success;
 			esac;
 		child_0.active := active;
 		child_1.active := active;
+		child_2.active := active;
+		child_3.active := active;
+		child_4.active := active;
+MODULE composite_selector_without_memory_3(child_0, child_1, child_2)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				!(child_0.internal_status = failure) : child_0.internal_status;
+				!(child_1.internal_status = failure) : child_1.internal_status;
+				!(child_2.internal_status = failure) : child_2.internal_status;
+				TRUE : failure;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = failure;
+		child_2.active := child_1.status = failure;
+MODULE composite_selector_without_memory_11(child_0, child_1, child_2, child_3, child_4, child_5, child_6, child_7, child_8, child_9, child_10)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				!(child_0.internal_status = failure) : child_0.internal_status;
+				!(child_1.internal_status = failure) : child_1.internal_status;
+				!(child_2.internal_status = failure) : child_2.internal_status;
+				!(child_3.internal_status = failure) : child_3.internal_status;
+				!(child_4.internal_status = failure) : child_4.internal_status;
+				!(child_5.internal_status = failure) : child_5.internal_status;
+				!(child_6.internal_status = failure) : child_6.internal_status;
+				!(child_7.internal_status = failure) : child_7.internal_status;
+				!(child_8.internal_status = failure) : child_8.internal_status;
+				!(child_9.internal_status = failure) : child_9.internal_status;
+				!(child_10.internal_status = failure) : child_10.internal_status;
+				TRUE : failure;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = failure;
+		child_2.active := child_1.status = failure;
+		child_3.active := child_2.status = failure;
+		child_4.active := child_3.status = failure;
+		child_5.active := child_4.status = failure;
+		child_6.active := child_5.status = failure;
+		child_7.active := child_6.status = failure;
+		child_8.active := child_7.status = failure;
+		child_9.active := child_8.status = failure;
+		child_10.active := child_9.status = failure;
+MODULE composite_parallel_success_on_all_without_memory_3(child_0, child_1, child_2)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				(child_0.internal_status = failure) : failure;
+				(child_1.internal_status = failure) : failure;
+				(child_2.internal_status = failure) : failure;
+				!(child_0.internal_status = success) : child_0.internal_status;
+				!(child_1.internal_status = success) : child_1.internal_status;
+				!(child_2.internal_status = success) : child_2.internal_status;
+				TRUE : success;
+			esac;
+		child_0.active := active;
+		child_1.active := active;
+		child_2.active := active;
+MODULE composite_sequence_with_memory_2(child_0, child_1, resume_point)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				(0 >= resume_point) & !(child_0.internal_status = success) : child_0.internal_status;
+				(1 >= resume_point) & !(child_1.internal_status = success) : child_1.internal_status;
+				TRUE : success;
+			esac;
+		child_0.active := active & (0 >= resume_point);
+		child_1.active := active & ((1 >= resume_point) & ((1 = resume_point) | (child_0.status = success)));
 MODULE composite_selector_without_memory_2(child_0, child_1)
 	CONSTANTS
 		success, failure, running, invalid;
@@ -1021,24 +1100,6 @@ MODULE composite_parallel_success_on_all_without_memory_14(child_0, child_1, chi
 		child_11.active := active;
 		child_12.active := active;
 		child_13.active := active;
-MODULE composite_parallel_success_on_all_without_memory_3(child_0, child_1, child_2)
-	CONSTANTS
-		success, failure, running, invalid;
-	DEFINE
-		status := active ? internal_status : invalid;
-		internal_status :=
-			case
-				(child_0.internal_status = failure) : failure;
-				(child_1.internal_status = failure) : failure;
-				(child_2.internal_status = failure) : failure;
-				!(child_0.internal_status = success) : child_0.internal_status;
-				!(child_1.internal_status = success) : child_1.internal_status;
-				!(child_2.internal_status = success) : child_2.internal_status;
-				TRUE : success;
-			esac;
-		child_0.active := active;
-		child_1.active := active;
-		child_2.active := active;
 MODULE decorator_X_is_Y(child_0, incoming_status, outgoing_status)
 	CONSTANTS
 		success, failure, running, invalid;
@@ -1054,35 +1115,7 @@ MODULE decorator_X_is_Y(child_0, incoming_status, outgoing_status)
 				!(active) : FALSE;
 				TRUE : TRUE;
 			esac;
-MODULE composite_selector_without_memory_3(child_0, child_1, child_2)
-	CONSTANTS
-		success, failure, running, invalid;
-	DEFINE
-		status := active ? internal_status : invalid;
-		internal_status :=
-			case
-				!(child_0.internal_status = failure) : child_0.internal_status;
-				!(child_1.internal_status = failure) : child_1.internal_status;
-				!(child_2.internal_status = failure) : child_2.internal_status;
-				TRUE : failure;
-			esac;
-		child_0.active := active;
-		child_1.active := child_0.status = failure;
-		child_2.active := child_1.status = failure;
-MODULE composite_sequence_with_memory_2(child_0, child_1, resume_point)
-	CONSTANTS
-		success, failure, running, invalid;
-	DEFINE
-		status := active ? internal_status : invalid;
-		internal_status :=
-			case
-				(0 >= resume_point) & !(child_0.internal_status = success) : child_0.internal_status;
-				(1 >= resume_point) & !(child_1.internal_status = success) : child_1.internal_status;
-				TRUE : success;
-			esac;
-		child_0.active := active & (0 >= resume_point);
-		child_1.active := (1 >= resume_point) & ((1 = resume_point) | (child_0.status = success));
-MODULE composite_parallel_success_on_all_without_memory_5(child_0, child_1, child_2, child_3, child_4)
+MODULE composite_parallel_success_on_all_without_memory_2(child_0, child_1)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
@@ -1091,52 +1124,12 @@ MODULE composite_parallel_success_on_all_without_memory_5(child_0, child_1, chil
 			case
 				(child_0.internal_status = failure) : failure;
 				(child_1.internal_status = failure) : failure;
-				(child_2.internal_status = failure) : failure;
-				(child_3.internal_status = failure) : failure;
-				(child_4.internal_status = failure) : failure;
 				!(child_0.internal_status = success) : child_0.internal_status;
 				!(child_1.internal_status = success) : child_1.internal_status;
-				!(child_2.internal_status = success) : child_2.internal_status;
-				!(child_3.internal_status = success) : child_3.internal_status;
-				!(child_4.internal_status = success) : child_4.internal_status;
 				TRUE : success;
 			esac;
 		child_0.active := active;
 		child_1.active := active;
-		child_2.active := active;
-		child_3.active := active;
-		child_4.active := active;
-MODULE composite_selector_without_memory_11(child_0, child_1, child_2, child_3, child_4, child_5, child_6, child_7, child_8, child_9, child_10)
-	CONSTANTS
-		success, failure, running, invalid;
-	DEFINE
-		status := active ? internal_status : invalid;
-		internal_status :=
-			case
-				!(child_0.internal_status = failure) : child_0.internal_status;
-				!(child_1.internal_status = failure) : child_1.internal_status;
-				!(child_2.internal_status = failure) : child_2.internal_status;
-				!(child_3.internal_status = failure) : child_3.internal_status;
-				!(child_4.internal_status = failure) : child_4.internal_status;
-				!(child_5.internal_status = failure) : child_5.internal_status;
-				!(child_6.internal_status = failure) : child_6.internal_status;
-				!(child_7.internal_status = failure) : child_7.internal_status;
-				!(child_8.internal_status = failure) : child_8.internal_status;
-				!(child_9.internal_status = failure) : child_9.internal_status;
-				!(child_10.internal_status = failure) : child_10.internal_status;
-				TRUE : failure;
-			esac;
-		child_0.active := active;
-		child_1.active := child_0.status = failure;
-		child_2.active := child_1.status = failure;
-		child_3.active := child_2.status = failure;
-		child_4.active := child_3.status = failure;
-		child_5.active := child_4.status = failure;
-		child_6.active := child_5.status = failure;
-		child_7.active := child_6.status = failure;
-		child_8.active := child_7.status = failure;
-		child_9.active := child_8.status = failure;
-		child_10.active := child_9.status = failure;
 MODULE battery2bb_module(battery2bb_update_success)
 	CONSTANTS
 		success, failure, running, invalid;

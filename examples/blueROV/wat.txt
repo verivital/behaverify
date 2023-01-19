@@ -1,0 +1,185 @@
+471,472c471,472
+< 		var_bb_mission : {waypoint_following, e_stop, pipe_following};
+< 		var_bb_mission_stage_1 : {waypoint_following, e_stop, pipe_following};
+---
+> 		var_bb_mission : {unknown, waypoint_following, e_stop, pipe_following};
+> 		var_bb_mission_stage_1 : {unknown, waypoint_following, e_stop, pipe_following};
+538a539,542
+> 		init(var_HSD_out) := 
+> 			case
+> 				TRUE : uuv_min_speed;
+> 			esac;
+566a571,574
+> 		init(var_bb_mission) := 
+> 			case
+> 				TRUE : unknown;
+> 			esac;
+602a611,618
+> 		init(var_cm_hsd_input) := 
+> 			case
+> 				TRUE : cm_surface_task;
+> 			esac;
+> 		init(var_dd_output) := 
+> 			case
+> 				TRUE : safe;
+> 			esac;
+618a635,638
+> 		init(var_lec2_am_l) := 
+> 			case
+> 				TRUE : safe;
+> 			esac;
+626a647,650
+> 		init(var_lec2_am_r) := 
+> 			case
+> 				TRUE : safe;
+> 			esac;
+666a691,694
+> 		init(var_rtreach_result) := 
+> 			case
+> 				TRUE : safe;
+> 			esac;
+814c842
+< -- LTLSPEC G (count(surface_task.active , surface_task_1.active , surface_task_2.active , surface_task_3.active , surface_task_4.active) < 2); -- true
+---
+> LTLSPEC G (count(surface_task.active , surface_task_1.active , surface_task_2.active , surface_task_3.active , surface_task_4.active) < 2); -- true
+817a846
+> -- LTLSPEC F (var_mission_idx = 4); -- false
+952c981
+< MODULE composite_selector_without_memory_2(child_0, child_1)
+---
+> MODULE composite_selector_without_memory_11(child_0, child_1, child_2, child_3, child_4, child_5, child_6, child_7, child_8, child_9, child_10)
+960a990,998
+> 				!(child_2.internal_status = failure) : child_2.internal_status;
+> 				!(child_3.internal_status = failure) : child_3.internal_status;
+> 				!(child_4.internal_status = failure) : child_4.internal_status;
+> 				!(child_5.internal_status = failure) : child_5.internal_status;
+> 				!(child_6.internal_status = failure) : child_6.internal_status;
+> 				!(child_7.internal_status = failure) : child_7.internal_status;
+> 				!(child_8.internal_status = failure) : child_8.internal_status;
+> 				!(child_9.internal_status = failure) : child_9.internal_status;
+> 				!(child_10.internal_status = failure) : child_10.internal_status;
+965c1003,1012
+< MODULE composite_parallel_success_on_all_without_memory_3(child_0, child_1, child_2)
+---
+> 		child_2.active := child_1.status = failure;
+> 		child_3.active := child_2.status = failure;
+> 		child_4.active := child_3.status = failure;
+> 		child_5.active := child_4.status = failure;
+> 		child_6.active := child_5.status = failure;
+> 		child_7.active := child_6.status = failure;
+> 		child_8.active := child_7.status = failure;
+> 		child_9.active := child_8.status = failure;
+> 		child_10.active := child_9.status = failure;
+> MODULE composite_selector_without_memory_2(child_0, child_1)
+972,978c1019,1021
+< 				(child_0.internal_status = failure) : failure;
+< 				(child_1.internal_status = failure) : failure;
+< 				(child_2.internal_status = failure) : failure;
+< 				!(child_0.internal_status = success) : child_0.internal_status;
+< 				!(child_1.internal_status = success) : child_1.internal_status;
+< 				!(child_2.internal_status = success) : child_2.internal_status;
+< 				TRUE : success;
+---
+> 				!(child_0.internal_status = failure) : child_0.internal_status;
+> 				!(child_1.internal_status = failure) : child_1.internal_status;
+> 				TRUE : failure;
+981,982c1024
+< 		child_1.active := active;
+< 		child_2.active := active;
+---
+> 		child_1.active := child_0.status = failure;
+998,1011c1040
+< MODULE composite_sequence_with_memory_2(child_0, child_1, resume_point)
+< 	CONSTANTS
+< 		success, failure, running, invalid;
+< 	DEFINE
+< 		status := active ? internal_status : invalid;
+< 		internal_status :=
+< 			case
+< 				(0 >= resume_point) & !(child_0.internal_status = success) : child_0.internal_status;
+< 				(1 >= resume_point) & !(child_1.internal_status = success) : child_1.internal_status;
+< 				TRUE : success;
+< 			esac;
+< 		child_0.active := active & (0 >= resume_point);
+< 		child_1.active := (1 >= resume_point) & ((1 = resume_point) | (child_0.status = success));
+< MODULE composite_parallel_success_on_all_without_memory_5(child_0, child_1, child_2, child_3, child_4)
+---
+> MODULE composite_parallel_success_on_all_without_memory_2(child_0, child_1)
+1020,1022d1048
+< 				(child_2.internal_status = failure) : failure;
+< 				(child_3.internal_status = failure) : failure;
+< 				(child_4.internal_status = failure) : failure;
+1025,1027d1050
+< 				!(child_2.internal_status = success) : child_2.internal_status;
+< 				!(child_3.internal_status = success) : child_3.internal_status;
+< 				!(child_4.internal_status = success) : child_4.internal_status;
+1032,1034d1054
+< 		child_2.active := active;
+< 		child_3.active := active;
+< 		child_4.active := active;
+1050c1070
+< MODULE composite_selector_without_memory_11(child_0, child_1, child_2, child_3, child_4, child_5, child_6, child_7, child_8, child_9, child_10)
+---
+> MODULE composite_parallel_success_on_all_without_memory_3(child_0, child_1, child_2)
+1057,1068c1077,1083
+< 				!(child_0.internal_status = failure) : child_0.internal_status;
+< 				!(child_1.internal_status = failure) : child_1.internal_status;
+< 				!(child_2.internal_status = failure) : child_2.internal_status;
+< 				!(child_3.internal_status = failure) : child_3.internal_status;
+< 				!(child_4.internal_status = failure) : child_4.internal_status;
+< 				!(child_5.internal_status = failure) : child_5.internal_status;
+< 				!(child_6.internal_status = failure) : child_6.internal_status;
+< 				!(child_7.internal_status = failure) : child_7.internal_status;
+< 				!(child_8.internal_status = failure) : child_8.internal_status;
+< 				!(child_9.internal_status = failure) : child_9.internal_status;
+< 				!(child_10.internal_status = failure) : child_10.internal_status;
+< 				TRUE : failure;
+---
+> 				(child_0.internal_status = failure) : failure;
+> 				(child_1.internal_status = failure) : failure;
+> 				(child_2.internal_status = failure) : failure;
+> 				!(child_0.internal_status = success) : child_0.internal_status;
+> 				!(child_1.internal_status = success) : child_1.internal_status;
+> 				!(child_2.internal_status = success) : child_2.internal_status;
+> 				TRUE : success;
+1071,1081c1086,1088
+< 		child_1.active := child_0.status = failure;
+< 		child_2.active := child_1.status = failure;
+< 		child_3.active := child_2.status = failure;
+< 		child_4.active := child_3.status = failure;
+< 		child_5.active := child_4.status = failure;
+< 		child_6.active := child_5.status = failure;
+< 		child_7.active := child_6.status = failure;
+< 		child_8.active := child_7.status = failure;
+< 		child_9.active := child_8.status = failure;
+< 		child_10.active := child_9.status = failure;
+< MODULE composite_parallel_success_on_all_without_memory_2(child_0, child_1)
+---
+> 		child_1.active := active;
+> 		child_2.active := active;
+> MODULE composite_parallel_success_on_all_without_memory_5(child_0, child_1, child_2, child_3, child_4)
+1089a1097,1099
+> 				(child_2.internal_status = failure) : failure;
+> 				(child_3.internal_status = failure) : failure;
+> 				(child_4.internal_status = failure) : failure;
+1091a1102,1104
+> 				!(child_2.internal_status = success) : child_2.internal_status;
+> 				!(child_3.internal_status = success) : child_3.internal_status;
+> 				!(child_4.internal_status = success) : child_4.internal_status;
+1095a1109,1124
+> 		child_2.active := active;
+> 		child_3.active := active;
+> 		child_4.active := active;
+> MODULE composite_sequence_with_memory_2(child_0, child_1, resume_point)
+> 	CONSTANTS
+> 		success, failure, running, invalid;
+> 	DEFINE
+> 		status := active ? internal_status : invalid;
+> 		internal_status :=
+> 			case
+> 				(0 >= resume_point) & !(child_0.internal_status = success) : child_0.internal_status;
+> 				(1 >= resume_point) & !(child_1.internal_status = success) : child_1.internal_status;
+> 				TRUE : success;
+> 			esac;
+> 		child_0.active := active & (0 >= resume_point);
+> 		child_1.active := (1 >= resume_point) & ((1 = resume_point) | (child_0.status = success));

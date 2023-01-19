@@ -1,0 +1,48 @@
+MODULE main
+	DEFINE
+		var_battery_stage_0 := var_battery_stage_1;
+	VAR
+		var_battery_stage_1 : boolean;
+		active : boolean;
+	ASSIGN
+		next(var_battery_stage_1) := next(
+			case
+				!(active) : var_battery_stage_0;
+				TRUE : var_battery_stage_0;
+			esac);
+
+--we want
+var_battery_stage_1 :=
+case
+!(active) : prev(var_battery_stage_0);
+TRUE : prev(var_battery_stage_0);
+esac;
+--but prev doesn't exist.
+--ok.....
+--wait lmao. solution:
+var_battery_stage_1 :=
+case
+!(active) : prev(var_battery_stage_0);
+TRUE : prev(var_battery_stage_0);
+esac;
+--give this ^ to the node creator, but in the usual form.
+--have node creator do this
+next(var_battery_stage_1) :=
+case
+next(!(active)) : next(prev(var_battery_stage_0));
+next(TRUE) : next(prev(var_battery_stage_0));
+esac;
+--thi will be easy to do.
+--then call replace-string to do this : next(prev( becomes ((
+next(var_battery_stage_1) :=
+case
+next(!(active)) : ((var_battery_stage_0));
+next(TRUE) : ((var_battery_stage_0));
+esac;
+--gonna test this in meh2.smv
+--ok. so that works.
+--steps to implement this:
+--1. detect case where it applies (doable, but effort). probably gonna keep a set of variable_names that gets updated.
+--2. if case, in dsl_to_behaverify call replace_string to replace variable with prev(variable), but also call everything with use_next, i think.
+--3. if case, in node_creator, define stage_0 = last_stage, then throw next at everything (NVM DOING THIS IN STEP 2), then replace next(prev( with ((.
+--4. PROFIT???
