@@ -1,0 +1,12 @@
+MODULE main
+	DEFINE
+		var_battery_stage_0 := var_battery_stage_1;
+	VAR
+		var_battery_stage_1 : boolean;
+		active : boolean;
+	ASSIGN
+		next(var_battery_stage_1) :=
+					  case
+						next(!(active)) : ((var_battery_stage_0));
+						next(TRUE) : ((var_battery_stage_0));
+					esac;
