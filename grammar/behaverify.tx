@@ -26,7 +26,7 @@ BehaviorModel:
 ;
 
     variable_environment_pair:
-    '(' is_local ?= 'local' variable = [variable] ', ' environment_variable = [environment_variable] ')'
+    '(' is_local ?= 'local' variable = [variable] ',' 'env' environment_variable = [environment_variable] ')'
 ;
     
     read_statement:
@@ -134,7 +134,7 @@ statement:
     environment_statement:
     'environment_statement' '{'
     instant ?= 'instant'
-    variable = [environment_variable]
+    'env' variable = [environment_variable]
     case_results *= environment_variable_case_result
     default_result = environment_variable_default_result
     '}' 'end_environment_statement'
@@ -202,7 +202,7 @@ statement:
 
     code_statement_env:
     (constant = INT) | (constant = FLOAT) | (constant = BOOL) | (constant = STRING) |
-    (variable = [environment_variable] ) |
+    (is_env = 'env' variable = [environment_variable] ) |
     (is_local ?= 'local' variable = [variable]) |
     ('(' function_call = function_env ')') |
     ('(' code_statement = code_statement_env ')')
