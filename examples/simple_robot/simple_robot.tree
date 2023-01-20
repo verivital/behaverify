@@ -21,26 +21,26 @@ environment {
 	initial_values { } end_initial_values
 	update_values {
 		environment_statement {
-			remaining_goals
-			case { (and, (equal, x_goal, x_true), (equal, y_goal, y_true)) } end_case
-			result { (max, 0, (subtraction, remaining_goals, 1)) } end_result
-			result { remaining_goals } end_result
+			env remaining_goals
+			case { (and, (equal, env x_goal, env x_true), (equal, env y_goal, env y_true)) } end_case
+			result { (max, 0, (subtraction, env remaining_goals, 1)) } end_result
+			result { env remaining_goals } end_result
 		} end_environment_statement
 		environment_statement {
-			x_goal
-			case { (equal, 0, remaining_goals ) } end_case
-			result { x_goal } end_result
-			case { (and, (equal, x_goal, x_true), (equal, y_goal, y_true)) } end_case
+			env x_goal
+			case { (equal, 0, env remaining_goals ) } end_case
+			result { env x_goal } end_result
+			case { (and, (equal, env x_goal, env x_true), (equal, env y_goal, env y_true)) } end_case
 			result { 0, 1, 2, 3, 4 } end_result
-			result { x_goal } end_result
+			result { env x_goal } end_result
 		} end_environment_statement
 		environment_statement {
-			y_goal
-			case { (equal, 0, remaining_goals) } end_case
-			result { y_goal } end_result
-			case { (and, (equal, x_goal, x_true), (equal, y_goal, y_true)) } end_case
+			env y_goal
+			case { (equal, 0, env remaining_goals) } end_case
+			result { env y_goal } end_result
+			case { (and, (equal, env x_goal, env x_true), (equal, env y_goal, env y_true)) } end_case
 			result { 0, 1, 2, 3, 4 } end_result
-			result { y_goal } end_result
+			result { env y_goal } end_result
 		} end_environment_statement
 	} end_update_values
 } end_environment
@@ -99,7 +99,7 @@ actions {
 			read_environment {
 				python_function { 'robot.get_mission()' } end_python_function
 				local saw_target
-				set_variables { (target_x, x_goal), (target_y, y_goal) } end_set_variables
+				set_variables { (target_x, env x_goal), (target_y, env y_goal) } end_set_variables
 			} end_read_environment
 			variable_statement {
 				mission
@@ -131,7 +131,7 @@ actions {
 			read_environment {
 				python_function { 'robot.get_position()' } end_python_function
 				condition { True } end_condition
-				set_variables { (x, x_true), (y, y_true) } end_set_variables
+				set_variables { (x, env x_true), (y, env y_true) } end_set_variables
 			} end_read_environment
 			return_statement { result { success } end_result } end_return_statement
 		} end_update
@@ -162,7 +162,7 @@ actions {
 				python_function { 'robot.go_right()' } end_python_function
 				update_values {
 					environment_statement {
-						x_true result { (min, 4, (addition, x_true, 1)) } end_result
+						env x_true result { (min, 4, (addition, env x_true, 1)) } end_result
 					} end_environment_statement
 				} end_update_values
 			} end_write_environment
@@ -181,7 +181,7 @@ actions {
 				python_function { 'robot.go_left()' } end_python_function
 				update_values {
 					environment_statement {
-						x_true result { (max, 0, (subtraction, x_true, 1)) } end_result
+						env x_true result { (max, 0, (subtraction, env x_true, 1)) } end_result
 					} end_environment_statement
 				} end_update_values
 			} end_write_environment
@@ -200,7 +200,7 @@ actions {
 				python_function { 'robot.go_up()' } end_python_function
 				update_values {
 					environment_statement {
-						y_true result { (min, 4, (addition, y_true, 1)) } end_result
+						env y_true result { (min, 4, (addition, env y_true, 1)) } end_result
 					} end_environment_statement
 				} end_update_values
 			} end_write_environment
@@ -219,7 +219,7 @@ actions {
 				python_function { 'robot.go_down()' } end_python_function
 				update_values {
 					environment_statement {
-						y_true result { (max, 0, (subtraction, y_true, 1)) } end_result
+						env y_true result { (max, 0, (subtraction, env y_true, 1)) } end_result
 					} end_environment_statement
 				} end_update_values
 			} end_write_environment
