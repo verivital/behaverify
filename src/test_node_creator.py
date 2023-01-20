@@ -89,6 +89,7 @@ def create_blackboard(nodes, variables):
                     define_string += '\t\t' + variable_name + '_exists := TRUE;' + os.linesep
                 start_location = 0
             else:
+                define_string += '\t\t' + variable_name + ' := ' + variable_name + '_stage_1;' + os.linesep
                 define_string += '\t\tLINK_TO_PREVIOUS_FINAL_' + variable_name + ' := ' + variable_name + '_stage_' + str(len(variable['next_value'])) + ';' + os.linesep
                 var_string += ('\t\t' + variable_name + '_stage_1' + ' : '
                                + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean')))
