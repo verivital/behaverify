@@ -9,7 +9,7 @@ import os
 from behaverify_common import create_node_name, create_node_template, create_variable_template_keep_stage as create_variable_template
 
 
-def get_variables(model):
+def get_variables(model, keep_stage_0):
     return {variable.name :
             create_variable_template(variable.name, 'DEFINE' if (len(variable.model.enums) == 1) else 'VAR',
                                      (None if variable.model.range_minimum is not None else ('{TRUE, FALSE}' if variable.model.is_bool is not None else ('{' + ', '.join(map(str, variable.model.enums)) + '}'))),
@@ -19,7 +19,7 @@ def get_variables(model):
                                          [('TRUE', (str(variable.initial_value).upper() if isinstance(variable.initial_value, bool) else str(variable.initial_value)))]
                                          )
                                       ),
-                                     [], prefix = 'var_', keep_stage_0 = False)
+                                     [], prefix = 'var_', keep_stage_0 = keep_stage_0)
             for variable in model.bbVariables if variable.model is not None}
 
 
@@ -356,13 +356,14 @@ def main():
     arg_parser = argparse.ArgumentParser()
     arg_parser.add_argument('metamodel_file')
     arg_parser.add_argument('model_file')
+    arg_parser.add_argument('--keep_stage_0', action = 'store_true')
     arg_parser.add_argument('--output_file', default = None)
     args = arg_parser.parse_args()
 
     metamodel = textx.metamodel_from_file(args.metamodel_file, auto_init_attributes = False)
     model = metamodel.model_from_file(args.model_file)
 
-    variables = get_variables(model)
+    variables = get_variables(model, args.keep_stage_0)
     nodes = walk_tree(metamodel, model, variables)
 
     if args.output_file is None:

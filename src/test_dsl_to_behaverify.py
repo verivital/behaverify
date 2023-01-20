@@ -9,7 +9,7 @@ import copy
 from behaverify_common import create_node_name, create_node_template, create_variable_template_keep_stage as create_variable_template
 
 
-def get_variables(model):
+def get_variables(model, keep_stage_0):
     '''
     this constructs and returns variables and local variables.
     variables are constructed based on variables and environment_variables
@@ -26,7 +26,7 @@ def get_variables(model):
                                           (None if variable.domain.min_val is not None else ('{TRUE, FALSE}' if variable.domain.boolean is not None else ('{' + ', '.join(variable.domain.enums) + '}'))),
                                           0 if variable.domain.min_val is None else variable.domain.min_val,
                                           1 if variable.domain.min_val is None else variable.domain.max_val,
-                                          None, [], 'var_', False
+                                          None, [], 'var_', keep_stage_0
                                           )
                  for variable in model.variables}
     env_variables = {variable_reference(variable.name, False, '', True) :
@@ -34,7 +34,7 @@ def get_variables(model):
                                               (None if variable.domain.min_val is not None else ('{TRUE, FALSE}' if variable.domain.boolean is not None else ('{' + ', '.join(variable.domain.enums) + '}'))),
                                               0 if variable.domain.min_val is None else variable.domain.min_val,
                                               1 if variable.domain.min_val is None else variable.domain.max_val,
-                                              None, [], 'env_', False
+                                              None, [], 'env_', keep_stage_0
                                               )
                      for variable in model.environment_variables}
     variables.update(env_variables)
@@ -43,7 +43,7 @@ def get_variables(model):
                                                 (None if variable.domain.min_val is not None else ('{TRUE, FALSE}' if variable.domain.boolean is not None else ('{' + ', '.join(variable.domain.enums) + '}'))),
                                                 0 if variable.domain.min_val is None else variable.domain.min_val,
                                                 1 if variable.domain.min_val is None else variable.domain.max_val,
-                                                None, [], '', False
+                                                None, [], '', keep_stage_0
                                                 )
                        for variable in model.local_variables}
     return (variables, local_variables)
@@ -481,13 +481,14 @@ def main():
     arg_parser = argparse.ArgumentParser()
     arg_parser.add_argument('metamodel_file')
     arg_parser.add_argument('model_file')
+    arg_parser.add_argument('--keep_stage_0', action = 'store_true')
     arg_parser.add_argument('--output_file', default = None)
     args = arg_parser.parse_args()
 
     metamodel = textx.metamodel_from_file(args.metamodel_file, auto_init_attributes = False)
     model = metamodel.model_from_file(args.model_file)
 
-    (variables, local_variables) = get_variables(model)
+    (variables, local_variables) = get_variables(model, args.keep_stage_0)
     (nodes, delayed_statements) = walk_tree(model, variables, local_variables)
     complete_environment_variables(model, variables, local_variables, delayed_statements)
 
