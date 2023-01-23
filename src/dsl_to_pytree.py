@@ -83,6 +83,21 @@ def update_method_check(node):
             + os.linesep)
 
 
+def init_method_check_env(node):
+    return (indent(1) + 'def __init__(self, name):' + os.linesep
+            + indent(2) + 'super(' + node.name + ', self).__init__(name)' + os.linesep
+            + indent(2) + 'self.name = name' + os.linesep
+            + os.linesep)
+
+
+def update_method_check_env(node):
+    return (indent(1) + 'def update(self):' + os.linesep
+            + indent(2) + 'return ((py_trees.common.Status.SUCCESS) if ('
+            + ('' if node.python_function is None else node.python_function)
+            + ') else (py_trees.common.Status.FAILURE))' + os.linesep
+            + os.linesep)
+
+
 def variable_assignment(values):
     if len(values) > 1 :
         return ('random.choice('
@@ -147,7 +162,7 @@ def init_method_action(node):
             + indent(2) + 'self.blackboard = self.attach_blackboard_client(name = name)' + os.linesep
             + ''.join([(indent(2) + 'self.blackboard.register_key(key = (' + "'" + variable.name + "'" + '), access = py_trees.common.Access.READ)' + os.linesep) for variable in node.read_variables])
             + ''.join([(indent(2) + 'self.blackboard.register_key(key = (' + "'" + variable.name + "'" + '), access = py_trees.common.Access.WRITE)' + os.linesep) for variable in node.write_variables])
-            + ''.join([handle_variable_statement(statement) for statement in node.init_statements])
+            + ''.join([handle_statement(statement) for statement in node.init_statements])
             + os.linesep)
 
 
@@ -181,6 +196,15 @@ def build_check_node(node):
             + class_definition(node.name)
             + init_method_check(node)
             + update_method_check(node)
+            )
+
+
+def build_check_environment_node(node):
+    return (STANDARD_IMPORTS
+            + custom_imports(node)
+            + class_definition(node.name)
+            + init_method_check_env(node)
+            + update_method_check_env(node)
             )
 
 
@@ -268,6 +292,9 @@ def main():
     for check in model.check_nodes:
         with open(args.location + check.name + '_file.py', 'w') as f:
             f.write(build_check_node(check))
+    for check_env in model.environment_checks:
+        with open(args.location + check_env.name + '_file.py', 'w') as f:
+            f.write(build_check_environment_node(check_env))
 
     with open(args.location + args.output_file, 'w') as f:
         f.write(''.join([('import ' + node.name + '_file' + os.linesep) for node in itertools.chain(model.check_nodes, model.action_nodes)])

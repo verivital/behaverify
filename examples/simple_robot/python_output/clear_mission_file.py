@@ -12,6 +12,6 @@ class clear_mission(py_trees.behaviour.Behaviour):
         self.blackboard.register_key(key = ('mission'), access = py_trees.common.Access.WRITE)
 
     def update(self):
-        self.blackboard.mission = random.choice([False])
+        self.blackboard.mission = False
         return_status = py_trees.common.Status.SUCCESS
         return return_status

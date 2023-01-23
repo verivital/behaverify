@@ -159,18 +159,17 @@ var Bool 				bb_sensor_failure_warning = False, model_as(bool, False);
 var Bool 				bb_waypoints_completed = False, model_as(bool, False);
 var String 				cm_hsd_input, model_as({'cm_surface_task', 'cm_rth_task', 'cm_loiter_task', 'cm_obstacle_avoidance_task', 'cm_tracking_task', 'cm_waypoint_task'}); //cm_hsd_input is a variable that informs the ros nodes what task set the information.
 var string 				ddlec_am_path; //this is not being modeled.
-var Float32MultiArray 			dd_output, model_as({'safe', 'xy_warn', 'z_warn'}); //these 3 enumerations represent the possible paths in the node
 var bool 				dd_xy_axis_degradation = False, model_as(bool, False);
 var bool 				dd_z_axis_warning = False, model_as(bool, False);
 var float 				decision_threshold; // not being modeled
 var bool 				emergency_stop_warning = False, model_as(bool, False);
 var bool 				event_reallocate_button = False; // node being modeled. this appears to be unused???????
 var Range 				fls_range, model_as({'danger_zone', 'safe'}, 'safe'); // represents if we are in the clear or in danger. note: not considering junk_values.
-var HSDCommand 				hsd_pipeline_mapping; // these variables are basically not being used in the current model.
-var HSDCommand 				hsd_to_surface;
-var HSDCommand 				hsd_to_rth;
-var HSDCommand 				hsd_to_waypoint;
-var HSDCommand 				hsd_to_waypoint_rrt;
+// var HSDCommand 				hsd_pipeline_mapping; // these variables are basically not being used in the current model.
+// var HSDCommand 				hsd_to_surface;
+// var HSDCommand 				hsd_to_rth;
+// var HSDCommand 				hsd_to_waypoint;
+// var HSDCommand 				hsd_to_waypoint_rrt;
 var HSDCommand 				HSD_out, model_as({'uuv_min_speed', 'uuv_max_speed'}); //HSD_out contains far more information (specifically, heading and depth). however, heading is handled as an enum, and redundant given cm_hsd_input, and depth is basically a constant.
 var LEC1OutputAssuredStamped 		lec_dd_am, model_as(bool, False);
 var bool 				lec_dd_am_warning = False, model_as(bool, False);
@@ -204,6 +203,7 @@ var float 				uuv_max_speed; //not modeled. not sure why this is in here but min
 //----------------------------------
 //these are variables that are not used in code generation. just in the modeling side.
 var bool				finished_missions, model_as(bool, False);
+var Float32MultiArray 			dd_output, model_as({'safe', 'xy_warn', 'z_warn'}); //these 3 enumerations represent the possible paths in the node
 var bool				BLUEROV_SURFACED, model_as(bool, False);
 //----------------------------------
 //Arguments
@@ -241,32 +241,26 @@ arg float rtreach_window_threshold = 0.75;
 //2.3 all set() commands are executed in order
 
 
+// input hsd_pipe2bb hsd_pipeline_mapping -> hsd_pipeline_mapping
+//     comment  "This node captures HSD input from pipeline tracking node"
+// end
 
-input hsd_pipe2bb hsd_pipeline_mapping -> hsd_pipeline_mapping
-    comment  "This node captures HSD input from pipeline tracking node"
-    model_ignore
-end
+// input hsd_surface2bb hsd_to_surface -> hsd_to_surface
+//     comment  "This node captures HSD input from surface node"
+// end
 
-input hsd_surface2bb hsd_to_surface -> hsd_to_surface
-    comment  "This node captures HSD input from surface node"
-    model_ignore
-end
+// input hsd_rth2bb hsd_to_rth -> hsd_to_rth
+//     comment  "This node captures HSD input from rth node"
+// end
 
-input hsd_rth2bb hsd_to_rth -> hsd_to_rth
-    comment  "This node captures HSD input from rth node"
-    model_ignore
-end
+// input hsd_wp2bb hsd_to_waypoint -> hsd_to_waypoint
+//     comment  "This node captures HSD input from waypoint node"
+// end
 
-input hsd_wp2bb hsd_to_waypoint -> hsd_to_waypoint
-    comment  "This node captures HSD input from waypoint node"
-    model_ignore
-end
+// input hsd_wp_rrt2bb hsd_to_waypoint_rrt -> hsd_to_waypoint_rrt
+//     comment  "This node captures HSD input from waypoint node"
+// end
 
-input hsd_wp_rrt2bb hsd_to_waypoint_rrt -> hsd_to_waypoint_rrt
-    comment  "This node captures HSD input from waypoint node"
-    model_ignore
-end
-//the 5 nodes above appear to not really be used by the current tree.
 //regardless, there would be nothing to add modeling wise here anyways
 //to enable greater detail with respect to modeling them, simply model the HSD variables
 
@@ -358,23 +352,24 @@ input home2bb bb_home_dist -> bb_home_dist
     set(bb_home_reached, (or, bb_home_reached, (less_than, bb_home_dist, 15))) // 15 is home_reached_threshold. Could look into using constants.
 end
 
-input mission2bb bb_mission -> bb_mission
-//    arg bool enable_waypoint_following = False;
-    comment  "This node captures the current mission"
-    model_ignore_topic
-    model_ignore
-end
+// input mission2bb bb_mission -> bb_mission
+// //    arg bool enable_waypoint_following = False;
+//     comment  "This node captures the current mission"
+//     model_ignore_topic
+//     model_ignore
+// end
 
-input ddlec2bb degradation_detector -> dd_output 
-    vars dd_z_axis_warning, dd_xy_axis_degradation;
-    arg float total_degradation_threshold= total_degradation_threshold;
-    arg integer num_classes = num_classes;
-    arg bool enable_fault_detection = enable_fault_detection;
-    arg string decision_source = decision_source;
-    comment  "This node captures the output of the DD LEC"
-    set(dd_z_axis_warning, (or, (equal, dd_output, 'z_warn'), (and, dd_z_axis_warning, (not, (equal, dd_output, 'safe'))))) //so these are slightly more complicated. there are multiple paths the code can take. these are represented by 'safe', 'xy_warn', and 'z_warn'. It is not possible to set both xy and z at the same time. However, if xy is set, it is possible for z to remain set, and vice versa. they are only unset if SAFE occurs.
-    set(dd_xy_axis_degradation, (or, (equal, dd_output, 'xy_warn'), (and, dd_xy_axis_degradation, (not, (equal, dd_output, 'safe')))))
-end   
+// input ddlec2bb degradation_detector -> dd_output 
+//     vars dd_z_axis_warning, dd_xy_axis_degradation;
+//     arg float total_degradation_threshold= total_degradation_threshold;
+//     arg integer num_classes = num_classes;
+//     arg bool enable_fault_detection = enable_fault_detection;
+//     arg string decision_source = decision_source;
+//     comment  "This node captures the output of the DD LEC"
+//     set(dd_z_axis_warning, (or, (equal, dd_output, 'z_warn'), (and, dd_z_axis_warning, (not, (equal, dd_output, 'safe'))))) //so these are slightly more complicated. there are multiple paths the code can take. these are represented by 'safe', 'xy_warn', and 'z_warn'. It is not possible to set both xy and z at the same time. However, if xy is set, it is possible for z to remain set, and vice versa. they are only unset if SAFE occurs.
+//     set(dd_xy_axis_degradation, (or, (equal, dd_output, 'xy_warn'), (and, dd_xy_axis_degradation, (not, (equal, dd_output, 'safe')))))
+// end  
+
 
 //input rtreach2bb rtreach -> rtreach_out
 //    var bool emergency_stop_warning = False;
@@ -417,7 +412,7 @@ check emergency_stop_fs
         emergency_stop_warning==False;
 
 check obstacle_standoff_fs
-        obstacle_standoff_warning==False;
+        obstacle_standoff_warning == True; //changed by serene for new obstacle avoidance logic
 
 check is_reallocation_requested 
         dd_xy_axis_degradation==False;
@@ -427,11 +422,11 @@ check check_dd_am
 
 
 check check_lec2am_ls 
-        lec2_am_l_speed_warning == False;
+        lec2_am_l_speed_warning == True; // changed by serene for new sequence logic
 
 
 check check_lec2am_rs 
-        lec2_am_r_speed_warning == False;
+        lec2_am_r_speed_warning == True; // changed by serene for new sequence logic.
 
 
 check check_lec2am_lp 
@@ -443,31 +438,31 @@ check check_lec2am_rp
 
 
 check check_geofence 
-        bb_geofence_warning == False;
+        bb_geofence_warning == True; // changed by serene for new sequence logic
 
 
 check check_rth 
-        bb_rth_warning == False;
+        bb_rth_warning == True; // changed by serene for new sequence logic
 
 
 check check_surface 
-        bb_home_reached ==False;
+        bb_home_reached == True; // changed by serene for new sequence logic
 
 
-check check_pipe_post 
+check check_pipe_lost 
         bb_pipe_lost_warning == False;
 
 
 check check_waypoints_completed 
-        bb_waypoints_completed == False;
+        bb_waypoints_completed == True; //changed by serene for new sequence logic
 
 
 check check_sensor_failure 
-        bb_sensor_failure_warning == False;
+        bb_sensor_failure_warning == True; //changed by serene for new sequence logic
 
 
 check battery_low_fs 
-        battery_low_warning == False;
+        battery_low_warning == True; //changed by serene for new sequence logic
 
 
 check is_track_pipe_mission_requested 
@@ -500,6 +495,9 @@ check rtreach_obstacle_check
 
 check rtreach_long_term_check
     rtreach_long_term_warning == False;
+
+check obstacle_avoidance_required
+	bb_obstacle_warning == True;
 
 //-----------------------------------
 //standard behavioral nodes
@@ -555,8 +553,8 @@ end
 
 
 task obstacle_avoidance
-    in hsd_obstacle_avoidance hsd_obstacle_avoidance_, hsd_pipeline_mapping  hsd_pipeline_mapping_, hsd_to_waypoint hsd_waypoint_, hsd_to_waypoint_rrt hsd_waypoint_rrt_;
-    out hsd_command hsd_pub;
+    in hsd_obstacle_avoidance hsd_obstacle_avoidance_; //, hsd_pipeline_mapping  hsd_pipeline_mapping_, hsd_to_waypoint hsd_waypoint_, hsd_to_waypoint_rrt hsd_waypoint_rrt_;
+    //out hsd_command hsd_pub;
     vars HSD_out, bb_obstacle_warning, cm_hsd_input;
     arg bool enable_obstacle_avoidance = enable_obstacle_avoidance;
     set(bb_obstacle_warning, (any, True, False))
@@ -566,9 +564,8 @@ end
 
 
 task mission_server
-    out bb_mission bb_mission;
+    //out bb_mission bb_mission; //bb_mission doesn't publish anything. that's a blackboard variable now.
     vars uuv_max_speed, mission_file, refLat, refLon;
-    //var bool next_mission = False;
     arg float uuv_max_speed = uuv_max_speed;
     arg string mission_file = mission_file;
     set(finished_missions, try((and, next_mission, finished_missions), (any, True, False)), finished_missions)
@@ -580,7 +577,7 @@ task mission_server
 end
 
 task next_mission
-    in bb_mission bb_mission;
+    //in bb_mission bb_mission;
     out next_wp next_wp_;
     vars next_mission;
     set(next_mission, True)
@@ -621,6 +618,11 @@ task  tracking_task
     return running
 end    
 
+
+//since this node occurs after waypoints_completed2bb and hsd_wp2bb,
+//it could remove
+//bb_waypoints_completed (info should be stored by w/e waypoints_completed2bb dumped info into)
+//hsd_to_way
 task  waypoint_task 
     in hsd_to_waypoint hsd_waypoint_, bb_waypoints_completed hsd_waypoint_completed_;
 	out cm_hsd_input cm_hsd_input_, next_wp next_wp_;
@@ -638,12 +640,28 @@ end
 
 task dd_lec_task
     in lec_input lec_input_;
-    out degradation_detector degradation_detector_, degradation_detector_am degradation_detector_am_;        
+    out degradation_detector degradation_detector_, degradation_detector_am degradation_detector_am_;
+    vars dd_z_axis_warning, dd_xy_axis_degradation;
+    arg float total_degradation_threshold= total_degradation_threshold;
+    //arg integer num_classes = num_classes;
+    arg bool enable_fault_detection = enable_fault_detection;
+    arg string decision_source = decision_source;
+    //the above arguments were copied over by serene
     arg integer num_classes= num_classes;
     arg integer ann_input_len= ann_input_len;
     arg string ddlec_am_path= ddlec_am_path;
     arg string ddlec_am_params= ddlec_am_params;
-    return running
+    set(dd_output, (any, 'safe', 'z_warn', 'xy_warn'))
+    set(dd_z_axis_warning, (or, (equal, dd_output, 'z_warn'), (and, dd_z_axis_warning, (not, (equal, dd_output, 'safe'))))) //so these are slightly more complicated. there are multiple paths the code can take. these are represented by 'safe', 'xy_warn', and 'z_warn'. It is not possible to set both xy and z at the same time. However, if xy is set, it is possible for z to remain set, and vice versa. they are only unset if SAFE occurs.
+    set(dd_xy_axis_degradation, (or, (equal, dd_output, 'xy_warn'), (and, dd_xy_axis_degradation, (not, (equal, dd_output, 'safe')))))
+    //return running
+    return failure
+end
+
+task publish_HSD_command
+	out hsd_command hsd_pub;
+    	vars HSD_out;
+	return running
 end
 
 //-----------------------------------
@@ -652,145 +670,270 @@ end
 
 tree(updatetime=1000,timeout=15)
 par BlueROV {
-    par topics2bb {
-		mon battery2bb, rth2bb, geofence2bb
-        mon lec2_am_r_2bb, lec2_am_l_2bb, pipe_lost2bb
-		mon sensor_failure2bb, waypoints_completed2bb
-        mon mission2bb, ddlec2bb
-        mon fls2bb, fls_warning2bb
-        mon hsd_pipe2bb, hsd_wp2bb, hsd_rth2bb, hsd_surface2bb
-        mon rtreach2bb, rtreach_unsafe_value2bb, rtreach_index2bb
-
+    	par topics2bb {
+    		mon battery2bb, rth2bb, geofence2bb
+        	mon lec2_am_r_2bb, lec2_am_l_2bb, pipe_lost2bb
+		mon sensor_failure2bb
+		mon waypoints_completed2bb //assuming this is computed in ros nodes. if it's not, then it should be removed, and tghe tree restructured.
+        	// mon mission2bb  //mission2bb is not actually doing anything.
+		// mon ddlec2bb //ddlec2bb should be a processing task directly inside dd_lec_task, or vice versa
+        	mon fls2bb, fls_warning2bb
+ 	       	//mon hsd_pipe2bb, hsd_wp2bb, hsd_rth2bb, hsd_surface2bb //this information is being directly subscribed to in the tasks.
+        	mon rtreach2bb, rtreach_unsafe_value2bb, rtreach_index2bb
+		mon home2bb //this added here by serene. it appears that bb_home_dist is handled in ros nodes.
 	}
-    sel dd_tasks {
-        do reallocate_check {
+	// there are 3 ways i can think of to more cleanly handle dd_tasks situation
+	// 1. combine dd_lec_task and ddlec2bb into dd_lec_task, that's the first option here. in this case, remove ddlec2bb as a monitor node above.
+	// 2. combine dd_lec_task and ddlec2bb into ddlec2bb. that's the comended out section after dd_tasks. in this case, enable ddlec2bb as a monitor node (note: would have to change the topic being listend to)
+	// 3. keep both, but reorder them so dd_lec_task occurs before ddlec2bb, and change it so that it's using a blackboard variable instead of publishing (idk why this option would be used).
+    	sel dd_tasks {
+    		exec dd_lec_task // NEEDS TO RETURN FAILURE. by returning failure, the dd_tasks will then always run reallocate check.
+		//alternative, more efficient solution: nix is_reallocation_requested. have this return based on if reallocation is requested.
+		//i.e-> if this sets xy_axis_degradation to true, then just return Failure, otherwise, return Success.
+		//combine with ddlec2bb
+        	do reallocate_check {
 			if is_reallocation_requested
 			then {
 				exec reallocate_task
 			}
 		}
-        exec dd_lec_task
+        	//exec dd_lec_task //moved to before reallocate check. should reduce latency
 	}
-    exec mission_server
-    exec obstacle_avoidance // this needs to be highest priority, to make sure obstacle avoidance happens before any other priorities or missions.
-    sel priorities {
-		do battery_check {
-			if battery_low_fs 
-			then {
-				exec surface_task
+	// ok, new plan. dd_lec_task was, for all purposes, a monitor node as far as i can tell. could do the below if we re-enable ddlec2bb above, and put the dd_lec_task code into that. ask about this.
+        // do reallocate_check {
+	// 	if is_reallocation_requested
+	// 	then {
+	// 		exec reallocate_task
+	// 	}
+	// }
+	//this segement added by serene
+	//if a mission ends, then we trigger the next mission. very simple logic.
+	seq mission_end {
+		sel confirm_mission_ended {
+			//this will check for the relevant misison type, and if information about it ending has been received.
+			//this list can be expanded as new missions are added.
+			//if both checks in a sequence return success, the sequence will return success, and sel confirm_misison_ended will know a mission ended. it will return success
+			//then, mission_end will trigger next_mission.
+			seq waypoint_mission_end {
+        			chk is_waypoint_requested
+                    		chk check_waypoints_completed //return success if it completed
+			}
+			seq pipe_tracking_misison_end {
+				chk is_track_pipe_mission_requested
+				exec failure_node //placeholder for some check that this mission actually ended. success means it ended.
 			}
 		}
-        do sensor_failure_selector {
-			if check_sensor_failure
-			then {
-				exec surface_task
-			}
-		}
-
-        do emergency_stop_check{
-            if emergency_stop_fs
-            then{
-                seq emergency_stop_tasks {
-                    exec emergency_stop_task
-                    exec surface_task
-                }
-            }
-        }
-
-		do home_reached_selector  {
-			if check_surface  
-			then {
-				exec surface_task 
-			}
-		}
-
-        do obstacle_standoff_check{
-            if obstacle_standoff_fs
-            then{
-                exec surface_task
-            }
-        }
-
-		do rth_selector  {
-			if check_rth  
-			then {
-				par rth_par {
-					exec rth_task  
-					mon home2bb
+		exec next_mission //return success
+		//NOTE next mission appears to have some code that is specific to waypoint. specifically, it calls next_wp__pub.publish, which seems waypoint specific
+		//if this were to be used more generally, that might need to be reworked, but i'm not quite sure what that does.
+	}
+    	exec mission_server //everything that is used by this comes after it. we should be able to remove all topic publishing. 
+    	exec obstacle_avoidance //reworked. does not publish. only detects if obstacle avoidance is happening and sets appropriate heading.
+    	sel priorities {
+    		//per the conversation in slack, since emergency_stop_task overwrites everything else, this is the most important task and should be handled first.
+		//even before obstacle_avoidance.
+        	do emergency_stop_check{
+        		if emergency_stop_fs
+           		then{
+                		seq emergency_stop_tasks {
+                    			exec emergency_stop_task
+                    			exec surface_task
+                		}
+            		}
+        	}
+    		chk obstacle_avoidance_required //a new check which checks bb_obstacle_warning
+		//^returns success if obstacles need to be avoided. returns failure otherwise, allowing remaining selectors to take place.
+		//
+		//the surface tasks have been consolidated. if any of the failsafes are triggered, we surface.
+		//arguably we should merge the emergency stop check into this, and remove surface task from there.
+		seq failsafe_surface {
+			sel failsafe_triggered {
+				chk battery_low_fs
+				chk check_sensor_failure
+				chk obstacle_standoff_fs
+				//if any of the above 3 checks return success, failsafe_triggered returns success and we execute surface task
+				//finally, even if all 3 return failure, it is possible for us to still surface
+				//specifically, if we are supposed to be returning to home, and have reached home, then we surface.
+				seq rth_surface {
+					//first we check if return to home is needed. return to home is needed if either of these checks return success
+					sel rth_needed {
+						chk check_rth
+		    				chk check_geofence
+					}
+					//if at least one check returned success, then we check if we've reached home
+					chk check_surface
 				}
 			}
+			exec surface_task
 		}
-		do geofence_selector  {
-			if check_geofence  
-			then {
-				par rth_par {
-					exec rth_task  
-					mon home2bb
-				} 
+		//merged into above
+		// do battery_check {
+		// 	if battery_low_fs 
+		// 	then {
+		// 		exec surface_task
+		// 	}
+		// }
+        	// do sensor_failure_selector {
+		// 	if check_sensor_failure
+		// 	then {
+		// 		exec surface_task
+		// 	}
+		// }
+		//moved to top.
+        	// do emergency_stop_check{
+        	// 	if emergency_stop_fs
+        	//    	then{
+        	//         	seq emergency_stop_tasks {
+        	//             		exec emergency_stop_task
+        	//             		exec surface_task
+        	//         	}
+        	//     	}
+        	// }
+		//this segment recombined with rth
+		// do home_reached_selector  {
+		// 	if check_surface  
+		// 	then {
+		// 		exec surface_task 
+		// 	}
+		// }
+		// merged into above.
+        	// do obstacle_standoff_check{
+        	// 	if obstacle_standoff_fs
+        	// 	then{
+        	//         	exec surface_task
+        	//     	}
+        	// }
+		//this segment simplified into one thing. logic explained below
+		// do rth_selector  {
+		// 	if check_rth  
+		// 	then {
+		// 		par rth_par {
+		// 			exec rth_task  
+		// 			mon home2bb
+		// 		}
+		// 	}
+		// }
+		// do geofence_selector  {
+		// 	if check_geofence  
+		// 	then {
+		// 		par rth_par {
+		// 			exec rth_task  
+		// 			mon home2bb
+		// 		} 
+		// 	}
+		// }
+		//this will first check if we are supposed to be trying to return home.
+		//if we are, it will check if we have reached home.
+		//if we have, we will surface.
+		//if we haven't, we will keep heading home.
+		seq rth {
+			//if either of these checks succeeds, we continue.
+			//if they both fail, we return failure, rth ends.
+			sel rth_needed {
+				chk check_rth
+		    		chk check_geofence
 			}
+			//we've already confirmed that we arne't home. if we were home, we would have surfaced.
+			exec rth_task //return running. or success. w/e. just not failure.
 		}
 		do pipe_lost_selector  {
-			if check_pipe_post  
+			if check_pipe_lost  
 			then {
 				exec loiter_task
 			}
 		}
-        seq track_pipe_mission  {
+        	seq track_pipe_mission  {
 			chk is_track_pipe_mission_requested
-	        par tracking  {
-                exec tracking_task  
-                sel lec2am_speed_cmd {
-                    do lec2am_l_speed_check {
-                        if check_lec2am_ls
-                        then {
-                            exec speed_min_task 
-                        }
-                    } 
-                    do lec2am_r_speed_check  {
-                        if check_lec2am_rs  
-                        then {
-                            exec speed_min_task
-                        }
-                    }
-                    exec speed_max_task 
-                }
-                sel lec2am_mapping_cmd {
-                    do lec2am_l_mapping_check  {
-                        if check_lec2am_lp  
-                        then {
-                            exec pipe_mapping_disable_task
-                        }
-                    }
-                    do lec2am_r_mapping_check  {
-                        if check_lec2am_rp  
-                        then {
-                            exec pipe_mapping_disable_task
-                        }
-                    }
-                    exec pipe_mapping_enable_task
-                }
-            }
-            seq track_pipe_mission_end {
-                timer evaluate(0.5)
-            }
-        }
-        seq waypoint_mission  {
-            chk is_waypoint_requested
-            sel waypoint_selector {
-                do waypoints_sif {
-                    if check_waypoints_completed
-                    then {
-                        seq waypoint_end {
-                            exec next_mission
-                            exec  loiter_task
-                        } 
-                    }
-                }
-            exec waypoint_task
-            } 
+                	exec tracking_task //return success
+			sel lec2am_speed_cmd {
+				//the lec2am_speed_cmd is guaranteed to return success
+				seq speed_min {
+					//if either speed_warning is enabled, then the speed_warning selector returns success, and we execute speed_min_task
+					//if both speed_warningsn fail, speed_warning selector returns failure and we execute speed_max_task
+					sel speed_warning {
+						chk check_lec2am_ls
+						chk check_lec2am_rs
+					}
+					exec speed_min_task //returns success
+				}
+                    		exec speed_max_task //returns success
+                	}
+			//nothing using pipe_mapping_enable. so don't run this code.
+                	// sel lec2am_mapping_cmd {
+			// 	seq tracking_off {
+			// 		sel pipe_warning {
+			// 			chk check_lec2am_lp
+			// 			chk check_lec2am_rp
+			// 		}
+                        //     		exec pipe_mapping_disable_task
+			// 	}
+                    	// 	exec pipe_mapping_enable_task
+                	// }
+        	}
+		//track_pipe_mission re-written above to consolidate various checks.
+        	// seq track_pipe_mission  {
+		// 	chk is_track_pipe_mission_requested
+	        // 	par tracking  {
+                // 		exec tracking_task  
+                // 		sel lec2am_speed_cmd {
+                //     			do lec2am_l_speed_check {
+                //         			if check_lec2am_ls
+                //         			then {
+                //             				exec speed_min_task 
+                //         			}
+                //     			}
+                //     			do lec2am_r_speed_check  {
+                //         			if check_lec2am_rs  
+                //         			then {
+                //             				exec speed_min_task
+                //         			}
+                //     			}
+                //     			exec speed_max_task 
+                // 		}	
+                // 		sel lec2am_mapping_cmd {
+                //     			do lec2am_l_mapping_check  {
+                //         			if check_lec2am_lp  
+                //         			then {
+                //             				exec pipe_mapping_disable_task
+                //         			}
+                //     			}
+                //     			do lec2am_r_mapping_check  {
+                //         			if check_lec2am_rp  
+                //         			then {
+                //             				exec pipe_mapping_disable_task
+                //         			}
+                //     			}
+                //     			exec pipe_mapping_enable_task
+                // 		}
+		// 	}
+            	// 	seq track_pipe_mission_end {
+                // 		timer evaluate(0.5)
+            	// 	}
+        	// }
+        	seq waypoint_mission  {
+			//because we checked if mission completed earlier, we know that mission is not complete here. we can just execute.
+        		chk is_waypoint_requested
+            		exec waypoint_task //should be changed to return success. so as to prevent memory problems with sequence nodes.
+			//really unfortunate that old py_trees lacked the ability to declare sequence nodes without memory.
 		}
-        exec loiter_task
-    }
+        	// seq waypoint_mission  {
+        	// 	chk is_waypoint_requested
+            	// 	sel waypoint_selector {
+            	// 		do waypoints_sif {
+                //     			if check_waypoints_completed
+                //     			then {
+                //         			seq waypoint_end {
+                //             				exec next_mission
+                //             				exec  loiter_task
+                //        				} 
+                //     			}
+                // 		}
+            	// 		exec waypoint_task
+            	// 	} 
+		// }
+        	exec loiter_task
+    	}
+    	exec publish_HSD_command //new task to publish what command we're doing.
 }
 
 //-------done------------------

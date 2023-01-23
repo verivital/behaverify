@@ -116,11 +116,11 @@
                                                           'running': False,
                                                           'success': True},
                               'type': 'action'},
-                 'have_mission': {   'additional_arguments': [   'mission_stage_1'],
+                 'have_mission': {   'additional_arguments': [   'var_mission_stage_1'],
                                      'category': 'leaf',
                                      'children': [],
                                      'internal_status_module_code': 'MODULE '
-                                                                    'have_mission_module(mission_stage_1)\n'
+                                                                    'have_mission_module(var_mission_stage_1)\n'
                                                                     '\t'
                                                                     'CONSTANTS\n'
                                                                     '\t\t'
@@ -138,7 +138,7 @@
                                                                     '\t\t'
                                                                     'internal_status '
                                                                     ':= '
-                                                                    '(mission_stage_1) '
+                                                                    '(var_mission_stage_1) '
                                                                     '? success '
                                                                     ': '
                                                                     'failure;\n',
@@ -201,17 +201,17 @@
                                                                   'running': True,
                                                                   'success': True},
                                       'type': 'sequence_without_memory'},
-                 'target_reached': {   'additional_arguments': [   'target_y',
-                                                                   'y_stage_1',
-                                                                   'target_x',
-                                                                   'x_stage_1'],
+                 'target_reached': {   'additional_arguments': [   'var_target_x',
+                                                                   'var_x_stage_1',
+                                                                   'var_target_y',
+                                                                   'var_y_stage_1'],
                                        'category': 'leaf',
                                        'children': [],
                                        'internal_status_module_code': 'MODULE '
-                                                                      'target_reached_module(target_y, '
-                                                                      'y_stage_1, '
-                                                                      'target_x, '
-                                                                      'x_stage_1)\n'
+                                                                      'target_reached_module(var_target_x, '
+                                                                      'var_x_stage_1, '
+                                                                      'var_target_y, '
+                                                                      'var_y_stage_1)\n'
                                                                       '\t'
                                                                       'CONSTANTS\n'
                                                                       '\t\t'
@@ -232,13 +232,13 @@
                                                                       '\t\t'
                                                                       'internal_status '
                                                                       ':= '
-                                                                      '(((x_stage_1 '
+                                                                      '(((var_x_stage_1 '
                                                                       '= '
-                                                                      'target_x) '
+                                                                      'var_target_x) '
                                                                       '& '
-                                                                      '(y_stage_1 '
+                                                                      '(var_y_stage_1 '
                                                                       '= '
-                                                                      'target_y))) '
+                                                                      'var_target_y))) '
                                                                       '? '
                                                                       'success '
                                                                       ': '
@@ -294,13 +294,13 @@
                                                            'running': True,
                                                            'success': True},
                                'type': 'sequence_without_memory'},
-                 'x_too_big': {   'additional_arguments': [   'target_x_stage_1',
-                                                              'x_stage_1'],
+                 'x_too_big': {   'additional_arguments': [   'var_x_stage_1',
+                                                              'var_target_x_stage_1'],
                                   'category': 'leaf',
                                   'children': [],
                                   'internal_status_module_code': 'MODULE '
-                                                                 'x_too_big_module(target_x_stage_1, '
-                                                                 'x_stage_1)\n'
+                                                                 'x_too_big_module(var_x_stage_1, '
+                                                                 'var_target_x_stage_1)\n'
                                                                  '\tCONSTANTS\n'
                                                                  '\t\tsuccess, '
                                                                  'failure, '
@@ -314,9 +314,9 @@
                                                                  '\t\t'
                                                                  'internal_status '
                                                                  ':= '
-                                                                 '((x_stage_1 '
+                                                                 '((var_x_stage_1 '
                                                                  '> '
-                                                                 'target_x_stage_1)) '
+                                                                 'var_target_x_stage_1)) '
                                                                  '? success : '
                                                                  'failure;\n',
                                   'internal_status_module_name': 'x_too_big_module',
@@ -326,13 +326,13 @@
                                                               'running': False,
                                                               'success': True},
                                   'type': 'check'},
-                 'x_too_small': {   'additional_arguments': [   'target_x_stage_1',
-                                                                'x_stage_1'],
+                 'x_too_small': {   'additional_arguments': [   'var_x_stage_1',
+                                                                'var_target_x_stage_1'],
                                     'category': 'leaf',
                                     'children': [],
                                     'internal_status_module_code': 'MODULE '
-                                                                   'x_too_small_module(target_x_stage_1, '
-                                                                   'x_stage_1)\n'
+                                                                   'x_too_small_module(var_x_stage_1, '
+                                                                   'var_target_x_stage_1)\n'
                                                                    '\t'
                                                                    'CONSTANTS\n'
                                                                    '\t\t'
@@ -350,9 +350,9 @@
                                                                    '\t\t'
                                                                    'internal_status '
                                                                    ':= '
-                                                                   '((x_stage_1 '
+                                                                   '((var_x_stage_1 '
                                                                    '< '
-                                                                   'target_x_stage_1)) '
+                                                                   'var_target_x_stage_1)) '
                                                                    '? success '
                                                                    ': '
                                                                    'failure;\n',
@@ -363,13 +363,13 @@
                                                                 'running': False,
                                                                 'success': True},
                                     'type': 'check'},
-                 'y_too_big': {   'additional_arguments': [   'target_y_stage_1',
-                                                              'y_stage_1'],
+                 'y_too_big': {   'additional_arguments': [   'var_target_y_stage_1',
+                                                              'var_y_stage_1'],
                                   'category': 'leaf',
                                   'children': [],
                                   'internal_status_module_code': 'MODULE '
-                                                                 'y_too_big_module(target_y_stage_1, '
-                                                                 'y_stage_1)\n'
+                                                                 'y_too_big_module(var_target_y_stage_1, '
+                                                                 'var_y_stage_1)\n'
                                                                  '\tCONSTANTS\n'
                                                                  '\t\tsuccess, '
                                                                  'failure, '
@@ -383,9 +383,9 @@
                                                                  '\t\t'
                                                                  'internal_status '
                                                                  ':= '
-                                                                 '((y_stage_1 '
+                                                                 '((var_y_stage_1 '
                                                                  '> '
-                                                                 'target_y_stage_1)) '
+                                                                 'var_target_y_stage_1)) '
                                                                  '? success : '
                                                                  'failure;\n',
                                   'internal_status_module_name': 'y_too_big_module',
@@ -395,13 +395,13 @@
                                                               'running': False,
                                                               'success': True},
                                   'type': 'check'},
-                 'y_too_small': {   'additional_arguments': [   'target_y_stage_1',
-                                                                'y_stage_1'],
+                 'y_too_small': {   'additional_arguments': [   'var_target_y_stage_1',
+                                                                'var_y_stage_1'],
                                     'category': 'leaf',
                                     'children': [],
                                     'internal_status_module_code': 'MODULE '
-                                                                   'y_too_small_module(target_y_stage_1, '
-                                                                   'y_stage_1)\n'
+                                                                   'y_too_small_module(var_target_y_stage_1, '
+                                                                   'var_y_stage_1)\n'
                                                                    '\t'
                                                                    'CONSTANTS\n'
                                                                    '\t\t'
@@ -419,9 +419,9 @@
                                                                    '\t\t'
                                                                    'internal_status '
                                                                    ':= '
-                                                                   '((y_stage_1 '
+                                                                   '((var_y_stage_1 '
                                                                    '< '
-                                                                   'target_y_stage_1)) '
+                                                                   'var_target_y_stage_1)) '
                                                                    '? success '
                                                                    ': '
                                                                    'failure;\n',
@@ -432,9 +432,126 @@
                                                                 'running': False,
                                                                 'success': True},
                                     'type': 'check'}},
-    'variables': {   'get_mission_DOT_saw_target': {   'custom_value_range': '{TRUE, '
+    'tick_condition': 'TRUE',
+    'variables': {   'env_remaining_goals': {   'custom_value_range': None,
+                                                'initial_value': None,
+                                                'keep_stage_0': True,
+                                                'max_value': 10,
+                                                'min_value': 0,
+                                                'mode': 'VAR',
+                                                'name': 'remaining_goals',
+                                                'next_value': [   (   None,
+                                                                      False,
+                                                                      [   (   '((env_x_goal '
+                                                                              '= '
+                                                                              'env_x_true_stage_2) '
+                                                                              '& '
+                                                                              '(env_y_goal '
+                                                                              '= '
+                                                                              'env_y_true_stage_2))',
+                                                                              'max(0, '
+                                                                              '(env_remaining_goals '
+                                                                              '- '
+                                                                              '1))'),
+                                                                          (   'TRUE',
+                                                                              'env_remaining_goals')])],
+                                                'prefix': 'env_'},
+                     'env_x_goal': {   'custom_value_range': None,
+                                       'initial_value': None,
+                                       'keep_stage_0': True,
+                                       'max_value': 4,
+                                       'min_value': 0,
+                                       'mode': 'VAR',
+                                       'name': 'x_goal',
+                                       'next_value': [   (   None,
+                                                             True,
+                                                             [   (   '(0 = '
+                                                                     'env_remaining_goals_stage_1)',
+                                                                     'env_x_goal'),
+                                                                 (   '((env_x_goal '
+                                                                     '= '
+                                                                     'env_x_true_stage_2) '
+                                                                     '& '
+                                                                     '(env_y_goal '
+                                                                     '= '
+                                                                     'env_y_true_stage_2))',
+                                                                     '{0, 1, '
+                                                                     '2, 3, '
+                                                                     '4}'),
+                                                                 (   'TRUE',
+                                                                     'env_x_goal')])],
+                                       'prefix': 'env_'},
+                     'env_x_true': {   'custom_value_range': None,
+                                       'initial_value': None,
+                                       'keep_stage_0': True,
+                                       'max_value': 4,
+                                       'min_value': 0,
+                                       'mode': 'VAR',
+                                       'name': 'x_true',
+                                       'next_value': [   (   'go_right',
+                                                             False,
+                                                             [   (   'TRUE',
+                                                                     'min(4, '
+                                                                     '(env_x_true '
+                                                                     '+ 1))')]),
+                                                         (   'go_left',
+                                                             False,
+                                                             [   (   'TRUE',
+                                                                     'max(0, '
+                                                                     '(env_x_true_stage_1 '
+                                                                     '- '
+                                                                     '1))')])],
+                                       'prefix': 'env_'},
+                     'env_y_goal': {   'custom_value_range': None,
+                                       'initial_value': None,
+                                       'keep_stage_0': True,
+                                       'max_value': 4,
+                                       'min_value': 0,
+                                       'mode': 'VAR',
+                                       'name': 'y_goal',
+                                       'next_value': [   (   None,
+                                                             True,
+                                                             [   (   '(0 = '
+                                                                     'env_remaining_goals_stage_1)',
+                                                                     'env_y_goal'),
+                                                                 (   '((env_x_goal_stage_1 '
+                                                                     '= '
+                                                                     'env_x_true_stage_2) '
+                                                                     '& '
+                                                                     '(env_y_goal '
+                                                                     '= '
+                                                                     'env_y_true_stage_2))',
+                                                                     '{0, 1, '
+                                                                     '2, 3, '
+                                                                     '4}'),
+                                                                 (   'TRUE',
+                                                                     'env_y_goal')])],
+                                       'prefix': 'env_'},
+                     'env_y_true': {   'custom_value_range': None,
+                                       'initial_value': None,
+                                       'keep_stage_0': True,
+                                       'max_value': 4,
+                                       'min_value': 0,
+                                       'mode': 'VAR',
+                                       'name': 'y_true',
+                                       'next_value': [   (   'go_up',
+                                                             False,
+                                                             [   (   'TRUE',
+                                                                     'min(4, '
+                                                                     '(env_y_true '
+                                                                     '+ 1))')]),
+                                                         (   'go_down',
+                                                             False,
+                                                             [   (   'TRUE',
+                                                                     'max(0, '
+                                                                     '(env_y_true_stage_1 '
+                                                                     '- '
+                                                                     '1))')])],
+                                       'prefix': 'env_'},
+                     'get_mission_DOT_saw_target': {   'custom_value_range': '{TRUE, '
                                                                              'FALSE}',
                                                        'initial_value': None,
+                                                       'keep_stage_0': False,
                                                        'max_value': 1,
                                                        'min_value': 0,
                                                        'mode': 'VAR',
@@ -443,9 +560,11 @@
                                                                              True,
                                                                              [   (   'TRUE',
                                                                                      '{TRUE, '
-                                                                                     'FALSE}')])]},
+                                                                                     'FALSE}')])],
+                                                       'prefix': ''},
                      'mission': {   'custom_value_range': '{TRUE, FALSE}',
                                     'initial_value': [('TRUE', 'FALSE')],
+                                    'keep_stage_0': True,
                                     'max_value': 1,
                                     'min_value': 0,
                                     'mode': 'VAR',
@@ -458,30 +577,11 @@
                                                           [   (   'get_mission_DOT_saw_target_stage_1',
                                                                   'TRUE'),
                                                               (   'TRUE',
-                                                                  'FALSE')])]},
-                     'remaining_goals': {   'custom_value_range': None,
-                                            'initial_value': None,
-                                            'max_value': 10,
-                                            'min_value': 0,
-                                            'mode': 'VAR',
-                                            'name': 'remaining_goals',
-                                            'next_value': [   (   None,
-                                                                  False,
-                                                                  [   (   '((x_goal '
-                                                                          '= '
-                                                                          'x_true_stage_2) '
-                                                                          '& '
-                                                                          '(y_goal '
-                                                                          '= '
-                                                                          'y_true_stage_2))',
-                                                                          'max(0, '
-                                                                          '(remaining_goals '
-                                                                          '- '
-                                                                          '1))'),
-                                                                      (   'TRUE',
-                                                                          'remaining_goals')])]},
+                                                                  'FALSE')])],
+                                    'prefix': 'var_'},
                      'target_x': {   'custom_value_range': None,
                                      'initial_value': [('TRUE', '0')],
+                                     'keep_stage_0': True,
                                      'max_value': 4,
                                      'min_value': 0,
                                      'mode': 'VAR',
@@ -489,11 +589,13 @@
                                      'next_value': [   (   'get_mission',
                                                            False,
                                                            [   (   'get_mission_DOT_saw_target_stage_1',
-                                                                   'x_goal'),
+                                                                   'env_x_goal'),
                                                                (   'TRUE',
-                                                                   'target_x')])]},
+                                                                   'var_target_x')])],
+                                     'prefix': 'var_'},
                      'target_y': {   'custom_value_range': None,
                                      'initial_value': [('TRUE', '0')],
+                                     'keep_stage_0': True,
                                      'max_value': 4,
                                      'min_value': 0,
                                      'mode': 'VAR',
@@ -501,101 +603,31 @@
                                      'next_value': [   (   'get_mission',
                                                            False,
                                                            [   (   'get_mission_DOT_saw_target_stage_1',
-                                                                   'y_goal'),
+                                                                   'env_y_goal'),
                                                                (   'TRUE',
-                                                                   'target_y')])]},
+                                                                   'var_target_y')])],
+                                     'prefix': 'var_'},
                      'x': {   'custom_value_range': None,
                               'initial_value': [('TRUE', '0')],
+                              'keep_stage_0': True,
                               'max_value': 4,
                               'min_value': 0,
                               'mode': 'VAR',
                               'name': 'x',
                               'next_value': [   (   'get_position',
                                                     False,
-                                                    [   ('TRUE', 'x_true'),
-                                                        ('TRUE', 'x')])]},
-                     'x_goal': {   'custom_value_range': None,
-                                   'initial_value': None,
-                                   'max_value': 4,
-                                   'min_value': 0,
-                                   'mode': 'VAR',
-                                   'name': 'x_goal',
-                                   'next_value': [   (   None,
-                                                         True,
-                                                         [   (   '(0 = '
-                                                                 'remaining_goals_stage_1)',
-                                                                 'x_goal'),
-                                                             (   '((x_goal = '
-                                                                 'x_true_stage_2) '
-                                                                 '& (y_goal = '
-                                                                 'y_true_stage_2))',
-                                                                 '{0, 1, 2, 3, '
-                                                                 '4}'),
-                                                             (   'TRUE',
-                                                                 'x_goal')])]},
-                     'x_true': {   'custom_value_range': None,
-                                   'initial_value': None,
-                                   'max_value': 4,
-                                   'min_value': 0,
-                                   'mode': 'VAR',
-                                   'name': 'x_true',
-                                   'next_value': [   (   'go_right',
-                                                         False,
-                                                         [   (   'TRUE',
-                                                                 'min(4, '
-                                                                 '(x_true + '
-                                                                 '1))')]),
-                                                     (   'go_left',
-                                                         False,
-                                                         [   (   'TRUE',
-                                                                 'max(0, '
-                                                                 '(x_true_stage_1 '
-                                                                 '- 1))')])]},
+                                                    [   ('TRUE', 'env_x_true'),
+                                                        ('TRUE', 'var_x')])],
+                              'prefix': 'var_'},
                      'y': {   'custom_value_range': None,
                               'initial_value': [('TRUE', '0')],
+                              'keep_stage_0': True,
                               'max_value': 4,
                               'min_value': 0,
                               'mode': 'VAR',
                               'name': 'y',
                               'next_value': [   (   'get_position',
                                                     False,
-                                                    [   ('TRUE', 'y_true'),
-                                                        ('TRUE', 'y')])]},
-                     'y_goal': {   'custom_value_range': None,
-                                   'initial_value': None,
-                                   'max_value': 4,
-                                   'min_value': 0,
-                                   'mode': 'VAR',
-                                   'name': 'y_goal',
-                                   'next_value': [   (   None,
-                                                         True,
-                                                         [   (   '(0 = '
-                                                                 'remaining_goals_stage_1)',
-                                                                 'y_goal'),
-                                                             (   '((x_goal_stage_1 '
-                                                                 '= '
-                                                                 'x_true_stage_2) '
-                                                                 '& (y_goal = '
-                                                                 'y_true_stage_2))',
-                                                                 '{0, 1, 2, 3, '
-                                                                 '4}'),
-                                                             (   'TRUE',
-                                                                 'y_goal')])]},
-                     'y_true': {   'custom_value_range': None,
-                                   'initial_value': None,
-                                   'max_value': 4,
-                                   'min_value': 0,
-                                   'mode': 'VAR',
-                                   'name': 'y_true',
-                                   'next_value': [   (   'go_up',
-                                                         False,
-                                                         [   (   'TRUE',
-                                                                 'min(4, '
-                                                                 '(y_true + '
-                                                                 '1))')]),
-                                                     (   'go_down',
-                                                         False,
-                                                         [   (   'TRUE',
-                                                                 'max(0, '
-                                                                 '(y_true_stage_1 '
-                                                                 '- 1))')])]}}}
+                                                    [   ('TRUE', 'env_y_true'),
+                                                        ('TRUE', 'var_y')])],
+                              'prefix': 'var_'}}}

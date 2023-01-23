@@ -12,8 +12,8 @@ class get_position(py_trees.behaviour.Behaviour):
         self.blackboard = self.attach_blackboard_client(name = name)
         self.blackboard.register_key(key = ('x'), access = py_trees.common.Access.WRITE)
         self.blackboard.register_key(key = ('y'), access = py_trees.common.Access.WRITE)
-        self.blackboard.x = random.choice([0])
-        self.blackboard.y = random.choice([0])
+        self.blackboard.x = 0
+        self.blackboard.y = 0
 
     def update(self):
         (self.blackboard.x, self.blackboard.y) = robot.get_position()
