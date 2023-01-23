@@ -1,6 +1,6 @@
 variables {
 	variable { failsafe_engaged VAR BOOLEAN } end_variable
-	variable { mission VAR {'emergency_surface', 'pipe_tracking', 'go_to_home', 'go_to_waypoint'} } end_variable
+	variable { mission VAR {'MISSION_emergency_surface', 'MISSION_pipe_tracking', 'MISSION_go_to_home', 'MISSION_go_to_waypoint'} } end_variable
 } end_variables
 
 local_variables {} end_local_variables
@@ -9,11 +9,13 @@ environment {
 	environment_variables {
 		environment_variable { battery_low VAR BOOLEAN } end_environment_variable
 		environment_variable { BLUEROV_SURFACED VAR BOOLEAN } end_environment_variable
-		environment_variable { command VAR {'UNKNOWN', 'avoiding_obstacles', 'go_to_waypoint', 'go_to_home', 'search_for_pipe', 'go_to_surface', 'pipe_tracking'} } end_environment_variable
+		environment_variable { BLUEROV_HALTED VAR BOOLEAN } end_environment_variable
+		environment_variable { command VAR {'COMMAND_UNKNOWN', 'COMMAND_avoid_obstacles', 'COMMAND_go_to_waypoint', 'COMMAND_go_to_home', 'COMMAND_surface', 'COMMAND_halt', 'COMMAND_pipe_tracking', 'COMMAND_search_for_pipe'} } end_environment_variable
+		environment_variable { emergency_sensor VAR BOOLEAN } end_environment_variable
 		environment_variable { geofence_warning VAR BOOLEAN } end_environment_variable
 		environment_variable { home_reached VAR BOOLEAN } end_environment_variable
 		environment_variable { mission_finished VAR BOOLEAN } end_environment_variable
-		environment_variable { next_mission VAR {'emergency_surface', 'pipe_tracking', 'go_to_home', 'go_to_waypoint'} } end_environment_variable
+		environment_variable { next_mission VAR {'MISSION_emergency_surface', 'MISSION_pipe_tracking', 'MISSION_go_to_home', 'MISSION_go_to_waypoint'} } end_environment_variable
 		environment_variable { obstacles_present VAR BOOLEAN } end_environment_variable
 		environment_variable { pipe_lost VAR BOOLEAN } end_environment_variable
 		environment_variable { reallocation_needed VAR BOOLEAN } end_environment_variable
@@ -21,21 +23,21 @@ environment {
 		environment_variable { sensor_failure VAR BOOLEAN } end_environment_variable
 	} end_environment_variables
 	initial_values {
-		environment_statement { env battery_low result { False } end_result } end_environment_statement
 		environment_statement { env BLUEROV_SURFACED result { False } end_result } end_environment_statement
-		environment_statement { env geofence_warning result { False } end_result } end_environment_statement
-		environment_statement { env home_reached result { False } end_result } end_environment_statement
-		environment_statement { env mission_finished result { False } end_result } end_environment_statement
-		environment_statement { env sensor_failure result { False } end_result } end_environment_statement
+		environment_statement { env BLUEROV_HALTED result { False } end_result } end_environment_statement
 	} end_initial_values
 	update_values {
+		environment_statement {
+			env BLUEROV_HALTED
+			result { env BLUEROV_HALTED } end_result
+		} end_environment_statement
 		environment_statement {
 			env BLUEROV_SURFACED
 			result { env BLUEROV_SURFACED } end_result
 		} end_environment_statement
 		environment_statement {
 			env next_mission
-			case { env mission_finished } end_case result { 'emergency_surface', 'pipe_tracking', 'go_to_home', 'go_to_waypoint' } end_result
+			case { env mission_finished } end_case result { 'MISSION_emergency_surface', 'MISSION_pipe_tracking', 'MISSION_go_to_home', 'MISSION_go_to_waypoint' } end_result
 			result { env next_mission } end_result
 		} end_environment_statement
 	} end_update_values
@@ -45,7 +47,7 @@ checks {
 	check {
 		emergency_surface_mission
 		read_variables { mission } end_read_variables
-		condition { (equal, mission, 'emergency_surface') } end_condition
+		condition { (equal, mission, 'MISSION_emergency_surface') } end_condition
 	} end_check
 	
 	check {
@@ -57,19 +59,19 @@ checks {
 	check {
 		return_home_mission
 		read_variables { mission } end_read_variables
-		condition { (equal, mission, 'go_to_home') } end_condition
+		condition { (equal, mission, 'MISSION_go_to_home') } end_condition
 	} end_check
 	
 	check {
 		track_pipe_mission
 		read_variables { mission } end_read_variables
-		condition { (equal, mission, 'pipe_tracking') } end_condition
+		condition { (equal, mission, 'MISSION_pipe_tracking') } end_condition
 	} end_check
 	
 	check {
 		waypoint_mission
 		read_variables { mission } end_read_variables
-		condition { (equal, mission, 'go_to_waypoint') } end_condition
+		condition { (equal, mission, 'MISSION_go_to_waypoint') } end_condition
 	} end_check
 } end_checks
 
@@ -83,10 +85,24 @@ environment_checks {
 	} end_check_environment
 
 	check_environment {
+		check_emergency_sensor
+		imports { 'blueROV_interface' } end_imports
+		python_function {'blueROV_interface.emergency_sensor()' } end_python_function
+		condition { env emergency_sensor } end_condition
+	} end_check_environment
+
+	check_environment {
 		check_geofence
 		imports { 'blueROV_interface' } end_imports
 		python_function {'blueROV_interface.geofence_warning()' } end_python_function
 		condition { env geofence_warning } end_condition
+	} end_check_environment
+
+	check_environment {
+		check_halted
+		imports { 'blueROV_interface' } end_imports
+		python_function {'blueROV_interface.not_halted()' } end_python_function
+		condition { env BLUEROV_HALTED } end_condition
 	} end_check_environment
 
 	check_environment {
@@ -153,7 +169,7 @@ actions {
 				update_values {
 					environment_statement {
 						env command
-						result { 'avoiding_obstacles' } end_result
+						result { 'COMMAND_avoid_obstacles' } end_result
 					} end_environment_statement
 				} end_update_values
 			} end_write_environment
@@ -186,6 +202,32 @@ actions {
 			} end_return_statement
 		} end_update
 	} end_action
+	
+	action {
+		halt
+		imports { 'blueROV_interface' } end_imports
+		read_variables {} end_read_variables
+		write_variables {} end_write_variables
+		initial_values {} end_initial_values
+		update {
+			write_environment {
+				python_function { 'blueROV_interface.halt()' } end_python_function
+				update_values {
+					environment_statement {
+						env BLUEROV_HALTED
+						result { True } end_result
+					} end_environment_statement
+					environment_statement {
+						env command
+						result { 'COMMAND_halt' } end_result
+					} end_environment_statement
+				} end_update_values
+			} end_write_environment
+			return_statement {
+				result { success } end_result
+			} end_return_statement
+		} end_update
+	} end_action
 
 	action {
 		loiter
@@ -199,7 +241,7 @@ actions {
 				update_values {
 					environment_statement {
 						env command
-						result { 'UNKNOWN' } end_result
+						result { 'COMMAND_UNKNOWN' } end_result
 					} end_environment_statement
 				} end_update_values
 			} end_write_environment
@@ -244,7 +286,7 @@ actions {
 				update_values {
 					environment_statement {
 						env command
-						result { 'go_to_home' } end_result
+						result { 'COMMAND_go_to_home' } end_result
 					} end_environment_statement
 				} end_update_values
 			} end_write_environment
@@ -255,21 +297,38 @@ actions {
 	} end_action
 	
 	action {
-		search
+		search_for_pipe
 		imports { 'blueROV_interface' } end_imports
 		read_variables {} end_read_variables
 		write_variables {} end_write_variables
 		initial_values {} end_initial_values
 		update {
 			write_environment {
-				python_function { 'blueROV_interface.search()' } end_python_function
+				python_function { 'blueROV_interface.search_for_pipe()' } end_python_function
 				update_values {
 					environment_statement {
 						env command
-						result { 'search_for_pipe' } end_result
+						result { 'COMMAND_search_for_pipe' } end_result
 					} end_environment_statement
 				} end_update_values
 			} end_write_environment
+			return_statement {
+				result { success } end_result
+			} end_return_statement
+		} end_update
+	} end_action
+
+	action {
+		set_return_home
+		read_variables {} end_read_variables
+		write_variables {mission} end_write_variables
+		initial_values {
+		} end_initial_values
+		update {
+			variable_statement {
+				mission
+				result { 'MISSION_go_to_home' } end_result
+			} end_variable_statement
 			return_statement {
 				result { success } end_result
 			} end_return_statement
@@ -292,7 +351,7 @@ actions {
 					} end_environment_statement
 					environment_statement {
 						env command
-						result { 'go_to_surface' } end_result
+						result { 'COMMAND_surface' } end_result
 					} end_environment_statement
 				} end_update_values
 			} end_write_environment
@@ -314,7 +373,7 @@ actions {
 				update_values {
 					environment_statement {
 						env command
-						result { 'pipe_tracking' } end_result
+						result { 'COMMAND_pipe_tracking' } end_result
 					} end_environment_statement
 				} end_update_values
 			} end_write_environment
@@ -357,7 +416,7 @@ actions {
 				update_values {
 					environment_statement {
 						env command
-						result { 'go_to_waypoint' } end_result
+						result { 'COMMAND_go_to_waypoint' } end_result
 					} end_environment_statement
 				} end_update_values
 			} end_write_environment
@@ -399,10 +458,26 @@ composite {
 		} end_composite
 		composite {
 			process_mission
-			sequence
+			selector
 			children {
-				check_mission_finished
-				get_mission
+				emergency_surface_mission
+				return_home_mission
+				composite {
+					geofence_abort
+					sequence
+					children {
+						check_geofence
+						set_return_home
+					} end_children
+				} end_composite
+				composite {
+					normal_process
+					sequence
+					children {
+						check_mission_finished
+						get_mission
+					} end_children
+				} end_composite
 			} end_children
 		} end_composite
 		composite {
@@ -419,27 +494,30 @@ composite {
 							children {
 								failsafe_triggered
 								emergency_surface_mission
+								check_battery_low
+								check_emergency_sensor
+								check_sensor_failure
 								composite {
-									get_information
-									selector
+									home_surface
+									sequence
 									children {
-										check_battery_low
-										check_geofence
-										check_sensor_failure
-										composite {
-											home_surface
-											sequence
-											children {
-												return_home_mission
-												check_home_reached
-											} end_children
-										} end_composite
+										return_home_mission
+										check_home_reached
 									} end_children
 								} end_composite
 							} end_children
 						} end_composite
 						trigger_failsafe
+						check_halted
 						surface
+					} end_children
+				} end_composite
+				composite {
+					halt_sequence
+					sequence
+					children {
+						failsafe_triggered
+						halt
 					} end_children
 				} end_composite
 				composite {
@@ -472,7 +550,7 @@ composite {
 									sequence
 									children {
 										check_pipe_lost
-										search
+										search_for_pipe
 									} end_children
 								} end_composite
 								track_pipe
