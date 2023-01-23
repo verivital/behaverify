@@ -147,7 +147,7 @@ var bool 				bb_home_reached =False, model_as(bool, False);
 //--------------------------------
 //while in THEORY, bb_mission can be any of the types listed above, in practice, the only place that sets bb_mission is mission_server
 //and mission_server will only set to these values.
-var String 				bb_mission = "", model_as({'waypoint_following', 'e_stop', 'pipe_following'}); //mission can be any of these types
+var String 				bb_mission = "", model_as({'waypoint_following', 'e_stop', 'pipe_following'}, 'waypoint_following'); //mission can be any of these types
 var bool 				bb_obstacle_warning = False, model_as(bool, False);
 var Bool 				bb_pipelost = False, model_as(bool, False);
 var bool 				bb_pipe_lost_warning = False, model_as(bool, False);
@@ -531,7 +531,7 @@ task surface_task
     in hsd_to_surface hsd_to_surface_;
     out cm_hsd_input cm_hsd_input_;
     vars HSD_out, cm_hsd_input;
-    set(cm_hsd_input, 'cm_surface_task')
+    set(cm_hsd_input, try(bb_obstacle_warning, 'cm_obstacle_avoidance_task'), 'cm_surface_task')
     set(BLUEROV_SURFACED, True)
     return running
     //set the cm_hsd_input, and then return running.
@@ -541,7 +541,7 @@ task  rth_task
     in  hsd_to_rth hsd_to_rth_;
     out cm_hsd_input cm_hsd_input_;
     vars HSD_out, cm_hsd_input;
-    set(cm_hsd_input, 'cm_rth_task')
+    set(cm_hsd_input, try(bb_obstacle_warning, 'cm_obstacle_avoidance_task'), 'cm_rth_task')
     return running
 end
 
@@ -549,7 +549,7 @@ task  loiter_task
     in hsd_pipeline_mapping  hsd_pipeline_mapping_;
     out cm_hsd_input  cm_hsd_input_;
     vars HSD_out, cm_hsd_input;
-    set(cm_hsd_input, 'cm_loiter_task')
+    set(cm_hsd_input, try(bb_obstacle_warning, 'cm_obstacle_avoidance_task'), 'cm_loiter_task')
     return running
 end    
 
@@ -617,7 +617,7 @@ task  tracking_task
     in hsd_pipeline_mapping  hsd_pipeline_mapping_;
     out cm_hsd_input cm_hsd_input_;
     vars HSD_out, cm_hsd_input;
-    set(cm_hsd_input, 'cm_tracking_task')
+    set(cm_hsd_input, try(bb_obstacle_warning, 'cm_obstacle_avoidance_task'), 'cm_tracking_task')
     return running
 end    
 
@@ -625,7 +625,7 @@ task  waypoint_task
     in hsd_to_waypoint hsd_waypoint_, bb_waypoints_completed hsd_waypoint_completed_;
 	out cm_hsd_input cm_hsd_input_, next_wp next_wp_;
     vars HSD_out, cm_hsd_input;
-    set(cm_hsd_input, 'cm_waypoint_task')
+    set(cm_hsd_input, try(bb_obstacle_warning, 'cm_obstacle_avoidance_task'), 'cm_waypoint_task')
     return running
 end   
 

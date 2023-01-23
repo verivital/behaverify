@@ -71,4 +71,37 @@
 
 
 -- --the blueROV surfaces eventually if battery gets low.
--- LTLSPEC G ((F battery = 0) -> F BLUEROV_SURFACED);
+-- LTLSPEC G ((F var_battery = 0) -> F var_BLUEROV_SURFACED);
+
+
+
+-- --obstacles eventually end
+-- LTLSPEC G (var_bb_obstacle_warning -> F (!(var_bb_obstacle_warning) | var_BLUEROV_SURFACED)); -- fails. there is no way to prove that obstacles will not be detected at every step
+
+
+-- --obstacle avoidance task command is ordered if bb_obstacle_warning
+-- LTLSPEC G (var_bb_obstacle_warning_stage_1 -> (var_cm_hsd_input_stage_1 = cm_obstacle_avoidance_task)); -- true
+-- LTLSPEC G (var_bb_obstacle_warning_stage_1 -> (var_cm_hsd_input_stage_2 = cm_obstacle_avoidance_task));-- true
+-- LTLSPEC G (var_bb_obstacle_warning_stage_1 -> (var_cm_hsd_input_stage_3 = cm_obstacle_avoidance_task));-- true
+-- LTLSPEC G (var_bb_obstacle_warning_stage_1 -> (var_cm_hsd_input_stage_4 = cm_obstacle_avoidance_task));-- true
+-- LTLSPEC G (var_bb_obstacle_warning_stage_1 -> (var_cm_hsd_input_stage_5 = cm_obstacle_avoidance_task));-- true
+-- LTLSPEC G (var_bb_obstacle_warning_stage_1 -> (var_cm_hsd_input_stage_6 = cm_obstacle_avoidance_task));-- true
+-- LTLSPEC G (var_bb_obstacle_warning_stage_1 -> (var_cm_hsd_input_stage_7 = cm_obstacle_avoidance_task));-- true
+-- LTLSPEC G (var_bb_obstacle_warning_stage_1 -> (var_cm_hsd_input_stage_8 = cm_obstacle_avoidance_task));-- true
+-- LTLSPEC G (var_bb_obstacle_warning_stage_1 -> (var_cm_hsd_input_stage_9 = cm_obstacle_avoidance_task));-- true
+-- LTLSPEC G (var_bb_obstacle_warning_stage_1 -> (var_cm_hsd_input_stage_10 = cm_obstacle_avoidance_task));-- true
+-- LTLSPEC G (var_bb_obstacle_warning_stage_1 -> (var_cm_hsd_input_stage_11 = cm_obstacle_avoidance_task));-- true, but slow
+-- LTLSPEC G (var_bb_obstacle_warning_stage_1 -> (var_cm_hsd_input_stage_12 = cm_obstacle_avoidance_task));-- true, very slow
+-- LTLSPEC G (var_bb_obstacle_warning_stage_1 -> (var_cm_hsd_input_stage_13 = cm_obstacle_avoidance_task));-- probably true, extremely slow
+
+
+-- --loiter_task_1 is unreachable (it is reachable. i meant loiter task 2... lol)
+-- CTLSPEC EF (loiter_task_1.active); -- False? idk how to interpret this. possible i have poorly written the specification.
+-- LTLSPEC G (!(loiter_task_1.active)); -- False, so it's eventually active
+
+
+
+-- --loiter_task_2 is unreachable
+-- CTLSPEC EF (loiter_task_2.active); -- False? idk how to interpret this. possible i have poorly written the specification.
+-- LTLSPEC G (!(loiter_task_2.active)); -- True now, formerly false. see below
+-- False. It's reachable... because i had an error in the file. specifically, i assumed emergency_stop_warning would be initialized to false, which may not be true, because bb_misison can be set to e_stop at start. fixed. for now. rechekcing if reachable.
