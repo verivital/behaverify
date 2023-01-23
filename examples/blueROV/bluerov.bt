@@ -454,7 +454,7 @@ check check_surface
         bb_home_reached ==False;
 
 
-check check_pipe_post 
+check check_pipe_lost 
         bb_pipe_lost_warning == False;
 
 
@@ -729,8 +729,8 @@ par BlueROV {
 				} 
 			}
 		}
-		do pipe_lost_selector  {
-			if check_pipe_post  
+		do pipe_lost_selector {
+			if check_pipe_lost  
 			then {
 				exec loiter_task
 			}
