@@ -54,6 +54,10 @@
 -- LTLSPEC G (speed_min_task.active -> (!(speed_max_task.active) & !(speed_min_task_1.active))); -- true
 -- LTLSPEC G (speed_min_task_1.active -> (!(speed_min_task.active) & !(speed_max_task.active))); -- true
 
+
+-- --when we tick, exactly one of the priorities tasks is selected. not 0, not 2.
+-- LTLSPEC G (BlueROV.active -> count(surface_task.active, surface_task_1.active, surface_task_2.active, surface_task_3.active, surface_task_4.active, rth_task.active, rth_task_1.active, loiter_task.active, tracking_task.active,  loiter_task_1.active, waypoint_task.active, loiter_task_2.active) = 1); -- true, but slow
+
 -- --multiple failsafes can be activated
 -- LTLSPEC G (!(var_battery_low_warning_stage_1 & var_bb_geofence_warning_stage_1)); -- both can be set, this spec should be false.
 
@@ -96,12 +100,52 @@
 
 
 -- --loiter_task_1 is unreachable (it is reachable. i meant loiter task 2... lol)
--- CTLSPEC EF (loiter_task_1.active); -- False? idk how to interpret this. possible i have poorly written the specification.
+-- CTLSPEC EF (loiter_task_1.active); -- True
 -- LTLSPEC G (!(loiter_task_1.active)); -- False, so it's eventually active
 
 
 
 -- --loiter_task_2 is unreachable
--- CTLSPEC EF (loiter_task_2.active); -- False? idk how to interpret this. possible i have poorly written the specification.
--- LTLSPEC G (!(loiter_task_2.active)); -- True now, formerly false. see below
+-- CTLSPEC EF (loiter_task_2.active); -- False now.
+-- LTLSPEC G (!(loiter_task_2.active)); -- True now, formerly false. slow though. see below
 -- False. It's reachable... because i had an error in the file. specifically, i assumed emergency_stop_warning would be initialized to false, which may not be true, because bb_misison can be set to e_stop at start. fixed. for now. rechekcing if reachable.
+
+
+-- --surface guarantees, but in ctl
+-- CTLSPEC EF(var_BLUEROV_SURFACED); -- true, it is possible to reach the surface
+-- CTLSPEC AF(var_BLUEROV_SURFACED); -- false, you are not guaranteed to reach the surface
+
+
+
+
+------------------------------------------------------------
+--specifications from contingency manager.
+-- prioritize 1. do no harm, 2. keep the UUV safe, 3. completing the mission.
+
+
+-- --1. do no harm
+-- --this specification is TRUE if surfacing is safe and will not do harm. proof: obstacle avoidance always takes priority, but sometimes surfacing can interrupt.
+-- --this specification is FALSE if surfacing is NOT always safe.
+-- --for the true version, refer back to prior specifications which prove tht if  failsafe is set, we surface, and that if bb_obstacle_warning is set, we do obstacle avoidance
+-- --for the false version, use the following specification to prove a violation
+-- LTLSPEC G(var_bb_obstacle_warning_stage_1 -> !(emergency_stop_task.active)); -- FALSE. it is possible for obstacle avoidance ot be going, and emergency_stop_task to occur, which overwrites everthing else
+-- --CTL version
+-- CTLSPEC EF(var_bb_obstacle_warning_stage_1 & emergency_stop_task.active); -- TRUE. it is possible blah blah.
+
+-- --2. keep the UUV safe
+-- --exactly the same as specification 1. unclear on the difference to be honest.
+
+
+-- --3. completing the mission
+-- --impossible to show that the mission will be completed without asserting the mission is completed, or using a fairness constraint to do the same thing.
+-- --however, we can show that if failsafes are not triggered and there is no obstacle avoidance, then we do our mission.
+
+-- LTLSPEC G ((BlueROV.active & !(surface_task.active | surface_task_1.active | surface_task_2.active | surface_task_3.active | surface_task_4.active)) -> (var_bb_mission_stage_1 = waypoint_following & (loiter_task_1.active | waypoint_task.active)) | (var_bb_mission_stage_1 = pipe_following & tracking_task.active)); --FALSE. return to home might be triggered.
+-- LTLSPEC G ((BlueROV.active & !(surface_task.active | surface_task_1.active | surface_task_2.active | surface_task_3.active | surface_task_4.active | rth_task.active | rth_task_1.active)) -> (var_bb_mission_stage_1 = waypoint_following & (loiter_task_1.active | waypoint_task.active)) | (var_bb_mission_stage_1 = pipe_following & (tracking_task.active | loiter_task.active)));  --TRUE. but this is very sketchy. Specifically, this is ONLY true because pipe_following cannot end. The issue i see with the currrent layout is that pipe_lost_warning is set BEFORE the mission is updated. Thus, if pipe_tracking could end, the following scenario could take place.
+-- --tick 1. mission is pipe_tracking. mission ends.
+-- --tick 2. pipe_lost_warning is set to true. mission is set to waypoint_following. tree executes loiter_task because pipe_lost_warning is set to true
+-- --tick 3+. tree continues to execute loiter_task. it is not possible to unset this. eventually, battery runs out, and bluerov surfaces.
+-- --the below version slightly more complete.
+-- LTLSPEC G ((BlueROV.active & !(surface_task.active | surface_task_1.active | surface_task_2.active | surface_task_3.active | surface_task_4.active | rth_task.active | rth_task_1.active)) -> (var_bb_mission_stage_1 = waypoint_following & var_cm_hsd_input_stage_13 = cm_waypoint_task) | (var_bb_mission_stage_1 = pipe_following & var_cm_hsd_input_stage_13 = cm_tracking_task) | (var_cm_hsd_input_stage_13 = cm_obstacle_avoidance_task) | var_cm_hsd_input_stage_13 = cm_loiter_task);  --TRUE.
+
+
