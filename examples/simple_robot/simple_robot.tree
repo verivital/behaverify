@@ -78,6 +78,9 @@ checks {
 	} end_check
 } end_checks
 
+environment_checks {
+} end_environment_checks
+
 actions {
 	action {
 		get_mission

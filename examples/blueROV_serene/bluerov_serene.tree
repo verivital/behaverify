@@ -1,0 +1,495 @@
+variables {
+	variable { failsafe_engaged VAR BOOLEAN } end_variable
+	variable { mission VAR {'emergency_surface', 'pipe_tracking', 'go_to_home', 'go_to_waypoint'} } end_variable
+} end_variables
+
+local_variables {} end_local_variables
+
+environment {
+	environment_variables {
+		environment_variable { battery_low VAR BOOLEAN } end_environment_variable
+		environment_variable { BLUEROV_SURFACED VAR BOOLEAN } end_environment_variable
+		environment_variable { command VAR {'UNKNOWN', 'avoiding_obstacles', 'go_to_waypoint', 'go_to_home', 'search_for_pipe', 'go_to_surface', 'pipe_tracking'} } end_environment_variable
+		environment_variable { geofence_warning VAR BOOLEAN } end_environment_variable
+		environment_variable { home_reached VAR BOOLEAN } end_environment_variable
+		environment_variable { mission_finished VAR BOOLEAN } end_environment_variable
+		environment_variable { next_mission VAR {'emergency_surface', 'pipe_tracking', 'go_to_home', 'go_to_waypoint'} } end_environment_variable
+		environment_variable { obstacles_present VAR BOOLEAN } end_environment_variable
+		environment_variable { pipe_lost VAR BOOLEAN } end_environment_variable
+		environment_variable { reallocation_needed VAR BOOLEAN } end_environment_variable
+		environment_variable { reallocation_possible VAR BOOLEAN } end_environment_variable
+		environment_variable { sensor_failure VAR BOOLEAN } end_environment_variable
+	} end_environment_variables
+	initial_values {
+		environment_statement { env battery_low result { False } end_result } end_environment_statement
+		environment_statement { env BLUEROV_SURFACED result { False } end_result } end_environment_statement
+		environment_statement { env geofence_warning result { False } end_result } end_environment_statement
+		environment_statement { env home_reached result { False } end_result } end_environment_statement
+		environment_statement { env mission_finished result { False } end_result } end_environment_statement
+		environment_statement { env sensor_failure result { False } end_result } end_environment_statement
+	} end_initial_values
+	update_values {
+		environment_statement {
+			env BLUEROV_SURFACED
+			result { env BLUEROV_SURFACED } end_result
+		} end_environment_statement
+		environment_statement {
+			env next_mission
+			case { env mission_finished } end_case result { 'emergency_surface', 'pipe_tracking', 'go_to_home', 'go_to_waypoint' } end_result
+			result { env next_mission } end_result
+		} end_environment_statement
+	} end_update_values
+} end_environment
+
+checks {
+	check {
+		emergency_surface_mission
+		read_variables { mission } end_read_variables
+		condition { (equal, mission, 'emergency_surface') } end_condition
+	} end_check
+	
+	check {
+		failsafe_triggered
+		read_variables { failsafe_engaged } end_read_variables
+		condition { failsafe_engaged } end_condition
+	} end_check
+	
+	check {
+		return_home_mission
+		read_variables { mission } end_read_variables
+		condition { (equal, mission, 'go_to_home') } end_condition
+	} end_check
+	
+	check {
+		track_pipe_mission
+		read_variables { mission } end_read_variables
+		condition { (equal, mission, 'pipe_tracking') } end_condition
+	} end_check
+	
+	check {
+		waypoint_mission
+		read_variables { mission } end_read_variables
+		condition { (equal, mission, 'go_to_waypoint') } end_condition
+	} end_check
+} end_checks
+
+environment_checks {
+
+	check_environment {
+		check_battery_low
+		imports { 'blueROV_interface' } end_imports
+		python_function {'blueROV_interface.battery_low()' } end_python_function
+		condition { env battery_low } end_condition
+	} end_check_environment
+
+	check_environment {
+		check_geofence
+		imports { 'blueROV_interface' } end_imports
+		python_function {'blueROV_interface.geofence_warning()' } end_python_function
+		condition { env geofence_warning } end_condition
+	} end_check_environment
+
+	check_environment {
+		check_home_reached
+		imports { 'blueROV_interface' } end_imports
+		python_function {'blueROV_interface.home_reached()' } end_python_function
+		condition { env home_reached } end_condition
+	} end_check_environment
+
+	check_environment {
+		check_mission_finished
+		imports { 'blueROV_interface' } end_imports
+		python_function {'blueROV_interface.mission_finished()' } end_python_function
+		condition { env mission_finished } end_condition
+	} end_check_environment
+
+	check_environment {
+		check_obstacles_present
+		imports { 'blueROV_interface' } end_imports
+		python_function { 'blueROV_interface.obstacles_present()' } end_python_function
+		condition { env obstacles_present } end_condition
+	} end_check_environment
+
+	check_environment {
+		check_pipe_lost
+		imports { 'blueROV_interface' } end_imports
+		python_function { 'blueROV_interface.pipe_lost()' } end_python_function
+		condition { env pipe_lost } end_condition
+	} end_check_environment
+	
+	check_environment {
+		check_reallocation_needed
+		imports { 'blueROV_interface' } end_imports
+		python_function { 'blueROV_interface.reallocation_requested()' } end_python_function
+		condition { env reallocation_needed } end_condition
+	} end_check_environment
+
+	check_environment {
+		check_reallocation_possible
+		imports { 'blueROV_interface' } end_imports
+		python_function { 'blueROV_interface.reallocation_possible()' } end_python_function
+		condition { env reallocation_possible } end_condition
+	} end_check_environment
+
+	check_environment {
+		check_sensor_failure
+		imports { 'blueROV_interface' } end_imports
+		python_function { 'blueROV_interface.sensor_failure()' } end_python_function
+		condition { env sensor_failure } end_condition
+	} end_check_environment
+} end_environment_checks
+
+actions {
+
+	action {
+		avoid_obstacles
+		imports { 'blueROV_interface' } end_imports
+		read_variables {} end_read_variables
+		write_variables {} end_write_variables
+		initial_values {} end_initial_values
+		update {
+			write_environment {
+				python_function { 'blueROV_interface.avoid_obstacles()' } end_python_function
+				update_values {
+					environment_statement {
+						env command
+						result { 'avoiding_obstacles' } end_result
+					} end_environment_statement
+				} end_update_values
+			} end_write_environment
+			return_statement {
+				result { success } end_result
+			} end_return_statement
+		} end_update
+	} end_action
+	
+	action {
+		get_mission
+		imports { 'blueROV_interface' } end_imports
+		read_variables {} end_read_variables
+		write_variables { mission } end_write_variables
+		initial_values {
+			read_environment {
+				python_function { 'blueROV_interface.get_mission()' } end_python_function
+				condition { True } end_condition
+				set_variables { (mission, env next_mission) } end_set_variables
+			} end_read_environment
+		} end_initial_values
+		update {
+			read_environment {
+				python_function { 'blueROV_interface.get_mission()' } end_python_function
+				condition { True } end_condition
+				set_variables { (mission, env next_mission) } end_set_variables
+			} end_read_environment
+			return_statement {
+				result { success } end_result
+			} end_return_statement
+		} end_update
+	} end_action
+
+	action {
+		loiter
+		imports { 'blueROV_interface' } end_imports
+		read_variables {} end_read_variables
+		write_variables {} end_write_variables
+		initial_values {} end_initial_values
+		update {
+			write_environment {
+				python_function { 'blueROV_interface.loiter()' } end_python_function
+				update_values {
+					environment_statement {
+						env command
+						result { 'UNKNOWN' } end_result
+					} end_environment_statement
+				} end_update_values
+			} end_write_environment
+			return_statement {
+				result { success } end_result
+			} end_return_statement
+		} end_update
+	} end_action
+	
+	action {
+		reallocate
+		imports { 'blueROV_interface' } end_imports
+		read_variables {} end_read_variables
+		write_variables {} end_write_variables
+		initial_values {} end_initial_values
+		update {
+			write_environment {
+				python_function { 'blueROV_interface.reallocate()' } end_python_function
+				update_values {
+					environment_statement {
+						instant
+						env reallocation_possible
+						result { True, False } end_result
+					} end_environment_statement
+				} end_update_values
+			} end_write_environment
+			return_statement {
+				result { success } end_result
+			} end_return_statement
+		} end_update
+	} end_action
+
+	action {
+		return_home
+		imports { 'blueROV_interface' } end_imports
+		read_variables {} end_read_variables
+		write_variables {} end_write_variables
+		initial_values {} end_initial_values
+		update {
+			write_environment {
+				python_function { 'blueROV_interface.return_home()' } end_python_function
+				update_values {
+					environment_statement {
+						env command
+						result { 'go_to_home' } end_result
+					} end_environment_statement
+				} end_update_values
+			} end_write_environment
+			return_statement {
+				result { success } end_result
+			} end_return_statement
+		} end_update
+	} end_action
+	
+	action {
+		search
+		imports { 'blueROV_interface' } end_imports
+		read_variables {} end_read_variables
+		write_variables {} end_write_variables
+		initial_values {} end_initial_values
+		update {
+			write_environment {
+				python_function { 'blueROV_interface.search()' } end_python_function
+				update_values {
+					environment_statement {
+						env command
+						result { 'search_for_pipe' } end_result
+					} end_environment_statement
+				} end_update_values
+			} end_write_environment
+			return_statement {
+				result { success } end_result
+			} end_return_statement
+		} end_update
+	} end_action
+	
+	action {
+		surface
+		imports { 'blueROV_interface' } end_imports
+		read_variables {} end_read_variables
+		write_variables {} end_write_variables
+		initial_values {} end_initial_values
+		update {
+			write_environment {
+				python_function { 'blueROV_interface.surface()' } end_python_function
+				update_values {
+					environment_statement {
+						env BLUEROV_SURFACED
+						result { True } end_result
+					} end_environment_statement
+					environment_statement {
+						env command
+						result { 'go_to_surface' } end_result
+					} end_environment_statement
+				} end_update_values
+			} end_write_environment
+			return_statement {
+				result { success } end_result
+			} end_return_statement
+		} end_update
+	} end_action
+
+	action {
+		track_pipe
+		imports { 'blueROV_interface' } end_imports
+		read_variables {} end_read_variables
+		write_variables {} end_write_variables
+		initial_values {} end_initial_values
+		update {
+			write_environment {
+				python_function { 'blueROV_interface.track_pipe()' } end_python_function
+				update_values {
+					environment_statement {
+						env command
+						result { 'pipe_tracking' } end_result
+					} end_environment_statement
+				} end_update_values
+			} end_write_environment
+			return_statement {
+				result { success } end_result
+			} end_return_statement
+		} end_update
+	} end_action
+
+	action {
+		trigger_failsafe
+		read_variables {} end_read_variables
+		write_variables {failsafe_engaged} end_write_variables
+		initial_values {
+			variable_statement {
+				failsafe_engaged
+				result { False } end_result
+			} end_variable_statement
+		} end_initial_values
+		update {
+			variable_statement {
+				failsafe_engaged
+				result { True } end_result
+			} end_variable_statement
+			return_statement {
+				result { success } end_result
+			} end_return_statement
+		} end_update
+	} end_action
+
+	action {
+		waypoint
+		imports { 'blueROV_interface' } end_imports
+		read_variables {} end_read_variables
+		write_variables {} end_write_variables
+		initial_values {} end_initial_values
+		update {
+			write_environment {
+				python_function { 'blueROV_interface.waypoint()' } end_python_function
+				update_values {
+					environment_statement {
+						env command
+						result { 'go_to_waypoint' } end_result
+					} end_environment_statement
+				} end_update_values
+			} end_write_environment
+			return_statement {
+				result { success } end_result
+			} end_return_statement
+		} end_update
+	} end_action
+} end_actions	
+
+tick_prerequisite { (not, env BLUEROV_SURFACED) } end_tick_prerequisite
+
+root_node
+composite {
+	BlueROV
+	parallel policy success_on_one
+	children {
+		composite {
+			reallocate_handler
+			sequence
+			children {
+				check_reallocation_needed
+				composite {
+					reallocation_or_failsafe
+					selector
+					children {
+						composite {
+							reallocate_sequencce
+							sequence
+							children {
+								check_reallocation_possible
+								reallocate
+							} end_children
+						} end_composite
+						trigger_failsafe
+					} end_children
+				} end_composite
+			} end_children
+		} end_composite
+		composite {
+			process_mission
+			sequence
+			children {
+				check_mission_finished
+				get_mission
+			} end_children
+		} end_composite
+		composite {
+			priorities
+			selector
+			children {
+				composite {
+					surface_sequence
+					sequence
+					children {
+						composite {
+							surface_required
+							selector
+							children {
+								failsafe_triggered
+								emergency_surface_mission
+								composite {
+									get_information
+									selector
+									children {
+										check_battery_low
+										check_geofence
+										check_sensor_failure
+										composite {
+											home_surface
+											sequence
+											children {
+												return_home_mission
+												check_home_reached
+											} end_children
+										} end_composite
+									} end_children
+								} end_composite
+							} end_children
+						} end_composite
+						trigger_failsafe
+						surface
+					} end_children
+				} end_composite
+				composite {
+					obstacle_avoidance_sequence
+					sequence
+					children {
+						check_obstacles_present
+						avoid_obstacles
+					} end_children
+				} end_composite
+				composite {
+					go_home_sequence
+					sequence
+					children {
+						return_home_mission
+						return_home
+					} end_children
+				} end_composite
+				composite {
+					track_pipe_sequence
+					sequence
+					children {
+						track_pipe_mission
+						composite {
+							find_or_track
+							selector
+							children {
+								composite {
+									find_pipe
+									sequence
+									children {
+										check_pipe_lost
+										search
+									} end_children
+								} end_composite
+								track_pipe
+							} end_children
+						} end_composite
+					} end_children
+				} end_composite
+				composite {
+					waypoint_sequence
+					sequence
+					children {
+						waypoint_mission
+						waypoint
+					} end_children
+				} end_composite
+				loiter
+			} end_children
+		} end_composite
+	} end_children
+} end_composite

@@ -13,7 +13,7 @@ import argparse
 import os
 # ----------------------------------------------------------------------------------------------------------------
 # serene custom imports
-import test_node_creator as node_creator
+import node_creator
 from behaverify_common import (get_root_node,
                                refine_return_types,
                                refine_invalid,

@@ -134,16 +134,13 @@ def merge_variables(list_of_variable_maps, node_name_to_number):
 
 def template_variable(variable_name, node_name, update, next_value = None):
     return {
-        'prefix' : 'var_',
         'name' : variable_name,
         'mode' : 'VAR',
         'custom_value_range' : None,
         'min_value' : 0,
         'max_value' : 1,
         'init_value' : None,
-        'next_value' : ([(node_name, True, [('TRUE', '{0, 1}')])] if update else []) if next_value is None else next_value,
-        'environment_update' : None,
-        'keep_stage_0' : True
+        'next_value' : ([(node_name, True, [('TRUE', '{0, 1}')])] if update else []) if next_value is None else next_value
     }
 
 

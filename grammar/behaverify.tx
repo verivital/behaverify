@@ -19,9 +19,13 @@ BehaviorModel:
     'checks' '{'
     check_nodes *= check_node
     '}' 'end_checks'
+    'environment_checks' '{'
+    environment_checks *= check_environment_node
+    '}' 'end_environment_checks'
     'actions' '{'
     action_nodes *= action_node
     '}' 'end_actions'
+    ('tick_prerequisite' '{' tick_condition = code_statement_env '}' 'end_tick_prerequisite')?
     'root_node' root = node
 ;
 
@@ -63,9 +67,12 @@ variable:
 ;
     
     variable_domain:
-    ('[' min_val = INT ',' max_val = INT ']') | (boolean = 'BOOLEAN') | ('{' enums += ID[','] '}')
+    ('[' min_val = INT ',' max_val = INT ']') | (boolean = 'BOOLEAN') | ('{' enums += enumeration[','] '}')
 ;
-
+    
+enumeration:
+    INT | BOOL | STRING
+;
 
 status:
     'success' | 'running' | 'failure'
@@ -99,7 +106,7 @@ node:
     
     
     leaf_node:
-    (leaf = [check_node]) | (leaf = [action_node])
+    (leaf = [check_node]) | (leaf = [action_node]) | (leaf = [check_environment_node])
 ;
     
     check_node:
@@ -109,6 +116,14 @@ node:
     ('condition' '{' condition = code_statement '}' 'end_condition')
     '}' 'end_check'
 ;
+    check_environment_node:
+    (node_type = 'check_environment') '{'
+    name = ID
+    ('imports' '{' imports *= STRING[','] '}' 'end_imports')?
+    ('python_function' '{' python_function = STRING '}' 'end_python_function')?
+    ('condition' '{' condition = code_statement_env '}' 'end_condition')
+    '}' 'end_check_environment'
+;
     
     action_node:
     (node_type = 'action') '{'
@@ -117,7 +132,7 @@ node:
     'read_variables' '{' read_variables *= [variable]  '}' 'end_read_variables'
     'write_variables' '{' write_variables *= [variable]  '}' 'end_write_variables'
     'initial_values' '{'
-    init_statements *= variable_statement
+    init_statements *= statement
     '}' 'end_initial_values'
     'update' '{'
     pre_update_statements *= statement
@@ -194,14 +209,14 @@ statement:
 
 
     code_statement:
-    (constant = INT) | (constant = FLOAT) | (constant = BOOL) | (constant = STRING) |
+    (constant = STRICTFLOAT) | (constant = INT) | (constant = BOOL) | (constant = STRING) |
     (is_local ?= 'local' variable = [variable]) |
     ('(' function_call = function ')') |
     ('(' code_statement = code_statement ')')
 ;
 
     code_statement_env:
-    (constant = INT) | (constant = FLOAT) | (constant = BOOL) | (constant = STRING) |
+    (constant = STRICTFLOAT) | (constant = INT) | (constant = BOOL) | (constant = STRING) |
     (is_env = 'env' variable = [environment_variable] ) |
     (is_local ?= 'local' variable = [variable]) |
     ('(' function_call = function_env ')') |

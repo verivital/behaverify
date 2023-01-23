@@ -1948,9 +1948,41 @@
                                                                     'running': True,
                                                                     'success': True},
                                         'type': 'selector_without_memory'}},
-    'variables': {   'HSD_out': {   'custom_value_range': '{uuv_min_speed, '
+    'tick_condition': '!(var_BLUEROV_SURFACED)',
+    'variables': {   'BLUEROV_SURFACED': {   'custom_value_range': '{TRUE, '
+                                                                   'FALSE}',
+                                             'initial_value': [   (   'TRUE',
+                                                                      'FALSE')],
+                                             'keep_stage_0': True,
+                                             'max_value': 1,
+                                             'min_value': 0,
+                                             'mode': 'VAR',
+                                             'name': 'BLUEROV_SURFACED',
+                                             'next_value': [   (   'surface_task',
+                                                                   False,
+                                                                   [   (   'TRUE',
+                                                                           'TRUE')]),
+                                                               (   'surface_task_1',
+                                                                   False,
+                                                                   [   (   'TRUE',
+                                                                           'TRUE')]),
+                                                               (   'surface_task_2',
+                                                                   False,
+                                                                   [   (   'TRUE',
+                                                                           'TRUE')]),
+                                                               (   'surface_task_3',
+                                                                   False,
+                                                                   [   (   'TRUE',
+                                                                           'TRUE')]),
+                                                               (   'surface_task_4',
+                                                                   False,
+                                                                   [   (   'TRUE',
+                                                                           'TRUE')])],
+                                             'prefix': 'var_'},
+                     'HSD_out': {   'custom_value_range': '{uuv_min_speed, '
                                                           'uuv_max_speed}',
                                     'initial_value': None,
+                                    'keep_stage_0': True,
                                     'max_value': 1,
                                     'min_value': 0,
                                     'mode': 'VAR',
@@ -1970,20 +2002,22 @@
                                     'prefix': 'var_'},
                      'battery': {   'custom_value_range': None,
                                     'initial_value': [('TRUE', '1')],
+                                    'keep_stage_0': False,
                                     'max_value': 1,
                                     'min_value': 0,
                                     'mode': 'VAR',
                                     'name': 'battery',
                                     'next_value': [   (   'battery2bb',
                                                           True,
-                                                          [   (   'battery2bb_update_success',
+                                                          [   (   'next(battery2bb_update_success)',
                                                                   '{0, 1}'),
                                                               (   'TRUE',
-                                                                  'var_battery')])],
+                                                                  'LINK_TO_PREVIOUS_FINAL_var_battery')])],
                                     'prefix': 'var_'},
                      'battery2bb_update_success': {   'custom_value_range': '{TRUE, '
                                                                             'FALSE}',
                                                       'initial_value': None,
+                                                      'keep_stage_0': True,
                                                       'max_value': 1,
                                                       'min_value': 0,
                                                       'mode': 'VAR',
@@ -1994,17 +2028,14 @@
                                                                       'FALSE}',
                                                 'initial_value': [   (   'TRUE',
                                                                          'FALSE')],
+                                                'keep_stage_0': True,
                                                 'max_value': 1,
                                                 'min_value': 0,
                                                 'mode': 'VAR',
                                                 'name': 'battery_low_warning',
                                                 'next_value': [   (   'battery2bb',
                                                                       False,
-                                                                      [   (   '(battery2bb_update_success '
-                                                                              '= '
-                                                                              'FALSE)',
-                                                                              'var_battery_low_warning'),
-                                                                          (   'TRUE',
+                                                                      [   (   'TRUE',
                                                                               'var_battery_stage_1 '
                                                                               '<= '
                                                                               '0')])],
@@ -2012,67 +2043,63 @@
                      'bb_fls_warning': {   'custom_value_range': '{TRUE, '
                                                                  'FALSE}',
                                            'initial_value': [('TRUE', 'FALSE')],
+                                           'keep_stage_0': True,
                                            'max_value': 1,
                                            'min_value': 0,
                                            'mode': 'VAR',
                                            'name': 'bb_fls_warning',
                                            'next_value': [   (   'fls_warning2bb',
                                                                  False,
-                                                                 [   (   '(fls_warning2bb_update_success '
-                                                                         '= '
-                                                                         'FALSE)',
-                                                                         'var_bb_fls_warning'),
-                                                                     (   'TRUE',
+                                                                 [   (   'TRUE',
                                                                          'var_bb_fls_warning '
                                                                          '| '
                                                                          'var_obstacle_in_view_stage_1')])],
                                            'prefix': 'var_'},
                      'bb_geofence': {   'custom_value_range': '{TRUE, FALSE}',
                                         'initial_value': [('TRUE', 'FALSE')],
+                                        'keep_stage_0': False,
                                         'max_value': 1,
                                         'min_value': 0,
                                         'mode': 'VAR',
                                         'name': 'bb_geofence',
                                         'next_value': [   (   'geofence2bb',
                                                               True,
-                                                              [   (   'geofence2bb_update_success',
+                                                              [   (   'next(geofence2bb_update_success)',
                                                                       '{TRUE, '
                                                                       'FALSE}'),
                                                                   (   'TRUE',
-                                                                      'var_bb_geofence')])],
+                                                                      'LINK_TO_PREVIOUS_FINAL_var_bb_geofence')])],
                                         'prefix': 'var_'},
                      'bb_geofence_warning': {   'custom_value_range': '{TRUE, '
                                                                       'FALSE}',
                                                 'initial_value': [   (   'TRUE',
                                                                          'FALSE')],
+                                                'keep_stage_0': True,
                                                 'max_value': 1,
                                                 'min_value': 0,
                                                 'mode': 'VAR',
                                                 'name': 'bb_geofence_warning',
                                                 'next_value': [   (   'geofence2bb',
                                                                       False,
-                                                                      [   (   '(geofence2bb_update_success '
-                                                                              '= '
-                                                                              'FALSE)',
-                                                                              'var_bb_geofence_warning'),
-                                                                          (   'TRUE',
+                                                                      [   (   'TRUE',
                                                                               'var_bb_geofence_warning '
                                                                               '| '
                                                                               'var_bb_geofence_stage_1')])],
                                                 'prefix': 'var_'},
                      'bb_home_dist': {   'custom_value_range': '{10, 100}',
                                          'initial_value': [('TRUE', '10')],
+                                         'keep_stage_0': False,
                                          'max_value': 1,
                                          'min_value': 0,
                                          'mode': 'VAR',
                                          'name': 'bb_home_dist',
                                          'next_value': [   (   'home2bb',
                                                                True,
-                                                               [   (   'home2bb_update_success',
+                                                               [   (   'next(home2bb_update_success)',
                                                                        '{10, '
                                                                        '100}'),
                                                                    (   'TRUE',
-                                                                       'var_bb_home_dist')]),
+                                                                       'LINK_TO_PREVIOUS_FINAL_var_bb_home_dist')]),
                                                            (   'home2bb_1',
                                                                True,
                                                                [   (   'home2bb_1_update_success',
@@ -2085,17 +2112,14 @@
                                                                   'FALSE}',
                                             'initial_value': [   (   'TRUE',
                                                                      'FALSE')],
+                                            'keep_stage_0': True,
                                             'max_value': 1,
                                             'min_value': 0,
                                             'mode': 'VAR',
                                             'name': 'bb_home_reached',
                                             'next_value': [   (   'home2bb',
                                                                   False,
-                                                                  [   (   '(home2bb_update_success '
-                                                                          '= '
-                                                                          'FALSE)',
-                                                                          'var_bb_home_reached'),
-                                                                      (   'TRUE',
+                                                                  [   (   'TRUE',
                                                                           'var_bb_home_reached '
                                                                           '| '
                                                                           'var_bb_home_dist_stage_1 '
@@ -2103,11 +2127,7 @@
                                                                           '15')]),
                                                               (   'home2bb_1',
                                                                   False,
-                                                                  [   (   '(home2bb_1_update_success '
-                                                                          '= '
-                                                                          'FALSE)',
-                                                                          'var_bb_home_reached_stage_1'),
-                                                                      (   'TRUE',
+                                                                  [   (   'TRUE',
                                                                           'var_bb_home_reached_stage_1 '
                                                                           '| '
                                                                           'var_bb_home_dist_stage_2 '
@@ -2118,6 +2138,7 @@
                                                              'e_stop, '
                                                              'pipe_following}',
                                        'initial_value': None,
+                                       'keep_stage_0': True,
                                        'max_value': 1,
                                        'min_value': 0,
                                        'mode': 'VAR',
@@ -2137,6 +2158,7 @@
                                                                       'FALSE}',
                                                 'initial_value': [   (   'TRUE',
                                                                          'FALSE')],
+                                                'keep_stage_0': False,
                                                 'max_value': 1,
                                                 'min_value': 0,
                                                 'mode': 'VAR',
@@ -2151,17 +2173,14 @@
                                                                        'FALSE}',
                                                  'initial_value': [   (   'TRUE',
                                                                           'FALSE')],
+                                                 'keep_stage_0': True,
                                                  'max_value': 1,
                                                  'min_value': 0,
                                                  'mode': 'VAR',
                                                  'name': 'bb_pipe_lost_warning',
                                                  'next_value': [   (   'pipe_lost2bb',
                                                                        False,
-                                                                       [   (   '(pipe_lost2bb_update_success '
-                                                                               '= '
-                                                                               'FALSE)',
-                                                                               'var_bb_pipe_lost_warning'),
-                                                                           (   'TRUE',
+                                                                       [   (   'TRUE',
                                                                                'var_bb_pipelost_stage_1 '
                                                                                '& '
                                                                                'var_bb_mission '
@@ -2172,6 +2191,7 @@
                                                                          'FALSE}',
                                                    'initial_value': [   (   'TRUE',
                                                                             'FALSE')],
+                                                   'keep_stage_0': False,
                                                    'max_value': 1,
                                                    'min_value': 0,
                                                    'mode': 'VAR',
@@ -2180,46 +2200,45 @@
                                                    'prefix': 'var_'},
                      'bb_pipelost': {   'custom_value_range': '{TRUE, FALSE}',
                                         'initial_value': [('TRUE', 'FALSE')],
+                                        'keep_stage_0': False,
                                         'max_value': 1,
                                         'min_value': 0,
                                         'mode': 'VAR',
                                         'name': 'bb_pipelost',
                                         'next_value': [   (   'pipe_lost2bb',
                                                               True,
-                                                              [   (   'pipe_lost2bb_update_success',
+                                                              [   (   'next(pipe_lost2bb_update_success)',
                                                                       '{TRUE, '
                                                                       'FALSE}'),
                                                                   (   'TRUE',
-                                                                      'var_bb_pipelost')])],
+                                                                      'LINK_TO_PREVIOUS_FINAL_var_bb_pipelost')])],
                                         'prefix': 'var_'},
                      'bb_rth': {   'custom_value_range': '{TRUE, FALSE}',
                                    'initial_value': [('TRUE', 'FALSE')],
+                                   'keep_stage_0': False,
                                    'max_value': 1,
                                    'min_value': 0,
                                    'mode': 'VAR',
                                    'name': 'bb_rth',
                                    'next_value': [   (   'rth2bb',
                                                          True,
-                                                         [   (   'rth2bb_update_success',
+                                                         [   (   'next(rth2bb_update_success)',
                                                                  '{TRUE, '
                                                                  'FALSE}'),
                                                              (   'TRUE',
-                                                                 'var_bb_rth')])],
+                                                                 'LINK_TO_PREVIOUS_FINAL_var_bb_rth')])],
                                    'prefix': 'var_'},
                      'bb_rth_warning': {   'custom_value_range': '{TRUE, '
                                                                  'FALSE}',
                                            'initial_value': [('TRUE', 'FALSE')],
+                                           'keep_stage_0': True,
                                            'max_value': 1,
                                            'min_value': 0,
                                            'mode': 'VAR',
                                            'name': 'bb_rth_warning',
                                            'next_value': [   (   'rth2bb',
                                                                  False,
-                                                                 [   (   '(rth2bb_update_success '
-                                                                         '= '
-                                                                         'FALSE)',
-                                                                         'var_bb_rth_warning'),
-                                                                     (   'TRUE',
+                                                                 [   (   'TRUE',
                                                                          'var_bb_rth_warning '
                                                                          '| '
                                                                          'var_bb_rth_stage_1')]),
@@ -2234,33 +2253,31 @@
                                                                     'FALSE}',
                                               'initial_value': [   (   'TRUE',
                                                                        'FALSE')],
+                                              'keep_stage_0': False,
                                               'max_value': 1,
                                               'min_value': 0,
                                               'mode': 'VAR',
                                               'name': 'bb_sensor_failure',
                                               'next_value': [   (   'sensor_failure2bb',
                                                                     True,
-                                                                    [   (   'sensor_failure2bb_update_success',
+                                                                    [   (   'next(sensor_failure2bb_update_success)',
                                                                             '{TRUE, '
                                                                             'FALSE}'),
                                                                         (   'TRUE',
-                                                                            'var_bb_sensor_failure')])],
+                                                                            'LINK_TO_PREVIOUS_FINAL_var_bb_sensor_failure')])],
                                               'prefix': 'var_'},
                      'bb_sensor_failure_warning': {   'custom_value_range': '{TRUE, '
                                                                             'FALSE}',
                                                       'initial_value': [   (   'TRUE',
                                                                                'FALSE')],
+                                                      'keep_stage_0': True,
                                                       'max_value': 1,
                                                       'min_value': 0,
                                                       'mode': 'VAR',
                                                       'name': 'bb_sensor_failure_warning',
                                                       'next_value': [   (   'sensor_failure2bb',
                                                                             False,
-                                                                            [   (   '(sensor_failure2bb_update_success '
-                                                                                    '= '
-                                                                                    'FALSE)',
-                                                                                    'var_bb_sensor_failure_warning'),
-                                                                                (   'TRUE',
+                                                                            [   (   'TRUE',
                                                                                     'var_bb_sensor_failure_warning '
                                                                                     '| '
                                                                                     'var_bb_sensor_failure_stage_1')])],
@@ -2269,17 +2286,18 @@
                                                                          'FALSE}',
                                                    'initial_value': [   (   'TRUE',
                                                                             'FALSE')],
+                                                   'keep_stage_0': False,
                                                    'max_value': 1,
                                                    'min_value': 0,
                                                    'mode': 'VAR',
                                                    'name': 'bb_waypoints_completed',
                                                    'next_value': [   (   'waypoints_completed2bb',
                                                                          True,
-                                                                         [   (   'waypoints_completed2bb_update_success',
+                                                                         [   (   'next(waypoints_completed2bb_update_success)',
                                                                                  '{TRUE, '
                                                                                  'FALSE}'),
                                                                              (   'TRUE',
-                                                                                 'var_bb_waypoints_completed')])],
+                                                                                 'LINK_TO_PREVIOUS_FINAL_var_bb_waypoints_completed')])],
                                                    'prefix': 'var_'},
                      'cm_hsd_input': {   'custom_value_range': '{cm_surface_task, '
                                                                'cm_rth_task, '
@@ -2288,6 +2306,7 @@
                                                                'cm_tracking_task, '
                                                                'cm_waypoint_task}',
                                          'initial_value': None,
+                                         'keep_stage_0': True,
                                          'max_value': 1,
                                          'min_value': 0,
                                          'mode': 'VAR',
@@ -2350,34 +2369,32 @@
                      'dd_output': {   'custom_value_range': '{safe, xy_warn, '
                                                             'z_warn}',
                                       'initial_value': None,
+                                      'keep_stage_0': False,
                                       'max_value': 1,
                                       'min_value': 0,
                                       'mode': 'VAR',
                                       'name': 'dd_output',
                                       'next_value': [   (   'ddlec2bb',
                                                             True,
-                                                            [   (   'ddlec2bb_update_success',
+                                                            [   (   'next(ddlec2bb_update_success)',
                                                                     '{safe, '
                                                                     'xy_warn, '
                                                                     'z_warn}'),
                                                                 (   'TRUE',
-                                                                    'var_dd_output')])],
+                                                                    'LINK_TO_PREVIOUS_FINAL_var_dd_output')])],
                                       'prefix': 'var_'},
                      'dd_xy_axis_degradation': {   'custom_value_range': '{TRUE, '
                                                                          'FALSE}',
                                                    'initial_value': [   (   'TRUE',
                                                                             'FALSE')],
+                                                   'keep_stage_0': True,
                                                    'max_value': 1,
                                                    'min_value': 0,
                                                    'mode': 'VAR',
                                                    'name': 'dd_xy_axis_degradation',
                                                    'next_value': [   (   'ddlec2bb',
                                                                          False,
-                                                                         [   (   '(ddlec2bb_update_success '
-                                                                                 '= '
-                                                                                 'FALSE)',
-                                                                                 'var_dd_xy_axis_degradation'),
-                                                                             (   'TRUE',
+                                                                         [   (   'TRUE',
                                                                                  'var_dd_output_stage_1 '
                                                                                  '= '
                                                                                  'xy_warn '
@@ -2392,17 +2409,14 @@
                                                                     'FALSE}',
                                               'initial_value': [   (   'TRUE',
                                                                        'FALSE')],
+                                              'keep_stage_0': True,
                                               'max_value': 1,
                                               'min_value': 0,
                                               'mode': 'VAR',
                                               'name': 'dd_z_axis_warning',
                                               'next_value': [   (   'ddlec2bb',
                                                                     False,
-                                                                    [   (   '(ddlec2bb_update_success '
-                                                                            '= '
-                                                                            'FALSE)',
-                                                                            'var_dd_z_axis_warning'),
-                                                                        (   'TRUE',
+                                                                    [   (   'TRUE',
                                                                             'var_dd_output_stage_1 '
                                                                             '= '
                                                                             'z_warn '
@@ -2416,6 +2430,7 @@
                      'ddlec2bb_update_success': {   'custom_value_range': '{TRUE, '
                                                                           'FALSE}',
                                                     'initial_value': None,
+                                                    'keep_stage_0': True,
                                                     'max_value': 1,
                                                     'min_value': 0,
                                                     'mode': 'VAR',
@@ -2426,17 +2441,14 @@
                                                                          'FALSE}',
                                                    'initial_value': [   (   'TRUE',
                                                                             'FALSE')],
+                                                   'keep_stage_0': True,
                                                    'max_value': 1,
                                                    'min_value': 0,
                                                    'mode': 'VAR',
                                                    'name': 'emergency_stop_warning',
                                                    'next_value': [   (   'fls_warning2bb',
                                                                          False,
-                                                                         [   (   '(fls_warning2bb_update_success '
-                                                                                 '= '
-                                                                                 'FALSE)',
-                                                                                 'var_emergency_stop_warning'),
-                                                                             (   'TRUE',
+                                                                         [   (   'TRUE',
                                                                                  'var_emergency_stop_warning '
                                                                                  '| '
                                                                                  'var_obstacle_in_view_stage_1')]),
@@ -2457,23 +2469,25 @@
                                                                     'FALSE}',
                                               'initial_value': [   (   'TRUE',
                                                                        'FALSE')],
+                                              'keep_stage_0': False,
                                               'max_value': 1,
                                               'min_value': 0,
                                               'mode': 'VAR',
                                               'name': 'finished_missions',
                                               'next_value': [   (   'mission_server',
                                                                     True,
-                                                                    [   (   'var_next_mission '
+                                                                    [   (   'next(var_next_mission) '
                                                                             '& '
-                                                                            'var_finished_missions',
+                                                                            'LINK_TO_PREVIOUS_FINAL_var_finished_missions',
                                                                             '{TRUE, '
                                                                             'FALSE}'),
                                                                         (   'TRUE',
-                                                                            'var_finished_missions')])],
+                                                                            'LINK_TO_PREVIOUS_FINAL_var_finished_missions')])],
                                               'prefix': 'var_'},
                      'fls2bb_update_success': {   'custom_value_range': '{TRUE, '
                                                                         'FALSE}',
                                                   'initial_value': None,
+                                                  'keep_stage_0': True,
                                                   'max_value': 1,
                                                   'min_value': 0,
                                                   'mode': 'VAR',
@@ -2483,21 +2497,23 @@
                      'fls_range': {   'custom_value_range': '{danger_zone, '
                                                             'safe}',
                                       'initial_value': [('TRUE', 'safe')],
+                                      'keep_stage_0': False,
                                       'max_value': 1,
                                       'min_value': 0,
                                       'mode': 'VAR',
                                       'name': 'fls_range',
                                       'next_value': [   (   'fls2bb',
                                                             True,
-                                                            [   (   'fls2bb_update_success',
+                                                            [   (   'next(fls2bb_update_success)',
                                                                     '{danger_zone, '
                                                                     'safe}'),
                                                                 (   'TRUE',
-                                                                    'var_fls_range')])],
+                                                                    'LINK_TO_PREVIOUS_FINAL_var_fls_range')])],
                                       'prefix': 'var_'},
                      'fls_warning2bb_update_success': {   'custom_value_range': '{TRUE, '
                                                                                 'FALSE}',
                                                           'initial_value': None,
+                                                          'keep_stage_0': True,
                                                           'max_value': 1,
                                                           'min_value': 0,
                                                           'mode': 'VAR',
@@ -2507,6 +2523,7 @@
                      'geofence2bb_update_success': {   'custom_value_range': '{TRUE, '
                                                                              'FALSE}',
                                                        'initial_value': None,
+                                                       'keep_stage_0': True,
                                                        'max_value': 1,
                                                        'min_value': 0,
                                                        'mode': 'VAR',
@@ -2516,6 +2533,7 @@
                      'home2bb_1_update_success': {   'custom_value_range': '{TRUE, '
                                                                            'FALSE}',
                                                      'initial_value': None,
+                                                     'keep_stage_0': True,
                                                      'max_value': 1,
                                                      'min_value': 0,
                                                      'mode': 'VAR',
@@ -2525,6 +2543,7 @@
                      'home2bb_update_success': {   'custom_value_range': '{TRUE, '
                                                                          'FALSE}',
                                                    'initial_value': None,
+                                                   'keep_stage_0': True,
                                                    'max_value': 1,
                                                    'min_value': 0,
                                                    'mode': 'VAR',
@@ -2534,23 +2553,25 @@
                      'lec2_am_l': {   'custom_value_range': '{safe, speed, '
                                                             'pipe, speed_pipe}',
                                       'initial_value': None,
+                                      'keep_stage_0': False,
                                       'max_value': 1,
                                       'min_value': 0,
                                       'mode': 'VAR',
                                       'name': 'lec2_am_l',
                                       'next_value': [   (   'lec2_am_l_2bb',
                                                             True,
-                                                            [   (   'lec2_am_l_2bb_update_success',
+                                                            [   (   'next(lec2_am_l_2bb_update_success)',
                                                                     '{safe, '
                                                                     'speed, '
                                                                     'pipe, '
                                                                     'speed_pipe}'),
                                                                 (   'TRUE',
-                                                                    'var_lec2_am_l')])],
+                                                                    'LINK_TO_PREVIOUS_FINAL_var_lec2_am_l')])],
                                       'prefix': 'var_'},
                      'lec2_am_l_2bb_update_success': {   'custom_value_range': '{TRUE, '
                                                                                'FALSE}',
                                                          'initial_value': None,
+                                                         'keep_stage_0': True,
                                                          'max_value': 1,
                                                          'min_value': 0,
                                                          'mode': 'VAR',
@@ -2561,17 +2582,14 @@
                                                                          'FALSE}',
                                                    'initial_value': [   (   'TRUE',
                                                                             'FALSE')],
+                                                   'keep_stage_0': True,
                                                    'max_value': 1,
                                                    'min_value': 0,
                                                    'mode': 'VAR',
                                                    'name': 'lec2_am_l_pipe_warning',
                                                    'next_value': [   (   'lec2_am_l_2bb',
                                                                          False,
-                                                                         [   (   '(lec2_am_l_2bb_update_success '
-                                                                                 '= '
-                                                                                 'FALSE)',
-                                                                                 'var_lec2_am_l_pipe_warning'),
-                                                                             (   'TRUE',
+                                                                         [   (   'TRUE',
                                                                                  'var_lec2_am_l_stage_1 '
                                                                                  '= '
                                                                                  'pipe '
@@ -2584,17 +2602,14 @@
                                                                           'FALSE}',
                                                     'initial_value': [   (   'TRUE',
                                                                              'FALSE')],
+                                                    'keep_stage_0': True,
                                                     'max_value': 1,
                                                     'min_value': 0,
                                                     'mode': 'VAR',
                                                     'name': 'lec2_am_l_speed_warning',
                                                     'next_value': [   (   'lec2_am_l_2bb',
                                                                           False,
-                                                                          [   (   '(lec2_am_l_2bb_update_success '
-                                                                                  '= '
-                                                                                  'FALSE)',
-                                                                                  'var_lec2_am_l_speed_warning'),
-                                                                              (   'TRUE',
+                                                                          [   (   'TRUE',
                                                                                   'var_lec2_am_l_stage_1 '
                                                                                   '= '
                                                                                   'speed '
@@ -2606,23 +2621,25 @@
                      'lec2_am_r': {   'custom_value_range': '{safe, speed, '
                                                             'pipe, speed_pipe}',
                                       'initial_value': None,
+                                      'keep_stage_0': False,
                                       'max_value': 1,
                                       'min_value': 0,
                                       'mode': 'VAR',
                                       'name': 'lec2_am_r',
                                       'next_value': [   (   'lec2_am_r_2bb',
                                                             True,
-                                                            [   (   'lec2_am_r_2bb_update_success',
+                                                            [   (   'next(lec2_am_r_2bb_update_success)',
                                                                     '{safe, '
                                                                     'speed, '
                                                                     'pipe, '
                                                                     'speed_pipe}'),
                                                                 (   'TRUE',
-                                                                    'var_lec2_am_r')])],
+                                                                    'LINK_TO_PREVIOUS_FINAL_var_lec2_am_r')])],
                                       'prefix': 'var_'},
                      'lec2_am_r_2bb_update_success': {   'custom_value_range': '{TRUE, '
                                                                                'FALSE}',
                                                          'initial_value': None,
+                                                         'keep_stage_0': True,
                                                          'max_value': 1,
                                                          'min_value': 0,
                                                          'mode': 'VAR',
@@ -2633,17 +2650,14 @@
                                                                          'FALSE}',
                                                    'initial_value': [   (   'TRUE',
                                                                             'FALSE')],
+                                                   'keep_stage_0': True,
                                                    'max_value': 1,
                                                    'min_value': 0,
                                                    'mode': 'VAR',
                                                    'name': 'lec2_am_r_pipe_warning',
                                                    'next_value': [   (   'lec2_am_r_2bb',
                                                                          False,
-                                                                         [   (   '(lec2_am_r_2bb_update_success '
-                                                                                 '= '
-                                                                                 'FALSE)',
-                                                                                 'var_lec2_am_r_pipe_warning'),
-                                                                             (   'TRUE',
+                                                                         [   (   'TRUE',
                                                                                  'var_lec2_am_r_stage_1 '
                                                                                  '= '
                                                                                  'pipe '
@@ -2656,17 +2670,14 @@
                                                                           'FALSE}',
                                                     'initial_value': [   (   'TRUE',
                                                                              'FALSE')],
+                                                    'keep_stage_0': True,
                                                     'max_value': 1,
                                                     'min_value': 0,
                                                     'mode': 'VAR',
                                                     'name': 'lec2_am_r_speed_warning',
                                                     'next_value': [   (   'lec2_am_r_2bb',
                                                                           False,
-                                                                          [   (   '(lec2_am_r_2bb_update_success '
-                                                                                  '= '
-                                                                                  'FALSE)',
-                                                                                  'var_lec2_am_r_speed_warning'),
-                                                                              (   'TRUE',
+                                                                          [   (   'TRUE',
                                                                                   'var_lec2_am_r_stage_1 '
                                                                                   '= '
                                                                                   'speed '
@@ -2677,6 +2688,7 @@
                                                     'prefix': 'var_'},
                      'lec_dd_am': {   'custom_value_range': '{TRUE, FALSE}',
                                       'initial_value': [('TRUE', 'FALSE')],
+                                      'keep_stage_0': False,
                                       'max_value': 1,
                                       'min_value': 0,
                                       'mode': 'VAR',
@@ -2687,6 +2699,7 @@
                                                                     'FALSE}',
                                               'initial_value': [   (   'TRUE',
                                                                        'FALSE')],
+                                              'keep_stage_0': False,
                                               'max_value': 1,
                                               'min_value': 0,
                                               'mode': 'VAR',
@@ -2695,6 +2708,7 @@
                                               'prefix': 'var_'},
                      'next_mission': {   'custom_value_range': '{TRUE, FALSE}',
                                          'initial_value': [('TRUE', 'FALSE')],
+                                         'keep_stage_0': True,
                                          'max_value': 1,
                                          'min_value': 0,
                                          'mode': 'VAR',
@@ -2712,33 +2726,31 @@
                                                                    'FALSE}',
                                              'initial_value': [   (   'TRUE',
                                                                       'FALSE')],
+                                             'keep_stage_0': False,
                                              'max_value': 1,
                                              'min_value': 0,
                                              'mode': 'VAR',
                                              'name': 'obstacle_in_view',
                                              'next_value': [   (   'fls_warning2bb',
                                                                    True,
-                                                                   [   (   'fls_warning2bb_update_success',
+                                                                   [   (   'next(fls_warning2bb_update_success)',
                                                                            '{TRUE, '
                                                                            'FALSE}'),
                                                                        (   'TRUE',
-                                                                           'var_obstacle_in_view')])],
+                                                                           'LINK_TO_PREVIOUS_FINAL_var_obstacle_in_view')])],
                                              'prefix': 'var_'},
                      'obstacle_standoff_warning': {   'custom_value_range': '{TRUE, '
                                                                             'FALSE}',
                                                       'initial_value': [   (   'TRUE',
                                                                                'FALSE')],
+                                                      'keep_stage_0': True,
                                                       'max_value': 1,
                                                       'min_value': 0,
                                                       'mode': 'VAR',
                                                       'name': 'obstacle_standoff_warning',
                                                       'next_value': [   (   'fls2bb',
                                                                             False,
-                                                                            [   (   '(fls2bb_update_success '
-                                                                                    '= '
-                                                                                    'FALSE)',
-                                                                                    'var_obstacle_standoff_warning'),
-                                                                                (   'TRUE',
+                                                                            [   (   'TRUE',
                                                                                     'var_fls_range_stage_1 '
                                                                                     '= '
                                                                                     'danger_zone')])],
@@ -2746,6 +2758,7 @@
                      'pipe_lost2bb_update_success': {   'custom_value_range': '{TRUE, '
                                                                               'FALSE}',
                                                         'initial_value': None,
+                                                        'keep_stage_0': True,
                                                         'max_value': 1,
                                                         'min_value': 0,
                                                         'mode': 'VAR',
@@ -2756,6 +2769,7 @@
                                                                       'FALSE}',
                                                 'initial_value': [   (   'TRUE',
                                                                          'FALSE')],
+                                                'keep_stage_0': True,
                                                 'max_value': 1,
                                                 'min_value': 0,
                                                 'mode': 'VAR',
@@ -2776,6 +2790,7 @@
                      'rth2bb_update_success': {   'custom_value_range': '{TRUE, '
                                                                         'FALSE}',
                                                   'initial_value': None,
+                                                  'keep_stage_0': True,
                                                   'max_value': 1,
                                                   'min_value': 0,
                                                   'mode': 'VAR',
@@ -2785,6 +2800,7 @@
                      'rtreach2bb_update_success': {   'custom_value_range': '{TRUE, '
                                                                             'FALSE}',
                                                       'initial_value': None,
+                                                      'keep_stage_0': True,
                                                       'max_value': 1,
                                                       'min_value': 0,
                                                       'mode': 'VAR',
@@ -2794,6 +2810,7 @@
                      'rtreach_index2bb_update_success': {   'custom_value_range': '{TRUE, '
                                                                                   'FALSE}',
                                                             'initial_value': None,
+                                                            'keep_stage_0': True,
                                                             'max_value': 1,
                                                             'min_value': 0,
                                                             'mode': 'VAR',
@@ -2804,17 +2821,14 @@
                                                                             'FALSE}',
                                                       'initial_value': [   (   'TRUE',
                                                                                'FALSE')],
+                                                      'keep_stage_0': True,
                                                       'max_value': 1,
                                                       'min_value': 0,
                                                       'mode': 'VAR',
                                                       'name': 'rtreach_long_term_warning',
                                                       'next_value': [   (   'rtreach2bb',
                                                                             False,
-                                                                            [   (   '(rtreach2bb_update_success '
-                                                                                    '= '
-                                                                                    'FALSE)',
-                                                                                    'var_rtreach_long_term_warning'),
-                                                                                (   'TRUE',
+                                                                            [   (   'TRUE',
                                                                                     'var_rtreach_result_stage_1 '
                                                                                     '= '
                                                                                     'long '
@@ -2827,23 +2841,25 @@
                                                                  'short, long, '
                                                                  'short_long}',
                                            'initial_value': None,
+                                           'keep_stage_0': False,
                                            'max_value': 1,
                                            'min_value': 0,
                                            'mode': 'VAR',
                                            'name': 'rtreach_result',
                                            'next_value': [   (   'rtreach2bb',
                                                                  True,
-                                                                 [   (   'rtreach2bb_update_success',
+                                                                 [   (   'next(rtreach2bb_update_success)',
                                                                          '{safe, '
                                                                          'short, '
                                                                          'long, '
                                                                          'short_long}'),
                                                                      (   'TRUE',
-                                                                         'var_rtreach_result')])],
+                                                                         'LINK_TO_PREVIOUS_FINAL_var_rtreach_result')])],
                                            'prefix': 'var_'},
                      'rtreach_unsafe_value2bb_update_success': {   'custom_value_range': '{TRUE, '
                                                                                          'FALSE}',
                                                                    'initial_value': None,
+                                                                   'keep_stage_0': True,
                                                                    'max_value': 1,
                                                                    'min_value': 0,
                                                                    'mode': 'VAR',
@@ -2854,17 +2870,14 @@
                                                                   'FALSE}',
                                             'initial_value': [   (   'TRUE',
                                                                      'FALSE')],
+                                            'keep_stage_0': True,
                                             'max_value': 1,
                                             'min_value': 0,
                                             'mode': 'VAR',
                                             'name': 'rtreach_warning',
                                             'next_value': [   (   'rtreach2bb',
                                                                   False,
-                                                                  [   (   '(rtreach2bb_update_success '
-                                                                          '= '
-                                                                          'FALSE)',
-                                                                          'var_rtreach_warning'),
-                                                                      (   'TRUE',
+                                                                  [   (   'TRUE',
                                                                           'var_rtreach_result_stage_1 '
                                                                           '= '
                                                                           'short '
@@ -2876,6 +2889,7 @@
                      'sensor_failure2bb_update_success': {   'custom_value_range': '{TRUE, '
                                                                                    'FALSE}',
                                                              'initial_value': None,
+                                                             'keep_stage_0': True,
                                                              'max_value': 1,
                                                              'min_value': 0,
                                                              'mode': 'VAR',
@@ -2885,6 +2899,7 @@
                      'waypoints_completed2bb_update_success': {   'custom_value_range': '{TRUE, '
                                                                                         'FALSE}',
                                                                   'initial_value': None,
+                                                                  'keep_stage_0': True,
                                                                   'max_value': 1,
                                                                   'min_value': 0,
                                                                   'mode': 'VAR',
