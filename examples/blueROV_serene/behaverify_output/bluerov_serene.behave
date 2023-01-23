@@ -54,11 +54,48 @@
                                                                          'failure;\n',
                                           'internal_status_module_name': 'check_battery_low_module',
                                           'name': 'check_battery_low',
-                                          'parent': 'get_information',
+                                          'parent': 'surface_required',
                                           'return_possibilities': {   'failure': True,
                                                                       'running': False,
                                                                       'success': True},
                                           'type': 'check_environment'},
+                 'check_emergency_sensor': {   'additional_arguments': [   'env_emergency_sensor'],
+                                               'category': 'leaf',
+                                               'children': [],
+                                               'internal_status_module_code': 'MODULE '
+                                                                              'check_emergency_sensor_module(env_emergency_sensor)\n'
+                                                                              '\t'
+                                                                              'CONSTANTS\n'
+                                                                              '\t\t'
+                                                                              'success, '
+                                                                              'failure, '
+                                                                              'running, '
+                                                                              'invalid;\n'
+                                                                              '\t'
+                                                                              'DEFINE\n'
+                                                                              '\t\t'
+                                                                              'status '
+                                                                              ':= '
+                                                                              'active '
+                                                                              '? '
+                                                                              'internal_status '
+                                                                              ': '
+                                                                              'invalid;\n'
+                                                                              '\t\t'
+                                                                              'internal_status '
+                                                                              ':= '
+                                                                              '(env_emergency_sensor) '
+                                                                              '? '
+                                                                              'success '
+                                                                              ': '
+                                                                              'failure;\n',
+                                               'internal_status_module_name': 'check_emergency_sensor_module',
+                                               'name': 'check_emergency_sensor',
+                                               'parent': 'surface_required',
+                                               'return_possibilities': {   'failure': True,
+                                                                           'running': False,
+                                                                           'success': True},
+                                               'type': 'check_environment'},
                  'check_geofence': {   'additional_arguments': [   'env_geofence_warning'],
                                        'category': 'leaf',
                                        'children': [],
@@ -91,11 +128,44 @@
                                                                       'failure;\n',
                                        'internal_status_module_name': 'check_geofence_module',
                                        'name': 'check_geofence',
-                                       'parent': 'get_information',
+                                       'parent': 'geofence_abort',
                                        'return_possibilities': {   'failure': True,
                                                                    'running': False,
                                                                    'success': True},
                                        'type': 'check_environment'},
+                 'check_halted': {   'additional_arguments': [   'env_BLUEROV_HALTED'],
+                                     'category': 'leaf',
+                                     'children': [],
+                                     'internal_status_module_code': 'MODULE '
+                                                                    'check_halted_module(env_BLUEROV_HALTED)\n'
+                                                                    '\t'
+                                                                    'CONSTANTS\n'
+                                                                    '\t\t'
+                                                                    'success, '
+                                                                    'failure, '
+                                                                    'running, '
+                                                                    'invalid;\n'
+                                                                    '\tDEFINE\n'
+                                                                    '\t\t'
+                                                                    'status := '
+                                                                    'active ? '
+                                                                    'internal_status '
+                                                                    ': '
+                                                                    'invalid;\n'
+                                                                    '\t\t'
+                                                                    'internal_status '
+                                                                    ':= '
+                                                                    '(env_BLUEROV_HALTED) '
+                                                                    '? success '
+                                                                    ': '
+                                                                    'failure;\n',
+                                     'internal_status_module_name': 'check_halted_module',
+                                     'name': 'check_halted',
+                                     'parent': 'surface_sequence',
+                                     'return_possibilities': {   'failure': True,
+                                                                 'running': False,
+                                                                 'success': True},
+                                     'type': 'check_environment'},
                  'check_home_reached': {   'additional_arguments': [   'env_home_reached'],
                                            'category': 'leaf',
                                            'children': [],
@@ -165,7 +235,7 @@
                                                                               'failure;\n',
                                                'internal_status_module_name': 'check_mission_finished_module',
                                                'name': 'check_mission_finished',
-                                               'parent': 'process_mission',
+                                               'parent': 'normal_process',
                                                'return_possibilities': {   'failure': True,
                                                                            'running': False,
                                                                            'success': True},
@@ -350,16 +420,16 @@
                                                                             'failure;\n',
                                              'internal_status_module_name': 'check_sensor_failure_module',
                                              'name': 'check_sensor_failure',
-                                             'parent': 'get_information',
+                                             'parent': 'surface_required',
                                              'return_possibilities': {   'failure': True,
                                                                          'running': False,
                                                                          'success': True},
                                              'type': 'check_environment'},
-                 'emergency_surface_mission': {   'additional_arguments': [   'var_mission_stage_1'],
+                 'emergency_surface_mission': {   'additional_arguments': [   'var_mission'],
                                                   'category': 'leaf',
                                                   'children': [],
                                                   'internal_status_module_code': 'MODULE '
-                                                                                 'emergency_surface_mission_module(var_mission_stage_1)\n'
+                                                                                 'emergency_surface_mission_module(var_mission)\n'
                                                                                  '\t'
                                                                                  'CONSTANTS\n'
                                                                                  '\t\t'
@@ -380,20 +450,59 @@
                                                                                  '\t\t'
                                                                                  'internal_status '
                                                                                  ':= '
-                                                                                 '((var_mission_stage_1 '
+                                                                                 '((var_mission '
                                                                                  '= '
-                                                                                 'emergency_surface)) '
+                                                                                 'MISSION_emergency_surface)) '
                                                                                  '? '
                                                                                  'success '
                                                                                  ': '
                                                                                  'failure;\n',
                                                   'internal_status_module_name': 'emergency_surface_mission_module',
                                                   'name': 'emergency_surface_mission',
-                                                  'parent': 'surface_required',
+                                                  'parent': 'process_mission',
                                                   'return_possibilities': {   'failure': True,
                                                                               'running': False,
                                                                               'success': True},
                                                   'type': 'check'},
+                 'emergency_surface_mission_1': {   'additional_arguments': [   'var_mission_stage_2'],
+                                                    'category': 'leaf',
+                                                    'children': [],
+                                                    'internal_status_module_code': 'MODULE '
+                                                                                   'emergency_surface_mission_1_module(var_mission_stage_2)\n'
+                                                                                   '\t'
+                                                                                   'CONSTANTS\n'
+                                                                                   '\t\t'
+                                                                                   'success, '
+                                                                                   'failure, '
+                                                                                   'running, '
+                                                                                   'invalid;\n'
+                                                                                   '\t'
+                                                                                   'DEFINE\n'
+                                                                                   '\t\t'
+                                                                                   'status '
+                                                                                   ':= '
+                                                                                   'active '
+                                                                                   '? '
+                                                                                   'internal_status '
+                                                                                   ': '
+                                                                                   'invalid;\n'
+                                                                                   '\t\t'
+                                                                                   'internal_status '
+                                                                                   ':= '
+                                                                                   '((var_mission_stage_2 '
+                                                                                   '= '
+                                                                                   'MISSION_emergency_surface)) '
+                                                                                   '? '
+                                                                                   'success '
+                                                                                   ': '
+                                                                                   'failure;\n',
+                                                    'internal_status_module_name': 'emergency_surface_mission_1_module',
+                                                    'name': 'emergency_surface_mission_1',
+                                                    'parent': 'surface_required',
+                                                    'return_possibilities': {   'failure': True,
+                                                                                'running': False,
+                                                                                'success': True},
+                                                    'type': 'check'},
                  'failsafe_triggered': {   'additional_arguments': [   'var_failsafe_engaged_stage_1'],
                                            'category': 'leaf',
                                            'children': [],
@@ -431,6 +540,43 @@
                                                                        'running': False,
                                                                        'success': True},
                                            'type': 'check'},
+                 'failsafe_triggered_1': {   'additional_arguments': [   'var_failsafe_engaged_stage_2'],
+                                             'category': 'leaf',
+                                             'children': [],
+                                             'internal_status_module_code': 'MODULE '
+                                                                            'failsafe_triggered_1_module(var_failsafe_engaged_stage_2)\n'
+                                                                            '\t'
+                                                                            'CONSTANTS\n'
+                                                                            '\t\t'
+                                                                            'success, '
+                                                                            'failure, '
+                                                                            'running, '
+                                                                            'invalid;\n'
+                                                                            '\t'
+                                                                            'DEFINE\n'
+                                                                            '\t\t'
+                                                                            'status '
+                                                                            ':= '
+                                                                            'active '
+                                                                            '? '
+                                                                            'internal_status '
+                                                                            ': '
+                                                                            'invalid;\n'
+                                                                            '\t\t'
+                                                                            'internal_status '
+                                                                            ':= '
+                                                                            '(var_failsafe_engaged_stage_2) '
+                                                                            '? '
+                                                                            'success '
+                                                                            ': '
+                                                                            'failure;\n',
+                                             'internal_status_module_name': 'failsafe_triggered_1_module',
+                                             'name': 'failsafe_triggered_1',
+                                             'parent': 'halt_sequence',
+                                             'return_possibilities': {   'failure': True,
+                                                                         'running': False,
+                                                                         'success': True},
+                                             'type': 'check'},
                  'find_or_track': {   'additional_arguments': None,
                                       'category': 'composite',
                                       'children': ['find_pipe', 'track_pipe'],
@@ -444,7 +590,8 @@
                                       'type': 'selector_without_memory'},
                  'find_pipe': {   'additional_arguments': None,
                                   'category': 'composite',
-                                  'children': ['check_pipe_lost', 'search'],
+                                  'children': [   'check_pipe_lost',
+                                                  'search_for_pipe'],
                                   'internal_status_module_code': None,
                                   'internal_status_module_name': None,
                                   'name': 'find_pipe',
@@ -453,34 +600,32 @@
                                                               'running': True,
                                                               'success': True},
                                   'type': 'sequence_without_memory'},
-                 'get_information': {   'additional_arguments': None,
-                                        'category': 'composite',
-                                        'children': [   'check_battery_low',
-                                                        'check_geofence',
-                                                        'check_sensor_failure',
-                                                        'home_surface'],
-                                        'internal_status_module_code': None,
-                                        'internal_status_module_name': None,
-                                        'name': 'get_information',
-                                        'parent': 'surface_required',
-                                        'return_possibilities': {   'failure': True,
-                                                                    'running': True,
-                                                                    'success': True},
-                                        'type': 'selector_without_memory'},
+                 'geofence_abort': {   'additional_arguments': None,
+                                       'category': 'composite',
+                                       'children': [   'check_geofence',
+                                                       'set_return_home'],
+                                       'internal_status_module_code': None,
+                                       'internal_status_module_name': None,
+                                       'name': 'geofence_abort',
+                                       'parent': 'process_mission',
+                                       'return_possibilities': {   'failure': True,
+                                                                   'running': True,
+                                                                   'success': True},
+                                       'type': 'sequence_without_memory'},
                  'get_mission': {   'additional_arguments': [],
                                     'category': 'leaf',
                                     'children': [],
                                     'internal_status_module_code': None,
                                     'internal_status_module_name': None,
                                     'name': 'get_mission',
-                                    'parent': 'process_mission',
+                                    'parent': 'normal_process',
                                     'return_possibilities': {   'failure': False,
                                                                 'running': False,
                                                                 'success': True},
                                     'type': 'action'},
                  'go_home_sequence': {   'additional_arguments': None,
                                          'category': 'composite',
-                                         'children': [   'return_home_mission_1',
+                                         'children': [   'return_home_mission_2',
                                                          'return_home'],
                                          'internal_status_module_code': None,
                                          'internal_status_module_name': None,
@@ -490,14 +635,37 @@
                                                                      'running': True,
                                                                      'success': True},
                                          'type': 'sequence_without_memory'},
+                 'halt': {   'additional_arguments': [],
+                             'category': 'leaf',
+                             'children': [],
+                             'internal_status_module_code': None,
+                             'internal_status_module_name': None,
+                             'name': 'halt',
+                             'parent': 'halt_sequence',
+                             'return_possibilities': {   'failure': False,
+                                                         'running': False,
+                                                         'success': True},
+                             'type': 'action'},
+                 'halt_sequence': {   'additional_arguments': None,
+                                      'category': 'composite',
+                                      'children': [   'failsafe_triggered_1',
+                                                      'halt'],
+                                      'internal_status_module_code': None,
+                                      'internal_status_module_name': None,
+                                      'name': 'halt_sequence',
+                                      'parent': 'priorities',
+                                      'return_possibilities': {   'failure': True,
+                                                                  'running': True,
+                                                                  'success': True},
+                                      'type': 'sequence_without_memory'},
                  'home_surface': {   'additional_arguments': None,
                                      'category': 'composite',
-                                     'children': [   'return_home_mission',
+                                     'children': [   'return_home_mission_1',
                                                      'check_home_reached'],
                                      'internal_status_module_code': None,
                                      'internal_status_module_name': None,
                                      'name': 'home_surface',
-                                     'parent': 'get_information',
+                                     'parent': 'surface_required',
                                      'return_possibilities': {   'failure': True,
                                                                  'running': True,
                                                                  'success': True},
@@ -513,6 +681,18 @@
                                                            'running': False,
                                                            'success': True},
                                'type': 'action'},
+                 'normal_process': {   'additional_arguments': None,
+                                       'category': 'composite',
+                                       'children': [   'check_mission_finished',
+                                                       'get_mission'],
+                                       'internal_status_module_code': None,
+                                       'internal_status_module_name': None,
+                                       'name': 'normal_process',
+                                       'parent': 'process_mission',
+                                       'return_possibilities': {   'failure': True,
+                                                                   'running': True,
+                                                                   'success': True},
+                                       'type': 'sequence_without_memory'},
                  'obstacle_avoidance_sequence': {   'additional_arguments': None,
                                                     'category': 'composite',
                                                     'children': [   'check_obstacles_present',
@@ -528,6 +708,7 @@
                  'priorities': {   'additional_arguments': None,
                                    'category': 'composite',
                                    'children': [   'surface_sequence',
+                                                   'halt_sequence',
                                                    'obstacle_avoidance_sequence',
                                                    'go_home_sequence',
                                                    'track_pipe_sequence',
@@ -543,8 +724,10 @@
                                    'type': 'selector_without_memory'},
                  'process_mission': {   'additional_arguments': None,
                                         'category': 'composite',
-                                        'children': [   'check_mission_finished',
-                                                        'get_mission'],
+                                        'children': [   'emergency_surface_mission',
+                                                        'return_home_mission',
+                                                        'geofence_abort',
+                                                        'normal_process'],
                                         'internal_status_module_code': None,
                                         'internal_status_module_name': None,
                                         'name': 'process_mission',
@@ -552,7 +735,7 @@
                                         'return_possibilities': {   'failure': True,
                                                                     'running': True,
                                                                     'success': True},
-                                        'type': 'sequence_without_memory'},
+                                        'type': 'selector_without_memory'},
                  'reallocate': {   'additional_arguments': [],
                                    'category': 'leaf',
                                    'children': [],
@@ -611,11 +794,11 @@
                                                                 'running': False,
                                                                 'success': True},
                                     'type': 'action'},
-                 'return_home_mission': {   'additional_arguments': [   'var_mission_stage_1'],
+                 'return_home_mission': {   'additional_arguments': [   'var_mission'],
                                             'category': 'leaf',
                                             'children': [],
                                             'internal_status_module_code': 'MODULE '
-                                                                           'return_home_mission_module(var_mission_stage_1)\n'
+                                                                           'return_home_mission_module(var_mission)\n'
                                                                            '\t'
                                                                            'CONSTANTS\n'
                                                                            '\t\t'
@@ -636,25 +819,25 @@
                                                                            '\t\t'
                                                                            'internal_status '
                                                                            ':= '
-                                                                           '((var_mission_stage_1 '
+                                                                           '((var_mission '
                                                                            '= '
-                                                                           'go_to_home)) '
+                                                                           'MISSION_go_to_home)) '
                                                                            '? '
                                                                            'success '
                                                                            ': '
                                                                            'failure;\n',
                                             'internal_status_module_name': 'return_home_mission_module',
                                             'name': 'return_home_mission',
-                                            'parent': 'home_surface',
+                                            'parent': 'process_mission',
                                             'return_possibilities': {   'failure': True,
                                                                         'running': False,
                                                                         'success': True},
                                             'type': 'check'},
-                 'return_home_mission_1': {   'additional_arguments': [   'var_mission_stage_1'],
+                 'return_home_mission_1': {   'additional_arguments': [   'var_mission_stage_2'],
                                               'category': 'leaf',
                                               'children': [],
                                               'internal_status_module_code': 'MODULE '
-                                                                             'return_home_mission_1_module(var_mission_stage_1)\n'
+                                                                             'return_home_mission_1_module(var_mission_stage_2)\n'
                                                                              '\t'
                                                                              'CONSTANTS\n'
                                                                              '\t\t'
@@ -675,31 +858,81 @@
                                                                              '\t\t'
                                                                              'internal_status '
                                                                              ':= '
-                                                                             '((var_mission_stage_1 '
+                                                                             '((var_mission_stage_2 '
                                                                              '= '
-                                                                             'go_to_home)) '
+                                                                             'MISSION_go_to_home)) '
                                                                              '? '
                                                                              'success '
                                                                              ': '
                                                                              'failure;\n',
                                               'internal_status_module_name': 'return_home_mission_1_module',
                                               'name': 'return_home_mission_1',
+                                              'parent': 'home_surface',
+                                              'return_possibilities': {   'failure': True,
+                                                                          'running': False,
+                                                                          'success': True},
+                                              'type': 'check'},
+                 'return_home_mission_2': {   'additional_arguments': [   'var_mission_stage_2'],
+                                              'category': 'leaf',
+                                              'children': [],
+                                              'internal_status_module_code': 'MODULE '
+                                                                             'return_home_mission_2_module(var_mission_stage_2)\n'
+                                                                             '\t'
+                                                                             'CONSTANTS\n'
+                                                                             '\t\t'
+                                                                             'success, '
+                                                                             'failure, '
+                                                                             'running, '
+                                                                             'invalid;\n'
+                                                                             '\t'
+                                                                             'DEFINE\n'
+                                                                             '\t\t'
+                                                                             'status '
+                                                                             ':= '
+                                                                             'active '
+                                                                             '? '
+                                                                             'internal_status '
+                                                                             ': '
+                                                                             'invalid;\n'
+                                                                             '\t\t'
+                                                                             'internal_status '
+                                                                             ':= '
+                                                                             '((var_mission_stage_2 '
+                                                                             '= '
+                                                                             'MISSION_go_to_home)) '
+                                                                             '? '
+                                                                             'success '
+                                                                             ': '
+                                                                             'failure;\n',
+                                              'internal_status_module_name': 'return_home_mission_2_module',
+                                              'name': 'return_home_mission_2',
                                               'parent': 'go_home_sequence',
                                               'return_possibilities': {   'failure': True,
                                                                           'running': False,
                                                                           'success': True},
                                               'type': 'check'},
-                 'search': {   'additional_arguments': [],
-                               'category': 'leaf',
-                               'children': [],
-                               'internal_status_module_code': None,
-                               'internal_status_module_name': None,
-                               'name': 'search',
-                               'parent': 'find_pipe',
-                               'return_possibilities': {   'failure': False,
-                                                           'running': False,
-                                                           'success': True},
-                               'type': 'action'},
+                 'search_for_pipe': {   'additional_arguments': [],
+                                        'category': 'leaf',
+                                        'children': [],
+                                        'internal_status_module_code': None,
+                                        'internal_status_module_name': None,
+                                        'name': 'search_for_pipe',
+                                        'parent': 'find_pipe',
+                                        'return_possibilities': {   'failure': False,
+                                                                    'running': False,
+                                                                    'success': True},
+                                        'type': 'action'},
+                 'set_return_home': {   'additional_arguments': [],
+                                        'category': 'leaf',
+                                        'children': [],
+                                        'internal_status_module_code': None,
+                                        'internal_status_module_name': None,
+                                        'name': 'set_return_home',
+                                        'parent': 'geofence_abort',
+                                        'return_possibilities': {   'failure': False,
+                                                                    'running': False,
+                                                                    'success': True},
+                                        'type': 'action'},
                  'surface': {   'additional_arguments': [],
                                 'category': 'leaf',
                                 'children': [],
@@ -714,8 +947,11 @@
                  'surface_required': {   'additional_arguments': None,
                                          'category': 'composite',
                                          'children': [   'failsafe_triggered',
-                                                         'emergency_surface_mission',
-                                                         'get_information'],
+                                                         'emergency_surface_mission_1',
+                                                         'check_battery_low',
+                                                         'check_emergency_sensor',
+                                                         'check_sensor_failure',
+                                                         'home_surface'],
                                          'internal_status_module_code': None,
                                          'internal_status_module_name': None,
                                          'name': 'surface_required',
@@ -728,6 +964,7 @@
                                          'category': 'composite',
                                          'children': [   'surface_required',
                                                          'trigger_failsafe_1',
+                                                         'check_halted',
                                                          'surface'],
                                          'internal_status_module_code': None,
                                          'internal_status_module_name': None,
@@ -748,11 +985,11 @@
                                                                'running': False,
                                                                'success': True},
                                    'type': 'action'},
-                 'track_pipe_mission': {   'additional_arguments': [   'var_mission_stage_1'],
+                 'track_pipe_mission': {   'additional_arguments': [   'var_mission_stage_2'],
                                            'category': 'leaf',
                                            'children': [],
                                            'internal_status_module_code': 'MODULE '
-                                                                          'track_pipe_mission_module(var_mission_stage_1)\n'
+                                                                          'track_pipe_mission_module(var_mission_stage_2)\n'
                                                                           '\t'
                                                                           'CONSTANTS\n'
                                                                           '\t\t'
@@ -773,9 +1010,9 @@
                                                                           '\t\t'
                                                                           'internal_status '
                                                                           ':= '
-                                                                          '((var_mission_stage_1 '
+                                                                          '((var_mission_stage_2 '
                                                                           '= '
-                                                                          'pipe_tracking)) '
+                                                                          'MISSION_pipe_tracking)) '
                                                                           '? '
                                                                           'success '
                                                                           ': '
@@ -832,11 +1069,11 @@
                                                              'running': False,
                                                              'success': True},
                                  'type': 'action'},
-                 'waypoint_mission': {   'additional_arguments': [   'var_mission_stage_1'],
+                 'waypoint_mission': {   'additional_arguments': [   'var_mission_stage_2'],
                                          'category': 'leaf',
                                          'children': [],
                                          'internal_status_module_code': 'MODULE '
-                                                                        'waypoint_mission_module(var_mission_stage_1)\n'
+                                                                        'waypoint_mission_module(var_mission_stage_2)\n'
                                                                         '\t'
                                                                         'CONSTANTS\n'
                                                                         '\t\t'
@@ -857,9 +1094,9 @@
                                                                         '\t\t'
                                                                         'internal_status '
                                                                         ':= '
-                                                                        '((var_mission_stage_1 '
+                                                                        '((var_mission_stage_2 '
                                                                         '= '
-                                                                        'go_to_waypoint)) '
+                                                                        'MISSION_go_to_waypoint)) '
                                                                         '? '
                                                                         'success '
                                                                         ': '
@@ -884,7 +1121,25 @@
                                                                       'success': True},
                                           'type': 'sequence_without_memory'}},
     'tick_condition': '!(env_BLUEROV_SURFACED)',
-    'variables': {   'env_BLUEROV_SURFACED': {   'custom_value_range': '{TRUE, '
+    'variables': {   'env_BLUEROV_HALTED': {   'custom_value_range': '{TRUE, '
+                                                                     'FALSE}',
+                                               'initial_value': [   (   'TRUE',
+                                                                        'FALSE')],
+                                               'keep_stage_0': True,
+                                               'max_value': 1,
+                                               'min_value': 0,
+                                               'mode': 'VAR',
+                                               'name': 'BLUEROV_HALTED',
+                                               'next_value': [   (   'halt',
+                                                                     False,
+                                                                     [   (   'TRUE',
+                                                                             'TRUE')]),
+                                                                 (   None,
+                                                                     False,
+                                                                     [   (   'TRUE',
+                                                                             'env_BLUEROV_HALTED_stage_1')])],
+                                               'prefix': 'env_'},
+                     'env_BLUEROV_SURFACED': {   'custom_value_range': '{TRUE, '
                                                                        'FALSE}',
                                                  'initial_value': [   (   'TRUE',
                                                                           'FALSE')],
@@ -904,8 +1159,7 @@
                                                  'prefix': 'env_'},
                      'env_battery_low': {   'custom_value_range': '{TRUE, '
                                                                   'FALSE}',
-                                            'initial_value': [   (   'TRUE',
-                                                                     'FALSE')],
+                                            'initial_value': None,
                                             'keep_stage_0': True,
                                             'max_value': 1,
                                             'min_value': 0,
@@ -913,13 +1167,14 @@
                                             'name': 'battery_low',
                                             'next_value': [],
                                             'prefix': 'env_'},
-                     'env_command': {   'custom_value_range': '{UNKNOWN, '
-                                                              'avoiding_obstacles, '
-                                                              'go_to_waypoint, '
-                                                              'go_to_home, '
-                                                              'search_for_pipe, '
-                                                              'go_to_surface, '
-                                                              'pipe_tracking}',
+                     'env_command': {   'custom_value_range': '{COMMAND_UNKNOWN, '
+                                                              'COMMAND_avoid_obstacles, '
+                                                              'COMMAND_go_to_waypoint, '
+                                                              'COMMAND_go_to_home, '
+                                                              'COMMAND_surface, '
+                                                              'COMMAND_halt, '
+                                                              'COMMAND_pipe_tracking, '
+                                                              'COMMAND_search_for_pipe}',
                                         'initial_value': None,
                                         'keep_stage_0': False,
                                         'max_value': 1,
@@ -929,36 +1184,49 @@
                                         'next_value': [   (   'surface',
                                                               False,
                                                               [   (   'TRUE',
-                                                                      'go_to_surface')]),
+                                                                      'COMMAND_surface')]),
+                                                          (   'halt',
+                                                              False,
+                                                              [   (   'TRUE',
+                                                                      'COMMAND_halt')]),
                                                           (   'avoid_obstacles',
                                                               False,
                                                               [   (   'TRUE',
-                                                                      'avoiding_obstacles')]),
+                                                                      'COMMAND_avoid_obstacles')]),
                                                           (   'return_home',
                                                               False,
                                                               [   (   'TRUE',
-                                                                      'go_to_home')]),
-                                                          (   'search',
+                                                                      'COMMAND_go_to_home')]),
+                                                          (   'search_for_pipe',
                                                               False,
                                                               [   (   'TRUE',
-                                                                      'search_for_pipe')]),
+                                                                      'COMMAND_search_for_pipe')]),
                                                           (   'track_pipe',
                                                               False,
                                                               [   (   'TRUE',
-                                                                      'pipe_tracking')]),
+                                                                      'COMMAND_pipe_tracking')]),
                                                           (   'waypoint',
                                                               False,
                                                               [   (   'TRUE',
-                                                                      'go_to_waypoint')]),
+                                                                      'COMMAND_go_to_waypoint')]),
                                                           (   'loiter',
                                                               False,
                                                               [   (   'TRUE',
-                                                                      'UNKNOWN')])],
+                                                                      'COMMAND_UNKNOWN')])],
                                         'prefix': 'env_'},
+                     'env_emergency_sensor': {   'custom_value_range': '{TRUE, '
+                                                                       'FALSE}',
+                                                 'initial_value': None,
+                                                 'keep_stage_0': True,
+                                                 'max_value': 1,
+                                                 'min_value': 0,
+                                                 'mode': 'VAR',
+                                                 'name': 'emergency_sensor',
+                                                 'next_value': [],
+                                                 'prefix': 'env_'},
                      'env_geofence_warning': {   'custom_value_range': '{TRUE, '
                                                                        'FALSE}',
-                                                 'initial_value': [   (   'TRUE',
-                                                                          'FALSE')],
+                                                 'initial_value': None,
                                                  'keep_stage_0': True,
                                                  'max_value': 1,
                                                  'min_value': 0,
@@ -968,8 +1236,7 @@
                                                  'prefix': 'env_'},
                      'env_home_reached': {   'custom_value_range': '{TRUE, '
                                                                    'FALSE}',
-                                             'initial_value': [   (   'TRUE',
-                                                                      'FALSE')],
+                                             'initial_value': None,
                                              'keep_stage_0': True,
                                              'max_value': 1,
                                              'min_value': 0,
@@ -979,8 +1246,7 @@
                                              'prefix': 'env_'},
                      'env_mission_finished': {   'custom_value_range': '{TRUE, '
                                                                        'FALSE}',
-                                                 'initial_value': [   (   'TRUE',
-                                                                          'FALSE')],
+                                                 'initial_value': None,
                                                  'keep_stage_0': True,
                                                  'max_value': 1,
                                                  'min_value': 0,
@@ -988,10 +1254,10 @@
                                                  'name': 'mission_finished',
                                                  'next_value': [],
                                                  'prefix': 'env_'},
-                     'env_next_mission': {   'custom_value_range': '{emergency_surface, '
-                                                                   'pipe_tracking, '
-                                                                   'go_to_home, '
-                                                                   'go_to_waypoint}',
+                     'env_next_mission': {   'custom_value_range': '{MISSION_emergency_surface, '
+                                                                   'MISSION_pipe_tracking, '
+                                                                   'MISSION_go_to_home, '
+                                                                   'MISSION_go_to_waypoint}',
                                              'initial_value': None,
                                              'keep_stage_0': True,
                                              'max_value': 1,
@@ -1001,10 +1267,10 @@
                                              'next_value': [   (   None,
                                                                    True,
                                                                    [   (   'env_mission_finished',
-                                                                           '{emergency_surface, '
-                                                                           'pipe_tracking, '
-                                                                           'go_to_home, '
-                                                                           'go_to_waypoint}'),
+                                                                           '{MISSION_emergency_surface, '
+                                                                           'MISSION_pipe_tracking, '
+                                                                           'MISSION_go_to_home, '
+                                                                           'MISSION_go_to_waypoint}'),
                                                                        (   'TRUE',
                                                                            'env_next_mission')])],
                                              'prefix': 'env_'},
@@ -1053,8 +1319,7 @@
                                                       'prefix': 'env_'},
                      'env_sensor_failure': {   'custom_value_range': '{TRUE, '
                                                                      'FALSE}',
-                                               'initial_value': [   (   'TRUE',
-                                                                        'FALSE')],
+                                               'initial_value': None,
                                                'keep_stage_0': True,
                                                'max_value': 1,
                                                'min_value': 0,
@@ -1080,26 +1345,30 @@
                                                                    [   (   'TRUE',
                                                                            'TRUE')])],
                                              'prefix': 'var_'},
-                     'mission': {   'custom_value_range': '{emergency_surface, '
-                                                          'pipe_tracking, '
-                                                          'go_to_home, '
-                                                          'go_to_waypoint}',
+                     'mission': {   'custom_value_range': '{MISSION_emergency_surface, '
+                                                          'MISSION_pipe_tracking, '
+                                                          'MISSION_go_to_home, '
+                                                          'MISSION_go_to_waypoint}',
                                     'initial_value': [   (   'TRUE',
                                                              'env_next_mission'),
                                                          (   'TRUE',
-                                                             '{emergency_surface, '
-                                                             'pipe_tracking, '
-                                                             'go_to_home, '
-                                                             'go_to_waypoint}')],
+                                                             '{MISSION_emergency_surface, '
+                                                             'MISSION_pipe_tracking, '
+                                                             'MISSION_go_to_home, '
+                                                             'MISSION_go_to_waypoint}')],
                                     'keep_stage_0': True,
                                     'max_value': 1,
                                     'min_value': 0,
                                     'mode': 'VAR',
                                     'name': 'mission',
-                                    'next_value': [   (   'get_mission',
+                                    'next_value': [   (   'set_return_home',
+                                                          False,
+                                                          [   (   'TRUE',
+                                                                  'MISSION_go_to_home')]),
+                                                      (   'get_mission',
                                                           False,
                                                           [   (   'TRUE',
                                                                   'env_next_mission'),
                                                               (   'TRUE',
-                                                                  'var_mission')])],
+                                                                  'var_mission_stage_1')])],
                                     'prefix': 'var_'}}}
