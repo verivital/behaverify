@@ -134,13 +134,16 @@ def merge_variables(list_of_variable_maps, node_name_to_number):
 
 def template_variable(variable_name, node_name, update, next_value = None):
     return {
+        'prefix' : 'var_',
         'name' : variable_name,
         'mode' : 'VAR',
         'custom_value_range' : None,
         'min_value' : 0,
         'max_value' : 1,
         'init_value' : None,
-        'next_value' : ([(node_name, True, [('TRUE', '{0, 1}')])] if update else []) if next_value is None else next_value
+        'next_value' : ([(node_name, True, [('TRUE', '{0, 1}')])] if update else []) if next_value is None else next_value,
+        'environment_update' : None,
+        'keep_stage_0' : True
     }
 
 
@@ -270,12 +273,12 @@ def write_to_file(root, file_name):
     if file_name is None:
         printer = pprint.PrettyPrinter(indent = 4)
         # printer = modified_pretty_print.modified_pprinter(indent = 4)
-        printer.pprint({'nodes' : nodes, 'variables' : variables})
+        printer.pprint({'tick_condition' : 'TRUE', 'nodes' : nodes, 'variables' : variables})
     else:
         with open(file_name, 'w') as f:
             printer = pprint.PrettyPrinter(indent = 4, stream = f)
             # printer = modified_pretty_print.modified_pprinter(indent = 4, stream = f)
-            printer.pprint({'nodes' : nodes, 'variables' : variables})
+            printer.pprint({'tick_condition' : 'TRUE', 'nodes' : nodes, 'variables' : variables})
 
 
 def main():

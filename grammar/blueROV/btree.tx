@@ -10,6 +10,7 @@ BehaviorModel:
 	checkNodes *= CheckNode
 	taskNodes *= BehaviorNode
     'tree' '(' 'updatetime' '=' updatetime=FLOAT ',' 'timeout' '=' timeout=FLOAT ')' tree=BTree
+    ('tick_prerequisite' '{' tick_condition = CodeStatement '}' 'end_tick_prerequisite')?
 ;
 
 

@@ -13,16 +13,16 @@ class get_mission(py_trees.behaviour.Behaviour):
         self.blackboard.register_key(key = ('mission'), access = py_trees.common.Access.WRITE)
         self.blackboard.register_key(key = ('target_x'), access = py_trees.common.Access.WRITE)
         self.blackboard.register_key(key = ('target_y'), access = py_trees.common.Access.WRITE)
-        self.blackboard.mission = random.choice([False])
-        self.blackboard.target_x = random.choice([0])
-        self.blackboard.target_y = random.choice([0])
+        self.blackboard.mission = False
+        self.blackboard.target_x = 0
+        self.blackboard.target_y = 0
 
     def update(self):
         (self.saw_target, self.blackboard.target_x, self.blackboard.target_y) = robot.get_mission()
         if self.saw_target:
-            self.blackboard.mission = random.choice([True])
+            self.blackboard.mission = True
         else:
-            self.blackboard.mission = random.choice([False])
+            self.blackboard.mission = False
         if self.saw_target:
             return_status = py_trees.common.Status.FAILURE
         else:

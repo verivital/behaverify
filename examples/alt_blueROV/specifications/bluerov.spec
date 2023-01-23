@@ -68,7 +68,3 @@
 
 -- --the blueROV surfaces eventually
 -- LTLSPEC F (surface_task.active | surface_task_1.active | surface_task_2.active | surface_task_3.active | surface_task_4.active); -- this should be false, because missions don't need to end
-
-
--- --the blueROV surfaces eventually if battery gets low.
--- LTLSPEC G ((F battery = 0) -> F BLUEROV_SURFACED);

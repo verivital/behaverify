@@ -29,7 +29,7 @@ CHILD_TRACK_STRING = 'child_index_to_resume_from__'
 PARALLEL_SKIP_STRING = 'parallel_skip__'
 
 
-def create_nodes(nodes, root_node_name, node_name_to_number):
+def create_nodes(nodes, root_node_name, node_name_to_number, tick_condition):
     '''
     creates strings with neccessary information based on nodes.
     --
@@ -52,7 +52,7 @@ def create_nodes(nodes, root_node_name, node_name_to_number):
     effects
     purely funcitonal
     '''
-    define_string = ('\t\t' + root_node_name + '.active := TRUE;' + os.linesep
+    define_string = ('\t\t' + root_node_name + '.active := ' + tick_condition + ';' + os.linesep
                      + ''.join([('\t\t' + PARALLEL_SKIP_STRING + node['name'] + ' := '
                                  + (
                                      '[-2]' if len(node['children']) < 2 else (
@@ -373,6 +373,7 @@ def main():
 
     with open(args.input_file, 'r') as f:
         temp = eval(f.read())
+    tick_condition = temp['tick_condition']
     nodes = temp['nodes']
     variables = temp['variables']
 
@@ -427,13 +428,13 @@ def main():
     init_string += new_init
     next_string += new_next
 
-    (new_define, new_var, new_init, new_next) = create_nodes(nodes, root_node_name, node_name_to_number)
+    (new_define, new_var, new_init, new_next) = create_nodes(nodes, root_node_name, node_name_to_number, tick_condition)
     define_string += new_define
     var_string += new_var
     init_string += new_init
     next_string += new_next
 
-    (new_define, new_frozen_var, new_var, new_init, new_next) = node_creator.create_blackboard(nodes, variables)
+    (new_define, new_frozen_var, new_var, new_init, new_next) = node_creator.create_blackboard(nodes, variables, root_node_name)
     define_string += ('\t\t--START OF BLACKBOARD DEFINITIONS' + os.linesep
                       + new_define
                       + '\t\t--END OF BLACKBOARD DEFINITIONS' + os.linesep
