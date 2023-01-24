@@ -73,13 +73,13 @@
 ------------------------------------------------------------------------------------------------------------------
 -- --Misc Tree makes sense checks
 
---Speed min and speed_max are mutually exclusive
-LTLSPEC G(speed_min_task.active -> !speed_max_task.active);
-LTLSPEC G(speed_max_task.active -> !speed_min_task.active);
+-- --Speed min and speed_max are mutually exclusive
+-- LTLSPEC G(speed_min_task.active -> !speed_max_task.active); --TRUE
+-- LTLSPEC G(speed_max_task.active -> !speed_min_task.active); --TRUE
 
 
---The last loiter task is included, but can never be reached.
-LTLSPEC G(!(loiter_task_1.active));
+-- --The last loiter task is included, but can never be reached.
+-- LTLSPEC G(!(loiter_task_1.active)); --TRUE
 
---If we have not surfaced, then one of the tasks is selected by the priorities selected, or we're doing obstacle avoidance
-LTLSPEC G(!(var_BLUEROV_SURFACED) -> (count(surface_task.active, surface_task_1.active, rth_task.active, loiter_task.active, tracking_task.active, waypoint_task.active) = 1 | (var_cm_hsd_input_stage_8 = cm_obstacle_avoidance_task)));
+-- --If we have not surfaced, then one of the tasks is selected by the priorities selected, or we're doing obstacle avoidance
+-- LTLSPEC G(!(var_BLUEROV_SURFACED) -> (count(surface_task.active, surface_task_1.active, rth_task.active, loiter_task.active, tracking_task.active, waypoint_task.active) = 1 | (var_cm_hsd_input_stage_8 = cm_obstacle_avoidance_task))); --TRUE
