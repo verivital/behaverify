@@ -203,7 +203,7 @@ def walk_tree_recursive(metamodel, current_node, parent_name, nodes, node_names,
                                                         + '\tDEFINE' + os.linesep
                                                         + '\t\tstatus := active ? internal_status : invalid;' + os.linesep
                                                         + '\t\tinternal_status := ('
-                                                        + variable_name + ' = ' + str(check.default).upper()
+                                                        + variable_name + ' = ' + (str(check.default).upper() if isinstance(check.default, bool) else str(check.default))
                                                         + ') ? success : failure;' + os.linesep
                                                     ))
         # all checks added in, so now we restore back up to the selector
@@ -231,7 +231,7 @@ def walk_tree_recursive(metamodel, current_node, parent_name, nodes, node_names,
                                                         + '\tDEFINE' + os.linesep
                                                         + '\t\tstatus := active ? internal_status : invalid;' + os.linesep
                                                         + '\t\tinternal_status := ('
-                                                        + variable_name + ' = ' + check.default
+                                                        + variable_name + ' = ' + (str(check.default).upper() if isinstance(check.default, bool) else str(check.default))
                                                         + ') ? success : failure;' + os.linesep
                                                     ))
 
@@ -241,6 +241,15 @@ def walk_tree_recursive(metamodel, current_node, parent_name, nodes, node_names,
             node_names.add(node_name)
             if parent_name is not None:
                 nodes[parent_name]['children'].append(node_name)
+
+            if hasattr(task, 'type'):
+                nodes[node_name] = create_node_template(node_name, parent_name,
+                                                        'leaf', 'action',
+                                                        str(task.type) == 'success', str(task.type) == 'running', str(task.type) == 'failure',
+                                                        additional_arguments = [],
+                                                        internal_status_module_name = None,
+                                                        internal_status_module_code = None)
+                continue
 
             nodes[node_name] = create_node_template(node_name, parent_name,
                                                     'leaf', 'action',

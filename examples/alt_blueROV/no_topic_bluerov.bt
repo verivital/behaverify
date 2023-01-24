@@ -147,7 +147,7 @@ var bool 				bb_home_reached =False, model_as(bool, False);
 //--------------------------------
 //while in THEORY, bb_mission can be any of the types listed above, in practice, the only place that sets bb_mission is mission_server
 //and mission_server will only set to these values.
-var String 				bb_mission = "", model_as({'waypoint_following', 'e_stop', 'pipe_following'}); //mission can be any of these types
+var String 				bb_mission = "", model_as({'waypoint_following', 'e_stop', 'pipe_following'}, 'waypoint_following'); //mission can be any of these types
 var bool 				bb_obstacle_warning = False, model_as(bool, False);
 var Bool 				bb_pipelost = False, model_as(bool, False);
 var bool 				bb_pipe_lost_warning = False, model_as(bool, False);
@@ -588,14 +588,14 @@ task  speed_max_task
     vars HSD_out;
     arg float uuv_max_speed = uuv_max_speed;
     set(HSD_out, 'uuv_max_speed')
-    return running
+    return success
 end    
 
 task  speed_min_task 
     vars HSD_out;
     arg float uuv_min_speed=uuv_min_speed;
     set(HSD_out, 'uuv_min_speed')
-    return running
+    return success
 end
 
 task  pipe_mapping_enable_task 
@@ -615,7 +615,7 @@ task  tracking_task
     out cm_hsd_input cm_hsd_input_;
     vars HSD_out, cm_hsd_input;
     set(cm_hsd_input, 'cm_tracking_task')
-    return running
+    return success
 end    
 
 
@@ -628,7 +628,7 @@ task  waypoint_task
 	out cm_hsd_input cm_hsd_input_, next_wp next_wp_;
     vars HSD_out, cm_hsd_input;
     set(cm_hsd_input, 'cm_waypoint_task')
-    return running
+    return success
 end   
 
 
