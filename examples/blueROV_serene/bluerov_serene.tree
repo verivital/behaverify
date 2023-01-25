@@ -3,6 +3,8 @@ variables {
 	variable { mission VAR {'MISSION_emergency_surface', 'MISSION_pipe_tracking', 'MISSION_go_to_home', 'MISSION_go_to_waypoint'} } end_variable
 } end_variables
 
+#comment# a test #end_comment#
+
 local_variables {} end_local_variables
 
 environment {
