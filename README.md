@@ -5,317 +5,181 @@ behavior tree verification
 
 To recreate tests, see REPRODUCIBILITY.
 
+Older versions can be found in subfolders of ./src/. The documentation for older versions may not be accurate.
 
 
 # General Usage
+
+File extensions are not mandatory. This documentation will use the following convention for them
+
+-- .behave - an intermediate file that BehaVerify creates.
+-- .bt - a specification file that follows the rules in ./metamodel/blueROV/btree.tx (a textx file)
+-- .smv - a file for use with nuXmv
+-- .tree - a specification file that follows the rules in ./metamodel/behaverify.tx (a textx file)
+-- .tx - a metamodel file. The two relevant ones are ./metamodel/behaverify.tx and ./metamodel/blueROV/btree.tx
+
 
 The following files make up BehaVerify
 
 --behaverify_common.py (internal use only. do not interact with)
 
---behaverify_to_dsl.py - Converts behaverify files to DSL templates
+--behaverify_to_dsl.py - Converts .behave files to .tree templates
 
---behaverify_to_smv.py - Converts behaverify files to SMV files (for use with nuXmv)
+--behaverify_to_smv.py - Converts .behave files to .smv files (for use with nuXmv)
 
---dsl_to_behaverify.py - Converts DSL files to behaverify files
+--blueROV_dsl_to_behaverify.py - Converts .bt files to .behave files
 
---dsl_to_python.py - Converts DSL files to python (py_trees)
+--dsl_to_behaverify.py - Converts .tree files to .behave files
 
---modifier.py (NOT CURRENTLY WORKING)
+--dsl_to_python.py - Converts .tree files to python (py_trees)
 
 --node_creator.py (internal use only. do not interact with)
 
---pytree_to_behaverify.py - Converts a py_tree to Behaverify Files
+--pytree_to_behaverify.py - Converts a py_tree to .behave
 
---read_files.py (internal use only. do not interact with)
+These files are located in ./src.
 
-These files are located in ./src. Please note that this version is still being tested. There are errors and inefficiencies.
+## Suggested Use
 
+There are five main ways to go about using Behaverify.
 
-# WARNING
+### .tree to .smv
 
-Information below is not accurate and has not been updated to the most recent version. 
+In this case, the user begins by creating a .tree file that follows the rules specified in ./metamodel/behaverify.tx. Assuming the user is at the top level directory of this repository and their tree is named ex.tree, the user will then execute the following commands
 
-Quick overview: the newest version utilizes a Domain Specific Language (DSL) as defined in the grammar folder. Eventually, the plan is to be able to create a DSL template from an existing py_trees implementation, but that functionality does not yet exist. Furthermore, owing to some re-writes, it is currently not possible to utilize tree_parser.py to create a modeol directly from an existing py_trees implementation.
+python ./src/dsl_to_behaverify.py ./metamodel/behaverify.tx ex.tree --output_file ex.behave
+python ./src/behaverify_to_smv.py ex.behave --output_file ex.smv
 
-Current usage: use dsl_to_python.py in order to create an intermediate file that is used with smv_writer.py to create an smv file for use with nuXmv. 
+And at this point, the user may use the ex.smv file with nuXmv.
 
-# NOTE
+### .bt to .smv
 
-Some nuXmv functions currently not supported, like exp and ln, because I don't actually know how those functions work. I can't make them work in any examples.
+This is the same as .tree to .smv, except the rules are specified in ./metamodel/blueROV/btree.tx and the blueROV_dsl_to_behaverify.py is used.
 
-## tree_parser.py
+### .tree to py_tree
 
-This is the first file that will be used. It will create a tree object based on the input arguments it receives and the walk this object, gathering relevant information. If an output file is provided, it will write the output to that file. Otherwise, it will print the output.
+In this case, the user begins by creating a .tree file that follows the rules specified in ./metamodel/behaverify.tx. Assuming the user is at the top level directory of this repository and their tree is named ex.tree, the user will then execute the following command
 
-An example call would be
+python ./src/dsl_to_pytree.py ./metamodel/behaverify.tx ex.tree ex.py path_to_output_directory
 
-python3 tree_parser.py file_with_BT.py method_to_create_root --output_file my_output
+And at this point, ex.py and other required .py files will be present in the specified output_directory. ex.py will contain exactly 1 method, create_tree() which returns the root node of the py_tree.
 
-where
 
-file_with_BT.py is a file provided by the user. This file needs to have a method which when called returns the root of the tree. This method is method_to_create_root. If there are arguments that this method needs, they can be provided using the optional flags --input_args and --input_string_args.
+### py_trees to .tree
 
-## modifier.py
+In this case, the user starts with a py_tree. In order for this to function, there must be a method which returns the root node of the tree. Assuming that the user is at the top level directory of this repository, their py_tree is in ex.py, and ex.py has a method called create_root(required_args, optional_args), then the user will execute the following commands
 
-This is the second file that will be used. It is used to modify the output of tree_parser.py. In the example call, this output was my_output. As this is a text file, it can be modified by hand. However, it may be easier or faster to utilize modifer.py for this task. There are a variety of flags which can be used to mass edit nodes and variables. It is also possible to specify individual nodes/variables to modify.
+python ./src/pytree_to_behaverify.py ex.py create_root --root_args some_arg1 some_arg2 --string_args some_string_arg some_string_arg2 --output_file ex.behave
+python ./src/behaverify_to_dsl.py ex.behave --output_file ex.tree
 
-An example call would be
+And at this point the ex.tree file will be ready to be modifed by the user. Note that some modification will likely be required in order to ensure the ex.tree file actually works as intended.
 
-python3 modifer.py my_output.txt --force_parallel_sync --instruction_file list_of_instructions --output_file my_output2
 
+### py_tree to .smv
 
-## smv_writer.py
+In this case, the user starts with a py_tree. In order for this to function, there must be a method which returns the root node of the tree. Assuming that the user is at the top level directory of this repository, their py_tree is in ex.py, and ex.py has a method called create_root(required_args, optional_args), then the user will execute the following commands
 
-This is the final file that will be used. It uses the file created by modifier.py (or tree_parser.py, if no editing was required). It will create the actual .smv file to be used by nuXmv. An example call would be
+python ./src/pytree_to_behaverify.py ex.py create_root --root_args some_arg1 some_arg2 --string_args some_string_arg some_string_arg2 --output_file ex.behave
+python ./src/behaverify_to_smv.py ex.behave --output_file ex.smv
 
-python3 smv_writer.py my_output2 --spec_file ltl_specs --blackboard_output_file my_blackboard --output_file my_output.smv
+And at this point the ex.smv file will be ready for use with nuXmv. Note that most likely the model will not accurately reflect the original py_tree, as information regarding blackboard variables and leaf nodes is unlikely to be fully captured. It is instead suggested to use a .tree file. If no .tree file exists, a template may be created using the py_trees to .tree method described above.
 
-Various arguments can be provided to smv_writer.py. These include a custom blackboard (this will prevent the smv_writer.py from generating a new blackboard and use the one provided instead), specifications (these are directly copy and pasted into the file), etc.
 
-Various outputs can be requested, allowing for greater reusability.
+# File Explanations
 
+## behaverify_to_dsl.py
 
-## node_creator.py
+The only reason to use this is if a .behave file was generated from a py_tree, in which case a .tree file can be generated. The generated file will not match the py_tree, nor is it guaranteed to be correct (i.e, attempting to use it out of the box may cause errors). The purpose is to save time in writing the .tree file.
 
-This is used internally. It is required, but you will not use it directly.
+### Required Arguments
 
+- input file - a .behave file.
 
+### Optional Arguments
 
+- output_file - where the .tree file will be written
 
+python behaverify_to_dsl.py ex.behave --output_file ex.tree
 
-# Detailed Documentation
 
+## behaverify_to_smv.py
 
+This converts a .behave file to .smv for use with nuXmv.
 
-# tree_parser.py
 
+### Required Arguments
 
-python3 tree_parser.py root_file root_method --root_args ROOT_ARGS --string_args STRING_ARGS --output_file OUTPUT_FILE
+- input file - a .behave file
 
-## Required Arguments
+### Optional Arguments
 
-### root_file
+- output_file - where the .smv file will be written
+- specs_input_file - additional INVAR/LTL/CTL specifications to copy in. Note that if the .tree file was generated using dsl_to_behaverify.py, then  these can instead be written into the .tree file.
+- do_not_trim - a flag. if present, behaverify will not remove unreachable nodes or correct for composite nodes with only 1 child.
 
-### root_method
+python behaverify_to_smv.py ex.behave --output_file ex.smv
 
-The root_file must contain the root_method. When called, the root_method must return a py_trees node. This node will be treated as the root. If additional parameters are required to call this method, please include them using the optional arguments.
 
-## Optional Arguments
+## blueROV_dsl_to_behaverify.py
 
-### root_args
+This converts a .bt file to .smv for use with nuXmv.
 
-### string_args
+### Required Arguments
 
-root_args and string_args both accept any number of arguments. Each arg in root_args will be used as an argument in the root_method. It must evaluate to a valid python expression. string_args function in the same way as root_args, but the argument will be passed as a string.
+- metamodel file - a .tx file. In this case, ./metamodel/blueROV/btree.tx should be used.
+- input file - a .bt file which follows the rules described in the metamodel file
 
-### output_file
+### Optional Arguments
 
-The output_file is an optional argument indicating where the output should be written. WARNING: this will overwrite an existing file! If no output_file is provided, the output will be printed.
+- keep_stage_0 - a flag. if present, behaverify will not perform an optimization which removes stage_0 of variables.
+- output_file - where the .behave file will be written
 
+python blueROV_dsl_to_behaverify.py /path/to/btree.tx ex.bt --output_file ex.behave
 
 
-# modifier.py
+## dsl_to_behaverify.py
 
-## Required Arguments
+This converts a .behave file to .smv for use with nuXmv.
 
-### input_file
+### Required Arguments
 
-The input_file is where modifier will read it's information from. Most likely, this should be the output of tree_parser.py. The output of modifier.py will be in the same format as the input, so repeated modification is possible.
+- metamodel file - a .tx file. In this case, ./metamodel/behaverify.tx should be used.
+- input file - a .tree file which follows the rules described in the metamodel file
 
-## Optional Arguments
+### Optional Arguments
 
-### output_file
+- keep_stage_0 - a flag. if present, behaverify will not perform an optimization which removes stage_0 of variables.
+- output_file - where the .behave file will be written
 
-The output_file is an optional argument indicating where the output should be written. WARNING: this will overwrite an existing file! If no output_file is provided, the output will be printed.
+python blueROV_dsl_to_behaverify.py /path/to/behaverify.tx ex.tree --output_file ex.behave
 
-### interactive_mode
 
-If this flag is present, modifier.py will enter an interactive mode where the user can modify values via the command prompt. This feature is incomplete, and probably shouldn't be used.
+## dsl_to_pytree.py
 
-### instruction_file
+This converts a .behave file to a .py file.
 
-If an instruction_file is provided, modifier.py will apply every instruction in the file to the provided input. For repeatability reasons, this is probably the best way to use modifier.py. An explanation of how to write an instruction_file can be found below.
+### Required Arguments
 
-## Optional Arguments (global modifications)
+- metamodel file - a .tx file. In this case, ./metamodel/behaverify.tx should be used
+- model file - a .tree file that follows the rules described in the metamodel file
+- output file - the name of the main python file to be used. Note that this should just be a name, something like ex.py. No path information should be included
+- location - the path to a directory where the files should be output.
 
-The following Optional Arguments will be applied everywhere (where applicable).
+python dsl_to_pytree.py /path/to/behaverify.tx ex.tree ex.py /path/to/output/
 
-### force_parallel_unsynch
+## pytree_to_behaverify.py
 
-Forces each parallel node to be treated as unsynchronized (i.e., without memory).
+This converts a pytree to a .behave file.
 
-### force_parallel_synch
+### Required Arguments
 
-Forces each parallel node to be treated as synchronized (i.e., with memory).
+- root file - a .py file.
+- root method - a method in the root file which returns the root node of the pytree to convert
 
-### force_selector_memory
+### Optional Arguments
 
-Forces each selector node to be treated as a node with memory.
+- root args - any number of arguments (space separated). Each argument will be passed, in order, to the root method
+- string_args - any number of arguments (space separated). Each argumenty will be surrounded by quotation marks and then passed, in order, to the root method
+- output_file - where the .behave file will be written
 
-### force_selector_memoryless
-
-Forces each selector node to be treated as a node without memory.
-
-### force_sequence_memory
-
-Forces each sequence node to be treated as a node with memory.
-
-### force_sequence_memoryless
-
-Forces each sequence node to be treated as a node without memory.
-
-### use_next_checks
-
-Forces check_blackboard_variables to use the next value of the variable being checked. Useful if most blackboard variables have their value updated before any relevant checks are applied.
-
-### use_current_checks
-
-Forces check_blackboard_variables to use the current value of the variable being checked. Useful if most blackboard variables have their value updated after any relevant checks are applied.
-
-### best_guess_checks
-
-BehaVerify will attempt to detect when blackboard variables are updated and use a current or next check as appropriate in check_blackbaord_variables. Note: this is not guaranteed to work. Nodes with access may need to be updated for more accurate results.
-
-### min_value
-
-Sets the minimum value for each variable to the provided value.
-
-### max_value
-
-Sets the maximum value for each variable to the provided value.
-
-### init_value
-
-Sets the initial value for each variable to the provided value.
-
-### no_init_value
-
-Removes the initial value for each variable.
-
-### always_exist
-
-Variables are treated as always existing.
-
-### sometimes_exist
-
-Variables will need to be 'initialized'. I.E., until a node sets a value for a variable, it will be marked as not existing. All checks will automatically return False for the variable.
-
-### init_exist
-
-Variables initial exist will be set to this value (note: if variables always exist, this value is ignored).
-
-### no_init_exist
-
-Variables do not have an initial exist value.
-
-### next_exist
-
-If this value is provided, then when a variable's value is updated using anything other than the default case, the variable's exist value will be set to this.
-
-### no_next_exist
-
-Variables will be nondeterministically set to exist or not exist with each update.
-
-### variables_auto_stay
-
-If no node updates the variable's value, then the variable will automatically retain it's current value.
-
-### variables_auto_change
-
-If no node updates the variable's value, then the node will nondeterministically take on a new value.
-
-### use_stages
-
-Variables will be split into stages, allowing much easier modelling for variables which update repeatedly during a single execution. WARNING: greatly increases state space.
-
-### no_stages
-
-Varaiables will not use stages.
-
-
-
-# smv_writer.py
-
-## Required Arguments
-
-### input_file
-
-The input containing tree information. Most likely, this should be the output of tree_parser.py or modifier.py
-
-## Optional Arguments
-
-### blackboard_input_file
-
-If this argument is provided, smv_writer.py will not generate a blackbaord file. Instead, it will directly include the contents of blackboard_input_file.
-
-### module_input_file
-
-If this argument is provided, smv_writer.py will not generate additional modules (such as blackboard checks or status setting modules). Instead, it will directly include the contents of module_input_file
-
-### specs_input_file
-
-If this argument is provided, smv_writer.py will include the contents of the file.
-
-### output_file
-
-If this argument is provided, smv_writer.py will write the output to the file. WARNING: this will overwrite existing files. If this argument is not provided, the output will be printed.
-
-### blackboard_output_file
-
-If this argument is provided, smv_writer.py will also write the blackboard to this file. This can then be used as a template to modify the blackboard by hand. The modified blackboard can then be used in subsequent runs as a blackboard_input_file. WARNING: this will overwrite existing files.
-
-### module_output_file
-
-If this argument is provided, smv_writer.py will also write the additional modules to this file. This can then be used as a template to modify the additional modules by hand. The modified modules can then be used in subsequent runs as a module_input_file. WARNING: this will overwrite existing files.
-
-
-
-
-
-
-
-
-# Instruction File Documentation
-
-The instruction file should be formatted as a list of dictionaries.
-
-## target
-
-Each dictionary needs to contain a 'target' key. There are three valid targets: 'global_flags', 'variable', and 'node'.
-
-### global_flags
-
-If 'target' maps to 'global_flags', then the only other entry in the dictionary should be 'instructions' which maps to a list of global flags to be applied. Most optional arguments (as described above) are accepted.
-
-### variable
-
-If 'target' maps to 'variable', then this dictionary is going to describe what variable is to be modified and how. The dictionary should have the following entries:
-
-#### name
-
-The name of the variable to be modified. This is a string.
-
-#### create (optional)
-
-This indicates that the variable needs to be created. Should map to True
-
-### delete (optional)
-
-This indicates that the variable needs to be deleted. Should map to True
-
-### instructions
-
-A dictionary of modifications to make.
-
-### node
-
-If 'target' maps to 'node', then this dictionary is going to describe what node is to be modified and how. This dictionary should have the following entries:
-
-#### name
-
-The name of the node to be modified
-
-#### instructions
-
-A dictionary of modifications to apply to the node.
+python pytree_to_behaverify.py ex.py create_root --output_file ex.behave
