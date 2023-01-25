@@ -34,87 +34,168 @@ def make_new_stage(statement, node_name, variables, use_next, not_next):
     )
 
 
-FUNCTION_FORMAT = {
-    'abs' : ('abs', 0),
-    'max' : ('max', 1),
-    'min' : ('min', 1),
-    'sin' : ('sin', 0),
-    'cos' : ('cos', 0),
-    'tan' : ('tan', 0),
-    'ln' : ('ln', 0),
-    'not' : ('!', 0),
-    'and' : ('&', 2),
-    'or' : ('|', 2),
-    'xor' : ('xor', 2),
-    'xnor' : ('xnor', 2),
-    'implies' : ('=>', 2),
-    'equivalent' : ('<=>', 2),
-    'equal' : ('=', 2),
-    'not_equal' : ('!=', 2),
-    'less_than' : ('<', 2),
-    'greater_than' : ('>', 2),
-    'less_than_or_equal' : ('<=', 2),
-    'greater_than_or_equal' : ('>=', 2),
-    'negative' : ('-', 0),
-    'addition' : ('+', 2),
-    'subtraction' : ('-', 2),
-    'multiplication' : ('*', 2),
-    'division' : ('/', 2),
-    'mod' : ('mod', 2),
-    'any' : (None, 3)
-}
-
-
 def is_nondeterministic(code):
     return (
         False if (code.constant is not None or code.variable is not None) else (
             is_nondeterministic(code.CodeStatement) if code.CodeStatement is not None else (
-                True if FUNCTION_FORMAT[code.function_call.function_name][1] == 3 else (
-                    is_nondeterministic(code.function_call.value1) if FUNCTION_FORMAT[code.function_call.function_name][1] == 0 else (
-                        is_nondeterministic(code.function_call.value1) or is_nondeterministic(code.function_call.value2)
-                        )
+                True if code.function_call.function_name == 'any' else (
+                    any([is_nondeterministic(value) for value in code.function_call.values])
                     )
                 )
             )
         )
 
 
-def compute_stage(variable_name, variables):
+def compute_stage(variable_name, variables, overwrite_stage = None):
+    if overwrite_stage is not None:
+        return (('_stage_' + str(min(overwrite_stage, len(variables[variable_name]['next_value']))) if overwrite_stage > 0 else (
+            '' if overwrite_stage == 0 else (
+                '_stage_' + str(len(variables[variable_name]['next_value']))
+            ))))
     return (('_stage_' + str(len(variables[variable_name]['next_value']))) if (len(variables[variable_name]['next_value']) > 0) else '')
 
 
-def format_variable(variable, node_name, variables, use_next, not_next):
-    if len(variables[variable.name]['next_value']) == 0:
+def format_variable(variable, node_name, variables, use_next, not_next, overwrite_stage = None):
+    if len(variables[variable.name]['next_value']) == 0 or overwrite_stage == 0:
         variables[variable.name]['keep_stage_0'] = True
     if use_next and variable.name == not_next:
         return 'LINK_TO_PREVIOUS_FINAL_' + variables[variable.name]['prefix'] + variable.name
     return (('' if not use_next else 'next(')
             + variables[variable.name]['prefix']
             + variable.name
-            + compute_stage(variable.name, variables)
+            + compute_stage(variable.name, variables, overwrite_stage)
             + ('' if not use_next else ')'))
 
 
-def format_function(code, node_name, variables, use_next, not_next):
+def format_function_before(function_name, code, node_name, variables, use_next, not_next):
     return (
-        (FUNCTION_FORMAT[code.function_call.function_name][0] + '(' + format_code(code.function_call.value1, node_name, variables, use_next, not_next) + ')') if FUNCTION_FORMAT[code.function_call.function_name][1] == 0 else (
-            (FUNCTION_FORMAT[code.function_call.function_name][0] + '(' + format_code(code.function_call.value1, node_name, variables, use_next, not_next) + ', ' + format_code(code.function_call.value2, node_name, variables, use_next, not_next) + ')') if FUNCTION_FORMAT[code.function_call.function_name][1] == 1 else (
-                format_code(code.function_call.value1, node_name, variables, use_next, not_next) + ' ' + FUNCTION_FORMAT[code.function_call.function_name][0] + ' ' + format_code(code.function_call.value2, node_name, variables, use_next, not_next) if FUNCTION_FORMAT[code.function_call.function_name][1] == 2 else (
-                    '{'
-                    +
-                    ', '.join([format_code(value, node_name, variables, use_next, not_next) for value in code.function_call.values])
-                    +
-                    '}'
-                )
-            )
-        )
+        function_name + '('
+        + ', '.join([format_code(value, node_name, variables, use_next, not_next) for value in code.function_call.values])
+        + ')'
     )
+
+
+def format_function_between(function_name, code, node_name, variables, use_next, not_next):
+    return (
+        '('
+        + (' ' + function_name + ' ').join([format_code(value, node_name, variables, use_next, not_next) for value in code.function_call.values])
+        + ')'
+    )
+
+
+def format_function_after(function_name, code, node_name, variables, use_next, not_next):
+    return (
+        '('
+        + code.function_call.node_name
+        + function_name
+        + ')'
+    )
+
+
+def format_function_before_bounded(function_name, code, node_name, variables, use_next, not_next):
+    return (
+        function_name + ' [' + str(code.lower_bound) + ', ' + str(code.upper_bound) + '] '  '('
+        + ', '.join([format_code(value, node_name, variables, use_next, not_next) for value in code.function_call.values])
+        + ')'
+    )
+
+
+def format_function_between_bounded(function_name, code, node_name, variables, use_next, not_next):
+    return (
+        '('
+        + (' ' + function_name + ' [' + str(code.lower_bound) + ', ' + str(code.upper_bound) + '] ').join([format_code(value, node_name, variables, use_next, not_next) for value in code.function_call.values])
+        + ')'
+    )
+
+
+def format_function_before_between(function_name, code, node_name, variables, use_next, not_next):
+    return (
+        function_name[0] + '('
+        + (' ' + function_name[1] + ' ').join([format_code(value, node_name, variables, use_next, not_next) for value in code.function_call.values])
+        + ')'
+    )
+
+
+def format_function_non_determinism(function_name, code, node_name, variables, use_next, not_next):
+    return (
+        '{'
+        + ', '.join([format_code(value, node_name, variables, use_next, not_next) for value in code.function_call.values])
+        + '}'
+    )
+
+
+FUNCTION_FORMAT = {
+    'abs' : ('abs', format_function_before),
+    'max' : ('max', format_function_before),
+    'min' : ('min', format_function_before),
+    'sin' : ('sin', format_function_before),
+    'cos' : ('cos', format_function_before),
+    'tan' : ('tan', format_function_before),
+    'ln' : ('ln', format_function_before),
+    'not' : ('!', format_function_before),
+    'and' : ('&', format_function_between),
+    'or' : ('|', format_function_between),
+    'xor' : ('xor', format_function_between),
+    'xnor' : ('xnor', format_function_between),
+    'implies' : ('->', format_function_between),
+    'equivalent' : ('<->', format_function_between),
+    'equal' : ('=', format_function_between),
+    'not_equal' : ('!=', format_function_between),
+    'less_than' : ('<', format_function_between),
+    'greater_than' : ('>', format_function_between),
+    'less_than_or_equal' : ('<=', format_function_between),
+    'greater_than_or_equal' : ('>=', format_function_between),
+    'negative' : ('-', format_function_before),
+    'addition' : ('+', format_function_between),
+    'subtraction' : ('-', format_function_between),
+    'multiplication' : ('*', format_function_between),
+    'division' : ('/', format_function_between),
+    'mod' : ('mod', format_function_between),
+    'any' : (None, format_function_non_determinism),
+    'count' : ('count', format_function_before),
+    'active' : ('.active', format_function_after),
+    'success' : ('.status = success', format_function_after),
+    'running' : ('.status = running', format_function_after),
+    'failure' : ('.status = failure', format_function_after),
+    'next' : ('X', format_function_before),
+    'globally' : ('G', format_function_before),
+    'globally_bounded' : ('G', format_function_before_bounded),
+    'finally' : ('F', format_function_before),
+    'finally_bounded' : ('F', format_function_before_bounded),
+    'until' : ('U', format_function_between),
+    'until_bounded' : ('U', format_function_between_bounded),
+    'release' : ('V', format_function_between),
+    'release_bounded' : ('V', format_function_between_bounded),
+    'previous' : ('Y', format_function_before),
+    'not_previous_not' : ('Z', format_function_before),
+    'historically' : ('H', format_function_before),
+    'historically_bounded' : ('H', format_function_before_bounded),
+    'once' : ('O', format_function_before),
+    'once_bounded' : ('O', format_function_before_bounded),
+    'since' : ('S', format_function_between),
+    'since_bounded' : ('S', format_function_between_bounded),
+    'triggered' : ('T', format_function_between),
+    'triggered_bounded' : ('T', format_function_between_bounded),
+    'exists_globally' : ('EG', format_function_before),
+    'exists_next' : ('EX', format_function_before),
+    'exists_finally' : ('EF', format_function_before),
+    'exists_until' : (('E', 'U'), format_function_before_between),
+    'always_globally' : ('AG', format_function_before),
+    'always_next' : ('AX', format_function_before),
+    'always_finally' : ('AF', format_function_before),
+    'always_until' : (('A', 'U'), format_function_before_between)
+}
+
+
+def format_function(code, node_name, variables, use_next, not_next):
+    (function_name, function_to_call) = FUNCTION_FORMAT[code.function_call.function_name]
+    return function_to_call(function_name, code, node_name, variables, use_next, not_next)
 
 
 def format_code(code, node_name, variables, use_next, not_next):
     return (
         (str(code.constant).upper() if isinstance(code.constant, bool) else str(code.constant)) if code.constant is not None else (
-            (format_variable(code.variable, node_name, variables, use_next, not_next)) if code.variable is not None else (
+            (format_variable(code.variable, node_name, variables, use_next, not_next, (code.read_at if hasattr(code, 'read_at') else None))) if code.variable is not None else (
                 ('(' + format_code(code.CodeStatement, node_name, variables, use_next, not_next) + ')') if code.CodeStatement is not None else (
                     format_function(code, node_name, variables, use_next, not_next)
                 )
@@ -360,6 +441,18 @@ def walk_tree_recursive(metamodel, current_node, parent_name, nodes, node_names,
     return
 
 
+def handle_specifications(specifications, variables):
+    return [
+        (
+            specification.spec_type
+            + ' '
+            + format_code(specification.CodeStatement, '', variables, False, None)
+            + ';'
+        )
+        for specification in specifications
+        ]
+
+
 def main():
 
     arg_parser = argparse.ArgumentParser()
@@ -374,15 +467,17 @@ def main():
 
     variables = get_variables(model, args.keep_stage_0)
     tick_condition = 'TRUE' if model.tick_condition is None else format_code(model.tick_condition, None, variables, False, None)
+    specifications = handle_specifications(model.specifications, variables)  # this included here to ensure we don't erase stage 0 used by specifications.
     nodes = walk_tree(metamodel, model, variables)
+    specifications = handle_specifications(model.specifications, variables)
 
     if args.output_file is None:
         printer = pprint.PrettyPrinter(indent = 4)
-        printer.pprint({'tick_condition' : tick_condition, 'nodes' : nodes, 'variables' : variables})
+        printer.pprint({'tick_condition' : tick_condition, 'nodes' : nodes, 'variables' : variables, 'specifications' : specifications})
     else:
         with open(args.output_file, 'w') as f:
             printer = pprint.PrettyPrinter(indent = 4, stream = f)
-            printer.pprint({'tick_condition' : tick_condition, 'nodes' : nodes, 'variables' : variables})
+            printer.pprint({'tick_condition' : tick_condition, 'nodes' : nodes, 'variables' : variables, 'specifications' : specifications})
     return
 
 
