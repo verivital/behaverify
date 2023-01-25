@@ -376,6 +376,7 @@ def main():
     tick_condition = temp['tick_condition']
     nodes = temp['nodes']
     variables = temp['variables']
+    specifications = temp['specifications']
 
     print(len(nodes))
 
@@ -455,7 +456,7 @@ def main():
                     + new_next
                     + '\t\t--END OF BLACKBOARD VARIABLES TRANSITION' + os.linesep)
 
-    nuxmv_string = define_string + var_string + init_string + next_string
+    nuxmv_string = define_string + var_string + init_string + next_string + os.linesep + (os.linesep).join(specifications) + os.linesep
     # ------------------------------------------------------------------------------------------------------------------------
     if args.specs_input_file:
         nuxmv_string += open(args.specs_input_file).read() + os.linesep + os.linesep

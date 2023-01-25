@@ -28,8 +28,11 @@ MODULE main
 				!(BlueROV.active) : env_BLUEROV_SURFACED_stage_1;
 				TRUE : env_BLUEROV_SURFACED_stage_1;
 			esac;
-		env_command := env_command_stage_1;
-		LINK_TO_PREVIOUS_FINAL_env_command := env_command_stage_8;
+		env_command_stage_1 := 
+			case
+				!(surface.active) : env_command;
+				TRUE : COMMAND_surface;
+			esac;
 		env_command_stage_2 := 
 			case
 				!(halt.active) : env_command_stage_1;
@@ -144,7 +147,7 @@ MODULE main
 		env_BLUEROV_HALTED : boolean;
 		env_BLUEROV_SURFACED : boolean;
 		env_battery_low : boolean;
-		env_command_stage_1 : {COMMAND_UNKNOWN, COMMAND_avoid_obstacles, COMMAND_go_to_waypoint, COMMAND_go_to_home, COMMAND_surface, COMMAND_halt, COMMAND_pipe_tracking, COMMAND_search_for_pipe};
+		env_command : {COMMAND_UNKNOWN, COMMAND_avoid_obstacles, COMMAND_go_to_waypoint, COMMAND_go_to_home, COMMAND_surface, COMMAND_halt, COMMAND_pipe_tracking, COMMAND_search_for_pipe};
 		env_emergency_sensor : boolean;
 		env_geofence_warning : boolean;
 		env_home_reached : boolean;
@@ -188,11 +191,7 @@ MODULE main
 				next(!(BlueROV.active)) : env_battery_low;
 				TRUE : {TRUE, FALSE};
 			esac;
-		next(env_command_stage_1) := 
-			case
-				next(!(surface.active)) : LINK_TO_PREVIOUS_FINAL_env_command;
-				TRUE : COMMAND_surface;
-			esac;
+		next(env_command) := env_command_stage_8;
 		next(env_emergency_sensor) := 
 			case
 				next(!(BlueROV.active)) : env_emergency_sensor;
@@ -249,52 +248,9 @@ MODULE main
 		next(var_failsafe_engaged) := var_failsafe_engaged_stage_2;
 		next(var_mission) := var_mission_stage_2;
 		--END OF BLACKBOARD VARIABLES TRANSITION
--- LTLSPEC G(var_failsafe_engaged -> (halt.active | surface.active | env_BLUEROV_SURFACED));
 
--- LTLSPEC G((count(halt.active, surface.active, avoid_obstacles.active, return_home.active, search_for_pipe.active, track_pipe.active, waypoint.active, loiter.active) = 1) <-> BlueROV.active);
--- LTLSPEC G((count(halt.active, surface.active, avoid_obstacles.active, return_home.active, search_for_pipe.active, track_pipe.active, waypoint.active, loiter.active) = 0) <-> !(BlueROV.active));
--- LTLSPEC G((count(halt.active, surface.active, avoid_obstacles.active, return_home.active, search_for_pipe.active, track_pipe.active, waypoint.active, loiter.active) <= 1));
-
--- LTLSPEC G (!(loiter.active));
-
--- LTLSPEC G (env_obstacles_present -> (halt.active | surface.active | avoid_obstacles.active | env_BLUEROV_SURFACED));
-
-
-
----------------------------------------------------------------------------------------------------------------
--- --1. Do No Harm
--- --2. Preserve UUV
--- --3. Complete Missions
----------------------------------------------------------------------------------------------------------------
-
-
--- --1. Do No Harm
--- --To ensure no harm is done, we will prioritize avoiding obstacles. Thus we either engage in obstacle avoidance or halt (or are halted) if obstacles are present.
-
--- LTLSPEC G ((env_obstacles_present | env_emergency_sensor) -> (halt.active | avoid_obstacles.active | env_BLUEROV_HALTED));
-
-
--- --2. Preserve UUV
--- --To ensure the UUV is safe, we first ensure we do not crash. This is covered by (1. Do No Harm). The next phase is to confirm we surface if a failsafe is triggered.
-
--- LTLSPEC G ((env_battery_low | env_emergency_sensor | env_sensor_failure| (env_reallocation_needed & !(env_reallocation_possible))) -> (surface.active | env_BLUEROV_SURFACED)); -- False. Halt can take precedence
--- LTLSPEC G ((env_battery_low | env_emergency_sensor | env_sensor_failure | (env_reallocation_needed & !(env_reallocation_possible))) -> (halt.active | surface.active | env_BLUEROV_SURFACED)); -- True
-
--- --additionally, we should surface if we've reached home
-
--- LTLSPEC G(((var_mission = MISSION_go_to_home) & env_home_reached) -> (halt.active | surface.active | env_BLUEROV_SURFACED));
-
--- --furthermore, ensure that we don't get lost going too far away
-
--- LTLSPEC G(env_geofence_warning -> (halt.active | surface.active | env_BLUEROV_SURFACED | avoid_obstacles.active | return_home.active));
-
-
--- --3. Complete Missions
--- --If 1 and 2 are handled, then we need to focus on 3. prove that we try and make progress on missions
-
-LTLSPEC G ( !(env_BLUEROV_SURFACED | surface.active | halt.active | avoid_obstacles.active) -> ((var_mission_stage_2 = MISSION_pipe_tracking & env_command_stage_8 in {COMMAND_pipe_tracking, COMMAND_search_for_pipe}) | (var_mission_stage_2 = MISSION_go_to_waypoint & env_command_stage_8 = COMMAND_go_to_waypoint) | (var_mission_stage_2 = MISSION_go_to_home & env_command_stage_8 = COMMAND_go_to_home)));
-
-
+LTLSPEC G(((env_obstacles_present | env_emergency_sensor) -> ((halt.active) | (avoid_obstacles.active) | (env_BLUEROV_HALTED))));
+INVARSPEC (!(((env_BLUEROV_SURFACED) | (surface.active) | (halt.active) | (avoid_obstacles.active))) -> (((var_mission_stage_2 = MISSION_pipe_tracking) & ((env_command_stage_8 = COMMAND_pipe_tracking) | (env_command_stage_8 = COMMAND_search_for_pipe))) | ((var_mission_stage_2 = MISSION_go_to_waypoint) & (env_command_stage_8 = COMMAND_go_to_waypoint)) | ((var_mission_stage_2 = MISSION_go_to_home) & (env_command_stage_8 = COMMAND_go_to_home))));
 MODULE define_nodes
 	DEFINE
 		BlueROV := 0;
@@ -353,7 +309,7 @@ MODULE leaf_module(internal_status_module)
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status_module.internal_status : invalid;
-MODULE composite_selector_without_memory_2(child_0, child_1)
+MODULE composite_selector_without_memory_7(child_0, child_1, child_2, child_3, child_4, child_5, child_6)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
@@ -362,28 +318,20 @@ MODULE composite_selector_without_memory_2(child_0, child_1)
 			case
 				!(child_0.internal_status = failure) : child_0.internal_status;
 				!(child_1.internal_status = failure) : child_1.internal_status;
+				!(child_2.internal_status = failure) : child_2.internal_status;
+				!(child_3.internal_status = failure) : child_3.internal_status;
+				!(child_4.internal_status = failure) : child_4.internal_status;
+				!(child_5.internal_status = failure) : child_5.internal_status;
+				!(child_6.internal_status = failure) : child_6.internal_status;
 				TRUE : failure;
 			esac;
 		child_0.active := active;
 		child_1.active := child_0.status = failure;
-MODULE composite_parallel_success_on_all_without_memory_3(child_0, child_1, child_2)
-	CONSTANTS
-		success, failure, running, invalid;
-	DEFINE
-		status := active ? internal_status : invalid;
-		internal_status :=
-			case
-				(child_0.internal_status = failure) : failure;
-				(child_1.internal_status = failure) : failure;
-				(child_2.internal_status = failure) : failure;
-				!(child_0.internal_status = success) : child_0.internal_status;
-				!(child_1.internal_status = success) : child_1.internal_status;
-				!(child_2.internal_status = success) : child_2.internal_status;
-				TRUE : success;
-			esac;
-		child_0.active := active;
-		child_1.active := active;
-		child_2.active := active;
+		child_2.active := child_1.status = failure;
+		child_3.active := child_2.status = failure;
+		child_4.active := child_3.status = failure;
+		child_5.active := child_4.status = failure;
+		child_6.active := child_5.status = failure;
 MODULE composite_selector_without_memory_4(child_0, child_1, child_2, child_3)
 	CONSTANTS
 		success, failure, running, invalid;
@@ -422,42 +370,6 @@ MODULE composite_selector_without_memory_6(child_0, child_1, child_2, child_3, c
 		child_3.active := child_2.status = failure;
 		child_4.active := child_3.status = failure;
 		child_5.active := child_4.status = failure;
-MODULE composite_selector_without_memory_7(child_0, child_1, child_2, child_3, child_4, child_5, child_6)
-	CONSTANTS
-		success, failure, running, invalid;
-	DEFINE
-		status := active ? internal_status : invalid;
-		internal_status :=
-			case
-				!(child_0.internal_status = failure) : child_0.internal_status;
-				!(child_1.internal_status = failure) : child_1.internal_status;
-				!(child_2.internal_status = failure) : child_2.internal_status;
-				!(child_3.internal_status = failure) : child_3.internal_status;
-				!(child_4.internal_status = failure) : child_4.internal_status;
-				!(child_5.internal_status = failure) : child_5.internal_status;
-				!(child_6.internal_status = failure) : child_6.internal_status;
-				TRUE : failure;
-			esac;
-		child_0.active := active;
-		child_1.active := child_0.status = failure;
-		child_2.active := child_1.status = failure;
-		child_3.active := child_2.status = failure;
-		child_4.active := child_3.status = failure;
-		child_5.active := child_4.status = failure;
-		child_6.active := child_5.status = failure;
-MODULE composite_sequence_without_memory_2(child_0, child_1)
-	CONSTANTS
-		success, failure, running, invalid;
-	DEFINE
-		status := active ? internal_status : invalid;
-		internal_status :=
-			case
-				!(child_0.internal_status = success) : child_0.internal_status;
-				!(child_1.internal_status = success) : child_1.internal_status;
-				TRUE : success;
-			esac;
-		child_0.active := active;
-		child_1.active := child_0.status = success;
 MODULE composite_sequence_without_memory_4(child_0, child_1, child_2, child_3)
 	CONSTANTS
 		success, failure, running, invalid;
@@ -475,6 +387,50 @@ MODULE composite_sequence_without_memory_4(child_0, child_1, child_2, child_3)
 		child_1.active := child_0.status = success;
 		child_2.active := child_1.status = success;
 		child_3.active := child_2.status = success;
+MODULE composite_sequence_without_memory_2(child_0, child_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				!(child_0.internal_status = success) : child_0.internal_status;
+				!(child_1.internal_status = success) : child_1.internal_status;
+				TRUE : success;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = success;
+MODULE composite_parallel_success_on_all_without_memory_3(child_0, child_1, child_2)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				(child_0.internal_status = failure) : failure;
+				(child_1.internal_status = failure) : failure;
+				(child_2.internal_status = failure) : failure;
+				!(child_0.internal_status = success) : child_0.internal_status;
+				!(child_1.internal_status = success) : child_1.internal_status;
+				!(child_2.internal_status = success) : child_2.internal_status;
+				TRUE : success;
+			esac;
+		child_0.active := active;
+		child_1.active := active;
+		child_2.active := active;
+MODULE composite_selector_without_memory_2(child_0, child_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				!(child_0.internal_status = failure) : child_0.internal_status;
+				!(child_1.internal_status = failure) : child_1.internal_status;
+				TRUE : failure;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = failure;
 MODULE check_battery_low_module(env_battery_low)
 	CONSTANTS
 		success, failure, running, invalid;

@@ -427,8 +427,6 @@ actions {
 	} end_action
 } end_actions	
 
-tick_prerequisite { (not, env BLUEROV_SURFACED) } end_tick_prerequisite
-
 root_node
 composite {
 	BlueROV
@@ -571,3 +569,10 @@ composite {
 		} end_composite
 	} end_children
 } end_composite
+
+tick_prerequisite { (not, env BLUEROV_SURFACED) } end_tick_prerequisite
+
+specifications {
+LTLSPEC {(globally, (implies, (or, env obstacles_present 0, env emergency_sensor 0), (or, (active, halt), (active, avoid_obstacles), (env BLUEROV_HALTED 0)))) } end_LTLSPEC
+INVARSPEC { (implies, (not, (or, (env BLUEROV_SURFACED 0), (active, surface), (active, halt), (active, avoid_obstacles))), (or, (and, (equal, mission -1, 'MISSION_pipe_tracking'), (or, (equal, env command -1, 'COMMAND_pipe_tracking'), (equal, env command 8, 'COMMAND_search_for_pipe'))), (and, (equal, mission -1, 'MISSION_go_to_waypoint'), (equal, env command -1, 'COMMAND_go_to_waypoint')), (and, (equal, mission -1, 'MISSION_go_to_home'), (equal, env command -1, 'COMMAND_go_to_home')))) } end_INVARSPEC
+} end_specifications

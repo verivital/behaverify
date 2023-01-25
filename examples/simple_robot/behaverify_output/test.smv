@@ -1,0 +1,11 @@
+MODULE main
+	VAR
+		x : 0..100;
+	ASSIGN
+		init(x) := 7;
+		next(x) :=
+			case
+				x mod 2 = 0 : {min(100, x + 1), max( x - 1, 0)};
+				TRUE : min(100,x+1);
+			esac;
+	

@@ -25,8 +25,9 @@ BehaviorModel:
     'actions' '{'
     action_nodes *= action_node
     '}' 'end_actions'
-    ('tick_prerequisite' '{' tick_condition = code_statement_env '}' 'end_tick_prerequisite')?
     'root_node' root = node
+    ('tick_prerequisite' '{' tick_condition = code_statement_env '}' 'end_tick_prerequisite')?
+    ('specifications' '{' specifications *= specification '}' 'end_specifications')
 ;
 
     variable_environment_pair:
@@ -222,64 +223,234 @@ statement:
     ('(' function_call = function_env ')') |
     ('(' code_statement = code_statement_env ')')
 ;
+    
+    code_statement_ltl:
+    (constant = STRICTFLOAT) | (constant = INT) | (constant = BOOL) | (constant = STRING) |
+    (is_env = 'env' variable = [environment_variable] read_at = INT) |
+    (('local' node_name = ID)? variable = [variable] read_at = INT) |
+    ('(' function_call = function_ltl ')') |
+    ('(' code_statement = code_statement_ltl ')')
+;
+
+    code_statement_ctl:
+    (constant = STRICTFLOAT) | (constant = INT) | (constant = BOOL) | (constant = STRING) |
+    (is_env = 'env' variable = [environment_variable] read_at = INT) |
+    (('local' node_name = ID)? variable = [variable] read_at = INT) |
+    ('(' function_call = function_ctl ')') |
+    ('(' code_statement = code_statement_ctl ')')
+;
+
+    code_statement_invar:
+    (constant = STRICTFLOAT) | (constant = INT) | (constant = BOOL) | (constant = STRING) |
+    (is_env = 'env' variable = [environment_variable] read_at = INT) |
+    (('local' node_name = ID)? variable = [variable] read_at = INT) |
+    ('(' function_call = function_invar ')') |
+    ('(' code_statement = code_statement_invar ')')
+;
 
 function:
-    (function_name = 'abs' ',' value1 = code_statement) |
-    (function_name = 'max' ',' value1 = code_statement ',' value2 = code_statement) |
-    (function_name = 'min' ',' value1 = code_statement ',' value2 = code_statement) |
-    (function_name = 'sin' ',' value1 = code_statement) |
-    (function_name = 'cos' ',' value1 = code_statement) |
-    (function_name = 'exp' ',' value1 = code_statement) |
-    (function_name = 'tan' ',' value1 = code_statement) |
-    (function_name = 'ln' ',' value1 = code_statement) |
-    (function_name = 'not' ',' value1 = code_statement) |
-    (function_name = 'and' ',' value1 = code_statement ',' value2 = code_statement) |
-    (function_name = 'or' ',' value1 = code_statement ',' value2 = code_statement) |
-    (function_name = 'xor' ',' value1 = code_statement ',' value2 = code_statement) |
-    (function_name = 'xnor' ',' value1 = code_statement ',' value2 = code_statement) |
-    (function_name = 'implies' ',' value1 = code_statement ',' value2 = code_statement) |
-    (function_name = 'equivalent' ',' value1 = code_statement ',' value2 = code_statement) |
-    (function_name = 'equal' ',' value1 = code_statement ',' value2 = code_statement) |
-    (function_name = 'not_equal' ',' value1 = code_statement ',' value2 = code_statement) |
-    (function_name = 'less_than' ',' value1 = code_statement ',' value2 = code_statement) |
-    (function_name = 'greater_than' ',' value1 = code_statement ',' value2 = code_statement) |
-    (function_name = 'less_than_or_equal' ',' value1 = code_statement ',' value2 = code_statement) |
-    (function_name = 'greater_than_or_equal' ',' value1 = code_statement ',' value2 = code_statement) |
-    (function_name = 'negative' ',' value1 = code_statement) |
-    (function_name = 'addition' ',' value1 = code_statement ',' value2 = code_statement) |
-    (function_name = 'subtraction' ',' value1 = code_statement ',' value2 = code_statement) |
-    (function_name = 'multiplication' ',' value1 = code_statement ',' value2 = code_statement) |
-    (function_name = 'division' ',' value1 = code_statement ',' value2 = code_statement) |
-    (function_name = 'mod' ',' value1 = code_statement ',' value2 = code_statement)
+    (function_name = 'abs' ',' values = code_statement) |
+    (function_name = 'max' ',' values = code_statement ',' values = code_statement) |
+    (function_name = 'min' ',' values = code_statement ',' values = code_statement) |
+    (function_name = 'sin' ',' values = code_statement) |
+    (function_name = 'cos' ',' values = code_statement) |
+    (function_name = 'exp' ',' values = code_statement) |
+    (function_name = 'tan' ',' values = code_statement) |
+    (function_name = 'ln' ',' values = code_statement) |
+    (function_name = 'not' ',' values = code_statement) |
+    (function_name = 'and' ',' values += code_statement[',']) |
+    (function_name = 'or' ',' values += code_statement[',']) |
+    (function_name = 'xor' ',' values = code_statement ',' values = code_statement) |
+    (function_name = 'xnor' ',' values = code_statement ',' values = code_statement) |
+    (function_name = 'implies' ',' values = code_statement ',' values = code_statement) |
+    (function_name = 'equivalent' ',' values = code_statement ',' values = code_statement) |
+    (function_name = 'equal' ',' values = code_statement ',' values = code_statement) |
+    (function_name = 'not_equal' ',' values = code_statement ',' values = code_statement) |
+    (function_name = 'less_than' ',' values = code_statement ',' values = code_statement) |
+    (function_name = 'greater_than' ',' values = code_statement ',' values = code_statement) |
+    (function_name = 'less_than_or_equal' ',' values = code_statement ',' values = code_statement) |
+    (function_name = 'greater_than_or_equal' ',' values = code_statement ',' values = code_statement) |
+    (function_name = 'negative' ',' values = code_statement) |
+    (function_name = 'addition' ',' values += code_statement[',']) |
+    (function_name = 'subtraction' ',' values = code_statement ',' values = code_statement) |
+    (function_name = 'multiplication' ',' values += code_statement[',']) |
+    (function_name = 'division' ',' values = code_statement ',' values = code_statement) |
+    (function_name = 'mod' ',' values = code_statement ',' values = code_statement) |
+    (function_name = 'count' ',' values += code_statement[','])
 ;
 
     function_env:
-    (function_name = 'abs' ',' value1 = code_statement_env) |
-    (function_name = 'max' ',' value1 = code_statement_env ',' value2 = code_statement_env) |
-    (function_name = 'min' ',' value1 = code_statement_env ',' value2 = code_statement_env) |
-    (function_name = 'sin' ',' value1 = code_statement_env) |
-    (function_name = 'cos' ',' value1 = code_statement_env) |
-    (function_name = 'exp' ',' value1 = code_statement_env) |
-    (function_name = 'tan' ',' value1 = code_statement_env) |
-    (function_name = 'ln' ',' value1 = code_statement_env) |
-    (function_name = 'not' ',' value1 = code_statement_env) |
-    (function_name = 'and' ',' value1 = code_statement_env ',' value2 = code_statement_env) |
-    (function_name = 'or' ',' value1 = code_statement_env ',' value2 = code_statement_env) |
-    (function_name = 'xor' ',' value1 = code_statement_env ',' value2 = code_statement_env) |
-    (function_name = 'xnor' ',' value1 = code_statement_env ',' value2 = code_statement_env) |
-    (function_name = 'implies' ',' value1 = code_statement_env ',' value2 = code_statement_env) |
-    (function_name = 'equivalent' ',' value1 = code_statement_env ',' value2 = code_statement_env) |
-    (function_name = 'equal' ',' value1 = code_statement_env ',' value2 = code_statement_env) |
-    (function_name = 'not_equal' ',' value1 = code_statement_env ',' value2 = code_statement_env) |
-    (function_name = 'less_than' ',' value1 = code_statement_env ',' value2 = code_statement_env) |
-    (function_name = 'greater_than' ',' value1 = code_statement_env ',' value2 = code_statement_env) |
-    (function_name = 'less_than_or_equal' ',' value1 = code_statement_env ',' value2 = code_statement_env) |
-    (function_name = 'greater_than_or_equal' ',' value1 = code_statement_env ',' value2 = code_statement_env) |
-    (function_name = 'negative' ',' value1 = code_statement_env) |
-    (function_name = 'addition' ',' value1 = code_statement_env ',' value2 = code_statement_env) |
-    (function_name = 'subtraction' ',' value1 = code_statement_env ',' value2 = code_statement_env) |
-    (function_name = 'multiplication' ',' value1 = code_statement_env ',' value2 = code_statement_env) |
-    (function_name = 'division' ',' value1 = code_statement_env ',' value2 = code_statement_env) |
-    (function_name = 'mod' ',' value1 = code_statement_env ',' value2 = code_statement_env)
+    (function_name = 'abs' ',' values = code_statement_env) |
+    (function_name = 'max' ',' values = code_statement_env ',' values = code_statement_env) |
+    (function_name = 'min' ',' values = code_statement_env ',' values = code_statement_env) |
+    (function_name = 'sin' ',' values = code_statement_env) |
+    (function_name = 'cos' ',' values = code_statement_env) |
+    (function_name = 'exp' ',' values = code_statement_env) |
+    (function_name = 'tan' ',' values = code_statement_env) |
+    (function_name = 'ln' ',' values = code_statement_env) |
+    (function_name = 'not' ',' values = code_statement_env) |
+    (function_name = 'and' ',' values += code_statement_env[',']) |
+    (function_name = 'or' ',' values += code_statement_env[',']) |
+    (function_name = 'xor' ',' values = code_statement_env ',' values = code_statement_env) |
+    (function_name = 'xnor' ',' values = code_statement_env ',' values = code_statement_env) |
+    (function_name = 'implies' ',' values = code_statement_env ',' values = code_statement_env) |
+    (function_name = 'equivalent' ',' values = code_statement_env ',' values = code_statement_env) |
+    (function_name = 'equal' ',' values = code_statement_env ',' values = code_statement_env) |
+    (function_name = 'not_equal' ',' values = code_statement_env ',' values = code_statement_env) |
+    (function_name = 'less_than' ',' values = code_statement_env ',' values = code_statement_env) |
+    (function_name = 'greater_than' ',' values = code_statement_env ',' values = code_statement_env) |
+    (function_name = 'less_than_or_equal' ',' values = code_statement_env ',' values = code_statement_env) |
+    (function_name = 'greater_than_or_equal' ',' values = code_statement_env ',' values = code_statement_env) |
+    (function_name = 'negative' ',' values = code_statement_env) |
+    (function_name = 'addition' ',' values += code_statement_env[',']) |
+    (function_name = 'subtraction' ',' values = code_statement_env ',' values = code_statement_env) |
+    (function_name = 'multiplication' ',' values += code_statement_env[',']) |
+    (function_name = 'division' ',' values = code_statement_env ',' values = code_statement_env) |
+    (function_name = 'mod' ',' values = code_statement_env ',' values = code_statement_env) |
+    (function_name = 'count' ',' values += code_statement_env[','])
+;
+
+    function_ltl:
+    (function_name = 'abs' ',' values = code_statement_invar) |
+    (function_name = 'max' ',' values = code_statement_invar ',' values = code_statement_invar) |
+    (function_name = 'min' ',' values = code_statement_invar ',' values = code_statement_invar) |
+    (function_name = 'sin' ',' values = code_statement_invar) |
+    (function_name = 'cos' ',' values = code_statement_invar) |
+    (function_name = 'exp' ',' values = code_statement_invar) |
+    (function_name = 'tan' ',' values = code_statement_invar) |
+    (function_name = 'ln' ',' values = code_statement_invar) |
+    (function_name = 'equal' ',' values = code_statement_invar ',' values = code_statement_invar) |
+    (function_name = 'not_equal' ',' values = code_statement_invar ',' values = code_statement_invar) |
+    (function_name = 'less_than' ',' values = code_statement_invar ',' values = code_statement_invar) |
+    (function_name = 'greater_than' ',' values = code_statement_invar ',' values = code_statement_invar) |
+    (function_name = 'less_than_or_equal' ',' values = code_statement_invar ',' values = code_statement_invar) |
+    (function_name = 'greater_than_or_equal' ',' values = code_statement_invar ',' values = code_statement_invar) |
+    (function_name = 'negative' ',' values = code_statement_invar) |
+    (function_name = 'addition' ',' values += code_statement_invar[',']) |
+    (function_name = 'subtraction' ',' values = code_statement_invar ',' values = code_statement_invar) |
+    (function_name = 'multiplication' ',' values += code_statement_invar[',']) |
+    (function_name = 'division' ',' values = code_statement_invar ',' values = code_statement_invar) |
+    (function_name = 'mod' ',' values = code_statement_invar ',' values = code_statement_invar) |
+    (function_name = 'count' ',' values += code_statement_invar[',']) |
+    
+    (function_name = 'not' ',' values = code_statement_ltl) |
+    (function_name = 'and' ',' values += code_statement_ltl[',']) |
+    (function_name = 'or' ',' values += code_statement_ltl[',']) |
+    (function_name = 'xor' ',' values = code_statement_ltl ',' values = code_statement_ltl) |
+    (function_name = 'xnor' ',' values = code_statement_ltl ',' values = code_statement_ltl) |
+    (function_name = 'implies' ',' values = code_statement_ltl ',' values = code_statement_ltl) |
+    (function_name = 'equivalent' ',' values = code_statement_ltl ',' values = code_statement_ltl) |
+    (function_name = 'active' ',' node_name = ID) |
+    (function_name = 'success' ',' node_name = ID) |
+    (function_name = 'running' ',' node_name = ID) |
+    (function_name = 'failure' ',' node_name = ID) |
+    (function_name = 'next' ',' values = code_statement_ltl) |
+    (function_name = 'globally' ',' values = code_statement_ltl) |
+    (function_name = 'globally_bounded' ',' bound = bound_statement ',' values = code_statement_ltl) |
+    (function_name = 'finally' ',' values = code_statement_ltl) |
+    (function_name = 'finally_bounded' ',' bound = bound_statement ',' values = code_statement_ltl) |
+    (function_name = 'until' ',' values = code_statement_ltl ',' values = code_statement_ltl) |
+    (function_name = 'until_bounded' ',' bound = bound_statement ',' values = code_statement_ltl ',' values = code_statement_ltl) |
+    (function_name = 'release' ',' values = code_statement_ltl ',' values = code_statement_ltl) |
+    (function_name = 'release_bounded' ',' bound = bound_statement ',' values = code_statement_ltl ',' values = code_statement_ltl) |
+    (function_name = 'previous' ',' values = code_statement_ltl) |
+    (function_name = 'not_previous_not' ',' values = code_statement_ltl) |
+    (function_name = 'historically' ',' values = code_statement_ltl) |
+    (function_name = 'historically_bounded' ',' bound = bound_statement ',' values = code_statement_ltl) |
+    (function_name = 'once' ',' values = code_statement_ltl) |
+    (function_name = 'once_bounded' ',' bound = bound_statement ',' values = code_statement_ltl) |
+    (function_name = 'since' ',' values = code_statement_ltl ',' values = code_statement_ltl) |
+    (function_name = 'since_bounded' ',' bound = bound_statement ',' values = code_statement_ltl ',' values = code_statement_ltl) |
+    (function_name = 'triggered' ',' values = code_statement_ltl ',' values = code_statement_ltl) |
+    (function_name = 'triggered_bounded' ',' bound = bound_statement ',' values = code_statement_ltl ',' values = code_statement_ltl)
+;
+    
+    function_ctl:
+    (function_name = 'abs' ',' values = code_statement_invar) |
+    (function_name = 'max' ',' values = code_statement_invar ',' values = code_statement_invar) |
+    (function_name = 'min' ',' values = code_statement_invar ',' values = code_statement_invar) |
+    (function_name = 'sin' ',' values = code_statement_invar) |
+    (function_name = 'cos' ',' values = code_statement_invar) |
+    (function_name = 'exp' ',' values = code_statement_invar) |
+    (function_name = 'tan' ',' values = code_statement_invar) |
+    (function_name = 'ln' ',' values = code_statement_invar) |
+    (function_name = 'equal' ',' values = code_statement_invar ',' values = code_statement_invar) |
+    (function_name = 'not_equal' ',' values = code_statement_invar ',' values = code_statement_invar) |
+    (function_name = 'less_than' ',' values = code_statement_invar ',' values = code_statement_invar) |
+    (function_name = 'greater_than' ',' values = code_statement_invar ',' values = code_statement_invar) |
+    (function_name = 'less_than_or_equal' ',' values = code_statement_invar ',' values = code_statement_invar) |
+    (function_name = 'greater_than_or_equal' ',' values = code_statement_invar ',' values = code_statement_invar) |
+    (function_name = 'negative' ',' values = code_statement_invar) |
+    (function_name = 'addition' ',' values += code_statement_invar[',']) |
+    (function_name = 'subtraction' ',' values = code_statement_invar ',' values = code_statement_invar) |
+    (function_name = 'multiplication' ',' values += code_statement_invar[',']) |
+    (function_name = 'division' ',' values = code_statement_invar ',' values = code_statement_invar) |
+    (function_name = 'mod' ',' values = code_statement_invar ',' values = code_statement_invar) |
+    (function_name = 'count' ',' values += code_statement_invar[',']) |
+    
+    (function_name = 'not' ',' values = code_statement_ctl) |
+    (function_name = 'and' ',' values += code_statement_ctl[',']) |
+    (function_name = 'or' ',' values += code_statement_ctl[',']) |
+    (function_name = 'xor' ',' values = code_statement_ctl ',' values = code_statement_ctl) |
+    (function_name = 'xnor' ',' values = code_statement_ctl ',' values = code_statement_ctl) |
+    (function_name = 'implies' ',' values = code_statement_ctl ',' values = code_statement_ctl) |
+    (function_name = 'equivalent' ',' values = code_statement_ctl ',' values = code_statement_ctl) |
+    (function_name = 'active' ',' node_name = ID) |
+    (function_name = 'success' ',' node_name = ID) |
+    (function_name = 'running' ',' node_name = ID) |
+    (function_name = 'failure' ',' node_name = ID) |
+    (function_name = 'exists_globally' ',' values = code_statement_ctl) |
+    (function_name = 'exists_next' ',' values = code_statement_ctl) |
+    (function_name = 'exists_finally' ',' values = code_statement_ctl) |
+    (function_name = 'exists_until' ',' values = code_statement_ctl ',' values = code_statement_ctl) |
+    (function_name = 'always_globally' ',' values = code_statement_ctl) |
+    (function_name = 'always_next' ',' values = code_statement_ctl) |
+    (function_name = 'always_finally' ',' values = code_statement_ctl) |
+    (function_name = 'always_until' ',' values = code_statement_ctl ',' values = code_statement_ctl)
+;
+    
+    function_invar:
+    (function_name = 'abs' ',' values = code_statement_invar) |
+    (function_name = 'max' ',' values = code_statement_invar ',' values = code_statement_invar) |
+    (function_name = 'min' ',' values = code_statement_invar ',' values = code_statement_invar) |
+    (function_name = 'sin' ',' values = code_statement_invar) |
+    (function_name = 'cos' ',' values = code_statement_invar) |
+    (function_name = 'exp' ',' values = code_statement_invar) |
+    (function_name = 'tan' ',' values = code_statement_invar) |
+    (function_name = 'ln' ',' values = code_statement_invar) |
+    (function_name = 'not' ',' values = code_statement_invar) |
+    (function_name = 'and' ',' values += code_statement_invar[',']) |
+    (function_name = 'or' ',' values += code_statement_invar[',']) |
+    (function_name = 'xor' ',' values = code_statement_invar ',' values = code_statement_invar) |
+    (function_name = 'xnor' ',' values = code_statement_invar ',' values = code_statement_invar) |
+    (function_name = 'implies' ',' values = code_statement_invar ',' values = code_statement_invar) |
+    (function_name = 'equivalent' ',' values = code_statement_invar ',' values = code_statement_invar) |
+    (function_name = 'equal' ',' values = code_statement_invar ',' values = code_statement_invar) |
+    (function_name = 'not_equal' ',' values = code_statement_invar ',' values = code_statement_invar) |
+    (function_name = 'less_than' ',' values = code_statement_invar ',' values = code_statement_invar) |
+    (function_name = 'greater_than' ',' values = code_statement_invar ',' values = code_statement_invar) |
+    (function_name = 'less_than_or_equal' ',' values = code_statement_invar ',' values = code_statement_invar) |
+    (function_name = 'greater_than_or_equal' ',' values = code_statement_invar ',' values = code_statement_invar) |
+    (function_name = 'negative' ',' values = code_statement_invar) |
+    (function_name = 'addition' ',' values += code_statement_invar[',']) |
+    (function_name = 'subtraction' ',' values = code_statement_invar ',' values = code_statement_invar) |
+    (function_name = 'multiplication' ',' values += code_statement_invar[',']) |
+    (function_name = 'division' ',' values = code_statement_invar ',' values = code_statement_invar) |
+    (function_name = 'mod' ',' values = code_statement_invar ',' values = code_statement_invar) |
+    (function_name = 'count' ',' values += code_statement_invar[',']) |
+    (function_name = 'active' ',' node_name = ID) |
+    (function_name = 'success' ',' node_name = ID) |
+    (function_name = 'running' ',' node_name = ID) |
+    (function_name = 'failure' ',' node_name = ID)
+;
+
+    bound_statement:
+    '[' lower_bound = INT ',' ((upper_bound = INT) |  (upper_bound = '+oo')) ']'
+;
+
+specification:
+    (spec_type = 'LTLSPEC' '{' code_statement = code_statement_ltl '}' 'end_LTLSPEC') |
+    (spec_type = 'CTLSPEC' '{' code_statement = code_statement_ctl '}' 'end_CTLSPEC') |
+    (spec_type = 'INVARSPEC' '{' code_statement = code_statement_invar '}' 'end_INVARSPEC')
 ;
     
