@@ -30,55 +30,14 @@ BehaviorModel:
     ('specifications' '{' specifications *= specification '}' 'end_specifications')
 ;
 
-    variable_environment_pair:
-    '(' is_local ?= 'local' variable = [variable] ',' 'env' environment_variable = [environment_variable] ')'
+//comments so that we can explain what is happening in a .tree file
+Comment:
+    '#comment#' .* '#end_comment#'
 ;
     
-    read_statement:
-    'read_environment' '{'
-    ('python_function' '{' python_function = STRING '}' 'end_python_function')?
-    (('condition' '{' condition = code_statement_env '}' 'end_condition') | (is_local = 'local' condition_variable = [variable]))
-    'set_variables' '{' variable_environment_pairs *= variable_environment_pair[','] '}' 'end_set_variables'
-    '}' 'end_read_environment'
-;
-    
-    write_statement:
-    'write_environment' '{'
-    ('python_function' '{' python_function = STRING '}' 'end_python_function')?
-    'update_values' '{'
-    update *= environment_statement
-    '}' 'end_update_values'
-    '}' 'end_write_environment'
-;
+    //--------------------NODES-------------------------------
+    //nodes are either composite, decorator, or leaf. 
 
-    environment_variable:
-    'environment_variable' '{'
-    name = ID
-    ((model_as = 'VAR') | (model_as = 'FROZENVAR') | (model_as = 'DEFINE'))
-    domain = variable_domain
-    '}' 'end_environment_variable'
-;
-    
-variable:
-    'variable' '{'
-    name = ID
-    ((model_as = 'VAR') | (model_as = 'FROZENVAR') | (model_as = 'DEFINE'))
-    domain = variable_domain
-    '}' 'end_variable'
-;
-    
-    variable_domain:
-    ('[' min_val = INT ',' max_val = INT ']') | (boolean = 'BOOLEAN') | ('{' enums += enumeration[','] '}')
-;
-    
-enumeration:
-    INT | BOOL | STRING
-;
-
-status:
-    'success' | 'running' | 'failure'
-;
-    
 node:
     composite_node | decorator_node | leaf_node
 ;
@@ -104,8 +63,6 @@ node:
     '}' 'end_decorator'
 ;
 
-    
-    
     leaf_node:
     (leaf = [check_node]) | (leaf = [action_node]) | (leaf = [check_environment_node])
 ;
@@ -143,9 +100,67 @@ node:
     '}' 'end_action'
 ;
 
+    //--------------------VARIABLES---------------------------
+    environment_variable:
+    'environment_variable' '{'
+    name = ID
+    ((model_as = 'VAR') | (model_as = 'FROZENVAR') | (model_as = 'DEFINE'))
+    domain = variable_domain
+    '}' 'end_environment_variable'
+;
+    
+variable:
+    'variable' '{'
+    name = ID
+    ((model_as = 'VAR') | (model_as = 'FROZENVAR') | (model_as = 'DEFINE'))
+    domain = variable_domain
+    '}' 'end_variable'
+;
+    
+    variable_domain:
+    ('[' min_val = INT ',' max_val = INT ']') | (boolean = 'BOOLEAN') | ('{' enums += enumeration[','] '}')
+;
+    
+enumeration:
+    INT | BOOL | STRING
+;
+
+status:
+    'success' | 'running' | 'failure'
+;
+    
+    variable_environment_pair:
+    '(' is_local ?= 'local' variable = [variable] ',' 'env' environment_variable = [environment_variable] ')'
+;
+
+    //--------------------STATEMENTS--------------------------
+    
 statement:
     (variable_statement = variable_statement) | (read_statement = read_statement) | (write_statement = write_statement)
 ;
+    
+    read_statement:
+    'read_environment' '{'
+    ('python_function' '{' python_function = STRING '}' 'end_python_function')?
+    (('condition' '{' condition = code_statement_env '}' 'end_condition') | (is_local = 'local' condition_variable = [variable]))
+    'set_variables' '{' variable_environment_pairs *= variable_environment_pair[','] '}' 'end_set_variables'
+    '}' 'end_read_environment'
+;
+    
+    write_statement:
+    'write_environment' '{'
+    ('python_function' '{' python_function = STRING '}' 'end_python_function')?
+    'update_values' '{'
+    update *= environment_statement
+    '}' 'end_update_values'
+    '}' 'end_write_environment'
+;
+
+
+    
+
+
+
 
     environment_statement:
     'environment_statement' '{'
@@ -208,6 +223,8 @@ statement:
     '}' 'end_result'
 ;
 
+
+    //--------------------CODE--------------------------------
 
     code_statement:
     (constant = STRICTFLOAT) | (constant = INT) | (constant = BOOL) | (constant = STRING) |

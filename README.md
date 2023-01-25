@@ -8,15 +8,26 @@ To recreate tests, see REPRODUCIBILITY.
 Older versions can be found in subfolders of ./src/. The documentation for older versions may not be accurate.
 
 
+# Installation/Requirements
+
+textx
+
+python3.10
+
+you will also need to download nuXmv (behaverify will generate .smv files even if you don't have nuXmv, but you will not be able to do anything with the .smv files if you don't have nuXmv).
+
+py_trees (only necessary if you're using the py_trees to .smv function)
+
+
 # General Usage
 
 File extensions are not mandatory. This documentation will use the following convention for them
 
 -- .behave - an intermediate file that BehaVerify creates.
--- .bt - a specification file that follows the rules in ./metamodel/blueROV/btree.tx (a textx file)
+-- .bt - a specification file that follows the rules in ./metamodel/btree/btree.tx (a textx file)
 -- .smv - a file for use with nuXmv
 -- .tree - a specification file that follows the rules in ./metamodel/behaverify.tx (a textx file)
--- .tx - a metamodel file. The two relevant ones are ./metamodel/behaverify.tx and ./metamodel/blueROV/btree.tx
+-- .tx - a metamodel file. The two relevant ones are ./metamodel/behaverify.tx and ./metamodel/btree/btree.tx
 
 
 The following files make up BehaVerify
@@ -27,7 +38,7 @@ The following files make up BehaVerify
 
 --behaverify_to_smv.py - Converts .behave files to .smv files (for use with nuXmv)
 
---blueROV_dsl_to_behaverify.py - Converts .bt files to .behave files
+--btree_dsl_to_behaverify.py - Converts .bt files to .behave files
 
 --dsl_to_behaverify.py - Converts .tree files to .behave files
 
@@ -48,13 +59,21 @@ There are five main ways to go about using Behaverify.
 In this case, the user begins by creating a .tree file that follows the rules specified in ./metamodel/behaverify.tx. Assuming the user is at the top level directory of this repository and their tree is named ex.tree, the user will then execute the following commands
 
 python ./src/dsl_to_behaverify.py ./metamodel/behaverify.tx ex.tree --output_file ex.behave
+
 python ./src/behaverify_to_smv.py ex.behave --output_file ex.smv
 
 And at this point, the user may use the ex.smv file with nuXmv.
 
 ### .bt to .smv
 
-This is the same as .tree to .smv, except the rules are specified in ./metamodel/blueROV/btree.tx and the blueROV_dsl_to_behaverify.py is used.
+In this case, the user begins by creating a .tree file that follows the rules specified in ./metamodel/btree/btree.tx. Assuming the user is at the top level directory of this repository and their tree is named ex.tree, the user will then execute the following commands
+
+python ./src/btree_dsl_to_behaverify.py ./metamodel/btree/btree.tx ex.tree --output_file ex.behave
+
+python ./src/behaverify_to_smv.py ex.behave --output_file ex.smv
+
+And at this point, the user may use the ex.smv file with nuXmv.
+
 
 ### .tree to py_tree
 
@@ -114,27 +133,31 @@ This converts a .behave file to .smv for use with nuXmv.
 ### Optional Arguments
 
 - output_file - where the .smv file will be written
+
 - specs_input_file - additional INVAR/LTL/CTL specifications to copy in. Note that if the .tree file was generated using dsl_to_behaverify.py, then  these can instead be written into the .tree file.
+
 - do_not_trim - a flag. if present, behaverify will not remove unreachable nodes or correct for composite nodes with only 1 child.
 
 python behaverify_to_smv.py ex.behave --output_file ex.smv
 
 
-## blueROV_dsl_to_behaverify.py
+## btree_dsl_to_behaverify.py
 
 This converts a .bt file to .smv for use with nuXmv.
 
 ### Required Arguments
 
-- metamodel file - a .tx file. In this case, ./metamodel/blueROV/btree.tx should be used.
+- metamodel file - a .tx file. In this case, ./metamodel/btree/btree.tx should be used.
+
 - input file - a .bt file which follows the rules described in the metamodel file
 
 ### Optional Arguments
 
 - keep_stage_0 - a flag. if present, behaverify will not perform an optimization which removes stage_0 of variables.
+
 - output_file - where the .behave file will be written
 
-python blueROV_dsl_to_behaverify.py /path/to/btree.tx ex.bt --output_file ex.behave
+python btree_dsl_to_behaverify.py /path/to/btree.tx ex.bt --output_file ex.behave
 
 
 ## dsl_to_behaverify.py
@@ -144,14 +167,16 @@ This converts a .behave file to .smv for use with nuXmv.
 ### Required Arguments
 
 - metamodel file - a .tx file. In this case, ./metamodel/behaverify.tx should be used.
+
 - input file - a .tree file which follows the rules described in the metamodel file
 
 ### Optional Arguments
 
 - keep_stage_0 - a flag. if present, behaverify will not perform an optimization which removes stage_0 of variables.
+
 - output_file - where the .behave file will be written
 
-python blueROV_dsl_to_behaverify.py /path/to/behaverify.tx ex.tree --output_file ex.behave
+python dsl_to_behaverify.py /path/to/behaverify.tx ex.tree --output_file ex.behave
 
 
 ## dsl_to_pytree.py
@@ -161,8 +186,11 @@ This converts a .behave file to a .py file.
 ### Required Arguments
 
 - metamodel file - a .tx file. In this case, ./metamodel/behaverify.tx should be used
+
 - model file - a .tree file that follows the rules described in the metamodel file
+
 - output file - the name of the main python file to be used. Note that this should just be a name, something like ex.py. No path information should be included
+
 - location - the path to a directory where the files should be output.
 
 python dsl_to_pytree.py /path/to/behaverify.tx ex.tree ex.py /path/to/output/
@@ -174,12 +202,15 @@ This converts a pytree to a .behave file.
 ### Required Arguments
 
 - root file - a .py file.
+
 - root method - a method in the root file which returns the root node of the pytree to convert
 
 ### Optional Arguments
 
 - root args - any number of arguments (space separated). Each argument will be passed, in order, to the root method
+
 - string_args - any number of arguments (space separated). Each argumenty will be surrounded by quotation marks and then passed, in order, to the root method
+
 - output_file - where the .behave file will be written
 
 python pytree_to_behaverify.py ex.py create_root --output_file ex.behave
