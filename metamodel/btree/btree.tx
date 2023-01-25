@@ -397,8 +397,12 @@ Enumeration:
     INT | BOOL | STRING
 ;
 
+EnumerationDec:
+    INT | STRING
+;
+
 ModelOptions:
-    (is_bool = 'bool') | ('{' enums += Enumeration[','] '}') | ( '[' range_minimum = INT ',' range_maximum = INT ']')
+    (is_bool = 'bool') | ('{' enums += EnumerationDec[','] '}') | ( '[' range_minimum = INT ',' range_maximum = INT ']')
 ;
 
 UpdateStatement:
