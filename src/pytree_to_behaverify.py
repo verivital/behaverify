@@ -273,12 +273,12 @@ def write_to_file(root, file_name):
     if file_name is None:
         printer = pprint.PrettyPrinter(indent = 4)
         # printer = modified_pretty_print.modified_pprinter(indent = 4)
-        printer.pprint({'tick_condition' : 'TRUE', 'nodes' : nodes, 'variables' : variables})
+        printer.pprint({'tick_condition' : 'TRUE', 'nodes' : nodes, 'variables' : variables, 'specifications' : []})
     else:
         with open(file_name, 'w') as f:
             printer = pprint.PrettyPrinter(indent = 4, stream = f)
             # printer = modified_pretty_print.modified_pprinter(indent = 4, stream = f)
-            printer.pprint({'tick_condition' : 'TRUE', 'nodes' : nodes, 'variables' : variables})
+            printer.pprint({'tick_condition' : 'TRUE', 'nodes' : nodes, 'variables' : variables, 'specifications' : []})
 
 
 def main():

@@ -1120,6 +1120,19 @@
                                                                       'running': True,
                                                                       'success': True},
                                           'type': 'sequence_without_memory'}},
+    'specifications': [   'LTLSPEC G(((env_obstacles_present | '
+                          'env_emergency_sensor) -> ((halt.active) | '
+                          '(avoid_obstacles.active) | (env_BLUEROV_HALTED))));',
+                          'INVARSPEC (!(((env_BLUEROV_SURFACED) | '
+                          '(surface.active) | (halt.active) | '
+                          '(avoid_obstacles.active))) -> '
+                          '(((var_mission_stage_2 = MISSION_pipe_tracking) & '
+                          '((env_command_stage_8 = COMMAND_pipe_tracking) | '
+                          '(env_command_stage_8 = COMMAND_search_for_pipe))) | '
+                          '((var_mission_stage_2 = MISSION_go_to_waypoint) & '
+                          '(env_command_stage_8 = COMMAND_go_to_waypoint)) | '
+                          '((var_mission_stage_2 = MISSION_go_to_home) & '
+                          '(env_command_stage_8 = COMMAND_go_to_home))));'],
     'tick_condition': '!(env_BLUEROV_SURFACED)',
     'variables': {   'env_BLUEROV_HALTED': {   'custom_value_range': '{TRUE, '
                                                                      'FALSE}',
@@ -1176,7 +1189,7 @@
                                                               'COMMAND_pipe_tracking, '
                                                               'COMMAND_search_for_pipe}',
                                         'initial_value': None,
-                                        'keep_stage_0': False,
+                                        'keep_stage_0': True,
                                         'max_value': 1,
                                         'min_value': 0,
                                         'mode': 'VAR',

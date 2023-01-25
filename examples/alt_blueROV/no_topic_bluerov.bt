@@ -938,3 +938,7 @@ par BlueROV {
 
 //-------done------------------
 tick_prerequisite { (not, BLUEROV_SURFACED) } end_tick_prerequisite
+
+specifications {
+	LTLSPEC {(globally, (implies, bb_fls_warning 1, (or, BLUEROV_SURFACED 0, (equal, cm_hsd_input -1, 'cm_surface_task')))) } end_LTLSPEC
+} end_specifications
