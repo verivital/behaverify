@@ -940,5 +940,99 @@ par BlueROV {
 tick_prerequisite { (not, BLUEROV_SURFACED) } end_tick_prerequisite
 
 specifications {
-	INVARSPEC {(implies, bb_fls_warning 1, (or, BLUEROV_SURFACED 0, (equal, cm_hsd_input -1, 'cm_surface_task'))) } end_LTLSPEC
+	// ---------------------------------------------------------------------------------------------------------------
+	// -- --1. Do No Harm
+	// -- --2. Preserve UUV
+	// -- --3. Complete Missions
+	// ---------------------------------------------------------------------------------------------------------------
+
+	// -- --1. Do No Harm
+	// -- --To ensure no harm is done, we will prioritize avoiding obstacles. Thus we either engage in obstacle avoidance or halt (or are halted) if obstacles are present.
+	
+	INVARSPEC {(implies, bb_fls_warning 1, (or, BLUEROV_SURFACED 0, (equal, cm_hsd_input -1, 'cm_surface_task'))) } end_INVARSPEC
+	// -- TRUE
+	// -- --This specification confirms that if the FLS warning is set to true, then one of the following is true
+	// -- --1. We have already surfaced and are done
+	// -- --2. We executed the emergecny_stop_task and the command sent to the blueROV is surface
+
+	INVARSPEC { (implies, (and, (not, bb_fls_warning 1), (not, (equal, bb_mission 1, 'e_stop')), bb_obstacle_warning 1), (or, BLUEROV_SURFACED 0, (equal, cm_hsd_input -1, 'cm_obstacle_avoidance_task'))) } end_INVARSPEC
+	// -- TRUE
+	// -- --This specification confirms that if the FLS warning is NOT set to true and we are not executing an e_stop mission, then one of the following is true
+	// -- --1. We have already surfaced and are done
+	// -- --2. The commmand sent to the blueROV is obstacle avoidance
+
+	// -- --between these two specifications we have handled avoiding obstacles. if we cannot go around the obstacle (FLS warning true), then we attempt to stop. If we can go around and are not stopping for some other reason, then we do so.
+
+
+
+	// -- --2. Preserve UUV
+	// -- --Preservation of the UUV consists of two factors. The first is not crashing into things. Fortunately, this is handled by objective [1. Do No Harm]. Therefore, we are now only interested in the second aspect: ensuring that we surface if a failsafe is set and that the UUV is not lost underwater.
+
+
+	INVARSPEC { (implies, (and, (not, bb_obstacle_warning 1), (or, emergency_stop_warning 2, battery_low_warning 1, bb_sensor_failure_warning 1, obstacle_standoff_warning 1)), (or, BLUEROV_SURFACED 0, (equal, cm_hsd_input -1, 'cm_surface_task'))) } end_INVARSPEC
+	// -- TRUE
+	// -- --This specification confirms that if we're not doing basic obstacle avoidance, then any failsafe being triggered (emergency_stop_warning, battery_low_warning, sensor_failure_warning, obstacle_standoff_warning) mean one of the following are true
+	// -- --1. We have already surfaced and are done
+	// -- --2. The command sent to the blueROV is surface
+
+
+	INVARSPEC { (implies, (and, (not, bb_obstacle_warning 1), (and, (or, bb_rth_warning 2, bb_geofence 1), bb_home_reached 1)), (or, BLUEROV_SURFACED 0, (equal, cm_hsd_input -1, 'cm_surface_task'))) } end_INVARSPEC
+	// -- TRUE
+	// -- --This specification confirms that if we're not doing basic obstacle avoidance, then if we were returning home and have reached home, one of the following are true
+	// -- --1. We have already surfaced and are done
+	// -- --2. The command sent to the blueROV is surface
+
+
+	INVARSPEC { (implies, (and, (not, bb_obstacle_warning 1), (and, (or, bb_rth_warning 2, bb_geofence 1), (not, (equal, cm_hsd_input -1, 'cm_surface_task')))), (or, BLUEROV_SURFACED 0, (equal, cm_hsd_input -1, 'cm_rth_task'))) } end_INVARSPEC
+	// -- TRUE
+	// -- --This specification confirms that if we're not doing basic obstacle avoidance and we are not issuing the surface command, then if either geofence_warning or rth_warning have been set, one of the following are true
+	// -- --1. We have already surfaced and are done
+	// -- --2. The command sent to the blueROV is rth (return to home)
+
+	// -- --Between these three specifications, we have confirmed that if we're not doing obstacle avoidance then failsafes will cause us to surface, reaching home will cause us to surface, and exceeding the geofence or getting an RTH from some other source will cause us to attempt to return to home (and if we reach home we will surface by the 2nd specification).
+	// -- --This confirms that the UUV will attempt to preserve itself if it is not prioritizing [1. Do No Harm].
+
+
+
+	// -- --3. Complete Missions
+	// -- --Finally, if we possible, we would like to focus on completing missions. The two mission types are pipe_tracking and waypoint_following
+
+
+	INVARSPEC { (implies, (not, (or, (equal, cm_hsd_input -1, 'cm_surface_task'), (equal, cm_hsd_input -1, 'cm_rth_task'), (equal, cm_hsd_input -1, 'cm_obstacle_avoidance_task'))), (or, BLUEROV_SURFACED 0, (equal, cm_hsd_input -1, 'cm_loiter_task'), (equal, cm_hsd_input -1, 'cm_tracking_task'), (equal, cm_hsd_input -1, 'cm_waypoint_task'))) } end_INVARSPEC
+	// --TRUE
+	// -- --This specification confirms that if we are not busy with surfacing, returning to home, or avoiding obstacles, then one of the following is true
+	// -- --1. We have already surfaced and are done
+	// -- --2. The command sent is mission related.
+	// -- --While this specification is true, it's also trivially true....because the full domain for cm_hsd_input is {cm_surface_task, cm_rth_task, cm_obstacle_avoidance_task} UNION {cm_loiter_task, cm_tracking_task, cm_waypoint_task}...so by excluding the first half in the assertion, the implication is trivially true. In fact, we can even remove var_BLUEROV_SURFACED.
+	INVARSPEC { (implies, (not, (or, (equal, cm_hsd_input -1, 'cm_surface_task'), (equal, cm_hsd_input -1, 'cm_rth_task'), (equal, cm_hsd_input -1, 'cm_obstacle_avoidance_task'))), (or, (equal, cm_hsd_input -1, 'cm_loiter_task'), (equal, cm_hsd_input -1, 'cm_tracking_task'), (equal, cm_hsd_input -1, 'cm_waypoint_task'))) } end_INVARSPEC
+	// --TRUE
+	// -- --The specification still holds. Let us move to more interesting mission statements.
+
+
+	INVARSPEC { (implies, (not, (or, (equal, cm_hsd_input -1, 'cm_surface_task'), (equal, cm_hsd_input -1, 'cm_rth_task'), (equal, cm_hsd_input -1, 'cm_obstacle_avoidance_task'))), (or, BLUEROV_SURFACED 0, (and, (equal, bb_mission 1, 'pipe_following'), bb_pipe_lost_warning 1, (equal, cm_hsd_input -1, 'cm_loiter_task')), (and, (equal, bb_mission 1, 'pipe_following'), (not, bb_pipe_lost_warning 1), (equal, cm_hsd_input -1, 'cm_tracking_task')), (and, (equal, bb_mission 1, 'waypoint_following'), (equal, cm_hsd_input -1, 'cm_waypoint_task')))) } end_INVARSPEC
+	// --TRUE
+	// -- --This specification confirms that if we are not busy with surfacing, returning to home, or avoiding obstacles, then one of the following is true
+	// -- --1. We have already surfaced and are done
+	// -- --2. Our mission is follow a pipe and we have lost the pipe, so we are loitering until it reappears
+	// -- --3. Our mission is follow a pipe and we have not lost the pipe, so we are following the pipe
+	// -- --4. Our mission is go to a waypoint and we are going to a waypoint
+
+
+	// -- --Thus, if we are not busy with [1. Do No Harm] or [2. Preserve UUV], we will be doing out best to [3. Complete Missions].
+
+
+	// ------------------------------------------------------------------------------------------------------------------
+	// -- --Misc Tree makes sense checks
+
+	// -- --Speed min and speed_max are mutually exclusive
+	INVARSPEC { (implies, (active, speed_min_task), (not, (active, speed_max_task))) } end_INVARSPEC // --TRUE
+	INVARSPEC { (implies, (active, speed_max_task), (not, (active, speed_min_task))) } end_INVARSPEC // --TRUE
+
+	// -- --The last loiter task is included, but can never be reached.
+	INVARSPEC { (not, (active, loiter_task_1)) } end_INVARSPEC // --TRUE
+
+	// -- --If we have not surfaced, then one of the tasks is selected by the priorities selected, or we're doing obstacle avoidance
+	INVARSPEC { (implies, (not, BLUEROV_SURFACED 0), (or, (equal, (count, (active, surface_task), (active, surface_task_1), (active, rth_task), (active, loiter_task), (active, tracking_task), (active, waypoint_task)), 1), (equal, cm_hsd_input -1, 'cm_obstacle_avoidance_task'))) } end_INVARSPEC
+	// --TRUE
+
 } end_specifications
