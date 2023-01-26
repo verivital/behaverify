@@ -1,0 +1,46 @@
+system exampleSystem; //this is required, but adds no information to the model.
+type notUsedSimple; //each 'SimpleType' we declare can be used for code generation. Because we want to include some variables, we need at least one SimpleType for code generation. This will not be used in the model
+message notUsedMessage notUsedPackage end; //this is needed if we want to use an input node, which we do, because this is an example.
+topic notUsedMessage notUsedTopic hi; //this is needed if we wnat to use an input node, which we do, because this is an example.
+var notUsedSimple varA, model_as({'on', 'off', 'unknown'}, 'off'); //we've defined a variable named varA, which can be in 3 states: on, off, or unknown. it starts as off
+var notUsedSimple varB, model_as(bool, False); //we've defined a variable named varB, which is a boolean. it starts as false.
+
+input inputNode notUsedTopic -> varA //here we are declaring an Input Node. It will monitor the topic and set varA if a new value appears (this is abstracted as being set to a random value). if a random value would ruin the model, you are encouraged to use model_ignore_topic and instead set a new value using a set declaration.
+set(varA, try((equal, varA, 'unknown'), 'off'), varA) //if the new value of varA is unknown, we will set varA to off, otherwise, we don't change the value
+//varB is not set in this node.
+end
+
+//here we could write a check node. Check nodes are handled automatically and are fairly straight forward, so they weren't explained above.
+check is_varB varB == True; //checks if varB is True.
+
+task taskNode
+set(varB, (equal, varA, 'on')) //sets varB equal to the result of varA == 'on'
+set(varA, try(varB, varA), (any, 'off', 'unknown')) //if varB is true, then varA does not change. if varB is false, set varA nondeterministically to 'off' or 'unknown'
+return success //value to return
+end;
+//now we construct the tree
+
+tree ( updatetime = 1 , timeout = 1 ) //information for codeGeneration, we don't need any of this, but requred.
+seq theRoot //our root node can have any name. this one is a sequence node. 
+{
+	mon inputNode //our first child is the input node
+	sel someName // our second child is a selector node with a very creative and descriptive name
+	{
+		chk is_varB //our first child of the selector node
+		exec taskNode //our second child of the selector node
+	}
+}
+// here we could specify a tick pre-requisite. If one is not specified, the tree always ticks. 
+// As an example, if you have a variable called MissionOver, and the tree shouldn't tick if MissionOver is True, then you might do
+// tick_prerequisite { (not, MissionOver) } end_tick_prerequisite
+// but we won't include a prereq here.
+//next up are specifications. We'll include several of each type.
+specifications {
+	INVARSPEC { (not, (equal, varA 0, 'unknown')) } end_INVARSPEC //this specification says that at the start of each tick, varA is not equal to 'unknown' (this is false)
+	INVARSPEC { (not, (equal, varA 2, 'unknown')) } end_INVARSPEC //this specification says that after 2 updates (so once inputNode finishes), varA is not equal to 'unknown' (this is false, because inputNode might fail to update varA)
+	INVARSPEC { (or, varB -1, (not, varB -1)) } end_INVARSPEC //this specification says that at the end of each tick, varB is true or false (true...obviously).
+	CTLSPEC { (exists_finally, varB 0) } end_CTLSPEC //this says that there exists a path where varB is eventually true (this is true)
+	CTLSPEC { (always_finally, varB 0) } end_CTLSPEC //this says that on every path, varB is eventually true (this is false)
+	LTLSPEC { (globally, (or, (not, varB 0), (not, (active, taskNode)))) } end_LTLSPEC //this says globally, at the start varB is False or taskNode is not active (this is true)
+	LTLSPEC { (globally, (or, (not, varB 0), ((active, taskNode)))) } end_LTLSPEC //this says globally, at the start varB is False or taskNode not active (this is false)
+} end_specifications
