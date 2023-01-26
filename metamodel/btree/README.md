@@ -15,7 +15,7 @@ var bool example = False , model_as(bool, False);
 Note that in the above example, the type and model are both bool. Similarly, the default and initial value are both False. This need not be the case. For instance
 ```
 var String example2 = 'potato', model_as([0,3], 2);
-var SomeComplexMessagetype example4, model_as({'safe', 'unsafe'}, 'safe');
+var SomeComplexMessagetype example3, model_as({'safe', 'unsafe'}, 'safe');
 ```
 is completely acceptable, though perhaps not productive for the goals of accurately modeling. Below we explain using example2 what each part means
 
@@ -27,9 +27,9 @@ is completely acceptable, though perhaps not productive for the goals of accurat
 
 These first three values are what is used by code generation. Of the three, only name matters for modeling. Note then that it is possible to declare a variable as follows
 ```
-var Float32 example3;
+var Float32 example4;
 ```
-Because example3 dose NOT have a model_as statement, it will not be modeled. example3 would only be used in code generation. Continuing with the explanation.
+Because example4 does NOT have a model_as statement, it will not be modeled. example3 would only be used in code generation. Continuing with the explanation.
 
 - model : model defines what type the variable is in the model. This has no effect on code generation, it is only used in the model. If the variable is to be modeled, this paramater is required.
 
