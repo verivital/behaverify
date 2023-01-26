@@ -5,17 +5,17 @@ This file will not currently contain all relevant information. Specifically it w
 ## Variables
 
 All variables that will be used in the model must be declared in the appropriate section. A variable must be of the following format
-
+```
 'var' type=[Type] name=ID ('=' default=DefaultBBType)? (',' 'model_as' '(' model = ModelOptions (',' initial_value = Enumeration)? ')')? ';'
-
-Thus an example would be
-
+```
+Note that while initial_value is listed as being of Enumeration type, this will also accept Ints or boolean values. Thus an example would be
+```
 var bool example = False , model_as(bool, False);
-
+```
 Note that in the above example, the type and model are both bool. Similarly, the default and initial value are both False. This need not be the case. For instance
-
+```
 var String example2 = 'potato', model_as([0,3], 2);
-
+```
 is completely acceptable, though perhaps not productive for the goals of accurately modeling. Below we explain using example2 what each part means
 
 - type : type defines what type the variable is IN CODE GENERATION. This has no effect on the model. This paramater is required.
@@ -25,9 +25,9 @@ is completely acceptable, though perhaps not productive for the goals of accurat
 - default : the default value (if any) to be used IN CODE GENERATION. This has no effect on the model. This paramter is optional.
 
 These first three values are what is used by code generation. Of the three, only name matters for modeling. Note then that it is possible to declare a variable as follows
-
+```
 var Float32 example3;
-
+```
 Because exampl3 dose NOT have a model_as statement, it will not be modeled. example3 would only be used in code generation. Continuing with the explanation.
 
 - model : model defines what type the variable is in the model. This has no effect on code generation, it is only used in the model. If the variable is to be modeled, this paramater is required.
@@ -39,9 +39,9 @@ Thus the model information from example2 would be as follows: name is example2, 
 ### ModelOptions
 
 ModelOptions describes what domains can be used to model a variable. ModelOptions must be of the following format
-
+```
 (is_bool = 'bool') | ('{' enums += EnumerationDec[','] '}') | ( '[' range_minimum = INT ',' range_maximum = INT ']')
-
+```
 Thus the three modes, so to speak, would be: bool, {enum1, enum2, ..., enumK}, [minVal, maxVal]. Note that an enum could be an int or a string. Thus {0, 'potato', 3, 'tomato'} is a valid set of enumerations. However, {'1.3', True, 'TRUE'} would all fail, if not here, then when the .smv file is ran. '1.3' would fail because it would end up being represented as 1.3 in .smv, and nuXmv does not allow floats in enumerations. True and 'TRUE' would fail because nuXmv places restrictions on booleans appear inside enumerations. However {'True', '3'} would be acceptable.
 
 
@@ -53,29 +53,25 @@ Once all variables are declared, we will need to be able to use them. Variables 
 ### set declaration
 
 A set declaration defines how the variable should be updated when the node runs. set declarations must be of the following format
-
+```
 'set' '(' variable = [BBVar] ',' updates *= UpdateStatement default_update = CodeStatement')'
-
+```
 Thus two examples would be
-
+```
 set(example, True)
-
 set(example2, try((not, example), (addition, example2, 1)), (any, 0, (subtraction, example2, 1)))
-
+```
 The first example sets the variable example to be True. The second example sets the variable example2 to be example2 + 1 if example is False, else it picks non-deterministically form 0 and example-1. In python code, this is equivalent to the following
-
+```
 if not example: example2 = example2 + 1
-
 else: example2 = random.choice([0, example2 - 1])
-
+```
 Note that you can have any number of try statements, including 0. Furthermore, note that if a node had both of our examples as set declarations, it would be the same as the following python code segment
-
+```
 example = True
-
 if not example: example2 = example2 + 1
-
 else: example2 = random.choice([0, example2 - 1])
-
+```
 Let us now more specifically disect example2. it consists of 3 parts
 
 - variable : this informs us which variable is being updated. In this case it's example2
@@ -87,9 +83,9 @@ Let us now more specifically disect example2. it consists of 3 parts
 ### Update Statement
 
 An update statement is a pair (condition, update_value). If the condition is True, then the update_value is used. Update Statements must be of the following format
-
+```
 'try(' condition = CodeStatement ',' update_value = CodeStatement ')' ','
-
+```
 Note that the comma at the end is to ensure each entry in the set declaration is comma separated, for asthetic reasons. Unfortunately, there was no easier way to handle this.
 
 CodeStatement is described in more detail below. However, note that a CodeStatement need not resolve to a True or False according to the grammar. It is up to the user to ensure that the condition is actually something that can resolve to True or False (e.g, 'potato' is a valid CodeStatement, but would not function as a condition. However, type checking this is not currently enabled).
@@ -97,9 +93,9 @@ CodeStatement is described in more detail below. However, note that a CodeStatem
 ### CodeStatement
 
 A CodeStatement is of the following format:
-
+```
 (constant = STRICTFLOAT) | (constant = INT) | (constant = BOOL) | (constant = STRING) | (variable = [BBVar]) | ('(' function_call = function ')') | ('(' CodeStatement = CodeStatement ')')
-
+```
 Intuitively, this means your code statement can be
 
 1. a constant (float, int, bool, or string)
@@ -116,12 +112,11 @@ Intuitively, this means your code statement can be
 Input Nodes are a specific type of node. In general, it is assumed that an input node is monitoring some topic. If new data came in, then it will update a variable and return success, and potentially run some other code in the process. If no new data came in, then it returns running. Note that an Input Node will only excecute its set declarations if it received new data.
 
 An InputNode is of the following format :
-
+```
 'input' name=ID input_topic=[Topic] '->' topic_bbvar=[BBVar] ('vars' bb_vars *= [BBVar][','] ';')? args *= Param ('comment' comment=STRING)? 
-
 ignore_topic ?= 'model_ignore_topic' ignore_node ?= 'model_ignore' set_vars *= SetVar
-
 'end'(';')?
+```
 
 For the purpose of modeling, we are interested in the following elements:
 
@@ -142,15 +137,12 @@ Note that ignore_topic and ignore_node can be useful tools for reducing the size
 Task Nodes are a specific type of node. If a task node is ticked, then all of its set declarations are executed in order and it returns the appropriate status.
 
 A TaskNode is of the following format :
-
+```
 'task' name=ID ('in' input_topics+=TopicArg[','] ';')? ('out' output_topics+=TopicArg[','] ';')?
-
 ('vars' bb_vars *= [BBVar][','] ';')? args*=Param ('comment' comment=STRING (';')?)?
-
 set_vars *= SetVar 'return' return_status = StdBehaviorType
-
 'end'(';')?
-
+```
 For the purpose of modeling, we are interested in the following elements:
 
 - name : the name of the Task Node.
@@ -205,9 +197,9 @@ An Invariant is a specification that we want to always be true. For instance, th
 NOTE: If possible, you should write your specifications as Invariants. This is because while an Invariant specification can easily be written using LTL or CTL, nuXmv will check invariant specifications far more efficiently because it is able to make various simplifying assumptions.
 
 An invariant specification takes the following form :
-
+```
 (spec_type = 'INVARSPEC' '{' CodeStatement = CodeStatementINVAR '}' 'end_INVARSPEC')
-
+```
 Note that we've already seen what CodeStatement is. CodeStatementINVAR is like CodeStatement, except several new functions are allowed. One key difference is that CodeStatementINVAR allows NodeNames to appear inside specific functions. Those functions are:
 
 - active : this function will return true if the node is active and false otherwise. E.G. (active, nodeA). 
@@ -221,9 +213,9 @@ Note that we've already seen what CodeStatement is. CodeStatementINVAR is like C
 Note that the grammar will parse even if the node name does not refer to a node that actually exists. It is up to the user to check that the node in question exists.
 
 An example invariant specifcation, then, is as follows
-
+```
 INVARSPEC { (implies, (active, nodeA), (active, nodeB)) } end_INVARSPEC
-
+```
 This specification states that if nodeA is active, then nodeB is active.
 
 The second key difference between CodeStatement and CodeStatementINVAR is that CodeStatementINVAR requires you to specify an additional bit of information with respect to variables. This is because of the Variable Stages discussed earlier. Each variable must now be followed by an Integer.
@@ -235,9 +227,9 @@ The second key difference between CodeStatement and CodeStatementINVAR is that C
 - x : (x is positive). This indicates that xth stage of the variable should be used. If x is 1, then this means the first stage, meaning after the variable has been set 1 time. If x exceeds the number of stages the variable has, then it defaults to the last stage.
 
 Thus we could write a specification as follows
-
+```
 INVARSPEC { (or, (active, nodeA) (equal, varA 1, -5)) } INVARSPEC
-
+```
 Which states that nodeA is active, or varA_stage_1 is -5, or both.
 
 
@@ -246,21 +238,21 @@ Which states that nodeA is active, or varA_stage_1 is -5, or both.
 In some cases, a specification requires the concept of time and an Invariant specification cannot describe it adequately. In these cases, either a CTL or LTL spec is required. From personal experience, CTL specifications seem to generally perform faster than LTL specifications, though the output is generally cryptic by comparison and they seem harder to reason about.
 
 The primary difference between a CTL specificaiton and an Invariant Specifcation is, as mentioned, the presence of time. When writing a CTL specification, various additional functions are enabled in order to reason about time, though they cannot always be used. An example of this would be the following:
-
+```
 CTLSPEC { (exists_finally, (active, nodeA)) } end_CTLSPEC
-
+```
 Which specifies that there exists a path where eventually nodeA is active. In general, you cannot make specifications regarding time within certain specific functions. 
-
+```
 CTLSPEC { (equal, (addition, (exists_finally, varA 0), 1) 1) } end_CTLSPEC
-
+```
 Is therefore invalid and will throw an error when parsed. However
-
+```
 CTLSPEC { (exists_finally, (equal, (addition, varA 0, 1) 1)) } end_CTLSPEC
-
+```
 is completely acceptable. Note also that a time specification need not be at the highest level. For instance:
-
+```
 CTLSPEC { (or, (always_finally, (active, nodeA)), (exists_globally, (active, nodeB))) } end_CTLSPEC
-
+```
 which specifies that either the nodeA is always eventually active, or there exists a path where nodeB is always active. 
 
 Time can be specified using the following functions:
@@ -282,9 +274,9 @@ Time can be specified using the following functions:
 - always_until : on every path condition1 holds until condition2 holds
 
 Note that these can be combined. For instance:
-
+```
 CTLSPEC { (exists_finally (always_globally, (active, nodeA))) } end_CTLSPEC
-
+```
 is a specification that states that there exists a path where eventually all subsequent paths always an active nodeA.
 
 Note that each of these functions takes 1 argument, except the until functions which take 2.
