@@ -29,7 +29,7 @@ These first three values are what is used by code generation. Of the three, only
 ```
 var Float32 example4;
 ```
-Because example4 does NOT have a model_as statement, it will not be modeled. example3 would only be used in code generation. Continuing with the explanation.
+Because example4 does NOT have a model_as statement, it will not be modeled. example4 would only be used in code generation. Continuing with the explanation.
 
 - model : model defines what type the variable is in the model. This has no effect on code generation, it is only used in the model. If the variable is to be modeled, this paramater is required.
 
