@@ -66,6 +66,8 @@ And at this point, the user may use the ex.smv file with nuXmv.
 
 ### .bt to .smv
 
+FOR A DETAILED GUIDE TO CREATING A .BT FILE, SEE ./metamodel/btree/README.md
+
 In this case, the user begins by creating a .tree file that follows the rules specified in ./metamodel/btree/btree.tx. Assuming the user is at the top level directory of this repository and their tree is named ex.tree, the user will then execute the following commands
 
 python ./src/btree_dsl_to_behaverify.py ./metamodel/btree/btree.tx ex.tree --output_file ex.behave
