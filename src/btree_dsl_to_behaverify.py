@@ -412,11 +412,19 @@ def walk_tree_recursive(metamodel, current_node, parent_name, nodes, node_names,
                     # nothing fancy, just add it
                     variables[variable_name]['next_value'].append((node_name,
                                                                    non_determinism,
-                                                                   make_new_stage(set_var, node_name, variables, False, None)))
+                                                                   [('!(' + node_name + '_update_success)', format_variable(set_var.variable, node_name, variables, False, None))]
+                                                                   + make_new_stage(set_var, node_name, variables, False, None)))
+                    # variables[variable_name]['next_value'].append((node_name,
+                    #                                                non_determinism,
+                    #                                                make_new_stage(set_var, node_name, variables, False, None)))
                 else:
                     variables[variable_name]['next_value'].append((node_name,
                                                                    non_determinism,
-                                                                   make_new_stage(set_var, node_name, variables, True, variable_name)))
+                                                                   [('!(' + node_name + '_update_success)', format_variable(set_var.variable, node_name, variables, True, variable_name))]
+                                                                   + make_new_stage(set_var, node_name, variables, True, variable_name)))
+                    # variables[variable_name]['next_value'].append((node_name,
+                    #                                                non_determinism,
+                    #                                                make_new_stage(set_var, node_name, variables, True, variable_name)))
                 variables[variable_name]['keep_stage_0'] = keep_stage_0  # reset keep_stage_0 (or properly mark it if non_determinism changed it)
 
     elif textx.textx_isinstance(current_node, metamodel['TimerBTNode']):
