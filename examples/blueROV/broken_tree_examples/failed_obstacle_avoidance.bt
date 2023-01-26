@@ -741,7 +741,7 @@ par BlueROV {
                 		}
             		}
         	}
-    		chk obstacle_avoidance_required //a new check which checks bb_obstacle_warning
+    		//chk obstacle_avoidance_required //a new check which checks bb_obstacle_warning
 		//^returns success if obstacles need to be avoided. returns failure otherwise, allowing remaining selectors to take place.
 		//
 		//the surface tasks have been consolidated. if any of the failsafes are triggered, we surface.

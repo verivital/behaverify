@@ -727,7 +727,6 @@ par BlueROV {
 		//NOTE next mission appears to have some code that is specific to waypoint. specifically, it calls next_wp__pub.publish, which seems waypoint specific
 		//if this were to be used more generally, that might need to be reworked, but i'm not quite sure what that does.
 	}
-    	exec mission_server //everything that is used by this comes after it. we should be able to remove all topic publishing. 
     	exec obstacle_avoidance //reworked. does not publish. only detects if obstacle avoidance is happening and sets appropriate heading.
     	sel priorities {
     		//per the conversation in slack, since emergency_stop_task overwrites everything else, this is the most important task and should be handled first.
@@ -933,6 +932,7 @@ par BlueROV {
 		// }
         	exec loiter_task
     	}
+	exec mission_server //everything that is used by this comes after it. we should be able to remove all topic publishing. 
     	exec publish_HSD_command //new task to publish what command we're doing.
 }
 
