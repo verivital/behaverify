@@ -1708,9 +1708,72 @@
                                                                            'running': True,
                                                                            'success': True},
                                                'type': 'read_action'}},
-    'specifications': [   'LTLSPEC G((var_bb_fls_warning_stage_1 -> '
+    'specifications': [   'INVARSPEC (var_bb_fls_warning_stage_1 -> '
                           '(var_BLUEROV_SURFACED | (var_cm_hsd_input_stage_8 = '
-                          'cm_surface_task))));'],
+                          'cm_surface_task)));',
+                          'INVARSPEC ((!(var_bb_fls_warning_stage_1) & '
+                          '!((var_bb_mission_stage_1 = e_stop)) & '
+                          'var_bb_obstacle_warning_stage_1) -> '
+                          '(var_BLUEROV_SURFACED | (var_cm_hsd_input_stage_8 = '
+                          'cm_obstacle_avoidance_task)));',
+                          'INVARSPEC ((!(var_bb_obstacle_warning_stage_1) & '
+                          '(var_emergency_stop_warning_stage_2 | '
+                          'var_battery_low_warning_stage_1 | '
+                          'var_bb_sensor_failure_warning_stage_1 | '
+                          'var_obstacle_standoff_warning_stage_1)) -> '
+                          '(var_BLUEROV_SURFACED | (var_cm_hsd_input_stage_8 = '
+                          'cm_surface_task)));',
+                          'INVARSPEC ((!(var_bb_obstacle_warning_stage_1) & '
+                          '((var_bb_rth_warning_stage_2 | '
+                          'var_bb_geofence_stage_1) & '
+                          'var_bb_home_reached_stage_1)) -> '
+                          '(var_BLUEROV_SURFACED | (var_cm_hsd_input_stage_8 = '
+                          'cm_surface_task)));',
+                          'INVARSPEC ((!(var_bb_obstacle_warning_stage_1) & '
+                          '((var_bb_rth_warning_stage_2 | '
+                          'var_bb_geofence_stage_1) & '
+                          '!((var_cm_hsd_input_stage_8 = cm_surface_task)))) '
+                          '-> (var_BLUEROV_SURFACED | '
+                          '(var_cm_hsd_input_stage_8 = cm_rth_task)));',
+                          'INVARSPEC (!(((var_cm_hsd_input_stage_8 = '
+                          'cm_surface_task) | (var_cm_hsd_input_stage_8 = '
+                          'cm_rth_task) | (var_cm_hsd_input_stage_8 = '
+                          'cm_obstacle_avoidance_task))) -> '
+                          '(var_BLUEROV_SURFACED | (var_cm_hsd_input_stage_8 = '
+                          'cm_loiter_task) | (var_cm_hsd_input_stage_8 = '
+                          'cm_tracking_task) | (var_cm_hsd_input_stage_8 = '
+                          'cm_waypoint_task)));',
+                          'INVARSPEC (!(((var_cm_hsd_input_stage_8 = '
+                          'cm_surface_task) | (var_cm_hsd_input_stage_8 = '
+                          'cm_rth_task) | (var_cm_hsd_input_stage_8 = '
+                          'cm_obstacle_avoidance_task))) -> '
+                          '((var_cm_hsd_input_stage_8 = cm_loiter_task) | '
+                          '(var_cm_hsd_input_stage_8 = cm_tracking_task) | '
+                          '(var_cm_hsd_input_stage_8 = cm_waypoint_task)));',
+                          'INVARSPEC (!(((var_cm_hsd_input_stage_8 = '
+                          'cm_surface_task) | (var_cm_hsd_input_stage_8 = '
+                          'cm_rth_task) | (var_cm_hsd_input_stage_8 = '
+                          'cm_obstacle_avoidance_task))) -> '
+                          '(var_BLUEROV_SURFACED | ((var_bb_mission_stage_1 = '
+                          'pipe_following) & var_bb_pipe_lost_warning_stage_1 '
+                          '& (var_cm_hsd_input_stage_8 = cm_loiter_task)) | '
+                          '((var_bb_mission_stage_1 = pipe_following) & '
+                          '!(var_bb_pipe_lost_warning_stage_1) & '
+                          '(var_cm_hsd_input_stage_8 = cm_tracking_task)) | '
+                          '((var_bb_mission_stage_1 = waypoint_following) & '
+                          '(var_cm_hsd_input_stage_8 = cm_waypoint_task))));',
+                          'INVARSPEC ((speed_min_task.active) -> '
+                          '!((speed_max_task.active)));',
+                          'INVARSPEC ((speed_max_task.active) -> '
+                          '!((speed_min_task.active)));',
+                          'INVARSPEC !((loiter_task_1.active));',
+                          'INVARSPEC (!(var_BLUEROV_SURFACED) -> '
+                          '((count((surface_task.active), '
+                          '(surface_task_1.active), (rth_task.active), '
+                          '(loiter_task.active), (tracking_task.active), '
+                          '(waypoint_task.active)) = 1) | '
+                          '(var_cm_hsd_input_stage_8 = '
+                          'cm_obstacle_avoidance_task)));'],
     'tick_condition': '!(var_BLUEROV_SURFACED)',
     'variables': {   'BLUEROV_SURFACED': {   'custom_value_range': '{TRUE, '
                                                                    'FALSE}',
@@ -1782,7 +1845,9 @@
                                                 'name': 'battery_low_warning',
                                                 'next_value': [   (   'battery2bb',
                                                                       False,
-                                                                      [   (   'TRUE',
+                                                                      [   (   '!(battery2bb_update_success)',
+                                                                              'var_battery_low_warning'),
+                                                                          (   'TRUE',
                                                                               '(var_battery_stage_1 '
                                                                               '<= '
                                                                               '0)')])],
@@ -1797,25 +1862,27 @@
                                            'name': 'bb_fls_warning',
                                            'next_value': [   (   'fls_warning2bb',
                                                                  False,
-                                                                 [   (   'TRUE',
+                                                                 [   (   '!(fls_warning2bb_update_success)',
+                                                                         'var_bb_fls_warning'),
+                                                                     (   'TRUE',
                                                                          '(var_bb_fls_warning '
                                                                          '| '
                                                                          'var_obstacle_in_view_stage_1)')])],
                                            'prefix': 'var_'},
                      'bb_geofence': {   'custom_value_range': '{TRUE, FALSE}',
                                         'initial_value': [('TRUE', 'FALSE')],
-                                        'keep_stage_0': False,
+                                        'keep_stage_0': True,
                                         'max_value': 1,
                                         'min_value': 0,
                                         'mode': 'VAR',
                                         'name': 'bb_geofence',
                                         'next_value': [   (   'geofence2bb',
                                                               True,
-                                                              [   (   'next(geofence2bb_update_success)',
+                                                              [   (   'geofence2bb_update_success',
                                                                       '{TRUE, '
                                                                       'FALSE}'),
                                                                   (   'TRUE',
-                                                                      'LINK_TO_PREVIOUS_FINAL_var_bb_geofence')])],
+                                                                      'var_bb_geofence')])],
                                         'prefix': 'var_'},
                      'bb_geofence_warning': {   'custom_value_range': '{TRUE, '
                                                                       'FALSE}',
@@ -1828,7 +1895,9 @@
                                                 'name': 'bb_geofence_warning',
                                                 'next_value': [   (   'geofence2bb',
                                                                       False,
-                                                                      [   (   'TRUE',
+                                                                      [   (   '!(geofence2bb_update_success)',
+                                                                              'var_bb_geofence_warning'),
+                                                                          (   'TRUE',
                                                                               '(var_bb_geofence_warning '
                                                                               '| '
                                                                               'var_bb_geofence_stage_1)')])],
@@ -1859,7 +1928,9 @@
                                             'name': 'bb_home_reached',
                                             'next_value': [   (   'home2bb',
                                                                   False,
-                                                                  [   (   'TRUE',
+                                                                  [   (   '!(home2bb_update_success)',
+                                                                          'var_bb_home_reached'),
+                                                                      (   'TRUE',
                                                                           '(var_bb_home_reached '
                                                                           '| '
                                                                           '(var_bb_home_dist_stage_1 '
@@ -1891,7 +1962,7 @@
                                                                       'FALSE}',
                                                 'initial_value': [   (   'TRUE',
                                                                          'FALSE')],
-                                                'keep_stage_0': False,
+                                                'keep_stage_0': True,
                                                 'max_value': 1,
                                                 'min_value': 0,
                                                 'mode': 'VAR',
@@ -1913,7 +1984,9 @@
                                                  'name': 'bb_pipe_lost_warning',
                                                  'next_value': [   (   'pipe_lost2bb',
                                                                        False,
-                                                                       [   (   'TRUE',
+                                                                       [   (   '!(pipe_lost2bb_update_success)',
+                                                                               'var_bb_pipe_lost_warning'),
+                                                                           (   'TRUE',
                                                                                '(var_bb_pipelost_stage_1 '
                                                                                '& '
                                                                                '(var_bb_mission '
@@ -1971,7 +2044,9 @@
                                            'name': 'bb_rth_warning',
                                            'next_value': [   (   'rth2bb',
                                                                  False,
-                                                                 [   (   'TRUE',
+                                                                 [   (   '!(rth2bb_update_success)',
+                                                                         'var_bb_rth_warning'),
+                                                                     (   'TRUE',
                                                                          '(var_bb_rth_warning '
                                                                          '| '
                                                                          'var_bb_rth_stage_1)')]),
@@ -2010,7 +2085,9 @@
                                                       'name': 'bb_sensor_failure_warning',
                                                       'next_value': [   (   'sensor_failure2bb',
                                                                             False,
-                                                                            [   (   'TRUE',
+                                                                            [   (   '!(sensor_failure2bb_update_success)',
+                                                                                    'var_bb_sensor_failure_warning'),
+                                                                                (   'TRUE',
                                                                                     '(var_bb_sensor_failure_warning '
                                                                                     '| '
                                                                                     'var_bb_sensor_failure_stage_1)')])],
@@ -2149,7 +2226,9 @@
                                                    'name': 'emergency_stop_warning',
                                                    'next_value': [   (   'fls_warning2bb',
                                                                          False,
-                                                                         [   (   'TRUE',
+                                                                         [   (   '!(fls_warning2bb_update_success)',
+                                                                                 'var_emergency_stop_warning'),
+                                                                             (   'TRUE',
                                                                                  '(var_emergency_stop_warning '
                                                                                  '| '
                                                                                  'var_obstacle_in_view_stage_1)')]),
@@ -2280,7 +2359,9 @@
                                                    'name': 'lec2_am_l_pipe_warning',
                                                    'next_value': [   (   'lec2_am_l_2bb',
                                                                          False,
-                                                                         [   (   'TRUE',
+                                                                         [   (   '!(lec2_am_l_2bb_update_success)',
+                                                                                 'var_lec2_am_l_pipe_warning'),
+                                                                             (   'TRUE',
                                                                                  '((var_lec2_am_l_stage_1 '
                                                                                  '= '
                                                                                  'pipe) '
@@ -2300,7 +2381,9 @@
                                                     'name': 'lec2_am_l_speed_warning',
                                                     'next_value': [   (   'lec2_am_l_2bb',
                                                                           False,
-                                                                          [   (   'TRUE',
+                                                                          [   (   '!(lec2_am_l_2bb_update_success)',
+                                                                                  'var_lec2_am_l_speed_warning'),
+                                                                              (   'TRUE',
                                                                                   '((var_lec2_am_l_stage_1 '
                                                                                   '= '
                                                                                   'speed) '
@@ -2348,7 +2431,9 @@
                                                    'name': 'lec2_am_r_pipe_warning',
                                                    'next_value': [   (   'lec2_am_r_2bb',
                                                                          False,
-                                                                         [   (   'TRUE',
+                                                                         [   (   '!(lec2_am_r_2bb_update_success)',
+                                                                                 'var_lec2_am_r_pipe_warning'),
+                                                                             (   'TRUE',
                                                                                  '((var_lec2_am_r_stage_1 '
                                                                                  '= '
                                                                                  'pipe) '
@@ -2368,7 +2453,9 @@
                                                     'name': 'lec2_am_r_speed_warning',
                                                     'next_value': [   (   'lec2_am_r_2bb',
                                                                           False,
-                                                                          [   (   'TRUE',
+                                                                          [   (   '!(lec2_am_r_2bb_update_success)',
+                                                                                  'var_lec2_am_r_speed_warning'),
+                                                                              (   'TRUE',
                                                                                   '((var_lec2_am_r_stage_1 '
                                                                                   '= '
                                                                                   'speed) '
@@ -2441,7 +2528,9 @@
                                                       'name': 'obstacle_standoff_warning',
                                                       'next_value': [   (   'fls2bb',
                                                                             False,
-                                                                            [   (   'TRUE',
+                                                                            [   (   '!(fls2bb_update_success)',
+                                                                                    'var_obstacle_standoff_warning'),
+                                                                                (   'TRUE',
                                                                                     '(var_fls_range_stage_1 '
                                                                                     '= '
                                                                                     'danger_zone)')])],
@@ -2508,7 +2597,9 @@
                                                       'name': 'rtreach_long_term_warning',
                                                       'next_value': [   (   'rtreach2bb',
                                                                             False,
-                                                                            [   (   'TRUE',
+                                                                            [   (   '!(rtreach2bb_update_success)',
+                                                                                    'var_rtreach_long_term_warning'),
+                                                                                (   'TRUE',
                                                                                     '((var_rtreach_result_stage_1 '
                                                                                     '= '
                                                                                     'long) '
@@ -2557,7 +2648,9 @@
                                             'name': 'rtreach_warning',
                                             'next_value': [   (   'rtreach2bb',
                                                                   False,
-                                                                  [   (   'TRUE',
+                                                                  [   (   '!(rtreach2bb_update_success)',
+                                                                          'var_rtreach_warning'),
+                                                                      (   'TRUE',
                                                                           '((var_rtreach_result_stage_1 '
                                                                           '= '
                                                                           'short) '
