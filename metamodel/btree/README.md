@@ -154,7 +154,7 @@ For the purpose of modeling, we are interested in the following elements:
 
 ## The Tree
 
-The tree is obviously used for modeling. The tree wil be walked using a Depth First Pattern until all nodes have been visited. Each visited node will be modeled (unless marked as ignore (see Input Nodes)). Furthermore, all of the set declarations will be processed IN THIS ORDER. Therefore, if you place Node1 before Node2, all of the set declarations in Node1 will occur before any of the set declarations in Node2.
+The tree is obviously used for modeling. The tree wil be walked using a Depth First Pattern until all nodes have been visited. Each visited node will be modeled (unless marked as ignore (see Input Nodes)). Furthermore, all of the set declarations will be processed IN THIS ORDER. Therefore, if you place Node1 before Node2 in the tree, all of the set declarations in Node1 will occur before any of the set declarations in Node2.
 
 ## Variable Stages - Differences between Encoding and Reality
 
