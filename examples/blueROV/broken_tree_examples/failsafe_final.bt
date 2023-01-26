@@ -746,26 +746,6 @@ par BlueROV {
 		//
 		//the surface tasks have been consolidated. if any of the failsafes are triggered, we surface.
 		//arguably we should merge the emergency stop check into this, and remove surface task from there.
-		seq failsafe_surface {
-			sel failsafe_triggered {
-				chk battery_low_fs
-				chk check_sensor_failure
-				chk obstacle_standoff_fs
-				//if any of the above 3 checks return success, failsafe_triggered returns success and we execute surface task
-				//finally, even if all 3 return failure, it is possible for us to still surface
-				//specifically, if we are supposed to be returning to home, and have reached home, then we surface.
-				seq rth_surface {
-					//first we check if return to home is needed. return to home is needed if either of these checks return success
-					sel rth_needed {
-						chk check_rth
-		    				chk check_geofence
-					}
-					//if at least one check returned success, then we check if we've reached home
-					chk check_surface
-				}
-			}
-			exec surface_task
-		}
 		//merged into above
 		// do battery_check {
 		// 	if battery_low_fs 
@@ -931,6 +911,26 @@ par BlueROV {
             	// 		exec waypoint_task
             	// 	} 
 		// }
+		seq failsafe_surface {
+			sel failsafe_triggered {
+				chk battery_low_fs
+				chk check_sensor_failure
+				chk obstacle_standoff_fs
+				//if any of the above 3 checks return success, failsafe_triggered returns success and we execute surface task
+				//finally, even if all 3 return failure, it is possible for us to still surface
+				//specifically, if we are supposed to be returning to home, and have reached home, then we surface.
+				seq rth_surface {
+					//first we check if return to home is needed. return to home is needed if either of these checks return success
+					sel rth_needed {
+						chk check_rth
+		    				chk check_geofence
+					}
+					//if at least one check returned success, then we check if we've reached home
+					chk check_surface
+				}
+			}
+			exec surface_task
+		}
         	exec loiter_task
     	}
     	exec publish_HSD_command //new task to publish what command we're doing.
@@ -1034,5 +1034,9 @@ specifications {
 	// -- --If we have not surfaced, then one of the tasks is selected by the priorities selected, or we're doing obstacle avoidance
 	INVARSPEC { (implies, (not, BLUEROV_SURFACED 0), (or, (equal, (count, (active, surface_task), (active, surface_task_1), (active, rth_task), (active, loiter_task), (active, tracking_task), (active, waypoint_task)), 1), (equal, cm_hsd_input -1, 'cm_obstacle_avoidance_task'))) } end_INVARSPEC
 	// --TRUE
+
+	INVARSPEC { (not, next_mission -1) } end_INVARSPEC
+	// --TRUE
+	// -- --We should always be reading the next available mission as soon as possible
 
 } end_specifications

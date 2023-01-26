@@ -409,7 +409,7 @@ end
 //        event_reallocate_button==False;
 
 check emergency_stop_fs
-        emergency_stop_warning==False;
+        emergency_stop_warning==True; //changed by Serene for new logic
 
 check obstacle_standoff_fs
         obstacle_standoff_warning == True; //changed by serene for new obstacle avoidance logic
@@ -732,15 +732,15 @@ par BlueROV {
     	sel priorities {
     		//per the conversation in slack, since emergency_stop_task overwrites everything else, this is the most important task and should be handled first.
 		//even before obstacle_avoidance.
-        	do emergency_stop_check{
-        		if emergency_stop_fs
-           		then{
-                		seq emergency_stop_tasks {
-                    			exec emergency_stop_task
-                    			exec surface_task
-                		}
-            		}
-        	}
+        	// do emergency_stop_check{
+        	// 	if emergency_stop_fs
+           	// 	then{
+                // 		seq emergency_stop_tasks {
+                //     			exec emergency_stop_task
+                //     			exec surface_task
+                // 		}
+            	// 	}
+        	// }
     		chk obstacle_avoidance_required //a new check which checks bb_obstacle_warning
 		//^returns success if obstacles need to be avoided. returns failure otherwise, allowing remaining selectors to take place.
 		//
@@ -748,6 +748,12 @@ par BlueROV {
 		//arguably we should merge the emergency stop check into this, and remove surface task from there.
 		seq failsafe_surface {
 			sel failsafe_triggered {
+				//the new logic here is that we first ccheck if we need an emergency stop.
+				// if we do, we call emergency stop, and then continue with surfacing.
+				seq emergency_stop_tasks {
+					chk emergency_stop_fs
+					exec emergency_stop_task
+				}
 				chk battery_low_fs
 				chk check_sensor_failure
 				chk obstacle_standoff_fs
@@ -1032,7 +1038,7 @@ specifications {
 	INVARSPEC { (not, (active, loiter_task_1)) } end_INVARSPEC // --TRUE
 
 	// -- --If we have not surfaced, then one of the tasks is selected by the priorities selected, or we're doing obstacle avoidance
-	INVARSPEC { (implies, (not, BLUEROV_SURFACED 0), (or, (equal, (count, (active, surface_task), (active, surface_task_1), (active, rth_task), (active, loiter_task), (active, tracking_task), (active, waypoint_task)), 1), (equal, cm_hsd_input -1, 'cm_obstacle_avoidance_task'))) } end_INVARSPEC
+	INVARSPEC { (implies, (not, BLUEROV_SURFACED 0), (or, (equal, (count, (active, surface_task), (active, rth_task), (active, loiter_task), (active, tracking_task), (active, waypoint_task)), 1), (equal, cm_hsd_input -1, 'cm_obstacle_avoidance_task'))) } end_INVARSPEC
 	// --TRUE
 
 	INVARSPEC { (not, next_mission -1) } end_INVARSPEC
