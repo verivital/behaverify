@@ -1773,7 +1773,8 @@
                           '(loiter_task.active), (tracking_task.active), '
                           '(waypoint_task.active)) = 1) | '
                           '(var_cm_hsd_input_stage_8 = '
-                          'cm_obstacle_avoidance_task)));'],
+                          'cm_obstacle_avoidance_task)));',
+                          'INVARSPEC !(var_next_mission_stage_2);'],
     'tick_condition': '!(var_BLUEROV_SURFACED)',
     'variables': {   'BLUEROV_SURFACED': {   'custom_value_range': '{TRUE, '
                                                                    'FALSE}',

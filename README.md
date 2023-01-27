@@ -10,13 +10,13 @@ Older versions can be found in subfolders of ./src/. The documentation for older
 
 # Installation/Requirements
 
-textx
+textx 3.0.0 
 
-python3.10
+python 3.10 (also tested with 3.6.9)
 
-you will also need to download nuXmv (behaverify will generate .smv files even if you don't have nuXmv, but you will not be able to do anything with the .smv files if you don't have nuXmv).
+you will also need to download nuXmv (behaverify will generate .smv files even if you don't have nuXmv, but you will not be able to do anything with the .smv files if you don't have nuXmv). nuXmv can be downloaded from https://nuxmv.fbk.eu/
 
-py_trees (only necessary if you're using the py_trees to .smv function)
+py_trees 2.1.6 (only necessary if you're using the py_trees to .smv function)
 
 
 # General Usage

@@ -816,6 +816,7 @@ INVARSPEC ((speed_min_task.active) -> !((speed_max_task.active)));
 INVARSPEC ((speed_max_task.active) -> !((speed_min_task.active)));
 INVARSPEC !((loiter_task_1.active));
 INVARSPEC (!(var_BLUEROV_SURFACED) -> ((count((surface_task.active), (surface_task_1.active), (rth_task.active), (loiter_task.active), (tracking_task.active), (waypoint_task.active)) = 1) | (var_cm_hsd_input_stage_8 = cm_obstacle_avoidance_task)));
+INVARSPEC !(var_next_mission_stage_2);
 MODULE define_nodes
 	DEFINE
 		BlueROV := 0;
@@ -899,36 +900,57 @@ MODULE leaf_module(internal_status_module)
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status_module.internal_status : invalid;
-MODULE composite_selector_without_memory_4(child_0, child_1, child_2, child_3)
+MODULE composite_parallel_success_on_all_without_memory_14(child_0, child_1, child_2, child_3, child_4, child_5, child_6, child_7, child_8, child_9, child_10, child_11, child_12, child_13)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
 		internal_status :=
 			case
-				!(child_0.internal_status = failure) : child_0.internal_status;
-				!(child_1.internal_status = failure) : child_1.internal_status;
-				!(child_2.internal_status = failure) : child_2.internal_status;
-				!(child_3.internal_status = failure) : child_3.internal_status;
-				TRUE : failure;
+				(child_0.internal_status = failure) : failure;
+				(child_1.internal_status = failure) : failure;
+				(child_2.internal_status = failure) : failure;
+				(child_3.internal_status = failure) : failure;
+				(child_4.internal_status = failure) : failure;
+				(child_5.internal_status = failure) : failure;
+				(child_6.internal_status = failure) : failure;
+				(child_7.internal_status = failure) : failure;
+				(child_8.internal_status = failure) : failure;
+				(child_9.internal_status = failure) : failure;
+				(child_10.internal_status = failure) : failure;
+				(child_11.internal_status = failure) : failure;
+				(child_12.internal_status = failure) : failure;
+				(child_13.internal_status = failure) : failure;
+				!(child_0.internal_status = success) : child_0.internal_status;
+				!(child_1.internal_status = success) : child_1.internal_status;
+				!(child_2.internal_status = success) : child_2.internal_status;
+				!(child_3.internal_status = success) : child_3.internal_status;
+				!(child_4.internal_status = success) : child_4.internal_status;
+				!(child_5.internal_status = success) : child_5.internal_status;
+				!(child_6.internal_status = success) : child_6.internal_status;
+				!(child_7.internal_status = success) : child_7.internal_status;
+				!(child_8.internal_status = success) : child_8.internal_status;
+				!(child_9.internal_status = success) : child_9.internal_status;
+				!(child_10.internal_status = success) : child_10.internal_status;
+				!(child_11.internal_status = success) : child_11.internal_status;
+				!(child_12.internal_status = success) : child_12.internal_status;
+				!(child_13.internal_status = success) : child_13.internal_status;
+				TRUE : success;
 			esac;
 		child_0.active := active;
-		child_1.active := child_0.status = failure;
-		child_2.active := child_1.status = failure;
-		child_3.active := child_2.status = failure;
-MODULE composite_selector_without_memory_2(child_0, child_1)
-	CONSTANTS
-		success, failure, running, invalid;
-	DEFINE
-		status := active ? internal_status : invalid;
-		internal_status :=
-			case
-				!(child_0.internal_status = failure) : child_0.internal_status;
-				!(child_1.internal_status = failure) : child_1.internal_status;
-				TRUE : failure;
-			esac;
-		child_0.active := active;
-		child_1.active := child_0.status = failure;
+		child_1.active := active;
+		child_2.active := active;
+		child_3.active := active;
+		child_4.active := active;
+		child_5.active := active;
+		child_6.active := active;
+		child_7.active := active;
+		child_8.active := active;
+		child_9.active := active;
+		child_10.active := active;
+		child_11.active := active;
+		child_12.active := active;
+		child_13.active := active;
 MODULE composite_sequence_with_memory_2(child_0, child_1, resume_point)
 	CONSTANTS
 		success, failure, running, invalid;
@@ -942,6 +964,34 @@ MODULE composite_sequence_with_memory_2(child_0, child_1, resume_point)
 			esac;
 		child_0.active := active & (0 >= resume_point);
 		child_1.active := active & ((1 >= resume_point) & ((1 = resume_point) | (child_0.status = success)));
+MODULE decorator_X_is_Y(child_0, incoming_status, outgoing_status)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				child_0.status = incoming_status : outgoing_status;
+				TRUE : child_0.status;
+			esac;
+		child_0.active :=
+			case
+				!(active) : FALSE;
+				TRUE : TRUE;
+			esac;
+MODULE composite_selector_without_memory_2(child_0, child_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				!(child_0.internal_status = failure) : child_0.internal_status;
+				!(child_1.internal_status = failure) : child_1.internal_status;
+				TRUE : failure;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = failure;
 MODULE composite_parallel_success_on_all_without_memory_7(child_0, child_1, child_2, child_3, child_4, child_5, child_6)
 	CONSTANTS
 		success, failure, running, invalid;
@@ -997,21 +1047,6 @@ MODULE composite_selector_without_memory_8(child_0, child_1, child_2, child_3, c
 		child_5.active := child_4.status = failure;
 		child_6.active := child_5.status = failure;
 		child_7.active := child_6.status = failure;
-MODULE decorator_X_is_Y(child_0, incoming_status, outgoing_status)
-	CONSTANTS
-		success, failure, running, invalid;
-	DEFINE
-		status := active ? internal_status : invalid;
-		internal_status :=
-			case
-				child_0.status = incoming_status : outgoing_status;
-				TRUE : child_0.status;
-			esac;
-		child_0.active :=
-			case
-				!(active) : FALSE;
-				TRUE : TRUE;
-			esac;
 MODULE composite_sequence_with_memory_3(child_0, child_1, child_2, resume_point)
 	CONSTANTS
 		success, failure, running, invalid;
@@ -1027,57 +1062,23 @@ MODULE composite_sequence_with_memory_3(child_0, child_1, child_2, resume_point)
 		child_0.active := active & (0 >= resume_point);
 		child_1.active := active & ((1 >= resume_point) & ((1 = resume_point) | (child_0.status = success)));
 		child_2.active := active & ((2 >= resume_point) & ((2 = resume_point) | (child_1.status = success)));
-MODULE composite_parallel_success_on_all_without_memory_14(child_0, child_1, child_2, child_3, child_4, child_5, child_6, child_7, child_8, child_9, child_10, child_11, child_12, child_13)
+MODULE composite_selector_without_memory_4(child_0, child_1, child_2, child_3)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
 		internal_status :=
 			case
-				(child_0.internal_status = failure) : failure;
-				(child_1.internal_status = failure) : failure;
-				(child_2.internal_status = failure) : failure;
-				(child_3.internal_status = failure) : failure;
-				(child_4.internal_status = failure) : failure;
-				(child_5.internal_status = failure) : failure;
-				(child_6.internal_status = failure) : failure;
-				(child_7.internal_status = failure) : failure;
-				(child_8.internal_status = failure) : failure;
-				(child_9.internal_status = failure) : failure;
-				(child_10.internal_status = failure) : failure;
-				(child_11.internal_status = failure) : failure;
-				(child_12.internal_status = failure) : failure;
-				(child_13.internal_status = failure) : failure;
-				!(child_0.internal_status = success) : child_0.internal_status;
-				!(child_1.internal_status = success) : child_1.internal_status;
-				!(child_2.internal_status = success) : child_2.internal_status;
-				!(child_3.internal_status = success) : child_3.internal_status;
-				!(child_4.internal_status = success) : child_4.internal_status;
-				!(child_5.internal_status = success) : child_5.internal_status;
-				!(child_6.internal_status = success) : child_6.internal_status;
-				!(child_7.internal_status = success) : child_7.internal_status;
-				!(child_8.internal_status = success) : child_8.internal_status;
-				!(child_9.internal_status = success) : child_9.internal_status;
-				!(child_10.internal_status = success) : child_10.internal_status;
-				!(child_11.internal_status = success) : child_11.internal_status;
-				!(child_12.internal_status = success) : child_12.internal_status;
-				!(child_13.internal_status = success) : child_13.internal_status;
-				TRUE : success;
+				!(child_0.internal_status = failure) : child_0.internal_status;
+				!(child_1.internal_status = failure) : child_1.internal_status;
+				!(child_2.internal_status = failure) : child_2.internal_status;
+				!(child_3.internal_status = failure) : child_3.internal_status;
+				TRUE : failure;
 			esac;
 		child_0.active := active;
-		child_1.active := active;
-		child_2.active := active;
-		child_3.active := active;
-		child_4.active := active;
-		child_5.active := active;
-		child_6.active := active;
-		child_7.active := active;
-		child_8.active := active;
-		child_9.active := active;
-		child_10.active := active;
-		child_11.active := active;
-		child_12.active := active;
-		child_13.active := active;
+		child_1.active := child_0.status = failure;
+		child_2.active := child_1.status = failure;
+		child_3.active := child_2.status = failure;
 MODULE battery2bb_module(battery2bb_update_success)
 	CONSTANTS
 		success, failure, running, invalid;
@@ -1276,6 +1277,12 @@ MODULE waypoints_completed2bb_module(waypoints_completed2bb_update_success)
 	DEFINE
 		status := active ? internal_status : invalid;
 		internal_status := waypoints_completed2bb_update_success ? success : running;
+MODULE success_DEFAULT_module
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := success;
 MODULE running_DEFAULT_module
 	CONSTANTS
 		success, failure, running, invalid;
@@ -1288,9 +1295,3 @@ MODULE failure_DEFAULT_module
 	DEFINE
 		status := active ? internal_status : invalid;
 		internal_status := failure;
-MODULE success_DEFAULT_module
-	CONSTANTS
-		success, failure, running, invalid;
-	DEFINE
-		status := active ? internal_status : invalid;
-		internal_status := success;
