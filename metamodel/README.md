@@ -1,6 +1,6 @@
 # Instructions for creating a .tree file for use with behaverify.tx
 
-This document is meant as a guide for creating .tree files for use with behaverify.tx. A .tree file is necessary if you wish to convert a .tree file to .smv or into pytree code using BehaVerify. The user is assumed to generally understand how Behavior Trees work. However, as there is some pytree specific terminology, we will first provide a brief vocabulary explanation.
+This document is meant as a guide for creating .tree files for use with behaverify.tx. A .tree file is necessary if you wish to convert a .tree file to .smv or into pytree code using BehaVerify. The user is assumed to generally understand how Behavior Trees work. However, as there is some pytree specific terminology, we will first provide a brief vocabulary explanation. After the terminology, we will cover the .tree format, and then give an example.
 
 # Terminology
 
@@ -55,190 +55,443 @@ This functions in the same way as a Check Node, but instead of evaluating a stat
 
 A more general Leaf node, it can return success, failure, or running depending on conditions. It is possible to update shared memory, read the environment, and 'act' upon the enviroment (e.g., a robot control could issue a "go forward" command). Details are provided later.
 
-
 ## Blackboard
 
 Nodes can share memory by writing information to the Blackboard.
 
 
+# The .tree Format
+
+The .tree file is seperated into various sections. The order is as follows:
+
+1. variables - These are blackboard variables, representing shared memory
+2. local variables - These are variables that are not shared between nodes.
+3. environment variables - These are variables that represent the environment.
+4. check nodes - These were described above
+5. check environment nodes - These were described above
+6. action nodes - These were described above
+7. the tree itself
+8. tick prerequisite - Here you can specify a condition which must be met in order for a tick to occur. This is used to allow the simulation to 'end'. THIS SECTION IS OPTIONAL.
+9. specifications - Here you can specify specifications to be checked.
+
+Each section, except tick prerequisite, is required. Before covering the sections, we will introduce Code Statements and Variable Statements.
+
+## Code Statement
+
+A Code Statement is of the following form:
+
+```
+    code_statement:
+    (constant = STRICTFLOAT) | (constant = INT) | (constant = BOOL) | (constant = STRING) |
+    (is_local ?= 'local' variable = [variable]) |
+    ('(' function_call = function ')') |
+    ('(' code_statement = code_statement ')')
+;
+```
+
+Intuitively, this means that a Code Statement can be 
+1. a Constant : this can be of type Float, Int, Bool, or String.
+2. a Variable : note that in a code statement you will simply use the name of the variable.
+3. a Function surrounded by parantheses : these are of the form (function, value1, value2...). Note that value1, value2, etc are all code statements. A full list of functions will be included somewhere. (or you can look in the behaverify.tx file).
+4. a CodeStatement surrounded by parantheses : this condition means you an always include more parantheses.
+
+Thus, an example would be
+
+```
+(addition, varA, (multiplication, (varB), 3), 1)
+```
+which is of course
+```
+varA + ((varB) * 3) + 1
+```
+
+Currently, there is no type checking. It is on the user to ensure that the statement makes sense (i.e, do not add a string to an integer).
+
+## Variable Statement
+
+A Variable Statement is of the following form:
+```
+    variable_statement:
+    'variable_statement' '{'
+    is_local ?= 'local' variable = [variable]
+    case_results *= variable_case_result
+    default_result = variable_default_result
+    '}' 'end_variable_statement'
+;
+```
+The purpose of the Variable Statement is to assign a value to a variable. Each Case Result is a (Condition, Value) pair. If the Condition is met, the Value is used. If no Condition is met, the Default value is used, as declared in Default Result. Each Condition is a Code Statement. Each Value is one or more Code Statements. Thus, for example:
+
+```
+variable_statement {
+	varA
+	case { (equal, 0, 1) } end_case result { 0, 1, (addition, varA, 1) } end_result
+	case { (or, varB, (not, varC)) } end_case result { 0, (mod, 12, varA) } end_result
+	result { 1 } end_result
+} end_variable_statement
+```
+This corresponds to the following python code sequence:
+```
+if 0 == 1:
+  varA = random.choice([0, 1, varA+1])
+elif varB or not varC:
+  varA = random.choice([0, 12 % varA])
+else:
+  varA = 1
+```
+Note that this means each Condition should ultimately return a Boolean value. This is not currently typed check. It is up to the user to enforce this. Similiary, if varA is a variable that is supposed to be a String, it is up to the user to ensure that a String value is provided.
+
 ## Variables
 
-All variables that will be used in the model must be declared in the appropriate section. A variable must be of the following format
-```
-'var' type=[Type] name=ID ('=' default=DefaultBBType)? (',' 'model_as' '(' model = ModelOptions (',' initial_value = Enumeration)? ')')? ';'
-```
-Note that while initial_value is listed as being of Enumeration type, this will also accept Ints or boolean values. Thus an example would be
-```
-var bool example = False , model_as(bool, False);
-```
-Note that in the above example, the type and model are both bool. Similarly, the default and initial value are both False. This need not be the case. For instance
-```
-var String example2 = 'potato', model_as([0,3], 2);
-var SomeComplexMessagetype example3, model_as({'safe', 'unsafe'}, 'safe');
-```
-is completely acceptable, though perhaps not productive for the goals of accurately modeling. Below we explain using example2 what each part means
+The first section will be the Variable section representing the blackboard variables in the model. The section is formatted as
 
-- type : type defines what type the variable is IN CODE GENERATION. This has no effect on the model. This paramater is required.
-
-- name : the name of the variable. This is used in the model and in code generation. This paramater is required.
-
-- default : the default value (if any) to be used IN CODE GENERATION. This has no effect on the model. This paramter is optional.
-
-These first three values are what is used by code generation. Of the three, only name matters for modeling. Note then that it is possible to declare a variable as follows
+``` 
+variables {
+declare variables here
+} end_variables
 ```
-var Float32 example4;
+
+All blackboard variables used in the model must be declared within this section.
+
+A variable declaration is defined as:
+
 ```
-Because example4 does NOT have a model_as statement, it will not be modeled. example4 would only be used in code generation. Continuing with the explanation.
-
-- model : model defines what type the variable is in the model. This has no effect on code generation, it is only used in the model. If the variable is to be modeled, this paramater is required.
-
-- initial_value : initial_value defines what value the variable should initially have in the model. This has no effect on code generation, it is only used in the model. This paramater is optional.
-
-Thus the model information from example2 would be as follows: name is example2, model is [0, 3], initial value is 2. 
-
-### ModelOptions
-
-ModelOptions describes what domains can be used to model a variable. ModelOptions must be of the following format
+variable:
+    'variable' '{'
+    name = ID
+    ((model_as = 'VAR' domain = variable_domain) | (model_as = 'FROZENVAR' domain = variable_domain) | (model_as = 'DEFINE'))
+    '}' 'end_variable'
+;
 ```
-(is_bool = 'bool') | ('{' enums += EnumerationDec[','] '}') | ( '[' range_minimum = INT ',' range_maximum = INT ']')
-```
-Thus the three modes, so to speak, would be: bool, {enum1, enum2, ..., enumK}, [minVal, maxVal]. Note that an enum could be an int or a string. Thus {0, 'potato', 3, 'tomato'} is a valid set of enumerations. However, {'1.3', True, 'TRUE'} would all fail, if not here, then when the .smv file is ran. '1.3' would fail because it would end up being represented as 1.3 in .smv, and nuXmv does not allow floats in enumerations. True and 'TRUE' would fail because nuXmv places restrictions on booleans appear inside enumerations. However {'True', '3'} would be acceptable.
 
+Thus an example would be
+
+```
+variable { varA VAR [0, 3] } end_var
+```
+
+Note that usually, environment variables are not allowed in variable statements. When they are allowed, you must use env before the variable name (e.g env varE).
+
+### model_as
+
+The three options for modeling are VAR, FROZENVAR, and DEFINE.
+
+1. DEFINE : DEFINE is an unchanging constant. 
+2. FROZENVAR : FROZENVAR is initially set to some value, and then never changes.
+3. VAR : VAR can change at each state.
+
+### domain
+
+The three options for variable domains are [minVal, maxVal], BOOLEAN, and {enum1, enum2...enumK}.
+
+1. [minVal, maxVal] : both minVal and maxVal must be an integer
+2. BOOLEAN : represents True and False
+3. {enum1, enum2...enumK} : an enumration of options
+
+Note that an enum could be an int or a string. Thus {0, 'potato', 3, 'tomato'} is a valid set of enumerations. However, {'1.3', True, 'TRUE'} would all fail, if not here, then when the .smv file is ran. '1.3' would fail because it would end up being represented as 1.3 in .smv, and nuXmv does not allow floats in enumerations. True and 'TRUE' would fail because nuXmv places restrictions on booleans appear inside enumerations. However {'True', '3'} would be acceptable.
+
+Note that a DEFINE variable does not have a domain.
+
+### How Variables Are Used
+
+Note that the variable declaration does not say anything about how the variable changes over time, or even what the initial value is. This information will be conveyed within the various check, check_environment, and action nodes.
+
+## local variable
+
+These are defined identically to variables. The difference is they are used slightly differently in nodes and cannot appear in certain places. The local variable secion is formatted as
+
+``` 
+local_variables {
+	declare local variables here
+} end_local_variables
+```
+
+## environment 
+
+As the environment variables are meant to model the environment, these involve a bit more complexity compared to variables and local variables. While they are declared the same way, we also need to specify what values they take at the start and how they change over time. The section is formatted as
+
+```
+environment {
+	environment_variables {
+		declare variables here
+	} end_environment_variables
+	initial_values {
+		declare initial values here
+	} end_initial_values
+	update_values {
+		declare update values here
+	} end_update_values
+} end_variables
+```
+Environment variables are declared as
+
+```
+environment_variable:
+'environment_variable' '{'
+name = ID
+((model_as = 'VAR' domain = variable_domain) | (model_as = 'FROZENVAR' domain = variable_domain) | (model_as = 'DEFINE'))
+'}' 'end_environment_variable'
+;
+```
+
+The initial and declare values consist of Variable Statements, which were defined above.
 
 ## Nodes
 
-Once all variables are declared, we will need to be able to use them. Variables are used within Nodes. The main way to use variables in Nodes is through a set() declaration. A Node can have any number of set declarations, but they must be placed in the appropriate section. The order of set declarations matters: they will be executed in the order they are presented.
+At this point, all the variables have been declared. The next step is to define the various nodes that will be used. Only the Leaf nodes need to be defined.
 
+## Check Nodes
 
-### set declaration
+Check nodes are used to check Blackboard Variable values. This section looks like this:
 
-A set declaration defines how the variable should be updated when the node runs. set declarations must be of the following format
 ```
-'set' '(' variable = [BBVar] ',' updates *= UpdateStatement default_update = CodeStatement')'
+checks {
+	declare check nodes here
+} end_checks
 ```
-Thus two examples would be
+Each check node looks as follows:
 ```
-set(example, True)
-set(example2, try((not, example), (addition, example2, 1)), (any, 0, (subtraction, example2, 1)))
+    check_node:
+    (node_type = 'check') '{'
+    name = ID
+    'read_variables' '{' read_variables *= [variable]  '}' 'end_read_variables'
+    ('condition' '{' condition = code_statement '}' 'end_condition')
+    '}' 'end_check'
+;
 ```
-The first example sets the variable example to be True. The second example sets the variable example2 to be example2 + 1 if example is False, else it picks non-deterministically form 0 and example-1. In python code, this is equivalent to the following
+Note that while the Read Variables are required, this information is only used when generating a Python file. These are used to properly set blackboard permissions in py_trees. The Condition is a Code Statement. This Code Statement should evaluate to a Boolean, but type checking is not enforced. If the Condition is True, the node will return success, and otherwise it will return failure. Note that the Condition CANNOT use Environment or Local Variables.
+
+Thus an example is:
 ```
-if not example: example2 = example2 + 1
-else: example2 = random.choice([0, example2 - 1])
+check {
+	checkName
+	read_variables { varA varB } end_read_variables
+	condition { (equal, (multiplication, varA, 2), varB) } end_condition
+} end_check
 ```
-Note that you can have any number of try statements, including 0. Furthermore, note that if a node had both of our examples as set declarations, it would be the same as the following python code segment
+Thus this check will return success if 2*varA=varB, else failure.
+
+## Check Environment Nodes
+
+Check Environment Nodes are used to check environment variables. This section looks like this:
+
 ```
-example = True
-if not example: example2 = example2 + 1
-else: example2 = random.choice([0, example2 - 1])
-```
-Let us now more specifically disect example2. it consists of 3 parts
-
-- variable : this informs us which variable is being updated. In this case it's example2
-
-- updates : these are the statements to try. The first update that succeeds will be applied. Update statements are described in more detail below
-
-- defualt_update : this is the value to use if none of the updates applied. This is a CodeStatement. CodeStatements are described in more detail below.
-
-### Update Statement
-
-An update statement is a pair (condition, update_value). If the condition is True, then the update_value is used. Update Statements must be of the following format
-```
-'try(' condition = CodeStatement ',' update_value = CodeStatement ')' ','
-```
-Note that the comma at the end is to ensure each entry in the set declaration is comma separated, for asthetic reasons. Unfortunately, there was no easier way to handle this.
-
-CodeStatement is described in more detail below. However, note that a CodeStatement need not resolve to a True or False according to the grammar. It is up to the user to ensure that the condition is actually something that can resolve to True or False (e.g, 'potato' is a valid CodeStatement, but would not function as a condition. However, type checking this is not currently enabled).
-
-### CodeStatement
-
-A CodeStatement is of the following format:
-```
-(constant = STRICTFLOAT) | (constant = INT) | (constant = BOOL) | (constant = STRING) | (variable = [BBVar]) | ('(' function_call = function ')') | ('(' CodeStatement = CodeStatement ')')
-```
-Intuitively, this means your code statement can be
-
-1. a constant (float, int, bool, or string)
-
-2. a variable. Note that the variable itself must be declared in the appropriate variable section, as described above. Here you will simple refer to the variable using it's name.
-
-3. a function. all functions are of the form (FUNCTION_NAME, VALUE1, VALUE2, ...). Note that the surrounding () are required. A full list of functions can be found in btree.tx
-
-4. a CodeStatement surrounded by (). I.E, you don't need to worry about adding in too many paranthesis. 
-
-
-## Input Nodes
-
-Input Nodes are a specific type of node. In general, it is assumed that an input node is monitoring some topic. If new data came in, then it will update a variable and return success, and potentially run some other code in the process. If no new data came in, then it returns running. Note that an Input Node will only excecute its set declarations if it received new data.
-
-An InputNode is of the following format :
-```
-'input' name=ID input_topic=[Topic] '->' topic_bbvar=[BBVar] ('vars' bb_vars *= [BBVar][','] ';')? args *= Param ('comment' comment=STRING)? 
-ignore_topic ?= 'model_ignore_topic' ignore_node ?= 'model_ignore' set_vars *= SetVar
-'end'(';')?
+environment_checks {
+	declare environment checks
+} end_environment_checks
 ```
 
-For the purpose of modeling, we are interested in the following elements:
-
-- name : the name of the Input Node.
-
-- topic_bbvar : this identifies the variable that will be update when the Input Node receives new data from the input topic
-
-- ignore_topic : this is a flag that, if present, indicates we will not be copying the input_topic into the topic_bbvar. Note that set var declarations still only trigger if new data was received.
-
-- ignore_node : this is a flag that, if present, indicates we will not be modeling this node.
-
-- set_vars : explained earlier as set declarations.
-
-Note that ignore_topic and ignore_node can be useful tools for reducing the size of the model, but should be used with caution.
-
-## Task Nodes
-
-Task Nodes are a specific type of node. If a task node is ticked, then all of its set declarations are executed in order and it returns the appropriate status.
-
-A TaskNode is of the following format :
+Each environment check looks as follows:
 ```
-'task' name=ID ('in' input_topics+=TopicArg[','] ';')? ('out' output_topics+=TopicArg[','] ';')?
-('vars' bb_vars *= [BBVar][','] ';')? args*=Param ('comment' comment=STRING (';')?)?
-set_vars *= SetVar 'return' return_status = StdBehaviorType
-'end'(';')?
+    check_environment_node:
+    (node_type = 'check_environment') '{'
+    name = ID
+    ('imports' '{' imports *= STRING[','] '}' 'end_imports')?
+    ('python_function' '{' python_function = STRING '}' 'end_python_function')?
+    ('condition' '{' condition = code_statement_env '}' 'end_condition')
+    '}' 'end_check_environment'
+;
 ```
-For the purpose of modeling, we are interested in the following elements:
 
-- name : the name of the Task Node.
+Here imports and python function are optional and only used when generating py_trees. Condition is the same as in Check Nodes, except the code statement is now allowed to contain Environment Variables. Thus an example would be:
 
-- set_vars : explained earlier as set declarations.
+```
+check_environment {
+	checkEnvName
+	imports { 'myImport' } end_imports
+	python_function { 'myImport.myFunction()' } end_python_function
+	condition { (equal, env varE, 1) } end_condition
+} end_check_environment
+```
 
-- return_status : this is either success or running or failure. This indicates what the task node returns. Note that the task node is assumed to always return the same status (because that's how all of the task nodes so far have worked).
+Thus this is an environment check that returns success if the environment variable varE is equal to 1, and failure otherwise. In a py_tree, this environment check node will instead call myImport.myFunction(). If the result is true, the node will return success, otherwise it will return failure.
+
+Note that when referencing an environment variable in a code statement, you must preceed the variable name with 'env'.
+
+## Action Nodes
+
+Any leaf node that is not a Check or Environment Check node is an Action node. Note that it is possible to recreate the behavior of a Check node or Environment Check with an Action node. Action Nodes are also the only place where Local Variables are used. This section looks as follows:
+
+```
+actions {
+	declare actions here
+} end_actions
+```
+
+Each action is of the following form:
+
+```
+    action_node:
+    (node_type = 'action') '{'
+    name = ID
+    ('imports' '{' imports *= STRING[','] '}' 'end_imports')?
+    'read_variables' '{' read_variables *= [variable]  '}' 'end_read_variables'
+    'write_variables' '{' write_variables *= [variable]  '}' 'end_write_variables'
+    'initial_values' '{'
+    init_statements *= statement
+    '}' 'end_initial_values'
+    'update' '{'
+    pre_update_statements *= statement
+    return_statement = return_statement
+    post_update_statements *= statement
+    '}' 'end_update'
+    '}' 'end_action'
+;
+```
+
+Imports is optional, as described in Check Environment Nodes. Read Variables and Write Variables are required, but only for setting permissions in py_trees. The first core of the Action Node is the initial values subsection. This subsection defines the initial values of variables and local variables. Initial values consist of Statements. These can be Variable Statements, as described earlier, or Read Statements, or a mixture of both. The purpose of a Read Statement is to copy the value of an Enviornment Variable into a Blackboard Variable. Formally, they are as follows:
+
+```
+    read_statement:
+    'read_environment' '{'
+    ('python_function' '{' python_function = STRING '}' 'end_python_function')?
+    (('condition' '{' condition = code_statement_env '}' 'end_condition') | (is_local = 'local' condition_variable = [variable]))
+    'set_variables' '{' variable_environment_pairs *= variable_environment_pair[','] '}' 'end_set_variables'
+    '}' 'end_read_environment'
+;
+```
+Here python function is only used in py_tree generation and represents how the code would read the environmeent. You must either provide a Condition under which the environment is successfully read or, if non-determinism is preferred, assign a Local Variable to store whether or not the read was successful. Each Variable Environment pair couples a Local or Blackboard Variable with an Environment variable.
+
+Thus an example would be
+```
+read_environment {
+	python_function { 'importedByActionNode.myFunc()' } end_python_function
+	condition { True } end_condition
+	set_variables { (varA, env varE), (local varB, env varE) } end_set_variables
+} end_read_environment
+```
+
+This example would set varA to the value of the environment variable varE. It would also set the Local Variable varB to the value of the environment variable varE. Another example would be
+
+```
+read_environment {
+	python_function { 'importedByActionNode.myFunc()' } end_python_function
+	local varC
+	set_variables { (varA, env varE), (local varB, env varE) } end_set_variables
+} end_read_environment
+```
+
+Which will do the same thing, but it can nondeterministically succeed or fail. If it fails, the local variable varC will be set to false. If it succeeds, the local variable varC will be set to true.
+
+The second core section of Action nodes is the Update section. This defines how variables and local variable are changed by the Action node, as well as how the Action node detremines what value to return. Pre-update statements and post-update statements can be Variable statements, read statement, or write statements. These are divided into pre and post so that the return value can be determined using intermediate variable values. We've covered Variable Statements and Read Statements before, so here we will only describe Write Statements.
+
+The purpose of a Write Statement is to affect the Environment. Formally, this looks as follows:
+
+```
+	write_statement:
+    'write_environment' '{'
+    ('python_function' '{' python_function = STRING '}' 'end_python_function')?
+    'update_values' '{'
+    update *= environment_statement
+    '}' 'end_update_values'
+    '}' 'end_write_environment'
+;
+```
+An environment statement is like a variable statement, except it can use environment variables. Additionally, it can be marked as instant. Instant environment statements take place immediately, while non-instant environment statements take place after the tick ends, but before environment variables update. Remember to use env before any environment variable names. An example is then:
+
+```
+write_environment {
+	python_function { 'importedByActionNode.myFunc()' } end_python_function
+	update_values {
+		environment_statement {
+			instant
+			env varE
+			case { local varB} end_case result { 0 } end_result
+			result { 1, 2 } end_result
+		} end_environment_statement
+		environment_statement {
+			env varF
+			case { local varB} end_case result { 0 } end_result
+			result { 1, 2 } end_result
+		} end_environment_statement
+	} end_update_values
+} end_write_environment
+```
+
+Thus this is a Write Statement which will immediately set varE to 0 if the local variable varB is true, and otherwise nondeterministically pick 1 or 2. It will also set varF to 0 if the local variable varB is true and 1 or 2 otherwise, but this will not take place until later.
+
+Finally, return statements are like variable statements. They look as follows:
+```
+    return_statement:
+    'return_statement' '{'
+    case_results *=  status_case_result
+    default_result = status_default_result
+    '}' 'end_return_statement'
+;
+```
+
+Thus an example would be:
+
+```
+return_statement {
+	case { varA } end_case result { success } end_result
+	result { failure } end_result
+} end_return_statement
+```
+
+Thus the action node with this return statement would return success if varA is true, and failure otherwise.
+
+Putting it all together, an example of an action node would be:
+
+```
+action {
+	get_mission
+	imports {'robot'} end_imports
+	read_variables {} end_read_variables
+	write_variables {mission target_x target_y} end_write_variables
+	initial_values {
+		variable_statement {
+			mission result { False } end_result
+		} end_variable_statement
+		variable_statement {
+			target_x result { 0 } end_result
+		} end_variable_statement
+		variable_statement {
+			target_y result { 0 } end_result
+		} end_variable_statement
+	} end_initial_values
+	update {
+		read_environment {
+			python_function { 'robot.get_mission()' } end_python_function
+			local saw_target
+			set_variables { (target_x, env x_goal), (target_y, env y_goal) } end_set_variables
+		} end_read_environment
+		variable_statement {
+			mission
+			case { local saw_target } end_case result { True } end_result
+			result { False } end_result
+		} end_variable_statement
+		return_statement {
+			case { local saw_target } end_case result { success } end_result
+			result { failure } end_result
+		} end_return_statement
+	} end_update
+} end_action
+```
+
+This is an Action called get_mission. It imports robot. It does not need read permissions, but it does need write permissions for mission, target_x, and target_y. It initializes mission to False, target_x to 0, and target_y to 0. When it upates, it nondeterministically reads the environment, potentially setting target_x and target_y. It then updates based on the result of the nondetermisim, which was stored in the local variable saw_target. It then also returns based on the value of saw_target.
+
 
 ## The Tree
 
-The tree is obviously used for modeling. The tree wil be walked using a Depth First Pattern until all nodes have been visited. Each visited node will be modeled (unless marked as ignore (see Input Nodes)). Furthermore, all of the set declarations will be processed IN THIS ORDER. Therefore, if you place Node1 before Node2 in the tree, all of the set declarations in Node1 will occur before any of the set declarations in Node2.
+The tree is obviously used for modeling. The tree wil be walked using a Depth First Pattern until all nodes have been visited. Each visited node will be modeled. Furthermore, all of the initializations and updates will be handled in this oder.. Therefore, if you place Node1 before Node2 in the tree, all of the statements in Node1 will occur before any of the statements in Node2. For a more concrete example, consult the walkthrough provided later on.
 
 ## Variable Stages - Differences between Encoding and Reality
 
-Suppose we have a simple tree. A parallel root with 2 children, A and B. A has a set declaration which sets the variable V to False. B has a set declaration which sets the variable V to True. Both Nodes are Task Nodes which return Success.
+Suppose we have a simple tree. A parallel root with 2 children, A and B. A has a variable statement which sets the variable V to False. B has a variable statement which sets the variable V to True. Both Nodes are ACtion Nodes which return Success.
 
 In reality, a tick will look as follows:
 
 1. The Root receives a tick signal. Because it is a parallel node, it begins to run the children. It sends a tick to A.
-
 2. A receives a tick signal. A will set V to False, and then return Success.
-
 3. The Root sees that A has returned Success, and so it continues to run the children. It sends a tick to B.
-
 4. B receives a tick signal. B will set V to True, and then return Success.
-
 5. The Root sees that B has returned Success, and so it continues to run the children. Since there are no more children to run, it returns (in this case, with Success).
-
 6. The tick is now over.
 
 Note that these events happen one at a time sequentially. If one were to open a debugger you could step through these events. However, a direct encoding which mimics this exact behavior is very inefficient. Therefore, the BehaVerify encoding used considers the entire sequence of events above as happening during a single step. This greatly improves performance and makes reasoning about the outcome of a tick substantially simpler. However, it can complicate variable logic. Let us consider how V is handled in BehaVerify.
 
 1. New tick begins. Via a set of equations, both A and B realize that they will be active during this tick.
-
 2. Because both A and B are active, A will set V to False and B will set V to True.
-
 3. Therefore, V_stage_1 is set to False, and V_stage_2 is set to True, because A comes before B in the tree.
 
 In essence, V is now 3 variables instead of 1: V, V_stage_1, and V_stage_2. Through various encoding tricks, this doesn't increase the number of states the model needs to consider unless one of these stages can be set non-determinisitically. None of the information has been lost.
@@ -397,55 +650,171 @@ where +oo represents infinity.
 
 # A guided example of the entire process
 
-Here we will walk through creating a tree. Comments, marked by // will explain why something is being done.
+Here we will walk through creating a tree. Comments, marked by #comment# ACTUAL COMMENT #end_comment# will explain why something is being done. The idea will be as follows: we want to create a tree that controls a robot that gets cookies to the user.
 
 ```
-system exampleSystem; //this is required, but adds no information to the model.
-type notUsedSimple; //each 'SimpleType' we declare can be used for code generation. Because we want to include some variables, we need at least one SimpleType for code generation. This will not be used in the model
-message notUsedMessage notUsedPackage end; //this is needed if we want to use an input node, which we do, because this is an example.
-topic notUsedMessage notUsedTopic hi; //this is needed if we wnat to use an input node, which we do, because this is an example.
-var notUsedSimple varA, model_as({'on', 'off', 'unknown'}, 'off'); //we've defined a variable named varA, which can be in 3 states: on, off, or unknown. it starts as off
-var notUsedSimple varB, model_as(bool, False); //we've defined a variable named varB, which is a boolean. it starts as false.
-
-input inputNode notUsedTopic -> varA //here we are declaring an Input Node. It will monitor the topic and set varA if a new value appears (this is abstracted as being set to a random value). if a random value would ruin the model, you are encouraged to use model_ignore_topic and instead set a new value using a set declaration.
-set(varA, try((equal, varA, 'unknown'), 'off'), varA) //if the new value of varA is unknown, we will set varA to off, otherwise, we don't change the value
-//varB is not set in this node.
-end
-
-//here we could write a check node. Check nodes are handled automatically and are fairly straight forward, so they weren't explained above.
-check is_varB varB == True; //checks if varB is True.
-
-task taskNode
-set(varB, (equal, varA, 'on')) //sets varB equal to the result of varA == 'on'
-set(varA, try(varB, varA), (any, 'off', 'unknown')) //if varB is true, then varA does not change. if varB is false, set varA nondeterministically to 'off' or 'unknown'
-return success //value to return
-end;
-//now we construct the tree
-
-tree ( updatetime = 1 , timeout = 1 ) //information for codeGeneration, we don't need any of this, but requred.
-seq theRoot //our root node can have any name. this one is a sequence node. 
-{
-	mon inputNode //our first child is the input node
-	sel someName // our second child is a selector node with a very creative and descriptive name
-	{
-		chk is_varB //our first child of the selector node
-		exec taskNode //our second child of the selector node
-	}
-}
-// here we could specify a tick pre-requisite. If one is not specified, the tree always ticks. 
-// As an example, if you have a variable called MissionOver, and the tree shouldn't tick if MissionOver is True, then you might do
-// tick_prerequisite { (not, MissionOver) } end_tick_prerequisite
-// but we won't include a prereq here.
-//next up are specifications. We'll include several of each type.
+variables {
+	variable { on_a_mission VAR BOOLEAN } end_variable 
+	#comment# We will use this variable to store if we are on a mission, which we will store as a Boolean #end_comment#
+} end_variables
+local_variables {} end_local_variables #comment# no local variables for this example #end_comment#
+environment {
+	environment_variables {
+		environment_variable { cookies_requested VAR BOOLEAN } end_environment_variable
+		environment_variable { num_cookies VAR [0, 3] } end_environment_variable
+		#comment# we will use this to track the number of cookies #end_comment#
+	} end_environment_variables
+	initial_values {
+		#comment# we don't set an initial value for cookies_requested. #end_comment#
+		#comment# we don't set an initial value for num_cookies. this represents the possibility of there already being cookies in the house. #end_comment#
+	} end_initial_values
+	update_values {
+		environment_statement {
+			env cookies_requested
+			case { env cookies_requested} end_case result { True } end_result
+			result {True, False} end_result
+		} end_environment_statement
+		#comment# cookies can be requsted at any point, but once requested, can't be unrequsted #end_comment#
+		#comment# we assume that cookies don't appear or disappear in general, so we need to clarify that #end_comment#
+	} end_update_values
+} end_environment
+checks {
+	check {
+		#comment# this will just check if we're on a mission #end_comment#
+		on_mission
+		read_variables { on_a_mission } end_read_variables
+		condition { on_a_mission } end_condition
+	} end_check
+} end_checks
+environment_checks {
+	check_environment {
+		#comment# this will just check if a mission was requested #end_comment#
+		mission_called
+		imports { 'cookie_robot_interface' } end_imports
+		python_function { 'cookie_robot_interace.cookies_requested()' } end_python_function
+		condition { env cookies_requested } end_condition
+	} end_check_environment
+	check_environment {
+		#comment# checks if cookies already exist #end_comment#
+		cookies_present
+		imports { 'cookie_robot_interface' } end_imports
+		python_function { 'cookie_robot_interace.cookies_present()' } end_python_function
+		condition { (greater_than, env num_cookies, 0) } end_condition
+	} end_check_environment
+} end_environment_checks
+actions {
+	action {
+		set_mission
+		read_variables {} end_read_variables
+		write_variables { on_a_mission } end_write_variables
+		initial_values {
+			variable_statement {
+				on_a_mission
+				result { False } end_result
+			} end_variable_statement
+		} end_initial_values
+		update {
+			variable_statement {
+				on_a_mission
+				result { True } end_result
+			} end_variable_statement
+			return_statement { result { success } end_result } end_return_statement
+		} end_update
+	} end_action
+	action {
+		bake_cookies
+		imports { 'cookie_robot_interface' } end_imports
+		read_variables {} end_read_variables
+		write_variables {} end_write_variables
+		initial_values {} end_initial_values
+		update {
+			write_environment {
+				python_function { 'cookie_robot_interface.bake()' } end_python_function
+				update_values {
+					environment_statement {
+						env num_cookies
+						result { 0, 1, 2, 3 } end_result
+					} end_environment_statement
+				} end_update_values
+			} end_write_environment
+			return_statement { result { running } end_result } end_return_statement
+		} end_update
+	} end_action
+	action {
+		serve_cookies
+		imports { 'cookie_robot_interface' } end_imports
+		read_variables {} end_read_variables
+		write_variables {} end_write_variables
+		initial_values {} end_initial_values
+		update {
+			write_environment {
+				python_function { 'cookie_robot_interface.serve()' } end_python_function
+				update_values {
+					environment_statement {
+						env num_cookies
+						result { (max, 0, (subtraction, env num_cookies, 1)), (max, 0, (subtraction, env num_cookies, 2)), (max, 0, (subtraction, env num_cookies, 3)) } end_result
+					} end_environment_statement
+					environment_statement {
+						env cookies_requested
+						result { False } end_result
+					} end_environment_statement
+				} end_update_values
+			} end_write_environment
+			return_statement { result { success } end_result } end_return_statement
+		} end_update
+	} end_action
+} end_actions
+root_node
+composite {
+	cookie_control
+	sequence
+	#comment# Cookie Control is our root node.
+	It is a sequence, so it goes to the next child only if the current child returns success.
+	The False means no memory #end_comment#
+	children {
+		#comment#
+		We will first Confirm we have a mission
+		then we will confirm we have cookies
+		then we will serve cookies.
+		#end_comment#
+		composite {
+			confirm_mission
+			selector
+			children {
+				#comment#
+				First, check if we are alredy on a cookie mission.
+				If we aren't, see if someone has asked for cookies.
+				#end_comment#
+				on_mission
+				composite {
+					check_new_mission
+					sequence
+					children {
+						mission_called
+						set_mission #comment# mark the new mission. #end_comment#
+					} end_children
+				} end_composite
+			} end_children
+		} end_composite
+		composite {
+			confirm_cookies
+			selector
+			#comment# before we can serve cookies, we need to have cookies.
+			Check if we have cookies, if we do, done.
+			If not, bake cookies.#end_comment#
+			children {
+				cookies_present
+				bake_cookies
+			} end_children
+		} end_composite
+		serve_cookies
+	} end_children
+} end_composite
+tick_prerequisite {True} end_tick_prerequisite #comment# since in this case, our prerequisite is just True, we could have omitted this#end_comment#
 specifications {
-	INVARSPEC { (not, (equal, varA 0, 'unknown')) } end_INVARSPEC //this specification says that at the start of each tick, varA is not equal to 'unknown' (this is false)
-	INVARSPEC { (not, (equal, varA 2, 'unknown')) } end_INVARSPEC //this specification says that after 2 updates (so once inputNode finishes), varA is not equal to 'unknown' (this is false, because inputNode might fail to update varA)
-	INVARSPEC { (or, varB -1, (not, varB -1)) } end_INVARSPEC //this specification says that at the end of each tick, varB is true or false (true...obviously).
-	CTLSPEC { (exists_finally, varB 0) } end_CTLSPEC //this says that there exists a path where varB is eventually true (this is true)
-	CTLSPEC { (always_finally, varB 0) } end_CTLSPEC //this says that on every path, varB is eventually true (this is false)
-	LTLSPEC { (globally, (or, (not, varB 0), (not, (active, taskNode)))) } end_LTLSPEC //this says globally, at the start varB is False or taskNode is not active (this is true)
-	LTLSPEC { (globally, (or, (not, varB 0), ((active, taskNode)))) } end_LTLSPEC //this says globally, at the start varB is False or taskNode not active (this is false)
+	INVARSPEC { (implies, (greater_than,  env num_cookies 0, 0), (not, (active, bake_cookies)))} end_INVARSPEC #comment# this one is true #end_comment#
+	CTLSPEC { (always_globally, (implies, env cookies_requested 0, (always_finally, (active, serve_cookies)))) } end_CTLSPEC #comment# this one is false #end_comment#
 } end_specifications
 ```
 
-This exaqmple file can also be found at ./examples/guided_BT/guided_BT.bt, so you don't need to copy it from here.
+This exaqmple file can also be found at ./examples/guided_tree/guided_tree.tree, so you don't need to copy it from here.

@@ -1,0 +1,48 @@
+variables {
+	variable { test VAR [0, 2] } end_variable
+} end_variables
+
+local_variables {} end_local_variables
+
+environment {
+	environment_variables {
+	} end_environment_variables
+	initial_values {
+	} end_initial_values
+	update_values {
+	} end_update_values
+} end_environment
+
+checks { } end_checks
+
+environment_checks {} end_environment_checks
+
+actions {
+	action {
+		tester
+		read_variables {} end_read_variables
+		write_variables { test } end_write_variables
+		initial_values { } end_initial_values
+		update {
+			variable_statement {
+				test
+				case { (equal, test, 2) } end_case result { 0 } end_result
+				result { (min, 2, (addition, test, 1)) } end_result
+			} end_variable_statement
+			return_statement {
+				case { (equal, test, 0) } end_case result { success } end_result
+				case { (equal, test, 1) } end_case result { running } end_result
+				result { failure } end_result
+			} end_return_statement
+		} end_update
+	} end_action
+} end_actions
+
+root_node
+decorator {
+	inv
+	inverter
+	child tester
+} end_decorator
+
+specifications { } end_specifications
