@@ -40,7 +40,7 @@ def create_blackboard(nodes, variables, root_node_name):
                                   )
             if use_exist:
                 define_string += "\t\t" + variable_name + "_exists := TRUE;" + os.linesep
-        elif variable['mode'].strip() == 'FROZENVAR':
+        elif variable['mode'].strip() == 'FROZENVAR' or len(variable['next_value']) == 0:
             frozenvar_string += ('\t\t' + variable_name + ' : '
                                  + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean')))
                                  + ';' + os.linesep)
@@ -56,27 +56,27 @@ def create_blackboard(nodes, variables, root_node_name):
         # ok, so we've handled define and frozenvar, so all that's left
         # is actual variable.
         else:
-            if len(variable['next_value']) == 0:
-                var_string += ('\t\t' + variable_name + ' : '
-                               + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (
-                                   variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean')))
-                               + ';' + os.linesep)
-                init_string += (
-                    ('' if variable['initial_value'] is None else (
-                        '\t\tinit(' + variable_name + ') := ' + os.linesep
-                        + '\t\t\tcase' + os.linesep
-                        + ''.join([('\t\t\t\t' + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in variable['initial_value']])
-                        + '\t\t\tesac;' + os.linesep
-                    ))
-                )
-                next_string += ('\t\tnext(' + variable_name + ') := ' + os.linesep
-                                + '\t\t\tcase' + os.linesep
-                                + '\t\t\t\tnext(!(' + root_node_name + '.active)) : ' + variable_name + ';' + os.linesep
-                                + '\t\t\t\tTRUE : ' + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (
-                                    variable['custom_value_range'])) + ';' + os.linesep
-                                + '\t\t\tesac;' + os.linesep
-                                )
-                continue
+            # if len(variable['next_value']) == 0:
+            #     var_string += ('\t\t' + variable_name + ' : '
+            #                    + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (
+            #                        variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean')))
+            #                    + ';' + os.linesep)
+            #     init_string += (
+            #         ('' if variable['initial_value'] is None else (
+            #             '\t\tinit(' + variable_name + ') := ' + os.linesep
+            #             + '\t\t\tcase' + os.linesep
+            #             + ''.join([('\t\t\t\t' + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in variable['initial_value']])
+            #             + '\t\t\tesac;' + os.linesep
+            #         ))
+            #     )
+            #     next_string += ('\t\tnext(' + variable_name + ') := ' + os.linesep
+            #                     + '\t\t\tcase' + os.linesep
+            #                     + '\t\t\t\tnext(!(' + root_node_name + '.active)) : ' + variable_name + ';' + os.linesep
+            #                     + '\t\t\t\tTRUE : ' + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (
+            #                         variable['custom_value_range'])) + ';' + os.linesep
+            #                     + '\t\t\tesac;' + os.linesep
+            #                     )
+            #     continue
             if variable['keep_stage_0']:
                 var_string += ('\t\t' + variable_name + ' : '
                                + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean')))
@@ -241,6 +241,20 @@ def create_decorator_X_is_Y(ignored_value = 0):
     return_string = ("MODULE decorator_X_is_Y(child_0, incoming_status, outgoing_status)" + os.linesep
                      + status_start
                      + "\t\t\t\tchild_0.status = incoming_status : outgoing_status;" + os.linesep  # if we detect the incoming status, use outgoing_status
+                     + "\t\t\t\tTRUE : child_0.status;" + os.linesep  # otherwise matcch the child
+                     + status_end
+                     + active[0]  # handles (if this node not active, child_0 not active)
+                     + active_end  # handle (otherwise, child_0 active)
+                     )
+    return return_string
+
+
+def create_decorator_inverter(ignored_value = 0):
+    (status_start, status_end, active, active_end, children) = common_string_decorator(1)
+    return_string = ("MODULE decorator_inverter(child_0)" + os.linesep
+                     + status_start
+                     + "\t\t\t\tchild_0.status = success : failure;" + os.linesep  # if we detect the incoming status, use outgoing_status
+                     + "\t\t\t\tchild_0.status = failure : success;" + os.linesep  # if we detect the incoming status, use outgoing_status
                      + "\t\t\t\tTRUE : child_0.status;" + os.linesep  # otherwise matcch the child
                      + status_end
                      + active[0]  # handles (if this node not active, child_0 not active)

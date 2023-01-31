@@ -70,7 +70,7 @@ def create_nodes(nodes, root_node_name, node_name_to_number, tick_condition):
                                        node['category'] + '_' + node['type']
                                        + ('_' + (str(len(node['children']))) if node['category'] == 'composite' else '')
                                        + '('
-                                       + ((', '.join(node['children'] + node['additional_arguments'])) if node['category'] == 'decorator' else (
+                                       + ((', '.join(node['children'] + (node['additional_arguments'] if node['additional_arguments'] is not None else []))) if node['category'] == 'decorator' else (
                                            ', '.join(node['children'] + (
                                                ([] if 'without_memory' in node['type'] else (
                                                    [

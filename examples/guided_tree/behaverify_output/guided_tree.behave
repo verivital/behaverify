@@ -1,0 +1,254 @@
+{   'nodes': {   'bake_cookies': {   'additional_arguments': [],
+                                     'category': 'leaf',
+                                     'children': [],
+                                     'internal_status_module_code': None,
+                                     'internal_status_module_name': None,
+                                     'name': 'bake_cookies',
+                                     'parent': 'confirm_cookies',
+                                     'return_possibilities': {   'failure': False,
+                                                                 'running': True,
+                                                                 'success': False},
+                                     'type': 'action'},
+                 'check_new_mission': {   'additional_arguments': None,
+                                          'category': 'composite',
+                                          'children': [   'mission_called',
+                                                          'set_mission'],
+                                          'internal_status_module_code': None,
+                                          'internal_status_module_name': None,
+                                          'name': 'check_new_mission',
+                                          'parent': 'confirm_mission',
+                                          'return_possibilities': {   'failure': True,
+                                                                      'running': True,
+                                                                      'success': True},
+                                          'type': 'sequence_without_memory'},
+                 'confirm_cookies': {   'additional_arguments': None,
+                                        'category': 'composite',
+                                        'children': [   'cookies_present',
+                                                        'bake_cookies'],
+                                        'internal_status_module_code': None,
+                                        'internal_status_module_name': None,
+                                        'name': 'confirm_cookies',
+                                        'parent': 'cookie_control',
+                                        'return_possibilities': {   'failure': True,
+                                                                    'running': True,
+                                                                    'success': True},
+                                        'type': 'selector_without_memory'},
+                 'confirm_mission': {   'additional_arguments': None,
+                                        'category': 'composite',
+                                        'children': [   'on_mission',
+                                                        'check_new_mission'],
+                                        'internal_status_module_code': None,
+                                        'internal_status_module_name': None,
+                                        'name': 'confirm_mission',
+                                        'parent': 'cookie_control',
+                                        'return_possibilities': {   'failure': True,
+                                                                    'running': True,
+                                                                    'success': True},
+                                        'type': 'selector_without_memory'},
+                 'cookie_control': {   'additional_arguments': None,
+                                       'category': 'composite',
+                                       'children': [   'confirm_mission',
+                                                       'confirm_cookies',
+                                                       'serve_cookies'],
+                                       'internal_status_module_code': None,
+                                       'internal_status_module_name': None,
+                                       'name': 'cookie_control',
+                                       'parent': None,
+                                       'return_possibilities': {   'failure': True,
+                                                                   'running': True,
+                                                                   'success': True},
+                                       'type': 'sequence_without_memory'},
+                 'cookies_present': {   'additional_arguments': [   'env_num_cookies'],
+                                        'category': 'leaf',
+                                        'children': [],
+                                        'internal_status_module_code': 'MODULE '
+                                                                       'cookies_present_module(env_num_cookies)\n'
+                                                                       '\t'
+                                                                       'CONSTANTS\n'
+                                                                       '\t\t'
+                                                                       'success, '
+                                                                       'failure, '
+                                                                       'running, '
+                                                                       'invalid;\n'
+                                                                       '\t'
+                                                                       'DEFINE\n'
+                                                                       '\t\t'
+                                                                       'status '
+                                                                       ':= '
+                                                                       'active '
+                                                                       '? '
+                                                                       'internal_status '
+                                                                       ': '
+                                                                       'invalid;\n'
+                                                                       '\t\t'
+                                                                       'internal_status '
+                                                                       ':= '
+                                                                       '((env_num_cookies '
+                                                                       '> 0)) '
+                                                                       '? '
+                                                                       'success '
+                                                                       ': '
+                                                                       'failure;\n',
+                                        'internal_status_module_name': 'cookies_present_module',
+                                        'name': 'cookies_present',
+                                        'parent': 'confirm_cookies',
+                                        'return_possibilities': {   'failure': True,
+                                                                    'running': False,
+                                                                    'success': True},
+                                        'type': 'check_environment'},
+                 'mission_called': {   'additional_arguments': [   'env_cookies_requested'],
+                                       'category': 'leaf',
+                                       'children': [],
+                                       'internal_status_module_code': 'MODULE '
+                                                                      'mission_called_module(env_cookies_requested)\n'
+                                                                      '\t'
+                                                                      'CONSTANTS\n'
+                                                                      '\t\t'
+                                                                      'success, '
+                                                                      'failure, '
+                                                                      'running, '
+                                                                      'invalid;\n'
+                                                                      '\t'
+                                                                      'DEFINE\n'
+                                                                      '\t\t'
+                                                                      'status '
+                                                                      ':= '
+                                                                      'active '
+                                                                      '? '
+                                                                      'internal_status '
+                                                                      ': '
+                                                                      'invalid;\n'
+                                                                      '\t\t'
+                                                                      'internal_status '
+                                                                      ':= '
+                                                                      '(env_cookies_requested) '
+                                                                      '? '
+                                                                      'success '
+                                                                      ': '
+                                                                      'failure;\n',
+                                       'internal_status_module_name': 'mission_called_module',
+                                       'name': 'mission_called',
+                                       'parent': 'check_new_mission',
+                                       'return_possibilities': {   'failure': True,
+                                                                   'running': False,
+                                                                   'success': True},
+                                       'type': 'check_environment'},
+                 'on_mission': {   'additional_arguments': ['var_on_a_mission'],
+                                   'category': 'leaf',
+                                   'children': [],
+                                   'internal_status_module_code': 'MODULE '
+                                                                  'on_mission_module(var_on_a_mission)\n'
+                                                                  '\t'
+                                                                  'CONSTANTS\n'
+                                                                  '\t\t'
+                                                                  'success, '
+                                                                  'failure, '
+                                                                  'running, '
+                                                                  'invalid;\n'
+                                                                  '\tDEFINE\n'
+                                                                  '\t\tstatus '
+                                                                  ':= active ? '
+                                                                  'internal_status '
+                                                                  ': invalid;\n'
+                                                                  '\t\t'
+                                                                  'internal_status '
+                                                                  ':= '
+                                                                  '(var_on_a_mission) '
+                                                                  '? success : '
+                                                                  'failure;\n',
+                                   'internal_status_module_name': 'on_mission_module',
+                                   'name': 'on_mission',
+                                   'parent': 'confirm_mission',
+                                   'return_possibilities': {   'failure': True,
+                                                               'running': False,
+                                                               'success': True},
+                                   'type': 'check'},
+                 'serve_cookies': {   'additional_arguments': [],
+                                      'category': 'leaf',
+                                      'children': [],
+                                      'internal_status_module_code': None,
+                                      'internal_status_module_name': None,
+                                      'name': 'serve_cookies',
+                                      'parent': 'cookie_control',
+                                      'return_possibilities': {   'failure': False,
+                                                                  'running': False,
+                                                                  'success': True},
+                                      'type': 'action'},
+                 'set_mission': {   'additional_arguments': [],
+                                    'category': 'leaf',
+                                    'children': [],
+                                    'internal_status_module_code': None,
+                                    'internal_status_module_name': None,
+                                    'name': 'set_mission',
+                                    'parent': 'check_new_mission',
+                                    'return_possibilities': {   'failure': False,
+                                                                'running': False,
+                                                                'success': True},
+                                    'type': 'action'}},
+    'specifications': [   'INVARSPEC ((env_num_cookies > 0) -> '
+                          '!((bake_cookies.active)));',
+                          'CTLSPEC AG((env_cookies_requested -> '
+                          'AF((serve_cookies.active))));'],
+    'tick_condition': 'TRUE',
+    'variables': {   'env_cookies_requested': {   'custom_value_range': '{TRUE, '
+                                                                        'FALSE}',
+                                                  'initial_value': None,
+                                                  'keep_stage_0': True,
+                                                  'max_value': 1,
+                                                  'min_value': 0,
+                                                  'mode': 'VAR',
+                                                  'name': 'cookies_requested',
+                                                  'next_value': [   (   'serve_cookies',
+                                                                        False,
+                                                                        [   (   'TRUE',
+                                                                                'FALSE')]),
+                                                                    (   None,
+                                                                        True,
+                                                                        [   (   'env_cookies_requested_stage_1',
+                                                                                'TRUE'),
+                                                                            (   'TRUE',
+                                                                                '{TRUE, '
+                                                                                'FALSE}')])],
+                                                  'prefix': 'env_'},
+                     'env_num_cookies': {   'custom_value_range': None,
+                                            'initial_value': None,
+                                            'keep_stage_0': True,
+                                            'max_value': 3,
+                                            'min_value': 0,
+                                            'mode': 'VAR',
+                                            'name': 'num_cookies',
+                                            'next_value': [   (   'bake_cookies',
+                                                                  True,
+                                                                  [   (   'TRUE',
+                                                                          '{0, '
+                                                                          '1, '
+                                                                          '2, '
+                                                                          '3}')]),
+                                                              (   'serve_cookies',
+                                                                  True,
+                                                                  [   (   'TRUE',
+                                                                          '{max(0, '
+                                                                          '(env_num_cookies_stage_1 '
+                                                                          '- '
+                                                                          '1)), '
+                                                                          'max(0, '
+                                                                          '(env_num_cookies_stage_1 '
+                                                                          '- '
+                                                                          '2)), '
+                                                                          'max(0, '
+                                                                          '(env_num_cookies_stage_1 '
+                                                                          '- '
+                                                                          '3))}')])],
+                                            'prefix': 'env_'},
+                     'on_a_mission': {   'custom_value_range': '{TRUE, FALSE}',
+                                         'initial_value': [('TRUE', 'FALSE')],
+                                         'keep_stage_0': True,
+                                         'max_value': 1,
+                                         'min_value': 0,
+                                         'mode': 'VAR',
+                                         'name': 'on_a_mission',
+                                         'next_value': [   (   'set_mission',
+                                                               False,
+                                                               [   (   'TRUE',
+                                                                       'TRUE')])],
+                                         'prefix': 'var_'}}}
