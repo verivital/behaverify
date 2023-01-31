@@ -379,7 +379,13 @@ def walk_tree_recursive(metamodel, current_node, parent_name, nodes, node_names,
 
             variables[node_name + '_update_success'] = create_variable_template(node_name + '_update_success', 'VAR',
                                                                                 '{TRUE, FALSE}', 0, 1, None,
-                                                                                [])
+                                                                                [
+                                                                                    (node_name,
+                                                                                     True,
+                                                                                     [('TRUE', '{TRUE, FALSE}')]
+                                                                                     )
+                                                                                ],
+                                                                                prefix = '', keep_stage_0 = False)
 
             if (mon.topic_bbvar.name) in variables and (not mon.ignore_topic):
                 variable = variables[mon.topic_bbvar.name]

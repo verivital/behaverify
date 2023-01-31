@@ -2,7 +2,6 @@ BehaviorModel:
     'variables' '{'
     variables *= variable
     '}' 'end_variables'
-    //'#comment'/a/'end_comment#'
     'local_variables' '{'
     local_variables *= variable
     '}' 'end_local_variables'
@@ -57,9 +56,10 @@ node:
     decorator_node:
     'decorator' '{'
     name = ID
-    node_type = 'X_is_Y'
-    'X' x = status
-    'Y' y = status
+    (
+    (node_type = 'X_is_Y' 'X' x = status 'Y' y = status) |
+    (node_type = 'inverter')
+    )
     'child' child = node
     '}' 'end_decorator'
 ;
@@ -105,16 +105,14 @@ node:
     environment_variable:
     'environment_variable' '{'
     name = ID
-    ((model_as = 'VAR') | (model_as = 'FROZENVAR') | (model_as = 'DEFINE'))
-    domain = variable_domain
+    ((model_as = 'VAR' domain = variable_domain) | (model_as = 'FROZENVAR' domain = variable_domain) | (model_as = 'DEFINE'))
     '}' 'end_environment_variable'
 ;
     
 variable:
     'variable' '{'
     name = ID
-    ((model_as = 'VAR') | (model_as = 'FROZENVAR') | (model_as = 'DEFINE'))
-    domain = variable_domain
+    ((model_as = 'VAR' domain = variable_domain) | (model_as = 'FROZENVAR' domain = variable_domain) | (model_as = 'DEFINE'))
     '}' 'end_variable'
 ;
     

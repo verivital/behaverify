@@ -1,0 +1,65 @@
+MODULE main
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		resume_from_here_in_subtree__inv := -3;
+		inv.active := TRUE;
+		--START OF BLACKBOARD DEFINITIONS
+		var_test_stage_1 := 
+			case
+				!(tester.active) : var_test;
+				(var_test = 2) : 0;
+				TRUE : min(2, (var_test + 1));
+			esac;
+		--END OF BLACKBOARD DEFINITIONS
+	VAR
+		node_names : define_nodes;
+		inv : decorator_inverter(tester);
+		tester : tester_module(var_test_stage_1);
+		--START OF BLACKBOARD VARIABLES DECLARATION
+		var_test : 0..2;
+		--END OF BLACKBOARD VARIABLES DECLARATION
+	ASSIGN
+		--START OF BLACKBOARD VARIABLES INITIALIZATION
+		--END OF BLACKBOARD VARIABLES INITIALIZATION
+		--START OF BLACKBOARD VARIABLES TRANSITION
+		next(var_test) := var_test_stage_1;
+		--END OF BLACKBOARD VARIABLES TRANSITION
+
+
+MODULE define_nodes
+	DEFINE
+		inv := 0;
+		tester := 1;
+MODULE leaf_module(internal_status_module)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status_module.internal_status : invalid;
+MODULE decorator_inverter(child_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				child_0.status = success : failure;
+				child_0.status = failure : success;
+				TRUE : child_0.status;
+			esac;
+		child_0.active :=
+			case
+				!(active) : FALSE;
+				TRUE : TRUE;
+			esac;
+MODULE tester_module(var_test_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := 
+			case
+				(var_test_stage_1 = 0) : success;
+				(var_test_stage_1 = 1) : running;
+				TRUE : failure;
+			esac;

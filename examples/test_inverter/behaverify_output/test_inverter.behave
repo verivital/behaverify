@@ -1,0 +1,66 @@
+{   'nodes': {   'inv': {   'additional_arguments': None,
+                            'category': 'decorator',
+                            'children': ['tester'],
+                            'internal_status_module_code': None,
+                            'internal_status_module_name': None,
+                            'name': 'inv',
+                            'parent': None,
+                            'return_possibilities': {   'failure': True,
+                                                        'running': True,
+                                                        'success': True},
+                            'type': 'inverter'},
+                 'tester': {   'additional_arguments': ['var_test_stage_1'],
+                               'category': 'leaf',
+                               'children': [],
+                               'internal_status_module_code': 'MODULE '
+                                                              'tester_module(var_test_stage_1)\n'
+                                                              '\tCONSTANTS\n'
+                                                              '\t\tsuccess, '
+                                                              'failure, '
+                                                              'running, '
+                                                              'invalid;\n'
+                                                              '\tDEFINE\n'
+                                                              '\t\tstatus := '
+                                                              'active ? '
+                                                              'internal_status '
+                                                              ': invalid;\n'
+                                                              '\t\t'
+                                                              'internal_status '
+                                                              ':= \n'
+                                                              '\t\t\tcase\n'
+                                                              '\t\t\t\t'
+                                                              '(var_test_stage_1 '
+                                                              '= 0) : '
+                                                              'success;\n'
+                                                              '\t\t\t\t'
+                                                              '(var_test_stage_1 '
+                                                              '= 1) : '
+                                                              'running;\n'
+                                                              '\t\t\t\tTRUE : '
+                                                              'failure;\n'
+                                                              '\t\t\tesac;\n',
+                               'internal_status_module_name': 'tester_module',
+                               'name': 'tester',
+                               'parent': 'inv',
+                               'return_possibilities': {   'failure': True,
+                                                           'running': True,
+                                                           'success': True},
+                               'type': 'action'}},
+    'specifications': [],
+    'tick_condition': 'TRUE',
+    'variables': {   'test': {   'custom_value_range': None,
+                                 'initial_value': None,
+                                 'keep_stage_0': True,
+                                 'max_value': 2,
+                                 'min_value': 0,
+                                 'mode': 'VAR',
+                                 'name': 'test',
+                                 'next_value': [   (   'tester',
+                                                       False,
+                                                       [   (   '(var_test = 2)',
+                                                               '0'),
+                                                           (   'TRUE',
+                                                               'min(2, '
+                                                               '(var_test + '
+                                                               '1))')])],
+                                 'prefix': 'var_'}}}

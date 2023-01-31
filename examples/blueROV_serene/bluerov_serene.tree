@@ -30,17 +30,49 @@ environment {
 	} end_initial_values
 	update_values {
 		environment_statement {
-			env BLUEROV_HALTED
-			result { env BLUEROV_HALTED } end_result
+			env battery_low
+			result { True, False } end_result
 		} end_environment_statement
 		environment_statement {
-			env BLUEROV_SURFACED
-			result { env BLUEROV_SURFACED } end_result
+			env emergency_sensor
+			result { True, False } end_result
+		} end_environment_statement
+		environment_statement {
+			env geofence_warning
+			result { True, False } end_result
+		} end_environment_statement
+		environment_statement {
+			env home_reached
+			result { True, False } end_result
+		} end_environment_statement
+		environment_statement {
+			env mission_finished
+			result { True, False } end_result
 		} end_environment_statement
 		environment_statement {
 			env next_mission
 			case { env mission_finished } end_case result { 'MISSION_emergency_surface', 'MISSION_pipe_tracking', 'MISSION_go_to_home', 'MISSION_go_to_waypoint' } end_result
 			result { env next_mission } end_result
+		} end_environment_statement
+		environment_statement {
+			env obstacles_present
+			result { True, False } end_result
+		} end_environment_statement
+		environment_statement {
+			env pipe_lost
+			result { True, False } end_result
+		} end_environment_statement
+		environment_statement {
+			env reallocation_needed
+			result { True, False } end_result
+		} end_environment_statement
+		environment_statement {
+			env reallocation_possible
+			result { True, False } end_result
+		} end_environment_statement
+		environment_statement {
+			env sensor_failure
+			result { True, False } end_result
 		} end_environment_statement
 	} end_update_values
 } end_environment

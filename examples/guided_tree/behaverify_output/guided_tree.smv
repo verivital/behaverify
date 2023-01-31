@@ -1,0 +1,157 @@
+MODULE main
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		resume_from_here_in_subtree__cookie_control := -3;
+		cookie_control.active := TRUE;
+		--START OF BLACKBOARD DEFINITIONS
+		env_cookies_requested_stage_1 := 
+			case
+				!(serve_cookies.active) : env_cookies_requested;
+				TRUE : FALSE;
+			esac;
+		var_on_a_mission_stage_1 := 
+			case
+				!(set_mission.active) : var_on_a_mission;
+				TRUE : TRUE;
+			esac;
+		--END OF BLACKBOARD DEFINITIONS
+	VAR
+		node_names : define_nodes;
+		bake_cookies : running_DEFAULT_module();
+		check_new_mission : composite_sequence_without_memory_2(mission_called, set_mission);
+		confirm_cookies : composite_selector_without_memory_2(cookies_present, bake_cookies);
+		confirm_mission : composite_selector_without_memory_2(on_mission, check_new_mission);
+		cookie_control : composite_sequence_without_memory_3(confirm_mission, confirm_cookies, serve_cookies);
+		cookies_present : cookies_present_module(env_num_cookies);
+		mission_called : mission_called_module(env_cookies_requested);
+		on_mission : on_mission_module(var_on_a_mission);
+		serve_cookies : success_DEFAULT_module();
+		set_mission : success_DEFAULT_module();
+		--START OF BLACKBOARD VARIABLES DECLARATION
+		env_cookies_requested : boolean;
+		env_cookies_requested_stage_2 : boolean;
+		env_num_cookies : 0..3;
+		env_num_cookies_stage_1 : 0..3;
+		env_num_cookies_stage_2 : 0..3;
+		var_on_a_mission : boolean;
+		--END OF BLACKBOARD VARIABLES DECLARATION
+	ASSIGN
+		--START OF BLACKBOARD VARIABLES INITIALIZATION
+		init(var_on_a_mission) := 
+			case
+				TRUE : FALSE;
+			esac;
+		--END OF BLACKBOARD VARIABLES INITIALIZATION
+		--START OF BLACKBOARD VARIABLES TRANSITION
+		next(env_cookies_requested) := env_cookies_requested_stage_2;
+		env_cookies_requested_stage_2 := 
+			case
+				!(cookie_control.active) : env_cookies_requested_stage_1;
+				env_cookies_requested_stage_1 : TRUE;
+				TRUE : {TRUE, FALSE};
+			esac;
+		next(env_num_cookies) := env_num_cookies_stage_2;
+		env_num_cookies_stage_1 := 
+			case
+				!(bake_cookies.active) : env_num_cookies;
+				TRUE : {0, 1, 2, 3};
+			esac;
+		env_num_cookies_stage_2 := 
+			case
+				!(serve_cookies.active) : env_num_cookies_stage_1;
+				TRUE : {max(0, (env_num_cookies_stage_1 - 1)), max(0, (env_num_cookies_stage_1 - 2)), max(0, (env_num_cookies_stage_1 - 3))};
+			esac;
+		next(var_on_a_mission) := var_on_a_mission_stage_1;
+		--END OF BLACKBOARD VARIABLES TRANSITION
+
+INVARSPEC ((env_num_cookies > 0) -> !((bake_cookies.active)));
+CTLSPEC AG((env_cookies_requested -> AF((serve_cookies.active))));
+MODULE define_nodes
+	DEFINE
+		cookie_control := 0;
+		confirm_mission := 1;
+		on_mission := 2;
+		check_new_mission := 3;
+		mission_called := 4;
+		set_mission := 5;
+		confirm_cookies := 6;
+		cookies_present := 7;
+		bake_cookies := 8;
+		serve_cookies := 9;
+MODULE leaf_module(internal_status_module)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status_module.internal_status : invalid;
+MODULE composite_sequence_without_memory_3(child_0, child_1, child_2)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				!(child_0.internal_status = success) : child_0.internal_status;
+				!(child_1.internal_status = success) : child_1.internal_status;
+				!(child_2.internal_status = success) : child_2.internal_status;
+				TRUE : success;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = success;
+		child_2.active := child_1.status = success;
+MODULE composite_sequence_without_memory_2(child_0, child_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				!(child_0.internal_status = success) : child_0.internal_status;
+				!(child_1.internal_status = success) : child_1.internal_status;
+				TRUE : success;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = success;
+MODULE composite_selector_without_memory_2(child_0, child_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				!(child_0.internal_status = failure) : child_0.internal_status;
+				!(child_1.internal_status = failure) : child_1.internal_status;
+				TRUE : failure;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = failure;
+MODULE cookies_present_module(env_num_cookies)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((env_num_cookies > 0)) ? success : failure;
+MODULE mission_called_module(env_cookies_requested)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := (env_cookies_requested) ? success : failure;
+MODULE on_mission_module(var_on_a_mission)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := (var_on_a_mission) ? success : failure;
+MODULE running_DEFAULT_module
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := running;
+MODULE success_DEFAULT_module
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := success;

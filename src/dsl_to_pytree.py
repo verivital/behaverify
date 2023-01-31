@@ -249,6 +249,14 @@ def walk_tree_recursive(current_node, node_names, file_name):
                     + child
                     + ', ' + "'" + node_name + "'" + ')' + os.linesep)
         return node_name
+    elif current_node.node_type == 'inverter':
+        decorator_type = ('inverter')
+        child = walk_tree_recursive(current_node.child, node_names, file_name)
+        with open(file_name, 'a') as f:
+            f.write(indent(1) + node_name + ' = py_trees.decorators.' + decorator_type + '('
+                    + child
+                    + ', ' + "'" + node_name + "'" + ')' + os.linesep)
+        return node_name
 
     # so at this point, we're in composite node territory
 
