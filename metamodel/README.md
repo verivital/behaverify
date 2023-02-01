@@ -678,6 +678,11 @@ environment {
 		#comment# we assume that cookies don't appear or disappear in general, so we need to clarify that #end_comment#
 	} end_update_values
 } end_environment
+
+#comment#
+at this point, all of our variables have been declared.
+#end_comment#
+
 checks {
 	check {
 		#comment# this will just check if we're on a mission #end_comment#
@@ -704,16 +709,19 @@ environment_checks {
 } end_environment_checks
 actions {
 	action {
+		#comment# this will set the mission variable to true #end_comment#
 		set_mission
 		read_variables {} end_read_variables
 		write_variables { on_a_mission } end_write_variables
 		initial_values {
+			#comment# here we initialize on_a_mission to False #end_comment#
 			variable_statement {
 				on_a_mission
 				result { False } end_result
 			} end_variable_statement
 		} end_initial_values
 		update {
+			#comment# if we run this action, we set on_a_mission to True #end_comment#
 			variable_statement {
 				on_a_mission
 				result { True } end_result
@@ -722,13 +730,17 @@ actions {
 		} end_update
 	} end_action
 	action {
+		#comment# this will bake cookies #end_comment#
 		bake_cookies
 		imports { 'cookie_robot_interface' } end_imports
 		read_variables {} end_read_variables
 		write_variables {} end_write_variables
+		#comment# note that since we are only changing environemnt variables via a write statement,
+		we don't need to mark anything for write or read #end_comment#
 		initial_values {} end_initial_values
 		update {
 			write_environment {
+				#comment# when we bake, we can end up with 0 cookies (meaning baking isn't finished), or any number of positive cookies #end_comment#
 				python_function { 'cookie_robot_interface.bake()' } end_python_function
 				update_values {
 					environment_statement {
@@ -741,6 +753,7 @@ actions {
 		} end_update
 	} end_action
 	action {
+		#comment# now we serve cookies #end_comment#
 		serve_cookies
 		imports { 'cookie_robot_interface' } end_imports
 		read_variables {} end_read_variables
@@ -796,6 +809,7 @@ composite {
 				} end_composite
 			} end_children
 		} end_composite
+		#comment# if we've reached this point, we have confirmed someone asked for cookies #end_comment#
 		composite {
 			confirm_cookies
 			selector
@@ -807,13 +821,14 @@ composite {
 				bake_cookies
 			} end_children
 		} end_composite
+		#comment# if we got to this point, then we have confirmed cookies exist. so we can serve cookies #end_comment#
 		serve_cookies
 	} end_children
 } end_composite
 tick_prerequisite {True} end_tick_prerequisite #comment# since in this case, our prerequisite is just True, we could have omitted this#end_comment#
 specifications {
-	INVARSPEC { (implies, (greater_than,  env num_cookies 0, 0), (not, (active, bake_cookies)))} end_INVARSPEC #comment# this one is true #end_comment#
-	CTLSPEC { (always_globally, (implies, env cookies_requested 0, (always_finally, (active, serve_cookies)))) } end_CTLSPEC #comment# this one is false #end_comment#
+	INVARSPEC { (implies, (greater_than,  env num_cookies 0, 0), (not, (active, bake_cookies)))} end_INVARSPEC #comment# this one is true. it specifies that if the number of cookies is positive, then we are not baking. #end_comment#
+	CTLSPEC { (always_globally, (implies, env cookies_requested 0, (always_finally, (active, serve_cookies)))) } end_CTLSPEC #comment# this one is false. this implies that if cookies are requested, eventually cookies will be served. this is false, because baking can continue forever. #end_comment#
 } end_specifications
 ```
 
