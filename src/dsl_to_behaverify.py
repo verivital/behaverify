@@ -8,6 +8,13 @@ import copy
 
 from behaverify_common import create_node_name, create_node_template, create_variable_template
 
+# a STAGE is defined as a triple (node_name, non_determinism, case_results)
+# node_name is a string representing the node where this update happens or none if it's environmental
+# non_determinism indicates if this update is non-deterministic
+# case_results are are pairs (condition, result)
+# if the condition is true, then the result is used.
+# the last condition should always be TRUE
+
 
 def get_variables(model, keep_stage_0):
     '''
@@ -15,6 +22,7 @@ def get_variables(model, keep_stage_0):
     variables are constructed based on variables and environment_variables
     -- arguments
     @ model := a model. one created using behaverify.tx as the metamodel (probably)
+    @ keep_stage_0 := a boolean. indicates if we should be default keep_stage_0.
     -- return
     @ variables := a dictionary from variable_name (string) to variable informaion
     @ local_variables := a dictionary from variable_name (string) to variable informaion
@@ -55,24 +63,25 @@ def make_new_stage(statement, node_name, variables, local_variables, use_stages,
     the stage consists of (conditions, results) pairs in order.
     if a condition is met, that value is used.
     the last condition is always TRUE, ensuring at least one condition will be met.
-    -- @ arguments
-    statement := a code statement (see grammar defined in behaverify.tx)
+    -- arguments
+    @ statement := a code statement (see grammar defined in behaverify.tx)
      -> the statement contains the information we need.
-    node_name := the name of the node to use string usually, can be None.
+    @ node_name := the name of the node to use string usually, can be None.
      -> this is used by methods called by make_new_stage.
-    variables := a dictionary of variables_names to variable_info
-    local_variables := a dictionary of variable_names to variable_info
-    use_stages := a boolean.
+    @ variables := a dictionary of variables_names to variable_info
+    @ local_variables := a dictionary of variable_names to variable_info
+    @ use_stages := a boolean.
      -> if true, variables will be formattted to use their current stage.
      -> if false, variables will just use their name
-    call_blackboard := a boolean
-     -> WARNING. DEPRICATED. should always be false.
-     -> in older versions, blackboard was seperate.
-     -> this necessitated some things calling the blackboard. this is no longer accurate.
-    use_next := a boolean
-     -> WARNING. DEPRICATED. should always be false
-     -> in older versions it was sometimes useful to call next value instead of current
-     -> that was mostly because i overthought it and made a bad and complicated encoding.
+    @ use_next := a boolean
+     -> usually false. This is only True in the case where we've decided we will
+     -> be deleting stage_0, and therefore stage_1 must use next statements.
+    @ not_next := a string or None.
+     -> Only relevant if use_next is true. in that case, this is the name of the
+     -> variable which is having stage_0 deleted, which requires some mapping.
+     -> Should only be None if use_next is False.
+    -- return
+    @ UNNAMED := a new stage is returned.
     -- side effects
     none directly. however, this method calls format_code which calls format_variable
     format_variable has side effects. can modify variables.
@@ -103,6 +112,18 @@ def make_new_stage(statement, node_name, variables, local_variables, use_stages,
 
 
 def variable_reference(base_name, is_local, node_name, is_env):
+    '''
+    creates the name used to store the variable in variables.
+    -- arguments
+    @ base_name := what is normally stored in 'variable_name'
+    @ is_local := is the variable local
+    @ node_name := the name of the node (only relevant if local)
+    @ is_env := is the variable an environment_variable
+    -- return
+    @ UNNAMED := returns the variable name
+    -- side effects
+    none
+    '''
     return (
         ('env_' if is_env else ((node_name + '_DOT_') if is_local else ('')))
         + base_name)
@@ -111,8 +132,15 @@ def variable_reference(base_name, is_local, node_name, is_env):
 def complete_environment_variables(model, variables, local_variables, delayed_statements):
     '''
     completes the environment variables.
-    --arguments
-    @ model :=
+    -- arguments
+    @ model := a model.
+    @ variables := a dictionary of variables
+    @ local_variables := a dictionary of local variables that will be used to create new variable
+    @ delayed_statements := a list of statements that need to be processed now
+    -- return
+    no return
+    -- side effects
+    changes variables.
     '''
     for (node_name, statement) in delayed_statements:
         new_stage = make_new_stage(statement, node_name, variables, local_variables, True, False, None)
@@ -134,13 +162,25 @@ def complete_environment_variables(model, variables, local_variables, delayed_st
     return
 
 
-def compute_stage(variable_name, variables, use_stages, overwrite_stage = None):
+def compute_stage(variable_key, variables, use_stages, overwrite_stage = None):
+    '''
+    compute the stage for the variable now
+    -- arguments
+    @ variable_key := used to index into the variable.
+    @ variables := a dictionary of variables
+    @ use_stages := if true, use stages
+    @ overwrite_stage := forces a specific stage
+    -- return
+    @ the string with appropriate state number
+    -- side effects
+    none.
+    '''
     if overwrite_stage is not None:
-        return (('_stage_' + str(min(overwrite_stage, len(variables[variable_name]['next_value']))) if overwrite_stage > 0 else (
+        return (('_stage_' + str(min(overwrite_stage, len(variables[variable_key]['next_value']))) if overwrite_stage > 0 else (
             '' if overwrite_stage == 0 else (
-                '_stage_' + str(len(variables[variable_name]['next_value']))
+                '_stage_' + str(len(variables[variable_key]['next_value']))
             ))))
-    return (('_stage_' + str(len(variables[variable_name]['next_value']))) if (use_stages and len(variables[variable_name]['next_value']) > 0) else (''))
+    return (('_stage_' + str(len(variables[variable_key]['next_value']))) if (use_stages and len(variables[variable_key]['next_value']) > 0) else (''))
 
 
 def add_local_variable(variables, local_variables, variable_name, variable_key):
