@@ -1,28 +1,3 @@
-
-# arg_parser.add_argument('input_file')
-# arg_parser.add_argument('--blackboard_input_file', default = None)
-# arg_parser.add_argument('--module_input_file', default = None)
-# arg_parser.add_argument('--specs_input_file', default = None)
-# arg_parser.add_argument('--output_file', default = None)
-# arg_parser.add_argument('--blackboard_output_file', default = None)
-# arg_parser.add_argument('--module_output_file', default = None)
-# arg_parser.add_argument('--overwrite', action = 'store_true')
-
-# -----------------------------------------------------------------------------------------------------------------------
-
-# def create_variable_template(name, mode, custom_value_range, min_value, max_value, initial_value, next_value, prefix = ''):
-#     return {
-#         'prefix' : prefix,
-#         'name' : name,
-#         'mode' : mode,
-#         'custom_value_range' : custom_value_range,
-#         'min_value' : min_value,
-#         'max_value' : max_value,
-#         'initial_value' : initial_value,
-#         'next_value' : next_value
-#     }
-
-
 def create_variable_template(name, mode, custom_value_range, min_value, max_value, initial_value, next_value, prefix = '', keep_stage_0 = True):
     return {
         'prefix' : prefix,
