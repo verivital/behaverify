@@ -5,33 +5,51 @@ import sys
 import itertools
 from behaverify_common import indent, create_node_name
 
+
+def format_function_before(function_name, code):
+    return (
+        function_name + '('
+        + ', '.join([format_code(value) for value in code.function_call.values])
+        + ')'
+        )
+
+
+def format_function_between(function_name, code):
+    return (
+        '('
+        + (' ' + function_name + ' ').join([format_code(value) for value in code.function_call.values])
+        + ')'
+        )
+
+
 FUNCTION_FORMAT = {
-    'abs' : ('abs', 0),
-    'max' : ('max', 1),
-    'min' : ('min', 1),
-    'sin' : ('math.sin', 0),
-    'cos' : ('math.cos', 0),
-    'tan' : ('math.tan', 0),
-    'ln' : ('math.log', 0),
-    'not' : ('not', 0),
-    'and' : ('and', 2),
-    'or' : ('or', 2),
-    'xor' : ('operator.xor', 2),
-    'xnor' : ('xnor', 2),
-    'implies' : ('=>', 2),
-    'equivalent' : ('==', 2),
-    'equal' : ('==', 2),
-    'not_equal' : ('!=', 2),
-    'less_than' : ('<', 2),
-    'greater_than' : ('>', 2),
-    'less_than_or_equal' : ('<=', 2),
-    'greater_than_or_equal' : ('>=', 2),
-    'negative' : ('-', 0),
-    'addition' : ('+', 2),
-    'subtraction' : ('-', 2),
-    'multiplication' : ('*', 2),
-    'division' : ('/', 2),
-    'mod' : ('%', 2)
+    'abs' : ('abs', format_function_before),
+    'max' : ('max', format_function_before),
+    'min' : ('min', format_function_before),
+    'sin' : ('math.sin', format_function_before),
+    'cos' : ('math.cos', format_function_before),
+    'tan' : ('math.tan', format_function_before),
+    'ln' : ('math.log', format_function_before),
+    'not' : ('not', format_function_before),
+    'and' : ('and', format_function_between),
+    'or' : ('or', format_function_between),
+    'xor' : ('operator.xor', format_function_between),
+    'xnor' : ('xnor', format_function_between),
+    'implies' : ('->', format_function_between),
+    'equivalent' : ('==', format_function_between),
+    'equal' : ('==', format_function_between),
+    'not_equal' : ('!=', format_function_between),
+    'less_than' : ('<', format_function_between),
+    'greater_than' : ('>', format_function_between),
+    'less_than_or_equal' : ('<=', format_function_between),
+    'greater_than_or_equal' : ('>=', format_function_between),
+    'negative' : ('-', format_function_before),
+    'addition' : ('+', format_function_between),
+    'subtraction' : ('-', format_function_between),
+    'multiplication' : ('*', format_function_between),
+    'division' : ('/', format_function_between),
+    'mod' : ('%', format_function_between),
+    'count' : ('count', format_function_before)
 }
 
 
@@ -44,11 +62,7 @@ def format_code(code):
         ((("'" + code.constant + "'") if isinstance(code.constant, str) else str(code.constant)) if code.constant is not None else (
             (format_variable(code.variable, code.is_local)) if code.variable is not None else (
                 ('(' + format_code(code.code_statement) + ')') if code.code_statement is not None else (
-                    (FUNCTION_FORMAT[code.function_call.function_name][0] + '(' + format_code(code.function_call.value1) + ')') if FUNCTION_FORMAT[code.function_call.function_name][1] == 0 else (
-                        (FUNCTION_FORMAT[code.function_call.function_name][0] + '(' + format_code(code.function_call.value1) + ', ' + format_code(code.function_call.value2) + ')') if FUNCTION_FORMAT[code.function_call.function_name][1] == 1 else (
-                            format_code(code.function_call.value1) + ' ' + FUNCTION_FORMAT[code.function_call.function_name][0] + ' ' + format_code(code.function_call.value2)
-                        )
-                    )
+                    FUNCTION_FORMAT[code.function_call.function_name][1](FUNCTION_FORMAT[code.function_call.function_name][0], code)
                 )
             )
         )
@@ -130,7 +144,7 @@ def handle_read_statement(statement):
             + ', '.join(
                 ([] if statement.condition_variable is None else [format_variable(statement.condition_variable, True)])
                 +
-                [format_variable(var_env_pair.variable, var_env_pair.is_local) for var_env_pair in statement.variable_environment_pairs])
+                [format_variable(var_statement.variable, var_statement.is_local) for var_statement in statement.variable_statements])
             + ') = ' + statement.python_function + os.linesep)
 
 

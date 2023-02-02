@@ -29,6 +29,7 @@ def get_variables(model, keep_stage_0):
     -- side effects
     none. purely functional.
     '''
+    # create each variable type using the template.
     variables = {variable_reference(variable.name, False, '', False) :
                  create_variable_template(variable.name, variable.model_as,
                                           (None if (variable.domain.min_val is not None or variable.model_as == 'DEFAULT') else ('{TRUE, FALSE}' if variable.domain.boolean is not None else ('{' + ', '.join(variable.domain.enums) + '}'))),
@@ -86,6 +87,8 @@ def make_new_stage(statement, node_name, variables, local_variables, use_stages,
     none directly. however, this method calls format_code which calls format_variable
     format_variable has side effects. can modify variables.
     '''
+    # first we go through all the not default case-results, and pair them up.
+    # then we add the base case.
     return ([(format_code(case_result.condition, node_name, variables, local_variables, use_stages, use_next, not_next)
               ,
               (
@@ -442,22 +445,20 @@ def create_action(current_node, node_name, parent_name, variables, local_variabl
                             format_variable(statement.condition_variable, True, node_name, False, variables, local_variables, False, False, None)
                             )
                         )
-                    for variable_environment_pair in statement.variable_environment_pairs:
-                        variable_key = variable_reference(variable_environment_pair.variable.name, variable_environment_pair.is_local, node_name, False)
+                    for variable_statement in statement.variable_statements:
+                        variable_key = variable_reference(variable_statement.variable.name, variable_statement.is_local, node_name, False)
                         if variable_key not in variables:
-                            format_variable(variable_environment_pair.variable, variable_environment_pair.is_local,
+                            format_variable(variable_statement.variable, variable_statement.is_local,
                                             node_name, False, variables, local_variables, False, False, None)
                         variable = variables[variable_key]
-                        variable['initial_value'] = [(condition,
-                                                      format_variable(variable_environment_pair.environment_variable,
-                                                                      False, node_name, True, variables, local_variables,
-                                                                      False, False, None)
-                                                      ),
-                                                     ('TRUE',
+                        variable['intial_value'] = ([('!(' + condition + ')',
                                                       variable['custom_value_range'] if variable['custom_value_range'] is not None else (
-                                                          '[' + str(variable['min_value']) + ', ' + str(variable['max_value']) + ']')
+                                                          str(variable['min_val']) + '..' + str(variable['max_val'])
                                                       )
-                                                     ]
+                                                      )]
+                                                    +
+                                                    make_new_stage(variable_statement, node_name, variables, local_variables, False, False, None)
+                                                    )
                 else:
                     if statement.condition is None:
                         condition_variable_key = variable_reference(statement.condition_variable.name, True, node_name, False)
@@ -470,26 +471,29 @@ def create_action(current_node, node_name, parent_name, variables, local_variabl
                             format_variable(statement.condition_variable, True, node_name, False, variables, local_variables, True, False, None)
                             )
                         )
-                    for variable_environment_pair in statement.variable_environment_pairs:
-                        variable_key = variable_reference(variable_environment_pair.variable.name, variable_environment_pair.is_local, node_name, False)
+                    for variable_statement in statement.variable_statements:
+                        variable_key = variable_reference(variable_statement.variable.name, variable_statement.is_local, node_name, False)
                         if variable_key not in variables:
-                            format_variable(variable_environment_pair.variable, variable_environment_pair.is_local,
+                            format_variable(variable_statement.variable, variable_statement.is_local,
                                             node_name, False, variables, local_variables, False, False, None)
                         variable = variables[variable_key]
-                        variable['keep_stage_0'] = variable['keep_stage_0'] if len(variable['next_value']) > 0 else True
+                        keep_stage_0 = variable['keep_stage_0']
+                        non_determinism = any([(len(result.values) > 1) for result in itertools.chain([variable_statement.default_result], variable_statement.case_results)])
+                        keep_stage_0 = keep_stage_0 or (not non_determinism)
                         variable['next_value'].append((node_name,
-                                                       False,
-                                                       [(condition,
-                                                         format_variable(variable_environment_pair.environment_variable,
-                                                                         False, node_name, True, variables, local_variables,
-                                                                         True, False, None)
-                                                         ),
-                                                        ('TRUE',
-                                                         format_variable(variable_environment_pair.variable, variable_environment_pair.is_local,
-                                                                         node_name, False, variables, local_variables, True, False, None)
-                                                         )
-                                                        ]
-                                                       ))
+                                                       non_determinism,
+                                                       (
+                                                           [('!(' + condition + ')',
+                                                             format_variable(variable_statement.variable, variable_statement.is_local,
+                                                                             node_name, False, variables, local_variables, True,
+                                                                             (False if keep_stage_0 or len(variables['next_value']) > 0 else True),
+                                                                             (None if keep_stage_0 or len(variables['next_value']) > 0 else variable_key))
+                                                             )]
+                                                           +
+                                                           make_new_stage(variable_statement, node_name, variables, local_variables, True,
+                                                                          (False if keep_stage_0 or len(variables['next_value']) > 0 else True),
+                                                                          (None if keep_stage_0 or len(variables['next_value']) > 0 else variable_key)))))
+                        variable['keep_stage_0'] = keep_stage_0
             elif cur_statement.write_statement is not None:
                 statements = cur_statement.write_statement.update
                 for statement in statements:
@@ -499,14 +503,11 @@ def create_action(current_node, node_name, parent_name, variables, local_variabl
                         keep_stage_0 = variable['keep_stage_0']
                         non_determinism = any([(len(result.values) > 1) for result in itertools.chain([statement.default_result], statement.case_results)])
                         keep_stage_0 = keep_stage_0 or (not non_determinism)
-                        if keep_stage_0 or len(variable['next_value']) > 0:
-                            variable['next_value'].append((node_name,
-                                                           non_determinism,
-                                                           make_new_stage(statement, node_name, variables, local_variables, True, False, None)))
-                        else:
-                            variable['next_value'].append((node_name,
-                                                           non_determinism,
-                                                           make_new_stage(statement, node_name, variables, local_variables, True, True, variable_key)))
+                        variable['next_value'].append((node_name,
+                                                       non_determinism,
+                                                       make_new_stage(statement, node_name, variables, local_variables, True,
+                                                                      (False if keep_stage_0 or len(variables['next_value']) > 0 else True),
+                                                                      (None if keep_stage_0 or len(variables['next_value']) > 0 else variable_key))))
                         variable['keep_stage_0'] = keep_stage_0
                     else:
                         delayed_statements.append((node_name, statement))

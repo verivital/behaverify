@@ -102,7 +102,8 @@ actions {
 			read_environment {
 				python_function { 'robot.get_mission()' } end_python_function
 				local saw_target
-				set_variables { (target_x, env x_goal), (target_y, env y_goal) } end_set_variables
+				variable_environment_statement {target_x result { env x_goal } end_result} end_variable_environment_statement
+				variable_environment_statement {target_y result { env y_goal } end_result} end_variable_environment_statement
 			} end_read_environment
 			variable_statement {
 				mission
@@ -134,7 +135,8 @@ actions {
 			read_environment {
 				python_function { 'robot.get_position()' } end_python_function
 				condition { True } end_condition
-				set_variables { (x, env x_true), (y, env y_true) } end_set_variables
+				variable_environment_statement {x result { env x_true } end_result} end_variable_environment_statement
+				variable_environment_statement {y result { env y_true } end_result} end_variable_environment_statement
 			} end_read_environment
 			return_statement { result { success } end_result } end_return_statement
 		} end_update
@@ -300,3 +302,10 @@ composite {
 		} end_composite
 	} end_children
 } end_composite
+
+tick_prerequisite { (greater_than, env remaining_goals, 0) } end_tick_prerequisite
+specifications {
+	INVARSPEC {(less_than_or_equal, (count, (active, go_down), (active, go_left), (active, go_right), (active, go_up)), 1)} end_INVARSPEC
+	LTLSPEC { (finally, (equal, env remaining_goals -1, 0)) } end_LTLSPEC
+	CTLSPEC { (always_finally, (equal, env remaining_goals -1, 0)) } end_CTLSPEC
+} end_specifications

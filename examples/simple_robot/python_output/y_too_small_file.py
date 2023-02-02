@@ -11,5 +11,5 @@ class y_too_small(py_trees.behaviour.Behaviour):
         self.blackboard.register_key(key = ('y'), access = py_trees.common.Access.READ)
 
     def update(self):
-        return ((py_trees.common.Status.SUCCESS) if (self.blackboard.y < self.blackboard.target_y) else (py_trees.common.Status.FAILURE))
+        return ((py_trees.common.Status.SUCCESS) if ((self.blackboard.y < self.blackboard.target_y)) else (py_trees.common.Status.FAILURE))
 
