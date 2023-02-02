@@ -345,18 +345,19 @@ Imports is optional, as described in Check Environment Nodes. Read Variables and
     'read_environment' '{'
     ('python_function' '{' python_function = STRING '}' 'end_python_function')?
     (('condition' '{' condition = code_statement_env '}' 'end_condition') | (is_local = 'local' condition_variable = [variable]))
-    'set_variables' '{' variable_environment_pairs *= variable_environment_pair[','] '}' 'end_set_variables'
+    variable_statements += variable_environment_statement
     '}' 'end_read_environment'
 ;
 ```
-Here python function is only used in py_tree generation and represents how the code would read the environmeent. You must either provide a Condition under which the environment is successfully read or, if non-determinism is preferred, assign a Local Variable to store whether or not the read was successful. Each Variable Environment pair couples a Local or Blackboard Variable with an Environment variable.
+Here python function is only used in py_tree generation and represents how the code would read the environmeent. You must either provide a Condition under which the environment is successfully read or, if non-determinism is preferred, assign a Local Variable to store whether or not the read was successful. Each Variable Statement assigns a local or blackboard variable a value. You may use environment variables in the code statements.
 
 Thus an example would be
 ```
 read_environment {
 	python_function { 'importedByActionNode.myFunc()' } end_python_function
 	condition { True } end_condition
-	set_variables { (varA, env varE), (local varB, env varE) } end_set_variables
+	variable_environment_statement { varA result { env varE } end_result } end_variable_environment_statement
+	variable_environment_statement { local varB result { env varE } end_result } end_variable_environment_statement
 } end_read_environment
 ```
 
@@ -366,7 +367,8 @@ This example would set varA to the value of the environment variable varE. It wo
 read_environment {
 	python_function { 'importedByActionNode.myFunc()' } end_python_function
 	local varC
-	set_variables { (varA, env varE), (local varB, env varE) } end_set_variables
+	variable_environment_statement { varA result { env varE } end_result } end_variable_environment_statement
+	variable_environment_statement { local varB result { env varE } end_result } end_variable_environment_statement
 } end_read_environment
 ```
 
@@ -655,7 +657,9 @@ Here we will walk through creating a tree. Comments, marked by #comment# ACTUAL 
 ```
 variables {
 	variable { on_a_mission VAR BOOLEAN } end_variable 
-	#comment# We will use this variable to store if we are on a mission, which we will store as a Boolean #end_comment#
+	#comment#
+	We will use this variable to store if we are on a mission,
+	which we will store as a Boolean #end_comment#
 } end_variables
 local_variables {} end_local_variables #comment# no local variables for this example #end_comment#
 environment {
@@ -666,7 +670,9 @@ environment {
 	} end_environment_variables
 	initial_values {
 		#comment# we don't set an initial value for cookies_requested. #end_comment#
-		#comment# we don't set an initial value for num_cookies. this represents the possibility of there already being cookies in the house. #end_comment#
+		#comment# we don't set an initial value for num_cookies.
+		this represents the possibility of there already being cookies in the house.
+		#end_comment#
 	} end_initial_values
 	update_values {
 		environment_statement {
@@ -674,8 +680,10 @@ environment {
 			case { env cookies_requested} end_case result { True } end_result
 			result {True, False} end_result
 		} end_environment_statement
-		#comment# cookies can be requsted at any point, but once requested, can't be unrequsted #end_comment#
-		#comment# we assume that cookies don't appear or disappear in general, so we need to clarify that #end_comment#
+		#comment# cookies can be requsted at any point,
+		but once requested, can't be unrequsted #end_comment#
+		#comment# we assume that cookies don't appear or disappear in general.
+		No need to specify that.#end_comment#
 	} end_update_values
 } end_environment
 
@@ -740,7 +748,11 @@ actions {
 		initial_values {} end_initial_values
 		update {
 			write_environment {
-				#comment# when we bake, we can end up with 0 cookies (meaning baking isn't finished), or any number of positive cookies #end_comment#
+				#comment#
+				when we bake, one of the following happens:
+				1. we end up with 0 cookies (meaning baking isn't finished)
+				2. we end up with any number of positive cookies
+				#end_comment#
 				python_function { 'cookie_robot_interface.bake()' } end_python_function
 				update_values {
 					environment_statement {
@@ -763,9 +775,16 @@ actions {
 			write_environment {
 				python_function { 'cookie_robot_interface.serve()' } end_python_function
 				update_values {
+					#comment#
+					we can eat any number of cookies.
+					#end_comment#
 					environment_statement {
 						env num_cookies
-						result { (max, 0, (subtraction, env num_cookies, 1)), (max, 0, (subtraction, env num_cookies, 2)), (max, 0, (subtraction, env num_cookies, 3)) } end_result
+						result {
+							(max, 0, (subtraction, env num_cookies, 1)),
+							(max, 0, (subtraction, env num_cookies, 2)),
+							(max, 0, (subtraction, env num_cookies, 3))
+						} end_result
 					} end_environment_statement
 					environment_statement {
 						env cookies_requested
@@ -783,7 +802,7 @@ composite {
 	sequence
 	#comment# Cookie Control is our root node.
 	It is a sequence, so it goes to the next child only if the current child returns success.
-	The False means no memory #end_comment#
+	#end_comment#
 	children {
 		#comment#
 		We will first Confirm we have a mission
@@ -804,12 +823,14 @@ composite {
 					sequence
 					children {
 						mission_called
-						set_mission #comment# mark the new mission. #end_comment#
+						set_mission
+						#comment# mark the new mission. #end_comment#
 					} end_children
 				} end_composite
 			} end_children
 		} end_composite
-		#comment# if we've reached this point, we have confirmed someone asked for cookies #end_comment#
+		#comment# if we've reached this point,
+		then we have confirmed someone asked for cookies #end_comment#
 		composite {
 			confirm_cookies
 			selector
@@ -821,14 +842,24 @@ composite {
 				bake_cookies
 			} end_children
 		} end_composite
-		#comment# if we got to this point, then we have confirmed cookies exist. so we can serve cookies #end_comment#
+		#comment# if we got to this point,
+		then we have confirmed cookies exist.
+		so we can serve cookies #end_comment#
 		serve_cookies
 	} end_children
 } end_composite
-tick_prerequisite {True} end_tick_prerequisite #comment# since in this case, our prerequisite is just True, we could have omitted this#end_comment#
+tick_prerequisite {True} end_tick_prerequisite
+#comment# since in this case our prerequisite is just True,
+we could have omitted this#end_comment#
 specifications {
-	INVARSPEC { (implies, (greater_than,  env num_cookies 0, 0), (not, (active, bake_cookies)))} end_INVARSPEC #comment# this one is true. it specifies that if the number of cookies is positive, then we are not baking. #end_comment#
-	CTLSPEC { (always_globally, (implies, env cookies_requested 0, (always_finally, (active, serve_cookies)))) } end_CTLSPEC #comment# this one is false. this implies that if cookies are requested, eventually cookies will be served. this is false, because baking can continue forever. #end_comment#
+	INVARSPEC { (implies, (greater_than,  env num_cookies 0, 0), (not, (active, bake_cookies)))} end_INVARSPEC
+	#comment# this one is true.
+	it specifies that if the number of cookies is positive, then we are not baking.
+	#end_comment#
+	CTLSPEC { (always_globally, (implies, env cookies_requested 0, (always_finally, (active, serve_cookies)))) } end_CTLSPEC
+	#comment# this one is false.
+	this implies that if cookies are requested, eventually cookies will be served.
+	this is false, because baking can continue forever. #end_comment#
 } end_specifications
 ```
 

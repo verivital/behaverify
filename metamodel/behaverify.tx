@@ -127,10 +127,6 @@ enumeration:
 status:
     'success' | 'running' | 'failure'
 ;
-    
-    variable_environment_pair:
-    '(' is_local ?= 'local' variable = [variable] ',' 'env' environment_variable = [environment_variable] ')'
-;
 
     //--------------------STATEMENTS--------------------------
     
@@ -142,7 +138,7 @@ statement:
     'read_environment' '{'
     ('python_function' '{' python_function = STRING '}' 'end_python_function')?
     (('condition' '{' condition = code_statement_env '}' 'end_condition') | (is_local = 'local' condition_variable = [variable]))
-    'set_variables' '{' variable_environment_pairs *= variable_environment_pair[','] '}' 'end_set_variables'
+    variable_statements += variable_environment_statement
     '}' 'end_read_environment'
 ;
     
@@ -157,7 +153,13 @@ statement:
 
 
     
-
+    variable_environment_statement:
+    'variable_environment_statement' '{'
+    is_local ?= 'local' variable = [variable]
+    case_results *= environment_variable_case_result
+    default_result = environment_variable_default_result
+    '}' 'end_variable_environment_statement'
+;
 
 
 
