@@ -11,5 +11,5 @@ class x_too_big(py_trees.behaviour.Behaviour):
         self.blackboard.register_key(key = ('x'), access = py_trees.common.Access.READ)
 
     def update(self):
-        return ((py_trees.common.Status.SUCCESS) if (self.blackboard.x > self.blackboard.target_x) else (py_trees.common.Status.FAILURE))
+        return ((py_trees.common.Status.SUCCESS) if ((self.blackboard.x > self.blackboard.target_x)) else (py_trees.common.Status.FAILURE))
 
