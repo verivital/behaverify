@@ -6,95 +6,72 @@ import itertools
 from behaverify_common import indent, create_node_name
 
 
-def format_function_before(function_name, code):
+def handle_check_env(node):
     return (
-        function_name + '('
-        + ', '.join([format_code(value) for value in code.function_call.values])
-        + ')'
+        (
+            'def ' + node.python_function.split('.')[-1] + ':' + os.linesep
+            + indent(1) + "'''" + os.linesep
+            + indent(1) + 'This method is expected to return True or False.' + os.linsep
+            + indent(1) + 'This method is being modeled using the following behavior:' + os.linesep
+            + indent(1) + format_code(node.condition) + os.linesep
+            + indent(1) + "'''" + os.linesep
+            + indent(1) + 'pass' + os.linesep
+            + os.linesep
+            + os.linesep
         )
+        if node.python_function is not None else '')
 
 
-def format_function_between(function_name, code):
+def handle_read_statement(statement):
     return (
-        '('
-        + (' ' + function_name + ' ').join([format_code(value) for value in code.function_call.values])
-        + ')'
+        (
+            'def ' + statement.python_function.split('.')[-1] + ':' + os.linesep
+            + indent(1) + "'''" + os.linesep
+            + indent(1) + 'This method is expected to return a tuple.' + os.linsep
+            + indent(1) + 'The values in the tuple should be as follows:' + os.linsep
+            + indent(2) + '0: True or False. Indicates if other variables will be updated.' + os.linesep
+            + indent(2) + 'Modeled using the following behavior:' + os.linesep
+            + ((indent(3) + 'modeled nondeterministically. no restriction') if statement.condition_variable is not None else (
+                indent(3) + format_code(statement.condition)))
+            + ''.join(
+                [
+                    (indent(2) + str(x + 1) + ':'
+                     + format_variable(statement.variable_statements[x].variable, statement.variable_statements[x].is_local)
+                     + '. Modeled using the following behavior:' + os.linesep
+                     + indent(3) + format_statement(statement.variable_statements[x]) + os.linesep
+                     )
+                    for x in range(len(statement.variable_statements))
+                ])
+            + indent(1) + "'''" + os.linesep
+            + indent(1) + 'pass' + os.linesep
+            + os.linesep
+            + os.linesep
         )
+        if statement.python_function is not None else '')
 
 
-FUNCTION_FORMAT = {
-    'abs' : ('abs', format_function_before),
-    'max' : ('max', format_function_before),
-    'min' : ('min', format_function_before),
-    'sin' : ('math.sin', format_function_before),
-    'cos' : ('math.cos', format_function_before),
-    'tan' : ('math.tan', format_function_before),
-    'ln' : ('math.log', format_function_before),
-    'not' : ('not', format_function_before),
-    'and' : ('and', format_function_between),
-    'or' : ('or', format_function_between),
-    'xor' : ('operator.xor', format_function_between),
-    'xnor' : ('xnor', format_function_between),
-    'implies' : ('->', format_function_between),
-    'equivalent' : ('==', format_function_between),
-    'equal' : ('==', format_function_between),
-    'not_equal' : ('!=', format_function_between),
-    'less_than' : ('<', format_function_between),
-    'greater_than' : ('>', format_function_between),
-    'less_than_or_equal' : ('<=', format_function_between),
-    'greater_than_or_equal' : ('>=', format_function_between),
-    'negative' : ('-', format_function_before),
-    'addition' : ('+', format_function_between),
-    'subtraction' : ('-', format_function_between),
-    'multiplication' : ('*', format_function_between),
-    'division' : ('/', format_function_between),
-    'mod' : ('%', format_function_between),
-    'count' : ('count', format_function_before)
-}
-
-
-def format_variable(variable, is_local):
-    return ('self.' + ('' if is_local else 'blackboard.') + variable.name)
-
-
-def format_code(code):
+def handle_write_statement(statement):
     return (
-        ((("'" + code.constant + "'") if isinstance(code.constant, str) else str(code.constant)) if code.constant is not None else (
-            (format_variable(code.variable, code.is_local)) if code.variable is not None else (
-                ('(' + format_code(code.code_statement) + ')') if code.code_statement is not None else (
-                    FUNCTION_FORMAT[code.function_call.function_name][1](FUNCTION_FORMAT[code.function_call.function_name][0], code)
-                )
-            )
+        (
+            'def ' + statement.python_function.split('.')[-1] + ':' + os.linesep
+            + indent(1) + "'''" + os.linesep
+            + indent(1) + 'This method is expected to effect the environment.' + os.linsep
+            + indent(1) + 'The following changes are expected:' + os.linsep
+            + ''.join(
+                [
+                    (indent(2) + str(x + 1) + ':'
+                     + format_variable(statement.variable_statements[x].variable, statement.variable_statements[x].is_local)
+                     + '. Modeled using the following behavior:' + os.linesep
+                     + indent(3) + format_statement(statement.variable_statements[x]) + os.linesep
+                     )
+                    for x in range(len(statement.variable_statements))
+                ])
+            + indent(1) + "'''" + os.linesep
+            + indent(1) + 'pass' + os.linesep
+            + os.linesep
+            + os.linesep
         )
-         )
-    )
-
-
-STANDARD_IMPORTS = ('import py_trees' + os.linesep
-                    + 'import math' + os.linesep
-                    + 'import operator' + os.linesep
-                    + 'import random' + os.linesep)
-
-
-def class_definition(node_name):
-    return ('class ' + node_name + '(py_trees.behaviour.Behaviour):' + os.linesep)
-
-
-def init_method_check(node):
-    return (indent(1) + 'def __init__(self, name):' + os.linesep
-            + indent(2) + 'super(' + node.name + ', self).__init__(name)' + os.linesep
-            + indent(2) + 'self.name = name' + os.linesep
-            + indent(2) + 'self.blackboard = self.attach_blackboard_client(name = name)' + os.linesep
-            + ''.join([(indent(2) + 'self.blackboard.register_key(key = (' + "'" + variable.name + "'" + '), access = py_trees.common.Access.READ)' + os.linesep) for variable in node.read_variables])
-            + os.linesep)
-
-
-def update_method_check(node):
-    return (indent(1) + 'def update(self):' + os.linesep
-            + indent(2) + 'return ((py_trees.common.Status.SUCCESS) if ('
-            + format_code(node.condition)
-            + ') else (py_trees.common.Status.FAILURE))' + os.linesep
-            + os.linesep)
+        if statement.python_function is not None else '')
 
 
 def init_method_check_env(node):
@@ -135,34 +112,7 @@ def handle_variable_statement(statement):
             )
 
 
-def handle_read_statement(statement):
-    if statement.python_function is None:
-        if statement.condition_variable is not None:
-            return (indent(2) + format_variable(statement.condition_variable, True) + ' = random.choice([True, False]);' + os.linesep)
-        return ''
-    # return (indent(2) + '('
-    #         + ', '.join(
-    #             ([] if statement.condition_variable is None else [format_variable(statement.condition_variable, True)])
-    #             +
-    #             [format_variable(var_statement.variable, var_statement.is_local) for var_statement in statement.variable_statements])
-    #         + ') = ' + statement.python_function + os.linesep)
-    return (indent(2) + 'temp_vals = ' + statement.python_function + os.linesep
-            + indent(2) + 'if temp_vals[0]:' + os.linesep
-            + indent(3) + '('
-            + ', '.join(
-                (['_'] if statement.condition_variable is None else [format_variable(statement.condition_variable, True)])
-                +
-                [format_variable(var_statement.variable, var_statement.is_local) for var_statement in statement.variable_statements])
-            + ') = temp_vals' + os.linesep
-            + (
-                (indent(2) + 'else:'
-                 + indent(3) + format_variable(statement.condition_variable, True) + ' = False' + os.linesep)
-                if statement.condition_variable is not None else '')
-            )
 
-
-def handle_write_statement(statement):
-    return ((indent(2) + statement.python_function + os.linesep) if statement.python_function is not None else '')
 
 
 def format_returns(status_result):
