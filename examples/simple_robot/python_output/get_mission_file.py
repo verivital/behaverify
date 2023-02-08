@@ -18,7 +18,11 @@ class get_mission(py_trees.behaviour.Behaviour):
         self.blackboard.target_y = 0
 
     def update(self):
-        (self.saw_target, self.blackboard.target_x, self.blackboard.target_y) = robot.get_mission()
+        temp_vals = robot.get_mission()
+        if temp_vals[0]:
+            (self.saw_target, self.blackboard.target_x, self.blackboard.target_y) = temp_vals
+        else:
+            self.saw_target = False
         if self.saw_target:
             self.blackboard.mission = True
         else:

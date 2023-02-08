@@ -79,7 +79,7 @@ node:
     (node_type = 'check_environment') '{'
     name = ID
     ('imports' '{' imports *= STRING[','] '}' 'end_imports')?
-    ('python_function' '{' python_function = STRING '}' 'end_python_function')?
+    ('python_function' '{' ('from' import_from = STRING)? python_function = STRING 'args' args *= code_statement '}' 'end_python_function')?
     ('condition' '{' condition = code_statement_env '}' 'end_condition')
     '}' 'end_check_environment'
 ;
@@ -136,7 +136,7 @@ statement:
     
     read_statement:
     'read_environment' '{'
-    ('python_function' '{' python_function = STRING '}' 'end_python_function')?
+    ('python_function' '{' ('from' import_from = STRING)? python_function = STRING 'args' args *= code_statement '}' 'end_python_function')?
     (('condition' '{' condition = code_statement_env '}' 'end_condition') | (is_local = 'local' condition_variable = [variable]))
     variable_statements += variable_environment_statement
     '}' 'end_read_environment'
@@ -144,7 +144,7 @@ statement:
     
     write_statement:
     'write_environment' '{'
-    ('python_function' '{' python_function = STRING '}' 'end_python_function')?
+    ('python_function' '{' ('from' import_from = STRING)? python_function = STRING 'args' args *= code_statement '}' 'end_python_function')?
     'update_values' '{'
     update *= environment_statement
     '}' 'end_update_values'
