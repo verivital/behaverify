@@ -15,29 +15,17 @@ def get_mission():
 
 
 def get_position():
-    return (state['x'], state['y'])
+    return (True, state['x'], state['y'])
 
 
-def go_right():
-    state['x'] = state['x'] + 1
+def go_x(val):
+    state['x'] = state['x'] + val
     check_completion()
     return
 
 
-def go_left():
-    state['x'] = state['x'] - 1
-    check_completion()
-    return
-
-
-def go_up():
-    state['y'] = state['y'] + 1
-    check_completion()
-    return
-
-
-def go_down():
-    state['y'] = state['y'] - 1
+def go_y(val):
+    state['y'] = state['y'] + val
     check_completion()
     return
 

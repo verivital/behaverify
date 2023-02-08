@@ -12,6 +12,6 @@ class go_up(py_trees.behaviour.Behaviour):
         self.blackboard = self.attach_blackboard_client(name = name)
 
     def update(self):
-        robot.go_up()
+        robot.go_y(1)
         return_status = py_trees.common.Status.SUCCESS
         return return_status

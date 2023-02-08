@@ -107,7 +107,12 @@ def init_method_check_env(node):
 def update_method_check_env(node):
     return (indent(1) + 'def update(self):' + os.linesep
             + indent(2) + 'return ((py_trees.common.Status.SUCCESS) if ('
-            + ('' if node.python_function is None else node.python_function)
+            + ('' if node.python_function is None else (
+                ((node.import_from + '.') if node.import_from is not None else '') + node.python_function
+                + '('
+                + ', '.join([format_code(arg) for arg in node.args])
+                + ')'
+                + os.linesep))
             + ') else (py_trees.common.Status.FAILURE))' + os.linesep
             + os.linesep)
 
@@ -146,7 +151,14 @@ def handle_read_statement(statement):
     #             +
     #             [format_variable(var_statement.variable, var_statement.is_local) for var_statement in statement.variable_statements])
     #         + ') = ' + statement.python_function + os.linesep)
-    return (indent(2) + 'temp_vals = ' + statement.python_function + os.linesep
+    return (indent(2) + 'temp_vals = ' +
+            (
+                ((statement.import_from + '.') if statement.import_from is not None else '') + statement.python_function
+                + '('
+                + ', '.join([format_code(arg) for arg in statement.args])
+                + ')'
+                + os.linesep
+            )
             + indent(2) + 'if temp_vals[0]:' + os.linesep
             + indent(3) + '('
             + ', '.join(
@@ -155,14 +167,23 @@ def handle_read_statement(statement):
                 [format_variable(var_statement.variable, var_statement.is_local) for var_statement in statement.variable_statements])
             + ') = temp_vals' + os.linesep
             + (
-                (indent(2) + 'else:'
+                (indent(2) + 'else:' + os.linesep
                  + indent(3) + format_variable(statement.condition_variable, True) + ' = False' + os.linesep)
                 if statement.condition_variable is not None else '')
             )
 
 
 def handle_write_statement(statement):
-    return ((indent(2) + statement.python_function + os.linesep) if statement.python_function is not None else '')
+    return (
+        (
+            indent(2)
+            + ((statement.import_from + '.') if statement.import_from is not None else '') + statement.python_function
+            + '('
+            + ', '.join([format_code(arg) for arg in statement.args])
+            + ')'
+            + os.linesep
+        )
+        if statement.python_function is not None else '')
 
 
 def format_returns(status_result):

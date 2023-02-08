@@ -100,7 +100,7 @@ actions {
 		} end_initial_values
 		update {
 			read_environment {
-				python_function { 'robot.get_mission()' } end_python_function
+				python_function { from 'robot' 'get_mission' args } end_python_function
 				local saw_target
 				variable_environment_statement {target_x result { env x_goal } end_result} end_variable_environment_statement
 				variable_environment_statement {target_y result { env y_goal } end_result} end_variable_environment_statement
@@ -133,7 +133,7 @@ actions {
 		} end_initial_values
 		update {
 			read_environment {
-				python_function { 'robot.get_position()' } end_python_function
+				python_function { from 'robot' 'get_position' args } end_python_function
 				condition { True } end_condition
 				variable_environment_statement {x result { env x_true } end_result} end_variable_environment_statement
 				variable_environment_statement {y result { env y_true } end_result} end_variable_environment_statement
@@ -164,7 +164,7 @@ actions {
 		initial_values {} end_initial_values
 		update {
 			write_environment {
-				python_function { 'robot.go_right()' } end_python_function
+				python_function { from 'robot' 'go_x' args 1 } end_python_function
 				update_values {
 					environment_statement {
 						env x_true result { (min, 4, (addition, env x_true, 1)) } end_result
@@ -183,7 +183,7 @@ actions {
 		initial_values {} end_initial_values
 		update {
 			write_environment {
-				python_function { 'robot.go_left()' } end_python_function
+				python_function { from 'robot' 'go_x' args -1 } end_python_function
 				update_values {
 					environment_statement {
 						env x_true result { (max, 0, (subtraction, env x_true, 1)) } end_result
@@ -202,7 +202,7 @@ actions {
 		initial_values {} end_initial_values
 		update {
 			write_environment {
-				python_function { 'robot.go_up()' } end_python_function
+				python_function { from 'robot' 'go_y' args 1 } end_python_function
 				update_values {
 					environment_statement {
 						env y_true result { (min, 4, (addition, env y_true, 1)) } end_result
@@ -221,7 +221,7 @@ actions {
 		initial_values {} end_initial_values
 		update {
 			write_environment {
-				python_function { 'robot.go_down()' } end_python_function
+				python_function { from 'robot' 'go_y' args -1 } end_python_function
 				update_values {
 					environment_statement {
 						env y_true result { (max, 0, (subtraction, env y_true, 1)) } end_result
