@@ -16,6 +16,8 @@ class get_position(py_trees.behaviour.Behaviour):
         self.blackboard.y = 0
 
     def update(self):
-        (self.blackboard.x, self.blackboard.y) = robot.get_position()
+        temp_vals = robot.get_position()
+        if temp_vals[0]:
+            (_, self.blackboard.x, self.blackboard.y) = temp_vals
         return_status = py_trees.common.Status.SUCCESS
         return return_status

@@ -12,6 +12,6 @@ class go_left(py_trees.behaviour.Behaviour):
         self.blackboard = self.attach_blackboard_client(name = name)
 
     def update(self):
-        robot.go_left()
+        robot.go_x(-1)
         return_status = py_trees.common.Status.SUCCESS
         return return_status
