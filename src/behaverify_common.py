@@ -1,4 +1,7 @@
-def create_variable_template(name, mode, custom_value_range, min_value, max_value, initial_value, next_value, prefix = '', keep_stage_0 = True):
+def create_variable_template(name, mode, custom_value_range,
+                             min_value, max_value,
+                             initial_value, next_value,
+                             prefix = '', keep_stage_0 = True):
     return {
         'prefix' : prefix,
         'name' : name,
@@ -89,24 +92,24 @@ def create_node_to_local_root_map(nodes, root_node_name):
     def local_root_map(nodes, node_name, local_root):
         # print(node_name + ' -> ' + local_root)
         return {node_name : (node_name
-                            if (
-                                    nodes[node_name]['parent'] is None
-                                    or 'parallel' in nodes[nodes[node_name]['parent']]['type']
-                            )
-                            else local_root),
+                             if (
+                                     nodes[node_name]['parent'] is None
+                                     or 'parallel' in nodes[nodes[node_name]['parent']]['type']
+                             )
+                             else local_root),
                 **{desecendent_name : desecendent_value
                    for child_name in nodes[node_name]['children']
                    for desecendent_name, desecendent_value in local_root_map(nodes,
-                                                                            child_name,
-                                                                            (
-                                                                                node_name
-                                                                                if (
-                                                                                        nodes[node_name]['parent'] is None
-                                                                                        or 'parallel' in nodes[nodes[node_name]['parent']]['type']
-                                                                                )
-                                                                                else local_root
-                                                                            )
-                                                                            ).items()
+                                                                             child_name,
+                                                                             (
+                                                                                 node_name
+                                                                                 if (
+                                                                                         nodes[node_name]['parent'] is None
+                                                                                         or 'parallel' in nodes[nodes[node_name]['parent']]['type']
+                                                                                 )
+                                                                                 else local_root
+                                                                             )
+                                                                             ).items()
                    }
                 }
     return local_root_map(nodes, root_node_name, root_node_name)
@@ -163,9 +166,9 @@ def create_node_to_descendants_map(nodes, node_name):
                         for child_name in nodes[node_name]['children']
                         ]
     return {node_name : {descendant_name
-                        for child_result in children_results
-                        for descendant_name in child_result
-                        },
+                         for child_result in children_results
+                         for descendant_name in child_result
+                         },
             **{descendant_name : descendant_value
                for child_result in children_results
                for descendant_name,  descendant_value in child_result.items()
