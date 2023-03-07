@@ -5,33 +5,51 @@ import sys
 import itertools
 from behaverify_common import indent, create_node_name
 
+
+def format_function_before(function_name, code):
+    return (
+        '(' + function_name
+        + ' '.join([format_code(value) for value in code.function_call.values])
+        + ')'
+        )
+
+
+def format_function_between(function_name, code):
+    return (
+        '('
+        + (' ' + function_name + ' ').join([format_code(value) for value in code.function_call.values])
+        + ')'
+        )
+
+
 FUNCTION_FORMAT = {
-    'abs' : ('abs', 0),
-    'max' : ('max', 1),
-    'min' : ('min', 1),
-    'sin' : ('math.sin', 0),
-    'cos' : ('math.cos', 0),
-    'tan' : ('math.tan', 0),
-    'ln' : ('math.log', 0),
-    'not' : ('not', 0),
-    'and' : ('and', 2),
-    'or' : ('or', 2),
-    'xor' : ('operator.xor', 2),
-    'xnor' : ('xnor', 2),
-    'implies' : ('=>', 2),
-    'equivalent' : ('==', 2),
-    'equal' : ('==', 2),
-    'not_equal' : ('!=', 2),
-    'less_than' : ('<', 2),
-    'greater_than' : ('>', 2),
-    'less_than_or_equal' : ('<=', 2),
-    'greater_than_or_equal' : ('>=', 2),
-    'negative' : ('-', 0),
-    'addition' : ('+', 2),
-    'subtraction' : ('-', 2),
-    'multiplication' : ('*', 2),
-    'division' : ('/', 2),
-    'mod' : ('%', 2)
+    'abs' : ('abs', format_function_before),
+    'max' : ('max', format_function_before),
+    'min' : ('min', format_function_before),
+    'sin' : ('sin', format_function_before),
+    'cos' : ('cos', format_function_before),
+    'tan' : ('tan', format_function_before),
+    'ln' : ('log', format_function_before),
+    'not' : ('not', format_function_before),
+    'and' : ('&&', format_function_between),
+    'or' : ('||', format_function_between),
+    'xor' : ('sereneXor', format_function_before),
+    'xnor' : ('sereneXnor', format_function_between),
+    'implies' : ('sereneImplies', format_function_between),
+    'equivalent' : ('==', format_function_between),
+    'equal' : ('==', format_function_between),
+    'not_equal' : ('/=', format_function_between),
+    'less_than' : ('<', format_function_between),
+    'greater_than' : ('>', format_function_between),
+    'less_than_or_equal' : ('<=', format_function_between),
+    'greater_than_or_equal' : ('>=', format_function_between),
+    'negative' : ('-', format_function_before),
+    'addition' : ('+', format_function_between),
+    'subtraction' : ('-', format_function_between),
+    'multiplication' : ('*', format_function_between),
+    'division' : ('/', format_function_between),
+    'mod' : ('mod', format_function_between),
+    'count' : ('sereneCount', format_function_before)
 }
 
 
@@ -44,11 +62,7 @@ def format_code(code):
         ((("'" + code.constant + "'") if isinstance(code.constant, str) else str(code.constant)) if code.constant is not None else (
             (format_variable(code.variable, code.is_local)) if code.variable is not None else (
                 ('(' + format_code(code.code_statement) + ')') if code.code_statement is not None else (
-                    (FUNCTION_FORMAT[code.function_call.function_name][0] + '(' + format_code(code.function_call.value1) + ')') if FUNCTION_FORMAT[code.function_call.function_name][1] == 0 else (
-                        (FUNCTION_FORMAT[code.function_call.function_name][0] + '(' + format_code(code.function_call.value1) + ', ' + format_code(code.function_call.value2) + ')') if FUNCTION_FORMAT[code.function_call.function_name][1] == 1 else (
-                            format_code(code.function_call.value1) + ' ' + FUNCTION_FORMAT[code.function_call.function_name][0] + ' ' + format_code(code.function_call.value2)
-                        )
-                    )
+                    FUNCTION_FORMAT[code.function_call.function_name][1](FUNCTION_FORMAT[code.function_call.function_name][0], code)
                 )
             )
         )
@@ -83,6 +97,26 @@ def update_method_check(node):
             + os.linesep)
 
 
+def init_method_check_env(node):
+    return (indent(1) + 'def __init__(self, name):' + os.linesep
+            + indent(2) + 'super(' + node.name + ', self).__init__(name)' + os.linesep
+            + indent(2) + 'self.name = name' + os.linesep
+            + os.linesep)
+
+
+def update_method_check_env(node):
+    return (indent(1) + 'def update(self):' + os.linesep
+            + indent(2) + 'return ((py_trees.common.Status.SUCCESS) if ('
+            + ('' if node.python_function is None else (
+                ((node.import_from + '.') if node.import_from is not None else '') + node.python_function
+                + '('
+                + ', '.join([format_code(arg) for arg in node.args])
+                + ')'
+                + os.linesep))
+            + ') else (py_trees.common.Status.FAILURE))' + os.linesep
+            + os.linesep)
+
+
 def variable_assignment(values):
     if len(values) > 1 :
         return ('random.choice('
@@ -111,16 +145,45 @@ def handle_read_statement(statement):
         if statement.condition_variable is not None:
             return (indent(2) + format_variable(statement.condition_variable, True) + ' = random.choice([True, False]);' + os.linesep)
         return ''
-    return (indent(2) + '('
+    # return (indent(2) + '('
+    #         + ', '.join(
+    #             ([] if statement.condition_variable is None else [format_variable(statement.condition_variable, True)])
+    #             +
+    #             [format_variable(var_statement.variable, var_statement.is_local) for var_statement in statement.variable_statements])
+    #         + ') = ' + statement.python_function + os.linesep)
+    return (indent(2) + 'temp_vals = ' +
+            (
+                ((statement.import_from + '.') if statement.import_from is not None else '') + statement.python_function
+                + '('
+                + ', '.join([format_code(arg) for arg in statement.args])
+                + ')'
+                + os.linesep
+            )
+            + indent(2) + 'if temp_vals[0]:' + os.linesep
+            + indent(3) + '('
             + ', '.join(
-                ([] if statement.condition_variable is None else [format_variable(statement.condition_variable, True)])
+                (['_'] if statement.condition_variable is None else [format_variable(statement.condition_variable, True)])
                 +
-                [format_variable(var_env_pair.variable, var_env_pair.is_local) for var_env_pair in statement.variable_environment_pairs])
-            + ') = ' + statement.python_function + os.linesep)
+                [format_variable(var_statement.variable, var_statement.is_local) for var_statement in statement.variable_statements])
+            + ') = temp_vals' + os.linesep
+            + (
+                (indent(2) + 'else:' + os.linesep
+                 + indent(3) + format_variable(statement.condition_variable, True) + ' = False' + os.linesep)
+                if statement.condition_variable is not None else '')
+            )
 
 
 def handle_write_statement(statement):
-    return ((indent(2) + statement.python_function + os.linesep) if statement.python_function is not None else '')
+    return (
+        (
+            indent(2)
+            + ((statement.import_from + '.') if statement.import_from is not None else '') + statement.python_function
+            + '('
+            + ', '.join([format_code(arg) for arg in statement.args])
+            + ')'
+            + os.linesep
+        )
+        if statement.python_function is not None else '')
 
 
 def format_returns(status_result):
@@ -147,7 +210,7 @@ def init_method_action(node):
             + indent(2) + 'self.blackboard = self.attach_blackboard_client(name = name)' + os.linesep
             + ''.join([(indent(2) + 'self.blackboard.register_key(key = (' + "'" + variable.name + "'" + '), access = py_trees.common.Access.READ)' + os.linesep) for variable in node.read_variables])
             + ''.join([(indent(2) + 'self.blackboard.register_key(key = (' + "'" + variable.name + "'" + '), access = py_trees.common.Access.WRITE)' + os.linesep) for variable in node.write_variables])
-            + ''.join([handle_variable_statement(statement) for statement in node.init_statements])
+            + ''.join([handle_statement(statement) for statement in node.init_statements])
             + os.linesep)
 
 
@@ -181,6 +244,15 @@ def build_check_node(node):
             + class_definition(node.name)
             + init_method_check(node)
             + update_method_check(node)
+            )
+
+
+def build_check_environment_node(node):
+    return (STANDARD_IMPORTS
+            + custom_imports(node)
+            + class_definition(node.name)
+            + init_method_check_env(node)
+            + update_method_check_env(node)
             )
 
 
@@ -219,6 +291,14 @@ def walk_tree_recursive(current_node, node_names, file_name):
         decorator_type = (current_node.x.capitalize()
                           + 'Is'
                           + current_node.y.capitalize())
+        child = walk_tree_recursive(current_node.child, node_names, file_name)
+        with open(file_name, 'a') as f:
+            f.write(indent(1) + node_name + ' = py_trees.decorators.' + decorator_type + '('
+                    + child
+                    + ', ' + "'" + node_name + "'" + ')' + os.linesep)
+        return node_name
+    elif current_node.node_type == 'inverter':
+        decorator_type = ('inverter')
         child = walk_tree_recursive(current_node.child, node_names, file_name)
         with open(file_name, 'a') as f:
             f.write(indent(1) + node_name + ' = py_trees.decorators.' + decorator_type + '('
@@ -268,6 +348,9 @@ def main():
     for check in model.check_nodes:
         with open(args.location + check.name + '_file.py', 'w') as f:
             f.write(build_check_node(check))
+    for check_env in model.environment_checks:
+        with open(args.location + check_env.name + '_file.py', 'w') as f:
+            f.write(build_check_environment_node(check_env))
 
     with open(args.location + args.output_file, 'w') as f:
         f.write(''.join([('import ' + node.name + '_file' + os.linesep) for node in itertools.chain(model.check_nodes, model.action_nodes)])
