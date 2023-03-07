@@ -1,0 +1,27 @@
+Assumptions:
+1. Each node returns instantly.
+2. No time passes in the environment between the start and end of a tree ticking, and the environment is static during the tick (unless changed by the tree).
+
+
+First, let us consider behavior trees without memory and an abstracted environment.
+
+We will define a Behavior Tree as an extended state machine using the following rules.
+Assume we have n+1 nodes. Label the nodes node0, node1, node2...noden where nodei is the ith node reached when traversing the tree using a Depth First Search started from the root.
+Our set of states is given by {{node0, node1, ... noden} mode, {invalid, running, failure, success} status0, ... {invalid, running failure, success} statusn}
+The initial state is {(node0, invalid, invalid..., invalid)}.
+The set of transitions T := C UNION P UNION R
+where C is the set of transitions to children, P is the set of transtions to parent, R is the set of root transitions.
+C is defined using these rules:
+if nodej is a child of nodei and nodei is a sequence node, then (nodei, ...) -> (nodej, ...) if statusj = invalid and statusi = invalid and forall k<j, statusk = success or nodek not in children(nodei)
+if nodej is a child of nodei and nodei is a selector node, then (nodei, ...) -> (nodej, ...) if statusj = invalid and statusi = invalid and forall k<j, statusk = failure or nodek not in children(nodei)
+if nodej is a child of nodei and nodei is a parallel node, then (nodei, ...) -> (nodej, ...) if statusj = invalid and statusi = invalid and forall k<j, statusk != invalid or nodek not in children(nodei)
+if nodej is a child of nodei and nodei is a decorator node, then (nodei, ...) -> (nodej, ...) if statusj = invalid and statusi = invalid and forall k<j, statusk != invalid or nodek not in children(nodei)
+
+P
+if nodej is a child of nodei and nodei is a sequence node, then (nodej, ... statusi=invalid ... statusj=invalid ...) -> (nodei, ... statusi=invalid ... statusj=invalid ...)
+
+1. Each Composite nodes has transitions to it's children. If c is a composite node, then let cT_c be a sequence of these transition in order of the children.
+1.1 Let i
+
+
+Define a node as
