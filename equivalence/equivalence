@@ -7,10 +7,10 @@ First, let us consider behavior trees without memory and an abstracted environme
 
 We will define a Behavior Tree as an extended state machine using the following rules.
 Assume we have n+1 nodes. Label the nodes node0, node1, node2...noden where nodei is the ith node reached when traversing the tree using a Depth First Search started from the root.
-Our set of states is given by {{node0, node1, ... noden} mode, {invalid, running, failure, success} status0, ... {invalid, running failure, success} statusn}
+Our set of states is given by {{node0, node1, ... noden} mode, {invalid, running, failure, success} status0, ... {invalid, running, failure, success} statusn}
 The initial state is {(node0, invalid, invalid..., invalid)}.
-The set of transitions T := C UNION P UNION R
-where C is the set of transitions to children, P is the set of transtions to parent, R is the set of root transitions.
+The set of transitions T := C UNION P UNION S UNION R
+where C is the set of transitions to children, P is the set of transtions to parent, S is the set of status transitions, R is the set of root transitions.
 C is defined using these rules:
 if nodej is a child of nodei and nodei is a sequence node, then (nodei, ...) -> (nodej, ...) if statusj = invalid and statusi = invalid and forall k<j, statusk = success or nodek not in children(nodei)
 if nodej is a child of nodei and nodei is a selector node, then (nodei, ...) -> (nodej, ...) if statusj = invalid and statusi = invalid and forall k<j, statusk = failure or nodek not in children(nodei)
@@ -18,10 +18,21 @@ if nodej is a child of nodei and nodei is a parallel node, then (nodei, ...) -> 
 if nodej is a child of nodei and nodei is a decorator node, then (nodei, ...) -> (nodej, ...) if statusj = invalid and statusi = invalid and forall k<j, statusk != invalid or nodek not in children(nodei)
 
 P
-if nodej is a child of nodei and nodei is a sequence node, then (nodej, ... statusi=invalid ... statusj=invalid ...) -> (nodei, ... statusi=invalid ... statusj=invalid ...)
+if nodej is a child of nodei and nodei is a sequence node and A \in {running, failure}, then (nodej, ... statusi=invalid ... statusj=A ...) -> (nodei, ... statusi=A ... statusj=A ...).
+if nodej is a child of nodei and nodei is a sequence node, then (nodej, ... statusi=invalid ... statusj=success ...) -> (nodei, ... statusi=success ... statusj=success ...) if \forall k>j, nodek \notin children(nodei).
+if nodej is a child of nodei and nodei is a sequence node, then (nodej, ... statusi=invalid ... statusj=success ...) -> (nodei, ... statusi=invalid ... statusj=success ...) if \exists k>j s.t. nodek \in children(nodei).
+if nodej is a child of nodei and nodei is a selector node and A \in {running, success}, then (nodej, ... statusi=invalid ... statusj=A ...) -> (nodei, ... statusi=A ... statusj=A ...).
+if nodej is a child of nodei and nodei is a selector node, then (nodej, ... statusi=invalid ... statusj=failure ...) -> (nodei, ... statusi=failure ... statusj=failure ...) if \forall k>j, nodek \notin children(nodei).
+if nodej is a child of nodei and nodei is a sequence node, then (nodej, ... statusi=invalid ... statusj=failure ...) -> (nodei, ... statusi=invalid ... statusj=failure ...) if \exists k>j s.t. nodek \in children(nodei).
+if nodej is a child of nodei and nodei is a parallel node and A \neq invalid and B \neq invalid, then (nodej, ... statusi=invalid ... statusj=A ...) -> (nodei, ... statusi=B ... statusj=A ...) if \forall k>j, nodek \notin children(nodei). Here B is based on the policy of the parallel node.
+if nodej is a child of nodei and nodei is a parallel node and A \neq invalid, then (nodej, ... statusi=invalid ... statusj=A ...) -> (nodei, ... statusi=invalid ... statusj=A ...) if \exists k>j s.t. nodek \in children(nodei).
 
-1. Each Composite nodes has transitions to it's children. If c is a composite node, then let cT_c be a sequence of these transition in order of the children.
-1.1 Let i
+S
+if nodej is a leaf node, then the appropriate loops for nodej to nodej to set it's status exist.
 
+R
+node0 is the root. We also have the special loop (node0, status0/neq invalid ....) -> (node0, status0=invalid, status1=invalid, status2=invalid...statusk=invalid...statusn=invalid).
 
-Define a node as
+--------------------------------------------------------------------------
+
+ok, we need to figure out 

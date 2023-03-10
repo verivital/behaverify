@@ -50,6 +50,12 @@ def get_root_node(nodes):
     return next(filter((lambda x : nodes[x]['parent'] is None), nodes))
 
 
+def get_right_sibling(nodes, node):
+    return ((False, None) if node['parent'] is None else (
+        (False, None) if nodes[node['parent']]['children'].index(node['name']) == (len(nodes[node['parent']]['children']) - 1) else (
+            (True, nodes[node['parent']]['children'][nodes[node['parent']]['children'].index(node['name']) + 1]))))
+
+
 def order_nodes(node_name, nodes):
     return ([node_name]
             + [node_name_ for list_of_names in
@@ -259,6 +265,10 @@ def prune_nodes(nodes):
 
 def indent(indent_level):
     return (' '*(4*indent_level))
+
+
+def tab_indent(indent_level):
+    return '\t'*indent_level
 
 
 def refine_return_types(nodes, node_name):

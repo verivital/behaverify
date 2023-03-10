@@ -1,0 +1,495 @@
+MODULE main
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		resume_from_here_in_subtree__BlueROV := -3;
+		resume_from_here_in_subtree__reallocate_handler := -3;
+		resume_from_here_in_subtree__process_mission := -3;
+		resume_from_here_in_subtree__priorities := -3;
+		BlueROV.active := !(env_BLUEROV_SURFACED);
+		BlueROV.status := BlueROV.active ? BlueROV.internal_status : invalid;
+		BlueROV.internal_status := 
+			case
+				count(reallocate_handler.internal_status = failure, process_mission.internal_status = failure, priorities.internal_status = failure) >= 1 : failure;
+				count(reallocate_handler.internal_status = running, process_mission.internal_status = running, priorities.internal_status = running) >= 1 : running;
+			esac;
+		--START OF BLACKBOARD DEFINITIONS
+		env_BLUEROV_HALTED_stage_1 := 
+			case
+				!(halt.active) : env_BLUEROV_HALTED;
+				TRUE : TRUE;
+			esac;
+		env_BLUEROV_HALTED_stage_2 := 
+			case
+				!(BlueROV.active) : env_BLUEROV_HALTED_stage_1;
+				TRUE : env_BLUEROV_HALTED_stage_1;
+			esac;
+		env_BLUEROV_SURFACED_stage_1 := 
+			case
+				!(surface.active) : env_BLUEROV_SURFACED;
+				TRUE : TRUE;
+			esac;
+		env_BLUEROV_SURFACED_stage_2 := 
+			case
+				!(BlueROV.active) : env_BLUEROV_SURFACED_stage_1;
+				TRUE : env_BLUEROV_SURFACED_stage_1;
+			esac;
+		env_command_stage_1 := 
+			case
+				!(surface.active) : env_command;
+				TRUE : COMMAND_surface;
+			esac;
+		env_command_stage_2 := 
+			case
+				!(halt.active) : env_command_stage_1;
+				TRUE : COMMAND_halt;
+			esac;
+		env_command_stage_3 := 
+			case
+				!(avoid_obstacles.active) : env_command_stage_2;
+				TRUE : COMMAND_avoid_obstacles;
+			esac;
+		env_command_stage_4 := 
+			case
+				!(return_home.active) : env_command_stage_3;
+				TRUE : COMMAND_go_to_home;
+			esac;
+		env_command_stage_5 := 
+			case
+				!(search_for_pipe.active) : env_command_stage_4;
+				TRUE : COMMAND_search_for_pipe;
+			esac;
+		env_command_stage_6 := 
+			case
+				!(track_pipe.active) : env_command_stage_5;
+				TRUE : COMMAND_pipe_tracking;
+			esac;
+		env_command_stage_7 := 
+			case
+				!(waypoint.active) : env_command_stage_6;
+				TRUE : COMMAND_go_to_waypoint;
+			esac;
+		env_command_stage_8 := 
+			case
+				!(loiter.active) : env_command_stage_7;
+				TRUE : COMMAND_UNKNOWN;
+			esac;
+		var_failsafe_engaged_stage_1 := 
+			case
+				!(trigger_failsafe.active) : var_failsafe_engaged;
+				TRUE : TRUE;
+			esac;
+		var_failsafe_engaged_stage_2 := 
+			case
+				!(trigger_failsafe_1.active) : var_failsafe_engaged_stage_1;
+				TRUE : TRUE;
+			esac;
+		var_mission_stage_1 := 
+			case
+				!(set_return_home.active) : var_mission;
+				TRUE : MISSION_go_to_home;
+			esac;
+		var_mission_stage_2 := 
+			case
+				!(get_mission.active) : var_mission_stage_1;
+				TRUE : env_next_mission;
+				TRUE : var_mission_stage_1;
+			esac;
+		--END OF BLACKBOARD DEFINITIONS
+	FROZENVAR
+		--START OF BLACKBOARD FROZENVAR
+		env_battery_low : boolean;
+		env_emergency_sensor : boolean;
+		env_geofence_warning : boolean;
+		env_home_reached : boolean;
+		env_mission_finished : boolean;
+		env_obstacles_present : boolean;
+		env_pipe_lost : boolean;
+		env_reallocation_needed : boolean;
+		env_sensor_failure : boolean;
+		--END OF BLACKBOARD FROZENVAR
+	VAR
+		node_names : define_nodes;
+		BlueROV_3 : composite_parallel_without_memory_END;
+		BlueROV_2 : composite_parallel_without_memory(BlueROV_3, priorities);
+		BlueROV_1 : composite_parallel_without_memory(BlueROV_2, process_mission);
+		BlueROV : composite_parallel_without_memory(BlueROV_1, reallocate_handler);
+		avoid_obstacles : success_DEFAULT_module;
+		check_battery_low : check_battery_low_module(env_battery_low);
+		check_emergency_sensor : check_emergency_sensor_module(env_emergency_sensor);
+		check_geofence : check_geofence_module(env_geofence_warning);
+		check_halted : check_halted_module(env_BLUEROV_HALTED);
+		check_home_reached : check_home_reached_module(env_home_reached);
+		check_mission_finished : check_mission_finished_module(env_mission_finished);
+		check_obstacles_present : check_obstacles_present_module(env_obstacles_present);
+		check_pipe_lost : check_pipe_lost_module(env_pipe_lost);
+		check_reallocation_needed : check_reallocation_needed_module(env_reallocation_needed);
+		check_reallocation_possible : check_reallocation_possible_module(env_reallocation_possible);
+		check_sensor_failure : check_sensor_failure_module(env_sensor_failure);
+		emergency_surface_mission : emergency_surface_mission_module(var_mission);
+		emergency_surface_mission_1 : emergency_surface_mission_1_module(var_mission_stage_2);
+		failsafe_triggered : failsafe_triggered_module(var_failsafe_engaged_stage_1);
+		failsafe_triggered_1 : failsafe_triggered_1_module(var_failsafe_engaged_stage_2);
+		find_or_track_2 : composite_selector_without_memory_END;
+		find_or_track_1 : composite_selector_without_memory(find_or_track_2, track_pipe);
+		find_or_track : composite_selector_without_memory(find_or_track_1, find_pipe);
+		find_pipe_2 : composite_sequence_without_memory_END;
+		find_pipe_1 : composite_sequence_without_memory(find_pipe_2, search_for_pipe);
+		find_pipe : composite_sequence_without_memory(find_pipe_1, check_pipe_lost);
+		geofence_abort_2 : composite_sequence_without_memory_END;
+		geofence_abort_1 : composite_sequence_without_memory(geofence_abort_2, set_return_home);
+		geofence_abort : composite_sequence_without_memory(geofence_abort_1, check_geofence);
+		get_mission : success_DEFAULT_module;
+		go_home_sequence_2 : composite_sequence_without_memory_END;
+		go_home_sequence_1 : composite_sequence_without_memory(go_home_sequence_2, return_home);
+		go_home_sequence : composite_sequence_without_memory(go_home_sequence_1, return_home_mission_2);
+		halt : success_DEFAULT_module;
+		halt_sequence_2 : composite_sequence_without_memory_END;
+		halt_sequence_1 : composite_sequence_without_memory(halt_sequence_2, halt);
+		halt_sequence : composite_sequence_without_memory(halt_sequence_1, failsafe_triggered_1);
+		home_surface_2 : composite_sequence_without_memory_END;
+		home_surface_1 : composite_sequence_without_memory(home_surface_2, check_home_reached);
+		home_surface : composite_sequence_without_memory(home_surface_1, return_home_mission_1);
+		loiter : success_DEFAULT_module;
+		normal_process_2 : composite_sequence_without_memory_END;
+		normal_process_1 : composite_sequence_without_memory(normal_process_2, get_mission);
+		normal_process : composite_sequence_without_memory(normal_process_1, check_mission_finished);
+		obstacle_avoidance_sequence_2 : composite_sequence_without_memory_END;
+		obstacle_avoidance_sequence_1 : composite_sequence_without_memory(obstacle_avoidance_sequence_2, avoid_obstacles);
+		obstacle_avoidance_sequence : composite_sequence_without_memory(obstacle_avoidance_sequence_1, check_obstacles_present);
+		priorities_7 : composite_selector_without_memory_END;
+		priorities_6 : composite_selector_without_memory(priorities_7, loiter);
+		priorities_5 : composite_selector_without_memory(priorities_6, waypoint_sequence);
+		priorities_4 : composite_selector_without_memory(priorities_5, track_pipe_sequence);
+		priorities_3 : composite_selector_without_memory(priorities_4, go_home_sequence);
+		priorities_2 : composite_selector_without_memory(priorities_3, obstacle_avoidance_sequence);
+		priorities_1 : composite_selector_without_memory(priorities_2, halt_sequence);
+		priorities : composite_selector_without_memory(priorities_1, surface_sequence);
+		process_mission_4 : composite_selector_without_memory_END;
+		process_mission_3 : composite_selector_without_memory(process_mission_4, normal_process);
+		process_mission_2 : composite_selector_without_memory(process_mission_3, geofence_abort);
+		process_mission_1 : composite_selector_without_memory(process_mission_2, return_home_mission);
+		process_mission : composite_selector_without_memory(process_mission_1, emergency_surface_mission);
+		reallocate : success_DEFAULT_module;
+		reallocate_handler_2 : composite_sequence_without_memory_END;
+		reallocate_handler_1 : composite_sequence_without_memory(reallocate_handler_2, reallocation_or_failsafe);
+		reallocate_handler : composite_sequence_without_memory(reallocate_handler_1, check_reallocation_needed);
+		reallocate_sequencce_2 : composite_sequence_without_memory_END;
+		reallocate_sequencce_1 : composite_sequence_without_memory(reallocate_sequencce_2, reallocate);
+		reallocate_sequencce : composite_sequence_without_memory(reallocate_sequencce_1, check_reallocation_possible);
+		reallocation_or_failsafe_2 : composite_selector_without_memory_END;
+		reallocation_or_failsafe_1 : composite_selector_without_memory(reallocation_or_failsafe_2, trigger_failsafe);
+		reallocation_or_failsafe : composite_selector_without_memory(reallocation_or_failsafe_1, reallocate_sequencce);
+		return_home : success_DEFAULT_module;
+		return_home_mission : return_home_mission_module(var_mission);
+		return_home_mission_1 : return_home_mission_1_module(var_mission_stage_2);
+		return_home_mission_2 : return_home_mission_2_module(var_mission_stage_2);
+		search_for_pipe : success_DEFAULT_module;
+		set_return_home : success_DEFAULT_module;
+		surface : success_DEFAULT_module;
+		surface_required_6 : composite_selector_without_memory_END;
+		surface_required_5 : composite_selector_without_memory(surface_required_6, home_surface);
+		surface_required_4 : composite_selector_without_memory(surface_required_5, check_sensor_failure);
+		surface_required_3 : composite_selector_without_memory(surface_required_4, check_emergency_sensor);
+		surface_required_2 : composite_selector_without_memory(surface_required_3, check_battery_low);
+		surface_required_1 : composite_selector_without_memory(surface_required_2, emergency_surface_mission_1);
+		surface_required : composite_selector_without_memory(surface_required_1, failsafe_triggered);
+		surface_sequence_4 : composite_sequence_without_memory_END;
+		surface_sequence_3 : composite_sequence_without_memory(surface_sequence_4, surface);
+		surface_sequence_2 : composite_sequence_without_memory(surface_sequence_3, check_halted);
+		surface_sequence_1 : composite_sequence_without_memory(surface_sequence_2, trigger_failsafe_1);
+		surface_sequence : composite_sequence_without_memory(surface_sequence_1, surface_required);
+		track_pipe : success_DEFAULT_module;
+		track_pipe_mission : track_pipe_mission_module(var_mission_stage_2);
+		track_pipe_sequence_2 : composite_sequence_without_memory_END;
+		track_pipe_sequence_1 : composite_sequence_without_memory(track_pipe_sequence_2, find_or_track);
+		track_pipe_sequence : composite_sequence_without_memory(track_pipe_sequence_1, track_pipe_mission);
+		trigger_failsafe : success_DEFAULT_module;
+		trigger_failsafe_1 : success_DEFAULT_module;
+		waypoint : success_DEFAULT_module;
+		waypoint_mission : waypoint_mission_module(var_mission_stage_2);
+		waypoint_sequence_2 : composite_sequence_without_memory_END;
+		waypoint_sequence_1 : composite_sequence_without_memory(waypoint_sequence_2, waypoint);
+		waypoint_sequence : composite_sequence_without_memory(waypoint_sequence_1, waypoint_mission);
+		--START OF BLACKBOARD VARIABLES DECLARATION
+		env_BLUEROV_HALTED : boolean;
+		env_BLUEROV_SURFACED : boolean;
+		env_command : {COMMAND_UNKNOWN, COMMAND_avoid_obstacles, COMMAND_go_to_waypoint, COMMAND_go_to_home, COMMAND_surface, COMMAND_halt, COMMAND_pipe_tracking, COMMAND_search_for_pipe};
+		env_next_mission : {MISSION_emergency_surface, MISSION_pipe_tracking, MISSION_go_to_home, MISSION_go_to_waypoint};
+		env_next_mission_stage_1 : {MISSION_emergency_surface, MISSION_pipe_tracking, MISSION_go_to_home, MISSION_go_to_waypoint};
+		env_reallocation_possible : boolean;
+		env_reallocation_possible_stage_1 : boolean;
+		var_failsafe_engaged : boolean;
+		var_mission : {MISSION_emergency_surface, MISSION_pipe_tracking, MISSION_go_to_home, MISSION_go_to_waypoint};
+		--END OF BLACKBOARD VARIABLES DECLARATION
+	ASSIGN
+		--START OF BLACKBOARD VARIABLES INITIALIZATION
+		init(env_BLUEROV_HALTED) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(env_BLUEROV_SURFACED) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(var_failsafe_engaged) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(var_mission) := 
+			case
+				TRUE : env_next_mission;
+				TRUE : {MISSION_emergency_surface, MISSION_pipe_tracking, MISSION_go_to_home, MISSION_go_to_waypoint};
+			esac;
+		--END OF BLACKBOARD VARIABLES INITIALIZATION
+		--START OF BLACKBOARD VARIABLES TRANSITION
+		next(env_BLUEROV_HALTED) := env_BLUEROV_HALTED_stage_2;
+		next(env_BLUEROV_SURFACED) := env_BLUEROV_SURFACED_stage_2;
+		next(env_command) := env_command_stage_8;
+		next(env_next_mission) := env_next_mission_stage_1;
+		env_next_mission_stage_1 := 
+			case
+				!(BlueROV.active) : env_next_mission;
+				env_mission_finished : {MISSION_emergency_surface, MISSION_pipe_tracking, MISSION_go_to_home, MISSION_go_to_waypoint};
+				TRUE : env_next_mission;
+			esac;
+		next(env_reallocation_possible) := env_reallocation_possible_stage_1;
+		env_reallocation_possible_stage_1 := 
+			case
+				!(reallocate.active) : env_reallocation_possible;
+				TRUE : {TRUE, FALSE};
+			esac;
+		next(var_failsafe_engaged) := var_failsafe_engaged_stage_2;
+		next(var_mission) := var_mission_stage_2;
+		--END OF BLACKBOARD VARIABLES TRANSITION
+
+LTLSPEC G(((env_obstacles_present | env_emergency_sensor) -> ((halt.active) | (avoid_obstacles.active) | (env_BLUEROV_HALTED))));
+INVARSPEC (!(((env_BLUEROV_SURFACED) | (surface.active) | (halt.active) | (avoid_obstacles.active))) -> (((var_mission_stage_2 = MISSION_pipe_tracking) & ((env_command_stage_8 = COMMAND_pipe_tracking) | (env_command_stage_8 = COMMAND_search_for_pipe))) | ((var_mission_stage_2 = MISSION_go_to_waypoint) & (env_command_stage_8 = COMMAND_go_to_waypoint)) | ((var_mission_stage_2 = MISSION_go_to_home) & (env_command_stage_8 = COMMAND_go_to_home))));
+MODULE define_nodes
+	DEFINE
+		BlueROV := 0;
+		reallocate_handler := 1;
+		check_reallocation_needed := 2;
+		reallocation_or_failsafe := 3;
+		reallocate_sequencce := 4;
+		check_reallocation_possible := 5;
+		reallocate := 6;
+		trigger_failsafe := 7;
+		process_mission := 8;
+		emergency_surface_mission := 9;
+		return_home_mission := 10;
+		geofence_abort := 11;
+		check_geofence := 12;
+		set_return_home := 13;
+		normal_process := 14;
+		check_mission_finished := 15;
+		get_mission := 16;
+		priorities := 17;
+		surface_sequence := 18;
+		surface_required := 19;
+		failsafe_triggered := 20;
+		emergency_surface_mission_1 := 21;
+		check_battery_low := 22;
+		check_emergency_sensor := 23;
+		check_sensor_failure := 24;
+		home_surface := 25;
+		return_home_mission_1 := 26;
+		check_home_reached := 27;
+		trigger_failsafe_1 := 28;
+		check_halted := 29;
+		surface := 30;
+		halt_sequence := 31;
+		failsafe_triggered_1 := 32;
+		halt := 33;
+		obstacle_avoidance_sequence := 34;
+		check_obstacles_present := 35;
+		avoid_obstacles := 36;
+		go_home_sequence := 37;
+		return_home_mission_2 := 38;
+		return_home := 39;
+		track_pipe_sequence := 40;
+		track_pipe_mission := 41;
+		find_or_track := 42;
+		find_pipe := 43;
+		check_pipe_lost := 44;
+		search_for_pipe := 45;
+		track_pipe := 46;
+		waypoint_sequence := 47;
+		waypoint_mission := 48;
+		waypoint := 49;
+		loiter := 50;
+MODULE composite_sequence_without_memory(next_composite, child)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				child.internal_status = success : next_composite.internal_status;
+				TRUE : child.internal_status;
+			esac;
+		child.active := active;
+		next_composite.active := active & (child.internal_status = success);
+
+MODULE composite_sequence_without_memory_END
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? success : invalid;
+		internal_status := success;
+MODULE composite_parallel_without_memory(next_composite, child)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		child.active := active;
+		next_composite.active := active;
+
+MODULE composite_parallel_without_memory_END
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+MODULE composite_selector_without_memory(next_composite, child)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				child.internal_status = failure : next_composite.internal_status;
+				TRUE : child.internal_status;
+			esac;
+		child.active := active;
+		next_composite.active := (child.internal_status = failure);
+
+MODULE composite_selector_without_memory_END
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? failure : invalid;
+		internal_status := failure;
+MODULE check_battery_low_module(env_battery_low)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := (env_battery_low) ? success : failure;
+MODULE check_emergency_sensor_module(env_emergency_sensor)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := (env_emergency_sensor) ? success : failure;
+MODULE check_geofence_module(env_geofence_warning)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := (env_geofence_warning) ? success : failure;
+MODULE check_halted_module(env_BLUEROV_HALTED)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := (env_BLUEROV_HALTED) ? success : failure;
+MODULE check_home_reached_module(env_home_reached)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := (env_home_reached) ? success : failure;
+MODULE check_mission_finished_module(env_mission_finished)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := (env_mission_finished) ? success : failure;
+MODULE check_obstacles_present_module(env_obstacles_present)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := (env_obstacles_present) ? success : failure;
+MODULE check_pipe_lost_module(env_pipe_lost)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := (env_pipe_lost) ? success : failure;
+MODULE check_reallocation_needed_module(env_reallocation_needed)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := (env_reallocation_needed) ? success : failure;
+MODULE check_reallocation_possible_module(env_reallocation_possible)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := (env_reallocation_possible) ? success : failure;
+MODULE check_sensor_failure_module(env_sensor_failure)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := (env_sensor_failure) ? success : failure;
+MODULE emergency_surface_mission_module(var_mission)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((var_mission = MISSION_emergency_surface)) ? success : failure;
+MODULE emergency_surface_mission_1_module(var_mission_stage_2)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((var_mission_stage_2 = MISSION_emergency_surface)) ? success : failure;
+MODULE failsafe_triggered_module(var_failsafe_engaged_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := (var_failsafe_engaged_stage_1) ? success : failure;
+MODULE failsafe_triggered_1_module(var_failsafe_engaged_stage_2)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := (var_failsafe_engaged_stage_2) ? success : failure;
+MODULE return_home_mission_module(var_mission)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((var_mission = MISSION_go_to_home)) ? success : failure;
+MODULE return_home_mission_1_module(var_mission_stage_2)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((var_mission_stage_2 = MISSION_go_to_home)) ? success : failure;
+MODULE return_home_mission_2_module(var_mission_stage_2)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((var_mission_stage_2 = MISSION_go_to_home)) ? success : failure;
+MODULE track_pipe_mission_module(var_mission_stage_2)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((var_mission_stage_2 = MISSION_pipe_tracking)) ? success : failure;
+MODULE waypoint_mission_module(var_mission_stage_2)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((var_mission_stage_2 = MISSION_go_to_waypoint)) ? success : failure;
+MODULE success_DEFAULT_module
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := success;
