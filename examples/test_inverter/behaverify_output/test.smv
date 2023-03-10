@@ -1,0 +1,44 @@
+MODULE main
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		sel.active := TRUE;
+	VAR
+		sel_end : selector_end;
+		child_2 : any_leaf;
+		sel_2 : selector(sel_end, child_2);
+		child_1 : any_leaf;
+		sel_1 : selector(sel_2, child_1);
+		child_0 : any_leaf;
+		sel : selector(sel_1, child_0);
+	ASSIGN
+
+
+MODULE any_leaf
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+	VAR
+		internal_status : {success, failure, running};
+	ASSIGN
+		init(internal_status) := failure;
+
+MODULE selector(next_selector, child)
+       	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				child.status = failure : next_selector.status;
+				TRUE : child.status;
+			esac;
+		child.active := active;
+		next_selector.active := (child.status = failure);
+
+MODULE selector_end
+       	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? failure : invalid;
