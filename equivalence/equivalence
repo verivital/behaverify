@@ -35,4 +35,23 @@ node0 is the root. We also have the special loop (node0, status0/neq invalid ...
 
 --------------------------------------------------------------------------
 
-ok, we need to figure out 
+ok, we need to figure out
+
+
+--------------------------------------------------------------------------
+Turing complete
+
+We will allow the behavior tree to use the following leaf nodes:
+1. for each symbol s in the alphabet, a node which reads the symbol r from the tape and returns success if r=s. (also nodes which do this with running and failure).
+2. for each symbol s in the alphabet, a node which writes the symbol to the tape and returns success. (also nodes which do this with running and failure).
+3. for each direction d in {L, R}, a node which causes the head to move in the direction and returns success. (also nodes which do this with running and failure).
+
+The behavior tree will also be able to use selector, sequence, and parallel nodes.
+
+A behavior tree with memory will also be able to use selectorM, sequenceM, and parallelM nodes, where those are nodes with memory. 
+
+First, assume that T is a turing machine and BT is a behavior tree without memory or blackboard. Furthermore, let T have two states, A and B, and let 1 be a symbol that can appear on the tape. Then let T go left if a 1 is read and the state is A, and let T go right if a 1 is read and the state is B. Then observe that since BT has no memory or blackboard, it is effectively a function from the input symbols to the actions. Therefore, it cannot possibly be capable of reproducing this behavior, as a function will provide the same output when given the same inputs.
+
+Therefore, some form of memory is needed in order for a behavior tree to be turing complete.
+
+Next, let T be a turing machine. Then let 
