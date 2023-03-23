@@ -165,7 +165,7 @@ statement:
 
     environment_statement:
     'environment_statement' '{'
-    instant ?= 'instant'
+    instant ?= 'instant' // does noot work with aut version.
     'env' variable = [environment_variable]
     case_results *= environment_variable_case_result
     default_result = environment_variable_default_result
