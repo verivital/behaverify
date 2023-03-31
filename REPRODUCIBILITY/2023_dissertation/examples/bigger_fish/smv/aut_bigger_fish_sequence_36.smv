@@ -1,0 +1,1372 @@
+MODULE main
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		resume_from_here_in_subtree__biggest_fish_sequence := -3;
+		status__bigger_fish := bigger_fish.status;
+		status__biggest_fish_is0 := biggest_fish_is0.status;
+		status__biggest_fish_is1 := biggest_fish_is1.status;
+		status__biggest_fish_is10 := biggest_fish_is10.status;
+		status__biggest_fish_is11 := biggest_fish_is11.status;
+		status__biggest_fish_is12 := biggest_fish_is12.status;
+		status__biggest_fish_is13 := biggest_fish_is13.status;
+		status__biggest_fish_is14 := biggest_fish_is14.status;
+		status__biggest_fish_is15 := biggest_fish_is15.status;
+		status__biggest_fish_is16 := biggest_fish_is16.status;
+		status__biggest_fish_is17 := biggest_fish_is17.status;
+		status__biggest_fish_is18 := biggest_fish_is18.status;
+		status__biggest_fish_is19 := biggest_fish_is19.status;
+		status__biggest_fish_is2 := biggest_fish_is2.status;
+		status__biggest_fish_is20 := biggest_fish_is20.status;
+		status__biggest_fish_is21 := biggest_fish_is21.status;
+		status__biggest_fish_is22 := biggest_fish_is22.status;
+		status__biggest_fish_is23 := biggest_fish_is23.status;
+		status__biggest_fish_is24 := biggest_fish_is24.status;
+		status__biggest_fish_is25 := biggest_fish_is25.status;
+		status__biggest_fish_is26 := biggest_fish_is26.status;
+		status__biggest_fish_is27 := biggest_fish_is27.status;
+		status__biggest_fish_is28 := biggest_fish_is28.status;
+		status__biggest_fish_is29 := biggest_fish_is29.status;
+		status__biggest_fish_is3 := biggest_fish_is3.status;
+		status__biggest_fish_is30 := biggest_fish_is30.status;
+		status__biggest_fish_is31 := biggest_fish_is31.status;
+		status__biggest_fish_is32 := biggest_fish_is32.status;
+		status__biggest_fish_is33 := biggest_fish_is33.status;
+		status__biggest_fish_is34 := biggest_fish_is34.status;
+		status__biggest_fish_is35 := biggest_fish_is35.status;
+		status__biggest_fish_is36 := biggest_fish_is36.status;
+		status__biggest_fish_is4 := biggest_fish_is4.status;
+		status__biggest_fish_is5 := biggest_fish_is5.status;
+		status__biggest_fish_is6 := biggest_fish_is6.status;
+		status__biggest_fish_is7 := biggest_fish_is7.status;
+		status__biggest_fish_is8 := biggest_fish_is8.status;
+		status__biggest_fish_is9 := biggest_fish_is9.status;
+		status__biggest_fish_sequence := 
+			case
+				status__special_decorator != success : status__special_decorator;
+				status__bigger_fish != success : status__bigger_fish;
+				TRUE : success;
+			esac;
+		status__decorator0 := 
+			case
+				status__biggest_fish_is0 = failure : success;
+				status__biggest_fish_is0 = success : failure;
+				TRUE : status__biggest_fish_is0;
+			esac;
+		status__decorator1 := 
+			case
+				status__biggest_fish_is1 = failure : success;
+				status__biggest_fish_is1 = success : failure;
+				TRUE : status__biggest_fish_is1;
+			esac;
+		status__decorator10 := 
+			case
+				status__biggest_fish_is10 = failure : success;
+				status__biggest_fish_is10 = success : failure;
+				TRUE : status__biggest_fish_is10;
+			esac;
+		status__decorator11 := 
+			case
+				status__biggest_fish_is11 = failure : success;
+				status__biggest_fish_is11 = success : failure;
+				TRUE : status__biggest_fish_is11;
+			esac;
+		status__decorator12 := 
+			case
+				status__biggest_fish_is12 = failure : success;
+				status__biggest_fish_is12 = success : failure;
+				TRUE : status__biggest_fish_is12;
+			esac;
+		status__decorator13 := 
+			case
+				status__biggest_fish_is13 = failure : success;
+				status__biggest_fish_is13 = success : failure;
+				TRUE : status__biggest_fish_is13;
+			esac;
+		status__decorator14 := 
+			case
+				status__biggest_fish_is14 = failure : success;
+				status__biggest_fish_is14 = success : failure;
+				TRUE : status__biggest_fish_is14;
+			esac;
+		status__decorator15 := 
+			case
+				status__biggest_fish_is15 = failure : success;
+				status__biggest_fish_is15 = success : failure;
+				TRUE : status__biggest_fish_is15;
+			esac;
+		status__decorator16 := 
+			case
+				status__biggest_fish_is16 = failure : success;
+				status__biggest_fish_is16 = success : failure;
+				TRUE : status__biggest_fish_is16;
+			esac;
+		status__decorator17 := 
+			case
+				status__biggest_fish_is17 = failure : success;
+				status__biggest_fish_is17 = success : failure;
+				TRUE : status__biggest_fish_is17;
+			esac;
+		status__decorator18 := 
+			case
+				status__biggest_fish_is18 = failure : success;
+				status__biggest_fish_is18 = success : failure;
+				TRUE : status__biggest_fish_is18;
+			esac;
+		status__decorator19 := 
+			case
+				status__biggest_fish_is19 = failure : success;
+				status__biggest_fish_is19 = success : failure;
+				TRUE : status__biggest_fish_is19;
+			esac;
+		status__decorator2 := 
+			case
+				status__biggest_fish_is2 = failure : success;
+				status__biggest_fish_is2 = success : failure;
+				TRUE : status__biggest_fish_is2;
+			esac;
+		status__decorator20 := 
+			case
+				status__biggest_fish_is20 = failure : success;
+				status__biggest_fish_is20 = success : failure;
+				TRUE : status__biggest_fish_is20;
+			esac;
+		status__decorator21 := 
+			case
+				status__biggest_fish_is21 = failure : success;
+				status__biggest_fish_is21 = success : failure;
+				TRUE : status__biggest_fish_is21;
+			esac;
+		status__decorator22 := 
+			case
+				status__biggest_fish_is22 = failure : success;
+				status__biggest_fish_is22 = success : failure;
+				TRUE : status__biggest_fish_is22;
+			esac;
+		status__decorator23 := 
+			case
+				status__biggest_fish_is23 = failure : success;
+				status__biggest_fish_is23 = success : failure;
+				TRUE : status__biggest_fish_is23;
+			esac;
+		status__decorator24 := 
+			case
+				status__biggest_fish_is24 = failure : success;
+				status__biggest_fish_is24 = success : failure;
+				TRUE : status__biggest_fish_is24;
+			esac;
+		status__decorator25 := 
+			case
+				status__biggest_fish_is25 = failure : success;
+				status__biggest_fish_is25 = success : failure;
+				TRUE : status__biggest_fish_is25;
+			esac;
+		status__decorator26 := 
+			case
+				status__biggest_fish_is26 = failure : success;
+				status__biggest_fish_is26 = success : failure;
+				TRUE : status__biggest_fish_is26;
+			esac;
+		status__decorator27 := 
+			case
+				status__biggest_fish_is27 = failure : success;
+				status__biggest_fish_is27 = success : failure;
+				TRUE : status__biggest_fish_is27;
+			esac;
+		status__decorator28 := 
+			case
+				status__biggest_fish_is28 = failure : success;
+				status__biggest_fish_is28 = success : failure;
+				TRUE : status__biggest_fish_is28;
+			esac;
+		status__decorator29 := 
+			case
+				status__biggest_fish_is29 = failure : success;
+				status__biggest_fish_is29 = success : failure;
+				TRUE : status__biggest_fish_is29;
+			esac;
+		status__decorator3 := 
+			case
+				status__biggest_fish_is3 = failure : success;
+				status__biggest_fish_is3 = success : failure;
+				TRUE : status__biggest_fish_is3;
+			esac;
+		status__decorator30 := 
+			case
+				status__biggest_fish_is30 = failure : success;
+				status__biggest_fish_is30 = success : failure;
+				TRUE : status__biggest_fish_is30;
+			esac;
+		status__decorator31 := 
+			case
+				status__biggest_fish_is31 = failure : success;
+				status__biggest_fish_is31 = success : failure;
+				TRUE : status__biggest_fish_is31;
+			esac;
+		status__decorator32 := 
+			case
+				status__biggest_fish_is32 = failure : success;
+				status__biggest_fish_is32 = success : failure;
+				TRUE : status__biggest_fish_is32;
+			esac;
+		status__decorator33 := 
+			case
+				status__biggest_fish_is33 = failure : success;
+				status__biggest_fish_is33 = success : failure;
+				TRUE : status__biggest_fish_is33;
+			esac;
+		status__decorator34 := 
+			case
+				status__biggest_fish_is34 = failure : success;
+				status__biggest_fish_is34 = success : failure;
+				TRUE : status__biggest_fish_is34;
+			esac;
+		status__decorator35 := 
+			case
+				status__biggest_fish_is35 = failure : success;
+				status__biggest_fish_is35 = success : failure;
+				TRUE : status__biggest_fish_is35;
+			esac;
+		status__decorator36 := 
+			case
+				status__biggest_fish_is36 = failure : success;
+				status__biggest_fish_is36 = success : failure;
+				TRUE : status__biggest_fish_is36;
+			esac;
+		status__decorator4 := 
+			case
+				status__biggest_fish_is4 = failure : success;
+				status__biggest_fish_is4 = success : failure;
+				TRUE : status__biggest_fish_is4;
+			esac;
+		status__decorator5 := 
+			case
+				status__biggest_fish_is5 = failure : success;
+				status__biggest_fish_is5 = success : failure;
+				TRUE : status__biggest_fish_is5;
+			esac;
+		status__decorator6 := 
+			case
+				status__biggest_fish_is6 = failure : success;
+				status__biggest_fish_is6 = success : failure;
+				TRUE : status__biggest_fish_is6;
+			esac;
+		status__decorator7 := 
+			case
+				status__biggest_fish_is7 = failure : success;
+				status__biggest_fish_is7 = success : failure;
+				TRUE : status__biggest_fish_is7;
+			esac;
+		status__decorator8 := 
+			case
+				status__biggest_fish_is8 = failure : success;
+				status__biggest_fish_is8 = success : failure;
+				TRUE : status__biggest_fish_is8;
+			esac;
+		status__decorator9 := 
+			case
+				status__biggest_fish_is9 = failure : success;
+				status__biggest_fish_is9 = success : failure;
+				TRUE : status__biggest_fish_is9;
+			esac;
+		status__sequence12 := 
+			case
+				status__decorator9 != success : status__decorator9;
+				status__decorator10 != success : status__decorator10;
+				status__decorator11 != success : status__decorator11;
+				status__decorator12 != success : status__decorator12;
+				status__sequence8 != success : status__sequence8;
+				TRUE : success;
+			esac;
+		status__sequence16 := 
+			case
+				status__decorator13 != success : status__decorator13;
+				status__decorator14 != success : status__decorator14;
+				status__decorator15 != success : status__decorator15;
+				status__decorator16 != success : status__decorator16;
+				status__sequence12 != success : status__sequence12;
+				TRUE : success;
+			esac;
+		status__sequence20 := 
+			case
+				status__decorator17 != success : status__decorator17;
+				status__decorator18 != success : status__decorator18;
+				status__decorator19 != success : status__decorator19;
+				status__decorator20 != success : status__decorator20;
+				status__sequence16 != success : status__sequence16;
+				TRUE : success;
+			esac;
+		status__sequence24 := 
+			case
+				status__decorator21 != success : status__decorator21;
+				status__decorator22 != success : status__decorator22;
+				status__decorator23 != success : status__decorator23;
+				status__decorator24 != success : status__decorator24;
+				status__sequence20 != success : status__sequence20;
+				TRUE : success;
+			esac;
+		status__sequence28 := 
+			case
+				status__decorator25 != success : status__decorator25;
+				status__decorator26 != success : status__decorator26;
+				status__decorator27 != success : status__decorator27;
+				status__decorator28 != success : status__decorator28;
+				status__sequence24 != success : status__sequence24;
+				TRUE : success;
+			esac;
+		status__sequence32 := 
+			case
+				status__decorator29 != success : status__decorator29;
+				status__decorator30 != success : status__decorator30;
+				status__decorator31 != success : status__decorator31;
+				status__decorator32 != success : status__decorator32;
+				status__sequence28 != success : status__sequence28;
+				TRUE : success;
+			esac;
+		status__sequence36 := 
+			case
+				status__decorator33 != success : status__decorator33;
+				status__decorator34 != success : status__decorator34;
+				status__decorator35 != success : status__decorator35;
+				status__decorator36 != success : status__decorator36;
+				status__sequence32 != success : status__sequence32;
+				TRUE : success;
+			esac;
+		status__sequence4 := 
+			case
+				status__decorator1 != success : status__decorator1;
+				status__decorator2 != success : status__decorator2;
+				status__decorator3 != success : status__decorator3;
+				status__decorator4 != success : status__decorator4;
+				status__decorator0 != success : status__decorator0;
+				TRUE : success;
+			esac;
+		status__sequence8 := 
+			case
+				status__decorator5 != success : status__decorator5;
+				status__decorator6 != success : status__decorator6;
+				status__decorator7 != success : status__decorator7;
+				status__decorator8 != success : status__decorator8;
+				status__sequence4 != success : status__sequence4;
+				TRUE : success;
+			esac;
+		status__special_decorator := 
+			case
+				status__sequence36 = failure : success;
+				status__sequence36 = success : failure;
+				TRUE : status__sequence36;
+			esac;
+		next_child__biggest_fish_sequence := 
+			case
+				(status__special_decorator = invalid) : node_names.special_decorator;
+				(status__bigger_fish = invalid) : node_names.bigger_fish;
+			esac;
+		next_child__decorator0 := node_names.biggest_fish_is0;
+		next_child__decorator1 := node_names.biggest_fish_is1;
+		next_child__decorator10 := node_names.biggest_fish_is10;
+		next_child__decorator11 := node_names.biggest_fish_is11;
+		next_child__decorator12 := node_names.biggest_fish_is12;
+		next_child__decorator13 := node_names.biggest_fish_is13;
+		next_child__decorator14 := node_names.biggest_fish_is14;
+		next_child__decorator15 := node_names.biggest_fish_is15;
+		next_child__decorator16 := node_names.biggest_fish_is16;
+		next_child__decorator17 := node_names.biggest_fish_is17;
+		next_child__decorator18 := node_names.biggest_fish_is18;
+		next_child__decorator19 := node_names.biggest_fish_is19;
+		next_child__decorator2 := node_names.biggest_fish_is2;
+		next_child__decorator20 := node_names.biggest_fish_is20;
+		next_child__decorator21 := node_names.biggest_fish_is21;
+		next_child__decorator22 := node_names.biggest_fish_is22;
+		next_child__decorator23 := node_names.biggest_fish_is23;
+		next_child__decorator24 := node_names.biggest_fish_is24;
+		next_child__decorator25 := node_names.biggest_fish_is25;
+		next_child__decorator26 := node_names.biggest_fish_is26;
+		next_child__decorator27 := node_names.biggest_fish_is27;
+		next_child__decorator28 := node_names.biggest_fish_is28;
+		next_child__decorator29 := node_names.biggest_fish_is29;
+		next_child__decorator3 := node_names.biggest_fish_is3;
+		next_child__decorator30 := node_names.biggest_fish_is30;
+		next_child__decorator31 := node_names.biggest_fish_is31;
+		next_child__decorator32 := node_names.biggest_fish_is32;
+		next_child__decorator33 := node_names.biggest_fish_is33;
+		next_child__decorator34 := node_names.biggest_fish_is34;
+		next_child__decorator35 := node_names.biggest_fish_is35;
+		next_child__decorator36 := node_names.biggest_fish_is36;
+		next_child__decorator4 := node_names.biggest_fish_is4;
+		next_child__decorator5 := node_names.biggest_fish_is5;
+		next_child__decorator6 := node_names.biggest_fish_is6;
+		next_child__decorator7 := node_names.biggest_fish_is7;
+		next_child__decorator8 := node_names.biggest_fish_is8;
+		next_child__decorator9 := node_names.biggest_fish_is9;
+		next_child__sequence12 := 
+			case
+				(status__decorator9 = invalid) : node_names.decorator9;
+				(status__decorator10 = invalid) : node_names.decorator10;
+				(status__decorator11 = invalid) : node_names.decorator11;
+				(status__decorator12 = invalid) : node_names.decorator12;
+				(status__sequence8 = invalid) : node_names.sequence8;
+			esac;
+		next_child__sequence16 := 
+			case
+				(status__decorator13 = invalid) : node_names.decorator13;
+				(status__decorator14 = invalid) : node_names.decorator14;
+				(status__decorator15 = invalid) : node_names.decorator15;
+				(status__decorator16 = invalid) : node_names.decorator16;
+				(status__sequence12 = invalid) : node_names.sequence12;
+			esac;
+		next_child__sequence20 := 
+			case
+				(status__decorator17 = invalid) : node_names.decorator17;
+				(status__decorator18 = invalid) : node_names.decorator18;
+				(status__decorator19 = invalid) : node_names.decorator19;
+				(status__decorator20 = invalid) : node_names.decorator20;
+				(status__sequence16 = invalid) : node_names.sequence16;
+			esac;
+		next_child__sequence24 := 
+			case
+				(status__decorator21 = invalid) : node_names.decorator21;
+				(status__decorator22 = invalid) : node_names.decorator22;
+				(status__decorator23 = invalid) : node_names.decorator23;
+				(status__decorator24 = invalid) : node_names.decorator24;
+				(status__sequence20 = invalid) : node_names.sequence20;
+			esac;
+		next_child__sequence28 := 
+			case
+				(status__decorator25 = invalid) : node_names.decorator25;
+				(status__decorator26 = invalid) : node_names.decorator26;
+				(status__decorator27 = invalid) : node_names.decorator27;
+				(status__decorator28 = invalid) : node_names.decorator28;
+				(status__sequence24 = invalid) : node_names.sequence24;
+			esac;
+		next_child__sequence32 := 
+			case
+				(status__decorator29 = invalid) : node_names.decorator29;
+				(status__decorator30 = invalid) : node_names.decorator30;
+				(status__decorator31 = invalid) : node_names.decorator31;
+				(status__decorator32 = invalid) : node_names.decorator32;
+				(status__sequence28 = invalid) : node_names.sequence28;
+			esac;
+		next_child__sequence36 := 
+			case
+				(status__decorator33 = invalid) : node_names.decorator33;
+				(status__decorator34 = invalid) : node_names.decorator34;
+				(status__decorator35 = invalid) : node_names.decorator35;
+				(status__decorator36 = invalid) : node_names.decorator36;
+				(status__sequence32 = invalid) : node_names.sequence32;
+			esac;
+		next_child__sequence4 := 
+			case
+				(status__decorator1 = invalid) : node_names.decorator1;
+				(status__decorator2 = invalid) : node_names.decorator2;
+				(status__decorator3 = invalid) : node_names.decorator3;
+				(status__decorator4 = invalid) : node_names.decorator4;
+				(status__decorator0 = invalid) : node_names.decorator0;
+			esac;
+		next_child__sequence8 := 
+			case
+				(status__decorator5 = invalid) : node_names.decorator5;
+				(status__decorator6 = invalid) : node_names.decorator6;
+				(status__decorator7 = invalid) : node_names.decorator7;
+				(status__decorator8 = invalid) : node_names.decorator8;
+				(status__sequence4 = invalid) : node_names.sequence4;
+			esac;
+		next_child__special_decorator := node_names.sequence36;
+		bigger_fish.active := active_node = node_names.bigger_fish;
+		bigger_fish.reset := active_node = -1;
+		biggest_fish_is0.active := active_node = node_names.biggest_fish_is0;
+		biggest_fish_is0.reset := active_node = -1;
+		biggest_fish_is1.active := active_node = node_names.biggest_fish_is1;
+		biggest_fish_is1.reset := active_node = -1;
+		biggest_fish_is10.active := active_node = node_names.biggest_fish_is10;
+		biggest_fish_is10.reset := active_node = -1;
+		biggest_fish_is11.active := active_node = node_names.biggest_fish_is11;
+		biggest_fish_is11.reset := active_node = -1;
+		biggest_fish_is12.active := active_node = node_names.biggest_fish_is12;
+		biggest_fish_is12.reset := active_node = -1;
+		biggest_fish_is13.active := active_node = node_names.biggest_fish_is13;
+		biggest_fish_is13.reset := active_node = -1;
+		biggest_fish_is14.active := active_node = node_names.biggest_fish_is14;
+		biggest_fish_is14.reset := active_node = -1;
+		biggest_fish_is15.active := active_node = node_names.biggest_fish_is15;
+		biggest_fish_is15.reset := active_node = -1;
+		biggest_fish_is16.active := active_node = node_names.biggest_fish_is16;
+		biggest_fish_is16.reset := active_node = -1;
+		biggest_fish_is17.active := active_node = node_names.biggest_fish_is17;
+		biggest_fish_is17.reset := active_node = -1;
+		biggest_fish_is18.active := active_node = node_names.biggest_fish_is18;
+		biggest_fish_is18.reset := active_node = -1;
+		biggest_fish_is19.active := active_node = node_names.biggest_fish_is19;
+		biggest_fish_is19.reset := active_node = -1;
+		biggest_fish_is2.active := active_node = node_names.biggest_fish_is2;
+		biggest_fish_is2.reset := active_node = -1;
+		biggest_fish_is20.active := active_node = node_names.biggest_fish_is20;
+		biggest_fish_is20.reset := active_node = -1;
+		biggest_fish_is21.active := active_node = node_names.biggest_fish_is21;
+		biggest_fish_is21.reset := active_node = -1;
+		biggest_fish_is22.active := active_node = node_names.biggest_fish_is22;
+		biggest_fish_is22.reset := active_node = -1;
+		biggest_fish_is23.active := active_node = node_names.biggest_fish_is23;
+		biggest_fish_is23.reset := active_node = -1;
+		biggest_fish_is24.active := active_node = node_names.biggest_fish_is24;
+		biggest_fish_is24.reset := active_node = -1;
+		biggest_fish_is25.active := active_node = node_names.biggest_fish_is25;
+		biggest_fish_is25.reset := active_node = -1;
+		biggest_fish_is26.active := active_node = node_names.biggest_fish_is26;
+		biggest_fish_is26.reset := active_node = -1;
+		biggest_fish_is27.active := active_node = node_names.biggest_fish_is27;
+		biggest_fish_is27.reset := active_node = -1;
+		biggest_fish_is28.active := active_node = node_names.biggest_fish_is28;
+		biggest_fish_is28.reset := active_node = -1;
+		biggest_fish_is29.active := active_node = node_names.biggest_fish_is29;
+		biggest_fish_is29.reset := active_node = -1;
+		biggest_fish_is3.active := active_node = node_names.biggest_fish_is3;
+		biggest_fish_is3.reset := active_node = -1;
+		biggest_fish_is30.active := active_node = node_names.biggest_fish_is30;
+		biggest_fish_is30.reset := active_node = -1;
+		biggest_fish_is31.active := active_node = node_names.biggest_fish_is31;
+		biggest_fish_is31.reset := active_node = -1;
+		biggest_fish_is32.active := active_node = node_names.biggest_fish_is32;
+		biggest_fish_is32.reset := active_node = -1;
+		biggest_fish_is33.active := active_node = node_names.biggest_fish_is33;
+		biggest_fish_is33.reset := active_node = -1;
+		biggest_fish_is34.active := active_node = node_names.biggest_fish_is34;
+		biggest_fish_is34.reset := active_node = -1;
+		biggest_fish_is35.active := active_node = node_names.biggest_fish_is35;
+		biggest_fish_is35.reset := active_node = -1;
+		biggest_fish_is36.active := active_node = node_names.biggest_fish_is36;
+		biggest_fish_is36.reset := active_node = -1;
+		biggest_fish_is4.active := active_node = node_names.biggest_fish_is4;
+		biggest_fish_is4.reset := active_node = -1;
+		biggest_fish_is5.active := active_node = node_names.biggest_fish_is5;
+		biggest_fish_is5.reset := active_node = -1;
+		biggest_fish_is6.active := active_node = node_names.biggest_fish_is6;
+		biggest_fish_is6.reset := active_node = -1;
+		biggest_fish_is7.active := active_node = node_names.biggest_fish_is7;
+		biggest_fish_is7.reset := active_node = -1;
+		biggest_fish_is8.active := active_node = node_names.biggest_fish_is8;
+		biggest_fish_is8.reset := active_node = -1;
+		biggest_fish_is9.active := active_node = node_names.biggest_fish_is9;
+		biggest_fish_is9.reset := active_node = -1;
+		--START OF BLACKBOARD DEFINITIONS
+		--END OF BLACKBOARD DEFINITIONS
+	VAR
+		node_names : define_nodes;
+		active_node : -1..86;
+		bigger_fish : success_DEFAULT_module;
+		biggest_fish_is0 : biggest_fish_is0_module(var_biggest_fish);
+		biggest_fish_is1 : biggest_fish_is1_module(var_biggest_fish);
+		biggest_fish_is10 : biggest_fish_is10_module(var_biggest_fish);
+		biggest_fish_is11 : biggest_fish_is11_module(var_biggest_fish);
+		biggest_fish_is12 : biggest_fish_is12_module(var_biggest_fish);
+		biggest_fish_is13 : biggest_fish_is13_module(var_biggest_fish);
+		biggest_fish_is14 : biggest_fish_is14_module(var_biggest_fish);
+		biggest_fish_is15 : biggest_fish_is15_module(var_biggest_fish);
+		biggest_fish_is16 : biggest_fish_is16_module(var_biggest_fish);
+		biggest_fish_is17 : biggest_fish_is17_module(var_biggest_fish);
+		biggest_fish_is18 : biggest_fish_is18_module(var_biggest_fish);
+		biggest_fish_is19 : biggest_fish_is19_module(var_biggest_fish);
+		biggest_fish_is2 : biggest_fish_is2_module(var_biggest_fish);
+		biggest_fish_is20 : biggest_fish_is20_module(var_biggest_fish);
+		biggest_fish_is21 : biggest_fish_is21_module(var_biggest_fish);
+		biggest_fish_is22 : biggest_fish_is22_module(var_biggest_fish);
+		biggest_fish_is23 : biggest_fish_is23_module(var_biggest_fish);
+		biggest_fish_is24 : biggest_fish_is24_module(var_biggest_fish);
+		biggest_fish_is25 : biggest_fish_is25_module(var_biggest_fish);
+		biggest_fish_is26 : biggest_fish_is26_module(var_biggest_fish);
+		biggest_fish_is27 : biggest_fish_is27_module(var_biggest_fish);
+		biggest_fish_is28 : biggest_fish_is28_module(var_biggest_fish);
+		biggest_fish_is29 : biggest_fish_is29_module(var_biggest_fish);
+		biggest_fish_is3 : biggest_fish_is3_module(var_biggest_fish);
+		biggest_fish_is30 : biggest_fish_is30_module(var_biggest_fish);
+		biggest_fish_is31 : biggest_fish_is31_module(var_biggest_fish);
+		biggest_fish_is32 : biggest_fish_is32_module(var_biggest_fish);
+		biggest_fish_is33 : biggest_fish_is33_module(var_biggest_fish);
+		biggest_fish_is34 : biggest_fish_is34_module(var_biggest_fish);
+		biggest_fish_is35 : biggest_fish_is35_module(var_biggest_fish);
+		biggest_fish_is36 : biggest_fish_is36_module(var_biggest_fish);
+		biggest_fish_is4 : biggest_fish_is4_module(var_biggest_fish);
+		biggest_fish_is5 : biggest_fish_is5_module(var_biggest_fish);
+		biggest_fish_is6 : biggest_fish_is6_module(var_biggest_fish);
+		biggest_fish_is7 : biggest_fish_is7_module(var_biggest_fish);
+		biggest_fish_is8 : biggest_fish_is8_module(var_biggest_fish);
+		biggest_fish_is9 : biggest_fish_is9_module(var_biggest_fish);
+		--START OF BLACKBOARD VARIABLES DECLARATION
+		var_biggest_fish : 0..99;
+		--END OF BLACKBOARD VARIABLES DECLARATION
+	ASSIGN
+		init(active_node) := 0;
+		--START OF BLACKBOARD VARIABLES INITIALIZATION
+		init(var_biggest_fish) := 
+			case
+				TRUE : 0;
+			esac;
+		--END OF BLACKBOARD VARIABLES INITIALIZATION
+		next(active_node) :=
+			case
+				active_node = -1 & TRUE : node_names.biggest_fish_sequence;
+				active_node = -1 & !(TRUE) : -1;
+				(active_node = node_names.bigger_fish) & (status__bigger_fish != invalid) : node_names.biggest_fish_sequence;
+				(active_node = node_names.biggest_fish_is0) & (status__biggest_fish_is0 != invalid) : node_names.decorator0;
+				(active_node = node_names.biggest_fish_is1) & (status__biggest_fish_is1 != invalid) : node_names.decorator1;
+				(active_node = node_names.biggest_fish_is10) & (status__biggest_fish_is10 != invalid) : node_names.decorator10;
+				(active_node = node_names.biggest_fish_is11) & (status__biggest_fish_is11 != invalid) : node_names.decorator11;
+				(active_node = node_names.biggest_fish_is12) & (status__biggest_fish_is12 != invalid) : node_names.decorator12;
+				(active_node = node_names.biggest_fish_is13) & (status__biggest_fish_is13 != invalid) : node_names.decorator13;
+				(active_node = node_names.biggest_fish_is14) & (status__biggest_fish_is14 != invalid) : node_names.decorator14;
+				(active_node = node_names.biggest_fish_is15) & (status__biggest_fish_is15 != invalid) : node_names.decorator15;
+				(active_node = node_names.biggest_fish_is16) & (status__biggest_fish_is16 != invalid) : node_names.decorator16;
+				(active_node = node_names.biggest_fish_is17) & (status__biggest_fish_is17 != invalid) : node_names.decorator17;
+				(active_node = node_names.biggest_fish_is18) & (status__biggest_fish_is18 != invalid) : node_names.decorator18;
+				(active_node = node_names.biggest_fish_is19) & (status__biggest_fish_is19 != invalid) : node_names.decorator19;
+				(active_node = node_names.biggest_fish_is2) & (status__biggest_fish_is2 != invalid) : node_names.decorator2;
+				(active_node = node_names.biggest_fish_is20) & (status__biggest_fish_is20 != invalid) : node_names.decorator20;
+				(active_node = node_names.biggest_fish_is21) & (status__biggest_fish_is21 != invalid) : node_names.decorator21;
+				(active_node = node_names.biggest_fish_is22) & (status__biggest_fish_is22 != invalid) : node_names.decorator22;
+				(active_node = node_names.biggest_fish_is23) & (status__biggest_fish_is23 != invalid) : node_names.decorator23;
+				(active_node = node_names.biggest_fish_is24) & (status__biggest_fish_is24 != invalid) : node_names.decorator24;
+				(active_node = node_names.biggest_fish_is25) & (status__biggest_fish_is25 != invalid) : node_names.decorator25;
+				(active_node = node_names.biggest_fish_is26) & (status__biggest_fish_is26 != invalid) : node_names.decorator26;
+				(active_node = node_names.biggest_fish_is27) & (status__biggest_fish_is27 != invalid) : node_names.decorator27;
+				(active_node = node_names.biggest_fish_is28) & (status__biggest_fish_is28 != invalid) : node_names.decorator28;
+				(active_node = node_names.biggest_fish_is29) & (status__biggest_fish_is29 != invalid) : node_names.decorator29;
+				(active_node = node_names.biggest_fish_is3) & (status__biggest_fish_is3 != invalid) : node_names.decorator3;
+				(active_node = node_names.biggest_fish_is30) & (status__biggest_fish_is30 != invalid) : node_names.decorator30;
+				(active_node = node_names.biggest_fish_is31) & (status__biggest_fish_is31 != invalid) : node_names.decorator31;
+				(active_node = node_names.biggest_fish_is32) & (status__biggest_fish_is32 != invalid) : node_names.decorator32;
+				(active_node = node_names.biggest_fish_is33) & (status__biggest_fish_is33 != invalid) : node_names.decorator33;
+				(active_node = node_names.biggest_fish_is34) & (status__biggest_fish_is34 != invalid) : node_names.decorator34;
+				(active_node = node_names.biggest_fish_is35) & (status__biggest_fish_is35 != invalid) : node_names.decorator35;
+				(active_node = node_names.biggest_fish_is36) & (status__biggest_fish_is36 != invalid) : node_names.decorator36;
+				(active_node = node_names.biggest_fish_is4) & (status__biggest_fish_is4 != invalid) : node_names.decorator4;
+				(active_node = node_names.biggest_fish_is5) & (status__biggest_fish_is5 != invalid) : node_names.decorator5;
+				(active_node = node_names.biggest_fish_is6) & (status__biggest_fish_is6 != invalid) : node_names.decorator6;
+				(active_node = node_names.biggest_fish_is7) & (status__biggest_fish_is7 != invalid) : node_names.decorator7;
+				(active_node = node_names.biggest_fish_is8) & (status__biggest_fish_is8 != invalid) : node_names.decorator8;
+				(active_node = node_names.biggest_fish_is9) & (status__biggest_fish_is9 != invalid) : node_names.decorator9;
+				(active_node = node_names.biggest_fish_sequence) & (status__biggest_fish_sequence != invalid) : -1;
+				(active_node = node_names.biggest_fish_sequence) & (status__biggest_fish_sequence = invalid) : next_child__biggest_fish_sequence;
+				(active_node = node_names.decorator0) & (status__decorator0 != invalid) : node_names.sequence4;
+				(active_node = node_names.decorator0) & (status__decorator0 = invalid) : next_child__decorator0;
+				(active_node = node_names.decorator1) & (status__decorator1 != invalid) : node_names.sequence4;
+				(active_node = node_names.decorator1) & (status__decorator1 = invalid) : next_child__decorator1;
+				(active_node = node_names.decorator10) & (status__decorator10 != invalid) : node_names.sequence12;
+				(active_node = node_names.decorator10) & (status__decorator10 = invalid) : next_child__decorator10;
+				(active_node = node_names.decorator11) & (status__decorator11 != invalid) : node_names.sequence12;
+				(active_node = node_names.decorator11) & (status__decorator11 = invalid) : next_child__decorator11;
+				(active_node = node_names.decorator12) & (status__decorator12 != invalid) : node_names.sequence12;
+				(active_node = node_names.decorator12) & (status__decorator12 = invalid) : next_child__decorator12;
+				(active_node = node_names.decorator13) & (status__decorator13 != invalid) : node_names.sequence16;
+				(active_node = node_names.decorator13) & (status__decorator13 = invalid) : next_child__decorator13;
+				(active_node = node_names.decorator14) & (status__decorator14 != invalid) : node_names.sequence16;
+				(active_node = node_names.decorator14) & (status__decorator14 = invalid) : next_child__decorator14;
+				(active_node = node_names.decorator15) & (status__decorator15 != invalid) : node_names.sequence16;
+				(active_node = node_names.decorator15) & (status__decorator15 = invalid) : next_child__decorator15;
+				(active_node = node_names.decorator16) & (status__decorator16 != invalid) : node_names.sequence16;
+				(active_node = node_names.decorator16) & (status__decorator16 = invalid) : next_child__decorator16;
+				(active_node = node_names.decorator17) & (status__decorator17 != invalid) : node_names.sequence20;
+				(active_node = node_names.decorator17) & (status__decorator17 = invalid) : next_child__decorator17;
+				(active_node = node_names.decorator18) & (status__decorator18 != invalid) : node_names.sequence20;
+				(active_node = node_names.decorator18) & (status__decorator18 = invalid) : next_child__decorator18;
+				(active_node = node_names.decorator19) & (status__decorator19 != invalid) : node_names.sequence20;
+				(active_node = node_names.decorator19) & (status__decorator19 = invalid) : next_child__decorator19;
+				(active_node = node_names.decorator2) & (status__decorator2 != invalid) : node_names.sequence4;
+				(active_node = node_names.decorator2) & (status__decorator2 = invalid) : next_child__decorator2;
+				(active_node = node_names.decorator20) & (status__decorator20 != invalid) : node_names.sequence20;
+				(active_node = node_names.decorator20) & (status__decorator20 = invalid) : next_child__decorator20;
+				(active_node = node_names.decorator21) & (status__decorator21 != invalid) : node_names.sequence24;
+				(active_node = node_names.decorator21) & (status__decorator21 = invalid) : next_child__decorator21;
+				(active_node = node_names.decorator22) & (status__decorator22 != invalid) : node_names.sequence24;
+				(active_node = node_names.decorator22) & (status__decorator22 = invalid) : next_child__decorator22;
+				(active_node = node_names.decorator23) & (status__decorator23 != invalid) : node_names.sequence24;
+				(active_node = node_names.decorator23) & (status__decorator23 = invalid) : next_child__decorator23;
+				(active_node = node_names.decorator24) & (status__decorator24 != invalid) : node_names.sequence24;
+				(active_node = node_names.decorator24) & (status__decorator24 = invalid) : next_child__decorator24;
+				(active_node = node_names.decorator25) & (status__decorator25 != invalid) : node_names.sequence28;
+				(active_node = node_names.decorator25) & (status__decorator25 = invalid) : next_child__decorator25;
+				(active_node = node_names.decorator26) & (status__decorator26 != invalid) : node_names.sequence28;
+				(active_node = node_names.decorator26) & (status__decorator26 = invalid) : next_child__decorator26;
+				(active_node = node_names.decorator27) & (status__decorator27 != invalid) : node_names.sequence28;
+				(active_node = node_names.decorator27) & (status__decorator27 = invalid) : next_child__decorator27;
+				(active_node = node_names.decorator28) & (status__decorator28 != invalid) : node_names.sequence28;
+				(active_node = node_names.decorator28) & (status__decorator28 = invalid) : next_child__decorator28;
+				(active_node = node_names.decorator29) & (status__decorator29 != invalid) : node_names.sequence32;
+				(active_node = node_names.decorator29) & (status__decorator29 = invalid) : next_child__decorator29;
+				(active_node = node_names.decorator3) & (status__decorator3 != invalid) : node_names.sequence4;
+				(active_node = node_names.decorator3) & (status__decorator3 = invalid) : next_child__decorator3;
+				(active_node = node_names.decorator30) & (status__decorator30 != invalid) : node_names.sequence32;
+				(active_node = node_names.decorator30) & (status__decorator30 = invalid) : next_child__decorator30;
+				(active_node = node_names.decorator31) & (status__decorator31 != invalid) : node_names.sequence32;
+				(active_node = node_names.decorator31) & (status__decorator31 = invalid) : next_child__decorator31;
+				(active_node = node_names.decorator32) & (status__decorator32 != invalid) : node_names.sequence32;
+				(active_node = node_names.decorator32) & (status__decorator32 = invalid) : next_child__decorator32;
+				(active_node = node_names.decorator33) & (status__decorator33 != invalid) : node_names.sequence36;
+				(active_node = node_names.decorator33) & (status__decorator33 = invalid) : next_child__decorator33;
+				(active_node = node_names.decorator34) & (status__decorator34 != invalid) : node_names.sequence36;
+				(active_node = node_names.decorator34) & (status__decorator34 = invalid) : next_child__decorator34;
+				(active_node = node_names.decorator35) & (status__decorator35 != invalid) : node_names.sequence36;
+				(active_node = node_names.decorator35) & (status__decorator35 = invalid) : next_child__decorator35;
+				(active_node = node_names.decorator36) & (status__decorator36 != invalid) : node_names.sequence36;
+				(active_node = node_names.decorator36) & (status__decorator36 = invalid) : next_child__decorator36;
+				(active_node = node_names.decorator4) & (status__decorator4 != invalid) : node_names.sequence4;
+				(active_node = node_names.decorator4) & (status__decorator4 = invalid) : next_child__decorator4;
+				(active_node = node_names.decorator5) & (status__decorator5 != invalid) : node_names.sequence8;
+				(active_node = node_names.decorator5) & (status__decorator5 = invalid) : next_child__decorator5;
+				(active_node = node_names.decorator6) & (status__decorator6 != invalid) : node_names.sequence8;
+				(active_node = node_names.decorator6) & (status__decorator6 = invalid) : next_child__decorator6;
+				(active_node = node_names.decorator7) & (status__decorator7 != invalid) : node_names.sequence8;
+				(active_node = node_names.decorator7) & (status__decorator7 = invalid) : next_child__decorator7;
+				(active_node = node_names.decorator8) & (status__decorator8 != invalid) : node_names.sequence8;
+				(active_node = node_names.decorator8) & (status__decorator8 = invalid) : next_child__decorator8;
+				(active_node = node_names.decorator9) & (status__decorator9 != invalid) : node_names.sequence12;
+				(active_node = node_names.decorator9) & (status__decorator9 = invalid) : next_child__decorator9;
+				(active_node = node_names.sequence12) & (status__sequence12 != invalid) : node_names.sequence16;
+				(active_node = node_names.sequence12) & (status__sequence12 = invalid) : next_child__sequence12;
+				(active_node = node_names.sequence16) & (status__sequence16 != invalid) : node_names.sequence20;
+				(active_node = node_names.sequence16) & (status__sequence16 = invalid) : next_child__sequence16;
+				(active_node = node_names.sequence20) & (status__sequence20 != invalid) : node_names.sequence24;
+				(active_node = node_names.sequence20) & (status__sequence20 = invalid) : next_child__sequence20;
+				(active_node = node_names.sequence24) & (status__sequence24 != invalid) : node_names.sequence28;
+				(active_node = node_names.sequence24) & (status__sequence24 = invalid) : next_child__sequence24;
+				(active_node = node_names.sequence28) & (status__sequence28 != invalid) : node_names.sequence32;
+				(active_node = node_names.sequence28) & (status__sequence28 = invalid) : next_child__sequence28;
+				(active_node = node_names.sequence32) & (status__sequence32 != invalid) : node_names.sequence36;
+				(active_node = node_names.sequence32) & (status__sequence32 = invalid) : next_child__sequence32;
+				(active_node = node_names.sequence36) & (status__sequence36 != invalid) : node_names.special_decorator;
+				(active_node = node_names.sequence36) & (status__sequence36 = invalid) : next_child__sequence36;
+				(active_node = node_names.sequence4) & (status__sequence4 != invalid) : node_names.sequence8;
+				(active_node = node_names.sequence4) & (status__sequence4 = invalid) : next_child__sequence4;
+				(active_node = node_names.sequence8) & (status__sequence8 != invalid) : node_names.sequence12;
+				(active_node = node_names.sequence8) & (status__sequence8 = invalid) : next_child__sequence8;
+				(active_node = node_names.special_decorator) & (status__special_decorator != invalid) : node_names.biggest_fish_sequence;
+				(active_node = node_names.special_decorator) & (status__special_decorator = invalid) : next_child__special_decorator;
+				TRUE : active_node;
+			esac;
+		--START OF BLACKBOARD VARIABLES TRANSITION
+		next(var_biggest_fish) :=
+			case
+				(active_node = -1) & !(status__bigger_fish = invalid) & (TRUE) : min((1 + var_biggest_fish), 99);
+				TRUE : var_biggest_fish;
+			esac;
+		--END OF BLACKBOARD VARIABLES TRANSITION
+
+LTLSPEC F(G((var_biggest_fish = 37)));
+CTLSPEC AF(AG((var_biggest_fish = 37)));
+MODULE define_nodes
+	DEFINE
+		biggest_fish_sequence := 0;
+		special_decorator := 1;
+		sequence36 := 2;
+		decorator33 := 3;
+		biggest_fish_is33 := 4;
+		decorator34 := 5;
+		biggest_fish_is34 := 6;
+		decorator35 := 7;
+		biggest_fish_is35 := 8;
+		decorator36 := 9;
+		biggest_fish_is36 := 10;
+		sequence32 := 11;
+		decorator29 := 12;
+		biggest_fish_is29 := 13;
+		decorator30 := 14;
+		biggest_fish_is30 := 15;
+		decorator31 := 16;
+		biggest_fish_is31 := 17;
+		decorator32 := 18;
+		biggest_fish_is32 := 19;
+		sequence28 := 20;
+		decorator25 := 21;
+		biggest_fish_is25 := 22;
+		decorator26 := 23;
+		biggest_fish_is26 := 24;
+		decorator27 := 25;
+		biggest_fish_is27 := 26;
+		decorator28 := 27;
+		biggest_fish_is28 := 28;
+		sequence24 := 29;
+		decorator21 := 30;
+		biggest_fish_is21 := 31;
+		decorator22 := 32;
+		biggest_fish_is22 := 33;
+		decorator23 := 34;
+		biggest_fish_is23 := 35;
+		decorator24 := 36;
+		biggest_fish_is24 := 37;
+		sequence20 := 38;
+		decorator17 := 39;
+		biggest_fish_is17 := 40;
+		decorator18 := 41;
+		biggest_fish_is18 := 42;
+		decorator19 := 43;
+		biggest_fish_is19 := 44;
+		decorator20 := 45;
+		biggest_fish_is20 := 46;
+		sequence16 := 47;
+		decorator13 := 48;
+		biggest_fish_is13 := 49;
+		decorator14 := 50;
+		biggest_fish_is14 := 51;
+		decorator15 := 52;
+		biggest_fish_is15 := 53;
+		decorator16 := 54;
+		biggest_fish_is16 := 55;
+		sequence12 := 56;
+		decorator9 := 57;
+		biggest_fish_is9 := 58;
+		decorator10 := 59;
+		biggest_fish_is10 := 60;
+		decorator11 := 61;
+		biggest_fish_is11 := 62;
+		decorator12 := 63;
+		biggest_fish_is12 := 64;
+		sequence8 := 65;
+		decorator5 := 66;
+		biggest_fish_is5 := 67;
+		decorator6 := 68;
+		biggest_fish_is6 := 69;
+		decorator7 := 70;
+		biggest_fish_is7 := 71;
+		decorator8 := 72;
+		biggest_fish_is8 := 73;
+		sequence4 := 74;
+		decorator1 := 75;
+		biggest_fish_is1 := 76;
+		decorator2 := 77;
+		biggest_fish_is2 := 78;
+		decorator3 := 79;
+		biggest_fish_is3 := 80;
+		decorator4 := 81;
+		biggest_fish_is4 := 82;
+		decorator0 := 83;
+		biggest_fish_is0 := 84;
+		bigger_fish := 85;
+MODULE biggest_fish_is0_module(var_biggest_fish)
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		status : {success, failure, invalid};
+	ASSIGN
+		init(status) := invalid;
+		next(status) :=
+			case
+				reset : invalid;
+				!(active) : status;
+				(var_biggest_fish = 0) : success;
+				TRUE : failure;
+			esac;
+MODULE biggest_fish_is1_module(var_biggest_fish)
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		status : {success, failure, invalid};
+	ASSIGN
+		init(status) := invalid;
+		next(status) :=
+			case
+				reset : invalid;
+				!(active) : status;
+				(var_biggest_fish = 1) : success;
+				TRUE : failure;
+			esac;
+MODULE biggest_fish_is10_module(var_biggest_fish)
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		status : {success, failure, invalid};
+	ASSIGN
+		init(status) := invalid;
+		next(status) :=
+			case
+				reset : invalid;
+				!(active) : status;
+				(var_biggest_fish = 10) : success;
+				TRUE : failure;
+			esac;
+MODULE biggest_fish_is11_module(var_biggest_fish)
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		status : {success, failure, invalid};
+	ASSIGN
+		init(status) := invalid;
+		next(status) :=
+			case
+				reset : invalid;
+				!(active) : status;
+				(var_biggest_fish = 11) : success;
+				TRUE : failure;
+			esac;
+MODULE biggest_fish_is12_module(var_biggest_fish)
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		status : {success, failure, invalid};
+	ASSIGN
+		init(status) := invalid;
+		next(status) :=
+			case
+				reset : invalid;
+				!(active) : status;
+				(var_biggest_fish = 12) : success;
+				TRUE : failure;
+			esac;
+MODULE biggest_fish_is13_module(var_biggest_fish)
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		status : {success, failure, invalid};
+	ASSIGN
+		init(status) := invalid;
+		next(status) :=
+			case
+				reset : invalid;
+				!(active) : status;
+				(var_biggest_fish = 13) : success;
+				TRUE : failure;
+			esac;
+MODULE biggest_fish_is14_module(var_biggest_fish)
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		status : {success, failure, invalid};
+	ASSIGN
+		init(status) := invalid;
+		next(status) :=
+			case
+				reset : invalid;
+				!(active) : status;
+				(var_biggest_fish = 14) : success;
+				TRUE : failure;
+			esac;
+MODULE biggest_fish_is15_module(var_biggest_fish)
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		status : {success, failure, invalid};
+	ASSIGN
+		init(status) := invalid;
+		next(status) :=
+			case
+				reset : invalid;
+				!(active) : status;
+				(var_biggest_fish = 15) : success;
+				TRUE : failure;
+			esac;
+MODULE biggest_fish_is16_module(var_biggest_fish)
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		status : {success, failure, invalid};
+	ASSIGN
+		init(status) := invalid;
+		next(status) :=
+			case
+				reset : invalid;
+				!(active) : status;
+				(var_biggest_fish = 16) : success;
+				TRUE : failure;
+			esac;
+MODULE biggest_fish_is17_module(var_biggest_fish)
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		status : {success, failure, invalid};
+	ASSIGN
+		init(status) := invalid;
+		next(status) :=
+			case
+				reset : invalid;
+				!(active) : status;
+				(var_biggest_fish = 17) : success;
+				TRUE : failure;
+			esac;
+MODULE biggest_fish_is18_module(var_biggest_fish)
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		status : {success, failure, invalid};
+	ASSIGN
+		init(status) := invalid;
+		next(status) :=
+			case
+				reset : invalid;
+				!(active) : status;
+				(var_biggest_fish = 18) : success;
+				TRUE : failure;
+			esac;
+MODULE biggest_fish_is19_module(var_biggest_fish)
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		status : {success, failure, invalid};
+	ASSIGN
+		init(status) := invalid;
+		next(status) :=
+			case
+				reset : invalid;
+				!(active) : status;
+				(var_biggest_fish = 19) : success;
+				TRUE : failure;
+			esac;
+MODULE biggest_fish_is2_module(var_biggest_fish)
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		status : {success, failure, invalid};
+	ASSIGN
+		init(status) := invalid;
+		next(status) :=
+			case
+				reset : invalid;
+				!(active) : status;
+				(var_biggest_fish = 2) : success;
+				TRUE : failure;
+			esac;
+MODULE biggest_fish_is20_module(var_biggest_fish)
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		status : {success, failure, invalid};
+	ASSIGN
+		init(status) := invalid;
+		next(status) :=
+			case
+				reset : invalid;
+				!(active) : status;
+				(var_biggest_fish = 20) : success;
+				TRUE : failure;
+			esac;
+MODULE biggest_fish_is21_module(var_biggest_fish)
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		status : {success, failure, invalid};
+	ASSIGN
+		init(status) := invalid;
+		next(status) :=
+			case
+				reset : invalid;
+				!(active) : status;
+				(var_biggest_fish = 21) : success;
+				TRUE : failure;
+			esac;
+MODULE biggest_fish_is22_module(var_biggest_fish)
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		status : {success, failure, invalid};
+	ASSIGN
+		init(status) := invalid;
+		next(status) :=
+			case
+				reset : invalid;
+				!(active) : status;
+				(var_biggest_fish = 22) : success;
+				TRUE : failure;
+			esac;
+MODULE biggest_fish_is23_module(var_biggest_fish)
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		status : {success, failure, invalid};
+	ASSIGN
+		init(status) := invalid;
+		next(status) :=
+			case
+				reset : invalid;
+				!(active) : status;
+				(var_biggest_fish = 23) : success;
+				TRUE : failure;
+			esac;
+MODULE biggest_fish_is24_module(var_biggest_fish)
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		status : {success, failure, invalid};
+	ASSIGN
+		init(status) := invalid;
+		next(status) :=
+			case
+				reset : invalid;
+				!(active) : status;
+				(var_biggest_fish = 24) : success;
+				TRUE : failure;
+			esac;
+MODULE biggest_fish_is25_module(var_biggest_fish)
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		status : {success, failure, invalid};
+	ASSIGN
+		init(status) := invalid;
+		next(status) :=
+			case
+				reset : invalid;
+				!(active) : status;
+				(var_biggest_fish = 25) : success;
+				TRUE : failure;
+			esac;
+MODULE biggest_fish_is26_module(var_biggest_fish)
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		status : {success, failure, invalid};
+	ASSIGN
+		init(status) := invalid;
+		next(status) :=
+			case
+				reset : invalid;
+				!(active) : status;
+				(var_biggest_fish = 26) : success;
+				TRUE : failure;
+			esac;
+MODULE biggest_fish_is27_module(var_biggest_fish)
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		status : {success, failure, invalid};
+	ASSIGN
+		init(status) := invalid;
+		next(status) :=
+			case
+				reset : invalid;
+				!(active) : status;
+				(var_biggest_fish = 27) : success;
+				TRUE : failure;
+			esac;
+MODULE biggest_fish_is28_module(var_biggest_fish)
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		status : {success, failure, invalid};
+	ASSIGN
+		init(status) := invalid;
+		next(status) :=
+			case
+				reset : invalid;
+				!(active) : status;
+				(var_biggest_fish = 28) : success;
+				TRUE : failure;
+			esac;
+MODULE biggest_fish_is29_module(var_biggest_fish)
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		status : {success, failure, invalid};
+	ASSIGN
+		init(status) := invalid;
+		next(status) :=
+			case
+				reset : invalid;
+				!(active) : status;
+				(var_biggest_fish = 29) : success;
+				TRUE : failure;
+			esac;
+MODULE biggest_fish_is3_module(var_biggest_fish)
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		status : {success, failure, invalid};
+	ASSIGN
+		init(status) := invalid;
+		next(status) :=
+			case
+				reset : invalid;
+				!(active) : status;
+				(var_biggest_fish = 3) : success;
+				TRUE : failure;
+			esac;
+MODULE biggest_fish_is30_module(var_biggest_fish)
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		status : {success, failure, invalid};
+	ASSIGN
+		init(status) := invalid;
+		next(status) :=
+			case
+				reset : invalid;
+				!(active) : status;
+				(var_biggest_fish = 30) : success;
+				TRUE : failure;
+			esac;
+MODULE biggest_fish_is31_module(var_biggest_fish)
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		status : {success, failure, invalid};
+	ASSIGN
+		init(status) := invalid;
+		next(status) :=
+			case
+				reset : invalid;
+				!(active) : status;
+				(var_biggest_fish = 31) : success;
+				TRUE : failure;
+			esac;
+MODULE biggest_fish_is32_module(var_biggest_fish)
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		status : {success, failure, invalid};
+	ASSIGN
+		init(status) := invalid;
+		next(status) :=
+			case
+				reset : invalid;
+				!(active) : status;
+				(var_biggest_fish = 32) : success;
+				TRUE : failure;
+			esac;
+MODULE biggest_fish_is33_module(var_biggest_fish)
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		status : {success, failure, invalid};
+	ASSIGN
+		init(status) := invalid;
+		next(status) :=
+			case
+				reset : invalid;
+				!(active) : status;
+				(var_biggest_fish = 33) : success;
+				TRUE : failure;
+			esac;
+MODULE biggest_fish_is34_module(var_biggest_fish)
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		status : {success, failure, invalid};
+	ASSIGN
+		init(status) := invalid;
+		next(status) :=
+			case
+				reset : invalid;
+				!(active) : status;
+				(var_biggest_fish = 34) : success;
+				TRUE : failure;
+			esac;
+MODULE biggest_fish_is35_module(var_biggest_fish)
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		status : {success, failure, invalid};
+	ASSIGN
+		init(status) := invalid;
+		next(status) :=
+			case
+				reset : invalid;
+				!(active) : status;
+				(var_biggest_fish = 35) : success;
+				TRUE : failure;
+			esac;
+MODULE biggest_fish_is36_module(var_biggest_fish)
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		status : {success, failure, invalid};
+	ASSIGN
+		init(status) := invalid;
+		next(status) :=
+			case
+				reset : invalid;
+				!(active) : status;
+				(var_biggest_fish = 36) : success;
+				TRUE : failure;
+			esac;
+MODULE biggest_fish_is4_module(var_biggest_fish)
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		status : {success, failure, invalid};
+	ASSIGN
+		init(status) := invalid;
+		next(status) :=
+			case
+				reset : invalid;
+				!(active) : status;
+				(var_biggest_fish = 4) : success;
+				TRUE : failure;
+			esac;
+MODULE biggest_fish_is5_module(var_biggest_fish)
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		status : {success, failure, invalid};
+	ASSIGN
+		init(status) := invalid;
+		next(status) :=
+			case
+				reset : invalid;
+				!(active) : status;
+				(var_biggest_fish = 5) : success;
+				TRUE : failure;
+			esac;
+MODULE biggest_fish_is6_module(var_biggest_fish)
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		status : {success, failure, invalid};
+	ASSIGN
+		init(status) := invalid;
+		next(status) :=
+			case
+				reset : invalid;
+				!(active) : status;
+				(var_biggest_fish = 6) : success;
+				TRUE : failure;
+			esac;
+MODULE biggest_fish_is7_module(var_biggest_fish)
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		status : {success, failure, invalid};
+	ASSIGN
+		init(status) := invalid;
+		next(status) :=
+			case
+				reset : invalid;
+				!(active) : status;
+				(var_biggest_fish = 7) : success;
+				TRUE : failure;
+			esac;
+MODULE biggest_fish_is8_module(var_biggest_fish)
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		status : {success, failure, invalid};
+	ASSIGN
+		init(status) := invalid;
+		next(status) :=
+			case
+				reset : invalid;
+				!(active) : status;
+				(var_biggest_fish = 8) : success;
+				TRUE : failure;
+			esac;
+MODULE biggest_fish_is9_module(var_biggest_fish)
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		status : {success, failure, invalid};
+	ASSIGN
+		init(status) := invalid;
+		next(status) :=
+			case
+				reset : invalid;
+				!(active) : status;
+				(var_biggest_fish = 9) : success;
+				TRUE : failure;
+			esac;
+MODULE success_DEFAULT_module
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		status : {success, invalid};
+	ASSIGN
+		init(status) := invalid;
+		next(status) := 
+			case
+				reset : invalid;
+				active : {success};
+				TRUE : status;
+			esac;
