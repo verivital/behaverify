@@ -1,0 +1,125 @@
+MODULE main
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		resume_from_here_in_subtree__biggest_fish_sequence := -3;
+		resume_from_here_in_subtree__decorator0 := -3;
+		resume_from_here_in_subtree__decorator1 := -3;
+		biggest_fish_sequence.active := TRUE;
+		parallel1.status := parallel1.active ? parallel1.internal_status : invalid;
+		parallel1.internal_status := 
+			case
+				count(decorator0.internal_status = failure, decorator1.internal_status = failure) >= 1 : failure;
+				count(decorator0.internal_status = success, decorator1.internal_status = success) >= 1 : success;
+				TRUE : running;
+			esac;
+		--START OF BLACKBOARD DEFINITIONS
+		var_biggest_fish_stage_1 := 
+			case
+				!(bigger_fish.active) : var_biggest_fish;
+				TRUE : min((1 + var_biggest_fish), 99);
+			esac;
+		--END OF BLACKBOARD DEFINITIONS
+	VAR
+		node_names : define_nodes;
+		bigger_fish : success_DEFAULT_module;
+		biggest_fish_is0 : biggest_fish_is0_module(var_biggest_fish);
+		biggest_fish_is1 : biggest_fish_is1_module(var_biggest_fish);
+		biggest_fish_sequence_NEXT_2 : composite_sequence_without_memory_END;
+		biggest_fish_sequence_NEXT_1 : composite_sequence_without_memory(biggest_fish_sequence_NEXT_2, bigger_fish);
+		biggest_fish_sequence : composite_sequence_without_memory(biggest_fish_sequence_NEXT_1, special_decorator);
+		decorator0 : decorator_X_is_Y(biggest_fish_is0, failure, running);
+		decorator1 : decorator_X_is_Y(biggest_fish_is1, failure, running);
+		parallel1_NEXT_2 : composite_parallel_without_memory_END;
+		parallel1_NEXT_1 : composite_parallel_without_memory(parallel1_NEXT_2, decorator1);
+		parallel1 : composite_parallel_without_memory(parallel1_NEXT_1, decorator0);
+		special_decorator : decorator_X_is_Y(parallel1, running, failure);
+		--START OF BLACKBOARD VARIABLES DECLARATION
+		var_biggest_fish : 0..99;
+		--END OF BLACKBOARD VARIABLES DECLARATION
+	ASSIGN
+		--START OF BLACKBOARD VARIABLES INITIALIZATION
+		init(var_biggest_fish) := 
+			case
+				TRUE : 0;
+			esac;
+		--END OF BLACKBOARD VARIABLES INITIALIZATION
+		--START OF BLACKBOARD VARIABLES TRANSITION
+		next(var_biggest_fish) := var_biggest_fish_stage_1;
+		--END OF BLACKBOARD VARIABLES TRANSITION
+
+LTLSPEC F(G((var_biggest_fish = 2)));
+CTLSPEC AF(AG((var_biggest_fish = 2)));
+MODULE define_nodes
+	DEFINE
+		biggest_fish_sequence := 0;
+		special_decorator := 1;
+		parallel1 := 2;
+		decorator0 := 3;
+		biggest_fish_is0 := 4;
+		decorator1 := 5;
+		biggest_fish_is1 := 6;
+		bigger_fish := 7;
+MODULE decorator_X_is_Y(child_0, incoming_status, outgoing_status)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				child_0.status = incoming_status : outgoing_status;
+				TRUE : child_0.status;
+			esac;
+		child_0.active :=
+			case
+				!(active) : FALSE;
+				TRUE : TRUE;
+			esac;
+MODULE composite_sequence_without_memory(next_composite, child)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				child.internal_status = success : next_composite.internal_status;
+				TRUE : child.internal_status;
+			esac;
+		child.active := active;
+		next_composite.active := active & (child.internal_status = success);
+
+MODULE composite_sequence_without_memory_END
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? success : invalid;
+		internal_status := success;
+MODULE composite_parallel_without_memory(next_composite, child)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		child.active := active;
+		next_composite.active := active;
+
+MODULE composite_parallel_without_memory_END
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+MODULE biggest_fish_is0_module(var_biggest_fish)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((var_biggest_fish = 0)) ? success : failure;
+MODULE biggest_fish_is1_module(var_biggest_fish)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((var_biggest_fish = 1)) ? success : failure;
+MODULE success_DEFAULT_module
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := success;

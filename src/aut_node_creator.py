@@ -157,7 +157,7 @@ def create_composite_selector_with_memory(node):
             + tab_indent(3) + 'case' + os.linesep
             + ''.join(
                 [(tab_indent(4) + '(' + STATUS_STRING + children[child_index] + ' != failure) & (' + str(child_index) + ' >= RESUME THINGY HERE) : ' + STATUS_STRING + children[child_index] + ';' + os.linesep)
-                 for child_index in len(children)])
+                 for child_index in range(len(children))])
             + tab_indent(4) + 'TRUE : failure;' + os.linesep
             + tab_indent(3) + 'esac;' + os.linesep)
 
@@ -179,7 +179,7 @@ def create_composite_sequence_with_memory(node):
             + tab_indent(3) + 'case' + os.linesep
             + ''.join(
                 [(tab_indent(4) + '(' + STATUS_STRING + children[child_index] + ' != success) & (' + str(child_index) + ' >= RESUME THINGY HERE) : ' + STATUS_STRING + children[child_index] + ';' + os.linesep)
-                 for child_index in len(children)])
+                 for child_index in range(len(children))])
             + tab_indent(4) + 'TRUE : success;' + os.linesep
             + tab_indent(3) + 'esac;' + os.linesep)
 
@@ -201,10 +201,10 @@ def create_composite_parallel_success_on_all_with_memory(node):
             + tab_indent(3) + 'case' + os.linesep
             + ''.join(
                 [(tab_indent(4) + '((' + STATUS_STRING + children[child_index] + ' = failure) | (' + STATUS_STRING + children[child_index] + ' = invalid)) & (' + str(child_index) + ' >= RESUME THINGY HERE) : ' + STATUS_STRING + children[child_index] + ';' + os.linesep)
-                 for child_index in len(children)])
+                 for child_index in range(len(children))])
             + ''.join(
                 [(tab_indent(4) + '(' + STATUS_STRING + children[child_index] + ' = running) & (' + str(child_index) + ' >= RESUME THINGY HERE) : running;' + os.linesep)
-                 for child_index in len(children)])
+                 for child_index in range(len(children))])
             + tab_indent(4) + 'TRUE : success;' + os.linesep
             + tab_indent(3) + 'esac;' + os.linesep)
 
@@ -215,10 +215,10 @@ def create_composite_parallel_success_on_all_without_memory(node):
             + tab_indent(3) + 'case' + os.linesep
             + ''.join(
                 [(tab_indent(4) + '(' + STATUS_STRING + children[child_index] + ' = failure) | (' + STATUS_STRING + children[child_index] + ' = invalid) : ' + STATUS_STRING + children[child_index] + ';' + os.linesep)
-                 for child_index in len(children)])
+                 for child_index in range(len(children))])
             + ''.join(
                 [(tab_indent(4) + STATUS_STRING + children[child_index] + ' = running : running;' + os.linesep)
-                 for child_index in len(children)])
+                 for child_index in range(len(children))])
             + tab_indent(4) + 'TRUE : success;' + os.linesep
             + tab_indent(3) + 'esac;' + os.linesep)
 
@@ -233,10 +233,10 @@ def create_composite_parallel_success_on_one_without_memory(node):
             + tab_indent(3) + 'case' + os.linesep
             + ''.join(
                 [(tab_indent(4) + '(' + STATUS_STRING + children[child_index] + ' = failure) | (' + STATUS_STRING + children[child_index] + ' = invalid) : ' + STATUS_STRING + children[child_index] + ';' + os.linesep)
-                 for child_index in len(children)])
+                 for child_index in range(len(children))])
             + ''.join(
                 [(tab_indent(4) + STATUS_STRING + children[child_index] + ' = success : success;' + os.linesep)
-                 for child_index in len(children)])
+                 for child_index in range(len(children))])
             + tab_indent(4) + 'TRUE : running;' + os.linesep
             + tab_indent(3) + 'esac;' + os.linesep)
 

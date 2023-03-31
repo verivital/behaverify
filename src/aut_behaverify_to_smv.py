@@ -238,7 +238,7 @@ def create_resume_structure(nodes, local_root_to_relevant_list_map, node_name_to
         # go through and add all the ancestors of the local root to a set for the purpose of resetting.
         next_resume_from_node_string += (tab_indent(2) + 'next(' + LOCAL_ROOT_TREE_STRING + local_root_name + ') := ' + os.linesep
                                          + tab_indent(3) + 'case' + os.linesep
-                                         + tab_indent(4) + 'active_node != -1 : active_node;' + os.linesep  # only change in between ticks.
+                                         + tab_indent(4) + 'active_node != -1 : ' + LOCAL_ROOT_TREE_STRING + local_root_name + ';' + os.linesep  # only change in between ticks.
                                          + ancestor_string  # highest priority is reset
                                          + inject_string  # parallel_synch nodes have a special condition
                                          )
