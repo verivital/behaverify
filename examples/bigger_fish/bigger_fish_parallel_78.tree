@@ -1,0 +1,946 @@
+variables {variable { biggest_fish VAR [0, 99] } end_variable} end_variables
+local_variables {#comment# Local Variable declarations go here #end_comment#} end_local_variables
+environment {environment_variables {#comment# Local Variable declarations go here #end_comment#} end_environment_variables initial_values { #comment# initial values for environment #end_comment#} end_initial_values update_values { #comment# update values for environment #end_comment#} end_update_values} end_environment
+checks {
+    check {
+        biggest_fish_is0
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 0) } end_condition
+    } end_check
+    check {
+        biggest_fish_is1
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 1) } end_condition
+    } end_check
+    check {
+        biggest_fish_is2
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 2) } end_condition
+    } end_check
+    check {
+        biggest_fish_is3
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 3) } end_condition
+    } end_check
+    check {
+        biggest_fish_is4
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 4) } end_condition
+    } end_check
+    check {
+        biggest_fish_is5
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 5) } end_condition
+    } end_check
+    check {
+        biggest_fish_is6
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 6) } end_condition
+    } end_check
+    check {
+        biggest_fish_is7
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 7) } end_condition
+    } end_check
+    check {
+        biggest_fish_is8
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 8) } end_condition
+    } end_check
+    check {
+        biggest_fish_is9
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 9) } end_condition
+    } end_check
+    check {
+        biggest_fish_is10
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 10) } end_condition
+    } end_check
+    check {
+        biggest_fish_is11
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 11) } end_condition
+    } end_check
+    check {
+        biggest_fish_is12
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 12) } end_condition
+    } end_check
+    check {
+        biggest_fish_is13
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 13) } end_condition
+    } end_check
+    check {
+        biggest_fish_is14
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 14) } end_condition
+    } end_check
+    check {
+        biggest_fish_is15
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 15) } end_condition
+    } end_check
+    check {
+        biggest_fish_is16
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 16) } end_condition
+    } end_check
+    check {
+        biggest_fish_is17
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 17) } end_condition
+    } end_check
+    check {
+        biggest_fish_is18
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 18) } end_condition
+    } end_check
+    check {
+        biggest_fish_is19
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 19) } end_condition
+    } end_check
+    check {
+        biggest_fish_is20
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 20) } end_condition
+    } end_check
+    check {
+        biggest_fish_is21
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 21) } end_condition
+    } end_check
+    check {
+        biggest_fish_is22
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 22) } end_condition
+    } end_check
+    check {
+        biggest_fish_is23
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 23) } end_condition
+    } end_check
+    check {
+        biggest_fish_is24
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 24) } end_condition
+    } end_check
+    check {
+        biggest_fish_is25
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 25) } end_condition
+    } end_check
+    check {
+        biggest_fish_is26
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 26) } end_condition
+    } end_check
+    check {
+        biggest_fish_is27
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 27) } end_condition
+    } end_check
+    check {
+        biggest_fish_is28
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 28) } end_condition
+    } end_check
+    check {
+        biggest_fish_is29
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 29) } end_condition
+    } end_check
+    check {
+        biggest_fish_is30
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 30) } end_condition
+    } end_check
+    check {
+        biggest_fish_is31
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 31) } end_condition
+    } end_check
+    check {
+        biggest_fish_is32
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 32) } end_condition
+    } end_check
+    check {
+        biggest_fish_is33
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 33) } end_condition
+    } end_check
+    check {
+        biggest_fish_is34
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 34) } end_condition
+    } end_check
+    check {
+        biggest_fish_is35
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 35) } end_condition
+    } end_check
+    check {
+        biggest_fish_is36
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 36) } end_condition
+    } end_check
+    check {
+        biggest_fish_is37
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 37) } end_condition
+    } end_check
+    check {
+        biggest_fish_is38
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 38) } end_condition
+    } end_check
+    check {
+        biggest_fish_is39
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 39) } end_condition
+    } end_check
+    check {
+        biggest_fish_is40
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 40) } end_condition
+    } end_check
+    check {
+        biggest_fish_is41
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 41) } end_condition
+    } end_check
+    check {
+        biggest_fish_is42
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 42) } end_condition
+    } end_check
+    check {
+        biggest_fish_is43
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 43) } end_condition
+    } end_check
+    check {
+        biggest_fish_is44
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 44) } end_condition
+    } end_check
+    check {
+        biggest_fish_is45
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 45) } end_condition
+    } end_check
+    check {
+        biggest_fish_is46
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 46) } end_condition
+    } end_check
+    check {
+        biggest_fish_is47
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 47) } end_condition
+    } end_check
+    check {
+        biggest_fish_is48
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 48) } end_condition
+    } end_check
+    check {
+        biggest_fish_is49
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 49) } end_condition
+    } end_check
+    check {
+        biggest_fish_is50
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 50) } end_condition
+    } end_check
+    check {
+        biggest_fish_is51
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 51) } end_condition
+    } end_check
+    check {
+        biggest_fish_is52
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 52) } end_condition
+    } end_check
+    check {
+        biggest_fish_is53
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 53) } end_condition
+    } end_check
+    check {
+        biggest_fish_is54
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 54) } end_condition
+    } end_check
+    check {
+        biggest_fish_is55
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 55) } end_condition
+    } end_check
+    check {
+        biggest_fish_is56
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 56) } end_condition
+    } end_check
+    check {
+        biggest_fish_is57
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 57) } end_condition
+    } end_check
+    check {
+        biggest_fish_is58
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 58) } end_condition
+    } end_check
+    check {
+        biggest_fish_is59
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 59) } end_condition
+    } end_check
+    check {
+        biggest_fish_is60
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 60) } end_condition
+    } end_check
+    check {
+        biggest_fish_is61
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 61) } end_condition
+    } end_check
+    check {
+        biggest_fish_is62
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 62) } end_condition
+    } end_check
+    check {
+        biggest_fish_is63
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 63) } end_condition
+    } end_check
+    check {
+        biggest_fish_is64
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 64) } end_condition
+    } end_check
+    check {
+        biggest_fish_is65
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 65) } end_condition
+    } end_check
+    check {
+        biggest_fish_is66
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 66) } end_condition
+    } end_check
+    check {
+        biggest_fish_is67
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 67) } end_condition
+    } end_check
+    check {
+        biggest_fish_is68
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 68) } end_condition
+    } end_check
+    check {
+        biggest_fish_is69
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 69) } end_condition
+    } end_check
+    check {
+        biggest_fish_is70
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 70) } end_condition
+    } end_check
+    check {
+        biggest_fish_is71
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 71) } end_condition
+    } end_check
+    check {
+        biggest_fish_is72
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 72) } end_condition
+    } end_check
+    check {
+        biggest_fish_is73
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 73) } end_condition
+    } end_check
+    check {
+        biggest_fish_is74
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 74) } end_condition
+    } end_check
+    check {
+        biggest_fish_is75
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 75) } end_condition
+    } end_check
+    check {
+        biggest_fish_is76
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 76) } end_condition
+    } end_check
+    check {
+        biggest_fish_is77
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 77) } end_condition
+    } end_check
+    check {
+        biggest_fish_is78
+        read_variables { biggest_fish } end_read_variables
+        condition { (equal, biggest_fish, 78) } end_condition
+    } end_check
+} end_checks
+environment_checks {#comment# check environment nodes are defined here #end_comment#} end_environment_checks
+actions {
+    action {
+        bigger_fish
+        imports {} end_imports
+        read_variables {} end_read_variables
+        write_variables { biggest_fish } end_write_variables
+        initial_values { variable_statement { biggest_fish result { 0 } end_result } end_variable_statement } end_initial_values
+        update {
+            variable_statement { biggest_fish result { (min, (addition, 1, biggest_fish), 99) } end_result } end_variable_statement
+            return_statement { result { success } end_result } end_return_statement
+        } end_update
+    } end_action
+} end_actions
+root_node
+composite {
+    biggest_fish_sequence
+    sequence
+    children {
+        decorator {
+            special_decorator
+            X_is_Y X running Y failure
+            child
+            composite {
+                parallel78
+                parallel policy success_on_one
+                children {
+                    decorator {
+                        decorator75
+                        X_is_Y X failure Y running
+                        child biggest_fish_is75
+                    } end_decorator
+                    decorator {
+                        decorator76
+                        X_is_Y X failure Y running
+                        child biggest_fish_is76
+                    } end_decorator
+                    decorator {
+                        decorator77
+                        X_is_Y X failure Y running
+                        child biggest_fish_is77
+                    } end_decorator
+                    decorator {
+                        decorator78
+                        X_is_Y X failure Y running
+                        child biggest_fish_is78
+                    } end_decorator
+                    composite {
+                        parallel74
+                        parallel policy success_on_one
+                        children {
+                            decorator {
+                                decorator71
+                                X_is_Y X failure Y running
+                                child biggest_fish_is71
+                            } end_decorator
+                            decorator {
+                                decorator72
+                                X_is_Y X failure Y running
+                                child biggest_fish_is72
+                            } end_decorator
+                            decorator {
+                                decorator73
+                                X_is_Y X failure Y running
+                                child biggest_fish_is73
+                            } end_decorator
+                            decorator {
+                                decorator74
+                                X_is_Y X failure Y running
+                                child biggest_fish_is74
+                            } end_decorator
+                            composite {
+                                parallel70
+                                parallel policy success_on_one
+                                children {
+                                    decorator {
+                                        decorator67
+                                        X_is_Y X failure Y running
+                                        child biggest_fish_is67
+                                    } end_decorator
+                                    decorator {
+                                        decorator68
+                                        X_is_Y X failure Y running
+                                        child biggest_fish_is68
+                                    } end_decorator
+                                    decorator {
+                                        decorator69
+                                        X_is_Y X failure Y running
+                                        child biggest_fish_is69
+                                    } end_decorator
+                                    decorator {
+                                        decorator70
+                                        X_is_Y X failure Y running
+                                        child biggest_fish_is70
+                                    } end_decorator
+                                    composite {
+                                        parallel66
+                                        parallel policy success_on_one
+                                        children {
+                                            decorator {
+                                                decorator63
+                                                X_is_Y X failure Y running
+                                                child biggest_fish_is63
+                                            } end_decorator
+                                            decorator {
+                                                decorator64
+                                                X_is_Y X failure Y running
+                                                child biggest_fish_is64
+                                            } end_decorator
+                                            decorator {
+                                                decorator65
+                                                X_is_Y X failure Y running
+                                                child biggest_fish_is65
+                                            } end_decorator
+                                            decorator {
+                                                decorator66
+                                                X_is_Y X failure Y running
+                                                child biggest_fish_is66
+                                            } end_decorator
+                                            composite {
+                                                parallel62
+                                                parallel policy success_on_one
+                                                children {
+                                                    decorator {
+                                                        decorator59
+                                                        X_is_Y X failure Y running
+                                                        child biggest_fish_is59
+                                                    } end_decorator
+                                                    decorator {
+                                                        decorator60
+                                                        X_is_Y X failure Y running
+                                                        child biggest_fish_is60
+                                                    } end_decorator
+                                                    decorator {
+                                                        decorator61
+                                                        X_is_Y X failure Y running
+                                                        child biggest_fish_is61
+                                                    } end_decorator
+                                                    decorator {
+                                                        decorator62
+                                                        X_is_Y X failure Y running
+                                                        child biggest_fish_is62
+                                                    } end_decorator
+                                                    composite {
+                                                        parallel58
+                                                        parallel policy success_on_one
+                                                        children {
+                                                            decorator {
+                                                                decorator55
+                                                                X_is_Y X failure Y running
+                                                                child biggest_fish_is55
+                                                            } end_decorator
+                                                            decorator {
+                                                                decorator56
+                                                                X_is_Y X failure Y running
+                                                                child biggest_fish_is56
+                                                            } end_decorator
+                                                            decorator {
+                                                                decorator57
+                                                                X_is_Y X failure Y running
+                                                                child biggest_fish_is57
+                                                            } end_decorator
+                                                            decorator {
+                                                                decorator58
+                                                                X_is_Y X failure Y running
+                                                                child biggest_fish_is58
+                                                            } end_decorator
+                                                            composite {
+                                                                parallel54
+                                                                parallel policy success_on_one
+                                                                children {
+                                                                    decorator {
+                                                                        decorator51
+                                                                        X_is_Y X failure Y running
+                                                                        child biggest_fish_is51
+                                                                    } end_decorator
+                                                                    decorator {
+                                                                        decorator52
+                                                                        X_is_Y X failure Y running
+                                                                        child biggest_fish_is52
+                                                                    } end_decorator
+                                                                    decorator {
+                                                                        decorator53
+                                                                        X_is_Y X failure Y running
+                                                                        child biggest_fish_is53
+                                                                    } end_decorator
+                                                                    decorator {
+                                                                        decorator54
+                                                                        X_is_Y X failure Y running
+                                                                        child biggest_fish_is54
+                                                                    } end_decorator
+                                                                    composite {
+                                                                        parallel50
+                                                                        parallel policy success_on_one
+                                                                        children {
+                                                                            decorator {
+                                                                                decorator47
+                                                                                X_is_Y X failure Y running
+                                                                                child biggest_fish_is47
+                                                                            } end_decorator
+                                                                            decorator {
+                                                                                decorator48
+                                                                                X_is_Y X failure Y running
+                                                                                child biggest_fish_is48
+                                                                            } end_decorator
+                                                                            decorator {
+                                                                                decorator49
+                                                                                X_is_Y X failure Y running
+                                                                                child biggest_fish_is49
+                                                                            } end_decorator
+                                                                            decorator {
+                                                                                decorator50
+                                                                                X_is_Y X failure Y running
+                                                                                child biggest_fish_is50
+                                                                            } end_decorator
+                                                                            composite {
+                                                                                parallel46
+                                                                                parallel policy success_on_one
+                                                                                children {
+                                                                                    decorator {
+                                                                                        decorator43
+                                                                                        X_is_Y X failure Y running
+                                                                                        child biggest_fish_is43
+                                                                                    } end_decorator
+                                                                                    decorator {
+                                                                                        decorator44
+                                                                                        X_is_Y X failure Y running
+                                                                                        child biggest_fish_is44
+                                                                                    } end_decorator
+                                                                                    decorator {
+                                                                                        decorator45
+                                                                                        X_is_Y X failure Y running
+                                                                                        child biggest_fish_is45
+                                                                                    } end_decorator
+                                                                                    decorator {
+                                                                                        decorator46
+                                                                                        X_is_Y X failure Y running
+                                                                                        child biggest_fish_is46
+                                                                                    } end_decorator
+                                                                                    composite {
+                                                                                        parallel42
+                                                                                        parallel policy success_on_one
+                                                                                        children {
+                                                                                            decorator {
+                                                                                                decorator39
+                                                                                                X_is_Y X failure Y running
+                                                                                                child biggest_fish_is39
+                                                                                            } end_decorator
+                                                                                            decorator {
+                                                                                                decorator40
+                                                                                                X_is_Y X failure Y running
+                                                                                                child biggest_fish_is40
+                                                                                            } end_decorator
+                                                                                            decorator {
+                                                                                                decorator41
+                                                                                                X_is_Y X failure Y running
+                                                                                                child biggest_fish_is41
+                                                                                            } end_decorator
+                                                                                            decorator {
+                                                                                                decorator42
+                                                                                                X_is_Y X failure Y running
+                                                                                                child biggest_fish_is42
+                                                                                            } end_decorator
+                                                                                            composite {
+                                                                                                parallel38
+                                                                                                parallel policy success_on_one
+                                                                                                children {
+                                                                                                    decorator {
+                                                                                                        decorator35
+                                                                                                        X_is_Y X failure Y running
+                                                                                                        child biggest_fish_is35
+                                                                                                    } end_decorator
+                                                                                                    decorator {
+                                                                                                        decorator36
+                                                                                                        X_is_Y X failure Y running
+                                                                                                        child biggest_fish_is36
+                                                                                                    } end_decorator
+                                                                                                    decorator {
+                                                                                                        decorator37
+                                                                                                        X_is_Y X failure Y running
+                                                                                                        child biggest_fish_is37
+                                                                                                    } end_decorator
+                                                                                                    decorator {
+                                                                                                        decorator38
+                                                                                                        X_is_Y X failure Y running
+                                                                                                        child biggest_fish_is38
+                                                                                                    } end_decorator
+                                                                                                    composite {
+                                                                                                        parallel34
+                                                                                                        parallel policy success_on_one
+                                                                                                        children {
+                                                                                                            decorator {
+                                                                                                                decorator31
+                                                                                                                X_is_Y X failure Y running
+                                                                                                                child biggest_fish_is31
+                                                                                                            } end_decorator
+                                                                                                            decorator {
+                                                                                                                decorator32
+                                                                                                                X_is_Y X failure Y running
+                                                                                                                child biggest_fish_is32
+                                                                                                            } end_decorator
+                                                                                                            decorator {
+                                                                                                                decorator33
+                                                                                                                X_is_Y X failure Y running
+                                                                                                                child biggest_fish_is33
+                                                                                                            } end_decorator
+                                                                                                            decorator {
+                                                                                                                decorator34
+                                                                                                                X_is_Y X failure Y running
+                                                                                                                child biggest_fish_is34
+                                                                                                            } end_decorator
+                                                                                                            composite {
+                                                                                                                parallel30
+                                                                                                                parallel policy success_on_one
+                                                                                                                children {
+                                                                                                                    decorator {
+                                                                                                                        decorator27
+                                                                                                                        X_is_Y X failure Y running
+                                                                                                                        child biggest_fish_is27
+                                                                                                                    } end_decorator
+                                                                                                                    decorator {
+                                                                                                                        decorator28
+                                                                                                                        X_is_Y X failure Y running
+                                                                                                                        child biggest_fish_is28
+                                                                                                                    } end_decorator
+                                                                                                                    decorator {
+                                                                                                                        decorator29
+                                                                                                                        X_is_Y X failure Y running
+                                                                                                                        child biggest_fish_is29
+                                                                                                                    } end_decorator
+                                                                                                                    decorator {
+                                                                                                                        decorator30
+                                                                                                                        X_is_Y X failure Y running
+                                                                                                                        child biggest_fish_is30
+                                                                                                                    } end_decorator
+                                                                                                                    composite {
+                                                                                                                        parallel26
+                                                                                                                        parallel policy success_on_one
+                                                                                                                        children {
+                                                                                                                            decorator {
+                                                                                                                                decorator23
+                                                                                                                                X_is_Y X failure Y running
+                                                                                                                                child biggest_fish_is23
+                                                                                                                            } end_decorator
+                                                                                                                            decorator {
+                                                                                                                                decorator24
+                                                                                                                                X_is_Y X failure Y running
+                                                                                                                                child biggest_fish_is24
+                                                                                                                            } end_decorator
+                                                                                                                            decorator {
+                                                                                                                                decorator25
+                                                                                                                                X_is_Y X failure Y running
+                                                                                                                                child biggest_fish_is25
+                                                                                                                            } end_decorator
+                                                                                                                            decorator {
+                                                                                                                                decorator26
+                                                                                                                                X_is_Y X failure Y running
+                                                                                                                                child biggest_fish_is26
+                                                                                                                            } end_decorator
+                                                                                                                            composite {
+                                                                                                                                parallel22
+                                                                                                                                parallel policy success_on_one
+                                                                                                                                children {
+                                                                                                                                    decorator {
+                                                                                                                                        decorator19
+                                                                                                                                        X_is_Y X failure Y running
+                                                                                                                                        child biggest_fish_is19
+                                                                                                                                    } end_decorator
+                                                                                                                                    decorator {
+                                                                                                                                        decorator20
+                                                                                                                                        X_is_Y X failure Y running
+                                                                                                                                        child biggest_fish_is20
+                                                                                                                                    } end_decorator
+                                                                                                                                    decorator {
+                                                                                                                                        decorator21
+                                                                                                                                        X_is_Y X failure Y running
+                                                                                                                                        child biggest_fish_is21
+                                                                                                                                    } end_decorator
+                                                                                                                                    decorator {
+                                                                                                                                        decorator22
+                                                                                                                                        X_is_Y X failure Y running
+                                                                                                                                        child biggest_fish_is22
+                                                                                                                                    } end_decorator
+                                                                                                                                    composite {
+                                                                                                                                        parallel18
+                                                                                                                                        parallel policy success_on_one
+                                                                                                                                        children {
+                                                                                                                                            decorator {
+                                                                                                                                                decorator15
+                                                                                                                                                X_is_Y X failure Y running
+                                                                                                                                                child biggest_fish_is15
+                                                                                                                                            } end_decorator
+                                                                                                                                            decorator {
+                                                                                                                                                decorator16
+                                                                                                                                                X_is_Y X failure Y running
+                                                                                                                                                child biggest_fish_is16
+                                                                                                                                            } end_decorator
+                                                                                                                                            decorator {
+                                                                                                                                                decorator17
+                                                                                                                                                X_is_Y X failure Y running
+                                                                                                                                                child biggest_fish_is17
+                                                                                                                                            } end_decorator
+                                                                                                                                            decorator {
+                                                                                                                                                decorator18
+                                                                                                                                                X_is_Y X failure Y running
+                                                                                                                                                child biggest_fish_is18
+                                                                                                                                            } end_decorator
+                                                                                                                                            composite {
+                                                                                                                                                parallel14
+                                                                                                                                                parallel policy success_on_one
+                                                                                                                                                children {
+                                                                                                                                                    decorator {
+                                                                                                                                                        decorator11
+                                                                                                                                                        X_is_Y X failure Y running
+                                                                                                                                                        child biggest_fish_is11
+                                                                                                                                                    } end_decorator
+                                                                                                                                                    decorator {
+                                                                                                                                                        decorator12
+                                                                                                                                                        X_is_Y X failure Y running
+                                                                                                                                                        child biggest_fish_is12
+                                                                                                                                                    } end_decorator
+                                                                                                                                                    decorator {
+                                                                                                                                                        decorator13
+                                                                                                                                                        X_is_Y X failure Y running
+                                                                                                                                                        child biggest_fish_is13
+                                                                                                                                                    } end_decorator
+                                                                                                                                                    decorator {
+                                                                                                                                                        decorator14
+                                                                                                                                                        X_is_Y X failure Y running
+                                                                                                                                                        child biggest_fish_is14
+                                                                                                                                                    } end_decorator
+                                                                                                                                                    composite {
+                                                                                                                                                        parallel10
+                                                                                                                                                        parallel policy success_on_one
+                                                                                                                                                        children {
+                                                                                                                                                            decorator {
+                                                                                                                                                                decorator7
+                                                                                                                                                                X_is_Y X failure Y running
+                                                                                                                                                                child biggest_fish_is7
+                                                                                                                                                            } end_decorator
+                                                                                                                                                            decorator {
+                                                                                                                                                                decorator8
+                                                                                                                                                                X_is_Y X failure Y running
+                                                                                                                                                                child biggest_fish_is8
+                                                                                                                                                            } end_decorator
+                                                                                                                                                            decorator {
+                                                                                                                                                                decorator9
+                                                                                                                                                                X_is_Y X failure Y running
+                                                                                                                                                                child biggest_fish_is9
+                                                                                                                                                            } end_decorator
+                                                                                                                                                            decorator {
+                                                                                                                                                                decorator10
+                                                                                                                                                                X_is_Y X failure Y running
+                                                                                                                                                                child biggest_fish_is10
+                                                                                                                                                            } end_decorator
+                                                                                                                                                            composite {
+                                                                                                                                                                parallel6
+                                                                                                                                                                parallel policy success_on_one
+                                                                                                                                                                children {
+                                                                                                                                                                    decorator {
+                                                                                                                                                                        decorator3
+                                                                                                                                                                        X_is_Y X failure Y running
+                                                                                                                                                                        child biggest_fish_is3
+                                                                                                                                                                    } end_decorator
+                                                                                                                                                                    decorator {
+                                                                                                                                                                        decorator4
+                                                                                                                                                                        X_is_Y X failure Y running
+                                                                                                                                                                        child biggest_fish_is4
+                                                                                                                                                                    } end_decorator
+                                                                                                                                                                    decorator {
+                                                                                                                                                                        decorator5
+                                                                                                                                                                        X_is_Y X failure Y running
+                                                                                                                                                                        child biggest_fish_is5
+                                                                                                                                                                    } end_decorator
+                                                                                                                                                                    decorator {
+                                                                                                                                                                        decorator6
+                                                                                                                                                                        X_is_Y X failure Y running
+                                                                                                                                                                        child biggest_fish_is6
+                                                                                                                                                                    } end_decorator
+                                                                                                                                                                    composite {
+                                                                                                                                                                        parallel2
+                                                                                                                                                                        parallel policy success_on_one
+                                                                                                                                                                        children {
+                                                                                                                                                                            decorator {
+                                                                                                                                                                                decorator0
+                                                                                                                                                                                X_is_Y X failure Y running
+                                                                                                                                                                                child biggest_fish_is0
+                                                                                                                                                                            } end_decorator
+                                                                                                                                                                            decorator {
+                                                                                                                                                                                decorator1
+                                                                                                                                                                                X_is_Y X failure Y running
+                                                                                                                                                                                child biggest_fish_is1
+                                                                                                                                                                            } end_decorator
+                                                                                                                                                                            decorator {
+                                                                                                                                                                                decorator2
+                                                                                                                                                                                X_is_Y X failure Y running
+                                                                                                                                                                                child biggest_fish_is2
+                                                                                                                                                                            } end_decorator
+                                                                                                                                                                        } end_children
+                                                                                                                                                                    } end_composite
+                                                                                                                                                                } end_children
+                                                                                                                                                            } end_composite
+                                                                                                                                                        } end_children
+                                                                                                                                                    } end_composite
+                                                                                                                                                } end_children
+                                                                                                                                            } end_composite
+                                                                                                                                        } end_children
+                                                                                                                                    } end_composite
+                                                                                                                                } end_children
+                                                                                                                            } end_composite
+                                                                                                                        } end_children
+                                                                                                                    } end_composite
+                                                                                                                } end_children
+                                                                                                            } end_composite
+                                                                                                        } end_children
+                                                                                                    } end_composite
+                                                                                                } end_children
+                                                                                            } end_composite
+                                                                                        } end_children
+                                                                                    } end_composite
+                                                                                } end_children
+                                                                            } end_composite
+                                                                        } end_children
+                                                                    } end_composite
+                                                                } end_children
+                                                            } end_composite
+                                                        } end_children
+                                                    } end_composite
+                                                } end_children
+                                            } end_composite
+                                        } end_children
+                                    } end_composite
+                                } end_children
+                            } end_composite
+                        } end_children
+                    } end_composite
+                } end_children
+            } end_composite
+        } end_decorator
+        bigger_fish
+    } end_children
+} end_composite
+specifications {
+    LTLSPEC { (finally, (globally, (equal, biggest_fish 0, 79))) } end_LTLSPEC
+    CTLSPEC { (always_finally, (always_globally, (equal, biggest_fish 0, 79))) } end_CTLSPEC
+} end_specifications

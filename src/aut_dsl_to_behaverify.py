@@ -257,6 +257,15 @@ def format_function_before_between(function_name, code, node_name, variables, lo
         )
 
 
+STATUS_STRING = 'status__'
+
+
+def format_function_status(function_name, code, node_name, variables, local_variables, use_stages, use_next, not_next):
+    return (
+        '(' + STATUS_STRING + code.function_call.node_name + ' = ' + function_name + ')'
+        )
+
+
 FUNCTION_FORMAT = {
     'abs' : ('abs', format_function_before),
     'max' : ('max', format_function_before),
@@ -286,9 +295,9 @@ FUNCTION_FORMAT = {
     'mod' : ('mod', format_function_between),
     'count' : ('count', format_function_before),
     'active' : ('.active', format_function_after),
-    'success' : ('.status = success', format_function_after),
-    'running' : ('.status = running', format_function_after),
-    'failure' : ('.status = failure', format_function_after),
+    'success' : ('success', format_function_status),
+    'running' : ('running', format_function_status),
+    'failure' : ('failure', format_function_status),
     'next' : ('X', format_function_before),
     'globally' : ('G', format_function_before),
     'globally_bounded' : ('G', format_function_before_bounded),
@@ -357,8 +366,8 @@ def create_sequence_selector(current_node, node_name, parent_name, variables, lo
 def create_parallel(current_node, node_name, parent_name, variables, local_variables, delayed_statements):
     return create_node_template(node_name, parent_name, 'composite',
                                 (current_node.node_type
-                                 + ('_' + current_node.parallel_policy + '_with_memory' if current_node.memory else (
-                                     '_success_on_all_without_memory')
+                                 + ('_' + current_node.parallel_policy + '_without_memory' if not current_node.memory else (
+                                     '_success_on_all_with_memory')
                                     )
                                  ),
                                 True, True, True)
