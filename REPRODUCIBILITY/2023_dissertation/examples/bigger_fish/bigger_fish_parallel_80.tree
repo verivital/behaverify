@@ -1,4 +1,4 @@
-variables {variable { biggest_fish VAR [0, 99] } end_variable} end_variables
+variables {variable { biggest_fish VAR [0, 199] } end_variable} end_variables
 local_variables {#comment# Local Variable declarations go here #end_comment#} end_local_variables
 environment {environment_variables {#comment# Local Variable declarations go here #end_comment#} end_environment_variables initial_values { #comment# initial values for environment #end_comment#} end_initial_values update_values { #comment# update values for environment #end_comment#} end_update_values} end_environment
 checks {
@@ -417,7 +417,7 @@ actions {
         write_variables { biggest_fish } end_write_variables
         initial_values { variable_statement { biggest_fish result { 0 } end_result } end_variable_statement } end_initial_values
         update {
-            variable_statement { biggest_fish result { (min, (addition, 1, biggest_fish), 99) } end_result } end_variable_statement
+            variable_statement { biggest_fish result { (min, (addition, 1, biggest_fish), 199) } end_result } end_variable_statement
             return_statement { result { success } end_result } end_return_statement
         } end_update
     } end_action

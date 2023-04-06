@@ -74,7 +74,7 @@ def create_statuses(nodes):
 def create_active_node(nodes, root_node_name, tick_condition):
     define_string = ''
     var_string = ''
-    init_string = tab_indent(2) + 'init(active_node) := 0;' + os.linesep
+    init_string = tab_indent(2) + 'init(active_node) := -1;' + os.linesep
     next_string = (
         tab_indent(2) + 'next(active_node) :=' + os.linesep
         + tab_indent(3) + 'case' + os.linesep

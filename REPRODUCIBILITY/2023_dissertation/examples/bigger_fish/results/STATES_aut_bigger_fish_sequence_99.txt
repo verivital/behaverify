@@ -24,7 +24,33 @@
 *** Copyright (C) 2009-2019 by University of Trento and others
 *** See http://mathsat.fbk.eu
 
+elapse: 0.00 seconds, total: 0.00 seconds
 ######################################################################
-system diameter: 28550
-reachable states: 28550 (2^14.8012) out of 2.37074e+52 (2^173.986)
+system diameter: 29105
+reachable states: 29105 (2^14.829) out of 4.74147e+52 (2^174.986)
 ######################################################################
+elapse: 4.89 seconds, total: 4.90 seconds
+Runtime Statistics
+------------------
+Machine name: serene-MS-7B51
+User time    4.899 seconds
+System time  0.028 seconds
+
+Average resident text size       =     0K
+Average resident data+stack size =     0K
+Maximum resident size            = 77612K
+
+Virtual text size                = 17832K
+Virtual data size                = 186631K
+    data size initialized        = 32226K
+    data size uninitialized      =  8317K
+    data size sbrk               = 146088K
+Virtual memory limit             = -2147483648K (-2147483648K)
+
+Major page faults = 0
+Minor page faults = 38701
+Swaps = 0
+Input blocks = 0
+Output blocks = 8
+Context switch (voluntary) = 0
+Context switch (involuntary) = 28
