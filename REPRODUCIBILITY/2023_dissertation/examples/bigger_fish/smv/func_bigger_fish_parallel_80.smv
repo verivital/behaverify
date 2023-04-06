@@ -248,7 +248,7 @@ MODULE main
 		var_biggest_fish_stage_1 := 
 			case
 				!(bigger_fish.active) : var_biggest_fish;
-				TRUE : min((1 + var_biggest_fish), 99);
+				TRUE : min((1 + var_biggest_fish), 199);
 			esac;
 		--END OF BLACKBOARD DEFINITIONS
 	VAR
@@ -541,7 +541,7 @@ MODULE main
 		parallel80 : composite_parallel_without_memory(parallel80_NEXT_1, decorator77);
 		special_decorator : decorator_X_is_Y(parallel80, running, failure);
 		--START OF BLACKBOARD VARIABLES DECLARATION
-		var_biggest_fish : 0..99;
+		var_biggest_fish : 0..199;
 		--END OF BLACKBOARD VARIABLES DECLARATION
 	ASSIGN
 		--START OF BLACKBOARD VARIABLES INITIALIZATION
@@ -743,21 +743,6 @@ MODULE define_nodes
 		decorator0 := 182;
 		biggest_fish_is0 := 183;
 		bigger_fish := 184;
-MODULE decorator_X_is_Y(child_0, incoming_status, outgoing_status)
-	CONSTANTS
-		success, failure, running, invalid;
-	DEFINE
-		status := active ? internal_status : invalid;
-		internal_status :=
-			case
-				child_0.status = incoming_status : outgoing_status;
-				TRUE : child_0.status;
-			esac;
-		child_0.active :=
-			case
-				!(active) : FALSE;
-				TRUE : TRUE;
-			esac;
 MODULE composite_parallel_without_memory(next_composite, child)
 	CONSTANTS
 		success, failure, running, invalid;
@@ -788,6 +773,21 @@ MODULE composite_sequence_without_memory_END
 	DEFINE
 		status := active ? success : invalid;
 		internal_status := success;
+MODULE decorator_X_is_Y(child_0, incoming_status, outgoing_status)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				child_0.status = incoming_status : outgoing_status;
+				TRUE : child_0.status;
+			esac;
+		child_0.active :=
+			case
+				!(active) : FALSE;
+				TRUE : TRUE;
+			esac;
 MODULE biggest_fish_is0_module(var_biggest_fish)
 	CONSTANTS
 		success, failure, running, invalid;

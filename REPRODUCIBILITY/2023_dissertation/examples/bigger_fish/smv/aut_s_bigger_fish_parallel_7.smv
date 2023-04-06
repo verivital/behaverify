@@ -55,10 +55,10 @@ MODULE main
 		parallel_status__parallel3 : {success, running, failure};
 		parallel_status__parallel7 : {success, running, failure};
 		--START OF BLACKBOARD VARIABLES DECLARATION
-		var_biggest_fish : 0..99;
+		var_biggest_fish : 0..199;
 		--END OF BLACKBOARD VARIABLES DECLARATION
 	ASSIGN
-		init(active_node) := 0;
+		init(active_node) := -1;
 		init(previous_node) := -1;
 		init(previous_status) := invalid;
 		init(parallel_status__parallel3) := running;
@@ -157,22 +157,24 @@ MODULE main
 				TRUE : invalid;
 			esac;
 		next(previous_status) := current_status;
-		next(parallel_status__parallel3) := 			case
-				active_node = -1 : running;
-				(active_node = node_names.parallel3) & (previous_status = failure) : failure;
-				(active_node = node_names.parallel3) & (previous_status = success) : success;
+		next(parallel_status__parallel3) := 
+			case
+				next(active_node) = -1 : running;
+				(next(active_node) = node_names.parallel3) & (current_status = failure) : failure;
+				(next(active_node) = node_names.parallel3) & (current_status = success) : success;
 				TRUE : parallel_status__parallel3;
 			esac;
-		next(parallel_status__parallel7) := 			case
-				active_node = -1 : running;
-				(active_node = node_names.parallel7) & (previous_status = failure) : failure;
-				(active_node = node_names.parallel7) & (previous_status = success) : success;
+		next(parallel_status__parallel7) := 
+			case
+				next(active_node) = -1 : running;
+				(next(active_node) = node_names.parallel7) & (current_status = failure) : failure;
+				(next(active_node) = node_names.parallel7) & (current_status = success) : success;
 				TRUE : parallel_status__parallel7;
 			esac;
 		--START OF BLACKBOARD VARIABLES TRANSITION
 		next(var_biggest_fish) :=
 			case
-				(active_node = node_names.bigger_fish) & !(current_status = invalid) & (TRUE) : min((1 + var_biggest_fish), 99);
+				(active_node = node_names.bigger_fish) & !(current_status = invalid) & (TRUE) : min((1 + var_biggest_fish), 199);
 				TRUE : var_biggest_fish;
 			esac;
 		--END OF BLACKBOARD VARIABLES TRANSITION

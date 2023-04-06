@@ -125,10 +125,10 @@ MODULE main
 		biggest_fish_is4 : biggest_fish_is4_module(var_biggest_fish);
 		biggest_fish_is5 : biggest_fish_is5_module(var_biggest_fish);
 		--START OF BLACKBOARD VARIABLES DECLARATION
-		var_biggest_fish : 0..99;
+		var_biggest_fish : 0..199;
 		--END OF BLACKBOARD VARIABLES DECLARATION
 	ASSIGN
-		init(active_node) := 0;
+		init(active_node) := -1;
 		--START OF BLACKBOARD VARIABLES INITIALIZATION
 		init(var_biggest_fish) := 
 			case
@@ -171,7 +171,7 @@ MODULE main
 		--START OF BLACKBOARD VARIABLES TRANSITION
 		next(var_biggest_fish) :=
 			case
-				(active_node = -1) & !(status__bigger_fish = invalid) & (TRUE) : min((1 + var_biggest_fish), 99);
+				(active_node = -1) & !(status__bigger_fish = invalid) & (TRUE) : min((1 + var_biggest_fish), 199);
 				TRUE : var_biggest_fish;
 			esac;
 		--END OF BLACKBOARD VARIABLES TRANSITION

@@ -2425,7 +2425,7 @@
     'variables': {   'biggest_fish': {   'custom_value_range': None,
                                          'initial_value': [('TRUE', '0')],
                                          'keep_stage_0': True,
-                                         'max_value': 99,
+                                         'max_value': 199,
                                          'min_value': 0,
                                          'mode': 'VAR',
                                          'name': 'biggest_fish',
@@ -2435,5 +2435,5 @@
                                                                        'min((1 '
                                                                        '+ '
                                                                        'var_biggest_fish), '
-                                                                       '99)')])],
+                                                                       '199)')])],
                                          'prefix': 'var_'}}}

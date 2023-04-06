@@ -86,7 +86,7 @@ def create_previous_node(nodes):
 def create_active_node(nodes, root_node_name, tick_condition):
     define_string = ''
     var_string = tab_indent(2) + 'active_node : -1..' + str(len(nodes)) + ';' + os.linesep
-    init_string = tab_indent(2) + 'init(active_node) := 0;' + os.linesep
+    init_string = tab_indent(2) + 'init(active_node) := -1;' + os.linesep
     next_string = (
         tab_indent(2) + 'next(active_node) :=' + os.linesep
         + tab_indent(3) + 'case' + os.linesep
@@ -180,14 +180,14 @@ def create_parallel_status(nodes):
     )
     next_string = ''.join(
         [
-            (tab_indent(2) + 'next(' + PARALLEL_STATUS_STRING + node['name'] + ') := '
+            (tab_indent(2) + 'next(' + PARALLEL_STATUS_STRING + node['name'] + ') := ' + os.linesep
              + tab_indent(3) + 'case' + os.linesep
-             + tab_indent(4) + 'active_node = -1 : ' + ('success' if 'success_on_all' in node['type'] else 'running') + ';' + os.linesep
-             + tab_indent(4) + '(active_node = node_names.' + node['name'] + ') & (previous_status = failure) : failure;' + os.linesep
+             + tab_indent(4) + 'next(active_node) = -1 : ' + ('success' if 'success_on_all' in node['type'] else 'running') + ';' + os.linesep
+             + tab_indent(4) + '(next(active_node) = node_names.' + node['name'] + ') & (current_status = failure) : failure;' + os.linesep
              + (
-                 (tab_indent(4) + '(active_node = node_names.' + node['name'] + ') & (previous_status = running) : running;' + os.linesep)
+                 (tab_indent(4) + '(next(active_node) = node_names.' + node['name'] + ') & (current_status = running) : running;' + os.linesep)
                  if 'success_on_all' in node['type'] else
-                 (tab_indent(4) + '(active_node = node_names.' + node['name'] + ') & (previous_status = success) : success;' + os.linesep))
+                 (tab_indent(4) + '(next(active_node) = node_names.' + node['name'] + ') & (current_status = success) : success;' + os.linesep))
              + tab_indent(4) + 'TRUE : ' + PARALLEL_STATUS_STRING + node['name'] + ';' + os.linesep
              + tab_indent(3) + 'esac;' + os.linesep
              )

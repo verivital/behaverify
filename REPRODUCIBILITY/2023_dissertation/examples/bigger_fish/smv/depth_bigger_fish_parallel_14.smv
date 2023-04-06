@@ -1,0 +1,334 @@
+MODULE main
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		resume_from_here_in_subtree__biggest_fish_sequence := -3;
+		resume_from_here_in_subtree__decorator11 := -3;
+		resume_from_here_in_subtree__decorator12 := -3;
+		resume_from_here_in_subtree__decorator13 := -3;
+		resume_from_here_in_subtree__decorator14 := -3;
+		resume_from_here_in_subtree__parallel10 := -3;
+		resume_from_here_in_subtree__decorator7 := -3;
+		resume_from_here_in_subtree__decorator8 := -3;
+		resume_from_here_in_subtree__decorator9 := -3;
+		resume_from_here_in_subtree__decorator10 := -3;
+		resume_from_here_in_subtree__parallel6 := -3;
+		resume_from_here_in_subtree__decorator3 := -3;
+		resume_from_here_in_subtree__decorator4 := -3;
+		resume_from_here_in_subtree__decorator5 := -3;
+		resume_from_here_in_subtree__decorator6 := -3;
+		resume_from_here_in_subtree__parallel2 := -3;
+		resume_from_here_in_subtree__decorator0 := -3;
+		resume_from_here_in_subtree__decorator1 := -3;
+		resume_from_here_in_subtree__decorator2 := -3;
+		next_child__biggest_fish_sequence := 
+			case
+				(previous_node < node_names.special_decorator) : node_names.special_decorator;
+				(previous_node < node_names.bigger_fish) : node_names.bigger_fish;
+				TRUE : -1;
+			esac;
+		next_child__decorator0 := node_names.biggest_fish_is0;
+		next_child__decorator1 := node_names.biggest_fish_is1;
+		next_child__decorator10 := node_names.biggest_fish_is10;
+		next_child__decorator11 := node_names.biggest_fish_is11;
+		next_child__decorator12 := node_names.biggest_fish_is12;
+		next_child__decorator13 := node_names.biggest_fish_is13;
+		next_child__decorator14 := node_names.biggest_fish_is14;
+		next_child__decorator2 := node_names.biggest_fish_is2;
+		next_child__decorator3 := node_names.biggest_fish_is3;
+		next_child__decorator4 := node_names.biggest_fish_is4;
+		next_child__decorator5 := node_names.biggest_fish_is5;
+		next_child__decorator6 := node_names.biggest_fish_is6;
+		next_child__decorator7 := node_names.biggest_fish_is7;
+		next_child__decorator8 := node_names.biggest_fish_is8;
+		next_child__decorator9 := node_names.biggest_fish_is9;
+		next_child__parallel10 := 
+			case
+				(previous_node < node_names.decorator7) : node_names.decorator7;
+				(previous_node < node_names.decorator8) : node_names.decorator8;
+				(previous_node < node_names.decorator9) : node_names.decorator9;
+				(previous_node < node_names.decorator10) : node_names.decorator10;
+				(previous_node < node_names.parallel6) : node_names.parallel6;
+				TRUE : -1;
+			esac;
+		next_child__parallel14 := 
+			case
+				(previous_node < node_names.decorator11) : node_names.decorator11;
+				(previous_node < node_names.decorator12) : node_names.decorator12;
+				(previous_node < node_names.decorator13) : node_names.decorator13;
+				(previous_node < node_names.decorator14) : node_names.decorator14;
+				(previous_node < node_names.parallel10) : node_names.parallel10;
+				TRUE : -1;
+			esac;
+		next_child__parallel2 := 
+			case
+				(previous_node < node_names.decorator0) : node_names.decorator0;
+				(previous_node < node_names.decorator1) : node_names.decorator1;
+				(previous_node < node_names.decorator2) : node_names.decorator2;
+				TRUE : -1;
+			esac;
+		next_child__parallel6 := 
+			case
+				(previous_node < node_names.decorator3) : node_names.decorator3;
+				(previous_node < node_names.decorator4) : node_names.decorator4;
+				(previous_node < node_names.decorator5) : node_names.decorator5;
+				(previous_node < node_names.decorator6) : node_names.decorator6;
+				(previous_node < node_names.parallel2) : node_names.parallel2;
+				TRUE : -1;
+			esac;
+		next_child__special_decorator := node_names.parallel14;
+		--START OF BLACKBOARD DEFINITIONS
+		--END OF BLACKBOARD DEFINITIONS
+	VAR
+		node_names : define_nodes;
+		active_node : -1..37;
+		previous_node : -1..37;
+		current_status : {success, running, failure, invalid};
+		previous_status : {success, running, failure, invalid};
+		parallel_status_depth__0 : {success, running, failure};
+		parallel_status_depth__1 : {success, running, failure};
+		parallel_status_depth__2 : {success, running, failure};
+		parallel_status_depth__3 : {success, running, failure};
+		--START OF BLACKBOARD VARIABLES DECLARATION
+		var_biggest_fish : 0..199;
+		--END OF BLACKBOARD VARIABLES DECLARATION
+	ASSIGN
+		init(active_node) := -1;
+		init(previous_node) := -1;
+		init(previous_status) := invalid;
+		init(parallel_status_depth__0) := failure;
+		init(parallel_status_depth__1) := failure;
+		init(parallel_status_depth__2) := failure;
+		init(parallel_status_depth__3) := failure;
+		--START OF BLACKBOARD VARIABLES INITIALIZATION
+		init(var_biggest_fish) := 
+			case
+				TRUE : 0;
+			esac;
+		--END OF BLACKBOARD VARIABLES INITIALIZATION
+		next(active_node) :=
+			case
+				active_node = -1 & TRUE : node_names.biggest_fish_sequence;
+				active_node = -1 & !(TRUE) : -1;
+				(active_node = node_names.bigger_fish) & (current_status != invalid) : node_names.biggest_fish_sequence;
+				(active_node = node_names.biggest_fish_is0) & (current_status != invalid) : node_names.decorator0;
+				(active_node = node_names.biggest_fish_is1) & (current_status != invalid) : node_names.decorator1;
+				(active_node = node_names.biggest_fish_is10) & (current_status != invalid) : node_names.decorator10;
+				(active_node = node_names.biggest_fish_is11) & (current_status != invalid) : node_names.decorator11;
+				(active_node = node_names.biggest_fish_is12) & (current_status != invalid) : node_names.decorator12;
+				(active_node = node_names.biggest_fish_is13) & (current_status != invalid) : node_names.decorator13;
+				(active_node = node_names.biggest_fish_is14) & (current_status != invalid) : node_names.decorator14;
+				(active_node = node_names.biggest_fish_is2) & (current_status != invalid) : node_names.decorator2;
+				(active_node = node_names.biggest_fish_is3) & (current_status != invalid) : node_names.decorator3;
+				(active_node = node_names.biggest_fish_is4) & (current_status != invalid) : node_names.decorator4;
+				(active_node = node_names.biggest_fish_is5) & (current_status != invalid) : node_names.decorator5;
+				(active_node = node_names.biggest_fish_is6) & (current_status != invalid) : node_names.decorator6;
+				(active_node = node_names.biggest_fish_is7) & (current_status != invalid) : node_names.decorator7;
+				(active_node = node_names.biggest_fish_is8) & (current_status != invalid) : node_names.decorator8;
+				(active_node = node_names.biggest_fish_is9) & (current_status != invalid) : node_names.decorator9;
+				(active_node = node_names.biggest_fish_sequence) & (current_status != invalid) : -1;
+				(active_node = node_names.biggest_fish_sequence) & (current_status = invalid) : next_child__biggest_fish_sequence;
+				(active_node = node_names.decorator0) & (current_status != invalid) : node_names.parallel2;
+				(active_node = node_names.decorator0) & (current_status = invalid) : next_child__decorator0;
+				(active_node = node_names.decorator1) & (current_status != invalid) : node_names.parallel2;
+				(active_node = node_names.decorator1) & (current_status = invalid) : next_child__decorator1;
+				(active_node = node_names.decorator10) & (current_status != invalid) : node_names.parallel10;
+				(active_node = node_names.decorator10) & (current_status = invalid) : next_child__decorator10;
+				(active_node = node_names.decorator11) & (current_status != invalid) : node_names.parallel14;
+				(active_node = node_names.decorator11) & (current_status = invalid) : next_child__decorator11;
+				(active_node = node_names.decorator12) & (current_status != invalid) : node_names.parallel14;
+				(active_node = node_names.decorator12) & (current_status = invalid) : next_child__decorator12;
+				(active_node = node_names.decorator13) & (current_status != invalid) : node_names.parallel14;
+				(active_node = node_names.decorator13) & (current_status = invalid) : next_child__decorator13;
+				(active_node = node_names.decorator14) & (current_status != invalid) : node_names.parallel14;
+				(active_node = node_names.decorator14) & (current_status = invalid) : next_child__decorator14;
+				(active_node = node_names.decorator2) & (current_status != invalid) : node_names.parallel2;
+				(active_node = node_names.decorator2) & (current_status = invalid) : next_child__decorator2;
+				(active_node = node_names.decorator3) & (current_status != invalid) : node_names.parallel6;
+				(active_node = node_names.decorator3) & (current_status = invalid) : next_child__decorator3;
+				(active_node = node_names.decorator4) & (current_status != invalid) : node_names.parallel6;
+				(active_node = node_names.decorator4) & (current_status = invalid) : next_child__decorator4;
+				(active_node = node_names.decorator5) & (current_status != invalid) : node_names.parallel6;
+				(active_node = node_names.decorator5) & (current_status = invalid) : next_child__decorator5;
+				(active_node = node_names.decorator6) & (current_status != invalid) : node_names.parallel6;
+				(active_node = node_names.decorator6) & (current_status = invalid) : next_child__decorator6;
+				(active_node = node_names.decorator7) & (current_status != invalid) : node_names.parallel10;
+				(active_node = node_names.decorator7) & (current_status = invalid) : next_child__decorator7;
+				(active_node = node_names.decorator8) & (current_status != invalid) : node_names.parallel10;
+				(active_node = node_names.decorator8) & (current_status = invalid) : next_child__decorator8;
+				(active_node = node_names.decorator9) & (current_status != invalid) : node_names.parallel10;
+				(active_node = node_names.decorator9) & (current_status = invalid) : next_child__decorator9;
+				(active_node = node_names.parallel10) & (current_status != invalid) : node_names.parallel14;
+				(active_node = node_names.parallel10) & (current_status = invalid) : next_child__parallel10;
+				(active_node = node_names.parallel14) & (current_status != invalid) : node_names.special_decorator;
+				(active_node = node_names.parallel14) & (current_status = invalid) : next_child__parallel14;
+				(active_node = node_names.parallel2) & (current_status != invalid) : node_names.parallel6;
+				(active_node = node_names.parallel2) & (current_status = invalid) : next_child__parallel2;
+				(active_node = node_names.parallel6) & (current_status != invalid) : node_names.parallel10;
+				(active_node = node_names.parallel6) & (current_status = invalid) : next_child__parallel6;
+				(active_node = node_names.special_decorator) & (current_status != invalid) : node_names.biggest_fish_sequence;
+				(active_node = node_names.special_decorator) & (current_status = invalid) : next_child__special_decorator;
+				TRUE : active_node;
+			esac;
+		next(previous_node) := active_node;
+		current_status :=
+			case
+				(active_node = node_names.bigger_fish) : success;
+				(active_node = node_names.biggest_fish_is0) & (var_biggest_fish = 0) : success;
+				(active_node = node_names.biggest_fish_is0) & TRUE : failure;
+				(active_node = node_names.biggest_fish_is1) & (var_biggest_fish = 1) : success;
+				(active_node = node_names.biggest_fish_is1) & TRUE : failure;
+				(active_node = node_names.biggest_fish_is10) & (var_biggest_fish = 10) : success;
+				(active_node = node_names.biggest_fish_is10) & TRUE : failure;
+				(active_node = node_names.biggest_fish_is11) & (var_biggest_fish = 11) : success;
+				(active_node = node_names.biggest_fish_is11) & TRUE : failure;
+				(active_node = node_names.biggest_fish_is12) & (var_biggest_fish = 12) : success;
+				(active_node = node_names.biggest_fish_is12) & TRUE : failure;
+				(active_node = node_names.biggest_fish_is13) & (var_biggest_fish = 13) : success;
+				(active_node = node_names.biggest_fish_is13) & TRUE : failure;
+				(active_node = node_names.biggest_fish_is14) & (var_biggest_fish = 14) : success;
+				(active_node = node_names.biggest_fish_is14) & TRUE : failure;
+				(active_node = node_names.biggest_fish_is2) & (var_biggest_fish = 2) : success;
+				(active_node = node_names.biggest_fish_is2) & TRUE : failure;
+				(active_node = node_names.biggest_fish_is3) & (var_biggest_fish = 3) : success;
+				(active_node = node_names.biggest_fish_is3) & TRUE : failure;
+				(active_node = node_names.biggest_fish_is4) & (var_biggest_fish = 4) : success;
+				(active_node = node_names.biggest_fish_is4) & TRUE : failure;
+				(active_node = node_names.biggest_fish_is5) & (var_biggest_fish = 5) : success;
+				(active_node = node_names.biggest_fish_is5) & TRUE : failure;
+				(active_node = node_names.biggest_fish_is6) & (var_biggest_fish = 6) : success;
+				(active_node = node_names.biggest_fish_is6) & TRUE : failure;
+				(active_node = node_names.biggest_fish_is7) & (var_biggest_fish = 7) : success;
+				(active_node = node_names.biggest_fish_is7) & TRUE : failure;
+				(active_node = node_names.biggest_fish_is8) & (var_biggest_fish = 8) : success;
+				(active_node = node_names.biggest_fish_is8) & TRUE : failure;
+				(active_node = node_names.biggest_fish_is9) & (var_biggest_fish = 9) : success;
+				(active_node = node_names.biggest_fish_is9) & TRUE : failure;
+				(active_node = node_names.biggest_fish_sequence) & (previous_status = running) : running;
+				(active_node = node_names.biggest_fish_sequence) & (previous_status = failure) : failure;
+				(active_node = node_names.biggest_fish_sequence) & (next_child__biggest_fish_sequence = -1) : success;
+				(active_node = node_names.biggest_fish_sequence) : invalid;
+				(active_node = node_names.decorator0) & (previous_status = failure) : running;
+				(active_node = node_names.decorator0) : previous_status;
+				(active_node = node_names.decorator1) & (previous_status = failure) : running;
+				(active_node = node_names.decorator1) : previous_status;
+				(active_node = node_names.decorator10) & (previous_status = failure) : running;
+				(active_node = node_names.decorator10) : previous_status;
+				(active_node = node_names.decorator11) & (previous_status = failure) : running;
+				(active_node = node_names.decorator11) : previous_status;
+				(active_node = node_names.decorator12) & (previous_status = failure) : running;
+				(active_node = node_names.decorator12) : previous_status;
+				(active_node = node_names.decorator13) & (previous_status = failure) : running;
+				(active_node = node_names.decorator13) : previous_status;
+				(active_node = node_names.decorator14) & (previous_status = failure) : running;
+				(active_node = node_names.decorator14) : previous_status;
+				(active_node = node_names.decorator2) & (previous_status = failure) : running;
+				(active_node = node_names.decorator2) : previous_status;
+				(active_node = node_names.decorator3) & (previous_status = failure) : running;
+				(active_node = node_names.decorator3) : previous_status;
+				(active_node = node_names.decorator4) & (previous_status = failure) : running;
+				(active_node = node_names.decorator4) : previous_status;
+				(active_node = node_names.decorator5) & (previous_status = failure) : running;
+				(active_node = node_names.decorator5) : previous_status;
+				(active_node = node_names.decorator6) & (previous_status = failure) : running;
+				(active_node = node_names.decorator6) : previous_status;
+				(active_node = node_names.decorator7) & (previous_status = failure) : running;
+				(active_node = node_names.decorator7) : previous_status;
+				(active_node = node_names.decorator8) & (previous_status = failure) : running;
+				(active_node = node_names.decorator8) : previous_status;
+				(active_node = node_names.decorator9) & (previous_status = failure) : running;
+				(active_node = node_names.decorator9) : previous_status;
+				(active_node = node_names.parallel10) & (next_child__parallel10 = -1) : parallel_status_depth__1;
+				(active_node = node_names.parallel10) : invalid;
+				(active_node = node_names.parallel14) & (next_child__parallel14 = -1) : parallel_status_depth__0;
+				(active_node = node_names.parallel14) : invalid;
+				(active_node = node_names.parallel2) & (next_child__parallel2 = -1) : parallel_status_depth__3;
+				(active_node = node_names.parallel2) : invalid;
+				(active_node = node_names.parallel6) & (next_child__parallel6 = -1) : parallel_status_depth__2;
+				(active_node = node_names.parallel6) : invalid;
+				(active_node = node_names.special_decorator) & (previous_status = running) : failure;
+				(active_node = node_names.special_decorator) : previous_status;
+				TRUE : invalid;
+			esac;
+		next(previous_status) := current_status;
+		next(parallel_status_depth__1) := 
+			case
+				next(active_node) = -1 : failure;
+				(next(active_node) = node_names.parallel10) & (current_status = invalid) : running;
+				(next(active_node) = node_names.parallel10) & (current_status = failure) : failure;
+				(next(active_node) = node_names.parallel10) & (current_status = success) : success;
+				TRUE : parallel_status_depth__1;
+			esac;
+		next(parallel_status_depth__0) := 
+			case
+				next(active_node) = -1 : failure;
+				(next(active_node) = node_names.parallel14) & (current_status = invalid) : running;
+				(next(active_node) = node_names.parallel14) & (current_status = failure) : failure;
+				(next(active_node) = node_names.parallel14) & (current_status = success) : success;
+				TRUE : parallel_status_depth__0;
+			esac;
+		next(parallel_status_depth__3) := 
+			case
+				next(active_node) = -1 : failure;
+				(next(active_node) = node_names.parallel2) & (current_status = invalid) : running;
+				(next(active_node) = node_names.parallel2) & (current_status = failure) : failure;
+				(next(active_node) = node_names.parallel2) & (current_status = success) : success;
+				TRUE : parallel_status_depth__3;
+			esac;
+		next(parallel_status_depth__2) := 
+			case
+				next(active_node) = -1 : failure;
+				(next(active_node) = node_names.parallel6) & (current_status = invalid) : running;
+				(next(active_node) = node_names.parallel6) & (current_status = failure) : failure;
+				(next(active_node) = node_names.parallel6) & (current_status = success) : success;
+				TRUE : parallel_status_depth__2;
+			esac;
+		--START OF BLACKBOARD VARIABLES TRANSITION
+		next(var_biggest_fish) :=
+			case
+				(active_node = node_names.bigger_fish) & !(current_status = invalid) & (TRUE) : min((1 + var_biggest_fish), 199);
+				TRUE : var_biggest_fish;
+			esac;
+		--END OF BLACKBOARD VARIABLES TRANSITION
+
+LTLSPEC F(G((var_biggest_fish = 15)));
+CTLSPEC AF(AG((var_biggest_fish = 15)));
+MODULE define_nodes
+	DEFINE
+		biggest_fish_sequence := 0;
+		special_decorator := 1;
+		parallel14 := 2;
+		decorator11 := 3;
+		biggest_fish_is11 := 4;
+		decorator12 := 5;
+		biggest_fish_is12 := 6;
+		decorator13 := 7;
+		biggest_fish_is13 := 8;
+		decorator14 := 9;
+		biggest_fish_is14 := 10;
+		parallel10 := 11;
+		decorator7 := 12;
+		biggest_fish_is7 := 13;
+		decorator8 := 14;
+		biggest_fish_is8 := 15;
+		decorator9 := 16;
+		biggest_fish_is9 := 17;
+		decorator10 := 18;
+		biggest_fish_is10 := 19;
+		parallel6 := 20;
+		decorator3 := 21;
+		biggest_fish_is3 := 22;
+		decorator4 := 23;
+		biggest_fish_is4 := 24;
+		decorator5 := 25;
+		biggest_fish_is5 := 26;
+		decorator6 := 27;
+		biggest_fish_is6 := 28;
+		parallel2 := 29;
+		decorator0 := 30;
+		biggest_fish_is0 := 31;
+		decorator1 := 32;
+		biggest_fish_is1 := 33;
+		decorator2 := 34;
+		biggest_fish_is2 := 35;
+		bigger_fish := 36;
