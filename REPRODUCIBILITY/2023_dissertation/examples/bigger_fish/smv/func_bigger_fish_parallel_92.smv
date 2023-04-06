@@ -284,7 +284,7 @@ MODULE main
 		var_biggest_fish_stage_1 := 
 			case
 				!(bigger_fish.active) : var_biggest_fish;
-				TRUE : min((1 + var_biggest_fish), 99);
+				TRUE : min((1 + var_biggest_fish), 199);
 			esac;
 		--END OF BLACKBOARD DEFINITIONS
 	VAR
@@ -619,7 +619,7 @@ MODULE main
 		parallel92 : composite_parallel_without_memory(parallel92_NEXT_1, decorator89);
 		special_decorator : decorator_X_is_Y(parallel92, running, failure);
 		--START OF BLACKBOARD VARIABLES DECLARATION
-		var_biggest_fish : 0..99;
+		var_biggest_fish : 0..199;
 		--END OF BLACKBOARD VARIABLES DECLARATION
 	ASSIGN
 		--START OF BLACKBOARD VARIABLES INITIALIZATION

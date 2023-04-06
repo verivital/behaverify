@@ -1,5 +1,5 @@
-go
 time
+go
 check_ctlspec -o /dev/null
 time
 usage

@@ -8,7 +8,7 @@ MODULE main
 		var_biggest_fish_stage_1 := 
 			case
 				!(bigger_fish.active) : var_biggest_fish;
-				TRUE : min((1 + var_biggest_fish), 99);
+				TRUE : min((1 + var_biggest_fish), 199);
 			esac;
 		--END OF BLACKBOARD DEFINITIONS
 	VAR
@@ -295,7 +295,7 @@ MODULE main
 		sequence78 : composite_sequence_without_memory(sequence78_NEXT_1, decorator75);
 		special_decorator : decorator_inverter(sequence78);
 		--START OF BLACKBOARD VARIABLES DECLARATION
-		var_biggest_fish : 0..99;
+		var_biggest_fish : 0..199;
 		--END OF BLACKBOARD VARIABLES DECLARATION
 	ASSIGN
 		--START OF BLACKBOARD VARIABLES INITIALIZATION

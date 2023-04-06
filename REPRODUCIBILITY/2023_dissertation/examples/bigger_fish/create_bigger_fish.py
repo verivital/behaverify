@@ -6,7 +6,7 @@ def indent(n):
 
 
 def create_variables():
-    return ('variables {variable { biggest_fish VAR [0, 99] } end_variable} end_variables' + os.linesep)
+    return ('variables {variable { biggest_fish VAR [0, 199] } end_variable} end_variables' + os.linesep)
 
 
 def create_local_variables():
@@ -51,7 +51,7 @@ def create_actions():
         + indent(2) + 'write_variables { biggest_fish } end_write_variables' + os.linesep
         + indent(2) + 'initial_values { variable_statement { biggest_fish result { 0 } end_result } end_variable_statement } end_initial_values' + os.linesep
         + indent(2) + 'update {' + os.linesep
-        + indent(3) + 'variable_statement { biggest_fish result { (min, (addition, 1, biggest_fish), 99) } end_result } end_variable_statement' + os.linesep
+        + indent(3) + 'variable_statement { biggest_fish result { (min, (addition, 1, biggest_fish), 199) } end_result } end_variable_statement' + os.linesep
         + indent(3) + 'return_statement { result { success } end_result } end_return_statement' + os.linesep
         + indent(2) + '} end_update' + os.linesep
         + indent(1) + '} end_action' + os.linesep
@@ -209,7 +209,7 @@ def create_fish_sequence(x):
 
 
 def write_files():
-    for x in range(100):
+    for x in range(200):
         with open('./bigger_fish_parallel_' + str(x) + '.tree', 'w') as f:
             f.write(create_fish_parallel(x))
         with open('./bigger_fish_sequence_' + str(x) + '.tree', 'w') as f:

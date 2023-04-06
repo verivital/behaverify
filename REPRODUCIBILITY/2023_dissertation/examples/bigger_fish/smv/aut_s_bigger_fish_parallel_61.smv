@@ -315,10 +315,10 @@ MODULE main
 		parallel_status__parallel61 : {success, running, failure};
 		parallel_status__parallel9 : {success, running, failure};
 		--START OF BLACKBOARD VARIABLES DECLARATION
-		var_biggest_fish : 0..99;
+		var_biggest_fish : 0..199;
 		--END OF BLACKBOARD VARIABLES DECLARATION
 	ASSIGN
-		init(active_node) := 0;
+		init(active_node) := -1;
 		init(previous_node) := -1;
 		init(previous_status) := invalid;
 		init(parallel_status__parallel1) := running;
@@ -865,106 +865,122 @@ MODULE main
 				TRUE : invalid;
 			esac;
 		next(previous_status) := current_status;
-		next(parallel_status__parallel1) := 			case
-				active_node = -1 : running;
-				(active_node = node_names.parallel1) & (previous_status = failure) : failure;
-				(active_node = node_names.parallel1) & (previous_status = success) : success;
+		next(parallel_status__parallel1) := 
+			case
+				next(active_node) = -1 : running;
+				(next(active_node) = node_names.parallel1) & (current_status = failure) : failure;
+				(next(active_node) = node_names.parallel1) & (current_status = success) : success;
 				TRUE : parallel_status__parallel1;
 			esac;
-		next(parallel_status__parallel13) := 			case
-				active_node = -1 : running;
-				(active_node = node_names.parallel13) & (previous_status = failure) : failure;
-				(active_node = node_names.parallel13) & (previous_status = success) : success;
+		next(parallel_status__parallel13) := 
+			case
+				next(active_node) = -1 : running;
+				(next(active_node) = node_names.parallel13) & (current_status = failure) : failure;
+				(next(active_node) = node_names.parallel13) & (current_status = success) : success;
 				TRUE : parallel_status__parallel13;
 			esac;
-		next(parallel_status__parallel17) := 			case
-				active_node = -1 : running;
-				(active_node = node_names.parallel17) & (previous_status = failure) : failure;
-				(active_node = node_names.parallel17) & (previous_status = success) : success;
+		next(parallel_status__parallel17) := 
+			case
+				next(active_node) = -1 : running;
+				(next(active_node) = node_names.parallel17) & (current_status = failure) : failure;
+				(next(active_node) = node_names.parallel17) & (current_status = success) : success;
 				TRUE : parallel_status__parallel17;
 			esac;
-		next(parallel_status__parallel21) := 			case
-				active_node = -1 : running;
-				(active_node = node_names.parallel21) & (previous_status = failure) : failure;
-				(active_node = node_names.parallel21) & (previous_status = success) : success;
+		next(parallel_status__parallel21) := 
+			case
+				next(active_node) = -1 : running;
+				(next(active_node) = node_names.parallel21) & (current_status = failure) : failure;
+				(next(active_node) = node_names.parallel21) & (current_status = success) : success;
 				TRUE : parallel_status__parallel21;
 			esac;
-		next(parallel_status__parallel25) := 			case
-				active_node = -1 : running;
-				(active_node = node_names.parallel25) & (previous_status = failure) : failure;
-				(active_node = node_names.parallel25) & (previous_status = success) : success;
+		next(parallel_status__parallel25) := 
+			case
+				next(active_node) = -1 : running;
+				(next(active_node) = node_names.parallel25) & (current_status = failure) : failure;
+				(next(active_node) = node_names.parallel25) & (current_status = success) : success;
 				TRUE : parallel_status__parallel25;
 			esac;
-		next(parallel_status__parallel29) := 			case
-				active_node = -1 : running;
-				(active_node = node_names.parallel29) & (previous_status = failure) : failure;
-				(active_node = node_names.parallel29) & (previous_status = success) : success;
+		next(parallel_status__parallel29) := 
+			case
+				next(active_node) = -1 : running;
+				(next(active_node) = node_names.parallel29) & (current_status = failure) : failure;
+				(next(active_node) = node_names.parallel29) & (current_status = success) : success;
 				TRUE : parallel_status__parallel29;
 			esac;
-		next(parallel_status__parallel33) := 			case
-				active_node = -1 : running;
-				(active_node = node_names.parallel33) & (previous_status = failure) : failure;
-				(active_node = node_names.parallel33) & (previous_status = success) : success;
+		next(parallel_status__parallel33) := 
+			case
+				next(active_node) = -1 : running;
+				(next(active_node) = node_names.parallel33) & (current_status = failure) : failure;
+				(next(active_node) = node_names.parallel33) & (current_status = success) : success;
 				TRUE : parallel_status__parallel33;
 			esac;
-		next(parallel_status__parallel37) := 			case
-				active_node = -1 : running;
-				(active_node = node_names.parallel37) & (previous_status = failure) : failure;
-				(active_node = node_names.parallel37) & (previous_status = success) : success;
+		next(parallel_status__parallel37) := 
+			case
+				next(active_node) = -1 : running;
+				(next(active_node) = node_names.parallel37) & (current_status = failure) : failure;
+				(next(active_node) = node_names.parallel37) & (current_status = success) : success;
 				TRUE : parallel_status__parallel37;
 			esac;
-		next(parallel_status__parallel41) := 			case
-				active_node = -1 : running;
-				(active_node = node_names.parallel41) & (previous_status = failure) : failure;
-				(active_node = node_names.parallel41) & (previous_status = success) : success;
+		next(parallel_status__parallel41) := 
+			case
+				next(active_node) = -1 : running;
+				(next(active_node) = node_names.parallel41) & (current_status = failure) : failure;
+				(next(active_node) = node_names.parallel41) & (current_status = success) : success;
 				TRUE : parallel_status__parallel41;
 			esac;
-		next(parallel_status__parallel45) := 			case
-				active_node = -1 : running;
-				(active_node = node_names.parallel45) & (previous_status = failure) : failure;
-				(active_node = node_names.parallel45) & (previous_status = success) : success;
+		next(parallel_status__parallel45) := 
+			case
+				next(active_node) = -1 : running;
+				(next(active_node) = node_names.parallel45) & (current_status = failure) : failure;
+				(next(active_node) = node_names.parallel45) & (current_status = success) : success;
 				TRUE : parallel_status__parallel45;
 			esac;
-		next(parallel_status__parallel49) := 			case
-				active_node = -1 : running;
-				(active_node = node_names.parallel49) & (previous_status = failure) : failure;
-				(active_node = node_names.parallel49) & (previous_status = success) : success;
+		next(parallel_status__parallel49) := 
+			case
+				next(active_node) = -1 : running;
+				(next(active_node) = node_names.parallel49) & (current_status = failure) : failure;
+				(next(active_node) = node_names.parallel49) & (current_status = success) : success;
 				TRUE : parallel_status__parallel49;
 			esac;
-		next(parallel_status__parallel5) := 			case
-				active_node = -1 : running;
-				(active_node = node_names.parallel5) & (previous_status = failure) : failure;
-				(active_node = node_names.parallel5) & (previous_status = success) : success;
+		next(parallel_status__parallel5) := 
+			case
+				next(active_node) = -1 : running;
+				(next(active_node) = node_names.parallel5) & (current_status = failure) : failure;
+				(next(active_node) = node_names.parallel5) & (current_status = success) : success;
 				TRUE : parallel_status__parallel5;
 			esac;
-		next(parallel_status__parallel53) := 			case
-				active_node = -1 : running;
-				(active_node = node_names.parallel53) & (previous_status = failure) : failure;
-				(active_node = node_names.parallel53) & (previous_status = success) : success;
+		next(parallel_status__parallel53) := 
+			case
+				next(active_node) = -1 : running;
+				(next(active_node) = node_names.parallel53) & (current_status = failure) : failure;
+				(next(active_node) = node_names.parallel53) & (current_status = success) : success;
 				TRUE : parallel_status__parallel53;
 			esac;
-		next(parallel_status__parallel57) := 			case
-				active_node = -1 : running;
-				(active_node = node_names.parallel57) & (previous_status = failure) : failure;
-				(active_node = node_names.parallel57) & (previous_status = success) : success;
+		next(parallel_status__parallel57) := 
+			case
+				next(active_node) = -1 : running;
+				(next(active_node) = node_names.parallel57) & (current_status = failure) : failure;
+				(next(active_node) = node_names.parallel57) & (current_status = success) : success;
 				TRUE : parallel_status__parallel57;
 			esac;
-		next(parallel_status__parallel61) := 			case
-				active_node = -1 : running;
-				(active_node = node_names.parallel61) & (previous_status = failure) : failure;
-				(active_node = node_names.parallel61) & (previous_status = success) : success;
+		next(parallel_status__parallel61) := 
+			case
+				next(active_node) = -1 : running;
+				(next(active_node) = node_names.parallel61) & (current_status = failure) : failure;
+				(next(active_node) = node_names.parallel61) & (current_status = success) : success;
 				TRUE : parallel_status__parallel61;
 			esac;
-		next(parallel_status__parallel9) := 			case
-				active_node = -1 : running;
-				(active_node = node_names.parallel9) & (previous_status = failure) : failure;
-				(active_node = node_names.parallel9) & (previous_status = success) : success;
+		next(parallel_status__parallel9) := 
+			case
+				next(active_node) = -1 : running;
+				(next(active_node) = node_names.parallel9) & (current_status = failure) : failure;
+				(next(active_node) = node_names.parallel9) & (current_status = success) : success;
 				TRUE : parallel_status__parallel9;
 			esac;
 		--START OF BLACKBOARD VARIABLES TRANSITION
 		next(var_biggest_fish) :=
 			case
-				(active_node = node_names.bigger_fish) & !(current_status = invalid) & (TRUE) : min((1 + var_biggest_fish), 99);
+				(active_node = node_names.bigger_fish) & !(current_status = invalid) & (TRUE) : min((1 + var_biggest_fish), 199);
 				TRUE : var_biggest_fish;
 			esac;
 		--END OF BLACKBOARD VARIABLES TRANSITION
