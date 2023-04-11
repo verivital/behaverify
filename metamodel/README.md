@@ -193,7 +193,7 @@ Note that a DEFINE variable does not have a domain.
 
 ### How Variables Are Used
 
-Note that the variable declaration does not say anything about how the variable changes over time, or even what the initial value is. This information will be conveyed within the various check, check_environment, and action nodes.
+Note that the variable declaration does not say anything about how the variable changes over time, or even what the initial value is. This information will be conveyed within the various check, check_environment, and action nodes. Note: if a variable doesn't have an initial value, it will automatically use the the minimum value, or first value in the case of enumerations. However, this is not reflected in generated python code.
 
 ## local variable
 

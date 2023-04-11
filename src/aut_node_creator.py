@@ -53,12 +53,27 @@ def create_blackboard(nodes, variables, root_node_name, tick_condition):
             frozenvar_string += ('\t\t' + variable_name + ' : '
                                  + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean')))
                                  + ';' + os.linesep)
-            if variable['initial_value'] is not None:
-                init_string += ('\t\tinit(' + variable_name + ') := ' + os.linesep
-                                + '\t\t\tcase' + os.linesep
-                                + ''.join([('\t\t\t\t' + remove_stage(condition_pair[0]) + ' : ' + remove_stage(condition_pair[1]) + ';' + os.linesep) for condition_pair in variable['initial_value']])
-                                + '\t\t\tesac;' + os.linesep
-                                )
+            # if variable['initial_value'] is not None:
+            #     init_string += ('\t\tinit(' + variable_name + ') := ' + os.linesep
+            #                     + '\t\t\tcase' + os.linesep
+            #                     + ''.join([('\t\t\t\t' + remove_stage(condition_pair[0]) + ' : ' + remove_stage(condition_pair[1]) + ';' + os.linesep) for condition_pair in variable['initial_value']])
+            #                     + '\t\t\tesac;' + os.linesep
+            #                     )
+            init_string += (
+                ('\t\tinit(' + variable_name + ') := ' + os.linesep
+                 + '\t\t\tcase' + os.linesep
+                 + ''.join([('\t\t\t\t' + remove_stage(condition_pair[0]) + ' : ' + remove_stage(condition_pair[1]) + ';' + os.linesep) for condition_pair in variable['initial_value']])
+                 + '\t\t\tesac;' + os.linesep
+                 )
+                if variable['initial_value'] is not None else
+                (tab_indent(2) + 'init(' + variable_name + ') := '
+                 + (
+                     str(variable['min_value']) if variable['custom_value_range'] is None else
+                     variable['custom_value_range'].split(',')[0].replace('{', '').strip()
+                 )
+                 + ';' + os.linesep
+                 )
+            )
             if use_exist:
                 define_string += "\t\t" + variable_name + "_exists := TRUE;" + os.linesep
         # --------------------------------
