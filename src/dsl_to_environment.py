@@ -61,9 +61,11 @@ def format_variable(variable, is_local, is_env, node_name):
 
 
 def format_code(code, node_name):
+    # print(code)
+    # print(dir(code))
     return (
         ((("'" + code.constant + "'") if isinstance(code.constant, str) else str(code.constant)) if code.constant is not None else (
-            (format_variable(code.variable, False if code.is_local is None else code.is_local, False if code.is_env is None else True, node_name)) if code.variable is not None else (
+            (format_variable(code.variable, False if code.is_local is None else code.is_local, (False if not hasattr(code, 'is_env') else (False if code.is_env is None else True)), node_name)) if code.variable is not None else (
                 ('(' + format_code(code.code_statement, node_name) + ')') if code.code_statement is not None else (
                     FUNCTION_FORMAT[code.function_call.function_name][1](FUNCTION_FORMAT[code.function_call.function_name][0], code, node_name)
                 )
