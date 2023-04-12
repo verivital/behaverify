@@ -1,0 +1,1604 @@
+{   'nodes': {   'can_move_forward': {   'additional_arguments': [   'env_hole_1',
+                                                                     'env_y',
+                                                                     'env_hole_3',
+                                                                     'env_hole_6',
+                                                                     'env_hole_10',
+                                                                     'env_hole_5',
+                                                                     'env_x',
+                                                                     'env_hole_4',
+                                                                     'env_hole_9',
+                                                                     'env_hole_8',
+                                                                     'var_forward',
+                                                                     'env_hole_7',
+                                                                     'env_hole_2'],
+                                         'category': 'leaf',
+                                         'children': [],
+                                         'internal_status_module_code': 'MODULE '
+                                                                        'can_move_forward_module(env_hole_1, '
+                                                                        'env_y, '
+                                                                        'env_hole_3, '
+                                                                        'env_hole_6, '
+                                                                        'env_hole_10, '
+                                                                        'env_hole_5, '
+                                                                        'env_x, '
+                                                                        'env_hole_4, '
+                                                                        'env_hole_9, '
+                                                                        'env_hole_8, '
+                                                                        'var_forward, '
+                                                                        'env_hole_7, '
+                                                                        'env_hole_2)\n'
+                                                                        '\t'
+                                                                        'CONSTANTS\n'
+                                                                        '\t\t'
+                                                                        'success, '
+                                                                        'failure, '
+                                                                        'running, '
+                                                                        'invalid;\n'
+                                                                        '\t'
+                                                                        'DEFINE\n'
+                                                                        '\t\t'
+                                                                        'status '
+                                                                        ':= '
+                                                                        'active '
+                                                                        '? '
+                                                                        'internal_status '
+                                                                        ': '
+                                                                        'invalid;\n'
+                                                                        '\t\t'
+                                                                        'internal_status '
+                                                                        ':= '
+                                                                        '(!((((env_x '
+                                                                        '= 0) '
+                                                                        '& '
+                                                                        '(var_forward '
+                                                                        '= '
+                                                                        '-1)) '
+                                                                        '| '
+                                                                        '((env_x '
+                                                                        '= 40) '
+                                                                        '& '
+                                                                        '(var_forward '
+                                                                        '= 1)) '
+                                                                        '| '
+                                                                        '((((env_x '
+                                                                        '= 14) '
+                                                                        '& '
+                                                                        '(var_forward '
+                                                                        '= 1)) '
+                                                                        '| '
+                                                                        '((env_x '
+                                                                        '= 15) '
+                                                                        '& '
+                                                                        '(var_forward '
+                                                                        '= '
+                                                                        '-1))) '
+                                                                        '& '
+                                                                        '(env_y '
+                                                                        '!= '
+                                                                        'env_hole_1)) '
+                                                                        '| '
+                                                                        '((((env_x '
+                                                                        '= 15) '
+                                                                        '& '
+                                                                        '(var_forward '
+                                                                        '= 1)) '
+                                                                        '| '
+                                                                        '((env_x '
+                                                                        '= 16) '
+                                                                        '& '
+                                                                        '(var_forward '
+                                                                        '= '
+                                                                        '-1))) '
+                                                                        '& '
+                                                                        '(env_y '
+                                                                        '!= '
+                                                                        'env_hole_2)) '
+                                                                        '| '
+                                                                        '((((env_x '
+                                                                        '= 16) '
+                                                                        '& '
+                                                                        '(var_forward '
+                                                                        '= 1)) '
+                                                                        '| '
+                                                                        '((env_x '
+                                                                        '= 17) '
+                                                                        '& '
+                                                                        '(var_forward '
+                                                                        '= '
+                                                                        '-1))) '
+                                                                        '& '
+                                                                        '(env_y '
+                                                                        '!= '
+                                                                        'env_hole_3)) '
+                                                                        '| '
+                                                                        '((((env_x '
+                                                                        '= 17) '
+                                                                        '& '
+                                                                        '(var_forward '
+                                                                        '= 1)) '
+                                                                        '| '
+                                                                        '((env_x '
+                                                                        '= 18) '
+                                                                        '& '
+                                                                        '(var_forward '
+                                                                        '= '
+                                                                        '-1))) '
+                                                                        '& '
+                                                                        '(env_y '
+                                                                        '!= '
+                                                                        'env_hole_4)) '
+                                                                        '| '
+                                                                        '((((env_x '
+                                                                        '= 18) '
+                                                                        '& '
+                                                                        '(var_forward '
+                                                                        '= 1)) '
+                                                                        '| '
+                                                                        '((env_x '
+                                                                        '= 19) '
+                                                                        '& '
+                                                                        '(var_forward '
+                                                                        '= '
+                                                                        '-1))) '
+                                                                        '& '
+                                                                        '(env_y '
+                                                                        '!= '
+                                                                        'env_hole_5)) '
+                                                                        '| '
+                                                                        '((((env_x '
+                                                                        '= 19) '
+                                                                        '& '
+                                                                        '(var_forward '
+                                                                        '= 1)) '
+                                                                        '| '
+                                                                        '((env_x '
+                                                                        '= 20) '
+                                                                        '& '
+                                                                        '(var_forward '
+                                                                        '= '
+                                                                        '-1))) '
+                                                                        '& '
+                                                                        '(env_y '
+                                                                        '!= '
+                                                                        'env_hole_6)) '
+                                                                        '| '
+                                                                        '((((env_x '
+                                                                        '= 20) '
+                                                                        '& '
+                                                                        '(var_forward '
+                                                                        '= 1)) '
+                                                                        '| '
+                                                                        '((env_x '
+                                                                        '= 21) '
+                                                                        '& '
+                                                                        '(var_forward '
+                                                                        '= '
+                                                                        '-1))) '
+                                                                        '& '
+                                                                        '(env_y '
+                                                                        '!= '
+                                                                        'env_hole_7)) '
+                                                                        '| '
+                                                                        '((((env_x '
+                                                                        '= 21) '
+                                                                        '& '
+                                                                        '(var_forward '
+                                                                        '= 1)) '
+                                                                        '| '
+                                                                        '((env_x '
+                                                                        '= 22) '
+                                                                        '& '
+                                                                        '(var_forward '
+                                                                        '= '
+                                                                        '-1))) '
+                                                                        '& '
+                                                                        '(env_y '
+                                                                        '!= '
+                                                                        'env_hole_8)) '
+                                                                        '| '
+                                                                        '((((env_x '
+                                                                        '= 22) '
+                                                                        '& '
+                                                                        '(var_forward '
+                                                                        '= 1)) '
+                                                                        '| '
+                                                                        '((env_x '
+                                                                        '= 23) '
+                                                                        '& '
+                                                                        '(var_forward '
+                                                                        '= '
+                                                                        '-1))) '
+                                                                        '& '
+                                                                        '(env_y '
+                                                                        '!= '
+                                                                        'env_hole_8)) '
+                                                                        '| '
+                                                                        '((((env_x '
+                                                                        '= 23) '
+                                                                        '& '
+                                                                        '(var_forward '
+                                                                        '= 1)) '
+                                                                        '| '
+                                                                        '((env_x '
+                                                                        '= 24) '
+                                                                        '& '
+                                                                        '(var_forward '
+                                                                        '= '
+                                                                        '-1))) '
+                                                                        '& '
+                                                                        '(env_y '
+                                                                        '!= '
+                                                                        'env_hole_9)) '
+                                                                        '| '
+                                                                        '((((env_x '
+                                                                        '= 24) '
+                                                                        '& '
+                                                                        '(var_forward '
+                                                                        '= 1)) '
+                                                                        '| '
+                                                                        '((env_x '
+                                                                        '= 25) '
+                                                                        '& '
+                                                                        '(var_forward '
+                                                                        '= '
+                                                                        '-1))) '
+                                                                        '& '
+                                                                        '(env_y '
+                                                                        '!= '
+                                                                        'env_hole_10))))) '
+                                                                        '? '
+                                                                        'success '
+                                                                        ': '
+                                                                        'failure;\n',
+                                         'internal_status_module_name': 'can_move_forward_module',
+                                         'name': 'can_move_forward',
+                                         'parent': 'try_forward',
+                                         'return_possibilities': {   'failure': True,
+                                                                     'running': False,
+                                                                     'success': True},
+                                         'type': 'check_environment'},
+                 'can_move_side': {   'additional_arguments': [   'var_side',
+                                                                  'env_y'],
+                                      'category': 'leaf',
+                                      'children': [],
+                                      'internal_status_module_code': 'MODULE '
+                                                                     'can_move_side_module(var_side, '
+                                                                     'env_y)\n'
+                                                                     '\t'
+                                                                     'CONSTANTS\n'
+                                                                     '\t\t'
+                                                                     'success, '
+                                                                     'failure, '
+                                                                     'running, '
+                                                                     'invalid;\n'
+                                                                     '\t'
+                                                                     'DEFINE\n'
+                                                                     '\t\t'
+                                                                     'status '
+                                                                     ':= '
+                                                                     'active ? '
+                                                                     'internal_status '
+                                                                     ': '
+                                                                     'invalid;\n'
+                                                                     '\t\t'
+                                                                     'internal_status '
+                                                                     ':= '
+                                                                     '(!((((env_y '
+                                                                     '= 0) & '
+                                                                     '(var_side '
+                                                                     '= -1)) | '
+                                                                     '((env_y '
+                                                                     '= 40) & '
+                                                                     '(var_side '
+                                                                     '= 1))))) '
+                                                                     '? '
+                                                                     'success '
+                                                                     ': '
+                                                                     'failure;\n',
+                                      'internal_status_module_name': 'can_move_side_module',
+                                      'name': 'can_move_side',
+                                      'parent': 'try_side',
+                                      'return_possibilities': {   'failure': True,
+                                                                  'running': False,
+                                                                  'success': True},
+                                      'type': 'check_environment'},
+                 'can_move_side_1': {   'additional_arguments': [   'env_y',
+                                                                    'var_side_stage_1'],
+                                        'category': 'leaf',
+                                        'children': [],
+                                        'internal_status_module_code': 'MODULE '
+                                                                       'can_move_side_1_module(env_y, '
+                                                                       'var_side_stage_1)\n'
+                                                                       '\t'
+                                                                       'CONSTANTS\n'
+                                                                       '\t\t'
+                                                                       'success, '
+                                                                       'failure, '
+                                                                       'running, '
+                                                                       'invalid;\n'
+                                                                       '\t'
+                                                                       'DEFINE\n'
+                                                                       '\t\t'
+                                                                       'status '
+                                                                       ':= '
+                                                                       'active '
+                                                                       '? '
+                                                                       'internal_status '
+                                                                       ': '
+                                                                       'invalid;\n'
+                                                                       '\t\t'
+                                                                       'internal_status '
+                                                                       ':= '
+                                                                       '(!((((env_y '
+                                                                       '= 0) & '
+                                                                       '(var_side_stage_1 '
+                                                                       '= -1)) '
+                                                                       '| '
+                                                                       '((env_y '
+                                                                       '= 40) '
+                                                                       '& '
+                                                                       '(var_side_stage_1 '
+                                                                       '= '
+                                                                       '1))))) '
+                                                                       '? '
+                                                                       'success '
+                                                                       ': '
+                                                                       'failure;\n',
+                                        'internal_status_module_name': 'can_move_side_1_module',
+                                        'name': 'can_move_side_1',
+                                        'parent': 'try_side_1',
+                                        'return_possibilities': {   'failure': True,
+                                                                    'running': False,
+                                                                    'success': True},
+                                        'type': 'check_environment'},
+                 'can_move_side_2': {   'additional_arguments': [   'var_side_stage_2',
+                                                                    'env_y'],
+                                        'category': 'leaf',
+                                        'children': [],
+                                        'internal_status_module_code': 'MODULE '
+                                                                       'can_move_side_2_module(var_side_stage_2, '
+                                                                       'env_y)\n'
+                                                                       '\t'
+                                                                       'CONSTANTS\n'
+                                                                       '\t\t'
+                                                                       'success, '
+                                                                       'failure, '
+                                                                       'running, '
+                                                                       'invalid;\n'
+                                                                       '\t'
+                                                                       'DEFINE\n'
+                                                                       '\t\t'
+                                                                       'status '
+                                                                       ':= '
+                                                                       'active '
+                                                                       '? '
+                                                                       'internal_status '
+                                                                       ': '
+                                                                       'invalid;\n'
+                                                                       '\t\t'
+                                                                       'internal_status '
+                                                                       ':= '
+                                                                       '(!((((env_y '
+                                                                       '= 0) & '
+                                                                       '(var_side_stage_2 '
+                                                                       '= -1)) '
+                                                                       '| '
+                                                                       '((env_y '
+                                                                       '= 40) '
+                                                                       '& '
+                                                                       '(var_side_stage_2 '
+                                                                       '= '
+                                                                       '1))))) '
+                                                                       '? '
+                                                                       'success '
+                                                                       ': '
+                                                                       'failure;\n',
+                                        'internal_status_module_name': 'can_move_side_2_module',
+                                        'name': 'can_move_side_2',
+                                        'parent': 'try_side_2',
+                                        'return_possibilities': {   'failure': True,
+                                                                    'running': False,
+                                                                    'success': True},
+                                        'type': 'check_environment'},
+                 'change_side': {   'additional_arguments': [],
+                                    'category': 'leaf',
+                                    'children': [],
+                                    'internal_status_module_code': None,
+                                    'internal_status_module_name': None,
+                                    'name': 'change_side',
+                                    'parent': 'move_through_maze',
+                                    'return_possibilities': {   'failure': False,
+                                                                'running': False,
+                                                                'success': True},
+                                    'type': 'action'},
+                 'change_side_1': {   'additional_arguments': [],
+                                      'category': 'leaf',
+                                      'children': [],
+                                      'internal_status_module_code': None,
+                                      'internal_status_module_name': None,
+                                      'name': 'change_side_1',
+                                      'parent': 'control_sequence',
+                                      'return_possibilities': {   'failure': False,
+                                                                  'running': False,
+                                                                  'success': True},
+                                      'type': 'action'},
+                 'change_side_2': {   'additional_arguments': [],
+                                      'category': 'leaf',
+                                      'children': [],
+                                      'internal_status_module_code': None,
+                                      'internal_status_module_name': None,
+                                      'name': 'change_side_2',
+                                      'parent': 'change_side_decorator',
+                                      'return_possibilities': {   'failure': False,
+                                                                  'running': False,
+                                                                  'success': True},
+                                      'type': 'action'},
+                 'change_side_decorator': {   'additional_arguments': [   'success',
+                                                                          'failure'],
+                                              'category': 'decorator',
+                                              'children': ['change_side_2'],
+                                              'internal_status_module_code': None,
+                                              'internal_status_module_name': None,
+                                              'name': 'change_side_decorator',
+                                              'parent': 'move_for_flag',
+                                              'return_possibilities': {   'failure': True,
+                                                                          'running': True,
+                                                                          'success': False},
+                                              'type': 'X_is_Y'},
+                 'control': {   'additional_arguments': None,
+                                'category': 'composite',
+                                'children': ['set_zone', 'control_sequence'],
+                                'internal_status_module_code': None,
+                                'internal_status_module_name': None,
+                                'name': 'control',
+                                'parent': None,
+                                'return_possibilities': {   'failure': True,
+                                                            'running': True,
+                                                            'success': True},
+                                'type': 'parallel_success_on_all_without_memory'},
+                 'control_sequence': {   'additional_arguments': None,
+                                         'category': 'composite',
+                                         'children': [   'flag_not_returned',
+                                                         'enter_maze',
+                                                         'navigate_maze_decorator',
+                                                         'to_side_decorator',
+                                                         'change_side_1',
+                                                         'have_or_find_flag'],
+                                         'internal_status_module_code': None,
+                                         'internal_status_module_name': None,
+                                         'name': 'control_sequence',
+                                         'parent': 'control',
+                                         'return_possibilities': {   'failure': True,
+                                                                     'running': True,
+                                                                     'success': True},
+                                         'type': 'sequence_with_memory'},
+                 'enter_maze': {   'additional_arguments': None,
+                                   'category': 'composite',
+                                   'children': ['in_maze', 'go_forward'],
+                                   'internal_status_module_code': None,
+                                   'internal_status_module_name': None,
+                                   'name': 'enter_maze',
+                                   'parent': 'control_sequence',
+                                   'return_possibilities': {   'failure': True,
+                                                               'running': True,
+                                                               'success': True},
+                                   'type': 'selector_without_memory'},
+                 'flag_found': {   'additional_arguments': ['var_have_flag'],
+                                   'category': 'leaf',
+                                   'children': [],
+                                   'internal_status_module_code': 'MODULE '
+                                                                  'flag_found_module(var_have_flag)\n'
+                                                                  '\t'
+                                                                  'CONSTANTS\n'
+                                                                  '\t\t'
+                                                                  'success, '
+                                                                  'failure, '
+                                                                  'running, '
+                                                                  'invalid;\n'
+                                                                  '\tDEFINE\n'
+                                                                  '\t\tstatus '
+                                                                  ':= active ? '
+                                                                  'internal_status '
+                                                                  ': invalid;\n'
+                                                                  '\t\t'
+                                                                  'internal_status '
+                                                                  ':= '
+                                                                  '(var_have_flag) '
+                                                                  '? success : '
+                                                                  'failure;\n',
+                                   'internal_status_module_name': 'flag_found_module',
+                                   'name': 'flag_found',
+                                   'parent': 'have_or_find_flag',
+                                   'return_possibilities': {   'failure': True,
+                                                               'running': False,
+                                                               'success': True},
+                                   'type': 'check'},
+                 'flag_not_returned': {   'additional_arguments': [   'env_flag_returned'],
+                                          'category': 'leaf',
+                                          'children': [],
+                                          'internal_status_module_code': 'MODULE '
+                                                                         'flag_not_returned_module(env_flag_returned)\n'
+                                                                         '\t'
+                                                                         'CONSTANTS\n'
+                                                                         '\t\t'
+                                                                         'success, '
+                                                                         'failure, '
+                                                                         'running, '
+                                                                         'invalid;\n'
+                                                                         '\t'
+                                                                         'DEFINE\n'
+                                                                         '\t\t'
+                                                                         'status '
+                                                                         ':= '
+                                                                         'active '
+                                                                         '? '
+                                                                         'internal_status '
+                                                                         ': '
+                                                                         'invalid;\n'
+                                                                         '\t\t'
+                                                                         'internal_status '
+                                                                         ':= '
+                                                                         '(!(env_flag_returned)) '
+                                                                         '? '
+                                                                         'success '
+                                                                         ': '
+                                                                         'failure;\n',
+                                          'internal_status_module_name': 'flag_not_returned_module',
+                                          'name': 'flag_not_returned',
+                                          'parent': 'control_sequence',
+                                          'return_possibilities': {   'failure': True,
+                                                                      'running': False,
+                                                                      'success': True},
+                                          'type': 'check_environment'},
+                 'go_forward': {   'additional_arguments': [],
+                                   'category': 'leaf',
+                                   'children': [],
+                                   'internal_status_module_code': None,
+                                   'internal_status_module_name': None,
+                                   'name': 'go_forward',
+                                   'parent': 'enter_maze',
+                                   'return_possibilities': {   'failure': False,
+                                                               'running': True,
+                                                               'success': False},
+                                   'type': 'action'},
+                 'go_forward_1': {   'additional_arguments': [],
+                                     'category': 'leaf',
+                                     'children': [],
+                                     'internal_status_module_code': None,
+                                     'internal_status_module_name': None,
+                                     'name': 'go_forward_1',
+                                     'parent': 'try_forward',
+                                     'return_possibilities': {   'failure': False,
+                                                                 'running': True,
+                                                                 'success': False},
+                                     'type': 'action'},
+                 'go_forward_2': {   'additional_arguments': [],
+                                     'category': 'leaf',
+                                     'children': [],
+                                     'internal_status_module_code': None,
+                                     'internal_status_module_name': None,
+                                     'name': 'go_forward_2',
+                                     'parent': 'move_for_flag',
+                                     'return_possibilities': {   'failure': False,
+                                                                 'running': True,
+                                                                 'success': False},
+                                     'type': 'action'},
+                 'go_side': {   'additional_arguments': [],
+                                'category': 'leaf',
+                                'children': [],
+                                'internal_status_module_code': None,
+                                'internal_status_module_name': None,
+                                'name': 'go_side',
+                                'parent': 'try_side',
+                                'return_possibilities': {   'failure': False,
+                                                            'running': True,
+                                                            'success': False},
+                                'type': 'action'},
+                 'go_side_1': {   'additional_arguments': [],
+                                  'category': 'leaf',
+                                  'children': [],
+                                  'internal_status_module_code': None,
+                                  'internal_status_module_name': None,
+                                  'name': 'go_side_1',
+                                  'parent': 'try_side_1',
+                                  'return_possibilities': {   'failure': False,
+                                                              'running': True,
+                                                              'success': False},
+                                  'type': 'action'},
+                 'go_side_2': {   'additional_arguments': [],
+                                  'category': 'leaf',
+                                  'children': [],
+                                  'internal_status_module_code': None,
+                                  'internal_status_module_name': None,
+                                  'name': 'go_side_2',
+                                  'parent': 'try_side_2',
+                                  'return_possibilities': {   'failure': False,
+                                                              'running': True,
+                                                              'success': False},
+                                  'type': 'action'},
+                 'have_or_find_flag': {   'additional_arguments': None,
+                                          'category': 'composite',
+                                          'children': [   'flag_found',
+                                                          'search_for_flag'],
+                                          'internal_status_module_code': None,
+                                          'internal_status_module_name': None,
+                                          'name': 'have_or_find_flag',
+                                          'parent': 'control_sequence',
+                                          'return_possibilities': {   'failure': True,
+                                                                      'running': True,
+                                                                      'success': True},
+                                          'type': 'selector_without_memory'},
+                 'in_maze': {   'additional_arguments': ['var_zone_stage_1'],
+                                'category': 'leaf',
+                                'children': [],
+                                'internal_status_module_code': 'MODULE '
+                                                               'in_maze_module(var_zone_stage_1)\n'
+                                                               '\tCONSTANTS\n'
+                                                               '\t\tsuccess, '
+                                                               'failure, '
+                                                               'running, '
+                                                               'invalid;\n'
+                                                               '\tDEFINE\n'
+                                                               '\t\tstatus := '
+                                                               'active ? '
+                                                               'internal_status '
+                                                               ': invalid;\n'
+                                                               '\t\t'
+                                                               'internal_status '
+                                                               ':= '
+                                                               '((var_zone_stage_1 '
+                                                               '= maze)) ? '
+                                                               'success : '
+                                                               'failure;\n',
+                                'internal_status_module_name': 'in_maze_module',
+                                'name': 'in_maze',
+                                'parent': 'enter_maze',
+                                'return_possibilities': {   'failure': True,
+                                                            'running': False,
+                                                            'success': True},
+                                'type': 'check'},
+                 'in_maze_1': {   'additional_arguments': ['var_zone_stage_1'],
+                                  'category': 'leaf',
+                                  'children': [],
+                                  'internal_status_module_code': 'MODULE '
+                                                                 'in_maze_1_module(var_zone_stage_1)\n'
+                                                                 '\tCONSTANTS\n'
+                                                                 '\t\tsuccess, '
+                                                                 'failure, '
+                                                                 'running, '
+                                                                 'invalid;\n'
+                                                                 '\tDEFINE\n'
+                                                                 '\t\tstatus '
+                                                                 ':= active ? '
+                                                                 'internal_status '
+                                                                 ': invalid;\n'
+                                                                 '\t\t'
+                                                                 'internal_status '
+                                                                 ':= '
+                                                                 '((var_zone_stage_1 '
+                                                                 '= maze)) ? '
+                                                                 'success : '
+                                                                 'failure;\n',
+                                  'internal_status_module_name': 'in_maze_1_module',
+                                  'name': 'in_maze_1',
+                                  'parent': 'maze_inverter',
+                                  'return_possibilities': {   'failure': True,
+                                                              'running': False,
+                                                              'success': True},
+                                  'type': 'check'},
+                 'maze_inverter': {   'additional_arguments': None,
+                                      'category': 'decorator',
+                                      'children': ['in_maze_1'],
+                                      'internal_status_module_code': None,
+                                      'internal_status_module_name': None,
+                                      'name': 'maze_inverter',
+                                      'parent': 'navigate_maze',
+                                      'return_possibilities': {   'failure': True,
+                                                                  'running': True,
+                                                                  'success': True},
+                                      'type': 'inverter'},
+                 'move_for_flag': {   'additional_arguments': None,
+                                      'category': 'composite',
+                                      'children': [   'try_side_2',
+                                                      'change_side_decorator',
+                                                      'go_forward_2'],
+                                      'internal_status_module_code': None,
+                                      'internal_status_module_name': None,
+                                      'name': 'move_for_flag',
+                                      'parent': 'search_for_flag',
+                                      'return_possibilities': {   'failure': True,
+                                                                  'running': True,
+                                                                  'success': True},
+                                      'type': 'selector_without_memory'},
+                 'move_through_maze': {   'additional_arguments': None,
+                                          'category': 'composite',
+                                          'children': [   'try_forward',
+                                                          'try_side',
+                                                          'change_side'],
+                                          'internal_status_module_code': None,
+                                          'internal_status_module_name': None,
+                                          'name': 'move_through_maze',
+                                          'parent': 'move_through_maze_decorator',
+                                          'return_possibilities': {   'failure': True,
+                                                                      'running': True,
+                                                                      'success': True},
+                                          'type': 'selector_with_memory'},
+                 'move_through_maze_decorator': {   'additional_arguments': [   'success',
+                                                                                'running'],
+                                                    'category': 'decorator',
+                                                    'children': [   'move_through_maze'],
+                                                    'internal_status_module_code': None,
+                                                    'internal_status_module_name': None,
+                                                    'name': 'move_through_maze_decorator',
+                                                    'parent': 'navigate_maze',
+                                                    'return_possibilities': {   'failure': True,
+                                                                                'running': True,
+                                                                                'success': False},
+                                                    'type': 'X_is_Y'},
+                 'navigate_maze': {   'additional_arguments': None,
+                                      'category': 'composite',
+                                      'children': [   'maze_inverter',
+                                                      'move_through_maze_decorator'],
+                                      'internal_status_module_code': None,
+                                      'internal_status_module_name': None,
+                                      'name': 'navigate_maze',
+                                      'parent': 'navigate_maze_decorator',
+                                      'return_possibilities': {   'failure': True,
+                                                                  'running': True,
+                                                                  'success': True},
+                                      'type': 'selector_without_memory'},
+                 'navigate_maze_decorator': {   'additional_arguments': [   'failure',
+                                                                            'running'],
+                                                'category': 'decorator',
+                                                'children': ['navigate_maze'],
+                                                'internal_status_module_code': None,
+                                                'internal_status_module_name': None,
+                                                'name': 'navigate_maze_decorator',
+                                                'parent': 'control_sequence',
+                                                'return_possibilities': {   'failure': False,
+                                                                            'running': True,
+                                                                            'success': True},
+                                                'type': 'X_is_Y'},
+                 'search_for_flag': {   'additional_arguments': None,
+                                        'category': 'composite',
+                                        'children': [   'search_tile',
+                                                        'move_for_flag'],
+                                        'internal_status_module_code': None,
+                                        'internal_status_module_name': None,
+                                        'name': 'search_for_flag',
+                                        'parent': 'have_or_find_flag',
+                                        'return_possibilities': {   'failure': True,
+                                                                    'running': True,
+                                                                    'success': True},
+                                        'type': 'selector_without_memory'},
+                 'search_tile': {   'additional_arguments': [   'search_tile_DOT_tile_searched_stage_1',
+                                                                'var_have_flag_stage_1'],
+                                    'category': 'leaf',
+                                    'children': [],
+                                    'internal_status_module_code': 'MODULE '
+                                                                   'search_tile_module(search_tile_DOT_tile_searched_stage_1, '
+                                                                   'var_have_flag_stage_1)\n'
+                                                                   '\t'
+                                                                   'CONSTANTS\n'
+                                                                   '\t\t'
+                                                                   'success, '
+                                                                   'failure, '
+                                                                   'running, '
+                                                                   'invalid;\n'
+                                                                   '\tDEFINE\n'
+                                                                   '\t\tstatus '
+                                                                   ':= active '
+                                                                   '? '
+                                                                   'internal_status '
+                                                                   ': '
+                                                                   'invalid;\n'
+                                                                   '\t\t'
+                                                                   'internal_status '
+                                                                   ':= \n'
+                                                                   '\t\t\t'
+                                                                   'case\n'
+                                                                   '\t\t\t\t'
+                                                                   '(search_tile_DOT_tile_searched_stage_1 '
+                                                                   '& '
+                                                                   'var_have_flag_stage_1) '
+                                                                   ': '
+                                                                   'success;\n'
+                                                                   '\t\t\t\t'
+                                                                   'search_tile_DOT_tile_searched_stage_1 '
+                                                                   ': '
+                                                                   'failure;\n'
+                                                                   '\t\t\t\t'
+                                                                   'TRUE : '
+                                                                   'running;\n'
+                                                                   '\t\t\t'
+                                                                   'esac;\n',
+                                    'internal_status_module_name': 'search_tile_module',
+                                    'name': 'search_tile',
+                                    'parent': 'search_for_flag',
+                                    'return_possibilities': {   'failure': True,
+                                                                'running': True,
+                                                                'success': True},
+                                    'type': 'action'},
+                 'set_zone': {   'additional_arguments': [],
+                                 'category': 'leaf',
+                                 'children': [],
+                                 'internal_status_module_code': None,
+                                 'internal_status_module_name': None,
+                                 'name': 'set_zone',
+                                 'parent': 'control',
+                                 'return_possibilities': {   'failure': False,
+                                                             'running': False,
+                                                             'success': True},
+                                 'type': 'action'},
+                 'to_side_decorator': {   'additional_arguments': [   'failure',
+                                                                      'success'],
+                                          'category': 'decorator',
+                                          'children': ['try_side_1'],
+                                          'internal_status_module_code': None,
+                                          'internal_status_module_name': None,
+                                          'name': 'to_side_decorator',
+                                          'parent': 'control_sequence',
+                                          'return_possibilities': {   'failure': False,
+                                                                      'running': True,
+                                                                      'success': True},
+                                          'type': 'X_is_Y'},
+                 'try_forward': {   'additional_arguments': None,
+                                    'category': 'composite',
+                                    'children': [   'can_move_forward',
+                                                    'go_forward_1'],
+                                    'internal_status_module_code': None,
+                                    'internal_status_module_name': None,
+                                    'name': 'try_forward',
+                                    'parent': 'move_through_maze',
+                                    'return_possibilities': {   'failure': True,
+                                                                'running': True,
+                                                                'success': True},
+                                    'type': 'sequence_without_memory'},
+                 'try_side': {   'additional_arguments': None,
+                                 'category': 'composite',
+                                 'children': ['can_move_side', 'go_side'],
+                                 'internal_status_module_code': None,
+                                 'internal_status_module_name': None,
+                                 'name': 'try_side',
+                                 'parent': 'move_through_maze',
+                                 'return_possibilities': {   'failure': True,
+                                                             'running': True,
+                                                             'success': True},
+                                 'type': 'sequence_without_memory'},
+                 'try_side_1': {   'additional_arguments': None,
+                                   'category': 'composite',
+                                   'children': ['can_move_side_1', 'go_side_1'],
+                                   'internal_status_module_code': None,
+                                   'internal_status_module_name': None,
+                                   'name': 'try_side_1',
+                                   'parent': 'to_side_decorator',
+                                   'return_possibilities': {   'failure': True,
+                                                               'running': True,
+                                                               'success': True},
+                                   'type': 'sequence_without_memory'},
+                 'try_side_2': {   'additional_arguments': None,
+                                   'category': 'composite',
+                                   'children': ['can_move_side_2', 'go_side_2'],
+                                   'internal_status_module_code': None,
+                                   'internal_status_module_name': None,
+                                   'name': 'try_side_2',
+                                   'parent': 'move_for_flag',
+                                   'return_possibilities': {   'failure': True,
+                                                               'running': True,
+                                                               'success': True},
+                                   'type': 'sequence_without_memory'}},
+    'specifications': ['CTLSPEC AG(AF(env_flag_returned));'],
+    'tick_condition': 'TRUE',
+    'variables': {   'env_flag_returned': {   'custom_value_range': None,
+                                              'initial_value': [   (   'TRUE',
+                                                                       '(var_have_flag '
+                                                                       '& '
+                                                                       '(env_x '
+                                                                       '<= '
+                                                                       '10))')],
+                                              'keep_stage_0': True,
+                                              'max_value': 0,
+                                              'min_value': 0,
+                                              'mode': 'DEFINE',
+                                              'name': 'flag_returned',
+                                              'next_value': [],
+                                              'prefix': 'env_'},
+                     'env_flag_x': {   'custom_value_range': None,
+                                       'initial_value': [   (   'TRUE',
+                                                                '{30, 31, 32, '
+                                                                '33, 34, 35, '
+                                                                '36, 37, 38, '
+                                                                '39, 40}')],
+                                       'keep_stage_0': True,
+                                       'max_value': 40,
+                                       'min_value': 0,
+                                       'mode': 'VAR',
+                                       'name': 'flag_x',
+                                       'next_value': [],
+                                       'prefix': 'env_'},
+                     'env_flag_y': {   'custom_value_range': None,
+                                       'initial_value': None,
+                                       'keep_stage_0': True,
+                                       'max_value': 40,
+                                       'min_value': 0,
+                                       'mode': 'VAR',
+                                       'name': 'flag_y',
+                                       'next_value': [],
+                                       'prefix': 'env_'},
+                     'env_hole_1': {   'custom_value_range': None,
+                                       'initial_value': None,
+                                       'keep_stage_0': True,
+                                       'max_value': 40,
+                                       'min_value': 0,
+                                       'mode': 'FROZENVAR',
+                                       'name': 'hole_1',
+                                       'next_value': [],
+                                       'prefix': 'env_'},
+                     'env_hole_10': {   'custom_value_range': None,
+                                        'initial_value': None,
+                                        'keep_stage_0': True,
+                                        'max_value': 40,
+                                        'min_value': 0,
+                                        'mode': 'FROZENVAR',
+                                        'name': 'hole_10',
+                                        'next_value': [],
+                                        'prefix': 'env_'},
+                     'env_hole_2': {   'custom_value_range': None,
+                                       'initial_value': None,
+                                       'keep_stage_0': True,
+                                       'max_value': 40,
+                                       'min_value': 0,
+                                       'mode': 'FROZENVAR',
+                                       'name': 'hole_2',
+                                       'next_value': [],
+                                       'prefix': 'env_'},
+                     'env_hole_3': {   'custom_value_range': None,
+                                       'initial_value': None,
+                                       'keep_stage_0': True,
+                                       'max_value': 40,
+                                       'min_value': 0,
+                                       'mode': 'FROZENVAR',
+                                       'name': 'hole_3',
+                                       'next_value': [],
+                                       'prefix': 'env_'},
+                     'env_hole_4': {   'custom_value_range': None,
+                                       'initial_value': None,
+                                       'keep_stage_0': True,
+                                       'max_value': 40,
+                                       'min_value': 0,
+                                       'mode': 'FROZENVAR',
+                                       'name': 'hole_4',
+                                       'next_value': [],
+                                       'prefix': 'env_'},
+                     'env_hole_5': {   'custom_value_range': None,
+                                       'initial_value': None,
+                                       'keep_stage_0': True,
+                                       'max_value': 40,
+                                       'min_value': 0,
+                                       'mode': 'FROZENVAR',
+                                       'name': 'hole_5',
+                                       'next_value': [],
+                                       'prefix': 'env_'},
+                     'env_hole_6': {   'custom_value_range': None,
+                                       'initial_value': None,
+                                       'keep_stage_0': True,
+                                       'max_value': 40,
+                                       'min_value': 0,
+                                       'mode': 'FROZENVAR',
+                                       'name': 'hole_6',
+                                       'next_value': [],
+                                       'prefix': 'env_'},
+                     'env_hole_7': {   'custom_value_range': None,
+                                       'initial_value': None,
+                                       'keep_stage_0': True,
+                                       'max_value': 40,
+                                       'min_value': 0,
+                                       'mode': 'FROZENVAR',
+                                       'name': 'hole_7',
+                                       'next_value': [],
+                                       'prefix': 'env_'},
+                     'env_hole_8': {   'custom_value_range': None,
+                                       'initial_value': None,
+                                       'keep_stage_0': True,
+                                       'max_value': 40,
+                                       'min_value': 0,
+                                       'mode': 'FROZENVAR',
+                                       'name': 'hole_8',
+                                       'next_value': [],
+                                       'prefix': 'env_'},
+                     'env_hole_9': {   'custom_value_range': None,
+                                       'initial_value': None,
+                                       'keep_stage_0': True,
+                                       'max_value': 40,
+                                       'min_value': 0,
+                                       'mode': 'FROZENVAR',
+                                       'name': 'hole_9',
+                                       'next_value': [],
+                                       'prefix': 'env_'},
+                     'env_tile_progress': {   'custom_value_range': None,
+                                              'initial_value': None,
+                                              'keep_stage_0': True,
+                                              'max_value': 2,
+                                              'min_value': 0,
+                                              'mode': 'VAR',
+                                              'name': 'tile_progress',
+                                              'next_value': [   (   'search_tile',
+                                                                    False,
+                                                                    [   (   'search_tile_DOT_tile_searched_stage_1',
+                                                                            '2'),
+                                                                        (   'TRUE',
+                                                                            'min(2, '
+                                                                            '(1 '
+                                                                            '+ '
+                                                                            'env_tile_progress))')])],
+                                              'prefix': 'env_'},
+                     'env_x': {   'custom_value_range': None,
+                                  'initial_value': [('TRUE', '0')],
+                                  'keep_stage_0': True,
+                                  'max_value': 40,
+                                  'min_value': 0,
+                                  'mode': 'VAR',
+                                  'name': 'x',
+                                  'next_value': [   (   'go_forward',
+                                                        False,
+                                                        [   (   '((env_x = 0) '
+                                                                '& '
+                                                                '(var_forward '
+                                                                '= -1))',
+                                                                '0'),
+                                                            (   '((env_x = 40) '
+                                                                '& '
+                                                                '(var_forward '
+                                                                '= 1))',
+                                                                '40'),
+                                                            (   '(((((env_x = '
+                                                                '14) & '
+                                                                '(var_forward '
+                                                                '= 1)) | '
+                                                                '((env_x = 15) '
+                                                                '& '
+                                                                '(var_forward '
+                                                                '= -1))) & '
+                                                                '(env_y != '
+                                                                'env_hole_1)) '
+                                                                '| ((((env_x = '
+                                                                '15) & '
+                                                                '(var_forward '
+                                                                '= 1)) | '
+                                                                '((env_x = 16) '
+                                                                '& '
+                                                                '(var_forward '
+                                                                '= -1))) & '
+                                                                '(env_y != '
+                                                                'env_hole_2)) '
+                                                                '| ((((env_x = '
+                                                                '16) & '
+                                                                '(var_forward '
+                                                                '= 1)) | '
+                                                                '((env_x = 17) '
+                                                                '& '
+                                                                '(var_forward '
+                                                                '= -1))) & '
+                                                                '(env_y != '
+                                                                'env_hole_3)) '
+                                                                '| ((((env_x = '
+                                                                '17) & '
+                                                                '(var_forward '
+                                                                '= 1)) | '
+                                                                '((env_x = 18) '
+                                                                '& '
+                                                                '(var_forward '
+                                                                '= -1))) & '
+                                                                '(env_y != '
+                                                                'env_hole_4)) '
+                                                                '| ((((env_x = '
+                                                                '18) & '
+                                                                '(var_forward '
+                                                                '= 1)) | '
+                                                                '((env_x = 19) '
+                                                                '& '
+                                                                '(var_forward '
+                                                                '= -1))) & '
+                                                                '(env_y != '
+                                                                'env_hole_5)) '
+                                                                '| ((((env_x = '
+                                                                '19) & '
+                                                                '(var_forward '
+                                                                '= 1)) | '
+                                                                '((env_x = 20) '
+                                                                '& '
+                                                                '(var_forward '
+                                                                '= -1))) & '
+                                                                '(env_y != '
+                                                                'env_hole_6)) '
+                                                                '| ((((env_x = '
+                                                                '20) & '
+                                                                '(var_forward '
+                                                                '= 1)) | '
+                                                                '((env_x = 21) '
+                                                                '& '
+                                                                '(var_forward '
+                                                                '= -1))) & '
+                                                                '(env_y != '
+                                                                'env_hole_7)) '
+                                                                '| ((((env_x = '
+                                                                '21) & '
+                                                                '(var_forward '
+                                                                '= 1)) | '
+                                                                '((env_x = 22) '
+                                                                '& '
+                                                                '(var_forward '
+                                                                '= -1))) & '
+                                                                '(env_y != '
+                                                                'env_hole_8)) '
+                                                                '| ((((env_x = '
+                                                                '22) & '
+                                                                '(var_forward '
+                                                                '= 1)) | '
+                                                                '((env_x = 23) '
+                                                                '& '
+                                                                '(var_forward '
+                                                                '= -1))) & '
+                                                                '(env_y != '
+                                                                'env_hole_8)) '
+                                                                '| ((((env_x = '
+                                                                '23) & '
+                                                                '(var_forward '
+                                                                '= 1)) | '
+                                                                '((env_x = 24) '
+                                                                '& '
+                                                                '(var_forward '
+                                                                '= -1))) & '
+                                                                '(env_y != '
+                                                                'env_hole_9)) '
+                                                                '| ((((env_x = '
+                                                                '24) & '
+                                                                '(var_forward '
+                                                                '= 1)) | '
+                                                                '((env_x = 25) '
+                                                                '& '
+                                                                '(var_forward '
+                                                                '= -1))) & '
+                                                                '(env_y != '
+                                                                'env_hole_10)))',
+                                                                'env_x'),
+                                                            (   'TRUE',
+                                                                '(env_x + '
+                                                                'var_forward)')]),
+                                                    (   'go_forward_1',
+                                                        False,
+                                                        [   (   '((env_x_stage_1 '
+                                                                '= 0) & '
+                                                                '(var_forward '
+                                                                '= -1))',
+                                                                '0'),
+                                                            (   '((env_x_stage_1 '
+                                                                '= 40) & '
+                                                                '(var_forward '
+                                                                '= 1))',
+                                                                '40'),
+                                                            (   '(((((env_x_stage_1 '
+                                                                '= 14) & '
+                                                                '(var_forward '
+                                                                '= 1)) | '
+                                                                '((env_x_stage_1 '
+                                                                '= 15) & '
+                                                                '(var_forward '
+                                                                '= -1))) & '
+                                                                '(env_y != '
+                                                                'env_hole_1)) '
+                                                                '| '
+                                                                '((((env_x_stage_1 '
+                                                                '= 15) & '
+                                                                '(var_forward '
+                                                                '= 1)) | '
+                                                                '((env_x_stage_1 '
+                                                                '= 16) & '
+                                                                '(var_forward '
+                                                                '= -1))) & '
+                                                                '(env_y != '
+                                                                'env_hole_2)) '
+                                                                '| '
+                                                                '((((env_x_stage_1 '
+                                                                '= 16) & '
+                                                                '(var_forward '
+                                                                '= 1)) | '
+                                                                '((env_x_stage_1 '
+                                                                '= 17) & '
+                                                                '(var_forward '
+                                                                '= -1))) & '
+                                                                '(env_y != '
+                                                                'env_hole_3)) '
+                                                                '| '
+                                                                '((((env_x_stage_1 '
+                                                                '= 17) & '
+                                                                '(var_forward '
+                                                                '= 1)) | '
+                                                                '((env_x_stage_1 '
+                                                                '= 18) & '
+                                                                '(var_forward '
+                                                                '= -1))) & '
+                                                                '(env_y != '
+                                                                'env_hole_4)) '
+                                                                '| '
+                                                                '((((env_x_stage_1 '
+                                                                '= 18) & '
+                                                                '(var_forward '
+                                                                '= 1)) | '
+                                                                '((env_x_stage_1 '
+                                                                '= 19) & '
+                                                                '(var_forward '
+                                                                '= -1))) & '
+                                                                '(env_y != '
+                                                                'env_hole_5)) '
+                                                                '| '
+                                                                '((((env_x_stage_1 '
+                                                                '= 19) & '
+                                                                '(var_forward '
+                                                                '= 1)) | '
+                                                                '((env_x_stage_1 '
+                                                                '= 20) & '
+                                                                '(var_forward '
+                                                                '= -1))) & '
+                                                                '(env_y != '
+                                                                'env_hole_6)) '
+                                                                '| '
+                                                                '((((env_x_stage_1 '
+                                                                '= 20) & '
+                                                                '(var_forward '
+                                                                '= 1)) | '
+                                                                '((env_x_stage_1 '
+                                                                '= 21) & '
+                                                                '(var_forward '
+                                                                '= -1))) & '
+                                                                '(env_y != '
+                                                                'env_hole_7)) '
+                                                                '| '
+                                                                '((((env_x_stage_1 '
+                                                                '= 21) & '
+                                                                '(var_forward '
+                                                                '= 1)) | '
+                                                                '((env_x_stage_1 '
+                                                                '= 22) & '
+                                                                '(var_forward '
+                                                                '= -1))) & '
+                                                                '(env_y != '
+                                                                'env_hole_8)) '
+                                                                '| '
+                                                                '((((env_x_stage_1 '
+                                                                '= 22) & '
+                                                                '(var_forward '
+                                                                '= 1)) | '
+                                                                '((env_x_stage_1 '
+                                                                '= 23) & '
+                                                                '(var_forward '
+                                                                '= -1))) & '
+                                                                '(env_y != '
+                                                                'env_hole_8)) '
+                                                                '| '
+                                                                '((((env_x_stage_1 '
+                                                                '= 23) & '
+                                                                '(var_forward '
+                                                                '= 1)) | '
+                                                                '((env_x_stage_1 '
+                                                                '= 24) & '
+                                                                '(var_forward '
+                                                                '= -1))) & '
+                                                                '(env_y != '
+                                                                'env_hole_9)) '
+                                                                '| '
+                                                                '((((env_x_stage_1 '
+                                                                '= 24) & '
+                                                                '(var_forward '
+                                                                '= 1)) | '
+                                                                '((env_x_stage_1 '
+                                                                '= 25) & '
+                                                                '(var_forward '
+                                                                '= -1))) & '
+                                                                '(env_y != '
+                                                                'env_hole_10)))',
+                                                                'env_x_stage_1'),
+                                                            (   'TRUE',
+                                                                '(env_x_stage_1 '
+                                                                '+ '
+                                                                'var_forward)')]),
+                                                    (   'go_forward_2',
+                                                        False,
+                                                        [   (   '((env_x_stage_2 '
+                                                                '= 0) & '
+                                                                '(var_forward '
+                                                                '= -1))',
+                                                                '0'),
+                                                            (   '((env_x_stage_2 '
+                                                                '= 40) & '
+                                                                '(var_forward '
+                                                                '= 1))',
+                                                                '40'),
+                                                            (   '(((((env_x_stage_2 '
+                                                                '= 14) & '
+                                                                '(var_forward '
+                                                                '= 1)) | '
+                                                                '((env_x_stage_2 '
+                                                                '= 15) & '
+                                                                '(var_forward '
+                                                                '= -1))) & '
+                                                                '(env_y_stage_3 '
+                                                                '!= '
+                                                                'env_hole_1)) '
+                                                                '| '
+                                                                '((((env_x_stage_2 '
+                                                                '= 15) & '
+                                                                '(var_forward '
+                                                                '= 1)) | '
+                                                                '((env_x_stage_2 '
+                                                                '= 16) & '
+                                                                '(var_forward '
+                                                                '= -1))) & '
+                                                                '(env_y_stage_3 '
+                                                                '!= '
+                                                                'env_hole_2)) '
+                                                                '| '
+                                                                '((((env_x_stage_2 '
+                                                                '= 16) & '
+                                                                '(var_forward '
+                                                                '= 1)) | '
+                                                                '((env_x_stage_2 '
+                                                                '= 17) & '
+                                                                '(var_forward '
+                                                                '= -1))) & '
+                                                                '(env_y_stage_3 '
+                                                                '!= '
+                                                                'env_hole_3)) '
+                                                                '| '
+                                                                '((((env_x_stage_2 '
+                                                                '= 17) & '
+                                                                '(var_forward '
+                                                                '= 1)) | '
+                                                                '((env_x_stage_2 '
+                                                                '= 18) & '
+                                                                '(var_forward '
+                                                                '= -1))) & '
+                                                                '(env_y_stage_3 '
+                                                                '!= '
+                                                                'env_hole_4)) '
+                                                                '| '
+                                                                '((((env_x_stage_2 '
+                                                                '= 18) & '
+                                                                '(var_forward '
+                                                                '= 1)) | '
+                                                                '((env_x_stage_2 '
+                                                                '= 19) & '
+                                                                '(var_forward '
+                                                                '= -1))) & '
+                                                                '(env_y_stage_3 '
+                                                                '!= '
+                                                                'env_hole_5)) '
+                                                                '| '
+                                                                '((((env_x_stage_2 '
+                                                                '= 19) & '
+                                                                '(var_forward '
+                                                                '= 1)) | '
+                                                                '((env_x_stage_2 '
+                                                                '= 20) & '
+                                                                '(var_forward '
+                                                                '= -1))) & '
+                                                                '(env_y_stage_3 '
+                                                                '!= '
+                                                                'env_hole_6)) '
+                                                                '| '
+                                                                '((((env_x_stage_2 '
+                                                                '= 20) & '
+                                                                '(var_forward '
+                                                                '= 1)) | '
+                                                                '((env_x_stage_2 '
+                                                                '= 21) & '
+                                                                '(var_forward '
+                                                                '= -1))) & '
+                                                                '(env_y_stage_3 '
+                                                                '!= '
+                                                                'env_hole_7)) '
+                                                                '| '
+                                                                '((((env_x_stage_2 '
+                                                                '= 21) & '
+                                                                '(var_forward '
+                                                                '= 1)) | '
+                                                                '((env_x_stage_2 '
+                                                                '= 22) & '
+                                                                '(var_forward '
+                                                                '= -1))) & '
+                                                                '(env_y_stage_3 '
+                                                                '!= '
+                                                                'env_hole_8)) '
+                                                                '| '
+                                                                '((((env_x_stage_2 '
+                                                                '= 22) & '
+                                                                '(var_forward '
+                                                                '= 1)) | '
+                                                                '((env_x_stage_2 '
+                                                                '= 23) & '
+                                                                '(var_forward '
+                                                                '= -1))) & '
+                                                                '(env_y_stage_3 '
+                                                                '!= '
+                                                                'env_hole_8)) '
+                                                                '| '
+                                                                '((((env_x_stage_2 '
+                                                                '= 23) & '
+                                                                '(var_forward '
+                                                                '= 1)) | '
+                                                                '((env_x_stage_2 '
+                                                                '= 24) & '
+                                                                '(var_forward '
+                                                                '= -1))) & '
+                                                                '(env_y_stage_3 '
+                                                                '!= '
+                                                                'env_hole_9)) '
+                                                                '| '
+                                                                '((((env_x_stage_2 '
+                                                                '= 24) & '
+                                                                '(var_forward '
+                                                                '= 1)) | '
+                                                                '((env_x_stage_2 '
+                                                                '= 25) & '
+                                                                '(var_forward '
+                                                                '= -1))) & '
+                                                                '(env_y_stage_3 '
+                                                                '!= '
+                                                                'env_hole_10)))',
+                                                                'env_x_stage_2'),
+                                                            (   'TRUE',
+                                                                '(env_x_stage_2 '
+                                                                '+ '
+                                                                'var_forward)')])],
+                                  'prefix': 'env_'},
+                     'env_y': {   'custom_value_range': None,
+                                  'initial_value': [('TRUE', '0')],
+                                  'keep_stage_0': True,
+                                  'max_value': 40,
+                                  'min_value': 0,
+                                  'mode': 'VAR',
+                                  'name': 'y',
+                                  'next_value': [   (   'go_side',
+                                                        False,
+                                                        [   (   '((env_y = 0) '
+                                                                '& '
+                                                                '(var_side_stage_3 '
+                                                                '= -1))',
+                                                                '0'),
+                                                            (   '((env_y = 40) '
+                                                                '& '
+                                                                '(var_side_stage_3 '
+                                                                '= 1))',
+                                                                '40'),
+                                                            (   'TRUE',
+                                                                '(env_y + '
+                                                                'var_side_stage_3)')]),
+                                                    (   'go_side_1',
+                                                        False,
+                                                        [   (   '((env_y_stage_1 '
+                                                                '= 0) & '
+                                                                '(var_side_stage_3 '
+                                                                '= -1))',
+                                                                '0'),
+                                                            (   '((env_y_stage_1 '
+                                                                '= 40) & '
+                                                                '(var_side_stage_3 '
+                                                                '= 1))',
+                                                                '40'),
+                                                            (   'TRUE',
+                                                                '(env_y_stage_1 '
+                                                                '+ '
+                                                                'var_side_stage_3)')]),
+                                                    (   'go_side_2',
+                                                        False,
+                                                        [   (   '((env_y_stage_2 '
+                                                                '= 0) & '
+                                                                '(var_side_stage_3 '
+                                                                '= -1))',
+                                                                '0'),
+                                                            (   '((env_y_stage_2 '
+                                                                '= 40) & '
+                                                                '(var_side_stage_3 '
+                                                                '= 1))',
+                                                                '40'),
+                                                            (   'TRUE',
+                                                                '(env_y_stage_2 '
+                                                                '+ '
+                                                                'var_side_stage_3)')])],
+                                  'prefix': 'env_'},
+                     'forward': {   'custom_value_range': None,
+                                    'initial_value': [   (   'var_have_flag',
+                                                             '-1'),
+                                                         ('TRUE', '1')],
+                                    'keep_stage_0': True,
+                                    'max_value': 0,
+                                    'min_value': 0,
+                                    'mode': 'DEFINE',
+                                    'name': 'forward',
+                                    'next_value': [],
+                                    'prefix': 'var_'},
+                     'have_flag': {   'custom_value_range': '{TRUE, FALSE}',
+                                      'initial_value': [('TRUE', 'FALSE')],
+                                      'keep_stage_0': True,
+                                      'max_value': 1,
+                                      'min_value': 0,
+                                      'mode': 'VAR',
+                                      'name': 'have_flag',
+                                      'next_value': [   (   'search_tile',
+                                                            False,
+                                                            [   (   '!(TRUE)',
+                                                                    'var_have_flag'),
+                                                                (   'var_have_flag',
+                                                                    'TRUE'),
+                                                                (   'TRUE',
+                                                                    '(search_tile_DOT_tile_searched_stage_1 '
+                                                                    '& (env_x '
+                                                                    '= '
+                                                                    'env_flag_x) '
+                                                                    '& (env_y '
+                                                                    '= '
+                                                                    'env_flag_y))')])],
+                                      'prefix': 'var_'},
+                     'search_tile_DOT_tile_searched': {   'custom_value_range': '{TRUE, '
+                                                                                'FALSE}',
+                                                          'initial_value': [   (   'TRUE',
+                                                                                   'FALSE')],
+                                                          'keep_stage_0': False,
+                                                          'max_value': 1,
+                                                          'min_value': 0,
+                                                          'mode': 'VAR',
+                                                          'name': 'search_tile_DOT_tile_searched',
+                                                          'next_value': [   (   'search_tile',
+                                                                                True,
+                                                                                [   (   '!(TRUE)',
+                                                                                        'LINK_TO_PREVIOUS_FINAL_search_tile_DOT_tile_searched'),
+                                                                                    (   '(next(env_tile_progress) '
+                                                                                        '= '
+                                                                                        '2)',
+                                                                                        'TRUE'),
+                                                                                    (   'TRUE',
+                                                                                        '{TRUE, '
+                                                                                        'FALSE}')])],
+                                                          'prefix': ''},
+                     'side': {   'custom_value_range': '{-1, 1}',
+                                 'initial_value': [('TRUE', '1')],
+                                 'keep_stage_0': True,
+                                 'max_value': 1,
+                                 'min_value': 0,
+                                 'mode': 'VAR',
+                                 'name': 'side',
+                                 'next_value': [   (   'change_side',
+                                                       False,
+                                                       [   (   '(var_side = 1)',
+                                                               '-1'),
+                                                           ('TRUE', '1')]),
+                                                   (   'change_side_1',
+                                                       False,
+                                                       [   (   '(var_side_stage_1 '
+                                                               '= 1)',
+                                                               '-1'),
+                                                           ('TRUE', '1')]),
+                                                   (   'change_side_2',
+                                                       False,
+                                                       [   (   '(var_side_stage_2 '
+                                                               '= 1)',
+                                                               '-1'),
+                                                           ('TRUE', '1')])],
+                                 'prefix': 'var_'},
+                     'zone': {   'custom_value_range': '{home, maze, target}',
+                                 'initial_value': [('TRUE', 'home')],
+                                 'keep_stage_0': True,
+                                 'max_value': 1,
+                                 'min_value': 0,
+                                 'mode': 'VAR',
+                                 'name': 'zone',
+                                 'next_value': [   (   'set_zone',
+                                                       False,
+                                                       [   (   '!(TRUE)',
+                                                               'var_zone'),
+                                                           (   '(env_x <= 13)',
+                                                               'home'),
+                                                           (   '(env_x >= 26)',
+                                                               'target'),
+                                                           ('TRUE', 'maze')])],
+                                 'prefix': 'var_'}}}

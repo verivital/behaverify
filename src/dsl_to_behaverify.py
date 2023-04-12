@@ -30,30 +30,44 @@ def get_variables(model, keep_stage_0):
     none. purely functional.
     '''
     # create each variable type using the template.
+    print(model.variables[1].model_as)
+    print(model.variables[1].model_as == 'DEFINE')
     variables = {variable_reference(variable.name, False, '', False) :
-                 create_variable_template(variable.name, variable.model_as,
-                                          (None if (variable.domain.min_val is not None or variable.model_as == 'DEFAULT') else ('{TRUE, FALSE}' if variable.domain.boolean is not None else ('{' + ', '.join(variable.domain.enums) + '}'))),
-                                          0 if variable.domain.min_val is None else variable.domain.min_val,
-                                          1 if variable.domain.min_val is None else variable.domain.max_val,
-                                          None, [], 'var_', keep_stage_0
-                                          )
-                 for variable in model.variables}
-    env_variables = {variable_reference(variable.name, False, '', True) :
+                 (
+                     create_variable_template(variable.name, variable.model_as, None, 0, 0, None, [], 'var_', False)
+                     if variable.model_as == 'DEFINE' else
                      create_variable_template(variable.name, variable.model_as,
-                                              (None if (variable.domain.min_val is not None or variable.model_as == 'DEFAULT') else ('{TRUE, FALSE}' if variable.domain.boolean is not None else ('{' + ', '.join(variable.domain.enums) + '}'))),
+                                              (None if (variable.domain.min_val is not None or variable.model_as == 'DEFAULT') else ('{TRUE, FALSE}' if variable.domain.boolean is not None else ('{' + ', '.join(map(str, variable.domain.enums)) + '}'))),
                                               0 if variable.domain.min_val is None else variable.domain.min_val,
                                               1 if variable.domain.min_val is None else variable.domain.max_val,
-                                              None, [], 'env_', keep_stage_0
+                                              None, [], 'var_', keep_stage_0
                                               )
+                  )
+                 for variable in model.variables}
+    env_variables = {variable_reference(variable.name, False, '', True) :
+                     (
+                         create_variable_template(variable.name, variable.model_as, None, 0, 0, None, [], 'env_', False)
+                         if variable.model_as == 'DEFINE' else
+                         create_variable_template(variable.name, variable.model_as,
+                                                  (None if (variable.domain.min_val is not None or variable.model_as == 'DEFAULT') else ('{TRUE, FALSE}' if variable.domain.boolean is not None else ('{' + ', '.join(map(str, variable.domain.enums)) + '}'))),
+                                                  0 if variable.domain.min_val is None else variable.domain.min_val,
+                                                  1 if variable.domain.min_val is None else variable.domain.max_val,
+                                                  None, [], 'env_', keep_stage_0
+                                                  )
+                     )
                      for variable in model.environment_variables}
     variables.update(env_variables)
     local_variables = {variable.name :
-                       create_variable_template(variable.name, variable.model_as,
-                                                (None if (variable.domain.min_val is not None or variable.model_as == 'DEFAULT') else ('{TRUE, FALSE}' if variable.domain.boolean is not None else ('{' + ', '.join(variable.domain.enums) + '}'))),
-                                                0 if variable.domain.min_val is None else variable.domain.min_val,
-                                                1 if variable.domain.min_val is None else variable.domain.max_val,
-                                                None, [], '', keep_stage_0
-                                                )
+                       (
+                           create_variable_template(variable.name, variable.model_as, None, 0, 0, None, [], '', False)
+                           if variable.model_as == 'DEFINE' else
+                           create_variable_template(variable.name, variable.model_as,
+                                                    (None if (variable.domain.min_val is not None or variable.model_as == 'DEFAULT') else ('{TRUE, FALSE}' if variable.domain.boolean is not None else ('{' + ', '.join(map(str, variable.domain.enums)) + '}'))),
+                                                    0 if variable.domain.min_val is None else variable.domain.min_val,
+                                                    1 if variable.domain.min_val is None else variable.domain.max_val,
+                                                    None, [], '', keep_stage_0
+                                                    )
+                       )
                        for variable in model.local_variables}
     return (variables, local_variables)
 
@@ -413,9 +427,11 @@ def create_action(current_node, node_name, parent_name, variables, local_variabl
         for cur_statement in statements:
             if cur_statement.variable_statement is not None:
                 statement = cur_statement.variable_statement
+                format_variable(statement.variable, statement.is_local, node_name, False, variables, local_variables, False, False, False, None)
                 if init_statement:
                     new_stage = make_new_stage(statement, node_name, variables, local_variables, False, False, None)
                     variable_key = variable_reference(statement.variable.name, statement.is_local, node_name, False)
+                    # print(variables.keys())
                     variables[variable_key]['initial_value'] = new_stage
                 else:
                     variable_key = variable_reference(statement.variable.name, statement.is_local, node_name, False)
@@ -486,13 +502,13 @@ def create_action(current_node, node_name, parent_name, variables, local_variabl
                                                            [('!(' + condition + ')',
                                                              format_variable(variable_statement.variable, variable_statement.is_local,
                                                                              node_name, False, variables, local_variables, True,
-                                                                             (False if keep_stage_0 or len(variables['next_value']) > 0 else True),
-                                                                             (None if keep_stage_0 or len(variables['next_value']) > 0 else variable_key))
+                                                                             (False if keep_stage_0 or len(variable['next_value']) > 0 else True),
+                                                                             (None if keep_stage_0 or len(variable['next_value']) > 0 else variable_key))
                                                              )]
                                                            +
                                                            make_new_stage(variable_statement, node_name, variables, local_variables, True,
-                                                                          (False if keep_stage_0 or len(variables['next_value']) > 0 else True),
-                                                                          (None if keep_stage_0 or len(variables['next_value']) > 0 else variable_key)))))
+                                                                          (False if keep_stage_0 or len(variable['next_value']) > 0 else True),
+                                                                          (None if keep_stage_0 or len(variable['next_value']) > 0 else variable_key)))))
                         variable['keep_stage_0'] = keep_stage_0
             elif cur_statement.write_statement is not None:
                 statements = cur_statement.write_statement.update
@@ -506,8 +522,8 @@ def create_action(current_node, node_name, parent_name, variables, local_variabl
                         variable['next_value'].append((node_name,
                                                        non_determinism,
                                                        make_new_stage(statement, node_name, variables, local_variables, True,
-                                                                      (False if keep_stage_0 or len(variables['next_value']) > 0 else True),
-                                                                      (None if keep_stage_0 or len(variables['next_value']) > 0 else variable_key))))
+                                                                      (False if keep_stage_0 or len(variable['next_value']) > 0 else True),
+                                                                      (None if keep_stage_0 or len(variable['next_value']) > 0 else variable_key))))
                         variable['keep_stage_0'] = keep_stage_0
                     else:
                         delayed_statements.append((node_name, statement))
@@ -576,8 +592,13 @@ def walk_tree(model, variables, local_variables):
 
 
 def walk_tree_recursive(current_node, parent_name, nodes, node_names, variables, local_variables, delayed_statements):
-    if not hasattr(current_node, 'name'):
-        current_node = current_node.leaf
+    while (not hasattr(current_node, 'name') or hasattr(current_node, 'sub_root')):
+        if hasattr(current_node, 'leaf'):
+            current_node = current_node.leaf
+        else:
+            # print(dir(current_node))
+            current_node = current_node.sub_root
+    # the above deals with sub_trees and leaf nodes, ensuring that the current_node variable has the next actual node at this point
     # next, we get the name of this node, and correct for duplication
 
     node_name = create_node_name(current_node.name.replace(' ', ''), node_names)
@@ -635,6 +656,10 @@ def main():
 
     metamodel = textx.metamodel_from_file(args.metamodel_file, auto_init_attributes = False)
     model = metamodel.model_from_file(args.model_file)
+
+    print(model.sub_trees)
+    print(model.sub_trees[0])
+    print(dir(model.sub_trees[0]))
 
     (variables, local_variables) = get_variables(model, args.keep_stage_0)
     tick_condition = 'TRUE' if model.tick_condition is None else format_code(model.tick_condition, None, variables, local_variables, True, False, None)
