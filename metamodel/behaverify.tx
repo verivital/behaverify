@@ -25,7 +25,10 @@ BehaviorModel:
     'actions' '{'
     action_nodes *= action_node
     '}' 'end_actions'
-    'root_node' root = node
+    'sub_trees' '{'
+    sub_trees *= sub_tree
+    '}' 'end_sub_trees'
+    'tree' '{' root = node '}' 'end_tree'
     ('tick_prerequisite' '{' tick_condition = code_statement_env '}' 'end_tick_prerequisite')?
     ('specifications' '{' specifications *= specification '}' 'end_specifications')
 ;
@@ -39,8 +42,21 @@ Comment:
     //nodes are either composite, decorator, or leaf. 
 
 node:
-    composite_node | decorator_node | leaf_node
+    sub_tree_reference  | composite_node | decorator_node | leaf_node
 ;
+
+    sub_tree :
+    'sub_tree' '{'
+    name = ID
+    sub_root = node
+    '}' 'end_sub_tree'
+;
+    sub_tree_reference :
+    'insert' '{' 
+    sub_root = [sub_tree]
+    '}' 'end_insert'
+;
+    
 
     composite_node:
     'composite' '{'
@@ -79,6 +95,7 @@ node:
     (node_type = 'check_environment') '{'
     name = ID
     ('imports' '{' imports *= STRING[','] '}' 'end_imports')?
+    'read_variables' '{' read_variables *= [variable]  '}' 'end_read_variables'
     ('python_function' '{' ('from' import_from = STRING)? python_function = STRING 'args' args *= code_statement '}' 'end_python_function')?
     ('condition' '{' condition = code_statement_env '}' 'end_condition')
     '}' 'end_check_environment'

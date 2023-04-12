@@ -98,10 +98,11 @@ def update_method_check(node):
 
 
 def init_method_check_env(node):
-    return (indent(1) + 'def __init__(self, name):' + os.linesep
-            + indent(2) + 'super(' + node.name + ', self).__init__(name)' + os.linesep
-            + indent(2) + 'self.name = name' + os.linesep
-            + os.linesep)
+    return init_method_check(node)
+    # return (indent(1) + 'def __init__(self, name):' + os.linesep
+    #         + indent(2) + 'super(' + node.name + ', self).__init__(name)' + os.linesep
+    #         + indent(2) + 'self.name = name' + os.linesep
+    #         + os.linesep)
 
 
 def update_method_check_env(node):
@@ -112,7 +113,7 @@ def update_method_check_env(node):
                 + '('
                 + ', '.join([format_code(arg) for arg in node.args])
                 + ')'
-                + os.linesep))
+            ))
             + ') else (py_trees.common.Status.FAILURE))' + os.linesep
             + os.linesep)
 
@@ -241,6 +242,8 @@ def custom_imports(node):
 def build_check_node(node):
     return (STANDARD_IMPORTS
             # + custom_imports(node)
+            + os.linesep
+            + os.linesep
             + class_definition(node.name)
             + init_method_check(node)
             + update_method_check(node)
@@ -270,8 +273,12 @@ def walk_tree(model, file_name):
 
 
 def walk_tree_recursive(current_node, node_names, file_name):
-    if not hasattr(current_node, 'name'):
-        current_node = current_node.leaf
+    while (not hasattr(current_node, 'name') or hasattr(current_node, 'sub_root')):
+        if hasattr(current_node, 'leaf'):
+            current_node = current_node.leaf
+        else:
+            # print(dir(current_node))
+            current_node = current_node.sub_root
 
     node_name = create_node_name(current_node.name.replace(' ', ''), node_names)
     node_names.add(node_name)
@@ -280,7 +287,8 @@ def walk_tree_recursive(current_node, node_names, file_name):
     # start of massive if statements, starting with composites
     # -----------------------------------------------------------------------------------
     # start of composite nodes
-    if current_node.node_type == 'check' or current_node.node_type == 'action':
+    print(current_node.node_type)
+    if current_node.node_type == 'check' or current_node.node_type == 'check_environment' or current_node.node_type == 'action':
         with open(file_name, 'a') as f:
             f.write(indent(1) + node_name + ' = ' + current_node.name + '_file.' + current_node.name + '(' + "'" + node_name + "'" + ')' + os.linesep)
         return node_name
@@ -349,11 +357,12 @@ def main():
         with open(args.location + check.name + '_file.py', 'w') as f:
             f.write(build_check_node(check))
     for check_env in model.environment_checks:
+        print(check_env)
         with open(args.location + check_env.name + '_file.py', 'w') as f:
             f.write(build_check_environment_node(check_env))
 
     with open(args.location + args.output_file, 'w') as f:
-        f.write(''.join([('import ' + node.name + '_file' + os.linesep) for node in itertools.chain(model.check_nodes, model.action_nodes)])
+        f.write(''.join([('import ' + node.name + '_file' + os.linesep) for node in itertools.chain(model.check_nodes, model.action_nodes, model.environment_checks)])
                 + 'import py_trees' + os.linesep
                 + os.linesep + os.linesep
                 + 'def create_tree():' + os.linesep
