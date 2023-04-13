@@ -53,11 +53,15 @@ FUNCTION_FORMAT = {
 
 
 def format_variable_name_only(variable_name, is_local, is_env, node_name):
-    return (((node_name + '.') if is_local else ('blackboard.' if not is_env else '')) + variable_name)
+    return (((node_name + '.') if is_local else ('blackboard_reader.' if not is_env else '')) + variable_name)
 
 
 def format_variable(variable, is_local, is_env, node_name):
-    return (((node_name + '.') if is_local else ('blackboard.' if not is_env else '')) + variable.name)
+    return (
+        (variable.name + '()')
+        if variable.model_as == 'DEFINE' and is_env else
+        (((node_name + '.') if is_local else ('blackboard_reader.' if not is_env else '')) + variable.name)
+    )
 
 
 def format_code(code, node_name):
@@ -85,17 +89,43 @@ def variable_assignment(values, node_name):
     return format_code(values[0], node_name)
 
 
-def format_statement(statement, node_name):
-    variable_name = format_variable(statement.variable, statement.is_local if hasattr(statement, 'is_local') else False, True if hasattr(statement, 'instant') else False, node_name)
+def format_statement(statement, node_name, indent_level = 2, override_variable_name = None):
+    variable_name = (
+        format_variable(statement.variable, statement.is_local if hasattr(statement, 'is_local') else False, True if hasattr(statement, 'instant') else False, node_name)
+        if override_variable_name is None else override_variable_name
+    )
     if len(statement.case_results) == 0:
-        return (indent(2) + variable_name + ' = ' + variable_assignment(statement.default_result.values, node_name) + os.linesep)
+        return (indent(indent_level) + variable_name + ' = ' + variable_assignment(statement.default_result.values, node_name) + os.linesep)
     return ((''.join([
-        (indent(2) + 'elif ' + format_code(case_result.condition, node_name) + ':' + os.linesep
-         + (indent(3) + variable_name + ' = ' + variable_assignment(case_result.values, node_name) + os.linesep)
+        (indent(indent_level) + 'elif ' + format_code(case_result.condition, node_name) + ':' + os.linesep
+         + (indent(indent_level + 1) + variable_name + ' = ' + variable_assignment(case_result.values, node_name) + os.linesep)
          ) for case_result in statement.case_results])).replace('elif', 'if', 1)
-            + (indent(2) + 'else:' + os.linesep
-               + indent(3) + variable_name + ' = ' + variable_assignment(statement.default_result.values, node_name) + os.linesep)
+            + (indent(indent_level) + 'else:' + os.linesep
+               + indent(indent_level + 1) + variable_name + ' = ' + variable_assignment(statement.default_result.values, node_name) + os.linesep)
             )
+
+
+def variable_init_none(variable):
+    variable_name = format_variable(variable, False, True, None)
+    return (variable_name + ' = random.choice(['
+            + (
+                ', '.join(map(str, range(variable.domain.min_val, variable.domain.max_val + 1)))
+                if variable.domain.min_val is not None else (
+                        'True, False' if variable.domain.boolean is not None else (
+                            ', '.join(map(str, variable.domain.enums))
+                        )
+                )
+            )
+            + '])' + os.linesep)
+
+
+def create_variable_macro(statement):
+    return (
+        os.linesep
+        + 'def ' + statement.variable.name + '():' + os.linesep
+        + format_statement(statement, None, 1, '_' + statement.variable.name + '_value_to_return_')
+        + indent(1) + 'return _' + statement.variable.name + '_value_to_return_' + os.linesep
+    )
 
 
 def handle_check_env(node):
@@ -125,6 +155,7 @@ def handle_check_env(node):
                 + indent(1) + '-- SIDE EFFECTS' + os.linesep
                 + indent(1) + 'This method is expected to have no side effects (for the tree).' + os.linesep
                 + indent(1) + "'''" + os.linesep
+                + indent(1) + '# below we include an auto generated attempt at implmenting this' + os.linesep
             )
             if node.python_function is not None else '')
 
@@ -169,6 +200,7 @@ def handle_read_statement(statement, node_name):
                 + indent(1) + '-- SIDE EFFECTS' + os.linesep
                 + indent(1) + 'This method is expected to have no side effects (for the tree).' + os.linesep
                 + indent(1) + "'''" + os.linesep
+                + indent(1) + '# below we include an auto generated attempt at implmenting this' + os.linesep
             )
             if statement.python_function is not None else '')
 
@@ -208,8 +240,31 @@ def handle_write_statement(statement, node_name):
                         for x in range(len(statement.update))
                     ])
                 + indent(1) + "'''" + os.linesep
+                + indent(1) + '# below we include an auto generated attempt at implmenting this' + os.linesep
+                + ''.join(
+                    [
+                        ()
+                    ]
+                )
             )
             if statement.python_function is not None else '')
+
+
+def default_preamble(blackboard_variables):
+    return (
+        'import py_trees' + os.linesep
+        + 'import random' + os.linesep
+        + os.linesep
+        + os.linesep
+        + 'blackboard_reader = py_trees.blackboard.Client()' + os.linesep
+        + ''.join(
+            [
+                ('blackboard_reader.register_key(key = ' + "'" + blackboard_variable.name + "'" + ', access = py_trees.common.Access.READ)' + os.linesep)
+                for blackboard_variable in blackboard_variables
+            ]
+        )
+        + os.linesep
+    )
 
 
 def main():
@@ -226,7 +281,7 @@ def main():
 
     to_write = {}
     variables_initial = {
-        format_variable(statement.variable, False, True, None) : format_statement(statement, None)
+        format_variable(statement.variable, False, True, None) : (format_statement(statement, None, 0) if statement.variable.model_as != 'DEFINE' else create_variable_macro(statement))
         for statement in model.initial
         }
     variables_update = {
@@ -243,18 +298,23 @@ def main():
         }
 
     to_write[args.default_file] = {
-        None : (os.linesep).join(
-            [
-                (
-                    format_variable(variable, False, True, None) + ' = '
-                    + (variables_initial[format_variable(variable, False, True, None)] if format_variable(variable, False, True, None) in variables_initial else 'None')
-                    + os.linesep
-                    + (('# this variable develops in the following way between ticks' + os.linesep + variables_update[format_variable(variable, False, True, None)])
-                       if format_variable(variable, False, True, None) in variables_update else
-                       ('# this variable does not change bewteen ticks' + os.linesep))
-                )
-                for variable in model.environment_variables
-            ]
+        None : (
+            default_preamble(model.variables)
+            + (os.linesep).join(
+                [
+                    (
+                        (variables_initial[format_variable(variable, False, True, None)]
+                         if format_variable(variable, False, True, None) in variables_initial else
+                         variable_init_none(variable))
+                        # + os.linesep
+                        + (('# this variable develops in the following way between ticks' + os.linesep + variables_update[format_variable(variable, False, True, None)])
+                           if format_variable(variable, False, True, None) in variables_update else
+                           ('# this variable does not change between ticks' + os.linesep))
+                        + (os.linesep if variable.model_as == 'DEFINE' else '')
+                    )
+                    for variable in model.environment_variables
+                ]
+            )
         )
     }
 
