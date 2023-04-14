@@ -2,6 +2,16 @@ import py_trees
 import random
 
 
+delayed_action_queue = []
+
+
+def execute_delayed_action_queue():
+    global delayed_action_queue
+    for delayed_action in delayed_action_queue:
+        delayed_action()
+    return
+
+
 blackboard_reader = py_trees.blackboard.Client()
 blackboard_reader.register_key(key = 'zone', access = py_trees.common.Access.READ)
 blackboard_reader.register_key(key = 'forward', access = py_trees.common.Access.READ)
@@ -67,12 +77,14 @@ def check_flag_not_returned():
     -- RETURN
     This method is expected to return True or False.
     This method is being modeled using the following behavior:
-    not(flag_returned())
+    not (flag_returned())
     -- SIDE EFFECTS
     This method is expected to have no side effects (for the tree).
     '''
     # below we include an auto generated attempt at implmenting this
-    pass
+    return (
+        not (flag_returned())
+    )
 
 
 def can_move_forward(arg0):
@@ -82,12 +94,14 @@ def can_move_forward(arg0):
     -- RETURN
     This method is expected to return True or False.
     This method is being modeled using the following behavior:
-    not((((x == 0) and (blackboard_reader.forward == -1)) or ((x == 40) and (blackboard_reader.forward == 1)) or ((((x == 14) and (blackboard_reader.forward == 1)) or ((x == 15) and (blackboard_reader.forward == -1))) and (y != hole_1)) or ((((x == 15) and (blackboard_reader.forward == 1)) or ((x == 16) and (blackboard_reader.forward == -1))) and (y != hole_2)) or ((((x == 16) and (blackboard_reader.forward == 1)) or ((x == 17) and (blackboard_reader.forward == -1))) and (y != hole_3)) or ((((x == 17) and (blackboard_reader.forward == 1)) or ((x == 18) and (blackboard_reader.forward == -1))) and (y != hole_4)) or ((((x == 18) and (blackboard_reader.forward == 1)) or ((x == 19) and (blackboard_reader.forward == -1))) and (y != hole_5)) or ((((x == 19) and (blackboard_reader.forward == 1)) or ((x == 20) and (blackboard_reader.forward == -1))) and (y != hole_6)) or ((((x == 20) and (blackboard_reader.forward == 1)) or ((x == 21) and (blackboard_reader.forward == -1))) and (y != hole_7)) or ((((x == 21) and (blackboard_reader.forward == 1)) or ((x == 22) and (blackboard_reader.forward == -1))) and (y != hole_8)) or ((((x == 22) and (blackboard_reader.forward == 1)) or ((x == 23) and (blackboard_reader.forward == -1))) and (y != hole_8)) or ((((x == 23) and (blackboard_reader.forward == 1)) or ((x == 24) and (blackboard_reader.forward == -1))) and (y != hole_9)) or ((((x == 24) and (blackboard_reader.forward == 1)) or ((x == 25) and (blackboard_reader.forward == -1))) and (y != hole_10))))
+    not ((((x == 0) and (blackboard_reader.forward == -1)) or ((x == 40) and (blackboard_reader.forward == 1)) or ((((x == 14) and (blackboard_reader.forward == 1)) or ((x == 15) and (blackboard_reader.forward == -1))) and (y != hole_1)) or ((((x == 15) and (blackboard_reader.forward == 1)) or ((x == 16) and (blackboard_reader.forward == -1))) and (y != hole_2)) or ((((x == 16) and (blackboard_reader.forward == 1)) or ((x == 17) and (blackboard_reader.forward == -1))) and (y != hole_3)) or ((((x == 17) and (blackboard_reader.forward == 1)) or ((x == 18) and (blackboard_reader.forward == -1))) and (y != hole_4)) or ((((x == 18) and (blackboard_reader.forward == 1)) or ((x == 19) and (blackboard_reader.forward == -1))) and (y != hole_5)) or ((((x == 19) and (blackboard_reader.forward == 1)) or ((x == 20) and (blackboard_reader.forward == -1))) and (y != hole_6)) or ((((x == 20) and (blackboard_reader.forward == 1)) or ((x == 21) and (blackboard_reader.forward == -1))) and (y != hole_7)) or ((((x == 21) and (blackboard_reader.forward == 1)) or ((x == 22) and (blackboard_reader.forward == -1))) and (y != hole_8)) or ((((x == 22) and (blackboard_reader.forward == 1)) or ((x == 23) and (blackboard_reader.forward == -1))) and (y != hole_8)) or ((((x == 23) and (blackboard_reader.forward == 1)) or ((x == 24) and (blackboard_reader.forward == -1))) and (y != hole_9)) or ((((x == 24) and (blackboard_reader.forward == 1)) or ((x == 25) and (blackboard_reader.forward == -1))) and (y != hole_10))))
     -- SIDE EFFECTS
     This method is expected to have no side effects (for the tree).
     '''
     # below we include an auto generated attempt at implmenting this
-    pass
+    return (
+        not ((((x == 0) and (blackboard_reader.forward == -1)) or ((x == 40) and (blackboard_reader.forward == 1)) or ((((x == 14) and (blackboard_reader.forward == 1)) or ((x == 15) and (blackboard_reader.forward == -1))) and (y != hole_1)) or ((((x == 15) and (blackboard_reader.forward == 1)) or ((x == 16) and (blackboard_reader.forward == -1))) and (y != hole_2)) or ((((x == 16) and (blackboard_reader.forward == 1)) or ((x == 17) and (blackboard_reader.forward == -1))) and (y != hole_3)) or ((((x == 17) and (blackboard_reader.forward == 1)) or ((x == 18) and (blackboard_reader.forward == -1))) and (y != hole_4)) or ((((x == 18) and (blackboard_reader.forward == 1)) or ((x == 19) and (blackboard_reader.forward == -1))) and (y != hole_5)) or ((((x == 19) and (blackboard_reader.forward == 1)) or ((x == 20) and (blackboard_reader.forward == -1))) and (y != hole_6)) or ((((x == 20) and (blackboard_reader.forward == 1)) or ((x == 21) and (blackboard_reader.forward == -1))) and (y != hole_7)) or ((((x == 21) and (blackboard_reader.forward == 1)) or ((x == 22) and (blackboard_reader.forward == -1))) and (y != hole_8)) or ((((x == 22) and (blackboard_reader.forward == 1)) or ((x == 23) and (blackboard_reader.forward == -1))) and (y != hole_8)) or ((((x == 23) and (blackboard_reader.forward == 1)) or ((x == 24) and (blackboard_reader.forward == -1))) and (y != hole_9)) or ((((x == 24) and (blackboard_reader.forward == 1)) or ((x == 25) and (blackboard_reader.forward == -1))) and (y != hole_10))))
+    )
 
 
 def can_move_side(arg0):
@@ -97,12 +111,14 @@ def can_move_side(arg0):
     -- RETURN
     This method is expected to return True or False.
     This method is being modeled using the following behavior:
-    not((((y == 0) and (blackboard_reader.side == -1)) or ((y == 40) and (blackboard_reader.side == 1))))
+    not ((((y == 0) and (blackboard_reader.side == -1)) or ((y == 40) and (blackboard_reader.side == 1))))
     -- SIDE EFFECTS
     This method is expected to have no side effects (for the tree).
     '''
     # below we include an auto generated attempt at implmenting this
-    pass
+    return (
+        not ((((y == 0) and (blackboard_reader.side == -1)) or ((y == 40) and (blackboard_reader.side == 1))))
+    )
 
 
 def go_forward(arg0):
@@ -126,7 +142,22 @@ def go_forward(arg0):
 
     '''
     # below we include an auto generated attempt at implmenting this
-    pass
+    global delayed_action_queue
+
+    def delayed_update_for__x():
+        global x
+        if ((x == 0) and (blackboard_reader.forward == -1)):
+            x = 0
+        elif ((x == 40) and (blackboard_reader.forward == 1)):
+            x = 40
+        elif (((((x == 14) and (blackboard_reader.forward == 1)) or ((x == 15) and (blackboard_reader.forward == -1))) and (y != hole_1)) or ((((x == 15) and (blackboard_reader.forward == 1)) or ((x == 16) and (blackboard_reader.forward == -1))) and (y != hole_2)) or ((((x == 16) and (blackboard_reader.forward == 1)) or ((x == 17) and (blackboard_reader.forward == -1))) and (y != hole_3)) or ((((x == 17) and (blackboard_reader.forward == 1)) or ((x == 18) and (blackboard_reader.forward == -1))) and (y != hole_4)) or ((((x == 18) and (blackboard_reader.forward == 1)) or ((x == 19) and (blackboard_reader.forward == -1))) and (y != hole_5)) or ((((x == 19) and (blackboard_reader.forward == 1)) or ((x == 20) and (blackboard_reader.forward == -1))) and (y != hole_6)) or ((((x == 20) and (blackboard_reader.forward == 1)) or ((x == 21) and (blackboard_reader.forward == -1))) and (y != hole_7)) or ((((x == 21) and (blackboard_reader.forward == 1)) or ((x == 22) and (blackboard_reader.forward == -1))) and (y != hole_8)) or ((((x == 22) and (blackboard_reader.forward == 1)) or ((x == 23) and (blackboard_reader.forward == -1))) and (y != hole_8)) or ((((x == 23) and (blackboard_reader.forward == 1)) or ((x == 24) and (blackboard_reader.forward == -1))) and (y != hole_9)) or ((((x == 24) and (blackboard_reader.forward == 1)) or ((x == 25) and (blackboard_reader.forward == -1))) and (y != hole_10))):
+            x = x
+        else:
+            x = (x + blackboard_reader.forward)
+        return
+    delayed_action_queue.append(delayed_update_for__x)
+
+    return
 
 
 def go_side(arg0):
@@ -148,7 +179,20 @@ def go_side(arg0):
 
     '''
     # below we include an auto generated attempt at implmenting this
-    pass
+    global delayed_action_queue
+
+    def delayed_update_for__y():
+        global y
+        if ((y == 0) and (blackboard_reader.side == -1)):
+            y = 0
+        elif ((y == 40) and (blackboard_reader.side == 1)):
+            y = 40
+        else:
+            y = (y + blackboard_reader.side)
+        return
+    delayed_action_queue.append(delayed_update_for__y)
+
+    return
 
 
 def search_tile():
@@ -176,7 +220,19 @@ def search_tile():
     This method is expected to have no side effects (for the tree).
     '''
     # below we include an auto generated attempt at implmenting this
-    pass
+    search_tile__return_condition = True
+    if search_tile__return_condition:
+        if (tile_progress == 2):
+            search_tile.tile_searched = True
+        else:
+            search_tile.tile_searched = random.choice([True, False])
+        if blackboard_reader.have_flag:
+            blackboard_reader.have_flag = True
+        else:
+            blackboard_reader.have_flag = (search_tile.tile_searched and (x == flag_x) and (y == flag_y))
+        return (True, search_tile.tile_searched, blackboard_reader.have_flag)
+    else:
+        return (False, None, None)
 
 
 def update_search(arg0):
@@ -196,7 +252,18 @@ def update_search(arg0):
 
     '''
     # below we include an auto generated attempt at implmenting this
-    pass
+    global delayed_action_queue
+
+    def delayed_update_for__tile_progress():
+        global tile_progress
+        if search_tile.tile_searched:
+            tile_progress = 2
+        else:
+            tile_progress = min(2, (1 + tile_progress))
+        return
+    delayed_action_queue.append(delayed_update_for__tile_progress)
+
+    return
 
 
 def compute_zone():
@@ -220,4 +287,14 @@ def compute_zone():
     This method is expected to have no side effects (for the tree).
     '''
     # below we include an auto generated attempt at implmenting this
-    pass
+    compute_zone__return_condition = True
+    if compute_zone__return_condition:
+        if (x <= 13):
+            blackboard_reader.zone = 'home'
+        elif (x >= 26):
+            blackboard_reader.zone = 'target'
+        else:
+            blackboard_reader.zone = 'maze'
+        return (True, blackboard_reader.zone)
+    else:
+        return (False, None)
