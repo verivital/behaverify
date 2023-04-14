@@ -29,7 +29,7 @@ FUNCTION_FORMAT = {
     'cos' : ('math.cos', format_function_before),
     'tan' : ('math.tan', format_function_before),
     'ln' : ('math.log', format_function_before),
-    'not' : ('not', format_function_before),
+    'not' : ('not ', format_function_before),  # space intentionally added here
     'and' : ('and', format_function_between),
     'or' : ('or', format_function_between),
     'xor' : ('operator.xor', format_function_between),
@@ -156,16 +156,20 @@ def handle_check_env(node):
                 + indent(1) + 'This method is expected to have no side effects (for the tree).' + os.linesep
                 + indent(1) + "'''" + os.linesep
                 + indent(1) + '# below we include an auto generated attempt at implmenting this' + os.linesep
+                + indent(1) + 'return (' + os.linesep
+                + indent(2) + format_code(node.condition, node.name) + os.linesep
+                + indent(1) + ')' + os.linesep
             )
             if node.python_function is not None else '')
 
 
 def handle_read_statement(statement, node_name):
+    function_name = statement.python_function.split('.')[-1]
     return (statement.import_from,
             (
                 'def '
                 + (
-                    statement.python_function.split('.')[-1]
+                    function_name
                     + '('
                     + ', '.join([('arg' + str(x)) for x in range(len(statement.args))]) +
                     '):' + os.linesep
@@ -201,6 +205,30 @@ def handle_read_statement(statement, node_name):
                 + indent(1) + 'This method is expected to have no side effects (for the tree).' + os.linesep
                 + indent(1) + "'''" + os.linesep
                 + indent(1) + '# below we include an auto generated attempt at implmenting this' + os.linesep
+                + indent(1) + function_name + '__return_condition = '
+                + (
+                    format_code(statement.condition, node_name)
+                    if statement.condition_variable is None else
+                    'random.choice([True, False])'
+                )
+                + os.linesep
+                + indent(1) + 'if ' + function_name + '__return_condition:' + os.linesep
+                + ''.join(
+                    [
+                        (format_statement(variable_statement, node_name))
+                        for variable_statement in statement.variable_statements
+                    ]
+                )
+                + indent(2) + 'return (True' + (', ' if len(statement.variable_statements) > 0 else '')
+                + ', '.join(
+                    [
+                        format_variable(variable_statement.variable, variable_statement.is_local, False, node_name)
+                        for variable_statement in statement.variable_statements
+                    ]
+                )
+                + ')' + os.linesep
+                + indent(1) + 'else:' + os.linesep
+                + indent(2) + 'return (False' + (', None' * len(statement.variable_statements)) + ')' + os.linesep
             )
             if statement.python_function is not None else '')
 
@@ -241,11 +269,33 @@ def handle_write_statement(statement, node_name):
                     ])
                 + indent(1) + "'''" + os.linesep
                 + indent(1) + '# below we include an auto generated attempt at implmenting this' + os.linesep
-                + ''.join(
+                + indent(1) + 'global delayed_action_queue'
+                + ', '.join(
                     [
-                        ()
+                        (format_variable(update.variable, False, True, node_name))
+                        for update in statement.update if update.instant
                     ]
                 )
+                + os.linesep
+                + os.linesep
+                + ''.join(
+                    [
+                        (format_statement(update, node_name, 1))
+                        for update in statement.update if update.instant
+                    ]
+                )
+                + ''.join(
+                    [
+                        (indent(1) + 'def delayed_update_for__' + format_variable(update.variable, False, True, node_name) + '():' + os.linesep
+                         + indent(2) + 'global ' + format_variable(update.variable, False, True, node_name) + os.linesep
+                         + format_statement(update, node_name, 2)
+                         + indent(2) + 'return' + os.linesep
+                         + indent(1) + 'delayed_action_queue.append(delayed_update_for__' + format_variable(update.variable, False, True, node_name) + ')' + os.linesep
+                         + os.linesep)
+                        for update in statement.update if not update.instant
+                    ]
+                )
+                + indent(1) + 'return' + os.linesep
             )
             if statement.python_function is not None else '')
 
@@ -254,6 +304,16 @@ def default_preamble(blackboard_variables):
     return (
         'import py_trees' + os.linesep
         + 'import random' + os.linesep
+        + os.linesep
+        + os.linesep
+        + 'delayed_action_queue = []' + os.linesep
+        + os.linesep
+        + os.linesep
+        + 'def execute_delayed_action_queue():' + os.linesep
+        + indent(1) + 'global delayed_action_queue' + os.linesep
+        + indent(1) + 'for delayed_action in delayed_action_queue:' + os.linesep
+        + indent(2) + 'delayed_action()' + os.linesep
+        + indent(1) + 'return' + os.linesep
         + os.linesep
         + os.linesep
         + 'blackboard_reader = py_trees.blackboard.Client()' + os.linesep
@@ -360,7 +420,7 @@ def main():
                         (
                             ('' if function_name is None else function_name)
                             + to_write[file_name][function_name]
-                            + ('' if function_name is None else (indent(1) + 'pass' + os.linesep))
+                            # + ('' if function_name is None else (indent(1) + 'pass' + os.linesep))
                         )
                         for function_name in to_write[file_name]
                     ]
