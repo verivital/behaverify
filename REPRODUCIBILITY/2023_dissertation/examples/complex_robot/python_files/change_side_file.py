@@ -10,7 +10,6 @@ class change_side(py_trees.behaviour.Behaviour):
         self.name = name
         self.blackboard = self.attach_blackboard_client(name = name)
         self.blackboard.register_key(key = ('side'), access = py_trees.common.Access.WRITE)
-        self.blackboard.side = 1
 
     def update(self):
         if (self.blackboard.side == 1):

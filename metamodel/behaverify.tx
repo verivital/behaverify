@@ -1,17 +1,17 @@
 BehaviorModel:
-    'variables' '{'
-    variables *= variable
-    '}' 'end_variables'
+    'constants' '{'
+    constants *= constant
+    '}' 'end_constants'
+    'blackboard_variables' '{'
+    blackboard_variables *= blackboard_variable
+    '}' 'end_blackboard_variables'
     'local_variables' '{'
-    local_variables *= variable
+    local_variables *= local_variable
     '}' 'end_local_variables'
     'environment' '{'
     'environment_variables' '{'
     environment_variables *= environment_variable
     '}' 'end_environment_variables'
-    'initial_values' '{'
-    initial *= environment_statement
-    '}' 'end_initial_values'
     'update_values' '{'
     update *= environment_statement
     '}' 'end_update_values'
@@ -33,12 +33,16 @@ BehaviorModel:
     ('specifications' '{' specifications *= specification '}' 'end_specifications')
 ;
 
+reserved:
+    'bl' | 'local' | 'env' | 'value'
+;
+
 //comments so that we can explain what is happening in a .tree file
 Comment:
     '#comment#'/[^#]*/'#end_comment#'
 ;
     
-    //--------------------NODES-------------------------------
+    //--------------------SEC:NODES-------------------------------
     //nodes are either composite, decorator, or leaf. 
 
 node:
@@ -87,7 +91,7 @@ node:
     check_node:
     (node_type = 'check') '{'
     name = ID
-    'read_variables' '{' read_variables *= [variable]  '}' 'end_read_variables'
+    'read_variables' '{' read_variables *= [blackboard_variable]  '}' 'end_read_variables'
     ('condition' '{' condition = code_statement '}' 'end_condition')
     '}' 'end_check'
 ;
@@ -95,8 +99,8 @@ node:
     (node_type = 'check_environment') '{'
     name = ID
     ('imports' '{' imports *= STRING[','] '}' 'end_imports')?
-    'read_variables' '{' read_variables *= [variable]  '}' 'end_read_variables'
-    ('python_function' '{' ('from' import_from = STRING)? python_function = STRING 'args' args *= code_statement '}' 'end_python_function')?
+    'read_variables' '{' read_variables *= [blackboard_variable]  '}' 'end_read_variables'
+    ('python_function' '{' ('from' import_from = STRING)? python_function = STRING'}' 'end_python_function')?
     ('condition' '{' condition = code_statement_env '}' 'end_condition')
     '}' 'end_check_environment'
 ;
@@ -105,8 +109,9 @@ node:
     (node_type = 'action') '{'
     name = ID
     ('imports' '{' imports *= STRING[','] '}' 'end_imports')?
-    'read_variables' '{' read_variables *= [variable]  '}' 'end_read_variables'
-    'write_variables' '{' write_variables *= [variable]  '}' 'end_write_variables'
+    'local_variables' '{' local_variables *= [local_variable] '}' 'end_local_variables'
+    'read_variables' '{' read_variables *= [blackboard_variable]  '}' 'end_read_variables'
+    'write_variables' '{' write_variables *= [blackboard_variable]  '}' 'end_write_variables'
     'initial_values' '{'
     init_statements *= statement
     '}' 'end_initial_values'
@@ -118,34 +123,67 @@ node:
     '}' 'end_action'
 ;
 
-    //--------------------VARIABLES---------------------------
+    //--------------------SEC:VARIABLES---------------------------
     environment_variable:
     'environment_variable' '{'
     name = ID
     ((model_as = 'VAR' domain = variable_domain) | (model_as = 'FROZENVAR' domain = variable_domain) | (model_as = 'DEFINE'))
+    initial_value = environment_initial_value
     '}' 'end_environment_variable'
 ;
+
+    environment_initial_value:
+    'initial_value' '{'
+    case_results *= case_result_using_env_non_local
+    default_result = default_result_using_env_non_local
+    '}' 'end_initial_value'
+;
     
-variable:
-    'variable' '{'
+    blackboard_variable:
+    'blackboard_variable' '{'
     name = ID
     ((model_as = 'VAR' domain = variable_domain) | (model_as = 'FROZENVAR' domain = variable_domain) | (model_as = 'DEFINE'))
-    '}' 'end_variable'
+    initial_value = blackboard_initial_value
+    '}' 'end_blackboard_variable'
+;
+
+    blackboard_initial_value:
+    'initial_value' '{'
+    case_results *= case_result_using_non_local
+    default_result = default_result_using_non_local
+    '}' 'end_initial_value'
+;
+
+    local_variable:
+    'local_variable' '{'
+    name = ID
+    ((model_as = 'VAR' domain = variable_domain) | (model_as = 'FROZENVAR' domain = variable_domain) | (model_as = 'DEFINE'))
+    initial_value = blackboard_initial_value //not a typo. uses blackboard initial value. cannot use local variables in the declaration of a local variable here. if you need that, re-initialize in an action node.
+    '}' 'end_local_variable'
 ;
     
     variable_domain:
-    ('[' min_val = INT ',' max_val = INT ']') | (boolean = 'BOOLEAN') | ('{' enums += enumeration[','] '}')
+    ('[' min_val = serene_int ',' max_val = serene_int ']') | (boolean = 'BOOLEAN') | ('{' enums += enumeration[','] '}')
 ;
     
 enumeration:
-    INT | BOOL | STRING
+    serene_int | BOOL | STRING
 ;
+    
+    serene_int:
+    INT | STRING
+;
+
+constant:
+    name = ID '=' val = INT
+;
+    
 
 status:
     'success' | 'running' | 'failure'
 ;
 
-    //--------------------STATEMENTS--------------------------
+    //--------------------SEC:STATEMENTS--------------------------
     
 statement:
     (variable_statement = variable_statement) | (read_statement = read_statement) | (write_statement = write_statement)
@@ -153,58 +191,47 @@ statement:
     
     read_statement:
     'read_environment' '{'
-    ('python_function' '{' ('from' import_from = STRING)? python_function = STRING 'args' args *= code_statement '}' 'end_python_function')?
-    (('condition' '{' condition = code_statement_env '}' 'end_condition') | (is_local = 'local' condition_variable = [variable]))
-    variable_statements += variable_environment_statement
+    ('python_function' '{' ('from' import_from = STRING)? python_function = STRING'}' 'end_python_function')?
+    (('condition' '{' condition = code_statement_env '}' 'end_condition') | (condition_variable = [local_variable]))
+    variable_statements += variable_statement_using_env
     '}' 'end_read_environment'
 ;
     
     write_statement:
     'write_environment' '{'
-    ('python_function' '{' ('from' import_from = STRING)? python_function = STRING 'args' args *= code_statement '}' 'end_python_function')?
+    ('python_function' '{' ('from' import_from = STRING)? python_function = STRING'}' 'end_python_function')?
     'update_values' '{'
     update *= environment_statement
     '}' 'end_update_values'
     '}' 'end_write_environment'
 ;
 
+    //--------------------SEC:VAR_STATEMENTS--------------------------
 
-    
-    variable_environment_statement:
-    'variable_environment_statement' '{'
-    is_local ?= 'local' variable = [variable]
-    case_results *= environment_variable_case_result
-    default_result = environment_variable_default_result
-    '}' 'end_variable_environment_statement'
+    variable_statement_using_env:
+    'variable_statement_using_env' '{'
+    ((mode = 'bl' variable = [blackboard_variable]) | 
+    (mode = 'local' variable = [local_variable]))
+    case_results *= case_result_using_env
+    default_result = default_result_using_env
+    '}' 'end_variable_statement_using_env'
 ;
-
-
 
     environment_statement:
     'environment_statement' '{'
-    instant ?= 'instant' // does noot work with aut version.
-    'env' variable = [environment_variable]
-    case_results *= environment_variable_case_result
-    default_result = environment_variable_default_result
+    instant ?= 'instant' // does not work with aut version.
+    mode = 'env' variable = [environment_variable]
+    case_results *= case_result_using_env
+    default_result = default_result_using_env
     '}' 'end_environment_statement'
-;
-    environment_variable_case_result:
-    ('case' '{' condition = code_statement_env '}' 'end_case')
-    'result' '{'
-    values += code_statement_env[',']
-    '}' 'end_result'
-;
-    environment_variable_default_result:
-    'result' '{'
-    values += code_statement_env[',']
-    '}' 'end_result'
 ;
     
     variable_statement:
     'variable_statement' '{'
-    is_local ?= 'local' variable = [variable]
-    case_results *= variable_case_result
-    default_result = variable_default_result
+    ((mode = 'bl' variable = [blackboard_variable]) | 
+    (mode = 'local' variable = [local_variable]))
+    case_results *= case_result
+    default_result = default_result
     '}' 'end_variable_statement'
 ;
     
@@ -215,16 +242,65 @@ statement:
     '}' 'end_return_statement'
 ;
 
-    variable_case_result:
+    //--------------------SEC:CASE_RESULT--------------------------
+    
+    case_result_using_env:
+    ('case' '{' condition = code_statement_env '}' 'end_case')
+    'result' '{'
+    ((range_mode ?= 'range' ',' values = serene_int ',' values = serene_int ',' values = range_code) | 
+    (values += code_statement_env[',']))
+    '}' 'end_result'
+;
+    
+    default_result_using_env:
+    'result' '{'
+    ((range_mode ?= 'range' ',' values = serene_int ',' values = serene_int ',' values = range_code) | 
+    (values += code_statement_env[',']))
+    '}' 'end_result'
+;
+
+    case_result_using_env_non_local:
+    ('case' '{' condition = code_statement_env_non_local '}' 'end_case')
+    'result' '{'
+    ((range_mode ?= 'range' ',' values = serene_int ',' values = serene_int ',' values = range_code) | 
+    (values += code_statement_env_non_local[',']))
+    '}' 'end_result'
+;
+    
+    default_result_using_env_non_local:
+    'result' '{'
+    ((range_mode ?= 'range' ',' values = serene_int ',' values = serene_int ',' values = range_code) | 
+    (values += code_statement_env_non_local[',']))
+    '}' 'end_result'
+;
+
+    case_result:
     ('case' '{' condition = code_statement '}' 'end_case')
     'result' '{'
-    values += code_statement[',']
+    ((range_mode ?= 'range' ',' values = serene_int ',' values = serene_int ',' values = range_code) | 
+    (values += code_statement[',']))
     '}' 'end_result'
 ;
         
-    variable_default_result:
+    default_result:
     'result' '{'
-    values += code_statement[',']
+    ((range_mode ?= 'range' ',' values = serene_int ',' values = serene_int ',' values = range_code) | 
+    (values += code_statement[',']))
+    '}' 'end_result'
+;
+
+    case_result_using_non_local:
+    ('case' '{' condition = code_statement_non_local '}' 'end_case')
+    'result' '{'
+    ((range_mode ?= 'range' ',' values = serene_int ',' values = serene_int ',' values = range_code) | 
+    (values += code_statement_non_local[',']))
+    '}' 'end_result'
+;
+        
+    default_result_using_non_local:
+    'result' '{'
+    ((range_mode ?= 'range' ',' values = serene_int ',' values = serene_int ',' values = range_code) | 
+    (values += code_statement_non_local[',']))
     '}' 'end_result'
 ;
 
@@ -242,45 +318,107 @@ statement:
 ;
 
 
-    //--------------------CODE--------------------------------
+    //--------------------SEC:CODE--------------------------------
+
+    range_code:
+    (constant = STRICTFLOAT) | (constant = serene_int) | (constant = BOOL) | (constant = STRING) |
+    (value ?= 'value') |
+    ('(' function_call = range_function ')') |
+    ('(' code_statement = range_code ')')
+;
 
     code_statement:
-    (constant = STRICTFLOAT) | (constant = INT) | (constant = BOOL) | (constant = STRING) |
-    (is_local ?= 'local' variable = [variable]) |
+    (constant = STRICTFLOAT) | (constant = serene_int) | (constant = BOOL) | (constant = STRING) |
+    (mode = 'local' variable = [local_variable]) |
+    (mode = 'bl' variable = [blackboard_variable]) |
     ('(' function_call = function ')') |
     ('(' code_statement = code_statement ')')
 ;
+    
+    code_statement_non_local:
+    (constant = STRICTFLOAT) | (constant = serene_int) | (constant = BOOL) | (constant = STRING) |
+    (mode = 'bl' variable = [blackboard_variable]) |
+    ('(' function_call = function_non_local ')') |
+    ('(' code_statement = code_statement_non_local ')')
+;
 
     code_statement_env:
-    (constant = STRICTFLOAT) | (constant = INT) | (constant = BOOL) | (constant = STRING) |
-    (is_env = 'env' variable = [environment_variable] ) |
-    (is_local ?= 'local' variable = [variable]) |
+    (constant = STRICTFLOAT) | (constant = serene_int) | (constant = BOOL) | (constant = STRING) |
+    (mode = 'env' variable = [environment_variable] ) |
+    (mode = 'local' variable = [local_variable]) |
+    (mode = 'bl' variable = [blackboard_variable]) |
     ('(' function_call = function_env ')') |
     ('(' code_statement = code_statement_env ')')
 ;
+
+    code_statement_env_non_local:
+    (constant = STRICTFLOAT) | (constant = serene_int) | (constant = BOOL) | (constant = STRING) |
+    (mode = 'env' variable = [environment_variable] ) |
+    (mode = 'bl' variable = [blackboard_variable]) |
+    ('(' function_call = function_env_non_local ')') |
+    ('(' code_statement = code_statement_env_non_local ')')
+;
+
+    //--------------------SEC:SPEC_CODE--------------------------------
     
     code_statement_ltl:
-    (constant = STRICTFLOAT) | (constant = INT) | (constant = BOOL) | (constant = STRING) |
-    (is_env = 'env' variable = [environment_variable] read_at = INT) |
-    (('local' node_name = ID)? variable = [variable] read_at = INT) |
+    (constant = STRICTFLOAT) | (constant = serene_int) | (constant = BOOL) | (constant = STRING) |
+    (mode = 'env' variable = [environment_variable] read_at = serene_int) |
+    (mode = 'local' node_name = ID variable = [local_variable] read_at = serene_int) |
+    (mode = 'bl' variable = [blackboard_variable] read_at = serene_int) |
     ('(' function_call = function_ltl ')') |
     ('(' code_statement = code_statement_ltl ')')
 ;
 
     code_statement_ctl:
-    (constant = STRICTFLOAT) | (constant = INT) | (constant = BOOL) | (constant = STRING) |
-    (is_env = 'env' variable = [environment_variable] read_at = INT) |
-    (('local' node_name = ID)? variable = [variable] read_at = INT) |
+    (constant = STRICTFLOAT) | (constant = serene_int) | (constant = BOOL) | (constant = STRING) |
+    (mode = 'env' variable = [environment_variable] read_at = serene_int) |
+    (mode = 'local' node_name = ID variable = [local_variable] read_at = serene_int) |
+    (mode = 'bl' variable = [blackboard_variable] read_at = serene_int) |
     ('(' function_call = function_ctl ')') |
     ('(' code_statement = code_statement_ctl ')')
 ;
 
     code_statement_invar:
-    (constant = STRICTFLOAT) | (constant = INT) | (constant = BOOL) | (constant = STRING) |
-    (is_env = 'env' variable = [environment_variable] read_at = INT) |
-    (('local' node_name = ID)? variable = [variable] read_at = INT) |
+    (constant = STRICTFLOAT) | (constant = serene_int) | (constant = BOOL) | (constant = STRING) |
+    (mode = 'env' variable = [environment_variable] read_at = serene_int) |
+    (mode = 'local' node_name = ID variable = [local_variable] read_at = serene_int) |
+    (mode = 'bl' variable = [blackboard_variable] read_at = serene_int) |
     ('(' function_call = function_invar ')') |
     ('(' code_statement = code_statement_invar ')')
+;
+
+    //--------------------SEC:FUNCTIONS--------------------------------
+
+    range_function:
+    (function_name = 'abs' ',' values = range_code) |
+    (function_name = 'max' ',' values = range_code ',' values = range_code) |
+    (function_name = 'min' ',' values = range_code ',' values = range_code) |
+    (function_name = 'sin' ',' values = range_code) |
+    (function_name = 'cos' ',' values = range_code) |
+    (function_name = 'exp' ',' values = range_code) |
+    (function_name = 'tan' ',' values = range_code) |
+    (function_name = 'ln' ',' values = range_code) |
+    (function_name = 'not' ',' values = range_code) |
+    (function_name = 'and' ',' values += range_code[',']) |
+    (function_name = 'or' ',' values += range_code[',']) |
+    (function_name = 'xor' ',' values = range_code ',' values = range_code) |
+    (function_name = 'xnor' ',' values = range_code ',' values = range_code) |
+    (function_name = 'implies' ',' values = range_code ',' values = range_code) |
+    (function_name = 'equivalent' ',' values = range_code ',' values = range_code) |
+    (function_name = 'equal' ',' values = range_code ',' values = range_code) |
+    (function_name = 'not_equal' ',' values = range_code ',' values = range_code) |
+    (function_name = 'less_than' ',' values = range_code ',' values = range_code) |
+    (function_name = 'greater_than' ',' values = range_code ',' values = range_code) |
+    (function_name = 'less_than_or_equal' ',' values = range_code ',' values = range_code) |
+    (function_name = 'greater_than_or_equal' ',' values = range_code ',' values = range_code) |
+    (function_name = 'negative' ',' values = range_code) |
+    (function_name = 'addition' ',' values += range_code[',']) |
+    (function_name = 'subtraction' ',' values = range_code ',' values = range_code) |
+    (function_name = 'multiplication' ',' values += range_code[',']) |
+    (function_name = 'division' ',' values = range_code ',' values = range_code) |
+    (function_name = 'mod' ',' values = range_code ',' values = range_code) |
+    (function_name = 'count' ',' values += range_code[','])
 ;
 
 function:
@@ -314,6 +452,38 @@ function:
     (function_name = 'count' ',' values += code_statement[','])
 ;
 
+
+    function_non_local:
+    (function_name = 'abs' ',' values = code_statement_non_local) |
+    (function_name = 'max' ',' values = code_statement_non_local ',' values = code_statement_non_local) |
+    (function_name = 'min' ',' values = code_statement_non_local ',' values = code_statement_non_local) |
+    (function_name = 'sin' ',' values = code_statement_non_local) |
+    (function_name = 'cos' ',' values = code_statement_non_local) |
+    (function_name = 'exp' ',' values = code_statement_non_local) |
+    (function_name = 'tan' ',' values = code_statement_non_local) |
+    (function_name = 'ln' ',' values = code_statement_non_local) |
+    (function_name = 'not' ',' values = code_statement_non_local) |
+    (function_name = 'and' ',' values += code_statement_non_local[',']) |
+    (function_name = 'or' ',' values += code_statement_non_local[',']) |
+    (function_name = 'xor' ',' values = code_statement_non_local ',' values = code_statement_non_local) |
+    (function_name = 'xnor' ',' values = code_statement_non_local ',' values = code_statement_non_local) |
+    (function_name = 'implies' ',' values = code_statement_non_local ',' values = code_statement_non_local) |
+    (function_name = 'equivalent' ',' values = code_statement_non_local ',' values = code_statement_non_local) |
+    (function_name = 'equal' ',' values = code_statement_non_local ',' values = code_statement_non_local) |
+    (function_name = 'not_equal' ',' values = code_statement_non_local ',' values = code_statement_non_local) |
+    (function_name = 'less_than' ',' values = code_statement_non_local ',' values = code_statement_non_local) |
+    (function_name = 'greater_than' ',' values = code_statement_non_local ',' values = code_statement_non_local) |
+    (function_name = 'less_than_or_equal' ',' values = code_statement_non_local ',' values = code_statement_non_local) |
+    (function_name = 'greater_than_or_equal' ',' values = code_statement_non_local ',' values = code_statement_non_local) |
+    (function_name = 'negative' ',' values = code_statement_non_local) |
+    (function_name = 'addition' ',' values += code_statement_non_local[',']) |
+    (function_name = 'subtraction' ',' values = code_statement_non_local ',' values = code_statement_non_local) |
+    (function_name = 'multiplication' ',' values += code_statement_non_local[',']) |
+    (function_name = 'division' ',' values = code_statement_non_local ',' values = code_statement_non_local) |
+    (function_name = 'mod' ',' values = code_statement_non_local ',' values = code_statement_non_local) |
+    (function_name = 'count' ',' values += code_statement_non_local[','])
+;
+
     function_env:
     (function_name = 'abs' ',' values = code_statement_env) |
     (function_name = 'max' ',' values = code_statement_env ',' values = code_statement_env) |
@@ -343,6 +513,37 @@ function:
     (function_name = 'division' ',' values = code_statement_env ',' values = code_statement_env) |
     (function_name = 'mod' ',' values = code_statement_env ',' values = code_statement_env) |
     (function_name = 'count' ',' values += code_statement_env[','])
+;
+
+    function_env_non_local:
+    (function_name = 'abs' ',' values = code_statement_env_non_local) |
+    (function_name = 'max' ',' values = code_statement_env_non_local ',' values = code_statement_env_non_local) |
+    (function_name = 'min' ',' values = code_statement_env_non_local ',' values = code_statement_env_non_local) |
+    (function_name = 'sin' ',' values = code_statement_env_non_local) |
+    (function_name = 'cos' ',' values = code_statement_env_non_local) |
+    (function_name = 'exp' ',' values = code_statement_env_non_local) |
+    (function_name = 'tan' ',' values = code_statement_env_non_local) |
+    (function_name = 'ln' ',' values = code_statement_env_non_local) |
+    (function_name = 'not' ',' values = code_statement_env_non_local) |
+    (function_name = 'and' ',' values += code_statement_env_non_local[',']) |
+    (function_name = 'or' ',' values += code_statement_env_non_local[',']) |
+    (function_name = 'xor' ',' values = code_statement_env_non_local ',' values = code_statement_env_non_local) |
+    (function_name = 'xnor' ',' values = code_statement_env_non_local ',' values = code_statement_env_non_local) |
+    (function_name = 'implies' ',' values = code_statement_env_non_local ',' values = code_statement_env_non_local) |
+    (function_name = 'equivalent' ',' values = code_statement_env_non_local ',' values = code_statement_env_non_local) |
+    (function_name = 'equal' ',' values = code_statement_env_non_local ',' values = code_statement_env_non_local) |
+    (function_name = 'not_equal' ',' values = code_statement_env_non_local ',' values = code_statement_env_non_local) |
+    (function_name = 'less_than' ',' values = code_statement_env_non_local ',' values = code_statement_env_non_local) |
+    (function_name = 'greater_than' ',' values = code_statement_env_non_local ',' values = code_statement_env_non_local) |
+    (function_name = 'less_than_or_equal' ',' values = code_statement_env_non_local ',' values = code_statement_env_non_local) |
+    (function_name = 'greater_than_or_equal' ',' values = code_statement_env_non_local ',' values = code_statement_env_non_local) |
+    (function_name = 'negative' ',' values = code_statement_env_non_local) |
+    (function_name = 'addition' ',' values += code_statement_env_non_local[',']) |
+    (function_name = 'subtraction' ',' values = code_statement_env_non_local ',' values = code_statement_env_non_local) |
+    (function_name = 'multiplication' ',' values += code_statement_env_non_local[',']) |
+    (function_name = 'division' ',' values = code_statement_env_non_local ',' values = code_statement_env_non_local) |
+    (function_name = 'mod' ',' values = code_statement_env_non_local ',' values = code_statement_env_non_local) |
+    (function_name = 'count' ',' values += code_statement_env_non_local[','])
 ;
 
     function_ltl:
@@ -480,7 +681,7 @@ function:
 ;
 
     bound_statement:
-    '[' lower_bound = INT ',' ((upper_bound = INT) |  (upper_bound = '+oo')) ']'
+    '[' lower_bound = serene_int ',' ((upper_bound = serene_int) |  (upper_bound = '+oo')) ']'
 ;
 
 specification:

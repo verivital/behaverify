@@ -13,5 +13,5 @@ class can_move_forward(py_trees.behaviour.Behaviour):
         self.blackboard.register_key(key = ('forward'), access = py_trees.common.Access.READ)
 
     def update(self):
-        return ((py_trees.common.Status.SUCCESS) if (complex_robot_environment.can_move_forward(self.blackboard.forward)) else (py_trees.common.Status.FAILURE))
+        return ((py_trees.common.Status.SUCCESS) if (complex_robot_environment.can_move_forward()) else (py_trees.common.Status.FAILURE))
 
