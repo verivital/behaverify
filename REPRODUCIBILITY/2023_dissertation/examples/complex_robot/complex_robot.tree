@@ -1,58 +1,71 @@
 #comment#
-0-13 -> home
-14-25 -> maze
-26-40 -> target
+0-9 -> home
+10-20 -> maze
+21-25 -> target
 #end_comment#
 
-variables {
+constants {
+	x_max = 18
+	y_max = 2
+	home_end = 3
+	maze_start = 4
+	maze_end = 14
+	target_start = 15
+} end_constants
+
+
+#comment# REMEMBER TO AUTOMATE REPLACING DEFINE VARIABLES #end_comment#
+blackboard_variables {
 	#comment# Variable declarations go here #end_comment#
-	variable { zone VAR {'home', 'maze', 'target'} } end_variable
-	variable { forward DEFINE } end_variable
-	variable { side VAR {-1, 1} } end_variable
-	variable { have_flag VAR BOOLEAN } end_variable
-} end_variables
+	blackboard_variable { zone VAR {'home', 'maze', 'target'} initial_value { result { 'home' } end_result } end_initial_value} end_blackboard_variable
+	blackboard_variable { side VAR {-1, 1} initial_value { result { 1 } end_result } end_initial_value } end_blackboard_variable
+	blackboard_variable { have_flag VAR BOOLEAN initial_value { result { False } end_result } end_initial_value } end_blackboard_variable
+	blackboard_variable { forward DEFINE initial_value { case { bl have_flag } end_case result { -1 } end_result result { 1 } end_result} end_initial_value} end_blackboard_variable
+} end_blackboard_variables
 
 local_variables {
 	#comment# Local Variable declarations go here #end_comment#
-	variable {tile_searched VAR BOOLEAN} end_variable
-	variable {will_collide VAR BOOLEAN} end_variable
+	local_variable {tile_searched VAR BOOLEAN initial_value { result { False } end_result } end_initial_value} end_local_variable
+	local_variable {will_collide VAR BOOLEAN initial_value { result { False } end_result } end_initial_value} end_local_variable
 } end_local_variables
 
+
+#comment# FIND A WAY TO SPECIFY NON-DETERMINISM WITHOUT MANUALLY WRITING EVERYTHING OUT #end_comment#
 environment {
 	environment_variables {
 		#comment# Local Variable declarations go here #end_comment#
-		environment_variable { x VAR [0, 40] } end_environment_variable
-		environment_variable { y VAR [0, 40] } end_environment_variable
-		environment_variable { hole_1 FROZENVAR [0, 40] } end_environment_variable
-		environment_variable { hole_2 FROZENVAR [0, 40] } end_environment_variable
-		environment_variable { hole_3 FROZENVAR [0, 40] } end_environment_variable
-		environment_variable { hole_4 FROZENVAR [0, 40] } end_environment_variable
-		environment_variable { hole_5 FROZENVAR [0, 40] } end_environment_variable
-		environment_variable { hole_6 FROZENVAR [0, 40] } end_environment_variable
-		environment_variable { hole_7 FROZENVAR [0, 40] } end_environment_variable
-		environment_variable { hole_8 FROZENVAR [0, 40] } end_environment_variable
-		environment_variable { hole_9 FROZENVAR [0, 40] } end_environment_variable
-		environment_variable { hole_10 FROZENVAR [0, 40] } end_environment_variable
-		environment_variable { flag_x VAR [0, 40] } end_environment_variable
-		environment_variable { flag_y VAR [0, 40] } end_environment_variable
-		environment_variable { flag_returned DEFINE } end_environment_variable
-		environment_variable { tile_progress VAR [0, 2] } end_environment_variable
+		environment_variable { x VAR [0, 'x_max'] initial_value { result {0} end_result} end_initial_value} end_environment_variable
+		environment_variable { y VAR [0, 'y_max'] initial_value {result {0} end_result} end_initial_value} end_environment_variable
+		environment_variable { hole_1 FROZENVAR [0, 'y_max'] initial_value { result { range, 0, 'y_max', True } end_result } end_initial_value} end_environment_variable
+		environment_variable { hole_2 FROZENVAR [0, 'y_max'] initial_value { result { range, 0, 'y_max', True } end_result } end_initial_value} end_environment_variable
+		environment_variable { hole_3 FROZENVAR [0, 'y_max'] initial_value { result { range, 0, 'y_max', True } end_result } end_initial_value} end_environment_variable
+		environment_variable { hole_4 FROZENVAR [0, 'y_max'] initial_value { result { range, 0, 'y_max', True } end_result } end_initial_value} end_environment_variable
+		environment_variable { hole_5 FROZENVAR [0, 'y_max'] initial_value { result { range, 0, 'y_max', True } end_result } end_initial_value} end_environment_variable
+		environment_variable { hole_6 FROZENVAR [0, 'y_max'] initial_value { result { range, 0, 'y_max', True } end_result } end_initial_value} end_environment_variable
+		environment_variable { hole_7 FROZENVAR [0, 'y_max'] initial_value { result { range, 0, 'y_max', True } end_result } end_initial_value} end_environment_variable
+		environment_variable { hole_8 FROZENVAR [0, 'y_max'] initial_value { result { range, 0, 'y_max', True } end_result } end_initial_value} end_environment_variable
+		environment_variable { hole_9 FROZENVAR [0, 'y_max'] initial_value { result { range, 0, 'y_max', True } end_result } end_initial_value} end_environment_variable
+		environment_variable {
+			active_hole
+			DEFINE
+			initial_value {
+				case { (equal, (addition, env x, (min, 0, bl forward)), 'maze_start') } end_case result { env hole_1 } end_result
+				case { (equal, (addition, env x, (min, 0, bl forward)), (addition, 'maze_start', 1)) } end_case result { env hole_2 } end_result
+				case { (equal, (addition, env x, (min, 0, bl forward)), (addition, 'maze_start', 2)) } end_case result { env hole_3 } end_result
+				case { (equal, (addition, env x, (min, 0, bl forward)), (addition, 'maze_start', 3)) } end_case result { env hole_4 } end_result
+				case { (equal, (addition, env x, (min, 0, bl forward)), (addition, 'maze_start', 4)) } end_case result { env hole_5 } end_result
+				case { (equal, (addition, env x, (min, 0, bl forward)), (addition, 'maze_start', 5)) } end_case result { env hole_6 } end_result
+				case { (equal, (addition, env x, (min, 0, bl forward)), (addition, 'maze_start', 6)) } end_case result { env hole_7 } end_result
+				case { (equal, (addition, env x, (min, 0, bl forward)), (addition, 'maze_start', 7)) } end_case result { env hole_8 } end_result
+				case { (equal, (addition, env x, (min, 0, bl forward)), (addition, 'maze_start', 8)) } end_case result { env hole_9 } end_result
+				result { -1 } end_result
+			} end_initial_value
+		} end_environment_variable
+		environment_variable { flag_x VAR ['target_start', 'x_max'] initial_value { result { range, 0, 'x_max', (greater_than_or_equal, value, 'target_start') } end_result } end_initial_value } end_environment_variable
+		environment_variable { flag_y VAR [0, 'y_max'] initial_value { result { range, 0, 'y_max', True } end_result } end_initial_value} end_environment_variable
+		environment_variable { flag_returned DEFINE initial_value { result { (and, bl have_flag, (less_than, env x, 'home_end')) } end_result } end_initial_value } end_environment_variable
+		environment_variable { tile_progress VAR [0, 2] initial_value { result { 0 } end_result } end_initial_value} end_environment_variable
 	} end_environment_variables
-	initial_values {
-		#comment# initial values for environment #end_comment#
-		environment_statement {
-			env x result { 0 } end_result
-		} end_environment_statement
-		environment_statement {
-			env y result { 0 } end_result
-		} end_environment_statement
-		environment_statement {
-			env flag_x result { 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40 } end_result
-		} end_environment_statement
-		environment_statement {
-			env flag_returned result { (and, have_flag, (less_than_or_equal, env x, 10)) } end_result
-		} end_environment_statement
-	} end_initial_values
 	update_values {
 		#comment# update values for environment #end_comment#
 	} end_update_values
@@ -63,12 +76,17 @@ checks {
 	check {
 		in_maze
 		read_variables { zone } end_read_variables
-		condition { (equal, zone, 'maze') } end_condition
+		condition { (equal, bl zone, 'maze') } end_condition
+	} end_check
+	check {
+		in_target
+		read_variables { zone } end_read_variables
+		condition { (equal, bl zone, 'target') } end_condition
 	} end_check
 	check {
 		flag_found
 		read_variables { have_flag } end_read_variables
-		condition { have_flag } end_condition
+		condition { bl have_flag } end_condition
 	} end_check
 } end_checks
 
@@ -78,108 +96,35 @@ environment_checks {
 		flag_not_returned
 		imports { 'complex_robot_environment' } end_imports
 		read_variables {} end_read_variables
-		python_function { from 'complex_robot_environment' 'check_flag_not_returned' args } end_python_function
+		python_function { from 'complex_robot_environment' 'check_flag_not_returned'  } end_python_function
 		condition { (not, env flag_returned) } end_condition
 	} end_check_environment
 	check_environment {
 		can_move_forward
 		imports { 'complex_robot_environment' } end_imports
 		read_variables { forward } end_read_variables
-		python_function { from 'complex_robot_environment' 'can_move_forward' args forward } end_python_function
+		python_function { from 'complex_robot_environment' 'can_move_forward'  } end_python_function
 		condition {
-			(not, (or,
-				(and, (equal, env x, 0), (equal, forward, -1)),
-				(and, (equal, env x, 40), (equal, forward, 1)),
-								(and,
-									(or,
-										(and, (equal, env x, 14), (equal, forward, 1)),
-										(and, (equal, env x, 15), (equal, forward, -1))
-									),
-									(not_equal, env y, env hole_1)
-								),
-								(and,
-									(or,
-										(and, (equal, env x, 15), (equal, forward, 1)),
-										(and, (equal, env x, 16), (equal, forward, -1))
-									),
-									(not_equal, env y, env hole_2)
-								),
-								(and,
-									(or,
-										(and, (equal, env x, 16), (equal, forward, 1)),
-										(and, (equal, env x, 17), (equal, forward, -1))
-									),
-									(not_equal, env y, env hole_3)
-								),
-								(and,
-									(or,
-										(and, (equal, env x, 17), (equal, forward, 1)),
-										(and, (equal, env x, 18), (equal, forward, -1))
-									),
-									(not_equal, env y, env hole_4)
-								),
-								(and,
-									(or,
-										(and, (equal, env x, 18), (equal, forward, 1)),
-										(and, (equal, env x, 19), (equal, forward, -1))
-									),
-									(not_equal, env y, env hole_5)
-								),
-								(and,
-									(or,
-										(and, (equal, env x, 19), (equal, forward, 1)),
-										(and, (equal, env x, 20), (equal, forward, -1))
-									),
-									(not_equal, env y, env hole_6)
-								),
-								(and,
-									(or,
-										(and, (equal, env x, 20), (equal, forward, 1)),
-										(and, (equal, env x, 21), (equal, forward, -1))
-									),
-									(not_equal, env y, env hole_7)
-								),
-								(and,
-									(or,
-										(and, (equal, env x, 21), (equal, forward, 1)),
-										(and, (equal, env x, 22), (equal, forward, -1))
-									),
-									(not_equal, env y, env hole_8)
-								),
-								(and,
-									(or,
-										(and, (equal, env x, 22), (equal, forward, 1)),
-										(and, (equal, env x, 23), (equal, forward, -1))
-									),
-									(not_equal, env y, env hole_8)
-								),
-								(and,
-									(or,
-										(and, (equal, env x, 23), (equal, forward, 1)),
-										(and, (equal, env x, 24), (equal, forward, -1))
-									),
-									(not_equal, env y, env hole_9)
-								),
-								(and,
-									(or,
-										(and, (equal, env x, 24), (equal, forward, 1)),
-										(and, (equal, env x, 25), (equal, forward, -1))
-									),
-									(not_equal, env y, env hole_10)
-								)
-							))
+			(and,
+				(greater_than_or_equal, (addition, bl forward, env x), 0),
+				(less_than_or_equal, (addition, bl forward, env x), 'x_max'),
+				(or,
+					(equal, env active_hole, -1),
+					(equal, env active_hole, env y)
+				)
+			)
 		} end_condition
 	} end_check_environment
 	check_environment {
 		can_move_side
 		imports { 'complex_robot_environment' } end_imports
 		read_variables {side} end_read_variables
-		python_function { from 'complex_robot_environment' 'can_move_side' args side } end_python_function
+		python_function { from 'complex_robot_environment' 'can_move_side'  } end_python_function
 		condition {
-			(not, (or,
-				(and, (equal, env y, 0), (equal, side, -1)),
-				(and, (equal, env y, 40), (equal, side, 1))
-			))
+			(and,
+				(greater_than_or_equal, (addition, bl side, env y), 0),
+				(less_than_or_equal, (addition, bl side, env y), 'y_max')
+			)
 		} end_condition
 	} end_check_environment
 } end_environment_checks
@@ -191,15 +136,14 @@ actions {
 	action {
 		change_side
 		imports { } end_imports
+		local_variables {} end_local_variables
 		read_variables {} end_read_variables
 		write_variables { side } end_write_variables
-		initial_values {
-			variable_statement { side result { 1 } end_result } end_variable_statement
-		} end_initial_values
+		initial_values {} end_initial_values
 		update {
 			variable_statement {
-				side
-				case { (equal, side, 1) } end_case result { -1 } end_result
+				bl side
+				case { (equal, bl side, 1) } end_case result { -1 } end_result
 				result { 1 } end_result
 			} end_variable_statement
 			return_statement {
@@ -211,102 +155,28 @@ actions {
 	action {
 		go_forward
 		imports { 'complex_robot_environment' } end_imports
-		read_variables {} end_read_variables
-		write_variables { forward } end_write_variables
-		initial_values {
-			variable_statement { forward case { have_flag } end_case result { -1 } end_result result { 1 } end_result } end_variable_statement
-		} end_initial_values
+		local_variables {} end_local_variables
+		read_variables {forward} end_read_variables
+		write_variables {} end_write_variables
+		initial_values {} end_initial_values
 		update {
 			write_environment {
-				python_function { from 'complex_robot_environment' 'go_forward' args forward } end_python_function
+				python_function { from 'complex_robot_environment' 'go_forward' } end_python_function
 				update_values {
 					environment_statement {
 						env x
-						case { (and, (equal, env x, 0), (equal, forward, -1)) } end_case result { 0 } end_result
-						case { (and, (equal, env x, 40), (equal, forward, 1)) } end_case result { 40 } end_result
 						case {
-							(or,
-								(and,
-									(or,
-										(and, (equal, env x, 14), (equal, forward, 1)),
-										(and, (equal, env x, 15), (equal, forward, -1))
-									),
-									(not_equal, env y, env hole_1)
-								),
-								(and,
-									(or,
-										(and, (equal, env x, 15), (equal, forward, 1)),
-										(and, (equal, env x, 16), (equal, forward, -1))
-									),
-									(not_equal, env y, env hole_2)
-								),
-								(and,
-									(or,
-										(and, (equal, env x, 16), (equal, forward, 1)),
-										(and, (equal, env x, 17), (equal, forward, -1))
-									),
-									(not_equal, env y, env hole_3)
-								),
-								(and,
-									(or,
-										(and, (equal, env x, 17), (equal, forward, 1)),
-										(and, (equal, env x, 18), (equal, forward, -1))
-									),
-									(not_equal, env y, env hole_4)
-								),
-								(and,
-									(or,
-										(and, (equal, env x, 18), (equal, forward, 1)),
-										(and, (equal, env x, 19), (equal, forward, -1))
-									),
-									(not_equal, env y, env hole_5)
-								),
-								(and,
-									(or,
-										(and, (equal, env x, 19), (equal, forward, 1)),
-										(and, (equal, env x, 20), (equal, forward, -1))
-									),
-									(not_equal, env y, env hole_6)
-								),
-								(and,
-									(or,
-										(and, (equal, env x, 20), (equal, forward, 1)),
-										(and, (equal, env x, 21), (equal, forward, -1))
-									),
-									(not_equal, env y, env hole_7)
-								),
-								(and,
-									(or,
-										(and, (equal, env x, 21), (equal, forward, 1)),
-										(and, (equal, env x, 22), (equal, forward, -1))
-									),
-									(not_equal, env y, env hole_8)
-								),
-								(and,
-									(or,
-										(and, (equal, env x, 22), (equal, forward, 1)),
-										(and, (equal, env x, 23), (equal, forward, -1))
-									),
-									(not_equal, env y, env hole_8)
-								),
-								(and,
-									(or,
-										(and, (equal, env x, 23), (equal, forward, 1)),
-										(and, (equal, env x, 24), (equal, forward, -1))
-									),
-									(not_equal, env y, env hole_9)
-								),
-								(and,
-									(or,
-										(and, (equal, env x, 24), (equal, forward, 1)),
-										(and, (equal, env x, 25), (equal, forward, -1))
-									),
-									(not_equal, env y, env hole_10)
+							(and,
+								(greater_than_or_equal, (addition, bl forward, env x), 0),
+								(less_than_or_equal, (addition, bl forward, env x), 'x_max'),
+								(or,
+									(equal, env active_hole, -1),
+									(equal, env active_hole, env y)
 								)
 							)
 						} end_case
+						result { (addition, env x, bl forward) } end_result
 						result { env x } end_result
-						result { (addition, env x, forward) } end_result
 					} end_environment_statement
 				} end_update_values
 			} end_write_environment
@@ -320,19 +190,25 @@ actions {
 	action {
 		go_side
 		imports { 'complex_robot_environment' } end_imports
+		local_variables {} end_local_variables
 		read_variables {side} end_read_variables
 		write_variables {} end_write_variables
 		initial_values {
 		} end_initial_values
 		update {
 			write_environment {
-				python_function { from 'complex_robot_environment' 'go_side' args side } end_python_function
+				python_function { from 'complex_robot_environment' 'go_side' } end_python_function
 				update_values {
 					environment_statement {
 						env y
-						case { (and, (equal, env y, 0), (equal, side, -1)) } end_case result { 0 } end_result
-						case { (and, (equal, env y, 40), (equal, side, 1)) } end_case result { 40 } end_result
-						result { (addition, env y, side) } end_result
+						case {
+							(and,
+								(greater_than_or_equal, (addition, bl side, env y), 0),
+								(less_than_or_equal, (addition, bl side, env y), 'y_max')
+							)
+						} end_case
+						result { (addition, env y, bl side) } end_result
+						result { env y } end_result
 					} end_environment_statement
 				} end_update_values
 			} end_write_environment
@@ -347,29 +223,27 @@ actions {
 	action {
 		search_tile
 		imports { 'complex_robot_environment' } end_imports
+		local_variables {tile_searched} end_local_variables
 		read_variables {} end_read_variables
 		write_variables { have_flag } end_write_variables
-		initial_values {
-			variable_statement { have_flag result {False } end_result } end_variable_statement
-			variable_statement { local tile_searched result { False } end_result } end_variable_statement
-		} end_initial_values
+		initial_values {} end_initial_values
 		update {
 			read_environment {
-				python_function { from 'complex_robot_environment' 'search_tile' args } end_python_function
+				python_function { from 'complex_robot_environment' 'search_tile'} end_python_function
 				condition { True } end_condition
-				variable_environment_statement {
+				variable_statement_using_env {
 					local tile_searched
 					case { (equal, env tile_progress, 2) } end_case result { True } end_result
 					result { True, False } end_result
-				} end_variable_environment_statement
-				variable_environment_statement {
-					have_flag
-					case {have_flag} end_case result { True } end_result
+				} end_variable_statement_using_env
+				variable_statement_using_env {
+					bl have_flag
+					case { bl have_flag} end_case result { True } end_result
 					result { (and, local tile_searched, (equal, env x, env flag_x), (equal, env y, env flag_y)) } end_result
-				} end_variable_environment_statement
+				} end_variable_statement_using_env
 			} end_read_environment
 			write_environment {
-				python_function { from 'complex_robot_environment' 'update_search' args (local tile_searched) } end_python_function
+				python_function { from 'complex_robot_environment' 'update_search'} end_python_function
 				update_values {
 					environment_statement {
 						env tile_progress
@@ -379,7 +253,7 @@ actions {
 				} end_update_values
 			} end_write_environment
 			return_statement {
-				case {(and, local tile_searched, have_flag)} end_case result {success} end_result
+				case {(and, local tile_searched, bl have_flag)} end_case result {success} end_result
 				case {local tile_searched} end_case result {failure} end_result
 				result { running } end_result
 			} end_return_statement
@@ -390,21 +264,20 @@ actions {
 	action {
 		set_zone
 		imports { 'complex_robot_environment' } end_imports
+		local_variables {} end_local_variables
 		read_variables {} end_read_variables
 		write_variables { zone } end_write_variables
-		initial_values {
-			variable_statement { zone result { 'home' } end_result } end_variable_statement
-		} end_initial_values
+		initial_values {} end_initial_values
 		update {
 			read_environment {
-				python_function { from 'complex_robot_environment' 'compute_zone' args } end_python_function
+				python_function { from 'complex_robot_environment' 'compute_zone' } end_python_function
 				condition { True } end_condition
-				variable_environment_statement {
-					zone
-					case { (less_than_or_equal, env x, 13) } end_case result { 'home' } end_result
-					case { (greater_than_or_equal, env x, 26) } end_case result { 'target' } end_result
+				variable_statement_using_env {
+					bl zone
+					case { (less_than_or_equal, env x, 'home_end') } end_case result { 'home' } end_result
+					case { (greater_than_or_equal, env x, 'target_start') } end_case result { 'target' } end_result
 					result { 'maze' } end_result
-				} end_variable_environment_statement
+				} end_variable_statement_using_env
 			} end_read_environment
 			return_statement {
 				result { success } end_result
@@ -480,7 +353,7 @@ composite {
 								child
 								composite {
 									move_through_maze
-									selector with_memory
+									selector
 									children {
 										insert { sub_forward } end_insert
 										insert { sub_side } end_insert
@@ -491,6 +364,7 @@ composite {
 						} end_children
 					} end_composite
 				} end_decorator
+				in_target
 				decorator {
 					to_side_decorator
 					X_is_Y X failure Y success

@@ -13,6 +13,6 @@ class go_side(py_trees.behaviour.Behaviour):
         self.blackboard.register_key(key = ('side'), access = py_trees.common.Access.READ)
 
     def update(self):
-        complex_robot_environment.go_side(self.blackboard.side)
+        complex_robot_environment.go_side()
         return_status = py_trees.common.Status.RUNNING
         return return_status
