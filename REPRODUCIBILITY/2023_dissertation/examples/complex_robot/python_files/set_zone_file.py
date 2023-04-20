@@ -11,7 +11,6 @@ class set_zone(py_trees.behaviour.Behaviour):
         self.name = name
         self.blackboard = self.attach_blackboard_client(name = name)
         self.blackboard.register_key(key = ('zone'), access = py_trees.common.Access.WRITE)
-        self.blackboard.zone = 'home'
 
     def update(self):
         temp_vals = complex_robot_environment.compute_zone()

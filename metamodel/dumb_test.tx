@@ -1,0 +1,15 @@
+bruh:
+    constants *= constant
+    idk *= serene_int
+;
+    serene_int:
+    val = something
+;
+something:
+    INT | STRING | ID
+;
+    
+constant:
+    'HELLO' name = ID '=' val = INT
+;
+    
