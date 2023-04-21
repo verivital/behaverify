@@ -233,6 +233,18 @@ def handle_variable_statement(statement, indent_level = 2, global_init = False, 
             )
 
 
+def create_variable_macro(statement, function_name, variable_name, indent_level = 2, global_init = False):
+    return (
+        os.linesep
+        + os.linesep
+        + indent(indent_level) + 'def ' + function_name + '():' + os.linesep
+        + handle_variable_statement(statement, indent_level + 1, global_init, function_name + '_return_val')
+        + indent(indent_level + 1) + 'return ' + function_name + '_return_val' + os.linesep
+        + os.linesep
+        + indent(indent_level) + variable_name.replace('(', '').replace(')', '') + ' = ' + function_name + os.linesep
+    )
+
+
 def handle_read_statement(statement):
     if statement.python_function is None:
         if statement.condition_variable is not None:
@@ -340,7 +352,11 @@ def init_method_action(node):
             + ''.join([(indent(2) + 'self.blackboard.register_key(key = (' + "'" + variable.name + "'" + '), access = py_trees.common.Access.WRITE)' + os.linesep) for variable in node.write_variables])
             + ''.join(
                 [
-                    handle_variable_statement(local_variable.initial_value, indent_level = 2, global_init = False, override_variable_name = format_variable(local_variable, True, False))
+                    (
+                        create_variable_macro(local_variable.initial_value, local_variable.name, format_variable(local_variable, True, False), 2, False)
+                        if local_variable.model_as == 'DEFINE' else
+                        handle_variable_statement(local_variable.initial_value, indent_level = 2, global_init = False, override_variable_name = format_variable(local_variable, True, False))
+                    )
                     for local_variable in node.local_variables if local_variable not in
                     [
                         statement.variable for statement in node.init_statements
@@ -438,14 +454,14 @@ def walk_tree_recursive(current_node, node_names, file_name):
         child = walk_tree_recursive(current_node.child, node_names, file_name)
         with open(file_name, 'a') as f:
             f.write(indent(1) + node_name + ' = py_trees.decorators.' + decorator_type + '('
-                    + "'" + node_name + "'" + ', ' + child + ')' + os.linesep)
+                    + 'name = ' + "'" + node_name + "'" + ', child = ' + child + ')' + os.linesep)
         return node_name
     elif current_node.node_type == 'inverter':
         decorator_type = ('Inverter')
         child = walk_tree_recursive(current_node.child, node_names, file_name)
         with open(file_name, 'a') as f:
             f.write(indent(1) + node_name + ' = py_trees.decorators.' + decorator_type + '('
-                    + "'" + node_name + "'" + ', ' + child + ')' + os.linesep)
+                    + 'name = ' + "'" + node_name + "'" + ', child = ' + child + ')' + os.linesep)
         return node_name
 
     # so at this point, we're in composite node territory
@@ -515,7 +531,11 @@ def main():
                 )
                 + ''.join(
                     [
-                        handle_variable_statement(blackboard_variable.initial_value, indent_level = 1, global_init = True, override_variable_name = format_variable(blackboard_variable, False, True))
+                        (
+                            create_variable_macro(blackboard_variable.initial_value, blackboard_variable.name, format_variable(blackboard_variable, False, True), 1, True)
+                            if blackboard_variable.model_as == 'DEFINE' else
+                            handle_variable_statement(blackboard_variable.initial_value, indent_level = 1, global_init = True, override_variable_name = format_variable(blackboard_variable, False, True))
+                        )
                         for blackboard_variable in model.blackboard_variables
                     ]
                 )
