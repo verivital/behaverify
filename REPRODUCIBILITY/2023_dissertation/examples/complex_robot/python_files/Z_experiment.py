@@ -29,11 +29,14 @@ def draw_board():
                 to_print += 'f'
             elif (row == complex_robot_environment.flag_y) and (col == complex_robot_environment.flag_x):
                 to_print += 'F'
-            elif (row >= 4 and row <= 12):
-                if col == holes[row - 4]:
-                    to_print += '\\'
+            elif (col < 4 or col > 12):
+                to_print += '-'
+            if (col >= 4 and col <= 12):
+                space = '' if (col == complex_robot_environment.x and row == complex_robot_environment.y) else ' '
+                if row == holes[col - 4]:
+                    to_print += space + '\\'
                 else:
-                    to_print += '|'
+                    to_print += space + '|'
         to_print += os.linesep
     print(to_print)
     print('_________________________________________')
