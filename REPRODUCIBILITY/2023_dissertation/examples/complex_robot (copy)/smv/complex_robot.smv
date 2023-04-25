@@ -1,0 +1,676 @@
+MODULE main
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		resume_from_here_in_subtree__control := -3;
+		resume_from_here_in_subtree__set_zone := -3;
+		resume_from_here_in_subtree__control_sequence := -3;
+		control.active := TRUE;
+		--START OF BLACKBOARD DEFINITIONS
+		env_active_hole_stage_0 :=
+			case
+				((env_x + min(0, var_forward_stage_0)) = 4) : env_hole_1;
+				((env_x + min(0, var_forward_stage_0)) = (4 + 1)) : env_hole_2;
+				((env_x + min(0, var_forward_stage_0)) = (4 + 2)) : env_hole_3;
+				((env_x + min(0, var_forward_stage_0)) = (4 + 3)) : env_hole_4;
+				((env_x + min(0, var_forward_stage_0)) = (4 + 4)) : env_hole_5;
+				((env_x + min(0, var_forward_stage_0)) = (4 + 5)) : env_hole_6;
+				((env_x + min(0, var_forward_stage_0)) = (4 + 6)) : env_hole_7;
+				((env_x + min(0, var_forward_stage_0)) = (4 + 7)) : env_hole_8;
+				((env_x + min(0, var_forward_stage_0)) = (4 + 8)) : env_hole_9;
+				TRUE : -1;
+			esac;
+		env_active_hole_stage_1 :=
+			case
+				((env_x + min(0, var_forward_stage_1)) = 4) : env_hole_1;
+				((env_x + min(0, var_forward_stage_1)) = (4 + 1)) : env_hole_2;
+				((env_x + min(0, var_forward_stage_1)) = (4 + 2)) : env_hole_3;
+				((env_x + min(0, var_forward_stage_1)) = (4 + 3)) : env_hole_4;
+				((env_x + min(0, var_forward_stage_1)) = (4 + 4)) : env_hole_5;
+				((env_x + min(0, var_forward_stage_1)) = (4 + 5)) : env_hole_6;
+				((env_x + min(0, var_forward_stage_1)) = (4 + 6)) : env_hole_7;
+				((env_x + min(0, var_forward_stage_1)) = (4 + 7)) : env_hole_8;
+				((env_x + min(0, var_forward_stage_1)) = (4 + 8)) : env_hole_9;
+				TRUE : -1;
+			esac;
+		env_active_hole_stage_2 :=
+			case
+				((env_x_stage_1 + min(0, var_forward_stage_1)) = 4) : env_hole_1;
+				((env_x_stage_1 + min(0, var_forward_stage_1)) = (4 + 1)) : env_hole_2;
+				((env_x_stage_1 + min(0, var_forward_stage_1)) = (4 + 2)) : env_hole_3;
+				((env_x_stage_1 + min(0, var_forward_stage_1)) = (4 + 3)) : env_hole_4;
+				((env_x_stage_1 + min(0, var_forward_stage_1)) = (4 + 4)) : env_hole_5;
+				((env_x_stage_1 + min(0, var_forward_stage_1)) = (4 + 5)) : env_hole_6;
+				((env_x_stage_1 + min(0, var_forward_stage_1)) = (4 + 6)) : env_hole_7;
+				((env_x_stage_1 + min(0, var_forward_stage_1)) = (4 + 7)) : env_hole_8;
+				((env_x_stage_1 + min(0, var_forward_stage_1)) = (4 + 8)) : env_hole_9;
+				TRUE : -1;
+			esac;
+		env_active_hole_stage_3 :=
+			case
+				((env_x_stage_2 + min(0, var_forward_stage_1)) = 4) : env_hole_1;
+				((env_x_stage_2 + min(0, var_forward_stage_1)) = (4 + 1)) : env_hole_2;
+				((env_x_stage_2 + min(0, var_forward_stage_1)) = (4 + 2)) : env_hole_3;
+				((env_x_stage_2 + min(0, var_forward_stage_1)) = (4 + 3)) : env_hole_4;
+				((env_x_stage_2 + min(0, var_forward_stage_1)) = (4 + 4)) : env_hole_5;
+				((env_x_stage_2 + min(0, var_forward_stage_1)) = (4 + 5)) : env_hole_6;
+				((env_x_stage_2 + min(0, var_forward_stage_1)) = (4 + 6)) : env_hole_7;
+				((env_x_stage_2 + min(0, var_forward_stage_1)) = (4 + 7)) : env_hole_8;
+				((env_x_stage_2 + min(0, var_forward_stage_1)) = (4 + 8)) : env_hole_9;
+				TRUE : -1;
+			esac;
+		env_flag_returned_stage_0 :=
+			case
+				TRUE : (var_have_flag & (env_x <= 3));
+			esac;
+		env_flag_returned_stage_1 :=
+			case
+				TRUE : (var_have_flag_stage_1 & (env_x_stage_3 <= 3));
+			esac;
+		env_tile_progress_stage_1 := 
+			case
+				!(search_tile.active) : env_tile_progress;
+				search_tile_DOT_tile_searched_stage_1 : 2;
+				TRUE : min(2, (1 + env_tile_progress));
+			esac;
+		env_tile_progress_stage_2 := 
+			case
+				!(control.active) : env_tile_progress_stage_1;
+				(env_tile_tracker = env_tile_progress_stage_1) : 0;
+				TRUE : env_tile_progress_stage_1;
+			esac;
+		env_tile_tracker_stage_1 := 
+			case
+				!(control.active) : env_tile_tracker;
+				TRUE : env_tile_progress_stage_2;
+			esac;
+		env_x_stage_1 := 
+			case
+				!(go_forward.active) : env_x;
+				(((var_forward_stage_1 + env_x) >= 0) & ((var_forward_stage_1 + env_x) <= 18) & ((env_active_hole_stage_1 = -1) | (env_active_hole_stage_1 = env_y))) : (env_x + var_forward_stage_1);
+				TRUE : env_x;
+			esac;
+		env_x_stage_2 := 
+			case
+				!(go_forward_1.active) : env_x_stage_1;
+				(((var_forward_stage_1 + env_x_stage_1) >= 0) & ((var_forward_stage_1 + env_x_stage_1) <= 18) & ((env_active_hole_stage_2 = -1) | (env_active_hole_stage_2 = env_y_stage_1))) : (env_x_stage_1 + var_forward_stage_1);
+				TRUE : env_x_stage_1;
+			esac;
+		env_x_stage_3 := 
+			case
+				!(go_forward_2.active) : env_x_stage_2;
+				(((var_forward_stage_1 + env_x_stage_2) >= 0) & ((var_forward_stage_1 + env_x_stage_2) <= 18) & ((env_active_hole_stage_3 = -1) | (env_active_hole_stage_3 = env_y_stage_3))) : (env_x_stage_2 + var_forward_stage_1);
+				TRUE : env_x_stage_2;
+			esac;
+		env_y_stage_1 := 
+			case
+				!(go_side.active) : env_y;
+				(((var_side_stage_3 + env_y) >= 0) & ((var_side_stage_3 + env_y) <= 2)) : (env_y + var_side_stage_3);
+				TRUE : env_y;
+			esac;
+		env_y_stage_2 := 
+			case
+				!(go_side_1.active) : env_y_stage_1;
+				(((var_side_stage_3 + env_y_stage_1) >= 0) & ((var_side_stage_3 + env_y_stage_1) <= 2)) : (env_y_stage_1 + var_side_stage_3);
+				TRUE : env_y_stage_1;
+			esac;
+		env_y_stage_3 := 
+			case
+				!(go_side_2.active) : env_y_stage_2;
+				(((var_side_stage_3 + env_y_stage_2) >= 0) & ((var_side_stage_3 + env_y_stage_2) <= 2)) : (env_y_stage_2 + var_side_stage_3);
+				TRUE : env_y_stage_2;
+			esac;
+		var_forward_stage_0 :=
+			case
+				var_have_flag : -1;
+				TRUE : 1;
+			esac;
+		var_forward_stage_1 :=
+			case
+				var_have_flag_stage_1 : -1;
+				TRUE : 1;
+			esac;
+		var_have_flag_stage_1 := 
+			case
+				!(search_tile.active) : var_have_flag;
+				!(TRUE) : var_have_flag;
+				var_have_flag : TRUE;
+				TRUE : (search_tile_DOT_tile_searched_stage_1 & (env_x = env_flag_x) & (env_y = env_flag_y));
+			esac;
+		var_need_side_reached_stage_1 := 
+			case
+				!(never_need_side.active) : var_need_side_reached;
+				TRUE : FALSE;
+			esac;
+		search_tile_DOT_tile_searched := search_tile_DOT_tile_searched_stage_1;
+		LINK_TO_PREVIOUS_FINAL_search_tile_DOT_tile_searched := search_tile_DOT_tile_searched_stage_1;
+		var_side_stage_1 := 
+			case
+				!(change_side.active) : var_side;
+				(var_side = 1) : -1;
+				TRUE : 1;
+			esac;
+		var_side_stage_2 := 
+			case
+				!(change_side_1.active) : var_side_stage_1;
+				(var_side_stage_1 = 1) : -1;
+				TRUE : 1;
+			esac;
+		var_side_stage_3 := 
+			case
+				!(change_side_2.active) : var_side_stage_2;
+				(var_side_stage_2 = 1) : -1;
+				TRUE : 1;
+			esac;
+		var_zone_stage_1 := 
+			case
+				!(set_zone.active) : var_zone;
+				!(TRUE) : var_zone;
+				(env_x <= 3) : home;
+				(env_x >= 15) : target;
+				TRUE : maze;
+			esac;
+		--END OF BLACKBOARD DEFINITIONS
+	FROZENVAR
+		--START OF BLACKBOARD FROZENVAR
+		env_flag_x : 15..18;
+		env_flag_y : 0..2;
+		env_hole_1 : 0..2;
+		env_hole_2 : 0..2;
+		env_hole_3 : 0..2;
+		env_hole_4 : 0..2;
+		env_hole_5 : 0..2;
+		env_hole_6 : 0..2;
+		env_hole_7 : 0..2;
+		env_hole_8 : 0..2;
+		env_hole_9 : 0..2;
+		--END OF BLACKBOARD FROZENVAR
+	VAR
+		node_names : define_nodes;
+		can_move_forward : can_move_forward_module(var_forward_stage_0, env_x, env_y, env_active_hole_stage_0);
+		can_move_side : can_move_side_module(env_y, var_side);
+		can_move_side_1 : can_move_side_1_module(var_side_stage_1, env_y);
+		can_move_side_2 : can_move_side_2_module(var_side_stage_2, env_y);
+		change_side : success_DEFAULT_module();
+		change_side_1 : success_DEFAULT_module();
+		change_side_2 : success_DEFAULT_module();
+		control : composite_parallel_success_on_all_without_memory_2(set_zone, control_sequence);
+		control_selector : composite_selector_without_memory_4(navigate_maze, enter_maze, to_side, search_target);
+		control_sequence : composite_sequence_without_memory_2(flag_not_returned, control_selector);
+		enter_maze : composite_sequence_without_memory_3(maze_inverter, traversal_needed, go_forward_1);
+		flag_found : flag_found_module(var_have_flag);
+		flag_found_1 : flag_found_1_module(var_have_flag);
+		flag_found_2 : flag_found_2_module(var_have_flag);
+		flag_inverter : decorator_inverter(flag_found_1);
+		flag_inverter_1 : decorator_inverter(flag_found_2);
+		flag_not_returned : flag_not_returned_module(env_flag_returned_stage_0);
+		go_forward : running_DEFAULT_module();
+		go_forward_1 : running_DEFAULT_module();
+		go_forward_2 : running_DEFAULT_module();
+		go_home : composite_sequence_without_memory_2(in_target, flag_found);
+		go_side : running_DEFAULT_module();
+		go_side_1 : running_DEFAULT_module();
+		go_side_2 : running_DEFAULT_module();
+		go_target : composite_sequence_without_memory_2(in_home, flag_inverter);
+		in_home : in_home_module(var_zone_stage_1);
+		in_maze : in_maze_module(var_zone_stage_1);
+		in_maze_1 : in_maze_1_module(var_zone_stage_1);
+		in_target : in_target_module(var_zone_stage_1);
+		in_target_1 : in_target_1_module(var_zone_stage_1);
+		in_target_2 : in_target_2_module(var_zone_stage_1);
+		maze_inverter : decorator_inverter(in_maze_1);
+		move_for_flag : composite_selector_without_memory_2(try_side_or_change_2, go_forward_2);
+		move_through_maze : composite_selector_without_memory_3(try_forward, try_side_or_change, success_node);
+		move_through_maze_decorator : decorator_X_is_Y(move_through_maze, success, running);
+		navigate_maze : composite_sequence_without_memory_2(in_maze, move_through_maze_decorator);
+		need_side : need_side_module(var_need_side_reached);
+		never_need_side : success_DEFAULT_module();
+		return_failure : decorator_X_is_Y(change_side, success, failure);
+		return_failure_1 : decorator_X_is_Y(change_side_1, success, failure);
+		return_failure_2 : decorator_X_is_Y(change_side_2, success, failure);
+		search_for_flag : composite_selector_without_memory_2(search_tile, move_for_flag);
+		search_target : composite_sequence_without_memory_3(in_target_2, flag_inverter_1, search_for_flag);
+		search_tile : search_tile_module(var_have_flag_stage_1, search_tile_DOT_tile_searched_stage_1);
+		set_zone : success_DEFAULT_module();
+		side_reached : decorator_X_is_Y(try_side_or_change_1, failure, success);
+		success_node : success_node_module();
+		to_side : composite_sequence_without_memory_4(in_target_1, need_side, side_reached, never_need_side);
+		traversal_needed : composite_selector_without_memory_2(go_home, go_target);
+		try_forward : composite_sequence_without_memory_2(can_move_forward, go_forward);
+		try_side : composite_sequence_without_memory_2(can_move_side, go_side);
+		try_side_1 : composite_sequence_without_memory_2(can_move_side_1, go_side_1);
+		try_side_2 : composite_sequence_without_memory_2(can_move_side_2, go_side_2);
+		try_side_or_change : composite_selector_without_memory_2(try_side, return_failure);
+		try_side_or_change_1 : composite_selector_without_memory_2(try_side_1, return_failure_1);
+		try_side_or_change_2 : composite_selector_without_memory_2(try_side_2, return_failure_2);
+		--START OF BLACKBOARD VARIABLES DECLARATION
+		env_tile_progress : 0..2;
+		env_tile_tracker : 0..2;
+		env_x : 0..18;
+		env_y : 0..2;
+		var_have_flag : boolean;
+		var_need_side_reached : boolean;
+		search_tile_DOT_tile_searched_stage_1 : boolean;
+		var_side : {-1, 1};
+		var_zone : {home, maze, target};
+		--END OF BLACKBOARD VARIABLES DECLARATION
+	ASSIGN
+		--START OF BLACKBOARD VARIABLES INITIALIZATION
+		init(env_flag_x) := 
+			case
+				TRUE : {15, 16, 17, 18};
+			esac;
+		init(env_flag_y) := 
+			case
+				TRUE : {0, 1, 2};
+			esac;
+		init(env_hole_1) := 
+			case
+				TRUE : {0, 1, 2};
+			esac;
+		init(env_hole_2) := 
+			case
+				TRUE : {0, 1, 2};
+			esac;
+		init(env_hole_3) := 
+			case
+				TRUE : {0, 1, 2};
+			esac;
+		init(env_hole_4) := 
+			case
+				TRUE : {0, 1, 2};
+			esac;
+		init(env_hole_5) := 
+			case
+				TRUE : {0, 1, 2};
+			esac;
+		init(env_hole_6) := 
+			case
+				TRUE : {0, 1, 2};
+			esac;
+		init(env_hole_7) := 
+			case
+				TRUE : {0, 1, 2};
+			esac;
+		init(env_hole_8) := 
+			case
+				TRUE : {0, 1, 2};
+			esac;
+		init(env_hole_9) := 
+			case
+				TRUE : {0, 1, 2};
+			esac;
+		init(env_tile_progress) := 
+			case
+				TRUE : 0;
+			esac;
+		init(env_tile_tracker) := 
+			case
+				TRUE : 0;
+			esac;
+		init(env_x) := 
+			case
+				TRUE : 0;
+			esac;
+		init(env_y) := 
+			case
+				TRUE : 0;
+			esac;
+		init(var_have_flag) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(var_need_side_reached) := 
+			case
+				TRUE : TRUE;
+			esac;
+		init(search_tile_DOT_tile_searched_stage_1) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(var_side) := 
+			case
+				TRUE : 1;
+			esac;
+		init(var_zone) := 
+			case
+				TRUE : home;
+			esac;
+		--END OF BLACKBOARD VARIABLES INITIALIZATION
+		--START OF BLACKBOARD VARIABLES TRANSITION
+		next(env_tile_progress) := env_tile_progress_stage_2;
+		next(env_tile_tracker) := env_tile_tracker_stage_1;
+		next(env_x) := env_x_stage_3;
+		next(env_y) := env_y_stage_3;
+		next(var_have_flag) := var_have_flag_stage_1;
+		next(var_need_side_reached) := var_need_side_reached_stage_1;
+		next(search_tile_DOT_tile_searched_stage_1) := 
+			case
+				next(!(search_tile.active)) : LINK_TO_PREVIOUS_FINAL_search_tile_DOT_tile_searched;
+				!(TRUE) : LINK_TO_PREVIOUS_FINAL_search_tile_DOT_tile_searched;
+				(next(env_tile_progress) = 2) : TRUE;
+				TRUE : {TRUE, FALSE};
+			esac;
+		next(var_side) := var_side_stage_3;
+		next(var_zone) := var_zone_stage_1;
+		--END OF BLACKBOARD VARIABLES TRANSITION
+
+CTLSPEC AG(AF(env_flag_returned_stage_1));
+MODULE define_nodes
+	DEFINE
+		control := 0;
+		set_zone := 1;
+		control_sequence := 2;
+		flag_not_returned := 3;
+		control_selector := 4;
+		navigate_maze := 5;
+		in_maze := 6;
+		move_through_maze_decorator := 7;
+		move_through_maze := 8;
+		try_forward := 9;
+		can_move_forward := 10;
+		go_forward := 11;
+		try_side_or_change := 12;
+		try_side := 13;
+		can_move_side := 14;
+		go_side := 15;
+		return_failure := 16;
+		change_side := 17;
+		success_node := 18;
+		enter_maze := 19;
+		maze_inverter := 20;
+		in_maze_1 := 21;
+		traversal_needed := 22;
+		go_home := 23;
+		in_target := 24;
+		flag_found := 25;
+		go_target := 26;
+		in_home := 27;
+		flag_inverter := 28;
+		flag_found_1 := 29;
+		go_forward_1 := 30;
+		to_side := 31;
+		in_target_1 := 32;
+		need_side := 33;
+		side_reached := 34;
+		try_side_or_change_1 := 35;
+		try_side_1 := 36;
+		can_move_side_1 := 37;
+		go_side_1 := 38;
+		return_failure_1 := 39;
+		change_side_1 := 40;
+		never_need_side := 41;
+		search_target := 42;
+		in_target_2 := 43;
+		flag_inverter_1 := 44;
+		flag_found_2 := 45;
+		search_for_flag := 46;
+		search_tile := 47;
+		move_for_flag := 48;
+		try_side_or_change_2 := 49;
+		try_side_2 := 50;
+		can_move_side_2 := 51;
+		go_side_2 := 52;
+		return_failure_2 := 53;
+		change_side_2 := 54;
+		go_forward_2 := 55;
+MODULE leaf_module(internal_status_module)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status_module.internal_status : invalid;
+MODULE composite_sequence_without_memory_4(child_0, child_1, child_2, child_3)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				!(child_0.internal_status = success) : child_0.internal_status;
+				!(child_1.internal_status = success) : child_1.internal_status;
+				!(child_2.internal_status = success) : child_2.internal_status;
+				!(child_3.internal_status = success) : child_3.internal_status;
+				TRUE : success;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = success;
+		child_2.active := child_1.status = success;
+		child_3.active := child_2.status = success;
+MODULE composite_selector_without_memory_2(child_0, child_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				!(child_0.internal_status = failure) : child_0.internal_status;
+				!(child_1.internal_status = failure) : child_1.internal_status;
+				TRUE : failure;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = failure;
+MODULE decorator_X_is_Y(child_0, incoming_status, outgoing_status)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				child_0.status = incoming_status : outgoing_status;
+				TRUE : child_0.status;
+			esac;
+		child_0.active :=
+			case
+				!(active) : FALSE;
+				TRUE : TRUE;
+			esac;
+MODULE composite_sequence_without_memory_3(child_0, child_1, child_2)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				!(child_0.internal_status = success) : child_0.internal_status;
+				!(child_1.internal_status = success) : child_1.internal_status;
+				!(child_2.internal_status = success) : child_2.internal_status;
+				TRUE : success;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = success;
+		child_2.active := child_1.status = success;
+MODULE decorator_inverter(child_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				child_0.status = success : failure;
+				child_0.status = failure : success;
+				TRUE : child_0.status;
+			esac;
+		child_0.active :=
+			case
+				!(active) : FALSE;
+				TRUE : TRUE;
+			esac;
+MODULE composite_selector_without_memory_4(child_0, child_1, child_2, child_3)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				!(child_0.internal_status = failure) : child_0.internal_status;
+				!(child_1.internal_status = failure) : child_1.internal_status;
+				!(child_2.internal_status = failure) : child_2.internal_status;
+				!(child_3.internal_status = failure) : child_3.internal_status;
+				TRUE : failure;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = failure;
+		child_2.active := child_1.status = failure;
+		child_3.active := child_2.status = failure;
+MODULE composite_parallel_success_on_all_without_memory_2(child_0, child_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				(child_0.internal_status = failure) : failure;
+				(child_1.internal_status = failure) : failure;
+				!(child_0.internal_status = success) : child_0.internal_status;
+				!(child_1.internal_status = success) : child_1.internal_status;
+				TRUE : success;
+			esac;
+		child_0.active := active;
+		child_1.active := active;
+MODULE composite_sequence_without_memory_2(child_0, child_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				!(child_0.internal_status = success) : child_0.internal_status;
+				!(child_1.internal_status = success) : child_1.internal_status;
+				TRUE : success;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = success;
+MODULE composite_selector_without_memory_3(child_0, child_1, child_2)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				!(child_0.internal_status = failure) : child_0.internal_status;
+				!(child_1.internal_status = failure) : child_1.internal_status;
+				!(child_2.internal_status = failure) : child_2.internal_status;
+				TRUE : failure;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = failure;
+		child_2.active := child_1.status = failure;
+MODULE can_move_forward_module(var_forward_stage_0, env_x, env_y, env_active_hole_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((((var_forward_stage_0 + env_x) >= 0) & ((var_forward_stage_0 + env_x) <= 18) & ((env_active_hole_stage_0 = -1) | (env_active_hole_stage_0 = env_y)))) ? success : failure;
+MODULE can_move_side_module(env_y, var_side)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((((var_side + env_y) >= 0) & ((var_side + env_y) <= 2))) ? success : failure;
+MODULE can_move_side_1_module(var_side_stage_1, env_y)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((((var_side_stage_1 + env_y) >= 0) & ((var_side_stage_1 + env_y) <= 2))) ? success : failure;
+MODULE can_move_side_2_module(var_side_stage_2, env_y)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((((var_side_stage_2 + env_y) >= 0) & ((var_side_stage_2 + env_y) <= 2))) ? success : failure;
+MODULE flag_found_module(var_have_flag)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := (var_have_flag) ? success : failure;
+MODULE flag_found_1_module(var_have_flag)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := (var_have_flag) ? success : failure;
+MODULE flag_found_2_module(var_have_flag)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := (var_have_flag) ? success : failure;
+MODULE flag_not_returned_module(env_flag_returned_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := (!(env_flag_returned_stage_0)) ? success : failure;
+MODULE in_home_module(var_zone_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((var_zone_stage_1 = home)) ? success : failure;
+MODULE in_maze_module(var_zone_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((var_zone_stage_1 = maze)) ? success : failure;
+MODULE in_maze_1_module(var_zone_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((var_zone_stage_1 = maze)) ? success : failure;
+MODULE in_target_module(var_zone_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((var_zone_stage_1 = target)) ? success : failure;
+MODULE in_target_1_module(var_zone_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((var_zone_stage_1 = target)) ? success : failure;
+MODULE in_target_2_module(var_zone_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((var_zone_stage_1 = target)) ? success : failure;
+MODULE need_side_module(var_need_side_reached)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := (var_need_side_reached) ? success : failure;
+MODULE search_tile_module(var_have_flag_stage_1, search_tile_DOT_tile_searched_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := 
+			case
+				(search_tile_DOT_tile_searched_stage_1 & var_have_flag_stage_1) : success;
+				search_tile_DOT_tile_searched_stage_1 : failure;
+				TRUE : running;
+			esac;
+MODULE success_node_module()
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := (TRUE) ? success : failure;
+MODULE running_DEFAULT_module
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := running;
+MODULE success_DEFAULT_module
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := success;

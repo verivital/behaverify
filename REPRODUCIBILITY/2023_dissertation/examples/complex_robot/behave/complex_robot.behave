@@ -1,14 +1,14 @@
 {   'nodes': {   'can_move_forward': {   'additional_arguments': [   'env_x',
+                                                                     'env_y',
                                                                      'env_active_hole_stage_0',
-                                                                     'var_forward_stage_0',
-                                                                     'env_y'],
+                                                                     'var_forward_stage_0'],
                                          'category': 'leaf',
                                          'children': [],
                                          'internal_status_module_code': 'MODULE '
                                                                         'can_move_forward_module(env_x, '
+                                                                        'env_y, '
                                                                         'env_active_hole_stage_0, '
-                                                                        'var_forward_stage_0, '
-                                                                        'env_y)\n'
+                                                                        'var_forward_stage_0)\n'
                                                                         '\t'
                                                                         'CONSTANTS\n'
                                                                         '\t\t'
@@ -99,13 +99,13 @@
                                                                   'running': False,
                                                                   'success': True},
                                       'type': 'check_environment'},
-                 'can_move_side_1': {   'additional_arguments': [   'var_side_stage_1',
-                                                                    'env_y'],
+                 'can_move_side_1': {   'additional_arguments': [   'env_y',
+                                                                    'var_side_stage_1'],
                                         'category': 'leaf',
                                         'children': [],
                                         'internal_status_module_code': 'MODULE '
-                                                                       'can_move_side_1_module(var_side_stage_1, '
-                                                                       'env_y)\n'
+                                                                       'can_move_side_1_module(env_y, '
+                                                                       'var_side_stage_1)\n'
                                                                        '\t'
                                                                        'CONSTANTS\n'
                                                                        '\t\t'
@@ -146,13 +146,13 @@
                                                                     'running': False,
                                                                     'success': True},
                                         'type': 'check_environment'},
-                 'can_move_side_2': {   'additional_arguments': [   'var_side_stage_2',
-                                                                    'env_y'],
+                 'can_move_side_2': {   'additional_arguments': [   'env_y',
+                                                                    'var_side_stage_2'],
                                         'category': 'leaf',
                                         'children': [],
                                         'internal_status_module_code': 'MODULE '
-                                                                       'can_move_side_2_module(var_side_stage_2, '
-                                                                       'env_y)\n'
+                                                                       'can_move_side_2_module(env_y, '
+                                                                       'var_side_stage_2)\n'
                                                                        '\t'
                                                                        'CONSTANTS\n'
                                                                        '\t\t'
@@ -594,13 +594,13 @@
                                                                     'running': True,
                                                                     'success': True},
                                         'type': 'selector_without_memory'},
-                 'search_tile': {   'additional_arguments': [   'var_have_flag_stage_1',
-                                                                'search_tile_DOT_tile_searched_stage_1'],
+                 'search_tile': {   'additional_arguments': [   'search_tile_DOT_tile_searched_stage_1',
+                                                                'var_have_flag_stage_1'],
                                     'category': 'leaf',
                                     'children': [],
                                     'internal_status_module_code': 'MODULE '
-                                                                   'search_tile_module(var_have_flag_stage_1, '
-                                                                   'search_tile_DOT_tile_searched_stage_1)\n'
+                                                                   'search_tile_module(search_tile_DOT_tile_searched_stage_1, '
+                                                                   'var_have_flag_stage_1)\n'
                                                                    '\t'
                                                                    'CONSTANTS\n'
                                                                    '\t\t'

@@ -1,7 +1,11 @@
-variables {
-	variable { failsafe_engaged VAR BOOLEAN } end_variable
-	variable { mission VAR {'MISSION_emergency_surface', 'MISSION_pipe_tracking', 'MISSION_go_to_home', 'MISSION_go_to_waypoint'} } end_variable
-} end_variables
+constants {
+}end_constants
+
+
+blackboard_variables {
+	blackboard_variable { failsafe_engaged VAR BOOLEAN initial_value { result { True, False } end_result } end_initial_value} end_blackboard_variable
+	blackboard_variable { mission VAR {'MISSION_emergency_surface', 'MISSION_pipe_tracking', 'MISSION_go_to_home', 'MISSION_go_to_waypoint'} initial_value { result { 'MISSION_emergency_surface', 'MISSION_pipe_tracking', 'MISSION_go_to_home', 'MISSION_go_to_waypoint' } end_result } end_initial_value} end_blackboard_variable
+} end_blackboard_variables
 
 #comment# testing testing #end_comment#
 
@@ -9,20 +13,20 @@ local_variables {} end_local_variables
 
 environment {
 	environment_variables {
-		environment_variable { battery_low VAR BOOLEAN } end_environment_variable
-		environment_variable { BLUEROV_SURFACED VAR BOOLEAN } end_environment_variable
-		environment_variable { BLUEROV_HALTED VAR BOOLEAN } end_environment_variable
+		environment_variable { battery_low VAR BOOLEAN initial_value { result { True, False } end_result } end_initial_value} end_environment_variable
+		environment_variable { BLUEROV_SURFACED VAR BOOLEAN initial_value { result { False } end_result } end_initial_value} end_environment_variable
+		environment_variable { BLUEROV_HALTED VAR BOOLEAN initial_value { result { False } end_result } end_initial_value} end_environment_variable
 		environment_variable { command VAR {'COMMAND_UNKNOWN', 'COMMAND_avoid_obstacles', 'COMMAND_go_to_waypoint', 'COMMAND_go_to_home', 'COMMAND_surface', 'COMMAND_halt', 'COMMAND_pipe_tracking', 'COMMAND_search_for_pipe'} } end_environment_variable
-		environment_variable { emergency_sensor VAR BOOLEAN } end_environment_variable
-		environment_variable { geofence_warning VAR BOOLEAN } end_environment_variable
-		environment_variable { home_reached VAR BOOLEAN } end_environment_variable
-		environment_variable { mission_finished VAR BOOLEAN } end_environment_variable
-		environment_variable { next_mission VAR {'MISSION_emergency_surface', 'MISSION_pipe_tracking', 'MISSION_go_to_home', 'MISSION_go_to_waypoint'} } end_environment_variable
-		environment_variable { obstacles_present VAR BOOLEAN } end_environment_variable
-		environment_variable { pipe_lost VAR BOOLEAN } end_environment_variable
-		environment_variable { reallocation_needed VAR BOOLEAN } end_environment_variable
-		environment_variable { reallocation_possible VAR BOOLEAN } end_environment_variable
-		environment_variable { sensor_failure VAR BOOLEAN } end_environment_variable
+		environment_variable { emergency_sensor VAR BOOLEAN initial_value { result { True, False } end_result } end_initial_value} end_environment_variable
+		environment_variable { geofence_warning VAR BOOLEAN initial_value { result { True, False } end_result } end_initial_value} end_environment_variable
+		environment_variable { home_reached VAR BOOLEAN initial_value { result { True, False } end_result } end_initial_value} end_environment_variable
+		environment_variable { mission_finished VAR BOOLEAN initial_value { result { True, False } end_result } end_initial_value} end_environment_variable
+		environment_variable { next_mission VAR {'MISSION_emergency_surface', 'MISSION_pipe_tracking', 'MISSION_go_to_home', 'MISSION_go_to_waypoint'} initial_value { result { 'MISSION_emergency_surface', 'MISSION_pipe_tracking', 'MISSION_go_to_home', 'MISSION_go_to_waypoint' } end_result } end_initial_value} end_environment_variable
+		environment_variable { obstacles_present VAR BOOLEAN initial_value { result { True, False } end_result } end_initial_value} end_environment_variable
+		environment_variable { pipe_lost VAR BOOLEAN initial_value { result { True, False } end_result } end_initial_value} end_environment_variable
+		environment_variable { reallocation_needed VAR BOOLEAN initial_value { result { True, False } end_result } end_initial_value} end_environment_variable
+		environment_variable { reallocation_possible VAR BOOLEAN initial_value { result { True, False } end_result } end_initial_value} end_environment_variable
+		environment_variable { sensor_failure VAR BOOLEAN initial_value { result { True, False } end_result } end_initial_value} end_environment_variable
 	} end_environment_variables
 	initial_values {
 		environment_statement { env BLUEROV_SURFACED result { False } end_result } end_environment_statement
@@ -81,31 +85,31 @@ checks {
 	check {
 		emergency_surface_mission
 		read_variables { mission } end_read_variables
-		condition { (equal, mission, 'MISSION_emergency_surface') } end_condition
+		condition { (equal, bl mission, 'MISSION_emergency_surface') } end_condition
 	} end_check
 	
 	check {
 		failsafe_triggered
 		read_variables { failsafe_engaged } end_read_variables
-		condition { failsafe_engaged } end_condition
+		condition { bl failsafe_engaged } end_condition
 	} end_check
 	
 	check {
 		return_home_mission
 		read_variables { mission } end_read_variables
-		condition { (equal, mission, 'MISSION_go_to_home') } end_condition
+		condition { (equal, bl mission, 'MISSION_go_to_home') } end_condition
 	} end_check
 	
 	check {
 		track_pipe_mission
 		read_variables { mission } end_read_variables
-		condition { (equal, mission, 'MISSION_pipe_tracking') } end_condition
+		condition { (equal, bl mission, 'MISSION_pipe_tracking') } end_condition
 	} end_check
 	
 	check {
 		waypoint_mission
 		read_variables { mission } end_read_variables
-		condition { (equal, mission, 'MISSION_go_to_waypoint') } end_condition
+		condition { (equal, bl mission, 'MISSION_go_to_waypoint') } end_condition
 	} end_check
 } end_checks
 
@@ -199,7 +203,7 @@ actions {
 		initial_values {} end_initial_values
 		update {
 			write_environment {
-				python_function { 'blueROV_interface.avoid_obstacles()' } end_python_function
+				python_function { from 'blueROV_interface' 'avoid_obstacles' } end_python_function
 				update_values {
 					environment_statement {
 						env command
@@ -220,9 +224,12 @@ actions {
 		write_variables { mission } end_write_variables
 		initial_values {
 			read_environment {
-				python_function { 'blueROV_interface.get_mission()' } end_python_function
+				python_function { from 'blueROV_interface' 'get_mission' } end_python_function
 				condition { True } end_condition
-				set_variables { (mission, env next_mission) } end_set_variables
+				variable_statement_using_env {
+					bl mission
+					result { env next_mission } end_result
+				} end_variable_statement_using_env
 			} end_read_environment
 		} end_initial_values
 		update {

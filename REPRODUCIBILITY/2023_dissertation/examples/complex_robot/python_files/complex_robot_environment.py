@@ -9,6 +9,7 @@ def execute_delayed_action_queue():
     global delayed_action_queue
     for delayed_action in delayed_action_queue:
         delayed_action()
+    delayed_action_queue = []
     return
 
 

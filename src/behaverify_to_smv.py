@@ -21,7 +21,8 @@ from behaverify_common import (get_root_node,
                                map_node_name_to_number,
                                create_node_to_local_root_map,
                                create_local_root_to_relevant_list_map,
-                               create_node_to_descendants_map)
+                               create_node_to_descendants_map,
+                               tab_indent)
 # -----------------------------------------------------------------------------------------------------------------------
 
 LOCAL_ROOT_TREE_STRING = 'resume_from_here_in_subtree__'
@@ -64,25 +65,100 @@ def create_nodes(nodes, root_node_name, node_name_to_number, tick_condition):
     # ^ for each node that is parallel with memory, create a parellel_skip_string.
     # if it doesn't really have children, set it to a constant. otherwise, it will track each of it's children local roots.
     # (also the base case of we need to make the root_node active).
-    var_string = ''.join([('\t\t' + node['name'] + ' : '
-                           + ((('_'.join([status for (status, possible) in [('success', node['return_possibilities']['success']), ('running', node['return_possibilities']['running']), ('failure', node['return_possibilities']['failure'])] if possible]) + '_DEFAULT_module(') if node['internal_status_module_name'] is None else (
-                                   node['internal_status_module_name'] + '(' + ', '.join(node['additional_arguments']))) if node['category'] == 'leaf' else (
-                                       node['category'] + '_' + node['type']
-                                       + ('_' + (str(len(node['children']))) if node['category'] == 'composite' else '')
-                                       + '('
-                                       + ((', '.join(node['children'] + (node['additional_arguments'] if node['additional_arguments'] is not None else []))) if node['category'] == 'decorator' else (
-                                           ', '.join(node['children'] + (
-                                               ([] if 'without_memory' in node['type'] else (
-                                                   [
-                                                       (PARALLEL_SKIP_STRING + node['name']) if 'parallel' in node['type'] else (
-                                                           '-2' if len(node['children']) < 2 else (CHILD_TRACK_STRING + node['name'])
-                                                       )
-                                                   ]
-                                               ))))))))
-                           + ');' + os.linesep
-                           )
-                          for node in nodes.values()]
-                         )
+    # print('hello?')
+
+    def create_leaf(node):
+        # print(node['name'] + ' : ' + str(node['internal_status_module_name']))
+        return (
+            tab_indent(2) + node['name'] + ' : '
+            + (
+                (
+                    '_'.join(
+                        [
+                            status
+                            for (status, possible) in [('success', node['return_possibilities']['success']),
+                                                       ('running', node['return_possibilities']['running']),
+                                                       ('failure', node['return_possibilities']['failure'])]
+                            if possible
+                        ]
+                    ) + '_DEFAULT_module();'
+                )
+                if node['internal_status_module_name'] is None else
+                (
+                    node['internal_status_module_name'] + '(' + ', '.join(node['additional_arguments']) + ');'
+                )
+            )
+            + os.linesep
+        )
+
+    def create_decorator(node):
+        return (
+            tab_indent(2) + node['name'] + ' : '
+            + node['category'] + '_' + node['type'] + '('
+            + ', '.join(node['children'] + (node['additional_arguments'] if node['additional_arguments'] is not None else []))
+            + ');' + os.linesep
+        )
+
+    def create_composite_with_memory(node):
+        return (
+            tab_indent(2) + node['name'] + ' : '
+            + node['category'] + '_' + node['type'] + '_' + str(len(node['children'])) + '('
+            + ', '.join(
+                node['children'] +
+                [
+                    (PARALLEL_SKIP_STRING + node['name'])
+                    if 'parallel' in node['type'] else
+                    (
+                        '-2' if len(node['children']) < 2 else (CHILD_TRACK_STRING + node['name'])
+                    )
+                ]
+            )
+            + ');' + os.linesep
+        )
+
+    def create_composite_without_memory(node):
+        return (
+            tab_indent(2) + node['name'] + ' : '
+            + node['category'] + '_' + node['type'] + '_' + str(len(node['children'])) + '('
+            + ', '.join(node['children'])
+            + ');' + os.linesep
+        )
+
+    def create_composite(node):
+        return (
+            (
+                tab_indent(2) + node['name']
+                + (
+                    ' : running_DEFAULT_module;'
+                    if 'parallel' in node['type'] else
+                    (
+                        ' : success_DEFAULT_module;'
+                        if 'sequence' in node['type'] else
+                        ' : failure_DEFAULT_module;'
+                    )
+                )
+                + os.linesep
+            )
+            if len(node['children']) == 0 else
+            (
+                create_composite_with_memory(node)
+                if ('with_memory' in node['type']) else
+                create_composite_without_memory(node)
+            )
+        )
+
+    var_string = ''.join(
+        [
+            create_leaf(node)
+            if node['category'] == 'leaf' else
+            (
+                create_decorator(node)
+                if node['category'] == 'decorator' else
+                create_composite(node)
+            )
+            for node in nodes.values()
+        ]
+    )
     # ^ for each node, create it as a variable.
     # for leaf nodes: this means passing the internal status module as an argument
     # for decorator nodes: this means adding the additional arguments into the mix
@@ -462,7 +538,7 @@ def main():
         nuxmv_string += open(args.specs_input_file).read() + os.linesep + os.linesep
 
     nuxmv_string += node_creator.create_names_module(node_name_to_number)
-    nuxmv_string += node_creator.create_leaf()
+    # nuxmv_string += node_creator.create_leaf()
     nuxmv_string += ''.join([eval('node_creator.create_' + cur_thing[0] + '(' + cur_thing[1] + ')') for cur_thing in
                              [*set([('composite_' + node['type'], str(len(node['children']))) if node['category'] == 'composite' else (
                                  ('decorator_' + node['type'], '0'))
