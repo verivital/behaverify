@@ -294,13 +294,13 @@ def create_decorator_inverter(ignored_value = 0):
     return return_string
 
 
-def create_leaf():
-    return ('MODULE leaf_module(internal_status_module)' + os.linesep
-            + '\tCONSTANTS' + os.linesep
-            + '\t\tsuccess, failure, running, invalid;' + os.linesep
-            + '\tDEFINE' + os.linesep
-            + '\t\tstatus := active ? internal_status_module.internal_status : invalid;' + os.linesep
-            )
+# def create_leaf():
+#     return ('MODULE leaf_module(internal_status_module)' + os.linesep
+#             + '\tCONSTANTS' + os.linesep
+#             + '\t\tsuccess, failure, running, invalid;' + os.linesep
+#             + '\tDEFINE' + os.linesep
+#             + '\t\tstatus := active ? internal_status_module.internal_status : invalid;' + os.linesep
+#             )
 
 # -----------------------------------------------------------------
 # composite nodes

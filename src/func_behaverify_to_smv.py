@@ -14,85 +14,20 @@ import os
 # ----------------------------------------------------------------------------------------------------------------
 # serene custom imports
 import func_node_creator as node_creator
-from behaverify_common import (tab_indent,
-                               get_root_node,
-                               get_right_sibling,
+from behaverify_common import (get_root_node,
                                refine_return_types,
                                refine_invalid,
                                prune_nodes, order_nodes,
                                map_node_name_to_number,
                                create_node_to_local_root_map,
                                create_local_root_to_relevant_list_map,
-                               create_node_to_descendants_map)
+                               create_node_to_descendants_map,
+                               tab_indent)
 # -----------------------------------------------------------------------------------------------------------------------
 
 LOCAL_ROOT_TREE_STRING = 'resume_from_here_in_subtree__'
 CHILD_TRACK_STRING = 'child_index_to_resume_from__'
 PARALLEL_SKIP_STRING = 'parallel_skip__'
-
-
-def create_leaf(node):
-    return (
-        tab_indent(2) + node['name'] + ' : '
-        +
-        (
-            ('_'.join(
-                [status for (status, possible) in [('success', node['return_possibilities']['success']),
-                                                   ('running', node['return_possibilities']['running']),
-                                                   ('failure', node['return_possibilities']['failure'])] if possible])
-             + '_DEFAULT_module')
-            if node['internal_status_module_name'] is None
-            else (
-                    node['internal_status_module_name'] + '(' + ', '.join(node['additional_arguments']) + ')')
-        )
-        + ';' + os.linesep
-    )
-
-
-def create_decorator(node):
-    return (
-        tab_indent(2) + node['name'] + ' : '
-        + node['category'] + '_' + node['type']
-        + '('
-        + (', '.join(node['children'] + (node['additional_arguments'] if node['additional_arguments'] is not None else [])))
-        + ');' + os.linesep
-    )
-
-
-def create_composite_without_memory(node):
-    cur_type = 'parallel_without_memory' if 'parallel' in node['type'] else node['type']
-    return (
-        tab_indent(2) + node['name'] + '_NEXT_' + str(len(node['children'])) + ' : ' + node['category'] + '_' + cur_type + '_END;' + os.linesep
-        + ''.join([(tab_indent(2) + node['name'] + (('_NEXT_' + str(num)) if num > 0 else '') + ' : '
-                    + node['category'] + '_' + cur_type + '(' + node['name'] + '_NEXT_' + str(num + 1) + ', ' + node['children'][num] + ');' + os.linesep)
-                   for num in reversed(range(len(node['children'])))])
-    )
-
-
-def create_composite_with_memory(node):
-    cur_type = 'parallel_without_memory' if 'parallel' in node['type'] else node['type']
-    return (
-        tab_indent(2) + node['name'] + '_NEXT_' + str(len(node['children'])) + ' : ' + node['category'] + '_' + cur_type + '_END;' + os.linesep
-        + ''.join([(tab_indent(2) + node['name'] + (('_NEXT_' + str(num)) if num > 0 else '') + ' : '
-                    + node['category'] + '_' + cur_type + '(' + node['name'] + '_NEXT_' + str(num + 1) + ', ' + node['children'][num] + ', ' + node['name'] + '_SKIP_' + str(num) + ');' + os.linesep)
-                   for num in reversed(range(len(node['children'])))])
-    )
-
-
-def create_composite(node):
-    return (
-        (tab_indent(2) + node['name'] + (' : running_DEFAULT_module;'
-                                         if 'parallel' in node['type'] else (
-                                                 ' : success_DEFAULT_module;'
-                                                 if 'sequence' in node['type']
-                                                 else ' : failure_DEFAULT_module;'))
-         + os.linesep
-         )
-        if len(node['children']) == 0 else (
-                create_composite_with_memory(node) if ('with_memory' in node['type']) else (
-                    create_composite_without_memory(node))
-        )
-    )
 
 
 def create_nodes(nodes, root_node_name, node_name_to_number, tick_condition):
@@ -119,18 +54,6 @@ def create_nodes(nodes, root_node_name, node_name_to_number, tick_condition):
     purely funcitonal
     '''
     define_string = ('\t\t' + root_node_name + '.active := ' + tick_condition + ';' + os.linesep
-                     + ''.join([(tab_indent(2) + node['name'] + '.status := ' + node['name'] + '.active ? ' + node['name'] + '.internal_status : invalid;' + os.linesep
-                                 + tab_indent(2) + node['name'] + '.internal_status := ' + os.linesep
-                                 + tab_indent(3) + 'case' + os.linesep
-                                 + tab_indent(4) + 'count(' + ', '.join([(child + '.internal_status = failure') for child in node['children']]) + ') >= 1 : failure;' + os.linesep
-                                 + tab_indent(4) + 'count(' + (
-                                     (', '.join([(child + '.internal_status = running') for child in node['children']]) + ') >= 1 : running;') if 'success_on_all' in node['type'] else (
-                                         ', '.join([(child + '.internal_status = success') for child in node['children']]) + ') >= 1 : success;'
-                                     )
-                                 ) + os.linesep
-                                 + tab_indent(4) + 'TRUE : ' + ('success' if 'success_on_all' in node['type'] else 'running') + ';' + os.linesep
-                                 + tab_indent(3) + 'esac;' + os.linesep)
-                                for node in nodes.values() if 'parallel' in node['type']])
                      + ''.join([('\t\t' + PARALLEL_SKIP_STRING + node['name'] + ' := '
                                  + (
                                      '[-2]' if len(node['children']) < 2 else (
@@ -142,12 +65,159 @@ def create_nodes(nodes, root_node_name, node_name_to_number, tick_condition):
     # ^ for each node that is parallel with memory, create a parellel_skip_string.
     # if it doesn't really have children, set it to a constant. otherwise, it will track each of it's children local roots.
     # (also the base case of we need to make the root_node active).
-    var_string = ''.join([
-        (create_leaf(node) if node['category'] == 'leaf' else (
-            create_decorator(node) if node['category'] == 'decorator' else (
+
+    def create_leaf(node):
+        return (
+            tab_indent(2) + node['name'] + ' : '
+            + (
+                (
+                    '_'.join(
+                        [
+                            status
+                            for (status, possible) in [('success', node['return_possibilities']['success']),
+                                                       ('running', node['return_possibilities']['running']),
+                                                       ('failure', node['return_possibilities']['failure'])]
+                            if possible
+                        ]
+                    ) + '_DEFAULT_module();'
+                )
+                if node['internal_status_module_name'] is None else
+                (
+                    node['internal_status_module_name'] + '(' + ', '.join(node['additional_arguments']) + ');'
+                )
+            )
+            + os.linesep
+        )
+
+    def create_decorator(node):
+        return (
+            tab_indent(2) + node['name'] + ' : '
+            + node['category'] + '_' + node['type'] + '('
+            + ', '.join(node['children'] + (node['additional_arguments'] if node['additional_arguments'] is not None else []))
+            + ');' + os.linesep
+        )
+
+    def create_composite_with_memory(node):
+        return (
+            ''.join(
+                [
+                    (
+                        tab_indent(2) + node['name']
+                        + (('_' + str(x)) if x > 0 else '')
+                        + ' : '
+                        + node['category'] + '_' + node['type'] + '('
+                        + node['name'] + '_' + (str(x + 1) if (x + 1 < len(node['children'])) else 'END')
+                        + ', '
+                        + node['children'][x]
+                        + (
+                            (
+                                ', '
+                                + ('TRUE' if 'success_on_all' in node['type'] else 'FALSE')
+                            )
+                            if 'parallel' in node['type'] else
+                            ''
+                        )
+                        + ', '
+                        + (
+                            (
+                                PARALLEL_SKIP_STRING + node['name'] + '[' + str(x) + ']'
+                            )
+                            if 'parallel' in node['type'] else
+                            (
+                                '-2' if len(node['children']) < 2 else (CHILD_TRACK_STRING + node['name'])
+                            )
+                        )
+                        + ');' + os.linesep
+                    )
+                    for x in range(len(node['children']))
+                ]
+            )
+            + tab_indent(2) + node['name'] + '_END : ' + node['category'] + '_' + node['type'] + '_END'
+            + (
+                (
+                    '('
+                    + ('TRUE' if 'success_on_all' in node['type'] else 'FALSE')
+                    + ')'
+                )
+                if 'parallel' in node['type'] else
+                ''
+            )
+            + ';' + os.linesep
+        )
+
+    def create_composite_without_memory(node):
+        return (
+            ''.join(
+                [
+                    (
+                        tab_indent(2) + node['name']
+                        + (('_' + str(x)) if x > 0 else '')
+                        + ' : '
+                        + node['category'] + '_' + node['type'] + '('
+                        + node['name'] + '_' + (str(x + 1) if (x + 1 < len(node['children'])) else 'END')
+                        + ', '
+                        + node['children'][x]
+                        + (
+                            (
+                                ', '
+                                + ('TRUE' if 'success_on_all' in node['type'] else 'FALSE')
+                            )
+                            if 'parallel' in node['type'] else
+                            ''
+                        )
+                        + ');' + os.linesep
+                    )
+                    for x in range(len(node['children']))
+                ]
+            )
+            + tab_indent(2) + node['name'] + '_END : ' + node['category'] + '_' + node['type'] + '_END'
+            + (
+                (
+                    '('
+                    + ('TRUE' if 'success_on_all' in node['type'] else 'FALSE')
+                    + ')'
+                )
+                if 'parallel' in node['type'] else
+                ''
+            )
+            + ';' + os.linesep
+        )
+
+    def create_composite(node):
+        return (
+            (
+                tab_indent(2) + node['name']
+                + (
+                    ' : running_DEFAULT_module;'
+                    if 'parallel' in node['type'] else
+                    (
+                        ' : success_DEFAULT_module;'
+                        if 'sequence' in node['type'] else
+                        ' : failure_DEFAULT_module;'
+                    )
+                )
+                + os.linesep
+            )
+            if len(node['children']) == 0 else
+            (
+                create_composite_with_memory(node)
+                if ('with_memory' in node['type']) else
+                create_composite_without_memory(node)
+            )
+        )
+
+    var_string = ''.join(
+        [
+            create_leaf(node)
+            if node['category'] == 'leaf' else
+            (
+                create_decorator(node)
+                if node['category'] == 'decorator' else
                 create_composite(node)
-            )))
-        for node in nodes.values()])
+            )
+            for node in nodes.values()
+        ]
+    )
     # ^ for each node, create it as a variable.
     # for leaf nodes: this means passing the internal status module as an argument
     # for decorator nodes: this means adding the additional arguments into the mix
@@ -316,50 +386,71 @@ def create_resume_point(nodes, node_to_local_root_name_map, local_root_to_releva
         node = nodes[node_name]
         if not node['category'] == 'composite':
             continue
+        if 'parallel' in node['type']:
+            continue
         if 'with_memory' not in node['type']:
             continue
-        # if len(node['children']) < 2:
-        #     # print('few children. skipping')
-        #     # we have 0 or 1 children
-        #     # if there are no children, then resume_point really doesn't matter,
-        #     # but we need to pass a value
-        #     # if there is 1 child, then we never skip it, so resume_point really doesn't matter,
-        #     # but we need to pass a value
-        #     # so regardless, we need to pass a value.
-        #     # hard code -2 into the node_with_memory in this case
-        #     pass
-        if len(node['children']) == 0:
-            continue
-        if len(node['children']) == 1:
-            resume_point_string += tab_indent(2) + node['name'] + '_SKIP_0 := FALSE;' + os.linesep
-            continue
-        if 'parallel' in node['type']:
-            resume_point_string += ''.join([
-                (tab_indent(2) + node['name'] + '_SKIP_' + str(child_index) + ' := '
-                 + (
-                     ('FALSE')
-                     if child_index == len(node['children']) - 1 else
-                     ('!(' + LOCAL_ROOT_TREE_STRING + node['name'] + ' = -2)')
-                 )
-                 + ';' + os.linesep
-                 )
-                for child_index in range(len(node['children']))])
+        if len(node['children']) < 2:
+            # print('few children. skipping')
+            # we have 0 or 1 children
+            # if there are no children, then resume_point really doesn't matter,
+            # but we need to pass a value
+            # if there is 1 child, then we never skip it, so resume_point really doesn't matter,
+            # but we need to pass a value
+            # so regardless, we need to pass a value.
+            # hard code -2 into the node_with_memory in this case
+            pass
         else:
+            # print('multiple children')
+            # have an actual quantity of children
             local_root_name = node_to_local_root_name_map[node_name]
-            (right_sibling_exists, right_sibling_name) = get_right_sibling(nodes, node)
-            resume_point_string += ''.join([
-                (tab_indent(2) + node['name'] + '_SKIP_' + str(child_index) + ' := '
-                 + (
-                     ('FALSE')
-                     if child_index == (len(node['children']) - 1) else
-                     (
-                         '(' + LOCAL_ROOT_TREE_STRING + local_root_name + ' >= node_names.' + node['children'][child_index + 1] + ')'
-                         + (('& (' + LOCAL_ROOT_TREE_STRING + local_root_name + ' < node_names.' + right_sibling_name + ')') if right_sibling_exists else '')
-                     )
-                 )
-                 + ';' + os.linesep
-                 )
-                for child_index in range(len(node['children']))])
+            relevant_list = local_root_to_relevant_list_map[local_root_name]
+            # print(relevant_list)
+            if len(relevant_list) == 0:
+                # print('no real resume children. hard coding -2')
+                resume_point_string += '\t\t' + CHILD_TRACK_STRING + node_name + ' := -2;' + os.linesep
+            else:
+                # print('real resume target present. initiating')
+                resume_point_string += ('\t\t' + CHILD_TRACK_STRING + node_name + ' := ' + os.linesep
+                                        + '\t\t\tcase' + os.linesep
+                                        )
+                descendants = node_to_descendants_map[node_name]
+                child_index_to_relevant_descendants_map = {}  # basically, we are going to use this to figure out where we need to point.
+                # i.e., if resume_from_node is pointing to 400, which of our children, if any, needs to be resumed? this is what this map answers.
+                # print(descendants)
+                for relevant_node in relevant_list:
+                    # print(relevant_node)
+                    if relevant_node in descendants:
+                        for child_index in range(len(node['children'])):
+                            # so we're gonna map this based on relative children
+                            # i.e, do i resume from my first child? second child?
+                            # print('---------------------------')
+                            # print(child_index)
+                            # print(child_index_to_relevant_descendants_map)
+                            child_name = node['children'][child_index]
+                            # print(child)
+                            if relevant_node in node_to_descendants_map[child_name]:
+                                # if the relevant node is a descendant of this child,
+                                # then we need to mark that down. if it's not, continue
+                                if child_index in child_index_to_relevant_descendants_map:
+                                    child_index_to_relevant_descendants_map[child_index].add(node_name_to_number[relevant_node])
+                                else:
+                                    child_index_to_relevant_descendants_map[child_index] = {node_name_to_number[relevant_node]}
+                            elif child_name == relevant_node:
+                                # unless of course, the relevant node IS the child,
+                                # then we also need to mark that down.
+                                if child_index in child_index_to_relevant_descendants_map:
+                                    child_index_to_relevant_descendants_map[child_index].add(node_name_to_number[relevant_node])
+                                else:
+                                    child_index_to_relevant_descendants_map[child_index] = {node_name_to_number[relevant_node]}
+                            # print(child_index_to_relevant_descendants_map)
+
+                for child_index in child_index_to_relevant_descendants_map:
+                    resume_point_string += '\t\t\t\t(' + LOCAL_ROOT_TREE_STRING + local_root_name + ' in ' + str(child_index_to_relevant_descendants_map[child_index]) + ') : ' + str(child_index) + ';' + os.linesep
+                resume_point_string += ('\t\t\t\tTRUE : -2;' + os.linesep
+                                        # we have nothing to resume from
+                                        + '\t\t\tesac;' + os.linesep
+                                        )
 
     define_string = resume_point_string
     var_string = ''
@@ -507,17 +598,40 @@ def main():
 
     nuxmv_string += node_creator.create_names_module(node_name_to_number)
     # nuxmv_string += node_creator.create_leaf()
-    nuxmv_string += ''.join([eval('node_creator.create_' + cur_thing + '(0)') for cur_thing in
-                             [*set([
-                                 ('composite_parallel_without_memory' if 'parallel' in node['type'] and 'without_memory' in node['type'] else (
-                                     'composite_parallel_without_memory' if 'parallel' in node['type'] else (
-                                         ('composite_' + node['type']) if node['category'] == 'composite' else (
-                                             ('decorator_' + node['type'])))))
-                                 for node in nodes.values() if (node['category'] != 'leaf')])]])
+    non_leaf_node = [
+        (lambda node : ('composite' == node['category'] and 'parallel' in node['type'] and 'with_memory' in node['type']),
+         node_creator.create_composite_parallel_with_memory),
+        (lambda node : ('composite' == node['category'] and 'parallel' in node['type'] and 'without_memory' in node['type']),
+         node_creator.create_composite_parallel_without_memory),
+        (lambda node : ('composite' == node['category'] and 'selector' in node['type'] and 'with_memory' in node['type']),
+         node_creator.create_composite_selector_with_memory),
+        (lambda node : ('composite' == node['category'] and 'selector' in node['type'] and 'without_memory' in node['type']),
+         node_creator.create_composite_selector_without_memory),
+        (lambda node : ('composite' == node['category'] and 'sequence' in node['type'] and 'with_memory' in node['type']),
+         node_creator.create_composite_sequence_with_memory),
+        (lambda node : ('composite' == node['category'] and 'sequence' in node['type'] and 'without_memory' in node['type']),
+         node_creator.create_composite_sequence_without_memory),
+        (lambda node : ('decorator' == node['category'] and 'inverter' in node['type']),
+         node_creator.create_decorator_inverter),
+        (lambda node : ('decorator' == node['category'] and 'X_is_Y' in node['type']),
+         node_creator.create_decorator_X_is_Y)
+    ]
+
+    nuxmv_string += ''.join(
+        [
+            method(0) if next(filter(test, nodes.values()), False) else ''
+            for (test, method) in non_leaf_node
+        ]
+    )
+    # nuxmv_string += ''.join([eval('node_creator.create_' + cur_thing[0] + '(' + cur_thing[1] + ')') for cur_thing in
+    #                          [*set([('composite_' + node['type'], str(len(node['children']))) if node['category'] == 'composite' else (
+    #                              ('decorator_' + node['type'], '0'))
+    #                                 for node in nodes.values() if (node['category'] != 'leaf')])]])
 
     if args.module_input_file:
         nuxmv_string = nuxmv_string + open(args.module_input_file).read()
     else:
+
         module_string = ''.join([node['internal_status_module_code']
                                  for node in nodes.values() if ((node['category'] == 'leaf') and (node['internal_status_module_name'] is not None))])
 

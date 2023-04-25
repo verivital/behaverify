@@ -160,6 +160,7 @@ def make_new_stage(statement, node_name, variables, local_variables, use_stages,
     none directly. however, this method calls format_code which calls format_variable
     format_variable has side effects. can modify variables.
     '''
+
     return (
         [
             (

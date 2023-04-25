@@ -1,24 +1,29 @@
-variables {
-	variable { x VAR [0, 2] } end_variable
-	variable { y VAR [0, 2] } end_variable
-	variable { target_x VAR [0, 2] } end_variable
-	variable { target_y VAR [0, 2] } end_variable
-	variable { mission VAR BOOLEAN } end_variable
-} end_variables
+constants {
+	x_max = 2
+	y_max = 2
+} end_constants
+
+
+blackboard_variables {
+	blackboard_variable { x VAR [0, 'x_max'] initial_value {result {0} end_result} end_initial_value} end_blackboard_variable
+	blackboard_variable { y VAR [0, 'y_max'] initial_value {result {0} end_result} end_initial_value} end_blackboard_variable
+	blackboard_variable { target_x VAR [0, 'x_max'] initial_value {result {0} end_result} end_initial_value} end_blackboard_variable
+	blackboard_variable { target_y VAR [0, 'y_max'] initial_value {result {0} end_result} end_initial_value} end_blackboard_variable
+	blackboard_variable { mission VAR BOOLEAN initial_value {result {False} end_result} end_initial_value} end_blackboard_variable
+} end_blackboard_variables
 
 local_variables {
-	variable { saw_target VAR BOOLEAN } end_variable
+	local_variable { saw_target VAR BOOLEAN initial_value {result {True} end_result} end_initial_value} end_local_variable
 } end_local_variables
 
 environment {
 	environment_variables {
-		environment_variable { x_goal VAR [0, 2] } end_environment_variable
-		environment_variable { y_goal VAR [0, 2] } end_environment_variable
-		environment_variable { x_true VAR [0, 2] } end_environment_variable
-		environment_variable { y_true VAR [0, 2] } end_environment_variable
-		environment_variable { remaining_goals VAR [0, 3] } end_environment_variable
+		environment_variable { x_goal VAR [0, 'x_max'] initial_value {result {range, 0, 'x_max', True} end_result} end_initial_value} end_environment_variable
+		environment_variable { y_goal VAR [0, 'y_max'] initial_value {result {range, 0, 'y_max', True} end_result} end_initial_value} end_environment_variable
+		environment_variable { x_true VAR [0, 'x_max'] initial_value {result {range, 0, 'x_max', True} end_result} end_initial_value} end_environment_variable
+		environment_variable { y_true VAR [0, 'y_max'] initial_value {result {range, 0, 'y_max', True} end_result} end_initial_value} end_environment_variable
+		environment_variable { remaining_goals VAR [0, 3] initial_value {result {range, 0, 3, True} end_result} end_initial_value} end_environment_variable
 	} end_environment_variables
-	initial_values { } end_initial_values
 	update_values {
 		environment_statement {
 			env remaining_goals
@@ -31,7 +36,7 @@ environment {
 			case { (equal, 0, env remaining_goals ) } end_case
 			result { env x_goal } end_result
 			case { (and, (equal, env x_goal, env x_true), (equal, env y_goal, env y_true)) } end_case
-			result { 0, 1, 2 } end_result
+			result {range, 0, 'x_max', True} end_result
 			result { env x_goal } end_result
 		} end_environment_statement
 		environment_statement {
@@ -39,7 +44,7 @@ environment {
 			case { (equal, 0, env remaining_goals) } end_case
 			result { env y_goal } end_result
 			case { (and, (equal, env x_goal, env x_true), (equal, env y_goal, env y_true)) } end_case
-			result { 0, 1, 2 } end_result
+			result {range, 0, 'y_max', True} end_result
 			result { env y_goal } end_result
 		} end_environment_statement
 	} end_update_values
@@ -49,32 +54,32 @@ checks {
 	check {
 		have_mission
 		read_variables { mission } end_read_variables
-		condition { mission } end_condition
+		condition { bl mission } end_condition
 	} end_check
 	check {
 		target_reached
 		read_variables { x y target_x target_y } end_read_variables
-		condition { (and, (equal, x, target_x), (equal, y, target_y)) } end_condition
+		condition { (and, (equal, bl x, bl target_x), (equal, bl y, bl target_y)) } end_condition
 	} end_check
 	check {
 		x_too_small
 		read_variables { target_x x } end_read_variables
-		condition { (less_than, x, target_x) } end_condition
+		condition { (less_than, bl x, bl target_x) } end_condition
 	} end_check
 	check {
 		x_too_big
 		read_variables { target_x x } end_read_variables
-		condition { (greater_than, x, target_x) } end_condition
+		condition { (greater_than, bl x, bl target_x) } end_condition
 	} end_check
 	check {
 		y_too_small
 		read_variables { target_y y } end_read_variables
-		condition { (less_than, y, target_y) } end_condition
+		condition { (less_than, bl y, bl target_y) } end_condition
 	} end_check
 	check {
 		y_too_big
 		read_variables { target_y y } end_read_variables
-		condition { (greater_than, y, target_y) } end_condition
+		condition { (greater_than, bl y, bl target_y) } end_condition
 	} end_check
 } end_checks
 
@@ -85,28 +90,20 @@ actions {
 	action {
 		get_mission
 		imports {'robot'} end_imports
+		local_variables {} end_local_variables
 		read_variables {} end_read_variables
 		write_variables {mission target_x target_y} end_write_variables
 		initial_values {
-			variable_statement {
-				mission result { False } end_result
-			} end_variable_statement
-			variable_statement {
-				target_x result { 0 } end_result
-			} end_variable_statement
-			variable_statement {
-				target_y result { 0 } end_result
-			} end_variable_statement
 		} end_initial_values
 		update {
 			read_environment {
-				python_function { from 'robot' 'get_mission' args } end_python_function
+				python_function { from 'robot' 'get_mission'} end_python_function
 				condition { True } end_condition
-				variable_environment_statement {target_x result { env x_goal } end_result} end_variable_environment_statement
-				variable_environment_statement {target_y result { env y_goal } end_result} end_variable_environment_statement
+				variable_statement_using_env {bl target_x result { env x_goal } end_result} end_variable_statement_using_env
+				variable_statement_using_env {bl target_y result { env y_goal } end_result} end_variable_statement_using_env
 			} end_read_environment
 			variable_statement {
-				mission
+				bl mission
 				result { True } end_result
 			} end_variable_statement
 			return_statement {
@@ -119,22 +116,17 @@ actions {
 	action {
 		get_position
 		imports {'robot'} end_imports
+		local_variables {} end_local_variables
 		read_variables {} end_read_variables
 		write_variables { x y } end_write_variables
 		initial_values {
-			variable_statement {
-				x result { 0 } end_result
-			} end_variable_statement
-			variable_statement {
-				y result { 0 } end_result
-			} end_variable_statement
 		} end_initial_values
 		update {
 			read_environment {
-				python_function { from 'robot' 'get_position' args } end_python_function
+				python_function { from 'robot' 'get_position'} end_python_function
 				condition { True } end_condition
-				variable_environment_statement {x result { env x_true } end_result} end_variable_environment_statement
-				variable_environment_statement {y result { env y_true } end_result} end_variable_environment_statement
+				variable_statement_using_env {bl x result { env x_true } end_result} end_variable_statement_using_env
+				variable_statement_using_env {bl y result { env y_true } end_result} end_variable_statement_using_env
 			} end_read_environment
 			return_statement { result { success } end_result } end_return_statement
 		} end_update
@@ -142,12 +134,13 @@ actions {
 
 	action {
 		clear_mission
+		local_variables {} end_local_variables
 		read_variables {} end_read_variables
 		write_variables { mission } end_write_variables
 		initial_values {} end_initial_values
 		update {
 			variable_statement {
-				mission
+				bl mission
 				result { False } end_result
 			} end_variable_statement
 			return_statement { result { success } end_result } end_return_statement
@@ -157,15 +150,16 @@ actions {
 	action {
 		go_right
 		imports { 'robot' } end_imports
+		local_variables {} end_local_variables
 		read_variables {} end_read_variables
 		write_variables {} end_write_variables
 		initial_values {} end_initial_values
 		update {
 			write_environment {
-				python_function { from 'robot' 'go_x' args 1 } end_python_function
+				python_function { from 'robot' 'go_right'} end_python_function
 				update_values {
 					environment_statement {
-						env x_true result { (min, 2, (addition, env x_true, 1)) } end_result
+						env x_true result { (min, 'x_max', (addition, env x_true, 1)) } end_result
 					} end_environment_statement
 				} end_update_values
 			} end_write_environment
@@ -176,12 +170,13 @@ actions {
 	action {
 		go_left
 		imports { 'robot' } end_imports
+		local_variables {} end_local_variables
 		read_variables {} end_read_variables
 		write_variables {} end_write_variables
 		initial_values {} end_initial_values
 		update {
 			write_environment {
-				python_function { from 'robot' 'go_x' args -1 } end_python_function
+				python_function { from 'robot' 'go_left'} end_python_function
 				update_values {
 					environment_statement {
 						env x_true result { (max, 0, (subtraction, env x_true, 1)) } end_result
@@ -195,15 +190,16 @@ actions {
 	action {
 		go_up
 		imports { 'robot' } end_imports
+		local_variables {} end_local_variables
 		read_variables {} end_read_variables
 		write_variables {} end_write_variables
 		initial_values {} end_initial_values
 		update {
 			write_environment {
-				python_function { from 'robot' 'go_y' args 1 } end_python_function
+				python_function { from 'robot' 'go_up'} end_python_function
 				update_values {
 					environment_statement {
-						env y_true result { (min, 2, (addition, env y_true, 1)) } end_result
+						env y_true result { (min, 'y_max', (addition, env y_true, 1)) } end_result
 					} end_environment_statement
 				} end_update_values
 			} end_write_environment
@@ -214,12 +210,13 @@ actions {
 	action {
 		go_down
 		imports { 'robot' } end_imports
+		local_variables {} end_local_variables
 		read_variables {} end_read_variables
 		write_variables {} end_write_variables
 		initial_values {} end_initial_values
 		update {
 			write_environment {
-				python_function { from 'robot' 'go_y' args -1 } end_python_function
+				python_function { from 'robot' 'go_down'} end_python_function
 				update_values {
 					environment_statement {
 						env y_true result { (max, 0, (subtraction, env y_true, 1)) } end_result
@@ -231,7 +228,9 @@ actions {
 	} end_action
 } end_actions
 
-root_node
+sub_trees {
+}end_sub_trees
+tree{
 composite {
 	robot_control
 	sequence
@@ -300,6 +299,7 @@ composite {
 		} end_composite
 	} end_children
 } end_composite
+} end_tree
 
 tick_prerequisite { (greater_than, env remaining_goals, 0) } end_tick_prerequisite
 specifications {
