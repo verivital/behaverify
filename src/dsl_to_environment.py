@@ -457,6 +457,7 @@ def default_preamble(blackboard_variables, environment_variables, updates):
         + indent(1) + 'global delayed_action_queue' + os.linesep
         + indent(1) + 'for delayed_action in delayed_action_queue:' + os.linesep
         + indent(2) + 'delayed_action()' + os.linesep
+        + indent(1) + 'delayed_action_queue = []' + os.linesep
         + indent(1) + 'return' + os.linesep
         + os.linesep
         + os.linesep
@@ -474,7 +475,7 @@ def default_preamble(blackboard_variables, environment_variables, updates):
             indent(1) + 'global ' + ', '.join([format_variable(variable, False, True, None) for variable in environment_variables if variable.model_as == 'VAR']) + os.linesep
             + ''.join(
                 [
-                    format_statement(update, None)
+                    format_statement(update, None, indent_level = 1)
                     for update in updates
                 ]
             )

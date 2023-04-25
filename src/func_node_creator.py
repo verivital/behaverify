@@ -1,5 +1,4 @@
 import os
-
 from behaverify_common import tab_indent
 
 # -----------------------------------------------------------------
@@ -29,19 +28,34 @@ def create_blackboard(nodes, variables, root_node_name):
         # -----------------------------------
         # define are static.
         if variable['mode'].strip() == 'DEFINE':
-            if variable['initial_value'] is None:
-                if variable['custom_value_range'] is None:
-                    define_string += ('\t\t' + variable_name + ' := ' + str(variable['min_value']) + ';' + os.linesep)
-                else:
-                    define_string += ('\t\t' + variable_name + ' := ' + variable['custom_value_range'].split(',')[0].replace('{', '').strip() + ";" + os.linesep)
-            else:
-                define_string += ('\t\t' + variable_name + ' := ' + os.linesep
-                                  + '\t\t\tcase' + os.linesep
-                                  + ''.join([('\t\t\t\t' + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in variable['initial_value']])
-                                  + '\t\t\tesac;' + os.linesep
-                                  )
-            if use_exist:
-                define_string += "\t\t" + variable_name + "_exists := TRUE;" + os.linesep
+            if len(variable['next_value']) > 0:
+                cur_stage = 0
+                for stage in variable['next_value']:
+                    define_string += (
+                        tab_indent(2) + variable_name + '_stage_' + str(cur_stage) + ' :=' + os.linesep
+                        + tab_indent(3) + 'case' + os.linesep
+                        + ''.join(
+                            [
+                                (tab_indent(4) + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep)
+                                for condition_pair in stage
+                            ]
+                        )
+                        + tab_indent(3) + 'esac;' + os.linesep
+                    )
+                    cur_stage = cur_stage + 1
+            # if variable['initial_value'] is None:
+            #     if variable['custom_value_range'] is None:
+            #         define_string += ('\t\t' + variable_name + ' := ' + str(variable['min_value']) + ';' + os.linesep)
+            #     else:
+            #         define_string += ('\t\t' + variable_name + ' := ' + variable['custom_value_range'].split(',')[0].replace('{', '').strip() + ";" + os.linesep)
+            # else:
+            #     define_string += ('\t\t' + variable_name + ' := ' + os.linesep
+            #                       + '\t\t\tcase' + os.linesep
+            #                       + ''.join([('\t\t\t\t' + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in variable['initial_value']])
+            #                       + '\t\t\tesac;' + os.linesep
+            #                       )
+            # if use_exist:
+            #     define_string += "\t\t" + variable_name + "_exists := TRUE;" + os.linesep
         elif variable['mode'].strip() == 'FROZENVAR' or len(variable['next_value']) == 0:
             frozenvar_string += ('\t\t' + variable_name + ' : '
                                  + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean')))
@@ -392,33 +406,56 @@ def create_composite_sequence_without_memory(number_of_children):
 
 
 def create_composite_parallel_without_memory(number_of_children):
-    return_string = ('MODULE composite_parallel_without_memory(next_composite, child)' + os.linesep
+    return_string = ('MODULE composite_parallel_without_memory(next_composite, child, success_on_all)' + os.linesep
                      + tab_indent(1) + 'CONSTANTS' + os.linesep
                      + tab_indent(2) + 'success, failure, running, invalid;' + os.linesep
                      + tab_indent(1) + 'DEFINE' + os.linesep
+                     + tab_indent(2) + 'status := active ? internal_status : invalid;' + os.linesep
+                     + tab_indent(2) + 'internal_status :=' + os.linesep
+                     + tab_indent(3) + 'case' + os.linesep
+                     + tab_indent(4) + 'child.internal_status = failure : failure;' + os.linesep
+                     + tab_indent(4) + 'success_on_all & (child.internal_status = success) : next_composite.internal_status;' + os.linesep
+                     + tab_indent(4) + 'success_on_all & (child.internal_status = running) : running;' + os.linesep
+                     + tab_indent(4) + '(child.internal_status = success) : success;' + os.linesep
+                     + tab_indent(4) + 'TRUE : running;' + os.linesep
+                     + tab_indent(3) + 'esac;' + os.linesep
                      + tab_indent(2) + 'child.active := active;' + os.linesep
                      + tab_indent(2) + 'next_composite.active := active;' + os.linesep
                      + os.linesep
-                     + 'MODULE composite_parallel_without_memory_END' + os.linesep
+                     + 'MODULE composite_parallel_without_memory_END(success_on_all)' + os.linesep
                      + tab_indent(1) + 'CONSTANTS' + os.linesep
                      + tab_indent(2) + 'success, failure, running, invalid;' + os.linesep
                      + tab_indent(1) + 'DEFINE' + os.linesep
+                     + tab_indent(2) + 'status := active ? internal_status : invalid;' + os.linesep
+                     + tab_indent(2) + 'internal_status := success_on_all ? success : running;' + os.linesep
                      )
     return return_string
 
 
 def create_composite_parallel_with_memory(number_of_children):
-    return_string = ('MODULE composite_parallel_with_memory(next_composite, child, skip_child)' + os.linesep
+    return_string = ('MODULE composite_parallel_with_memory(next_composite, child, success_on_all, skip_child)' + os.linesep
                      + tab_indent(1) + 'CONSTANTS' + os.linesep
                      + tab_indent(2) + 'success, failure, running, invalid;' + os.linesep
                      + tab_indent(1) + 'DEFINE' + os.linesep
+                     + tab_indent(2) + 'status := active ? internal_status : invalid;' + os.linesep
+                     + tab_indent(2) + 'internal_status :=' + os.linesep
+                     + tab_indent(3) + 'case' + os.linesep
+                     + tab_indent(4) + 'skip_child : next_composite.internal_status' + os.linesep
+                     + tab_indent(4) + 'child.internal_status = failure : failure;' + os.linesep
+                     + tab_indent(4) + 'success_on_all & (child.internal_status = success) : next_composite.internal_status;' + os.linesep
+                     + tab_indent(4) + 'success_on_all & (child.internal_status = running) : running;' + os.linesep
+                     + tab_indent(4) + '(child.internal_status = success) : success;' + os.linesep
+                     + tab_indent(4) + 'TRUE : running;' + os.linesep
+                     + tab_indent(3) + 'esac;' + os.linesep
                      + tab_indent(2) + 'child.active := active & !(skip_child);' + os.linesep
                      + tab_indent(2) + 'next_composite.active := active;' + os.linesep
                      + os.linesep
-                     + 'MODULE composite_parallel_with_memory_END' + os.linesep
+                     + 'MODULE composite_parallel_with_memory_END(success_on_all)' + os.linesep
                      + tab_indent(1) + 'CONSTANTS' + os.linesep
                      + tab_indent(2) + 'success, failure, running, invalid;' + os.linesep
                      + tab_indent(1) + 'DEFINE' + os.linesep
+                     + tab_indent(2) + 'status := active ? internal_status : invalid;' + os.linesep
+                     + tab_indent(2) + 'internal_status := success_on_all ? success : running;' + os.linesep
                      )
     return return_string
 

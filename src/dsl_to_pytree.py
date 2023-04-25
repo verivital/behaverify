@@ -334,10 +334,11 @@ def handle_return_statement(statement):
     variable_name = 'return_status'
     if len(statement.case_results) == 0:
         return (indent(2) + variable_name + ' = ' + format_returns(statement.default_result) + os.linesep)
-    return ((''.join([
-        (indent(2) + 'elif ' + format_code(case_result.condition) + ':' + os.linesep
-         + (indent(3) + variable_name + ' = ' + format_returns(statement.default_result) + os.linesep)
-         ) for case_result in statement.case_results])).replace('elif', 'if', 1)
+    return ((''.join(
+        [
+            (indent(2) + 'elif ' + format_code(case_result.condition) + ':' + os.linesep
+             + (indent(3) + variable_name + ' = ' + format_returns(case_result) + os.linesep)
+             ) for case_result in statement.case_results])).replace('elif', 'if', 1)
             + (indent(2) + 'else:' + os.linesep
                + indent(3) + variable_name + ' = ' + format_returns(statement.default_result) + os.linesep)
             )
