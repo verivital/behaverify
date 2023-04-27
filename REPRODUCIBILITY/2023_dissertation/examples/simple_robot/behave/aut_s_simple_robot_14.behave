@@ -153,8 +153,8 @@
                                                                   'running': True,
                                                                   'success': True},
                                       'type': 'sequence_without_memory'},
-                 'target_reached': {   'additional_arguments': [   'var_x',
-                                                                   'var_y',
+                 'target_reached': {   'additional_arguments': [   'var_y',
+                                                                   'var_x',
                                                                    'var_target_y',
                                                                    'var_target_x'],
                                        'category': 'leaf',
@@ -292,7 +292,11 @@
                           'CTLSPEC AF((env_remaining_goals_stage_1 = 0));'],
     'tick_condition': '(env_remaining_goals > 0)',
     'variables': {   'env_remaining_goals': {   'custom_value_range': None,
-                                                'initial_value': None,
+                                                'initial_value': [   (   'TRUE',
+                                                                         '{0, '
+                                                                         '1, '
+                                                                         '2, '
+                                                                         '3}')],
                                                 'keep_stage_0': True,
                                                 'max_value': 3,
                                                 'min_value': 0,
@@ -315,7 +319,11 @@
                                                                               'env_remaining_goals')])],
                                                 'prefix': 'env_'},
                      'env_x_goal': {   'custom_value_range': None,
-                                       'initial_value': None,
+                                       'initial_value': [   (   'TRUE',
+                                                                '{0, 1, 2, 3, '
+                                                                '4, 5, 6, 7, '
+                                                                '8, 9, 10, 11, '
+                                                                '12, 13}')],
                                        'keep_stage_0': True,
                                        'max_value': 13,
                                        'min_value': 0,
@@ -343,7 +351,11 @@
                                                                      'env_x_goal')])],
                                        'prefix': 'env_'},
                      'env_x_true': {   'custom_value_range': None,
-                                       'initial_value': None,
+                                       'initial_value': [   (   'TRUE',
+                                                                '{0, 1, 2, 3, '
+                                                                '4, 5, 6, 7, '
+                                                                '8, 9, 10, 11, '
+                                                                '12, 13}')],
                                        'keep_stage_0': True,
                                        'max_value': 13,
                                        'min_value': 0,
@@ -364,7 +376,11 @@
                                                                      '1))')])],
                                        'prefix': 'env_'},
                      'env_y_goal': {   'custom_value_range': None,
-                                       'initial_value': None,
+                                       'initial_value': [   (   'TRUE',
+                                                                '{0, 1, 2, 3, '
+                                                                '4, 5, 6, 7, '
+                                                                '8, 9, 10, 11, '
+                                                                '12, 13}')],
                                        'keep_stage_0': True,
                                        'max_value': 13,
                                        'min_value': 0,
@@ -392,7 +408,11 @@
                                                                      'env_y_goal')])],
                                        'prefix': 'env_'},
                      'env_y_true': {   'custom_value_range': None,
-                                       'initial_value': None,
+                                       'initial_value': [   (   'TRUE',
+                                                                '{0, 1, 2, 3, '
+                                                                '4, 5, 6, 7, '
+                                                                '8, 9, 10, 11, '
+                                                                '12, 13}')],
                                        'keep_stage_0': True,
                                        'max_value': 13,
                                        'min_value': 0,

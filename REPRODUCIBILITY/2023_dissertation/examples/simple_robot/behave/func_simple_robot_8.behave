@@ -172,17 +172,17 @@
                                                                   'running': True,
                                                                   'success': True},
                                       'type': 'sequence_without_memory'},
-                 'target_reached': {   'additional_arguments': [   'var_target_x',
-                                                                   'var_y_stage_1',
+                 'target_reached': {   'additional_arguments': [   'var_target_y',
                                                                    'var_x_stage_1',
-                                                                   'var_target_y'],
+                                                                   'var_y_stage_1',
+                                                                   'var_target_x'],
                                        'category': 'leaf',
                                        'children': [],
                                        'internal_status_module_code': 'MODULE '
-                                                                      'target_reached_module(var_target_x, '
-                                                                      'var_y_stage_1, '
+                                                                      'target_reached_module(var_target_y, '
                                                                       'var_x_stage_1, '
-                                                                      'var_target_y)\n'
+                                                                      'var_y_stage_1, '
+                                                                      'var_target_x)\n'
                                                                       '\t'
                                                                       'CONSTANTS\n'
                                                                       '\t\t'
@@ -410,7 +410,11 @@
                           'CTLSPEC AF((env_remaining_goals_stage_1 = 0));'],
     'tick_condition': '(env_remaining_goals > 0)',
     'variables': {   'env_remaining_goals': {   'custom_value_range': None,
-                                                'initial_value': None,
+                                                'initial_value': [   (   'TRUE',
+                                                                         '{0, '
+                                                                         '1, '
+                                                                         '2, '
+                                                                         '3}')],
                                                 'keep_stage_0': True,
                                                 'max_value': 3,
                                                 'min_value': 0,
@@ -433,7 +437,9 @@
                                                                               'env_remaining_goals')])],
                                                 'prefix': 'env_'},
                      'env_x_goal': {   'custom_value_range': None,
-                                       'initial_value': None,
+                                       'initial_value': [   (   'TRUE',
+                                                                '{0, 1, 2, 3, '
+                                                                '4, 5, 6, 7}')],
                                        'keep_stage_0': True,
                                        'max_value': 7,
                                        'min_value': 0,
@@ -459,7 +465,9 @@
                                                                      'env_x_goal')])],
                                        'prefix': 'env_'},
                      'env_x_true': {   'custom_value_range': None,
-                                       'initial_value': None,
+                                       'initial_value': [   (   'TRUE',
+                                                                '{0, 1, 2, 3, '
+                                                                '4, 5, 6, 7}')],
                                        'keep_stage_0': True,
                                        'max_value': 7,
                                        'min_value': 0,
@@ -480,7 +488,9 @@
                                                                      '1))')])],
                                        'prefix': 'env_'},
                      'env_y_goal': {   'custom_value_range': None,
-                                       'initial_value': None,
+                                       'initial_value': [   (   'TRUE',
+                                                                '{0, 1, 2, 3, '
+                                                                '4, 5, 6, 7}')],
                                        'keep_stage_0': True,
                                        'max_value': 7,
                                        'min_value': 0,
@@ -506,7 +516,9 @@
                                                                      'env_y_goal')])],
                                        'prefix': 'env_'},
                      'env_y_true': {   'custom_value_range': None,
-                                       'initial_value': None,
+                                       'initial_value': [   (   'TRUE',
+                                                                '{0, 1, 2, 3, '
+                                                                '4, 5, 6, 7}')],
                                        'keep_stage_0': True,
                                        'max_value': 7,
                                        'min_value': 0,

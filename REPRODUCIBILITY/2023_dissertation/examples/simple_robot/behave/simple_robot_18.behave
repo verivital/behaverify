@@ -265,13 +265,13 @@
                                                            'running': True,
                                                            'success': True},
                                'type': 'sequence_without_memory'},
-                 'x_too_big': {   'additional_arguments': [   'var_x_stage_1',
-                                                              'var_target_x_stage_1'],
+                 'x_too_big': {   'additional_arguments': [   'var_target_x_stage_1',
+                                                              'var_x_stage_1'],
                                   'category': 'leaf',
                                   'children': [],
                                   'internal_status_module_code': 'MODULE '
-                                                                 'x_too_big_module(var_x_stage_1, '
-                                                                 'var_target_x_stage_1)\n'
+                                                                 'x_too_big_module(var_target_x_stage_1, '
+                                                                 'var_x_stage_1)\n'
                                                                  '\tCONSTANTS\n'
                                                                  '\t\tsuccess, '
                                                                  'failure, '
@@ -297,13 +297,13 @@
                                                               'running': False,
                                                               'success': True},
                                   'type': 'check'},
-                 'x_too_small': {   'additional_arguments': [   'var_x_stage_1',
-                                                                'var_target_x_stage_1'],
+                 'x_too_small': {   'additional_arguments': [   'var_target_x_stage_1',
+                                                                'var_x_stage_1'],
                                     'category': 'leaf',
                                     'children': [],
                                     'internal_status_module_code': 'MODULE '
-                                                                   'x_too_small_module(var_x_stage_1, '
-                                                                   'var_target_x_stage_1)\n'
+                                                                   'x_too_small_module(var_target_x_stage_1, '
+                                                                   'var_x_stage_1)\n'
                                                                    '\t'
                                                                    'CONSTANTS\n'
                                                                    '\t\t'
@@ -410,7 +410,11 @@
                           'CTLSPEC AF((env_remaining_goals_stage_1 = 0));'],
     'tick_condition': '(env_remaining_goals > 0)',
     'variables': {   'env_remaining_goals': {   'custom_value_range': None,
-                                                'initial_value': None,
+                                                'initial_value': [   (   'TRUE',
+                                                                         '{0, '
+                                                                         '1, '
+                                                                         '2, '
+                                                                         '3}')],
                                                 'keep_stage_0': True,
                                                 'max_value': 3,
                                                 'min_value': 0,
@@ -433,7 +437,12 @@
                                                                               'env_remaining_goals')])],
                                                 'prefix': 'env_'},
                      'env_x_goal': {   'custom_value_range': None,
-                                       'initial_value': None,
+                                       'initial_value': [   (   'TRUE',
+                                                                '{0, 1, 2, 3, '
+                                                                '4, 5, 6, 7, '
+                                                                '8, 9, 10, 11, '
+                                                                '12, 13, 14, '
+                                                                '15, 16, 17}')],
                                        'keep_stage_0': True,
                                        'max_value': 17,
                                        'min_value': 0,
@@ -463,7 +472,12 @@
                                                                      'env_x_goal')])],
                                        'prefix': 'env_'},
                      'env_x_true': {   'custom_value_range': None,
-                                       'initial_value': None,
+                                       'initial_value': [   (   'TRUE',
+                                                                '{0, 1, 2, 3, '
+                                                                '4, 5, 6, 7, '
+                                                                '8, 9, 10, 11, '
+                                                                '12, 13, 14, '
+                                                                '15, 16, 17}')],
                                        'keep_stage_0': True,
                                        'max_value': 17,
                                        'min_value': 0,
@@ -484,7 +498,12 @@
                                                                      '1))')])],
                                        'prefix': 'env_'},
                      'env_y_goal': {   'custom_value_range': None,
-                                       'initial_value': None,
+                                       'initial_value': [   (   'TRUE',
+                                                                '{0, 1, 2, 3, '
+                                                                '4, 5, 6, 7, '
+                                                                '8, 9, 10, 11, '
+                                                                '12, 13, 14, '
+                                                                '15, 16, 17}')],
                                        'keep_stage_0': True,
                                        'max_value': 17,
                                        'min_value': 0,
@@ -514,7 +533,12 @@
                                                                      'env_y_goal')])],
                                        'prefix': 'env_'},
                      'env_y_true': {   'custom_value_range': None,
-                                       'initial_value': None,
+                                       'initial_value': [   (   'TRUE',
+                                                                '{0, 1, 2, 3, '
+                                                                '4, 5, 6, 7, '
+                                                                '8, 9, 10, 11, '
+                                                                '12, 13, 14, '
+                                                                '15, 16, 17}')],
                                        'keep_stage_0': True,
                                        'max_value': 17,
                                        'min_value': 0,
