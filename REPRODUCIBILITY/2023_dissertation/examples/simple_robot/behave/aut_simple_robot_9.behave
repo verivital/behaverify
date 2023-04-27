@@ -190,17 +190,17 @@
                                                                   'running': True,
                                                                   'success': True},
                                       'type': 'sequence_without_memory'},
-                 'target_reached': {   'additional_arguments': [   'var_y',
-                                                                   'var_target_y',
-                                                                   'var_target_x',
-                                                                   'var_x'],
+                 'target_reached': {   'additional_arguments': [   'var_target_x',
+                                                                   'var_y',
+                                                                   'var_x',
+                                                                   'var_target_y'],
                                        'category': 'leaf',
                                        'children': [],
                                        'internal_status_module_code': 'MODULE '
-                                                                      'target_reached_module(var_y, '
-                                                                      'var_target_y, '
-                                                                      'var_target_x, '
-                                                                      'var_x)\n'
+                                                                      'target_reached_module(var_target_x, '
+                                                                      'var_y, '
+                                                                      'var_x, '
+                                                                      'var_target_y)\n'
                                                                       '\t'
                                                                       'CONSTANTS\n'
                                                                       '\t\t'
