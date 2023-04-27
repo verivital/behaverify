@@ -191,15 +191,15 @@
                                                                   'success': True},
                                       'type': 'sequence_without_memory'},
                  'target_reached': {   'additional_arguments': [   'var_x',
-                                                                   'var_y',
                                                                    'var_target_x',
+                                                                   'var_y',
                                                                    'var_target_y'],
                                        'category': 'leaf',
                                        'children': [],
                                        'internal_status_module_code': 'MODULE '
                                                                       'target_reached_module(var_x, '
-                                                                      'var_y, '
                                                                       'var_target_x, '
+                                                                      'var_y, '
                                                                       'var_target_y)\n'
                                                                       '\t'
                                                                       'CONSTANTS\n'

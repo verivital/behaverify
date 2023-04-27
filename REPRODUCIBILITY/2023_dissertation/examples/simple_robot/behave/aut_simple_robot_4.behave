@@ -190,17 +190,17 @@
                                                                   'running': True,
                                                                   'success': True},
                                       'type': 'sequence_without_memory'},
-                 'target_reached': {   'additional_arguments': [   'var_y',
+                 'target_reached': {   'additional_arguments': [   'var_x',
+                                                                   'var_target_x',
                                                                    'var_target_y',
-                                                                   'var_x',
-                                                                   'var_target_x'],
+                                                                   'var_y'],
                                        'category': 'leaf',
                                        'children': [],
                                        'internal_status_module_code': 'MODULE '
-                                                                      'target_reached_module(var_y, '
+                                                                      'target_reached_module(var_x, '
+                                                                      'var_target_x, '
                                                                       'var_target_y, '
-                                                                      'var_x, '
-                                                                      'var_target_x)\n'
+                                                                      'var_y)\n'
                                                                       '\t'
                                                                       'CONSTANTS\n'
                                                                       '\t\t'
