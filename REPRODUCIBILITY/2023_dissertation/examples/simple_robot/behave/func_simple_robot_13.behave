@@ -172,17 +172,17 @@
                                                                   'running': True,
                                                                   'success': True},
                                       'type': 'sequence_without_memory'},
-                 'target_reached': {   'additional_arguments': [   'var_target_x',
-                                                                   'var_y_stage_1',
-                                                                   'var_target_y',
-                                                                   'var_x_stage_1'],
+                 'target_reached': {   'additional_arguments': [   'var_target_y',
+                                                                   'var_target_x',
+                                                                   'var_x_stage_1',
+                                                                   'var_y_stage_1'],
                                        'category': 'leaf',
                                        'children': [],
                                        'internal_status_module_code': 'MODULE '
-                                                                      'target_reached_module(var_target_x, '
-                                                                      'var_y_stage_1, '
-                                                                      'var_target_y, '
-                                                                      'var_x_stage_1)\n'
+                                                                      'target_reached_module(var_target_y, '
+                                                                      'var_target_x, '
+                                                                      'var_x_stage_1, '
+                                                                      'var_y_stage_1)\n'
                                                                       '\t'
                                                                       'CONSTANTS\n'
                                                                       '\t\t'

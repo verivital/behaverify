@@ -154,9 +154,9 @@
                                                                   'success': True},
                                       'type': 'sequence_without_memory'},
                  'target_reached': {   'additional_arguments': [   'var_target_x',
-                                                                   'var_y',
+                                                                   'var_target_y',
                                                                    'var_x',
-                                                                   'var_target_y'],
+                                                                   'var_y'],
                                        'category': 'leaf',
                                        'children': [],
                                        'internal_status_module_code': [   (   '((var_x '
@@ -254,8 +254,8 @@
                                                                 'running': False,
                                                                 'success': True},
                                     'type': 'check'},
-                 'y_too_big': {   'additional_arguments': [   'var_y',
-                                                              'var_target_y'],
+                 'y_too_big': {   'additional_arguments': [   'var_target_y',
+                                                              'var_y'],
                                   'category': 'leaf',
                                   'children': [],
                                   'internal_status_module_code': [   (   '(var_y '
@@ -271,8 +271,8 @@
                                                               'running': False,
                                                               'success': True},
                                   'type': 'check'},
-                 'y_too_small': {   'additional_arguments': [   'var_y',
-                                                                'var_target_y'],
+                 'y_too_small': {   'additional_arguments': [   'var_target_y',
+                                                                'var_y'],
                                     'category': 'leaf',
                                     'children': [],
                                     'internal_status_module_code': [   (   '(var_y '
