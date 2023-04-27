@@ -153,10 +153,10 @@
                                                                   'running': True,
                                                                   'success': True},
                                       'type': 'sequence_without_memory'},
-                 'target_reached': {   'additional_arguments': [   'var_x',
-                                                                   'var_target_y',
+                 'target_reached': {   'additional_arguments': [   'var_target_x',
                                                                    'var_y',
-                                                                   'var_target_x'],
+                                                                   'var_x',
+                                                                   'var_target_y'],
                                        'category': 'leaf',
                                        'children': [],
                                        'internal_status_module_code': [   (   '((var_x '
@@ -220,8 +220,8 @@
                                                            'running': True,
                                                            'success': True},
                                'type': 'sequence_without_memory'},
-                 'x_too_big': {   'additional_arguments': [   'var_x',
-                                                              'var_target_x'],
+                 'x_too_big': {   'additional_arguments': [   'var_target_x',
+                                                              'var_x'],
                                   'category': 'leaf',
                                   'children': [],
                                   'internal_status_module_code': [   (   '(var_x '
@@ -237,8 +237,8 @@
                                                               'running': False,
                                                               'success': True},
                                   'type': 'check'},
-                 'x_too_small': {   'additional_arguments': [   'var_x',
-                                                                'var_target_x'],
+                 'x_too_small': {   'additional_arguments': [   'var_target_x',
+                                                                'var_x'],
                                     'category': 'leaf',
                                     'children': [],
                                     'internal_status_module_code': [   (   '(var_x '
@@ -292,7 +292,11 @@
                           'CTLSPEC AF((env_remaining_goals_stage_1 = 0));'],
     'tick_condition': '(env_remaining_goals > 0)',
     'variables': {   'env_remaining_goals': {   'custom_value_range': None,
-                                                'initial_value': None,
+                                                'initial_value': [   (   'TRUE',
+                                                                         '{0, '
+                                                                         '1, '
+                                                                         '2, '
+                                                                         '3}')],
                                                 'keep_stage_0': True,
                                                 'max_value': 3,
                                                 'min_value': 0,
@@ -315,7 +319,10 @@
                                                                               'env_remaining_goals')])],
                                                 'prefix': 'env_'},
                      'env_x_goal': {   'custom_value_range': None,
-                                       'initial_value': None,
+                                       'initial_value': [   (   'TRUE',
+                                                                '{0, 1, 2, 3, '
+                                                                '4, 5, 6, 7, '
+                                                                '8, 9, 10}')],
                                        'keep_stage_0': True,
                                        'max_value': 10,
                                        'min_value': 0,
@@ -342,7 +349,10 @@
                                                                      'env_x_goal')])],
                                        'prefix': 'env_'},
                      'env_x_true': {   'custom_value_range': None,
-                                       'initial_value': None,
+                                       'initial_value': [   (   'TRUE',
+                                                                '{0, 1, 2, 3, '
+                                                                '4, 5, 6, 7, '
+                                                                '8, 9, 10}')],
                                        'keep_stage_0': True,
                                        'max_value': 10,
                                        'min_value': 0,
@@ -363,7 +373,10 @@
                                                                      '1))')])],
                                        'prefix': 'env_'},
                      'env_y_goal': {   'custom_value_range': None,
-                                       'initial_value': None,
+                                       'initial_value': [   (   'TRUE',
+                                                                '{0, 1, 2, 3, '
+                                                                '4, 5, 6, 7, '
+                                                                '8, 9, 10}')],
                                        'keep_stage_0': True,
                                        'max_value': 10,
                                        'min_value': 0,
@@ -390,7 +403,10 @@
                                                                      'env_y_goal')])],
                                        'prefix': 'env_'},
                      'env_y_true': {   'custom_value_range': None,
-                                       'initial_value': None,
+                                       'initial_value': [   (   'TRUE',
+                                                                '{0, 1, 2, 3, '
+                                                                '4, 5, 6, 7, '
+                                                                '8, 9, 10}')],
                                        'keep_stage_0': True,
                                        'max_value': 10,
                                        'min_value': 0,

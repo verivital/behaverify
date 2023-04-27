@@ -271,8 +271,8 @@ def create_decorator_X_is_Y(ignored_value = 0):
     (status_start, status_end, active, active_end, children) = common_string_decorator(1)
     return_string = ("MODULE decorator_X_is_Y(child_0, incoming_status, outgoing_status)" + os.linesep
                      + status_start
-                     + "\t\t\t\tchild_0.status = incoming_status : outgoing_status;" + os.linesep  # if we detect the incoming status, use outgoing_status
-                     + "\t\t\t\tTRUE : child_0.status;" + os.linesep  # otherwise matcch the child
+                     + "\t\t\t\tchild_0.internal_status = incoming_status : outgoing_status;" + os.linesep  # if we detect the incoming status, use outgoing_status
+                     + "\t\t\t\tTRUE : child_0.internal_status;" + os.linesep  # otherwise matcch the child
                      + status_end
                      + active[0]  # handles (if this node not active, child_0 not active)
                      + active_end  # handle (otherwise, child_0 active)
@@ -284,8 +284,8 @@ def create_decorator_inverter(ignored_value = 0):
     (status_start, status_end, active, active_end, children) = common_string_decorator(1)
     return_string = ("MODULE decorator_inverter(child_0)" + os.linesep
                      + status_start
-                     + "\t\t\t\tchild_0.status = success : failure;" + os.linesep  # if we detect the incoming status, use outgoing_status
-                     + "\t\t\t\tchild_0.status = failure : success;" + os.linesep  # if we detect the incoming status, use outgoing_status
+                     + "\t\t\t\tchild_0.internal_status = success : failure;" + os.linesep  # if we detect the incoming status, use outgoing_status
+                     + "\t\t\t\tchild_0.internal_status = failure : success;" + os.linesep  # if we detect the incoming status, use outgoing_status
                      + "\t\t\t\tTRUE : child_0.status;" + os.linesep  # otherwise matcch the child
                      + status_end
                      + active[0]  # handles (if this node not active, child_0 not active)
@@ -331,8 +331,21 @@ def create_composite_selector_with_memory(number_of_children):
             return_string += ("\t\tchild_0.active := active & (0 >= resume_point);" + os.linesep)
             # first child is active if we are active and didn't skip it via resume_point
         else:
-            # NEW MODIFICATION?
-            return_string += ("\t\tchild_" + str(child) + ".active := active & ((" + str(child) + " >= resume_point) & ((" + str(child) + " = resume_point) | (child_" + str(child-1) + ".status = failure)));" + os.linesep)
+            # --- original version.
+            return_string += (tab_indent(2) + 'child_' + str(child) + '.active := active & ((' + str(child) + ' >= resume_point) & ((' + str(child) + ' = resume_point) | (child_' + str(child - 1) + '.status = failure)));' + os.linesep)
+
+            # --- internal_status version.
+            # return_string += (tab_indent(2) + 'child_' + str(child) + '.active := active & ((' + str(child) + ' >= resume_point) & ((' + str(child) + ' = resume_point) | ((child_' + str(child - 1) + '.internal_status = success) & (child_' + str(child - 1) + '.active))));' + os.linesep)
+
+            # most recent change -> changed .status to .internal_status. wait. this might be correct for a while, but fuck up later. let's consider it.
+            # start from child 1. child 1 returns success.
+            # child 2: inactive, because it was not the resume_point and child 1 did not return failure. but it's internal_status is failure.
+            # child 3: active, because it was after the resume_point but not the resume_point. child 2 is inactive, so it should be inactive, but it's only checking internal_status.
+            # ok. so that's an error. But. we must now consider if we should use active and internal status as a pair of conditions, to more actively prune.
+            # ------- end consideration. below notes on doing stuff.
+            # ------- consideration 2. i think there was an error in the resume code using the old version actually. NVM. i thought the following situation could occur
+            # child x is skipped. child x + 1 fails to activate because child x is inactive. howerer, in the non-parallel nodes, child x being skipped means either child x+1 is skipped, or the resume point. either way, we don't have a problem.
+
             # other children are active if we are active, we didn't skip it via resume_point, and the previous child returned failure or we're resuming from this child specifically
     return return_string
 
@@ -358,6 +371,10 @@ def create_composite_selector_without_memory(number_of_children):
         else:
             return_string += ("\t\tchild_" + str(child) + ".active := child_" + str(child-1) + ".status = failure;" + os.linesep)
             # if it's not the first child, then the only thing that matters is was did the child before this one return failure?
+
+            # below we have the internal_status version. which checks the internal status and if the parent is active. wait. that's wrong. this could cause later nodes to restart.
+            # we need to check if the previous node is active.
+            # return_string += ("\t\tchild_" + str(child) + ".active := (child_" + str(child-1) + ".internal_status = failure) & (child_" + str(child-1) + ".active);" + os.linesep)
     return return_string
 
 
@@ -386,8 +403,11 @@ def create_composite_sequence_with_memory(number_of_children):
             return_string += ("\t\tchild_0.active := active & (0 >= resume_point);" + os.linesep)
             # first child is active if we are active and didn't skip it via resume_point
         else:
-            return_string += ("\t\tchild_" + str(child) + ".active := active & ((" + str(child) + " >= resume_point) & ((" + str(child) + " = resume_point) | (child_" + str(child-1) + ".status = success)));" + os.linesep)
-            # other children are active if we are active, we didn't skip it via resume_point, and the previous child returned success or we're resuming from this child specifically
+            # --- original version.
+            return_string += (tab_indent(2) + 'child_' + str(child) + '.active := active & ((' + str(child) + ' >= resume_point) & ((' + str(child) + ' = resume_point) | (child_' + str(child - 1) + '.status = success)));' + os.linesep)
+
+            # --- internal_status version.
+            # return_string += (tab_indent(2) + 'child_' + str(child) + '.active := active & ((' + str(child) + ' >= resume_point) & ((' + str(child) + ' = resume_point) | ((child_' + str(child - 1) + '.internal_status = success) & (child_' + str(child - 1) + '.active))));' + os.linesep)
     return return_string
 
 
@@ -411,7 +431,11 @@ def create_composite_sequence_without_memory(number_of_children):
             # first child is just based on active status in a sequence without memory
         else:
             return_string += ("\t\tchild_" + str(child) + ".active := child_" + str(child-1) + ".status = success;" + os.linesep)
-            # if it's not the first child, then the only thing that matters is was did the child before this one return success (is parent active also matters)
+            # if it's not the first child, then the only thing that matters is was did the child before this one return success?
+
+            # below we have the internal_status version. which checks the internal status and if the parent is active. wait. that's wrong. this could cause later nodes to restart.
+            # we need to check if the previous node is active.
+            # return_string += ("\t\tchild_" + str(child) + ".active := (child_" + str(child-1) + ".internal_status = success) & (child_" + str(child-1) + ".active);" + os.linesep)
     return return_string
 
 
