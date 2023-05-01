@@ -29,22 +29,22 @@ elapse: 0.00 seconds, total: 0.00 seconds
 system diameter: 68041
 reachable states: 68041 (2^16.0541) out of 3.07977e+57 (2^190.973)
 ######################################################################
-elapse: 11.75 seconds, total: 11.76 seconds
+elapse: 11.72 seconds, total: 11.72 seconds
 Runtime Statistics
 ------------------
 Machine name: serene-MS-7B51
-User time   11.763 seconds
-System time  0.056 seconds
+User time   11.721 seconds
+System time  0.048 seconds
 
 Average resident text size       =     0K
 Average resident data+stack size =     0K
-Maximum resident size            = 127082K
+Maximum resident size            = 127078K
 
 Virtual text size                = 17832K
-Virtual data size                = 257827K
+Virtual data size                = 272787K
     data size initialized        = 32226K
     data size uninitialized      =  8317K
-    data size sbrk               = 217284K
+    data size sbrk               = 232244K
 Virtual memory limit             = -2147483648K (-2147483648K)
 
 Major page faults = 0
@@ -53,4 +53,4 @@ Swaps = 0
 Input blocks = 0
 Output blocks = 8
 Context switch (voluntary) = 0
-Context switch (involuntary) = 74
+Context switch (involuntary) = 95

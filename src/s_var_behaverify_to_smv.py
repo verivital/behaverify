@@ -454,7 +454,7 @@ def main():
     variables = temp['variables']
     specifications = temp['specifications']
 
-    print(len(nodes))
+    print('Number of nodes before pruning: ' + str(len(nodes)))
 
     root_node_name = get_root_node(nodes)
     refine_return_types(nodes, root_node_name)
@@ -462,8 +462,9 @@ def main():
 
     if not args.do_not_trim:
         nodes = prune_nodes(nodes)
+        root_node_name = get_root_node(nodes)
 
-    print(len(nodes))
+    print('Number of nodes after pruning: ' + str(len(nodes)))
 
     nodes_in_order = order_nodes(root_node_name, nodes)
     node_name_to_number = map_node_name_to_number(nodes, nodes_in_order)

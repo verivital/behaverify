@@ -1,7 +1,7 @@
 #!/bin/bash
 
 encodings=("aut_" "aut_s_" "depth_" "" "func_" "no_internal_" "s_var_")
-# encodings=("")
+#encodings=("")
 
 for encoding in "${encodings[@]}"; do
     echo $encoding

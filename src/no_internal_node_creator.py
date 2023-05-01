@@ -201,7 +201,7 @@ def create_status_module(statuses):
         + (
             (
                 tab_indent(1) + 'VAR' + os.linesep
-                + tab_indent(2) + 'status : {' + statuses.replace('_', ', ') + '}' + os.linesep
+                + tab_indent(2) + 'status : {' + statuses.replace('_', ', ') + '};' + os.linesep
                 + tab_indent(1) + 'ASSIGN' + os.linesep
                 + tab_indent(2) + 'status :=' + os.linesep
                 + tab_indent(3) + 'case' + os.linesep

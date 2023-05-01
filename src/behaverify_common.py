@@ -15,7 +15,7 @@ def create_variable_template(name, mode, custom_value_range,
     }
 
 
-def create_node_template(node_name, parent_name, category, node_type,
+def create_node_template(node_name, parent_name, children, category, node_type,
                          success, running, failure,
                          additional_arguments = None,
                          internal_status_module_name = None,
@@ -23,7 +23,7 @@ def create_node_template(node_name, parent_name, category, node_type,
     return {
             'name' : node_name,
             'parent' : parent_name,
-            'children' : [],
+            'children' : children,
             'category' : category,
             'type' : node_type,
             'return_possibilities' : {
@@ -37,13 +37,50 @@ def create_node_template(node_name, parent_name, category, node_type,
         }
 
 
-def create_node_name(base_name, node_names, modifier = 0):
+# def create_node_template(node_name, parent_name, category, node_type,
+#                          success, running, failure,
+#                          additional_arguments = None,
+#                          internal_status_module_name = None,
+#                          internal_status_module_code = None):
+#     return {
+#             'name' : node_name,
+#             'parent' : parent_name,
+#             'children' : [],
+#             'category' : category,
+#             'type' : node_type,
+#             'return_possibilities' : {
+#                 'success' : success,
+#                 'running' : running,
+#                 'failure' : failure
+#             },
+#             'additional_arguments' : additional_arguments,
+#             'internal_status_module_name' : internal_status_module_name,
+#             'internal_status_module_code' : internal_status_module_code
+#         }
+
+
+# def create_node_name(base_name, node_names, modifier = 0):
+#     formatted_name = base_name + (('_' + str(modifier)) if modifier > 0 else '')
+#     return (create_node_name(base_name, node_names, modifier + 1)
+#             if formatted_name in node_names else (
+#                     formatted_name
+#                     )
+#             )
+
+
+def create_node_name(base_name, node_names, node_names_map, modifier = 0):
+    if modifier == 0:
+        return (
+            create_node_name(base_name, node_names, node_names_map, (node_names_map[base_name] if base_name in node_names_map else 1))
+            if base_name in node_names else
+            (base_name, 1)
+        )
     formatted_name = base_name + (('_' + str(modifier)) if modifier > 0 else '')
-    return (create_node_name(base_name, node_names, modifier + 1)
-            if formatted_name in node_names else (
-                    formatted_name
-                    )
-            )
+    return (
+        create_node_name(base_name, node_names, node_names_map, modifier + 1)
+        if formatted_name in node_names else
+        (formatted_name, modifier + 1)
+    )
 
 
 def get_root_node(nodes):
@@ -451,28 +488,28 @@ def refine_invalid(nodes, node_name):
         node['can_be_invalid'] = True
         node['always_invalid'] = True
     # at this point, parent is sometimes valid
-    elif parent['category'] == 'composite' and 'unsynchronized' in parent['type']:
-        node['can_be_invalid'] = parent['can_be_invalid']
-        node['always_invalid'] = False
-        # parallel unsynchronized always runs all children
-    elif parent['category'] == 'composite' and 'synchronized' in parent['type']:
-        if node['return_possibilities']['success'] is False:
-            # this node cannot return success.
-            # it will never be skipped.
-            # therefore, it can never be invalid (unless the parent is invalid).
+    elif parent['category'] == 'composite' and 'parallel' in parent['type']:
+        if 'without_memory' in parent['type']:
             node['can_be_invalid'] = parent['can_be_invalid']
+            node['always_invalid'] = False
+            # parallel unsynchronized always runs all children
         else:
-            # this node can return success, so it can be
-            # skipped
-            node['can_be_invalid'] = True
+            if node['return_possibilities']['success'] is False:
+                # this node cannot return success.
+                # it will never be skipped.
+                # therefore, it can never be invalid (unless the parent is invalid).
+                node['can_be_invalid'] = parent['can_be_invalid']
+            else:
+                # this node can return success, so it can be
+                # skipped
+                node['can_be_invalid'] = True
         node['always_invalid'] = False
     elif parent['category'] == 'composite' and 'selector' in parent['type']:
         done = False
         done_always = False
         for sibling_index in range(0, parent['children'].index(node_name)):
             sibling_id = parent['children'][sibling_index]
-            if nodes[sibling_id]['return_possibilities']['success'] \
-               or nodes[sibling_id]['return_possibilities']['running']:
+            if nodes[sibling_id]['return_possibilities']['success'] or nodes[sibling_id]['return_possibilities']['running']:
                 # if a left neighbor can cause the parent to return, then this
                 # node can be invalid
                 done = True
@@ -504,8 +541,7 @@ def refine_invalid(nodes, node_name):
         done_always = False
         for sibling_index in range(0, parent['children'].index(node_name)):
             sibling_id = parent['children'][sibling_index]
-            if nodes[sibling_id]['return_possibilities']['failure'] \
-               or nodes[sibling_id]['return_possibilities']['running']:
+            if nodes[sibling_id]['return_possibilities']['failure'] or nodes[sibling_id]['return_possibilities']['running']:
                 # if a left neighbor can cause the parent to return, then this
                 # node can be invalid
                 done = True
