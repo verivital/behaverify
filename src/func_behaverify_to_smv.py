@@ -98,6 +98,9 @@ def create_nodes(nodes, root_node_name, node_name_to_number, tick_condition):
         )
 
     def create_composite_with_memory(node):
+        success_on_all = 'TRUE' if 'success_on_all' in node['type'] else 'FALSE'
+        parallel = 'parallel' in node['type']
+        node_module_type = node['type'].replace('success_on_all_', '').replace('success_on_one_', '')
         return (
             ''.join(
                 [
@@ -105,16 +108,16 @@ def create_nodes(nodes, root_node_name, node_name_to_number, tick_condition):
                         tab_indent(2) + node['name']
                         + (('_' + str(x)) if x > 0 else '')
                         + ' : '
-                        + node['category'] + '_' + node['type'] + '('
+                        + node['category'] + '_' + node_module_type + '('
                         + node['name'] + '_' + (str(x + 1) if (x + 1 < len(node['children'])) else 'END')
                         + ', '
                         + node['children'][x]
                         + (
                             (
                                 ', '
-                                + ('TRUE' if 'success_on_all' in node['type'] else 'FALSE')
+                                + (success_on_all)
                             )
-                            if 'parallel' in node['type'] else
+                            if parallel else
                             ''
                         )
                         + ', '
@@ -122,7 +125,7 @@ def create_nodes(nodes, root_node_name, node_name_to_number, tick_condition):
                             (
                                 PARALLEL_SKIP_STRING + node['name'] + '[' + str(x) + ']'
                             )
-                            if 'parallel' in node['type'] else
+                            if parallel else
                             (
                                 '-2' if len(node['children']) < 2 else (CHILD_TRACK_STRING + node['name'])
                             )
@@ -132,20 +135,23 @@ def create_nodes(nodes, root_node_name, node_name_to_number, tick_condition):
                     for x in range(len(node['children']))
                 ]
             )
-            + tab_indent(2) + node['name'] + '_END : ' + node['category'] + '_' + node['type'] + '_END'
+            + tab_indent(2) + node['name'] + '_END : ' + node['category'] + '_' + node_module_type + '_END'
             + (
                 (
                     '('
-                    + ('TRUE' if 'success_on_all' in node['type'] else 'FALSE')
+                    + (success_on_all)
                     + ')'
                 )
-                if 'parallel' in node['type'] else
+                if parallel else
                 ''
             )
             + ';' + os.linesep
         )
 
     def create_composite_without_memory(node):
+        success_on_all = 'TRUE' if 'success_on_all' in node['type'] else 'FALSE'
+        parallel = 'parallel' in node['type']
+        node_module_type = node['type'].replace('success_on_all_', '').replace('success_on_one_', '')
         return (
             ''.join(
                 [
@@ -153,16 +159,16 @@ def create_nodes(nodes, root_node_name, node_name_to_number, tick_condition):
                         tab_indent(2) + node['name']
                         + (('_' + str(x)) if x > 0 else '')
                         + ' : '
-                        + node['category'] + '_' + node['type'] + '('
+                        + node['category'] + '_' + node_module_type + '('
                         + node['name'] + '_' + (str(x + 1) if (x + 1 < len(node['children'])) else 'END')
                         + ', '
                         + node['children'][x]
                         + (
                             (
                                 ', '
-                                + ('TRUE' if 'success_on_all' in node['type'] else 'FALSE')
+                                + (success_on_all)
                             )
-                            if 'parallel' in node['type'] else
+                            if parallel else
                             ''
                         )
                         + ');' + os.linesep
@@ -170,14 +176,14 @@ def create_nodes(nodes, root_node_name, node_name_to_number, tick_condition):
                     for x in range(len(node['children']))
                 ]
             )
-            + tab_indent(2) + node['name'] + '_END : ' + node['category'] + '_' + node['type'] + '_END'
+            + tab_indent(2) + node['name'] + '_END : ' + node['category'] + '_' + node_module_type + '_END'
             + (
                 (
                     '('
-                    + ('TRUE' if 'success_on_all' in node['type'] else 'FALSE')
+                    + (success_on_all)
                     + ')'
                 )
-                if 'parallel' in node['type'] else
+                if parallel else
                 ''
             )
             + ';' + os.linesep
@@ -513,7 +519,7 @@ def main():
     variables = temp['variables']
     specifications = temp['specifications']
 
-    print(len(nodes))
+    print('Number of nodes before pruning: ' + str(len(nodes)))
 
     root_node_name = get_root_node(nodes)
     refine_return_types(nodes, root_node_name)
@@ -521,8 +527,9 @@ def main():
 
     if not args.do_not_trim:
         nodes = prune_nodes(nodes)
+        root_node_name = get_root_node(nodes)
 
-    print(len(nodes))
+    print('Number of nodes after pruning: ' + str(len(nodes)))
 
     nodes_in_order = order_nodes(root_node_name, nodes)
     node_name_to_number = map_node_name_to_number(nodes, nodes_in_order)

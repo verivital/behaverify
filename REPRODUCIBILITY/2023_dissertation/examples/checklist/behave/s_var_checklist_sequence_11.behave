@@ -1,0 +1,1148 @@
+{   'nodes': {   'sel0': {   'additional_arguments': None,
+                             'category': 'composite',
+                             'children': [   'success_failure_node_5',
+                                             'success_node_5'],
+                             'internal_status_module_code': None,
+                             'internal_status_module_name': None,
+                             'name': 'sel0',
+                             'parent': 'seqLink1',
+                             'return_possibilities': {   'failure': True,
+                                                         'running': True,
+                                                         'success': True},
+                             'type': 'selector_without_memory'},
+                 'sel1': {   'additional_arguments': None,
+                             'category': 'composite',
+                             'children': [   'success_failure_node_6',
+                                             'success_node_6'],
+                             'internal_status_module_code': None,
+                             'internal_status_module_name': None,
+                             'name': 'sel1',
+                             'parent': 'seqLink1',
+                             'return_possibilities': {   'failure': True,
+                                                         'running': True,
+                                                         'success': True},
+                             'type': 'selector_without_memory'},
+                 'sel10': {   'additional_arguments': None,
+                              'category': 'composite',
+                              'children': [   'success_failure_node_4',
+                                              'success_node_4'],
+                              'internal_status_module_code': None,
+                              'internal_status_module_name': None,
+                              'name': 'sel10',
+                              'parent': 'seqLink6',
+                              'return_possibilities': {   'failure': True,
+                                                          'running': True,
+                                                          'success': True},
+                              'type': 'selector_without_memory'},
+                 'sel2': {   'additional_arguments': None,
+                             'category': 'composite',
+                             'children': [   'success_failure_node_7',
+                                             'success_node_7'],
+                             'internal_status_module_code': None,
+                             'internal_status_module_name': None,
+                             'name': 'sel2',
+                             'parent': 'seqLink2',
+                             'return_possibilities': {   'failure': True,
+                                                         'running': True,
+                                                         'success': True},
+                             'type': 'selector_without_memory'},
+                 'sel3': {   'additional_arguments': None,
+                             'category': 'composite',
+                             'children': [   'success_failure_node_8',
+                                             'success_node_8'],
+                             'internal_status_module_code': None,
+                             'internal_status_module_name': None,
+                             'name': 'sel3',
+                             'parent': 'seqLink2',
+                             'return_possibilities': {   'failure': True,
+                                                         'running': True,
+                                                         'success': True},
+                             'type': 'selector_without_memory'},
+                 'sel4': {   'additional_arguments': None,
+                             'category': 'composite',
+                             'children': [   'success_failure_node_9',
+                                             'success_node_9'],
+                             'internal_status_module_code': None,
+                             'internal_status_module_name': None,
+                             'name': 'sel4',
+                             'parent': 'seqLink3',
+                             'return_possibilities': {   'failure': True,
+                                                         'running': True,
+                                                         'success': True},
+                             'type': 'selector_without_memory'},
+                 'sel5': {   'additional_arguments': None,
+                             'category': 'composite',
+                             'children': [   'success_failure_node_10',
+                                             'success_node_10'],
+                             'internal_status_module_code': None,
+                             'internal_status_module_name': None,
+                             'name': 'sel5',
+                             'parent': 'seqLink3',
+                             'return_possibilities': {   'failure': True,
+                                                         'running': True,
+                                                         'success': True},
+                             'type': 'selector_without_memory'},
+                 'sel6': {   'additional_arguments': None,
+                             'category': 'composite',
+                             'children': [   'success_failure_node',
+                                             'success_node'],
+                             'internal_status_module_code': None,
+                             'internal_status_module_name': None,
+                             'name': 'sel6',
+                             'parent': 'seqLink4',
+                             'return_possibilities': {   'failure': True,
+                                                         'running': True,
+                                                         'success': True},
+                             'type': 'selector_without_memory'},
+                 'sel7': {   'additional_arguments': None,
+                             'category': 'composite',
+                             'children': [   'success_failure_node_1',
+                                             'success_node_1'],
+                             'internal_status_module_code': None,
+                             'internal_status_module_name': None,
+                             'name': 'sel7',
+                             'parent': 'seqLink4',
+                             'return_possibilities': {   'failure': True,
+                                                         'running': True,
+                                                         'success': True},
+                             'type': 'selector_without_memory'},
+                 'sel8': {   'additional_arguments': None,
+                             'category': 'composite',
+                             'children': [   'success_failure_node_2',
+                                             'success_node_2'],
+                             'internal_status_module_code': None,
+                             'internal_status_module_name': None,
+                             'name': 'sel8',
+                             'parent': 'seqLink5',
+                             'return_possibilities': {   'failure': True,
+                                                         'running': True,
+                                                         'success': True},
+                             'type': 'selector_without_memory'},
+                 'sel9': {   'additional_arguments': None,
+                             'category': 'composite',
+                             'children': [   'success_failure_node_3',
+                                             'success_node_3'],
+                             'internal_status_module_code': None,
+                             'internal_status_module_name': None,
+                             'name': 'sel9',
+                             'parent': 'seqLink5',
+                             'return_possibilities': {   'failure': True,
+                                                         'running': True,
+                                                         'success': True},
+                             'type': 'selector_without_memory'},
+                 'seqLink1': {   'additional_arguments': None,
+                                 'category': 'composite',
+                                 'children': ['sel0', 'sel1'],
+                                 'internal_status_module_code': None,
+                                 'internal_status_module_name': None,
+                                 'name': 'seqLink1',
+                                 'parent': 'seqLink6',
+                                 'return_possibilities': {   'failure': True,
+                                                             'running': True,
+                                                             'success': True},
+                                 'type': 'sequence_without_memory'},
+                 'seqLink10': {   'additional_arguments': None,
+                                  'category': 'composite',
+                                  'children': ['seqLink8', 'seqLink9'],
+                                  'internal_status_module_code': None,
+                                  'internal_status_module_name': None,
+                                  'name': 'seqLink10',
+                                  'parent': None,
+                                  'return_possibilities': {   'failure': True,
+                                                              'running': True,
+                                                              'success': True},
+                                  'type': 'sequence_without_memory'},
+                 'seqLink2': {   'additional_arguments': None,
+                                 'category': 'composite',
+                                 'children': ['sel2', 'sel3'],
+                                 'internal_status_module_code': None,
+                                 'internal_status_module_name': None,
+                                 'name': 'seqLink2',
+                                 'parent': 'seqLink7',
+                                 'return_possibilities': {   'failure': True,
+                                                             'running': True,
+                                                             'success': True},
+                                 'type': 'sequence_without_memory'},
+                 'seqLink3': {   'additional_arguments': None,
+                                 'category': 'composite',
+                                 'children': ['sel4', 'sel5'],
+                                 'internal_status_module_code': None,
+                                 'internal_status_module_name': None,
+                                 'name': 'seqLink3',
+                                 'parent': 'seqLink7',
+                                 'return_possibilities': {   'failure': True,
+                                                             'running': True,
+                                                             'success': True},
+                                 'type': 'sequence_without_memory'},
+                 'seqLink4': {   'additional_arguments': None,
+                                 'category': 'composite',
+                                 'children': ['sel6', 'sel7'],
+                                 'internal_status_module_code': None,
+                                 'internal_status_module_name': None,
+                                 'name': 'seqLink4',
+                                 'parent': 'seqLink8',
+                                 'return_possibilities': {   'failure': True,
+                                                             'running': True,
+                                                             'success': True},
+                                 'type': 'sequence_without_memory'},
+                 'seqLink5': {   'additional_arguments': None,
+                                 'category': 'composite',
+                                 'children': ['sel8', 'sel9'],
+                                 'internal_status_module_code': None,
+                                 'internal_status_module_name': None,
+                                 'name': 'seqLink5',
+                                 'parent': 'seqLink8',
+                                 'return_possibilities': {   'failure': True,
+                                                             'running': True,
+                                                             'success': True},
+                                 'type': 'sequence_without_memory'},
+                 'seqLink6': {   'additional_arguments': None,
+                                 'category': 'composite',
+                                 'children': ['sel10', 'seqLink1'],
+                                 'internal_status_module_code': None,
+                                 'internal_status_module_name': None,
+                                 'name': 'seqLink6',
+                                 'parent': 'seqLink9',
+                                 'return_possibilities': {   'failure': True,
+                                                             'running': True,
+                                                             'success': True},
+                                 'type': 'sequence_without_memory'},
+                 'seqLink7': {   'additional_arguments': None,
+                                 'category': 'composite',
+                                 'children': ['seqLink2', 'seqLink3'],
+                                 'internal_status_module_code': None,
+                                 'internal_status_module_name': None,
+                                 'name': 'seqLink7',
+                                 'parent': 'seqLink9',
+                                 'return_possibilities': {   'failure': True,
+                                                             'running': True,
+                                                             'success': True},
+                                 'type': 'sequence_without_memory'},
+                 'seqLink8': {   'additional_arguments': None,
+                                 'category': 'composite',
+                                 'children': ['seqLink4', 'seqLink5'],
+                                 'internal_status_module_code': None,
+                                 'internal_status_module_name': None,
+                                 'name': 'seqLink8',
+                                 'parent': 'seqLink10',
+                                 'return_possibilities': {   'failure': True,
+                                                             'running': True,
+                                                             'success': True},
+                                 'type': 'sequence_without_memory'},
+                 'seqLink9': {   'additional_arguments': None,
+                                 'category': 'composite',
+                                 'children': ['seqLink6', 'seqLink7'],
+                                 'internal_status_module_code': None,
+                                 'internal_status_module_name': None,
+                                 'name': 'seqLink9',
+                                 'parent': 'seqLink10',
+                                 'return_possibilities': {   'failure': True,
+                                                             'running': True,
+                                                             'success': True},
+                                 'type': 'sequence_without_memory'},
+                 'success_failure_node': {   'additional_arguments': [   'success_failure_node_DOT_randomizer_stage_1'],
+                                             'category': 'leaf',
+                                             'children': [],
+                                             'internal_status_module_code': 'MODULE '
+                                                                            'success_failure_node_module(success_failure_node_DOT_randomizer_stage_1)\n'
+                                                                            '\t'
+                                                                            'CONSTANTS\n'
+                                                                            '\t\t'
+                                                                            'success, '
+                                                                            'failure, '
+                                                                            'running, '
+                                                                            'invalid;\n'
+                                                                            '\t'
+                                                                            'DEFINE\n'
+                                                                            '\t\t'
+                                                                            'status '
+                                                                            ':= '
+                                                                            'active '
+                                                                            '? '
+                                                                            'internal_status '
+                                                                            ': '
+                                                                            'invalid;\n'
+                                                                            '\t\t'
+                                                                            'internal_status '
+                                                                            ':= \n'
+                                                                            '\t\t\t'
+                                                                            'case\n'
+                                                                            '\t\t\t\t'
+                                                                            'success_failure_node_DOT_randomizer_stage_1 '
+                                                                            ': '
+                                                                            'success;\n'
+                                                                            '\t\t\t\t'
+                                                                            'TRUE '
+                                                                            ': '
+                                                                            'failure;\n'
+                                                                            '\t\t\t'
+                                                                            'esac;\n',
+                                             'internal_status_module_name': 'success_failure_node_module',
+                                             'name': 'success_failure_node',
+                                             'parent': 'sel6',
+                                             'return_possibilities': {   'failure': True,
+                                                                         'running': False,
+                                                                         'success': True},
+                                             'type': 'action'},
+                 'success_failure_node_1': {   'additional_arguments': [   'success_failure_node_1_DOT_randomizer_stage_1'],
+                                               'category': 'leaf',
+                                               'children': [],
+                                               'internal_status_module_code': 'MODULE '
+                                                                              'success_failure_node_1_module(success_failure_node_1_DOT_randomizer_stage_1)\n'
+                                                                              '\t'
+                                                                              'CONSTANTS\n'
+                                                                              '\t\t'
+                                                                              'success, '
+                                                                              'failure, '
+                                                                              'running, '
+                                                                              'invalid;\n'
+                                                                              '\t'
+                                                                              'DEFINE\n'
+                                                                              '\t\t'
+                                                                              'status '
+                                                                              ':= '
+                                                                              'active '
+                                                                              '? '
+                                                                              'internal_status '
+                                                                              ': '
+                                                                              'invalid;\n'
+                                                                              '\t\t'
+                                                                              'internal_status '
+                                                                              ':= \n'
+                                                                              '\t\t\t'
+                                                                              'case\n'
+                                                                              '\t\t\t\t'
+                                                                              'success_failure_node_1_DOT_randomizer_stage_1 '
+                                                                              ': '
+                                                                              'success;\n'
+                                                                              '\t\t\t\t'
+                                                                              'TRUE '
+                                                                              ': '
+                                                                              'failure;\n'
+                                                                              '\t\t\t'
+                                                                              'esac;\n',
+                                               'internal_status_module_name': 'success_failure_node_1_module',
+                                               'name': 'success_failure_node_1',
+                                               'parent': 'sel7',
+                                               'return_possibilities': {   'failure': True,
+                                                                           'running': False,
+                                                                           'success': True},
+                                               'type': 'action'},
+                 'success_failure_node_10': {   'additional_arguments': [   'success_failure_node_10_DOT_randomizer_stage_1'],
+                                                'category': 'leaf',
+                                                'children': [],
+                                                'internal_status_module_code': 'MODULE '
+                                                                               'success_failure_node_10_module(success_failure_node_10_DOT_randomizer_stage_1)\n'
+                                                                               '\t'
+                                                                               'CONSTANTS\n'
+                                                                               '\t\t'
+                                                                               'success, '
+                                                                               'failure, '
+                                                                               'running, '
+                                                                               'invalid;\n'
+                                                                               '\t'
+                                                                               'DEFINE\n'
+                                                                               '\t\t'
+                                                                               'status '
+                                                                               ':= '
+                                                                               'active '
+                                                                               '? '
+                                                                               'internal_status '
+                                                                               ': '
+                                                                               'invalid;\n'
+                                                                               '\t\t'
+                                                                               'internal_status '
+                                                                               ':= \n'
+                                                                               '\t\t\t'
+                                                                               'case\n'
+                                                                               '\t\t\t\t'
+                                                                               'success_failure_node_10_DOT_randomizer_stage_1 '
+                                                                               ': '
+                                                                               'success;\n'
+                                                                               '\t\t\t\t'
+                                                                               'TRUE '
+                                                                               ': '
+                                                                               'failure;\n'
+                                                                               '\t\t\t'
+                                                                               'esac;\n',
+                                                'internal_status_module_name': 'success_failure_node_10_module',
+                                                'name': 'success_failure_node_10',
+                                                'parent': 'sel5',
+                                                'return_possibilities': {   'failure': True,
+                                                                            'running': False,
+                                                                            'success': True},
+                                                'type': 'action'},
+                 'success_failure_node_2': {   'additional_arguments': [   'success_failure_node_2_DOT_randomizer_stage_1'],
+                                               'category': 'leaf',
+                                               'children': [],
+                                               'internal_status_module_code': 'MODULE '
+                                                                              'success_failure_node_2_module(success_failure_node_2_DOT_randomizer_stage_1)\n'
+                                                                              '\t'
+                                                                              'CONSTANTS\n'
+                                                                              '\t\t'
+                                                                              'success, '
+                                                                              'failure, '
+                                                                              'running, '
+                                                                              'invalid;\n'
+                                                                              '\t'
+                                                                              'DEFINE\n'
+                                                                              '\t\t'
+                                                                              'status '
+                                                                              ':= '
+                                                                              'active '
+                                                                              '? '
+                                                                              'internal_status '
+                                                                              ': '
+                                                                              'invalid;\n'
+                                                                              '\t\t'
+                                                                              'internal_status '
+                                                                              ':= \n'
+                                                                              '\t\t\t'
+                                                                              'case\n'
+                                                                              '\t\t\t\t'
+                                                                              'success_failure_node_2_DOT_randomizer_stage_1 '
+                                                                              ': '
+                                                                              'success;\n'
+                                                                              '\t\t\t\t'
+                                                                              'TRUE '
+                                                                              ': '
+                                                                              'failure;\n'
+                                                                              '\t\t\t'
+                                                                              'esac;\n',
+                                               'internal_status_module_name': 'success_failure_node_2_module',
+                                               'name': 'success_failure_node_2',
+                                               'parent': 'sel8',
+                                               'return_possibilities': {   'failure': True,
+                                                                           'running': False,
+                                                                           'success': True},
+                                               'type': 'action'},
+                 'success_failure_node_3': {   'additional_arguments': [   'success_failure_node_3_DOT_randomizer_stage_1'],
+                                               'category': 'leaf',
+                                               'children': [],
+                                               'internal_status_module_code': 'MODULE '
+                                                                              'success_failure_node_3_module(success_failure_node_3_DOT_randomizer_stage_1)\n'
+                                                                              '\t'
+                                                                              'CONSTANTS\n'
+                                                                              '\t\t'
+                                                                              'success, '
+                                                                              'failure, '
+                                                                              'running, '
+                                                                              'invalid;\n'
+                                                                              '\t'
+                                                                              'DEFINE\n'
+                                                                              '\t\t'
+                                                                              'status '
+                                                                              ':= '
+                                                                              'active '
+                                                                              '? '
+                                                                              'internal_status '
+                                                                              ': '
+                                                                              'invalid;\n'
+                                                                              '\t\t'
+                                                                              'internal_status '
+                                                                              ':= \n'
+                                                                              '\t\t\t'
+                                                                              'case\n'
+                                                                              '\t\t\t\t'
+                                                                              'success_failure_node_3_DOT_randomizer_stage_1 '
+                                                                              ': '
+                                                                              'success;\n'
+                                                                              '\t\t\t\t'
+                                                                              'TRUE '
+                                                                              ': '
+                                                                              'failure;\n'
+                                                                              '\t\t\t'
+                                                                              'esac;\n',
+                                               'internal_status_module_name': 'success_failure_node_3_module',
+                                               'name': 'success_failure_node_3',
+                                               'parent': 'sel9',
+                                               'return_possibilities': {   'failure': True,
+                                                                           'running': False,
+                                                                           'success': True},
+                                               'type': 'action'},
+                 'success_failure_node_4': {   'additional_arguments': [   'success_failure_node_4_DOT_randomizer_stage_1'],
+                                               'category': 'leaf',
+                                               'children': [],
+                                               'internal_status_module_code': 'MODULE '
+                                                                              'success_failure_node_4_module(success_failure_node_4_DOT_randomizer_stage_1)\n'
+                                                                              '\t'
+                                                                              'CONSTANTS\n'
+                                                                              '\t\t'
+                                                                              'success, '
+                                                                              'failure, '
+                                                                              'running, '
+                                                                              'invalid;\n'
+                                                                              '\t'
+                                                                              'DEFINE\n'
+                                                                              '\t\t'
+                                                                              'status '
+                                                                              ':= '
+                                                                              'active '
+                                                                              '? '
+                                                                              'internal_status '
+                                                                              ': '
+                                                                              'invalid;\n'
+                                                                              '\t\t'
+                                                                              'internal_status '
+                                                                              ':= \n'
+                                                                              '\t\t\t'
+                                                                              'case\n'
+                                                                              '\t\t\t\t'
+                                                                              'success_failure_node_4_DOT_randomizer_stage_1 '
+                                                                              ': '
+                                                                              'success;\n'
+                                                                              '\t\t\t\t'
+                                                                              'TRUE '
+                                                                              ': '
+                                                                              'failure;\n'
+                                                                              '\t\t\t'
+                                                                              'esac;\n',
+                                               'internal_status_module_name': 'success_failure_node_4_module',
+                                               'name': 'success_failure_node_4',
+                                               'parent': 'sel10',
+                                               'return_possibilities': {   'failure': True,
+                                                                           'running': False,
+                                                                           'success': True},
+                                               'type': 'action'},
+                 'success_failure_node_5': {   'additional_arguments': [   'success_failure_node_5_DOT_randomizer_stage_1'],
+                                               'category': 'leaf',
+                                               'children': [],
+                                               'internal_status_module_code': 'MODULE '
+                                                                              'success_failure_node_5_module(success_failure_node_5_DOT_randomizer_stage_1)\n'
+                                                                              '\t'
+                                                                              'CONSTANTS\n'
+                                                                              '\t\t'
+                                                                              'success, '
+                                                                              'failure, '
+                                                                              'running, '
+                                                                              'invalid;\n'
+                                                                              '\t'
+                                                                              'DEFINE\n'
+                                                                              '\t\t'
+                                                                              'status '
+                                                                              ':= '
+                                                                              'active '
+                                                                              '? '
+                                                                              'internal_status '
+                                                                              ': '
+                                                                              'invalid;\n'
+                                                                              '\t\t'
+                                                                              'internal_status '
+                                                                              ':= \n'
+                                                                              '\t\t\t'
+                                                                              'case\n'
+                                                                              '\t\t\t\t'
+                                                                              'success_failure_node_5_DOT_randomizer_stage_1 '
+                                                                              ': '
+                                                                              'success;\n'
+                                                                              '\t\t\t\t'
+                                                                              'TRUE '
+                                                                              ': '
+                                                                              'failure;\n'
+                                                                              '\t\t\t'
+                                                                              'esac;\n',
+                                               'internal_status_module_name': 'success_failure_node_5_module',
+                                               'name': 'success_failure_node_5',
+                                               'parent': 'sel0',
+                                               'return_possibilities': {   'failure': True,
+                                                                           'running': False,
+                                                                           'success': True},
+                                               'type': 'action'},
+                 'success_failure_node_6': {   'additional_arguments': [   'success_failure_node_6_DOT_randomizer_stage_1'],
+                                               'category': 'leaf',
+                                               'children': [],
+                                               'internal_status_module_code': 'MODULE '
+                                                                              'success_failure_node_6_module(success_failure_node_6_DOT_randomizer_stage_1)\n'
+                                                                              '\t'
+                                                                              'CONSTANTS\n'
+                                                                              '\t\t'
+                                                                              'success, '
+                                                                              'failure, '
+                                                                              'running, '
+                                                                              'invalid;\n'
+                                                                              '\t'
+                                                                              'DEFINE\n'
+                                                                              '\t\t'
+                                                                              'status '
+                                                                              ':= '
+                                                                              'active '
+                                                                              '? '
+                                                                              'internal_status '
+                                                                              ': '
+                                                                              'invalid;\n'
+                                                                              '\t\t'
+                                                                              'internal_status '
+                                                                              ':= \n'
+                                                                              '\t\t\t'
+                                                                              'case\n'
+                                                                              '\t\t\t\t'
+                                                                              'success_failure_node_6_DOT_randomizer_stage_1 '
+                                                                              ': '
+                                                                              'success;\n'
+                                                                              '\t\t\t\t'
+                                                                              'TRUE '
+                                                                              ': '
+                                                                              'failure;\n'
+                                                                              '\t\t\t'
+                                                                              'esac;\n',
+                                               'internal_status_module_name': 'success_failure_node_6_module',
+                                               'name': 'success_failure_node_6',
+                                               'parent': 'sel1',
+                                               'return_possibilities': {   'failure': True,
+                                                                           'running': False,
+                                                                           'success': True},
+                                               'type': 'action'},
+                 'success_failure_node_7': {   'additional_arguments': [   'success_failure_node_7_DOT_randomizer_stage_1'],
+                                               'category': 'leaf',
+                                               'children': [],
+                                               'internal_status_module_code': 'MODULE '
+                                                                              'success_failure_node_7_module(success_failure_node_7_DOT_randomizer_stage_1)\n'
+                                                                              '\t'
+                                                                              'CONSTANTS\n'
+                                                                              '\t\t'
+                                                                              'success, '
+                                                                              'failure, '
+                                                                              'running, '
+                                                                              'invalid;\n'
+                                                                              '\t'
+                                                                              'DEFINE\n'
+                                                                              '\t\t'
+                                                                              'status '
+                                                                              ':= '
+                                                                              'active '
+                                                                              '? '
+                                                                              'internal_status '
+                                                                              ': '
+                                                                              'invalid;\n'
+                                                                              '\t\t'
+                                                                              'internal_status '
+                                                                              ':= \n'
+                                                                              '\t\t\t'
+                                                                              'case\n'
+                                                                              '\t\t\t\t'
+                                                                              'success_failure_node_7_DOT_randomizer_stage_1 '
+                                                                              ': '
+                                                                              'success;\n'
+                                                                              '\t\t\t\t'
+                                                                              'TRUE '
+                                                                              ': '
+                                                                              'failure;\n'
+                                                                              '\t\t\t'
+                                                                              'esac;\n',
+                                               'internal_status_module_name': 'success_failure_node_7_module',
+                                               'name': 'success_failure_node_7',
+                                               'parent': 'sel2',
+                                               'return_possibilities': {   'failure': True,
+                                                                           'running': False,
+                                                                           'success': True},
+                                               'type': 'action'},
+                 'success_failure_node_8': {   'additional_arguments': [   'success_failure_node_8_DOT_randomizer_stage_1'],
+                                               'category': 'leaf',
+                                               'children': [],
+                                               'internal_status_module_code': 'MODULE '
+                                                                              'success_failure_node_8_module(success_failure_node_8_DOT_randomizer_stage_1)\n'
+                                                                              '\t'
+                                                                              'CONSTANTS\n'
+                                                                              '\t\t'
+                                                                              'success, '
+                                                                              'failure, '
+                                                                              'running, '
+                                                                              'invalid;\n'
+                                                                              '\t'
+                                                                              'DEFINE\n'
+                                                                              '\t\t'
+                                                                              'status '
+                                                                              ':= '
+                                                                              'active '
+                                                                              '? '
+                                                                              'internal_status '
+                                                                              ': '
+                                                                              'invalid;\n'
+                                                                              '\t\t'
+                                                                              'internal_status '
+                                                                              ':= \n'
+                                                                              '\t\t\t'
+                                                                              'case\n'
+                                                                              '\t\t\t\t'
+                                                                              'success_failure_node_8_DOT_randomizer_stage_1 '
+                                                                              ': '
+                                                                              'success;\n'
+                                                                              '\t\t\t\t'
+                                                                              'TRUE '
+                                                                              ': '
+                                                                              'failure;\n'
+                                                                              '\t\t\t'
+                                                                              'esac;\n',
+                                               'internal_status_module_name': 'success_failure_node_8_module',
+                                               'name': 'success_failure_node_8',
+                                               'parent': 'sel3',
+                                               'return_possibilities': {   'failure': True,
+                                                                           'running': False,
+                                                                           'success': True},
+                                               'type': 'action'},
+                 'success_failure_node_9': {   'additional_arguments': [   'success_failure_node_9_DOT_randomizer_stage_1'],
+                                               'category': 'leaf',
+                                               'children': [],
+                                               'internal_status_module_code': 'MODULE '
+                                                                              'success_failure_node_9_module(success_failure_node_9_DOT_randomizer_stage_1)\n'
+                                                                              '\t'
+                                                                              'CONSTANTS\n'
+                                                                              '\t\t'
+                                                                              'success, '
+                                                                              'failure, '
+                                                                              'running, '
+                                                                              'invalid;\n'
+                                                                              '\t'
+                                                                              'DEFINE\n'
+                                                                              '\t\t'
+                                                                              'status '
+                                                                              ':= '
+                                                                              'active '
+                                                                              '? '
+                                                                              'internal_status '
+                                                                              ': '
+                                                                              'invalid;\n'
+                                                                              '\t\t'
+                                                                              'internal_status '
+                                                                              ':= \n'
+                                                                              '\t\t\t'
+                                                                              'case\n'
+                                                                              '\t\t\t\t'
+                                                                              'success_failure_node_9_DOT_randomizer_stage_1 '
+                                                                              ': '
+                                                                              'success;\n'
+                                                                              '\t\t\t\t'
+                                                                              'TRUE '
+                                                                              ': '
+                                                                              'failure;\n'
+                                                                              '\t\t\t'
+                                                                              'esac;\n',
+                                               'internal_status_module_name': 'success_failure_node_9_module',
+                                               'name': 'success_failure_node_9',
+                                               'parent': 'sel4',
+                                               'return_possibilities': {   'failure': True,
+                                                                           'running': False,
+                                                                           'success': True},
+                                               'type': 'action'},
+                 'success_node': {   'additional_arguments': [],
+                                     'category': 'leaf',
+                                     'children': [],
+                                     'internal_status_module_code': None,
+                                     'internal_status_module_name': None,
+                                     'name': 'success_node',
+                                     'parent': 'sel6',
+                                     'return_possibilities': {   'failure': False,
+                                                                 'running': False,
+                                                                 'success': True},
+                                     'type': 'action'},
+                 'success_node_1': {   'additional_arguments': [],
+                                       'category': 'leaf',
+                                       'children': [],
+                                       'internal_status_module_code': None,
+                                       'internal_status_module_name': None,
+                                       'name': 'success_node_1',
+                                       'parent': 'sel7',
+                                       'return_possibilities': {   'failure': False,
+                                                                   'running': False,
+                                                                   'success': True},
+                                       'type': 'action'},
+                 'success_node_10': {   'additional_arguments': [],
+                                        'category': 'leaf',
+                                        'children': [],
+                                        'internal_status_module_code': None,
+                                        'internal_status_module_name': None,
+                                        'name': 'success_node_10',
+                                        'parent': 'sel5',
+                                        'return_possibilities': {   'failure': False,
+                                                                    'running': False,
+                                                                    'success': True},
+                                        'type': 'action'},
+                 'success_node_2': {   'additional_arguments': [],
+                                       'category': 'leaf',
+                                       'children': [],
+                                       'internal_status_module_code': None,
+                                       'internal_status_module_name': None,
+                                       'name': 'success_node_2',
+                                       'parent': 'sel8',
+                                       'return_possibilities': {   'failure': False,
+                                                                   'running': False,
+                                                                   'success': True},
+                                       'type': 'action'},
+                 'success_node_3': {   'additional_arguments': [],
+                                       'category': 'leaf',
+                                       'children': [],
+                                       'internal_status_module_code': None,
+                                       'internal_status_module_name': None,
+                                       'name': 'success_node_3',
+                                       'parent': 'sel9',
+                                       'return_possibilities': {   'failure': False,
+                                                                   'running': False,
+                                                                   'success': True},
+                                       'type': 'action'},
+                 'success_node_4': {   'additional_arguments': [],
+                                       'category': 'leaf',
+                                       'children': [],
+                                       'internal_status_module_code': None,
+                                       'internal_status_module_name': None,
+                                       'name': 'success_node_4',
+                                       'parent': 'sel10',
+                                       'return_possibilities': {   'failure': False,
+                                                                   'running': False,
+                                                                   'success': True},
+                                       'type': 'action'},
+                 'success_node_5': {   'additional_arguments': [],
+                                       'category': 'leaf',
+                                       'children': [],
+                                       'internal_status_module_code': None,
+                                       'internal_status_module_name': None,
+                                       'name': 'success_node_5',
+                                       'parent': 'sel0',
+                                       'return_possibilities': {   'failure': False,
+                                                                   'running': False,
+                                                                   'success': True},
+                                       'type': 'action'},
+                 'success_node_6': {   'additional_arguments': [],
+                                       'category': 'leaf',
+                                       'children': [],
+                                       'internal_status_module_code': None,
+                                       'internal_status_module_name': None,
+                                       'name': 'success_node_6',
+                                       'parent': 'sel1',
+                                       'return_possibilities': {   'failure': False,
+                                                                   'running': False,
+                                                                   'success': True},
+                                       'type': 'action'},
+                 'success_node_7': {   'additional_arguments': [],
+                                       'category': 'leaf',
+                                       'children': [],
+                                       'internal_status_module_code': None,
+                                       'internal_status_module_name': None,
+                                       'name': 'success_node_7',
+                                       'parent': 'sel2',
+                                       'return_possibilities': {   'failure': False,
+                                                                   'running': False,
+                                                                   'success': True},
+                                       'type': 'action'},
+                 'success_node_8': {   'additional_arguments': [],
+                                       'category': 'leaf',
+                                       'children': [],
+                                       'internal_status_module_code': None,
+                                       'internal_status_module_name': None,
+                                       'name': 'success_node_8',
+                                       'parent': 'sel3',
+                                       'return_possibilities': {   'failure': False,
+                                                                   'running': False,
+                                                                   'success': True},
+                                       'type': 'action'},
+                 'success_node_9': {   'additional_arguments': [],
+                                       'category': 'leaf',
+                                       'children': [],
+                                       'internal_status_module_code': None,
+                                       'internal_status_module_name': None,
+                                       'name': 'success_node_9',
+                                       'parent': 'sel4',
+                                       'return_possibilities': {   'failure': False,
+                                                                   'running': False,
+                                                                   'success': True},
+                                       'type': 'action'}},
+    'specifications': [   'LTLSPEC G(((success_failure_node.status = failure) '
+                          '-> (success_node.status = success)));',
+                          'LTLSPEC G(((success_failure_node.status = failure) '
+                          '-> !((success_node.status = success))));',
+                          'CTLSPEC AG(((success_failure_node.status = failure) '
+                          '-> (success_node.status = success)));',
+                          'CTLSPEC AG(((success_failure_node.status = failure) '
+                          '-> !((success_node.status = success))));',
+                          'INVARSPEC ((success_failure_node.status = failure) '
+                          '-> (success_node.status = success));',
+                          'INVARSPEC ((success_failure_node.status = failure) '
+                          '-> !((success_node.status = success)));',
+                          'LTLSPEC G(((success_failure_node_1.status = '
+                          'failure) -> (success_node_1.status = success)));',
+                          'LTLSPEC G(((success_failure_node_1.status = '
+                          'failure) -> !((success_node_1.status = success))));',
+                          'CTLSPEC AG(((success_failure_node_1.status = '
+                          'failure) -> (success_node_1.status = success)));',
+                          'CTLSPEC AG(((success_failure_node_1.status = '
+                          'failure) -> !((success_node_1.status = success))));',
+                          'INVARSPEC ((success_failure_node_1.status = '
+                          'failure) -> (success_node_1.status = success));',
+                          'INVARSPEC ((success_failure_node_1.status = '
+                          'failure) -> !((success_node_1.status = success)));',
+                          'LTLSPEC G(((success_failure_node_2.status = '
+                          'failure) -> (success_node_2.status = success)));',
+                          'LTLSPEC G(((success_failure_node_2.status = '
+                          'failure) -> !((success_node_2.status = success))));',
+                          'CTLSPEC AG(((success_failure_node_2.status = '
+                          'failure) -> (success_node_2.status = success)));',
+                          'CTLSPEC AG(((success_failure_node_2.status = '
+                          'failure) -> !((success_node_2.status = success))));',
+                          'INVARSPEC ((success_failure_node_2.status = '
+                          'failure) -> (success_node_2.status = success));',
+                          'INVARSPEC ((success_failure_node_2.status = '
+                          'failure) -> !((success_node_2.status = success)));',
+                          'LTLSPEC G(((success_failure_node_3.status = '
+                          'failure) -> (success_node_3.status = success)));',
+                          'LTLSPEC G(((success_failure_node_3.status = '
+                          'failure) -> !((success_node_3.status = success))));',
+                          'CTLSPEC AG(((success_failure_node_3.status = '
+                          'failure) -> (success_node_3.status = success)));',
+                          'CTLSPEC AG(((success_failure_node_3.status = '
+                          'failure) -> !((success_node_3.status = success))));',
+                          'INVARSPEC ((success_failure_node_3.status = '
+                          'failure) -> (success_node_3.status = success));',
+                          'INVARSPEC ((success_failure_node_3.status = '
+                          'failure) -> !((success_node_3.status = success)));',
+                          'LTLSPEC G(((success_failure_node_4.status = '
+                          'failure) -> (success_node_4.status = success)));',
+                          'LTLSPEC G(((success_failure_node_4.status = '
+                          'failure) -> !((success_node_4.status = success))));',
+                          'CTLSPEC AG(((success_failure_node_4.status = '
+                          'failure) -> (success_node_4.status = success)));',
+                          'CTLSPEC AG(((success_failure_node_4.status = '
+                          'failure) -> !((success_node_4.status = success))));',
+                          'INVARSPEC ((success_failure_node_4.status = '
+                          'failure) -> (success_node_4.status = success));',
+                          'INVARSPEC ((success_failure_node_4.status = '
+                          'failure) -> !((success_node_4.status = success)));',
+                          'LTLSPEC G(((success_failure_node_5.status = '
+                          'failure) -> (success_node_5.status = success)));',
+                          'LTLSPEC G(((success_failure_node_5.status = '
+                          'failure) -> !((success_node_5.status = success))));',
+                          'CTLSPEC AG(((success_failure_node_5.status = '
+                          'failure) -> (success_node_5.status = success)));',
+                          'CTLSPEC AG(((success_failure_node_5.status = '
+                          'failure) -> !((success_node_5.status = success))));',
+                          'INVARSPEC ((success_failure_node_5.status = '
+                          'failure) -> (success_node_5.status = success));',
+                          'INVARSPEC ((success_failure_node_5.status = '
+                          'failure) -> !((success_node_5.status = success)));',
+                          'LTLSPEC G(((success_failure_node_6.status = '
+                          'failure) -> (success_node_6.status = success)));',
+                          'LTLSPEC G(((success_failure_node_6.status = '
+                          'failure) -> !((success_node_6.status = success))));',
+                          'CTLSPEC AG(((success_failure_node_6.status = '
+                          'failure) -> (success_node_6.status = success)));',
+                          'CTLSPEC AG(((success_failure_node_6.status = '
+                          'failure) -> !((success_node_6.status = success))));',
+                          'INVARSPEC ((success_failure_node_6.status = '
+                          'failure) -> (success_node_6.status = success));',
+                          'INVARSPEC ((success_failure_node_6.status = '
+                          'failure) -> !((success_node_6.status = success)));',
+                          'LTLSPEC G(((success_failure_node_7.status = '
+                          'failure) -> (success_node_7.status = success)));',
+                          'LTLSPEC G(((success_failure_node_7.status = '
+                          'failure) -> !((success_node_7.status = success))));',
+                          'CTLSPEC AG(((success_failure_node_7.status = '
+                          'failure) -> (success_node_7.status = success)));',
+                          'CTLSPEC AG(((success_failure_node_7.status = '
+                          'failure) -> !((success_node_7.status = success))));',
+                          'INVARSPEC ((success_failure_node_7.status = '
+                          'failure) -> (success_node_7.status = success));',
+                          'INVARSPEC ((success_failure_node_7.status = '
+                          'failure) -> !((success_node_7.status = success)));',
+                          'LTLSPEC G(((success_failure_node_8.status = '
+                          'failure) -> (success_node_8.status = success)));',
+                          'LTLSPEC G(((success_failure_node_8.status = '
+                          'failure) -> !((success_node_8.status = success))));',
+                          'CTLSPEC AG(((success_failure_node_8.status = '
+                          'failure) -> (success_node_8.status = success)));',
+                          'CTLSPEC AG(((success_failure_node_8.status = '
+                          'failure) -> !((success_node_8.status = success))));',
+                          'INVARSPEC ((success_failure_node_8.status = '
+                          'failure) -> (success_node_8.status = success));',
+                          'INVARSPEC ((success_failure_node_8.status = '
+                          'failure) -> !((success_node_8.status = success)));',
+                          'LTLSPEC G(((success_failure_node_9.status = '
+                          'failure) -> (success_node_9.status = success)));',
+                          'LTLSPEC G(((success_failure_node_9.status = '
+                          'failure) -> !((success_node_9.status = success))));',
+                          'CTLSPEC AG(((success_failure_node_9.status = '
+                          'failure) -> (success_node_9.status = success)));',
+                          'CTLSPEC AG(((success_failure_node_9.status = '
+                          'failure) -> !((success_node_9.status = success))));',
+                          'INVARSPEC ((success_failure_node_9.status = '
+                          'failure) -> (success_node_9.status = success));',
+                          'INVARSPEC ((success_failure_node_9.status = '
+                          'failure) -> !((success_node_9.status = success)));',
+                          'LTLSPEC G(((success_failure_node_10.status = '
+                          'failure) -> (success_node_10.status = success)));',
+                          'LTLSPEC G(((success_failure_node_10.status = '
+                          'failure) -> !((success_node_10.status = '
+                          'success))));',
+                          'CTLSPEC AG(((success_failure_node_10.status = '
+                          'failure) -> (success_node_10.status = success)));',
+                          'CTLSPEC AG(((success_failure_node_10.status = '
+                          'failure) -> !((success_node_10.status = '
+                          'success))));',
+                          'INVARSPEC ((success_failure_node_10.status = '
+                          'failure) -> (success_node_10.status = success));',
+                          'INVARSPEC ((success_failure_node_10.status = '
+                          'failure) -> !((success_node_10.status = '
+                          'success)));'],
+    'tick_condition': 'TRUE',
+    'variables': {   'success_failure_node_10_DOT_randomizer': {   'custom_value_range': '{TRUE, '
+                                                                                         'FALSE}',
+                                                                   'initial_value': [   (   'TRUE',
+                                                                                            'FALSE')],
+                                                                   'keep_stage_0': False,
+                                                                   'max_value': 1,
+                                                                   'min_value': 0,
+                                                                   'mode': 'VAR',
+                                                                   'name': 'success_failure_node_10_DOT_randomizer',
+                                                                   'next_value': [   (   'success_failure_node_10',
+                                                                                         True,
+                                                                                         [   (   'TRUE',
+                                                                                                 '{TRUE, '
+                                                                                                 'FALSE}')])],
+                                                                   'prefix': ''},
+                     'success_failure_node_1_DOT_randomizer': {   'custom_value_range': '{TRUE, '
+                                                                                        'FALSE}',
+                                                                  'initial_value': [   (   'TRUE',
+                                                                                           'FALSE')],
+                                                                  'keep_stage_0': False,
+                                                                  'max_value': 1,
+                                                                  'min_value': 0,
+                                                                  'mode': 'VAR',
+                                                                  'name': 'success_failure_node_1_DOT_randomizer',
+                                                                  'next_value': [   (   'success_failure_node_1',
+                                                                                        True,
+                                                                                        [   (   'TRUE',
+                                                                                                '{TRUE, '
+                                                                                                'FALSE}')])],
+                                                                  'prefix': ''},
+                     'success_failure_node_2_DOT_randomizer': {   'custom_value_range': '{TRUE, '
+                                                                                        'FALSE}',
+                                                                  'initial_value': [   (   'TRUE',
+                                                                                           'FALSE')],
+                                                                  'keep_stage_0': False,
+                                                                  'max_value': 1,
+                                                                  'min_value': 0,
+                                                                  'mode': 'VAR',
+                                                                  'name': 'success_failure_node_2_DOT_randomizer',
+                                                                  'next_value': [   (   'success_failure_node_2',
+                                                                                        True,
+                                                                                        [   (   'TRUE',
+                                                                                                '{TRUE, '
+                                                                                                'FALSE}')])],
+                                                                  'prefix': ''},
+                     'success_failure_node_3_DOT_randomizer': {   'custom_value_range': '{TRUE, '
+                                                                                        'FALSE}',
+                                                                  'initial_value': [   (   'TRUE',
+                                                                                           'FALSE')],
+                                                                  'keep_stage_0': False,
+                                                                  'max_value': 1,
+                                                                  'min_value': 0,
+                                                                  'mode': 'VAR',
+                                                                  'name': 'success_failure_node_3_DOT_randomizer',
+                                                                  'next_value': [   (   'success_failure_node_3',
+                                                                                        True,
+                                                                                        [   (   'TRUE',
+                                                                                                '{TRUE, '
+                                                                                                'FALSE}')])],
+                                                                  'prefix': ''},
+                     'success_failure_node_4_DOT_randomizer': {   'custom_value_range': '{TRUE, '
+                                                                                        'FALSE}',
+                                                                  'initial_value': [   (   'TRUE',
+                                                                                           'FALSE')],
+                                                                  'keep_stage_0': False,
+                                                                  'max_value': 1,
+                                                                  'min_value': 0,
+                                                                  'mode': 'VAR',
+                                                                  'name': 'success_failure_node_4_DOT_randomizer',
+                                                                  'next_value': [   (   'success_failure_node_4',
+                                                                                        True,
+                                                                                        [   (   'TRUE',
+                                                                                                '{TRUE, '
+                                                                                                'FALSE}')])],
+                                                                  'prefix': ''},
+                     'success_failure_node_5_DOT_randomizer': {   'custom_value_range': '{TRUE, '
+                                                                                        'FALSE}',
+                                                                  'initial_value': [   (   'TRUE',
+                                                                                           'FALSE')],
+                                                                  'keep_stage_0': False,
+                                                                  'max_value': 1,
+                                                                  'min_value': 0,
+                                                                  'mode': 'VAR',
+                                                                  'name': 'success_failure_node_5_DOT_randomizer',
+                                                                  'next_value': [   (   'success_failure_node_5',
+                                                                                        True,
+                                                                                        [   (   'TRUE',
+                                                                                                '{TRUE, '
+                                                                                                'FALSE}')])],
+                                                                  'prefix': ''},
+                     'success_failure_node_6_DOT_randomizer': {   'custom_value_range': '{TRUE, '
+                                                                                        'FALSE}',
+                                                                  'initial_value': [   (   'TRUE',
+                                                                                           'FALSE')],
+                                                                  'keep_stage_0': False,
+                                                                  'max_value': 1,
+                                                                  'min_value': 0,
+                                                                  'mode': 'VAR',
+                                                                  'name': 'success_failure_node_6_DOT_randomizer',
+                                                                  'next_value': [   (   'success_failure_node_6',
+                                                                                        True,
+                                                                                        [   (   'TRUE',
+                                                                                                '{TRUE, '
+                                                                                                'FALSE}')])],
+                                                                  'prefix': ''},
+                     'success_failure_node_7_DOT_randomizer': {   'custom_value_range': '{TRUE, '
+                                                                                        'FALSE}',
+                                                                  'initial_value': [   (   'TRUE',
+                                                                                           'FALSE')],
+                                                                  'keep_stage_0': False,
+                                                                  'max_value': 1,
+                                                                  'min_value': 0,
+                                                                  'mode': 'VAR',
+                                                                  'name': 'success_failure_node_7_DOT_randomizer',
+                                                                  'next_value': [   (   'success_failure_node_7',
+                                                                                        True,
+                                                                                        [   (   'TRUE',
+                                                                                                '{TRUE, '
+                                                                                                'FALSE}')])],
+                                                                  'prefix': ''},
+                     'success_failure_node_8_DOT_randomizer': {   'custom_value_range': '{TRUE, '
+                                                                                        'FALSE}',
+                                                                  'initial_value': [   (   'TRUE',
+                                                                                           'FALSE')],
+                                                                  'keep_stage_0': False,
+                                                                  'max_value': 1,
+                                                                  'min_value': 0,
+                                                                  'mode': 'VAR',
+                                                                  'name': 'success_failure_node_8_DOT_randomizer',
+                                                                  'next_value': [   (   'success_failure_node_8',
+                                                                                        True,
+                                                                                        [   (   'TRUE',
+                                                                                                '{TRUE, '
+                                                                                                'FALSE}')])],
+                                                                  'prefix': ''},
+                     'success_failure_node_9_DOT_randomizer': {   'custom_value_range': '{TRUE, '
+                                                                                        'FALSE}',
+                                                                  'initial_value': [   (   'TRUE',
+                                                                                           'FALSE')],
+                                                                  'keep_stage_0': False,
+                                                                  'max_value': 1,
+                                                                  'min_value': 0,
+                                                                  'mode': 'VAR',
+                                                                  'name': 'success_failure_node_9_DOT_randomizer',
+                                                                  'next_value': [   (   'success_failure_node_9',
+                                                                                        True,
+                                                                                        [   (   'TRUE',
+                                                                                                '{TRUE, '
+                                                                                                'FALSE}')])],
+                                                                  'prefix': ''},
+                     'success_failure_node_DOT_randomizer': {   'custom_value_range': '{TRUE, '
+                                                                                      'FALSE}',
+                                                                'initial_value': [   (   'TRUE',
+                                                                                         'FALSE')],
+                                                                'keep_stage_0': False,
+                                                                'max_value': 1,
+                                                                'min_value': 0,
+                                                                'mode': 'VAR',
+                                                                'name': 'success_failure_node_DOT_randomizer',
+                                                                'next_value': [   (   'success_failure_node',
+                                                                                      True,
+                                                                                      [   (   'TRUE',
+                                                                                              '{TRUE, '
+                                                                                              'FALSE}')])],
+                                                                'prefix': ''}}}

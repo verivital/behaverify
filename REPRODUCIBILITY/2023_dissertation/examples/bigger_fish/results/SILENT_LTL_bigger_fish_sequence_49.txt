@@ -30,24 +30,24 @@ elapse: 0.03 seconds, total: 0.03 seconds
 Runtime Statistics
 ------------------
 Machine name: serene-MS-7B51
-User time    0.030 seconds
-System time  0.009 seconds
+User time    0.033 seconds
+System time  0.008 seconds
 
 Average resident text size       =     0K
 Average resident data+stack size =     0K
-Maximum resident size            = 20932K
+Maximum resident size            = 21594K
 
 Virtual text size                = 17832K
-Virtual data size                = 51759K
+Virtual data size                = 64591K
     data size initialized        = 32226K
     data size uninitialized      =  8317K
-    data size sbrk               = 11216K
+    data size sbrk               = 24048K
 Virtual memory limit             = -2147483648K (-2147483648K)
 
 Major page faults = 0
-Minor page faults = 8276
+Minor page faults = 8567
 Swaps = 0
 Input blocks = 0
 Output blocks = 8
 Context switch (voluntary) = 0
-Context switch (involuntary) = 0
+Context switch (involuntary) = 1
