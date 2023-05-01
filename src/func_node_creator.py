@@ -417,7 +417,7 @@ def create_composite_parallel_without_memory(number_of_children):
                      + tab_indent(4) + 'success_on_all & (child.internal_status = success) : next_composite.internal_status;' + os.linesep
                      + tab_indent(4) + 'success_on_all & (child.internal_status = running) : running;' + os.linesep
                      + tab_indent(4) + '(child.internal_status = success) : success;' + os.linesep
-                     + tab_indent(4) + 'TRUE : running;' + os.linesep
+                     + tab_indent(4) + 'TRUE : next_composite.internal_status;' + os.linesep
                      + tab_indent(3) + 'esac;' + os.linesep
                      + tab_indent(2) + 'child.active := active;' + os.linesep
                      + tab_indent(2) + 'next_composite.active := active;' + os.linesep
@@ -445,7 +445,7 @@ def create_composite_parallel_with_memory(number_of_children):
                      + tab_indent(4) + 'success_on_all & (child.internal_status = success) : next_composite.internal_status;' + os.linesep
                      + tab_indent(4) + 'success_on_all & (child.internal_status = running) : running;' + os.linesep
                      + tab_indent(4) + '(child.internal_status = success) : success;' + os.linesep
-                     + tab_indent(4) + 'TRUE : running;' + os.linesep
+                     + tab_indent(4) + 'TRUE : next_composite.internal_status;' + os.linesep
                      + tab_indent(3) + 'esac;' + os.linesep
                      + tab_indent(2) + 'child.active := active & !(skip_child);' + os.linesep
                      + tab_indent(2) + 'next_composite.active := active;' + os.linesep

@@ -1,6 +1,8 @@
 #!/bin/bash
 
-for num in {0..199}; do
-    ./generate.sh ../examples/bigger_fish bigger_fish_parallel_$num
-    ./generate.sh ../examples/bigger_fish bigger_fish_sequence_$num
+for num in {1..20}; do
+    echo $num
+    new_num=$((10*$num-1))
+    ./generate.sh ../examples/bigger_fish bigger_fish_parallel_$new_num
+    ./generate.sh ../examples/bigger_fish bigger_fish_sequence_$new_num
 done

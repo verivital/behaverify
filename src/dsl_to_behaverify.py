@@ -2,7 +2,7 @@ import textx
 import argparse
 import pprint
 import os
-import sys
+# import sys
 import itertools
 import copy
 import serene_functions
@@ -17,106 +17,154 @@ from behaverify_common import create_node_name, create_node_template, create_var
 # the last condition should always be TRUE
 
 
-def get_variables(model, keep_stage_0):
+# -------------- FUNCTIONS
+
+
+def format_function_before(function_name, code, node_name, variables, use_stages, use_next, not_next):
+    return (
+        function_name + '('
+        + ', '.join([format_code(value, node_name, variables, use_stages, use_next, not_next) for value in code.function_call.values])
+        + ')'
+        )
+
+
+def format_function_between(function_name, code, node_name, variables, use_stages, use_next, not_next):
+    return (
+        '('
+        + (' ' + function_name + ' ').join([format_code(value, node_name, variables, use_stages, use_next, not_next) for value in code.function_call.values])
+        + ')'
+        )
+
+
+def format_function_after(function_name, code, node_name, variables, use_stages, use_next, not_next):
+    return (
+        '('
+        + code.function_call.node_name
+        + function_name
+        + ')'
+        )
+
+
+def format_function_before_bounded(function_name, code, node_name, variables, use_stages, use_next, not_next):
+    return (
+        function_name + ' [' + str(code.lower_bound) + ', ' + str(code.upper_bound) + '] '  '('
+        + ', '.join([format_code(value, node_name, variables, use_stages, use_next, not_next) for value in code.function_call.values])
+        + ')'
+        )
+
+
+def format_function_between_bounded(function_name, code, node_name, variables, use_stages, use_next, not_next):
+    return (
+        '('
+        + (' ' + function_name + ' [' + str(code.lower_bound) + ', ' + str(code.upper_bound) + '] ').join([format_code(value, node_name, variables, use_stages, use_next, not_next) for value in code.function_call.values])
+        + ')'
+        )
+
+
+def format_function_before_between(function_name, code, node_name, variables, use_stages, use_next, not_next):
+    return (
+        function_name[0] + '['
+        + (' ' + function_name[1] + ' ').join([format_code(value, node_name, variables, use_stages, use_next, not_next) for value in code.function_call.values])
+        + ']'
+        )
+
+
+def format_function(code, node_name, variables, use_stages, use_next, not_next):
+    (function_name, function_to_call) = FUNCTION_FORMAT[code.function_call.function_name]
+    return function_to_call(function_name, code, node_name, variables, use_stages, use_next, not_next)
+
+
+def compute_stage(variable_key, variables, use_stages, overwrite_stage = None):
     '''
-    this constructs and returns variables and local variables.
-    variables are constructed based on variables and environment_variables
+    compute the stage for the variable now
     -- arguments
-    @ model := a model. one created using behaverify.tx as the metamodel (probably)
-    @ keep_stage_0 := a boolean. indicates if we should be default keep_stage_0.
+    @ variable_key := used to index into the variable.
+    @ variables := a dictionary of variables
+    @ use_stages := if true, use stages
+    @ overwrite_stage := forces a specific stage
     -- return
-    @ variables := a dictionary from variable_name (string) to variable informaion
-    @ local_variables := a dictionary from variable_name (string) to variable informaion
+    @ the string with appropriate state number
     -- side effects
-    none. purely functional.
+    none.
     '''
-    # create each variable type using the template.
-    # global test_variable
-    variables = {variable_reference(variable.name, False, '', False) :
-                 (
-                     create_variable_template(variable.name, variable.model_as, None, 0, 0, None, [], 'var_', False)
-                     if variable.model_as == 'DEFINE' else
-                     create_variable_template(variable.name, variable.model_as,
-                                              (None if (variable.domain.min_val is not None or variable.model_as == 'DEFAULT') else ('{TRUE, FALSE}' if variable.domain.boolean is not None else ('{' + ', '.join(map(str, map(handle_constant, variable.domain.enums))) + '}'))),
-                                              0 if variable.domain.min_val is None else int(handle_constant(variable.domain.min_val)),
-                                              1 if variable.domain.min_val is None else int(handle_constant(variable.domain.max_val)),
-                                              None, [], 'var_', keep_stage_0
-                                              )
-                  )
-                 for variable in model.blackboard_variables}
-    env_variables = {variable_reference(variable.name, False, '', True) :
-                     (
-                         create_variable_template(variable.name, variable.model_as, None, 0, 0, None, [], 'env_', False)
-                         if variable.model_as == 'DEFINE' else
-                         create_variable_template(variable.name, variable.model_as,
-                                                  (None if (variable.domain.min_val is not None or variable.model_as == 'DEFAULT') else ('{TRUE, FALSE}' if variable.domain.boolean is not None else ('{' + ', '.join(map(str, map(handle_constant, variable.domain.enums))) + '}'))),
-                                                  0 if variable.domain.min_val is None else int(handle_constant(variable.domain.min_val)),
-                                                  1 if variable.domain.min_val is None else int(handle_constant(variable.domain.max_val)),
-                                                  None, [], 'env_', keep_stage_0
-                                                  )
-                     )
-                     for variable in model.environment_variables}
-    variables.update(env_variables)
-    local_variables = {variable.name :
-                       (
-                           create_variable_template(variable.name, variable.model_as, None, 0, 0, None, [], '', False)
-                           if variable.model_as == 'DEFINE' else
-                           create_variable_template(variable.name, variable.model_as,
-                                                    (None if (variable.domain.min_val is not None or variable.model_as == 'DEFAULT') else ('{TRUE, FALSE}' if variable.domain.boolean is not None else ('{' + ', '.join(map(str, map(handle_constant, variable.domain.enums))) + '}'))),
-                                                    0 if variable.domain.min_val is None else int(handle_constant(variable.domain.min_val)),
-                                                    1 if variable.domain.min_val is None else int(handle_constant(variable.domain.max_val)),
-                                                    None, [], '', keep_stage_0
-                                                    )
-                       )
-                       for variable in model.local_variables}
-
-    for variable in model.blackboard_variables:
-        if variable.model_as == 'DEFINE':
-            variables[variable_reference(variable.name, False, '', False)]['existing_definitions'] = {}
-        else:
-            variables[variable_reference(variable.name, False, '', False)]['initial_value'] = make_new_stage(variable.initial_value, None, variables, local_variables, False, False, None)
-    for variable in model.environment_variables:
-        if variable.model_as == 'DEFINE':
-            variables[variable_reference(variable.name, False, '', True)]['existing_definitions'] = {}
-        else:
-            variables[variable_reference(variable.name, False, '', True)]['initial_value'] = make_new_stage(variable.initial_value, None, variables, local_variables, False, False, None)
-    for variable in model.local_variables:
-        if variable.model_as == 'DEFINE':
-            local_variables[variable.name]['existing_definitions'] = {}
-        else:
-            local_variables[variable.name]['initial_value'] = make_new_stage(variable.initial_value, None, variables, local_variables, False, False, None)
-    return (variables, local_variables)
+    return (
+        (('_stage_' + str(min(overwrite_stage, len(variables[variable_key]['next_value']))) if overwrite_stage > 0 else (
+            '' if overwrite_stage == 0 else (
+                '_stage_' + str(len(variables[variable_key]['next_value']))
+            ))))
+        if overwrite_stage is not None else
+        (('_stage_' + str(len(variables[variable_key]['next_value']))) if (use_stages and len(variables[variable_key]['next_value']) > 0) else (''))
+    )
 
 
-RANGE_FUNCTION = {
-    'abs' : serene_functions.serene_abs,
-    'max' : serene_functions.serene_max,
-    'min' : serene_functions.serene_min,
-    'sin' : serene_functions.serene_sin,
-    'cos' : serene_functions.serene_cos,
-    'tan' : serene_functions.serene_tan,
-    'ln' : serene_functions.serene_log,
-    'not' : serene_functions.serene_not,
-    'and' : serene_functions.serene_and,
-    'or' : serene_functions.serene_or,
-    'xor' : serene_functions.serene_xor,
-    'xnor' : serene_functions.serene_xnor,
-    'implies' : serene_functions.serene_implies,
-    'equivalent' : serene_functions.serene_eq,
-    'equal' : serene_functions.serene_eq,
-    'not_equal' : serene_functions.serene_ne,
-    'less_than' : serene_functions.serene_lt,
-    'greater_than' : serene_functions.serene_gt,
-    'less_than_or_equal' : serene_functions.serene_lte,
-    'greater_than_or_equal' : serene_functions.serene_gte,
-    'negative' : serene_functions.serene_neg,
-    'addition' : serene_functions.serene_sum,
-    'subtraction' : serene_functions.serene_sub,
-    'multiplication' : serene_functions.serene_mult,
-    'division' : serene_functions.serene_truediv,
-    'mod' : serene_functions.serene_mod,
-    'count' : serene_functions.serene_count
-}
+def find_used_variables(code, node_name, variables, use_stages):
+    return (
+        [] if code.constant is not None else (
+            [format_variable(code.variable, (code.mode == 'local'), node_name, (code.mode == 'env'), variables, use_stages, False, None)] if code.variable is not None else (
+                find_used_variables(code.code_statement, node_name, variables, use_stages) if code.code_statement is not None else (
+                    [variable for value in code.function_call.values for variable in find_used_variables(value, node_name, variables, use_stages)]
+                    )
+                )
+            )
+        )
+
+
+def format_variable(variable_obj, is_local, node_name, is_env, variables, use_stages, use_next, not_next, overwrite_stage = None):
+    '''
+    -- ARGUMENTS
+    @ variable_obj := a textx object of a variable that we will be formatting.
+    @ is_local := is the variable local?
+    @ node_name := the name of the node which caused this to be called.
+    @ is_env := is this an environment variable?
+    @ variables := a dict of all variables
+    @ use_stages := are we using stages for this?
+    @ use_next := are we making a 'next' call for this. (only used in optimization cases where we're optimizing out stage_0
+    @ not_next := only matters if use_next is true. In that case, this variable is replaced with a macro link.
+    @ overwrite_stage := overwrite which stage we're asking for.
+    '''
+    variable_key = variable_reference(variable_obj.name, is_local, node_name, is_env)
+    variable = variables[variable_key]
+    if variable['mode'] == 'DEFINE':
+        used_vars = []
+        for code_fragment in variable_obj.initial_value.default_result.values:
+            used_vars += find_used_variables(code_fragment, node_name, variables, use_stages)
+        for case_result in variable_obj.initial_value.case_results:
+            for code_fragment in case_result.values:
+                used_vars += find_used_variables(code_fragment, node_name, variables, use_stages)
+            used_vars += find_used_variables(case_result.condition, node_name, variables, use_stages)
+        used_vars = tuple(sorted(list(set(used_vars))))
+        if used_vars not in variable['existing_definitions']:
+            variable['existing_definitions'][used_vars] = len(variable['next_value'])
+            variable['next_value'].append(make_new_stage(variable_obj.initial_value, node_name, variables, use_stages, use_next, not_next))
+        stage = variable['existing_definitions'][used_vars]
+        return (
+            ('' if not use_next else 'next(')
+            + variable['prefix']
+            + variable['name']
+            + '_stage_' + str(stage)
+            + ('' if not use_next else ')'))
+
+    if use_stages and (len(variable['next_value']) == 0 or overwrite_stage == 0):
+        variable['keep_stage_0'] = True
+    if use_next and variable_key == not_next:
+        return 'LINK_TO_PREVIOUS_FINAL_' + variable['prefix'] + variable['name']
+    return (('' if not use_next else 'next(')
+            + variable['prefix']
+            + variable['name']
+            + compute_stage(variable_key, variables, use_stages, overwrite_stage)
+            + ('' if not use_next else ')'))
+
+
+def format_code(code, node_name, variables, use_stages, use_next, not_next):
+    return (
+        (str(code.constant).upper() if isinstance(code.constant, bool) else str(handle_constant(code.constant))) if code.constant is not None else (
+            (format_variable(code.variable, (code.mode == 'local'), (code.node_name if hasattr(code, 'node_name') else node_name), (code.mode == 'env'), variables, use_stages, use_next, not_next, (code.read_at if hasattr(code, 'read_at') else None))) if code.variable is not None else (
+                ('(' + format_code(code.code_statement, node_name, variables, use_stages, use_next, not_next) + ')') if code.code_statement is not None else (
+                    format_function(code, node_name, variables, use_stages, use_next, not_next)
+                )
+            )
+        )
+    )
 
 
 def build_range_func(code):
@@ -131,7 +179,7 @@ def build_range_func(code):
     )
 
 
-def make_new_stage(statement, node_name, variables, local_variables, use_stages, use_next, not_next):
+def make_new_stage(statement, node_name, variables, use_stages, use_next, not_next):
     '''
     this creates a new_stage and returns it.
     the stage consists of (conditions, results) pairs in order.
@@ -164,7 +212,7 @@ def make_new_stage(statement, node_name, variables, local_variables, use_stages,
     return (
         [
             (
-                format_code(case_result.condition, node_name, variables, local_variables, use_stages, use_next, not_next)
+                format_code(case_result.condition, node_name, variables, use_stages, use_next, not_next)
                 ,
                 (
                     (
@@ -176,7 +224,7 @@ def make_new_stage(statement, node_name, variables, local_variables, use_stages,
                     if (case_result.range_mode and ((cond_func := build_range_func(case_result.values[2])) or True)) else  # this is not a mistake. we are doing this to build the cond func once, instead of having to repeatedly build it
                     (
                         ('{' if len(case_result.values) > 1 else '')
-                        + ', '.join([format_code(value, node_name, variables, local_variables, use_stages, use_next, not_next)
+                        + ', '.join([format_code(value, node_name, variables, use_stages, use_next, not_next)
                                      for value in case_result.values])
                         + ('}' if len(case_result.values) > 1 else '')
                     )
@@ -184,7 +232,9 @@ def make_new_stage(statement, node_name, variables, local_variables, use_stages,
             )
             for case_result in statement.case_results
         ]
+        # the above portion is the optional cases
         +
+        # the below portion is the required final case.
         [
             (
                 'TRUE'
@@ -199,7 +249,7 @@ def make_new_stage(statement, node_name, variables, local_variables, use_stages,
                     if (statement.default_result.range_mode and ((cond_func := build_range_func(statement.default_result.values[2])) or True)) else  # this is not a mistake. we are doing this to build the cond func once, instead of having to repeatedly build it
                     (
                         ('{' if len(statement.default_result.values) > 1 else '')
-                        + ', '.join([format_code(value, node_name, variables, local_variables, use_stages, use_next, not_next)
+                        + ', '.join([format_code(value, node_name, variables, use_stages, use_next, not_next)
                                      for value in statement.default_result.values])
                         + ('}' if len(statement.default_result.values) > 1 else '')
                     )
@@ -209,8 +259,19 @@ def make_new_stage(statement, node_name, variables, local_variables, use_stages,
     )
 
 
+def handle_specifications(specifications, variables):
+    return [
+        (
+            specification.spec_type
+            + ' '
+            + format_code(specification.code_statement, '', variables, True, False, None)
+            + ';'
+        )
+        for specification in specifications
+        ]
+
+
 def handle_constant(constant):
-    global constants
     return (constants[constant] if constant in constants else constant)
 
 
@@ -232,7 +293,209 @@ def variable_reference(base_name, is_local, node_name, is_env):
         + base_name)
 
 
-def complete_environment_variables(model, variables, local_variables, delayed_statements):
+def handle_variable_statement(statement, node_name, variables, is_initial, define_only):
+    if is_initial:
+        variable_key = variable_reference(statement.variable.name, statement.mode == 'local', node_name, False)
+        variable = variables[variable_key]
+        if variable['model_as'] == 'DEFINE':
+            variable.initial_value = statement
+            pass
+        elif define_only:
+            # intentional. do nothing in this case.
+            pass
+        else:
+            variables[variable_key]['initial_value'] = make_new_stage(statement, node_name, variables, False, False, None)
+    else:
+        variable_key = variable_reference(statement.variable.name, statement.mode == 'local', node_name, False)
+        keep_stage_0 = variables[variable_key]['keep_stage_0']
+        non_determinism = any([(len(result.values) > 1) for result in itertools.chain([statement.default_result], statement.case_results)])
+        keep_stage_0 = keep_stage_0 or (not non_determinism)
+        if keep_stage_0 or len(variables[variable_key]['next_value']) > 0:
+            variables[variable_key]['next_value'].append((node_name,
+                                                          non_determinism,
+                                                          make_new_stage(statement, node_name, variables, True, False, None)))
+        else:
+            variables[variable_key]['next_value'].append((node_name,
+                                                          non_determinism,
+                                                          make_new_stage(statement, node_name, variables, True, True, variable_key)))
+        variables[variable_key]['keep_stage_0'] = keep_stage_0
+    return
+
+
+def handle_read_statement(statement, node_name, variables, is_initial, define_only):
+    if is_initial:
+        if statement.condition is None:
+            condition_variable_key = variable_reference(statement.condition_variable.name, True, node_name, False)
+            if condition_variable_key not in variables:
+                format_variable(statement.condition_variable, True, node_name, False, variables, False, False, None)
+            new_stage = [('TRUE', '{TRUE, FALSE}')]
+            variables[condition_variable_key]['initial_value'] = new_stage
+        condition = (
+            format_code(statement.condition, node_name, variables, False, False, None) if statement.condition is not None else (
+                format_variable(statement.condition_variable, True, node_name, False, variables, False, False, None)
+                )
+            )
+        for variable_statement in statement.variable_statements:
+            variable_key = variable_reference(variable_statement.variable.name, variable_statement.mode == 'local', node_name, False)
+            if variable_key not in variables:
+                format_variable(variable_statement.variable, variable_statement.mode == 'local',
+                                node_name, False, variables, False, False, None)
+            variable = variables[variable_key]
+            variable['intial_value'] = ([('!(' + condition + ')',
+                                          variable['custom_value_range'] if variable['custom_value_range'] is not None else (
+                                              str(variable['min_val']) + '..' + str(variable['max_val'])
+                                          )
+                                          )]
+                                        +
+                                        make_new_stage(variable_statement, node_name, variables, False, False, None)
+                                        )
+    else:
+        if statement.condition is None:
+            condition_variable_key = variable_reference(statement.condition_variable.name, True, node_name, False)
+            if condition_variable_key not in variables:
+                format_variable(statement.condition_variable, True, node_name, False, variables, False, False, None)
+            new_stage = [('TRUE', '{TRUE, FALSE}')]
+            variables[condition_variable_key]['next_value'].append((node_name, True, new_stage))
+        condition = (
+            format_code(statement.condition, node_name, variables, True, False, None) if statement.condition is not None else (
+                format_variable(statement.condition_variable, True, node_name, False, variables, True, False, None)
+                )
+            )
+        for variable_statement in statement.variable_statements:
+            variable_key = variable_reference(variable_statement.variable.name, variable_statement.mode == 'local', node_name, False)
+            if variable_key not in variables:
+                format_variable(variable_statement.variable, variable_statement.mode == 'local',
+                                node_name, False, variables, False, False, None)
+            variable = variables[variable_key]
+            keep_stage_0 = variable['keep_stage_0']
+            non_determinism = any([(len(result.values) > 1) for result in itertools.chain([variable_statement.default_result], variable_statement.case_results)])
+            keep_stage_0 = keep_stage_0 or (not non_determinism)
+            variable['next_value'].append((node_name,
+                                           non_determinism,
+                                           (
+                                               [('!(' + condition + ')',
+                                                 format_variable(variable_statement.variable, variable_statement.mode == 'local',
+                                                                 node_name, False, variables, True,
+                                                                 (False if keep_stage_0 or len(variable['next_value']) > 0 else True),
+                                                                 (None if keep_stage_0 or len(variable['next_value']) > 0 else variable_key))
+                                                 )]
+                                               +
+                                               make_new_stage(variable_statement, node_name, variables, True,
+                                                              (False if keep_stage_0 or len(variable['next_value']) > 0 else True),
+                                                              (None if keep_stage_0 or len(variable['next_value']) > 0 else variable_key)))))
+            variable['keep_stage_0'] = keep_stage_0
+    return
+
+
+def handle_write_statement(statement, node_name, variables):
+    delayed = []
+    for var_update in statement.update:
+        if var_update.instant:
+            variable_key = variable_reference(var_update.variable.name, False, '', True)
+            variable = variables[variable_key]
+            keep_stage_0 = variable['keep_stage_0']
+            non_determinism = any([(len(result.values) > 1) for result in itertools.chain([var_update.default_result], var_update.case_results)])
+            keep_stage_0 = keep_stage_0 or (not non_determinism)
+            variable['next_value'].append((node_name,
+                                           non_determinism,
+                                           make_new_stage(var_update, node_name, variables, True,
+                                                          (False if keep_stage_0 or len(variable['next_value']) > 0 else True),
+                                                          (None if keep_stage_0 or len(variable['next_value']) > 0 else variable_key))))
+            variable['keep_stage_0'] = keep_stage_0
+        else:
+            delayed.append((node_name, var_update))
+    return delayed
+
+
+def resolve_statements(statements, nodes, variables):
+
+    def handle_return_statement(statement, nodes, node_name, variables):
+        node = nodes[node_name]
+        statuses = {result.status for result in itertools.chain([statement.default_result], statement.case_results)}
+        node['return_possibilities']['success'] = 'success' in statuses
+        node['return_possibilities']['running'] = 'running' in statuses
+        node['return_possibilities']['failure'] = 'failure' in statuses
+
+        variable_list = []
+        if not (len(statement.case_results) == 0 or len(statuses) == 1):
+            for case_result in statement.case_results:
+                variable_list += find_used_variables(case_result.condition,
+                                                     node_name, variables,
+                                                     True)
+        variable_list = sorted(list(set(variable_list)))
+        node['additional_arguments'] = variable_list
+        node['internal_status_module_name'] = (
+            None
+            if (len(statement.case_results) == 0 or len(statuses) == 1) else
+            (
+                node_name + '_module'
+            )
+        )
+        node['internal_status_module_code'] = (
+            None
+            if (len(statement.case_results) == 0 or len(statuses) == 1) else
+            (
+                'MODULE ' + node_name + '_module(' + ', '.join(variable_list) + ')' + os.linesep
+                + '\tCONSTANTS' + os.linesep
+                + '\t\tsuccess, failure, running, invalid;' + os.linesep
+                + '\tDEFINE' + os.linesep
+                + '\t\tstatus := active ? internal_status : invalid;' + os.linesep
+                + '\t\tinternal_status := ' + os.linesep
+                + '\t\t\tcase' + os.linesep
+                + ('').join([('\t\t\t\t'
+                              + format_code(case_result.condition, node_name, variables, True, False, None)
+                              + ' : '
+                              + case_result.status
+                              + ';' + os.linesep)
+                             for case_result in statement.case_results])
+                + '\t\t\t\tTRUE : ' + statement.default_result.status + ';' + os.linesep
+                + '\t\t\tesac;' + os.linesep
+            )
+        )
+        return
+
+    def handle_condition(condition, nodes, node_name, variables):
+        node = nodes[node_name]
+        variable_list = (
+            find_used_variables(condition,
+                                node_name, variables,
+                                True)
+            if condition is not None else [])
+        variable_list = sorted(list(set(variable_list)))
+        node['additional_arguments'] = variable_list
+        node['internal_status_module_name'] = node_name + '_module'
+        node['internal_status_module_code'] = (
+            'MODULE ' + node_name + '_module(' + ', '.join(variable_list) + ')' + os.linesep
+            + '\tCONSTANTS' + os.linesep
+            + '\t\tsuccess, failure, running, invalid;' + os.linesep
+            + '\tDEFINE' + os.linesep
+            + '\t\tstatus := active ? internal_status : invalid;' + os.linesep
+            + '\t\tinternal_status := ('
+            + format_code(condition, node_name, variables, True, False, None)
+            + ') ? success : failure;' + os.linesep
+        )
+        return
+
+    delayed_statements = []
+
+    for statement_tuple in statements:
+        if statement_tuple[1] == 'check':
+            handle_condition(statement_tuple[2], nodes, statement_tuple[0], variables)
+        elif statement_tuple[1] == 'return':
+            handle_return_statement(statement_tuple[2], nodes, statement_tuple[0], variables)
+        else:
+            if statement_tuple[2].variable_statement is not None:
+                handle_variable_statement(statement_tuple[2].variable_statement, statement_tuple[0], variables, False, False)
+            elif statement_tuple[2].read_statement is not None:
+                handle_read_statement(statement_tuple[2].read_statement, statement_tuple[0], variables, False, False)
+            else:
+                delayed_statements.append(handle_write_statement(statement_tuple[2].write_statement, statement_tuple[0], variables))
+    for delayed in delayed_statements:
+        handle_variable_statement(delayed[1], delayed[0], variables, False, False)
+    return
+
+
+def complete_environment_variables(model, variables):
     '''
     completes the environment variables.
     -- arguments
@@ -245,16 +508,6 @@ def complete_environment_variables(model, variables, local_variables, delayed_st
     -- side effects
     changes variables.
     '''
-    for (node_name, statement) in delayed_statements:
-        new_stage = make_new_stage(statement, node_name, variables, local_variables, True, False, None)
-        variable_name = variable_reference(statement.variable.name, False, '', True)
-        non_determinism = any([(len(result.values) > 1) for result in itertools.chain([statement.default_result], statement.case_results)])
-        variables[variable_name]['next_value'].append((node_name, non_determinism, new_stage))
-
-    # for statement in model.initial:
-    #     new_stage = make_new_stage(statement, None, variables, {}, False, False, False)
-    #     variable_name = variable_reference(statement.variable.name, False, '', True)
-    #     variables[variable_name]['initial_value'] = new_stage
 
     for statement in model.update:
         new_stage = make_new_stage(statement, None, variables, {}, True, False, False)
@@ -265,116 +518,225 @@ def complete_environment_variables(model, variables, local_variables, delayed_st
     return
 
 
-def compute_stage(variable_key, variables, use_stages, overwrite_stage = None):
+def get_variables(model, local_variables, initial_statements, keep_stage_0):
     '''
-    compute the stage for the variable now
+    this constructs and returns variables and local variables.
+    variables are constructed based on variables and environment_variables
     -- arguments
-    @ variable_key := used to index into the variable.
-    @ variables := a dictionary of variables
-    @ use_stages := if true, use stages
-    @ overwrite_stage := forces a specific stage
+    @ model := a model. one created using behaverify.tx as the metamodel (probably)
+    @ keep_stage_0 := a boolean. indicates if we should be default keep_stage_0.
     -- return
-    @ the string with appropriate state number
+    @ variables := a dictionary from variable_name (string) to variable informaion
+    @ local_variables := a dictionary from variable_name (string) to variable informaion
     -- side effects
-    none.
+    none. purely functional.
     '''
-    if overwrite_stage is not None:
-        return (('_stage_' + str(min(overwrite_stage, len(variables[variable_key]['next_value']))) if overwrite_stage > 0 else (
-            '' if overwrite_stage == 0 else (
-                '_stage_' + str(len(variables[variable_key]['next_value']))
-            ))))
-    return (('_stage_' + str(len(variables[variable_key]['next_value']))) if (use_stages and len(variables[variable_key]['next_value']) > 0) else (''))
+    # create each variable type using the template.
+    variables = {variable_reference(variable.name, False, '', False) :
+                 (
+                     create_variable_template(variable.name, variable.model_as, None, 0, 0, None, [], 'var_', False)
+                     if variable.model_as == 'DEFINE' else
+                     create_variable_template(variable.name, variable.model_as,
+                                              (None if (variable.domain.min_val is not None or variable.model_as == 'DEFAULT') else ('{TRUE, FALSE}' if variable.domain.boolean is not None else ('{' + ', '.join(map(str, map(handle_constant, variable.domain.enums))) + '}'))),
+                                              0 if variable.domain.min_val is None else int(handle_constant(variable.domain.min_val)),
+                                              1 if variable.domain.min_val is None else int(handle_constant(variable.domain.max_val)),
+                                              None, [], 'var_', keep_stage_0
+                                              )
+                  )
+                 for variable in model.blackboard_variables}
+    env_variables = {variable_reference(variable.name, False, '', True) :
+                     (
+                         create_variable_template(variable.name, variable.model_as, None, 0, 0, None, [], 'env_', False)
+                         if variable.model_as == 'DEFINE' else
+                         create_variable_template(variable.name, variable.model_as,
+                                                  (None if (variable.domain.min_val is not None or variable.model_as == 'DEFAULT') else ('{TRUE, FALSE}' if variable.domain.boolean is not None else ('{' + ', '.join(map(str, map(handle_constant, variable.domain.enums))) + '}'))),
+                                                  0 if variable.domain.min_val is None else int(handle_constant(variable.domain.min_val)),
+                                                  1 if variable.domain.min_val is None else int(handle_constant(variable.domain.max_val)),
+                                                  None, [], 'env_', keep_stage_0
+                                                  )
+                     )
+                     for variable in model.environment_variables}
+    variables.update(env_variables)
+
+    local_variable_templates = {variable.name :
+                                (
+                                    create_variable_template(variable.name, variable.model_as, None, 0, 0, None, [], '', False)
+                                    if variable.model_as == 'DEFINE' else
+                                    create_variable_template(variable.name, variable.model_as,
+                                                             (None if (variable.domain.min_val is not None or variable.model_as == 'DEFAULT') else ('{TRUE, FALSE}' if variable.domain.boolean is not None else ('{' + ', '.join(map(str, map(handle_constant, variable.domain.enums))) + '}'))),
+                                                             0 if variable.domain.min_val is None else int(handle_constant(variable.domain.min_val)),
+                                                             1 if variable.domain.min_val is None else int(handle_constant(variable.domain.max_val)),
+                                                             None, [], '', keep_stage_0
+                                                             )
+                                )
+                                for variable in model.local_variables}
+
+    # add existing_definitions field for local variables.
+
+    for variable in model.blackboard_variables:
+        if variable.model_as == 'DEFINE':
+            variables[variable_reference(variable.name, False, '', False)]['existing_definitions'] = {}
+        else:
+            variables[variable_reference(variable.name, False, '', False)]['initial_value'] = make_new_stage(variable.initial_value, None, variables, False, False, None)
+    for variable in model.environment_variables:
+        if variable.model_as == 'DEFINE':
+            variables[variable_reference(variable.name, False, '', True)]['existing_definitions'] = {}
+        else:
+            variables[variable_reference(variable.name, False, '', True)]['initial_value'] = make_new_stage(variable.initial_value, None, variables, False, False, None)
+    for variable in model.local_variables:
+        if variable.model_as == 'DEFINE':
+            local_variable_templates[variable.name]['existing_definitions'] = {}
+        else:
+            local_variable_templates[variable.name]['initial_value'] = make_new_stage(variable.initial_value, None, variables, False, False, None)
+
+    # create local variables.
+
+    for local_variable_pair in local_variables:
+        new_name = variable_reference(local_variable_pair[1].name, True, local_variable_pair[0], False)
+        new_var = copy.deepcopy(local_variable_templates[local_variable_pair[1].name])
+        new_var['name'] = new_name
+        variables[new_name] = new_var
+
+    # handle initial statements FOR DEFINE ONLY.
+    # we have to parse and update this first. only after that can we go through non-define macros.
+
+    for statement_tuple in initial_statements:
+        if statement_tuple[1].variable_statement is not None:
+            handle_variable_statement(statement_tuple[1], statement_tuple[0], variables, True, True)
+        elif statement_tuple[1].read_statement is not None:
+            handle_read_statement(statement_tuple[1], statement_tuple[0], variables, True, True)
+        else:
+            print('warning: DO NOT USE WRITE STATEMENTS IN INITIAL DECLARATIONS')
+
+    for statement_tuple in initial_statements:
+        if statement_tuple[1].variable_statement is not None:
+            handle_variable_statement(statement_tuple[1], statement_tuple[0], variables, True, False)
+        elif statement_tuple[1].read_statement is not None:
+            handle_read_statement(statement_tuple[1], statement_tuple[0], variables, True, False)
+        else:
+            print('warning: DO NOT USE WRITE STATEMENTS IN INITIAL DECLARATIONS')
+
+    return variables
 
 
-def add_local_variable(variables, local_variables, variable_name, variable_key):
-    variables[variable_key] = copy.deepcopy(local_variables[variable_name])
-    variables[variable_key]['name'] = variable_key
-    return
-
-
-def format_variable(variable_obj, is_local, node_name, is_env, variables, local_variables, use_stages, use_next, not_next, overwrite_stage = None):
-    variable_key = variable_reference(variable_obj.name, is_local, node_name, is_env)
-    if variable_key not in variables:
-        add_local_variable(variables, local_variables, variable_obj.name, variable_key)
-    variable = variables[variable_key]
-    if variable['mode'] == 'DEFINE':
-        used_vars = []
-        for code_fragment in variable_obj.initial_value.default_result.values:
-            used_vars += find_used_variables(code_fragment, node_name, variables, local_variables, use_stages)
-        for case_result in variable_obj.initial_value.case_results:
-            for code_fragment in case_result.values:
-                used_vars += find_used_variables(code_fragment, node_name, variables, local_variables, use_stages)
-            used_vars += find_used_variables(case_result.condition, node_name, variables, local_variables, use_stages)
-        used_vars = tuple(sorted(list(set(used_vars))))
-        if used_vars not in variable['existing_definitions']:
-            variable['existing_definitions'][used_vars] = len(variable['next_value'])
-            variable['next_value'].append(make_new_stage(variable_obj.initial_value, node_name, variables, local_variables, use_stages, use_next, not_next))
-        stage = variable['existing_definitions'][used_vars]
-        return (
-            ('' if not use_next else 'next(')
-            + variable['prefix']
-            + variable['name']
-            + '_stage_' + str(stage)
-            + ('' if not use_next else ')'))
-
-    if use_stages and (len(variable['next_value']) == 0 or overwrite_stage == 0):
-        variable['keep_stage_0'] = True
-    if use_next and variable_key == not_next:
-        return 'LINK_TO_PREVIOUS_FINAL_' + variable['prefix'] + variable['name']
-    return (('' if not use_next else 'next(')
-            + variable['prefix']
-            + variable['name']
-            + compute_stage(variable_key, variables, use_stages, overwrite_stage)
-            + ('' if not use_next else ')'))
-
-
-def format_function_before(function_name, code, node_name, variables, local_variables, use_stages, use_next, not_next):
+def format_node_type(current_node):
     return (
-        function_name + '('
-        + ', '.join([format_code(value, node_name, variables, local_variables, use_stages, use_next, not_next) for value in code.function_call.values])
-        + ')'
+        (
+            current_node.node_type + (
+                ('_' + current_node.parallel_policy + '_without_memory' if not current_node.memory else (
+                    '_success_on_all_with_memory')
+                 )
+                if current_node.node_type == 'parallel' else
+                ('_with_memory' if current_node.memory else '_without_memory')
+            )
         )
+        if current_node.node_type in COMPOSITES else
+        (
+            current_node.node_type
+        )
+    )
 
 
-def format_function_between(function_name, code, node_name, variables, local_variables, use_stages, use_next, not_next):
+def create_composite(current_node, node_name, modifier, node_names, node_names_map, parent_name):
+    cur_node_names = {node_name}.union(node_names)
+    cur_node_names_map = {name : (modifier if name == node_name else node_names_map[name]) for name in node_names_map}
+    children = []
+    nodes = {}
+    local_variables = []
+    initial_statements = []
+    statements = []
+    for child in current_node.children:
+        # (child_name, node_names, nodes, local_variables, initial_statements, statements)
+        new_vals = walk_tree(child, node_name, cur_node_names, cur_node_names_map)
+        children.append(new_vals[0])
+        cur_node_names = new_vals[1]
+        cur_node_names_map = new_vals[2]
+        nodes.update(new_vals[3])
+        local_variables = local_variables + new_vals[4]
+        initial_statements = initial_statements + new_vals[5]
+        statements = statements + new_vals[6]
+    nodes[node_name] = create_node_template(node_name, parent_name, children, 'composite',
+                                            format_node_type(current_node),
+                                            True, True, True)
+    return (node_name, cur_node_names, cur_node_names_map, nodes, local_variables, initial_statements, statements)
+
+
+def create_decorator(current_node, node_name, modifier, node_names, node_names_map, parent_name, additional_arguments = None):
+    cur_node_names = {node_name}.union(node_names)
+    cur_node_names_map = {name : (modifier if name == node_name else node_names_map[name]) for name in node_names_map}
+    children = []
+    nodes = {}
+    local_variables = []
+    initial_statements = []
+    statements = []
+    new_vals = walk_tree(current_node.child, node_name, cur_node_names, cur_node_names_map)
+    children.append(new_vals[0])
+    cur_node_names = new_vals[1]
+    cur_node_names_map = new_vals[2]
+    nodes.update(new_vals[3])
+    local_variables = local_variables + new_vals[4]
+    initial_statements = initial_statements + new_vals[5]
+    statements = statements + new_vals[6]
+    nodes[node_name] = create_node_template(node_name, parent_name, children, 'decorator',
+                                            format_node_type(current_node),
+                                            True, True, True, additional_arguments)
+    return (node_name, cur_node_names, cur_node_names_map, nodes, local_variables, initial_statements, statements)
+
+
+def create_X_is_Y(current_node, node_name, modifier, node_names, node_names_map, parent_name):
+    return create_decorator(current_node, node_name, modifier, node_names, node_names_map, parent_name, [current_node.x, current_node.y])
+
+
+def create_check(current_node, node_name, modifier, node_names, node_names_map, parent_name):
+    cur_node_names = {node_name}.union(node_names)
+    cur_node_names_map = {name : (modifier if name == node_name else node_names_map[name]) for name in node_names_map}
     return (
-        '('
-        + (' ' + function_name + ' ').join([format_code(value, node_name, variables, local_variables, use_stages, use_next, not_next) for value in code.function_call.values])
-        + ')'
-        )
+        node_name, cur_node_names, cur_node_names_map,
+        {node_name : create_node_template(node_name, parent_name, [], 'leaf', current_node.node_type,
+                                          True, False, True)
+         },
+        [], [], [(node_name, 'check', current_node.condition)]
+    )
 
 
-def format_function_after(function_name, code, node_name, variables, local_variables, use_stages, use_next, not_next):
+def create_action(current_node, node_name, modifier, node_names, node_names_map, parent_name):
+    cur_node_names = {node_name}.union(node_names)
+    cur_node_names_map = {name : (modifier if name == node_name else node_names_map[name]) for name in node_names_map}
     return (
-        '('
-        + code.function_call.node_name
-        + function_name
-        + ')'
+        node_name, cur_node_names, cur_node_names_map,
+        {node_name : create_node_template(node_name, parent_name, [], 'leaf', current_node.node_type,
+                                          True, True, True)
+         },
+        list(map(lambda x : (node_name, x), current_node.local_variables)),
+        list(map(lambda x : (node_name, x), current_node.init_statements)),
+        (
+            list(map(lambda x : (node_name, 'statement', x), current_node.pre_update_statements))
+            +
+            [(node_name, 'return', current_node.return_statement)]
+            +
+            list(map(lambda x : (node_name, 'statement', x), current_node.post_update_statements))
         )
+    )
 
 
-def format_function_before_bounded(function_name, code, node_name, variables, local_variables, use_stages, use_next, not_next):
-    return (
-        function_name + ' [' + str(code.lower_bound) + ', ' + str(code.upper_bound) + '] '  '('
-        + ', '.join([format_code(value, node_name, variables, local_variables, use_stages, use_next, not_next) for value in code.function_call.values])
-        + ')'
-        )
+def walk_tree(current_node, parent_name = None, node_names = set(), node_names_map = {}):
+    while (not hasattr(current_node, 'name') or hasattr(current_node, 'sub_root')):
+        if hasattr(current_node, 'leaf'):
+            current_node = current_node.leaf
+        else:
+            # print(dir(current_node))
+            current_node = current_node.sub_root
+    # the above deals with sub_trees and leaf nodes, ensuring that the current_node variable has the next actual node at this point
+    # next, we get the name of this node, and correct for duplication
+
+    new_name = create_node_name(current_node.name.replace(' ', ''), node_names, node_names_map)
+    node_name = new_name[0]
+    modifier = new_name[1]
+    # print(node_name + ' : ' + str(parent_name))
+    return CREATE_NODE[current_node.node_type](current_node, node_name, modifier, node_names, node_names_map, parent_name)
 
 
-def format_function_between_bounded(function_name, code, node_name, variables, local_variables, use_stages, use_next, not_next):
-    return (
-        '('
-        + (' ' + function_name + ' [' + str(code.lower_bound) + ', ' + str(code.upper_bound) + '] ').join([format_code(value, node_name, variables, local_variables, use_stages, use_next, not_next) for value in code.function_call.values])
-        + ')'
-        )
-
-
-def format_function_before_between(function_name, code, node_name, variables, local_variables, use_stages, use_next, not_next):
-    return (
-        function_name[0] + '('
-        + (' ' + function_name[1] + ' ').join([format_code(value, node_name, variables, local_variables, use_stages, use_next, not_next) for value in code.function_call.values])
-        + ')'
-        )
+# --------------- CONSTANTS
 
 
 FUNCTION_FORMAT = {
@@ -439,316 +801,57 @@ FUNCTION_FORMAT = {
 }
 
 
-def format_function(code, node_name, variables, local_variables, use_stages, use_next, not_next):
-    (function_name, function_to_call) = FUNCTION_FORMAT[code.function_call.function_name]
-    return function_to_call(function_name, code, node_name, variables, local_variables, use_stages, use_next, not_next)
+RANGE_FUNCTION = {
+    'abs' : serene_functions.serene_abs,
+    'max' : serene_functions.serene_max,
+    'min' : serene_functions.serene_min,
+    'sin' : serene_functions.serene_sin,
+    'cos' : serene_functions.serene_cos,
+    'tan' : serene_functions.serene_tan,
+    'ln' : serene_functions.serene_log,
+    'not' : serene_functions.serene_not,
+    'and' : serene_functions.serene_and,
+    'or' : serene_functions.serene_or,
+    'xor' : serene_functions.serene_xor,
+    'xnor' : serene_functions.serene_xnor,
+    'implies' : serene_functions.serene_implies,
+    'equivalent' : serene_functions.serene_eq,
+    'equal' : serene_functions.serene_eq,
+    'not_equal' : serene_functions.serene_ne,
+    'less_than' : serene_functions.serene_lt,
+    'greater_than' : serene_functions.serene_gt,
+    'less_than_or_equal' : serene_functions.serene_lte,
+    'greater_than_or_equal' : serene_functions.serene_gte,
+    'negative' : serene_functions.serene_neg,
+    'addition' : serene_functions.serene_sum,
+    'subtraction' : serene_functions.serene_sub,
+    'multiplication' : serene_functions.serene_mult,
+    'division' : serene_functions.serene_truediv,
+    'mod' : serene_functions.serene_mod,
+    'count' : serene_functions.serene_count
+}
 
 
-def format_code(code, node_name, variables, local_variables, use_stages, use_next, not_next):
-    return (
-        (str(code.constant).upper() if isinstance(code.constant, bool) else str(handle_constant(code.constant))) if code.constant is not None else (
-            (format_variable(code.variable, (code.mode == 'local'), (code.node_name if hasattr(code, 'node_name') else node_name), (code.mode == 'env'), variables, local_variables, use_stages, use_next, not_next, (code.read_at if hasattr(code, 'read_at') else None))) if code.variable is not None else (
-                ('(' + format_code(code.code_statement, node_name, variables, local_variables, use_stages, use_next, not_next) + ')') if code.code_statement is not None else (
-                    format_function(code, node_name, variables, local_variables, use_stages, use_next, not_next)
-                )
-            )
-        )
-    )
-
-
-def find_used_variables(code, node_name, variables, local_variables, use_stages):
-    return (
-        [] if code.constant is not None else (
-            [format_variable(code.variable, (code.mode == 'local'), node_name, (code.mode == 'env'), variables, local_variables, use_stages, False, None)] if code.variable is not None else (
-                find_used_variables(code.code_statement, node_name, variables, local_variables, use_stages) if code.code_statement is not None else (
-                    [variable for value in code.function_call.values for variable in find_used_variables(value, node_name, variables, local_variables, use_stages)]
-                    )
-                )
-            )
-        )
-
-
-def create_sequence_selector(current_node, node_name, parent_name, variables, local_variables, delayed_statements):
-    return create_node_template(node_name, parent_name, 'composite',
-                                current_node.node_type + ('_with_memory' if current_node.memory else '_without_memory'),
-                                True, True, True)
-
-
-def create_parallel(current_node, node_name, parent_name, variables, local_variables, delayed_statements):
-    return create_node_template(node_name, parent_name, 'composite',
-                                (current_node.node_type
-                                 + ('_' + current_node.parallel_policy + '_without_memory' if not current_node.memory else (
-                                     '_success_on_all_with_memory')
-                                    )
-                                 ),
-                                True, True, True)
-
-
-def create_X_is_Y(current_node, node_name, parent_name, variables, local_variables, delayed_statements):
-    if current_node.x == current_node.y:
-        print('Decorator ' + current_node.name + ' has the same X and Y. Exiting.')
-        sys.exit()
-    return create_node_template(node_name, parent_name, 'decorator', 'X_is_Y',
-                                (current_node.x != 'success'), (current_node.x != 'running'), (current_node.x != 'failure'),
-                                additional_arguments = [current_node.x, current_node.y])
-
-
-def create_inverter(current_node, node_name, parent_name, variables, local_variables, delayed_statements):
-    return create_node_template(node_name, parent_name, 'decorator', 'inverter',
-                                True, True, True)
-
-
-def create_check(current_node, node_name, parent_name, variables, local_variables, delayed_statements):
-    variable_list = (
-        find_used_variables(current_node.condition,
-                            node_name, variables, local_variables,
-                            True)
-        if current_node.condition is not None else [])
-
-    variable_set = [*set(variable_list)]  # remove duplicates, but force a specific order.
-
-    return create_node_template(node_name, parent_name, 'leaf', current_node.node_type,
-                                True, False, True,
-                                additional_arguments = variable_set,
-                                internal_status_module_name = node_name + '_module',
-                                internal_status_module_code = (
-                                    'MODULE ' + node_name + '_module(' + ', '.join(variable_set) + ')' + os.linesep
-                                    + '\tCONSTANTS' + os.linesep
-                                    + '\t\tsuccess, failure, running, invalid;' + os.linesep
-                                    + '\tDEFINE' + os.linesep
-                                    + '\t\tstatus := active ? internal_status : invalid;' + os.linesep
-                                    + '\t\tinternal_status := ('
-                                    + format_code(current_node.condition, node_name, variables, local_variables, True, False, None)
-                                    + ') ? success : failure;' + os.linesep
-                                ))
-
-
-def create_action(current_node, node_name, parent_name, variables, local_variables, delayed_statements):
-    statuses = {result.status for result in itertools.chain([current_node.return_statement.default_result], current_node.return_statement.case_results)}
-    success = 'success' in statuses
-    running = 'running' in statuses
-    failure = 'failure' in statuses
-
-    def handle_statements(statements, init_statement = False):
-        for cur_statement in statements:
-            if cur_statement.variable_statement is not None:
-                statement = cur_statement.variable_statement
-                format_variable(statement.variable, statement.mode == 'local', node_name, False, variables, local_variables, False, False, False, None)
-                if init_statement:
-                    new_stage = make_new_stage(statement, node_name, variables, local_variables, False, False, None)
-                    variable_key = variable_reference(statement.variable.name, statement.mode == 'local', node_name, False)
-                    # print(variables.keys())
-                    variables[variable_key]['initial_value'] = new_stage
-                else:
-                    variable_key = variable_reference(statement.variable.name, statement.mode == 'local', node_name, False)
-                    keep_stage_0 = variables[variable_key]['keep_stage_0']
-                    non_determinism = any([(len(result.values) > 1) for result in itertools.chain([statement.default_result], statement.case_results)])
-                    keep_stage_0 = keep_stage_0 or (not non_determinism)
-                    if keep_stage_0 or len(variables[variable_key]['next_value']) > 0:
-                        variables[variable_key]['next_value'].append((node_name,
-                                                                      non_determinism,
-                                                                      make_new_stage(statement, node_name, variables, local_variables, True, False, None)))
-                    else:
-                        variables[variable_key]['next_value'].append((node_name,
-                                                                      non_determinism,
-                                                                      make_new_stage(statement, node_name, variables, local_variables, True, True, variable_key)))
-                    variables[variable_key]['keep_stage_0'] = keep_stage_0
-            elif cur_statement.read_statement is not None:
-                statement = cur_statement.read_statement
-                if init_statement:
-                    if statement.condition is None:
-                        condition_variable_key = variable_reference(statement.condition_variable.name, True, node_name, False)
-                        if condition_variable_key not in variables:
-                            format_variable(statement.condition_variable, True, node_name, False, variables, local_variables, False, False, None)
-                        new_stage = [('TRUE', '{TRUE, FALSE}')]
-                        variables[condition_variable_key]['initial_value'] = new_stage
-                    condition = (
-                        format_code(statement.condition, node_name, variables, local_variables, False, False, None) if statement.condition is not None else (
-                            format_variable(statement.condition_variable, True, node_name, False, variables, local_variables, False, False, None)
-                            )
-                        )
-                    for variable_statement in statement.variable_statements:
-                        variable_key = variable_reference(variable_statement.variable.name, variable_statement.mode == 'local', node_name, False)
-                        if variable_key not in variables:
-                            format_variable(variable_statement.variable, variable_statement.mode == 'local',
-                                            node_name, False, variables, local_variables, False, False, None)
-                        variable = variables[variable_key]
-                        variable['intial_value'] = ([('!(' + condition + ')',
-                                                      variable['custom_value_range'] if variable['custom_value_range'] is not None else (
-                                                          str(variable['min_val']) + '..' + str(variable['max_val'])
-                                                      )
-                                                      )]
-                                                    +
-                                                    make_new_stage(variable_statement, node_name, variables, local_variables, False, False, None)
-                                                    )
-                else:
-                    if statement.condition is None:
-                        condition_variable_key = variable_reference(statement.condition_variable.name, True, node_name, False)
-                        if condition_variable_key not in variables:
-                            format_variable(statement.condition_variable, True, node_name, False, variables, local_variables, False, False, None)
-                        new_stage = [('TRUE', '{TRUE, FALSE}')]
-                        variables[condition_variable_key]['next_value'].append((node_name, True, new_stage))
-                    condition = (
-                        format_code(statement.condition, node_name, variables, local_variables, True, False, None) if statement.condition is not None else (
-                            format_variable(statement.condition_variable, True, node_name, False, variables, local_variables, True, False, None)
-                            )
-                        )
-                    for variable_statement in statement.variable_statements:
-                        variable_key = variable_reference(variable_statement.variable.name, variable_statement.mode == 'local', node_name, False)
-                        if variable_key not in variables:
-                            format_variable(variable_statement.variable, variable_statement.mode == 'local',
-                                            node_name, False, variables, local_variables, False, False, None)
-                        variable = variables[variable_key]
-                        keep_stage_0 = variable['keep_stage_0']
-                        non_determinism = any([(len(result.values) > 1) for result in itertools.chain([variable_statement.default_result], variable_statement.case_results)])
-                        keep_stage_0 = keep_stage_0 or (not non_determinism)
-                        variable['next_value'].append((node_name,
-                                                       non_determinism,
-                                                       (
-                                                           [('!(' + condition + ')',
-                                                             format_variable(variable_statement.variable, variable_statement.mode == 'local',
-                                                                             node_name, False, variables, local_variables, True,
-                                                                             (False if keep_stage_0 or len(variable['next_value']) > 0 else True),
-                                                                             (None if keep_stage_0 or len(variable['next_value']) > 0 else variable_key))
-                                                             )]
-                                                           +
-                                                           make_new_stage(variable_statement, node_name, variables, local_variables, True,
-                                                                          (False if keep_stage_0 or len(variable['next_value']) > 0 else True),
-                                                                          (None if keep_stage_0 or len(variable['next_value']) > 0 else variable_key)))))
-                        variable['keep_stage_0'] = keep_stage_0
-            elif cur_statement.write_statement is not None:
-                statements = cur_statement.write_statement.update
-                for statement in statements:
-                    if statement.instant:
-                        variable_key = variable_reference(statement.variable.name, False, '', True)
-                        variable = variables[variable_key]
-                        keep_stage_0 = variable['keep_stage_0']
-                        non_determinism = any([(len(result.values) > 1) for result in itertools.chain([statement.default_result], statement.case_results)])
-                        keep_stage_0 = keep_stage_0 or (not non_determinism)
-                        variable['next_value'].append((node_name,
-                                                       non_determinism,
-                                                       make_new_stage(statement, node_name, variables, local_variables, True,
-                                                                      (False if keep_stage_0 or len(variable['next_value']) > 0 else True),
-                                                                      (None if keep_stage_0 or len(variable['next_value']) > 0 else variable_key))))
-                        variable['keep_stage_0'] = keep_stage_0
-                    else:
-                        delayed_statements.append((node_name, statement))
-        return
-
-    handle_statements(current_node.init_statements, True)
-    handle_statements(current_node.pre_update_statements, False)
-
-    variable_list = []
-    if not (len(current_node.return_statement.case_results) == 0 or len(statuses) == 1):
-        for case_result in current_node.return_statement.case_results:
-            variable_list += find_used_variables(case_result.condition,
-                                                 node_name, variables, local_variables,
-                                                 True)
-    variable_set = [*set(variable_list)]  # remove duplicates, but force a specific order. (order can be arbitrary, just needs to be the same each time from here on out)
-
-    node = create_node_template(node_name, parent_name, 'leaf', 'action',
-                                success, running, failure,
-                                additional_arguments = variable_set,
-                                internal_status_module_name = None if (len(current_node.return_statement.case_results) == 0
-                                                                       or len(statuses) == 1) else
-                                (
-                                    node_name + '_module'
-                                ),
-                                internal_status_module_code = None if (len(current_node.return_statement.case_results) == 0
-                                                                       or len(statuses) == 1) else
-                                (
-                                    'MODULE ' + node_name + '_module(' + ', '.join(variable_set) + ')' + os.linesep
-                                    + '\tCONSTANTS' + os.linesep
-                                    + '\t\tsuccess, failure, running, invalid;' + os.linesep
-                                    + '\tDEFINE' + os.linesep
-                                    + '\t\tstatus := active ? internal_status : invalid;' + os.linesep
-                                    + '\t\tinternal_status := ' + os.linesep
-                                    + '\t\t\tcase' + os.linesep
-                                    + ('').join([('\t\t\t\t'
-                                                  + format_code(case_result.condition, node_name, variables, local_variables, True, False, None)
-                                                  + ' : '
-                                                  + case_result.status
-                                                  + ';' + os.linesep)
-                                                 for case_result in current_node.return_statement.case_results])
-                                    + '\t\t\t\tTRUE : ' + current_node.return_statement.default_result.status + ';' + os.linesep
-                                    + '\t\t\tesac;' + os.linesep
-                                ))
-
-    handle_statements(current_node.post_update_statements, False)
-    return node
+COMPOSITES = {
+    'parallel',
+    'sequence',
+    'selector',
+}
 
 
 CREATE_NODE = {
-    'sequence' : create_sequence_selector,
-    'selector' : create_sequence_selector,
-    'parallel' : create_parallel,
+    'sequence' : create_composite,
+    'selector' : create_composite,
+    'parallel' : create_composite,
     'X_is_Y' : create_X_is_Y,
-    'inverter' : create_inverter,
+    'inverter' : create_decorator,
     'check' : create_check,
     'check_environment' : create_check,
     'action' : create_action
 }
 
 
-def walk_tree(model, variables, local_variables):
-    nodes = {}
-    delayed_statements = []
-    walk_tree_recursive(model.root, None, nodes, set(), variables, local_variables, delayed_statements)
-    return (nodes, delayed_statements)
-
-
-def walk_tree_recursive(current_node, parent_name, nodes, node_names, variables, local_variables, delayed_statements):
-    while (not hasattr(current_node, 'name') or hasattr(current_node, 'sub_root')):
-        if hasattr(current_node, 'leaf'):
-            current_node = current_node.leaf
-        else:
-            # print(dir(current_node))
-            current_node = current_node.sub_root
-    # the above deals with sub_trees and leaf nodes, ensuring that the current_node variable has the next actual node at this point
-    # next, we get the name of this node, and correct for duplication
-
-    node_name = create_node_name(current_node.name.replace(' ', ''), node_names)
-    node_names.add(node_name)
-
-    if parent_name is not None:
-        nodes[parent_name]['children'].append(node_name)
-        # update parent's list of children
-
-    nodes[node_name] = CREATE_NODE[current_node.node_type](current_node, node_name, parent_name, variables, local_variables, delayed_statements)
-
-    if nodes[node_name]['category'] == 'leaf':
-        pass
-    elif nodes[node_name]['category'] == 'decorator':
-        walk_tree_recursive(
-            current_node.child,
-            node_name,
-            nodes, node_names,
-            variables, local_variables,
-            delayed_statements
-            )
-    else:
-        for child in current_node.children:
-            walk_tree_recursive(
-                child,
-                node_name,
-                nodes, node_names,
-                variables, local_variables,
-                delayed_statements
-            )
-
-    return
-
-
-def handle_specifications(specifications, variables, local_variables):
-    return [
-        (
-            specification.spec_type
-            + ' '
-            + format_code(specification.code_statement, '', variables, local_variables, True, False, None)
-            + ';'
-        )
-        for specification in specifications
-        ]
+# --------------- Main
 
 
 def main():
@@ -769,12 +872,14 @@ def main():
         for constant in model.constants
     }
 
-    (variables, local_variables) = get_variables(model, args.keep_stage_0)
+    (_, _, _, nodes, local_variables, initial_statements, statements) = walk_tree(model.root)
+
+    variables = get_variables(model, local_variables, initial_statements, args.keep_stage_0)
     tick_condition = 'TRUE' if model.tick_condition is None else format_code(model.tick_condition, None, variables, local_variables, True, False, None)
-    specifications = handle_specifications(model.specifications, variables, local_variables)  # this included here to ensure we don't erase stage 0 used by specifications.
-    (nodes, delayed_statements) = walk_tree(model, variables, local_variables)
-    complete_environment_variables(model, variables, local_variables, delayed_statements)
-    specifications = handle_specifications(model.specifications, variables, local_variables)
+    specifications = handle_specifications(model.specifications, variables)  # this included here to ensure we don't erase stage 0 used by specifications.
+    resolve_statements(statements, nodes, variables)
+    complete_environment_variables(model, variables)
+    specifications = handle_specifications(model.specifications, variables)
 
     if args.output_file is None:
         printer = pprint.PrettyPrinter(indent = 4)
