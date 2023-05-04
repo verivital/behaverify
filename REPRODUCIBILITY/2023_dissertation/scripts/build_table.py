@@ -9,7 +9,8 @@ encoding_combo = {
     'internal' : ['norm', 'no_internal', 's_var'],
     'core' : ['aut', 'aut_s', 'norm'],
     'aut' : ['aut', 'aut_s'],
-    'func' : ['func', 'norm', 'no_internal', 's_var']
+    'func' : ['func', 'norm', 'no_internal', 's_var'],
+    'invar' : ['aut', 'func', 'norm', 'no_internal', 's_var']
 }
 encoding_name_to_result_name = {
     'aut' : 'aut_',
@@ -66,11 +67,13 @@ for encoding_code in encoding_codes:
         total_v1_states = []
         elapsed_time_ltl = []
         elapsed_time_ctl = []
+        elapsed_time_invar = []
         elapsed_time_compute_reachable = []
         elapsed_time_print_states = []
         elapsed_time_model = []
         maximum_resident_ltl = []
         maximum_resident_ctl = []
+        maximum_resident_invar = []
 
         for encoding_name in encodings:
             encoding_result_name = encoding_name_to_result_name[encoding_name]
@@ -180,6 +183,30 @@ for encoding_code in encoding_codes:
                 except FileNotFoundError:
                     pass
                 try:
+                    with open('../examples/' + group_name + '/results/SILENT_INVAR_' + encoding_result_name + file_name + '_' + experiment + '.txt', 'r') as cur_file:
+                        decoy = True
+                        for line in cur_file:
+                            match = elapsed.search(line)
+                            if match:
+                                if decoy:
+                                    decoy = False
+                                else:
+                                    elapsed_time_invar[-1].append(match.group('val1'))
+                                    found_invar_silent = True
+                    with open('../examples/' + group_name + '/results/SILENT_INVAR_' + encoding_result_name + file_name + '_' + experiment + '.txt', 'r') as cur_file:
+                        # decoy = True
+                        for line in cur_file:
+                            # print(line)
+                            match = resident.search(line)
+                            if match:
+                                # if decoy:
+                                #     decoy = False
+                                # else:
+                                maximum_resident_invar[-1].append(match.group('val1'))
+                                found_invar_resident = True
+                except FileNotFoundError:
+                    pass
+                try:
                     with open('../examples/' + group_name + '/results/MODEL_' + encoding_result_name + file_name + '_' + experiment + '.txt', 'r') as cur_file:
                         decoy = True
                         for line in cur_file:
@@ -235,6 +262,9 @@ for encoding_code in encoding_codes:
         df = pd.DataFrame(elapsed_time_ltl, columns=experiments, index=encodings)
         df.to_latex('../examples/' + group_name + '/processed_data/tables/' + encoding_code + '/' + file_name + '_elapsed_ltl.tex', caption=file_name + ', Time in Seconds to Compute LTL', label=file_name + '_LTL_time')
 
+        df = pd.DataFrame(elapsed_time_invar, columns=experiments, index=encodings)
+        df.to_latex('../examples/' + group_name + '/processed_data/tables/' + encoding_code + '/' + file_name + '_elapsed_invar.tex', caption=file_name + ', Time in Seconds to Compute INVAR', label=file_name + '_INVAR_time')
+
         df = pd.DataFrame(elapsed_time_model, columns=experiments, index=encodings)
         df.to_latex('../examples/' + group_name + '/processed_data/tables/' + encoding_code + '/' + file_name + '_elapsed_model.tex', caption=file_name + ', Time in Seconds to Build Model', label=file_name + '_model_time')
 
@@ -242,11 +272,14 @@ for encoding_code in encoding_codes:
         df.to_latex('../examples/' + group_name + '/processed_data/tables/' + encoding_code + '/' + file_name + '_maximum_resident_ltl.tex', caption=file_name + ', Maximum Resident Size in K to Compute LTL', label=file_name + '_LTL_size')
 
         df = pd.DataFrame(maximum_resident_ctl, columns=experiments, index=encodings)
-        df.to_latex('../examples/' + group_name + '/processed_data/tables/' + encoding_code + '/' + file_name + '_maximum_resident_ctl.tex', caption=file_name + ', Maximum Resident Size in K to Compute CTL', label=file_name + '_LTL_size')
+        df.to_latex('../examples/' + group_name + '/processed_data/tables/' + encoding_code + '/' + file_name + '_maximum_resident_ctl.tex', caption=file_name + ', Maximum Resident Size in K to Compute CTL', label=file_name + '_CTL_size')
+
+        df = pd.DataFrame(maximum_resident_invar, columns=experiments, index=encodings)
+        df.to_latex('../examples/' + group_name + '/processed_data/tables/' + encoding_code + '/' + file_name + '_maximum_resident_invar.tex', caption=file_name + ', Maximum Resident Size in K to Compute INVAR', label=file_name + '_INVAR_size')
 
         # print(len(elapsed_time_ltl))
 
-        for thing in ['diameters', 'reachable', 'total', 'print', 'compute', 'ctl', 'ltl', 'model', 'ctl_r', 'ltl_r']:
+        for thing in ['diameters', 'reachable', 'total', 'print', 'compute', 'ctl', 'ltl', 'invar', 'model', 'ctl_r', 'ltl_r', 'invar_r']:
             if thing == 'diameters':
                 data = diameters
                 x_label = xLabel
@@ -295,6 +328,13 @@ for encoding_code in encoding_codes:
                 title = 'Time in Seconds to verify LTL of FSM for ' + file_name
                 file_end = 'ltl'
                 y_default_val = -1000
+            elif thing == 'invar':
+                data = elapsed_time_invar
+                x_label = xLabel
+                y_label = 'Time in Seconds'
+                title = 'Time in Seconds to verify INVAR of FSM for ' + file_name
+                file_end = 'invar'
+                y_default_val = -1000
             elif thing == 'model':
                 data = elapsed_time_model
                 x_label = xLabel
@@ -315,6 +355,13 @@ for encoding_code in encoding_codes:
                 y_label = 'Maximum Resident Size in K'
                 title = 'Max Resident Size in K for LTL Specs in ' + file_name
                 file_end = 'ltl_r'
+                y_default_val = -1000
+            elif thing == 'invar_r':
+                data = maximum_resident_invar
+                x_label = xLabel
+                y_label = 'Maximum Resident Size in K'
+                title = 'Max Resident Size in K for INVAR Specs in ' + file_name
+                file_end = 'invar_r'
                 y_default_val = -1000
             for i in range(len(encodings)):
                 x_range = []
