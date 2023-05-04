@@ -1,5 +1,6 @@
 import os
 import queue
+import sys
 
 
 def indent(n):
@@ -205,12 +206,12 @@ def create_checklist_sequence(x):
         )
 
 
-def write_files():
+def write_files(location):
     for x in range(1, 50 + 1):
-        with open('./checklist_parallel_' + str(x) + '.tree', 'w') as f:
+        with open(location + 'checklist_parallel_' + str(x) + '.tree', 'w') as f:
             f.write(create_checklist_parallel(x))
-        with open('./checklist_sequence_' + str(x) + '.tree', 'w') as f:
+        with open(location + '/checklist_sequence_' + str(x) + '.tree', 'w') as f:
             f.write(create_checklist_sequence(x))
 
 
-write_files()
+write_files(sys.argv[1])

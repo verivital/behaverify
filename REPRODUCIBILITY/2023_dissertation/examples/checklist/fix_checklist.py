@@ -11,25 +11,25 @@ INVAR_RE_NOT = re.compile(r'INVARSPEC \(\(success_failure_node(?P<val1>(_\d+)?)\
 
 def aut_ctl(matchobj):
     return (
-        'CTLSPEC AG(((success_failure_node' + matchobj.group('val1') + '.status = failure) -> (A [(active_node > 0) U (success_node' + matchobj.group('val1') + '.status = success)])));'
+        'CTLSPEC AG(((success_failure_node' + matchobj.group('val1') + '.status = failure) -> (A [(active_node > 0) U (success_node' + matchobj.group('val2') + '.status = success)])));'
     )
 
 
 def aut_ctl_not(matchobj):
     return (
-        'CTLSPEC AG(((success_failure_node' + matchobj.group('val1') + '.status = failure) -> !(A [(active_node > 0) U (success_node' + matchobj.group('val1') + '.status = success)])));'
+        'CTLSPEC AG(((success_failure_node' + matchobj.group('val1') + '.status = failure) -> !(A [(active_node > 0) U (success_node' + matchobj.group('val2') + '.status = success)])));'
     )
 
 
 def aut_ltl(matchobj):
     return (
-        'LTLSPEC G(((success_failure_node' + matchobj.group('val1') + '.status = failure) -> ((active_node > 0) U (success_node' + matchobj.group('val1') + '.status = success))));'
+        'LTLSPEC G(((success_failure_node' + matchobj.group('val1') + '.status = failure) -> ((active_node > 0) U (success_node' + matchobj.group('val2') + '.status = success))));'
     )
 
 
 def aut_ltl_not(matchobj):
     return (
-        'LTLSPEC G(((success_failure_node' + matchobj.group('val1') + '.status = failure) -> !((active_node > 0) U (success_node' + matchobj.group('val1') + '.status = success))));'
+        'LTLSPEC G(((success_failure_node' + matchobj.group('val1') + '.status = failure) -> !((active_node > 0) U (success_node' + matchobj.group('val2') + '.status = success))));'
     )
 
 
