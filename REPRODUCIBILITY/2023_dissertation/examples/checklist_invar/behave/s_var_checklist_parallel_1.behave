@@ -1,0 +1,87 @@
+{   'nodes': {   'sel0': {   'additional_arguments': None,
+                             'category': 'composite',
+                             'children': [   'success_failure_node',
+                                             'success_node'],
+                             'internal_status_module_code': None,
+                             'internal_status_module_name': None,
+                             'name': 'sel0',
+                             'parent': None,
+                             'return_possibilities': {   'failure': True,
+                                                         'running': True,
+                                                         'success': True},
+                             'type': 'selector_without_memory'},
+                 'success_failure_node': {   'additional_arguments': [   'success_failure_node_DOT_randomizer_stage_1'],
+                                             'category': 'leaf',
+                                             'children': [],
+                                             'internal_status_module_code': 'MODULE '
+                                                                            'success_failure_node_module(success_failure_node_DOT_randomizer_stage_1)\n'
+                                                                            '\t'
+                                                                            'CONSTANTS\n'
+                                                                            '\t\t'
+                                                                            'success, '
+                                                                            'failure, '
+                                                                            'running, '
+                                                                            'invalid;\n'
+                                                                            '\t'
+                                                                            'DEFINE\n'
+                                                                            '\t\t'
+                                                                            'status '
+                                                                            ':= '
+                                                                            'active '
+                                                                            '? '
+                                                                            'internal_status '
+                                                                            ': '
+                                                                            'invalid;\n'
+                                                                            '\t\t'
+                                                                            'internal_status '
+                                                                            ':= \n'
+                                                                            '\t\t\t'
+                                                                            'case\n'
+                                                                            '\t\t\t\t'
+                                                                            'success_failure_node_DOT_randomizer_stage_1 '
+                                                                            ': '
+                                                                            'success;\n'
+                                                                            '\t\t\t\t'
+                                                                            'TRUE '
+                                                                            ': '
+                                                                            'failure;\n'
+                                                                            '\t\t\t'
+                                                                            'esac;\n',
+                                             'internal_status_module_name': 'success_failure_node_module',
+                                             'name': 'success_failure_node',
+                                             'parent': 'sel0',
+                                             'return_possibilities': {   'failure': True,
+                                                                         'running': False,
+                                                                         'success': True},
+                                             'type': 'action'},
+                 'success_node': {   'additional_arguments': [],
+                                     'category': 'leaf',
+                                     'children': [],
+                                     'internal_status_module_code': None,
+                                     'internal_status_module_name': None,
+                                     'name': 'success_node',
+                                     'parent': 'sel0',
+                                     'return_possibilities': {   'failure': False,
+                                                                 'running': False,
+                                                                 'success': True},
+                                     'type': 'action'}},
+    'specifications': [   'INVARSPEC ((success_failure_node.status = failure) '
+                          '-> (success_node.status = success));',
+                          'INVARSPEC ((success_failure_node.status = failure) '
+                          '-> !((success_node.status = success)));'],
+    'tick_condition': 'TRUE',
+    'variables': {   'success_failure_node_DOT_randomizer': {   'custom_value_range': '{TRUE, '
+                                                                                      'FALSE}',
+                                                                'initial_value': [   (   'TRUE',
+                                                                                         'FALSE')],
+                                                                'keep_stage_0': False,
+                                                                'max_value': 1,
+                                                                'min_value': 0,
+                                                                'mode': 'VAR',
+                                                                'name': 'success_failure_node_DOT_randomizer',
+                                                                'next_value': [   (   'success_failure_node',
+                                                                                      True,
+                                                                                      [   (   'TRUE',
+                                                                                              '{TRUE, '
+                                                                                              'FALSE}')])],
+                                                                'prefix': ''}}}

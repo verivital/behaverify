@@ -1,4 +1,5 @@
 import os
+import sys
 
 
 def indent(n):
@@ -219,12 +220,12 @@ def create_fish_sequence(x):
         )
 
 
-def write_files():
+def write_files(location):
     for x in range(9, 200, 10):
-        with open('./bigger_fish_parallel_' + str(x) + '.tree', 'w') as f:
+        with open(location + 'bigger_fish_parallel_' + str(x) + '.tree', 'w') as f:
             f.write(create_fish_parallel(x))
-        with open('./bigger_fish_sequence_' + str(x) + '.tree', 'w') as f:
+        with open(location + 'bigger_fish_sequence_' + str(x) + '.tree', 'w') as f:
             f.write(create_fish_sequence(x))
 
 
-write_files()
+write_files(sys.argv[1])
