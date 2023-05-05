@@ -83,11 +83,13 @@ for encoding_code in encoding_codes:
             reachable_states.append([])
             elapsed_time_ltl.append([])
             elapsed_time_ctl.append([])
+            elapsed_time_invar.append([])
             elapsed_time_compute_reachable.append([])
             elapsed_time_print_states.append([])
             elapsed_time_model.append([])
             maximum_resident_ltl.append([])
             maximum_resident_ctl.append([])
+            maximum_resident_invar.append([])
             for experiment in experiments:
                 found_diamater = False
                 found_print_states = False
@@ -95,9 +97,11 @@ for encoding_code in encoding_codes:
                 found_compute_reachable = False
                 found_ctl_silent = False
                 found_ltl_silent = False
+                found_invar_silent = False
                 found_model = False
                 found_ltl_resident = False
                 found_ctl_resident = False
+                found_invar_resident = False
                 try:
                     with open('../examples/' + group_name + '/results/STATES_' + encoding_result_name + file_name + '_' + experiment + '.txt', 'r') as cur_file:
                         decoy = True
@@ -232,12 +236,16 @@ for encoding_code in encoding_codes:
                     elapsed_time_ctl[-1].append('-')
                 if not found_ltl_silent:
                     elapsed_time_ltl[-1].append('-')
+                if not found_invar_silent:
+                    elapsed_time_invar[-1].append('-')
                 if not found_model:
                     elapsed_time_model[-1].append('-')
                 if not found_ltl_resident:
                     maximum_resident_ltl[-1].append('-')
                 if not found_ctl_resident:
                     maximum_resident_ctl[-1].append('-')
+                if not found_invar_resident:
+                    maximum_resident_invar[-1].append('-')
 
         # print(diameters)
 
@@ -262,8 +270,8 @@ for encoding_code in encoding_codes:
         df = pd.DataFrame(elapsed_time_ltl, columns=experiments, index=encodings)
         df.to_latex('../examples/' + group_name + '/processed_data/tables/' + encoding_code + '/' + file_name + '_elapsed_ltl.tex', caption=file_name + ', Time in Seconds to Compute LTL', label=file_name + '_LTL_time')
 
-        df = pd.DataFrame(elapsed_time_invar, columns=experiments, index=encodings)
-        df.to_latex('../examples/' + group_name + '/processed_data/tables/' + encoding_code + '/' + file_name + '_elapsed_invar.tex', caption=file_name + ', Time in Seconds to Compute INVAR', label=file_name + '_INVAR_time')
+        # df = pd.DataFrame(elapsed_time_invar, columns=experiments, index=encodings)
+        # df.to_latex('../examples/' + group_name + '/processed_data/tables/' + encoding_code + '/' + file_name + '_elapsed_invar.tex', caption=file_name + ', Time in Seconds to Compute INVAR', label=file_name + '_INVAR_time')
 
         df = pd.DataFrame(elapsed_time_model, columns=experiments, index=encodings)
         df.to_latex('../examples/' + group_name + '/processed_data/tables/' + encoding_code + '/' + file_name + '_elapsed_model.tex', caption=file_name + ', Time in Seconds to Build Model', label=file_name + '_model_time')
@@ -274,8 +282,8 @@ for encoding_code in encoding_codes:
         df = pd.DataFrame(maximum_resident_ctl, columns=experiments, index=encodings)
         df.to_latex('../examples/' + group_name + '/processed_data/tables/' + encoding_code + '/' + file_name + '_maximum_resident_ctl.tex', caption=file_name + ', Maximum Resident Size in K to Compute CTL', label=file_name + '_CTL_size')
 
-        df = pd.DataFrame(maximum_resident_invar, columns=experiments, index=encodings)
-        df.to_latex('../examples/' + group_name + '/processed_data/tables/' + encoding_code + '/' + file_name + '_maximum_resident_invar.tex', caption=file_name + ', Maximum Resident Size in K to Compute INVAR', label=file_name + '_INVAR_size')
+        # df = pd.DataFrame(maximum_resident_invar, columns=experiments, index=encodings)
+        # df.to_latex('../examples/' + group_name + '/processed_data/tables/' + encoding_code + '/' + file_name + '_maximum_resident_invar.tex', caption=file_name + ', Maximum Resident Size in K to Compute INVAR', label=file_name + '_INVAR_size')
 
         # print(len(elapsed_time_ltl))
 
