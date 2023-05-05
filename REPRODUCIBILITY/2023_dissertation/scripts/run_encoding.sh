@@ -17,7 +17,6 @@ for encoding in "${encodings[@]}"; do
     #./test_ltl.sh $path_name $file_name $encoding
     timeout 3m ./test_ltl_silent.sh $path_name $file_name $encoding
     echo "invar"
-    #./test_ltl.sh $path_name $file_name $encoding
     timeout 3m ./test_invar_silent.sh $path_name $file_name $encoding
     echo "states"
     timeout 3m ./test_model.sh $path_name $file_name $encoding
