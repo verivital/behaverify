@@ -304,6 +304,10 @@ def indent(indent_level):
     return (' '*(4*indent_level))
 
 
+def haskell_indent(indent_level):
+    return (' '*(2*indent_level))
+
+
 def tab_indent(indent_level):
     return '\t'*indent_level
 

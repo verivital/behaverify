@@ -422,19 +422,24 @@ def build_action_node(node):
 
 
 def walk_tree(model, file_name):
-    return walk_tree_recursive(model.root, set(), file_name)
+    return walk_tree_recursive(model.root, set(), {}, file_name)
 
 
-def walk_tree_recursive(current_node, node_names, file_name):
+def walk_tree_recursive(current_node, node_names, node_names_map, file_name):
     while (not hasattr(current_node, 'name') or hasattr(current_node, 'sub_root')):
         if hasattr(current_node, 'leaf'):
             current_node = current_node.leaf
         else:
             # print(dir(current_node))
             current_node = current_node.sub_root
+    # next, we get the name of this node, and correct for duplication
 
-    node_name = create_node_name(current_node.name.replace(' ', ''), node_names)
+    new_name = create_node_name(current_node.name.replace(' ', ''), node_names, node_names_map)
+    node_name = new_name[0]
+    modifier = new_name[1]
+
     node_names.add(node_name)
+    node_names_map[node_name] = modifier
 
     # ----------------------------------------------------------------------------------
     # start of massive if statements, starting with composites
@@ -452,14 +457,14 @@ def walk_tree_recursive(current_node, node_names, file_name):
         decorator_type = (current_node.x.capitalize()
                           + 'Is'
                           + current_node.y.capitalize())
-        child = walk_tree_recursive(current_node.child, node_names, file_name)
+        child = walk_tree_recursive(current_node.child, node_names, node_names_map, file_name)
         with open(file_name, 'a') as f:
             f.write(indent(1) + node_name + ' = py_trees.decorators.' + decorator_type + '('
                     + 'name = ' + "'" + node_name + "'" + ', child = ' + child + ')' + os.linesep)
         return node_name
     elif current_node.node_type == 'inverter':
         decorator_type = ('Inverter')
-        child = walk_tree_recursive(current_node.child, node_names, file_name)
+        child = walk_tree_recursive(current_node.child, node_names, node_names_map, file_name)
         with open(file_name, 'a') as f:
             f.write(indent(1) + node_name + ' = py_trees.decorators.' + decorator_type + '('
                     + 'name = ' + "'" + node_name + "'" + ', child = ' + child + ')' + os.linesep)
@@ -479,7 +484,7 @@ def walk_tree_recursive(current_node, node_names, file_name):
                     + (('SuccessOnAll(' + str(current_node.memory) + ')') if current_node.parallel_policy == 'success_on_all' else ('SuccessOnOne()'))
                     + ')' + os.linesep)
 
-    children = '[' + ', '.join([walk_tree_recursive(child, node_names, file_name) for child in current_node.children]) + ']'
+    children = '[' + ', '.join([walk_tree_recursive(child, node_names, node_names_map, file_name) for child in current_node.children]) + ']'
 
     with open(file_name, 'a') as f:
         f.write(indent(1) + node_name + '.add_children('
