@@ -1,0 +1,101 @@
+constants {#comment# constants are used to synchronize values in a .tree file. t#end_comment#} end_constants
+
+blackboard_variables {#comment# Blackboard Variable declarations go here #end_comment#
+	blackboard_variable { x VAR [0, 10] initial_value { result { 0 } end_result } end_initial_value } end_blackboard_variable
+	blackboard_variable { y VAR [0, 10] initial_value { result { 10 } end_result } end_initial_value } end_blackboard_variable
+} end_blackboard_variables
+
+local_variables {#comment# Local Variable declarations go here #end_comment#} end_local_variables
+
+environment {
+	environment_variables {
+		#comment# Local Variable declarations go here #end_comment#
+	} end_environment_variables
+	update_values { #comment# update values for environment #end_comment#} end_update_values
+} end_environment
+
+checks {
+	check {
+		x_less_than_5
+		read_variables { x } end_read_variables
+		condition { (less_than, bl x, 5) } end_condition
+	} end_check
+} end_checks
+
+environment_checks {
+#comment# check environment nodes are defined here #end_comment#} end_environment_checks
+
+actions {
+#comment# action nodes are defined here #end_comment#
+	action {
+		action1
+		local_variables {} end_local_variables
+		read_variables {} end_read_variables
+		write_variables { x y } end_write_variables
+		initial_values {} end_initial_values
+		update {
+			variable_statement {
+				bl x
+				result {(min, 10, (addition, bl x, 5))} end_result
+			} end_variable_statement
+			return_statement {
+				result { success } end_result
+			} end_return_statement
+			variable_statement {
+				bl y
+				result {(max, 0, (subtraction, bl y, 1))} end_result
+			} end_variable_statement
+		} end_update
+	} end_action
+	action {
+		action2
+		local_variables {} end_local_variables
+		read_variables {} end_read_variables
+		write_variables { x y } end_write_variables
+		initial_values {} end_initial_values
+		update {
+			variable_statement {
+				bl x
+				result {(min, 10, (multiplication, bl x, 2))} end_result
+			} end_variable_statement
+			return_statement {
+				result { success } end_result
+			} end_return_statement
+			variable_statement {
+				bl y
+				result {(max, 0, (subtraction, bl y, 1))} end_result
+			} end_variable_statement
+			variable_statement {
+				bl x
+				result {(max, 0, (subtraction, bl x, 1))} end_result
+			} end_variable_statement
+		} end_update
+	} end_action
+} end_actions
+
+sub_trees {#comment# subtrees go here. #end_comment#} end_sub_trees
+
+tree {
+#comment# the tree is defined here#end_comment#
+	composite {
+		root_sel
+		selector
+		children {
+			composite {
+				default_attempt
+				sequence
+				children {
+					x_less_than_5
+					action1
+				} end_children
+			} end_composite
+			action2
+		} end_children
+	} end_composite
+} end_tree
+
+#comment# this section is optional. you may remove it #end_comment#
+tick_prerequisite { True } end_tick_prerequisite
+
+
+specifications { #comment# INVAR, LTL, and CTL specs go here #end_comment# } end_specifications

@@ -537,7 +537,7 @@ def get_variables(model, local_variables, initial_statements, keep_stage_0):
                      create_variable_template(variable.name, variable.model_as, None, 0, 0, None, [], 'var_', False)
                      if variable.model_as == 'DEFINE' else
                      create_variable_template(variable.name, variable.model_as,
-                                              (None if (variable.domain.min_val is not None or variable.model_as == 'DEFAULT') else ('{TRUE, FALSE}' if variable.domain.boolean is not None else ('{' + ', '.join(map(str, map(handle_constant, variable.domain.enums))) + '}'))),
+                                              (None if (variable.domain.min_val is not None or variable.model_as == 'DEFINE') else ('{TRUE, FALSE}' if variable.domain.boolean is not None else ('{' + ', '.join(map(str, map(handle_constant, variable.domain.enums))) + '}'))),
                                               0 if variable.domain.min_val is None else int(handle_constant(variable.domain.min_val)),
                                               1 if variable.domain.min_val is None else int(handle_constant(variable.domain.max_val)),
                                               None, [], 'var_', keep_stage_0
@@ -549,7 +549,7 @@ def get_variables(model, local_variables, initial_statements, keep_stage_0):
                          create_variable_template(variable.name, variable.model_as, None, 0, 0, None, [], 'env_', False)
                          if variable.model_as == 'DEFINE' else
                          create_variable_template(variable.name, variable.model_as,
-                                                  (None if (variable.domain.min_val is not None or variable.model_as == 'DEFAULT') else ('{TRUE, FALSE}' if variable.domain.boolean is not None else ('{' + ', '.join(map(str, map(handle_constant, variable.domain.enums))) + '}'))),
+                                                  (None if (variable.domain.min_val is not None or variable.model_as == 'DEFINE') else ('{TRUE, FALSE}' if variable.domain.boolean is not None else ('{' + ', '.join(map(str, map(handle_constant, variable.domain.enums))) + '}'))),
                                                   0 if variable.domain.min_val is None else int(handle_constant(variable.domain.min_val)),
                                                   1 if variable.domain.min_val is None else int(handle_constant(variable.domain.max_val)),
                                                   None, [], 'env_', keep_stage_0
@@ -563,7 +563,7 @@ def get_variables(model, local_variables, initial_statements, keep_stage_0):
                                     create_variable_template(variable.name, variable.model_as, None, 0, 0, None, [], '', False)
                                     if variable.model_as == 'DEFINE' else
                                     create_variable_template(variable.name, variable.model_as,
-                                                             (None if (variable.domain.min_val is not None or variable.model_as == 'DEFAULT') else ('{TRUE, FALSE}' if variable.domain.boolean is not None else ('{' + ', '.join(map(str, map(handle_constant, variable.domain.enums))) + '}'))),
+                                                             (None if (variable.domain.min_val is not None or variable.model_as == 'DEFINE') else ('{TRUE, FALSE}' if variable.domain.boolean is not None else ('{' + ', '.join(map(str, map(handle_constant, variable.domain.enums))) + '}'))),
                                                              0 if variable.domain.min_val is None else int(handle_constant(variable.domain.min_val)),
                                                              1 if variable.domain.min_val is None else int(handle_constant(variable.domain.max_val)),
                                                              None, [], '', keep_stage_0
