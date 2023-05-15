@@ -19,6 +19,7 @@ blackboard_variables {
 	blackboard_variable { zone VAR {'home', 'maze', 'target'} initial_value { result { 'home' } end_result } end_initial_value} end_blackboard_variable
 	blackboard_variable { side VAR {-1, 1} initial_value { result { 1 } end_result } end_initial_value } end_blackboard_variable
 	blackboard_variable { have_flag VAR BOOLEAN initial_value { result { False } end_result } end_initial_value } end_blackboard_variable
+	blackboard_variable { need_side_reached VAR BOOLEAN initial_value { result { True } end_result } end_initial_value } end_blackboard_variable
 	blackboard_variable { forward DEFINE INT initial_value { case { bl have_flag } end_case result { -1 } end_result result { 1 } end_result} end_initial_value} end_blackboard_variable
 } end_blackboard_variables
 
@@ -61,16 +62,32 @@ environment {
 		} end_environment_variable
 		environment_variable { flag_x VAR ['target_start', 'x_max'] initial_value { result { range, 0, 'x_max', (greater_than_or_equal, value, 'target_start') } end_result } end_initial_value } end_environment_variable
 		environment_variable { flag_y VAR [0, 'y_max'] initial_value { result { range, 0, 'y_max', True } end_result } end_initial_value} end_environment_variable
-		environment_variable { flag_returned DEFINE BOOLEAN initial_value { result { (and, bl have_flag, (less_than, env x, 'home_end')) } end_result } end_initial_value } end_environment_variable
+		environment_variable { flag_returned DEFINE BOOLEAN initial_value { result { (and, bl have_flag, (less_than_or_equal, env x, 'home_end')) } end_result } end_initial_value } end_environment_variable
 		environment_variable { tile_progress VAR [0, 2] initial_value { result { 0 } end_result } end_initial_value} end_environment_variable
+		environment_variable { tile_tracker VAR [0, 2] initial_value { result { 0 } end_result } end_initial_value} end_environment_variable
 	} end_environment_variables
 	update_values {
+		environment_statement {
+			env tile_progress
+			case { (equal, env tile_tracker, env tile_progress) } end_case result { 0 } end_result
+			result { env tile_progress } end_result
+		} end_environment_statement
+		environment_statement {
+			env tile_tracker
+			result { env tile_progress } end_result
+		} end_environment_statement
+		
 		#comment# update values for environment #end_comment#
 	} end_update_values
 } end_environment
 
 checks {
 	#comment# check nodes are defined here #end_comment#
+	check {
+		in_home
+		read_variables { zone } end_read_variables
+		condition { (equal, bl zone, 'home') } end_condition
+	} end_check
 	check {
 		in_maze
 		read_variables { zone } end_read_variables
@@ -85,6 +102,16 @@ checks {
 		flag_found
 		read_variables { have_flag } end_read_variables
 		condition { bl have_flag } end_condition
+	} end_check
+	check {
+		need_side
+		read_variables { need_side_reached } end_read_variables
+		condition { bl need_side_reached } end_condition
+	} end_check
+	check {
+		success_node
+		read_variables {} end_read_variables
+		condition { True } end_condition
 	} end_check
 } end_checks
 
@@ -216,6 +243,25 @@ actions {
 		} end_update
 	} end_action
 
+	action {
+		never_need_side
+		imports {} end_imports
+		local_variables {} end_local_variables
+		read_variables {} end_read_variables
+		write_variables {need_side_reached} end_write_variables
+		initial_values {
+		} end_initial_values
+		update {
+			variable_statement {
+				bl need_side_reached
+				result { False } end_result
+			} end_variable_statement
+			return_statement {
+				result { success } end_result
+			} end_return_statement
+		} end_update
+	} end_action
+
 
 	
 	action {
@@ -301,13 +347,33 @@ sub_trees {
 	sub_tree {
 		sub_side
 		composite {
-			try_side
-			sequence
+			try_side_or_change
+			selector
 			children {
-				can_move_side
-				go_side
+				composite {
+					try_side
+					sequence
+					children {
+						can_move_side
+						go_side
+					} end_children
+				} end_composite
+				decorator {
+					return_failure
+					X_is_Y X success Y failure
+					child change_side
+				} end_decorator
 			} end_children
 		} end_composite
+	} end_sub_tree
+	
+	sub_tree {
+		sub_flag
+		decorator {
+			flag_inverter
+			inverter
+			child flag_found
+		} end_decorator
 	} end_sub_tree
 } end_sub_trees
 
@@ -321,76 +387,101 @@ composite {
 		set_zone
 		composite {
 			control_sequence
-			sequence with_memory
+			sequence
 			children {
 				flag_not_returned
 				composite {
-					enter_maze
+					control_selector
 					selector
 					children {
-						in_maze
-						go_forward
-					} end_children
-				} end_composite
-				decorator {
-					navigate_maze_decorator
-					X_is_Y X failure Y running
-					child
-					composite {
-						navigate_maze
-						selector
-						children {
-							decorator {
-								maze_inverter
-								inverter
-								child in_maze
-							} end_decorator
-							decorator {
-								move_through_maze_decorator
-								X_is_Y X success Y running
-								child
+						composite {
+							navigate_maze
+							sequence
+							children {
+								in_maze
+								decorator {
+									move_through_maze_decorator
+									X_is_Y X success Y running
+									child
+									composite {
+										move_through_maze
+										selector
+										children {
+											insert { sub_forward } end_insert
+											insert { sub_side } end_insert
+											success_node
+										} end_children
+									} end_composite
+								} end_decorator
+							} end_children
+						} end_composite
+						composite {
+							enter_maze
+							sequence
+							children {
+								decorator {
+									maze_inverter
+									inverter
+									child in_maze
+								} end_decorator
 								composite {
-									move_through_maze
+									traversal_needed
 									selector
 									children {
-										insert { sub_forward } end_insert
-										insert { sub_side } end_insert
-										change_side
+										composite {
+											go_home
+											sequence
+											children {
+												in_target
+												flag_found
+											} end_children
+										} end_composite
+										composite {
+											go_target
+											sequence
+											children {
+												in_home
+												insert { sub_flag } end_insert
+											} end_children
+										} end_composite
 									} end_children
 								} end_composite
-							} end_decorator
-						} end_children
-					} end_composite
-				} end_decorator
-				in_target
-				decorator {
-					to_side_decorator
-					X_is_Y X failure Y success
-					child
-					insert { sub_side } end_insert
-				} end_decorator
-				change_side
-				composite {
-					have_or_find_flag
-					selector
-					children {
-						flag_found
+								go_forward
+							} end_children
+						} end_composite
 						composite {
-							search_for_flag
-							selector
+							to_side
+							sequence
 							children {
-								search_tile
+								in_target
+								need_side
+								decorator {
+									side_reached
+									X_is_Y X failure Y success
+									child insert {sub_side} end_insert
+								} end_decorator
+								never_need_side
+							} end_children
+						} end_composite
+						composite {
+							search_target
+							sequence
+							children {
+								in_target
+								insert { sub_flag } end_insert
 								composite {
-									move_for_flag
+									search_for_flag
 									selector
 									children {
-										insert { sub_side } end_insert
-										decorator {
-											change_side_decorator
-											X_is_Y X success Y failure
-											child change_side
-										} end_decorator
-										go_forward
+										search_tile
+										composite {
+											move_for_flag
+											selector
+											children {
+												insert { sub_side } end_insert
+												go_forward
+											} end_children
+										} end_composite
 									} end_children
 								} end_composite
 							} end_children

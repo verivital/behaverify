@@ -127,7 +127,7 @@ node:
     environment_variable:
     'environment_variable' '{'
     name = ID
-    ((model_as = 'VAR' domain = variable_domain) | (model_as = 'FROZENVAR' domain = variable_domain) | (model_as = 'DEFINE'))
+    ((model_as = 'VAR' domain = variable_domain) | (model_as = 'FROZENVAR' domain = variable_domain) | (model_as = 'DEFINE' ((domain = 'INT') | (domain = 'ENUM') | (domain = 'BOOLEAN'))))
     initial_value = environment_initial_value
     '}' 'end_environment_variable'
 ;
@@ -142,7 +142,7 @@ node:
     blackboard_variable:
     'blackboard_variable' '{'
     name = ID
-    ((model_as = 'VAR' domain = variable_domain) | (model_as = 'FROZENVAR' domain = variable_domain) | (model_as = 'DEFINE'))
+    ((model_as = 'VAR' domain = variable_domain) | (model_as = 'FROZENVAR' domain = variable_domain) | (model_as = 'DEFINE' ((domain = 'INT') | (domain = 'ENUM') | (domain = 'BOOLEAN'))))
     initial_value = blackboard_initial_value
     '}' 'end_blackboard_variable'
 ;
@@ -157,7 +157,7 @@ node:
     local_variable:
     'local_variable' '{'
     name = ID
-    ((model_as = 'VAR' domain = variable_domain) | (model_as = 'FROZENVAR' domain = variable_domain) | (model_as = 'DEFINE'))
+    ((model_as = 'VAR' domain = variable_domain) | (model_as = 'FROZENVAR' domain = variable_domain) | (model_as = 'DEFINE' ((domain = 'INT') | (domain = 'ENUM') | (domain = 'BOOLEAN'))))
     initial_value = blackboard_initial_value //not a typo. uses blackboard initial value. cannot use local variables in the declaration of a local variable here. if you need that, re-initialize in an action node.
     '}' 'end_local_variable'
 ;
