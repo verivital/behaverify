@@ -31,7 +31,7 @@ type PartialMemoryStorage = BTreeStatusTree
 
 type PartialMemoryStatus = BTreeNodeStatus
 
-type FutureChanges = [(BTreeBlackboard, BTreeEnvironment) -> (BTreeBlackboard, BTreeEnvironment)]
+type FutureChanges = [BTreeEnvironment -> BTreeEnvironment]
 
 type TreeLocation = Int
 
