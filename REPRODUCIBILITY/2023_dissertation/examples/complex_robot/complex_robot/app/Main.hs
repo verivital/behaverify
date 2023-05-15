@@ -1,12 +1,20 @@
 module Main where
-import Test1
+import Complex_robot
 import Behavior_tree_core
 import Behavior_tree_environment
 import Behavior_tree_blackboard
 import System.Environment (getArgs)
-import X_less_than_5_file
-import Action1_file
-import Action2_file
+import In_maze_file
+import In_target_file
+import Flag_found_file
+import Change_side_file
+import Go_forward_file
+import Go_side_file
+import Search_tile_file
+import Set_zone_file
+import Flag_not_returned_file
+import Can_move_forward_file
+import Can_move_side_file
 
 
 executeFromSeeds :: Int -> Int -> Int -> [(BTreeBlackboard, BTreeEnvironment)]
@@ -14,7 +22,7 @@ executeFromSeeds seed1 seed2 maxIteration = eachBoardEnv
   where
     initBoard = initialBlackboard seed1
     initEnv = initialEnvironment seed2 initBoard
-    treeRoot = root_sel__node
+    treeRoot = control__node
     executionChain :: Int -> MemoryStorage -> PartialMemoryStorage -> BTreeBlackboard -> BTreeEnvironment -> [(BTreeBlackboard, BTreeEnvironment)]
     executionChain count memory partial blackboard environment
       | count >= maxIteration = [(blackboard, environment)]

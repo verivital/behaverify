@@ -4,9 +4,13 @@ import System.Random
 import Behavior_tree_blackboard
 
 data BTreeEnvironment = BTreeEnvironment {
-  sereneGenerator :: StdGen
-  } deriving (Show)
+  sereneEnvGenerator :: StdGen
+  }
 
+instance Show BTreeEnvironment where
+  show (BTreeEnvironment _ ) = "Env = {" ++ "}"
+updateEnvGenerator :: BTreeEnvironment -> StdGen -> BTreeEnvironment
+updateEnvGenerator environment newGen = environment { sereneEnvGenerator = newGen }
 checkTickConditionTermination :: BTreeBlackboard -> BTreeEnvironment -> Bool
 checkTickConditionTermination blackboard environment = True
 
