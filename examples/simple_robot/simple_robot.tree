@@ -1,118 +1,187 @@
-variables {
-	variable { x VAR [0, 4] } end_variable
-	variable { y VAR [0, 4] } end_variable
-	variable { target_x VAR [0, 4] } end_variable
-	variable { target_y VAR [0, 4] } end_variable
-	variable { mission VAR BOOLEAN } end_variable
-} end_variables
+#comment#
+We are making a simple robot on a grid.
+The robot navigates one square at a time to a target destination, at which point a new destination appears.
+This process repeats until there are no more destinations left.
+Comments throughout provide some general explanation.
+For a full explanation see the README in the metamodels folder
+#end_comment#
+
+constants {
+	x_max = 9
+	y_max = 9
+	#comment# these are constants. anywhere you see 'x_max' or 'y_max' will be replaced with the appropriate Int #end_comment#
+} end_constants
+
+
+blackboard_variables {
+	blackboard_variable {
+		x #comment# variable name #end_comment#
+		VAR #comment#
+		how the variable is modeled.
+		VAR means it has state and can change over time.
+		FROZENVAR means it has state, but cannot change over time.
+		DEFINE means it is basically a macro, a shorthand for somehting else
+		#end_comment#
+		[0, 'x_max'] #commment# the variable domain. here it goes from 0 to 'x_max', the constant we defined above #end_comment#
+		initial_value {
+			result {0} end_result #comment# in this case, the initial value is always set to 0. #end_comment#
+		} end_initial_value
+	} end_blackboard_variable
+	blackboard_variable { y VAR [0, 'y_max'] initial_value {result {0} end_result} end_initial_value} end_blackboard_variable
+	#comment# here we have x and y, Int variables from 0 to the approriate maximum value.
+	Both are initially 0. These are blackboard variables which represent where the robot thinks it is #end_comment#
+	
+	blackboard_variable { target_x VAR [0, 'x_max'] initial_value {result {0} end_result} end_initial_value} end_blackboard_variable
+	blackboard_variable { target_y VAR [0, 'y_max'] initial_value {result {0} end_result} end_initial_value} end_blackboard_variable
+	#comment# these two variables where the robot is trying to get to. #end_comment#
+	
+	blackboard_variable { mission VAR BOOLEAN initial_value {result {False} end_result} end_initial_value} end_blackboard_variable
+	#comment# this is a boolean which indicates if we have a mission. #end_comment#
+} end_blackboard_variables
 
 local_variables {
-	variable { saw_target VAR BOOLEAN } end_variable
+#comment# we don't have any local variables for this example#end_comment#
 } end_local_variables
 
 environment {
 	environment_variables {
-		environment_variable { x_goal VAR [0, 4] } end_environment_variable
-		environment_variable { y_goal VAR [0, 4] } end_environment_variable
-		environment_variable { x_true VAR [0, 4] } end_environment_variable
-		environment_variable { y_true VAR [0, 4] } end_environment_variable
-		environment_variable { remaining_goals VAR [0, 10] } end_environment_variable
+		environment_variable { x_goal VAR [0, 'x_max'] initial_value {result {range, 0, 'x_max', True} end_result} end_initial_value} end_environment_variable
+		environment_variable { y_goal VAR [0, 'y_max'] initial_value {result {range, 0, 'y_max', True} end_result} end_initial_value} end_environment_variable
+		#comment# where target_x and target_y are where the robot is triyng to get to, x_goal and y_goal are where the flag actually is #end_comment#
+		#comment#
+			Note: result {range, 0, 'x_max', True} end_result means any integer between 0 and 'x_max' (a constant) such that the condition is True.
+			In this case, the condition is just True, so it is always True, so this is just [0..'x_max']
+			If we wanted only even numbers, we would write
+			result {range, 0, 'x_max', (equal, 0, (mod, 'value', 2)) } end_result
+			Note that you cannot use variables in this condition. 'value' is effectively the iteration variable.
+		#end_comment#
+
+		environment_variable { x_true VAR [0, 'x_max'] initial_value {result {range, 0, 'x_max', True} end_result} end_initial_value} end_environment_variable
+		environment_variable { y_true VAR [0, 'y_max'] initial_value {result {range, 0, 'y_max', True} end_result} end_initial_value} end_environment_variable
+		#comment# where x and y are where the robot believes it is, x_true and y_true are where the robot actully is #end_comment#
+
+		environment_variable { remaining_goals VAR [0, 3] initial_value {result {range, 1, 3, True} end_result} end_initial_value} end_environment_variable
+		#comment# a variable indicating how many more goals are left #end_comment#
 	} end_environment_variables
-	initial_values { } end_initial_values
 	update_values {
+		#comment# here we update the environment variables between ticks #end_comment#
 		environment_statement {
 			env remaining_goals
 			case { (and, (equal, env x_goal, env x_true), (equal, env y_goal, env y_true)) } end_case
 			result { (max, 0, (subtraction, env remaining_goals, 1)) } end_result
 			result { env remaining_goals } end_result
+			#comment#
+			this says that we are updating remaining goals.
+			specifically, if x_goal=x_ture and y_goaly_true, then we decrease the number of goals by 1.
+			otherwise the value remains unchanged.
+			#end_comment#
 		} end_environment_statement
 		environment_statement {
 			env x_goal
 			case { (equal, 0, env remaining_goals ) } end_case
 			result { env x_goal } end_result
 			case { (and, (equal, env x_goal, env x_true), (equal, env y_goal, env y_true)) } end_case
-			result { 0, 1, 2, 3, 4 } end_result
+			result {range, 0, 'x_max', True} end_result
 			result { env x_goal } end_result
+			#comment#
+			this says that we are updating x_goal
+			First, if ther are no new goals, then don't update.
+			Second, if we are at the current goal, then update to a random value in the appropriate range.
+			Third, if neither of the previous conditions happened, then don't updated.
+			#end_comment#
 		} end_environment_statement
 		environment_statement {
 			env y_goal
 			case { (equal, 0, env remaining_goals) } end_case
 			result { env y_goal } end_result
 			case { (and, (equal, env x_goal, env x_true), (equal, env y_goal, env y_true)) } end_case
-			result { 0, 1, 2, 3, 4 } end_result
+			result {range, 0, 'y_max', True} end_result
 			result { env y_goal } end_result
+			#comment# see x_goal #end_comment#
 		} end_environment_statement
 	} end_update_values
 } end_environment
 
 checks {
+	#comment# these are checks which we use to check values in the blackboard#end_comment#
 	check {
 		have_mission
 		read_variables { mission } end_read_variables
-		condition { mission } end_condition
+		condition { bl mission } end_condition
+		#comment#
+		This check is called have_mission.
+		It reads the blackboard variable mission.
+		It returns success if the condition is true, and failure otherwise
+		#end_comment#
 	} end_check
 	check {
 		target_reached
 		read_variables { x y target_x target_y } end_read_variables
-		condition { (and, (equal, x, target_x), (equal, y, target_y)) } end_condition
+		condition { (and, (equal, bl x, bl target_x), (equal, bl y, bl target_y)) } end_condition
+		#comment#
+		This check is called target_reached.
+		It reads the blackboard variables x, y, target_x, and target_y.
+		If x=target_x and y=target_y, then it returns success. otherwise failure.
+		#end_comment#
 	} end_check
 	check {
 		x_too_small
 		read_variables { target_x x } end_read_variables
-		condition { (less_than, x, target_x) } end_condition
+		condition { (less_than, bl x, bl target_x) } end_condition
 	} end_check
 	check {
 		x_too_big
 		read_variables { target_x x } end_read_variables
-		condition { (greater_than, x, target_x) } end_condition
+		condition { (greater_than, bl x, bl target_x) } end_condition
 	} end_check
 	check {
 		y_too_small
 		read_variables { target_y y } end_read_variables
-		condition { (less_than, y, target_y) } end_condition
+		condition { (less_than, bl y, bl target_y) } end_condition
 	} end_check
 	check {
 		y_too_big
 		read_variables { target_y y } end_read_variables
-		condition { (greater_than, y, target_y) } end_condition
+		condition { (greater_than, bl y, bl target_y) } end_condition
 	} end_check
 } end_checks
 
 environment_checks {
+#comment# we don't have any environmental checks in this example#end_comment#
 } end_environment_checks
 
 actions {
 	action {
-		get_mission
-		imports {'robot'} end_imports
-		read_variables {} end_read_variables
-		write_variables {mission target_x target_y} end_write_variables
+		get_mission #comment# the name of this action#end_comment#
+		imports {'robot'} end_imports #comment# this is used in python code generation. It means we should include imports robot in the file #end_comment#
+		local_variables {} end_local_variables #comment# this doens't use any local variables #end_comment#
+		read_variables {} end_read_variables #comment# this doesn't read any blackboard variables. note: if a variable is both read and write, declare in write. #end_comment#
+		write_variables {mission target_x target_y} end_write_variables #comment# this action write mission, target_x, and target_y#end_comment#
 		initial_values {
-			variable_statement {
-				mission result { False } end_result
-			} end_variable_statement
-			variable_statement {
-				target_x result { 0 } end_result
-			} end_variable_statement
-			variable_statement {
-				target_y result { 0 } end_result
-			} end_variable_statement
+		#comment# since this node doesn't use any local variables, there's nothing to initialize#end_comment#
 		} end_initial_values
 		update {
 			read_environment {
-				python_function { from 'robot' 'get_mission' args } end_python_function
-				local saw_target
-				variable_environment_statement {target_x result { env x_goal } end_result} end_variable_environment_statement
-				variable_environment_statement {target_y result { env y_goal } end_result} end_variable_environment_statement
+				python_function { from 'robot' 'get_mission'} end_python_function
+				#comment# when generating python code, this clarifies what function to call#end_comment#
+				condition { True } end_condition
+				#comment#
+				if the condition is True, then we successfully read from the environment and will execute the below statements
+				if the condition is False, then we failed, and we won't execute the below statements (within this read_environment)
+				In this case, the conditionis just True, so it's always true.
+				#end_comment#
+				read_variable_statement {bl target_x result { env x_goal } end_result} end_read_variable_statement
+				read_variable_statement {bl target_y result { env y_goal } end_result} end_read_variable_statement
+				#comment# here we are updating target_x and target_y based on where the goal is #end_comment#
 			} end_read_environment
 			variable_statement {
-				mission
-				case { local saw_target } end_case result { True } end_result
-				result { False } end_result
+				bl mission
+				result { True } end_result
+				#comment# if we run this node, then we get a mission. so set mission to true. #end_comment#
 			} end_variable_statement
 			return_statement {
-				case { local saw_target } end_case result { success } end_result
-				result { failure } end_result
+				result { success } end_result
+				#comment# this node always returns success#end_comment#
 			} end_return_statement
 		} end_update
 	} end_action
@@ -121,22 +190,17 @@ actions {
 	action {
 		get_position
 		imports {'robot'} end_imports
+		local_variables {} end_local_variables
 		read_variables {} end_read_variables
 		write_variables { x y } end_write_variables
 		initial_values {
-			variable_statement {
-				x result { 0 } end_result
-			} end_variable_statement
-			variable_statement {
-				y result { 0 } end_result
-			} end_variable_statement
 		} end_initial_values
 		update {
 			read_environment {
-				python_function { from 'robot' 'get_position' args } end_python_function
+				python_function { from 'robot' 'get_position'} end_python_function
 				condition { True } end_condition
-				variable_environment_statement {x result { env x_true } end_result} end_variable_environment_statement
-				variable_environment_statement {y result { env y_true } end_result} end_variable_environment_statement
+				read_variable_statement {bl x result { env x_true } end_result} end_read_variable_statement
+				read_variable_statement {bl y result { env y_true } end_result} end_read_variable_statement
 			} end_read_environment
 			return_statement { result { success } end_result } end_return_statement
 		} end_update
@@ -144,12 +208,13 @@ actions {
 
 	action {
 		clear_mission
+		local_variables {} end_local_variables
 		read_variables {} end_read_variables
 		write_variables { mission } end_write_variables
 		initial_values {} end_initial_values
 		update {
 			variable_statement {
-				mission
+				bl mission
 				result { False } end_result
 			} end_variable_statement
 			return_statement { result { success } end_result } end_return_statement
@@ -159,15 +224,16 @@ actions {
 	action {
 		go_right
 		imports { 'robot' } end_imports
+		local_variables {} end_local_variables
 		read_variables {} end_read_variables
 		write_variables {} end_write_variables
 		initial_values {} end_initial_values
 		update {
 			write_environment {
-				python_function { from 'robot' 'go_x' args 1 } end_python_function
+				python_function { from 'robot' 'go_right'} end_python_function
 				update_values {
 					environment_statement {
-						env x_true result { (min, 4, (addition, env x_true, 1)) } end_result
+						env x_true result { (min, 'x_max', (addition, env x_true, 1)) } end_result
 					} end_environment_statement
 				} end_update_values
 			} end_write_environment
@@ -178,12 +244,13 @@ actions {
 	action {
 		go_left
 		imports { 'robot' } end_imports
+		local_variables {} end_local_variables
 		read_variables {} end_read_variables
 		write_variables {} end_write_variables
 		initial_values {} end_initial_values
 		update {
 			write_environment {
-				python_function { from 'robot' 'go_x' args -1 } end_python_function
+				python_function { from 'robot' 'go_left'} end_python_function
 				update_values {
 					environment_statement {
 						env x_true result { (max, 0, (subtraction, env x_true, 1)) } end_result
@@ -197,15 +264,16 @@ actions {
 	action {
 		go_up
 		imports { 'robot' } end_imports
+		local_variables {} end_local_variables
 		read_variables {} end_read_variables
 		write_variables {} end_write_variables
 		initial_values {} end_initial_values
 		update {
 			write_environment {
-				python_function { from 'robot' 'go_y' args 1 } end_python_function
+				python_function { from 'robot' 'go_up'} end_python_function
 				update_values {
 					environment_statement {
-						env y_true result { (min, 4, (addition, env y_true, 1)) } end_result
+						env y_true result { (min, 'y_max', (addition, env y_true, 1)) } end_result
 					} end_environment_statement
 				} end_update_values
 			} end_write_environment
@@ -216,12 +284,13 @@ actions {
 	action {
 		go_down
 		imports { 'robot' } end_imports
+		local_variables {} end_local_variables
 		read_variables {} end_read_variables
 		write_variables {} end_write_variables
 		initial_values {} end_initial_values
 		update {
 			write_environment {
-				python_function { from 'robot' 'go_y' args -1 } end_python_function
+				python_function { from 'robot' 'go_down'} end_python_function
 				update_values {
 					environment_statement {
 						env y_true result { (max, 0, (subtraction, env y_true, 1)) } end_result
@@ -233,77 +302,87 @@ actions {
 	} end_action
 } end_actions
 
-root_node
-composite {
-	robot_control
-	sequence
-	children {
-		get_position
-		decorator {
-			reset_completed_mission_FiS
-			X_is_Y
-			X failure
-			Y success
-			child
+sub_trees {
+#comment# we don't ahve any subtrees to use in this case. #end_comment#
+}end_sub_trees
+
+#comment# here we define the tree #end_comment#
+tree{
+	composite {
+		robot_control
+		sequence
+		children {
+			get_position
+			decorator {
+				reset_completed_mission_FiS
+				X_is_Y
+				X failure
+				Y success
+				child
+				composite {
+					reset_completed_mission
+					sequence
+					children {
+						target_reached
+						clear_mission
+					} end_children
+				} end_composite
+			} end_decorator
 			composite {
-				reset_completed_mission
-				sequence
+				confirm_mission
+				selector
 				children {
-					target_reached
-					clear_mission
+					have_mission
+					get_mission
 				} end_children
 			} end_composite
-		} end_decorator
-		composite {
-			confirm_mission
-			selector
-			children {
-				have_mission
-				get_mission
-			} end_children
-		} end_composite
-		composite {
-			move_robot
-			selector
-			children {
-				composite {
-					try_right
-					sequence
-					children {
-						x_too_small
-						go_right
-					} end_children
-				} end_composite
-				composite {
-					try_left
-					sequence
-					children {
-						x_too_big
-						go_left
-					} end_children
-				} end_composite
-				composite {
-					try_up
-					sequence
-					children {
-						y_too_small
-						go_up
-					} end_children
-				} end_composite
-				composite {
-					try_down
-					sequence
-					children {
-						y_too_big
-						go_down
-					} end_children
-				} end_composite
-			} end_children
-		} end_composite
-	} end_children
-} end_composite
+			composite {
+				move_robot
+				selector
+				children {
+					composite {
+						try_right
+						sequence
+						children {
+							x_too_small
+							go_right
+						} end_children
+					} end_composite
+					composite {
+						try_left
+						sequence
+						children {
+							x_too_big
+							go_left
+						} end_children
+					} end_composite
+					composite {
+						try_up
+						sequence
+						children {
+							y_too_small
+							go_up
+						} end_children
+					} end_composite
+					composite {
+						try_down
+						sequence
+						children {
+							y_too_big
+							go_down
+						} end_children
+					} end_composite
+				} end_children
+			} end_composite
+		} end_children
+	} end_composite
+} end_tree
 
+#comment# this tree should only tick if we ahve goals left. not really much point of ticking if we don't have goals left#end_comment#
 tick_prerequisite { (greater_than, env remaining_goals, 0) } end_tick_prerequisite
+
+
+#comment# some specifications. #end_comment#
 specifications {
 	INVARSPEC {(less_than_or_equal, (count, (active, go_down), (active, go_left), (active, go_right), (active, go_up)), 1)} end_INVARSPEC
 	LTLSPEC { (finally, (equal, env remaining_goals -1, 0)) } end_LTLSPEC

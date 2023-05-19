@@ -22,7 +22,8 @@ from behaverify_common import (get_root_node,
                                create_node_to_local_root_map,
                                create_local_root_to_relevant_list_map,
                                create_node_to_descendants_map,
-                               tab_indent)
+                               tab_indent,
+                               format_node_type)
 # -----------------------------------------------------------------------------------------------------------------------
 
 LOCAL_ROOT_TREE_STRING = 'resume_from_here_in_subtree__'
@@ -60,7 +61,7 @@ def create_nodes(nodes, root_node_name, node_name_to_number, tick_condition):
                                          '[' + ', '.join([(LOCAL_ROOT_TREE_STRING + child) for child in node['children']]) + ']'
                                      )
                                  )
-                                 + ';' + os.linesep) for node in filter(lambda node: ('parallel' in node['type'] and '_with_memory' in node['type']), nodes.values())])
+                                 + ';' + os.linesep) for node in filter(lambda node: (node['type'] == 'parallel' and node['memory'] != ''), nodes.values())])
                      )
     # ^ for each node that is parallel with memory, create a parellel_skip_string.
     # if it doesn't really have children, set it to a constant. otherwise, it will track each of it's children local roots.
@@ -94,7 +95,8 @@ def create_nodes(nodes, root_node_name, node_name_to_number, tick_condition):
     def create_decorator(node):
         return (
             tab_indent(2) + node['name'] + ' : '
-            + node['category'] + '_' + node['type'] + '('
+            + format_node_type(node, False)
+            + '('
             + ', '.join(node['children'] + (node['additional_arguments'] if node['additional_arguments'] is not None else []))
             + ');' + os.linesep
         )
@@ -102,12 +104,13 @@ def create_nodes(nodes, root_node_name, node_name_to_number, tick_condition):
     def create_composite_with_memory(node):
         return (
             tab_indent(2) + node['name'] + ' : '
-            + node['category'] + '_' + node['type'] + '_' + str(len(node['children'])) + '('
+            + format_node_type(node, True)
+            + '('
             + ', '.join(
                 node['children'] +
                 [
                     (PARALLEL_SKIP_STRING + node['name'])
-                    if 'parallel' in node['type'] else
+                    if node['type'] == 'parallel' else
                     (
                         '-2' if len(node['children']) < 2 else (CHILD_TRACK_STRING + node['name'])
                     )
@@ -119,7 +122,8 @@ def create_nodes(nodes, root_node_name, node_name_to_number, tick_condition):
     def create_composite_without_memory(node):
         return (
             tab_indent(2) + node['name'] + ' : '
-            + node['category'] + '_' + node['type'] + '_' + str(len(node['children'])) + '('
+            + format_node_type(node, True)
+            + '('
             + ', '.join(node['children'])
             + ');' + os.linesep
         )
@@ -130,7 +134,7 @@ def create_nodes(nodes, root_node_name, node_name_to_number, tick_condition):
                 tab_indent(2) + node['name']
                 + (
                     ' : running_DEFAULT_module;'
-                    if 'parallel' in node['type'] else
+                    if node['type'] == 'parallel' else
                     (
                         ' : success_DEFAULT_module;'
                         if 'sequence' in node['type'] else
@@ -141,9 +145,10 @@ def create_nodes(nodes, root_node_name, node_name_to_number, tick_condition):
             )
             if len(node['children']) == 0 else
             (
-                create_composite_with_memory(node)
-                if ('with_memory' in node['type']) else
                 create_composite_without_memory(node)
+                if node['memory'] == ''
+                else
+                create_composite_with_memory(node)
             )
         )
 
@@ -221,7 +226,7 @@ def create_resume_structure(nodes, local_root_to_relevant_list_map, node_name_to
             continue
         # var_resume_from_node_string += '\t\t' + LOCAL_ROOT_TREE_STRING + '' + local_root_name + ' : {' + local_root_id_str + ', ' + str(relevant_list)[1:-1] + '};' + os.linesep
         var_resume_from_node_string += ('\t\t' + LOCAL_ROOT_TREE_STRING + local_root_name + ' : {'
-                                        + ', '.join([str(node_name_to_number[local_root_name])] + [str(node_name_to_number[node_name]) for node_name in relevant_list])
+                                        + ', '.join([str(node_name_to_number[local_root_name])] + [('-2' if node_name == -2 else str(node_name_to_number[node_name])) for node_name in relevant_list])
                                         + '};' + os.linesep)
         init_resume_from_node_string += '\t\tinit(' + LOCAL_ROOT_TREE_STRING + local_root_name + ') := ' + local_root_id_str + ';' + os.linesep
         if -2 in relevant_list:
@@ -327,9 +332,9 @@ def create_resume_point(nodes, node_to_local_root_name_map, local_root_to_releva
         node = nodes[node_name]
         if not node['category'] == 'composite':
             continue
-        if 'parallel' in node['type']:
+        if node['type'] == 'parallel':
             continue
-        if 'with_memory' not in node['type']:
+        if node['memory'] == '':
             continue
         if len(node['children']) < 2:
             # print('few children. skipping')
@@ -400,32 +405,18 @@ def create_resume_point(nodes, node_to_local_root_name_map, local_root_to_releva
 
     return (define_string, var_string, init_string, next_string)
 
-##############################################################################
-# Main
-##############################################################################
 
-
-def main():
+def write_smv(nodes, variables, tick_condition, specifications, output_file = None, do_not_trim = False):
     '''
     basically a script to write the necessary information.
     --
     arguments
-    NONE * -> there are no arguments, but there are command line arguments
-    --
-    command_line_arguments
-    REQUIRED
-    @ input_file -> the file containing the nodes and variables.
-    OPTIONAL
-    @ blackboard_input_file -> a file containing a blackboard. Overwrites
-      the default blackbaord creation
-    @ module_input_file -> a file containing additional modules. Overwrites
-      the default additional module creation
-    @ specs_input_file -> a file containing specifications.
-    @ output_file -> a file where the entire nuXmv model will be written
-      This includes the blackboard, modules, and specifications
-    @ blackboard_output_file -> a file where the blackboard will be written
-    @ module_output_file -> a file where the additional modules will be written
-    @ do_not_trim -> if set, prevents the automatic removal of nodes that cannot run
+    @ nodes := a dictionary from node names to a dictionary with info
+    @ variables := a dictionary from variable name to dict info
+    @ tick_condition := a string containing tick_condition
+    @ specifications := a string containing specifications
+    @ output_file := if none, will print. else, writes to the file
+    @ do_not_trim := if true, prevents the automatic removal of nodes that cannot run
     --
     return
     NONE
@@ -434,33 +425,13 @@ def main():
     creates a string that can be used with nuXmv. Output printed either to a
     specified file, or to the terminal.
     '''
-    arg_parser = argparse.ArgumentParser()
-    # python3 behaverify.py create_root_FILE create_root_METHOD --root_args root_args_ARGS --string_args string_args_ARGS --min_val min_val_INT --max_val max_val_INT --force_parallel_unsynch --no_seperate_variable_modules --module_input_file module_input_file --specs_input_file specs_FILE --gen_modules gen_modules_INT --output_file ouput_file_FILE --module_output_file module_output_file_FILE --blackboard_output_file blackboard_output_file_FILE --overwrite
-    arg_parser.add_argument('input_file')
-    arg_parser.add_argument('--blackboard_input_file', default = None)
-    arg_parser.add_argument('--module_input_file', default = None)
-    arg_parser.add_argument('--specs_input_file', default = None)
-    arg_parser.add_argument('--output_file', default = None)
-    arg_parser.add_argument('--blackboard_output_file', default = None)
-    arg_parser.add_argument('--module_output_file', default = None)
-    arg_parser.add_argument('--do_not_trim', action = 'store_true')
-    # arg_parser.add_argument('--overwrite', action = 'store_true')
-    args = arg_parser.parse_args()
-
-    with open(args.input_file, 'r') as f:
-        temp = eval(f.read())
-    tick_condition = temp['tick_condition']
-    nodes = temp['nodes']
-    variables = temp['variables']
-    specifications = temp['specifications']
-
     print('Number of nodes before pruning: ' + str(len(nodes)))
 
     root_node_name = get_root_node(nodes)
     refine_return_types(nodes, root_node_name)
     refine_invalid(nodes, root_node_name)
 
-    if not args.do_not_trim:
+    if not do_not_trim:
         nodes = prune_nodes(nodes)
         root_node_name = get_root_node(nodes)
 
@@ -535,49 +506,77 @@ def main():
 
     nuxmv_string = define_string + var_string + init_string + next_string + os.linesep + (os.linesep).join(specifications) + os.linesep
     # ------------------------------------------------------------------------------------------------------------------------
-    if args.specs_input_file:
-        nuxmv_string += open(args.specs_input_file).read() + os.linesep + os.linesep
 
     nuxmv_string += node_creator.create_names_module(node_name_to_number)
     # nuxmv_string += node_creator.create_leaf()
     nuxmv_string += ''.join([eval('node_creator.create_' + cur_thing[0] + '(' + cur_thing[1] + ')') for cur_thing in
-                             [*set([('composite_' + node['type'], str(len(node['children']))) if node['category'] == 'composite' else (
-                                 ('decorator_' + node['type'], '0'))
+                             [*set([(format_node_type(node, False), str(len(node['children'])))
                                     for node in nodes.values() if (node['category'] != 'leaf')])]])
 
-    if args.module_input_file:
-        nuxmv_string = nuxmv_string + open(args.module_input_file).read()
-    else:
+    module_string = ''.join([node['internal_status_module_code']
+                             for node in nodes.values() if ((node['category'] == 'leaf') and (node['internal_status_module_name'] is not None))])
 
-        module_string = ''.join([node['internal_status_module_code']
-                                 for node in nodes.values() if ((node['category'] == 'leaf') and (node['internal_status_module_name'] is not None))])
+    module_string += ''.join([node_creator.create_status_module(statuses) for statuses in [*set([('_'.join([status for (status, possible) in [('success', node['return_possibilities']['success']), ('running', node['return_possibilities']['running']), ('failure', node['return_possibilities']['failure'])] if possible])) for node in nodes.values() if ((node['category'] == 'leaf') and (node['internal_status_module_name'] is None))])]])
 
-        module_string += ''.join([node_creator.create_status_module(statuses) for statuses in [*set([('_'.join([status for (status, possible) in [('success', node['return_possibilities']['success']), ('running', node['return_possibilities']['running']), ('failure', node['return_possibilities']['failure'])] if possible])) for node in nodes.values() if ((node['category'] == 'leaf') and (node['internal_status_module_name'] is None))])]])
+    nuxmv_string += module_string
 
-        nuxmv_string += module_string
-        if args.module_output_file is None:
-            pass
-        else:
-            with open(args.module_output_file, 'w') as f:
-                f.write(module_string)
-
-    # if args.blackboard_input_file:
-    #     nuxmv_string += open(args.blackboard_input_file).read()
-    # else:
-    #     blackboard_string = ''
-    #     blackboard_string += node_creator.create_blackboard(nodes, variables)
-    #     nuxmv_string += blackboard_string
-    #     if args.blackboard_output_file is None:
-    #         pass
-    #     else:
-    #         with open(args.blackboard_output_file, 'w') as f:
-    #             f.write(blackboard_string)
-
-    if args.output_file is None:
+    if output_file is None:
         print(nuxmv_string)
     else:
-        with open(args.output_file, 'w') as f:
+        with open(output_file, 'w') as f:
             f.write(nuxmv_string)
+    return
+
+
+##############################################################################
+# Main
+##############################################################################
+
+
+def main():
+    '''
+    basically a script to write the necessary information.
+    --
+    arguments
+    NONE * -> there are no arguments, but there are command line arguments
+    --
+    command_line_arguments
+    REQUIRED
+    @ input_file -> the file containing the nodes and variables.
+    OPTIONAL
+    @ blackboard_input_file -> a file containing a blackboard. Overwrites
+      the default blackbaord creation
+    @ module_input_file -> a file containing additional modules. Overwrites
+      the default additional module creation
+    @ specs_input_file -> a file containing specifications.
+    @ output_file -> a file where the entire nuXmv model will be written
+      This includes the blackboard, modules, and specifications
+    @ blackboard_output_file -> a file where the blackboard will be written
+    @ module_output_file -> a file where the additional modules will be written
+    @ do_not_trim -> if set, prevents the automatic removal of nodes that cannot run
+    --
+    return
+    NONE
+    --
+    effects
+    creates a string that can be used with nuXmv. Output printed either to a
+    specified file, or to the terminal.
+    '''
+    arg_parser = argparse.ArgumentParser()
+    # python3 behaverify.py create_root_FILE create_root_METHOD --root_args root_args_ARGS --string_args string_args_ARGS --min_val min_val_INT --max_val max_val_INT --force_parallel_unsynch --no_seperate_variable_modules --module_input_file module_input_file --specs_input_file specs_FILE --gen_modules gen_modules_INT --output_file ouput_file_FILE --module_output_file module_output_file_FILE --blackboard_output_file blackboard_output_file_FILE --overwrite
+    arg_parser.add_argument('input_file')
+    arg_parser.add_argument('--output_file', default = None)
+    arg_parser.add_argument('--do_not_trim', action = 'store_true')
+    # arg_parser.add_argument('--overwrite', action = 'store_true')
+    args = arg_parser.parse_args()
+
+    with open(args.input_file, 'r') as f:
+        temp = eval(f.read())
+    tick_condition = temp['tick_condition']
+    nodes = temp['nodes']
+    variables = temp['variables']
+    specifications = temp['specifications']
+    write_smv(nodes, variables, tick_condition, specifications, args.output_file, args.do_not_trim)
     return
 
 

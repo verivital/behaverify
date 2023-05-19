@@ -306,14 +306,14 @@ def create_decorator_inverter(ignored_value = 0):
 # composite nodes
 
 
-def create_composite_selector_with_memory(number_of_children):
+def create_composite_selector_with_partial_memory(number_of_children):
     (status_start, status_end, active, active_end, children) = common_string_composite(number_of_children)
     # note that resume_point is an integer between 0 and last_child (inclusive)
     if number_of_children == 0:
         inject_string = "resume_point"
     else:
         inject_string = ", resume_point"
-    return_string = ("MODULE composite_selector_with_memory_" + str(number_of_children) + "(" + children + inject_string + ")" + os.linesep
+    return_string = ("MODULE composite_selector_with_partial_memory_" + str(number_of_children) + "(" + children + inject_string + ")" + os.linesep
                      + status_start
                      )
     for child in range(number_of_children):
@@ -378,14 +378,14 @@ def create_composite_selector_without_memory(number_of_children):
     return return_string
 
 
-def create_composite_sequence_with_memory(number_of_children):
+def create_composite_sequence_with_partial_memory(number_of_children):
     (status_start, status_end, active, active_end, children) = common_string_composite(number_of_children)
     # note that resume_point is an integer between 0 and last_child (inclusive)
     if number_of_children == 0:
         inject_string = "resume_point"
     else:
         inject_string = ", resume_point"
-    return_string = ("MODULE composite_sequence_with_memory_" + str(number_of_children) + "(" + children + inject_string + ")" + os.linesep
+    return_string = ("MODULE composite_sequence_with_partial_memory_" + str(number_of_children) + "(" + children + inject_string + ")" + os.linesep
                      + status_start
                      )
     for child in range(number_of_children):
@@ -439,9 +439,9 @@ def create_composite_sequence_without_memory(number_of_children):
     return return_string
 
 
-def create_composite_parallel_success_on_all_with_memory(number_of_children):
+def create_composite_parallel_success_on_all_with_partial_memory(number_of_children):
     (status_start, status_end, active, active_end, children) = common_string_composite(number_of_children)
-    return_string = ("MODULE composite_parallel_success_on_all_with_memory_" + str(number_of_children) + "(" + children + ", skip_child)" + os.linesep
+    return_string = ("MODULE composite_parallel_success_on_all_with_partial_memory_" + str(number_of_children) + "(" + children + ", skip_child)" + os.linesep
                      + status_start
                      )
     for child in range(number_of_children):
@@ -465,9 +465,9 @@ def create_composite_parallel_success_on_all_with_memory(number_of_children):
 
 
 """
-def create_composite_parallel_with_memory_success_on_one(number_of_children):
+def create_composite_parallel_with_partial_memory_success_on_one(number_of_children):
     (status_start, status_end, active, active_end, children) = common_string_composite(number_of_children)
-    return_string = ("MODULE composite_parallel_with_memory_success_on_one_" + str(number_of_children) + "(" + children + ", skip_child)" + os.linesep
+    return_string = ("MODULE composite_parallel_with_partial_memory_success_on_one_" + str(number_of_children) + "(" + children + ", skip_child)" + os.linesep
                       + status_start
     )
     for child in range(number_of_children):
