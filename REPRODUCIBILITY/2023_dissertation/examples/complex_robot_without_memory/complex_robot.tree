@@ -20,7 +20,15 @@ blackboard_variables {
 	blackboard_variable { side VAR {-1, 1} initial_value { result { 1 } end_result } end_initial_value } end_blackboard_variable
 	blackboard_variable { have_flag VAR BOOLEAN initial_value { result { False } end_result } end_initial_value } end_blackboard_variable
 	blackboard_variable { need_side_reached VAR BOOLEAN initial_value { result { True } end_result } end_initial_value } end_blackboard_variable
-	blackboard_variable { forward DEFINE INT initial_value { case { bl have_flag } end_case result { -1 } end_result result { 1 } end_result} end_initial_value} end_blackboard_variable
+	blackboard_variable { forward DEFINE INT
+		initial_value {
+			case {
+				bl have_flag
+			} end_case
+			result { -1 } end_result
+			result { 1 } end_result
+		} end_initial_value
+	} end_blackboard_variable
 } end_blackboard_variables
 
 local_variables {
@@ -275,16 +283,16 @@ actions {
 			read_environment {
 				python_function { from 'complex_robot_environment' 'search_tile'} end_python_function
 				condition { True } end_condition
-				variable_statement_using_env {
+				read_variable_statement {
 					local tile_searched
 					case { (equal, env tile_progress, 2) } end_case result { True } end_result
 					result { True, False } end_result
-				} end_variable_statement_using_env
-				variable_statement_using_env {
+				} end_read_variable_statement
+				read_variable_statement {
 					bl have_flag
 					case { bl have_flag} end_case result { True } end_result
 					result { (and, local tile_searched, (equal, env x, env flag_x), (equal, env y, env flag_y)) } end_result
-				} end_variable_statement_using_env
+				} end_read_variable_statement
 			} end_read_environment
 			write_environment {
 				python_function { from 'complex_robot_environment' 'update_search'} end_python_function
@@ -316,12 +324,12 @@ actions {
 			read_environment {
 				python_function { from 'complex_robot_environment' 'compute_zone' } end_python_function
 				condition { True } end_condition
-				variable_statement_using_env {
+				read_variable_statement {
 					bl zone
 					case { (less_than_or_equal, env x, 'home_end') } end_case result { 'home' } end_result
 					case { (greater_than_or_equal, env x, 'target_start') } end_case result { 'target' } end_result
 					result { 'maze' } end_result
-				} end_variable_statement_using_env
+				} end_read_variable_statement
 			} end_read_environment
 			return_statement {
 				result { success } end_result
@@ -378,7 +386,6 @@ sub_trees {
 } end_sub_trees
 
 
-#comment# the tree is defined here. replace REPLACE_ME with the root node #end_comment#
 tree {
 composite {
 	control
@@ -504,5 +511,8 @@ If it is false, everything is done #end_comment#
 
 specifications {
 	#comment# INVAR, LTL, and CTL specs go here #end_comment#
-	CTLSPEC { (always_globally, (always_finally, env flag_returned 0)) } end_CTLSPEC
+	CTLSPEC { (always_finally, env flag_returned 0) } end_CTLSPEC
+	LTLSPEC { (finally, env flag_returned 0) } end_LTLSPEC
+	CTLSPEC { (always_globally, (implies, (equal, bl zone 0, 'target'), (always_globally, (implies, (not_equal, bl zone 0, 'target'), bl have_flag 0)))) } end_CTLSPEC 
+	LTLSPEC { (globally, (implies, (equal, bl zone 0, 'target'), (globally, (implies, (not_equal, bl zone 0, 'target'), bl have_flag 0)))) } end_LTLSPEC
 } end_specifications

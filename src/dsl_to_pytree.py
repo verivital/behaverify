@@ -474,14 +474,14 @@ def walk_tree_recursive(current_node, node_names, node_names_map, file_name):
 
     if current_node.node_type == 'sequence':
         with open(file_name, 'a') as f:
-            f.write(indent(1) + node_name + ' = py_trees.composites.Sequence(' + "'" + node_name + "'" + ', ' + str(current_node.memory) + ')' + os.linesep)
+            f.write(indent(1) + node_name + ' = py_trees.composites.Sequence(' + "'" + node_name + "'" + ', memory = ' + ('False' if current_node.memory == '' else 'True') + ')' + os.linesep)
     elif current_node.node_type == 'selector':
         with open(file_name, 'a') as f:
-            f.write(indent(1) + node_name + ' = py_trees.composites.Selector(' + "'" + node_name + "'" + ', ' + str(current_node.memory) + ')' + os.linesep)
+            f.write(indent(1) + node_name + ' = py_trees.composites.Selector(' + "'" + node_name + "'" + ', memory = ' + ('False' if current_node.memory == '' else 'True') + ')' + os.linesep)
     elif current_node.node_type == 'parallel':
         with open(file_name, 'a') as f:
             f.write(indent(1) + node_name + ' = py_trees.composites.Parallel(' + "'" + node_name + "'" + ', py_trees.common.ParallelPolicy.'
-                    + (('SuccessOnAll(' + str(current_node.memory) + ')') if current_node.parallel_policy == 'success_on_all' else ('SuccessOnOne()'))
+                    + (('SuccessOnAll(' + ('False' if current_node.memory == '' else 'True') + ')') if current_node.parallel_policy == 'success_on_all' else ('SuccessOnOne()'))
                     + ')' + os.linesep)
 
     children = '[' + ', '.join([walk_tree_recursive(child, node_names, node_names_map, file_name) for child in current_node.children]) + ']'
@@ -499,8 +499,8 @@ def main():
     arg_parser = argparse.ArgumentParser()
     arg_parser.add_argument('metamodel_file')
     arg_parser.add_argument('model_file')
-    arg_parser.add_argument('location', default = './')
-    arg_parser.add_argument('output_file', default = 'main.py')
+    arg_parser.add_argument('location')
+    arg_parser.add_argument('output_file')
     args = arg_parser.parse_args()
 
     metamodel = textx.metamodel_from_file(args.metamodel_file, auto_init_attributes = False)
@@ -523,7 +523,7 @@ def main():
         with open(args.location + check_env.name + '_file.py', 'w') as f:
             f.write(build_check_environment_node(check_env))
 
-    with open(args.location + args.output_file, 'w') as f:
+    with open(args.location + args.output_file + '.py', 'w') as f:
         f.write(''.join([('import ' + node.name + '_file' + os.linesep) for node in itertools.chain(model.check_nodes, model.action_nodes, model.environment_checks)])
                 + 'import py_trees' + os.linesep
                 + os.linesep + os.linesep
@@ -547,9 +547,9 @@ def main():
                 )
                 + os.linesep
                 )
-    root_name = walk_tree(model, args.location + args.output_file)
+    root_name = walk_tree(model, args.location + args.output_file + '.py')
 
-    with open(args.location + args.output_file, 'a') as f:
+    with open(args.location + args.output_file + '.py', 'a') as f:
         f.write(indent(1) + 'return ' + root_name + os.linesep)
 
     return

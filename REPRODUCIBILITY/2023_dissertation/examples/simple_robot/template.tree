@@ -95,8 +95,8 @@ actions {
 			read_environment {
 				python_function { from 'robot' 'get_mission'} end_python_function
 				condition { True } end_condition
-				variable_statement_using_env {bl target_x result { env x_goal } end_result} end_variable_statement_using_env
-				variable_statement_using_env {bl target_y result { env y_goal } end_result} end_variable_statement_using_env
+				read_variable_statement {bl target_x result { env x_goal } end_result} end_read_variable_statement
+				read_variable_statement {bl target_y result { env y_goal } end_result} end_read_variable_statement
 			} end_read_environment
 			variable_statement {
 				bl mission
@@ -121,8 +121,8 @@ actions {
 			read_environment {
 				python_function { from 'robot' 'get_position'} end_python_function
 				condition { True } end_condition
-				variable_statement_using_env {bl x result { env x_true } end_result} end_variable_statement_using_env
-				variable_statement_using_env {bl y result { env y_true } end_result} end_variable_statement_using_env
+				read_variable_statement {bl x result { env x_true } end_result} end_read_variable_statement
+				read_variable_statement {bl y result { env y_true } end_result} end_read_variable_statement
 			} end_read_environment
 			return_statement { result { success } end_result } end_return_statement
 		} end_update

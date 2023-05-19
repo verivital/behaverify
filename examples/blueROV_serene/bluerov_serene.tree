@@ -3,7 +3,7 @@ constants {
 
 
 blackboard_variables {
-	blackboard_variable { failsafe_engaged VAR BOOLEAN initial_value { result { True, False } end_result } end_initial_value} end_blackboard_variable
+	blackboard_variable { failsafe_engaged VAR BOOLEAN initial_value { result { False } end_result } end_initial_value} end_blackboard_variable
 	blackboard_variable { mission VAR {'MISSION_emergency_surface', 'MISSION_pipe_tracking', 'MISSION_go_to_home', 'MISSION_go_to_waypoint'} initial_value { result { 'MISSION_emergency_surface', 'MISSION_pipe_tracking', 'MISSION_go_to_home', 'MISSION_go_to_waypoint' } end_result } end_initial_value} end_blackboard_variable
 } end_blackboard_variables
 
@@ -16,7 +16,7 @@ environment {
 		environment_variable { battery_low VAR BOOLEAN initial_value { result { True, False } end_result } end_initial_value} end_environment_variable
 		environment_variable { BLUEROV_SURFACED VAR BOOLEAN initial_value { result { False } end_result } end_initial_value} end_environment_variable
 		environment_variable { BLUEROV_HALTED VAR BOOLEAN initial_value { result { False } end_result } end_initial_value} end_environment_variable
-		environment_variable { command VAR {'COMMAND_UNKNOWN', 'COMMAND_avoid_obstacles', 'COMMAND_go_to_waypoint', 'COMMAND_go_to_home', 'COMMAND_surface', 'COMMAND_halt', 'COMMAND_pipe_tracking', 'COMMAND_search_for_pipe'} } end_environment_variable
+		environment_variable { command VAR {'COMMAND_UNKNOWN', 'COMMAND_avoid_obstacles', 'COMMAND_go_to_waypoint', 'COMMAND_go_to_home', 'COMMAND_surface', 'COMMAND_halt', 'COMMAND_pipe_tracking', 'COMMAND_search_for_pipe'} initial_value { result {'COMMAND_UNKNOWN', 'COMMAND_avoid_obstacles', 'COMMAND_go_to_waypoint', 'COMMAND_go_to_home', 'COMMAND_surface', 'COMMAND_halt', 'COMMAND_pipe_tracking', 'COMMAND_search_for_pipe'} end_result } end_initial_value } end_environment_variable
 		environment_variable { emergency_sensor VAR BOOLEAN initial_value { result { True, False } end_result } end_initial_value} end_environment_variable
 		environment_variable { geofence_warning VAR BOOLEAN initial_value { result { True, False } end_result } end_initial_value} end_environment_variable
 		environment_variable { home_reached VAR BOOLEAN initial_value { result { True, False } end_result } end_initial_value} end_environment_variable
@@ -28,10 +28,6 @@ environment {
 		environment_variable { reallocation_possible VAR BOOLEAN initial_value { result { True, False } end_result } end_initial_value} end_environment_variable
 		environment_variable { sensor_failure VAR BOOLEAN initial_value { result { True, False } end_result } end_initial_value} end_environment_variable
 	} end_environment_variables
-	initial_values {
-		environment_statement { env BLUEROV_SURFACED result { False } end_result } end_environment_statement
-		environment_statement { env BLUEROV_HALTED result { False } end_result } end_environment_statement
-	} end_initial_values
 	update_values {
 		environment_statement {
 			env battery_low
@@ -118,6 +114,7 @@ environment_checks {
 	check_environment {
 		check_battery_low
 		imports { 'blueROV_interface' } end_imports
+		read_variables {} end_read_variables
 		python_function {'blueROV_interface.battery_low()' } end_python_function
 		condition { env battery_low } end_condition
 	} end_check_environment
@@ -125,6 +122,7 @@ environment_checks {
 	check_environment {
 		check_emergency_sensor
 		imports { 'blueROV_interface' } end_imports
+		read_variables {} end_read_variables
 		python_function {'blueROV_interface.emergency_sensor()' } end_python_function
 		condition { env emergency_sensor } end_condition
 	} end_check_environment
@@ -132,6 +130,7 @@ environment_checks {
 	check_environment {
 		check_geofence
 		imports { 'blueROV_interface' } end_imports
+		read_variables {} end_read_variables
 		python_function {'blueROV_interface.geofence_warning()' } end_python_function
 		condition { env geofence_warning } end_condition
 	} end_check_environment
@@ -139,6 +138,7 @@ environment_checks {
 	check_environment {
 		check_halted
 		imports { 'blueROV_interface' } end_imports
+		read_variables {} end_read_variables
 		python_function {'blueROV_interface.not_halted()' } end_python_function
 		condition { env BLUEROV_HALTED } end_condition
 	} end_check_environment
@@ -146,6 +146,7 @@ environment_checks {
 	check_environment {
 		check_home_reached
 		imports { 'blueROV_interface' } end_imports
+		read_variables {} end_read_variables
 		python_function {'blueROV_interface.home_reached()' } end_python_function
 		condition { env home_reached } end_condition
 	} end_check_environment
@@ -153,6 +154,7 @@ environment_checks {
 	check_environment {
 		check_mission_finished
 		imports { 'blueROV_interface' } end_imports
+		read_variables {} end_read_variables
 		python_function {'blueROV_interface.mission_finished()' } end_python_function
 		condition { env mission_finished } end_condition
 	} end_check_environment
@@ -160,6 +162,7 @@ environment_checks {
 	check_environment {
 		check_obstacles_present
 		imports { 'blueROV_interface' } end_imports
+		read_variables {} end_read_variables
 		python_function { 'blueROV_interface.obstacles_present()' } end_python_function
 		condition { env obstacles_present } end_condition
 	} end_check_environment
@@ -167,6 +170,7 @@ environment_checks {
 	check_environment {
 		check_pipe_lost
 		imports { 'blueROV_interface' } end_imports
+		read_variables {} end_read_variables
 		python_function { 'blueROV_interface.pipe_lost()' } end_python_function
 		condition { env pipe_lost } end_condition
 	} end_check_environment
@@ -174,6 +178,7 @@ environment_checks {
 	check_environment {
 		check_reallocation_needed
 		imports { 'blueROV_interface' } end_imports
+		read_variables {} end_read_variables
 		python_function { 'blueROV_interface.reallocation_requested()' } end_python_function
 		condition { env reallocation_needed } end_condition
 	} end_check_environment
@@ -181,6 +186,7 @@ environment_checks {
 	check_environment {
 		check_reallocation_possible
 		imports { 'blueROV_interface' } end_imports
+		read_variables {} end_read_variables
 		python_function { 'blueROV_interface.reallocation_possible()' } end_python_function
 		condition { env reallocation_possible } end_condition
 	} end_check_environment
@@ -188,6 +194,7 @@ environment_checks {
 	check_environment {
 		check_sensor_failure
 		imports { 'blueROV_interface' } end_imports
+		read_variables {} end_read_variables
 		python_function { 'blueROV_interface.sensor_failure()' } end_python_function
 		condition { env sensor_failure } end_condition
 	} end_check_environment
@@ -198,6 +205,7 @@ actions {
 	action {
 		avoid_obstacles
 		imports { 'blueROV_interface' } end_imports
+		local_variables {} end_local_variables
 		read_variables {} end_read_variables
 		write_variables {} end_write_variables
 		initial_values {} end_initial_values
@@ -220,23 +228,19 @@ actions {
 	action {
 		get_mission
 		imports { 'blueROV_interface' } end_imports
+		local_variables {} end_local_variables
 		read_variables {} end_read_variables
 		write_variables { mission } end_write_variables
 		initial_values {
-			read_environment {
-				python_function { from 'blueROV_interface' 'get_mission' } end_python_function
-				condition { True } end_condition
-				variable_statement_using_env {
-					bl mission
-					result { env next_mission } end_result
-				} end_variable_statement_using_env
-			} end_read_environment
 		} end_initial_values
 		update {
 			read_environment {
-				python_function { 'blueROV_interface.get_mission()' } end_python_function
+				python_function { from 'blueROV_interface' 'get_mission' } end_python_function
 				condition { True } end_condition
-				set_variables { (mission, env next_mission) } end_set_variables
+				read_variable_statement {
+					bl mission
+					result { env next_mission } end_result
+				} end_read_variable_statement
 			} end_read_environment
 			return_statement {
 				result { success } end_result
@@ -247,6 +251,7 @@ actions {
 	action {
 		halt
 		imports { 'blueROV_interface' } end_imports
+		local_variables {} end_local_variables
 		read_variables {} end_read_variables
 		write_variables {} end_write_variables
 		initial_values {} end_initial_values
@@ -273,6 +278,7 @@ actions {
 	action {
 		loiter
 		imports { 'blueROV_interface' } end_imports
+		local_variables {} end_local_variables
 		read_variables {} end_read_variables
 		write_variables {} end_write_variables
 		initial_values {} end_initial_values
@@ -295,6 +301,7 @@ actions {
 	action {
 		reallocate
 		imports { 'blueROV_interface' } end_imports
+		local_variables {} end_local_variables
 		read_variables {} end_read_variables
 		write_variables {} end_write_variables
 		initial_values {} end_initial_values
@@ -318,6 +325,7 @@ actions {
 	action {
 		return_home
 		imports { 'blueROV_interface' } end_imports
+		local_variables {} end_local_variables
 		read_variables {} end_read_variables
 		write_variables {} end_write_variables
 		initial_values {} end_initial_values
@@ -340,6 +348,7 @@ actions {
 	action {
 		search_for_pipe
 		imports { 'blueROV_interface' } end_imports
+		local_variables {} end_local_variables
 		read_variables {} end_read_variables
 		write_variables {} end_write_variables
 		initial_values {} end_initial_values
@@ -361,13 +370,14 @@ actions {
 
 	action {
 		set_return_home
+		local_variables {} end_local_variables
 		read_variables {} end_read_variables
 		write_variables {mission} end_write_variables
 		initial_values {
 		} end_initial_values
 		update {
 			variable_statement {
-				mission
+				bl mission
 				result { 'MISSION_go_to_home' } end_result
 			} end_variable_statement
 			return_statement {
@@ -379,6 +389,7 @@ actions {
 	action {
 		surface
 		imports { 'blueROV_interface' } end_imports
+		local_variables {} end_local_variables
 		read_variables {} end_read_variables
 		write_variables {} end_write_variables
 		initial_values {} end_initial_values
@@ -405,6 +416,7 @@ actions {
 	action {
 		track_pipe
 		imports { 'blueROV_interface' } end_imports
+		local_variables {} end_local_variables
 		read_variables {} end_read_variables
 		write_variables {} end_write_variables
 		initial_values {} end_initial_values
@@ -426,17 +438,14 @@ actions {
 
 	action {
 		trigger_failsafe
+		local_variables {} end_local_variables
 		read_variables {} end_read_variables
 		write_variables {failsafe_engaged} end_write_variables
 		initial_values {
-			variable_statement {
-				failsafe_engaged
-				result { False } end_result
-			} end_variable_statement
 		} end_initial_values
 		update {
 			variable_statement {
-				failsafe_engaged
+				bl failsafe_engaged
 				result { True } end_result
 			} end_variable_statement
 			return_statement {
@@ -448,6 +457,7 @@ actions {
 	action {
 		waypoint
 		imports { 'blueROV_interface' } end_imports
+		local_variables {} end_local_variables
 		read_variables {} end_read_variables
 		write_variables {} end_write_variables
 		initial_values {} end_initial_values
@@ -466,9 +476,11 @@ actions {
 			} end_return_statement
 		} end_update
 	} end_action
-} end_actions	
+} end_actions
 
-root_node
+sub_trees {} end_sub_trees
+
+tree{
 composite {
 	BlueROV
 	parallel policy success_on_one
@@ -610,10 +622,12 @@ composite {
 		} end_composite
 	} end_children
 } end_composite
+} end_tree
 
 tick_prerequisite { (not, env BLUEROV_SURFACED) } end_tick_prerequisite
 
 specifications {
-LTLSPEC {(globally, (implies, (or, env obstacles_present 0, env emergency_sensor 0), (or, (active, halt), (active, avoid_obstacles), (env BLUEROV_HALTED 0)))) } end_LTLSPEC
-INVARSPEC { (implies, (not, (or, (env BLUEROV_SURFACED 0), (active, surface), (active, halt), (active, avoid_obstacles))), (or, (and, (equal, mission -1, 'MISSION_pipe_tracking'), (or, (equal, env command -1, 'COMMAND_pipe_tracking'), (equal, env command 8, 'COMMAND_search_for_pipe'))), (and, (equal, mission -1, 'MISSION_go_to_waypoint'), (equal, env command -1, 'COMMAND_go_to_waypoint')), (and, (equal, mission -1, 'MISSION_go_to_home'), (equal, env command -1, 'COMMAND_go_to_home')))) } end_INVARSPEC
+	LTLSPEC {(globally, (implies, (or, env obstacles_present 0, env emergency_sensor 0), (or, (active, halt), (active, avoid_obstacles), (env BLUEROV_HALTED 0)))) } end_LTLSPEC
+	
+	INVARSPEC { (implies, (not, (or, (env BLUEROV_SURFACED 0), (active, surface), (active, halt), (active, avoid_obstacles))), (or, (and, (equal, bl mission -1, 'MISSION_pipe_tracking'), (or, (equal, env command -1, 'COMMAND_pipe_tracking'), (equal, env command 8, 'COMMAND_search_for_pipe'))), (and, (equal, bl mission -1, 'MISSION_go_to_waypoint'), (equal, env command -1, 'COMMAND_go_to_waypoint')), (and, (equal, bl mission -1, 'MISSION_go_to_home'), (equal, env command -1, 'COMMAND_go_to_home')))) } end_INVARSPEC
 } end_specifications

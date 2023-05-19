@@ -15,26 +15,63 @@ def create_variable_template(name, mode, custom_value_range,
     }
 
 
-def create_node_template(node_name, parent_name, children, category, node_type,
+def create_node_template(node_name, parent_name, children,
+                         category, node_type, policy, memory,
                          success, running, failure,
                          additional_arguments = None,
                          internal_status_module_name = None,
                          internal_status_module_code = None):
     return {
-            'name' : node_name,
-            'parent' : parent_name,
-            'children' : children,
-            'category' : category,
-            'type' : node_type,
-            'return_possibilities' : {
-                'success' : success,
-                'running' : running,
-                'failure' : failure
-            },
-            'additional_arguments' : additional_arguments,
-            'internal_status_module_name' : internal_status_module_name,
-            'internal_status_module_code' : internal_status_module_code
-        }
+        'name' : node_name,
+        'parent' : parent_name,
+        'children' : children,
+        'category' : category,
+        'type' : node_type,
+        'policy' : policy,
+        'memory' : memory,  # 'with_true_memory', 'with_partial_memory', ''
+        'return_possibilities' : {
+            'success' : success,
+            'running' : running,
+            'failure' : failure
+        },
+        'additional_arguments' : additional_arguments,
+        'internal_status_module_name' : internal_status_module_name,
+        'internal_status_module_code' : internal_status_module_code
+    }
+
+
+def format_node_type(node, children = True):
+    return (
+        (
+            node['type']
+        )
+        if node['category'] == 'leaf'
+        else
+        (
+            node['category'] + '_' + node['type'] + node['policy']
+            + (
+                ''
+                if node['category'] == 'decorator'
+                else
+                (
+                    '_'
+                    + (
+                        'without_memory'
+                        if node['memory'] == ''
+                        else
+                        node['memory']
+                    )
+                )
+            )
+            +
+            (
+                ('_' + str(len(node['children'])))
+                if children
+                else
+                ''
+            )
+        )
+    )
 
 
 # def create_node_template(node_name, parent_name, category, node_type,
@@ -137,7 +174,8 @@ def create_node_to_local_root_map(nodes, root_node_name):
         return {node_name : (node_name
                              if (
                                      nodes[node_name]['parent'] is None
-                                     or 'parallel' in nodes[nodes[node_name]['parent']]['type']
+                                     or nodes[nodes[node_name]['parent']]['type'] == 'parallel'
+                                     # if either of these things are true then this is the local root.
                              )
                              else local_root),
                 **{desecendent_name : desecendent_value
@@ -148,7 +186,7 @@ def create_node_to_local_root_map(nodes, root_node_name):
                                                                                  node_name
                                                                                  if (
                                                                                          nodes[node_name]['parent'] is None
-                                                                                         or 'parallel' in nodes[nodes[node_name]['parent']]['type']
+                                                                                         or nodes[nodes[node_name]['parent']]['type'] == 'parallel'
                                                                                  )
                                                                                  else local_root
                                                                              )
@@ -156,36 +194,6 @@ def create_node_to_local_root_map(nodes, root_node_name):
                    }
                 }
     return local_root_map(nodes, root_node_name, root_node_name)
-
-
-def can_create_running(node):
-    """
-    used to determine if a given node can 'create' a running result.
-    Note that this is not the same as RETURNING running. For instance,
-    a decorator might return running solely because it's child returned running.
-    The child created running in this case, not the decorator
-    --
-    arguments
-    @ nodes -> a map (dictionary) from node_id to node information
-    --
-    return
-    @ Boolean. True indicates the node in question can create running.
-      False indicates it cannot.
-    --
-    effects and method
-    the node type is checked. based on the node type, we return a value.
-    """
-    return (
-        False if (node['category'] == 'composite' and 'with_memory' in node['type']) else (
-            (node['additional_arguments'][1] == 'running') if node['type'] == 'X_is_Y' else (
-                False if node['category'] == 'decorator' else (
-                    node['return_possibilities']['running'] if node['category'] == 'leaf' else (
-                        True
-                    )
-                )
-            )
-        )
-    )
 
 
 def create_node_to_descendants_map(nodes, node_name):
@@ -247,6 +255,14 @@ def prune_nodes(nodes):
              for node_name in filter((lambda x : (nodes[x]['return_possibilities']['success']
                                                   or nodes[x]['return_possibilities']['failure']
                                                   or nodes[x]['return_possibilities']['running'])),
+                                     nodes)}
+    nodes = {node_name : {field :
+                          ((list(filter(
+                              (lambda x : (not nodes[x]['always_invalid'])),
+                              nodes[node_name]['children'])))
+                           if field == 'children' else (nodes[node_name][field]))
+                          for field in nodes[node_name]}
+             for node_name in filter((lambda x : (not nodes[x]['always_invalid'])),
                                      nodes)}
     # we've now removed all dead nodes.
 
@@ -348,31 +364,23 @@ def refine_return_types(nodes, node_name):
             }
             cannot_run = True
             print(node['name'] + ' : my parents failed me')
-        elif parent['category'] == 'composite':
-            # we don't care about decorators
+        elif parent['category'] == 'composite' and parent['type'] != 'parallel':
+            # decorators and parallel nodes that can run cannot change our return types.
             left_sibling_index = parent['children'].index(node_name) - 1
             if left_sibling_index >= 0:
                 # if sibling_index is >= 0, then we have a left sibling
                 # that left sibling might prevent us from running.
                 left_sibling_name = parent['children'][left_sibling_index]
                 left_sibling = nodes[left_sibling_name]
-                if 'selector' in parent['type']:
-                    if not left_sibling['return_possibilities']['failure']:
-                        node['return_possibilities'] = {
-                            'success' : False,
-                            'running' : False,
-                            'failure' : False}
-                        cannot_run = True
-                        print(node['name'] + ' : SIBLING = ' + left_sibling_name)
-                        # print(left_sibling)
-                elif 'sequence' in parent['type']:
-                    if not left_sibling['return_possibilities']['success']:
-                        node['return_possibilities'] = {
-                            'success' : False,
-                            'running' : False,
-                            'failure' : False}
-                        cannot_run = True
-                        print(node['name'] + ' : SIBLING = ' + left_sibling_name)
+                if not left_sibling['return_possibilities']['failure' if parent['type'] == 'selector' else 'success']:
+                    node['return_possibilities'] = {
+                        'success' : False,
+                        'running' : False,
+                        'failure' : False}
+                    # if the parent is a selector and the left sibling cannot return 'failure', then we will never run. (mirror for sequence)
+                    cannot_run = True
+                    print(node['name'] + ' : SIBLING = ' + left_sibling_name)
+                    # print(left_sibling)
 
     if cannot_run:
         for child_id in node['children']:
@@ -381,7 +389,7 @@ def refine_return_types(nodes, node_name):
     elif node['category'] == 'leaf':
         return
     elif node['category'] == 'composite':
-        if 'selector' in node['type']:
+        if node['type'] == 'selector':
             can_return_success = False
             can_return_failure = True
             can_return_running = False
@@ -395,7 +403,7 @@ def refine_return_types(nodes, node_name):
                 'running' : can_return_running,
                 'failure' : can_return_failure}
             return
-        elif 'sequence' in node['type']:
+        elif node['type'] == 'sequence':
             can_return_success = True
             can_return_failure = False
             can_return_running = False
@@ -409,7 +417,7 @@ def refine_return_types(nodes, node_name):
                 'running' : can_return_running,
                 'failure' : can_return_failure}
             return
-        elif 'success_on_all' in node['type']:
+        elif node['policy'] == '_success_on_all':
             can_return_success = True
             can_return_failure = False
             can_return_running = False
@@ -423,7 +431,7 @@ def refine_return_types(nodes, node_name):
                 'running' : can_return_running,
                 'failure' : can_return_failure}
             return
-        elif 'success_on_one' in node['type']:
+        elif node['policy'] == '_success_on_one':
             can_return_success = False
             can_return_failure = False
             can_return_running = True
@@ -438,7 +446,7 @@ def refine_return_types(nodes, node_name):
                 'failure' : can_return_failure}
             return
         else:
-            print('unknown composite type!!! ', node['type'])
+            print('unknown composite type/policy combintion!!! ', node['type'], ' ', node['policy'])
             return
     elif node['category'] == 'decorator':
         child_name = node['children'][0]
@@ -492,10 +500,9 @@ def refine_invalid(nodes, node_name):
         node['can_be_invalid'] = True
         node['always_invalid'] = True
     # at this point, parent is sometimes valid
-    elif parent['category'] == 'composite' and 'parallel' in parent['type']:
-        if 'without_memory' in parent['type']:
+    elif parent['type'] == 'parallel':
+        if parent['memory'] == '':
             node['can_be_invalid'] = parent['can_be_invalid']
-            node['always_invalid'] = False
             # parallel unsynchronized always runs all children
         else:
             if node['return_possibilities']['success'] is False:
@@ -508,18 +515,21 @@ def refine_invalid(nodes, node_name):
                 # skipped
                 node['can_be_invalid'] = True
         node['always_invalid'] = False
-    elif parent['category'] == 'composite' and 'selector' in parent['type']:
+        # this could only always be invalid if the parent is always invalid, which it isn't at this point
+    elif parent['category'] == 'composite':
         done = False
         done_always = False
+        forces_return = 'success' if parent['type'] == 'selector' else 'failure'  # I assume the other type would be sequence, at this point.
+        unreachability = 'failure' if parent['type'] == 'selector' else 'success'  # I assume the other type would be sequence, at this point.
         for sibling_index in range(0, parent['children'].index(node_name)):
             sibling_id = parent['children'][sibling_index]
-            if nodes[sibling_id]['return_possibilities']['success'] or nodes[sibling_id]['return_possibilities']['running']:
+            if nodes[sibling_id]['return_possibilities'][forces_return] or nodes[sibling_id]['return_possibilities']['running']:
                 # if a left neighbor can cause the parent to return, then this
                 # node can be invalid
                 done = True
                 node['can_be_invalid'] = True
-                if not nodes[sibling_id]['return_possibilities']['failure']:
-                    # a node to the left of this always returns running or success.
+                if not nodes[sibling_id]['return_possibilities'][unreachability]:
+                    # a node to the left of this is capable of forcing the parent to return, but incapable of allowing us to run
                     # we cannot possibly reach this node.
                     done_always = True
                     # print('the source???? ' + node_name + ' : ' + str(sibling_id))
@@ -527,39 +537,7 @@ def refine_invalid(nodes, node_name):
         node['always_invalid'] = done_always
         if not done:
             # we weren't done.
-            if 'with_memory' in parent['type']:
-                # check if a right neighbor can cause us to be skipped.
-                for sibling_index in range(parent['children'].index(node_name) + 1,
-                                           len(parent['children'])):
-                    sibling_id = parent['children'][sibling_index]
-                    if nodes[sibling_id]['return_possibilities']['running']:
-                        # a sibling to the right can return running
-                        # that means this can be invalid
-                        done = True
-                        node['can_be_invalid'] = True
-                        break
-            if not done:
-                node['can_be_invalid'] = parent['can_be_invalid']
-    elif parent['category'] == 'composite' and 'sequence' in parent['type']:
-        done = False
-        done_always = False
-        for sibling_index in range(0, parent['children'].index(node_name)):
-            sibling_id = parent['children'][sibling_index]
-            if nodes[sibling_id]['return_possibilities']['failure'] or nodes[sibling_id]['return_possibilities']['running']:
-                # if a left neighbor can cause the parent to return, then this
-                # node can be invalid
-                done = True
-                node['can_be_invalid'] = True
-                if not nodes[sibling_id]['return_possibilities']['success']:
-                    # a node to the left of this always returns running or failure.
-                    # we cannot possibly reach this node.
-                    done_always = True
-                    # print('the source2????')
-                    break
-        node['always_invalid'] = done_always
-        if not done:
-            # we weren't done.
-            if 'with_memory' in parent['type']:
+            if parent['memory'] != '':
                 # check if a right neighbor can cause us to be skipped.
                 for sibling_index in range(parent['children'].index(node_name) + 1,
                                            len(parent['children'])):
@@ -607,6 +585,45 @@ def create_local_root_to_relevant_list_map(nodes, node_to_local_root_map, nodes_
     then we started from a relevant point.
     """
 
+    def can_create_running(node):
+        """
+        used to determine if a given node can 'create' a running result.
+        Note that this is not the same as RETURNING running. For instance,
+        a decorator might return running solely because it's child returned running.
+        The child created running in this case, not the decorator
+        --
+        arguments
+        @ node ->  node information
+        --
+        return
+        @ Boolean. True indicates the node in question can create running.
+        False indicates it cannot.
+        --
+        effects and method
+        the node type is checked. based on the node type, we return a value.
+        """
+        return (
+            (
+                node['type'] == 'parallel' or node['memory'] == ''  # composite nodes without memory collapse their children, and can basically create running. parallel nodes always collapse.
+                if node['category'] == 'composite'
+                else
+                (
+                    (
+                        node['additional_arguments'][1] == 'running'  # it can convert X into running.
+                        if node['type'] == 'X_is_Y'
+                        else
+                        False  # only X_is_Y decorators can create running
+                    )
+                    if node['category'] == 'decorator'
+                    else
+                    True  # leaf nodes can create running. (assuming they can return running, and we already verified they can)
+                )
+            )
+            if node['return_possibilities']['running']
+            else
+            False  # it can't create running because it can't return running.
+        )
+
     # running_map = map_can_return_running(nodes, nodes_in_order[0])
 
     local_root_to_relevant_list_map = {}
@@ -624,16 +641,16 @@ def create_local_root_to_relevant_list_map(nodes, node_to_local_root_map, nodes_
                 # this local root is THE root, and therefore it can't be skipped
                 # so we don't have to track if it's skippable
                 local_root_to_relevant_list_map[node_name] = []
-            elif ('parallel' in nodes[nodes[node_name]['parent']]['type']
-                  and '_synchronized' in nodes[nodes[node_name]['parent']]['type']):
-                # the local root's parent is a parallel_synch node
+            elif ('parallel' == nodes[nodes[node_name]['parent']]['type']
+                  and nodes[nodes[node_name]['parent']]['memory'] != ''):
+                # the local root's parent is a parallel node with memory.
                 # so we have to track if it's skippable
                 local_root_to_relevant_list_map[node_name] = [-2]
             else:
-                # the local root's parent is not a parallel_synch node
+                # the local root's parent is either not a parallel node, or doesn't have memory
                 # so we don't have to track if it's skippable
                 local_root_to_relevant_list_map[node_name] = []
-        elif nodes[node_name]['return_possibilities']['running'] and can_create_running(nodes[node_name]):
+        elif can_create_running(nodes[node_name]):
             cur_name = node_name
             first_child = True
             done = False
@@ -661,12 +678,12 @@ def create_local_root_to_relevant_list_map(nodes, node_to_local_root_map, nodes_
                             # this node_with_memory cannot resume. indicate as such.
                             nodes_with_memory_to_relevant_descendants_map[node_with_memory] = set()
                 elif nodes[cur_name]['category'] == 'composite':
-                    if ('without_memory' in nodes[cur_name]['type'] or 'parallel' in nodes[cur_name]['type']):
+                    if (nodes[cur_name]['memory'] == '' or nodes[cur_name]['type'] == 'parallel'):
                         done = True
                         # nothing above us will care.
-                        # without memory collapses everything.
+                        # without memory collapses everything, as does parallel.
                         # either this location will be tracked, or nothing will be tracked.
-                    elif 'with_memory' in nodes[cur_name]['type']:
+                    elif nodes[cur_name]['memory'] != '':
                         nodes_with_memory_found.append(cur_name)
                         if cur_name not in nodes_with_memory_to_relevant_descendants_map:
                             nodes_with_memory_to_relevant_descendants_map[cur_name] = set()
@@ -764,7 +781,7 @@ def create_local_root_to_relevant_list_map(nodes, node_to_local_root_map, nodes_
 #             running = running or running_map[child_name]
 #         if len(node['children']) == 0:
 #             # this is an edge case check.
-#             if 'parallel' in node['type']:
+#             if 'parallel' == node['type']:
 #                 running_map[node_name] = True
 #                 return True
 #             else:
