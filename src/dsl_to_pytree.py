@@ -115,7 +115,8 @@ def flatten(array_of_array, running_total = []):
 STANDARD_IMPORTS = ('import py_trees' + os.linesep
                     + 'import math' + os.linesep
                     + 'import operator' + os.linesep
-                    + 'import random' + os.linesep)
+                    + 'import random' + os.linesep
+                    + 'import serene_value_checker' + os.linesep)
 
 
 def class_definition(node_name):
@@ -203,7 +204,7 @@ def build_range_func(code):
     )
 
 
-def variable_assignment(values, range_mode, global_init = False):
+def resolve_variable_nondeterminism(values, range_mode, global_init = False):
     return (
         (
             'random.choice(['
@@ -220,16 +221,24 @@ def variable_assignment(values, range_mode, global_init = False):
     )
 
 
+def variable_assignment(variable, variable_name, assign_value, global_init = False, indent_level):
+    if variable.model_as == 'FROZENVAR' and not global_init:
+        print('ERROR: variable ' + statement.variable.name + ' is a FROZENVAR but is being updated')
+        sys.exit()
+    safety_1 = '' if variable.model_as == 'DEFINE' else ('serene_value_checker.' + statement.variable.name + '(')
+    safety_2 = '' if variable.model_as == 'DEFINE' else ')'
+
+
 def handle_variable_statement(statement, indent_level = 2, global_init = False, override_variable_name = None):
     variable_name = (format_variable(statement.variable, statement.mode == 'local', global_init) if override_variable_name is None else override_variable_name)
     if len(statement.case_results) == 0:
-        return (indent(indent_level) + variable_name + ' = ' + variable_assignment(statement.default_result.values, statement.default_result.range_mode, global_init) + os.linesep)
+        return (indent(indent_level) + variable_name + ' = ' + safety_1 + resolve_variable_nondeterminism(statement.default_result.values, statement.default_result.range_mode, global_init) + safety_2 + os.linesep)
     return ((''.join([
         (indent(indent_level) + 'elif ' + format_code(case_result.condition, global_init) + ':' + os.linesep
-         + (indent(indent_level + 1) + variable_name + ' = ' + variable_assignment(case_result.values, case_result.range_mode, global_init) + os.linesep)
+         + (indent(indent_level + 1) + variable_name + ' = ' + safety_1 + resolve_variable_nondeterminism(case_result.values, case_result.range_mode, global_init) + safety_2 + os.linesep)
          ) for case_result in statement.case_results])).replace('elif', 'if', 1)
             + (indent(indent_level) + 'else:' + os.linesep
-               + indent(indent_level + 1) + variable_name + ' = ' + variable_assignment(statement.default_result.values, statement.default_result.range_mode, global_init) + os.linesep)
+               + indent(indent_level + 1) + variable_name + ' = ' + safety_1 + resolve_variable_nondeterminism(statement.default_result.values, statement.default_result.range_mode, global_init) + safety_2 + os.linesep)
             )
 
 
@@ -283,6 +292,10 @@ def handle_read_statement(statement):
                 + os.linesep
             )
             + indent(2) + 'if temp_vals[0]:' + os.linesep
+            + ''.join(
+                [
+                ]
+            )
             + indent(3) + '('
             + ', '.join(
                 (['_'] if statement.condition_variable is None else [format_variable(statement.condition_variable, True)])
