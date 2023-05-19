@@ -1,0 +1,149 @@
+MODULE main
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		resume_from_here_in_subtree__runner := -3;
+		trace_running_source_running_node := (running_node.status = running) ? node_names.running_node : -2;
+		trace_running_source_seq := 
+			case
+				!(trace_running_source_running_node = -2) : trace_running_source_running_node;
+				TRUE : -2;
+			esac;
+		trace_running_source_running_node_1 := (running_node_1.status = running) ? node_names.running_node_1 : -2;
+		trace_running_source_sel := 
+			case
+				!(trace_running_source_running_node_1 = -2) : trace_running_source_running_node_1;
+				TRUE : -2;
+			esac;
+		child_index_to_resume_from__seq := 
+			case
+				(resume_from_here_in_subtree__seq in {3}) : 1;
+				TRUE : -2;
+			esac;
+		child_index_to_resume_from__sel := 
+			case
+				(resume_from_here_in_subtree__sel in {6}) : 1;
+				TRUE : -2;
+			esac;
+		runner.active := TRUE;
+		parallel_skip__runner := [resume_from_here_in_subtree__seq, resume_from_here_in_subtree__sel, resume_from_here_in_subtree__success_node_1];
+		--START OF BLACKBOARD DEFINITIONS
+		--END OF BLACKBOARD DEFINITIONS
+	VAR
+		node_names : define_nodes;
+		resume_from_here_in_subtree__seq : {1, -2, 3};
+		resume_from_here_in_subtree__sel : {4, -2, 6};
+		resume_from_here_in_subtree__success_node_1 : {7, -2};
+		success_node : success_DEFAULT_module();
+		running_node : running_DEFAULT_module();
+		seq : composite_sequence_with_partial_memory_2(success_node, running_node, child_index_to_resume_from__seq);
+		failure_node : failure_DEFAULT_module();
+		running_node_1 : running_DEFAULT_module();
+		sel : composite_selector_with_partial_memory_2(failure_node, running_node_1, child_index_to_resume_from__sel);
+		success_node_1 : success_DEFAULT_module();
+		runner : composite_parallel_success_on_all_with_partial_memory_3(seq, sel, success_node_1, parallel_skip__runner);
+		--START OF BLACKBOARD VARIABLES DECLARATION
+		--END OF BLACKBOARD VARIABLES DECLARATION
+	ASSIGN
+		init(resume_from_here_in_subtree__seq) := 1;
+		init(resume_from_here_in_subtree__sel) := 4;
+		init(resume_from_here_in_subtree__success_node_1) := 7;
+		--START OF BLACKBOARD VARIABLES INITIALIZATION
+		--END OF BLACKBOARD VARIABLES INITIALIZATION
+		next(resume_from_here_in_subtree__seq) := 
+			case
+				(runner.status in {success, failure}) : node_names.seq;
+				(seq.status = success) : -2;
+				(seq.status = failure) : node_names.seq;
+				TRUE : max(trace_running_source_seq, node_names.seq);
+			esac;
+		next(resume_from_here_in_subtree__sel) := 
+			case
+				(runner.status in {success, failure}) : node_names.sel;
+				(sel.status = success) : -2;
+				(sel.status = failure) : node_names.sel;
+				TRUE : max(trace_running_source_sel, node_names.sel);
+			esac;
+		next(resume_from_here_in_subtree__success_node_1) := 
+			case
+				(runner.status in {success, failure}) : node_names.success_node_1;
+				(success_node_1.status = success) : -2;
+				(success_node_1.status = failure) : node_names.success_node_1;
+				TRUE : 7;
+			esac;
+		--START OF BLACKBOARD VARIABLES TRANSITION
+		--END OF BLACKBOARD VARIABLES TRANSITION
+
+
+MODULE define_nodes
+	DEFINE
+		runner := 0;
+		seq := 1;
+		success_node := 2;
+		running_node := 3;
+		sel := 4;
+		failure_node := 5;
+		running_node_1 := 6;
+		success_node_1 := 7;
+MODULE composite_selector_with_partial_memory_2(child_0, child_1, resume_point)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				(0 >= resume_point) & !(child_0.internal_status = failure) : child_0.internal_status;
+				(1 >= resume_point) & !(child_1.internal_status = failure) : child_1.internal_status;
+				TRUE : failure;
+			esac;
+		child_0.active := active & (0 >= resume_point);
+		child_1.active := active & ((1 >= resume_point) & ((1 = resume_point) | (child_0.status = failure)));
+MODULE composite_sequence_with_partial_memory_2(child_0, child_1, resume_point)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				(0 >= resume_point) & !(child_0.internal_status = success) : child_0.internal_status;
+				(1 >= resume_point) & !(child_1.internal_status = success) : child_1.internal_status;
+				TRUE : success;
+			esac;
+		child_0.active := active & (0 >= resume_point);
+		child_1.active := active & ((1 >= resume_point) & ((1 = resume_point) | (child_0.status = success)));
+MODULE composite_parallel_success_on_all_with_partial_memory_3(child_0, child_1, child_2, skip_child)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				(child_0.internal_status = failure) & !(skip_child[0] = -2) : failure;
+				(child_1.internal_status = failure) & !(skip_child[1] = -2) : failure;
+				(child_2.internal_status = failure) & !(skip_child[2] = -2) : failure;
+				!(child_0.internal_status = success) & !(skip_child[0] = -2) : child_0.internal_status;
+				!(child_1.internal_status = success) & !(skip_child[1] = -2) : child_1.internal_status;
+				!(child_2.internal_status = success) & !(skip_child[2] = -2) : child_2.internal_status;
+				TRUE : success;
+			esac;
+		child_0.active := active & !(skip_child[0] = -2);
+		child_1.active := active & !(skip_child[1] = -2);
+		child_2.active := active & !(skip_child[2] = -2);
+MODULE running_DEFAULT_module
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := running;
+MODULE success_DEFAULT_module
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := success;
+MODULE failure_DEFAULT_module
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := failure;

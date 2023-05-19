@@ -26,26 +26,26 @@ executable complex-robot
 
     -- Modules included in this executable, other than Main.
     other-modules:
-        Behavior_tree_blackboard
-        Behavior_tree_core
-        Behavior_tree_environment
-        Can_move_forward_file
-        Can_move_side_file
-        Change_side_file
-        Complex_robot
-        Flag_found_file
-        Flag_not_returned_file
-        Go_forward_file
-        Go_side_file
-        In_home_file
-        In_maze_file
-        In_target_file
-        Need_side_file
-        Never_need_side_file
-        Search_tile_file
+        BehaviorTreeBlackboard
+        BehaviorTreeCore
+        BehaviorTreeEnvironment
+        BTreeCanMoveForward
+        BTreeCanMoveSide
+        BTreeChangeSide
+        BTreeFlagFound
+        BTreeFlagNotReturned
+        BTreeGoForward
+        BTreeGoSide
+        BTreeInHome
+        BTreeInMaze
+        BTreeInTarget
+        BTreeNeedSide
+        BTreeNeverNeedSide
+        BTreeSearchTile
+        BTreeSetZone
+        BTreeSuccessNode
+        ComplexRobot
         SereneRandomizer
-        Set_zone_file
-        Success_node_file
 
 
     -- LANGUAGE extensions used by modules in this package.

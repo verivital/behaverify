@@ -229,16 +229,16 @@ actions {
 			read_environment {
 				python_function { from 'complex_robot_environment' 'search_tile'} end_python_function
 				condition { True } end_condition
-				variable_statement_using_env {
+				read_variable_statement {
 					local tile_searched
 					case { (equal, env tile_progress, 2) } end_case result { True } end_result
 					result { True, False } end_result
-				} end_variable_statement_using_env
-				variable_statement_using_env {
+				} end_read_variable_statement
+				read_variable_statement {
 					bl have_flag
 					case { bl have_flag} end_case result { True } end_result
 					result { (and, local tile_searched, (equal, env x, env flag_x), (equal, env y, env flag_y)) } end_result
-				} end_variable_statement_using_env
+				} end_read_variable_statement
 			} end_read_environment
 			write_environment {
 				python_function { from 'complex_robot_environment' 'update_search'} end_python_function
@@ -270,12 +270,12 @@ actions {
 			read_environment {
 				python_function { from 'complex_robot_environment' 'compute_zone' } end_python_function
 				condition { True } end_condition
-				variable_statement_using_env {
+				read_variable_statement {
 					bl zone
 					case { (less_than_or_equal, env x, 'home_end') } end_case result { 'home' } end_result
 					case { (greater_than_or_equal, env x, 'target_start') } end_case result { 'target' } end_result
 					result { 'maze' } end_result
-				} end_variable_statement_using_env
+				} end_read_variable_statement
 			} end_read_environment
 			return_statement {
 				result { success } end_result
@@ -321,7 +321,7 @@ composite {
 		set_zone
 		composite {
 			control_sequence
-			sequence with_memory
+			sequence with_partial_memory
 			children {
 				flag_not_returned
 				composite {

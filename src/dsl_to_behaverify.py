@@ -6,6 +6,7 @@ import os
 import itertools
 import copy
 import serene_functions
+from behaverify_to_smv import write_smv
 
 from behaverify_common import create_node_name, create_node_template, create_variable_template
 
@@ -125,6 +126,13 @@ def format_variable(variable_obj, is_local, node_name, is_env, variables, use_st
     variable_key = variable_reference(variable_obj.name, is_local, node_name, is_env)
     variable = variables[variable_key]
     if variable['mode'] == 'DEFINE':
+        if overwrite_stage is not None:
+            return (
+                ('' if not use_next else 'next(')
+                + variable['prefix']
+                + variable['name']
+                + '_stage_' + str(overwrite_stage)
+                + ('' if not use_next else ')'))
         used_vars = []
         for code_fragment in variable_obj.initial_value.default_result.values:
             used_vars += find_used_variables(code_fragment, node_name, variables, use_stages)
@@ -158,7 +166,7 @@ def format_variable(variable_obj, is_local, node_name, is_env, variables, use_st
 def format_code(code, node_name, variables, use_stages, use_next, not_next):
     return (
         (str(code.constant).upper() if isinstance(code.constant, bool) else str(handle_constant(code.constant))) if code.constant is not None else (
-            (format_variable(code.variable, (code.mode == 'local'), (code.node_name if hasattr(code, 'node_name') else node_name), (code.mode == 'env'), variables, use_stages, use_next, not_next, (code.read_at if hasattr(code, 'read_at') else None))) if code.variable is not None else (
+            (format_variable(code.variable, code.mode == 'local', code.node_name if hasattr(code, 'node_name') else node_name, code.mode == 'env', variables, use_stages, use_next, not_next, (code.read_at if hasattr(code, 'read_at') else None))) if code.variable is not None else (
                 ('(' + format_code(code.code_statement, node_name, variables, use_stages, use_next, not_next) + ')') if code.code_statement is not None else (
                     format_function(code, node_name, variables, use_stages, use_next, not_next)
                 )
@@ -295,7 +303,7 @@ def variable_reference(base_name, is_local, node_name, is_env):
 
 def handle_variable_statement(statement, node_name, variables, is_initial, define_only):
     if is_initial:
-        variable_key = variable_reference(statement.variable.name, statement.mode == 'local', node_name, False)
+        variable_key = variable_reference(statement.variable.name, statement.mode == 'local', node_name, statement.mode == 'env')
         variable = variables[variable_key]
         if variable['model_as'] == 'DEFINE':
             variable.initial_value = statement
@@ -306,7 +314,7 @@ def handle_variable_statement(statement, node_name, variables, is_initial, defin
         else:
             variables[variable_key]['initial_value'] = make_new_stage(statement, node_name, variables, False, False, None)
     else:
-        variable_key = variable_reference(statement.variable.name, statement.mode == 'local', node_name, False)
+        variable_key = variable_reference(statement.variable.name, statement.mode == 'local', node_name, statement.mode == 'env')
         keep_stage_0 = variables[variable_key]['keep_stage_0']
         non_determinism = any([(len(result.values) > 1) for result in itertools.chain([statement.default_result], statement.case_results)])
         keep_stage_0 = keep_stage_0 or (not non_determinism)
@@ -326,8 +334,8 @@ def handle_read_statement(statement, node_name, variables, is_initial, define_on
     if is_initial:
         if statement.condition is None:
             condition_variable_key = variable_reference(statement.condition_variable.name, True, node_name, False)
-            if condition_variable_key not in variables:
-                format_variable(statement.condition_variable, True, node_name, False, variables, False, False, None)
+            # if condition_variable_key not in variables:
+            #     format_variable(statement.condition_variable, True, node_name, False, variables, False, False, None)
             new_stage = [('TRUE', '{TRUE, FALSE}')]
             variables[condition_variable_key]['initial_value'] = new_stage
         condition = (
@@ -336,10 +344,10 @@ def handle_read_statement(statement, node_name, variables, is_initial, define_on
                 )
             )
         for variable_statement in statement.variable_statements:
-            variable_key = variable_reference(variable_statement.variable.name, variable_statement.mode == 'local', node_name, False)
-            if variable_key not in variables:
-                format_variable(variable_statement.variable, variable_statement.mode == 'local',
-                                node_name, False, variables, False, False, None)
+            variable_key = variable_reference(variable_statement.variable.name, variable_statement.mode == 'local', node_name, variable_statement.mode == 'env')
+            # if variable_key not in variables:
+            #     format_variable(variable_statement.variable, True,
+            #                     node_name, False, variables, False, False, None)
             variable = variables[variable_key]
             variable['intial_value'] = ([('!(' + condition + ')',
                                           variable['custom_value_range'] if variable['custom_value_range'] is not None else (
@@ -352,8 +360,8 @@ def handle_read_statement(statement, node_name, variables, is_initial, define_on
     else:
         if statement.condition is None:
             condition_variable_key = variable_reference(statement.condition_variable.name, True, node_name, False)
-            if condition_variable_key not in variables:
-                format_variable(statement.condition_variable, True, node_name, False, variables, False, False, None)
+            # if condition_variable_key not in variables:
+            #     format_variable(statement.condition_variable, True, node_name, False, variables, False, False, None)
             new_stage = [('TRUE', '{TRUE, FALSE}')]
             variables[condition_variable_key]['next_value'].append((node_name, True, new_stage))
         condition = (
@@ -362,10 +370,10 @@ def handle_read_statement(statement, node_name, variables, is_initial, define_on
                 )
             )
         for variable_statement in statement.variable_statements:
-            variable_key = variable_reference(variable_statement.variable.name, variable_statement.mode == 'local', node_name, False)
-            if variable_key not in variables:
-                format_variable(variable_statement.variable, variable_statement.mode == 'local',
-                                node_name, False, variables, False, False, None)
+            variable_key = variable_reference(variable_statement.variable.name, variable_statement.mode == 'local', node_name, variable_statement.mode == 'env')
+            # if variable_key not in variables:
+            #     format_variable(variable_statement.variable, variable_statement.mode == 'local',
+            #                     node_name, False, variables, False, False, None)
             variable = variables[variable_key]
             keep_stage_0 = variable['keep_stage_0']
             non_determinism = any([(len(result.values) > 1) for result in itertools.chain([variable_statement.default_result], variable_statement.case_results)])
@@ -489,7 +497,7 @@ def resolve_statements(statements, nodes, variables):
             elif statement_tuple[2].read_statement is not None:
                 handle_read_statement(statement_tuple[2].read_statement, statement_tuple[0], variables, False, False)
             else:
-                delayed_statements.append(handle_write_statement(statement_tuple[2].write_statement, statement_tuple[0], variables))
+                delayed_statements += handle_write_statement(statement_tuple[2].write_statement, statement_tuple[0], variables)
     for delayed in delayed_statements:
         handle_variable_statement(delayed[1], delayed[0], variables, False, False)
     return
@@ -510,7 +518,7 @@ def complete_environment_variables(model, variables):
     '''
 
     for statement in model.update:
-        new_stage = make_new_stage(statement, None, variables, {}, True, False, False)
+        new_stage = make_new_stage(statement, None, variables, True, False, False)
         variable_name = variable_reference(statement.variable.name, False, '', True)
         non_determinism = any([(len(result.values) > 1) for result in itertools.chain([statement.default_result], statement.case_results)])
         variables[variable_name]['next_value'].append((None, non_determinism, new_stage))
@@ -619,24 +627,6 @@ def get_variables(model, local_variables, initial_statements, keep_stage_0):
     return variables
 
 
-def format_node_type(current_node):
-    return (
-        (
-            current_node.node_type + (
-                ('_' + current_node.parallel_policy + '_without_memory' if not current_node.memory else (
-                    '_success_on_all_with_memory')
-                 )
-                if current_node.node_type == 'parallel' else
-                ('_with_memory' if current_node.memory else '_without_memory')
-            )
-        )
-        if current_node.node_type in COMPOSITES else
-        (
-            current_node.node_type
-        )
-    )
-
-
 def create_composite(current_node, node_name, modifier, node_names, node_names_map, parent_name):
     cur_node_names = {node_name}.union(node_names)
     cur_node_names_map = {name : (modifier if name == node_name else node_names_map[name]) for name in node_names_map}
@@ -655,8 +645,8 @@ def create_composite(current_node, node_name, modifier, node_names, node_names_m
         local_variables = local_variables + new_vals[4]
         initial_statements = initial_statements + new_vals[5]
         statements = statements + new_vals[6]
-    nodes[node_name] = create_node_template(node_name, parent_name, children, 'composite',
-                                            format_node_type(current_node),
+    nodes[node_name] = create_node_template(node_name, parent_name, children,
+                                            'composite', current_node.node_type, (('_' + current_node.parallel_policy) if current_node.node_type == 'parallel' else ''), current_node.memory,
                                             True, True, True)
     return (node_name, cur_node_names, cur_node_names_map, nodes, local_variables, initial_statements, statements)
 
@@ -677,8 +667,8 @@ def create_decorator(current_node, node_name, modifier, node_names, node_names_m
     local_variables = local_variables + new_vals[4]
     initial_statements = initial_statements + new_vals[5]
     statements = statements + new_vals[6]
-    nodes[node_name] = create_node_template(node_name, parent_name, children, 'decorator',
-                                            format_node_type(current_node),
+    nodes[node_name] = create_node_template(node_name, parent_name, children,
+                                            'decorator', current_node.node_type, '', '',
                                             True, True, True, additional_arguments)
     return (node_name, cur_node_names, cur_node_names_map, nodes, local_variables, initial_statements, statements)
 
@@ -692,7 +682,8 @@ def create_check(current_node, node_name, modifier, node_names, node_names_map, 
     cur_node_names_map = {name : (modifier if name == node_name else node_names_map[name]) for name in node_names_map}
     return (
         node_name, cur_node_names, cur_node_names_map,
-        {node_name : create_node_template(node_name, parent_name, [], 'leaf', current_node.node_type,
+        {node_name : create_node_template(node_name, parent_name, [],
+                                          'leaf', current_node.node_type, '', '',
                                           True, False, True)
          },
         [], [], [(node_name, 'check', current_node.condition)]
@@ -704,7 +695,8 @@ def create_action(current_node, node_name, modifier, node_names, node_names_map,
     cur_node_names_map = {name : (modifier if name == node_name else node_names_map[name]) for name in node_names_map}
     return (
         node_name, cur_node_names, cur_node_names_map,
-        {node_name : create_node_template(node_name, parent_name, [], 'leaf', current_node.node_type,
+        {node_name : create_node_template(node_name, parent_name, [],
+                                          'leaf', current_node.node_type, '', '',
                                           True, True, True)
          },
         list(map(lambda x : (node_name, x), current_node.local_variables)),
@@ -861,6 +853,8 @@ def main():
     arg_parser.add_argument('model_file')
     arg_parser.add_argument('--keep_stage_0', action = 'store_true')
     arg_parser.add_argument('--output_file', default = None)
+    arg_parser.add_argument('--do_not_trim', action = 'store_true')
+    arg_parser.add_argument('--behave_only', action = 'store_true')
     args = arg_parser.parse_args()
 
     metamodel = textx.metamodel_from_file(args.metamodel_file, auto_init_attributes = False)
@@ -875,19 +869,22 @@ def main():
     (_, _, _, nodes, local_variables, initial_statements, statements) = walk_tree(model.root)
 
     variables = get_variables(model, local_variables, initial_statements, args.keep_stage_0)
-    tick_condition = 'TRUE' if model.tick_condition is None else format_code(model.tick_condition, None, variables, local_variables, True, False, None)
+    tick_condition = 'TRUE' if model.tick_condition is None else format_code(model.tick_condition, None, variables, True, False, None)
     specifications = handle_specifications(model.specifications, variables)  # this included here to ensure we don't erase stage 0 used by specifications.
     resolve_statements(statements, nodes, variables)
     complete_environment_variables(model, variables)
     specifications = handle_specifications(model.specifications, variables)
 
-    if args.output_file is None:
-        printer = pprint.PrettyPrinter(indent = 4)
-        printer.pprint({'tick_condition' : tick_condition, 'nodes' : nodes, 'variables' : variables, 'specifications' : specifications})
-    else:
-        with open(args.output_file, 'w') as f:
-            printer = pprint.PrettyPrinter(indent = 4, stream = f)
+    if args.behave_only:
+        if args.output_file is None:
+            printer = pprint.PrettyPrinter(indent = 4)
             printer.pprint({'tick_condition' : tick_condition, 'nodes' : nodes, 'variables' : variables, 'specifications' : specifications})
+        else:
+            with open(args.output_file, 'w') as f:
+                printer = pprint.PrettyPrinter(indent = 4, stream = f)
+                printer.pprint({'tick_condition' : tick_condition, 'nodes' : nodes, 'variables' : variables, 'specifications' : specifications})
+    else:
+        write_smv(nodes, variables, tick_condition, specifications, args.output_file, args.do_not_trim)
     return
 
 

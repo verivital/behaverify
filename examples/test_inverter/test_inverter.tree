@@ -1,14 +1,14 @@
-variables {
-	variable { test VAR [0, 2] } end_variable
-} end_variables
+constants {} end_constants
+
+blackboard_variables {
+	blackboard_variable { test VAR [0, 2] initial_value { result { range, 0, 2, True } end_result } end_initial_value} end_blackboard_variable
+} end_blackboard_variables
 
 local_variables {} end_local_variables
 
 environment {
 	environment_variables {
 	} end_environment_variables
-	initial_values {
-	} end_initial_values
 	update_values {
 	} end_update_values
 } end_environment
@@ -20,29 +20,33 @@ environment_checks {} end_environment_checks
 actions {
 	action {
 		tester
+		local_variables {} end_local_variables
 		read_variables {} end_read_variables
 		write_variables { test } end_write_variables
 		initial_values { } end_initial_values
 		update {
 			variable_statement {
-				test
-				case { (equal, test, 2) } end_case result { 0 } end_result
-				result { (min, 2, (addition, test, 1)) } end_result
+				bl test
+				case { (equal, bl test, 2) } end_case result { 0 } end_result
+				result { (min, 2, (addition, bl test, 1)) } end_result
 			} end_variable_statement
 			return_statement {
-				case { (equal, test, 0) } end_case result { success } end_result
-				case { (equal, test, 1) } end_case result { running } end_result
+				case { (equal, bl test, 0) } end_case result { success } end_result
+				case { (equal, bl test, 1) } end_case result { running } end_result
 				result { failure } end_result
 			} end_return_statement
 		} end_update
 	} end_action
 } end_actions
 
-root_node
-decorator {
-	inv
-	inverter
-	child tester
-} end_decorator
+sub_trees {} end_sub_trees
+
+tree {
+	decorator {
+		inv
+		inverter
+		child tester
+	} end_decorator
+} end_tree
 
 specifications { } end_specifications
