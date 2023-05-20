@@ -127,16 +127,12 @@ environment_checks {
 	#comment# check environment nodes are defined here #end_comment#
 	check_environment {
 		flag_not_returned
-		imports { 'complex_robot_environment' } end_imports
 		read_variables {} end_read_variables
-		python_function { from 'complex_robot_environment' 'check_flag_not_returned'  } end_python_function
 		condition { (not, env flag_returned) } end_condition
 	} end_check_environment
 	check_environment {
 		can_move_forward
-		imports { 'complex_robot_environment' } end_imports
 		read_variables { forward } end_read_variables
-		python_function { from 'complex_robot_environment' 'can_move_forward'  } end_python_function
 		condition {
 			(and,
 				(greater_than_or_equal, (addition, bl forward, env x), 0),
@@ -150,9 +146,7 @@ environment_checks {
 	} end_check_environment
 	check_environment {
 		can_move_side
-		imports { 'complex_robot_environment' } end_imports
 		read_variables {side} end_read_variables
-		python_function { from 'complex_robot_environment' 'can_move_side'  } end_python_function
 		condition {
 			(and,
 				(greater_than_or_equal, (addition, bl side, env y), 0),
@@ -168,7 +162,6 @@ actions {
 
 	action {
 		change_side
-		imports { } end_imports
 		local_variables {} end_local_variables
 		read_variables {} end_read_variables
 		write_variables { side } end_write_variables
@@ -187,14 +180,13 @@ actions {
 	
 	action {
 		go_forward
-		imports { 'complex_robot_environment' } end_imports
 		local_variables {} end_local_variables
 		read_variables {forward} end_read_variables
 		write_variables {} end_write_variables
 		initial_values {} end_initial_values
 		update {
 			write_environment {
-				python_function { from 'complex_robot_environment' 'go_forward' } end_python_function
+				go_forward_func
 				update_values {
 					environment_statement {
 						env x
@@ -222,7 +214,6 @@ actions {
 
 	action {
 		go_side
-		imports { 'complex_robot_environment' } end_imports
 		local_variables {} end_local_variables
 		read_variables {side} end_read_variables
 		write_variables {} end_write_variables
@@ -230,7 +221,7 @@ actions {
 		} end_initial_values
 		update {
 			write_environment {
-				python_function { from 'complex_robot_environment' 'go_side' } end_python_function
+				go_side_func
 				update_values {
 					environment_statement {
 						env y
@@ -253,7 +244,6 @@ actions {
 
 	action {
 		never_need_side
-		imports {} end_imports
 		local_variables {} end_local_variables
 		read_variables {} end_read_variables
 		write_variables {need_side_reached} end_write_variables
@@ -274,14 +264,13 @@ actions {
 	
 	action {
 		search_tile
-		imports { 'complex_robot_environment' } end_imports
 		local_variables {tile_searched} end_local_variables
 		read_variables {} end_read_variables
 		write_variables { have_flag } end_write_variables
 		initial_values {} end_initial_values
 		update {
 			read_environment {
-				python_function { from 'complex_robot_environment' 'search_tile'} end_python_function
+				search_tile_func
 				condition { True } end_condition
 				read_variable_statement {
 					local tile_searched
@@ -295,7 +284,7 @@ actions {
 				} end_read_variable_statement
 			} end_read_environment
 			write_environment {
-				python_function { from 'complex_robot_environment' 'update_search'} end_python_function
+				update_search_func
 				update_values {
 					environment_statement {
 						env tile_progress
@@ -315,14 +304,13 @@ actions {
 	
 	action {
 		set_zone
-		imports { 'complex_robot_environment' } end_imports
 		local_variables {} end_local_variables
 		read_variables {} end_read_variables
 		write_variables { zone } end_write_variables
 		initial_values {} end_initial_values
 		update {
 			read_environment {
-				python_function { from 'complex_robot_environment' 'compute_zone' } end_python_function
+				compute_zone_func
 				condition { True } end_condition
 				read_variable_statement {
 					bl zone

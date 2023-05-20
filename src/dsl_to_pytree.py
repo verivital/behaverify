@@ -1,24 +1,26 @@
 import textx
 import argparse
 import os
-import sys
+# import sys
 import itertools
 from behaverify_common import indent, create_node_name
 import serene_functions
+import dsl_to_environment
+from check_model import validate_model
 
 
-def format_function_before(function_name, code, global_init = False):
+def format_function_before(function_name, code, init_mode = None):
     return (
         function_name + '('
-        + ', '.join([format_code(value, global_init) for value in code.function_call.values])
+        + ', '.join([format_code(value, init_mode) for value in code.function_call.values])
         + ')'
         )
 
 
-def format_function_between(function_name, code, global_init = False):
+def format_function_between(function_name, code, init_mode = None):
     return (
         '('
-        + (' ' + function_name + ' ').join([format_code(value, global_init) for value in code.function_call.values])
+        + (' ' + function_name + ' ').join([format_code(value, init_mode) for value in code.function_call.values])
         + ')'
         )
 
@@ -54,11 +56,22 @@ FUNCTION_FORMAT = {
 }
 
 
-def format_variable(variable, is_local, global_init = False):
+def format_variable_name_only(variable, is_local, init_mode = None):
     return (
         (
             ('blackboard_reader.')
-            if global_init else
+            if init_mode == 'blackboard' else
+            ('self.' + ('' if is_local else 'blackboard.'))
+        )
+        + variable.name
+    )
+
+
+def format_variable(variable, is_local, init_mode = None):
+    return (
+        (
+            ('blackboard_reader.')
+            if init_mode == 'blackboard' else
             ('self.' + ('' if is_local else 'blackboard.'))
         )
         + variable.name
@@ -66,13 +79,13 @@ def format_variable(variable, is_local, global_init = False):
     )
 
 
-def format_code(code, global_init = False):
+def format_code(code, init_mode = None):
     return (
         (
-            (("'" + handle_constant(code.constant) + "'") if isinstance(handle_constant(code.constant), str) else str(handle_constant(code.constant))) if code.constant is not None else (
-                (format_variable(code.variable, code.mode == 'local', global_init)) if code.variable is not None else (
-                    ('(' + format_code(code.code_statement, global_init) + ')') if code.code_statement is not None else (
-                        FUNCTION_FORMAT[code.function_call.function_name][1](FUNCTION_FORMAT[code.function_call.function_name][0], code, global_init)
+            handle_constant_str(code.constant) if code.constant is not None else (
+                (format_variable(code.variable, code.mode == 'local', init_mode)) if code.variable is not None else (
+                    ('(' + format_code(code.code_statement, init_mode) + ')') if code.code_statement is not None else (
+                        FUNCTION_FORMAT[code.function_call.function_name][1](FUNCTION_FORMAT[code.function_call.function_name][0], code, init_mode)
                     )
                 )
             )
@@ -83,6 +96,11 @@ def format_code(code, global_init = False):
 def handle_constant(constant):
     global constants
     return (constants[constant] if constant in constants else constant)
+
+
+def handle_constant_str(constant):
+    new_constant = handle_constant(constant)
+    return (("'" + new_constant + "'") if isinstance(new_constant, str) else str(new_constant))
 
 
 def find_local_variables(code):
@@ -116,7 +134,7 @@ STANDARD_IMPORTS = ('import py_trees' + os.linesep
                     + 'import math' + os.linesep
                     + 'import operator' + os.linesep
                     + 'import random' + os.linesep
-                    + 'import serene_value_checker' + os.linesep)
+                    + 'import serene_safe_assignment' + os.linesep)
 
 
 def class_definition(node_name):
@@ -136,8 +154,7 @@ def update_method_check(node):
     return (indent(1) + 'def update(self):' + os.linesep
             + indent(2) + 'return ((py_trees.common.Status.SUCCESS) if ('
             + format_code(node.condition)
-            + ') else (py_trees.common.Status.FAILURE))' + os.linesep
-            + os.linesep)
+            + ') else (py_trees.common.Status.FAILURE))' + os.linesep)
 
 
 def init_method_check_env(node):
@@ -149,16 +166,15 @@ def init_method_check_env(node):
 
 
 def update_method_check_env(node):
+    global PROJECT_ENVIRONMENT_NAME
     return (indent(1) + 'def update(self):' + os.linesep
             + indent(2) + 'return ((py_trees.common.Status.SUCCESS) if ('
-            + ('' if node.python_function is None else (
-                ((node.import_from + '.') if node.import_from is not None else '') + node.python_function
-                + '('
-                + ', '.join(sorted(list(set(find_local_variables(node.condition)))))
-                + ')'
-            ))
-            + ') else (py_trees.common.Status.FAILURE))' + os.linesep
-            + os.linesep)
+            + PROJECT_ENVIRONMENT_NAME + '.' + node.name + '(self)'
+            # + PROJECT_ENVIRONMENT_NAME + '.' + node.name
+            # + '('
+            # + ', '.join(sorted(list(set(find_local_variables(node.condition)))))
+            # + ')'
+            + ') else (py_trees.common.Status.FAILURE))' + os.linesep)
 
 
 RANGE_FUNCTION = {
@@ -204,139 +220,175 @@ def build_range_func(code):
     )
 
 
-def resolve_variable_nondeterminism(values, range_mode, global_init = False):
+def resolve_variable_nondeterminism(values, range_mode, init_mode = None):
+    if range_mode:
+        cond_func = build_range_func(values[2])
+        poss_values = '[' + ', '.join(map(str, filter(cond_func, range(handle_constant(values[0]), handle_constant(values[1]) + 1)))) + ']'
+        if poss_values == '[]':
+            raise Exception('variable had no valid values!')
+        else:
+            return (
+                'random.choice('
+                + poss_values
+                + ')'
+            )
+        pass
+    else:
+        if len(values) == 0:
+            raise Exception('variable had no valid values!')
+        elif len(values) == 1:
+            return format_code(values[0], init_mode)
+        else:
+            return ('random.choice(['
+                    + ', '.join([format_code(value, init_mode) for value in values])
+                    + '])')
+
+
+def variable_assignment(variable, variable_name, is_local, assign_value, indent_level = 2, init_mode = None):
+    if init_mode is None and (variable.model_as == 'FROZENVAR' or variable.model_as == 'DEFINE'):
+        raise Exception('ERROR: variable ' + variable.name + ' is a ' + variable.model_as + ' but is being updated.')
+    if init_mode == 'node' and not is_local and (variable.model_as == 'FROZENVAR' or variable.model_as == 'DEFINE'):
+        raise Exception('ERROR: variable ' + variable.name + ' is a ' + variable.model_as + ' but is being updated.')
+    safety_1 = '' if variable.model_as == 'DEFINE' else ('serene_safe_assignment.' + variable.name + '(')
+    safety_2 = '' if variable.model_as == 'DEFINE' else ')'
     return (
-        (
-            'random.choice(['
-            + ', '.join([str(value) for value in range(handle_constant(values[0]), handle_constant(values[1]) + 1)
-                         if cond_func(value)])
-            + '])'
-        )
-        if (range_mode and ((cond_func := build_range_func(values[2])) or True)) else  # this is not a mistake. we are doing this to build the cond func once, instead of having to repeatedly build it
-        ('random.choice(['
-         + ', '.join([format_code(value, global_init) for value in values])
-         + '])')
-        if len(values) > 1 else
-        format_code(values[0], global_init)
+        indent(indent_level) + variable_name + ' = ' + safety_1 + assign_value + safety_2 + os.linesep
     )
 
 
-def variable_assignment(variable, variable_name, assign_value, global_init = False, indent_level):
-    if variable.model_as == 'FROZENVAR' and not global_init:
-        print('ERROR: variable ' + statement.variable.name + ' is a FROZENVAR but is being updated')
-        sys.exit()
-    safety_1 = '' if variable.model_as == 'DEFINE' else ('serene_value_checker.' + statement.variable.name + '(')
-    safety_2 = '' if variable.model_as == 'DEFINE' else ')'
+def handle_case_result(case_results, default_result, variable, is_local, indent_level = 2, init_mode = None, override_variable_name = None):
+    variable_name = (format_variable(variable, is_local, init_mode) if override_variable_name is None else override_variable_name)
+    if len(case_results) == 0:
+        return variable_assignment(
+            variable,
+            variable_name,
+            is_local,
+            resolve_variable_nondeterminism(default_result.values, default_result.range_mode, init_mode),
+            indent_level,
+            init_mode
+        )
+    return (
+        ''.join(
+            [
+                (
+                    (
+                        (indent(indent_level) + 'elif ' + format_code(case_result.condition, init_mode) + ':' + os.linesep)
+                        if index > 0
+                        else
+                        (indent(indent_level) + 'if ' + format_code(case_result.condition, init_mode) + ':' + os.linesep)
+                    )
+                    + variable_assignment(
+                        variable,
+                        variable_name,
+                        is_local,
+                        resolve_variable_nondeterminism(case_result.values, case_result.range_mode, init_mode),
+                        indent_level + 1,
+                        init_mode
+                    )
+                 ) for index, case_result in enumerate(case_results)
+            ]
+        )
+        + indent(indent_level) + 'else:' + os.linesep
+        + variable_assignment(
+            variable,
+            variable_name,
+            is_local,
+            resolve_variable_nondeterminism(default_result.values, default_result.range_mode, init_mode),
+            indent_level + 1,
+            init_mode
+        )
+    )
 
 
-def handle_variable_statement(statement, indent_level = 2, global_init = False, override_variable_name = None):
-    variable_name = (format_variable(statement.variable, statement.mode == 'local', global_init) if override_variable_name is None else override_variable_name)
-    if len(statement.case_results) == 0:
-        return (indent(indent_level) + variable_name + ' = ' + safety_1 + resolve_variable_nondeterminism(statement.default_result.values, statement.default_result.range_mode, global_init) + safety_2 + os.linesep)
-    return ((''.join([
-        (indent(indent_level) + 'elif ' + format_code(case_result.condition, global_init) + ':' + os.linesep
-         + (indent(indent_level + 1) + variable_name + ' = ' + safety_1 + resolve_variable_nondeterminism(case_result.values, case_result.range_mode, global_init) + safety_2 + os.linesep)
-         ) for case_result in statement.case_results])).replace('elif', 'if', 1)
-            + (indent(indent_level) + 'else:' + os.linesep
-               + indent(indent_level + 1) + variable_name + ' = ' + safety_1 + resolve_variable_nondeterminism(statement.default_result.values, statement.default_result.range_mode, global_init) + safety_2 + os.linesep)
-            )
+def handle_variable_statement(statement, indent_level = 2, init_mode = None, override_variable_name = None):
+    return handle_case_result(statement.case_results, statement.default_result, statement.variable, statement.mode == 'local', indent_level, init_mode, override_variable_name)
 
 
-def create_variable_macro(statement, function_name, variable_name, indent_level = 2, global_init = False):
+def create_variable_macro(case_default, variable, is_local, indent_level = 2, init_mode = None):
     return (
         os.linesep
         + os.linesep
-        + indent(indent_level) + 'def ' + function_name + '():' + os.linesep
-        + handle_variable_statement(statement, indent_level + 1, global_init, function_name + '_return_val')
-        + indent(indent_level + 1) + 'return ' + function_name + '_return_val' + os.linesep
+        + indent(indent_level) + 'def ' + variable.name + '():' + os.linesep
+        + handle_case_result(case_default.case_results, case_default.default_result, variable, is_local, indent_level + 1, init_mode, override_variable_name = (variable.name + '_return_val'))
+        + indent(indent_level + 1) + 'return ' + variable.name + '_return_val' + os.linesep
         + os.linesep
-        + indent(indent_level) + variable_name.replace('(', '').replace(')', '') + ' = ' + function_name + os.linesep
+        + indent(indent_level) + format_variable_name_only(variable, is_local, init_mode) + ' = ' + variable.name + os.linesep
     )
 
 
 def handle_read_statement(statement):
-    if statement.python_function is None:
-        if statement.condition_variable is not None:
-            return (indent(2) + format_variable(statement.condition_variable, True) + ' = random.choice([True, False]);' + os.linesep)
-        return ''
-    # return (indent(2) + '('
-    #         + ', '.join(
-    #             ([] if statement.condition_variable is None else [format_variable(statement.condition_variable, True)])
-    #             +
-    #             [format_variable(var_statement.variable, var_statement.is_local) for var_statement in statement.variable_statements])
-    #         + ') = ' + statement.python_function + os.linesep)
-    return (indent(2) + 'temp_vals = ' +
+    global PROJECT_ENVIRONMENT_NAME
+    if statement.condition_variable is not None:
+        if statement.condition_variable.domain != 'BOOLEAN':
+            raise Exception('Variable ' + statement.condition_variable.name + ' is being used as a condition variable but is not a boolean')
+    return (
+        indent(2) + 'if ' + PROJECT_ENVIRONMENT_NAME + '.' + statement.name + '__condition(self):' + os.linesep
+        # indent(2) + 'if ' + PROJECT_ENVIRONMENT_NAME + '.' + statement.name + '__condition('
+        # + ', '.join(sorted(list(set(find_local_variables(statement.condition)))))
+        # + '):' + os.linesep
+        + (
+            variable_assignment(statement.condition_variable, format_variable(statement.condition_variable, True, init_mode = None), True, 'True', indent_level = 3, init_mode = None)
+            if statement.condition_variable is not None
+            else
+            ''
+        )
+        + ''.join(
+            [
+                (
+                    variable_assignment(read_var_state.variable, format_variable(read_var_state.variable, read_var_state.mode == 'local', init_mode = None),
+                                        read_var_state.mode == 'local',
+                                        (
+                                            PROJECT_ENVIRONMENT_NAME + '.' + statement.name + '__' + str(index) + '(self)'
+                                            # PROJECT_ENVIRONMENT_NAME + '.' + statement.name + '__' + str(index) + '('
+                                            # + ', '.join(sorted(list(set(
+                                            #     flatten(
+                                            #         [
+                                            #             (find_local_variables(case_result.condition)
+                                            #              + ([] if case_result.range_mode else flatten([find_local_variables(value) for value in case_result.values]))
+                                            #              )
+                                            #             for case_result in read_var_state.case_results
+                                            #         ]
+                                            #     )
+                                            #     + (
+                                            #         [] if read_var_state.default_result.range_mode else flatten([find_local_variables(value) for value in read_var_state.default_result.values])
+                                            #     )
+                                            # ))))
+                                            # + ')'
+                                        ),
+                                        indent_level = 3, init_mode = None)
+                )
+                for index, read_var_state in enumerate(statement.variable_statements)
+            ]
+        )
+        + (
             (
-                ((statement.import_from + '.') if statement.import_from is not None else '') + statement.python_function
-                + '('
-                + ', '.join(sorted(list(set(
-                    find_local_variables(statement.condition)
-                    + flatten(
-                        [
-                            flatten(
-                                [
-                                    (find_local_variables(case_result.condition)
-                                     + ([] if case_result.range_mode else flatten([find_local_variables(value) for value in case_result.values]))
-                                     )
-                                    for case_result in variable_statement.case_results
-                                ]
-                            )
-                            + (
-                                    [] if variable_statement.default_result.range_mode else flatten([find_local_variables(value) for value in variable_statement.default_result.values])
-                            )
-                            for variable_statement in statement.variable_statements
-                        ]
-                    )
-                ))))
-                + ')'
-                + os.linesep
+                indent(2) + 'else:' + os.linesep
+                + variable_assignment(statement.condition_variable, format_variable(statement.condition_variable, True, init_mode = None), True, 'False', indent_level = 3, init_mode = None)
             )
-            + indent(2) + 'if temp_vals[0]:' + os.linesep
-            + ''.join(
-                [
-                ]
-            )
-            + indent(3) + '('
-            + ', '.join(
-                (['_'] if statement.condition_variable is None else [format_variable(statement.condition_variable, True)])
-                +
-                [format_variable(var_statement.variable, var_statement.mode == 'local') for var_statement in statement.variable_statements])
-            + ') = temp_vals' + os.linesep
-            + (
-                (indent(2) + 'else:' + os.linesep
-                 + indent(3) + format_variable(statement.condition_variable, True) + ' = False' + os.linesep)
-                if statement.condition_variable is not None else '')
-            )
+            if statement.condition_variable is not None
+            else
+            ''
+        )
+    )
 
 
 def handle_write_statement(statement):
+    global PROJECT_ENVIRONMENT_NAME
     return (
-        (
-            indent(2)
-            + ((statement.import_from + '.') if statement.import_from is not None else '') + statement.python_function
-            + '('
-            + ', '.join(sorted(list(set(
-                flatten(
-                    [
-                        flatten(
-                            [
-                                (find_local_variables(case_result.condition)
-                                 + ([] if case_result.range_mode else flatten([find_local_variables(value) for value in case_result.values]))
-                                 )
-                                for case_result in update.case_results
-                            ]
-                                )
-                        + (
-                            [] if update.default_result.range_mode else flatten([find_local_variables(value) for value in update.default_result.values])
-                        )
-                        for update in statement.update
-                    ]
+        ''.join(
+            [
+                (
+                    indent(2) + PROJECT_ENVIRONMENT_NAME + '.' + statement.name + '__' + str(index) + '(self)' + os.linesep
                 )
-            ))))
-            + ')'
-            + os.linesep
+                if update_env.instant
+                else
+                (
+                    indent(2) + PROJECT_ENVIRONMENT_NAME + '.delay_this_action(' + PROJECT_ENVIRONMENT_NAME + '.' + statement.name + '__' + str(index) + ', self)' + os.linesep
+                )
+                for index, update_env in enumerate(statement.update)
+            ]
         )
-        if statement.python_function is not None else '')
+    )
 
 
 def format_returns(status_result):
@@ -367,9 +419,9 @@ def init_method_action(node):
             + ''.join(
                 [
                     (
-                        create_variable_macro(local_variable.initial_value, local_variable.name, format_variable(local_variable, True, False), 2, False)
+                        create_variable_macro(local_variable.initial_value, local_variable.name, True, indent_level = 2, init_mode = 'node')
                         if local_variable.model_as == 'DEFINE' else
-                        handle_variable_statement(local_variable.initial_value, indent_level = 2, global_init = False, override_variable_name = format_variable(local_variable, True, False))
+                        handle_case_result(local_variable.initial_value.case_results, local_variable.initial_value.default_result, local_variable, True, indent_level = 2, init_mode = 'node', override_variable_name = None)
                     )
                     for local_variable in node.local_variables if local_variable not in
                     [
@@ -401,8 +453,8 @@ def update_method_action(node):
 
 
 def custom_imports(node):
-    return ((('import ' + (os.linesep + 'import ').join(node.imports) + os.linesep) if node.imports is not None and len(node.imports) > 0 else '')
-            + os.linesep + os.linesep)
+    global PROJECT_ENVIRONMENT_NAME
+    return 'import ' + PROJECT_ENVIRONMENT_NAME + os.linesep
 
 
 def build_check_node(node):
@@ -419,6 +471,8 @@ def build_check_node(node):
 def build_check_environment_node(node):
     return (STANDARD_IMPORTS
             + custom_imports(node)
+            + os.linesep
+            + os.linesep
             + class_definition(node.name)
             + init_method_check_env(node)
             + update_method_check_env(node)
@@ -428,22 +482,23 @@ def build_check_environment_node(node):
 def build_action_node(node):
     return (STANDARD_IMPORTS
             + custom_imports(node)
+            + os.linesep
+            + os.linesep
             + class_definition(node.name)
             + init_method_action(node)
             + update_method_action(node)
             )
 
 
-def walk_tree(model, file_name):
-    return walk_tree_recursive(model.root, set(), {}, file_name)
+def walk_tree(model):
+    return walk_tree_recursive(model.root, set(), {}, '')
 
 
-def walk_tree_recursive(current_node, node_names, node_names_map, file_name):
+def walk_tree_recursive(current_node, node_names, node_names_map, running_string):
     while (not hasattr(current_node, 'name') or hasattr(current_node, 'sub_root')):
         if hasattr(current_node, 'leaf'):
             current_node = current_node.leaf
         else:
-            # print(dir(current_node))
             current_node = current_node.sub_root
     # next, we get the name of this node, and correct for duplication
 
@@ -458,53 +513,139 @@ def walk_tree_recursive(current_node, node_names, node_names_map, file_name):
     # start of massive if statements, starting with composites
     # -----------------------------------------------------------------------------------
     # start of composite nodes
-    print(current_node.node_type)
     if current_node.node_type == 'check' or current_node.node_type == 'check_environment' or current_node.node_type == 'action':
-        with open(file_name, 'a') as f:
-            f.write(indent(1) + node_name + ' = ' + current_node.name + '_file.' + current_node.name + '(' + "'" + node_name + "'" + ')' + os.linesep)
-        return node_name
+        running_string += indent(1) + node_name + ' = ' + current_node.name + '_file.' + current_node.name + '(' + "'" + node_name + "'" + ')' + os.linesep
+        return (node_name, node_names, node_names_map, running_string)
     elif current_node.node_type == 'X_is_Y':
         if current_node.x == current_node.y:
-            print('Decorator ' + current_node.name + ' has the same X and Y. Exiting.')
-            sys.exit()
+            raise Exception('Decorator ' + current_node.name + ' has the same X and Y. Exiting.')
         decorator_type = (current_node.x.capitalize()
                           + 'Is'
                           + current_node.y.capitalize())
-        child = walk_tree_recursive(current_node.child, node_names, node_names_map, file_name)
-        with open(file_name, 'a') as f:
-            f.write(indent(1) + node_name + ' = py_trees.decorators.' + decorator_type + '('
-                    + 'name = ' + "'" + node_name + "'" + ', child = ' + child + ')' + os.linesep)
-        return node_name
+        (child_name, node_names, node_names_map, running_string) = walk_tree_recursive(current_node.child, node_names, node_names_map, running_string)
+        running_string += (indent(1) + node_name + ' = py_trees.decorators.' + decorator_type + '('
+                           + 'name = ' + "'" + node_name + "'" + ', child = ' + child_name + ')' + os.linesep)
+        return (node_name, node_names, node_names_map, running_string)
     elif current_node.node_type == 'inverter':
         decorator_type = ('Inverter')
-        child = walk_tree_recursive(current_node.child, node_names, node_names_map, file_name)
-        with open(file_name, 'a') as f:
-            f.write(indent(1) + node_name + ' = py_trees.decorators.' + decorator_type + '('
-                    + 'name = ' + "'" + node_name + "'" + ', child = ' + child + ')' + os.linesep)
-        return node_name
+        (child_name, node_names, node_names_map, running_string) = walk_tree_recursive(current_node.child, node_names, node_names_map, running_string)
+        running_string += (indent(1) + node_name + ' = py_trees.decorators.' + decorator_type + '('
+                           + 'name = ' + "'" + node_name + "'" + ', child = ' + child_name + ')' + os.linesep)
+        return (node_name, node_names, node_names_map, running_string)
 
     # so at this point, we're in composite node territory
+    children = []
+    for child in current_node.children:
+        (child_name, node_names, node_names_map, running_string) = walk_tree_recursive(child, node_names, node_names_map, running_string)
+        children.append(child_name)
+    children_names = '[' + ', '.join(children) + ']'
+
+    if current_node.memory == 'with_true_memory':
+        raise Exception('ERROR: true memory not supported in py-trees. Only partial memory is supported.')
 
     if current_node.node_type == 'sequence':
-        with open(file_name, 'a') as f:
-            f.write(indent(1) + node_name + ' = py_trees.composites.Sequence(' + "'" + node_name + "'" + ', memory = ' + ('False' if current_node.memory == '' else 'True') + ')' + os.linesep)
+        running_string += (indent(1) + node_name + ' = py_trees.composites.Sequence('
+                           + 'name = ' + "'" + node_name + "'"
+                           + ', memory = ' + ('False' if current_node.memory == '' else 'True')
+                           + ', children = ' + children_names
+                           + ')' + os.linesep)
     elif current_node.node_type == 'selector':
-        with open(file_name, 'a') as f:
-            f.write(indent(1) + node_name + ' = py_trees.composites.Selector(' + "'" + node_name + "'" + ', memory = ' + ('False' if current_node.memory == '' else 'True') + ')' + os.linesep)
+        running_string += (indent(1) + node_name + ' = py_trees.composites.Selector('
+                           + 'name = ' + "'" + node_name + "'"
+                           + ', memory = ' + ('False' if current_node.memory == '' else 'True')
+                           + ', children = ' + children_names
+                           + ')' + os.linesep)
     elif current_node.node_type == 'parallel':
-        with open(file_name, 'a') as f:
-            f.write(indent(1) + node_name + ' = py_trees.composites.Parallel(' + "'" + node_name + "'" + ', py_trees.common.ParallelPolicy.'
-                    + (('SuccessOnAll(' + ('False' if current_node.memory == '' else 'True') + ')') if current_node.parallel_policy == 'success_on_all' else ('SuccessOnOne()'))
-                    + ')' + os.linesep)
+        running_string += (indent(1) + node_name + ' = py_trees.composites.Parallel('
+                           + 'name = ' + "'" + node_name + "'"
+                           + ', policy = py_trees.common.ParallelPolicy.'
+                           + (('SuccessOnAll(' + ('False' if current_node.memory == '' else 'True') + ')') if current_node.parallel_policy == 'success_on_all' else ('SuccessOnOne()'))
+                           + ', children = ' + children_names
+                           + ')' + os.linesep)
+    return (node_name, node_names, node_names_map, running_string)
 
-    children = '[' + ', '.join([walk_tree_recursive(child, node_names, node_names_map, file_name) for child in current_node.children]) + ']'
 
-    with open(file_name, 'a') as f:
-        f.write(indent(1) + node_name + '.add_children('
-                + children
-                + ')'
-                + os.linesep)
-    return node_name
+def variable_type(variable):
+    return (
+        (
+            'int'
+            if variable.domain == 'INT'
+            else
+            (
+                'str'
+                if variable.domain == 'ENUM'
+                else
+                'bool'
+            )
+        )
+        if variable.model_as == 'DEFINE'
+        else
+        (
+            'bool'
+            if variable.domain.boolean is not None
+            else
+            (
+                (
+                    'str'
+                    if isinstance(handle_constant(variable.domain.enums[0]), str)
+                    else
+                    'int'
+                )
+                if variable.domain.min_val is None
+                else
+                'int'
+            )
+        )
+    )
+
+
+def create_safe_assignment(model):
+    def conditional_for_variable(variable):
+        if variable.domain.condition is not None:
+            return build_range_func(variable.domain.condition)
+        return None
+    return_string = ''
+    for variable in itertools.chain(model.blackboard_variables, model.local_variables, model.environment_variables):
+        if variable.model_as == 'DEFINE':
+            continue
+        cur_var_type = variable_type(variable)
+        return_string += (
+            os.linesep
+            + os.linesep
+            + 'def ' + variable.name + '(new_value):' + os.linesep
+            + indent(1) + 'if not isinstance(new_value, ' + cur_var_type + '):' + os.linesep
+            + indent(2) + 'raise Exception(' + "'variable " + variable.name + " expected type " + cur_var_type + " but received type ' + str(type(new_value)))" + os.linesep
+        )
+        if variable.domain.min_val is not None:
+            if variable.domain.condition is not None:
+                cond_func = conditional_for_variable(variable)
+                value_list = '[' + ', '.join(map(str, filter(cond_func, range(handle_constant(variable.domain.min_val), handle_constant(variable.domain.max_val) + 1)))) + ']'
+                return_string += (
+                    indent(1) + 'if new_value in ' + value_list
+                    + ':' + os.linesep
+                    + indent(2) + 'return new_value' + os.linesep
+                    + indent(1) + 'else:' + os.linesep
+                    + indent(2) + 'raise Exception(' + "'variable " + variable.name + " expected value in " + value_list + " but received value ' + str(new_value))" + os.linesep
+                )
+            else:
+                return_string += (
+                    indent(1) + 'if new_value >= ' + handle_constant_str(variable.domain.min_val) + ' and new_value <= ' + handle_constant_str(variable.domain.max_val) + ':' + os.linesep
+                    + indent(2) + 'return new_value' + os.linesep
+                    + indent(1) + 'else:' + os.linesep
+                    + indent(2) + 'raise Exception(' + "'variable " + variable.name + " expected value between " + handle_constant_str(variable.domain.min_val) + " and " + handle_constant_str(variable.domain.max_val) + " inclusive but received value ' + str(new_value))" + os.linesep
+                )
+        elif variable.domain.boolean is not None:
+            return_string += indent(1) + 'return new_value' + os.linesep
+        else:
+            value_list = '[' + ', '.join(map(handle_constant_str, variable.domain.enums)) + ']'
+            return_string += (
+                indent(1) + 'if new_value in ' + value_list
+                + ':' + os.linesep
+                + indent(2) + 'return new_value' + os.linesep
+                + indent(1) + 'else:' + os.linesep
+                + indent(2) + 'raise Exception(' + '"variable ' + variable.name + ' expected value in ' + value_list + ' but received value \'" + new_value + "\'")' + os.linesep
+            )
+    return return_string
 
 
 def main():
@@ -513,17 +654,25 @@ def main():
     arg_parser.add_argument('metamodel_file')
     arg_parser.add_argument('model_file')
     arg_parser.add_argument('location')
-    arg_parser.add_argument('output_file')
+    arg_parser.add_argument('name')
     args = arg_parser.parse_args()
 
     metamodel = textx.metamodel_from_file(args.metamodel_file, auto_init_attributes = False)
     model = metamodel.model_from_file(args.model_file)
+
+    global PROJECT_NAME, PROJECT_ENVIRONMENT_NAME
+    PROJECT_NAME = args.name
+    PROJECT_ENVIRONMENT_NAME = args.name + '_environment'
 
     global constants
     constants = {
         constant.name : constant.val
         for constant in model.constants
     }
+    validate_model(model, constants, metamodel)
+
+    with open(args.location + 'serene_safe_assignment.py', 'w') as f:
+        f.write(create_safe_assignment(model))
 
     for action in model.action_nodes:
         with open(args.location + action.name + '_file.py', 'w') as f:
@@ -532,13 +681,15 @@ def main():
         with open(args.location + check.name + '_file.py', 'w') as f:
             f.write(build_check_node(check))
     for check_env in model.environment_checks:
-        print(check_env)
         with open(args.location + check_env.name + '_file.py', 'w') as f:
             f.write(build_check_environment_node(check_env))
 
-    with open(args.location + args.output_file + '.py', 'w') as f:
+    (root_name, _, _, running_string) = walk_tree(model)
+
+    with open(args.location + PROJECT_NAME + '.py', 'w') as f:
         f.write(''.join([('import ' + node.name + '_file' + os.linesep) for node in itertools.chain(model.check_nodes, model.action_nodes, model.environment_checks)])
                 + 'import py_trees' + os.linesep
+                + 'import serene_safe_assignment' + os.linesep
                 + os.linesep + os.linesep
                 + 'def create_tree():' + os.linesep
                 + indent(1) + 'blackboard_reader = py_trees.blackboard.Client()' + os.linesep
@@ -551,20 +702,18 @@ def main():
                 + ''.join(
                     [
                         (
-                            create_variable_macro(blackboard_variable.initial_value, blackboard_variable.name, format_variable(blackboard_variable, False, True), 1, True)
+                            create_variable_macro(blackboard_variable.initial_value, blackboard_variable, False, indent_level = 1, init_mode = 'blackboard')
                             if blackboard_variable.model_as == 'DEFINE' else
-                            handle_variable_statement(blackboard_variable.initial_value, indent_level = 1, global_init = True, override_variable_name = format_variable(blackboard_variable, False, True))
+                            handle_case_result(blackboard_variable.initial_value.case_results, blackboard_variable.initial_value.default_result, blackboard_variable, False, indent_level = 1, init_mode = 'blackboard', override_variable_name = None)
                         )
                         for blackboard_variable in model.blackboard_variables
                     ]
                 )
                 + os.linesep
+                + running_string
+                + indent(1) + 'return ' + root_name + os.linesep
                 )
-    root_name = walk_tree(model, args.location + args.output_file + '.py')
-
-    with open(args.location + args.output_file + '.py', 'a') as f:
-        f.write(indent(1) + 'return ' + root_name + os.linesep)
-
+    dsl_to_environment.write_environment(model, args.location, PROJECT_NAME)
     return
 
 

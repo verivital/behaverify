@@ -2,7 +2,8 @@ import py_trees
 import math
 import operator
 import random
-import robot
+import serene_safe_assignment
+import simple_robot_environment
 
 
 class go_left(py_trees.behaviour.Behaviour):
@@ -12,6 +13,6 @@ class go_left(py_trees.behaviour.Behaviour):
         self.blackboard = self.attach_blackboard_client(name = name)
 
     def update(self):
-        robot.go_left()
+        simple_robot_environment.delay_this_action(simple_robot_environment.go_left_func__0, self)
         return_status = py_trees.common.Status.SUCCESS
         return return_status

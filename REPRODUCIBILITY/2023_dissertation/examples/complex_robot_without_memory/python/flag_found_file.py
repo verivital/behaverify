@@ -2,6 +2,7 @@ import py_trees
 import math
 import operator
 import random
+import serene_safe_assignment
 
 
 class flag_found(py_trees.behaviour.Behaviour):
@@ -13,4 +14,3 @@ class flag_found(py_trees.behaviour.Behaviour):
 
     def update(self):
         return ((py_trees.common.Status.SUCCESS) if (self.blackboard.have_flag) else (py_trees.common.Status.FAILURE))
-

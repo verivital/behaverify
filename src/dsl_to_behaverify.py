@@ -7,6 +7,7 @@ import itertools
 import copy
 import serene_functions
 from behaverify_to_smv import write_smv
+from check_model import validate_model
 
 from behaverify_common import create_node_name, create_node_template, create_variable_template
 
@@ -865,6 +866,7 @@ def main():
         constant.name : constant.val
         for constant in model.constants
     }
+    validate_model(model, constants, metamodel)
 
     (_, _, _, nodes, local_variables, initial_statements, statements) = walk_tree(model.root)
 

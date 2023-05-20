@@ -2,6 +2,8 @@ import py_trees
 import math
 import operator
 import random
+import serene_safe_assignment
+import simple_robot_environment
 
 
 class clear_mission(py_trees.behaviour.Behaviour):
@@ -12,6 +14,6 @@ class clear_mission(py_trees.behaviour.Behaviour):
         self.blackboard.register_key(key = ('mission'), access = py_trees.common.Access.WRITE)
 
     def update(self):
-        self.blackboard.mission = False
+        self.blackboard.mission = serene_safe_assignment.mission(False)
         return_status = py_trees.common.Status.SUCCESS
         return return_status
