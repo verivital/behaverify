@@ -2,6 +2,7 @@ import py_trees
 import math
 import operator
 import random
+import serene_safe_assignment
 
 
 class target_reached(py_trees.behaviour.Behaviour):
@@ -16,4 +17,3 @@ class target_reached(py_trees.behaviour.Behaviour):
 
     def update(self):
         return ((py_trees.common.Status.SUCCESS) if (((self.blackboard.x == self.blackboard.target_x) and (self.blackboard.y == self.blackboard.target_y))) else (py_trees.common.Status.FAILURE))
-

@@ -2,6 +2,8 @@ import py_trees
 import math
 import operator
 import random
+import serene_safe_assignment
+import complex_robot_environment
 
 
 class never_need_side(py_trees.behaviour.Behaviour):
@@ -12,6 +14,6 @@ class never_need_side(py_trees.behaviour.Behaviour):
         self.blackboard.register_key(key = ('need_side_reached'), access = py_trees.common.Access.WRITE)
 
     def update(self):
-        self.blackboard.need_side_reached = False
+        self.blackboard.need_side_reached = serene_safe_assignment.need_side_reached(False)
         return_status = py_trees.common.Status.SUCCESS
         return return_status

@@ -98,9 +98,7 @@ node:
     check_environment_node:
     (node_type = 'check_environment') '{'
     name = ID
-    ('imports' '{' imports *= STRING[','] '}' 'end_imports')?
     'read_variables' '{' read_variables *= [blackboard_variable]  '}' 'end_read_variables'
-    ('python_function' '{' ('from' import_from = STRING)? python_function = STRING'}' 'end_python_function')?
     ('condition' '{' condition = code_statement_bl_env '}' 'end_condition')
     '}' 'end_check_environment'
 ;
@@ -108,7 +106,6 @@ node:
     action_node:
     (node_type = 'action') '{'
     name = ID
-    ('imports' '{' imports *= STRING[','] '}' 'end_imports')?
     'local_variables' '{' local_variables *= [local_variable] '}' 'end_local_variables'
     'read_variables' '{' read_variables *= [blackboard_variable]  '}' 'end_read_variables'
     'write_variables' '{' write_variables *= [blackboard_variable]  '}' 'end_write_variables'
@@ -164,14 +161,14 @@ node:
 
     action_local_initial_value:
     'initial_value' '{'
-    mode='local' variable = [local_variable]
+    mode = 'local' variable = [local_variable]
     case_results *= case_result_bl_local
     default_result = default_result_bl_local
     '}' 'end_initial_value'
 ;
     
     variable_domain:
-    ('[' min_val = serene_int ',' max_val = serene_int ']') | (boolean = 'BOOLEAN') | ('{' enums += enumeration[','] '}')
+    ('[' min_val = serene_int ',' max_val = serene_int (',' condition = range_code)? ']') | (boolean = 'BOOLEAN') | ('{' enums += enumeration[','] '}')
 ;
     
 enumeration:
@@ -198,8 +195,8 @@ statement:
 ;
     
     read_statement:
-    'read_environment' '{'
-    ('python_function' '{' ('from' import_from = STRING)? python_function = STRING'}' 'end_python_function')?
+    'read_environment' '{'-
+    name = ID
     (('condition' '{' condition = code_statement_bl_local_env '}' 'end_condition') | (condition_variable = [local_variable]))
     variable_statements += read_variable_statement
     '}' 'end_read_environment'
@@ -207,7 +204,7 @@ statement:
     
     write_statement:
     'write_environment' '{'
-    ('python_function' '{' ('from' import_from = STRING)? python_function = STRING'}' 'end_python_function')?
+    name = ID
     'update_values' '{'
     update *= environment_statement_action
     '}' 'end_update_values'

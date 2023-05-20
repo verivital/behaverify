@@ -2,6 +2,7 @@ import py_trees
 import math
 import operator
 import random
+import serene_safe_assignment
 import complex_robot_environment
 
 
@@ -12,5 +13,4 @@ class flag_not_returned(py_trees.behaviour.Behaviour):
         self.blackboard = self.attach_blackboard_client(name = name)
 
     def update(self):
-        return ((py_trees.common.Status.SUCCESS) if (complex_robot_environment.check_flag_not_returned()) else (py_trees.common.Status.FAILURE))
-
+        return ((py_trees.common.Status.SUCCESS) if (complex_robot_environment.flag_not_returned(self)) else (py_trees.common.Status.FAILURE))

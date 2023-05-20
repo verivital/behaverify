@@ -2,7 +2,8 @@ import py_trees
 import math
 import operator
 import random
-import robot
+import serene_safe_assignment
+import simple_robot_environment
 
 
 class get_position(py_trees.behaviour.Behaviour):
@@ -14,8 +15,8 @@ class get_position(py_trees.behaviour.Behaviour):
         self.blackboard.register_key(key = ('y'), access = py_trees.common.Access.WRITE)
 
     def update(self):
-        temp_vals = robot.get_position()
-        if temp_vals[0]:
-            (_, self.blackboard.x, self.blackboard.y) = temp_vals
+        if simple_robot_environment.get_position_func__condition(self):
+            self.blackboard.x = serene_safe_assignment.x(simple_robot_environment.get_position_func__0(self))
+            self.blackboard.y = serene_safe_assignment.y(simple_robot_environment.get_position_func__1(self))
         return_status = py_trees.common.Status.SUCCESS
         return return_status

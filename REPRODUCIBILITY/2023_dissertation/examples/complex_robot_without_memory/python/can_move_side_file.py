@@ -2,6 +2,7 @@ import py_trees
 import math
 import operator
 import random
+import serene_safe_assignment
 import complex_robot_environment
 
 
@@ -13,5 +14,4 @@ class can_move_side(py_trees.behaviour.Behaviour):
         self.blackboard.register_key(key = ('side'), access = py_trees.common.Access.READ)
 
     def update(self):
-        return ((py_trees.common.Status.SUCCESS) if (complex_robot_environment.can_move_side()) else (py_trees.common.Status.FAILURE))
-
+        return ((py_trees.common.Status.SUCCESS) if (complex_robot_environment.can_move_side(self)) else (py_trees.common.Status.FAILURE))
