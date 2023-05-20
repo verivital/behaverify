@@ -22,7 +22,7 @@ blackboard_variables {
 		FROZENVAR means it has state, but cannot change over time.
 		DEFINE means it is basically a macro, a shorthand for somehting else
 		#end_comment#
-		[0, 'x_max'] #commment# the variable domain. here it goes from 0 to 'x_max', the constant we defined above #end_comment#
+		[0, 'x_max'] #comment# the variable domain. here it goes from 0 to 'x_max', the constant we defined above #end_comment#
 		initial_value {
 			result {0} end_result #comment# in this case, the initial value is always set to 0. #end_comment#
 		} end_initial_value
@@ -153,7 +153,6 @@ environment_checks {
 actions {
 	action {
 		get_mission #comment# the name of this action#end_comment#
-		imports {'robot'} end_imports #comment# this is used in python code generation. It means we should include imports robot in the file #end_comment#
 		local_variables {} end_local_variables #comment# this doens't use any local variables #end_comment#
 		read_variables {} end_read_variables #comment# this doesn't read any blackboard variables. note: if a variable is both read and write, declare in write. #end_comment#
 		write_variables {mission target_x target_y} end_write_variables #comment# this action write mission, target_x, and target_y#end_comment#
@@ -162,7 +161,7 @@ actions {
 		} end_initial_values
 		update {
 			read_environment {
-				python_function { from 'robot' 'get_mission'} end_python_function
+				get_mission_func
 				#comment# when generating python code, this clarifies what function to call#end_comment#
 				condition { True } end_condition
 				#comment#
@@ -189,7 +188,6 @@ actions {
 
 	action {
 		get_position
-		imports {'robot'} end_imports
 		local_variables {} end_local_variables
 		read_variables {} end_read_variables
 		write_variables { x y } end_write_variables
@@ -197,7 +195,7 @@ actions {
 		} end_initial_values
 		update {
 			read_environment {
-				python_function { from 'robot' 'get_position'} end_python_function
+				get_position_func
 				condition { True } end_condition
 				read_variable_statement {bl x result { env x_true } end_result} end_read_variable_statement
 				read_variable_statement {bl y result { env y_true } end_result} end_read_variable_statement
@@ -223,14 +221,13 @@ actions {
 
 	action {
 		go_right
-		imports { 'robot' } end_imports
 		local_variables {} end_local_variables
 		read_variables {} end_read_variables
 		write_variables {} end_write_variables
 		initial_values {} end_initial_values
 		update {
 			write_environment {
-				python_function { from 'robot' 'go_right'} end_python_function
+				go_right_func
 				update_values {
 					environment_statement {
 						env x_true result { (min, 'x_max', (addition, env x_true, 1)) } end_result
@@ -243,14 +240,13 @@ actions {
 
 	action {
 		go_left
-		imports { 'robot' } end_imports
 		local_variables {} end_local_variables
 		read_variables {} end_read_variables
 		write_variables {} end_write_variables
 		initial_values {} end_initial_values
 		update {
 			write_environment {
-				python_function { from 'robot' 'go_left'} end_python_function
+				go_left_func
 				update_values {
 					environment_statement {
 						env x_true result { (max, 0, (subtraction, env x_true, 1)) } end_result
@@ -263,14 +259,13 @@ actions {
 
 	action {
 		go_up
-		imports { 'robot' } end_imports
 		local_variables {} end_local_variables
 		read_variables {} end_read_variables
 		write_variables {} end_write_variables
 		initial_values {} end_initial_values
 		update {
 			write_environment {
-				python_function { from 'robot' 'go_up'} end_python_function
+				go_up_func
 				update_values {
 					environment_statement {
 						env y_true result { (min, 'y_max', (addition, env y_true, 1)) } end_result
@@ -283,14 +278,13 @@ actions {
 
 	action {
 		go_down
-		imports { 'robot' } end_imports
 		local_variables {} end_local_variables
 		read_variables {} end_read_variables
 		write_variables {} end_write_variables
 		initial_values {} end_initial_values
 		update {
 			write_environment {
-				python_function { from 'robot' 'go_down'} end_python_function
+				go_down_func
 				update_values {
 					environment_statement {
 						env y_true result { (max, 0, (subtraction, env y_true, 1)) } end_result

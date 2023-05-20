@@ -2,6 +2,7 @@ import py_trees
 import math
 import operator
 import random
+import serene_safe_assignment
 
 
 class y_too_small(py_trees.behaviour.Behaviour):
@@ -14,4 +15,3 @@ class y_too_small(py_trees.behaviour.Behaviour):
 
     def update(self):
         return ((py_trees.common.Status.SUCCESS) if ((self.blackboard.y < self.blackboard.target_y)) else (py_trees.common.Status.FAILURE))
-

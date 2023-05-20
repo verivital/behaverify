@@ -2,6 +2,8 @@ import py_trees
 import math
 import operator
 import random
+import serene_safe_assignment
+import complex_robot_environment
 
 
 class change_side(py_trees.behaviour.Behaviour):
@@ -13,8 +15,8 @@ class change_side(py_trees.behaviour.Behaviour):
 
     def update(self):
         if (self.blackboard.side == 1):
-            self.blackboard.side = -1
+            self.blackboard.side = serene_safe_assignment.side(-1)
         else:
-            self.blackboard.side = 1
+            self.blackboard.side = serene_safe_assignment.side(1)
         return_status = py_trees.common.Status.SUCCESS
         return return_status

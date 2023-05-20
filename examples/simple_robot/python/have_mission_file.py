@@ -2,6 +2,7 @@ import py_trees
 import math
 import operator
 import random
+import serene_safe_assignment
 
 
 class have_mission(py_trees.behaviour.Behaviour):
@@ -13,4 +14,3 @@ class have_mission(py_trees.behaviour.Behaviour):
 
     def update(self):
         return ((py_trees.common.Status.SUCCESS) if (self.blackboard.mission) else (py_trees.common.Status.FAILURE))
-

@@ -1,14 +1,20 @@
 import py_trees
 import random
+import serene_safe_assignment
 
 
 delayed_action_queue = []
 
 
+def delay_this_action(action, node):
+    global delayed_action_queue
+    delayed_action_queue.append((action, node))
+
+
 def execute_delayed_action_queue():
     global delayed_action_queue
-    for delayed_action in delayed_action_queue:
-        delayed_action()
+    for (delayed_action, node) in delayed_action_queue:
+        delayed_action(node)
     delayed_action_queue = []
     return
 
@@ -117,9 +123,7 @@ tile_tracker = 0
 # this variable develops in the following way between ticks.
 #         tile_tracker = tile_progress
 #
-
-
-def check_flag_not_returned():
+def flag_not_returned(node):
     '''
     -- RETURN
     This method is expected to return True or False.
@@ -132,9 +136,7 @@ def check_flag_not_returned():
     return (
         not (flag_returned())
     )
-
-
-def can_move_forward():
+def can_move_forward(node):
     '''
     -- RETURN
     This method is expected to return True or False.
@@ -147,9 +149,7 @@ def can_move_forward():
     return (
         (((blackboard_reader.forward() + x) >= 0) and ((blackboard_reader.forward() + x) <= 18) and ((active_hole() == -1) or (active_hole() == y)))
     )
-
-
-def can_move_side():
+def can_move_side(node):
     '''
     -- RETURN
     This method is expected to return True or False.
@@ -164,160 +164,65 @@ def can_move_side():
     )
 
 
-def go_forward():
-    '''
-    -- RETURN
-    This method does not need to return any value (though it may).
-    -- SIDE EFFECTS
-    This method is expected to effect the environment.
-    The following changes are expected:
-        1:x. Modeled using the following behavior:
-                    if (((blackboard_reader.forward() + x) >= 0) and ((blackboard_reader.forward() + x) <= 18) and ((active_hole() == -1) or (active_hole() == y))):
-            x = (x + blackboard_reader.forward())
-        else:
-            x = x
-
-    '''
-    # below we include an auto generated attempt at implmenting this
-    global delayed_action_queue
-
-    def delayed_update_for__x():
-        global x
-        if (((blackboard_reader.forward() + x) >= 0) and ((blackboard_reader.forward() + x) <= 18) and ((active_hole() == -1) or (active_hole() == y))):
-            x = (x + blackboard_reader.forward())
-        else:
-            x = x
-        return
-    delayed_action_queue.append(delayed_update_for__x)
-
-    return
-
-
-def go_side():
-    '''
-    -- RETURN
-    This method does not need to return any value (though it may).
-    -- SIDE EFFECTS
-    This method is expected to effect the environment.
-    The following changes are expected:
-        1:y. Modeled using the following behavior:
-                    if (((blackboard_reader.side + y) >= 0) and ((blackboard_reader.side + y) <= 2)):
-            y = (y + blackboard_reader.side)
-        else:
-            y = y
-
-    '''
-    # below we include an auto generated attempt at implmenting this
-    global delayed_action_queue
-
-    def delayed_update_for__y():
-        global y
-        if (((blackboard_reader.side + y) >= 0) and ((blackboard_reader.side + y) <= 2)):
-            y = (y + blackboard_reader.side)
-        else:
-            y = y
-        return
-    delayed_action_queue.append(delayed_update_for__y)
-
-    return
-
-
-def search_tile(tile_searched):
-    '''
-    -- RETURN
-    This method is expected to return a tuple.
-    The values in the tuple should be as follows:
-        0: True or False. Indicates if other variables will be updated.
-        Modeled using the following behavior:
-            True
-        1:to_return_tile_searched. Modeled using the following behavior:
-                    if (tile_progress == 2):
-            tile_searched = True
-        else:
-            tile_searched = random.choice([True, False])
-
-        2:to_return_have_flag. Modeled using the following behavior:
-                    if blackboard_reader.have_flag:
-            blackboard_reader.have_flag = True
-        else:
-            blackboard_reader.have_flag = (tile_searched and (x == flag_x) and (y == flag_y))
-
-    -- SIDE EFFECTS
-    This method is expected to have no side effects (for the tree).
-    '''
-    # below we include an auto generated attempt at implmenting this
-    search_tile__return_condition = True
-    if search_tile__return_condition:
-        if (tile_progress == 2):
-            to_return_tile_searched = True
-        else:
-            to_return_tile_searched = random.choice([True, False])
-        if blackboard_reader.have_flag:
-            to_return_have_flag = True
-        else:
-            to_return_have_flag = (tile_searched and (x == flag_x) and (y == flag_y))
-        return (True, to_return_tile_searched, to_return_have_flag)
+def go_forward_func__0(node):
+    global x
+    if (((blackboard_reader.forward() + x) >= 0) and ((blackboard_reader.forward() + x) <= 18) and ((active_hole() == -1) or (active_hole() == y))):
+        update_val_x = (x + blackboard_reader.forward())
     else:
-        return (False, None, None)
-
-
-def update_search(tile_searched):
-    '''
-    -- RETURN
-    This method does not need to return any value (though it may).
-    -- SIDE EFFECTS
-    This method is expected to effect the environment.
-    The following changes are expected:
-        1:tile_progress. Modeled using the following behavior:
-                    if tile_searched:
-            tile_progress = 2
-        else:
-            tile_progress = min(2, (1 + tile_progress))
-
-    '''
-    # below we include an auto generated attempt at implmenting this
-    global delayed_action_queue
-
-    def delayed_update_for__tile_progress():
-        global tile_progress
-        if tile_searched:
-            tile_progress = 2
-        else:
-            tile_progress = min(2, (1 + tile_progress))
-        return
-    delayed_action_queue.append(delayed_update_for__tile_progress)
-
+        update_val_x = x
+    x = serene_safe_assignment.x(update_val_x)
     return
 
 
-def compute_zone():
-    '''
-    -- RETURN
-    This method is expected to return a tuple.
-    The values in the tuple should be as follows:
-        0: True or False. Indicates if other variables will be updated.
-        Modeled using the following behavior:
-            True
-        1:to_return_zone. Modeled using the following behavior:
-                    if (x <= 3):
-            blackboard_reader.zone = 'home'
-        elif (x >= 15):
-            blackboard_reader.zone = 'target'
-        else:
-            blackboard_reader.zone = 'maze'
-
-    -- SIDE EFFECTS
-    This method is expected to have no side effects (for the tree).
-    '''
-    # below we include an auto generated attempt at implmenting this
-    compute_zone__return_condition = True
-    if compute_zone__return_condition:
-        if (x <= 3):
-            to_return_zone = 'home'
-        elif (x >= 15):
-            to_return_zone = 'target'
-        else:
-            to_return_zone = 'maze'
-        return (True, to_return_zone)
+def go_side_func__0(node):
+    global y
+    if (((blackboard_reader.side + y) >= 0) and ((blackboard_reader.side + y) <= 2)):
+        update_val_y = (y + blackboard_reader.side)
     else:
-        return (False, None)
+        update_val_y = y
+    y = serene_safe_assignment.y(update_val_y)
+    return
+
+
+def search_tile_func__condition(node):
+    return True
+
+
+def search_tile_func__0(node):
+    if (tile_progress == 2):
+        to_return_tile_searched = True
+    else:
+        to_return_tile_searched = random.choice([True, False])
+    return to_return_tile_searched
+
+
+def search_tile_func__1(node):
+    if blackboard_reader.have_flag:
+        to_return_have_flag = True
+    else:
+        to_return_have_flag = (node.tile_searched and (x == flag_x) and (y == flag_y))
+    return to_return_have_flag
+
+
+def update_search_func__0(node):
+    global tile_progress
+    if node.tile_searched:
+        update_val_tile_progress = 2
+    else:
+        update_val_tile_progress = min(2, (1 + tile_progress))
+    tile_progress = serene_safe_assignment.tile_progress(update_val_tile_progress)
+    return
+
+
+def compute_zone_func__condition(node):
+    return True
+
+
+def compute_zone_func__0(node):
+    if (x <= 3):
+        to_return_zone = 'home'
+    elif (x >= 15):
+        to_return_zone = 'target'
+    else:
+        to_return_zone = 'maze'
+    return to_return_zone
