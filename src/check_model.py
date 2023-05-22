@@ -152,11 +152,6 @@ def str_format(value):
 def validate_code(code, scopes, variable_names):
     if code.constant is not None:
         return (constant_type(code.constant), 'constant', str_format(code.constant))
-        # const_type = constant_type(code.constant)
-        # if const_type == expected_return_type:
-        #     return
-        # else:
-        #     raise Exception('Expected type ' + expected_return_type + ' but got constant ' + str_format(code.constant) + ' of type ' + const_type)
     elif code.variable is not None:
         var_scope = variable_scope(code.variable)
         if var_scope not in scopes:
@@ -166,14 +161,11 @@ def validate_code(code, scopes, variable_names):
                 if code.variable.name not in variable_names:
                     raise Exception('Expected only the following variables: [' + ', '.join(variable_names) + '] but got ' + code.variable.name)
         return (variable_type(code.variable), 'variable', code.variable.name)
-        # var_type = variable_type(code.variable)
-        # if var_type == expected_return_type:
-        #     return
-        # else:
-        #     raise Exception('Expected type ' + expected_return_type + ' but got variable ' + code.variable.name + ' of type ' + var_type)
     elif code.code_statement is not None:
         return validate_code(code.code_statement, scopes, variable_names)
     else:
+        if code.function_call.function_name not in FUNCTION_TYPE_INFO:
+            raise Exception('Function ' + code.function_call.function_name + ' is not yet supported')
         if len(FUNCTION_TYPE_INFO[code.function_call.function_name]) == 3:
             (return_type, _, arg_type) = FUNCTION_TYPE_INFO[code.function_call.function_name]
             if code.function_call.bound.upper_bound != '+oo':
@@ -190,14 +182,10 @@ def validate_code(code, scopes, variable_names):
         if arg_type == 'DEPENDS':
             (arg_type, _, _) = validate_code(code.function_call.values[0], scopes, variable_names)
         for index, value in enumerate(code.function_call.values):
-            (cur_arg_type, cur_code_type, cur_code) = validate_code(code.function_call.values[0], scopes, variable_names)
+            (cur_arg_type, cur_code_type, cur_code) = validate_code(value, scopes, variable_names)
             if cur_arg_type != arg_type:
                 raise Exception('Function ' + code.function_call.function_name + ' expected ' + arg_type + ' but got ' + cur_arg_type + ' from argument number ' + str(index) + ' which is ' + cur_code_type + ' ' + cur_code)
         return (return_type, 'function', code.function_call.function_name)
-        # if return_type == expected_return_type:
-        #     return
-        # else:
-        #     raise Exception('Expected type ' + expected_return_type + ' but got function ' + code.function_call.function_name + ' that returns type ' + return_type)
 
 
 def validate_condition(code, scopes, variable_names):
@@ -233,33 +221,24 @@ def validate_variable_assignment(variable, case_default, scopes, variable_names,
         raise Exception('Variable ' + variable.name + ' is being updated but is modeled as ' + variable.model_as)
 
     var_type = variable_type(variable)
-    for case_result in case_default.case_results:
-        validate_condition(case_result.condition, scopes, variable_names)
+
+    def handle_case_result(case_result, is_default):
+        if not is_default:
+            validate_condition(case_result.condition, scopes, variable_names)
         if case_result.range_mode:
             if var_type != 'INT':
                 raise Exception('Variable ' + variable.name + ' is of type ' + var_type + ' but is being updated using range_mode')
             cond_func = build_range_func(case_result.values[2])
-            int_range = [x for x in range(case_result.values[0], case_result.values[1] + 1) if cond_func(x)]
-            if len(int_range) == 0:
+            if not any(map(cond_func, range(handle_constant(case_result.values[0]), handle_constant(case_result.values[1]) + 1))):
                 raise Exception('Variable ' + variable.name + ' is being assigned a value using range_mode but the range is empty')
         else:
             for index, value in enumerate(case_result.values):
                 (cur_arg_type, cur_code_type, cur_code) = validate_code(value, scopes, variable_names)
                 if cur_arg_type != var_type:
                     raise Exception('Variable ' + variable.name + ' is of type ' + var_type + ' but is being updated with ' + cur_code_type + ' ' + cur_code + ' which is of type ' + cur_arg_type)
-
-    case_result = case_default.default_result
-    if case_result.range_mode:
-        if var_type != 'INT':
-            raise Exception('Variable ' + variable.name + ' is of type ' + var_type + ' but is being updated using range_mode')
-        cond_func = build_range_func(case_result.values[2])
-        if not any(map(cond_func, range(handle_constant(case_result.values[0]), handle_constant(case_result.values[1]) + 1))):
-            raise Exception('Variable ' + variable.name + ' is being assigned a value using range_mode but the range is empty')
-    else:
-        for index, value in enumerate(case_result.values):
-            (cur_arg_type, cur_code_type, cur_code) = validate_code(value, scopes, variable_names)
-            if cur_arg_type != var_type:
-                raise Exception('Variable ' + variable.name + ' is of type ' + var_type + ' but is being updated with ' + cur_code_type + ' ' + cur_code + ' which is of type ' + cur_arg_type)
+    for case_result in case_default.case_results:
+        handle_case_result(case_result, False)
+    handle_case_result(case_default.default_result, True)
     return
 
 
@@ -296,11 +275,16 @@ def validate_action(node):
         validate_variable_assignment(init_statement.variable, init_statement, {'blackboard', 'local'}, all_vars, 'node')
     for statement in itertools.chain(node.pre_update_statements, node.post_update_statements):
         if statement.variable_statement is not None:
+            assign_var = statement.variable_statement.variable
+            if assign_var.name not in local_variables and assign_var.name not in write_variables:
+                raise Exception('Node ' + node.name + ' is updating variable ' + assign_var.name + ' but it is not listed in the local or write variables')
             validate_variable_assignment(statement.variable_statement.variable, statement.variable_statement, {'blackboard', 'local'}, all_vars, None)
         elif statement.read_statement is not None:
             read_statement = statement.read_statement
             if read_statement.condition_variable is not None:
                 cond_var = read_statement.condition_variable
+                if cond_var.name not in local_variables and cond_var.name not in write_variables:
+                    raise Exception('Node ' + node.name + ' is updating variable ' + cond_var.name + ' but it is not listed in the local or write variables')
                 if variable_type(cond_var) != 'BOOLEAN':
                     raise Exception('Condition variable for read statement in Action ' + node.name + ' is ' + cond_var.name + ' but ' + cond_var.name + ' is of type ' + variable_type(cond_var) + ' and not BOOLEAN')
                 if cond_var.model_as != 'VAR':
@@ -315,7 +299,10 @@ def validate_action(node):
         elif statement.write_statement is not None:
             write_statement = statement.write_statement
             for env_statement in write_statement.update:
-                validate_variable_assignment(env_statement.variable, env_statement, {'blackboard', 'local', 'environment'}, all_vars, None)
+                assign_var = env_statement.variable
+                if assign_var.name not in write_variables and assign_var.name not in local_variables:
+                    raise Exception('Action ' + node.name + ' is updating ' + assign_var.name + ' but ' + assign_var.name + ' is not declared in write_variables: [' + ', '.join(write_variables) + '] or in local_variables: [' + ', '.join(local_variables) + ']')
+                validate_variable_assignment(assign_var, env_statement, {'blackboard', 'local', 'environment'}, all_vars, None)
         else:
             raise Exception('Action ' + node.name + ' has a statement of an unrecognized type (should be impossible)')
     for case_result in node.return_statement.case_results:
@@ -360,9 +347,21 @@ def walk_tree(current_node, node_names, node_names_map):
     node_names.add(node_name)
     node_names_map[node_name] = modifier
 
+    if hasattr(current_node, 'memory'):
+        if current_node.memory == 'with_true_memory':
+            raise Exception('True memory not yet implemented')
+        if current_node.node_type == 'parallel':
+            if current_node.parallel_policy == 'success_on_one' and current_node.memory != '':
+                raise Exception('Node ' + current_node.name + ' is success_on_one and has memory. This combination does not make sense.')
+    if current_node.node_type == 'X_is_Y':
+        if current_node.x == current_node.y:
+            raise Exception('Node ' + current_node.name + ' is of type X_is_Y where X==Y')
+
     if hasattr(current_node, 'child'):
         (node_names, node_names_map) = walk_tree(current_node.child, node_names, node_names_map)
     if hasattr(current_node, 'children'):
+        if len(current_node.children) < 2:
+            raise Exception('Node ' + current_node.name + ' has less than 2 children.')
         for child in current_node.children:
             (node_names, node_names_map) = walk_tree(child, node_names, node_names_map)
     return (node_names, node_names_map)

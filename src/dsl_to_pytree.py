@@ -9,6 +9,9 @@ import dsl_to_environment
 from check_model import validate_model
 
 
+# todo: replace is_local, is_env, by setting metamodel to a global constant and then using textx_isinstance
+
+
 def format_function_before(function_name, code, init_mode = None):
     return (
         function_name + '('
@@ -53,6 +56,37 @@ FUNCTION_FORMAT = {
     'division' : ('/', format_function_between),
     'mod' : ('%', format_function_between),
     'count' : ('count', format_function_before)
+}
+
+
+RANGE_FUNCTION = {
+    'abs' : serene_functions.serene_abs,
+    'max' : serene_functions.serene_max,
+    'min' : serene_functions.serene_min,
+    'sin' : serene_functions.serene_sin,
+    'cos' : serene_functions.serene_cos,
+    'tan' : serene_functions.serene_tan,
+    'ln' : serene_functions.serene_log,
+    'not' : serene_functions.serene_not,
+    'and' : serene_functions.serene_and,
+    'or' : serene_functions.serene_or,
+    'xor' : serene_functions.serene_xor,
+    'xnor' : serene_functions.serene_xnor,
+    'implies' : serene_functions.serene_implies,
+    'equivalent' : serene_functions.serene_eq,
+    'equal' : serene_functions.serene_eq,
+    'not_equal' : serene_functions.serene_ne,
+    'less_than' : serene_functions.serene_lt,
+    'greater_than' : serene_functions.serene_gt,
+    'less_than_or_equal' : serene_functions.serene_lte,
+    'greater_than_or_equal' : serene_functions.serene_gte,
+    'negative' : serene_functions.serene_neg,
+    'addition' : serene_functions.serene_sum,
+    'subtraction' : serene_functions.serene_sub,
+    'multiplication' : serene_functions.serene_mult,
+    'division' : serene_functions.serene_truediv,
+    'mod' : serene_functions.serene_mod,
+    'count' : serene_functions.serene_count
 }
 
 
@@ -159,10 +193,6 @@ def update_method_check(node):
 
 def init_method_check_env(node):
     return init_method_check(node)
-    # return (indent(1) + 'def __init__(self, name):' + os.linesep
-    #         + indent(2) + 'super(' + node.name + ', self).__init__(name)' + os.linesep
-    #         + indent(2) + 'self.name = name' + os.linesep
-    #         + os.linesep)
 
 
 def update_method_check_env(node):
@@ -170,42 +200,7 @@ def update_method_check_env(node):
     return (indent(1) + 'def update(self):' + os.linesep
             + indent(2) + 'return ((py_trees.common.Status.SUCCESS) if ('
             + PROJECT_ENVIRONMENT_NAME + '.' + node.name + '(self)'
-            # + PROJECT_ENVIRONMENT_NAME + '.' + node.name
-            # + '('
-            # + ', '.join(sorted(list(set(find_local_variables(node.condition)))))
-            # + ')'
             + ') else (py_trees.common.Status.FAILURE))' + os.linesep)
-
-
-RANGE_FUNCTION = {
-    'abs' : serene_functions.serene_abs,
-    'max' : serene_functions.serene_max,
-    'min' : serene_functions.serene_min,
-    'sin' : serene_functions.serene_sin,
-    'cos' : serene_functions.serene_cos,
-    'tan' : serene_functions.serene_tan,
-    'ln' : serene_functions.serene_log,
-    'not' : serene_functions.serene_not,
-    'and' : serene_functions.serene_and,
-    'or' : serene_functions.serene_or,
-    'xor' : serene_functions.serene_xor,
-    'xnor' : serene_functions.serene_xnor,
-    'implies' : serene_functions.serene_implies,
-    'equivalent' : serene_functions.serene_eq,
-    'equal' : serene_functions.serene_eq,
-    'not_equal' : serene_functions.serene_ne,
-    'less_than' : serene_functions.serene_lt,
-    'greater_than' : serene_functions.serene_gt,
-    'less_than_or_equal' : serene_functions.serene_lte,
-    'greater_than_or_equal' : serene_functions.serene_gte,
-    'negative' : serene_functions.serene_neg,
-    'addition' : serene_functions.serene_sum,
-    'subtraction' : serene_functions.serene_sub,
-    'multiplication' : serene_functions.serene_mult,
-    'division' : serene_functions.serene_truediv,
-    'mod' : serene_functions.serene_mod,
-    'count' : serene_functions.serene_count
-}
 
 
 def build_range_func(code):
@@ -221,18 +216,21 @@ def build_range_func(code):
 
 
 def resolve_variable_nondeterminism(values, range_mode, init_mode = None):
+    # TODO: rework this to be more efficient.
+    # currently, each possibility is computed, even though only one will be used.
     if range_mode:
         cond_func = build_range_func(values[2])
-        poss_values = '[' + ', '.join(map(str, filter(cond_func, range(handle_constant(values[0]), handle_constant(values[1]) + 1)))) + ']'
-        if poss_values == '[]':
+        vals = [map(str, filter(cond_func, range(handle_constant(values[0]), handle_constant(values[1]) + 1)))]
+        if len(vals) == 0:
             raise Exception('variable had no valid values!')
+        elif len(vals) == 1:
+            return vals[0]
         else:
             return (
-                'random.choice('
-                + poss_values
-                + ')'
+                'random.choice(['
+                + ', '.join(vals)
+                + '])'
             )
-        pass
     else:
         if len(values) == 0:
             raise Exception('variable had no valid values!')
@@ -323,9 +321,6 @@ def handle_read_statement(statement):
             raise Exception('Variable ' + statement.condition_variable.name + ' is being used as a condition variable but is not a boolean')
     return (
         indent(2) + 'if ' + PROJECT_ENVIRONMENT_NAME + '.' + statement.name + '__condition(self):' + os.linesep
-        # indent(2) + 'if ' + PROJECT_ENVIRONMENT_NAME + '.' + statement.name + '__condition('
-        # + ', '.join(sorted(list(set(find_local_variables(statement.condition)))))
-        # + '):' + os.linesep
         + (
             variable_assignment(statement.condition_variable, format_variable(statement.condition_variable, True, init_mode = None), True, 'True', indent_level = 3, init_mode = None)
             if statement.condition_variable is not None
@@ -339,21 +334,6 @@ def handle_read_statement(statement):
                                         read_var_state.mode == 'local',
                                         (
                                             PROJECT_ENVIRONMENT_NAME + '.' + statement.name + '__' + str(index) + '(self)'
-                                            # PROJECT_ENVIRONMENT_NAME + '.' + statement.name + '__' + str(index) + '('
-                                            # + ', '.join(sorted(list(set(
-                                            #     flatten(
-                                            #         [
-                                            #             (find_local_variables(case_result.condition)
-                                            #              + ([] if case_result.range_mode else flatten([find_local_variables(value) for value in case_result.values]))
-                                            #              )
-                                            #             for case_result in read_var_state.case_results
-                                            #         ]
-                                            #     )
-                                            #     + (
-                                            #         [] if read_var_state.default_result.range_mode else flatten([find_local_variables(value) for value in read_var_state.default_result.values])
-                                            #     )
-                                            # ))))
-                                            # + ')'
                                         ),
                                         indent_level = 3, init_mode = None)
                 )
