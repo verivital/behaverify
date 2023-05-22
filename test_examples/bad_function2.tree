@@ -1,0 +1,118 @@
+#comment#
+the purpose of this test is to fail because a variable uses multiple enum types.
+#end_comment#
+
+constants {
+	#comment# constants are used to synchronize values in a .tree file. #end_comment#
+	#comment# example = 0 #end_comment#
+	#comment# to use example elsewhere, simply type 'example' in place of any integer (quotes included) #end_comment#
+} end_constants
+
+blackboard_variables {
+	#comment# Blackboard Variable declarations go here #end_comment#
+	#comment#
+	blackboard_variable {
+		x
+		VAR
+		[0, 10]
+		initial_value { result { 0 } end_result } end_initial_value
+	} end_blackboard_variable
+	#end_comment#
+	blackboard_variable { test VAR [0, 10] initial_value { result { 0 } end_result } end_initial_value } end_blackboard_variable
+} end_blackboard_variables
+
+local_variables {
+	#comment# Local Variable declarations go here #end_comment#
+	#comment#
+	local_variable {
+		y
+		VAR
+		{'potato', 'tomato', 'bawk'}
+		initial_value { result { 'bawk' } end_result } end_initial_value
+	} end_local_variable
+	#end_comment#
+} end_local_variables
+
+environment {
+	environment_variables {
+		#comment# Local Variable declarations go here #end_comment#
+		#comment#
+		environment_variable {
+			z
+			VAR
+			BOOLEAN
+			initial_value { case { (equal, 1, 0) } end_case result { False} end_result result { (equal, bl x, 0) } end_result } end_initial_value
+		} end_environment_variable
+		#end_comment#
+	} end_environment_variables
+	update_values {
+		#comment# update values for environment #end_comment#
+		#comment#
+		environment_statement {
+			env z
+			case { (less_than, bl x, 5) } end_case result { True, False} end_result
+			case { (greater_than, bl x, 5) } end_case result { (equal, 0, (mod, bl x, 2)) } end_result
+			result { env z } end_result
+		} end_environment_statement
+		#end_comment#
+	} end_update_values
+} end_environment
+
+checks {
+	#comment# check nodes are defined here #end_comment#
+	#comment#
+	check {
+		x_idk
+		read_variables { x } end_read_variables
+		condition { (and, (less_than, (addition, bl x, 1), 4), True) } end_condition
+	} end_check
+	#end_comment#
+	check {
+		test_node
+		read_variables {} end_read_variables
+		condition { True} end_condition
+	} end_check
+} end_checks
+
+environment_checks {
+	#comment# check environment nodes are defined here #end_comment#
+	#comment#
+	environment_check {
+		z_idk
+		read_variables {} end_read_variables
+		condition { env z } end_condition
+	} end_environment_check
+	#end_comment#
+} end_environment_checks
+
+actions {
+	#comment# action nodes are defined here #end_comment#
+	action {
+		y_do
+		local_variables { } end_local_variables
+		read_variables { } end_read_variables
+		write_variables { test } end_write_variables
+		initial_values {} end_initial_values
+		update {
+			variable_statement {
+				bl test
+				result { (count, True, (equal, bl test, 'a')) } end_result
+			} end_variable_statement
+			return_statement {
+				result { success} end_result
+			} end_return_statement
+		} end_update
+	} end_action
+} end_actions
+
+sub_trees {#comment# subtrees go here. #end_comment#} end_sub_trees
+
+tree {
+	#comment# the tree is defined here#end_comment#
+	test_node
+} end_tree
+
+
+
+
+specifications { #comment# INVAR, LTL, and CTL specs go here #end_comment# } end_specifications
