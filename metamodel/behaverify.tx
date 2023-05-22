@@ -171,8 +171,12 @@ node:
     ('[' min_val = serene_int ',' max_val = serene_int (',' condition = range_code)? ']') | (boolean = 'BOOLEAN') | ('{' enums += enumeration[','] '}')
 ;
     
+// enumeration:
+//     serene_int | BOOL | STRING
+// ;
+
 enumeration:
-    serene_int | BOOL | STRING
+    serene_int | STRING
 ;
     
     serene_int:
