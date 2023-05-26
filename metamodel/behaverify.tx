@@ -197,11 +197,16 @@ status:
 statement:
     (variable_statement = variable_statement) | (read_statement = read_statement) | (write_statement = write_statement)
 ;
+
+    pointless_spacing:
+    'non_determinism' ','
+    ;
     
     read_statement:
-    'read_environment' '{'-
+    'read_environment' '{'
     name = ID
-    (('condition' '{' condition = code_statement_bl_local_env '}' 'end_condition') | (condition_variable = [local_variable]))
+    (('condition_variable' '{' mode = 'local' condition_variable = [local_variable] '}' 'end_condition_variable') | ('condition_variable' '{' mode = 'bl' condition_variable = [blackboard_variable] '}' 'end_condition_variable'))?
+    ('condition' '{' non_determinism ?= pointless_spacing condition = code_statement_bl_local_env '}' 'end_condition')
     variable_statements += read_variable_statement
     '}' 'end_read_environment'
 ;
@@ -228,7 +233,7 @@ statement:
 
     environment_statement:
     'environment_statement' '{'
-    instant ?= 'instant' // does not work with aut version.
+    instant ?= 'instant'
     mode = 'env' variable = [environment_variable]
     case_results *= case_result_bl_env
     default_result = default_result_bl_env
@@ -237,7 +242,7 @@ statement:
 
     environment_statement_action:
     'environment_statement' '{'
-    instant ?= 'instant' // does not work with aut version.
+    instant ?= 'instant'
     mode = 'env' variable = [environment_variable]
     case_results *= case_result_bl_local_env
     default_result = default_result_bl_local_env
