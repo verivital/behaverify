@@ -54,7 +54,8 @@ FUNCTION_FORMAT = {
 
 
 def format_variable_name_only(variable_name, is_local, is_env, node_name):
-    return ((('') if is_local else ('blackboard_reader.' if not is_env else '')) + variable_name)
+    # return ((('') if is_local else ('blackboard_reader.' if not is_env else '')) + variable_name)
+    return ((('') if is_local else ('blackboard.' if not is_env else 'self.')) + variable_name)
 
 
 def format_variable(variable, is_local, is_env, node_name):
@@ -64,10 +65,10 @@ def format_variable(variable, is_local, is_env, node_name):
             if is_local
             else
             (
-                ''
+                'self.'
                 if is_env
                 else
-                'blackboard_reader.'
+                'self.blackboard.'
             )
         )
         + variable.name
@@ -179,59 +180,60 @@ def variable_init(variable):
     return (
         create_variable_macro(variable)
         if variable.model_as == 'DEFINE' else
-        format_statement(variable.initial_value, None, 0, format_variable(variable, False, True, None))
+        format_statement(variable.initial_value, None, 2, format_variable(variable, False, True, None))
     )
 
 
 def create_variable_macro(variable):
     return (
         os.linesep
-        + 'def ' + variable.name + '():' + os.linesep
-        + format_statement(variable.initial_value, None, 1, '_' + variable.name + '_value_to_return_')
-        + indent(1) + 'return _' + variable.name + '_value_to_return_' + os.linesep
+        + indent(1) + 'def ' + variable.name + '(self):' + os.linesep
+        + format_statement(variable.initial_value, None, 2, '_' + variable.name + '_value_to_return_')
+        + indent(2) + 'return _' + variable.name + '_value_to_return_' + os.linesep
     )
 
 
 def handle_check_env(node):
     return (
-        'def '
+        os.linesep
+        + indent(1) + 'def '
         + node.name
-        + '(node):' + os.linesep
-        + indent(1) + "'''" + os.linesep
-        + indent(1) + '-- RETURN' + os.linesep
-        + indent(1) + 'This method is expected to return True or False.' + os.linesep
-        + indent(1) + 'This method is being modeled using the following behavior:' + os.linesep
-        + indent(1) + format_code(node.condition, node.name) + os.linesep
-        + indent(1) + '-- SIDE EFFECTS' + os.linesep
-        + indent(1) + 'This method is expected to have no side effects (for the tree).' + os.linesep
-        + indent(1) + "'''" + os.linesep
-        + indent(1) + '# below we include an auto generated attempt at implmenting this' + os.linesep
-        + indent(1) + 'return (' + os.linesep
+        + '(self, node):' + os.linesep
+        + indent(2) + "'''" + os.linesep
+        + indent(2) + '-- RETURN' + os.linesep
+        + indent(2) + 'This method is expected to return True or False.' + os.linesep
+        + indent(2) + 'This method is being modeled using the following behavior:' + os.linesep
         + indent(2) + format_code(node.condition, node.name) + os.linesep
-        + indent(1) + ')' + os.linesep
+        + indent(2) + '-- SIDE EFFECTS' + os.linesep
+        + indent(2) + 'This method is expected to have no side effects (for the tree).' + os.linesep
+        + indent(2) + "'''" + os.linesep
+        + indent(2) + '# below we include an auto generated attempt at implmenting this' + os.linesep
+        + indent(2) + 'return ' + format_code(node.condition, node.name) + os.linesep
     )
 
 
 def handle_read_statement(statement, node_name):
     return (
         os.linesep
-        + os.linesep
-        + 'def ' + statement.name + '__condition(node):' + os.linesep
-        + indent(1) + 'return '
+        + indent(1) + 'def ' + statement.name + '__condition(self, node):' + os.linesep
+        + indent(2) + 'if ' + format_code(statement.condition, node_name) + ':' + os.linesep
+        + indent(3) + 'return '
         + (
-            format_code(statement.condition, node_name)
-            if statement.condition_variable is None else
             'random.choice([True, False])'
-        )
+            if statement.non_determinism
+            else
+            'True'
+        ) + os.linesep
+        + indent(2) + 'else:' + os.linesep
+        + indent(3) + 'return False' + os.linesep
         + os.linesep
         + ''.join(
             [
                 (
                     os.linesep
-                    + os.linesep
-                    + 'def ' + statement.name + '__' + str(index) + '(node):' + os.linesep
-                    + (format_statement(read_var_state, node_name, indent_level = 1, override_variable_name = ('to_return_' + read_var_state.variable.name)))
-                    + indent(1) + 'return to_return_' + read_var_state.variable.name + os.linesep
+                    + indent(1) + 'def ' + statement.name + '__' + str(index) + '(self, node):' + os.linesep
+                    + (format_statement(read_var_state, node_name, indent_level = 2, override_variable_name = ('to_return_' + read_var_state.variable.name)))
+                    + indent(2) + 'return to_return_' + read_var_state.variable.name + os.linesep
                 )
                 for index, read_var_state in enumerate(statement.variable_statements)
             ]
@@ -249,13 +251,11 @@ def handle_write_statement(statement, node_name):
             [
                 (
                     os.linesep
-                    + os.linesep
-                    + 'def ' + statement.name + '__' + str(index) + '(node):' + os.linesep
-                    + indent(1) + 'global ' + format_variable(env_update.variable, False, True, node_name) + os.linesep
-                    + (format_statement(env_update, node_name, indent_level = 1, override_variable_name = ('update_val_' + env_update.variable.name)))
-                    + indent(1) + format_variable(env_update.variable, False, True, node_name)
+                    + indent(1) + 'def ' + statement.name + '__' + str(index) + '(self, node):' + os.linesep
+                    + (format_statement(env_update, node_name, indent_level = 2, override_variable_name = ('update_val_' + env_update.variable.name)))
+                    + indent(2) + format_variable(env_update.variable, False, True, node_name)
                     + ' = serene_safe_assignment.' + env_update.variable.name + '(update_val_' + env_update.variable.name + ')' + os.linesep
-                    + indent(1) + 'return' + os.linesep
+                    + indent(2) + 'return' + os.linesep
                 )
                 for index, env_update in enumerate(statement.update) if update_is_safe(env_update)
             ]
@@ -263,58 +263,74 @@ def handle_write_statement(statement, node_name):
     )
 
 
-def default_preamble(blackboard_variables, environment_variables, updates):
+def default_preamble(blackboard_variables, environment_variables, updates, tick_condition):
+    global PROJECT_ENVIRONMENT_NAME
     return (
-        'import py_trees' + os.linesep
-        + 'import random' + os.linesep
+        # 'import py_trees' + os.linesep
+        'import random' + os.linesep
         + 'import serene_safe_assignment' + os.linesep
         + os.linesep
         + os.linesep
-        + 'delayed_action_queue = []' + os.linesep
+        + 'class ' + PROJECT_ENVIRONMENT_NAME + '():' + os.linesep
+        + indent(1) + 'def delay_this_action(self, action, node):' + os.linesep
+        + indent(2) + 'self.delayed_action_queue.append((action, node))' + os.linesep
         + os.linesep
+        + indent(1) + 'def execute_delayed_action_queue(self):' + os.linesep
+        + indent(2) + 'for (delayed_action, node) in self.delayed_action_queue:' + os.linesep
+        + indent(3) + 'delayed_action(node)' + os.linesep
+        + indent(2) + 'self.delayed_action_queue = []' + os.linesep
+        + indent(2) + 'return' + os.linesep
         + os.linesep
-        + 'def delay_this_action(action, node):' + os.linesep
-        + indent(1) + 'global delayed_action_queue' + os.linesep
-        + indent(1) + 'delayed_action_queue.append((action, node))' + os.linesep
-        + os.linesep
-        + os.linesep
-        + 'def execute_delayed_action_queue():' + os.linesep
-        + indent(1) + 'global delayed_action_queue' + os.linesep
-        + indent(1) + 'for (delayed_action, node) in delayed_action_queue:' + os.linesep
-        + indent(2) + 'delayed_action(node)' + os.linesep
-        + indent(1) + 'delayed_action_queue = []' + os.linesep
-        + indent(1) + 'return' + os.linesep
-        + os.linesep
-        + os.linesep
-        + 'blackboard_reader = py_trees.blackboard.Client()' + os.linesep
+        + indent(1) + 'def between_tick_environment_update(self):' + os.linesep
+        # + (
+        #     (
+        #         indent(2) + 'global ' + ', '.join([format_variable(variable, False, True, None) for variable in environment_variables if variable.model_as == 'VAR']) + os.linesep
+        #         + ''.join(
+        #             [
+        #                 format_statement(update, None, indent_level = 2)
+        #                 for update in updates
+        #             ]
+        #         )
+        #     )
+        #     if len(environment_variables) > 0
+        #     else
+        #     ''
+        # )
         + ''.join(
             [
-                ('blackboard_reader.register_key(key = ' + "'" + blackboard_variable.name + "'" + ', access = py_trees.common.Access.READ)' + os.linesep)
-                for blackboard_variable in blackboard_variables
+                format_statement(update, None, indent_level = 2)
+                for update in updates
             ]
         )
+        + indent(2) + 'return' + os.linesep
         + os.linesep
-        + os.linesep
-        + 'def between_tick_environment_update():' + os.linesep
+        + indent(1) + 'def check_tick_condition(self):' + os.linesep
         + (
-            indent(1) + 'global ' + ', '.join([format_variable(variable, False, True, None) for variable in environment_variables if variable.model_as == 'VAR']) + os.linesep
-            + ''.join(
-                [
-                    format_statement(update, None, indent_level = 1)
-                    for update in updates
-                ]
-            )
+            (indent(2) + 'return True' + os.linesep)
+            if tick_condition is None
+            else
+            (indent(2) + 'return ' + format_code(tick_condition, None) + os.linesep)
         )
-        + indent(1) + 'return' + os.linesep
         + os.linesep
-        + os.linesep
+        + indent(1) + 'def __init__(self, blackboard):' + os.linesep
+        + indent(2) + 'self.blackboard = blackboard' + os.linesep
+        + indent(2) + 'self.delayed_action_queue = []' + os.linesep
+        + (os.linesep if len(environment_variables) > 0 else '')
+        # + indent(2) + 'self.blackboard_reader = py_trees.blackboard.Client()' + os.linesep
+        # + ''.join(
+        #     [
+        #         ('blackboard_reader.register_key(key = ' + "'" + blackboard_variable.name + "'" + ', access = py_trees.common.Access.READ)' + os.linesep)
+        #         for blackboard_variable in blackboard_variables
+        #     ]
+        # )
     )
 
 
 def write_environment(model, location, const_name):
 
-    global CONSTANT_NAME
-    CONSTANT_NAME = const_name
+    global PROJECT_NAME, PROJECT_ENVIRONMENT_NAME
+    PROJECT_NAME = const_name
+    PROJECT_ENVIRONMENT_NAME = const_name + '_environment'
 
     global constants
     constants = {
@@ -327,40 +343,61 @@ def write_environment(model, location, const_name):
     #     format_variable(statement.variable, False, True, None) : (format_statement(statement, None, 0) if statement.variable.model_as != 'DEFINE' else create_variable_macro(statement))
     #     for statement in model.initial
     #     }
-    variables_update = {
-        format_variable_name_only(variable_name, False, True, None) : (
-            ''.join(
-                [
-                    ('# ' + format_statement(statement, None).replace(os.linesep, os.linesep + '# ').rstrip() + os.linesep)
-                    for statement in group
-                ])
-        )
-        for variable_name, group in itertools.groupby(
-                sorted(model.update, key = (lambda x : x.variable.name)),
-                key = (lambda x : x.variable.name))
-        }
+    # variables_update = {
+    #     format_variable_name_only(variable_name, False, True, None) : (
+    #         ''.join(
+    #             [
+    #                 ('# ' + format_statement(statement, None).replace(os.linesep, os.linesep + '# ').rstrip() + os.linesep)
+    #                 for statement in group
+    #             ])
+    #     )
+    #     for variable_name, group in itertools.groupby(
+    #             sorted(model.update, key = (lambda x : x.variable.name)),
+    #             key = (lambda x : x.variable.name))
+    # }
 
     to_write = (
-        default_preamble(model.blackboard_variables, model.environment_variables, model.update)
-        + (os.linesep).join(
+        default_preamble(model.blackboard_variables, model.environment_variables, model.update, model.tick_condition)
+        + ''.join(
             [
                 (
                     variable_init(variable)
                     # + os.linesep
-                    + (
-                        os.linesep
-                        if variable.model_as == 'DEFINE' else
-                        (
-                            ('# this variable is a constant. do not change it' + os.linesep)
-                            if variable.model_as == 'FROZENVAR' else
-                            (('# this variable develops in the following way between ticks.' + os.linesep + variables_update[format_variable(variable, False, True, None)])
-                             if format_variable(variable, False, True, None) in variables_update else
-                             ('# this variable does not change between ticks' + os.linesep
-                              + '# it should only change if a behavior tree leaf calls a method that changes it instantly or adds a method to the delayed action queue to change it' + os.linesep))
-                        )
-                    )
+                    # + (
+                    #     os.linesep
+                    #     if variable.model_as == 'DEFINE' else
+                    #     (
+                    #         (indent(2) + '# this variable is a constant. do not change it' + os.linesep)
+                    #         if variable.model_as == 'FROZENVAR' else
+                    #         (('# this variable develops in the following way between ticks.' + os.linesep + variables_update[format_variable(variable, False, True, None)])
+                    #          if format_variable(variable, False, True, None) in variables_update else
+                    #          ('# this variable does not change between ticks' + os.linesep
+                    #           + '# it should only change if a behavior tree leaf calls a method that changes it instantly or adds a method to the delayed action queue to change it' + os.linesep))
+                    #     )
+                    # )
                 )
-                for variable in model.environment_variables
+                for variable in model.environment_variables if variable.model_as != 'DEFINE'
+            ]
+        )
+        + ''.join(
+            [
+                (
+                    variable_init(variable)
+                    # + os.linesep
+                    # + (
+                    #     os.linesep
+                    #     if variable.model_as == 'DEFINE' else
+                    #     (
+                    #         (indent(2) + '# this variable is a constant. do not change it' + os.linesep)
+                    #         if variable.model_as == 'FROZENVAR' else
+                    #         (('# this variable develops in the following way between ticks.' + os.linesep + variables_update[format_variable(variable, False, True, None)])
+                    #          if format_variable(variable, False, True, None) in variables_update else
+                    #          ('# this variable does not change between ticks' + os.linesep
+                    #           + '# it should only change if a behavior tree leaf calls a method that changes it instantly or adds a method to the delayed action queue to change it' + os.linesep))
+                    #     )
+                    # )
+                )
+                for variable in model.environment_variables if variable.model_as == 'DEFINE'
             ]
         )
     )
@@ -377,7 +414,7 @@ def write_environment(model, location, const_name):
                 if statement.read_statement is not None else
                 handle_write_statement(statement.write_statement, action.name))
 
-    with open(location + CONSTANT_NAME + '_environment.py', 'w') as f:
+    with open(location + PROJECT_ENVIRONMENT_NAME + '.py', 'w') as f:
         f.write(to_write)
     return
 
