@@ -28,6 +28,24 @@ def format_function_between(function_name, code, init_mode = None):
         )
 
 
+def format_function_implies(function_name, code, init_mode = None):
+    return (
+        '('
+        + '(not (' + format_code(code.function_call.values[0]) + '))'
+        + ' or '
+        + '(' + format_code(code.function_call.values[1]) + ')'
+        + ')'
+    )
+
+
+def format_function_xnor(function_name, code, init_mode = None):
+    return (
+        '('
+        + 'not (' + FUNCTION_FORMAT['xnor'][1](FUNCTION_FORMAT['xnor'][0], code, init_mode) + ')'
+        + ')'
+    )
+
+
 FUNCTION_FORMAT = {
     'abs' : ('abs', format_function_before),
     'max' : ('max', format_function_before),
@@ -40,8 +58,8 @@ FUNCTION_FORMAT = {
     'and' : ('and', format_function_between),
     'or' : ('or', format_function_between),
     'xor' : ('operator.xor', format_function_between),
-    'xnor' : ('xnor', format_function_between),
-    'implies' : ('->', format_function_between),
+    'xnor' : ('xnor', format_function_xnor),
+    'implies' : ('->', format_function_implies),
     'equivalent' : ('==', format_function_between),
     'equal' : ('==', format_function_between),
     'not_equal' : ('!=', format_function_between),
@@ -192,14 +210,19 @@ def update_method_check(node):
 
 
 def init_method_check_env(node):
-    return init_method_check(node)
+    return (indent(1) + 'def __init__(self, name, environment):' + os.linesep
+            + indent(2) + 'super(' + node.name + ', self).__init__(name)' + os.linesep
+            + indent(2) + 'self.name = name' + os.linesep
+            + indent(2) + 'self.environment = environment' + os.linesep
+            + indent(2) + 'self.blackboard = self.attach_blackboard_client(name = name)' + os.linesep
+            + ''.join([(indent(2) + 'self.blackboard.register_key(key = (' + "'" + variable.name + "'" + '), access = py_trees.common.Access.READ)' + os.linesep) for variable in node.read_variables])
+            + os.linesep)
 
 
 def update_method_check_env(node):
-    global PROJECT_ENVIRONMENT_NAME
     return (indent(1) + 'def update(self):' + os.linesep
             + indent(2) + 'return ((py_trees.common.Status.SUCCESS) if ('
-            + PROJECT_ENVIRONMENT_NAME + '.' + node.name + '(self)'
+            + 'self.environment.' + node.name + '(self)'
             + ') else (py_trees.common.Status.FAILURE))' + os.linesep)
 
 
@@ -315,14 +338,10 @@ def create_variable_macro(case_default, variable, is_local, indent_level = 2, in
 
 
 def handle_read_statement(statement):
-    global PROJECT_ENVIRONMENT_NAME
-    if statement.condition_variable is not None:
-        if statement.condition_variable.domain != 'BOOLEAN':
-            raise Exception('Variable ' + statement.condition_variable.name + ' is being used as a condition variable but is not a boolean')
     return (
-        indent(2) + 'if ' + PROJECT_ENVIRONMENT_NAME + '.' + statement.name + '__condition(self):' + os.linesep
+        indent(2) + 'if ' + 'self.environment.' + statement.name + '__condition(self):' + os.linesep
         + (
-            variable_assignment(statement.condition_variable, format_variable(statement.condition_variable, True, init_mode = None), True, 'True', indent_level = 3, init_mode = None)
+            variable_assignment(statement.condition_variable, format_variable(statement.condition_variable, statement.mode == 'local', init_mode = None), statement.mode == 'local', 'True', indent_level = 3, init_mode = None)
             if statement.condition_variable is not None
             else
             ''
@@ -333,7 +352,7 @@ def handle_read_statement(statement):
                     variable_assignment(read_var_state.variable, format_variable(read_var_state.variable, read_var_state.mode == 'local', init_mode = None),
                                         read_var_state.mode == 'local',
                                         (
-                                            PROJECT_ENVIRONMENT_NAME + '.' + statement.name + '__' + str(index) + '(self)'
+                                            'self.environment.' + statement.name + '__' + str(index) + '(self)'
                                         ),
                                         indent_level = 3, init_mode = None)
                 )
@@ -353,17 +372,16 @@ def handle_read_statement(statement):
 
 
 def handle_write_statement(statement):
-    global PROJECT_ENVIRONMENT_NAME
     return (
         ''.join(
             [
                 (
-                    indent(2) + PROJECT_ENVIRONMENT_NAME + '.' + statement.name + '__' + str(index) + '(self)' + os.linesep
+                    indent(2) + 'self.environment.' + statement.name + '__' + str(index) + '(self)' + os.linesep
                 )
                 if update_env.instant
                 else
                 (
-                    indent(2) + PROJECT_ENVIRONMENT_NAME + '.delay_this_action(' + PROJECT_ENVIRONMENT_NAME + '.' + statement.name + '__' + str(index) + ', self)' + os.linesep
+                    indent(2) + 'self.environment.delay_this_action(' + 'self.environment.' + statement.name + '__' + str(index) + ', self)' + os.linesep
                 )
                 for index, update_env in enumerate(statement.update)
             ]
@@ -390,9 +408,10 @@ def handle_return_statement(statement):
 
 
 def init_method_action(node):
-    return (indent(1) + 'def __init__(self, name):' + os.linesep
+    return (indent(1) + 'def __init__(self, name, environment):' + os.linesep
             + indent(2) + 'super(' + node.name + ', self).__init__(name)' + os.linesep
             + indent(2) + 'self.name = name' + os.linesep
+            + indent(2) + 'self.environment = environment' + os.linesep
             + indent(2) + 'self.blackboard = self.attach_blackboard_client(name = name)' + os.linesep
             + ''.join([(indent(2) + 'self.blackboard.register_key(key = (' + "'" + variable.name + "'" + '), access = py_trees.common.Access.READ)' + os.linesep) for variable in node.read_variables])
             + ''.join([(indent(2) + 'self.blackboard.register_key(key = (' + "'" + variable.name + "'" + '), access = py_trees.common.Access.WRITE)' + os.linesep) for variable in node.write_variables])
@@ -432,9 +451,9 @@ def update_method_action(node):
             )
 
 
-def custom_imports(node):
-    global PROJECT_ENVIRONMENT_NAME
-    return 'import ' + PROJECT_ENVIRONMENT_NAME + os.linesep
+# def custom_imports(node):
+#     global PROJECT_ENVIRONMENT_NAME
+#     return 'import ' + PROJECT_ENVIRONMENT_NAME + os.linesep
 
 
 def build_check_node(node):
@@ -450,7 +469,7 @@ def build_check_node(node):
 
 def build_check_environment_node(node):
     return (STANDARD_IMPORTS
-            + custom_imports(node)
+            # + custom_imports(node)
             + os.linesep
             + os.linesep
             + class_definition(node.name)
@@ -461,7 +480,7 @@ def build_check_environment_node(node):
 
 def build_action_node(node):
     return (STANDARD_IMPORTS
-            + custom_imports(node)
+            # + custom_imports(node)
             + os.linesep
             + os.linesep
             + class_definition(node.name)
@@ -494,7 +513,7 @@ def walk_tree_recursive(current_node, node_names, node_names_map, running_string
     # -----------------------------------------------------------------------------------
     # start of composite nodes
     if current_node.node_type == 'check' or current_node.node_type == 'check_environment' or current_node.node_type == 'action':
-        running_string += indent(1) + node_name + ' = ' + current_node.name + '_file.' + current_node.name + '(' + "'" + node_name + "'" + ')' + os.linesep
+        running_string += indent(1) + node_name + ' = ' + current_node.name + '_file.' + current_node.name + '(' + "'" + node_name + "'" + ('' if current_node.node_type == 'check' else ', environment') + ')' + os.linesep
         return (node_name, node_names, node_names_map, running_string)
     elif current_node.node_type == 'X_is_Y':
         if current_node.x == current_node.y:
@@ -628,6 +647,62 @@ def create_safe_assignment(model):
     return return_string
 
 
+def create_runner(blackboard_variables, environment_variables):
+    global PROJECT_NAME, PROJECT_ENVIRONMENT_NAME
+    return (
+        'import ' + PROJECT_NAME + os.linesep
+        + 'import ' + PROJECT_ENVIRONMENT_NAME + os.linesep
+        + os.linesep
+        + 'blackboard_reader = ' + PROJECT_NAME + '.create_blackboard()' + os.linesep
+        + 'environment = ' + PROJECT_ENVIRONMENT_NAME + '.' + PROJECT_ENVIRONMENT_NAME + '(blackboard_reader)' + os.linesep
+        + 'tree = ' + PROJECT_NAME + '.create_tree(environment)' + os.linesep
+        + os.linesep
+        + os.linesep
+        + 'def full_tick():' + os.linesep
+        + indent(1) + 'tree.tick_once()' + os.linesep
+        + indent(1) + 'environment.execute_delayed_action_queue()' + os.linesep
+        + indent(1) + 'environment.between_tick_environment_update()' + os.linesep
+        + indent(1) + 'return' + os.linesep
+        + os.linesep
+        + os.linesep
+        + 'def print_blackboard():' + os.linesep
+        + indent(1) + "print('blackboard:')" + os.linesep
+        + ''.join(
+            [
+                (
+                    indent(1) + 'print(' + "'  " + variable.name + ": '" + ' + str(blackboard_reader.' + variable.name + ('()' if variable.model_as == 'DEFINE' else '') + '))' + os.linesep
+                )
+                for variable in blackboard_variables
+            ]
+        )
+        + indent(1) + 'return' + os.linesep
+        + os.linesep
+        + os.linesep
+        + 'def print_environment():' + os.linesep
+        + indent(1) + "print('environment:')" + os.linesep
+        + ''.join(
+            [
+                (
+                    indent(1) + 'print(' + "'  " + variable.name + ": '" + ' + str(environment.' + variable.name + ('()' if variable.model_as == 'DEFINE' else '') + '))' + os.linesep
+                )
+                for variable in environment_variables
+            ]
+        )
+        + indent(1) + 'return' + os.linesep
+        + os.linesep
+        + os.linesep
+        + 'for count in range(100):' + os.linesep
+        + indent(1) + "print('------------------------')" + os.linesep
+        + indent(1) + "print('iteration: ' + str(count))" + os.linesep
+        + indent(1) + 'print_blackboard()' + os.linesep
+        + indent(1) + 'print_environment()' + os.linesep
+        + indent(1) + 'if environment.check_tick_condition():' + os.linesep
+        + indent(2) + 'full_tick()' + os.linesep
+        + indent(1) + 'else:' + os.linesep
+        + indent(2) + 'break' + os.linesep
+    )
+
+
 def main():
 
     arg_parser = argparse.ArgumentParser()
@@ -671,7 +746,7 @@ def main():
                 + 'import py_trees' + os.linesep
                 + 'import serene_safe_assignment' + os.linesep
                 + os.linesep + os.linesep
-                + 'def create_tree():' + os.linesep
+                + 'def create_blackboard():' + os.linesep
                 + indent(1) + 'blackboard_reader = py_trees.blackboard.Client()' + os.linesep
                 + ''.join(
                     [
@@ -689,11 +764,16 @@ def main():
                         for blackboard_variable in model.blackboard_variables
                     ]
                 )
+                + indent(1) + 'return blackboard_reader' + os.linesep
                 + os.linesep
+                + os.linesep
+                + 'def create_tree(environment):' + os.linesep
                 + running_string
                 + indent(1) + 'return ' + root_name + os.linesep
                 )
     dsl_to_environment.write_environment(model, args.location, PROJECT_NAME)
+    with open(args.location + PROJECT_NAME + '_runner.py', 'w') as f:
+        f.write(create_runner(model.blackboard_variables, model.environment_variables))
     return
 
 
