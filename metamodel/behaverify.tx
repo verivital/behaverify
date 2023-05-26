@@ -124,11 +124,20 @@ node:
     environment_variable:
     'environment_variable' '{'
     name = ID
+    (
+    (
+    'array' array_size = serene_int
+    ((model_as = 'VAR' domain = variable_domain) | (model_as = 'FROZENVAR' domain = variable_domain) | (model_as = 'DEFINE' ((domain = 'INT') | (domain = 'ENUM') | (domain = 'BOOLEAN'))))
+    ((array_mode = 'range' initial_value = environment_initial_value) | (array_mode = 'manual' initial_values += environment_initial_value))
+    )
+    |
+    (
     ((model_as = 'VAR' domain = variable_domain) | (model_as = 'FROZENVAR' domain = variable_domain) | (model_as = 'DEFINE' ((domain = 'INT') | (domain = 'ENUM') | (domain = 'BOOLEAN'))))
     initial_value = environment_initial_value
+    )
+    )
     '}' 'end_environment_variable'
 ;
-
     environment_initial_value:
     'initial_value' '{'
     case_results *= case_result_bl_env
@@ -139,8 +148,9 @@ node:
     blackboard_variable:
     'blackboard_variable' '{'
     name = ID
+    ('array' array_size = serene_int)?
     ((model_as = 'VAR' domain = variable_domain) | (model_as = 'FROZENVAR' domain = variable_domain) | (model_as = 'DEFINE' ((domain = 'INT') | (domain = 'ENUM') | (domain = 'BOOLEAN'))))
-    initial_value = blackboard_initial_value
+    initial_value += blackboard_initial_value
     '}' 'end_blackboard_variable'
 ;
 
@@ -154,8 +164,9 @@ node:
     local_variable:
     'local_variable' '{'
     name = ID
+    ('array' array_size = serene_int)?
     ((model_as = 'VAR' domain = variable_domain) | (model_as = 'FROZENVAR' domain = variable_domain) | (model_as = 'DEFINE' ((domain = 'INT') | (domain = 'ENUM') | (domain = 'BOOLEAN'))))
-    initial_value = blackboard_initial_value //not a typo. uses blackboard initial value. cannot use local variables in the declaration of a local variable here. if you need that, re-initialize in an action node.
+    initial_value += blackboard_initial_value //not a typo. uses blackboard initial value. cannot use local variables in the declaration of a local variable here. if you need that, re-initialize in an action node.
     '}' 'end_local_variable'
 ;
 
@@ -235,8 +246,14 @@ statement:
     'environment_statement' '{'
     instant ?= 'instant'
     mode = 'env' variable = [environment_variable]
-    case_results *= case_result_bl_env
-    default_result = default_result_bl_env
+    (
+    (((range_mode ?= 'range' ',' values = serene_int ',' values = serene_int ',' values = range_code) | ('')) index_state = array_bl_env)
+    |
+    (index_states += array_bl_env)
+    |
+    (case_results *= case_result_bl_env
+    default_result = default_result_bl_env)
+    )
     '}' 'end_environment_statement'
 ;
 
@@ -263,6 +280,12 @@ statement:
     case_results *=  status_case_result
     default_result = status_default_result
     '}' 'end_return_statement'
+;
+    //--------------------SEC:ARRAY_INDEX_OF--------------------------
+    array_bl_env:
+    'index_of' '{' index_expr = code_statement_bl_env '}' 'end_index_of'
+    case_results *= case_result_bl_env
+    default_result = default_result_bl_env
 ;
 
     //--------------------SEC:CASE_RESULT--------------------------
@@ -494,7 +517,8 @@ statement:
     (function_name = 'multiplication' ',' values += code_statement_bl[',']) |
     (function_name = 'division' ',' values = code_statement_bl ',' values = code_statement_bl) |
     (function_name = 'mod' ',' values = code_statement_bl ',' values = code_statement_bl) |
-    (function_name = 'count' ',' values += code_statement_bl[','])
+    (function_name = 'count' ',' values += code_statement_bl[',']) |
+    (function_name = 'index' ',' ((mode = 'bl' variable = [blackboard_variable])) ',' values = code_statement_bl)
 ;
 
     function_env:
@@ -525,7 +549,8 @@ statement:
     (function_name = 'multiplication' ',' values += code_statement_env[',']) |
     (function_name = 'division' ',' values = code_statement_env ',' values = code_statement_env) |
     (function_name = 'mod' ',' values = code_statement_env ',' values = code_statement_env) |
-    (function_name = 'count' ',' values += code_statement_env[','])
+    (function_name = 'count' ',' values += code_statement_env[',']) |
+    (function_name = 'index' ',' ((mode = 'env' variable = [environment_variable])) ',' values = code_statement_env)
 ;
 
     function_bl_local:
@@ -556,7 +581,8 @@ statement:
     (function_name = 'multiplication' ',' values += code_statement_bl_local[',']) |
     (function_name = 'division' ',' values = code_statement_bl_local ',' values = code_statement_bl_local) |
     (function_name = 'mod' ',' values = code_statement_bl_local ',' values = code_statement_bl_local) |
-    (function_name = 'count' ',' values += code_statement_bl_local[','])
+    (function_name = 'count' ',' values += code_statement_bl_local[',']) |
+    (function_name = 'index' ',' ((mode = 'local' variable = [local_variable]) | (mode = 'bl' variable = [blackboard_variable])) ',' values = code_statement_bl_local)
 ;
 
     function_bl_env:
@@ -587,7 +613,8 @@ statement:
     (function_name = 'multiplication' ',' values += code_statement_bl_env[',']) |
     (function_name = 'division' ',' values = code_statement_bl_env ',' values = code_statement_bl_env) |
     (function_name = 'mod' ',' values = code_statement_bl_env ',' values = code_statement_bl_env) |
-    (function_name = 'count' ',' values += code_statement_bl_env[','])
+    (function_name = 'count' ',' values += code_statement_bl_env[',']) |
+    (function_name = 'index' ',' ((mode = 'env' variable = [environment_variable]) | (mode = 'bl' variable = [blackboard_variable])) ',' values = code_statement_bl_env)
 ;
 
     function_bl_local_env:
@@ -618,7 +645,8 @@ statement:
     (function_name = 'multiplication' ',' values += code_statement_bl_local_env[',']) |
     (function_name = 'division' ',' values = code_statement_bl_local_env ',' values = code_statement_bl_local_env) |
     (function_name = 'mod' ',' values = code_statement_bl_local_env ',' values = code_statement_bl_local_env) |
-    (function_name = 'count' ',' values += code_statement_bl_local_env[','])
+    (function_name = 'count' ',' values += code_statement_bl_local_env[',']) |
+    (function_name = 'index' ',' ((mode = 'env' variable = [environment_variable]) | (mode = 'local' variable = [local_variable]) | (mode = 'bl' variable = [blackboard_variable])) ',' values = code_statement_bl_local_env)
 ;
 
     function_ltl:
@@ -643,6 +671,7 @@ statement:
     (function_name = 'division' ',' values = code_statement_invar ',' values = code_statement_invar) |
     (function_name = 'mod' ',' values = code_statement_invar ',' values = code_statement_invar) |
     (function_name = 'count' ',' values += code_statement_invar[',']) |
+    (function_name = 'index' ',' ((mode = 'env' variable = [environment_variable]) | (mode = 'local' node_name = ID variable = [local_variable]) | (mode = 'bl' variable = [blackboard_variable])) read_at = serene_int ',' values = code_statement_invar) |
     
     (function_name = 'not' ',' values = code_statement_ltl) |
     (function_name = 'and' ',' values += code_statement_ltl[',']) |
@@ -698,6 +727,7 @@ statement:
     (function_name = 'division' ',' values = code_statement_invar ',' values = code_statement_invar) |
     (function_name = 'mod' ',' values = code_statement_invar ',' values = code_statement_invar) |
     (function_name = 'count' ',' values += code_statement_invar[',']) |
+    (function_name = 'index' ',' ((mode = 'env' variable = [environment_variable]) | (mode = 'local' node_name = ID variable = [local_variable]) | (mode = 'bl' variable = [blackboard_variable])) read_at = serene_int ',' values = code_statement_invar) |
     
     (function_name = 'not' ',' values = code_statement_ctl) |
     (function_name = 'and' ',' values += code_statement_ctl[',']) |
@@ -749,6 +779,7 @@ statement:
     (function_name = 'division' ',' values = code_statement_invar ',' values = code_statement_invar) |
     (function_name = 'mod' ',' values = code_statement_invar ',' values = code_statement_invar) |
     (function_name = 'count' ',' values += code_statement_invar[',']) |
+    (function_name = 'index' ',' ((mode = 'env' variable = [environment_variable]) | (mode = 'local' node_name = ID variable = [local_variable]) | (mode = 'bl' variable = [blackboard_variable])) read_at = serene_int ',' values = code_statement_invar) |
     (function_name = 'active' ',' node_name = ID) |
     (function_name = 'success' ',' node_name = ID) |
     (function_name = 'running' ',' node_name = ID) |
