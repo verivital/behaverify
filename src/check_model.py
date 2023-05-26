@@ -62,6 +62,7 @@ FUNCTION_TYPE_INFO = {
     'division' : {'return_type' : 'INT', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'INT'},
     'mod' : {'return_type' : 'INT', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'INT'},
     'count' : {'return_type' : 'INT', 'min_arg' : 1, 'max_arg' : -1, 'arg_type' : 'BOOLEAN'},
+    'index' : {'return_type' : 'depends', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'INT'},
     'active' : {'return_type' : 'BOOLEAN', 'min_arg' : 0, 'max_arg' : 0, 'arg_type' : 'node_name'},
     'success' : {'return_type' : 'BOOLEAN', 'min_arg' : 0, 'max_arg' : 0, 'arg_type' : 'node_name'},
     'running' : {'return_type' : 'BOOLEAN', 'min_arg' : 0, 'max_arg' : 0, 'arg_type' : 'node_name'},
@@ -151,9 +152,8 @@ def str_format(value):
 
 def validate_code(code, scopes, variable_names):
     global all_node_names
-    if code.constant is not None:
-        return (constant_type(code.constant), 'constant', str_format(code.constant))
-    elif code.variable is not None:
+
+    def var_checks(code):
         var_scope = variable_scope(code.variable)
         if var_scope not in scopes:
             raise Exception('Expected a variable in one of the following scopes: [' + ', '.join(scopes) + '] but got ' + code.variable.name + ' in scope ' + var_scope)
@@ -165,6 +165,16 @@ def validate_code(code, scopes, variable_names):
             if hasattr(code, 'node_name'):
                 if code.node_name not in all_node_names:
                     raise Exception('Reference to a node that does not exist ' + code.node_name)
+                # TODO: add a check here which confirms that the node actually uses the local variable.
+                # this will prevent the user from specificying a specification using a node that doesn't have this variable.
+        return
+
+    if code.constant is not None:
+        return (constant_type(code.constant), 'constant', str_format(code.constant))
+    elif code.variable is not None:
+        var_checks(code)
+        if code.variable.array_size is not None:
+            raise Exception('Variable ' + code.variable.name + ' is an array but appears without being indexed')
         return (variable_type(code.variable), 'variable', code.variable.name)
     elif code.code_statement is not None:
         return validate_code(code.code_statement, scopes, variable_names)
@@ -172,6 +182,14 @@ def validate_code(code, scopes, variable_names):
         if code.function_call.function_name not in FUNCTION_TYPE_INFO:
             raise Exception('Function ' + code.function_call.function_name + ' is not yet supported')
         func_info = FUNCTION_TYPE_INFO[code.function_call.function_name]
+        if code.function_call.function_name == 'index':
+            var_checks(code.function_call)
+            if len(code.function_call.values) != 1:
+                raise Exception('Index into variable ' + code.function_call.variable.name + ' should have exactly 1 argument')
+            (cur_arg_type, cur_code_type, cur_code) = validate_code(code.function_call.values[0], scopes, variable_names)
+            if cur_arg_type != 'INT':
+                raise Exception('Index into variable ' + code.function_call.variable.name + ' should be an integer')
+            return (variable_type(code.function_call.variable), 'indexed variable', code.function_call.variable.name)
         if 'bounded' in func_info:
             if code.function_call.bound.upper_bound != '+oo':
                 lower = handle_constant(code.function_call.bound.lower_bound)
@@ -332,7 +350,7 @@ def validate_action(node):
 
 
 def validate_variable(variable, scopes, variable_names):
-    global metamodel
+    global metamodel, constants
     if variable.model_as != 'DEFINE':
         if variable.domain.min_val is not None:
             min_val = handle_constant(variable.domain.min_val)
@@ -350,7 +368,19 @@ def validate_variable(variable, scopes, variable_names):
             for enum in variable.domain.enums:
                 if constant_type(enum) != var_type:
                     raise Exception('Variable ' + variable.name + ' mixes enumeration types')
-    validate_variable_assignment(variable, variable.initial_value, scopes, variable_names, deterministic = not textx.textx_isinstance(variable, metamodel['environment_variable']), init_mode = 'default')
+    if variable.array_size is None:
+        validate_variable_assignment(variable, variable.initial_value, scopes, variable_names, deterministic = not textx.textx_isinstance(variable, metamodel['environment_variable']), init_mode = 'default')
+    else:
+        if variable.array_mode == 'range':
+            for index in range(variable.array_size):
+                constants['serene_index'] = index
+                validate_variable_assignment(variable, variable.initial_value, scopes, variable_names, deterministic = not textx.textx_isinstance(variable, metamodel['environment_variable']), init_mode = 'default')
+            constants.pop('serene_index')
+        else:
+            if len(variable.initial_values) != variable.array_size:
+                raise Exception('Variable ' + variable.name + ' is an array of size ' + str(variable.array_size) + ' but was initialized with ' + str(len(variable.initial_values)) + ' values')
+            for initial_value in variable.initial_values:
+                validate_variable_assignment(variable, initial_value, scopes, variable_names, deterministic = not textx.textx_isinstance(variable, metamodel['environment_variable']), init_mode = 'default')
     return
 
 
@@ -393,6 +423,9 @@ def validate_model(model, constants_, metamodel_):
     global metamodel, constants
     metamodel = metamodel_
     constants = constants_
+
+    if 'serene_index' in constants:
+        raise Exception('serene_index was declared as a constant, but is resevered')
 
     global all_node_names
     (all_node_names, _) = walk_tree(model.root, set(), {})
