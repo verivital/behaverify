@@ -1,8 +1,8 @@
-import textx
 import argparse
 import os
 # import sys
 import itertools
+import textx
 from behaverify_common import indent, create_node_name
 # import serene_functions
 # import dsl_to_environment
@@ -67,7 +67,7 @@ def format_function_between(function_name, code, init_mode):
         )
 
 
-def format_function_implies(function_name, code, init_mode):
+def format_function_implies(_, code, init_mode):
     return (
         '('
         + '(not (' + format_code(code.function_call.values[0], init_mode) + '))'
@@ -77,7 +77,7 @@ def format_function_implies(function_name, code, init_mode):
     )
 
 
-def format_function_xnor(function_name, code, init_mode):
+def format_function_xnor(_, code, init_mode):
     return (
         '('
         + 'not (' + FUNCTION_FORMAT['xor'][1](FUNCTION_FORMAT['xor'][0], code, init_mode) + ')'
@@ -85,7 +85,7 @@ def format_function_xnor(function_name, code, init_mode):
     )
 
 
-def format_function_index(function_name, code, init_mode):
+def format_function_index(_, code, init_mode):
     return (
         (format_variable_name_only(code.function_call.variable, init_mode) + '(' + format_code(code.function_call.values[0], init_mode) + ')')
         if code.function_call.variable.model_as == 'DEFINE'
@@ -193,35 +193,6 @@ def handle_constant_str(constant):
     return (("'" + new_constant + "'") if isinstance(new_constant, str) else str(new_constant))
 
 
-def find_local_variables(code):
-    return (
-        (
-            [] if code.constant is not None else (
-                ([format_variable(code.variable)] if is_local(code.variable) else []) if code.variable is not None else (
-                    ('(' + find_local_variables(code.code_statement) + ')') if code.code_statement is not None else (
-                        flatten(
-                            [
-                                find_local_variables(value)
-                                for value in code.function_call.values
-                            ]
-                        )
-                    )
-                )
-            )
-        )
-    )
-
-
-def flatten(array_of_array_):
-    def internal_flatten(array_of_array, running_total):
-        return (
-            internal_flatten(array_of_array[1:], running_total + array_of_array[0])
-            if len(array_of_array) > 0 else
-            running_total
-        )
-    return internal_flatten(array_of_array_, [])
-
-
 STANDARD_IMPORTS = ('import py_trees' + os.linesep
                     + 'import math' + os.linesep
                     + 'import operator' + os.linesep
@@ -245,7 +216,7 @@ def init_method_check(node):
 def update_method_check(node):
     return (indent(1) + 'def update(self):' + os.linesep
             + indent(2) + 'return ((py_trees.common.Status.SUCCESS) if ('
-            + format_code(node.condition)
+            + format_code(node.condition, 'node')
             + ') else (py_trees.common.Status.FAILURE))' + os.linesep)
 
 
@@ -271,7 +242,7 @@ def resolve_variable_nondeterminism(values, range_mode, init_mode):
     # currently, each possibility is computed, even though only one will be used.
     if range_mode:
         cond_func = build_range_func(values[2])
-        vals = [map(str, filter(cond_func, range(handle_constant(values[0]), handle_constant(values[1]) + 1)))]
+        vals = list(map(str, filter(cond_func, range(handle_constant(values[0]), handle_constant(values[1]) + 1))))
         if len(vals) == 0:
             raise Exception('variable had no valid values!')
         elif len(vals) == 1:
@@ -332,7 +303,7 @@ def handle_assign(assign, indent_level, init_mode):
         )
         + indent(indent_level + len(case_results))
         + resolve_variable_nondeterminism(default_result.values, default_result.range_mode, init_mode) + os.linesep
-        + indent(indent_level) + ([')'] * len(case_results))  # NOTE: no linesep at the end!
+        + indent(indent_level) + (')' * (1 + len(case_results)))  # NOTE: no linesep at the end!
     )
 
 
@@ -445,7 +416,7 @@ def create_variable_macro(assign, range_mode, variable, indent_level, init_mode)
             + indent(indent_level) + 'def ' + variable.name + '():' + os.linesep
             + indent(indent_level + 1) + 'return ' + handle_assign(assign, indent_level + 1, init_mode) + os.linesep
             + os.linesep
-            + indent(indent_level) + format_variable_name_only(variable, is_local, init_mode) + ' = ' + variable.name + os.linesep
+            + indent(indent_level) + format_variable_name_only(variable, init_mode) + ' = ' + variable.name + os.linesep
         )
     return
 
@@ -455,7 +426,7 @@ def handle_read_statement(statement, indent_level, init_mode):
         indent(indent_level) + 'if ' + 'self.environment.' + statement.name + '__condition(self):' + os.linesep
         + (
             variable_assignment(statement.condition_variable
-                                , ('[(' + (format_code(statement.index_of) if statement.is_const == 'index_of' else handle_constant_str(statement.is_const)) + ', True)]') if is_array(statement.condition_variable) else 'True'
+                                , ('[(' + (format_code(statement.index_of, init_mode) if statement.is_const == 'index_of' else handle_constant_str(statement.is_const)) + ', True)]') if is_array(statement.condition_variable) else 'True'
                                 , indent_level = indent_level + 1
                                 , init_mode = init_mode
                                 , array_mode = is_array(statement.condition_variable))
@@ -479,7 +450,7 @@ def handle_read_statement(statement, indent_level, init_mode):
             (
                 indent(2) + 'else:' + os.linesep
                 + variable_assignment(statement.condition_variable
-                                      , ('[(' + format_code(statement.index_of) + ', False)]') if is_array(statement.condition_variable) else 'True'
+                                      , ('[(' + format_code(statement.index_of, init_mode) + ', False)]') if is_array(statement.condition_variable) else 'True'
                                       , indent_level = indent_level + 1
                                       , init_mode = init_mode
                                       , array_mode = is_array(statement.condition_variable))
@@ -519,7 +490,7 @@ def handle_return_statement(statement, indent_level):
         return (indent(indent_level) + variable_name + ' = ' + format_returns(statement.default_result) + os.linesep)
     return ((''.join(
         [
-            (indent(indent_level) + 'elif ' + format_code(case_result.condition) + ':' + os.linesep
+            (indent(indent_level) + 'elif ' + format_code(case_result.condition, None) + ':' + os.linesep
              + (indent(indent_level + 1) + variable_name + ' = ' + format_returns(case_result) + os.linesep)
              ) for case_result in statement.case_results])).replace('elif', 'if', 1)
             + (indent(indent_level) + 'else:' + os.linesep
@@ -535,6 +506,17 @@ def init_method_action(node):
             + indent(2) + 'self.blackboard = self.attach_blackboard_client(name = name)' + os.linesep
             + ''.join([(indent(2) + 'self.blackboard.register_key(key = (' + "'" + variable.name + "'" + '), access = py_trees.common.Access.READ)' + os.linesep) for variable in node.read_variables])
             + ''.join([(indent(2) + 'self.blackboard.register_key(key = (' + "'" + variable.name + "'" + '), access = py_trees.common.Access.WRITE)' + os.linesep) for variable in node.write_variables])
+            + ''.join(
+                [
+                    (
+                        (indent(2) + format_variable_name_only(local_variable, 'node') + ' = [None] * ' + handle_constant_str(local_variable.array_size) + os.linesep)
+                        if is_array(local_variable)
+                        else
+                        ''
+                    )
+                    for local_variable in node.local_variables
+                ]
+            )
             + ''.join(
                 [
                     (
@@ -785,7 +767,17 @@ def create_runner(blackboard_variables, environment_variables):
         + ''.join(
             [
                 (
-                    indent(1) + 'print(' + "'  " + variable.name + ": '" + ' + str(blackboard_reader.' + variable.name + ('()' if variable.model_as == 'DEFINE' else '') + '))' + os.linesep
+                    (
+                        indent(1) + 'print(' + "'  " + variable.name + ": '" + ' + str([blackboard_reader.' + variable.name
+                        + '(x) for x in range(' + handle_constant_str(variable.array_size) + ')]))' + os.linesep
+                    )
+                    if variable.model_as == 'DEFINE' and is_array(variable)
+                    else
+                    (
+                        indent(1) + 'print(' + "'  " + variable.name + ": '" + ' + str(blackboard_reader.' + variable.name
+                        + ('()' if variable.model_as == 'DEFINE' else '')
+                        + '))' + os.linesep
+                    )
                 )
                 for variable in blackboard_variables
             ]
@@ -798,7 +790,17 @@ def create_runner(blackboard_variables, environment_variables):
         + ''.join(
             [
                 (
-                    indent(1) + 'print(' + "'  " + variable.name + ": '" + ' + str(environment.' + variable.name + ('()' if variable.model_as == 'DEFINE' else '') + '))' + os.linesep
+                    (
+                        indent(1) + 'print(' + "'  " + variable.name + ": '" + ' + str([environment.' + variable.name
+                        + '(x) for x in range(' + handle_constant_str(variable.array_size) + ')]))' + os.linesep
+                    )
+                    if variable.model_as == 'DEFINE' and is_array(variable)
+                    else
+                    (
+                        indent(1) + 'print(' + "'  " + variable.name + ": '" + ' + str(environment.' + variable.name
+                        + ('()' if variable.model_as == 'DEFINE' else '')
+                        + '))' + os.linesep
+                    )
                 )
                 for variable in environment_variables
             ]
@@ -867,7 +869,7 @@ def write_environment(model, location, const_name):
             )
         )
 
-    def env_handle_write_statement(statement, node_name):
+    def env_handle_write_statement(statement):
         return (
             ''.join(
                 [
@@ -900,7 +902,7 @@ def write_environment(model, location, const_name):
         + indent(1) + 'def between_tick_environment_update(self):' + os.linesep
         + ''.join(
             [
-                handle_variable_statement(update, update.variable, indent_level = 2, init_mode = 'environment', assign_to_var = True)
+                handle_variable_statement(update, update.variable, indent_level = 2, init_mode = None, assign_to_var = True)
                 for update in model.update
             ]
         )
@@ -932,7 +934,7 @@ def write_environment(model, location, const_name):
             [
                 (
                     ((indent(2) + format_variable(variable, 'environment') + ' = [None] * ' + handle_constant_str(variable.array_size) + os.linesep)
-                     if handle_constant(variable.array_size) > 0
+                     if is_array(variable)
                      else
                      '')
                     + handle_variable_statement(variable, variable, indent_level = 2, init_mode = 'environment', assign_to_var = True)
@@ -951,9 +953,9 @@ def write_environment(model, location, const_name):
             if statement.variable_statement is not None:
                 continue
             to_write += (
-                env_handle_read_statement(statement.read_statement, action.name)
+                env_handle_read_statement(statement.read_statement)
                 if statement.read_statement is not None else
-                env_handle_write_statement(statement.write_statement, action.name))
+                env_handle_write_statement(statement.write_statement))
 
     with open(location + PROJECT_ENVIRONMENT_NAME + '.py', 'w') as f:
         f.write(to_write)
@@ -1013,13 +1015,22 @@ def main():
                 + ''.join(
                     [
                         (
-                            create_variable_macro(variable.assigns if len(variable.assigns) > 0 else variable.assign
-                                                  , variable.range_mode == 'range'
-                                                  , variable
-                                                  , indent_level = 2
-                                                  , init_mode = 'blackboard')
-                            if variable.model_as == 'DEFINE' else
-                            handle_variable_statement(variable, variable, indent_level = 2, init_mode = 'blackboard', assign_to_var = True)
+                            (
+                                (indent(1) + format_variable_name_only(variable, 'blackboard') + ' = [None] * ' + handle_constant_str(variable.array_size) + os.linesep)
+                                if is_array(variable)
+                                else
+                                ''
+                            )
+                            +
+                            (
+                                create_variable_macro(variable.assigns if len(variable.assigns) > 0 else variable.assign
+                                                      , variable.array_mode == 'range'
+                                                      , variable
+                                                      , indent_level = 1
+                                                      , init_mode = 'blackboard')
+                                if variable.model_as == 'DEFINE' else
+                                handle_variable_statement(variable, variable, indent_level = 1, init_mode = 'blackboard', assign_to_var = True)
+                            )
                         )
                         for variable in model.variables if is_blackboard(variable)
                     ]

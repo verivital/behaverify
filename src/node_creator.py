@@ -151,7 +151,7 @@ def create_blackboard(nodes, variables, root_node_name):
                             else:
                                 define_string += (
                                     tab_indent(2) + stage_name + stage_num + '_index_' + str(index) + ' := ' + os.linesep
-                                    + tab_indent(3) + 'case' + os.linsep
+                                    + tab_indent(3) + 'case' + os.linesep
                                     + tab_indent(4) + '!(' + node_name + '.active) : ' + previous_stage + '_index_' + str(index) + ';' + os.linesep
                                     + ''.join([(tab_indent(4) + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in condition_pairs])
                                     + tab_indent(3) + 'esac;'
