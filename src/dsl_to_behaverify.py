@@ -1,10 +1,10 @@
-import textx
 import argparse
 import pprint
 import os
 # import sys
 import itertools
 import copy
+import textx
 # import serene_functions
 from behaverify_to_smv import write_smv
 from check_model import (validate_model
@@ -49,6 +49,7 @@ def create_misc_args(node_name, use_stages, use_next, not_next, overwrite_stage)
 
 
 def format_function_before(function_name, code, misc_args):
+    '''function_name(vals)'''
     return (
         function_name + '('
         + ', '.join([format_code(value, misc_args) for value in code.function_call.values])
@@ -57,6 +58,7 @@ def format_function_before(function_name, code, misc_args):
 
 
 def format_function_between(function_name, code, misc_args):
+    '''(vals function_name vals)'''
     return (
         '('
         + (' ' + function_name + ' ').join([format_code(value, misc_args) for value in code.function_call.values])
@@ -64,7 +66,8 @@ def format_function_between(function_name, code, misc_args):
         )
 
 
-def format_function_after(function_name, code, misc_args):
+def format_function_after(function_name, code, _):
+    '''(node_name.function_name)'''
     return (
         '('
         + code.function_call.node_name
@@ -74,6 +77,7 @@ def format_function_after(function_name, code, misc_args):
 
 
 def format_function_before_bounded(function_name, code, misc_args):
+    '''function_name [min, max] (vals)'''
     return (
         function_name + ' [' + str(code.lower_bound) + ', ' + str(code.upper_bound) + '] '  '('
         + ', '.join([format_code(value, misc_args) for value in code.function_call.values])
@@ -82,6 +86,7 @@ def format_function_before_bounded(function_name, code, misc_args):
 
 
 def format_function_between_bounded(function_name, code, misc_args):
+    ''' honestly not sure '''
     return (
         '('
         + (' ' + function_name + ' [' + str(code.lower_bound) + ', ' + str(code.upper_bound) + '] ').join([format_code(value, misc_args) for value in code.function_call.values])
@@ -90,6 +95,7 @@ def format_function_between_bounded(function_name, code, misc_args):
 
 
 def format_function_before_between(function_name, code, misc_args):
+    '''probably some spec thing'''
     return (
         function_name[0] + '['
         + (' ' + function_name[1] + ' ').join([format_code(value, misc_args) for value in code.function_call.values])
@@ -97,11 +103,15 @@ def format_function_before_between(function_name, code, misc_args):
         )
 
 
-def format_function_index(function_name, code, misc_args):
-    return (format_variable(code.function_call.variable, misc_args) + '[' + format_code(code.function_call.values[0], misc_args) + ']')
+def format_function_index(_, code, misc_args):
+    '''variable[val]'''
+    return (
+        format_variable(code.function_call.variable, misc_args) + '[' + format_code(code.function_call.values[0], misc_args) + ']'
+    )
 
 
 def format_function(code, misc_args):
+    '''this just calls the other format functions. moved here to make format_code less cluttered.'''
     (function_name, function_to_call) = FUNCTION_FORMAT[code.function_call.function_name]
     return function_to_call(function_name, code, misc_args)
 
@@ -109,9 +119,10 @@ def format_function(code, misc_args):
 def compute_stage(variable_key, misc_args):
     '''
     compute the stage for the variable now
+    -- GLOBALS
+    @ variables := a dictionary of variables
     -- arguments
     @ variable_key := used to index into the variable.
-    @ variables := a dictionary of variables
     @ use_stages := if true, use stages
     @ overwrite_stage := forces a specific stage
     -- return
@@ -119,7 +130,7 @@ def compute_stage(variable_key, misc_args):
     -- side effects
     none.
     '''
-    global variables
+    variables = global_vars['variables']
     variable = variables[variable_key]
 
     # node_name = misc_args['node_name']
@@ -139,6 +150,7 @@ def compute_stage(variable_key, misc_args):
 
 
 def find_used_variables(code, misc_args):
+    '''Returns the list of used variables (will also format them)'''
     return (
         [] if code.constant is not None else (
             [format_variable(code.variable, misc_args)] if code.variable is not None else (
@@ -154,16 +166,18 @@ def find_used_variables(code, misc_args):
 
 def format_variable(variable_obj, misc_args):
     '''
+    -- GLOBALS
+    @ variables := a dict of all variables
     -- ARGUMENTS
     @ variable_obj := a textx object of a variable that we will be formatting.
     @ node_name := the name of the node which caused this to be called.
-    @ variables := a dict of all variables
     @ use_stages := are we using stages for this?
     @ use_next := are we making a 'next' call for this. (only used in optimization cases where we're optimizing out stage_0
     @ not_next := only matters if use_next is true. In that case, this variable is replaced with a macro link.
     @ overwrite_stage := overwrite which stage we're asking for.
     '''
-    global variables
+    # global variables
+    variables = global_vars['variables']
 
     node_name = misc_args['node_name']
     use_stages = misc_args['use_stages']
@@ -224,6 +238,10 @@ def format_variable(variable_obj, misc_args):
 
 
 def adjust_args(code, misc_args):
+    '''
+    creates a new arg based on the old one, but modifies it. should only be used by format_code
+    Declared not as nested function cuz that would tank performance.
+    '''
     new_misc_args = copy.deepcopy(misc_args)
     new_misc_args['node_name'] = new_misc_args['node_name'] if code.node_name is None else code.node_name
     new_misc_args['overwrite_stage'] = new_misc_args['overwrite_stage'] if code.read_at is None else code.read_at
@@ -231,9 +249,12 @@ def adjust_args(code, misc_args):
 
 
 def format_code(code, misc_args):
+    '''
+    format a code fragment
+    '''
     return (
         (str(code.constant).upper() if isinstance(code.constant, bool) else str(handle_constant(code.constant))) if code.constant is not None else (
-            format_variable(code.variable, adjust_args(misc_args)) if code.variable is not None else (
+            format_variable(code.variable, adjust_args(code, misc_args)) if code.variable is not None else (
                 ('(' + format_code(code.code_statement, misc_args) + ')') if code.code_statement is not None else (
                     format_function(code, misc_args)
                 )
@@ -281,7 +302,9 @@ def handle_variable_statement(statement, assign_var, condition, misc_args):
     '''
     should only be called if init_mode is true or from variable_assignment
     '''
-    global constants, variables, metamodel
+    metamodel = global_vars['metamodel']
+    constants = global_vars['constants']
+
     node_name = misc_args['node_name']
     # use_stages = misc_args['use_stages']
     # use_next = misc_args['use_next']
@@ -333,7 +356,7 @@ def handle_variable_statement(statement, assign_var, condition, misc_args):
             for index, assign in enumerate(statement.assigns):
                 cur_index = (
                     index
-                    if init_mode is None
+                    if init_mode
                     else
                     (
                         handle_constant(assign.index_expr)
@@ -360,7 +383,14 @@ def handle_variable_statement(statement, assign_var, condition, misc_args):
 
 
 def handle_variable_assignment(statement, assign_var, condition, misc_args):
-    global metamodel
+    '''
+    this handles variable assignment
+    this should be called if you have a variable assignment and it is not initial
+    if you have an initial variable value, call handle_variable_statement
+    '''
+    # global metamodel
+    metamodel = global_vars['metamodel']
+    variables = global_vars['variables']
 
     node_name = misc_args['node_name']
 
@@ -405,7 +435,8 @@ def handle_variable_assignment(statement, assign_var, condition, misc_args):
     return
 
 
-def handle_specifications(specifications, variables):
+def handle_specifications(specifications):
+    '''this handles specifications'''
     return [
         (
             specification.spec_type
@@ -418,6 +449,8 @@ def handle_specifications(specifications, variables):
 
 
 def handle_constant(constant):
+    '''this handles a constant by checking if it is in constants and replacing if appropriate'''
+    constants = global_vars['constants']
     return (constants[constant] if constant in constants else constant)
 
 
@@ -437,12 +470,11 @@ def variable_reference(base_name, _is_local_, node_name):
     return ((node_name + '_DOT_' + base_name) if _is_local_ else base_name)
 
 
-def resolve_statements(statements, nodes, variables):
+def resolve_statements(statements, nodes):
 
     def handle_read_statement(statement, misc_args):
-        global variables
         if statement.condition_variable is not None:
-            handle_variable_assignment(statement, statement.condition_variable, misc_args)
+            handle_variable_assignment(statement, statement.condition_variable, None, misc_args)
             condition = (
                 '!('
                 + format_variable(statement.condition_variable, misc_args)
@@ -474,7 +506,6 @@ def resolve_statements(statements, nodes, variables):
         return delayed
 
     def handle_return_statement(statement, nodes, misc_args):
-        global variables
 
         node_name = misc_args['node_name']
 
@@ -521,7 +552,6 @@ def resolve_statements(statements, nodes, variables):
         return
 
     def handle_condition(condition, nodes, misc_args):
-        global variables
 
         node_name = misc_args['node_name']
 
@@ -563,7 +593,7 @@ def resolve_statements(statements, nodes, variables):
     return
 
 
-def complete_environment_variables(model, variables):
+def complete_environment_variables(model):
     '''
     completes the environment variables.
     -- arguments
@@ -579,8 +609,6 @@ def complete_environment_variables(model, variables):
 
     for statement in model.update:
         handle_variable_assignment(statement, statement.variable, None, create_misc_args(None, True, False, None, None))
-
-    return
 
 
 def get_variables(model, local_variables, initial_statements, keep_stage_0):
@@ -626,6 +654,7 @@ def get_variables(model, local_variables, initial_statements, keep_stage_0):
         for variable in model.variables if is_local(variable)}
 
     # add existing_definitions field for local variables.
+    global_vars['variables'] = variables
 
     for variable in model.variables:
         if variable.model_as == 'DEFINE':
@@ -851,9 +880,11 @@ CREATE_NODE = {
 
 
 # --------------- Main
+global_vars = {'constants' : {}, 'metamodel' : {}, 'variables' : {}}
 
 
 def main():
+    # global constants, metamodel, variables
 
     arg_parser = argparse.ArgumentParser()
     arg_parser.add_argument('metamodel_file')
@@ -864,28 +895,26 @@ def main():
     arg_parser.add_argument('--behave_only', action = 'store_true')
     args = arg_parser.parse_args()
 
-    metamodel_ = textx.metamodel_from_file(args.metamodel_file, auto_init_attributes = False)
-    model = metamodel_.model_from_file(args.model_file)
+    metamodel = textx.metamodel_from_file(args.metamodel_file, auto_init_attributes = False)
+    global_vars['metamodel'] = metamodel
+    model = metamodel.model_from_file(args.model_file)
 
-    global constants
     constants = {
         constant.name : constant.val
         for constant in model.constants
     }
-    validate_model(model, constants, metamodel_)
-    global metamodel
-    metamodel = metamodel_
+    global_vars['constants'] = constants
+    validate_model(model, constants, metamodel)
 
     (_, _, _, nodes, local_variables, initial_statements, statements) = walk_tree(model.root)
 
-    vars_ = get_variables(model, local_variables, initial_statements, args.keep_stage_0)
-    global variables
-    variables = vars_
-    tick_condition = 'TRUE' if model.tick_condition is None else format_code(model.tick_condition, None, True, False, None)
-    specifications = handle_specifications(model.specifications, variables)  # this included here to ensure we don't erase stage 0 used by specifications.
-    resolve_statements(statements, nodes, variables)
-    complete_environment_variables(model, variables)
-    specifications = handle_specifications(model.specifications, variables)
+    variables = get_variables(model, local_variables, initial_statements, args.keep_stage_0)
+    global_vars['variables'] = variables
+    tick_condition = 'TRUE' if model.tick_condition is None else format_code(model.tick_condition, create_misc_args(None, True, False, None, None))
+    specifications = handle_specifications(model.specifications)  # this included here to ensure we don't erase stage 0 used by specifications.
+    resolve_statements(statements, nodes)
+    complete_environment_variables(model)
+    specifications = handle_specifications(model.specifications)
 
     if args.behave_only:
         if args.output_file is None:

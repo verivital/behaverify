@@ -228,15 +228,15 @@ statement:
     case_result:
     'case' '{' condition = code_statement '}' ('end_case')?
     'result' '{'
-    ((range_mode ?= 'range' ',' values = serene_int ',' values = serene_int ',' values = range_code) | 
-    (values += code_statement[',']))
+    ((range_mode = 'range' ',' values = serene_int ',' values = serene_int ',' values = range_code) | 
+    (range_mode = '' values += code_statement[',']))
     '}' ('end_result')?
 ;
         
     default_result:
     'result' '{'
-    ((range_mode ?= 'range' ',' values = serene_int ',' values = serene_int ',' values = range_code) | 
-    (values += code_statement[',']))
+    ((range_mode = 'range' ',' values = serene_int ',' values = serene_int ',' values = range_code) | 
+    (range_mode = '' values += code_statement[',']))
     '}' ('end_result')?
 ;
 
