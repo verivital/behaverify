@@ -1,0 +1,54 @@
+#comment#
+the purpose of this test is to fail because a variable uses multiple enum types.
+#end_comment#
+
+constants {
+	#comment# constants are used to synchronize values in a .tree file. #end_comment#
+	#comment# example = 0 #end_comment#
+	#comment# to use example elsewhere, simply type 'example' in place of any integer (quotes included) #end_comment#
+} end_constants
+
+variables {
+	variable { bl test array 3 VAR [0, 10] range assign { result { 'serene_index' } } }
+}
+
+environment_update {}
+
+checks {}
+
+environment_checks {}
+actions {
+	action {
+		y_do
+		local_variables {}
+		read_variables {}
+		write_variables {}
+		initial_values {}
+		update {
+			write_environment {
+				idk
+				variable_statement {
+					test
+					index_of { 0 }
+					assign {
+						result { (abs, (index, test, 0)) }
+					}
+				}
+			}
+			return_statement {
+				result { success}
+			}
+		}
+	}
+}
+
+sub_trees {#comment# subtrees go here. #end_comment#} end_sub_trees
+tree {
+	#comment# the tree is defined here#end_comment#
+	y_do
+} end_tree
+
+
+
+
+specifications { #comment# INVAR, LTL, and CTL specs go here #end_comment# } end_specifications

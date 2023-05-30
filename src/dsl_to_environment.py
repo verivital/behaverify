@@ -3,7 +3,58 @@ import argparse
 import os
 import itertools
 from behaverify_common import indent
-import serene_functions
+# import serene_functions
+from check_model import (variable_type
+                         # , constant_type
+                         , is_local
+                         , is_env
+                         , is_blackboard
+                         # , variable_scope
+                         , is_array
+                         , build_range_func)
+
+
+# RANGE_FUNCTION = {
+#     'abs' : serene_functions.serene_abs,
+#     'max' : serene_functions.serene_max,
+#     'min' : serene_functions.serene_min,
+#     'sin' : serene_functions.serene_sin,
+#     'cos' : serene_functions.serene_cos,
+#     'tan' : serene_functions.serene_tan,
+#     'ln' : serene_functions.serene_log,
+#     'not' : serene_functions.serene_not,
+#     'and' : serene_functions.serene_and,
+#     'or' : serene_functions.serene_or,
+#     'xor' : serene_functions.serene_xor,
+#     'xnor' : serene_functions.serene_xnor,
+#     'implies' : serene_functions.serene_implies,
+#     'equivalent' : serene_functions.serene_eq,
+#     'equal' : serene_functions.serene_eq,
+#     'not_equal' : serene_functions.serene_ne,
+#     'less_than' : serene_functions.serene_lt,
+#     'greater_than' : serene_functions.serene_gt,
+#     'less_than_or_equal' : serene_functions.serene_lte,
+#     'greater_than_or_equal' : serene_functions.serene_gte,
+#     'negative' : serene_functions.serene_neg,
+#     'addition' : serene_functions.serene_sum,
+#     'subtraction' : serene_functions.serene_sub,
+#     'multiplication' : serene_functions.serene_mult,
+#     'division' : serene_functions.serene_truediv,
+#     'mod' : serene_functions.serene_mod,
+#     'count' : serene_functions.serene_count
+# }
+
+
+# def build_range_func(code):
+#     return (
+#         (lambda x : handle_constant(code.constant)) if code.constant is not None else (
+#             (lambda x : x) if code.value else (
+#                 build_range_func(code.code_statement) if code.code_statement is not None else (
+#                     (lambda x : RANGE_FUNCTION[code.function_call.function_name]([build_range_func(value) for value in code.function_call.values], x))
+#                 )
+#             )
+#         )
+#     )
 
 
 def format_function_before(function_name, code, node_name):
@@ -22,6 +73,33 @@ def format_function_between(function_name, code, node_name):
         )
 
 
+def format_function_implies(function_name, code, node_name):
+    return (
+        '('
+        + '(not (' + format_code(code.function_call.values[0], node_name) + '))'
+        + ' or '
+        + '(' + format_code(code.function_call.values[1], node_name) + ')'
+        + ')'
+    )
+
+
+def format_function_xnor(function_name, code, node_name):
+    return (
+        '('
+        + 'not (' + FUNCTION_FORMAT['xor'][1](FUNCTION_FORMAT['xor'][0], code, node_name) + ')'
+        + ')'
+    )
+
+
+def format_function_index(function_name, code, node_name):
+    return (
+        (format_variable_name_only(code.function_call.variable, node_name) + '(' + format_code(code.function_call.values[0], node_name) + ')')
+        if function_name.variable.model_as == 'DEFINE'
+        else
+        (format_variable(code.function_call.variable, node_name) + '[' + format_code(code.function_call.values[0], node_name) + ']')
+    )
+
+
 FUNCTION_FORMAT = {
     'abs' : ('abs', format_function_before),
     'max' : ('max', format_function_before),
@@ -30,12 +108,12 @@ FUNCTION_FORMAT = {
     'cos' : ('math.cos', format_function_before),
     'tan' : ('math.tan', format_function_before),
     'ln' : ('math.log', format_function_before),
-    'not' : ('not ', format_function_before),  # space intentionally added here
+    'not' : ('not ', format_function_before),  # space intentionally added here.
     'and' : ('and', format_function_between),
     'or' : ('or', format_function_between),
     'xor' : ('operator.xor', format_function_between),
-    'xnor' : ('xnor', format_function_between),
-    'implies' : ('->', format_function_between),
+    'xnor' : ('xnor', format_function_xnor),
+    'implies' : ('->', format_function_implies),
     'equivalent' : ('==', format_function_between),
     'equal' : ('==', format_function_between),
     'not_equal' : ('!=', format_function_between),
@@ -49,24 +127,25 @@ FUNCTION_FORMAT = {
     'multiplication' : ('*', format_function_between),
     'division' : ('/', format_function_between),
     'mod' : ('%', format_function_between),
-    'count' : ('count', format_function_before)
+    'count' : ('count', format_function_before),
+    'index' : ('index', format_function_index)
 }
 
 
-def format_variable_name_only(variable_name, is_local, is_env, node_name):
+def format_variable_name_only(variable, node_name):
     # return ((('') if is_local else ('blackboard_reader.' if not is_env else '')) + variable_name)
-    return ((('') if is_local else ('blackboard.' if not is_env else 'self.')) + variable_name)
+    return ((('') if is_local(variable) else ('blackboard.' if not is_env(variable) else 'self.')) + variable.name)
 
 
-def format_variable(variable, is_local, is_env, node_name):
+def format_variable(variable, node_name):
     return (
         (
             'node.'
-            if is_local
+            if is_local(variable)
             else
             (
                 'self.'
-                if is_env
+                if is_env(variable)
                 else
                 'self.blackboard.'
             )
@@ -80,7 +159,7 @@ def format_code(code, node_name):
     return (
         (
             handle_constant_str(code.constant) if code.constant is not None else (
-                (format_variable(code.variable, code.mode == 'local', code.mode == 'env', node_name)) if code.variable is not None else (
+                format_variable(code.variable, node_name) if code.variable is not None else (
                     ('(' + format_code(code.code_statement, node_name) + ')') if code.code_statement is not None else (
                         FUNCTION_FORMAT[code.function_call.function_name][1](FUNCTION_FORMAT[code.function_call.function_name][0], code, node_name)
                     )
@@ -98,49 +177,6 @@ def handle_constant(constant):
 def handle_constant_str(constant):
     new_constant = handle_constant(constant)
     return (("'" + new_constant + "'") if isinstance(new_constant, str) else str(new_constant))
-
-
-RANGE_FUNCTION = {
-    'abs' : serene_functions.serene_abs,
-    'max' : serene_functions.serene_max,
-    'min' : serene_functions.serene_min,
-    'sin' : serene_functions.serene_sin,
-    'cos' : serene_functions.serene_cos,
-    'tan' : serene_functions.serene_tan,
-    'ln' : serene_functions.serene_log,
-    'not' : serene_functions.serene_not,
-    'and' : serene_functions.serene_and,
-    'or' : serene_functions.serene_or,
-    'xor' : serene_functions.serene_xor,
-    'xnor' : serene_functions.serene_xnor,
-    'implies' : serene_functions.serene_implies,
-    'equivalent' : serene_functions.serene_eq,
-    'equal' : serene_functions.serene_eq,
-    'not_equal' : serene_functions.serene_ne,
-    'less_than' : serene_functions.serene_lt,
-    'greater_than' : serene_functions.serene_gt,
-    'less_than_or_equal' : serene_functions.serene_lte,
-    'greater_than_or_equal' : serene_functions.serene_gte,
-    'negative' : serene_functions.serene_neg,
-    'addition' : serene_functions.serene_sum,
-    'subtraction' : serene_functions.serene_sub,
-    'multiplication' : serene_functions.serene_mult,
-    'division' : serene_functions.serene_truediv,
-    'mod' : serene_functions.serene_mod,
-    'count' : serene_functions.serene_count
-}
-
-
-def build_range_func(code):
-    return (
-        (lambda x : handle_constant(code.constant)) if code.constant is not None else (
-            (lambda x : x) if code.value else (
-                build_range_func(code.code_statement) if code.code_statement is not None else (
-                    (lambda x : RANGE_FUNCTION[code.function_call.function_name]([build_range_func(value) for value in code.function_call.values], x))
-                )
-            )
-        )
-    )
 
 
 def variable_assignment(values, node_name, range_mode):
@@ -339,22 +375,6 @@ def write_environment(model, location, const_name):
     }
 
     to_write = {}
-    # variables_initial = {
-    #     format_variable(statement.variable, False, True, None) : (format_statement(statement, None, 0) if statement.variable.model_as != 'DEFINE' else create_variable_macro(statement))
-    #     for statement in model.initial
-    #     }
-    # variables_update = {
-    #     format_variable_name_only(variable_name, False, True, None) : (
-    #         ''.join(
-    #             [
-    #                 ('# ' + format_statement(statement, None).replace(os.linesep, os.linesep + '# ').rstrip() + os.linesep)
-    #                 for statement in group
-    #             ])
-    #     )
-    #     for variable_name, group in itertools.groupby(
-    #             sorted(model.update, key = (lambda x : x.variable.name)),
-    #             key = (lambda x : x.variable.name))
-    # }
 
     to_write = (
         default_preamble(model.blackboard_variables, model.environment_variables, model.update, model.tick_condition)

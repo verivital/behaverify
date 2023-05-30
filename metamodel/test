@@ -1,0 +1,138 @@
+var_stat {
+	x
+	range, 0, 3, True
+	index_of { 'serene_index' }
+	assign {
+		case { 'serene_index' + 1 < len(x)} result { x['serene_index' + 1] }
+		result { x[0] }
+	}
+}
+
+
+var_stat {
+	x
+	range, 1, 3, True
+	index_of { 'serene_index' }
+	assign {
+		case { idk } result { yes }
+		case { sure } result { yes }
+		result { no }
+	}
+}
+
+var_stat {
+	x
+	index_of { index1 }
+	assign {
+		case { idk } result { yes }
+		case { sure } result { yes }
+		result { no }
+	}
+	index_of { index2 }
+	assign {
+		case { idk } result { yes }
+		case { sure } result { yes }
+		result { no }
+	}
+}
+
+var_stat {
+	y
+	assign {
+		case { idk } result { yes }
+		case { sure } result { yes }
+		result { no }
+	}
+}
+
+var {
+	x
+	bl
+	array 3
+	VAR
+	range
+	assign {
+	}
+}
+var {
+	x
+	bl
+	array 3
+	VAR
+	assign {
+	}
+	assign {
+	}
+	assign {
+	}
+}
+
+
+var {
+	y
+	bl
+	VAR
+	assign {
+	}
+}
+
+
+
+x : array 0..2 of BOOLEAN;
+y : 0..2;
+
+
+x_1 = [x_1_0, x_1_1, x_1_2];
+
+x_1_i :=
+	case
+		y=i : case
+			x[i] : True;
+			True :{True, False};
+			esac;
+		True : x[i];
+	esac;
+
+
+now suppose
+x : array 0..20 of BOOLEAN;
+a
+b
+c
+d
+
+x_1_i :=
+	case
+		a=i : case (do_something)
+		a+b=i : case (do_something)
+		
+
+
+
+# if array
+
+# a NEXT_VALUE is defined as a quadruple (node_name, constant_index, non_determinism, STAGE)
+# node_name is a string representing the node where this update happens or none if it's environmental
+# constant_index is a boolean. If true, the indices will all be constants, simplifying the update greatly. Furthermore, those indicies will be INTS.
+# If false, then the indices may be arbitrary code, so long as it resolves to an int. stored as a string.
+# non_determinism depends on constant_index
+# if constant_index is True -> non_determinism is a map from Int to bool, where the ints represent indices, while the bools represent if the update for that index is nondeterministic.
+# if constant_index is False -> non_determinism is a bool indicating if non-determinism appears anywhere within the update
+# STAGE is a list of pairs (index, [(condition, result)])
+# if constant_index is true, index is an int
+# if constant_index is false, index is a string.
+# if the condition is true, then the result is used.
+# the last condition should always be TRUE
+
+
+# the initial value of a variable is a single stage with int based index.
+# define nodes use the initial version for each stage.
+
+
+
+    node_name = misc_args['node_name']
+    use_stages = misc_args['use_stages']
+    use_next = misc_args['use_next']
+    not_next = misc_args['not_next']
+    init_mode = misc_args['init_mode']
+    overwrite_stage = misc_args['overwrite_stage']
