@@ -1,0 +1,127 @@
+#comment#
+the purpose of this test is to fail because a variable uses multiple enum types.
+#end_comment#
+
+constants {
+	#comment# constants are used to synchronize values in a .tree file. #end_comment#
+	#comment# example = 0 #end_comment#
+	#comment# to use example elsewhere, simply type 'example' in place of any integer (quotes included) #end_comment#
+} end_constants
+
+variables {
+	variable { bl a array 3 VAR [0, 10] range assign { result { (multiplication, 'serene_index', 2) } } }
+	variable { bl b array 3 VAR [0, 10] assign { result { 0 } } assign { result { 4 } } assign { result { (index, a, 2) } } }
+	variable { bl c array 3 FROZENVAR [0, 10] assign { result { 0 } } assign { result { 4 } } assign { result { (index, a, 2) } } }
+	variable { bl d array 3 DEFINE INT range assign { case { (less_than, 'serene_index', 2) } result { (addition, (index, a, 'serene_index'), (index, b, (addition, 'serene_index', 1)))} result { (addition, (index, a, 'serene_index'), (index, b, 0))} } }
+	variable { bl e array 3 VAR BOOLEAN range assign { result { (greater_than, (index, d, 'serene_index'), 10) } } }
+	variable { local f array 4 VAR {'hi', 'bye', 'die'} range assign { result {'bye'} }}
+	variable { env test array 10 VAR [0, 10] range assign { result { 'serene_index' } } }
+}
+
+environment_update {
+	variable_statement {
+		test
+		range
+		constant_index
+		index_of { 'serene_index' }
+		assign { case { (equal, (index, test, 'serene_index'), 10) } result{range, 0, 9, True} result { (index, test, 'serene_index') } }
+	}
+	variable_statement {
+		test
+		index_of { (index, test, 0) }
+		assign { case { (equal, (mod, (index, test, (index, test, 0)), 2), 0) } result{(addition, (index, test, (index, test, 0)), 2)} result {(addition, (index, test, (index, test, 0)), 1) }}
+		index_of { (index, test, 9) }
+		assign { case { (equal, (mod, (index, test, (index, test, 9)), 2), 0) } result{(addition, (index, test, (index, test, 9)), 2)} result {(addition, (index, test, (index, test, 9)), 1) }}
+	}
+}
+
+checks {
+	check {
+		my_check
+		read_variables { a b } end_read_variables
+		condition { (equal, (index, a, (min, 2, (index, b, 0))), (index, b, (min, 2, (index, a, 0))))}
+	} end_check
+}
+
+environment_checks {}
+actions {
+	action {
+		my_action_1
+		local_variables {f}
+		read_variables {a b c d}
+		write_variables {e}
+		initial_values {
+			variable_statement { f range assign { result {'hi'} }}
+		}
+		update {
+			write_environment {
+				idk
+				variable_statement {
+					instant
+					test
+					constant_index
+					index_of { 1 }
+					assign {
+						result { (abs, (index, test, 0)) }
+					}
+				}
+			}
+			return_statement {
+				result { success}
+			}
+			variable_statement { e range index_of { (min, 2, (max, (index, a, 'serene_index'), (index, b, 'serene_index'))) }assign {result {True}} }
+		}
+	}
+	action {
+		my_action_2
+		local_variables {f}
+		read_variables {a b c d}
+		write_variables {e}
+		initial_values {
+			variable_statement { f range assign { result {'hi'} }}
+		}
+		update {
+			write_environment {
+				idk
+				variable_statement {
+					instant
+					test
+					constant_index
+					index_of { 1 }
+					assign {
+						result { (abs, (index, test, 0)) }
+					}
+				}
+			}
+			return_statement {
+				result { success}
+			}
+			variable_statement { e range index_of { (max, 0, (min, (index, a, 'serene_index'), (index, b, 'serene_index'))) } assign {result {False}} }
+		}
+	}
+}
+
+sub_trees {#comment# subtrees go here. #end_comment#} end_sub_trees
+tree {
+	#comment# the tree is defined here#end_comment#
+	composite {
+		idk
+		selector
+		children {
+			composite {
+				idk2
+				sequence
+				children {
+					my_check
+					my_action_1
+					}
+					}
+					my_action_2
+					}
+					}
+} end_tree
+
+
+
+
+specifications { #comment# INVAR, LTL, and CTL specs go here #end_comment# } end_specifications

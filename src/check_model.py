@@ -1,6 +1,6 @@
+import itertools
 import serene_functions
 # import textx
-import itertools
 from behaverify_common import create_node_name
 
 # TODO : function category (TL/INVAR/reg) - DONE?
@@ -293,6 +293,62 @@ def validate_variable_assignment(variable, assign, scopes, variable_names, deter
     return
 
 
+def validate_array_assign(statement, constant_index, scopes, variable_names, node, deterministic = True, init_mode = None):
+    assign_var = statement.variable
+    if not is_array(assign_var):
+        raise Exception('In action ' + node.name + ' Variable ' + assign_var.name + ' is being updated as array but is not an array')
+    if statement.array_mode == 'range':
+        if statement.assign is None:
+            raise Exception('In action ' + node.name + ' Variable ' + assign_var.name + ' is being updated with incorrect syntax')
+        if not hasattr(statement, 'values') or len(statement.values) == 0:
+            serene_indices = list(range(assign_var.array_size))
+        else:
+            cond_func = build_range_func(statement.values[2])
+            min_val = handle_constant(statement.values[0])
+            max_val = handle_constant(statement.values[1])
+            if max_val < min_val:
+                raise Exception('In action ' + node.name + ' in variable ' + assign_var.name + ' max_val is less than min_val')
+            serene_indices = list(filter(cond_func, range(min_val, max_val + 1)))
+        if len(serene_indices) == 0:
+            raise Exception('In action ' + node.name + ', array variable ' + assign_var.name + ' is being updated using a range with no values')
+        global constants
+        constants['serene_index'] = 0  # this just used to confirm the types, not an actual value
+        if init_mode == 'node':
+            validate_variable_assignment(assign_var, statement.assign, scopes, variable_names, deterministic, init_mode)
+        else:
+            if constant_index:
+                cur_type = constant_type(statement.assign.index_expr)
+            else:
+                (cur_type, _, _) = validate_code(statement.assign.index_expr, scopes, variable_names, {'reg'})
+            if cur_type != 'INT':
+                raise Exception('In action ' + node.name + ' in variable ' + assign_var.name + ' is being indexed using type of ' + cur_type + ' instead of INT')
+            validate_variable_assignment(assign_var, statement.assign.assign, scopes, variable_names, deterministic, init_mode)
+        constants.pop('serene_index')
+        return
+    else:
+        if init_mode == 'node' and len(statement.assigns) != assign_var.array_size:
+            raise Exception('Variable ' + assign_var.name + ' is an array of size ' + str(assign_var.array_size) + ' but was initialized with ' + str(len(statement.assigns)) + ' values')
+        if len(statement.assigns) == 0:
+            raise Exception('In action ' + node.name + ', array variable ' + assign_var.name + ' is being updated with wrong syntax')
+        seen_constants = set()
+        for assign in statement.assigns:
+            if init_mode == 'node':
+                validate_variable_assignment(assign_var, assign, scopes, variable_names, deterministic, init_mode)
+            else:
+                if constant_index:
+                    cur_type = constant_type(assign.index_expr)
+                    if handle_constant(assign.index_expr) in seen_constants:
+                        raise Exception('In action ' + node.name + ' in variable ' + assign_var.name + ' is being indexed with constants and a constant appears twice')
+                    seen_constants.add(handle_constant(assign.index_expr))
+                else:
+                    (cur_type, _, _) = validate_code(assign.index_expr, scopes, variable_names, {'reg'})
+                if cur_type != 'INT':
+                    raise Exception('In action ' + node.name + ' in variable ' + assign_var.name + ' is being indexed using type of ' + cur_type + ' instead of INT')
+                validate_variable_assignment(assign_var, assign.assign, scopes, variable_names, deterministic, init_mode)
+        return
+    raise Exception('unreachable state')
+
+
 def validate_check(node):
     read_variables = set(map(lambda x : x.name, node.read_variables))
     if len(read_variables) != len(node.read_variables):
@@ -310,60 +366,6 @@ def validate_check_env(node):
 
 
 def validate_action(node):
-    def validate_array_assign(statement, constant_index, scopes, variable_names, deterministic = True, init_mode = None):
-        assign_var = statement.variable
-        if not is_array(assign_var):
-            raise Exception('In action ' + node.name + ' Variable ' + assign_var.name + ' is being updated as array but is not an array')
-        if statement.array_mode == 'range':
-            if statement.assign is None:
-                raise Exception('In action ' + node.name + ' Variable ' + assign_var.name + ' is being updated with incorrect syntax')
-            if len(statement.values) == 0:
-                serene_indices = list(range(assign_var.array_size))
-            else:
-                cond_func = build_range_func(statement.values[2])
-                min_val = handle_constant(statement.values[0])
-                max_val = handle_constant(statement.values[1])
-                if max_val < min_val:
-                    raise Exception('In action ' + node.name + ' in variable ' + assign_var.name + ' max_val is less than min_val')
-                serene_indices = list(filter(cond_func, range(min_val, max_val + 1)))
-            if len(serene_indices) == 0:
-                raise Exception('In action ' + node.name + ', array variable ' + assign_var.name + ' is being updated using a range with no values')
-            global constants
-            constants['serene_index'] = 0  # this just used to confirm the types, not an actual value
-            if init_mode == 'node':
-                validate_variable_assignment(assign_var, statement.assign, scopes, variable_names, deterministic, init_mode)
-            else:
-                if constant_index:
-                    cur_type = constant_type(statement.assign.index_expr)
-                else:
-                    (cur_type, _, _) = validate_code(statement.assign.index_expr, scopes, variable_names, {'reg'})
-                if cur_type != 'INT':
-                    raise Exception('In action ' + node.name + ' in variable ' + assign_var.name + ' is being indexed using type of ' + cur_type + ' instead of INT')
-                validate_variable_assignment(assign_var, statement.assign.assign, scopes, variable_names, deterministic, init_mode)
-            constants.pop('serene_index')
-            return
-        else:
-            if init_mode == 'node' and len(statement.assigns) != assign_var.array_size:
-                raise Exception('Variable ' + assign_var.name + ' is an array of size ' + str(assign_var.array_size) + ' but was initialized with ' + str(len(statement.assigns)) + ' values')
-            if len(statement.assigns) == 0:
-                raise Exception('In action ' + node.name + ', array variable ' + assign_var.name + ' is being updated with wrong syntax')
-            seen_constants = set()
-            for assign in statement.assigns:
-                if init_mode == 'node':
-                    validate_variable_assignment(assign_var, assign, scopes, variable_names, deterministic, init_mode)
-                else:
-                    if constant_index:
-                        cur_type = constant_type(assign.index_expr)
-                        if handle_constant(assign.index_expr) in seen_constants:
-                            raise Exception('In action ' + node.name + ' in variable ' + assign_var.name + ' is being indexed with constants and a constant appears twice')
-                        seen_constants.add(handle_constant(assign.index_expr))
-                    else:
-                        (cur_type, _, _) = validate_code(assign.index_expr, scopes, variable_names, {'reg'})
-                    if cur_type != 'INT':
-                        raise Exception('In action ' + node.name + ' in variable ' + assign_var.name + ' is being indexed using type of ' + cur_type + ' instead of INT')
-                    validate_variable_assignment(assign_var, assign.assign, scopes, variable_names, deterministic, init_mode)
-            return
-        raise Exception('unreachable state')
 
     all_vars = set(map(lambda x : x.name, itertools.chain(node.local_variables, node.read_variables, node.write_variables)))
     read_variables = set(map(lambda x : x.name, node.read_variables))
@@ -380,13 +382,13 @@ def validate_action(node):
         raise Exception('Action ' + node.name + ' initializes at least one variable at least twice')
 
     for var_statement in node.init_statements:
-        if var_statement.instant:
-            raise Exception('Action ' + node.name + ' marked a non-environment statement as instant')
+        # if var_statement.instant:
+        #     raise Exception('Action ' + node.name + ' marked a non-environment statement as instant')
         assign_var = var_statement.variable
         if assign_var.name not in local_variables:
             raise Exception('Action ' + node.name + ' is initializing local variable ' + assign_var.name + ' but it it does not appear in the local variable list for the node: [' + ', '.join(local_variables) + ']')
         if is_array(assign_var):
-            validate_array_assign(var_statement, True, {'blackboard', 'local'}, all_vars, deterministic = True, init_mode = 'node')
+            validate_array_assign(var_statement, True, {'blackboard', 'local'}, all_vars, node, deterministic = True, init_mode = 'node')
         else:
             if var_statement.assign is None or var_statement.array_mode == 'range':
                 raise Exception('Action ' + node.name + ' has an invalid assignment for variable ' + assign_var.name)
@@ -401,7 +403,7 @@ def validate_action(node):
             if assign_var.name not in local_variables and assign_var.name not in write_variables:
                 raise Exception('Node ' + node.name + ' is updating variable ' + assign_var.name + ' but it is not listed in the local or write variables')
             if is_array(assign_var):
-                validate_array_assign(var_statement, var_statement.constant_index == 'constant_index', {'blackboard', 'local'}, all_vars, deterministic = True, init_mode = None)
+                validate_array_assign(var_statement, var_statement.constant_index == 'constant_index', {'blackboard', 'local'}, all_vars, node, deterministic = True, init_mode = None)
             else:
                 if var_statement.assign is None or var_statement.array_mode == 'range':
                     raise Exception('Action ' + node.name + ' has an invalid assignment for variable ' + assign_var.name)
@@ -450,7 +452,7 @@ def validate_action(node):
                 if assign_var.name not in write_variables and assign_var.name not in local_variables:
                     raise Exception('Action ' + node.name + ' is updating ' + assign_var.name + ' but ' + assign_var.name + ' is not declared in write_variables: [' + ', '.join(write_variables) + '] or in local_variables: [' + ', '.join(local_variables) + ']')
                 if is_array(assign_var):
-                    validate_array_assign(var_statement, var_statement.constant_index == 'constant_index', {'blackboard', 'local', 'environment'}, all_vars, deterministic = False, init_mode = None)
+                    validate_array_assign(var_statement, var_statement.constant_index == 'constant_index', {'blackboard', 'local', 'environment'}, all_vars, node, deterministic = False, init_mode = None)
                 else:
                     if var_statement.assign is None or var_statement.array_mode == 'range':
                         raise Exception('Action ' + node.name + ' has an invalid assignment for variable ' + assign_var.name)
@@ -465,7 +467,7 @@ def validate_action(node):
                 if not is_env(assign_var):
                     raise Exception('Action ' + node.name + ' is updating ' + assign_var.name + ' as part of a write statement but it is not an Environment Variable')
                 if is_array(assign_var):
-                    validate_array_assign(var_statement, var_statement.constant_index == 'constant_index', {'blackboard', 'local', 'environment'}, all_vars, deterministic = False, init_mode = None)
+                    validate_array_assign(var_statement, var_statement.constant_index == 'constant_index', {'blackboard', 'local', 'environment'}, all_vars, node, deterministic = False, init_mode = None)
                 else:
                     if var_statement.assign is None or var_statement.array_mode == 'range':
                         raise Exception('Action ' + node.name + ' has an invalid assignment for variable ' + assign_var.name)
@@ -575,8 +577,14 @@ def validate_model(model, constants_, metamodel_):
     #     validate_variable(variable, {'blackboard', 'environment'}, variables_so_far)
     #     variables_so_far.add(variable.name)
 
-    for statement in model.update:
-        validate_variable_assignment(statement.variable, statement, {'blackboard', 'environment'}, None, deterministic = False, init_mode = None)
+    for var_statement in model.update:
+        assign_var = var_statement.variable
+        if is_array(assign_var):
+            validate_array_assign(var_statement, var_statement.constant_index == 'constant_index', {'blackboard', 'local', 'environment'}, None, None, deterministic = False, init_mode = None)
+        else:
+            if var_statement.assign is None or var_statement.array_mode == 'range':
+                raise Exception('Environment update has an invalid assignment for variable ' + assign_var.name)
+            validate_variable_assignment(assign_var, var_statement.assign, {'blackboard', 'environment'}, None, deterministic = False, init_mode = None)
     for check in model.check_nodes:
         validate_check(check)
     for check_env in model.environment_checks:
@@ -596,4 +604,5 @@ def validate_model(model, constants_, metamodel_):
         else:
             raise Exception('unknown specification type: ' + specification.spec_type)
         validate_condition(specification.code_statement, {'blackboard', 'local', 'environment'}, None, allowed)
+    print('model check complete')
     return
