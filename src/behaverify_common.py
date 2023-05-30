@@ -1,11 +1,40 @@
-def create_variable_template(name, mode, custom_value_range,
+
+# if not array
+
+# a NEXT_VALUE is defined as a triple (node_name, non_determinism, STAGE)
+# node_name is a string representing the node where this update happens or none if it's environmental
+# non_determinism indicates if this update is non-deterministic
+# STAGE is a list of pairs (condition, result)
+# if the condition is true, then the result is used.
+# the last condition should always be TRUE
+
+
+# if array
+
+# a NEXT_VALUE is defined as a quadruple (node_name, constant_index, non_determinism, STAGE)
+# node_name is a string representing the node where this update happens or none if it's environmental
+# constant_index is a boolean. If true, the indices will all be constants, simplifying the update greatly. Furthermore, those indicies will be INTS.
+# If false, then the indices may be arbitrary code, so long as it resolves to an int. stored as a string.
+# non_determinism depends on constant_index
+# if constant_index is True -> non_determinism is a map from Int to bool, where the ints represent indices, while the bools represent if the update for that index is nondeterministic.
+# if constant_index is False -> non_determinism is a bool indicating if non-determinism appears anywhere within the update
+# STAGE is a list of pairs (index, [(condition, result)])
+# if constant_index is true, index is an int
+# if constant_index is false, index is a string.
+# if the condition is true, then the result is used.
+# the last condition should always be TRUE
+
+# the initial value of a variable is a single stage with int based index.
+
+
+def create_variable_template(name, mode, array_size, custom_value_range,
                              min_value, max_value,
-                             initial_value, next_value,
-                             prefix = '', keep_stage_0 = True):
+                             initial_value, next_value, keep_stage_0 = True):
     return {
-        'prefix' : prefix,
         'name' : name,
         'mode' : mode,
+        'array' : array_size is not None,
+        'array_size' : None if array_size is None else array_size,
         'custom_value_range' : custom_value_range,
         'min_value' : min_value,
         'max_value' : max_value,

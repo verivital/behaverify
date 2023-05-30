@@ -1,7 +1,13 @@
 import serene_functions
-import textx
+# import textx
 import itertools
 from behaverify_common import create_node_name
+
+# TODO : function category (TL/INVAR/reg) - DONE?
+# TODO : node_types (idk what this means)
+# TODO : instant declarations
+# TODO : array updates
+# TODO : read at/node_name in functions
 
 RANGE_FUNCTION = {
     'abs' : serene_functions.serene_abs,
@@ -35,65 +41,69 @@ RANGE_FUNCTION = {
 
 
 FUNCTION_TYPE_INFO = {
-    'abs' : {'return_type' : 'INT', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'INT'},
-    'max' : {'return_type' : 'INT', 'min_arg' : 2, 'max_arg' : -1, 'arg_type' : 'INT'},
-    'min' : {'return_type' : 'INT', 'min_arg' : 2, 'max_arg' : -1, 'arg_type' : 'INT'},
+    'abs' : {'return_type' : 'INT', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'INT', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'reg'}},
+    'max' : {'return_type' : 'INT', 'min_arg' : 2, 'max_arg' : -1, 'arg_type' : 'INT', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'reg'}},
+    'min' : {'return_type' : 'INT', 'min_arg' : 2, 'max_arg' : -1, 'arg_type' : 'INT', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'reg'}},
     # 'sin' : serene_functions.serene_sin,
     # 'cos' : serene_functions.serene_cos,
     # 'tan' : serene_functions.serene_tan,
     # 'ln' : serene_functions.serene_log,
-    'not' : {'return_type' : 'BOOLEAN', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'BOOLEAN'},
-    'and' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : -1, 'arg_type' : 'BOOLEAN'},
-    'or' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : -1, 'arg_type' : 'BOOLEAN'},
-    'xor' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'BOOLEAN'},
-    'xnor' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'BOOLEAN'},
-    'implies' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'BOOLEAN'},
-    'equivalent' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'BOOLEAN'},
-    'equal' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'depends'},
-    'not_equal' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'depends'},
-    'less_than' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'INT'},
-    'greater_than' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'INT'},
-    'less_than_or_equal' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'INT'},
-    'greater_than_or_equal' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'INT'},
-    'negative' : {'return_type' : 'INT', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'INT'},
-    'addition' : {'return_type' : 'INT', 'min_arg' : 2, 'max_arg' : -1, 'arg_type' : 'INT'},
-    'subtraction' : {'return_type' : 'INT', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'INT'},
-    'multiplication' : {'return_type' : 'INT', 'min_arg' : 2, 'max_arg' : -1, 'arg_type' : 'INT'},
-    'division' : {'return_type' : 'INT', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'INT'},
-    'mod' : {'return_type' : 'INT', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'INT'},
-    'count' : {'return_type' : 'INT', 'min_arg' : 1, 'max_arg' : -1, 'arg_type' : 'BOOLEAN'},
-    'index' : {'return_type' : 'depends', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'INT'},
-    'active' : {'return_type' : 'BOOLEAN', 'min_arg' : 0, 'max_arg' : 0, 'arg_type' : 'node_name'},
-    'success' : {'return_type' : 'BOOLEAN', 'min_arg' : 0, 'max_arg' : 0, 'arg_type' : 'node_name'},
-    'running' : {'return_type' : 'BOOLEAN', 'min_arg' : 0, 'max_arg' : 0, 'arg_type' : 'node_name'},
-    'failure' : {'return_type' : 'BOOLEAN', 'min_arg' : 0, 'max_arg' : 0, 'arg_type' : 'node_name'},
-    'exists_globally' : {'return_type' : 'BOOLEAN', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'BOOLEAN'},
-    'exists_next' : {'return_type' : 'BOOLEAN', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'BOOLEAN'},
-    'exists_finally' :  {'return_type' : 'BOOLEAN', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'BOOLEAN'},
-    'exists_until' :  {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'BOOLEAN'},
-    'always_globally' : {'return_type' : 'BOOLEAN', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'BOOLEAN'},
-    'always_next' :  {'return_type' : 'BOOLEAN', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'BOOLEAN'},
-    'always_finally' :  {'return_type' : 'BOOLEAN', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'BOOLEAN'},
-    'always_until' :  {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'BOOLEAN'},
-    'next' :  {'return_type' : 'BOOLEAN', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'BOOLEAN'},
-    'globally' : {'return_type' : 'BOOLEAN', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'BOOLEAN'},
-    'globally_bounded' : {'return_type' : 'BOOLEAN', 'bounded' : True, 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'BOOLEAN'},
-    'finally' : {'return_type' : 'BOOLEAN', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'BOOLEAN'},
-    'finally_bounded' : {'return_type' : 'BOOLEAN', 'bounded' : True, 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'BOOLEAN'},
-    'until' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'BOOLEAN'},
-    'until_bounded' : {'return_type' : 'BOOLEAN', 'bounded' : True, 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'BOOLEAN'},
-    'release' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'BOOLEAN'},
-    'release_bounded' : {'return_type' : 'BOOLEAN', 'bounded' : True, 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'BOOLEAN'},
-    'previous' : {'return_type' : 'BOOLEAN', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'BOOLEAN'},
-    'not_previous_not' : {'return_type' : 'BOOLEAN', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'BOOLEAN'},
-    'historically' : {'return_type' : 'BOOLEAN', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'BOOLEAN'},
-    'historically_bounded' : {'return_type' : 'BOOLEAN', 'bounded' : True, 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'BOOLEAN'},
-    'once' : {'return_type' : 'BOOLEAN', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'BOOLEAN'},
-    'once_bounded' : {'return_type' : 'BOOLEAN', 'bounded' : True, 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'BOOLEAN'},
-    'since' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'BOOLEAN'},
-    'since_bounded' : {'return_type' : 'BOOLEAN', 'bounded' : True, 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'BOOLEAN'},
-    'triggered' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'BOOLEAN'},
-    'triggered_bounded' : {'return_type' : 'BOOLEAN', 'bounded' : True, 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'BOOLEAN'}
+    'equal' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'depends', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'reg'}},
+    'not_equal' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'depends', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'reg'}},
+    'less_than' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'INT', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'reg'}},
+    'greater_than' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'INT', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'reg'}},
+    'less_than_or_equal' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'INT', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'reg'}},
+    'greater_than_or_equal' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'INT', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'reg'}},
+    'negative' : {'return_type' : 'INT', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'INT', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'reg'}},
+    'addition' : {'return_type' : 'INT', 'min_arg' : 2, 'max_arg' : -1, 'arg_type' : 'INT', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'reg'}},
+    'subtraction' : {'return_type' : 'INT', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'INT', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'reg'}},
+    'multiplication' : {'return_type' : 'INT', 'min_arg' : 2, 'max_arg' : -1, 'arg_type' : 'INT', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'reg'}},
+    'division' : {'return_type' : 'INT', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'INT', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'reg'}},
+    'mod' : {'return_type' : 'INT', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'INT', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'reg'}},
+    'count' : {'return_type' : 'INT', 'min_arg' : 1, 'max_arg' : -1, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'reg'}},
+    'index' : {'return_type' : 'depends', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'INT', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'reg'}},
+
+    'not' : {'return_type' : 'BOOLEAN', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'CTL', 'LTL', 'INVAR', 'reg'}},
+    'and' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : -1, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'CTL', 'LTL', 'INVAR', 'reg'}},
+    'or' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : -1, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'CTL', 'LTL', 'INVAR', 'reg'}},
+    'xor' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'CTL', 'LTL', 'INVAR', 'reg'}},
+    'xnor' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'CTL', 'LTL', 'INVAR', 'reg'}},
+    'implies' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'CTL', 'LTL', 'INVAR', 'reg'}},
+    'equivalent' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'CTL', 'LTL', 'INVAR', 'reg'}},
+
+    'active' : {'return_type' : 'BOOLEAN', 'min_arg' : 0, 'max_arg' : 0, 'arg_type' : 'node_name', 'allowed_in' : {'CTL', 'LTL', 'INVAR'}, 'allows' : set()},
+    'success' : {'return_type' : 'BOOLEAN', 'min_arg' : 0, 'max_arg' : 0, 'arg_type' : 'node_name', 'allowed_in' : {'CTL', 'LTL', 'INVAR'}, 'allows' : set()},
+    'running' : {'return_type' : 'BOOLEAN', 'min_arg' : 0, 'max_arg' : 0, 'arg_type' : 'node_name', 'allowed_in' : {'CTL', 'LTL', 'INVAR'}, 'allows' : set()},
+    'failure' : {'return_type' : 'BOOLEAN', 'min_arg' : 0, 'max_arg' : 0, 'arg_type' : 'node_name', 'allowed_in' : {'CTL', 'LTL', 'INVAR'}, 'allows' : set()},
+
+    'exists_globally' : {'return_type' : 'BOOLEAN', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'CTL'}, 'allows' : {'CTL', 'INVAR', 'reg'}},
+    'exists_next' : {'return_type' : 'BOOLEAN', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'CTL'}, 'allows' : {'CTL', 'INVAR', 'reg'}},
+    'exists_finally' :  {'return_type' : 'BOOLEAN', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'CTL'}, 'allows' : {'CTL', 'INVAR', 'reg'}},
+    'exists_until' :  {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'CTL'}, 'allows' : {'CTL', 'INVAR', 'reg'}},
+    'always_globally' : {'return_type' : 'BOOLEAN', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'CTL'}, 'allows' : {'CTL', 'INVAR', 'reg'}},
+    'always_next' :  {'return_type' : 'BOOLEAN', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'CTL'}, 'allows' : {'CTL', 'INVAR', 'reg'}},
+    'always_finally' :  {'return_type' : 'BOOLEAN', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'CTL'}, 'allows' : {'CTL', 'INVAR', 'reg'}},
+    'always_until' :  {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'CTL'}, 'allows' : {'CTL', 'INVAR', 'reg'}},
+
+    'next' :  {'return_type' : 'BOOLEAN', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'LTL'}, 'allows' : {'LTL', 'INVAR', 'reg'}},
+    'globally' : {'return_type' : 'BOOLEAN', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'LTL'}, 'allows' : {'LTL', 'INVAR', 'reg'}},
+    'globally_bounded' : {'return_type' : 'BOOLEAN', 'bounded' : True, 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'LTL'}, 'allows' : {'LTL', 'INVAR', 'reg'}},
+    'finally' : {'return_type' : 'BOOLEAN', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'LTL'}, 'allows' : {'LTL', 'INVAR', 'reg'}},
+    'finally_bounded' : {'return_type' : 'BOOLEAN', 'bounded' : True, 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'LTL'}, 'allows' : {'LTL', 'INVAR', 'reg'}},
+    'until' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'LTL'}, 'allows' : {'LTL', 'INVAR', 'reg'}},
+    'until_bounded' : {'return_type' : 'BOOLEAN', 'bounded' : True, 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'LTL'}, 'allows' : {'LTL', 'INVAR', 'reg'}},
+    'release' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'LTL'}, 'allows' : {'LTL', 'INVAR', 'reg'}},
+    'release_bounded' : {'return_type' : 'BOOLEAN', 'bounded' : True, 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'LTL'}, 'allows' : {'LTL', 'INVAR', 'reg'}},
+    'previous' : {'return_type' : 'BOOLEAN', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'LTL'}, 'allows' : {'LTL', 'INVAR', 'reg'}},
+    'not_previous_not' : {'return_type' : 'BOOLEAN', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'LTL'}, 'allows' : {'LTL', 'INVAR', 'reg'}},
+    'historically' : {'return_type' : 'BOOLEAN', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'LTL'}, 'allows' : {'LTL', 'INVAR', 'reg'}},
+    'historically_bounded' : {'return_type' : 'BOOLEAN', 'bounded' : True, 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'LTL'}, 'allows' : {'LTL', 'INVAR', 'reg'}},
+    'once' : {'return_type' : 'BOOLEAN', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'LTL'}, 'allows' : {'LTL', 'INVAR', 'reg'}},
+    'once_bounded' : {'return_type' : 'BOOLEAN', 'bounded' : True, 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'LTL'}, 'allows' : {'LTL', 'INVAR', 'reg'}},
+    'since' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'LTL'}, 'allows' : {'LTL', 'INVAR', 'reg'}},
+    'since_bounded' : {'return_type' : 'BOOLEAN', 'bounded' : True, 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'LTL'}, 'allows' : {'LTL', 'INVAR', 'reg'}},
+    'triggered' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'LTL'}, 'allows' : {'LTL', 'INVAR', 'reg'}},
+    'triggered_bounded' : {'return_type' : 'BOOLEAN', 'bounded' : True, 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'LTL'}, 'allows' : {'LTL', 'INVAR', 'reg'}}
 }
 
 
@@ -123,25 +133,42 @@ def variable_type(variable):
 
 
 def is_local(variable):
-    global metamodel
-    return textx.textx_isinstance(variable, metamodel['local_variable'])
+    return variable.var_type == 'local'
 
 
 def is_env(variable):
-    global metamodel
-    return textx.textx_isinstance(variable, metamodel['environment_variable'])
+    return variable.var_type == 'env'
+
+
+def is_blackboard(variable):
+    return variable.var_type == 'bl'
 
 
 def variable_scope(variable):
-    global metamodel
     if is_local(variable):
         return 'local'
     elif is_env(variable):
         return 'environment'
-    elif textx.textx_isinstance(variable, metamodel['blackboard_variable']):
+    elif is_blackboard(variable):
         return 'blackboard'
     else:
         raise Exception('Variable ' + variable.name + ' is not local, blackboard, or environment')
+
+
+def is_array(variable):
+    return variable.array_size is not None
+
+
+def build_range_func(code):
+    return (
+        (lambda x : handle_constant(code.constant)) if code.constant is not None else (
+            (lambda x : x) if code.value else (
+                build_range_func(code.code_statement) if code.code_statement is not None else (
+                    (lambda x : RANGE_FUNCTION[code.function_call.function_name]([build_range_func(value) for value in code.function_call.values], x))
+                )
+            )
+        )
+    )
 
 
 def str_format(value):
@@ -150,7 +177,7 @@ def str_format(value):
     return str(value)
 
 
-def validate_code(code, scopes, variable_names):
+def validate_code(code, scopes, variable_names, allowed_functions):
     global all_node_names
 
     def var_checks(code):
@@ -173,7 +200,7 @@ def validate_code(code, scopes, variable_names):
         return (constant_type(code.constant), 'constant', str_format(code.constant))
     elif code.variable is not None:
         var_checks(code)
-        if code.variable.array_size is not None:
+        if is_array(code.variable):
             raise Exception('Variable ' + code.variable.name + ' is an array but appears without being indexed')
         return (variable_type(code.variable), 'variable', code.variable.name)
     elif code.code_statement is not None:
@@ -182,14 +209,19 @@ def validate_code(code, scopes, variable_names):
         if code.function_call.function_name not in FUNCTION_TYPE_INFO:
             raise Exception('Function ' + code.function_call.function_name + ' is not yet supported')
         func_info = FUNCTION_TYPE_INFO[code.function_call.function_name]
+        if len(func_info['allowed_in'].intersection(allowed_functions)) == 0:
+            raise Exception('Function ' + code.function_call.function_name + ' is only allowed in ' + str(func_info['allowed_in']) + ' but we are in ' + str(allowed_functions))
+        new_allowed_functions = func_info['allows'].intersection(allowed_functions)
+        # handle index specially, and return.
         if code.function_call.function_name == 'index':
             var_checks(code.function_call)
             if len(code.function_call.values) != 1:
                 raise Exception('Index into variable ' + code.function_call.variable.name + ' should have exactly 1 argument')
-            (cur_arg_type, cur_code_type, cur_code) = validate_code(code.function_call.values[0], scopes, variable_names)
+            (cur_arg_type, cur_code_type, cur_code) = validate_code(code.function_call.values[0], scopes, variable_names, new_allowed_functions)
             if cur_arg_type != 'INT':
                 raise Exception('Index into variable ' + code.function_call.variable.name + ' should be an integer')
             return (variable_type(code.function_call.variable), 'indexed variable', code.function_call.variable.name)
+        # handle bounded specially
         if 'bounded' in func_info:
             if code.function_call.bound.upper_bound != '+oo':
                 lower = handle_constant(code.function_call.bound.lower_bound)
@@ -207,16 +239,16 @@ def validate_code(code, scopes, variable_names):
             if code.function_call.node_name not in all_node_names:
                 raise Exception('Reference to a node that does not exist ' + code.function_call.node_name)
         if arg_type == 'depends':
-            (arg_type, _, _) = validate_code(code.function_call.values[0], scopes, variable_names)
+            (arg_type, _, _) = validate_code(code.function_call.values[0], scopes, variable_names, new_allowed_functions)
         for index, value in enumerate(code.function_call.values):
-            (cur_arg_type, cur_code_type, cur_code) = validate_code(value, scopes, variable_names)
+            (cur_arg_type, cur_code_type, cur_code) = validate_code(value, scopes, variable_names, new_allowed_functions)
             if cur_arg_type != arg_type:
                 raise Exception('Function ' + code.function_call.function_name + ' expected ' + arg_type + ' but got ' + cur_arg_type + ' from argument number ' + str(index) + ' which is ' + cur_code_type + ' ' + cur_code)
         return (return_type, 'function', code.function_call.function_name)
 
 
-def validate_condition(code, scopes, variable_names):
-    (cur_arg_type, cur_code_type, cur_code) = validate_code(code, scopes, variable_names)
+def validate_condition(code, scopes, variable_names, allowed_functions):
+    (cur_arg_type, cur_code_type, cur_code) = validate_code(code, scopes, variable_names, allowed_functions)
     if cur_arg_type != 'BOOLEAN':
         raise Exception('Conditition expected BOOLEAN but got ' + cur_arg_type + ' from ' + cur_code_type + ' ' + cur_code)
     return
@@ -227,21 +259,9 @@ def handle_constant(constant):
     return (constants[constant] if constant in constants else constant)
 
 
-def build_range_func(code):
-    return (
-        (lambda x : handle_constant(code.constant)) if code.constant is not None else (
-            (lambda x : x) if code.value else (
-                build_range_func(code.code_statement) if code.code_statement is not None else (
-                    (lambda x : RANGE_FUNCTION[code.function_call.function_name]([build_range_func(value) for value in code.function_call.values], x))
-                )
-            )
-        )
-    )
-
-
-def validate_variable_assignment(variable, case_default, scopes, variable_names, deterministic = False, init_mode = None):
-    if is_local(variable) and is_env(variable):
-        raise Exception('Variable ' + variable.name + ' was internally marked as both local and env')
+def validate_variable_assignment(variable, assign, scopes, variable_names, deterministic = False, init_mode = None):
+    if sum([is_local(variable), is_env(variable), is_blackboard(variable)]) != 1:
+        raise Exception('Variable ' + variable.name + ' was marked as not exactly one type (this should be unreachable)')
     if init_mode is None and (variable.model_as == 'DEFINE' or variable.model_as == 'FROZENVAR'):
         raise Exception('Variable ' + variable.name + ' is being updated but is modeled as ' + variable.model_as)
     if init_mode == 'node' and (not is_local(variable)):
@@ -251,7 +271,7 @@ def validate_variable_assignment(variable, case_default, scopes, variable_names,
 
     def handle_case_result(case_result, is_default):
         if not is_default:
-            validate_condition(case_result.condition, scopes, variable_names)
+            validate_condition(case_result.condition, scopes, variable_names, {'reg'})
         if case_result.range_mode:
             if deterministic:
                 raise Exception('Variable ' + variable.name + ' needs to be updated deterministicly here but is being updated non-deterministicly')
@@ -264,12 +284,12 @@ def validate_variable_assignment(variable, case_default, scopes, variable_names,
             if deterministic and len(case_result.values) > 1:
                 raise Exception('Variable ' + variable.name + ' needs to be updated deterministicly here but is being updated non-deterministicly')
             for index, value in enumerate(case_result.values):
-                (cur_arg_type, cur_code_type, cur_code) = validate_code(value, scopes, variable_names)
+                (cur_arg_type, cur_code_type, cur_code) = validate_code(value, scopes, variable_names, {'reg'})
                 if cur_arg_type != var_type:
                     raise Exception('Variable ' + variable.name + ' is of type ' + var_type + ' but is being updated with ' + cur_code_type + ' ' + cur_code + ' which is of type ' + cur_arg_type)
-    for case_result in case_default.case_results:
+    for case_result in assign.case_results:
         handle_case_result(case_result, False)
-    handle_case_result(case_default.default_result, True)
+    handle_case_result(assign.default_result, True)
     return
 
 
@@ -277,7 +297,7 @@ def validate_check(node):
     read_variables = set(map(lambda x : x.name, node.read_variables))
     if len(read_variables) != len(node.read_variables):
         raise Exception('Check ' + node.name + ' has duplicate read variables')
-    validate_condition(node.condition, {'blackboard'}, set(map(lambda x : x.name, node.read_variables)))
+    validate_condition(node.condition, {'blackboard'}, read_variables, {'reg'})
     return
 
 
@@ -285,12 +305,66 @@ def validate_check_env(node):
     read_variables = set(map(lambda x : x.name, node.read_variables))
     if len(read_variables) != len(node.read_variables):
         raise Exception('Environment Check ' + node.name + ' has duplicate read variables')
-    validate_condition(node.condition, {'blackboard', 'environment'}, set(map(lambda x : x.name, node.read_variables)))
+    validate_condition(node.condition, {'blackboard', 'environment'}, read_variables, {'reg'})
     return
 
 
 def validate_action(node):
-    global metamodel
+    def validate_array_assign(statement, constant_index, scopes, variable_names, deterministic = True, init_mode = None):
+        assign_var = statement.variable
+        if not is_array(assign_var):
+            raise Exception('In action ' + node.name + ' Variable ' + assign_var.name + ' is being updated as array but is not an array')
+        if statement.array_mode == 'range':
+            if statement.assign is None:
+                raise Exception('In action ' + node.name + ' Variable ' + assign_var.name + ' is being updated with incorrect syntax')
+            if len(statement.values) == 0:
+                serene_indices = list(range(assign_var.array_size))
+            else:
+                cond_func = build_range_func(statement.values[2])
+                min_val = handle_constant(statement.values[0])
+                max_val = handle_constant(statement.values[1])
+                if max_val < min_val:
+                    raise Exception('In action ' + node.name + ' in variable ' + assign_var.name + ' max_val is less than min_val')
+                serene_indices = list(filter(cond_func, range(min_val, max_val + 1)))
+            if len(serene_indices) == 0:
+                raise Exception('In action ' + node.name + ', array variable ' + assign_var.name + ' is being updated using a range with no values')
+            global constants
+            constants['serene_index'] = 0  # this just used to confirm the types, not an actual value
+            if init_mode == 'node':
+                validate_variable_assignment(assign_var, statement.assign, scopes, variable_names, deterministic, init_mode)
+            else:
+                if constant_index:
+                    cur_type = constant_type(statement.assign.index_expr)
+                else:
+                    (cur_type, _, _) = validate_code(statement.assign.index_expr, scopes, variable_names, {'reg'})
+                if cur_type != 'INT':
+                    raise Exception('In action ' + node.name + ' in variable ' + assign_var.name + ' is being indexed using type of ' + cur_type + ' instead of INT')
+                validate_variable_assignment(assign_var, statement.assign.assign, scopes, variable_names, deterministic, init_mode)
+            constants.pop('serene_index')
+            return
+        else:
+            if init_mode == 'node' and len(statement.assigns) != assign_var.array_size:
+                raise Exception('Variable ' + assign_var.name + ' is an array of size ' + str(assign_var.array_size) + ' but was initialized with ' + str(len(statement.assigns)) + ' values')
+            if len(statement.assigns) == 0:
+                raise Exception('In action ' + node.name + ', array variable ' + assign_var.name + ' is being updated with wrong syntax')
+            seen_constants = set()
+            for assign in statement.assigns:
+                if init_mode == 'node':
+                    validate_variable_assignment(assign_var, assign, scopes, variable_names, deterministic, init_mode)
+                else:
+                    if constant_index:
+                        cur_type = constant_type(assign.index_expr)
+                        if handle_constant(assign.index_expr) in seen_constants:
+                            raise Exception('In action ' + node.name + ' in variable ' + assign_var.name + ' is being indexed with constants and a constant appears twice')
+                        seen_constants.add(handle_constant(assign.index_expr))
+                    else:
+                        (cur_type, _, _) = validate_code(assign.index_expr, scopes, variable_names, {'reg'})
+                    if cur_type != 'INT':
+                        raise Exception('In action ' + node.name + ' in variable ' + assign_var.name + ' is being indexed using type of ' + cur_type + ' instead of INT')
+                    validate_variable_assignment(assign_var, assign.assign, scopes, variable_names, deterministic, init_mode)
+            return
+        raise Exception('unreachable state')
+
     all_vars = set(map(lambda x : x.name, itertools.chain(node.local_variables, node.read_variables, node.write_variables)))
     read_variables = set(map(lambda x : x.name, node.read_variables))
     write_variables = set(map(lambda x : x.name, node.write_variables))
@@ -301,24 +375,60 @@ def validate_action(node):
         raise Exception('Action ' + node.name + ' has duplicate write variables')
     if len(local_variables) != len(node.local_variables):
         raise Exception('Action ' + node.name + ' has duplicate local variables')
-    for init_statement in node.init_statements:
-        if init_statement.variable.name not in local_variables:
-            raise Exception('Action ' + node.name + ' is initializing local variable ' + init_statement.variable.name + ' but it it does not appear in the local variable list for the node: [' + ', '.join(local_variables) + ']')
-        validate_variable_assignment(init_statement.variable, init_statement, {'blackboard', 'local'}, all_vars, deterministic = True, init_mode = 'node')
+
+    if len(node.init_statements) != len(set(map(lambda x: x.variable.name, node.init_statements))):
+        raise Exception('Action ' + node.name + ' initializes at least one variable at least twice')
+
+    for var_statement in node.init_statements:
+        if var_statement.instant:
+            raise Exception('Action ' + node.name + ' marked a non-environment statement as instant')
+        assign_var = var_statement.variable
+        if assign_var.name not in local_variables:
+            raise Exception('Action ' + node.name + ' is initializing local variable ' + assign_var.name + ' but it it does not appear in the local variable list for the node: [' + ', '.join(local_variables) + ']')
+        if is_array(assign_var):
+            validate_array_assign(var_statement, True, {'blackboard', 'local'}, all_vars, deterministic = True, init_mode = 'node')
+        else:
+            if var_statement.assign is None or var_statement.array_mode == 'range':
+                raise Exception('Action ' + node.name + ' has an invalid assignment for variable ' + assign_var.name)
+            validate_variable_assignment(assign_var, var_statement.assign, {'blackboard', 'local'}, all_vars, deterministic = True, init_mode = 'node')
+
     for statement in itertools.chain(node.pre_update_statements, node.post_update_statements):
         if statement.variable_statement is not None:
-            assign_var = statement.variable_statement.variable
+            var_statement = statement.variable_statement
+            if var_statement.instant:
+                raise Exception('Action ' + node.name + ' marked a non-environment statement as instant')
+            assign_var = var_statement.variable
             if assign_var.name not in local_variables and assign_var.name not in write_variables:
                 raise Exception('Node ' + node.name + ' is updating variable ' + assign_var.name + ' but it is not listed in the local or write variables')
-            validate_variable_assignment(statement.variable_statement.variable, statement.variable_statement, {'blackboard', 'local'}, all_vars, deterministic = True, init_mode = None)
+            if is_array(assign_var):
+                validate_array_assign(var_statement, var_statement.constant_index == 'constant_index', {'blackboard', 'local'}, all_vars, deterministic = True, init_mode = None)
+            else:
+                if var_statement.assign is None or var_statement.array_mode == 'range':
+                    raise Exception('Action ' + node.name + ' has an invalid assignment for variable ' + assign_var.name)
+                validate_variable_assignment(assign_var, var_statement.assign, {'blackboard', 'local'}, all_vars, deterministic = True, init_mode = None)
+            #
+            # END OF VARIABLE_STATEMENT
+            #
         elif statement.read_statement is not None:
             read_statement = statement.read_statement
+            cond_var = None
             if read_statement.condition_variable is not None:
                 cond_var = read_statement.condition_variable
-                if textx.textx_isinstance(cond_var, metamodel['environment_variable']):
-                    raise Exception('Action ' + node.name + ' is using ' + assign_var.name + ' as a condition variable but it is an Environment Variable')
+                if is_array(cond_var):
+                    if read_statement.index_of is None:
+                        raise Exception('Action ' + node.name + ' is using array ' + cond_var.name + ' without an index as a condition variable')
+                    if read_statement.is_const == 'index_of':
+                        (cur_type, _, _) = validate_code(read_statement.index_of, {'local', 'blackboard'}, all_vars, {'reg'})
+                    else:
+                        cur_type = constant_type(read_statement.index_of)
+                    if cur_type != 'INT':
+                        raise Exception('Action ' + node.name + ' is indexing into ' + cond_var.name + ' with something other than an int')
+                if not is_array(cond_var) and read_statement.index_of is not None:
+                    raise Exception('Action ' + node.name + ' is using ' + cond_var.name + ' with an index as a condition variable but it is not an array')
+                if is_env(cond_var):
+                    raise Exception('Action ' + node.name + ' is using ' + cond_var.name + ' as a condition variable but it is an Environment Variable')
                 if cond_var.name not in local_variables and cond_var.name not in write_variables:
-                    raise Exception('Node ' + node.name + ' is updating variable ' + cond_var.name + ' but it is not listed in the local or write variables')
+                    raise Exception('Node ' + node.name + ' is updating condition variable ' + cond_var.name + ' but it is not listed in the local or write variables')
                 if variable_type(cond_var) != 'BOOLEAN':
                     raise Exception('Condition variable for read statement in Action ' + node.name + ' is ' + cond_var.name + ' but ' + cond_var.name + ' is of type ' + variable_type(cond_var) + ' and not BOOLEAN')
                 if cond_var.model_as != 'VAR':
@@ -326,31 +436,53 @@ def validate_action(node):
             (cur_arg_type, cur_code_type, cur_code) = validate_code(read_statement.condition, {'blackboard', 'local', 'environment'}, all_vars)
             if cur_arg_type != 'BOOLEAN':
                 raise Exception('Action ' + node.name + ' has a read statement with a condition of type ' + cur_arg_type + ' instead of BOOLEAN')
-            if read_statement.non_determinism and read_statement.condition_variable is None:
+            if read_statement.non_determinism and cond_var is None:
                 raise Exception('Action ' + node.name + ' has a non-deterministic read statement but no condition variable')
-            for assign_statement in read_statement.variable_statements:
-                assign_var = assign_statement.variable
-                if textx.textx_isinstance(assign_var, metamodel['environment_variable']):
+            for var_statement in read_statement.variable_statements:
+                if var_statement.instant:
+                    raise Exception('Action ' + node.name + ' marked a non-environment statement as instant')
+                assign_var = var_statement.variable
+                if cond_var is not None:
+                    if cond_var.name == assign_var.name:
+                        raise Exception('Action ' + node.name + ' uses ' + cond_var.name + ' as a condition variable and update variable in the same read statement')
+                if is_env(assign_var):
                     raise Exception('Action ' + node.name + ' is updating ' + assign_var.name + ' as part of a read statement but it is an Environment Variable')
                 if assign_var.name not in write_variables and assign_var.name not in local_variables:
                     raise Exception('Action ' + node.name + ' is updating ' + assign_var.name + ' but ' + assign_var.name + ' is not declared in write_variables: [' + ', '.join(write_variables) + '] or in local_variables: [' + ', '.join(local_variables) + ']')
-                validate_variable_assignment(assign_var, assign_statement, {'blackboard', 'local', 'environment'}, all_vars, deterministic = False, init_mode = None)
+                if is_array(assign_var):
+                    validate_array_assign(var_statement, var_statement.constant_index == 'constant_index', {'blackboard', 'local', 'environment'}, all_vars, deterministic = False, init_mode = None)
+                else:
+                    if var_statement.assign is None or var_statement.array_mode == 'range':
+                        raise Exception('Action ' + node.name + ' has an invalid assignment for variable ' + assign_var.name)
+                    validate_variable_assignment(assign_var, var_statement.assign, {'blackboard', 'local', 'environment'}, all_vars, deterministic = False, init_mode = None)
+            #
+            # END OF READ_STATEMENT
+            #
         elif statement.write_statement is not None:
             write_statement = statement.write_statement
-            for env_statement in write_statement.update:
-                assign_var = env_statement.variable
-                if not textx.textx_isinstance(assign_var, metamodel['environment_variable']):
-                    raise Exception('Action ' + node.name + ' is updating ' + assign_var.name + ' as part of a read statement but it is an Environment Variable')
-                validate_variable_assignment(assign_var, env_statement, {'blackboard', 'local', 'environment'}, all_vars, deterministic = False, init_mode = None)
+            for var_statement in write_statement.update:
+                assign_var = var_statement.variable
+                if not is_env(assign_var):
+                    raise Exception('Action ' + node.name + ' is updating ' + assign_var.name + ' as part of a write statement but it is not an Environment Variable')
+                if is_array(assign_var):
+                    validate_array_assign(var_statement, var_statement.constant_index == 'constant_index', {'blackboard', 'local', 'environment'}, all_vars, deterministic = False, init_mode = None)
+                else:
+                    if var_statement.assign is None or var_statement.array_mode == 'range':
+                        raise Exception('Action ' + node.name + ' has an invalid assignment for variable ' + assign_var.name)
+                    validate_variable_assignment(assign_var, var_statement.assign, {'blackboard', 'local', 'environment'}, all_vars, deterministic = False, init_mode = None)
+            #
+            # END OF WRITE_STATEMENT
+            #
         else:
             raise Exception('Action ' + node.name + ' has a statement of an unrecognized type (should be impossible)')
+
     for case_result in node.return_statement.case_results:
         validate_condition(case_result.condition, {'blackboard', 'local'}, all_vars)
     return
 
 
 def validate_variable(variable, scopes, variable_names):
-    global metamodel, constants
+    global constants
     if variable.model_as != 'DEFINE':
         if variable.domain.min_val is not None:
             min_val = handle_constant(variable.domain.min_val)
@@ -368,19 +500,19 @@ def validate_variable(variable, scopes, variable_names):
             for enum in variable.domain.enums:
                 if constant_type(enum) != var_type:
                     raise Exception('Variable ' + variable.name + ' mixes enumeration types')
-    if variable.array_size is None:
-        validate_variable_assignment(variable, variable.initial_value, scopes, variable_names, deterministic = not textx.textx_isinstance(variable, metamodel['environment_variable']), init_mode = 'default')
-    else:
+    if is_array(variable):
         if variable.array_mode == 'range':
             for index in range(variable.array_size):
                 constants['serene_index'] = index
-                validate_variable_assignment(variable, variable.initial_value, scopes, variable_names, deterministic = not textx.textx_isinstance(variable, metamodel['environment_variable']), init_mode = 'default')
+                validate_variable_assignment(variable, variable.assign, scopes, variable_names, deterministic = not is_env(variable), init_mode = 'default')
             constants.pop('serene_index')
         else:
-            if len(variable.initial_values) != variable.array_size:
-                raise Exception('Variable ' + variable.name + ' is an array of size ' + str(variable.array_size) + ' but was initialized with ' + str(len(variable.initial_values)) + ' values')
-            for initial_value in variable.initial_values:
-                validate_variable_assignment(variable, initial_value, scopes, variable_names, deterministic = not textx.textx_isinstance(variable, metamodel['environment_variable']), init_mode = 'default')
+            if len(variable.assigns) != variable.array_size:
+                raise Exception('Variable ' + variable.name + ' is an array of size ' + str(variable.array_size) + ' but was initialized with ' + str(len(variable.assigns)) + ' values')
+            for assign in variable.assigns:
+                validate_variable_assignment(variable, assign, scopes, variable_names, deterministic = not is_env(variable), init_mode = 'default')
+    else:
+        validate_variable_assignment(variable, variable.assign, scopes, variable_names, deterministic = not is_env(variable), init_mode = 'default')
     return
 
 
@@ -431,17 +563,20 @@ def validate_model(model, constants_, metamodel_):
     (all_node_names, _) = walk_tree(model.root, set(), {})
 
     variables_so_far = set()
-    for variable in model.blackboard_variables:
-        validate_variable(variable, {'blackboard'}, variables_so_far)
+    for variable in model.variables:
+        validate_variable(variable, {'blackboard', 'environment'} if is_env(variable) else {'blackboard'}, variables_so_far)
         variables_so_far.add(variable.name)
-    for variable in model.local_variables:
-        validate_variable(variable, {'blackboard'}, variables_so_far)
-    for variable in model.environment_variables:
-        validate_variable(variable, {'blackboard', 'environment'}, variables_so_far)
-        variables_so_far.add(variable.name)
+    # for variable in model.blackboard_variables:
+    #     validate_variable(variable, {'blackboard'}, variables_so_far)
+    #     variables_so_far.add(variable.name)
+    # for variable in model.local_variables:
+    #     validate_variable(variable, {'blackboard'}, variables_so_far)
+    # for variable in model.environment_variables:
+    #     validate_variable(variable, {'blackboard', 'environment'}, variables_so_far)
+    #     variables_so_far.add(variable.name)
 
-    for env_statement in model.update:
-        validate_variable_assignment(env_statement.variable, env_statement, {'blackboard', 'local', 'environment'}, None, deterministic = False, init_mode = None)
+    for statement in model.update:
+        validate_variable_assignment(statement.variable, statement, {'blackboard', 'environment'}, None, deterministic = False, init_mode = None)
     for check in model.check_nodes:
         validate_check(check)
     for check_env in model.environment_checks:
@@ -450,7 +585,15 @@ def validate_model(model, constants_, metamodel_):
         validate_action(action)
 
     if model.tick_condition is not None:
-        validate_condition(model.tick_condition, {'blackboard', 'local', 'environment'}, None)
+        validate_condition(model.tick_condition, {'blackboard', 'local', 'environment'}, None, {'reg'})
     for specification in model.specifications:
-        validate_condition(specification.code_statement, {'blackboard', 'local', 'environment'}, None)
+        if specification.spec_type == 'LTLSPEC':
+            allowed = {'LTL', 'INVAR', 'reg'}
+        elif specification.spec_type == 'CTLSPEC':
+            allowed = {'CTL', 'INVAR', 'reg'}
+        elif specification.spec_type == 'INVARSPEC':
+            allowed = {'INVAR', 'reg'}
+        else:
+            raise Exception('unknown specification type: ' + specification.spec_type)
+        validate_condition(specification.code_statement, {'blackboard', 'local', 'environment'}, None, allowed)
     return
