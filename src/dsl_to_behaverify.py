@@ -7,15 +7,15 @@ import copy
 import textx
 # import serene_functions
 from behaverify_to_smv import write_smv
-from check_model import (validate_model
-                         # , constant_type
-                         # , variable_type
-                         , is_local
-                         # , is_env
-                         # , is_blackboard
-                         # , variable_scope
-                         , is_array
-                         , build_range_func)
+from check_model import (validate_model,
+                         # constant_type,
+                         # variable_type,
+                         is_local,
+                         # is_env,
+                         # is_blackboard,
+                         # variable_scope,
+                         is_array,
+                         build_range_func)
 
 from behaverify_common import create_node_name, create_node_template, create_variable_template
 
@@ -134,18 +134,19 @@ def compute_stage(variable_key, misc_args):
     variable = variables[variable_key]
 
     # node_name = misc_args['node_name']
-    use_stages = misc_args['use_stages']
+    # use_stages = misc_args['use_stages']
     # use_next = misc_args['use_next']
     # not_next = misc_args['not_next']
     # init_mode = misc_args['init_mode']
     overwrite_stage = misc_args['overwrite_stage']
     return (
-        (('_stage_' + str(min(overwrite_stage, len(variable['next_value']))) if overwrite_stage > 0 else (
-            '' if overwrite_stage == 0 else (
-                '_stage_' + str(len(variable['next_value']))
-            ))))
-        if overwrite_stage is not None else
-        (('_stage_' + str(len(variable['next_value']))) if (use_stages and len(variable['next_value']) > 0) else (''))
+        '_stage_'
+        + str(
+            len(variable['next_value'])
+            if overwrite_stage is None or overwrite_stage < 0
+            else
+            min(overwrite_stage, len(variable['next_value']))
+        )
     )
 
 
@@ -294,7 +295,7 @@ def handle_assign(assign, misc_args):
         non_determinism = non_determinism or new_non_det
         stage.append((format_code(case_result.condition, misc_args), stage_part))
     (new_non_det, stage_part) = handle_result(default_result, misc_args)
-    stage.append(('True', stage_part))
+    stage.append(('TRUE', stage_part))
     return (non_determinism, stage)
 
 
@@ -303,7 +304,8 @@ def handle_variable_statement(statement, assign_var, condition, misc_args):
     should only be called if init_mode is true or from variable_assignment
     '''
     metamodel = global_vars['metamodel']
-    constants = global_vars['constants']
+    # constants = global_vars['constants']
+    serene_index = global_vars['serene_index']
 
     node_name = misc_args['node_name']
     # use_stages = misc_args['use_stages']
@@ -324,14 +326,15 @@ def handle_variable_statement(statement, assign_var, condition, misc_args):
         if statement.array_mode == 'range':
             serene_indices = []
             if init_mode or len(statement.values) == 0:
-                serene_indices = list(range(assign_var.array_size))
+                serene_indices = list(range(handle_constant(assign_var.array_size)))
             else:
                 cond_func = build_range_func(statement.values[2])
                 min_val = handle_constant(statement.values[0])
                 max_val = handle_constant(statement.values[1])
                 serene_indices = list(filter(cond_func, range(min_val, max_val + 1)))
             for index in serene_indices:
-                constants['serene_index'] = index
+                # constants['serene_index'] = index
+                serene_index.append(index)
                 cur_index = (
                     index
                     if init_mode
@@ -345,13 +348,14 @@ def handle_variable_statement(statement, assign_var, condition, misc_args):
                 )
                 (cur_non_determinism, cur_stage) = handle_assign(statement.assign if init_mode else statement.assign.assign, misc_args)
                 if condition is not None:
-                    cur_stage = [condition, format_variable(assign_var, misc_args) + '[' + str(cur_index) + ']'] + cur_stage
+                    cur_stage = [(condition, format_variable(assign_var, misc_args) + '[' + str(cur_index) + ']')] + cur_stage
                 stage.append((cur_index, cur_stage))
                 if constant_index:
                     non_determinism[cur_index] = cur_non_determinism
                 else:
                     non_determinism = non_determinism or cur_non_determinism
-            constants.pop('serene_index')
+                serene_index.pop()
+            # constants.pop('serene_index')
         else:
             for index, assign in enumerate(statement.assigns):
                 cur_index = (
@@ -367,7 +371,7 @@ def handle_variable_statement(statement, assign_var, condition, misc_args):
                 )
                 (cur_non_determinism, cur_stage) = handle_assign(assign if init_mode else assign.assign, misc_args)
                 if condition is not None:
-                    cur_stage = [condition, format_variable(assign_var, misc_args) + '[' + str(cur_index) + ']'] + cur_stage
+                    cur_stage = [(condition, format_variable(assign_var, misc_args) + '[' + str(cur_index) + ']')] + cur_stage
                 stage.append((cur_index, cur_stage))
                 if constant_index:
                     non_determinism[cur_index] = cur_non_determinism
@@ -377,7 +381,7 @@ def handle_variable_statement(statement, assign_var, condition, misc_args):
     else:
         (non_determinism, stage) = handle_assign(statement.assign, misc_args)
         if condition is not None:
-            stage = [condition, format_variable(assign_var, misc_args)] + stage
+            stage = [(condition, format_variable(assign_var, misc_args))] + stage
         return (node_name, non_determinism, stage)
     return
 
@@ -451,6 +455,8 @@ def handle_specifications(specifications):
 def handle_constant(constant):
     '''this handles a constant by checking if it is in constants and replacing if appropriate'''
     constants = global_vars['constants']
+    if constant == 'serene_index':
+        return global_vars['serene_index'][-1]
     return (constants[constant] if constant in constants else constant)
 
 
@@ -628,9 +634,9 @@ def get_variables(model, local_variables, initial_statements, keep_stage_0):
     variables = {
         variable_reference(variable.name, False, '') :
         (
-            create_variable_template(variable.name, variable.model_as, variable.array_size, None, 0, 0, None, [], False)
+            create_variable_template(variable.name, variable.model_as, handle_constant(variable.array_size), None, 0, 0, None, [], False)
             if variable.model_as == 'DEFINE' else
-            create_variable_template(variable.name, variable.model_as, variable.array_size,
+            create_variable_template(variable.name, variable.model_as, handle_constant(variable.array_size),
                                      (None if (variable.domain.min_val is not None or variable.model_as == 'DEFINE') else ('{TRUE, FALSE}' if variable.domain.boolean is not None else ('{' + ', '.join(map(str, map(handle_constant, variable.domain.enums))) + '}'))),
                                      0 if variable.domain.min_val is None else int(handle_constant(variable.domain.min_val)),
                                      1 if variable.domain.min_val is None else int(handle_constant(variable.domain.max_val)),
@@ -642,9 +648,9 @@ def get_variables(model, local_variables, initial_statements, keep_stage_0):
     local_variable_templates = {
         variable.name :
         (
-            create_variable_template(variable.name, variable.model_as, variable.array_size, None, 0, 0, None, [], False)
+            create_variable_template(variable.name, variable.model_as, handle_constant(variable.array_size), None, 0, 0, None, [], False)
             if variable.model_as == 'DEFINE' else
-            create_variable_template(variable.name, variable.model_as, variable.array_size,
+            create_variable_template(variable.name, variable.model_as, handle_constant(variable.array_size),
                                      (None if (variable.domain.min_val is not None or variable.model_as == 'DEFINE') else ('{TRUE, FALSE}' if variable.domain.boolean is not None else ('{' + ', '.join(map(str, map(handle_constant, variable.domain.enums))) + '}'))),
                                      0 if variable.domain.min_val is None else int(handle_constant(variable.domain.min_val)),
                                      1 if variable.domain.min_val is None else int(handle_constant(variable.domain.max_val)),
@@ -880,7 +886,7 @@ CREATE_NODE = {
 
 
 # --------------- Main
-global_vars = {'constants' : {}, 'metamodel' : {}, 'variables' : {}}
+global_vars = {'constants' : {}, 'metamodel' : {}, 'variables' : {}, 'serene_index' : []}
 
 
 def main():
