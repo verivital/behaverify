@@ -14,68 +14,68 @@ class array_test_environment():
 
     def between_tick_environment_update(self):
         __temp_var__ = serene_safe_assignment.test([(0, (
-            random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
-            if (self.test[0] == 10) else
+            random.choice([0, 1, 2, 3, 4, 5, 6, 7])
+            if (self.test[0] == 8) else
             (
             self.test[0]
         ))), (1, (
-            random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
-            if (self.test[1] == 10) else
+            random.choice([0, 1, 2, 3, 4, 5, 6, 7])
+            if (self.test[1] == 8) else
             (
             self.test[1]
         ))), (2, (
-            random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
-            if (self.test[2] == 10) else
+            random.choice([0, 1, 2, 3, 4, 5, 6, 7])
+            if (self.test[2] == 8) else
             (
             self.test[2]
         ))), (3, (
-            random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
-            if (self.test[3] == 10) else
+            random.choice([0, 1, 2, 3, 4, 5, 6, 7])
+            if (self.test[3] == 8) else
             (
             self.test[3]
         ))), (4, (
-            random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
-            if (self.test[4] == 10) else
+            random.choice([0, 1, 2, 3, 4, 5, 6, 7])
+            if (self.test[4] == 8) else
             (
             self.test[4]
         ))), (5, (
-            random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
-            if (self.test[5] == 10) else
+            random.choice([0, 1, 2, 3, 4, 5, 6, 7])
+            if (self.test[5] == 8) else
             (
             self.test[5]
         ))), (6, (
-            random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
-            if (self.test[6] == 10) else
+            random.choice([0, 1, 2, 3, 4, 5, 6, 7])
+            if (self.test[6] == 8) else
             (
             self.test[6]
         ))), (7, (
-            random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
-            if (self.test[7] == 10) else
+            random.choice([0, 1, 2, 3, 4, 5, 6, 7])
+            if (self.test[7] == 8) else
             (
             self.test[7]
         ))), (8, (
-            random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
-            if (self.test[8] == 10) else
+            random.choice([0, 1, 2, 3, 4, 5, 6, 7])
+            if (self.test[8] == 8) else
             (
             self.test[8]
         ))), (9, (
-            random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
-            if (self.test[9] == 10) else
+            random.choice([0, 1, 2, 3, 4, 5, 6, 7])
+            if (self.test[9] == 8) else
             (
             self.test[9]
         )))])
         for (index, val) in __temp_var__:
             self.test[index] = val
         __temp_var__ = serene_safe_assignment.test([(self.test[0], (
-            (self.test[self.test[0]] + 2)
+            min(8, (self.test[self.test[0]] + 2))
             if ((self.test[self.test[0]] % 2) == 0) else
             (
-            (self.test[self.test[0]] + 1)
+            min(8, (self.test[self.test[0]] + 1))
         ))), (self.test[9], (
-            (self.test[self.test[9]] + 2)
+            min(8, (self.test[self.test[9]] + 2))
             if ((self.test[self.test[9]] % 2) == 0) else
             (
-            (self.test[self.test[9]] + 1)
+            min(8, (self.test[self.test[9]] + 1))
         )))])
         for (index, val) in __temp_var__:
             self.test[index] = val

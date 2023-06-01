@@ -119,7 +119,7 @@ FUNCTION_FORMAT = {
     'addition' : ('+', format_function_between),
     'subtraction' : ('-', format_function_between),
     'multiplication' : ('*', format_function_between),
-    'division' : ('/', format_function_between),
+    'division' : ('//', format_function_between),
     'mod' : ('%', format_function_between),
     'count' : ('count', format_function_before),
     'index' : ('index', format_function_index)
@@ -315,7 +315,7 @@ def handle_variable_statement(statement, assign_var, indent_level, init_mode, as
         if statement.array_mode == 'range':
             serene_indices = []
             if init_mode is not None or len(statement.values) == 0:
-                serene_indices = list(range(assign_var.array_size))
+                serene_indices = list(range(handle_constant(assign_var.array_size)))
             else:
                 cond_func = build_range_func(statement.values[2])
                 min_val = handle_constant(statement.values[0])
@@ -382,7 +382,7 @@ def create_variable_macro(assign, range_mode, variable, indent_level, init_mode)
         case_string = ''
         if range_mode:
             global constants
-            for index in range(handle_constant(variable.array_size)):
+            for index in range(handle_constant(handle_constant(variable.array_size))):
                 constants['serene_index'] = index
                 case_string += (
                     indent(indent_level + 1) + ('if' if index == 0 else 'elif') + ' index == ' + str(index) + ':' + os.linesep
