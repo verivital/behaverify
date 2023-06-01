@@ -46,7 +46,7 @@ def create_blackboard(nodes, variables, root_node_name):
                                 + tab_indent(3) + 'esac;' + os.linesep
                             )
             elif variable['mode'] == 'FROZENVAR' or len(variable['next_value']) == 0:
-                frozenvar_string += (tab_indent(2) + stage_name + '0 : array 0..' + str(variable['array_size'])
+                frozenvar_string += (tab_indent(2) + stage_name + '0 : array 0..' + str(variable['array_size']) + ' of '
                                      + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean')))
                                      + ';' + os.linesep)
                 (_, _, _, stage) = variable['initial_value']
@@ -113,14 +113,15 @@ def create_blackboard(nodes, variables, root_node_name):
                                 + tab_indent(3) + 'case' + os.linesep
                                 + tab_indent(4) + 'next(!(' + node_name + '.active)) : LINK_TO_PREVIOUS_FINAL_' + variable_name + '_index_' + str(index) + ';' + os.linesep
                             )
-                            for (index_condition, condition_pairs) in stage:
+                            for (index_expression, condition_pairs) in stage:
                                 next_string += (
-                                    tab_indent(4) + index_condition + ' : case' + os.linesep
-                                    + ''.join([(tab_indent(5) + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in condition_pairs])
-                                    + tab_indent(4) + 'esac;' + os.linesep
+                                    tab_indent(4) + str(index) + ' = ' + index_expression + ' :' + os.linesep
+                                    + tab_indent(5) + 'case' + os.linesep
+                                    + ''.join([(tab_indent(6) + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in condition_pairs])
+                                    + tab_indent(5) + 'esac;' + os.linesep
                                 )
                             next_string += (
-                                + tab_indent(4) + 'TRUE : LINK_TO_PREVIOUS_FINAL_' + variable_name + '_index_' + str(index) + ';' + os.linesep
+                                tab_indent(4) + 'TRUE : LINK_TO_PREVIOUS_FINAL_' + variable_name + '_index_' + str(index) + ';' + os.linesep
                                 + tab_indent(3) + 'esac;' + os.linesep
                             )
 
@@ -142,7 +143,7 @@ def create_blackboard(nodes, variables, root_node_name):
                                     + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean')))
                                     + ';' + os.linesep)
                                 next_string += (
-                                    tab_indent(2) + stage_name + stage_num + '_index_' + str(index) + ' := '
+                                    tab_indent(2) + stage_name + stage_num + '_index_' + str(index) + ' := ' + os.linesep
                                     + tab_indent(3) + 'case' + os.linesep
                                     + tab_indent(4) + '!(' + node_name + '.active) : ' + previous_stage + '_index_' + str(index) + ';' + os.linesep
                                     + ''.join([(tab_indent(4) + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in condition_pairs])
@@ -154,7 +155,7 @@ def create_blackboard(nodes, variables, root_node_name):
                                     + tab_indent(3) + 'case' + os.linesep
                                     + tab_indent(4) + '!(' + node_name + '.active) : ' + previous_stage + '_index_' + str(index) + ';' + os.linesep
                                     + ''.join([(tab_indent(4) + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in condition_pairs])
-                                    + tab_indent(3) + 'esac;'
+                                    + tab_indent(3) + 'esac;' + os.linesep
                                 )
                         for index in indices_to_do:
                             define_string += tab_indent(2) + stage_name + stage_num + '_index_' + str(index) + ' := ' + previous_stage + '_index_' + str(index) + ';' + os.linesep
@@ -166,34 +167,36 @@ def create_blackboard(nodes, variables, root_node_name):
                                     + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean')))
                                     + ';' + os.linesep)
                                 next_string += (
-                                    tab_indent(2) + stage_name + stage_num + '_index_' + str(index) + ' := '
+                                    tab_indent(2) + stage_name + stage_num + '_index_' + str(index) + ' := ' + os.linesep
                                     + tab_indent(3) + 'case' + os.linesep
                                     + tab_indent(4) + '!(' + node_name + '.active) : ' + previous_stage + '_index_' + str(index) + ';' + os.linesep
                                 )
 
-                                for (index_condition, condition_pairs) in stage:
+                                for (index_expression, condition_pairs) in stage:
                                     next_string += (
-                                        tab_indent(4) + index_condition + ' : case' + os.linesep
-                                        + ''.join([(tab_indent(5) + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in condition_pairs])
-                                        + tab_indent(4) + 'esac;' + os.linesep
+                                        tab_indent(4) + str(index) + ' = ' + index_expression + ' :' + os.linesep
+                                        + tab_indent(5) + 'case' + os.linesep
+                                        + ''.join([(tab_indent(6) + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in condition_pairs])
+                                        + tab_indent(5) + 'esac;' + os.linesep
                                     )
                                 next_string += (
-                                    + tab_indent(4) + 'TRUE : ' + previous_stage + '_index_' + str(index) + ';' + os.linesep
+                                    tab_indent(4) + 'TRUE : ' + previous_stage + '_index_' + str(index) + ';' + os.linesep
                                     + tab_indent(3) + 'esac;' + os.linesep
                                 )
                         else:
                             for index in range(variable['array_size']):
                                 define_string += (
-                                    tab_indent(2) + stage_name + stage_num + '_index_' + str(index) + ' := '
+                                    tab_indent(2) + stage_name + stage_num + '_index_' + str(index) + ' := ' + os.linesep
                                     + tab_indent(3) + 'case' + os.linesep
                                     + tab_indent(4) + '!(' + node_name + '.active) : ' + previous_stage + '_index_' + str(index) + ';' + os.linesep
                                 )
 
-                                for (index_condition, condition_pairs) in stage:
+                                for (index_expression, condition_pairs) in stage:
                                     define_string += (
-                                        tab_indent(4) + index_condition + ' : case' + os.linesep
-                                        + ''.join([(tab_indent(5) + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in condition_pairs])
-                                        + tab_indent(4) + 'esac;' + os.linesep
+                                        tab_indent(4) + str(index) + ' = ' + index_expression + ' :' + os.linesep
+                                        + tab_indent(5) + 'case' + os.linesep
+                                        + ''.join([(tab_indent(6) + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in condition_pairs])
+                                        + tab_indent(5) + 'esac;' + os.linesep
                                     )
                                 define_string += (
                                     tab_indent(4) + 'TRUE : ' + previous_stage + '_index_' + str(index) + ';' + os.linesep

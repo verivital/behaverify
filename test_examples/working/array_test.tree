@@ -15,7 +15,7 @@ variables {
 	variable { bl d array 3 DEFINE INT range assign { case { (less_than, 'serene_index', 2) } result { (addition, (index, a, 'serene_index'), (index, b, (addition, 'serene_index', 1)))} result { (addition, (index, a, 'serene_index'), (index, b, 0))} } }
 	variable { bl e array 3 VAR BOOLEAN range assign { result { (greater_than, (index, d, 'serene_index'), 10) } } }
 	variable { local f array 4 VAR {'hi', 'bye', 'die'} range assign { result {'bye'} }}
-	variable { env test array 10 VAR [0, 10] range assign { result { 'serene_index' } } }
+	variable { env test array 10 VAR [0, 9] range assign { result { 'serene_index' } } }
 }
 
 environment_update {
@@ -24,14 +24,14 @@ environment_update {
 		range
 		constant_index
 		index_of { 'serene_index' }
-		assign { case { (equal, (index, test, 'serene_index'), 10) } result{range, 0, 9, True} result { (index, test, 'serene_index') } }
+		assign { case { (equal, (index, test, 'serene_index'), 8) } result{range, 0, 7, True} result { (index, test, 'serene_index') } }
 	}
 	variable_statement {
 		test
 		index_of { (index, test, 0) }
-		assign { case { (equal, (mod, (index, test, (index, test, 0)), 2), 0) } result{(addition, (index, test, (index, test, 0)), 2)} result {(addition, (index, test, (index, test, 0)), 1) }}
+		assign { case { (equal, (mod, (index, test, (index, test, 0)), 2), 0) } result{(min, 8, (addition, (index, test, (index, test, 0)), 2))} result {(min, 8, (addition, (index, test, (index, test, 0)), 1)) }}
 		index_of { (index, test, 9) }
-		assign { case { (equal, (mod, (index, test, (index, test, 9)), 2), 0) } result{(addition, (index, test, (index, test, 9)), 2)} result {(addition, (index, test, (index, test, 9)), 1) }}
+		assign { case { (equal, (mod, (index, test, (index, test, 9)), 2), 0) } result{(min, 8, (addition, (index, test, (index, test, 9)), 2))} result {(min, 8, (addition, (index, test, (index, test, 9)), 1)) }}
 	}
 }
 

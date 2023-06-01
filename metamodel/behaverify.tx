@@ -379,8 +379,8 @@ statement:
 ;
 
 specification:
-    (spec_type = 'LTLSPEC' '{' code_statement = code_statement '}' 'end_LTLSPEC') |
-    (spec_type = 'CTLSPEC' '{' code_statement = code_statement '}' 'end_CTLSPEC') |
-    (spec_type = 'INVARSPEC' '{' code_statement = code_statement '}' 'end_INVARSPEC')
+    (spec_type = 'LTLSPEC' '{' code_statement = code_statement '}' ('end_LTLSPEC')?) |
+    (spec_type = 'CTLSPEC' '{' code_statement = code_statement '}' ('end_CTLSPEC')?) |
+    (spec_type = 'INVARSPEC' '{' code_statement = code_statement '}' ('end_INVARSPEC')?)
 ;
     

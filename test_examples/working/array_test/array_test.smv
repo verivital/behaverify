@@ -8,98 +8,122 @@ MODULE main
 		d_stage_0 := [d_stage_0_index_0, d_stage_0_index_1, d_stage_0_index_2];
 		d_stage_0_index_0 :=
 			case
-				(0 < 2) : (a[0] + b[(0 + 1)]);
-				True : (a[0] + b[0]);
+				(0 < 2) : (a_stage_0[0] + b_stage_0[(0 + 1)]);
+				TRUE : (a_stage_0[0] + b_stage_0[0]);
 			esac;
 		d_stage_0_index_1 :=
 			case
-				(1 < 2) : (a[1] + b[(1 + 1)]);
-				True : (a[1] + b[0]);
+				(1 < 2) : (a_stage_0[1] + b_stage_0[(1 + 1)]);
+				TRUE : (a_stage_0[1] + b_stage_0[0]);
 			esac;
 		d_stage_0_index_2 :=
 			case
-				(2 < 2) : (a[2] + b[(2 + 1)]);
-				True : (a[2] + b[0]);
+				(2 < 2) : (a_stage_0[2] + b_stage_0[(2 + 1)]);
+				TRUE : (a_stage_0[2] + b_stage_0[0]);
 			esac;
 		e_stage_0 := [e_stage_0_index_0, e_stage_0_index_1, e_stage_0_index_2];
 		e_stage_1 := [e_stage_1_index_0, e_stage_1_index_1, e_stage_1_index_2];
-		e_stage_1_index_0 := 			case
+		e_stage_1_index_0 := 
+			case
 				!(my_action_1.active) : e_stage_0_index_0;
-				min(2, max(a[0], b[0])) : case
-					True : TRUE;
-				esac;
-				min(2, max(a[1], b[1])) : case
-					True : TRUE;
-				esac;
-				min(2, max(a[2], b[2])) : case
-					True : TRUE;
-				esac;
+				0 = min(2, max(a_stage_0[0], b_stage_0[0])) :
+					case
+						TRUE : TRUE;
+					esac;
+				0 = min(2, max(a_stage_0[1], b_stage_0[1])) :
+					case
+						TRUE : TRUE;
+					esac;
+				0 = min(2, max(a_stage_0[2], b_stage_0[2])) :
+					case
+						TRUE : TRUE;
+					esac;
 				TRUE : e_stage_0_index_0;
 			esac;
-		e_stage_1_index_1 := 			case
+		e_stage_1_index_1 := 
+			case
 				!(my_action_1.active) : e_stage_0_index_1;
-				min(2, max(a[0], b[0])) : case
-					True : TRUE;
-				esac;
-				min(2, max(a[1], b[1])) : case
-					True : TRUE;
-				esac;
-				min(2, max(a[2], b[2])) : case
-					True : TRUE;
-				esac;
+				1 = min(2, max(a_stage_0[0], b_stage_0[0])) :
+					case
+						TRUE : TRUE;
+					esac;
+				1 = min(2, max(a_stage_0[1], b_stage_0[1])) :
+					case
+						TRUE : TRUE;
+					esac;
+				1 = min(2, max(a_stage_0[2], b_stage_0[2])) :
+					case
+						TRUE : TRUE;
+					esac;
 				TRUE : e_stage_0_index_1;
 			esac;
-		e_stage_1_index_2 := 			case
+		e_stage_1_index_2 := 
+			case
 				!(my_action_1.active) : e_stage_0_index_2;
-				min(2, max(a[0], b[0])) : case
-					True : TRUE;
-				esac;
-				min(2, max(a[1], b[1])) : case
-					True : TRUE;
-				esac;
-				min(2, max(a[2], b[2])) : case
-					True : TRUE;
-				esac;
+				2 = min(2, max(a_stage_0[0], b_stage_0[0])) :
+					case
+						TRUE : TRUE;
+					esac;
+				2 = min(2, max(a_stage_0[1], b_stage_0[1])) :
+					case
+						TRUE : TRUE;
+					esac;
+				2 = min(2, max(a_stage_0[2], b_stage_0[2])) :
+					case
+						TRUE : TRUE;
+					esac;
 				TRUE : e_stage_0_index_2;
 			esac;
 		e_stage_2 := [e_stage_2_index_0, e_stage_2_index_1, e_stage_2_index_2];
-		e_stage_2_index_0 := 			case
+		e_stage_2_index_0 := 
+			case
 				!(my_action_2.active) : e_stage_1_index_0;
-				max(0, min(a[0], b[0])) : case
-					True : FALSE;
-				esac;
-				max(0, min(a[1], b[1])) : case
-					True : FALSE;
-				esac;
-				max(0, min(a[2], b[2])) : case
-					True : FALSE;
-				esac;
+				0 = max(0, min(a_stage_0[0], b_stage_0[0])) :
+					case
+						TRUE : FALSE;
+					esac;
+				0 = max(0, min(a_stage_0[1], b_stage_0[1])) :
+					case
+						TRUE : FALSE;
+					esac;
+				0 = max(0, min(a_stage_0[2], b_stage_0[2])) :
+					case
+						TRUE : FALSE;
+					esac;
 				TRUE : e_stage_1_index_0;
 			esac;
-		e_stage_2_index_1 := 			case
+		e_stage_2_index_1 := 
+			case
 				!(my_action_2.active) : e_stage_1_index_1;
-				max(0, min(a[0], b[0])) : case
-					True : FALSE;
-				esac;
-				max(0, min(a[1], b[1])) : case
-					True : FALSE;
-				esac;
-				max(0, min(a[2], b[2])) : case
-					True : FALSE;
-				esac;
+				1 = max(0, min(a_stage_0[0], b_stage_0[0])) :
+					case
+						TRUE : FALSE;
+					esac;
+				1 = max(0, min(a_stage_0[1], b_stage_0[1])) :
+					case
+						TRUE : FALSE;
+					esac;
+				1 = max(0, min(a_stage_0[2], b_stage_0[2])) :
+					case
+						TRUE : FALSE;
+					esac;
 				TRUE : e_stage_1_index_1;
 			esac;
-		e_stage_2_index_2 := 			case
+		e_stage_2_index_2 := 
+			case
 				!(my_action_2.active) : e_stage_1_index_2;
-				max(0, min(a[0], b[0])) : case
-					True : FALSE;
-				esac;
-				max(0, min(a[1], b[1])) : case
-					True : FALSE;
-				esac;
-				max(0, min(a[2], b[2])) : case
-					True : FALSE;
-				esac;
+				2 = max(0, min(a_stage_0[0], b_stage_0[0])) :
+					case
+						TRUE : FALSE;
+					esac;
+				2 = max(0, min(a_stage_0[1], b_stage_0[1])) :
+					case
+						TRUE : FALSE;
+					esac;
+				2 = max(0, min(a_stage_0[2], b_stage_0[2])) :
+					case
+						TRUE : FALSE;
+					esac;
 				TRUE : e_stage_1_index_2;
 			esac;
 		test_stage_0 := [test_stage_0_index_0, test_stage_0_index_1, test_stage_0_index_2, test_stage_0_index_3, test_stage_0_index_4, test_stage_0_index_5, test_stage_0_index_6, test_stage_0_index_7, test_stage_0_index_8, test_stage_0_index_9];
@@ -107,8 +131,9 @@ MODULE main
 		test_stage_1_index_1 := 
 			case
 				!(my_action_1.active) : test_stage_0_index_1;
-				True : abs(test[0]);
-			esac;		test_stage_1_index_0 := test_stage_0_index_0;
+				TRUE : abs(test_stage_0[0]);
+			esac;
+		test_stage_1_index_0 := test_stage_0_index_0;
 		test_stage_1_index_2 := test_stage_0_index_2;
 		test_stage_1_index_3 := test_stage_0_index_3;
 		test_stage_1_index_4 := test_stage_0_index_4;
@@ -121,8 +146,9 @@ MODULE main
 		test_stage_2_index_1 := 
 			case
 				!(my_action_2.active) : test_stage_1_index_1;
-				True : abs(test_stage_1[0]);
-			esac;		test_stage_2_index_0 := test_stage_1_index_0;
+				TRUE : abs(test_stage_1[0]);
+			esac;
+		test_stage_2_index_0 := test_stage_1_index_0;
 		test_stage_2_index_2 := test_stage_1_index_2;
 		test_stage_2_index_3 := test_stage_1_index_3;
 		test_stage_2_index_4 := test_stage_1_index_4;
@@ -133,138 +159,168 @@ MODULE main
 		test_stage_2_index_9 := test_stage_1_index_9;
 		test_stage_3 := [test_stage_3_index_0, test_stage_3_index_1, test_stage_3_index_2, test_stage_3_index_3, test_stage_3_index_4, test_stage_3_index_5, test_stage_3_index_6, test_stage_3_index_7, test_stage_3_index_8, test_stage_3_index_9];
 		test_stage_4 := [test_stage_4_index_0, test_stage_4_index_1, test_stage_4_index_2, test_stage_4_index_3, test_stage_4_index_4, test_stage_4_index_5, test_stage_4_index_6, test_stage_4_index_7, test_stage_4_index_8, test_stage_4_index_9];
-		test_stage_4_index_0 := 			case
+		test_stage_4_index_0 := 
+			case
 				!(idk.active) : test_stage_3_index_0;
-				test_stage_3[0] : case
-					((test_stage_3[test_stage_3[0]] mod 2) = 0) : (test_stage_3[test_stage_3[0]] + 2);
-					True : (test_stage_3[test_stage_3[0]] + 1);
-				esac;
-				test_stage_3[9] : case
-					((test_stage_3[test_stage_3[9]] mod 2) = 0) : (test_stage_3[test_stage_3[9]] + 2);
-					True : (test_stage_3[test_stage_3[9]] + 1);
-				esac;
+				0 = test_stage_3[0] :
+					case
+						((test_stage_3[test_stage_3[0]] mod 2) = 0) : min(8, (test_stage_3[test_stage_3[0]] + 2));
+						TRUE : min(8, (test_stage_3[test_stage_3[0]] + 1));
+					esac;
+				0 = test_stage_3[9] :
+					case
+						((test_stage_3[test_stage_3[9]] mod 2) = 0) : min(8, (test_stage_3[test_stage_3[9]] + 2));
+						TRUE : min(8, (test_stage_3[test_stage_3[9]] + 1));
+					esac;
 				TRUE : test_stage_3_index_0;
 			esac;
-		test_stage_4_index_1 := 			case
+		test_stage_4_index_1 := 
+			case
 				!(idk.active) : test_stage_3_index_1;
-				test_stage_3[0] : case
-					((test_stage_3[test_stage_3[0]] mod 2) = 0) : (test_stage_3[test_stage_3[0]] + 2);
-					True : (test_stage_3[test_stage_3[0]] + 1);
-				esac;
-				test_stage_3[9] : case
-					((test_stage_3[test_stage_3[9]] mod 2) = 0) : (test_stage_3[test_stage_3[9]] + 2);
-					True : (test_stage_3[test_stage_3[9]] + 1);
-				esac;
+				1 = test_stage_3[0] :
+					case
+						((test_stage_3[test_stage_3[0]] mod 2) = 0) : min(8, (test_stage_3[test_stage_3[0]] + 2));
+						TRUE : min(8, (test_stage_3[test_stage_3[0]] + 1));
+					esac;
+				1 = test_stage_3[9] :
+					case
+						((test_stage_3[test_stage_3[9]] mod 2) = 0) : min(8, (test_stage_3[test_stage_3[9]] + 2));
+						TRUE : min(8, (test_stage_3[test_stage_3[9]] + 1));
+					esac;
 				TRUE : test_stage_3_index_1;
 			esac;
-		test_stage_4_index_2 := 			case
+		test_stage_4_index_2 := 
+			case
 				!(idk.active) : test_stage_3_index_2;
-				test_stage_3[0] : case
-					((test_stage_3[test_stage_3[0]] mod 2) = 0) : (test_stage_3[test_stage_3[0]] + 2);
-					True : (test_stage_3[test_stage_3[0]] + 1);
-				esac;
-				test_stage_3[9] : case
-					((test_stage_3[test_stage_3[9]] mod 2) = 0) : (test_stage_3[test_stage_3[9]] + 2);
-					True : (test_stage_3[test_stage_3[9]] + 1);
-				esac;
+				2 = test_stage_3[0] :
+					case
+						((test_stage_3[test_stage_3[0]] mod 2) = 0) : min(8, (test_stage_3[test_stage_3[0]] + 2));
+						TRUE : min(8, (test_stage_3[test_stage_3[0]] + 1));
+					esac;
+				2 = test_stage_3[9] :
+					case
+						((test_stage_3[test_stage_3[9]] mod 2) = 0) : min(8, (test_stage_3[test_stage_3[9]] + 2));
+						TRUE : min(8, (test_stage_3[test_stage_3[9]] + 1));
+					esac;
 				TRUE : test_stage_3_index_2;
 			esac;
-		test_stage_4_index_3 := 			case
+		test_stage_4_index_3 := 
+			case
 				!(idk.active) : test_stage_3_index_3;
-				test_stage_3[0] : case
-					((test_stage_3[test_stage_3[0]] mod 2) = 0) : (test_stage_3[test_stage_3[0]] + 2);
-					True : (test_stage_3[test_stage_3[0]] + 1);
-				esac;
-				test_stage_3[9] : case
-					((test_stage_3[test_stage_3[9]] mod 2) = 0) : (test_stage_3[test_stage_3[9]] + 2);
-					True : (test_stage_3[test_stage_3[9]] + 1);
-				esac;
+				3 = test_stage_3[0] :
+					case
+						((test_stage_3[test_stage_3[0]] mod 2) = 0) : min(8, (test_stage_3[test_stage_3[0]] + 2));
+						TRUE : min(8, (test_stage_3[test_stage_3[0]] + 1));
+					esac;
+				3 = test_stage_3[9] :
+					case
+						((test_stage_3[test_stage_3[9]] mod 2) = 0) : min(8, (test_stage_3[test_stage_3[9]] + 2));
+						TRUE : min(8, (test_stage_3[test_stage_3[9]] + 1));
+					esac;
 				TRUE : test_stage_3_index_3;
 			esac;
-		test_stage_4_index_4 := 			case
+		test_stage_4_index_4 := 
+			case
 				!(idk.active) : test_stage_3_index_4;
-				test_stage_3[0] : case
-					((test_stage_3[test_stage_3[0]] mod 2) = 0) : (test_stage_3[test_stage_3[0]] + 2);
-					True : (test_stage_3[test_stage_3[0]] + 1);
-				esac;
-				test_stage_3[9] : case
-					((test_stage_3[test_stage_3[9]] mod 2) = 0) : (test_stage_3[test_stage_3[9]] + 2);
-					True : (test_stage_3[test_stage_3[9]] + 1);
-				esac;
+				4 = test_stage_3[0] :
+					case
+						((test_stage_3[test_stage_3[0]] mod 2) = 0) : min(8, (test_stage_3[test_stage_3[0]] + 2));
+						TRUE : min(8, (test_stage_3[test_stage_3[0]] + 1));
+					esac;
+				4 = test_stage_3[9] :
+					case
+						((test_stage_3[test_stage_3[9]] mod 2) = 0) : min(8, (test_stage_3[test_stage_3[9]] + 2));
+						TRUE : min(8, (test_stage_3[test_stage_3[9]] + 1));
+					esac;
 				TRUE : test_stage_3_index_4;
 			esac;
-		test_stage_4_index_5 := 			case
+		test_stage_4_index_5 := 
+			case
 				!(idk.active) : test_stage_3_index_5;
-				test_stage_3[0] : case
-					((test_stage_3[test_stage_3[0]] mod 2) = 0) : (test_stage_3[test_stage_3[0]] + 2);
-					True : (test_stage_3[test_stage_3[0]] + 1);
-				esac;
-				test_stage_3[9] : case
-					((test_stage_3[test_stage_3[9]] mod 2) = 0) : (test_stage_3[test_stage_3[9]] + 2);
-					True : (test_stage_3[test_stage_3[9]] + 1);
-				esac;
+				5 = test_stage_3[0] :
+					case
+						((test_stage_3[test_stage_3[0]] mod 2) = 0) : min(8, (test_stage_3[test_stage_3[0]] + 2));
+						TRUE : min(8, (test_stage_3[test_stage_3[0]] + 1));
+					esac;
+				5 = test_stage_3[9] :
+					case
+						((test_stage_3[test_stage_3[9]] mod 2) = 0) : min(8, (test_stage_3[test_stage_3[9]] + 2));
+						TRUE : min(8, (test_stage_3[test_stage_3[9]] + 1));
+					esac;
 				TRUE : test_stage_3_index_5;
 			esac;
-		test_stage_4_index_6 := 			case
+		test_stage_4_index_6 := 
+			case
 				!(idk.active) : test_stage_3_index_6;
-				test_stage_3[0] : case
-					((test_stage_3[test_stage_3[0]] mod 2) = 0) : (test_stage_3[test_stage_3[0]] + 2);
-					True : (test_stage_3[test_stage_3[0]] + 1);
-				esac;
-				test_stage_3[9] : case
-					((test_stage_3[test_stage_3[9]] mod 2) = 0) : (test_stage_3[test_stage_3[9]] + 2);
-					True : (test_stage_3[test_stage_3[9]] + 1);
-				esac;
+				6 = test_stage_3[0] :
+					case
+						((test_stage_3[test_stage_3[0]] mod 2) = 0) : min(8, (test_stage_3[test_stage_3[0]] + 2));
+						TRUE : min(8, (test_stage_3[test_stage_3[0]] + 1));
+					esac;
+				6 = test_stage_3[9] :
+					case
+						((test_stage_3[test_stage_3[9]] mod 2) = 0) : min(8, (test_stage_3[test_stage_3[9]] + 2));
+						TRUE : min(8, (test_stage_3[test_stage_3[9]] + 1));
+					esac;
 				TRUE : test_stage_3_index_6;
 			esac;
-		test_stage_4_index_7 := 			case
+		test_stage_4_index_7 := 
+			case
 				!(idk.active) : test_stage_3_index_7;
-				test_stage_3[0] : case
-					((test_stage_3[test_stage_3[0]] mod 2) = 0) : (test_stage_3[test_stage_3[0]] + 2);
-					True : (test_stage_3[test_stage_3[0]] + 1);
-				esac;
-				test_stage_3[9] : case
-					((test_stage_3[test_stage_3[9]] mod 2) = 0) : (test_stage_3[test_stage_3[9]] + 2);
-					True : (test_stage_3[test_stage_3[9]] + 1);
-				esac;
+				7 = test_stage_3[0] :
+					case
+						((test_stage_3[test_stage_3[0]] mod 2) = 0) : min(8, (test_stage_3[test_stage_3[0]] + 2));
+						TRUE : min(8, (test_stage_3[test_stage_3[0]] + 1));
+					esac;
+				7 = test_stage_3[9] :
+					case
+						((test_stage_3[test_stage_3[9]] mod 2) = 0) : min(8, (test_stage_3[test_stage_3[9]] + 2));
+						TRUE : min(8, (test_stage_3[test_stage_3[9]] + 1));
+					esac;
 				TRUE : test_stage_3_index_7;
 			esac;
-		test_stage_4_index_8 := 			case
+		test_stage_4_index_8 := 
+			case
 				!(idk.active) : test_stage_3_index_8;
-				test_stage_3[0] : case
-					((test_stage_3[test_stage_3[0]] mod 2) = 0) : (test_stage_3[test_stage_3[0]] + 2);
-					True : (test_stage_3[test_stage_3[0]] + 1);
-				esac;
-				test_stage_3[9] : case
-					((test_stage_3[test_stage_3[9]] mod 2) = 0) : (test_stage_3[test_stage_3[9]] + 2);
-					True : (test_stage_3[test_stage_3[9]] + 1);
-				esac;
+				8 = test_stage_3[0] :
+					case
+						((test_stage_3[test_stage_3[0]] mod 2) = 0) : min(8, (test_stage_3[test_stage_3[0]] + 2));
+						TRUE : min(8, (test_stage_3[test_stage_3[0]] + 1));
+					esac;
+				8 = test_stage_3[9] :
+					case
+						((test_stage_3[test_stage_3[9]] mod 2) = 0) : min(8, (test_stage_3[test_stage_3[9]] + 2));
+						TRUE : min(8, (test_stage_3[test_stage_3[9]] + 1));
+					esac;
 				TRUE : test_stage_3_index_8;
 			esac;
-		test_stage_4_index_9 := 			case
+		test_stage_4_index_9 := 
+			case
 				!(idk.active) : test_stage_3_index_9;
-				test_stage_3[0] : case
-					((test_stage_3[test_stage_3[0]] mod 2) = 0) : (test_stage_3[test_stage_3[0]] + 2);
-					True : (test_stage_3[test_stage_3[0]] + 1);
-				esac;
-				test_stage_3[9] : case
-					((test_stage_3[test_stage_3[9]] mod 2) = 0) : (test_stage_3[test_stage_3[9]] + 2);
-					True : (test_stage_3[test_stage_3[9]] + 1);
-				esac;
+				9 = test_stage_3[0] :
+					case
+						((test_stage_3[test_stage_3[0]] mod 2) = 0) : min(8, (test_stage_3[test_stage_3[0]] + 2));
+						TRUE : min(8, (test_stage_3[test_stage_3[0]] + 1));
+					esac;
+				9 = test_stage_3[9] :
+					case
+						((test_stage_3[test_stage_3[9]] mod 2) = 0) : min(8, (test_stage_3[test_stage_3[9]] + 2));
+						TRUE : min(8, (test_stage_3[test_stage_3[9]] + 1));
+					esac;
 				TRUE : test_stage_3_index_9;
 			esac;
 		--END OF BLACKBOARD DEFINITIONS
 	FROZENVAR
 		--START OF BLACKBOARD FROZENVAR
-		a_stage_0 : array 0..30..10;
-		b_stage_0 : array 0..30..10;
-		c_stage_0 : array 0..30..10;
-		my_action_1_DOT_f_stage_0 : array 0..4{hi, bye, die};
-		my_action_2_DOT_f_stage_0 : array 0..4{hi, bye, die};
+		a_stage_0 : array 0..3 of 0..10;
+		b_stage_0 : array 0..3 of 0..10;
+		c_stage_0 : array 0..3 of 0..10;
+		my_action_1_DOT_f_stage_0 : array 0..4 of {hi, bye, die};
+		my_action_2_DOT_f_stage_0 : array 0..4 of {hi, bye, die};
 		--END OF BLACKBOARD FROZENVAR
 	VAR
 		node_names : define_nodes;
-		my_check : my_check_module(a, b);
+		my_check : my_check_module(a_stage_0, b_stage_0);
 		my_action_1 : success_DEFAULT_module();
 		idk2 : composite_sequence_without_memory_2(my_check, my_action_1);
 		my_action_2 : success_DEFAULT_module();
@@ -273,148 +329,148 @@ MODULE main
 		e_stage_0_index_0 : boolean;
 		e_stage_0_index_1 : boolean;
 		e_stage_0_index_2 : boolean;
-		test_stage_0_index_0 : 0..10;
-		test_stage_0_index_1 : 0..10;
-		test_stage_0_index_2 : 0..10;
-		test_stage_0_index_3 : 0..10;
-		test_stage_0_index_4 : 0..10;
-		test_stage_0_index_5 : 0..10;
-		test_stage_0_index_6 : 0..10;
-		test_stage_0_index_7 : 0..10;
-		test_stage_0_index_8 : 0..10;
-		test_stage_0_index_9 : 0..10;
-		test_stage_3_index_0 : 0..10;
-		test_stage_3_index_1 : 0..10;
-		test_stage_3_index_2 : 0..10;
-		test_stage_3_index_3 : 0..10;
-		test_stage_3_index_4 : 0..10;
-		test_stage_3_index_5 : 0..10;
-		test_stage_3_index_6 : 0..10;
-		test_stage_3_index_7 : 0..10;
-		test_stage_3_index_8 : 0..10;
-		test_stage_3_index_9 : 0..10;
+		test_stage_0_index_0 : 0..9;
+		test_stage_0_index_1 : 0..9;
+		test_stage_0_index_2 : 0..9;
+		test_stage_0_index_3 : 0..9;
+		test_stage_0_index_4 : 0..9;
+		test_stage_0_index_5 : 0..9;
+		test_stage_0_index_6 : 0..9;
+		test_stage_0_index_7 : 0..9;
+		test_stage_0_index_8 : 0..9;
+		test_stage_0_index_9 : 0..9;
+		test_stage_3_index_0 : 0..9;
+		test_stage_3_index_1 : 0..9;
+		test_stage_3_index_2 : 0..9;
+		test_stage_3_index_3 : 0..9;
+		test_stage_3_index_4 : 0..9;
+		test_stage_3_index_5 : 0..9;
+		test_stage_3_index_6 : 0..9;
+		test_stage_3_index_7 : 0..9;
+		test_stage_3_index_8 : 0..9;
+		test_stage_3_index_9 : 0..9;
 		--END OF BLACKBOARD VARIABLES DECLARATION
 	ASSIGN
 		--START OF BLACKBOARD VARIABLES INITIALIZATION
 		init(a_stage_0[0]) := 
 			case
-				True : (0 * 2);
+				TRUE : (0 * 2);
 			esac;
 		init(a_stage_0[1]) := 
 			case
-				True : (1 * 2);
+				TRUE : (1 * 2);
 			esac;
 		init(a_stage_0[2]) := 
 			case
-				True : (2 * 2);
+				TRUE : (2 * 2);
 			esac;
 		init(b_stage_0[0]) := 
 			case
-				True : 0;
+				TRUE : 0;
 			esac;
 		init(b_stage_0[1]) := 
 			case
-				True : 4;
+				TRUE : 4;
 			esac;
 		init(b_stage_0[2]) := 
 			case
-				True : a[2];
+				TRUE : a_stage_0[2];
 			esac;
 		init(c_stage_0[0]) := 
 			case
-				True : 0;
+				TRUE : 0;
 			esac;
 		init(c_stage_0[1]) := 
 			case
-				True : 4;
+				TRUE : 4;
 			esac;
 		init(c_stage_0[2]) := 
 			case
-				True : a[2];
+				TRUE : a_stage_0[2];
 			esac;
 		init(e_stage_0_index_0) := 
 			case
-				True : (d_stage_0[serene_index] > 10);
+				TRUE : (d_stage_0[0] > 10);
 			esac;
 		init(e_stage_0_index_1) := 
 			case
-				True : (d_stage_0[1] > 10);
+				TRUE : (d_stage_0[1] > 10);
 			esac;
 		init(e_stage_0_index_2) := 
 			case
-				True : (d_stage_0[2] > 10);
+				TRUE : (d_stage_0[2] > 10);
 			esac;
 		init(test_stage_0_index_0) := 
 			case
-				True : 0;
+				TRUE : 0;
 			esac;
 		init(test_stage_0_index_1) := 
 			case
-				True : 1;
+				TRUE : 1;
 			esac;
 		init(test_stage_0_index_2) := 
 			case
-				True : 2;
+				TRUE : 2;
 			esac;
 		init(test_stage_0_index_3) := 
 			case
-				True : 3;
+				TRUE : 3;
 			esac;
 		init(test_stage_0_index_4) := 
 			case
-				True : 4;
+				TRUE : 4;
 			esac;
 		init(test_stage_0_index_5) := 
 			case
-				True : 5;
+				TRUE : 5;
 			esac;
 		init(test_stage_0_index_6) := 
 			case
-				True : 6;
+				TRUE : 6;
 			esac;
 		init(test_stage_0_index_7) := 
 			case
-				True : 7;
+				TRUE : 7;
 			esac;
 		init(test_stage_0_index_8) := 
 			case
-				True : 8;
+				TRUE : 8;
 			esac;
 		init(test_stage_0_index_9) := 
 			case
-				True : 9;
+				TRUE : 9;
 			esac;
 		init(my_action_1_DOT_f_stage_0[0]) := 
 			case
-				True : hi;
+				TRUE : hi;
 			esac;
 		init(my_action_1_DOT_f_stage_0[1]) := 
 			case
-				True : hi;
+				TRUE : hi;
 			esac;
 		init(my_action_1_DOT_f_stage_0[2]) := 
 			case
-				True : hi;
+				TRUE : hi;
 			esac;
 		init(my_action_1_DOT_f_stage_0[3]) := 
 			case
-				True : hi;
+				TRUE : hi;
 			esac;
 		init(my_action_2_DOT_f_stage_0[0]) := 
 			case
-				True : hi;
+				TRUE : hi;
 			esac;
 		init(my_action_2_DOT_f_stage_0[1]) := 
 			case
-				True : hi;
+				TRUE : hi;
 			esac;
 		init(my_action_2_DOT_f_stage_0[2]) := 
 			case
-				True : hi;
+				TRUE : hi;
 			esac;
 		init(my_action_2_DOT_f_stage_0[3]) := 
 			case
-				True : hi;
+				TRUE : hi;
 			esac;
 		--END OF BLACKBOARD VARIABLES INITIALIZATION
 		--START OF BLACKBOARD VARIABLES TRANSITION
@@ -431,55 +487,65 @@ MODULE main
 		next(test_stage_0_index_7) := test_stage_4_index_7;
 		next(test_stage_0_index_8) := test_stage_4_index_8;
 		next(test_stage_0_index_9) := test_stage_4_index_9;
-		test_stage_3_index_0 := 			case
+		test_stage_3_index_0 := 
+			case
 				!(idk.active) : test_stage_2_index_0;
-				(test_stage_2[0] = 10) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-				True : test_stage_2[0];
+				(test_stage_2[0] = 8) : {0, 1, 2, 3, 4, 5, 6, 7};
+				TRUE : test_stage_2[0];
 			esac;
-		test_stage_3_index_1 := 			case
+		test_stage_3_index_1 := 
+			case
 				!(idk.active) : test_stage_2_index_1;
-				(test_stage_2[1] = 10) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-				True : test_stage_2[1];
+				(test_stage_2[1] = 8) : {0, 1, 2, 3, 4, 5, 6, 7};
+				TRUE : test_stage_2[1];
 			esac;
-		test_stage_3_index_2 := 			case
+		test_stage_3_index_2 := 
+			case
 				!(idk.active) : test_stage_2_index_2;
-				(test_stage_2[2] = 10) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-				True : test_stage_2[2];
+				(test_stage_2[2] = 8) : {0, 1, 2, 3, 4, 5, 6, 7};
+				TRUE : test_stage_2[2];
 			esac;
-		test_stage_3_index_3 := 			case
+		test_stage_3_index_3 := 
+			case
 				!(idk.active) : test_stage_2_index_3;
-				(test_stage_2[3] = 10) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-				True : test_stage_2[3];
+				(test_stage_2[3] = 8) : {0, 1, 2, 3, 4, 5, 6, 7};
+				TRUE : test_stage_2[3];
 			esac;
-		test_stage_3_index_4 := 			case
+		test_stage_3_index_4 := 
+			case
 				!(idk.active) : test_stage_2_index_4;
-				(test_stage_2[4] = 10) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-				True : test_stage_2[4];
+				(test_stage_2[4] = 8) : {0, 1, 2, 3, 4, 5, 6, 7};
+				TRUE : test_stage_2[4];
 			esac;
-		test_stage_3_index_5 := 			case
+		test_stage_3_index_5 := 
+			case
 				!(idk.active) : test_stage_2_index_5;
-				(test_stage_2[5] = 10) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-				True : test_stage_2[5];
+				(test_stage_2[5] = 8) : {0, 1, 2, 3, 4, 5, 6, 7};
+				TRUE : test_stage_2[5];
 			esac;
-		test_stage_3_index_6 := 			case
+		test_stage_3_index_6 := 
+			case
 				!(idk.active) : test_stage_2_index_6;
-				(test_stage_2[6] = 10) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-				True : test_stage_2[6];
+				(test_stage_2[6] = 8) : {0, 1, 2, 3, 4, 5, 6, 7};
+				TRUE : test_stage_2[6];
 			esac;
-		test_stage_3_index_7 := 			case
+		test_stage_3_index_7 := 
+			case
 				!(idk.active) : test_stage_2_index_7;
-				(test_stage_2[7] = 10) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-				True : test_stage_2[7];
+				(test_stage_2[7] = 8) : {0, 1, 2, 3, 4, 5, 6, 7};
+				TRUE : test_stage_2[7];
 			esac;
-		test_stage_3_index_8 := 			case
+		test_stage_3_index_8 := 
+			case
 				!(idk.active) : test_stage_2_index_8;
-				(test_stage_2[8] = 10) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-				True : test_stage_2[8];
+				(test_stage_2[8] = 8) : {0, 1, 2, 3, 4, 5, 6, 7};
+				TRUE : test_stage_2[8];
 			esac;
-		test_stage_3_index_9 := 			case
+		test_stage_3_index_9 := 
+			case
 				!(idk.active) : test_stage_2_index_9;
-				(test_stage_2[9] = 10) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-				True : test_stage_2[9];
+				(test_stage_2[9] = 8) : {0, 1, 2, 3, 4, 5, 6, 7};
+				TRUE : test_stage_2[9];
 			esac;
 		--END OF BLACKBOARD VARIABLES TRANSITION
 
@@ -517,12 +583,12 @@ MODULE composite_sequence_without_memory_2(child_0, child_1)
 			esac;
 		child_0.active := active;
 		child_1.active := child_0.status = success;
-MODULE my_check_module(a, b)
+MODULE my_check_module(a_stage_0, b_stage_0)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
-		internal_status := ((a[min(2, b[0])] = b[min(2, a[0])])) ? success : failure;
+		internal_status := ((a_stage_0[min(2, b_stage_0[0])] = b_stage_0[min(2, a_stage_0[0])])) ? success : failure;
 MODULE success_DEFAULT_module
 	CONSTANTS
 		success, failure, running, invalid;

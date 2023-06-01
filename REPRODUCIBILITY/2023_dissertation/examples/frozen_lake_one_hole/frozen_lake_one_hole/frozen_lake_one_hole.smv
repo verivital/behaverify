@@ -1,0 +1,1138 @@
+MODULE main
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		resume_from_here_in_subtree__execution_sequence := -3;
+		execution_sequence.active := TRUE;
+		--START OF BLACKBOARD DEFINITIONS
+		tiles_stage_0 := [tiles_stage_0_index_0, tiles_stage_0_index_1, tiles_stage_0_index_2, tiles_stage_0_index_3, tiles_stage_0_index_4, tiles_stage_0_index_5, tiles_stage_0_index_6, tiles_stage_0_index_7, tiles_stage_0_index_8, tiles_stage_0_index_9, tiles_stage_0_index_10, tiles_stage_0_index_11, tiles_stage_0_index_12, tiles_stage_0_index_13, tiles_stage_0_index_14, tiles_stage_0_index_15];
+		tiles_stage_1 := [tiles_stage_1_index_0, tiles_stage_1_index_1, tiles_stage_1_index_2, tiles_stage_1_index_3, tiles_stage_1_index_4, tiles_stage_1_index_5, tiles_stage_1_index_6, tiles_stage_1_index_7, tiles_stage_1_index_8, tiles_stage_1_index_9, tiles_stage_1_index_10, tiles_stage_1_index_11, tiles_stage_1_index_12, tiles_stage_1_index_13, tiles_stage_1_index_14, tiles_stage_1_index_15];
+		tiles_stage_1_index_0 := 
+			case
+				!(get_info.active) : tiles_stage_0_index_0;
+				0 = loc_stage_0 :
+					case
+						!(TRUE) : tiles_stage_0[loc_stage_0];
+						(loc_stage_0 = goal_loc_stage_0) : goal;
+						(loc_stage_0 = hole_loc_stage_0) : hole;
+						TRUE : safe;
+					esac;
+				TRUE : tiles_stage_0_index_0;
+			esac;
+		tiles_stage_1_index_1 := 
+			case
+				!(get_info.active) : tiles_stage_0_index_1;
+				1 = loc_stage_0 :
+					case
+						!(TRUE) : tiles_stage_0[loc_stage_0];
+						(loc_stage_0 = goal_loc_stage_0) : goal;
+						(loc_stage_0 = hole_loc_stage_0) : hole;
+						TRUE : safe;
+					esac;
+				TRUE : tiles_stage_0_index_1;
+			esac;
+		tiles_stage_1_index_2 := 
+			case
+				!(get_info.active) : tiles_stage_0_index_2;
+				2 = loc_stage_0 :
+					case
+						!(TRUE) : tiles_stage_0[loc_stage_0];
+						(loc_stage_0 = goal_loc_stage_0) : goal;
+						(loc_stage_0 = hole_loc_stage_0) : hole;
+						TRUE : safe;
+					esac;
+				TRUE : tiles_stage_0_index_2;
+			esac;
+		tiles_stage_1_index_3 := 
+			case
+				!(get_info.active) : tiles_stage_0_index_3;
+				3 = loc_stage_0 :
+					case
+						!(TRUE) : tiles_stage_0[loc_stage_0];
+						(loc_stage_0 = goal_loc_stage_0) : goal;
+						(loc_stage_0 = hole_loc_stage_0) : hole;
+						TRUE : safe;
+					esac;
+				TRUE : tiles_stage_0_index_3;
+			esac;
+		tiles_stage_1_index_4 := 
+			case
+				!(get_info.active) : tiles_stage_0_index_4;
+				4 = loc_stage_0 :
+					case
+						!(TRUE) : tiles_stage_0[loc_stage_0];
+						(loc_stage_0 = goal_loc_stage_0) : goal;
+						(loc_stage_0 = hole_loc_stage_0) : hole;
+						TRUE : safe;
+					esac;
+				TRUE : tiles_stage_0_index_4;
+			esac;
+		tiles_stage_1_index_5 := 
+			case
+				!(get_info.active) : tiles_stage_0_index_5;
+				5 = loc_stage_0 :
+					case
+						!(TRUE) : tiles_stage_0[loc_stage_0];
+						(loc_stage_0 = goal_loc_stage_0) : goal;
+						(loc_stage_0 = hole_loc_stage_0) : hole;
+						TRUE : safe;
+					esac;
+				TRUE : tiles_stage_0_index_5;
+			esac;
+		tiles_stage_1_index_6 := 
+			case
+				!(get_info.active) : tiles_stage_0_index_6;
+				6 = loc_stage_0 :
+					case
+						!(TRUE) : tiles_stage_0[loc_stage_0];
+						(loc_stage_0 = goal_loc_stage_0) : goal;
+						(loc_stage_0 = hole_loc_stage_0) : hole;
+						TRUE : safe;
+					esac;
+				TRUE : tiles_stage_0_index_6;
+			esac;
+		tiles_stage_1_index_7 := 
+			case
+				!(get_info.active) : tiles_stage_0_index_7;
+				7 = loc_stage_0 :
+					case
+						!(TRUE) : tiles_stage_0[loc_stage_0];
+						(loc_stage_0 = goal_loc_stage_0) : goal;
+						(loc_stage_0 = hole_loc_stage_0) : hole;
+						TRUE : safe;
+					esac;
+				TRUE : tiles_stage_0_index_7;
+			esac;
+		tiles_stage_1_index_8 := 
+			case
+				!(get_info.active) : tiles_stage_0_index_8;
+				8 = loc_stage_0 :
+					case
+						!(TRUE) : tiles_stage_0[loc_stage_0];
+						(loc_stage_0 = goal_loc_stage_0) : goal;
+						(loc_stage_0 = hole_loc_stage_0) : hole;
+						TRUE : safe;
+					esac;
+				TRUE : tiles_stage_0_index_8;
+			esac;
+		tiles_stage_1_index_9 := 
+			case
+				!(get_info.active) : tiles_stage_0_index_9;
+				9 = loc_stage_0 :
+					case
+						!(TRUE) : tiles_stage_0[loc_stage_0];
+						(loc_stage_0 = goal_loc_stage_0) : goal;
+						(loc_stage_0 = hole_loc_stage_0) : hole;
+						TRUE : safe;
+					esac;
+				TRUE : tiles_stage_0_index_9;
+			esac;
+		tiles_stage_1_index_10 := 
+			case
+				!(get_info.active) : tiles_stage_0_index_10;
+				10 = loc_stage_0 :
+					case
+						!(TRUE) : tiles_stage_0[loc_stage_0];
+						(loc_stage_0 = goal_loc_stage_0) : goal;
+						(loc_stage_0 = hole_loc_stage_0) : hole;
+						TRUE : safe;
+					esac;
+				TRUE : tiles_stage_0_index_10;
+			esac;
+		tiles_stage_1_index_11 := 
+			case
+				!(get_info.active) : tiles_stage_0_index_11;
+				11 = loc_stage_0 :
+					case
+						!(TRUE) : tiles_stage_0[loc_stage_0];
+						(loc_stage_0 = goal_loc_stage_0) : goal;
+						(loc_stage_0 = hole_loc_stage_0) : hole;
+						TRUE : safe;
+					esac;
+				TRUE : tiles_stage_0_index_11;
+			esac;
+		tiles_stage_1_index_12 := 
+			case
+				!(get_info.active) : tiles_stage_0_index_12;
+				12 = loc_stage_0 :
+					case
+						!(TRUE) : tiles_stage_0[loc_stage_0];
+						(loc_stage_0 = goal_loc_stage_0) : goal;
+						(loc_stage_0 = hole_loc_stage_0) : hole;
+						TRUE : safe;
+					esac;
+				TRUE : tiles_stage_0_index_12;
+			esac;
+		tiles_stage_1_index_13 := 
+			case
+				!(get_info.active) : tiles_stage_0_index_13;
+				13 = loc_stage_0 :
+					case
+						!(TRUE) : tiles_stage_0[loc_stage_0];
+						(loc_stage_0 = goal_loc_stage_0) : goal;
+						(loc_stage_0 = hole_loc_stage_0) : hole;
+						TRUE : safe;
+					esac;
+				TRUE : tiles_stage_0_index_13;
+			esac;
+		tiles_stage_1_index_14 := 
+			case
+				!(get_info.active) : tiles_stage_0_index_14;
+				14 = loc_stage_0 :
+					case
+						!(TRUE) : tiles_stage_0[loc_stage_0];
+						(loc_stage_0 = goal_loc_stage_0) : goal;
+						(loc_stage_0 = hole_loc_stage_0) : hole;
+						TRUE : safe;
+					esac;
+				TRUE : tiles_stage_0_index_14;
+			esac;
+		tiles_stage_1_index_15 := 
+			case
+				!(get_info.active) : tiles_stage_0_index_15;
+				15 = loc_stage_0 :
+					case
+						!(TRUE) : tiles_stage_0[loc_stage_0];
+						(loc_stage_0 = goal_loc_stage_0) : goal;
+						(loc_stage_0 = hole_loc_stage_0) : hole;
+						TRUE : safe;
+					esac;
+				TRUE : tiles_stage_0_index_15;
+			esac;
+		action_stage_1 := 
+			case
+				!(request_hold.active) : action_stage_0;
+				TRUE : -2;
+			esac;
+		action_stage_2 := 
+			case
+				!(request_reset.active) : action_stage_1;
+				TRUE : -1;
+			esac;
+		action_stage_3 := 
+			case
+				!(request_up.active) : action_stage_2;
+				TRUE : 3;
+			esac;
+		action_stage_4 := 
+			case
+				!(request_down.active) : action_stage_3;
+				TRUE : 1;
+			esac;
+		action_stage_5 := 
+			case
+				!(request_left.active) : action_stage_4;
+				TRUE : 0;
+			esac;
+		action_stage_6 := 
+			case
+				!(request_right.active) : action_stage_5;
+				TRUE : 2;
+			esac;
+		action_stage_7 := 
+			case
+				!(request_left_1.active) : action_stage_6;
+				TRUE : 0;
+			esac;
+		action_stage_8 := 
+			case
+				!(request_right_1.active) : action_stage_7;
+				TRUE : 2;
+			esac;
+		action_stage_9 := 
+			case
+				!(request_up_1.active) : action_stage_8;
+				TRUE : 3;
+			esac;
+		action_stage_10 := 
+			case
+				!(request_down_1.active) : action_stage_9;
+				TRUE : 1;
+			esac;
+		action_stage_11 := 
+			case
+				!(request_left_2.active) : action_stage_10;
+				TRUE : 0;
+			esac;
+		action_stage_12 := 
+			case
+				!(request_right_2.active) : action_stage_11;
+				TRUE : 2;
+			esac;
+		action_stage_13 := 
+			case
+				!(request_up_2.active) : action_stage_12;
+				TRUE : 3;
+			esac;
+		action_stage_14 := 
+			case
+				!(request_down_2.active) : action_stage_13;
+				TRUE : 1;
+			esac;
+		action_stage_15 := 
+			case
+				!(request_hold_1.active) : action_stage_14;
+				TRUE : -2;
+			esac;
+		action_stage_16 := 
+			case
+				!(request_up_3.active) : action_stage_15;
+				TRUE : 3;
+			esac;
+		action_stage_17 := 
+			case
+				!(request_down_3.active) : action_stage_16;
+				TRUE : 1;
+			esac;
+		action_stage_18 := 
+			case
+				!(request_left_3.active) : action_stage_17;
+				TRUE : 0;
+			esac;
+		action_stage_19 := 
+			case
+				!(request_right_3.active) : action_stage_18;
+				TRUE : 2;
+			esac;
+		action_stage_20 := 
+			case
+				!(request_hold_2.active) : action_stage_19;
+				TRUE : -2;
+			esac;
+		sometimes_stage_1 := 
+			case
+				!(sometimes_change_strategy.active) : sometimes_stage_0;
+				TRUE : !(sometimes_stage_0);
+			esac;
+		sometimes_stage_2 := 
+			case
+				!(sometimes_change_strategy_1.active) : sometimes_stage_1;
+				TRUE : !(sometimes_stage_1);
+			esac;
+		sometimes_stage_3 := 
+			case
+				!(sometimes_change_strategy_2.active) : sometimes_stage_2;
+				TRUE : !(sometimes_stage_2);
+			esac;
+		sometimes_stage_4 := 
+			case
+				!(sometimes_change_strategy_3.active) : sometimes_stage_3;
+				TRUE : !(sometimes_stage_3);
+			esac;
+		strategy_stage_1 := 
+			case
+				!(sometimes_change_strategy.active) : strategy_stage_0;
+				!(sometimes_stage_1) : strategy_stage_0;
+				(strategy_stage_0 = x_first) : y_first;
+				TRUE : x_first;
+			esac;
+		strategy_stage_2 := 
+			case
+				!(sometimes_change_strategy_1.active) : strategy_stage_1;
+				!(sometimes_stage_2) : strategy_stage_1;
+				(strategy_stage_1 = x_first) : y_first;
+				TRUE : x_first;
+			esac;
+		strategy_stage_3 := 
+			case
+				!(sometimes_change_strategy_2.active) : strategy_stage_2;
+				!(sometimes_stage_3) : strategy_stage_2;
+				(strategy_stage_2 = x_first) : y_first;
+				TRUE : x_first;
+			esac;
+		strategy_stage_4 := 
+			case
+				!(sometimes_change_strategy_3.active) : strategy_stage_3;
+				!(sometimes_stage_4) : strategy_stage_3;
+				(strategy_stage_3 = x_first) : y_first;
+				TRUE : x_first;
+			esac;
+		strategy_stage_5 := 
+			case
+				!(change_strategy.active) : strategy_stage_4;
+				(strategy_stage_4 = x_first) : y_first;
+				TRUE : x_first;
+			esac;
+		subgoal_stage_1 := 
+			case
+				!(set_new_subgoal.active) : subgoal_stage_0;
+				(subgoal_stage_0 = 15) : 0;
+				TRUE : (1 + subgoal_stage_0);
+			esac;
+		x_subgoal_stage_0 :=
+			case
+				TRUE : (subgoal_stage_0 mod 4);
+			esac;
+		x_subgoal_stage_1 :=
+			case
+				TRUE : (subgoal_stage_1 mod 4);
+			esac;
+		y_subgoal_stage_0 :=
+			case
+				TRUE : ((subgoal_stage_0 - x_subgoal_stage_0) / 4);
+			esac;
+		y_subgoal_stage_1 :=
+			case
+				TRUE : ((subgoal_stage_1 - x_subgoal_stage_1) / 4);
+			esac;
+		loc_stage_1 := 
+			case
+				!(execution_sequence.active) : loc_stage_0;
+				(action_stage_20 = -1) : start_loc_stage_0;
+				(action_stage_20 = 3) : (x_loc_stage_0 + (4 * max(0, (y_loc_stage_0 - 1))));
+				(action_stage_20 = 1) : (x_loc_stage_0 + (4 * min(3, (y_loc_stage_0 + 1))));
+				(action_stage_20 = 0) : (max(0, (x_loc_stage_0 - 1)) + (4 * y_loc_stage_0));
+				(action_stage_20 = 2) : (min(3, (x_loc_stage_0 + 1)) + (4 * y_loc_stage_0));
+				TRUE : loc_stage_0;
+			esac;
+		x_loc_stage_0 :=
+			case
+				TRUE : (loc_stage_0 mod 4);
+			esac;
+		y_loc_stage_0 :=
+			case
+				TRUE : ((loc_stage_0 - x_loc_stage_0) / 4);
+			esac;
+		falls_remaining_stage_1 := 
+			case
+				!(execution_sequence.active) : falls_remaining_stage_0;
+				(loc_stage_1 = hole_loc_stage_0) : max(-1, (falls_remaining_stage_0 - 1));
+				TRUE : falls_remaining_stage_0;
+			esac;
+		--END OF BLACKBOARD DEFINITIONS
+	FROZENVAR
+		--START OF BLACKBOARD FROZENVAR
+		start_loc_stage_0 : 0..15;
+		goal_loc_stage_0 : 0..15;
+		hole_loc_stage_0 : 0..15;
+		--END OF BLACKBOARD FROZENVAR
+	VAR
+		node_names : define_nodes;
+		get_info : success_DEFAULT_module();
+		reached_goal : reached_goal_module(loc_stage_0, tiles_stage_1);
+		request_hold : success_DEFAULT_module();
+		at_goal_sequence : composite_sequence_without_memory_2(reached_goal, request_hold);
+		fell_in_hole : fell_in_hole_module(loc_stage_0, tiles_stage_1);
+		request_reset : success_DEFAULT_module();
+		reset_sequence : composite_sequence_without_memory_2(fell_in_hole, request_reset);
+		up_unknown : up_unknown_module(tiles_stage_1, x_loc_stage_0, y_loc_stage_0);
+		request_up : success_DEFAULT_module();
+		up_unknown_seq : composite_sequence_without_memory_2(up_unknown, request_up);
+		down_unknown : down_unknown_module(tiles_stage_1, x_loc_stage_0, y_loc_stage_0);
+		request_down : success_DEFAULT_module();
+		down_unknown_seq : composite_sequence_without_memory_2(down_unknown, request_down);
+		left_unknown : left_unknown_module(tiles_stage_1, x_loc_stage_0, y_loc_stage_0);
+		request_left : success_DEFAULT_module();
+		left_unknown_seq : composite_sequence_without_memory_2(left_unknown, request_left);
+		right_unknown : right_unknown_module(tiles_stage_1, x_loc_stage_0, y_loc_stage_0);
+		request_right : success_DEFAULT_module();
+		right_unknown_seq : composite_sequence_without_memory_2(right_unknown, request_right);
+		adjacent_unknown : composite_selector_without_memory_4(up_unknown_seq, down_unknown_seq, left_unknown_seq, right_unknown_seq);
+		need_new_subgoal : need_new_subgoal_module(loc_stage_0, subgoal_stage_0, tiles_stage_1, x_subgoal_stage_0, y_subgoal_stage_0);
+		set_new_subgoal : success_DEFAULT_module();
+		subgoal_seq : composite_sequence_without_memory_2(need_new_subgoal, set_new_subgoal);
+		subgoal_failure_is_success : decorator_X_is_Y(subgoal_seq, failure, success);
+		x_strategy : x_strategy_module(strategy_stage_0);
+		need_left : need_left_module(x_loc_stage_0, x_subgoal_stage_1);
+		left_bad : left_bad_module(tiles_stage_1, x_loc_stage_0, y_loc_stage_0);
+		left_bad_inverter : decorator_inverter(left_bad);
+		request_left_1 : success_DEFAULT_module();
+		try_left : composite_sequence_without_memory_3(need_left, left_bad_inverter, request_left_1);
+		need_right : need_right_module(x_loc_stage_0, x_subgoal_stage_1);
+		right_bad : right_bad_module(tiles_stage_1, x_loc_stage_0, y_loc_stage_0);
+		right_bad_inverter : decorator_inverter(right_bad);
+		request_right_1 : success_DEFAULT_module();
+		try_right : composite_sequence_without_memory_3(need_right, right_bad_inverter, request_right_1);
+		try_x : composite_selector_without_memory_2(try_left, try_right);
+		opt_x_movement : composite_sequence_without_memory_2(x_strategy, try_x);
+		y_strategy : y_strategy_module(strategy_stage_0);
+		need_up : need_up_module(y_loc_stage_0, y_subgoal_stage_1);
+		up_bad : up_bad_module(tiles_stage_1, x_loc_stage_0, y_loc_stage_0);
+		up_bad_inverter : decorator_inverter(up_bad);
+		request_up_1 : success_DEFAULT_module();
+		try_up : composite_sequence_without_memory_3(need_up, up_bad_inverter, request_up_1);
+		need_down : need_down_module(y_loc_stage_0, y_subgoal_stage_1);
+		down_bad : down_bad_module(tiles_stage_1, x_loc_stage_0, y_loc_stage_0);
+		down_bad_inverter : decorator_inverter(down_bad);
+		request_down_1 : success_DEFAULT_module();
+		try_down : composite_sequence_without_memory_3(need_down, down_bad_inverter, request_down_1);
+		try_y : composite_selector_without_memory_2(try_up, try_down);
+		opt_y_movement : composite_sequence_without_memory_2(y_strategy, try_y);
+		x_or_y_movement_selector : composite_selector_without_memory_2(opt_x_movement, opt_y_movement);
+		need_left_1 : need_left_1_module(x_loc_stage_0, x_subgoal_stage_1);
+		left_bad_1 : left_bad_1_module(tiles_stage_1, x_loc_stage_0, y_loc_stage_0);
+		left_bad_inverter_1 : decorator_inverter(left_bad_1);
+		request_left_2 : success_DEFAULT_module();
+		try_left_1 : composite_sequence_without_memory_3(need_left_1, left_bad_inverter_1, request_left_2);
+		need_right_1 : need_right_1_module(x_loc_stage_0, x_subgoal_stage_1);
+		right_bad_1 : right_bad_1_module(tiles_stage_1, x_loc_stage_0, y_loc_stage_0);
+		right_bad_inverter_1 : decorator_inverter(right_bad_1);
+		request_right_2 : success_DEFAULT_module();
+		try_right_1 : composite_sequence_without_memory_3(need_right_1, right_bad_inverter_1, request_right_2);
+		try_x_1 : composite_selector_without_memory_2(try_left_1, try_right_1);
+		need_up_1 : need_up_1_module(y_loc_stage_0, y_subgoal_stage_1);
+		up_bad_1 : up_bad_1_module(tiles_stage_1, x_loc_stage_0, y_loc_stage_0);
+		up_bad_inverter_1 : decorator_inverter(up_bad_1);
+		request_up_2 : success_DEFAULT_module();
+		try_up_1 : composite_sequence_without_memory_3(need_up_1, up_bad_inverter_1, request_up_2);
+		need_down_1 : need_down_1_module(y_loc_stage_0, y_subgoal_stage_1);
+		down_bad_1 : down_bad_1_module(tiles_stage_1, x_loc_stage_0, y_loc_stage_0);
+		down_bad_inverter_1 : decorator_inverter(down_bad_1);
+		request_down_2 : success_DEFAULT_module();
+		try_down_1 : composite_sequence_without_memory_3(need_down_1, down_bad_inverter_1, request_down_2);
+		try_y_1 : composite_selector_without_memory_2(try_up_1, try_down_1);
+		subgoal_unreachable : subgoal_unreachable_module(subgoal_stage_1, tiles_stage_1);
+		request_hold_1 : success_DEFAULT_module();
+		new_subgoal_strategy : composite_sequence_without_memory_2(subgoal_unreachable, request_hold_1);
+		x_strategy_1 : x_strategy_1_module(strategy_stage_0);
+		up_bad_2 : up_bad_2_module(tiles_stage_1, x_loc_stage_0, y_loc_stage_0);
+		up_bad_inverter_2 : decorator_inverter(up_bad_2);
+		request_up_3 : success_DEFAULT_module();
+		sometimes_change_strategy : success_DEFAULT_module();
+		navi_up : composite_sequence_without_memory_4(x_strategy_1, up_bad_inverter_2, request_up_3, sometimes_change_strategy);
+		x_strategy_2 : x_strategy_2_module(strategy_stage_1);
+		down_bad_2 : down_bad_2_module(tiles_stage_1, x_loc_stage_0, y_loc_stage_0);
+		down_bad_inverter_2 : decorator_inverter(down_bad_2);
+		request_down_3 : success_DEFAULT_module();
+		sometimes_change_strategy_1 : success_DEFAULT_module();
+		navi_down : composite_sequence_without_memory_4(x_strategy_2, down_bad_inverter_2, request_down_3, sometimes_change_strategy_1);
+		y_strategy_1 : y_strategy_1_module(strategy_stage_2);
+		left_bad_2 : left_bad_2_module(tiles_stage_1, x_loc_stage_0, y_loc_stage_0);
+		left_bad_inverter_2 : decorator_inverter(left_bad_2);
+		request_left_3 : success_DEFAULT_module();
+		sometimes_change_strategy_2 : success_DEFAULT_module();
+		navi_left : composite_sequence_without_memory_4(y_strategy_1, left_bad_inverter_2, request_left_3, sometimes_change_strategy_2);
+		y_strategy_2 : y_strategy_2_module(strategy_stage_3);
+		right_bad_2 : right_bad_2_module(tiles_stage_1, x_loc_stage_0, y_loc_stage_0);
+		right_bad_inverter_2 : decorator_inverter(right_bad_2);
+		request_right_3 : success_DEFAULT_module();
+		sometimes_change_strategy_3 : success_DEFAULT_module();
+		navi_right : composite_sequence_without_memory_4(y_strategy_2, right_bad_inverter_2, request_right_3, sometimes_change_strategy_3);
+		request_hold_2 : success_DEFAULT_module();
+		change_strategy : success_DEFAULT_module();
+		hold_and_change : composite_sequence_without_memory_2(request_hold_2, change_strategy);
+		new_navigation_strategy : composite_selector_without_memory_5(navi_up, navi_down, navi_left, navi_right, hold_and_change);
+		failure_plan : composite_selector_without_memory_2(new_subgoal_strategy, new_navigation_strategy);
+		move_selector : composite_selector_without_memory_4(x_or_y_movement_selector, try_x_1, try_y_1, failure_plan);
+		navigation_sequence : composite_sequence_without_memory_2(subgoal_failure_is_success, move_selector);
+		pick_action : composite_selector_without_memory_4(at_goal_sequence, reset_sequence, adjacent_unknown, navigation_sequence);
+		execution_sequence : composite_sequence_without_memory_2(get_info, pick_action);
+		--START OF BLACKBOARD VARIABLES DECLARATION
+		tiles_stage_0_index_0 : {unknown, safe, hole, goal};
+		tiles_stage_0_index_1 : {unknown, safe, hole, goal};
+		tiles_stage_0_index_2 : {unknown, safe, hole, goal};
+		tiles_stage_0_index_3 : {unknown, safe, hole, goal};
+		tiles_stage_0_index_4 : {unknown, safe, hole, goal};
+		tiles_stage_0_index_5 : {unknown, safe, hole, goal};
+		tiles_stage_0_index_6 : {unknown, safe, hole, goal};
+		tiles_stage_0_index_7 : {unknown, safe, hole, goal};
+		tiles_stage_0_index_8 : {unknown, safe, hole, goal};
+		tiles_stage_0_index_9 : {unknown, safe, hole, goal};
+		tiles_stage_0_index_10 : {unknown, safe, hole, goal};
+		tiles_stage_0_index_11 : {unknown, safe, hole, goal};
+		tiles_stage_0_index_12 : {unknown, safe, hole, goal};
+		tiles_stage_0_index_13 : {unknown, safe, hole, goal};
+		tiles_stage_0_index_14 : {unknown, safe, hole, goal};
+		tiles_stage_0_index_15 : {unknown, safe, hole, goal};
+		action_stage_0 : {-2, -1, 0, 1, 2, 3};
+		sometimes_stage_0 : boolean;
+		strategy_stage_0 : {x_first, y_first};
+		subgoal_stage_0 : 0..15;
+		loc_stage_0 : 0..15;
+		falls_remaining_stage_0 : -1..1;
+		--END OF BLACKBOARD VARIABLES DECLARATION
+	ASSIGN
+		--START OF BLACKBOARD VARIABLES INITIALIZATION
+		init(tiles_stage_0_index_0) := 
+			case
+				TRUE : unknown;
+			esac;
+		init(tiles_stage_0_index_1) := 
+			case
+				TRUE : unknown;
+			esac;
+		init(tiles_stage_0_index_2) := 
+			case
+				TRUE : unknown;
+			esac;
+		init(tiles_stage_0_index_3) := 
+			case
+				TRUE : unknown;
+			esac;
+		init(tiles_stage_0_index_4) := 
+			case
+				TRUE : unknown;
+			esac;
+		init(tiles_stage_0_index_5) := 
+			case
+				TRUE : unknown;
+			esac;
+		init(tiles_stage_0_index_6) := 
+			case
+				TRUE : unknown;
+			esac;
+		init(tiles_stage_0_index_7) := 
+			case
+				TRUE : unknown;
+			esac;
+		init(tiles_stage_0_index_8) := 
+			case
+				TRUE : unknown;
+			esac;
+		init(tiles_stage_0_index_9) := 
+			case
+				TRUE : unknown;
+			esac;
+		init(tiles_stage_0_index_10) := 
+			case
+				TRUE : unknown;
+			esac;
+		init(tiles_stage_0_index_11) := 
+			case
+				TRUE : unknown;
+			esac;
+		init(tiles_stage_0_index_12) := 
+			case
+				TRUE : unknown;
+			esac;
+		init(tiles_stage_0_index_13) := 
+			case
+				TRUE : unknown;
+			esac;
+		init(tiles_stage_0_index_14) := 
+			case
+				TRUE : unknown;
+			esac;
+		init(tiles_stage_0_index_15) := 
+			case
+				TRUE : unknown;
+			esac;
+		init(action_stage_0) := 
+			case
+				TRUE : -2;
+			esac;
+		init(sometimes_stage_0) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(strategy_stage_0) := 
+			case
+				TRUE : x_first;
+			esac;
+		init(subgoal_stage_0) := 
+			case
+				TRUE : 0;
+			esac;
+		init(start_loc_stage_0) := 
+			case
+				TRUE : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+			esac;
+		init(goal_loc_stage_0) := 
+			case
+				TRUE : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+			esac;
+		init(loc_stage_0) := 
+			case
+				TRUE : start_loc_stage_0;
+			esac;
+		init(hole_loc_stage_0) := 
+			case
+				(start_loc_stage_0 = 0) : {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+				(start_loc_stage_0 = 1) : {0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+				(start_loc_stage_0 = 2) : {0, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+				(start_loc_stage_0 = 3) : {0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+				(start_loc_stage_0 = 4) : {0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+				(start_loc_stage_0 = 5) : {0, 1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+				(start_loc_stage_0 = 6) : {0, 1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+				(start_loc_stage_0 = 7) : {0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 13, 14, 15};
+				(start_loc_stage_0 = 8) : {0, 1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15};
+				(start_loc_stage_0 = 9) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15};
+				(start_loc_stage_0 = 10) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15};
+				(start_loc_stage_0 = 11) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15};
+				(start_loc_stage_0 = 12) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15};
+				(start_loc_stage_0 = 13) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15};
+				(start_loc_stage_0 = 14) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15};
+				(start_loc_stage_0 = 15) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14};
+				TRUE : 0;
+			esac;
+		init(falls_remaining_stage_0) := 
+			case
+				TRUE : 1;
+			esac;
+		--END OF BLACKBOARD VARIABLES INITIALIZATION
+		--START OF BLACKBOARD VARIABLES TRANSITION
+		next(tiles_stage_0_index_0) := tiles_stage_1_index_0;
+		next(tiles_stage_0_index_1) := tiles_stage_1_index_1;
+		next(tiles_stage_0_index_2) := tiles_stage_1_index_2;
+		next(tiles_stage_0_index_3) := tiles_stage_1_index_3;
+		next(tiles_stage_0_index_4) := tiles_stage_1_index_4;
+		next(tiles_stage_0_index_5) := tiles_stage_1_index_5;
+		next(tiles_stage_0_index_6) := tiles_stage_1_index_6;
+		next(tiles_stage_0_index_7) := tiles_stage_1_index_7;
+		next(tiles_stage_0_index_8) := tiles_stage_1_index_8;
+		next(tiles_stage_0_index_9) := tiles_stage_1_index_9;
+		next(tiles_stage_0_index_10) := tiles_stage_1_index_10;
+		next(tiles_stage_0_index_11) := tiles_stage_1_index_11;
+		next(tiles_stage_0_index_12) := tiles_stage_1_index_12;
+		next(tiles_stage_0_index_13) := tiles_stage_1_index_13;
+		next(tiles_stage_0_index_14) := tiles_stage_1_index_14;
+		next(tiles_stage_0_index_15) := tiles_stage_1_index_15;
+		next(action_stage_0) := action_stage_20;
+		next(sometimes_stage_0) := sometimes_stage_4;
+		next(strategy_stage_0) := strategy_stage_5;
+		next(subgoal_stage_0) := subgoal_stage_1;
+		next(loc_stage_0) := loc_stage_1;
+		next(falls_remaining_stage_0) := falls_remaining_stage_1;
+		--END OF BLACKBOARD VARIABLES TRANSITION
+
+INVARSPEC (falls_remaining_stage_1 >= -1);
+LTLSPEC G((falls_remaining_stage_1 >= -1));
+CTLSPEC AG((falls_remaining_stage_1 >= -1));
+LTLSPEC ((goal_loc_stage_0 != hole_loc_stage_0) -> F((loc_stage_1 = goal_loc_stage_0)));
+CTLSPEC ((goal_loc_stage_0 != hole_loc_stage_0) -> AF((loc_stage_1 = goal_loc_stage_0)));
+MODULE define_nodes
+	DEFINE
+		execution_sequence := 0;
+		get_info := 1;
+		pick_action := 2;
+		at_goal_sequence := 3;
+		reached_goal := 4;
+		request_hold := 5;
+		reset_sequence := 6;
+		fell_in_hole := 7;
+		request_reset := 8;
+		adjacent_unknown := 9;
+		up_unknown_seq := 10;
+		up_unknown := 11;
+		request_up := 12;
+		down_unknown_seq := 13;
+		down_unknown := 14;
+		request_down := 15;
+		left_unknown_seq := 16;
+		left_unknown := 17;
+		request_left := 18;
+		right_unknown_seq := 19;
+		right_unknown := 20;
+		request_right := 21;
+		navigation_sequence := 22;
+		subgoal_failure_is_success := 23;
+		subgoal_seq := 24;
+		need_new_subgoal := 25;
+		set_new_subgoal := 26;
+		move_selector := 27;
+		x_or_y_movement_selector := 28;
+		opt_x_movement := 29;
+		x_strategy := 30;
+		try_x := 31;
+		try_left := 32;
+		need_left := 33;
+		left_bad_inverter := 34;
+		left_bad := 35;
+		request_left_1 := 36;
+		try_right := 37;
+		need_right := 38;
+		right_bad_inverter := 39;
+		right_bad := 40;
+		request_right_1 := 41;
+		opt_y_movement := 42;
+		y_strategy := 43;
+		try_y := 44;
+		try_up := 45;
+		need_up := 46;
+		up_bad_inverter := 47;
+		up_bad := 48;
+		request_up_1 := 49;
+		try_down := 50;
+		need_down := 51;
+		down_bad_inverter := 52;
+		down_bad := 53;
+		request_down_1 := 54;
+		try_x_1 := 55;
+		try_left_1 := 56;
+		need_left_1 := 57;
+		left_bad_inverter_1 := 58;
+		left_bad_1 := 59;
+		request_left_2 := 60;
+		try_right_1 := 61;
+		need_right_1 := 62;
+		right_bad_inverter_1 := 63;
+		right_bad_1 := 64;
+		request_right_2 := 65;
+		try_y_1 := 66;
+		try_up_1 := 67;
+		need_up_1 := 68;
+		up_bad_inverter_1 := 69;
+		up_bad_1 := 70;
+		request_up_2 := 71;
+		try_down_1 := 72;
+		need_down_1 := 73;
+		down_bad_inverter_1 := 74;
+		down_bad_1 := 75;
+		request_down_2 := 76;
+		failure_plan := 77;
+		new_subgoal_strategy := 78;
+		subgoal_unreachable := 79;
+		request_hold_1 := 80;
+		new_navigation_strategy := 81;
+		navi_up := 82;
+		x_strategy_1 := 83;
+		up_bad_inverter_2 := 84;
+		up_bad_2 := 85;
+		request_up_3 := 86;
+		sometimes_change_strategy := 87;
+		navi_down := 88;
+		x_strategy_2 := 89;
+		down_bad_inverter_2 := 90;
+		down_bad_2 := 91;
+		request_down_3 := 92;
+		sometimes_change_strategy_1 := 93;
+		navi_left := 94;
+		y_strategy_1 := 95;
+		left_bad_inverter_2 := 96;
+		left_bad_2 := 97;
+		request_left_3 := 98;
+		sometimes_change_strategy_2 := 99;
+		navi_right := 100;
+		y_strategy_2 := 101;
+		right_bad_inverter_2 := 102;
+		right_bad_2 := 103;
+		request_right_3 := 104;
+		sometimes_change_strategy_3 := 105;
+		hold_and_change := 106;
+		request_hold_2 := 107;
+		change_strategy := 108;
+MODULE composite_selector_without_memory_5(child_0, child_1, child_2, child_3, child_4)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				!(child_0.internal_status = failure) : child_0.internal_status;
+				!(child_1.internal_status = failure) : child_1.internal_status;
+				!(child_2.internal_status = failure) : child_2.internal_status;
+				!(child_3.internal_status = failure) : child_3.internal_status;
+				!(child_4.internal_status = failure) : child_4.internal_status;
+				TRUE : failure;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = failure;
+		child_2.active := child_1.status = failure;
+		child_3.active := child_2.status = failure;
+		child_4.active := child_3.status = failure;
+MODULE composite_sequence_without_memory_2(child_0, child_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				!(child_0.internal_status = success) : child_0.internal_status;
+				!(child_1.internal_status = success) : child_1.internal_status;
+				TRUE : success;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = success;
+MODULE composite_sequence_without_memory_3(child_0, child_1, child_2)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				!(child_0.internal_status = success) : child_0.internal_status;
+				!(child_1.internal_status = success) : child_1.internal_status;
+				!(child_2.internal_status = success) : child_2.internal_status;
+				TRUE : success;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = success;
+		child_2.active := child_1.status = success;
+MODULE composite_selector_without_memory_2(child_0, child_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				!(child_0.internal_status = failure) : child_0.internal_status;
+				!(child_1.internal_status = failure) : child_1.internal_status;
+				TRUE : failure;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = failure;
+MODULE composite_sequence_without_memory_4(child_0, child_1, child_2, child_3)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				!(child_0.internal_status = success) : child_0.internal_status;
+				!(child_1.internal_status = success) : child_1.internal_status;
+				!(child_2.internal_status = success) : child_2.internal_status;
+				!(child_3.internal_status = success) : child_3.internal_status;
+				TRUE : success;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = success;
+		child_2.active := child_1.status = success;
+		child_3.active := child_2.status = success;
+MODULE decorator_X_is_Y(child_0, incoming_status, outgoing_status)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				child_0.internal_status = incoming_status : outgoing_status;
+				TRUE : child_0.internal_status;
+			esac;
+		child_0.active :=
+			case
+				!(active) : FALSE;
+				TRUE : TRUE;
+			esac;
+MODULE composite_selector_without_memory_4(child_0, child_1, child_2, child_3)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				!(child_0.internal_status = failure) : child_0.internal_status;
+				!(child_1.internal_status = failure) : child_1.internal_status;
+				!(child_2.internal_status = failure) : child_2.internal_status;
+				!(child_3.internal_status = failure) : child_3.internal_status;
+				TRUE : failure;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = failure;
+		child_2.active := child_1.status = failure;
+		child_3.active := child_2.status = failure;
+MODULE decorator_inverter(child_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				child_0.internal_status = success : failure;
+				child_0.internal_status = failure : success;
+				TRUE : child_0.status;
+			esac;
+		child_0.active :=
+			case
+				!(active) : FALSE;
+				TRUE : TRUE;
+			esac;
+MODULE reached_goal_module(loc_stage_0, tiles_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((goal = tiles_stage_1[loc_stage_0])) ? success : failure;
+MODULE fell_in_hole_module(loc_stage_0, tiles_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((tiles_stage_1[loc_stage_0] = hole)) ? success : failure;
+MODULE up_unknown_module(tiles_stage_1, x_loc_stage_0, y_loc_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := (((unknown = tiles_stage_1[(x_loc_stage_0 + (4 * max(0, (y_loc_stage_0 - 1))))]) & (y_loc_stage_0 != 0))) ? success : failure;
+MODULE down_unknown_module(tiles_stage_1, x_loc_stage_0, y_loc_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := (((unknown = tiles_stage_1[(x_loc_stage_0 + (4 * min(3, (y_loc_stage_0 + 1))))]) & (y_loc_stage_0 != 3))) ? success : failure;
+MODULE left_unknown_module(tiles_stage_1, x_loc_stage_0, y_loc_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := (((unknown = tiles_stage_1[(max(0, (x_loc_stage_0 - 1)) + (4 * y_loc_stage_0))]) & (x_loc_stage_0 != 0))) ? success : failure;
+MODULE right_unknown_module(tiles_stage_1, x_loc_stage_0, y_loc_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := (((unknown = tiles_stage_1[(min(3, (x_loc_stage_0 + 1)) + (4 * y_loc_stage_0))]) & (x_loc_stage_0 != 3))) ? success : failure;
+MODULE need_new_subgoal_module(loc_stage_0, subgoal_stage_0, tiles_stage_1, x_subgoal_stage_0, y_subgoal_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := (((hole = tiles_stage_1[(x_subgoal_stage_0 + (4 * y_subgoal_stage_0))]) | (loc_stage_0 = subgoal_stage_0))) ? success : failure;
+MODULE x_strategy_module(strategy_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((strategy_stage_0 = x_first)) ? success : failure;
+MODULE need_left_module(x_loc_stage_0, x_subgoal_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((x_loc_stage_0 > x_subgoal_stage_1)) ? success : failure;
+MODULE left_bad_module(tiles_stage_1, x_loc_stage_0, y_loc_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := (((hole = tiles_stage_1[(max(0, (x_loc_stage_0 - 1)) + (4 * y_loc_stage_0))]) | (x_loc_stage_0 = 0))) ? success : failure;
+MODULE need_right_module(x_loc_stage_0, x_subgoal_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((x_loc_stage_0 < x_subgoal_stage_1)) ? success : failure;
+MODULE right_bad_module(tiles_stage_1, x_loc_stage_0, y_loc_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := (((hole = tiles_stage_1[(min(3, (x_loc_stage_0 + 1)) + (4 * y_loc_stage_0))]) | (x_loc_stage_0 = 3))) ? success : failure;
+MODULE y_strategy_module(strategy_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((strategy_stage_0 = y_first)) ? success : failure;
+MODULE need_up_module(y_loc_stage_0, y_subgoal_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((y_loc_stage_0 > y_subgoal_stage_1)) ? success : failure;
+MODULE up_bad_module(tiles_stage_1, x_loc_stage_0, y_loc_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := (((hole = tiles_stage_1[(x_loc_stage_0 + (4 * max(0, (y_loc_stage_0 - 1))))]) | (y_loc_stage_0 = 0))) ? success : failure;
+MODULE need_down_module(y_loc_stage_0, y_subgoal_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((y_loc_stage_0 < y_subgoal_stage_1)) ? success : failure;
+MODULE down_bad_module(tiles_stage_1, x_loc_stage_0, y_loc_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := (((hole = tiles_stage_1[(x_loc_stage_0 + (4 * min(3, (y_loc_stage_0 + 1))))]) | (y_loc_stage_0 = 3))) ? success : failure;
+MODULE need_left_1_module(x_loc_stage_0, x_subgoal_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((x_loc_stage_0 > x_subgoal_stage_1)) ? success : failure;
+MODULE left_bad_1_module(tiles_stage_1, x_loc_stage_0, y_loc_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := (((hole = tiles_stage_1[(max(0, (x_loc_stage_0 - 1)) + (4 * y_loc_stage_0))]) | (x_loc_stage_0 = 0))) ? success : failure;
+MODULE need_right_1_module(x_loc_stage_0, x_subgoal_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((x_loc_stage_0 < x_subgoal_stage_1)) ? success : failure;
+MODULE right_bad_1_module(tiles_stage_1, x_loc_stage_0, y_loc_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := (((hole = tiles_stage_1[(min(3, (x_loc_stage_0 + 1)) + (4 * y_loc_stage_0))]) | (x_loc_stage_0 = 3))) ? success : failure;
+MODULE need_up_1_module(y_loc_stage_0, y_subgoal_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((y_loc_stage_0 > y_subgoal_stage_1)) ? success : failure;
+MODULE up_bad_1_module(tiles_stage_1, x_loc_stage_0, y_loc_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := (((hole = tiles_stage_1[(x_loc_stage_0 + (4 * max(0, (y_loc_stage_0 - 1))))]) | (y_loc_stage_0 = 0))) ? success : failure;
+MODULE need_down_1_module(y_loc_stage_0, y_subgoal_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((y_loc_stage_0 < y_subgoal_stage_1)) ? success : failure;
+MODULE down_bad_1_module(tiles_stage_1, x_loc_stage_0, y_loc_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := (((hole = tiles_stage_1[(x_loc_stage_0 + (4 * min(3, (y_loc_stage_0 + 1))))]) | (y_loc_stage_0 = 3))) ? success : failure;
+MODULE subgoal_unreachable_module(subgoal_stage_1, tiles_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((hole = tiles_stage_1[subgoal_stage_1])) ? success : failure;
+MODULE x_strategy_1_module(strategy_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((strategy_stage_0 = x_first)) ? success : failure;
+MODULE up_bad_2_module(tiles_stage_1, x_loc_stage_0, y_loc_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := (((hole = tiles_stage_1[(x_loc_stage_0 + (4 * max(0, (y_loc_stage_0 - 1))))]) | (y_loc_stage_0 = 0))) ? success : failure;
+MODULE x_strategy_2_module(strategy_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((strategy_stage_1 = x_first)) ? success : failure;
+MODULE down_bad_2_module(tiles_stage_1, x_loc_stage_0, y_loc_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := (((hole = tiles_stage_1[(x_loc_stage_0 + (4 * min(3, (y_loc_stage_0 + 1))))]) | (y_loc_stage_0 = 3))) ? success : failure;
+MODULE y_strategy_1_module(strategy_stage_2)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((strategy_stage_2 = y_first)) ? success : failure;
+MODULE left_bad_2_module(tiles_stage_1, x_loc_stage_0, y_loc_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := (((hole = tiles_stage_1[(max(0, (x_loc_stage_0 - 1)) + (4 * y_loc_stage_0))]) | (x_loc_stage_0 = 0))) ? success : failure;
+MODULE y_strategy_2_module(strategy_stage_3)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((strategy_stage_3 = y_first)) ? success : failure;
+MODULE right_bad_2_module(tiles_stage_1, x_loc_stage_0, y_loc_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := (((hole = tiles_stage_1[(min(3, (x_loc_stage_0 + 1)) + (4 * y_loc_stage_0))]) | (x_loc_stage_0 = 3))) ? success : failure;
+MODULE success_DEFAULT_module
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := success;
