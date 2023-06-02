@@ -1,0 +1,1 @@
+WARNING: The encodings presented in this folder are incomplete and are not guaranteed to work for the DSL in general. They are here to generate working models based on specifically the examples in the subfolder of 2023_sefm.
