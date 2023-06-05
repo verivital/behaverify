@@ -11,155 +11,163 @@
 # -----------------------------------------------------------------------------------------------------------------------
 import argparse
 import os
-import re
 # ----------------------------------------------------------------------------------------------------------------
 # serene custom imports
-import aut_node_creator as node_creator
-from behaverify_common import (tab_indent,
-                               get_root_node,
+import node_creator
+from behaverify_common import (get_root_node,
                                refine_return_types,
                                refine_invalid,
                                prune_nodes, order_nodes,
                                map_node_name_to_number,
                                create_node_to_local_root_map,
                                create_local_root_to_relevant_list_map,
-                               create_node_to_descendants_map)
+                               create_node_to_descendants_map,
+                               tab_indent,
+                               format_node_type)
 # -----------------------------------------------------------------------------------------------------------------------
 
 LOCAL_ROOT_TREE_STRING = 'resume_from_here_in_subtree__'
 CHILD_TRACK_STRING = 'child_index_to_resume_from__'
-# PARALLEL_SKIP_STRING = 'parallel_skip__'
-NEXT_CHILD_STRING = 'next_child__'
-STATUS_STRING = 'status__'
-RUNNING_TRACE_STRING = 'trace_running_source__'
-
-STATUS_FUNCTIONS = {
-    'parallel_success_on_all_without_memory' : node_creator.create_composite_parallel_success_on_all_without_memory,
-    'parallel_success_on_all_with_memory' : node_creator.create_composite_parallel_success_on_all_with_memory,
-    'parallel_success_on_one_without_memory' : node_creator.create_composite_parallel_success_on_one_without_memory,
-    'parallel_success_on_one_with_memory' : node_creator.create_composite_parallel_success_on_one_with_memory,
-    'selector_with_memory' : node_creator.create_composite_selector_with_memory,
-    'selector_without_memory' : node_creator.create_composite_selector_without_memory,
-    'sequence_with_memory' : node_creator.create_composite_sequence_with_memory,
-    'sequence_without_memory' : node_creator.create_composite_sequence_without_memory,
-    'X_is_Y' : node_creator.create_decorator_X_is_Y,
-    'inverter' : node_creator.create_decorator_inverter
-}
+PARALLEL_SKIP_STRING = 'parallel_skip__'
 
 
-def create_status(node):
-    return (
-        (tab_indent(2) + STATUS_STRING + node['name'] + ' := ' + node['name'] + '.status;' + os.linesep)
-        if node['category'] == 'leaf'
-        else STATUS_FUNCTIONS[node['type']](node)
-    )
+def create_nodes(nodes, root_node_name, node_name_to_number, tick_condition):
+    '''
+    creates strings with neccessary information based on nodes.
+    --
+    arguments
+    @ nodes := dictionary, s -> n
+      s := name of a node, string
+      n := dictionary containing node informaion, dictionary
+    @ root_node_name := string, name of the root
+    @ node_name_to_number := dictionary, s -> i
+      s := name of a node, string
+      i := where the node appears in a depth first traversal
+           of the tree, integer
+    --
+    return
+    @ define_string := a string with defintions
+    @ init_string := a string with initializations
+    @ next_string := a string with next conditions
+    @ var_string := a string with variable declarations
+    --
+    effects
+    purely funcitonal
+    '''
+    define_string = ('\t\t' + root_node_name + '.active := ' + tick_condition + ';' + os.linesep
+                     + ''.join([('\t\t' + PARALLEL_SKIP_STRING + node['name'] + ' := '
+                                 + (
+                                     '[-2]' if len(node['children']) < 2 else (
+                                         '[' + ', '.join([(LOCAL_ROOT_TREE_STRING + child) for child in node['children']]) + ']'
+                                     )
+                                 )
+                                 + ';' + os.linesep) for node in filter(lambda node: (node['type'] == 'parallel' and node['memory'] != ''), nodes.values())])
+                     )
+    # ^ for each node that is parallel with memory, create a parellel_skip_string.
+    # if it doesn't really have children, set it to a constant. otherwise, it will track each of it's children local roots.
+    # (also the base case of we need to make the root_node active).
+    # print('hello?')
 
-
-def create_statuses(nodes):
-    def stage_split(my_string):
-        return my_string.split('_stage_')[0]
-    define_string = (''.join([create_status(node) for node in nodes.values()]))
-    var_string = (''.join([(tab_indent(2) + node['name'] + ' : '
-                            + ((node['internal_status_module_name'] + '(' + ', '.join(map(stage_split, node['additional_arguments'])) + ')') if node['internal_status_module_name'] is not None else (
-                                '_'.join([status for (status, possible) in [('success', node['return_possibilities']['success']), ('running', node['return_possibilities']['running']), ('failure', node['return_possibilities']['failure'])] if possible])
-                                + '_DEFAULT_module'
-                            ))
-                            + ';' + os.linesep)
-                           for node in nodes.values() if node['category'] == 'leaf']))
-    init_string = ''
-    next_string = ''
-    return (define_string, var_string, init_string, next_string)
-
-
-def create_active_node(nodes, root_node_name, tick_condition):
-    define_string = ''
-    var_string = ''
-    init_string = tab_indent(2) + 'init(active_node) := -1;' + os.linesep
-    next_string = (
-        tab_indent(2) + 'next(active_node) :=' + os.linesep
-        + tab_indent(3) + 'case' + os.linesep
-        + tab_indent(4) + 'active_node = -1 & ' + tick_condition + ' : node_names.' + root_node_name + ';' + os.linesep
-        + tab_indent(4) + 'active_node = -1 & !(' + tick_condition + ') : -1;' + os.linesep
-        + ''.join(
-            [
+    def create_leaf(node):
+        # print(node['name'] + ' : ' + str(node['internal_status_module_name']))
+        return (
+            tab_indent(2) + node['name'] + ' : '
+            + (
                 (
-                    tab_indent(4) + '(active_node = node_names.' + node['name'] + ') & (' + STATUS_STRING + node['name'] + ' != invalid) : ' + ('-1' if node['parent'] is None else ('node_names.' + node['parent'])) + ';' + os.linesep
-                    + ((tab_indent(4) + '(active_node = node_names.' + node['name'] + ') & (' + STATUS_STRING + node['name'] + ' = invalid) : ' + NEXT_CHILD_STRING + node['name'] + ';' + os.linesep) if node['category'] != 'leaf' else '')
+                    '_'.join(
+                        [
+                            status
+                            for (status, possible) in [('success', node['return_possibilities']['success']),
+                                                       ('running', node['return_possibilities']['running']),
+                                                       ('failure', node['return_possibilities']['failure'])]
+                            if possible
+                        ]
+                    ) + '_DEFAULT_module();'
                 )
-                for node in nodes.values()
-            ]
-        )
-        + tab_indent(4) + 'TRUE : active_node;' + os.linesep
-        + tab_indent(3) + 'esac;' + os.linesep
-    )
-    return (define_string, var_string, init_string, next_string)
-
-
-def has_memory(node):
-    return (
-        False if node['category'] != 'composite' else (
-            False if 'without_memory' in node['type'] else (
-                False if 'success_on_one' in node['type'] else (
-                    True
+                if node['internal_status_module_name'] is None else
+                (
+                    node['internal_status_module_name'] + '(' + ', '.join(node['additional_arguments']) + ');'
                 )
             )
+            + os.linesep
         )
-    )
 
+    def create_decorator(node):
+        return (
+            tab_indent(2) + node['name'] + ' : '
+            + format_node_type(node, False)
+            + '('
+            + ', '.join(node['children'] + (node['additional_arguments'] if node['additional_arguments'] is not None else []))
+            + ');' + os.linesep
+        )
 
-def create_next_child(nodes):
-    define_string = (
-        ''.join(
-            [
-                (
-                    tab_indent(2) + NEXT_CHILD_STRING + node['name'] + ' := ' + os.linesep
-                    + tab_indent(3) + 'case' + os.linesep
-                    + ''.join(
-                        [
-                            (
-                                tab_indent(4) + '(' + STATUS_STRING + node['children'][child_index] + ' = invalid)'
-                                + (
-                                    '' if not has_memory(node) else (
-                                        ('& !(' + LOCAL_ROOT_TREE_STRING + node['children'][child_index] + ' = -2)') if 'parallel' in node['type'] else (
-                                            ('& (' + CHILD_TRACK_STRING + node['name'] + ' <= ' + str(child_index) + ')')
-                                        )
-                                    )
-                                )
-                                + ' : node_names.' + node['children'][child_index] + ';' + os.linesep
-                            )
-                            for child_index in range(len(node['children']))
-                        ]
+    def create_composite_with_memory(node):
+        return (
+            tab_indent(2) + node['name'] + ' : '
+            + format_node_type(node, True)
+            + '('
+            + ', '.join(
+                node['children'] +
+                [
+                    (PARALLEL_SKIP_STRING + node['name'])
+                    if node['type'] == 'parallel' else
+                    (
+                        '-2' if len(node['children']) < 2 else (CHILD_TRACK_STRING + node['name'])
                     )
-                    + tab_indent(3) + 'esac;' + os.linesep
-                ) if len(node['children']) >= 2 else (
-                    (tab_indent(2) + NEXT_CHILD_STRING + node['name']
-                     + ' := node_names.' + node['children'][0] + ';' + os.linesep)
-                    if len(node['children']) == 1 else (
-                            (tab_indent(2) + NEXT_CHILD_STRING + node['name']
-                             + ' := ' + ('-1' if node['parent'] is None else ('node_names.' + node['parent'])) + ';' + os.linesep)
+                ]
+            )
+            + ');' + os.linesep
+        )
+
+    def create_composite_without_memory(node):
+        return (
+            tab_indent(2) + node['name'] + ' : '
+            + format_node_type(node, True)
+            + '('
+            + ', '.join(node['children'])
+            + ');' + os.linesep
+        )
+
+    def create_composite(node):
+        return (
+            (
+                tab_indent(2) + node['name']
+                + (
+                    ' : running_DEFAULT_module;'
+                    if node['type'] == 'parallel' else
+                    (
+                        ' : success_DEFAULT_module;'
+                        if 'sequence' in node['type'] else
+                        ' : failure_DEFAULT_module;'
                     )
                 )
-                for node in nodes.values() if node['category'] != 'leaf'
-            ]
+                + os.linesep
+            )
+            if len(node['children']) == 0 else
+            (
+                create_composite_without_memory(node)
+                if node['memory'] == ''
+                else
+                create_composite_with_memory(node)
+            )
         )
-    )
-    var_string = ''
-    init_string = ''
-    next_string = ''
-    return (define_string, var_string, init_string, next_string)
 
-
-def create_leaf_info(nodes):
-    define_string = (
-        ''.join(
-            [
-                (tab_indent(2) + node['name'] + '.active := active_node = node_names.' + node['name'] + ';' + os.linesep
-                 + tab_indent(2) + node['name'] + '.reset := active_node = -1;' + os.linesep)
-                for node in nodes.values() if node['category'] == 'leaf'
-            ]
-        )
+    var_string = ''.join(
+        [
+            create_leaf(node)
+            if node['category'] == 'leaf' else
+            (
+                create_decorator(node)
+                if node['category'] == 'decorator' else
+                create_composite(node)
+            )
+            for node in nodes.values()
+        ]
     )
-    var_string = ''
+    # ^ for each node, create it as a variable.
+    # for leaf nodes: this means passing the internal status module as an argument
+    # for decorator nodes: this means adding the additional arguments into the mix
+    # for composite nodes: this means adding children, and potential memory tracking stuff.
     init_string = ''
     next_string = ''
     return (define_string, var_string, init_string, next_string)
@@ -214,38 +222,37 @@ def create_resume_structure(nodes, local_root_to_relevant_list_map, node_name_to
         relevant_list = local_root_to_relevant_list_map[local_root_name]
         if len(relevant_list) == 0:
             # there's nothing to resume from. if we have a sequence node, then it apparently only had 0 or 1 children, and we don't need any special resume for it.
-            var_define_status_string += tab_indent(2) + LOCAL_ROOT_TREE_STRING + local_root_name + ' := -3;' + os.linesep
+            var_define_status_string += '\t\t' + LOCAL_ROOT_TREE_STRING + local_root_name + ' := -3;' + os.linesep
             continue
         # var_resume_from_node_string += '\t\t' + LOCAL_ROOT_TREE_STRING + '' + local_root_name + ' : {' + local_root_id_str + ', ' + str(relevant_list)[1:-1] + '};' + os.linesep
-        var_resume_from_node_string += (tab_indent(2) + LOCAL_ROOT_TREE_STRING + local_root_name + ' : {'
-                                        + ', '.join([str(node_name_to_number[local_root_name])] + [str(node_name_to_number[node_name]) for node_name in relevant_list])
+        var_resume_from_node_string += ('\t\t' + LOCAL_ROOT_TREE_STRING + local_root_name + ' : {'
+                                        + ', '.join([str(node_name_to_number[local_root_name])] + [('-2' if node_name == -2 else str(node_name_to_number[node_name])) for node_name in relevant_list])
                                         + '};' + os.linesep)
-        init_resume_from_node_string += tab_indent(2) + 'init(' + LOCAL_ROOT_TREE_STRING + local_root_name + ') := ' + local_root_id_str + ';' + os.linesep
+        init_resume_from_node_string += '\t\tinit(' + LOCAL_ROOT_TREE_STRING + local_root_name + ') := ' + local_root_id_str + ';' + os.linesep
         if -2 in relevant_list:
             # this means the parent is a synched parallel node, so it can skip the entire branch.
-            inject_string = (tab_indent(4) + '(' + STATUS_STRING + local_root_name + ' = success) : -2;' + os.linesep  # if the local root returns success, this is skippable. note that this is checked after the reset condition, so we don't over-write the reset.
-                             + tab_indent(4) + '(' + STATUS_STRING + local_root_name + ' = failure) : node_names.' + local_root_name + ';' + os.linesep  # failure is still a reset though
+            inject_string = ('\t\t\t\t(' + local_root_name + '.status = success) : -2;' + os.linesep  # if the local root returns success, this is skippable. note that this is checked after the reset condition, so we don't over-write the reset.
+                             + '\t\t\t\t(' + local_root_name + '.status = failure) : node_names.' + local_root_name + ';' + os.linesep  # failure is still a reset though
                              )
             relevant_list.remove(-2)  # don't actually want it in the relevant set going forward
         else:
-            inject_string = tab_indent(4) + '(' + STATUS_STRING + local_root_name + ' = success) | (' + STATUS_STRING + local_root_name + ' = failure) : node_names.' + local_root_name + ';' + os.linesep  # reset since this isn't skippable.
+            inject_string = '\t\t\t\t(' + local_root_name + '.status in {success, failure}) : node_names.' + local_root_name + ';' + os.linesep  # reset since this isn't skippable.
         # we've manually handled the root case using inject_string
         cur_node_name = nodes[local_root_name]['parent']  # start from the parent.
         ancestor_string = ''
         while cur_node_name is not None:
-            ancestor_string += tab_indent(4) + '(' + STATUS_STRING + cur_node_name + ' = success) | (' + STATUS_STRING + cur_node_name + ' = failure) : node_names.' + local_root_name + ';' + os.linesep
+            ancestor_string += '\t\t\t\t(' + cur_node_name + '.status in {success, failure}) : node_names.' + local_root_name + ';' + os.linesep
             cur_node_name = nodes[cur_node_name]['parent']
         # go through and add all the ancestors of the local root to a set for the purpose of resetting.
-        next_resume_from_node_string += (tab_indent(2) + 'next(' + LOCAL_ROOT_TREE_STRING + local_root_name + ') := ' + os.linesep
-                                         + tab_indent(3) + 'case' + os.linesep
-                                         + tab_indent(4) + 'active_node != -1 : ' + LOCAL_ROOT_TREE_STRING + local_root_name + ';' + os.linesep  # only change in between ticks.
+        next_resume_from_node_string += ('\t\tnext(' + LOCAL_ROOT_TREE_STRING + local_root_name + ') := ' + os.linesep
+                                         + '\t\t\tcase' + os.linesep
                                          + ancestor_string  # highest priority is reset
                                          + inject_string  # parallel_synch nodes have a special condition
                                          )
         if len(relevant_list) == 0:
             # this was solely for the purpose of skipping success nodes with parallel_synch nodes
             # since ancestor and inject_string already happened, we'll just exit with a default case
-            next_resume_from_node_string += ('\t\t\t\tTRUE : node_name.' + local_root_name + ';' + os.linesep
+            next_resume_from_node_string += ('\t\t\t\tTRUE : ' + local_root_id_str + ';' + os.linesep
                                              + '\t\t\tesac;' + os.linesep
                                              )
             continue
@@ -258,23 +265,23 @@ def create_resume_structure(nodes, local_root_to_relevant_list_map, node_name_to
             else:
                 for child_name in nodes[node_name]['children']:
                     if trace_running_source(child_name):
-                        cases += tab_indent(4) + '!(' + RUNNING_TRACE_STRING + child_name + ' = -2) : ' + RUNNING_TRACE_STRING + child_name + ';' + os.linesep
+                        cases += '\t\t\t\t!(trace_running_source_' + child_name + ' = -2) : trace_running_source_' + child_name + ';' + os.linesep
             if cases == '':
                 if node_name in relevant_list:
-                    define_trace_running_source += tab_indent(2) + RUNNING_TRACE_STRING + node_name + ' := (' + STATUS_STRING + node_name + ' = running) ? node_names.' + node_name + ' : -2;' + os.linesep
+                    define_trace_running_source += '\t\ttrace_running_source_' + node_name + ' := (' + node_name + '.status = running) ? node_names.' + node_name + ' : -2;' + os.linesep
                     return True
                 return False
             if node_name in relevant_list:
-                cases += tab_indent(4) + '(' + STATUS_STRING + node_name + ' = running) : node_names.' + node_name + ';' + os.linesep
-            define_trace_running_source += (tab_indent(2) + RUNNING_TRACE_STRING + node_name + ' := ' + os.linesep
-                                            + tab_indent(3) + 'case' + os.linesep
+                cases += '\t\t\t\t(' + node_name + '.status = running) : node_names.' + node_name + ';' + os.linesep
+            define_trace_running_source += ('\t\ttrace_running_source_' + node_name + ' := ' + os.linesep
+                                            + '\t\t\tcase' + os.linesep
                                             + cases
-                                            + tab_indent(4) + 'TRUE : -2;' + os.linesep
-                                            + tab_indent(3) + 'esac;' + os.linesep
+                                            + '\t\t\t\tTRUE : -2;' + os.linesep
+                                            + '\t\t\tesac;' + os.linesep
                                             )
             return True
         trace_running_source(local_root_name)
-        next_resume_from_node_string += ('\t\t\t\tTRUE : max(' + RUNNING_TRACE_STRING + local_root_name + ', node_names.' + local_root_name + ');' + os.linesep
+        next_resume_from_node_string += ('\t\t\t\tTRUE : max(trace_running_source_' + local_root_name + ', node_names.' + local_root_name + ');' + os.linesep
                                          # we didn't encounter any reset triggers, so we use trace_running_source
                                          # note that if trace_running_source = -2, then we're just setting to local_root_name.
                                          # if something returned running, the value will be > = local_root_name, so we'll point to that
@@ -324,19 +331,20 @@ def create_resume_point(nodes, node_to_local_root_name_map, local_root_to_releva
     for node_name in nodes:
         node = nodes[node_name]
         if not node['category'] == 'composite':
-            pass
-        elif not has_memory(node):
-            # doesn't have memory. we don't need to resume.
-            pass
-        elif len(node['children']) < 2:
+            continue
+        if node['type'] == 'parallel':
+            continue
+        if node['memory'] == '':
+            continue
+        if len(node['children']) < 2:
             # print('few children. skipping')
             # we have 0 or 1 children
             # if there are no children, then resume_point really doesn't matter,
             # but we need to pass a value
-            # if there is 1 child, then we never skip it, so resume_point really doesn't matter
-            pass
-        elif 'parallel' in node['type']:
-            # the parallel skip case is already handled, because that's just "is resume tree = -2"
+            # if there is 1 child, then we never skip it, so resume_point really doesn't matter,
+            # but we need to pass a value
+            # so regardless, we need to pass a value.
+            # hard code -2 into the node_with_memory in this case
             pass
         else:
             # print('multiple children')
@@ -346,11 +354,11 @@ def create_resume_point(nodes, node_to_local_root_name_map, local_root_to_releva
             # print(relevant_list)
             if len(relevant_list) == 0:
                 # print('no real resume children. hard coding -2')
-                resume_point_string += tab_indent(2) + CHILD_TRACK_STRING + node_name + ' := -2;' + os.linesep
+                resume_point_string += '\t\t' + CHILD_TRACK_STRING + node_name + ' := -2;' + os.linesep
             else:
                 # print('real resume target present. initiating')
-                resume_point_string += (tab_indent(2) + CHILD_TRACK_STRING + node_name + ' := ' + os.linesep
-                                        + tab_indent(3) + 'case' + os.linesep
+                resume_point_string += ('\t\t' + CHILD_TRACK_STRING + node_name + ' := ' + os.linesep
+                                        + '\t\t\tcase' + os.linesep
                                         )
                 descendants = node_to_descendants_map[node_name]
                 child_index_to_relevant_descendants_map = {}  # basically, we are going to use this to figure out where we need to point.
@@ -384,10 +392,10 @@ def create_resume_point(nodes, node_to_local_root_name_map, local_root_to_releva
                             # print(child_index_to_relevant_descendants_map)
 
                 for child_index in child_index_to_relevant_descendants_map:
-                    resume_point_string += tab_indent(4) + '(' + LOCAL_ROOT_TREE_STRING + local_root_name + ' in ' + str(child_index_to_relevant_descendants_map[child_index]) + ') : ' + str(child_index) + ';' + os.linesep
-                resume_point_string += (tab_indent(4) + 'TRUE : -2;' + os.linesep
+                    resume_point_string += '\t\t\t\t(' + LOCAL_ROOT_TREE_STRING + local_root_name + ' in ' + str(child_index_to_relevant_descendants_map[child_index]) + ') : ' + str(child_index) + ';' + os.linesep
+                resume_point_string += ('\t\t\t\tTRUE : -2;' + os.linesep
                                         # we have nothing to resume from
-                                        + tab_indent(3) + 'esac;' + os.linesep
+                                        + '\t\t\tesac;' + os.linesep
                                         )
 
     define_string = resume_point_string
@@ -396,6 +404,129 @@ def create_resume_point(nodes, node_to_local_root_name_map, local_root_to_releva
     next_string = ''
 
     return (define_string, var_string, init_string, next_string)
+
+
+def write_smv(nodes, variables, tick_condition, specifications, output_file = None, do_not_trim = False):
+    '''
+    basically a script to write the necessary information.
+    --
+    arguments
+    @ nodes := a dictionary from node names to a dictionary with info
+    @ variables := a dictionary from variable name to dict info
+    @ tick_condition := a string containing tick_condition
+    @ specifications := a string containing specifications
+    @ output_file := if none, will print. else, writes to the file
+    @ do_not_trim := if true, prevents the automatic removal of nodes that cannot run
+    --
+    return
+    NONE
+    --
+    effects
+    creates a string that can be used with nuXmv. Output printed either to a
+    specified file, or to the terminal.
+    '''
+    print('Number of nodes before pruning: ' + str(len(nodes)))
+
+    root_node_name = get_root_node(nodes)
+    refine_return_types(nodes, root_node_name)
+    refine_invalid(nodes, root_node_name)
+
+    if not do_not_trim:
+        nodes = prune_nodes(nodes)
+        root_node_name = get_root_node(nodes)
+
+    print('Number of nodes after pruning: ' + str(len(nodes)))
+
+    nodes_in_order = order_nodes(root_node_name, nodes)
+    node_name_to_number = map_node_name_to_number(nodes, nodes_in_order)
+
+    node_to_local_root_name_map = create_node_to_local_root_map(nodes, root_node_name)
+    (local_root_to_relevant_list_map, nodes_with_memory_to_relevant_descendants_map) = create_local_root_to_relevant_list_map(nodes, node_to_local_root_name_map, nodes_in_order)
+    node_to_descendants_map = create_node_to_descendants_map(nodes, root_node_name)
+
+    # ------------------------------------------------------------------------------------------------------------------------
+    # done with variable decleration, moving into string building.
+
+    define_string = ('MODULE main' + os.linesep
+                     + '\tCONSTANTS' + os.linesep
+                     + '\t\tsuccess, failure, running, invalid;' + os.linesep
+                     + '\tDEFINE' + os.linesep
+                     # + '\t\tstatuses := [' + ', '.join([(node_name + '.status') for node_name in nodes_in_order]) + '];' + os.linesep
+                     # + '\t\tactive := [' + ', '.join([(node_name + '.active') for node_name in nodes_in_order]) + '];' + os.linesep
+                     )
+
+    # ------------------------------------------------------------------------------------------------------------------------
+    var_string = ('\tVAR' + os.linesep
+                  + '\t\tnode_names : define_nodes;' + os.linesep
+                  # + '\t\tblackboard : blackboard_module(node_names, active);' + os.linesep
+                  )
+    # ------------------------------------------------------------------------------------------------------------------------
+    init_string = '\tASSIGN' + os.linesep
+    next_string = ''
+    # ------------------------------------------------------------------------------------------------------------------------
+
+    (new_define, new_var, new_init, new_next) = create_resume_structure(nodes, local_root_to_relevant_list_map, node_name_to_number)
+    define_string += new_define
+    var_string += new_var
+    init_string += new_init
+    next_string += new_next
+
+    (new_define, new_var, new_init, new_next) = create_resume_point(nodes, node_to_local_root_name_map, local_root_to_relevant_list_map, node_to_descendants_map, node_name_to_number)
+    define_string += new_define
+    var_string += new_var
+    init_string += new_init
+    next_string += new_next
+
+    (new_define, new_var, new_init, new_next) = create_nodes(nodes, root_node_name, node_name_to_number, tick_condition)
+    define_string += new_define
+    var_string += new_var
+    init_string += new_init
+    next_string += new_next
+
+    (new_define, new_frozen_var, new_var, new_init, new_next) = node_creator.create_blackboard(nodes, variables, root_node_name)
+    define_string += ('\t\t--START OF BLACKBOARD DEFINITIONS' + os.linesep
+                      + new_define
+                      + '\t\t--END OF BLACKBOARD DEFINITIONS' + os.linesep
+                      + (
+                          (
+                              '\tFROZENVAR' + os.linesep
+                              + '\t\t--START OF BLACKBOARD FROZENVAR' + os.linesep
+                              + new_frozen_var
+                              + '\t\t--END OF BLACKBOARD FROZENVAR' + os.linesep) if len(new_frozen_var) > 0 else '')
+                      )
+    var_string += ('\t\t--START OF BLACKBOARD VARIABLES DECLARATION' + os.linesep
+                   + new_var
+                   + '\t\t--END OF BLACKBOARD VARIABLES DECLARATION' + os.linesep)
+    init_string += ('\t\t--START OF BLACKBOARD VARIABLES INITIALIZATION' + os.linesep
+                    + new_init
+                    + '\t\t--END OF BLACKBOARD VARIABLES INITIALIZATION' + os.linesep)
+    next_string += ('\t\t--START OF BLACKBOARD VARIABLES TRANSITION' + os.linesep
+                    + new_next
+                    + '\t\t--END OF BLACKBOARD VARIABLES TRANSITION' + os.linesep)
+
+    nuxmv_string = define_string + var_string + init_string + next_string + os.linesep + (os.linesep).join(specifications) + os.linesep
+    # ------------------------------------------------------------------------------------------------------------------------
+
+    nuxmv_string += node_creator.create_names_module(node_name_to_number)
+    # nuxmv_string += node_creator.create_leaf()
+    nuxmv_string += ''.join([eval('node_creator.create_' + cur_thing[0] + '(' + cur_thing[1] + ')') for cur_thing in
+                             [*set([(format_node_type(node, False), str(len(node['children'])))
+                                    for node in nodes.values() if (node['category'] != 'leaf')])]])
+
+    module_string = ''.join([node['internal_status_module_code']
+                             for node in nodes.values() if ((node['category'] == 'leaf') and (node['internal_status_module_name'] is not None))])
+
+    module_string += ''.join([node_creator.create_status_module(statuses) for statuses in [*set([('_'.join([status for (status, possible) in [('success', node['return_possibilities']['success']), ('running', node['return_possibilities']['running']), ('failure', node['return_possibilities']['failure'])] if possible])) for node in nodes.values() if ((node['category'] == 'leaf') and (node['internal_status_module_name'] is None))])]])
+
+    nuxmv_string += module_string
+
+    if output_file is None:
+        print(nuxmv_string)
+    else:
+        with open(output_file, 'w') as f:
+            f.write(nuxmv_string)
+    return
+
 
 ##############################################################################
 # Main
@@ -434,12 +565,7 @@ def main():
     arg_parser = argparse.ArgumentParser()
     # python3 behaverify.py create_root_FILE create_root_METHOD --root_args root_args_ARGS --string_args string_args_ARGS --min_val min_val_INT --max_val max_val_INT --force_parallel_unsynch --no_seperate_variable_modules --module_input_file module_input_file --specs_input_file specs_FILE --gen_modules gen_modules_INT --output_file ouput_file_FILE --module_output_file module_output_file_FILE --blackboard_output_file blackboard_output_file_FILE --overwrite
     arg_parser.add_argument('input_file')
-    arg_parser.add_argument('--blackboard_input_file', default = None)
-    arg_parser.add_argument('--module_input_file', default = None)
-    arg_parser.add_argument('--specs_input_file', default = None)
     arg_parser.add_argument('--output_file', default = None)
-    arg_parser.add_argument('--blackboard_output_file', default = None)
-    arg_parser.add_argument('--module_output_file', default = None)
     arg_parser.add_argument('--do_not_trim', action = 'store_true')
     # arg_parser.add_argument('--overwrite', action = 'store_true')
     args = arg_parser.parse_args()
@@ -449,139 +575,8 @@ def main():
     tick_condition = temp['tick_condition']
     nodes = temp['nodes']
     variables = temp['variables']
-
-    STAGE_RE = re.compile(r'_stage_\d+')
-
-    def remove_stage(condition):
-        return STAGE_RE.sub('', condition)
-
-    specifications = map(remove_stage, temp['specifications'])
-
-    print('Number of nodes before pruning: ' + str(len(nodes)))
-
-    root_node_name = get_root_node(nodes)
-    refine_return_types(nodes, root_node_name)
-    refine_invalid(nodes, root_node_name)
-
-    if not args.do_not_trim:
-        nodes = prune_nodes(nodes)
-        root_node_name = get_root_node(nodes)
-
-    print('Number of nodes after pruning: ' + str(len(nodes)))
-
-    nodes_in_order = order_nodes(root_node_name, nodes)
-    node_name_to_number = map_node_name_to_number(nodes, nodes_in_order)
-
-    node_to_local_root_name_map = create_node_to_local_root_map(nodes, root_node_name)
-    (local_root_to_relevant_list_map, nodes_with_memory_to_relevant_descendants_map) = create_local_root_to_relevant_list_map(nodes, node_to_local_root_name_map, nodes_in_order)
-    node_to_descendants_map = create_node_to_descendants_map(nodes, root_node_name)
-
-    # ------------------------------------------------------------------------------------------------------------------------
-    # done with variable decleration, moving into string building.
-
-    define_string = ('MODULE main' + os.linesep
-                     + '\tCONSTANTS' + os.linesep
-                     + '\t\tsuccess, failure, running, invalid;' + os.linesep
-                     + '\tDEFINE' + os.linesep
-                     # + '\t\tstatuses := [' + ', '.join([(node_name + '_status') for node_name in nodes_in_order]) + '];' + os.linesep
-                     # + '\t\tactive := [' + ', '.join([(node_name + '.active') for node_name in nodes_in_order]) + '];' + os.linesep
-                     )
-
-    # ------------------------------------------------------------------------------------------------------------------------
-    var_string = ('\tVAR' + os.linesep
-                  + '\t\tnode_names : define_nodes;' + os.linesep
-                  + tab_indent(2) + 'active_node : -1..' + str(len(nodes_in_order)) + ';' + os.linesep
-                  )
-    # ------------------------------------------------------------------------------------------------------------------------
-    init_string = '\tASSIGN' + os.linesep
-    next_string = ''
-    # ------------------------------------------------------------------------------------------------------------------------
-
-    (new_define, new_var, new_init, new_next) = create_resume_structure(nodes, local_root_to_relevant_list_map, node_name_to_number)
-    define_string += new_define
-    var_string += new_var
-    init_string += new_init
-    next_string += new_next
-
-    (new_define, new_var, new_init, new_next) = create_resume_point(nodes, node_to_local_root_name_map, local_root_to_relevant_list_map, node_to_descendants_map, node_name_to_number)
-    define_string += new_define
-    var_string += new_var
-    init_string += new_init
-    next_string += new_next
-
-    (new_define, new_var, new_init, new_next) = create_statuses(nodes)
-    define_string += new_define
-    var_string += new_var
-    init_string += new_init
-    next_string += new_next
-
-    (new_define, new_var, new_init, new_next) = create_active_node(nodes, root_node_name, tick_condition)
-    define_string += new_define
-    var_string += new_var
-    init_string += new_init
-    next_string += new_next
-
-    (new_define, new_var, new_init, new_next) = create_next_child(nodes)
-    define_string += new_define
-    var_string += new_var
-    init_string += new_init
-    next_string += new_next
-
-    (new_define, new_var, new_init, new_next) = create_leaf_info(nodes)
-    define_string += new_define
-    var_string += new_var
-    init_string += new_init
-    next_string += new_next
-
-    (new_define, new_frozen_var, new_var, new_init, new_next) = node_creator.create_blackboard(nodes, variables, root_node_name, tick_condition)
-    define_string += ('\t\t--START OF BLACKBOARD DEFINITIONS' + os.linesep
-                      + new_define
-                      + '\t\t--END OF BLACKBOARD DEFINITIONS' + os.linesep
-                      + (
-                          (
-                              '\tFROZENVAR' + os.linesep
-                              + '\t\t--START OF BLACKBOARD FROZENVAR' + os.linesep
-                              + new_frozen_var
-                              + '\t\t--END OF BLACKBOARD FROZENVAR' + os.linesep) if len(new_frozen_var) > 0 else '')
-                      )
-    var_string += ('\t\t--START OF BLACKBOARD VARIABLES DECLARATION' + os.linesep
-                   + new_var
-                   + '\t\t--END OF BLACKBOARD VARIABLES DECLARATION' + os.linesep)
-    init_string += ('\t\t--START OF BLACKBOARD VARIABLES INITIALIZATION' + os.linesep
-                    + new_init
-                    + '\t\t--END OF BLACKBOARD VARIABLES INITIALIZATION' + os.linesep)
-    next_string += ('\t\t--START OF BLACKBOARD VARIABLES TRANSITION' + os.linesep
-                    + new_next
-                    + '\t\t--END OF BLACKBOARD VARIABLES TRANSITION' + os.linesep)
-
-    nuxmv_string = define_string + var_string + init_string + next_string + os.linesep + (os.linesep).join(specifications) + os.linesep
-    # ------------------------------------------------------------------------------------------------------------------------
-    if args.specs_input_file:
-        nuxmv_string += open(args.specs_input_file).read() + os.linesep + os.linesep
-
-    nuxmv_string += node_creator.create_names_module(node_name_to_number)
-
-    if args.module_input_file:
-        nuxmv_string = nuxmv_string + open(args.module_input_file).read()
-    else:
-
-        module_string = ''.join([node['internal_status_module_code']
-                                 for node in nodes.values() if ((node['category'] == 'leaf') and (node['internal_status_module_name'] is not None))])
-
-        module_string += ''.join([node_creator.create_status_module(statuses) for statuses in [*set([('_'.join([status for (status, possible) in [('success', node['return_possibilities']['success']), ('running', node['return_possibilities']['running']), ('failure', node['return_possibilities']['failure'])] if possible])) for node in nodes.values() if ((node['category'] == 'leaf') and (node['internal_status_module_name'] is None))])]])
-
-        nuxmv_string += module_string
-        if args.module_output_file is None:
-            pass
-        else:
-            with open(args.module_output_file, 'w') as f:
-                f.write(module_string)
-
-    if args.output_file is None:
-        print(nuxmv_string)
-    else:
-        with open(args.output_file, 'w') as f:
-            f.write(nuxmv_string)
+    specifications = temp['specifications']
+    write_smv(nodes, variables, tick_condition, specifications, args.output_file, args.do_not_trim)
     return
 
 

@@ -1,0 +1,2 @@
+node creator: all composite nodes rewritten.
+behaverify to smv: create_composite (with memory and without memory), changing how nuxmv_string is built (adds modules differently)
