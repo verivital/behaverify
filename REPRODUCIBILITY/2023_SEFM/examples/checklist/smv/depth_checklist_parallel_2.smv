@@ -5,22 +5,24 @@ MODULE main
 		resume_from_here_in_subtree__parLink1 := -3;
 		resume_from_here_in_subtree__sel0 := -3;
 		resume_from_here_in_subtree__sel1 := -3;
-		next_child__parLink1 := 
-			case
-				(previous_node < node_names.sel0) : node_names.sel0;
-				(previous_node < node_names.sel1) : node_names.sel1;
-				TRUE : -1;
-			esac;
+		child_index_to_resume_from__sel0 := -2;
+		child_index_to_resume_from__sel1 := -2;
 		next_child__sel0 := 
 			case
-				(previous_node < node_names.success_failure_node) : node_names.success_failure_node;
-				(previous_node < node_names.success_node) : node_names.success_node;
+				(previous_node < node_names.success_failure_node)& (child_index_to_resume_from__sel0 <= 0) : node_names.success_failure_node;
+				(previous_node < node_names.success_node)& (child_index_to_resume_from__sel0 <= 1) : node_names.success_node;
 				TRUE : -1;
 			esac;
 		next_child__sel1 := 
 			case
-				(previous_node < node_names.success_failure_node_1) : node_names.success_failure_node_1;
-				(previous_node < node_names.success_node_1) : node_names.success_node_1;
+				(previous_node < node_names.success_failure_node_1)& (child_index_to_resume_from__sel1 <= 0) : node_names.success_failure_node_1;
+				(previous_node < node_names.success_node_1)& (child_index_to_resume_from__sel1 <= 1) : node_names.success_node_1;
+				TRUE : -1;
+			esac;
+		next_child__parLink1 := 
+			case
+				(previous_node < node_names.sel0)& !(resume_from_here_in_subtree__sel0 = -2) : node_names.sel0;
+				(previous_node < node_names.sel1)& !(resume_from_here_in_subtree__sel1 = -2) : node_names.sel1;
 				TRUE : -1;
 			esac;
 		--START OF BLACKBOARD DEFINITIONS
@@ -33,8 +35,7 @@ MODULE main
 		previous_status : {success, running, failure, invalid};
 		parallel_status_depth__0 : {success, running, failure};
 		--START OF BLACKBOARD VARIABLES DECLARATION
-		success_failure_node_1_DOT_randomizer : boolean;
-		success_failure_node_DOT_randomizer : boolean;
+		randomizer : boolean;
 		--END OF BLACKBOARD VARIABLES DECLARATION
 	ASSIGN
 		init(active_node) := -1;
@@ -42,11 +43,7 @@ MODULE main
 		init(previous_status) := invalid;
 		init(parallel_status_depth__0) := failure;
 		--START OF BLACKBOARD VARIABLES INITIALIZATION
-		init(success_failure_node_1_DOT_randomizer) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_DOT_randomizer) := 
+		init(randomizer) := 
 			case
 				TRUE : FALSE;
 			esac;
@@ -55,58 +52,56 @@ MODULE main
 			case
 				active_node = -1 & TRUE : node_names.parLink1;
 				active_node = -1 & !(TRUE) : -1;
-				(active_node = node_names.parLink1) & (current_status != invalid) : -1;
-				(active_node = node_names.parLink1) & (current_status = invalid) : next_child__parLink1;
+				(active_node = node_names.success_failure_node) & (current_status != invalid) : node_names.sel0;
+				(active_node = node_names.success_node) & (current_status != invalid) : node_names.sel0;
 				(active_node = node_names.sel0) & (current_status != invalid) : node_names.parLink1;
 				(active_node = node_names.sel0) & (current_status = invalid) : next_child__sel0;
+				(active_node = node_names.success_failure_node_1) & (current_status != invalid) : node_names.sel1;
+				(active_node = node_names.success_node_1) & (current_status != invalid) : node_names.sel1;
 				(active_node = node_names.sel1) & (current_status != invalid) : node_names.parLink1;
 				(active_node = node_names.sel1) & (current_status = invalid) : next_child__sel1;
-				(active_node = node_names.success_failure_node) & (current_status != invalid) : node_names.sel0;
-				(active_node = node_names.success_failure_node_1) & (current_status != invalid) : node_names.sel1;
-				(active_node = node_names.success_node) & (current_status != invalid) : node_names.sel0;
-				(active_node = node_names.success_node_1) & (current_status != invalid) : node_names.sel1;
+				(active_node = node_names.parLink1) & (current_status != invalid) : -1;
+				(active_node = node_names.parLink1) & (current_status = invalid) : next_child__parLink1;
 				TRUE : active_node;
 			esac;
 		next(previous_node) := active_node;
 		current_status :=
 			case
-				(active_node = node_names.parLink1) & (next_child__parLink1 = -1) : parallel_status_depth__0;
-				(active_node = node_names.parLink1) : invalid;
+				(active_node = node_names.success_failure_node) & randomizer : success;
+				(active_node = node_names.success_failure_node) & TRUE : failure;
+				(active_node = node_names.success_node) : success;
 				(active_node = node_names.sel0) & (previous_status = running) : running;
 				(active_node = node_names.sel0) & (previous_status = success) : success;
 				(active_node = node_names.sel0) & (next_child__sel0 = -1) : failure;
 				(active_node = node_names.sel0) : invalid;
+				(active_node = node_names.success_failure_node_1) & randomizer : success;
+				(active_node = node_names.success_failure_node_1) & TRUE : failure;
+				(active_node = node_names.success_node_1) : success;
 				(active_node = node_names.sel1) & (previous_status = running) : running;
 				(active_node = node_names.sel1) & (previous_status = success) : success;
 				(active_node = node_names.sel1) & (next_child__sel1 = -1) : failure;
 				(active_node = node_names.sel1) : invalid;
-				(active_node = node_names.success_failure_node) & success_failure_node_DOT_randomizer : success;
-				(active_node = node_names.success_failure_node) & TRUE : failure;
-				(active_node = node_names.success_failure_node_1) & success_failure_node_1_DOT_randomizer : success;
-				(active_node = node_names.success_failure_node_1) & TRUE : failure;
-				(active_node = node_names.success_node) : success;
-				(active_node = node_names.success_node_1) : success;
+				(active_node = node_names.parLink1) & (next_child__parLink1 = -1) : parallel_status_depth__0;
+				(active_node = node_names.parLink1) : invalid;
 				TRUE : invalid;
 			esac;
 		next(previous_status) := current_status;
 		next(parallel_status_depth__0) := 
 			case
 				next(active_node) = -1 : failure;
-				(next(active_node) = node_names.parLink1) & (current_status = invalid) : success;
+				(next(active_node) = node_names.parLink1) & (current_status = invalid) : running;
 				(next(active_node) = node_names.parLink1) & (current_status = failure) : failure;
-				(next(active_node) = node_names.parLink1) & (current_status = running) : running;
+				(next(active_node) = node_names.parLink1) & (current_status = success) : success;
 				TRUE : parallel_status_depth__0;
 			esac;
 		--START OF BLACKBOARD VARIABLES TRANSITION
-		next(success_failure_node_1_DOT_randomizer) :=
+		next(randomizer) :=
 			case
-				(active_node = node_names.success_failure_node_1) & !(current_status = invalid) & (TRUE) : {TRUE, FALSE};
-				TRUE : success_failure_node_1_DOT_randomizer;
-			esac;
-		next(success_failure_node_DOT_randomizer) :=
-			case
+				(active_node = node_names.success_failure_node) & !(current_status = invalid) & (!(TRUE)) : randomizer;
 				(active_node = node_names.success_failure_node) & !(current_status = invalid) & (TRUE) : {TRUE, FALSE};
-				TRUE : success_failure_node_DOT_randomizer;
+				(active_node = node_names.success_failure_node_1) & !(current_status = invalid) & (!(TRUE)) : randomizer;
+				(active_node = node_names.success_failure_node_1) & !(current_status = invalid) & (TRUE) : {TRUE, FALSE};
+				TRUE : randomizer;
 			esac;
 		--END OF BLACKBOARD VARIABLES TRANSITION
 

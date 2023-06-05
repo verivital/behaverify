@@ -1,0 +1,3 @@
+node creator -> replaced with old aut_node_creator
+behaverify to smv -> replaced with old aut_behaverify_to_smv, added write_smv method.
+dsl to behaverify -> replace code for internal_status_module_code

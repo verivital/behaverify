@@ -15,33 +15,27 @@ MODULE main
 		resume_from_here_in_subtree__parallel1 := -3;
 		resume_from_here_in_subtree__decorator0 := -3;
 		resume_from_here_in_subtree__decorator1 := -3;
-		status__bigger_fish := bigger_fish.status;
-		status__biggest_fish_is0 := biggest_fish_is0.status;
-		status__biggest_fish_is1 := biggest_fish_is1.status;
-		status__biggest_fish_is2 := biggest_fish_is2.status;
-		status__biggest_fish_is3 := biggest_fish_is3.status;
-		status__biggest_fish_is4 := biggest_fish_is4.status;
-		status__biggest_fish_is5 := biggest_fish_is5.status;
+		child_index_to_resume_from__biggest_fish_sequence := -2;
 		status__biggest_fish_is6 := biggest_fish_is6.status;
-		status__biggest_fish_is7 := biggest_fish_is7.status;
-		status__biggest_fish_is8 := biggest_fish_is8.status;
-		status__biggest_fish_is9 := biggest_fish_is9.status;
-		status__biggest_fish_sequence := 
-			case
-				status__special_decorator != success : status__special_decorator;
-				status__bigger_fish != success : status__bigger_fish;
-				TRUE : success;
-			esac;
-		status__decorator0 := status__biggest_fish_is0 = failure ? running : status__biggest_fish_is0;
-		status__decorator1 := status__biggest_fish_is1 = failure ? running : status__biggest_fish_is1;
-		status__decorator2 := status__biggest_fish_is2 = failure ? running : status__biggest_fish_is2;
-		status__decorator3 := status__biggest_fish_is3 = failure ? running : status__biggest_fish_is3;
-		status__decorator4 := status__biggest_fish_is4 = failure ? running : status__biggest_fish_is4;
-		status__decorator5 := status__biggest_fish_is5 = failure ? running : status__biggest_fish_is5;
 		status__decorator6 := status__biggest_fish_is6 = failure ? running : status__biggest_fish_is6;
+		status__biggest_fish_is7 := biggest_fish_is7.status;
 		status__decorator7 := status__biggest_fish_is7 = failure ? running : status__biggest_fish_is7;
+		status__biggest_fish_is8 := biggest_fish_is8.status;
 		status__decorator8 := status__biggest_fish_is8 = failure ? running : status__biggest_fish_is8;
+		status__biggest_fish_is9 := biggest_fish_is9.status;
 		status__decorator9 := status__biggest_fish_is9 = failure ? running : status__biggest_fish_is9;
+		status__biggest_fish_is2 := biggest_fish_is2.status;
+		status__decorator2 := status__biggest_fish_is2 = failure ? running : status__biggest_fish_is2;
+		status__biggest_fish_is3 := biggest_fish_is3.status;
+		status__decorator3 := status__biggest_fish_is3 = failure ? running : status__biggest_fish_is3;
+		status__biggest_fish_is4 := biggest_fish_is4.status;
+		status__decorator4 := status__biggest_fish_is4 = failure ? running : status__biggest_fish_is4;
+		status__biggest_fish_is5 := biggest_fish_is5.status;
+		status__decorator5 := status__biggest_fish_is5 = failure ? running : status__biggest_fish_is5;
+		status__biggest_fish_is0 := biggest_fish_is0.status;
+		status__decorator0 := status__biggest_fish_is0 = failure ? running : status__biggest_fish_is0;
+		status__biggest_fish_is1 := biggest_fish_is1.status;
+		status__decorator1 := status__biggest_fish_is1 = failure ? running : status__biggest_fish_is1;
 		status__parallel1 := 
 			case
 				(status__decorator0 = failure) | (status__decorator0 = invalid) : status__decorator0;
@@ -79,57 +73,50 @@ MODULE main
 				TRUE : running;
 			esac;
 		status__special_decorator := status__parallel9 = running ? failure : status__parallel9;
-		next_child__biggest_fish_sequence := 
+		status__bigger_fish := bigger_fish.status;
+		status__biggest_fish_sequence := 
 			case
-				(status__special_decorator = invalid) : node_names.special_decorator;
-				(status__bigger_fish = invalid) : node_names.bigger_fish;
+				status__special_decorator != success : status__special_decorator;
+				status__bigger_fish != success : status__bigger_fish;
+				TRUE : success;
 			esac;
-		next_child__decorator0 := node_names.biggest_fish_is0;
-		next_child__decorator1 := node_names.biggest_fish_is1;
-		next_child__decorator2 := node_names.biggest_fish_is2;
-		next_child__decorator3 := node_names.biggest_fish_is3;
-		next_child__decorator4 := node_names.biggest_fish_is4;
-		next_child__decorator5 := node_names.biggest_fish_is5;
 		next_child__decorator6 := node_names.biggest_fish_is6;
 		next_child__decorator7 := node_names.biggest_fish_is7;
 		next_child__decorator8 := node_names.biggest_fish_is8;
 		next_child__decorator9 := node_names.biggest_fish_is9;
+		next_child__decorator2 := node_names.biggest_fish_is2;
+		next_child__decorator3 := node_names.biggest_fish_is3;
+		next_child__decorator4 := node_names.biggest_fish_is4;
+		next_child__decorator5 := node_names.biggest_fish_is5;
+		next_child__decorator0 := node_names.biggest_fish_is0;
+		next_child__decorator1 := node_names.biggest_fish_is1;
 		next_child__parallel1 := 
 			case
-				(status__decorator0 = invalid) : node_names.decorator0;
-				(status__decorator1 = invalid) : node_names.decorator1;
+				(status__decorator0 = invalid)& !(resume_from_here_in_subtree__decorator0 = -2) : node_names.decorator0;
+				(status__decorator1 = invalid)& !(resume_from_here_in_subtree__decorator1 = -2) : node_names.decorator1;
 			esac;
 		next_child__parallel5 := 
 			case
-				(status__decorator2 = invalid) : node_names.decorator2;
-				(status__decorator3 = invalid) : node_names.decorator3;
-				(status__decorator4 = invalid) : node_names.decorator4;
-				(status__decorator5 = invalid) : node_names.decorator5;
-				(status__parallel1 = invalid) : node_names.parallel1;
+				(status__decorator2 = invalid)& !(resume_from_here_in_subtree__decorator2 = -2) : node_names.decorator2;
+				(status__decorator3 = invalid)& !(resume_from_here_in_subtree__decorator3 = -2) : node_names.decorator3;
+				(status__decorator4 = invalid)& !(resume_from_here_in_subtree__decorator4 = -2) : node_names.decorator4;
+				(status__decorator5 = invalid)& !(resume_from_here_in_subtree__decorator5 = -2) : node_names.decorator5;
+				(status__parallel1 = invalid)& !(resume_from_here_in_subtree__parallel1 = -2) : node_names.parallel1;
 			esac;
 		next_child__parallel9 := 
 			case
-				(status__decorator6 = invalid) : node_names.decorator6;
-				(status__decorator7 = invalid) : node_names.decorator7;
-				(status__decorator8 = invalid) : node_names.decorator8;
-				(status__decorator9 = invalid) : node_names.decorator9;
-				(status__parallel5 = invalid) : node_names.parallel5;
+				(status__decorator6 = invalid)& !(resume_from_here_in_subtree__decorator6 = -2) : node_names.decorator6;
+				(status__decorator7 = invalid)& !(resume_from_here_in_subtree__decorator7 = -2) : node_names.decorator7;
+				(status__decorator8 = invalid)& !(resume_from_here_in_subtree__decorator8 = -2) : node_names.decorator8;
+				(status__decorator9 = invalid)& !(resume_from_here_in_subtree__decorator9 = -2) : node_names.decorator9;
+				(status__parallel5 = invalid)& !(resume_from_here_in_subtree__parallel5 = -2) : node_names.parallel5;
 			esac;
 		next_child__special_decorator := node_names.parallel9;
-		bigger_fish.active := active_node = node_names.bigger_fish;
-		bigger_fish.reset := active_node = -1;
-		biggest_fish_is0.active := active_node = node_names.biggest_fish_is0;
-		biggest_fish_is0.reset := active_node = -1;
-		biggest_fish_is1.active := active_node = node_names.biggest_fish_is1;
-		biggest_fish_is1.reset := active_node = -1;
-		biggest_fish_is2.active := active_node = node_names.biggest_fish_is2;
-		biggest_fish_is2.reset := active_node = -1;
-		biggest_fish_is3.active := active_node = node_names.biggest_fish_is3;
-		biggest_fish_is3.reset := active_node = -1;
-		biggest_fish_is4.active := active_node = node_names.biggest_fish_is4;
-		biggest_fish_is4.reset := active_node = -1;
-		biggest_fish_is5.active := active_node = node_names.biggest_fish_is5;
-		biggest_fish_is5.reset := active_node = -1;
+		next_child__biggest_fish_sequence := 
+			case
+				(status__special_decorator = invalid)& (child_index_to_resume_from__biggest_fish_sequence <= 0) : node_names.special_decorator;
+				(status__bigger_fish = invalid)& (child_index_to_resume_from__biggest_fish_sequence <= 1) : node_names.bigger_fish;
+			esac;
 		biggest_fish_is6.active := active_node = node_names.biggest_fish_is6;
 		biggest_fish_is6.reset := active_node = -1;
 		biggest_fish_is7.active := active_node = node_names.biggest_fish_is7;
@@ -138,29 +125,43 @@ MODULE main
 		biggest_fish_is8.reset := active_node = -1;
 		biggest_fish_is9.active := active_node = node_names.biggest_fish_is9;
 		biggest_fish_is9.reset := active_node = -1;
+		biggest_fish_is2.active := active_node = node_names.biggest_fish_is2;
+		biggest_fish_is2.reset := active_node = -1;
+		biggest_fish_is3.active := active_node = node_names.biggest_fish_is3;
+		biggest_fish_is3.reset := active_node = -1;
+		biggest_fish_is4.active := active_node = node_names.biggest_fish_is4;
+		biggest_fish_is4.reset := active_node = -1;
+		biggest_fish_is5.active := active_node = node_names.biggest_fish_is5;
+		biggest_fish_is5.reset := active_node = -1;
+		biggest_fish_is0.active := active_node = node_names.biggest_fish_is0;
+		biggest_fish_is0.reset := active_node = -1;
+		biggest_fish_is1.active := active_node = node_names.biggest_fish_is1;
+		biggest_fish_is1.reset := active_node = -1;
+		bigger_fish.active := active_node = node_names.bigger_fish;
+		bigger_fish.reset := active_node = -1;
 		--START OF BLACKBOARD DEFINITIONS
 		--END OF BLACKBOARD DEFINITIONS
 	VAR
 		node_names : define_nodes;
 		active_node : -1..26;
+		biggest_fish_is6 : biggest_fish_is6_module(biggest_fish);
+		biggest_fish_is7 : biggest_fish_is7_module(biggest_fish);
+		biggest_fish_is8 : biggest_fish_is8_module(biggest_fish);
+		biggest_fish_is9 : biggest_fish_is9_module(biggest_fish);
+		biggest_fish_is2 : biggest_fish_is2_module(biggest_fish);
+		biggest_fish_is3 : biggest_fish_is3_module(biggest_fish);
+		biggest_fish_is4 : biggest_fish_is4_module(biggest_fish);
+		biggest_fish_is5 : biggest_fish_is5_module(biggest_fish);
+		biggest_fish_is0 : biggest_fish_is0_module(biggest_fish);
+		biggest_fish_is1 : biggest_fish_is1_module(biggest_fish);
 		bigger_fish : success_DEFAULT_module;
-		biggest_fish_is0 : biggest_fish_is0_module(var_biggest_fish);
-		biggest_fish_is1 : biggest_fish_is1_module(var_biggest_fish);
-		biggest_fish_is2 : biggest_fish_is2_module(var_biggest_fish);
-		biggest_fish_is3 : biggest_fish_is3_module(var_biggest_fish);
-		biggest_fish_is4 : biggest_fish_is4_module(var_biggest_fish);
-		biggest_fish_is5 : biggest_fish_is5_module(var_biggest_fish);
-		biggest_fish_is6 : biggest_fish_is6_module(var_biggest_fish);
-		biggest_fish_is7 : biggest_fish_is7_module(var_biggest_fish);
-		biggest_fish_is8 : biggest_fish_is8_module(var_biggest_fish);
-		biggest_fish_is9 : biggest_fish_is9_module(var_biggest_fish);
 		--START OF BLACKBOARD VARIABLES DECLARATION
-		var_biggest_fish : 0..199;
+		biggest_fish : 0..199;
 		--END OF BLACKBOARD VARIABLES DECLARATION
 	ASSIGN
 		init(active_node) := -1;
 		--START OF BLACKBOARD VARIABLES INITIALIZATION
-		init(var_biggest_fish) := 
+		init(biggest_fish) := 
 			case
 				TRUE : 0;
 			esac;
@@ -169,39 +170,36 @@ MODULE main
 			case
 				active_node = -1 & TRUE : node_names.biggest_fish_sequence;
 				active_node = -1 & !(TRUE) : -1;
-				(active_node = node_names.bigger_fish) & (status__bigger_fish != invalid) : node_names.biggest_fish_sequence;
-				(active_node = node_names.biggest_fish_is0) & (status__biggest_fish_is0 != invalid) : node_names.decorator0;
-				(active_node = node_names.biggest_fish_is1) & (status__biggest_fish_is1 != invalid) : node_names.decorator1;
-				(active_node = node_names.biggest_fish_is2) & (status__biggest_fish_is2 != invalid) : node_names.decorator2;
-				(active_node = node_names.biggest_fish_is3) & (status__biggest_fish_is3 != invalid) : node_names.decorator3;
-				(active_node = node_names.biggest_fish_is4) & (status__biggest_fish_is4 != invalid) : node_names.decorator4;
-				(active_node = node_names.biggest_fish_is5) & (status__biggest_fish_is5 != invalid) : node_names.decorator5;
 				(active_node = node_names.biggest_fish_is6) & (status__biggest_fish_is6 != invalid) : node_names.decorator6;
-				(active_node = node_names.biggest_fish_is7) & (status__biggest_fish_is7 != invalid) : node_names.decorator7;
-				(active_node = node_names.biggest_fish_is8) & (status__biggest_fish_is8 != invalid) : node_names.decorator8;
-				(active_node = node_names.biggest_fish_is9) & (status__biggest_fish_is9 != invalid) : node_names.decorator9;
-				(active_node = node_names.biggest_fish_sequence) & (status__biggest_fish_sequence != invalid) : -1;
-				(active_node = node_names.biggest_fish_sequence) & (status__biggest_fish_sequence = invalid) : next_child__biggest_fish_sequence;
-				(active_node = node_names.decorator0) & (status__decorator0 != invalid) : node_names.parallel1;
-				(active_node = node_names.decorator0) & (status__decorator0 = invalid) : next_child__decorator0;
-				(active_node = node_names.decorator1) & (status__decorator1 != invalid) : node_names.parallel1;
-				(active_node = node_names.decorator1) & (status__decorator1 = invalid) : next_child__decorator1;
-				(active_node = node_names.decorator2) & (status__decorator2 != invalid) : node_names.parallel5;
-				(active_node = node_names.decorator2) & (status__decorator2 = invalid) : next_child__decorator2;
-				(active_node = node_names.decorator3) & (status__decorator3 != invalid) : node_names.parallel5;
-				(active_node = node_names.decorator3) & (status__decorator3 = invalid) : next_child__decorator3;
-				(active_node = node_names.decorator4) & (status__decorator4 != invalid) : node_names.parallel5;
-				(active_node = node_names.decorator4) & (status__decorator4 = invalid) : next_child__decorator4;
-				(active_node = node_names.decorator5) & (status__decorator5 != invalid) : node_names.parallel5;
-				(active_node = node_names.decorator5) & (status__decorator5 = invalid) : next_child__decorator5;
 				(active_node = node_names.decorator6) & (status__decorator6 != invalid) : node_names.parallel9;
 				(active_node = node_names.decorator6) & (status__decorator6 = invalid) : next_child__decorator6;
+				(active_node = node_names.biggest_fish_is7) & (status__biggest_fish_is7 != invalid) : node_names.decorator7;
 				(active_node = node_names.decorator7) & (status__decorator7 != invalid) : node_names.parallel9;
 				(active_node = node_names.decorator7) & (status__decorator7 = invalid) : next_child__decorator7;
+				(active_node = node_names.biggest_fish_is8) & (status__biggest_fish_is8 != invalid) : node_names.decorator8;
 				(active_node = node_names.decorator8) & (status__decorator8 != invalid) : node_names.parallel9;
 				(active_node = node_names.decorator8) & (status__decorator8 = invalid) : next_child__decorator8;
+				(active_node = node_names.biggest_fish_is9) & (status__biggest_fish_is9 != invalid) : node_names.decorator9;
 				(active_node = node_names.decorator9) & (status__decorator9 != invalid) : node_names.parallel9;
 				(active_node = node_names.decorator9) & (status__decorator9 = invalid) : next_child__decorator9;
+				(active_node = node_names.biggest_fish_is2) & (status__biggest_fish_is2 != invalid) : node_names.decorator2;
+				(active_node = node_names.decorator2) & (status__decorator2 != invalid) : node_names.parallel5;
+				(active_node = node_names.decorator2) & (status__decorator2 = invalid) : next_child__decorator2;
+				(active_node = node_names.biggest_fish_is3) & (status__biggest_fish_is3 != invalid) : node_names.decorator3;
+				(active_node = node_names.decorator3) & (status__decorator3 != invalid) : node_names.parallel5;
+				(active_node = node_names.decorator3) & (status__decorator3 = invalid) : next_child__decorator3;
+				(active_node = node_names.biggest_fish_is4) & (status__biggest_fish_is4 != invalid) : node_names.decorator4;
+				(active_node = node_names.decorator4) & (status__decorator4 != invalid) : node_names.parallel5;
+				(active_node = node_names.decorator4) & (status__decorator4 = invalid) : next_child__decorator4;
+				(active_node = node_names.biggest_fish_is5) & (status__biggest_fish_is5 != invalid) : node_names.decorator5;
+				(active_node = node_names.decorator5) & (status__decorator5 != invalid) : node_names.parallel5;
+				(active_node = node_names.decorator5) & (status__decorator5 = invalid) : next_child__decorator5;
+				(active_node = node_names.biggest_fish_is0) & (status__biggest_fish_is0 != invalid) : node_names.decorator0;
+				(active_node = node_names.decorator0) & (status__decorator0 != invalid) : node_names.parallel1;
+				(active_node = node_names.decorator0) & (status__decorator0 = invalid) : next_child__decorator0;
+				(active_node = node_names.biggest_fish_is1) & (status__biggest_fish_is1 != invalid) : node_names.decorator1;
+				(active_node = node_names.decorator1) & (status__decorator1 != invalid) : node_names.parallel1;
+				(active_node = node_names.decorator1) & (status__decorator1 = invalid) : next_child__decorator1;
 				(active_node = node_names.parallel1) & (status__parallel1 != invalid) : node_names.parallel5;
 				(active_node = node_names.parallel1) & (status__parallel1 = invalid) : next_child__parallel1;
 				(active_node = node_names.parallel5) & (status__parallel5 != invalid) : node_names.parallel9;
@@ -210,18 +208,21 @@ MODULE main
 				(active_node = node_names.parallel9) & (status__parallel9 = invalid) : next_child__parallel9;
 				(active_node = node_names.special_decorator) & (status__special_decorator != invalid) : node_names.biggest_fish_sequence;
 				(active_node = node_names.special_decorator) & (status__special_decorator = invalid) : next_child__special_decorator;
+				(active_node = node_names.bigger_fish) & (status__bigger_fish != invalid) : node_names.biggest_fish_sequence;
+				(active_node = node_names.biggest_fish_sequence) & (status__biggest_fish_sequence != invalid) : -1;
+				(active_node = node_names.biggest_fish_sequence) & (status__biggest_fish_sequence = invalid) : next_child__biggest_fish_sequence;
 				TRUE : active_node;
 			esac;
 		--START OF BLACKBOARD VARIABLES TRANSITION
-		next(var_biggest_fish) :=
+		next(biggest_fish) :=
 			case
-				(active_node = -1) & !(status__bigger_fish = invalid) & (TRUE) : min((1 + var_biggest_fish), 199);
-				TRUE : var_biggest_fish;
+				(active_node = -1) & !(status__bigger_fish = invalid) & (TRUE) : min((1 + biggest_fish), 199);
+				TRUE : biggest_fish;
 			esac;
 		--END OF BLACKBOARD VARIABLES TRANSITION
 
-LTLSPEC F(G((var_biggest_fish = 10)));
-CTLSPEC AF(AG((var_biggest_fish = 10)));
+LTLSPEC F(G((biggest_fish = 10)));
+CTLSPEC AF(AG((biggest_fish = 10)));
 MODULE define_nodes
 	DEFINE
 		biggest_fish_sequence := 0;
@@ -250,7 +251,7 @@ MODULE define_nodes
 		decorator1 := 23;
 		biggest_fish_is1 := 24;
 		bigger_fish := 25;
-MODULE biggest_fish_is0_module(var_biggest_fish)
+MODULE biggest_fish_is6_module(biggest_fish)
 	CONSTANTS
 		success, failure, running, invalid;
 	VAR
@@ -261,10 +262,10 @@ MODULE biggest_fish_is0_module(var_biggest_fish)
 			case
 				reset : invalid;
 				!(active) : status;
-				(var_biggest_fish = 0) : success;
+				(biggest_fish = 6) : success;
 				TRUE : failure;
 			esac;
-MODULE biggest_fish_is1_module(var_biggest_fish)
+MODULE biggest_fish_is7_module(biggest_fish)
 	CONSTANTS
 		success, failure, running, invalid;
 	VAR
@@ -275,10 +276,10 @@ MODULE biggest_fish_is1_module(var_biggest_fish)
 			case
 				reset : invalid;
 				!(active) : status;
-				(var_biggest_fish = 1) : success;
+				(biggest_fish = 7) : success;
 				TRUE : failure;
 			esac;
-MODULE biggest_fish_is2_module(var_biggest_fish)
+MODULE biggest_fish_is8_module(biggest_fish)
 	CONSTANTS
 		success, failure, running, invalid;
 	VAR
@@ -289,10 +290,10 @@ MODULE biggest_fish_is2_module(var_biggest_fish)
 			case
 				reset : invalid;
 				!(active) : status;
-				(var_biggest_fish = 2) : success;
+				(biggest_fish = 8) : success;
 				TRUE : failure;
 			esac;
-MODULE biggest_fish_is3_module(var_biggest_fish)
+MODULE biggest_fish_is9_module(biggest_fish)
 	CONSTANTS
 		success, failure, running, invalid;
 	VAR
@@ -303,10 +304,10 @@ MODULE biggest_fish_is3_module(var_biggest_fish)
 			case
 				reset : invalid;
 				!(active) : status;
-				(var_biggest_fish = 3) : success;
+				(biggest_fish = 9) : success;
 				TRUE : failure;
 			esac;
-MODULE biggest_fish_is4_module(var_biggest_fish)
+MODULE biggest_fish_is2_module(biggest_fish)
 	CONSTANTS
 		success, failure, running, invalid;
 	VAR
@@ -317,10 +318,10 @@ MODULE biggest_fish_is4_module(var_biggest_fish)
 			case
 				reset : invalid;
 				!(active) : status;
-				(var_biggest_fish = 4) : success;
+				(biggest_fish = 2) : success;
 				TRUE : failure;
 			esac;
-MODULE biggest_fish_is5_module(var_biggest_fish)
+MODULE biggest_fish_is3_module(biggest_fish)
 	CONSTANTS
 		success, failure, running, invalid;
 	VAR
@@ -331,10 +332,10 @@ MODULE biggest_fish_is5_module(var_biggest_fish)
 			case
 				reset : invalid;
 				!(active) : status;
-				(var_biggest_fish = 5) : success;
+				(biggest_fish = 3) : success;
 				TRUE : failure;
 			esac;
-MODULE biggest_fish_is6_module(var_biggest_fish)
+MODULE biggest_fish_is4_module(biggest_fish)
 	CONSTANTS
 		success, failure, running, invalid;
 	VAR
@@ -345,10 +346,10 @@ MODULE biggest_fish_is6_module(var_biggest_fish)
 			case
 				reset : invalid;
 				!(active) : status;
-				(var_biggest_fish = 6) : success;
+				(biggest_fish = 4) : success;
 				TRUE : failure;
 			esac;
-MODULE biggest_fish_is7_module(var_biggest_fish)
+MODULE biggest_fish_is5_module(biggest_fish)
 	CONSTANTS
 		success, failure, running, invalid;
 	VAR
@@ -359,10 +360,10 @@ MODULE biggest_fish_is7_module(var_biggest_fish)
 			case
 				reset : invalid;
 				!(active) : status;
-				(var_biggest_fish = 7) : success;
+				(biggest_fish = 5) : success;
 				TRUE : failure;
 			esac;
-MODULE biggest_fish_is8_module(var_biggest_fish)
+MODULE biggest_fish_is0_module(biggest_fish)
 	CONSTANTS
 		success, failure, running, invalid;
 	VAR
@@ -373,10 +374,10 @@ MODULE biggest_fish_is8_module(var_biggest_fish)
 			case
 				reset : invalid;
 				!(active) : status;
-				(var_biggest_fish = 8) : success;
+				(biggest_fish = 0) : success;
 				TRUE : failure;
 			esac;
-MODULE biggest_fish_is9_module(var_biggest_fish)
+MODULE biggest_fish_is1_module(biggest_fish)
 	CONSTANTS
 		success, failure, running, invalid;
 	VAR
@@ -387,7 +388,7 @@ MODULE biggest_fish_is9_module(var_biggest_fish)
 			case
 				reset : invalid;
 				!(active) : status;
-				(var_biggest_fish = 9) : success;
+				(biggest_fish = 1) : success;
 				TRUE : failure;
 			esac;
 MODULE success_DEFAULT_module

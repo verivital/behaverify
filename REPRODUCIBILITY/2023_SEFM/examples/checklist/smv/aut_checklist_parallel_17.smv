@@ -35,12 +35,69 @@ MODULE main
 		resume_from_here_in_subtree__parLink1 := -3;
 		resume_from_here_in_subtree__sel0 := -3;
 		resume_from_here_in_subtree__sel1 := -3;
-		status__parLink1 := 
+		child_index_to_resume_from__sel2 := -2;
+		child_index_to_resume_from__sel3 := -2;
+		child_index_to_resume_from__sel4 := -2;
+		child_index_to_resume_from__sel5 := -2;
+		child_index_to_resume_from__sel6 := -2;
+		child_index_to_resume_from__sel7 := -2;
+		child_index_to_resume_from__sel8 := -2;
+		child_index_to_resume_from__sel9 := -2;
+		child_index_to_resume_from__sel10 := -2;
+		child_index_to_resume_from__sel11 := -2;
+		child_index_to_resume_from__sel12 := -2;
+		child_index_to_resume_from__sel13 := -2;
+		child_index_to_resume_from__sel14 := -2;
+		child_index_to_resume_from__sel15 := -2;
+		child_index_to_resume_from__sel16 := -2;
+		child_index_to_resume_from__sel0 := -2;
+		child_index_to_resume_from__sel1 := -2;
+		status__success_failure_node := success_failure_node.status;
+		status__success_node := success_node.status;
+		status__sel2 := 
 			case
-				(status__sel0 = failure) | (status__sel0 = invalid) : status__sel0;
-				(status__sel1 = failure) | (status__sel1 = invalid) : status__sel1;
-				status__sel0 = running : running;
-				status__sel1 = running : running;
+				status__success_failure_node != failure : status__success_failure_node;
+				status__success_node != failure : status__success_node;
+				TRUE : failure;
+			esac;
+		status__success_failure_node_1 := success_failure_node_1.status;
+		status__success_node_1 := success_node_1.status;
+		status__sel3 := 
+			case
+				status__success_failure_node_1 != failure : status__success_failure_node_1;
+				status__success_node_1 != failure : status__success_node_1;
+				TRUE : failure;
+			esac;
+		status__parLink2 := 
+			case
+				(status__sel2 = failure) | (status__sel2 = invalid) : status__sel2;
+				(status__sel3 = failure) | (status__sel3 = invalid) : status__sel3;
+				status__sel2 = running : running;
+				status__sel3 = running : running;
+				TRUE : success;
+			esac;
+		status__success_failure_node_2 := success_failure_node_2.status;
+		status__success_node_2 := success_node_2.status;
+		status__sel4 := 
+			case
+				status__success_failure_node_2 != failure : status__success_failure_node_2;
+				status__success_node_2 != failure : status__success_node_2;
+				TRUE : failure;
+			esac;
+		status__success_failure_node_3 := success_failure_node_3.status;
+		status__success_node_3 := success_node_3.status;
+		status__sel5 := 
+			case
+				status__success_failure_node_3 != failure : status__success_failure_node_3;
+				status__success_node_3 != failure : status__success_node_3;
+				TRUE : failure;
+			esac;
+		status__parLink3 := 
+			case
+				(status__sel4 = failure) | (status__sel4 = invalid) : status__sel4;
+				(status__sel5 = failure) | (status__sel5 = invalid) : status__sel5;
+				status__sel4 = running : running;
+				status__sel5 = running : running;
 				TRUE : success;
 			esac;
 		status__parLink10 := 
@@ -51,12 +108,116 @@ MODULE main
 				status__parLink3 = running : running;
 				TRUE : success;
 			esac;
+		status__success_failure_node_4 := success_failure_node_4.status;
+		status__success_node_4 := success_node_4.status;
+		status__sel6 := 
+			case
+				status__success_failure_node_4 != failure : status__success_failure_node_4;
+				status__success_node_4 != failure : status__success_node_4;
+				TRUE : failure;
+			esac;
+		status__success_failure_node_5 := success_failure_node_5.status;
+		status__success_node_5 := success_node_5.status;
+		status__sel7 := 
+			case
+				status__success_failure_node_5 != failure : status__success_failure_node_5;
+				status__success_node_5 != failure : status__success_node_5;
+				TRUE : failure;
+			esac;
+		status__parLink4 := 
+			case
+				(status__sel6 = failure) | (status__sel6 = invalid) : status__sel6;
+				(status__sel7 = failure) | (status__sel7 = invalid) : status__sel7;
+				status__sel6 = running : running;
+				status__sel7 = running : running;
+				TRUE : success;
+			esac;
+		status__success_failure_node_6 := success_failure_node_6.status;
+		status__success_node_6 := success_node_6.status;
+		status__sel8 := 
+			case
+				status__success_failure_node_6 != failure : status__success_failure_node_6;
+				status__success_node_6 != failure : status__success_node_6;
+				TRUE : failure;
+			esac;
+		status__success_failure_node_7 := success_failure_node_7.status;
+		status__success_node_7 := success_node_7.status;
+		status__sel9 := 
+			case
+				status__success_failure_node_7 != failure : status__success_failure_node_7;
+				status__success_node_7 != failure : status__success_node_7;
+				TRUE : failure;
+			esac;
+		status__parLink5 := 
+			case
+				(status__sel8 = failure) | (status__sel8 = invalid) : status__sel8;
+				(status__sel9 = failure) | (status__sel9 = invalid) : status__sel9;
+				status__sel8 = running : running;
+				status__sel9 = running : running;
+				TRUE : success;
+			esac;
 		status__parLink11 := 
 			case
 				(status__parLink4 = failure) | (status__parLink4 = invalid) : status__parLink4;
 				(status__parLink5 = failure) | (status__parLink5 = invalid) : status__parLink5;
 				status__parLink4 = running : running;
 				status__parLink5 = running : running;
+				TRUE : success;
+			esac;
+		status__parLink14 := 
+			case
+				(status__parLink10 = failure) | (status__parLink10 = invalid) : status__parLink10;
+				(status__parLink11 = failure) | (status__parLink11 = invalid) : status__parLink11;
+				status__parLink10 = running : running;
+				status__parLink11 = running : running;
+				TRUE : success;
+			esac;
+		status__success_failure_node_8 := success_failure_node_8.status;
+		status__success_node_8 := success_node_8.status;
+		status__sel10 := 
+			case
+				status__success_failure_node_8 != failure : status__success_failure_node_8;
+				status__success_node_8 != failure : status__success_node_8;
+				TRUE : failure;
+			esac;
+		status__success_failure_node_9 := success_failure_node_9.status;
+		status__success_node_9 := success_node_9.status;
+		status__sel11 := 
+			case
+				status__success_failure_node_9 != failure : status__success_failure_node_9;
+				status__success_node_9 != failure : status__success_node_9;
+				TRUE : failure;
+			esac;
+		status__parLink6 := 
+			case
+				(status__sel10 = failure) | (status__sel10 = invalid) : status__sel10;
+				(status__sel11 = failure) | (status__sel11 = invalid) : status__sel11;
+				status__sel10 = running : running;
+				status__sel11 = running : running;
+				TRUE : success;
+			esac;
+		status__success_failure_node_10 := success_failure_node_10.status;
+		status__success_node_10 := success_node_10.status;
+		status__sel12 := 
+			case
+				status__success_failure_node_10 != failure : status__success_failure_node_10;
+				status__success_node_10 != failure : status__success_node_10;
+				TRUE : failure;
+			esac;
+		status__success_failure_node_11 := success_failure_node_11.status;
+		status__success_node_11 := success_node_11.status;
+		status__sel13 := 
+			case
+				status__success_failure_node_11 != failure : status__success_failure_node_11;
+				status__success_node_11 != failure : status__success_node_11;
+				TRUE : failure;
+			esac;
+		status__parLink7 := 
+			case
+				(status__sel12 = failure) | (status__sel12 = invalid) : status__sel12;
+				(status__sel13 = failure) | (status__sel13 = invalid) : status__sel13;
+				status__sel12 = running : running;
+				status__sel13 = running : running;
 				TRUE : success;
 			esac;
 		status__parLink12 := 
@@ -67,20 +228,76 @@ MODULE main
 				status__parLink7 = running : running;
 				TRUE : success;
 			esac;
+		status__success_failure_node_12 := success_failure_node_12.status;
+		status__success_node_12 := success_node_12.status;
+		status__sel14 := 
+			case
+				status__success_failure_node_12 != failure : status__success_failure_node_12;
+				status__success_node_12 != failure : status__success_node_12;
+				TRUE : failure;
+			esac;
+		status__success_failure_node_13 := success_failure_node_13.status;
+		status__success_node_13 := success_node_13.status;
+		status__sel15 := 
+			case
+				status__success_failure_node_13 != failure : status__success_failure_node_13;
+				status__success_node_13 != failure : status__success_node_13;
+				TRUE : failure;
+			esac;
+		status__parLink8 := 
+			case
+				(status__sel14 = failure) | (status__sel14 = invalid) : status__sel14;
+				(status__sel15 = failure) | (status__sel15 = invalid) : status__sel15;
+				status__sel14 = running : running;
+				status__sel15 = running : running;
+				TRUE : success;
+			esac;
+		status__success_failure_node_14 := success_failure_node_14.status;
+		status__success_node_14 := success_node_14.status;
+		status__sel16 := 
+			case
+				status__success_failure_node_14 != failure : status__success_failure_node_14;
+				status__success_node_14 != failure : status__success_node_14;
+				TRUE : failure;
+			esac;
+		status__success_failure_node_15 := success_failure_node_15.status;
+		status__success_node_15 := success_node_15.status;
+		status__sel0 := 
+			case
+				status__success_failure_node_15 != failure : status__success_failure_node_15;
+				status__success_node_15 != failure : status__success_node_15;
+				TRUE : failure;
+			esac;
+		status__success_failure_node_16 := success_failure_node_16.status;
+		status__success_node_16 := success_node_16.status;
+		status__sel1 := 
+			case
+				status__success_failure_node_16 != failure : status__success_failure_node_16;
+				status__success_node_16 != failure : status__success_node_16;
+				TRUE : failure;
+			esac;
+		status__parLink1 := 
+			case
+				(status__sel0 = failure) | (status__sel0 = invalid) : status__sel0;
+				(status__sel1 = failure) | (status__sel1 = invalid) : status__sel1;
+				status__sel0 = running : running;
+				status__sel1 = running : running;
+				TRUE : success;
+			esac;
+		status__parLink9 := 
+			case
+				(status__sel16 = failure) | (status__sel16 = invalid) : status__sel16;
+				(status__parLink1 = failure) | (status__parLink1 = invalid) : status__parLink1;
+				status__sel16 = running : running;
+				status__parLink1 = running : running;
+				TRUE : success;
+			esac;
 		status__parLink13 := 
 			case
 				(status__parLink8 = failure) | (status__parLink8 = invalid) : status__parLink8;
 				(status__parLink9 = failure) | (status__parLink9 = invalid) : status__parLink9;
 				status__parLink8 = running : running;
 				status__parLink9 = running : running;
-				TRUE : success;
-			esac;
-		status__parLink14 := 
-			case
-				(status__parLink10 = failure) | (status__parLink10 = invalid) : status__parLink10;
-				(status__parLink11 = failure) | (status__parLink11 = invalid) : status__parLink11;
-				status__parLink10 = running : running;
-				status__parLink11 = running : running;
 				TRUE : success;
 			esac;
 		status__parLink15 := 
@@ -99,565 +316,285 @@ MODULE main
 				status__parLink15 = running : running;
 				TRUE : success;
 			esac;
-		status__parLink2 := 
-			case
-				(status__sel2 = failure) | (status__sel2 = invalid) : status__sel2;
-				(status__sel3 = failure) | (status__sel3 = invalid) : status__sel3;
-				status__sel2 = running : running;
-				status__sel3 = running : running;
-				TRUE : success;
-			esac;
-		status__parLink3 := 
-			case
-				(status__sel4 = failure) | (status__sel4 = invalid) : status__sel4;
-				(status__sel5 = failure) | (status__sel5 = invalid) : status__sel5;
-				status__sel4 = running : running;
-				status__sel5 = running : running;
-				TRUE : success;
-			esac;
-		status__parLink4 := 
-			case
-				(status__sel6 = failure) | (status__sel6 = invalid) : status__sel6;
-				(status__sel7 = failure) | (status__sel7 = invalid) : status__sel7;
-				status__sel6 = running : running;
-				status__sel7 = running : running;
-				TRUE : success;
-			esac;
-		status__parLink5 := 
-			case
-				(status__sel8 = failure) | (status__sel8 = invalid) : status__sel8;
-				(status__sel9 = failure) | (status__sel9 = invalid) : status__sel9;
-				status__sel8 = running : running;
-				status__sel9 = running : running;
-				TRUE : success;
-			esac;
-		status__parLink6 := 
-			case
-				(status__sel10 = failure) | (status__sel10 = invalid) : status__sel10;
-				(status__sel11 = failure) | (status__sel11 = invalid) : status__sel11;
-				status__sel10 = running : running;
-				status__sel11 = running : running;
-				TRUE : success;
-			esac;
-		status__parLink7 := 
-			case
-				(status__sel12 = failure) | (status__sel12 = invalid) : status__sel12;
-				(status__sel13 = failure) | (status__sel13 = invalid) : status__sel13;
-				status__sel12 = running : running;
-				status__sel13 = running : running;
-				TRUE : success;
-			esac;
-		status__parLink8 := 
-			case
-				(status__sel14 = failure) | (status__sel14 = invalid) : status__sel14;
-				(status__sel15 = failure) | (status__sel15 = invalid) : status__sel15;
-				status__sel14 = running : running;
-				status__sel15 = running : running;
-				TRUE : success;
-			esac;
-		status__parLink9 := 
-			case
-				(status__sel16 = failure) | (status__sel16 = invalid) : status__sel16;
-				(status__parLink1 = failure) | (status__parLink1 = invalid) : status__parLink1;
-				status__sel16 = running : running;
-				status__parLink1 = running : running;
-				TRUE : success;
-			esac;
-		status__sel0 := 
-			case
-				status__success_failure_node_15 != failure : status__success_failure_node_15;
-				status__success_node_15 != failure : status__success_node_15;
-				TRUE : failure;
-			esac;
-		status__sel1 := 
-			case
-				status__success_failure_node_16 != failure : status__success_failure_node_16;
-				status__success_node_16 != failure : status__success_node_16;
-				TRUE : failure;
-			esac;
-		status__sel10 := 
-			case
-				status__success_failure_node_8 != failure : status__success_failure_node_8;
-				status__success_node_8 != failure : status__success_node_8;
-				TRUE : failure;
-			esac;
-		status__sel11 := 
-			case
-				status__success_failure_node_9 != failure : status__success_failure_node_9;
-				status__success_node_9 != failure : status__success_node_9;
-				TRUE : failure;
-			esac;
-		status__sel12 := 
-			case
-				status__success_failure_node_10 != failure : status__success_failure_node_10;
-				status__success_node_10 != failure : status__success_node_10;
-				TRUE : failure;
-			esac;
-		status__sel13 := 
-			case
-				status__success_failure_node_11 != failure : status__success_failure_node_11;
-				status__success_node_11 != failure : status__success_node_11;
-				TRUE : failure;
-			esac;
-		status__sel14 := 
-			case
-				status__success_failure_node_12 != failure : status__success_failure_node_12;
-				status__success_node_12 != failure : status__success_node_12;
-				TRUE : failure;
-			esac;
-		status__sel15 := 
-			case
-				status__success_failure_node_13 != failure : status__success_failure_node_13;
-				status__success_node_13 != failure : status__success_node_13;
-				TRUE : failure;
-			esac;
-		status__sel16 := 
-			case
-				status__success_failure_node_14 != failure : status__success_failure_node_14;
-				status__success_node_14 != failure : status__success_node_14;
-				TRUE : failure;
-			esac;
-		status__sel2 := 
-			case
-				status__success_failure_node != failure : status__success_failure_node;
-				status__success_node != failure : status__success_node;
-				TRUE : failure;
-			esac;
-		status__sel3 := 
-			case
-				status__success_failure_node_1 != failure : status__success_failure_node_1;
-				status__success_node_1 != failure : status__success_node_1;
-				TRUE : failure;
-			esac;
-		status__sel4 := 
-			case
-				status__success_failure_node_2 != failure : status__success_failure_node_2;
-				status__success_node_2 != failure : status__success_node_2;
-				TRUE : failure;
-			esac;
-		status__sel5 := 
-			case
-				status__success_failure_node_3 != failure : status__success_failure_node_3;
-				status__success_node_3 != failure : status__success_node_3;
-				TRUE : failure;
-			esac;
-		status__sel6 := 
-			case
-				status__success_failure_node_4 != failure : status__success_failure_node_4;
-				status__success_node_4 != failure : status__success_node_4;
-				TRUE : failure;
-			esac;
-		status__sel7 := 
-			case
-				status__success_failure_node_5 != failure : status__success_failure_node_5;
-				status__success_node_5 != failure : status__success_node_5;
-				TRUE : failure;
-			esac;
-		status__sel8 := 
-			case
-				status__success_failure_node_6 != failure : status__success_failure_node_6;
-				status__success_node_6 != failure : status__success_node_6;
-				TRUE : failure;
-			esac;
-		status__sel9 := 
-			case
-				status__success_failure_node_7 != failure : status__success_failure_node_7;
-				status__success_node_7 != failure : status__success_node_7;
-				TRUE : failure;
-			esac;
-		status__success_failure_node := success_failure_node.status;
-		status__success_failure_node_1 := success_failure_node_1.status;
-		status__success_failure_node_10 := success_failure_node_10.status;
-		status__success_failure_node_11 := success_failure_node_11.status;
-		status__success_failure_node_12 := success_failure_node_12.status;
-		status__success_failure_node_13 := success_failure_node_13.status;
-		status__success_failure_node_14 := success_failure_node_14.status;
-		status__success_failure_node_15 := success_failure_node_15.status;
-		status__success_failure_node_16 := success_failure_node_16.status;
-		status__success_failure_node_2 := success_failure_node_2.status;
-		status__success_failure_node_3 := success_failure_node_3.status;
-		status__success_failure_node_4 := success_failure_node_4.status;
-		status__success_failure_node_5 := success_failure_node_5.status;
-		status__success_failure_node_6 := success_failure_node_6.status;
-		status__success_failure_node_7 := success_failure_node_7.status;
-		status__success_failure_node_8 := success_failure_node_8.status;
-		status__success_failure_node_9 := success_failure_node_9.status;
-		status__success_node := success_node.status;
-		status__success_node_1 := success_node_1.status;
-		status__success_node_10 := success_node_10.status;
-		status__success_node_11 := success_node_11.status;
-		status__success_node_12 := success_node_12.status;
-		status__success_node_13 := success_node_13.status;
-		status__success_node_14 := success_node_14.status;
-		status__success_node_15 := success_node_15.status;
-		status__success_node_16 := success_node_16.status;
-		status__success_node_2 := success_node_2.status;
-		status__success_node_3 := success_node_3.status;
-		status__success_node_4 := success_node_4.status;
-		status__success_node_5 := success_node_5.status;
-		status__success_node_6 := success_node_6.status;
-		status__success_node_7 := success_node_7.status;
-		status__success_node_8 := success_node_8.status;
-		status__success_node_9 := success_node_9.status;
-		next_child__parLink1 := 
-			case
-				(status__sel0 = invalid) : node_names.sel0;
-				(status__sel1 = invalid) : node_names.sel1;
-			esac;
-		next_child__parLink10 := 
-			case
-				(status__parLink2 = invalid) : node_names.parLink2;
-				(status__parLink3 = invalid) : node_names.parLink3;
-			esac;
-		next_child__parLink11 := 
-			case
-				(status__parLink4 = invalid) : node_names.parLink4;
-				(status__parLink5 = invalid) : node_names.parLink5;
-			esac;
-		next_child__parLink12 := 
-			case
-				(status__parLink6 = invalid) : node_names.parLink6;
-				(status__parLink7 = invalid) : node_names.parLink7;
-			esac;
-		next_child__parLink13 := 
-			case
-				(status__parLink8 = invalid) : node_names.parLink8;
-				(status__parLink9 = invalid) : node_names.parLink9;
-			esac;
-		next_child__parLink14 := 
-			case
-				(status__parLink10 = invalid) : node_names.parLink10;
-				(status__parLink11 = invalid) : node_names.parLink11;
-			esac;
-		next_child__parLink15 := 
-			case
-				(status__parLink12 = invalid) : node_names.parLink12;
-				(status__parLink13 = invalid) : node_names.parLink13;
-			esac;
-		next_child__parLink16 := 
-			case
-				(status__parLink14 = invalid) : node_names.parLink14;
-				(status__parLink15 = invalid) : node_names.parLink15;
-			esac;
-		next_child__parLink2 := 
-			case
-				(status__sel2 = invalid) : node_names.sel2;
-				(status__sel3 = invalid) : node_names.sel3;
-			esac;
-		next_child__parLink3 := 
-			case
-				(status__sel4 = invalid) : node_names.sel4;
-				(status__sel5 = invalid) : node_names.sel5;
-			esac;
-		next_child__parLink4 := 
-			case
-				(status__sel6 = invalid) : node_names.sel6;
-				(status__sel7 = invalid) : node_names.sel7;
-			esac;
-		next_child__parLink5 := 
-			case
-				(status__sel8 = invalid) : node_names.sel8;
-				(status__sel9 = invalid) : node_names.sel9;
-			esac;
-		next_child__parLink6 := 
-			case
-				(status__sel10 = invalid) : node_names.sel10;
-				(status__sel11 = invalid) : node_names.sel11;
-			esac;
-		next_child__parLink7 := 
-			case
-				(status__sel12 = invalid) : node_names.sel12;
-				(status__sel13 = invalid) : node_names.sel13;
-			esac;
-		next_child__parLink8 := 
-			case
-				(status__sel14 = invalid) : node_names.sel14;
-				(status__sel15 = invalid) : node_names.sel15;
-			esac;
-		next_child__parLink9 := 
-			case
-				(status__sel16 = invalid) : node_names.sel16;
-				(status__parLink1 = invalid) : node_names.parLink1;
-			esac;
-		next_child__sel0 := 
-			case
-				(status__success_failure_node_15 = invalid) : node_names.success_failure_node_15;
-				(status__success_node_15 = invalid) : node_names.success_node_15;
-			esac;
-		next_child__sel1 := 
-			case
-				(status__success_failure_node_16 = invalid) : node_names.success_failure_node_16;
-				(status__success_node_16 = invalid) : node_names.success_node_16;
-			esac;
-		next_child__sel10 := 
-			case
-				(status__success_failure_node_8 = invalid) : node_names.success_failure_node_8;
-				(status__success_node_8 = invalid) : node_names.success_node_8;
-			esac;
-		next_child__sel11 := 
-			case
-				(status__success_failure_node_9 = invalid) : node_names.success_failure_node_9;
-				(status__success_node_9 = invalid) : node_names.success_node_9;
-			esac;
-		next_child__sel12 := 
-			case
-				(status__success_failure_node_10 = invalid) : node_names.success_failure_node_10;
-				(status__success_node_10 = invalid) : node_names.success_node_10;
-			esac;
-		next_child__sel13 := 
-			case
-				(status__success_failure_node_11 = invalid) : node_names.success_failure_node_11;
-				(status__success_node_11 = invalid) : node_names.success_node_11;
-			esac;
-		next_child__sel14 := 
-			case
-				(status__success_failure_node_12 = invalid) : node_names.success_failure_node_12;
-				(status__success_node_12 = invalid) : node_names.success_node_12;
-			esac;
-		next_child__sel15 := 
-			case
-				(status__success_failure_node_13 = invalid) : node_names.success_failure_node_13;
-				(status__success_node_13 = invalid) : node_names.success_node_13;
-			esac;
-		next_child__sel16 := 
-			case
-				(status__success_failure_node_14 = invalid) : node_names.success_failure_node_14;
-				(status__success_node_14 = invalid) : node_names.success_node_14;
-			esac;
 		next_child__sel2 := 
 			case
-				(status__success_failure_node = invalid) : node_names.success_failure_node;
-				(status__success_node = invalid) : node_names.success_node;
+				(status__success_failure_node = invalid)& (child_index_to_resume_from__sel2 <= 0) : node_names.success_failure_node;
+				(status__success_node = invalid)& (child_index_to_resume_from__sel2 <= 1) : node_names.success_node;
 			esac;
 		next_child__sel3 := 
 			case
-				(status__success_failure_node_1 = invalid) : node_names.success_failure_node_1;
-				(status__success_node_1 = invalid) : node_names.success_node_1;
+				(status__success_failure_node_1 = invalid)& (child_index_to_resume_from__sel3 <= 0) : node_names.success_failure_node_1;
+				(status__success_node_1 = invalid)& (child_index_to_resume_from__sel3 <= 1) : node_names.success_node_1;
+			esac;
+		next_child__parLink2 := 
+			case
+				(status__sel2 = invalid)& !(resume_from_here_in_subtree__sel2 = -2) : node_names.sel2;
+				(status__sel3 = invalid)& !(resume_from_here_in_subtree__sel3 = -2) : node_names.sel3;
 			esac;
 		next_child__sel4 := 
 			case
-				(status__success_failure_node_2 = invalid) : node_names.success_failure_node_2;
-				(status__success_node_2 = invalid) : node_names.success_node_2;
+				(status__success_failure_node_2 = invalid)& (child_index_to_resume_from__sel4 <= 0) : node_names.success_failure_node_2;
+				(status__success_node_2 = invalid)& (child_index_to_resume_from__sel4 <= 1) : node_names.success_node_2;
 			esac;
 		next_child__sel5 := 
 			case
-				(status__success_failure_node_3 = invalid) : node_names.success_failure_node_3;
-				(status__success_node_3 = invalid) : node_names.success_node_3;
+				(status__success_failure_node_3 = invalid)& (child_index_to_resume_from__sel5 <= 0) : node_names.success_failure_node_3;
+				(status__success_node_3 = invalid)& (child_index_to_resume_from__sel5 <= 1) : node_names.success_node_3;
+			esac;
+		next_child__parLink3 := 
+			case
+				(status__sel4 = invalid)& !(resume_from_here_in_subtree__sel4 = -2) : node_names.sel4;
+				(status__sel5 = invalid)& !(resume_from_here_in_subtree__sel5 = -2) : node_names.sel5;
+			esac;
+		next_child__parLink10 := 
+			case
+				(status__parLink2 = invalid)& !(resume_from_here_in_subtree__parLink2 = -2) : node_names.parLink2;
+				(status__parLink3 = invalid)& !(resume_from_here_in_subtree__parLink3 = -2) : node_names.parLink3;
 			esac;
 		next_child__sel6 := 
 			case
-				(status__success_failure_node_4 = invalid) : node_names.success_failure_node_4;
-				(status__success_node_4 = invalid) : node_names.success_node_4;
+				(status__success_failure_node_4 = invalid)& (child_index_to_resume_from__sel6 <= 0) : node_names.success_failure_node_4;
+				(status__success_node_4 = invalid)& (child_index_to_resume_from__sel6 <= 1) : node_names.success_node_4;
 			esac;
 		next_child__sel7 := 
 			case
-				(status__success_failure_node_5 = invalid) : node_names.success_failure_node_5;
-				(status__success_node_5 = invalid) : node_names.success_node_5;
+				(status__success_failure_node_5 = invalid)& (child_index_to_resume_from__sel7 <= 0) : node_names.success_failure_node_5;
+				(status__success_node_5 = invalid)& (child_index_to_resume_from__sel7 <= 1) : node_names.success_node_5;
+			esac;
+		next_child__parLink4 := 
+			case
+				(status__sel6 = invalid)& !(resume_from_here_in_subtree__sel6 = -2) : node_names.sel6;
+				(status__sel7 = invalid)& !(resume_from_here_in_subtree__sel7 = -2) : node_names.sel7;
 			esac;
 		next_child__sel8 := 
 			case
-				(status__success_failure_node_6 = invalid) : node_names.success_failure_node_6;
-				(status__success_node_6 = invalid) : node_names.success_node_6;
+				(status__success_failure_node_6 = invalid)& (child_index_to_resume_from__sel8 <= 0) : node_names.success_failure_node_6;
+				(status__success_node_6 = invalid)& (child_index_to_resume_from__sel8 <= 1) : node_names.success_node_6;
 			esac;
 		next_child__sel9 := 
 			case
-				(status__success_failure_node_7 = invalid) : node_names.success_failure_node_7;
-				(status__success_node_7 = invalid) : node_names.success_node_7;
+				(status__success_failure_node_7 = invalid)& (child_index_to_resume_from__sel9 <= 0) : node_names.success_failure_node_7;
+				(status__success_node_7 = invalid)& (child_index_to_resume_from__sel9 <= 1) : node_names.success_node_7;
+			esac;
+		next_child__parLink5 := 
+			case
+				(status__sel8 = invalid)& !(resume_from_here_in_subtree__sel8 = -2) : node_names.sel8;
+				(status__sel9 = invalid)& !(resume_from_here_in_subtree__sel9 = -2) : node_names.sel9;
+			esac;
+		next_child__parLink11 := 
+			case
+				(status__parLink4 = invalid)& !(resume_from_here_in_subtree__parLink4 = -2) : node_names.parLink4;
+				(status__parLink5 = invalid)& !(resume_from_here_in_subtree__parLink5 = -2) : node_names.parLink5;
+			esac;
+		next_child__parLink14 := 
+			case
+				(status__parLink10 = invalid)& !(resume_from_here_in_subtree__parLink10 = -2) : node_names.parLink10;
+				(status__parLink11 = invalid)& !(resume_from_here_in_subtree__parLink11 = -2) : node_names.parLink11;
+			esac;
+		next_child__sel10 := 
+			case
+				(status__success_failure_node_8 = invalid)& (child_index_to_resume_from__sel10 <= 0) : node_names.success_failure_node_8;
+				(status__success_node_8 = invalid)& (child_index_to_resume_from__sel10 <= 1) : node_names.success_node_8;
+			esac;
+		next_child__sel11 := 
+			case
+				(status__success_failure_node_9 = invalid)& (child_index_to_resume_from__sel11 <= 0) : node_names.success_failure_node_9;
+				(status__success_node_9 = invalid)& (child_index_to_resume_from__sel11 <= 1) : node_names.success_node_9;
+			esac;
+		next_child__parLink6 := 
+			case
+				(status__sel10 = invalid)& !(resume_from_here_in_subtree__sel10 = -2) : node_names.sel10;
+				(status__sel11 = invalid)& !(resume_from_here_in_subtree__sel11 = -2) : node_names.sel11;
+			esac;
+		next_child__sel12 := 
+			case
+				(status__success_failure_node_10 = invalid)& (child_index_to_resume_from__sel12 <= 0) : node_names.success_failure_node_10;
+				(status__success_node_10 = invalid)& (child_index_to_resume_from__sel12 <= 1) : node_names.success_node_10;
+			esac;
+		next_child__sel13 := 
+			case
+				(status__success_failure_node_11 = invalid)& (child_index_to_resume_from__sel13 <= 0) : node_names.success_failure_node_11;
+				(status__success_node_11 = invalid)& (child_index_to_resume_from__sel13 <= 1) : node_names.success_node_11;
+			esac;
+		next_child__parLink7 := 
+			case
+				(status__sel12 = invalid)& !(resume_from_here_in_subtree__sel12 = -2) : node_names.sel12;
+				(status__sel13 = invalid)& !(resume_from_here_in_subtree__sel13 = -2) : node_names.sel13;
+			esac;
+		next_child__parLink12 := 
+			case
+				(status__parLink6 = invalid)& !(resume_from_here_in_subtree__parLink6 = -2) : node_names.parLink6;
+				(status__parLink7 = invalid)& !(resume_from_here_in_subtree__parLink7 = -2) : node_names.parLink7;
+			esac;
+		next_child__sel14 := 
+			case
+				(status__success_failure_node_12 = invalid)& (child_index_to_resume_from__sel14 <= 0) : node_names.success_failure_node_12;
+				(status__success_node_12 = invalid)& (child_index_to_resume_from__sel14 <= 1) : node_names.success_node_12;
+			esac;
+		next_child__sel15 := 
+			case
+				(status__success_failure_node_13 = invalid)& (child_index_to_resume_from__sel15 <= 0) : node_names.success_failure_node_13;
+				(status__success_node_13 = invalid)& (child_index_to_resume_from__sel15 <= 1) : node_names.success_node_13;
+			esac;
+		next_child__parLink8 := 
+			case
+				(status__sel14 = invalid)& !(resume_from_here_in_subtree__sel14 = -2) : node_names.sel14;
+				(status__sel15 = invalid)& !(resume_from_here_in_subtree__sel15 = -2) : node_names.sel15;
+			esac;
+		next_child__sel16 := 
+			case
+				(status__success_failure_node_14 = invalid)& (child_index_to_resume_from__sel16 <= 0) : node_names.success_failure_node_14;
+				(status__success_node_14 = invalid)& (child_index_to_resume_from__sel16 <= 1) : node_names.success_node_14;
+			esac;
+		next_child__sel0 := 
+			case
+				(status__success_failure_node_15 = invalid)& (child_index_to_resume_from__sel0 <= 0) : node_names.success_failure_node_15;
+				(status__success_node_15 = invalid)& (child_index_to_resume_from__sel0 <= 1) : node_names.success_node_15;
+			esac;
+		next_child__sel1 := 
+			case
+				(status__success_failure_node_16 = invalid)& (child_index_to_resume_from__sel1 <= 0) : node_names.success_failure_node_16;
+				(status__success_node_16 = invalid)& (child_index_to_resume_from__sel1 <= 1) : node_names.success_node_16;
+			esac;
+		next_child__parLink1 := 
+			case
+				(status__sel0 = invalid)& !(resume_from_here_in_subtree__sel0 = -2) : node_names.sel0;
+				(status__sel1 = invalid)& !(resume_from_here_in_subtree__sel1 = -2) : node_names.sel1;
+			esac;
+		next_child__parLink9 := 
+			case
+				(status__sel16 = invalid)& !(resume_from_here_in_subtree__sel16 = -2) : node_names.sel16;
+				(status__parLink1 = invalid)& !(resume_from_here_in_subtree__parLink1 = -2) : node_names.parLink1;
+			esac;
+		next_child__parLink13 := 
+			case
+				(status__parLink8 = invalid)& !(resume_from_here_in_subtree__parLink8 = -2) : node_names.parLink8;
+				(status__parLink9 = invalid)& !(resume_from_here_in_subtree__parLink9 = -2) : node_names.parLink9;
+			esac;
+		next_child__parLink15 := 
+			case
+				(status__parLink12 = invalid)& !(resume_from_here_in_subtree__parLink12 = -2) : node_names.parLink12;
+				(status__parLink13 = invalid)& !(resume_from_here_in_subtree__parLink13 = -2) : node_names.parLink13;
+			esac;
+		next_child__parLink16 := 
+			case
+				(status__parLink14 = invalid)& !(resume_from_here_in_subtree__parLink14 = -2) : node_names.parLink14;
+				(status__parLink15 = invalid)& !(resume_from_here_in_subtree__parLink15 = -2) : node_names.parLink15;
 			esac;
 		success_failure_node.active := active_node = node_names.success_failure_node;
 		success_failure_node.reset := active_node = -1;
-		success_failure_node_1.active := active_node = node_names.success_failure_node_1;
-		success_failure_node_1.reset := active_node = -1;
-		success_failure_node_10.active := active_node = node_names.success_failure_node_10;
-		success_failure_node_10.reset := active_node = -1;
-		success_failure_node_11.active := active_node = node_names.success_failure_node_11;
-		success_failure_node_11.reset := active_node = -1;
-		success_failure_node_12.active := active_node = node_names.success_failure_node_12;
-		success_failure_node_12.reset := active_node = -1;
-		success_failure_node_13.active := active_node = node_names.success_failure_node_13;
-		success_failure_node_13.reset := active_node = -1;
-		success_failure_node_14.active := active_node = node_names.success_failure_node_14;
-		success_failure_node_14.reset := active_node = -1;
-		success_failure_node_15.active := active_node = node_names.success_failure_node_15;
-		success_failure_node_15.reset := active_node = -1;
-		success_failure_node_16.active := active_node = node_names.success_failure_node_16;
-		success_failure_node_16.reset := active_node = -1;
-		success_failure_node_2.active := active_node = node_names.success_failure_node_2;
-		success_failure_node_2.reset := active_node = -1;
-		success_failure_node_3.active := active_node = node_names.success_failure_node_3;
-		success_failure_node_3.reset := active_node = -1;
-		success_failure_node_4.active := active_node = node_names.success_failure_node_4;
-		success_failure_node_4.reset := active_node = -1;
-		success_failure_node_5.active := active_node = node_names.success_failure_node_5;
-		success_failure_node_5.reset := active_node = -1;
-		success_failure_node_6.active := active_node = node_names.success_failure_node_6;
-		success_failure_node_6.reset := active_node = -1;
-		success_failure_node_7.active := active_node = node_names.success_failure_node_7;
-		success_failure_node_7.reset := active_node = -1;
-		success_failure_node_8.active := active_node = node_names.success_failure_node_8;
-		success_failure_node_8.reset := active_node = -1;
-		success_failure_node_9.active := active_node = node_names.success_failure_node_9;
-		success_failure_node_9.reset := active_node = -1;
 		success_node.active := active_node = node_names.success_node;
 		success_node.reset := active_node = -1;
+		success_failure_node_1.active := active_node = node_names.success_failure_node_1;
+		success_failure_node_1.reset := active_node = -1;
 		success_node_1.active := active_node = node_names.success_node_1;
 		success_node_1.reset := active_node = -1;
-		success_node_10.active := active_node = node_names.success_node_10;
-		success_node_10.reset := active_node = -1;
-		success_node_11.active := active_node = node_names.success_node_11;
-		success_node_11.reset := active_node = -1;
-		success_node_12.active := active_node = node_names.success_node_12;
-		success_node_12.reset := active_node = -1;
-		success_node_13.active := active_node = node_names.success_node_13;
-		success_node_13.reset := active_node = -1;
-		success_node_14.active := active_node = node_names.success_node_14;
-		success_node_14.reset := active_node = -1;
-		success_node_15.active := active_node = node_names.success_node_15;
-		success_node_15.reset := active_node = -1;
-		success_node_16.active := active_node = node_names.success_node_16;
-		success_node_16.reset := active_node = -1;
+		success_failure_node_2.active := active_node = node_names.success_failure_node_2;
+		success_failure_node_2.reset := active_node = -1;
 		success_node_2.active := active_node = node_names.success_node_2;
 		success_node_2.reset := active_node = -1;
+		success_failure_node_3.active := active_node = node_names.success_failure_node_3;
+		success_failure_node_3.reset := active_node = -1;
 		success_node_3.active := active_node = node_names.success_node_3;
 		success_node_3.reset := active_node = -1;
+		success_failure_node_4.active := active_node = node_names.success_failure_node_4;
+		success_failure_node_4.reset := active_node = -1;
 		success_node_4.active := active_node = node_names.success_node_4;
 		success_node_4.reset := active_node = -1;
+		success_failure_node_5.active := active_node = node_names.success_failure_node_5;
+		success_failure_node_5.reset := active_node = -1;
 		success_node_5.active := active_node = node_names.success_node_5;
 		success_node_5.reset := active_node = -1;
+		success_failure_node_6.active := active_node = node_names.success_failure_node_6;
+		success_failure_node_6.reset := active_node = -1;
 		success_node_6.active := active_node = node_names.success_node_6;
 		success_node_6.reset := active_node = -1;
+		success_failure_node_7.active := active_node = node_names.success_failure_node_7;
+		success_failure_node_7.reset := active_node = -1;
 		success_node_7.active := active_node = node_names.success_node_7;
 		success_node_7.reset := active_node = -1;
+		success_failure_node_8.active := active_node = node_names.success_failure_node_8;
+		success_failure_node_8.reset := active_node = -1;
 		success_node_8.active := active_node = node_names.success_node_8;
 		success_node_8.reset := active_node = -1;
+		success_failure_node_9.active := active_node = node_names.success_failure_node_9;
+		success_failure_node_9.reset := active_node = -1;
 		success_node_9.active := active_node = node_names.success_node_9;
 		success_node_9.reset := active_node = -1;
+		success_failure_node_10.active := active_node = node_names.success_failure_node_10;
+		success_failure_node_10.reset := active_node = -1;
+		success_node_10.active := active_node = node_names.success_node_10;
+		success_node_10.reset := active_node = -1;
+		success_failure_node_11.active := active_node = node_names.success_failure_node_11;
+		success_failure_node_11.reset := active_node = -1;
+		success_node_11.active := active_node = node_names.success_node_11;
+		success_node_11.reset := active_node = -1;
+		success_failure_node_12.active := active_node = node_names.success_failure_node_12;
+		success_failure_node_12.reset := active_node = -1;
+		success_node_12.active := active_node = node_names.success_node_12;
+		success_node_12.reset := active_node = -1;
+		success_failure_node_13.active := active_node = node_names.success_failure_node_13;
+		success_failure_node_13.reset := active_node = -1;
+		success_node_13.active := active_node = node_names.success_node_13;
+		success_node_13.reset := active_node = -1;
+		success_failure_node_14.active := active_node = node_names.success_failure_node_14;
+		success_failure_node_14.reset := active_node = -1;
+		success_node_14.active := active_node = node_names.success_node_14;
+		success_node_14.reset := active_node = -1;
+		success_failure_node_15.active := active_node = node_names.success_failure_node_15;
+		success_failure_node_15.reset := active_node = -1;
+		success_node_15.active := active_node = node_names.success_node_15;
+		success_node_15.reset := active_node = -1;
+		success_failure_node_16.active := active_node = node_names.success_failure_node_16;
+		success_failure_node_16.reset := active_node = -1;
+		success_node_16.active := active_node = node_names.success_node_16;
+		success_node_16.reset := active_node = -1;
 		--START OF BLACKBOARD DEFINITIONS
 		--END OF BLACKBOARD DEFINITIONS
 	VAR
 		node_names : define_nodes;
 		active_node : -1..67;
-		success_failure_node : success_failure_node_module(success_failure_node_DOT_randomizer);
-		success_failure_node_1 : success_failure_node_1_module(success_failure_node_1_DOT_randomizer);
-		success_failure_node_10 : success_failure_node_10_module(success_failure_node_10_DOT_randomizer);
-		success_failure_node_11 : success_failure_node_11_module(success_failure_node_11_DOT_randomizer);
-		success_failure_node_12 : success_failure_node_12_module(success_failure_node_12_DOT_randomizer);
-		success_failure_node_13 : success_failure_node_13_module(success_failure_node_13_DOT_randomizer);
-		success_failure_node_14 : success_failure_node_14_module(success_failure_node_14_DOT_randomizer);
-		success_failure_node_15 : success_failure_node_15_module(success_failure_node_15_DOT_randomizer);
-		success_failure_node_16 : success_failure_node_16_module(success_failure_node_16_DOT_randomizer);
-		success_failure_node_2 : success_failure_node_2_module(success_failure_node_2_DOT_randomizer);
-		success_failure_node_3 : success_failure_node_3_module(success_failure_node_3_DOT_randomizer);
-		success_failure_node_4 : success_failure_node_4_module(success_failure_node_4_DOT_randomizer);
-		success_failure_node_5 : success_failure_node_5_module(success_failure_node_5_DOT_randomizer);
-		success_failure_node_6 : success_failure_node_6_module(success_failure_node_6_DOT_randomizer);
-		success_failure_node_7 : success_failure_node_7_module(success_failure_node_7_DOT_randomizer);
-		success_failure_node_8 : success_failure_node_8_module(success_failure_node_8_DOT_randomizer);
-		success_failure_node_9 : success_failure_node_9_module(success_failure_node_9_DOT_randomizer);
+		success_failure_node : success_failure_node_module(randomizer);
 		success_node : success_DEFAULT_module;
+		success_failure_node_1 : success_failure_node_1_module(randomizer);
 		success_node_1 : success_DEFAULT_module;
-		success_node_10 : success_DEFAULT_module;
-		success_node_11 : success_DEFAULT_module;
-		success_node_12 : success_DEFAULT_module;
-		success_node_13 : success_DEFAULT_module;
-		success_node_14 : success_DEFAULT_module;
-		success_node_15 : success_DEFAULT_module;
-		success_node_16 : success_DEFAULT_module;
+		success_failure_node_2 : success_failure_node_2_module(randomizer);
 		success_node_2 : success_DEFAULT_module;
+		success_failure_node_3 : success_failure_node_3_module(randomizer);
 		success_node_3 : success_DEFAULT_module;
+		success_failure_node_4 : success_failure_node_4_module(randomizer);
 		success_node_4 : success_DEFAULT_module;
+		success_failure_node_5 : success_failure_node_5_module(randomizer);
 		success_node_5 : success_DEFAULT_module;
+		success_failure_node_6 : success_failure_node_6_module(randomizer);
 		success_node_6 : success_DEFAULT_module;
+		success_failure_node_7 : success_failure_node_7_module(randomizer);
 		success_node_7 : success_DEFAULT_module;
+		success_failure_node_8 : success_failure_node_8_module(randomizer);
 		success_node_8 : success_DEFAULT_module;
+		success_failure_node_9 : success_failure_node_9_module(randomizer);
 		success_node_9 : success_DEFAULT_module;
+		success_failure_node_10 : success_failure_node_10_module(randomizer);
+		success_node_10 : success_DEFAULT_module;
+		success_failure_node_11 : success_failure_node_11_module(randomizer);
+		success_node_11 : success_DEFAULT_module;
+		success_failure_node_12 : success_failure_node_12_module(randomizer);
+		success_node_12 : success_DEFAULT_module;
+		success_failure_node_13 : success_failure_node_13_module(randomizer);
+		success_node_13 : success_DEFAULT_module;
+		success_failure_node_14 : success_failure_node_14_module(randomizer);
+		success_node_14 : success_DEFAULT_module;
+		success_failure_node_15 : success_failure_node_15_module(randomizer);
+		success_node_15 : success_DEFAULT_module;
+		success_failure_node_16 : success_failure_node_16_module(randomizer);
+		success_node_16 : success_DEFAULT_module;
 		--START OF BLACKBOARD VARIABLES DECLARATION
-		success_failure_node_10_DOT_randomizer : boolean;
-		success_failure_node_11_DOT_randomizer : boolean;
-		success_failure_node_12_DOT_randomizer : boolean;
-		success_failure_node_13_DOT_randomizer : boolean;
-		success_failure_node_14_DOT_randomizer : boolean;
-		success_failure_node_15_DOT_randomizer : boolean;
-		success_failure_node_16_DOT_randomizer : boolean;
-		success_failure_node_1_DOT_randomizer : boolean;
-		success_failure_node_2_DOT_randomizer : boolean;
-		success_failure_node_3_DOT_randomizer : boolean;
-		success_failure_node_4_DOT_randomizer : boolean;
-		success_failure_node_5_DOT_randomizer : boolean;
-		success_failure_node_6_DOT_randomizer : boolean;
-		success_failure_node_7_DOT_randomizer : boolean;
-		success_failure_node_8_DOT_randomizer : boolean;
-		success_failure_node_9_DOT_randomizer : boolean;
-		success_failure_node_DOT_randomizer : boolean;
+		randomizer : boolean;
 		--END OF BLACKBOARD VARIABLES DECLARATION
 	ASSIGN
 		init(active_node) := -1;
 		--START OF BLACKBOARD VARIABLES INITIALIZATION
-		init(success_failure_node_10_DOT_randomizer) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_11_DOT_randomizer) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_12_DOT_randomizer) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_13_DOT_randomizer) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_14_DOT_randomizer) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_15_DOT_randomizer) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_16_DOT_randomizer) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_1_DOT_randomizer) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_2_DOT_randomizer) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_3_DOT_randomizer) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_4_DOT_randomizer) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_5_DOT_randomizer) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_6_DOT_randomizer) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_7_DOT_randomizer) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_8_DOT_randomizer) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_9_DOT_randomizer) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_DOT_randomizer) := 
+		init(randomizer) := 
 			case
 				TRUE : FALSE;
 			esac;
@@ -666,193 +603,146 @@ MODULE main
 			case
 				active_node = -1 & TRUE : node_names.parLink16;
 				active_node = -1 & !(TRUE) : -1;
-				(active_node = node_names.parLink1) & (status__parLink1 != invalid) : node_names.parLink9;
-				(active_node = node_names.parLink1) & (status__parLink1 = invalid) : next_child__parLink1;
+				(active_node = node_names.success_failure_node) & (status__success_failure_node != invalid) : node_names.sel2;
+				(active_node = node_names.success_node) & (status__success_node != invalid) : node_names.sel2;
+				(active_node = node_names.sel2) & (status__sel2 != invalid) : node_names.parLink2;
+				(active_node = node_names.sel2) & (status__sel2 = invalid) : next_child__sel2;
+				(active_node = node_names.success_failure_node_1) & (status__success_failure_node_1 != invalid) : node_names.sel3;
+				(active_node = node_names.success_node_1) & (status__success_node_1 != invalid) : node_names.sel3;
+				(active_node = node_names.sel3) & (status__sel3 != invalid) : node_names.parLink2;
+				(active_node = node_names.sel3) & (status__sel3 = invalid) : next_child__sel3;
+				(active_node = node_names.parLink2) & (status__parLink2 != invalid) : node_names.parLink10;
+				(active_node = node_names.parLink2) & (status__parLink2 = invalid) : next_child__parLink2;
+				(active_node = node_names.success_failure_node_2) & (status__success_failure_node_2 != invalid) : node_names.sel4;
+				(active_node = node_names.success_node_2) & (status__success_node_2 != invalid) : node_names.sel4;
+				(active_node = node_names.sel4) & (status__sel4 != invalid) : node_names.parLink3;
+				(active_node = node_names.sel4) & (status__sel4 = invalid) : next_child__sel4;
+				(active_node = node_names.success_failure_node_3) & (status__success_failure_node_3 != invalid) : node_names.sel5;
+				(active_node = node_names.success_node_3) & (status__success_node_3 != invalid) : node_names.sel5;
+				(active_node = node_names.sel5) & (status__sel5 != invalid) : node_names.parLink3;
+				(active_node = node_names.sel5) & (status__sel5 = invalid) : next_child__sel5;
+				(active_node = node_names.parLink3) & (status__parLink3 != invalid) : node_names.parLink10;
+				(active_node = node_names.parLink3) & (status__parLink3 = invalid) : next_child__parLink3;
 				(active_node = node_names.parLink10) & (status__parLink10 != invalid) : node_names.parLink14;
 				(active_node = node_names.parLink10) & (status__parLink10 = invalid) : next_child__parLink10;
+				(active_node = node_names.success_failure_node_4) & (status__success_failure_node_4 != invalid) : node_names.sel6;
+				(active_node = node_names.success_node_4) & (status__success_node_4 != invalid) : node_names.sel6;
+				(active_node = node_names.sel6) & (status__sel6 != invalid) : node_names.parLink4;
+				(active_node = node_names.sel6) & (status__sel6 = invalid) : next_child__sel6;
+				(active_node = node_names.success_failure_node_5) & (status__success_failure_node_5 != invalid) : node_names.sel7;
+				(active_node = node_names.success_node_5) & (status__success_node_5 != invalid) : node_names.sel7;
+				(active_node = node_names.sel7) & (status__sel7 != invalid) : node_names.parLink4;
+				(active_node = node_names.sel7) & (status__sel7 = invalid) : next_child__sel7;
+				(active_node = node_names.parLink4) & (status__parLink4 != invalid) : node_names.parLink11;
+				(active_node = node_names.parLink4) & (status__parLink4 = invalid) : next_child__parLink4;
+				(active_node = node_names.success_failure_node_6) & (status__success_failure_node_6 != invalid) : node_names.sel8;
+				(active_node = node_names.success_node_6) & (status__success_node_6 != invalid) : node_names.sel8;
+				(active_node = node_names.sel8) & (status__sel8 != invalid) : node_names.parLink5;
+				(active_node = node_names.sel8) & (status__sel8 = invalid) : next_child__sel8;
+				(active_node = node_names.success_failure_node_7) & (status__success_failure_node_7 != invalid) : node_names.sel9;
+				(active_node = node_names.success_node_7) & (status__success_node_7 != invalid) : node_names.sel9;
+				(active_node = node_names.sel9) & (status__sel9 != invalid) : node_names.parLink5;
+				(active_node = node_names.sel9) & (status__sel9 = invalid) : next_child__sel9;
+				(active_node = node_names.parLink5) & (status__parLink5 != invalid) : node_names.parLink11;
+				(active_node = node_names.parLink5) & (status__parLink5 = invalid) : next_child__parLink5;
 				(active_node = node_names.parLink11) & (status__parLink11 != invalid) : node_names.parLink14;
 				(active_node = node_names.parLink11) & (status__parLink11 = invalid) : next_child__parLink11;
-				(active_node = node_names.parLink12) & (status__parLink12 != invalid) : node_names.parLink15;
-				(active_node = node_names.parLink12) & (status__parLink12 = invalid) : next_child__parLink12;
-				(active_node = node_names.parLink13) & (status__parLink13 != invalid) : node_names.parLink15;
-				(active_node = node_names.parLink13) & (status__parLink13 = invalid) : next_child__parLink13;
 				(active_node = node_names.parLink14) & (status__parLink14 != invalid) : node_names.parLink16;
 				(active_node = node_names.parLink14) & (status__parLink14 = invalid) : next_child__parLink14;
+				(active_node = node_names.success_failure_node_8) & (status__success_failure_node_8 != invalid) : node_names.sel10;
+				(active_node = node_names.success_node_8) & (status__success_node_8 != invalid) : node_names.sel10;
+				(active_node = node_names.sel10) & (status__sel10 != invalid) : node_names.parLink6;
+				(active_node = node_names.sel10) & (status__sel10 = invalid) : next_child__sel10;
+				(active_node = node_names.success_failure_node_9) & (status__success_failure_node_9 != invalid) : node_names.sel11;
+				(active_node = node_names.success_node_9) & (status__success_node_9 != invalid) : node_names.sel11;
+				(active_node = node_names.sel11) & (status__sel11 != invalid) : node_names.parLink6;
+				(active_node = node_names.sel11) & (status__sel11 = invalid) : next_child__sel11;
+				(active_node = node_names.parLink6) & (status__parLink6 != invalid) : node_names.parLink12;
+				(active_node = node_names.parLink6) & (status__parLink6 = invalid) : next_child__parLink6;
+				(active_node = node_names.success_failure_node_10) & (status__success_failure_node_10 != invalid) : node_names.sel12;
+				(active_node = node_names.success_node_10) & (status__success_node_10 != invalid) : node_names.sel12;
+				(active_node = node_names.sel12) & (status__sel12 != invalid) : node_names.parLink7;
+				(active_node = node_names.sel12) & (status__sel12 = invalid) : next_child__sel12;
+				(active_node = node_names.success_failure_node_11) & (status__success_failure_node_11 != invalid) : node_names.sel13;
+				(active_node = node_names.success_node_11) & (status__success_node_11 != invalid) : node_names.sel13;
+				(active_node = node_names.sel13) & (status__sel13 != invalid) : node_names.parLink7;
+				(active_node = node_names.sel13) & (status__sel13 = invalid) : next_child__sel13;
+				(active_node = node_names.parLink7) & (status__parLink7 != invalid) : node_names.parLink12;
+				(active_node = node_names.parLink7) & (status__parLink7 = invalid) : next_child__parLink7;
+				(active_node = node_names.parLink12) & (status__parLink12 != invalid) : node_names.parLink15;
+				(active_node = node_names.parLink12) & (status__parLink12 = invalid) : next_child__parLink12;
+				(active_node = node_names.success_failure_node_12) & (status__success_failure_node_12 != invalid) : node_names.sel14;
+				(active_node = node_names.success_node_12) & (status__success_node_12 != invalid) : node_names.sel14;
+				(active_node = node_names.sel14) & (status__sel14 != invalid) : node_names.parLink8;
+				(active_node = node_names.sel14) & (status__sel14 = invalid) : next_child__sel14;
+				(active_node = node_names.success_failure_node_13) & (status__success_failure_node_13 != invalid) : node_names.sel15;
+				(active_node = node_names.success_node_13) & (status__success_node_13 != invalid) : node_names.sel15;
+				(active_node = node_names.sel15) & (status__sel15 != invalid) : node_names.parLink8;
+				(active_node = node_names.sel15) & (status__sel15 = invalid) : next_child__sel15;
+				(active_node = node_names.parLink8) & (status__parLink8 != invalid) : node_names.parLink13;
+				(active_node = node_names.parLink8) & (status__parLink8 = invalid) : next_child__parLink8;
+				(active_node = node_names.success_failure_node_14) & (status__success_failure_node_14 != invalid) : node_names.sel16;
+				(active_node = node_names.success_node_14) & (status__success_node_14 != invalid) : node_names.sel16;
+				(active_node = node_names.sel16) & (status__sel16 != invalid) : node_names.parLink9;
+				(active_node = node_names.sel16) & (status__sel16 = invalid) : next_child__sel16;
+				(active_node = node_names.success_failure_node_15) & (status__success_failure_node_15 != invalid) : node_names.sel0;
+				(active_node = node_names.success_node_15) & (status__success_node_15 != invalid) : node_names.sel0;
+				(active_node = node_names.sel0) & (status__sel0 != invalid) : node_names.parLink1;
+				(active_node = node_names.sel0) & (status__sel0 = invalid) : next_child__sel0;
+				(active_node = node_names.success_failure_node_16) & (status__success_failure_node_16 != invalid) : node_names.sel1;
+				(active_node = node_names.success_node_16) & (status__success_node_16 != invalid) : node_names.sel1;
+				(active_node = node_names.sel1) & (status__sel1 != invalid) : node_names.parLink1;
+				(active_node = node_names.sel1) & (status__sel1 = invalid) : next_child__sel1;
+				(active_node = node_names.parLink1) & (status__parLink1 != invalid) : node_names.parLink9;
+				(active_node = node_names.parLink1) & (status__parLink1 = invalid) : next_child__parLink1;
+				(active_node = node_names.parLink9) & (status__parLink9 != invalid) : node_names.parLink13;
+				(active_node = node_names.parLink9) & (status__parLink9 = invalid) : next_child__parLink9;
+				(active_node = node_names.parLink13) & (status__parLink13 != invalid) : node_names.parLink15;
+				(active_node = node_names.parLink13) & (status__parLink13 = invalid) : next_child__parLink13;
 				(active_node = node_names.parLink15) & (status__parLink15 != invalid) : node_names.parLink16;
 				(active_node = node_names.parLink15) & (status__parLink15 = invalid) : next_child__parLink15;
 				(active_node = node_names.parLink16) & (status__parLink16 != invalid) : -1;
 				(active_node = node_names.parLink16) & (status__parLink16 = invalid) : next_child__parLink16;
-				(active_node = node_names.parLink2) & (status__parLink2 != invalid) : node_names.parLink10;
-				(active_node = node_names.parLink2) & (status__parLink2 = invalid) : next_child__parLink2;
-				(active_node = node_names.parLink3) & (status__parLink3 != invalid) : node_names.parLink10;
-				(active_node = node_names.parLink3) & (status__parLink3 = invalid) : next_child__parLink3;
-				(active_node = node_names.parLink4) & (status__parLink4 != invalid) : node_names.parLink11;
-				(active_node = node_names.parLink4) & (status__parLink4 = invalid) : next_child__parLink4;
-				(active_node = node_names.parLink5) & (status__parLink5 != invalid) : node_names.parLink11;
-				(active_node = node_names.parLink5) & (status__parLink5 = invalid) : next_child__parLink5;
-				(active_node = node_names.parLink6) & (status__parLink6 != invalid) : node_names.parLink12;
-				(active_node = node_names.parLink6) & (status__parLink6 = invalid) : next_child__parLink6;
-				(active_node = node_names.parLink7) & (status__parLink7 != invalid) : node_names.parLink12;
-				(active_node = node_names.parLink7) & (status__parLink7 = invalid) : next_child__parLink7;
-				(active_node = node_names.parLink8) & (status__parLink8 != invalid) : node_names.parLink13;
-				(active_node = node_names.parLink8) & (status__parLink8 = invalid) : next_child__parLink8;
-				(active_node = node_names.parLink9) & (status__parLink9 != invalid) : node_names.parLink13;
-				(active_node = node_names.parLink9) & (status__parLink9 = invalid) : next_child__parLink9;
-				(active_node = node_names.sel0) & (status__sel0 != invalid) : node_names.parLink1;
-				(active_node = node_names.sel0) & (status__sel0 = invalid) : next_child__sel0;
-				(active_node = node_names.sel1) & (status__sel1 != invalid) : node_names.parLink1;
-				(active_node = node_names.sel1) & (status__sel1 = invalid) : next_child__sel1;
-				(active_node = node_names.sel10) & (status__sel10 != invalid) : node_names.parLink6;
-				(active_node = node_names.sel10) & (status__sel10 = invalid) : next_child__sel10;
-				(active_node = node_names.sel11) & (status__sel11 != invalid) : node_names.parLink6;
-				(active_node = node_names.sel11) & (status__sel11 = invalid) : next_child__sel11;
-				(active_node = node_names.sel12) & (status__sel12 != invalid) : node_names.parLink7;
-				(active_node = node_names.sel12) & (status__sel12 = invalid) : next_child__sel12;
-				(active_node = node_names.sel13) & (status__sel13 != invalid) : node_names.parLink7;
-				(active_node = node_names.sel13) & (status__sel13 = invalid) : next_child__sel13;
-				(active_node = node_names.sel14) & (status__sel14 != invalid) : node_names.parLink8;
-				(active_node = node_names.sel14) & (status__sel14 = invalid) : next_child__sel14;
-				(active_node = node_names.sel15) & (status__sel15 != invalid) : node_names.parLink8;
-				(active_node = node_names.sel15) & (status__sel15 = invalid) : next_child__sel15;
-				(active_node = node_names.sel16) & (status__sel16 != invalid) : node_names.parLink9;
-				(active_node = node_names.sel16) & (status__sel16 = invalid) : next_child__sel16;
-				(active_node = node_names.sel2) & (status__sel2 != invalid) : node_names.parLink2;
-				(active_node = node_names.sel2) & (status__sel2 = invalid) : next_child__sel2;
-				(active_node = node_names.sel3) & (status__sel3 != invalid) : node_names.parLink2;
-				(active_node = node_names.sel3) & (status__sel3 = invalid) : next_child__sel3;
-				(active_node = node_names.sel4) & (status__sel4 != invalid) : node_names.parLink3;
-				(active_node = node_names.sel4) & (status__sel4 = invalid) : next_child__sel4;
-				(active_node = node_names.sel5) & (status__sel5 != invalid) : node_names.parLink3;
-				(active_node = node_names.sel5) & (status__sel5 = invalid) : next_child__sel5;
-				(active_node = node_names.sel6) & (status__sel6 != invalid) : node_names.parLink4;
-				(active_node = node_names.sel6) & (status__sel6 = invalid) : next_child__sel6;
-				(active_node = node_names.sel7) & (status__sel7 != invalid) : node_names.parLink4;
-				(active_node = node_names.sel7) & (status__sel7 = invalid) : next_child__sel7;
-				(active_node = node_names.sel8) & (status__sel8 != invalid) : node_names.parLink5;
-				(active_node = node_names.sel8) & (status__sel8 = invalid) : next_child__sel8;
-				(active_node = node_names.sel9) & (status__sel9 != invalid) : node_names.parLink5;
-				(active_node = node_names.sel9) & (status__sel9 = invalid) : next_child__sel9;
-				(active_node = node_names.success_failure_node) & (status__success_failure_node != invalid) : node_names.sel2;
-				(active_node = node_names.success_failure_node_1) & (status__success_failure_node_1 != invalid) : node_names.sel3;
-				(active_node = node_names.success_failure_node_10) & (status__success_failure_node_10 != invalid) : node_names.sel12;
-				(active_node = node_names.success_failure_node_11) & (status__success_failure_node_11 != invalid) : node_names.sel13;
-				(active_node = node_names.success_failure_node_12) & (status__success_failure_node_12 != invalid) : node_names.sel14;
-				(active_node = node_names.success_failure_node_13) & (status__success_failure_node_13 != invalid) : node_names.sel15;
-				(active_node = node_names.success_failure_node_14) & (status__success_failure_node_14 != invalid) : node_names.sel16;
-				(active_node = node_names.success_failure_node_15) & (status__success_failure_node_15 != invalid) : node_names.sel0;
-				(active_node = node_names.success_failure_node_16) & (status__success_failure_node_16 != invalid) : node_names.sel1;
-				(active_node = node_names.success_failure_node_2) & (status__success_failure_node_2 != invalid) : node_names.sel4;
-				(active_node = node_names.success_failure_node_3) & (status__success_failure_node_3 != invalid) : node_names.sel5;
-				(active_node = node_names.success_failure_node_4) & (status__success_failure_node_4 != invalid) : node_names.sel6;
-				(active_node = node_names.success_failure_node_5) & (status__success_failure_node_5 != invalid) : node_names.sel7;
-				(active_node = node_names.success_failure_node_6) & (status__success_failure_node_6 != invalid) : node_names.sel8;
-				(active_node = node_names.success_failure_node_7) & (status__success_failure_node_7 != invalid) : node_names.sel9;
-				(active_node = node_names.success_failure_node_8) & (status__success_failure_node_8 != invalid) : node_names.sel10;
-				(active_node = node_names.success_failure_node_9) & (status__success_failure_node_9 != invalid) : node_names.sel11;
-				(active_node = node_names.success_node) & (status__success_node != invalid) : node_names.sel2;
-				(active_node = node_names.success_node_1) & (status__success_node_1 != invalid) : node_names.sel3;
-				(active_node = node_names.success_node_10) & (status__success_node_10 != invalid) : node_names.sel12;
-				(active_node = node_names.success_node_11) & (status__success_node_11 != invalid) : node_names.sel13;
-				(active_node = node_names.success_node_12) & (status__success_node_12 != invalid) : node_names.sel14;
-				(active_node = node_names.success_node_13) & (status__success_node_13 != invalid) : node_names.sel15;
-				(active_node = node_names.success_node_14) & (status__success_node_14 != invalid) : node_names.sel16;
-				(active_node = node_names.success_node_15) & (status__success_node_15 != invalid) : node_names.sel0;
-				(active_node = node_names.success_node_16) & (status__success_node_16 != invalid) : node_names.sel1;
-				(active_node = node_names.success_node_2) & (status__success_node_2 != invalid) : node_names.sel4;
-				(active_node = node_names.success_node_3) & (status__success_node_3 != invalid) : node_names.sel5;
-				(active_node = node_names.success_node_4) & (status__success_node_4 != invalid) : node_names.sel6;
-				(active_node = node_names.success_node_5) & (status__success_node_5 != invalid) : node_names.sel7;
-				(active_node = node_names.success_node_6) & (status__success_node_6 != invalid) : node_names.sel8;
-				(active_node = node_names.success_node_7) & (status__success_node_7 != invalid) : node_names.sel9;
-				(active_node = node_names.success_node_8) & (status__success_node_8 != invalid) : node_names.sel10;
-				(active_node = node_names.success_node_9) & (status__success_node_9 != invalid) : node_names.sel11;
 				TRUE : active_node;
 			esac;
 		--START OF BLACKBOARD VARIABLES TRANSITION
-		next(success_failure_node_10_DOT_randomizer) :=
+		next(randomizer) :=
 			case
-				(active_node = -1) & !(status__success_failure_node_10 = invalid) & (TRUE) : {TRUE, FALSE};
-				TRUE : success_failure_node_10_DOT_randomizer;
-			esac;
-		next(success_failure_node_11_DOT_randomizer) :=
-			case
-				(active_node = -1) & !(status__success_failure_node_11 = invalid) & (TRUE) : {TRUE, FALSE};
-				TRUE : success_failure_node_11_DOT_randomizer;
-			esac;
-		next(success_failure_node_12_DOT_randomizer) :=
-			case
-				(active_node = -1) & !(status__success_failure_node_12 = invalid) & (TRUE) : {TRUE, FALSE};
-				TRUE : success_failure_node_12_DOT_randomizer;
-			esac;
-		next(success_failure_node_13_DOT_randomizer) :=
-			case
-				(active_node = -1) & !(status__success_failure_node_13 = invalid) & (TRUE) : {TRUE, FALSE};
-				TRUE : success_failure_node_13_DOT_randomizer;
-			esac;
-		next(success_failure_node_14_DOT_randomizer) :=
-			case
-				(active_node = -1) & !(status__success_failure_node_14 = invalid) & (TRUE) : {TRUE, FALSE};
-				TRUE : success_failure_node_14_DOT_randomizer;
-			esac;
-		next(success_failure_node_15_DOT_randomizer) :=
-			case
-				(active_node = -1) & !(status__success_failure_node_15 = invalid) & (TRUE) : {TRUE, FALSE};
-				TRUE : success_failure_node_15_DOT_randomizer;
-			esac;
-		next(success_failure_node_16_DOT_randomizer) :=
-			case
-				(active_node = -1) & !(status__success_failure_node_16 = invalid) & (TRUE) : {TRUE, FALSE};
-				TRUE : success_failure_node_16_DOT_randomizer;
-			esac;
-		next(success_failure_node_1_DOT_randomizer) :=
-			case
-				(active_node = -1) & !(status__success_failure_node_1 = invalid) & (TRUE) : {TRUE, FALSE};
-				TRUE : success_failure_node_1_DOT_randomizer;
-			esac;
-		next(success_failure_node_2_DOT_randomizer) :=
-			case
-				(active_node = -1) & !(status__success_failure_node_2 = invalid) & (TRUE) : {TRUE, FALSE};
-				TRUE : success_failure_node_2_DOT_randomizer;
-			esac;
-		next(success_failure_node_3_DOT_randomizer) :=
-			case
-				(active_node = -1) & !(status__success_failure_node_3 = invalid) & (TRUE) : {TRUE, FALSE};
-				TRUE : success_failure_node_3_DOT_randomizer;
-			esac;
-		next(success_failure_node_4_DOT_randomizer) :=
-			case
-				(active_node = -1) & !(status__success_failure_node_4 = invalid) & (TRUE) : {TRUE, FALSE};
-				TRUE : success_failure_node_4_DOT_randomizer;
-			esac;
-		next(success_failure_node_5_DOT_randomizer) :=
-			case
-				(active_node = -1) & !(status__success_failure_node_5 = invalid) & (TRUE) : {TRUE, FALSE};
-				TRUE : success_failure_node_5_DOT_randomizer;
-			esac;
-		next(success_failure_node_6_DOT_randomizer) :=
-			case
-				(active_node = -1) & !(status__success_failure_node_6 = invalid) & (TRUE) : {TRUE, FALSE};
-				TRUE : success_failure_node_6_DOT_randomizer;
-			esac;
-		next(success_failure_node_7_DOT_randomizer) :=
-			case
-				(active_node = -1) & !(status__success_failure_node_7 = invalid) & (TRUE) : {TRUE, FALSE};
-				TRUE : success_failure_node_7_DOT_randomizer;
-			esac;
-		next(success_failure_node_8_DOT_randomizer) :=
-			case
-				(active_node = -1) & !(status__success_failure_node_8 = invalid) & (TRUE) : {TRUE, FALSE};
-				TRUE : success_failure_node_8_DOT_randomizer;
-			esac;
-		next(success_failure_node_9_DOT_randomizer) :=
-			case
-				(active_node = -1) & !(status__success_failure_node_9 = invalid) & (TRUE) : {TRUE, FALSE};
-				TRUE : success_failure_node_9_DOT_randomizer;
-			esac;
-		next(success_failure_node_DOT_randomizer) :=
-			case
+				(active_node = -1) & !(status__success_failure_node = invalid) & (!(TRUE)) : randomizer;
 				(active_node = -1) & !(status__success_failure_node = invalid) & (TRUE) : {TRUE, FALSE};
-				TRUE : success_failure_node_DOT_randomizer;
+				(active_node = -1) & !(status__success_failure_node_1 = invalid) & (!(TRUE)) : randomizer;
+				(active_node = -1) & !(status__success_failure_node_1 = invalid) & (TRUE) : {TRUE, FALSE};
+				(active_node = -1) & !(status__success_failure_node_2 = invalid) & (!(TRUE)) : randomizer;
+				(active_node = -1) & !(status__success_failure_node_2 = invalid) & (TRUE) : {TRUE, FALSE};
+				(active_node = -1) & !(status__success_failure_node_3 = invalid) & (!(TRUE)) : randomizer;
+				(active_node = -1) & !(status__success_failure_node_3 = invalid) & (TRUE) : {TRUE, FALSE};
+				(active_node = -1) & !(status__success_failure_node_4 = invalid) & (!(TRUE)) : randomizer;
+				(active_node = -1) & !(status__success_failure_node_4 = invalid) & (TRUE) : {TRUE, FALSE};
+				(active_node = -1) & !(status__success_failure_node_5 = invalid) & (!(TRUE)) : randomizer;
+				(active_node = -1) & !(status__success_failure_node_5 = invalid) & (TRUE) : {TRUE, FALSE};
+				(active_node = -1) & !(status__success_failure_node_6 = invalid) & (!(TRUE)) : randomizer;
+				(active_node = -1) & !(status__success_failure_node_6 = invalid) & (TRUE) : {TRUE, FALSE};
+				(active_node = -1) & !(status__success_failure_node_7 = invalid) & (!(TRUE)) : randomizer;
+				(active_node = -1) & !(status__success_failure_node_7 = invalid) & (TRUE) : {TRUE, FALSE};
+				(active_node = -1) & !(status__success_failure_node_8 = invalid) & (!(TRUE)) : randomizer;
+				(active_node = -1) & !(status__success_failure_node_8 = invalid) & (TRUE) : {TRUE, FALSE};
+				(active_node = -1) & !(status__success_failure_node_9 = invalid) & (!(TRUE)) : randomizer;
+				(active_node = -1) & !(status__success_failure_node_9 = invalid) & (TRUE) : {TRUE, FALSE};
+				(active_node = -1) & !(status__success_failure_node_10 = invalid) & (!(TRUE)) : randomizer;
+				(active_node = -1) & !(status__success_failure_node_10 = invalid) & (TRUE) : {TRUE, FALSE};
+				(active_node = -1) & !(status__success_failure_node_11 = invalid) & (!(TRUE)) : randomizer;
+				(active_node = -1) & !(status__success_failure_node_11 = invalid) & (TRUE) : {TRUE, FALSE};
+				(active_node = -1) & !(status__success_failure_node_12 = invalid) & (!(TRUE)) : randomizer;
+				(active_node = -1) & !(status__success_failure_node_12 = invalid) & (TRUE) : {TRUE, FALSE};
+				(active_node = -1) & !(status__success_failure_node_13 = invalid) & (!(TRUE)) : randomizer;
+				(active_node = -1) & !(status__success_failure_node_13 = invalid) & (TRUE) : {TRUE, FALSE};
+				(active_node = -1) & !(status__success_failure_node_14 = invalid) & (!(TRUE)) : randomizer;
+				(active_node = -1) & !(status__success_failure_node_14 = invalid) & (TRUE) : {TRUE, FALSE};
+				(active_node = -1) & !(status__success_failure_node_15 = invalid) & (!(TRUE)) : randomizer;
+				(active_node = -1) & !(status__success_failure_node_15 = invalid) & (TRUE) : {TRUE, FALSE};
+				(active_node = -1) & !(status__success_failure_node_16 = invalid) & (!(TRUE)) : randomizer;
+				(active_node = -1) & !(status__success_failure_node_16 = invalid) & (TRUE) : {TRUE, FALSE};
+				TRUE : randomizer;
 			esac;
 		--END OF BLACKBOARD VARIABLES TRANSITION
 
@@ -1027,7 +917,7 @@ MODULE define_nodes
 		sel1 := 64;
 		success_failure_node_16 := 65;
 		success_node_16 := 66;
-MODULE success_failure_node_module(success_failure_node_DOT_randomizer)
+MODULE success_failure_node_module(randomizer)
 	CONSTANTS
 		success, failure, running, invalid;
 	VAR
@@ -1038,10 +928,10 @@ MODULE success_failure_node_module(success_failure_node_DOT_randomizer)
 			case
 				reset : invalid;
 				!(active) : status;
-				success_failure_node_DOT_randomizer : success;
+				randomizer : success;
 				TRUE : failure;
 			esac;
-MODULE success_failure_node_1_module(success_failure_node_1_DOT_randomizer)
+MODULE success_failure_node_1_module(randomizer)
 	CONSTANTS
 		success, failure, running, invalid;
 	VAR
@@ -1052,10 +942,10 @@ MODULE success_failure_node_1_module(success_failure_node_1_DOT_randomizer)
 			case
 				reset : invalid;
 				!(active) : status;
-				success_failure_node_1_DOT_randomizer : success;
+				randomizer : success;
 				TRUE : failure;
 			esac;
-MODULE success_failure_node_10_module(success_failure_node_10_DOT_randomizer)
+MODULE success_failure_node_2_module(randomizer)
 	CONSTANTS
 		success, failure, running, invalid;
 	VAR
@@ -1066,10 +956,10 @@ MODULE success_failure_node_10_module(success_failure_node_10_DOT_randomizer)
 			case
 				reset : invalid;
 				!(active) : status;
-				success_failure_node_10_DOT_randomizer : success;
+				randomizer : success;
 				TRUE : failure;
 			esac;
-MODULE success_failure_node_11_module(success_failure_node_11_DOT_randomizer)
+MODULE success_failure_node_3_module(randomizer)
 	CONSTANTS
 		success, failure, running, invalid;
 	VAR
@@ -1080,10 +970,10 @@ MODULE success_failure_node_11_module(success_failure_node_11_DOT_randomizer)
 			case
 				reset : invalid;
 				!(active) : status;
-				success_failure_node_11_DOT_randomizer : success;
+				randomizer : success;
 				TRUE : failure;
 			esac;
-MODULE success_failure_node_12_module(success_failure_node_12_DOT_randomizer)
+MODULE success_failure_node_4_module(randomizer)
 	CONSTANTS
 		success, failure, running, invalid;
 	VAR
@@ -1094,10 +984,10 @@ MODULE success_failure_node_12_module(success_failure_node_12_DOT_randomizer)
 			case
 				reset : invalid;
 				!(active) : status;
-				success_failure_node_12_DOT_randomizer : success;
+				randomizer : success;
 				TRUE : failure;
 			esac;
-MODULE success_failure_node_13_module(success_failure_node_13_DOT_randomizer)
+MODULE success_failure_node_5_module(randomizer)
 	CONSTANTS
 		success, failure, running, invalid;
 	VAR
@@ -1108,10 +998,10 @@ MODULE success_failure_node_13_module(success_failure_node_13_DOT_randomizer)
 			case
 				reset : invalid;
 				!(active) : status;
-				success_failure_node_13_DOT_randomizer : success;
+				randomizer : success;
 				TRUE : failure;
 			esac;
-MODULE success_failure_node_14_module(success_failure_node_14_DOT_randomizer)
+MODULE success_failure_node_6_module(randomizer)
 	CONSTANTS
 		success, failure, running, invalid;
 	VAR
@@ -1122,10 +1012,10 @@ MODULE success_failure_node_14_module(success_failure_node_14_DOT_randomizer)
 			case
 				reset : invalid;
 				!(active) : status;
-				success_failure_node_14_DOT_randomizer : success;
+				randomizer : success;
 				TRUE : failure;
 			esac;
-MODULE success_failure_node_15_module(success_failure_node_15_DOT_randomizer)
+MODULE success_failure_node_7_module(randomizer)
 	CONSTANTS
 		success, failure, running, invalid;
 	VAR
@@ -1136,10 +1026,10 @@ MODULE success_failure_node_15_module(success_failure_node_15_DOT_randomizer)
 			case
 				reset : invalid;
 				!(active) : status;
-				success_failure_node_15_DOT_randomizer : success;
+				randomizer : success;
 				TRUE : failure;
 			esac;
-MODULE success_failure_node_16_module(success_failure_node_16_DOT_randomizer)
+MODULE success_failure_node_8_module(randomizer)
 	CONSTANTS
 		success, failure, running, invalid;
 	VAR
@@ -1150,10 +1040,10 @@ MODULE success_failure_node_16_module(success_failure_node_16_DOT_randomizer)
 			case
 				reset : invalid;
 				!(active) : status;
-				success_failure_node_16_DOT_randomizer : success;
+				randomizer : success;
 				TRUE : failure;
 			esac;
-MODULE success_failure_node_2_module(success_failure_node_2_DOT_randomizer)
+MODULE success_failure_node_9_module(randomizer)
 	CONSTANTS
 		success, failure, running, invalid;
 	VAR
@@ -1164,10 +1054,10 @@ MODULE success_failure_node_2_module(success_failure_node_2_DOT_randomizer)
 			case
 				reset : invalid;
 				!(active) : status;
-				success_failure_node_2_DOT_randomizer : success;
+				randomizer : success;
 				TRUE : failure;
 			esac;
-MODULE success_failure_node_3_module(success_failure_node_3_DOT_randomizer)
+MODULE success_failure_node_10_module(randomizer)
 	CONSTANTS
 		success, failure, running, invalid;
 	VAR
@@ -1178,10 +1068,10 @@ MODULE success_failure_node_3_module(success_failure_node_3_DOT_randomizer)
 			case
 				reset : invalid;
 				!(active) : status;
-				success_failure_node_3_DOT_randomizer : success;
+				randomizer : success;
 				TRUE : failure;
 			esac;
-MODULE success_failure_node_4_module(success_failure_node_4_DOT_randomizer)
+MODULE success_failure_node_11_module(randomizer)
 	CONSTANTS
 		success, failure, running, invalid;
 	VAR
@@ -1192,10 +1082,10 @@ MODULE success_failure_node_4_module(success_failure_node_4_DOT_randomizer)
 			case
 				reset : invalid;
 				!(active) : status;
-				success_failure_node_4_DOT_randomizer : success;
+				randomizer : success;
 				TRUE : failure;
 			esac;
-MODULE success_failure_node_5_module(success_failure_node_5_DOT_randomizer)
+MODULE success_failure_node_12_module(randomizer)
 	CONSTANTS
 		success, failure, running, invalid;
 	VAR
@@ -1206,10 +1096,10 @@ MODULE success_failure_node_5_module(success_failure_node_5_DOT_randomizer)
 			case
 				reset : invalid;
 				!(active) : status;
-				success_failure_node_5_DOT_randomizer : success;
+				randomizer : success;
 				TRUE : failure;
 			esac;
-MODULE success_failure_node_6_module(success_failure_node_6_DOT_randomizer)
+MODULE success_failure_node_13_module(randomizer)
 	CONSTANTS
 		success, failure, running, invalid;
 	VAR
@@ -1220,10 +1110,10 @@ MODULE success_failure_node_6_module(success_failure_node_6_DOT_randomizer)
 			case
 				reset : invalid;
 				!(active) : status;
-				success_failure_node_6_DOT_randomizer : success;
+				randomizer : success;
 				TRUE : failure;
 			esac;
-MODULE success_failure_node_7_module(success_failure_node_7_DOT_randomizer)
+MODULE success_failure_node_14_module(randomizer)
 	CONSTANTS
 		success, failure, running, invalid;
 	VAR
@@ -1234,10 +1124,10 @@ MODULE success_failure_node_7_module(success_failure_node_7_DOT_randomizer)
 			case
 				reset : invalid;
 				!(active) : status;
-				success_failure_node_7_DOT_randomizer : success;
+				randomizer : success;
 				TRUE : failure;
 			esac;
-MODULE success_failure_node_8_module(success_failure_node_8_DOT_randomizer)
+MODULE success_failure_node_15_module(randomizer)
 	CONSTANTS
 		success, failure, running, invalid;
 	VAR
@@ -1248,10 +1138,10 @@ MODULE success_failure_node_8_module(success_failure_node_8_DOT_randomizer)
 			case
 				reset : invalid;
 				!(active) : status;
-				success_failure_node_8_DOT_randomizer : success;
+				randomizer : success;
 				TRUE : failure;
 			esac;
-MODULE success_failure_node_9_module(success_failure_node_9_DOT_randomizer)
+MODULE success_failure_node_16_module(randomizer)
 	CONSTANTS
 		success, failure, running, invalid;
 	VAR
@@ -1262,7 +1152,7 @@ MODULE success_failure_node_9_module(success_failure_node_9_DOT_randomizer)
 			case
 				reset : invalid;
 				!(active) : status;
-				success_failure_node_9_DOT_randomizer : success;
+				randomizer : success;
 				TRUE : failure;
 			esac;
 MODULE success_DEFAULT_module

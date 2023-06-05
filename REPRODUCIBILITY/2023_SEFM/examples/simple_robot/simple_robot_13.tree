@@ -4,82 +4,81 @@ constants {
 } end_constants
 
 
-blackboard_variables {
-	blackboard_variable { x VAR [0, 'x_max'] initial_value {result {0} end_result} end_initial_value} end_blackboard_variable
-	blackboard_variable { y VAR [0, 'y_max'] initial_value {result {0} end_result} end_initial_value} end_blackboard_variable
-	blackboard_variable { target_x VAR [0, 'x_max'] initial_value {result {0} end_result} end_initial_value} end_blackboard_variable
-	blackboard_variable { target_y VAR [0, 'y_max'] initial_value {result {0} end_result} end_initial_value} end_blackboard_variable
-	blackboard_variable { mission VAR BOOLEAN initial_value {result {False} end_result} end_initial_value} end_blackboard_variable
-} end_blackboard_variables
+variables {
+	variable { bl x VAR [0, 'x_max'] assign {result {0} }}
+	variable { bl y VAR [0, 'y_max'] assign {result {0} } }
+	variable { bl target_x VAR [0, 'x_max'] assign {result {0} } }
+	variable { bl target_y VAR [0, 'y_max'] assign {result {0} } }
+	variable { bl mission VAR BOOLEAN assign {result {False} } }
+	variable { local saw_target VAR BOOLEAN assign {result {True} } }
+	variable { env x_goal VAR [0, 'x_max'] assign {result {range, 0, 'x_max', True} } }
+	variable { env y_goal VAR [0, 'y_max'] assign {result {range, 0, 'y_max', True} } }
+	variable { env x_true VAR [0, 'x_max'] assign {result {range, 0, 'x_max', True} } }
+	variable { env y_true VAR [0, 'y_max'] assign {result {range, 0, 'y_max', True} } }
+	variable { env remaining_goals VAR [0, 3] assign {result {range, 0, 3, True} } }
+}
 
-local_variables {
-	local_variable { saw_target VAR BOOLEAN initial_value {result {True} end_result} end_initial_value} end_local_variable
-} end_local_variables
-
-environment {
-	environment_variables {
-		environment_variable { x_goal VAR [0, 'x_max'] initial_value {result {range, 0, 'x_max', True} end_result} end_initial_value} end_environment_variable
-		environment_variable { y_goal VAR [0, 'y_max'] initial_value {result {range, 0, 'y_max', True} end_result} end_initial_value} end_environment_variable
-		environment_variable { x_true VAR [0, 'x_max'] initial_value {result {range, 0, 'x_max', True} end_result} end_initial_value} end_environment_variable
-		environment_variable { y_true VAR [0, 'y_max'] initial_value {result {range, 0, 'y_max', True} end_result} end_initial_value} end_environment_variable
-		environment_variable { remaining_goals VAR [0, 3] initial_value {result {range, 0, 3, True} end_result} end_initial_value} end_environment_variable
-	} end_environment_variables
-	update_values {
-		environment_statement {
-			env remaining_goals
-			case { (and, (equal, env x_goal, env x_true), (equal, env y_goal, env y_true)) } end_case
-			result { (max, 0, (subtraction, env remaining_goals, 1)) } end_result
-			result { env remaining_goals } end_result
-		} end_environment_statement
-		environment_statement {
-			env x_goal
-			case { (equal, 0, env remaining_goals ) } end_case
-			result { env x_goal } end_result
-			case { (and, (equal, env x_goal, env x_true), (equal, env y_goal, env y_true)) } end_case
-			result {range, 0, 'x_max', True} end_result
-			result { env x_goal } end_result
-		} end_environment_statement
-		environment_statement {
-			env y_goal
-			case { (equal, 0, env remaining_goals) } end_case
-			result { env y_goal } end_result
-			case { (and, (equal, env x_goal, env x_true), (equal, env y_goal, env y_true)) } end_case
-			result {range, 0, 'y_max', True} end_result
-			result { env y_goal } end_result
-		} end_environment_statement
-	} end_update_values
-} end_environment
+environment_update {
+		variable_statement {
+			remaining_goals
+			assign{
+			case { (and, (equal, x_goal, x_true), (equal, y_goal, y_true)) } end_case
+			result { (max, 0, (subtraction, remaining_goals, 1)) } 
+			result { remaining_goals } 
+			}
+		}
+		variable_statement {
+			x_goal
+			assign{
+			case { (equal, 0, remaining_goals ) } end_case
+			result { x_goal } 
+			case { (and, (equal, x_goal, x_true), (equal, y_goal, y_true)) } end_case
+			result {range, 0, 'x_max', True} 
+			result { x_goal } 
+			}
+		}
+		variable_statement {
+			y_goal
+			assign {
+			case { (equal, 0, remaining_goals) } end_case
+			result { y_goal } 
+			case { (and, (equal, x_goal, x_true), (equal, y_goal, y_true)) } end_case
+			result {range, 0, 'y_max', True} 
+			result { y_goal } 
+			}
+		}
+}
 
 checks {
 	check {
 		have_mission
 		read_variables { mission } end_read_variables
-		condition { bl mission } end_condition
+		condition { mission } end_condition
 	} end_check
 	check {
 		target_reached
 		read_variables { x y target_x target_y } end_read_variables
-		condition { (and, (equal, bl x, bl target_x), (equal, bl y, bl target_y)) } end_condition
+		condition { (and, (equal, x, target_x), (equal, y, target_y)) } end_condition
 	} end_check
 	check {
 		x_too_small
 		read_variables { target_x x } end_read_variables
-		condition { (less_than, bl x, bl target_x) } end_condition
+		condition { (less_than, x, target_x) } end_condition
 	} end_check
 	check {
 		x_too_big
 		read_variables { target_x x } end_read_variables
-		condition { (greater_than, bl x, bl target_x) } end_condition
+		condition { (greater_than, x, target_x) } end_condition
 	} end_check
 	check {
 		y_too_small
 		read_variables { target_y y } end_read_variables
-		condition { (less_than, bl y, bl target_y) } end_condition
+		condition { (less_than, y, target_y) } end_condition
 	} end_check
 	check {
 		y_too_big
 		read_variables { target_y y } end_read_variables
-		condition { (greater_than, bl y, bl target_y) } end_condition
+		condition { (greater_than, y, target_y) } end_condition
 	} end_check
 } end_checks
 
@@ -89,7 +88,7 @@ environment_checks {
 actions {
 	action {
 		get_mission
-		imports {'robot'} end_imports
+		
 		local_variables {} end_local_variables
 		read_variables {} end_read_variables
 		write_variables {mission target_x target_y} end_write_variables
@@ -97,17 +96,17 @@ actions {
 		} end_initial_values
 		update {
 			read_environment {
-				python_function { from 'robot' 'get_mission'} end_python_function
+			mission_func
 				condition { True } end_condition
-				read_variable_statement {bl target_x result { env x_goal } end_result} end_read_variable_statement
-				read_variable_statement {bl target_y result { env y_goal } end_result} end_read_variable_statement
+				variable_statement {target_x assign{result { x_goal }} }
+				variable_statement {target_y assign{result { y_goal }} }
 			} end_read_environment
 			variable_statement {
-				bl mission
-				result { True } end_result
+				mission
+				assign{result { True } }
 			} end_variable_statement
 			return_statement {
-				result { success } end_result
+				result { success } 
 			} end_return_statement
 		} end_update
 	} end_action
@@ -115,7 +114,7 @@ actions {
 
 	action {
 		get_position
-		imports {'robot'} end_imports
+		
 		local_variables {} end_local_variables
 		read_variables {} end_read_variables
 		write_variables { x y } end_write_variables
@@ -123,12 +122,12 @@ actions {
 		} end_initial_values
 		update {
 			read_environment {
-				python_function { from 'robot' 'get_position'} end_python_function
+			position_func
 				condition { True } end_condition
-				read_variable_statement {bl x result { env x_true } end_result} end_read_variable_statement
-				read_variable_statement {bl y result { env y_true } end_result} end_read_variable_statement
+				variable_statement {x assign{result { x_true }} }
+				variable_statement {y assign{result { y_true }} }
 			} end_read_environment
-			return_statement { result { success } end_result } end_return_statement
+			return_statement { result { success }  } end_return_statement
 		} end_update
 	} end_action
 
@@ -140,90 +139,79 @@ actions {
 		initial_values {} end_initial_values
 		update {
 			variable_statement {
-				bl mission
-				result { False } end_result
+				mission
+				assign{
+				result { False } }
 			} end_variable_statement
-			return_statement { result { success } end_result } end_return_statement
+			return_statement { result { success }  } end_return_statement
 		} end_update
 	} end_action
 
 	action {
 		go_right
-		imports { 'robot' } end_imports
 		local_variables {} end_local_variables
 		read_variables {} end_read_variables
 		write_variables {} end_write_variables
 		initial_values {} end_initial_values
 		update {
 			write_environment {
-				python_function { from 'robot' 'go_right'} end_python_function
-				update_values {
-					environment_statement {
-						env x_true result { (min, 'x_max', (addition, env x_true, 1)) } end_result
-					} end_environment_statement
-				} end_update_values
+			right_func
+					variable_statement {
+						x_true assign {result { (min, 'x_max', (addition, x_true, 1)) } }
+					}
 			} end_write_environment
-			return_statement { result { success } end_result } end_return_statement
+			return_statement { result { success }  } end_return_statement
 		} end_update
 	} end_action
 
 	action {
 		go_left
-		imports { 'robot' } end_imports
 		local_variables {} end_local_variables
 		read_variables {} end_read_variables
 		write_variables {} end_write_variables
 		initial_values {} end_initial_values
 		update {
 			write_environment {
-				python_function { from 'robot' 'go_left'} end_python_function
-				update_values {
-					environment_statement {
-						env x_true result { (max, 0, (subtraction, env x_true, 1)) } end_result
-					} end_environment_statement
-				} end_update_values
+			left_func
+					variable_statement {
+						x_true assign{result { (max, 0, (subtraction, x_true, 1)) } }
+					} 
 			} end_write_environment
-			return_statement { result { success } end_result } end_return_statement
+			return_statement { result { success }  } end_return_statement
 		} end_update
 	} end_action
 
 	action {
 		go_up
-		imports { 'robot' } end_imports
 		local_variables {} end_local_variables
 		read_variables {} end_read_variables
 		write_variables {} end_write_variables
 		initial_values {} end_initial_values
 		update {
 			write_environment {
-				python_function { from 'robot' 'go_up'} end_python_function
-				update_values {
-					environment_statement {
-						env y_true result { (min, 'y_max', (addition, env y_true, 1)) } end_result
-					} end_environment_statement
-				} end_update_values
+			up_func
+					variable_statement {
+						y_true assign{result { (min, 'y_max', (addition, y_true, 1)) } }
+					} 
 			} end_write_environment
-			return_statement { result { success } end_result } end_return_statement
+			return_statement { result { success }  } end_return_statement
 		} end_update
 	} end_action
 
 	action {
 		go_down
-		imports { 'robot' } end_imports
 		local_variables {} end_local_variables
 		read_variables {} end_read_variables
 		write_variables {} end_write_variables
 		initial_values {} end_initial_values
 		update {
 			write_environment {
-				python_function { from 'robot' 'go_down'} end_python_function
-				update_values {
-					environment_statement {
-						env y_true result { (max, 0, (subtraction, env y_true, 1)) } end_result
-					} end_environment_statement
-				} end_update_values
+			down_func
+					variable_statement {
+						y_true assign{result { (max, 0, (subtraction, y_true, 1)) } }
+					} end_variable_statement
 			} end_write_environment
-			return_statement { result { success } end_result } end_return_statement
+			return_statement { result { success }  } end_return_statement
 		} end_update
 	} end_action
 } end_actions
@@ -241,7 +229,7 @@ composite {
 			X_is_Y
 			X failure
 			Y success
-			child
+			child {
 			composite {
 				reset_completed_mission
 				sequence
@@ -250,6 +238,7 @@ composite {
 					clear_mission
 				} end_children
 			} end_composite
+			}
 		} end_decorator
 		composite {
 			confirm_mission
@@ -301,9 +290,8 @@ composite {
 } end_composite
 } end_tree
 
-tick_prerequisite { (greater_than, env remaining_goals, 0) } end_tick_prerequisite
+tick_prerequisite { (greater_than, remaining_goals, 0) } end_tick_prerequisite
 specifications {
-	INVARSPEC {(less_than_or_equal, (count, (active, go_down), (active, go_left), (active, go_right), (active, go_up)), 1)} end_INVARSPEC
-	LTLSPEC { (finally, (equal, env remaining_goals -1, 0)) } end_LTLSPEC
-	CTLSPEC { (always_finally, (equal, env remaining_goals -1, 0)) } end_CTLSPEC
+	LTLSPEC { (finally, (equal, remaining_goals -1, 0)) } end_LTLSPEC
+	CTLSPEC { (always_finally, (equal, remaining_goals -1, 0)) } end_CTLSPEC
 } end_specifications

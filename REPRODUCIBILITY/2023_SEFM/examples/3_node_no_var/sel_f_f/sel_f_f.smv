@@ -2,15 +2,15 @@ MODULE main
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
-		resume_from_here_in_subtree__root := -3;
-		root.active := TRUE;
+		resume_from_here_in_subtree__sel := -3;
+		sel.active := TRUE;
 		--START OF BLACKBOARD DEFINITIONS
 		--END OF BLACKBOARD DEFINITIONS
 	VAR
 		node_names : define_nodes;
 		f : failure_DEFAULT_module();
 		f_1 : failure_DEFAULT_module();
-		root : composite_selector_without_memory_2(f, f_1);
+		sel : composite_selector_without_memory_2(f, f_1);
 		--START OF BLACKBOARD VARIABLES DECLARATION
 		--END OF BLACKBOARD VARIABLES DECLARATION
 	ASSIGN
@@ -22,7 +22,7 @@ MODULE main
 
 MODULE define_nodes
 	DEFINE
-		root := 0;
+		sel := 0;
 		f := 1;
 		f_1 := 2;
 MODULE composite_selector_without_memory_2(child_0, child_1)

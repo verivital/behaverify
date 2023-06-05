@@ -9,70 +9,61 @@ MODULE main
 		resume_from_here_in_subtree__sel1 := -3;
 		parLink2.active := TRUE;
 		--START OF BLACKBOARD DEFINITIONS
-		success_failure_node_1_DOT_randomizer := success_failure_node_1_DOT_randomizer_stage_1;
-		LINK_TO_PREVIOUS_FINAL_success_failure_node_1_DOT_randomizer := success_failure_node_1_DOT_randomizer_stage_1;
-		success_failure_node_2_DOT_randomizer := success_failure_node_2_DOT_randomizer_stage_1;
-		LINK_TO_PREVIOUS_FINAL_success_failure_node_2_DOT_randomizer := success_failure_node_2_DOT_randomizer_stage_1;
-		success_failure_node_DOT_randomizer := success_failure_node_DOT_randomizer_stage_1;
-		LINK_TO_PREVIOUS_FINAL_success_failure_node_DOT_randomizer := success_failure_node_DOT_randomizer_stage_1;
+		randomizer_stage_0 := randomizer_stage_1;
+		LINK_TO_PREVIOUS_FINAL_randomizer := randomizer_stage_3;
 		--END OF BLACKBOARD DEFINITIONS
 	VAR
 		node_names : define_nodes;
-		parLink1 : composite_parallel_without_memory(parLink1_1, sel0, TRUE);
-		parLink1_1 : composite_parallel_without_memory(parLink1_END, sel1, TRUE);
-		parLink1_END : composite_parallel_without_memory_END(TRUE);
-		parLink2 : composite_parallel_without_memory(parLink2_1, sel2, TRUE);
-		parLink2_1 : composite_parallel_without_memory(parLink2_END, parLink1, TRUE);
-		parLink2_END : composite_parallel_without_memory_END(TRUE);
-		sel0 : composite_selector_without_memory(sel0_1, success_failure_node_1);
-		sel0_1 : composite_selector_without_memory(sel0_END, success_node_1);
-		sel0_END : composite_selector_without_memory_END;
-		sel1 : composite_selector_without_memory(sel1_1, success_failure_node_2);
-		sel1_1 : composite_selector_without_memory(sel1_END, success_node_2);
-		sel1_END : composite_selector_without_memory_END;
+		success_failure_node : success_failure_node_module(randomizer_stage_1);
+		success_node : success_DEFAULT_module();
 		sel2 : composite_selector_without_memory(sel2_1, success_failure_node);
 		sel2_1 : composite_selector_without_memory(sel2_END, success_node);
 		sel2_END : composite_selector_without_memory_END;
-		success_failure_node : success_failure_node_module(success_failure_node_DOT_randomizer_stage_1);
-		success_failure_node_1 : success_failure_node_1_module(success_failure_node_1_DOT_randomizer_stage_1);
-		success_failure_node_2 : success_failure_node_2_module(success_failure_node_2_DOT_randomizer_stage_1);
-		success_node : success_DEFAULT_module();
+		success_failure_node_1 : success_failure_node_1_module(randomizer_stage_2);
 		success_node_1 : success_DEFAULT_module();
+		sel0 : composite_selector_without_memory(sel0_1, success_failure_node_1);
+		sel0_1 : composite_selector_without_memory(sel0_END, success_node_1);
+		sel0_END : composite_selector_without_memory_END;
+		success_failure_node_2 : success_failure_node_2_module(randomizer_stage_3);
 		success_node_2 : success_DEFAULT_module();
+		sel1 : composite_selector_without_memory(sel1_1, success_failure_node_2);
+		sel1_1 : composite_selector_without_memory(sel1_END, success_node_2);
+		sel1_END : composite_selector_without_memory_END;
+		parLink1 : composite_parallel_without_memory(parLink1_1, sel0, FALSE);
+		parLink1_1 : composite_parallel_without_memory(parLink1_END, sel1, FALSE);
+		parLink1_END : composite_parallel_without_memory_END(FALSE);
+		parLink2 : composite_parallel_without_memory(parLink2_1, sel2, FALSE);
+		parLink2_1 : composite_parallel_without_memory(parLink2_END, parLink1, FALSE);
+		parLink2_END : composite_parallel_without_memory_END(FALSE);
 		--START OF BLACKBOARD VARIABLES DECLARATION
-		success_failure_node_1_DOT_randomizer_stage_1 : boolean;
-		success_failure_node_2_DOT_randomizer_stage_1 : boolean;
-		success_failure_node_DOT_randomizer_stage_1 : boolean;
+		randomizer_stage_1 : boolean;
+		randomizer_stage_2 : boolean;
+		randomizer_stage_3 : boolean;
 		--END OF BLACKBOARD VARIABLES DECLARATION
 	ASSIGN
 		--START OF BLACKBOARD VARIABLES INITIALIZATION
-		init(success_failure_node_1_DOT_randomizer_stage_1) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_2_DOT_randomizer_stage_1) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_DOT_randomizer_stage_1) := 
+		init(randomizer_stage_1) := 
 			case
 				TRUE : FALSE;
 			esac;
 		--END OF BLACKBOARD VARIABLES INITIALIZATION
 		--START OF BLACKBOARD VARIABLES TRANSITION
-		next(success_failure_node_1_DOT_randomizer_stage_1) := 
+		next(randomizer_stage_1) := 
 			case
-				next(!(success_failure_node_1.active)) : LINK_TO_PREVIOUS_FINAL_success_failure_node_1_DOT_randomizer;
+				next(!(success_failure_node.active)) : LINK_TO_PREVIOUS_FINAL_randomizer;
+				!(TRUE) : randomizer_stage_0;
 				TRUE : {TRUE, FALSE};
 			esac;
-		next(success_failure_node_2_DOT_randomizer_stage_1) := 
+		randomizer_stage_2 := 
 			case
-				next(!(success_failure_node_2.active)) : LINK_TO_PREVIOUS_FINAL_success_failure_node_2_DOT_randomizer;
+				!(success_failure_node_1.active) : randomizer_stage_1;
+				!(TRUE) : randomizer_stage_1;
 				TRUE : {TRUE, FALSE};
 			esac;
-		next(success_failure_node_DOT_randomizer_stage_1) := 
+		randomizer_stage_3 := 
 			case
-				next(!(success_failure_node.active)) : LINK_TO_PREVIOUS_FINAL_success_failure_node_DOT_randomizer;
+				!(success_failure_node_2.active) : randomizer_stage_2;
+				!(TRUE) : randomizer_stage_2;
 				TRUE : {TRUE, FALSE};
 			esac;
 		--END OF BLACKBOARD VARIABLES TRANSITION
@@ -149,34 +140,34 @@ MODULE composite_selector_without_memory_END
 	DEFINE
 		status := active ? failure : invalid;
 		internal_status := failure;
-MODULE success_failure_node_module(success_failure_node_DOT_randomizer_stage_1)
+MODULE success_failure_node_module(randomizer_stage_1)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
 		internal_status := 
 			case
-				success_failure_node_DOT_randomizer_stage_1 : success;
+				randomizer_stage_1 : success;
 				TRUE : failure;
 			esac;
-MODULE success_failure_node_1_module(success_failure_node_1_DOT_randomizer_stage_1)
+MODULE success_failure_node_1_module(randomizer_stage_2)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
 		internal_status := 
 			case
-				success_failure_node_1_DOT_randomizer_stage_1 : success;
+				randomizer_stage_2 : success;
 				TRUE : failure;
 			esac;
-MODULE success_failure_node_2_module(success_failure_node_2_DOT_randomizer_stage_1)
+MODULE success_failure_node_2_module(randomizer_stage_3)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
 		internal_status := 
 			case
-				success_failure_node_2_DOT_randomizer_stage_1 : success;
+				randomizer_stage_3 : success;
 				TRUE : failure;
 			esac;
 MODULE success_DEFAULT_module

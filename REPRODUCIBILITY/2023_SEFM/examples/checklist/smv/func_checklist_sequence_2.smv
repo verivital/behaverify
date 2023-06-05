@@ -5,50 +5,46 @@ MODULE main
 		resume_from_here_in_subtree__seqLink1 := -3;
 		seqLink1.active := TRUE;
 		--START OF BLACKBOARD DEFINITIONS
-		success_failure_node_1_DOT_randomizer := success_failure_node_1_DOT_randomizer_stage_1;
-		LINK_TO_PREVIOUS_FINAL_success_failure_node_1_DOT_randomizer := success_failure_node_1_DOT_randomizer_stage_1;
-		success_failure_node_DOT_randomizer := success_failure_node_DOT_randomizer_stage_1;
-		LINK_TO_PREVIOUS_FINAL_success_failure_node_DOT_randomizer := success_failure_node_DOT_randomizer_stage_1;
+		randomizer_stage_0 := randomizer_stage_1;
+		LINK_TO_PREVIOUS_FINAL_randomizer := randomizer_stage_2;
 		--END OF BLACKBOARD DEFINITIONS
 	VAR
 		node_names : define_nodes;
+		success_failure_node : success_failure_node_module(randomizer_stage_1);
+		success_node : success_DEFAULT_module();
 		sel0 : composite_selector_without_memory(sel0_1, success_failure_node);
 		sel0_1 : composite_selector_without_memory(sel0_END, success_node);
 		sel0_END : composite_selector_without_memory_END;
+		success_failure_node_1 : success_failure_node_1_module(randomizer_stage_2);
+		success_node_1 : success_DEFAULT_module();
 		sel1 : composite_selector_without_memory(sel1_1, success_failure_node_1);
 		sel1_1 : composite_selector_without_memory(sel1_END, success_node_1);
 		sel1_END : composite_selector_without_memory_END;
 		seqLink1 : composite_sequence_without_memory(seqLink1_1, sel0);
 		seqLink1_1 : composite_sequence_without_memory(seqLink1_END, sel1);
 		seqLink1_END : composite_sequence_without_memory_END;
-		success_failure_node : success_failure_node_module(success_failure_node_DOT_randomizer_stage_1);
-		success_failure_node_1 : success_failure_node_1_module(success_failure_node_1_DOT_randomizer_stage_1);
-		success_node : success_DEFAULT_module();
-		success_node_1 : success_DEFAULT_module();
 		--START OF BLACKBOARD VARIABLES DECLARATION
-		success_failure_node_1_DOT_randomizer_stage_1 : boolean;
-		success_failure_node_DOT_randomizer_stage_1 : boolean;
+		randomizer_stage_1 : boolean;
+		randomizer_stage_2 : boolean;
 		--END OF BLACKBOARD VARIABLES DECLARATION
 	ASSIGN
 		--START OF BLACKBOARD VARIABLES INITIALIZATION
-		init(success_failure_node_1_DOT_randomizer_stage_1) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_DOT_randomizer_stage_1) := 
+		init(randomizer_stage_1) := 
 			case
 				TRUE : FALSE;
 			esac;
 		--END OF BLACKBOARD VARIABLES INITIALIZATION
 		--START OF BLACKBOARD VARIABLES TRANSITION
-		next(success_failure_node_1_DOT_randomizer_stage_1) := 
+		next(randomizer_stage_1) := 
 			case
-				next(!(success_failure_node_1.active)) : LINK_TO_PREVIOUS_FINAL_success_failure_node_1_DOT_randomizer;
+				next(!(success_failure_node.active)) : LINK_TO_PREVIOUS_FINAL_randomizer;
+				!(TRUE) : randomizer_stage_0;
 				TRUE : {TRUE, FALSE};
 			esac;
-		next(success_failure_node_DOT_randomizer_stage_1) := 
+		randomizer_stage_2 := 
 			case
-				next(!(success_failure_node.active)) : LINK_TO_PREVIOUS_FINAL_success_failure_node_DOT_randomizer;
+				!(success_failure_node_1.active) : randomizer_stage_1;
+				!(TRUE) : randomizer_stage_1;
 				TRUE : {TRUE, FALSE};
 			esac;
 		--END OF BLACKBOARD VARIABLES TRANSITION
@@ -112,24 +108,24 @@ MODULE composite_sequence_without_memory_END
 	DEFINE
 		status := active ? success : invalid;
 		internal_status := success;
-MODULE success_failure_node_module(success_failure_node_DOT_randomizer_stage_1)
+MODULE success_failure_node_module(randomizer_stage_1)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
 		internal_status := 
 			case
-				success_failure_node_DOT_randomizer_stage_1 : success;
+				randomizer_stage_1 : success;
 				TRUE : failure;
 			esac;
-MODULE success_failure_node_1_module(success_failure_node_1_DOT_randomizer_stage_1)
+MODULE success_failure_node_1_module(randomizer_stage_2)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
 		internal_status := 
 			case
-				success_failure_node_1_DOT_randomizer_stage_1 : success;
+				randomizer_stage_2 : success;
 				TRUE : failure;
 			esac;
 MODULE success_DEFAULT_module

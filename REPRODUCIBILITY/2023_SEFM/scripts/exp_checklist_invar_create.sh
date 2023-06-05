@@ -1,8 +1,10 @@
 #!/bin/bash
 
+./make_folder_structure.sh checklist_invar
+
 python3 ../examples/checklist_invar/create_checklist.py ../examples/checklist_invar/
 
-encodings=("aut_" "" "func_" "no_internal_" "s_var_")
+encodings=("aut" "norm" "func" "no_internal" "s_var")
 
 for num in {1..50}; do
     echo "now on iteration: "

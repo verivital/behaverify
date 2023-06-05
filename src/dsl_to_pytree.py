@@ -760,7 +760,7 @@ def create_runner(blackboard_variables, environment_variables, max_iter):
         + os.linesep
         + os.linesep
         + 'def full_tick():' + os.linesep
-        + indent(1) + 'tree.tick_once()' + os.linesep
+        + indent(1) + 'tree.tick()' + os.linesep
         + indent(1) + 'environment.execute_delayed_action_queue()' + os.linesep
         + indent(1) + 'environment.between_tick_environment_update()' + os.linesep
         + indent(1) + 'return' + os.linesep

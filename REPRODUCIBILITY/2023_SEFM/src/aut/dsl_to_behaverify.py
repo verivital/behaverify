@@ -98,94 +98,6 @@ def format_function(code, misc_args):
     return function_to_call(function_name, code, misc_args)
 
 
-# --------------- CONSTANTS
-
-
-FUNCTION_FORMAT = {
-    'abs' : ('abs', format_function_before),
-    'max' : ('max', format_function_before),
-    'min' : ('min', format_function_before),
-    'sin' : ('sin', format_function_before),
-    'cos' : ('cos', format_function_before),
-    'tan' : ('tan', format_function_before),
-    'ln' : ('ln', format_function_before),
-    'not' : ('!', format_function_before),
-    'and' : ('&', format_function_between),
-    'or' : ('|', format_function_between),
-    'xor' : ('xor', format_function_between),
-    'xnor' : ('xnor', format_function_between),
-    'implies' : ('->', format_function_between),
-    'equivalent' : ('<->', format_function_between),
-    'equal' : ('=', format_function_between),
-    'not_equal' : ('!=', format_function_between),
-    'less_than' : ('<', format_function_between),
-    'greater_than' : ('>', format_function_between),
-    'less_than_or_equal' : ('<=', format_function_between),
-    'greater_than_or_equal' : ('>=', format_function_between),
-    'negative' : ('-', format_function_before),
-    'addition' : ('+', format_function_between),
-    'subtraction' : ('-', format_function_between),
-    'multiplication' : ('*', format_function_between),
-    'division' : ('/', format_function_between),
-    'mod' : ('mod', format_function_between),
-    'count' : ('count', format_function_before),
-    'index' : ('index', format_function_index),
-    'active' : ('.active', format_function_after),
-    'success' : ('.status = success', format_function_after),
-    'running' : ('.status = running', format_function_after),
-    'failure' : ('.status = failure', format_function_after),
-    'next' : ('X', format_function_before),
-    'globally' : ('G', format_function_before),
-    'globally_bounded' : ('G', format_function_before_bounded),
-    'finally' : ('F', format_function_before),
-    'finally_bounded' : ('F', format_function_before_bounded),
-    'until' : ('U', format_function_between),
-    'until_bounded' : ('U', format_function_between_bounded),
-    'release' : ('V', format_function_between),
-    'release_bounded' : ('V', format_function_between_bounded),
-    'previous' : ('Y', format_function_before),
-    'not_previous_not' : ('Z', format_function_before),
-    'historically' : ('H', format_function_before),
-    'historically_bounded' : ('H', format_function_before_bounded),
-    'once' : ('O', format_function_before),
-    'once_bounded' : ('O', format_function_before_bounded),
-    'since' : ('S', format_function_between),
-    'since_bounded' : ('S', format_function_between_bounded),
-    'triggered' : ('T', format_function_between),
-    'triggered_bounded' : ('T', format_function_between_bounded),
-    'exists_globally' : ('EG', format_function_before),
-    'exists_next' : ('EX', format_function_before),
-    'exists_finally' : ('EF', format_function_before),
-    'exists_until' : (('E', 'U'), format_function_before_between),
-    'always_globally' : ('AG', format_function_before),
-    'always_next' : ('AX', format_function_before),
-    'always_finally' : ('AF', format_function_before),
-    'always_until' : (('A', 'U'), format_function_before_between)
-}
-
-
-COMPOSITES = {
-    'parallel',
-    'sequence',
-    'selector',
-}
-
-
-CREATE_NODE = {
-    'sequence' : create_composite,
-    'selector' : create_composite,
-    'parallel' : create_composite,
-    'X_is_Y' : create_X_is_Y,
-    'inverter' : create_decorator,
-    'check' : create_check,
-    'check_environment' : create_check,
-    'action' : create_action
-}
-
-
-global_vars = {'constants' : {}, 'metamodel' : {}, 'variables' : {}, 'serene_index' : []}
-
-
 def create_misc_args(node_name, use_stages, use_next, not_next, overwrite_stage):
     '''
     -- ARGUMENTS
@@ -383,6 +295,7 @@ def handle_assign(assign, misc_args):
         non_determinism = non_determinism or new_non_det
         stage.append((format_code(case_result.condition, misc_args), stage_part))
     (new_non_det, stage_part) = handle_result(default_result, misc_args)
+    non_determinism = non_determinism or new_non_det
     stage.append(('TRUE', stage_part))
     return (non_determinism, stage)
 
@@ -902,6 +815,92 @@ def walk_tree(current_node, parent_name = None, node_names = set(), node_names_m
     return CREATE_NODE[current_node.node_type](current_node, node_name, modifier, node_names, node_names_map, parent_name)
 
 
+# --------------- CONSTANTS
+
+
+FUNCTION_FORMAT = {
+    'abs' : ('abs', format_function_before),
+    'max' : ('max', format_function_before),
+    'min' : ('min', format_function_before),
+    'sin' : ('sin', format_function_before),
+    'cos' : ('cos', format_function_before),
+    'tan' : ('tan', format_function_before),
+    'ln' : ('ln', format_function_before),
+    'not' : ('!', format_function_before),
+    'and' : ('&', format_function_between),
+    'or' : ('|', format_function_between),
+    'xor' : ('xor', format_function_between),
+    'xnor' : ('xnor', format_function_between),
+    'implies' : ('->', format_function_between),
+    'equivalent' : ('<->', format_function_between),
+    'equal' : ('=', format_function_between),
+    'not_equal' : ('!=', format_function_between),
+    'less_than' : ('<', format_function_between),
+    'greater_than' : ('>', format_function_between),
+    'less_than_or_equal' : ('<=', format_function_between),
+    'greater_than_or_equal' : ('>=', format_function_between),
+    'negative' : ('-', format_function_before),
+    'addition' : ('+', format_function_between),
+    'subtraction' : ('-', format_function_between),
+    'multiplication' : ('*', format_function_between),
+    'division' : ('/', format_function_between),
+    'mod' : ('mod', format_function_between),
+    'count' : ('count', format_function_before),
+    'index' : ('index', format_function_index),
+    'active' : ('.active', format_function_after),
+    'success' : ('.status = success', format_function_after),
+    'running' : ('.status = running', format_function_after),
+    'failure' : ('.status = failure', format_function_after),
+    'next' : ('X', format_function_before),
+    'globally' : ('G', format_function_before),
+    'globally_bounded' : ('G', format_function_before_bounded),
+    'finally' : ('F', format_function_before),
+    'finally_bounded' : ('F', format_function_before_bounded),
+    'until' : ('U', format_function_between),
+    'until_bounded' : ('U', format_function_between_bounded),
+    'release' : ('V', format_function_between),
+    'release_bounded' : ('V', format_function_between_bounded),
+    'previous' : ('Y', format_function_before),
+    'not_previous_not' : ('Z', format_function_before),
+    'historically' : ('H', format_function_before),
+    'historically_bounded' : ('H', format_function_before_bounded),
+    'once' : ('O', format_function_before),
+    'once_bounded' : ('O', format_function_before_bounded),
+    'since' : ('S', format_function_between),
+    'since_bounded' : ('S', format_function_between_bounded),
+    'triggered' : ('T', format_function_between),
+    'triggered_bounded' : ('T', format_function_between_bounded),
+    'exists_globally' : ('EG', format_function_before),
+    'exists_next' : ('EX', format_function_before),
+    'exists_finally' : ('EF', format_function_before),
+    'exists_until' : (('E', 'U'), format_function_before_between),
+    'always_globally' : ('AG', format_function_before),
+    'always_next' : ('AX', format_function_before),
+    'always_finally' : ('AF', format_function_before),
+    'always_until' : (('A', 'U'), format_function_before_between)
+}
+
+
+COMPOSITES = {
+    'parallel',
+    'sequence',
+    'selector',
+}
+
+
+CREATE_NODE = {
+    'sequence' : create_composite,
+    'selector' : create_composite,
+    'parallel' : create_composite,
+    'X_is_Y' : create_X_is_Y,
+    'inverter' : create_decorator,
+    'check' : create_check,
+    'check_environment' : create_check,
+    'action' : create_action
+}
+
+
+global_vars = {'constants' : {}, 'metamodel' : {}, 'variables' : {}, 'serene_index' : []}
 
 
 # --------------- Main

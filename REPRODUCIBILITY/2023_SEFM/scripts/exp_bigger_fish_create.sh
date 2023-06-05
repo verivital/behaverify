@@ -1,8 +1,12 @@
 #!/bin/bash
 
-python3 ../examples/checklist/create_bigger_fish.py ../examples/bigger_fish/
+./make_folder_structure.sh bigger_fish
 
-encodings=("aut_" "aut_s_" "depth_" "" "func_" "no_internal_" "s_var_")
+python3 ../examples/bigger_fish/create_bigger_fish.py ../examples/bigger_fish/
+
+encodings=("aut" "aut_s" "depth" "norm" "func" "no_internal" "s_var")
+#encodings=("norm" "norm")
+echo $encodings
 
 for num in {1..20}; do
     echo $num

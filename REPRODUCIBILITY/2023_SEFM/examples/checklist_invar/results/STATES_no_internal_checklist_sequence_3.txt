@@ -32,23 +32,23 @@ reachable states: 8 (2^3) out of 8 (2^3)
 elapse: 0.00 seconds, total: 0.00 seconds
 Runtime Statistics
 ------------------
-Machine name: serene-MS-7B51
-User time    0.000 seconds
-System time  0.010 seconds
+Machine name: serene-OptiPlex-7040
+User time    0.005 seconds
+System time  0.009 seconds
 
 Average resident text size       =     0K
 Average resident data+stack size =     0K
-Maximum resident size            = 16446K
+Maximum resident size            = 16638K
 
 Virtual text size                = 17832K
-Virtual data size                = 66835K
+Virtual data size                = 47371K
     data size initialized        = 32226K
     data size uninitialized      =  8317K
-    data size sbrk               = 26292K
+    data size sbrk               =  6828K
 Virtual memory limit             = -2147483648K (-2147483648K)
 
 Major page faults = 0
-Minor page faults = 5996
+Minor page faults = 5984
 Swaps = 0
 Input blocks = 0
 Output blocks = 8

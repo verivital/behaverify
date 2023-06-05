@@ -24,30 +24,30 @@
 *** Copyright (C) 2009-2019 by University of Trento and others
 *** See http://mathsat.fbk.eu
 
-elapse: 0.01 seconds, total: 0.01 seconds
+elapse: 0.00 seconds, total: 0.00 seconds
 Output to file: /dev/null
-elapse: 0.90 seconds, total: 0.91 seconds
+elapse: 0.30 seconds, total: 0.31 seconds
 Runtime Statistics
 ------------------
-Machine name: serene-MS-7B51
-User time    0.910 seconds
-System time  0.008 seconds
+Machine name: serene-OptiPlex-7040
+User time    0.316 seconds
+System time  0.024 seconds
 
 Average resident text size       =     0K
 Average resident data+stack size =     0K
-Maximum resident size            = 45554K
+Maximum resident size            = 21982K
 
 Virtual text size                = 17832K
-Virtual data size                = 116419K
+Virtual data size                = 84459K
     data size initialized        = 32226K
     data size uninitialized      =  8317K
-    data size sbrk               = 75876K
+    data size sbrk               = 43916K
 Virtual memory limit             = -2147483648K (-2147483648K)
 
 Major page faults = 0
-Minor page faults = 22634
+Minor page faults = 8701
 Swaps = 0
 Input blocks = 0
 Output blocks = 8
 Context switch (voluntary) = 0
-Context switch (involuntary) = 6
+Context switch (involuntary) = 2

@@ -1,14 +1,12 @@
 constants { } end_constants
-blackboard_variables {} end_blackboard_variables
-local_variables {local_variable {randomizer VAR BOOLEAN initial_value { result { False } end_result } end_initial_value } end_local_variable} end_local_variables
-environment {environment_variables {} end_environment_variables update_values {} end_update_values} end_environment
+variables {variable {bl randomizer VAR BOOLEAN assign { result { False } end_result }  }} 
+environment_update {}
 checks {
 } end_checks
 environment_checks {#comment# check environment nodes are defined here #end_comment#} end_environment_checks
 actions {
     action {
         success_node
-        imports {} end_imports
         local_variables {} end_local_variables
         read_variables {} end_read_variables
         write_variables {} end_write_variables
@@ -19,14 +17,14 @@ actions {
     } end_action
     action {
         success_failure_node
-        imports {} end_imports
-        local_variables {randomizer} end_local_variables
+        local_variables {} end_local_variables
         read_variables {} end_read_variables
-        write_variables {} end_write_variables
+        write_variables {randomizer} end_write_variables
         initial_values {} end_initial_values
         update {
-            variable_statement { local randomizer result { True, False } end_result } end_variable_statement
-            return_statement { case { local randomizer } end_case result { success } end_result result { failure } end_result } end_return_statement
+            read_environment{ randomize_randomizer condition { True }
+                variable_statement { randomizer assign { result { True, False } end_result } } end_variable_statement}
+            return_statement { case { randomizer } end_case result { success } end_result result { failure } end_result } end_return_statement
         } end_update
     } end_action
 } end_actions
