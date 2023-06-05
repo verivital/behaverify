@@ -32,21 +32,23 @@ def create_blackboard(nodes, variables, root_node_name, tick_condition):
     for variable_name_key in variables:
         # print(variable_name)
         variable = variables[variable_name_key]
-        variable_name = variable['prefix'] + variable['name']
+        variable_name = variable['name']
         # -----------------------------------
         # define are static.
         if variable['mode'].strip() == 'DEFINE':
-            if variable['initial_value'] is None:
-                if variable['custom_value_range'] is None:
-                    define_string += ('\t\t' + variable_name + ' := ' + str(variable['min_value']) + ';' + os.linesep)
-                else:
-                    define_string += ('\t\t' + variable_name + ' := ' + variable['custom_value_range'].split(',')[0].replace('{', '').strip() + ";" + os.linesep)
-            else:
-                define_string += ('\t\t' + variable_name + ' := ' + os.linesep
-                                  + '\t\t\tcase' + os.linesep
-                                  + ''.join([('\t\t\t\t' + remove_stage(condition_pair[0]) + ' : ' + remove_stage(condition_pair[1]) + ';' + os.linesep) for condition_pair in variable['initial_value']])
-                                  + '\t\t\tesac;' + os.linesep
-                                  )
+            if len(variable['next_value']) > 0:
+                (_, _, stage) = variable['next_value']
+                define_string += (
+                    tab_indent(2) + variable_name + ' :=' + os.linesep
+                    + tab_indent(3) + 'case' + os.linesep
+                    + ''.join(
+                        [
+                            (tab_indent(4) + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep)
+                            for condition_pair in stage
+                        ]
+                    )
+                    + tab_indent(3) + 'esac;' + os.linesep
+                )
             if use_exist:
                 define_string += "\t\t" + variable_name + "_exists := TRUE;" + os.linesep
         elif variable['mode'].strip() == 'FROZENVAR' or len(variable['next_value']) == 0:
@@ -87,7 +89,7 @@ def create_blackboard(nodes, variables, root_node_name, tick_condition):
                 ('' if variable['initial_value'] is None else (
                     '\t\tinit(' + variable_name + ') := ' + os.linesep
                     + '\t\t\tcase' + os.linesep
-                    + ''.join([('\t\t\t\t' + remove_stage(condition_pair[0]) + ' : ' + remove_stage(condition_pair[1]) + ';' + os.linesep) for condition_pair in variable['initial_value']])
+                    + ''.join([('\t\t\t\t' + remove_stage(condition_pair[0]) + ' : ' + remove_stage(condition_pair[1]) + ';' + os.linesep) for condition_pair in variable['initial_value'][2]])
                     + '\t\t\tesac;' + os.linesep
                 ))
             )

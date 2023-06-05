@@ -11,17 +11,13 @@ def create_constants():
     return ('constants { } end_constants' + os.linesep)
 
 
-def create_blackboard_variables():
-    return ('blackboard_variables {} end_blackboard_variables' + os.linesep)
-
-
-def create_local_variables():
-    return ('local_variables {local_variable {randomizer VAR BOOLEAN initial_value { result { False } end_result } end_initial_value } end_local_variable} end_local_variables' + os.linesep)
+def create_variables():
+    return ('variables {variable {bl randomizer VAR BOOLEAN assign { result { False } end_result }  }} ' + os.linesep)
 
 
 def create_environment():
     return (
-        'environment {environment_variables {} end_environment_variables update_values {} end_update_values} end_environment' + os.linesep
+        'environment_update {}' + os.linesep
     )
 
 
@@ -41,7 +37,6 @@ def create_actions():
         'actions {' + os.linesep
         + indent(1) + 'action {' + os.linesep
         + indent(2) + 'success_node' + os.linesep
-        + indent(2) + 'imports {} end_imports' + os.linesep
         + indent(2) + 'local_variables {} end_local_variables' + os.linesep
         + indent(2) + 'read_variables {} end_read_variables' + os.linesep
         + indent(2) + 'write_variables {} end_write_variables' + os.linesep
@@ -52,14 +47,14 @@ def create_actions():
         + indent(1) + '} end_action' + os.linesep
         + indent(1) + 'action {' + os.linesep
         + indent(2) + 'success_failure_node' + os.linesep
-        + indent(2) + 'imports {} end_imports' + os.linesep
-        + indent(2) + 'local_variables {randomizer} end_local_variables' + os.linesep
+        + indent(2) + 'local_variables {} end_local_variables' + os.linesep
         + indent(2) + 'read_variables {} end_read_variables' + os.linesep
-        + indent(2) + 'write_variables {} end_write_variables' + os.linesep
+        + indent(2) + 'write_variables {randomizer} end_write_variables' + os.linesep
         + indent(2) + 'initial_values {} end_initial_values' + os.linesep
         + indent(2) + 'update {' + os.linesep
-        + indent(3) + 'variable_statement { local randomizer result { True, False } end_result } end_variable_statement' + os.linesep
-        + indent(3) + 'return_statement { case { local randomizer } end_case result { success } end_result result { failure } end_result } end_return_statement' + os.linesep
+        + indent(3) + 'read_environment{ randomize_randomizer condition { True }' + os.linesep
+        + indent(4) + 'variable_statement { randomizer assign { result { True, False } end_result } } end_variable_statement}' + os.linesep
+        + indent(3) + 'return_statement { case { randomizer } end_case result { success } end_result result { failure } end_result } end_return_statement' + os.linesep
         + indent(2) + '} end_update' + os.linesep
         + indent(1) + '} end_action' + os.linesep
         + '} end_actions' + os.linesep
@@ -176,8 +171,7 @@ def create_checklist_parallel(x):
     (mapping, root) = create_mapping(x)
     return (
         create_constants()
-        + create_blackboard_variables()
-        + create_local_variables()
+        + create_variables()
         + create_environment()
         + create_checks()
         + create_environment_checks()
@@ -191,8 +185,7 @@ def create_checklist_sequence(x):
     (mapping, root) = create_mapping(x)
     return (
         create_constants()
-        + create_blackboard_variables()
-        + create_local_variables()
+        + create_variables()
         + create_environment()
         + create_checks()
         + create_environment_checks()
@@ -206,7 +199,7 @@ def write_files(location):
     for x in range(1, 50 + 1):
         with open(location + 'checklist_parallel_' + str(x) + '.tree', 'w') as f:
             f.write(create_checklist_parallel(x))
-        with open(location + './checklist_sequence_' + str(x) + '.tree', 'w') as f:
+        with open(location + '/checklist_sequence_' + str(x) + '.tree', 'w') as f:
             f.write(create_checklist_sequence(x))
 
 

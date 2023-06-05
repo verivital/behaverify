@@ -1,0 +1,52 @@
+constants {
+	#comment# constants are used to synchronize values in a .tree file. #end_comment#
+	#comment# example = 0 #end_comment#
+	#comment# to use example elsewhere, simply type 'example' in place of any integer (quotes included) #end_comment#
+} end_constants
+
+variables {
+}
+
+environment_update {
+}
+
+checks {
+} end_checks
+
+environment_checks {
+} end_environment_checks
+
+actions {
+	action {
+		f
+		local_variables{}
+		read_variables{}
+		write_variables{}
+		initial_values{}
+		update { return_statement { result { failure}}}
+	}
+	action {
+		r
+		local_variables{}
+		read_variables{}
+		write_variables{}
+		initial_values{}
+		update { return_statement { result { running}}}
+	}
+	action {
+		s
+		local_variables{}
+		read_variables{}
+		write_variables{}
+		initial_values{}
+		update { return_statement { result { success}}}
+	}
+} end_actions
+
+sub_trees {#comment# subtrees go here. #end_comment#} end_sub_trees
+
+
+tree {
+composite {seq sequence children { f f}}
+}
+specifications { #comment# INVAR, LTL, and CTL specs go here #end_comment# } end_specifications

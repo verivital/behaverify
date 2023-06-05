@@ -1,6 +1,6 @@
 #!/bin/bash
 
-encodings=("aut_" "" "func_" "no_internal_" "s_var_")
+encodings=("aut" "norm" "func" "no_internal" "s_var")
 
 for num in {1..50}; do
     echo $num

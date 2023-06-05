@@ -13,5 +13,5 @@ def create_blackboard():
 def create_tree(environment):
     f = f_file.f('f', environment)
     f_1 = f_file.f('f_1', environment)
-    root = py_trees.composites.Selector(name = 'root', memory = False, children = [f, f_1])
-    return root
+    sel = py_trees.composites.Selector(name = 'sel', memory = False, children = [f, f_1])
+    return sel

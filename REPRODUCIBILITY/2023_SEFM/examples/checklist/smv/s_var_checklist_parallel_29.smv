@@ -61,478 +61,310 @@ MODULE main
 		resume_from_here_in_subtree__sel25 := -3;
 		parLink28.active := TRUE;
 		--START OF BLACKBOARD DEFINITIONS
-		success_failure_node_10_DOT_randomizer := success_failure_node_10_DOT_randomizer_stage_1;
-		LINK_TO_PREVIOUS_FINAL_success_failure_node_10_DOT_randomizer := success_failure_node_10_DOT_randomizer_stage_1;
-		success_failure_node_11_DOT_randomizer := success_failure_node_11_DOT_randomizer_stage_1;
-		LINK_TO_PREVIOUS_FINAL_success_failure_node_11_DOT_randomizer := success_failure_node_11_DOT_randomizer_stage_1;
-		success_failure_node_12_DOT_randomizer := success_failure_node_12_DOT_randomizer_stage_1;
-		LINK_TO_PREVIOUS_FINAL_success_failure_node_12_DOT_randomizer := success_failure_node_12_DOT_randomizer_stage_1;
-		success_failure_node_13_DOT_randomizer := success_failure_node_13_DOT_randomizer_stage_1;
-		LINK_TO_PREVIOUS_FINAL_success_failure_node_13_DOT_randomizer := success_failure_node_13_DOT_randomizer_stage_1;
-		success_failure_node_14_DOT_randomizer := success_failure_node_14_DOT_randomizer_stage_1;
-		LINK_TO_PREVIOUS_FINAL_success_failure_node_14_DOT_randomizer := success_failure_node_14_DOT_randomizer_stage_1;
-		success_failure_node_15_DOT_randomizer := success_failure_node_15_DOT_randomizer_stage_1;
-		LINK_TO_PREVIOUS_FINAL_success_failure_node_15_DOT_randomizer := success_failure_node_15_DOT_randomizer_stage_1;
-		success_failure_node_16_DOT_randomizer := success_failure_node_16_DOT_randomizer_stage_1;
-		LINK_TO_PREVIOUS_FINAL_success_failure_node_16_DOT_randomizer := success_failure_node_16_DOT_randomizer_stage_1;
-		success_failure_node_17_DOT_randomizer := success_failure_node_17_DOT_randomizer_stage_1;
-		LINK_TO_PREVIOUS_FINAL_success_failure_node_17_DOT_randomizer := success_failure_node_17_DOT_randomizer_stage_1;
-		success_failure_node_18_DOT_randomizer := success_failure_node_18_DOT_randomizer_stage_1;
-		LINK_TO_PREVIOUS_FINAL_success_failure_node_18_DOT_randomizer := success_failure_node_18_DOT_randomizer_stage_1;
-		success_failure_node_19_DOT_randomizer := success_failure_node_19_DOT_randomizer_stage_1;
-		LINK_TO_PREVIOUS_FINAL_success_failure_node_19_DOT_randomizer := success_failure_node_19_DOT_randomizer_stage_1;
-		success_failure_node_1_DOT_randomizer := success_failure_node_1_DOT_randomizer_stage_1;
-		LINK_TO_PREVIOUS_FINAL_success_failure_node_1_DOT_randomizer := success_failure_node_1_DOT_randomizer_stage_1;
-		success_failure_node_20_DOT_randomizer := success_failure_node_20_DOT_randomizer_stage_1;
-		LINK_TO_PREVIOUS_FINAL_success_failure_node_20_DOT_randomizer := success_failure_node_20_DOT_randomizer_stage_1;
-		success_failure_node_21_DOT_randomizer := success_failure_node_21_DOT_randomizer_stage_1;
-		LINK_TO_PREVIOUS_FINAL_success_failure_node_21_DOT_randomizer := success_failure_node_21_DOT_randomizer_stage_1;
-		success_failure_node_22_DOT_randomizer := success_failure_node_22_DOT_randomizer_stage_1;
-		LINK_TO_PREVIOUS_FINAL_success_failure_node_22_DOT_randomizer := success_failure_node_22_DOT_randomizer_stage_1;
-		success_failure_node_23_DOT_randomizer := success_failure_node_23_DOT_randomizer_stage_1;
-		LINK_TO_PREVIOUS_FINAL_success_failure_node_23_DOT_randomizer := success_failure_node_23_DOT_randomizer_stage_1;
-		success_failure_node_24_DOT_randomizer := success_failure_node_24_DOT_randomizer_stage_1;
-		LINK_TO_PREVIOUS_FINAL_success_failure_node_24_DOT_randomizer := success_failure_node_24_DOT_randomizer_stage_1;
-		success_failure_node_25_DOT_randomizer := success_failure_node_25_DOT_randomizer_stage_1;
-		LINK_TO_PREVIOUS_FINAL_success_failure_node_25_DOT_randomizer := success_failure_node_25_DOT_randomizer_stage_1;
-		success_failure_node_26_DOT_randomizer := success_failure_node_26_DOT_randomizer_stage_1;
-		LINK_TO_PREVIOUS_FINAL_success_failure_node_26_DOT_randomizer := success_failure_node_26_DOT_randomizer_stage_1;
-		success_failure_node_27_DOT_randomizer := success_failure_node_27_DOT_randomizer_stage_1;
-		LINK_TO_PREVIOUS_FINAL_success_failure_node_27_DOT_randomizer := success_failure_node_27_DOT_randomizer_stage_1;
-		success_failure_node_28_DOT_randomizer := success_failure_node_28_DOT_randomizer_stage_1;
-		LINK_TO_PREVIOUS_FINAL_success_failure_node_28_DOT_randomizer := success_failure_node_28_DOT_randomizer_stage_1;
-		success_failure_node_2_DOT_randomizer := success_failure_node_2_DOT_randomizer_stage_1;
-		LINK_TO_PREVIOUS_FINAL_success_failure_node_2_DOT_randomizer := success_failure_node_2_DOT_randomizer_stage_1;
-		success_failure_node_3_DOT_randomizer := success_failure_node_3_DOT_randomizer_stage_1;
-		LINK_TO_PREVIOUS_FINAL_success_failure_node_3_DOT_randomizer := success_failure_node_3_DOT_randomizer_stage_1;
-		success_failure_node_4_DOT_randomizer := success_failure_node_4_DOT_randomizer_stage_1;
-		LINK_TO_PREVIOUS_FINAL_success_failure_node_4_DOT_randomizer := success_failure_node_4_DOT_randomizer_stage_1;
-		success_failure_node_5_DOT_randomizer := success_failure_node_5_DOT_randomizer_stage_1;
-		LINK_TO_PREVIOUS_FINAL_success_failure_node_5_DOT_randomizer := success_failure_node_5_DOT_randomizer_stage_1;
-		success_failure_node_6_DOT_randomizer := success_failure_node_6_DOT_randomizer_stage_1;
-		LINK_TO_PREVIOUS_FINAL_success_failure_node_6_DOT_randomizer := success_failure_node_6_DOT_randomizer_stage_1;
-		success_failure_node_7_DOT_randomizer := success_failure_node_7_DOT_randomizer_stage_1;
-		LINK_TO_PREVIOUS_FINAL_success_failure_node_7_DOT_randomizer := success_failure_node_7_DOT_randomizer_stage_1;
-		success_failure_node_8_DOT_randomizer := success_failure_node_8_DOT_randomizer_stage_1;
-		LINK_TO_PREVIOUS_FINAL_success_failure_node_8_DOT_randomizer := success_failure_node_8_DOT_randomizer_stage_1;
-		success_failure_node_9_DOT_randomizer := success_failure_node_9_DOT_randomizer_stage_1;
-		LINK_TO_PREVIOUS_FINAL_success_failure_node_9_DOT_randomizer := success_failure_node_9_DOT_randomizer_stage_1;
-		success_failure_node_DOT_randomizer := success_failure_node_DOT_randomizer_stage_1;
-		LINK_TO_PREVIOUS_FINAL_success_failure_node_DOT_randomizer := success_failure_node_DOT_randomizer_stage_1;
+		randomizer_stage_1 := 
+			case
+				!(success_failure_node.active) : randomizer_stage_0;
+				!(TRUE) : randomizer_stage_0;
+				TRUE : {TRUE, FALSE};
+			esac;
+		randomizer_stage_2 := 
+			case
+				!(success_failure_node_1.active) : randomizer_stage_1;
+				!(TRUE) : randomizer_stage_1;
+				TRUE : {TRUE, FALSE};
+			esac;
+		randomizer_stage_3 := 
+			case
+				!(success_failure_node_2.active) : randomizer_stage_2;
+				!(TRUE) : randomizer_stage_2;
+				TRUE : {TRUE, FALSE};
+			esac;
+		randomizer_stage_4 := 
+			case
+				!(success_failure_node_3.active) : randomizer_stage_3;
+				!(TRUE) : randomizer_stage_3;
+				TRUE : {TRUE, FALSE};
+			esac;
+		randomizer_stage_5 := 
+			case
+				!(success_failure_node_4.active) : randomizer_stage_4;
+				!(TRUE) : randomizer_stage_4;
+				TRUE : {TRUE, FALSE};
+			esac;
+		randomizer_stage_6 := 
+			case
+				!(success_failure_node_5.active) : randomizer_stage_5;
+				!(TRUE) : randomizer_stage_5;
+				TRUE : {TRUE, FALSE};
+			esac;
+		randomizer_stage_7 := 
+			case
+				!(success_failure_node_6.active) : randomizer_stage_6;
+				!(TRUE) : randomizer_stage_6;
+				TRUE : {TRUE, FALSE};
+			esac;
+		randomizer_stage_8 := 
+			case
+				!(success_failure_node_7.active) : randomizer_stage_7;
+				!(TRUE) : randomizer_stage_7;
+				TRUE : {TRUE, FALSE};
+			esac;
+		randomizer_stage_9 := 
+			case
+				!(success_failure_node_8.active) : randomizer_stage_8;
+				!(TRUE) : randomizer_stage_8;
+				TRUE : {TRUE, FALSE};
+			esac;
+		randomizer_stage_10 := 
+			case
+				!(success_failure_node_9.active) : randomizer_stage_9;
+				!(TRUE) : randomizer_stage_9;
+				TRUE : {TRUE, FALSE};
+			esac;
+		randomizer_stage_11 := 
+			case
+				!(success_failure_node_10.active) : randomizer_stage_10;
+				!(TRUE) : randomizer_stage_10;
+				TRUE : {TRUE, FALSE};
+			esac;
+		randomizer_stage_12 := 
+			case
+				!(success_failure_node_11.active) : randomizer_stage_11;
+				!(TRUE) : randomizer_stage_11;
+				TRUE : {TRUE, FALSE};
+			esac;
+		randomizer_stage_13 := 
+			case
+				!(success_failure_node_12.active) : randomizer_stage_12;
+				!(TRUE) : randomizer_stage_12;
+				TRUE : {TRUE, FALSE};
+			esac;
+		randomizer_stage_14 := 
+			case
+				!(success_failure_node_13.active) : randomizer_stage_13;
+				!(TRUE) : randomizer_stage_13;
+				TRUE : {TRUE, FALSE};
+			esac;
+		randomizer_stage_15 := 
+			case
+				!(success_failure_node_14.active) : randomizer_stage_14;
+				!(TRUE) : randomizer_stage_14;
+				TRUE : {TRUE, FALSE};
+			esac;
+		randomizer_stage_16 := 
+			case
+				!(success_failure_node_15.active) : randomizer_stage_15;
+				!(TRUE) : randomizer_stage_15;
+				TRUE : {TRUE, FALSE};
+			esac;
+		randomizer_stage_17 := 
+			case
+				!(success_failure_node_16.active) : randomizer_stage_16;
+				!(TRUE) : randomizer_stage_16;
+				TRUE : {TRUE, FALSE};
+			esac;
+		randomizer_stage_18 := 
+			case
+				!(success_failure_node_17.active) : randomizer_stage_17;
+				!(TRUE) : randomizer_stage_17;
+				TRUE : {TRUE, FALSE};
+			esac;
+		randomizer_stage_19 := 
+			case
+				!(success_failure_node_18.active) : randomizer_stage_18;
+				!(TRUE) : randomizer_stage_18;
+				TRUE : {TRUE, FALSE};
+			esac;
+		randomizer_stage_20 := 
+			case
+				!(success_failure_node_19.active) : randomizer_stage_19;
+				!(TRUE) : randomizer_stage_19;
+				TRUE : {TRUE, FALSE};
+			esac;
+		randomizer_stage_21 := 
+			case
+				!(success_failure_node_20.active) : randomizer_stage_20;
+				!(TRUE) : randomizer_stage_20;
+				TRUE : {TRUE, FALSE};
+			esac;
+		randomizer_stage_22 := 
+			case
+				!(success_failure_node_21.active) : randomizer_stage_21;
+				!(TRUE) : randomizer_stage_21;
+				TRUE : {TRUE, FALSE};
+			esac;
+		randomizer_stage_23 := 
+			case
+				!(success_failure_node_22.active) : randomizer_stage_22;
+				!(TRUE) : randomizer_stage_22;
+				TRUE : {TRUE, FALSE};
+			esac;
+		randomizer_stage_24 := 
+			case
+				!(success_failure_node_23.active) : randomizer_stage_23;
+				!(TRUE) : randomizer_stage_23;
+				TRUE : {TRUE, FALSE};
+			esac;
+		randomizer_stage_25 := 
+			case
+				!(success_failure_node_24.active) : randomizer_stage_24;
+				!(TRUE) : randomizer_stage_24;
+				TRUE : {TRUE, FALSE};
+			esac;
+		randomizer_stage_26 := 
+			case
+				!(success_failure_node_25.active) : randomizer_stage_25;
+				!(TRUE) : randomizer_stage_25;
+				TRUE : {TRUE, FALSE};
+			esac;
+		randomizer_stage_27 := 
+			case
+				!(success_failure_node_26.active) : randomizer_stage_26;
+				!(TRUE) : randomizer_stage_26;
+				TRUE : {TRUE, FALSE};
+			esac;
+		randomizer_stage_28 := 
+			case
+				!(success_failure_node_27.active) : randomizer_stage_27;
+				!(TRUE) : randomizer_stage_27;
+				TRUE : {TRUE, FALSE};
+			esac;
+		randomizer_stage_29 := 
+			case
+				!(success_failure_node_28.active) : randomizer_stage_28;
+				!(TRUE) : randomizer_stage_28;
+				TRUE : {TRUE, FALSE};
+			esac;
 		--END OF BLACKBOARD DEFINITIONS
 	VAR
 		node_names : define_nodes;
-		parLink1 : composite_parallel_success_on_all_without_memory_2(sel0, sel1);
-		parLink10 : composite_parallel_success_on_all_without_memory_2(sel18, sel19);
-		parLink11 : composite_parallel_success_on_all_without_memory_2(sel20, sel21);
-		parLink12 : composite_parallel_success_on_all_without_memory_2(sel22, sel23);
-		parLink13 : composite_parallel_success_on_all_without_memory_2(sel24, sel25);
+		success_failure_node : success_failure_node_module(randomizer_stage_1);
+		success_node : success_DEFAULT_module();
+		sel26 : composite_selector_without_memory_2(success_failure_node, success_node);
+		success_failure_node_1 : success_failure_node_1_module(randomizer_stage_2);
+		success_node_1 : success_DEFAULT_module();
+		sel27 : composite_selector_without_memory_2(success_failure_node_1, success_node_1);
 		parLink14 : composite_parallel_success_on_all_without_memory_2(sel26, sel27);
+		success_failure_node_2 : success_failure_node_2_module(randomizer_stage_3);
+		success_node_2 : success_DEFAULT_module();
+		sel28 : composite_selector_without_memory_2(success_failure_node_2, success_node_2);
+		success_failure_node_3 : success_failure_node_3_module(randomizer_stage_4);
+		success_node_3 : success_DEFAULT_module();
+		sel0 : composite_selector_without_memory_2(success_failure_node_3, success_node_3);
+		success_failure_node_4 : success_failure_node_4_module(randomizer_stage_5);
+		success_node_4 : success_DEFAULT_module();
+		sel1 : composite_selector_without_memory_2(success_failure_node_4, success_node_4);
+		parLink1 : composite_parallel_success_on_all_without_memory_2(sel0, sel1);
 		parLink15 : composite_parallel_success_on_all_without_memory_2(sel28, parLink1);
-		parLink16 : composite_parallel_success_on_all_without_memory_2(parLink2, parLink3);
-		parLink17 : composite_parallel_success_on_all_without_memory_2(parLink4, parLink5);
-		parLink18 : composite_parallel_success_on_all_without_memory_2(parLink6, parLink7);
-		parLink19 : composite_parallel_success_on_all_without_memory_2(parLink8, parLink9);
-		parLink2 : composite_parallel_success_on_all_without_memory_2(sel2, sel3);
-		parLink20 : composite_parallel_success_on_all_without_memory_2(parLink10, parLink11);
-		parLink21 : composite_parallel_success_on_all_without_memory_2(parLink12, parLink13);
 		parLink22 : composite_parallel_success_on_all_without_memory_2(parLink14, parLink15);
+		success_failure_node_5 : success_failure_node_5_module(randomizer_stage_6);
+		success_node_5 : success_DEFAULT_module();
+		sel2 : composite_selector_without_memory_2(success_failure_node_5, success_node_5);
+		success_failure_node_6 : success_failure_node_6_module(randomizer_stage_7);
+		success_node_6 : success_DEFAULT_module();
+		sel3 : composite_selector_without_memory_2(success_failure_node_6, success_node_6);
+		parLink2 : composite_parallel_success_on_all_without_memory_2(sel2, sel3);
+		success_failure_node_7 : success_failure_node_7_module(randomizer_stage_8);
+		success_node_7 : success_DEFAULT_module();
+		sel4 : composite_selector_without_memory_2(success_failure_node_7, success_node_7);
+		success_failure_node_8 : success_failure_node_8_module(randomizer_stage_9);
+		success_node_8 : success_DEFAULT_module();
+		sel5 : composite_selector_without_memory_2(success_failure_node_8, success_node_8);
+		parLink3 : composite_parallel_success_on_all_without_memory_2(sel4, sel5);
+		parLink16 : composite_parallel_success_on_all_without_memory_2(parLink2, parLink3);
+		success_failure_node_9 : success_failure_node_9_module(randomizer_stage_10);
+		success_node_9 : success_DEFAULT_module();
+		sel6 : composite_selector_without_memory_2(success_failure_node_9, success_node_9);
+		success_failure_node_10 : success_failure_node_10_module(randomizer_stage_11);
+		success_node_10 : success_DEFAULT_module();
+		sel7 : composite_selector_without_memory_2(success_failure_node_10, success_node_10);
+		parLink4 : composite_parallel_success_on_all_without_memory_2(sel6, sel7);
+		success_failure_node_11 : success_failure_node_11_module(randomizer_stage_12);
+		success_node_11 : success_DEFAULT_module();
+		sel8 : composite_selector_without_memory_2(success_failure_node_11, success_node_11);
+		success_failure_node_12 : success_failure_node_12_module(randomizer_stage_13);
+		success_node_12 : success_DEFAULT_module();
+		sel9 : composite_selector_without_memory_2(success_failure_node_12, success_node_12);
+		parLink5 : composite_parallel_success_on_all_without_memory_2(sel8, sel9);
+		parLink17 : composite_parallel_success_on_all_without_memory_2(parLink4, parLink5);
 		parLink23 : composite_parallel_success_on_all_without_memory_2(parLink16, parLink17);
-		parLink24 : composite_parallel_success_on_all_without_memory_2(parLink18, parLink19);
-		parLink25 : composite_parallel_success_on_all_without_memory_2(parLink20, parLink21);
 		parLink26 : composite_parallel_success_on_all_without_memory_2(parLink22, parLink23);
+		success_failure_node_13 : success_failure_node_13_module(randomizer_stage_14);
+		success_node_13 : success_DEFAULT_module();
+		sel10 : composite_selector_without_memory_2(success_failure_node_13, success_node_13);
+		success_failure_node_14 : success_failure_node_14_module(randomizer_stage_15);
+		success_node_14 : success_DEFAULT_module();
+		sel11 : composite_selector_without_memory_2(success_failure_node_14, success_node_14);
+		parLink6 : composite_parallel_success_on_all_without_memory_2(sel10, sel11);
+		success_failure_node_15 : success_failure_node_15_module(randomizer_stage_16);
+		success_node_15 : success_DEFAULT_module();
+		sel12 : composite_selector_without_memory_2(success_failure_node_15, success_node_15);
+		success_failure_node_16 : success_failure_node_16_module(randomizer_stage_17);
+		success_node_16 : success_DEFAULT_module();
+		sel13 : composite_selector_without_memory_2(success_failure_node_16, success_node_16);
+		parLink7 : composite_parallel_success_on_all_without_memory_2(sel12, sel13);
+		parLink18 : composite_parallel_success_on_all_without_memory_2(parLink6, parLink7);
+		success_failure_node_17 : success_failure_node_17_module(randomizer_stage_18);
+		success_node_17 : success_DEFAULT_module();
+		sel14 : composite_selector_without_memory_2(success_failure_node_17, success_node_17);
+		success_failure_node_18 : success_failure_node_18_module(randomizer_stage_19);
+		success_node_18 : success_DEFAULT_module();
+		sel15 : composite_selector_without_memory_2(success_failure_node_18, success_node_18);
+		parLink8 : composite_parallel_success_on_all_without_memory_2(sel14, sel15);
+		success_failure_node_19 : success_failure_node_19_module(randomizer_stage_20);
+		success_node_19 : success_DEFAULT_module();
+		sel16 : composite_selector_without_memory_2(success_failure_node_19, success_node_19);
+		success_failure_node_20 : success_failure_node_20_module(randomizer_stage_21);
+		success_node_20 : success_DEFAULT_module();
+		sel17 : composite_selector_without_memory_2(success_failure_node_20, success_node_20);
+		parLink9 : composite_parallel_success_on_all_without_memory_2(sel16, sel17);
+		parLink19 : composite_parallel_success_on_all_without_memory_2(parLink8, parLink9);
+		parLink24 : composite_parallel_success_on_all_without_memory_2(parLink18, parLink19);
+		success_failure_node_21 : success_failure_node_21_module(randomizer_stage_22);
+		success_node_21 : success_DEFAULT_module();
+		sel18 : composite_selector_without_memory_2(success_failure_node_21, success_node_21);
+		success_failure_node_22 : success_failure_node_22_module(randomizer_stage_23);
+		success_node_22 : success_DEFAULT_module();
+		sel19 : composite_selector_without_memory_2(success_failure_node_22, success_node_22);
+		parLink10 : composite_parallel_success_on_all_without_memory_2(sel18, sel19);
+		success_failure_node_23 : success_failure_node_23_module(randomizer_stage_24);
+		success_node_23 : success_DEFAULT_module();
+		sel20 : composite_selector_without_memory_2(success_failure_node_23, success_node_23);
+		success_failure_node_24 : success_failure_node_24_module(randomizer_stage_25);
+		success_node_24 : success_DEFAULT_module();
+		sel21 : composite_selector_without_memory_2(success_failure_node_24, success_node_24);
+		parLink11 : composite_parallel_success_on_all_without_memory_2(sel20, sel21);
+		parLink20 : composite_parallel_success_on_all_without_memory_2(parLink10, parLink11);
+		success_failure_node_25 : success_failure_node_25_module(randomizer_stage_26);
+		success_node_25 : success_DEFAULT_module();
+		sel22 : composite_selector_without_memory_2(success_failure_node_25, success_node_25);
+		success_failure_node_26 : success_failure_node_26_module(randomizer_stage_27);
+		success_node_26 : success_DEFAULT_module();
+		sel23 : composite_selector_without_memory_2(success_failure_node_26, success_node_26);
+		parLink12 : composite_parallel_success_on_all_without_memory_2(sel22, sel23);
+		success_failure_node_27 : success_failure_node_27_module(randomizer_stage_28);
+		success_node_27 : success_DEFAULT_module();
+		sel24 : composite_selector_without_memory_2(success_failure_node_27, success_node_27);
+		success_failure_node_28 : success_failure_node_28_module(randomizer_stage_29);
+		success_node_28 : success_DEFAULT_module();
+		sel25 : composite_selector_without_memory_2(success_failure_node_28, success_node_28);
+		parLink13 : composite_parallel_success_on_all_without_memory_2(sel24, sel25);
+		parLink21 : composite_parallel_success_on_all_without_memory_2(parLink12, parLink13);
+		parLink25 : composite_parallel_success_on_all_without_memory_2(parLink20, parLink21);
 		parLink27 : composite_parallel_success_on_all_without_memory_2(parLink24, parLink25);
 		parLink28 : composite_parallel_success_on_all_without_memory_2(parLink26, parLink27);
-		parLink3 : composite_parallel_success_on_all_without_memory_2(sel4, sel5);
-		parLink4 : composite_parallel_success_on_all_without_memory_2(sel6, sel7);
-		parLink5 : composite_parallel_success_on_all_without_memory_2(sel8, sel9);
-		parLink6 : composite_parallel_success_on_all_without_memory_2(sel10, sel11);
-		parLink7 : composite_parallel_success_on_all_without_memory_2(sel12, sel13);
-		parLink8 : composite_parallel_success_on_all_without_memory_2(sel14, sel15);
-		parLink9 : composite_parallel_success_on_all_without_memory_2(sel16, sel17);
-		sel0 : composite_selector_without_memory_2(success_failure_node_3, success_node_3);
-		sel1 : composite_selector_without_memory_2(success_failure_node_4, success_node_4);
-		sel10 : composite_selector_without_memory_2(success_failure_node_13, success_node_13);
-		sel11 : composite_selector_without_memory_2(success_failure_node_14, success_node_14);
-		sel12 : composite_selector_without_memory_2(success_failure_node_15, success_node_15);
-		sel13 : composite_selector_without_memory_2(success_failure_node_16, success_node_16);
-		sel14 : composite_selector_without_memory_2(success_failure_node_17, success_node_17);
-		sel15 : composite_selector_without_memory_2(success_failure_node_18, success_node_18);
-		sel16 : composite_selector_without_memory_2(success_failure_node_19, success_node_19);
-		sel17 : composite_selector_without_memory_2(success_failure_node_20, success_node_20);
-		sel18 : composite_selector_without_memory_2(success_failure_node_21, success_node_21);
-		sel19 : composite_selector_without_memory_2(success_failure_node_22, success_node_22);
-		sel2 : composite_selector_without_memory_2(success_failure_node_5, success_node_5);
-		sel20 : composite_selector_without_memory_2(success_failure_node_23, success_node_23);
-		sel21 : composite_selector_without_memory_2(success_failure_node_24, success_node_24);
-		sel22 : composite_selector_without_memory_2(success_failure_node_25, success_node_25);
-		sel23 : composite_selector_without_memory_2(success_failure_node_26, success_node_26);
-		sel24 : composite_selector_without_memory_2(success_failure_node_27, success_node_27);
-		sel25 : composite_selector_without_memory_2(success_failure_node_28, success_node_28);
-		sel26 : composite_selector_without_memory_2(success_failure_node, success_node);
-		sel27 : composite_selector_without_memory_2(success_failure_node_1, success_node_1);
-		sel28 : composite_selector_without_memory_2(success_failure_node_2, success_node_2);
-		sel3 : composite_selector_without_memory_2(success_failure_node_6, success_node_6);
-		sel4 : composite_selector_without_memory_2(success_failure_node_7, success_node_7);
-		sel5 : composite_selector_without_memory_2(success_failure_node_8, success_node_8);
-		sel6 : composite_selector_without_memory_2(success_failure_node_9, success_node_9);
-		sel7 : composite_selector_without_memory_2(success_failure_node_10, success_node_10);
-		sel8 : composite_selector_without_memory_2(success_failure_node_11, success_node_11);
-		sel9 : composite_selector_without_memory_2(success_failure_node_12, success_node_12);
-		success_failure_node : success_failure_node_module(success_failure_node_DOT_randomizer_stage_1);
-		success_failure_node_1 : success_failure_node_1_module(success_failure_node_1_DOT_randomizer_stage_1);
-		success_failure_node_10 : success_failure_node_10_module(success_failure_node_10_DOT_randomizer_stage_1);
-		success_failure_node_11 : success_failure_node_11_module(success_failure_node_11_DOT_randomizer_stage_1);
-		success_failure_node_12 : success_failure_node_12_module(success_failure_node_12_DOT_randomizer_stage_1);
-		success_failure_node_13 : success_failure_node_13_module(success_failure_node_13_DOT_randomizer_stage_1);
-		success_failure_node_14 : success_failure_node_14_module(success_failure_node_14_DOT_randomizer_stage_1);
-		success_failure_node_15 : success_failure_node_15_module(success_failure_node_15_DOT_randomizer_stage_1);
-		success_failure_node_16 : success_failure_node_16_module(success_failure_node_16_DOT_randomizer_stage_1);
-		success_failure_node_17 : success_failure_node_17_module(success_failure_node_17_DOT_randomizer_stage_1);
-		success_failure_node_18 : success_failure_node_18_module(success_failure_node_18_DOT_randomizer_stage_1);
-		success_failure_node_19 : success_failure_node_19_module(success_failure_node_19_DOT_randomizer_stage_1);
-		success_failure_node_2 : success_failure_node_2_module(success_failure_node_2_DOT_randomizer_stage_1);
-		success_failure_node_20 : success_failure_node_20_module(success_failure_node_20_DOT_randomizer_stage_1);
-		success_failure_node_21 : success_failure_node_21_module(success_failure_node_21_DOT_randomizer_stage_1);
-		success_failure_node_22 : success_failure_node_22_module(success_failure_node_22_DOT_randomizer_stage_1);
-		success_failure_node_23 : success_failure_node_23_module(success_failure_node_23_DOT_randomizer_stage_1);
-		success_failure_node_24 : success_failure_node_24_module(success_failure_node_24_DOT_randomizer_stage_1);
-		success_failure_node_25 : success_failure_node_25_module(success_failure_node_25_DOT_randomizer_stage_1);
-		success_failure_node_26 : success_failure_node_26_module(success_failure_node_26_DOT_randomizer_stage_1);
-		success_failure_node_27 : success_failure_node_27_module(success_failure_node_27_DOT_randomizer_stage_1);
-		success_failure_node_28 : success_failure_node_28_module(success_failure_node_28_DOT_randomizer_stage_1);
-		success_failure_node_3 : success_failure_node_3_module(success_failure_node_3_DOT_randomizer_stage_1);
-		success_failure_node_4 : success_failure_node_4_module(success_failure_node_4_DOT_randomizer_stage_1);
-		success_failure_node_5 : success_failure_node_5_module(success_failure_node_5_DOT_randomizer_stage_1);
-		success_failure_node_6 : success_failure_node_6_module(success_failure_node_6_DOT_randomizer_stage_1);
-		success_failure_node_7 : success_failure_node_7_module(success_failure_node_7_DOT_randomizer_stage_1);
-		success_failure_node_8 : success_failure_node_8_module(success_failure_node_8_DOT_randomizer_stage_1);
-		success_failure_node_9 : success_failure_node_9_module(success_failure_node_9_DOT_randomizer_stage_1);
-		success_node : success_DEFAULT_module();
-		success_node_1 : success_DEFAULT_module();
-		success_node_10 : success_DEFAULT_module();
-		success_node_11 : success_DEFAULT_module();
-		success_node_12 : success_DEFAULT_module();
-		success_node_13 : success_DEFAULT_module();
-		success_node_14 : success_DEFAULT_module();
-		success_node_15 : success_DEFAULT_module();
-		success_node_16 : success_DEFAULT_module();
-		success_node_17 : success_DEFAULT_module();
-		success_node_18 : success_DEFAULT_module();
-		success_node_19 : success_DEFAULT_module();
-		success_node_2 : success_DEFAULT_module();
-		success_node_20 : success_DEFAULT_module();
-		success_node_21 : success_DEFAULT_module();
-		success_node_22 : success_DEFAULT_module();
-		success_node_23 : success_DEFAULT_module();
-		success_node_24 : success_DEFAULT_module();
-		success_node_25 : success_DEFAULT_module();
-		success_node_26 : success_DEFAULT_module();
-		success_node_27 : success_DEFAULT_module();
-		success_node_28 : success_DEFAULT_module();
-		success_node_3 : success_DEFAULT_module();
-		success_node_4 : success_DEFAULT_module();
-		success_node_5 : success_DEFAULT_module();
-		success_node_6 : success_DEFAULT_module();
-		success_node_7 : success_DEFAULT_module();
-		success_node_8 : success_DEFAULT_module();
-		success_node_9 : success_DEFAULT_module();
 		--START OF BLACKBOARD VARIABLES DECLARATION
-		success_failure_node_10_DOT_randomizer_stage_1 : boolean;
-		success_failure_node_11_DOT_randomizer_stage_1 : boolean;
-		success_failure_node_12_DOT_randomizer_stage_1 : boolean;
-		success_failure_node_13_DOT_randomizer_stage_1 : boolean;
-		success_failure_node_14_DOT_randomizer_stage_1 : boolean;
-		success_failure_node_15_DOT_randomizer_stage_1 : boolean;
-		success_failure_node_16_DOT_randomizer_stage_1 : boolean;
-		success_failure_node_17_DOT_randomizer_stage_1 : boolean;
-		success_failure_node_18_DOT_randomizer_stage_1 : boolean;
-		success_failure_node_19_DOT_randomizer_stage_1 : boolean;
-		success_failure_node_1_DOT_randomizer_stage_1 : boolean;
-		success_failure_node_20_DOT_randomizer_stage_1 : boolean;
-		success_failure_node_21_DOT_randomizer_stage_1 : boolean;
-		success_failure_node_22_DOT_randomizer_stage_1 : boolean;
-		success_failure_node_23_DOT_randomizer_stage_1 : boolean;
-		success_failure_node_24_DOT_randomizer_stage_1 : boolean;
-		success_failure_node_25_DOT_randomizer_stage_1 : boolean;
-		success_failure_node_26_DOT_randomizer_stage_1 : boolean;
-		success_failure_node_27_DOT_randomizer_stage_1 : boolean;
-		success_failure_node_28_DOT_randomizer_stage_1 : boolean;
-		success_failure_node_2_DOT_randomizer_stage_1 : boolean;
-		success_failure_node_3_DOT_randomizer_stage_1 : boolean;
-		success_failure_node_4_DOT_randomizer_stage_1 : boolean;
-		success_failure_node_5_DOT_randomizer_stage_1 : boolean;
-		success_failure_node_6_DOT_randomizer_stage_1 : boolean;
-		success_failure_node_7_DOT_randomizer_stage_1 : boolean;
-		success_failure_node_8_DOT_randomizer_stage_1 : boolean;
-		success_failure_node_9_DOT_randomizer_stage_1 : boolean;
-		success_failure_node_DOT_randomizer_stage_1 : boolean;
+		randomizer_stage_0 : boolean;
 		--END OF BLACKBOARD VARIABLES DECLARATION
 	ASSIGN
 		--START OF BLACKBOARD VARIABLES INITIALIZATION
-		init(success_failure_node_10_DOT_randomizer_stage_1) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_11_DOT_randomizer_stage_1) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_12_DOT_randomizer_stage_1) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_13_DOT_randomizer_stage_1) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_14_DOT_randomizer_stage_1) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_15_DOT_randomizer_stage_1) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_16_DOT_randomizer_stage_1) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_17_DOT_randomizer_stage_1) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_18_DOT_randomizer_stage_1) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_19_DOT_randomizer_stage_1) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_1_DOT_randomizer_stage_1) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_20_DOT_randomizer_stage_1) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_21_DOT_randomizer_stage_1) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_22_DOT_randomizer_stage_1) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_23_DOT_randomizer_stage_1) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_24_DOT_randomizer_stage_1) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_25_DOT_randomizer_stage_1) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_26_DOT_randomizer_stage_1) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_27_DOT_randomizer_stage_1) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_28_DOT_randomizer_stage_1) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_2_DOT_randomizer_stage_1) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_3_DOT_randomizer_stage_1) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_4_DOT_randomizer_stage_1) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_5_DOT_randomizer_stage_1) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_6_DOT_randomizer_stage_1) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_7_DOT_randomizer_stage_1) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_8_DOT_randomizer_stage_1) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_9_DOT_randomizer_stage_1) := 
-			case
-				TRUE : FALSE;
-			esac;
-		init(success_failure_node_DOT_randomizer_stage_1) := 
+		init(randomizer_stage_0) := 
 			case
 				TRUE : FALSE;
 			esac;
 		--END OF BLACKBOARD VARIABLES INITIALIZATION
 		--START OF BLACKBOARD VARIABLES TRANSITION
-		next(success_failure_node_10_DOT_randomizer_stage_1) := 
-			case
-				next(!(success_failure_node_10.active)) : LINK_TO_PREVIOUS_FINAL_success_failure_node_10_DOT_randomizer;
-				TRUE : {TRUE, FALSE};
-			esac;
-		next(success_failure_node_11_DOT_randomizer_stage_1) := 
-			case
-				next(!(success_failure_node_11.active)) : LINK_TO_PREVIOUS_FINAL_success_failure_node_11_DOT_randomizer;
-				TRUE : {TRUE, FALSE};
-			esac;
-		next(success_failure_node_12_DOT_randomizer_stage_1) := 
-			case
-				next(!(success_failure_node_12.active)) : LINK_TO_PREVIOUS_FINAL_success_failure_node_12_DOT_randomizer;
-				TRUE : {TRUE, FALSE};
-			esac;
-		next(success_failure_node_13_DOT_randomizer_stage_1) := 
-			case
-				next(!(success_failure_node_13.active)) : LINK_TO_PREVIOUS_FINAL_success_failure_node_13_DOT_randomizer;
-				TRUE : {TRUE, FALSE};
-			esac;
-		next(success_failure_node_14_DOT_randomizer_stage_1) := 
-			case
-				next(!(success_failure_node_14.active)) : LINK_TO_PREVIOUS_FINAL_success_failure_node_14_DOT_randomizer;
-				TRUE : {TRUE, FALSE};
-			esac;
-		next(success_failure_node_15_DOT_randomizer_stage_1) := 
-			case
-				next(!(success_failure_node_15.active)) : LINK_TO_PREVIOUS_FINAL_success_failure_node_15_DOT_randomizer;
-				TRUE : {TRUE, FALSE};
-			esac;
-		next(success_failure_node_16_DOT_randomizer_stage_1) := 
-			case
-				next(!(success_failure_node_16.active)) : LINK_TO_PREVIOUS_FINAL_success_failure_node_16_DOT_randomizer;
-				TRUE : {TRUE, FALSE};
-			esac;
-		next(success_failure_node_17_DOT_randomizer_stage_1) := 
-			case
-				next(!(success_failure_node_17.active)) : LINK_TO_PREVIOUS_FINAL_success_failure_node_17_DOT_randomizer;
-				TRUE : {TRUE, FALSE};
-			esac;
-		next(success_failure_node_18_DOT_randomizer_stage_1) := 
-			case
-				next(!(success_failure_node_18.active)) : LINK_TO_PREVIOUS_FINAL_success_failure_node_18_DOT_randomizer;
-				TRUE : {TRUE, FALSE};
-			esac;
-		next(success_failure_node_19_DOT_randomizer_stage_1) := 
-			case
-				next(!(success_failure_node_19.active)) : LINK_TO_PREVIOUS_FINAL_success_failure_node_19_DOT_randomizer;
-				TRUE : {TRUE, FALSE};
-			esac;
-		next(success_failure_node_1_DOT_randomizer_stage_1) := 
-			case
-				next(!(success_failure_node_1.active)) : LINK_TO_PREVIOUS_FINAL_success_failure_node_1_DOT_randomizer;
-				TRUE : {TRUE, FALSE};
-			esac;
-		next(success_failure_node_20_DOT_randomizer_stage_1) := 
-			case
-				next(!(success_failure_node_20.active)) : LINK_TO_PREVIOUS_FINAL_success_failure_node_20_DOT_randomizer;
-				TRUE : {TRUE, FALSE};
-			esac;
-		next(success_failure_node_21_DOT_randomizer_stage_1) := 
-			case
-				next(!(success_failure_node_21.active)) : LINK_TO_PREVIOUS_FINAL_success_failure_node_21_DOT_randomizer;
-				TRUE : {TRUE, FALSE};
-			esac;
-		next(success_failure_node_22_DOT_randomizer_stage_1) := 
-			case
-				next(!(success_failure_node_22.active)) : LINK_TO_PREVIOUS_FINAL_success_failure_node_22_DOT_randomizer;
-				TRUE : {TRUE, FALSE};
-			esac;
-		next(success_failure_node_23_DOT_randomizer_stage_1) := 
-			case
-				next(!(success_failure_node_23.active)) : LINK_TO_PREVIOUS_FINAL_success_failure_node_23_DOT_randomizer;
-				TRUE : {TRUE, FALSE};
-			esac;
-		next(success_failure_node_24_DOT_randomizer_stage_1) := 
-			case
-				next(!(success_failure_node_24.active)) : LINK_TO_PREVIOUS_FINAL_success_failure_node_24_DOT_randomizer;
-				TRUE : {TRUE, FALSE};
-			esac;
-		next(success_failure_node_25_DOT_randomizer_stage_1) := 
-			case
-				next(!(success_failure_node_25.active)) : LINK_TO_PREVIOUS_FINAL_success_failure_node_25_DOT_randomizer;
-				TRUE : {TRUE, FALSE};
-			esac;
-		next(success_failure_node_26_DOT_randomizer_stage_1) := 
-			case
-				next(!(success_failure_node_26.active)) : LINK_TO_PREVIOUS_FINAL_success_failure_node_26_DOT_randomizer;
-				TRUE : {TRUE, FALSE};
-			esac;
-		next(success_failure_node_27_DOT_randomizer_stage_1) := 
-			case
-				next(!(success_failure_node_27.active)) : LINK_TO_PREVIOUS_FINAL_success_failure_node_27_DOT_randomizer;
-				TRUE : {TRUE, FALSE};
-			esac;
-		next(success_failure_node_28_DOT_randomizer_stage_1) := 
-			case
-				next(!(success_failure_node_28.active)) : LINK_TO_PREVIOUS_FINAL_success_failure_node_28_DOT_randomizer;
-				TRUE : {TRUE, FALSE};
-			esac;
-		next(success_failure_node_2_DOT_randomizer_stage_1) := 
-			case
-				next(!(success_failure_node_2.active)) : LINK_TO_PREVIOUS_FINAL_success_failure_node_2_DOT_randomizer;
-				TRUE : {TRUE, FALSE};
-			esac;
-		next(success_failure_node_3_DOT_randomizer_stage_1) := 
-			case
-				next(!(success_failure_node_3.active)) : LINK_TO_PREVIOUS_FINAL_success_failure_node_3_DOT_randomizer;
-				TRUE : {TRUE, FALSE};
-			esac;
-		next(success_failure_node_4_DOT_randomizer_stage_1) := 
-			case
-				next(!(success_failure_node_4.active)) : LINK_TO_PREVIOUS_FINAL_success_failure_node_4_DOT_randomizer;
-				TRUE : {TRUE, FALSE};
-			esac;
-		next(success_failure_node_5_DOT_randomizer_stage_1) := 
-			case
-				next(!(success_failure_node_5.active)) : LINK_TO_PREVIOUS_FINAL_success_failure_node_5_DOT_randomizer;
-				TRUE : {TRUE, FALSE};
-			esac;
-		next(success_failure_node_6_DOT_randomizer_stage_1) := 
-			case
-				next(!(success_failure_node_6.active)) : LINK_TO_PREVIOUS_FINAL_success_failure_node_6_DOT_randomizer;
-				TRUE : {TRUE, FALSE};
-			esac;
-		next(success_failure_node_7_DOT_randomizer_stage_1) := 
-			case
-				next(!(success_failure_node_7.active)) : LINK_TO_PREVIOUS_FINAL_success_failure_node_7_DOT_randomizer;
-				TRUE : {TRUE, FALSE};
-			esac;
-		next(success_failure_node_8_DOT_randomizer_stage_1) := 
-			case
-				next(!(success_failure_node_8.active)) : LINK_TO_PREVIOUS_FINAL_success_failure_node_8_DOT_randomizer;
-				TRUE : {TRUE, FALSE};
-			esac;
-		next(success_failure_node_9_DOT_randomizer_stage_1) := 
-			case
-				next(!(success_failure_node_9.active)) : LINK_TO_PREVIOUS_FINAL_success_failure_node_9_DOT_randomizer;
-				TRUE : {TRUE, FALSE};
-			esac;
-		next(success_failure_node_DOT_randomizer_stage_1) := 
-			case
-				next(!(success_failure_node.active)) : LINK_TO_PREVIOUS_FINAL_success_failure_node_DOT_randomizer;
-				TRUE : {TRUE, FALSE};
-			esac;
+		next(randomizer_stage_0) := randomizer_stage_29;
 		--END OF BLACKBOARD VARIABLES TRANSITION
 
 LTLSPEC G(((success_failure_node.status = failure) -> (success_node.status = success)));
@@ -854,294 +686,294 @@ MODULE composite_parallel_success_on_all_without_memory_2(child_0, child_1)
 			esac;
 		child_0.active := active;
 		child_1.active := active;
-MODULE success_failure_node_module(success_failure_node_DOT_randomizer_stage_1)
+MODULE success_failure_node_module(randomizer_stage_1)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
 		internal_status := 
 			case
-				success_failure_node_DOT_randomizer_stage_1 : success;
+				randomizer_stage_1 : success;
 				TRUE : failure;
 			esac;
-MODULE success_failure_node_1_module(success_failure_node_1_DOT_randomizer_stage_1)
+MODULE success_failure_node_1_module(randomizer_stage_2)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
 		internal_status := 
 			case
-				success_failure_node_1_DOT_randomizer_stage_1 : success;
+				randomizer_stage_2 : success;
 				TRUE : failure;
 			esac;
-MODULE success_failure_node_10_module(success_failure_node_10_DOT_randomizer_stage_1)
+MODULE success_failure_node_2_module(randomizer_stage_3)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
 		internal_status := 
 			case
-				success_failure_node_10_DOT_randomizer_stage_1 : success;
+				randomizer_stage_3 : success;
 				TRUE : failure;
 			esac;
-MODULE success_failure_node_11_module(success_failure_node_11_DOT_randomizer_stage_1)
+MODULE success_failure_node_3_module(randomizer_stage_4)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
 		internal_status := 
 			case
-				success_failure_node_11_DOT_randomizer_stage_1 : success;
+				randomizer_stage_4 : success;
 				TRUE : failure;
 			esac;
-MODULE success_failure_node_12_module(success_failure_node_12_DOT_randomizer_stage_1)
+MODULE success_failure_node_4_module(randomizer_stage_5)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
 		internal_status := 
 			case
-				success_failure_node_12_DOT_randomizer_stage_1 : success;
+				randomizer_stage_5 : success;
 				TRUE : failure;
 			esac;
-MODULE success_failure_node_13_module(success_failure_node_13_DOT_randomizer_stage_1)
+MODULE success_failure_node_5_module(randomizer_stage_6)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
 		internal_status := 
 			case
-				success_failure_node_13_DOT_randomizer_stage_1 : success;
+				randomizer_stage_6 : success;
 				TRUE : failure;
 			esac;
-MODULE success_failure_node_14_module(success_failure_node_14_DOT_randomizer_stage_1)
+MODULE success_failure_node_6_module(randomizer_stage_7)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
 		internal_status := 
 			case
-				success_failure_node_14_DOT_randomizer_stage_1 : success;
+				randomizer_stage_7 : success;
 				TRUE : failure;
 			esac;
-MODULE success_failure_node_15_module(success_failure_node_15_DOT_randomizer_stage_1)
+MODULE success_failure_node_7_module(randomizer_stage_8)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
 		internal_status := 
 			case
-				success_failure_node_15_DOT_randomizer_stage_1 : success;
+				randomizer_stage_8 : success;
 				TRUE : failure;
 			esac;
-MODULE success_failure_node_16_module(success_failure_node_16_DOT_randomizer_stage_1)
+MODULE success_failure_node_8_module(randomizer_stage_9)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
 		internal_status := 
 			case
-				success_failure_node_16_DOT_randomizer_stage_1 : success;
+				randomizer_stage_9 : success;
 				TRUE : failure;
 			esac;
-MODULE success_failure_node_17_module(success_failure_node_17_DOT_randomizer_stage_1)
+MODULE success_failure_node_9_module(randomizer_stage_10)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
 		internal_status := 
 			case
-				success_failure_node_17_DOT_randomizer_stage_1 : success;
+				randomizer_stage_10 : success;
 				TRUE : failure;
 			esac;
-MODULE success_failure_node_18_module(success_failure_node_18_DOT_randomizer_stage_1)
+MODULE success_failure_node_10_module(randomizer_stage_11)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
 		internal_status := 
 			case
-				success_failure_node_18_DOT_randomizer_stage_1 : success;
+				randomizer_stage_11 : success;
 				TRUE : failure;
 			esac;
-MODULE success_failure_node_19_module(success_failure_node_19_DOT_randomizer_stage_1)
+MODULE success_failure_node_11_module(randomizer_stage_12)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
 		internal_status := 
 			case
-				success_failure_node_19_DOT_randomizer_stage_1 : success;
+				randomizer_stage_12 : success;
 				TRUE : failure;
 			esac;
-MODULE success_failure_node_2_module(success_failure_node_2_DOT_randomizer_stage_1)
+MODULE success_failure_node_12_module(randomizer_stage_13)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
 		internal_status := 
 			case
-				success_failure_node_2_DOT_randomizer_stage_1 : success;
+				randomizer_stage_13 : success;
 				TRUE : failure;
 			esac;
-MODULE success_failure_node_20_module(success_failure_node_20_DOT_randomizer_stage_1)
+MODULE success_failure_node_13_module(randomizer_stage_14)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
 		internal_status := 
 			case
-				success_failure_node_20_DOT_randomizer_stage_1 : success;
+				randomizer_stage_14 : success;
 				TRUE : failure;
 			esac;
-MODULE success_failure_node_21_module(success_failure_node_21_DOT_randomizer_stage_1)
+MODULE success_failure_node_14_module(randomizer_stage_15)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
 		internal_status := 
 			case
-				success_failure_node_21_DOT_randomizer_stage_1 : success;
+				randomizer_stage_15 : success;
 				TRUE : failure;
 			esac;
-MODULE success_failure_node_22_module(success_failure_node_22_DOT_randomizer_stage_1)
+MODULE success_failure_node_15_module(randomizer_stage_16)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
 		internal_status := 
 			case
-				success_failure_node_22_DOT_randomizer_stage_1 : success;
+				randomizer_stage_16 : success;
 				TRUE : failure;
 			esac;
-MODULE success_failure_node_23_module(success_failure_node_23_DOT_randomizer_stage_1)
+MODULE success_failure_node_16_module(randomizer_stage_17)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
 		internal_status := 
 			case
-				success_failure_node_23_DOT_randomizer_stage_1 : success;
+				randomizer_stage_17 : success;
 				TRUE : failure;
 			esac;
-MODULE success_failure_node_24_module(success_failure_node_24_DOT_randomizer_stage_1)
+MODULE success_failure_node_17_module(randomizer_stage_18)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
 		internal_status := 
 			case
-				success_failure_node_24_DOT_randomizer_stage_1 : success;
+				randomizer_stage_18 : success;
 				TRUE : failure;
 			esac;
-MODULE success_failure_node_25_module(success_failure_node_25_DOT_randomizer_stage_1)
+MODULE success_failure_node_18_module(randomizer_stage_19)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
 		internal_status := 
 			case
-				success_failure_node_25_DOT_randomizer_stage_1 : success;
+				randomizer_stage_19 : success;
 				TRUE : failure;
 			esac;
-MODULE success_failure_node_26_module(success_failure_node_26_DOT_randomizer_stage_1)
+MODULE success_failure_node_19_module(randomizer_stage_20)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
 		internal_status := 
 			case
-				success_failure_node_26_DOT_randomizer_stage_1 : success;
+				randomizer_stage_20 : success;
 				TRUE : failure;
 			esac;
-MODULE success_failure_node_27_module(success_failure_node_27_DOT_randomizer_stage_1)
+MODULE success_failure_node_20_module(randomizer_stage_21)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
 		internal_status := 
 			case
-				success_failure_node_27_DOT_randomizer_stage_1 : success;
+				randomizer_stage_21 : success;
 				TRUE : failure;
 			esac;
-MODULE success_failure_node_28_module(success_failure_node_28_DOT_randomizer_stage_1)
+MODULE success_failure_node_21_module(randomizer_stage_22)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
 		internal_status := 
 			case
-				success_failure_node_28_DOT_randomizer_stage_1 : success;
+				randomizer_stage_22 : success;
 				TRUE : failure;
 			esac;
-MODULE success_failure_node_3_module(success_failure_node_3_DOT_randomizer_stage_1)
+MODULE success_failure_node_22_module(randomizer_stage_23)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
 		internal_status := 
 			case
-				success_failure_node_3_DOT_randomizer_stage_1 : success;
+				randomizer_stage_23 : success;
 				TRUE : failure;
 			esac;
-MODULE success_failure_node_4_module(success_failure_node_4_DOT_randomizer_stage_1)
+MODULE success_failure_node_23_module(randomizer_stage_24)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
 		internal_status := 
 			case
-				success_failure_node_4_DOT_randomizer_stage_1 : success;
+				randomizer_stage_24 : success;
 				TRUE : failure;
 			esac;
-MODULE success_failure_node_5_module(success_failure_node_5_DOT_randomizer_stage_1)
+MODULE success_failure_node_24_module(randomizer_stage_25)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
 		internal_status := 
 			case
-				success_failure_node_5_DOT_randomizer_stage_1 : success;
+				randomizer_stage_25 : success;
 				TRUE : failure;
 			esac;
-MODULE success_failure_node_6_module(success_failure_node_6_DOT_randomizer_stage_1)
+MODULE success_failure_node_25_module(randomizer_stage_26)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
 		internal_status := 
 			case
-				success_failure_node_6_DOT_randomizer_stage_1 : success;
+				randomizer_stage_26 : success;
 				TRUE : failure;
 			esac;
-MODULE success_failure_node_7_module(success_failure_node_7_DOT_randomizer_stage_1)
+MODULE success_failure_node_26_module(randomizer_stage_27)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
 		internal_status := 
 			case
-				success_failure_node_7_DOT_randomizer_stage_1 : success;
+				randomizer_stage_27 : success;
 				TRUE : failure;
 			esac;
-MODULE success_failure_node_8_module(success_failure_node_8_DOT_randomizer_stage_1)
+MODULE success_failure_node_27_module(randomizer_stage_28)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
 		internal_status := 
 			case
-				success_failure_node_8_DOT_randomizer_stage_1 : success;
+				randomizer_stage_28 : success;
 				TRUE : failure;
 			esac;
-MODULE success_failure_node_9_module(success_failure_node_9_DOT_randomizer_stage_1)
+MODULE success_failure_node_28_module(randomizer_stage_29)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
 		internal_status := 
 			case
-				success_failure_node_9_DOT_randomizer_stage_1 : success;
+				randomizer_stage_29 : success;
 				TRUE : failure;
 			esac;
 MODULE success_DEFAULT_module

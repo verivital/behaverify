@@ -45,13 +45,8 @@ actions {
 
 sub_trees {#comment# subtrees go here. #end_comment#} end_sub_trees
 
+
 tree {
-	composite {
-		root
-		selector
-		children { f f}
-	}
-} end_tree
-
-
+composite {sel selector children { f f}}
+}
 specifications { #comment# INVAR, LTL, and CTL specs go here #end_comment# } end_specifications
