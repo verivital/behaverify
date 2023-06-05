@@ -1,170 +1,168 @@
 constants { } end_constants
-blackboard_variables {blackboard_variable { biggest_fish VAR [0, 199] initial_value { result {0} end_result} end_initial_value} end_blackboard_variable} end_blackboard_variables
-local_variables {#comment# Local Variable declarations go here #end_comment#} end_local_variables
-environment {environment_variables {#comment# Local Variable declarations go here #end_comment#} end_environment_variables update_values { #comment# update values for environment #end_comment#} end_update_values} end_environment
+variables {variable { bl biggest_fish VAR [0, 199] assign { result {0} end_result} }}
+environment_update {} 
 checks {
     check {
         biggest_fish_is0
         read_variables { biggest_fish } end_read_variables
-        condition { (equal, bl biggest_fish, 0) } end_condition
+        condition { (equal, biggest_fish, 0) } end_condition
     } end_check
     check {
         biggest_fish_is1
         read_variables { biggest_fish } end_read_variables
-        condition { (equal, bl biggest_fish, 1) } end_condition
+        condition { (equal, biggest_fish, 1) } end_condition
     } end_check
     check {
         biggest_fish_is2
         read_variables { biggest_fish } end_read_variables
-        condition { (equal, bl biggest_fish, 2) } end_condition
+        condition { (equal, biggest_fish, 2) } end_condition
     } end_check
     check {
         biggest_fish_is3
         read_variables { biggest_fish } end_read_variables
-        condition { (equal, bl biggest_fish, 3) } end_condition
+        condition { (equal, biggest_fish, 3) } end_condition
     } end_check
     check {
         biggest_fish_is4
         read_variables { biggest_fish } end_read_variables
-        condition { (equal, bl biggest_fish, 4) } end_condition
+        condition { (equal, biggest_fish, 4) } end_condition
     } end_check
     check {
         biggest_fish_is5
         read_variables { biggest_fish } end_read_variables
-        condition { (equal, bl biggest_fish, 5) } end_condition
+        condition { (equal, biggest_fish, 5) } end_condition
     } end_check
     check {
         biggest_fish_is6
         read_variables { biggest_fish } end_read_variables
-        condition { (equal, bl biggest_fish, 6) } end_condition
+        condition { (equal, biggest_fish, 6) } end_condition
     } end_check
     check {
         biggest_fish_is7
         read_variables { biggest_fish } end_read_variables
-        condition { (equal, bl biggest_fish, 7) } end_condition
+        condition { (equal, biggest_fish, 7) } end_condition
     } end_check
     check {
         biggest_fish_is8
         read_variables { biggest_fish } end_read_variables
-        condition { (equal, bl biggest_fish, 8) } end_condition
+        condition { (equal, biggest_fish, 8) } end_condition
     } end_check
     check {
         biggest_fish_is9
         read_variables { biggest_fish } end_read_variables
-        condition { (equal, bl biggest_fish, 9) } end_condition
+        condition { (equal, biggest_fish, 9) } end_condition
     } end_check
     check {
         biggest_fish_is10
         read_variables { biggest_fish } end_read_variables
-        condition { (equal, bl biggest_fish, 10) } end_condition
+        condition { (equal, biggest_fish, 10) } end_condition
     } end_check
     check {
         biggest_fish_is11
         read_variables { biggest_fish } end_read_variables
-        condition { (equal, bl biggest_fish, 11) } end_condition
+        condition { (equal, biggest_fish, 11) } end_condition
     } end_check
     check {
         biggest_fish_is12
         read_variables { biggest_fish } end_read_variables
-        condition { (equal, bl biggest_fish, 12) } end_condition
+        condition { (equal, biggest_fish, 12) } end_condition
     } end_check
     check {
         biggest_fish_is13
         read_variables { biggest_fish } end_read_variables
-        condition { (equal, bl biggest_fish, 13) } end_condition
+        condition { (equal, biggest_fish, 13) } end_condition
     } end_check
     check {
         biggest_fish_is14
         read_variables { biggest_fish } end_read_variables
-        condition { (equal, bl biggest_fish, 14) } end_condition
+        condition { (equal, biggest_fish, 14) } end_condition
     } end_check
     check {
         biggest_fish_is15
         read_variables { biggest_fish } end_read_variables
-        condition { (equal, bl biggest_fish, 15) } end_condition
+        condition { (equal, biggest_fish, 15) } end_condition
     } end_check
     check {
         biggest_fish_is16
         read_variables { biggest_fish } end_read_variables
-        condition { (equal, bl biggest_fish, 16) } end_condition
+        condition { (equal, biggest_fish, 16) } end_condition
     } end_check
     check {
         biggest_fish_is17
         read_variables { biggest_fish } end_read_variables
-        condition { (equal, bl biggest_fish, 17) } end_condition
+        condition { (equal, biggest_fish, 17) } end_condition
     } end_check
     check {
         biggest_fish_is18
         read_variables { biggest_fish } end_read_variables
-        condition { (equal, bl biggest_fish, 18) } end_condition
+        condition { (equal, biggest_fish, 18) } end_condition
     } end_check
     check {
         biggest_fish_is19
         read_variables { biggest_fish } end_read_variables
-        condition { (equal, bl biggest_fish, 19) } end_condition
+        condition { (equal, biggest_fish, 19) } end_condition
     } end_check
     check {
         biggest_fish_is20
         read_variables { biggest_fish } end_read_variables
-        condition { (equal, bl biggest_fish, 20) } end_condition
+        condition { (equal, biggest_fish, 20) } end_condition
     } end_check
     check {
         biggest_fish_is21
         read_variables { biggest_fish } end_read_variables
-        condition { (equal, bl biggest_fish, 21) } end_condition
+        condition { (equal, biggest_fish, 21) } end_condition
     } end_check
     check {
         biggest_fish_is22
         read_variables { biggest_fish } end_read_variables
-        condition { (equal, bl biggest_fish, 22) } end_condition
+        condition { (equal, biggest_fish, 22) } end_condition
     } end_check
     check {
         biggest_fish_is23
         read_variables { biggest_fish } end_read_variables
-        condition { (equal, bl biggest_fish, 23) } end_condition
+        condition { (equal, biggest_fish, 23) } end_condition
     } end_check
     check {
         biggest_fish_is24
         read_variables { biggest_fish } end_read_variables
-        condition { (equal, bl biggest_fish, 24) } end_condition
+        condition { (equal, biggest_fish, 24) } end_condition
     } end_check
     check {
         biggest_fish_is25
         read_variables { biggest_fish } end_read_variables
-        condition { (equal, bl biggest_fish, 25) } end_condition
+        condition { (equal, biggest_fish, 25) } end_condition
     } end_check
     check {
         biggest_fish_is26
         read_variables { biggest_fish } end_read_variables
-        condition { (equal, bl biggest_fish, 26) } end_condition
+        condition { (equal, biggest_fish, 26) } end_condition
     } end_check
     check {
         biggest_fish_is27
         read_variables { biggest_fish } end_read_variables
-        condition { (equal, bl biggest_fish, 27) } end_condition
+        condition { (equal, biggest_fish, 27) } end_condition
     } end_check
     check {
         biggest_fish_is28
         read_variables { biggest_fish } end_read_variables
-        condition { (equal, bl biggest_fish, 28) } end_condition
+        condition { (equal, biggest_fish, 28) } end_condition
     } end_check
     check {
         biggest_fish_is29
         read_variables { biggest_fish } end_read_variables
-        condition { (equal, bl biggest_fish, 29) } end_condition
+        condition { (equal, biggest_fish, 29) } end_condition
     } end_check
 } end_checks
 environment_checks {#comment# check environment nodes are defined here #end_comment#} end_environment_checks
 actions {
     action {
         bigger_fish
-        imports {} end_imports
         local_variables {} end_local_variables
         read_variables {} end_read_variables
         write_variables { biggest_fish } end_write_variables
         initial_values {} end_initial_values
         update {
-            variable_statement { bl biggest_fish result { (min, (addition, 1, bl biggest_fish), 199) } end_result } end_variable_statement
+            variable_statement { biggest_fish assign {result { (min, (addition, 1, biggest_fish), 199) } } } end_variable_statement
             return_statement { result { success } end_result } end_return_statement
         } end_update
     } end_action
@@ -178,7 +176,7 @@ composite {
         decorator {
             special_decorator
             inverter
-            child
+            child{
             composite {
                 sequence29
                 sequence
@@ -186,22 +184,22 @@ composite {
                     decorator {
                         decorator26
                         inverter
-                        child biggest_fish_is26
+                        child { biggest_fish_is26}
                     } end_decorator
                     decorator {
                         decorator27
                         inverter
-                        child biggest_fish_is27
+                        child { biggest_fish_is27}
                     } end_decorator
                     decorator {
                         decorator28
                         inverter
-                        child biggest_fish_is28
+                        child { biggest_fish_is28}
                     } end_decorator
                     decorator {
                         decorator29
                         inverter
-                        child biggest_fish_is29
+                        child { biggest_fish_is29}
                     } end_decorator
                     composite {
                         sequence25
@@ -210,22 +208,22 @@ composite {
                             decorator {
                                 decorator22
                                 inverter
-                                child biggest_fish_is22
+                                child { biggest_fish_is22}
                             } end_decorator
                             decorator {
                                 decorator23
                                 inverter
-                                child biggest_fish_is23
+                                child { biggest_fish_is23}
                             } end_decorator
                             decorator {
                                 decorator24
                                 inverter
-                                child biggest_fish_is24
+                                child { biggest_fish_is24}
                             } end_decorator
                             decorator {
                                 decorator25
                                 inverter
-                                child biggest_fish_is25
+                                child { biggest_fish_is25}
                             } end_decorator
                             composite {
                                 sequence21
@@ -234,22 +232,22 @@ composite {
                                     decorator {
                                         decorator18
                                         inverter
-                                        child biggest_fish_is18
+                                        child { biggest_fish_is18}
                                     } end_decorator
                                     decorator {
                                         decorator19
                                         inverter
-                                        child biggest_fish_is19
+                                        child { biggest_fish_is19}
                                     } end_decorator
                                     decorator {
                                         decorator20
                                         inverter
-                                        child biggest_fish_is20
+                                        child { biggest_fish_is20}
                                     } end_decorator
                                     decorator {
                                         decorator21
                                         inverter
-                                        child biggest_fish_is21
+                                        child { biggest_fish_is21}
                                     } end_decorator
                                     composite {
                                         sequence17
@@ -258,22 +256,22 @@ composite {
                                             decorator {
                                                 decorator14
                                                 inverter
-                                                child biggest_fish_is14
+                                                child { biggest_fish_is14}
                                             } end_decorator
                                             decorator {
                                                 decorator15
                                                 inverter
-                                                child biggest_fish_is15
+                                                child { biggest_fish_is15}
                                             } end_decorator
                                             decorator {
                                                 decorator16
                                                 inverter
-                                                child biggest_fish_is16
+                                                child { biggest_fish_is16}
                                             } end_decorator
                                             decorator {
                                                 decorator17
                                                 inverter
-                                                child biggest_fish_is17
+                                                child { biggest_fish_is17}
                                             } end_decorator
                                             composite {
                                                 sequence13
@@ -282,22 +280,22 @@ composite {
                                                     decorator {
                                                         decorator10
                                                         inverter
-                                                        child biggest_fish_is10
+                                                        child { biggest_fish_is10}
                                                     } end_decorator
                                                     decorator {
                                                         decorator11
                                                         inverter
-                                                        child biggest_fish_is11
+                                                        child { biggest_fish_is11}
                                                     } end_decorator
                                                     decorator {
                                                         decorator12
                                                         inverter
-                                                        child biggest_fish_is12
+                                                        child { biggest_fish_is12}
                                                     } end_decorator
                                                     decorator {
                                                         decorator13
                                                         inverter
-                                                        child biggest_fish_is13
+                                                        child { biggest_fish_is13}
                                                     } end_decorator
                                                     composite {
                                                         sequence9
@@ -306,22 +304,22 @@ composite {
                                                             decorator {
                                                                 decorator6
                                                                 inverter
-                                                                child biggest_fish_is6
+                                                                child { biggest_fish_is6}
                                                             } end_decorator
                                                             decorator {
                                                                 decorator7
                                                                 inverter
-                                                                child biggest_fish_is7
+                                                                child { biggest_fish_is7}
                                                             } end_decorator
                                                             decorator {
                                                                 decorator8
                                                                 inverter
-                                                                child biggest_fish_is8
+                                                                child { biggest_fish_is8}
                                                             } end_decorator
                                                             decorator {
                                                                 decorator9
                                                                 inverter
-                                                                child biggest_fish_is9
+                                                                child { biggest_fish_is9}
                                                             } end_decorator
                                                             composite {
                                                                 sequence5
@@ -330,22 +328,22 @@ composite {
                                                                     decorator {
                                                                         decorator2
                                                                         inverter
-                                                                        child biggest_fish_is2
+                                                                        child { biggest_fish_is2}
                                                                     } end_decorator
                                                                     decorator {
                                                                         decorator3
                                                                         inverter
-                                                                        child biggest_fish_is3
+                                                                        child { biggest_fish_is3}
                                                                     } end_decorator
                                                                     decorator {
                                                                         decorator4
                                                                         inverter
-                                                                        child biggest_fish_is4
+                                                                        child { biggest_fish_is4}
                                                                     } end_decorator
                                                                     decorator {
                                                                         decorator5
                                                                         inverter
-                                                                        child biggest_fish_is5
+                                                                        child { biggest_fish_is5}
                                                                     } end_decorator
                                                                     composite {
                                                                         sequence1
@@ -354,12 +352,12 @@ composite {
                                                                             decorator {
                                                                                 decorator0
                                                                                 inverter
-                                                                                child biggest_fish_is0
+                                                                                child { biggest_fish_is0}
                                                                             } end_decorator
                                                                             decorator {
                                                                                 decorator1
                                                                                 inverter
-                                                                                child biggest_fish_is1
+                                                                                child { biggest_fish_is1}
                                                                             } end_decorator
                                                                         } end_children
                                                                     } end_composite
@@ -377,12 +375,12 @@ composite {
                     } end_composite
                 } end_children
             } end_composite
-        } end_decorator
+        }} end_decorator
         bigger_fish
     } end_children
 } end_composite
 } end_tree
 specifications {
-    LTLSPEC { (finally, (globally, (equal, bl biggest_fish 0, 30))) } end_LTLSPEC
-    CTLSPEC { (always_finally, (always_globally, (equal, bl biggest_fish 0, 30))) } end_CTLSPEC
+    LTLSPEC { (finally, (globally, (equal, biggest_fish 0, 30))) } end_LTLSPEC
+    CTLSPEC { (always_finally, (always_globally, (equal, biggest_fish 0, 30))) } end_CTLSPEC
 } end_specifications

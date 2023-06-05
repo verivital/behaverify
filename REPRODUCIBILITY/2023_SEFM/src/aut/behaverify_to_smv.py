@@ -23,7 +23,8 @@ from behaverify_common import (tab_indent,
                                map_node_name_to_number,
                                create_node_to_local_root_map,
                                create_local_root_to_relevant_list_map,
-                               create_node_to_descendants_map)
+                               create_node_to_descendants_map,
+                               format_node_type)
 # -----------------------------------------------------------------------------------------------------------------------
 
 LOCAL_ROOT_TREE_STRING = 'resume_from_here_in_subtree__'
@@ -34,16 +35,16 @@ STATUS_STRING = 'status__'
 RUNNING_TRACE_STRING = 'trace_running_source__'
 
 STATUS_FUNCTIONS = {
-    'parallel_success_on_all_without_memory' : node_creator.create_composite_parallel_success_on_all_without_memory,
-    'parallel_success_on_all_with_memory' : node_creator.create_composite_parallel_success_on_all_with_memory,
-    'parallel_success_on_one_without_memory' : node_creator.create_composite_parallel_success_on_one_without_memory,
-    'parallel_success_on_one_with_memory' : node_creator.create_composite_parallel_success_on_one_with_memory,
-    'selector_with_memory' : node_creator.create_composite_selector_with_memory,
-    'selector_without_memory' : node_creator.create_composite_selector_without_memory,
-    'sequence_with_memory' : node_creator.create_composite_sequence_with_memory,
-    'sequence_without_memory' : node_creator.create_composite_sequence_without_memory,
-    'X_is_Y' : node_creator.create_decorator_X_is_Y,
-    'inverter' : node_creator.create_decorator_inverter
+    'composite_parallel_success_on_all_without_memory' : node_creator.create_composite_parallel_success_on_all_without_memory,
+    'composite_parallel_success_on_all_with_memory' : node_creator.create_composite_parallel_success_on_all_with_memory,
+    'composite_parallel_success_on_one_without_memory' : node_creator.create_composite_parallel_success_on_one_without_memory,
+    'composite_parallel_success_on_one_with_memory' : node_creator.create_composite_parallel_success_on_one_with_memory,
+    'composite_selector_with_memory' : node_creator.create_composite_selector_with_memory,
+    'composite_selector_without_memory' : node_creator.create_composite_selector_without_memory,
+    'composite_sequence_with_memory' : node_creator.create_composite_sequence_with_memory,
+    'composite_sequence_without_memory' : node_creator.create_composite_sequence_without_memory,
+    'decorator_X_is_Y' : node_creator.create_decorator_X_is_Y,
+    'decorator_inverter' : node_creator.create_decorator_inverter
 }
 
 
@@ -51,7 +52,7 @@ def create_status(node):
     return (
         (tab_indent(2) + STATUS_STRING + node['name'] + ' := ' + node['name'] + '.status;' + os.linesep)
         if node['category'] == 'leaf'
-        else STATUS_FUNCTIONS[node['type']](node)
+        else STATUS_FUNCTIONS[format_node_type(node, False)](node)
     )
 
 
@@ -409,6 +410,8 @@ def write_smv(nodes, variables, tick_condition, specifications, output_file = No
     def remove_stage(condition):
         return STAGE_RE.sub('', condition)
 
+    specifications = map(remove_stage, specifications)
+
     print('Number of nodes before pruning: ' + str(len(nodes)))
 
     root_node_name = get_root_node(nodes)
@@ -518,6 +521,8 @@ def write_smv(nodes, variables, tick_condition, specifications, output_file = No
 
     nuxmv_string += module_string
 
+    nuxmv_string = remove_stage(nuxmv_string)
+
     if output_file is None:
         print(nuxmv_string)
     else:
@@ -573,13 +578,7 @@ def main():
     tick_condition = temp['tick_condition']
     nodes = temp['nodes']
     variables = temp['variables']
-
-    STAGE_RE = re.compile(r'_stage_\d+')
-
-    def remove_stage(condition):
-        return STAGE_RE.sub('', condition)
-
-    specifications = map(remove_stage, temp['specifications'])
+    specifications = temp['specifications']
 
     write_smv(nodes, variables, tick_condition, specifications, args.output_file, args.do_not_trim)
     return

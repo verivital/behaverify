@@ -112,7 +112,7 @@ def create_nodes(nodes, root_node_name, node_name_to_number, tick_condition):
                         tab_indent(2) + node['name']
                         + (('_' + str(x)) if x > 0 else '')
                         + ' : '
-                        + node['category'] + '_' + node_module_type + '('
+                        + node_module_type + '('
                         + node['name'] + '_' + (str(x + 1) if (x + 1 < len(node['children'])) else 'END')
                         + ', '
                         + node['children'][x]
@@ -139,7 +139,7 @@ def create_nodes(nodes, root_node_name, node_name_to_number, tick_condition):
                     for x in range(len(node['children']))
                 ]
             )
-            + tab_indent(2) + node['name'] + '_END : ' + node['category'] + '_' + node_module_type + '_END'
+            + tab_indent(2) + node['name'] + '_END : ' + node_module_type + '_END'
             + (
                 (
                     '('
@@ -163,7 +163,7 @@ def create_nodes(nodes, root_node_name, node_name_to_number, tick_condition):
                         tab_indent(2) + node['name']
                         + (('_' + str(x)) if x > 0 else '')
                         + ' : '
-                        + node['category'] + '_' + node_module_type + '('
+                        + node_module_type + '('
                         + node['name'] + '_' + (str(x + 1) if (x + 1 < len(node['children'])) else 'END')
                         + ', '
                         + node['children'][x]
@@ -180,7 +180,7 @@ def create_nodes(nodes, root_node_name, node_name_to_number, tick_condition):
                     for x in range(len(node['children']))
                 ]
             )
-            + tab_indent(2) + node['name'] + '_END : ' + node['category'] + '_' + node_module_type + '_END'
+            + tab_indent(2) + node['name'] + '_END : ' + node_module_type + '_END'
             + (
                 (
                     '('
@@ -575,21 +575,21 @@ def write_smv(nodes, variables, tick_condition, specifications, output_file = No
     nuxmv_string += node_creator.create_names_module(node_name_to_number)
     # nuxmv_string += node_creator.create_leaf()
     non_leaf_node = [
-        (lambda node : ('composite' == node['category'] and 'parallel' in node['type'] and 'with_memory' in node['type']),
+        (lambda node : ('composite' == node['category'] and 'parallel' == node['type'] and 'with_partial_memory' == node['memory']),
          node_creator.create_composite_parallel_with_partial_memory),
-        (lambda node : ('composite' == node['category'] and 'parallel' in node['type'] and 'without_memory' in node['type']),
+        (lambda node : ('composite' == node['category'] and 'parallel' == node['type'] and '' == node['memory']),
          node_creator.create_composite_parallel_without_memory),
-        (lambda node : ('composite' == node['category'] and 'selector' in node['type'] and 'with_memory' in node['type']),
+        (lambda node : ('composite' == node['category'] and 'selector' == node['type'] and 'with_partial_memory' == node['memory']),
          node_creator.create_composite_selector_with_partial_memory),
-        (lambda node : ('composite' == node['category'] and 'selector' in node['type'] and 'without_memory' in node['type']),
+        (lambda node : ('composite' == node['category'] and 'selector' == node['type'] and '' == node['memory']),
          node_creator.create_composite_selector_without_memory),
-        (lambda node : ('composite' == node['category'] and 'sequence' in node['type'] and 'with_memory' in node['type']),
+        (lambda node : ('composite' == node['category'] and 'sequence' == node['type'] and 'with_partial_memory' == node['memory']),
          node_creator.create_composite_sequence_with_partial_memory),
-        (lambda node : ('composite' == node['category'] and 'sequence' in node['type'] and 'without_memory' in node['type']),
+        (lambda node : ('composite' == node['category'] and 'sequence' == node['type'] and '' == node['memory']),
          node_creator.create_composite_sequence_without_memory),
-        (lambda node : ('decorator' == node['category'] and 'inverter' in node['type']),
+        (lambda node : ('decorator' == node['category'] and 'inverter' == node['type']),
          node_creator.create_decorator_inverter),
-        (lambda node : ('decorator' == node['category'] and 'X_is_Y' in node['type']),
+        (lambda node : ('decorator' == node['category'] and 'X_is_Y' == node['type']),
          node_creator.create_decorator_X_is_Y)
     ]
 
@@ -599,6 +599,12 @@ def write_smv(nodes, variables, tick_condition, specifications, output_file = No
             for (test, method) in non_leaf_node
         ]
     )
+    module_string = ''.join([node['internal_status_module_code']
+                             for node in nodes.values() if ((node['category'] == 'leaf') and (node['internal_status_module_name'] is not None))])
+
+    module_string += ''.join([node_creator.create_status_module(statuses) for statuses in [*set([('_'.join([status for (status, possible) in [('success', node['return_possibilities']['success']), ('running', node['return_possibilities']['running']), ('failure', node['return_possibilities']['failure'])] if possible])) for node in nodes.values() if ((node['category'] == 'leaf') and (node['internal_status_module_name'] is None))])]])
+
+    nuxmv_string += module_string
 
     if output_file is None:
         print(nuxmv_string)

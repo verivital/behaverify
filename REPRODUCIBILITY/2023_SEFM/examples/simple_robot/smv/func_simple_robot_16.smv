@@ -3,200 +3,199 @@ MODULE main
 		success, failure, running, invalid;
 	DEFINE
 		resume_from_here_in_subtree__robot_control := -3;
-		robot_control.active := (env_remaining_goals > 0);
+		robot_control.active := (remaining_goals_stage_0 > 0);
 		--START OF BLACKBOARD DEFINITIONS
-		env_remaining_goals_stage_1 := 
+		x_stage_1 := 
 			case
-				!(robot_control.active) : env_remaining_goals;
-				((env_x_goal = env_x_true_stage_2) & (env_y_goal = env_y_true_stage_2)) : max(0, (env_remaining_goals - 1));
-				TRUE : env_remaining_goals;
+				!(get_position.active) : x_stage_0;
+				!(TRUE) : x_stage_0;
+				TRUE : x_true_stage_0;
 			esac;
-		env_x_true_stage_1 := 
+		y_stage_1 := 
 			case
-				!(go_right.active) : env_x_true;
-				TRUE : min(15, (env_x_true + 1));
+				!(get_position.active) : y_stage_0;
+				!(TRUE) : y_stage_0;
+				TRUE : y_true_stage_0;
 			esac;
-		env_x_true_stage_2 := 
+		target_x_stage_1 := 
 			case
-				!(go_left.active) : env_x_true_stage_1;
-				TRUE : max(0, (env_x_true_stage_1 - 1));
+				!(get_mission.active) : target_x_stage_0;
+				!(TRUE) : target_x_stage_0;
+				TRUE : x_goal_stage_0;
 			esac;
-		env_y_true_stage_1 := 
+		target_y_stage_1 := 
 			case
-				!(go_up.active) : env_y_true;
-				TRUE : min(15, (env_y_true + 1));
+				!(get_mission.active) : target_y_stage_0;
+				!(TRUE) : target_y_stage_0;
+				TRUE : y_goal_stage_0;
 			esac;
-		env_y_true_stage_2 := 
+		mission_stage_1 := 
 			case
-				!(go_down.active) : env_y_true_stage_1;
-				TRUE : max(0, (env_y_true_stage_1 - 1));
-			esac;
-		var_mission_stage_1 := 
-			case
-				!(clear_mission.active) : var_mission;
+				!(clear_mission.active) : mission_stage_0;
 				TRUE : FALSE;
 			esac;
-		var_mission_stage_2 := 
+		mission_stage_2 := 
 			case
-				!(get_mission.active) : var_mission_stage_1;
+				!(get_mission.active) : mission_stage_1;
 				TRUE : TRUE;
 			esac;
-		var_target_x_stage_1 := 
+		x_true_stage_1 := 
 			case
-				!(get_mission.active) : var_target_x;
-				!(TRUE) : var_target_x;
-				TRUE : env_x_goal;
+				!(go_right.active) : x_true_stage_0;
+				TRUE : min(15, (x_true_stage_0 + 1));
 			esac;
-		var_target_y_stage_1 := 
+		x_true_stage_2 := 
 			case
-				!(get_mission.active) : var_target_y;
-				!(TRUE) : var_target_y;
-				TRUE : env_y_goal;
+				!(go_left.active) : x_true_stage_1;
+				TRUE : max(0, (x_true_stage_1 - 1));
 			esac;
-		var_x_stage_1 := 
+		y_true_stage_1 := 
 			case
-				!(get_position.active) : var_x;
-				!(TRUE) : var_x;
-				TRUE : env_x_true;
+				!(go_up.active) : y_true_stage_0;
+				TRUE : min(15, (y_true_stage_0 + 1));
 			esac;
-		var_y_stage_1 := 
+		y_true_stage_2 := 
 			case
-				!(get_position.active) : var_y;
-				!(TRUE) : var_y;
-				TRUE : env_y_true;
+				!(go_down.active) : y_true_stage_1;
+				TRUE : max(0, (y_true_stage_1 - 1));
+			esac;
+		remaining_goals_stage_1 := 
+			case
+				!(robot_control.active) : remaining_goals_stage_0;
+				((x_goal_stage_0 = x_true_stage_2) & (y_goal_stage_0 = y_true_stage_2)) : max(0, (remaining_goals_stage_0 - 1));
+				TRUE : remaining_goals_stage_0;
 			esac;
 		--END OF BLACKBOARD DEFINITIONS
 	VAR
 		node_names : define_nodes;
+		get_position : success_DEFAULT_module();
+		target_reached : target_reached_module(target_x_stage_0, target_y_stage_0, x_stage_1, y_stage_1);
 		clear_mission : success_DEFAULT_module();
+		reset_completed_mission : composite_sequence_without_memory(reset_completed_mission_1, target_reached);
+		reset_completed_mission_1 : composite_sequence_without_memory(reset_completed_mission_END, clear_mission);
+		reset_completed_mission_END : composite_sequence_without_memory_END;
+		reset_completed_mission_FiS : decorator_X_is_Y(reset_completed_mission, failure, success);
+		have_mission : have_mission_module(mission_stage_1);
+		get_mission : success_DEFAULT_module();
 		confirm_mission : composite_selector_without_memory(confirm_mission_1, have_mission);
 		confirm_mission_1 : composite_selector_without_memory(confirm_mission_END, get_mission);
 		confirm_mission_END : composite_selector_without_memory_END;
-		get_mission : success_DEFAULT_module();
-		get_position : success_DEFAULT_module();
-		go_down : success_DEFAULT_module();
-		go_left : success_DEFAULT_module();
+		x_too_small : x_too_small_module(target_x_stage_1, x_stage_1);
 		go_right : success_DEFAULT_module();
+		try_right : composite_sequence_without_memory(try_right_1, x_too_small);
+		try_right_1 : composite_sequence_without_memory(try_right_END, go_right);
+		try_right_END : composite_sequence_without_memory_END;
+		x_too_big : x_too_big_module(target_x_stage_1, x_stage_1);
+		go_left : success_DEFAULT_module();
+		try_left : composite_sequence_without_memory(try_left_1, x_too_big);
+		try_left_1 : composite_sequence_without_memory(try_left_END, go_left);
+		try_left_END : composite_sequence_without_memory_END;
+		y_too_small : y_too_small_module(target_y_stage_1, y_stage_1);
 		go_up : success_DEFAULT_module();
-		have_mission : have_mission_module(var_mission_stage_1);
+		try_up : composite_sequence_without_memory(try_up_1, y_too_small);
+		try_up_1 : composite_sequence_without_memory(try_up_END, go_up);
+		try_up_END : composite_sequence_without_memory_END;
+		y_too_big : y_too_big_module(target_y_stage_1, y_stage_1);
+		go_down : success_DEFAULT_module();
+		try_down : composite_sequence_without_memory(try_down_1, y_too_big);
+		try_down_1 : composite_sequence_without_memory(try_down_END, go_down);
+		try_down_END : composite_sequence_without_memory_END;
 		move_robot : composite_selector_without_memory(move_robot_1, try_right);
 		move_robot_1 : composite_selector_without_memory(move_robot_2, try_left);
 		move_robot_2 : composite_selector_without_memory(move_robot_3, try_up);
 		move_robot_3 : composite_selector_without_memory(move_robot_END, try_down);
 		move_robot_END : composite_selector_without_memory_END;
-		reset_completed_mission : composite_sequence_without_memory(reset_completed_mission_1, target_reached);
-		reset_completed_mission_1 : composite_sequence_without_memory(reset_completed_mission_END, clear_mission);
-		reset_completed_mission_END : composite_sequence_without_memory_END;
-		reset_completed_mission_FiS : decorator_X_is_Y(reset_completed_mission, failure, success);
 		robot_control : composite_sequence_without_memory(robot_control_1, get_position);
 		robot_control_1 : composite_sequence_without_memory(robot_control_2, reset_completed_mission_FiS);
 		robot_control_2 : composite_sequence_without_memory(robot_control_3, confirm_mission);
 		robot_control_3 : composite_sequence_without_memory(robot_control_END, move_robot);
 		robot_control_END : composite_sequence_without_memory_END;
-		target_reached : target_reached_module(var_y_stage_1, var_x_stage_1, var_target_x, var_target_y);
-		try_down : composite_sequence_without_memory(try_down_1, y_too_big);
-		try_down_1 : composite_sequence_without_memory(try_down_END, go_down);
-		try_down_END : composite_sequence_without_memory_END;
-		try_left : composite_sequence_without_memory(try_left_1, x_too_big);
-		try_left_1 : composite_sequence_without_memory(try_left_END, go_left);
-		try_left_END : composite_sequence_without_memory_END;
-		try_right : composite_sequence_without_memory(try_right_1, x_too_small);
-		try_right_1 : composite_sequence_without_memory(try_right_END, go_right);
-		try_right_END : composite_sequence_without_memory_END;
-		try_up : composite_sequence_without_memory(try_up_1, y_too_small);
-		try_up_1 : composite_sequence_without_memory(try_up_END, go_up);
-		try_up_END : composite_sequence_without_memory_END;
-		x_too_big : x_too_big_module(var_x_stage_1, var_target_x_stage_1);
-		x_too_small : x_too_small_module(var_x_stage_1, var_target_x_stage_1);
-		y_too_big : y_too_big_module(var_y_stage_1, var_target_y_stage_1);
-		y_too_small : y_too_small_module(var_y_stage_1, var_target_y_stage_1);
 		--START OF BLACKBOARD VARIABLES DECLARATION
-		env_remaining_goals : 0..3;
-		env_x_goal : 0..15;
-		env_x_goal_stage_1 : 0..15;
-		env_x_true : 0..15;
-		env_y_goal : 0..15;
-		env_y_goal_stage_1 : 0..15;
-		env_y_true : 0..15;
-		var_mission : boolean;
-		var_target_x : 0..15;
-		var_target_y : 0..15;
-		var_x : 0..15;
-		var_y : 0..15;
+		x_stage_0 : 0..15;
+		y_stage_0 : 0..15;
+		target_x_stage_0 : 0..15;
+		target_y_stage_0 : 0..15;
+		mission_stage_0 : boolean;
+		x_goal_stage_0 : 0..15;
+		x_goal_stage_1 : 0..15;
+		y_goal_stage_0 : 0..15;
+		y_goal_stage_1 : 0..15;
+		x_true_stage_0 : 0..15;
+		y_true_stage_0 : 0..15;
+		remaining_goals_stage_0 : 0..3;
 		--END OF BLACKBOARD VARIABLES DECLARATION
 	ASSIGN
 		--START OF BLACKBOARD VARIABLES INITIALIZATION
-		init(env_remaining_goals) := 
+		init(x_stage_0) := 
 			case
-				TRUE : {0, 1, 2, 3};
+				TRUE : 0;
 			esac;
-		init(env_x_goal) := 
+		init(y_stage_0) := 
 			case
-				TRUE : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+				TRUE : 0;
 			esac;
-		init(env_x_true) := 
+		init(target_x_stage_0) := 
 			case
-				TRUE : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+				TRUE : 0;
 			esac;
-		init(env_y_goal) := 
+		init(target_y_stage_0) := 
 			case
-				TRUE : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+				TRUE : 0;
 			esac;
-		init(env_y_true) := 
-			case
-				TRUE : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
-			esac;
-		init(var_mission) := 
+		init(mission_stage_0) := 
 			case
 				TRUE : FALSE;
 			esac;
-		init(var_target_x) := 
+		init(x_goal_stage_0) := 
 			case
-				TRUE : 0;
+				TRUE : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
 			esac;
-		init(var_target_y) := 
+		init(y_goal_stage_0) := 
 			case
-				TRUE : 0;
+				TRUE : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
 			esac;
-		init(var_x) := 
+		init(x_true_stage_0) := 
 			case
-				TRUE : 0;
+				TRUE : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
 			esac;
-		init(var_y) := 
+		init(y_true_stage_0) := 
 			case
-				TRUE : 0;
+				TRUE : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+			esac;
+		init(remaining_goals_stage_0) := 
+			case
+				TRUE : {0, 1, 2, 3};
 			esac;
 		--END OF BLACKBOARD VARIABLES INITIALIZATION
 		--START OF BLACKBOARD VARIABLES TRANSITION
-		next(env_remaining_goals) := env_remaining_goals_stage_1;
-		next(env_x_goal) := env_x_goal_stage_1;
-		env_x_goal_stage_1 := 
+		next(x_stage_0) := x_stage_1;
+		next(y_stage_0) := y_stage_1;
+		next(target_x_stage_0) := target_x_stage_1;
+		next(target_y_stage_0) := target_y_stage_1;
+		next(mission_stage_0) := mission_stage_2;
+		next(x_goal_stage_0) := x_goal_stage_1;
+		x_goal_stage_1 := 
 			case
-				!(robot_control.active) : env_x_goal;
-				(0 = env_remaining_goals_stage_1) : env_x_goal;
-				((env_x_goal = env_x_true_stage_2) & (env_y_goal = env_y_true_stage_2)) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
-				TRUE : env_x_goal;
+				!(robot_control.active) : x_goal_stage_0;
+				(0 = remaining_goals_stage_1) : x_goal_stage_0;
+				((x_goal_stage_0 = x_true_stage_2) & (y_goal_stage_0 = y_true_stage_2)) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+				TRUE : x_goal_stage_0;
 			esac;
-		next(env_x_true) := env_x_true_stage_2;
-		next(env_y_goal) := env_y_goal_stage_1;
-		env_y_goal_stage_1 := 
+		next(y_goal_stage_0) := y_goal_stage_1;
+		y_goal_stage_1 := 
 			case
-				!(robot_control.active) : env_y_goal;
-				(0 = env_remaining_goals_stage_1) : env_y_goal;
-				((env_x_goal_stage_1 = env_x_true_stage_2) & (env_y_goal = env_y_true_stage_2)) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
-				TRUE : env_y_goal;
+				!(robot_control.active) : y_goal_stage_0;
+				(0 = remaining_goals_stage_1) : y_goal_stage_0;
+				((x_goal_stage_1 = x_true_stage_2) & (y_goal_stage_0 = y_true_stage_2)) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+				TRUE : y_goal_stage_0;
 			esac;
-		next(env_y_true) := env_y_true_stage_2;
-		next(var_mission) := var_mission_stage_2;
-		next(var_target_x) := var_target_x_stage_1;
-		next(var_target_y) := var_target_y_stage_1;
-		next(var_x) := var_x_stage_1;
-		next(var_y) := var_y_stage_1;
+		next(x_true_stage_0) := x_true_stage_2;
+		next(y_true_stage_0) := y_true_stage_2;
+		next(remaining_goals_stage_0) := remaining_goals_stage_1;
 		--END OF BLACKBOARD VARIABLES TRANSITION
 
-INVARSPEC (count((go_down.active), (go_left.active), (go_right.active), (go_up.active)) <= 1);
-LTLSPEC F((env_remaining_goals_stage_1 = 0));
-CTLSPEC AF((env_remaining_goals_stage_1 = 0));
+LTLSPEC F((remaining_goals_stage_1 = 0));
+CTLSPEC AF((remaining_goals_stage_1 = 0));
 MODULE define_nodes
 	DEFINE
 		robot_control := 0;
@@ -266,50 +265,50 @@ MODULE decorator_X_is_Y(child_0, incoming_status, outgoing_status)
 		status := active ? internal_status : invalid;
 		internal_status :=
 			case
-				child_0.status = incoming_status : outgoing_status;
-				TRUE : child_0.status;
+				child_0.internal_status = incoming_status : outgoing_status;
+				TRUE : child_0.internal_status;
 			esac;
 		child_0.active :=
 			case
 				!(active) : FALSE;
 				TRUE : TRUE;
 			esac;
-MODULE have_mission_module(var_mission_stage_1)
+MODULE target_reached_module(target_x_stage_0, target_y_stage_0, x_stage_1, y_stage_1)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
-		internal_status := (var_mission_stage_1) ? success : failure;
-MODULE target_reached_module(var_y_stage_1, var_x_stage_1, var_target_x, var_target_y)
+		internal_status := (((x_stage_1 = target_x_stage_0) & (y_stage_1 = target_y_stage_0))) ? success : failure;
+MODULE have_mission_module(mission_stage_1)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
-		internal_status := (((var_x_stage_1 = var_target_x) & (var_y_stage_1 = var_target_y))) ? success : failure;
-MODULE x_too_big_module(var_x_stage_1, var_target_x_stage_1)
+		internal_status := (mission_stage_1) ? success : failure;
+MODULE x_too_small_module(target_x_stage_1, x_stage_1)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
-		internal_status := ((var_x_stage_1 > var_target_x_stage_1)) ? success : failure;
-MODULE x_too_small_module(var_x_stage_1, var_target_x_stage_1)
+		internal_status := ((x_stage_1 < target_x_stage_1)) ? success : failure;
+MODULE x_too_big_module(target_x_stage_1, x_stage_1)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
-		internal_status := ((var_x_stage_1 < var_target_x_stage_1)) ? success : failure;
-MODULE y_too_big_module(var_y_stage_1, var_target_y_stage_1)
+		internal_status := ((x_stage_1 > target_x_stage_1)) ? success : failure;
+MODULE y_too_small_module(target_y_stage_1, y_stage_1)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
-		internal_status := ((var_y_stage_1 > var_target_y_stage_1)) ? success : failure;
-MODULE y_too_small_module(var_y_stage_1, var_target_y_stage_1)
+		internal_status := ((y_stage_1 < target_y_stage_1)) ? success : failure;
+MODULE y_too_big_module(target_y_stage_1, y_stage_1)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
-		internal_status := ((var_y_stage_1 < var_target_y_stage_1)) ? success : failure;
+		internal_status := ((y_stage_1 > target_y_stage_1)) ? success : failure;
 MODULE success_DEFAULT_module
 	CONSTANTS
 		success, failure, running, invalid;

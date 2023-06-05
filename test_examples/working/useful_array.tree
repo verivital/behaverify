@@ -9,7 +9,7 @@ constants {
 } end_constants
 
 variables {
-	variable { bl test array 3 VAR [0, 10] range assign { result { 'serene_index' } } }
+	variable { env test array 3 VAR [0, 10] range assign { result { 'serene_index' } } }
 }
 
 environment_update {}
