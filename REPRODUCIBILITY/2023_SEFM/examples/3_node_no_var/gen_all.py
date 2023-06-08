@@ -2,8 +2,9 @@ import sys
 import os
 
 location = sys.argv[1]
+template_location = sys.argv[2]
 
-with open(location + 'template.tree', 'r') as f:
+with open(template_location + 'template.tree', 'r') as f:
     template = f.read()
 
 root = [('selector', 'sel'), ('sequence', 'seq'), ('parallel policy success_on_all', 'p_all'), ('parallel policy success_on_one', 'p_one')]

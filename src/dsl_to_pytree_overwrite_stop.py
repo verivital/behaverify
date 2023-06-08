@@ -677,7 +677,7 @@ def walk_tree_recursive(current_node, serene_print, node_names, node_names_map, 
         running_string += (indent(1) + node_name + ' = py_trees.decorators.' + decorator_type + '('
                            + 'name = ' + "'" + node_name + "'" + ', child = ' + child_name + ')' + os.linesep)
         if serene_print:
-            running_string += (indent(1) + node_name + '.tick = decorator_better_tick.__get__(' + node_name + ', py_trees.decorators.Decorator)' + os.linesep)
+            running_string += (indent(1) + node_name + '.stop = decorator_better_stop.__get__(' + node_name + ', py_trees.decorators.Decorator)' + os.linesep)
         return (node_name, node_names, node_names_map, running_string)
     elif current_node.node_type == 'inverter':
         decorator_type = ('Inverter')
@@ -685,7 +685,7 @@ def walk_tree_recursive(current_node, serene_print, node_names, node_names_map, 
         running_string += (indent(1) + node_name + ' = py_trees.decorators.' + decorator_type + '('
                            + 'name = ' + "'" + node_name + "'" + ', child = ' + child_name + ')' + os.linesep)
         if serene_print:
-            running_string += (indent(1) + node_name + '.tick = decorator_better_tick.__get__(' + node_name + ', py_trees.decorators.Decorator)' + os.linesep)
+            running_string += (indent(1) + node_name + '.stop = decorator_better_stop.__get__(' + node_name + ', py_trees.decorators.Decorator)' + os.linesep)
         return (node_name, node_names, node_names_map, running_string)
 
     # so at this point, we're in composite node territory
@@ -705,7 +705,7 @@ def walk_tree_recursive(current_node, serene_print, node_names, node_names_map, 
                            + ', children = ' + children_names
                            + ')' + os.linesep)
         if serene_print:
-            running_string += (indent(1) + node_name + '.tick = sequence_better_tick.__get__(' + node_name + ', py_trees.composites.Sequence)' + os.linesep)
+            running_string += (indent(1) + node_name + '.stop = sequence_better_stop.__get__(' + node_name + ', py_trees.composites.Sequence)' + os.linesep)
     elif current_node.node_type == 'selector':
         running_string += (indent(1) + node_name + ' = py_trees.composites.Selector('
                            + 'name = ' + "'" + node_name + "'"
@@ -713,7 +713,7 @@ def walk_tree_recursive(current_node, serene_print, node_names, node_names_map, 
                            + ', children = ' + children_names
                            + ')' + os.linesep)
         if serene_print:
-            running_string += (indent(1) + node_name + '.tick = selector_better_tick.__get__(' + node_name + ', py_trees.composites.Selector)' + os.linesep)
+            running_string += (indent(1) + node_name + '.stop = selector_better_stop.__get__(' + node_name + ', py_trees.composites.Selector)' + os.linesep)
     elif current_node.node_type == 'parallel':
         running_string += (indent(1) + node_name + ' = py_trees.composites.Parallel('
                            + 'name = ' + "'" + node_name + "'"
@@ -722,7 +722,7 @@ def walk_tree_recursive(current_node, serene_print, node_names, node_names_map, 
                            + ', children = ' + children_names
                            + ')' + os.linesep)
         if serene_print:
-            running_string += (indent(1) + node_name + '.tick = parallel_better_tick.__get__(' + node_name + ', py_trees.composites.Parallel)' + os.linesep)
+            running_string += (indent(1) + node_name + '.stop = parallel_better_stop.__get__(' + node_name + ', py_trees.composites.Parallel)' + os.linesep)
     return (node_name, node_names, node_names_map, running_string)
 
 
@@ -902,8 +902,13 @@ def create_runner(blackboard_variables, environment_variables, max_iter, serene_
                 + os.linesep
                 + os.linesep
                 + 'def tree_printer(node, indent_level):' + os.linesep
+                + indent(1) + "if node.status.value == 'INVALID':" + os.linesep
+                + indent(2) + 'return (' + os.linesep
+                + indent(3) + "indent(indent_level) + node.name + ' -> ' + node.__serene_print__ + os.linesep" + os.linesep
+                + indent(3) + "+ ''.join(map(lambda child: tree_printer(child, indent_level + 1), node.children))" + os.linesep
+                + indent(2) + ')' + os.linesep
                 + indent(1) + 'return (' + os.linesep
-                + indent(2) + "indent(indent_level) + node.name + ' -> ' + node.__serene_print__ + os.linesep" + os.linesep
+                + indent(2) + "indent(indent_level) + node.name + ' -> ' + node.status.value + os.linesep" + os.linesep
                 + indent(2) + "+ ''.join(map(lambda child: tree_printer(child, indent_level + 1), node.children))" + os.linesep
                 + indent(1) + ')' + os.linesep
                 + os.linesep
@@ -1116,10 +1121,6 @@ def main():
 
     (root_name, _, _, running_string) = walk_tree(model, args.serene_print)
 
-    if args.serene_print:
-        with open(os.path.dirname(os.path.realpath(__file__)) + '/tick_overwrite/tick_overwrite.py', 'r') as f:
-            better_ticks = f.read()
-
     with open(args.location + PROJECT_NAME + '.py', 'w') as f:
         f.write(''.join([('import ' + node.name + '_file' + os.linesep) for node in itertools.chain(model.check_nodes, model.action_nodes, model.environment_checks)])
                 + 'import py_trees' + os.linesep
@@ -1158,7 +1159,69 @@ def main():
                 )
                 + indent(1) + 'return blackboard_reader' + os.linesep
                 + (
-                    better_ticks
+                    (
+                        'def selector_better_stop(self, new_status: py_trees.common.Status = py_trees.common.Status.INVALID) -> None:' + os.linesep
+                        + indent(1) + '"""' + os.linesep
+                        + indent(1) + 'Ensure that children are appropriately stopped and update status.' + os.linesep
+                        + os.linesep
+                        + indent(1) + 'Args:' + os.linesep
+                        + indent(2) + 'new_status : the composite is transitioning to this new status' + os.linesep
+                        + indent(1) + '"""' + os.linesep
+                        + indent(1) + 'self.__serene_print__ = self.status.value' + os.linesep
+                        + indent(1) + 'self.logger.debug(' + os.linesep
+                        + indent(2) + 'f"{self.__class__.__name__}.stop()[{self.status}->{new_status}]"' + os.linesep
+                        + indent(1) + ')' + os.linesep
+                        + indent(1) + 'py_trees.composites.Composite.stop(self, new_status)' + os.linesep
+                        + os.linesep
+                        + os.linesep
+                        + 'def sequence_better_stop(self, new_status: py_trees.common.Status = py_trees.common.Status.INVALID) -> None:' + os.linesep
+                        + indent(1) + '"""' + os.linesep
+                        + indent(1) + 'Ensure that children are appropriately stopped and update status.' + os.linesep
+                        + os.linesep
+                        + indent(1) + 'Args:' + os.linesep
+                        + indent(2) + 'new_status : the composite is transitioning to this new status' + os.linesep
+                        + indent(1) + '"""' + os.linesep
+                        + indent(1) + 'self.__serene_print__ = self.status.value' + os.linesep
+                        + indent(1) + 'self.logger.debug(' + os.linesep
+                        + indent(2) + 'f"{self.__class__.__name__}.stop()[{self.status}->{new_status}]"' + os.linesep
+                        + indent(1) + ')' + os.linesep
+                        + indent(1) + 'py_trees.composites.Composite.stop(self, new_status)' + os.linesep
+                        + 'def parallel_better_stop(self, new_status: py_trees.common.Status = py_trees.common.Status.INVALID) -> None:' + os.linesep
+                        + indent(1) + '"""' + os.linesep
+                        + indent(1) + 'Ensure that children are appropriately stopped and update status.' + os.linesep
+                        + os.linesep
+                        + indent(1) + 'Args:' + os.linesep
+                        + indent(2) + 'new_status : the composite is transitioning to this new status' + os.linesep
+                        + indent(1) + '"""' + os.linesep
+                        + indent(1) + 'self.__serene_print__ = self.status.value' + os.linesep
+                        + indent(1) + 'self.logger.debug(' + os.linesep
+                        + indent(2) + 'f"{self.__class__.__name__}.stop()[{self.status}->{new_status}]"' + os.linesep
+                        + indent(1) + ')' + os.linesep
+                        + indent(1) + '# clean up dangling (running) children' + os.linesep
+                        + indent(1) + 'for child in self.children:' + os.linesep
+                        + indent(2) + 'if child.status == py_trees.common.Status.RUNNING:' + os.linesep
+                        + indent(3) + "# this unfortunately knocks out it's running status for introspection" + os.linesep
+                        + indent(3) + "# but logically is the correct thing to do, see #132." + os.linesep
+                        + indent(3) + 'child.stop(py_trees.common.Status.INVALID)' + os.linesep
+                        + indent(1) + 'py_trees.composites.Composite.stop(self, new_status)' + os.linesep
+                        + 'def decorator_better_stop(self, new_status: py_trees.common.Status) -> None:' + os.linesep
+                        + indent(1) + '"""' + os.linesep
+                        + indent(1) + 'Check if the child is running (dangling) and stop it if that is the case.' + os.linesep
+                        + os.linesep
+                        + indent(1) + 'Args:' + os.linesep
+                        + indent(2) + 'new_status (:class:`~py_trees.common.Status`): the behaviour is transitioning to this new status' + os.linesep
+                        + indent(1) + '"""' + os.linesep
+                        + indent(1) + 'self.__serene_print__ = self.status.value' + os.linesep
+                        + indent(1) + 'self.logger.debug("%s.stop(%s)" % (self.__class__.__name__, new_status))' + os.linesep
+                        + indent(1) + 'self.terminate(new_status)' + os.linesep
+                        + indent(1) + '# priority interrupt handling' + os.linesep
+                        + indent(1) + 'if new_status == py_trees.common.Status.INVALID:' + os.linesep
+                        + indent(2) + 'self.decorated.stop(new_status)' + os.linesep
+                        + indent(1) + '# if the decorator returns SUCCESS/FAILURE and should stop the child' + os.linesep
+                        + indent(1) + 'if self.decorated.status == py_trees.common.Status.RUNNING:' + os.linesep
+                        + indent(2) + 'self.decorated.stop(py_trees.common.Status.INVALID)' + os.linesep
+                        + indent(1) + 'self.status = new_status' + os.linesep
+                    )
                     if args.serene_print
                     else
                     ''
