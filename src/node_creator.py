@@ -333,16 +333,32 @@ def create_blackboard(nodes, variables, root_node_name):
 
 
 def create_status_module(statuses):
-    status_module = ('MODULE ' + statuses + '_DEFAULT_module'
-                     + os.linesep
-                     + '\tCONSTANTS' + os.linesep
-                     + '\t\tsuccess, failure, running, invalid;' + os.linesep
-                     + '\tDEFINE' + os.linesep
-                     + '\t\tstatus := active ? internal_status : invalid;' + os.linesep
-                     + (('\t\tinternal_status := ' + statuses + ';' + os.linesep) if '_' not in statuses else (
-                         '\tVAR' + os.linesep
-                         + '\t\tinternal_status : {' + statuses.replace('_', ', ') + '};' + os.linesep
-                          )))
+    status_module = (
+        'MODULE ' + statuses + '_DEFAULT_module'
+        + os.linesep
+        + tab_indent(1) + 'CONSTANTS' + os.linesep
+        + tab_indent(2) + 'success, failure, running, invalid;' + os.linesep
+        + tab_indent(1) + 'DEFINE' + os.linesep
+        + (
+            (
+                tab_indent(2) + 'status := invalid;' + os.linesep
+                + tab_indent(2) + 'internal_status := invalid;' + os.linesep
+            )
+            if statuses == ''
+            else
+            (
+                tab_indent(2) + 'status := active ? internal_status : invalid;' + os.linesep
+                + (
+                    (tab_indent(2) + 'internal_status := ' + statuses + ';' + os.linesep)
+                    if '_' not in statuses else
+                    (
+                        tab_indent(1) + 'VAR' + os.linesep
+                        + tab_indent(2) + 'internal_status : {' + statuses.replace('_', ', ') + '};' + os.linesep
+                    )
+                )
+            )
+        )
+    )
     return status_module
 
 # -----------------------------------------------------------------

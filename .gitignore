@@ -8,3 +8,4 @@ __pycache__/
 IGNORE/
 temp_output/**
 dist-newstyle/
+gen_files/

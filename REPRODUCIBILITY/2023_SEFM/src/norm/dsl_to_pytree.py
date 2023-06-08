@@ -85,6 +85,14 @@ def format_function_xnor(_, code, init_mode):
     )
 
 
+def format_function_count(_, code, init_mode):
+    return (
+        '('
+        + '[' + ', '.join([format_code(value, init_mode) for value in code.function_call.values]) + '].count(True)'
+        + ')'
+        )
+
+
 def format_function_index(_, code, init_mode):
     return (
         (format_variable_name_only(code.function_call.variable, init_mode) + '(' + format_code(code.function_call.values[0], init_mode) + ')')
@@ -105,7 +113,7 @@ FUNCTION_FORMAT = {
     'not' : ('not ', format_function_before),  # space intentionally added here.
     'and' : ('and', format_function_between),
     'or' : ('or', format_function_between),
-    'xor' : ('operator.xor', format_function_between),
+    'xor' : ('^', format_function_between),
     'xnor' : ('xnor', format_function_xnor),
     'implies' : ('->', format_function_implies),
     'equivalent' : ('==', format_function_between),
@@ -121,7 +129,7 @@ FUNCTION_FORMAT = {
     'multiplication' : ('*', format_function_between),
     'division' : ('//', format_function_between),
     'mod' : ('%', format_function_between),
-    'count' : ('count', format_function_before),
+    'count' : ('count', format_function_count),
     'index' : ('index', format_function_index)
 }
 
@@ -204,25 +212,44 @@ def class_definition(node_name):
     return ('class ' + node_name + '(py_trees.behaviour.Behaviour):' + os.linesep)
 
 
-def init_method_check(node):
+def init_method_check(node, serene_print):
     return (indent(1) + 'def __init__(self, name):' + os.linesep
             + indent(2) + 'super(' + node.name + ', self).__init__(name)' + os.linesep
+            + (
+                (indent(2) + "self.__serene_print__ = 'INVALID'" + os.linesep)
+                if serene_print
+                else
+                ''
+            )
             + indent(2) + 'self.name = name' + os.linesep
             + indent(2) + 'self.blackboard = self.attach_blackboard_client(name = name)' + os.linesep
             + ''.join([(indent(2) + 'self.blackboard.register_key(key = (' + "'" + variable.name + "'" + '), access = py_trees.common.Access.READ)' + os.linesep) for variable in node.read_variables])
             + os.linesep)
 
 
-def update_method_check(node):
+def update_method_check(node, serene_print):
     return (indent(1) + 'def update(self):' + os.linesep
-            + indent(2) + 'return ((py_trees.common.Status.SUCCESS) if ('
+            + indent(2) + 'return_status = ((py_trees.common.Status.SUCCESS) if ('
             + format_code(node.condition, 'node')
-            + ') else (py_trees.common.Status.FAILURE))' + os.linesep)
+            + ') else (py_trees.common.Status.FAILURE))' + os.linesep
+            + (
+                (indent(2) + "self.__serene_print__ = return_status.value" + os.linesep)
+                if serene_print
+                else
+                ''
+            )
+            + indent(2) + 'return return_status' + os.linesep)
 
 
-def init_method_check_env(node):
+def init_method_check_env(node, serene_print):
     return (indent(1) + 'def __init__(self, name, environment):' + os.linesep
             + indent(2) + 'super(' + node.name + ', self).__init__(name)' + os.linesep
+            + (
+                (indent(2) + "self.__serene_print__ = 'INVALID'" + os.linesep)
+                if serene_print
+                else
+                ''
+            )
             + indent(2) + 'self.name = name' + os.linesep
             + indent(2) + 'self.environment = environment' + os.linesep
             + indent(2) + 'self.blackboard = self.attach_blackboard_client(name = name)' + os.linesep
@@ -230,11 +257,18 @@ def init_method_check_env(node):
             + os.linesep)
 
 
-def update_method_check_env(node):
+def update_method_check_env(node, serene_print):
     return (indent(1) + 'def update(self):' + os.linesep
-            + indent(2) + 'return ((py_trees.common.Status.SUCCESS) if ('
+            + indent(2) + 'return_status = ((py_trees.common.Status.SUCCESS) if ('
             + 'self.environment.' + node.name + '(self)'
-            + ') else (py_trees.common.Status.FAILURE))' + os.linesep)
+            + ') else (py_trees.common.Status.FAILURE))' + os.linesep
+            + (
+                (indent(2) + "self.__serene_print__ = return_status.value" + os.linesep)
+                if serene_print
+                else
+                ''
+            )
+            + indent(2) + 'return return_status' + os.linesep)
 
 
 def resolve_variable_nondeterminism(values, range_mode, init_mode):
@@ -498,9 +532,15 @@ def handle_return_statement(statement, indent_level):
             )
 
 
-def init_method_action(node):
+def init_method_action(node, serene_print):
     return (indent(1) + 'def __init__(self, name, environment):' + os.linesep
             + indent(2) + 'super(' + node.name + ', self).__init__(name)' + os.linesep
+            + (
+                (indent(2) + "self.__serene_print__ = 'INVALID'" + os.linesep)
+                if serene_print
+                else
+                ''
+            )
             + indent(2) + 'self.name = name' + os.linesep
             + indent(2) + 'self.environment = environment' + os.linesep
             + indent(2) + 'self.blackboard = self.attach_blackboard_client(name = name)' + os.linesep
@@ -548,10 +588,16 @@ def handle_statement(statement, indent_level, init_mode, assign_to_var):
         )
 
 
-def update_method_action(node):
+def update_method_action(node, serene_print):
     return (indent(1) + 'def update(self):' + os.linesep
             + ''.join([handle_statement(statement, indent_level = 2, init_mode = None, assign_to_var = True) for statement in node.pre_update_statements])
             + handle_return_statement(node.return_statement, indent_level = 2)
+            + (
+                (indent(2) + "self.__serene_print__ = return_status.value" + os.linesep)
+                if serene_print
+                else
+                ''
+            )
             + ''.join([handle_statement(statement, indent_level = 2, init_mode = None, assign_to_var = True) for statement in node.post_update_statements])
             + indent(2) + 'return return_status' + os.linesep
             )
@@ -562,44 +608,44 @@ def update_method_action(node):
 #     return 'import ' + PROJECT_ENVIRONMENT_NAME + os.linesep
 
 
-def build_check_node(node):
+def build_check_node(node, serene_print):
     return (STANDARD_IMPORTS
             # + custom_imports(node)
             + os.linesep
             + os.linesep
             + class_definition(node.name)
-            + init_method_check(node)
-            + update_method_check(node)
+            + init_method_check(node, serene_print)
+            + update_method_check(node, serene_print)
             )
 
 
-def build_check_environment_node(node):
+def build_check_environment_node(node, serene_print):
     return (STANDARD_IMPORTS
             # + custom_imports(node)
             + os.linesep
             + os.linesep
             + class_definition(node.name)
-            + init_method_check_env(node)
-            + update_method_check_env(node)
+            + init_method_check_env(node, serene_print)
+            + update_method_check_env(node, serene_print)
             )
 
 
-def build_action_node(node):
+def build_action_node(node, serene_print):
     return (STANDARD_IMPORTS
             # + custom_imports(node)
             + os.linesep
             + os.linesep
             + class_definition(node.name)
-            + init_method_action(node)
-            + update_method_action(node)
+            + init_method_action(node, serene_print)
+            + update_method_action(node, serene_print)
             )
 
 
-def walk_tree(model):
-    return walk_tree_recursive(model.root, set(), {}, '')
+def walk_tree(model, serene_print):
+    return walk_tree_recursive(model.root, serene_print, set(), {}, '')
 
 
-def walk_tree_recursive(current_node, node_names, node_names_map, running_string):
+def walk_tree_recursive(current_node, serene_print, node_names, node_names_map, running_string):
     while (not hasattr(current_node, 'name') or hasattr(current_node, 'sub_root')):
         if hasattr(current_node, 'leaf'):
             current_node = current_node.leaf
@@ -627,21 +673,25 @@ def walk_tree_recursive(current_node, node_names, node_names_map, running_string
         decorator_type = (current_node.x.capitalize()
                           + 'Is'
                           + current_node.y.capitalize())
-        (child_name, node_names, node_names_map, running_string) = walk_tree_recursive(current_node.child, node_names, node_names_map, running_string)
+        (child_name, node_names, node_names_map, running_string) = walk_tree_recursive(current_node.child, serene_print, node_names, node_names_map, running_string)
         running_string += (indent(1) + node_name + ' = py_trees.decorators.' + decorator_type + '('
                            + 'name = ' + "'" + node_name + "'" + ', child = ' + child_name + ')' + os.linesep)
+        if serene_print:
+            running_string += (indent(1) + node_name + '.tick = decorator_better_tick.__get__(' + node_name + ', py_trees.decorators.Decorator)' + os.linesep)
         return (node_name, node_names, node_names_map, running_string)
     elif current_node.node_type == 'inverter':
         decorator_type = ('Inverter')
-        (child_name, node_names, node_names_map, running_string) = walk_tree_recursive(current_node.child, node_names, node_names_map, running_string)
+        (child_name, node_names, node_names_map, running_string) = walk_tree_recursive(current_node.child, serene_print, node_names, node_names_map, running_string)
         running_string += (indent(1) + node_name + ' = py_trees.decorators.' + decorator_type + '('
                            + 'name = ' + "'" + node_name + "'" + ', child = ' + child_name + ')' + os.linesep)
+        if serene_print:
+            running_string += (indent(1) + node_name + '.tick = decorator_better_tick.__get__(' + node_name + ', py_trees.decorators.Decorator)' + os.linesep)
         return (node_name, node_names, node_names_map, running_string)
 
     # so at this point, we're in composite node territory
     children = []
     for child in current_node.children:
-        (child_name, node_names, node_names_map, running_string) = walk_tree_recursive(child, node_names, node_names_map, running_string)
+        (child_name, node_names, node_names_map, running_string) = walk_tree_recursive(child, serene_print, node_names, node_names_map, running_string)
         children.append(child_name)
     children_names = '[' + ', '.join(children) + ']'
 
@@ -654,12 +704,16 @@ def walk_tree_recursive(current_node, node_names, node_names_map, running_string
                            + ', memory = ' + ('False' if current_node.memory == '' else 'True')
                            + ', children = ' + children_names
                            + ')' + os.linesep)
+        if serene_print:
+            running_string += (indent(1) + node_name + '.tick = sequence_better_tick.__get__(' + node_name + ', py_trees.composites.Sequence)' + os.linesep)
     elif current_node.node_type == 'selector':
         running_string += (indent(1) + node_name + ' = py_trees.composites.Selector('
                            + 'name = ' + "'" + node_name + "'"
                            + ', memory = ' + ('False' if current_node.memory == '' else 'True')
                            + ', children = ' + children_names
                            + ')' + os.linesep)
+        if serene_print:
+            running_string += (indent(1) + node_name + '.tick = selector_better_tick.__get__(' + node_name + ', py_trees.composites.Selector)' + os.linesep)
     elif current_node.node_type == 'parallel':
         running_string += (indent(1) + node_name + ' = py_trees.composites.Parallel('
                            + 'name = ' + "'" + node_name + "'"
@@ -667,6 +721,8 @@ def walk_tree_recursive(current_node, node_names, node_names_map, running_string
                            + (('SuccessOnAll(' + ('False' if current_node.memory == '' else 'True') + ')') if current_node.parallel_policy == 'success_on_all' else ('SuccessOnOne()'))
                            + ', children = ' + children_names
                            + ')' + os.linesep)
+        if serene_print:
+            running_string += (indent(1) + node_name + '.tick = parallel_better_tick.__get__(' + node_name + ', py_trees.composites.Parallel)' + os.linesep)
     return (node_name, node_names, node_names_map, running_string)
 
 
@@ -744,10 +800,11 @@ def create_safe_assignment(model):
     return outter_return_string
 
 
-def create_runner(blackboard_variables, environment_variables, max_iter):
+def create_runner(blackboard_variables, environment_variables, max_iter, serene_print, no_var_print, py_tree_print):
     global PROJECT_NAME, PROJECT_ENVIRONMENT_NAME
     return (
-        'import py_trees' + os.linesep
+        'import os' + os.linesep
+        + 'import py_trees' + os.linesep
         + 'import ' + PROJECT_NAME + os.linesep
         + 'import ' + PROJECT_ENVIRONMENT_NAME + os.linesep
         + os.linesep
@@ -755,66 +812,117 @@ def create_runner(blackboard_variables, environment_variables, max_iter):
         + 'environment = ' + PROJECT_ENVIRONMENT_NAME + '.' + PROJECT_ENVIRONMENT_NAME + '(blackboard_reader)' + os.linesep
         + 'root = ' + PROJECT_NAME + '.create_tree(environment)' + os.linesep
         + 'tree = py_trees.trees.BehaviourTree(root)' + os.linesep
-        + 'visualizer = py_trees.visitors.DisplaySnapshotVisitor()' + os.linesep
-        + 'tree.add_visitor(visualizer)' + os.linesep
+        + (
+            (
+                'visualizer = py_trees.visitors.DisplaySnapshotVisitor()' + os.linesep
+                + 'tree.add_visitor(visualizer)' + os.linesep
+            )
+            if py_tree_print
+            else
+            ''
+        )
         + os.linesep
         + os.linesep
         + 'def full_tick():' + os.linesep
+        + (
+            (indent(1) + 'reset_serene_tree_print(root)' + os.linesep)
+            if serene_print
+            else
+            ''
+        )
         + indent(1) + 'tree.tick()' + os.linesep
+        + (
+            (indent(1) + 'print(tree_printer(root, 0))' + os.linesep)
+            if serene_print
+            else
+            ''
+        )
         + indent(1) + 'environment.execute_delayed_action_queue()' + os.linesep
         + indent(1) + 'environment.between_tick_environment_update()' + os.linesep
         + indent(1) + 'return' + os.linesep
         + os.linesep
         + os.linesep
-        + 'def print_blackboard():' + os.linesep
-        + indent(1) + "print('blackboard:')" + os.linesep
-        + ''.join(
-            [
-                (
-                    (
-                        indent(1) + 'print(' + "'  " + variable.name + ": '" + ' + str([blackboard_reader.' + variable.name
-                        + '(x) for x in range(' + handle_constant_str(variable.array_size) + ')]))' + os.linesep
-                    )
-                    if variable.model_as == 'DEFINE' and is_array(variable)
-                    else
-                    (
-                        indent(1) + 'print(' + "'  " + variable.name + ": '" + ' + str(blackboard_reader.' + variable.name
-                        + ('()' if variable.model_as == 'DEFINE' else '')
-                        + '))' + os.linesep
-                    )
+        + (
+            ''
+            if no_var_print
+            else
+            (
+                'def print_blackboard():' + os.linesep
+                + indent(1) + "print('blackboard')" + os.linesep
+                + ''.join(
+                    [
+                        (
+                            (
+                                indent(1) + 'print(' + "'  " + variable.name + ": '" + ' + str([blackboard_reader.' + variable.name
+                                + '(x) for x in range(' + handle_constant_str(variable.array_size) + ')]))' + os.linesep
+                            )
+                            if variable.model_as == 'DEFINE' and is_array(variable)
+                            else
+                            (
+                                indent(1) + 'print(' + "'  " + variable.name + ": '" + ' + str(blackboard_reader.' + variable.name
+                                + ('()' if variable.model_as == 'DEFINE' else '')
+                                + '))' + os.linesep
+                            )
+                        )
+                        for variable in blackboard_variables
+                    ]
                 )
-                for variable in blackboard_variables
-            ]
+                + indent(1) + 'return' + os.linesep
+                + os.linesep
+                + os.linesep
+                + 'def print_environment():' + os.linesep
+                + indent(1) + "print('environment')" + os.linesep
+                + ''.join(
+                    [
+                        (
+                            (
+                                indent(1) + 'print(' + "'  " + variable.name + ": '" + ' + str([environment.' + variable.name
+                                + '(x) for x in range(' + handle_constant_str(variable.array_size) + ')]))' + os.linesep
+                            )
+                            if variable.model_as == 'DEFINE' and is_array(variable)
+                            else
+                            (
+                                indent(1) + 'print(' + "'  " + variable.name + ": '" + ' + str(environment.' + variable.name
+                                + ('()' if variable.model_as == 'DEFINE' else '')
+                                + '))' + os.linesep
+                            )
+                        )
+                        for variable in environment_variables
+                    ]
+                )
+                + indent(1) + 'return' + os.linesep
+            )
         )
-        + indent(1) + 'return' + os.linesep
         + os.linesep
         + os.linesep
-        + 'def print_environment():' + os.linesep
-        + indent(1) + "print('environment:')" + os.linesep
-        + ''.join(
-            [
-                (
-                    (
-                        indent(1) + 'print(' + "'  " + variable.name + ": '" + ' + str([environment.' + variable.name
-                        + '(x) for x in range(' + handle_constant_str(variable.array_size) + ')]))' + os.linesep
-                    )
-                    if variable.model_as == 'DEFINE' and is_array(variable)
-                    else
-                    (
-                        indent(1) + 'print(' + "'  " + variable.name + ": '" + ' + str(environment.' + variable.name
-                        + ('()' if variable.model_as == 'DEFINE' else '')
-                        + '))' + os.linesep
-                    )
-                )
-                for variable in environment_variables
-            ]
+        + (
+            (
+                'def indent(n):' + os.linesep
+                + indent(1) + "return '  '*n" + os.linesep
+                + os.linesep
+                + os.linesep
+                + 'def tree_printer(node, indent_level):' + os.linesep
+                + indent(1) + 'return (' + os.linesep
+                + indent(2) + "indent(indent_level) + node.name + ' -> ' + node.__serene_print__ + os.linesep" + os.linesep
+                + indent(2) + "+ ''.join(map(lambda child: tree_printer(child, indent_level + 1), node.children))" + os.linesep
+                + indent(1) + ')' + os.linesep
+                + os.linesep
+                + os.linesep
+                + 'def reset_serene_tree_print(node):' + os.linesep
+                + indent(1) + "node.__serene_print__ = 'INVALID'" + os.linesep
+                + indent(1) + 'for child in node.children:' + os.linesep
+                + indent(2) + 'reset_serene_tree_print(child)' + os.linesep
+                + indent(1) + 'return' + os.linesep
+            )
+            if serene_print
+            else
+            ''
         )
-        + indent(1) + 'return' + os.linesep
         + os.linesep
         + os.linesep
         + 'for count in range(' + str(max_iter) + '):' + os.linesep
         + indent(1) + "print('------------------------')" + os.linesep
-        + indent(1) + "print('iteration: ' + str(count))" + os.linesep
+        + indent(1) + "print('State after tick: ' + str(count + 1))" + os.linesep
         + indent(1) + 'if environment.check_tick_condition():' + os.linesep
         + indent(2) + 'full_tick()' + os.linesep
         + indent(1) + 'else:' + os.linesep
@@ -975,6 +1083,9 @@ def main():
     arg_parser.add_argument('location')
     arg_parser.add_argument('name')
     arg_parser.add_argument('--max_iter', default = 100)
+    arg_parser.add_argument('--no_var_print', action = 'store_true')
+    arg_parser.add_argument('--serene_print', action = 'store_true')
+    arg_parser.add_argument('--py_tree_print', action = 'store_true')
     args = arg_parser.parse_args()
 
     metamodel = textx.metamodel_from_file(args.metamodel_file, auto_init_attributes = False)
@@ -995,15 +1106,19 @@ def main():
 
     for action in model.action_nodes:
         with open(args.location + action.name + '_file.py', 'w') as f:
-            f.write(build_action_node(action))
+            f.write(build_action_node(action, args.serene_print))
     for check in model.check_nodes:
         with open(args.location + check.name + '_file.py', 'w') as f:
-            f.write(build_check_node(check))
+            f.write(build_check_node(check, args.serene_print))
     for check_env in model.environment_checks:
         with open(args.location + check_env.name + '_file.py', 'w') as f:
-            f.write(build_check_environment_node(check_env))
+            f.write(build_check_environment_node(check_env, args.serene_print))
 
-    (root_name, _, _, running_string) = walk_tree(model)
+    (root_name, _, _, running_string) = walk_tree(model, args.serene_print)
+
+    if args.serene_print:
+        with open(os.path.dirname(os.path.realpath(__file__)) + '/tick_overwrite/tick_overwrite.py', 'r') as f:
+            better_ticks = f.read()
 
     with open(args.location + PROJECT_NAME + '.py', 'w') as f:
         f.write(''.join([('import ' + node.name + '_file' + os.linesep) for node in itertools.chain(model.check_nodes, model.action_nodes, model.environment_checks)])
@@ -1042,6 +1157,12 @@ def main():
                     ]
                 )
                 + indent(1) + 'return blackboard_reader' + os.linesep
+                + (
+                    better_ticks
+                    if args.serene_print
+                    else
+                    ''
+                )
                 + os.linesep
                 + os.linesep
                 + 'def create_tree(environment):' + os.linesep
@@ -1050,7 +1171,7 @@ def main():
                 )
     write_environment(model, args.location, PROJECT_NAME)
     with open(args.location + PROJECT_NAME + '_runner.py', 'w') as f:
-        f.write(create_runner(list(filter(lambda x : is_blackboard(x), model.variables)), list(filter(lambda x : is_env(x), model.variables)), args.max_iter))
+        f.write(create_runner(list(filter(lambda x : is_blackboard(x), model.variables)), list(filter(lambda x : is_env(x), model.variables)), args.max_iter, args.serene_print, args.no_var_print, args.py_tree_print))
     return
 
 
