@@ -248,6 +248,7 @@ def create_resume_structure(nodes, local_root_to_relevant_list_map, node_name_to
                                          + '\t\t\tcase' + os.linesep
                                          + ancestor_string  # highest priority is reset
                                          + inject_string  # parallel_synch nodes have a special condition
+                                         + tab_indent(4) + local_root_name + '.status = invalid : ' + LOCAL_ROOT_TREE_STRING + local_root_name + ';' + os.linesep  # don't change if the local root is invalid, and an ancestor didn't make us reset
                                          )
         if len(relevant_list) == 0:
             # this was solely for the purpose of skipping success nodes with parallel_synch nodes
