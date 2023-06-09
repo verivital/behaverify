@@ -58,55 +58,55 @@ variables {
 
 environment_update {
 
-				variable_statement {
+				variable_statement { #comment#instant#end_comment#
 					fls_range
 					assign {result {'danger_zone', 'safe'}}
 				}
-				variable_statement {
+				variable_statement { #comment#instant#end_comment#
 					obstacle_in_view
 					assign { result {True, False}}
 				}
-				variable_statement {
+				variable_statement { #comment#instant#end_comment#
 					battery
 					assign{result {0, 1}}
 				}
-				variable_statement {
+				variable_statement { #comment#instant#end_comment#
 					lec_dd_am
 					assign{result {True, False}}
 				}
-            variable_statement {
+            variable_statement { #comment#instant#end_comment#
                 bb_rth
                 assign { result {True, False}}
             }
-            variable_statement {
+            variable_statement { #comment#instant#end_comment#
                 bb_geofence
                 assign { result {True, False}}
             }
-            variable_statement {
+            variable_statement { #comment#instant#end_comment#
                 lec2_am_l
                 assign { result {'safe', 'speed', 'pipe', 'speed_pipe'}}
             }
-            variable_statement {
+            variable_statement { #comment#instant#end_comment#
                 lec2_am_r
                 assign { result {'safe', 'speed', 'pipe', 'speed_pipe'}}
             }
-            variable_statement {
+            variable_statement { #comment#instant#end_comment#
                 bb_pipelost
                 assign { result {True, False}}
             }
-            variable_statement {
+            variable_statement { #comment#instant#end_comment#
                 bb_sensor_failure
                 assign { result {True, False}}
             }
-            variable_statement {
+            variable_statement { #comment#instant#end_comment#
                 bb_waypoints_completed
                 assign { result {True, False}}
             }
-            variable_statement {
+            variable_statement { #comment#instant#end_comment#
                 bb_home_dist
                 assign { result {10, 100}}
             }
-            variable_statement {
+            variable_statement { #comment#instant#end_comment#
                 rtreach_result
                 assign { result {'safe', 'short', 'long', 'short_long'}}
             }
@@ -1196,14 +1196,16 @@ specifications {
 	// -- --1. Do No Harm
 	// -- --To ensure no harm is done, we will prioritize avoiding obstacles. Thus we either engage in obstacle avoidance or halt (or are halted) if obstacles are present.
 	#end_comment#
+
 	
 	INVARSPEC {(implies, bb_fls_warning 1, (or, BLUEROV_SURFACED 0, (equal, cm_hsd_input -1, 'cm_surface_task'))) } end_INVARSPEC
 	#comment#
 	// -- TRUE
 	// -- --This specification confirms that if the FLS warning is set to true, then one of the following is true
 	// -- --1. We have already surfaced and are done
-	// -- --2. We executed the emergecny_stop_task and the command sent to the blueROV is surface
+	// -- --2. We executed the emergecny_stop_task and the command sent to the blueROV is surface	
 	#end_comment#
+
 
 	INVARSPEC { (implies, (and, (not, bb_fls_warning 1), (not, (equal, bb_mission 1, 'e_stop')), bb_obstacle_warning 1), (or, BLUEROV_SURFACED 0, (equal, cm_hsd_input -1, 'cm_obstacle_avoidance_task'))) } end_INVARSPEC
 	#comment#
@@ -1228,21 +1230,27 @@ specifications {
 	// -- --2. The command sent to the blueROV is surface
 	#end_comment#
 
-	INVARSPEC { (implies, (and, (not, bb_obstacle_warning 1), (and, (or, bb_rth_warning 2, bb_geofence 1), bb_home_reached 1)), (or, BLUEROV_SURFACED 0, (equal, cm_hsd_input -1, 'cm_surface_task'))) } end_INVARSPEC
+	INVARSPEC { (implies, (and, (not, bb_obstacle_warning 1), (and, (or, bb_rth_warning 2, bb_geofence 0), bb_home_reached 1)), (or, BLUEROV_SURFACED 0, (equal, cm_hsd_input -1, 'cm_surface_task'), (not, (read_success geofence2bb -1)))) } end_INVARSPEC
 	#comment#
 	// -- TRUE
 	// -- --This specification confirms that if we're not doing basic obstacle avoidance, then if we were returning home and have reached home, one of the following are true
 	// -- --1. We have already surfaced and are done
 	// -- --2. The command sent to the blueROV is surface
+	// -- --3. We failed to read from the environment.
+
+	// -- -- NOTE: in the above spec, we changed bb_geofence 1 to bb_geofence 0, because we are now updating bb_geofence as part of the environment.
 	#end_comment#
 
 
-	INVARSPEC { (implies, (and, (not, bb_obstacle_warning 1), (and, (or, bb_rth_warning 2, bb_geofence 1), (not, (equal, cm_hsd_input -1, 'cm_surface_task')))), (or, BLUEROV_SURFACED 0, (equal, cm_hsd_input -1, 'cm_rth_task'))) } end_INVARSPEC
+	INVARSPEC { (implies, (and, (not, bb_obstacle_warning 1), (and, (or, bb_rth_warning 2, bb_geofence 0), (not, (equal, cm_hsd_input -1, 'cm_surface_task')))), (or, BLUEROV_SURFACED 0, (equal, cm_hsd_input -1, 'cm_rth_task'), (not, (read_success geofence2bb -1)))) } end_INVARSPEC
 	#comment#
 	// -- TRUE
 	// -- --This specification confirms that if we're not doing basic obstacle avoidance and we are not issuing the surface command, then if either geofence_warning or rth_warning have been set, one of the following are true
 	// -- --1. We have already surfaced and are done
 	// -- --2. The command sent to the blueROV is rth (return to home)
+	// -- --3. we failed to read from the environment
+
+	// -- -- NOTE: in the above spec, we changed bb_geofence 1 to bb_geofence 0, because we are now updating bb_geofence as part of the environment.
 
 	// -- --Between these three specifications, we have confirmed that if we're not doing obstacle avoidance then failsafes will cause us to surface, reaching home will cause us to surface, and exceeding the geofence or getting an RTH from some other source will cause us to attempt to return to home (and if we reach home we will surface by the 2nd specification).
 	// -- --This confirms that the UUV will attempt to preserve itself if it is not prioritizing [1. Do No Harm].

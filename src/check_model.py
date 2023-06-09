@@ -414,7 +414,7 @@ def validate_action(node):
             validate_array_assign(var_statement, True, {'blackboard', 'local'}, all_vars, node, deterministic = True, init_mode = 'node')
         else:
             if var_statement.assign is None or var_statement.array_mode == 'range':
-                raise BTreeException('invalid assignment for variable ' + assign_var.name)
+                raise BTreeException('Variable is not an array, but has as an array like update: ' + assign_var.name)
             validate_variable_assignment(assign_var, var_statement.assign, {'blackboard', 'local'}, all_vars, deterministic = True, init_mode = 'node')
 
     for statement in itertools.chain(node.pre_update_statements, node.post_update_statements):
@@ -430,7 +430,7 @@ def validate_action(node):
                 validate_array_assign(var_statement, var_statement.constant_index == 'constant_index', {'blackboard', 'local'}, all_vars, node, deterministic = True, init_mode = None)
             else:
                 if var_statement.assign is None or var_statement.array_mode == 'range':
-                    raise BTreeException('has an invalid assignment for variable ' + assign_var.name)
+                    raise BTreeException('Variable is not an array, but has as an array like update: ' + assign_var.name)
                 validate_variable_assignment(assign_var, var_statement.assign, {'blackboard', 'local'}, all_vars, deterministic = True, init_mode = None)
             trace.pop()
             #
@@ -482,7 +482,7 @@ def validate_action(node):
                     validate_array_assign(var_statement, var_statement.constant_index == 'constant_index', {'blackboard', 'local', 'environment'}, all_vars, node, deterministic = False, init_mode = None)
                 else:
                     if var_statement.assign is None or var_statement.array_mode == 'range':
-                        raise BTreeException('invalid assignment for variable ' + assign_var.name)
+                        raise BTreeException('Variable is not an array, but has as an array like update: ' + assign_var.name)
                     validate_variable_assignment(assign_var, var_statement.assign, {'blackboard', 'local', 'environment'}, all_vars, deterministic = False, init_mode = None)
                 trace.pop()
             trace.pop()
@@ -501,7 +501,7 @@ def validate_action(node):
                     validate_array_assign(var_statement, var_statement.constant_index == 'constant_index', {'blackboard', 'local', 'environment'}, all_vars, node, deterministic = False, init_mode = None)
                 else:
                     if var_statement.assign is None or var_statement.array_mode == 'range':
-                        raise BTreeException('invalid assignment for variable ' + assign_var.name)
+                        raise BTreeException('Variable is not an array, but has as an array like update: ' + assign_var.name)
                     validate_variable_assignment(assign_var, var_statement.assign, {'blackboard', 'local', 'environment'}, all_vars, deterministic = False, init_mode = None)
                 trace.pop()
             trace.pop()
@@ -616,11 +616,13 @@ def validate_model(model, constants_, metamodel_):
 
     for var_statement in model.update:
         assign_var = var_statement.variable
+        if not is_env(assign_var):
+            raise BTreeException('A pre/post tick update is updating a non-environment variable: ' + assign_var.name)
         if is_array(assign_var):
-            validate_array_assign(var_statement, var_statement.constant_index == 'constant_index', {'blackboard', 'local', 'environment'}, None, None, deterministic = False, init_mode = None)
+            validate_array_assign(var_statement, var_statement.constant_index == 'constant_index', {'blackboard', 'environment'}, None, None, deterministic = False, init_mode = None)
         else:
             if var_statement.assign is None or var_statement.array_mode == 'range':
-                raise BTreeException('Environment update has an invalid assignment for variable ' + assign_var.name)
+                raise BTreeException('Environment update :: Variable is not an array, but has as an array like update: ' + assign_var.name)
             validate_variable_assignment(assign_var, var_statement.assign, {'blackboard', 'environment'}, None, deterministic = False, init_mode = None)
     for check in model.check_nodes:
         validate_check(check)
