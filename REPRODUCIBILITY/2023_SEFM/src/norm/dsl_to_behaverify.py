@@ -229,7 +229,14 @@ def format_variable(variable_obj, misc_args):
             + ('' if not use_next else ')'))
 
     if use_stages and (len(variable['next_value']) == 0 or overwrite_stage == 0):
+        if global_vars['spec_warn'] and not variable['keep_stage_0']:
+            print('A specification is preventing the removal of stage 0 for: ' + variable['name'])
         variable['keep_stage_0'] = True
+    if use_stages and (overwrite_stage is None or overwrite_stage < 0 or overwrite_stage == len(variable['next_value'])):
+        # we don't need to subtract one from len of next_value because we have one stage not represented in next_value.
+        if global_vars['spec_warn'] and not variable['keep_last_stage']:
+            print('A specification is preventing the removal of last stage for: ' + variable['name'])
+        variable['keep_last_stage'] = True
     if use_next and variable_key == not_next:
         return 'LINK_TO_PREVIOUS_FINAL_' + variable['name']
     return (('' if not use_next else 'next(')
@@ -402,6 +409,8 @@ def handle_variable_assignment(statement, assign_var, condition, misc_args):
     variable_key = variable_reference(assign_var.name, is_local(assign_var), node_name)
     variable = variables[variable_key]
     keep_stage_0 = variable['keep_stage_0']
+    # keep_last_stage = variable['keep_last_stage']
+    # we don't need to track keep_last_stage here, because we're going to reset the value after adding a new stage anyways. see below.
     if textx.textx_isinstance(statement, metamodel['read_statement']):
         non_determinism = statement.non_determinism
         if is_array(assign_var):
@@ -437,6 +446,10 @@ def handle_variable_assignment(statement, assign_var, condition, misc_args):
     keep_stage_0 = keep_stage_0 or (not non_determinism)  # there is no point in deleting stage_0 if stage_1 was going to be deterministic.
     variable['next_value'].append(next_value)
     variable['keep_stage_0'] = keep_stage_0
+    variable['keep_last_stage'] = variable['force_last_stage']  # and now we've reset it. if force_last_stage is true, this will ensure we use the last stage
+    # if force_last_stage is false, then if this variable shows up in someone elses update after this point, we'll keep the last stage
+    # if it never shows up after this point, then we can axe it.
+    # note: keep_stage_0 takes precedence
     return
 
 
@@ -498,7 +511,7 @@ def resolve_statements(statements, nodes):
                 + ')'
             )
         else:
-            condition = ('!(' + format_code(statement.condition, misc_args) + ')')
+            condition = '!(' + format_code(statement.condition, misc_args) + ')'
         for variable_statement in statement.variable_statements:
             handle_variable_assignment(variable_statement, variable_statement.variable, condition, misc_args)
         return
@@ -600,7 +613,7 @@ def resolve_statements(statements, nodes):
     return
 
 
-def complete_environment_variables(model):
+def complete_environment_variables(model, pre_tick):
     '''
     completes the environment variables.
     -- arguments
@@ -615,10 +628,13 @@ def complete_environment_variables(model):
     '''
 
     for statement in model.update:
-        handle_variable_assignment(statement, statement.variable, None, create_misc_args(None, True, False, None, None))
+        if statement.instant == pre_tick:
+            # things marked as instant happen before the tick.
+            # pre_tick means before the tick.
+            handle_variable_assignment(statement, statement.variable, None, create_misc_args(None, True, False, None, None))
 
 
-def get_variables(model, local_variables, initial_statements, keep_stage_0):
+def get_variables(model, local_variables, initial_statements, keep_stage_0, keep_last_stage):
     '''
     this constructs and returns variables and local variables.
     variables are constructed based on variables and environment_variables
@@ -635,13 +651,13 @@ def get_variables(model, local_variables, initial_statements, keep_stage_0):
     variables = {
         variable_reference(variable.name, False, '') :
         (
-            create_variable_template(variable.name, variable.model_as, handle_constant(variable.array_size), None, 0, 0, None, [], False)
+            create_variable_template(variable.name, variable.model_as, handle_constant(variable.array_size), None, 0, 0, None, [], True, True)
             if variable.model_as == 'DEFINE' else
             create_variable_template(variable.name, variable.model_as, handle_constant(variable.array_size),
                                      (None if (variable.domain.min_val is not None or variable.model_as == 'DEFINE') else ('{TRUE, FALSE}' if variable.domain.boolean is not None else ('{' + ', '.join(map(str, map(handle_constant, variable.domain.enums))) + '}'))),
                                      0 if variable.domain.min_val is None else int(handle_constant(variable.domain.min_val)),
                                      1 if variable.domain.min_val is None else int(handle_constant(variable.domain.max_val)),
-                                     None, [], keep_stage_0
+                                     None, [], keep_stage_0, keep_last_stage
                                      )
         )
         for variable in model.variables if not is_local(variable)}
@@ -649,13 +665,13 @@ def get_variables(model, local_variables, initial_statements, keep_stage_0):
     local_variable_templates = {
         variable.name :
         (
-            create_variable_template(variable.name, variable.model_as, handle_constant(variable.array_size), None, 0, 0, None, [], False)
+            create_variable_template(variable.name, variable.model_as, handle_constant(variable.array_size), None, 0, 0, None, [], True, True)
             if variable.model_as == 'DEFINE' else
             create_variable_template(variable.name, variable.model_as, handle_constant(variable.array_size),
                                      (None if (variable.domain.min_val is not None or variable.model_as == 'DEFINE') else ('{TRUE, FALSE}' if variable.domain.boolean is not None else ('{' + ', '.join(map(str, map(handle_constant, variable.domain.enums))) + '}'))),
                                      0 if variable.domain.min_val is None else int(handle_constant(variable.domain.min_val)),
                                      1 if variable.domain.min_val is None else int(handle_constant(variable.domain.max_val)),
-                                     None, [], keep_stage_0
+                                     None, [], keep_stage_0, keep_last_stage
                                      )
         )
         for variable in model.variables if is_local(variable)}
@@ -886,23 +902,14 @@ CREATE_NODE = {
 }
 
 
-global_vars = {'constants' : {}, 'metamodel' : {}, 'variables' : {}, 'serene_index' : []}
+global_vars = {'constants' : {}, 'metamodel' : {}, 'variables' : {}, 'serene_index' : [], 'spec_warn' : False}
 
 
 # --------------- Main
 
 
-def main():
+def main(args):
     # global constants, metamodel, variables
-
-    arg_parser = argparse.ArgumentParser()
-    arg_parser.add_argument('metamodel_file')
-    arg_parser.add_argument('model_file')
-    arg_parser.add_argument('--keep_stage_0', action = 'store_true')
-    arg_parser.add_argument('--output_file', default = None)
-    arg_parser.add_argument('--do_not_trim', action = 'store_true')
-    arg_parser.add_argument('--behave_only', action = 'store_true')
-    args = arg_parser.parse_args()
 
     metamodel = textx.metamodel_from_file(args.metamodel_file, auto_init_attributes = False)
     global_vars['metamodel'] = metamodel
@@ -917,13 +924,21 @@ def main():
 
     (_, _, _, nodes, local_variables, initial_statements, statements) = walk_tree(model.root)
 
-    variables = get_variables(model, local_variables, initial_statements, args.keep_stage_0)
+    variables = get_variables(model, local_variables, initial_statements, args.keep_stage_0, args.keep_last_stage)
     global_vars['variables'] = variables
     tick_condition = 'TRUE' if model.tick_condition is None else format_code(model.tick_condition, create_misc_args(None, True, False, None, None))
-    specifications = handle_specifications(model.specifications)  # this included here to ensure we don't erase stage 0 used by specifications.
+    complete_environment_variables(model, True)
+    # global_vars['spec_warn_before'] = True
+    # specifications = handle_specifications(model.specifications)  # this included here to ensure we don't erase stage 0 used by specifications.
+    # that WAS the idea, but very clearly, specifications overwrite stages anyways. so if a val is being used, it'll just overwrite the removal.
+    # global_vars['spec_warn_before'] = False
     resolve_statements(statements, nodes)
-    complete_environment_variables(model)
+    complete_environment_variables(model, False)
+    # global_vars['spec_warn_after'] = True
+    global_vars['spec_warn'] = True
     specifications = handle_specifications(model.specifications)
+    global_vars['spec_warn'] = False
+    # global_vars['spec_warn_after'] = False
 
     if args.behave_only:
         if args.output_file is None:
@@ -939,4 +954,13 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    arg_parser = argparse.ArgumentParser()
+    arg_parser.add_argument('metamodel_file')
+    arg_parser.add_argument('model_file')
+    arg_parser.add_argument('--keep_stage_0', action = 'store_true')
+    arg_parser.add_argument('--keep_last_stage', action = 'store_true')
+    arg_parser.add_argument('--output_file', default = None)
+    arg_parser.add_argument('--do_not_trim', action = 'store_true')
+    arg_parser.add_argument('--behave_only', action = 'store_true')
+    args = arg_parser.parse_args()
+    main(args)

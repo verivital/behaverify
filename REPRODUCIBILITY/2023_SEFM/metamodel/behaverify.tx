@@ -197,7 +197,7 @@ statement:
     variable_statement_initial:
     'variable_statement' '{'
     variable = [variable]
-    ((array_mode = 'range' assign = assign_value) | (array_mode = '' assigns += assign_value) | (array_mode = '' assign = assign_value))
+    ((array_mode = '' assign = assign_value) | (array_mode = 'range' assign = assign_value) | (array_mode = '' assigns += assign_value)) //this was re-oredered to ensure match correctness.
     '}' ('end_variable_statement')?
 ;
     

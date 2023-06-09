@@ -29,7 +29,11 @@
 
 def create_variable_template(name, mode, array_size, custom_value_range,
                              min_value, max_value,
-                             initial_value, next_value, keep_stage_0 = True):
+                             initial_value, next_value, keep_stage_0, keep_last_stage):
+    '''
+    Use this method to create variable templates
+    @ name :=> name of the variable
+    '''
     return {
         'name' : name,
         'mode' : mode,
@@ -40,7 +44,9 @@ def create_variable_template(name, mode, array_size, custom_value_range,
         'max_value' : max_value,
         'initial_value' : initial_value,
         'next_value' : next_value,
-        'keep_stage_0' : keep_stage_0
+        'keep_stage_0' : keep_stage_0,  # keep stage_0 takes precedence over keep_last_stage. if keep_stage_0 is false, keep_last_stage is ignored.
+        'keep_last_stage' : keep_last_stage,
+        'force_last_stage' : keep_last_stage  # this is used to reset keep_last_stage when a new stage is added
     }
 
 

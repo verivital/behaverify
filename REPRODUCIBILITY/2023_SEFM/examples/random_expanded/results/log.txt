@@ -1,0 +1,35 @@
+-----------------------------t0-----------------------------
+Comparison failure! After tick 1, a2_DOT_local1 with value 2 was in nuxmv_tick but not in python_tick
+-----------------------------t1-----------------------------
+Comparison failure! After tick 1, bl4 was 15 in python_tick but 8 in nuxmv_tick
+-----------------------------t2-----------------------------
+-----------------------------t3-----------------------------
+Comparison failure! After tick 1, a1_DOT_local1 with value 2 was in nuxmv_tick but not in python_tick
+-----------------------------t4-----------------------------
+Comparison failure! After tick 1, bl1 was 12 in python_tick but 15 in nuxmv_tick
+-----------------------------t5-----------------------------
+Comparison failure! After tick 1, env1 was 9 in python_tick but 15 in nuxmv_tick
+-----------------------------t6-----------------------------
+-----------------------------t7-----------------------------
+Comparison failure! After tick 1, env2 was 15 in python_tick but 10 in nuxmv_tick
+-----------------------------t8-----------------------------
+-----------------------------t9-----------------------------
+Comparison failure! After tick 1, a4_DOT_local3 with value 9 was in nuxmv_tick but not in python_tick
+-----------------------------t10-----------------------------
+Comparison failure! After tick 1, env1 was 15 in python_tick but 6 in nuxmv_tick
+-----------------------------t11-----------------------------
+-----------------------------t12-----------------------------
+Comparison failure! After tick 1, a2_DOT_local1 with value 15 was in nuxmv_tick but not in python_tick
+-----------------------------t13-----------------------------
+-----------------------------t14-----------------------------
+Comparison failure! After tick 1, a3_DOT_local1 with value 14 was in nuxmv_tick but not in python_tick
+-----------------------------t15-----------------------------
+Comparison failure! After tick 1, a4_DOT_local1 with value 2 was in nuxmv_tick but not in python_tick
+-----------------------------t16-----------------------------
+Comparison failure! After tick 1, env1 was 2 in python_tick but 15 in nuxmv_tick
+-----------------------------t17-----------------------------
+Comparison failure! After tick 1, env3 was 4 in python_tick but 15 in nuxmv_tick
+-----------------------------t18-----------------------------
+Comparison failure! After tick 1, env1 was 15 in python_tick but 2 in nuxmv_tick
+-----------------------------t19-----------------------------
+Comparison failure! After tick 1, env4 was 15 in python_tick but 2 in nuxmv_tick

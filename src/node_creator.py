@@ -13,6 +13,32 @@ def create_names_module(node_name_to_number):
 
 
 def create_blackboard(nodes, variables, root_node_name):
+
+    def write_cases(active_node_name, previous_stage, condition_pairs, indent_level):
+        return (
+            tab_indent(indent_level) + 'case' + os.linesep
+            + (
+                ''
+                if active_node_name is None
+                else
+                (tab_indent(indent_level + 1) + '!(' + active_node_name + ') : ' + previous_stage + ';' + os.linesep)
+            )
+            + ''.join([(tab_indent(indent_level + 1) + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in condition_pairs])
+            + tab_indent(indent_level) + 'esac;' + os.linesep
+        )
+
+    def get_active_node_name(node_name):
+        node_name = root_node_name if node_name is None else node_name
+        if node_name in nodes:
+            active_node_name = node_name + '.active'
+            force_constant = False
+        else:
+            # this means we pruned a node, but it was updating a variable. since the node was unreachable, it was never going to update anything
+            # therefore, we cna force constant.
+            active_node_name = 'FALSE'
+            force_constant = True
+        return (active_node_name, force_constant)
+
     define_string = ''
     frozenvar_string = ''
     var_string = ''
@@ -31,31 +57,22 @@ def create_blackboard(nodes, variables, root_node_name):
             # define are static.
             if variable['mode'] == 'DEFINE':
                 if len(variable['next_value']) > 0:
-                    for stage_num, (_, _, _, stage) in enumerate(variable['next_value']):
+                    for stage_num, (_, _, _, indexed_cond_pairs) in enumerate(variable['next_value']):
                         define_string += (tab_indent(2) + stage_name + str(stage_num) + ' := [' + ', '.join(map(lambda x: stage_name + str(stage_num) + '_index_' + str(x), range(variable['array_size']))) + '];' + os.linesep)
-                        for (index, index_stage) in stage:
+                        for (index, condition_pairs) in indexed_cond_pairs:
                             define_string += (
                                 tab_indent(2) + stage_name + str(stage_num) + '_index_' + str(index) + ' :=' + os.linesep
-                                + tab_indent(3) + 'case' + os.linesep
-                                + ''.join(
-                                    [
-                                        (tab_indent(4) + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep)
-                                        for condition_pair in index_stage
-                                    ]
-                                )
-                                + tab_indent(3) + 'esac;' + os.linesep
+                                + write_cases(None, None, condition_pairs, 3)
                             )
             elif variable['mode'] == 'FROZENVAR' or len(variable['next_value']) == 0:
                 frozenvar_string += (tab_indent(2) + stage_name + '0 : array 0..' + str(variable['array_size']) + ' of '
                                      + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean')))
                                      + ';' + os.linesep)
-                (_, _, _, stage) = variable['initial_value']
-                for (index, index_initial) in stage:
+                (_, _, _, indexed_cond_pairs) = variable['initial_value']
+                for (index, condition_pairs) in indexed_cond_pairs:
                     init_string += (
                         tab_indent(2) + 'init(' + stage_name + '0[' + str(index) + ']) := ' + os.linesep
-                        + tab_indent(3) + 'case' + os.linesep
-                        + ''.join([(tab_indent(4) + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in index_initial])
-                        + tab_indent(3) + 'esac;' + os.linesep
+                        + write_cases(None, None, condition_pairs, 3)
                     )
             # --------------------------------
             # ok, so we've handled define and frozenvar, so all that's left
@@ -63,17 +80,21 @@ def create_blackboard(nodes, variables, root_node_name):
             else:
                 define_string += (tab_indent(2) + stage_name + '0 := [' + ', '.join(map(lambda x: stage_name + '0_index_' + str(x), range(variable['array_size']))) + '];' + os.linesep)
                 if variable['keep_stage_0']:
-                    (_, _, _, stage) = variable['initial_value']
-                    for (index, index_initial) in stage:
+                    (_, _, _, indexed_cond_pairs) = variable['initial_value']
+                    if variable['keep_last_stage']:
+                        # we will keep the last stage, nothing to do here
+                        pass
+                    else:
+                        print('removal of last stage for array variables not yet implemented.')
+                    for (index, condition_pairs) in indexed_cond_pairs:
                         var_string += ('\t\t' + stage_name + '0_index_' + str(index) + ' : '
                                        + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean')))
                                        + ';' + os.linesep)
                         init_string += (
                             '\t\tinit(' + stage_name + '0_index_' + str(index) + ') := ' + os.linesep
-                            + '\t\t\tcase' + os.linesep
-                            + ''.join([('\t\t\t\t' + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in index_initial])
-                            + '\t\t\tesac;' + os.linesep
+                            + write_cases(None, None, condition_pairs, 3)
                         )
+                        # next string in for loop because we need to init each index
                         next_string += '\t\tnext(' + stage_name + '0_index_' + str(index) + ') := ' + stage_name + str(len(variable['next_value'])) + '_index_' + str(index) + ';' + os.linesep
                         # TODO: explain why this doesn't have the root condition.
 
@@ -81,8 +102,8 @@ def create_blackboard(nodes, variables, root_node_name):
                     start_location = 0
                 else:
                     define_string += (tab_indent(2) + stage_name + '1 := [' + ', '.join(map(lambda x: stage_name + '1_index_' + str(x), range(variable['array_size']))) + '];' + os.linesep)
-                    (_, _, _, stage) = variable['initial_value']
-                    for (index, index_initial) in stage:
+                    (_, _, _, indexed_cond_pairs) = variable['initial_value']
+                    for (index, condition_pairs) in indexed_cond_pairs:
                         define_string += tab_indent(2) + stage_name + '0_index_' + str(index) + ' := ' + stage_name + '1_index_' + str(index) + ';' + os.linesep
                         define_string += tab_indent(2) + 'LINK_TO_PREVIOUS_FINAL_' + variable_name + '_index_' + str(index) + ' := ' + stage_name + str(len(variable['next_value'])) + '_index_' + str(index) + ';' + os.linesep
                         var_string += ('\t\t' + stage_name + '1_index_' + str(index) + ' : '
@@ -90,25 +111,16 @@ def create_blackboard(nodes, variables, root_node_name):
                                        + ';' + os.linesep)
                         init_string += (
                             '\t\tinit(' + stage_name + '1_index_' + str(index) + ') := ' + os.linesep
-                            + '\t\t\tcase' + os.linesep
-                            + ''.join([('\t\t\t\t' + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in index_initial])
-                            + '\t\t\tesac;' + os.linesep
+                            + write_cases(None, None, condition_pairs, 3)
                         )
                         # link handled in next loop
-                    (node_name, constant_index, non_determinism, stage) = variable['next_value'][0]
-                    node_name = root_node_name if node_name is None else node_name
-                    if node_name in nodes:
-                        active_node_name = node_name + '.active'
-                    else:
-                        active_node_name = 'FALSE'
+                    (node_name, constant_index, non_determinism, indexed_cond_pairs) = variable['next_value'][0]
+                    (active_node_name, _) = get_active_node_name(node_name)
                     if constant_index:
-                        for (index, condition_pairs) in stage:
+                        for (index, condition_pairs) in indexed_cond_pairs:
                             next_string += (
                                 tab_indent(2) + 'next(' + stage_name + '1_index_' + str(index) + ') := ' + os.linesep
-                                + tab_indent(3) + 'case' + os.linesep
-                                + tab_indent(4) + 'next(!(' + active_node_name + ')) : LINK_TO_PREVIOUS_FINAL_' + variable_name + '_index_' + str(index) + ';' + os.linesep
-                                + ''.join([(tab_indent(4) + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in condition_pairs])
-                                + tab_indent(3) + 'esac;' + os.linesep
+                                + write_cases(active_node_name, 'LINK_TO_PREVIOUS_FINAL_' + variable_name + '_index_' + str(index), condition_pairs, 3)
                             )
                     else:
                         for index in range(variable['array_size']):
@@ -117,12 +129,10 @@ def create_blackboard(nodes, variables, root_node_name):
                                 + tab_indent(3) + 'case' + os.linesep
                                 + tab_indent(4) + 'next(!(' + active_node_name + ')) : LINK_TO_PREVIOUS_FINAL_' + variable_name + '_index_' + str(index) + ';' + os.linesep
                             )
-                            for (index_expression, condition_pairs) in stage:
+                            for (index_expression, condition_pairs) in indexed_cond_pairs:
                                 next_string += (
                                     tab_indent(4) + str(index) + ' = ' + index_expression + ' :' + os.linesep
-                                    + tab_indent(5) + 'case' + os.linesep
-                                    + ''.join([(tab_indent(6) + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in condition_pairs])
-                                    + tab_indent(5) + 'esac;' + os.linesep
+                                    + write_cases(None, None, condition_pairs, 5)
                                 )
                             next_string += (
                                 tab_indent(4) + 'TRUE : LINK_TO_PREVIOUS_FINAL_' + variable_name + '_index_' + str(index) + ';' + os.linesep
@@ -135,18 +145,11 @@ def create_blackboard(nodes, variables, root_node_name):
                 for counter in range(start_location, len(variable['next_value'])):
                     stage_num = str(counter + 1)
                     define_string += (tab_indent(2) + stage_name + stage_num + ' := [' + ', '.join(map(lambda x: stage_name + stage_num + '_index_' + str(x), range(variable['array_size']))) + '];' + os.linesep)
-                    (node_name, constant_index, non_determinism, stage) = variable['next_value'][counter]
-                    node_name = root_node_name if node_name is None else node_name
-                    if node_name in nodes:
-                        active_node_name = node_name + '.active'
-                        force_constant = False
-                    else:
-                        # this means we pruned a node, but it was updating a variable. since the node was unreachable, it was never going to update anything
-                        active_node_name = 'FALSE'
-                        force_constant = True
+                    (node_name, constant_index, non_determinism, indexed_cond_pairs) = variable['next_value'][counter]
+                    (active_node_name, force_constant) = get_active_node_name(node_name)
                     if constant_index:
                         indices_to_do = set(range(variable['array_size']))
-                        for (index, condition_pairs) in stage:
+                        for (index, condition_pairs) in indexed_cond_pairs:
                             indices_to_do.remove(index)
                             if non_determinism[index] and not force_constant:
                                 var_string += (
@@ -155,18 +158,12 @@ def create_blackboard(nodes, variables, root_node_name):
                                     + ';' + os.linesep)
                                 next_string += (
                                     tab_indent(2) + stage_name + stage_num + '_index_' + str(index) + ' := ' + os.linesep
-                                    + tab_indent(3) + 'case' + os.linesep
-                                    + tab_indent(4) + '!(' + active_node_name + ') : ' + previous_stage + '_index_' + str(index) + ';' + os.linesep
-                                    + ''.join([(tab_indent(4) + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in condition_pairs])
-                                    + tab_indent(3) + 'esac;' + os.linesep
+                                    + write_cases(active_node_name, previous_stage + '_index_' + str(index), condition_pairs, 3)
                                 )
                             else:
                                 define_string += (
                                     tab_indent(2) + stage_name + stage_num + '_index_' + str(index) + ' := ' + os.linesep
-                                    + tab_indent(3) + 'case' + os.linesep
-                                    + tab_indent(4) + '!(' + active_node_name + ') : ' + previous_stage + '_index_' + str(index) + ';' + os.linesep
-                                    + ''.join([(tab_indent(4) + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in condition_pairs])
-                                    + tab_indent(3) + 'esac;' + os.linesep
+                                    + write_cases(active_node_name, previous_stage + '_index_' + str(index), condition_pairs, 3)
                                 )
                         for index in indices_to_do:
                             define_string += tab_indent(2) + stage_name + stage_num + '_index_' + str(index) + ' := ' + previous_stage + '_index_' + str(index) + ';' + os.linesep
@@ -183,12 +180,10 @@ def create_blackboard(nodes, variables, root_node_name):
                                     + tab_indent(4) + '!(' + active_node_name + ') : ' + previous_stage + '_index_' + str(index) + ';' + os.linesep
                                 )
 
-                                for (index_expression, condition_pairs) in stage:
+                                for (index_expression, condition_pairs) in indexed_cond_pairs:
                                     next_string += (
                                         tab_indent(4) + str(index) + ' = ' + index_expression + ' :' + os.linesep
-                                        + tab_indent(5) + 'case' + os.linesep
-                                        + ''.join([(tab_indent(6) + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in condition_pairs])
-                                        + tab_indent(5) + 'esac;' + os.linesep
+                                        + write_cases(None, None, condition_pairs, 5)
                                     )
                                 next_string += (
                                     tab_indent(4) + 'TRUE : ' + previous_stage + '_index_' + str(index) + ';' + os.linesep
@@ -202,12 +197,10 @@ def create_blackboard(nodes, variables, root_node_name):
                                     + tab_indent(4) + '!(' + active_node_name + ') : ' + previous_stage + '_index_' + str(index) + ';' + os.linesep
                                 )
 
-                                for (index_expression, condition_pairs) in stage:
+                                for (index_expression, condition_pairs) in indexed_cond_pairs:
                                     define_string += (
                                         tab_indent(4) + str(index) + ' = ' + index_expression + ' :' + os.linesep
-                                        + tab_indent(5) + 'case' + os.linesep
-                                        + ''.join([(tab_indent(6) + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in condition_pairs])
-                                        + tab_indent(5) + 'esac;' + os.linesep
+                                        + write_cases(None, None, condition_pairs, 5)
                                     )
                                 define_string += (
                                     tab_indent(4) + 'TRUE : ' + previous_stage + '_index_' + str(index) + ';' + os.linesep
@@ -219,28 +212,19 @@ def create_blackboard(nodes, variables, root_node_name):
             # define are static.
             if variable['mode'] == 'DEFINE':
                 if len(variable['next_value']) > 0:
-                    for stage_num, (_, _, stage) in enumerate(variable['next_value']):
+                    for stage_num, (_, _, condition_pairs) in enumerate(variable['next_value']):
                         define_string += (
                             tab_indent(2) + stage_name + str(stage_num) + ' :=' + os.linesep
-                            + tab_indent(3) + 'case' + os.linesep
-                            + ''.join(
-                                [
-                                    (tab_indent(4) + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep)
-                                    for condition_pair in stage
-                                ]
-                            )
-                            + tab_indent(3) + 'esac;' + os.linesep
+                            + write_cases(None, None, condition_pairs, 3)
                         )
             elif variable['mode'] == 'FROZENVAR' or len(variable['next_value']) == 0:
                 frozenvar_string += ('\t\t' + stage_name + '0 : '
                                      + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean')))
                                      + ';' + os.linesep)
-                (_, _, stage) = variable['initial_value']
+                (_, _, condition_pairs) = variable['initial_value']
                 init_string += (
                     '\t\tinit(' + stage_name + '0) := ' + os.linesep
-                    + '\t\t\tcase' + os.linesep
-                    + ''.join([('\t\t\t\t' + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in stage])
-                    + '\t\t\tesac;' + os.linesep
+                    + write_cases(None, None, condition_pairs, 3)
                 )
             # --------------------------------
             # ok, so we've handled define and frozenvar, so all that's left
@@ -250,15 +234,26 @@ def create_blackboard(nodes, variables, root_node_name):
                     var_string += ('\t\t' + stage_name + '0 : '
                                    + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean')))
                                    + ';' + os.linesep)
-                    (_, _, stage) = variable['initial_value']
+                    (_, _, condition_pairs) = variable['initial_value']
                     init_string += (
                         '\t\tinit(' + stage_name + '0) := ' + os.linesep
-                        + '\t\t\tcase' + os.linesep
-                        + ''.join([('\t\t\t\t' + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in stage])
-                        + '\t\t\tesac;' + os.linesep
+                        + write_cases(None, None, condition_pairs, 3)
                     )
-                    next_string += '\t\tnext(' + stage_name + '0) := ' + stage_name + str(len(variable['next_value'])) + ';' + os.linesep
-                    # TODO: explain why this doesn't have the root condition.
+                    if variable['keep_last_stage']:
+                        next_string += tab_indent(2) + 'next(' + stage_name + '0) := ' + stage_name + str(len(variable['next_value'])) + ';' + os.linesep
+                        # TODO: explain why this doesn't have the root condition.
+                    else:
+                        # print('removed last stage for: ' + variable_name)
+                        # we are going to get rid of the last stage.
+                        # this means the update for stage_0 will instead be the update that the last stage was going to use
+                        (node_name, _, condition_pairs) = variable['next_value'].pop()
+                        (active_node_name, _) = get_active_node_name(node_name)
+                        next_string += (
+                            tab_indent(2) + 'next(' + stage_name + '0) := '
+                            + write_cases(active_node_name, stage_name + str(len(variable['next_value'])), condition_pairs, 3)
+                            # note that we don't need to subtract one from len because pop decreased the len naturally.
+                            # thus, if there was only 1 other stage, this would now be empty, and point to ourself, which is what we want.
+                        )
 
                     previous_stage = stage_name + '0'
                     start_location = 0
@@ -268,25 +263,16 @@ def create_blackboard(nodes, variables, root_node_name):
                     var_string += ('\t\t' + stage_name + '1' + ' : '
                                    + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean')))
                                    + ';' + os.linesep)
-                    (_, _, stage) = variable['initial_value']
+                    (_, _, condition_pairs) = variable['initial_value']
                     init_string += (
                         '\t\tinit(' + stage_name + '1) := ' + os.linesep
-                        + '\t\t\tcase' + os.linesep
-                        + ''.join([('\t\t\t\t' + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in stage])
-                        + '\t\t\tesac;' + os.linesep
+                        + write_cases(None, None, condition_pairs, 3)
                     )
-                    (node_name, non_determinism, stage) = variable['next_value'][0]
-                    node_name = root_node_name if node_name is None else node_name
-                    if node_name in nodes:
-                        active_node_name = node_name + '.active'
-                    else:
-                        active_node_name = 'FALSE'
+                    (node_name, non_determinism, condition_pairs) = variable['next_value'][0]
+                    (active_node_name, _) = get_active_node_name(node_name)
                     next_string += (
                         '\t\tnext(' + stage_name + '1) := ' + os.linesep
-                        + '\t\t\tcase' + os.linesep
-                        + '\t\t\t\tnext(!(' + active_node_name + ')) : LINK_TO_PREVIOUS_FINAL_' + variable_name + ';' + os.linesep
-                        + ''.join([('\t\t\t\t' + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in stage])
-                        + '\t\t\tesac;' + os.linesep
+                        + write_cases(active_node_name, 'LINK_TO_PREVIOUS_FINAL_' + variable_name, condition_pairs, 3)
                     )
 
                     previous_stage = stage_name + '1'
@@ -294,33 +280,20 @@ def create_blackboard(nodes, variables, root_node_name):
 
                 for index in range(start_location, len(variable['next_value'])):
                     stage_num = str(index + 1)
-                    (node_name, non_determinism, stage) = variable['next_value'][index]
-                    node_name = root_node_name if node_name is None else node_name
-                    if node_name in nodes:
-                        active_node_name = node_name + '.active'
-                        force_constant = False
-                    else:
-                        # this means we pruned a node, but it was updating a variable. since the node was unreachable, it was never going to update anything
-                        active_node_name = 'FALSE'
-                        force_constant = True
+                    (node_name, non_determinism, condition_pairs) = variable['next_value'][index]
+                    (active_node_name, force_constant) = get_active_node_name(node_name)
                     if non_determinism and not force_constant:
                         var_string += ('\t\t' + stage_name + stage_num + ' : '
                                        + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean')))
                                        + ';' + os.linesep)
                         next_string += (
                             '\t\t' + stage_name + stage_num + ' := ' + os.linesep
-                            + '\t\t\tcase' + os.linesep
-                            + '\t\t\t\t!(' + active_node_name + ') : ' + previous_stage + ';' + os.linesep
-                            + ''.join([('\t\t\t\t' + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in stage])
-                            + '\t\t\tesac;' + os.linesep
+                            + write_cases(active_node_name, previous_stage, condition_pairs, 3)
                         )
                     else:
                         define_string += (
                             '\t\t' + stage_name + stage_num + ' := ' + os.linesep
-                            + '\t\t\tcase' + os.linesep
-                            + '\t\t\t\t!(' + active_node_name + ') : ' + previous_stage + ';' + os.linesep
-                            + ''.join([('\t\t\t\t' + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in stage])
-                            + '\t\t\tesac;' + os.linesep
+                            + write_cases(active_node_name, previous_stage, condition_pairs, 3)
                         )
                     previous_stage = stage_name + stage_num
     return (define_string,
