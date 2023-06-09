@@ -1,5 +1,5 @@
 import os
-from behaverify_common import tab_indent
+from ros_behaverify_common import tab_indent
 
 # -----------------------------------------------------------------
 # the blackboard
@@ -139,11 +139,10 @@ def create_blackboard(nodes, variables, root_node_name):
                     node_name = root_node_name if node_name is None else node_name
                     if node_name in nodes:
                         active_node_name = node_name + '.active'
-                        force_constant = False
-                    else:
-                        # this means we pruned a node, but it was updating a variable. since the node was unreachable, it was never going to update anything
-                        active_node_name = 'FALSE'
                         force_constant = True
+                    else:
+                        active_node_name = 'FALSE'
+                        force_constant = False
                     if constant_index:
                         indices_to_do = set(range(variable['array_size']))
                         for (index, condition_pairs) in stage:
@@ -300,7 +299,7 @@ def create_blackboard(nodes, variables, root_node_name):
                         active_node_name = node_name + '.active'
                         force_constant = False
                     else:
-                        # this means we pruned a node, but it was updating a variable. since the node was unreachable, it was never going to update anything
+                        # this means a node is unrechable, so it was pruned, but we still have a variable that is being 'modified' by it
                         active_node_name = 'FALSE'
                         force_constant = True
                     if non_determinism and not force_constant:

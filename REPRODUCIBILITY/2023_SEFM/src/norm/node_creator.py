@@ -139,10 +139,11 @@ def create_blackboard(nodes, variables, root_node_name):
                     node_name = root_node_name if node_name is None else node_name
                     if node_name in nodes:
                         active_node_name = node_name + '.active'
-                        force_constant = True
-                    else:
-                        active_node_name = 'FALSE'
                         force_constant = False
+                    else:
+                        # this means we pruned a node, but it was updating a variable. since the node was unreachable, it was never going to update anything
+                        active_node_name = 'FALSE'
+                        force_constant = True
                     if constant_index:
                         indices_to_do = set(range(variable['array_size']))
                         for (index, condition_pairs) in stage:
@@ -297,10 +298,11 @@ def create_blackboard(nodes, variables, root_node_name):
                     node_name = root_node_name if node_name is None else node_name
                     if node_name in nodes:
                         active_node_name = node_name + '.active'
-                        force_constant = True
-                    else:
-                        active_node_name = 'FALSE'
                         force_constant = False
+                    else:
+                        # this means we pruned a node, but it was updating a variable. since the node was unreachable, it was never going to update anything
+                        force_constant = True
+                        active_node_name = 'FALSE'
                     if non_determinism and not force_constant:
                         var_string += ('\t\t' + stage_name + stage_num + ' : '
                                        + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean')))

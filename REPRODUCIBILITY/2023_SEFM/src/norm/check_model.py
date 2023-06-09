@@ -197,11 +197,15 @@ def validate_code(code, scopes, variable_names, allowed_functions):
                 if code.variable.name not in variable_names:
                     raise BTreeException('Expected only the following variables: [' + ', '.join(variable_names) + '] but got ' + code.variable.name)
         if var_scope == 'local':
-            if hasattr(code, 'node_name'):
+            # if hasattr(code, 'node_name'):
+            if code.node_name is not None:
                 if code.node_name not in all_node_names:
                     raise BTreeException('Reference to a node that does not exist ' + code.node_name)
                 # TODO: add a check here which confirms that the node actually uses the local variable.
                 # this will prevent the user from specificying a specification using a node that doesn't have this variable.
+            else:
+                # TODO: double check, we should make sure we're in a node doing this, and not from invar, and that the node uses the variable
+                pass
         return
 
     if code.constant is not None:
