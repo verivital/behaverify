@@ -6,7 +6,7 @@ import os
 # import itertools
 # import copy
 
-from behaverify_common import create_node_name, create_node_template, create_variable_template
+from ros_behaverify_common import create_node_name, create_node_template, create_variable_template
 
 
 def get_variables(model, keep_stage_0):
@@ -19,7 +19,7 @@ def get_variables(model, keep_stage_0):
                                          [('TRUE', (str(variable.initial_value).upper() if isinstance(variable.initial_value, bool) else str(variable.initial_value)))]
                                          )
                                       ),
-                                     [], prefix = 'var_', keep_stage_0 = keep_stage_0)
+                                     [], keep_stage_0 = keep_stage_0)
             for variable in model.bbVariables if variable.model is not None}
 
 
@@ -59,9 +59,8 @@ def format_variable(variable, node_name, variables, use_next, not_next, overwrit
     if len(variables[variable.name]['next_value']) == 0 or overwrite_stage == 0:
         variables[variable.name]['keep_stage_0'] = True
     if use_next and variable.name == not_next:
-        return 'LINK_TO_PREVIOUS_FINAL_' + variables[variable.name]['prefix'] + variable.name
+        return 'LINK_TO_PREVIOUS_FINAL_' + variable.name
     return (('' if not use_next else 'next(')
-            + variables[variable.name]['prefix']
             + variable.name
             + compute_stage(variable.name, variables, overwrite_stage)
             + ('' if not use_next else ')'))
@@ -384,8 +383,7 @@ def walk_tree_recursive(metamodel, current_node, parent_name, nodes, node_names,
                                                                                      True,
                                                                                      [('TRUE', '{TRUE, FALSE}')]
                                                                                      )
-                                                                                ],
-                                                                                prefix = '', keep_stage_0 = False)
+                                                                                ], keep_stage_0 = False)
 
             if (mon.topic_bbvar.name) in variables and (not mon.ignore_topic):
                 variable = variables[mon.topic_bbvar.name]

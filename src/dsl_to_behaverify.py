@@ -434,7 +434,7 @@ def handle_variable_assignment(statement, assign_var, condition, misc_args):
     else:
         next_value = handle_variable_statement(statement, assign_var, condition, misc_args)
         non_determinism = next_value[-2]
-    keep_stage_0 = keep_stage_0 or (not non_determinism)
+    keep_stage_0 = keep_stage_0 or (not non_determinism)  # there is no point in deleting stage_0 if stage_1 was going to be deterministic.
     variable['next_value'].append(next_value)
     variable['keep_stage_0'] = keep_stage_0
     return

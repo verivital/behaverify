@@ -1,4 +1,6 @@
-
+'''
+for use with the model in metamodel/btree.tx
+'''
 # arg_parser.add_argument('input_file')
 # arg_parser.add_argument('--blackboard_input_file', default = None)
 # arg_parser.add_argument('--module_input_file', default = None)
@@ -13,8 +15,8 @@ import argparse
 import os
 # ----------------------------------------------------------------------------------------------------------------
 # serene custom imports
-import node_creator
-from behaverify_common import (get_root_node,
+import ros_node_creator as node_creator
+from ros_behaverify_common import (get_root_node,
                                refine_return_types,
                                refine_invalid,
                                prune_nodes, order_nodes,
