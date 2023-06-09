@@ -41,8 +41,8 @@ def create_blackboard(nodes, variables):
                                  + ''.join([('\t\t\t\t' + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in variable['init_value']])
                                  + '\t\t\tesac;' + os.linesep
                                  )
-            exist_define += "\t\t" + variable_name + "_exists := TRUE;" + os.linesep
-        elif variable['mode'].strip() == 'FROZENVAR':
+            # exist_define += "\t\t" + variable_name + "_exists := TRUE;" + os.linesep
+        elif variable['mode'].strip() == 'FROZENVAR' or len(variable['next_value']) == 0:
             # elif variable['mode'].strip() == 'FROZENVAR' or (len(variable['next_value']) == 0 and variable['environment_update'] is None):
             frozen_decl_string += ('\t\t' + variable_name + ' : '
                                    + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean')))
@@ -53,48 +53,50 @@ def create_blackboard(nodes, variables):
                                   + ''.join([('\t\t\t\t' + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in variable['init_value']])
                                   + '\t\t\tesac;' + os.linesep
                                   )
-            exist_define += "\t\t" + variable_name + "_exists := TRUE;" + os.linesep
+            # exist_define += "\t\t" + variable_name + "_exists := TRUE;" + os.linesep
         # --------------------------------
         # ok, so we've handled define and frozenvar, so all that's left
         # is actual variable.
-        elif variable['environment_update'] is not None:
-            decl_string += ('\t\t' + variable_name + ' : '
-                            + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean')))
-                            + ';' + os.linesep)
-            assign_string += (
-                ('' if variable['init_value'] is None else (
-                    '\t\tinit(' + variable_name + ') := ' + os.linesep
-                    + '\t\t\tcase' + os.linesep
-                    + ''.join([('\t\t\t\t' + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in variable['init_value']])
-                    + '\t\t\tesac;' + os.linesep
-                ))
-                + '\t\tnext(' + variable_name + ') := ' + os.linesep
-                + '\t\t\tcase' + os.linesep
-                + ''.join([('\t\t\t\t' + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in variable['environment_update']])
-                + '\t\t\tesac;' + os.linesep
-            )
+        # elif variable['environment_update'] is not None:
+        #     decl_string += ('\t\t' + variable_name + ' : '
+        #                     + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean')))
+        #                     + ';' + os.linesep)
+        #     assign_string += (
+        #         ('' if variable['init_value'] is None else (
+        #             '\t\tinit(' + variable_name + ') := ' + os.linesep
+        #             + '\t\t\tcase' + os.linesep
+        #             + ''.join([('\t\t\t\t' + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in variable['init_value']])
+        #             + '\t\t\tesac;' + os.linesep
+        #         ))
+        #         + '\t\tnext(' + variable_name + ') := ' + os.linesep
+        #         + '\t\t\tcase' + os.linesep
+        #         + ''.join([('\t\t\t\t' + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in variable['environment_update']])
+        #         + '\t\t\tesac;' + os.linesep
+        #     )
         else:
-            if len(variable['next_value']) == 0:
-                exist_define += ('\t\t' + variable_name + ' := ' + variable_name + '_stage_' + str(len(variable['next_value'])) + ';' + os.linesep)
-                decl_string += ('\t\t' + variable_name + ' : '
-                                + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean')))
-                                + ';' + os.linesep)
-                assign_string += (
-                    ('' if variable['init_value'] is None else (
-                        '\t\tinit(' + variable_name + ') := ' + os.linesep
-                        + '\t\t\tcase' + os.linesep
-                        + ''.join([('\t\t\t\t' + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in variable['init_value']])
-                        + '\t\t\tesac;' + os.linesep
-                    ))
-                )
-                continue
+            # if len(variable['next_value']) == 0:
+            #     exist_define += ('\t\t' + variable_name + ' := ' + variable_name + '_stage_' + str(len(variable['next_value'])) + ';' + os.linesep)
+            #     decl_string += ('\t\t' + variable_name + ' : '
+            #                     + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean')))
+            #                     + ';' + os.linesep)
+            #     assign_string += (
+            #         ('' if variable['init_value'] is None else (
+            #             '\t\tinit(' + variable_name + ') := ' + os.linesep
+            #             + '\t\t\tcase' + os.linesep
+            #             + ''.join([('\t\t\t\t' + condition_pair[0] + ' : ' + condition_pair[1] + ';' + os.linesep) for condition_pair in variable['init_value']])
+            #             + '\t\t\tesac;' + os.linesep
+            #         ))
+            #     )
+            #     continue
             exist_define += ('\t\t' + variable_name + ' := ' + variable_name + '_stage_' + str(len(variable['next_value'])) + ';' + os.linesep
-                             + '\t\t' + variable_name + '_exists := TRUE;' + os.linesep)
+                             # + '\t\t' + variable_name + '_exists := TRUE;' + os.linesep
+                             )
             previous_stage = variable_name
             # the base variable is just a macro for the last stage.
             index = 0
             stage_num = str(index + 1)
-            (node_name, stage) = variable['next_value'][index]
+            # print(variable['next_value'])
+            (node_name, _, stage) = variable['next_value'][index]
             decl_string += ('\t\t' + variable_name + '_stage_' + stage_num + ' : '
                             + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean')))
                             + ';' + os.linesep)
@@ -112,11 +114,11 @@ def create_blackboard(nodes, variables):
                 + '\t\t\tesac;' + os.linesep
             )
             previous_stage = variable_name + '_stage_' + stage_num
-            exist_define += '\t\t' + variable_name + '_stage_' + stage_num + '_exists := TRUE;' + os.linesep
+            # exist_define += '\t\t' + variable_name + '_stage_' + stage_num + '_exists := TRUE;' + os.linesep
 
             for index in range(1, len(variable['next_value'])):
                 stage_num = str(index + 1)
-                (node_name, stage) = variable['next_value'][index]
+                (node_name, _, stage) = variable['next_value'][index]
                 decl_string += ('\t\t' + variable_name + '_stage_' + stage_num + ' : '
                                 + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean')))
                                 + ';' + os.linesep)
@@ -129,7 +131,7 @@ def create_blackboard(nodes, variables):
                     + '\t\t\tesac;' + os.linesep
                 )
                 previous_stage = variable_name + '_stage_' + stage_num
-                exist_define += '\t\t' + variable_name + '_stage_' + stage_num + '_exists := TRUE;' + os.linesep
+                # exist_define += '\t\t' + variable_name + '_stage_' + stage_num + '_exists := TRUE;' + os.linesep
     return_string += (exist_define
                       + frozen_decl_string
                       + decl_string

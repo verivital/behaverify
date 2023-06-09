@@ -4,54 +4,54 @@ constants {
 	#comment# to use example elsewhere, simply type 'example' in place of any integer (quotes included) #end_comment#
 } end_constants
 
-blackboard_variables {
-	#comment# Blackboard Variable declarations go here #end_comment#
+variables {
+	#comment# Variable declarations go here.
+	it is suggested, but not required, that the order of declaration be
+	Blackboard, Local, Environment.
+	If variable B depends on variable A, then variable A MUST be declared before B.
+	#end_comment#
 	#comment#
-	blackboard_variable {
+	variable {
+		bl
 		x
 		VAR
 		[0, 10]
-		initial_value { result { 0 } end_result } end_initial_value
-	} end_blackboard_variable
+		assign { result { 0 } end_result } end_assign
+	} end_variable
 	#end_comment#
-} end_blackboard_variables
-
-local_variables {
-	#comment# Local Variable declarations go here #end_comment#
 	#comment#
-	local_variable {
+	variable {
+		local
 		y
 		VAR
 		{'potato', 'tomato', 'bawk'}
-		initial_value { result { 'bawk' } end_result } end_initial_value
-	} end_local_variable
+		assign { result { 'bawk' } end_result } end_assign
+	} end_variable
 	#end_comment#
-} end_local_variables
+	#comment#
+	variable {
+		env
+		z
+		VAR
+		BOOLEAN
+		assign { case { (equal, 1, 0) } end_case result { False} end_result result { (equal, bl x, 0) } end_result } end_assign
+	} end_variable
+	#end_comment#
+} end_variables
 
-environment {
-	environment_variables {
-		#comment# Local Variable declarations go here #end_comment#
-		#comment#
-		environment_variable {
-			z
-			VAR
-			BOOLEAN
-			initial_value { case { (equal, 1, 0) } end_case result { False} end_result result { (equal, bl x, 0) } end_result } end_initial_value
-		} end_environment_variable
-		#end_comment#
-	} end_environment_variables
-	update_values {
-		#comment# update values for environment #end_comment#
-		#comment#
-		environment_statement {
-			env z
-			case { (less_than, bl x, 5) } end_case result { True, False} end_result
-			case { (greater_than, bl x, 5) } end_case result { (equal, 0, (mod, bl x, 2)) } end_result
+environment_update {
+	#comment# update values for environment #end_comment#
+	#comment#
+	variable_statement {
+		z
+		assign {
+			case { (less_than, x, 5) } end_case result { True, False} end_result
+			case { (greater_than, x, 5) } end_case result { (equal, 0, (mod, x, 2)) } end_result
 			result { env z } end_result
-		} end_environment_statement
-		#end_comment#
-	} end_update_values
-} end_environment
+		} end_assign
+	} end_variable_statement
+	#end_comment#
+} end_environment_update
 
 checks {
 	#comment# check nodes are defined here #end_comment#
@@ -59,7 +59,7 @@ checks {
 	check {
 		x_idk
 		read_variables { x } end_read_variables
-		condition { (and, (less_than, (addition, bl x, 1), 4), True) } end_condition
+		condition { (and, (less_than, (addition, x, 1), 4), True) } end_condition
 	} end_check
 	#end_comment#
 } end_checks
@@ -70,7 +70,7 @@ environment_checks {
 	environment_check {
 		z_idk
 		read_variables {} end_read_variables
-		condition { env z } end_condition
+		condition { z } end_condition
 	} end_environment_check
 	#end_comment#
 } end_environment_checks
@@ -86,7 +86,7 @@ actions {
 		initial_values {} end_initial_values
 		update {
 			variable_statement {
-				bl x
+				x
 				result { (max, 'example', (subtraction, x, 1)) } end_result
 			} end_variable_statement
 			return_statement {
@@ -105,8 +105,9 @@ tree {
 
 
 #comment# this section is optional. you may remove it #end_comment#
+#comment#
 tick_prerequisite { #comment# if the condition is True, the tree ticks.
 If it is false, everything is done #end_comment# } end_tick_prerequisite
-
+#end_comment#
 
 specifications { #comment# INVAR, LTL, and CTL specs go here #end_comment# } end_specifications
