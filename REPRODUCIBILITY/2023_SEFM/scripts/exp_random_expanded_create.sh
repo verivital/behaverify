@@ -2,10 +2,10 @@
 
 #./make_comparison_folder_structure.sh 3_node_no_var
 
-path_name="../examples/random"
+path_name="../examples/random_expanded"
 
-to_gen=1000
-min_val=1
+to_gen=20
+min_val=2
 max_val=15
 
 mkdir $path_name/gen_files

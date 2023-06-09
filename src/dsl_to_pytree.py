@@ -824,21 +824,10 @@ def create_runner(blackboard_variables, environment_variables, max_iter, serene_
         + os.linesep
         + os.linesep
         + 'def full_tick():' + os.linesep
-        + (
-            (indent(1) + 'reset_serene_tree_print(root)' + os.linesep)
-            if serene_print
-            else
-            ''
-        )
+        + indent(1) + 'environment.pre_tick_environment_update()' + os.linesep
         + indent(1) + 'tree.tick()' + os.linesep
-        + (
-            (indent(1) + 'print(tree_printer(root, 0))' + os.linesep)
-            if serene_print
-            else
-            ''
-        )
         + indent(1) + 'environment.execute_delayed_action_queue()' + os.linesep
-        + indent(1) + 'environment.between_tick_environment_update()' + os.linesep
+        + indent(1) + 'environment.post_tick_environment_update()' + os.linesep
         + indent(1) + 'return' + os.linesep
         + os.linesep
         + os.linesep
@@ -924,12 +913,26 @@ def create_runner(blackboard_variables, environment_variables, max_iter, serene_
         + indent(1) + "print('------------------------')" + os.linesep
         + indent(1) + "print('State after tick: ' + str(count + 1))" + os.linesep
         + indent(1) + 'if environment.check_tick_condition():' + os.linesep
+        + (
+            (indent(2) + 'reset_serene_tree_print(root)' + os.linesep)
+            if serene_print
+            else
+            ''
+        )
         + indent(2) + 'full_tick()' + os.linesep
+        + (
+            (indent(2) + 'print(tree_printer(root, 0))' + os.linesep)
+            if serene_print
+            else
+            ''
+        )
+        + indent(2) + 'print_blackboard()' + os.linesep
+        + indent(2) + 'print_environment()' + os.linesep
         + indent(1) + 'else:' + os.linesep
-        + indent(2) + "print('after ' + str(count) + ' ticks, tick_condition no longer holds. exiting')" + os.linesep
+        + indent(2) + "print('after ' + str(count) + ' ticks, tick_condition no longer holds. Printing blackboard and environment, then exiting')" + os.linesep
+        + indent(2) + 'print_blackboard()' + os.linesep
+        + indent(2) + 'print_environment()' + os.linesep
         + indent(2) + 'break' + os.linesep
-        + indent(1) + 'print_blackboard()' + os.linesep
-        + indent(1) + 'print_environment()' + os.linesep
     )
 
 
@@ -1012,11 +1015,20 @@ def write_environment(model, location, const_name):
         + indent(2) + 'self.delayed_action_queue = []' + os.linesep
         + indent(2) + 'return' + os.linesep
         + os.linesep
-        + indent(1) + 'def between_tick_environment_update(self):' + os.linesep
+        + indent(1) + 'def pre_tick_environment_update(self):' + os.linesep
         + ''.join(
             [
                 handle_variable_statement(update, update.variable, indent_level = 2, init_mode = None, assign_to_var = True)
-                for update in model.update
+                for update in model.update if update.instant
+            ]
+        )
+        + indent(2) + 'return' + os.linesep
+        + os.linesep
+        + indent(1) + 'def post_tick_environment_update(self):' + os.linesep
+        + ''.join(
+            [
+                handle_variable_statement(update, update.variable, indent_level = 2, init_mode = None, assign_to_var = True)
+                for update in model.update if not update.instant
             ]
         )
         + indent(2) + 'return' + os.linesep
