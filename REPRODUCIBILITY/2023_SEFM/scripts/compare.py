@@ -3,6 +3,7 @@ import sys
 experiment_name = sys.argv[1]
 python_file = sys.argv[2]
 smv_file = sys.argv[3]
+opt_smv_file = sys.argv[4]
 
 python_run = []
 with open(python_file, 'r', encoding = 'utf-8') as f:
@@ -61,11 +62,49 @@ with open(smv_file, 'r', encoding = 'utf-8') as f:
                     nuxmv_run[-1][var_name] = var_val
 
 
+opt_nuxmv_run = []
+with open(opt_smv_file, 'r', encoding = 'utf-8') as f:
+    ignore = True
+    for line in f:
+        line.strip()
+        if 'State: ' in line:
+            opt_nuxmv_run.append({})
+            max_stage = {}
+            ignore = False
+        if not ignore:
+            if '.status' in line:
+                node_name = line.split('.status')[0].strip()
+                # print(line)
+                # print(node_name)
+                status = line.split('=')[-1].strip()
+                opt_nuxmv_run[-1][node_name] = status
+            elif '_stage_' in line:
+                var_name_stage = line.split('=')[0]
+                var_name_stage = var_name_stage.strip()
+                var_name = var_name_stage.split('_stage_')[0]
+                var_name = var_name.strip()
+                var_stage = var_name_stage.split('_stage_')[1]
+                var_stage = var_stage.strip()
+                var_stage = int(var_stage)
+                var_val = line.split('=')[1]
+                var_val = var_val.strip()
+                if var_name in max_stage:
+                    if var_stage > max_stage[var_name]:
+                        max_stage[var_name] = var_stage
+                        opt_nuxmv_run[-1][var_name] = var_val
+                    else:
+                        pass
+                else:
+                    max_stage[var_name] = var_stage
+                    opt_nuxmv_run[-1][var_name] = var_val
+
+
 print('-----------------------------' + experiment_name + '-----------------------------')
 
 for tick in range(len(python_run)):
     python_tick = python_run[tick]
     nuxmv_tick = nuxmv_run[tick]
+    opt_nuxmv_tick = opt_nuxmv_run[tick]
     for item in python_tick:
         if item not in nuxmv_tick:
             print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' with value ' + python_tick[item] + ' was in python_tick but not in nuxmv_tick')
@@ -81,4 +120,11 @@ for tick in range(len(python_run)):
             sys.exit()
         elif python_tick[item] != nuxmv_tick[item]:
             print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' was ' + python_tick[item] + ' in python_tick but ' + nuxmv_tick[item] + ' in nuxmv_tick')
+            sys.exit()
+    for item in opt_nuxmv_tick:
+        if item not in nuxmv_tick:
+            print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' with value ' + opt_nuxmv_tick[item] + ' was in opt_nuxmv_tick but not in nuxmv_tick')
+            sys.exit()
+        elif opt_nuxmv_tick[item] != nuxmv_tick[item]:
+            print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' was ' + opt_nuxmv_tick[item] + ' in opt_nuxmv_tick but ' + nuxmv_tick[item] + ' in nuxmv_tick')
             sys.exit()
