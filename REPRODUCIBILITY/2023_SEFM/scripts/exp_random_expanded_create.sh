@@ -4,7 +4,7 @@
 
 path_name="../examples/random_expanded"
 
-to_gen=20
+to_gen=5
 min_val=2
 max_val=15
 

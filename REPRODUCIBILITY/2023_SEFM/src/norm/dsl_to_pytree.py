@@ -642,10 +642,10 @@ def build_action_node(node, serene_print):
 
 
 def walk_tree(model, serene_print):
-    return walk_tree_recursive(model.root, serene_print, set(), {}, '')
+    return walk_tree_recursive(model.root, serene_print, set(), {}, '', {})
 
 
-def walk_tree_recursive(current_node, serene_print, node_names, node_names_map, running_string):
+def walk_tree_recursive(current_node, serene_print, node_names, node_names_map, running_string, variable_print_info):
     while (not hasattr(current_node, 'name') or hasattr(current_node, 'sub_root')):
         if hasattr(current_node, 'leaf'):
             current_node = current_node.leaf
@@ -666,32 +666,34 @@ def walk_tree_recursive(current_node, serene_print, node_names, node_names_map, 
     # start of composite nodes
     if current_node.node_type == 'check' or current_node.node_type == 'check_environment' or current_node.node_type == 'action':
         running_string += indent(1) + node_name + ' = ' + current_node.name + '_file.' + current_node.name + '(' + "'" + node_name + "'" + ('' if current_node.node_type == 'check' else ', environment') + ')' + os.linesep
-        return (node_name, node_names, node_names_map, running_string)
+        if current_node.node_type == 'action':
+            variable_print_info[node_name] = current_node.local_variables
+        return (node_name, node_names, node_names_map, running_string, variable_print_info)
     elif current_node.node_type == 'X_is_Y':
         if current_node.x == current_node.y:
             raise Exception('Decorator ' + current_node.name + ' has the same X and Y. Exiting.')
         decorator_type = (current_node.x.capitalize()
                           + 'Is'
                           + current_node.y.capitalize())
-        (child_name, node_names, node_names_map, running_string) = walk_tree_recursive(current_node.child, serene_print, node_names, node_names_map, running_string)
+        (child_name, node_names, node_names_map, running_string, variable_print_info) = walk_tree_recursive(current_node.child, serene_print, node_names, node_names_map, running_string, variable_print_info)
         running_string += (indent(1) + node_name + ' = py_trees.decorators.' + decorator_type + '('
                            + 'name = ' + "'" + node_name + "'" + ', child = ' + child_name + ')' + os.linesep)
         if serene_print:
             running_string += (indent(1) + node_name + '.tick = decorator_better_tick.__get__(' + node_name + ', py_trees.decorators.Decorator)' + os.linesep)
-        return (node_name, node_names, node_names_map, running_string)
+        return (node_name, node_names, node_names_map, running_string, variable_print_info)
     elif current_node.node_type == 'inverter':
         decorator_type = ('Inverter')
-        (child_name, node_names, node_names_map, running_string) = walk_tree_recursive(current_node.child, serene_print, node_names, node_names_map, running_string)
+        (child_name, node_names, node_names_map, running_string, variable_print_info) = walk_tree_recursive(current_node.child, serene_print, node_names, node_names_map, running_string, variable_print_info)
         running_string += (indent(1) + node_name + ' = py_trees.decorators.' + decorator_type + '('
                            + 'name = ' + "'" + node_name + "'" + ', child = ' + child_name + ')' + os.linesep)
         if serene_print:
             running_string += (indent(1) + node_name + '.tick = decorator_better_tick.__get__(' + node_name + ', py_trees.decorators.Decorator)' + os.linesep)
-        return (node_name, node_names, node_names_map, running_string)
+        return (node_name, node_names, node_names_map, running_string, variable_print_info)
 
     # so at this point, we're in composite node territory
     children = []
     for child in current_node.children:
-        (child_name, node_names, node_names_map, running_string) = walk_tree_recursive(child, serene_print, node_names, node_names_map, running_string)
+        (child_name, node_names, node_names_map, running_string, variable_print_info) = walk_tree_recursive(child, serene_print, node_names, node_names_map, running_string, variable_print_info)
         children.append(child_name)
     children_names = '[' + ', '.join(children) + ']'
 
@@ -723,7 +725,7 @@ def walk_tree_recursive(current_node, serene_print, node_names, node_names_map, 
                            + ')' + os.linesep)
         if serene_print:
             running_string += (indent(1) + node_name + '.tick = parallel_better_tick.__get__(' + node_name + ', py_trees.composites.Parallel)' + os.linesep)
-    return (node_name, node_names, node_names_map, running_string)
+    return (node_name, node_names, node_names_map, running_string, variable_print_info)
 
 
 def create_safe_assignment(model):
@@ -800,8 +802,15 @@ def create_safe_assignment(model):
     return outter_return_string
 
 
-def create_runner(blackboard_variables, environment_variables, max_iter, serene_print, no_var_print, py_tree_print):
+def create_runner(blackboard_variables, environment_variables, local_print_info, max_iter, serene_print, no_var_print, py_tree_print):
     global PROJECT_NAME, PROJECT_ENVIRONMENT_NAME
+
+    def map_local_to_info(local_var):
+        return (
+            '{\'name\' : \'' + local_var.name + '\''
+            + ', \'is_func\' : ' + str(local_var.model_as == 'DEFINE')
+            + ', \'array_size\' : ' + str(local_var.array_size) + '}'
+        )
     return (
         'import os' + os.linesep
         + 'import py_trees' + os.linesep
@@ -837,49 +846,84 @@ def create_runner(blackboard_variables, environment_variables, max_iter, serene_
             else
             (
                 'def print_blackboard():' + os.linesep
-                + indent(1) + "print('blackboard')" + os.linesep
+                + indent(1) + 'ret_string = \'blackboard\' + os.linesep' + os.linesep
                 + ''.join(
                     [
                         (
                             (
-                                indent(1) + 'print(' + "'  " + variable.name + ": '" + ' + str([blackboard_reader.' + variable.name
-                                + '(x) for x in range(' + handle_constant_str(variable.array_size) + ')]))' + os.linesep
+                                indent(1) + 'ret_string += indent(1) + \'' + variable.name + ': \' + str([blackboard_reader.' + variable.name
+                                + '(x) for x in range(' + handle_constant_str(variable.array_size) + ')]) + os.linesep' + os.linesep
                             )
                             if variable.model_as == 'DEFINE' and is_array(variable)
                             else
                             (
-                                indent(1) + 'print(' + "'  " + variable.name + ": '" + ' + str(blackboard_reader.' + variable.name
+                                indent(1) + 'ret_string += indent(1) + \'' + variable.name + ': \' + str(blackboard_reader.' + variable.name
                                 + ('()' if variable.model_as == 'DEFINE' else '')
-                                + '))' + os.linesep
+                                + ') + os.linesep' + os.linesep
                             )
                         )
                         for variable in blackboard_variables
                     ]
                 )
-                + indent(1) + 'return' + os.linesep
+                + indent(1) + 'return ret_string' + os.linesep
                 + os.linesep
                 + os.linesep
                 + 'def print_environment():' + os.linesep
-                + indent(1) + "print('environment')" + os.linesep
+                + indent(1) + 'ret_string = \'environment\' + os.linesep' + os.linesep
                 + ''.join(
                     [
                         (
                             (
-                                indent(1) + 'print(' + "'  " + variable.name + ": '" + ' + str([environment.' + variable.name
-                                + '(x) for x in range(' + handle_constant_str(variable.array_size) + ')]))' + os.linesep
+                                indent(1) + 'ret_string += indent(1) + \'' + variable.name + ': \' + str([environment.' + variable.name
+                                + '(x) for x in range(' + handle_constant_str(variable.array_size) + ')]) + os.linesep' + os.linesep
                             )
                             if variable.model_as == 'DEFINE' and is_array(variable)
                             else
                             (
-                                indent(1) + 'print(' + "'  " + variable.name + ": '" + ' + str(environment.' + variable.name
+                                indent(1) + 'ret_string += indent(1) + \'' + variable.name + ': \' + str(environment.' + variable.name
                                 + ('()' if variable.model_as == 'DEFINE' else '')
-                                + '))' + os.linesep
+                                + ') + os.linesep' + os.linesep
                             )
                         )
                         for variable in environment_variables
                     ]
                 )
-                + indent(1) + 'return' + os.linesep
+                + indent(1) + 'return ret_string' + os.linesep
+                + os.linesep
+                + os.linesep
+                + 'node_to_locals = {' + os.linesep
+                + ''.join(
+                    [
+                        (indent(1) + '\'' + node_name + '\' : ['
+                         + ', '.join(map(map_local_to_info, local_vars))
+                         + '],' + os.linesep)
+                        for (node_name, local_vars) in local_print_info.items()
+                    ]
+                )
+                + '}' + os.linesep
+                + os.linesep
+                + os.linesep
+                + 'def print_local_in_node(node, local_var):' + os.linesep
+                + indent(1) + 'var_attr = getattr(node, local_var[\'name\'])' + os.linesep
+                + indent(1) + 'if not local_var[\'is_func\']:' + os.linesep
+                + indent(2) + 'return indent(1) + node.name + \'_DOT_\' + local_var[\'name\'] + \' : \' + str(var_attr) + os.linesep' + os.linesep
+                + indent(1) + 'if local_var[\'array_size\'] is None:' + os.linesep
+                + indent(2) + 'return indent(1) + node.name + \'_DOT_\' + local_var[\'name\'] + \' : \' + str(var_attr()) + os.linesep' + os.linesep
+                + indent(1) + 'return indent(1) + node.name + \'_DOT_\' + local_var[\'name\'] + \' : [\' + \', \'.join(map(var_attr, range(local_var[\'array_size\'] - 1))) + \']\''
+                + os.linesep
+                + os.linesep
+                + 'def print_locals_in_node(node, local_vars):' + os.linesep
+                + indent(1) + "return ''.join(map(lambda var: print_local_in_node(node, var), local_vars))" + os.linesep
+                + os.linesep
+                + os.linesep
+                + 'def _print_local_(node):' + os.linesep
+                + indent(1) + 'if node.name in node_to_locals:' + os.linesep
+                + indent(2) + 'return print_locals_in_node(node, node_to_locals[node.name])' + os.linesep
+                + indent(1) + 'return \'\'.join(map(_print_local_, node.children))' + os.linesep
+                + os.linesep
+                + os.linesep
+                + 'def print_local():' + os.linesep
+                + indent(1) + 'return \'local\' + os.linesep + _print_local_(root)' + os.linesep
             )
         )
         + os.linesep
@@ -926,12 +970,14 @@ def create_runner(blackboard_variables, environment_variables, max_iter, serene_
             else
             ''
         )
-        + indent(2) + 'print_blackboard()' + os.linesep
-        + indent(2) + 'print_environment()' + os.linesep
+        + indent(2) + 'print(print_blackboard())' + os.linesep
+        + indent(2) + 'print(print_local())' + os.linesep
+        + indent(2) + 'print(print_environment())' + os.linesep
         + indent(1) + 'else:' + os.linesep
         + indent(2) + "print('after ' + str(count) + ' ticks, tick_condition no longer holds. Printing blackboard and environment, then exiting')" + os.linesep
-        + indent(2) + 'print_blackboard()' + os.linesep
-        + indent(2) + 'print_environment()' + os.linesep
+        + indent(2) + 'print(print_blackboard())' + os.linesep
+        + indent(2) + 'print(print_local())' + os.linesep
+        + indent(2) + 'print(print_environment())' + os.linesep
         + indent(2) + 'break' + os.linesep
     )
 
@@ -1126,7 +1172,7 @@ def main():
         with open(args.location + check_env.name + '_file.py', 'w') as f:
             f.write(build_check_environment_node(check_env, args.serene_print))
 
-    (root_name, _, _, running_string) = walk_tree(model, args.serene_print)
+    (root_name, _, _, running_string, local_print_info) = walk_tree(model, args.serene_print)
 
     if args.serene_print:
         with open(os.path.dirname(os.path.realpath(__file__)) + '/tick_overwrite/tick_overwrite.py', 'r') as f:
@@ -1183,7 +1229,7 @@ def main():
                 )
     write_environment(model, args.location, PROJECT_NAME)
     with open(args.location + PROJECT_NAME + '_runner.py', 'w') as f:
-        f.write(create_runner(list(filter(lambda x : is_blackboard(x), model.variables)), list(filter(lambda x : is_env(x), model.variables)), args.max_iter, args.serene_print, args.no_var_print, args.py_tree_print))
+        f.write(create_runner(list(filter(is_blackboard, model.variables)), list(filter(is_env, model.variables)), local_print_info, args.max_iter, args.serene_print, args.no_var_print, args.py_tree_print))
     return
 
 
