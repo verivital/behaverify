@@ -2,7 +2,7 @@
 
 path_name="../examples/random_expanded"
 
-to_gen=5
+to_gen=200
 
 mkdir $path_name/results
 rm $path_name/results/log.txt

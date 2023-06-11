@@ -4,9 +4,9 @@
 
 path_name="../examples/random_expanded"
 
-to_gen=5
+to_gen=200
 min_val=2
-max_val=15
+max_val=8
 
 mkdir $path_name/gen_files
 
