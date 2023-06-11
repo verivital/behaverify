@@ -10,6 +10,10 @@ MAX_VAL = int(sys.argv[4])
 MIN_VAL = max(MIN_VAL, 2)
 MAX_VAL = max(MAX_VAL, MIN_VAL)
 
+STATEMENT_DEPTH = 4
+MAX_UPDATES = 6
+MAX_CONDITIONS = 3
+
 ROOT = [('selector', 'sel'), ('sequence', 'seq'), ('parallel policy success_on_all', 'p_all'), ('parallel policy success_on_one', 'p_one')]
 DECORATOR = [
     ('X_is_Y X success Y failure', 'dec_sf'),
@@ -49,7 +53,7 @@ def get_var(bl, local, env):
 
 def create_int_value(depth_left, bl, local, env):
     if depth_left < 0:
-        depth_left = random.randint(0, 5)
+        depth_left = random.randint(0, STATEMENT_DEPTH)
     if depth_left == 0:
         if random.choice([True, False]):
             return random.choice(CONSTANTS)
@@ -62,7 +66,7 @@ def create_int_value(depth_left, bl, local, env):
 
 def create_condition(depth_left, bl, local, env):
     if depth_left < 0:
-        depth_left = random.randint(0, 5)
+        depth_left = random.randint(0, STATEMENT_DEPTH)
     if depth_left == 0:
         return random.choice(['True', 'False'])
     left_depth = random.randint(0, depth_left - 1)
@@ -118,7 +122,7 @@ def create_action_node(name):
             if random.randint(0, 1) == 1:
                 condition_count = random.randint(0, 2)
                 local_init += write_variable_statement(local, False, condition_count, 3, True, [], False)
-    total_updates = random.randint(0, 8)
+    total_updates = random.randint(0, MAX_UPDATES)
     num_before = random.randint(0, total_updates)
     num_after = total_updates - num_before
     before_string = ''
@@ -129,9 +133,10 @@ def create_action_node(name):
         statement_type = random.randint(0, 2)
         if NUM_ENV == 0:
             statement_type = min(statement_type, 1)
+            # prevents us from trying to create write_environment without evironement variables
         if statement_type == 0:  # variable_statement
             num_left = num_left - 1
-            condition_count = random.randint(0, 3)
+            condition_count = random.randint(0, MAX_CONDITIONS)
             update_string = write_variable_statement(get_var(True, my_local_vars, False), False, condition_count, 3, True, my_local_vars, False)
         elif statement_type == 1:  # read_environment
             read_updates = random.randint(1, num_left)
@@ -142,7 +147,7 @@ def create_action_node(name):
                 + indent(4) + 'condition {' + create_condition(-1, True, my_local_vars, True) + '}' + os.linesep
                 + ''.join(
                     [
-                        write_variable_statement(get_var(True, my_local_vars, False), False, random.randint(0, 3), 4, True, my_local_vars, True)
+                        write_variable_statement(get_var(True, my_local_vars, False), False, random.randint(0, MAX_CONDITIONS), 4, True, my_local_vars, True)
                         for _ in range(read_updates)
                     ]
                 )
@@ -156,7 +161,7 @@ def create_action_node(name):
                 + indent(4) + name + '_write_' + ('before_' if before_mode else 'after_') + str(num_left) + os.linesep
                 + ''.join(
                     [
-                        write_variable_statement(get_var(False, [], True), random.choice([True, False]), random.randint(0, 3), 4, True, my_local_vars, True)
+                        write_variable_statement(get_var(False, [], True), random.choice([True, False]), random.randint(0, MAX_CONDITIONS), 4, True, my_local_vars, True)
                         for _ in range(write_updates)
                     ]
                 )
@@ -206,7 +211,7 @@ def indent(n):
 node_count = 0
 def create_structure(depth_left):
     if depth_left == -1:
-        depth_left = random.randint(0, 5)
+        depth_left = random.randint(0, 4)
     if depth_left == 0:
         return {'leaf': True, 'dec': False, 'name' : random.choice(['c1', 'c2', 'a1', 'a2', 'a3', 'a4'])}
     global node_count
@@ -215,7 +220,7 @@ def create_structure(depth_left):
         node_name = node_name + str(node_count)
         node_count = node_count + 1
         return {'leaf': False, 'dec': True, 'name' : node_name, 'type' : node_type, 'child' : create_structure(random.randint(0, depth_left - 1))}
-    num_child = random.randint(2, 5)
+    num_child = random.randint(2, 4)
     (node_type, node_name) = random.choice(ROOT)
     node_name = node_name + str(node_count)
     node_count = node_count + 1
@@ -254,7 +259,7 @@ for count in range(TO_GEN):
 
     NUM_VARS = random.randint(2, 8)
     NUM_BL = random.randint(1, NUM_VARS)
-    NUM_LOCAL = random.randint(0, NUM_VARS - NUM_BL)
+    NUM_LOCAL = random.randint(0, min(NUM_VARS - NUM_BL, 2))  # cap out at 2 local variables
     NUM_ENV = random.randint(0, (NUM_VARS - NUM_BL) - NUM_LOCAL)
     VARS_BL = list(map(lambda x : 'bl' + str(x + 1), range(NUM_BL)))
     VARS_LOCAL = list(map(lambda x : 'local' + str(x + 1), range(NUM_LOCAL)))
