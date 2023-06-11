@@ -3,7 +3,9 @@
 all_args=( "$@" )
 path_name="${all_args[0]}"
 file_name="${all_args[1]}"
+real_path="${path_name}/gen_files/${file_name}"
 
-python3 $path_name/gen_files/$file_name/"$file_name"_runner.py > $path_name/gen_files/$file_name/PYTHON_OUTPUT.txt
-../nuXmv -source command_simulate $path_name/gen_files/$file_name/"$file_name".smv > $path_name/gen_files/$file_name/NUXMV_OUTPUT.txt
-python3 compare.py $file_name $path_name/gen_files/$file_name/PYTHON_OUTPUT.txt $path_name/gen_files/$file_name/NUXMV_OUTPUT.txt >> $path_name/results/log.txt
+python3 "${real_path}/${file_name}_runner.py" > "${real_path}/OUTPUT_PYTHON.txt"
+../nuXmv -source command_simulate "${real_path}/${file_name}.smv" > "${real_path}/OUTPUT_NUXMV.txt"
+../nuXmv -source command_simulate "${real_path}/OPT_${file_name}.smv" > "${real_path}/OUTPUT_OPT_NUXMV.txt"
+python3 compare.py "${file_name}" "${real_path}/OUTPUT_PYTHON.txt" "${real_path}/OUTPUT_NUXMV.txt" "${real_path}/OUTPUT_OPT_NUXMV.txt" >> "${path_name}/results/log.txt"
