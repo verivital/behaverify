@@ -5,11 +5,6 @@ MODULE main
 		resume_from_here_in_subtree__biggest_fish_sequence := -3;
 		biggest_fish_sequence.active := TRUE;
 		--START OF BLACKBOARD DEFINITIONS
-		biggest_fish_stage_1 := 
-			case
-				!(bigger_fish.active) : biggest_fish_stage_0;
-				TRUE : min((1 + biggest_fish_stage_0), 199);
-			esac;
 		--END OF BLACKBOARD DEFINITIONS
 	VAR
 		node_names : define_nodes;
@@ -50,7 +45,10 @@ MODULE main
 			esac;
 		--END OF BLACKBOARD VARIABLES INITIALIZATION
 		--START OF BLACKBOARD VARIABLES TRANSITION
-		next(biggest_fish_stage_0) := biggest_fish_stage_1;
+		next(biggest_fish_stage_0) := 			case
+				!(bigger_fish.active) : biggest_fish_stage_0;
+				TRUE : min((1 + biggest_fish_stage_0), 199);
+			esac;
 		--END OF BLACKBOARD VARIABLES TRANSITION
 
 LTLSPEC F(G((biggest_fish_stage_0 = 10)));
@@ -83,6 +81,19 @@ MODULE define_nodes
 		decorator1 := 23;
 		biggest_fish_is1 := 24;
 		bigger_fish := 25;
+MODULE composite_sequence_without_memory_2(child_0, child_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				!(child_0.internal_status = success) : child_0.internal_status;
+				!(child_1.internal_status = success) : child_1.internal_status;
+				TRUE : success;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = success;
 MODULE composite_sequence_without_memory_5(child_0, child_1, child_2, child_3, child_4)
 	CONSTANTS
 		success, failure, running, invalid;
@@ -118,19 +129,6 @@ MODULE decorator_inverter(child_0)
 				!(active) : FALSE;
 				TRUE : TRUE;
 			esac;
-MODULE composite_sequence_without_memory_2(child_0, child_1)
-	CONSTANTS
-		success, failure, running, invalid;
-	DEFINE
-		status := active ? internal_status : invalid;
-		internal_status :=
-			case
-				!(child_0.internal_status = success) : child_0.internal_status;
-				!(child_1.internal_status = success) : child_1.internal_status;
-				TRUE : success;
-			esac;
-		child_0.active := active;
-		child_1.active := child_0.status = success;
 MODULE biggest_fish_is6_module(biggest_fish_stage_0)
 	CONSTANTS
 		success, failure, running, invalid;
