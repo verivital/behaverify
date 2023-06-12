@@ -26,7 +26,7 @@ MODULE main
 		--START OF BLACKBOARD VARIABLES TRANSITION
 		next(randomizer_stage_1) := 
 			case
-				next(!(success_failure_node.active)) : LINK_TO_PREVIOUS_FINAL_randomizer;
+				!(success_failure_node.active) : LINK_TO_PREVIOUS_FINAL_randomizer;
 				!(TRUE) : randomizer_stage_0;
 				TRUE : {TRUE, FALSE};
 			esac;

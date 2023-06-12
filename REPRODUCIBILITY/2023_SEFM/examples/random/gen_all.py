@@ -212,7 +212,7 @@ def write_tree(structure, indent_level):
 
 for count in range(TO_GEN):
     node_count = 0
-    with open(LOCATION + 't' + str(count) + '.tree', 'w') as f:
+    with open(LOCATION + '/' + 't' + str(count) + '.tree', 'w') as f:
         f.write('constants {' + os.linesep
                 + indent(1) + 'MIN_VAL = ' + str(MIN_VAL) + os.linesep
                 + indent(1) + 'MAX_VAL = ' + str(MAX_VAL) + os.linesep
