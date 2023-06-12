@@ -17,11 +17,6 @@ MODULE main
 		resume_from_here_in_subtree__decorator1 := -3;
 		biggest_fish_sequence.active := TRUE;
 		--START OF BLACKBOARD DEFINITIONS
-		biggest_fish_stage_1 := 
-			case
-				!(bigger_fish.active) : biggest_fish_stage_0;
-				TRUE : min((1 + biggest_fish_stage_0), 199);
-			esac;
 		--END OF BLACKBOARD DEFINITIONS
 	VAR
 		node_names : define_nodes;
@@ -62,7 +57,10 @@ MODULE main
 			esac;
 		--END OF BLACKBOARD VARIABLES INITIALIZATION
 		--START OF BLACKBOARD VARIABLES TRANSITION
-		next(biggest_fish_stage_0) := biggest_fish_stage_1;
+		next(biggest_fish_stage_0) := 			case
+				!(bigger_fish.active) : biggest_fish_stage_0;
+				TRUE : min((1 + biggest_fish_stage_0), 199);
+			esac;
 		--END OF BLACKBOARD VARIABLES TRANSITION
 
 LTLSPEC F(G((biggest_fish_stage_0 = 10)));
@@ -95,6 +93,21 @@ MODULE define_nodes
 		decorator1 := 23;
 		biggest_fish_is1 := 24;
 		bigger_fish := 25;
+MODULE composite_parallel_success_on_one_without_memory_2(child_0, child_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				(child_0.internal_status = failure) : failure;
+				(child_1.internal_status = failure) : failure;
+				!(child_0.internal_status = running) : child_0.internal_status;
+				!(child_1.internal_status = running) : child_1.internal_status;
+				TRUE : running;
+			esac;
+		child_0.active := active;
+		child_1.active := active;
 MODULE composite_sequence_without_memory_2(child_0, child_1)
 	CONSTANTS
 		success, failure, running, invalid;
@@ -108,6 +121,21 @@ MODULE composite_sequence_without_memory_2(child_0, child_1)
 			esac;
 		child_0.active := active;
 		child_1.active := child_0.status = success;
+MODULE decorator_X_is_Y(child_0, incoming_status, outgoing_status)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				child_0.internal_status = incoming_status : outgoing_status;
+				TRUE : child_0.internal_status;
+			esac;
+		child_0.active :=
+			case
+				!(active) : FALSE;
+				TRUE : TRUE;
+			esac;
 MODULE composite_parallel_success_on_one_without_memory_5(child_0, child_1, child_2, child_3, child_4)
 	CONSTANTS
 		success, failure, running, invalid;
@@ -132,36 +160,6 @@ MODULE composite_parallel_success_on_one_without_memory_5(child_0, child_1, chil
 		child_2.active := active;
 		child_3.active := active;
 		child_4.active := active;
-MODULE composite_parallel_success_on_one_without_memory_2(child_0, child_1)
-	CONSTANTS
-		success, failure, running, invalid;
-	DEFINE
-		status := active ? internal_status : invalid;
-		internal_status :=
-			case
-				(child_0.internal_status = failure) : failure;
-				(child_1.internal_status = failure) : failure;
-				!(child_0.internal_status = running) : child_0.internal_status;
-				!(child_1.internal_status = running) : child_1.internal_status;
-				TRUE : running;
-			esac;
-		child_0.active := active;
-		child_1.active := active;
-MODULE decorator_X_is_Y(child_0, incoming_status, outgoing_status)
-	CONSTANTS
-		success, failure, running, invalid;
-	DEFINE
-		status := active ? internal_status : invalid;
-		internal_status :=
-			case
-				child_0.internal_status = incoming_status : outgoing_status;
-				TRUE : child_0.internal_status;
-			esac;
-		child_0.active :=
-			case
-				!(active) : FALSE;
-				TRUE : TRUE;
-			esac;
 MODULE biggest_fish_is6_module(biggest_fish_stage_0)
 	CONSTANTS
 		success, failure, running, invalid;

@@ -199,12 +199,12 @@ def create_checklist_sequence(x):
         )
 
 
-def write_files(location):
-    for x in range(1, 50 + 1):
-        with open(location + 'checklist_parallel_' + str(x) + '.tree', 'w') as f:
+def write_files(location, min_val, max_val, step_size):
+    for x in range(min_val, max_val + 1, step_size):
+        with open(location + '/' + 'checklist_parallel_' + str(x) + '.tree', 'w') as f:
             f.write(create_checklist_parallel(x))
-        with open(location + '/checklist_sequence_' + str(x) + '.tree', 'w') as f:
+        with open(location + '/' + 'checklist_sequence_' + str(x) + '.tree', 'w') as f:
             f.write(create_checklist_sequence(x))
 
 
-write_files(sys.argv[1])
+write_files(sys.argv[1], int(sys.argv[2]), int(sys.argv[3]), int(sys.argv[4]))
