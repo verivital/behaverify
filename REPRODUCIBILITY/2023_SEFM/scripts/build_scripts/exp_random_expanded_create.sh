@@ -20,5 +20,6 @@ python3 $path_name/gen_all.py $path_name/gen_files $to_gen $min_val $max_val
 
 for (( val=0; val<$to_gen; val++ )); do
     echo $val
-    ./generate_comparison.sh $path_name "t$val"
+    ./generate_comparison.sh $path_name "t$val" 0
+    # 0 means don't use haskell
 done

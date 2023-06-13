@@ -77,6 +77,16 @@ def format_function_implies(_, code, init_mode):
     )
 
 
+def format_function_division(_, code, init_mode):
+    return (
+        '(int('
+        + '(' + format_code(code.function_call.values[0], init_mode) + ')'
+        + '/ '
+        + '(' + format_code(code.function_call.values[1], init_mode) + ')'
+        + '))'
+    )
+
+
 def format_function_xnor(_, code, init_mode):
     return (
         '('
@@ -127,7 +137,8 @@ FUNCTION_FORMAT = {
     'addition' : ('+', format_function_between),
     'subtraction' : ('-', format_function_between),
     'multiplication' : ('*', format_function_between),
-    'division' : ('//', format_function_between),
+    # 'division' : ('//', format_function_between),  # this rounds to negative infinity, we want rounds to 0.
+    'division' : ('division', format_function_division),
     'mod' : ('%', format_function_between),
     'count' : ('count', format_function_count),
     'index' : ('index', format_function_index)
