@@ -4,9 +4,16 @@ experiment_name = sys.argv[1]
 python_file = sys.argv[2]
 smv_file = sys.argv[3]
 opt_smv_file = sys.argv[4]
+use_haskell = len(sys.argv) >= 6
+haskell_file = None
+if use_haskell:
+    haskell_file = sys.argv[5]
 
 nodes = set()
 variables = set()
+
+def normalize_var_name(cur_var_name):
+    return cur_var_name.replace('_', '').upper().replace('BOARD', '').replace('ENV', '')
 
 python_run = []
 with open(python_file, 'r', encoding = 'utf-8') as f:
@@ -25,6 +32,7 @@ with open(python_file, 'r', encoding = 'utf-8') as f:
         elif ':' in line:
             var_name = line.split(':')[0]
             var_name = var_name.strip()
+            var_name = normalize_var_name(var_name)
             var_val = line.split(':')[1]
             var_val = var_val.strip()
             python_run[-1][var_name] = var_val
@@ -51,6 +59,7 @@ with open(smv_file, 'r', encoding = 'utf-8') as f:
                 var_name_stage = var_name_stage.strip()
                 var_name = var_name_stage.split('_stage_')[0]
                 var_name = var_name.strip()
+                var_name = normalize_var_name(var_name)
                 var_stage = var_name_stage.split('_stage_')[1]
                 var_stage = var_stage.strip()
                 var_stage = int(var_stage)
@@ -89,6 +98,7 @@ with open(opt_smv_file, 'r', encoding = 'utf-8') as f:
                 var_name_stage = var_name_stage.strip()
                 var_name = var_name_stage.split('_stage_')[0]
                 var_name = var_name.strip()
+                var_name = normalize_var_name(var_name)
                 var_stage = var_name_stage.split('_stage_')[1]
                 var_stage = var_stage.strip()
                 var_stage = int(var_stage)
@@ -105,6 +115,27 @@ with open(opt_smv_file, 'r', encoding = 'utf-8') as f:
                     opt_nuxmv_run[-1][var_name] = var_val
 opt_nuxmv_max_stage = max_stage
 
+if use_haskell:
+    haskell_run = []
+    with open(haskell_file, 'r', encoding = 'utf-8') as f:
+        ignore_initial_state = True
+        for line in f:
+            if ignore_initial_state:
+                ignore_initial_state = False
+                continue
+            line.strip()
+            haskell_run.append({})
+            line = line.replace('(Board = {', '').replace('Env = {', ' ').replace('})', '').replace('}', '')
+            for var_and_val in line.split(','):
+                var_and_val.strip()
+                if ':' not in var_and_val:
+                    continue
+                (var_name, var_val) = var_and_val.split(':')
+                var_name = var_name.strip()
+                var_name = normalize_var_name(var_name)
+                var_val = var_val.strip()
+                haskell_run[-1][var_name] = var_val
+
 
 print('-----------------------------' + experiment_name + '-----------------------------')
 
@@ -112,6 +143,9 @@ for tick in range(len(python_run)):
     python_tick = python_run[tick]
     nuxmv_tick = nuxmv_run[tick]
     opt_nuxmv_tick = opt_nuxmv_run[tick]
+    haskell_tick = None
+    if use_haskell:
+        haskell_tick = haskell_run[tick]
     for item in python_tick:
         # compare python tick to nuxmv tick
         if item not in nuxmv_tick:
@@ -122,6 +156,16 @@ for tick in range(len(python_run)):
             # if something doesn't match, that's bad
             print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' was ' + python_tick[item] + ' in python_tick but ' + nuxmv_tick[item] + ' in nuxmv_tick')
             sys.exit()
+        if use_haskell:
+            if item in variables and item not in haskell_tick:
+                # if something is missing, that's bad
+                print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' with value ' + python_tick[item] + ' was in python_tick but not in haskell_tick')
+                sys.exit()
+            elif item in variables and haskell_tick[item] != python_tick[item]:
+                # if something doesn't match, that's bad
+                print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' was ' + python_tick[item] + ' in python_tick but ' + haskell_tick[item] + ' in haskell_tick')
+                sys.exit()
+            
     for item in nuxmv_tick:
         # compare nuxmv tick to python tick, then nuxmv tick to nuxmv opt tick
         if item not in python_tick:
@@ -176,5 +220,15 @@ for tick in range(len(python_run)):
             elif opt_nuxmv_max_stage[item] >= nuxmv_max_stage[item]:
                 # if a variable doesn't match and we DIDN'T prune the last stage, that's bad.
                 print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' was ' + opt_nuxmv_tick[item] + ' in opt_nuxmv_tick but ' + nuxmv_tick[item] + ' in nuxmv_tick')
+                sys.exit()
+    if use_haskell:
+        for item in haskell_tick:
+            if item not in python_tick:
+                # if something is missing, that's bad
+                print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' with value ' + haskell_tick[item] + ' was in haskell_tick but not in python_tick')
+                sys.exit()
+            elif haskell_tick[item] != python_tick[item]:
+                # if something doesn't match, that's bad
+                print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' was ' + python_tick[item] + ' in python_tick but ' + haskell_tick[item] + ' in haskell_tick')
                 sys.exit()
     # we don't comapre opt_nuxmv to python, it's too complicated and requires too many strange things. besisdes, by transitivity, it should be fine.

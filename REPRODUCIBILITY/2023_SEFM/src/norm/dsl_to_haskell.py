@@ -7,6 +7,50 @@ import itertools
 from behaverify_common import haskell_indent as indent, create_node_name
 import serene_functions
 
+from check_model import (validate_model
+                         # , constant_type
+                         # , variable_type
+                         , is_local
+                         , is_env
+                         , is_blackboard
+                         # , variable_scope
+                         , is_array
+                         , build_range_func)
+
+
+def variable_type(variable):
+    return (
+        (
+            'Int'
+            if variable.domain == 'INT'
+            else
+            (
+                'String'
+                if variable.domain == 'ENUM'
+                else
+                'Bool'
+            )
+        )
+        if variable.model_as == 'DEFINE'
+        else
+        (
+            'Bool'
+            if variable.domain.boolean is not None
+            else
+            (
+                (
+                    'String'
+                    if isinstance(handle_constant(variable.domain.enums[0], False), str)
+                    else
+                    'Int'
+                )
+                if variable.domain.min_val is None
+                else
+                'Int'
+            )
+        )
+    )
+
 
 def pascal_case(variable_name):
     return ''.join(
@@ -34,32 +78,71 @@ def camel_case(variable_name):
     )
 
 
-def format_function_before(function_name, code, global_init = False):
+def format_function_before(function_name, code, init_mode):
     return (
         '('
         + function_name + ' '
-        + ' '.join([format_code(value, global_init) for value in code.function_call.values])
+        + ' '.join([format_code(value, init_mode) for value in code.function_call.values])
         + ')'
         )
 
 
-def format_function_between(function_name, code, global_init = False):
+def format_function_between(function_name, code, init_mode):
     return (
         '('
-        + (' ' + function_name + ' ').join([format_code(value, global_init) for value in code.function_call.values])
+        + (' ' + function_name + ' ').join([format_code(value, init_mode) for value in code.function_call.values])
         + ')'
         )
 
 
-def format_variable(variable, is_local, is_env, global_init = False):
+def format_function_index(_, code, init_mode):
+    raise Exception('Array not implemented yet')
+
+
+# todo: implement SereneOperations
+FUNCTION_FORMAT = {
+    'abs' : ('abs', format_function_before),
+    'max' : ('max', format_function_before),
+    'min' : ('min', format_function_before),
+    'sin' : ('sin', format_function_before),
+    'cos' : ('cos', format_function_before),
+    'tan' : ('tan', format_function_before),
+    'ln' : ('log', format_function_before),
+    'not' : ('not', format_function_before),
+    'and' : ('&&', format_function_between),
+    'or' : ('||', format_function_between),
+    'xor' : ('sereneXOR', format_function_before),
+    'xnor' : ('sereneXNOR', format_function_before),
+    'implies' : ('sereneIMPLIES', format_function_before),
+    'equivalent' : ('==', format_function_between),
+    'equal' : ('==', format_function_between),
+    'not_equal' : ('/=', format_function_between),
+    'less_than' : ('<', format_function_between),
+    'greater_than' : ('>', format_function_between),
+    'less_than_or_equal' : ('<=', format_function_between),
+    'greater_than_or_equal' : ('>=', format_function_between),
+    'negative' : ('-', format_function_before),
+    'addition' : ('+', format_function_between),
+    'subtraction' : ('-', format_function_between),
+    'multiplication' : ('*', format_function_between),
+    'division' : ('quot', format_function_before),  # quot rounds to 0, which is what nuxmv does.
+    'mod' : ('%', format_function_between),
+    'count' : ('sereneCOUNT', format_function_before),  # probably not usable now
+    'index' : ('index', format_function_index)  # definitely not usable now
+}
+
+
+def format_variable(variable, init_mode):
+    if debug:
+        print('format variable: ' + str(init_mode))
     return (
         ('(localBoard' + pascal_case(variable.name) + ' nodeLocation blackboard)')
-        if is_local
+        if is_local(variable)
         else
         (
             (
                 ('newVal' + pascal_case(variable.name))
-                if global_init == 'env'
+                if init_mode == 'env'
                 else
                 (
                     ('(env' + pascal_case(variable.name) + ' blackboard environment)')
@@ -68,11 +151,11 @@ def format_variable(variable, is_local, is_env, global_init = False):
                     ('(env' + pascal_case(variable.name) + ' environment)')
                 )
             )
-            if is_env
+            if is_env(variable)
             else
             (
                 ('newVal' + pascal_case(variable.name))
-                if global_init == 'board'
+                if init_mode == 'board'
                 else
                 ('(board' + pascal_case(variable.name) + ' blackboard)')
             )
@@ -80,13 +163,15 @@ def format_variable(variable, is_local, is_env, global_init = False):
     )
 
 
-def format_code(code, global_init = False):
+def format_code(code, init_mode):
+    if debug:
+        print('code: ' + str(init_mode))
     return (
         (
-            handle_constant(code.constant) if code.constant is not None else (
-                (format_variable(code.variable, code.mode == 'local', code.mode == 'env', global_init)) if code.variable is not None else (
-                    ('(' + format_code(code.code_statement, global_init) + ')') if code.code_statement is not None else (
-                        FUNCTION_FORMAT[code.function_call.function_name][1](FUNCTION_FORMAT[code.function_call.function_name][0], code, global_init)
+            handle_constant(code.constant, True) if code.constant is not None else (
+                format_variable(code.variable, init_mode) if code.variable is not None else (
+                    ('(' + format_code(code.code_statement, init_mode) + ')') if code.code_statement is not None else (
+                        FUNCTION_FORMAT[code.function_call.function_name][1](FUNCTION_FORMAT[code.function_call.function_name][0], code, init_mode)
                     )
                 )
             )
@@ -94,7 +179,7 @@ def format_code(code, global_init = False):
     )
 
 
-def handle_constant(constant, str_conversion = True):
+def handle_constant(constant, str_conversion):
     global constants
     new_constant = (constants[constant] if constant in constants else constant)
     return (
@@ -120,51 +205,39 @@ def handle_constant(constant, str_conversion = True):
     )
 
 
-def build_range_func(code):
-    return (
-        (lambda x : handle_constant(code.constant, False)) if code.constant is not None else (
-            (lambda x : x) if code.value else (
-                build_range_func(code.code_statement) if code.code_statement is not None else (
-                    (lambda x : RANGE_FUNCTION[code.function_call.function_name]([build_range_func(value) for value in code.function_call.values], x))
-                )
-            )
-        )
-    )
-
-
-def handle_variable_statement(statement, indent_level = 2, board_env_string = 'boardEnv'):
-    variable_name = statement.variable.name
+def handle_variable_statement(assign, assign_var, indent_level, init_mode, board_env_string):
+    variable_name = assign_var.name
     update_env_board = (
         'updateEnv'
-        if statement.mode == 'env'
+        if is_env(assign_var)
         else
         (
             'localUpdateBoard'
-            if statement.mode == 'local'
+            if is_local(assign_var)
             else
             'updateBoard'
         )
     )
     update_generator = (
         'updateEnvGenerator'
-        if statement.mode == 'env'
+        if is_env(assign_var)
         else
         'updateBoardGenerator'
     )
     env_board = (
         ' environment '
-        if statement.mode == 'env'
+        if is_env(assign_var)
         else
         (
             ' nodeLocation blackboard '
-            if statement.mode == 'local'
+            if is_local(assign_var)
             else
             ' blackboard '
         )
     )
     env_board_generator = (
         'sereneEnvGenerator'
-        if statement.mode == 'env'
+        if is_env(assign_var)
         else
         (
             'sereneBoardGenerator'
@@ -178,6 +251,8 @@ def handle_variable_statement(statement, indent_level = 2, board_env_string = 'b
         )
 
     def create_random_func(function_name, values, range_mode, var_type, cond_func, random_range, indent_level):
+        # figure out where case_result is coming from.
+        # i think it's defined below.
         if range_mode:
             return (
                 indent(indent_level + 2) + function_name + ' :: Int -> ' + var_type + os.linesep
@@ -193,7 +268,7 @@ def handle_variable_statement(statement, indent_level = 2, board_env_string = 'b
                 indent(indent_level + 2) + function_name + ' :: Int -> ' + var_type + os.linesep
                 + ''.join(
                     [
-                        (indent(indent_level + 2) + function_name + ' ' + (str(index) if index < random_range else '_') + ' = ' + format_code(value) + os.linesep)
+                        (indent(indent_level + 2) + function_name + ' ' + (str(index) if index < random_range else '_') + ' = ' + format_code(value, init_mode) + os.linesep)
                         for index, value in enumerate(values)
                     ]
                 )
@@ -201,24 +276,77 @@ def handle_variable_statement(statement, indent_level = 2, board_env_string = 'b
         else:
             return ''
 
-    default = statement.default_result
-    if len(statement.case_results) == 0:
-        if (not default.range_mode) and len(default.values) == 1:
-            return (
-                ' = '
-                + ('(blackboard, ' if statement.mode == 'env' else '(')
-                + update_env_board + pascal_case(variable_name) + env_board + format_code(default.values[0])
-                + (')' if statement.mode == 'env' else ', environment)')
-                + os.linesep
-                + post_script(indent_level)
+    if is_array(assign_var):
+        print('ARRAY VARIABLES NOT YET SUPPORTED')
+        raise Exception('Array not supported')
+
+    else:
+        case_result = None
+        default = assign.default_result
+        if len(assign.case_results) == 0:
+            if (not default.range_mode) and len(default.values) == 1:
+                return (
+                    ' = '
+                    + ('(blackboard, ' if is_env(assign_var) else '(')
+                    + update_env_board + pascal_case(variable_name) + env_board + format_code(default.values[0], init_mode)
+                    + (')' if is_env(assign_var) else ', environment)')
+                    + os.linesep
+                    + post_script(indent_level)
+                )
+        var_type = variable_type(assign_var)
+        # var_type = ('Bool' if assign.variable.domain.boolean is not None else ('String' if assign.variable.domain.min_val is None else 'Int'))
+        return_string = ('' if len(assign.case_results) == 0 else os.linesep)
+        where_string = post_script(indent_level)
+        unique_id = 0
+        for case_result in assign.case_results:
+            return_string += (
+                indent(indent_level + 1) + '| ' + format_code(case_result.condition, init_mode) + ' = '
             )
-    var_type = ('Bool' if statement.variable.domain.boolean is not None else ('String' if statement.variable.domain.min_val is None else 'Int'))
-    return_string = ('' if len(statement.case_results) == 0 else os.linesep)
-    where_string = post_script(indent_level)
-    unique_id = 0
-    for case_result in statement.case_results:
+            if (not case_result.range_mode) and (len(case_result.values) == 1):
+                cond_func = None
+                random_range = 0
+                function_name = ''
+            elif case_result.range_mode:
+                cond_func = build_range_func(case_result.values[2])
+                random_range = len(list(filter(cond_func, range(handle_constant(case_result.values[0], False), handle_constant(case_result.values[1], False) + 1)))) - 1
+                function_name = 'privateRandom' + str(unique_id)
+                unique_id = unique_id + 1
+            else:
+                cond_func = None
+                random_range = len(case_result.values) - 1
+                function_name = 'privateRandom' + str(unique_id)
+                unique_id = unique_id + 1
+
+            return_string += (
+                ('(blackboard, ' if is_env(assign_var) else '(')
+                + (
+                    (
+                        update_env_board + pascal_case(variable_name) + env_board + format_code(case_result.values[0], init_mode)
+                    )
+                    if (not case_result.range_mode) and (len(case_result.values) == 1)
+                    else
+                    (
+                        update_generator + ' ('
+                        + update_env_board + pascal_case(variable_name) + env_board
+                        + '(' + function_name + ' (fst (getRandomInt (' + env_board_generator + ' blackboard) ' + str(random_range)
+                        + ')))) (snd (getRandomInt (' + env_board_generator + ' blackboard) ' + str(random_range) + '))'
+                    )
+                )
+                + (')' if is_env(assign_var) else ', environment)')
+                + os.linesep
+            )
+            where_string += create_random_func(function_name, case_result.values, case_result.range_mode, var_type, cond_func, random_range, indent_level)
+        # we are now in the default case, but will simply rename case_result.
+        case_result = default
         return_string += (
-            indent(indent_level + 1) + '| ' + format_code(case_result.condition) + ' = '
+            (
+                ' = '
+            )
+            if len(assign.case_results) == 0
+            else
+            (
+                indent(indent_level + 1) + '| otherwise = '
+            )
         )
         if (not case_result.range_mode) and (len(case_result.values) == 1):
             cond_func = None
@@ -236,10 +364,10 @@ def handle_variable_statement(statement, indent_level = 2, board_env_string = 'b
             unique_id = unique_id + 1
 
         return_string += (
-            ('(blackboard, ' if statement.mode == 'env' else '(')
+            ('(blackboard, ' if is_env(assign_var) else '(')
             + (
                 (
-                    update_env_board + pascal_case(variable_name) + env_board + format_code(case_result.values[0])
+                    update_env_board + pascal_case(variable_name) + env_board + format_code(case_result.values[0], init_mode)
                 )
                 if (not case_result.range_mode) and (len(case_result.values) == 1)
                 else
@@ -250,101 +378,59 @@ def handle_variable_statement(statement, indent_level = 2, board_env_string = 'b
                     + ')))) (snd (getRandomInt (' + env_board_generator + ' blackboard) ' + str(random_range) + '))'
                 )
             )
-            + (')' if statement.mode == 'env' else ', environment)')
+            + (')' if is_env(assign_var) else ', environment)')
             + os.linesep
         )
         where_string += create_random_func(function_name, case_result.values, case_result.range_mode, var_type, cond_func, random_range, indent_level)
-    return_string += (
-        (
-            ' = '
-        )
-        if len(statement.case_results) == 0
-        else
-        (
-            indent(indent_level + 1) + '| otherwise = '
-        )
-    )
-    if (not default.range_mode) and (len(default.values) == 1):
-        cond_func = None
-        random_range = 0
-        function_name = ''
-    elif default.range_mode:
-        cond_func = build_range_func(default.values[2])
-        random_range = len(list(filter(cond_func, range(handle_constant(default.values[0], False), handle_constant(default.values[1], False) + 1)))) - 1
-        function_name = 'privateRandom' + str(unique_id)
-        unique_id = unique_id + 1
-    else:
-        cond_func = None
-        random_range = len(default.values) - 1
-        function_name = 'privateRandom' + str(unique_id)
-        unique_id = unique_id + 1
+        return return_string + where_string
 
-    return_string += (
-        ('(blackboard, ' if statement.mode == 'env' else '(')
-        + (
-            (
-                update_env_board + pascal_case(variable_name) + env_board + format_code(default.values[0])
-            )
-            if (not default.range_mode) and (len(default.values) == 1)
+
+def handle_read_statement(statement, indent_level, init_mode):
+    cond_var = statement.condition_variable
+    inject_string = ''
+    shift = (0 if cond_var is None else 1)
+    inject_string = (
+        (
+            (indent(indent_level + 2) + 'privateTempBoardEnv0 = boardEnv' + os.linesep)
+            if not statement.non_determinism
             else
             (
-                update_generator + ' ('
-                + update_env_board + pascal_case(variable_name) + env_board
-                + '(' + function_name + ' (fst (getRandomInt (' + env_board_generator + ' blackboard) ' + str(random_range)
-                + ')))) (snd (getRandomInt (' + env_board_generator + ' blackboard) ' + str(random_range) + '))'
+                indent(indent_level + 2) + '(conditionRandomInt, conditionRandomGenerator) = getRandomInt (sereneEnvGenerator (snd boardEnv)) 1' + os.linesep
+                + indent(indent_level + 2) + 'privateTempBoardEnv0 = (fst boardEnv, updateEnvGenerator (snd boardEnv) conditionRandomGenerator)' + os.linesep
             )
         )
-        + (')' if statement.mode == 'env' else ', environment)')
-        + os.linesep
-    )
-    where_string += create_random_func(function_name, default.values, default.range_mode, var_type, cond_func, random_range, indent_level)
-    return return_string + where_string
-
-
-def create_variable_macro(statement, function_name, variable_name, indent_level = 2, global_init = False):
-    return (
-        os.linesep
-        + os.linesep
-        + indent(indent_level) + 'def ' + function_name + '():' + os.linesep
-        + handle_variable_statement(statement, indent_level + 1, global_init, function_name + '_return_val')
-        + indent(indent_level + 1) + 'return ' + function_name + '_return_val' + os.linesep
-        + os.linesep
-        + indent(indent_level) + variable_name.replace('(', '').replace(')', '') + ' = ' + function_name + os.linesep
-    )
-
-
-def handle_read_statement(statement, indent_level = 2):
-    # todo: obviously not done.
-    condition_code = (
-        format_code(statement.condition)
-        if statement.condition_variable is None
-        else
-        'conditionRandomInt == 1'
-    )
-    inject_string = (
-        (indent(indent_level + 2) + 'privateTempBoardEnv0 = boardEnv' + os.linesep)
-        if statement.condition_variable is None
-        else
+        +
         (
-            indent(indent_level + 2) + '(conditionRandomInt, conditionRandomGenerator) = getRandomInt (sereneBoardGenerator (fst boardEnv)) 1' + os.linesep
-            + indent(indent_level + 2) + 'newBoardEnv = updateBoardGenerator (fst boardEnv) conditionRandomGenerator' + os.linesep
-            + indent(indent_level + 2) + 'privateTempBoardEnv0 = newBoardEnv' + os.linesep
+            ''
+            if cond_var is None
+            else
+            (
+                indent(indent_level + 2) + 'privateTempBoardEnv1 = ('
+                + ('localUpdateBoard' if is_local(cond_var) else '') + pascal_case(cond_var.name)
+                + ' (fst privateTempBoardEnv0) True, snd privateTempBoardEnv0)' + os.linesep
+            )
         )
     )
     return (
         [
             (
                 os.linesep
-                + indent(indent_level + 1) + '| ' + condition_code + ' = privateBoardEnv' + os.linesep
-                + indent(indent_level + 1) + '| otherwise = boardEnv' + os.linesep  # this needs to be changed to handle non-determinism
+                + indent(indent_level + 1) + '| not (' + format_code(statement.condition, init_mode) + ') = boardEnv' + os.linesep
+                + (
+                    (indent(indent_level + 1) + '| nonDeterministicInt == 0 = privateTempBoardEnv0' + os.linesep)
+                    if statement.non_determinism
+                    else
+                    ''
+                )
+                + indent(indent_level + 1) + '| otherwise = privateBoardEnv' + os.linesep  # this needs to be changed to handle non-determinism
                 + indent(indent_level + 1) + 'where' + os.linesep
-                + indent(indent_level + 2) + 'privateBoardEnv = privateTempBoardEnv' + str(len(statement.variable_statements)) + os.linesep
                 + inject_string
+                + indent(indent_level + 2) + 'privateBoardEnv = privateTempBoardEnv' + str(len(statement.variable_statements) + shift) + os.linesep
                 + ''.join(
                     [
                         (
-                            indent(indent_level + 2) + 'privateTempBoardEnv' + str(x + 1)  # no os.linesep here intentionally, handled by varirable statement
-                            + handle_variable_statement(variable_statement, indent_level + 2, 'privateTempBoardEnv' + str(x))
+                            indent(indent_level + 2) + 'privateTempBoardEnv' + str(x + shift + 1)  # no os.linesep here intentionally, handled by varirable statement
+                            + handle_variable_statement(variable_statement.assign, variable_statement.variable, indent_level + 2, init_mode, 'privateTempBoardEnv' + str(x + shift))
                         )
                         for x, variable_statement in enumerate(statement.variable_statements)
                     ]
@@ -355,17 +441,17 @@ def handle_read_statement(statement, indent_level = 2):
     )
 
 
-def handle_write_statement(statement):
+def handle_write_statement(statement, indent_level, init_mode):
     return (
         [
             (
-                handle_variable_statement(update)
+                handle_variable_statement(update.assign, update.variable, indent_level, init_mode, 'boardEnv')
             )
             for update in statement.update if update.instant
         ],
         [
             (
-                handle_variable_statement(update)
+                handle_variable_statement(update.assign, update.variable, indent_level, init_mode, 'boardEnv')
             )
             for update in statement.update if not update.instant
         ]
@@ -389,7 +475,7 @@ def handle_return_statement(statement, indent_level = 2):
                 + ''.join(
                     [
                         (
-                            indent(indent_level + 1) + '| ' + format_code(case_result.condition) + ' = ' + format_returns(case_result) + os.linesep
+                            indent(indent_level + 1) + '| ' + format_code(case_result.condition, None) + ' = ' + format_returns(case_result) + os.linesep
                         )
                         for case_result in statement.case_results
                     ]
@@ -405,7 +491,7 @@ def handle_return_statement(statement, indent_level = 2):
         return (indent(2) + variable_name + ' = ' + format_returns(statement.default_result) + os.linesep)
     return ((''.join(
         [
-            (indent(2) + 'elif ' + format_code(case_result.condition) + ':' + os.linesep
+            (indent(2) + 'elif ' + format_code(case_result.condition, None) + ':' + os.linesep
              + (indent(3) + variable_name + ' = ' + format_returns(case_result) + os.linesep)
              ) for case_result in statement.case_results])).replace('elif', 'if', 1)
             + (indent(2) + 'else:' + os.linesep
@@ -413,11 +499,11 @@ def handle_return_statement(statement, indent_level = 2):
             )
 
 
-def handle_statement(statement):
+def handle_statement(statement, indent_level, init_mode):
     return (
-        ([handle_variable_statement(statement.variable_statement)], []) if statement.variable_statement is not None else (
-            handle_read_statement(statement.read_statement) if statement.read_statement is not None else (
-                handle_write_statement(statement.write_statement)
+        ([handle_variable_statement(statement.variable_statement.assign, statement.variable_statement.variable, indent_level, init_mode, 'boardEnv')], []) if statement.variable_statement is not None else (
+            handle_read_statement(statement.read_statement, indent_level, init_mode) if statement.read_statement is not None else (
+                handle_write_statement(statement.write_statement, indent_level, init_mode)
                 )
             )
         )
@@ -431,7 +517,7 @@ def check_function(node):
     return (
         camel_case(node.name) + ' :: [BTreeNode] -> TreeLocation -> TrueMemoryStatus -> [TrueMemoryStorage] -> PartialMemoryStatus -> [PartialMemoryStorage] -> BTreeBlackboard -> BTreeEnvironment -> FutureChanges -> BTreeNodeOutput' + os.linesep
         + camel_case(node.name) + ' _ nodeLocation _ _ _ _ blackboard environment futureChanges' + os.linesep
-        + indent(1) + '| ' + format_code(node.condition) + ' = (Success, [], [], blackboard, environment, futureChanges)' + os.linesep
+        + indent(1) + '| ' + format_code(node.condition, None) + ' = (Success, [], [], blackboard, environment, futureChanges)' + os.linesep
         + indent(1) + '| otherwise = (Failure, [], [], blackboard, environment, futureChanges)'
     )
 
@@ -443,11 +529,11 @@ def action_function(node):
     delay_updates = []
     post_updates = []
     for index in range(pre):
-        (new_pre, new_delay) = handle_statement(node.pre_update_statements[index])
+        (new_pre, new_delay) = handle_statement(node.pre_update_statements[index], 2, None)
         pre_updates += new_pre
         delay_updates += new_delay
     for index in range(post):
-        (new_post, new_delay) = handle_statement(node.post_update_statements[index])
+        (new_post, new_delay) = handle_statement(node.post_update_statements[index], 2, None)
         post_updates += new_post
         delay_updates += new_delay
     # print(pre_updates)
@@ -526,7 +612,15 @@ def build_action_node(node):
             )
 
 
-def create_runner(model, name):
+def create_runner(model, name, max_iter):
+    current_node = model.root
+    while (not hasattr(current_node, 'name') or hasattr(current_node, 'sub_root')):
+        if hasattr(current_node, 'leaf'):
+            current_node = current_node.leaf
+        else:
+            # print(dir(current_node))
+            current_node = current_node.sub_root
+    root_name = current_node.name
     return (
         'module Main where' + os.linesep
         + 'import ' + pascal_case(name) + os.linesep
@@ -541,7 +635,7 @@ def create_runner(model, name):
         + indent(1) + 'where' + os.linesep
         + indent(2) + 'initBoard = initialBlackboard seed1' + os.linesep
         + indent(2) + 'initEnv = initialEnvironment seed2 initBoard' + os.linesep
-        + indent(2) + 'treeRoot = bTreeNode' + pascal_case(model.root.name) + os.linesep
+        + indent(2) + 'treeRoot = bTreeNode' + pascal_case(root_name) + os.linesep
         + indent(2) + 'executionChain :: Int -> TrueMemoryStorage -> PartialMemoryStorage -> BTreeBlackboard -> BTreeEnvironment -> [(BTreeBlackboard, BTreeEnvironment)]' + os.linesep
         + indent(2) + 'executionChain count memory partial blackboard environment' + os.linesep
         + indent(3) + '| count >= maxIteration = [(blackboard, environment)]' + os.linesep
@@ -556,7 +650,7 @@ def create_runner(model, name):
         + 'main =' + os.linesep
         + indent(1) + 'do {' + os.linesep
         + indent(2) + 'args <- getArgs' + os.linesep
-        + indent(2) + '; let (seed1, seed2) = seedFromArgs args in mapM_ print (executeFromSeeds seed1 seed2 10)' + os.linesep
+        + indent(2) + '; let (seed1, seed2) = seedFromArgs args in mapM_ print (executeFromSeeds seed1 seed2 ' + str(int(max_iter) + 1) + ')' + os.linesep
         + indent(1) + '}' + os.linesep
         + indent(1) + 'where' + os.linesep
         + indent(2) + 'seedFromArgs :: [String] -> (Int, Int)' + os.linesep
@@ -689,10 +783,12 @@ def create_tree(model, name):
     )
 
 
-def handle_initial_value(statement, variable_name, var_type, indent_level, mode):
-    if len(statement.case_results) == 0:
-        if (not statement.default_result.range_mode) and len(statement.default_result.values) == 1:
-            return (' = (' + format_code(statement.default_result.values[0], mode) + ', curGen)' + os.linesep)
+def handle_initial_value(assign, variable, var_type, indent_level, init_mode):
+    if is_array(variable):
+        raise Exception('Array not allowed yet')
+    if len(assign.case_results) == 0:
+        if (not assign.default_result.range_mode) and len(assign.default_result.values) == 1:
+            return (' = (' + format_code(assign.default_result.values[0], init_mode) + ', curGen)' + os.linesep)
 
     def post_script(indent_level):
         return (
@@ -715,7 +811,7 @@ def handle_initial_value(statement, variable_name, var_type, indent_level, mode)
                 indent(indent_level + 2) + function_name + ' :: Int -> ' + var_type + os.linesep
                 + ''.join(
                     [
-                        (indent(indent_level + 2) + function_name + ' ' + (str(index) if index < random_range else '_') + ' = ' + format_code(value, mode) + os.linesep)
+                        (indent(indent_level + 2) + function_name + ' ' + (str(index) if index < random_range else '_') + ' = ' + format_code(value, init_mode) + os.linesep)
                         for index, value in enumerate(values)
                     ]
                 )
@@ -723,13 +819,14 @@ def handle_initial_value(statement, variable_name, var_type, indent_level, mode)
         else:
             return ''
 
-    default = statement.default_result
-    return_string = ('' if len(statement.case_results) == 0 else os.linesep)
+    default = assign.default_result
+    case_result = None
+    return_string = ('' if len(assign.case_results) == 0 else os.linesep)
     where_string = ''
     unique_id = 0
-    for case_result in statement.case_results:
+    for case_result in assign.case_results:
         return_string += (
-            indent(indent_level + 1) + '| ' + format_code(case_result.condition,  mode) + ' = '
+            indent(indent_level + 1) + '| ' + format_code(case_result.condition, init_mode) + ' = '
         )
         if (not case_result.range_mode) and (len(case_result.values) == 1):
             cond_func = None
@@ -748,7 +845,7 @@ def handle_initial_value(statement, variable_name, var_type, indent_level, mode)
 
         return_string += (
             (
-                '(' + format_code(case_result.values[0], mode) + ', curGen)' + os.linesep
+                '(' + format_code(case_result.values[0], init_mode) + ', curGen)' + os.linesep
             )
             if (not case_result.range_mode) and (len(case_result.values) == 1)
             else
@@ -757,49 +854,54 @@ def handle_initial_value(statement, variable_name, var_type, indent_level, mode)
             )
         )
         where_string += create_random_func(function_name, case_result.values, case_result.range_mode, var_type, cond_func, random_range, indent_level)
+    case_result = default
     return_string += (
         (
             ' = '
         )
-        if len(statement.case_results) == 0
+        if len(assign.case_results) == 0
         else
         (
             indent(indent_level + 1) + '| otherwise = '
         )
     )
-    if (not default.range_mode) and (len(default.values) == 1):
+    if (not case_result.range_mode) and (len(case_result.values) == 1):
         cond_func = None
         random_range = 0
         function_name = ''
-    elif default.range_mode:
-        cond_func = build_range_func(default.values[2])
-        random_range = len(list(filter(cond_func, range(handle_constant(default.values[0], False), handle_constant(default.values[1], False) + 1)))) - 1
+    elif case_result.range_mode:
+        cond_func = build_range_func(case_result.values[2])
+        random_range = len(list(filter(cond_func, range(handle_constant(case_result.values[0], False), handle_constant(case_result.values[1], False) + 1)))) - 1
         function_name = 'privateRandom' + str(unique_id)
         unique_id = unique_id + 1
     else:
         cond_func = None
-        random_range = len(default.values) - 1
+        random_range = len(case_result.values) - 1
         function_name = 'privateRandom' + str(unique_id)
         unique_id = unique_id + 1
 
     return_string += (
         (
-            '(' + format_code(default.values[0], mode) + ', curGen)' + os.linesep
+            '(' + format_code(case_result.values[0], init_mode) + ', curGen)' + os.linesep
         )
-        if (not default.range_mode) and (len(default.values) == 1)
+        if (not case_result.range_mode) and (len(case_result.values) == 1)
         else
         (
             '(' + function_name + ' (fst (getRandomInt curGen ' + str(random_range) + ')), snd (getRandomInt curGen ' + str(random_range) + '))' + os.linesep
         )
     )
-    where_string += create_random_func(function_name, default.values, default.range_mode, var_type, cond_func, random_range, indent_level)
+    where_string += create_random_func(function_name, case_result.values, case_result.range_mode, var_type, cond_func, random_range, indent_level)
     return return_string + ((post_script(indent_level) + where_string) if unique_id > 0 else '')
 
-
-def handle_update_value(statement, variable_name, var_type, indent_level):
-    if len(statement.case_results) == 0:
-        if (not statement.default_result.range_mode) and len(statement.default_result.values) == 1:
-            return (' = environment { env' + pascal_case(variable_name) + ' = ' + format_code(statement.default_result.values[0]) + '}' + os.linesep)
+debug = False
+def handle_update_value(assign, variable_name, var_type, indent_level, init_mode):
+    print('----------------------------------------------------------------------')
+    global debug
+    debug = True
+    print('update: ' + str(init_mode)) 
+    if len(assign.case_results) == 0:
+        if (not assign.default_result.range_mode) and len(assign.default_result.values) == 1:
+            return (' = environment { env' + pascal_case(variable_name) + ' = ' + format_code(assign.default_result.values[0], init_mode) + '}' + os.linesep)
 
     def post_script(indent_level):
         return (
@@ -822,7 +924,7 @@ def handle_update_value(statement, variable_name, var_type, indent_level):
                 indent(indent_level + 2) + function_name + ' :: Int -> ' + var_type + os.linesep
                 + ''.join(
                     [
-                        (indent(indent_level + 2) + function_name + ' ' + (str(index) if index < random_range else '_') + ' = ' + format_code(value) + os.linesep)
+                        (indent(indent_level + 2) + function_name + ' ' + (str(index) if index < random_range else '_') + ' = ' + format_code(value, init_mode) + os.linesep)
                         for index, value in enumerate(values)
                     ]
                 )
@@ -830,13 +932,13 @@ def handle_update_value(statement, variable_name, var_type, indent_level):
         else:
             return ''
 
-    default = statement.default_result
-    return_string = ('' if len(statement.case_results) == 0 else os.linesep)
+    default = assign.default_result
+    return_string = ('' if len(assign.case_results) == 0 else os.linesep)
     where_string = ''
     unique_id = 0
-    for case_result in statement.case_results:
+    for case_result in assign.case_results:
         return_string += (
-            indent(indent_level + 1) + '| ' + format_code(case_result.condition) + ' = '
+            indent(indent_level + 1) + '| ' + format_code(case_result.condition, init_mode) + ' = '
         )
         if (not case_result.range_mode) and (len(case_result.values) == 1):
             cond_func = None
@@ -855,7 +957,7 @@ def handle_update_value(statement, variable_name, var_type, indent_level):
 
         return_string += (
             (
-                'environment { env' + pascal_case(variable_name) + ' = ' + format_code(case_result.values[0]) + ' }' + os.linesep
+                'environment { env' + pascal_case(variable_name) + ' = ' + format_code(case_result.values[0], init_mode) + ' }' + os.linesep
             )
             if (not case_result.range_mode) and (len(case_result.values) == 1)
             else
@@ -868,7 +970,7 @@ def handle_update_value(statement, variable_name, var_type, indent_level):
         (
             ' = '
         )
-        if len(statement.case_results) == 0
+        if len(assign.case_results) == 0
         else
         (
             indent(indent_level + 1) + '| otherwise = '
@@ -891,7 +993,7 @@ def handle_update_value(statement, variable_name, var_type, indent_level):
 
     return_string += (
         (
-            'environment { env' + pascal_case(variable_name) + ' = ' + format_code(default.values[0]) + ' }' + os.linesep
+            'environment { env' + pascal_case(variable_name) + ' = ' + format_code(default.values[0], init_mode) + ' }' + os.linesep
         )
         if (not default.range_mode) and (len(default.values) == 1)
         else
@@ -900,55 +1002,22 @@ def handle_update_value(statement, variable_name, var_type, indent_level):
         )
     )
     where_string += create_random_func(function_name, default.values, default.range_mode, var_type, cond_func, random_range, indent_level)
+    debug = False
     return return_string + ((post_script(indent_level) + where_string) if unique_id > 0 else '')
 
 
-def create_macro(statement, indent_level):
-    if len(statement.case_results) == 0:
-        return ' = ' + format_code(statement.default_result.values[0]) + os.linesep
+def create_macro(assign, indent_level, init_mode):
+    if len(assign.case_results) == 0:
+        return ' = ' + format_code(assign.default_result.values[0], init_mode) + os.linesep
     return (
         os.linesep
         + ''.join(
             [
-                (indent(indent_level + 1) + '| ' + format_code(case_result.condition) + ' = ' + format_code(case_result.values[0]) + os.linesep)
-                for case_result in statement.case_results
+                (indent(indent_level + 1) + '| ' + format_code(case_result.condition, init_mode) + ' = ' + format_code(case_result.values[0], init_mode) + os.linesep)
+                for case_result in assign.case_results
             ]
         )
-        + (indent(indent_level + 1) + '| otherwise = ' + format_code(statement.default_result.values[0]) + os.linesep)
-    )
-
-
-def variable_type(variable):
-    return (
-        (
-            'Int'
-            if variable.domain == 'INT'
-            else
-            (
-                'String'
-                if variable.domain == 'ENUM'
-                else
-                'Bool'
-            )
-        )
-        if variable.model_as == 'DEFINE'
-        else
-        (
-            'Bool'
-            if variable.domain.boolean is not None
-            else
-            (
-                (
-                    'String'
-                    if isinstance(handle_constant(variable.domain.enums[0], False), str)
-                    else
-                    'Int'
-                )
-                if variable.domain.min_val is None
-                else
-                'Int'
-            )
-        )
+        + (indent(indent_level + 1) + '| otherwise = ' + format_code(assign.default_result.values[0], init_mode) + os.linesep)
     )
 
 
@@ -1024,7 +1093,7 @@ def safe_update(variable, env_mode, local_mode, local_numbers = []):
                                     ''.join(
                                         map(
                                             lambda value :
-                                            (function_name + ' ' + str(number) + ' ' + board_type + ' ' + handle_constant(value) + ' = ' + board_type + ' { ' + field_name + str(number) + ' = ' + handle_constant(value) + ' }' + os.linesep)
+                                            (function_name + ' ' + str(number) + ' ' + board_type + ' ' + handle_constant(value, True) + ' = ' + board_type + ' { ' + field_name + str(number) + ' = ' + handle_constant(value, True) + ' }' + os.linesep)
                                             ,
                                             variable.domain.enums
                                         )
@@ -1039,7 +1108,7 @@ def safe_update(variable, env_mode, local_mode, local_numbers = []):
                                 else
                                 (
                                     function_name + ' ' + str(number) + ' ' + board_type + ' value' + os.linesep
-                                    + indent(1) + '| ' + handle_constant(variable.domain.min_val) + ' > value || value > ' + handle_constant(variable.domain.max_val) + ' = error "local ' + variable.name + ' illegal value"' + os.linesep
+                                    + indent(1) + '| ' + handle_constant(variable.domain.min_val, True) + ' > value || value > ' + handle_constant(variable.domain.max_val, True) + ' = error "local ' + variable.name + ' illegal value"' + os.linesep
                                     + indent(1) + '| otherwise = ' + board_type + ' { ' + field_name + str(number) + ' = value }' + os.linesep
                                 )
                             )
@@ -1059,7 +1128,7 @@ def safe_update(variable, env_mode, local_mode, local_numbers = []):
                             ''.join(
                                 map(
                                     lambda value :
-                                    (function_name + ' ' + board_type + ' ' + handle_constant(value) + ' = ' + board_type + ' { ' + field_name + ' = ' + handle_constant(value) + ' }' + os.linesep)
+                                    (function_name + ' ' + board_type + ' ' + handle_constant(value, True) + ' = ' + board_type + ' { ' + field_name + ' = ' + handle_constant(value, True) + ' }' + os.linesep)
                                     ,
                                     variable.domain.enums
                                 )
@@ -1074,7 +1143,7 @@ def safe_update(variable, env_mode, local_mode, local_numbers = []):
                         else
                         (
                             function_name + ' ' + board_type + ' value' + os.linesep
-                            + indent(1) + '| ' + handle_constant(variable.domain.min_val) + ' > value || value > ' + handle_constant(variable.domain.max_val) + ' = error "' + variable.name + ' illegal value"' + os.linesep
+                            + indent(1) + '| ' + handle_constant(variable.domain.min_val, True) + ' > value || value > ' + handle_constant(variable.domain.max_val, True) + ' = error "' + variable.name + ' illegal value"' + os.linesep
                             + indent(1) + '| otherwise = ' + board_type + ' { ' + field_name + ' = value }' + os.linesep
                         )
                     )
@@ -1087,19 +1156,35 @@ def safe_update(variable, env_mode, local_mode, local_numbers = []):
 
 def create_environment(model):
     names_to_types = {
-        variable.name : variable_type(variable)
-        for variable in model.environment_variables if variable.model_as != 'DEFINE'
+        variable.name : (('Array' + pascal_case(variable.name)) if is_array(variable) else variable_type(variable))
+        for variable in model.variables if (is_env(variable) and variable.model_as != 'DEFINE')
     }
     initial_values = {
-        variable.name : handle_initial_value(variable.initial_value, variable.name, names_to_types[variable.name], 2, 'env')
-        for index, variable in enumerate(model.environment_variables) if variable.model_as != 'DEFINE'
+        variable.name : handle_initial_value(variable.assign, variable, names_to_types[variable.name], 2, 'env')
+        for index, variable in enumerate(model.variables) if (is_env(variable) and variable.model_as != 'DEFINE')
     }
     return (
         'module BehaviorTreeEnvironment where' + os.linesep
         + 'import SereneRandomizer' + os.linesep
         + 'import System.Random' + os.linesep
         + 'import BehaviorTreeBlackboard' + os.linesep
+        + 'import SereneOperations' + os.linesep
         + os.linesep
+        + ''.join(
+            [
+                (
+                    'data Array' + pascal_case(variable.name) + ' = Array' + pascal_case(variable.name) + ' {' + os.linesep
+                    + indent(1) + ', '
+                    + (indent(1) + ', ').join(map(
+                        lambda x : ('val' + str(x) + ' :: Int' + os.linesep),
+                        range(variable.array_size)
+                        ))
+                    + indent(1) + '}' + os.linesep
+                    + os.linesep
+                )
+                for variable in model.variables if (is_env(variable) and is_array(variable) and variable.model_as != 'DEFINE')
+            ]
+        )
         + 'data BTreeEnvironment = BTreeEnvironment {' + os.linesep
         + indent(1) + 'sereneEnvGenerator :: StdGen' + os.linesep
         + ((indent(1) + ', ') if len(names_to_types) > 0 else '')
@@ -1131,9 +1216,9 @@ def create_environment(model):
             [
                 (
                     'env' + pascal_case(variable.name) + ' :: BTreeBlackboard -> BTreeEnvironment -> ' + variable_type(variable) + os.linesep
-                    + 'env' + pascal_case(variable.name) + ' blackboard environment' + create_macro(variable.initial_value, 0)
+                    + 'env' + pascal_case(variable.name) + ' blackboard environment' + create_macro(variable.initial_value, 0, 'env')
                 )
-                for variable in model.environment_variables if variable.model_as == 'DEFINE'
+                for variable in model.variables if (variable.model_as == 'DEFINE' and is_env(variable))
             ]
         )
         + os.linesep + os.linesep
@@ -1145,9 +1230,9 @@ def create_environment(model):
                 safe_update(var, True, False)
                 ,
                 filter(lambda var :
-                       var.model_as != 'DEFINE'
+                       var.model_as != 'DEFINE' and is_env(var)
                        ,
-                       model.environment_variables
+                       model.variables
                        )
             )
         )
@@ -1156,7 +1241,7 @@ def create_environment(model):
             'True'
             if model.tick_condition is None
             else
-            format_code(model.tick_condition)
+            format_code(model.tick_condition, None)
         ) + os.linesep + os.linesep
         + 'modifiedID :: BTreeBlackboard -> BTreeEnvironment -> BTreeEnvironment' + os.linesep
         + 'modifiedID _ environment = environment' + os.linesep
@@ -1173,7 +1258,7 @@ def create_environment(model):
             [
                 (
                     indent(2) + 'tickUpdate' + pascal_case(update.variable.name) + ' :: BTreeEnvironment -> BTreeEnvironment' + os.linesep
-                    + indent(2) + 'tickUpdate' + pascal_case(update.variable.name) + ' environment' + handle_update_value(update, update.variable.name, variable_type(update.variable), 2)
+                    + indent(2) + 'tickUpdate' + pascal_case(update.variable.name) + ' environment' + handle_update_value(update.assign, update.variable.name, variable_type(update.variable), 2, None)
                     + os.linesep
                     + indent(2) + 'tempEnvironment' + str(index + 1) + ' = tickUpdate' + pascal_case(update.variable.name) + ' tempEnvironment' + str(index) + os.linesep
                     + os.linesep
@@ -1206,11 +1291,11 @@ def create_environment(model):
 def create_blackboard(model):
     names_to_types = {
         variable.name : variable_type(variable)
-        for variable in model.blackboard_variables if variable.model_as != 'DEFINE'
+        for variable in model.variables if (variable.model_as != 'DEFINE' and is_blackboard(variable))
     }
     initial_values = {
-        variable.name : handle_initial_value(variable.initial_value, variable.name, names_to_types[variable.name], 2, 'board')
-        for index, variable in enumerate(model.blackboard_variables) if variable.model_as != 'DEFINE'
+        variable.name : handle_initial_value(variable.assign, variable, names_to_types[variable.name], 2, 'board')
+        for index, variable in enumerate(model.variables) if (variable.model_as != 'DEFINE' and is_blackboard(variable))
     }
 
     def walk_tree_recursive(current_node, node_names, node_names_map, running_list, running_int):
@@ -1242,7 +1327,7 @@ def create_blackboard(model):
                         {
                             'name' : variable.name,
                             'type' : cur_type,
-                            'init' : handle_initial_value(variable.initial_value, variable.name, len(names_to_types) + my_int, cur_type, 2, 'board'),
+                            'init' : handle_initial_value(variable.assign, variable, cur_type, 2, 'board'),
                             'number' : my_int,
                             'variable' : variable
                         }
@@ -1341,18 +1426,18 @@ def create_blackboard(model):
             [
                 (
                     'board' + pascal_case(variable.name) + ' :: BTreeBlackboard -> ' + variable_type(variable) + os.linesep
-                    + 'board' + pascal_case(variable.name) + ' blackboard' + create_macro(variable.initial_value, 0)
+                    + 'board' + pascal_case(variable.name) + ' blackboard' + create_macro(variable.initial_value, 0, 'board')
                 )
-                for variable in model.blackboard_variables if variable.model_as == 'DEFINE'
+                for variable in model.variables if (variable.model_as == 'DEFINE' and is_blackboard(variable))
             ]
         )
         + ''.join(
             [
                 (
                     'localBoard' + pascal_case(variable.name) + ' :: Int -> BTreeBlackboard -> ' + variable_type(variable) + os.linesep
-                    + 'localBoard' + pascal_case(variable.name) + ' nodeLocation blackboard' + create_macro(variable.initial_value, 0)
+                    + 'localBoard' + pascal_case(variable.name) + ' nodeLocation blackboard' + create_macro(variable.initial_value, 0, 'board')
                 )
-                for variable in model.local_variables if variable.model_as == 'DEFINE'
+                for variable in model.variables if (variable.model_as == 'DEFINE' and is_local(variable))
             ]
         )
         + os.linesep + os.linesep
@@ -1364,9 +1449,9 @@ def create_blackboard(model):
                 safe_update(var, False, False)
                 ,
                 filter(lambda var :
-                       var.model_as != 'DEFINE'
+                       (var.model_as != 'DEFINE' and is_blackboard(var))
                        ,
-                       model.blackboard_variables
+                       model.variables
                        )
             )
         )
@@ -1426,74 +1511,44 @@ def create_randomizer():
     )
 
 
-RANGE_FUNCTION = {
-    'abs' : serene_functions.serene_abs,
-    'max' : serene_functions.serene_max,
-    'min' : serene_functions.serene_min,
-    'sin' : serene_functions.serene_sin,
-    'cos' : serene_functions.serene_cos,
-    'tan' : serene_functions.serene_tan,
-    'ln' : serene_functions.serene_log,
-    'not' : serene_functions.serene_not,
-    'and' : serene_functions.serene_and,
-    'or' : serene_functions.serene_or,
-    'xor' : serene_functions.serene_xor,
-    'xnor' : serene_functions.serene_xnor,
-    'implies' : serene_functions.serene_implies,
-    'equivalent' : serene_functions.serene_eq,
-    'equal' : serene_functions.serene_eq,
-    'not_equal' : serene_functions.serene_ne,
-    'less_than' : serene_functions.serene_lt,
-    'greater_than' : serene_functions.serene_gt,
-    'less_than_or_equal' : serene_functions.serene_lte,
-    'greater_than_or_equal' : serene_functions.serene_gte,
-    'negative' : serene_functions.serene_neg,
-    'addition' : serene_functions.serene_sum,
-    'subtraction' : serene_functions.serene_sub,
-    'multiplication' : serene_functions.serene_mult,
-    'division' : serene_functions.serene_truediv,
-    'mod' : serene_functions.serene_mod,
-    'count' : serene_functions.serene_count
-}
-
-
-FUNCTION_FORMAT = {
-    'abs' : ('abs', format_function_before),
-    'max' : ('max', format_function_before),
-    'min' : ('min', format_function_before),
-    'sin' : ('sin', format_function_before),
-    'cos' : ('cos', format_function_before),
-    'tan' : ('tan', format_function_before),
-    'ln' : ('log', format_function_before),
-    'not' : ('not', format_function_before),
-    'and' : ('&&', format_function_between),
-    'or' : ('||', format_function_between),
-    'xor' : ('operator.xor', format_function_between),
-    'xnor' : ('xnor', format_function_between),
-    'implies' : ('->', format_function_between),
-    'equivalent' : ('==', format_function_between),
-    'equal' : ('==', format_function_between),
-    'not_equal' : ('/=', format_function_between),
-    'less_than' : ('<', format_function_between),
-    'greater_than' : ('>', format_function_between),
-    'less_than_or_equal' : ('<=', format_function_between),
-    'greater_than_or_equal' : ('>=', format_function_between),
-    'negative' : ('-', format_function_before),
-    'addition' : ('+', format_function_between),
-    'subtraction' : ('-', format_function_between),
-    'multiplication' : ('*', format_function_between),
-    'division' : ('/', format_function_between),
-    'mod' : ('%', format_function_between),
-    'count' : ('count', format_function_before)
-}
-
-
 STANDARD_IMPORTS = ('import BehaviorTreeCore' + os.linesep
                     + 'import BehaviorTreeBlackboard' + os.linesep
                     + 'import BehaviorTreeEnvironment' + os.linesep
                     + 'import SereneRandomizer' + os.linesep
+                    + 'import SereneOperations' + os.linesep
                     + os.linesep)
 
+
+def create_serene_operations():
+    return (
+        'module SereneOperations where' + os.linesep
+        + os.linesep
+        + 'sereneXOR :: Bool -> Bool -> Bool' + os.linesep
+        + 'sereneXOR True True = False' + os.linesep
+        + 'sereneXOR True False = True' + os.linesep
+        + 'sereneXOR False True = True' + os.linesep
+        + 'sereneXOR False False = False' + os.linesep
+        + os.linesep
+        + 'sereneXNOR :: Bool -> Bool -> Bool' + os.linesep
+        + 'sereneXNOR True True = True' + os.linesep
+        + 'sereneXNOR True False = False' + os.linesep
+        + 'sereneXNOR False True = False' + os.linesep
+        + 'sereneXNOR False False = True' + os.linesep
+        + os.linesep
+        + 'sereneIMPLIES :: Bool -> Bool -> Bool' + os.linesep
+        + 'sereneIMPLIES True True = True' + os.linesep
+        + 'sereneIMPLIES True False = False' + os.linesep
+        + 'sereneIMPLIES False True = True' + os.linesep
+        + 'sereneIMPLIES False False = True' + os.linesep
+        + os.linesep
+        + 'sereneCOUNT :: Bool -> Bool -> Int' + os.linesep
+        + 'sereneCOUNT True True = 2' + os.linesep
+        + 'sereneCOUNT True False = 1' + os.linesep
+        + 'sereneCOUNT False True = 1' + os.linesep
+        + 'sereneCOUNT False False = 0' + os.linesep
+        + os.linesep
+    )
+    
 
 def main():
 
@@ -1502,6 +1557,8 @@ def main():
     arg_parser.add_argument('model_file')
     arg_parser.add_argument('location', default = './')
     arg_parser.add_argument('output_file')
+    arg_parser.add_argument('--max_iter', default = 100)
+    # arg_parser.add_argument('--keep_names', action = 'store_true')
     args = arg_parser.parse_args()
 
     metamodel = textx.metamodel_from_file(args.metamodel_file, auto_init_attributes = False)
@@ -1512,6 +1569,8 @@ def main():
         constant.name : constant.val
         for constant in model.constants
     }
+    
+    validate_model(model, constants, metamodel)
 
     my_location = args.location + 'app/'
 
@@ -1519,6 +1578,9 @@ def main():
 
     with open(my_location + 'SereneRandomizer.hs', 'w') as f:
         f.write(create_randomizer())
+
+    with open(my_location + 'SereneOperations.hs', 'w') as f:
+        f.write(create_serene_operations())
 
     with open(my_location + 'BehaviorTreeEnvironment.hs', 'w') as f:
         f.write(create_environment(model))
@@ -1530,7 +1592,7 @@ def main():
         f.write(create_tree(model, args.output_file))
 
     with open(my_location + 'Main.hs', 'w') as f:
-        f.write(create_runner(model, args.output_file))
+        f.write(create_runner(model, args.output_file, args.max_iter))
 
     for action in model.action_nodes:
         with open(my_location + 'BTree' + pascal_case(action.name) + '.hs', 'w') as f:

@@ -16,7 +16,8 @@ for r in "${root_name[@]}"; do
 	for c2 in "${child[@]}"; do
 	    true_name="${r}_${c1}_${c2}"
 	    echo $true_name
-	    ./run_comparison.sh "${path_name}" $true_name
+	    ./run_comparison.sh "${path_name}" $true_name 0
+	    # 0 means don't use haskell.
 	done
     done
 done

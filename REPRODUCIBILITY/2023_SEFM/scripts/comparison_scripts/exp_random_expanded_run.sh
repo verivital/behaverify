@@ -14,5 +14,6 @@ touch $path_name/results/log.txt
 
 for (( val=0; val<$to_gen; val++ )); do
     echo $val
-    ./run_comparison.sh $path_name "t$val"
+    ./run_comparison.sh $path_name "t$val" 0
+    # 0 means don't use haskell
 done
