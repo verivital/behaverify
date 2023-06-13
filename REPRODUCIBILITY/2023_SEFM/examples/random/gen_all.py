@@ -25,7 +25,8 @@ CONSTANTS = list(map(str, range(MIN_VAL, MAX_VAL + 1)))
 VARIABLES = list(map(lambda x : 'var' + str(x + 1), range(random.randint(2, 8))))
 VAR_STRING = '{' + ' '.join(VARIABLES) + '}'
 # FUNCTIONS = [('abs', 1, 1), ('max', 2, 2), ('min', 2, 2), ('negative', 1, 1), ('addition', 2, 5), ('subtraction', 2, 2), ('multiplication', 2, 5), ('division', 2, 2), ('mod', 2, 2), ('count', 2, 5)]
-FUNCTIONS = [('abs', 1, 1), ('max', 2, 2), ('min', 2, 2), ('negative', 1, 1), ('addition', 2, 4), ('subtraction', 2, 2), ('multiplication', 2, 4), ('division', 2, 2), ('count', 2, 4)]
+# FUNCTIONS = [('abs', 1, 1), ('max', 2, 2), ('min', 2, 2), ('negative', 1, 1), ('addition', 2, 4), ('subtraction', 2, 2), ('multiplication', 2, 4), ('division', 2, 2), ('count', 2, 4)]
+FUNCTIONS = [('abs', 1, 1), ('max', 2, 2), ('min', 2, 2), ('negative', 1, 1), ('addition', 2, 2), ('subtraction', 2, 2), ('multiplication', 2, 2), ('division', 2, 2), ('count', 2, 2)]
 COMPARISONS = ['equal', 'not_equal', 'less_than', 'greater_than', 'less_than_or_equal', 'greater_than_or_equal', 'and', 'or', 'xor', 'xnor', 'implies', 'equivalent']
 STATUSES = ['success', 'failure', 'running']
 
@@ -45,7 +46,7 @@ def get_var():
 
 def create_int_value(depth_left):
     if depth_left < 0:
-        depth_left = random.randint(0, 5)
+        depth_left = random.randint(0, 4)
     if depth_left == 0:
         if random.choice([True, False]):
             return random.choice(CONSTANTS)
@@ -58,7 +59,7 @@ def create_int_value(depth_left):
 
 def create_condition(depth_left):
     if depth_left < 0:
-        depth_left = random.randint(0, 5)
+        depth_left = random.randint(0, 4)
     if depth_left == 0:
         return random.choice(['True', 'False'])
     left_depth = random.randint(0, depth_left - 1)
@@ -85,8 +86,8 @@ def create_check_node(name):
 
 
 def create_action_node(name):
-    num_before = random.randint(0, 4)
-    num_after = random.randint(0, 4)
+    num_before = random.randint(0, 3)
+    num_after = random.randint(0, 3)
     update_before = []
     update_after = []
     for _ in range(num_before):
@@ -166,16 +167,16 @@ def indent(n):
 node_count = 0
 def create_structure(depth_left):
     if depth_left == -1:
-        depth_left = random.randint(0, 5)
+        depth_left = random.randint(0, 4)
     if depth_left == 0:
         return {'leaf': True, 'dec': False, 'name' : random.choice(['c1', 'c2', 'a1', 'a2', 'a3', 'a4'])}
     global node_count
-    if random.randint(0, 4) == 0:
+    if random.randint(0, 3) == 0:
         (node_type, node_name) = random.choice(DECORATOR)
         node_name = node_name + str(node_count)
         node_count = node_count + 1
         return {'leaf': False, 'dec': True, 'name' : node_name, 'type' : node_type, 'child' : create_structure(random.randint(0, depth_left - 1))}
-    num_child = random.randint(2, 5)
+    num_child = random.randint(2, 4)
     (node_type, node_name) = random.choice(ROOT)
     node_name = node_name + str(node_count)
     node_count = node_count + 1
