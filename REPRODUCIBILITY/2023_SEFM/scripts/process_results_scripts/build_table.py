@@ -20,7 +20,7 @@ encoding_name_to_result_name = {
     'aut_s' : 'aut_s_',
     'depth' : 'depth_',
     'func' : 'func_',
-    'norm' : '',
+    'norm' : 'norm_',
     'no_internal' : 'no_internal_',
     's_var' : 's_var_'
 }
@@ -78,6 +78,17 @@ for encoding_code in encoding_codes:
         maximum_resident_ltl = []
         maximum_resident_ctl = []
         maximum_resident_invar = []
+        skip_diamater = True
+        skip_print_states = True
+        skip_time_states = True
+        skip_compute_reachable = True
+        skip_ctl_silent = True
+        skip_ltl_silent = True
+        skip_invar_silent = True
+        skip_model = True
+        skip_ltl_resident = True
+        skip_ctl_resident = True
+        skip_invar_resident = True
 
         for encoding_name in encodings:
             encoding_result_name = encoding_name_to_result_name[encoding_name]
@@ -229,69 +240,115 @@ for encoding_code in encoding_codes:
                     pass
                 if not found_diamater:
                     diameters[-1].append('-')
+                else:
+                    skip_diamater = False
                 if not found_print_states:
                     reachable_states[-1].append('-')
                     total_v1_states[-1].append('-')
+                else:
+                    skip_print_states = False
                 if not found_time_states:
                     elapsed_time_print_states[-1].append('-')
+                else:
+                    skip_time_states = False
                 if not found_compute_reachable:
                     elapsed_time_compute_reachable[-1].append('-')
+                else:
+                    skip_compute_reachable = False
                 if not found_ctl_silent:
                     elapsed_time_ctl[-1].append('-')
+                else:
+                    skip_ctl_silent = False
                 if not found_ltl_silent:
                     elapsed_time_ltl[-1].append('-')
+                else:
+                    skip_ltl_silent = False
                 if not found_invar_silent:
                     elapsed_time_invar[-1].append('-')
+                else:
+                    skip_invar_silent = False
                 if not found_model:
                     elapsed_time_model[-1].append('-')
+                else:
+                    skip_model = False
                 if not found_ltl_resident:
                     maximum_resident_ltl[-1].append('-')
+                else:
+                    skip_ltl_resident = False
                 if not found_ctl_resident:
                     maximum_resident_ctl[-1].append('-')
+                else:
+                    skip_ctl_resident = False
                 if not found_invar_resident:
                     maximum_resident_invar[-1].append('-')
+                else:
+                    skip_invar_resident = False
 
         # print(diameters)
 
-        df = pd.DataFrame(diameters, columns=experiments, index=encodings)
-        df.to_latex(PATH_DIRECTION + group_name + '/processed_data/tables/' + encoding_code + '/' + file_name + '_diameters.tex', caption=file_name + ', System Diameter', label=file_name + '_diam')
+        if not skip_diamater:
+            df = pd.DataFrame(diameters, columns=experiments, index=encodings)
+            df.to_latex(PATH_DIRECTION + group_name + '/processed_data/tables/' + encoding_code + '/' + file_name + '_diameters.tex', caption=file_name + ', System Diameter', label=file_name + '_diam')
 
-        df = pd.DataFrame(reachable_states, columns=experiments, index=encodings)
-        df.to_latex(PATH_DIRECTION + group_name + '/processed_data/tables/' + encoding_code + '/' + file_name + '_reachable_states.tex', caption=file_name + ', Reachable States', label=file_name + '_reach')
+        if not skip_print_states:
+            df = pd.DataFrame(reachable_states, columns=experiments, index=encodings)
+            df.to_latex(PATH_DIRECTION + group_name + '/processed_data/tables/' + encoding_code + '/' + file_name + '_reachable_states.tex', caption=file_name + ', Reachable States', label=file_name + '_reach')
 
-        df = pd.DataFrame(total_v1_states, columns=experiments, index=encodings)
-        df.to_latex(PATH_DIRECTION + group_name + '/processed_data/tables/' + encoding_code + '/' + file_name + '_total_states.tex', caption=file_name + ', Total States', label=file_name + '_total')
+            df = pd.DataFrame(total_v1_states, columns=experiments, index=encodings)
+            df.to_latex(PATH_DIRECTION + group_name + '/processed_data/tables/' + encoding_code + '/' + file_name + '_total_states.tex', caption=file_name + ', Total States', label=file_name + '_total')
+        if not skip_time_states:
+            df = pd.DataFrame(elapsed_time_print_states, columns=experiments, index=encodings)
+            df.to_latex(PATH_DIRECTION + group_name + '/processed_data/tables/' + encoding_code + '/' + file_name + '_elapsed_print_states.tex', caption=file_name + ', Time in Seconds to Print Reachability', label=file_name + '_states_time')
 
-        df = pd.DataFrame(elapsed_time_print_states, columns=experiments, index=encodings)
-        df.to_latex(PATH_DIRECTION + group_name + '/processed_data/tables/' + encoding_code + '/' + file_name + '_elapsed_print_states.tex', caption=file_name + ', Time in Seconds to Print Reachability', label=file_name + '_states_time')
+        if not skip_compute_reachable:
+            df = pd.DataFrame(elapsed_time_compute_reachable, columns=experiments, index=encodings)
+            df.to_latex(PATH_DIRECTION + group_name + '/processed_data/tables/' + encoding_code + '/' + file_name + '_elapsed_reachable.tex', caption=file_name + ', Time in Seconds to Compute Reachability', label=file_name + '_states_time')
 
-        df = pd.DataFrame(elapsed_time_compute_reachable, columns=experiments, index=encodings)
-        df.to_latex(PATH_DIRECTION + group_name + '/processed_data/tables/' + encoding_code + '/' + file_name + '_elapsed_reachable.tex', caption=file_name + ', Time in Seconds to Compute Reachability', label=file_name + '_states_time')
+        if not skip_ctl_silent:
+            df = pd.DataFrame(elapsed_time_ctl, columns=experiments, index=encodings)
+            df.to_latex(PATH_DIRECTION + group_name + '/processed_data/tables/' + encoding_code + '/' + file_name + '_elapsed_ctl.tex', caption=file_name + ', Time in Seconds to Compute CTL', label=file_name + '_CTL_time')
 
-        df = pd.DataFrame(elapsed_time_ctl, columns=experiments, index=encodings)
-        df.to_latex(PATH_DIRECTION + group_name + '/processed_data/tables/' + encoding_code + '/' + file_name + '_elapsed_ctl.tex', caption=file_name + ', Time in Seconds to Compute CTL', label=file_name + '_CTL_time')
+        if not skip_ltl_silent:
+            df = pd.DataFrame(elapsed_time_ltl, columns=experiments, index=encodings)
+            df.to_latex(PATH_DIRECTION + group_name + '/processed_data/tables/' + encoding_code + '/' + file_name + '_elapsed_ltl.tex', caption=file_name + ', Time in Seconds to Compute LTL', label=file_name + '_LTL_time')
 
-        df = pd.DataFrame(elapsed_time_ltl, columns=experiments, index=encodings)
-        df.to_latex(PATH_DIRECTION + group_name + '/processed_data/tables/' + encoding_code + '/' + file_name + '_elapsed_ltl.tex', caption=file_name + ', Time in Seconds to Compute LTL', label=file_name + '_LTL_time')
+        if not skip_invar_silent:
+            df = pd.DataFrame(elapsed_time_invar, columns=experiments, index=encodings)
+            df.to_latex(PATH_DIRECTION + group_name + '/processed_data/tables/' + encoding_code + '/' + file_name + '_elapsed_invar.tex', caption=file_name + ', Time in Seconds to Compute INVAR', label=file_name + '_INVAR_time')
 
-        # df = pd.DataFrame(elapsed_time_invar, columns=experiments, index=encodings)
-        # df.to_latex(PATH_DIRECTION + group_name + '/processed_data/tables/' + encoding_code + '/' + file_name + '_elapsed_invar.tex', caption=file_name + ', Time in Seconds to Compute INVAR', label=file_name + '_INVAR_time')
+        if not skip_model:
+            df = pd.DataFrame(elapsed_time_model, columns=experiments, index=encodings)
+            df.to_latex(PATH_DIRECTION + group_name + '/processed_data/tables/' + encoding_code + '/' + file_name + '_elapsed_model.tex', caption=file_name + ', Time in Seconds to Build Model', label=file_name + '_model_time')
 
-        df = pd.DataFrame(elapsed_time_model, columns=experiments, index=encodings)
-        df.to_latex(PATH_DIRECTION + group_name + '/processed_data/tables/' + encoding_code + '/' + file_name + '_elapsed_model.tex', caption=file_name + ', Time in Seconds to Build Model', label=file_name + '_model_time')
+        if not skip_ltl_resident:
+            df = pd.DataFrame(maximum_resident_ltl, columns=experiments, index=encodings)
+            df.to_latex(PATH_DIRECTION + group_name + '/processed_data/tables/' + encoding_code + '/' + file_name + '_maximum_resident_ltl.tex', caption=file_name + ', Maximum Resident Size in K to Compute LTL', label=file_name + '_LTL_size')
 
-        df = pd.DataFrame(maximum_resident_ltl, columns=experiments, index=encodings)
-        df.to_latex(PATH_DIRECTION + group_name + '/processed_data/tables/' + encoding_code + '/' + file_name + '_maximum_resident_ltl.tex', caption=file_name + ', Maximum Resident Size in K to Compute LTL', label=file_name + '_LTL_size')
+        if not skip_ctl_resident:
+            df = pd.DataFrame(maximum_resident_ctl, columns=experiments, index=encodings)
+            df.to_latex(PATH_DIRECTION + group_name + '/processed_data/tables/' + encoding_code + '/' + file_name + '_maximum_resident_ctl.tex', caption=file_name + ', Maximum Resident Size in K to Compute CTL', label=file_name + '_CTL_size')
 
-        df = pd.DataFrame(maximum_resident_ctl, columns=experiments, index=encodings)
-        df.to_latex(PATH_DIRECTION + group_name + '/processed_data/tables/' + encoding_code + '/' + file_name + '_maximum_resident_ctl.tex', caption=file_name + ', Maximum Resident Size in K to Compute CTL', label=file_name + '_CTL_size')
-
-        # df = pd.DataFrame(maximum_resident_invar, columns=experiments, index=encodings)
-        # df.to_latex(PATH_DIRECTION + group_name + '/processed_data/tables/' + encoding_code + '/' + file_name + '_maximum_resident_invar.tex', caption=file_name + ', Maximum Resident Size in K to Compute INVAR', label=file_name + '_INVAR_size')
+        if not skip_invar_resident:
+            df = pd.DataFrame(maximum_resident_invar, columns=experiments, index=encodings)
+            df.to_latex(PATH_DIRECTION + group_name + '/processed_data/tables/' + encoding_code + '/' + file_name + '_maximum_resident_invar.tex', caption=file_name + ', Maximum Resident Size in K to Compute INVAR', label=file_name + '_INVAR_size')
 
         # print(len(elapsed_time_ltl))
 
-        for thing in ['diameters', 'reachable', 'total', 'print', 'compute', 'ctl', 'ltl', 'invar', 'model', 'ctl_r', 'ltl_r', 'invar_r']:
+        for (thing, skip) in [
+                ('diameters', skip_diamater),
+                ('reachable', skip_compute_reachable),
+                ('total', skip_compute_reachable),
+                ('print', skip_print_states),
+                ('compute', skip_compute_reachable),
+                ('ctl', skip_ctl_silent),
+                ('ltl', skip_ltl_silent),
+                ('invar', skip_invar_silent),
+                ('model', skip_model),
+                ('ctl_r', skip_invar_resident),
+                ('ltl_r', skip_ltl_resident),
+                ('invar_r', skip_invar_resident)]:
+            if skip:
+                continue
             if thing == 'diameters':
                 data = diameters
                 x_label = xLabel

@@ -4,7 +4,7 @@ min_val=2
 max_val=20
 step_size=1
 
-if [ "$#" == 4 ]; then
+if [ "$#" == 3 ]; then
     min_val=$1
     max_val=$2
     step_size=$3
