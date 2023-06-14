@@ -1,3 +1,7 @@
 1. allow transitions via conditions. EG. next(x) != 3 (rather than next(x) = {0, 1, 4, 5, 6})
 2. create a shorthand for a definition which pulls an environment value and then doesn't change it.
 3. visualization tool both for creation and debugging a behavior tree.
+
+4. update haskell code for arrays
+5. general updates in terms of refactoring.
+6. fix haskell functions which take unknown number of arguments by chaining them together.

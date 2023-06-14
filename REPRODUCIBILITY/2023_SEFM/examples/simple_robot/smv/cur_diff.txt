@@ -1,0 +1,81 @@
+36a37,41
+> 		mission_stage_2 := 
+> 			case
+> 				!(get_mission.active) : mission_stage_1;
+> 				TRUE : TRUE;
+> 			esac;
+96a102
+> 		y_goal_stage_1 : 0..1;
+149,152c155
+< 		next(mission_stage_0) := 			case
+< 				!(get_mission.active) : mission_stage_1;
+< 				TRUE : TRUE;
+< 			esac;
+---
+> 		next(mission_stage_0) := mission_stage_2;
+161c164,166
+< 		next(y_goal_stage_0) := 			case
+---
+> 		next(y_goal_stage_0) := y_goal_stage_1;
+> 		y_goal_stage_1 := 
+> 			case
+198c203
+< MODULE composite_selector_without_memory_2(child_0, child_1)
+---
+> MODULE composite_selector_without_memory_4(child_0, child_1, child_2, child_3)
+206a212,213
+> 				!(child_2.internal_status = failure) : child_2.internal_status;
+> 				!(child_3.internal_status = failure) : child_3.internal_status;
+210c217,219
+< 		child_1.active := child_0.status = failure;
+---
+> 		child_1.active := (child_0.internal_status = failure) & (child_0.active);
+> 		child_2.active := (child_1.internal_status = failure) & (child_1.active);
+> 		child_3.active := (child_2.internal_status = failure) & (child_2.active);
+225,240c234,236
+< 		child_1.active := child_0.status = success;
+< 		child_2.active := child_1.status = success;
+< 		child_3.active := child_2.status = success;
+< MODULE composite_sequence_without_memory_2(child_0, child_1)
+< 	CONSTANTS
+< 		success, failure, running, invalid;
+< 	DEFINE
+< 		status := active ? internal_status : invalid;
+< 		internal_status :=
+< 			case
+< 				!(child_0.internal_status = success) : child_0.internal_status;
+< 				!(child_1.internal_status = success) : child_1.internal_status;
+< 				TRUE : success;
+< 			esac;
+< 		child_0.active := active;
+< 		child_1.active := child_0.status = success;
+---
+> 		child_1.active := (child_0.internal_status = success) & (child_0.active);
+> 		child_2.active := (child_1.internal_status = success) & (child_1.active);
+> 		child_3.active := (child_2.internal_status = success) & (child_2.active);
+256c252
+< MODULE composite_selector_without_memory_4(child_0, child_1, child_2, child_3)
+---
+> MODULE composite_selector_without_memory_2(child_0, child_1)
+265,266d260
+< 				!(child_2.internal_status = failure) : child_2.internal_status;
+< 				!(child_3.internal_status = failure) : child_3.internal_status;
+270,272c264,277
+< 		child_1.active := child_0.status = failure;
+< 		child_2.active := child_1.status = failure;
+< 		child_3.active := child_2.status = failure;
+---
+> 		child_1.active := (child_0.internal_status = failure) & (child_0.active);
+> MODULE composite_sequence_without_memory_2(child_0, child_1)
+> 	CONSTANTS
+> 		success, failure, running, invalid;
+> 	DEFINE
+> 		status := active ? internal_status : invalid;
+> 		internal_status :=
+> 			case
+> 				!(child_0.internal_status = success) : child_0.internal_status;
+> 				!(child_1.internal_status = success) : child_1.internal_status;
+> 				TRUE : success;
+> 			esac;
+> 		child_0.active := active;
+> 		child_1.active := (child_0.internal_status = success) & (child_0.active);
