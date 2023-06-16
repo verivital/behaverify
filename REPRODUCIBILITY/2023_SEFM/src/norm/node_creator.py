@@ -65,7 +65,7 @@ def create_blackboard(nodes, variables, root_node_name):
                                 + write_cases(None, None, condition_pairs, 3)
                             )
             elif variable['mode'] == 'FROZENVAR' or len(variable['next_value']) == 0:
-                frozenvar_string += (tab_indent(2) + stage_name + '0 : array 0..' + str(variable['array_size']) + ' of '
+                frozenvar_string += (tab_indent(2) + stage_name + '0 : array 0..' + str(variable['array_size'] - 1) + ' of '
                                      + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean')))
                                      + ';' + os.linesep)
                 (_, _, _, indexed_cond_pairs) = variable['initial_value']

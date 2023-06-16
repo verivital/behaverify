@@ -41,16 +41,16 @@ cd "${this_script_location}/scripts/process_results_scripts"
 ./exp_checklist_invar_table.sh 1 50 1
 
 
-cd "${this_script_location}/scripts/build_scripts"
-./exp_random_create.sh 200 2 6
-cd "${this_script_location}/scripts/comparison_scripts"
-./exp_random_run.sh 200
+# cd "${this_script_location}/scripts/build_scripts"
+# ./exp_random_create.sh 200 2 6
+# cd "${this_script_location}/scripts/comparison_scripts"
+# ./exp_random_run.sh 200
 
 
 cd "${this_script_location}/scripts/build_scripts"
-./exp_random_expanded_create.sh 1000 2 6
+./exp_random_haskell_create.sh 1000 2 6
 cd "${this_script_location}/scripts/comparison_scripts"
-./exp_random_expanded_run.sh 1000
+./exp_random_haskell_run.sh 1000
 
 
 cd "${this_script_location}/scripts/build_scripts"

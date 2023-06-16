@@ -5,3 +5,5 @@
 4. update haskell code for arrays
 5. general updates in terms of refactoring.
 6. fix haskell functions which take unknown number of arguments by chaining them together.
+
+7. make sure enum constants do not conflit with variable/node names.
