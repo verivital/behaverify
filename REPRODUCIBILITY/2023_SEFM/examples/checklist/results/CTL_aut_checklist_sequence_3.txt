@@ -1,0 +1,333 @@
+*** This is nuXmv 2.0.0 (compiled on Mon Oct 14 17:48:12 2019)
+*** Copyright (c) 2014-2019, Fondazione Bruno Kessler
+*** For more information on nuXmv see https://nuxmv.fbk.eu
+*** or email to <nuxmv@list.fbk.eu>.
+*** Please report bugs at https://nuxmv.fbk.eu/bugs
+*** (click on "Login Anonymously" to access)
+*** Alternatively write to <nuxmv@list.fbk.eu>.
+
+*** This version of nuXmv is linked to NuSMV 2.6.0.
+*** For more information on NuSMV see <http://nusmv.fbk.eu>
+*** or email to <nusmv-users@list.fbk.eu>.
+*** Copyright (C) 2010-2019, Fondazione Bruno Kessler
+
+*** This version of nuXmv is linked to the CUDD library version 2.4.1
+*** Copyright (c) 1995-2004, Regents of the University of Colorado
+
+*** This version of nuXmv is linked to the MiniSat SAT solver. 
+*** See http://minisat.se/MiniSat.html
+*** Copyright (c) 2003-2006, Niklas Een, Niklas Sorensson
+*** Copyright (c) 2007-2010, Niklas Sorensson
+
+*** This version of nuXmv is linked to MathSAT
+*** Copyright (C) 2009-2019 by Fondazione Bruno Kessler
+*** Copyright (C) 2009-2019 by University of Trento and others
+*** See http://mathsat.fbk.eu
+
+-- specification AG (success_failure_node.status = failure -> A [ active_node > 0 U success_node.status = success ] )  is true
+-- specification AG (success_failure_node.status = failure -> !A [ active_node > 0 U success_node.status = success ] )  is false
+-- as demonstrated by the following execution sequence
+Trace Description: CTL Counterexample 
+Trace Type: Counterexample 
+  -> State: 1.1 <-
+    active_node = -1
+    success_failure_node.status = invalid
+    success_node.status = invalid
+    success_failure_node_1.status = invalid
+    success_node_1.status = invalid
+    success_failure_node_2.status = invalid
+    success_node_2.status = invalid
+    randomizer = FALSE
+    success_node_2.reset = TRUE
+    success_node_2.active = FALSE
+    success_failure_node_2.reset = TRUE
+    success_failure_node_2.active = FALSE
+    success_node_1.reset = TRUE
+    success_node_1.active = FALSE
+    success_failure_node_1.reset = TRUE
+    success_failure_node_1.active = FALSE
+    success_node.reset = TRUE
+    success_node.active = FALSE
+    success_failure_node.reset = TRUE
+    success_failure_node.active = FALSE
+    next_child__seqLink2 = 1
+    next_child__seqLink1 = 5
+    next_child__sel1 = 9
+    next_child__sel0 = 6
+    next_child__sel2 = 2
+    status__seqLink2 = invalid
+    status__seqLink1 = invalid
+    status__sel1 = invalid
+    status__success_node_2 = invalid
+    status__success_failure_node_2 = invalid
+    status__sel0 = invalid
+    status__success_node_1 = invalid
+    status__success_failure_node_1 = invalid
+    status__sel2 = invalid
+    status__success_node = invalid
+    status__success_failure_node = invalid
+    child_index_to_resume_from__seqLink2 = -2
+    child_index_to_resume_from__seqLink1 = -2
+    child_index_to_resume_from__sel1 = -2
+    child_index_to_resume_from__sel0 = -2
+    child_index_to_resume_from__sel2 = -2
+    resume_from_here_in_subtree__seqLink2 = -3
+    node_names.success_node_2 = 10
+    node_names.success_failure_node_2 = 9
+    node_names.sel1 = 8
+    node_names.success_node_1 = 7
+    node_names.success_failure_node_1 = 6
+    node_names.sel0 = 5
+    node_names.seqLink1 = 4
+    node_names.success_node = 3
+    node_names.success_failure_node = 2
+    node_names.sel2 = 1
+    node_names.seqLink2 = 0
+  -> State: 1.2 <-
+    active_node = 0
+    success_node_2.reset = FALSE
+    success_failure_node_2.reset = FALSE
+    success_node_1.reset = FALSE
+    success_failure_node_1.reset = FALSE
+    success_node.reset = FALSE
+    success_failure_node.reset = FALSE
+  -> State: 1.3 <-
+    active_node = 1
+  -> State: 1.4 <-
+    active_node = 2
+    success_failure_node.active = TRUE
+  -> State: 1.5 <-
+    success_failure_node.status = failure
+    next_child__sel2 = 3
+    status__success_failure_node = failure
+-- specification AG (success_failure_node_1.status = failure -> A [ active_node > 0 U success_node_1.status = success ] )  is true
+-- specification AG (success_failure_node_1.status = failure -> !A [ active_node > 0 U success_node_1.status = success ] )  is false
+-- as demonstrated by the following execution sequence
+Trace Description: CTL Counterexample 
+Trace Type: Counterexample 
+  -> State: 2.1 <-
+    active_node = -1
+    success_failure_node.status = invalid
+    success_node.status = invalid
+    success_failure_node_1.status = invalid
+    success_node_1.status = invalid
+    success_failure_node_2.status = invalid
+    success_node_2.status = invalid
+    randomizer = FALSE
+    success_node_2.reset = TRUE
+    success_node_2.active = FALSE
+    success_failure_node_2.reset = TRUE
+    success_failure_node_2.active = FALSE
+    success_node_1.reset = TRUE
+    success_node_1.active = FALSE
+    success_failure_node_1.reset = TRUE
+    success_failure_node_1.active = FALSE
+    success_node.reset = TRUE
+    success_node.active = FALSE
+    success_failure_node.reset = TRUE
+    success_failure_node.active = FALSE
+    next_child__seqLink2 = 1
+    next_child__seqLink1 = 5
+    next_child__sel1 = 9
+    next_child__sel0 = 6
+    next_child__sel2 = 2
+    status__seqLink2 = invalid
+    status__seqLink1 = invalid
+    status__sel1 = invalid
+    status__success_node_2 = invalid
+    status__success_failure_node_2 = invalid
+    status__sel0 = invalid
+    status__success_node_1 = invalid
+    status__success_failure_node_1 = invalid
+    status__sel2 = invalid
+    status__success_node = invalid
+    status__success_failure_node = invalid
+    child_index_to_resume_from__seqLink2 = -2
+    child_index_to_resume_from__seqLink1 = -2
+    child_index_to_resume_from__sel1 = -2
+    child_index_to_resume_from__sel0 = -2
+    child_index_to_resume_from__sel2 = -2
+    resume_from_here_in_subtree__seqLink2 = -3
+    node_names.success_node_2 = 10
+    node_names.success_failure_node_2 = 9
+    node_names.sel1 = 8
+    node_names.success_node_1 = 7
+    node_names.success_failure_node_1 = 6
+    node_names.sel0 = 5
+    node_names.seqLink1 = 4
+    node_names.success_node = 3
+    node_names.success_failure_node = 2
+    node_names.sel2 = 1
+    node_names.seqLink2 = 0
+  -> State: 2.2 <-
+    active_node = 0
+    success_node_2.reset = FALSE
+    success_failure_node_2.reset = FALSE
+    success_node_1.reset = FALSE
+    success_failure_node_1.reset = FALSE
+    success_node.reset = FALSE
+    success_failure_node.reset = FALSE
+  -> State: 2.3 <-
+    active_node = 1
+  -> State: 2.4 <-
+    active_node = 2
+    success_failure_node.active = TRUE
+  -> State: 2.5 <-
+    success_failure_node.status = failure
+    next_child__sel2 = 3
+    status__success_failure_node = failure
+  -> State: 2.6 <-
+    active_node = 1
+    success_failure_node.active = FALSE
+  -> State: 2.7 <-
+    active_node = 3
+    success_node.active = TRUE
+  -> State: 2.8 <-
+    success_node.status = success
+    next_child__seqLink2 = 4
+    status__sel2 = success
+    status__success_node = success
+  -> State: 2.9 <-
+    active_node = 1
+    success_node.active = FALSE
+  -> State: 2.10 <-
+    active_node = 0
+  -> State: 2.11 <-
+    active_node = 4
+  -> State: 2.12 <-
+    active_node = 5
+  -> State: 2.13 <-
+    active_node = 6
+    success_failure_node_1.active = TRUE
+  -> State: 2.14 <-
+    success_failure_node_1.status = failure
+    next_child__sel0 = 7
+    status__success_failure_node_1 = failure
+-- specification AG (success_failure_node_2.status = failure -> A [ active_node > 0 U success_node_2.status = success ] )  is true
+-- specification AG (success_failure_node_2.status = failure -> !A [ active_node > 0 U success_node_2.status = success ] )  is false
+-- as demonstrated by the following execution sequence
+Trace Description: CTL Counterexample 
+Trace Type: Counterexample 
+  -> State: 3.1 <-
+    active_node = -1
+    success_failure_node.status = invalid
+    success_node.status = invalid
+    success_failure_node_1.status = invalid
+    success_node_1.status = invalid
+    success_failure_node_2.status = invalid
+    success_node_2.status = invalid
+    randomizer = FALSE
+    success_node_2.reset = TRUE
+    success_node_2.active = FALSE
+    success_failure_node_2.reset = TRUE
+    success_failure_node_2.active = FALSE
+    success_node_1.reset = TRUE
+    success_node_1.active = FALSE
+    success_failure_node_1.reset = TRUE
+    success_failure_node_1.active = FALSE
+    success_node.reset = TRUE
+    success_node.active = FALSE
+    success_failure_node.reset = TRUE
+    success_failure_node.active = FALSE
+    next_child__seqLink2 = 1
+    next_child__seqLink1 = 5
+    next_child__sel1 = 9
+    next_child__sel0 = 6
+    next_child__sel2 = 2
+    status__seqLink2 = invalid
+    status__seqLink1 = invalid
+    status__sel1 = invalid
+    status__success_node_2 = invalid
+    status__success_failure_node_2 = invalid
+    status__sel0 = invalid
+    status__success_node_1 = invalid
+    status__success_failure_node_1 = invalid
+    status__sel2 = invalid
+    status__success_node = invalid
+    status__success_failure_node = invalid
+    child_index_to_resume_from__seqLink2 = -2
+    child_index_to_resume_from__seqLink1 = -2
+    child_index_to_resume_from__sel1 = -2
+    child_index_to_resume_from__sel0 = -2
+    child_index_to_resume_from__sel2 = -2
+    resume_from_here_in_subtree__seqLink2 = -3
+    node_names.success_node_2 = 10
+    node_names.success_failure_node_2 = 9
+    node_names.sel1 = 8
+    node_names.success_node_1 = 7
+    node_names.success_failure_node_1 = 6
+    node_names.sel0 = 5
+    node_names.seqLink1 = 4
+    node_names.success_node = 3
+    node_names.success_failure_node = 2
+    node_names.sel2 = 1
+    node_names.seqLink2 = 0
+  -> State: 3.2 <-
+    active_node = 0
+    success_node_2.reset = FALSE
+    success_failure_node_2.reset = FALSE
+    success_node_1.reset = FALSE
+    success_failure_node_1.reset = FALSE
+    success_node.reset = FALSE
+    success_failure_node.reset = FALSE
+  -> State: 3.3 <-
+    active_node = 1
+  -> State: 3.4 <-
+    active_node = 2
+    success_failure_node.active = TRUE
+  -> State: 3.5 <-
+    success_failure_node.status = failure
+    next_child__sel2 = 3
+    status__success_failure_node = failure
+  -> State: 3.6 <-
+    active_node = 1
+    success_failure_node.active = FALSE
+  -> State: 3.7 <-
+    active_node = 3
+    success_node.active = TRUE
+  -> State: 3.8 <-
+    success_node.status = success
+    next_child__seqLink2 = 4
+    status__sel2 = success
+    status__success_node = success
+  -> State: 3.9 <-
+    active_node = 1
+    success_node.active = FALSE
+  -> State: 3.10 <-
+    active_node = 0
+  -> State: 3.11 <-
+    active_node = 4
+  -> State: 3.12 <-
+    active_node = 5
+  -> State: 3.13 <-
+    active_node = 6
+    success_failure_node_1.active = TRUE
+  -> State: 3.14 <-
+    success_failure_node_1.status = failure
+    next_child__sel0 = 7
+    status__success_failure_node_1 = failure
+  -> State: 3.15 <-
+    active_node = 5
+    success_failure_node_1.active = FALSE
+  -> State: 3.16 <-
+    active_node = 7
+    success_node_1.active = TRUE
+  -> State: 3.17 <-
+    success_node_1.status = success
+    next_child__seqLink1 = 8
+    status__sel0 = success
+    status__success_node_1 = success
+  -> State: 3.18 <-
+    active_node = 5
+    success_node_1.active = FALSE
+  -> State: 3.19 <-
+    active_node = 4
+  -> State: 3.20 <-
+    active_node = 8
+  -> State: 3.21 <-
+    active_node = 9
+    success_failure_node_2.active = TRUE
+  -> State: 3.22 <-
+    success_failure_node_2.status = failure
+    next_child__sel1 = 10
+    status__success_failure_node_2 = failure

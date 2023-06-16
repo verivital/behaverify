@@ -10,9 +10,9 @@ MAX_VAL = int(sys.argv[4])
 MIN_VAL = max(MIN_VAL, 2)
 MAX_VAL = max(MAX_VAL, MIN_VAL)
 
-STATEMENT_DEPTH = 4
-MAX_UPDATES = 5
-MAX_CONDITIONS = 3
+STATEMENT_DEPTH = 3
+MAX_UPDATES = 4
+MAX_CONDITIONS = 2
 MAX_INDEX_DEPTH = 0
 MAX_TIMES_INDEXED = 1
 CUR_TIMES_INDEXED = 0
@@ -291,7 +291,7 @@ def create_action_node(name):
                 condition_count = random.randint(0, 2)
                 local_init += write_variable_statement(local, False, condition_count, 3, True, [], False)
             local_count = local_count + 1
-            if local_count >= 3:
+            if local_count >= 2:
                 break
 
     total_updates = random.randint(0, MAX_UPDATES)

@@ -1,0 +1,5976 @@
+*** This is nuXmv 2.0.0 (compiled on Mon Oct 14 17:48:12 2019)
+*** Copyright (c) 2014-2019, Fondazione Bruno Kessler
+*** For more information on nuXmv see https://nuxmv.fbk.eu
+*** or email to <nuxmv@list.fbk.eu>.
+*** Please report bugs at https://nuxmv.fbk.eu/bugs
+*** (click on "Login Anonymously" to access)
+*** Alternatively write to <nuxmv@list.fbk.eu>.
+
+*** This version of nuXmv is linked to NuSMV 2.6.0.
+*** For more information on NuSMV see <http://nusmv.fbk.eu>
+*** or email to <nusmv-users@list.fbk.eu>.
+*** Copyright (C) 2010-2019, Fondazione Bruno Kessler
+
+*** This version of nuXmv is linked to the CUDD library version 2.4.1
+*** Copyright (c) 1995-2004, Regents of the University of Colorado
+
+*** This version of nuXmv is linked to the MiniSat SAT solver. 
+*** See http://minisat.se/MiniSat.html
+*** Copyright (c) 2003-2006, Niklas Een, Niklas Sorensson
+*** Copyright (c) 2007-2010, Niklas Sorensson
+
+*** This version of nuXmv is linked to MathSAT
+*** Copyright (C) 2009-2019 by Fondazione Bruno Kessler
+*** Copyright (C) 2009-2019 by University of Trento and others
+*** See http://mathsat.fbk.eu
+
+-- specification  G ((active_node = node_names.success_failure_node & current_status = failure) -> (active_node > 0 U (active_node = node_names.success_node & current_status = success)))  is true
+-- specification  G ((active_node = node_names.success_failure_node & current_status = failure) -> !(active_node > 0 U (active_node = node_names.success_node & current_status = success)))  is false
+-- as demonstrated by the following execution sequence
+Trace Description: LTL Counterexample 
+Trace Type: Counterexample 
+  -> State: 1.1 <-
+    active_node = -1
+    previous_node = -1
+    current_status = invalid
+    previous_status = invalid
+    randomizer = FALSE
+    next_child__seqLink9 = 1
+    next_child__seqLink8 = 17
+    next_child__seqLink6 = 25
+    next_child__seqLink2 = 33
+    next_child__sel3 = 37
+    next_child__sel2 = 34
+    next_child__seqLink1 = 26
+    next_child__sel1 = 30
+    next_child__sel0 = 27
+    next_child__seqLink5 = 18
+    next_child__sel9 = 22
+    next_child__sel8 = 19
+    next_child__seqLink7 = 2
+    next_child__seqLink4 = 10
+    next_child__sel7 = 14
+    next_child__sel6 = 11
+    next_child__seqLink3 = 3
+    next_child__sel5 = 7
+    next_child__sel4 = 4
+    child_index_to_resume_from__seqLink9 = -2
+    child_index_to_resume_from__seqLink8 = -2
+    child_index_to_resume_from__seqLink6 = -2
+    child_index_to_resume_from__seqLink2 = -2
+    child_index_to_resume_from__sel3 = -2
+    child_index_to_resume_from__sel2 = -2
+    child_index_to_resume_from__seqLink1 = -2
+    child_index_to_resume_from__sel1 = -2
+    child_index_to_resume_from__sel0 = -2
+    child_index_to_resume_from__seqLink5 = -2
+    child_index_to_resume_from__sel9 = -2
+    child_index_to_resume_from__sel8 = -2
+    child_index_to_resume_from__seqLink7 = -2
+    child_index_to_resume_from__seqLink4 = -2
+    child_index_to_resume_from__sel7 = -2
+    child_index_to_resume_from__sel6 = -2
+    child_index_to_resume_from__seqLink3 = -2
+    child_index_to_resume_from__sel5 = -2
+    child_index_to_resume_from__sel4 = -2
+    resume_from_here_in_subtree__seqLink9 = -3
+    node_names.success_node_9 = 38
+    node_names.success_failure_node_9 = 37
+    node_names.sel3 = 36
+    node_names.success_node_8 = 35
+    node_names.success_failure_node_8 = 34
+    node_names.sel2 = 33
+    node_names.seqLink2 = 32
+    node_names.success_node_7 = 31
+    node_names.success_failure_node_7 = 30
+    node_names.sel1 = 29
+    node_names.success_node_6 = 28
+    node_names.success_failure_node_6 = 27
+    node_names.sel0 = 26
+    node_names.seqLink1 = 25
+    node_names.seqLink6 = 24
+    node_names.success_node_5 = 23
+    node_names.success_failure_node_5 = 22
+    node_names.sel9 = 21
+    node_names.success_node_4 = 20
+    node_names.success_failure_node_4 = 19
+    node_names.sel8 = 18
+    node_names.seqLink5 = 17
+    node_names.seqLink8 = 16
+    node_names.success_node_3 = 15
+    node_names.success_failure_node_3 = 14
+    node_names.sel7 = 13
+    node_names.success_node_2 = 12
+    node_names.success_failure_node_2 = 11
+    node_names.sel6 = 10
+    node_names.seqLink4 = 9
+    node_names.success_node_1 = 8
+    node_names.success_failure_node_1 = 7
+    node_names.sel5 = 6
+    node_names.success_node = 5
+    node_names.success_failure_node = 4
+    node_names.sel4 = 3
+    node_names.seqLink3 = 2
+    node_names.seqLink7 = 1
+    node_names.seqLink9 = 0
+  -> State: 1.2 <-
+    active_node = 0
+  -> State: 1.3 <-
+    active_node = 1
+    previous_node = 0
+  -> State: 1.4 <-
+    active_node = 2
+    previous_node = 1
+    next_child__seqLink9 = 16
+  -> State: 1.5 <-
+    active_node = 3
+    previous_node = 2
+    next_child__seqLink7 = 9
+  -> State: 1.6 <-
+    active_node = 4
+    previous_node = 3
+    current_status = failure
+    next_child__seqLink3 = 6
+  -> State: 1.7 <-
+    active_node = 3
+    previous_node = 4
+    current_status = invalid
+    previous_status = failure
+    next_child__sel4 = 5
+  -> State: 1.8 <-
+    active_node = 5
+    previous_node = 3
+    current_status = success
+    previous_status = invalid
+    next_child__sel4 = 4
+  -> State: 1.9 <-
+    active_node = 3
+    previous_node = 5
+    previous_status = success
+    next_child__sel4 = -1
+  -- Loop starts here
+  -> State: 1.10 <-
+    active_node = 2
+    previous_node = 3
+    current_status = invalid
+    next_child__sel4 = 4
+  -> State: 1.11 <-
+    active_node = 6
+    previous_node = 2
+    previous_status = invalid
+    next_child__seqLink3 = 3
+  -> State: 1.12 <-
+    active_node = 7
+    previous_node = 6
+    current_status = failure
+    next_child__seqLink3 = -1
+    next_child__sel4 = -1
+  -> State: 1.13 <-
+    active_node = 6
+    previous_node = 7
+    current_status = invalid
+    previous_status = failure
+    randomizer = TRUE
+    next_child__sel5 = 8
+  -> State: 1.14 <-
+    active_node = 8
+    previous_node = 6
+    current_status = success
+    previous_status = invalid
+    next_child__sel5 = 7
+  -> State: 1.15 <-
+    active_node = 6
+    previous_node = 8
+    previous_status = success
+    next_child__sel5 = -1
+  -> State: 1.16 <-
+    active_node = 2
+    previous_node = 6
+    next_child__sel5 = 7
+  -> State: 1.17 <-
+    active_node = 1
+    previous_node = 2
+    current_status = invalid
+    next_child__seqLink3 = 3
+    next_child__sel4 = 4
+  -> State: 1.18 <-
+    active_node = 9
+    previous_node = 1
+    previous_status = invalid
+    next_child__seqLink7 = 2
+  -> State: 1.19 <-
+    active_node = 10
+    previous_node = 9
+    next_child__seqLink7 = -1
+    next_child__seqLink3 = -1
+    next_child__sel5 = -1
+    next_child__sel4 = -1
+  -> State: 1.20 <-
+    active_node = 11
+    previous_node = 10
+    current_status = success
+    next_child__seqLink4 = 13
+  -> State: 1.21 <-
+    active_node = 10
+    previous_node = 11
+    previous_status = success
+    next_child__sel6 = 12
+  -> State: 1.22 <-
+    active_node = 9
+    previous_node = 10
+    current_status = invalid
+    next_child__sel6 = 11
+  -> State: 1.23 <-
+    active_node = 13
+    previous_node = 9
+    previous_status = invalid
+    next_child__seqLink4 = 10
+  -> State: 1.24 <-
+    active_node = 14
+    previous_node = 13
+    current_status = success
+    next_child__seqLink4 = -1
+    next_child__sel6 = -1
+  -> State: 1.25 <-
+    active_node = 13
+    previous_node = 14
+    previous_status = success
+    next_child__sel7 = 15
+  -> State: 1.26 <-
+    active_node = 9
+    previous_node = 13
+    next_child__sel7 = 14
+  -> State: 1.27 <-
+    active_node = 1
+    previous_node = 9
+    next_child__seqLink4 = 10
+    next_child__sel6 = 11
+  -> State: 1.28 <-
+    active_node = 0
+    previous_node = 1
+    current_status = invalid
+    next_child__seqLink7 = 2
+    next_child__seqLink3 = 3
+    next_child__sel5 = 7
+    next_child__sel4 = 4
+  -> State: 1.29 <-
+    active_node = 16
+    previous_node = 0
+    previous_status = invalid
+    next_child__seqLink9 = 1
+  -> State: 1.30 <-
+    active_node = 17
+    previous_node = 16
+    next_child__seqLink9 = -1
+    next_child__seqLink7 = -1
+    next_child__seqLink4 = -1
+    next_child__sel7 = -1
+    next_child__sel6 = -1
+    next_child__seqLink3 = -1
+    next_child__sel5 = -1
+    next_child__sel4 = -1
+  -> State: 1.31 <-
+    active_node = 18
+    previous_node = 17
+    next_child__seqLink8 = 24
+  -> State: 1.32 <-
+    active_node = 19
+    previous_node = 18
+    current_status = success
+    next_child__seqLink5 = 21
+  -> State: 1.33 <-
+    active_node = 18
+    previous_node = 19
+    previous_status = success
+    next_child__sel8 = 20
+  -> State: 1.34 <-
+    active_node = 17
+    previous_node = 18
+    current_status = invalid
+    next_child__sel8 = 19
+  -> State: 1.35 <-
+    active_node = 21
+    previous_node = 17
+    previous_status = invalid
+    next_child__seqLink5 = 18
+  -> State: 1.36 <-
+    active_node = 22
+    previous_node = 21
+    current_status = success
+    next_child__seqLink5 = -1
+    next_child__sel8 = -1
+  -> State: 1.37 <-
+    active_node = 21
+    previous_node = 22
+    previous_status = success
+    next_child__sel9 = 23
+  -> State: 1.38 <-
+    active_node = 17
+    previous_node = 21
+    next_child__sel9 = 22
+  -> State: 1.39 <-
+    active_node = 16
+    previous_node = 17
+    current_status = invalid
+    next_child__seqLink5 = 18
+    next_child__sel8 = 19
+  -> State: 1.40 <-
+    active_node = 24
+    previous_node = 16
+    previous_status = invalid
+    next_child__seqLink8 = 17
+  -> State: 1.41 <-
+    active_node = 25
+    previous_node = 24
+    next_child__seqLink8 = -1
+    next_child__seqLink5 = -1
+    next_child__sel9 = -1
+    next_child__sel8 = -1
+  -> State: 1.42 <-
+    active_node = 26
+    previous_node = 25
+    next_child__seqLink6 = 32
+  -> State: 1.43 <-
+    active_node = 27
+    previous_node = 26
+    current_status = success
+    next_child__seqLink1 = 29
+  -> State: 1.44 <-
+    active_node = 26
+    previous_node = 27
+    previous_status = success
+    next_child__sel0 = 28
+  -> State: 1.45 <-
+    active_node = 25
+    previous_node = 26
+    current_status = invalid
+    next_child__sel0 = 27
+  -> State: 1.46 <-
+    active_node = 29
+    previous_node = 25
+    previous_status = invalid
+    next_child__seqLink1 = 26
+  -> State: 1.47 <-
+    active_node = 30
+    previous_node = 29
+    current_status = success
+    next_child__seqLink1 = -1
+    next_child__sel0 = -1
+  -> State: 1.48 <-
+    active_node = 29
+    previous_node = 30
+    previous_status = success
+    next_child__sel1 = 31
+  -> State: 1.49 <-
+    active_node = 25
+    previous_node = 29
+    next_child__sel1 = 30
+  -> State: 1.50 <-
+    active_node = 24
+    previous_node = 25
+    current_status = invalid
+    next_child__seqLink1 = 26
+    next_child__sel0 = 27
+  -> State: 1.51 <-
+    active_node = 32
+    previous_node = 24
+    previous_status = invalid
+    next_child__seqLink6 = 25
+  -> State: 1.52 <-
+    active_node = 33
+    previous_node = 32
+    next_child__seqLink6 = -1
+    next_child__seqLink1 = -1
+    next_child__sel1 = -1
+    next_child__sel0 = -1
+  -> State: 1.53 <-
+    active_node = 34
+    previous_node = 33
+    current_status = success
+    next_child__seqLink2 = 36
+  -> State: 1.54 <-
+    active_node = 33
+    previous_node = 34
+    previous_status = success
+    next_child__sel2 = 35
+  -> State: 1.55 <-
+    active_node = 32
+    previous_node = 33
+    current_status = invalid
+    next_child__sel2 = 34
+  -> State: 1.56 <-
+    active_node = 36
+    previous_node = 32
+    previous_status = invalid
+    next_child__seqLink2 = 33
+  -> State: 1.57 <-
+    active_node = 37
+    previous_node = 36
+    current_status = success
+    next_child__seqLink2 = -1
+    next_child__sel2 = -1
+  -> State: 1.58 <-
+    active_node = 36
+    previous_node = 37
+    previous_status = success
+    next_child__sel3 = 38
+  -> State: 1.59 <-
+    active_node = 32
+    previous_node = 36
+    next_child__sel3 = 37
+  -> State: 1.60 <-
+    active_node = 24
+    previous_node = 32
+    next_child__seqLink2 = 33
+    next_child__sel2 = 34
+  -> State: 1.61 <-
+    active_node = 16
+    previous_node = 24
+    next_child__seqLink6 = 25
+    next_child__seqLink1 = 26
+    next_child__sel1 = 30
+    next_child__sel0 = 27
+  -> State: 1.62 <-
+    active_node = 0
+    previous_node = 16
+    next_child__seqLink8 = 17
+    next_child__seqLink5 = 18
+    next_child__sel9 = 22
+    next_child__sel8 = 19
+  -> State: 1.63 <-
+    active_node = -1
+    previous_node = 0
+    current_status = invalid
+    next_child__seqLink9 = 1
+    next_child__seqLink7 = 2
+    next_child__seqLink4 = 10
+    next_child__sel7 = 14
+    next_child__sel6 = 11
+    next_child__seqLink3 = 3
+    next_child__sel5 = 7
+    next_child__sel4 = 4
+  -> State: 1.64 <-
+    active_node = 0
+    previous_node = -1
+    previous_status = invalid
+  -> State: 1.65 <-
+    active_node = 1
+    previous_node = 0
+  -> State: 1.66 <-
+    active_node = 2
+    previous_node = 1
+    next_child__seqLink9 = 16
+  -> State: 1.67 <-
+    active_node = 3
+    previous_node = 2
+    next_child__seqLink7 = 9
+  -> State: 1.68 <-
+    active_node = 4
+    previous_node = 3
+    current_status = success
+    next_child__seqLink3 = 6
+  -> State: 1.69 <-
+    active_node = 3
+    previous_node = 4
+    previous_status = success
+    randomizer = FALSE
+    next_child__sel4 = 5
+  -> State: 1.70 <-
+    active_node = 2
+    previous_node = 3
+    current_status = invalid
+    next_child__sel4 = 4
+-- specification  G ((active_node = node_names.success_failure_node_1 & current_status = failure) -> (active_node > 0 U (active_node = node_names.success_node_1 & current_status = success)))  is true
+-- specification  G ((active_node = node_names.success_failure_node_1 & current_status = failure) -> !(active_node > 0 U (active_node = node_names.success_node_1 & current_status = success)))  is false
+-- as demonstrated by the following execution sequence
+Trace Description: LTL Counterexample 
+Trace Type: Counterexample 
+  -> State: 2.1 <-
+    active_node = -1
+    previous_node = -1
+    current_status = invalid
+    previous_status = invalid
+    randomizer = FALSE
+    next_child__seqLink9 = 1
+    next_child__seqLink8 = 17
+    next_child__seqLink6 = 25
+    next_child__seqLink2 = 33
+    next_child__sel3 = 37
+    next_child__sel2 = 34
+    next_child__seqLink1 = 26
+    next_child__sel1 = 30
+    next_child__sel0 = 27
+    next_child__seqLink5 = 18
+    next_child__sel9 = 22
+    next_child__sel8 = 19
+    next_child__seqLink7 = 2
+    next_child__seqLink4 = 10
+    next_child__sel7 = 14
+    next_child__sel6 = 11
+    next_child__seqLink3 = 3
+    next_child__sel5 = 7
+    next_child__sel4 = 4
+    child_index_to_resume_from__seqLink9 = -2
+    child_index_to_resume_from__seqLink8 = -2
+    child_index_to_resume_from__seqLink6 = -2
+    child_index_to_resume_from__seqLink2 = -2
+    child_index_to_resume_from__sel3 = -2
+    child_index_to_resume_from__sel2 = -2
+    child_index_to_resume_from__seqLink1 = -2
+    child_index_to_resume_from__sel1 = -2
+    child_index_to_resume_from__sel0 = -2
+    child_index_to_resume_from__seqLink5 = -2
+    child_index_to_resume_from__sel9 = -2
+    child_index_to_resume_from__sel8 = -2
+    child_index_to_resume_from__seqLink7 = -2
+    child_index_to_resume_from__seqLink4 = -2
+    child_index_to_resume_from__sel7 = -2
+    child_index_to_resume_from__sel6 = -2
+    child_index_to_resume_from__seqLink3 = -2
+    child_index_to_resume_from__sel5 = -2
+    child_index_to_resume_from__sel4 = -2
+    resume_from_here_in_subtree__seqLink9 = -3
+    node_names.success_node_9 = 38
+    node_names.success_failure_node_9 = 37
+    node_names.sel3 = 36
+    node_names.success_node_8 = 35
+    node_names.success_failure_node_8 = 34
+    node_names.sel2 = 33
+    node_names.seqLink2 = 32
+    node_names.success_node_7 = 31
+    node_names.success_failure_node_7 = 30
+    node_names.sel1 = 29
+    node_names.success_node_6 = 28
+    node_names.success_failure_node_6 = 27
+    node_names.sel0 = 26
+    node_names.seqLink1 = 25
+    node_names.seqLink6 = 24
+    node_names.success_node_5 = 23
+    node_names.success_failure_node_5 = 22
+    node_names.sel9 = 21
+    node_names.success_node_4 = 20
+    node_names.success_failure_node_4 = 19
+    node_names.sel8 = 18
+    node_names.seqLink5 = 17
+    node_names.seqLink8 = 16
+    node_names.success_node_3 = 15
+    node_names.success_failure_node_3 = 14
+    node_names.sel7 = 13
+    node_names.success_node_2 = 12
+    node_names.success_failure_node_2 = 11
+    node_names.sel6 = 10
+    node_names.seqLink4 = 9
+    node_names.success_node_1 = 8
+    node_names.success_failure_node_1 = 7
+    node_names.sel5 = 6
+    node_names.success_node = 5
+    node_names.success_failure_node = 4
+    node_names.sel4 = 3
+    node_names.seqLink3 = 2
+    node_names.seqLink7 = 1
+    node_names.seqLink9 = 0
+  -> State: 2.2 <-
+    active_node = 0
+  -> State: 2.3 <-
+    active_node = 1
+    previous_node = 0
+  -> State: 2.4 <-
+    active_node = 2
+    previous_node = 1
+    next_child__seqLink9 = 16
+  -> State: 2.5 <-
+    active_node = 3
+    previous_node = 2
+    next_child__seqLink7 = 9
+  -> State: 2.6 <-
+    active_node = 4
+    previous_node = 3
+    current_status = failure
+    next_child__seqLink3 = 6
+  -> State: 2.7 <-
+    active_node = 3
+    previous_node = 4
+    current_status = invalid
+    previous_status = failure
+    next_child__sel4 = 5
+  -> State: 2.8 <-
+    active_node = 5
+    previous_node = 3
+    current_status = success
+    previous_status = invalid
+    next_child__sel4 = 4
+  -> State: 2.9 <-
+    active_node = 3
+    previous_node = 5
+    previous_status = success
+    next_child__sel4 = -1
+  -> State: 2.10 <-
+    active_node = 2
+    previous_node = 3
+    current_status = invalid
+    next_child__sel4 = 4
+  -> State: 2.11 <-
+    active_node = 6
+    previous_node = 2
+    previous_status = invalid
+    next_child__seqLink3 = 3
+  -> State: 2.12 <-
+    active_node = 7
+    previous_node = 6
+    current_status = failure
+    next_child__seqLink3 = -1
+    next_child__sel4 = -1
+  -> State: 2.13 <-
+    active_node = 6
+    previous_node = 7
+    current_status = invalid
+    previous_status = failure
+    next_child__sel5 = 8
+  -> State: 2.14 <-
+    active_node = 8
+    previous_node = 6
+    current_status = success
+    previous_status = invalid
+    next_child__sel5 = 7
+  -> State: 2.15 <-
+    active_node = 6
+    previous_node = 8
+    previous_status = success
+    next_child__sel5 = -1
+  -- Loop starts here
+  -> State: 2.16 <-
+    active_node = 2
+    previous_node = 6
+    next_child__sel5 = 7
+  -> State: 2.17 <-
+    active_node = 1
+    previous_node = 2
+    current_status = invalid
+    next_child__seqLink3 = 3
+    next_child__sel4 = 4
+  -> State: 2.18 <-
+    active_node = 9
+    previous_node = 1
+    previous_status = invalid
+    next_child__seqLink7 = 2
+  -> State: 2.19 <-
+    active_node = 10
+    previous_node = 9
+    next_child__seqLink7 = -1
+    next_child__seqLink3 = -1
+    next_child__sel5 = -1
+    next_child__sel4 = -1
+  -> State: 2.20 <-
+    active_node = 11
+    previous_node = 10
+    current_status = failure
+    next_child__seqLink4 = 13
+  -> State: 2.21 <-
+    active_node = 10
+    previous_node = 11
+    current_status = invalid
+    previous_status = failure
+    randomizer = TRUE
+    next_child__sel6 = 12
+  -> State: 2.22 <-
+    active_node = 12
+    previous_node = 10
+    current_status = success
+    previous_status = invalid
+    next_child__sel6 = 11
+  -> State: 2.23 <-
+    active_node = 10
+    previous_node = 12
+    previous_status = success
+    next_child__sel6 = -1
+  -> State: 2.24 <-
+    active_node = 9
+    previous_node = 10
+    current_status = invalid
+    next_child__sel6 = 11
+  -> State: 2.25 <-
+    active_node = 13
+    previous_node = 9
+    previous_status = invalid
+    next_child__seqLink4 = 10
+  -> State: 2.26 <-
+    active_node = 14
+    previous_node = 13
+    current_status = success
+    next_child__seqLink4 = -1
+    next_child__sel6 = -1
+  -> State: 2.27 <-
+    active_node = 13
+    previous_node = 14
+    previous_status = success
+    next_child__sel7 = 15
+  -> State: 2.28 <-
+    active_node = 9
+    previous_node = 13
+    next_child__sel7 = 14
+  -> State: 2.29 <-
+    active_node = 1
+    previous_node = 9
+    next_child__seqLink4 = 10
+    next_child__sel6 = 11
+  -> State: 2.30 <-
+    active_node = 0
+    previous_node = 1
+    current_status = invalid
+    next_child__seqLink7 = 2
+    next_child__seqLink3 = 3
+    next_child__sel5 = 7
+    next_child__sel4 = 4
+  -> State: 2.31 <-
+    active_node = 16
+    previous_node = 0
+    previous_status = invalid
+    next_child__seqLink9 = 1
+  -> State: 2.32 <-
+    active_node = 17
+    previous_node = 16
+    next_child__seqLink9 = -1
+    next_child__seqLink7 = -1
+    next_child__seqLink4 = -1
+    next_child__sel7 = -1
+    next_child__sel6 = -1
+    next_child__seqLink3 = -1
+    next_child__sel5 = -1
+    next_child__sel4 = -1
+  -> State: 2.33 <-
+    active_node = 18
+    previous_node = 17
+    next_child__seqLink8 = 24
+  -> State: 2.34 <-
+    active_node = 19
+    previous_node = 18
+    current_status = success
+    next_child__seqLink5 = 21
+  -> State: 2.35 <-
+    active_node = 18
+    previous_node = 19
+    previous_status = success
+    next_child__sel8 = 20
+  -> State: 2.36 <-
+    active_node = 17
+    previous_node = 18
+    current_status = invalid
+    next_child__sel8 = 19
+  -> State: 2.37 <-
+    active_node = 21
+    previous_node = 17
+    previous_status = invalid
+    next_child__seqLink5 = 18
+  -> State: 2.38 <-
+    active_node = 22
+    previous_node = 21
+    current_status = success
+    next_child__seqLink5 = -1
+    next_child__sel8 = -1
+  -> State: 2.39 <-
+    active_node = 21
+    previous_node = 22
+    previous_status = success
+    next_child__sel9 = 23
+  -> State: 2.40 <-
+    active_node = 17
+    previous_node = 21
+    next_child__sel9 = 22
+  -> State: 2.41 <-
+    active_node = 16
+    previous_node = 17
+    current_status = invalid
+    next_child__seqLink5 = 18
+    next_child__sel8 = 19
+  -> State: 2.42 <-
+    active_node = 24
+    previous_node = 16
+    previous_status = invalid
+    next_child__seqLink8 = 17
+  -> State: 2.43 <-
+    active_node = 25
+    previous_node = 24
+    next_child__seqLink8 = -1
+    next_child__seqLink5 = -1
+    next_child__sel9 = -1
+    next_child__sel8 = -1
+  -> State: 2.44 <-
+    active_node = 26
+    previous_node = 25
+    next_child__seqLink6 = 32
+  -> State: 2.45 <-
+    active_node = 27
+    previous_node = 26
+    current_status = success
+    next_child__seqLink1 = 29
+  -> State: 2.46 <-
+    active_node = 26
+    previous_node = 27
+    previous_status = success
+    next_child__sel0 = 28
+  -> State: 2.47 <-
+    active_node = 25
+    previous_node = 26
+    current_status = invalid
+    next_child__sel0 = 27
+  -> State: 2.48 <-
+    active_node = 29
+    previous_node = 25
+    previous_status = invalid
+    next_child__seqLink1 = 26
+  -> State: 2.49 <-
+    active_node = 30
+    previous_node = 29
+    current_status = success
+    next_child__seqLink1 = -1
+    next_child__sel0 = -1
+  -> State: 2.50 <-
+    active_node = 29
+    previous_node = 30
+    previous_status = success
+    next_child__sel1 = 31
+  -> State: 2.51 <-
+    active_node = 25
+    previous_node = 29
+    next_child__sel1 = 30
+  -> State: 2.52 <-
+    active_node = 24
+    previous_node = 25
+    current_status = invalid
+    next_child__seqLink1 = 26
+    next_child__sel0 = 27
+  -> State: 2.53 <-
+    active_node = 32
+    previous_node = 24
+    previous_status = invalid
+    next_child__seqLink6 = 25
+  -> State: 2.54 <-
+    active_node = 33
+    previous_node = 32
+    next_child__seqLink6 = -1
+    next_child__seqLink1 = -1
+    next_child__sel1 = -1
+    next_child__sel0 = -1
+  -> State: 2.55 <-
+    active_node = 34
+    previous_node = 33
+    current_status = success
+    next_child__seqLink2 = 36
+  -> State: 2.56 <-
+    active_node = 33
+    previous_node = 34
+    previous_status = success
+    next_child__sel2 = 35
+  -> State: 2.57 <-
+    active_node = 32
+    previous_node = 33
+    current_status = invalid
+    next_child__sel2 = 34
+  -> State: 2.58 <-
+    active_node = 36
+    previous_node = 32
+    previous_status = invalid
+    next_child__seqLink2 = 33
+  -> State: 2.59 <-
+    active_node = 37
+    previous_node = 36
+    current_status = success
+    next_child__seqLink2 = -1
+    next_child__sel2 = -1
+  -> State: 2.60 <-
+    active_node = 36
+    previous_node = 37
+    previous_status = success
+    next_child__sel3 = 38
+  -> State: 2.61 <-
+    active_node = 32
+    previous_node = 36
+    next_child__sel3 = 37
+  -> State: 2.62 <-
+    active_node = 24
+    previous_node = 32
+    next_child__seqLink2 = 33
+    next_child__sel2 = 34
+  -> State: 2.63 <-
+    active_node = 16
+    previous_node = 24
+    next_child__seqLink6 = 25
+    next_child__seqLink1 = 26
+    next_child__sel1 = 30
+    next_child__sel0 = 27
+  -> State: 2.64 <-
+    active_node = 0
+    previous_node = 16
+    next_child__seqLink8 = 17
+    next_child__seqLink5 = 18
+    next_child__sel9 = 22
+    next_child__sel8 = 19
+  -> State: 2.65 <-
+    active_node = -1
+    previous_node = 0
+    current_status = invalid
+    next_child__seqLink9 = 1
+    next_child__seqLink7 = 2
+    next_child__seqLink4 = 10
+    next_child__sel7 = 14
+    next_child__sel6 = 11
+    next_child__seqLink3 = 3
+    next_child__sel5 = 7
+    next_child__sel4 = 4
+  -> State: 2.66 <-
+    active_node = 0
+    previous_node = -1
+    previous_status = invalid
+  -> State: 2.67 <-
+    active_node = 1
+    previous_node = 0
+  -> State: 2.68 <-
+    active_node = 2
+    previous_node = 1
+    next_child__seqLink9 = 16
+  -> State: 2.69 <-
+    active_node = 3
+    previous_node = 2
+    next_child__seqLink7 = 9
+  -> State: 2.70 <-
+    active_node = 4
+    previous_node = 3
+    current_status = success
+    next_child__seqLink3 = 6
+  -> State: 2.71 <-
+    active_node = 3
+    previous_node = 4
+    previous_status = success
+    next_child__sel4 = 5
+  -> State: 2.72 <-
+    active_node = 2
+    previous_node = 3
+    current_status = invalid
+    next_child__sel4 = 4
+  -> State: 2.73 <-
+    active_node = 6
+    previous_node = 2
+    previous_status = invalid
+    next_child__seqLink3 = 3
+  -> State: 2.74 <-
+    active_node = 7
+    previous_node = 6
+    current_status = success
+    next_child__seqLink3 = -1
+    next_child__sel4 = -1
+  -> State: 2.75 <-
+    active_node = 6
+    previous_node = 7
+    previous_status = success
+    randomizer = FALSE
+    next_child__sel5 = 8
+  -> State: 2.76 <-
+    active_node = 2
+    previous_node = 6
+    next_child__sel5 = 7
+-- specification  G ((active_node = node_names.success_failure_node_2 & current_status = failure) -> (active_node > 0 U (active_node = node_names.success_node_2 & current_status = success)))  is true
+-- specification  G ((active_node = node_names.success_failure_node_2 & current_status = failure) -> !(active_node > 0 U (active_node = node_names.success_node_2 & current_status = success)))  is false
+-- as demonstrated by the following execution sequence
+Trace Description: LTL Counterexample 
+Trace Type: Counterexample 
+  -> State: 3.1 <-
+    active_node = -1
+    previous_node = -1
+    current_status = invalid
+    previous_status = invalid
+    randomizer = FALSE
+    next_child__seqLink9 = 1
+    next_child__seqLink8 = 17
+    next_child__seqLink6 = 25
+    next_child__seqLink2 = 33
+    next_child__sel3 = 37
+    next_child__sel2 = 34
+    next_child__seqLink1 = 26
+    next_child__sel1 = 30
+    next_child__sel0 = 27
+    next_child__seqLink5 = 18
+    next_child__sel9 = 22
+    next_child__sel8 = 19
+    next_child__seqLink7 = 2
+    next_child__seqLink4 = 10
+    next_child__sel7 = 14
+    next_child__sel6 = 11
+    next_child__seqLink3 = 3
+    next_child__sel5 = 7
+    next_child__sel4 = 4
+    child_index_to_resume_from__seqLink9 = -2
+    child_index_to_resume_from__seqLink8 = -2
+    child_index_to_resume_from__seqLink6 = -2
+    child_index_to_resume_from__seqLink2 = -2
+    child_index_to_resume_from__sel3 = -2
+    child_index_to_resume_from__sel2 = -2
+    child_index_to_resume_from__seqLink1 = -2
+    child_index_to_resume_from__sel1 = -2
+    child_index_to_resume_from__sel0 = -2
+    child_index_to_resume_from__seqLink5 = -2
+    child_index_to_resume_from__sel9 = -2
+    child_index_to_resume_from__sel8 = -2
+    child_index_to_resume_from__seqLink7 = -2
+    child_index_to_resume_from__seqLink4 = -2
+    child_index_to_resume_from__sel7 = -2
+    child_index_to_resume_from__sel6 = -2
+    child_index_to_resume_from__seqLink3 = -2
+    child_index_to_resume_from__sel5 = -2
+    child_index_to_resume_from__sel4 = -2
+    resume_from_here_in_subtree__seqLink9 = -3
+    node_names.success_node_9 = 38
+    node_names.success_failure_node_9 = 37
+    node_names.sel3 = 36
+    node_names.success_node_8 = 35
+    node_names.success_failure_node_8 = 34
+    node_names.sel2 = 33
+    node_names.seqLink2 = 32
+    node_names.success_node_7 = 31
+    node_names.success_failure_node_7 = 30
+    node_names.sel1 = 29
+    node_names.success_node_6 = 28
+    node_names.success_failure_node_6 = 27
+    node_names.sel0 = 26
+    node_names.seqLink1 = 25
+    node_names.seqLink6 = 24
+    node_names.success_node_5 = 23
+    node_names.success_failure_node_5 = 22
+    node_names.sel9 = 21
+    node_names.success_node_4 = 20
+    node_names.success_failure_node_4 = 19
+    node_names.sel8 = 18
+    node_names.seqLink5 = 17
+    node_names.seqLink8 = 16
+    node_names.success_node_3 = 15
+    node_names.success_failure_node_3 = 14
+    node_names.sel7 = 13
+    node_names.success_node_2 = 12
+    node_names.success_failure_node_2 = 11
+    node_names.sel6 = 10
+    node_names.seqLink4 = 9
+    node_names.success_node_1 = 8
+    node_names.success_failure_node_1 = 7
+    node_names.sel5 = 6
+    node_names.success_node = 5
+    node_names.success_failure_node = 4
+    node_names.sel4 = 3
+    node_names.seqLink3 = 2
+    node_names.seqLink7 = 1
+    node_names.seqLink9 = 0
+  -> State: 3.2 <-
+    active_node = 0
+  -> State: 3.3 <-
+    active_node = 1
+    previous_node = 0
+  -> State: 3.4 <-
+    active_node = 2
+    previous_node = 1
+    next_child__seqLink9 = 16
+  -> State: 3.5 <-
+    active_node = 3
+    previous_node = 2
+    next_child__seqLink7 = 9
+  -> State: 3.6 <-
+    active_node = 4
+    previous_node = 3
+    current_status = failure
+    next_child__seqLink3 = 6
+  -> State: 3.7 <-
+    active_node = 3
+    previous_node = 4
+    current_status = invalid
+    previous_status = failure
+    randomizer = TRUE
+    next_child__sel4 = 5
+  -> State: 3.8 <-
+    active_node = 5
+    previous_node = 3
+    current_status = success
+    previous_status = invalid
+    next_child__sel4 = 4
+  -> State: 3.9 <-
+    active_node = 3
+    previous_node = 5
+    previous_status = success
+    next_child__sel4 = -1
+  -> State: 3.10 <-
+    active_node = 2
+    previous_node = 3
+    current_status = invalid
+    next_child__sel4 = 4
+  -> State: 3.11 <-
+    active_node = 6
+    previous_node = 2
+    previous_status = invalid
+    next_child__seqLink3 = 3
+  -> State: 3.12 <-
+    active_node = 7
+    previous_node = 6
+    current_status = success
+    next_child__seqLink3 = -1
+    next_child__sel4 = -1
+  -> State: 3.13 <-
+    active_node = 6
+    previous_node = 7
+    previous_status = success
+    randomizer = FALSE
+    next_child__sel5 = 8
+  -> State: 3.14 <-
+    active_node = 2
+    previous_node = 6
+    next_child__sel5 = 7
+  -> State: 3.15 <-
+    active_node = 1
+    previous_node = 2
+    current_status = invalid
+    next_child__seqLink3 = 3
+    next_child__sel4 = 4
+  -> State: 3.16 <-
+    active_node = 9
+    previous_node = 1
+    previous_status = invalid
+    next_child__seqLink7 = 2
+  -> State: 3.17 <-
+    active_node = 10
+    previous_node = 9
+    next_child__seqLink7 = -1
+    next_child__seqLink3 = -1
+    next_child__sel5 = -1
+    next_child__sel4 = -1
+  -> State: 3.18 <-
+    active_node = 11
+    previous_node = 10
+    current_status = failure
+    next_child__seqLink4 = 13
+  -> State: 3.19 <-
+    active_node = 10
+    previous_node = 11
+    current_status = invalid
+    previous_status = failure
+    next_child__sel6 = 12
+  -> State: 3.20 <-
+    active_node = 12
+    previous_node = 10
+    current_status = success
+    previous_status = invalid
+    next_child__sel6 = 11
+  -> State: 3.21 <-
+    active_node = 10
+    previous_node = 12
+    previous_status = success
+    next_child__sel6 = -1
+  -- Loop starts here
+  -> State: 3.22 <-
+    active_node = 9
+    previous_node = 10
+    current_status = invalid
+    next_child__sel6 = 11
+  -> State: 3.23 <-
+    active_node = 13
+    previous_node = 9
+    previous_status = invalid
+    next_child__seqLink4 = 10
+  -> State: 3.24 <-
+    active_node = 14
+    previous_node = 13
+    current_status = failure
+    next_child__seqLink4 = -1
+    next_child__sel6 = -1
+  -> State: 3.25 <-
+    active_node = 13
+    previous_node = 14
+    current_status = invalid
+    previous_status = failure
+    randomizer = TRUE
+    next_child__sel7 = 15
+  -> State: 3.26 <-
+    active_node = 15
+    previous_node = 13
+    current_status = success
+    previous_status = invalid
+    next_child__sel7 = 14
+  -> State: 3.27 <-
+    active_node = 13
+    previous_node = 15
+    previous_status = success
+    next_child__sel7 = -1
+  -> State: 3.28 <-
+    active_node = 9
+    previous_node = 13
+    next_child__sel7 = 14
+  -> State: 3.29 <-
+    active_node = 1
+    previous_node = 9
+    next_child__seqLink4 = 10
+    next_child__sel6 = 11
+  -> State: 3.30 <-
+    active_node = 0
+    previous_node = 1
+    current_status = invalid
+    next_child__seqLink7 = 2
+    next_child__seqLink3 = 3
+    next_child__sel5 = 7
+    next_child__sel4 = 4
+  -> State: 3.31 <-
+    active_node = 16
+    previous_node = 0
+    previous_status = invalid
+    next_child__seqLink9 = 1
+  -> State: 3.32 <-
+    active_node = 17
+    previous_node = 16
+    next_child__seqLink9 = -1
+    next_child__seqLink7 = -1
+    next_child__seqLink4 = -1
+    next_child__sel7 = -1
+    next_child__sel6 = -1
+    next_child__seqLink3 = -1
+    next_child__sel5 = -1
+    next_child__sel4 = -1
+  -> State: 3.33 <-
+    active_node = 18
+    previous_node = 17
+    next_child__seqLink8 = 24
+  -> State: 3.34 <-
+    active_node = 19
+    previous_node = 18
+    current_status = success
+    next_child__seqLink5 = 21
+  -> State: 3.35 <-
+    active_node = 18
+    previous_node = 19
+    previous_status = success
+    next_child__sel8 = 20
+  -> State: 3.36 <-
+    active_node = 17
+    previous_node = 18
+    current_status = invalid
+    next_child__sel8 = 19
+  -> State: 3.37 <-
+    active_node = 21
+    previous_node = 17
+    previous_status = invalid
+    next_child__seqLink5 = 18
+  -> State: 3.38 <-
+    active_node = 22
+    previous_node = 21
+    current_status = success
+    next_child__seqLink5 = -1
+    next_child__sel8 = -1
+  -> State: 3.39 <-
+    active_node = 21
+    previous_node = 22
+    previous_status = success
+    next_child__sel9 = 23
+  -> State: 3.40 <-
+    active_node = 17
+    previous_node = 21
+    next_child__sel9 = 22
+  -> State: 3.41 <-
+    active_node = 16
+    previous_node = 17
+    current_status = invalid
+    next_child__seqLink5 = 18
+    next_child__sel8 = 19
+  -> State: 3.42 <-
+    active_node = 24
+    previous_node = 16
+    previous_status = invalid
+    next_child__seqLink8 = 17
+  -> State: 3.43 <-
+    active_node = 25
+    previous_node = 24
+    next_child__seqLink8 = -1
+    next_child__seqLink5 = -1
+    next_child__sel9 = -1
+    next_child__sel8 = -1
+  -> State: 3.44 <-
+    active_node = 26
+    previous_node = 25
+    next_child__seqLink6 = 32
+  -> State: 3.45 <-
+    active_node = 27
+    previous_node = 26
+    current_status = success
+    next_child__seqLink1 = 29
+  -> State: 3.46 <-
+    active_node = 26
+    previous_node = 27
+    previous_status = success
+    next_child__sel0 = 28
+  -> State: 3.47 <-
+    active_node = 25
+    previous_node = 26
+    current_status = invalid
+    next_child__sel0 = 27
+  -> State: 3.48 <-
+    active_node = 29
+    previous_node = 25
+    previous_status = invalid
+    next_child__seqLink1 = 26
+  -> State: 3.49 <-
+    active_node = 30
+    previous_node = 29
+    current_status = success
+    next_child__seqLink1 = -1
+    next_child__sel0 = -1
+  -> State: 3.50 <-
+    active_node = 29
+    previous_node = 30
+    previous_status = success
+    next_child__sel1 = 31
+  -> State: 3.51 <-
+    active_node = 25
+    previous_node = 29
+    next_child__sel1 = 30
+  -> State: 3.52 <-
+    active_node = 24
+    previous_node = 25
+    current_status = invalid
+    next_child__seqLink1 = 26
+    next_child__sel0 = 27
+  -> State: 3.53 <-
+    active_node = 32
+    previous_node = 24
+    previous_status = invalid
+    next_child__seqLink6 = 25
+  -> State: 3.54 <-
+    active_node = 33
+    previous_node = 32
+    next_child__seqLink6 = -1
+    next_child__seqLink1 = -1
+    next_child__sel1 = -1
+    next_child__sel0 = -1
+  -> State: 3.55 <-
+    active_node = 34
+    previous_node = 33
+    current_status = success
+    next_child__seqLink2 = 36
+  -> State: 3.56 <-
+    active_node = 33
+    previous_node = 34
+    previous_status = success
+    next_child__sel2 = 35
+  -> State: 3.57 <-
+    active_node = 32
+    previous_node = 33
+    current_status = invalid
+    next_child__sel2 = 34
+  -> State: 3.58 <-
+    active_node = 36
+    previous_node = 32
+    previous_status = invalid
+    next_child__seqLink2 = 33
+  -> State: 3.59 <-
+    active_node = 37
+    previous_node = 36
+    current_status = success
+    next_child__seqLink2 = -1
+    next_child__sel2 = -1
+  -> State: 3.60 <-
+    active_node = 36
+    previous_node = 37
+    previous_status = success
+    next_child__sel3 = 38
+  -> State: 3.61 <-
+    active_node = 32
+    previous_node = 36
+    next_child__sel3 = 37
+  -> State: 3.62 <-
+    active_node = 24
+    previous_node = 32
+    next_child__seqLink2 = 33
+    next_child__sel2 = 34
+  -> State: 3.63 <-
+    active_node = 16
+    previous_node = 24
+    next_child__seqLink6 = 25
+    next_child__seqLink1 = 26
+    next_child__sel1 = 30
+    next_child__sel0 = 27
+  -> State: 3.64 <-
+    active_node = 0
+    previous_node = 16
+    next_child__seqLink8 = 17
+    next_child__seqLink5 = 18
+    next_child__sel9 = 22
+    next_child__sel8 = 19
+  -> State: 3.65 <-
+    active_node = -1
+    previous_node = 0
+    current_status = invalid
+    next_child__seqLink9 = 1
+    next_child__seqLink7 = 2
+    next_child__seqLink4 = 10
+    next_child__sel7 = 14
+    next_child__sel6 = 11
+    next_child__seqLink3 = 3
+    next_child__sel5 = 7
+    next_child__sel4 = 4
+  -> State: 3.66 <-
+    active_node = 0
+    previous_node = -1
+    previous_status = invalid
+  -> State: 3.67 <-
+    active_node = 1
+    previous_node = 0
+  -> State: 3.68 <-
+    active_node = 2
+    previous_node = 1
+    next_child__seqLink9 = 16
+  -> State: 3.69 <-
+    active_node = 3
+    previous_node = 2
+    next_child__seqLink7 = 9
+  -> State: 3.70 <-
+    active_node = 4
+    previous_node = 3
+    current_status = success
+    next_child__seqLink3 = 6
+  -> State: 3.71 <-
+    active_node = 3
+    previous_node = 4
+    previous_status = success
+    next_child__sel4 = 5
+  -> State: 3.72 <-
+    active_node = 2
+    previous_node = 3
+    current_status = invalid
+    next_child__sel4 = 4
+  -> State: 3.73 <-
+    active_node = 6
+    previous_node = 2
+    previous_status = invalid
+    next_child__seqLink3 = 3
+  -> State: 3.74 <-
+    active_node = 7
+    previous_node = 6
+    current_status = success
+    next_child__seqLink3 = -1
+    next_child__sel4 = -1
+  -> State: 3.75 <-
+    active_node = 6
+    previous_node = 7
+    previous_status = success
+    next_child__sel5 = 8
+  -> State: 3.76 <-
+    active_node = 2
+    previous_node = 6
+    next_child__sel5 = 7
+  -> State: 3.77 <-
+    active_node = 1
+    previous_node = 2
+    current_status = invalid
+    next_child__seqLink3 = 3
+    next_child__sel4 = 4
+  -> State: 3.78 <-
+    active_node = 9
+    previous_node = 1
+    previous_status = invalid
+    next_child__seqLink7 = 2
+  -> State: 3.79 <-
+    active_node = 10
+    previous_node = 9
+    next_child__seqLink7 = -1
+    next_child__seqLink3 = -1
+    next_child__sel5 = -1
+    next_child__sel4 = -1
+  -> State: 3.80 <-
+    active_node = 11
+    previous_node = 10
+    current_status = success
+    next_child__seqLink4 = 13
+  -> State: 3.81 <-
+    active_node = 10
+    previous_node = 11
+    previous_status = success
+    randomizer = FALSE
+    next_child__sel6 = 12
+  -> State: 3.82 <-
+    active_node = 9
+    previous_node = 10
+    current_status = invalid
+    next_child__sel6 = 11
+-- specification  G ((active_node = node_names.success_failure_node_3 & current_status = failure) -> (active_node > 0 U (active_node = node_names.success_node_3 & current_status = success)))  is true
+-- specification  G ((active_node = node_names.success_failure_node_3 & current_status = failure) -> !(active_node > 0 U (active_node = node_names.success_node_3 & current_status = success)))  is false
+-- as demonstrated by the following execution sequence
+Trace Description: LTL Counterexample 
+Trace Type: Counterexample 
+  -> State: 4.1 <-
+    active_node = -1
+    previous_node = -1
+    current_status = invalid
+    previous_status = invalid
+    randomizer = FALSE
+    next_child__seqLink9 = 1
+    next_child__seqLink8 = 17
+    next_child__seqLink6 = 25
+    next_child__seqLink2 = 33
+    next_child__sel3 = 37
+    next_child__sel2 = 34
+    next_child__seqLink1 = 26
+    next_child__sel1 = 30
+    next_child__sel0 = 27
+    next_child__seqLink5 = 18
+    next_child__sel9 = 22
+    next_child__sel8 = 19
+    next_child__seqLink7 = 2
+    next_child__seqLink4 = 10
+    next_child__sel7 = 14
+    next_child__sel6 = 11
+    next_child__seqLink3 = 3
+    next_child__sel5 = 7
+    next_child__sel4 = 4
+    child_index_to_resume_from__seqLink9 = -2
+    child_index_to_resume_from__seqLink8 = -2
+    child_index_to_resume_from__seqLink6 = -2
+    child_index_to_resume_from__seqLink2 = -2
+    child_index_to_resume_from__sel3 = -2
+    child_index_to_resume_from__sel2 = -2
+    child_index_to_resume_from__seqLink1 = -2
+    child_index_to_resume_from__sel1 = -2
+    child_index_to_resume_from__sel0 = -2
+    child_index_to_resume_from__seqLink5 = -2
+    child_index_to_resume_from__sel9 = -2
+    child_index_to_resume_from__sel8 = -2
+    child_index_to_resume_from__seqLink7 = -2
+    child_index_to_resume_from__seqLink4 = -2
+    child_index_to_resume_from__sel7 = -2
+    child_index_to_resume_from__sel6 = -2
+    child_index_to_resume_from__seqLink3 = -2
+    child_index_to_resume_from__sel5 = -2
+    child_index_to_resume_from__sel4 = -2
+    resume_from_here_in_subtree__seqLink9 = -3
+    node_names.success_node_9 = 38
+    node_names.success_failure_node_9 = 37
+    node_names.sel3 = 36
+    node_names.success_node_8 = 35
+    node_names.success_failure_node_8 = 34
+    node_names.sel2 = 33
+    node_names.seqLink2 = 32
+    node_names.success_node_7 = 31
+    node_names.success_failure_node_7 = 30
+    node_names.sel1 = 29
+    node_names.success_node_6 = 28
+    node_names.success_failure_node_6 = 27
+    node_names.sel0 = 26
+    node_names.seqLink1 = 25
+    node_names.seqLink6 = 24
+    node_names.success_node_5 = 23
+    node_names.success_failure_node_5 = 22
+    node_names.sel9 = 21
+    node_names.success_node_4 = 20
+    node_names.success_failure_node_4 = 19
+    node_names.sel8 = 18
+    node_names.seqLink5 = 17
+    node_names.seqLink8 = 16
+    node_names.success_node_3 = 15
+    node_names.success_failure_node_3 = 14
+    node_names.sel7 = 13
+    node_names.success_node_2 = 12
+    node_names.success_failure_node_2 = 11
+    node_names.sel6 = 10
+    node_names.seqLink4 = 9
+    node_names.success_node_1 = 8
+    node_names.success_failure_node_1 = 7
+    node_names.sel5 = 6
+    node_names.success_node = 5
+    node_names.success_failure_node = 4
+    node_names.sel4 = 3
+    node_names.seqLink3 = 2
+    node_names.seqLink7 = 1
+    node_names.seqLink9 = 0
+  -> State: 4.2 <-
+    active_node = 0
+  -> State: 4.3 <-
+    active_node = 1
+    previous_node = 0
+  -> State: 4.4 <-
+    active_node = 2
+    previous_node = 1
+    next_child__seqLink9 = 16
+  -> State: 4.5 <-
+    active_node = 3
+    previous_node = 2
+    next_child__seqLink7 = 9
+  -> State: 4.6 <-
+    active_node = 4
+    previous_node = 3
+    current_status = failure
+    next_child__seqLink3 = 6
+  -> State: 4.7 <-
+    active_node = 3
+    previous_node = 4
+    current_status = invalid
+    previous_status = failure
+    randomizer = TRUE
+    next_child__sel4 = 5
+  -> State: 4.8 <-
+    active_node = 5
+    previous_node = 3
+    current_status = success
+    previous_status = invalid
+    next_child__sel4 = 4
+  -> State: 4.9 <-
+    active_node = 3
+    previous_node = 5
+    previous_status = success
+    next_child__sel4 = -1
+  -> State: 4.10 <-
+    active_node = 2
+    previous_node = 3
+    current_status = invalid
+    next_child__sel4 = 4
+  -> State: 4.11 <-
+    active_node = 6
+    previous_node = 2
+    previous_status = invalid
+    next_child__seqLink3 = 3
+  -> State: 4.12 <-
+    active_node = 7
+    previous_node = 6
+    current_status = success
+    next_child__seqLink3 = -1
+    next_child__sel4 = -1
+  -> State: 4.13 <-
+    active_node = 6
+    previous_node = 7
+    previous_status = success
+    next_child__sel5 = 8
+  -> State: 4.14 <-
+    active_node = 2
+    previous_node = 6
+    next_child__sel5 = 7
+  -> State: 4.15 <-
+    active_node = 1
+    previous_node = 2
+    current_status = invalid
+    next_child__seqLink3 = 3
+    next_child__sel4 = 4
+  -> State: 4.16 <-
+    active_node = 9
+    previous_node = 1
+    previous_status = invalid
+    next_child__seqLink7 = 2
+  -> State: 4.17 <-
+    active_node = 10
+    previous_node = 9
+    next_child__seqLink7 = -1
+    next_child__seqLink3 = -1
+    next_child__sel5 = -1
+    next_child__sel4 = -1
+  -> State: 4.18 <-
+    active_node = 11
+    previous_node = 10
+    current_status = success
+    next_child__seqLink4 = 13
+  -> State: 4.19 <-
+    active_node = 10
+    previous_node = 11
+    previous_status = success
+    randomizer = FALSE
+    next_child__sel6 = 12
+  -> State: 4.20 <-
+    active_node = 9
+    previous_node = 10
+    current_status = invalid
+    next_child__sel6 = 11
+  -> State: 4.21 <-
+    active_node = 13
+    previous_node = 9
+    previous_status = invalid
+    next_child__seqLink4 = 10
+  -> State: 4.22 <-
+    active_node = 14
+    previous_node = 13
+    current_status = failure
+    next_child__seqLink4 = -1
+    next_child__sel6 = -1
+  -> State: 4.23 <-
+    active_node = 13
+    previous_node = 14
+    current_status = invalid
+    previous_status = failure
+    next_child__sel7 = 15
+  -> State: 4.24 <-
+    active_node = 15
+    previous_node = 13
+    current_status = success
+    previous_status = invalid
+    next_child__sel7 = 14
+  -> State: 4.25 <-
+    active_node = 13
+    previous_node = 15
+    previous_status = success
+    next_child__sel7 = -1
+  -- Loop starts here
+  -> State: 4.26 <-
+    active_node = 9
+    previous_node = 13
+    next_child__sel7 = 14
+  -> State: 4.27 <-
+    active_node = 1
+    previous_node = 9
+    next_child__seqLink4 = 10
+    next_child__sel6 = 11
+  -> State: 4.28 <-
+    active_node = 0
+    previous_node = 1
+    current_status = invalid
+    next_child__seqLink7 = 2
+    next_child__seqLink3 = 3
+    next_child__sel5 = 7
+    next_child__sel4 = 4
+  -> State: 4.29 <-
+    active_node = 16
+    previous_node = 0
+    previous_status = invalid
+    next_child__seqLink9 = 1
+  -> State: 4.30 <-
+    active_node = 17
+    previous_node = 16
+    next_child__seqLink9 = -1
+    next_child__seqLink7 = -1
+    next_child__seqLink4 = -1
+    next_child__sel7 = -1
+    next_child__sel6 = -1
+    next_child__seqLink3 = -1
+    next_child__sel5 = -1
+    next_child__sel4 = -1
+  -> State: 4.31 <-
+    active_node = 18
+    previous_node = 17
+    next_child__seqLink8 = 24
+  -> State: 4.32 <-
+    active_node = 19
+    previous_node = 18
+    current_status = failure
+    next_child__seqLink5 = 21
+  -> State: 4.33 <-
+    active_node = 18
+    previous_node = 19
+    current_status = invalid
+    previous_status = failure
+    randomizer = TRUE
+    next_child__sel8 = 20
+  -> State: 4.34 <-
+    active_node = 20
+    previous_node = 18
+    current_status = success
+    previous_status = invalid
+    next_child__sel8 = 19
+  -> State: 4.35 <-
+    active_node = 18
+    previous_node = 20
+    previous_status = success
+    next_child__sel8 = -1
+  -> State: 4.36 <-
+    active_node = 17
+    previous_node = 18
+    current_status = invalid
+    next_child__sel8 = 19
+  -> State: 4.37 <-
+    active_node = 21
+    previous_node = 17
+    previous_status = invalid
+    next_child__seqLink5 = 18
+  -> State: 4.38 <-
+    active_node = 22
+    previous_node = 21
+    current_status = success
+    next_child__seqLink5 = -1
+    next_child__sel8 = -1
+  -> State: 4.39 <-
+    active_node = 21
+    previous_node = 22
+    previous_status = success
+    next_child__sel9 = 23
+  -> State: 4.40 <-
+    active_node = 17
+    previous_node = 21
+    next_child__sel9 = 22
+  -> State: 4.41 <-
+    active_node = 16
+    previous_node = 17
+    current_status = invalid
+    next_child__seqLink5 = 18
+    next_child__sel8 = 19
+  -> State: 4.42 <-
+    active_node = 24
+    previous_node = 16
+    previous_status = invalid
+    next_child__seqLink8 = 17
+  -> State: 4.43 <-
+    active_node = 25
+    previous_node = 24
+    next_child__seqLink8 = -1
+    next_child__seqLink5 = -1
+    next_child__sel9 = -1
+    next_child__sel8 = -1
+  -> State: 4.44 <-
+    active_node = 26
+    previous_node = 25
+    next_child__seqLink6 = 32
+  -> State: 4.45 <-
+    active_node = 27
+    previous_node = 26
+    current_status = success
+    next_child__seqLink1 = 29
+  -> State: 4.46 <-
+    active_node = 26
+    previous_node = 27
+    previous_status = success
+    next_child__sel0 = 28
+  -> State: 4.47 <-
+    active_node = 25
+    previous_node = 26
+    current_status = invalid
+    next_child__sel0 = 27
+  -> State: 4.48 <-
+    active_node = 29
+    previous_node = 25
+    previous_status = invalid
+    next_child__seqLink1 = 26
+  -> State: 4.49 <-
+    active_node = 30
+    previous_node = 29
+    current_status = success
+    next_child__seqLink1 = -1
+    next_child__sel0 = -1
+  -> State: 4.50 <-
+    active_node = 29
+    previous_node = 30
+    previous_status = success
+    next_child__sel1 = 31
+  -> State: 4.51 <-
+    active_node = 25
+    previous_node = 29
+    next_child__sel1 = 30
+  -> State: 4.52 <-
+    active_node = 24
+    previous_node = 25
+    current_status = invalid
+    next_child__seqLink1 = 26
+    next_child__sel0 = 27
+  -> State: 4.53 <-
+    active_node = 32
+    previous_node = 24
+    previous_status = invalid
+    next_child__seqLink6 = 25
+  -> State: 4.54 <-
+    active_node = 33
+    previous_node = 32
+    next_child__seqLink6 = -1
+    next_child__seqLink1 = -1
+    next_child__sel1 = -1
+    next_child__sel0 = -1
+  -> State: 4.55 <-
+    active_node = 34
+    previous_node = 33
+    current_status = success
+    next_child__seqLink2 = 36
+  -> State: 4.56 <-
+    active_node = 33
+    previous_node = 34
+    previous_status = success
+    next_child__sel2 = 35
+  -> State: 4.57 <-
+    active_node = 32
+    previous_node = 33
+    current_status = invalid
+    next_child__sel2 = 34
+  -> State: 4.58 <-
+    active_node = 36
+    previous_node = 32
+    previous_status = invalid
+    next_child__seqLink2 = 33
+  -> State: 4.59 <-
+    active_node = 37
+    previous_node = 36
+    current_status = success
+    next_child__seqLink2 = -1
+    next_child__sel2 = -1
+  -> State: 4.60 <-
+    active_node = 36
+    previous_node = 37
+    previous_status = success
+    next_child__sel3 = 38
+  -> State: 4.61 <-
+    active_node = 32
+    previous_node = 36
+    next_child__sel3 = 37
+  -> State: 4.62 <-
+    active_node = 24
+    previous_node = 32
+    next_child__seqLink2 = 33
+    next_child__sel2 = 34
+  -> State: 4.63 <-
+    active_node = 16
+    previous_node = 24
+    next_child__seqLink6 = 25
+    next_child__seqLink1 = 26
+    next_child__sel1 = 30
+    next_child__sel0 = 27
+  -> State: 4.64 <-
+    active_node = 0
+    previous_node = 16
+    next_child__seqLink8 = 17
+    next_child__seqLink5 = 18
+    next_child__sel9 = 22
+    next_child__sel8 = 19
+  -> State: 4.65 <-
+    active_node = -1
+    previous_node = 0
+    current_status = invalid
+    next_child__seqLink9 = 1
+    next_child__seqLink7 = 2
+    next_child__seqLink4 = 10
+    next_child__sel7 = 14
+    next_child__sel6 = 11
+    next_child__seqLink3 = 3
+    next_child__sel5 = 7
+    next_child__sel4 = 4
+  -> State: 4.66 <-
+    active_node = 0
+    previous_node = -1
+    previous_status = invalid
+  -> State: 4.67 <-
+    active_node = 1
+    previous_node = 0
+  -> State: 4.68 <-
+    active_node = 2
+    previous_node = 1
+    next_child__seqLink9 = 16
+  -> State: 4.69 <-
+    active_node = 3
+    previous_node = 2
+    next_child__seqLink7 = 9
+  -> State: 4.70 <-
+    active_node = 4
+    previous_node = 3
+    current_status = success
+    next_child__seqLink3 = 6
+  -> State: 4.71 <-
+    active_node = 3
+    previous_node = 4
+    previous_status = success
+    next_child__sel4 = 5
+  -> State: 4.72 <-
+    active_node = 2
+    previous_node = 3
+    current_status = invalid
+    next_child__sel4 = 4
+  -> State: 4.73 <-
+    active_node = 6
+    previous_node = 2
+    previous_status = invalid
+    next_child__seqLink3 = 3
+  -> State: 4.74 <-
+    active_node = 7
+    previous_node = 6
+    current_status = success
+    next_child__seqLink3 = -1
+    next_child__sel4 = -1
+  -> State: 4.75 <-
+    active_node = 6
+    previous_node = 7
+    previous_status = success
+    next_child__sel5 = 8
+  -> State: 4.76 <-
+    active_node = 2
+    previous_node = 6
+    next_child__sel5 = 7
+  -> State: 4.77 <-
+    active_node = 1
+    previous_node = 2
+    current_status = invalid
+    next_child__seqLink3 = 3
+    next_child__sel4 = 4
+  -> State: 4.78 <-
+    active_node = 9
+    previous_node = 1
+    previous_status = invalid
+    next_child__seqLink7 = 2
+  -> State: 4.79 <-
+    active_node = 10
+    previous_node = 9
+    next_child__seqLink7 = -1
+    next_child__seqLink3 = -1
+    next_child__sel5 = -1
+    next_child__sel4 = -1
+  -> State: 4.80 <-
+    active_node = 11
+    previous_node = 10
+    current_status = success
+    next_child__seqLink4 = 13
+  -> State: 4.81 <-
+    active_node = 10
+    previous_node = 11
+    previous_status = success
+    next_child__sel6 = 12
+  -> State: 4.82 <-
+    active_node = 9
+    previous_node = 10
+    current_status = invalid
+    next_child__sel6 = 11
+  -> State: 4.83 <-
+    active_node = 13
+    previous_node = 9
+    previous_status = invalid
+    next_child__seqLink4 = 10
+  -> State: 4.84 <-
+    active_node = 14
+    previous_node = 13
+    current_status = success
+    next_child__seqLink4 = -1
+    next_child__sel6 = -1
+  -> State: 4.85 <-
+    active_node = 13
+    previous_node = 14
+    previous_status = success
+    randomizer = FALSE
+    next_child__sel7 = 15
+  -> State: 4.86 <-
+    active_node = 9
+    previous_node = 13
+    next_child__sel7 = 14
+-- specification  G ((active_node = node_names.success_failure_node_4 & current_status = failure) -> (active_node > 0 U (active_node = node_names.success_node_4 & current_status = success)))  is true
+-- specification  G ((active_node = node_names.success_failure_node_4 & current_status = failure) -> !(active_node > 0 U (active_node = node_names.success_node_4 & current_status = success)))  is false
+-- as demonstrated by the following execution sequence
+Trace Description: LTL Counterexample 
+Trace Type: Counterexample 
+  -> State: 5.1 <-
+    active_node = -1
+    previous_node = -1
+    current_status = invalid
+    previous_status = invalid
+    randomizer = FALSE
+    next_child__seqLink9 = 1
+    next_child__seqLink8 = 17
+    next_child__seqLink6 = 25
+    next_child__seqLink2 = 33
+    next_child__sel3 = 37
+    next_child__sel2 = 34
+    next_child__seqLink1 = 26
+    next_child__sel1 = 30
+    next_child__sel0 = 27
+    next_child__seqLink5 = 18
+    next_child__sel9 = 22
+    next_child__sel8 = 19
+    next_child__seqLink7 = 2
+    next_child__seqLink4 = 10
+    next_child__sel7 = 14
+    next_child__sel6 = 11
+    next_child__seqLink3 = 3
+    next_child__sel5 = 7
+    next_child__sel4 = 4
+    child_index_to_resume_from__seqLink9 = -2
+    child_index_to_resume_from__seqLink8 = -2
+    child_index_to_resume_from__seqLink6 = -2
+    child_index_to_resume_from__seqLink2 = -2
+    child_index_to_resume_from__sel3 = -2
+    child_index_to_resume_from__sel2 = -2
+    child_index_to_resume_from__seqLink1 = -2
+    child_index_to_resume_from__sel1 = -2
+    child_index_to_resume_from__sel0 = -2
+    child_index_to_resume_from__seqLink5 = -2
+    child_index_to_resume_from__sel9 = -2
+    child_index_to_resume_from__sel8 = -2
+    child_index_to_resume_from__seqLink7 = -2
+    child_index_to_resume_from__seqLink4 = -2
+    child_index_to_resume_from__sel7 = -2
+    child_index_to_resume_from__sel6 = -2
+    child_index_to_resume_from__seqLink3 = -2
+    child_index_to_resume_from__sel5 = -2
+    child_index_to_resume_from__sel4 = -2
+    resume_from_here_in_subtree__seqLink9 = -3
+    node_names.success_node_9 = 38
+    node_names.success_failure_node_9 = 37
+    node_names.sel3 = 36
+    node_names.success_node_8 = 35
+    node_names.success_failure_node_8 = 34
+    node_names.sel2 = 33
+    node_names.seqLink2 = 32
+    node_names.success_node_7 = 31
+    node_names.success_failure_node_7 = 30
+    node_names.sel1 = 29
+    node_names.success_node_6 = 28
+    node_names.success_failure_node_6 = 27
+    node_names.sel0 = 26
+    node_names.seqLink1 = 25
+    node_names.seqLink6 = 24
+    node_names.success_node_5 = 23
+    node_names.success_failure_node_5 = 22
+    node_names.sel9 = 21
+    node_names.success_node_4 = 20
+    node_names.success_failure_node_4 = 19
+    node_names.sel8 = 18
+    node_names.seqLink5 = 17
+    node_names.seqLink8 = 16
+    node_names.success_node_3 = 15
+    node_names.success_failure_node_3 = 14
+    node_names.sel7 = 13
+    node_names.success_node_2 = 12
+    node_names.success_failure_node_2 = 11
+    node_names.sel6 = 10
+    node_names.seqLink4 = 9
+    node_names.success_node_1 = 8
+    node_names.success_failure_node_1 = 7
+    node_names.sel5 = 6
+    node_names.success_node = 5
+    node_names.success_failure_node = 4
+    node_names.sel4 = 3
+    node_names.seqLink3 = 2
+    node_names.seqLink7 = 1
+    node_names.seqLink9 = 0
+  -> State: 5.2 <-
+    active_node = 0
+  -> State: 5.3 <-
+    active_node = 1
+    previous_node = 0
+  -> State: 5.4 <-
+    active_node = 2
+    previous_node = 1
+    next_child__seqLink9 = 16
+  -> State: 5.5 <-
+    active_node = 3
+    previous_node = 2
+    next_child__seqLink7 = 9
+  -> State: 5.6 <-
+    active_node = 4
+    previous_node = 3
+    current_status = failure
+    next_child__seqLink3 = 6
+  -> State: 5.7 <-
+    active_node = 3
+    previous_node = 4
+    current_status = invalid
+    previous_status = failure
+    randomizer = TRUE
+    next_child__sel4 = 5
+  -> State: 5.8 <-
+    active_node = 5
+    previous_node = 3
+    current_status = success
+    previous_status = invalid
+    next_child__sel4 = 4
+  -> State: 5.9 <-
+    active_node = 3
+    previous_node = 5
+    previous_status = success
+    next_child__sel4 = -1
+  -> State: 5.10 <-
+    active_node = 2
+    previous_node = 3
+    current_status = invalid
+    next_child__sel4 = 4
+  -> State: 5.11 <-
+    active_node = 6
+    previous_node = 2
+    previous_status = invalid
+    next_child__seqLink3 = 3
+  -> State: 5.12 <-
+    active_node = 7
+    previous_node = 6
+    current_status = success
+    next_child__seqLink3 = -1
+    next_child__sel4 = -1
+  -> State: 5.13 <-
+    active_node = 6
+    previous_node = 7
+    previous_status = success
+    next_child__sel5 = 8
+  -> State: 5.14 <-
+    active_node = 2
+    previous_node = 6
+    next_child__sel5 = 7
+  -> State: 5.15 <-
+    active_node = 1
+    previous_node = 2
+    current_status = invalid
+    next_child__seqLink3 = 3
+    next_child__sel4 = 4
+  -> State: 5.16 <-
+    active_node = 9
+    previous_node = 1
+    previous_status = invalid
+    next_child__seqLink7 = 2
+  -> State: 5.17 <-
+    active_node = 10
+    previous_node = 9
+    next_child__seqLink7 = -1
+    next_child__seqLink3 = -1
+    next_child__sel5 = -1
+    next_child__sel4 = -1
+  -> State: 5.18 <-
+    active_node = 11
+    previous_node = 10
+    current_status = success
+    next_child__seqLink4 = 13
+  -> State: 5.19 <-
+    active_node = 10
+    previous_node = 11
+    previous_status = success
+    next_child__sel6 = 12
+  -> State: 5.20 <-
+    active_node = 9
+    previous_node = 10
+    current_status = invalid
+    next_child__sel6 = 11
+  -> State: 5.21 <-
+    active_node = 13
+    previous_node = 9
+    previous_status = invalid
+    next_child__seqLink4 = 10
+  -> State: 5.22 <-
+    active_node = 14
+    previous_node = 13
+    current_status = success
+    next_child__seqLink4 = -1
+    next_child__sel6 = -1
+  -> State: 5.23 <-
+    active_node = 13
+    previous_node = 14
+    previous_status = success
+    randomizer = FALSE
+    next_child__sel7 = 15
+  -> State: 5.24 <-
+    active_node = 9
+    previous_node = 13
+    next_child__sel7 = 14
+  -> State: 5.25 <-
+    active_node = 1
+    previous_node = 9
+    next_child__seqLink4 = 10
+    next_child__sel6 = 11
+  -> State: 5.26 <-
+    active_node = 0
+    previous_node = 1
+    current_status = invalid
+    next_child__seqLink7 = 2
+    next_child__seqLink3 = 3
+    next_child__sel5 = 7
+    next_child__sel4 = 4
+  -> State: 5.27 <-
+    active_node = 16
+    previous_node = 0
+    previous_status = invalid
+    next_child__seqLink9 = 1
+  -> State: 5.28 <-
+    active_node = 17
+    previous_node = 16
+    next_child__seqLink9 = -1
+    next_child__seqLink7 = -1
+    next_child__seqLink4 = -1
+    next_child__sel7 = -1
+    next_child__sel6 = -1
+    next_child__seqLink3 = -1
+    next_child__sel5 = -1
+    next_child__sel4 = -1
+  -> State: 5.29 <-
+    active_node = 18
+    previous_node = 17
+    next_child__seqLink8 = 24
+  -> State: 5.30 <-
+    active_node = 19
+    previous_node = 18
+    current_status = failure
+    next_child__seqLink5 = 21
+  -> State: 5.31 <-
+    active_node = 18
+    previous_node = 19
+    current_status = invalid
+    previous_status = failure
+    next_child__sel8 = 20
+  -> State: 5.32 <-
+    active_node = 20
+    previous_node = 18
+    current_status = success
+    previous_status = invalid
+    next_child__sel8 = 19
+  -> State: 5.33 <-
+    active_node = 18
+    previous_node = 20
+    previous_status = success
+    next_child__sel8 = -1
+  -- Loop starts here
+  -> State: 5.34 <-
+    active_node = 17
+    previous_node = 18
+    current_status = invalid
+    next_child__sel8 = 19
+  -> State: 5.35 <-
+    active_node = 21
+    previous_node = 17
+    previous_status = invalid
+    next_child__seqLink5 = 18
+  -> State: 5.36 <-
+    active_node = 22
+    previous_node = 21
+    current_status = failure
+    next_child__seqLink5 = -1
+    next_child__sel8 = -1
+  -> State: 5.37 <-
+    active_node = 21
+    previous_node = 22
+    current_status = invalid
+    previous_status = failure
+    randomizer = TRUE
+    next_child__sel9 = 23
+  -> State: 5.38 <-
+    active_node = 23
+    previous_node = 21
+    current_status = success
+    previous_status = invalid
+    next_child__sel9 = 22
+  -> State: 5.39 <-
+    active_node = 21
+    previous_node = 23
+    previous_status = success
+    next_child__sel9 = -1
+  -> State: 5.40 <-
+    active_node = 17
+    previous_node = 21
+    next_child__sel9 = 22
+  -> State: 5.41 <-
+    active_node = 16
+    previous_node = 17
+    current_status = invalid
+    next_child__seqLink5 = 18
+    next_child__sel8 = 19
+  -> State: 5.42 <-
+    active_node = 24
+    previous_node = 16
+    previous_status = invalid
+    next_child__seqLink8 = 17
+  -> State: 5.43 <-
+    active_node = 25
+    previous_node = 24
+    next_child__seqLink8 = -1
+    next_child__seqLink5 = -1
+    next_child__sel9 = -1
+    next_child__sel8 = -1
+  -> State: 5.44 <-
+    active_node = 26
+    previous_node = 25
+    next_child__seqLink6 = 32
+  -> State: 5.45 <-
+    active_node = 27
+    previous_node = 26
+    current_status = success
+    next_child__seqLink1 = 29
+  -> State: 5.46 <-
+    active_node = 26
+    previous_node = 27
+    previous_status = success
+    next_child__sel0 = 28
+  -> State: 5.47 <-
+    active_node = 25
+    previous_node = 26
+    current_status = invalid
+    next_child__sel0 = 27
+  -> State: 5.48 <-
+    active_node = 29
+    previous_node = 25
+    previous_status = invalid
+    next_child__seqLink1 = 26
+  -> State: 5.49 <-
+    active_node = 30
+    previous_node = 29
+    current_status = success
+    next_child__seqLink1 = -1
+    next_child__sel0 = -1
+  -> State: 5.50 <-
+    active_node = 29
+    previous_node = 30
+    previous_status = success
+    next_child__sel1 = 31
+  -> State: 5.51 <-
+    active_node = 25
+    previous_node = 29
+    next_child__sel1 = 30
+  -> State: 5.52 <-
+    active_node = 24
+    previous_node = 25
+    current_status = invalid
+    next_child__seqLink1 = 26
+    next_child__sel0 = 27
+  -> State: 5.53 <-
+    active_node = 32
+    previous_node = 24
+    previous_status = invalid
+    next_child__seqLink6 = 25
+  -> State: 5.54 <-
+    active_node = 33
+    previous_node = 32
+    next_child__seqLink6 = -1
+    next_child__seqLink1 = -1
+    next_child__sel1 = -1
+    next_child__sel0 = -1
+  -> State: 5.55 <-
+    active_node = 34
+    previous_node = 33
+    current_status = success
+    next_child__seqLink2 = 36
+  -> State: 5.56 <-
+    active_node = 33
+    previous_node = 34
+    previous_status = success
+    next_child__sel2 = 35
+  -> State: 5.57 <-
+    active_node = 32
+    previous_node = 33
+    current_status = invalid
+    next_child__sel2 = 34
+  -> State: 5.58 <-
+    active_node = 36
+    previous_node = 32
+    previous_status = invalid
+    next_child__seqLink2 = 33
+  -> State: 5.59 <-
+    active_node = 37
+    previous_node = 36
+    current_status = success
+    next_child__seqLink2 = -1
+    next_child__sel2 = -1
+  -> State: 5.60 <-
+    active_node = 36
+    previous_node = 37
+    previous_status = success
+    next_child__sel3 = 38
+  -> State: 5.61 <-
+    active_node = 32
+    previous_node = 36
+    next_child__sel3 = 37
+  -> State: 5.62 <-
+    active_node = 24
+    previous_node = 32
+    next_child__seqLink2 = 33
+    next_child__sel2 = 34
+  -> State: 5.63 <-
+    active_node = 16
+    previous_node = 24
+    next_child__seqLink6 = 25
+    next_child__seqLink1 = 26
+    next_child__sel1 = 30
+    next_child__sel0 = 27
+  -> State: 5.64 <-
+    active_node = 0
+    previous_node = 16
+    next_child__seqLink8 = 17
+    next_child__seqLink5 = 18
+    next_child__sel9 = 22
+    next_child__sel8 = 19
+  -> State: 5.65 <-
+    active_node = -1
+    previous_node = 0
+    current_status = invalid
+    next_child__seqLink9 = 1
+    next_child__seqLink7 = 2
+    next_child__seqLink4 = 10
+    next_child__sel7 = 14
+    next_child__sel6 = 11
+    next_child__seqLink3 = 3
+    next_child__sel5 = 7
+    next_child__sel4 = 4
+  -> State: 5.66 <-
+    active_node = 0
+    previous_node = -1
+    previous_status = invalid
+  -> State: 5.67 <-
+    active_node = 1
+    previous_node = 0
+  -> State: 5.68 <-
+    active_node = 2
+    previous_node = 1
+    next_child__seqLink9 = 16
+  -> State: 5.69 <-
+    active_node = 3
+    previous_node = 2
+    next_child__seqLink7 = 9
+  -> State: 5.70 <-
+    active_node = 4
+    previous_node = 3
+    current_status = success
+    next_child__seqLink3 = 6
+  -> State: 5.71 <-
+    active_node = 3
+    previous_node = 4
+    previous_status = success
+    next_child__sel4 = 5
+  -> State: 5.72 <-
+    active_node = 2
+    previous_node = 3
+    current_status = invalid
+    next_child__sel4 = 4
+  -> State: 5.73 <-
+    active_node = 6
+    previous_node = 2
+    previous_status = invalid
+    next_child__seqLink3 = 3
+  -> State: 5.74 <-
+    active_node = 7
+    previous_node = 6
+    current_status = success
+    next_child__seqLink3 = -1
+    next_child__sel4 = -1
+  -> State: 5.75 <-
+    active_node = 6
+    previous_node = 7
+    previous_status = success
+    next_child__sel5 = 8
+  -> State: 5.76 <-
+    active_node = 2
+    previous_node = 6
+    next_child__sel5 = 7
+  -> State: 5.77 <-
+    active_node = 1
+    previous_node = 2
+    current_status = invalid
+    next_child__seqLink3 = 3
+    next_child__sel4 = 4
+  -> State: 5.78 <-
+    active_node = 9
+    previous_node = 1
+    previous_status = invalid
+    next_child__seqLink7 = 2
+  -> State: 5.79 <-
+    active_node = 10
+    previous_node = 9
+    next_child__seqLink7 = -1
+    next_child__seqLink3 = -1
+    next_child__sel5 = -1
+    next_child__sel4 = -1
+  -> State: 5.80 <-
+    active_node = 11
+    previous_node = 10
+    current_status = success
+    next_child__seqLink4 = 13
+  -> State: 5.81 <-
+    active_node = 10
+    previous_node = 11
+    previous_status = success
+    next_child__sel6 = 12
+  -> State: 5.82 <-
+    active_node = 9
+    previous_node = 10
+    current_status = invalid
+    next_child__sel6 = 11
+  -> State: 5.83 <-
+    active_node = 13
+    previous_node = 9
+    previous_status = invalid
+    next_child__seqLink4 = 10
+  -> State: 5.84 <-
+    active_node = 14
+    previous_node = 13
+    current_status = success
+    next_child__seqLink4 = -1
+    next_child__sel6 = -1
+  -> State: 5.85 <-
+    active_node = 13
+    previous_node = 14
+    previous_status = success
+    next_child__sel7 = 15
+  -> State: 5.86 <-
+    active_node = 9
+    previous_node = 13
+    next_child__sel7 = 14
+  -> State: 5.87 <-
+    active_node = 1
+    previous_node = 9
+    next_child__seqLink4 = 10
+    next_child__sel6 = 11
+  -> State: 5.88 <-
+    active_node = 0
+    previous_node = 1
+    current_status = invalid
+    next_child__seqLink7 = 2
+    next_child__seqLink3 = 3
+    next_child__sel5 = 7
+    next_child__sel4 = 4
+  -> State: 5.89 <-
+    active_node = 16
+    previous_node = 0
+    previous_status = invalid
+    next_child__seqLink9 = 1
+  -> State: 5.90 <-
+    active_node = 17
+    previous_node = 16
+    next_child__seqLink9 = -1
+    next_child__seqLink7 = -1
+    next_child__seqLink4 = -1
+    next_child__sel7 = -1
+    next_child__sel6 = -1
+    next_child__seqLink3 = -1
+    next_child__sel5 = -1
+    next_child__sel4 = -1
+  -> State: 5.91 <-
+    active_node = 18
+    previous_node = 17
+    next_child__seqLink8 = 24
+  -> State: 5.92 <-
+    active_node = 19
+    previous_node = 18
+    current_status = success
+    next_child__seqLink5 = 21
+  -> State: 5.93 <-
+    active_node = 18
+    previous_node = 19
+    previous_status = success
+    randomizer = FALSE
+    next_child__sel8 = 20
+  -> State: 5.94 <-
+    active_node = 17
+    previous_node = 18
+    current_status = invalid
+    next_child__sel8 = 19
+-- specification  G ((active_node = node_names.success_failure_node_5 & current_status = failure) -> (active_node > 0 U (active_node = node_names.success_node_5 & current_status = success)))  is true
+-- specification  G ((active_node = node_names.success_failure_node_5 & current_status = failure) -> !(active_node > 0 U (active_node = node_names.success_node_5 & current_status = success)))  is false
+-- as demonstrated by the following execution sequence
+Trace Description: LTL Counterexample 
+Trace Type: Counterexample 
+  -> State: 6.1 <-
+    active_node = -1
+    previous_node = -1
+    current_status = invalid
+    previous_status = invalid
+    randomizer = FALSE
+    next_child__seqLink9 = 1
+    next_child__seqLink8 = 17
+    next_child__seqLink6 = 25
+    next_child__seqLink2 = 33
+    next_child__sel3 = 37
+    next_child__sel2 = 34
+    next_child__seqLink1 = 26
+    next_child__sel1 = 30
+    next_child__sel0 = 27
+    next_child__seqLink5 = 18
+    next_child__sel9 = 22
+    next_child__sel8 = 19
+    next_child__seqLink7 = 2
+    next_child__seqLink4 = 10
+    next_child__sel7 = 14
+    next_child__sel6 = 11
+    next_child__seqLink3 = 3
+    next_child__sel5 = 7
+    next_child__sel4 = 4
+    child_index_to_resume_from__seqLink9 = -2
+    child_index_to_resume_from__seqLink8 = -2
+    child_index_to_resume_from__seqLink6 = -2
+    child_index_to_resume_from__seqLink2 = -2
+    child_index_to_resume_from__sel3 = -2
+    child_index_to_resume_from__sel2 = -2
+    child_index_to_resume_from__seqLink1 = -2
+    child_index_to_resume_from__sel1 = -2
+    child_index_to_resume_from__sel0 = -2
+    child_index_to_resume_from__seqLink5 = -2
+    child_index_to_resume_from__sel9 = -2
+    child_index_to_resume_from__sel8 = -2
+    child_index_to_resume_from__seqLink7 = -2
+    child_index_to_resume_from__seqLink4 = -2
+    child_index_to_resume_from__sel7 = -2
+    child_index_to_resume_from__sel6 = -2
+    child_index_to_resume_from__seqLink3 = -2
+    child_index_to_resume_from__sel5 = -2
+    child_index_to_resume_from__sel4 = -2
+    resume_from_here_in_subtree__seqLink9 = -3
+    node_names.success_node_9 = 38
+    node_names.success_failure_node_9 = 37
+    node_names.sel3 = 36
+    node_names.success_node_8 = 35
+    node_names.success_failure_node_8 = 34
+    node_names.sel2 = 33
+    node_names.seqLink2 = 32
+    node_names.success_node_7 = 31
+    node_names.success_failure_node_7 = 30
+    node_names.sel1 = 29
+    node_names.success_node_6 = 28
+    node_names.success_failure_node_6 = 27
+    node_names.sel0 = 26
+    node_names.seqLink1 = 25
+    node_names.seqLink6 = 24
+    node_names.success_node_5 = 23
+    node_names.success_failure_node_5 = 22
+    node_names.sel9 = 21
+    node_names.success_node_4 = 20
+    node_names.success_failure_node_4 = 19
+    node_names.sel8 = 18
+    node_names.seqLink5 = 17
+    node_names.seqLink8 = 16
+    node_names.success_node_3 = 15
+    node_names.success_failure_node_3 = 14
+    node_names.sel7 = 13
+    node_names.success_node_2 = 12
+    node_names.success_failure_node_2 = 11
+    node_names.sel6 = 10
+    node_names.seqLink4 = 9
+    node_names.success_node_1 = 8
+    node_names.success_failure_node_1 = 7
+    node_names.sel5 = 6
+    node_names.success_node = 5
+    node_names.success_failure_node = 4
+    node_names.sel4 = 3
+    node_names.seqLink3 = 2
+    node_names.seqLink7 = 1
+    node_names.seqLink9 = 0
+  -> State: 6.2 <-
+    active_node = 0
+  -> State: 6.3 <-
+    active_node = 1
+    previous_node = 0
+  -> State: 6.4 <-
+    active_node = 2
+    previous_node = 1
+    next_child__seqLink9 = 16
+  -> State: 6.5 <-
+    active_node = 3
+    previous_node = 2
+    next_child__seqLink7 = 9
+  -> State: 6.6 <-
+    active_node = 4
+    previous_node = 3
+    current_status = failure
+    next_child__seqLink3 = 6
+  -> State: 6.7 <-
+    active_node = 3
+    previous_node = 4
+    current_status = invalid
+    previous_status = failure
+    randomizer = TRUE
+    next_child__sel4 = 5
+  -> State: 6.8 <-
+    active_node = 5
+    previous_node = 3
+    current_status = success
+    previous_status = invalid
+    next_child__sel4 = 4
+  -> State: 6.9 <-
+    active_node = 3
+    previous_node = 5
+    previous_status = success
+    next_child__sel4 = -1
+  -> State: 6.10 <-
+    active_node = 2
+    previous_node = 3
+    current_status = invalid
+    next_child__sel4 = 4
+  -> State: 6.11 <-
+    active_node = 6
+    previous_node = 2
+    previous_status = invalid
+    next_child__seqLink3 = 3
+  -> State: 6.12 <-
+    active_node = 7
+    previous_node = 6
+    current_status = success
+    next_child__seqLink3 = -1
+    next_child__sel4 = -1
+  -> State: 6.13 <-
+    active_node = 6
+    previous_node = 7
+    previous_status = success
+    next_child__sel5 = 8
+  -> State: 6.14 <-
+    active_node = 2
+    previous_node = 6
+    next_child__sel5 = 7
+  -> State: 6.15 <-
+    active_node = 1
+    previous_node = 2
+    current_status = invalid
+    next_child__seqLink3 = 3
+    next_child__sel4 = 4
+  -> State: 6.16 <-
+    active_node = 9
+    previous_node = 1
+    previous_status = invalid
+    next_child__seqLink7 = 2
+  -> State: 6.17 <-
+    active_node = 10
+    previous_node = 9
+    next_child__seqLink7 = -1
+    next_child__seqLink3 = -1
+    next_child__sel5 = -1
+    next_child__sel4 = -1
+  -> State: 6.18 <-
+    active_node = 11
+    previous_node = 10
+    current_status = success
+    next_child__seqLink4 = 13
+  -> State: 6.19 <-
+    active_node = 10
+    previous_node = 11
+    previous_status = success
+    next_child__sel6 = 12
+  -> State: 6.20 <-
+    active_node = 9
+    previous_node = 10
+    current_status = invalid
+    next_child__sel6 = 11
+  -> State: 6.21 <-
+    active_node = 13
+    previous_node = 9
+    previous_status = invalid
+    next_child__seqLink4 = 10
+  -> State: 6.22 <-
+    active_node = 14
+    previous_node = 13
+    current_status = success
+    next_child__seqLink4 = -1
+    next_child__sel6 = -1
+  -> State: 6.23 <-
+    active_node = 13
+    previous_node = 14
+    previous_status = success
+    next_child__sel7 = 15
+  -> State: 6.24 <-
+    active_node = 9
+    previous_node = 13
+    next_child__sel7 = 14
+  -> State: 6.25 <-
+    active_node = 1
+    previous_node = 9
+    next_child__seqLink4 = 10
+    next_child__sel6 = 11
+  -> State: 6.26 <-
+    active_node = 0
+    previous_node = 1
+    current_status = invalid
+    next_child__seqLink7 = 2
+    next_child__seqLink3 = 3
+    next_child__sel5 = 7
+    next_child__sel4 = 4
+  -> State: 6.27 <-
+    active_node = 16
+    previous_node = 0
+    previous_status = invalid
+    next_child__seqLink9 = 1
+  -> State: 6.28 <-
+    active_node = 17
+    previous_node = 16
+    next_child__seqLink9 = -1
+    next_child__seqLink7 = -1
+    next_child__seqLink4 = -1
+    next_child__sel7 = -1
+    next_child__sel6 = -1
+    next_child__seqLink3 = -1
+    next_child__sel5 = -1
+    next_child__sel4 = -1
+  -> State: 6.29 <-
+    active_node = 18
+    previous_node = 17
+    next_child__seqLink8 = 24
+  -> State: 6.30 <-
+    active_node = 19
+    previous_node = 18
+    current_status = success
+    next_child__seqLink5 = 21
+  -> State: 6.31 <-
+    active_node = 18
+    previous_node = 19
+    previous_status = success
+    randomizer = FALSE
+    next_child__sel8 = 20
+  -> State: 6.32 <-
+    active_node = 17
+    previous_node = 18
+    current_status = invalid
+    next_child__sel8 = 19
+  -> State: 6.33 <-
+    active_node = 21
+    previous_node = 17
+    previous_status = invalid
+    next_child__seqLink5 = 18
+  -> State: 6.34 <-
+    active_node = 22
+    previous_node = 21
+    current_status = failure
+    next_child__seqLink5 = -1
+    next_child__sel8 = -1
+  -> State: 6.35 <-
+    active_node = 21
+    previous_node = 22
+    current_status = invalid
+    previous_status = failure
+    next_child__sel9 = 23
+  -> State: 6.36 <-
+    active_node = 23
+    previous_node = 21
+    current_status = success
+    previous_status = invalid
+    next_child__sel9 = 22
+  -> State: 6.37 <-
+    active_node = 21
+    previous_node = 23
+    previous_status = success
+    next_child__sel9 = -1
+  -- Loop starts here
+  -> State: 6.38 <-
+    active_node = 17
+    previous_node = 21
+    next_child__sel9 = 22
+  -> State: 6.39 <-
+    active_node = 16
+    previous_node = 17
+    current_status = invalid
+    next_child__seqLink5 = 18
+    next_child__sel8 = 19
+  -> State: 6.40 <-
+    active_node = 24
+    previous_node = 16
+    previous_status = invalid
+    next_child__seqLink8 = 17
+  -> State: 6.41 <-
+    active_node = 25
+    previous_node = 24
+    next_child__seqLink8 = -1
+    next_child__seqLink5 = -1
+    next_child__sel9 = -1
+    next_child__sel8 = -1
+  -> State: 6.42 <-
+    active_node = 26
+    previous_node = 25
+    next_child__seqLink6 = 32
+  -> State: 6.43 <-
+    active_node = 27
+    previous_node = 26
+    current_status = failure
+    next_child__seqLink1 = 29
+  -> State: 6.44 <-
+    active_node = 26
+    previous_node = 27
+    current_status = invalid
+    previous_status = failure
+    randomizer = TRUE
+    next_child__sel0 = 28
+  -> State: 6.45 <-
+    active_node = 28
+    previous_node = 26
+    current_status = success
+    previous_status = invalid
+    next_child__sel0 = 27
+  -> State: 6.46 <-
+    active_node = 26
+    previous_node = 28
+    previous_status = success
+    next_child__sel0 = -1
+  -> State: 6.47 <-
+    active_node = 25
+    previous_node = 26
+    current_status = invalid
+    next_child__sel0 = 27
+  -> State: 6.48 <-
+    active_node = 29
+    previous_node = 25
+    previous_status = invalid
+    next_child__seqLink1 = 26
+  -> State: 6.49 <-
+    active_node = 30
+    previous_node = 29
+    current_status = success
+    next_child__seqLink1 = -1
+    next_child__sel0 = -1
+  -> State: 6.50 <-
+    active_node = 29
+    previous_node = 30
+    previous_status = success
+    next_child__sel1 = 31
+  -> State: 6.51 <-
+    active_node = 25
+    previous_node = 29
+    next_child__sel1 = 30
+  -> State: 6.52 <-
+    active_node = 24
+    previous_node = 25
+    current_status = invalid
+    next_child__seqLink1 = 26
+    next_child__sel0 = 27
+  -> State: 6.53 <-
+    active_node = 32
+    previous_node = 24
+    previous_status = invalid
+    next_child__seqLink6 = 25
+  -> State: 6.54 <-
+    active_node = 33
+    previous_node = 32
+    next_child__seqLink6 = -1
+    next_child__seqLink1 = -1
+    next_child__sel1 = -1
+    next_child__sel0 = -1
+  -> State: 6.55 <-
+    active_node = 34
+    previous_node = 33
+    current_status = success
+    next_child__seqLink2 = 36
+  -> State: 6.56 <-
+    active_node = 33
+    previous_node = 34
+    previous_status = success
+    next_child__sel2 = 35
+  -> State: 6.57 <-
+    active_node = 32
+    previous_node = 33
+    current_status = invalid
+    next_child__sel2 = 34
+  -> State: 6.58 <-
+    active_node = 36
+    previous_node = 32
+    previous_status = invalid
+    next_child__seqLink2 = 33
+  -> State: 6.59 <-
+    active_node = 37
+    previous_node = 36
+    current_status = success
+    next_child__seqLink2 = -1
+    next_child__sel2 = -1
+  -> State: 6.60 <-
+    active_node = 36
+    previous_node = 37
+    previous_status = success
+    next_child__sel3 = 38
+  -> State: 6.61 <-
+    active_node = 32
+    previous_node = 36
+    next_child__sel3 = 37
+  -> State: 6.62 <-
+    active_node = 24
+    previous_node = 32
+    next_child__seqLink2 = 33
+    next_child__sel2 = 34
+  -> State: 6.63 <-
+    active_node = 16
+    previous_node = 24
+    next_child__seqLink6 = 25
+    next_child__seqLink1 = 26
+    next_child__sel1 = 30
+    next_child__sel0 = 27
+  -> State: 6.64 <-
+    active_node = 0
+    previous_node = 16
+    next_child__seqLink8 = 17
+    next_child__seqLink5 = 18
+    next_child__sel9 = 22
+    next_child__sel8 = 19
+  -> State: 6.65 <-
+    active_node = -1
+    previous_node = 0
+    current_status = invalid
+    next_child__seqLink9 = 1
+    next_child__seqLink7 = 2
+    next_child__seqLink4 = 10
+    next_child__sel7 = 14
+    next_child__sel6 = 11
+    next_child__seqLink3 = 3
+    next_child__sel5 = 7
+    next_child__sel4 = 4
+  -> State: 6.66 <-
+    active_node = 0
+    previous_node = -1
+    previous_status = invalid
+  -> State: 6.67 <-
+    active_node = 1
+    previous_node = 0
+  -> State: 6.68 <-
+    active_node = 2
+    previous_node = 1
+    next_child__seqLink9 = 16
+  -> State: 6.69 <-
+    active_node = 3
+    previous_node = 2
+    next_child__seqLink7 = 9
+  -> State: 6.70 <-
+    active_node = 4
+    previous_node = 3
+    current_status = success
+    next_child__seqLink3 = 6
+  -> State: 6.71 <-
+    active_node = 3
+    previous_node = 4
+    previous_status = success
+    next_child__sel4 = 5
+  -> State: 6.72 <-
+    active_node = 2
+    previous_node = 3
+    current_status = invalid
+    next_child__sel4 = 4
+  -> State: 6.73 <-
+    active_node = 6
+    previous_node = 2
+    previous_status = invalid
+    next_child__seqLink3 = 3
+  -> State: 6.74 <-
+    active_node = 7
+    previous_node = 6
+    current_status = success
+    next_child__seqLink3 = -1
+    next_child__sel4 = -1
+  -> State: 6.75 <-
+    active_node = 6
+    previous_node = 7
+    previous_status = success
+    next_child__sel5 = 8
+  -> State: 6.76 <-
+    active_node = 2
+    previous_node = 6
+    next_child__sel5 = 7
+  -> State: 6.77 <-
+    active_node = 1
+    previous_node = 2
+    current_status = invalid
+    next_child__seqLink3 = 3
+    next_child__sel4 = 4
+  -> State: 6.78 <-
+    active_node = 9
+    previous_node = 1
+    previous_status = invalid
+    next_child__seqLink7 = 2
+  -> State: 6.79 <-
+    active_node = 10
+    previous_node = 9
+    next_child__seqLink7 = -1
+    next_child__seqLink3 = -1
+    next_child__sel5 = -1
+    next_child__sel4 = -1
+  -> State: 6.80 <-
+    active_node = 11
+    previous_node = 10
+    current_status = success
+    next_child__seqLink4 = 13
+  -> State: 6.81 <-
+    active_node = 10
+    previous_node = 11
+    previous_status = success
+    next_child__sel6 = 12
+  -> State: 6.82 <-
+    active_node = 9
+    previous_node = 10
+    current_status = invalid
+    next_child__sel6 = 11
+  -> State: 6.83 <-
+    active_node = 13
+    previous_node = 9
+    previous_status = invalid
+    next_child__seqLink4 = 10
+  -> State: 6.84 <-
+    active_node = 14
+    previous_node = 13
+    current_status = success
+    next_child__seqLink4 = -1
+    next_child__sel6 = -1
+  -> State: 6.85 <-
+    active_node = 13
+    previous_node = 14
+    previous_status = success
+    next_child__sel7 = 15
+  -> State: 6.86 <-
+    active_node = 9
+    previous_node = 13
+    next_child__sel7 = 14
+  -> State: 6.87 <-
+    active_node = 1
+    previous_node = 9
+    next_child__seqLink4 = 10
+    next_child__sel6 = 11
+  -> State: 6.88 <-
+    active_node = 0
+    previous_node = 1
+    current_status = invalid
+    next_child__seqLink7 = 2
+    next_child__seqLink3 = 3
+    next_child__sel5 = 7
+    next_child__sel4 = 4
+  -> State: 6.89 <-
+    active_node = 16
+    previous_node = 0
+    previous_status = invalid
+    next_child__seqLink9 = 1
+  -> State: 6.90 <-
+    active_node = 17
+    previous_node = 16
+    next_child__seqLink9 = -1
+    next_child__seqLink7 = -1
+    next_child__seqLink4 = -1
+    next_child__sel7 = -1
+    next_child__sel6 = -1
+    next_child__seqLink3 = -1
+    next_child__sel5 = -1
+    next_child__sel4 = -1
+  -> State: 6.91 <-
+    active_node = 18
+    previous_node = 17
+    next_child__seqLink8 = 24
+  -> State: 6.92 <-
+    active_node = 19
+    previous_node = 18
+    current_status = success
+    next_child__seqLink5 = 21
+  -> State: 6.93 <-
+    active_node = 18
+    previous_node = 19
+    previous_status = success
+    next_child__sel8 = 20
+  -> State: 6.94 <-
+    active_node = 17
+    previous_node = 18
+    current_status = invalid
+    next_child__sel8 = 19
+  -> State: 6.95 <-
+    active_node = 21
+    previous_node = 17
+    previous_status = invalid
+    next_child__seqLink5 = 18
+  -> State: 6.96 <-
+    active_node = 22
+    previous_node = 21
+    current_status = success
+    next_child__seqLink5 = -1
+    next_child__sel8 = -1
+  -> State: 6.97 <-
+    active_node = 21
+    previous_node = 22
+    previous_status = success
+    randomizer = FALSE
+    next_child__sel9 = 23
+  -> State: 6.98 <-
+    active_node = 17
+    previous_node = 21
+    next_child__sel9 = 22
+-- specification  G ((active_node = node_names.success_failure_node_6 & current_status = failure) -> (active_node > 0 U (active_node = node_names.success_node_6 & current_status = success)))  is true
+-- specification  G ((active_node = node_names.success_failure_node_6 & current_status = failure) -> !(active_node > 0 U (active_node = node_names.success_node_6 & current_status = success)))  is false
+-- as demonstrated by the following execution sequence
+Trace Description: LTL Counterexample 
+Trace Type: Counterexample 
+  -> State: 7.1 <-
+    active_node = -1
+    previous_node = -1
+    current_status = invalid
+    previous_status = invalid
+    randomizer = FALSE
+    next_child__seqLink9 = 1
+    next_child__seqLink8 = 17
+    next_child__seqLink6 = 25
+    next_child__seqLink2 = 33
+    next_child__sel3 = 37
+    next_child__sel2 = 34
+    next_child__seqLink1 = 26
+    next_child__sel1 = 30
+    next_child__sel0 = 27
+    next_child__seqLink5 = 18
+    next_child__sel9 = 22
+    next_child__sel8 = 19
+    next_child__seqLink7 = 2
+    next_child__seqLink4 = 10
+    next_child__sel7 = 14
+    next_child__sel6 = 11
+    next_child__seqLink3 = 3
+    next_child__sel5 = 7
+    next_child__sel4 = 4
+    child_index_to_resume_from__seqLink9 = -2
+    child_index_to_resume_from__seqLink8 = -2
+    child_index_to_resume_from__seqLink6 = -2
+    child_index_to_resume_from__seqLink2 = -2
+    child_index_to_resume_from__sel3 = -2
+    child_index_to_resume_from__sel2 = -2
+    child_index_to_resume_from__seqLink1 = -2
+    child_index_to_resume_from__sel1 = -2
+    child_index_to_resume_from__sel0 = -2
+    child_index_to_resume_from__seqLink5 = -2
+    child_index_to_resume_from__sel9 = -2
+    child_index_to_resume_from__sel8 = -2
+    child_index_to_resume_from__seqLink7 = -2
+    child_index_to_resume_from__seqLink4 = -2
+    child_index_to_resume_from__sel7 = -2
+    child_index_to_resume_from__sel6 = -2
+    child_index_to_resume_from__seqLink3 = -2
+    child_index_to_resume_from__sel5 = -2
+    child_index_to_resume_from__sel4 = -2
+    resume_from_here_in_subtree__seqLink9 = -3
+    node_names.success_node_9 = 38
+    node_names.success_failure_node_9 = 37
+    node_names.sel3 = 36
+    node_names.success_node_8 = 35
+    node_names.success_failure_node_8 = 34
+    node_names.sel2 = 33
+    node_names.seqLink2 = 32
+    node_names.success_node_7 = 31
+    node_names.success_failure_node_7 = 30
+    node_names.sel1 = 29
+    node_names.success_node_6 = 28
+    node_names.success_failure_node_6 = 27
+    node_names.sel0 = 26
+    node_names.seqLink1 = 25
+    node_names.seqLink6 = 24
+    node_names.success_node_5 = 23
+    node_names.success_failure_node_5 = 22
+    node_names.sel9 = 21
+    node_names.success_node_4 = 20
+    node_names.success_failure_node_4 = 19
+    node_names.sel8 = 18
+    node_names.seqLink5 = 17
+    node_names.seqLink8 = 16
+    node_names.success_node_3 = 15
+    node_names.success_failure_node_3 = 14
+    node_names.sel7 = 13
+    node_names.success_node_2 = 12
+    node_names.success_failure_node_2 = 11
+    node_names.sel6 = 10
+    node_names.seqLink4 = 9
+    node_names.success_node_1 = 8
+    node_names.success_failure_node_1 = 7
+    node_names.sel5 = 6
+    node_names.success_node = 5
+    node_names.success_failure_node = 4
+    node_names.sel4 = 3
+    node_names.seqLink3 = 2
+    node_names.seqLink7 = 1
+    node_names.seqLink9 = 0
+  -> State: 7.2 <-
+    active_node = 0
+  -> State: 7.3 <-
+    active_node = 1
+    previous_node = 0
+  -> State: 7.4 <-
+    active_node = 2
+    previous_node = 1
+    next_child__seqLink9 = 16
+  -> State: 7.5 <-
+    active_node = 3
+    previous_node = 2
+    next_child__seqLink7 = 9
+  -> State: 7.6 <-
+    active_node = 4
+    previous_node = 3
+    current_status = failure
+    next_child__seqLink3 = 6
+  -> State: 7.7 <-
+    active_node = 3
+    previous_node = 4
+    current_status = invalid
+    previous_status = failure
+    randomizer = TRUE
+    next_child__sel4 = 5
+  -> State: 7.8 <-
+    active_node = 5
+    previous_node = 3
+    current_status = success
+    previous_status = invalid
+    next_child__sel4 = 4
+  -> State: 7.9 <-
+    active_node = 3
+    previous_node = 5
+    previous_status = success
+    next_child__sel4 = -1
+  -> State: 7.10 <-
+    active_node = 2
+    previous_node = 3
+    current_status = invalid
+    next_child__sel4 = 4
+  -> State: 7.11 <-
+    active_node = 6
+    previous_node = 2
+    previous_status = invalid
+    next_child__seqLink3 = 3
+  -> State: 7.12 <-
+    active_node = 7
+    previous_node = 6
+    current_status = success
+    next_child__seqLink3 = -1
+    next_child__sel4 = -1
+  -> State: 7.13 <-
+    active_node = 6
+    previous_node = 7
+    previous_status = success
+    next_child__sel5 = 8
+  -> State: 7.14 <-
+    active_node = 2
+    previous_node = 6
+    next_child__sel5 = 7
+  -> State: 7.15 <-
+    active_node = 1
+    previous_node = 2
+    current_status = invalid
+    next_child__seqLink3 = 3
+    next_child__sel4 = 4
+  -> State: 7.16 <-
+    active_node = 9
+    previous_node = 1
+    previous_status = invalid
+    next_child__seqLink7 = 2
+  -> State: 7.17 <-
+    active_node = 10
+    previous_node = 9
+    next_child__seqLink7 = -1
+    next_child__seqLink3 = -1
+    next_child__sel5 = -1
+    next_child__sel4 = -1
+  -> State: 7.18 <-
+    active_node = 11
+    previous_node = 10
+    current_status = success
+    next_child__seqLink4 = 13
+  -> State: 7.19 <-
+    active_node = 10
+    previous_node = 11
+    previous_status = success
+    next_child__sel6 = 12
+  -> State: 7.20 <-
+    active_node = 9
+    previous_node = 10
+    current_status = invalid
+    next_child__sel6 = 11
+  -> State: 7.21 <-
+    active_node = 13
+    previous_node = 9
+    previous_status = invalid
+    next_child__seqLink4 = 10
+  -> State: 7.22 <-
+    active_node = 14
+    previous_node = 13
+    current_status = success
+    next_child__seqLink4 = -1
+    next_child__sel6 = -1
+  -> State: 7.23 <-
+    active_node = 13
+    previous_node = 14
+    previous_status = success
+    next_child__sel7 = 15
+  -> State: 7.24 <-
+    active_node = 9
+    previous_node = 13
+    next_child__sel7 = 14
+  -> State: 7.25 <-
+    active_node = 1
+    previous_node = 9
+    next_child__seqLink4 = 10
+    next_child__sel6 = 11
+  -> State: 7.26 <-
+    active_node = 0
+    previous_node = 1
+    current_status = invalid
+    next_child__seqLink7 = 2
+    next_child__seqLink3 = 3
+    next_child__sel5 = 7
+    next_child__sel4 = 4
+  -> State: 7.27 <-
+    active_node = 16
+    previous_node = 0
+    previous_status = invalid
+    next_child__seqLink9 = 1
+  -> State: 7.28 <-
+    active_node = 17
+    previous_node = 16
+    next_child__seqLink9 = -1
+    next_child__seqLink7 = -1
+    next_child__seqLink4 = -1
+    next_child__sel7 = -1
+    next_child__sel6 = -1
+    next_child__seqLink3 = -1
+    next_child__sel5 = -1
+    next_child__sel4 = -1
+  -> State: 7.29 <-
+    active_node = 18
+    previous_node = 17
+    next_child__seqLink8 = 24
+  -> State: 7.30 <-
+    active_node = 19
+    previous_node = 18
+    current_status = success
+    next_child__seqLink5 = 21
+  -> State: 7.31 <-
+    active_node = 18
+    previous_node = 19
+    previous_status = success
+    next_child__sel8 = 20
+  -> State: 7.32 <-
+    active_node = 17
+    previous_node = 18
+    current_status = invalid
+    next_child__sel8 = 19
+  -> State: 7.33 <-
+    active_node = 21
+    previous_node = 17
+    previous_status = invalid
+    next_child__seqLink5 = 18
+  -> State: 7.34 <-
+    active_node = 22
+    previous_node = 21
+    current_status = success
+    next_child__seqLink5 = -1
+    next_child__sel8 = -1
+  -> State: 7.35 <-
+    active_node = 21
+    previous_node = 22
+    previous_status = success
+    randomizer = FALSE
+    next_child__sel9 = 23
+  -> State: 7.36 <-
+    active_node = 17
+    previous_node = 21
+    next_child__sel9 = 22
+  -> State: 7.37 <-
+    active_node = 16
+    previous_node = 17
+    current_status = invalid
+    next_child__seqLink5 = 18
+    next_child__sel8 = 19
+  -> State: 7.38 <-
+    active_node = 24
+    previous_node = 16
+    previous_status = invalid
+    next_child__seqLink8 = 17
+  -> State: 7.39 <-
+    active_node = 25
+    previous_node = 24
+    next_child__seqLink8 = -1
+    next_child__seqLink5 = -1
+    next_child__sel9 = -1
+    next_child__sel8 = -1
+  -> State: 7.40 <-
+    active_node = 26
+    previous_node = 25
+    next_child__seqLink6 = 32
+  -> State: 7.41 <-
+    active_node = 27
+    previous_node = 26
+    current_status = failure
+    next_child__seqLink1 = 29
+  -> State: 7.42 <-
+    active_node = 26
+    previous_node = 27
+    current_status = invalid
+    previous_status = failure
+    next_child__sel0 = 28
+  -> State: 7.43 <-
+    active_node = 28
+    previous_node = 26
+    current_status = success
+    previous_status = invalid
+    next_child__sel0 = 27
+  -> State: 7.44 <-
+    active_node = 26
+    previous_node = 28
+    previous_status = success
+    next_child__sel0 = -1
+  -- Loop starts here
+  -> State: 7.45 <-
+    active_node = 25
+    previous_node = 26
+    current_status = invalid
+    next_child__sel0 = 27
+  -> State: 7.46 <-
+    active_node = 29
+    previous_node = 25
+    previous_status = invalid
+    next_child__seqLink1 = 26
+  -> State: 7.47 <-
+    active_node = 30
+    previous_node = 29
+    current_status = failure
+    next_child__seqLink1 = -1
+    next_child__sel0 = -1
+  -> State: 7.48 <-
+    active_node = 29
+    previous_node = 30
+    current_status = invalid
+    previous_status = failure
+    randomizer = TRUE
+    next_child__sel1 = 31
+  -> State: 7.49 <-
+    active_node = 31
+    previous_node = 29
+    current_status = success
+    previous_status = invalid
+    next_child__sel1 = 30
+  -> State: 7.50 <-
+    active_node = 29
+    previous_node = 31
+    previous_status = success
+    next_child__sel1 = -1
+  -> State: 7.51 <-
+    active_node = 25
+    previous_node = 29
+    next_child__sel1 = 30
+  -> State: 7.52 <-
+    active_node = 24
+    previous_node = 25
+    current_status = invalid
+    next_child__seqLink1 = 26
+    next_child__sel0 = 27
+  -> State: 7.53 <-
+    active_node = 32
+    previous_node = 24
+    previous_status = invalid
+    next_child__seqLink6 = 25
+  -> State: 7.54 <-
+    active_node = 33
+    previous_node = 32
+    next_child__seqLink6 = -1
+    next_child__seqLink1 = -1
+    next_child__sel1 = -1
+    next_child__sel0 = -1
+  -> State: 7.55 <-
+    active_node = 34
+    previous_node = 33
+    current_status = success
+    next_child__seqLink2 = 36
+  -> State: 7.56 <-
+    active_node = 33
+    previous_node = 34
+    previous_status = success
+    next_child__sel2 = 35
+  -> State: 7.57 <-
+    active_node = 32
+    previous_node = 33
+    current_status = invalid
+    next_child__sel2 = 34
+  -> State: 7.58 <-
+    active_node = 36
+    previous_node = 32
+    previous_status = invalid
+    next_child__seqLink2 = 33
+  -> State: 7.59 <-
+    active_node = 37
+    previous_node = 36
+    current_status = success
+    next_child__seqLink2 = -1
+    next_child__sel2 = -1
+  -> State: 7.60 <-
+    active_node = 36
+    previous_node = 37
+    previous_status = success
+    next_child__sel3 = 38
+  -> State: 7.61 <-
+    active_node = 32
+    previous_node = 36
+    next_child__sel3 = 37
+  -> State: 7.62 <-
+    active_node = 24
+    previous_node = 32
+    next_child__seqLink2 = 33
+    next_child__sel2 = 34
+  -> State: 7.63 <-
+    active_node = 16
+    previous_node = 24
+    next_child__seqLink6 = 25
+    next_child__seqLink1 = 26
+    next_child__sel1 = 30
+    next_child__sel0 = 27
+  -> State: 7.64 <-
+    active_node = 0
+    previous_node = 16
+    next_child__seqLink8 = 17
+    next_child__seqLink5 = 18
+    next_child__sel9 = 22
+    next_child__sel8 = 19
+  -> State: 7.65 <-
+    active_node = -1
+    previous_node = 0
+    current_status = invalid
+    next_child__seqLink9 = 1
+    next_child__seqLink7 = 2
+    next_child__seqLink4 = 10
+    next_child__sel7 = 14
+    next_child__sel6 = 11
+    next_child__seqLink3 = 3
+    next_child__sel5 = 7
+    next_child__sel4 = 4
+  -> State: 7.66 <-
+    active_node = 0
+    previous_node = -1
+    previous_status = invalid
+  -> State: 7.67 <-
+    active_node = 1
+    previous_node = 0
+  -> State: 7.68 <-
+    active_node = 2
+    previous_node = 1
+    next_child__seqLink9 = 16
+  -> State: 7.69 <-
+    active_node = 3
+    previous_node = 2
+    next_child__seqLink7 = 9
+  -> State: 7.70 <-
+    active_node = 4
+    previous_node = 3
+    current_status = success
+    next_child__seqLink3 = 6
+  -> State: 7.71 <-
+    active_node = 3
+    previous_node = 4
+    previous_status = success
+    next_child__sel4 = 5
+  -> State: 7.72 <-
+    active_node = 2
+    previous_node = 3
+    current_status = invalid
+    next_child__sel4 = 4
+  -> State: 7.73 <-
+    active_node = 6
+    previous_node = 2
+    previous_status = invalid
+    next_child__seqLink3 = 3
+  -> State: 7.74 <-
+    active_node = 7
+    previous_node = 6
+    current_status = success
+    next_child__seqLink3 = -1
+    next_child__sel4 = -1
+  -> State: 7.75 <-
+    active_node = 6
+    previous_node = 7
+    previous_status = success
+    next_child__sel5 = 8
+  -> State: 7.76 <-
+    active_node = 2
+    previous_node = 6
+    next_child__sel5 = 7
+  -> State: 7.77 <-
+    active_node = 1
+    previous_node = 2
+    current_status = invalid
+    next_child__seqLink3 = 3
+    next_child__sel4 = 4
+  -> State: 7.78 <-
+    active_node = 9
+    previous_node = 1
+    previous_status = invalid
+    next_child__seqLink7 = 2
+  -> State: 7.79 <-
+    active_node = 10
+    previous_node = 9
+    next_child__seqLink7 = -1
+    next_child__seqLink3 = -1
+    next_child__sel5 = -1
+    next_child__sel4 = -1
+  -> State: 7.80 <-
+    active_node = 11
+    previous_node = 10
+    current_status = success
+    next_child__seqLink4 = 13
+  -> State: 7.81 <-
+    active_node = 10
+    previous_node = 11
+    previous_status = success
+    next_child__sel6 = 12
+  -> State: 7.82 <-
+    active_node = 9
+    previous_node = 10
+    current_status = invalid
+    next_child__sel6 = 11
+  -> State: 7.83 <-
+    active_node = 13
+    previous_node = 9
+    previous_status = invalid
+    next_child__seqLink4 = 10
+  -> State: 7.84 <-
+    active_node = 14
+    previous_node = 13
+    current_status = success
+    next_child__seqLink4 = -1
+    next_child__sel6 = -1
+  -> State: 7.85 <-
+    active_node = 13
+    previous_node = 14
+    previous_status = success
+    next_child__sel7 = 15
+  -> State: 7.86 <-
+    active_node = 9
+    previous_node = 13
+    next_child__sel7 = 14
+  -> State: 7.87 <-
+    active_node = 1
+    previous_node = 9
+    next_child__seqLink4 = 10
+    next_child__sel6 = 11
+  -> State: 7.88 <-
+    active_node = 0
+    previous_node = 1
+    current_status = invalid
+    next_child__seqLink7 = 2
+    next_child__seqLink3 = 3
+    next_child__sel5 = 7
+    next_child__sel4 = 4
+  -> State: 7.89 <-
+    active_node = 16
+    previous_node = 0
+    previous_status = invalid
+    next_child__seqLink9 = 1
+  -> State: 7.90 <-
+    active_node = 17
+    previous_node = 16
+    next_child__seqLink9 = -1
+    next_child__seqLink7 = -1
+    next_child__seqLink4 = -1
+    next_child__sel7 = -1
+    next_child__sel6 = -1
+    next_child__seqLink3 = -1
+    next_child__sel5 = -1
+    next_child__sel4 = -1
+  -> State: 7.91 <-
+    active_node = 18
+    previous_node = 17
+    next_child__seqLink8 = 24
+  -> State: 7.92 <-
+    active_node = 19
+    previous_node = 18
+    current_status = success
+    next_child__seqLink5 = 21
+  -> State: 7.93 <-
+    active_node = 18
+    previous_node = 19
+    previous_status = success
+    next_child__sel8 = 20
+  -> State: 7.94 <-
+    active_node = 17
+    previous_node = 18
+    current_status = invalid
+    next_child__sel8 = 19
+  -> State: 7.95 <-
+    active_node = 21
+    previous_node = 17
+    previous_status = invalid
+    next_child__seqLink5 = 18
+  -> State: 7.96 <-
+    active_node = 22
+    previous_node = 21
+    current_status = success
+    next_child__seqLink5 = -1
+    next_child__sel8 = -1
+  -> State: 7.97 <-
+    active_node = 21
+    previous_node = 22
+    previous_status = success
+    next_child__sel9 = 23
+  -> State: 7.98 <-
+    active_node = 17
+    previous_node = 21
+    next_child__sel9 = 22
+  -> State: 7.99 <-
+    active_node = 16
+    previous_node = 17
+    current_status = invalid
+    next_child__seqLink5 = 18
+    next_child__sel8 = 19
+  -> State: 7.100 <-
+    active_node = 24
+    previous_node = 16
+    previous_status = invalid
+    next_child__seqLink8 = 17
+  -> State: 7.101 <-
+    active_node = 25
+    previous_node = 24
+    next_child__seqLink8 = -1
+    next_child__seqLink5 = -1
+    next_child__sel9 = -1
+    next_child__sel8 = -1
+  -> State: 7.102 <-
+    active_node = 26
+    previous_node = 25
+    next_child__seqLink6 = 32
+  -> State: 7.103 <-
+    active_node = 27
+    previous_node = 26
+    current_status = success
+    next_child__seqLink1 = 29
+  -> State: 7.104 <-
+    active_node = 26
+    previous_node = 27
+    previous_status = success
+    randomizer = FALSE
+    next_child__sel0 = 28
+  -> State: 7.105 <-
+    active_node = 25
+    previous_node = 26
+    current_status = invalid
+    next_child__sel0 = 27
+-- specification  G ((active_node = node_names.success_failure_node_7 & current_status = failure) -> (active_node > 0 U (active_node = node_names.success_node_7 & current_status = success)))  is true
+-- specification  G ((active_node = node_names.success_failure_node_7 & current_status = failure) -> !(active_node > 0 U (active_node = node_names.success_node_7 & current_status = success)))  is false
+-- as demonstrated by the following execution sequence
+Trace Description: LTL Counterexample 
+Trace Type: Counterexample 
+  -> State: 8.1 <-
+    active_node = -1
+    previous_node = -1
+    current_status = invalid
+    previous_status = invalid
+    randomizer = FALSE
+    next_child__seqLink9 = 1
+    next_child__seqLink8 = 17
+    next_child__seqLink6 = 25
+    next_child__seqLink2 = 33
+    next_child__sel3 = 37
+    next_child__sel2 = 34
+    next_child__seqLink1 = 26
+    next_child__sel1 = 30
+    next_child__sel0 = 27
+    next_child__seqLink5 = 18
+    next_child__sel9 = 22
+    next_child__sel8 = 19
+    next_child__seqLink7 = 2
+    next_child__seqLink4 = 10
+    next_child__sel7 = 14
+    next_child__sel6 = 11
+    next_child__seqLink3 = 3
+    next_child__sel5 = 7
+    next_child__sel4 = 4
+    child_index_to_resume_from__seqLink9 = -2
+    child_index_to_resume_from__seqLink8 = -2
+    child_index_to_resume_from__seqLink6 = -2
+    child_index_to_resume_from__seqLink2 = -2
+    child_index_to_resume_from__sel3 = -2
+    child_index_to_resume_from__sel2 = -2
+    child_index_to_resume_from__seqLink1 = -2
+    child_index_to_resume_from__sel1 = -2
+    child_index_to_resume_from__sel0 = -2
+    child_index_to_resume_from__seqLink5 = -2
+    child_index_to_resume_from__sel9 = -2
+    child_index_to_resume_from__sel8 = -2
+    child_index_to_resume_from__seqLink7 = -2
+    child_index_to_resume_from__seqLink4 = -2
+    child_index_to_resume_from__sel7 = -2
+    child_index_to_resume_from__sel6 = -2
+    child_index_to_resume_from__seqLink3 = -2
+    child_index_to_resume_from__sel5 = -2
+    child_index_to_resume_from__sel4 = -2
+    resume_from_here_in_subtree__seqLink9 = -3
+    node_names.success_node_9 = 38
+    node_names.success_failure_node_9 = 37
+    node_names.sel3 = 36
+    node_names.success_node_8 = 35
+    node_names.success_failure_node_8 = 34
+    node_names.sel2 = 33
+    node_names.seqLink2 = 32
+    node_names.success_node_7 = 31
+    node_names.success_failure_node_7 = 30
+    node_names.sel1 = 29
+    node_names.success_node_6 = 28
+    node_names.success_failure_node_6 = 27
+    node_names.sel0 = 26
+    node_names.seqLink1 = 25
+    node_names.seqLink6 = 24
+    node_names.success_node_5 = 23
+    node_names.success_failure_node_5 = 22
+    node_names.sel9 = 21
+    node_names.success_node_4 = 20
+    node_names.success_failure_node_4 = 19
+    node_names.sel8 = 18
+    node_names.seqLink5 = 17
+    node_names.seqLink8 = 16
+    node_names.success_node_3 = 15
+    node_names.success_failure_node_3 = 14
+    node_names.sel7 = 13
+    node_names.success_node_2 = 12
+    node_names.success_failure_node_2 = 11
+    node_names.sel6 = 10
+    node_names.seqLink4 = 9
+    node_names.success_node_1 = 8
+    node_names.success_failure_node_1 = 7
+    node_names.sel5 = 6
+    node_names.success_node = 5
+    node_names.success_failure_node = 4
+    node_names.sel4 = 3
+    node_names.seqLink3 = 2
+    node_names.seqLink7 = 1
+    node_names.seqLink9 = 0
+  -> State: 8.2 <-
+    active_node = 0
+  -> State: 8.3 <-
+    active_node = 1
+    previous_node = 0
+  -> State: 8.4 <-
+    active_node = 2
+    previous_node = 1
+    next_child__seqLink9 = 16
+  -> State: 8.5 <-
+    active_node = 3
+    previous_node = 2
+    next_child__seqLink7 = 9
+  -> State: 8.6 <-
+    active_node = 4
+    previous_node = 3
+    current_status = failure
+    next_child__seqLink3 = 6
+  -> State: 8.7 <-
+    active_node = 3
+    previous_node = 4
+    current_status = invalid
+    previous_status = failure
+    randomizer = TRUE
+    next_child__sel4 = 5
+  -> State: 8.8 <-
+    active_node = 5
+    previous_node = 3
+    current_status = success
+    previous_status = invalid
+    next_child__sel4 = 4
+  -> State: 8.9 <-
+    active_node = 3
+    previous_node = 5
+    previous_status = success
+    next_child__sel4 = -1
+  -> State: 8.10 <-
+    active_node = 2
+    previous_node = 3
+    current_status = invalid
+    next_child__sel4 = 4
+  -> State: 8.11 <-
+    active_node = 6
+    previous_node = 2
+    previous_status = invalid
+    next_child__seqLink3 = 3
+  -> State: 8.12 <-
+    active_node = 7
+    previous_node = 6
+    current_status = success
+    next_child__seqLink3 = -1
+    next_child__sel4 = -1
+  -> State: 8.13 <-
+    active_node = 6
+    previous_node = 7
+    previous_status = success
+    next_child__sel5 = 8
+  -> State: 8.14 <-
+    active_node = 2
+    previous_node = 6
+    next_child__sel5 = 7
+  -> State: 8.15 <-
+    active_node = 1
+    previous_node = 2
+    current_status = invalid
+    next_child__seqLink3 = 3
+    next_child__sel4 = 4
+  -> State: 8.16 <-
+    active_node = 9
+    previous_node = 1
+    previous_status = invalid
+    next_child__seqLink7 = 2
+  -> State: 8.17 <-
+    active_node = 10
+    previous_node = 9
+    next_child__seqLink7 = -1
+    next_child__seqLink3 = -1
+    next_child__sel5 = -1
+    next_child__sel4 = -1
+  -> State: 8.18 <-
+    active_node = 11
+    previous_node = 10
+    current_status = success
+    next_child__seqLink4 = 13
+  -> State: 8.19 <-
+    active_node = 10
+    previous_node = 11
+    previous_status = success
+    next_child__sel6 = 12
+  -> State: 8.20 <-
+    active_node = 9
+    previous_node = 10
+    current_status = invalid
+    next_child__sel6 = 11
+  -> State: 8.21 <-
+    active_node = 13
+    previous_node = 9
+    previous_status = invalid
+    next_child__seqLink4 = 10
+  -> State: 8.22 <-
+    active_node = 14
+    previous_node = 13
+    current_status = success
+    next_child__seqLink4 = -1
+    next_child__sel6 = -1
+  -> State: 8.23 <-
+    active_node = 13
+    previous_node = 14
+    previous_status = success
+    next_child__sel7 = 15
+  -> State: 8.24 <-
+    active_node = 9
+    previous_node = 13
+    next_child__sel7 = 14
+  -> State: 8.25 <-
+    active_node = 1
+    previous_node = 9
+    next_child__seqLink4 = 10
+    next_child__sel6 = 11
+  -> State: 8.26 <-
+    active_node = 0
+    previous_node = 1
+    current_status = invalid
+    next_child__seqLink7 = 2
+    next_child__seqLink3 = 3
+    next_child__sel5 = 7
+    next_child__sel4 = 4
+  -> State: 8.27 <-
+    active_node = 16
+    previous_node = 0
+    previous_status = invalid
+    next_child__seqLink9 = 1
+  -> State: 8.28 <-
+    active_node = 17
+    previous_node = 16
+    next_child__seqLink9 = -1
+    next_child__seqLink7 = -1
+    next_child__seqLink4 = -1
+    next_child__sel7 = -1
+    next_child__sel6 = -1
+    next_child__seqLink3 = -1
+    next_child__sel5 = -1
+    next_child__sel4 = -1
+  -> State: 8.29 <-
+    active_node = 18
+    previous_node = 17
+    next_child__seqLink8 = 24
+  -> State: 8.30 <-
+    active_node = 19
+    previous_node = 18
+    current_status = success
+    next_child__seqLink5 = 21
+  -> State: 8.31 <-
+    active_node = 18
+    previous_node = 19
+    previous_status = success
+    next_child__sel8 = 20
+  -> State: 8.32 <-
+    active_node = 17
+    previous_node = 18
+    current_status = invalid
+    next_child__sel8 = 19
+  -> State: 8.33 <-
+    active_node = 21
+    previous_node = 17
+    previous_status = invalid
+    next_child__seqLink5 = 18
+  -> State: 8.34 <-
+    active_node = 22
+    previous_node = 21
+    current_status = success
+    next_child__seqLink5 = -1
+    next_child__sel8 = -1
+  -> State: 8.35 <-
+    active_node = 21
+    previous_node = 22
+    previous_status = success
+    next_child__sel9 = 23
+  -> State: 8.36 <-
+    active_node = 17
+    previous_node = 21
+    next_child__sel9 = 22
+  -> State: 8.37 <-
+    active_node = 16
+    previous_node = 17
+    current_status = invalid
+    next_child__seqLink5 = 18
+    next_child__sel8 = 19
+  -> State: 8.38 <-
+    active_node = 24
+    previous_node = 16
+    previous_status = invalid
+    next_child__seqLink8 = 17
+  -> State: 8.39 <-
+    active_node = 25
+    previous_node = 24
+    next_child__seqLink8 = -1
+    next_child__seqLink5 = -1
+    next_child__sel9 = -1
+    next_child__sel8 = -1
+  -> State: 8.40 <-
+    active_node = 26
+    previous_node = 25
+    next_child__seqLink6 = 32
+  -> State: 8.41 <-
+    active_node = 27
+    previous_node = 26
+    current_status = success
+    next_child__seqLink1 = 29
+  -> State: 8.42 <-
+    active_node = 26
+    previous_node = 27
+    previous_status = success
+    randomizer = FALSE
+    next_child__sel0 = 28
+  -> State: 8.43 <-
+    active_node = 25
+    previous_node = 26
+    current_status = invalid
+    next_child__sel0 = 27
+  -> State: 8.44 <-
+    active_node = 29
+    previous_node = 25
+    previous_status = invalid
+    next_child__seqLink1 = 26
+  -> State: 8.45 <-
+    active_node = 30
+    previous_node = 29
+    current_status = failure
+    next_child__seqLink1 = -1
+    next_child__sel0 = -1
+  -> State: 8.46 <-
+    active_node = 29
+    previous_node = 30
+    current_status = invalid
+    previous_status = failure
+    next_child__sel1 = 31
+  -> State: 8.47 <-
+    active_node = 31
+    previous_node = 29
+    current_status = success
+    previous_status = invalid
+    next_child__sel1 = 30
+  -> State: 8.48 <-
+    active_node = 29
+    previous_node = 31
+    previous_status = success
+    next_child__sel1 = -1
+  -- Loop starts here
+  -> State: 8.49 <-
+    active_node = 25
+    previous_node = 29
+    next_child__sel1 = 30
+  -> State: 8.50 <-
+    active_node = 24
+    previous_node = 25
+    current_status = invalid
+    next_child__seqLink1 = 26
+    next_child__sel0 = 27
+  -> State: 8.51 <-
+    active_node = 32
+    previous_node = 24
+    previous_status = invalid
+    next_child__seqLink6 = 25
+  -> State: 8.52 <-
+    active_node = 33
+    previous_node = 32
+    next_child__seqLink6 = -1
+    next_child__seqLink1 = -1
+    next_child__sel1 = -1
+    next_child__sel0 = -1
+  -> State: 8.53 <-
+    active_node = 34
+    previous_node = 33
+    current_status = failure
+    next_child__seqLink2 = 36
+  -> State: 8.54 <-
+    active_node = 33
+    previous_node = 34
+    current_status = invalid
+    previous_status = failure
+    randomizer = TRUE
+    next_child__sel2 = 35
+  -> State: 8.55 <-
+    active_node = 35
+    previous_node = 33
+    current_status = success
+    previous_status = invalid
+    next_child__sel2 = 34
+  -> State: 8.56 <-
+    active_node = 33
+    previous_node = 35
+    previous_status = success
+    next_child__sel2 = -1
+  -> State: 8.57 <-
+    active_node = 32
+    previous_node = 33
+    current_status = invalid
+    next_child__sel2 = 34
+  -> State: 8.58 <-
+    active_node = 36
+    previous_node = 32
+    previous_status = invalid
+    next_child__seqLink2 = 33
+  -> State: 8.59 <-
+    active_node = 37
+    previous_node = 36
+    current_status = success
+    next_child__seqLink2 = -1
+    next_child__sel2 = -1
+  -> State: 8.60 <-
+    active_node = 36
+    previous_node = 37
+    previous_status = success
+    next_child__sel3 = 38
+  -> State: 8.61 <-
+    active_node = 32
+    previous_node = 36
+    next_child__sel3 = 37
+  -> State: 8.62 <-
+    active_node = 24
+    previous_node = 32
+    next_child__seqLink2 = 33
+    next_child__sel2 = 34
+  -> State: 8.63 <-
+    active_node = 16
+    previous_node = 24
+    next_child__seqLink6 = 25
+    next_child__seqLink1 = 26
+    next_child__sel1 = 30
+    next_child__sel0 = 27
+  -> State: 8.64 <-
+    active_node = 0
+    previous_node = 16
+    next_child__seqLink8 = 17
+    next_child__seqLink5 = 18
+    next_child__sel9 = 22
+    next_child__sel8 = 19
+  -> State: 8.65 <-
+    active_node = -1
+    previous_node = 0
+    current_status = invalid
+    next_child__seqLink9 = 1
+    next_child__seqLink7 = 2
+    next_child__seqLink4 = 10
+    next_child__sel7 = 14
+    next_child__sel6 = 11
+    next_child__seqLink3 = 3
+    next_child__sel5 = 7
+    next_child__sel4 = 4
+  -> State: 8.66 <-
+    active_node = 0
+    previous_node = -1
+    previous_status = invalid
+  -> State: 8.67 <-
+    active_node = 1
+    previous_node = 0
+  -> State: 8.68 <-
+    active_node = 2
+    previous_node = 1
+    next_child__seqLink9 = 16
+  -> State: 8.69 <-
+    active_node = 3
+    previous_node = 2
+    next_child__seqLink7 = 9
+  -> State: 8.70 <-
+    active_node = 4
+    previous_node = 3
+    current_status = success
+    next_child__seqLink3 = 6
+  -> State: 8.71 <-
+    active_node = 3
+    previous_node = 4
+    previous_status = success
+    next_child__sel4 = 5
+  -> State: 8.72 <-
+    active_node = 2
+    previous_node = 3
+    current_status = invalid
+    next_child__sel4 = 4
+  -> State: 8.73 <-
+    active_node = 6
+    previous_node = 2
+    previous_status = invalid
+    next_child__seqLink3 = 3
+  -> State: 8.74 <-
+    active_node = 7
+    previous_node = 6
+    current_status = success
+    next_child__seqLink3 = -1
+    next_child__sel4 = -1
+  -> State: 8.75 <-
+    active_node = 6
+    previous_node = 7
+    previous_status = success
+    next_child__sel5 = 8
+  -> State: 8.76 <-
+    active_node = 2
+    previous_node = 6
+    next_child__sel5 = 7
+  -> State: 8.77 <-
+    active_node = 1
+    previous_node = 2
+    current_status = invalid
+    next_child__seqLink3 = 3
+    next_child__sel4 = 4
+  -> State: 8.78 <-
+    active_node = 9
+    previous_node = 1
+    previous_status = invalid
+    next_child__seqLink7 = 2
+  -> State: 8.79 <-
+    active_node = 10
+    previous_node = 9
+    next_child__seqLink7 = -1
+    next_child__seqLink3 = -1
+    next_child__sel5 = -1
+    next_child__sel4 = -1
+  -> State: 8.80 <-
+    active_node = 11
+    previous_node = 10
+    current_status = success
+    next_child__seqLink4 = 13
+  -> State: 8.81 <-
+    active_node = 10
+    previous_node = 11
+    previous_status = success
+    next_child__sel6 = 12
+  -> State: 8.82 <-
+    active_node = 9
+    previous_node = 10
+    current_status = invalid
+    next_child__sel6 = 11
+  -> State: 8.83 <-
+    active_node = 13
+    previous_node = 9
+    previous_status = invalid
+    next_child__seqLink4 = 10
+  -> State: 8.84 <-
+    active_node = 14
+    previous_node = 13
+    current_status = success
+    next_child__seqLink4 = -1
+    next_child__sel6 = -1
+  -> State: 8.85 <-
+    active_node = 13
+    previous_node = 14
+    previous_status = success
+    next_child__sel7 = 15
+  -> State: 8.86 <-
+    active_node = 9
+    previous_node = 13
+    next_child__sel7 = 14
+  -> State: 8.87 <-
+    active_node = 1
+    previous_node = 9
+    next_child__seqLink4 = 10
+    next_child__sel6 = 11
+  -> State: 8.88 <-
+    active_node = 0
+    previous_node = 1
+    current_status = invalid
+    next_child__seqLink7 = 2
+    next_child__seqLink3 = 3
+    next_child__sel5 = 7
+    next_child__sel4 = 4
+  -> State: 8.89 <-
+    active_node = 16
+    previous_node = 0
+    previous_status = invalid
+    next_child__seqLink9 = 1
+  -> State: 8.90 <-
+    active_node = 17
+    previous_node = 16
+    next_child__seqLink9 = -1
+    next_child__seqLink7 = -1
+    next_child__seqLink4 = -1
+    next_child__sel7 = -1
+    next_child__sel6 = -1
+    next_child__seqLink3 = -1
+    next_child__sel5 = -1
+    next_child__sel4 = -1
+  -> State: 8.91 <-
+    active_node = 18
+    previous_node = 17
+    next_child__seqLink8 = 24
+  -> State: 8.92 <-
+    active_node = 19
+    previous_node = 18
+    current_status = success
+    next_child__seqLink5 = 21
+  -> State: 8.93 <-
+    active_node = 18
+    previous_node = 19
+    previous_status = success
+    next_child__sel8 = 20
+  -> State: 8.94 <-
+    active_node = 17
+    previous_node = 18
+    current_status = invalid
+    next_child__sel8 = 19
+  -> State: 8.95 <-
+    active_node = 21
+    previous_node = 17
+    previous_status = invalid
+    next_child__seqLink5 = 18
+  -> State: 8.96 <-
+    active_node = 22
+    previous_node = 21
+    current_status = success
+    next_child__seqLink5 = -1
+    next_child__sel8 = -1
+  -> State: 8.97 <-
+    active_node = 21
+    previous_node = 22
+    previous_status = success
+    next_child__sel9 = 23
+  -> State: 8.98 <-
+    active_node = 17
+    previous_node = 21
+    next_child__sel9 = 22
+  -> State: 8.99 <-
+    active_node = 16
+    previous_node = 17
+    current_status = invalid
+    next_child__seqLink5 = 18
+    next_child__sel8 = 19
+  -> State: 8.100 <-
+    active_node = 24
+    previous_node = 16
+    previous_status = invalid
+    next_child__seqLink8 = 17
+  -> State: 8.101 <-
+    active_node = 25
+    previous_node = 24
+    next_child__seqLink8 = -1
+    next_child__seqLink5 = -1
+    next_child__sel9 = -1
+    next_child__sel8 = -1
+  -> State: 8.102 <-
+    active_node = 26
+    previous_node = 25
+    next_child__seqLink6 = 32
+  -> State: 8.103 <-
+    active_node = 27
+    previous_node = 26
+    current_status = success
+    next_child__seqLink1 = 29
+  -> State: 8.104 <-
+    active_node = 26
+    previous_node = 27
+    previous_status = success
+    next_child__sel0 = 28
+  -> State: 8.105 <-
+    active_node = 25
+    previous_node = 26
+    current_status = invalid
+    next_child__sel0 = 27
+  -> State: 8.106 <-
+    active_node = 29
+    previous_node = 25
+    previous_status = invalid
+    next_child__seqLink1 = 26
+  -> State: 8.107 <-
+    active_node = 30
+    previous_node = 29
+    current_status = success
+    next_child__seqLink1 = -1
+    next_child__sel0 = -1
+  -> State: 8.108 <-
+    active_node = 29
+    previous_node = 30
+    previous_status = success
+    randomizer = FALSE
+    next_child__sel1 = 31
+  -> State: 8.109 <-
+    active_node = 25
+    previous_node = 29
+    next_child__sel1 = 30
+-- specification  G ((active_node = node_names.success_failure_node_8 & current_status = failure) -> (active_node > 0 U (active_node = node_names.success_node_8 & current_status = success)))  is true
+-- specification  G ((active_node = node_names.success_failure_node_8 & current_status = failure) -> !(active_node > 0 U (active_node = node_names.success_node_8 & current_status = success)))  is false
+-- as demonstrated by the following execution sequence
+Trace Description: LTL Counterexample 
+Trace Type: Counterexample 
+  -> State: 9.1 <-
+    active_node = -1
+    previous_node = -1
+    current_status = invalid
+    previous_status = invalid
+    randomizer = FALSE
+    next_child__seqLink9 = 1
+    next_child__seqLink8 = 17
+    next_child__seqLink6 = 25
+    next_child__seqLink2 = 33
+    next_child__sel3 = 37
+    next_child__sel2 = 34
+    next_child__seqLink1 = 26
+    next_child__sel1 = 30
+    next_child__sel0 = 27
+    next_child__seqLink5 = 18
+    next_child__sel9 = 22
+    next_child__sel8 = 19
+    next_child__seqLink7 = 2
+    next_child__seqLink4 = 10
+    next_child__sel7 = 14
+    next_child__sel6 = 11
+    next_child__seqLink3 = 3
+    next_child__sel5 = 7
+    next_child__sel4 = 4
+    child_index_to_resume_from__seqLink9 = -2
+    child_index_to_resume_from__seqLink8 = -2
+    child_index_to_resume_from__seqLink6 = -2
+    child_index_to_resume_from__seqLink2 = -2
+    child_index_to_resume_from__sel3 = -2
+    child_index_to_resume_from__sel2 = -2
+    child_index_to_resume_from__seqLink1 = -2
+    child_index_to_resume_from__sel1 = -2
+    child_index_to_resume_from__sel0 = -2
+    child_index_to_resume_from__seqLink5 = -2
+    child_index_to_resume_from__sel9 = -2
+    child_index_to_resume_from__sel8 = -2
+    child_index_to_resume_from__seqLink7 = -2
+    child_index_to_resume_from__seqLink4 = -2
+    child_index_to_resume_from__sel7 = -2
+    child_index_to_resume_from__sel6 = -2
+    child_index_to_resume_from__seqLink3 = -2
+    child_index_to_resume_from__sel5 = -2
+    child_index_to_resume_from__sel4 = -2
+    resume_from_here_in_subtree__seqLink9 = -3
+    node_names.success_node_9 = 38
+    node_names.success_failure_node_9 = 37
+    node_names.sel3 = 36
+    node_names.success_node_8 = 35
+    node_names.success_failure_node_8 = 34
+    node_names.sel2 = 33
+    node_names.seqLink2 = 32
+    node_names.success_node_7 = 31
+    node_names.success_failure_node_7 = 30
+    node_names.sel1 = 29
+    node_names.success_node_6 = 28
+    node_names.success_failure_node_6 = 27
+    node_names.sel0 = 26
+    node_names.seqLink1 = 25
+    node_names.seqLink6 = 24
+    node_names.success_node_5 = 23
+    node_names.success_failure_node_5 = 22
+    node_names.sel9 = 21
+    node_names.success_node_4 = 20
+    node_names.success_failure_node_4 = 19
+    node_names.sel8 = 18
+    node_names.seqLink5 = 17
+    node_names.seqLink8 = 16
+    node_names.success_node_3 = 15
+    node_names.success_failure_node_3 = 14
+    node_names.sel7 = 13
+    node_names.success_node_2 = 12
+    node_names.success_failure_node_2 = 11
+    node_names.sel6 = 10
+    node_names.seqLink4 = 9
+    node_names.success_node_1 = 8
+    node_names.success_failure_node_1 = 7
+    node_names.sel5 = 6
+    node_names.success_node = 5
+    node_names.success_failure_node = 4
+    node_names.sel4 = 3
+    node_names.seqLink3 = 2
+    node_names.seqLink7 = 1
+    node_names.seqLink9 = 0
+  -> State: 9.2 <-
+    active_node = 0
+  -> State: 9.3 <-
+    active_node = 1
+    previous_node = 0
+  -> State: 9.4 <-
+    active_node = 2
+    previous_node = 1
+    next_child__seqLink9 = 16
+  -> State: 9.5 <-
+    active_node = 3
+    previous_node = 2
+    next_child__seqLink7 = 9
+  -> State: 9.6 <-
+    active_node = 4
+    previous_node = 3
+    current_status = failure
+    next_child__seqLink3 = 6
+  -> State: 9.7 <-
+    active_node = 3
+    previous_node = 4
+    current_status = invalid
+    previous_status = failure
+    randomizer = TRUE
+    next_child__sel4 = 5
+  -> State: 9.8 <-
+    active_node = 5
+    previous_node = 3
+    current_status = success
+    previous_status = invalid
+    next_child__sel4 = 4
+  -> State: 9.9 <-
+    active_node = 3
+    previous_node = 5
+    previous_status = success
+    next_child__sel4 = -1
+  -> State: 9.10 <-
+    active_node = 2
+    previous_node = 3
+    current_status = invalid
+    next_child__sel4 = 4
+  -> State: 9.11 <-
+    active_node = 6
+    previous_node = 2
+    previous_status = invalid
+    next_child__seqLink3 = 3
+  -> State: 9.12 <-
+    active_node = 7
+    previous_node = 6
+    current_status = success
+    next_child__seqLink3 = -1
+    next_child__sel4 = -1
+  -> State: 9.13 <-
+    active_node = 6
+    previous_node = 7
+    previous_status = success
+    next_child__sel5 = 8
+  -> State: 9.14 <-
+    active_node = 2
+    previous_node = 6
+    next_child__sel5 = 7
+  -> State: 9.15 <-
+    active_node = 1
+    previous_node = 2
+    current_status = invalid
+    next_child__seqLink3 = 3
+    next_child__sel4 = 4
+  -> State: 9.16 <-
+    active_node = 9
+    previous_node = 1
+    previous_status = invalid
+    next_child__seqLink7 = 2
+  -> State: 9.17 <-
+    active_node = 10
+    previous_node = 9
+    next_child__seqLink7 = -1
+    next_child__seqLink3 = -1
+    next_child__sel5 = -1
+    next_child__sel4 = -1
+  -> State: 9.18 <-
+    active_node = 11
+    previous_node = 10
+    current_status = success
+    next_child__seqLink4 = 13
+  -> State: 9.19 <-
+    active_node = 10
+    previous_node = 11
+    previous_status = success
+    next_child__sel6 = 12
+  -> State: 9.20 <-
+    active_node = 9
+    previous_node = 10
+    current_status = invalid
+    next_child__sel6 = 11
+  -> State: 9.21 <-
+    active_node = 13
+    previous_node = 9
+    previous_status = invalid
+    next_child__seqLink4 = 10
+  -> State: 9.22 <-
+    active_node = 14
+    previous_node = 13
+    current_status = success
+    next_child__seqLink4 = -1
+    next_child__sel6 = -1
+  -> State: 9.23 <-
+    active_node = 13
+    previous_node = 14
+    previous_status = success
+    next_child__sel7 = 15
+  -> State: 9.24 <-
+    active_node = 9
+    previous_node = 13
+    next_child__sel7 = 14
+  -> State: 9.25 <-
+    active_node = 1
+    previous_node = 9
+    next_child__seqLink4 = 10
+    next_child__sel6 = 11
+  -> State: 9.26 <-
+    active_node = 0
+    previous_node = 1
+    current_status = invalid
+    next_child__seqLink7 = 2
+    next_child__seqLink3 = 3
+    next_child__sel5 = 7
+    next_child__sel4 = 4
+  -> State: 9.27 <-
+    active_node = 16
+    previous_node = 0
+    previous_status = invalid
+    next_child__seqLink9 = 1
+  -> State: 9.28 <-
+    active_node = 17
+    previous_node = 16
+    next_child__seqLink9 = -1
+    next_child__seqLink7 = -1
+    next_child__seqLink4 = -1
+    next_child__sel7 = -1
+    next_child__sel6 = -1
+    next_child__seqLink3 = -1
+    next_child__sel5 = -1
+    next_child__sel4 = -1
+  -> State: 9.29 <-
+    active_node = 18
+    previous_node = 17
+    next_child__seqLink8 = 24
+  -> State: 9.30 <-
+    active_node = 19
+    previous_node = 18
+    current_status = success
+    next_child__seqLink5 = 21
+  -> State: 9.31 <-
+    active_node = 18
+    previous_node = 19
+    previous_status = success
+    next_child__sel8 = 20
+  -> State: 9.32 <-
+    active_node = 17
+    previous_node = 18
+    current_status = invalid
+    next_child__sel8 = 19
+  -> State: 9.33 <-
+    active_node = 21
+    previous_node = 17
+    previous_status = invalid
+    next_child__seqLink5 = 18
+  -> State: 9.34 <-
+    active_node = 22
+    previous_node = 21
+    current_status = success
+    next_child__seqLink5 = -1
+    next_child__sel8 = -1
+  -> State: 9.35 <-
+    active_node = 21
+    previous_node = 22
+    previous_status = success
+    next_child__sel9 = 23
+  -> State: 9.36 <-
+    active_node = 17
+    previous_node = 21
+    next_child__sel9 = 22
+  -> State: 9.37 <-
+    active_node = 16
+    previous_node = 17
+    current_status = invalid
+    next_child__seqLink5 = 18
+    next_child__sel8 = 19
+  -> State: 9.38 <-
+    active_node = 24
+    previous_node = 16
+    previous_status = invalid
+    next_child__seqLink8 = 17
+  -> State: 9.39 <-
+    active_node = 25
+    previous_node = 24
+    next_child__seqLink8 = -1
+    next_child__seqLink5 = -1
+    next_child__sel9 = -1
+    next_child__sel8 = -1
+  -> State: 9.40 <-
+    active_node = 26
+    previous_node = 25
+    next_child__seqLink6 = 32
+  -> State: 9.41 <-
+    active_node = 27
+    previous_node = 26
+    current_status = success
+    next_child__seqLink1 = 29
+  -> State: 9.42 <-
+    active_node = 26
+    previous_node = 27
+    previous_status = success
+    next_child__sel0 = 28
+  -> State: 9.43 <-
+    active_node = 25
+    previous_node = 26
+    current_status = invalid
+    next_child__sel0 = 27
+  -> State: 9.44 <-
+    active_node = 29
+    previous_node = 25
+    previous_status = invalid
+    next_child__seqLink1 = 26
+  -> State: 9.45 <-
+    active_node = 30
+    previous_node = 29
+    current_status = success
+    next_child__seqLink1 = -1
+    next_child__sel0 = -1
+  -> State: 9.46 <-
+    active_node = 29
+    previous_node = 30
+    previous_status = success
+    randomizer = FALSE
+    next_child__sel1 = 31
+  -> State: 9.47 <-
+    active_node = 25
+    previous_node = 29
+    next_child__sel1 = 30
+  -> State: 9.48 <-
+    active_node = 24
+    previous_node = 25
+    current_status = invalid
+    next_child__seqLink1 = 26
+    next_child__sel0 = 27
+  -> State: 9.49 <-
+    active_node = 32
+    previous_node = 24
+    previous_status = invalid
+    next_child__seqLink6 = 25
+  -> State: 9.50 <-
+    active_node = 33
+    previous_node = 32
+    next_child__seqLink6 = -1
+    next_child__seqLink1 = -1
+    next_child__sel1 = -1
+    next_child__sel0 = -1
+  -> State: 9.51 <-
+    active_node = 34
+    previous_node = 33
+    current_status = failure
+    next_child__seqLink2 = 36
+  -> State: 9.52 <-
+    active_node = 33
+    previous_node = 34
+    current_status = invalid
+    previous_status = failure
+    next_child__sel2 = 35
+  -> State: 9.53 <-
+    active_node = 35
+    previous_node = 33
+    current_status = success
+    previous_status = invalid
+    next_child__sel2 = 34
+  -> State: 9.54 <-
+    active_node = 33
+    previous_node = 35
+    previous_status = success
+    next_child__sel2 = -1
+  -- Loop starts here
+  -> State: 9.55 <-
+    active_node = 32
+    previous_node = 33
+    current_status = invalid
+    next_child__sel2 = 34
+  -> State: 9.56 <-
+    active_node = 36
+    previous_node = 32
+    previous_status = invalid
+    next_child__seqLink2 = 33
+  -> State: 9.57 <-
+    active_node = 37
+    previous_node = 36
+    current_status = failure
+    next_child__seqLink2 = -1
+    next_child__sel2 = -1
+  -> State: 9.58 <-
+    active_node = 36
+    previous_node = 37
+    current_status = invalid
+    previous_status = failure
+    randomizer = TRUE
+    next_child__sel3 = 38
+  -> State: 9.59 <-
+    active_node = 38
+    previous_node = 36
+    current_status = success
+    previous_status = invalid
+    next_child__sel3 = 37
+  -> State: 9.60 <-
+    active_node = 36
+    previous_node = 38
+    previous_status = success
+    next_child__sel3 = -1
+  -> State: 9.61 <-
+    active_node = 32
+    previous_node = 36
+    next_child__sel3 = 37
+  -> State: 9.62 <-
+    active_node = 24
+    previous_node = 32
+    next_child__seqLink2 = 33
+    next_child__sel2 = 34
+  -> State: 9.63 <-
+    active_node = 16
+    previous_node = 24
+    next_child__seqLink6 = 25
+    next_child__seqLink1 = 26
+    next_child__sel1 = 30
+    next_child__sel0 = 27
+  -> State: 9.64 <-
+    active_node = 0
+    previous_node = 16
+    next_child__seqLink8 = 17
+    next_child__seqLink5 = 18
+    next_child__sel9 = 22
+    next_child__sel8 = 19
+  -> State: 9.65 <-
+    active_node = -1
+    previous_node = 0
+    current_status = invalid
+    next_child__seqLink9 = 1
+    next_child__seqLink7 = 2
+    next_child__seqLink4 = 10
+    next_child__sel7 = 14
+    next_child__sel6 = 11
+    next_child__seqLink3 = 3
+    next_child__sel5 = 7
+    next_child__sel4 = 4
+  -> State: 9.66 <-
+    active_node = 0
+    previous_node = -1
+    previous_status = invalid
+  -> State: 9.67 <-
+    active_node = 1
+    previous_node = 0
+  -> State: 9.68 <-
+    active_node = 2
+    previous_node = 1
+    next_child__seqLink9 = 16
+  -> State: 9.69 <-
+    active_node = 3
+    previous_node = 2
+    next_child__seqLink7 = 9
+  -> State: 9.70 <-
+    active_node = 4
+    previous_node = 3
+    current_status = success
+    next_child__seqLink3 = 6
+  -> State: 9.71 <-
+    active_node = 3
+    previous_node = 4
+    previous_status = success
+    next_child__sel4 = 5
+  -> State: 9.72 <-
+    active_node = 2
+    previous_node = 3
+    current_status = invalid
+    next_child__sel4 = 4
+  -> State: 9.73 <-
+    active_node = 6
+    previous_node = 2
+    previous_status = invalid
+    next_child__seqLink3 = 3
+  -> State: 9.74 <-
+    active_node = 7
+    previous_node = 6
+    current_status = success
+    next_child__seqLink3 = -1
+    next_child__sel4 = -1
+  -> State: 9.75 <-
+    active_node = 6
+    previous_node = 7
+    previous_status = success
+    next_child__sel5 = 8
+  -> State: 9.76 <-
+    active_node = 2
+    previous_node = 6
+    next_child__sel5 = 7
+  -> State: 9.77 <-
+    active_node = 1
+    previous_node = 2
+    current_status = invalid
+    next_child__seqLink3 = 3
+    next_child__sel4 = 4
+  -> State: 9.78 <-
+    active_node = 9
+    previous_node = 1
+    previous_status = invalid
+    next_child__seqLink7 = 2
+  -> State: 9.79 <-
+    active_node = 10
+    previous_node = 9
+    next_child__seqLink7 = -1
+    next_child__seqLink3 = -1
+    next_child__sel5 = -1
+    next_child__sel4 = -1
+  -> State: 9.80 <-
+    active_node = 11
+    previous_node = 10
+    current_status = success
+    next_child__seqLink4 = 13
+  -> State: 9.81 <-
+    active_node = 10
+    previous_node = 11
+    previous_status = success
+    next_child__sel6 = 12
+  -> State: 9.82 <-
+    active_node = 9
+    previous_node = 10
+    current_status = invalid
+    next_child__sel6 = 11
+  -> State: 9.83 <-
+    active_node = 13
+    previous_node = 9
+    previous_status = invalid
+    next_child__seqLink4 = 10
+  -> State: 9.84 <-
+    active_node = 14
+    previous_node = 13
+    current_status = success
+    next_child__seqLink4 = -1
+    next_child__sel6 = -1
+  -> State: 9.85 <-
+    active_node = 13
+    previous_node = 14
+    previous_status = success
+    next_child__sel7 = 15
+  -> State: 9.86 <-
+    active_node = 9
+    previous_node = 13
+    next_child__sel7 = 14
+  -> State: 9.87 <-
+    active_node = 1
+    previous_node = 9
+    next_child__seqLink4 = 10
+    next_child__sel6 = 11
+  -> State: 9.88 <-
+    active_node = 0
+    previous_node = 1
+    current_status = invalid
+    next_child__seqLink7 = 2
+    next_child__seqLink3 = 3
+    next_child__sel5 = 7
+    next_child__sel4 = 4
+  -> State: 9.89 <-
+    active_node = 16
+    previous_node = 0
+    previous_status = invalid
+    next_child__seqLink9 = 1
+  -> State: 9.90 <-
+    active_node = 17
+    previous_node = 16
+    next_child__seqLink9 = -1
+    next_child__seqLink7 = -1
+    next_child__seqLink4 = -1
+    next_child__sel7 = -1
+    next_child__sel6 = -1
+    next_child__seqLink3 = -1
+    next_child__sel5 = -1
+    next_child__sel4 = -1
+  -> State: 9.91 <-
+    active_node = 18
+    previous_node = 17
+    next_child__seqLink8 = 24
+  -> State: 9.92 <-
+    active_node = 19
+    previous_node = 18
+    current_status = success
+    next_child__seqLink5 = 21
+  -> State: 9.93 <-
+    active_node = 18
+    previous_node = 19
+    previous_status = success
+    next_child__sel8 = 20
+  -> State: 9.94 <-
+    active_node = 17
+    previous_node = 18
+    current_status = invalid
+    next_child__sel8 = 19
+  -> State: 9.95 <-
+    active_node = 21
+    previous_node = 17
+    previous_status = invalid
+    next_child__seqLink5 = 18
+  -> State: 9.96 <-
+    active_node = 22
+    previous_node = 21
+    current_status = success
+    next_child__seqLink5 = -1
+    next_child__sel8 = -1
+  -> State: 9.97 <-
+    active_node = 21
+    previous_node = 22
+    previous_status = success
+    next_child__sel9 = 23
+  -> State: 9.98 <-
+    active_node = 17
+    previous_node = 21
+    next_child__sel9 = 22
+  -> State: 9.99 <-
+    active_node = 16
+    previous_node = 17
+    current_status = invalid
+    next_child__seqLink5 = 18
+    next_child__sel8 = 19
+  -> State: 9.100 <-
+    active_node = 24
+    previous_node = 16
+    previous_status = invalid
+    next_child__seqLink8 = 17
+  -> State: 9.101 <-
+    active_node = 25
+    previous_node = 24
+    next_child__seqLink8 = -1
+    next_child__seqLink5 = -1
+    next_child__sel9 = -1
+    next_child__sel8 = -1
+  -> State: 9.102 <-
+    active_node = 26
+    previous_node = 25
+    next_child__seqLink6 = 32
+  -> State: 9.103 <-
+    active_node = 27
+    previous_node = 26
+    current_status = success
+    next_child__seqLink1 = 29
+  -> State: 9.104 <-
+    active_node = 26
+    previous_node = 27
+    previous_status = success
+    next_child__sel0 = 28
+  -> State: 9.105 <-
+    active_node = 25
+    previous_node = 26
+    current_status = invalid
+    next_child__sel0 = 27
+  -> State: 9.106 <-
+    active_node = 29
+    previous_node = 25
+    previous_status = invalid
+    next_child__seqLink1 = 26
+  -> State: 9.107 <-
+    active_node = 30
+    previous_node = 29
+    current_status = success
+    next_child__seqLink1 = -1
+    next_child__sel0 = -1
+  -> State: 9.108 <-
+    active_node = 29
+    previous_node = 30
+    previous_status = success
+    next_child__sel1 = 31
+  -> State: 9.109 <-
+    active_node = 25
+    previous_node = 29
+    next_child__sel1 = 30
+  -> State: 9.110 <-
+    active_node = 24
+    previous_node = 25
+    current_status = invalid
+    next_child__seqLink1 = 26
+    next_child__sel0 = 27
+  -> State: 9.111 <-
+    active_node = 32
+    previous_node = 24
+    previous_status = invalid
+    next_child__seqLink6 = 25
+  -> State: 9.112 <-
+    active_node = 33
+    previous_node = 32
+    next_child__seqLink6 = -1
+    next_child__seqLink1 = -1
+    next_child__sel1 = -1
+    next_child__sel0 = -1
+  -> State: 9.113 <-
+    active_node = 34
+    previous_node = 33
+    current_status = success
+    next_child__seqLink2 = 36
+  -> State: 9.114 <-
+    active_node = 33
+    previous_node = 34
+    previous_status = success
+    randomizer = FALSE
+    next_child__sel2 = 35
+  -> State: 9.115 <-
+    active_node = 32
+    previous_node = 33
+    current_status = invalid
+    next_child__sel2 = 34
+-- specification  G ((active_node = node_names.success_failure_node_9 & current_status = failure) -> (active_node > 0 U (active_node = node_names.success_node_9 & current_status = success)))  is true
+-- specification  G ((active_node = node_names.success_failure_node_9 & current_status = failure) -> !(active_node > 0 U (active_node = node_names.success_node_9 & current_status = success)))  is false
+-- as demonstrated by the following execution sequence
+Trace Description: LTL Counterexample 
+Trace Type: Counterexample 
+  -> State: 10.1 <-
+    active_node = -1
+    previous_node = -1
+    current_status = invalid
+    previous_status = invalid
+    randomizer = FALSE
+    next_child__seqLink9 = 1
+    next_child__seqLink8 = 17
+    next_child__seqLink6 = 25
+    next_child__seqLink2 = 33
+    next_child__sel3 = 37
+    next_child__sel2 = 34
+    next_child__seqLink1 = 26
+    next_child__sel1 = 30
+    next_child__sel0 = 27
+    next_child__seqLink5 = 18
+    next_child__sel9 = 22
+    next_child__sel8 = 19
+    next_child__seqLink7 = 2
+    next_child__seqLink4 = 10
+    next_child__sel7 = 14
+    next_child__sel6 = 11
+    next_child__seqLink3 = 3
+    next_child__sel5 = 7
+    next_child__sel4 = 4
+    child_index_to_resume_from__seqLink9 = -2
+    child_index_to_resume_from__seqLink8 = -2
+    child_index_to_resume_from__seqLink6 = -2
+    child_index_to_resume_from__seqLink2 = -2
+    child_index_to_resume_from__sel3 = -2
+    child_index_to_resume_from__sel2 = -2
+    child_index_to_resume_from__seqLink1 = -2
+    child_index_to_resume_from__sel1 = -2
+    child_index_to_resume_from__sel0 = -2
+    child_index_to_resume_from__seqLink5 = -2
+    child_index_to_resume_from__sel9 = -2
+    child_index_to_resume_from__sel8 = -2
+    child_index_to_resume_from__seqLink7 = -2
+    child_index_to_resume_from__seqLink4 = -2
+    child_index_to_resume_from__sel7 = -2
+    child_index_to_resume_from__sel6 = -2
+    child_index_to_resume_from__seqLink3 = -2
+    child_index_to_resume_from__sel5 = -2
+    child_index_to_resume_from__sel4 = -2
+    resume_from_here_in_subtree__seqLink9 = -3
+    node_names.success_node_9 = 38
+    node_names.success_failure_node_9 = 37
+    node_names.sel3 = 36
+    node_names.success_node_8 = 35
+    node_names.success_failure_node_8 = 34
+    node_names.sel2 = 33
+    node_names.seqLink2 = 32
+    node_names.success_node_7 = 31
+    node_names.success_failure_node_7 = 30
+    node_names.sel1 = 29
+    node_names.success_node_6 = 28
+    node_names.success_failure_node_6 = 27
+    node_names.sel0 = 26
+    node_names.seqLink1 = 25
+    node_names.seqLink6 = 24
+    node_names.success_node_5 = 23
+    node_names.success_failure_node_5 = 22
+    node_names.sel9 = 21
+    node_names.success_node_4 = 20
+    node_names.success_failure_node_4 = 19
+    node_names.sel8 = 18
+    node_names.seqLink5 = 17
+    node_names.seqLink8 = 16
+    node_names.success_node_3 = 15
+    node_names.success_failure_node_3 = 14
+    node_names.sel7 = 13
+    node_names.success_node_2 = 12
+    node_names.success_failure_node_2 = 11
+    node_names.sel6 = 10
+    node_names.seqLink4 = 9
+    node_names.success_node_1 = 8
+    node_names.success_failure_node_1 = 7
+    node_names.sel5 = 6
+    node_names.success_node = 5
+    node_names.success_failure_node = 4
+    node_names.sel4 = 3
+    node_names.seqLink3 = 2
+    node_names.seqLink7 = 1
+    node_names.seqLink9 = 0
+  -> State: 10.2 <-
+    active_node = 0
+  -> State: 10.3 <-
+    active_node = 1
+    previous_node = 0
+  -> State: 10.4 <-
+    active_node = 2
+    previous_node = 1
+    next_child__seqLink9 = 16
+  -> State: 10.5 <-
+    active_node = 3
+    previous_node = 2
+    next_child__seqLink7 = 9
+  -> State: 10.6 <-
+    active_node = 4
+    previous_node = 3
+    current_status = failure
+    next_child__seqLink3 = 6
+  -> State: 10.7 <-
+    active_node = 3
+    previous_node = 4
+    current_status = invalid
+    previous_status = failure
+    randomizer = TRUE
+    next_child__sel4 = 5
+  -> State: 10.8 <-
+    active_node = 5
+    previous_node = 3
+    current_status = success
+    previous_status = invalid
+    next_child__sel4 = 4
+  -> State: 10.9 <-
+    active_node = 3
+    previous_node = 5
+    previous_status = success
+    next_child__sel4 = -1
+  -> State: 10.10 <-
+    active_node = 2
+    previous_node = 3
+    current_status = invalid
+    next_child__sel4 = 4
+  -> State: 10.11 <-
+    active_node = 6
+    previous_node = 2
+    previous_status = invalid
+    next_child__seqLink3 = 3
+  -> State: 10.12 <-
+    active_node = 7
+    previous_node = 6
+    current_status = success
+    next_child__seqLink3 = -1
+    next_child__sel4 = -1
+  -> State: 10.13 <-
+    active_node = 6
+    previous_node = 7
+    previous_status = success
+    next_child__sel5 = 8
+  -> State: 10.14 <-
+    active_node = 2
+    previous_node = 6
+    next_child__sel5 = 7
+  -> State: 10.15 <-
+    active_node = 1
+    previous_node = 2
+    current_status = invalid
+    next_child__seqLink3 = 3
+    next_child__sel4 = 4
+  -> State: 10.16 <-
+    active_node = 9
+    previous_node = 1
+    previous_status = invalid
+    next_child__seqLink7 = 2
+  -> State: 10.17 <-
+    active_node = 10
+    previous_node = 9
+    next_child__seqLink7 = -1
+    next_child__seqLink3 = -1
+    next_child__sel5 = -1
+    next_child__sel4 = -1
+  -> State: 10.18 <-
+    active_node = 11
+    previous_node = 10
+    current_status = success
+    next_child__seqLink4 = 13
+  -> State: 10.19 <-
+    active_node = 10
+    previous_node = 11
+    previous_status = success
+    next_child__sel6 = 12
+  -> State: 10.20 <-
+    active_node = 9
+    previous_node = 10
+    current_status = invalid
+    next_child__sel6 = 11
+  -> State: 10.21 <-
+    active_node = 13
+    previous_node = 9
+    previous_status = invalid
+    next_child__seqLink4 = 10
+  -> State: 10.22 <-
+    active_node = 14
+    previous_node = 13
+    current_status = success
+    next_child__seqLink4 = -1
+    next_child__sel6 = -1
+  -> State: 10.23 <-
+    active_node = 13
+    previous_node = 14
+    previous_status = success
+    next_child__sel7 = 15
+  -> State: 10.24 <-
+    active_node = 9
+    previous_node = 13
+    next_child__sel7 = 14
+  -> State: 10.25 <-
+    active_node = 1
+    previous_node = 9
+    next_child__seqLink4 = 10
+    next_child__sel6 = 11
+  -> State: 10.26 <-
+    active_node = 0
+    previous_node = 1
+    current_status = invalid
+    next_child__seqLink7 = 2
+    next_child__seqLink3 = 3
+    next_child__sel5 = 7
+    next_child__sel4 = 4
+  -> State: 10.27 <-
+    active_node = 16
+    previous_node = 0
+    previous_status = invalid
+    next_child__seqLink9 = 1
+  -> State: 10.28 <-
+    active_node = 17
+    previous_node = 16
+    next_child__seqLink9 = -1
+    next_child__seqLink7 = -1
+    next_child__seqLink4 = -1
+    next_child__sel7 = -1
+    next_child__sel6 = -1
+    next_child__seqLink3 = -1
+    next_child__sel5 = -1
+    next_child__sel4 = -1
+  -> State: 10.29 <-
+    active_node = 18
+    previous_node = 17
+    next_child__seqLink8 = 24
+  -> State: 10.30 <-
+    active_node = 19
+    previous_node = 18
+    current_status = success
+    next_child__seqLink5 = 21
+  -> State: 10.31 <-
+    active_node = 18
+    previous_node = 19
+    previous_status = success
+    next_child__sel8 = 20
+  -> State: 10.32 <-
+    active_node = 17
+    previous_node = 18
+    current_status = invalid
+    next_child__sel8 = 19
+  -> State: 10.33 <-
+    active_node = 21
+    previous_node = 17
+    previous_status = invalid
+    next_child__seqLink5 = 18
+  -> State: 10.34 <-
+    active_node = 22
+    previous_node = 21
+    current_status = success
+    next_child__seqLink5 = -1
+    next_child__sel8 = -1
+  -> State: 10.35 <-
+    active_node = 21
+    previous_node = 22
+    previous_status = success
+    next_child__sel9 = 23
+  -> State: 10.36 <-
+    active_node = 17
+    previous_node = 21
+    next_child__sel9 = 22
+  -> State: 10.37 <-
+    active_node = 16
+    previous_node = 17
+    current_status = invalid
+    next_child__seqLink5 = 18
+    next_child__sel8 = 19
+  -> State: 10.38 <-
+    active_node = 24
+    previous_node = 16
+    previous_status = invalid
+    next_child__seqLink8 = 17
+  -> State: 10.39 <-
+    active_node = 25
+    previous_node = 24
+    next_child__seqLink8 = -1
+    next_child__seqLink5 = -1
+    next_child__sel9 = -1
+    next_child__sel8 = -1
+  -> State: 10.40 <-
+    active_node = 26
+    previous_node = 25
+    next_child__seqLink6 = 32
+  -> State: 10.41 <-
+    active_node = 27
+    previous_node = 26
+    current_status = success
+    next_child__seqLink1 = 29
+  -> State: 10.42 <-
+    active_node = 26
+    previous_node = 27
+    previous_status = success
+    next_child__sel0 = 28
+  -> State: 10.43 <-
+    active_node = 25
+    previous_node = 26
+    current_status = invalid
+    next_child__sel0 = 27
+  -> State: 10.44 <-
+    active_node = 29
+    previous_node = 25
+    previous_status = invalid
+    next_child__seqLink1 = 26
+  -> State: 10.45 <-
+    active_node = 30
+    previous_node = 29
+    current_status = success
+    next_child__seqLink1 = -1
+    next_child__sel0 = -1
+  -> State: 10.46 <-
+    active_node = 29
+    previous_node = 30
+    previous_status = success
+    next_child__sel1 = 31
+  -> State: 10.47 <-
+    active_node = 25
+    previous_node = 29
+    next_child__sel1 = 30
+  -> State: 10.48 <-
+    active_node = 24
+    previous_node = 25
+    current_status = invalid
+    next_child__seqLink1 = 26
+    next_child__sel0 = 27
+  -> State: 10.49 <-
+    active_node = 32
+    previous_node = 24
+    previous_status = invalid
+    next_child__seqLink6 = 25
+  -> State: 10.50 <-
+    active_node = 33
+    previous_node = 32
+    next_child__seqLink6 = -1
+    next_child__seqLink1 = -1
+    next_child__sel1 = -1
+    next_child__sel0 = -1
+  -> State: 10.51 <-
+    active_node = 34
+    previous_node = 33
+    current_status = success
+    next_child__seqLink2 = 36
+  -> State: 10.52 <-
+    active_node = 33
+    previous_node = 34
+    previous_status = success
+    randomizer = FALSE
+    next_child__sel2 = 35
+  -> State: 10.53 <-
+    active_node = 32
+    previous_node = 33
+    current_status = invalid
+    next_child__sel2 = 34
+  -> State: 10.54 <-
+    active_node = 36
+    previous_node = 32
+    previous_status = invalid
+    next_child__seqLink2 = 33
+  -> State: 10.55 <-
+    active_node = 37
+    previous_node = 36
+    current_status = failure
+    next_child__seqLink2 = -1
+    next_child__sel2 = -1
+  -> State: 10.56 <-
+    active_node = 36
+    previous_node = 37
+    current_status = invalid
+    previous_status = failure
+    next_child__sel3 = 38
+  -> State: 10.57 <-
+    active_node = 38
+    previous_node = 36
+    current_status = success
+    previous_status = invalid
+    next_child__sel3 = 37
+  -> State: 10.58 <-
+    active_node = 36
+    previous_node = 38
+    previous_status = success
+    next_child__sel3 = -1
+  -- Loop starts here
+  -> State: 10.59 <-
+    active_node = 32
+    previous_node = 36
+    next_child__sel3 = 37
+  -> State: 10.60 <-
+    active_node = 24
+    previous_node = 32
+    next_child__seqLink2 = 33
+    next_child__sel2 = 34
+  -> State: 10.61 <-
+    active_node = 16
+    previous_node = 24
+    next_child__seqLink6 = 25
+    next_child__seqLink1 = 26
+    next_child__sel1 = 30
+    next_child__sel0 = 27
+  -> State: 10.62 <-
+    active_node = 0
+    previous_node = 16
+    next_child__seqLink8 = 17
+    next_child__seqLink5 = 18
+    next_child__sel9 = 22
+    next_child__sel8 = 19
+  -> State: 10.63 <-
+    active_node = -1
+    previous_node = 0
+    current_status = invalid
+    next_child__seqLink9 = 1
+    next_child__seqLink7 = 2
+    next_child__seqLink4 = 10
+    next_child__sel7 = 14
+    next_child__sel6 = 11
+    next_child__seqLink3 = 3
+    next_child__sel5 = 7
+    next_child__sel4 = 4
+  -> State: 10.64 <-
+    active_node = 0
+    previous_node = -1
+    previous_status = invalid
+  -> State: 10.65 <-
+    active_node = 1
+    previous_node = 0
+  -> State: 10.66 <-
+    active_node = 2
+    previous_node = 1
+    next_child__seqLink9 = 16
+  -> State: 10.67 <-
+    active_node = 3
+    previous_node = 2
+    next_child__seqLink7 = 9
+  -> State: 10.68 <-
+    active_node = 4
+    previous_node = 3
+    current_status = failure
+    next_child__seqLink3 = 6
+  -> State: 10.69 <-
+    active_node = 3
+    previous_node = 4
+    current_status = invalid
+    previous_status = failure
+    randomizer = TRUE
+    next_child__sel4 = 5
+  -> State: 10.70 <-
+    active_node = 5
+    previous_node = 3
+    current_status = success
+    previous_status = invalid
+    next_child__sel4 = 4
+  -> State: 10.71 <-
+    active_node = 3
+    previous_node = 5
+    previous_status = success
+    next_child__sel4 = -1
+  -> State: 10.72 <-
+    active_node = 2
+    previous_node = 3
+    current_status = invalid
+    next_child__sel4 = 4
+  -> State: 10.73 <-
+    active_node = 6
+    previous_node = 2
+    previous_status = invalid
+    next_child__seqLink3 = 3
+  -> State: 10.74 <-
+    active_node = 7
+    previous_node = 6
+    current_status = success
+    next_child__seqLink3 = -1
+    next_child__sel4 = -1
+  -> State: 10.75 <-
+    active_node = 6
+    previous_node = 7
+    previous_status = success
+    next_child__sel5 = 8
+  -> State: 10.76 <-
+    active_node = 2
+    previous_node = 6
+    next_child__sel5 = 7
+  -> State: 10.77 <-
+    active_node = 1
+    previous_node = 2
+    current_status = invalid
+    next_child__seqLink3 = 3
+    next_child__sel4 = 4
+  -> State: 10.78 <-
+    active_node = 9
+    previous_node = 1
+    previous_status = invalid
+    next_child__seqLink7 = 2
+  -> State: 10.79 <-
+    active_node = 10
+    previous_node = 9
+    next_child__seqLink7 = -1
+    next_child__seqLink3 = -1
+    next_child__sel5 = -1
+    next_child__sel4 = -1
+  -> State: 10.80 <-
+    active_node = 11
+    previous_node = 10
+    current_status = success
+    next_child__seqLink4 = 13
+  -> State: 10.81 <-
+    active_node = 10
+    previous_node = 11
+    previous_status = success
+    next_child__sel6 = 12
+  -> State: 10.82 <-
+    active_node = 9
+    previous_node = 10
+    current_status = invalid
+    next_child__sel6 = 11
+  -> State: 10.83 <-
+    active_node = 13
+    previous_node = 9
+    previous_status = invalid
+    next_child__seqLink4 = 10
+  -> State: 10.84 <-
+    active_node = 14
+    previous_node = 13
+    current_status = success
+    next_child__seqLink4 = -1
+    next_child__sel6 = -1
+  -> State: 10.85 <-
+    active_node = 13
+    previous_node = 14
+    previous_status = success
+    next_child__sel7 = 15
+  -> State: 10.86 <-
+    active_node = 9
+    previous_node = 13
+    next_child__sel7 = 14
+  -> State: 10.87 <-
+    active_node = 1
+    previous_node = 9
+    next_child__seqLink4 = 10
+    next_child__sel6 = 11
+  -> State: 10.88 <-
+    active_node = 0
+    previous_node = 1
+    current_status = invalid
+    next_child__seqLink7 = 2
+    next_child__seqLink3 = 3
+    next_child__sel5 = 7
+    next_child__sel4 = 4
+  -> State: 10.89 <-
+    active_node = 16
+    previous_node = 0
+    previous_status = invalid
+    next_child__seqLink9 = 1
+  -> State: 10.90 <-
+    active_node = 17
+    previous_node = 16
+    next_child__seqLink9 = -1
+    next_child__seqLink7 = -1
+    next_child__seqLink4 = -1
+    next_child__sel7 = -1
+    next_child__sel6 = -1
+    next_child__seqLink3 = -1
+    next_child__sel5 = -1
+    next_child__sel4 = -1
+  -> State: 10.91 <-
+    active_node = 18
+    previous_node = 17
+    next_child__seqLink8 = 24
+  -> State: 10.92 <-
+    active_node = 19
+    previous_node = 18
+    current_status = success
+    next_child__seqLink5 = 21
+  -> State: 10.93 <-
+    active_node = 18
+    previous_node = 19
+    previous_status = success
+    next_child__sel8 = 20
+  -> State: 10.94 <-
+    active_node = 17
+    previous_node = 18
+    current_status = invalid
+    next_child__sel8 = 19
+  -> State: 10.95 <-
+    active_node = 21
+    previous_node = 17
+    previous_status = invalid
+    next_child__seqLink5 = 18
+  -> State: 10.96 <-
+    active_node = 22
+    previous_node = 21
+    current_status = success
+    next_child__seqLink5 = -1
+    next_child__sel8 = -1
+  -> State: 10.97 <-
+    active_node = 21
+    previous_node = 22
+    previous_status = success
+    next_child__sel9 = 23
+  -> State: 10.98 <-
+    active_node = 17
+    previous_node = 21
+    next_child__sel9 = 22
+  -> State: 10.99 <-
+    active_node = 16
+    previous_node = 17
+    current_status = invalid
+    next_child__seqLink5 = 18
+    next_child__sel8 = 19
+  -> State: 10.100 <-
+    active_node = 24
+    previous_node = 16
+    previous_status = invalid
+    next_child__seqLink8 = 17
+  -> State: 10.101 <-
+    active_node = 25
+    previous_node = 24
+    next_child__seqLink8 = -1
+    next_child__seqLink5 = -1
+    next_child__sel9 = -1
+    next_child__sel8 = -1
+  -> State: 10.102 <-
+    active_node = 26
+    previous_node = 25
+    next_child__seqLink6 = 32
+  -> State: 10.103 <-
+    active_node = 27
+    previous_node = 26
+    current_status = success
+    next_child__seqLink1 = 29
+  -> State: 10.104 <-
+    active_node = 26
+    previous_node = 27
+    previous_status = success
+    next_child__sel0 = 28
+  -> State: 10.105 <-
+    active_node = 25
+    previous_node = 26
+    current_status = invalid
+    next_child__sel0 = 27
+  -> State: 10.106 <-
+    active_node = 29
+    previous_node = 25
+    previous_status = invalid
+    next_child__seqLink1 = 26
+  -> State: 10.107 <-
+    active_node = 30
+    previous_node = 29
+    current_status = success
+    next_child__seqLink1 = -1
+    next_child__sel0 = -1
+  -> State: 10.108 <-
+    active_node = 29
+    previous_node = 30
+    previous_status = success
+    next_child__sel1 = 31
+  -> State: 10.109 <-
+    active_node = 25
+    previous_node = 29
+    next_child__sel1 = 30
+  -> State: 10.110 <-
+    active_node = 24
+    previous_node = 25
+    current_status = invalid
+    next_child__seqLink1 = 26
+    next_child__sel0 = 27
+  -> State: 10.111 <-
+    active_node = 32
+    previous_node = 24
+    previous_status = invalid
+    next_child__seqLink6 = 25
+  -> State: 10.112 <-
+    active_node = 33
+    previous_node = 32
+    next_child__seqLink6 = -1
+    next_child__seqLink1 = -1
+    next_child__sel1 = -1
+    next_child__sel0 = -1
+  -> State: 10.113 <-
+    active_node = 34
+    previous_node = 33
+    current_status = success
+    next_child__seqLink2 = 36
+  -> State: 10.114 <-
+    active_node = 33
+    previous_node = 34
+    previous_status = success
+    next_child__sel2 = 35
+  -> State: 10.115 <-
+    active_node = 32
+    previous_node = 33
+    current_status = invalid
+    next_child__sel2 = 34
+  -> State: 10.116 <-
+    active_node = 36
+    previous_node = 32
+    previous_status = invalid
+    next_child__seqLink2 = 33
+  -> State: 10.117 <-
+    active_node = 37
+    previous_node = 36
+    current_status = success
+    next_child__seqLink2 = -1
+    next_child__sel2 = -1
+  -> State: 10.118 <-
+    active_node = 36
+    previous_node = 37
+    previous_status = success
+    randomizer = FALSE
+    next_child__sel3 = 38
+  -> State: 10.119 <-
+    active_node = 32
+    previous_node = 36
+    next_child__sel3 = 37
