@@ -26,7 +26,7 @@ done
 echo "${range_string}" > ./range_info
 
 
-encodings="aut aut_s depth norm func no_internal s_var"
+encodings="aut aut_s depth norm func no_internal s_var no_opt last_opt first_opt full_opt"
 
 echo "${encodings}" > ./encoding_info
 

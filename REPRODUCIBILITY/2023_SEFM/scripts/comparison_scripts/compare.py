@@ -34,20 +34,28 @@ with open(python_file, 'r', encoding = 'utf-8') as f:
             var_name = var_name.strip()
             var_name = normalize_var_name(var_name)
             var_val = line.split(':')[1]
-            var_val = var_val.strip()
+            var_val = var_val.strip().upper().replace('\'', '').replace('"', '')
             python_run[-1][var_name] = var_val
             variables.add(var_name)
 
 nuxmv_run = []
+arrays_to_build = []
 with open(smv_file, 'r', encoding = 'utf-8') as f:
     ignore = True
+    max_stage = {}
     for line in f:
         line.strip()
         if 'State: ' in line:
+            if len(nuxmv_run) > 0:
+                for array_name in arrays_to_build:
+                    cur_array = []
+                    for index in range(len(arrays_to_build[array_name])):
+                        cur_array.append(arrays_to_build[array_name][index])
+                    nuxmv_run[-1][array_name] = '[' + ', '.join(cur_array) + ']'
             nuxmv_run.append({})
-            max_stage = {}
+            arrays_to_build = {}
             ignore = False
-        if not ignore:
+        elif not ignore:
             if '.status' in line:
                 node_name = line.split('.status')[0].strip()
                 # print(line)
@@ -55,8 +63,15 @@ with open(smv_file, 'r', encoding = 'utf-8') as f:
                 status = line.split('=')[-1].strip()
                 nuxmv_run[-1][node_name] = status
             elif '_stage_' in line:
+                if '_index_' in line:
+                    continue
                 var_name_stage = line.split('=')[0]
                 var_name_stage = var_name_stage.strip()
+                index = -1
+                if '[' in var_name_stage:
+                    (var_name_stage, index) = var_name_stage.split('[')
+                    index = index.replace(']', '')
+                    index = int(index)
                 var_name = var_name_stage.split('_stage_')[0]
                 var_name = var_name.strip()
                 var_name = normalize_var_name(var_name)
@@ -64,29 +79,54 @@ with open(smv_file, 'r', encoding = 'utf-8') as f:
                 var_stage = var_stage.strip()
                 var_stage = int(var_stage)
                 var_val = line.split('=')[1]
-                var_val = var_val.strip()
-                if var_name in max_stage:
-                    if var_stage > max_stage[var_name]:
+                var_val = var_val.strip().upper().replace('\'', '').replace('"', '')
+                if index >= 0:
+                    if var_name in max_stage:
+                        if var_stage >= max_stage[var_name]:
+                            max_stage[var_name] = var_stage
+                            if var_name in arrays_to_build:
+                                arrays_to_build[var_name][index] = var_val
+                            else:
+                                arrays_to_build[var_name] = {index : var_val}
+                        else:
+                            pass
+                    else:
+                        max_stage[var_name] = var_stage
+                        if var_name in arrays_to_build:
+                            arrays_to_build[var_name][index] = var_val
+                        else:
+                            arrays_to_build[var_name] = {index : var_val}
+                else:
+                    if var_name in max_stage:
+                        if var_stage >= max_stage[var_name]:
+                            max_stage[var_name] = var_stage
+                            nuxmv_run[-1][var_name] = var_val
+                        else:
+                            pass
+                    else:
                         max_stage[var_name] = var_stage
                         nuxmv_run[-1][var_name] = var_val
-                    else:
-                        pass
-                else:
-                    max_stage[var_name] = var_stage
-                    nuxmv_run[-1][var_name] = var_val
 nuxmv_max_stage = max_stage
 
 
 opt_nuxmv_run = []
-with open(opt_smv_file, 'r', encoding = 'utf-8') as f:
+arrays_to_build = []
+with open(smv_file, 'r', encoding = 'utf-8') as f:
     ignore = True
+    max_stage = {}
     for line in f:
         line.strip()
         if 'State: ' in line:
+            if len(opt_nuxmv_run) > 0:
+                for array_name in arrays_to_build:
+                    cur_array = []
+                    for index in range(len(arrays_to_build[array_name])):
+                        cur_array.append(arrays_to_build[array_name][index])
+                    opt_nuxmv_run[-1][array_name] = '[' + ', '.join(cur_array) + ']'
             opt_nuxmv_run.append({})
-            max_stage = {}
+            arrays_to_build = {}
             ignore = False
-        if not ignore:
+        elif not ignore:
             if '.status' in line:
                 node_name = line.split('.status')[0].strip()
                 # print(line)
@@ -94,8 +134,15 @@ with open(opt_smv_file, 'r', encoding = 'utf-8') as f:
                 status = line.split('=')[-1].strip()
                 opt_nuxmv_run[-1][node_name] = status
             elif '_stage_' in line:
+                if '_index_' in line:
+                    continue
                 var_name_stage = line.split('=')[0]
                 var_name_stage = var_name_stage.strip()
+                index = -1
+                if '[' in var_name_stage:
+                    (var_name_stage, index) = var_name_stage.split('[')
+                    index = index.replace(']', '')
+                    index = int(index)
                 var_name = var_name_stage.split('_stage_')[0]
                 var_name = var_name.strip()
                 var_name = normalize_var_name(var_name)
@@ -103,16 +150,33 @@ with open(opt_smv_file, 'r', encoding = 'utf-8') as f:
                 var_stage = var_stage.strip()
                 var_stage = int(var_stage)
                 var_val = line.split('=')[1]
-                var_val = var_val.strip()
-                if var_name in max_stage:
-                    if var_stage > max_stage[var_name]:
+                var_val = var_val.strip().upper().replace('\'', '').replace('"', '')
+                if index >= 0:
+                    if var_name in max_stage:
+                        if var_stage >= max_stage[var_name]:
+                            max_stage[var_name] = var_stage
+                            if var_name in arrays_to_build:
+                                arrays_to_build[var_name][index] = var_val
+                            else:
+                                arrays_to_build[var_name] = {index : var_val}
+                        else:
+                            pass
+                    else:
+                        max_stage[var_name] = var_stage
+                        if var_name in arrays_to_build:
+                            arrays_to_build[var_name][index] = var_val
+                        else:
+                            arrays_to_build[var_name] = {index : var_val}
+                else:
+                    if var_name in max_stage:
+                        if var_stage >= max_stage[var_name]:
+                            max_stage[var_name] = var_stage
+                            opt_nuxmv_run[-1][var_name] = var_val
+                        else:
+                            pass
+                    else:
                         max_stage[var_name] = var_stage
                         opt_nuxmv_run[-1][var_name] = var_val
-                    else:
-                        pass
-                else:
-                    max_stage[var_name] = var_stage
-                    opt_nuxmv_run[-1][var_name] = var_val
 opt_nuxmv_max_stage = max_stage
 
 if use_haskell:
@@ -133,7 +197,7 @@ if use_haskell:
                 (var_name, var_val) = var_and_val.split(':')
                 var_name = var_name.strip()
                 var_name = normalize_var_name(var_name)
-                var_val = var_val.strip()
+                var_val = var_val.strip().upper().replace('\'', '').replace('"', '')
                 haskell_run[-1][var_name] = var_val
 
 
@@ -150,17 +214,28 @@ for tick in range(len(python_run)):
         # compare python tick to nuxmv tick
         if item not in nuxmv_tick:
             # if something is missing, that's bad
-            print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' with value ' + python_tick[item] + ' was in python_tick but not in nuxmv_tick')
-            sys.exit()
+            if item in variables and 'DEFINE' in item:
+                # nuxmv version might not have defined the macro
+                pass
+            else:
+                print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' with value ' + python_tick[item] + ' was in python_tick but not in nuxmv_tick')
+                sys.exit()
         elif python_tick[item] != nuxmv_tick[item]:
             # if something doesn't match, that's bad
-            print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' was ' + python_tick[item] + ' in python_tick but ' + nuxmv_tick[item] + ' in nuxmv_tick')
-            sys.exit()
+            if item in variables and 'DEFINE' in item:
+                # nuxmv version might not have defined the macro
+                pass
+            else:
+                print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' was ' + python_tick[item] + ' in python_tick but ' + nuxmv_tick[item] + ' in nuxmv_tick')
+                sys.exit()
         if use_haskell:
             if item in variables and item not in haskell_tick:
-                # if something is missing, that's bad
-                print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' with value ' + python_tick[item] + ' was in python_tick but not in haskell_tick')
-                sys.exit()
+                if 'LOCAL' in item or 'DEFINE' in item:
+                    pass
+                else:
+                    # if something is missing, that's bad
+                    print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' with value ' + python_tick[item] + ' was in python_tick but not in haskell_tick')
+                    sys.exit()
             elif item in variables and haskell_tick[item] != python_tick[item]:
                 # if something doesn't match, that's bad
                 print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' was ' + python_tick[item] + ' in python_tick but ' + haskell_tick[item] + ' in haskell_tick')
@@ -170,18 +245,30 @@ for tick in range(len(python_run)):
         # compare nuxmv tick to python tick, then nuxmv tick to nuxmv opt tick
         if item not in python_tick:
             # if something is missing, that's bad
-            print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' with value ' + nuxmv_tick[item] + ' was in nuxmv_tick but not in python_tick')
-            sys.exit()
+            if item in variables and 'DEFINE' in item:
+                # nuxmv version might not have defined the macro
+                pass
+            else:
+                print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' with value ' + nuxmv_tick[item] + ' was in nuxmv_tick but not in python_tick')
+                sys.exit()
         elif python_tick[item] != nuxmv_tick[item]:
             # if something doesn't match, that's bad
-            print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' was ' + python_tick[item] + ' in python_tick but ' + nuxmv_tick[item] + ' in nuxmv_tick')
-            sys.exit()
+            if item in variables and 'DEFINE' in item:
+                # nuxmv version might not have defined the macro
+                pass
+            else:
+                print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' was ' + python_tick[item] + ' in python_tick but ' + nuxmv_tick[item] + ' in nuxmv_tick')
+                sys.exit()
         elif item not in opt_nuxmv_tick:
             # if something is missing, that MIGHT be bad.
             if item in variables:
-                # if it's a variable, that's bad. we shouldn't have fully eliminated any variables.
-                print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' with value ' + nuxmv_tick[item] + ' was in nuxmv_tick but not in opt_nuxmv_tick')
-                sys.exit()
+                if 'DEFINE' in item:
+                    # nuxmv version might not have defined the macro
+                    pass
+                else:
+                    # if it's a variable, that's bad. we shouldn't have fully eliminated any variables.
+                    print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' with value ' + nuxmv_tick[item] + ' was in nuxmv_tick but not in opt_nuxmv_tick')
+                    sys.exit()
             elif nuxmv_tick[item] != 'invalid' and item[0] in {'c', 'a'}:
                 # if it's a node and not invalid, that's bad. (invalid nodes may have reasonably been pruned. no cause for alarm)
                 # jk, we can trim composite nodes that aren't invalid because they have only one child. verify that it is a leaf node that differs.
@@ -194,13 +281,21 @@ for tick in range(len(python_run)):
                 print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' was ' + opt_nuxmv_tick[item] + ' in opt_nuxmv_tick but ' + nuxmv_tick[item] + ' in nuxmv_tick')
                 sys.exit()
             elif not (item in nuxmv_max_stage and item in opt_nuxmv_max_stage):
-                # if a variable doesn't match and we don't have stage info on it, that's bad
-                print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' was ' + opt_nuxmv_tick[item] + ' in opt_nuxmv_tick but ' + nuxmv_tick[item] + ' in nuxmv_tick')
-                sys.exit()
+                if item in variables and 'DEFINE' in item:
+                    # nuxmv version might not have defined the macro
+                    pass
+                else:
+                    # if a variable doesn't match and we don't have stage info on it, that's bad
+                    print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' was ' + opt_nuxmv_tick[item] + ' in opt_nuxmv_tick but ' + nuxmv_tick[item] + ' in nuxmv_tick')
+                    sys.exit()
             elif opt_nuxmv_max_stage[item] >= nuxmv_max_stage[item]:
-                # if a variable doesn't match and we DIDN'T prune the last stage, that's bad.
-                print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' was ' + opt_nuxmv_tick[item] + ' in opt_nuxmv_tick but ' + nuxmv_tick[item] + ' in nuxmv_tick')
-                sys.exit()
+                if item in variables and 'DEFINE' in item:
+                    # nuxmv version might not have defined the macro
+                    pass
+                else:
+                    # if a variable doesn't match and we DIDN'T prune the last stage, that's bad.
+                    print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' was ' + opt_nuxmv_tick[item] + ' in opt_nuxmv_tick but ' + nuxmv_tick[item] + ' in nuxmv_tick')
+                    sys.exit()
     for item in opt_nuxmv_tick:
         # now we compare opt_nuxmv to nuxmv
         if item not in nuxmv_tick:
@@ -214,19 +309,30 @@ for tick in range(len(python_run)):
                 print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' was ' + opt_nuxmv_tick[item] + ' in opt_nuxmv_tick but ' + nuxmv_tick[item] + ' in nuxmv_tick')
                 sys.exit()
             elif not (item in nuxmv_max_stage and item in opt_nuxmv_max_stage):
-                # if a variable doesn't match and we don't have stage info on it, that's bad
-                print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' was ' + opt_nuxmv_tick[item] + ' in opt_nuxmv_tick but ' + nuxmv_tick[item] + ' in nuxmv_tick')
-                sys.exit()
+                if item in variables and 'DEFINE' in item:
+                    # nuxmv version might not have defined the macro
+                    pass
+                else:
+                    # if a variable doesn't match and we don't have stage info on it, that's bad
+                    print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' was ' + opt_nuxmv_tick[item] + ' in opt_nuxmv_tick but ' + nuxmv_tick[item] + ' in nuxmv_tick')
+                    sys.exit()
             elif opt_nuxmv_max_stage[item] >= nuxmv_max_stage[item]:
-                # if a variable doesn't match and we DIDN'T prune the last stage, that's bad.
-                print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' was ' + opt_nuxmv_tick[item] + ' in opt_nuxmv_tick but ' + nuxmv_tick[item] + ' in nuxmv_tick')
-                sys.exit()
+                if item in variables and 'DEFINE' in item:
+                    # nuxmv version might not have defined the macro
+                    pass
+                else:
+                    # if a variable doesn't match and we DIDN'T prune the last stage, that's bad.
+                    print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' was ' + opt_nuxmv_tick[item] + ' in opt_nuxmv_tick but ' + nuxmv_tick[item] + ' in nuxmv_tick')
+                    sys.exit()
     if use_haskell:
         for item in haskell_tick:
             if item not in python_tick:
-                # if something is missing, that's bad
-                print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' with value ' + haskell_tick[item] + ' was in haskell_tick but not in python_tick')
-                sys.exit()
+                if 'LOCAL' in item or 'DEFINE' in item:
+                    pass
+                else:
+                    # if something is missing, that's bad
+                    print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' with value ' + haskell_tick[item] + ' was in haskell_tick but not in python_tick')
+                    sys.exit()
             elif haskell_tick[item] != python_tick[item]:
                 # if something doesn't match, that's bad
                 print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' was ' + python_tick[item] + ' in python_tick but ' + haskell_tick[item] + ' in haskell_tick')

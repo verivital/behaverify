@@ -407,7 +407,7 @@ def create_resume_point(nodes, node_to_local_root_name_map, local_root_to_releva
     return (define_string, var_string, init_string, next_string)
 
 
-def write_smv(nodes, variables, tick_condition, specifications, output_file = None, do_not_trim = False):
+def write_smv(nodes, variables, enum_constants, tick_condition, specifications, output_file = None, do_not_trim = False):
     '''
     basically a script to write the necessary information.
     --
@@ -450,7 +450,7 @@ def write_smv(nodes, variables, tick_condition, specifications, output_file = No
 
     define_string = ('MODULE main' + os.linesep
                      + '\tCONSTANTS' + os.linesep
-                     + '\t\tsuccess, failure, running, invalid;' + os.linesep
+                     + '\t\tsuccess, failure, running, invalid' + (', ' if len(enum_constants) > 0 else '') + ', '.join(enum_constants) + ';' + os.linesep
                      + '\tDEFINE' + os.linesep
                      # + '\t\tstatuses := [' + ', '.join([(node_name + '.status') for node_name in nodes_in_order]) + '];' + os.linesep
                      # + '\t\tactive := [' + ', '.join([(node_name + '.active') for node_name in nodes_in_order]) + '];' + os.linesep
@@ -573,11 +573,12 @@ def main():
 
     with open(args.input_file, 'r') as f:
         temp = eval(f.read())
-    tick_condition = temp['tick_condition']
     nodes = temp['nodes']
     variables = temp['variables']
+    enum_constants = temp['enum_constants']
+    tick_condition = temp['tick_condition']
     specifications = temp['specifications']
-    write_smv(nodes, variables, tick_condition, specifications, args.output_file, args.do_not_trim)
+    write_smv(nodes, variables, enum_constants, tick_condition, specifications, args.output_file, args.do_not_trim)
     return
 
 

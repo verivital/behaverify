@@ -22,4 +22,5 @@ for ((num=min_val; num<=max_val; num=(num + step_size))); do
     echo "now on iteration: "
     echo $num
     ./generate_encoding.sh "${path_name}" simple_robot_$num "${encodings[@]}"
+    ./make_optimized_smv.sh "${path_name}" simple_robot_$num
 done
