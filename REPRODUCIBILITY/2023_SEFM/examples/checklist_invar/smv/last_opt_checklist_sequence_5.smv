@@ -1,0 +1,191 @@
+MODULE main
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		resume_from_here_in_subtree__seqLink4 := -3;
+		seqLink4.active := TRUE;
+		--START OF BLACKBOARD DEFINITIONS
+		--END OF BLACKBOARD DEFINITIONS
+	VAR
+		node_names : define_nodes;
+		success_failure_node : success_failure_node_module(randomizer_stage_1);
+		success_node : success_DEFAULT_module();
+		sel2 : composite_selector_without_memory_2(success_failure_node, success_node);
+		success_failure_node_1 : success_failure_node_1_module(randomizer_stage_2);
+		success_node_1 : success_DEFAULT_module();
+		sel3 : composite_selector_without_memory_2(success_failure_node_1, success_node_1);
+		seqLink2 : composite_sequence_without_memory_2(sel2, sel3);
+		success_failure_node_2 : success_failure_node_2_module(randomizer_stage_3);
+		success_node_2 : success_DEFAULT_module();
+		sel4 : composite_selector_without_memory_2(success_failure_node_2, success_node_2);
+		success_failure_node_3 : success_failure_node_3_module(randomizer_stage_4);
+		success_node_3 : success_DEFAULT_module();
+		sel0 : composite_selector_without_memory_2(success_failure_node_3, success_node_3);
+		success_failure_node_4 : success_failure_node_4_module(randomizer_stage_5);
+		success_node_4 : success_DEFAULT_module();
+		sel1 : composite_selector_without_memory_2(success_failure_node_4, success_node_4);
+		seqLink1 : composite_sequence_without_memory_2(sel0, sel1);
+		seqLink3 : composite_sequence_without_memory_2(sel4, seqLink1);
+		seqLink4 : composite_sequence_without_memory_2(seqLink2, seqLink3);
+		--START OF BLACKBOARD VARIABLES DECLARATION
+		randomizer_stage_0 : boolean;
+		randomizer_stage_1 : boolean;
+		randomizer_stage_2 : boolean;
+		randomizer_stage_3 : boolean;
+		randomizer_stage_4 : boolean;
+		randomizer_stage_5 : boolean;
+		--END OF BLACKBOARD VARIABLES DECLARATION
+	ASSIGN
+		--START OF BLACKBOARD VARIABLES INITIALIZATION
+		init(randomizer_stage_0) := 
+			case
+				TRUE : FALSE;
+			esac;
+		--END OF BLACKBOARD VARIABLES INITIALIZATION
+		--START OF BLACKBOARD VARIABLES TRANSITION
+		next(randomizer_stage_0) := randomizer_stage_5;
+		randomizer_stage_1 := 
+			case
+				!(success_failure_node.active) : randomizer_stage_0;
+				!(TRUE) : randomizer_stage_0;
+				TRUE : {TRUE, FALSE};
+			esac;
+		randomizer_stage_2 := 
+			case
+				!(success_failure_node_1.active) : randomizer_stage_1;
+				!(TRUE) : randomizer_stage_1;
+				TRUE : {TRUE, FALSE};
+			esac;
+		randomizer_stage_3 := 
+			case
+				!(success_failure_node_2.active) : randomizer_stage_2;
+				!(TRUE) : randomizer_stage_2;
+				TRUE : {TRUE, FALSE};
+			esac;
+		randomizer_stage_4 := 
+			case
+				!(success_failure_node_3.active) : randomizer_stage_3;
+				!(TRUE) : randomizer_stage_3;
+				TRUE : {TRUE, FALSE};
+			esac;
+		randomizer_stage_5 := 
+			case
+				!(success_failure_node_4.active) : randomizer_stage_4;
+				!(TRUE) : randomizer_stage_4;
+				TRUE : {TRUE, FALSE};
+			esac;
+		--END OF BLACKBOARD VARIABLES TRANSITION
+
+INVARSPEC ((success_failure_node.status = failure) -> (success_node.status = success));
+INVARSPEC ((success_failure_node.status = failure) -> !((success_node.status = success)));
+INVARSPEC ((success_failure_node_1.status = failure) -> (success_node_1.status = success));
+INVARSPEC ((success_failure_node_1.status = failure) -> !((success_node_1.status = success)));
+INVARSPEC ((success_failure_node_2.status = failure) -> (success_node_2.status = success));
+INVARSPEC ((success_failure_node_2.status = failure) -> !((success_node_2.status = success)));
+INVARSPEC ((success_failure_node_3.status = failure) -> (success_node_3.status = success));
+INVARSPEC ((success_failure_node_3.status = failure) -> !((success_node_3.status = success)));
+INVARSPEC ((success_failure_node_4.status = failure) -> (success_node_4.status = success));
+INVARSPEC ((success_failure_node_4.status = failure) -> !((success_node_4.status = success)));
+MODULE define_nodes
+	DEFINE
+		seqLink4 := 0;
+		seqLink2 := 1;
+		sel2 := 2;
+		success_failure_node := 3;
+		success_node := 4;
+		sel3 := 5;
+		success_failure_node_1 := 6;
+		success_node_1 := 7;
+		seqLink3 := 8;
+		sel4 := 9;
+		success_failure_node_2 := 10;
+		success_node_2 := 11;
+		seqLink1 := 12;
+		sel0 := 13;
+		success_failure_node_3 := 14;
+		success_node_3 := 15;
+		sel1 := 16;
+		success_failure_node_4 := 17;
+		success_node_4 := 18;
+MODULE composite_sequence_without_memory_2(child_0, child_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				!(child_0.internal_status = success) : child_0.internal_status;
+				!(child_1.internal_status = success) : child_1.internal_status;
+				TRUE : success;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = success;
+MODULE composite_selector_without_memory_2(child_0, child_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				!(child_0.internal_status = failure) : child_0.internal_status;
+				!(child_1.internal_status = failure) : child_1.internal_status;
+				TRUE : failure;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = failure;
+MODULE success_failure_node_module(randomizer_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := 
+			case
+				randomizer_stage_1 : success;
+				TRUE : failure;
+			esac;
+MODULE success_failure_node_1_module(randomizer_stage_2)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := 
+			case
+				randomizer_stage_2 : success;
+				TRUE : failure;
+			esac;
+MODULE success_failure_node_2_module(randomizer_stage_3)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := 
+			case
+				randomizer_stage_3 : success;
+				TRUE : failure;
+			esac;
+MODULE success_failure_node_3_module(randomizer_stage_4)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := 
+			case
+				randomizer_stage_4 : success;
+				TRUE : failure;
+			esac;
+MODULE success_failure_node_4_module(randomizer_stage_5)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := 
+			case
+				randomizer_stage_5 : success;
+				TRUE : failure;
+			esac;
+MODULE success_DEFAULT_module
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := success;

@@ -1,0 +1,449 @@
+MODULE main
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		resume_from_here_in_subtree__robot_control := -3;
+		child_index_to_resume_from__reset_completed_mission := -2;
+		child_index_to_resume_from__confirm_mission := -2;
+		child_index_to_resume_from__try_right := -2;
+		child_index_to_resume_from__try_left := -2;
+		child_index_to_resume_from__try_up := -2;
+		child_index_to_resume_from__try_down := -2;
+		child_index_to_resume_from__move_robot := -2;
+		child_index_to_resume_from__robot_control := -2;
+		status__get_position := get_position.status;
+		status__target_reached := target_reached.status;
+		status__clear_mission := clear_mission.status;
+		status__reset_completed_mission := 
+			case
+				status__target_reached != success : status__target_reached;
+				status__clear_mission != success : status__clear_mission;
+				TRUE : success;
+			esac;
+		status__reset_completed_mission_FiS := status__reset_completed_mission = failure ? success : status__reset_completed_mission;
+		status__have_mission := have_mission.status;
+		status__get_mission := get_mission.status;
+		status__confirm_mission := 
+			case
+				status__have_mission != failure : status__have_mission;
+				status__get_mission != failure : status__get_mission;
+				TRUE : failure;
+			esac;
+		status__x_too_small := x_too_small.status;
+		status__go_right := go_right.status;
+		status__try_right := 
+			case
+				status__x_too_small != success : status__x_too_small;
+				status__go_right != success : status__go_right;
+				TRUE : success;
+			esac;
+		status__x_too_big := x_too_big.status;
+		status__go_left := go_left.status;
+		status__try_left := 
+			case
+				status__x_too_big != success : status__x_too_big;
+				status__go_left != success : status__go_left;
+				TRUE : success;
+			esac;
+		status__y_too_small := y_too_small.status;
+		status__go_up := go_up.status;
+		status__try_up := 
+			case
+				status__y_too_small != success : status__y_too_small;
+				status__go_up != success : status__go_up;
+				TRUE : success;
+			esac;
+		status__y_too_big := y_too_big.status;
+		status__go_down := go_down.status;
+		status__try_down := 
+			case
+				status__y_too_big != success : status__y_too_big;
+				status__go_down != success : status__go_down;
+				TRUE : success;
+			esac;
+		status__move_robot := 
+			case
+				status__try_right != failure : status__try_right;
+				status__try_left != failure : status__try_left;
+				status__try_up != failure : status__try_up;
+				status__try_down != failure : status__try_down;
+				TRUE : failure;
+			esac;
+		status__robot_control := 
+			case
+				status__get_position != success : status__get_position;
+				status__reset_completed_mission_FiS != success : status__reset_completed_mission_FiS;
+				status__confirm_mission != success : status__confirm_mission;
+				status__move_robot != success : status__move_robot;
+				TRUE : success;
+			esac;
+		next_child__reset_completed_mission := 
+			case
+				(status__target_reached = invalid)& (child_index_to_resume_from__reset_completed_mission <= 0) : node_names.target_reached;
+				(status__clear_mission = invalid)& (child_index_to_resume_from__reset_completed_mission <= 1) : node_names.clear_mission;
+			esac;
+		next_child__reset_completed_mission_FiS := node_names.reset_completed_mission;
+		next_child__confirm_mission := 
+			case
+				(status__have_mission = invalid)& (child_index_to_resume_from__confirm_mission <= 0) : node_names.have_mission;
+				(status__get_mission = invalid)& (child_index_to_resume_from__confirm_mission <= 1) : node_names.get_mission;
+			esac;
+		next_child__try_right := 
+			case
+				(status__x_too_small = invalid)& (child_index_to_resume_from__try_right <= 0) : node_names.x_too_small;
+				(status__go_right = invalid)& (child_index_to_resume_from__try_right <= 1) : node_names.go_right;
+			esac;
+		next_child__try_left := 
+			case
+				(status__x_too_big = invalid)& (child_index_to_resume_from__try_left <= 0) : node_names.x_too_big;
+				(status__go_left = invalid)& (child_index_to_resume_from__try_left <= 1) : node_names.go_left;
+			esac;
+		next_child__try_up := 
+			case
+				(status__y_too_small = invalid)& (child_index_to_resume_from__try_up <= 0) : node_names.y_too_small;
+				(status__go_up = invalid)& (child_index_to_resume_from__try_up <= 1) : node_names.go_up;
+			esac;
+		next_child__try_down := 
+			case
+				(status__y_too_big = invalid)& (child_index_to_resume_from__try_down <= 0) : node_names.y_too_big;
+				(status__go_down = invalid)& (child_index_to_resume_from__try_down <= 1) : node_names.go_down;
+			esac;
+		next_child__move_robot := 
+			case
+				(status__try_right = invalid)& (child_index_to_resume_from__move_robot <= 0) : node_names.try_right;
+				(status__try_left = invalid)& (child_index_to_resume_from__move_robot <= 1) : node_names.try_left;
+				(status__try_up = invalid)& (child_index_to_resume_from__move_robot <= 2) : node_names.try_up;
+				(status__try_down = invalid)& (child_index_to_resume_from__move_robot <= 3) : node_names.try_down;
+			esac;
+		next_child__robot_control := 
+			case
+				(status__get_position = invalid)& (child_index_to_resume_from__robot_control <= 0) : node_names.get_position;
+				(status__reset_completed_mission_FiS = invalid)& (child_index_to_resume_from__robot_control <= 1) : node_names.reset_completed_mission_FiS;
+				(status__confirm_mission = invalid)& (child_index_to_resume_from__robot_control <= 2) : node_names.confirm_mission;
+				(status__move_robot = invalid)& (child_index_to_resume_from__robot_control <= 3) : node_names.move_robot;
+			esac;
+		get_position.active := active_node = node_names.get_position;
+		get_position.reset := active_node = -1;
+		target_reached.active := active_node = node_names.target_reached;
+		target_reached.reset := active_node = -1;
+		clear_mission.active := active_node = node_names.clear_mission;
+		clear_mission.reset := active_node = -1;
+		have_mission.active := active_node = node_names.have_mission;
+		have_mission.reset := active_node = -1;
+		get_mission.active := active_node = node_names.get_mission;
+		get_mission.reset := active_node = -1;
+		x_too_small.active := active_node = node_names.x_too_small;
+		x_too_small.reset := active_node = -1;
+		go_right.active := active_node = node_names.go_right;
+		go_right.reset := active_node = -1;
+		x_too_big.active := active_node = node_names.x_too_big;
+		x_too_big.reset := active_node = -1;
+		go_left.active := active_node = node_names.go_left;
+		go_left.reset := active_node = -1;
+		y_too_small.active := active_node = node_names.y_too_small;
+		y_too_small.reset := active_node = -1;
+		go_up.active := active_node = node_names.go_up;
+		go_up.reset := active_node = -1;
+		y_too_big.active := active_node = node_names.y_too_big;
+		y_too_big.reset := active_node = -1;
+		go_down.active := active_node = node_names.go_down;
+		go_down.reset := active_node = -1;
+		--START OF BLACKBOARD DEFINITIONS
+		--END OF BLACKBOARD DEFINITIONS
+	VAR
+		node_names : define_nodes;
+		active_node : -1..22;
+		get_position : success_DEFAULT_module;
+		target_reached : target_reached_module(target_x, target_y, x, y);
+		clear_mission : success_DEFAULT_module;
+		have_mission : have_mission_module(mission);
+		get_mission : success_DEFAULT_module;
+		x_too_small : x_too_small_module(target_x, x);
+		go_right : success_DEFAULT_module;
+		x_too_big : x_too_big_module(target_x, x);
+		go_left : success_DEFAULT_module;
+		y_too_small : y_too_small_module(target_y, y);
+		go_up : success_DEFAULT_module;
+		y_too_big : y_too_big_module(target_y, y);
+		go_down : success_DEFAULT_module;
+		--START OF BLACKBOARD VARIABLES DECLARATION
+		x : 0..9;
+		y : 0..9;
+		target_x : 0..9;
+		target_y : 0..9;
+		mission : boolean;
+		x_goal : 0..9;
+		y_goal : 0..9;
+		x_true : 0..9;
+		y_true : 0..9;
+		remaining_goals : 0..3;
+		--END OF BLACKBOARD VARIABLES DECLARATION
+	ASSIGN
+		init(active_node) := -1;
+		--START OF BLACKBOARD VARIABLES INITIALIZATION
+		init(x) := 
+			case
+				TRUE : 0;
+			esac;
+		init(y) := 
+			case
+				TRUE : 0;
+			esac;
+		init(target_x) := 
+			case
+				TRUE : 0;
+			esac;
+		init(target_y) := 
+			case
+				TRUE : 0;
+			esac;
+		init(mission) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(x_goal) := 
+			case
+				TRUE : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+			esac;
+		init(y_goal) := 
+			case
+				TRUE : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+			esac;
+		init(x_true) := 
+			case
+				TRUE : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+			esac;
+		init(y_true) := 
+			case
+				TRUE : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+			esac;
+		init(remaining_goals) := 
+			case
+				TRUE : {0, 1, 2, 3};
+			esac;
+		--END OF BLACKBOARD VARIABLES INITIALIZATION
+		next(active_node) :=
+			case
+				active_node = -1 & (remaining_goals > 0) : node_names.robot_control;
+				active_node = -1 & !((remaining_goals > 0)) : -1;
+				(active_node = node_names.get_position) & (status__get_position != invalid) : node_names.robot_control;
+				(active_node = node_names.target_reached) & (status__target_reached != invalid) : node_names.reset_completed_mission;
+				(active_node = node_names.clear_mission) & (status__clear_mission != invalid) : node_names.reset_completed_mission;
+				(active_node = node_names.reset_completed_mission) & (status__reset_completed_mission != invalid) : node_names.reset_completed_mission_FiS;
+				(active_node = node_names.reset_completed_mission) & (status__reset_completed_mission = invalid) : next_child__reset_completed_mission;
+				(active_node = node_names.reset_completed_mission_FiS) & (status__reset_completed_mission_FiS != invalid) : node_names.robot_control;
+				(active_node = node_names.reset_completed_mission_FiS) & (status__reset_completed_mission_FiS = invalid) : next_child__reset_completed_mission_FiS;
+				(active_node = node_names.have_mission) & (status__have_mission != invalid) : node_names.confirm_mission;
+				(active_node = node_names.get_mission) & (status__get_mission != invalid) : node_names.confirm_mission;
+				(active_node = node_names.confirm_mission) & (status__confirm_mission != invalid) : node_names.robot_control;
+				(active_node = node_names.confirm_mission) & (status__confirm_mission = invalid) : next_child__confirm_mission;
+				(active_node = node_names.x_too_small) & (status__x_too_small != invalid) : node_names.try_right;
+				(active_node = node_names.go_right) & (status__go_right != invalid) : node_names.try_right;
+				(active_node = node_names.try_right) & (status__try_right != invalid) : node_names.move_robot;
+				(active_node = node_names.try_right) & (status__try_right = invalid) : next_child__try_right;
+				(active_node = node_names.x_too_big) & (status__x_too_big != invalid) : node_names.try_left;
+				(active_node = node_names.go_left) & (status__go_left != invalid) : node_names.try_left;
+				(active_node = node_names.try_left) & (status__try_left != invalid) : node_names.move_robot;
+				(active_node = node_names.try_left) & (status__try_left = invalid) : next_child__try_left;
+				(active_node = node_names.y_too_small) & (status__y_too_small != invalid) : node_names.try_up;
+				(active_node = node_names.go_up) & (status__go_up != invalid) : node_names.try_up;
+				(active_node = node_names.try_up) & (status__try_up != invalid) : node_names.move_robot;
+				(active_node = node_names.try_up) & (status__try_up = invalid) : next_child__try_up;
+				(active_node = node_names.y_too_big) & (status__y_too_big != invalid) : node_names.try_down;
+				(active_node = node_names.go_down) & (status__go_down != invalid) : node_names.try_down;
+				(active_node = node_names.try_down) & (status__try_down != invalid) : node_names.move_robot;
+				(active_node = node_names.try_down) & (status__try_down = invalid) : next_child__try_down;
+				(active_node = node_names.move_robot) & (status__move_robot != invalid) : node_names.robot_control;
+				(active_node = node_names.move_robot) & (status__move_robot = invalid) : next_child__move_robot;
+				(active_node = node_names.robot_control) & (status__robot_control != invalid) : -1;
+				(active_node = node_names.robot_control) & (status__robot_control = invalid) : next_child__robot_control;
+				TRUE : active_node;
+			esac;
+		--START OF BLACKBOARD VARIABLES TRANSITION
+		next(x) :=
+			case
+				(active_node = -1) & !(status__get_position = invalid) & (!(TRUE)) : x;
+				(active_node = -1) & !(status__get_position = invalid) & (TRUE) : x_true;
+				TRUE : x;
+			esac;
+		next(y) :=
+			case
+				(active_node = -1) & !(status__get_position = invalid) & (!(TRUE)) : y;
+				(active_node = -1) & !(status__get_position = invalid) & (TRUE) : y_true;
+				TRUE : y;
+			esac;
+		next(target_x) :=
+			case
+				(active_node = -1) & !(status__get_mission = invalid) & (!(TRUE)) : target_x;
+				(active_node = -1) & !(status__get_mission = invalid) & (TRUE) : x_goal;
+				TRUE : target_x;
+			esac;
+		next(target_y) :=
+			case
+				(active_node = -1) & !(status__get_mission = invalid) & (!(TRUE)) : target_y;
+				(active_node = -1) & !(status__get_mission = invalid) & (TRUE) : y_goal;
+				TRUE : target_y;
+			esac;
+		next(mission) :=
+			case
+				(active_node = -1) & !(status__clear_mission = invalid) & (TRUE) : FALSE;
+				(active_node = -1) & !(status__get_mission = invalid) & (TRUE) : TRUE;
+				TRUE : mission;
+			esac;
+		next(x_goal) :=
+			case
+				(active_node = -1) & (remaining_goals > 0) & ((0 = remaining_goals)) : x_goal;
+				(active_node = -1) & (remaining_goals > 0) & (((x_goal = x_true) & (y_goal = y_true))) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+				(active_node = -1) & (remaining_goals > 0) & (TRUE) : x_goal;
+				TRUE : x_goal;
+			esac;
+		next(y_goal) :=
+			case
+				(active_node = -1) & (remaining_goals > 0) & ((0 = remaining_goals)) : y_goal;
+				(active_node = -1) & (remaining_goals > 0) & (((x_goal = x_true) & (y_goal = y_true))) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+				(active_node = -1) & (remaining_goals > 0) & (TRUE) : y_goal;
+				TRUE : y_goal;
+			esac;
+		next(x_true) :=
+			case
+				(active_node = -1) & !(status__go_right = invalid) & (TRUE) : min(9, (x_true + 1));
+				(active_node = -1) & !(status__go_left = invalid) & (TRUE) : max(0, (x_true - 1));
+				TRUE : x_true;
+			esac;
+		next(y_true) :=
+			case
+				(active_node = -1) & !(status__go_up = invalid) & (TRUE) : min(9, (y_true + 1));
+				(active_node = -1) & !(status__go_down = invalid) & (TRUE) : max(0, (y_true - 1));
+				TRUE : y_true;
+			esac;
+		next(remaining_goals) :=
+			case
+				(active_node = -1) & (remaining_goals > 0) & (((x_goal = x_true) & (y_goal = y_true))) : max(0, (remaining_goals - 1));
+				(active_node = -1) & (remaining_goals > 0) & (TRUE) : remaining_goals;
+				TRUE : remaining_goals;
+			esac;
+		--END OF BLACKBOARD VARIABLES TRANSITION
+
+LTLSPEC F((remaining_goals = 0));
+CTLSPEC AF((remaining_goals = 0));
+MODULE define_nodes
+	DEFINE
+		robot_control := 0;
+		get_position := 1;
+		reset_completed_mission_FiS := 2;
+		reset_completed_mission := 3;
+		target_reached := 4;
+		clear_mission := 5;
+		confirm_mission := 6;
+		have_mission := 7;
+		get_mission := 8;
+		move_robot := 9;
+		try_right := 10;
+		x_too_small := 11;
+		go_right := 12;
+		try_left := 13;
+		x_too_big := 14;
+		go_left := 15;
+		try_up := 16;
+		y_too_small := 17;
+		go_up := 18;
+		try_down := 19;
+		y_too_big := 20;
+		go_down := 21;
+MODULE target_reached_module(target_x, target_y, x, y)
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		status : {success, failure, invalid};
+	ASSIGN
+		init(status) := invalid;
+		next(status) :=
+			case
+				reset : invalid;
+				!(active) : status;
+				((x = target_x) & (y = target_y)) : success;
+				TRUE : failure;
+			esac;
+MODULE have_mission_module(mission)
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		status : {success, failure, invalid};
+	ASSIGN
+		init(status) := invalid;
+		next(status) :=
+			case
+				reset : invalid;
+				!(active) : status;
+				mission : success;
+				TRUE : failure;
+			esac;
+MODULE x_too_small_module(target_x, x)
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		status : {success, failure, invalid};
+	ASSIGN
+		init(status) := invalid;
+		next(status) :=
+			case
+				reset : invalid;
+				!(active) : status;
+				(x < target_x) : success;
+				TRUE : failure;
+			esac;
+MODULE x_too_big_module(target_x, x)
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		status : {success, failure, invalid};
+	ASSIGN
+		init(status) := invalid;
+		next(status) :=
+			case
+				reset : invalid;
+				!(active) : status;
+				(x > target_x) : success;
+				TRUE : failure;
+			esac;
+MODULE y_too_small_module(target_y, y)
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		status : {success, failure, invalid};
+	ASSIGN
+		init(status) := invalid;
+		next(status) :=
+			case
+				reset : invalid;
+				!(active) : status;
+				(y < target_y) : success;
+				TRUE : failure;
+			esac;
+MODULE y_too_big_module(target_y, y)
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		status : {success, failure, invalid};
+	ASSIGN
+		init(status) := invalid;
+		next(status) :=
+			case
+				reset : invalid;
+				!(active) : status;
+				(y > target_y) : success;
+				TRUE : failure;
+			esac;
+MODULE success_DEFAULT_module
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		status : {success, invalid};
+	ASSIGN
+		init(status) := invalid;
+		next(status) := 
+			case
+				reset : invalid;
+				active : {success};
+				TRUE : status;
+			esac;

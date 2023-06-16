@@ -1,11 +1,12 @@
-import textx
+'''used to create haskell code from BehaVerify DSL for Behavior Trees'''
 import argparse
 import os
 # import sys
 import shutil
 import itertools
+import textx
 from behaverify_common import haskell_indent as indent, create_node_name
-import serene_functions
+# import serene_functions
 
 from check_model import (validate_model
                          # , constant_type
@@ -19,6 +20,7 @@ from check_model import (validate_model
 
 
 def variable_type(variable):
+    '''returns the vaiable type, correctly formatted for haskell'''
     return (
         (
             'Int'
@@ -53,6 +55,7 @@ def variable_type(variable):
 
 
 def pascal_case(variable_name):
+    '''removes underscores, capitalizes'''
     return ''.join(
         map(
             lambda x: x.capitalize()
@@ -63,6 +66,7 @@ def pascal_case(variable_name):
 
 
 def camel_case(variable_name):
+    '''removes underscores, capitalizes, does not capitalize first word'''
     return ''.join(
         map(
             lambda x:
@@ -78,79 +82,82 @@ def camel_case(variable_name):
     )
 
 
-def __format_function_before__(function_name, values, init_mode):
+def __format_function_before__(function_name, values, init_mode, blackboard_name, environment_name):
     if len(values) <= 2:
         return (
             '('
             + function_name + ' '
-            + ' '.join([format_code(value, init_mode) for value in values])
+            + ' '.join([format_code(value, init_mode, blackboard_name, environment_name) for value in values])
             + ')'
         )
     cur_val = values.pop()
     return (
         '('
-        + function_name + ' ' + format_code(cur_val, init_mode) + ' ' + __format_function_before__(function_name, values, init_mode)
+        + function_name + ' ' + format_code(cur_val, init_mode, blackboard_name, environment_name) + ' ' + __format_function_before__(function_name, values, init_mode, blackboard_name, environment_name)
         + ')'
     )
 
 
-def format_function_before(function_name, code, init_mode):
+def format_function_before(function_name, code, init_mode, blackboard_name, environment_name):
+    '''used with functions where the call is before the arguments'''
     if len(code.function_call.values) <= 2:
         return (
             '('
             + function_name + ' '
-            + ' '.join([format_code(value, init_mode) for value in code.function_call.values])
+            + ' '.join([format_code(value, init_mode, blackboard_name, environment_name) for value in code.function_call.values])
             + ')'
         )
-    return __format_function_before__(function_name, code.function_call.values, init_mode)
+    return __format_function_before__(function_name, code.function_call.values, init_mode, blackboard_name, environment_name)
 
 
-def __format_function_between__(function_name, values, init_mode):
+def __format_function_between__(function_name, values, init_mode, blackboard_name, environment_name):
     if len(values) <= 2:
         return (
             '('
-            + (' ' + function_name + ' ').join([format_code(value, init_mode) for value in values])
+            + (' ' + function_name + ' ').join([format_code(value, init_mode, blackboard_name, environment_name) for value in values])
             + ')'
         )
     cur_val = values.pop()
     return (
         '('
-        + format_code(cur_val, init_mode) + ' ' + function_name + ' ' + __format_function_between__(function_name, values, init_mode)
+        + format_code(cur_val, init_mode, blackboard_name, environment_name) + ' ' + function_name + ' ' + __format_function_between__(function_name, values, init_mode, blackboard_name, environment_name)
         + ')'
     )
 
 
-def format_function_between(function_name, code, init_mode):
+def format_function_between(function_name, code, init_mode, blackboard_name, environment_name):
+    '''used with functions where the call is between functions'''
     if len(code.function_call.values) <= 2:
         return (
             '('
-            + (' ' + function_name + ' ').join([format_code(value, init_mode) for value in code.function_call.values])
+            + (' ' + function_name + ' ').join([format_code(value, init_mode, blackboard_name, environment_name) for value in code.function_call.values])
             + ')'
         )
-    return __format_function_between__(function_name, code.function_call.values, init_mode)
+    return __format_function_between__(function_name, code.function_call.values, init_mode, blackboard_name, environment_name)
 
 
-def __format_function_count__(_, values, init_mode):
+def __format_function_count__(_, values, init_mode, blackboard_name, environment_name):
     if len(values) <= 0:
         return '0'
     if len(values) == 1:
-        return '(sereneCOUNT False ' + format_code(values[0], init_mode) + ')'
+        return '(sereneCOUNT False ' + format_code(values[0], init_mode, blackboard_name, environment_name) + ')'
     if len(values) == 2:
-        return '(sereneCOUNT ' + format_code(values[0], init_mode) + ' ' + format_code(values[1], init_mode) + ')'
+        return '(sereneCOUNT ' + format_code(values[0], init_mode, blackboard_name, environment_name) + ' ' + format_code(values[1], init_mode, blackboard_name, environment_name) + ')'
     val1 = values.pop()
     val2 = values.pop()
-    return '((sereneCOUNT ' + format_code(val1, init_mode) + ' ' + format_code(val2, init_mode) + ') + ' + __format_function_count__(_, values, init_mode) + ')'
+    return '((sereneCOUNT ' + format_code(val1, init_mode, blackboard_name, environment_name) + ' ' + format_code(val2, init_mode, blackboard_name, environment_name) + ') + ' + __format_function_count__(_, values, init_mode, blackboard_name, environment_name) + ')'
 
 
-def format_function_count(_, code, init_mode):
-    return __format_function_count__(_, code.function_call.values, init_mode)
+def format_function_count(_, code, init_mode, blackboard_name, environment_name):
+    '''used with count function specifically'''
+    return __format_function_count__(_, code.function_call.values, init_mode, blackboard_name, environment_name)
 
 
-def format_function_index(_, code, init_mode):
+def format_function_index(_, code, init_mode, blackboard_name, environment_name):
+    '''not used'''
     raise Exception('Array not implemented yet')
 
 
-# todo: implement SereneOperations
 FUNCTION_FORMAT = {
     'abs' : ('abs', format_function_before),
     'max' : ('max', format_function_before),
@@ -183,11 +190,41 @@ FUNCTION_FORMAT = {
 }
 
 
-def format_variable(variable, init_mode):
+def format_variable(variable, init_mode, blackboard_name, environment_name):
+    '''used to format variable names'''
     # if debug:
-    #     print('format variable: ' + str(init_mode))
+    #     print('format variable: ' + str(init_mode, blackboard_name, environment_name))
+    # no init_mode for local variables because other variables cannot depend on the initial values of local variables.
+    # return (
+    #     ('(localBoard' + pascal_case(variable.name) + ' nodeLocation blackboard)')
+    #     if is_local(variable)
+    #     else
+    #     (
+    #         (
+    #             ('newVal' + pascal_case(variable.name))
+    #             if init_mode == 'env'
+    #             else
+    #             (
+    #                 ('(env' + pascal_case(variable.name) + ' blackboard environment)')
+    #                 if variable.model_as == 'DEFINE'
+    #                 else
+    #                 ('(env' + pascal_case(variable.name) + ' environment)')
+    #             )
+    #         )
+    #         if is_env(variable)
+    #         else
+    #         (
+    #             ('newVal' + pascal_case(variable.name))
+    #             if init_mode == 'board'
+    #             else
+    #             ('(board' + pascal_case(variable.name) + ' blackboard)')
+    #         )
+    #     )
+    # )
+    if variable.model_as == 'DEFINE':
+        init_mode = None  # we do this to allow defines to work in a partially finished blackboard/environtmen
     return (
-        ('(localBoard' + pascal_case(variable.name) + ' nodeLocation blackboard)')
+        ('(localBoard' + pascal_case(variable.name) + ' nodeLocation ' + blackboard_name + ')')
         if is_local(variable)
         else
         (
@@ -196,33 +233,35 @@ def format_variable(variable, init_mode):
                 if init_mode == 'env'
                 else
                 (
-                    ('(env' + pascal_case(variable.name) + ' blackboard environment)')
+                    ('(env' + pascal_case(variable.name) + ' ' + blackboard_name + ' ' + environment_name + ')')
                     if variable.model_as == 'DEFINE'
                     else
-                    ('(env' + pascal_case(variable.name) + ' environment)')
+                    ('(env' + pascal_case(variable.name) + ' ' + environment_name + ')')
                 )
             )
             if is_env(variable)
             else
             (
                 ('newVal' + pascal_case(variable.name))
+                # if 'board' in init_mode
                 if init_mode == 'board'
                 else
-                ('(board' + pascal_case(variable.name) + ' blackboard)')
+                ('(board' + pascal_case(variable.name) + ' ' + blackboard_name + ')')
             )
         )
     )
 
 
-def format_code(code, init_mode):
+def format_code(code, init_mode, blackboard_name, environment_name):
+    '''used to format code'''
     # if debug:
-    #     print('code: ' + str(init_mode))
+    #     print('code: ' + str(init_mode, blackboard_name, environment_name))
     return (
         (
             handle_constant(code.constant, True) if code.constant is not None else (
-                format_variable(code.variable, init_mode) if code.variable is not None else (
-                    ('(' + format_code(code.code_statement, init_mode) + ')') if code.code_statement is not None else (
-                        FUNCTION_FORMAT[code.function_call.function_name][1](FUNCTION_FORMAT[code.function_call.function_name][0], code, init_mode)
+                format_variable(code.variable, init_mode, blackboard_name, environment_name) if code.variable is not None else (
+                    ('(' + format_code(code.code_statement, init_mode, blackboard_name, environment_name) + ')') if code.code_statement is not None else (
+                        FUNCTION_FORMAT[code.function_call.function_name][1](FUNCTION_FORMAT[code.function_call.function_name][0], code, init_mode, blackboard_name, environment_name)
                     )
                 )
             )
@@ -231,7 +270,8 @@ def format_code(code, init_mode):
 
 
 def handle_constant(constant, str_conversion):
-    global constants
+    '''used to handle constnts and replace them with integer values'''
+    # global constants
     new_constant = (constants[constant] if constant in constants else constant)
     return (
         (
@@ -257,6 +297,7 @@ def handle_constant(constant, str_conversion):
 
 
 def handle_variable_statement(assign, assign_var, indent_level, init_mode, board_env_string):
+    '''handles variable statements'''
     variable_name = assign_var.name
     update_env_board = (
         'updateEnv'
@@ -314,18 +355,17 @@ def handle_variable_statement(assign, assign_var, indent_level, init_mode, board
                     ]
                 )
             )
-        elif len(values) > 1:
+        if len(values) > 1:
             return (
                 indent(indent_level + 2) + function_name + ' :: Int -> ' + var_type + os.linesep
                 + ''.join(
                     [
-                        (indent(indent_level + 2) + function_name + ' ' + (str(index) if index < random_range else '_') + ' = ' + format_code(value, init_mode) + os.linesep)
+                        (indent(indent_level + 2) + function_name + ' ' + (str(index) if index < random_range else '_') + ' = ' + format_code(value, init_mode, 'blackboard', 'environment') + os.linesep)
                         for index, value in enumerate(values)
                     ]
                 )
             )
-        else:
-            return ''
+        return ''
 
     if is_array(assign_var):
         print('ARRAY VARIABLES NOT YET SUPPORTED')
@@ -339,7 +379,7 @@ def handle_variable_statement(assign, assign_var, indent_level, init_mode, board
                 return (
                     ' = '
                     + ('(blackboard, ' if is_env(assign_var) else '(')
-                    + update_env_board + pascal_case(variable_name) + env_board + format_code(default.values[0], init_mode)
+                    + update_env_board + pascal_case(variable_name) + env_board + format_code(default.values[0], init_mode, 'blackboard', 'environment')
                     + (')' if is_env(assign_var) else ', environment)')
                     + os.linesep
                     + post_script(indent_level)
@@ -351,7 +391,7 @@ def handle_variable_statement(assign, assign_var, indent_level, init_mode, board
         unique_id = 0
         for case_result in assign.case_results:
             return_string += (
-                indent(indent_level + 1) + '| ' + format_code(case_result.condition, init_mode) + ' = '
+                indent(indent_level + 1) + '| ' + format_code(case_result.condition, init_mode, 'blackboard', 'environment') + ' = '
             )
             if (not case_result.range_mode) and (len(case_result.values) == 1):
                 cond_func = None
@@ -372,7 +412,7 @@ def handle_variable_statement(assign, assign_var, indent_level, init_mode, board
                 ('(blackboard, ' if is_env(assign_var) else '(')
                 + (
                     (
-                        update_env_board + pascal_case(variable_name) + env_board + format_code(case_result.values[0], init_mode)
+                        update_env_board + pascal_case(variable_name) + env_board + format_code(case_result.values[0], init_mode, 'blackboard', 'environment')
                     )
                     if (not case_result.range_mode) and (len(case_result.values) == 1)
                     else
@@ -418,7 +458,7 @@ def handle_variable_statement(assign, assign_var, indent_level, init_mode, board
             ('(blackboard, ' if is_env(assign_var) else '(')
             + (
                 (
-                    update_env_board + pascal_case(variable_name) + env_board + format_code(case_result.values[0], init_mode)
+                    update_env_board + pascal_case(variable_name) + env_board + format_code(case_result.values[0], init_mode, 'blackboard', 'environment')
                 )
                 if (not case_result.range_mode) and (len(case_result.values) == 1)
                 else
@@ -437,6 +477,7 @@ def handle_variable_statement(assign, assign_var, indent_level, init_mode, board
 
 
 def handle_read_statement(statement, indent_level, init_mode):
+    '''used to handle read statements'''
     cond_var = statement.condition_variable
     inject_string = ''
     shift = (0 if cond_var is None else 1)
@@ -466,7 +507,7 @@ def handle_read_statement(statement, indent_level, init_mode):
         [
             (
                 os.linesep
-                + indent(indent_level + 1) + '| not (' + format_code(statement.condition, init_mode) + ') = boardEnv' + os.linesep
+                + indent(indent_level + 1) + '| not (' + format_code(statement.condition, init_mode, 'conditionBlackboard', 'conditionEnvironment') + ') = boardEnv' + os.linesep
                 + (
                     (indent(indent_level + 1) + '| nonDeterministicInt == 0 = privateTempBoardEnv0' + os.linesep)
                     if statement.non_determinism
@@ -475,6 +516,7 @@ def handle_read_statement(statement, indent_level, init_mode):
                 )
                 + indent(indent_level + 1) + '| otherwise = privateBoardEnv' + os.linesep  # this needs to be changed to handle non-determinism
                 + indent(indent_level + 1) + 'where' + os.linesep
+                + indent(indent_level + 2) + '(conditionBlackboard, conditionEnvironment) = boardEnv' + os.linesep
                 + inject_string
                 + indent(indent_level + 2) + 'privateBoardEnv = privateTempBoardEnv' + str(len(statement.variable_statements) + shift) + os.linesep
                 + ''.join(
@@ -493,6 +535,7 @@ def handle_read_statement(statement, indent_level, init_mode):
 
 
 def handle_write_statement(statement, indent_level, init_mode):
+    '''handles write statements'''
     return (
         [
             (
@@ -510,10 +553,14 @@ def handle_write_statement(statement, indent_level, init_mode):
 
 
 def format_returns(status_result):
+    '''fixes capitalization'''
     return status_result.status.capitalize()
 
 
 def handle_return_statement(statement, indent_level = 2):
+    '''handles return statements'''
+    blackboard_name = 'blackboard'
+    environment_name = 'environment'
     return (
         indent(indent_level) + 'returnStatement :: (BTreeBlackboard, BTreeEnvironment) -> BTreeNodeStatus' + os.linesep
         + indent(indent_level) + 'returnStatement boardEnv'
@@ -526,7 +573,7 @@ def handle_return_statement(statement, indent_level = 2):
                 + ''.join(
                     [
                         (
-                            indent(indent_level + 1) + '| ' + format_code(case_result.condition, None) + ' = ' + format_returns(case_result) + os.linesep
+                            indent(indent_level + 1) + '| ' + format_code(case_result.condition, None, blackboard_name, environment_name) + ' = ' + format_returns(case_result) + os.linesep
                         )
                         for case_result in statement.case_results
                     ]
@@ -536,21 +583,11 @@ def handle_return_statement(statement, indent_level = 2):
         )
         + indent(indent_level + 1) + 'where' + os.linesep
         + indent(indent_level + 2) + '(blackboard, environment) = boardEnv' + os.linesep
-    )  # todo: check if we're only handling the default case here.
-    variable_name = 'return_status'
-    if len(statement.case_results) == 0:
-        return (indent(2) + variable_name + ' = ' + format_returns(statement.default_result) + os.linesep)
-    return ((''.join(
-        [
-            (indent(2) + 'elif ' + format_code(case_result.condition, None) + ':' + os.linesep
-             + (indent(3) + variable_name + ' = ' + format_returns(case_result) + os.linesep)
-             ) for case_result in statement.case_results])).replace('elif', 'if', 1)
-            + (indent(2) + 'else:' + os.linesep
-               + indent(3) + variable_name + ' = ' + format_returns(statement.default_result) + os.linesep)
-            )
+    )
 
 
 def handle_statement(statement, indent_level, init_mode):
+    '''switches between the three statement types'''
     return (
         ([handle_variable_statement(statement.variable_statement.assign, statement.variable_statement.variable, indent_level, init_mode, 'boardEnv')], []) if statement.variable_statement is not None else (
             handle_read_statement(statement.read_statement, indent_level, init_mode) if statement.read_statement is not None else (
@@ -561,19 +598,22 @@ def handle_statement(statement, indent_level, init_mode):
 
 
 def module_declaration(node_name):
-    return ('module BTree' + pascal_case(node_name) + ' where' + os.linesep)
+    '''just a string'''
+    return 'module BTree' + pascal_case(node_name) + ' where' + os.linesep
 
 
 def check_function(node):
+    '''used to build check functions'''
     return (
         camel_case(node.name) + ' :: [BTreeNode] -> TreeLocation -> TrueMemoryStatus -> [TrueMemoryStorage] -> PartialMemoryStatus -> [PartialMemoryStorage] -> BTreeBlackboard -> BTreeEnvironment -> FutureChanges -> BTreeNodeOutput' + os.linesep
         + camel_case(node.name) + ' _ nodeLocation _ _ _ _ blackboard environment futureChanges' + os.linesep
-        + indent(1) + '| ' + format_code(node.condition, None) + ' = (Success, [], [], blackboard, environment, futureChanges)' + os.linesep
+        + indent(1) + '| ' + format_code(node.condition, None, 'blackboard', 'environment') + ' = (Success, [], [], blackboard, environment, futureChanges)' + os.linesep
         + indent(1) + '| otherwise = (Failure, [], [], blackboard, environment, futureChanges)'
     )
 
 
 def action_function(node):
+    '''used to build action functions'''
     pre = len(node.pre_update_statements)
     post = len(node.post_update_statements)
     pre_updates = []
@@ -613,7 +653,7 @@ def action_function(node):
 
     return (
         camel_case(node.name) + ' :: [BTreeNode] -> TreeLocation -> TrueMemoryStatus -> [TrueMemoryStorage] -> PartialMemoryStatus -> [PartialMemoryStorage] -> BTreeBlackboard -> BTreeEnvironment -> FutureChanges -> BTreeNodeOutput' + os.linesep
-        + camel_case(node.name) + ' _ nodeLocation _ _ _ _ blackboard environment futureChanges = (returnStatus, [], [], newBlackboard, newEnvironment, newFutureChanges)' + os.linesep
+        + camel_case(node.name) + ' _ nodeLocation _ _ _ _ oldBlackboard oldEnvironment futureChanges = (returnStatus, [], [], newBlackboard, newEnvironment, newFutureChanges)' + os.linesep
         + indent(1) + 'where' + os.linesep
         + ('').join(
             [
@@ -634,7 +674,7 @@ def action_function(node):
                 for index, value in enumerate(delay_updates)
             ]
         )
-        + indent(2) + 'preStatusBoardEnv = ' + ' . '.join(map(lambda x : 'boardEnvUpdate' + x, map(str, reversed(range(pre))))) + (' $ ' if pre > 1 else ' ') + '(blackboard, environment)' + os.linesep
+        + indent(2) + 'preStatusBoardEnv = ' + ' . '.join(map(lambda x : 'boardEnvUpdate' + x, map(str, reversed(range(pre))))) + (' $ ' if pre > 1 else ' ') + '(oldBlackboard, oldEnvironment)' + os.linesep
         + indent(2) + 'returnStatus = returnStatement preStatusBoardEnv' + os.linesep
         + indent(2) + '(newBlackboard, newEnvironment) = ' + ' . '.join(map(lambda x : 'boardEnvUpdate' + x, map(str, reversed(range(pre, pre + post))))) + (' $ ' if post > 1 else ' ') + 'preStatusBoardEnv' + os.linesep
         + indent(2) + 'newFutureChanges = ' + ' : '.join(map(lambda x : 'futureChanges' + x, map(str, reversed(range(delay))))) + (' : ' if delay > 0 else '') + 'futureChanges' + os.linesep
@@ -642,6 +682,7 @@ def action_function(node):
 
 
 def build_check_node(node):
+    '''sequence to build check nodes'''
     return (module_declaration(node.name)
             + STANDARD_IMPORTS
             + os.linesep
@@ -651,10 +692,12 @@ def build_check_node(node):
 
 
 def build_check_environment_node(node):
+    '''just calls check node lol'''
     return build_check_node(node)
 
 
 def build_action_node(node):
+    '''action node sequence'''
     return (module_declaration(node.name)
             + STANDARD_IMPORTS
             + os.linesep
@@ -664,6 +707,7 @@ def build_action_node(node):
 
 
 def create_runner(model, name, max_iter):
+    '''creates the runner for haskell code'''
     current_node = model.root
     while (not hasattr(current_node, 'name') or hasattr(current_node, 'sub_root')):
         if hasattr(current_node, 'leaf'):
@@ -713,6 +757,7 @@ def create_runner(model, name, max_iter):
 
 
 def create_tree(model, name):
+    '''walks the tree to find stuff'''
     def node_function(node):
         if node.node_type == 'selector' or node.node_type == 'sequence':
             return (
@@ -834,16 +879,20 @@ def create_tree(model, name):
     )
 
 
-def handle_initial_value(assign, variable, var_type, indent_level, init_mode):
+def handle_initial_value(assign, variable, var_type, indent_level, init_mode, partial_string, node_location):
+    blackboard_name = 'blackboard'
+    environment_name = 'environment'
     if is_array(variable):
         raise Exception('Array not allowed yet')
     if len(assign.case_results) == 0:
         if (not assign.default_result.range_mode) and len(assign.default_result.values) == 1:
-            return (' = (' + format_code(assign.default_result.values[0], init_mode) + ', curGen)' + os.linesep)
+            return (' = (' + format_code(assign.default_result.values[0], init_mode, blackboard_name, environment_name) + ', curGen)' + os.linesep)
 
     def post_script(indent_level):
         return (
             indent(indent_level + 1) + 'where' + os.linesep
+            + indent(indent_level + 2) + ('blackboard = ' if init_mode == 'board' else 'environment = ') + partial_string + os.linesep
+            + ((indent(indent_level + 2) + 'nodeLocation = ' + str(node_location) + os.linesep) if node_location is not None else '')
         )
 
     def create_random_func(function_name, values, range_mode, var_type, cond_func, random_range, indent_level):
@@ -862,7 +911,7 @@ def handle_initial_value(assign, variable, var_type, indent_level, init_mode):
                 indent(indent_level + 2) + function_name + ' :: Int -> ' + var_type + os.linesep
                 + ''.join(
                     [
-                        (indent(indent_level + 2) + function_name + ' ' + (str(index) if index < random_range else '_') + ' = ' + format_code(value, init_mode) + os.linesep)
+                        (indent(indent_level + 2) + function_name + ' ' + (str(index) if index < random_range else '_') + ' = ' + format_code(value, init_mode, blackboard_name, environment_name) + os.linesep)
                         for index, value in enumerate(values)
                     ]
                 )
@@ -877,7 +926,7 @@ def handle_initial_value(assign, variable, var_type, indent_level, init_mode):
     unique_id = 0
     for case_result in assign.case_results:
         return_string += (
-            indent(indent_level + 1) + '| ' + format_code(case_result.condition, init_mode) + ' = '
+            indent(indent_level + 1) + '| ' + format_code(case_result.condition, init_mode, blackboard_name, environment_name) + ' = '
         )
         if (not case_result.range_mode) and (len(case_result.values) == 1):
             cond_func = None
@@ -896,7 +945,7 @@ def handle_initial_value(assign, variable, var_type, indent_level, init_mode):
 
         return_string += (
             (
-                '(' + format_code(case_result.values[0], init_mode) + ', curGen)' + os.linesep
+                '(' + format_code(case_result.values[0], init_mode, blackboard_name, environment_name) + ', curGen)' + os.linesep
             )
             if (not case_result.range_mode) and (len(case_result.values) == 1)
             else
@@ -933,7 +982,7 @@ def handle_initial_value(assign, variable, var_type, indent_level, init_mode):
 
     return_string += (
         (
-            '(' + format_code(case_result.values[0], init_mode) + ', curGen)' + os.linesep
+            '(' + format_code(case_result.values[0], init_mode, blackboard_name, environment_name) + ', curGen)' + os.linesep
         )
         if (not case_result.range_mode) and (len(case_result.values) == 1)
         else
@@ -942,17 +991,20 @@ def handle_initial_value(assign, variable, var_type, indent_level, init_mode):
         )
     )
     where_string += create_random_func(function_name, case_result.values, case_result.range_mode, var_type, cond_func, random_range, indent_level)
-    return return_string + ((post_script(indent_level) + where_string) if unique_id > 0 else '')
+    # return return_string + ((post_script(indent_level) + where_string) if unique_id > 0 else '')
+    return return_string + post_script(indent_level) + (where_string if unique_id > 0 else '')
 
-debug = False
+# debug = False
 def handle_update_value(assign, variable_name, var_type, indent_level, init_mode):
     # print('----------------------------------------------------------------------')
     # global debug
     # debug = True
-    # print('update: ' + str(init_mode)) 
+    # print('update: ' + str(init_mode, blackboard_name, environment_name))
+    blackboard_name = 'blackboard'
+    environment_name = 'environment'
     if len(assign.case_results) == 0:
         if (not assign.default_result.range_mode) and len(assign.default_result.values) == 1:
-            return (' = environment { env' + pascal_case(variable_name) + ' = ' + format_code(assign.default_result.values[0], init_mode) + '}' + os.linesep)
+            return (' = environment { env' + pascal_case(variable_name) + ' = ' + format_code(assign.default_result.values[0], init_mode, blackboard_name, environment_name) + '}' + os.linesep)
 
     def post_script(indent_level):
         return (
@@ -975,7 +1027,7 @@ def handle_update_value(assign, variable_name, var_type, indent_level, init_mode
                 indent(indent_level + 2) + function_name + ' :: Int -> ' + var_type + os.linesep
                 + ''.join(
                     [
-                        (indent(indent_level + 2) + function_name + ' ' + (str(index) if index < random_range else '_') + ' = ' + format_code(value, init_mode) + os.linesep)
+                        (indent(indent_level + 2) + function_name + ' ' + (str(index) if index < random_range else '_') + ' = ' + format_code(value, init_mode, blackboard_name, environment_name) + os.linesep)
                         for index, value in enumerate(values)
                     ]
                 )
@@ -989,7 +1041,7 @@ def handle_update_value(assign, variable_name, var_type, indent_level, init_mode
     unique_id = 0
     for case_result in assign.case_results:
         return_string += (
-            indent(indent_level + 1) + '| ' + format_code(case_result.condition, init_mode) + ' = '
+            indent(indent_level + 1) + '| ' + format_code(case_result.condition, init_mode, blackboard_name, environment_name) + ' = '
         )
         if (not case_result.range_mode) and (len(case_result.values) == 1):
             cond_func = None
@@ -1008,7 +1060,7 @@ def handle_update_value(assign, variable_name, var_type, indent_level, init_mode
 
         return_string += (
             (
-                'environment { env' + pascal_case(variable_name) + ' = ' + format_code(case_result.values[0], init_mode) + ' }' + os.linesep
+                'environment { env' + pascal_case(variable_name) + ' = ' + format_code(case_result.values[0], init_mode, blackboard_name, environment_name) + ' }' + os.linesep
             )
             if (not case_result.range_mode) and (len(case_result.values) == 1)
             else
@@ -1044,7 +1096,7 @@ def handle_update_value(assign, variable_name, var_type, indent_level, init_mode
 
     return_string += (
         (
-            'environment { env' + pascal_case(variable_name) + ' = ' + format_code(default.values[0], init_mode) + ' }' + os.linesep
+            'environment { env' + pascal_case(variable_name) + ' = ' + format_code(default.values[0], init_mode, blackboard_name, environment_name) + ' }' + os.linesep
         )
         if (not default.range_mode) and (len(default.values) == 1)
         else
@@ -1053,22 +1105,24 @@ def handle_update_value(assign, variable_name, var_type, indent_level, init_mode
         )
     )
     where_string += create_random_func(function_name, default.values, default.range_mode, var_type, cond_func, random_range, indent_level)
-    debug = False
+    # debug = False
     return return_string + ((post_script(indent_level) + where_string) if unique_id > 0 else '')
 
 
 def create_macro(assign, indent_level, init_mode):
+    blackboard_name = 'blackboard'
+    environment_name = 'environment'
     if len(assign.case_results) == 0:
-        return ' = ' + format_code(assign.default_result.values[0], init_mode) + os.linesep
+        return ' = ' + format_code(assign.default_result.values[0], init_mode, blackboard_name, environment_name) + os.linesep
     return (
         os.linesep
         + ''.join(
             [
-                (indent(indent_level + 1) + '| ' + format_code(case_result.condition, init_mode) + ' = ' + format_code(case_result.values[0], init_mode) + os.linesep)
+                (indent(indent_level + 1) + '| ' + format_code(case_result.condition, init_mode, blackboard_name, environment_name) + ' = ' + format_code(case_result.values[0], init_mode, blackboard_name, environment_name) + os.linesep)
                 for case_result in assign.case_results
             ]
         )
-        + (indent(indent_level + 1) + '| otherwise = ' + format_code(assign.default_result.values[0], init_mode) + os.linesep)
+        + (indent(indent_level + 1) + '| otherwise = ' + format_code(assign.default_result.values[0], init_mode, blackboard_name, environment_name) + os.linesep)
     )
 
 
@@ -1205,15 +1259,42 @@ def safe_update(variable, env_mode, local_mode, local_numbers = []):
     )
 
 
+def order_partial_arguments(current_var_name, create_order):
+    use_name = True
+    return_string = ''
+    for (var_name, default_val) in create_order:
+        if var_name == current_var_name:
+            use_name = False
+        if use_name:
+            return_string = return_string + ' ' + var_name
+        else:
+            return_string = return_string + ' ' + default_val
+    return return_string
+
+
+def get_default_arg(variable):
+    var_type = variable_type(variable)
+    if var_type == 'Int':
+        return '0'
+    if var_type == 'Bool':
+        return 'True'
+    return '" "'
+
 def create_environment(model):
+    blackboard_name = 'blackboard'
+    environment_name = 'environment'
     names_to_types = {
         variable.name : (('Array' + pascal_case(variable.name)) if is_array(variable) else variable_type(variable))
         for variable in model.variables if (is_env(variable) and variable.model_as != 'DEFINE')
     }
     initial_values = {
-        variable.name : handle_initial_value(variable.assign, variable, names_to_types[variable.name], 2, 'env')
+        variable.name : handle_initial_value(variable.assign, variable, names_to_types[variable.name], 2, 'env', 'partialEnvironment' + pascal_case(variable.name), None)
         for index, variable in enumerate(model.variables) if (is_env(variable) and variable.model_as != 'DEFINE')
     }
+    create_order = [
+        ('newVal' + pascal_case(variable.name), get_default_arg(variable))
+        for variable in model.variables if (variable.model_as != 'DEFINE' and is_env(variable))
+    ]
     return (
         'module BehaviorTreeEnvironment where' + os.linesep
         + 'import SereneRandomizer' + os.linesep
@@ -1292,7 +1373,7 @@ def create_environment(model):
             'True'
             if model.tick_condition is None
             else
-            format_code(model.tick_condition, None)
+            format_code(model.tick_condition, None, blackboard_name, environment_name)
         ) + os.linesep + os.linesep
         + 'modifiedID :: BTreeBlackboard -> BTreeEnvironment -> BTreeEnvironment' + os.linesep
         + 'modifiedID _ environment = environment' + os.linesep
@@ -1327,7 +1408,8 @@ def create_environment(model):
         + ''.join(
             [
                 (
-                    indent(2) + 'initVal' + pascal_case(variable_name) + ' :: StdGen -> (' + names_to_types[variable_name] + ', StdGen)' + os.linesep
+                    indent(2) + 'partialEnvironment' + pascal_case(variable_name) + ' = BTreeEnvironment newSereneGenerator' + order_partial_arguments('newVal' + pascal_case(variable_name), create_order) + os.linesep
+                    + indent(2) + 'initVal' + pascal_case(variable_name) + ' :: StdGen -> (' + names_to_types[variable_name] + ', StdGen)' + os.linesep
                     + indent(2) + 'initVal' + pascal_case(variable_name) + ' curGen' + initial_values[variable_name]
                     + os.linesep
                     + indent(2) + '(newVal' + pascal_case(variable_name) + ', tempGen' + str(index + 1) + ') = initVal' + pascal_case(variable_name) + ' tempGen' + str(index) + os.linesep
@@ -1340,16 +1422,8 @@ def create_environment(model):
 
 
 def create_blackboard(model):
-    names_to_types = {
-        variable.name : variable_type(variable)
-        for variable in model.variables if (variable.model_as != 'DEFINE' and is_blackboard(variable))
-    }
-    initial_values = {
-        variable.name : handle_initial_value(variable.assign, variable, names_to_types[variable.name], 2, 'board')
-        for index, variable in enumerate(model.variables) if (variable.model_as != 'DEFINE' and is_blackboard(variable))
-    }
 
-    def walk_tree_recursive_blackboard(current_node, node_names, node_names_map, running_list, running_dict, running_int):
+    def walk_tree_recursive_blackboard(current_node, node_names, node_names_map, running_list, running_dict, running_int, running_create_order, run1):
         while (not hasattr(current_node, 'name') or hasattr(current_node, 'sub_root')):
             if hasattr(current_node, 'leaf'):
                 current_node = current_node.leaf
@@ -1371,36 +1445,48 @@ def create_blackboard(model):
         if current_node.node_type == 'action':
             for variable in current_node.local_variables:
                 if variable.model_as == 'DEFINE':
-                    cur_type = variable_type(variable)
-                    if variable.name not in running_dict:
-                        running_dict[variable.name] = []
+                    if not run1:
+                        cur_type = variable_type(variable)
+                        if variable.name not in running_dict:
+                            running_dict[variable.name] = []
+                        cur_assign = variable.assign
+                        for initial_statement in current_node.init_statements:
+                            if initial_statement.variable.name == variable.name:
+                                cur_assign = initial_statement.assign
+                                break
+                        running_dict[variable.name].append(
+                            'localBoard' + pascal_case(variable.name) + ' ' + str(my_int) + ' blackboard' + create_macro(cur_assign, 0, None)  # init_mode none here because we are operating in a func
+                            + indent(1) + 'where node_location = ' + str(my_int) + os.linesep
+                        )
+                else:
                     cur_assign = variable.assign
+                    overwritten = False
                     for initial_statement in current_node.init_statements:
                         if initial_statement.variable.name == variable.name:
                             cur_assign = initial_statement.assign
+                            overwritten = True
                             break
-                    running_dict[variable.name].append(
-                        'localBoard' + pascal_case(variable.name) + ' ' + str(my_int) + ' blackboard' + create_macro(cur_assign, 0, None)  # init_mode none here because we are operating in a func
-                        + indent(1) + 'where node_location = ' + str(my_int) + os.linesep
-                    )
-                else:
                     cur_type = variable_type(variable)
-                    running_list.append(
-                        {
-                            'name' : variable.name,
-                            'type' : cur_type,
-                            'init' : handle_initial_value(variable.assign, variable, cur_type, 2, 'board'),
-                            'number' : my_int,
-                            'variable' : variable
-                        }
-                    )
+                    if run1:
+                        running_create_order.append((variable.name + str(my_int), get_default_arg(variable), overwritten))
+                    else:
+                        running_list.append(
+                            {
+                                'name' : variable.name,
+                                'type' : cur_type,
+                                'init' : handle_initial_value(cur_assign, variable, cur_type, 2, 'board', 'partialBlackboard' + pascal_case(variable.name) + str(my_int), my_int),
+                                'number' : my_int,
+                                'variable' : variable,
+                                'overwritten' : overwritten
+                            }
+                        )
         elif current_node.node_type == 'check' or current_node.node_type == 'check_environment':
             # can't have local variables in checks.
             pass
         else:
             node_children = (current_node.children if hasattr(current_node, 'children') else [current_node.child])
             for child in node_children:
-                (cur_node_names, cur_node_names_map, running_list, running_dict, running_int) = walk_tree_recursive_blackboard(child, cur_node_names, cur_node_names_map, running_list, running_dict, running_int)
+                (cur_node_names, cur_node_names_map, running_list, running_dict, running_int, running_create_order) = walk_tree_recursive_blackboard(child, cur_node_names, cur_node_names_map, running_list, running_dict, running_int, running_create_order, run1)
         return (
             (
                 (
@@ -1408,12 +1494,41 @@ def create_blackboard(model):
                     cur_node_names_map,
                     running_list,
                     running_dict,
-                    running_int
+                    running_int,
+                    running_create_order
                 )
             )
         )
 
-    (_, _, local_list, local_macros, _) = walk_tree_recursive_blackboard(model.root, set(), {}, [], {}, -1)
+    (_, _, _, _, _, running_create_order) = walk_tree_recursive_blackboard(model.root, set(), {}, [], {}, -1, [], True)
+
+    create_order = (
+        [
+            ('newVal' + pascal_case(variable.name), get_default_arg(variable))
+            for variable in model.variables if (variable.model_as != 'DEFINE' and is_blackboard(variable))
+        ]
+        +
+        [
+            ('localNewVal' + pascal_case(cur_name), cur_type)
+            for (cur_name, cur_type, cur_overwritten) in running_create_order if not cur_overwritten
+        ]
+        +
+        [
+            ('localNewVal' + pascal_case(cur_name), cur_type)
+            for (cur_name, cur_type, cur_overwritten) in running_create_order if cur_overwritten
+        ]
+    )
+
+    names_to_types = {
+        variable.name : variable_type(variable)
+        for variable in model.variables if (variable.model_as != 'DEFINE' and is_blackboard(variable))
+    }
+    initial_values = {
+        variable.name : handle_initial_value(variable.assign, variable, names_to_types[variable.name], 2, 'board', 'partialBlackboard' + pascal_case(variable.name), None)
+        for index, variable in enumerate(model.variables) if (variable.model_as != 'DEFINE' and is_blackboard(variable))
+    }
+
+    (_, _, local_list, local_macros, _, _) = walk_tree_recursive_blackboard(model.root, set(), {}, [], {}, -1, create_order, False)
     local_var_to_nodes = {}
     names_to_local_var = {}
     for local_v in local_list:
@@ -1555,7 +1670,8 @@ def create_blackboard(model):
         + ''.join(
             [
                 (
-                    indent(2) + 'initVal' + pascal_case(variable_name) + ' :: StdGen -> (' + names_to_types[variable_name] + ', StdGen)' + os.linesep
+                    indent(2) + 'partialBlackboard' + pascal_case(variable_name) + ' = BTreeBlackboard newSereneGenerator' + order_partial_arguments('newVal' + pascal_case(variable_name), create_order) + os.linesep
+                    + indent(2) + 'initVal' + pascal_case(variable_name) + ' :: StdGen -> (' + names_to_types[variable_name] + ', StdGen)' + os.linesep
                     + indent(2) + 'initVal' + pascal_case(variable_name) + ' curGen' + initial_values[variable_name]
                     + os.linesep
                     + indent(2) + '(newVal' + pascal_case(variable_name) + ', tempGen' + str(index + 1) + ') = initVal' + pascal_case(variable_name) + ' tempGen' + str(index) + os.linesep
@@ -1567,7 +1683,8 @@ def create_blackboard(model):
         + ''.join(
             [
                 (
-                    indent(2) + 'localInitVal' + pascal_case(local_v['name']) + str(local_v['number']) + ' :: StdGen -> (' + local_v['type'] + ', StdGen)' + os.linesep
+                    indent(2) + 'partialBlackboard' + pascal_case(local_v['name']) + str(local_v['number']) +  ' = BTreeBlackboard newSereneGenerator' + order_partial_arguments('localNewVal' + pascal_case(local_v['name']) + str(local_v['number']), create_order) + os.linesep
+                    + indent(2) + 'localInitVal' + pascal_case(local_v['name']) + str(local_v['number']) + ' :: StdGen -> (' + local_v['type'] + ', StdGen)' + os.linesep
                     + indent(2) + 'localInitVal' + pascal_case(local_v['name']) + str(local_v['number']) + ' curGen' + local_v['init']
                     + indent(2) + '(localNewVal' + pascal_case(local_v['name']) + str(local_v['number']) + ', tempGen' + str(index + 1 + len(names_to_types)) + ') = localInitVal' + pascal_case(local_v['name']) + str(local_v['number']) + ' tempGen' + str(index + len(names_to_types)) + os.linesep
                 )
@@ -1601,6 +1718,7 @@ STANDARD_IMPORTS = ('import BehaviorTreeCore' + os.linesep
 
 
 def create_serene_operations():
+    '''returns a string with SereneOperations'''
     return (
         'module SereneOperations where' + os.linesep
         + os.linesep
@@ -1629,7 +1747,7 @@ def create_serene_operations():
         + 'sereneCOUNT False False = 0' + os.linesep
         + os.linesep
     )
-    
+
 
 def main():
 
@@ -1650,7 +1768,7 @@ def main():
         constant.name : constant.val
         for constant in model.constants
     }
-    
+
     validate_model(model, constants, metamodel)
 
     my_location = args.location + 'app/'
