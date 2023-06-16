@@ -1,0 +1,2830 @@
+*** This is nuXmv 2.0.0 (compiled on Mon Oct 14 17:48:12 2019)
+*** Copyright (c) 2014-2019, Fondazione Bruno Kessler
+*** For more information on nuXmv see https://nuxmv.fbk.eu
+*** or email to <nuxmv@list.fbk.eu>.
+*** Please report bugs at https://nuxmv.fbk.eu/bugs
+*** (click on "Login Anonymously" to access)
+*** Alternatively write to <nuxmv@list.fbk.eu>.
+
+*** This version of nuXmv is linked to NuSMV 2.6.0.
+*** For more information on NuSMV see <http://nusmv.fbk.eu>
+*** or email to <nusmv-users@list.fbk.eu>.
+*** Copyright (C) 2010-2019, Fondazione Bruno Kessler
+
+*** This version of nuXmv is linked to the CUDD library version 2.4.1
+*** Copyright (c) 1995-2004, Regents of the University of Colorado
+
+*** This version of nuXmv is linked to the MiniSat SAT solver. 
+*** See http://minisat.se/MiniSat.html
+*** Copyright (c) 2003-2006, Niklas Een, Niklas Sorensson
+*** Copyright (c) 2007-2010, Niklas Sorensson
+
+*** This version of nuXmv is linked to MathSAT
+*** Copyright (C) 2009-2019 by Fondazione Bruno Kessler
+*** Copyright (C) 2009-2019 by University of Trento and others
+*** See http://mathsat.fbk.eu
+
+-- specification AG (success_failure_node.status = failure -> A [ active_node > 0 U success_node.status = success ] )  is true
+-- specification AG (success_failure_node.status = failure -> !A [ active_node > 0 U success_node.status = success ] )  is false
+-- as demonstrated by the following execution sequence
+Trace Description: CTL Counterexample 
+Trace Type: Counterexample 
+  -> State: 1.1 <-
+    active_node = -1
+    success_failure_node.status = invalid
+    success_node.status = invalid
+    success_failure_node_1.status = invalid
+    success_node_1.status = invalid
+    success_failure_node_2.status = invalid
+    success_node_2.status = invalid
+    success_failure_node_3.status = invalid
+    success_node_3.status = invalid
+    success_failure_node_4.status = invalid
+    success_node_4.status = invalid
+    success_failure_node_5.status = invalid
+    success_node_5.status = invalid
+    success_failure_node_6.status = invalid
+    success_node_6.status = invalid
+    success_failure_node_7.status = invalid
+    success_node_7.status = invalid
+    success_failure_node_8.status = invalid
+    success_node_8.status = invalid
+    randomizer = FALSE
+    success_node_8.reset = TRUE
+    success_node_8.active = FALSE
+    success_failure_node_8.reset = TRUE
+    success_failure_node_8.active = FALSE
+    success_node_7.reset = TRUE
+    success_node_7.active = FALSE
+    success_failure_node_7.reset = TRUE
+    success_failure_node_7.active = FALSE
+    success_node_6.reset = TRUE
+    success_node_6.active = FALSE
+    success_failure_node_6.reset = TRUE
+    success_failure_node_6.active = FALSE
+    success_node_5.reset = TRUE
+    success_node_5.active = FALSE
+    success_failure_node_5.reset = TRUE
+    success_failure_node_5.active = FALSE
+    success_node_4.reset = TRUE
+    success_node_4.active = FALSE
+    success_failure_node_4.reset = TRUE
+    success_failure_node_4.active = FALSE
+    success_node_3.reset = TRUE
+    success_node_3.active = FALSE
+    success_failure_node_3.reset = TRUE
+    success_failure_node_3.active = FALSE
+    success_node_2.reset = TRUE
+    success_node_2.active = FALSE
+    success_failure_node_2.reset = TRUE
+    success_failure_node_2.active = FALSE
+    success_node_1.reset = TRUE
+    success_node_1.active = FALSE
+    success_failure_node_1.reset = TRUE
+    success_failure_node_1.active = FALSE
+    success_node.reset = TRUE
+    success_node.active = FALSE
+    success_failure_node.reset = TRUE
+    success_failure_node.active = FALSE
+    next_child__seqLink8 = 1
+    next_child__seqLink7 = 17
+    next_child__seqLink5 = 25
+    next_child__seqLink1 = 29
+    next_child__sel1 = 33
+    next_child__sel0 = 30
+    next_child__sel8 = 26
+    next_child__seqLink4 = 18
+    next_child__sel7 = 22
+    next_child__sel6 = 19
+    next_child__seqLink6 = 2
+    next_child__seqLink3 = 10
+    next_child__sel5 = 14
+    next_child__sel4 = 11
+    next_child__seqLink2 = 3
+    next_child__sel3 = 7
+    next_child__sel2 = 4
+    status__seqLink8 = invalid
+    status__seqLink7 = invalid
+    status__seqLink5 = invalid
+    status__seqLink1 = invalid
+    status__sel1 = invalid
+    status__success_node_8 = invalid
+    status__success_failure_node_8 = invalid
+    status__sel0 = invalid
+    status__success_node_7 = invalid
+    status__success_failure_node_7 = invalid
+    status__sel8 = invalid
+    status__success_node_6 = invalid
+    status__success_failure_node_6 = invalid
+    status__seqLink4 = invalid
+    status__sel7 = invalid
+    status__success_node_5 = invalid
+    status__success_failure_node_5 = invalid
+    status__sel6 = invalid
+    status__success_node_4 = invalid
+    status__success_failure_node_4 = invalid
+    status__seqLink6 = invalid
+    status__seqLink3 = invalid
+    status__sel5 = invalid
+    status__success_node_3 = invalid
+    status__success_failure_node_3 = invalid
+    status__sel4 = invalid
+    status__success_node_2 = invalid
+    status__success_failure_node_2 = invalid
+    status__seqLink2 = invalid
+    status__sel3 = invalid
+    status__success_node_1 = invalid
+    status__success_failure_node_1 = invalid
+    status__sel2 = invalid
+    status__success_node = invalid
+    status__success_failure_node = invalid
+    child_index_to_resume_from__seqLink8 = -2
+    child_index_to_resume_from__seqLink7 = -2
+    child_index_to_resume_from__seqLink5 = -2
+    child_index_to_resume_from__seqLink1 = -2
+    child_index_to_resume_from__sel1 = -2
+    child_index_to_resume_from__sel0 = -2
+    child_index_to_resume_from__sel8 = -2
+    child_index_to_resume_from__seqLink4 = -2
+    child_index_to_resume_from__sel7 = -2
+    child_index_to_resume_from__sel6 = -2
+    child_index_to_resume_from__seqLink6 = -2
+    child_index_to_resume_from__seqLink3 = -2
+    child_index_to_resume_from__sel5 = -2
+    child_index_to_resume_from__sel4 = -2
+    child_index_to_resume_from__seqLink2 = -2
+    child_index_to_resume_from__sel3 = -2
+    child_index_to_resume_from__sel2 = -2
+    resume_from_here_in_subtree__seqLink8 = -3
+    node_names.success_node_8 = 34
+    node_names.success_failure_node_8 = 33
+    node_names.sel1 = 32
+    node_names.success_node_7 = 31
+    node_names.success_failure_node_7 = 30
+    node_names.sel0 = 29
+    node_names.seqLink1 = 28
+    node_names.success_node_6 = 27
+    node_names.success_failure_node_6 = 26
+    node_names.sel8 = 25
+    node_names.seqLink5 = 24
+    node_names.success_node_5 = 23
+    node_names.success_failure_node_5 = 22
+    node_names.sel7 = 21
+    node_names.success_node_4 = 20
+    node_names.success_failure_node_4 = 19
+    node_names.sel6 = 18
+    node_names.seqLink4 = 17
+    node_names.seqLink7 = 16
+    node_names.success_node_3 = 15
+    node_names.success_failure_node_3 = 14
+    node_names.sel5 = 13
+    node_names.success_node_2 = 12
+    node_names.success_failure_node_2 = 11
+    node_names.sel4 = 10
+    node_names.seqLink3 = 9
+    node_names.success_node_1 = 8
+    node_names.success_failure_node_1 = 7
+    node_names.sel3 = 6
+    node_names.success_node = 5
+    node_names.success_failure_node = 4
+    node_names.sel2 = 3
+    node_names.seqLink2 = 2
+    node_names.seqLink6 = 1
+    node_names.seqLink8 = 0
+  -> State: 1.2 <-
+    active_node = 0
+    success_node_8.reset = FALSE
+    success_failure_node_8.reset = FALSE
+    success_node_7.reset = FALSE
+    success_failure_node_7.reset = FALSE
+    success_node_6.reset = FALSE
+    success_failure_node_6.reset = FALSE
+    success_node_5.reset = FALSE
+    success_failure_node_5.reset = FALSE
+    success_node_4.reset = FALSE
+    success_failure_node_4.reset = FALSE
+    success_node_3.reset = FALSE
+    success_failure_node_3.reset = FALSE
+    success_node_2.reset = FALSE
+    success_failure_node_2.reset = FALSE
+    success_node_1.reset = FALSE
+    success_failure_node_1.reset = FALSE
+    success_node.reset = FALSE
+    success_failure_node.reset = FALSE
+  -> State: 1.3 <-
+    active_node = 1
+  -> State: 1.4 <-
+    active_node = 2
+  -> State: 1.5 <-
+    active_node = 3
+  -> State: 1.6 <-
+    active_node = 4
+    success_failure_node.active = TRUE
+  -> State: 1.7 <-
+    success_failure_node.status = failure
+    next_child__sel2 = 5
+    status__success_failure_node = failure
+-- specification AG (success_failure_node_1.status = failure -> A [ active_node > 0 U success_node_1.status = success ] )  is true
+-- specification AG (success_failure_node_1.status = failure -> !A [ active_node > 0 U success_node_1.status = success ] )  is false
+-- as demonstrated by the following execution sequence
+Trace Description: CTL Counterexample 
+Trace Type: Counterexample 
+  -> State: 2.1 <-
+    active_node = -1
+    success_failure_node.status = invalid
+    success_node.status = invalid
+    success_failure_node_1.status = invalid
+    success_node_1.status = invalid
+    success_failure_node_2.status = invalid
+    success_node_2.status = invalid
+    success_failure_node_3.status = invalid
+    success_node_3.status = invalid
+    success_failure_node_4.status = invalid
+    success_node_4.status = invalid
+    success_failure_node_5.status = invalid
+    success_node_5.status = invalid
+    success_failure_node_6.status = invalid
+    success_node_6.status = invalid
+    success_failure_node_7.status = invalid
+    success_node_7.status = invalid
+    success_failure_node_8.status = invalid
+    success_node_8.status = invalid
+    randomizer = FALSE
+    success_node_8.reset = TRUE
+    success_node_8.active = FALSE
+    success_failure_node_8.reset = TRUE
+    success_failure_node_8.active = FALSE
+    success_node_7.reset = TRUE
+    success_node_7.active = FALSE
+    success_failure_node_7.reset = TRUE
+    success_failure_node_7.active = FALSE
+    success_node_6.reset = TRUE
+    success_node_6.active = FALSE
+    success_failure_node_6.reset = TRUE
+    success_failure_node_6.active = FALSE
+    success_node_5.reset = TRUE
+    success_node_5.active = FALSE
+    success_failure_node_5.reset = TRUE
+    success_failure_node_5.active = FALSE
+    success_node_4.reset = TRUE
+    success_node_4.active = FALSE
+    success_failure_node_4.reset = TRUE
+    success_failure_node_4.active = FALSE
+    success_node_3.reset = TRUE
+    success_node_3.active = FALSE
+    success_failure_node_3.reset = TRUE
+    success_failure_node_3.active = FALSE
+    success_node_2.reset = TRUE
+    success_node_2.active = FALSE
+    success_failure_node_2.reset = TRUE
+    success_failure_node_2.active = FALSE
+    success_node_1.reset = TRUE
+    success_node_1.active = FALSE
+    success_failure_node_1.reset = TRUE
+    success_failure_node_1.active = FALSE
+    success_node.reset = TRUE
+    success_node.active = FALSE
+    success_failure_node.reset = TRUE
+    success_failure_node.active = FALSE
+    next_child__seqLink8 = 1
+    next_child__seqLink7 = 17
+    next_child__seqLink5 = 25
+    next_child__seqLink1 = 29
+    next_child__sel1 = 33
+    next_child__sel0 = 30
+    next_child__sel8 = 26
+    next_child__seqLink4 = 18
+    next_child__sel7 = 22
+    next_child__sel6 = 19
+    next_child__seqLink6 = 2
+    next_child__seqLink3 = 10
+    next_child__sel5 = 14
+    next_child__sel4 = 11
+    next_child__seqLink2 = 3
+    next_child__sel3 = 7
+    next_child__sel2 = 4
+    status__seqLink8 = invalid
+    status__seqLink7 = invalid
+    status__seqLink5 = invalid
+    status__seqLink1 = invalid
+    status__sel1 = invalid
+    status__success_node_8 = invalid
+    status__success_failure_node_8 = invalid
+    status__sel0 = invalid
+    status__success_node_7 = invalid
+    status__success_failure_node_7 = invalid
+    status__sel8 = invalid
+    status__success_node_6 = invalid
+    status__success_failure_node_6 = invalid
+    status__seqLink4 = invalid
+    status__sel7 = invalid
+    status__success_node_5 = invalid
+    status__success_failure_node_5 = invalid
+    status__sel6 = invalid
+    status__success_node_4 = invalid
+    status__success_failure_node_4 = invalid
+    status__seqLink6 = invalid
+    status__seqLink3 = invalid
+    status__sel5 = invalid
+    status__success_node_3 = invalid
+    status__success_failure_node_3 = invalid
+    status__sel4 = invalid
+    status__success_node_2 = invalid
+    status__success_failure_node_2 = invalid
+    status__seqLink2 = invalid
+    status__sel3 = invalid
+    status__success_node_1 = invalid
+    status__success_failure_node_1 = invalid
+    status__sel2 = invalid
+    status__success_node = invalid
+    status__success_failure_node = invalid
+    child_index_to_resume_from__seqLink8 = -2
+    child_index_to_resume_from__seqLink7 = -2
+    child_index_to_resume_from__seqLink5 = -2
+    child_index_to_resume_from__seqLink1 = -2
+    child_index_to_resume_from__sel1 = -2
+    child_index_to_resume_from__sel0 = -2
+    child_index_to_resume_from__sel8 = -2
+    child_index_to_resume_from__seqLink4 = -2
+    child_index_to_resume_from__sel7 = -2
+    child_index_to_resume_from__sel6 = -2
+    child_index_to_resume_from__seqLink6 = -2
+    child_index_to_resume_from__seqLink3 = -2
+    child_index_to_resume_from__sel5 = -2
+    child_index_to_resume_from__sel4 = -2
+    child_index_to_resume_from__seqLink2 = -2
+    child_index_to_resume_from__sel3 = -2
+    child_index_to_resume_from__sel2 = -2
+    resume_from_here_in_subtree__seqLink8 = -3
+    node_names.success_node_8 = 34
+    node_names.success_failure_node_8 = 33
+    node_names.sel1 = 32
+    node_names.success_node_7 = 31
+    node_names.success_failure_node_7 = 30
+    node_names.sel0 = 29
+    node_names.seqLink1 = 28
+    node_names.success_node_6 = 27
+    node_names.success_failure_node_6 = 26
+    node_names.sel8 = 25
+    node_names.seqLink5 = 24
+    node_names.success_node_5 = 23
+    node_names.success_failure_node_5 = 22
+    node_names.sel7 = 21
+    node_names.success_node_4 = 20
+    node_names.success_failure_node_4 = 19
+    node_names.sel6 = 18
+    node_names.seqLink4 = 17
+    node_names.seqLink7 = 16
+    node_names.success_node_3 = 15
+    node_names.success_failure_node_3 = 14
+    node_names.sel5 = 13
+    node_names.success_node_2 = 12
+    node_names.success_failure_node_2 = 11
+    node_names.sel4 = 10
+    node_names.seqLink3 = 9
+    node_names.success_node_1 = 8
+    node_names.success_failure_node_1 = 7
+    node_names.sel3 = 6
+    node_names.success_node = 5
+    node_names.success_failure_node = 4
+    node_names.sel2 = 3
+    node_names.seqLink2 = 2
+    node_names.seqLink6 = 1
+    node_names.seqLink8 = 0
+  -> State: 2.2 <-
+    active_node = 0
+    success_node_8.reset = FALSE
+    success_failure_node_8.reset = FALSE
+    success_node_7.reset = FALSE
+    success_failure_node_7.reset = FALSE
+    success_node_6.reset = FALSE
+    success_failure_node_6.reset = FALSE
+    success_node_5.reset = FALSE
+    success_failure_node_5.reset = FALSE
+    success_node_4.reset = FALSE
+    success_failure_node_4.reset = FALSE
+    success_node_3.reset = FALSE
+    success_failure_node_3.reset = FALSE
+    success_node_2.reset = FALSE
+    success_failure_node_2.reset = FALSE
+    success_node_1.reset = FALSE
+    success_failure_node_1.reset = FALSE
+    success_node.reset = FALSE
+    success_failure_node.reset = FALSE
+  -> State: 2.3 <-
+    active_node = 1
+  -> State: 2.4 <-
+    active_node = 2
+  -> State: 2.5 <-
+    active_node = 3
+  -> State: 2.6 <-
+    active_node = 4
+    success_failure_node.active = TRUE
+  -> State: 2.7 <-
+    success_failure_node.status = failure
+    next_child__sel2 = 5
+    status__success_failure_node = failure
+  -> State: 2.8 <-
+    active_node = 3
+    success_failure_node.active = FALSE
+  -> State: 2.9 <-
+    active_node = 5
+    success_node.active = TRUE
+  -> State: 2.10 <-
+    success_node.status = success
+    next_child__seqLink2 = 6
+    status__sel2 = success
+    status__success_node = success
+  -> State: 2.11 <-
+    active_node = 3
+    success_node.active = FALSE
+  -> State: 2.12 <-
+    active_node = 2
+  -> State: 2.13 <-
+    active_node = 6
+  -> State: 2.14 <-
+    active_node = 7
+    success_failure_node_1.active = TRUE
+  -> State: 2.15 <-
+    success_failure_node_1.status = failure
+    next_child__sel3 = 8
+    status__success_failure_node_1 = failure
+-- specification AG (success_failure_node_2.status = failure -> A [ active_node > 0 U success_node_2.status = success ] )  is true
+-- specification AG (success_failure_node_2.status = failure -> !A [ active_node > 0 U success_node_2.status = success ] )  is false
+-- as demonstrated by the following execution sequence
+Trace Description: CTL Counterexample 
+Trace Type: Counterexample 
+  -> State: 3.1 <-
+    active_node = -1
+    success_failure_node.status = invalid
+    success_node.status = invalid
+    success_failure_node_1.status = invalid
+    success_node_1.status = invalid
+    success_failure_node_2.status = invalid
+    success_node_2.status = invalid
+    success_failure_node_3.status = invalid
+    success_node_3.status = invalid
+    success_failure_node_4.status = invalid
+    success_node_4.status = invalid
+    success_failure_node_5.status = invalid
+    success_node_5.status = invalid
+    success_failure_node_6.status = invalid
+    success_node_6.status = invalid
+    success_failure_node_7.status = invalid
+    success_node_7.status = invalid
+    success_failure_node_8.status = invalid
+    success_node_8.status = invalid
+    randomizer = FALSE
+    success_node_8.reset = TRUE
+    success_node_8.active = FALSE
+    success_failure_node_8.reset = TRUE
+    success_failure_node_8.active = FALSE
+    success_node_7.reset = TRUE
+    success_node_7.active = FALSE
+    success_failure_node_7.reset = TRUE
+    success_failure_node_7.active = FALSE
+    success_node_6.reset = TRUE
+    success_node_6.active = FALSE
+    success_failure_node_6.reset = TRUE
+    success_failure_node_6.active = FALSE
+    success_node_5.reset = TRUE
+    success_node_5.active = FALSE
+    success_failure_node_5.reset = TRUE
+    success_failure_node_5.active = FALSE
+    success_node_4.reset = TRUE
+    success_node_4.active = FALSE
+    success_failure_node_4.reset = TRUE
+    success_failure_node_4.active = FALSE
+    success_node_3.reset = TRUE
+    success_node_3.active = FALSE
+    success_failure_node_3.reset = TRUE
+    success_failure_node_3.active = FALSE
+    success_node_2.reset = TRUE
+    success_node_2.active = FALSE
+    success_failure_node_2.reset = TRUE
+    success_failure_node_2.active = FALSE
+    success_node_1.reset = TRUE
+    success_node_1.active = FALSE
+    success_failure_node_1.reset = TRUE
+    success_failure_node_1.active = FALSE
+    success_node.reset = TRUE
+    success_node.active = FALSE
+    success_failure_node.reset = TRUE
+    success_failure_node.active = FALSE
+    next_child__seqLink8 = 1
+    next_child__seqLink7 = 17
+    next_child__seqLink5 = 25
+    next_child__seqLink1 = 29
+    next_child__sel1 = 33
+    next_child__sel0 = 30
+    next_child__sel8 = 26
+    next_child__seqLink4 = 18
+    next_child__sel7 = 22
+    next_child__sel6 = 19
+    next_child__seqLink6 = 2
+    next_child__seqLink3 = 10
+    next_child__sel5 = 14
+    next_child__sel4 = 11
+    next_child__seqLink2 = 3
+    next_child__sel3 = 7
+    next_child__sel2 = 4
+    status__seqLink8 = invalid
+    status__seqLink7 = invalid
+    status__seqLink5 = invalid
+    status__seqLink1 = invalid
+    status__sel1 = invalid
+    status__success_node_8 = invalid
+    status__success_failure_node_8 = invalid
+    status__sel0 = invalid
+    status__success_node_7 = invalid
+    status__success_failure_node_7 = invalid
+    status__sel8 = invalid
+    status__success_node_6 = invalid
+    status__success_failure_node_6 = invalid
+    status__seqLink4 = invalid
+    status__sel7 = invalid
+    status__success_node_5 = invalid
+    status__success_failure_node_5 = invalid
+    status__sel6 = invalid
+    status__success_node_4 = invalid
+    status__success_failure_node_4 = invalid
+    status__seqLink6 = invalid
+    status__seqLink3 = invalid
+    status__sel5 = invalid
+    status__success_node_3 = invalid
+    status__success_failure_node_3 = invalid
+    status__sel4 = invalid
+    status__success_node_2 = invalid
+    status__success_failure_node_2 = invalid
+    status__seqLink2 = invalid
+    status__sel3 = invalid
+    status__success_node_1 = invalid
+    status__success_failure_node_1 = invalid
+    status__sel2 = invalid
+    status__success_node = invalid
+    status__success_failure_node = invalid
+    child_index_to_resume_from__seqLink8 = -2
+    child_index_to_resume_from__seqLink7 = -2
+    child_index_to_resume_from__seqLink5 = -2
+    child_index_to_resume_from__seqLink1 = -2
+    child_index_to_resume_from__sel1 = -2
+    child_index_to_resume_from__sel0 = -2
+    child_index_to_resume_from__sel8 = -2
+    child_index_to_resume_from__seqLink4 = -2
+    child_index_to_resume_from__sel7 = -2
+    child_index_to_resume_from__sel6 = -2
+    child_index_to_resume_from__seqLink6 = -2
+    child_index_to_resume_from__seqLink3 = -2
+    child_index_to_resume_from__sel5 = -2
+    child_index_to_resume_from__sel4 = -2
+    child_index_to_resume_from__seqLink2 = -2
+    child_index_to_resume_from__sel3 = -2
+    child_index_to_resume_from__sel2 = -2
+    resume_from_here_in_subtree__seqLink8 = -3
+    node_names.success_node_8 = 34
+    node_names.success_failure_node_8 = 33
+    node_names.sel1 = 32
+    node_names.success_node_7 = 31
+    node_names.success_failure_node_7 = 30
+    node_names.sel0 = 29
+    node_names.seqLink1 = 28
+    node_names.success_node_6 = 27
+    node_names.success_failure_node_6 = 26
+    node_names.sel8 = 25
+    node_names.seqLink5 = 24
+    node_names.success_node_5 = 23
+    node_names.success_failure_node_5 = 22
+    node_names.sel7 = 21
+    node_names.success_node_4 = 20
+    node_names.success_failure_node_4 = 19
+    node_names.sel6 = 18
+    node_names.seqLink4 = 17
+    node_names.seqLink7 = 16
+    node_names.success_node_3 = 15
+    node_names.success_failure_node_3 = 14
+    node_names.sel5 = 13
+    node_names.success_node_2 = 12
+    node_names.success_failure_node_2 = 11
+    node_names.sel4 = 10
+    node_names.seqLink3 = 9
+    node_names.success_node_1 = 8
+    node_names.success_failure_node_1 = 7
+    node_names.sel3 = 6
+    node_names.success_node = 5
+    node_names.success_failure_node = 4
+    node_names.sel2 = 3
+    node_names.seqLink2 = 2
+    node_names.seqLink6 = 1
+    node_names.seqLink8 = 0
+  -> State: 3.2 <-
+    active_node = 0
+    success_node_8.reset = FALSE
+    success_failure_node_8.reset = FALSE
+    success_node_7.reset = FALSE
+    success_failure_node_7.reset = FALSE
+    success_node_6.reset = FALSE
+    success_failure_node_6.reset = FALSE
+    success_node_5.reset = FALSE
+    success_failure_node_5.reset = FALSE
+    success_node_4.reset = FALSE
+    success_failure_node_4.reset = FALSE
+    success_node_3.reset = FALSE
+    success_failure_node_3.reset = FALSE
+    success_node_2.reset = FALSE
+    success_failure_node_2.reset = FALSE
+    success_node_1.reset = FALSE
+    success_failure_node_1.reset = FALSE
+    success_node.reset = FALSE
+    success_failure_node.reset = FALSE
+  -> State: 3.3 <-
+    active_node = 1
+  -> State: 3.4 <-
+    active_node = 2
+  -> State: 3.5 <-
+    active_node = 3
+  -> State: 3.6 <-
+    active_node = 4
+    success_failure_node.active = TRUE
+  -> State: 3.7 <-
+    success_failure_node.status = failure
+    next_child__sel2 = 5
+    status__success_failure_node = failure
+  -> State: 3.8 <-
+    active_node = 3
+    success_failure_node.active = FALSE
+  -> State: 3.9 <-
+    active_node = 5
+    success_node.active = TRUE
+  -> State: 3.10 <-
+    success_node.status = success
+    next_child__seqLink2 = 6
+    status__sel2 = success
+    status__success_node = success
+  -> State: 3.11 <-
+    active_node = 3
+    success_node.active = FALSE
+  -> State: 3.12 <-
+    active_node = 2
+  -> State: 3.13 <-
+    active_node = 6
+  -> State: 3.14 <-
+    active_node = 7
+    success_failure_node_1.active = TRUE
+  -> State: 3.15 <-
+    success_failure_node_1.status = failure
+    next_child__sel3 = 8
+    status__success_failure_node_1 = failure
+  -> State: 3.16 <-
+    active_node = 6
+    success_failure_node_1.active = FALSE
+  -> State: 3.17 <-
+    active_node = 8
+    success_node_1.active = TRUE
+  -> State: 3.18 <-
+    success_node_1.status = success
+    next_child__seqLink6 = 9
+    status__seqLink2 = success
+    status__sel3 = success
+    status__success_node_1 = success
+  -> State: 3.19 <-
+    active_node = 6
+    success_node_1.active = FALSE
+  -> State: 3.20 <-
+    active_node = 2
+  -> State: 3.21 <-
+    active_node = 1
+  -> State: 3.22 <-
+    active_node = 9
+  -> State: 3.23 <-
+    active_node = 10
+  -> State: 3.24 <-
+    active_node = 11
+    success_failure_node_2.active = TRUE
+  -> State: 3.25 <-
+    success_failure_node_2.status = failure
+    next_child__sel4 = 12
+    status__success_failure_node_2 = failure
+-- specification AG (success_failure_node_3.status = failure -> A [ active_node > 0 U success_node_3.status = success ] )  is true
+-- specification AG (success_failure_node_3.status = failure -> !A [ active_node > 0 U success_node_3.status = success ] )  is false
+-- as demonstrated by the following execution sequence
+Trace Description: CTL Counterexample 
+Trace Type: Counterexample 
+  -> State: 4.1 <-
+    active_node = -1
+    success_failure_node.status = invalid
+    success_node.status = invalid
+    success_failure_node_1.status = invalid
+    success_node_1.status = invalid
+    success_failure_node_2.status = invalid
+    success_node_2.status = invalid
+    success_failure_node_3.status = invalid
+    success_node_3.status = invalid
+    success_failure_node_4.status = invalid
+    success_node_4.status = invalid
+    success_failure_node_5.status = invalid
+    success_node_5.status = invalid
+    success_failure_node_6.status = invalid
+    success_node_6.status = invalid
+    success_failure_node_7.status = invalid
+    success_node_7.status = invalid
+    success_failure_node_8.status = invalid
+    success_node_8.status = invalid
+    randomizer = FALSE
+    success_node_8.reset = TRUE
+    success_node_8.active = FALSE
+    success_failure_node_8.reset = TRUE
+    success_failure_node_8.active = FALSE
+    success_node_7.reset = TRUE
+    success_node_7.active = FALSE
+    success_failure_node_7.reset = TRUE
+    success_failure_node_7.active = FALSE
+    success_node_6.reset = TRUE
+    success_node_6.active = FALSE
+    success_failure_node_6.reset = TRUE
+    success_failure_node_6.active = FALSE
+    success_node_5.reset = TRUE
+    success_node_5.active = FALSE
+    success_failure_node_5.reset = TRUE
+    success_failure_node_5.active = FALSE
+    success_node_4.reset = TRUE
+    success_node_4.active = FALSE
+    success_failure_node_4.reset = TRUE
+    success_failure_node_4.active = FALSE
+    success_node_3.reset = TRUE
+    success_node_3.active = FALSE
+    success_failure_node_3.reset = TRUE
+    success_failure_node_3.active = FALSE
+    success_node_2.reset = TRUE
+    success_node_2.active = FALSE
+    success_failure_node_2.reset = TRUE
+    success_failure_node_2.active = FALSE
+    success_node_1.reset = TRUE
+    success_node_1.active = FALSE
+    success_failure_node_1.reset = TRUE
+    success_failure_node_1.active = FALSE
+    success_node.reset = TRUE
+    success_node.active = FALSE
+    success_failure_node.reset = TRUE
+    success_failure_node.active = FALSE
+    next_child__seqLink8 = 1
+    next_child__seqLink7 = 17
+    next_child__seqLink5 = 25
+    next_child__seqLink1 = 29
+    next_child__sel1 = 33
+    next_child__sel0 = 30
+    next_child__sel8 = 26
+    next_child__seqLink4 = 18
+    next_child__sel7 = 22
+    next_child__sel6 = 19
+    next_child__seqLink6 = 2
+    next_child__seqLink3 = 10
+    next_child__sel5 = 14
+    next_child__sel4 = 11
+    next_child__seqLink2 = 3
+    next_child__sel3 = 7
+    next_child__sel2 = 4
+    status__seqLink8 = invalid
+    status__seqLink7 = invalid
+    status__seqLink5 = invalid
+    status__seqLink1 = invalid
+    status__sel1 = invalid
+    status__success_node_8 = invalid
+    status__success_failure_node_8 = invalid
+    status__sel0 = invalid
+    status__success_node_7 = invalid
+    status__success_failure_node_7 = invalid
+    status__sel8 = invalid
+    status__success_node_6 = invalid
+    status__success_failure_node_6 = invalid
+    status__seqLink4 = invalid
+    status__sel7 = invalid
+    status__success_node_5 = invalid
+    status__success_failure_node_5 = invalid
+    status__sel6 = invalid
+    status__success_node_4 = invalid
+    status__success_failure_node_4 = invalid
+    status__seqLink6 = invalid
+    status__seqLink3 = invalid
+    status__sel5 = invalid
+    status__success_node_3 = invalid
+    status__success_failure_node_3 = invalid
+    status__sel4 = invalid
+    status__success_node_2 = invalid
+    status__success_failure_node_2 = invalid
+    status__seqLink2 = invalid
+    status__sel3 = invalid
+    status__success_node_1 = invalid
+    status__success_failure_node_1 = invalid
+    status__sel2 = invalid
+    status__success_node = invalid
+    status__success_failure_node = invalid
+    child_index_to_resume_from__seqLink8 = -2
+    child_index_to_resume_from__seqLink7 = -2
+    child_index_to_resume_from__seqLink5 = -2
+    child_index_to_resume_from__seqLink1 = -2
+    child_index_to_resume_from__sel1 = -2
+    child_index_to_resume_from__sel0 = -2
+    child_index_to_resume_from__sel8 = -2
+    child_index_to_resume_from__seqLink4 = -2
+    child_index_to_resume_from__sel7 = -2
+    child_index_to_resume_from__sel6 = -2
+    child_index_to_resume_from__seqLink6 = -2
+    child_index_to_resume_from__seqLink3 = -2
+    child_index_to_resume_from__sel5 = -2
+    child_index_to_resume_from__sel4 = -2
+    child_index_to_resume_from__seqLink2 = -2
+    child_index_to_resume_from__sel3 = -2
+    child_index_to_resume_from__sel2 = -2
+    resume_from_here_in_subtree__seqLink8 = -3
+    node_names.success_node_8 = 34
+    node_names.success_failure_node_8 = 33
+    node_names.sel1 = 32
+    node_names.success_node_7 = 31
+    node_names.success_failure_node_7 = 30
+    node_names.sel0 = 29
+    node_names.seqLink1 = 28
+    node_names.success_node_6 = 27
+    node_names.success_failure_node_6 = 26
+    node_names.sel8 = 25
+    node_names.seqLink5 = 24
+    node_names.success_node_5 = 23
+    node_names.success_failure_node_5 = 22
+    node_names.sel7 = 21
+    node_names.success_node_4 = 20
+    node_names.success_failure_node_4 = 19
+    node_names.sel6 = 18
+    node_names.seqLink4 = 17
+    node_names.seqLink7 = 16
+    node_names.success_node_3 = 15
+    node_names.success_failure_node_3 = 14
+    node_names.sel5 = 13
+    node_names.success_node_2 = 12
+    node_names.success_failure_node_2 = 11
+    node_names.sel4 = 10
+    node_names.seqLink3 = 9
+    node_names.success_node_1 = 8
+    node_names.success_failure_node_1 = 7
+    node_names.sel3 = 6
+    node_names.success_node = 5
+    node_names.success_failure_node = 4
+    node_names.sel2 = 3
+    node_names.seqLink2 = 2
+    node_names.seqLink6 = 1
+    node_names.seqLink8 = 0
+  -> State: 4.2 <-
+    active_node = 0
+    success_node_8.reset = FALSE
+    success_failure_node_8.reset = FALSE
+    success_node_7.reset = FALSE
+    success_failure_node_7.reset = FALSE
+    success_node_6.reset = FALSE
+    success_failure_node_6.reset = FALSE
+    success_node_5.reset = FALSE
+    success_failure_node_5.reset = FALSE
+    success_node_4.reset = FALSE
+    success_failure_node_4.reset = FALSE
+    success_node_3.reset = FALSE
+    success_failure_node_3.reset = FALSE
+    success_node_2.reset = FALSE
+    success_failure_node_2.reset = FALSE
+    success_node_1.reset = FALSE
+    success_failure_node_1.reset = FALSE
+    success_node.reset = FALSE
+    success_failure_node.reset = FALSE
+  -> State: 4.3 <-
+    active_node = 1
+  -> State: 4.4 <-
+    active_node = 2
+  -> State: 4.5 <-
+    active_node = 3
+  -> State: 4.6 <-
+    active_node = 4
+    success_failure_node.active = TRUE
+  -> State: 4.7 <-
+    success_failure_node.status = failure
+    next_child__sel2 = 5
+    status__success_failure_node = failure
+  -> State: 4.8 <-
+    active_node = 3
+    success_failure_node.active = FALSE
+  -> State: 4.9 <-
+    active_node = 5
+    success_node.active = TRUE
+  -> State: 4.10 <-
+    success_node.status = success
+    next_child__seqLink2 = 6
+    status__sel2 = success
+    status__success_node = success
+  -> State: 4.11 <-
+    active_node = 3
+    success_node.active = FALSE
+  -> State: 4.12 <-
+    active_node = 2
+  -> State: 4.13 <-
+    active_node = 6
+  -> State: 4.14 <-
+    active_node = 7
+    success_failure_node_1.active = TRUE
+  -> State: 4.15 <-
+    success_failure_node_1.status = failure
+    next_child__sel3 = 8
+    status__success_failure_node_1 = failure
+  -> State: 4.16 <-
+    active_node = 6
+    success_failure_node_1.active = FALSE
+  -> State: 4.17 <-
+    active_node = 8
+    success_node_1.active = TRUE
+  -> State: 4.18 <-
+    success_node_1.status = success
+    next_child__seqLink6 = 9
+    status__seqLink2 = success
+    status__sel3 = success
+    status__success_node_1 = success
+  -> State: 4.19 <-
+    active_node = 6
+    success_node_1.active = FALSE
+  -> State: 4.20 <-
+    active_node = 2
+  -> State: 4.21 <-
+    active_node = 1
+  -> State: 4.22 <-
+    active_node = 9
+  -> State: 4.23 <-
+    active_node = 10
+  -> State: 4.24 <-
+    active_node = 11
+    success_failure_node_2.active = TRUE
+  -> State: 4.25 <-
+    success_failure_node_2.status = failure
+    next_child__sel4 = 12
+    status__success_failure_node_2 = failure
+  -> State: 4.26 <-
+    active_node = 10
+    success_failure_node_2.active = FALSE
+  -> State: 4.27 <-
+    active_node = 12
+    success_node_2.active = TRUE
+  -> State: 4.28 <-
+    success_node_2.status = success
+    next_child__seqLink3 = 13
+    status__sel4 = success
+    status__success_node_2 = success
+  -> State: 4.29 <-
+    active_node = 10
+    success_node_2.active = FALSE
+  -> State: 4.30 <-
+    active_node = 9
+  -> State: 4.31 <-
+    active_node = 13
+  -> State: 4.32 <-
+    active_node = 14
+    success_failure_node_3.active = TRUE
+  -> State: 4.33 <-
+    success_failure_node_3.status = failure
+    next_child__sel5 = 15
+    status__success_failure_node_3 = failure
+-- specification AG (success_failure_node_4.status = failure -> A [ active_node > 0 U success_node_4.status = success ] )  is true
+-- specification AG (success_failure_node_4.status = failure -> !A [ active_node > 0 U success_node_4.status = success ] )  is false
+-- as demonstrated by the following execution sequence
+Trace Description: CTL Counterexample 
+Trace Type: Counterexample 
+  -> State: 5.1 <-
+    active_node = -1
+    success_failure_node.status = invalid
+    success_node.status = invalid
+    success_failure_node_1.status = invalid
+    success_node_1.status = invalid
+    success_failure_node_2.status = invalid
+    success_node_2.status = invalid
+    success_failure_node_3.status = invalid
+    success_node_3.status = invalid
+    success_failure_node_4.status = invalid
+    success_node_4.status = invalid
+    success_failure_node_5.status = invalid
+    success_node_5.status = invalid
+    success_failure_node_6.status = invalid
+    success_node_6.status = invalid
+    success_failure_node_7.status = invalid
+    success_node_7.status = invalid
+    success_failure_node_8.status = invalid
+    success_node_8.status = invalid
+    randomizer = FALSE
+    success_node_8.reset = TRUE
+    success_node_8.active = FALSE
+    success_failure_node_8.reset = TRUE
+    success_failure_node_8.active = FALSE
+    success_node_7.reset = TRUE
+    success_node_7.active = FALSE
+    success_failure_node_7.reset = TRUE
+    success_failure_node_7.active = FALSE
+    success_node_6.reset = TRUE
+    success_node_6.active = FALSE
+    success_failure_node_6.reset = TRUE
+    success_failure_node_6.active = FALSE
+    success_node_5.reset = TRUE
+    success_node_5.active = FALSE
+    success_failure_node_5.reset = TRUE
+    success_failure_node_5.active = FALSE
+    success_node_4.reset = TRUE
+    success_node_4.active = FALSE
+    success_failure_node_4.reset = TRUE
+    success_failure_node_4.active = FALSE
+    success_node_3.reset = TRUE
+    success_node_3.active = FALSE
+    success_failure_node_3.reset = TRUE
+    success_failure_node_3.active = FALSE
+    success_node_2.reset = TRUE
+    success_node_2.active = FALSE
+    success_failure_node_2.reset = TRUE
+    success_failure_node_2.active = FALSE
+    success_node_1.reset = TRUE
+    success_node_1.active = FALSE
+    success_failure_node_1.reset = TRUE
+    success_failure_node_1.active = FALSE
+    success_node.reset = TRUE
+    success_node.active = FALSE
+    success_failure_node.reset = TRUE
+    success_failure_node.active = FALSE
+    next_child__seqLink8 = 1
+    next_child__seqLink7 = 17
+    next_child__seqLink5 = 25
+    next_child__seqLink1 = 29
+    next_child__sel1 = 33
+    next_child__sel0 = 30
+    next_child__sel8 = 26
+    next_child__seqLink4 = 18
+    next_child__sel7 = 22
+    next_child__sel6 = 19
+    next_child__seqLink6 = 2
+    next_child__seqLink3 = 10
+    next_child__sel5 = 14
+    next_child__sel4 = 11
+    next_child__seqLink2 = 3
+    next_child__sel3 = 7
+    next_child__sel2 = 4
+    status__seqLink8 = invalid
+    status__seqLink7 = invalid
+    status__seqLink5 = invalid
+    status__seqLink1 = invalid
+    status__sel1 = invalid
+    status__success_node_8 = invalid
+    status__success_failure_node_8 = invalid
+    status__sel0 = invalid
+    status__success_node_7 = invalid
+    status__success_failure_node_7 = invalid
+    status__sel8 = invalid
+    status__success_node_6 = invalid
+    status__success_failure_node_6 = invalid
+    status__seqLink4 = invalid
+    status__sel7 = invalid
+    status__success_node_5 = invalid
+    status__success_failure_node_5 = invalid
+    status__sel6 = invalid
+    status__success_node_4 = invalid
+    status__success_failure_node_4 = invalid
+    status__seqLink6 = invalid
+    status__seqLink3 = invalid
+    status__sel5 = invalid
+    status__success_node_3 = invalid
+    status__success_failure_node_3 = invalid
+    status__sel4 = invalid
+    status__success_node_2 = invalid
+    status__success_failure_node_2 = invalid
+    status__seqLink2 = invalid
+    status__sel3 = invalid
+    status__success_node_1 = invalid
+    status__success_failure_node_1 = invalid
+    status__sel2 = invalid
+    status__success_node = invalid
+    status__success_failure_node = invalid
+    child_index_to_resume_from__seqLink8 = -2
+    child_index_to_resume_from__seqLink7 = -2
+    child_index_to_resume_from__seqLink5 = -2
+    child_index_to_resume_from__seqLink1 = -2
+    child_index_to_resume_from__sel1 = -2
+    child_index_to_resume_from__sel0 = -2
+    child_index_to_resume_from__sel8 = -2
+    child_index_to_resume_from__seqLink4 = -2
+    child_index_to_resume_from__sel7 = -2
+    child_index_to_resume_from__sel6 = -2
+    child_index_to_resume_from__seqLink6 = -2
+    child_index_to_resume_from__seqLink3 = -2
+    child_index_to_resume_from__sel5 = -2
+    child_index_to_resume_from__sel4 = -2
+    child_index_to_resume_from__seqLink2 = -2
+    child_index_to_resume_from__sel3 = -2
+    child_index_to_resume_from__sel2 = -2
+    resume_from_here_in_subtree__seqLink8 = -3
+    node_names.success_node_8 = 34
+    node_names.success_failure_node_8 = 33
+    node_names.sel1 = 32
+    node_names.success_node_7 = 31
+    node_names.success_failure_node_7 = 30
+    node_names.sel0 = 29
+    node_names.seqLink1 = 28
+    node_names.success_node_6 = 27
+    node_names.success_failure_node_6 = 26
+    node_names.sel8 = 25
+    node_names.seqLink5 = 24
+    node_names.success_node_5 = 23
+    node_names.success_failure_node_5 = 22
+    node_names.sel7 = 21
+    node_names.success_node_4 = 20
+    node_names.success_failure_node_4 = 19
+    node_names.sel6 = 18
+    node_names.seqLink4 = 17
+    node_names.seqLink7 = 16
+    node_names.success_node_3 = 15
+    node_names.success_failure_node_3 = 14
+    node_names.sel5 = 13
+    node_names.success_node_2 = 12
+    node_names.success_failure_node_2 = 11
+    node_names.sel4 = 10
+    node_names.seqLink3 = 9
+    node_names.success_node_1 = 8
+    node_names.success_failure_node_1 = 7
+    node_names.sel3 = 6
+    node_names.success_node = 5
+    node_names.success_failure_node = 4
+    node_names.sel2 = 3
+    node_names.seqLink2 = 2
+    node_names.seqLink6 = 1
+    node_names.seqLink8 = 0
+  -> State: 5.2 <-
+    active_node = 0
+    success_node_8.reset = FALSE
+    success_failure_node_8.reset = FALSE
+    success_node_7.reset = FALSE
+    success_failure_node_7.reset = FALSE
+    success_node_6.reset = FALSE
+    success_failure_node_6.reset = FALSE
+    success_node_5.reset = FALSE
+    success_failure_node_5.reset = FALSE
+    success_node_4.reset = FALSE
+    success_failure_node_4.reset = FALSE
+    success_node_3.reset = FALSE
+    success_failure_node_3.reset = FALSE
+    success_node_2.reset = FALSE
+    success_failure_node_2.reset = FALSE
+    success_node_1.reset = FALSE
+    success_failure_node_1.reset = FALSE
+    success_node.reset = FALSE
+    success_failure_node.reset = FALSE
+  -> State: 5.3 <-
+    active_node = 1
+  -> State: 5.4 <-
+    active_node = 2
+  -> State: 5.5 <-
+    active_node = 3
+  -> State: 5.6 <-
+    active_node = 4
+    success_failure_node.active = TRUE
+  -> State: 5.7 <-
+    success_failure_node.status = failure
+    next_child__sel2 = 5
+    status__success_failure_node = failure
+  -> State: 5.8 <-
+    active_node = 3
+    success_failure_node.active = FALSE
+  -> State: 5.9 <-
+    active_node = 5
+    success_node.active = TRUE
+  -> State: 5.10 <-
+    success_node.status = success
+    next_child__seqLink2 = 6
+    status__sel2 = success
+    status__success_node = success
+  -> State: 5.11 <-
+    active_node = 3
+    success_node.active = FALSE
+  -> State: 5.12 <-
+    active_node = 2
+  -> State: 5.13 <-
+    active_node = 6
+  -> State: 5.14 <-
+    active_node = 7
+    success_failure_node_1.active = TRUE
+  -> State: 5.15 <-
+    success_failure_node_1.status = failure
+    next_child__sel3 = 8
+    status__success_failure_node_1 = failure
+  -> State: 5.16 <-
+    active_node = 6
+    success_failure_node_1.active = FALSE
+  -> State: 5.17 <-
+    active_node = 8
+    success_node_1.active = TRUE
+  -> State: 5.18 <-
+    success_node_1.status = success
+    next_child__seqLink6 = 9
+    status__seqLink2 = success
+    status__sel3 = success
+    status__success_node_1 = success
+  -> State: 5.19 <-
+    active_node = 6
+    success_node_1.active = FALSE
+  -> State: 5.20 <-
+    active_node = 2
+  -> State: 5.21 <-
+    active_node = 1
+  -> State: 5.22 <-
+    active_node = 9
+  -> State: 5.23 <-
+    active_node = 10
+  -> State: 5.24 <-
+    active_node = 11
+    success_failure_node_2.active = TRUE
+  -> State: 5.25 <-
+    success_failure_node_2.status = failure
+    next_child__sel4 = 12
+    status__success_failure_node_2 = failure
+  -> State: 5.26 <-
+    active_node = 10
+    success_failure_node_2.active = FALSE
+  -> State: 5.27 <-
+    active_node = 12
+    success_node_2.active = TRUE
+  -> State: 5.28 <-
+    success_node_2.status = success
+    next_child__seqLink3 = 13
+    status__sel4 = success
+    status__success_node_2 = success
+  -> State: 5.29 <-
+    active_node = 10
+    success_node_2.active = FALSE
+  -> State: 5.30 <-
+    active_node = 9
+  -> State: 5.31 <-
+    active_node = 13
+  -> State: 5.32 <-
+    active_node = 14
+    success_failure_node_3.active = TRUE
+  -> State: 5.33 <-
+    success_failure_node_3.status = failure
+    next_child__sel5 = 15
+    status__success_failure_node_3 = failure
+  -> State: 5.34 <-
+    active_node = 13
+    success_failure_node_3.active = FALSE
+  -> State: 5.35 <-
+    active_node = 15
+    success_node_3.active = TRUE
+  -> State: 5.36 <-
+    success_node_3.status = success
+    next_child__seqLink8 = 16
+    status__seqLink6 = success
+    status__seqLink3 = success
+    status__sel5 = success
+    status__success_node_3 = success
+  -> State: 5.37 <-
+    active_node = 13
+    success_node_3.active = FALSE
+  -> State: 5.38 <-
+    active_node = 9
+  -> State: 5.39 <-
+    active_node = 1
+  -> State: 5.40 <-
+    active_node = 0
+  -> State: 5.41 <-
+    active_node = 16
+  -> State: 5.42 <-
+    active_node = 17
+  -> State: 5.43 <-
+    active_node = 18
+  -> State: 5.44 <-
+    active_node = 19
+    success_failure_node_4.active = TRUE
+  -> State: 5.45 <-
+    success_failure_node_4.status = failure
+    next_child__sel6 = 20
+    status__success_failure_node_4 = failure
+-- specification AG (success_failure_node_5.status = failure -> A [ active_node > 0 U success_node_5.status = success ] )  is true
+-- specification AG (success_failure_node_5.status = failure -> !A [ active_node > 0 U success_node_5.status = success ] )  is false
+-- as demonstrated by the following execution sequence
+Trace Description: CTL Counterexample 
+Trace Type: Counterexample 
+  -> State: 6.1 <-
+    active_node = -1
+    success_failure_node.status = invalid
+    success_node.status = invalid
+    success_failure_node_1.status = invalid
+    success_node_1.status = invalid
+    success_failure_node_2.status = invalid
+    success_node_2.status = invalid
+    success_failure_node_3.status = invalid
+    success_node_3.status = invalid
+    success_failure_node_4.status = invalid
+    success_node_4.status = invalid
+    success_failure_node_5.status = invalid
+    success_node_5.status = invalid
+    success_failure_node_6.status = invalid
+    success_node_6.status = invalid
+    success_failure_node_7.status = invalid
+    success_node_7.status = invalid
+    success_failure_node_8.status = invalid
+    success_node_8.status = invalid
+    randomizer = FALSE
+    success_node_8.reset = TRUE
+    success_node_8.active = FALSE
+    success_failure_node_8.reset = TRUE
+    success_failure_node_8.active = FALSE
+    success_node_7.reset = TRUE
+    success_node_7.active = FALSE
+    success_failure_node_7.reset = TRUE
+    success_failure_node_7.active = FALSE
+    success_node_6.reset = TRUE
+    success_node_6.active = FALSE
+    success_failure_node_6.reset = TRUE
+    success_failure_node_6.active = FALSE
+    success_node_5.reset = TRUE
+    success_node_5.active = FALSE
+    success_failure_node_5.reset = TRUE
+    success_failure_node_5.active = FALSE
+    success_node_4.reset = TRUE
+    success_node_4.active = FALSE
+    success_failure_node_4.reset = TRUE
+    success_failure_node_4.active = FALSE
+    success_node_3.reset = TRUE
+    success_node_3.active = FALSE
+    success_failure_node_3.reset = TRUE
+    success_failure_node_3.active = FALSE
+    success_node_2.reset = TRUE
+    success_node_2.active = FALSE
+    success_failure_node_2.reset = TRUE
+    success_failure_node_2.active = FALSE
+    success_node_1.reset = TRUE
+    success_node_1.active = FALSE
+    success_failure_node_1.reset = TRUE
+    success_failure_node_1.active = FALSE
+    success_node.reset = TRUE
+    success_node.active = FALSE
+    success_failure_node.reset = TRUE
+    success_failure_node.active = FALSE
+    next_child__seqLink8 = 1
+    next_child__seqLink7 = 17
+    next_child__seqLink5 = 25
+    next_child__seqLink1 = 29
+    next_child__sel1 = 33
+    next_child__sel0 = 30
+    next_child__sel8 = 26
+    next_child__seqLink4 = 18
+    next_child__sel7 = 22
+    next_child__sel6 = 19
+    next_child__seqLink6 = 2
+    next_child__seqLink3 = 10
+    next_child__sel5 = 14
+    next_child__sel4 = 11
+    next_child__seqLink2 = 3
+    next_child__sel3 = 7
+    next_child__sel2 = 4
+    status__seqLink8 = invalid
+    status__seqLink7 = invalid
+    status__seqLink5 = invalid
+    status__seqLink1 = invalid
+    status__sel1 = invalid
+    status__success_node_8 = invalid
+    status__success_failure_node_8 = invalid
+    status__sel0 = invalid
+    status__success_node_7 = invalid
+    status__success_failure_node_7 = invalid
+    status__sel8 = invalid
+    status__success_node_6 = invalid
+    status__success_failure_node_6 = invalid
+    status__seqLink4 = invalid
+    status__sel7 = invalid
+    status__success_node_5 = invalid
+    status__success_failure_node_5 = invalid
+    status__sel6 = invalid
+    status__success_node_4 = invalid
+    status__success_failure_node_4 = invalid
+    status__seqLink6 = invalid
+    status__seqLink3 = invalid
+    status__sel5 = invalid
+    status__success_node_3 = invalid
+    status__success_failure_node_3 = invalid
+    status__sel4 = invalid
+    status__success_node_2 = invalid
+    status__success_failure_node_2 = invalid
+    status__seqLink2 = invalid
+    status__sel3 = invalid
+    status__success_node_1 = invalid
+    status__success_failure_node_1 = invalid
+    status__sel2 = invalid
+    status__success_node = invalid
+    status__success_failure_node = invalid
+    child_index_to_resume_from__seqLink8 = -2
+    child_index_to_resume_from__seqLink7 = -2
+    child_index_to_resume_from__seqLink5 = -2
+    child_index_to_resume_from__seqLink1 = -2
+    child_index_to_resume_from__sel1 = -2
+    child_index_to_resume_from__sel0 = -2
+    child_index_to_resume_from__sel8 = -2
+    child_index_to_resume_from__seqLink4 = -2
+    child_index_to_resume_from__sel7 = -2
+    child_index_to_resume_from__sel6 = -2
+    child_index_to_resume_from__seqLink6 = -2
+    child_index_to_resume_from__seqLink3 = -2
+    child_index_to_resume_from__sel5 = -2
+    child_index_to_resume_from__sel4 = -2
+    child_index_to_resume_from__seqLink2 = -2
+    child_index_to_resume_from__sel3 = -2
+    child_index_to_resume_from__sel2 = -2
+    resume_from_here_in_subtree__seqLink8 = -3
+    node_names.success_node_8 = 34
+    node_names.success_failure_node_8 = 33
+    node_names.sel1 = 32
+    node_names.success_node_7 = 31
+    node_names.success_failure_node_7 = 30
+    node_names.sel0 = 29
+    node_names.seqLink1 = 28
+    node_names.success_node_6 = 27
+    node_names.success_failure_node_6 = 26
+    node_names.sel8 = 25
+    node_names.seqLink5 = 24
+    node_names.success_node_5 = 23
+    node_names.success_failure_node_5 = 22
+    node_names.sel7 = 21
+    node_names.success_node_4 = 20
+    node_names.success_failure_node_4 = 19
+    node_names.sel6 = 18
+    node_names.seqLink4 = 17
+    node_names.seqLink7 = 16
+    node_names.success_node_3 = 15
+    node_names.success_failure_node_3 = 14
+    node_names.sel5 = 13
+    node_names.success_node_2 = 12
+    node_names.success_failure_node_2 = 11
+    node_names.sel4 = 10
+    node_names.seqLink3 = 9
+    node_names.success_node_1 = 8
+    node_names.success_failure_node_1 = 7
+    node_names.sel3 = 6
+    node_names.success_node = 5
+    node_names.success_failure_node = 4
+    node_names.sel2 = 3
+    node_names.seqLink2 = 2
+    node_names.seqLink6 = 1
+    node_names.seqLink8 = 0
+  -> State: 6.2 <-
+    active_node = 0
+    success_node_8.reset = FALSE
+    success_failure_node_8.reset = FALSE
+    success_node_7.reset = FALSE
+    success_failure_node_7.reset = FALSE
+    success_node_6.reset = FALSE
+    success_failure_node_6.reset = FALSE
+    success_node_5.reset = FALSE
+    success_failure_node_5.reset = FALSE
+    success_node_4.reset = FALSE
+    success_failure_node_4.reset = FALSE
+    success_node_3.reset = FALSE
+    success_failure_node_3.reset = FALSE
+    success_node_2.reset = FALSE
+    success_failure_node_2.reset = FALSE
+    success_node_1.reset = FALSE
+    success_failure_node_1.reset = FALSE
+    success_node.reset = FALSE
+    success_failure_node.reset = FALSE
+  -> State: 6.3 <-
+    active_node = 1
+  -> State: 6.4 <-
+    active_node = 2
+  -> State: 6.5 <-
+    active_node = 3
+  -> State: 6.6 <-
+    active_node = 4
+    success_failure_node.active = TRUE
+  -> State: 6.7 <-
+    success_failure_node.status = failure
+    next_child__sel2 = 5
+    status__success_failure_node = failure
+  -> State: 6.8 <-
+    active_node = 3
+    success_failure_node.active = FALSE
+  -> State: 6.9 <-
+    active_node = 5
+    success_node.active = TRUE
+  -> State: 6.10 <-
+    success_node.status = success
+    next_child__seqLink2 = 6
+    status__sel2 = success
+    status__success_node = success
+  -> State: 6.11 <-
+    active_node = 3
+    success_node.active = FALSE
+  -> State: 6.12 <-
+    active_node = 2
+  -> State: 6.13 <-
+    active_node = 6
+  -> State: 6.14 <-
+    active_node = 7
+    success_failure_node_1.active = TRUE
+  -> State: 6.15 <-
+    success_failure_node_1.status = failure
+    next_child__sel3 = 8
+    status__success_failure_node_1 = failure
+  -> State: 6.16 <-
+    active_node = 6
+    success_failure_node_1.active = FALSE
+  -> State: 6.17 <-
+    active_node = 8
+    success_node_1.active = TRUE
+  -> State: 6.18 <-
+    success_node_1.status = success
+    next_child__seqLink6 = 9
+    status__seqLink2 = success
+    status__sel3 = success
+    status__success_node_1 = success
+  -> State: 6.19 <-
+    active_node = 6
+    success_node_1.active = FALSE
+  -> State: 6.20 <-
+    active_node = 2
+  -> State: 6.21 <-
+    active_node = 1
+  -> State: 6.22 <-
+    active_node = 9
+  -> State: 6.23 <-
+    active_node = 10
+  -> State: 6.24 <-
+    active_node = 11
+    success_failure_node_2.active = TRUE
+  -> State: 6.25 <-
+    success_failure_node_2.status = failure
+    next_child__sel4 = 12
+    status__success_failure_node_2 = failure
+  -> State: 6.26 <-
+    active_node = 10
+    success_failure_node_2.active = FALSE
+  -> State: 6.27 <-
+    active_node = 12
+    success_node_2.active = TRUE
+  -> State: 6.28 <-
+    success_node_2.status = success
+    next_child__seqLink3 = 13
+    status__sel4 = success
+    status__success_node_2 = success
+  -> State: 6.29 <-
+    active_node = 10
+    success_node_2.active = FALSE
+  -> State: 6.30 <-
+    active_node = 9
+  -> State: 6.31 <-
+    active_node = 13
+  -> State: 6.32 <-
+    active_node = 14
+    success_failure_node_3.active = TRUE
+  -> State: 6.33 <-
+    success_failure_node_3.status = failure
+    next_child__sel5 = 15
+    status__success_failure_node_3 = failure
+  -> State: 6.34 <-
+    active_node = 13
+    success_failure_node_3.active = FALSE
+  -> State: 6.35 <-
+    active_node = 15
+    success_node_3.active = TRUE
+  -> State: 6.36 <-
+    success_node_3.status = success
+    next_child__seqLink8 = 16
+    status__seqLink6 = success
+    status__seqLink3 = success
+    status__sel5 = success
+    status__success_node_3 = success
+  -> State: 6.37 <-
+    active_node = 13
+    success_node_3.active = FALSE
+  -> State: 6.38 <-
+    active_node = 9
+  -> State: 6.39 <-
+    active_node = 1
+  -> State: 6.40 <-
+    active_node = 0
+  -> State: 6.41 <-
+    active_node = 16
+  -> State: 6.42 <-
+    active_node = 17
+  -> State: 6.43 <-
+    active_node = 18
+  -> State: 6.44 <-
+    active_node = 19
+    success_failure_node_4.active = TRUE
+  -> State: 6.45 <-
+    success_failure_node_4.status = failure
+    next_child__sel6 = 20
+    status__success_failure_node_4 = failure
+  -> State: 6.46 <-
+    active_node = 18
+    success_failure_node_4.active = FALSE
+  -> State: 6.47 <-
+    active_node = 20
+    success_node_4.active = TRUE
+  -> State: 6.48 <-
+    success_node_4.status = success
+    next_child__seqLink4 = 21
+    status__sel6 = success
+    status__success_node_4 = success
+  -> State: 6.49 <-
+    active_node = 18
+    success_node_4.active = FALSE
+  -> State: 6.50 <-
+    active_node = 17
+  -> State: 6.51 <-
+    active_node = 21
+  -> State: 6.52 <-
+    active_node = 22
+    success_failure_node_5.active = TRUE
+  -> State: 6.53 <-
+    success_failure_node_5.status = failure
+    next_child__sel7 = 23
+    status__success_failure_node_5 = failure
+-- specification AG (success_failure_node_6.status = failure -> A [ active_node > 0 U success_node_6.status = success ] )  is true
+-- specification AG (success_failure_node_6.status = failure -> !A [ active_node > 0 U success_node_6.status = success ] )  is false
+-- as demonstrated by the following execution sequence
+Trace Description: CTL Counterexample 
+Trace Type: Counterexample 
+  -> State: 7.1 <-
+    active_node = -1
+    success_failure_node.status = invalid
+    success_node.status = invalid
+    success_failure_node_1.status = invalid
+    success_node_1.status = invalid
+    success_failure_node_2.status = invalid
+    success_node_2.status = invalid
+    success_failure_node_3.status = invalid
+    success_node_3.status = invalid
+    success_failure_node_4.status = invalid
+    success_node_4.status = invalid
+    success_failure_node_5.status = invalid
+    success_node_5.status = invalid
+    success_failure_node_6.status = invalid
+    success_node_6.status = invalid
+    success_failure_node_7.status = invalid
+    success_node_7.status = invalid
+    success_failure_node_8.status = invalid
+    success_node_8.status = invalid
+    randomizer = FALSE
+    success_node_8.reset = TRUE
+    success_node_8.active = FALSE
+    success_failure_node_8.reset = TRUE
+    success_failure_node_8.active = FALSE
+    success_node_7.reset = TRUE
+    success_node_7.active = FALSE
+    success_failure_node_7.reset = TRUE
+    success_failure_node_7.active = FALSE
+    success_node_6.reset = TRUE
+    success_node_6.active = FALSE
+    success_failure_node_6.reset = TRUE
+    success_failure_node_6.active = FALSE
+    success_node_5.reset = TRUE
+    success_node_5.active = FALSE
+    success_failure_node_5.reset = TRUE
+    success_failure_node_5.active = FALSE
+    success_node_4.reset = TRUE
+    success_node_4.active = FALSE
+    success_failure_node_4.reset = TRUE
+    success_failure_node_4.active = FALSE
+    success_node_3.reset = TRUE
+    success_node_3.active = FALSE
+    success_failure_node_3.reset = TRUE
+    success_failure_node_3.active = FALSE
+    success_node_2.reset = TRUE
+    success_node_2.active = FALSE
+    success_failure_node_2.reset = TRUE
+    success_failure_node_2.active = FALSE
+    success_node_1.reset = TRUE
+    success_node_1.active = FALSE
+    success_failure_node_1.reset = TRUE
+    success_failure_node_1.active = FALSE
+    success_node.reset = TRUE
+    success_node.active = FALSE
+    success_failure_node.reset = TRUE
+    success_failure_node.active = FALSE
+    next_child__seqLink8 = 1
+    next_child__seqLink7 = 17
+    next_child__seqLink5 = 25
+    next_child__seqLink1 = 29
+    next_child__sel1 = 33
+    next_child__sel0 = 30
+    next_child__sel8 = 26
+    next_child__seqLink4 = 18
+    next_child__sel7 = 22
+    next_child__sel6 = 19
+    next_child__seqLink6 = 2
+    next_child__seqLink3 = 10
+    next_child__sel5 = 14
+    next_child__sel4 = 11
+    next_child__seqLink2 = 3
+    next_child__sel3 = 7
+    next_child__sel2 = 4
+    status__seqLink8 = invalid
+    status__seqLink7 = invalid
+    status__seqLink5 = invalid
+    status__seqLink1 = invalid
+    status__sel1 = invalid
+    status__success_node_8 = invalid
+    status__success_failure_node_8 = invalid
+    status__sel0 = invalid
+    status__success_node_7 = invalid
+    status__success_failure_node_7 = invalid
+    status__sel8 = invalid
+    status__success_node_6 = invalid
+    status__success_failure_node_6 = invalid
+    status__seqLink4 = invalid
+    status__sel7 = invalid
+    status__success_node_5 = invalid
+    status__success_failure_node_5 = invalid
+    status__sel6 = invalid
+    status__success_node_4 = invalid
+    status__success_failure_node_4 = invalid
+    status__seqLink6 = invalid
+    status__seqLink3 = invalid
+    status__sel5 = invalid
+    status__success_node_3 = invalid
+    status__success_failure_node_3 = invalid
+    status__sel4 = invalid
+    status__success_node_2 = invalid
+    status__success_failure_node_2 = invalid
+    status__seqLink2 = invalid
+    status__sel3 = invalid
+    status__success_node_1 = invalid
+    status__success_failure_node_1 = invalid
+    status__sel2 = invalid
+    status__success_node = invalid
+    status__success_failure_node = invalid
+    child_index_to_resume_from__seqLink8 = -2
+    child_index_to_resume_from__seqLink7 = -2
+    child_index_to_resume_from__seqLink5 = -2
+    child_index_to_resume_from__seqLink1 = -2
+    child_index_to_resume_from__sel1 = -2
+    child_index_to_resume_from__sel0 = -2
+    child_index_to_resume_from__sel8 = -2
+    child_index_to_resume_from__seqLink4 = -2
+    child_index_to_resume_from__sel7 = -2
+    child_index_to_resume_from__sel6 = -2
+    child_index_to_resume_from__seqLink6 = -2
+    child_index_to_resume_from__seqLink3 = -2
+    child_index_to_resume_from__sel5 = -2
+    child_index_to_resume_from__sel4 = -2
+    child_index_to_resume_from__seqLink2 = -2
+    child_index_to_resume_from__sel3 = -2
+    child_index_to_resume_from__sel2 = -2
+    resume_from_here_in_subtree__seqLink8 = -3
+    node_names.success_node_8 = 34
+    node_names.success_failure_node_8 = 33
+    node_names.sel1 = 32
+    node_names.success_node_7 = 31
+    node_names.success_failure_node_7 = 30
+    node_names.sel0 = 29
+    node_names.seqLink1 = 28
+    node_names.success_node_6 = 27
+    node_names.success_failure_node_6 = 26
+    node_names.sel8 = 25
+    node_names.seqLink5 = 24
+    node_names.success_node_5 = 23
+    node_names.success_failure_node_5 = 22
+    node_names.sel7 = 21
+    node_names.success_node_4 = 20
+    node_names.success_failure_node_4 = 19
+    node_names.sel6 = 18
+    node_names.seqLink4 = 17
+    node_names.seqLink7 = 16
+    node_names.success_node_3 = 15
+    node_names.success_failure_node_3 = 14
+    node_names.sel5 = 13
+    node_names.success_node_2 = 12
+    node_names.success_failure_node_2 = 11
+    node_names.sel4 = 10
+    node_names.seqLink3 = 9
+    node_names.success_node_1 = 8
+    node_names.success_failure_node_1 = 7
+    node_names.sel3 = 6
+    node_names.success_node = 5
+    node_names.success_failure_node = 4
+    node_names.sel2 = 3
+    node_names.seqLink2 = 2
+    node_names.seqLink6 = 1
+    node_names.seqLink8 = 0
+  -> State: 7.2 <-
+    active_node = 0
+    success_node_8.reset = FALSE
+    success_failure_node_8.reset = FALSE
+    success_node_7.reset = FALSE
+    success_failure_node_7.reset = FALSE
+    success_node_6.reset = FALSE
+    success_failure_node_6.reset = FALSE
+    success_node_5.reset = FALSE
+    success_failure_node_5.reset = FALSE
+    success_node_4.reset = FALSE
+    success_failure_node_4.reset = FALSE
+    success_node_3.reset = FALSE
+    success_failure_node_3.reset = FALSE
+    success_node_2.reset = FALSE
+    success_failure_node_2.reset = FALSE
+    success_node_1.reset = FALSE
+    success_failure_node_1.reset = FALSE
+    success_node.reset = FALSE
+    success_failure_node.reset = FALSE
+  -> State: 7.3 <-
+    active_node = 1
+  -> State: 7.4 <-
+    active_node = 2
+  -> State: 7.5 <-
+    active_node = 3
+  -> State: 7.6 <-
+    active_node = 4
+    success_failure_node.active = TRUE
+  -> State: 7.7 <-
+    success_failure_node.status = failure
+    next_child__sel2 = 5
+    status__success_failure_node = failure
+  -> State: 7.8 <-
+    active_node = 3
+    success_failure_node.active = FALSE
+  -> State: 7.9 <-
+    active_node = 5
+    success_node.active = TRUE
+  -> State: 7.10 <-
+    success_node.status = success
+    next_child__seqLink2 = 6
+    status__sel2 = success
+    status__success_node = success
+  -> State: 7.11 <-
+    active_node = 3
+    success_node.active = FALSE
+  -> State: 7.12 <-
+    active_node = 2
+  -> State: 7.13 <-
+    active_node = 6
+  -> State: 7.14 <-
+    active_node = 7
+    success_failure_node_1.active = TRUE
+  -> State: 7.15 <-
+    success_failure_node_1.status = failure
+    next_child__sel3 = 8
+    status__success_failure_node_1 = failure
+  -> State: 7.16 <-
+    active_node = 6
+    success_failure_node_1.active = FALSE
+  -> State: 7.17 <-
+    active_node = 8
+    success_node_1.active = TRUE
+  -> State: 7.18 <-
+    success_node_1.status = success
+    next_child__seqLink6 = 9
+    status__seqLink2 = success
+    status__sel3 = success
+    status__success_node_1 = success
+  -> State: 7.19 <-
+    active_node = 6
+    success_node_1.active = FALSE
+  -> State: 7.20 <-
+    active_node = 2
+  -> State: 7.21 <-
+    active_node = 1
+  -> State: 7.22 <-
+    active_node = 9
+  -> State: 7.23 <-
+    active_node = 10
+  -> State: 7.24 <-
+    active_node = 11
+    success_failure_node_2.active = TRUE
+  -> State: 7.25 <-
+    success_failure_node_2.status = failure
+    next_child__sel4 = 12
+    status__success_failure_node_2 = failure
+  -> State: 7.26 <-
+    active_node = 10
+    success_failure_node_2.active = FALSE
+  -> State: 7.27 <-
+    active_node = 12
+    success_node_2.active = TRUE
+  -> State: 7.28 <-
+    success_node_2.status = success
+    next_child__seqLink3 = 13
+    status__sel4 = success
+    status__success_node_2 = success
+  -> State: 7.29 <-
+    active_node = 10
+    success_node_2.active = FALSE
+  -> State: 7.30 <-
+    active_node = 9
+  -> State: 7.31 <-
+    active_node = 13
+  -> State: 7.32 <-
+    active_node = 14
+    success_failure_node_3.active = TRUE
+  -> State: 7.33 <-
+    success_failure_node_3.status = failure
+    next_child__sel5 = 15
+    status__success_failure_node_3 = failure
+  -> State: 7.34 <-
+    active_node = 13
+    success_failure_node_3.active = FALSE
+  -> State: 7.35 <-
+    active_node = 15
+    success_node_3.active = TRUE
+  -> State: 7.36 <-
+    success_node_3.status = success
+    next_child__seqLink8 = 16
+    status__seqLink6 = success
+    status__seqLink3 = success
+    status__sel5 = success
+    status__success_node_3 = success
+  -> State: 7.37 <-
+    active_node = 13
+    success_node_3.active = FALSE
+  -> State: 7.38 <-
+    active_node = 9
+  -> State: 7.39 <-
+    active_node = 1
+  -> State: 7.40 <-
+    active_node = 0
+  -> State: 7.41 <-
+    active_node = 16
+  -> State: 7.42 <-
+    active_node = 17
+  -> State: 7.43 <-
+    active_node = 18
+  -> State: 7.44 <-
+    active_node = 19
+    success_failure_node_4.active = TRUE
+  -> State: 7.45 <-
+    success_failure_node_4.status = failure
+    next_child__sel6 = 20
+    status__success_failure_node_4 = failure
+  -> State: 7.46 <-
+    active_node = 18
+    success_failure_node_4.active = FALSE
+  -> State: 7.47 <-
+    active_node = 20
+    success_node_4.active = TRUE
+  -> State: 7.48 <-
+    success_node_4.status = success
+    next_child__seqLink4 = 21
+    status__sel6 = success
+    status__success_node_4 = success
+  -> State: 7.49 <-
+    active_node = 18
+    success_node_4.active = FALSE
+  -> State: 7.50 <-
+    active_node = 17
+  -> State: 7.51 <-
+    active_node = 21
+  -> State: 7.52 <-
+    active_node = 22
+    success_failure_node_5.active = TRUE
+  -> State: 7.53 <-
+    success_failure_node_5.status = failure
+    next_child__sel7 = 23
+    status__success_failure_node_5 = failure
+  -> State: 7.54 <-
+    active_node = 21
+    success_failure_node_5.active = FALSE
+  -> State: 7.55 <-
+    active_node = 23
+    success_node_5.active = TRUE
+  -> State: 7.56 <-
+    success_node_5.status = success
+    next_child__seqLink7 = 24
+    status__seqLink4 = success
+    status__sel7 = success
+    status__success_node_5 = success
+  -> State: 7.57 <-
+    active_node = 21
+    success_node_5.active = FALSE
+  -> State: 7.58 <-
+    active_node = 17
+  -> State: 7.59 <-
+    active_node = 16
+  -> State: 7.60 <-
+    active_node = 24
+  -> State: 7.61 <-
+    active_node = 25
+  -> State: 7.62 <-
+    active_node = 26
+    success_failure_node_6.active = TRUE
+  -> State: 7.63 <-
+    success_failure_node_6.status = failure
+    next_child__sel8 = 27
+    status__success_failure_node_6 = failure
+-- specification AG (success_failure_node_7.status = failure -> A [ active_node > 0 U success_node_7.status = success ] )  is true
+-- specification AG (success_failure_node_7.status = failure -> !A [ active_node > 0 U success_node_7.status = success ] )  is false
+-- as demonstrated by the following execution sequence
+Trace Description: CTL Counterexample 
+Trace Type: Counterexample 
+  -> State: 8.1 <-
+    active_node = -1
+    success_failure_node.status = invalid
+    success_node.status = invalid
+    success_failure_node_1.status = invalid
+    success_node_1.status = invalid
+    success_failure_node_2.status = invalid
+    success_node_2.status = invalid
+    success_failure_node_3.status = invalid
+    success_node_3.status = invalid
+    success_failure_node_4.status = invalid
+    success_node_4.status = invalid
+    success_failure_node_5.status = invalid
+    success_node_5.status = invalid
+    success_failure_node_6.status = invalid
+    success_node_6.status = invalid
+    success_failure_node_7.status = invalid
+    success_node_7.status = invalid
+    success_failure_node_8.status = invalid
+    success_node_8.status = invalid
+    randomizer = FALSE
+    success_node_8.reset = TRUE
+    success_node_8.active = FALSE
+    success_failure_node_8.reset = TRUE
+    success_failure_node_8.active = FALSE
+    success_node_7.reset = TRUE
+    success_node_7.active = FALSE
+    success_failure_node_7.reset = TRUE
+    success_failure_node_7.active = FALSE
+    success_node_6.reset = TRUE
+    success_node_6.active = FALSE
+    success_failure_node_6.reset = TRUE
+    success_failure_node_6.active = FALSE
+    success_node_5.reset = TRUE
+    success_node_5.active = FALSE
+    success_failure_node_5.reset = TRUE
+    success_failure_node_5.active = FALSE
+    success_node_4.reset = TRUE
+    success_node_4.active = FALSE
+    success_failure_node_4.reset = TRUE
+    success_failure_node_4.active = FALSE
+    success_node_3.reset = TRUE
+    success_node_3.active = FALSE
+    success_failure_node_3.reset = TRUE
+    success_failure_node_3.active = FALSE
+    success_node_2.reset = TRUE
+    success_node_2.active = FALSE
+    success_failure_node_2.reset = TRUE
+    success_failure_node_2.active = FALSE
+    success_node_1.reset = TRUE
+    success_node_1.active = FALSE
+    success_failure_node_1.reset = TRUE
+    success_failure_node_1.active = FALSE
+    success_node.reset = TRUE
+    success_node.active = FALSE
+    success_failure_node.reset = TRUE
+    success_failure_node.active = FALSE
+    next_child__seqLink8 = 1
+    next_child__seqLink7 = 17
+    next_child__seqLink5 = 25
+    next_child__seqLink1 = 29
+    next_child__sel1 = 33
+    next_child__sel0 = 30
+    next_child__sel8 = 26
+    next_child__seqLink4 = 18
+    next_child__sel7 = 22
+    next_child__sel6 = 19
+    next_child__seqLink6 = 2
+    next_child__seqLink3 = 10
+    next_child__sel5 = 14
+    next_child__sel4 = 11
+    next_child__seqLink2 = 3
+    next_child__sel3 = 7
+    next_child__sel2 = 4
+    status__seqLink8 = invalid
+    status__seqLink7 = invalid
+    status__seqLink5 = invalid
+    status__seqLink1 = invalid
+    status__sel1 = invalid
+    status__success_node_8 = invalid
+    status__success_failure_node_8 = invalid
+    status__sel0 = invalid
+    status__success_node_7 = invalid
+    status__success_failure_node_7 = invalid
+    status__sel8 = invalid
+    status__success_node_6 = invalid
+    status__success_failure_node_6 = invalid
+    status__seqLink4 = invalid
+    status__sel7 = invalid
+    status__success_node_5 = invalid
+    status__success_failure_node_5 = invalid
+    status__sel6 = invalid
+    status__success_node_4 = invalid
+    status__success_failure_node_4 = invalid
+    status__seqLink6 = invalid
+    status__seqLink3 = invalid
+    status__sel5 = invalid
+    status__success_node_3 = invalid
+    status__success_failure_node_3 = invalid
+    status__sel4 = invalid
+    status__success_node_2 = invalid
+    status__success_failure_node_2 = invalid
+    status__seqLink2 = invalid
+    status__sel3 = invalid
+    status__success_node_1 = invalid
+    status__success_failure_node_1 = invalid
+    status__sel2 = invalid
+    status__success_node = invalid
+    status__success_failure_node = invalid
+    child_index_to_resume_from__seqLink8 = -2
+    child_index_to_resume_from__seqLink7 = -2
+    child_index_to_resume_from__seqLink5 = -2
+    child_index_to_resume_from__seqLink1 = -2
+    child_index_to_resume_from__sel1 = -2
+    child_index_to_resume_from__sel0 = -2
+    child_index_to_resume_from__sel8 = -2
+    child_index_to_resume_from__seqLink4 = -2
+    child_index_to_resume_from__sel7 = -2
+    child_index_to_resume_from__sel6 = -2
+    child_index_to_resume_from__seqLink6 = -2
+    child_index_to_resume_from__seqLink3 = -2
+    child_index_to_resume_from__sel5 = -2
+    child_index_to_resume_from__sel4 = -2
+    child_index_to_resume_from__seqLink2 = -2
+    child_index_to_resume_from__sel3 = -2
+    child_index_to_resume_from__sel2 = -2
+    resume_from_here_in_subtree__seqLink8 = -3
+    node_names.success_node_8 = 34
+    node_names.success_failure_node_8 = 33
+    node_names.sel1 = 32
+    node_names.success_node_7 = 31
+    node_names.success_failure_node_7 = 30
+    node_names.sel0 = 29
+    node_names.seqLink1 = 28
+    node_names.success_node_6 = 27
+    node_names.success_failure_node_6 = 26
+    node_names.sel8 = 25
+    node_names.seqLink5 = 24
+    node_names.success_node_5 = 23
+    node_names.success_failure_node_5 = 22
+    node_names.sel7 = 21
+    node_names.success_node_4 = 20
+    node_names.success_failure_node_4 = 19
+    node_names.sel6 = 18
+    node_names.seqLink4 = 17
+    node_names.seqLink7 = 16
+    node_names.success_node_3 = 15
+    node_names.success_failure_node_3 = 14
+    node_names.sel5 = 13
+    node_names.success_node_2 = 12
+    node_names.success_failure_node_2 = 11
+    node_names.sel4 = 10
+    node_names.seqLink3 = 9
+    node_names.success_node_1 = 8
+    node_names.success_failure_node_1 = 7
+    node_names.sel3 = 6
+    node_names.success_node = 5
+    node_names.success_failure_node = 4
+    node_names.sel2 = 3
+    node_names.seqLink2 = 2
+    node_names.seqLink6 = 1
+    node_names.seqLink8 = 0
+  -> State: 8.2 <-
+    active_node = 0
+    success_node_8.reset = FALSE
+    success_failure_node_8.reset = FALSE
+    success_node_7.reset = FALSE
+    success_failure_node_7.reset = FALSE
+    success_node_6.reset = FALSE
+    success_failure_node_6.reset = FALSE
+    success_node_5.reset = FALSE
+    success_failure_node_5.reset = FALSE
+    success_node_4.reset = FALSE
+    success_failure_node_4.reset = FALSE
+    success_node_3.reset = FALSE
+    success_failure_node_3.reset = FALSE
+    success_node_2.reset = FALSE
+    success_failure_node_2.reset = FALSE
+    success_node_1.reset = FALSE
+    success_failure_node_1.reset = FALSE
+    success_node.reset = FALSE
+    success_failure_node.reset = FALSE
+  -> State: 8.3 <-
+    active_node = 1
+  -> State: 8.4 <-
+    active_node = 2
+  -> State: 8.5 <-
+    active_node = 3
+  -> State: 8.6 <-
+    active_node = 4
+    success_failure_node.active = TRUE
+  -> State: 8.7 <-
+    success_failure_node.status = failure
+    next_child__sel2 = 5
+    status__success_failure_node = failure
+  -> State: 8.8 <-
+    active_node = 3
+    success_failure_node.active = FALSE
+  -> State: 8.9 <-
+    active_node = 5
+    success_node.active = TRUE
+  -> State: 8.10 <-
+    success_node.status = success
+    next_child__seqLink2 = 6
+    status__sel2 = success
+    status__success_node = success
+  -> State: 8.11 <-
+    active_node = 3
+    success_node.active = FALSE
+  -> State: 8.12 <-
+    active_node = 2
+  -> State: 8.13 <-
+    active_node = 6
+  -> State: 8.14 <-
+    active_node = 7
+    success_failure_node_1.active = TRUE
+  -> State: 8.15 <-
+    success_failure_node_1.status = failure
+    next_child__sel3 = 8
+    status__success_failure_node_1 = failure
+  -> State: 8.16 <-
+    active_node = 6
+    success_failure_node_1.active = FALSE
+  -> State: 8.17 <-
+    active_node = 8
+    success_node_1.active = TRUE
+  -> State: 8.18 <-
+    success_node_1.status = success
+    next_child__seqLink6 = 9
+    status__seqLink2 = success
+    status__sel3 = success
+    status__success_node_1 = success
+  -> State: 8.19 <-
+    active_node = 6
+    success_node_1.active = FALSE
+  -> State: 8.20 <-
+    active_node = 2
+  -> State: 8.21 <-
+    active_node = 1
+  -> State: 8.22 <-
+    active_node = 9
+  -> State: 8.23 <-
+    active_node = 10
+  -> State: 8.24 <-
+    active_node = 11
+    success_failure_node_2.active = TRUE
+  -> State: 8.25 <-
+    success_failure_node_2.status = failure
+    next_child__sel4 = 12
+    status__success_failure_node_2 = failure
+  -> State: 8.26 <-
+    active_node = 10
+    success_failure_node_2.active = FALSE
+  -> State: 8.27 <-
+    active_node = 12
+    success_node_2.active = TRUE
+  -> State: 8.28 <-
+    success_node_2.status = success
+    next_child__seqLink3 = 13
+    status__sel4 = success
+    status__success_node_2 = success
+  -> State: 8.29 <-
+    active_node = 10
+    success_node_2.active = FALSE
+  -> State: 8.30 <-
+    active_node = 9
+  -> State: 8.31 <-
+    active_node = 13
+  -> State: 8.32 <-
+    active_node = 14
+    success_failure_node_3.active = TRUE
+  -> State: 8.33 <-
+    success_failure_node_3.status = failure
+    next_child__sel5 = 15
+    status__success_failure_node_3 = failure
+  -> State: 8.34 <-
+    active_node = 13
+    success_failure_node_3.active = FALSE
+  -> State: 8.35 <-
+    active_node = 15
+    success_node_3.active = TRUE
+  -> State: 8.36 <-
+    success_node_3.status = success
+    next_child__seqLink8 = 16
+    status__seqLink6 = success
+    status__seqLink3 = success
+    status__sel5 = success
+    status__success_node_3 = success
+  -> State: 8.37 <-
+    active_node = 13
+    success_node_3.active = FALSE
+  -> State: 8.38 <-
+    active_node = 9
+  -> State: 8.39 <-
+    active_node = 1
+  -> State: 8.40 <-
+    active_node = 0
+  -> State: 8.41 <-
+    active_node = 16
+  -> State: 8.42 <-
+    active_node = 17
+  -> State: 8.43 <-
+    active_node = 18
+  -> State: 8.44 <-
+    active_node = 19
+    success_failure_node_4.active = TRUE
+  -> State: 8.45 <-
+    success_failure_node_4.status = failure
+    next_child__sel6 = 20
+    status__success_failure_node_4 = failure
+  -> State: 8.46 <-
+    active_node = 18
+    success_failure_node_4.active = FALSE
+  -> State: 8.47 <-
+    active_node = 20
+    success_node_4.active = TRUE
+  -> State: 8.48 <-
+    success_node_4.status = success
+    next_child__seqLink4 = 21
+    status__sel6 = success
+    status__success_node_4 = success
+  -> State: 8.49 <-
+    active_node = 18
+    success_node_4.active = FALSE
+  -> State: 8.50 <-
+    active_node = 17
+  -> State: 8.51 <-
+    active_node = 21
+  -> State: 8.52 <-
+    active_node = 22
+    success_failure_node_5.active = TRUE
+  -> State: 8.53 <-
+    success_failure_node_5.status = failure
+    next_child__sel7 = 23
+    status__success_failure_node_5 = failure
+  -> State: 8.54 <-
+    active_node = 21
+    success_failure_node_5.active = FALSE
+  -> State: 8.55 <-
+    active_node = 23
+    success_node_5.active = TRUE
+  -> State: 8.56 <-
+    success_node_5.status = success
+    next_child__seqLink7 = 24
+    status__seqLink4 = success
+    status__sel7 = success
+    status__success_node_5 = success
+  -> State: 8.57 <-
+    active_node = 21
+    success_node_5.active = FALSE
+  -> State: 8.58 <-
+    active_node = 17
+  -> State: 8.59 <-
+    active_node = 16
+  -> State: 8.60 <-
+    active_node = 24
+  -> State: 8.61 <-
+    active_node = 25
+  -> State: 8.62 <-
+    active_node = 26
+    success_failure_node_6.active = TRUE
+  -> State: 8.63 <-
+    success_failure_node_6.status = failure
+    next_child__sel8 = 27
+    status__success_failure_node_6 = failure
+  -> State: 8.64 <-
+    active_node = 25
+    success_failure_node_6.active = FALSE
+  -> State: 8.65 <-
+    active_node = 27
+    success_node_6.active = TRUE
+  -> State: 8.66 <-
+    success_node_6.status = success
+    next_child__seqLink5 = 28
+    status__sel8 = success
+    status__success_node_6 = success
+  -> State: 8.67 <-
+    active_node = 25
+    success_node_6.active = FALSE
+  -> State: 8.68 <-
+    active_node = 24
+  -> State: 8.69 <-
+    active_node = 28
+  -> State: 8.70 <-
+    active_node = 29
+  -> State: 8.71 <-
+    active_node = 30
+    success_failure_node_7.active = TRUE
+  -> State: 8.72 <-
+    success_failure_node_7.status = failure
+    next_child__sel0 = 31
+    status__success_failure_node_7 = failure
+-- specification AG (success_failure_node_8.status = failure -> A [ active_node > 0 U success_node_8.status = success ] )  is true
+-- specification AG (success_failure_node_8.status = failure -> !A [ active_node > 0 U success_node_8.status = success ] )  is false
+-- as demonstrated by the following execution sequence
+Trace Description: CTL Counterexample 
+Trace Type: Counterexample 
+  -> State: 9.1 <-
+    active_node = -1
+    success_failure_node.status = invalid
+    success_node.status = invalid
+    success_failure_node_1.status = invalid
+    success_node_1.status = invalid
+    success_failure_node_2.status = invalid
+    success_node_2.status = invalid
+    success_failure_node_3.status = invalid
+    success_node_3.status = invalid
+    success_failure_node_4.status = invalid
+    success_node_4.status = invalid
+    success_failure_node_5.status = invalid
+    success_node_5.status = invalid
+    success_failure_node_6.status = invalid
+    success_node_6.status = invalid
+    success_failure_node_7.status = invalid
+    success_node_7.status = invalid
+    success_failure_node_8.status = invalid
+    success_node_8.status = invalid
+    randomizer = FALSE
+    success_node_8.reset = TRUE
+    success_node_8.active = FALSE
+    success_failure_node_8.reset = TRUE
+    success_failure_node_8.active = FALSE
+    success_node_7.reset = TRUE
+    success_node_7.active = FALSE
+    success_failure_node_7.reset = TRUE
+    success_failure_node_7.active = FALSE
+    success_node_6.reset = TRUE
+    success_node_6.active = FALSE
+    success_failure_node_6.reset = TRUE
+    success_failure_node_6.active = FALSE
+    success_node_5.reset = TRUE
+    success_node_5.active = FALSE
+    success_failure_node_5.reset = TRUE
+    success_failure_node_5.active = FALSE
+    success_node_4.reset = TRUE
+    success_node_4.active = FALSE
+    success_failure_node_4.reset = TRUE
+    success_failure_node_4.active = FALSE
+    success_node_3.reset = TRUE
+    success_node_3.active = FALSE
+    success_failure_node_3.reset = TRUE
+    success_failure_node_3.active = FALSE
+    success_node_2.reset = TRUE
+    success_node_2.active = FALSE
+    success_failure_node_2.reset = TRUE
+    success_failure_node_2.active = FALSE
+    success_node_1.reset = TRUE
+    success_node_1.active = FALSE
+    success_failure_node_1.reset = TRUE
+    success_failure_node_1.active = FALSE
+    success_node.reset = TRUE
+    success_node.active = FALSE
+    success_failure_node.reset = TRUE
+    success_failure_node.active = FALSE
+    next_child__seqLink8 = 1
+    next_child__seqLink7 = 17
+    next_child__seqLink5 = 25
+    next_child__seqLink1 = 29
+    next_child__sel1 = 33
+    next_child__sel0 = 30
+    next_child__sel8 = 26
+    next_child__seqLink4 = 18
+    next_child__sel7 = 22
+    next_child__sel6 = 19
+    next_child__seqLink6 = 2
+    next_child__seqLink3 = 10
+    next_child__sel5 = 14
+    next_child__sel4 = 11
+    next_child__seqLink2 = 3
+    next_child__sel3 = 7
+    next_child__sel2 = 4
+    status__seqLink8 = invalid
+    status__seqLink7 = invalid
+    status__seqLink5 = invalid
+    status__seqLink1 = invalid
+    status__sel1 = invalid
+    status__success_node_8 = invalid
+    status__success_failure_node_8 = invalid
+    status__sel0 = invalid
+    status__success_node_7 = invalid
+    status__success_failure_node_7 = invalid
+    status__sel8 = invalid
+    status__success_node_6 = invalid
+    status__success_failure_node_6 = invalid
+    status__seqLink4 = invalid
+    status__sel7 = invalid
+    status__success_node_5 = invalid
+    status__success_failure_node_5 = invalid
+    status__sel6 = invalid
+    status__success_node_4 = invalid
+    status__success_failure_node_4 = invalid
+    status__seqLink6 = invalid
+    status__seqLink3 = invalid
+    status__sel5 = invalid
+    status__success_node_3 = invalid
+    status__success_failure_node_3 = invalid
+    status__sel4 = invalid
+    status__success_node_2 = invalid
+    status__success_failure_node_2 = invalid
+    status__seqLink2 = invalid
+    status__sel3 = invalid
+    status__success_node_1 = invalid
+    status__success_failure_node_1 = invalid
+    status__sel2 = invalid
+    status__success_node = invalid
+    status__success_failure_node = invalid
+    child_index_to_resume_from__seqLink8 = -2
+    child_index_to_resume_from__seqLink7 = -2
+    child_index_to_resume_from__seqLink5 = -2
+    child_index_to_resume_from__seqLink1 = -2
+    child_index_to_resume_from__sel1 = -2
+    child_index_to_resume_from__sel0 = -2
+    child_index_to_resume_from__sel8 = -2
+    child_index_to_resume_from__seqLink4 = -2
+    child_index_to_resume_from__sel7 = -2
+    child_index_to_resume_from__sel6 = -2
+    child_index_to_resume_from__seqLink6 = -2
+    child_index_to_resume_from__seqLink3 = -2
+    child_index_to_resume_from__sel5 = -2
+    child_index_to_resume_from__sel4 = -2
+    child_index_to_resume_from__seqLink2 = -2
+    child_index_to_resume_from__sel3 = -2
+    child_index_to_resume_from__sel2 = -2
+    resume_from_here_in_subtree__seqLink8 = -3
+    node_names.success_node_8 = 34
+    node_names.success_failure_node_8 = 33
+    node_names.sel1 = 32
+    node_names.success_node_7 = 31
+    node_names.success_failure_node_7 = 30
+    node_names.sel0 = 29
+    node_names.seqLink1 = 28
+    node_names.success_node_6 = 27
+    node_names.success_failure_node_6 = 26
+    node_names.sel8 = 25
+    node_names.seqLink5 = 24
+    node_names.success_node_5 = 23
+    node_names.success_failure_node_5 = 22
+    node_names.sel7 = 21
+    node_names.success_node_4 = 20
+    node_names.success_failure_node_4 = 19
+    node_names.sel6 = 18
+    node_names.seqLink4 = 17
+    node_names.seqLink7 = 16
+    node_names.success_node_3 = 15
+    node_names.success_failure_node_3 = 14
+    node_names.sel5 = 13
+    node_names.success_node_2 = 12
+    node_names.success_failure_node_2 = 11
+    node_names.sel4 = 10
+    node_names.seqLink3 = 9
+    node_names.success_node_1 = 8
+    node_names.success_failure_node_1 = 7
+    node_names.sel3 = 6
+    node_names.success_node = 5
+    node_names.success_failure_node = 4
+    node_names.sel2 = 3
+    node_names.seqLink2 = 2
+    node_names.seqLink6 = 1
+    node_names.seqLink8 = 0
+  -> State: 9.2 <-
+    active_node = 0
+    success_node_8.reset = FALSE
+    success_failure_node_8.reset = FALSE
+    success_node_7.reset = FALSE
+    success_failure_node_7.reset = FALSE
+    success_node_6.reset = FALSE
+    success_failure_node_6.reset = FALSE
+    success_node_5.reset = FALSE
+    success_failure_node_5.reset = FALSE
+    success_node_4.reset = FALSE
+    success_failure_node_4.reset = FALSE
+    success_node_3.reset = FALSE
+    success_failure_node_3.reset = FALSE
+    success_node_2.reset = FALSE
+    success_failure_node_2.reset = FALSE
+    success_node_1.reset = FALSE
+    success_failure_node_1.reset = FALSE
+    success_node.reset = FALSE
+    success_failure_node.reset = FALSE
+  -> State: 9.3 <-
+    active_node = 1
+  -> State: 9.4 <-
+    active_node = 2
+  -> State: 9.5 <-
+    active_node = 3
+  -> State: 9.6 <-
+    active_node = 4
+    success_failure_node.active = TRUE
+  -> State: 9.7 <-
+    success_failure_node.status = failure
+    next_child__sel2 = 5
+    status__success_failure_node = failure
+  -> State: 9.8 <-
+    active_node = 3
+    success_failure_node.active = FALSE
+  -> State: 9.9 <-
+    active_node = 5
+    success_node.active = TRUE
+  -> State: 9.10 <-
+    success_node.status = success
+    next_child__seqLink2 = 6
+    status__sel2 = success
+    status__success_node = success
+  -> State: 9.11 <-
+    active_node = 3
+    success_node.active = FALSE
+  -> State: 9.12 <-
+    active_node = 2
+  -> State: 9.13 <-
+    active_node = 6
+  -> State: 9.14 <-
+    active_node = 7
+    success_failure_node_1.active = TRUE
+  -> State: 9.15 <-
+    success_failure_node_1.status = failure
+    next_child__sel3 = 8
+    status__success_failure_node_1 = failure
+  -> State: 9.16 <-
+    active_node = 6
+    success_failure_node_1.active = FALSE
+  -> State: 9.17 <-
+    active_node = 8
+    success_node_1.active = TRUE
+  -> State: 9.18 <-
+    success_node_1.status = success
+    next_child__seqLink6 = 9
+    status__seqLink2 = success
+    status__sel3 = success
+    status__success_node_1 = success
+  -> State: 9.19 <-
+    active_node = 6
+    success_node_1.active = FALSE
+  -> State: 9.20 <-
+    active_node = 2
+  -> State: 9.21 <-
+    active_node = 1
+  -> State: 9.22 <-
+    active_node = 9
+  -> State: 9.23 <-
+    active_node = 10
+  -> State: 9.24 <-
+    active_node = 11
+    success_failure_node_2.active = TRUE
+  -> State: 9.25 <-
+    success_failure_node_2.status = failure
+    next_child__sel4 = 12
+    status__success_failure_node_2 = failure
+  -> State: 9.26 <-
+    active_node = 10
+    success_failure_node_2.active = FALSE
+  -> State: 9.27 <-
+    active_node = 12
+    success_node_2.active = TRUE
+  -> State: 9.28 <-
+    success_node_2.status = success
+    next_child__seqLink3 = 13
+    status__sel4 = success
+    status__success_node_2 = success
+  -> State: 9.29 <-
+    active_node = 10
+    success_node_2.active = FALSE
+  -> State: 9.30 <-
+    active_node = 9
+  -> State: 9.31 <-
+    active_node = 13
+  -> State: 9.32 <-
+    active_node = 14
+    success_failure_node_3.active = TRUE
+  -> State: 9.33 <-
+    success_failure_node_3.status = failure
+    next_child__sel5 = 15
+    status__success_failure_node_3 = failure
+  -> State: 9.34 <-
+    active_node = 13
+    success_failure_node_3.active = FALSE
+  -> State: 9.35 <-
+    active_node = 15
+    success_node_3.active = TRUE
+  -> State: 9.36 <-
+    success_node_3.status = success
+    next_child__seqLink8 = 16
+    status__seqLink6 = success
+    status__seqLink3 = success
+    status__sel5 = success
+    status__success_node_3 = success
+  -> State: 9.37 <-
+    active_node = 13
+    success_node_3.active = FALSE
+  -> State: 9.38 <-
+    active_node = 9
+  -> State: 9.39 <-
+    active_node = 1
+  -> State: 9.40 <-
+    active_node = 0
+  -> State: 9.41 <-
+    active_node = 16
+  -> State: 9.42 <-
+    active_node = 17
+  -> State: 9.43 <-
+    active_node = 18
+  -> State: 9.44 <-
+    active_node = 19
+    success_failure_node_4.active = TRUE
+  -> State: 9.45 <-
+    success_failure_node_4.status = failure
+    next_child__sel6 = 20
+    status__success_failure_node_4 = failure
+  -> State: 9.46 <-
+    active_node = 18
+    success_failure_node_4.active = FALSE
+  -> State: 9.47 <-
+    active_node = 20
+    success_node_4.active = TRUE
+  -> State: 9.48 <-
+    success_node_4.status = success
+    next_child__seqLink4 = 21
+    status__sel6 = success
+    status__success_node_4 = success
+  -> State: 9.49 <-
+    active_node = 18
+    success_node_4.active = FALSE
+  -> State: 9.50 <-
+    active_node = 17
+  -> State: 9.51 <-
+    active_node = 21
+  -> State: 9.52 <-
+    active_node = 22
+    success_failure_node_5.active = TRUE
+  -> State: 9.53 <-
+    success_failure_node_5.status = failure
+    next_child__sel7 = 23
+    status__success_failure_node_5 = failure
+  -> State: 9.54 <-
+    active_node = 21
+    success_failure_node_5.active = FALSE
+  -> State: 9.55 <-
+    active_node = 23
+    success_node_5.active = TRUE
+  -> State: 9.56 <-
+    success_node_5.status = success
+    next_child__seqLink7 = 24
+    status__seqLink4 = success
+    status__sel7 = success
+    status__success_node_5 = success
+  -> State: 9.57 <-
+    active_node = 21
+    success_node_5.active = FALSE
+  -> State: 9.58 <-
+    active_node = 17
+  -> State: 9.59 <-
+    active_node = 16
+  -> State: 9.60 <-
+    active_node = 24
+  -> State: 9.61 <-
+    active_node = 25
+  -> State: 9.62 <-
+    active_node = 26
+    success_failure_node_6.active = TRUE
+  -> State: 9.63 <-
+    success_failure_node_6.status = failure
+    next_child__sel8 = 27
+    status__success_failure_node_6 = failure
+  -> State: 9.64 <-
+    active_node = 25
+    success_failure_node_6.active = FALSE
+  -> State: 9.65 <-
+    active_node = 27
+    success_node_6.active = TRUE
+  -> State: 9.66 <-
+    success_node_6.status = success
+    next_child__seqLink5 = 28
+    status__sel8 = success
+    status__success_node_6 = success
+  -> State: 9.67 <-
+    active_node = 25
+    success_node_6.active = FALSE
+  -> State: 9.68 <-
+    active_node = 24
+  -> State: 9.69 <-
+    active_node = 28
+  -> State: 9.70 <-
+    active_node = 29
+  -> State: 9.71 <-
+    active_node = 30
+    success_failure_node_7.active = TRUE
+  -> State: 9.72 <-
+    success_failure_node_7.status = failure
+    next_child__sel0 = 31
+    status__success_failure_node_7 = failure
+  -> State: 9.73 <-
+    active_node = 29
+    success_failure_node_7.active = FALSE
+  -> State: 9.74 <-
+    active_node = 31
+    success_node_7.active = TRUE
+  -> State: 9.75 <-
+    success_node_7.status = success
+    next_child__seqLink1 = 32
+    status__sel0 = success
+    status__success_node_7 = success
+  -> State: 9.76 <-
+    active_node = 29
+    success_node_7.active = FALSE
+  -> State: 9.77 <-
+    active_node = 28
+  -> State: 9.78 <-
+    active_node = 32
+  -> State: 9.79 <-
+    active_node = 33
+    success_failure_node_8.active = TRUE
+  -> State: 9.80 <-
+    success_failure_node_8.status = failure
+    next_child__sel1 = 34
+    status__success_failure_node_8 = failure

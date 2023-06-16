@@ -1,0 +1,1760 @@
+MODULE main
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		resume_from_here_in_subtree__biggest_fish_sequence := -3;
+		resume_from_here_in_subtree__decorator136 := -3;
+		resume_from_here_in_subtree__decorator137 := -3;
+		resume_from_here_in_subtree__decorator138 := -3;
+		resume_from_here_in_subtree__decorator139 := -3;
+		resume_from_here_in_subtree__parallel135 := -3;
+		resume_from_here_in_subtree__decorator132 := -3;
+		resume_from_here_in_subtree__decorator133 := -3;
+		resume_from_here_in_subtree__decorator134 := -3;
+		resume_from_here_in_subtree__decorator135 := -3;
+		resume_from_here_in_subtree__parallel131 := -3;
+		resume_from_here_in_subtree__decorator128 := -3;
+		resume_from_here_in_subtree__decorator129 := -3;
+		resume_from_here_in_subtree__decorator130 := -3;
+		resume_from_here_in_subtree__decorator131 := -3;
+		resume_from_here_in_subtree__parallel127 := -3;
+		resume_from_here_in_subtree__decorator124 := -3;
+		resume_from_here_in_subtree__decorator125 := -3;
+		resume_from_here_in_subtree__decorator126 := -3;
+		resume_from_here_in_subtree__decorator127 := -3;
+		resume_from_here_in_subtree__parallel123 := -3;
+		resume_from_here_in_subtree__decorator120 := -3;
+		resume_from_here_in_subtree__decorator121 := -3;
+		resume_from_here_in_subtree__decorator122 := -3;
+		resume_from_here_in_subtree__decorator123 := -3;
+		resume_from_here_in_subtree__parallel119 := -3;
+		resume_from_here_in_subtree__decorator116 := -3;
+		resume_from_here_in_subtree__decorator117 := -3;
+		resume_from_here_in_subtree__decorator118 := -3;
+		resume_from_here_in_subtree__decorator119 := -3;
+		resume_from_here_in_subtree__parallel115 := -3;
+		resume_from_here_in_subtree__decorator112 := -3;
+		resume_from_here_in_subtree__decorator113 := -3;
+		resume_from_here_in_subtree__decorator114 := -3;
+		resume_from_here_in_subtree__decorator115 := -3;
+		resume_from_here_in_subtree__parallel111 := -3;
+		resume_from_here_in_subtree__decorator108 := -3;
+		resume_from_here_in_subtree__decorator109 := -3;
+		resume_from_here_in_subtree__decorator110 := -3;
+		resume_from_here_in_subtree__decorator111 := -3;
+		resume_from_here_in_subtree__parallel107 := -3;
+		resume_from_here_in_subtree__decorator104 := -3;
+		resume_from_here_in_subtree__decorator105 := -3;
+		resume_from_here_in_subtree__decorator106 := -3;
+		resume_from_here_in_subtree__decorator107 := -3;
+		resume_from_here_in_subtree__parallel103 := -3;
+		resume_from_here_in_subtree__decorator100 := -3;
+		resume_from_here_in_subtree__decorator101 := -3;
+		resume_from_here_in_subtree__decorator102 := -3;
+		resume_from_here_in_subtree__decorator103 := -3;
+		resume_from_here_in_subtree__parallel99 := -3;
+		resume_from_here_in_subtree__decorator96 := -3;
+		resume_from_here_in_subtree__decorator97 := -3;
+		resume_from_here_in_subtree__decorator98 := -3;
+		resume_from_here_in_subtree__decorator99 := -3;
+		resume_from_here_in_subtree__parallel95 := -3;
+		resume_from_here_in_subtree__decorator92 := -3;
+		resume_from_here_in_subtree__decorator93 := -3;
+		resume_from_here_in_subtree__decorator94 := -3;
+		resume_from_here_in_subtree__decorator95 := -3;
+		resume_from_here_in_subtree__parallel91 := -3;
+		resume_from_here_in_subtree__decorator88 := -3;
+		resume_from_here_in_subtree__decorator89 := -3;
+		resume_from_here_in_subtree__decorator90 := -3;
+		resume_from_here_in_subtree__decorator91 := -3;
+		resume_from_here_in_subtree__parallel87 := -3;
+		resume_from_here_in_subtree__decorator84 := -3;
+		resume_from_here_in_subtree__decorator85 := -3;
+		resume_from_here_in_subtree__decorator86 := -3;
+		resume_from_here_in_subtree__decorator87 := -3;
+		resume_from_here_in_subtree__parallel83 := -3;
+		resume_from_here_in_subtree__decorator80 := -3;
+		resume_from_here_in_subtree__decorator81 := -3;
+		resume_from_here_in_subtree__decorator82 := -3;
+		resume_from_here_in_subtree__decorator83 := -3;
+		resume_from_here_in_subtree__parallel79 := -3;
+		resume_from_here_in_subtree__decorator76 := -3;
+		resume_from_here_in_subtree__decorator77 := -3;
+		resume_from_here_in_subtree__decorator78 := -3;
+		resume_from_here_in_subtree__decorator79 := -3;
+		resume_from_here_in_subtree__parallel75 := -3;
+		resume_from_here_in_subtree__decorator72 := -3;
+		resume_from_here_in_subtree__decorator73 := -3;
+		resume_from_here_in_subtree__decorator74 := -3;
+		resume_from_here_in_subtree__decorator75 := -3;
+		resume_from_here_in_subtree__parallel71 := -3;
+		resume_from_here_in_subtree__decorator68 := -3;
+		resume_from_here_in_subtree__decorator69 := -3;
+		resume_from_here_in_subtree__decorator70 := -3;
+		resume_from_here_in_subtree__decorator71 := -3;
+		resume_from_here_in_subtree__parallel67 := -3;
+		resume_from_here_in_subtree__decorator64 := -3;
+		resume_from_here_in_subtree__decorator65 := -3;
+		resume_from_here_in_subtree__decorator66 := -3;
+		resume_from_here_in_subtree__decorator67 := -3;
+		resume_from_here_in_subtree__parallel63 := -3;
+		resume_from_here_in_subtree__decorator60 := -3;
+		resume_from_here_in_subtree__decorator61 := -3;
+		resume_from_here_in_subtree__decorator62 := -3;
+		resume_from_here_in_subtree__decorator63 := -3;
+		resume_from_here_in_subtree__parallel59 := -3;
+		resume_from_here_in_subtree__decorator56 := -3;
+		resume_from_here_in_subtree__decorator57 := -3;
+		resume_from_here_in_subtree__decorator58 := -3;
+		resume_from_here_in_subtree__decorator59 := -3;
+		resume_from_here_in_subtree__parallel55 := -3;
+		resume_from_here_in_subtree__decorator52 := -3;
+		resume_from_here_in_subtree__decorator53 := -3;
+		resume_from_here_in_subtree__decorator54 := -3;
+		resume_from_here_in_subtree__decorator55 := -3;
+		resume_from_here_in_subtree__parallel51 := -3;
+		resume_from_here_in_subtree__decorator48 := -3;
+		resume_from_here_in_subtree__decorator49 := -3;
+		resume_from_here_in_subtree__decorator50 := -3;
+		resume_from_here_in_subtree__decorator51 := -3;
+		resume_from_here_in_subtree__parallel47 := -3;
+		resume_from_here_in_subtree__decorator44 := -3;
+		resume_from_here_in_subtree__decorator45 := -3;
+		resume_from_here_in_subtree__decorator46 := -3;
+		resume_from_here_in_subtree__decorator47 := -3;
+		resume_from_here_in_subtree__parallel43 := -3;
+		resume_from_here_in_subtree__decorator40 := -3;
+		resume_from_here_in_subtree__decorator41 := -3;
+		resume_from_here_in_subtree__decorator42 := -3;
+		resume_from_here_in_subtree__decorator43 := -3;
+		resume_from_here_in_subtree__parallel39 := -3;
+		resume_from_here_in_subtree__decorator36 := -3;
+		resume_from_here_in_subtree__decorator37 := -3;
+		resume_from_here_in_subtree__decorator38 := -3;
+		resume_from_here_in_subtree__decorator39 := -3;
+		resume_from_here_in_subtree__parallel35 := -3;
+		resume_from_here_in_subtree__decorator32 := -3;
+		resume_from_here_in_subtree__decorator33 := -3;
+		resume_from_here_in_subtree__decorator34 := -3;
+		resume_from_here_in_subtree__decorator35 := -3;
+		resume_from_here_in_subtree__parallel31 := -3;
+		resume_from_here_in_subtree__decorator28 := -3;
+		resume_from_here_in_subtree__decorator29 := -3;
+		resume_from_here_in_subtree__decorator30 := -3;
+		resume_from_here_in_subtree__decorator31 := -3;
+		resume_from_here_in_subtree__parallel27 := -3;
+		resume_from_here_in_subtree__decorator24 := -3;
+		resume_from_here_in_subtree__decorator25 := -3;
+		resume_from_here_in_subtree__decorator26 := -3;
+		resume_from_here_in_subtree__decorator27 := -3;
+		resume_from_here_in_subtree__parallel23 := -3;
+		resume_from_here_in_subtree__decorator20 := -3;
+		resume_from_here_in_subtree__decorator21 := -3;
+		resume_from_here_in_subtree__decorator22 := -3;
+		resume_from_here_in_subtree__decorator23 := -3;
+		resume_from_here_in_subtree__parallel19 := -3;
+		resume_from_here_in_subtree__decorator16 := -3;
+		resume_from_here_in_subtree__decorator17 := -3;
+		resume_from_here_in_subtree__decorator18 := -3;
+		resume_from_here_in_subtree__decorator19 := -3;
+		resume_from_here_in_subtree__parallel15 := -3;
+		resume_from_here_in_subtree__decorator12 := -3;
+		resume_from_here_in_subtree__decorator13 := -3;
+		resume_from_here_in_subtree__decorator14 := -3;
+		resume_from_here_in_subtree__decorator15 := -3;
+		resume_from_here_in_subtree__parallel11 := -3;
+		resume_from_here_in_subtree__decorator8 := -3;
+		resume_from_here_in_subtree__decorator9 := -3;
+		resume_from_here_in_subtree__decorator10 := -3;
+		resume_from_here_in_subtree__decorator11 := -3;
+		resume_from_here_in_subtree__parallel7 := -3;
+		resume_from_here_in_subtree__decorator4 := -3;
+		resume_from_here_in_subtree__decorator5 := -3;
+		resume_from_here_in_subtree__decorator6 := -3;
+		resume_from_here_in_subtree__decorator7 := -3;
+		resume_from_here_in_subtree__parallel3 := -3;
+		resume_from_here_in_subtree__decorator0 := -3;
+		resume_from_here_in_subtree__decorator1 := -3;
+		resume_from_here_in_subtree__decorator2 := -3;
+		resume_from_here_in_subtree__decorator3 := -3;
+		biggest_fish_sequence.active := TRUE;
+		--START OF BLACKBOARD DEFINITIONS
+		--END OF BLACKBOARD DEFINITIONS
+	VAR
+		node_names : define_nodes;
+		biggest_fish_is136 : biggest_fish_is136_module(biggest_fish_stage_0);
+		decorator136 : decorator_X_is_Y(biggest_fish_is136, failure, running);
+		biggest_fish_is137 : biggest_fish_is137_module(biggest_fish_stage_0);
+		decorator137 : decorator_X_is_Y(biggest_fish_is137, failure, running);
+		biggest_fish_is138 : biggest_fish_is138_module(biggest_fish_stage_0);
+		decorator138 : decorator_X_is_Y(biggest_fish_is138, failure, running);
+		biggest_fish_is139 : biggest_fish_is139_module(biggest_fish_stage_0);
+		decorator139 : decorator_X_is_Y(biggest_fish_is139, failure, running);
+		biggest_fish_is132 : biggest_fish_is132_module(biggest_fish_stage_0);
+		decorator132 : decorator_X_is_Y(biggest_fish_is132, failure, running);
+		biggest_fish_is133 : biggest_fish_is133_module(biggest_fish_stage_0);
+		decorator133 : decorator_X_is_Y(biggest_fish_is133, failure, running);
+		biggest_fish_is134 : biggest_fish_is134_module(biggest_fish_stage_0);
+		decorator134 : decorator_X_is_Y(biggest_fish_is134, failure, running);
+		biggest_fish_is135 : biggest_fish_is135_module(biggest_fish_stage_0);
+		decorator135 : decorator_X_is_Y(biggest_fish_is135, failure, running);
+		biggest_fish_is128 : biggest_fish_is128_module(biggest_fish_stage_0);
+		decorator128 : decorator_X_is_Y(biggest_fish_is128, failure, running);
+		biggest_fish_is129 : biggest_fish_is129_module(biggest_fish_stage_0);
+		decorator129 : decorator_X_is_Y(biggest_fish_is129, failure, running);
+		biggest_fish_is130 : biggest_fish_is130_module(biggest_fish_stage_0);
+		decorator130 : decorator_X_is_Y(biggest_fish_is130, failure, running);
+		biggest_fish_is131 : biggest_fish_is131_module(biggest_fish_stage_0);
+		decorator131 : decorator_X_is_Y(biggest_fish_is131, failure, running);
+		biggest_fish_is124 : biggest_fish_is124_module(biggest_fish_stage_0);
+		decorator124 : decorator_X_is_Y(biggest_fish_is124, failure, running);
+		biggest_fish_is125 : biggest_fish_is125_module(biggest_fish_stage_0);
+		decorator125 : decorator_X_is_Y(biggest_fish_is125, failure, running);
+		biggest_fish_is126 : biggest_fish_is126_module(biggest_fish_stage_0);
+		decorator126 : decorator_X_is_Y(biggest_fish_is126, failure, running);
+		biggest_fish_is127 : biggest_fish_is127_module(biggest_fish_stage_0);
+		decorator127 : decorator_X_is_Y(biggest_fish_is127, failure, running);
+		biggest_fish_is120 : biggest_fish_is120_module(biggest_fish_stage_0);
+		decorator120 : decorator_X_is_Y(biggest_fish_is120, failure, running);
+		biggest_fish_is121 : biggest_fish_is121_module(biggest_fish_stage_0);
+		decorator121 : decorator_X_is_Y(biggest_fish_is121, failure, running);
+		biggest_fish_is122 : biggest_fish_is122_module(biggest_fish_stage_0);
+		decorator122 : decorator_X_is_Y(biggest_fish_is122, failure, running);
+		biggest_fish_is123 : biggest_fish_is123_module(biggest_fish_stage_0);
+		decorator123 : decorator_X_is_Y(biggest_fish_is123, failure, running);
+		biggest_fish_is116 : biggest_fish_is116_module(biggest_fish_stage_0);
+		decorator116 : decorator_X_is_Y(biggest_fish_is116, failure, running);
+		biggest_fish_is117 : biggest_fish_is117_module(biggest_fish_stage_0);
+		decorator117 : decorator_X_is_Y(biggest_fish_is117, failure, running);
+		biggest_fish_is118 : biggest_fish_is118_module(biggest_fish_stage_0);
+		decorator118 : decorator_X_is_Y(biggest_fish_is118, failure, running);
+		biggest_fish_is119 : biggest_fish_is119_module(biggest_fish_stage_0);
+		decorator119 : decorator_X_is_Y(biggest_fish_is119, failure, running);
+		biggest_fish_is112 : biggest_fish_is112_module(biggest_fish_stage_0);
+		decorator112 : decorator_X_is_Y(biggest_fish_is112, failure, running);
+		biggest_fish_is113 : biggest_fish_is113_module(biggest_fish_stage_0);
+		decorator113 : decorator_X_is_Y(biggest_fish_is113, failure, running);
+		biggest_fish_is114 : biggest_fish_is114_module(biggest_fish_stage_0);
+		decorator114 : decorator_X_is_Y(biggest_fish_is114, failure, running);
+		biggest_fish_is115 : biggest_fish_is115_module(biggest_fish_stage_0);
+		decorator115 : decorator_X_is_Y(biggest_fish_is115, failure, running);
+		biggest_fish_is108 : biggest_fish_is108_module(biggest_fish_stage_0);
+		decorator108 : decorator_X_is_Y(biggest_fish_is108, failure, running);
+		biggest_fish_is109 : biggest_fish_is109_module(biggest_fish_stage_0);
+		decorator109 : decorator_X_is_Y(biggest_fish_is109, failure, running);
+		biggest_fish_is110 : biggest_fish_is110_module(biggest_fish_stage_0);
+		decorator110 : decorator_X_is_Y(biggest_fish_is110, failure, running);
+		biggest_fish_is111 : biggest_fish_is111_module(biggest_fish_stage_0);
+		decorator111 : decorator_X_is_Y(biggest_fish_is111, failure, running);
+		biggest_fish_is104 : biggest_fish_is104_module(biggest_fish_stage_0);
+		decorator104 : decorator_X_is_Y(biggest_fish_is104, failure, running);
+		biggest_fish_is105 : biggest_fish_is105_module(biggest_fish_stage_0);
+		decorator105 : decorator_X_is_Y(biggest_fish_is105, failure, running);
+		biggest_fish_is106 : biggest_fish_is106_module(biggest_fish_stage_0);
+		decorator106 : decorator_X_is_Y(biggest_fish_is106, failure, running);
+		biggest_fish_is107 : biggest_fish_is107_module(biggest_fish_stage_0);
+		decorator107 : decorator_X_is_Y(biggest_fish_is107, failure, running);
+		biggest_fish_is100 : biggest_fish_is100_module(biggest_fish_stage_0);
+		decorator100 : decorator_X_is_Y(biggest_fish_is100, failure, running);
+		biggest_fish_is101 : biggest_fish_is101_module(biggest_fish_stage_0);
+		decorator101 : decorator_X_is_Y(biggest_fish_is101, failure, running);
+		biggest_fish_is102 : biggest_fish_is102_module(biggest_fish_stage_0);
+		decorator102 : decorator_X_is_Y(biggest_fish_is102, failure, running);
+		biggest_fish_is103 : biggest_fish_is103_module(biggest_fish_stage_0);
+		decorator103 : decorator_X_is_Y(biggest_fish_is103, failure, running);
+		biggest_fish_is96 : biggest_fish_is96_module(biggest_fish_stage_0);
+		decorator96 : decorator_X_is_Y(biggest_fish_is96, failure, running);
+		biggest_fish_is97 : biggest_fish_is97_module(biggest_fish_stage_0);
+		decorator97 : decorator_X_is_Y(biggest_fish_is97, failure, running);
+		biggest_fish_is98 : biggest_fish_is98_module(biggest_fish_stage_0);
+		decorator98 : decorator_X_is_Y(biggest_fish_is98, failure, running);
+		biggest_fish_is99 : biggest_fish_is99_module(biggest_fish_stage_0);
+		decorator99 : decorator_X_is_Y(biggest_fish_is99, failure, running);
+		biggest_fish_is92 : biggest_fish_is92_module(biggest_fish_stage_0);
+		decorator92 : decorator_X_is_Y(biggest_fish_is92, failure, running);
+		biggest_fish_is93 : biggest_fish_is93_module(biggest_fish_stage_0);
+		decorator93 : decorator_X_is_Y(biggest_fish_is93, failure, running);
+		biggest_fish_is94 : biggest_fish_is94_module(biggest_fish_stage_0);
+		decorator94 : decorator_X_is_Y(biggest_fish_is94, failure, running);
+		biggest_fish_is95 : biggest_fish_is95_module(biggest_fish_stage_0);
+		decorator95 : decorator_X_is_Y(biggest_fish_is95, failure, running);
+		biggest_fish_is88 : biggest_fish_is88_module(biggest_fish_stage_0);
+		decorator88 : decorator_X_is_Y(biggest_fish_is88, failure, running);
+		biggest_fish_is89 : biggest_fish_is89_module(biggest_fish_stage_0);
+		decorator89 : decorator_X_is_Y(biggest_fish_is89, failure, running);
+		biggest_fish_is90 : biggest_fish_is90_module(biggest_fish_stage_0);
+		decorator90 : decorator_X_is_Y(biggest_fish_is90, failure, running);
+		biggest_fish_is91 : biggest_fish_is91_module(biggest_fish_stage_0);
+		decorator91 : decorator_X_is_Y(biggest_fish_is91, failure, running);
+		biggest_fish_is84 : biggest_fish_is84_module(biggest_fish_stage_0);
+		decorator84 : decorator_X_is_Y(biggest_fish_is84, failure, running);
+		biggest_fish_is85 : biggest_fish_is85_module(biggest_fish_stage_0);
+		decorator85 : decorator_X_is_Y(biggest_fish_is85, failure, running);
+		biggest_fish_is86 : biggest_fish_is86_module(biggest_fish_stage_0);
+		decorator86 : decorator_X_is_Y(biggest_fish_is86, failure, running);
+		biggest_fish_is87 : biggest_fish_is87_module(biggest_fish_stage_0);
+		decorator87 : decorator_X_is_Y(biggest_fish_is87, failure, running);
+		biggest_fish_is80 : biggest_fish_is80_module(biggest_fish_stage_0);
+		decorator80 : decorator_X_is_Y(biggest_fish_is80, failure, running);
+		biggest_fish_is81 : biggest_fish_is81_module(biggest_fish_stage_0);
+		decorator81 : decorator_X_is_Y(biggest_fish_is81, failure, running);
+		biggest_fish_is82 : biggest_fish_is82_module(biggest_fish_stage_0);
+		decorator82 : decorator_X_is_Y(biggest_fish_is82, failure, running);
+		biggest_fish_is83 : biggest_fish_is83_module(biggest_fish_stage_0);
+		decorator83 : decorator_X_is_Y(biggest_fish_is83, failure, running);
+		biggest_fish_is76 : biggest_fish_is76_module(biggest_fish_stage_0);
+		decorator76 : decorator_X_is_Y(biggest_fish_is76, failure, running);
+		biggest_fish_is77 : biggest_fish_is77_module(biggest_fish_stage_0);
+		decorator77 : decorator_X_is_Y(biggest_fish_is77, failure, running);
+		biggest_fish_is78 : biggest_fish_is78_module(biggest_fish_stage_0);
+		decorator78 : decorator_X_is_Y(biggest_fish_is78, failure, running);
+		biggest_fish_is79 : biggest_fish_is79_module(biggest_fish_stage_0);
+		decorator79 : decorator_X_is_Y(biggest_fish_is79, failure, running);
+		biggest_fish_is72 : biggest_fish_is72_module(biggest_fish_stage_0);
+		decorator72 : decorator_X_is_Y(biggest_fish_is72, failure, running);
+		biggest_fish_is73 : biggest_fish_is73_module(biggest_fish_stage_0);
+		decorator73 : decorator_X_is_Y(biggest_fish_is73, failure, running);
+		biggest_fish_is74 : biggest_fish_is74_module(biggest_fish_stage_0);
+		decorator74 : decorator_X_is_Y(biggest_fish_is74, failure, running);
+		biggest_fish_is75 : biggest_fish_is75_module(biggest_fish_stage_0);
+		decorator75 : decorator_X_is_Y(biggest_fish_is75, failure, running);
+		biggest_fish_is68 : biggest_fish_is68_module(biggest_fish_stage_0);
+		decorator68 : decorator_X_is_Y(biggest_fish_is68, failure, running);
+		biggest_fish_is69 : biggest_fish_is69_module(biggest_fish_stage_0);
+		decorator69 : decorator_X_is_Y(biggest_fish_is69, failure, running);
+		biggest_fish_is70 : biggest_fish_is70_module(biggest_fish_stage_0);
+		decorator70 : decorator_X_is_Y(biggest_fish_is70, failure, running);
+		biggest_fish_is71 : biggest_fish_is71_module(biggest_fish_stage_0);
+		decorator71 : decorator_X_is_Y(biggest_fish_is71, failure, running);
+		biggest_fish_is64 : biggest_fish_is64_module(biggest_fish_stage_0);
+		decorator64 : decorator_X_is_Y(biggest_fish_is64, failure, running);
+		biggest_fish_is65 : biggest_fish_is65_module(biggest_fish_stage_0);
+		decorator65 : decorator_X_is_Y(biggest_fish_is65, failure, running);
+		biggest_fish_is66 : biggest_fish_is66_module(biggest_fish_stage_0);
+		decorator66 : decorator_X_is_Y(biggest_fish_is66, failure, running);
+		biggest_fish_is67 : biggest_fish_is67_module(biggest_fish_stage_0);
+		decorator67 : decorator_X_is_Y(biggest_fish_is67, failure, running);
+		biggest_fish_is60 : biggest_fish_is60_module(biggest_fish_stage_0);
+		decorator60 : decorator_X_is_Y(biggest_fish_is60, failure, running);
+		biggest_fish_is61 : biggest_fish_is61_module(biggest_fish_stage_0);
+		decorator61 : decorator_X_is_Y(biggest_fish_is61, failure, running);
+		biggest_fish_is62 : biggest_fish_is62_module(biggest_fish_stage_0);
+		decorator62 : decorator_X_is_Y(biggest_fish_is62, failure, running);
+		biggest_fish_is63 : biggest_fish_is63_module(biggest_fish_stage_0);
+		decorator63 : decorator_X_is_Y(biggest_fish_is63, failure, running);
+		biggest_fish_is56 : biggest_fish_is56_module(biggest_fish_stage_0);
+		decorator56 : decorator_X_is_Y(biggest_fish_is56, failure, running);
+		biggest_fish_is57 : biggest_fish_is57_module(biggest_fish_stage_0);
+		decorator57 : decorator_X_is_Y(biggest_fish_is57, failure, running);
+		biggest_fish_is58 : biggest_fish_is58_module(biggest_fish_stage_0);
+		decorator58 : decorator_X_is_Y(biggest_fish_is58, failure, running);
+		biggest_fish_is59 : biggest_fish_is59_module(biggest_fish_stage_0);
+		decorator59 : decorator_X_is_Y(biggest_fish_is59, failure, running);
+		biggest_fish_is52 : biggest_fish_is52_module(biggest_fish_stage_0);
+		decorator52 : decorator_X_is_Y(biggest_fish_is52, failure, running);
+		biggest_fish_is53 : biggest_fish_is53_module(biggest_fish_stage_0);
+		decorator53 : decorator_X_is_Y(biggest_fish_is53, failure, running);
+		biggest_fish_is54 : biggest_fish_is54_module(biggest_fish_stage_0);
+		decorator54 : decorator_X_is_Y(biggest_fish_is54, failure, running);
+		biggest_fish_is55 : biggest_fish_is55_module(biggest_fish_stage_0);
+		decorator55 : decorator_X_is_Y(biggest_fish_is55, failure, running);
+		biggest_fish_is48 : biggest_fish_is48_module(biggest_fish_stage_0);
+		decorator48 : decorator_X_is_Y(biggest_fish_is48, failure, running);
+		biggest_fish_is49 : biggest_fish_is49_module(biggest_fish_stage_0);
+		decorator49 : decorator_X_is_Y(biggest_fish_is49, failure, running);
+		biggest_fish_is50 : biggest_fish_is50_module(biggest_fish_stage_0);
+		decorator50 : decorator_X_is_Y(biggest_fish_is50, failure, running);
+		biggest_fish_is51 : biggest_fish_is51_module(biggest_fish_stage_0);
+		decorator51 : decorator_X_is_Y(biggest_fish_is51, failure, running);
+		biggest_fish_is44 : biggest_fish_is44_module(biggest_fish_stage_0);
+		decorator44 : decorator_X_is_Y(biggest_fish_is44, failure, running);
+		biggest_fish_is45 : biggest_fish_is45_module(biggest_fish_stage_0);
+		decorator45 : decorator_X_is_Y(biggest_fish_is45, failure, running);
+		biggest_fish_is46 : biggest_fish_is46_module(biggest_fish_stage_0);
+		decorator46 : decorator_X_is_Y(biggest_fish_is46, failure, running);
+		biggest_fish_is47 : biggest_fish_is47_module(biggest_fish_stage_0);
+		decorator47 : decorator_X_is_Y(biggest_fish_is47, failure, running);
+		biggest_fish_is40 : biggest_fish_is40_module(biggest_fish_stage_0);
+		decorator40 : decorator_X_is_Y(biggest_fish_is40, failure, running);
+		biggest_fish_is41 : biggest_fish_is41_module(biggest_fish_stage_0);
+		decorator41 : decorator_X_is_Y(biggest_fish_is41, failure, running);
+		biggest_fish_is42 : biggest_fish_is42_module(biggest_fish_stage_0);
+		decorator42 : decorator_X_is_Y(biggest_fish_is42, failure, running);
+		biggest_fish_is43 : biggest_fish_is43_module(biggest_fish_stage_0);
+		decorator43 : decorator_X_is_Y(biggest_fish_is43, failure, running);
+		biggest_fish_is36 : biggest_fish_is36_module(biggest_fish_stage_0);
+		decorator36 : decorator_X_is_Y(biggest_fish_is36, failure, running);
+		biggest_fish_is37 : biggest_fish_is37_module(biggest_fish_stage_0);
+		decorator37 : decorator_X_is_Y(biggest_fish_is37, failure, running);
+		biggest_fish_is38 : biggest_fish_is38_module(biggest_fish_stage_0);
+		decorator38 : decorator_X_is_Y(biggest_fish_is38, failure, running);
+		biggest_fish_is39 : biggest_fish_is39_module(biggest_fish_stage_0);
+		decorator39 : decorator_X_is_Y(biggest_fish_is39, failure, running);
+		biggest_fish_is32 : biggest_fish_is32_module(biggest_fish_stage_0);
+		decorator32 : decorator_X_is_Y(biggest_fish_is32, failure, running);
+		biggest_fish_is33 : biggest_fish_is33_module(biggest_fish_stage_0);
+		decorator33 : decorator_X_is_Y(biggest_fish_is33, failure, running);
+		biggest_fish_is34 : biggest_fish_is34_module(biggest_fish_stage_0);
+		decorator34 : decorator_X_is_Y(biggest_fish_is34, failure, running);
+		biggest_fish_is35 : biggest_fish_is35_module(biggest_fish_stage_0);
+		decorator35 : decorator_X_is_Y(biggest_fish_is35, failure, running);
+		biggest_fish_is28 : biggest_fish_is28_module(biggest_fish_stage_0);
+		decorator28 : decorator_X_is_Y(biggest_fish_is28, failure, running);
+		biggest_fish_is29 : biggest_fish_is29_module(biggest_fish_stage_0);
+		decorator29 : decorator_X_is_Y(biggest_fish_is29, failure, running);
+		biggest_fish_is30 : biggest_fish_is30_module(biggest_fish_stage_0);
+		decorator30 : decorator_X_is_Y(biggest_fish_is30, failure, running);
+		biggest_fish_is31 : biggest_fish_is31_module(biggest_fish_stage_0);
+		decorator31 : decorator_X_is_Y(biggest_fish_is31, failure, running);
+		biggest_fish_is24 : biggest_fish_is24_module(biggest_fish_stage_0);
+		decorator24 : decorator_X_is_Y(biggest_fish_is24, failure, running);
+		biggest_fish_is25 : biggest_fish_is25_module(biggest_fish_stage_0);
+		decorator25 : decorator_X_is_Y(biggest_fish_is25, failure, running);
+		biggest_fish_is26 : biggest_fish_is26_module(biggest_fish_stage_0);
+		decorator26 : decorator_X_is_Y(biggest_fish_is26, failure, running);
+		biggest_fish_is27 : biggest_fish_is27_module(biggest_fish_stage_0);
+		decorator27 : decorator_X_is_Y(biggest_fish_is27, failure, running);
+		biggest_fish_is20 : biggest_fish_is20_module(biggest_fish_stage_0);
+		decorator20 : decorator_X_is_Y(biggest_fish_is20, failure, running);
+		biggest_fish_is21 : biggest_fish_is21_module(biggest_fish_stage_0);
+		decorator21 : decorator_X_is_Y(biggest_fish_is21, failure, running);
+		biggest_fish_is22 : biggest_fish_is22_module(biggest_fish_stage_0);
+		decorator22 : decorator_X_is_Y(biggest_fish_is22, failure, running);
+		biggest_fish_is23 : biggest_fish_is23_module(biggest_fish_stage_0);
+		decorator23 : decorator_X_is_Y(biggest_fish_is23, failure, running);
+		biggest_fish_is16 : biggest_fish_is16_module(biggest_fish_stage_0);
+		decorator16 : decorator_X_is_Y(biggest_fish_is16, failure, running);
+		biggest_fish_is17 : biggest_fish_is17_module(biggest_fish_stage_0);
+		decorator17 : decorator_X_is_Y(biggest_fish_is17, failure, running);
+		biggest_fish_is18 : biggest_fish_is18_module(biggest_fish_stage_0);
+		decorator18 : decorator_X_is_Y(biggest_fish_is18, failure, running);
+		biggest_fish_is19 : biggest_fish_is19_module(biggest_fish_stage_0);
+		decorator19 : decorator_X_is_Y(biggest_fish_is19, failure, running);
+		biggest_fish_is12 : biggest_fish_is12_module(biggest_fish_stage_0);
+		decorator12 : decorator_X_is_Y(biggest_fish_is12, failure, running);
+		biggest_fish_is13 : biggest_fish_is13_module(biggest_fish_stage_0);
+		decorator13 : decorator_X_is_Y(biggest_fish_is13, failure, running);
+		biggest_fish_is14 : biggest_fish_is14_module(biggest_fish_stage_0);
+		decorator14 : decorator_X_is_Y(biggest_fish_is14, failure, running);
+		biggest_fish_is15 : biggest_fish_is15_module(biggest_fish_stage_0);
+		decorator15 : decorator_X_is_Y(biggest_fish_is15, failure, running);
+		biggest_fish_is8 : biggest_fish_is8_module(biggest_fish_stage_0);
+		decorator8 : decorator_X_is_Y(biggest_fish_is8, failure, running);
+		biggest_fish_is9 : biggest_fish_is9_module(biggest_fish_stage_0);
+		decorator9 : decorator_X_is_Y(biggest_fish_is9, failure, running);
+		biggest_fish_is10 : biggest_fish_is10_module(biggest_fish_stage_0);
+		decorator10 : decorator_X_is_Y(biggest_fish_is10, failure, running);
+		biggest_fish_is11 : biggest_fish_is11_module(biggest_fish_stage_0);
+		decorator11 : decorator_X_is_Y(biggest_fish_is11, failure, running);
+		biggest_fish_is4 : biggest_fish_is4_module(biggest_fish_stage_0);
+		decorator4 : decorator_X_is_Y(biggest_fish_is4, failure, running);
+		biggest_fish_is5 : biggest_fish_is5_module(biggest_fish_stage_0);
+		decorator5 : decorator_X_is_Y(biggest_fish_is5, failure, running);
+		biggest_fish_is6 : biggest_fish_is6_module(biggest_fish_stage_0);
+		decorator6 : decorator_X_is_Y(biggest_fish_is6, failure, running);
+		biggest_fish_is7 : biggest_fish_is7_module(biggest_fish_stage_0);
+		decorator7 : decorator_X_is_Y(biggest_fish_is7, failure, running);
+		biggest_fish_is0 : biggest_fish_is0_module(biggest_fish_stage_0);
+		decorator0 : decorator_X_is_Y(biggest_fish_is0, failure, running);
+		biggest_fish_is1 : biggest_fish_is1_module(biggest_fish_stage_0);
+		decorator1 : decorator_X_is_Y(biggest_fish_is1, failure, running);
+		biggest_fish_is2 : biggest_fish_is2_module(biggest_fish_stage_0);
+		decorator2 : decorator_X_is_Y(biggest_fish_is2, failure, running);
+		biggest_fish_is3 : biggest_fish_is3_module(biggest_fish_stage_0);
+		decorator3 : decorator_X_is_Y(biggest_fish_is3, failure, running);
+		parallel3 : composite_parallel_success_on_one_without_memory_4(decorator0, decorator1, decorator2, decorator3);
+		parallel7 : composite_parallel_success_on_one_without_memory_5(decorator4, decorator5, decorator6, decorator7, parallel3);
+		parallel11 : composite_parallel_success_on_one_without_memory_5(decorator8, decorator9, decorator10, decorator11, parallel7);
+		parallel15 : composite_parallel_success_on_one_without_memory_5(decorator12, decorator13, decorator14, decorator15, parallel11);
+		parallel19 : composite_parallel_success_on_one_without_memory_5(decorator16, decorator17, decorator18, decorator19, parallel15);
+		parallel23 : composite_parallel_success_on_one_without_memory_5(decorator20, decorator21, decorator22, decorator23, parallel19);
+		parallel27 : composite_parallel_success_on_one_without_memory_5(decorator24, decorator25, decorator26, decorator27, parallel23);
+		parallel31 : composite_parallel_success_on_one_without_memory_5(decorator28, decorator29, decorator30, decorator31, parallel27);
+		parallel35 : composite_parallel_success_on_one_without_memory_5(decorator32, decorator33, decorator34, decorator35, parallel31);
+		parallel39 : composite_parallel_success_on_one_without_memory_5(decorator36, decorator37, decorator38, decorator39, parallel35);
+		parallel43 : composite_parallel_success_on_one_without_memory_5(decorator40, decorator41, decorator42, decorator43, parallel39);
+		parallel47 : composite_parallel_success_on_one_without_memory_5(decorator44, decorator45, decorator46, decorator47, parallel43);
+		parallel51 : composite_parallel_success_on_one_without_memory_5(decorator48, decorator49, decorator50, decorator51, parallel47);
+		parallel55 : composite_parallel_success_on_one_without_memory_5(decorator52, decorator53, decorator54, decorator55, parallel51);
+		parallel59 : composite_parallel_success_on_one_without_memory_5(decorator56, decorator57, decorator58, decorator59, parallel55);
+		parallel63 : composite_parallel_success_on_one_without_memory_5(decorator60, decorator61, decorator62, decorator63, parallel59);
+		parallel67 : composite_parallel_success_on_one_without_memory_5(decorator64, decorator65, decorator66, decorator67, parallel63);
+		parallel71 : composite_parallel_success_on_one_without_memory_5(decorator68, decorator69, decorator70, decorator71, parallel67);
+		parallel75 : composite_parallel_success_on_one_without_memory_5(decorator72, decorator73, decorator74, decorator75, parallel71);
+		parallel79 : composite_parallel_success_on_one_without_memory_5(decorator76, decorator77, decorator78, decorator79, parallel75);
+		parallel83 : composite_parallel_success_on_one_without_memory_5(decorator80, decorator81, decorator82, decorator83, parallel79);
+		parallel87 : composite_parallel_success_on_one_without_memory_5(decorator84, decorator85, decorator86, decorator87, parallel83);
+		parallel91 : composite_parallel_success_on_one_without_memory_5(decorator88, decorator89, decorator90, decorator91, parallel87);
+		parallel95 : composite_parallel_success_on_one_without_memory_5(decorator92, decorator93, decorator94, decorator95, parallel91);
+		parallel99 : composite_parallel_success_on_one_without_memory_5(decorator96, decorator97, decorator98, decorator99, parallel95);
+		parallel103 : composite_parallel_success_on_one_without_memory_5(decorator100, decorator101, decorator102, decorator103, parallel99);
+		parallel107 : composite_parallel_success_on_one_without_memory_5(decorator104, decorator105, decorator106, decorator107, parallel103);
+		parallel111 : composite_parallel_success_on_one_without_memory_5(decorator108, decorator109, decorator110, decorator111, parallel107);
+		parallel115 : composite_parallel_success_on_one_without_memory_5(decorator112, decorator113, decorator114, decorator115, parallel111);
+		parallel119 : composite_parallel_success_on_one_without_memory_5(decorator116, decorator117, decorator118, decorator119, parallel115);
+		parallel123 : composite_parallel_success_on_one_without_memory_5(decorator120, decorator121, decorator122, decorator123, parallel119);
+		parallel127 : composite_parallel_success_on_one_without_memory_5(decorator124, decorator125, decorator126, decorator127, parallel123);
+		parallel131 : composite_parallel_success_on_one_without_memory_5(decorator128, decorator129, decorator130, decorator131, parallel127);
+		parallel135 : composite_parallel_success_on_one_without_memory_5(decorator132, decorator133, decorator134, decorator135, parallel131);
+		parallel139 : composite_parallel_success_on_one_without_memory_5(decorator136, decorator137, decorator138, decorator139, parallel135);
+		special_decorator : decorator_X_is_Y(parallel139, running, failure);
+		bigger_fish : success_DEFAULT_module();
+		biggest_fish_sequence : composite_sequence_without_memory_2(special_decorator, bigger_fish);
+		--START OF BLACKBOARD VARIABLES DECLARATION
+		biggest_fish_stage_0 : 0..199;
+		--END OF BLACKBOARD VARIABLES DECLARATION
+	ASSIGN
+		--START OF BLACKBOARD VARIABLES INITIALIZATION
+		init(biggest_fish_stage_0) := 
+			case
+				TRUE : 0;
+			esac;
+		--END OF BLACKBOARD VARIABLES INITIALIZATION
+		--START OF BLACKBOARD VARIABLES TRANSITION
+		next(biggest_fish_stage_0) := 			case
+				!(bigger_fish.active) : biggest_fish_stage_0;
+				TRUE : min((1 + biggest_fish_stage_0), 199);
+			esac;
+		--END OF BLACKBOARD VARIABLES TRANSITION
+
+LTLSPEC F(G((biggest_fish_stage_0 = 140)));
+CTLSPEC AF(AG((biggest_fish_stage_0 = 140)));
+MODULE define_nodes
+	DEFINE
+		biggest_fish_sequence := 0;
+		special_decorator := 1;
+		parallel139 := 2;
+		decorator136 := 3;
+		biggest_fish_is136 := 4;
+		decorator137 := 5;
+		biggest_fish_is137 := 6;
+		decorator138 := 7;
+		biggest_fish_is138 := 8;
+		decorator139 := 9;
+		biggest_fish_is139 := 10;
+		parallel135 := 11;
+		decorator132 := 12;
+		biggest_fish_is132 := 13;
+		decorator133 := 14;
+		biggest_fish_is133 := 15;
+		decorator134 := 16;
+		biggest_fish_is134 := 17;
+		decorator135 := 18;
+		biggest_fish_is135 := 19;
+		parallel131 := 20;
+		decorator128 := 21;
+		biggest_fish_is128 := 22;
+		decorator129 := 23;
+		biggest_fish_is129 := 24;
+		decorator130 := 25;
+		biggest_fish_is130 := 26;
+		decorator131 := 27;
+		biggest_fish_is131 := 28;
+		parallel127 := 29;
+		decorator124 := 30;
+		biggest_fish_is124 := 31;
+		decorator125 := 32;
+		biggest_fish_is125 := 33;
+		decorator126 := 34;
+		biggest_fish_is126 := 35;
+		decorator127 := 36;
+		biggest_fish_is127 := 37;
+		parallel123 := 38;
+		decorator120 := 39;
+		biggest_fish_is120 := 40;
+		decorator121 := 41;
+		biggest_fish_is121 := 42;
+		decorator122 := 43;
+		biggest_fish_is122 := 44;
+		decorator123 := 45;
+		biggest_fish_is123 := 46;
+		parallel119 := 47;
+		decorator116 := 48;
+		biggest_fish_is116 := 49;
+		decorator117 := 50;
+		biggest_fish_is117 := 51;
+		decorator118 := 52;
+		biggest_fish_is118 := 53;
+		decorator119 := 54;
+		biggest_fish_is119 := 55;
+		parallel115 := 56;
+		decorator112 := 57;
+		biggest_fish_is112 := 58;
+		decorator113 := 59;
+		biggest_fish_is113 := 60;
+		decorator114 := 61;
+		biggest_fish_is114 := 62;
+		decorator115 := 63;
+		biggest_fish_is115 := 64;
+		parallel111 := 65;
+		decorator108 := 66;
+		biggest_fish_is108 := 67;
+		decorator109 := 68;
+		biggest_fish_is109 := 69;
+		decorator110 := 70;
+		biggest_fish_is110 := 71;
+		decorator111 := 72;
+		biggest_fish_is111 := 73;
+		parallel107 := 74;
+		decorator104 := 75;
+		biggest_fish_is104 := 76;
+		decorator105 := 77;
+		biggest_fish_is105 := 78;
+		decorator106 := 79;
+		biggest_fish_is106 := 80;
+		decorator107 := 81;
+		biggest_fish_is107 := 82;
+		parallel103 := 83;
+		decorator100 := 84;
+		biggest_fish_is100 := 85;
+		decorator101 := 86;
+		biggest_fish_is101 := 87;
+		decorator102 := 88;
+		biggest_fish_is102 := 89;
+		decorator103 := 90;
+		biggest_fish_is103 := 91;
+		parallel99 := 92;
+		decorator96 := 93;
+		biggest_fish_is96 := 94;
+		decorator97 := 95;
+		biggest_fish_is97 := 96;
+		decorator98 := 97;
+		biggest_fish_is98 := 98;
+		decorator99 := 99;
+		biggest_fish_is99 := 100;
+		parallel95 := 101;
+		decorator92 := 102;
+		biggest_fish_is92 := 103;
+		decorator93 := 104;
+		biggest_fish_is93 := 105;
+		decorator94 := 106;
+		biggest_fish_is94 := 107;
+		decorator95 := 108;
+		biggest_fish_is95 := 109;
+		parallel91 := 110;
+		decorator88 := 111;
+		biggest_fish_is88 := 112;
+		decorator89 := 113;
+		biggest_fish_is89 := 114;
+		decorator90 := 115;
+		biggest_fish_is90 := 116;
+		decorator91 := 117;
+		biggest_fish_is91 := 118;
+		parallel87 := 119;
+		decorator84 := 120;
+		biggest_fish_is84 := 121;
+		decorator85 := 122;
+		biggest_fish_is85 := 123;
+		decorator86 := 124;
+		biggest_fish_is86 := 125;
+		decorator87 := 126;
+		biggest_fish_is87 := 127;
+		parallel83 := 128;
+		decorator80 := 129;
+		biggest_fish_is80 := 130;
+		decorator81 := 131;
+		biggest_fish_is81 := 132;
+		decorator82 := 133;
+		biggest_fish_is82 := 134;
+		decorator83 := 135;
+		biggest_fish_is83 := 136;
+		parallel79 := 137;
+		decorator76 := 138;
+		biggest_fish_is76 := 139;
+		decorator77 := 140;
+		biggest_fish_is77 := 141;
+		decorator78 := 142;
+		biggest_fish_is78 := 143;
+		decorator79 := 144;
+		biggest_fish_is79 := 145;
+		parallel75 := 146;
+		decorator72 := 147;
+		biggest_fish_is72 := 148;
+		decorator73 := 149;
+		biggest_fish_is73 := 150;
+		decorator74 := 151;
+		biggest_fish_is74 := 152;
+		decorator75 := 153;
+		biggest_fish_is75 := 154;
+		parallel71 := 155;
+		decorator68 := 156;
+		biggest_fish_is68 := 157;
+		decorator69 := 158;
+		biggest_fish_is69 := 159;
+		decorator70 := 160;
+		biggest_fish_is70 := 161;
+		decorator71 := 162;
+		biggest_fish_is71 := 163;
+		parallel67 := 164;
+		decorator64 := 165;
+		biggest_fish_is64 := 166;
+		decorator65 := 167;
+		biggest_fish_is65 := 168;
+		decorator66 := 169;
+		biggest_fish_is66 := 170;
+		decorator67 := 171;
+		biggest_fish_is67 := 172;
+		parallel63 := 173;
+		decorator60 := 174;
+		biggest_fish_is60 := 175;
+		decorator61 := 176;
+		biggest_fish_is61 := 177;
+		decorator62 := 178;
+		biggest_fish_is62 := 179;
+		decorator63 := 180;
+		biggest_fish_is63 := 181;
+		parallel59 := 182;
+		decorator56 := 183;
+		biggest_fish_is56 := 184;
+		decorator57 := 185;
+		biggest_fish_is57 := 186;
+		decorator58 := 187;
+		biggest_fish_is58 := 188;
+		decorator59 := 189;
+		biggest_fish_is59 := 190;
+		parallel55 := 191;
+		decorator52 := 192;
+		biggest_fish_is52 := 193;
+		decorator53 := 194;
+		biggest_fish_is53 := 195;
+		decorator54 := 196;
+		biggest_fish_is54 := 197;
+		decorator55 := 198;
+		biggest_fish_is55 := 199;
+		parallel51 := 200;
+		decorator48 := 201;
+		biggest_fish_is48 := 202;
+		decorator49 := 203;
+		biggest_fish_is49 := 204;
+		decorator50 := 205;
+		biggest_fish_is50 := 206;
+		decorator51 := 207;
+		biggest_fish_is51 := 208;
+		parallel47 := 209;
+		decorator44 := 210;
+		biggest_fish_is44 := 211;
+		decorator45 := 212;
+		biggest_fish_is45 := 213;
+		decorator46 := 214;
+		biggest_fish_is46 := 215;
+		decorator47 := 216;
+		biggest_fish_is47 := 217;
+		parallel43 := 218;
+		decorator40 := 219;
+		biggest_fish_is40 := 220;
+		decorator41 := 221;
+		biggest_fish_is41 := 222;
+		decorator42 := 223;
+		biggest_fish_is42 := 224;
+		decorator43 := 225;
+		biggest_fish_is43 := 226;
+		parallel39 := 227;
+		decorator36 := 228;
+		biggest_fish_is36 := 229;
+		decorator37 := 230;
+		biggest_fish_is37 := 231;
+		decorator38 := 232;
+		biggest_fish_is38 := 233;
+		decorator39 := 234;
+		biggest_fish_is39 := 235;
+		parallel35 := 236;
+		decorator32 := 237;
+		biggest_fish_is32 := 238;
+		decorator33 := 239;
+		biggest_fish_is33 := 240;
+		decorator34 := 241;
+		biggest_fish_is34 := 242;
+		decorator35 := 243;
+		biggest_fish_is35 := 244;
+		parallel31 := 245;
+		decorator28 := 246;
+		biggest_fish_is28 := 247;
+		decorator29 := 248;
+		biggest_fish_is29 := 249;
+		decorator30 := 250;
+		biggest_fish_is30 := 251;
+		decorator31 := 252;
+		biggest_fish_is31 := 253;
+		parallel27 := 254;
+		decorator24 := 255;
+		biggest_fish_is24 := 256;
+		decorator25 := 257;
+		biggest_fish_is25 := 258;
+		decorator26 := 259;
+		biggest_fish_is26 := 260;
+		decorator27 := 261;
+		biggest_fish_is27 := 262;
+		parallel23 := 263;
+		decorator20 := 264;
+		biggest_fish_is20 := 265;
+		decorator21 := 266;
+		biggest_fish_is21 := 267;
+		decorator22 := 268;
+		biggest_fish_is22 := 269;
+		decorator23 := 270;
+		biggest_fish_is23 := 271;
+		parallel19 := 272;
+		decorator16 := 273;
+		biggest_fish_is16 := 274;
+		decorator17 := 275;
+		biggest_fish_is17 := 276;
+		decorator18 := 277;
+		biggest_fish_is18 := 278;
+		decorator19 := 279;
+		biggest_fish_is19 := 280;
+		parallel15 := 281;
+		decorator12 := 282;
+		biggest_fish_is12 := 283;
+		decorator13 := 284;
+		biggest_fish_is13 := 285;
+		decorator14 := 286;
+		biggest_fish_is14 := 287;
+		decorator15 := 288;
+		biggest_fish_is15 := 289;
+		parallel11 := 290;
+		decorator8 := 291;
+		biggest_fish_is8 := 292;
+		decorator9 := 293;
+		biggest_fish_is9 := 294;
+		decorator10 := 295;
+		biggest_fish_is10 := 296;
+		decorator11 := 297;
+		biggest_fish_is11 := 298;
+		parallel7 := 299;
+		decorator4 := 300;
+		biggest_fish_is4 := 301;
+		decorator5 := 302;
+		biggest_fish_is5 := 303;
+		decorator6 := 304;
+		biggest_fish_is6 := 305;
+		decorator7 := 306;
+		biggest_fish_is7 := 307;
+		parallel3 := 308;
+		decorator0 := 309;
+		biggest_fish_is0 := 310;
+		decorator1 := 311;
+		biggest_fish_is1 := 312;
+		decorator2 := 313;
+		biggest_fish_is2 := 314;
+		decorator3 := 315;
+		biggest_fish_is3 := 316;
+		bigger_fish := 317;
+MODULE composite_parallel_success_on_one_without_memory_5(child_0, child_1, child_2, child_3, child_4)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				(child_0.internal_status = failure) : failure;
+				(child_1.internal_status = failure) : failure;
+				(child_2.internal_status = failure) : failure;
+				(child_3.internal_status = failure) : failure;
+				(child_4.internal_status = failure) : failure;
+				!(child_0.internal_status = running) : child_0.internal_status;
+				!(child_1.internal_status = running) : child_1.internal_status;
+				!(child_2.internal_status = running) : child_2.internal_status;
+				!(child_3.internal_status = running) : child_3.internal_status;
+				!(child_4.internal_status = running) : child_4.internal_status;
+				TRUE : running;
+			esac;
+		child_0.active := active;
+		child_1.active := active;
+		child_2.active := active;
+		child_3.active := active;
+		child_4.active := active;
+MODULE composite_sequence_without_memory_2(child_0, child_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				!(child_0.internal_status = success) : child_0.internal_status;
+				!(child_1.internal_status = success) : child_1.internal_status;
+				TRUE : success;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = success;
+MODULE decorator_X_is_Y(child_0, incoming_status, outgoing_status)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				child_0.internal_status = incoming_status : outgoing_status;
+				TRUE : child_0.internal_status;
+			esac;
+		child_0.active :=
+			case
+				!(active) : FALSE;
+				TRUE : TRUE;
+			esac;
+MODULE composite_parallel_success_on_one_without_memory_4(child_0, child_1, child_2, child_3)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				(child_0.internal_status = failure) : failure;
+				(child_1.internal_status = failure) : failure;
+				(child_2.internal_status = failure) : failure;
+				(child_3.internal_status = failure) : failure;
+				!(child_0.internal_status = running) : child_0.internal_status;
+				!(child_1.internal_status = running) : child_1.internal_status;
+				!(child_2.internal_status = running) : child_2.internal_status;
+				!(child_3.internal_status = running) : child_3.internal_status;
+				TRUE : running;
+			esac;
+		child_0.active := active;
+		child_1.active := active;
+		child_2.active := active;
+		child_3.active := active;
+MODULE biggest_fish_is136_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 136)) ? success : failure;
+MODULE biggest_fish_is137_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 137)) ? success : failure;
+MODULE biggest_fish_is138_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 138)) ? success : failure;
+MODULE biggest_fish_is139_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 139)) ? success : failure;
+MODULE biggest_fish_is132_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 132)) ? success : failure;
+MODULE biggest_fish_is133_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 133)) ? success : failure;
+MODULE biggest_fish_is134_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 134)) ? success : failure;
+MODULE biggest_fish_is135_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 135)) ? success : failure;
+MODULE biggest_fish_is128_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 128)) ? success : failure;
+MODULE biggest_fish_is129_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 129)) ? success : failure;
+MODULE biggest_fish_is130_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 130)) ? success : failure;
+MODULE biggest_fish_is131_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 131)) ? success : failure;
+MODULE biggest_fish_is124_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 124)) ? success : failure;
+MODULE biggest_fish_is125_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 125)) ? success : failure;
+MODULE biggest_fish_is126_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 126)) ? success : failure;
+MODULE biggest_fish_is127_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 127)) ? success : failure;
+MODULE biggest_fish_is120_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 120)) ? success : failure;
+MODULE biggest_fish_is121_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 121)) ? success : failure;
+MODULE biggest_fish_is122_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 122)) ? success : failure;
+MODULE biggest_fish_is123_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 123)) ? success : failure;
+MODULE biggest_fish_is116_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 116)) ? success : failure;
+MODULE biggest_fish_is117_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 117)) ? success : failure;
+MODULE biggest_fish_is118_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 118)) ? success : failure;
+MODULE biggest_fish_is119_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 119)) ? success : failure;
+MODULE biggest_fish_is112_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 112)) ? success : failure;
+MODULE biggest_fish_is113_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 113)) ? success : failure;
+MODULE biggest_fish_is114_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 114)) ? success : failure;
+MODULE biggest_fish_is115_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 115)) ? success : failure;
+MODULE biggest_fish_is108_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 108)) ? success : failure;
+MODULE biggest_fish_is109_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 109)) ? success : failure;
+MODULE biggest_fish_is110_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 110)) ? success : failure;
+MODULE biggest_fish_is111_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 111)) ? success : failure;
+MODULE biggest_fish_is104_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 104)) ? success : failure;
+MODULE biggest_fish_is105_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 105)) ? success : failure;
+MODULE biggest_fish_is106_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 106)) ? success : failure;
+MODULE biggest_fish_is107_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 107)) ? success : failure;
+MODULE biggest_fish_is100_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 100)) ? success : failure;
+MODULE biggest_fish_is101_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 101)) ? success : failure;
+MODULE biggest_fish_is102_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 102)) ? success : failure;
+MODULE biggest_fish_is103_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 103)) ? success : failure;
+MODULE biggest_fish_is96_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 96)) ? success : failure;
+MODULE biggest_fish_is97_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 97)) ? success : failure;
+MODULE biggest_fish_is98_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 98)) ? success : failure;
+MODULE biggest_fish_is99_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 99)) ? success : failure;
+MODULE biggest_fish_is92_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 92)) ? success : failure;
+MODULE biggest_fish_is93_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 93)) ? success : failure;
+MODULE biggest_fish_is94_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 94)) ? success : failure;
+MODULE biggest_fish_is95_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 95)) ? success : failure;
+MODULE biggest_fish_is88_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 88)) ? success : failure;
+MODULE biggest_fish_is89_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 89)) ? success : failure;
+MODULE biggest_fish_is90_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 90)) ? success : failure;
+MODULE biggest_fish_is91_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 91)) ? success : failure;
+MODULE biggest_fish_is84_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 84)) ? success : failure;
+MODULE biggest_fish_is85_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 85)) ? success : failure;
+MODULE biggest_fish_is86_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 86)) ? success : failure;
+MODULE biggest_fish_is87_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 87)) ? success : failure;
+MODULE biggest_fish_is80_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 80)) ? success : failure;
+MODULE biggest_fish_is81_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 81)) ? success : failure;
+MODULE biggest_fish_is82_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 82)) ? success : failure;
+MODULE biggest_fish_is83_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 83)) ? success : failure;
+MODULE biggest_fish_is76_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 76)) ? success : failure;
+MODULE biggest_fish_is77_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 77)) ? success : failure;
+MODULE biggest_fish_is78_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 78)) ? success : failure;
+MODULE biggest_fish_is79_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 79)) ? success : failure;
+MODULE biggest_fish_is72_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 72)) ? success : failure;
+MODULE biggest_fish_is73_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 73)) ? success : failure;
+MODULE biggest_fish_is74_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 74)) ? success : failure;
+MODULE biggest_fish_is75_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 75)) ? success : failure;
+MODULE biggest_fish_is68_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 68)) ? success : failure;
+MODULE biggest_fish_is69_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 69)) ? success : failure;
+MODULE biggest_fish_is70_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 70)) ? success : failure;
+MODULE biggest_fish_is71_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 71)) ? success : failure;
+MODULE biggest_fish_is64_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 64)) ? success : failure;
+MODULE biggest_fish_is65_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 65)) ? success : failure;
+MODULE biggest_fish_is66_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 66)) ? success : failure;
+MODULE biggest_fish_is67_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 67)) ? success : failure;
+MODULE biggest_fish_is60_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 60)) ? success : failure;
+MODULE biggest_fish_is61_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 61)) ? success : failure;
+MODULE biggest_fish_is62_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 62)) ? success : failure;
+MODULE biggest_fish_is63_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 63)) ? success : failure;
+MODULE biggest_fish_is56_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 56)) ? success : failure;
+MODULE biggest_fish_is57_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 57)) ? success : failure;
+MODULE biggest_fish_is58_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 58)) ? success : failure;
+MODULE biggest_fish_is59_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 59)) ? success : failure;
+MODULE biggest_fish_is52_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 52)) ? success : failure;
+MODULE biggest_fish_is53_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 53)) ? success : failure;
+MODULE biggest_fish_is54_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 54)) ? success : failure;
+MODULE biggest_fish_is55_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 55)) ? success : failure;
+MODULE biggest_fish_is48_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 48)) ? success : failure;
+MODULE biggest_fish_is49_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 49)) ? success : failure;
+MODULE biggest_fish_is50_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 50)) ? success : failure;
+MODULE biggest_fish_is51_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 51)) ? success : failure;
+MODULE biggest_fish_is44_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 44)) ? success : failure;
+MODULE biggest_fish_is45_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 45)) ? success : failure;
+MODULE biggest_fish_is46_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 46)) ? success : failure;
+MODULE biggest_fish_is47_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 47)) ? success : failure;
+MODULE biggest_fish_is40_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 40)) ? success : failure;
+MODULE biggest_fish_is41_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 41)) ? success : failure;
+MODULE biggest_fish_is42_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 42)) ? success : failure;
+MODULE biggest_fish_is43_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 43)) ? success : failure;
+MODULE biggest_fish_is36_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 36)) ? success : failure;
+MODULE biggest_fish_is37_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 37)) ? success : failure;
+MODULE biggest_fish_is38_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 38)) ? success : failure;
+MODULE biggest_fish_is39_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 39)) ? success : failure;
+MODULE biggest_fish_is32_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 32)) ? success : failure;
+MODULE biggest_fish_is33_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 33)) ? success : failure;
+MODULE biggest_fish_is34_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 34)) ? success : failure;
+MODULE biggest_fish_is35_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 35)) ? success : failure;
+MODULE biggest_fish_is28_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 28)) ? success : failure;
+MODULE biggest_fish_is29_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 29)) ? success : failure;
+MODULE biggest_fish_is30_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 30)) ? success : failure;
+MODULE biggest_fish_is31_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 31)) ? success : failure;
+MODULE biggest_fish_is24_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 24)) ? success : failure;
+MODULE biggest_fish_is25_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 25)) ? success : failure;
+MODULE biggest_fish_is26_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 26)) ? success : failure;
+MODULE biggest_fish_is27_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 27)) ? success : failure;
+MODULE biggest_fish_is20_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 20)) ? success : failure;
+MODULE biggest_fish_is21_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 21)) ? success : failure;
+MODULE biggest_fish_is22_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 22)) ? success : failure;
+MODULE biggest_fish_is23_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 23)) ? success : failure;
+MODULE biggest_fish_is16_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 16)) ? success : failure;
+MODULE biggest_fish_is17_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 17)) ? success : failure;
+MODULE biggest_fish_is18_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 18)) ? success : failure;
+MODULE biggest_fish_is19_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 19)) ? success : failure;
+MODULE biggest_fish_is12_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 12)) ? success : failure;
+MODULE biggest_fish_is13_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 13)) ? success : failure;
+MODULE biggest_fish_is14_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 14)) ? success : failure;
+MODULE biggest_fish_is15_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 15)) ? success : failure;
+MODULE biggest_fish_is8_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 8)) ? success : failure;
+MODULE biggest_fish_is9_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 9)) ? success : failure;
+MODULE biggest_fish_is10_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 10)) ? success : failure;
+MODULE biggest_fish_is11_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 11)) ? success : failure;
+MODULE biggest_fish_is4_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 4)) ? success : failure;
+MODULE biggest_fish_is5_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 5)) ? success : failure;
+MODULE biggest_fish_is6_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 6)) ? success : failure;
+MODULE biggest_fish_is7_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 7)) ? success : failure;
+MODULE biggest_fish_is0_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 0)) ? success : failure;
+MODULE biggest_fish_is1_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 1)) ? success : failure;
+MODULE biggest_fish_is2_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 2)) ? success : failure;
+MODULE biggest_fish_is3_module(biggest_fish_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((biggest_fish_stage_0 = 3)) ? success : failure;
+MODULE success_DEFAULT_module
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := success;

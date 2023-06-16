@@ -1,0 +1,98 @@
+MODULE main
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		resume_from_here_in_subtree__sel0 := -3;
+		child_index_to_resume_from__sel0 := -2;
+		status__success_failure_node := success_failure_node.status;
+		status__success_node := success_node.status;
+		status__sel0 := 
+			case
+				status__success_failure_node != failure : status__success_failure_node;
+				status__success_node != failure : status__success_node;
+				TRUE : failure;
+			esac;
+		next_child__sel0 := 
+			case
+				(status__success_failure_node = invalid)& (child_index_to_resume_from__sel0 <= 0) : node_names.success_failure_node;
+				(status__success_node = invalid)& (child_index_to_resume_from__sel0 <= 1) : node_names.success_node;
+			esac;
+		success_failure_node.active := active_node = node_names.success_failure_node;
+		success_failure_node.reset := active_node = -1;
+		success_node.active := active_node = node_names.success_node;
+		success_node.reset := active_node = -1;
+		--START OF BLACKBOARD DEFINITIONS
+		--END OF BLACKBOARD DEFINITIONS
+	VAR
+		node_names : define_nodes;
+		active_node : -1..3;
+		success_failure_node : success_failure_node_module(randomizer);
+		success_node : success_DEFAULT_module;
+		--START OF BLACKBOARD VARIABLES DECLARATION
+		randomizer : boolean;
+		--END OF BLACKBOARD VARIABLES DECLARATION
+	ASSIGN
+		init(active_node) := -1;
+		--START OF BLACKBOARD VARIABLES INITIALIZATION
+		init(randomizer) := 
+			case
+				TRUE : FALSE;
+			esac;
+		--END OF BLACKBOARD VARIABLES INITIALIZATION
+		next(active_node) :=
+			case
+				active_node = -1 & TRUE : node_names.sel0;
+				active_node = -1 & !(TRUE) : -1;
+				(active_node = node_names.success_failure_node) & (status__success_failure_node != invalid) : node_names.sel0;
+				(active_node = node_names.success_node) & (status__success_node != invalid) : node_names.sel0;
+				(active_node = node_names.sel0) & (status__sel0 != invalid) : -1;
+				(active_node = node_names.sel0) & (status__sel0 = invalid) : next_child__sel0;
+				TRUE : active_node;
+			esac;
+		--START OF BLACKBOARD VARIABLES TRANSITION
+		next(randomizer) :=
+			case
+				(active_node = -1) & !(status__success_failure_node = invalid) & (!(TRUE)) : randomizer;
+				(active_node = -1) & !(status__success_failure_node = invalid) & (TRUE) : {TRUE, FALSE};
+				TRUE : randomizer;
+			esac;
+		--END OF BLACKBOARD VARIABLES TRANSITION
+
+LTLSPEC G(((success_failure_node.status = failure) -> ((active_node > 0) U (success_node.status = success))));
+LTLSPEC G(((success_failure_node.status = failure) -> !((active_node > 0) U (success_node.status = success))));
+CTLSPEC AG(((success_failure_node.status = failure) -> (A [(active_node > 0) U (success_node.status = success)])));
+CTLSPEC AG(((success_failure_node.status = failure) -> !(A [(active_node > 0) U (success_node.status = success)])));
+
+
+MODULE define_nodes
+	DEFINE
+		sel0 := 0;
+		success_failure_node := 1;
+		success_node := 2;
+MODULE success_failure_node_module(randomizer)
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		status : {success,failure,invalid};
+	ASSIGN
+		init(status) := invalid;
+		next(status) :=
+			case
+				reset : invalid;
+				!(active) : status;
+				randomizer : success;
+				TRUE : failure;
+			esac;
+MODULE success_DEFAULT_module
+	CONSTANTS
+		success, failure, running, invalid;
+	VAR
+		status : {success, invalid};
+	ASSIGN
+		init(status) := invalid;
+		next(status) := 
+			case
+				reset : invalid;
+				active : {success};
+				TRUE : status;
+			esac;
