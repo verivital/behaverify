@@ -25,4 +25,6 @@ for ((num=min_val; num<=max_val; num=(num + step_size))); do
     ./generate_encoding.sh "${path_name}" checklist_sequence_$num "${encodings[@]}"
     python3 "${path_name}/fix_checklist.py" "${path_name}/" checklist_parallel_$num.smv
     python3 "${path_name}/fix_checklist.py" "${path_name}/" checklist_sequence_$num.smv
+    ./make_optimized_smv.sh "${path_name}" checklist_parallel_$num
+    ./make_optimized_smv.sh "${path_name}" checklist_sequence_$num
 done

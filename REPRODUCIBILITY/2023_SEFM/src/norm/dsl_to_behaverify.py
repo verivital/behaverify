@@ -9,7 +9,7 @@ import textx
 from behaverify_to_smv import write_smv
 from check_model import (validate_model,
                          # constant_type,
-                         # variable_type,
+                         variable_type,
                          is_local,
                          # is_env,
                          # is_blackboard,
@@ -112,7 +112,7 @@ def create_misc_args(node_name, use_stages, use_next, not_next, overwrite_stage)
         'use_stages' : use_stages,
         'use_next' : use_next,
         'not_next' : not_next,
-        'overwrite_stage' : overwrite_stage,
+        'overwrite_stage' : overwrite_stage
     }
 
 
@@ -198,8 +198,12 @@ def format_variable(variable_obj, misc_args):
                 + '_stage_' + str(overwrite_stage)
                 + ('' if not use_next else ')'))
         used_vars = []
-        if is_array(variable_obj) and variable_obj.array_mode != 'range':
-            for assign in variable_obj.assigns:
+        var_statement = variable['initial_value']
+        var_assigns = var_statement.assigns
+        var_assign = var_statement.assign
+        var_array_mode = var_statement.array_mode
+        if is_array(variable_obj) and var_array_mode != 'range':
+            for assign in var_assigns:
                 if assign.default_result.range_mode != 'range':
                     for code_fragment in assign.default_result.values:
                         used_vars += find_used_variables(code_fragment, misc_args)
@@ -209,10 +213,10 @@ def format_variable(variable_obj, misc_args):
                             used_vars += find_used_variables(code_fragment, misc_args)
                     used_vars += find_used_variables(case_result.condition, misc_args)
         else:
-            if variable_obj.assign.default_result.range_mode != 'range':
-                for code_fragment in variable_obj.assign.default_result.values:
+            if var_assign.default_result.range_mode != 'range':
+                for code_fragment in var_assign.default_result.values:
                     used_vars += find_used_variables(code_fragment, misc_args)
-            for case_result in variable_obj.assign.case_results:
+            for case_result in var_assign.case_results:
                 if case_result.range_mode != 'range':
                     for code_fragment in case_result.values:
                         used_vars += find_used_variables(code_fragment, misc_args)
@@ -220,7 +224,7 @@ def format_variable(variable_obj, misc_args):
         used_vars = tuple(sorted(list(set(used_vars))))
         if used_vars not in variable['existing_definitions']:
             variable['existing_definitions'][used_vars] = len(variable['next_value'])
-            variable['next_value'].append(handle_variable_statement(variable_obj, variable_obj, None, misc_args))
+            variable['next_value'].append(handle_variable_statement(var_statement, variable_obj, None, misc_args))
         stage = variable['existing_definitions'][used_vars]
         return (
             ('' if not use_next else 'next(')
@@ -683,8 +687,10 @@ def get_variables(model, local_variables, initial_statements, keep_stage_0, keep
         if variable.model_as == 'DEFINE':
             if is_local(variable):
                 local_variable_templates[variable.name]['existing_definitions'] = {}
+                local_variable_templates[variable.name]['initial_value'] = None
             else:
                 variables[variable_reference(variable.name, False, '')]['existing_definitions'] = {}
+                variables[variable_reference(variable.name, False, '')]['initial_value'] = variable
         else:
             if is_local(variable):
                 local_variable_templates[variable.name]['initial_value'] = handle_variable_statement(variable, variable, None, create_misc_args(None, False, False, None, None))
@@ -697,6 +703,8 @@ def get_variables(model, local_variables, initial_statements, keep_stage_0, keep
         new_name = variable_reference(local_variable_pair[1].name, True, local_variable_pair[0])
         new_var = copy.deepcopy(local_variable_templates[local_variable_pair[1].name])
         new_var['name'] = new_name
+        if local_variable_pair[1].model_as == 'DEFINE':
+            new_var['initial_value'] = local_variable_pair[1]
         variables[new_name] = new_var
 
     # handle initial statements FOR DEFINE ONLY.
@@ -706,7 +714,8 @@ def get_variables(model, local_variables, initial_statements, keep_stage_0, keep
     for (node_name, initial_statement) in initial_statements:
         assign_var = initial_statement.variable
         if assign_var.model_as == 'DEFINE':
-            variables[variable_reference(assign_var.name, is_local(assign_var), node_name)]['initial_value'] = handle_variable_statement(initial_statement, assign_var, None, create_misc_args(node_name, False, False, None, None))
+            # variables[variable_reference(assign_var.name, is_local(assign_var), node_name)]['initial_value'] = handle_variable_statement(initial_statement, assign_var, None, create_misc_args(node_name, False, False, None, None))
+            variables[variable_reference(assign_var.name, is_local(assign_var), node_name)]['initial_value'] = initial_statement
 
     for (node_name, initial_statement) in initial_statements:
         assign_var = initial_statement.variable
@@ -940,16 +949,29 @@ def main(args):
     global_vars['spec_warn'] = False
     # global_vars['spec_warn_after'] = False
 
+    enum_constants = set()
+    for variable in model.variables:
+        if variable_type(variable) == 'ENUM' and variable.model_as != 'DEFINE':
+            enum_constants.update(variable.domain.enums)
+
     if args.behave_only:
         if args.output_file is None:
             printer = pprint.PrettyPrinter(indent = 4)
-            printer.pprint({'tick_condition' : tick_condition, 'nodes' : nodes, 'variables' : variables, 'specifications' : specifications})
+            printer.pprint({'nodes' : nodes
+                            , 'variables' : variables
+                            , 'enum_constants' : enum_constants
+                            , 'tick_condition' : tick_condition
+                            , 'specifications' : specifications})
         else:
             with open(args.output_file, 'w') as f:
                 printer = pprint.PrettyPrinter(indent = 4, stream = f)
-                printer.pprint({'tick_condition' : tick_condition, 'nodes' : nodes, 'variables' : variables, 'specifications' : specifications})
+                printer.pprint({'nodes' : nodes
+                                , 'variables' : variables
+                                , 'enum_constants' : enum_constants
+                                , 'tick_condition' : tick_condition
+                                , 'specifications' : specifications})
     else:
-        write_smv(nodes, variables, tick_condition, specifications, args.output_file, args.do_not_trim)
+        write_smv(nodes, variables, enum_constants, tick_condition, specifications, args.output_file, args.do_not_trim)
     return
 
 

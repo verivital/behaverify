@@ -78,21 +78,72 @@ def camel_case(variable_name):
     )
 
 
-def format_function_before(function_name, code, init_mode):
+def __format_function_before__(function_name, values, init_mode):
+    if len(values) <= 2:
+        return (
+            '('
+            + function_name + ' '
+            + ' '.join([format_code(value, init_mode) for value in values])
+            + ')'
+        )
+    cur_val = values.pop()
     return (
         '('
-        + function_name + ' '
-        + ' '.join([format_code(value, init_mode) for value in code.function_call.values])
+        + function_name + ' ' + format_code(cur_val, init_mode) + ' ' + __format_function_before__(function_name, values, init_mode)
         + ')'
+    )
+
+
+def format_function_before(function_name, code, init_mode):
+    if len(code.function_call.values) <= 2:
+        return (
+            '('
+            + function_name + ' '
+            + ' '.join([format_code(value, init_mode) for value in code.function_call.values])
+            + ')'
         )
+    return __format_function_before__(function_name, code.function_call.values, init_mode)
+
+
+def __format_function_between__(function_name, values, init_mode):
+    if len(values) <= 2:
+        return (
+            '('
+            + (' ' + function_name + ' ').join([format_code(value, init_mode) for value in values])
+            + ')'
+        )
+    cur_val = values.pop()
+    return (
+        '('
+        + format_code(cur_val, init_mode) + ' ' + function_name + ' ' + __format_function_between__(function_name, values, init_mode)
+        + ')'
+    )
 
 
 def format_function_between(function_name, code, init_mode):
-    return (
-        '('
-        + (' ' + function_name + ' ').join([format_code(value, init_mode) for value in code.function_call.values])
-        + ')'
+    if len(code.function_call.values) <= 2:
+        return (
+            '('
+            + (' ' + function_name + ' ').join([format_code(value, init_mode) for value in code.function_call.values])
+            + ')'
         )
+    return __format_function_between__(function_name, code.function_call.values, init_mode)
+
+
+def __format_function_count__(_, values, init_mode):
+    if len(values) <= 0:
+        return '0'
+    if len(values) == 1:
+        return '(sereneCOUNT False ' + format_code(values[0], init_mode) + ')'
+    if len(values) == 2:
+        return '(sereneCOUNT ' + format_code(values[0], init_mode) + ' ' + format_code(values[1], init_mode) + ')'
+    val1 = values.pop()
+    val2 = values.pop()
+    return '((sereneCOUNT ' + format_code(val1, init_mode) + ' ' + format_code(val2, init_mode) + ') + ' + __format_function_count__(_, values, init_mode) + ')'
+
+
+def format_function_count(_, code, init_mode):
+    return __format_function_count__(_, code.function_call.values, init_mode)
 
 
 def format_function_index(_, code, init_mode):
@@ -127,14 +178,14 @@ FUNCTION_FORMAT = {
     'multiplication' : ('*', format_function_between),
     'division' : ('quot', format_function_before),  # quot rounds to 0, which is what nuxmv does.
     'mod' : ('%', format_function_between),
-    'count' : ('sereneCOUNT', format_function_before),  # probably not usable now
+    'count' : ('sereneCOUNT', format_function_count),  # probably not usable now
     'index' : ('index', format_function_index)  # definitely not usable now
 }
 
 
 def format_variable(variable, init_mode):
-    if debug:
-        print('format variable: ' + str(init_mode))
+    # if debug:
+    #     print('format variable: ' + str(init_mode))
     return (
         ('(localBoard' + pascal_case(variable.name) + ' nodeLocation blackboard)')
         if is_local(variable)
@@ -164,8 +215,8 @@ def format_variable(variable, init_mode):
 
 
 def format_code(code, init_mode):
-    if debug:
-        print('code: ' + str(init_mode))
+    # if debug:
+    #     print('code: ' + str(init_mode))
     return (
         (
             handle_constant(code.constant, True) if code.constant is not None else (
@@ -895,10 +946,10 @@ def handle_initial_value(assign, variable, var_type, indent_level, init_mode):
 
 debug = False
 def handle_update_value(assign, variable_name, var_type, indent_level, init_mode):
-    print('----------------------------------------------------------------------')
-    global debug
-    debug = True
-    print('update: ' + str(init_mode)) 
+    # print('----------------------------------------------------------------------')
+    # global debug
+    # debug = True
+    # print('update: ' + str(init_mode)) 
     if len(assign.case_results) == 0:
         if (not assign.default_result.range_mode) and len(assign.default_result.values) == 1:
             return (' = environment { env' + pascal_case(variable_name) + ' = ' + format_code(assign.default_result.values[0], init_mode) + '}' + os.linesep)
@@ -1216,7 +1267,7 @@ def create_environment(model):
             [
                 (
                     'env' + pascal_case(variable.name) + ' :: BTreeBlackboard -> BTreeEnvironment -> ' + variable_type(variable) + os.linesep
-                    + 'env' + pascal_case(variable.name) + ' blackboard environment' + create_macro(variable.initial_value, 0, 'env')
+                    + 'env' + pascal_case(variable.name) + ' blackboard environment' + create_macro(variable.assign, 0, init_mode = None)  # init_mode none here because we are operating in a func
                 )
                 for variable in model.variables if (variable.model_as == 'DEFINE' and is_env(variable))
             ]
@@ -1257,10 +1308,10 @@ def create_environment(model):
         + ''.join(
             [
                 (
-                    indent(2) + 'tickUpdate' + pascal_case(update.variable.name) + ' :: BTreeEnvironment -> BTreeEnvironment' + os.linesep
-                    + indent(2) + 'tickUpdate' + pascal_case(update.variable.name) + ' environment' + handle_update_value(update.assign, update.variable.name, variable_type(update.variable), 2, None)
+                    indent(2) + 'tickUpdate' + str(index + 1) + pascal_case(update.variable.name) + ' :: BTreeEnvironment -> BTreeEnvironment' + os.linesep
+                    + indent(2) + 'tickUpdate' + str(index + 1) + pascal_case(update.variable.name) + ' environment' + handle_update_value(update.assign, update.variable.name, variable_type(update.variable), 2, None)
                     + os.linesep
-                    + indent(2) + 'tempEnvironment' + str(index + 1) + ' = tickUpdate' + pascal_case(update.variable.name) + ' tempEnvironment' + str(index) + os.linesep
+                    + indent(2) + 'tempEnvironment' + str(index + 1) + ' = tickUpdate' + str(index + 1) + pascal_case(update.variable.name) + ' tempEnvironment' + str(index) + os.linesep
                     + os.linesep
                 )
                 for index, update in enumerate(model.update)
@@ -1298,7 +1349,7 @@ def create_blackboard(model):
         for index, variable in enumerate(model.variables) if (variable.model_as != 'DEFINE' and is_blackboard(variable))
     }
 
-    def walk_tree_recursive(current_node, node_names, node_names_map, running_list, running_int):
+    def walk_tree_recursive_blackboard(current_node, node_names, node_names_map, running_list, running_dict, running_int):
         while (not hasattr(current_node, 'name') or hasattr(current_node, 'sub_root')):
             if hasattr(current_node, 'leaf'):
                 current_node = current_node.leaf
@@ -1320,7 +1371,18 @@ def create_blackboard(model):
         if current_node.node_type == 'action':
             for variable in current_node.local_variables:
                 if variable.model_as == 'DEFINE':
-                    pass
+                    cur_type = variable_type(variable)
+                    if variable.name not in running_dict:
+                        running_dict[variable.name] = []
+                    cur_assign = variable.assign
+                    for initial_statement in current_node.init_statements:
+                        if initial_statement.variable.name == variable.name:
+                            cur_assign = initial_statement.assign
+                            break
+                    running_dict[variable.name].append(
+                        'localBoard' + pascal_case(variable.name) + ' ' + str(my_int) + ' blackboard' + create_macro(cur_assign, 0, None)  # init_mode none here because we are operating in a func
+                        + indent(1) + 'where node_location = ' + str(my_int) + os.linesep
+                    )
                 else:
                     cur_type = variable_type(variable)
                     running_list.append(
@@ -1338,19 +1400,20 @@ def create_blackboard(model):
         else:
             node_children = (current_node.children if hasattr(current_node, 'children') else [current_node.child])
             for child in node_children:
-                (cur_node_names, cur_node_names_map, running_list, running_int) = walk_tree_recursive(child, cur_node_names, cur_node_names_map, running_list, running_int)
+                (cur_node_names, cur_node_names_map, running_list, running_dict, running_int) = walk_tree_recursive_blackboard(child, cur_node_names, cur_node_names_map, running_list, running_dict, running_int)
         return (
             (
                 (
                     cur_node_names,
                     cur_node_names_map,
                     running_list,
+                    running_dict,
                     running_int
                 )
             )
         )
 
-    (_, _, local_list, _) = walk_tree_recursive(model.root, set(), {}, [], -1)
+    (_, _, local_list, local_macros, _) = walk_tree_recursive_blackboard(model.root, set(), {}, [], {}, -1)
     local_var_to_nodes = {}
     names_to_local_var = {}
     for local_v in local_list:
@@ -1364,6 +1427,7 @@ def create_blackboard(model):
         'module BehaviorTreeBlackboard where' + os.linesep
         + 'import SereneRandomizer' + os.linesep
         + 'import System.Random' + os.linesep
+        + 'import SereneOperations' + os.linesep
         + os.linesep
         + 'data BTreeBlackboard = BTreeBlackboard {' + os.linesep
         + indent(1) + 'sereneBoardGenerator :: StdGen' + os.linesep
@@ -1409,16 +1473,22 @@ def create_blackboard(model):
         + ''.join(
             [
                 (
-                    'localBoard' + pascal_case(var_name) + ' :: Int -> BTreeBlackboard -> ' + variable_type(variable) + os.linesep
-                    + ''.join(
-                        [
-                            ('localBoard' + pascal_case(var_name) + ' ' + str(number) + ' = localBoard' + pascal_case(var_name) + str(number) + os.linesep)
-                            for number in local_var_to_nodes[var_name]
-                        ]
+                    'localBoard' + pascal_case(variable.name) + ' :: Int -> BTreeBlackboard -> ' + variable_type(variable) + os.linesep
+                    + (
+                        ''.join(
+                            [
+                                ('localBoard' + pascal_case(variable.name) + ' ' + str(number) + ' = localBoard' + pascal_case(variable.name) + str(number) + os.linesep)
+                                for number in local_var_to_nodes[variable.name]
+                            ]
+                        )
+                        if variable.name in local_var_to_nodes
+                        else
+                        ''
                     )
-                    + 'localBoard' + pascal_case(var_name) + ' _ = error "' + var_name + ' illegal local reference"' + os.linesep
+                    + 'localBoard' + pascal_case(variable.name) + ' _ = error "' + variable.name + ' illegal local reference"' + os.linesep
                 )
-                for var_name in local_var_to_nodes if ((variable := names_to_local_var[var_name]) or True)
+                for variable in model.variables if (variable.model_as != 'DEFINE' and is_local(variable))
+                # for var_name in local_var_to_nodes if ((variable := names_to_local_var[var_name]) or True)
             ]
         )
         + os.linesep + os.linesep
@@ -1426,7 +1496,7 @@ def create_blackboard(model):
             [
                 (
                     'board' + pascal_case(variable.name) + ' :: BTreeBlackboard -> ' + variable_type(variable) + os.linesep
-                    + 'board' + pascal_case(variable.name) + ' blackboard' + create_macro(variable.initial_value, 0, 'board')
+                    + 'board' + pascal_case(variable.name) + ' blackboard' + create_macro(variable.assign, 0, None)  # init_mode none here because we are operating in a func
                 )
                 for variable in model.variables if (variable.model_as == 'DEFINE' and is_blackboard(variable))
             ]
@@ -1435,7 +1505,13 @@ def create_blackboard(model):
             [
                 (
                     'localBoard' + pascal_case(variable.name) + ' :: Int -> BTreeBlackboard -> ' + variable_type(variable) + os.linesep
-                    + 'localBoard' + pascal_case(variable.name) + ' nodeLocation blackboard' + create_macro(variable.initial_value, 0, 'board')
+                    + (
+                        ''.join(local_macros[variable.name])
+                        if variable.name in local_macros
+                        else
+                        ''
+                    )
+                    + 'localBoard' + pascal_case(variable.name) + ' nodeLocation blackboard' + create_macro(variable.assign, 0, None)  # init_mode none here because we are operating in a func
                 )
                 for variable in model.variables if (variable.model_as == 'DEFINE' and is_local(variable))
             ]
@@ -1457,10 +1533,15 @@ def create_blackboard(model):
         )
         + ''.join(
             map(
-                lambda var_name :
-                safe_update(names_to_local_var[var_name], False, True, local_var_to_nodes[var_name])
+                lambda var :
+                safe_update(var, False, True, (local_var_to_nodes[var.name] if var.name in local_var_to_nodes else []))
                 ,
-                local_var_to_nodes
+                filter(lambda var :
+                       (var.model_as != 'DEFINE' and is_local(var))
+                       ,
+                       model.variables
+                       )
+                # local_var_to_nodes
             )
         )
         + os.linesep + os.linesep

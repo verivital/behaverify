@@ -10,7 +10,7 @@ if [ "$#" == 3 ]; then
     max_val=$3
 fi
 
-path_name="../../examples/random"
+path_name="../../examples/random_haskell"
 
 mkdir $path_name/gen_files
 
@@ -18,6 +18,6 @@ python3 $path_name/gen_all.py $path_name/gen_files $to_gen $min_val $max_val
 
 for (( val=0; val<$to_gen; val++ )); do
     echo $val
-    ./generate_comparison.sh $path_name "t$val" 0
+    ./generate_comparison.sh $path_name "t$val" 1
     # 1 means use haskell
 done

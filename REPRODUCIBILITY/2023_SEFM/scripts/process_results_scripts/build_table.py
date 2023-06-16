@@ -13,7 +13,8 @@ encoding_combo = {
     'core' : ['aut', 'aut_s', 'norm'],
     'aut' : ['aut', 'aut_s'],
     'func' : ['func', 'norm', 'no_internal', 's_var'],
-    'invar' : ['aut', 'func', 'norm', 'no_internal', 's_var']
+    'invar' : ['aut', 'func', 'norm', 'no_internal', 's_var'],
+    'opt' : ['no_opt', 'last_opt', 'first_opt', 'full_opt']
 }
 encoding_name_to_result_name = {
     'aut' : 'aut_',
@@ -22,7 +23,11 @@ encoding_name_to_result_name = {
     'func' : 'func_',
     'norm' : 'norm_',
     'no_internal' : 'no_internal_',
-    's_var' : 's_var_'
+    's_var' : 's_var_',
+    'no_opt' : 'no_opt_',
+    'last_opt' : 'last_opt_',
+    'first_opt' : 'first_opt_',
+    'full_opt' : 'full_opt_'
 }
 
 encoding_mark = {
@@ -32,7 +37,12 @@ encoding_mark = {
     'no_internal' : ('yellow', '*'),
     'depth' : ('magenta', 'x'),
     'aut_s' : ('black', '.'),
-    's_var' : ('tan', '.')
+    's_var' : ('tan', '.'),
+    # the below and above will never run at the same time. no conflict
+    'no_opt' : ('red', 'o'),
+    'last_opt' : ('blue', 'v'),
+    'first_opt' : ('green', '^'),
+    'full_opt' : ('yellow', '*'),
 }
 
 reach = re.compile('reachable states: (?P<val1>\d+(\.\d+e\+\d+|)) \(2\^(?P<val2>\d+(\.\d+|))\) out of (?P<val3>\d+(\.\d+e\+\d+|)) \(2\^(?P<val4>\d+(\.\d+|))\)')

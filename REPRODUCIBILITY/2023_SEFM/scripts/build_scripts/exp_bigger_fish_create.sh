@@ -25,4 +25,6 @@ for ((num=min_val; num<=max_val; num=(num + step_size))); do
     echo $num
     ./generate_encoding.sh "${path_name}" bigger_fish_parallel_$num "${encodings[@]}"
     ./generate_encoding.sh "${path_name}" bigger_fish_sequence_$num "${encodings[@]}"
+    ./make_optimized_smv.sh "${path_name}" bigger_fish_parallel_$num
+    ./make_optimized_smv.sh "${path_name}" bigger_fish_sequence_$num
 done
