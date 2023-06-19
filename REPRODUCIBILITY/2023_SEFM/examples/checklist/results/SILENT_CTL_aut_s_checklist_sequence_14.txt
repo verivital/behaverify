@@ -24,7 +24,7 @@
 *** Copyright (C) 2009-2019 by University of Trento and others
 *** See http://mathsat.fbk.eu
 
-elapse: 0.00 seconds, total: 0.00 seconds
+elapse: 0.01 seconds, total: 0.01 seconds
 Output to file: /dev/null
 elapse: 0.15 seconds, total: 0.16 seconds
 Runtime Statistics
@@ -35,17 +35,17 @@ System time  0.008 seconds
 
 Average resident text size       =     0K
 Average resident data+stack size =     0K
-Maximum resident size            = 21298K
+Maximum resident size            = 21318K
 
 Virtual text size                = 17832K
-Virtual data size                = 57015K
+Virtual data size                = 72371K
     data size initialized        = 32226K
     data size uninitialized      =  8317K
-    data size sbrk               = 16472K
+    data size sbrk               = 31828K
 Virtual memory limit             = -2147483648K (-2147483648K)
 
 Major page faults = 0
-Minor page faults = 8422
+Minor page faults = 8420
 Swaps = 0
 Input blocks = 0
 Output blocks = 8

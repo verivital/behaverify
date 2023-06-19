@@ -496,6 +496,27 @@ MODULE define_nodes
 		decorator3 := 180;
 		biggest_fish_is3 := 181;
 		bigger_fish := 182;
+MODULE composite_parallel_success_on_one_without_memory_4(child_0, child_1, child_2, child_3)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				(child_0.internal_status = failure) : failure;
+				(child_1.internal_status = failure) : failure;
+				(child_2.internal_status = failure) : failure;
+				(child_3.internal_status = failure) : failure;
+				!(child_0.internal_status = running) : child_0.internal_status;
+				!(child_1.internal_status = running) : child_1.internal_status;
+				!(child_2.internal_status = running) : child_2.internal_status;
+				!(child_3.internal_status = running) : child_3.internal_status;
+				TRUE : running;
+			esac;
+		child_0.active := active;
+		child_1.active := active;
+		child_2.active := active;
+		child_3.active := active;
 MODULE composite_parallel_success_on_one_without_memory_5(child_0, child_1, child_2, child_3, child_4)
 	CONSTANTS
 		success, failure, running, invalid;
@@ -520,27 +541,6 @@ MODULE composite_parallel_success_on_one_without_memory_5(child_0, child_1, chil
 		child_2.active := active;
 		child_3.active := active;
 		child_4.active := active;
-MODULE composite_parallel_success_on_one_without_memory_4(child_0, child_1, child_2, child_3)
-	CONSTANTS
-		success, failure, running, invalid;
-	DEFINE
-		status := active ? internal_status : invalid;
-		internal_status :=
-			case
-				(child_0.internal_status = failure) : failure;
-				(child_1.internal_status = failure) : failure;
-				(child_2.internal_status = failure) : failure;
-				(child_3.internal_status = failure) : failure;
-				!(child_0.internal_status = running) : child_0.internal_status;
-				!(child_1.internal_status = running) : child_1.internal_status;
-				!(child_2.internal_status = running) : child_2.internal_status;
-				!(child_3.internal_status = running) : child_3.internal_status;
-				TRUE : running;
-			esac;
-		child_0.active := active;
-		child_1.active := active;
-		child_2.active := active;
-		child_3.active := active;
 MODULE composite_sequence_without_memory_2(child_0, child_1)
 	CONSTANTS
 		success, failure, running, invalid;

@@ -1069,21 +1069,6 @@ MODULE define_nodes
 		decorator3 := 405;
 		biggest_fish_is3 := 406;
 		bigger_fish := 407;
-MODULE decorator_X_is_Y(child_0, incoming_status, outgoing_status)
-	CONSTANTS
-		success, failure, running, invalid;
-	DEFINE
-		status := active ? internal_status : invalid;
-		internal_status :=
-			case
-				child_0.internal_status = incoming_status : outgoing_status;
-				TRUE : child_0.internal_status;
-			esac;
-		child_0.active :=
-			case
-				!(active) : FALSE;
-				TRUE : TRUE;
-			esac;
 MODULE composite_parallel_success_on_one_without_memory_4(child_0, child_1, child_2, child_3)
 	CONSTANTS
 		success, failure, running, invalid;
@@ -1142,6 +1127,21 @@ MODULE composite_sequence_without_memory_2(child_0, child_1)
 			esac;
 		child_0.active := active;
 		child_1.active := child_0.status = success;
+MODULE decorator_X_is_Y(child_0, incoming_status, outgoing_status)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				child_0.internal_status = incoming_status : outgoing_status;
+				TRUE : child_0.internal_status;
+			esac;
+		child_0.active :=
+			case
+				!(active) : FALSE;
+				TRUE : TRUE;
+			esac;
 MODULE biggest_fish_is176_module(biggest_fish_stage_0)
 	CONSTANTS
 		success, failure, running, invalid;

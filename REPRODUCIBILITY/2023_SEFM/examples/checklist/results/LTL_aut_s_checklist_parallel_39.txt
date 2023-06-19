@@ -79075,3 +79075,4 @@ Trace Type: Counterexample
     parallel_status__parLink4 = success
     next_child__sel6 = 128
 -- specification  G ((active_node = node_names.success_failure_node_32 & current_status = failure) -> (active_node > 0 U (active_node = node_names.success_node_32 & current_status = success)))  is true
+-- specification  G ((active_node = node_names.success_failure_node_32 & current_status = failure) -> !(active_node > 0 U (active_node = node_names.success_node_32 & current_status = success)))  is false

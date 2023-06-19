@@ -24,17 +24,17 @@
 *** Copyright (C) 2009-2019 by University of Trento and others
 *** See http://mathsat.fbk.eu
 
-elapse: 0.03 seconds, total: 0.03 seconds
-elapse: -0.00 seconds, total: 0.03 seconds
+elapse: 0.02 seconds, total: 0.02 seconds
+elapse: -0.00 seconds, total: 0.02 seconds
 Runtime Statistics
 ------------------
 Machine name: serene-OptiPlex-7040
-User time    0.034 seconds
-System time  0.008 seconds
+User time    0.026 seconds
+System time  0.015 seconds
 
 Average resident text size       =     0K
 Average resident data+stack size =     0K
-Maximum resident size            = 18816K
+Maximum resident size            = 18838K
 
 Virtual text size                = 17832K
 Virtual data size                = 57639K

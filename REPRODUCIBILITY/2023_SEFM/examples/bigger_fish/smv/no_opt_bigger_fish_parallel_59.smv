@@ -381,7 +381,7 @@ MODULE define_nodes
 		decorator3 := 135;
 		biggest_fish_is3 := 136;
 		bigger_fish := 137;
-MODULE composite_parallel_success_on_one_without_memory_5(child_0, child_1, child_2, child_3, child_4)
+MODULE composite_parallel_success_on_one_without_memory_4(child_0, child_1, child_2, child_3)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
@@ -392,19 +392,16 @@ MODULE composite_parallel_success_on_one_without_memory_5(child_0, child_1, chil
 				(child_1.internal_status = failure) : failure;
 				(child_2.internal_status = failure) : failure;
 				(child_3.internal_status = failure) : failure;
-				(child_4.internal_status = failure) : failure;
 				!(child_0.internal_status = running) : child_0.internal_status;
 				!(child_1.internal_status = running) : child_1.internal_status;
 				!(child_2.internal_status = running) : child_2.internal_status;
 				!(child_3.internal_status = running) : child_3.internal_status;
-				!(child_4.internal_status = running) : child_4.internal_status;
 				TRUE : running;
 			esac;
 		child_0.active := active;
 		child_1.active := active;
 		child_2.active := active;
 		child_3.active := active;
-		child_4.active := active;
 MODULE decorator_X_is_Y(child_0, incoming_status, outgoing_status)
 	CONSTANTS
 		success, failure, running, invalid;
@@ -433,7 +430,7 @@ MODULE composite_sequence_without_memory_2(child_0, child_1)
 			esac;
 		child_0.active := active;
 		child_1.active := child_0.status = success;
-MODULE composite_parallel_success_on_one_without_memory_4(child_0, child_1, child_2, child_3)
+MODULE composite_parallel_success_on_one_without_memory_5(child_0, child_1, child_2, child_3, child_4)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
@@ -444,16 +441,19 @@ MODULE composite_parallel_success_on_one_without_memory_4(child_0, child_1, chil
 				(child_1.internal_status = failure) : failure;
 				(child_2.internal_status = failure) : failure;
 				(child_3.internal_status = failure) : failure;
+				(child_4.internal_status = failure) : failure;
 				!(child_0.internal_status = running) : child_0.internal_status;
 				!(child_1.internal_status = running) : child_1.internal_status;
 				!(child_2.internal_status = running) : child_2.internal_status;
 				!(child_3.internal_status = running) : child_3.internal_status;
+				!(child_4.internal_status = running) : child_4.internal_status;
 				TRUE : running;
 			esac;
 		child_0.active := active;
 		child_1.active := active;
 		child_2.active := active;
 		child_3.active := active;
+		child_4.active := active;
 MODULE biggest_fish_is56_module(biggest_fish_stage_0)
 	CONSTANTS
 		success, failure, running, invalid;
