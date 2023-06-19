@@ -35,17 +35,17 @@ System time  0.011 seconds
 
 Average resident text size       =     0K
 Average resident data+stack size =     0K
-Maximum resident size            = 17772K
+Maximum resident size            = 17792K
 
 Virtual text size                = 17832K
-Virtual data size                = 64027K
+Virtual data size                = 72915K
     data size initialized        = 32226K
     data size uninitialized      =  8317K
-    data size sbrk               = 23484K
+    data size sbrk               = 32372K
 Virtual memory limit             = -2147483648K (-2147483648K)
 
 Major page faults = 0
-Minor page faults = 6648
+Minor page faults = 6649
 Swaps = 0
 Input blocks = 0
 Output blocks = 8

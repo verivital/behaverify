@@ -29,26 +29,26 @@ elapse: 0.00 seconds, total: 0.00 seconds
 system diameter: 490
 reachable states: 490 (2^8.93664) out of 8.62188e+24 (2^82.8343)
 ######################################################################
-elapse: 0.05 seconds, total: 0.06 seconds
+elapse: 0.07 seconds, total: 0.07 seconds
 Runtime Statistics
 ------------------
 Machine name: serene-OptiPlex-7040
-User time    0.064 seconds
-System time  0.016 seconds
+User time    0.071 seconds
+System time  0.008 seconds
 
 Average resident text size       =     0K
 Average resident data+stack size =     0K
-Maximum resident size            = 21590K
+Maximum resident size            = 21676K
 
 Virtual text size                = 17832K
-Virtual data size                = 82707K
+Virtual data size                = 85263K
     data size initialized        = 32226K
     data size uninitialized      =  8317K
-    data size sbrk               = 42164K
+    data size sbrk               = 44720K
 Virtual memory limit             = -2147483648K (-2147483648K)
 
 Major page faults = 0
-Minor page faults = 8573
+Minor page faults = 8571
 Swaps = 0
 Input blocks = 0
 Output blocks = 8

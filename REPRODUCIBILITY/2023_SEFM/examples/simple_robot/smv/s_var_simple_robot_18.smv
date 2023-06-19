@@ -228,6 +228,19 @@ MODULE composite_selector_without_memory_2(child_0, child_1)
 			esac;
 		child_0.active := active;
 		child_1.active := (child_0.internal_status = failure) & (child_0.active);
+MODULE composite_sequence_without_memory_2(child_0, child_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				!(child_0.internal_status = success) : child_0.internal_status;
+				!(child_1.internal_status = success) : child_1.internal_status;
+				TRUE : success;
+			esac;
+		child_0.active := active;
+		child_1.active := (child_0.internal_status = success) & (child_0.active);
 MODULE composite_selector_without_memory_4(child_0, child_1, child_2, child_3)
 	CONSTANTS
 		success, failure, running, invalid;
@@ -245,19 +258,6 @@ MODULE composite_selector_without_memory_4(child_0, child_1, child_2, child_3)
 		child_1.active := (child_0.internal_status = failure) & (child_0.active);
 		child_2.active := (child_1.internal_status = failure) & (child_1.active);
 		child_3.active := (child_2.internal_status = failure) & (child_2.active);
-MODULE composite_sequence_without_memory_2(child_0, child_1)
-	CONSTANTS
-		success, failure, running, invalid;
-	DEFINE
-		status := active ? internal_status : invalid;
-		internal_status :=
-			case
-				!(child_0.internal_status = success) : child_0.internal_status;
-				!(child_1.internal_status = success) : child_1.internal_status;
-				TRUE : success;
-			esac;
-		child_0.active := active;
-		child_1.active := (child_0.internal_status = success) & (child_0.active);
 MODULE composite_sequence_without_memory_4(child_0, child_1, child_2, child_3)
 	CONSTANTS
 		success, failure, running, invalid;

@@ -24,7 +24,7 @@
 *** Copyright (C) 2009-2019 by University of Trento and others
 *** See http://mathsat.fbk.eu
 
-elapse: 0.00 seconds, total: 0.00 seconds
+elapse: 0.01 seconds, total: 0.01 seconds
 ######################################################################
 system diameter: 779
 reachable states: 779 (2^9.60548) out of 2.30759e+38 (2^127.44)
@@ -38,19 +38,19 @@ System time  0.012 seconds
 
 Average resident text size       =     0K
 Average resident data+stack size =     0K
-Maximum resident size            = 27036K
+Maximum resident size            = 27058K
 
 Virtual text size                = 17832K
-Virtual data size                = 83311K
+Virtual data size                = 66999K
     data size initialized        = 32226K
     data size uninitialized      =  8317K
-    data size sbrk               = 42768K
+    data size sbrk               = 26456K
 Virtual memory limit             = -2147483648K (-2147483648K)
 
 Major page faults = 0
-Minor page faults = 11321
+Minor page faults = 11320
 Swaps = 0
 Input blocks = 0
 Output blocks = 8
 Context switch (voluntary) = 0
-Context switch (involuntary) = 0
+Context switch (involuntary) = 1
