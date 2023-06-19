@@ -82020,4 +82020,3 @@ Trace Type: Counterexample
   -> State: 32.642 <-
     active_node = 125
     success_node_31.active = FALSE
--- specification  G (success_failure_node_32.status = failure -> (active_node > 0 U success_node_32.status = success))  is true

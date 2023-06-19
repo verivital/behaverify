@@ -440,21 +440,21 @@ MODULE define_nodes
 		decorator1 := 158;
 		biggest_fish_is1 := 159;
 		bigger_fish := 160;
-MODULE decorator_X_is_Y(child_0, incoming_status, outgoing_status)
+MODULE composite_parallel_success_on_one_without_memory_2(child_0, child_1)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
 		internal_status :=
 			case
-				child_0.internal_status = incoming_status : outgoing_status;
-				TRUE : child_0.internal_status;
+				(child_0.internal_status = failure) : failure;
+				(child_1.internal_status = failure) : failure;
+				!(child_0.internal_status = running) : child_0.internal_status;
+				!(child_1.internal_status = running) : child_1.internal_status;
+				TRUE : running;
 			esac;
-		child_0.active :=
-			case
-				!(active) : FALSE;
-				TRUE : TRUE;
-			esac;
+		child_0.active := active;
+		child_1.active := active;
 MODULE composite_parallel_success_on_one_without_memory_5(child_0, child_1, child_2, child_3, child_4)
 	CONSTANTS
 		success, failure, running, invalid;
@@ -479,21 +479,21 @@ MODULE composite_parallel_success_on_one_without_memory_5(child_0, child_1, chil
 		child_2.active := active;
 		child_3.active := active;
 		child_4.active := active;
-MODULE composite_parallel_success_on_one_without_memory_2(child_0, child_1)
+MODULE decorator_X_is_Y(child_0, incoming_status, outgoing_status)
 	CONSTANTS
 		success, failure, running, invalid;
 	DEFINE
 		status := active ? internal_status : invalid;
 		internal_status :=
 			case
-				(child_0.internal_status = failure) : failure;
-				(child_1.internal_status = failure) : failure;
-				!(child_0.internal_status = running) : child_0.internal_status;
-				!(child_1.internal_status = running) : child_1.internal_status;
-				TRUE : running;
+				child_0.internal_status = incoming_status : outgoing_status;
+				TRUE : child_0.internal_status;
 			esac;
-		child_0.active := active;
-		child_1.active := active;
+		child_0.active :=
+			case
+				!(active) : FALSE;
+				TRUE : TRUE;
+			esac;
 MODULE composite_sequence_without_memory_2(child_0, child_1)
 	CONSTANTS
 		success, failure, running, invalid;

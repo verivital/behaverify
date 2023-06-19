@@ -1071,27 +1071,6 @@ MODULE define_nodes
 		decorator3 := 405;
 		biggest_fish_is3 := 406;
 		bigger_fish := 407;
-MODULE composite_parallel_success_on_one_without_memory_4(child_0, child_1, child_2, child_3)
-	CONSTANTS
-		success, failure, running, invalid;
-	DEFINE
-		status :=
-			case
-				!(active) : invalid;
-				(child_0.status = failure) : failure;
-				(child_1.status = failure) : failure;
-				(child_2.status = failure) : failure;
-				(child_3.status = failure) : failure;
-				!(child_0.status = running) : child_0.status;
-				!(child_1.status = running) : child_1.status;
-				!(child_2.status = running) : child_2.status;
-				!(child_3.status = running) : child_3.status;
-				TRUE : running;
-			esac;
-		child_0.active := active;
-		child_1.active := active;
-		child_2.active := active;
-		child_3.active := active;
 MODULE decorator_X_is_Y(child_0, incoming_status, outgoing_status)
 	CONSTANTS
 		success, failure, running, invalid;
@@ -1120,6 +1099,27 @@ MODULE composite_sequence_without_memory_2(child_0, child_1)
 			esac;
 		child_0.active := active;
 		child_1.active := child_0.status = success;
+MODULE composite_parallel_success_on_one_without_memory_4(child_0, child_1, child_2, child_3)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status :=
+			case
+				!(active) : invalid;
+				(child_0.status = failure) : failure;
+				(child_1.status = failure) : failure;
+				(child_2.status = failure) : failure;
+				(child_3.status = failure) : failure;
+				!(child_0.status = running) : child_0.status;
+				!(child_1.status = running) : child_1.status;
+				!(child_2.status = running) : child_2.status;
+				!(child_3.status = running) : child_3.status;
+				TRUE : running;
+			esac;
+		child_0.active := active;
+		child_1.active := active;
+		child_2.active := active;
+		child_3.active := active;
 MODULE composite_parallel_success_on_one_without_memory_5(child_0, child_1, child_2, child_3, child_4)
 	CONSTANTS
 		success, failure, running, invalid;

@@ -48,9 +48,9 @@ cd "${this_script_location}/scripts/process_results_scripts"
 
 
 cd "${this_script_location}/scripts/build_scripts"
-./exp_random_haskell_create.sh 1000 2 6
+./exp_random_haskell_create.sh 5000 2 5
 cd "${this_script_location}/scripts/comparison_scripts"
-./exp_random_haskell_run.sh 1000
+./exp_random_haskell_run.sh 5000
 
 
 cd "${this_script_location}/scripts/build_scripts"

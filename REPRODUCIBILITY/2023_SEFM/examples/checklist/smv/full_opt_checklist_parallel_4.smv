@@ -112,19 +112,6 @@ MODULE define_nodes
 		sel3 := 12;
 		success_failure_node_3 := 13;
 		success_node_3 := 14;
-MODULE composite_selector_without_memory_2(child_0, child_1)
-	CONSTANTS
-		success, failure, running, invalid;
-	DEFINE
-		status := active ? internal_status : invalid;
-		internal_status :=
-			case
-				!(child_0.internal_status = failure) : child_0.internal_status;
-				!(child_1.internal_status = failure) : child_1.internal_status;
-				TRUE : failure;
-			esac;
-		child_0.active := active;
-		child_1.active := child_0.status = failure;
 MODULE composite_parallel_success_on_all_without_memory_2(child_0, child_1)
 	CONSTANTS
 		success, failure, running, invalid;
@@ -140,6 +127,19 @@ MODULE composite_parallel_success_on_all_without_memory_2(child_0, child_1)
 			esac;
 		child_0.active := active;
 		child_1.active := active;
+MODULE composite_selector_without_memory_2(child_0, child_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				!(child_0.internal_status = failure) : child_0.internal_status;
+				!(child_1.internal_status = failure) : child_1.internal_status;
+				TRUE : failure;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = failure;
 MODULE success_failure_node_module(randomizer_stage_1)
 	CONSTANTS
 		success, failure, running, invalid;

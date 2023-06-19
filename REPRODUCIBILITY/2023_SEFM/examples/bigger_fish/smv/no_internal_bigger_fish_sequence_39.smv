@@ -217,23 +217,6 @@ MODULE define_nodes
 		decorator3 := 90;
 		biggest_fish_is3 := 91;
 		bigger_fish := 92;
-MODULE composite_sequence_without_memory_4(child_0, child_1, child_2, child_3)
-	CONSTANTS
-		success, failure, running, invalid;
-	DEFINE
-		status :=
-			case
-				!(active) : invalid;
-				!(child_0.status = success) : child_0.status;
-				!(child_1.status = success) : child_1.status;
-				!(child_2.status = success) : child_2.status;
-				!(child_3.status = success) : child_3.status;
-				TRUE : success;
-			esac;
-		child_0.active := active;
-		child_1.active := child_0.status = success;
-		child_2.active := child_1.status = success;
-		child_3.active := child_2.status = success;
 MODULE composite_sequence_without_memory_5(child_0, child_1, child_2, child_3, child_4)
 	CONSTANTS
 		success, failure, running, invalid;
@@ -266,6 +249,23 @@ MODULE composite_sequence_without_memory_2(child_0, child_1)
 			esac;
 		child_0.active := active;
 		child_1.active := child_0.status = success;
+MODULE composite_sequence_without_memory_4(child_0, child_1, child_2, child_3)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status :=
+			case
+				!(active) : invalid;
+				!(child_0.status = success) : child_0.status;
+				!(child_1.status = success) : child_1.status;
+				!(child_2.status = success) : child_2.status;
+				!(child_3.status = success) : child_3.status;
+				TRUE : success;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = success;
+		child_2.active := child_1.status = success;
+		child_3.active := child_2.status = success;
 MODULE decorator_inverter(child_0)
 	CONSTANTS
 		success, failure, running, invalid;

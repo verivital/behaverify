@@ -200,51 +200,6 @@ MODULE define_nodes
 		try_down := 19;
 		y_too_big := 20;
 		go_down := 21;
-MODULE composite_sequence_without_memory_4(child_0, child_1, child_2, child_3)
-	CONSTANTS
-		success, failure, running, invalid;
-	DEFINE
-		status :=
-			case
-				!(active) : invalid;
-				!(child_0.status = success) : child_0.status;
-				!(child_1.status = success) : child_1.status;
-				!(child_2.status = success) : child_2.status;
-				!(child_3.status = success) : child_3.status;
-				TRUE : success;
-			esac;
-		child_0.active := active;
-		child_1.active := child_0.status = success;
-		child_2.active := child_1.status = success;
-		child_3.active := child_2.status = success;
-MODULE decorator_X_is_Y(child_0, incoming_status, outgoing_status)
-	CONSTANTS
-		success, failure, running, invalid;
-	DEFINE
-		status :=
-			case
-				!(active) : invalid;
-				child_0.status = incoming_status : outgoing_status;
-				TRUE : child_0.status;
-			esac;
-		child_0.active :=
-			case
-				!(active) : FALSE;
-				TRUE : TRUE;
-			esac;
-MODULE composite_sequence_without_memory_2(child_0, child_1)
-	CONSTANTS
-		success, failure, running, invalid;
-	DEFINE
-		status :=
-			case
-				!(active) : invalid;
-				!(child_0.status = success) : child_0.status;
-				!(child_1.status = success) : child_1.status;
-				TRUE : success;
-			esac;
-		child_0.active := active;
-		child_1.active := child_0.status = success;
 MODULE composite_selector_without_memory_4(child_0, child_1, child_2, child_3)
 	CONSTANTS
 		success, failure, running, invalid;
@@ -262,6 +217,23 @@ MODULE composite_selector_without_memory_4(child_0, child_1, child_2, child_3)
 		child_1.active := child_0.status = failure;
 		child_2.active := child_1.status = failure;
 		child_3.active := child_2.status = failure;
+MODULE composite_sequence_without_memory_4(child_0, child_1, child_2, child_3)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status :=
+			case
+				!(active) : invalid;
+				!(child_0.status = success) : child_0.status;
+				!(child_1.status = success) : child_1.status;
+				!(child_2.status = success) : child_2.status;
+				!(child_3.status = success) : child_3.status;
+				TRUE : success;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = success;
+		child_2.active := child_1.status = success;
+		child_3.active := child_2.status = success;
 MODULE composite_selector_without_memory_2(child_0, child_1)
 	CONSTANTS
 		success, failure, running, invalid;
@@ -275,6 +247,34 @@ MODULE composite_selector_without_memory_2(child_0, child_1)
 			esac;
 		child_0.active := active;
 		child_1.active := child_0.status = failure;
+MODULE composite_sequence_without_memory_2(child_0, child_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status :=
+			case
+				!(active) : invalid;
+				!(child_0.status = success) : child_0.status;
+				!(child_1.status = success) : child_1.status;
+				TRUE : success;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = success;
+MODULE decorator_X_is_Y(child_0, incoming_status, outgoing_status)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status :=
+			case
+				!(active) : invalid;
+				child_0.status = incoming_status : outgoing_status;
+				TRUE : child_0.status;
+			esac;
+		child_0.active :=
+			case
+				!(active) : FALSE;
+				TRUE : TRUE;
+			esac;
 MODULE target_reached_module(target_x_stage_0, target_y_stage_0, x_stage_1, y_stage_1)
 	CONSTANTS
 		success, failure, running, invalid;

@@ -30,24 +30,24 @@ elapse: 0.57 seconds, total: 0.58 seconds
 Runtime Statistics
 ------------------
 Machine name: serene-OptiPlex-7040
-User time    0.583 seconds
-System time  0.040 seconds
+User time    0.577 seconds
+System time  0.044 seconds
 
 Average resident text size       =     0K
 Average resident data+stack size =     0K
-Maximum resident size            = 27128K
+Maximum resident size            = 27124K
 
 Virtual text size                = 17832K
-Virtual data size                = 87235K
+Virtual data size                = 67879K
     data size initialized        = 32226K
     data size uninitialized      =  8317K
-    data size sbrk               = 46692K
+    data size sbrk               = 27336K
 Virtual memory limit             = -2147483648K (-2147483648K)
 
 Major page faults = 0
-Minor page faults = 11368
+Minor page faults = 11370
 Swaps = 0
 Input blocks = 0
 Output blocks = 8
 Context switch (voluntary) = 0
-Context switch (involuntary) = 3
+Context switch (involuntary) = 1
