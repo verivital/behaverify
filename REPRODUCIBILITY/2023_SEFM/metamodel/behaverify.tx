@@ -21,8 +21,12 @@ BehaviorModel:
     sub_trees *= sub_tree
     '}' ('end_sub_trees')?
     'tree' '{' root = node '}' ('end_tree')?
-    ('tick_prerequisite' '{' tick_condition = code_statement '}' ('end_tick_prerequisite')?)?
-    'specifications' '{' specifications *= specification '}' ('end_specifications')?
+    ('tick_prerequisite' '{'
+    tick_condition = code_statement
+    '}' ('end_tick_prerequisite')?)?
+    'specifications' '{'
+    specifications *= specification
+    '}' ('end_specifications')?
 ;
 
 reserved:
@@ -56,8 +60,10 @@ node:
     composite_node:
     'composite' '{'
     name = ID
-    ((node_type = 'parallel' 'policy' (parallel_policy = 'success_on_all' | parallel_policy = 'success_on_one'))
-    | (node_type = 'sequence') | (node_type = 'selector'))
+    ((node_type = 'parallel' 'policy'
+    (parallel_policy = 'success_on_all' | parallel_policy = 'success_on_one'))
+    |
+    (node_type = 'sequence') | (node_type = 'selector'))
     (memory = 'with_partial_memory' | memory = 'with_true_memory' | memory = '')
     'children' '{'
     children += node
@@ -77,7 +83,9 @@ node:
 ;
 
     leaf_node:
-    (leaf = [check_node]) | (leaf = [action_node]) | (leaf = [check_environment_node])
+    (leaf = [check_node]) |
+    (leaf = [action_node]) |
+    (leaf = [check_environment_node])
 ;
     
     check_node:
@@ -117,29 +125,30 @@ node:
     'variable' '{'
     ((var_type = 'bl') | (var_type = 'local') | (var_type = 'env'))
     name = ID
-    (
-    (
-    'array' array_size = serene_int
-    ((model_as = 'VAR' domain = variable_domain) | (model_as = 'FROZENVAR' domain = variable_domain) | (model_as = 'DEFINE' ((domain = 'INT') | (domain = 'ENUM') | (domain = 'BOOLEAN'))))
-    ((array_mode = 'range' assign = assign_value) | (array_mode = '' assigns += assign_value))
-    )
+    (('array' array_size = serene_int
+    ((model_as = 'VAR' domain = variable_domain) |
+    (model_as = 'FROZENVAR' domain = variable_domain) |
+    (model_as = 'DEFINE' ((domain = 'INT') | (domain = 'ENUM') | (domain = 'BOOLEAN'))))
+    ((array_mode = 'range' assign = assign_value) | (array_mode = '' assigns += assign_value)))
     |
-    (
-    ((model_as = 'VAR' domain = variable_domain) | (model_as = 'FROZENVAR' domain = variable_domain) | (model_as = 'DEFINE' ((domain = 'INT') | (domain = 'ENUM') | (domain = 'BOOLEAN'))))
-    array_mode = '' assign = assign_value
-    )
-    )
+    (((model_as = 'VAR' domain = variable_domain) |
+    (model_as = 'FROZENVAR' domain = variable_domain) |
+    (model_as = 'DEFINE' ((domain = 'INT') | (domain = 'ENUM') | (domain = 'BOOLEAN'))))
+    array_mode = '' assign = assign_value))
     '}' ('end_variable')?
 ;
     
     variable_domain:
-    ('[' min_val = serene_int ',' max_val = serene_int (',' condition = range_code)? ']') | (boolean = 'BOOLEAN') | ('{' enums += enumeration[','] '}')
+    ('[' min_val = serene_int ',' max_val = serene_int (',' condition = range_code)? ']') |
+    (boolean = 'BOOLEAN') |
+    ('{' enums += enumeration[','] '}')
 ;
-    
-// enumeration:
-//     serene_int | BOOL | STRING
-// ;
 
+    //we could replace this just with INT | STRING
+    //however, for clariry, we keep this so it's clear
+    //that we are first checking is this an int
+    //then is it a quoted constant
+    //then is it an actual string.
 enumeration:
     serene_int | STRING
 ;
@@ -160,18 +169,26 @@ status:
     //--------------------SEC:STATEMENTS--------------------------
     
 statement:
-    (variable_statement = variable_statement) | (read_statement = read_statement) | (write_statement = write_statement)
+    (variable_statement = variable_statement) |
+    (read_statement = read_statement) |
+    (write_statement = write_statement)
 ;
 
-    pointless_spacing:
+    non_determinism_string:
     'non_determinism' ','
     ;
     
     read_statement:
     'read_environment' '{'
     name = ID
-    ('condition_variable' '{' (('(' is_const = 'constant_index_of' condition_variable = [variable] ',' index_of = serene_int ')') | ('(' is_const = 'index_of' condition_variable = [variable] ',' index_of = code_statement ')') | (condition_variable = [variable])) '}' ('end_condition_variable')?)?
-    'condition' '{' non_determinism ?= pointless_spacing condition = code_statement '}' ('end_condition')?
+    ('condition_variable' '{'
+    (('(' is_const = 'constant_index_of' condition_variable = [variable] ',' index_of = serene_int ')') |
+    ('(' is_const = 'index_of' condition_variable = [variable] ',' index_of = code_statement ')') |
+    (condition_variable = [variable]))
+    '}' ('end_condition_variable')?)?
+    'condition' '{'
+    non_determinism ?= non_determinism_string condition = code_statement
+    '}' ('end_condition')?
     variable_statements += variable_statement
     '}' ('end_read_environment')?
 ;
@@ -189,15 +206,28 @@ statement:
     'variable_statement' '{'
     instant ?= 'instant'
     variable = [variable]
-    ((array_mode = 'range' (',' values = serene_int ',' values = serene_int ',' values = range_code)? ((constant_index = 'constant_index' assign = array_index_constant) | (constant_index = '' assign = array_index)))
-    | (array_mode = '' ((constant_index = 'constant_index' assigns += array_index_constant) | (constant_index = '' assigns += array_index)  | (constant_index = '' assign = assign_value))))
+    ((array_mode = 'range'
+    (',' values = serene_int ',' values = serene_int ',' values = range_code)?
+    ((constant_index = 'constant_index' assign = array_index_constant) |
+    (constant_index = '' assign = array_index)))
+    //in the above we are using a range variable to index into an array.
+    //the variable MUST be an array
+    |
+    //in the below there is no range variable.
+    //the variable CAN be an array
+    (array_mode = ''
+    ((constant_index = 'constant_index' assigns += array_index_constant) |
+    (constant_index = '' assigns += array_index) |
+    (constant_index = '' assign = assign_value))))
     '}' ('end_variable_statement')?
     ;
 
     variable_statement_initial:
     'variable_statement' '{'
     variable = [variable]
-    ((array_mode = '' assign = assign_value) | (array_mode = 'range' assign = assign_value) | (array_mode = '' assigns += assign_value)) //this was re-oredered to ensure match correctness.
+    ((array_mode = '' assign = assign_value) |
+    (array_mode = 'range' assign = assign_value) |
+    (array_mode = '' assigns += assign_value))
     '}' ('end_variable_statement')?
 ;
     

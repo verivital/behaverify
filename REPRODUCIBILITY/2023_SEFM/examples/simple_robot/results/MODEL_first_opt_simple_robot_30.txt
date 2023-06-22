@@ -25,4 +25,4 @@
 *** See http://mathsat.fbk.eu
 
 elapse: 0.00 seconds, total: 0.00 seconds
-elapse: 16.53 seconds, total: 16.53 seconds
+elapse: 17.45 seconds, total: 17.46 seconds
