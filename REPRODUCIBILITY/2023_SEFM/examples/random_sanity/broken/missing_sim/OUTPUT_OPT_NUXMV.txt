@@ -1,0 +1,327 @@
+*** This is nuXmv 2.0.0 (compiled on Mon Oct 14 17:48:12 2019)
+*** Copyright (c) 2014-2019, Fondazione Bruno Kessler
+*** For more information on nuXmv see https://nuxmv.fbk.eu
+*** or email to <nuxmv@list.fbk.eu>.
+*** Please report bugs at https://nuxmv.fbk.eu/bugs
+*** (click on "Login Anonymously" to access)
+*** Alternatively write to <nuxmv@list.fbk.eu>.
+
+*** This version of nuXmv is linked to NuSMV 2.6.0.
+*** For more information on NuSMV see <http://nusmv.fbk.eu>
+*** or email to <nusmv-users@list.fbk.eu>.
+*** Copyright (C) 2010-2019, Fondazione Bruno Kessler
+
+*** This version of nuXmv is linked to the CUDD library version 2.4.1
+*** Copyright (c) 1995-2004, Regents of the University of Colorado
+
+*** This version of nuXmv is linked to the MiniSat SAT solver. 
+*** See http://minisat.se/MiniSat.html
+*** Copyright (c) 2003-2006, Niklas Een, Niklas Sorensson
+*** Copyright (c) 2007-2010, Niklas Sorensson
+
+*** This version of nuXmv is linked to MathSAT
+*** Copyright (C) 2009-2019 by Fondazione Bruno Kessler
+*** Copyright (C) 2009-2019 by University of Trento and others
+*** See http://mathsat.fbk.eu
+
+********  Simulation Starting From State 1.1   ********
+    <!-- ################### Trace number: 1 ################### -->
+Trace Description: Simulation Trace 
+Trace Type: Simulation 
+  -> State: 1.1 <-
+    blVAR0_stage_0 = 2
+    a3_DOT_localVAR3_stage_0 = 2
+    envVAR1_stage_0 = 2
+    a1_1_DOT_localDEFINE5_stage_0 = FALSE
+    a3_DOT_localDEFINE5_stage_0 = FALSE
+    a1_DOT_localDEFINE5_stage_0 = FALSE
+    blDEFINE4_stage_0 = TRUE
+    envVAR1_stage_8 = 2
+    envVAR1_stage_7 = 2
+    envVAR1_stage_6 = 4
+    envVAR1_stage_5 = 2
+    envVAR1_stage_4 = 4
+    envVAR1_stage_3 = 4
+    envVAR1_stage_2 = 2
+    envVAR1_stage_1 = 2
+    sel0.active = TRUE
+    resume_from_here_in_subtree__sel0 = -3
+    node_names.a1_1 = 3
+    node_names.a3 = 2
+    node_names.a1 = 1
+    node_names.sel0 = 0
+    a1.internal_status = failure
+    a1.status = failure
+    a3.internal_status = success
+    a3.status = success
+    a1_1.internal_status = failure
+    a1_1.status = invalid
+    a1_1.active = FALSE
+    a3.active = TRUE
+    a1.active = TRUE
+    sel0.internal_status = success
+    sel0.status = success
+  -> State: 1.2 <-
+    blVAR0_stage_0 = 2
+    a3_DOT_localVAR3_stage_0 = 2
+    envVAR1_stage_0 = 4
+    a1_1_DOT_localDEFINE5_stage_0 = FALSE
+    a3_DOT_localDEFINE5_stage_0 = FALSE
+    a1_DOT_localDEFINE5_stage_0 = FALSE
+    blDEFINE4_stage_0 = TRUE
+    envVAR1_stage_8 = 2
+    envVAR1_stage_7 = 2
+    envVAR1_stage_6 = 4
+    envVAR1_stage_5 = 2
+    envVAR1_stage_4 = 4
+    envVAR1_stage_3 = 4
+    envVAR1_stage_2 = 2
+    envVAR1_stage_1 = 2
+    sel0.active = TRUE
+    resume_from_here_in_subtree__sel0 = -3
+    node_names.a1_1 = 3
+    node_names.a3 = 2
+    node_names.a1 = 1
+    node_names.sel0 = 0
+    a1.internal_status = failure
+    a1.status = failure
+    a3.internal_status = success
+    a3.status = success
+    a1_1.internal_status = failure
+    a1_1.status = invalid
+    a1_1.active = FALSE
+    a3.active = TRUE
+    a1.active = TRUE
+    sel0.internal_status = success
+    sel0.status = success
+  -> State: 1.3 <-
+    blVAR0_stage_0 = 2
+    a3_DOT_localVAR3_stage_0 = 2
+    envVAR1_stage_0 = 4
+    a1_1_DOT_localDEFINE5_stage_0 = FALSE
+    a3_DOT_localDEFINE5_stage_0 = FALSE
+    a1_DOT_localDEFINE5_stage_0 = FALSE
+    blDEFINE4_stage_0 = TRUE
+    envVAR1_stage_8 = 2
+    envVAR1_stage_7 = 2
+    envVAR1_stage_6 = 4
+    envVAR1_stage_5 = 2
+    envVAR1_stage_4 = 4
+    envVAR1_stage_3 = 4
+    envVAR1_stage_2 = 2
+    envVAR1_stage_1 = 2
+    sel0.active = TRUE
+    resume_from_here_in_subtree__sel0 = -3
+    node_names.a1_1 = 3
+    node_names.a3 = 2
+    node_names.a1 = 1
+    node_names.sel0 = 0
+    a1.internal_status = failure
+    a1.status = failure
+    a3.internal_status = success
+    a3.status = success
+    a1_1.internal_status = failure
+    a1_1.status = invalid
+    a1_1.active = FALSE
+    a3.active = TRUE
+    a1.active = TRUE
+    sel0.internal_status = success
+    sel0.status = success
+  -> State: 1.4 <-
+    blVAR0_stage_0 = 2
+    a3_DOT_localVAR3_stage_0 = 2
+    envVAR1_stage_0 = 4
+    a1_1_DOT_localDEFINE5_stage_0 = FALSE
+    a3_DOT_localDEFINE5_stage_0 = FALSE
+    a1_DOT_localDEFINE5_stage_0 = FALSE
+    blDEFINE4_stage_0 = TRUE
+    envVAR1_stage_8 = 2
+    envVAR1_stage_7 = 2
+    envVAR1_stage_6 = 4
+    envVAR1_stage_5 = 2
+    envVAR1_stage_4 = 4
+    envVAR1_stage_3 = 4
+    envVAR1_stage_2 = 2
+    envVAR1_stage_1 = 2
+    sel0.active = TRUE
+    resume_from_here_in_subtree__sel0 = -3
+    node_names.a1_1 = 3
+    node_names.a3 = 2
+    node_names.a1 = 1
+    node_names.sel0 = 0
+    a1.internal_status = failure
+    a1.status = failure
+    a3.internal_status = success
+    a3.status = success
+    a1_1.internal_status = failure
+    a1_1.status = invalid
+    a1_1.active = FALSE
+    a3.active = TRUE
+    a1.active = TRUE
+    sel0.internal_status = success
+    sel0.status = success
+  -> State: 1.5 <-
+    blVAR0_stage_0 = 2
+    a3_DOT_localVAR3_stage_0 = 2
+    envVAR1_stage_0 = 4
+    a1_1_DOT_localDEFINE5_stage_0 = FALSE
+    a3_DOT_localDEFINE5_stage_0 = FALSE
+    a1_DOT_localDEFINE5_stage_0 = FALSE
+    blDEFINE4_stage_0 = TRUE
+    envVAR1_stage_8 = 2
+    envVAR1_stage_7 = 2
+    envVAR1_stage_6 = 4
+    envVAR1_stage_5 = 2
+    envVAR1_stage_4 = 4
+    envVAR1_stage_3 = 4
+    envVAR1_stage_2 = 2
+    envVAR1_stage_1 = 2
+    sel0.active = TRUE
+    resume_from_here_in_subtree__sel0 = -3
+    node_names.a1_1 = 3
+    node_names.a3 = 2
+    node_names.a1 = 1
+    node_names.sel0 = 0
+    a1.internal_status = failure
+    a1.status = failure
+    a3.internal_status = success
+    a3.status = success
+    a1_1.internal_status = failure
+    a1_1.status = invalid
+    a1_1.active = FALSE
+    a3.active = TRUE
+    a1.active = TRUE
+    sel0.internal_status = success
+    sel0.status = success
+  -> State: 1.6 <-
+    blVAR0_stage_0 = 2
+    a3_DOT_localVAR3_stage_0 = 2
+    envVAR1_stage_0 = 4
+    a1_1_DOT_localDEFINE5_stage_0 = FALSE
+    a3_DOT_localDEFINE5_stage_0 = FALSE
+    a1_DOT_localDEFINE5_stage_0 = FALSE
+    blDEFINE4_stage_0 = TRUE
+    envVAR1_stage_8 = 2
+    envVAR1_stage_7 = 2
+    envVAR1_stage_6 = 4
+    envVAR1_stage_5 = 2
+    envVAR1_stage_4 = 4
+    envVAR1_stage_3 = 4
+    envVAR1_stage_2 = 2
+    envVAR1_stage_1 = 2
+    sel0.active = TRUE
+    resume_from_here_in_subtree__sel0 = -3
+    node_names.a1_1 = 3
+    node_names.a3 = 2
+    node_names.a1 = 1
+    node_names.sel0 = 0
+    a1.internal_status = failure
+    a1.status = failure
+    a3.internal_status = success
+    a3.status = success
+    a1_1.internal_status = failure
+    a1_1.status = invalid
+    a1_1.active = FALSE
+    a3.active = TRUE
+    a1.active = TRUE
+    sel0.internal_status = success
+    sel0.status = success
+  -> State: 1.7 <-
+    blVAR0_stage_0 = 2
+    a3_DOT_localVAR3_stage_0 = 2
+    envVAR1_stage_0 = 4
+    a1_1_DOT_localDEFINE5_stage_0 = FALSE
+    a3_DOT_localDEFINE5_stage_0 = FALSE
+    a1_DOT_localDEFINE5_stage_0 = FALSE
+    blDEFINE4_stage_0 = TRUE
+    envVAR1_stage_8 = 2
+    envVAR1_stage_7 = 2
+    envVAR1_stage_6 = 4
+    envVAR1_stage_5 = 2
+    envVAR1_stage_4 = 4
+    envVAR1_stage_3 = 4
+    envVAR1_stage_2 = 2
+    envVAR1_stage_1 = 2
+    sel0.active = TRUE
+    resume_from_here_in_subtree__sel0 = -3
+    node_names.a1_1 = 3
+    node_names.a3 = 2
+    node_names.a1 = 1
+    node_names.sel0 = 0
+    a1.internal_status = failure
+    a1.status = failure
+    a3.internal_status = success
+    a3.status = success
+    a1_1.internal_status = failure
+    a1_1.status = invalid
+    a1_1.active = FALSE
+    a3.active = TRUE
+    a1.active = TRUE
+    sel0.internal_status = success
+    sel0.status = success
+  -> State: 1.8 <-
+    blVAR0_stage_0 = 2
+    a3_DOT_localVAR3_stage_0 = 2
+    envVAR1_stage_0 = 4
+    a1_1_DOT_localDEFINE5_stage_0 = FALSE
+    a3_DOT_localDEFINE5_stage_0 = FALSE
+    a1_DOT_localDEFINE5_stage_0 = FALSE
+    blDEFINE4_stage_0 = TRUE
+    envVAR1_stage_8 = 2
+    envVAR1_stage_7 = 2
+    envVAR1_stage_6 = 4
+    envVAR1_stage_5 = 2
+    envVAR1_stage_4 = 4
+    envVAR1_stage_3 = 4
+    envVAR1_stage_2 = 2
+    envVAR1_stage_1 = 2
+    sel0.active = TRUE
+    resume_from_here_in_subtree__sel0 = -3
+    node_names.a1_1 = 3
+    node_names.a3 = 2
+    node_names.a1 = 1
+    node_names.sel0 = 0
+    a1.internal_status = failure
+    a1.status = failure
+    a3.internal_status = success
+    a3.status = success
+    a1_1.internal_status = failure
+    a1_1.status = invalid
+    a1_1.active = FALSE
+    a3.active = TRUE
+    a1.active = TRUE
+    sel0.internal_status = success
+    sel0.status = success
+  -> State: 1.9 <-
+    blVAR0_stage_0 = 2
+    a3_DOT_localVAR3_stage_0 = 2
+    envVAR1_stage_0 = 4
+    a1_1_DOT_localDEFINE5_stage_0 = FALSE
+    a3_DOT_localDEFINE5_stage_0 = FALSE
+    a1_DOT_localDEFINE5_stage_0 = FALSE
+    blDEFINE4_stage_0 = TRUE
+    envVAR1_stage_8 = 2
+    envVAR1_stage_7 = 2
+    envVAR1_stage_6 = 4
+    envVAR1_stage_5 = 2
+    envVAR1_stage_4 = 4
+    envVAR1_stage_3 = 4
+    envVAR1_stage_2 = 2
+    envVAR1_stage_1 = 2
+    sel0.active = TRUE
+    resume_from_here_in_subtree__sel0 = -3
+    node_names.a1_1 = 3
+    node_names.a3 = 2
+    node_names.a1 = 1
+    node_names.sel0 = 0
+    a1.internal_status = failure
+    a1.status = failure
+    a3.internal_status = success
+    a3.status = success
+    a1_1.internal_status = failure
+    a1_1.status = invalid
+    a1_1.active = FALSE
+    a3.active = TRUE
+    a1.active = TRUE
+    sel0.internal_status = success
+    sel0.status = success

@@ -1,0 +1,1273 @@
+MODULE main
+	CONSTANTS
+		success, failure, running, invalid, waypoint_following, cm_obstacle_avoidance_task, pipe, cm_rth_task, short, xy_warn, speed_pipe, e_stop, short_long, long, uuv_min_speed, danger_zone, z_warn, cm_surface_task, cm_tracking_task, speed, cm_loiter_task, cm_waypoint_task, uuv_max_speed, pipe_following, safe;
+	DEFINE
+		resume_from_here_in_subtree__blueROV := -3;
+		resume_from_here_in_subtree__topics2bb := -3;
+		resume_from_here_in_subtree__battery2bb := -3;
+		resume_from_here_in_subtree__rth2bb := -3;
+		resume_from_here_in_subtree__geofence2bb := -3;
+		resume_from_here_in_subtree__lec2_am_r_2bb := -3;
+		resume_from_here_in_subtree__lec2_am_l_2bb := -3;
+		resume_from_here_in_subtree__pipe_lost2bb := -3;
+		resume_from_here_in_subtree__sensor_failure2bb := -3;
+		resume_from_here_in_subtree__waypoints_completed2bb := -3;
+		resume_from_here_in_subtree__fls2bb := -3;
+		resume_from_here_in_subtree__fls_warning2bb := -3;
+		resume_from_here_in_subtree__rtreach2bb := -3;
+		resume_from_here_in_subtree__home2bb := -3;
+		resume_from_here_in_subtree__dd_tasks := -3;
+		resume_from_here_in_subtree__mission_end := -3;
+		resume_from_here_in_subtree__mission_server := -3;
+		resume_from_here_in_subtree__obstacle_avoidance := -3;
+		resume_from_here_in_subtree__priorities := -3;
+		resume_from_here_in_subtree__publish_HSD_command := -3;
+		blueROV.active := !(BLUEROV_SURFACED_stage_0);
+		--START OF BLACKBOARD DEFINITIONS
+		battery_low_warning_stage_1 := 
+			case
+				!(battery2bb.active) : battery_low_warning_stage_0;
+				!(battery2bb_DOT_read_success_stage_1) : battery_low_warning_stage_0;
+				TRUE : (battery_stage_0 <= 0);
+			esac;
+		bb_fls_warning_stage_1 := 
+			case
+				!(fls_warning2bb.active) : bb_fls_warning_stage_0;
+				!(fls_warning2bb_DOT_read_success_stage_1) : bb_fls_warning_stage_0;
+				TRUE : (bb_fls_warning_stage_0 | obstacle_in_view_stage_0);
+			esac;
+		bb_geofence_warning_stage_1 := 
+			case
+				!(geofence2bb.active) : bb_geofence_warning_stage_0;
+				!(geofence2bb_DOT_read_success_stage_1) : bb_geofence_warning_stage_0;
+				TRUE : (bb_geofence_warning_stage_0 | bb_geofence_stage_0);
+			esac;
+		bb_home_reached_stage_1 := 
+			case
+				!(home2bb.active) : bb_home_reached_stage_0;
+				!(home2bb_DOT_read_success_stage_1) : bb_home_reached_stage_0;
+				TRUE : (bb_home_reached_stage_0 | (bb_home_dist_stage_0 < 15));
+			esac;
+		bb_obstacle_warning_stage_0 := bb_obstacle_warning_stage_1;
+		LINK_TO_PREVIOUS_FINAL_bb_obstacle_warning := bb_obstacle_warning_stage_1;
+		bb_pipe_lost_warning_stage_1 := 
+			case
+				!(pipe_lost2bb.active) : bb_pipe_lost_warning_stage_0;
+				!(pipe_lost2bb_DOT_read_success_stage_1) : bb_pipe_lost_warning_stage_0;
+				TRUE : (bb_pipelost_stage_0 & (bb_mission_stage_0 = pipe_following));
+			esac;
+		bb_rth_warning_stage_1 := 
+			case
+				!(rth2bb.active) : bb_rth_warning_stage_0;
+				!(rth2bb_DOT_read_success_stage_1) : bb_rth_warning_stage_0;
+				TRUE : (bb_rth_warning_stage_0 | bb_rth_stage_0);
+			esac;
+		bb_rth_warning_stage_2 := 
+			case
+				!(mission_server.active) : bb_rth_warning_stage_1;
+				next_mission_stage_1 : finished_missions_stage_1;
+				TRUE : bb_rth_warning_stage_1;
+			esac;
+		bb_sensor_failure_warning_stage_1 := 
+			case
+				!(sensor_failure2bb.active) : bb_sensor_failure_warning_stage_0;
+				!(sensor_failure2bb_DOT_read_success_stage_1) : bb_sensor_failure_warning_stage_0;
+				TRUE : (bb_sensor_failure_warning_stage_0 | bb_sensor_failure_stage_0);
+			esac;
+		cm_hsd_input_stage_1 := 
+			case
+				!(obstacle_avoidance.active) : cm_hsd_input_stage_0;
+				bb_obstacle_warning_stage_1 : cm_obstacle_avoidance_task;
+				TRUE : cm_hsd_input_stage_0;
+			esac;
+		cm_hsd_input_stage_2 := 
+			case
+				!(surface_task.active) : cm_hsd_input_stage_1;
+				TRUE : cm_surface_task;
+			esac;
+		cm_hsd_input_stage_3 := 
+			case
+				!(surface_task_1.active) : cm_hsd_input_stage_2;
+				TRUE : cm_surface_task;
+			esac;
+		cm_hsd_input_stage_4 := 
+			case
+				!(rth_task.active) : cm_hsd_input_stage_3;
+				TRUE : cm_rth_task;
+			esac;
+		cm_hsd_input_stage_5 := 
+			case
+				!(loiter_task.active) : cm_hsd_input_stage_4;
+				TRUE : cm_loiter_task;
+			esac;
+		cm_hsd_input_stage_6 := 
+			case
+				!(tracking_task.active) : cm_hsd_input_stage_5;
+				TRUE : cm_tracking_task;
+			esac;
+		cm_hsd_input_stage_7 := 
+			case
+				!(waypoint_task.active) : cm_hsd_input_stage_6;
+				TRUE : cm_waypoint_task;
+			esac;
+		cm_hsd_input_stage_8 := 
+			case
+				!(loiter_task_1.active) : cm_hsd_input_stage_7;
+				TRUE : cm_loiter_task;
+			esac;
+		dd_xy_axis_degradation_stage_1 := 
+			case
+				!(dd_lec_task.active) : dd_xy_axis_degradation_stage_0;
+				TRUE : ((dd_output_stage_1 = xy_warn) | (dd_xy_axis_degradation_stage_0 & !((dd_output_stage_1 = safe))));
+			esac;
+		emergency_stop_warning_stage_1 := 
+			case
+				!(fls_warning2bb.active) : emergency_stop_warning_stage_0;
+				!(fls_warning2bb_DOT_read_success_stage_1) : emergency_stop_warning_stage_0;
+				TRUE : (emergency_stop_warning_stage_0 | obstacle_in_view_stage_0);
+			esac;
+		emergency_stop_warning_stage_2 := 
+			case
+				!(mission_server.active) : emergency_stop_warning_stage_1;
+				((next_mission_stage_1 & !(finished_missions_stage_1)) & (e_stop = bb_mission_stage_1)) : TRUE;
+				TRUE : emergency_stop_warning_stage_1;
+			esac;
+		HSD_out_stage_1 := 
+			case
+				!(speed_min_task.active) : HSD_out_stage_0;
+				TRUE : uuv_min_speed;
+			esac;
+		lec_dd_am_stage_0 := lec_dd_am_stage_1;
+		LINK_TO_PREVIOUS_FINAL_lec_dd_am := lec_dd_am_stage_1;
+		lec2_am_l_speed_warning_stage_1 := 
+			case
+				!(lec2_am_l_2bb.active) : lec2_am_l_speed_warning_stage_0;
+				!(lec2_am_l_2bb_DOT_read_success_stage_1) : lec2_am_l_speed_warning_stage_0;
+				TRUE : ((lec2_am_l_stage_0 = speed) | (lec2_am_l_stage_0 = speed_pipe));
+			esac;
+		lec2_am_r_speed_warning_stage_1 := 
+			case
+				!(lec2_am_r_2bb.active) : lec2_am_r_speed_warning_stage_0;
+				!(lec2_am_r_2bb_DOT_read_success_stage_1) : lec2_am_r_speed_warning_stage_0;
+				TRUE : ((lec2_am_r_stage_0 = speed) | (lec2_am_r_stage_0 = speed_pipe));
+			esac;
+		next_mission_stage_1 := 
+			case
+				!(next_mission_node.active) : next_mission_stage_0;
+				TRUE : TRUE;
+			esac;
+		next_mission_stage_2 := 
+			case
+				!(mission_server.active) : next_mission_stage_1;
+				TRUE : FALSE;
+			esac;
+		obstacle_standoff_warning_stage_1 := 
+			case
+				!(fls2bb.active) : obstacle_standoff_warning_stage_0;
+				!(fls2bb_DOT_read_success_stage_1) : obstacle_standoff_warning_stage_0;
+				TRUE : (fls_range_stage_0 = danger_zone);
+			esac;
+		finished_missions_stage_0 := finished_missions_stage_1;
+		LINK_TO_PREVIOUS_FINAL_finished_missions := finished_missions_stage_1;
+		dd_output_stage_0 := dd_output_stage_1;
+		LINK_TO_PREVIOUS_FINAL_dd_output := dd_output_stage_1;
+		BLUEROV_SURFACED_stage_1 := 
+			case
+				!(surface_task.active) : BLUEROV_SURFACED_stage_0;
+				TRUE : TRUE;
+			esac;
+		battery2bb_DOT_read_success_stage_0 := battery2bb_DOT_read_success_stage_1;
+		LINK_TO_PREVIOUS_FINAL_battery2bb_DOT_read_success := battery2bb_DOT_read_success_stage_1;
+		rth2bb_DOT_read_success_stage_0 := rth2bb_DOT_read_success_stage_1;
+		LINK_TO_PREVIOUS_FINAL_rth2bb_DOT_read_success := rth2bb_DOT_read_success_stage_1;
+		geofence2bb_DOT_read_success_stage_0 := geofence2bb_DOT_read_success_stage_1;
+		LINK_TO_PREVIOUS_FINAL_geofence2bb_DOT_read_success := geofence2bb_DOT_read_success_stage_1;
+		lec2_am_r_2bb_DOT_read_success_stage_0 := lec2_am_r_2bb_DOT_read_success_stage_1;
+		LINK_TO_PREVIOUS_FINAL_lec2_am_r_2bb_DOT_read_success := lec2_am_r_2bb_DOT_read_success_stage_1;
+		lec2_am_l_2bb_DOT_read_success_stage_0 := lec2_am_l_2bb_DOT_read_success_stage_1;
+		LINK_TO_PREVIOUS_FINAL_lec2_am_l_2bb_DOT_read_success := lec2_am_l_2bb_DOT_read_success_stage_1;
+		pipe_lost2bb_DOT_read_success_stage_0 := pipe_lost2bb_DOT_read_success_stage_1;
+		LINK_TO_PREVIOUS_FINAL_pipe_lost2bb_DOT_read_success := pipe_lost2bb_DOT_read_success_stage_1;
+		sensor_failure2bb_DOT_read_success_stage_0 := sensor_failure2bb_DOT_read_success_stage_1;
+		LINK_TO_PREVIOUS_FINAL_sensor_failure2bb_DOT_read_success := sensor_failure2bb_DOT_read_success_stage_1;
+		waypoints_completed2bb_DOT_read_success_stage_0 := waypoints_completed2bb_DOT_read_success_stage_1;
+		LINK_TO_PREVIOUS_FINAL_waypoints_completed2bb_DOT_read_success := waypoints_completed2bb_DOT_read_success_stage_1;
+		fls2bb_DOT_read_success_stage_0 := fls2bb_DOT_read_success_stage_1;
+		LINK_TO_PREVIOUS_FINAL_fls2bb_DOT_read_success := fls2bb_DOT_read_success_stage_1;
+		fls_warning2bb_DOT_read_success_stage_0 := fls_warning2bb_DOT_read_success_stage_1;
+		LINK_TO_PREVIOUS_FINAL_fls_warning2bb_DOT_read_success := fls_warning2bb_DOT_read_success_stage_1;
+		rtreach2bb_DOT_read_success_stage_0 := rtreach2bb_DOT_read_success_stage_1;
+		LINK_TO_PREVIOUS_FINAL_rtreach2bb_DOT_read_success := rtreach2bb_DOT_read_success_stage_1;
+		home2bb_DOT_read_success_stage_0 := home2bb_DOT_read_success_stage_1;
+		LINK_TO_PREVIOUS_FINAL_home2bb_DOT_read_success := home2bb_DOT_read_success_stage_1;
+		--END OF BLACKBOARD DEFINITIONS
+	FROZENVAR
+		--START OF BLACKBOARD FROZENVAR
+		bb_pipe_mapping_enable_stage_0 : boolean;
+		lec_dd_am_warning_stage_0 : boolean;
+		pipe_mapping_enable_stage_0 : boolean;
+		rtreach_obstacle_warning_stage_0 : boolean;
+		--END OF BLACKBOARD FROZENVAR
+	VAR
+		node_names : define_nodes;
+		battery2bb : battery2bb_module(battery2bb_DOT_read_success_stage_1);
+		rth2bb : rth2bb_module(rth2bb_DOT_read_success_stage_1);
+		geofence2bb : geofence2bb_module(geofence2bb_DOT_read_success_stage_1);
+		lec2_am_r_2bb : lec2_am_r_2bb_module(lec2_am_r_2bb_DOT_read_success_stage_1);
+		lec2_am_l_2bb : lec2_am_l_2bb_module(lec2_am_l_2bb_DOT_read_success_stage_1);
+		pipe_lost2bb : pipe_lost2bb_module(pipe_lost2bb_DOT_read_success_stage_1);
+		sensor_failure2bb : sensor_failure2bb_module(sensor_failure2bb_DOT_read_success_stage_1);
+		waypoints_completed2bb : waypoints_completed2bb_module(waypoints_completed2bb_DOT_read_success_stage_1);
+		fls2bb : fls2bb_module(fls2bb_DOT_read_success_stage_1);
+		fls_warning2bb : fls_warning2bb_module(fls_warning2bb_DOT_read_success_stage_1);
+		rtreach2bb : rtreach2bb_module(rtreach2bb_DOT_read_success_stage_1);
+		home2bb : home2bb_module(home2bb_DOT_read_success_stage_1);
+		topics2bb : composite_parallel_success_on_all_without_memory_12(battery2bb, rth2bb, geofence2bb, lec2_am_r_2bb, lec2_am_l_2bb, pipe_lost2bb, sensor_failure2bb, waypoints_completed2bb, fls2bb, fls_warning2bb, rtreach2bb, home2bb);
+		dd_lec_task : failure_DEFAULT_module();
+		is_reallocation_requested : is_reallocation_requested_module(dd_xy_axis_degradation_stage_1);
+		reallocate_task : running_DEFAULT_module();
+		emergency_stop_check : composite_selector_without_memory_2(is_reallocation_requested, reallocate_task);
+		emergency_stop_check_SIF : decorator_X_is_Y(emergency_stop_check, success, failure);
+		dd_tasks : composite_selector_without_memory_2(dd_lec_task, emergency_stop_check_SIF);
+		is_waypoint_requested : is_waypoint_requested_module(bb_mission_stage_0);
+		check_waypoints_completed : check_waypoints_completed_module(bb_waypoints_completed_stage_0);
+		waypoint_mission_end : composite_sequence_without_memory_2(is_waypoint_requested, check_waypoints_completed);
+		is_track_pipe_mission_requested : is_track_pipe_mission_requested_module(bb_mission_stage_0);
+		failure_node : failure_DEFAULT_module();
+		pipe_tracking_misison_end : composite_sequence_without_memory_2(is_track_pipe_mission_requested, failure_node);
+		confirm_mission_ended : composite_selector_without_memory_2(waypoint_mission_end, pipe_tracking_misison_end);
+		next_mission_node : success_DEFAULT_module();
+		mission_end : composite_sequence_without_memory_2(confirm_mission_ended, next_mission_node);
+		mission_server : running_DEFAULT_module();
+		obstacle_avoidance : running_DEFAULT_module();
+		emergency_stop_fs : emergency_stop_fs_module(emergency_stop_warning_stage_2);
+		emergency_stop_task : success_DEFAULT_module();
+		surface_task : running_DEFAULT_module();
+		emergency_stop_tasks : composite_sequence_without_memory_2(emergency_stop_task, surface_task);
+		emergency_stop_check_1 : composite_selector_without_memory_2(emergency_stop_fs, emergency_stop_tasks);
+		emergency_stop_check_SIF_1 : decorator_X_is_Y(emergency_stop_check_1, success, failure);
+		obstacle_avoidance_required : obstacle_avoidance_required_module(bb_obstacle_warning_stage_1);
+		battery_low_fs : battery_low_fs_module(battery_low_warning_stage_1);
+		check_sensor_failure : check_sensor_failure_module(bb_sensor_failure_warning_stage_1);
+		obstacle_standoff_fs : obstacle_standoff_fs_module(obstacle_standoff_warning_stage_1);
+		check_rth : check_rth_module(bb_rth_warning_stage_2);
+		check_geofence : check_geofence_module(bb_geofence_warning_stage_1);
+		rth_needed : composite_selector_without_memory_2(check_rth, check_geofence);
+		check_surface : check_surface_module(bb_home_reached_stage_1);
+		rth_surface : composite_sequence_without_memory_2(rth_needed, check_surface);
+		failsafe_triggered : composite_selector_without_memory_4(battery_low_fs, check_sensor_failure, obstacle_standoff_fs, rth_surface);
+		surface_task_1 : running_DEFAULT_module();
+		failsafe_surface : composite_sequence_without_memory_2(failsafe_triggered, surface_task_1);
+		check_rth_1 : check_rth_1_module(bb_rth_warning_stage_2);
+		check_geofence_1 : check_geofence_1_module(bb_geofence_warning_stage_1);
+		rth_needed_1 : composite_selector_without_memory_2(check_rth_1, check_geofence_1);
+		rth_task : running_DEFAULT_module();
+		rth : composite_sequence_without_memory_2(rth_needed_1, rth_task);
+		check_pipe_lost : check_pipe_lost_module(bb_pipe_lost_warning_stage_1);
+		loiter_task : running_DEFAULT_module();
+		pipe_lost_selector : composite_selector_without_memory_2(check_pipe_lost, loiter_task);
+		pipe_lost_selector_SIF : decorator_X_is_Y(pipe_lost_selector, success, failure);
+		is_track_pipe_mission_requested_1 : is_track_pipe_mission_requested_1_module(bb_mission_stage_1);
+		tracking_task : success_DEFAULT_module();
+		check_lec2am_ls : check_lec2am_ls_module(lec2_am_l_speed_warning_stage_1);
+		check_lec2am_rs : check_lec2am_rs_module(lec2_am_r_speed_warning_stage_1);
+		speed_warning : composite_selector_without_memory_2(check_lec2am_ls, check_lec2am_rs);
+		speed_min_task : success_DEFAULT_module();
+		speed_min : composite_sequence_without_memory_2(speed_warning, speed_min_task);
+		speed_max_task : success_DEFAULT_module();
+		lec2am_speed_cmd : composite_selector_without_memory_2(speed_min, speed_max_task);
+		track_pipe_mission : composite_sequence_without_memory_3(is_track_pipe_mission_requested_1, tracking_task, lec2am_speed_cmd);
+		is_waypoint_requested_1 : is_waypoint_requested_1_module(bb_mission_stage_1);
+		waypoint_task : success_DEFAULT_module();
+		waypoint_mission : composite_sequence_without_memory_2(is_waypoint_requested_1, waypoint_task);
+		loiter_task_1 : running_DEFAULT_module();
+		priorities : composite_selector_without_memory_8(emergency_stop_check_SIF_1, obstacle_avoidance_required, failsafe_surface, rth, pipe_lost_selector_SIF, track_pipe_mission, waypoint_mission, loiter_task_1);
+		publish_HSD_command : running_DEFAULT_module();
+		blueROV : composite_parallel_success_on_all_without_memory_7(topics2bb, dd_tasks, mission_end, mission_server, obstacle_avoidance, priorities, publish_HSD_command);
+		--START OF BLACKBOARD VARIABLES DECLARATION
+		battery_stage_0 : 0..1;
+		battery_low_warning_stage_0 : boolean;
+		bb_fls_warning_stage_0 : boolean;
+		bb_geofence_stage_0 : boolean;
+		bb_geofence_warning_stage_0 : boolean;
+		bb_home_dist_stage_0 : {10, 100};
+		bb_home_reached_stage_0 : boolean;
+		bb_mission_stage_0 : {waypoint_following, e_stop, pipe_following};
+		bb_mission_stage_1 : {waypoint_following, e_stop, pipe_following};
+		bb_obstacle_warning_stage_1 : boolean;
+		bb_pipelost_stage_0 : boolean;
+		bb_pipe_lost_warning_stage_0 : boolean;
+		bb_rth_stage_0 : boolean;
+		bb_rth_warning_stage_0 : boolean;
+		bb_sensor_failure_stage_0 : boolean;
+		bb_sensor_failure_warning_stage_0 : boolean;
+		bb_waypoints_completed_stage_0 : boolean;
+		cm_hsd_input_stage_0 : {cm_surface_task, cm_rth_task, cm_loiter_task, cm_obstacle_avoidance_task, cm_tracking_task, cm_waypoint_task};
+		dd_xy_axis_degradation_stage_0 : boolean;
+		dd_z_axis_warning_stage_0 : boolean;
+		emergency_stop_warning_stage_0 : boolean;
+		fls_range_stage_0 : {danger_zone, safe};
+		HSD_out_stage_0 : {uuv_min_speed, uuv_max_speed};
+		lec_dd_am_stage_1 : boolean;
+		lec2_am_l_stage_0 : {safe, speed, pipe, speed_pipe};
+		lec2_am_l_speed_warning_stage_0 : boolean;
+		lec2_am_l_pipe_warning_stage_0 : boolean;
+		lec2_am_r_stage_0 : {safe, speed, pipe, speed_pipe};
+		lec2_am_r_speed_warning_stage_0 : boolean;
+		lec2_am_r_pipe_warning_stage_0 : boolean;
+		next_mission_stage_0 : boolean;
+		obstacle_in_view_stage_0 : boolean;
+		obstacle_standoff_warning_stage_0 : boolean;
+		rtreach_long_term_warning_stage_0 : boolean;
+		rtreach_result_stage_0 : {safe, short, long, short_long};
+		rtreach_warning_stage_0 : boolean;
+		finished_missions_stage_1 : boolean;
+		dd_output_stage_1 : {safe, xy_warn, z_warn};
+		BLUEROV_SURFACED_stage_0 : boolean;
+		battery2bb_DOT_read_success_stage_1 : boolean;
+		rth2bb_DOT_read_success_stage_1 : boolean;
+		geofence2bb_DOT_read_success_stage_1 : boolean;
+		lec2_am_r_2bb_DOT_read_success_stage_1 : boolean;
+		lec2_am_l_2bb_DOT_read_success_stage_1 : boolean;
+		pipe_lost2bb_DOT_read_success_stage_1 : boolean;
+		sensor_failure2bb_DOT_read_success_stage_1 : boolean;
+		waypoints_completed2bb_DOT_read_success_stage_1 : boolean;
+		fls2bb_DOT_read_success_stage_1 : boolean;
+		fls_warning2bb_DOT_read_success_stage_1 : boolean;
+		rtreach2bb_DOT_read_success_stage_1 : boolean;
+		home2bb_DOT_read_success_stage_1 : boolean;
+		--END OF BLACKBOARD VARIABLES DECLARATION
+	ASSIGN
+		--START OF BLACKBOARD VARIABLES INITIALIZATION
+		init(battery_stage_0) := 
+			case
+				TRUE : 1;
+			esac;
+		init(battery_low_warning_stage_0) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(bb_fls_warning_stage_0) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(bb_geofence_stage_0) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(bb_geofence_warning_stage_0) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(bb_home_dist_stage_0) := 
+			case
+				TRUE : 10;
+			esac;
+		init(bb_home_reached_stage_0) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(bb_mission_stage_0) := 
+			case
+				TRUE : waypoint_following;
+			esac;
+		init(bb_obstacle_warning_stage_1) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(bb_pipelost_stage_0) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(bb_pipe_lost_warning_stage_0) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(bb_pipe_mapping_enable_stage_0) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(bb_rth_stage_0) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(bb_rth_warning_stage_0) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(bb_sensor_failure_stage_0) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(bb_sensor_failure_warning_stage_0) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(bb_waypoints_completed_stage_0) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(cm_hsd_input_stage_0) := 
+			case
+				TRUE : cm_loiter_task;
+			esac;
+		init(dd_xy_axis_degradation_stage_0) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(dd_z_axis_warning_stage_0) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(emergency_stop_warning_stage_0) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(fls_range_stage_0) := 
+			case
+				TRUE : safe;
+			esac;
+		init(HSD_out_stage_0) := 
+			case
+				TRUE : uuv_max_speed;
+			esac;
+		init(lec_dd_am_stage_1) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(lec_dd_am_warning_stage_0) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(lec2_am_l_stage_0) := 
+			case
+				TRUE : safe;
+			esac;
+		init(lec2_am_l_speed_warning_stage_0) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(lec2_am_l_pipe_warning_stage_0) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(lec2_am_r_stage_0) := 
+			case
+				TRUE : safe;
+			esac;
+		init(lec2_am_r_speed_warning_stage_0) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(lec2_am_r_pipe_warning_stage_0) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(next_mission_stage_0) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(pipe_mapping_enable_stage_0) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(obstacle_in_view_stage_0) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(obstacle_standoff_warning_stage_0) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(rtreach_long_term_warning_stage_0) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(rtreach_obstacle_warning_stage_0) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(rtreach_result_stage_0) := 
+			case
+				TRUE : safe;
+			esac;
+		init(rtreach_warning_stage_0) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(finished_missions_stage_1) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(dd_output_stage_1) := 
+			case
+				TRUE : safe;
+			esac;
+		init(BLUEROV_SURFACED_stage_0) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(battery2bb_DOT_read_success_stage_1) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(rth2bb_DOT_read_success_stage_1) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(geofence2bb_DOT_read_success_stage_1) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(lec2_am_r_2bb_DOT_read_success_stage_1) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(lec2_am_l_2bb_DOT_read_success_stage_1) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(pipe_lost2bb_DOT_read_success_stage_1) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(sensor_failure2bb_DOT_read_success_stage_1) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(waypoints_completed2bb_DOT_read_success_stage_1) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(fls2bb_DOT_read_success_stage_1) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(fls_warning2bb_DOT_read_success_stage_1) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(rtreach2bb_DOT_read_success_stage_1) := 
+			case
+				TRUE : FALSE;
+			esac;
+		init(home2bb_DOT_read_success_stage_1) := 
+			case
+				TRUE : FALSE;
+			esac;
+		--END OF BLACKBOARD VARIABLES INITIALIZATION
+		--START OF BLACKBOARD VARIABLES TRANSITION
+		next(battery_stage_0) := 			case
+				!(blueROV.active) : battery_stage_0;
+				TRUE : {0, 1};
+			esac;
+		next(battery_low_warning_stage_0) := battery_low_warning_stage_1;
+		next(bb_fls_warning_stage_0) := bb_fls_warning_stage_1;
+		next(bb_geofence_stage_0) := 			case
+				!(blueROV.active) : bb_geofence_stage_0;
+				TRUE : {TRUE, FALSE};
+			esac;
+		next(bb_geofence_warning_stage_0) := bb_geofence_warning_stage_1;
+		next(bb_home_dist_stage_0) := 			case
+				!(blueROV.active) : bb_home_dist_stage_0;
+				TRUE : {10, 100};
+			esac;
+		next(bb_home_reached_stage_0) := bb_home_reached_stage_1;
+		next(bb_mission_stage_0) := bb_mission_stage_1;
+		bb_mission_stage_1 := 
+			case
+				!(mission_server.active) : bb_mission_stage_0;
+				!(TRUE) : bb_mission_stage_0;
+				(next_mission_stage_1 & !(finished_missions_stage_1)) : {waypoint_following, e_stop, pipe_following};
+				TRUE : bb_mission_stage_0;
+			esac;
+		next(bb_obstacle_warning_stage_1) := 
+			case
+				!(obstacle_avoidance.active) : LINK_TO_PREVIOUS_FINAL_bb_obstacle_warning;
+				!(TRUE) : bb_obstacle_warning_stage_0;
+				TRUE : {TRUE, FALSE};
+			esac;
+		next(bb_pipelost_stage_0) := 			case
+				!(blueROV.active) : bb_pipelost_stage_0;
+				TRUE : {TRUE, FALSE};
+			esac;
+		next(bb_pipe_lost_warning_stage_0) := bb_pipe_lost_warning_stage_1;
+		next(bb_rth_stage_0) := 			case
+				!(blueROV.active) : bb_rth_stage_0;
+				TRUE : {TRUE, FALSE};
+			esac;
+		next(bb_rth_warning_stage_0) := bb_rth_warning_stage_2;
+		next(bb_sensor_failure_stage_0) := 			case
+				!(blueROV.active) : bb_sensor_failure_stage_0;
+				TRUE : {TRUE, FALSE};
+			esac;
+		next(bb_sensor_failure_warning_stage_0) := bb_sensor_failure_warning_stage_1;
+		next(bb_waypoints_completed_stage_0) := 			case
+				!(blueROV.active) : bb_waypoints_completed_stage_0;
+				TRUE : {TRUE, FALSE};
+			esac;
+		next(cm_hsd_input_stage_0) := cm_hsd_input_stage_8;
+		next(dd_xy_axis_degradation_stage_0) := dd_xy_axis_degradation_stage_1;
+		next(dd_z_axis_warning_stage_0) := 			case
+				!(dd_lec_task.active) : dd_z_axis_warning_stage_0;
+				TRUE : ((dd_output_stage_1 = z_warn) | (dd_z_axis_warning_stage_0 & !((dd_output_stage_1 = safe))));
+			esac;
+		next(emergency_stop_warning_stage_0) := emergency_stop_warning_stage_2;
+		next(fls_range_stage_0) := 			case
+				!(blueROV.active) : fls_range_stage_0;
+				TRUE : {danger_zone, safe};
+			esac;
+		next(HSD_out_stage_0) := 			case
+				!(speed_max_task.active) : HSD_out_stage_1;
+				TRUE : uuv_max_speed;
+			esac;
+		next(lec_dd_am_stage_1) := 
+			case
+				!(blueROV.active) : LINK_TO_PREVIOUS_FINAL_lec_dd_am;
+				TRUE : {TRUE, FALSE};
+			esac;
+		next(lec2_am_l_stage_0) := 			case
+				!(blueROV.active) : lec2_am_l_stage_0;
+				TRUE : {safe, speed, pipe, speed_pipe};
+			esac;
+		next(lec2_am_l_speed_warning_stage_0) := lec2_am_l_speed_warning_stage_1;
+		next(lec2_am_l_pipe_warning_stage_0) := 			case
+				!(lec2_am_l_2bb.active) : lec2_am_l_pipe_warning_stage_0;
+				!(lec2_am_l_2bb_DOT_read_success_stage_1) : lec2_am_l_pipe_warning_stage_0;
+				TRUE : ((lec2_am_l_stage_0 = pipe) | (lec2_am_l_stage_0 = speed_pipe));
+			esac;
+		next(lec2_am_r_stage_0) := 			case
+				!(blueROV.active) : lec2_am_r_stage_0;
+				TRUE : {safe, speed, pipe, speed_pipe};
+			esac;
+		next(lec2_am_r_speed_warning_stage_0) := lec2_am_r_speed_warning_stage_1;
+		next(lec2_am_r_pipe_warning_stage_0) := 			case
+				!(lec2_am_r_2bb.active) : lec2_am_r_pipe_warning_stage_0;
+				!(lec2_am_r_2bb_DOT_read_success_stage_1) : lec2_am_r_pipe_warning_stage_0;
+				TRUE : ((lec2_am_r_stage_0 = pipe) | (lec2_am_r_stage_0 = speed_pipe));
+			esac;
+		next(next_mission_stage_0) := next_mission_stage_2;
+		next(obstacle_in_view_stage_0) := 			case
+				!(blueROV.active) : obstacle_in_view_stage_0;
+				TRUE : {TRUE, FALSE};
+			esac;
+		next(obstacle_standoff_warning_stage_0) := obstacle_standoff_warning_stage_1;
+		next(rtreach_long_term_warning_stage_0) := 			case
+				!(rtreach2bb.active) : rtreach_long_term_warning_stage_0;
+				!(rtreach2bb_DOT_read_success_stage_1) : rtreach_long_term_warning_stage_0;
+				TRUE : ((rtreach_result_stage_0 = long) | (rtreach_result_stage_0 = short_long));
+			esac;
+		next(rtreach_result_stage_0) := 			case
+				!(blueROV.active) : rtreach_result_stage_0;
+				TRUE : {safe, short, long, short_long};
+			esac;
+		next(rtreach_warning_stage_0) := 			case
+				!(rtreach2bb.active) : rtreach_warning_stage_0;
+				!(rtreach2bb_DOT_read_success_stage_1) : rtreach_warning_stage_0;
+				TRUE : ((rtreach_result_stage_0 = short) | (rtreach_result_stage_0 = short_long));
+			esac;
+		next(finished_missions_stage_1) := 
+			case
+				!(mission_server.active) : LINK_TO_PREVIOUS_FINAL_finished_missions;
+				!(TRUE) : finished_missions_stage_0;
+				(next_mission_stage_1 & finished_missions_stage_0) : {TRUE, FALSE};
+				TRUE : finished_missions_stage_0;
+			esac;
+		next(dd_output_stage_1) := 
+			case
+				!(dd_lec_task.active) : LINK_TO_PREVIOUS_FINAL_dd_output;
+				!(TRUE) : dd_output_stage_0;
+				TRUE : {safe, z_warn, xy_warn};
+			esac;
+		next(BLUEROV_SURFACED_stage_0) := 			case
+				!(surface_task_1.active) : BLUEROV_SURFACED_stage_1;
+				TRUE : TRUE;
+			esac;
+		next(battery2bb_DOT_read_success_stage_1) := 
+			case
+				!(battery2bb.active) : LINK_TO_PREVIOUS_FINAL_battery2bb_DOT_read_success;
+				TRUE : {TRUE, FALSE};
+				TRUE : FALSE;
+			esac;
+		next(rth2bb_DOT_read_success_stage_1) := 
+			case
+				!(rth2bb.active) : LINK_TO_PREVIOUS_FINAL_rth2bb_DOT_read_success;
+				TRUE : {TRUE, FALSE};
+				TRUE : FALSE;
+			esac;
+		next(geofence2bb_DOT_read_success_stage_1) := 
+			case
+				!(geofence2bb.active) : LINK_TO_PREVIOUS_FINAL_geofence2bb_DOT_read_success;
+				TRUE : {TRUE, FALSE};
+				TRUE : FALSE;
+			esac;
+		next(lec2_am_r_2bb_DOT_read_success_stage_1) := 
+			case
+				!(lec2_am_r_2bb.active) : LINK_TO_PREVIOUS_FINAL_lec2_am_r_2bb_DOT_read_success;
+				TRUE : {TRUE, FALSE};
+				TRUE : FALSE;
+			esac;
+		next(lec2_am_l_2bb_DOT_read_success_stage_1) := 
+			case
+				!(lec2_am_l_2bb.active) : LINK_TO_PREVIOUS_FINAL_lec2_am_l_2bb_DOT_read_success;
+				TRUE : {TRUE, FALSE};
+				TRUE : FALSE;
+			esac;
+		next(pipe_lost2bb_DOT_read_success_stage_1) := 
+			case
+				!(pipe_lost2bb.active) : LINK_TO_PREVIOUS_FINAL_pipe_lost2bb_DOT_read_success;
+				TRUE : {TRUE, FALSE};
+				TRUE : FALSE;
+			esac;
+		next(sensor_failure2bb_DOT_read_success_stage_1) := 
+			case
+				!(sensor_failure2bb.active) : LINK_TO_PREVIOUS_FINAL_sensor_failure2bb_DOT_read_success;
+				TRUE : {TRUE, FALSE};
+				TRUE : FALSE;
+			esac;
+		next(waypoints_completed2bb_DOT_read_success_stage_1) := 
+			case
+				!(waypoints_completed2bb.active) : LINK_TO_PREVIOUS_FINAL_waypoints_completed2bb_DOT_read_success;
+				!(TRUE) : waypoints_completed2bb_DOT_read_success_stage_0;
+				TRUE : {TRUE, FALSE};
+			esac;
+		next(fls2bb_DOT_read_success_stage_1) := 
+			case
+				!(fls2bb.active) : LINK_TO_PREVIOUS_FINAL_fls2bb_DOT_read_success;
+				TRUE : {TRUE, FALSE};
+				TRUE : FALSE;
+			esac;
+		next(fls_warning2bb_DOT_read_success_stage_1) := 
+			case
+				!(fls_warning2bb.active) : LINK_TO_PREVIOUS_FINAL_fls_warning2bb_DOT_read_success;
+				TRUE : {TRUE, FALSE};
+				TRUE : FALSE;
+			esac;
+		next(rtreach2bb_DOT_read_success_stage_1) := 
+			case
+				!(rtreach2bb.active) : LINK_TO_PREVIOUS_FINAL_rtreach2bb_DOT_read_success;
+				TRUE : {TRUE, FALSE};
+				TRUE : FALSE;
+			esac;
+		next(home2bb_DOT_read_success_stage_1) := 
+			case
+				!(home2bb.active) : LINK_TO_PREVIOUS_FINAL_home2bb_DOT_read_success;
+				TRUE : {TRUE, FALSE};
+				TRUE : FALSE;
+			esac;
+		--END OF BLACKBOARD VARIABLES TRANSITION
+
+INVARSPEC (bb_fls_warning_stage_1 -> (BLUEROV_SURFACED_stage_0 | (cm_hsd_input_stage_8 = cm_surface_task)));
+INVARSPEC ((!(bb_fls_warning_stage_1) & !((bb_mission_stage_1 = e_stop)) & bb_obstacle_warning_stage_1) -> (BLUEROV_SURFACED_stage_0 | (cm_hsd_input_stage_8 = cm_obstacle_avoidance_task)));
+INVARSPEC ((!(bb_obstacle_warning_stage_1) & (emergency_stop_warning_stage_2 | battery_low_warning_stage_1 | bb_sensor_failure_warning_stage_1 | obstacle_standoff_warning_stage_1)) -> (BLUEROV_SURFACED_stage_0 | (cm_hsd_input_stage_8 = cm_surface_task)));
+INVARSPEC ((!(bb_obstacle_warning_stage_1) & ((bb_rth_warning_stage_2 | bb_geofence_stage_0) & bb_home_reached_stage_1)) -> (BLUEROV_SURFACED_stage_0 | (cm_hsd_input_stage_8 = cm_surface_task) | !((geofence2bb_DOT_read_success_stage_1))));
+INVARSPEC ((!(bb_obstacle_warning_stage_1) & ((bb_rth_warning_stage_2 | bb_geofence_stage_0) & !((cm_hsd_input_stage_8 = cm_surface_task)))) -> (BLUEROV_SURFACED_stage_0 | (cm_hsd_input_stage_8 = cm_rth_task) | !((geofence2bb_DOT_read_success_stage_1))));
+INVARSPEC (!(((cm_hsd_input_stage_8 = cm_surface_task) | (cm_hsd_input_stage_8 = cm_rth_task) | (cm_hsd_input_stage_8 = cm_obstacle_avoidance_task))) -> (BLUEROV_SURFACED_stage_0 | (cm_hsd_input_stage_8 = cm_loiter_task) | (cm_hsd_input_stage_8 = cm_tracking_task) | (cm_hsd_input_stage_8 = cm_waypoint_task)));
+INVARSPEC (!(((cm_hsd_input_stage_8 = cm_surface_task) | (cm_hsd_input_stage_8 = cm_rth_task) | (cm_hsd_input_stage_8 = cm_obstacle_avoidance_task))) -> ((cm_hsd_input_stage_8 = cm_loiter_task) | (cm_hsd_input_stage_8 = cm_tracking_task) | (cm_hsd_input_stage_8 = cm_waypoint_task)));
+INVARSPEC (!(((cm_hsd_input_stage_8 = cm_surface_task) | (cm_hsd_input_stage_8 = cm_rth_task) | (cm_hsd_input_stage_8 = cm_obstacle_avoidance_task))) -> (BLUEROV_SURFACED_stage_0 | ((bb_mission_stage_1 = pipe_following) & bb_pipe_lost_warning_stage_1 & (cm_hsd_input_stage_8 = cm_loiter_task)) | ((bb_mission_stage_1 = pipe_following) & !(bb_pipe_lost_warning_stage_1) & (cm_hsd_input_stage_8 = cm_tracking_task)) | ((bb_mission_stage_1 = waypoint_following) & (cm_hsd_input_stage_8 = cm_waypoint_task))));
+INVARSPEC ((speed_min_task.active) -> !((speed_max_task.active)));
+INVARSPEC ((speed_max_task.active) -> !((speed_min_task.active)));
+INVARSPEC !((loiter_task_1.active));
+INVARSPEC (!(BLUEROV_SURFACED_stage_0) -> ((count((surface_task.active), (surface_task_1.active), (rth_task.active), (loiter_task.active), (tracking_task.active), (waypoint_task.active)) = 1) | (cm_hsd_input_stage_8 = cm_obstacle_avoidance_task)));
+INVARSPEC !(next_mission_stage_2);
+MODULE define_nodes
+	DEFINE
+		blueROV := 0;
+		topics2bb := 1;
+		battery2bb := 2;
+		rth2bb := 3;
+		geofence2bb := 4;
+		lec2_am_r_2bb := 5;
+		lec2_am_l_2bb := 6;
+		pipe_lost2bb := 7;
+		sensor_failure2bb := 8;
+		waypoints_completed2bb := 9;
+		fls2bb := 10;
+		fls_warning2bb := 11;
+		rtreach2bb := 12;
+		home2bb := 13;
+		dd_tasks := 14;
+		dd_lec_task := 15;
+		emergency_stop_check_SIF := 16;
+		emergency_stop_check := 17;
+		is_reallocation_requested := 18;
+		reallocate_task := 19;
+		mission_end := 20;
+		confirm_mission_ended := 21;
+		waypoint_mission_end := 22;
+		is_waypoint_requested := 23;
+		check_waypoints_completed := 24;
+		pipe_tracking_misison_end := 25;
+		is_track_pipe_mission_requested := 26;
+		failure_node := 27;
+		next_mission_node := 28;
+		mission_server := 29;
+		obstacle_avoidance := 30;
+		priorities := 31;
+		emergency_stop_check_SIF_1 := 32;
+		emergency_stop_check_1 := 33;
+		emergency_stop_fs := 34;
+		emergency_stop_tasks := 35;
+		emergency_stop_task := 36;
+		surface_task := 37;
+		obstacle_avoidance_required := 38;
+		failsafe_surface := 39;
+		failsafe_triggered := 40;
+		battery_low_fs := 41;
+		check_sensor_failure := 42;
+		obstacle_standoff_fs := 43;
+		rth_surface := 44;
+		rth_needed := 45;
+		check_rth := 46;
+		check_geofence := 47;
+		check_surface := 48;
+		surface_task_1 := 49;
+		rth := 50;
+		rth_needed_1 := 51;
+		check_rth_1 := 52;
+		check_geofence_1 := 53;
+		rth_task := 54;
+		pipe_lost_selector_SIF := 55;
+		pipe_lost_selector := 56;
+		check_pipe_lost := 57;
+		loiter_task := 58;
+		track_pipe_mission := 59;
+		is_track_pipe_mission_requested_1 := 60;
+		tracking_task := 61;
+		lec2am_speed_cmd := 62;
+		speed_min := 63;
+		speed_warning := 64;
+		check_lec2am_ls := 65;
+		check_lec2am_rs := 66;
+		speed_min_task := 67;
+		speed_max_task := 68;
+		waypoint_mission := 69;
+		is_waypoint_requested_1 := 70;
+		waypoint_task := 71;
+		loiter_task_1 := 72;
+		publish_HSD_command := 73;
+MODULE composite_sequence_without_memory_3(child_0, child_1, child_2)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				!(child_0.internal_status = success) : child_0.internal_status;
+				!(child_1.internal_status = success) : child_1.internal_status;
+				!(child_2.internal_status = success) : child_2.internal_status;
+				TRUE : success;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = success;
+		child_2.active := child_1.status = success;
+MODULE composite_selector_without_memory_2(child_0, child_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				!(child_0.internal_status = failure) : child_0.internal_status;
+				!(child_1.internal_status = failure) : child_1.internal_status;
+				TRUE : failure;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = failure;
+MODULE decorator_X_is_Y(child_0, incoming_status, outgoing_status)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				child_0.internal_status = incoming_status : outgoing_status;
+				TRUE : child_0.internal_status;
+			esac;
+		child_0.active :=
+			case
+				!(active) : FALSE;
+				TRUE : TRUE;
+			esac;
+MODULE composite_parallel_success_on_all_without_memory_7(child_0, child_1, child_2, child_3, child_4, child_5, child_6)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				(child_0.internal_status = failure) : failure;
+				(child_1.internal_status = failure) : failure;
+				(child_2.internal_status = failure) : failure;
+				(child_3.internal_status = failure) : failure;
+				(child_4.internal_status = failure) : failure;
+				(child_5.internal_status = failure) : failure;
+				(child_6.internal_status = failure) : failure;
+				!(child_0.internal_status = success) : child_0.internal_status;
+				!(child_1.internal_status = success) : child_1.internal_status;
+				!(child_2.internal_status = success) : child_2.internal_status;
+				!(child_3.internal_status = success) : child_3.internal_status;
+				!(child_4.internal_status = success) : child_4.internal_status;
+				!(child_5.internal_status = success) : child_5.internal_status;
+				!(child_6.internal_status = success) : child_6.internal_status;
+				TRUE : success;
+			esac;
+		child_0.active := active;
+		child_1.active := active;
+		child_2.active := active;
+		child_3.active := active;
+		child_4.active := active;
+		child_5.active := active;
+		child_6.active := active;
+MODULE composite_selector_without_memory_8(child_0, child_1, child_2, child_3, child_4, child_5, child_6, child_7)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				!(child_0.internal_status = failure) : child_0.internal_status;
+				!(child_1.internal_status = failure) : child_1.internal_status;
+				!(child_2.internal_status = failure) : child_2.internal_status;
+				!(child_3.internal_status = failure) : child_3.internal_status;
+				!(child_4.internal_status = failure) : child_4.internal_status;
+				!(child_5.internal_status = failure) : child_5.internal_status;
+				!(child_6.internal_status = failure) : child_6.internal_status;
+				!(child_7.internal_status = failure) : child_7.internal_status;
+				TRUE : failure;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = failure;
+		child_2.active := child_1.status = failure;
+		child_3.active := child_2.status = failure;
+		child_4.active := child_3.status = failure;
+		child_5.active := child_4.status = failure;
+		child_6.active := child_5.status = failure;
+		child_7.active := child_6.status = failure;
+MODULE composite_sequence_without_memory_2(child_0, child_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				!(child_0.internal_status = success) : child_0.internal_status;
+				!(child_1.internal_status = success) : child_1.internal_status;
+				TRUE : success;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = success;
+MODULE composite_parallel_success_on_all_without_memory_12(child_0, child_1, child_2, child_3, child_4, child_5, child_6, child_7, child_8, child_9, child_10, child_11)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				(child_0.internal_status = failure) : failure;
+				(child_1.internal_status = failure) : failure;
+				(child_2.internal_status = failure) : failure;
+				(child_3.internal_status = failure) : failure;
+				(child_4.internal_status = failure) : failure;
+				(child_5.internal_status = failure) : failure;
+				(child_6.internal_status = failure) : failure;
+				(child_7.internal_status = failure) : failure;
+				(child_8.internal_status = failure) : failure;
+				(child_9.internal_status = failure) : failure;
+				(child_10.internal_status = failure) : failure;
+				(child_11.internal_status = failure) : failure;
+				!(child_0.internal_status = success) : child_0.internal_status;
+				!(child_1.internal_status = success) : child_1.internal_status;
+				!(child_2.internal_status = success) : child_2.internal_status;
+				!(child_3.internal_status = success) : child_3.internal_status;
+				!(child_4.internal_status = success) : child_4.internal_status;
+				!(child_5.internal_status = success) : child_5.internal_status;
+				!(child_6.internal_status = success) : child_6.internal_status;
+				!(child_7.internal_status = success) : child_7.internal_status;
+				!(child_8.internal_status = success) : child_8.internal_status;
+				!(child_9.internal_status = success) : child_9.internal_status;
+				!(child_10.internal_status = success) : child_10.internal_status;
+				!(child_11.internal_status = success) : child_11.internal_status;
+				TRUE : success;
+			esac;
+		child_0.active := active;
+		child_1.active := active;
+		child_2.active := active;
+		child_3.active := active;
+		child_4.active := active;
+		child_5.active := active;
+		child_6.active := active;
+		child_7.active := active;
+		child_8.active := active;
+		child_9.active := active;
+		child_10.active := active;
+		child_11.active := active;
+MODULE composite_selector_without_memory_4(child_0, child_1, child_2, child_3)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				!(child_0.internal_status = failure) : child_0.internal_status;
+				!(child_1.internal_status = failure) : child_1.internal_status;
+				!(child_2.internal_status = failure) : child_2.internal_status;
+				!(child_3.internal_status = failure) : child_3.internal_status;
+				TRUE : failure;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = failure;
+		child_2.active := child_1.status = failure;
+		child_3.active := child_2.status = failure;
+MODULE battery2bb_module(battery2bb_DOT_read_success_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := 
+			case
+				battery2bb_DOT_read_success_stage_1 : success;
+				TRUE : running;
+			esac;
+MODULE rth2bb_module(rth2bb_DOT_read_success_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := 
+			case
+				rth2bb_DOT_read_success_stage_1 : success;
+				TRUE : running;
+			esac;
+MODULE geofence2bb_module(geofence2bb_DOT_read_success_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := 
+			case
+				geofence2bb_DOT_read_success_stage_1 : success;
+				TRUE : running;
+			esac;
+MODULE lec2_am_r_2bb_module(lec2_am_r_2bb_DOT_read_success_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := 
+			case
+				lec2_am_r_2bb_DOT_read_success_stage_1 : success;
+				TRUE : running;
+			esac;
+MODULE lec2_am_l_2bb_module(lec2_am_l_2bb_DOT_read_success_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := 
+			case
+				lec2_am_l_2bb_DOT_read_success_stage_1 : success;
+				TRUE : running;
+			esac;
+MODULE pipe_lost2bb_module(pipe_lost2bb_DOT_read_success_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := 
+			case
+				pipe_lost2bb_DOT_read_success_stage_1 : success;
+				TRUE : running;
+			esac;
+MODULE sensor_failure2bb_module(sensor_failure2bb_DOT_read_success_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := 
+			case
+				sensor_failure2bb_DOT_read_success_stage_1 : success;
+				TRUE : running;
+			esac;
+MODULE waypoints_completed2bb_module(waypoints_completed2bb_DOT_read_success_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := 
+			case
+				waypoints_completed2bb_DOT_read_success_stage_1 : success;
+				TRUE : running;
+			esac;
+MODULE fls2bb_module(fls2bb_DOT_read_success_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := 
+			case
+				fls2bb_DOT_read_success_stage_1 : success;
+				TRUE : running;
+			esac;
+MODULE fls_warning2bb_module(fls_warning2bb_DOT_read_success_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := 
+			case
+				fls_warning2bb_DOT_read_success_stage_1 : success;
+				TRUE : running;
+			esac;
+MODULE rtreach2bb_module(rtreach2bb_DOT_read_success_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := 
+			case
+				rtreach2bb_DOT_read_success_stage_1 : success;
+				TRUE : running;
+			esac;
+MODULE home2bb_module(home2bb_DOT_read_success_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := 
+			case
+				home2bb_DOT_read_success_stage_1 : success;
+				TRUE : running;
+			esac;
+MODULE is_reallocation_requested_module(dd_xy_axis_degradation_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((dd_xy_axis_degradation_stage_1 = FALSE)) ? success : failure;
+MODULE is_waypoint_requested_module(bb_mission_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((bb_mission_stage_0 = waypoint_following)) ? success : failure;
+MODULE check_waypoints_completed_module(bb_waypoints_completed_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((bb_waypoints_completed_stage_0 = TRUE)) ? success : failure;
+MODULE is_track_pipe_mission_requested_module(bb_mission_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((bb_mission_stage_0 = pipe_following)) ? success : failure;
+MODULE emergency_stop_fs_module(emergency_stop_warning_stage_2)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((emergency_stop_warning_stage_2 = FALSE)) ? success : failure;
+MODULE obstacle_avoidance_required_module(bb_obstacle_warning_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((bb_obstacle_warning_stage_1 = TRUE)) ? success : failure;
+MODULE battery_low_fs_module(battery_low_warning_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((battery_low_warning_stage_1 = TRUE)) ? success : failure;
+MODULE check_sensor_failure_module(bb_sensor_failure_warning_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((bb_sensor_failure_warning_stage_1 = TRUE)) ? success : failure;
+MODULE obstacle_standoff_fs_module(obstacle_standoff_warning_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((obstacle_standoff_warning_stage_1 = TRUE)) ? success : failure;
+MODULE check_rth_module(bb_rth_warning_stage_2)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((bb_rth_warning_stage_2 = TRUE)) ? success : failure;
+MODULE check_geofence_module(bb_geofence_warning_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((bb_geofence_warning_stage_1 = TRUE)) ? success : failure;
+MODULE check_surface_module(bb_home_reached_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((bb_home_reached_stage_1 = TRUE)) ? success : failure;
+MODULE check_rth_1_module(bb_rth_warning_stage_2)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((bb_rth_warning_stage_2 = TRUE)) ? success : failure;
+MODULE check_geofence_1_module(bb_geofence_warning_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((bb_geofence_warning_stage_1 = TRUE)) ? success : failure;
+MODULE check_pipe_lost_module(bb_pipe_lost_warning_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((bb_pipe_lost_warning_stage_1 = FALSE)) ? success : failure;
+MODULE is_track_pipe_mission_requested_1_module(bb_mission_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((bb_mission_stage_1 = pipe_following)) ? success : failure;
+MODULE check_lec2am_ls_module(lec2_am_l_speed_warning_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((lec2_am_l_speed_warning_stage_1 = TRUE)) ? success : failure;
+MODULE check_lec2am_rs_module(lec2_am_r_speed_warning_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((lec2_am_r_speed_warning_stage_1 = TRUE)) ? success : failure;
+MODULE is_waypoint_requested_1_module(bb_mission_stage_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((bb_mission_stage_1 = waypoint_following)) ? success : failure;
+MODULE success_DEFAULT_module
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := success;
+MODULE running_DEFAULT_module
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := running;
+MODULE failure_DEFAULT_module
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := failure;

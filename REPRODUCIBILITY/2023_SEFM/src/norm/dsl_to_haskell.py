@@ -82,18 +82,18 @@ def camel_case(variable_name):
     )
 
 
-def __format_function_before__(function_name, values, init_mode, blackboard_name, environment_name):
-    if len(values) <= 2:
+def __format_function_before__(function_name, values, index_start, init_mode, blackboard_name, environment_name):
+    if len(values) - index_start <= 2:
         return (
             '('
             + function_name + ' '
-            + ' '.join([format_code(value, init_mode, blackboard_name, environment_name) for value in values])
+            + ' '.join([format_code(value, init_mode, blackboard_name, environment_name) for value in values[index_start:]])
             + ')'
         )
-    cur_val = values.pop()
+    cur_val = values[index_start]
     return (
         '('
-        + function_name + ' ' + format_code(cur_val, init_mode, blackboard_name, environment_name) + ' ' + __format_function_before__(function_name, values, init_mode, blackboard_name, environment_name)
+        + function_name + ' ' + format_code(cur_val, init_mode, blackboard_name, environment_name) + ' ' + __format_function_before__(function_name, values, index_start + 1, init_mode, blackboard_name, environment_name)
         + ')'
     )
 
@@ -107,20 +107,20 @@ def format_function_before(function_name, code, init_mode, blackboard_name, envi
             + ' '.join([format_code(value, init_mode, blackboard_name, environment_name) for value in code.function_call.values])
             + ')'
         )
-    return __format_function_before__(function_name, code.function_call.values, init_mode, blackboard_name, environment_name)
+    return __format_function_before__(function_name, code.function_call.values, 0, init_mode, blackboard_name, environment_name)
 
 
-def __format_function_between__(function_name, values, init_mode, blackboard_name, environment_name):
-    if len(values) <= 2:
+def __format_function_between__(function_name, values, index_start, init_mode, blackboard_name, environment_name):
+    if len(values) - index_start <= 2:
         return (
             '('
-            + (' ' + function_name + ' ').join([format_code(value, init_mode, blackboard_name, environment_name) for value in values])
+            + (' ' + function_name + ' ').join([format_code(value, init_mode, blackboard_name, environment_name) for value in values[index_start:]])
             + ')'
         )
-    cur_val = values.pop()
+    cur_val = values[index_start]
     return (
         '('
-        + format_code(cur_val, init_mode, blackboard_name, environment_name) + ' ' + function_name + ' ' + __format_function_between__(function_name, values, init_mode, blackboard_name, environment_name)
+        + format_code(cur_val, init_mode, blackboard_name, environment_name) + ' ' + function_name + ' ' + __format_function_between__(function_name, values, index_start + 1, init_mode, blackboard_name, environment_name)
         + ')'
     )
 
@@ -133,24 +133,24 @@ def format_function_between(function_name, code, init_mode, blackboard_name, env
             + (' ' + function_name + ' ').join([format_code(value, init_mode, blackboard_name, environment_name) for value in code.function_call.values])
             + ')'
         )
-    return __format_function_between__(function_name, code.function_call.values, init_mode, blackboard_name, environment_name)
+    return __format_function_between__(function_name, code.function_call.values, 0, init_mode, blackboard_name, environment_name)
 
 
-def __format_function_count__(_, values, init_mode, blackboard_name, environment_name):
-    if len(values) <= 0:
+def __format_function_count__(_, values, index_start, init_mode, blackboard_name, environment_name):
+    if len(values) - index_start <= 0:
         return '0'
-    if len(values) == 1:
-        return '(sereneCOUNT False ' + format_code(values[0], init_mode, blackboard_name, environment_name) + ')'
-    if len(values) == 2:
-        return '(sereneCOUNT ' + format_code(values[0], init_mode, blackboard_name, environment_name) + ' ' + format_code(values[1], init_mode, blackboard_name, environment_name) + ')'
-    val1 = values.pop()
-    val2 = values.pop()
-    return '((sereneCOUNT ' + format_code(val1, init_mode, blackboard_name, environment_name) + ' ' + format_code(val2, init_mode, blackboard_name, environment_name) + ') + ' + __format_function_count__(_, values, init_mode, blackboard_name, environment_name) + ')'
+    if len(values) - index_start == 1:
+        return '(sereneCOUNT False ' + format_code(values[index_start], init_mode, blackboard_name, environment_name) + ')'
+    if len(values) - index_start == 2:
+        return '(sereneCOUNT ' + format_code(values[index_start], init_mode, blackboard_name, environment_name) + ' ' + format_code(values[index_start + 1], init_mode, blackboard_name, environment_name) + ')'
+    val1 = values[index_start]
+    val2 = values[index_start + 1]
+    return '((sereneCOUNT ' + format_code(val1, init_mode, blackboard_name, environment_name) + ' ' + format_code(val2, init_mode, blackboard_name, environment_name) + ') + ' + __format_function_count__(_, values, index_start + 2, init_mode, blackboard_name, environment_name) + ')'
 
 
 def format_function_count(_, code, init_mode, blackboard_name, environment_name):
     '''used with count function specifically'''
-    return __format_function_count__(_, code.function_call.values, init_mode, blackboard_name, environment_name)
+    return __format_function_count__(_, code.function_call.values, 0, init_mode, blackboard_name, environment_name)
 
 
 def format_function_index(_, code, init_mode, blackboard_name, environment_name):
@@ -882,11 +882,6 @@ def create_tree(model, name):
 def handle_initial_value(assign, variable, var_type, indent_level, init_mode, partial_string, node_location):
     blackboard_name = 'blackboard'
     environment_name = 'environment'
-    if is_array(variable):
-        raise Exception('Array not allowed yet')
-    if len(assign.case_results) == 0:
-        if (not assign.default_result.range_mode) and len(assign.default_result.values) == 1:
-            return (' = (' + format_code(assign.default_result.values[0], init_mode, blackboard_name, environment_name) + ', curGen)' + os.linesep)
 
     def post_script(indent_level):
         return (
@@ -894,6 +889,15 @@ def handle_initial_value(assign, variable, var_type, indent_level, init_mode, pa
             + indent(indent_level + 2) + ('blackboard = ' if init_mode == 'board' else 'environment = ') + partial_string + os.linesep
             + ((indent(indent_level + 2) + 'nodeLocation = ' + str(node_location) + os.linesep) if node_location is not None else '')
         )
+
+    if is_array(variable):
+        raise Exception('Array not allowed yet')
+    if len(assign.case_results) == 0:
+        if (not assign.default_result.range_mode) and len(assign.default_result.values) == 1:
+            return (
+                ' = (' + format_code(assign.default_result.values[0], init_mode, blackboard_name, environment_name) + ', curGen)' + os.linesep
+                + post_script(indent_level)
+            )
 
     def create_random_func(function_name, values, range_mode, var_type, cond_func, random_range, indent_level):
         if range_mode:
@@ -1262,13 +1266,13 @@ def safe_update(variable, env_mode, local_mode, local_numbers = []):
 def order_partial_arguments(current_var_name, create_order):
     use_name = True
     return_string = ''
-    for (var_name, default_val) in create_order:
-        if var_name == current_var_name:
+    for variable_info in create_order:
+        if variable_info['initial_name'] == current_var_name:
             use_name = False
         if use_name:
-            return_string = return_string + ' ' + var_name
+            return_string = return_string + ' ' + variable_info['initial_name']
         else:
-            return_string = return_string + ' ' + default_val
+            return_string = return_string + ' ' + variable_info['default_arg']
     return return_string
 
 
@@ -1280,21 +1284,32 @@ def get_default_arg(variable):
         return 'True'
     return '" "'
 
+
 def create_environment(model):
     blackboard_name = 'blackboard'
     environment_name = 'environment'
-    names_to_types = {
-        variable.name : (('Array' + pascal_case(variable.name)) if is_array(variable) else variable_type(variable))
-        for variable in model.variables if (is_env(variable) and variable.model_as != 'DEFINE')
-    }
-    initial_values = {
-        variable.name : handle_initial_value(variable.assign, variable, names_to_types[variable.name], 2, 'env', 'partialEnvironment' + pascal_case(variable.name), None)
-        for index, variable in enumerate(model.variables) if (is_env(variable) and variable.model_as != 'DEFINE')
-    }
-    create_order = [
-        ('newVal' + pascal_case(variable.name), get_default_arg(variable))
-        for variable in model.variables if (variable.model_as != 'DEFINE' and is_env(variable))
-    ]
+    # names_to_types = {
+    #     variable.name : (('Array' + pascal_case(variable.name)) if is_array(variable) else variable_type(variable))
+    #     for variable in model.variables if (is_env(variable) and variable.model_as != 'DEFINE')
+    # }
+    # initial_values = {
+    #     variable.name : handle_initial_value(variable.assign, variable, names_to_types[variable.name], 2, 'env', 'partialEnvironment' + pascal_case(variable.name), None)
+    #     for index, variable in enumerate(model.variables) if (is_env(variable) and variable.model_as != 'DEFINE')
+    # }
+    create_order = (
+        [
+            {
+                'initial_name' : 'newVal' + pascal_case(variable.name),
+                'initial_func' : 'initVal' + pascal_case(variable.name),
+                'field_name' : 'env' + pascal_case(variable.name),
+                'partial_name' : 'partialEnvironment' + pascal_case(variable.name),
+                'type' : variable_type(variable),
+                'default_arg' : get_default_arg(variable),
+                'initial_value' : handle_initial_value(variable.assign, variable, variable_type(variable), 2, 'env', 'partialEnvironment' + pascal_case(variable.name), None)
+            }
+            for variable in model.variables if (variable.model_as != 'DEFINE' and is_env(variable))
+        ]
+    )
     return (
         'module BehaviorTreeEnvironment where' + os.linesep
         + 'import SereneRandomizer' + os.linesep
@@ -1319,28 +1334,27 @@ def create_environment(model):
         )
         + 'data BTreeEnvironment = BTreeEnvironment {' + os.linesep
         + indent(1) + 'sereneEnvGenerator :: StdGen' + os.linesep
-        + ((indent(1) + ', ') if len(names_to_types) > 0 else '')
-        + (os.linesep + indent(1) + ', ').join([('env' + pascal_case(variable_name) + ' :: ' + names_to_types[variable_name]) for variable_name in names_to_types])
-        + (os.linesep if len(names_to_types) > 0 else '')
-        # + indent(1) + '} deriving (Show)' + os.linesep + os.linesep
+        + ((indent(1) + ', ') if len(create_order) > 0 else '')
+        + (os.linesep + indent(1) + ', ').join([(variable_info['field_name'] + ' :: ' + variable_info['type']) for variable_info in create_order])
+        + (os.linesep if len(create_order) > 0 else '')
         + indent(1) + '}' + os.linesep + os.linesep
         + (
             'instance Show BTreeEnvironment where' + os.linesep
             + indent(1) + 'show (BTreeEnvironment _ '
-            + ' '.join([('env' + pascal_case(variable_name)) for variable_name in names_to_types])
+            + ' '.join(map(lambda x : x['field_name'], create_order))
             + ') = '
             + '"Env = {"'
             + ' ++ '
             + ' ++ '.join(
                 [
-                    ('"env' + pascal_case(variable_name) + ': " ++ show env' + pascal_case(variable_name))
+                    ('"' + variable_info['field_name'] + ': " ++ show ' + variable_info['field_name'])
                     if index == 0
                     else
-                    ('", env' + pascal_case(variable_name) + ': " ++ show env' + pascal_case(variable_name))
-                    for index, variable_name in enumerate(names_to_types)
+                    ('", ' + variable_info['field_name'] + ': " ++ show ' + variable_info['field_name'])
+                    for index, variable_info in enumerate(create_order)
                 ]
             )
-            + (' ++ ' if len(names_to_types) > 0 else '')
+            + (' ++ ' if len(create_order) > 0 else '')
             + '"}"' + os.linesep
         )
         + os.linesep + os.linesep
@@ -1398,32 +1412,32 @@ def create_environment(model):
                 for index, update in enumerate(model.update)
             ]
         ) + os.linesep
-        + 'betweenTickUpdate environment = environment' + os.linesep  # TODO: obviously not done
         + os.linesep + os.linesep
         + 'initialEnvironment :: Int -> BTreeBlackboard -> BTreeEnvironment' + os.linesep
-        + 'initialEnvironment seed blackboard = BTreeEnvironment newSereneGenerator ' + ' '.join(map(lambda x : 'newVal' + pascal_case(x), names_to_types)) + os.linesep
+        + 'initialEnvironment seed blackboard = BTreeEnvironment newSereneGenerator ' + ' '.join(map(lambda x : x['initial_name'], create_order)) + os.linesep
         + indent(1) + 'where' + os.linesep
         + indent(2) + 'tempGen0 = getGenerator seed' + os.linesep
-        + indent(2) + 'newSereneGenerator = tempGen' + str(len(names_to_types)) + os.linesep
+        + indent(2) + 'newSereneGenerator = tempGen' + str(len(create_order)) + os.linesep
         + ''.join(
             [
                 (
-                    indent(2) + 'partialEnvironment' + pascal_case(variable_name) + ' = BTreeEnvironment newSereneGenerator' + order_partial_arguments('newVal' + pascal_case(variable_name), create_order) + os.linesep
-                    + indent(2) + 'initVal' + pascal_case(variable_name) + ' :: StdGen -> (' + names_to_types[variable_name] + ', StdGen)' + os.linesep
-                    + indent(2) + 'initVal' + pascal_case(variable_name) + ' curGen' + initial_values[variable_name]
+                    indent(2) + variable_info['partial_name'] + ' = BTreeEnvironment newSereneGenerator' + order_partial_arguments(variable_info['initial_name'], create_order) + os.linesep
+                    + indent(2) + variable_info['initial_func'] + ' :: StdGen -> (' + variable_info['type'] + ', StdGen)' + os.linesep
+                    + indent(2) + variable_info['initial_func'] + ' curGen' + variable_info['initial_value']
                     + os.linesep
-                    + indent(2) + '(newVal' + pascal_case(variable_name) + ', tempGen' + str(index + 1) + ') = initVal' + pascal_case(variable_name) + ' tempGen' + str(index) + os.linesep
+                    + indent(2) + '(' + variable_info['initial_name'] + ', tempGen' + str(index + 1) + ') = ' + variable_info['initial_func'] + ' tempGen' + str(index) + os.linesep
                     + os.linesep
                 )
-                for index, variable_name in enumerate(names_to_types)
+                for index, variable_info in enumerate(create_order)
             ]
         ) + os.linesep
     )
 
 
+# debug = False
 def create_blackboard(model):
 
-    def walk_tree_recursive_blackboard(current_node, node_names, node_names_map, running_list, running_dict, running_int, running_create_order, run1):
+    def walk_tree_recursive_blackboard(current_node, node_names, node_names_map, running_dict, running_int, running_create_order):
         while (not hasattr(current_node, 'name') or hasattr(current_node, 'sub_root')):
             if hasattr(current_node, 'leaf'):
                 current_node = current_node.leaf
@@ -1445,19 +1459,18 @@ def create_blackboard(model):
         if current_node.node_type == 'action':
             for variable in current_node.local_variables:
                 if variable.model_as == 'DEFINE':
-                    if not run1:
-                        cur_type = variable_type(variable)
-                        if variable.name not in running_dict:
-                            running_dict[variable.name] = []
-                        cur_assign = variable.assign
-                        for initial_statement in current_node.init_statements:
-                            if initial_statement.variable.name == variable.name:
-                                cur_assign = initial_statement.assign
-                                break
-                        running_dict[variable.name].append(
-                            'localBoard' + pascal_case(variable.name) + ' ' + str(my_int) + ' blackboard' + create_macro(cur_assign, 0, None)  # init_mode none here because we are operating in a func
-                            + indent(1) + 'where node_location = ' + str(my_int) + os.linesep
-                        )
+                    cur_type = variable_type(variable)
+                    if variable.name not in running_dict:
+                        running_dict[variable.name] = []
+                    cur_assign = variable.assign
+                    for initial_statement in current_node.init_statements:
+                        if initial_statement.variable.name == variable.name:
+                            cur_assign = initial_statement.assign
+                            break
+                    running_dict[variable.name].append(
+                        'localBoard' + pascal_case(variable.name) + ' ' + str(my_int) + ' blackboard' + create_macro(cur_assign, 0, None)  # init_mode none here because we are operating in a func
+                        + indent(1) + 'where nodeLocation = ' + str(my_int) + os.linesep
+                    )
                 else:
                     cur_assign = variable.assign
                     overwritten = False
@@ -1467,32 +1480,23 @@ def create_blackboard(model):
                             overwritten = True
                             break
                     cur_type = variable_type(variable)
-                    if run1:
-                        running_create_order.append((variable.name + str(my_int), get_default_arg(variable), overwritten))
-                    else:
-                        running_list.append(
-                            {
-                                'name' : variable.name,
-                                'type' : cur_type,
-                                'init' : handle_initial_value(cur_assign, variable, cur_type, 2, 'board', 'partialBlackboard' + pascal_case(variable.name) + str(my_int), my_int),
-                                'number' : my_int,
-                                'variable' : variable,
-                                'overwritten' : overwritten
-                            }
-                        )
+                    running_create_order.append((variable,
+                                                 my_int,
+                                                 overwritten,
+                                                 handle_initial_value(cur_assign, variable, cur_type, 2, 'board', 'partialBlackboard' + pascal_case(variable.name) + str(my_int), my_int)
+                                                 ))
         elif current_node.node_type == 'check' or current_node.node_type == 'check_environment':
             # can't have local variables in checks.
             pass
         else:
             node_children = (current_node.children if hasattr(current_node, 'children') else [current_node.child])
             for child in node_children:
-                (cur_node_names, cur_node_names_map, running_list, running_dict, running_int, running_create_order) = walk_tree_recursive_blackboard(child, cur_node_names, cur_node_names_map, running_list, running_dict, running_int, running_create_order, run1)
+                (cur_node_names, cur_node_names_map, running_dict, running_int, running_create_order) = walk_tree_recursive_blackboard(child, cur_node_names, cur_node_names_map, running_dict, running_int, running_create_order)
         return (
             (
                 (
                     cur_node_names,
                     cur_node_names_map,
-                    running_list,
                     running_dict,
                     running_int,
                     running_create_order
@@ -1500,44 +1504,56 @@ def create_blackboard(model):
             )
         )
 
-    (_, _, _, _, _, running_create_order) = walk_tree_recursive_blackboard(model.root, set(), {}, [], {}, -1, [], True)
+    (_, _, local_macros, _, running_create_order) = walk_tree_recursive_blackboard(model.root, set(), {}, {}, -1, [])
 
     create_order = (
         [
-            ('newVal' + pascal_case(variable.name), get_default_arg(variable))
+            {
+                'initial_name' : 'newVal' + pascal_case(variable.name),
+                'initial_func' : 'initVal' + pascal_case(variable.name),
+                'field_name' : 'board' + pascal_case(variable.name),
+                'partial_name' : 'partialBlackboard' + pascal_case(variable.name),
+                'type' : variable_type(variable),
+                'default_arg' : get_default_arg(variable),
+                'initial_value' : handle_initial_value(variable.assign, variable, variable_type(variable), 2, 'board', 'partialBlackboard' + pascal_case(variable.name), None)
+            }
             for variable in model.variables if (variable.model_as != 'DEFINE' and is_blackboard(variable))
         ]
         +
         [
-            ('localNewVal' + pascal_case(cur_name), cur_type)
-            for (cur_name, cur_type, cur_overwritten) in running_create_order if not cur_overwritten
+            {
+                'initial_name' : 'localNewVal' + pascal_case(variable.name) + str(my_int),
+                'initial_func' : 'localInitVal' + pascal_case(variable.name) + str(my_int),
+                'field_name' : 'localBoard' + pascal_case(variable.name) + str(my_int),
+                'partial_name' : 'partialBlackboard' + pascal_case(variable.name) + str(my_int),
+                'type' : variable_type(variable),
+                'default_arg' : get_default_arg(variable),
+                'initial_value' : initial_value
+            }
+            for (variable, my_int, cur_overwritten, initial_value) in running_create_order if not cur_overwritten
         ]
         +
         [
-            ('localNewVal' + pascal_case(cur_name), cur_type)
-            for (cur_name, cur_type, cur_overwritten) in running_create_order if cur_overwritten
+            {
+                'initial_name' : 'localNewVal' + pascal_case(variable.name) + str(my_int),
+                'initial_func' : 'localInitVal' + pascal_case(variable.name) + str(my_int),
+                'field_name' : 'localBoard' + pascal_case(variable.name) + str(my_int),
+                'partial_name' : 'partialBlackboard' + pascal_case(variable.name) + str(my_int),
+                'type' : variable_type(variable),
+                'default_arg' : get_default_arg(variable),
+                'initial_value' : initial_value
+            }
+            for (variable, my_int, cur_overwritten, initial_value) in running_create_order if cur_overwritten
         ]
     )
 
-    names_to_types = {
-        variable.name : variable_type(variable)
-        for variable in model.variables if (variable.model_as != 'DEFINE' and is_blackboard(variable))
-    }
-    initial_values = {
-        variable.name : handle_initial_value(variable.assign, variable, names_to_types[variable.name], 2, 'board', 'partialBlackboard' + pascal_case(variable.name), None)
-        for index, variable in enumerate(model.variables) if (variable.model_as != 'DEFINE' and is_blackboard(variable))
-    }
-
-    (_, _, local_list, local_macros, _, _) = walk_tree_recursive_blackboard(model.root, set(), {}, [], {}, -1, create_order, False)
     local_var_to_nodes = {}
-    names_to_local_var = {}
-    for local_v in local_list:
-        name = local_v['name']
+    for (variable, my_int, _, _) in running_create_order:
+        name = variable.name
         if name in local_var_to_nodes:
-            local_var_to_nodes[name].append(local_v['number'])
+            local_var_to_nodes[name].append(my_int)
         else:
-            names_to_local_var[name] = local_v['variable']
-            local_var_to_nodes[name] = [local_v['number']]
+            local_var_to_nodes[name] = [my_int]
     return (
         'module BehaviorTreeBlackboard where' + os.linesep
         + 'import SereneRandomizer' + os.linesep
@@ -1546,42 +1562,27 @@ def create_blackboard(model):
         + os.linesep
         + 'data BTreeBlackboard = BTreeBlackboard {' + os.linesep
         + indent(1) + 'sereneBoardGenerator :: StdGen' + os.linesep
-        + ((indent(1) + ', ') if len(names_to_types) > 0 else '')
-        + (os.linesep + indent(1) + ', ').join([('board' + pascal_case(variable_name) + ' :: ' + names_to_types[variable_name]) for variable_name in names_to_types])
-        + (os.linesep if len(names_to_types) > 0 else '')
-        + ((indent(1) + ', ') if len(local_list) > 0 else '')
-        + (os.linesep + indent(1) + ', ').join([('localBoard' + pascal_case(local_v['name']) + str(local_v['number']) + ' :: ' + local_v['type']) for local_v in local_list])
-        + (os.linesep if len(local_list) > 0 else '')
+        + ((indent(1) + ', ') if len(create_order) > 0 else '')
+        + (os.linesep + indent(1) + ', ').join([(variable_info['field_name'] + ' :: ' + variable_info['type']) for variable_info in create_order])
+        + (os.linesep if len(create_order) > 0 else '')
         + indent(1) + '}' + os.linesep + os.linesep
         + (
             'instance Show BTreeBlackboard where' + os.linesep
             + indent(1) + 'show (BTreeBlackboard _ '
-            + ' '.join([('board' + pascal_case(variable_name)) for variable_name in names_to_types])
-            + ' '
-            + ' '.join([('localBoard' + pascal_case(local_v['name']) + str(local_v['number'])) for local_v in local_list])
+            + ' '.join(map(lambda x: x['field_name'], create_order))
             + ') = '
             + '"Board = {"'
             + ' ++ '
             + ' ++ '.join(
                 [
-                    ('"board' + pascal_case(variable_name) + ': " ++ show board' + pascal_case(variable_name))
+                    ('"' + variable_info['field_name'] + ': " ++ show ' + variable_info['field_name'])
                     if index == 0
                     else
-                    ('", board' + pascal_case(variable_name) + ': " ++ show board' + pascal_case(variable_name))
-                    for index, variable_name in enumerate(names_to_types)
+                    ('", ' + variable_info['field_name'] + ': " ++ show ' + variable_info['field_name'])
+                    for index, variable_info in enumerate(create_order)
                 ]
             )
-            + (' ++ ' if len(names_to_types) > 0 else '')
-            + ' ++ '.join(
-                [
-                    ('"localBoard' + pascal_case(local_v['name']) + str(local_v['number']) + ': " ++ show localBoard' + pascal_case(local_v['name']) + str(local_v['number']))
-                    if index == 0 and len(names_to_types) == 0
-                    else
-                    ('", localBoard' + pascal_case(local_v['name']) + str(local_v['number']) + ': " ++ show localBoard' + pascal_case(local_v['name']) + str(local_v['number']))
-                    for index, local_v in enumerate(local_list)
-                ]
-            )
-            + (' ++ ' if len(local_list) > 0 else '')
+            + (' ++ ' if len(create_order) > 0 else '')
             + '"}"' + os.linesep
         )
         + os.linesep + os.linesep
@@ -1603,9 +1604,9 @@ def create_blackboard(model):
                     + 'localBoard' + pascal_case(variable.name) + ' _ = error "' + variable.name + ' illegal local reference"' + os.linesep
                 )
                 for variable in model.variables if (variable.model_as != 'DEFINE' and is_local(variable))
-                # for var_name in local_var_to_nodes if ((variable := names_to_local_var[var_name]) or True)
             ]
         )
+        # the above creates custom functions to get local variables.
         + os.linesep + os.linesep
         + ''.join(
             [
@@ -1626,7 +1627,10 @@ def create_blackboard(model):
                         else
                         ''
                     )
-                    + 'localBoard' + pascal_case(variable.name) + ' nodeLocation blackboard' + create_macro(variable.assign, 0, None)  # init_mode none here because we are operating in a func
+                    + 'localBoard' + pascal_case(variable.name) + ' _ _ = error "' + variable.name + ' illegal local reference"' + os.linesep
+                    # this one needs two _ because unlike the other one, we aren't doing eta reduction
+                    # we handle each case in the recursive call and now just need to combine them.
+                    # + 'localBoard' + pascal_case(variable.name) + ' nodeLocation blackboard' + create_macro(variable.assign, 0, None)  # init_mode none here because we are operating in a func
                 )
                 for variable in model.variables if (variable.model_as == 'DEFINE' and is_local(variable))
             ]
@@ -1656,39 +1660,25 @@ def create_blackboard(model):
                        ,
                        model.variables
                        )
-                # local_var_to_nodes
             )
         )
         + os.linesep + os.linesep
         + 'initialBlackboard :: Int -> BTreeBlackboard' + os.linesep
-        + 'initialBlackboard seed = BTreeBlackboard newSereneGenerator ' + ' '.join(map(lambda x : 'newVal' + pascal_case(x), names_to_types))
-        + ' '
-        + ' '.join(map(lambda x : 'localNewVal' + pascal_case(x['name']) + str(x['number']), local_list)) + os.linesep
+        + 'initialBlackboard seed = BTreeBlackboard newSereneGenerator ' + ' '.join(map(lambda x : x['initial_name'], create_order))
         + indent(1) + 'where' + os.linesep
         + indent(2) + 'tempGen0 = getGenerator seed' + os.linesep
-        + indent(2) + 'newSereneGenerator = tempGen' + str(len(names_to_types) + len(local_list)) + os.linesep
+        + indent(2) + 'newSereneGenerator = tempGen' + str(len(create_order)) + os.linesep
         + ''.join(
             [
                 (
-                    indent(2) + 'partialBlackboard' + pascal_case(variable_name) + ' = BTreeBlackboard newSereneGenerator' + order_partial_arguments('newVal' + pascal_case(variable_name), create_order) + os.linesep
-                    + indent(2) + 'initVal' + pascal_case(variable_name) + ' :: StdGen -> (' + names_to_types[variable_name] + ', StdGen)' + os.linesep
-                    + indent(2) + 'initVal' + pascal_case(variable_name) + ' curGen' + initial_values[variable_name]
+                    indent(2) + variable_info['partial_name'] + ' = BTreeBlackboard newSereneGenerator' + order_partial_arguments(variable_info['initial_name'], create_order) + os.linesep
+                    + indent(2) + variable_info['initial_func'] + ' :: StdGen -> (' + variable_info['type'] + ', StdGen)' + os.linesep
+                    + indent(2) + variable_info['initial_func'] + ' curGen' + variable_info['initial_value']
                     + os.linesep
-                    + indent(2) + '(newVal' + pascal_case(variable_name) + ', tempGen' + str(index + 1) + ') = initVal' + pascal_case(variable_name) + ' tempGen' + str(index) + os.linesep
+                    + indent(2) + '(' + variable_info['initial_name'] + ', tempGen' + str(index + 1) + ') = ' + variable_info['initial_func'] + ' tempGen' + str(index) + os.linesep
                     + os.linesep
                 )
-                for index, variable_name in enumerate(names_to_types)
-            ]
-        )
-        + ''.join(
-            [
-                (
-                    indent(2) + 'partialBlackboard' + pascal_case(local_v['name']) + str(local_v['number']) +  ' = BTreeBlackboard newSereneGenerator' + order_partial_arguments('localNewVal' + pascal_case(local_v['name']) + str(local_v['number']), create_order) + os.linesep
-                    + indent(2) + 'localInitVal' + pascal_case(local_v['name']) + str(local_v['number']) + ' :: StdGen -> (' + local_v['type'] + ', StdGen)' + os.linesep
-                    + indent(2) + 'localInitVal' + pascal_case(local_v['name']) + str(local_v['number']) + ' curGen' + local_v['init']
-                    + indent(2) + '(localNewVal' + pascal_case(local_v['name']) + str(local_v['number']) + ', tempGen' + str(index + 1 + len(names_to_types)) + ') = localInitVal' + pascal_case(local_v['name']) + str(local_v['number']) + ' tempGen' + str(index + len(names_to_types)) + os.linesep
-                )
-                for index, local_v in enumerate(local_list)
+                for index, variable_info in enumerate(create_order)
             ]
         )
         + os.linesep

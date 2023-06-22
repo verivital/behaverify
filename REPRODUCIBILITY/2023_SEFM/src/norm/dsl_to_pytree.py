@@ -727,7 +727,7 @@ def create_safe_assignment(model):
         return_string = (
             indent(indent_level) + 'def ' + function_name + '(new_value):' + os.linesep
             + indent(indent_level + 1) + 'if not isinstance(new_value, ' + cur_var_type + '):' + os.linesep
-            + indent(indent_level + 2) + 'raise Exception(' + "'variable " + variable.name + " expected type " + cur_var_type + " but received type ' + str(type(new_value)))" + os.linesep
+            + indent(indent_level + 2) + 'raise SereneAssignmentException(' + "'variable " + variable.name + " expected type " + cur_var_type + " but received type ' + str(type(new_value)))" + os.linesep
         )
         if variable.domain.min_val is not None:
             if variable.domain.condition is not None:
@@ -738,14 +738,14 @@ def create_safe_assignment(model):
                     + ':' + os.linesep
                     + indent(indent_level + 2) + 'return new_value' + os.linesep
                     + indent(indent_level + 1) + 'else:' + os.linesep
-                    + indent(indent_level + 2) + 'raise Exception(' + "'variable " + variable.name + " expected value in " + value_list + " but received value ' + str(new_value))" + os.linesep
+                    + indent(indent_level + 2) + 'raise SereneAssignmentException(' + "'variable " + variable.name + " expected value in " + value_list + " but received value ' + str(new_value))" + os.linesep
                 )
             else:
                 return_string += (
                     indent(indent_level + 1) + 'if new_value >= ' + handle_constant_str(variable.domain.min_val) + ' and new_value <= ' + handle_constant_str(variable.domain.max_val) + ':' + os.linesep
                     + indent(indent_level + 2) + 'return new_value' + os.linesep
                     + indent(indent_level + 1) + 'else:' + os.linesep
-                    + indent(indent_level + 2) + 'raise Exception(' + "'variable " + variable.name + " expected value between " + handle_constant_str(variable.domain.min_val) + " and " + handle_constant_str(variable.domain.max_val) + " inclusive but received value ' + str(new_value))" + os.linesep
+                    + indent(indent_level + 2) + 'raise SereneAssignmentException(' + "'variable " + variable.name + " expected value between " + handle_constant_str(variable.domain.min_val) + " and " + handle_constant_str(variable.domain.max_val) + " inclusive but received value ' + str(new_value))" + os.linesep
                 )
         elif variable.domain.boolean is not None:
             return_string += indent(indent_level + 1) + 'return new_value' + os.linesep
@@ -756,10 +756,16 @@ def create_safe_assignment(model):
                 + ':' + os.linesep
                 + indent(indent_level + 2) + 'return new_value' + os.linesep
                 + indent(indent_level + 1) + 'else:' + os.linesep
-                + indent(indent_level + 2) + 'raise Exception(' + '"variable ' + variable.name + ' expected value in ' + value_list + ' but received value \'" + new_value + "\'")' + os.linesep
+                + indent(indent_level + 2) + 'raise SereneAssignmentException(' + '"variable ' + variable.name + ' expected value in ' + value_list + ' but received value \'" + new_value + "\'")' + os.linesep
             )
         return return_string
-    outter_return_string = ''
+    outter_return_string = (
+        'class SereneAssignmentException(Exception):' + os.linesep
+        + indent(1) + 'def __init__(self, message):' + os.linesep
+        + indent(2) + 'super().__init__(message)' + os.linesep
+        + os.linesep
+        + os.linesep
+    )
     for variable in model.variables:
         if variable.model_as == 'DEFINE':
             continue
@@ -773,9 +779,9 @@ def create_safe_assignment(model):
                 + indent(1) + 'seen_indices = set()' + os.linesep
                 + indent(1) + 'for (index, new_value) in new_values:' + os.linesep
                 + indent(2) + 'if not isinstance(index, int):' + os.linesep
-                + indent(3) + "raise Exception('Index must be an int when accessing " + variable.name + ": ' + str(type(index)))" + os.linesep
+                + indent(3) + "raise SereneAssignmentException('Index must be an int when accessing " + variable.name + ": ' + str(type(index)))" + os.linesep
                 + indent(2) + 'if index < 0 or index >= ' + handle_constant_str(variable.array_size) + ':' + os.linesep
-                + indent(3) + "raise Exception('Index out of bounds when accessing " + variable.name + ": ' + str(index))" + os.linesep
+                + indent(3) + "raise SereneAssignmentException('Index out of bounds when accessing " + variable.name + ": ' + str(index))" + os.linesep
                 + indent(2) + 'checked_value = ' + variable.name + '__internal_type_check(new_value)' + os.linesep
                 + indent(2) + 'if index not in seen_indices:' + os.linesep
                 + indent(3) + 'seen_indices.add(index)' + os.linesep
@@ -1069,7 +1075,7 @@ def write_environment(model):
             (indent(2) + 'return True' + os.linesep)
             if model.tick_condition is None
             else
-            (indent(2) + 'return ' + format_code(model.tick_condition, None) + os.linesep)
+            (indent(2) + 'return ' + format_code(model.tick_condition, format_mode = {'init': False, 'loc' : 'environment'}) + os.linesep)
         )
         + os.linesep
         + indent(1) + 'def __init__(self, blackboard):' + os.linesep

@@ -1,0 +1,200 @@
+------------------------
+State after tick: 1
+sel0 -> SUCCESS
+  a1 -> FAILURE
+  a3 -> SUCCESS
+  a1_1 -> INVALID
+
+blackboard
+  blVAR0: 2
+  blDEFINE4: True
+
+local
+  a1_DOT_localDEFINE5 : False
+  a3_DOT_localVAR3 : 2
+  a3_DOT_localDEFINE5 : False
+  a1_1_DOT_localDEFINE5 : False
+
+environment
+  envVAR1: 4
+
+------------------------
+State after tick: 2
+sel0 -> SUCCESS
+  a1 -> FAILURE
+  a3 -> SUCCESS
+  a1_1 -> INVALID
+
+blackboard
+  blVAR0: 2
+  blDEFINE4: True
+
+local
+  a1_DOT_localDEFINE5 : False
+  a3_DOT_localVAR3 : 2
+  a3_DOT_localDEFINE5 : False
+  a1_1_DOT_localDEFINE5 : False
+
+environment
+  envVAR1: 4
+
+------------------------
+State after tick: 3
+sel0 -> SUCCESS
+  a1 -> FAILURE
+  a3 -> SUCCESS
+  a1_1 -> INVALID
+
+blackboard
+  blVAR0: 2
+  blDEFINE4: True
+
+local
+  a1_DOT_localDEFINE5 : False
+  a3_DOT_localVAR3 : 2
+  a3_DOT_localDEFINE5 : False
+  a1_1_DOT_localDEFINE5 : False
+
+environment
+  envVAR1: 4
+
+------------------------
+State after tick: 4
+sel0 -> SUCCESS
+  a1 -> FAILURE
+  a3 -> SUCCESS
+  a1_1 -> INVALID
+
+blackboard
+  blVAR0: 2
+  blDEFINE4: True
+
+local
+  a1_DOT_localDEFINE5 : False
+  a3_DOT_localVAR3 : 2
+  a3_DOT_localDEFINE5 : False
+  a1_1_DOT_localDEFINE5 : False
+
+environment
+  envVAR1: 4
+
+------------------------
+State after tick: 5
+sel0 -> SUCCESS
+  a1 -> FAILURE
+  a3 -> SUCCESS
+  a1_1 -> INVALID
+
+blackboard
+  blVAR0: 2
+  blDEFINE4: True
+
+local
+  a1_DOT_localDEFINE5 : False
+  a3_DOT_localVAR3 : 2
+  a3_DOT_localDEFINE5 : False
+  a1_1_DOT_localDEFINE5 : False
+
+environment
+  envVAR1: 4
+
+------------------------
+State after tick: 6
+sel0 -> SUCCESS
+  a1 -> FAILURE
+  a3 -> SUCCESS
+  a1_1 -> INVALID
+
+blackboard
+  blVAR0: 2
+  blDEFINE4: True
+
+local
+  a1_DOT_localDEFINE5 : False
+  a3_DOT_localVAR3 : 2
+  a3_DOT_localDEFINE5 : False
+  a1_1_DOT_localDEFINE5 : False
+
+environment
+  envVAR1: 4
+
+------------------------
+State after tick: 7
+sel0 -> SUCCESS
+  a1 -> FAILURE
+  a3 -> SUCCESS
+  a1_1 -> INVALID
+
+blackboard
+  blVAR0: 2
+  blDEFINE4: True
+
+local
+  a1_DOT_localDEFINE5 : False
+  a3_DOT_localVAR3 : 2
+  a3_DOT_localDEFINE5 : False
+  a1_1_DOT_localDEFINE5 : False
+
+environment
+  envVAR1: 4
+
+------------------------
+State after tick: 8
+sel0 -> SUCCESS
+  a1 -> FAILURE
+  a3 -> SUCCESS
+  a1_1 -> INVALID
+
+blackboard
+  blVAR0: 2
+  blDEFINE4: True
+
+local
+  a1_DOT_localDEFINE5 : False
+  a3_DOT_localVAR3 : 2
+  a3_DOT_localDEFINE5 : False
+  a1_1_DOT_localDEFINE5 : False
+
+environment
+  envVAR1: 4
+
+------------------------
+State after tick: 9
+sel0 -> SUCCESS
+  a1 -> FAILURE
+  a3 -> SUCCESS
+  a1_1 -> INVALID
+
+blackboard
+  blVAR0: 2
+  blDEFINE4: True
+
+local
+  a1_DOT_localDEFINE5 : False
+  a3_DOT_localVAR3 : 2
+  a3_DOT_localDEFINE5 : False
+  a1_1_DOT_localDEFINE5 : False
+
+environment
+  envVAR1: 4
+
+------------------------
+State after tick: 10
+sel0 -> SUCCESS
+  a1 -> FAILURE
+  a3 -> SUCCESS
+  a1_1 -> INVALID
+
+blackboard
+  blVAR0: 2
+  blDEFINE4: True
+
+local
+  a1_DOT_localDEFINE5 : False
+  a3_DOT_localVAR3 : 2
+  a3_DOT_localDEFINE5 : False
+  a1_1_DOT_localDEFINE5 : False
+
+environment
+  envVAR1: 4
+

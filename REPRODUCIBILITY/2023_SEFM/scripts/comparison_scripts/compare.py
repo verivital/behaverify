@@ -111,7 +111,7 @@ nuxmv_max_stage = max_stage
 
 opt_nuxmv_run = []
 arrays_to_build = []
-with open(smv_file, 'r', encoding = 'utf-8') as f:
+with open(opt_smv_file, 'r', encoding = 'utf-8') as f:
     ignore = True
     max_stage = {}
     for line in f:
@@ -200,141 +200,158 @@ if use_haskell:
                 var_val = var_val.strip().upper().replace('\'', '').replace('"', '')
                 haskell_run[-1][var_name] = var_val
 
-
+# print(opt_nuxmv_run)
+# print(len(opt_nuxmv_run))
 print('-----------------------------' + experiment_name + '-----------------------------')
+if len(python_run) < 10:
+    print('Comparison failure! Not enough python ticks')
+    sys.exit()
+if len(nuxmv_run) < 10:
+    print('Comparison failure! Not enough nuXmv ticks')
+    sys.exit()
+if len(opt_nuxmv_run) < 10:
+    print('Comparison failure! Not enough opt_nuxmv ticks')
+    sys.exit()
+if use_haskell and len(haskell_run) < 10:
+    print('Comparison failure! Not enough python ticks')
+    sys.exit()
 
 for tick in range(len(python_run)):
-    python_tick = python_run[tick]
-    nuxmv_tick = nuxmv_run[tick]
-    opt_nuxmv_tick = opt_nuxmv_run[tick]
-    haskell_tick = None
-    if use_haskell:
-        haskell_tick = haskell_run[tick]
-    for item in python_tick:
-        # compare python tick to nuxmv tick
-        if item not in nuxmv_tick:
-            # if something is missing, that's bad
-            if item in variables and 'DEFINE' in item:
-                # nuxmv version might not have defined the macro
-                pass
-            else:
-                print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' with value ' + python_tick[item] + ' was in python_tick but not in nuxmv_tick')
-                sys.exit()
-        elif python_tick[item] != nuxmv_tick[item]:
-            # if something doesn't match, that's bad
-            if item in variables and 'DEFINE' in item:
-                # nuxmv version might not have defined the macro
-                pass
-            else:
-                print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' was ' + python_tick[item] + ' in python_tick but ' + nuxmv_tick[item] + ' in nuxmv_tick')
-                sys.exit()
+    try:
+        python_tick = python_run[tick]
+        nuxmv_tick = nuxmv_run[tick]
+        opt_nuxmv_tick = opt_nuxmv_run[tick]
+        haskell_tick = None
         if use_haskell:
-            if item in variables and item not in haskell_tick:
-                if 'LOCAL' in item or 'DEFINE' in item:
-                    pass
-                else:
-                    # if something is missing, that's bad
-                    print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' with value ' + python_tick[item] + ' was in python_tick but not in haskell_tick')
-                    sys.exit()
-            elif item in variables and haskell_tick[item] != python_tick[item]:
-                # if something doesn't match, that's bad
-                print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' was ' + python_tick[item] + ' in python_tick but ' + haskell_tick[item] + ' in haskell_tick')
-                sys.exit()
-            
-    for item in nuxmv_tick:
-        # compare nuxmv tick to python tick, then nuxmv tick to nuxmv opt tick
-        if item not in python_tick:
-            # if something is missing, that's bad
-            if item in variables and 'DEFINE' in item:
-                # nuxmv version might not have defined the macro
-                pass
-            else:
-                print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' with value ' + nuxmv_tick[item] + ' was in nuxmv_tick but not in python_tick')
-                sys.exit()
-        elif python_tick[item] != nuxmv_tick[item]:
-            # if something doesn't match, that's bad
-            if item in variables and 'DEFINE' in item:
-                # nuxmv version might not have defined the macro
-                pass
-            else:
-                print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' was ' + python_tick[item] + ' in python_tick but ' + nuxmv_tick[item] + ' in nuxmv_tick')
-                sys.exit()
-        elif item not in opt_nuxmv_tick:
-            # if something is missing, that MIGHT be bad.
-            if item in variables:
-                if 'DEFINE' in item:
+            haskell_tick = haskell_run[tick]
+        for item in python_tick:
+            # compare python tick to nuxmv tick
+            if item not in nuxmv_tick:
+                # if something is missing, that's bad
+                if item in variables and 'DEFINE' in item:
                     # nuxmv version might not have defined the macro
                     pass
                 else:
-                    # if it's a variable, that's bad. we shouldn't have fully eliminated any variables.
+                    print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' with value ' + python_tick[item] + ' was in python_tick but not in nuxmv_tick')
+                    sys.exit()
+            elif python_tick[item] != nuxmv_tick[item]:
+                # if something doesn't match, that's bad
+                if item in variables and 'DEFINE' in item:
+                    # nuxmv version might not have defined the macro
+                    pass
+                else:
+                    print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' was ' + python_tick[item] + ' in python_tick but ' + nuxmv_tick[item] + ' in nuxmv_tick')
+                    sys.exit()
+            if use_haskell:
+                if item in variables and item not in haskell_tick:
+                    if 'LOCAL' in item or 'DEFINE' in item:
+                        pass
+                    else:
+                        # if something is missing, that's bad
+                        print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' with value ' + python_tick[item] + ' was in python_tick but not in haskell_tick')
+                        sys.exit()
+                elif item in variables and haskell_tick[item] != python_tick[item]:
+                    # if something doesn't match, that's bad
+                    print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' was ' + python_tick[item] + ' in python_tick but ' + haskell_tick[item] + ' in haskell_tick')
+                    sys.exit()
+
+        for item in nuxmv_tick:
+            # compare nuxmv tick to python tick, then nuxmv tick to nuxmv opt tick
+            if item not in python_tick:
+                # if something is missing, that's bad
+                if item in variables and 'DEFINE' in item:
+                    # nuxmv version might not have defined the macro
+                    pass
+                else:
+                    print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' with value ' + nuxmv_tick[item] + ' was in nuxmv_tick but not in python_tick')
+                    sys.exit()
+            elif python_tick[item] != nuxmv_tick[item]:
+                # if something doesn't match, that's bad
+                if item in variables and 'DEFINE' in item:
+                    # nuxmv version might not have defined the macro
+                    pass
+                else:
+                    print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' was ' + python_tick[item] + ' in python_tick but ' + nuxmv_tick[item] + ' in nuxmv_tick')
+                    sys.exit()
+            elif item not in opt_nuxmv_tick:
+                # if something is missing, that MIGHT be bad.
+                if item in variables:
+                    if 'DEFINE' in item:
+                        # nuxmv version might not have defined the macro
+                        pass
+                    else:
+                        # if it's a variable, that's bad. we shouldn't have fully eliminated any variables.
+                        print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' with value ' + nuxmv_tick[item] + ' was in nuxmv_tick but not in opt_nuxmv_tick')
+                        sys.exit()
+                elif nuxmv_tick[item] != 'invalid' and item[0] in {'c', 'a'}:
+                    # if it's a node and not invalid, that's bad. (invalid nodes may have reasonably been pruned. no cause for alarm)
+                    # jk, we can trim composite nodes that aren't invalid because they have only one child. verify that it is a leaf node that differs.
                     print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' with value ' + nuxmv_tick[item] + ' was in nuxmv_tick but not in opt_nuxmv_tick')
                     sys.exit()
-            elif nuxmv_tick[item] != 'invalid' and item[0] in {'c', 'a'}:
-                # if it's a node and not invalid, that's bad. (invalid nodes may have reasonably been pruned. no cause for alarm)
-                # jk, we can trim composite nodes that aren't invalid because they have only one child. verify that it is a leaf node that differs.
-                print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' with value ' + nuxmv_tick[item] + ' was in nuxmv_tick but not in opt_nuxmv_tick')
-                sys.exit()
-        elif nuxmv_tick[item] != opt_nuxmv_tick[item]:
-            # if something doesn't match, that MIGHT be bad
-            if item in nodes:
-                # if a node doesn't match, that's bad for sure
-                print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' was ' + opt_nuxmv_tick[item] + ' in opt_nuxmv_tick but ' + nuxmv_tick[item] + ' in nuxmv_tick')
-                sys.exit()
-            elif not (item in nuxmv_max_stage and item in opt_nuxmv_max_stage):
-                if item in variables and 'DEFINE' in item:
-                    # nuxmv version might not have defined the macro
-                    pass
-                else:
-                    # if a variable doesn't match and we don't have stage info on it, that's bad
+            elif nuxmv_tick[item] != opt_nuxmv_tick[item]:
+                # if something doesn't match, that MIGHT be bad
+                if item in nodes:
+                    # if a node doesn't match, that's bad for sure
                     print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' was ' + opt_nuxmv_tick[item] + ' in opt_nuxmv_tick but ' + nuxmv_tick[item] + ' in nuxmv_tick')
                     sys.exit()
-            elif opt_nuxmv_max_stage[item] >= nuxmv_max_stage[item]:
-                if item in variables and 'DEFINE' in item:
-                    # nuxmv version might not have defined the macro
-                    pass
-                else:
-                    # if a variable doesn't match and we DIDN'T prune the last stage, that's bad.
-                    print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' was ' + opt_nuxmv_tick[item] + ' in opt_nuxmv_tick but ' + nuxmv_tick[item] + ' in nuxmv_tick')
-                    sys.exit()
-    for item in opt_nuxmv_tick:
-        # now we compare opt_nuxmv to nuxmv
-        if item not in nuxmv_tick:
-            # if an item is in opt but not nuxmv, something has gone pretty seriously wrong
-            print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' with value ' + opt_nuxmv_tick[item] + ' was in opt_nuxmv_tick but not in nuxmv_tick')
-            sys.exit()
-        elif opt_nuxmv_tick[item] != nuxmv_tick[item]:
-            # if an item doesn't match, that might be fine. might just means pruning occured
-            if item in nodes:
-                # if a node doesn't match, that's bad for sure
-                print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' was ' + opt_nuxmv_tick[item] + ' in opt_nuxmv_tick but ' + nuxmv_tick[item] + ' in nuxmv_tick')
+                elif not (item in nuxmv_max_stage and item in opt_nuxmv_max_stage):
+                    if item in variables and 'DEFINE' in item:
+                        # nuxmv version might not have defined the macro
+                        pass
+                    else:
+                        # if a variable doesn't match and we don't have stage info on it, that's bad
+                        print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' was ' + opt_nuxmv_tick[item] + ' in opt_nuxmv_tick but ' + nuxmv_tick[item] + ' in nuxmv_tick')
+                        sys.exit()
+                elif opt_nuxmv_max_stage[item] >= nuxmv_max_stage[item]:
+                    if item in variables and 'DEFINE' in item:
+                        # nuxmv version might not have defined the macro
+                        pass
+                    else:
+                        # if a variable doesn't match and we DIDN'T prune the last stage, that's bad.
+                        print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' was ' + opt_nuxmv_tick[item] + ' in opt_nuxmv_tick but ' + nuxmv_tick[item] + ' in nuxmv_tick')
+                        sys.exit()
+        for item in opt_nuxmv_tick:
+            # now we compare opt_nuxmv to nuxmv
+            if item not in nuxmv_tick:
+                # if an item is in opt but not nuxmv, something has gone pretty seriously wrong
+                print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' with value ' + opt_nuxmv_tick[item] + ' was in opt_nuxmv_tick but not in nuxmv_tick')
                 sys.exit()
-            elif not (item in nuxmv_max_stage and item in opt_nuxmv_max_stage):
-                if item in variables and 'DEFINE' in item:
-                    # nuxmv version might not have defined the macro
-                    pass
-                else:
-                    # if a variable doesn't match and we don't have stage info on it, that's bad
+            elif opt_nuxmv_tick[item] != nuxmv_tick[item]:
+                # if an item doesn't match, that might be fine. might just means pruning occured
+                if item in nodes:
+                    # if a node doesn't match, that's bad for sure
                     print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' was ' + opt_nuxmv_tick[item] + ' in opt_nuxmv_tick but ' + nuxmv_tick[item] + ' in nuxmv_tick')
                     sys.exit()
-            elif opt_nuxmv_max_stage[item] >= nuxmv_max_stage[item]:
-                if item in variables and 'DEFINE' in item:
-                    # nuxmv version might not have defined the macro
-                    pass
-                else:
-                    # if a variable doesn't match and we DIDN'T prune the last stage, that's bad.
-                    print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' was ' + opt_nuxmv_tick[item] + ' in opt_nuxmv_tick but ' + nuxmv_tick[item] + ' in nuxmv_tick')
+                elif not (item in nuxmv_max_stage and item in opt_nuxmv_max_stage):
+                    if item in variables and 'DEFINE' in item:
+                        # nuxmv version might not have defined the macro
+                        pass
+                    else:
+                        # if a variable doesn't match and we don't have stage info on it, that's bad
+                        print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' was ' + opt_nuxmv_tick[item] + ' in opt_nuxmv_tick but ' + nuxmv_tick[item] + ' in nuxmv_tick')
+                        sys.exit()
+                elif opt_nuxmv_max_stage[item] >= nuxmv_max_stage[item]:
+                    if item in variables and 'DEFINE' in item:
+                        # nuxmv version might not have defined the macro
+                        pass
+                    else:
+                        # if a variable doesn't match and we DIDN'T prune the last stage, that's bad.
+                        print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' was ' + opt_nuxmv_tick[item] + ' in opt_nuxmv_tick but ' + nuxmv_tick[item] + ' in nuxmv_tick')
+                        sys.exit()
+        if use_haskell:
+            for item in haskell_tick:
+                if item not in python_tick:
+                    if 'LOCAL' in item or 'DEFINE' in item:
+                        pass
+                    else:
+                        # if something is missing, that's bad
+                        print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' with value ' + haskell_tick[item] + ' was in haskell_tick but not in python_tick')
+                        sys.exit()
+                elif haskell_tick[item] != python_tick[item]:
+                    # if something doesn't match, that's bad
+                    print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' was ' + python_tick[item] + ' in python_tick but ' + haskell_tick[item] + ' in haskell_tick')
                     sys.exit()
-    if use_haskell:
-        for item in haskell_tick:
-            if item not in python_tick:
-                if 'LOCAL' in item or 'DEFINE' in item:
-                    pass
-                else:
-                    # if something is missing, that's bad
-                    print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' with value ' + haskell_tick[item] + ' was in haskell_tick but not in python_tick')
-                    sys.exit()
-            elif haskell_tick[item] != python_tick[item]:
-                # if something doesn't match, that's bad
-                print('Comparison failure! After tick ' + str(tick + 1) + ', ' + item + ' was ' + python_tick[item] + ' in python_tick but ' + haskell_tick[item] + ' in haskell_tick')
-                sys.exit()
-    # we don't comapre opt_nuxmv to python, it's too complicated and requires too many strange things. besisdes, by transitivity, it should be fine.
+        # we don't comapre opt_nuxmv to python, it's too complicated and requires too many strange things. besisdes, by transitivity, it should be fine.
+    except:
+        print('Comparison failure! Reached unexpected error')
+        sys.exit()
