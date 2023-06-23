@@ -1,0 +1,177 @@
+MODULE main
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		resume_from_here_in_subtree__move_robot := -3;
+		move_robot.active := (remaining_goals_stage_0 > 0);
+		--START OF BLACKBOARD DEFINITIONS
+		x_true_stage_1 := 
+			case
+				!(go_right.active) : x_true_stage_0;
+				TRUE : min(17, (x_true_stage_0 + 1));
+			esac;
+		x_true_stage_2 := 
+			case
+				!(go_left.active) : x_true_stage_1;
+				TRUE : max(0, (x_true_stage_1 - 1));
+			esac;
+		y_true_stage_1 := 
+			case
+				!(go_up.active) : y_true_stage_0;
+				TRUE : min(17, (y_true_stage_0 + 1));
+			esac;
+		y_true_stage_2 := 
+			case
+				!(go_down.active) : y_true_stage_1;
+				TRUE : max(0, (y_true_stage_1 - 1));
+			esac;
+		remaining_goals_stage_1 := 
+			case
+				!(move_robot.active) : remaining_goals_stage_0;
+				((x_goal_stage_0 = x_true_stage_2) & (y_goal_stage_0 = y_true_stage_2)) : max(0, (remaining_goals_stage_0 - 1));
+				TRUE : remaining_goals_stage_0;
+			esac;
+		--END OF BLACKBOARD DEFINITIONS
+	VAR
+		node_names : define_nodes;
+		x_too_small : x_too_small_module(x_goal_stage_0, x_true_stage_0);
+		go_right : success_DEFAULT_module();
+		try_right : composite_sequence_without_memory_2(x_too_small, go_right);
+		x_too_big : x_too_big_module(x_goal_stage_0, x_true_stage_0);
+		go_left : success_DEFAULT_module();
+		try_left : composite_sequence_without_memory_2(x_too_big, go_left);
+		y_too_small : y_too_small_module(y_goal_stage_0, y_true_stage_0);
+		go_up : success_DEFAULT_module();
+		try_up : composite_sequence_without_memory_2(y_too_small, go_up);
+		y_too_big : y_too_big_module(y_goal_stage_0, y_true_stage_0);
+		go_down : success_DEFAULT_module();
+		try_down : composite_sequence_without_memory_2(y_too_big, go_down);
+		move_robot : composite_selector_without_memory_4(try_right, try_left, try_up, try_down);
+		--START OF BLACKBOARD VARIABLES DECLARATION
+		x_goal_stage_0 : 0..17;
+		x_goal_stage_1 : 0..17;
+		y_goal_stage_0 : 0..17;
+		x_true_stage_0 : 0..17;
+		y_true_stage_0 : 0..17;
+		remaining_goals_stage_0 : 0..3;
+		--END OF BLACKBOARD VARIABLES DECLARATION
+	ASSIGN
+		--START OF BLACKBOARD VARIABLES INITIALIZATION
+		init(x_goal_stage_0) := 
+			case
+				TRUE : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17};
+			esac;
+		init(y_goal_stage_0) := 
+			case
+				TRUE : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17};
+			esac;
+		init(x_true_stage_0) := 
+			case
+				TRUE : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17};
+			esac;
+		init(y_true_stage_0) := 
+			case
+				TRUE : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17};
+			esac;
+		init(remaining_goals_stage_0) := 
+			case
+				TRUE : {0, 1, 2, 3};
+			esac;
+		--END OF BLACKBOARD VARIABLES INITIALIZATION
+		--START OF BLACKBOARD VARIABLES TRANSITION
+		next(x_goal_stage_0) := x_goal_stage_1;
+		x_goal_stage_1 := 
+			case
+				!(move_robot.active) : x_goal_stage_0;
+				(0 = remaining_goals_stage_1) : x_goal_stage_0;
+				((x_goal_stage_0 = x_true_stage_2) & (y_goal_stage_0 = y_true_stage_2)) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17};
+				TRUE : x_goal_stage_0;
+			esac;
+		next(y_goal_stage_0) := 			case
+				!(move_robot.active) : y_goal_stage_0;
+				(0 = remaining_goals_stage_1) : y_goal_stage_0;
+				((x_goal_stage_1 = x_true_stage_2) & (y_goal_stage_0 = y_true_stage_2)) : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17};
+				TRUE : y_goal_stage_0;
+			esac;
+		next(x_true_stage_0) := x_true_stage_2;
+		next(y_true_stage_0) := y_true_stage_2;
+		next(remaining_goals_stage_0) := remaining_goals_stage_1;
+		--END OF BLACKBOARD VARIABLES TRANSITION
+
+LTLSPEC F((remaining_goals_stage_1 = 0));
+CTLSPEC AF((remaining_goals_stage_1 = 0));
+MODULE define_nodes
+	DEFINE
+		move_robot := 0;
+		try_right := 1;
+		x_too_small := 2;
+		go_right := 3;
+		try_left := 4;
+		x_too_big := 5;
+		go_left := 6;
+		try_up := 7;
+		y_too_small := 8;
+		go_up := 9;
+		try_down := 10;
+		y_too_big := 11;
+		go_down := 12;
+MODULE composite_selector_without_memory_4(child_0, child_1, child_2, child_3)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				!(child_0.internal_status = failure) : child_0.internal_status;
+				!(child_1.internal_status = failure) : child_1.internal_status;
+				!(child_2.internal_status = failure) : child_2.internal_status;
+				!(child_3.internal_status = failure) : child_3.internal_status;
+				TRUE : failure;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = failure;
+		child_2.active := child_1.status = failure;
+		child_3.active := child_2.status = failure;
+MODULE composite_sequence_without_memory_2(child_0, child_1)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status :=
+			case
+				!(child_0.internal_status = success) : child_0.internal_status;
+				!(child_1.internal_status = success) : child_1.internal_status;
+				TRUE : success;
+			esac;
+		child_0.active := active;
+		child_1.active := child_0.status = success;
+MODULE x_too_small_module(x_goal_stage_0, x_true_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((x_true_stage_0 < x_goal_stage_0)) ? success : failure;
+MODULE x_too_big_module(x_goal_stage_0, x_true_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((x_true_stage_0 > x_goal_stage_0)) ? success : failure;
+MODULE y_too_small_module(y_goal_stage_0, y_true_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((y_true_stage_0 < y_goal_stage_0)) ? success : failure;
+MODULE y_too_big_module(y_goal_stage_0, y_true_stage_0)
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := ((y_true_stage_0 > y_goal_stage_0)) ? success : failure;
+MODULE success_DEFAULT_module
+	CONSTANTS
+		success, failure, running, invalid;
+	DEFINE
+		status := active ? internal_status : invalid;
+		internal_status := success;
