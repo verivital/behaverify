@@ -2,9 +2,9 @@
 
 
 
-min_val=9
-max_val=200
-step_size=10
+min_val=50
+max_val=1000
+step_size=50
 
 if [ "$#" == 3 ]; then
     min_val=$1
@@ -12,9 +12,9 @@ if [ "$#" == 3 ]; then
     step_size=$3
 fi
 
-./make_folder_structure.sh bigger_fish
+./make_folder_structure.sh bigger_fish_expanded
 
-path_name="../../examples/bigger_fish"
+path_name="../../examples/bigger_fish_expanded"
 
 python3 "${path_name}/create_bigger_fish.py" "${path_name}/tree" $min_val $max_val $step_size
 

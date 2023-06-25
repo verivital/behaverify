@@ -26,11 +26,11 @@ done
 echo "${range_string}" > ./range_info
 
 
-encodings="aut aut_s depth norm func no_internal s_var no_opt last_opt first_opt full_opt"
+encodings="no_opt last_opt first_opt full_opt"
 
 echo "${encodings}" > ./encoding_info
 
-tests="test_ctl test_ctl_silent test_invar_silent test_ltl test_ltl_silent test_model test_states test_states_silent"
+tests="test_ctl test_ctl_silent test_ltl test_ltl_silent test_model test_states test_states_silent"
 
 echo "${tests}" > ./test_info
 
