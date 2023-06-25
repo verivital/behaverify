@@ -22,4 +22,4 @@ for encoding_group in "${encoding_groups[@]}"; do
     mkdir "${path_name}/processed_data/pictures/${encoding_group}"
 done
 
-python3 ./build_table.py --folder_name checklist_invar --file_name checklist_parallel checklist_sequence --minV $min_val --maxV $max_val --step $step_size --xLabel "Number of Checks" --encodings "invar" "internal" "func" "opt"
+python3 ./build_table.py --folder_name checklist_invar --file_name checklist_parallel checklist_sequence --minV $min_val --maxV $max_val --step $step_size --xLabel "Number of Checks" --encodings "opt"

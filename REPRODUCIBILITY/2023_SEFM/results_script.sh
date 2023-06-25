@@ -17,57 +17,57 @@ cd "${this_script_location}/scripts/comparison_scripts"
 
 
 cd "${this_script_location}/scripts/build_scripts"
-./exp_bigger_fish_create.sh 9 10 10
+./exp_bigger_fish_create.sh 9 200 10
 cd "${this_script_location}/scripts/encoding_timing_scripts"
-./exp_bigger_fish_run.sh 9 10 10
+./exp_bigger_fish_run.sh 9 200 10
 cd "${this_script_location}/scripts/process_results_scripts"
-./exp_bigger_fish_table.sh 9 10 10
+./exp_bigger_fish_table.sh 9 200 10
 
 
 cd "${this_script_location}/scripts/build_scripts"
-./exp_bigger_fish_expanded_create.sh 50 51 50
+./exp_bigger_fish_expanded_create.sh 50 1000 50
 cd "${this_script_location}/scripts/encoding_timing_scripts"
-./exp_bigger_fish_expanded_run.sh 50 51 50
+./exp_bigger_fish_expanded_run.sh 50 1000 50
 cd "${this_script_location}/scripts/process_results_scripts"
-./exp_bigger_fish_expanded_table.sh 50 51 50
+./exp_bigger_fish_expanded_table.sh 50 1000 50
 
 
 cd "${this_script_location}/scripts/build_scripts"
-./exp_checklist_create.sh 1 2 1
+./exp_checklist_create.sh 1 50 1
 cd "${this_script_location}/scripts/encoding_timing_scripts"
-./exp_checklist_run.sh 1 2 1
+./exp_checklist_run.sh 1 50 1
 cd "${this_script_location}/scripts/process_results_scripts"
-./exp_checklist_table.sh 1 2 1
+./exp_checklist_table.sh 1 50 1
 
 
 cd "${this_script_location}/scripts/build_scripts"
-./exp_checklist_invar_create.sh 1 2 1
+./exp_checklist_invar_create.sh 1 50 1
 cd "${this_script_location}/scripts/encoding_timing_scripts"
-./exp_checklist_invar_run.sh 1 2 1
+./exp_checklist_invar_run.sh 1 50 1
 cd "${this_script_location}/scripts/process_results_scripts"
-./exp_checklist_invar_table.sh 1 2 1
+./exp_checklist_invar_table.sh 1 50 1
 
 
 cd "${this_script_location}/scripts/build_scripts"
-./exp_random_haskell_create.sh 5 2 5
+./exp_random_haskell_create.sh 5000 2 5
 cd "${this_script_location}/scripts/comparison_scripts"
-./exp_random_haskell_run.sh 5
+./exp_random_haskell_run.sh 5000
 
 
 cd "${this_script_location}/scripts/build_scripts"
-./exp_simple_robot_create.sh 2 3 4
+./exp_simple_robot_create.sh 2 50 4
 cd "${this_script_location}/scripts/encoding_timing_scripts"
-./exp_simple_robot_run.sh 2 3 4
+./exp_simple_robot_run.sh 2 50 4
 cd "${this_script_location}/scripts/process_results_scripts"
-./exp_simple_robot_table.sh 2 3 4
+./exp_simple_robot_table.sh 2 50 4
 
 
 cd "${this_script_location}/scripts/build_scripts"
-./exp_simplified_robot_create.sh 2 3 4
+./exp_simplified_robot_create.sh 2 50 4
 cd "${this_script_location}/scripts/encoding_timing_scripts"
-./exp_simplified_robot_run.sh 2 3 4
+./exp_simplified_robot_run.sh 2 50 4
 cd "${this_script_location}/scripts/process_results_scripts"
-./exp_simplified_robot_table.sh 2 3 4
+./exp_simplified_robot_table.sh 2 50 4
 
 
 cd "${this_script_location}/scripts/build_scripts"
