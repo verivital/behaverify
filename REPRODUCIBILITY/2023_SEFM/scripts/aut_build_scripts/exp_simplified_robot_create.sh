@@ -10,9 +10,9 @@ if [ "$#" == 3 ]; then
     step_size=$3
 fi
 
-./make_folder_structure.sh simple_robot
+./make_folder_structure.sh simplified_robot
 
-path_name="../../examples/simple_robot"
+path_name="../../examples/simplified_robot"
 
 python3 "${path_name}/make_tree.py" "${path_name}" "${path_name}/tree" $min_val $max_val $step_size
 
@@ -21,6 +21,6 @@ python3 "${path_name}/make_tree.py" "${path_name}" "${path_name}/tree" $min_val 
 for ((num=min_val; num<=max_val; num=(num + step_size))); do
     echo "now on iteration: "
     echo $num
-    #./generate_encoding.sh "${path_name}" simple_robot_$num "${encodings[@]}"
-    ./make_optimized_smv.sh "${path_name}" simple_robot_$num
+    #./generate_encoding.sh "${path_name}" simplified_robot_$num "${encodings[@]}"
+    ./make_optimized_smv.sh "${path_name}" simplified_robot_$num
 done
