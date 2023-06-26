@@ -11,6 +11,7 @@ RUN python3 -m pip install py_trees
 RUN python3 -m pip install pandas
 RUN python3 -m pip install jinja2
 RUN python3 -m pip install textx
+RUN python3 -m pip install matplotlib
 RUN apt install graphviz -y
 RUN apt install git -y
 
