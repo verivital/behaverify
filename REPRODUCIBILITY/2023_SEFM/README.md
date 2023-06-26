@@ -25,3 +25,9 @@ results will be placed in /REPRODUCIBILITY/2022_SEFM/examples/results/EXAMPLE_NA
 
 These tests run using the code version found in ./src/v6_paper_last_second_fix
 The version in v6.5_input_recheck is identical to the total_v3 version in v6, except that it uses IVAR instead of a VAR in some places. Performance is very similar, but slightly favors the VAR variation.
+
+
+
+
+make sure to have permission to run docker
+docker might not be able to create a folder in some drives

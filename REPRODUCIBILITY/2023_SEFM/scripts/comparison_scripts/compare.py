@@ -213,7 +213,7 @@ if len(opt_nuxmv_run) < 10:
     print('Comparison failure! Not enough opt_nuxmv ticks')
     sys.exit()
 if use_haskell and len(haskell_run) < 10:
-    print('Comparison failure! Not enough python ticks')
+    print('Comparison failure! Not enough haskell ticks')
     sys.exit()
 
 for tick in range(len(python_run)):
