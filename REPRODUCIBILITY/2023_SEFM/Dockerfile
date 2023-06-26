@@ -25,6 +25,9 @@ RUN apt install git -y
 
 RUN apt install build-essential curl libffi-dev libffi8ubuntu1 libgmp-dev libgmp10 libncurses-dev libncurses5 libtinfo5 -y
 
+#this seems to be necessary for some things
+RUN apt install libgmp3-dev
+
 # Install ghcup
 ENV BOOTSTRAP_HASKELL_NONINTERACTIVE=1
 RUN bash -c "curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh"
@@ -36,12 +39,12 @@ ENV PATH=${PATH}:/root/.ghcup/bin
 
 # Install cabal
 RUN bash -c "ghcup upgrade"
-RUN bash -c "ghcup install cabal 3.4.0.0"
-RUN bash -c "ghcup set cabal 3.4.0.0"
+RUN bash -c "ghcup install cabal 3.6.2.0"
+RUN bash -c "ghcup set cabal 3.6.2.0"
 
 # Install GHC
-RUN bash -c "ghcup install ghc 8.10.4"
-RUN bash -c "ghcup set ghc 8.10.4"
+RUN bash -c "ghcup install ghc 9.2.8"
+RUN bash -c "ghcup set ghc 9.2.8"
 
 # Update Path to include Cabal and GHC exports
 RUN bash -c "echo PATH="$HOME/.local/bin:$PATH" >> $HOME/.bashrc"

@@ -81,7 +81,7 @@ steps = args.step
 encoding_codes = args.encodings
 
 for encoding_code in encoding_codes:
-    print(encoding_code)
+    #print(encoding_code)
     encodings = encoding_combo[encoding_code]
     for i in range(max(len(folder_names), len(file_names), len(mins), len(maxs), len(steps), len(encoding_codes))):
         group_name = folder_names[i if i < len(folder_names) else -1]
@@ -473,7 +473,7 @@ for encoding_code in encoding_codes:
                         x_range.append(experiments[x])
                         y_range.append(float(val))
                 # plt.plot(experiments, y_range, color = encoding_mark[encodings[i]][0], marker = encoding_mark[encodings[i]][1])
-                print(x_range)
+                #print(x_range)
                 plt.plot(x_range, y_range, color = encoding_mark[encodings[i]][0], marker = encoding_mark[encodings[i]][1])
             plt.ylabel(y_label)
             plt.xlabel(x_label)
