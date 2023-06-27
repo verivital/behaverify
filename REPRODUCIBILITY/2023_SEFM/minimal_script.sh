@@ -10,10 +10,10 @@ cd "${this_script_location}/examples"
 ./clean_all.sh
 
 
-cd "${this_script_location}/scripts/build_scripts"
-./exp_3_node_no_var_create.sh
-cd "${this_script_location}/scripts/comparison_scripts"
-./exp_3_node_no_var_run.sh
+# cd "${this_script_location}/scripts/build_scripts"
+# ./exp_3_node_no_var_create.sh
+# cd "${this_script_location}/scripts/comparison_scripts"
+# ./exp_3_node_no_var_run.sh
 
 
 cd "${this_script_location}/scripts/build_scripts"
