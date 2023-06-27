@@ -6,7 +6,7 @@ pandas=2.0.2
 Jinja2=3.1.2
 textX=3.1.1
 matplotlib=3.7.1
-#numpy=1.24.3
+#numpy=1.24.3 <- installed automatically by pandas
 
 
 from apt
@@ -14,4 +14,10 @@ from apt
 python3=3.10.6-1~22.04
 graphviz=2.42.2-6
 pip=22.02
-cabal-install=3.0.0.0-3build1.1
+
+
+from ghcup
+
+GHC=9.2.8
+cabal-install=3.6.2.0
+
