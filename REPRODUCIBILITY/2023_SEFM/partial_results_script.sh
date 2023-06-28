@@ -25,11 +25,11 @@ cd "${this_script_location}/examples"
 
 
 cd "${this_script_location}/scripts/build_scripts"
-./exp_bigger_fish_expanded_create.sh 50 1000 50
+./exp_bigger_fish_expanded_create.sh 50 600 50
 cd "${this_script_location}/scripts/encoding_timing_scripts"
-./exp_bigger_fish_expanded_run.sh 50 1000 50
+./exp_bigger_fish_expanded_run.sh 50 600 50
 cd "${this_script_location}/scripts/process_results_scripts"
-./exp_bigger_fish_expanded_table.sh 50 1000 50
+./exp_bigger_fish_expanded_table.sh 50 600 50
 
 
 # cd "${this_script_location}/scripts/build_scripts"
@@ -49,9 +49,9 @@ cd "${this_script_location}/scripts/process_results_scripts"
 
 
 cd "${this_script_location}/scripts/build_scripts"
-./exp_random_haskell_create.sh 5000 2 5
+./exp_random_haskell_create.sh 50 2 5
 cd "${this_script_location}/scripts/comparison_scripts"
-./exp_random_haskell_run.sh 5000
+./exp_random_haskell_run.sh 50
 
 
 cd "${this_script_location}/scripts/build_scripts"
