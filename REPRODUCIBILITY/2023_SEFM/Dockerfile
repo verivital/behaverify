@@ -56,4 +56,4 @@ RUN mkdir behaverify && cd behaverify && git init && \
     echo "REPRODUCIBILITY/2023_SEFM/" >> .git/info/sparse-checkout && \
     git pull origin main
 RUN chmod -R +x /behaverify/REPRODUCIBILITY/2023_SEFM/*.sh
-RUN chmod +x /behaverify/REPRODUCIBILITY/2023_SEFM/nuXmv
+#RUN chmod +x /behaverify/REPRODUCIBILITY/2023_SEFM/nuXmv
