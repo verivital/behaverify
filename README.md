@@ -173,3 +173,6 @@ If you wish to change the randomized starting seeds, use
 	cabal run fileName -- seed1 seed2
 
 (seed1 controls the initial seed for the blackboard, while seed2 controls the initial seed for the environment).
+
+
+# Creating .tree Files
