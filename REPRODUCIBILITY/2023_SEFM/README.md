@@ -26,48 +26,61 @@ The scripts assume you are able to run bash scripts. If you cannot, please run t
 2. The Partial Test fully runs the Bigger Fish experiment, BlueROV, and Light Controller. It runs 20 random iterations of the Differential Testing. It does not meaningfully run the Simple Robot experiment.
 3. The Full test replicates all results.
 
+---
+
 # Running Tests With Docker
 
 The tests can be run using docker. We provide several methods for doing this. Some utilize the provided docker image, while others rebuild the image. 
 
 ## Single Script Options
 
-We provide the following 4 Single Script Options. Each option will build a docker image from the Dockerfile, create a container based on that image, and then run the appropriate tests. Each of these scripts takes two command line arguments.
+- Build Scripts -> These scripts use the Dockerfile to build a new image and then create a container. These scripts must be run in the same folder as the Dockerfile.
+- Load Scripts -> These scripts load the provided image and then create a container. These scripts must be run in the same folder as behaverify_image.tar.
+
+We provide 3 scripts of each type (1 for each test from Test Information). Each of these scripts takes two command line arguments.
 	
 - **/path/to/nuXmv** -> this should point to the executable you downloaded as a prerequisite. There should be no file extension.
 - **/path/to/writable/location/** -> this should point to a folder where the results will be written.
 
+If a script fails because permission has been denied, please run the script without sudo (running docker without sudo requires some configuration). If the problem persists, please try a different location, as occasionally docker cannot write to secondary disks.
+
 ### Single Script: Minimal (about 8 minutes)
 
+Build Script:
+
 	./build_and_run_minimal.sh /path/to/nuXmv /path/to/writable/location/
+
+Load Script:
+
+	./load_and_run_minimal.sh /path/to/nuXmv /path/to/writable/location/
 	
 The results will be written in **/path/to/writable/location/behaverify\_install\_test\_results**. See the Interpreting and Comparing Results section for more information.
 
-If the script fails because permission has been denied, please run the script without sudo (running docker without sudo requires some configuration). If the problem persists, please try a different location, as occasionally docker cannot write to secondary disks.
-
 ### Single Script: Partial (about 25 minutes)
+
+Build Script:
+
+	./build_and_run_partial.sh /path/to/nuXmv /path/to/writable/location/
+
+Load Script:
 
 	./build_and_run_partial.sh /path/to/nuXmv /path/to/writable/location/
 	
 The results will be written in **/path/to/writable/location/behaverify\_partial\_results**. See the Interpreting and Comparing Results section for more information.
 
-If the script fails because permission has been denied, please run the script without sudo (running docker without sudo requires some configuration). If the problem persists, please try a different location, as occasionally docker cannot write to secondary disks.
-
 ### Single Script: Full (under 12 hours)
+
+Build Script:
+
+	./build_and_run_full.sh /path/to/nuXmv /path/to/writable/location/
+	
+Load Script:
 
 	./build_and_run_full.sh /path/to/nuXmv /path/to/writable/location/
 	
 The results will be written in **/path/to/writable/location/behaverify\_results**. See the Interpreting and Comparing Results section for more information.
 
-If the script fails because permission has been denied, please run the script without sudo (running docker without sudo requires some configuration). If the problem persists, please try a different location, as occasionally docker cannot write to secondary disks.
-
-### Single Script: All of the above (under 12 hours)
-
-	./build_and_run.sh /path/to/nuXmv /path/to/writable/location/
-	
-This will run the minimal, partial, and full scripts. It was included more as a test. A benefit of this test is that after about 10 mintues you can check if the minimal test results have been written and seem reasonable, allowing you to abort early if there are obvious flaws.
-
-If the script fails because permission has been denied, please run the script without sudo (running docker without sudo requires some configuration). If the problem persists, please try a different location, as occasionally docker cannot write to secondary disks.
+---
 
 ## Step by Step Docker instructions
 
@@ -106,7 +119,6 @@ The full test takes quite a while to run. To ensure everything works right, plea
 If the script fails because permission has been denied, please run the script without sudo (running docker without sudo requires some configuration). If the problem persists, please try a different location, as occasionally docker cannot write to secondary disks.
 
 
-
 ### 4. Partial Test (estimated time: 20 minutes)
 
 The full test takes quite a while to run. To ensure everything works right, please run
@@ -116,14 +128,13 @@ The full test takes quite a while to run. To ensure everything works right, plea
 If the script fails because permission has been denied, please run the script without sudo (running docker without sudo requires some configuration). If the problem persists, please try a different location, as occasionally docker cannot write to secondary disks.
 
 
-
 ### 5. Full Results (estimated time: under 12 hours)
 
 	./docker_replicate_results.sh /path/to/writable/location/
 
 If the script fails because permission has been denied, please run the script without sudo (running docker without sudo requires some configuration). If the problem persists, please try a different location, as occasionally docker cannot write to secondary disks.
 
-----------------------------------------------------------------------------------------
+---
 
 # Verbose Installation for Running tests locally without docker.
 
@@ -196,7 +207,7 @@ This section is intentionally lengthy. If you are not interested in the details 
 
 You are now ready to run the scripts locally. Scroll past the concise installation instructions to see the scripts explanation.
 
-----------------------------------------------------------------------------------------
+---
 
 # Concise Installation for Running the tests locally without docker.
 
@@ -241,7 +252,7 @@ Please navigate to the top level of our repository and run the following
 You are now ready to run the scripts locally. 
 
 
---------------------------------------------------------------------------------------------------------------------------
+---
 
 # Running Tests Locally without docker (requires installation, see above).
 
@@ -273,7 +284,7 @@ This will run a large script. The results will be in **behaverify/REPRODUCIBILIT
 
 
 
---------------------------------------------------------------------------------------------------------------------------
+---
 
 # Interpreting and Comparing Results
 
@@ -396,6 +407,8 @@ The results should be in **/path/to/writable/location/behaverify\_results/**.
 	- Haskell Files -> Inside **random\_haskell/gen\_files/t\*/** folder, run ```cabal run```. This will run the Haskell Model.
 		
 Note that the presence of Comparison failure in the Differential Results in **random\_haskell** is possible as the trials were randomized. This indicates a bug with one of the models (or an installation error). The Full test generates 5000 random trials.
+
+---
 
 # Code Explanation
 
