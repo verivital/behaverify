@@ -26,48 +26,61 @@ The scripts assume you are able to run bash scripts. If you cannot, please run t
 2. The Partial Test fully runs the Bigger Fish experiment, BlueROV, and Light Controller. It runs 20 random iterations of the Differential Testing. It does not meaningfully run the Simple Robot experiment.
 3. The Full test replicates all results.
 
+---
+
 # Running Tests With Docker
 
 The tests can be run using docker. We provide several methods for doing this. Some utilize the provided docker image, while others rebuild the image. 
 
 ## Single Script Options
 
-We provide the following 4 Single Script Options. Each option will build a docker image from the Dockerfile, create a container based on that image, and then run the appropriate tests. Each of these scripts takes two command line arguments.
+- Build Scripts -> These scripts use the Dockerfile to build a new image and then create a container. These scripts must be run in the same folder as the Dockerfile.
+- Load Scripts -> These scripts load the provided image and then create a container. These scripts must be run in the same folder as behaverify_image.tar.
+
+We provide 3 scripts of each type (1 for each test from Test Information). Each of these scripts takes two command line arguments.
 	
 - **/path/to/nuXmv** -> this should point to the executable you downloaded as a prerequisite. There should be no file extension.
 - **/path/to/writable/location/** -> this should point to a folder where the results will be written.
 
+If a script fails because permission has been denied, please run the script without sudo (running docker without sudo requires some configuration). If the problem persists, please try a different location, as occasionally docker cannot write to secondary disks.
+
 ### Single Script: Minimal (about 8 minutes)
 
+Build Script:
+
 	./build_and_run_minimal.sh /path/to/nuXmv /path/to/writable/location/
+
+Load Script:
+
+	./load_and_run_minimal.sh /path/to/nuXmv /path/to/writable/location/
 	
 The results will be written in **/path/to/writable/location/behaverify\_install\_test\_results**. See the Interpreting and Comparing Results section for more information.
 
-If the script fails because permission has been denied, please run the script without sudo (running docker without sudo requires some configuration). If the problem persists, please try a different location, as occasionally docker cannot write to secondary disks.
-
 ### Single Script: Partial (about 25 minutes)
+
+Build Script:
+
+	./build_and_run_partial.sh /path/to/nuXmv /path/to/writable/location/
+
+Load Script:
 
 	./build_and_run_partial.sh /path/to/nuXmv /path/to/writable/location/
 	
 The results will be written in **/path/to/writable/location/behaverify\_partial\_results**. See the Interpreting and Comparing Results section for more information.
 
-If the script fails because permission has been denied, please run the script without sudo (running docker without sudo requires some configuration). If the problem persists, please try a different location, as occasionally docker cannot write to secondary disks.
-
 ### Single Script: Full (under 12 hours)
+
+Build Script:
+
+	./build_and_run_full.sh /path/to/nuXmv /path/to/writable/location/
+	
+Load Script:
 
 	./build_and_run_full.sh /path/to/nuXmv /path/to/writable/location/
 	
 The results will be written in **/path/to/writable/location/behaverify\_results**. See the Interpreting and Comparing Results section for more information.
 
-If the script fails because permission has been denied, please run the script without sudo (running docker without sudo requires some configuration). If the problem persists, please try a different location, as occasionally docker cannot write to secondary disks.
-
-### Single Script: All of the above (under 12 hours)
-
-	./build_and_run.sh /path/to/nuXmv /path/to/writable/location/
-	
-This will run the minimal, partial, and full scripts. It was included more as a test. A benefit of this test is that after about 10 mintues you can check if the minimal test results have been written and seem reasonable, allowing you to abort early if there are obvious flaws.
-
-If the script fails because permission has been denied, please run the script without sudo (running docker without sudo requires some configuration). If the problem persists, please try a different location, as occasionally docker cannot write to secondary disks.
+---
 
 ## Step by Step Docker instructions
 
@@ -106,7 +119,6 @@ The full test takes quite a while to run. To ensure everything works right, plea
 If the script fails because permission has been denied, please run the script without sudo (running docker without sudo requires some configuration). If the problem persists, please try a different location, as occasionally docker cannot write to secondary disks.
 
 
-
 ### 4. Partial Test (estimated time: 20 minutes)
 
 The full test takes quite a while to run. To ensure everything works right, please run
@@ -116,14 +128,13 @@ The full test takes quite a while to run. To ensure everything works right, plea
 If the script fails because permission has been denied, please run the script without sudo (running docker without sudo requires some configuration). If the problem persists, please try a different location, as occasionally docker cannot write to secondary disks.
 
 
-
 ### 5. Full Results (estimated time: under 12 hours)
 
 	./docker_replicate_results.sh /path/to/writable/location/
 
 If the script fails because permission has been denied, please run the script without sudo (running docker without sudo requires some configuration). If the problem persists, please try a different location, as occasionally docker cannot write to secondary disks.
 
-----------------------------------------------------------------------------------------
+---
 
 # Verbose Installation for Running tests locally without docker.
 
@@ -196,7 +207,7 @@ This section is intentionally lengthy. If you are not interested in the details 
 
 You are now ready to run the scripts locally. Scroll past the concise installation instructions to see the scripts explanation.
 
-----------------------------------------------------------------------------------------
+---
 
 # Concise Installation for Running the tests locally without docker.
 
@@ -241,7 +252,7 @@ Please navigate to the top level of our repository and run the following
 You are now ready to run the scripts locally. 
 
 
---------------------------------------------------------------------------------------------------------------------------
+---
 
 # Running Tests Locally without docker (requires installation, see above).
 
@@ -273,7 +284,7 @@ This will run a large script. The results will be in **behaverify/REPRODUCIBILIT
 
 
 
---------------------------------------------------------------------------------------------------------------------------
+---
 
 # Interpreting and Comparing Results
 
@@ -308,7 +319,7 @@ The results should be in **/path/to/writable/location/behaverify\_install\_test\
     - **blueROV\_mod\_elapsed\_invar.tex** -> timing claims: results should be similar but may differ. See **Table 1**.
 	- **blueROV\_mod\_reachable\_states.tex** -> state claim: results should be exact. See **Table 2**. The value for first\_opt should also be between 2^62 and 2^63 reachable states, corresponding to the numerical claim made in **Section 6.4**.
 - **blueROV\_mod/smv/** -> There should be a series of .smv files containing the nuXmv models. In **Section 6.4** we utilize information from these models.
-    - **first\_opt\_blueROV\_mod\_1.smv** -> Please search this file for the phrase 'MODULE define\_nodes'. Following this phrase you will see an enumeration of the nodes, starting from 0 and ending at 73, for a total of 74 nodes. This should be exact.
+    - **first\_opt\_blueROV\_mod\_1.smv** -> Please search this file for the phrase 'MODULE define\_nodes'. Following this phrase you will see an enumeration of the nodes, starting from 0 and ending at 73, for a total of 74 nodes. This should be exact. (The paper states 73; this is a typo and will be corrected).
 - **random\_haskell/results/log.txt** -> This corresponds to **Section 7** of the paper. On each line, there should be a series of dashes and tX (X is a number, from 0 to 4). If there are any Comparison Failures, it means the results of the models differed. Note: if the Comparison Failure says "not enough ticks" (or something similar), then it is most likely indicating an installation error prevented one of the models from running correctly (probably the Haskell model). If you wish to double check the output of the models:
     - **random\_haskell/gen\_files/t\*/OUTPUT\_\*.txt** -> These files will contain the output of the run of each model. If the tick failure occured, one of these is probably empty.
 	- **random\_haskell/gen\_files/t\*/\*.smv** -> These files will contain the nuXmv models used. You can run them with nuXmv.
@@ -340,9 +351,9 @@ The results should be in **/path/to/writable/location/behaverify\_partial\_resul
 - **bigger\_fish\_expanded/processed\_data/pictures/opt/** -> There should be a series of graphs. In **Section 6.3** we utilize some of these graphs.
     - **bigger\_fish\_parallel\_ctl.png** -> This corresponds to part of **Figure 7**. timing claim: results should be similar but may differ.
 	- **bigger\_fish\_parallel\_ltl.png** -> This corresponds to part of **Figure 7**. timing claim: results should be similar but may differ.
-- **bigger\_fish\_expanded/smv/** -> There should be a series of .smv files containing nuXmv models. In **Section 6.3** we claim that the models with 600 checks have 1355 nodes. To verify this claim, open any of the files with the number 600 in the name. Please search this file for the phrase 'MODULE define\_nodes'. Following this phrase you will see an enumeration of the nodes, starting from 0 and ending at 1354, for a total of 1355 nodes. This result should be exact.
+- **bigger\_fish\_expanded/smv/** -> There should be a series of .smv files containing nuXmv models. In **Section 6.3** we claim that the models with 600 checks have 1355 nodes. To verify this claim, open any of the files with the number 600 in the name. Please search this file for the phrase 'MODULE define\_nodes'. Following this phrase you will see an enumeration of the nodes, starting from 0 and ending at 1354, for a total of 1355 nodes. This result should be exact. (The paper states 1354; this is a typo and will be corrected).
 - **blueROV\_mod/smv/** -> There should be a series of .smv files containing the nuXmv models. In **Section 6.4** we utilize information from these models.
-    - **first\_opt\_blueROV\_mod\_1.smv** -> Please search this file for the phrase 'MODULE define\_nodes'. Following this phrase you will see an enumeration of the nodes, starting from 0 and ending at 73, for a total of 74 nodes. This result should be exact.
+    - **first\_opt\_blueROV\_mod\_1.smv** -> Please search this file for the phrase 'MODULE define\_nodes'. Following this phrase you will see an enumeration of the nodes, starting from 0 and ending at 73, for a total of 74 nodes. This result should be exact. (The paper states 73; this is a typo and will be corrected).
 - **random\_haskell/results/log.txt** -> This corresponds to **Section 7** of the paper. On each line, there should be a series of dashes and tX (X is a number, from 0 to 20). If there are any Comparison Failures, it means the results of the models differed. Note: if the Comparison Failure says "not enough ticks" (or something similar), then it is most likely indicating an installation error prevented one of the models from running correctly (probably the Haskell model). If you wish to double check the output of the models:
     - **random\_haskell/gen\_files/t\*/OUTPUT\_\*.txt** -> These files will contain the output of the run of each model. If the tick failure occured, one of these is probably empty.
 	- **random\_haskell/gen\_files/t\*/\*.smv** -> These files will contain the nuXmv models used. You can run them with nuXmv.
@@ -372,15 +383,15 @@ The results should be in **/path/to/writable/location/behaverify\_results/**.
 - **bigger\_fish\_expanded/processed\_data/pictures/opt/** -> There should be a series of graphs. In **Section 6.3** we utilize some of these graphs.
     - **bigger\_fish\_parallel\_ctl.png** -> This corresponds to part of **Figure 7**. timing claim: results should be similar but may differ.
 	- **bigger\_fish\_parallel\_ltl.png** -> This corresponds to part of **Figure 7**. timing claim: results should be similar but may differ.
-- **bigger\_fish\_expanded/smv/** -> There should be a series of .smv files containing nuXmv models. In **Section 6.3** we claim that the models with 600 checks have 1355 nodes. To verify this claim, open any of the files with the number 600 in the name. Please search this file for the phrase 'MODULE define\_nodes'. Following this phrase you will see an enumeration of the nodes, starting from 0 and ending at 1354, for a total of 1355 nodes. This shoudl be exact.
+- **bigger\_fish\_expanded/smv/** -> There should be a series of .smv files containing nuXmv models. In **Section 6.3** we claim that the models with 600 checks have 1355 nodes. To verify this claim, open any of the files with the number 600 in the name. Please search this file for the phrase 'MODULE define\_nodes'. Following this phrase you will see an enumeration of the nodes, starting from 0 and ending at 1354, for a total of 1355 nodes. This shoudl be exact. (The paper states 1354; this is a typo and will be corrected).
 - **blueROV\_mod/smv/** -> There should be a series of .smv files containing the nuXmv models. In **Section 6.4** we utilize information from these models.
-    - **first\_opt\_blueROV\_mod\_1.smv** -> Please search this file for the phrase 'MODULE define\_nodes'. Following this phrase you will see an enumeration of the nodes, starting from 0 and ending at 73, for a total of 74 nodes. This should be exact
+    - **first\_opt\_blueROV\_mod\_1.smv** -> Please search this file for the phrase 'MODULE define\_nodes'. Following this phrase you will see an enumeration of the nodes, starting from 0 and ending at 73, for a total of 74 nodes. This should be exact. (The paper states 73; this is a typo and will be corrected).
 - **simple\_robot/processed\_data/pictures/opt/** -> There should be a series of graphs. In **Section 6.4** we utilize some of these graphs.
     - **simple\_robot\_ctl.png** -> This corresponds to part of **Figure 10**. timing claim: results should be similar but may differ.
 	- **simple\_robot\_ltl.png** -> This corresponds to part of **Figure 10**. timing claim: results should be similar but may differ.
 	- **simple\_robot\_reachable\_states.png** -> This corresponds to part of **Figure 10**. state claim: results should be exact.
 - **simple\_robot/smv/** -> There should be a series of .smv files containing the nuXmv models. In **Section 6.4** we utilize information from these models.
-    - **first\_opt\_simple\_robot\_50.smv** -> Please search this file for the phrase 'MODULE define\_nodes'. Following this phrase you will see an enumeration of the nodes, starting from 0 and ending at 21, for a total of 22 nodes. This should be exact.
+    - **first\_opt\_simple\_robot\_50.smv** -> Please search this file for the phrase 'MODULE define\_nodes'. Following this phrase you will see an enumeration of the nodes, starting from 0 and ending at 21, for a total of 22 nodes. This should be exact. (The paper states 21; this is a typo and will be corrected).
 	- **first\_opt\_simple\_robot\_50.smv** -> To verify the claim regarding number of reachable states, you will need to run nuXmv. Please execute the following commands:
 	```
 	nuXmv -int first_opt_simple_robot_50.smv
@@ -396,6 +407,8 @@ The results should be in **/path/to/writable/location/behaverify\_results/**.
 	- Haskell Files -> Inside **random\_haskell/gen\_files/t\*/** folder, run ```cabal run```. This will run the Haskell Model.
 		
 Note that the presence of Comparison failure in the Differential Results in **random\_haskell** is possible as the trials were randomized. This indicates a bug with one of the models (or an installation error). The Full test generates 5000 random trials.
+
+---
 
 # Code Explanation
 
