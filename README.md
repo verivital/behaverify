@@ -176,3 +176,5 @@ If you wish to change the randomized starting seeds, use
 
 
 # Creating .tree Files
+
+Please see **/examples/light\_controller/light\_controller.tree** for an example (with comments) that explains what goes into a .tree file.
