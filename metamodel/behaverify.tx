@@ -1,6 +1,6 @@
 BehaviorModel:
     'constants' '{'
-    constants *= constant
+    constants *= constant_declaration
     '}' ('end_constants')?
     'variables' '{'
     variables *= variable
@@ -83,14 +83,18 @@ node:
 ;
 
     leaf_node:
-    (leaf = [check_node]) |
+    ((leaf = [check_node]) |
     (leaf = [action_node]) |
-    (leaf = [check_environment_node])
+    (leaf = [check_environment_node]))
+    '{'
+    arguments *= constant_value
+    '}'
 ;
     
     check_node:
     (node_type = 'check') '{'
     name = ID
+    'arguments' '{' argument_names *= STRING '}' ('end_arguments')?
     'read_variables' '{' read_variables *= [variable]  '}' ('end_read_variables')?
     'condition' '{' condition = code_statement '}' ('end_condition')?
     '}' ('end_check')?
@@ -98,6 +102,7 @@ node:
     check_environment_node:
     (node_type = 'check_environment') '{'
     name = ID
+    'arguments' '{' argument_names *= STRING '}' ('end_arguments')?
     'read_variables' '{' read_variables *= [variable]  '}' ('end_read_variables')?
     'condition' '{' condition = code_statement '}' ('end_condition')?
     '}' ('end_check_environment')?
@@ -106,6 +111,7 @@ node:
     action_node:
     (node_type = 'action') '{'
     name = ID
+    'arguments' '{' argument_names *= STRING '}' ('end_arguments')?
     'local_variables' '{' local_variables *= [variable] '}' ('end_local_variables')?
     'read_variables' '{' read_variables *= [variable]  '}' ('end_read_variables')?
     'write_variables' '{' write_variables *= [variable]  '}' ('end_write_variables')?
@@ -125,7 +131,7 @@ node:
     'variable' '{'
     ((var_type = 'bl') | (var_type = 'local') | (var_type = 'env'))
     name = ID
-    (('array' array_size = serene_int
+    (('array' array_size = int_or_reference
     ((model_as = 'VAR' domain = variable_domain) |
     (model_as = 'FROZENVAR' domain = variable_domain) |
     (model_as = 'DEFINE' ((domain = 'INT') | (domain = 'ENUM') | (domain = 'BOOLEAN'))))
@@ -139,26 +145,28 @@ node:
 ;
     
     variable_domain:
-    ('[' min_val = serene_int ',' max_val = serene_int (',' condition = range_code)? ']') |
+    ('[' min_val = int_or_reference ',' max_val = int_or_reference (',' condition = range_code)? ']') |
     (boolean = 'BOOLEAN') |
     ('{' enums += enumeration[','] '}')
 ;
 
-    //we could replace this just with INT | STRING
-    //however, for clariry, we keep this so it's clear
-    //that we are first checking is this an int
-    //then is it a quoted constant
-    //then is it an actual string.
+
+    //note that string enumerations could be constant reference
 enumeration:
-    serene_int | STRING
-;
-    
-    serene_int:
     INT | STRING
 ;
 
-constant:
-    name = ID '=' val = INT
+    //the model checker will ensure in these cases that the string is a constant that refers to an int
+    int_or_reference:
+    INT | STRING
+;
+    
+    constant_value:
+    STRICTFLOAT | INT | STRING | BOOL
+;
+
+    constant_declaration:
+    name = ID '=' val = constant_value
 ;
     
 
@@ -182,7 +190,7 @@ statement:
     'read_environment' '{'
     name = ID
     ('condition_variable' '{'
-    (('(' is_const = 'constant_index_of' condition_variable = [variable] ',' index_of = serene_int ')') |
+    (('(' is_const = 'constant_index_of' condition_variable = [variable] ',' index_of = int_or_reference ')') |
     ('(' is_const = 'index_of' condition_variable = [variable] ',' index_of = code_statement ')') |
     (condition_variable = [variable]))
     '}' ('end_condition_variable')?)?
@@ -207,7 +215,7 @@ statement:
     instant ?= 'instant'
     variable = [variable]
     ((array_mode = 'range'
-    (',' values = serene_int ',' values = serene_int ',' values = range_code)?
+    (',' values = int_or_reference ',' values = int_or_reference ',' values = range_code)?
     ((constant_index = 'constant_index' assign = array_index_constant) |
     (constant_index = '' assign = array_index)))
     //in the above we are using a range variable to index into an array.
@@ -243,7 +251,7 @@ statement:
     assign = assign_value
 ;
     array_index_constant:
-    'index_of' '{' index_expr = serene_int '}' ('end_index_of')?
+    'index_of' '{' index_expr = int_or_reference '}' ('end_index_of')?
     assign = assign_value
 ;
     assign_value:
@@ -258,14 +266,14 @@ statement:
     case_result:
     'case' '{' condition = code_statement '}' ('end_case')?
     'result' '{'
-    ((range_mode = 'range' ',' values = serene_int ',' values = serene_int ',' values = range_code) | 
+    ((range_mode = 'range' ',' values = int_or_reference ',' values = int_or_reference ',' values = range_code) | 
     (range_mode = '' values += code_statement[',']))
     '}' ('end_result')?
 ;
         
     default_result:
     'result' '{'
-    ((range_mode = 'range' ',' values = serene_int ',' values = serene_int ',' values = range_code) | 
+    ((range_mode = 'range' ',' values = int_or_reference ',' values = int_or_reference ',' values = range_code) | 
     (range_mode = '' values += code_statement[',']))
     '}' ('end_result')?
 ;
@@ -287,15 +295,15 @@ statement:
     //--------------------SEC:CODE--------------------------------
 
     range_code:
-    (constant = STRICTFLOAT) | (constant = serene_int) | (constant = BOOL) | (constant = STRING) |
+    (constant = STRICTFLOAT) | (constant = int_or_reference) | (constant = BOOL) | (constant = STRING) |
     (value ?= 'value') |
     ('(' function_call = range_function ')') |
     ('(' code_statement = range_code ')')
 ;
 
     code_statement:
-    (constant = STRICTFLOAT) | (constant = serene_int) | (constant = BOOL) | (constant = STRING) |
-    (variable = [variable] (node_name = ID)? (read_at = serene_int)?) |
+    (constant = constant_value) |
+    (variable = [variable] (node_name = ID)? (read_at = int_or_reference)?) |
     ('(' function_call = function ')') |
     ('(' code_statement = code_statement ')')
 ;
@@ -405,7 +413,7 @@ statement:
 ;
 
     bound_statement:
-    '[' lower_bound = serene_int ',' ((upper_bound = serene_int) |  (upper_bound = '+oo')) ']'
+    '[' lower_bound = int_or_reference ',' ((upper_bound = int_or_reference) |  (upper_bound = '+oo')) ']'
 ;
 
 specification:
