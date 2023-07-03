@@ -1,12 +1,10 @@
 '''used to create haskell code from BehaVerify DSL for Behavior Trees'''
 import argparse
 import os
-# import sys
 import shutil
 import itertools
 import textx
 from behaverify_common import haskell_indent as indent, create_node_name
-# import serene_functions
 
 from check_model import (validate_model
                          # , constant_type
@@ -842,7 +840,7 @@ def create_tree(model, name):
         # ----------------------------------------------------------------------------------
         # start of massive if statements
         # -----------------------------------------------------------------------------------
-        if current_node.node_type == 'check' or current_node.node_type == 'check_environment' or current_node.node_type == 'action':
+        if current_node.node_type in ('check', 'check_environment', 'action'):
             running_string = running_string + (
                 indent(indent_level) + node_name + ' = BTreeNode ' + camel_case(current_node.name) + ' [] ' + str(my_int) + os.linesep
             )

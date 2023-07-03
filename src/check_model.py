@@ -120,12 +120,21 @@ def constant_type(constant):
     new_constant = (constants[constant] if constant in constants else constant)
     if isinstance(new_constant, str):
         return 'ENUM'
-    elif isinstance(new_constant, bool):
+    if isinstance(new_constant, bool):
         return 'BOOLEAN'
-    elif isinstance(new_constant, int):
+    if isinstance(new_constant, int):
         return 'INT'
-    else:
-        raise BTreeException('Constant ' + constant + ' is of an unsupported type. Only ENUM, BOOLEAN, and INT are supported')
+    raise BTreeException('Constant ' + constant + ' is of an unsupported type. Only ENUM, BOOLEAN, and INT are supported')
+
+
+def dummy_value(arg_type):
+    if arg_type == 'ENUM':
+        return 'ENUM'
+    if arg_type == 'BOOLEAN':
+        return True
+    if arg_type == 'INT':
+        return 0
+    raise BTreeException('Constant Type ' + arg_type + ' is of an unsupported type. Only ENUM, BOOLEAN, and INT are supported')
 
 
 def variable_type(variable):
@@ -134,10 +143,9 @@ def variable_type(variable):
         return variable.domain
     if variable.domain.boolean is not None:
         return 'BOOLEAN'
-    elif variable.domain.min_val is not None:
+    if variable.domain.min_val is not None:
         return 'INT'
-    else:
-        return constant_type(variable.domain.enums[0])
+    return constant_type(variable.domain.enums[0])
 
 
 def is_local(variable):
@@ -155,12 +163,11 @@ def is_blackboard(variable):
 def variable_scope(variable):
     if is_local(variable):
         return 'local'
-    elif is_env(variable):
+    if is_env(variable):
         return 'environment'
-    elif is_blackboard(variable):
+    if is_blackboard(variable):
         return 'blackboard'
-    else:
-        raise BTreeException('Variable ' + variable.name + ' is not local, blackboard, or environment')
+    raise BTreeException('Variable ' + variable.name + ' is not local, blackboard, or environment')
 
 
 def is_array(variable):
@@ -366,29 +373,46 @@ def validate_array_assign(statement, constant_index, scopes, variable_names, nod
     raise BTreeException('unreachable state')
 
 
-def validate_check(node):
+def validate_check(node, arg_types):
     trace.append('In Check: ' + node.name)
+    if len(arg_types) != len(node.argument_names):
+        raise BTreeException('wrong number of arguments')
+    for index in range(len(arg_types)):
+        constants[node.argument_names[index]] = dummy_value(arg_types[index])
     read_variables = set(map(lambda x : x.name, node.read_variables))
     if len(read_variables) != len(node.read_variables):
         raise BTreeException('duplicate read variables')
     validate_condition(node.condition, {'blackboard'}, read_variables, {'reg'})
+    for index in range(len(arg_types)):
+        constants.pop(node.argument_names[index])
     trace.pop()
     return
 
 
-def validate_check_env(node):
+def validate_check_env(node, arg_types):
     trace.append('In Environment Check: ' + node.name)
+    if len(arg_types) != len(node.argument_names):
+        raise BTreeException('wrong number of arguments')
+    for index in range(len(arg_types)):
+        constants[node.argument_names[index]] = dummy_value(arg_types[index])
     read_variables = set(map(lambda x : x.name, node.read_variables))
     if len(read_variables) != len(node.read_variables):
         raise BTreeException('duplicate read variables')
     validate_condition(node.condition, {'blackboard', 'environment'}, read_variables, {'reg'})
+    for index in range(len(arg_types)):
+        constants.pop(node.argument_names[index])
     trace.pop()
     return
 
 
-def validate_action(node):
+def validate_action(node, arg_types):
 
     trace.append('In Action: ' + node.name)
+
+    if len(arg_types) != len(node.argument_names):
+        raise BTreeException('wrong number of arguments')
+    for index in range(len(arg_types)):
+        constants[node.argument_names[index]] = dummy_value(arg_types[index])
 
     all_vars = set(map(lambda x : x.name, itertools.chain(node.local_variables, node.read_variables, node.write_variables)))
     read_variables = set(map(lambda x : x.name, node.read_variables))
@@ -513,6 +537,9 @@ def validate_action(node):
 
     for case_result in node.return_statement.case_results:
         validate_condition(case_result.condition, {'blackboard', 'local'}, all_vars, {'reg'})
+
+    for index in range(len(arg_types)):
+        constants.pop(node.argument_names[index])
     trace.pop()
     return
 
@@ -554,9 +581,13 @@ def validate_variable(variable, scopes, variable_names):
     return
 
 
-def walk_tree(current_node, node_names, node_names_map):
+def walk_tree(current_node, node_names, node_names_map, node_to_args):
     while (not hasattr(current_node, 'name') or hasattr(current_node, 'sub_root')):
         if hasattr(current_node, 'leaf'):
+            if current_node.leaf.name not in node_to_args:
+                node_to_args[current_node.leaf.name] = list(map(constant_type, current_node.arguments))
+            elif node_to_args[current_node.leaf.name] != list(map(constant_type, current_node.arguments)):
+                raise BTreeException('Node ' + current_node.leaf.name + ' was created with arguments of type: ' + str(node_to_args[current_node.leaf.name]) + ' but is now being created with arguments of type: ' + str(list(map(constant_type, current_node.arguments))))
             current_node = current_node.leaf
         else:
             current_node = current_node.sub_root
@@ -580,13 +611,13 @@ def walk_tree(current_node, node_names, node_names_map):
             raise BTreeException('Node ' + current_node.name + ' is of type X_is_Y where X==Y')
 
     if hasattr(current_node, 'child'):
-        (node_names, node_names_map) = walk_tree(current_node.child, node_names, node_names_map)
+        (node_names, node_names_map, node_to_args) = walk_tree(current_node.child, node_names, node_names_map, node_to_args)
     if hasattr(current_node, 'children'):
         if len(current_node.children) < 2:
             raise BTreeException('Node ' + current_node.name + ' has less than 2 children.')
         for child in current_node.children:
-            (node_names, node_names_map) = walk_tree(child, node_names, node_names_map)
-    return (node_names, node_names_map)
+            (node_names, node_names_map, node_to_args) = walk_tree(child, node_names, node_names_map, node_to_args)
+    return (node_names, node_names_map, node_to_args)
 
 
 def validate_model(model, constants_, metamodel_):
@@ -599,7 +630,7 @@ def validate_model(model, constants_, metamodel_):
         raise BTreeException('serene_index was declared as a constant, but is resevered')
 
     global all_node_names
-    (all_node_names, _) = walk_tree(model.root, set(), {})
+    (all_node_names, _, node_to_args) = walk_tree(model.root, set(), {}, {})
 
     variables_so_far = set()
     for variable in model.variables:
@@ -625,11 +656,11 @@ def validate_model(model, constants_, metamodel_):
                 raise BTreeException('Environment update :: Variable is not an array, but has as an array like update: ' + assign_var.name)
             validate_variable_assignment(assign_var, var_statement.assign, {'blackboard', 'environment'}, None, deterministic = False, init_mode = None)
     for check in model.check_nodes:
-        validate_check(check)
+        validate_check(check, node_to_args[check.name])
     for check_env in model.environment_checks:
-        validate_check_env(check_env)
+        validate_check_env(check_env, node_to_args[check_env.name])
     for action in model.action_nodes:
-        validate_action(action)
+        validate_action(action, node_to_args[action.name])
 
     if model.tick_condition is not None:
         validate_condition(model.tick_condition, {'blackboard', 'local', 'environment'}, None, {'reg'})

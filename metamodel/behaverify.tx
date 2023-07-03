@@ -35,8 +35,8 @@ reserved:
 
 //comments so that we can explain what is happening in a .tree file
 Comment:
-    '#comment#'/[^#]*/'#end_comment#'
-;
+    /#\{([^a]|a)*?\}#/
+;//i can't get it to match newlines without doing something janky like this.
     
     //--------------------SEC:NODES-------------------------------
     //nodes are either composite, decorator, or leaf. 
