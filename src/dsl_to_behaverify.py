@@ -1,19 +1,17 @@
+'''
+This module is part of BehaVerify and used to convert .tree files to .smv files for use with nuXmv.
+@author ::> Serene Serbinowska
+'''
 import argparse
 import pprint
 import os
-# import sys
 import itertools
 import copy
 import textx
-# import serene_functions
 from behaverify_to_smv import write_smv
 from check_model import (validate_model,
-                         # constant_type,
                          variable_type,
                          is_local,
-                         # is_env,
-                         # is_blackboard,
-                         # variable_scope,
                          is_array,
                          build_range_func)
 
@@ -472,10 +470,21 @@ def handle_specifications(specifications):
 
 def handle_constant(constant):
     '''this handles a constant by checking if it is in constants and replacing if appropriate'''
-    constants = global_vars['constants']
     if constant == 'serene_index':
         return global_vars['serene_index'][-1]
-    return (constants[constant] if constant in constants else constant)
+    arguments = global_vars['argument_pairs']
+    constants = global_vars['constants']
+    return (
+        constants[constant]
+        if constant in constants
+        else
+        (
+            arguments[constant]
+            if constant in arguments
+            else
+            constant
+        )
+    )
 
 
 def variable_reference(base_name, _is_local_, node_name):
@@ -526,7 +535,7 @@ def resolve_statements(statements, nodes):
             if var_update.instant:
                 handle_variable_assignment(var_update, var_update.variable, None, misc_args)
             else:
-                delayed.append((misc_args['node_name'], var_update))
+                delayed.append((misc_args['node_name'], global_vars['argument_pairs'], var_update))
         return delayed
 
     def handle_return_statement(statement, nodes, misc_args):
@@ -600,7 +609,8 @@ def resolve_statements(statements, nodes):
 
     delayed_statements = []
 
-    for (node_name, statement_type, statement) in statements:
+    for (node_name, argument_pairs, statement_type, statement) in statements:
+        global_vars['argument_pairs'] = argument_pairs
         if statement_type == 'check':
             handle_condition(statement, nodes, create_misc_args(node_name, True, False, None, None))
         elif statement_type == 'return':
@@ -612,8 +622,11 @@ def resolve_statements(statements, nodes):
                 handle_read_statement(statement.read_statement, create_misc_args(node_name, True, False, None, None))
             else:
                 delayed_statements += handle_write_statement(statement.write_statement, create_misc_args(node_name, True, False, None, None))
-    for (node_name, statement) in delayed_statements:
+        global_vars['argument_pairs'] = {}
+    for (node_name, argument_pairs, statement) in delayed_statements:
+        global_vars['argument_pairs'] = argument_pairs
         handle_variable_assignment(statement, statement.variable, None, create_misc_args(node_name, True, False, None, None))
+        global_vars['argument_pairs'] = {}
     return
 
 
@@ -711,11 +724,13 @@ def get_variables(model, local_variables, initial_statements, keep_stage_0, keep
     # we have to parse and update this first. only after that can we go through non-define macros.
     # this is so we populate the definitions and what not.
 
-    for (node_name, initial_statement) in initial_statements:
+    for (node_name, argument_pairs, initial_statement) in initial_statements:
+        global_vars['argument_pairs'] = argument_pairs
         assign_var = initial_statement.variable
         if assign_var.model_as == 'DEFINE':
             # variables[variable_reference(assign_var.name, is_local(assign_var), node_name)]['initial_value'] = handle_variable_statement(initial_statement, assign_var, None, create_misc_args(node_name, False, False, None, None))
             variables[variable_reference(assign_var.name, is_local(assign_var), node_name)]['initial_value'] = initial_statement
+        global_vars['argument_pairs'] = {}
 
     for (node_name, initial_statement) in initial_statements:
         assign_var = initial_statement.variable
@@ -775,7 +790,7 @@ def create_X_is_Y(current_node, node_name, modifier, node_names, node_names_map,
     return create_decorator(current_node, node_name, modifier, node_names, node_names_map, parent_name, [current_node.x, current_node.y])
 
 
-def create_check(current_node, node_name, modifier, node_names, node_names_map, parent_name):
+def create_check(current_node, argument_pairs, node_name, modifier, node_names, node_names_map, parent_name):
     cur_node_names = {node_name}.union(node_names)
     cur_node_names_map = {name : (modifier if name == node_name else node_names_map[name]) for name in node_names_map}
     return (
@@ -784,11 +799,11 @@ def create_check(current_node, node_name, modifier, node_names, node_names_map, 
                                           'leaf', current_node.node_type, '', '',
                                           True, False, True)
          },
-        [], [], [(node_name, 'check', current_node.condition)]
+        [], [], [(node_name, argument_pairs, 'check', current_node.condition)]
     )
 
 
-def create_action(current_node, node_name, modifier, node_names, node_names_map, parent_name):
+def create_action(current_node, argument_pairs, node_name, modifier, node_names, node_names_map, parent_name):
     cur_node_names = {node_name}.union(node_names)
     cur_node_names_map = {name : (modifier if name == node_name else node_names_map[name]) for name in node_names_map}
     return (
@@ -798,20 +813,25 @@ def create_action(current_node, node_name, modifier, node_names, node_names_map,
                                           True, True, True)
          },
         list(map(lambda x : (node_name, x), current_node.local_variables)),
-        list(map(lambda x : (node_name, x), current_node.init_statements)),
+        list(map(lambda x : (node_name, argument_pairs, x), current_node.init_statements)),
         (
-            list(map(lambda x : (node_name, 'statement', x), current_node.pre_update_statements))
+            list(map(lambda x : (node_name, argument_pairs, 'statement', x), current_node.pre_update_statements))
             +
-            [(node_name, 'return', current_node.return_statement)]
+            [(node_name, argument_pairs, 'return', current_node.return_statement)]
             +
-            list(map(lambda x : (node_name, 'statement', x), current_node.post_update_statements))
+            list(map(lambda x : (node_name, argument_pairs, 'statement', x), current_node.post_update_statements))
         )
     )
 
 
 def walk_tree(current_node, parent_name = None, node_names = set(), node_names_map = {}):
+    argument_pairs = None
     while (not hasattr(current_node, 'name') or hasattr(current_node, 'sub_root')):
         if hasattr(current_node, 'leaf'):
+            argument_pairs = {
+                current_node.leaf.argument_names[index]: handle_constant(current_node.arguments[index])
+                for index in range(len(current_node.arguments))
+            }
             current_node = current_node.leaf
         else:
             # print(dir(current_node))
@@ -823,8 +843,12 @@ def walk_tree(current_node, parent_name = None, node_names = set(), node_names_m
     node_name = new_name[0]
     modifier = new_name[1]
     # print(node_name + ' : ' + str(parent_name))
-    return CREATE_NODE[current_node.node_type](current_node, node_name, modifier, node_names, node_names_map, parent_name)
-
+    return (
+        CREATE_NODE[current_node.node_type](current_node, node_name, modifier, node_names, node_names_map, parent_name)
+        if argument_pairs is None
+        else
+        CREATE_NODE[current_node.node_type](current_node, argument_pairs, node_name, modifier, node_names, node_names_map, parent_name)
+    )
 
 # --------------- CONSTANTS
 
@@ -911,7 +935,7 @@ CREATE_NODE = {
 }
 
 
-global_vars = {'constants' : {}, 'metamodel' : {}, 'variables' : {}, 'serene_index' : [], 'spec_warn' : False}
+global_vars = {'constants' : {}, 'argument_pairs' : {}, 'metamodel' : {}, 'variables' : {}, 'serene_index' : [], 'spec_warn' : False}
 
 
 # --------------- Main
