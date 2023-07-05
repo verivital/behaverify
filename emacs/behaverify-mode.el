@@ -62,51 +62,65 @@
 (defvar behaverify-font-lock-keywords behaverify-font-lock-keywords-7
   "Default highlighting expressions for BehaVerify mode.")
 
-(setq default-tab-width 4)
+
+;;(buffer-substring-no-properties (line-beginning-position) (line-end-position))
+
 (defun behaverify-indent-line ()
   "Indent current line as BehaVerify code."
   (interactive)
-  (beginning-of-line)
-  (if (bobp)
-	  (indent-line-to 0)		   ; First line is always non-indented
-	(let ((not-indented t) cur-indent)
-	  (if (looking-at "^[^{]*}") ; If the line we are looking at is the end of a block, then decrease the indentation
-		  (progn
-			(save-excursion
-			  (forward-line -1)
-			  (setq cur-indent (- (current-indentation) default-tab-width)))
-			(if (< cur-indent 0) ; We can't indent past the left margin
-				(setq cur-indent 0)))
-		(save-excursion
-		  (while not-indented ; Iterate backwards until we find an indentation hint
-			(forward-line -1)
-			(if (looking-at "^[^{]*}") ; This hint indicates that we need to indent at the level of the END_ token
-				(progn
-				  (setq cur-indent (current-indentation))
-				  (setq not-indented nil))
-			  (if (looking-at "^.*{[^}]*$") ; This hint indicates that we need to indent an extra level
-				  (progn
-					(setq cur-indent (+ (current-indentation) default-tab-width)) ; Do the actual indenting
-					(setq not-indented nil))
-				(if (bobp)
-					(setq not-indented nil)))))))
-	  (if cur-indent
-		  (indent-line-to cur-indent)
-		(indent-line-to 0))))) ; If we didn't see an indentation hint, then allow no indentation
+  (beginning-of-line)  ; moves us to the start of the line.
+  (if (bobp)  ; true if at start of buffer
+      (indent-line-to 0)  ; First line is always non-indented
+    (let ((indent-level 0) (modify-indent-level 0))
+      (beginning-of-line)  ; moves us to the start of the line.
+      (if (looking-at "^[[:blank:]]*}.*$") (setq modify-indent-level -1) nil)  ; if we have spaces then }, we would like that } to indent itself back.
+      (save-excursion  ; we will save our current location
+	(let ((still-searching t))  ; this will be used to track if we are done looping
+	  (while still-searching  ; loop
+	    (forward-line -1)  ; go to the start of previous line.
+	    (if (bobp) (setq still-searching nil))  ; we will have to stop the loop if we're at the start.
+	    (if (looking-at "^[[:blank:]]*$") nil  ; if we're looking at a line with nothing in it, do nothing. otherwise, see below.
+	      (let ((num-open (how-many "{" (line-beginning-position) (line-end-position)))  ; the number of { in the line
+		    (num-closed (how-many "}" (line-beginning-position) (line-end-position))))  ; the number of } in the line
+		; (message "num-open = %d" num-open)
+		(setq still-searching nil)  ; done searching
+		(if (looking-at "^[[:blank:]]*}.*$") (setq modify-indent-level (+ 1 modify-indent-level)))  ; if the prior line also shifted back 1 as a ___} line, don't double it
+		(setq indent-level (+ (current-indentation) (* 4 (+ (- num-open num-closed) modify-indent-level))))  ; compute indent level
+		)  ; END progn
+	      )  ; END if looking at
+	    )  ; END while
+	  )  ; END let still searching
+	)  ; END save-excursion
+      (if (< indent-level 0) (indent-line-to 0) (indent-line-to indent-level))  ; run indent command, don't try to negative indent.
+      )  ; END let indent level
+    )  ; END if bobp
+  )  ; END function
+
+(defun behaverify-indent-all-lines ()
+  "Indent everyline in the buffer."
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (let ((still-moving t))
+      (while still-moving
+	(forward-line)
+	(if (eobp) (setq still-moving nil))
+	(behaverify-indent-line)
+	)
+      )
+    )
+  )
 
 (defvar behaverify-mode-syntax-table
   (let ((behaverify-mode-syntax-table (make-syntax-table)))
 	
     ; This is added so entity names with underscores can be more easily parsed
 	(modify-syntax-entry ?_ "w" behaverify-mode-syntax-table)
-	
-	; Comment styles are same as C++
-	;(modify-syntax-entry ?\# ". 124b" st)
-	;(modify-syntax-entry ?* ". 23" st)
-	;(modify-syntax-entry ?\n "> b" st)
+	(modify-syntax-entry ?\' "\" 14" behaverify-mode-syntax-table)
+	(modify-syntax-entry ?\" "\" 14" behaverify-mode-syntax-table)
 	(modify-syntax-entry ?\# ". 14" behaverify-mode-syntax-table)
-	(modify-syntax-entry ?{ ". 2" behaverify-mode-syntax-table)
-	(modify-syntax-entry ?} ". 3" behaverify-mode-syntax-table)
+	(modify-syntax-entry ?{ "(}2" behaverify-mode-syntax-table)
+	(modify-syntax-entry ?} "){3" behaverify-mode-syntax-table)
 	behaverify-mode-syntax-table)
   "Syntax table for behaverify-mode.")
   
