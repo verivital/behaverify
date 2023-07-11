@@ -7,12 +7,9 @@ import textx
 from behaverify_common import haskell_indent as indent, create_node_name
 
 from check_model import (validate_model
-                         # , constant_type
-                         # , variable_type
                          , is_local
                          , is_env
                          , is_blackboard
-                         # , variable_scope
                          , is_array
                          , build_range_func)
 
@@ -396,7 +393,7 @@ def handle_variable_statement(assign, assign_var, indent_level, init_mode, board
                 random_range = 0
                 function_name = ''
             elif case_result.range_mode:
-                cond_func = build_range_func(case_result.values[2])
+                cond_func = build_range_func(case_result.values[2], constants)
                 random_range = len(list(filter(cond_func, range(handle_constant(case_result.values[0], False), handle_constant(case_result.values[1], False) + 1)))) - 1
                 function_name = 'privateRandom' + str(unique_id)
                 unique_id = unique_id + 1
@@ -442,7 +439,7 @@ def handle_variable_statement(assign, assign_var, indent_level, init_mode, board
             random_range = 0
             function_name = ''
         elif case_result.range_mode:
-            cond_func = build_range_func(case_result.values[2])
+            cond_func = build_range_func(case_result.values[2], constants)
             random_range = len(list(filter(cond_func, range(handle_constant(case_result.values[0], False), handle_constant(case_result.values[1], False) + 1)))) - 1
             function_name = 'privateRandom' + str(unique_id)
             unique_id = unique_id + 1
@@ -935,7 +932,7 @@ def handle_initial_value(assign, variable, var_type, indent_level, init_mode, pa
             random_range = 0
             function_name = ''
         elif case_result.range_mode:
-            cond_func = build_range_func(case_result.values[2])
+            cond_func = build_range_func(case_result.values[2], constants)
             random_range = len(list(filter(cond_func, range(handle_constant(case_result.values[0], False), handle_constant(case_result.values[1], False) + 1)))) - 1
             function_name = 'privateRandom' + str(unique_id)
             unique_id = unique_id + 1
@@ -972,7 +969,7 @@ def handle_initial_value(assign, variable, var_type, indent_level, init_mode, pa
         random_range = 0
         function_name = ''
     elif case_result.range_mode:
-        cond_func = build_range_func(case_result.values[2])
+        cond_func = build_range_func(case_result.values[2], constants)
         random_range = len(list(filter(cond_func, range(handle_constant(case_result.values[0], False), handle_constant(case_result.values[1], False) + 1)))) - 1
         function_name = 'privateRandom' + str(unique_id)
         unique_id = unique_id + 1
@@ -996,7 +993,7 @@ def handle_initial_value(assign, variable, var_type, indent_level, init_mode, pa
     # return return_string + ((post_script(indent_level) + where_string) if unique_id > 0 else '')
     return return_string + post_script(indent_level) + (where_string if unique_id > 0 else '')
 
-# debug = False
+
 def handle_update_value(assign, variable_name, var_type, indent_level, init_mode):
     # print('----------------------------------------------------------------------')
     # global debug
@@ -1050,7 +1047,7 @@ def handle_update_value(assign, variable_name, var_type, indent_level, init_mode
             random_range = 0
             function_name = ''
         elif case_result.range_mode:
-            cond_func = build_range_func(case_result.values[2])
+            cond_func = build_range_func(case_result.values[2], constants)
             random_range = len(list(filter(cond_func, range(handle_constant(case_result.values[0], False), handle_constant(case_result.values[1], False) + 1)))) - 1
             function_name = 'privateRandom' + str(unique_id)
             unique_id = unique_id + 1
@@ -1086,7 +1083,7 @@ def handle_update_value(assign, variable_name, var_type, indent_level, init_mode
         random_range = 0
         function_name = ''
     elif default.range_mode:
-        cond_func = build_range_func(default.values[2])
+        cond_func = build_range_func(default.values[2], constants)
         random_range = len(list(filter(cond_func, range(handle_constant(default.values[0], False), handle_constant(default.values[1], False) + 1)))) - 1
         function_name = 'privateRandom' + str(unique_id)
         unique_id = unique_id + 1
@@ -1432,7 +1429,6 @@ def create_environment(model):
     )
 
 
-# debug = False
 def create_blackboard(model):
 
     def walk_tree_recursive_blackboard(current_node, node_names, node_names_map, running_dict, running_int, running_create_order):
@@ -1757,7 +1753,7 @@ def main():
         for constant in model.constants
     }
 
-    validate_model(model, constants, metamodel)
+    validate_model(model, constants)
 
     my_location = args.location + 'app/'
 

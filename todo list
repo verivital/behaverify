@@ -5,10 +5,17 @@
 
 4. update haskell code for arrays
 5. general updates in terms of refactoring.
-6. fix haskell functions which take unknown number of arguments by chaining them together. (i am not sure what this means now)
+6. fix haskell functions which take unknown number of arguments by chaining them together. (i am not sure what this means now) (i think this is done, and was referring to like, 1+2+3 becoming (1 + 2) + 3
 
-7. make sure enum constants do not conflit with variable/node names.
+7. make sure enum constants do not conflict with variable/node names.
 
 8. implement a method by which to pass an argument for the initialization of a node. e.g., this specific node initializes the local variable to this value. <- DONE. but not for haskell
-9. enforce requirement that arrays have an index of at least 2, or verify that assign for initial values works correctly.
 10. force read environment and write environment to use unique names. probably by attaching node names?
+
+
+
+
+DONE, but not tested
+
+
+9. enforce requirement that arrays have an index of at least 2, or verify that assign for initial values works correctly. ||| <- added BTreeException to model checker.
