@@ -8,12 +8,10 @@ import itertools
 import textx
 from behaverify_common import indent, create_node_name
 from check_model import (validate_model
-                         # , constant_type
                          , variable_type
                          , is_local
                          , is_env
                          , is_blackboard
-                         # , variable_scope
                          , is_array
                          , build_range_func)
 
@@ -218,7 +216,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
         # TODO: rework this to be more efficient.
         # currently, each possibility is computed, even though only one will be used.
         if range_mode:
-            cond_func = build_range_func(values[2])
+            cond_func = build_range_func(values[2], constants)
             vals = list(map(str, filter(cond_func, range(handle_constant(values[0]), handle_constant(values[1]) + 1))))
             if len(vals) == 0:
                 raise ValueError('variable had no valid values!')
@@ -238,11 +236,6 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                 + '])')
 
     def variable_assignment(variable, assign_value, indent_level, format_mode, array_mode):
-        # if format_mode is None and (variable.model_as == 'FROZENVAR' or variable.model_as == 'DEFINE'):
-        #     raise Exception('ERROR: variable ' + variable.name + ' is a ' + variable.model_as + ' but is being updated.')
-        # if format_mode == 'node' and not is_local and (variable.model_as == 'FROZENVAR' or variable.model_as == 'DEFINE'):
-        #     raise Exception('ERROR: variable ' + variable.name + ' is a ' + variable.model_as + ' but is being updated.')
-        # these checks are being handled in check_model
         safety_1 = '' if variable.model_as == 'DEFINE' else ('serene_safe_assignment.' + variable.name + '(')
         safety_2 = '' if variable.model_as == 'DEFINE' else ')'
         return (
@@ -286,7 +279,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                 if format_mode['init'] or len(statement.values) == 0:
                     serene_indices = list(range(handle_constant(assign_var.array_size)))
                 else:
-                    cond_func = build_range_func(statement.values[2])
+                    cond_func = build_range_func(statement.values[2], constants)
                     min_val = handle_constant(statement.values[0])
                     max_val = handle_constant(statement.values[1])
                     serene_indices = list(filter(cond_func, range(min_val, max_val + 1)))
@@ -661,11 +654,11 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
     def create_safe_assignment(model):
         def conditional_for_variable(variable):
             if variable.domain.condition is not None:
-                return build_range_func(variable.domain.condition)
+                return build_range_func(variable.domain.condition, constants)
             return None
 
         def create_type_check_function(variable, function_name, indent_level):
-            cur_var_type = variable_type(variable)
+            cur_var_type = variable_type(variable, constants)
             cur_var_type = ('int' if cur_var_type == 'INT'
                             else ('bool' if cur_var_type == 'BOOLEAN'
                                   else ('str')))
@@ -1108,7 +1101,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
         for constant in model.constants
     }
     argument_pairs = {}
-    validate_model(model, constants, metamodel)
+    validate_model(model, constants)
 
     with open(write_location + 'serene_safe_assignment.py', 'w', encoding = 'utf-8') as write_file:
         write_file.write(create_safe_assignment(model))
@@ -1136,54 +1129,55 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
             better_ticks = write_file.read()
 
     with open(write_location + project_name + '.py', 'w', encoding = 'utf-8') as write_file:
-        write_file.write(''.join([('import ' + node.name + '_file' + os.linesep) for node in itertools.chain(model.check_nodes, model.action_nodes, model.environment_checks)])
-                + 'import py_trees' + os.linesep
-                + 'import serene_safe_assignment' + os.linesep
-                + os.linesep + os.linesep
-                + 'def create_blackboard():' + os.linesep
-                + indent(1) + 'blackboard_reader = py_trees.blackboard.Client()' + os.linesep
-                + ''.join(
-                    [
-                        (indent(1) + 'blackboard_reader.register_key(key = ' + "'" + blackboard_variable.name + "'" + ', access = py_trees.common.Access.WRITE)' + os.linesep)
-                        for blackboard_variable in model.variables if is_blackboard(blackboard_variable)
-                    ]
-                )
-                + ''.join(
-                    [
+        write_file.write(
+            ''.join([('import ' + node.name + '_file' + os.linesep) for node in itertools.chain(model.check_nodes, model.action_nodes, model.environment_checks)])
+            + 'import py_trees' + os.linesep
+            + 'import serene_safe_assignment' + os.linesep
+            + os.linesep + os.linesep
+            + 'def create_blackboard():' + os.linesep
+            + indent(1) + 'blackboard_reader = py_trees.blackboard.Client()' + os.linesep
+            + ''.join(
+                [
+                    (indent(1) + 'blackboard_reader.register_key(key = ' + "'" + blackboard_variable.name + "'" + ', access = py_trees.common.Access.WRITE)' + os.linesep)
+                    for blackboard_variable in model.variables if is_blackboard(blackboard_variable)
+                ]
+            )
+            + ''.join(
+                [
+                    (
                         (
-                            (
-                                (indent(1) + format_variable_name_only(variable, format_mode = {'init': True, 'loc' : 'blackboard'}) + ' = [None] * ' + handle_constant_str(variable.array_size) + os.linesep)
-                                if is_array(variable)
-                                else
-                                ''
-                            )
-                            +
-                            (
-                                create_variable_macro(variable.assigns if len(variable.assigns) > 0 else variable.assign
-                                                      , variable.array_mode == 'range'
-                                                      , variable
-                                                      , indent_level = 1
-                                                      , format_mode = {'init': True, 'loc' : 'blackboard'})
-                                if variable.model_as == 'DEFINE' else
-                                handle_variable_statement(variable, variable, indent_level = 1, format_mode = {'init': True, 'loc' : 'blackboard'}, assign_to_var = True)
-                            )
+                            (indent(1) + format_variable_name_only(variable, format_mode = {'init': True, 'loc' : 'blackboard'}) + ' = [None] * ' + handle_constant_str(variable.array_size) + os.linesep)
+                            if is_array(variable)
+                            else
+                            ''
                         )
-                        for variable in model.variables if is_blackboard(variable)
-                    ]
-                )
-                + indent(1) + 'return blackboard_reader' + os.linesep
-                + (
-                    better_ticks
-                    if serene_print
-                    else
-                    ''
-                )
-                + os.linesep
-                + os.linesep
-                + 'def create_tree(environment):' + os.linesep
-                + running_string
-                + indent(1) + 'return ' + root_name + os.linesep
-                )
+                        +
+                        (
+                            create_variable_macro(variable.assigns if len(variable.assigns) > 0 else variable.assign
+                                                  , variable.array_mode == 'range'
+                                                  , variable
+                                                  , indent_level = 1
+                                                  , format_mode = {'init': True, 'loc' : 'blackboard'})
+                            if variable.model_as == 'DEFINE' else
+                            handle_variable_statement(variable, variable, indent_level = 1, format_mode = {'init': True, 'loc' : 'blackboard'}, assign_to_var = True)
+                        )
+                    )
+                    for variable in model.variables if is_blackboard(variable)
+                ]
+            )
+            + indent(1) + 'return blackboard_reader' + os.linesep
+            + (
+                better_ticks
+                if serene_print
+                else
+                ''
+            )
+            + os.linesep
+            + os.linesep
+            + 'def create_tree(environment):' + os.linesep
+            + running_string
+            + indent(1) + 'return ' + root_name + os.linesep
+        )
     with open(write_location + project_name + '_runner.py', 'w', encoding = 'utf-8') as write_file:
         write_file.write(create_runner(list(filter(is_blackboard, model.variables)), list(filter(is_env, model.variables)), local_print_info))
     with open(write_location + project_environment_name + '.py', 'w', encoding = 'utf-8') as write_file:
