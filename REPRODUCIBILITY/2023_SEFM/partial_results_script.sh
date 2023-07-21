@@ -1,6 +1,7 @@
 #!/bin/bash
 
 this_script_location_arg=$1
+no_haskell=$2
 start_location=$(pwd)
 
 cd "${this_script_location_arg}"
@@ -49,9 +50,9 @@ cd "${this_script_location}/scripts/process_results_scripts"
 
 
 cd "${this_script_location}/scripts/build_scripts"
-./exp_random_haskell_create.sh 20 2 5
+./exp_random_haskell_create.sh 20 2 5 $no_haskell
 cd "${this_script_location}/scripts/comparison_scripts"
-./exp_random_haskell_run.sh 20
+./exp_random_haskell_run.sh 20 $no_haskell
 
 
 cd "${this_script_location}/scripts/build_scripts"
