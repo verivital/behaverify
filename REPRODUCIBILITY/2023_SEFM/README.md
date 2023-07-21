@@ -46,7 +46,7 @@ We provide 3 scripts of each type (1 for each test from Test Information). Each 
 
 If a script fails because permission has been denied, please run the script without sudo (running docker without sudo requires some configuration). If the problem persists, please try a different location, as occasionally docker cannot write to secondary disks.
 
-### Single Script: Minimal (about 8 minutes)
+### Single Script: Minimal (about 10 minutes)
 
 Build Script (using Haskell):
 
@@ -61,6 +61,8 @@ Load Script:
 	./load_and_run_minimal.sh /path/to/nuXmv /path/to/writable/location/
 	
 The results will be written in **/path/to/writable/location/behaverify\_install\_test\_results**. See the Interpreting and Comparing Results section for more information.
+
+Note that the '/' at the end of the location is required.
 
 ### Single Script: Partial (about 25 minutes)
 
@@ -78,6 +80,8 @@ Load Script:
 	
 The results will be written in **/path/to/writable/location/behaverify\_partial\_results**. See the Interpreting and Comparing Results section for more information.
 
+Note that the '/' at the end of the location is required.
+
 ### Single Script: Full (under 12 hours)
 
 Build Script (using Haskell):
@@ -93,6 +97,8 @@ Load Script:
 	./build_and_run_full.sh /path/to/nuXmv /path/to/writable/location/
 	
 The results will be written in **/path/to/writable/location/behaverify\_results**. See the Interpreting and Comparing Results section for more information.
+
+Note that the '/' at the end of the location is required.
 
 ---
 
@@ -152,6 +158,8 @@ If you used option 1b, please ensure you run the no\_haskell version. The no\_ha
 
 If the script fails because permission has been denied, please run the script without sudo (running docker without sudo requires some configuration). If the problem persists, please try a different location, as occasionally docker cannot write to secondary disks.
 
+Note that the '/' at the end of the location is required.
+
 
 ### 4. Partial Test (estimated time: 20 minutes)
 
@@ -167,6 +175,8 @@ If you used option 1b, please ensure you run the no\_haskell version. The no\_ha
 
 If the script fails because permission has been denied, please run the script without sudo (running docker without sudo requires some configuration). If the problem persists, please try a different location, as occasionally docker cannot write to secondary disks.
 
+Note that the '/' at the end of the location is required.
+
 
 ### 5. Full Results (estimated time: under 12 hours)
 
@@ -181,6 +191,8 @@ or
 If you used option 1b, please ensure you run the no\_haskell version. The no\_haskell version will not create or run Haskell files for the Differential Testing but is otherwise the same.
 
 If the script fails because permission has been denied, please run the script without sudo (running docker without sudo requires some configuration). If the problem persists, please try a different location, as occasionally docker cannot write to secondary disks.
+
+Note that the '/' at the end of the location is required.
 
 ---
 
@@ -333,6 +345,8 @@ If you did not install Haskell, make sure you use the no\_haskell version.
 
 This will run a fairly small script. The results will be in behaverify/REPRODUCIBILITY/2023\_SEFM/examples/. Please see the Interpreting and Comparing Results section for an explanation of what results to look for.
 
+Note that the '/' at the end of the location is required.
+
 ## Partial Script
 
 To create a subset of the results, please navigate to behaverify/REPRODUCIBILITY/2023\_SEFM/ and run the following
@@ -347,6 +361,8 @@ If you did not install Haskell, make sure you use the no\_haskell version.
 
 This will run a larger, but still fairly small script. The results will be in behaverify/REPRODUCIBILITY/2023\_SEFM/examples/. Please see the Interpreting and Comparing Results section for an explanation of what results to look for.
 
+Note that the '/' at the end of the location is required.
+
 ## Full Script
 
 To create all results, please navigate to behaverify/REPRODUCIBILITY/2023\_SEFM/ and run the following
@@ -360,6 +376,8 @@ or
 If you did not install Haskell, make sure you use the no\_haskell version.
 
 This will run a large script. The results will be in **behaverify/REPRODUCIBILITY/2023\_SEFM/examples/**. Please see the Interpreting and Comparing Results section for an explanation of what results to look for.
+
+Note that the '/' at the end of the location is required.
 
 ---
 
