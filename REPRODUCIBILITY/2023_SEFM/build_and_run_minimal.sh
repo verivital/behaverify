@@ -2,10 +2,17 @@
 
 nuXmvLoc=$1
 outputLoc=$2
+no_haskell=$3
 
-./docker_build_script.sh
+if [[ "$no_haskell" == "no_haskell" ]]; then
+    echo "Haskell will NOT be installed or used."
+else
+    echo "Haskell WILL be installed and used."
+fi
+
+./docker_build_script.sh $no_haskell
 echo "docker build finished!"
 ./docker_add_nuxmv.sh $nuXmvLoc
 echo "added nuXmv!"
-./docker_test_install.sh $outputLoc
+./docker_test_install.sh $outputLoc $no_haskell
 echo "installation test finished!"
