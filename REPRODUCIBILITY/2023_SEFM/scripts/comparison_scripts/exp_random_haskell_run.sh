@@ -3,7 +3,7 @@
 to_gen=1000
 use_haskell=1
 
-if [ "$#" == 2 ]; then
+if [ "$#" -ge 1 ]; then
     to_gen=$1
     no_haskell=$2
     if [[ "$no_haskell" == "no_haskell" ]]; then

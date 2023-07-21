@@ -5,7 +5,7 @@ min_val=1
 max_val=15
 use_haskell=1
 
-if [ "$#" == 4 ]; then
+if [ "$#" -ge 3 ]; then
     to_gen=$1
     min_val=$2
     max_val=$3
