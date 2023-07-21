@@ -1,7 +1,6 @@
 '''This module is used to verify that the provided DSL file is reasonable.'''
 import itertools
 import serene_functions
-# import textx
 from behaverify_common import create_node_name
 
 # TODO : function category (TL/INVAR/reg) - DONE?
