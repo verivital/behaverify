@@ -1,0 +1,175 @@
+configuration {
+    hypersafety
+} end_configuration
+
+constants {
+    #{ constants are used to synchronize values in a .tree file. }#
+    #{ example = 0 }#
+    #{ to use example elsewhere, simply type 'example' in place of any integer (quotes included) }#
+} end_constants
+
+variables {
+    #{ Variable declarations go here.
+	it is suggested, but not required, that the order of declaration be
+	Blackboard, Local, Environment.
+	If variable B depends on variable A, then variable A MUST be declared before B.
+    }#
+    #{
+	variable {
+	    bl
+	    x
+	    VAR
+	    [0, 10]
+	    assign { result { 0 } end_result } end_assign
+	} end_variable
+    }#
+    #{
+	variable {
+	    local
+	    y
+	    VAR
+	    {'potato', 'tomato', 'bawk'}
+	    assign { result { 'bawk' } end_result } end_assign
+	} end_variable
+    }#
+    #{
+	variable {
+	    env
+	    z
+	    VAR
+	    BOOLEAN
+	    assign { case { (equal, 1, 0) } end_case result { False} end_result result { (equal, bl x, 0) } end_result } end_assign
+	} end_variable
+    }#
+    variable { bl output VAR [0, 30] assign { result { 0 }}}
+    variable { bl low_output DEFINE INT assign { result { (mod, output, 10) }}}
+    variable { bl high_output DEFINE INT assign { result { (division, output, 10) }}}
+    variable { env low_input VAR [-2, 2] assign { result { range, -2, 2, True }}}
+    variable { env high_input VAR [-1, 1] assign { result { range, -1, 1, True }}}
+    
+} end_variables
+
+environment_update {
+    variable_statement {
+	low_input
+	assign { result { range, -2, 2, True }}
+    }
+    
+    variable_statement {
+	high_input
+	assign { result { range, -1, 1, True }}
+    }
+} end_environment_update
+
+checks {
+    #{ check nodes are defined here }#
+    #{
+	check {
+	    x_idk
+	    read_variables { x } end_read_variables
+	    condition { (and, (less_than, (addition, x, 1), 4), True) } end_condition
+	} end_check
+    }#
+} end_checks
+
+environment_checks {
+    #{ check environment nodes are defined here }#
+    #{
+	environment_check {
+	    z_idk
+	    read_variables {} end_read_variables
+	    condition { z } end_condition
+	} end_environment_check
+    }#
+} end_environment_checks
+
+actions {
+    action {
+	apply_low_input
+	arguments {}
+	local_variables {}
+	read_variables {}
+	write_variables {output}
+	initial_values {}
+	update {
+	    read_environment {
+		read_low_input
+		condition { True }
+		variable_statement {
+		    output
+		    assign {
+			case { (greater_than, (addition, output, low_input), 30) }
+			result { (subtraction, (addition, output, low_input), 30) }
+			case { (less_than, (addition, output, low_input), 0) }
+			result { (addition, (addition, output, low_input), 30) }
+			result {(addition, output, low_input) }
+		    }
+		}
+	    }
+	    return_statement { result {success} }
+	}
+    }
+    action {
+	apply_high_input
+	arguments {}
+	local_variables {}
+	read_variables {}
+	write_variables {output}
+	initial_values {}
+	update {
+	    read_environment {
+		read_high_input
+		condition { True }
+		variable_statement {
+		    output
+		    assign {
+			case { (greater_than, (addition, output, (multiplication, 10, high_input)), 30) }
+			result { (subtraction, (addition, output, (multiplication, 10, high_input)), 30) }
+			case { (less_than, (addition, output, (multiplication, 10, high_input)), 0) }
+			result { (addition, (addition, output, (multiplication, 10, high_input)), 30) }
+			result {(addition, output, (multiplication, 10, high_input)) }
+		    }
+		}
+	    }
+	    return_statement { result {success} }
+	}
+    }
+    #{ action nodes are defined here }#
+    #{
+	action {
+	    y_do
+	    local_variables { y } end_local_variables
+	    read_variables { } end_read_variables
+	    write_variables { x } end_write_variables
+	    initial_values {} end_initial_values
+	    update {
+		variable_statement {
+		    x
+		    result { (max, 'example', (subtraction, x, 1)) } end_result
+		} end_variable_statement
+		return_statement {
+		    result { success} end_result
+		} end_return_statement
+	    } end_update
+	} end_action
+    }#
+} end_actions
+
+sub_trees {#{ subtrees go here. }#} end_sub_trees
+
+tree {
+    #{ the tree is defined here}#
+    composite {
+	output_changer sequence children {apply_low_input {} apply_high_input {}}
+    }
+} end_tree
+
+
+#{ this section is optional. you may remove it }#
+#{
+    tick_prerequisite {  } end_tick_prerequisite
+}#
+
+specifications { #{ INVAR, LTL, and CTL specs go here }#
+    LTLSPEC {(globally, (implies, (historically, (equal, low_input 0 1, low_input 0 2)), (equal, low_output -1 1, low_output -1 2)))}
+} end_specifications
