@@ -20,7 +20,7 @@
 
 (defconst behaverify-font-lock-keywords-1
   (list
-   '("\\<\\(actions\\|c\\(?:\\(?:heck\\|onstant\\)s\\)\\|en\\(?:d_\\(?:actions\\|c\\(?:\\(?:heck\\|onstant\\)s\\)\\|environment_\\(?:checks\\|update\\)\\|s\\(?:\\(?:pecification\\|ub_tree\\)s\\)\\|t\\(?:\\(?:ick_prerequisit\\|re\\)e\\)\\|variables\\)\\|vironment_\\(?:checks\\|update\\)\\)\\|s\\(?:\\(?:pecification\\|ub_tree\\)s\\)\\|t\\(?:\\(?:ick_prerequisit\\|re\\)e\\)\\|variables\\)\\>" . font-lock-warning-face))
+   '("\\<\\(actions\\|c\\(?:hecks\\|on\\(?:figuration\\|stants\\)\\)\\|en\\(?:d_\\(?:actions\\|c\\(?:hecks\\|on\\(?:figuration\\|stants\\)\\)\\|environment_\\(?:checks\\|update\\)\\|s\\(?:\\(?:pecification\\|ub_tree\\)s\\)\\|t\\(?:\\(?:ick_prerequisit\\|re\\)e\\)\\|variables\\)\\|vironment_\\(?:checks\\|update\\)\\)\\|s\\(?:\\(?:pecification\\|ub_tree\\)s\\)\\|t\\(?:\\(?:ick_prerequisit\\|re\\)e\\)\\|variables\\)\\>" . font-lock-warning-face))
   "Minimal highlighting expressions for BehaVerify mode.")
 
 (defconst behaverify-font-lock-keywords-2
@@ -38,7 +38,7 @@
 (defconst behaverify-font-lock-keywords-4
   (append behaverify-font-lock-keywords-3
 		  (list
-		   '("\\<\\(BOOLEAN\\|VAR\\|bl\\|en\\(?:d_\\(?:initial_values\\|re\\(?:\\(?:ad_environ\\|turn_state\\)ment\\)\\|update\\|variable\\(?:_statement\\)?\\|write_environment\\)\\|v\\)\\|initial_values\\|local\\|re\\(?:\\(?:ad_environ\\|turn_state\\)ment\\)\\|update\\|variable\\(?:_statement\\)?\\|write_environment\\)\\>" . font-lock-function-name-face)))
+		   '("\\<\\(BOOLEAN\\|DEFINE\\|ENUM\\|FROZENVAR\\|INT\\|VAR\\|bl\\|en\\(?:d_\\(?:initial_values\\|re\\(?:\\(?:ad_environ\\|turn_state\\)ment\\)\\|update\\|variable\\(?:_statement\\)?\\|write_environment\\)\\|v\\)\\|initial_values\\|local\\|re\\(?:\\(?:ad_environ\\|turn_state\\)ment\\)\\|update\\|variable\\(?:_statement\\)?\\|write_environment\\)\\>" . font-lock-function-name-face)))
   "Additional Keywords to highlight in BehaVerify mode.")
 
 (defconst behaverify-font-lock-keywords-5
@@ -56,7 +56,7 @@
 (defconst behaverify-font-lock-keywords-7
   (append behaverify-font-lock-keywords-6
 		  (list
-		   '("\\<\\(False\\|True\\|failure\\|runnning\\|success\\)\\>" . font-lock-constant-face)))
+		   '("\\<\\(False\\|True\\|failure\\|hypersafety\\|runnning\\|success\\)\\>" . font-lock-constant-face)))
   "Additional Keywords to highlight in BehaVerify mode.")
 
 (defvar behaverify-font-lock-keywords behaverify-font-lock-keywords-7

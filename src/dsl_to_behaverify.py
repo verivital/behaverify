@@ -1,6 +1,6 @@
 '''
 This module is part of BehaVerify and used to convert .tree files to .smv files for use with nuXmv.
-@author ::> Serene Serbinowska
+@author ::> Serena Aura Serbinowska
 '''
 import argparse
 import pprint
@@ -24,7 +24,10 @@ from behaverify_common import create_node_name, create_node_template, create_var
 # if the condition is true, then the result is used.
 # the last condition should always be TRUE
 
-def main(metamodel_file, model_file, keep_stage_0, keep_last_stage, output_file, do_not_trim, behave_only):
+def dsl_to_behaverify(metamodel_file, model_file, keep_stage_0, keep_last_stage, output_file, do_not_trim, behave_only):
+    '''
+    This method is used to convert the dsl to behaverify.
+    '''
 
     def format_function_before(function_name, code, misc_args):
         '''function_name(vals)'''
@@ -100,7 +103,8 @@ def main(metamodel_file, model_file, keep_stage_0, keep_last_stage, output_file,
             'use_stages' : use_stages,
             'use_next' : use_next,
             'not_next' : not_next,
-            'overwrite_stage' : overwrite_stage
+            'overwrite_stage' : overwrite_stage,
+            'trace_num' : '1'
         }
 
     def compute_stage(variable_key, misc_args):
@@ -120,14 +124,25 @@ def main(metamodel_file, model_file, keep_stage_0, keep_last_stage, output_file,
         variable = variables[variable_key]
         overwrite_stage = misc_args['overwrite_stage']
         return (
-            '_stage_'
-            + str(
-                len(variable['next_value'])
-                if overwrite_stage is None or overwrite_stage < 0
+            (
+                (len(variable['next_value']) - 1)
+                if variable['mode'] == 'DEFINE'
                 else
-                min(overwrite_stage, len(variable['next_value']))
+                len(variable['next_value'])
             )
+            if overwrite_stage is None or overwrite_stage < 0
+            else
+            min(overwrite_stage, len(variable['next_value']))
         )
+        # return (
+        #     '_stage_'
+        #     + str(
+        #         len(variable['next_value'])
+        #         if overwrite_stage is None or overwrite_stage < 0
+        #         else
+        #         min(overwrite_stage, len(variable['next_value']))
+        #     )
+        # )
 
     def find_used_variables(code, misc_args):
         '''Returns the list of used variables (will also format them)'''
@@ -142,6 +157,17 @@ def main(metamodel_file, model_file, keep_stage_0, keep_last_stage, output_file,
                 )
             )
         )
+
+    def assemble_variable(name, stage, use_next, trace_num):
+        '''
+        This method should only be called by format variable.
+        '''
+        return (
+            ('' if not use_next else 'next(')
+            + (('system' + (('_' + trace_num) if hyper_mode else '') + '.') if specification_writing else '')
+            + name
+            + '_stage_' + str(stage)
+            + ('' if not use_next else ')'))
 
     def format_variable(variable_obj, misc_args):
         '''
@@ -161,18 +187,17 @@ def main(metamodel_file, model_file, keep_stage_0, keep_last_stage, output_file,
         use_next = misc_args['use_next']
         not_next = misc_args['not_next']
         overwrite_stage = misc_args['overwrite_stage']
+        trace_num = misc_args['trace_num']
 
         variable_key = variable_reference(variable_obj.name, is_local(variable_obj), node_name)
         variable = variables[variable_key]
 
         if variable['mode'] == 'DEFINE':
-            if overwrite_stage is not None:
-                return (
-                    ('' if not use_next else 'next(')
-                    + variable['prefix']
-                    + variable['name']
-                    + '_stage_' + str(overwrite_stage)
-                    + ('' if not use_next else ')'))
+            nonlocal specification_writing
+            if overwrite_stage is not None and len(variable['next_value']) > 0:
+                return assemble_variable(variable['name'], compute_stage(variable_key, misc_args), use_next, trace_num)
+            restore_specification_writing = specification_writing
+            specification_writing = False
             used_vars = []
             var_statement = variable['initial_value']
             var_assigns = var_statement.assigns
@@ -202,11 +227,8 @@ def main(metamodel_file, model_file, keep_stage_0, keep_last_stage, output_file,
                 variable['existing_definitions'][used_vars] = len(variable['next_value'])
                 variable['next_value'].append(handle_variable_statement(var_statement, variable_obj, None, misc_args))
             stage = variable['existing_definitions'][used_vars]
-            return (
-                ('' if not use_next else 'next(')
-                + variable['name']
-                + '_stage_' + str(stage)
-                + ('' if not use_next else ')'))
+            specification_writing = restore_specification_writing
+            return assemble_variable(variable['name'], stage, use_next, trace_num)
 
         if use_stages and (len(variable['next_value']) == 0 or overwrite_stage == 0):
             if spec_warn and not variable['keep_stage_0']:
@@ -218,11 +240,8 @@ def main(metamodel_file, model_file, keep_stage_0, keep_last_stage, output_file,
                 print('A specification is preventing the removal of last stage for: ' + variable['name'])
             variable['keep_last_stage'] = True
         if use_next and variable_key == not_next:
-            return 'LINK_TO_PREVIOUS_FINAL_' + variable['name']
-        return (('' if not use_next else 'next(')
-                + variable['name']
-                + compute_stage(variable_key, misc_args)
-                + ('' if not use_next else ')'))
+            return (('system' + (('_' + trace_num) if hyper_mode else '') + '.') if specification_writing else '') + 'LINK_TO_PREVIOUS_FINAL_' + variable['name']
+        return assemble_variable(variable['name'], compute_stage(variable_key, misc_args), use_next, trace_num)
 
     def adjust_args(code, misc_args):
         '''
@@ -232,6 +251,7 @@ def main(metamodel_file, model_file, keep_stage_0, keep_last_stage, output_file,
         new_misc_args = copy.deepcopy(misc_args)
         new_misc_args['node_name'] = new_misc_args['node_name'] if code.node_name is None else code.node_name
         new_misc_args['overwrite_stage'] = new_misc_args['overwrite_stage'] if code.read_at is None else code.read_at
+        new_misc_args['trace_num'] = new_misc_args['trace_num'] if code.trace_num is None else str(handle_constant(code.trace_num))
         return new_misc_args
 
     def format_code(code, misc_args):
@@ -754,7 +774,11 @@ def main(metamodel_file, model_file, keep_stage_0, keep_last_stage, output_file,
             )
         )
 
-    def walk_tree(current_node, parent_name = None, node_names = set(), node_names_map = {}):
+    def walk_tree(current_node, parent_name = None, node_names = None, node_names_map = None):
+        if node_names is None:
+            node_names = set()
+        if node_names_map is None:
+            node_names_map = {}
         argument_pairs = None
         while (not hasattr(current_node, 'name') or hasattr(current_node, 'sub_root')):
             if hasattr(current_node, 'leaf'):
@@ -853,6 +877,8 @@ def main(metamodel_file, model_file, keep_stage_0, keep_last_stage, output_file,
 
     metamodel = textx.metamodel_from_file(metamodel_file, auto_init_attributes = False)
     model = metamodel.model_from_file(model_file)
+    hyper_mode = model.hypersafety
+    specification_writing = False  # this is used to track whether or not code should make references to the trace and system or not.
     constants = {
         constant.name : constant.val
         for constant in model.constants
@@ -869,6 +895,7 @@ def main(metamodel_file, model_file, keep_stage_0, keep_last_stage, output_file,
     complete_environment_variables(model, True)
     resolve_statements(statements, nodes)
     complete_environment_variables(model, False)
+    specification_writing = True
     spec_warn = True
     specifications = handle_specifications(model.specifications)
     spec_warn = False
@@ -894,7 +921,7 @@ def main(metamodel_file, model_file, keep_stage_0, keep_last_stage, output_file,
                                 , 'tick_condition' : tick_condition
                                 , 'specifications' : specifications})
     else:
-        write_smv(nodes, variables, enum_constants, tick_condition, specifications, output_file, do_not_trim)
+        write_smv(nodes, variables, enum_constants, tick_condition, specifications, hyper_mode, output_file, do_not_trim)
     return
 
 
@@ -908,4 +935,4 @@ if __name__ == '__main__':
     arg_parser.add_argument('--do_not_trim', action = 'store_true')
     arg_parser.add_argument('--behave_only', action = 'store_true')
     args = arg_parser.parse_args()
-    main(args.metamodel_file, args.model_file, args.keep_stage_0, args.keep_last_stage, args.output_file, args.do_not_trim, args.behave_only)
+    dsl_to_behaverify(args.metamodel_file, args.model_file, args.keep_stage_0, args.keep_last_stage, args.output_file, args.do_not_trim, args.behave_only)

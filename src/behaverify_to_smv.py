@@ -407,7 +407,7 @@ def create_resume_point(nodes, node_to_local_root_name_map, local_root_to_releva
     return (define_string, var_string, init_string, next_string)
 
 
-def write_smv(nodes, variables, enum_constants, tick_condition, specifications, output_file = None, do_not_trim = False):
+def write_smv(nodes, variables, enum_constants, tick_condition, specifications, hyper_mode, output_file = None, do_not_trim = False):
     '''
     basically a script to write the necessary information.
     --
@@ -448,13 +448,30 @@ def write_smv(nodes, variables, enum_constants, tick_condition, specifications, 
     # ------------------------------------------------------------------------------------------------------------------------
     # done with variable decleration, moving into string building.
 
-    define_string = ('MODULE main' + os.linesep
-                     + '\tCONSTANTS' + os.linesep
-                     + '\t\tsuccess, failure, running, invalid' + (', ' if len(enum_constants) > 0 else '') + ', '.join(enum_constants) + ';' + os.linesep
-                     + '\tDEFINE' + os.linesep
-                     # + '\t\tstatuses := [' + ', '.join([(node_name + '.status') for node_name in nodes_in_order]) + '];' + os.linesep
-                     # + '\t\tactive := [' + ', '.join([(node_name + '.active') for node_name in nodes_in_order]) + '];' + os.linesep
-                     )
+    define_string = (
+        'MODULE main' + os.linesep
+        + tab_indent(1) + 'VAR' + os.linesep
+        + (
+            (
+                tab_indent(2) + 'system_1 : system_module;' + os.linesep
+                + tab_indent(2) + 'system_2 : system_module;' + os.linesep
+            )
+            if hyper_mode
+            else
+            (
+                tab_indent(2) + 'system : system_module;' + os.linesep
+            )
+        )
+        + '--------------SPECIFICATIONS' + os.linesep
+        + os.linesep + (os.linesep).join(specifications)
+        + '--------------END OF SPECIFICATIONS' + os.linesep
+        + 'MODULE system_module' + os.linesep
+        + '\tCONSTANTS' + os.linesep
+        + '\t\tsuccess, failure, running, invalid' + (', ' if len(enum_constants) > 0 else '') + ', '.join(enum_constants) + ';' + os.linesep
+        + '\tDEFINE' + os.linesep
+        # + '\t\tstatuses := [' + ', '.join([(node_name + '.status') for node_name in nodes_in_order]) + '];' + os.linesep
+        # + '\t\tactive := [' + ', '.join([(node_name + '.active') for node_name in nodes_in_order]) + '];' + os.linesep
+    )
 
     # ------------------------------------------------------------------------------------------------------------------------
     var_string = ('\tVAR' + os.linesep
@@ -505,7 +522,7 @@ def write_smv(nodes, variables, enum_constants, tick_condition, specifications, 
                     + new_next
                     + '\t\t--END OF BLACKBOARD VARIABLES TRANSITION' + os.linesep)
 
-    nuxmv_string = define_string + var_string + init_string + next_string + os.linesep + (os.linesep).join(specifications) + os.linesep
+    nuxmv_string = define_string + var_string + init_string + next_string  + os.linesep
     # ------------------------------------------------------------------------------------------------------------------------
 
     nuxmv_string += node_creator.create_names_module(node_name_to_number)
@@ -578,7 +595,8 @@ def main():
     enum_constants = temp['enum_constants']
     tick_condition = temp['tick_condition']
     specifications = temp['specifications']
-    write_smv(nodes, variables, enum_constants, tick_condition, specifications, args.output_file, args.do_not_trim)
+    hyper_mode = temp['hyper_mode']
+    write_smv(nodes, variables, enum_constants, tick_condition, specifications, hyper_mode, args.output_file, args.do_not_trim)
     return
 
 

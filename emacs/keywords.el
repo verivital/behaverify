@@ -1,6 +1,8 @@
-(regexp-opt '("constants" "end_constants" "variables" "end_variables" "environment_update" "end_environment_update" "checks" "end_checks" "environment_checks" "end_environment_checks" "actions" "end_actions" "sub_trees" "end_sub_trees" "tree" "end_tree" "tick_prerequisite" "end_tick_prerequisite" "specifications" "end_specifications") t)
+(regexp-opt '("configuration" "end_configuration" "constants" "end_constants" "variables" "end_variables" "environment_update" "end_environment_update" "checks" "end_checks" "environment_checks" "end_environment_checks" "actions" "end_actions" "sub_trees" "end_sub_trees" "tree" "end_tree" "tick_prerequisite" "end_tick_prerequisite" "specifications" "end_specifications") t)
 
-"\\(actions\\|c\\(?:\\(?:heck\\|onstant\\)s\\)\\|en\\(?:d_\\(?:actions\\|c\\(?:\\(?:heck\\|onstant\\)s\\)\\|environment_\\(?:checks\\|update\\)\\|s\\(?:\\(?:pecification\\|ub_tree\\)s\\)\\|t\\(?:\\(?:ick_prerequisit\\|re\\)e\\)\\|variables\\)\\|vironment_\\(?:checks\\|update\\)\\)\\|s\\(?:\\(?:pecification\\|ub_tree\\)s\\)\\|t\\(?:\\(?:ick_prerequisit\\|re\\)e\\)\\|variables\\)"
+"\\(actions\\|c\\(?:hecks\\|on\\(?:figuration\\|stants\\)\\)\\|en\\(?:d_\\(?:actions\\|c\\(?:hecks\\|on\\(?:figuration\\|stants\\)\\)\\|environment_\\(?:checks\\|update\\)\\|s\\(?:\\(?:pecification\\|ub_tree\\)s\\)\\|t\\(?:\\(?:ick_prerequisit\\|re\\)e\\)\\|variables\\)\\|vironment_\\(?:checks\\|update\\)\\)\\|s\\(?:\\(?:pecification\\|ub_tree\\)s\\)\\|t\\(?:\\(?:ick_prerequisit\\|re\\)e\\)\\|variables\\)"
+
+;;"\\(actions\\|c\\(?:\\(?:heck\\|onstant\\)s\\)\\|en\\(?:d_\\(?:actions\\|c\\(?:\\(?:heck\\|onstant\\)s\\)\\|environment_\\(?:checks\\|update\\)\\|s\\(?:\\(?:pecification\\|ub_tree\\)s\\)\\|t\\(?:\\(?:ick_prerequisit\\|re\\)e\\)\\|variables\\)\\|vironment_\\(?:checks\\|update\\)\\)\\|s\\(?:\\(?:pecification\\|ub_tree\\)s\\)\\|t\\(?:\\(?:ick_prerequisit\\|re\\)e\\)\\|variables\\)"
 
 ;; END OF 1
 ;; font-lock-preprocessor-face
@@ -19,9 +21,11 @@
 ;; END OF 3
 ;; font-lock-type-face
 
-(regexp-opt '("variable" "end_variable" "variable_statement" "end_variable_statement" "initial_values" "end_initial_values" "update" "end_update" "write_environment" "end_write_environment" "read_environment" "end_read_environment" "return_statement" "end_return_statement" "bl" "env" "local" "VAR" "BOOLEAN") t)
+(regexp-opt '("variable" "end_variable" "variable_statement" "end_variable_statement" "initial_values" "end_initial_values" "update" "end_update" "write_environment" "end_write_environment" "read_environment" "end_read_environment" "return_statement" "end_return_statement" "bl" "env" "local" "VAR" "FROZENVAR" "DEFINE" "BOOLEAN" "INT" "ENUM") t)
 
-"\\(BOOLEAN\\|VAR\\|bl\\|en\\(?:d_\\(?:initial_values\\|re\\(?:\\(?:ad_environ\\|turn_state\\)ment\\)\\|update\\|variable\\(?:_statement\\)?\\|write_environment\\)\\|v\\)\\|initial_values\\|local\\|re\\(?:\\(?:ad_environ\\|turn_state\\)ment\\)\\|update\\|variable\\(?:_statement\\)?\\|write_environment\\)"
+"\\(BOOLEAN\\|DEFINE\\|ENUM\\|FROZENVAR\\|INT\\|VAR\\|bl\\|en\\(?:d_\\(?:initial_values\\|re\\(?:\\(?:ad_environ\\|turn_state\\)ment\\)\\|update\\|variable\\(?:_statement\\)?\\|write_environment\\)\\|v\\)\\|initial_values\\|local\\|re\\(?:\\(?:ad_environ\\|turn_state\\)ment\\)\\|update\\|variable\\(?:_statement\\)?\\|write_environment\\)"
+
+;;"\\(BOOLEAN\\|VAR\\|bl\\|en\\(?:d_\\(?:initial_values\\|re\\(?:\\(?:ad_environ\\|turn_state\\)ment\\)\\|update\\|variable\\(?:_statement\\)?\\|write_environment\\)\\|v\\)\\|initial_values\\|local\\|re\\(?:\\(?:ad_environ\\|turn_state\\)ment\\)\\|update\\|variable\\(?:_statement\\)?\\|write_environment\\)"
 
 ;; END OF 4
 ;; font-lock-function-name-face
@@ -40,9 +44,11 @@
 ;; END OF 6
 ;; font-lock-builtin-face
 
-(regexp-opt '("True" "False" "success" "runnning" "failure") t)
+(regexp-opt '("hypersafety" "True" "False" "success" "runnning" "failure") t)
 
-"\\(False\\|True\\|failure\\|runnning\\|success\\)"
+"\\(False\\|True\\|failure\\|hypersafety\\|runnning\\|success\\)"
+
+;;"\\(False\\|True\\|failure\\|runnning\\|success\\)"
 
 ;; END OF 7
 ;; font-lock-constant-face

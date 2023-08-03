@@ -1,4 +1,7 @@
 BehaviorModel:
+    'configuration' '{'
+    (hypersafety ?= 'hypersafety')
+    '}' ('end_configuration')?
     'constants' '{'
     constants *= constant_declaration
     '}' ('end_constants')?
@@ -303,7 +306,7 @@ statement:
 
     code_statement:
     (constant = constant_value) |
-    (variable = [variable] (node_name = ID)? (read_at = int_or_reference)?) |
+    (variable = [variable] (node_name = ID)? (read_at = int_or_reference)? (trace_num = int_or_reference)?) |
     ('(' function_call = function ')') |
     ('(' code_statement = code_statement ')')
 ;
