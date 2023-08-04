@@ -1,6 +1,12 @@
 '''
-This module is part of BehaVerify and used to convert .tree files to Python code.
-@author ::> Serene Serbinowska
+This module is for internal use with BehaVerify.
+It is used to convert .tree files to Python code.
+It contains a variety of utility functions.
+
+
+Author: Serena Aura Serbinowska
+Created: 2022-01-01 (Date not correct)
+Last Edit: 2023-01-01 (Date not correct)
 '''
 import argparse
 import os
