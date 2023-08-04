@@ -1,7 +1,8 @@
 ;;; behaverify-mode-el -- Major mode for editing BehaVerify files
 
-;; Author: Serene
+;; Author: Serena Aura Serbinowska
 ;; Created: 2023-07-03
+;; Last Edit: 2023-08-04
 ;; Keywords: BehaVerify major-mode
 
 ;;; Commentary:
@@ -65,6 +66,8 @@
 
 ;;(buffer-substring-no-properties (line-beginning-position) (line-end-position))
 
+;; behaverify-tab-witdh is set in your user file.
+
 (defun behaverify-indent-line ()
   "Indent current line as BehaVerify code."
   (interactive)
@@ -115,12 +118,12 @@
   (let ((behaverify-mode-syntax-table (make-syntax-table)))
 	
     ; This is added so entity names with underscores can be more easily parsed
-	(modify-syntax-entry ?_ "w" behaverify-mode-syntax-table)
-	(modify-syntax-entry ?\' "\" 14" behaverify-mode-syntax-table)
-	(modify-syntax-entry ?\" "\" 14" behaverify-mode-syntax-table)
-	(modify-syntax-entry ?\# ". 14" behaverify-mode-syntax-table)
-	(modify-syntax-entry ?{ "(}2" behaverify-mode-syntax-table)
-	(modify-syntax-entry ?} "){3" behaverify-mode-syntax-table)
+	(modify-syntax-entry ?_ "w" behaverify-mode-syntax-table) ; mark _ as a word character
+	(modify-syntax-entry ?\' "\"" behaverify-mode-syntax-table) ; mark ' as a string
+	(modify-syntax-entry ?\" "\"" behaverify-mode-syntax-table) ; mark " as a string
+	(modify-syntax-entry ?\# ". 14" behaverify-mode-syntax-table) ; mark # as punctuation, also 1st token of comment start and 2nd token of comment end
+	(modify-syntax-entry ?{ "( 2" behaverify-mode-syntax-table) ; mark { as an open bracket and the 2nd token of a comment start
+	(modify-syntax-entry ?} ") 3" behaverify-mode-syntax-table) ; mark } as a close bracket, and the 1st token of a comment end
 	behaverify-mode-syntax-table)
   "Syntax table for behaverify-mode.")
   

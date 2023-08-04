@@ -148,6 +148,7 @@ node:
 ;
     
     variable_domain:
+    (true_int = 'UNBOUND') |
     ('[' min_val = int_or_reference ',' max_val = int_or_reference (',' condition = range_code)? ']') |
     (boolean = 'BOOLEAN') |
     ('{' enums += enumeration[','] '}')
