@@ -1,4 +1,13 @@
-'''This module is used to verify that the provided DSL file is reasonable.'''
+'''
+This module is for internal use with BehaVerify.
+It is used to verify that the provided DSL file is reasonable.
+It contains a variety of utility functions.
+
+
+Author: Serena Aura Serbinowska
+Created: 2022-01-01 (Date not correct)
+Last Edit: 2023-01-01 (Date not correct)
+'''
 import itertools
 import serene_functions
 from behaverify_common import create_node_name

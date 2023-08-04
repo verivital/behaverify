@@ -1,4 +1,12 @@
+'''
+This module is for internal use with BehaVerify.
+It contains a variety of utility functions.
 
+
+Author: Serena Aura Serbinowska
+Created: 2022-01-01 (Date not correct)
+Last Edit: 2023-01-01 (Date not correct)
+'''
 # if not array
 
 # a NEXT_VALUE is defined as a triple (node_name, non_determinism, STAGE)

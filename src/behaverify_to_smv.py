@@ -1,4 +1,14 @@
+'''
+This module is primarily for internal use with BehaVerify.
+It is called by dsl_to_behaverify.py.
+It contains a variety of functions to format BehaVerify for use with nuXmv.
+It can be called directly.
 
+
+Author: Serena Aura Serbinowska
+First Created: 2022-01-01 (Date not correct)
+Last Edit: 2023-08-04 
+'''
 # arg_parser.add_argument('input_file')
 # arg_parser.add_argument('--blackboard_input_file', default = None)
 # arg_parser.add_argument('--module_input_file', default = None)
@@ -22,7 +32,7 @@ from behaverify_common import (get_root_node,
                                create_node_to_local_root_map,
                                create_local_root_to_relevant_list_map,
                                create_node_to_descendants_map,
-                               tab_indent,
+                               indent,
                                format_node_type)
 # -----------------------------------------------------------------------------------------------------------------------
 
@@ -54,8 +64,8 @@ def create_nodes(nodes, root_node_name, node_name_to_number, tick_condition):
     effects
     purely funcitonal
     '''
-    define_string = ('\t\t' + root_node_name + '.active := ' + tick_condition + ';' + os.linesep
-                     + ''.join([('\t\t' + PARALLEL_SKIP_STRING + node['name'] + ' := '
+    define_string = (indent(2) + root_node_name + '.active := ' + tick_condition + ';' + os.linesep
+                     + ''.join([(indent(2) + PARALLEL_SKIP_STRING + node['name'] + ' := '
                                  + (
                                      '[-2]' if len(node['children']) < 2 else (
                                          '[' + ', '.join([(LOCAL_ROOT_TREE_STRING + child) for child in node['children']]) + ']'
@@ -71,7 +81,7 @@ def create_nodes(nodes, root_node_name, node_name_to_number, tick_condition):
     def create_leaf(node):
         # print(node['name'] + ' : ' + str(node['internal_status_module_name']))
         return (
-            tab_indent(2) + node['name'] + ' : '
+            indent(2) + node['name'] + ' : '
             + (
                 (
                     '_'.join(
@@ -94,7 +104,7 @@ def create_nodes(nodes, root_node_name, node_name_to_number, tick_condition):
 
     def create_decorator(node):
         return (
-            tab_indent(2) + node['name'] + ' : '
+            indent(2) + node['name'] + ' : '
             + format_node_type(node, False)
             + '('
             + ', '.join(node['children'] + (node['additional_arguments'] if node['additional_arguments'] is not None else []))
@@ -103,7 +113,7 @@ def create_nodes(nodes, root_node_name, node_name_to_number, tick_condition):
 
     def create_composite_with_memory(node):
         return (
-            tab_indent(2) + node['name'] + ' : '
+            indent(2) + node['name'] + ' : '
             + format_node_type(node, True)
             + '('
             + ', '.join(
@@ -121,7 +131,7 @@ def create_nodes(nodes, root_node_name, node_name_to_number, tick_condition):
 
     def create_composite_without_memory(node):
         return (
-            tab_indent(2) + node['name'] + ' : '
+            indent(2) + node['name'] + ' : '
             + format_node_type(node, True)
             + '('
             + ', '.join(node['children'])
@@ -131,7 +141,7 @@ def create_nodes(nodes, root_node_name, node_name_to_number, tick_condition):
     def create_composite(node):
         return (
             (
-                tab_indent(2) + node['name']
+                indent(2) + node['name']
                 + (
                     ' : running_DEFAULT_module;'
                     if node['type'] == 'parallel' else
@@ -222,39 +232,39 @@ def create_resume_structure(nodes, local_root_to_relevant_list_map, node_name_to
         relevant_list = local_root_to_relevant_list_map[local_root_name]
         if len(relevant_list) == 0:
             # there's nothing to resume from. if we have a sequence node, then it apparently only had 0 or 1 children, and we don't need any special resume for it.
-            var_define_status_string += '\t\t' + LOCAL_ROOT_TREE_STRING + local_root_name + ' := -3;' + os.linesep
+            var_define_status_string += indent(2) + LOCAL_ROOT_TREE_STRING + local_root_name + ' := -3;' + os.linesep
             continue
-        # var_resume_from_node_string += '\t\t' + LOCAL_ROOT_TREE_STRING + '' + local_root_name + ' : {' + local_root_id_str + ', ' + str(relevant_list)[1:-1] + '};' + os.linesep
-        var_resume_from_node_string += ('\t\t' + LOCAL_ROOT_TREE_STRING + local_root_name + ' : {'
+        # var_resume_from_node_string += indent(2) + LOCAL_ROOT_TREE_STRING + local_root_name + ' : {' + local_root_id_str + ', ' + str(relevant_list)[1:-1] + '};' + os.linesep
+        var_resume_from_node_string += (indent(2) + LOCAL_ROOT_TREE_STRING + local_root_name + ' : {'
                                         + ', '.join([str(node_name_to_number[local_root_name])] + [('-2' if node_name == -2 else str(node_name_to_number[node_name])) for node_name in relevant_list])
                                         + '};' + os.linesep)
-        init_resume_from_node_string += '\t\tinit(' + LOCAL_ROOT_TREE_STRING + local_root_name + ') := ' + local_root_id_str + ';' + os.linesep
+        init_resume_from_node_string += indent(2) + 'init(' + LOCAL_ROOT_TREE_STRING + local_root_name + ') := ' + local_root_id_str + ';' + os.linesep
         if -2 in relevant_list:
             # this means the parent is a synched parallel node, so it can skip the entire branch.
-            inject_string = ('\t\t\t\t(' + local_root_name + '.status = success) : -2;' + os.linesep  # if the local root returns success, this is skippable. note that this is checked after the reset condition, so we don't over-write the reset.
-                             + '\t\t\t\t(' + local_root_name + '.status = failure) : node_names.' + local_root_name + ';' + os.linesep  # failure is still a reset though
+            inject_string = (indent(4) + '(' + local_root_name + '.status = success) : -2;' + os.linesep  # if the local root returns success, this is skippable. note that this is checked after the reset condition, so we don't over-write the reset.
+                             + indent(4) + '(' + local_root_name + '.status = failure) : node_names.' + local_root_name + ';' + os.linesep  # failure is still a reset though
                              )
             relevant_list.remove(-2)  # don't actually want it in the relevant set going forward
         else:
-            inject_string = '\t\t\t\t(' + local_root_name + '.status in {success, failure}) : node_names.' + local_root_name + ';' + os.linesep  # reset since this isn't skippable.
+            inject_string = indent(4) + '(' + local_root_name + '.status in {success, failure}) : node_names.' + local_root_name + ';' + os.linesep  # reset since this isn't skippable.
         # we've manually handled the root case using inject_string
         cur_node_name = nodes[local_root_name]['parent']  # start from the parent.
         ancestor_string = ''
         while cur_node_name is not None:
-            ancestor_string += '\t\t\t\t(' + cur_node_name + '.status in {success, failure}) : node_names.' + local_root_name + ';' + os.linesep
+            ancestor_string += indent(4) + '(' + cur_node_name + '.status in {success, failure}) : node_names.' + local_root_name + ';' + os.linesep
             cur_node_name = nodes[cur_node_name]['parent']
         # go through and add all the ancestors of the local root to a set for the purpose of resetting.
-        next_resume_from_node_string += ('\t\tnext(' + LOCAL_ROOT_TREE_STRING + local_root_name + ') := ' + os.linesep
-                                         + '\t\t\tcase' + os.linesep
+        next_resume_from_node_string += (indent(2) + 'next(' + LOCAL_ROOT_TREE_STRING + local_root_name + ') := ' + os.linesep
+                                         + indent(3) + 'case' + os.linesep
                                          + ancestor_string  # highest priority is reset
                                          + inject_string  # parallel_synch nodes have a special condition
-                                         + tab_indent(4) + local_root_name + '.status = invalid : ' + LOCAL_ROOT_TREE_STRING + local_root_name + ';' + os.linesep  # don't change if the local root is invalid, and an ancestor didn't make us reset
+                                         + indent(4) + local_root_name + '.status = invalid : ' + LOCAL_ROOT_TREE_STRING + local_root_name + ';' + os.linesep  # don't change if the local root is invalid, and an ancestor didn't make us reset
                                          )
         if len(relevant_list) == 0:
             # this was solely for the purpose of skipping success nodes with parallel_synch nodes
             # since ancestor and inject_string already happened, we'll just exit with a default case
-            next_resume_from_node_string += ('\t\t\t\tTRUE : ' + local_root_id_str + ';' + os.linesep
-                                             + '\t\t\tesac;' + os.linesep
+            next_resume_from_node_string += (indent(4) + 'TRUE : ' + local_root_id_str + ';' + os.linesep
+                                             + indent(3) + 'esac;' + os.linesep
                                              )
             continue
 
@@ -266,28 +276,28 @@ def create_resume_structure(nodes, local_root_to_relevant_list_map, node_name_to
             else:
                 for child_name in nodes[node_name]['children']:
                     if trace_running_source(child_name):
-                        cases += '\t\t\t\t!(trace_running_source_' + child_name + ' = -2) : trace_running_source_' + child_name + ';' + os.linesep
+                        cases += indent(4) + '!(trace_running_source_' + child_name + ' = -2) : trace_running_source_' + child_name + ';' + os.linesep
             if cases == '':
                 if node_name in relevant_list:
-                    define_trace_running_source += '\t\ttrace_running_source_' + node_name + ' := (' + node_name + '.status = running) ? node_names.' + node_name + ' : -2;' + os.linesep
+                    define_trace_running_source += indent(2) + 'trace_running_source_' + node_name + ' := (' + node_name + '.status = running) ? node_names.' + node_name + ' : -2;' + os.linesep
                     return True
                 return False
             if node_name in relevant_list:
-                cases += '\t\t\t\t(' + node_name + '.status = running) : node_names.' + node_name + ';' + os.linesep
-            define_trace_running_source += ('\t\ttrace_running_source_' + node_name + ' := ' + os.linesep
-                                            + '\t\t\tcase' + os.linesep
+                cases += indent(4) + '(' + node_name + '.status = running) : node_names.' + node_name + ';' + os.linesep
+            define_trace_running_source += (indent(2) + 'trace_running_source_' + node_name + ' := ' + os.linesep
+                                            + indent(3) + 'case' + os.linesep
                                             + cases
-                                            + '\t\t\t\tTRUE : -2;' + os.linesep
-                                            + '\t\t\tesac;' + os.linesep
+                                            + indent(4) + 'TRUE : -2;' + os.linesep
+                                            + indent(3) + 'esac;' + os.linesep
                                             )
             return True
         trace_running_source(local_root_name)
-        next_resume_from_node_string += ('\t\t\t\tTRUE : max(trace_running_source_' + local_root_name + ', node_names.' + local_root_name + ');' + os.linesep
+        next_resume_from_node_string += (indent(4) + 'TRUE : max(trace_running_source_' + local_root_name + ', node_names.' + local_root_name + ');' + os.linesep
                                          # we didn't encounter any reset triggers, so we use trace_running_source
                                          # note that if trace_running_source = -2, then we're just setting to local_root_name.
                                          # if something returned running, the value will be > = local_root_name, so we'll point to that
                                          # note that since we are always executing the entire tree, if we returned running last time we will definitely resume this time.
-                                         + '\t\t\tesac;' + os.linesep
+                                         + indent(3) + 'esac;' + os.linesep
                                          )
     define_string = var_define_status_string + define_trace_running_source
     var_string = var_resume_from_node_string
@@ -355,11 +365,11 @@ def create_resume_point(nodes, node_to_local_root_name_map, local_root_to_releva
             # print(relevant_list)
             if len(relevant_list) == 0:
                 # print('no real resume children. hard coding -2')
-                resume_point_string += '\t\t' + CHILD_TRACK_STRING + node_name + ' := -2;' + os.linesep
+                resume_point_string += indent(2) + CHILD_TRACK_STRING + node_name + ' := -2;' + os.linesep
             else:
                 # print('real resume target present. initiating')
-                resume_point_string += ('\t\t' + CHILD_TRACK_STRING + node_name + ' := ' + os.linesep
-                                        + '\t\t\tcase' + os.linesep
+                resume_point_string += (indent(2) + CHILD_TRACK_STRING + node_name + ' := ' + os.linesep
+                                        + indent(3) + 'case' + os.linesep
                                         )
                 descendants = node_to_descendants_map[node_name]
                 child_index_to_relevant_descendants_map = {}  # basically, we are going to use this to figure out where we need to point.
@@ -393,10 +403,10 @@ def create_resume_point(nodes, node_to_local_root_name_map, local_root_to_releva
                             # print(child_index_to_relevant_descendants_map)
 
                 for child_index in child_index_to_relevant_descendants_map:
-                    resume_point_string += '\t\t\t\t(' + LOCAL_ROOT_TREE_STRING + local_root_name + ' in ' + str(child_index_to_relevant_descendants_map[child_index]) + ') : ' + str(child_index) + ';' + os.linesep
-                resume_point_string += ('\t\t\t\tTRUE : -2;' + os.linesep
+                    resume_point_string += indent(4) + '(' + LOCAL_ROOT_TREE_STRING + local_root_name + ' in ' + str(child_index_to_relevant_descendants_map[child_index]) + ') : ' + str(child_index) + ';' + os.linesep
+                resume_point_string += (indent(4) + 'TRUE : -2;' + os.linesep
                                         # we have nothing to resume from
-                                        + '\t\t\tesac;' + os.linesep
+                                        + indent(3) + 'esac;' + os.linesep
                                         )
 
     define_string = resume_point_string
@@ -450,36 +460,39 @@ def write_smv(nodes, variables, enum_constants, tick_condition, specifications, 
 
     define_string = (
         'MODULE main' + os.linesep
-        + tab_indent(1) + 'VAR' + os.linesep
+        + indent(1) + 'VAR' + os.linesep
         + (
             (
-                tab_indent(2) + 'system_1 : system_module;' + os.linesep
-                + tab_indent(2) + 'system_2 : system_module;' + os.linesep
+                indent(2) + 'system_1 : system_module;' + os.linesep
+                + indent(2) + 'system_2 : system_module;' + os.linesep
             )
             if hyper_mode
             else
             (
-                tab_indent(2) + 'system : system_module;' + os.linesep
+                indent(2) + 'system : system_module;' + os.linesep
             )
         )
         + '--------------SPECIFICATIONS' + os.linesep
-        + os.linesep + (os.linesep).join(specifications)
+        + os.linesep
+        + (os.linesep).join(specifications) + os.linesep
+        + os.linesep
         + '--------------END OF SPECIFICATIONS' + os.linesep
+        + os.linesep
         + 'MODULE system_module' + os.linesep
-        + '\tCONSTANTS' + os.linesep
-        + '\t\tsuccess, failure, running, invalid' + (', ' if len(enum_constants) > 0 else '') + ', '.join(enum_constants) + ';' + os.linesep
-        + '\tDEFINE' + os.linesep
-        # + '\t\tstatuses := [' + ', '.join([(node_name + '.status') for node_name in nodes_in_order]) + '];' + os.linesep
-        # + '\t\tactive := [' + ', '.join([(node_name + '.active') for node_name in nodes_in_order]) + '];' + os.linesep
+        + indent(1) + 'CONSTANTS' + os.linesep
+        + indent(2) + 'success, failure, running, invalid' + (', ' if len(enum_constants) > 0 else '') + ', '.join(enum_constants) + ';' + os.linesep
+        + indent(1) + 'DEFINE' + os.linesep
+        # + indent(2) + 'statuses := [' + ', '.join([(node_name + '.status') for node_name in nodes_in_order]) + '];' + os.linesep
+        # + indent(2) + 'active := [' + ', '.join([(node_name + '.active') for node_name in nodes_in_order]) + '];' + os.linesep
     )
 
     # ------------------------------------------------------------------------------------------------------------------------
-    var_string = ('\tVAR' + os.linesep
-                  + '\t\tnode_names : define_nodes;' + os.linesep
-                  # + '\t\tblackboard : blackboard_module(node_names, active);' + os.linesep
+    var_string = (indent(1) + 'VAR' + os.linesep
+                  + indent(2) + 'node_names : define_nodes;' + os.linesep
+                  # + indent(2) + 'blackboard : blackboard_module(node_names, active);' + os.linesep
                   )
     # ------------------------------------------------------------------------------------------------------------------------
-    init_string = '\tASSIGN' + os.linesep
+    init_string = indent(1) + 'ASSIGN' + os.linesep
     next_string = ''
     # ------------------------------------------------------------------------------------------------------------------------
 
@@ -502,25 +515,25 @@ def write_smv(nodes, variables, enum_constants, tick_condition, specifications, 
     next_string += new_next
 
     (new_define, new_frozen_var, new_var, new_init, new_next) = node_creator.create_blackboard(nodes, variables, root_node_name)
-    define_string += ('\t\t--START OF BLACKBOARD DEFINITIONS' + os.linesep
+    define_string += (indent(2) + '--START OF BLACKBOARD DEFINITIONS' + os.linesep
                       + new_define
-                      + '\t\t--END OF BLACKBOARD DEFINITIONS' + os.linesep
+                      + indent(2) + '--END OF BLACKBOARD DEFINITIONS' + os.linesep
                       + (
                           (
-                              '\tFROZENVAR' + os.linesep
-                              + '\t\t--START OF BLACKBOARD FROZENVAR' + os.linesep
+                              indent(1) + 'FROZENVAR' + os.linesep
+                              + indent(2) + '--START OF BLACKBOARD FROZENVAR' + os.linesep
                               + new_frozen_var
-                              + '\t\t--END OF BLACKBOARD FROZENVAR' + os.linesep) if len(new_frozen_var) > 0 else '')
+                              + indent(2) + '--END OF BLACKBOARD FROZENVAR' + os.linesep) if len(new_frozen_var) > 0 else '')
                       )
-    var_string += ('\t\t--START OF BLACKBOARD VARIABLES DECLARATION' + os.linesep
+    var_string += (indent(2) + '--START OF BLACKBOARD VARIABLES DECLARATION' + os.linesep
                    + new_var
-                   + '\t\t--END OF BLACKBOARD VARIABLES DECLARATION' + os.linesep)
-    init_string += ('\t\t--START OF BLACKBOARD VARIABLES INITIALIZATION' + os.linesep
+                   + indent(2) + '--END OF BLACKBOARD VARIABLES DECLARATION' + os.linesep)
+    init_string += (indent(2) + '--START OF BLACKBOARD VARIABLES INITIALIZATION' + os.linesep
                     + new_init
-                    + '\t\t--END OF BLACKBOARD VARIABLES INITIALIZATION' + os.linesep)
-    next_string += ('\t\t--START OF BLACKBOARD VARIABLES TRANSITION' + os.linesep
+                    + indent(2) + '--END OF BLACKBOARD VARIABLES INITIALIZATION' + os.linesep)
+    next_string += (indent(2) + '--START OF BLACKBOARD VARIABLES TRANSITION' + os.linesep
                     + new_next
-                    + '\t\t--END OF BLACKBOARD VARIABLES TRANSITION' + os.linesep)
+                    + indent(2) + '--END OF BLACKBOARD VARIABLES TRANSITION' + os.linesep)
 
     nuxmv_string = define_string + var_string + init_string + next_string  + os.linesep
     # ------------------------------------------------------------------------------------------------------------------------
