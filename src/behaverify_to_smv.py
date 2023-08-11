@@ -5,7 +5,7 @@ It contains a variety of functions to format BehaVerify for use with nuXmv.
 It can be called directly.
 
 
-Author: Serena Aura Serbinowska
+Author: Serena Serafina Serbinowska
 First Created: 2022-01-01 (Date not correct)
 Last Edit: 2023-08-04 
 '''

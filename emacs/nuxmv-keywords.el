@@ -55,6 +55,9 @@
 ;; font-lock-constant-face
 
 
+
+;; BELOW FOR TABBING.
+
 (regexp-opt '("CONSTANTS" "DEFINE" "VAR" "IVAR" "FROZENVAR" "FUN" "ASSIGN" "TRANS" "INIT" "FAIRNESS" "JUSTICE" "COMPASSION" "INVAR") t)
 
 
