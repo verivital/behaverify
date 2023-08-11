@@ -3,7 +3,7 @@ This module is for internal use with BehaVerify.
 It contains utility functions for computations.
 
 
-Author: Serena Aura Serbinowska
+Author: Serena Serafina Serbinowska
 Created: 2022-01-01 (Date not correct)
 Last Edit: 2023-01-01 (Date not correct)
 '''

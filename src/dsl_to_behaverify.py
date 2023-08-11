@@ -1,6 +1,10 @@
 '''
 This module is part of BehaVerify and used to convert .tree files to .smv files for use with nuXmv.
-@author ::> Serena Aura Serbinowska
+
+
+Author: Serena Serafina Serbinowska
+Created: 2022-01-01 (Date not correct)
+Last Edit: 2023-01-01 (Date not correct)
 '''
 import argparse
 import pprint

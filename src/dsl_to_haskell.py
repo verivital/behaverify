@@ -4,7 +4,7 @@ It is used to create Haskell code from BehaVerify DSL for Behavior Trees.
 It contains a variety of utility functions.
 
 
-Author: Serena Aura Serbinowska
+Author: Serena Serafina Serbinowska
 Created: 2022-01-01 (Date not correct)
 Last Edit: 2023-01-01 (Date not correct)
 '''

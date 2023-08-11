@@ -4,7 +4,7 @@ It is called by behaverify_to_smv.py.
 It contains a variety of functions to format BehaVerify for use with nuXmv.
 
 
-Author: Serena Aura Serbinowska
+Author: Serena Serafina Serbinowska
 First Created: 2022-01-01 (Date not correct)
 Last Edit: 2023-08-04 
 '''
