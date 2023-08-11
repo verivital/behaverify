@@ -1,21 +1,29 @@
 0. replace constants with like...actual constants? it's possible this was done because textx tries to interpret ANYTHING it can as a constant.
-1. allow transitions via conditions. EG. next(x) != 3 (rather than next(x) = {0, 1, 4, 5, 6})
+1. allow transitions via conditions. EG. next(x) != 3 (rather than next(x) = {0, 1, 4, 5, 6}) <- works well for nuXmv, but how do we implement this in python/haskell? I suppose we could generate a list of all the possible outputs.
 2. create a shorthand for a definition which pulls an environment value and then doesn't change it.
 3. visualization tool both for creation and debugging a behavior tree.
-
 4. update haskell code for arrays
 5. general updates in terms of refactoring.
-6. fix haskell functions which take unknown number of arguments by chaining them together. (i am not sure what this means now) (i think this is done, and was referring to like, 1+2+3 becoming (1 + 2) + 3
-
 7. make sure enum constants do not conflict with variable/node names. This is important for nuXmv.
-
 8. implement a method by which to pass an argument for the initialization of a node. e.g., this specific node initializes the local variable to this value. <- DONE. but not for haskell
 10. force read environment and write environment to use unique names. probably by attaching node names?
 
 
+DONE, but not tested
+9. enforce requirement that arrays have an index of at least 2, or verify that assign for initial values works correctly. ||| <- added BTreeException to model checker.
+
+
+DONE
+6. fix haskell functions which take unknown number of arguments by chaining them together. (i am not sure what this means now) (i think this is done, and was referring to like, 1+2+3 becoming (1 + 2) + 3
+
+
+------------------------------------------------Post Hyperproperty updates
+5. add real support?
+6. extend to BehaviorTree.cpp
 
 
 DONE, but not tested
-
-
-9. enforce requirement that arrays have an index of at least 2, or verify that assign for initial values works correctly. ||| <- added BTreeException to model checker.
+1. update model checker to check if a trace identifier is required. complain if it is required and is missing. complain if it ISN'T required and is present.
+2. update model checker for unbound integers
+3. re-add nondeterministic updates to blackboard variables.
+4. test integer <- can't use mod, integer division not a thing. hard to tell exactly what the point of doing this is.
