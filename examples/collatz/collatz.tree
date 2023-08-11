@@ -8,6 +8,7 @@ constants {
 } end_constants
 
 variables {
+    variable { bl value VAR UNBOUND assign { result { range, 1, 20, True}}}
     #{ Variable declarations go here.
 	it is suggested, but not required, that the order of declaration be
 	Blackboard, Local, Environment.
@@ -61,11 +62,17 @@ checks {
     #{
 	check {
 	    x_idk
-	    arguments{}
 	    read_variables { x } end_read_variables
 	    condition { (and, (less_than, (addition, x, 1), 4), True) } end_condition
 	} end_check
     }#
+    check {
+	is_even
+	arguments{}
+	read_variables { value}
+	#{condition { (equal, 0, (mod, value, 2))}}#
+	condition{ (equal, value, (multiplication, 2, (division, value, 2))) }
+    }
 } end_checks
 
 environment_checks {
@@ -73,7 +80,6 @@ environment_checks {
     #{
 	environment_check {
 	    z_idk
-	    arguments{}
 	    read_variables {} end_read_variables
 	    condition { z } end_condition
 	} end_environment_check
@@ -85,7 +91,6 @@ actions {
     #{
 	action {
 	    y_do
-	    arguments{}
 	    local_variables { y } end_local_variables
 	    read_variables { } end_read_variables
 	    write_variables { x } end_write_variables
@@ -101,18 +106,65 @@ actions {
 	    } end_update
 	} end_action
     }#
+    action {
+	divide_by_2
+	arguments{}
+	local_variables{}
+	read_variables{}
+	write_variables{value}
+	initial_values{}
+	update{
+	    variable_statement{
+		value
+		assign{
+		    result{(division, value, 2)}
+		}
+	    }
+	    return_statement{result{success}}
+	}
+    }
+    action {
+	multiply_and_add
+	arguments{}
+	local_variables{}
+	read_variables{}
+	write_variables{value}
+	initial_values{}
+	update{
+	    variable_statement{
+		value
+		assign{
+		    result{(addition, (multiplication, value, 3), 1)}
+		}
+	    }
+	    return_statement{result{success}}
+	}
+    }
 } end_actions
 
 sub_trees {#{ subtrees go here. }#} end_sub_trees
 
 tree {
     #{ the tree is defined here}#
+    composite {
+	collatz selector
+	children {
+	    composite{
+		even_case sequence children { is_even{} divide_by_2{}}
+	    }
+	    multiply_and_add{}
+	}
+    }
 } end_tree
 
 
 
 
-tick_prerequisite { #{ if the condition is True, the tree ticks.
-	If it is false, everything is done }# } end_tick_prerequisite
+tick_prerequisite { (not_equal, value, 1) } end_tick_prerequisite
 
-specifications { #{ INVAR, LTL, and CTL specs go here }# } end_specifications
+specifications {
+    #{LTLSPEC {(finally, (equal, value -1, 1))}}#
+    LTLSPEC {(globally, (not_equal, value -1, 1))}
+    LTLSPEC {(implies, (not_equal, value 0, 1), (globally, (not_equal, value -1, 1)))}
+    LTLSPEC {(implies, (and, (not_equal, value 0, 1), (not_equal, value 0, 2)), (globally, (not_equal, value -1, 1)))}
+} end_specifications

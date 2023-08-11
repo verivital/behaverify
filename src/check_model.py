@@ -6,7 +6,7 @@ It contains a variety of utility functions.
 
 Author: Serena Serafina Serbinowska
 Created: 2022-01-01 (Date not correct)
-Last Edit: 2023-01-01 (Date not correct)
+Last Edit: 2023-08-11 (Date not correct)
 '''
 import itertools
 import serene_functions
@@ -84,7 +84,7 @@ def variable_type(variable, constants):
         return variable.domain
     if variable.domain.boolean is not None:
         return 'BOOLEAN'
-    if variable.domain.min_val is not None:
+    if variable.domain.min_val is not None or variable.domain.true_int is not None:
         return 'INT'
     return constant_type(variable.domain.enums[0], constants)
 
@@ -241,10 +241,13 @@ def validate_model(model, constants):
             var_checks(code)
             if is_array(code.variable):
                 raise BTreeException(trace, 'Variable ' + code.variable.name + ' is an array but appears without being indexed')
+            if require_trace_identifier == (code.trace_num is None):
+                #print(require_trace_identifier)
+                #print(code.trace_num)
+                raise BTreeException(trace, 'Variable ' + code.variable.name + ' is being referenced ' + ('without' if require_trace_identifier else 'with') + ' a trace identifier.')
             return (variable_type(code.variable, constants), 'variable', code.variable.name)
         if code.code_statement is not None:
             return validate_code(code.code_statement, scopes, variable_names, allowed_functions)
-
         if code.function_call.function_name not in function_type_info:
             raise BTreeException(trace, 'Function ' + code.function_call.function_name + ' is not yet supported')
         func_info = function_type_info[code.function_call.function_name]
@@ -271,7 +274,7 @@ def validate_model(model, constants):
             if len(code.function_call.values) > func_info['max_arg']:
                 raise BTreeException(trace, 'Function ' + code.function_call.function_name + ' expected at most ' + str(func_info['max_arg']) + ' but got ' + len(code.function_call.values))
         if len(code.function_call.values) < func_info['min_arg']:
-            raise BTreeException(trace, 'Function ' + code.function_call.function_name + ' expected at least ' + str(func_info['min_arg']) + ' but got ' + len(code.function_call.values))
+            raise BTreeException(trace, 'Function ' + code.function_call.function_name + ' expected at least ' + str(func_info['min_arg']) + ' but got ' + str(len(code.function_call.values)))
         return_type = func_info['return_type']
         arg_type = func_info['arg_type']
         if arg_type == 'node_name':
@@ -306,16 +309,16 @@ def validate_model(model, constants):
             if not is_default:
                 validate_condition(case_result.condition, scopes, variable_names, {'reg'})
             if case_result.range_mode:
-                if deterministic:
-                    raise BTreeException(trace, 'needs to be updated deterministicly here but is being updated non-deterministicly')
+                # if deterministic:
+                #     raise BTreeException(trace, 'needs to be updated deterministicly here but is being updated non-deterministicly')
                 if var_type != 'INT':
                     raise BTreeException(trace, 'type ' + var_type + ' is being updated using range_mode')
                 cond_func = build_range_func(case_result.values[2], constants)
                 if not any(map(cond_func, range(handle_constant(case_result.values[0], constants), handle_constant(case_result.values[1], constants) + 1))):
                     raise BTreeException(trace, 'assigned a value using range_mode but the range is empty')
             else:
-                if deterministic and len(case_result.values) > 1:
-                    raise BTreeException(trace, 'needs to be updated deterministicly here but is being updated non-deterministicly')
+                # if deterministic and len(case_result.values) > 1:
+                #     raise BTreeException(trace, 'needs to be updated deterministicly here but is being updated non-deterministicly')
                 for value in case_result.values:
                     (cur_arg_type, cur_code_type, cur_code) = validate_code(value, scopes, variable_names, {'reg'})
                     if cur_arg_type != var_type:
@@ -558,7 +561,9 @@ def validate_model(model, constants):
     def validate_variable(variable, scopes, variable_names):
         trace.append('In Variable: ' + variable.name)
         if variable.model_as != 'DEFINE':
-            if variable.domain.min_val is not None:
+            if variable.domain.true_int is not None:
+                pass
+            elif variable.domain.min_val is not None:
                 min_val = handle_constant(variable.domain.min_val, constants)
                 max_val = handle_constant(variable.domain.max_val, constants)
                 if max_val < min_val:
@@ -638,6 +643,8 @@ def validate_model(model, constants):
 
     (all_node_names, _, node_to_args) = walk_tree(model.root, set(), {}, {})
 
+    require_trace_identifier = False
+
     variables_so_far = set()
     for variable in model.variables:
         validate_variable(variable, {'blackboard', 'environment'} if is_env(variable) else {'blackboard'}, variables_so_far)
@@ -662,6 +669,8 @@ def validate_model(model, constants):
 
     if model.tick_condition is not None:
         validate_condition(model.tick_condition, {'blackboard', 'local', 'environment'}, None, {'reg'})
+    if model.hypersafety:
+        require_trace_identifier = True
     for specification in model.specifications:
         if specification.spec_type == 'LTLSPEC':
             allowed = {'LTL', 'INVAR', 'reg'}

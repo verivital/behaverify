@@ -6,7 +6,7 @@ It contains a variety of utility functions.
 
 Author: Serena Serafina Serbinowska
 Created: 2022-01-01 (Date not correct)
-Last Edit: 2023-01-01 (Date not correct)
+Last Edit: 2023-08-11
 '''
 import argparse
 import os
@@ -159,6 +159,7 @@ def format_function_count(_, code, init_mode, blackboard_name, environment_name)
 
 def format_function_index(_, code, init_mode, blackboard_name, environment_name):
     '''not used'''
+    # return '(sereneIndex'
     raise Exception('Array not implemented yet')
 
 

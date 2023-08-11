@@ -4,7 +4,7 @@ This module is part of BehaVerify and used to convert .tree files to .smv files 
 
 Author: Serena Serafina Serbinowska
 Created: 2022-01-01 (Date not correct)
-Last Edit: 2023-01-01 (Date not correct)
+Last Edit: 2023-08-11
 '''
 import argparse
 import pprint
@@ -19,7 +19,7 @@ from check_model import (validate_model,
                          is_array,
                          build_range_func)
 
-from behaverify_common import create_node_name, create_node_template, create_variable_template
+from behaverify_common import create_node_name, create_node_template, create_variable_template, indent
 
 # a NEXT_VALLUE is defined as a triple (node_name, non_determinism, STAGE)
 # node_name is a string representing the node where this update happens or none if it's environmental
@@ -532,20 +532,20 @@ def dsl_to_behaverify(metamodel_file, model_file, keep_stage_0, keep_last_stage,
                 if (len(statement.case_results) == 0 or len(statuses) == 1) else
                 (
                     'MODULE ' + node_name + '_module(' + ', '.join(variable_list) + ')' + os.linesep
-                    + '\tCONSTANTS' + os.linesep
-                    + '\t\tsuccess, failure, running, invalid;' + os.linesep
-                    + '\tDEFINE' + os.linesep
-                    + '\t\tstatus := active ? internal_status : invalid;' + os.linesep
-                    + '\t\tinternal_status := ' + os.linesep
-                    + '\t\t\tcase' + os.linesep
-                    + ('').join([('\t\t\t\t'
+                    + indent(1) + 'CONSTANTS' + os.linesep
+                    + indent(2) + 'success, failure, running, invalid;' + os.linesep
+                    + indent(1) + 'DEFINE' + os.linesep
+                    + indent(2) + 'status := active ? internal_status : invalid;' + os.linesep
+                    + indent(2) + 'internal_status := ' + os.linesep
+                    + indent(3) + 'case' + os.linesep
+                    + ('').join([(indent(4) + ''
                                   + format_code(case_result.condition, misc_args)
                                   + ' : '
                                   + case_result.status
                                   + ';' + os.linesep)
                                  for case_result in statement.case_results])
-                    + '\t\t\t\tTRUE : ' + statement.default_result.status + ';' + os.linesep
-                    + '\t\t\tesac;' + os.linesep
+                    + indent(4) + 'TRUE : ' + statement.default_result.status + ';' + os.linesep
+                    + indent(3) + 'esac;' + os.linesep
                 )
             )
             return
@@ -559,11 +559,11 @@ def dsl_to_behaverify(metamodel_file, model_file, keep_stage_0, keep_last_stage,
             node['internal_status_module_name'] = node_name + '_module'
             node['internal_status_module_code'] = (
                 'MODULE ' + node_name + '_module(' + ', '.join(variable_list) + ')' + os.linesep
-                + '\tCONSTANTS' + os.linesep
-                + '\t\tsuccess, failure, running, invalid;' + os.linesep
-                + '\tDEFINE' + os.linesep
-                + '\t\tstatus := active ? internal_status : invalid;' + os.linesep
-                + '\t\tinternal_status := ('
+                + indent(1) + 'CONSTANTS' + os.linesep
+                + indent(2) + 'success, failure, running, invalid;' + os.linesep
+                + indent(1) + 'DEFINE' + os.linesep
+                + indent(2) + 'status := active ? internal_status : invalid;' + os.linesep
+                + indent(2) + 'internal_status := ('
                 + format_code(condition, misc_args)
                 + ') ? success : failure;' + os.linesep
             )
@@ -634,7 +634,7 @@ def dsl_to_behaverify(metamodel_file, model_file, keep_stage_0, keep_last_stage,
                 create_variable_template(variable.name, variable.model_as, handle_constant(variable.array_size), None, 0, 0, None, [], True, True)
                 if variable.model_as == 'DEFINE' else
                 create_variable_template(variable.name, variable.model_as, handle_constant(variable.array_size),
-                                         (None if (variable.domain.min_val is not None or variable.model_as == 'DEFINE') else ('{TRUE, FALSE}' if variable.domain.boolean is not None else ('{' + ', '.join(map(str, map(handle_constant, variable.domain.enums))) + '}'))),
+                                         ('integer' if variable.domain.true_int is not None else (None if (variable.domain.min_val is not None or variable.model_as == 'DEFINE') else ('{TRUE, FALSE}' if variable.domain.boolean is not None else ('{' + ', '.join(map(str, map(handle_constant, variable.domain.enums))) + '}')))),
                                          0 if variable.domain.min_val is None else int(handle_constant(variable.domain.min_val)),
                                          1 if variable.domain.min_val is None else int(handle_constant(variable.domain.max_val)),
                                          None, [], keep_stage_0, keep_last_stage
@@ -648,7 +648,7 @@ def dsl_to_behaverify(metamodel_file, model_file, keep_stage_0, keep_last_stage,
                 create_variable_template(variable.name, variable.model_as, handle_constant(variable.array_size), None, 0, 0, None, [], True, True)
                 if variable.model_as == 'DEFINE' else
                 create_variable_template(variable.name, variable.model_as, handle_constant(variable.array_size),
-                                         (None if (variable.domain.min_val is not None or variable.model_as == 'DEFINE') else ('{TRUE, FALSE}' if variable.domain.boolean is not None else ('{' + ', '.join(map(str, map(handle_constant, variable.domain.enums))) + '}'))),
+                                         ('integer' if variable.domain.true_int is not None else (None if (variable.domain.min_val is not None or variable.model_as == 'DEFINE') else ('{TRUE, FALSE}' if variable.domain.boolean is not None else ('{' + ', '.join(map(str, map(handle_constant, variable.domain.enums))) + '}')))),
                                          0 if variable.domain.min_val is None else int(handle_constant(variable.domain.min_val)),
                                          1 if variable.domain.min_val is None else int(handle_constant(variable.domain.max_val)),
                                          None, [], keep_stage_0, keep_last_stage
