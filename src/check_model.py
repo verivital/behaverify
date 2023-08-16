@@ -6,7 +6,7 @@ It contains a variety of utility functions.
 
 Author: Serena Serafina Serbinowska
 Created: 2022-01-01 (Date not correct)
-Last Edit: 2023-08-11 (Date not correct)
+Last Edit: 2023-08-16
 '''
 import itertools
 import serene_functions
@@ -580,16 +580,17 @@ def validate_model(model, constants):
                     if constant_type(enum, constants) != var_type:
                         raise BTreeException(trace, 'Variable ' + variable.name + ' mixes enumeration types')
         if is_array(variable):
-            if variable.array_size < 2:
-                raise BTreeException(trace, 'Variable ' + variable.name + ' is an array of size ' + str(variable.array_size))
+            array_size = handle_constant(variable.array_size, constants)
+            if array_size < 2:
+                raise BTreeException(trace, 'Variable ' + variable.name + ' is an array of size ' + str(array_size))
             if variable.array_mode == 'range':
-                for index in range(handle_constant(variable.array_size, constants)):
+                for index in range(handle_constant(array_size, constants)):
                     constants['serene_index'] = index
                     validate_variable_assignment(variable, variable.assign, scopes, variable_names, deterministic = not is_env(variable), init_mode = 'default')
                 constants.pop('serene_index')
             else:
-                if len(variable.assigns) != variable.array_size:
-                    raise BTreeException(trace, 'Variable ' + variable.name + ' is an array of size ' + str(variable.array_size) + ' but was initialized with ' + str(len(variable.assigns)) + ' values')
+                if len(variable.assigns) != array_size:
+                    raise BTreeException(trace, 'Variable ' + variable.name + ' is an array of size ' + str(array_size) + ' but was initialized with ' + str(len(variable.assigns)) + ' values')
                 for assign in variable.assigns:
                     validate_variable_assignment(variable, assign, scopes, variable_names, deterministic = not is_env(variable), init_mode = 'default')
         else:
