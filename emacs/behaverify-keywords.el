@@ -14,9 +14,9 @@
 ;; END OF 2
 ;; font-lock-variable-name-face
 
-(regexp-opt '("parallel" "selector" "sequence" "X_is_Y" "inverter" "read_variables" "end_read_variables" "write_variables" "end_write_variables" "local_variables" "end_local_variables" "policy" "success_on_all" "success_on_one" "with_partial_memory" "with_true_memory" "instant" "constant_index" "range" "children" "end_children" "child" "end_child" "X" "Y") t)
+(regexp-opt '("parallel" "selector" "sequence" "X_is_Y" "inverter" "arguments" "end_arguments" "read_variables" "end_read_variables" "write_variables" "end_write_variables" "local_variables" "end_local_variables" "policy" "success_on_all" "success_on_one" "with_partial_memory" "with_true_memory" "instant" "constant_index" "range" "children" "end_children" "child" "end_child" "X" "Y") t)
 
-"\\(X_is_Y\\|c\\(?:hild\\(?:ren\\)?\\|onstant_index\\)\\|end_\\(?:child\\(?:ren\\)?\\|\\(?:local\\|read\\|write\\)_variables\\)\\|in\\(?:stant\\|verter\\)\\|local_variables\\|p\\(?:arallel\\|olicy\\)\\|r\\(?:ange\\|ead_variables\\)\\|s\\(?:e\\(?:lector\\|quence\\)\\|uccess_on_\\(?:all\\|one\\)\\)\\|w\\(?:ith_\\(?:\\(?:partial\\|true\\)_memory\\)\\|rite_variables\\)\\|[XY]\\)"
+"\\(X_is_Y\\|arguments\\|c\\(?:hild\\(?:ren\\)?\\|onstant_index\\)\\|end_\\(?:arguments\\|child\\(?:ren\\)?\\|\\(?:local\\|read\\|write\\)_variables\\)\\|in\\(?:stant\\|verter\\)\\|local_variables\\|p\\(?:arallel\\|olicy\\)\\|r\\(?:ange\\|ead_variables\\)\\|s\\(?:e\\(?:lector\\|quence\\)\\|uccess_on_\\(?:all\\|one\\)\\)\\|w\\(?:ith_\\(?:\\(?:partial\\|true\\)_memory\\)\\|rite_variables\\)\\|[XY]\\)"
 
 ;; END OF 3
 ;; font-lock-type-face
