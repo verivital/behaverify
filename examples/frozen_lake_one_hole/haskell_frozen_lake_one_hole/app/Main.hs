@@ -1,5 +1,5 @@
 module Main where
-import Haskellfrozenlake
+import HaskellFrozenLake
 import BehaviorTreeCore
 import BehaviorTreeEnvironment
 import BehaviorTreeBlackboard
@@ -54,7 +54,7 @@ main :: IO ()
 main =
   do {
     args <- getArgs
-    ; let (seed1, seed2) = seedFromArgs args in mapM_ print (executeFromSeeds seed1 seed2 11)
+    ; let (seed1, seed2) = seedFromArgs args in mapM_ print (executeFromSeeds seed1 seed2 101)
   }
   where
     seedFromArgs :: [String] -> (Int, Int)
