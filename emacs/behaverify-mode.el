@@ -33,7 +33,7 @@
 (defconst behaverify-font-lock-keywords-3
   (append behaverify-font-lock-keywords-2
 		  (list
-		   '("\\<\\(X_is_Y\\|c\\(?:hild\\(?:ren\\)?\\|onstant_index\\)\\|end_\\(?:child\\(?:ren\\)?\\|\\(?:local\\|read\\|write\\)_variables\\)\\|in\\(?:stant\\|verter\\)\\|local_variables\\|p\\(?:arallel\\|olicy\\)\\|r\\(?:ange\\|ead_variables\\)\\|s\\(?:e\\(?:lector\\|quence\\)\\|uccess_on_\\(?:all\\|one\\)\\)\\|w\\(?:ith_\\(?:\\(?:partial\\|true\\)_memory\\)\\|rite_variables\\)\\|[XY]\\)\\>" . font-lock-type-face)))
+		   '("\\<\\(X_is_Y\\|arguments\\|c\\(?:hild\\(?:ren\\)?\\|onstant_index\\)\\|end_\\(?:arguments\\|child\\(?:ren\\)?\\|\\(?:local\\|read\\|write\\)_variables\\)\\|in\\(?:stant\\|verter\\)\\|local_variables\\|p\\(?:arallel\\|olicy\\)\\|r\\(?:ange\\|ead_variables\\)\\|s\\(?:e\\(?:lector\\|quence\\)\\|uccess_on_\\(?:all\\|one\\)\\)\\|w\\(?:ith_\\(?:\\(?:partial\\|true\\)_memory\\)\\|rite_variables\\)\\|[XY]\\)\\>" . font-lock-type-face)))
   "Additional Keywords to highlight in BehaVerify mode.")
 
 (defconst behaverify-font-lock-keywords-4

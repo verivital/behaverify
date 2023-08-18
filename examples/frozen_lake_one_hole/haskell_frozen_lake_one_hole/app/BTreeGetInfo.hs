@@ -20,8 +20,7 @@ getInfo _ nodeLocation _ _ _ _ oldBlackboard oldEnvironment futureChanges = (ret
         privateBoardEnv = privateTempBoardEnv1
         privateTempBoardEnv1 = (arrayUpdateBoardTiles blackboard updates, environment)
           where
-            blackboard = blackboard
-            environment = environment
+            (blackboard, environment) = privateTempBoardEnv0
             updates = [updatePair0]
             updatePair0 = ((envLoc environment), updateValue0)
             updateValue0

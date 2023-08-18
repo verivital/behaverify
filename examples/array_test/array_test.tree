@@ -1,0 +1,213 @@
+configuration {
+    #{ Here you specify various configuration options, such as Hypersafety }#
+}
+constants {
+    #{ constants are used to synchronize values in a .tree file. }#
+    #{ example = 0 }#
+    #{ to use example elsewhere, simply type 'example' in place of any integer (quotes included) }#
+} end_constants
+
+variables {
+    #{ Variable declarations go here.
+	it is suggested, but not required, that the order of declaration be
+	Blackboard, Local, Environment.
+	If variable B depends on variable A, then variable A MUST be declared before B.
+    }#
+    variable{bl foo array 3 VAR [0, 10] range assign{result{'serene_index'}}}
+    variable{bl trom array 2 DEFINE INT assign{result{(addition, (index, foo, 0), (index, foo, 1), (index, foo, 2))}}assign{result{(multiplication, (index, foo, 0), (index, foo, 1), (index, foo, 2))}}}
+    variable{bl index_var VAR [0, 2] assign{result{0, 1, 2}}}
+    variable{local bar array 3 VAR {'increase', 'decrease', 'nope'} assign{result{'increase'}} assign{result{'increase', 'decrease'}} assign{case{False}result{'increase', 'decrease'}result{'nope'}}}
+} end_variables
+
+environment_update {
+} end_environment_update
+
+checks {
+    #{ check nodes are defined here }#
+    #{
+	check {
+	    x_idk
+	    arguments{}
+	    read_variables { x } end_read_variables
+	    condition { (and, (less_than, (addition, x, 1), 4), True) } end_condition
+	} end_check
+    }#
+    check {
+	addition_more
+	arguments{}
+	read_variables {trom}
+	condition { (greater_than, (index, trom, 0), (index, trom, 1))}
+    }
+} end_checks
+
+environment_checks {
+    #{ check environment nodes are defined here }#
+    #{
+	environment_check {
+	    z_idk
+	    arguments{}
+	    read_variables {} end_read_variables
+	    condition { z } end_condition
+	} end_environment_check
+    }#
+} end_environment_checks
+
+actions {
+    #{ action nodes are defined here }#
+    action {
+	move_index
+	arguments{}
+	local_variables{}
+	read_variables{}
+	write_variables{index_var}
+	initial_values{}
+	update{
+	    variable_statement{
+		index_var assign{result{(mod, (addition, index_var, 1), 3)}}
+	    }
+	    return_statement{result{failure}}
+	}
+    }
+    action {
+	action_one
+	arguments{}
+	local_variables {bar}
+	read_variables {index_var}
+	write_variables {foo}
+	initial_values{
+	    variable_statement{
+		bar
+		range
+		assign{case{(equal, 0, 'serene_index')}result{'increase'}case{(equal, 1, 'serene_index')}result{'decrease'}result{'nope'}}
+
+	    }
+	}
+	update {
+	    variable_statement{
+		foo
+		index_of { index_var}
+		assign {
+		    case{(equal, 'increase', (index, bar, index_var))}
+		    result{(min, 10, (addition, (index, foo, index_var), 1))}
+		    case{(equal, 'decrease', (index, bar, index_var))}
+		    result{(max, 0, (subtraction, (index, foo, index_var), 1))}
+		    result{(index, foo, index_var)}
+
+		}
+	    }
+	    return_statement {result{success}}
+	    variable_statement{
+		bar
+		range
+		constant_index
+		index_of{'serene_index'}
+		assign{
+		    case{(equal, 'increase', (index, bar, 'serene_index'))}
+		    result{'decrease', 'nope'}
+		    case{(equal, 'decrease', (index, bar, 'serene_index'))}
+		    result{'nope', 'increase'}
+		    result{'increase', 'decrease'}
+		}
+	    }
+	}
+    }
+    action {
+	action_two
+	arguments{}
+	local_variables {bar}
+	read_variables {index_var}
+	write_variables {foo}
+	initial_values{}
+	update {
+	    variable_statement{
+		foo
+		index_of { index_var}
+		assign {
+		    case{(equal, 'increase', (index, bar, index_var))}
+		    result{(min, 10, (multiplication, (index, foo, index_var), 2))}
+		    case{(equal, 'decrease', (index, bar, index_var))}
+		    result{(max, 0, (division, (index, foo, index_var), 2))}
+		    result{(index, foo, index_var)}
+		}
+		index_of {(mod, (addition, index_var, 1), 3)}
+		assign {
+		    case{(equal, 'increase', (index, bar, index_var))}
+		    result{(min, 10, (multiplication, (index, foo, index_var), 2))}
+		    case{(equal, 'decrease', (index, bar, index_var))}
+		    result{(max, 0, (division, (index, foo, index_var), 2))}
+		    result{(index, foo, index_var)}
+		}
+	    }
+	    return_statement {result{success}}
+	    variable_statement{
+		bar
+		range
+		constant_index
+		index_of{'serene_index'}
+		assign{
+		    case{(equal, 'increase', (index, bar, 'serene_index'))}
+		    result{'decrease', 'nope'}
+		    case{(equal, 'decrease', (index, bar, 'serene_index'))}
+		    result{'nope', 'increase'}
+		    result{'increase', 'decrease'}
+		}
+	    }
+	    variable_statement{
+		bar
+		index_of{index_var}
+		assign{
+		    case{(equal, 'increase', (index, bar, index_var))}
+		    result{'decrease', 'nope'}
+		    case{(equal, 'decrease', (index, bar, index_var))}
+		    result{'nope', 'increase'}
+		    result{'increase', 'decrease'}
+		}
+	    }
+	}
+    }
+    
+    #{
+	action {
+	    y_do
+	    arguments{}
+	    local_variables { y } end_local_variables
+	    read_variables { } end_read_variables
+	    write_variables { x } end_write_variables
+	    initial_values {} end_initial_values
+	    update {
+		variable_statement {
+		    x
+		    result { (max, 'example', (subtraction, x, 1)) } end_result
+		} end_variable_statement
+		return_statement {
+		    result { success} end_result
+		} end_return_statement
+	    } end_update
+	} end_action
+    }#
+} end_actions
+
+sub_trees {#{ subtrees go here. }#} end_sub_trees
+
+tree {
+    composite {
+	controller
+	selector
+	children {
+	    move_index {}
+	    composite {
+		try_option
+		sequence
+		children{addition_more{}action_one{}}
+	    }
+	    action_two{}
+	}
+    }
+} end_tree
+
+
+
+
+tick_prerequisite { True} end_tick_prerequisite
+
+specifications { #{ INVAR, LTL, and CTL specs go here }# } end_specifications
