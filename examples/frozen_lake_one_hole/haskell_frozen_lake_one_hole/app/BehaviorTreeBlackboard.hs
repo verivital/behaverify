@@ -32,61 +32,210 @@ instance Show BTreeBlackboard where
 
 
 sereneIndexTiles :: Int -> BTreeBlackboard -> String
-sereneIndexTiles l = boardTilesIndexl
-sereneIndexTiles o = boardTilesIndexo
-sereneIndexTiles c = boardTilesIndexc
-sereneIndexTiles _ = boardTilesIndex_
-sereneIndexTiles a = boardTilesIndexa
-sereneIndexTiles r = boardTilesIndexr
-sereneIndexTiles r = boardTilesIndexr
-sereneIndexTiles a = boardTilesIndexa
-sereneIndexTiles y = boardTilesIndexy
-sereneIndexTiles _ = boardTilesIndex_
-sereneIndexTiles s = boardTilesIndexs
-sereneIndexTiles i = boardTilesIndexi
-sereneIndexTiles z = boardTilesIndexz
-sereneIndexTiles e = boardTilesIndexe
-sereneIndexTiles_ = error "tiles illegal index value"
+sereneIndexTiles 0 = boardTilesIndex0
+sereneIndexTiles 1 = boardTilesIndex1
+sereneIndexTiles 2 = boardTilesIndex2
+sereneIndexTiles 3 = boardTilesIndex3
+sereneIndexTiles 4 = boardTilesIndex4
+sereneIndexTiles 5 = boardTilesIndex5
+sereneIndexTiles 6 = boardTilesIndex6
+sereneIndexTiles 7 = boardTilesIndex7
+sereneIndexTiles 8 = boardTilesIndex8
+sereneIndexTiles 9 = boardTilesIndex9
+sereneIndexTiles 10 = boardTilesIndex10
+sereneIndexTiles 11 = boardTilesIndex11
+sereneIndexTiles 12 = boardTilesIndex12
+sereneIndexTiles 13 = boardTilesIndex13
+sereneIndexTiles 14 = boardTilesIndex14
+sereneIndexTiles 15 = boardTilesIndex15
+sereneIndexTiles _ = error "tiles illegal index value"
+updateBoardTiles :: Int -> BTreeBlackboard -> String -> BTreeBlackboard
+updateBoardTiles 0 = updateBoardTilesIndex0
+updateBoardTiles 1 = updateBoardTilesIndex1
+updateBoardTiles 2 = updateBoardTilesIndex2
+updateBoardTiles 3 = updateBoardTilesIndex3
+updateBoardTiles 4 = updateBoardTilesIndex4
+updateBoardTiles 5 = updateBoardTilesIndex5
+updateBoardTiles 6 = updateBoardTilesIndex6
+updateBoardTiles 7 = updateBoardTilesIndex7
+updateBoardTiles 8 = updateBoardTilesIndex8
+updateBoardTiles 9 = updateBoardTilesIndex9
+updateBoardTiles 10 = updateBoardTilesIndex10
+updateBoardTiles 11 = updateBoardTilesIndex11
+updateBoardTiles 12 = updateBoardTilesIndex12
+updateBoardTiles 13 = updateBoardTilesIndex13
+updateBoardTiles 14 = updateBoardTilesIndex14
+updateBoardTiles 15 = updateBoardTilesIndex15
+updateBoardTiles _ = error "tiles illegal index value"
+arrayUpdateBoardTiles :: BTreeBlackboard -> [(Int, String)] -> BTreeBlackboard
+arrayUpdateBoardTiles blackboard []  = blackboard
+arrayUpdateBoardTiles blackboard [(index, value)] = updateBoardTiles index blackboard value
+arrayUpdateBoardTiles blackboard indicesValues = blackboard {
+  boardTilesIndex0 = newTilesIndex0
+  , boardTilesIndex1 = newTilesIndex1
+  , boardTilesIndex2 = newTilesIndex2
+  , boardTilesIndex3 = newTilesIndex3
+  , boardTilesIndex4 = newTilesIndex4
+  , boardTilesIndex5 = newTilesIndex5
+  , boardTilesIndex6 = newTilesIndex6
+  , boardTilesIndex7 = newTilesIndex7
+  , boardTilesIndex8 = newTilesIndex8
+  , boardTilesIndex9 = newTilesIndex9
+  , boardTilesIndex10 = newTilesIndex10
+  , boardTilesIndex11 = newTilesIndex11
+  , boardTilesIndex12 = newTilesIndex12
+  , boardTilesIndex13 = newTilesIndex13
+  , boardTilesIndex14 = newTilesIndex14
+  , boardTilesIndex15 = newTilesIndex15
+  }
+    where
+      (newTilesIndex0, newTilesIndex1, newTilesIndex2, newTilesIndex3, newTilesIndex4, newTilesIndex5, newTilesIndex6, newTilesIndex7, newTilesIndex8, newTilesIndex9, newTilesIndex10, newTilesIndex11, newTilesIndex12, newTilesIndex13, newTilesIndex14, newTilesIndex15) = updateValues indicesValues
+      updateValues :: [(Int, String)] -> (String, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String)
+      updateValues [] = (boardTilesIndex0 blackboard, boardTilesIndex1 blackboard, boardTilesIndex2 blackboard, boardTilesIndex3 blackboard, boardTilesIndex4 blackboard, boardTilesIndex5 blackboard, boardTilesIndex6 blackboard, boardTilesIndex7 blackboard, boardTilesIndex8 blackboard, boardTilesIndex9 blackboard, boardTilesIndex10 blackboard, boardTilesIndex11 blackboard, boardTilesIndex12 blackboard, boardTilesIndex13 blackboard, boardTilesIndex14 blackboard, boardTilesIndex15 blackboard)
+      updateValues ((0, currentValue) : nextIndicesValues) = (updatedValue0, updatedValue1, updatedValue2, updatedValue3, updatedValue4, updatedValue5, updatedValue6, updatedValue7, updatedValue8, updatedValue9, updatedValue10, updatedValue11, updatedValue12, updatedValue13, updatedValue14, updatedValue15)
+        where
+          updatedValue0 = currentValue
+          (_, updatedValue1, updatedValue2, updatedValue3, updatedValue4, updatedValue5, updatedValue6, updatedValue7, updatedValue8, updatedValue9, updatedValue10, updatedValue11, updatedValue12, updatedValue13, updatedValue14, updatedValue15) = updateValues nextIndicesValues
+      updateValues ((1, currentValue) : nextIndicesValues) = (updatedValue0, updatedValue1, updatedValue2, updatedValue3, updatedValue4, updatedValue5, updatedValue6, updatedValue7, updatedValue8, updatedValue9, updatedValue10, updatedValue11, updatedValue12, updatedValue13, updatedValue14, updatedValue15)
+        where
+          updatedValue1 = currentValue
+          (updatedValue0, _, updatedValue2, updatedValue3, updatedValue4, updatedValue5, updatedValue6, updatedValue7, updatedValue8, updatedValue9, updatedValue10, updatedValue11, updatedValue12, updatedValue13, updatedValue14, updatedValue15) = updateValues nextIndicesValues
+      updateValues ((2, currentValue) : nextIndicesValues) = (updatedValue0, updatedValue1, updatedValue2, updatedValue3, updatedValue4, updatedValue5, updatedValue6, updatedValue7, updatedValue8, updatedValue9, updatedValue10, updatedValue11, updatedValue12, updatedValue13, updatedValue14, updatedValue15)
+        where
+          updatedValue2 = currentValue
+          (updatedValue0, updatedValue1, _, updatedValue3, updatedValue4, updatedValue5, updatedValue6, updatedValue7, updatedValue8, updatedValue9, updatedValue10, updatedValue11, updatedValue12, updatedValue13, updatedValue14, updatedValue15) = updateValues nextIndicesValues
+      updateValues ((3, currentValue) : nextIndicesValues) = (updatedValue0, updatedValue1, updatedValue2, updatedValue3, updatedValue4, updatedValue5, updatedValue6, updatedValue7, updatedValue8, updatedValue9, updatedValue10, updatedValue11, updatedValue12, updatedValue13, updatedValue14, updatedValue15)
+        where
+          updatedValue3 = currentValue
+          (updatedValue0, updatedValue1, updatedValue2, _, updatedValue4, updatedValue5, updatedValue6, updatedValue7, updatedValue8, updatedValue9, updatedValue10, updatedValue11, updatedValue12, updatedValue13, updatedValue14, updatedValue15) = updateValues nextIndicesValues
+      updateValues ((4, currentValue) : nextIndicesValues) = (updatedValue0, updatedValue1, updatedValue2, updatedValue3, updatedValue4, updatedValue5, updatedValue6, updatedValue7, updatedValue8, updatedValue9, updatedValue10, updatedValue11, updatedValue12, updatedValue13, updatedValue14, updatedValue15)
+        where
+          updatedValue4 = currentValue
+          (updatedValue0, updatedValue1, updatedValue2, updatedValue3, _, updatedValue5, updatedValue6, updatedValue7, updatedValue8, updatedValue9, updatedValue10, updatedValue11, updatedValue12, updatedValue13, updatedValue14, updatedValue15) = updateValues nextIndicesValues
+      updateValues ((5, currentValue) : nextIndicesValues) = (updatedValue0, updatedValue1, updatedValue2, updatedValue3, updatedValue4, updatedValue5, updatedValue6, updatedValue7, updatedValue8, updatedValue9, updatedValue10, updatedValue11, updatedValue12, updatedValue13, updatedValue14, updatedValue15)
+        where
+          updatedValue5 = currentValue
+          (updatedValue0, updatedValue1, updatedValue2, updatedValue3, updatedValue4, _, updatedValue6, updatedValue7, updatedValue8, updatedValue9, updatedValue10, updatedValue11, updatedValue12, updatedValue13, updatedValue14, updatedValue15) = updateValues nextIndicesValues
+      updateValues ((6, currentValue) : nextIndicesValues) = (updatedValue0, updatedValue1, updatedValue2, updatedValue3, updatedValue4, updatedValue5, updatedValue6, updatedValue7, updatedValue8, updatedValue9, updatedValue10, updatedValue11, updatedValue12, updatedValue13, updatedValue14, updatedValue15)
+        where
+          updatedValue6 = currentValue
+          (updatedValue0, updatedValue1, updatedValue2, updatedValue3, updatedValue4, updatedValue5, _, updatedValue7, updatedValue8, updatedValue9, updatedValue10, updatedValue11, updatedValue12, updatedValue13, updatedValue14, updatedValue15) = updateValues nextIndicesValues
+      updateValues ((7, currentValue) : nextIndicesValues) = (updatedValue0, updatedValue1, updatedValue2, updatedValue3, updatedValue4, updatedValue5, updatedValue6, updatedValue7, updatedValue8, updatedValue9, updatedValue10, updatedValue11, updatedValue12, updatedValue13, updatedValue14, updatedValue15)
+        where
+          updatedValue7 = currentValue
+          (updatedValue0, updatedValue1, updatedValue2, updatedValue3, updatedValue4, updatedValue5, updatedValue6, _, updatedValue8, updatedValue9, updatedValue10, updatedValue11, updatedValue12, updatedValue13, updatedValue14, updatedValue15) = updateValues nextIndicesValues
+      updateValues ((8, currentValue) : nextIndicesValues) = (updatedValue0, updatedValue1, updatedValue2, updatedValue3, updatedValue4, updatedValue5, updatedValue6, updatedValue7, updatedValue8, updatedValue9, updatedValue10, updatedValue11, updatedValue12, updatedValue13, updatedValue14, updatedValue15)
+        where
+          updatedValue8 = currentValue
+          (updatedValue0, updatedValue1, updatedValue2, updatedValue3, updatedValue4, updatedValue5, updatedValue6, updatedValue7, _, updatedValue9, updatedValue10, updatedValue11, updatedValue12, updatedValue13, updatedValue14, updatedValue15) = updateValues nextIndicesValues
+      updateValues ((9, currentValue) : nextIndicesValues) = (updatedValue0, updatedValue1, updatedValue2, updatedValue3, updatedValue4, updatedValue5, updatedValue6, updatedValue7, updatedValue8, updatedValue9, updatedValue10, updatedValue11, updatedValue12, updatedValue13, updatedValue14, updatedValue15)
+        where
+          updatedValue9 = currentValue
+          (updatedValue0, updatedValue1, updatedValue2, updatedValue3, updatedValue4, updatedValue5, updatedValue6, updatedValue7, updatedValue8, _, updatedValue10, updatedValue11, updatedValue12, updatedValue13, updatedValue14, updatedValue15) = updateValues nextIndicesValues
+      updateValues ((10, currentValue) : nextIndicesValues) = (updatedValue0, updatedValue1, updatedValue2, updatedValue3, updatedValue4, updatedValue5, updatedValue6, updatedValue7, updatedValue8, updatedValue9, updatedValue10, updatedValue11, updatedValue12, updatedValue13, updatedValue14, updatedValue15)
+        where
+          updatedValue10 = currentValue
+          (updatedValue0, updatedValue1, updatedValue2, updatedValue3, updatedValue4, updatedValue5, updatedValue6, updatedValue7, updatedValue8, updatedValue9, _, updatedValue11, updatedValue12, updatedValue13, updatedValue14, updatedValue15) = updateValues nextIndicesValues
+      updateValues ((11, currentValue) : nextIndicesValues) = (updatedValue0, updatedValue1, updatedValue2, updatedValue3, updatedValue4, updatedValue5, updatedValue6, updatedValue7, updatedValue8, updatedValue9, updatedValue10, updatedValue11, updatedValue12, updatedValue13, updatedValue14, updatedValue15)
+        where
+          updatedValue11 = currentValue
+          (updatedValue0, updatedValue1, updatedValue2, updatedValue3, updatedValue4, updatedValue5, updatedValue6, updatedValue7, updatedValue8, updatedValue9, updatedValue10, _, updatedValue12, updatedValue13, updatedValue14, updatedValue15) = updateValues nextIndicesValues
+      updateValues ((12, currentValue) : nextIndicesValues) = (updatedValue0, updatedValue1, updatedValue2, updatedValue3, updatedValue4, updatedValue5, updatedValue6, updatedValue7, updatedValue8, updatedValue9, updatedValue10, updatedValue11, updatedValue12, updatedValue13, updatedValue14, updatedValue15)
+        where
+          updatedValue12 = currentValue
+          (updatedValue0, updatedValue1, updatedValue2, updatedValue3, updatedValue4, updatedValue5, updatedValue6, updatedValue7, updatedValue8, updatedValue9, updatedValue10, updatedValue11, _, updatedValue13, updatedValue14, updatedValue15) = updateValues nextIndicesValues
+      updateValues ((13, currentValue) : nextIndicesValues) = (updatedValue0, updatedValue1, updatedValue2, updatedValue3, updatedValue4, updatedValue5, updatedValue6, updatedValue7, updatedValue8, updatedValue9, updatedValue10, updatedValue11, updatedValue12, updatedValue13, updatedValue14, updatedValue15)
+        where
+          updatedValue13 = currentValue
+          (updatedValue0, updatedValue1, updatedValue2, updatedValue3, updatedValue4, updatedValue5, updatedValue6, updatedValue7, updatedValue8, updatedValue9, updatedValue10, updatedValue11, updatedValue12, _, updatedValue14, updatedValue15) = updateValues nextIndicesValues
+      updateValues ((14, currentValue) : nextIndicesValues) = (updatedValue0, updatedValue1, updatedValue2, updatedValue3, updatedValue4, updatedValue5, updatedValue6, updatedValue7, updatedValue8, updatedValue9, updatedValue10, updatedValue11, updatedValue12, updatedValue13, updatedValue14, updatedValue15)
+        where
+          updatedValue14 = currentValue
+          (updatedValue0, updatedValue1, updatedValue2, updatedValue3, updatedValue4, updatedValue5, updatedValue6, updatedValue7, updatedValue8, updatedValue9, updatedValue10, updatedValue11, updatedValue12, updatedValue13, _, updatedValue15) = updateValues nextIndicesValues
+      updateValues ((15, currentValue) : nextIndicesValues) = (updatedValue0, updatedValue1, updatedValue2, updatedValue3, updatedValue4, updatedValue5, updatedValue6, updatedValue7, updatedValue8, updatedValue9, updatedValue10, updatedValue11, updatedValue12, updatedValue13, updatedValue14, updatedValue15)
+        where
+          updatedValue15 = currentValue
+          (updatedValue0, updatedValue1, updatedValue2, updatedValue3, updatedValue4, updatedValue5, updatedValue6, updatedValue7, updatedValue8, updatedValue9, updatedValue10, updatedValue11, updatedValue12, updatedValue13, updatedValue14, _) = updateValues nextIndicesValues
 
 
 
 
 boardXSubgoal :: BTreeBlackboard -> Int
-boardXSubgoal blackboard = ((boardSubgoal blackboard) % 4)
+boardXSubgoal blackboard = (rem (boardSubgoal blackboard) 4)
 boardYSubgoal :: BTreeBlackboard -> Int
 boardYSubgoal blackboard = (quot ((boardSubgoal blackboard) - (boardXSubgoal blackboard)) 4)
 
 
 updateBoardGenerator :: BTreeBlackboard -> StdGen -> BTreeBlackboard
 updateBoardGenerator blackboard newGen = blackboard { sereneBoardGenerator = newGen }
-updateBoardTiles :: BTreeBlackboard -> String -> BTreeBlackboard
-updateBoardTiles blackboard "unknown" = blackboard { boardTiles = "unknown" }
-updateBoardTiles blackboard "safe" = blackboard { boardTiles = "safe" }
-updateBoardTiles blackboard "hole" = blackboard { boardTiles = "hole" }
-updateBoardTiles blackboard "goal" = blackboard { boardTiles = "goal" }
-updateBoardTiles _ _ = error "tiles illegal value"
-
 updateBoardAction :: BTreeBlackboard -> Int -> BTreeBlackboard
-updateBoardAction blackboard (-2) = blackboard { boardAction = (-2) }
-updateBoardAction blackboard (-1) = blackboard { boardAction = (-1) }
-updateBoardAction blackboard 0 = blackboard { boardAction = 0 }
-updateBoardAction blackboard 1 = blackboard { boardAction = 1 }
-updateBoardAction blackboard 2 = blackboard { boardAction = 2 }
-updateBoardAction blackboard 3 = blackboard { boardAction = 3 }
-updateBoardAction _ _ = error "action illegal value"
-
+updateBoardAction blackboard value = blackboard { boardAction = (checkValueBoardAction value)}
 updateBoardSometimes :: BTreeBlackboard -> Bool -> BTreeBlackboard
-updateBoardSometimes blackboard value = blackboard { boardSometimes = value }
-
+updateBoardSometimes blackboard value = blackboard { boardSometimes = (checkValueBoardSometimes value)}
 updateBoardStrategy :: BTreeBlackboard -> String -> BTreeBlackboard
-updateBoardStrategy blackboard "x_first" = blackboard { boardStrategy = "x_first" }
-updateBoardStrategy blackboard "y_first" = blackboard { boardStrategy = "y_first" }
-updateBoardStrategy _ _ = error "strategy illegal value"
-
+updateBoardStrategy blackboard value = blackboard { boardStrategy = (checkValueBoardStrategy value)}
 updateBoardSubgoal :: BTreeBlackboard -> Int -> BTreeBlackboard
-updateBoardSubgoal blackboard value
-  | 0 > value || value > 15 = error "subgoal illegal value"
-  | otherwise = blackboard { boardSubgoal = value }
+updateBoardSubgoal blackboard value = blackboard { boardSubgoal = (checkValueBoardSubgoal value)}
+updateBoardTilesIndex0 :: BTreeBlackboard -> String -> BTreeBlackboard
+updateBoardTilesIndex0 blackboard value = blackboard { boardTilesIndex0 = (checkValueBoardTiles value)}
+updateBoardTilesIndex1 :: BTreeBlackboard -> String -> BTreeBlackboard
+updateBoardTilesIndex1 blackboard value = blackboard { boardTilesIndex1 = (checkValueBoardTiles value)}
+updateBoardTilesIndex2 :: BTreeBlackboard -> String -> BTreeBlackboard
+updateBoardTilesIndex2 blackboard value = blackboard { boardTilesIndex2 = (checkValueBoardTiles value)}
+updateBoardTilesIndex3 :: BTreeBlackboard -> String -> BTreeBlackboard
+updateBoardTilesIndex3 blackboard value = blackboard { boardTilesIndex3 = (checkValueBoardTiles value)}
+updateBoardTilesIndex4 :: BTreeBlackboard -> String -> BTreeBlackboard
+updateBoardTilesIndex4 blackboard value = blackboard { boardTilesIndex4 = (checkValueBoardTiles value)}
+updateBoardTilesIndex5 :: BTreeBlackboard -> String -> BTreeBlackboard
+updateBoardTilesIndex5 blackboard value = blackboard { boardTilesIndex5 = (checkValueBoardTiles value)}
+updateBoardTilesIndex6 :: BTreeBlackboard -> String -> BTreeBlackboard
+updateBoardTilesIndex6 blackboard value = blackboard { boardTilesIndex6 = (checkValueBoardTiles value)}
+updateBoardTilesIndex7 :: BTreeBlackboard -> String -> BTreeBlackboard
+updateBoardTilesIndex7 blackboard value = blackboard { boardTilesIndex7 = (checkValueBoardTiles value)}
+updateBoardTilesIndex8 :: BTreeBlackboard -> String -> BTreeBlackboard
+updateBoardTilesIndex8 blackboard value = blackboard { boardTilesIndex8 = (checkValueBoardTiles value)}
+updateBoardTilesIndex9 :: BTreeBlackboard -> String -> BTreeBlackboard
+updateBoardTilesIndex9 blackboard value = blackboard { boardTilesIndex9 = (checkValueBoardTiles value)}
+updateBoardTilesIndex10 :: BTreeBlackboard -> String -> BTreeBlackboard
+updateBoardTilesIndex10 blackboard value = blackboard { boardTilesIndex10 = (checkValueBoardTiles value)}
+updateBoardTilesIndex11 :: BTreeBlackboard -> String -> BTreeBlackboard
+updateBoardTilesIndex11 blackboard value = blackboard { boardTilesIndex11 = (checkValueBoardTiles value)}
+updateBoardTilesIndex12 :: BTreeBlackboard -> String -> BTreeBlackboard
+updateBoardTilesIndex12 blackboard value = blackboard { boardTilesIndex12 = (checkValueBoardTiles value)}
+updateBoardTilesIndex13 :: BTreeBlackboard -> String -> BTreeBlackboard
+updateBoardTilesIndex13 blackboard value = blackboard { boardTilesIndex13 = (checkValueBoardTiles value)}
+updateBoardTilesIndex14 :: BTreeBlackboard -> String -> BTreeBlackboard
+updateBoardTilesIndex14 blackboard value = blackboard { boardTilesIndex14 = (checkValueBoardTiles value)}
+updateBoardTilesIndex15 :: BTreeBlackboard -> String -> BTreeBlackboard
+updateBoardTilesIndex15 blackboard value = blackboard { boardTilesIndex15 = (checkValueBoardTiles value)}
+checkValueBoardTiles :: String -> String
+checkValueBoardTiles "unknown" = "unknown"
+checkValueBoardTiles "safe" = "safe"
+checkValueBoardTiles "hole" = "hole"
+checkValueBoardTiles "goal" = "goal"
+checkValueBoardTiles _ = error "boardTiles illegal value"
+
+checkValueBoardAction :: Int -> Int
+checkValueBoardAction (-2) = (-2)
+checkValueBoardAction (-1) = (-1)
+checkValueBoardAction 0 = 0
+checkValueBoardAction 1 = 1
+checkValueBoardAction 2 = 2
+checkValueBoardAction 3 = 3
+checkValueBoardAction _ = error "boardAction illegal value"
+
+checkValueBoardSometimes :: Bool -> Bool
+checkValueBoardSometimes value = value
+
+checkValueBoardStrategy :: String -> String
+checkValueBoardStrategy "x_first" = "x_first"
+checkValueBoardStrategy "y_first" = "y_first"
+checkValueBoardStrategy _ = error "boardStrategy illegal value"
+
+checkValueBoardSubgoal :: Int -> Int
+checkValueBoardSubgoal value
+  | 0 > value || value > 15 = error "boardSubgoal illegal value"
+  | otherwise = value
 
 
 

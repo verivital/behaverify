@@ -25,10 +25,46 @@ executable haskell-frozen-lake-one-hole
     main-is:          Main.hs
 
     -- Modules included in this executable, other than Main.
-    -- other-modules:
+    other-modules:
+        BTreeChangeStrategy
+        BTreeDownBad
+        BTreeDownUnknown
+        BTreeFellInHole
+        BTreeGetInfo
+        BTreeLeftBad
+        BTreeLeftUnknown
+        BTreeNeedDown
+        BTreeNeedLeft
+        BTreeNeedNewSubgoal
+        BTreeNeedRight
+        BTreeNeedUp
+        BTreeReachedGoal
+        BTreeRequestDown
+        BTreeRequestHold
+        BTreeRequestLeft
+        BTreeRequestReset
+        BTreeRequestRight
+        BTreeRequestUp
+        BTreeRightBad
+        BTreeRightUnknown
+        BTreeSetNewSubgoal
+        BTreeSometimesChangeStrategy
+        BTreeSubgoalUnreachable
+        BTreeUpBad
+        BTreeUpUnknown
+        BTreeXStrategy
+        BTreeYStrategy
+        BehaviorTreeBlackboard
+        BehaviorTreeCore
+        BehaviorTreeEnvironment
+        HaskellFrozenLake
+        SereneOperations
+        SereneRandomizer
+
+
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
-    build-depends:    base ^>=4.16.4.0
+    build-depends:    base ^>=4.16.4.0, random
     hs-source-dirs:   app
     default-language: Haskell2010

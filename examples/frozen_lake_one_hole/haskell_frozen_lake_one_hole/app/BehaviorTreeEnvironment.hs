@@ -18,7 +18,7 @@ instance Show BTreeEnvironment where
 
 
 envXLoc :: BTreeBlackboard -> BTreeEnvironment -> Int
-envXLoc blackboard environment = ((envLoc environment) % 4)
+envXLoc blackboard environment = (rem (envLoc environment) 4)
 envYLoc :: BTreeBlackboard -> BTreeEnvironment -> Int
 envYLoc blackboard environment = (quot ((envLoc environment) - (envXLoc blackboard environment)) 4)
 
