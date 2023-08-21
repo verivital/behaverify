@@ -15,12 +15,12 @@ import itertools
 import textx
 from behaverify_common import haskell_indent as indent, create_node_name
 
-from check_model import (validate_model
-                         , is_local
-                         , is_env
-                         , is_blackboard
-                         , is_array
-                         , build_range_func)
+from check_model import (validate_model,
+                         is_local,
+                         is_env,
+                         is_blackboard,
+                         is_array,
+                         build_range_func)
 
 
 def dsl_to_haskell():
@@ -239,7 +239,7 @@ def dsl_to_haskell():
 
     def handle_constant(constant, str_conversion):
         '''used to handle constnts and replace them with integer values'''
-        new_constant = (constants[constant] if constant in constants else constant)
+        new_constant = ((constants['serene_index'][-1] if constant == 'serene_index' else constants[constant]) if constant in constants else constant)
         return (
             (
                 ('"' + new_constant + '"')
@@ -270,7 +270,10 @@ def dsl_to_haskell():
             number_of_updates = 0
             update_pair_strings = []
             update_value_strings = []
+            random_gen_strings = []
+            needs_random = False
             if statement.array_mode == 'range':
+                needs_random = any(case_result.range_mode == 'range' or len(case_result.values) > 1 for case_result in statement.assign.assign.case_results) or statement.assign.assign.default_result.range_mode == 'range' or len(statement.assign.assign.default_result.values) > 1
                 if len(statement.values) == 0:
                     number_of_updates = handle_constant(assign_var.array_size, False)
                     update_range = range(number_of_updates)
@@ -279,36 +282,66 @@ def dsl_to_haskell():
                     update_range = list(filter(cond_func, range(handle_constant(statement.values[0], False), handle_constant(statement.values[1], False) + 1)))
                     number_of_updates = len(update_range)
                 for index, range_val in enumerate(update_range):
-                    constants['serene_index'] = range_val
-                    update_value_strings.append(indent(indent_level + 2) + 'updateValue' + str(index) + handle_assign(statement.assign.assign, assign_var, indent_level + 2, init_mode, board_env_name, blackboard_name, environment_name, True))
+                    constants['serene_index'].append(range_val)
+                    update_value_strings.append(indent(indent_level + 2) + 'updateValue' + str(index) + handle_assign(statement.assign.assign, assign_var, indent_level + 2, init_mode, board_env_name, blackboard_name, environment_name, True, 'randomGenerator' + str(len(random_gen_strings)) if needs_random else None))
                     update_pair_strings.append(
-                        indent(indent_level + 2) + 'updatePair' + str(index)
-                        + ' = '
+                        indent(indent_level + 2) + 'updatePair' + str(index) + ' = '
                         + '(' + (handle_constant(statement.assign.index_expr, True) if statement.constant_index == 'constant_index' else format_code(statement.assign.index_expr, init_mode, blackboard_name, environment_name)) + ', updateValue' + str(index) + ')'
                         + os.linesep
                     )
-                constants.pop('serene_index')
+                    constants['serene_index'].pop()
+                    if needs_random:
+                        random_gen_strings.append(
+                            indent(indent_level + 2) + 'randomGenerator' + str(len(random_gen_strings)) + ' = '
+                            + (
+                                (('sereneEnvGenerator ' + environment_name) if is_env(assign_var) else ('sereneBoardGenerator ' + blackboard_name))
+                                if len(random_gen_strings) == 0
+                                else
+                                ('snd (getRandomInt randomGenerator' + str(len(random_gen_strings) - 1) + ' 1)')
+                            )
+                            + os.linesep
+                        )
             else:
                 number_of_updates = len(statement.assigns)
                 for index, array_index in enumerate(statement.assigns):
-                    update_value_strings.append(indent(indent_level + 2) + 'updateValue' + str(index) + handle_assign(array_index.assign, assign_var, indent_level + 2, init_mode, board_env_name, blackboard_name, environment_name, True))
+                    currently_random = any(case_result.range_mode == 'range' or len(case_result.values) > 1 for case_result in array_index.assign.case_results) or array_index.assign.default_result.range_mode == 'range' or len(array_index.assign.default_result.values) > 1
+                    needs_random = needs_random or currently_random
+                    update_value_strings.append(indent(indent_level + 2) + 'updateValue' + str(index) + handle_assign(array_index.assign, assign_var, indent_level + 2, init_mode, board_env_name, blackboard_name, environment_name, True, 'randomGenerator' + str(len(random_gen_strings)) if currently_random else None))
                     update_pair_strings.append(
                         indent(indent_level + 2) + 'updatePair' + str(index)
                         + ' = '
                         + '(' + (handle_constant(array_index.index_expr, True) if statement.constant_index == 'constant_index' else format_code(array_index.index_expr, init_mode, blackboard_name, environment_name)) + ', updateValue' + str(index)  + ')'
                         + os.linesep
                     )
+                    if currently_random:
+                        random_gen_strings.append(
+                            indent(indent_level + 2) + 'randomGenerator' + str(len(random_gen_strings)) + ' = '
+                            + (
+                                (('sereneEnvGenerator ' + environment_name) if is_env(assign_var) else ('sereneBoardGenerator ' + blackboard_name))
+                                if len(random_gen_strings) == 0
+                                else
+                                ('snd (getRandomInt randomGenerator' + str(len(random_gen_strings) - 1) + ' 1)')
+                            )
+                            + os.linesep
+                        )
             return (
                 ' = '
-                + (('(' + blackboard_name + ', arrayUpdateEnv' + pascal_case(assign_var.name) + ' ' + environment_name + ' updates)') if is_env(assign_var) else (('(arrayUpdateLocalBoard' if is_local(assign_var) else '(arrayUpdateBoard') + pascal_case(assign_var.name) + (' nodeLocation' if is_local(assign_var) else '') + ' ' + blackboard_name + ' updates, ' + environment_name + ')')) + os.linesep
+                + (
+                    ('(' + blackboard_name + ', arrayUpdateEnv' + pascal_case(assign_var.name) + ' ' + (('(updateEnvGenerator ' + environment_name + ' randomGenerator' + str(len(random_gen_strings) - 1)  + ')') if needs_random else environment_name) + ' updates)')
+                    if is_env(assign_var)
+                    else
+                    (('(arrayUpdateLocalBoard' if is_local(assign_var) else '(arrayUpdateBoard') + pascal_case(assign_var.name) + (' nodeLocation' if is_local(assign_var) else '') + ' ' + (('(updateBoardGenerator ' + blackboard_name + ' randomGenerator' + str(len(random_gen_strings) - 1)  + ')') if needs_random else blackboard_name) + ' updates, ' + environment_name + ')')
+                )
+                + os.linesep
                 + indent(indent_level + 1) + 'where' + os.linesep
                 + indent(indent_level + 2) + '(' + blackboard_name + ', ' +  environment_name + ') = ' + board_env_name + os.linesep
+                + ''.join(random_gen_strings)
                 + indent(indent_level + 2) + 'updates = [' + ', '.join(map(lambda x: 'updatePair' + str(x), range(number_of_updates))) + ']' + os.linesep
                 + ''.join(update_pair_strings)
                 + ''.join(update_value_strings)
                 # + board_env_post_script(indent_level + 2, board_env_name, blackboard_name, environment_name) # handled elsewhere
             )
-        return handle_assign(statement.assign, assign_var, indent_level, init_mode, board_env_name, blackboard_name, environment_name, False)
+        return handle_assign(statement.assign, assign_var, indent_level, init_mode, board_env_name, blackboard_name, environment_name, False, None)
 
     def handle_read_statement(statement, indent_level, init_mode):
         '''used to handle read statements'''
@@ -714,14 +747,14 @@ def dsl_to_haskell():
             )
         return ''
 
-    def handle_case_result(case_result, case_mode, init_mode, indent_level, assign_var, env_board, env_board_generator, update_generator, update_env_board, board_env_name, blackboard_name, environment_name, unique_id, value_only_mode):
+    def handle_case_result(case_result, case_mode, init_mode, indent_level, assign_var, env_board, env_board_generator, update_generator, update_env_board, board_env_name, blackboard_name, environment_name, unique_id, value_only_mode, random_gen_string):
         '''
         case_mode = 'case' -> this is a case result
         case_mode = 'default' -> this is a default result
         case_mode = 'only' -> this is a default result with no case results.
         '''
         if case_mode == 'only':
-            if (not case_result.range_mode) and len(case_result.values) == 1:
+            if (case_result.range_mode != 'range') and len(case_result.values) == 1:
                 # use a special case if we're just setting to a constant value. no need for special bells and whistles.
                 return (
                     (
@@ -750,11 +783,11 @@ def dsl_to_haskell():
                 (os.linesep + indent(indent_level + 1) + '| otherwise = ')
             )
         )
-        if (not case_result.range_mode) and (len(case_result.values) == 1):
+        if (case_result.range_mode != 'range') and (len(case_result.values) == 1):
             cond_func = None
             random_range = 0
             function_name = ''
-        elif case_result.range_mode:
+        elif case_result.range_mode == 'range':
             cond_func = build_range_func(case_result.values[2], constants)
             random_range = len(list(filter(cond_func, range(handle_constant(case_result.values[0], False), handle_constant(case_result.values[1], False) + 1)))) - 1
             function_name = 'privateRandom' + str(unique_id)
@@ -766,7 +799,12 @@ def dsl_to_haskell():
             # unique_id = unique_id + 1
 
         return_string += (
-            format_code(case_result.values[0], init_mode, blackboard_name, environment_name)
+            (
+                (function_name + ' (fst (getRandomInt ' + random_gen_string + ' ' + str(random_range) + '))')
+                if case_result.range_mode == 'range' or len(case_result.values) > 1
+                else
+                format_code(case_result.values[0], init_mode, blackboard_name, environment_name)
+            )
             if value_only_mode
             else
             (
@@ -790,7 +828,7 @@ def dsl_to_haskell():
         where_string = create_random_func(case_result, function_name, variable_type(assign_var), cond_func, random_range, indent_level + 2, init_mode, blackboard_name, environment_name)
         return (return_string, where_string)
 
-    def handle_assign(assign, assign_var, indent_level, init_mode, board_env_name, blackboard_name, environment_name, value_only_mode):
+    def handle_assign(assign, assign_var, indent_level, init_mode, board_env_name, blackboard_name, environment_name, value_only_mode, random_gen_string):
         '''handles variable statements. the function declaration was created elsewhere. this creates the logic of the variable udpate.'''
         update_env_board = (
             'updateEnv'
@@ -829,11 +867,11 @@ def dsl_to_haskell():
             )
         )
         strings = [
-            handle_case_result(case_result, 'case', init_mode, indent_level, assign_var, env_board, env_board_generator, update_generator, update_env_board, board_env_name, blackboard_name, environment_name, index + 1, value_only_mode)
+            handle_case_result(case_result, 'case', init_mode, indent_level, assign_var, env_board, env_board_generator, update_generator, update_env_board, board_env_name, blackboard_name, environment_name, index + 1, value_only_mode, random_gen_string)
             for (index, case_result) in enumerate(assign.case_results)
         ]
         strings.append(
-            handle_case_result(assign.default_result, 'only' if len(assign.case_results) == 0 else 'default', init_mode, indent_level, assign_var, env_board, env_board_generator, update_generator, update_env_board, board_env_name, blackboard_name, environment_name, 0, value_only_mode)
+            handle_case_result(assign.default_result, 'only' if len(assign.case_results) == 0 else 'default', init_mode, indent_level, assign_var, env_board, env_board_generator, update_generator, update_env_board, board_env_name, blackboard_name, environment_name, 0, value_only_mode, random_gen_string)
         )
         return_string = ''.join(map(lambda x: x[0], strings))
         where_string = ''.join(map(lambda x: x[1], strings))
@@ -843,7 +881,7 @@ def dsl_to_haskell():
         blackboard_name = 'blackboard'
         environment_name = 'environment'
         if array_index is not None:
-            constants['serene_index'] = array_index
+            constants['serene_index'].append(array_index)
 
         def post_script(indent_level):
             return (
@@ -1059,7 +1097,7 @@ def dsl_to_haskell():
         blackboard_name = 'blackboard'
         environment_name = 'environment'
         if array_index is not None:
-            constants['serene_index'] = array_index
+            constants['serene_index'].append(array_index)
         return_string = (
             (' = ' + format_code(assign.default_result.values[0], init_mode, blackboard_name, environment_name) + os.linesep)
             if len(assign.case_results) == 0
@@ -1076,7 +1114,7 @@ def dsl_to_haskell():
             )
         )
         if array_index is not None:
-            constants.pop('serene_index')
+            constants['serene_index'].pop()
         return return_string
 
     def safe_update(variable, env_mode, local_mode, local_numbers = None):
@@ -1343,57 +1381,37 @@ def dsl_to_haskell():
             )
         )
 
-    def create_environment(model):
+    def handle_blackboard_environment(create_order, blackboard_mode, local_macros, local_var_to_nodes):
+        data_type_name = 'BTreeBlackboard' if blackboard_mode else 'BTreeEnvironment'
+        data_type_name_2 = 'BTreeBlackboard' if blackboard_mode else 'BTreeBlackboard -> BTreeEnvironment'
+        board_env_cap = 'Board' if blackboard_mode else 'Env'
+        board_env = 'board' if blackboard_mode else 'env'
         blackboard_name = 'blackboard'
         environment_name = 'environment'
-        create_order = (
-            [
-                {
-                    'initial_name' : 'newVal' + pascal_case(variable.name),
-                    'initial_func' : 'initVal' + pascal_case(variable.name),
-                    'field_name' : 'env' + pascal_case(variable.name),
-                    'partial_name' : 'partialEnvironment' + pascal_case(variable.name),
-                    'type' : variable_type(variable),
-                    'default_arg' : get_default_arg(variable),
-                    'initial_value' : handle_initial_value(variable.assign, variable_type(variable), 2, 'env', 'partialEnvironment' + pascal_case(variable.name), None, array_index = None)
-                }
-                for variable in model.variables if (variable.model_as != 'DEFINE' and is_env(variable))
-            ]
-        )
+        var_name = blackboard_name if blackboard_mode else environment_name
+        var_name_2 = blackboard_name if blackboard_mode else (blackboard_name + ' ' + environment_name)
+        is_non_local = is_blackboard if blackboard_mode else is_env
         return (
-            'module BehaviorTreeEnvironment where' + os.linesep
+            'module ' + ('BehaviorTreeBlackboard' if blackboard_mode else 'BehaviorTreeEnvironment') +  ' where' + os.linesep
             + 'import SereneRandomizer' + os.linesep
             + 'import System.Random' + os.linesep
-            + 'import BehaviorTreeBlackboard' + os.linesep
             + 'import SereneOperations' + os.linesep
+            + ('' if blackboard_mode else ('import BehaviorTreeBlackboard' + os.linesep))
             + os.linesep
-            + ''.join(
-                [
-                    (
-                        'data Array' + pascal_case(variable.name) + ' = Array' + pascal_case(variable.name) + ' {' + os.linesep
-                        + indent(1) + ', '
-                        + (indent(1) + ', ').join(map(
-                            lambda x : ('val' + str(x) + ' :: Int' + os.linesep),
-                            range(variable.array_size)
-                            ))
-                        + indent(1) + '}' + os.linesep
-                        + os.linesep
-                    )
-                    for variable in model.variables if (is_env(variable) and is_array(variable) and variable.model_as != 'DEFINE')
-                ]
-            )
-            + 'data BTreeEnvironment = BTreeEnvironment {' + os.linesep
-            + indent(1) + 'sereneEnvGenerator :: StdGen' + os.linesep
+            # end of imports.
+            # ---------------------------------------------------------------------------------------
+            + 'data ' + data_type_name + ' = ' + data_type_name + ' {' + os.linesep
+            + indent(1) + 'serene' + board_env_cap + 'Generator :: StdGen' + os.linesep
             + ((indent(1) + ', ') if len(create_order) > 0 else '')
             + (os.linesep + indent(1) + ', ').join([(variable_info['field_name'] + ' :: ' + variable_info['type']) for variable_info in create_order])
             + (os.linesep if len(create_order) > 0 else '')
             + indent(1) + '}' + os.linesep + os.linesep
             + (
-                'instance Show BTreeEnvironment where' + os.linesep
-                + indent(1) + 'show (BTreeEnvironment _ '
-                + ' '.join(map(lambda x : x['field_name'], create_order))
+                'instance Show ' + data_type_name + ' where' + os.linesep
+                + indent(1) + 'show (' + data_type_name + ' _ '
+                + ' '.join(map(lambda x: x['field_name'], create_order))
                 + ') = '
-                + '"Env = {"'
+                + '"' + board_env_cap + ' = {"'
                 + ' ++ '
                 + ' ++ '.join(
                     [
@@ -1407,71 +1425,291 @@ def dsl_to_haskell():
                 + (' ++ ' if len(create_order) > 0 else '')
                 + '"}"' + os.linesep
             )
-            + os.linesep + os.linesep
+            # end of blackboard and show for the blackbord.
+            # ---------------------------------------------------------------------------------------
+            + os.linesep + '-- START OF ' + ('BLACKBOARD' if blackboard_mode else 'ENVIRONMENT') + ' FUNCTIONS' + os.linesep + os.linesep
             + ''.join(
                 [
                     (
-                        'env' + pascal_case(variable.name) + ' :: BTreeBlackboard -> BTreeEnvironment -> ' + variable_type(variable) + os.linesep
-                        + 'env' + pascal_case(variable.name) + ' blackboard environment' + create_macro(variable.assign, 0, init_mode = None)  # init_mode none here because we are operating in a func
+                        board_env + pascal_case(variable.name) + ' :: ' + data_type_name_2 + ' -> ' + variable_type(variable) + os.linesep
+                        + board_env + pascal_case(variable.name) + ' ' + var_name_2 + create_macro(variable.assign, 0, None, array_index = None)  # init_mode none here because we are operating in a func
                     )
-                    for variable in model.variables if (variable.model_as == 'DEFINE' and is_env(variable))
+                    for variable in model.variables if (variable.model_as == 'DEFINE' and is_non_local(variable) and not is_array(variable))
                 ]
             )
-            + os.linesep + os.linesep
-            + 'updateEnvGenerator :: BTreeEnvironment -> StdGen -> BTreeEnvironment' + os.linesep
-            + 'updateEnvGenerator environment newGen = environment { sereneEnvGenerator = newGen }' + os.linesep
             + ''.join(
                 map(
-                    lambda var :
-                    safe_update(var, True, False)
-                    ,
-                    filter(lambda var :
-                           var.model_as != 'DEFINE' and is_env(var)
-                           ,
-                           model.variables
-                           )
+                    lambda variable:
+                    board_env + pascal_case(variable.name) + ' :: Int -> ' + data_type_name_2 + ' -> ' + variable_type(variable) + os.linesep
+                    + ''.join(
+                        map(
+                            lambda index:
+                            board_env + pascal_case(variable.name) + ' ' + str(index) + ' ' + var_name_2 + create_macro(variable.assign if variable.array_mode == 'range' else variable.assigns[index], 0, None, array_index = index),
+                            range(handle_constant(variable.array_size, False))
+                        )
+                    )
+                    + board_env + pascal_case(variable.name) + ' _ _ = error "' + board_env + pascal_case(variable.name) + ' illegal index value"' + os.linesep,
+                    filter(lambda variable: variable.model_as == 'DEFINE' and is_non_local(variable) and is_array(variable), model.variables)
                 )
             )
-            + 'checkTickConditionTermination :: BTreeBlackboard -> BTreeEnvironment -> Bool' + os.linesep
-            + 'checkTickConditionTermination blackboard environment = ' + (
-                'True'
-                if model.tick_condition is None
+            # created accessor functions for define non-local ---------------------------------------------------------------------------------------
+            + (
+                ''.join(
+                  map(
+                      lambda variable:
+                      'local' + board_env_cap + pascal_case(variable.name) + ' :: Int -> Int -> ' + data_type_name_2 + ' -> ' + variable_type(variable) + os.linesep
+                      + ''.join(map(lambda location: 'local' + board_env_cap + pascal_case(variable.name) + ' ' + str(location) + ' = local' + board_env_cap + pascal_case(variable.name) + str(location) + os.linesep, local_var_to_nodes[variable.name]))
+                      + 'local' + board_env_cap + pascal_case(variable.name) + ' _ = error "local' + board_env_cap + pascal_case(variable.name) + ' illegal local reference"' + os.linesep
+                      + ''.join(local_macros[variable.name])
+                      ,
+                      filter(lambda variable: variable.model_as == 'DEFINE' and is_local(variable) and is_array(variable), model.variables)
+                  )
+                )
+                if blackboard_mode
                 else
-                format_code(model.tick_condition, None, blackboard_name, environment_name)
-            ) + os.linesep + os.linesep
-            + 'modifiedID :: BTreeBlackboard -> BTreeEnvironment -> BTreeEnvironment' + os.linesep
-            + 'modifiedID _ environment = environment' + os.linesep
-            + 'applyFutureChanges :: [(BTreeBlackboard, BTreeEnvironment) -> (BTreeBlackboard, BTreeEnvironment)] -> (BTreeBlackboard, BTreeEnvironment) -> (BTreeBlackboard, BTreeEnvironment)' + os.linesep
-            + 'applyFutureChanges [] = id' + os.linesep
-            + 'applyFutureChanges futureChanges = head futureChanges . applyFutureChanges (tail futureChanges)' + os.linesep
-            + os.linesep + os.linesep
-            + 'betweenTickUpdate :: (BTreeBlackboard, BTreeEnvironment) -> (BTreeBlackboard, BTreeEnvironment)' + os.linesep
-            + 'betweenTickUpdate (blackboard, curEnvironment) = (blackboard, newEnvironment)' + os.linesep
-            + indent(1) + 'where' + os.linesep
-            + indent(2) + 'tempEnvironment0 = curEnvironment' + os.linesep
-            + indent(2) + 'newEnvironment = tempEnvironment' + str(len(model.update)) + os.linesep
+                ''
+            )
+            + (
+                (
+                    os.linesep + '-- START OF LOCAL BLACKBOARD FUNCTIONS' + os.linesep + os.linesep
+                    + ''.join(
+                        [
+                            (
+                                'local' + board_env_cap + pascal_case(variable.name) + ' :: Int -> ' + data_type_name_2 + ' -> ' + variable_type(variable) + os.linesep
+                                + (
+                                    ''.join(local_macros[variable.name])
+                                    if variable.name in local_macros
+                                    else
+                                    ''
+                                )
+                                + 'local' + board_env_cap + pascal_case(variable.name) + ' _ _ = error "' + variable.name + ' illegal local reference"' + os.linesep
+                                # this one needs two _ because unlike the other one, we aren't doing eta reduction
+                                # we handle each case in the recursive call and now just need to combine them.
+                                # + 'localBoard' + pascal_case(variable.name) + ' nodeLocation blackboard' + create_macro(variable.assign, 0, None)  # init_mode none here because we are operating in a func
+                            )
+                            for variable in model.variables if (variable.model_as == 'DEFINE' and is_local(variable) and not is_array(variable))
+                        ]
+                    )
+                    + ''.join(
+                        map(
+                            lambda variable:
+                            'local' + board_env_cap + pascal_case(variable.name) + ' :: Int -> Int -> ' + data_type_name_2 + ' -> ' + variable_type(variable) + os.linesep
+                            + ''.join(
+                                map(
+                                    lambda index:
+                                    'local' + board_env_cap + pascal_case(variable.name) + ' ' + str(index) + ' ' + var_name_2 + create_macro(variable.assign if variable.array_mode == 'range' else variable.assigns[index], 0, None, array_index = index),
+                                    range(len(handle_constant(variable.array_size, False)))
+                                )
+                            )
+                            + 'local' + board_env_cap + pascal_case(variable.name) + ' _ _ = error "local' + board_env_cap + pascal_case(variable.name) + ' illegal index value"' + os.linesep,
+                            filter(lambda variable: variable.model_as == 'DEFINE' and is_local(variable) and is_array(variable), model.variables)
+                        )
+                    )
+                    # created accessor functions for define local
+                    # ---------------------------------------------------------------------------------------
+                    + os.linesep + '-- START OF GET FUNCTIONS FOR LOCAL VARIABLES' + os.linesep + os.linesep
+                    + ''.join(
+                        [
+                            (
+                                'local' + board_env_cap + pascal_case(variable.name) + ' :: Int' + (' -> Int ' if is_array(variable) else ' ') + '-> ' + data_type_name_2 + ' -> ' + variable_type(variable) + os.linesep
+                                + (
+                                    ''.join(
+                                        [
+                                            ('local' + board_env_cap + pascal_case(variable.name) + ' ' + str(number) + ' = local' + board_env_cap + pascal_case(variable.name) + str(number) + os.linesep)
+                                            for number in local_var_to_nodes[variable.name]
+                                        ]
+                                    )
+                                    if variable.name in local_var_to_nodes
+                                    else
+                                    ''
+                                )
+                                + 'local' + board_env_cap + pascal_case(variable.name) + ' _ = error "' + variable.name + ' illegal local reference"' + os.linesep
+                            )
+                            for variable in model.variables if (variable.model_as != 'DEFINE' and is_local(variable))
+                        ]
+                    )
+                    # the above creates accessor functions to get local variables. ---------------------------------------------------------------------------------------
+                )
+                if blackboard_mode
+                else
+                ''
+            )
+            + os.linesep + '-- START OF GET FUNCTIONS FOR ARRAYS' + os.linesep + os.linesep
+            + ''.join(
+                [
+                    board_env + pascal_case(variable.name) + ' :: Int -> ' + data_type_name_2 + ' -> ' + variable_type(variable) + os.linesep
+                    + ''.join(
+                        [
+                            (board_env + pascal_case(variable.name) + ' ' + str(index) + ' = ' + board_env + pascal_case(variable.name) + 'Index' + str(index) + os.linesep)
+                            for index in range(handle_constant(variable.array_size, False))
+                        ]
+                    )
+                    + board_env + pascal_case(variable.name) + ' _ = error "' + board_env + pascal_case(variable.name) + ' illegal index value"' + os.linesep
+                    for variable in model.variables if (variable.model_as != 'DEFINE' and is_non_local(variable) and is_array(variable))
+                ]
+            )
+            + (
+                ''.join(
+                    [
+                        'local' + board_env_cap + pascal_case(variable.name) + str(variable_location) + ' :: Int -> ' + data_type_name_2 + ' -> ' + variable_type(variable) + os.linesep
+                        + ''.join(
+                            [
+                                ('local' + board_env_cap + pascal_case(variable.name) + str(variable_location) + ' ' + str(index) + ' = local' + board_env_cap + pascal_case(variable.name) + str(variable_location) + 'Index' + str(index) + os.linesep)
+                                for index in range(handle_constant(variable.array_size, False))
+                            ]
+                        )
+                        + 'local' + board_env_cap + pascal_case(variable.name) + str(variable_location) + ' _ = error "local' + board_env_cap + pascal_case(variable.name) + str(variable_location) + ' illegal index value"' + os.linesep
+                        for variable in model.variables if (variable.model_as != 'DEFINE' and is_local(variable) and is_array(variable))
+                        for variable_location in local_var_to_nodes[variable.name]
+                    ]
+                )
+                if blackboard_mode
+                else
+                ''
+            )
+            # end of array variable indexing for non-define variables
+            # ---------------------------------------------------------------------------------------
+            + os.linesep + '-- START OF TYPE CHECKING FUNCTIONS' + os.linesep + os.linesep
+            + ''.join(map(create_check_value, filter(lambda var : var.model_as == 'VAR' and (blackboard_mode != is_env(var)), model.variables)))
+            # created checkValue for each variable that can be updated.
+            # ---------------------------------------------------------------------------------------
+            + os.linesep + '-- START OF SET FUNCTIONS' + os.linesep + os.linesep
+            + 'update' + board_env_cap + 'Generator :: ' + data_type_name + ' -> StdGen -> ' + data_type_name + os.linesep
+            + 'update' + board_env_cap + 'Generator ' + var_name + ' newGen = ' + var_name + ' { serene' + board_env_cap + 'Generator = newGen }' + os.linesep
+            # created an update for the random number generator
+            # ---------------------------------------------------------------------------------------
+            + (
+                ''.join(
+                    map(
+                        lambda var:
+                        (
+                            'updateLocal' + board_env_cap + pascal_case(var.name) + ' :: Int -> ' + data_type_name_2 + ' -> ' + variable_type(var) + ' -> ' + data_type_name + os.linesep
+                            + ''.join(
+                                map(
+                                    lambda local_number:
+                                    ('updateLocal' + board_env_cap + pascal_case(var.name) + ' ' + str(local_number) + ' = updateLocal' + board_env_cap + pascal_case(var.name) + str(local_number) + os.linesep)
+                                    ,
+                                    (local_var_to_nodes[var.name] if var.name in local_var_to_nodes else [])
+                                )
+                            )
+                            + 'updateLocal' + board_env_cap + pascal_case(var.name) + ' _ = error "local' + board_env_cap + pascal_case(var.name) + ' illegal local reference"' + os.linesep
+                        ),
+                        filter(lambda var: (var.model_as == 'VAR' and is_local(var) and not is_array(var)), model.variables)
+                    )
+                )
+                if blackboard_mode
+                else
+                ''
+            )
+            # created updaters for local variables which switches based on node location
+            # ---------------------------------------------------------------------------------------
             + ''.join(
                 [
                     (
-                        indent(2) + 'tickUpdate' + str(index + 1) + pascal_case(update.variable.name) + ' :: BTreeEnvironment -> BTreeEnvironment' + os.linesep
-                        + indent(2) + 'tickUpdate' + str(index + 1) + pascal_case(update.variable.name) + ' environment' + handle_update_value(update.assign, update.variable.name, variable_type(update.variable), 2, None)
-                        + os.linesep
-                        + indent(2) + 'tempEnvironment' + str(index + 1) + ' = tickUpdate' + str(index + 1) + pascal_case(update.variable.name) + ' tempEnvironment' + str(index) + os.linesep
-                        + os.linesep
+                        'update' + pascal_case(variable['field_name']) + ' :: ' + data_type_name + ' -> ' + variable['type'] + ' -> ' + data_type_name + os.linesep
+                        + 'update' + pascal_case(variable['field_name']) + ' ' + var_name + ' value = ' + var_name + ' { ' + variable['field_name'] + ' = (checkValue' + pascal_case(variable['category_name']) + ' value)}' + os.linesep
                     )
-                    for index, update in enumerate(model.update)
+                    for variable in create_order if variable['model_as'] == 'VAR'
                 ]
-            ) + os.linesep
-            + os.linesep + os.linesep
-            + 'initialEnvironment :: Int -> BTreeBlackboard -> BTreeEnvironment' + os.linesep
-            + 'initialEnvironment seed blackboard = BTreeEnvironment newSereneGenerator ' + ' '.join(map(lambda x : x['initial_name'], create_order)) + os.linesep
+            )
+            # created updaters for all fields. these are direct updaters. local variables reference these, as do array variables. these reference checkValue, see below.
+            # ---------------------------------------------------------------------------------------
+            + os.linesep + '-- START OF SET FUNCTIONS FOR ARRAYS' + os.linesep + os.linesep
+            + ''.join(
+                map(
+                    lambda variable:
+                    (
+                        array_set_creator(variable, local_number = None)
+                        if not is_local(variable)
+                        else
+                        ''.join(
+                            'updateLocalBoard' + pascal_case(variable.name) + ' :: Int -> Int -> ' + data_type_name + ' -> ' + variable_type(variable) + ' -> BTreeBlackboard' + os.linesep
+                            + ''.join(
+                                map(
+                                    lambda location:
+                                    'updateLocalBoard' + pascal_case(variable.name) + ' ' + str(location) + ' = updateLocalBoard' + pascal_case(variable.name) + str(location) + os.linesep
+                                    ,
+                                    local_var_to_nodes[variable.name]
+                                )
+                            )
+                            + 'updateLocalBoard' + pascal_case(variable.name) + ' _ = error "localBoard' + pascal_case(variable.name) + ' illegal local reference"' + os.linesep
+                            + 'arrayUpdateLocalBoard' + pascal_case(variable.name) + ' :: Int -> ' + data_type_name + ' -> [(Int, ' + variable_type(variable) + ')] -> BTreeBlackboard' + os.linesep
+                            + ''.join(
+                                map(
+                                    lambda location:
+                                    'arrayUpdateLocalBoard' + pascal_case(variable.name) + ' ' + str(location) + ' = arrayUpdateLocalBoard' + pascal_case(variable.name) + str(location) + os.linesep
+                                    ,
+                                    local_var_to_nodes[variable.name]
+                                )
+                            )
+                            + 'arrayUpdateLocalBoard' + pascal_case(variable.name) + ' _ = error "localBoard' + pascal_case(variable.name) + ' illegal local reference"' + os.linesep
+                            + ''.join(
+                                map(
+                                    lambda location:
+                                    array_set_creator(variable, local_number = location)
+                                    ,
+                                    local_var_to_nodes[variable.name]
+                                )
+                            )
+                        )
+                    )
+                    ,
+                    filter(lambda variable: is_array(variable) and (blackboard_mode != is_env(variable)) and variable.model_as == 'VAR', model.variables)
+                )
+            )
+            # end of array update functions for variables.
+            # ---------------------------------------------------------------------------------------
+            + (
+                ''
+                if blackboard_mode
+                else
+                (
+                    os.linesep + '-- START OF TICK CONDITION' + os.linesep + os.linesep
+                    + 'checkTickConditionTermination :: BTreeBlackboard -> BTreeEnvironment -> Bool' + os.linesep
+                    + 'checkTickConditionTermination blackboard environment = ' + (
+                        'True'
+                        if model.tick_condition is None
+                        else
+                        format_code(model.tick_condition, None, blackboard_name, environment_name)
+                    ) + os.linesep
+                    # + 'modifiedID :: BTreeBlackboard -> BTreeEnvironment -> BTreeEnvironment' + os.linesep
+                    # + 'modifiedID _ environment = environment' + os.linesep  # I think I was planning on using these for eta reduction? but then didn't?
+                    + os.linesep + '-- START OF FUTURE CHANGES' + os.linesep + os.linesep
+                    + 'applyFutureChanges :: [(BTreeBlackboard, BTreeEnvironment) -> (BTreeBlackboard, BTreeEnvironment)] -> (BTreeBlackboard, BTreeEnvironment) -> (BTreeBlackboard, BTreeEnvironment)' + os.linesep
+                    + 'applyFutureChanges [] = id' + os.linesep
+                    + 'applyFutureChanges futureChanges = head futureChanges . applyFutureChanges (tail futureChanges)' + os.linesep
+                    + os.linesep + '-- START OF BETWEEN TICK CHANGES' + os.linesep + os.linesep
+                    + 'betweenTickUpdate :: (BTreeBlackboard, BTreeEnvironment) -> (BTreeBlackboard, BTreeEnvironment)' + os.linesep
+                    + 'betweenTickUpdate (blackboard, curEnvironment) = (blackboard, newEnvironment)' + os.linesep
+                    + indent(1) + 'where' + os.linesep
+                    + indent(2) + 'tempEnvironment0 = curEnvironment' + os.linesep
+                    + indent(2) + 'newEnvironment = tempEnvironment' + str(len(model.update)) + os.linesep
+                    + ''.join(
+                        [
+                            (
+                                indent(2) + 'tickUpdate' + str(index + 1) + pascal_case(update.variable.name) + ' :: BTreeEnvironment -> BTreeEnvironment' + os.linesep
+                                + indent(2) + 'tickUpdate' + str(index + 1) + pascal_case(update.variable.name) + ' environment' + handle_update_value(update.assign, update.variable.name, variable_type(update.variable), 2, None)
+                                + os.linesep
+                                + indent(2) + 'tempEnvironment' + str(index + 1) + ' = tickUpdate' + str(index + 1) + pascal_case(update.variable.name) + ' tempEnvironment' + str(index) + os.linesep
+                                + os.linesep
+                            )
+                            for index, update in enumerate(model.update)
+                        ]
+                    ) + os.linesep
+                )
+            )
+            # end of tick conditions.
+            # ---------------------------------------------------------------------------------------
+            + os.linesep + '-- START OF INITIAL ' + ('BLACKBOARD' if blackboard_mode else 'ENVIRONMENT') + ' VALUE' + os.linesep + os.linesep
+            + 'initial' + ('Blackboard' if blackboard_mode else 'Environment') + ' :: Int -> ' + data_type_name_2 + os.linesep
+            + 'initial' + ('Blackboard' if blackboard_mode else 'Environment') + ' seed ' + ('' if blackboard_mode else (blackboard_name + ' ')) + '= ' + data_type_name + ' newSereneGenerator ' + ' '.join(map(lambda x : x['initial_name'], create_order))
             + indent(1) + 'where' + os.linesep
             + indent(2) + 'tempGen0 = getGenerator seed' + os.linesep
             + indent(2) + 'newSereneGenerator = tempGen' + str(len(create_order)) + os.linesep
             + ''.join(
                 [
                     (
-                        indent(2) + variable_info['partial_name'] + ' = BTreeEnvironment newSereneGenerator' + order_partial_arguments(variable_info['initial_name'], create_order) + os.linesep
+                        indent(2) + variable_info['partial_name'] + ' = ' + data_type_name + ' newSereneGenerator' + order_partial_arguments(variable_info['initial_name'], create_order) + os.linesep
                         + indent(2) + variable_info['initial_func'] + ' :: StdGen -> (' + variable_info['type'] + ', StdGen)' + os.linesep
                         + indent(2) + variable_info['initial_func'] + ' curGen' + variable_info['initial_value']
                         + os.linesep
@@ -1480,8 +1718,141 @@ def dsl_to_haskell():
                     )
                     for index, variable_info in enumerate(create_order)
                 ]
-            ) + os.linesep
+            )
+            + os.linesep
+            # created initial blackboard. ---------------------------------------------------------------------------------------
         )
+
+    def create_environment(model):
+        create_order = [
+            {
+                'category_name' : 'env' + pascal_case(variable.name),
+                'initial_name' : 'newVal' + pascal_case(variable.name) + (('Index' + str(index)) if is_array(variable) else ''),
+                'initial_func' : 'initVal' + pascal_case(variable.name) + (('Index' + str(index)) if is_array(variable) else ''),
+                'field_name' : 'env' + pascal_case(variable.name) + (('Index' + str(index)) if is_array(variable) else ''),
+                'partial_name' : 'partialEnvironment' + pascal_case(variable.name) + (('Index' + str(index)) if is_array(variable) else ''),
+                'type' : variable_type(variable),
+                'default_arg' : get_default_arg(variable),
+                'initial_value' : handle_initial_value(
+                    (variable.assign if ((not is_array(variable)) or variable.array_mode == 'range') else variable.assigns[index]),
+                    variable_type(variable), 2, 'env',
+                    'partialEnvironment' + pascal_case(variable.name) + (('Index' + str(index)) if is_array(variable) else ''),
+                    None, array_index = (index if is_array(variable) else None)),
+                'model_as' : variable.model_as
+            }
+            for variable in filter(lambda var: (var.model_as != 'DEFINE' and is_env(var)), model.variables)
+            for index in range(handle_constant(variable.array_size, False) if is_array(variable) else 1)
+        ]
+        return handle_blackboard_environment(create_order, False, None, None)
+        # return (
+        #     'module BehaviorTreeEnvironment where' + os.linesep
+        #     + 'import SereneRandomizer' + os.linesep
+        #     + 'import System.Random' + os.linesep
+        #     + 'import BehaviorTreeBlackboard' + os.linesep
+        #     + 'import SereneOperations' + os.linesep
+        #     + os.linesep
+        #     # end of imports.
+        #     # ---------------------------------------------------------------------------------------
+        #     + 'data BTreeEnvironment = BTreeEnvironment {' + os.linesep
+        #     + indent(1) + 'sereneEnvGenerator :: StdGen' + os.linesep
+        #     + ((indent(1) + ', ') if len(create_order) > 0 else '')
+        #     + (os.linesep + indent(1) + ', ').join([(variable_info['field_name'] + ' :: ' + variable_info['type']) for variable_info in create_order])
+        #     + (os.linesep if len(create_order) > 0 else '')
+        #     + indent(1) + '}' + os.linesep + os.linesep
+        #     + (
+        #         'instance Show BTreeEnvironment where' + os.linesep
+        #         + indent(1) + 'show (BTreeEnvironment _ '
+        #         + ' '.join(map(lambda x : x['field_name'], create_order))
+        #         + ') = '
+        #         + '"Env = {"'
+        #         + ' ++ '
+        #         + ' ++ '.join(
+        #             [
+        #                 ('"' + variable_info['field_name'] + ': " ++ show ' + variable_info['field_name'])
+        #                 if index == 0
+        #                 else
+        #                 ('", ' + variable_info['field_name'] + ': " ++ show ' + variable_info['field_name'])
+        #                 for index, variable_info in enumerate(create_order)
+        #             ]
+        #         )
+        #         + (' ++ ' if len(create_order) > 0 else '')
+        #         + '"}"' + os.linesep
+        #     )
+        #     + os.linesep + os.linesep
+        #     + ''.join(
+        #         [
+        #             (
+        #                 'env' + pascal_case(variable.name) + ' :: BTreeBlackboard -> BTreeEnvironment -> ' + variable_type(variable) + os.linesep
+        #                 + 'env' + pascal_case(variable.name) + ' blackboard environment' + create_macro(variable.assign, 0, init_mode = None)  # init_mode none here because we are operating in a func
+        #             )
+        #             for variable in model.variables if (variable.model_as == 'DEFINE' and is_env(variable))
+        #         ]
+        #     )
+        #     + os.linesep + os.linesep
+        #     + 'updateEnvGenerator :: BTreeEnvironment -> StdGen -> BTreeEnvironment' + os.linesep
+        #     + 'updateEnvGenerator environment newGen = environment { sereneEnvGenerator = newGen }' + os.linesep
+        #     + ''.join(
+        #         map(
+        #             lambda var :
+        #             safe_update(var, True, False)
+        #             ,
+        #             filter(lambda var :
+        #                    var.model_as != 'DEFINE' and is_env(var)
+        #                    ,
+        #                    model.variables
+        #                    )
+        #         )
+        #     )
+        #     + 'checkTickConditionTermination :: BTreeBlackboard -> BTreeEnvironment -> Bool' + os.linesep
+        #     + 'checkTickConditionTermination blackboard environment = ' + (
+        #         'True'
+        #         if model.tick_condition is None
+        #         else
+        #         format_code(model.tick_condition, None, blackboard_name, environment_name)
+        #     ) + os.linesep + os.linesep
+        #     + 'modifiedID :: BTreeBlackboard -> BTreeEnvironment -> BTreeEnvironment' + os.linesep
+        #     + 'modifiedID _ environment = environment' + os.linesep
+        #     + 'applyFutureChanges :: [(BTreeBlackboard, BTreeEnvironment) -> (BTreeBlackboard, BTreeEnvironment)] -> (BTreeBlackboard, BTreeEnvironment) -> (BTreeBlackboard, BTreeEnvironment)' + os.linesep
+        #     + 'applyFutureChanges [] = id' + os.linesep
+        #     + 'applyFutureChanges futureChanges = head futureChanges . applyFutureChanges (tail futureChanges)' + os.linesep
+        #     + os.linesep + os.linesep
+        #     + 'betweenTickUpdate :: (BTreeBlackboard, BTreeEnvironment) -> (BTreeBlackboard, BTreeEnvironment)' + os.linesep
+        #     + 'betweenTickUpdate (blackboard, curEnvironment) = (blackboard, newEnvironment)' + os.linesep
+        #     + indent(1) + 'where' + os.linesep
+        #     + indent(2) + 'tempEnvironment0 = curEnvironment' + os.linesep
+        #     + indent(2) + 'newEnvironment = tempEnvironment' + str(len(model.update)) + os.linesep
+        #     + ''.join(
+        #         [
+        #             (
+        #                 indent(2) + 'tickUpdate' + str(index + 1) + pascal_case(update.variable.name) + ' :: BTreeEnvironment -> BTreeEnvironment' + os.linesep
+        #                 + indent(2) + 'tickUpdate' + str(index + 1) + pascal_case(update.variable.name) + ' environment' + handle_update_value(update.assign, update.variable.name, variable_type(update.variable), 2, None)
+        #                 + os.linesep
+        #                 + indent(2) + 'tempEnvironment' + str(index + 1) + ' = tickUpdate' + str(index + 1) + pascal_case(update.variable.name) + ' tempEnvironment' + str(index) + os.linesep
+        #                 + os.linesep
+        #             )
+        #             for index, update in enumerate(model.update)
+        #         ]
+        #     ) + os.linesep
+        #     + os.linesep + os.linesep
+        #     + 'initialEnvironment :: Int -> BTreeBlackboard -> BTreeEnvironment' + os.linesep
+        #     + 'initialEnvironment seed blackboard = BTreeEnvironment newSereneGenerator ' + ' '.join(map(lambda x : x['initial_name'], create_order)) + os.linesep
+        #     + indent(1) + 'where' + os.linesep
+        #     + indent(2) + 'tempGen0 = getGenerator seed' + os.linesep
+        #     + indent(2) + 'newSereneGenerator = tempGen' + str(len(create_order)) + os.linesep
+        #     + ''.join(
+        #         [
+        #             (
+        #                 indent(2) + variable_info['partial_name'] + ' = BTreeEnvironment newSereneGenerator' + order_partial_arguments(variable_info['initial_name'], create_order) + os.linesep
+        #                 + indent(2) + variable_info['initial_func'] + ' :: StdGen -> (' + variable_info['type'] + ', StdGen)' + os.linesep
+        #                 + indent(2) + variable_info['initial_func'] + ' curGen' + variable_info['initial_value']
+        #                 + os.linesep
+        #                 + indent(2) + '(' + variable_info['initial_name'] + ', tempGen' + str(index + 1) + ') = ' + variable_info['initial_func'] + ' tempGen' + str(index) + os.linesep
+        #                 + os.linesep
+        #             )
+        #             for index, variable_info in enumerate(create_order)
+        #         ]
+        #     ) + os.linesep
+        # )
 
     def create_blackboard(model):
         def walk_tree_recursive_blackboard(current_node, node_names, node_names_map, running_dict, running_int, location_info, running_create_order):
@@ -1506,17 +1877,43 @@ def dsl_to_haskell():
                         if variable.name not in running_dict:
                             running_dict[variable.name] = []
                         cur_assign = variable.assign
+                        cur_assigns = variable.assigns
+                        cur_array_mode = variable.array_mode
                         for initial_statement in current_node.init_statements:
                             if initial_statement.variable.name == variable.name:
                                 cur_assign = initial_statement.assign
+                                cur_assigns = initial_statement.assigns
+                                cur_array_mode = initial_statement.array_mode
                                 break
                         # todo: plan is to utilize this area to also create define indexes.
                         # we will simply have two ints, str(my_int) and then str(index), utilizing a double variable strategy.
                         # node location is necessary so that we can access other local variables.
-                        running_dict[variable.name].append(
-                            'localBoard' + pascal_case(variable.name) + ' ' + str(my_int) + ' blackboard' + create_macro(cur_assign, 0, None)  # init_mode none here because we are operating in a func
-                            + indent(1) + 'where nodeLocation = ' + str(my_int) + os.linesep
-                        )
+                        if is_array(variable):
+                            running_dict[variable.name].append(
+                                'localBoard' + pascal_case(variable.name) + str(my_int) + ' :: Int -> BTreeBlackboard -> ' + cur_type + os.linesep
+                                + ''.join(
+                                    map(
+                                        lambda index:
+                                        'localBoard' + pascal_case(variable.name) + str(my_int) + ' ' + str(index)
+                                        + ' = localBoard' + pascal_case(variable.name) + str(my_int) + 'Index' + str(index) + os.linesep,
+                                        range(handle_constant(variable.array_size, False))
+                                    )
+                                )
+                                + 'localBoard' + pascal_case(variable.name) + str(my_int) + ' _ = error "localBoard' + pascal_case(variable.name) + str(my_int) + ' illegal index"' + os.linesep
+                                + ''.join(
+                                    map(
+                                        lambda index:
+                                        'localBoard' + pascal_case(variable.name) + str(my_int) + 'Index' + str(index) + ' blackboard' + create_macro(cur_assign if cur_array_mode == 'range' else cur_assigns[index], 0, None, index)
+                                        + indent(1) + 'where nodeLocation = ' + str(my_int) + os.linesep,
+                                        range(handle_constant(variable.array_size, False))
+                                    )
+                                )
+                            )
+                        else:
+                            running_dict[variable.name].append(
+                                'localBoard' + pascal_case(variable.name) + ' ' + str(my_int) + ' blackboard' + create_macro(cur_assign, 0, None)  # init_mode none here because we are operating in a func
+                                + indent(1) + 'where nodeLocation = ' + str(my_int) + os.linesep
+                            )
                     else:
                         location_info.append((variable, my_int))
                         cur_assign = variable.assign
@@ -1572,27 +1969,25 @@ def dsl_to_haskell():
             )
 
         (_, _, local_macros, _, location_info, running_create_order) = walk_tree_recursive_blackboard(model.root, set(), {}, {}, -1, [], [])
-        create_order = []
-        for variable in filter(lambda var: (var.model_as != 'DEFINE' and is_blackboard(var)), model.variables):
-            for index in range(handle_constant(variable.array_size, False) if is_array(variable) else 1):
-                create_order.append(
-                    {
-                        'category_name' : 'board' + pascal_case(variable.name),
-                        'initial_name' : 'newVal' + pascal_case(variable.name) + (('Index' + str(index)) if is_array(variable) else ''),
-                        'initial_func' : 'initVal' + pascal_case(variable.name) + (('Index' + str(index)) if is_array(variable) else ''),
-                        'field_name' : 'board' + pascal_case(variable.name) + (('Index' + str(index)) if is_array(variable) else ''),
-                        'partial_name' : 'partialBlackboard' + pascal_case(variable.name) + (('Index' + str(index)) if is_array(variable) else ''),
-                        'type' : variable_type(variable),
-                        'default_arg' : get_default_arg(variable),
-                        'initial_value' : handle_initial_value(
-                            (variable.assign if ((not is_array(variable)) or variable.array_mode == 'range') else variable.assigns[index]),
-                            variable_type(variable), 2, 'board',
-                            'partialBlackboard' + pascal_case(variable.name) + (('Index' + str(index)) if is_array(variable) else ''),
-                            None, array_index = (index if is_array(variable) else None)),
-                        'model_as' : variable.model_as
-                    }
-                )
-        create_order += list(map(lambda x: x[1], filter(lambda x: not x[0], running_create_order))) + list(map(lambda x: x[1], filter(lambda x: x[0], running_create_order)))
+        create_order = [
+            {
+                'category_name' : 'board' + pascal_case(variable.name),
+                'initial_name' : 'newVal' + pascal_case(variable.name) + (('Index' + str(index)) if is_array(variable) else ''),
+                'initial_func' : 'initVal' + pascal_case(variable.name) + (('Index' + str(index)) if is_array(variable) else ''),
+                'field_name' : 'board' + pascal_case(variable.name) + (('Index' + str(index)) if is_array(variable) else ''),
+                'partial_name' : 'partialBlackboard' + pascal_case(variable.name) + (('Index' + str(index)) if is_array(variable) else ''),
+                'type' : variable_type(variable),
+                'default_arg' : get_default_arg(variable),
+                'initial_value' : handle_initial_value(
+                    (variable.assign if ((not is_array(variable)) or variable.array_mode == 'range') else variable.assigns[index]),
+                    variable_type(variable), 2, 'board',
+                    'partialBlackboard' + pascal_case(variable.name) + (('Index' + str(index)) if is_array(variable) else ''),
+                    None, array_index = (index if is_array(variable) else None)),
+                'model_as' : variable.model_as
+            }
+            for variable in filter(lambda var: (var.model_as != 'DEFINE' and is_blackboard(var)), model.variables)
+            for index in range(handle_constant(variable.array_size, False) if is_array(variable) else 1)
+        ] + list(map(lambda x: x[1], filter(lambda x: not x[0], running_create_order))) + list(map(lambda x: x[1], filter(lambda x: x[0], running_create_order)))
 
         local_var_to_nodes = {}
         for (variable, my_int) in location_info:
@@ -1601,262 +1996,263 @@ def dsl_to_haskell():
                 local_var_to_nodes[name].append(my_int)
             else:
                 local_var_to_nodes[name] = [my_int]
-        return (
-            'module BehaviorTreeBlackboard where' + os.linesep
-            + 'import SereneRandomizer' + os.linesep
-            + 'import System.Random' + os.linesep
-            + 'import SereneOperations' + os.linesep
-            + os.linesep
-            # end of imports.
-            # ---------------------------------------------------------------------------------------
-            + 'data BTreeBlackboard = BTreeBlackboard {' + os.linesep
-            + indent(1) + 'sereneBoardGenerator :: StdGen' + os.linesep
-            + ((indent(1) + ', ') if len(create_order) > 0 else '')
-            + (os.linesep + indent(1) + ', ').join([(variable_info['field_name'] + ' :: ' + variable_info['type']) for variable_info in create_order])
-            + (os.linesep if len(create_order) > 0 else '')
-            + indent(1) + '}' + os.linesep + os.linesep
-            + (
-                'instance Show BTreeBlackboard where' + os.linesep
-                + indent(1) + 'show (BTreeBlackboard _ '
-                + ' '.join(map(lambda x: x['field_name'], create_order))
-                + ') = '
-                + '"Board = {"'
-                + ' ++ '
-                + ' ++ '.join(
-                    [
-                        ('"' + variable_info['field_name'] + ': " ++ show ' + variable_info['field_name'])
-                        if index == 0
-                        else
-                        ('", ' + variable_info['field_name'] + ': " ++ show ' + variable_info['field_name'])
-                        for index, variable_info in enumerate(create_order)
-                    ]
-                )
-                + (' ++ ' if len(create_order) > 0 else '')
-                + '"}"' + os.linesep
-            )
-            # end of blackboard and show for the blackbord.
-            # ---------------------------------------------------------------------------------------
-            + os.linesep + '-- START OF BLACKBOARD FUNCTIONS' + os.linesep + os.linesep
-            + ''.join(
-                [
-                    (
-                        'board' + pascal_case(variable.name) + ' :: BTreeBlackboard -> ' + variable_type(variable) + os.linesep
-                        + 'board' + pascal_case(variable.name) + ' blackboard' + create_macro(variable.assign, 0, None, array_index = None)  # init_mode none here because we are operating in a func
-                    )
-                    for variable in model.variables if (variable.model_as == 'DEFINE' and is_blackboard(variable) and not is_array(variable))
-                ]
-            )
-            + ''.join(
-                map(
-                    lambda variable:
-                    'board' + pascal_case(variable.name) + ' :: Int -> BTreeBlackboard -> ' + variable_type(variable) + os.linesep
-                    + ''.join(
-                        map(
-                            lambda index:
-                            'board' + pascal_case(variable.name) + ' ' + str(index) + ' blackboard' + create_macro(variable.assign if variable.array_mode == 'range' else variable.assigns[index], 0, None, array_index = index),
-                            range(handle_constant(variable.array_size, False))
-                        )
-                    )
-                    + 'board' + pascal_case(variable.name) + ' _ _ = error "board' + pascal_case(variable.name) + ' illegal index value"' + os.linesep,
-                    filter(lambda variable: variable.model_as == 'DEFINE' and is_blackboard(variable) and is_array(variable), model.variables)
-                )
-            )
-            # created accessor functions for define non-local ---------------------------------------------------------------------------------------
-            + os.linesep + '-- START OF LOCAL BLACKBOARD FUNCTIONS' + os.linesep + os.linesep
-            + ''.join(
-                [
-                    (
-                        'localBoard' + pascal_case(variable.name) + ' :: Int -> BTreeBlackboard -> ' + variable_type(variable) + os.linesep
-                        + (
-                            ''.join(local_macros[variable.name])
-                            if variable.name in local_macros
-                            else
-                            ''
-                        )
-                        + 'localBoard' + pascal_case(variable.name) + ' _ _ = error "' + variable.name + ' illegal local reference"' + os.linesep
-                        # this one needs two _ because unlike the other one, we aren't doing eta reduction
-                        # we handle each case in the recursive call and now just need to combine them.
-                        # + 'localBoard' + pascal_case(variable.name) + ' nodeLocation blackboard' + create_macro(variable.assign, 0, None)  # init_mode none here because we are operating in a func
-                    )
-                    for variable in model.variables if (variable.model_as == 'DEFINE' and is_local(variable) and not is_array(variable))
-                ]
-            )
-            + ''.join(
-                map(
-                    lambda variable:
-                    'localBoard' + pascal_case(variable.name) + ' :: Int -> Int -> BTreeBlackboard -> ' + variable_type(variable) + os.linesep
-                    + ''.join(
-                        map(
-                            lambda index:
-                            'localBoard' + pascal_case(variable.name) + ' ' + str(index) + ' blackboard' + create_macro(variable.assign if variable.array_mode == 'range' else variable.assigns[index], 0, None, array_index = index),
-                            range(len(handle_constant(variable.array_size, False)))
-                        )
-                    )
-                    + 'localBoard' + pascal_case(variable.name) + ' _ _ = error "localBoard' + pascal_case(variable.name) + ' illegal index value"' + os.linesep,
-                    filter(lambda variable: variable.model_as == 'DEFINE' and is_local(variable) and is_array(variable), model.variables)
-                )
-            )
-            # created accessor functions for define local
-            # ---------------------------------------------------------------------------------------
-            + os.linesep + '-- START OF GET FUNCTIONS FOR LOCAL VARIABLES' + os.linesep + os.linesep
-            + ''.join(
-                [
-                    (
-                        'localBoard' + pascal_case(variable.name) + ' :: Int' + (' -> Int ' if is_array(variable) else ' ') + '-> BTreeBlackboard -> ' + variable_type(variable) + os.linesep
-                        + (
-                            ''.join(
-                                [
-                                    ('localBoard' + pascal_case(variable.name) + ' ' + str(number) + ' = localBoard' + pascal_case(variable.name) + str(number) + os.linesep)
-                                    for number in local_var_to_nodes[variable.name]
-                                ]
-                            )
-                            if variable.name in local_var_to_nodes
-                            else
-                            ''
-                        )
-                        + 'localBoard' + pascal_case(variable.name) + ' _ = error "' + variable.name + ' illegal local reference"' + os.linesep
-                    )
-                    for variable in model.variables if (variable.model_as != 'DEFINE' and is_local(variable))
-                ]
-            )
-            # the above creates accessor functions to get local variables. ---------------------------------------------------------------------------------------
-            + os.linesep + '-- START OF GET FUNCTIONS FOR ARRAYS' + os.linesep + os.linesep
-            + ''.join(
-                [
-                    'board' + pascal_case(variable.name) + ' :: Int -> BTreeBlackboard -> ' + variable_type(variable) + os.linesep
-                    + ''.join(
-                        [
-                            ('board' + pascal_case(variable.name) + ' ' + str(index) + ' = board' + pascal_case(variable.name) + 'Index' + str(index) + os.linesep)
-                            for index in range(handle_constant(variable.array_size, False))
-                        ]
-                    )
-                    + 'board' + pascal_case(variable.name) + ' _ = error "board' + pascal_case(variable.name) + ' illegal index value"' + os.linesep
-                    for variable in model.variables if (variable.model_as != 'DEFINE' and is_blackboard(variable) and is_array(variable))
-                ]
-            )
-            + ''.join(
-                [
-                    'localBoard' + pascal_case(variable.name) + str(variable_location) + ' :: Int -> BTreeBlackboard -> ' + variable_type(variable) + os.linesep
-                    + ''.join(
-                        [
-                            ('localBoard' + pascal_case(variable.name) + str(variable_location) + ' ' + str(index) + ' = localBoard' + pascal_case(variable.name) + str(variable_location) + 'Index' + str(index) + os.linesep)
-                            for index in range(handle_constant(variable.array_size, False))
-                        ]
-                    )
-                    + 'localBoard' + pascal_case(variable.name) + str(variable_location) + ' _ = error "localBoard' + pascal_case(variable.name) + str(variable_location) + ' illegal index value"' + os.linesep
-                    for variable in model.variables if (variable.model_as != 'DEFINE' and is_local(variable) and is_array(variable))
-                    for variable_location in local_var_to_nodes[variable.name]
-                ]
-            )
-            # end of array variable indexing for non-define variables
-            # ---------------------------------------------------------------------------------------
-            + os.linesep + '-- START OF TYPE CHECKING FUNCTIONS' + os.linesep + os.linesep
-            + ''.join(map(lambda var: create_check_value(var), filter(lambda var : var.model_as == 'VAR' and not is_env(var), model.variables)))
-            # created checkValue for each blackboard and local variable that can be updated.
-            # ---------------------------------------------------------------------------------------
-            + os.linesep + '-- START OF SET FUNCTIONS' + os.linesep + os.linesep
-            + 'updateBoardGenerator :: BTreeBlackboard -> StdGen -> BTreeBlackboard' + os.linesep
-            + 'updateBoardGenerator blackboard newGen = blackboard { sereneBoardGenerator = newGen }' + os.linesep
-            # created an update for the random number generator
-            # ---------------------------------------------------------------------------------------
-            + ''.join(
-                map(
-                    lambda var:
-                    (
-                        'updateLocalBoard' + pascal_case(var.name) + ' :: Int -> BTreeBlackboard -> ' + variable_type(var) + ' -> BTreeBlackboard' + os.linesep
-                        + ''.join(
-                            map(
-                                lambda local_number:
-                                ('updateLocalBoard' + pascal_case(var.name) + ' ' + str(local_number) + ' = updateLocalBoard' + pascal_case(var.name) + str(local_number) + os.linesep)
-                                ,
-                                (local_var_to_nodes[var.name] if var.name in local_var_to_nodes else [])
-                            )
-                        )
-                        + 'updateLocalBoard' + pascal_case(var.name) + ' _ = error "localBoard' + pascal_case(var.name) + ' illegal local reference"' + os.linesep
-                    ),
-                    filter(lambda var: (var.model_as == 'VAR' and is_local(var) and not is_array(var)), model.variables)
-                )
-            )
-            # created updaters for local variables which switches based on node location
-            # ---------------------------------------------------------------------------------------
-            + ''.join(
-                [
-                    (
-                        'update' + pascal_case(variable['field_name']) + ' :: BTreeBlackboard -> ' + variable['type'] + ' -> BTreeBlackboard' + os.linesep
-                        + 'update' + pascal_case(variable['field_name']) + ' blackboard value = blackboard { ' + variable['field_name'] + ' = (checkValue' + pascal_case(variable['category_name']) + ' value)}' + os.linesep
-                    )
-                    for variable in create_order if variable['model_as'] == 'VAR'
-                ]
-            )
-            # created updaters for all fields. these are direct updaters. local variables reference these, as do array variables. these reference checkValue, see below.
-            # ---------------------------------------------------------------------------------------
-            + os.linesep + '-- START OF SET FUNCTIONS FOR ARRAYS' + os.linesep + os.linesep
-            + ''.join(
-                map(
-                    lambda variable:
-                    (
-                        array_set_creator(variable, local_number = None)
-                        if is_blackboard(variable)
-                        else
-                        ''.join(
-                            'updateLocalBoard' + pascal_case(variable.name) + ' :: Int -> Int -> BTreeBlackboard -> ' + variable_type(variable) + ' -> BTreeBlackboard' + os.linesep
-                            + ''.join(
-                                map(
-                                    lambda location:
-                                    'updateLocalBoard' + pascal_case(variable.name) + ' ' + str(location) + ' = updateLocalBoard' + pascal_case(variable.name) + str(location) + os.linesep
-                                    ,
-                                    local_var_to_nodes[variable.name]
-                                )
-                            )
-                            + 'updateLocalBoard' + pascal_case(variable.name) + ' _ = error "localBoard' + pascal_case(variable.name) + ' illegal local reference"' + os.linesep
-                            + 'arrayUpdateLocalBoard' + pascal_case(variable.name) + ' :: Int -> BTreeBlackboard -> [(Int, ' + variable_type(variable) + ')] -> BTreeBlackboard' + os.linesep
-                            + ''.join(
-                                map(
-                                    lambda location:
-                                    'arrayUpdateLocalBoard' + pascal_case(variable.name) + ' ' + str(location) + ' = arrayUpdateLocalBoard' + pascal_case(variable.name) + str(location) + os.linesep
-                                    ,
-                                    local_var_to_nodes[variable.name]
-                                )
-                            )
-                            + 'arrayUpdateLocalBoard' + pascal_case(variable.name) + ' _ = error "localBoard' + pascal_case(variable.name) + ' illegal local reference"' + os.linesep
-                            + ''.join(
-                                map(
-                                    lambda location:
-                                    array_set_creator(variable, local_number = location)
-                                    ,
-                                    local_var_to_nodes[variable.name]
-                                )
-                            )
-                        )
-                    )
-                    ,
-                    filter(lambda variable: is_array(variable) and not is_env(variable) and variable.model_as == 'VAR', model.variables)
-                )
-            )
-            # end of array update functions for variables in the blackboard.
-            # ---------------------------------------------------------------------------------------
-            + os.linesep + '-- START OF INITIAL BLACKBOARD VALUE' + os.linesep + os.linesep
-            + 'initialBlackboard :: Int -> BTreeBlackboard' + os.linesep
-            + 'initialBlackboard seed = BTreeBlackboard newSereneGenerator ' + ' '.join(map(lambda x : x['initial_name'], create_order))
-            + indent(1) + 'where' + os.linesep
-            + indent(2) + 'tempGen0 = getGenerator seed' + os.linesep
-            + indent(2) + 'newSereneGenerator = tempGen' + str(len(create_order)) + os.linesep
-            + ''.join(
-                [
-                    (
-                        indent(2) + variable_info['partial_name'] + ' = BTreeBlackboard newSereneGenerator' + order_partial_arguments(variable_info['initial_name'], create_order) + os.linesep
-                        + indent(2) + variable_info['initial_func'] + ' :: StdGen -> (' + variable_info['type'] + ', StdGen)' + os.linesep
-                        + indent(2) + variable_info['initial_func'] + ' curGen' + variable_info['initial_value']
-                        + os.linesep
-                        + indent(2) + '(' + variable_info['initial_name'] + ', tempGen' + str(index + 1) + ') = ' + variable_info['initial_func'] + ' tempGen' + str(index) + os.linesep
-                        + os.linesep
-                    )
-                    for index, variable_info in enumerate(create_order)
-                ]
-            )
-            + os.linesep
-            # created initial blackboard. ---------------------------------------------------------------------------------------
-        )
+        return handle_blackboard_environment(create_order, True, local_macros, local_var_to_nodes)
+        # return (
+        #     'module BehaviorTreeBlackboard where' + os.linesep
+        #     + 'import SereneRandomizer' + os.linesep
+        #     + 'import System.Random' + os.linesep
+        #     + 'import SereneOperations' + os.linesep
+        #     + os.linesep
+        #     # end of imports.
+        #     # ---------------------------------------------------------------------------------------
+        #     + 'data BTreeBlackboard = BTreeBlackboard {' + os.linesep
+        #     + indent(1) + 'sereneBoardGenerator :: StdGen' + os.linesep
+        #     + ((indent(1) + ', ') if len(create_order) > 0 else '')
+        #     + (os.linesep + indent(1) + ', ').join([(variable_info['field_name'] + ' :: ' + variable_info['type']) for variable_info in create_order])
+        #     + (os.linesep if len(create_order) > 0 else '')
+        #     + indent(1) + '}' + os.linesep + os.linesep
+        #     + (
+        #         'instance Show BTreeBlackboard where' + os.linesep
+        #         + indent(1) + 'show (BTreeBlackboard _ '
+        #         + ' '.join(map(lambda x: x['field_name'], create_order))
+        #         + ') = '
+        #         + '"Board = {"'
+        #         + ' ++ '
+        #         + ' ++ '.join(
+        #             [
+        #                 ('"' + variable_info['field_name'] + ': " ++ show ' + variable_info['field_name'])
+        #                 if index == 0
+        #                 else
+        #                 ('", ' + variable_info['field_name'] + ': " ++ show ' + variable_info['field_name'])
+        #                 for index, variable_info in enumerate(create_order)
+        #             ]
+        #         )
+        #         + (' ++ ' if len(create_order) > 0 else '')
+        #         + '"}"' + os.linesep
+        #     )
+        #     # end of blackboard and show for the blackbord.
+        #     # ---------------------------------------------------------------------------------------
+        #     + os.linesep + '-- START OF BLACKBOARD FUNCTIONS' + os.linesep + os.linesep
+        #     + ''.join(
+        #         [
+        #             (
+        #                 'board' + pascal_case(variable.name) + ' :: BTreeBlackboard -> ' + variable_type(variable) + os.linesep
+        #                 + 'board' + pascal_case(variable.name) + ' blackboard' + create_macro(variable.assign, 0, None, array_index = None)  # init_mode none here because we are operating in a func
+        #             )
+        #             for variable in model.variables if (variable.model_as == 'DEFINE' and is_blackboard(variable) and not is_array(variable))
+        #         ]
+        #     )
+        #     + ''.join(
+        #         map(
+        #             lambda variable:
+        #             'board' + pascal_case(variable.name) + ' :: Int -> BTreeBlackboard -> ' + variable_type(variable) + os.linesep
+        #             + ''.join(
+        #                 map(
+        #                     lambda index:
+        #                     'board' + pascal_case(variable.name) + ' ' + str(index) + ' blackboard' + create_macro(variable.assign if variable.array_mode == 'range' else variable.assigns[index], 0, None, array_index = index),
+        #                     range(handle_constant(variable.array_size, False))
+        #                 )
+        #             )
+        #             + 'board' + pascal_case(variable.name) + ' _ _ = error "board' + pascal_case(variable.name) + ' illegal index value"' + os.linesep,
+        #             filter(lambda variable: variable.model_as == 'DEFINE' and is_blackboard(variable) and is_array(variable), model.variables)
+        #         )
+        #     )
+        #     # created accessor functions for define non-local ---------------------------------------------------------------------------------------
+        #     + os.linesep + '-- START OF LOCAL BLACKBOARD FUNCTIONS' + os.linesep + os.linesep
+        #     + ''.join(
+        #         [
+        #             (
+        #                 'localBoard' + pascal_case(variable.name) + ' :: Int -> BTreeBlackboard -> ' + variable_type(variable) + os.linesep
+        #                 + (
+        #                     ''.join(local_macros[variable.name])
+        #                     if variable.name in local_macros
+        #                     else
+        #                     ''
+        #                 )
+        #                 + 'localBoard' + pascal_case(variable.name) + ' _ _ = error "' + variable.name + ' illegal local reference"' + os.linesep
+        #                 # this one needs two _ because unlike the other one, we aren't doing eta reduction
+        #                 # we handle each case in the recursive call and now just need to combine them.
+        #                 # + 'localBoard' + pascal_case(variable.name) + ' nodeLocation blackboard' + create_macro(variable.assign, 0, None)  # init_mode none here because we are operating in a func
+        #             )
+        #             for variable in model.variables if (variable.model_as == 'DEFINE' and is_local(variable) and not is_array(variable))
+        #         ]
+        #     )
+        #     + ''.join(
+        #         map(
+        #             lambda variable:
+        #             'localBoard' + pascal_case(variable.name) + ' :: Int -> Int -> BTreeBlackboard -> ' + variable_type(variable) + os.linesep
+        #             + ''.join(
+        #                 map(
+        #                     lambda index:
+        #                     'localBoard' + pascal_case(variable.name) + ' ' + str(index) + ' blackboard' + create_macro(variable.assign if variable.array_mode == 'range' else variable.assigns[index], 0, None, array_index = index),
+        #                     range(len(handle_constant(variable.array_size, False)))
+        #                 )
+        #             )
+        #             + 'localBoard' + pascal_case(variable.name) + ' _ _ = error "localBoard' + pascal_case(variable.name) + ' illegal index value"' + os.linesep,
+        #             filter(lambda variable: variable.model_as == 'DEFINE' and is_local(variable) and is_array(variable), model.variables)
+        #         )
+        #     )
+        #     # created accessor functions for define local
+        #     # ---------------------------------------------------------------------------------------
+        #     + os.linesep + '-- START OF GET FUNCTIONS FOR LOCAL VARIABLES' + os.linesep + os.linesep
+        #     + ''.join(
+        #         [
+        #             (
+        #                 'localBoard' + pascal_case(variable.name) + ' :: Int' + (' -> Int ' if is_array(variable) else ' ') + '-> BTreeBlackboard -> ' + variable_type(variable) + os.linesep
+        #                 + (
+        #                     ''.join(
+        #                         [
+        #                             ('localBoard' + pascal_case(variable.name) + ' ' + str(number) + ' = localBoard' + pascal_case(variable.name) + str(number) + os.linesep)
+        #                             for number in local_var_to_nodes[variable.name]
+        #                         ]
+        #                     )
+        #                     if variable.name in local_var_to_nodes
+        #                     else
+        #                     ''
+        #                 )
+        #                 + 'localBoard' + pascal_case(variable.name) + ' _ = error "' + variable.name + ' illegal local reference"' + os.linesep
+        #             )
+        #             for variable in model.variables if (variable.model_as != 'DEFINE' and is_local(variable))
+        #         ]
+        #     )
+        #     # the above creates accessor functions to get local variables. ---------------------------------------------------------------------------------------
+        #     + os.linesep + '-- START OF GET FUNCTIONS FOR ARRAYS' + os.linesep + os.linesep
+        #     + ''.join(
+        #         [
+        #             'board' + pascal_case(variable.name) + ' :: Int -> BTreeBlackboard -> ' + variable_type(variable) + os.linesep
+        #             + ''.join(
+        #                 [
+        #                     ('board' + pascal_case(variable.name) + ' ' + str(index) + ' = board' + pascal_case(variable.name) + 'Index' + str(index) + os.linesep)
+        #                     for index in range(handle_constant(variable.array_size, False))
+        #                 ]
+        #             )
+        #             + 'board' + pascal_case(variable.name) + ' _ = error "board' + pascal_case(variable.name) + ' illegal index value"' + os.linesep
+        #             for variable in model.variables if (variable.model_as != 'DEFINE' and is_blackboard(variable) and is_array(variable))
+        #         ]
+        #     )
+        #     + ''.join(
+        #         [
+        #             'localBoard' + pascal_case(variable.name) + str(variable_location) + ' :: Int -> BTreeBlackboard -> ' + variable_type(variable) + os.linesep
+        #             + ''.join(
+        #                 [
+        #                     ('localBoard' + pascal_case(variable.name) + str(variable_location) + ' ' + str(index) + ' = localBoard' + pascal_case(variable.name) + str(variable_location) + 'Index' + str(index) + os.linesep)
+        #                     for index in range(handle_constant(variable.array_size, False))
+        #                 ]
+        #             )
+        #             + 'localBoard' + pascal_case(variable.name) + str(variable_location) + ' _ = error "localBoard' + pascal_case(variable.name) + str(variable_location) + ' illegal index value"' + os.linesep
+        #             for variable in model.variables if (variable.model_as != 'DEFINE' and is_local(variable) and is_array(variable))
+        #             for variable_location in local_var_to_nodes[variable.name]
+        #         ]
+        #     )
+        #     # end of array variable indexing for non-define variables
+        #     # ---------------------------------------------------------------------------------------
+        #     + os.linesep + '-- START OF TYPE CHECKING FUNCTIONS' + os.linesep + os.linesep
+        #     + ''.join(map(lambda var: create_check_value(var), filter(lambda var : var.model_as == 'VAR' and not is_env(var), model.variables)))
+        #     # created checkValue for each blackboard and local variable that can be updated.
+        #     # ---------------------------------------------------------------------------------------
+        #     + os.linesep + '-- START OF SET FUNCTIONS' + os.linesep + os.linesep
+        #     + 'updateBoardGenerator :: BTreeBlackboard -> StdGen -> BTreeBlackboard' + os.linesep
+        #     + 'updateBoardGenerator blackboard newGen = blackboard { sereneBoardGenerator = newGen }' + os.linesep
+        #     # created an update for the random number generator
+        #     # ---------------------------------------------------------------------------------------
+        #     + ''.join(
+        #         map(
+        #             lambda var:
+        #             (
+        #                 'updateLocalBoard' + pascal_case(var.name) + ' :: Int -> BTreeBlackboard -> ' + variable_type(var) + ' -> BTreeBlackboard' + os.linesep
+        #                 + ''.join(
+        #                     map(
+        #                         lambda local_number:
+        #                         ('updateLocalBoard' + pascal_case(var.name) + ' ' + str(local_number) + ' = updateLocalBoard' + pascal_case(var.name) + str(local_number) + os.linesep)
+        #                         ,
+        #                         (local_var_to_nodes[var.name] if var.name in local_var_to_nodes else [])
+        #                     )
+        #                 )
+        #                 + 'updateLocalBoard' + pascal_case(var.name) + ' _ = error "localBoard' + pascal_case(var.name) + ' illegal local reference"' + os.linesep
+        #             ),
+        #             filter(lambda var: (var.model_as == 'VAR' and is_local(var) and not is_array(var)), model.variables)
+        #         )
+        #     )
+        #     # created updaters for local variables which switches based on node location
+        #     # ---------------------------------------------------------------------------------------
+        #     + ''.join(
+        #         [
+        #             (
+        #                 'update' + pascal_case(variable['field_name']) + ' :: BTreeBlackboard -> ' + variable['type'] + ' -> BTreeBlackboard' + os.linesep
+        #                 + 'update' + pascal_case(variable['field_name']) + ' blackboard value = blackboard { ' + variable['field_name'] + ' = (checkValue' + pascal_case(variable['category_name']) + ' value)}' + os.linesep
+        #             )
+        #             for variable in create_order if variable['model_as'] == 'VAR'
+        #         ]
+        #     )
+        #     # created updaters for all fields. these are direct updaters. local variables reference these, as do array variables. these reference checkValue, see below.
+        #     # ---------------------------------------------------------------------------------------
+        #     + os.linesep + '-- START OF SET FUNCTIONS FOR ARRAYS' + os.linesep + os.linesep
+        #     + ''.join(
+        #         map(
+        #             lambda variable:
+        #             (
+        #                 array_set_creator(variable, local_number = None)
+        #                 if is_blackboard(variable)
+        #                 else
+        #                 ''.join(
+        #                     'updateLocalBoard' + pascal_case(variable.name) + ' :: Int -> Int -> BTreeBlackboard -> ' + variable_type(variable) + ' -> BTreeBlackboard' + os.linesep
+        #                     + ''.join(
+        #                         map(
+        #                             lambda location:
+        #                             'updateLocalBoard' + pascal_case(variable.name) + ' ' + str(location) + ' = updateLocalBoard' + pascal_case(variable.name) + str(location) + os.linesep
+        #                             ,
+        #                             local_var_to_nodes[variable.name]
+        #                         )
+        #                     )
+        #                     + 'updateLocalBoard' + pascal_case(variable.name) + ' _ = error "localBoard' + pascal_case(variable.name) + ' illegal local reference"' + os.linesep
+        #                     + 'arrayUpdateLocalBoard' + pascal_case(variable.name) + ' :: Int -> BTreeBlackboard -> [(Int, ' + variable_type(variable) + ')] -> BTreeBlackboard' + os.linesep
+        #                     + ''.join(
+        #                         map(
+        #                             lambda location:
+        #                             'arrayUpdateLocalBoard' + pascal_case(variable.name) + ' ' + str(location) + ' = arrayUpdateLocalBoard' + pascal_case(variable.name) + str(location) + os.linesep
+        #                             ,
+        #                             local_var_to_nodes[variable.name]
+        #                         )
+        #                     )
+        #                     + 'arrayUpdateLocalBoard' + pascal_case(variable.name) + ' _ = error "localBoard' + pascal_case(variable.name) + ' illegal local reference"' + os.linesep
+        #                     + ''.join(
+        #                         map(
+        #                             lambda location:
+        #                             array_set_creator(variable, local_number = location)
+        #                             ,
+        #                             local_var_to_nodes[variable.name]
+        #                         )
+        #                     )
+        #                 )
+        #             )
+        #             ,
+        #             filter(lambda variable: is_array(variable) and not is_env(variable) and variable.model_as == 'VAR', model.variables)
+        #         )
+        #     )
+        #     # end of array update functions for variables in the blackboard.
+        #     # ---------------------------------------------------------------------------------------
+        #     + os.linesep + '-- START OF INITIAL BLACKBOARD VALUE' + os.linesep + os.linesep
+        #     + 'initialBlackboard :: Int -> BTreeBlackboard' + os.linesep
+        #     + 'initialBlackboard seed = BTreeBlackboard newSereneGenerator ' + ' '.join(map(lambda x : x['initial_name'], create_order))
+        #     + indent(1) + 'where' + os.linesep
+        #     + indent(2) + 'tempGen0 = getGenerator seed' + os.linesep
+        #     + indent(2) + 'newSereneGenerator = tempGen' + str(len(create_order)) + os.linesep
+        #     + ''.join(
+        #         [
+        #             (
+        #                 indent(2) + variable_info['partial_name'] + ' = BTreeBlackboard newSereneGenerator' + order_partial_arguments(variable_info['initial_name'], create_order) + os.linesep
+        #                 + indent(2) + variable_info['initial_func'] + ' :: StdGen -> (' + variable_info['type'] + ', StdGen)' + os.linesep
+        #                 + indent(2) + variable_info['initial_func'] + ' curGen' + variable_info['initial_value']
+        #                 + os.linesep
+        #                 + indent(2) + '(' + variable_info['initial_name'] + ', tempGen' + str(index + 1) + ') = ' + variable_info['initial_func'] + ' tempGen' + str(index) + os.linesep
+        #                 + os.linesep
+        #             )
+        #             for index, variable_info in enumerate(create_order)
+        #         ]
+        #     )
+        #     + os.linesep
+        #     # created initial blackboard. ---------------------------------------------------------------------------------------
+        # )
 
     randomizer = (
             'module SereneRandomizer where' + os.linesep
@@ -1926,6 +2322,7 @@ def dsl_to_haskell():
     }
 
     validate_model(model, constants)
+    constants['serene_index'] = []
 
     my_location = args.location + 'app/'
 

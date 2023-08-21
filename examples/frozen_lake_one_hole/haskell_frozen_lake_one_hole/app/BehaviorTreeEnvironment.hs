@@ -1,8 +1,8 @@
 module BehaviorTreeEnvironment where
 import SereneRandomizer
 import System.Random
-import BehaviorTreeBlackboard
 import SereneOperations
+import BehaviorTreeBlackboard
 
 data BTreeEnvironment = BTreeEnvironment {
   sereneEnvGenerator :: StdGen
@@ -16,43 +16,53 @@ data BTreeEnvironment = BTreeEnvironment {
 instance Show BTreeEnvironment where
   show (BTreeEnvironment _ envStartLoc envGoalLoc envLoc envHoleLoc envFallsRemaining) = "Env = {" ++ "envStartLoc: " ++ show envStartLoc ++ ", envGoalLoc: " ++ show envGoalLoc ++ ", envLoc: " ++ show envLoc ++ ", envHoleLoc: " ++ show envHoleLoc ++ ", envFallsRemaining: " ++ show envFallsRemaining ++ "}"
 
+-- START OF ENVIRONMENT FUNCTIONS
 
 envXLoc :: BTreeBlackboard -> BTreeEnvironment -> Int
 envXLoc blackboard environment = (rem (envLoc environment) 4)
 envYLoc :: BTreeBlackboard -> BTreeEnvironment -> Int
 envYLoc blackboard environment = (quot ((envLoc environment) - (envXLoc blackboard environment)) 4)
 
+-- START OF GET FUNCTIONS FOR ARRAYS
+
+
+-- START OF TYPE CHECKING FUNCTIONS
+
+checkValueEnvLoc :: Int -> Int
+checkValueEnvLoc value
+  | 0 > value || value > 15 = error "envLoc illegal value"
+  | otherwise = value
+
+checkValueEnvFallsRemaining :: Int -> Int
+checkValueEnvFallsRemaining value
+  | (-1) > value || value > 1 = error "envFallsRemaining illegal value"
+  | otherwise = value
+
+
+-- START OF SET FUNCTIONS
 
 updateEnvGenerator :: BTreeEnvironment -> StdGen -> BTreeEnvironment
 updateEnvGenerator environment newGen = environment { sereneEnvGenerator = newGen }
-updateEnvStartLoc :: BTreeEnvironment -> Int -> BTreeEnvironment
-updateEnvStartLoc environment _ = environment
-
-updateEnvGoalLoc :: BTreeEnvironment -> Int -> BTreeEnvironment
-updateEnvGoalLoc environment _ = environment
-
 updateEnvLoc :: BTreeEnvironment -> Int -> BTreeEnvironment
-updateEnvLoc environment value
-  | 0 > value || value > 15 = error "loc illegal value"
-  | otherwise = environment { envLoc = value }
-
-updateEnvHoleLoc :: BTreeEnvironment -> Int -> BTreeEnvironment
-updateEnvHoleLoc environment _ = environment
-
+updateEnvLoc environment value = environment { envLoc = (checkValueEnvLoc value)}
 updateEnvFallsRemaining :: BTreeEnvironment -> Int -> BTreeEnvironment
-updateEnvFallsRemaining environment value
-  | (-1) > value || value > 1 = error "falls_remaining illegal value"
-  | otherwise = environment { envFallsRemaining = value }
+updateEnvFallsRemaining environment value = environment { envFallsRemaining = (checkValueEnvFallsRemaining value)}
+
+-- START OF SET FUNCTIONS FOR ARRAYS
+
+
+-- START OF TICK CONDITION
 
 checkTickConditionTermination :: BTreeBlackboard -> BTreeEnvironment -> Bool
 checkTickConditionTermination blackboard environment = True
 
-modifiedID :: BTreeBlackboard -> BTreeEnvironment -> BTreeEnvironment
-modifiedID _ environment = environment
+-- START OF FUTURE CHANGES
+
 applyFutureChanges :: [(BTreeBlackboard, BTreeEnvironment) -> (BTreeBlackboard, BTreeEnvironment)] -> (BTreeBlackboard, BTreeEnvironment) -> (BTreeBlackboard, BTreeEnvironment)
 applyFutureChanges [] = id
 applyFutureChanges futureChanges = head futureChanges . applyFutureChanges (tail futureChanges)
 
+-- START OF BETWEEN TICK CHANGES
 
 betweenTickUpdate :: (BTreeBlackboard, BTreeEnvironment) -> (BTreeBlackboard, BTreeEnvironment)
 betweenTickUpdate (blackboard, curEnvironment) = (blackboard, newEnvironment)
@@ -79,10 +89,10 @@ betweenTickUpdate (blackboard, curEnvironment) = (blackboard, newEnvironment)
 
 
 
+-- START OF INITIAL ENVIRONMENT VALUE
 
 initialEnvironment :: Int -> BTreeBlackboard -> BTreeEnvironment
-initialEnvironment seed blackboard = BTreeEnvironment newSereneGenerator newValStartLoc newValGoalLoc newValLoc newValHoleLoc newValFallsRemaining
-  where
+initialEnvironment seed blackboard = BTreeEnvironment newSereneGenerator newValStartLoc newValGoalLoc newValLoc newValHoleLoc newValFallsRemaining  where
     tempGen0 = getGenerator seed
     newSereneGenerator = tempGen5
     partialEnvironmentStartLoc = BTreeEnvironment newSereneGenerator 0 0 0 0 0
