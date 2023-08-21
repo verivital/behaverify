@@ -27,17 +27,20 @@ actionOne _ nodeLocation _ _ _ _ oldBlackboard oldEnvironment futureChanges = (r
       where
         (blackboard, environment) = boardEnv
     boardEnvUpdate1 :: (BTreeBlackboard, BTreeEnvironment) -> (BTreeBlackboard, BTreeEnvironment)
-    boardEnvUpdate1 boardEnv = (arrayUpdateLocalBoardBar nodeLocation blackboard updates, environment)
+    boardEnvUpdate1 boardEnv = (arrayUpdateLocalBoardBar nodeLocation (updateBoardGenerator blackboard randomGenerator2) updates, environment)
       where
         (blackboard, environment) = boardEnv
+        randomGenerator0 = sereneBoardGenerator blackboard
+        randomGenerator1 = snd (getRandomInt randomGenerator0 1)
+        randomGenerator2 = snd (getRandomInt randomGenerator1 1)
         updates = [updatePair0, updatePair1, updatePair2]
         updatePair0 = (0, updateValue0)
         updatePair1 = (1, updateValue1)
         updatePair2 = (2, updateValue2)
         updateValue0
-          | ("increase" == (localBoardBar nodeLocation 0 blackboard)) = "decrease"
-          | ("decrease" == (localBoardBar nodeLocation 0 blackboard)) = "nope"
-          | otherwise = "increase"
+          | ("increase" == (localBoardBar nodeLocation 0 blackboard)) = privateRandom1 (fst (getRandomInt randomGenerator0 1))
+          | ("decrease" == (localBoardBar nodeLocation 0 blackboard)) = privateRandom2 (fst (getRandomInt randomGenerator0 1))
+          | otherwise = privateRandom0 (fst (getRandomInt randomGenerator0 1))
           where
             (blackboard, environment) = boardEnv
             privateRandom1 :: Int -> String
@@ -50,9 +53,9 @@ actionOne _ nodeLocation _ _ _ _ oldBlackboard oldEnvironment futureChanges = (r
             privateRandom0 0 = "increase"
             privateRandom0 _ = "decrease"
         updateValue1
-          | ("increase" == (localBoardBar nodeLocation 1 blackboard)) = "decrease"
-          | ("decrease" == (localBoardBar nodeLocation 1 blackboard)) = "nope"
-          | otherwise = "increase"
+          | ("increase" == (localBoardBar nodeLocation 1 blackboard)) = privateRandom1 (fst (getRandomInt randomGenerator1 1))
+          | ("decrease" == (localBoardBar nodeLocation 1 blackboard)) = privateRandom2 (fst (getRandomInt randomGenerator1 1))
+          | otherwise = privateRandom0 (fst (getRandomInt randomGenerator1 1))
           where
             (blackboard, environment) = boardEnv
             privateRandom1 :: Int -> String
@@ -65,9 +68,9 @@ actionOne _ nodeLocation _ _ _ _ oldBlackboard oldEnvironment futureChanges = (r
             privateRandom0 0 = "increase"
             privateRandom0 _ = "decrease"
         updateValue2
-          | ("increase" == (localBoardBar nodeLocation 2 blackboard)) = "decrease"
-          | ("decrease" == (localBoardBar nodeLocation 2 blackboard)) = "nope"
-          | otherwise = "increase"
+          | ("increase" == (localBoardBar nodeLocation 2 blackboard)) = privateRandom1 (fst (getRandomInt randomGenerator2 1))
+          | ("decrease" == (localBoardBar nodeLocation 2 blackboard)) = privateRandom2 (fst (getRandomInt randomGenerator2 1))
+          | otherwise = privateRandom0 (fst (getRandomInt randomGenerator2 1))
           where
             (blackboard, environment) = boardEnv
             privateRandom1 :: Int -> String
