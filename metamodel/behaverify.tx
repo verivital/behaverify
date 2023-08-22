@@ -140,7 +140,7 @@ node:
     ((model_as = 'VAR' domain = variable_domain) |
     (model_as = 'FROZENVAR' domain = variable_domain) |
     (model_as = 'DEFINE' ((domain = 'INT') | (domain = 'ENUM') | (domain = 'BOOLEAN'))))
-    ((array_mode = 'range' assign = assign_value) | (array_mode = '' assigns += assign_value)))
+    ((array_mode = 'range' assign = assign_value) | (array_mode = 'per_index' assigns += assign_value)))
     |
     (((model_as = 'VAR' domain = variable_domain) |
     (model_as = 'FROZENVAR' domain = variable_domain) |
@@ -220,28 +220,32 @@ statement:
     'variable_statement' '{'
     instant ?= 'instant'
     variable = [variable]
-    ((array_mode = 'range'
-    (',' values = int_or_reference ',' values = int_or_reference ',' values = range_code)?
-    ((constant_index = 'constant_index' assign = array_index_constant) |
-    (constant_index = '' assign = array_index)))
-    //in the above we are using a range variable to index into an array.
-    //the variable MUST be an array
+    //start of variable match. this will go through array range, array per_index, and non-array
+    (
+    (array_mode = 'range' (',' values = int_or_reference ',' values = int_or_reference ',' values = range_code)?
+    ((constant_index = 'constant_index' assign = array_index_constant) | (constant_index = '' assign = array_index)))
+    //in the above we are using a range variable to index into an array. the variable MUST be an array
     |
-    //in the below there is no range variable.
-    //the variable CAN be an array
+    (array_mode = 'per_index'
+    ((constant_index = 'constant_index' assigns += array_index_constant) | (constant_index = '' assigns += array_index)))
+    //in the above we are indexing without a range variable. the variable MUST be an array
+    |
     (array_mode = ''
-    ((constant_index = 'constant_index' assigns += array_index_constant) |
-    (constant_index = '' assigns += array_index) |
-    (constant_index = '' assign = assign_value))))
+    (constant_index = '' assign = assign_value))
+    )
     '}' ('end_variable_statement')?
     ;
 
     variable_statement_initial:
     'variable_statement' '{'
     variable = [variable]
-    ((array_mode = '' assign = assign_value) |
-    (array_mode = 'range' assign = assign_value) |
-    (array_mode = '' assigns += assign_value))
+    (
+    (array_mode = 'range' assign = assign_value)
+    |
+    (array_mode = 'per_index' assigns += assign_value)
+    |
+    (array_mode = '' assign = assign_value)
+    )
     '}' ('end_variable_statement')?
 ;
     

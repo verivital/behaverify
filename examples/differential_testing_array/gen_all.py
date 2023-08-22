@@ -50,13 +50,12 @@ def get_status():
 
 def domain_compare(cur_var, domain):
     if domain == 'int':
-        return cur_var['domain'] in {'int_pos', 'int_neg'}
-    elif domain == 'bool':
+        return cur_var['domain'] in {'int_pos', 'int_neg', 'unbound'}
+    if domain == 'bool':
         return cur_var['domain'] == 'bool'
-    elif domain == 'enum':
+    if domain == 'enum':
         return cur_var['domain'] == 'enum'
-    else:
-        return True
+    return True
 
 
 def get_var(bl, local, env, var_only, domain):
@@ -89,7 +88,8 @@ def create_int_value(depth_left, bl, local, env):
         depth_left = random.randint(0, STATEMENT_DEPTH)
     if depth_left == 0:
         if random.choice([True, False]):
-            return random.choice(CONSTANTS_INT)
+            #return random.choice(CONSTANTS_INT)
+            return str(random.randint(-100, 100))
         ret_var = get_var(bl, local, env, False, 'int')
         if ret_var is None:
             return random.choice(CONSTANTS_INT)
@@ -176,6 +176,7 @@ def create_check_node(name):
     CUR_TIMES_INDEXED = 0
     return (indent(1) + 'check {' + os.linesep
             + indent(2) + name + os.linesep
+            + indent(2) + 'arguments{}' + os.linesep
             + indent(2) + 'read_variables ' + VAR_BL_STRING + os.linesep
             + indent(2) + 'condition{' + create_bool_value(-1, True, [], False) + '}' + os.linesep
             + indent(1) + '}' + os.linesep
@@ -186,6 +187,7 @@ def create_check_env_node(name):
     CUR_TIMES_INDEXED = 0
     return (indent(1) + 'check_environment {' + os.linesep
             + indent(2) + name + os.linesep
+            + indent(2) + 'arguments{}' + os.linesep
             + indent(2) + 'read_variables ' + VAR_BL_STRING + os.linesep
             + indent(2) + 'condition{' + create_bool_value(-1, True, [], True) + '}' + os.linesep
             + indent(1) + '}' + os.linesep
@@ -210,10 +212,15 @@ def write_assign_statement(cur_var, condition_count, indent_level, bl, local, en
                             if cur_var['domain'] == 'int_neg'
                             else
                             (
-                                create_bool_value(-1, bl, local, env)
-                                if cur_var['domain'] == 'bool'
+                                create_int_value(-1, bl, local, env)
+                                if cur_var['domain'] == 'unbound'
                                 else
-                                create_enum_value(-1, bl, local, env)
+                                (
+                                    create_bool_value(-1, bl, local, env)
+                                    if cur_var['domain'] == 'bool'
+                                    else
+                                    create_enum_value(-1, bl, local, env)
+                                )
                             )
                         )
                     )
@@ -232,10 +239,15 @@ def write_assign_statement(cur_var, condition_count, indent_level, bl, local, en
                 if cur_var['domain'] == 'int_neg'
                 else
                 (
-                    create_bool_value(-1, bl, local, env)
-                                if cur_var['domain'] == 'bool'
+                    create_int_value(-1, bl, local, env)
+                    if cur_var['domain'] == 'unbound'
                     else
-                    create_enum_value(-1, bl, local, env)
+                    (
+                        create_bool_value(-1, bl, local, env)
+                        if cur_var['domain'] == 'bool'
+                        else
+                        create_enum_value(-1, bl, local, env)
+                    )
                 )
             )
         )
@@ -244,7 +256,7 @@ def write_assign_statement(cur_var, condition_count, indent_level, bl, local, en
     )
 
 
-def write_variable_statement(cur_var, instant, condition_count, indent_level, bl, local, env):
+def write_variable_statement(cur_var, instant, condition_count, indent_level, bl, local, env, init = False):
     global CUR_TIMES_INDEXED
     CUR_TIMES_INDEXED = 0
     return (
@@ -254,14 +266,15 @@ def write_variable_statement(cur_var, instant, condition_count, indent_level, bl
             if cur_var['array'] is None
             else
             (
-                ''.join(
+                indent(indent_level + 1) + 'per_index' + os.linesep
+                + ''.join(
                     (
                         [
                             (
-                                indent(indent_level + 1) + 'index_of { (min, ' + str(cur_var['array'] - 1) + ', (max, 0, ' + create_int_value(-1, bl, local, env) + '))}' + os.linesep
+                                ('' if init else indent(indent_level + 1) + 'index_of { (min, ' + str(cur_var['array'] - 1) + ', (max, 0, ' + create_int_value(-1, bl, local, env) + '))}' + os.linesep)
                                 + write_assign_statement(cur_var, condition_count, indent_level + 1, bl, local, env)
                             )
-                            for _ in range(random.randint(1, cur_var['array']))
+                            for _ in range(cur_var['array'] if init else (random.randint(1, cur_var['array'])))
                         ]
                     )
                 )
@@ -281,7 +294,7 @@ def create_action_node(name):
             my_local_vars.append(local)
             if random.randint(0, 1) == 1:
                 condition_count = random.randint(0, 2)
-                local_init += write_variable_statement(local, False, condition_count, 3, True, [], False)
+                local_init += write_variable_statement(local, False, condition_count, 3, True, [], False, init = True)
             local_count = local_count + 1
             break
     for local in f_vars_local + d_vars_local:
@@ -289,7 +302,7 @@ def create_action_node(name):
             my_local_vars.append(local)
             if random.randint(0, 1) == 1:
                 condition_count = random.randint(0, 2)
-                local_init += write_variable_statement(local, False, condition_count, 3, True, [], False)
+                local_init += write_variable_statement(local, False, condition_count, 3, True, [], False, init = True)
             local_count = local_count + 1
             if local_count >= 3:
                 break
@@ -360,6 +373,7 @@ def create_action_node(name):
     )
     return (indent(1) + 'action {' + os.linesep
             + indent(2) + name + os.linesep
+            + indent(2) + 'arguments{}' + os.linesep
             + indent(2) + 'local_variables {' + ' '.join(map(lambda x: x['name'], my_local_vars)) + '}' + os.linesep
             + indent(2) + 'read_variables { }' + os.linesep
             + indent(2) + 'write_variables ' + VAR_BL_STRING + os.linesep
@@ -402,7 +416,7 @@ def create_structure(depth_left):
 
 def write_tree(structure, indent_level):
     if structure['leaf']:
-        return indent(indent_level) + structure['name'] + os.linesep
+        return indent(indent_level) + structure['name'] + '{}' + os.linesep
     if structure['dec']:
         return (
             indent(indent_level) + 'decorator {' + os.linesep
@@ -426,18 +440,19 @@ def write_tree(structure, indent_level):
 
 
 def create_var(num, can_array, mode, force_type = None):
-    my_domain = random.choice(('int_pos', 'int_neg', 'bool', 'enum'))
+    my_domain = random.choice(('int_pos', 'int_neg', 'unbound', 'bool', 'enum'))
     if my_domain == 'enum':
         global can_use_enums
         if mode == 'DEFINE' and not can_use_enums:
-            my_domain = random.choice(('int_pos', 'int_neg', 'bool'))
+            my_domain = random.choice(('int_pos', 'int_neg', 'unbound', 'bool'))
         else:
             can_use_enums = True
     if force_type is None:
         my_type = random.choice(('bl', 'local', 'env'))
     else:
         my_type = force_type
-    if my_type == 'local' or not can_array or random.choice((True, False)):
+    #if my_type == 'local' or not can_array or random.choice((True, False)):
+    if random.choice((True, False)):
         my_array = None
     else:
         my_array = random.randint(2, 3)
@@ -456,7 +471,7 @@ def create_variable_declaration(cur_var, mode):
     if mode == 'DEFINE':
         cur_domain = (
             'INT'
-            if cur_var['domain'] in {'int_pos', 'int_neg'}
+            if cur_var['domain'] in {'int_pos', 'int_neg', 'unbound'}
             else
             (
                 'BOOLEAN'
@@ -475,10 +490,15 @@ def create_variable_declaration(cur_var, mode):
                 if cur_var['domain'] == 'int_neg'
                 else
                 (
-                    'BOOLEAN'
-                    if cur_var['domain'] == 'bool'
+                    'UNBOUND'
+                    if cur_var['domain'] == 'unbound'
                     else
-                    ('{' + ', '.join(CONSTANTS_ENUM) + '}')
+                    (
+                        'BOOLEAN'
+                        if cur_var['domain'] == 'bool'
+                        else
+                        ('{' + ', '.join(CONSTANTS_ENUM) + '}')
+                    )
                 )
             )
         )
@@ -498,11 +518,14 @@ def create_variable_declaration(cur_var, mode):
                 )
                 if random.choice((True, False))
                 else
-                ''.join(
-                    [
-                        write_assign_statement(cur_var, random.randint(0, MAX_CONDITIONS), 2, True, [], cur_var['type'] == 'env')
-                        for _ in range(cur_var['array'])
-                    ]
+                (
+                    indent(2) + 'per_index' + os.linesep
+                    + ''.join(
+                        [
+                            write_assign_statement(cur_var, random.randint(0, MAX_CONDITIONS), 2, True, [], cur_var['type'] == 'env')
+                            for _ in range(cur_var['array'])
+                        ]
+                    )
                 )
             )
         )
@@ -597,36 +620,39 @@ for count in range(TO_GEN):
 
     node_count = 0
     with open(LOCATION + '/' + 't' + str(count) + '.tree', 'w') as f:
-        f.write('constants {' + os.linesep
-                + indent(1) + 'MIN_VAL = ' + str(MIN_VAL) + os.linesep
-                + indent(1) + 'MAX_VAL = ' + str(MAX_VAL) + os.linesep
-                + '}' + os.linesep
-                + 'variables { ' + os.linesep
-                + ''.join(map(lambda x: x['declaration'], create_order))
-                + '}' + os.linesep
-                + 'environment_update {' + os.linesep
-                + ''.join(
-                    [
-                        # write_variable_statement(get_var(False, [], True), random.choice([True, False]), random.randint(0, 2), 1, True, [], True)
+        f.write(
+            'configuration{}' + os.linesep
+            + 'constants {' + os.linesep
+            + indent(1) + 'MIN_VAL = ' + str(MIN_VAL) + os.linesep
+            + indent(1) + 'MAX_VAL = ' + str(MAX_VAL) + os.linesep
+            + '}' + os.linesep
+            + 'variables { ' + os.linesep
+            + ''.join(map(lambda x: x['declaration'], create_order))
+            + '}' + os.linesep
+            + 'environment_update {' + os.linesep
+            + ''.join(
+                [
+                    # write_variable_statement(get_var(False, [], True), random.choice([True, False]), random.randint(0, 2), 1, True, [], True)
                         write_variable_statement(get_var(False, [], True, True, 'any'), False, random.randint(0, 2), 1, True, [], True)
                         for _ in range(ENV_UPD)
-                    ]
-                )
-                + '}' + os.linesep
-                + 'checks{' + os.linesep
-                + create_check_node('c1')
-                + create_check_node('c2')
-                + '}' + os.linesep
-                + 'environment_checks {}' + os.linesep
-                + 'actions{' + os.linesep
-                + create_action_node('a1')
-                + create_action_node('a2')
-                + create_action_node('a3')
-                + create_action_node('a4')
-                + '}' + os.linesep
-                + 'sub_trees{}' + os.linesep
-                + 'tree {' + os.linesep
-                + write_tree(create_structure(-1), 1)
-                + '}' + os.linesep
-                + 'specifications { #comment# INVAR, LTL, and CTL specs go here #end_comment# } end_specifications'
-                )
+                ]
+            )
+            + '}' + os.linesep
+            + 'checks{' + os.linesep
+            + create_check_node('c1')
+            + create_check_node('c2')
+            + '}' + os.linesep
+            + 'environment_checks {}' + os.linesep
+            + 'actions{' + os.linesep
+            + create_action_node('a1')
+            + create_action_node('a2')
+            + create_action_node('a3')
+            + create_action_node('a4')
+            + '}' + os.linesep
+            + 'sub_trees{}' + os.linesep
+            + 'tree {' + os.linesep
+            + write_tree(create_structure(-1), 1)
+            + '}' + os.linesep
+            + 'tick_prerequisite{True}' + os.linesep
+            + 'specifications { #{ INVAR, LTL, and CTL specs go here }# } end_specifications'
+        )

@@ -6,7 +6,7 @@ It contains a variety of utility functions.
 
 Author: Serena Serafina Serbinowska
 Created: 2022-01-01 (Date not correct)
-Last Edit: 2023-01-01 (Date not correct)
+Last Edit: 2023-08-22
 '''
 import argparse
 import os
@@ -479,7 +479,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                 + ''.join(
                     [
                         (
-                            (indent(2) + format_variable_name_only(local_variable, 'node') + ' = [None] * ' + handle_constant_str(local_variable.array_size) + os.linesep)
+                            (indent(2) + format_variable_name_only(local_variable, format_mode = {'init': True, 'loc': 'node'}) + ' = [None] * ' + handle_constant_str(local_variable.array_size) + os.linesep)
                             if is_array(local_variable)
                             else
                             ''
@@ -691,7 +691,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                         + indent(indent_level + 1) + 'else:' + os.linesep
                         + indent(indent_level + 2) + 'raise SereneAssignmentException(' + "'variable " + variable.name + " expected value between " + handle_constant_str(variable.domain.min_val) + " and " + handle_constant_str(variable.domain.max_val) + " inclusive but received value ' + str(new_value))" + os.linesep
                     )
-            elif variable.domain.boolean is not None:
+            elif variable.domain.boolean is not None or variable.domain.true_int is not None:
                 return_string += indent(indent_level + 1) + 'return new_value' + os.linesep
             else:
                 value_list = '[' + ', '.join(map(handle_constant_str, variable.domain.enums)) + ']'
@@ -841,7 +841,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                     + indent(2) + 'return indent(1) + node.name + \'_DOT_\' + local_var[\'name\'] + \' : \' + str(var_attr) + os.linesep' + os.linesep
                     + indent(1) + 'if local_var[\'array_size\'] is None:' + os.linesep
                     + indent(2) + 'return indent(1) + node.name + \'_DOT_\' + local_var[\'name\'] + \' : \' + str(var_attr()) + os.linesep' + os.linesep
-                    + indent(1) + 'return indent(1) + node.name + \'_DOT_\' + local_var[\'name\'] + \' : [\' + \', \'.join(map(var_attr, range(local_var[\'array_size\'] - 1))) + \']\''
+                    + indent(1) + 'return indent(1) + node.name + \'_DOT_\' + local_var[\'name\'] + \' : [\' + \', \'.join(map(str, map(var_attr, range(local_var[\'array_size\'] - 1)))) + \']\''
                     + os.linesep
                     + os.linesep
                     + 'def print_locals_in_node(node, local_vars):' + os.linesep
