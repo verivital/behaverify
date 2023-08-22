@@ -4,7 +4,7 @@ This module is part of BehaVerify and used to convert .tree files to .smv files 
 
 Author: Serena Serafina Serbinowska
 Created: 2022-01-01 (Date not correct)
-Last Edit: 2023-08-11
+Last Edit: 2023-08-22
 '''
 import argparse
 import pprint
@@ -317,11 +317,7 @@ def dsl_to_behaverify(metamodel_file, model_file, keep_stage_0, keep_last_stage,
 
         if is_array(assign_var):
             stage = []
-
-            if constant_index:
-                non_determinism = {}
-            else:
-                non_determinism = False
+            non_determinism = {} if constant_index else False
 
             if statement.array_mode == 'range':
                 serene_indices = []
@@ -333,7 +329,6 @@ def dsl_to_behaverify(metamodel_file, model_file, keep_stage_0, keep_last_stage,
                     max_val = handle_constant(statement.values[1])
                     serene_indices = list(filter(cond_func, range(min_val, max_val + 1)))
                 for index in serene_indices:
-                    # constants['serene_index'] = index
                     serene_index.append(index)
                     cur_index = (
                         index
@@ -355,7 +350,6 @@ def dsl_to_behaverify(metamodel_file, model_file, keep_stage_0, keep_last_stage,
                     else:
                         non_determinism = non_determinism or cur_non_determinism
                     serene_index.pop()
-                # constants.pop('serene_index')
             else:
                 for index, assign in enumerate(statement.assigns):
                     cur_index = (
@@ -628,6 +622,7 @@ def dsl_to_behaverify(metamodel_file, model_file, keep_stage_0, keep_last_stage,
         none. purely functional.
         '''
         # create each variable type using the template.
+        nonlocal variables  # this is necessary right now because we need to be able to access already created variables during other variable initializations.
         variables = {
             variable_reference(variable.name, False, '') :
             (
@@ -657,6 +652,7 @@ def dsl_to_behaverify(metamodel_file, model_file, keep_stage_0, keep_last_stage,
             for variable in model.variables if is_local(variable)
         }
         for variable in model.variables:
+            print(variable.name)
             if variable.model_as == 'DEFINE':
                 if is_local(variable):
                     local_variable_templates[variable.name]['existing_definitions'] = {}
@@ -691,11 +687,14 @@ def dsl_to_behaverify(metamodel_file, model_file, keep_stage_0, keep_last_stage,
                 variables[variable_reference(assign_var.name, is_local(assign_var), node_name)]['initial_value'] = initial_statement
             for argument_name in argument_pairs:
                 constants.pop(argument_name)
-
-        for (node_name, initial_statement) in initial_statements:
+        for (node_name, argument_pairs, initial_statement) in initial_statements:
+            for argument_name in argument_pairs:
+                constants[argument_name] = argument_pairs[argument_name]
             assign_var = initial_statement.variable
             if assign_var.model_as != 'DEFINE':
                 variables[variable_reference(assign_var.name, is_local(assign_var), node_name)]['initial_value'] = handle_variable_statement(initial_statement, assign_var, None, create_misc_args(node_name, False, False, None, None))
+            for argument_name in argument_pairs:
+                constants.pop(argument_name)
 
         return variables
 

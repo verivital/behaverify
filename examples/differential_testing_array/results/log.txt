@@ -1,0 +1,3 @@
+-----------------------------t0-----------------------------
+Comparison failure! After tick 1, seq0 with value running was in python_tick but not in nuxmv_tick
+Comparison failure! Reached unexpected error

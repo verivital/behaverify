@@ -6,7 +6,7 @@ It contains a variety of utility functions.
 
 Author: Serena Serafina Serbinowska
 Created: 2022-01-01 (Date not correct)
-Last Edit: 2023-08-16
+Last Edit: 2023-08-22
 '''
 import itertools
 import serene_functions
@@ -637,7 +637,7 @@ def validate_model(model, constants):
                 (node_names, node_names_map, node_to_args) = walk_tree(child, node_names, node_names_map, node_to_args)
         return (node_names, node_names_map, node_to_args)
 
-    # END OF METHODS. START OF SCRIPT
+    # END OF METHODS. START OF SCRIPT -------------------------------------------------------------------------------------------------------------
 
     if 'serene_index' in constants:
         raise BTreeException(trace, 'serene_index was declared as a constant, but is resevered')
@@ -652,20 +652,24 @@ def validate_model(model, constants):
         variables_so_far.add(variable.name)
 
     for var_statement in model.update:
+        # we allow local, blackboard, and environment variables to be referenced in between ticks for environment updates
+        # TODO: make sure local variables are always referened with a node identifier here.
         assign_var = var_statement.variable
         if not is_env(assign_var):
             raise BTreeException(trace, 'A pre/post tick update is updating a non-environment variable: ' + assign_var.name)
         if is_array(assign_var):
-            validate_array_assign(var_statement, var_statement.constant_index == 'constant_index', {'blackboard', 'environment'}, None, None, deterministic = False, init_mode = None)
+            validate_array_assign(var_statement, var_statement.constant_index == 'constant_index', {'local', 'blackboard', 'environment'}, None, None, deterministic = False, init_mode = None)
         else:
             if var_statement.assign is None or var_statement.array_mode == 'range':
                 raise BTreeException(trace, 'Environment update :: Variable is not an array, but has as an array like update: ' + assign_var.name)
-            validate_variable_assignment(assign_var, var_statement.assign, {'blackboard', 'environment'}, None, deterministic = False, init_mode = None)
-    for check in model.check_nodes:
+            validate_variable_assignment(assign_var, var_statement.assign, {'local', 'blackboard', 'environment'}, None, deterministic = False, init_mode = None)
+    # no point in really checking nodes that aren't being used.
+    # and checking them causes problems because we can't verify argument types.
+    for check in filter(lambda node: node.name in node_to_args, model.check_nodes):
         validate_check(check, node_to_args[check.name])
-    for check_env in model.environment_checks:
+    for check_env in filter(lambda node: node.name in node_to_args, model.environment_checks):
         validate_check_env(check_env, node_to_args[check_env.name])
-    for action in model.action_nodes:
+    for action in filter(lambda node: node.name in node_to_args, model.action_nodes):
         validate_action(action, node_to_args[action.name])
 
     if model.tick_condition is not None:
