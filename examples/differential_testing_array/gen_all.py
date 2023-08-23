@@ -33,7 +33,8 @@ CONSTANTS_INT = list(map(str, range(MIN_VAL, MAX_VAL + 1))) + list(map(str, rang
 CONSTANTS_ENUM = ['\'yes\'', '\'no\'', '\'both\'']
 CONSTANTS_BOOL = ['True', 'False']
 # FUNCTIONS = [('abs', 1, 1), ('max', 2, 2), ('min', 2, 2), ('negative', 1, 1), ('addition', 2, 5), ('subtraction', 2, 2), ('multiplication', 2, 5), ('division', 2, 2), ('mod', 2, 2), ('count', 2, 5)]
-FUNCTIONS = [('abs', 1, 1), ('max', 2, 2), ('min', 2, 2), ('negative', 1, 1), ('addition', 2, 4), ('subtraction', 2, 2), ('multiplication', 2, 4), ('division', 2, 2), ('count', 2, 4)]
+# FUNCTIONS = [('abs', 1, 1), ('max', 2, 2), ('min', 2, 2), ('negative', 1, 1), ('addition', 2, 4), ('subtraction', 2, 2), ('multiplication', 2, 4), ('division', 2, 2), ('count', 2, 4)]
+FUNCTIONS = [('abs', 1, 1), ('max', 2, 2), ('min', 2, 2), ('negative', 1, 1), ('addition', 2, 4), ('subtraction', 2, 2), ('multiplication', 2, 4), ('count', 2, 4)]
 COMPARISONS = ['equal', 'not_equal', 'less_than', 'greater_than', 'less_than_or_equal', 'greater_than_or_equal', 'and', 'or', 'xor', 'xnor', 'implies', 'equivalent']
 STATUSES = ['success', 'failure', 'running']
 
@@ -392,10 +393,15 @@ def indent(n):
 
 
 node_count = 0
+leaf_count = 0
 def create_structure(depth_left):
     if depth_left == -1:
-        depth_left = random.randint(0, 4)
+        depth_left = random.randint(0, 3)
     if depth_left == 0:
+        global leaf_count
+        leaf_count = leaf_count + 1
+        if leaf_count > 5:
+            return{'leaf': True, 'dec': False, 'name' : random.choice(['c1', 'c2'])}
         return {'leaf': True, 'dec': False, 'name' : random.choice(['c1', 'c2', 'a1', 'a2', 'a3', 'a4'])}
     global node_count
     if random.randint(0, 4) == 0:
@@ -403,7 +409,7 @@ def create_structure(depth_left):
         node_name = node_name + str(node_count)
         node_count = node_count + 1
         return {'leaf': False, 'dec': True, 'name' : node_name, 'type' : node_type, 'child' : create_structure(random.randint(0, depth_left - 1))}
-    num_child = random.randint(2, 4)
+    num_child = random.randint(2, 3)
     (node_type, node_name) = random.choice(ROOT)
     node_name = node_name + str(node_count)
     node_count = node_count + 1
@@ -619,6 +625,7 @@ for count in range(TO_GEN):
 
 
     node_count = 0
+    leaf_count = 0
     with open(LOCATION + '/' + 't' + str(count) + '.tree', 'w') as f:
         f.write(
             'configuration{}' + os.linesep
