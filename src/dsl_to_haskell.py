@@ -6,7 +6,7 @@ It contains a variety of utility functions.
 
 Author: Serena Serafina Serbinowska
 Created: 2022-01-01 (Date not correct)
-Last Edit: 2023-08-22
+Last Edit: 2023-08-23
 '''
 import argparse
 import os
@@ -31,7 +31,7 @@ def dsl_to_haskell():
         '''returns the vaiable type, correctly formatted for haskell'''
         return (
             (
-                'Int'
+                'Integer'
                 if variable.domain == 'INT'
                 else
                 (
@@ -49,19 +49,19 @@ def dsl_to_haskell():
                 else
                 (
                     (
-                        'Int'
+                        'Integer'
                         if variable.domain.true_int is not None
                         else
                         (
                             'String'
                             if isinstance(handle_constant(variable.domain.enums[0], False), str)
                             else
-                            'Int'
+                            'Integer'
                         )
                     )
                     if variable.domain.min_val is None
                     else
-                    'Int'
+                    'Integer'
                 )
             )
         )
@@ -306,7 +306,7 @@ def dsl_to_haskell():
                                 (('sereneEnvGenerator ' + environment_name) if is_env(assign_var) else ('sereneBoardGenerator ' + blackboard_name))
                                 if len(random_gen_strings) == 0
                                 else
-                                ('snd (getRandomInt randomGenerator' + str(len(random_gen_strings) - 1) + ' 1)')
+                                ('snd (getRandomInteger randomGenerator' + str(len(random_gen_strings) - 1) + ' 1)')
                             )
                             + os.linesep
                         )
@@ -329,7 +329,7 @@ def dsl_to_haskell():
                                 (('sereneEnvGenerator ' + environment_name) if is_env(assign_var) else ('sereneBoardGenerator ' + blackboard_name))
                                 if len(random_gen_strings) == 0
                                 else
-                                ('snd (getRandomInt randomGenerator' + str(len(random_gen_strings) - 1) + ' 1)')
+                                ('snd (getRandomInteger randomGenerator' + str(len(random_gen_strings) - 1) + ' 1)')
                             )
                             + os.linesep
                         )
@@ -368,7 +368,7 @@ def dsl_to_haskell():
                 if not statement.non_determinism
                 else
                 (
-                    indent(indent_level + 2) + '(conditionRandomInt, conditionRandomGenerator) = getRandomInt (sereneEnvGenerator (snd boardEnv)) 1' + os.linesep
+                    indent(indent_level + 2) + '(conditionRandomInteger, conditionRandomGenerator) = getRandomInteger (sereneEnvGenerator (snd boardEnv)) 1' + os.linesep
                     + indent(indent_level + 2) + 'privateTempBoardEnv0 = (fst boardEnv, updateEnvGenerator (snd boardEnv) conditionRandomGenerator)' + os.linesep
                 )
             )
@@ -390,7 +390,7 @@ def dsl_to_haskell():
                     os.linesep
                     + indent(indent_level + 1) + '| not (' + format_code(statement.condition, init_mode, 'conditionBlackboard', 'conditionEnvironment') + ') = boardEnv' + os.linesep
                     + (
-                        (indent(indent_level + 1) + '| nonDeterministicInt == 0 = privateTempBoardEnv0' + os.linesep)
+                        (indent(indent_level + 1) + '| nonDeterministicInteger == 0 = privateTempBoardEnv0' + os.linesep)
                         if statement.non_determinism
                         else
                         ''
@@ -584,15 +584,16 @@ def dsl_to_haskell():
             + 'import BehaviorTreeEnvironment' + os.linesep
             + 'import BehaviorTreeBlackboard' + os.linesep
             + 'import System.Environment (getArgs)' + os.linesep
-            + ''.join([('import BTree' + pascal_case(node.name) + os.linesep) for node in itertools.chain(model.check_nodes, model.action_nodes, model.environment_checks)])
+            # + ''.join([('import BTree' + pascal_case(node.name) + os.linesep) for node in itertools.chain(model.check_nodes, model.action_nodes, model.environment_checks)])
+            # the above line is unnecessary. Not sure why it was here.
             + os.linesep + os.linesep
-            + 'executeFromSeeds :: Int -> Int -> Int -> [(BTreeBlackboard, BTreeEnvironment)]' + os.linesep
+            + 'executeFromSeeds :: Integer -> Integer -> Integer -> [(BTreeBlackboard, BTreeEnvironment)]' + os.linesep
             + 'executeFromSeeds seed1 seed2 maxIteration = eachBoardEnv' + os.linesep
             + indent(1) + 'where' + os.linesep
             + indent(2) + 'initBoard = initialBlackboard seed1' + os.linesep
             + indent(2) + 'initEnv = initialEnvironment seed2 initBoard' + os.linesep
             + indent(2) + 'treeRoot = bTreeNode' + pascal_case(root_name) + os.linesep
-            + indent(2) + 'executionChain :: Int -> TrueMemoryStorage -> PartialMemoryStorage -> BTreeBlackboard -> BTreeEnvironment -> [(BTreeBlackboard, BTreeEnvironment)]' + os.linesep
+            + indent(2) + 'executionChain :: Integer -> TrueMemoryStorage -> PartialMemoryStorage -> BTreeBlackboard -> BTreeEnvironment -> [(BTreeBlackboard, BTreeEnvironment)]' + os.linesep
             + indent(2) + 'executionChain count memory partial blackboard environment' + os.linesep
             + indent(3) + '| count >= maxIteration = [(blackboard, environment)]' + os.linesep
             + indent(3) + '| not (checkTickConditionTermination blackboard environment) = [(blackboard, environment)]' + os.linesep
@@ -609,7 +610,7 @@ def dsl_to_haskell():
             + indent(2) + '; let (seed1, seed2) = seedFromArgs args in mapM_ print (executeFromSeeds seed1 seed2 ' + str(int(max_iter) + 1) + ')' + os.linesep
             + indent(1) + '}' + os.linesep
             + indent(1) + 'where' + os.linesep
-            + indent(2) + 'seedFromArgs :: [String] -> (Int, Int)' + os.linesep
+            + indent(2) + 'seedFromArgs :: [String] -> (Integer, Integer)' + os.linesep
             + indent(2) + 'seedFromArgs [] = (0, 0)' + os.linesep
             + indent(2) + 'seedFromArgs curArgs' + os.linesep
             + indent(3) + '| null (tail curArgs) = (read (head curArgs), 0)' + os.linesep
@@ -682,7 +683,7 @@ def dsl_to_haskell():
                 + ')'
             )
 
-        def walk_tree_recursive(current_node, node_names, node_names_map, running_string, running_int, indent_level):
+        def walk_tree_recursive(current_node, seen_nodes, node_names, node_names_map, running_string, running_int, indent_level):
             while (not hasattr(current_node, 'name') or hasattr(current_node, 'sub_root')):
                 current_node = (current_node.leaf if hasattr(current_node, 'leaf') else current_node.sub_root)
 
@@ -695,6 +696,7 @@ def dsl_to_haskell():
             my_int = running_int
 
             if current_node.node_type in ('check', 'check_environment', 'action'):
+                seen_nodes.add(current_node.name)
                 running_string = running_string + (
                     indent(indent_level) + node_name + ' = BTreeNode ' + camel_case(current_node.name) + ' [] ' + str(my_int) + os.linesep
                 )
@@ -702,7 +704,7 @@ def dsl_to_haskell():
                 child_names = []
                 node_children = (current_node.children if hasattr(current_node, 'children') else [current_node.child])
                 for child in node_children:
-                    (child_name, cur_node_names, cur_node_names_map, running_string, running_int, indent_level) = walk_tree_recursive(child, cur_node_names, cur_node_names_map, running_string, running_int, indent_level)
+                    (child_name, seen_nodes, cur_node_names, cur_node_names_map, running_string, running_int, indent_level) = walk_tree_recursive(child, seen_nodes, cur_node_names, cur_node_names_map, running_string, running_int, indent_level)
                     child_names.append(child_name)
                 running_string = running_string + (
                     indent(indent_level) + node_name + ' = BTreeNode ' + node_function(current_node) + ' ' + '[' + ', '.join(child_names) + '] ' + str(my_int) + os.linesep
@@ -712,6 +714,7 @@ def dsl_to_haskell():
                 (
                     (
                         node_name,
+                        seen_nodes,
                         cur_node_names,
                         cur_node_names_map,
                         running_string,
@@ -721,13 +724,16 @@ def dsl_to_haskell():
                 )
             )
 
-        (_, _, _, node_declarations, _, _) = walk_tree_recursive(model.root, set(), {}, '', -1, 0)
+        (_, seen_nodes,  _, _, node_declarations, _, _) = walk_tree_recursive(model.root, set(), set(), {}, '', -1, 0)
 
         return (
-            'module ' + pascal_case(name) + ' where' + os.linesep
-            + 'import BehaviorTreeCore' + os.linesep
-            + ''.join([('import BTree' + pascal_case(node.name) + os.linesep) for node in itertools.chain(model.check_nodes, model.action_nodes, model.environment_checks)])
-            + node_declarations
+            seen_nodes,
+            (
+                'module ' + pascal_case(name) + ' where' + os.linesep
+                + 'import BehaviorTreeCore' + os.linesep
+                + ''.join([('import BTree' + pascal_case(node.name) + os.linesep) for node in itertools.chain(model.check_nodes, model.action_nodes, model.environment_checks) if node.name in seen_nodes])
+                + node_declarations
+            )
         )
 
     def board_env_post_script(indent_level, board_env_name, blackboard_name, environment_name):
@@ -741,7 +747,7 @@ def dsl_to_haskell():
         # i think it's defined below.
         if case_result.range_mode:
             return (
-                indent(indent_level) + function_name + ' :: Int -> ' + var_type + os.linesep
+                indent(indent_level) + function_name + ' :: Integer -> ' + var_type + os.linesep
                 + ''.join(
                     [
                         (indent(indent_level) + function_name + ' ' + (str(index) if index < random_range else '_') + ' = ' + str(value) + os.linesep)
@@ -751,7 +757,7 @@ def dsl_to_haskell():
             )
         if len(case_result.values) > 1:
             return (
-                indent(indent_level) + function_name + ' :: Int -> ' + var_type + os.linesep
+                indent(indent_level) + function_name + ' :: Integer -> ' + var_type + os.linesep
                 + ''.join(
                     [
                         (indent(indent_level) + function_name + ' ' + (str(index) if index < random_range else '_') + ' = ' + format_code(value, init_mode, blackboard_name, environment_name) + os.linesep)
@@ -814,7 +820,7 @@ def dsl_to_haskell():
 
         return_string += (
             (
-                (function_name + ' (fst (getRandomInt ' + random_gen_string + ' ' + str(random_range) + '))')
+                (function_name + ' (fst (getRandomInteger ' + random_gen_string + ' ' + str(random_range) + '))')
                 if case_result.range_mode == 'range' or len(case_result.values) > 1
                 else
                 format_code(case_result.values[0], init_mode, blackboard_name, environment_name)
@@ -832,8 +838,8 @@ def dsl_to_haskell():
                     (
                         update_generator + ' ('
                         + update_env_board + pascal_case(assign_var.name) + ' ' + env_board + ' '
-                        + '(' + function_name + ' (fst (getRandomInt (' + env_board_generator + ' ' + env_board + ') ' + str(random_range)
-                        + ')))) (snd (getRandomInt (' + env_board_generator + ' ' + env_board + ') ' + str(random_range) + '))'
+                        + '(' + function_name + ' (fst (getRandomInteger (' + env_board_generator + ' ' + env_board + ') ' + str(random_range)
+                        + ')))) (snd (getRandomInteger (' + env_board_generator + ' ' + env_board + ') ' + str(random_range) + '))'
                     )
                 )
                 + ('' if board_env_name is None else (')' if is_env(assign_var) else ', ' + environment_name + ')'))
@@ -849,7 +855,7 @@ def dsl_to_haskell():
             if is_env(assign_var)
             else
             (
-                'localUpdateBoard'
+                'updateLocalBoard'
                 if is_local(assign_var)
                 else
                 'updateBoard'
@@ -919,7 +925,7 @@ def dsl_to_haskell():
         def create_random_func(function_name, values, range_mode, var_type, cond_func, random_range, indent_level):
             if range_mode:
                 return (
-                    indent(indent_level + 2) + function_name + ' :: Int -> ' + var_type + os.linesep
+                    indent(indent_level + 2) + function_name + ' :: Integer -> ' + var_type + os.linesep
                     + ''.join(
                         [
                             (indent(indent_level + 2) + function_name + ' ' + (str(index) if index < random_range else '_') + ' = ' + str(value) + os.linesep)
@@ -929,7 +935,7 @@ def dsl_to_haskell():
                 )
             if len(values) > 1:
                 return (
-                    indent(indent_level + 2) + function_name + ' :: Int -> ' + var_type + os.linesep
+                    indent(indent_level + 2) + function_name + ' :: Integer -> ' + var_type + os.linesep
                     + ''.join(
                         [
                             (indent(indent_level + 2) + function_name + ' ' + (str(index) if index < random_range else '_') + ' = ' + format_code(value, init_mode, blackboard_name, environment_name) + os.linesep)
@@ -970,7 +976,7 @@ def dsl_to_haskell():
                 if (not case_result.range_mode) and (len(case_result.values) == 1)
                 else
                 (
-                    '(' + function_name + ' (fst (getRandomInt curGen ' + str(random_range) + ')), snd (getRandomInt curGen ' + str(random_range) + '))' + os.linesep
+                    '(' + function_name + ' (fst (getRandomInteger curGen ' + str(random_range) + ')), snd (getRandomInteger curGen ' + str(random_range) + '))' + os.linesep
                 )
             )
             where_string += create_random_func(function_name, case_result.values, case_result.range_mode, var_type, cond_func, random_range, indent_level)
@@ -1004,7 +1010,7 @@ def dsl_to_haskell():
             ('(' + format_code(case_result.values[0], init_mode, blackboard_name, environment_name) + ', curGen)' + os.linesep)
             if (not case_result.range_mode) and (len(case_result.values) == 1)
             else
-            ('(' + function_name + ' (fst (getRandomInt curGen ' + str(random_range) + ')), snd (getRandomInt curGen ' + str(random_range) + '))' + os.linesep)
+            ('(' + function_name + ' (fst (getRandomInteger curGen ' + str(random_range) + ')), snd (getRandomInteger curGen ' + str(random_range) + '))' + os.linesep)
         )
         where_string += create_random_func(function_name, case_result.values, case_result.range_mode, var_type, cond_func, random_range, indent_level)
         return return_string + post_script(indent_level) + (where_string if unique_id > 0 else '')
@@ -1024,7 +1030,7 @@ def dsl_to_haskell():
         def create_random_func(function_name, values, range_mode, var_type, cond_func, random_range, indent_level):
             if range_mode:
                 return (
-                    indent(indent_level + 2) + function_name + ' :: Int -> ' + var_type + os.linesep
+                    indent(indent_level + 2) + function_name + ' :: Integer -> ' + var_type + os.linesep
                     + ''.join(
                         [
                             (indent(indent_level + 2) + function_name + ' ' + (str(index) if index < random_range else '_') + ' = ' + str(value) + os.linesep)
@@ -1034,7 +1040,7 @@ def dsl_to_haskell():
                 )
             if len(values) > 1:
                 return (
-                    indent(indent_level + 2) + function_name + ' :: Int -> ' + var_type + os.linesep
+                    indent(indent_level + 2) + function_name + ' :: Integer -> ' + var_type + os.linesep
                     + ''.join(
                         [
                             (indent(indent_level + 2) + function_name + ' ' + (str(index) if index < random_range else '_') + ' = ' + format_code(value, init_mode, blackboard_name, environment_name) + os.linesep)
@@ -1074,7 +1080,7 @@ def dsl_to_haskell():
                 if (not case_result.range_mode) and (len(case_result.values) == 1)
                 else
                 (
-                    'environment { sereneEnvGenerator = (snd (getRandomInt (sereneEnvGenerator environment) ' + str(random_range) + ')), env' + pascal_case(variable_name) + ' = ' + function_name + ' (fst (getRandomInt (sereneEnvGenerator environment) ' + str(random_range) + ')) }' + os.linesep
+                    'environment { sereneEnvGenerator = (snd (getRandomInteger (sereneEnvGenerator environment) ' + str(random_range) + ')), env' + pascal_case(variable_name) + ' = ' + function_name + ' (fst (getRandomInteger (sereneEnvGenerator environment) ' + str(random_range) + ')) }' + os.linesep
                 )
             )
             where_string += create_random_func(function_name, case_result.values, case_result.range_mode, var_type, cond_func, random_range, indent_level)
@@ -1107,7 +1113,7 @@ def dsl_to_haskell():
             ('environment { env' + pascal_case(variable_name) + ' = ' + format_code(default.values[0], init_mode, blackboard_name, environment_name) + ' }' + os.linesep)
             if (not default.range_mode) and (len(default.values) == 1)
             else
-            ('environment { sereneEnvGenerator = (snd (getRandomInt (sereneEnvGenerator environment) ' + str(random_range) + ')), env' + pascal_case(variable_name) + ' = ' + function_name + ' (fst (getRandomInt (sereneEnvGenerator environment) ' + str(random_range) + ')) }' + os.linesep)
+            ('environment { sereneEnvGenerator = (snd (getRandomInteger (sereneEnvGenerator environment) ' + str(random_range) + ')), env' + pascal_case(variable_name) + ' = ' + function_name + ' (fst (getRandomInteger (sereneEnvGenerator environment) ' + str(random_range) + ')) }' + os.linesep)
         )
         where_string += create_random_func(function_name, default.values, default.range_mode, var_type, cond_func, random_range, indent_level)
         return return_string + ((post_script(indent_level) + where_string) if unique_id > 0 else '')
@@ -1157,7 +1163,7 @@ def dsl_to_haskell():
             if env_mode
             else
             (
-                'Int -> BTreeBlackboard'
+                'Integer -> BTreeBlackboard'
                 if local_mode
                 else
                 'BTreeBlackboard'
@@ -1335,7 +1341,7 @@ def dsl_to_haskell():
 
     def get_default_arg(variable):
         var_type = variable_type(variable)
-        if var_type == 'Int':
+        if var_type == 'Integer':
             return '0'
         if var_type == 'Bool':
             return 'True'
@@ -1346,10 +1352,10 @@ def dsl_to_haskell():
         prefix_cap = pascal_case(prefix)
         data_instance = ('environment' if is_env(variable) else 'blackboard')
         data_type = ('BTreeEnvironment' if is_env(variable) else 'BTreeBlackboard')
-        variable_name = pascal_case(variable.name) + ('' if local_number is None else str(local_number))
+        variable_name = pascal_case(variable.name) + ('' if local_number is None else ('Location' +str(local_number)))
         check_name = 'checkValue' + prefix_cap + pascal_case(variable.name)
         return (
-            'update' + prefix_cap + variable_name + ' :: Int -> ' + data_type + ' -> ' + variable_type(variable) + ' -> ' + data_type + os.linesep
+            'update' + prefix_cap + variable_name + ' :: Integer -> ' + data_type + ' -> ' + variable_type(variable) + ' -> ' + data_type + os.linesep
             + ''.join(
                 [
                     ('update' + prefix_cap + variable_name + ' ' + str(index) + ' = update' + prefix_cap + variable_name + 'Index' + str(index) + os.linesep)
@@ -1357,7 +1363,7 @@ def dsl_to_haskell():
                 ]
             )
             + 'update' + prefix_cap + variable_name + ' _ = error "' + prefix_cap + variable_name + ' illegal index value"' + os.linesep
-            + 'arrayUpdate' + prefix_cap + variable_name + ' :: ' + data_type + ' -> [(Int, ' + variable_type(variable) + ')] -> ' + data_type + os.linesep
+            + 'arrayUpdate' + prefix_cap + variable_name + ' :: ' + data_type + ' -> [(Integer, ' + variable_type(variable) + ')] -> ' + data_type + os.linesep
             + 'arrayUpdate' + prefix_cap + variable_name + ' ' + data_instance + ' []  = ' + data_instance + os.linesep  # no update
             + 'arrayUpdate' + prefix_cap + variable_name + ' ' + data_instance + ' [(index, value)] = update' + prefix_cap + variable_name + ' index ' + data_instance + ' value' + os.linesep  # single value update is already defined
             # below we do multiple value updating.
@@ -1383,7 +1389,7 @@ def dsl_to_haskell():
             # suppose we have [(1, 'a'), (2, 'b'), (1, 'c'), (3, 'd')]
             # then we want this to update index 1 to a, 2 to b, and 3 to d, and ignore the 1=c option.
             # therefore, we use recursion.
-            + indent(3) + 'updateValues :: [(Int, ' + variable_type(variable) + ')] -> (' + ', '.join(map(lambda x: variable_type(variable), range(handle_constant(variable.array_size, False)))) + ')' + os.linesep
+            + indent(3) + 'updateValues :: [(Integer, ' + variable_type(variable) + ')] -> (' + ', '.join(map(lambda x: variable_type(variable), range(handle_constant(variable.array_size, False)))) + ')' + os.linesep
             + indent(3) + 'updateValues [] = (' + ', '.join(map(lambda x: (prefix + variable_name + 'Index' + str(x) + ' ' + data_instance), range(handle_constant(variable.array_size, False)))) + ')' + os.linesep # in the base case, just grab what the current value is.
             + ''.join(
                 [
@@ -1459,7 +1465,7 @@ def dsl_to_haskell():
             + ''.join(
                 map(
                     lambda variable:
-                    board_env + pascal_case(variable.name) + ' :: Int -> ' + data_type_name_2 + ' -> ' + variable_type(variable) + os.linesep
+                    board_env + pascal_case(variable.name) + ' :: Integer -> ' + data_type_name_2 + ' -> ' + variable_type(variable) + os.linesep
                     + ''.join(
                         map(
                             lambda index:
@@ -1478,7 +1484,7 @@ def dsl_to_haskell():
                     + ''.join(
                         [
                             (
-                                'local' + board_env_cap + pascal_case(variable.name) + ' :: Int -> ' + data_type_name_2 + ' -> ' + variable_type(variable) + os.linesep
+                                'local' + board_env_cap + pascal_case(variable.name) + ' :: Integer -> ' + data_type_name_2 + ' -> ' + variable_type(variable) + os.linesep
                                 + (
                                     ''.join(local_macros[variable.name])
                                     if variable.name in local_macros
@@ -1496,7 +1502,7 @@ def dsl_to_haskell():
                     + ''.join(
                         map(
                             lambda variable:
-                            'local' + board_env_cap + pascal_case(variable.name) + ' :: Int -> Int -> ' + data_type_name_2 + ' -> ' + variable_type(variable) + os.linesep
+                            'local' + board_env_cap + pascal_case(variable.name) + ' :: Integer -> Integer -> ' + data_type_name_2 + ' -> ' + variable_type(variable) + os.linesep
                             + ''.join(map(lambda location: 'local' + board_env_cap + pascal_case(variable.name) + ' ' + str(location) + ' = local' + board_env_cap + pascal_case(variable.name) + 'Location' + str(location) + os.linesep, local_var_to_nodes[variable.name]))
                             + 'local' + board_env_cap + pascal_case(variable.name) + ' _ = error "local' + board_env_cap + pascal_case(variable.name) + ' illegal local reference"' + os.linesep
                             + ''.join(local_macros[variable.name])
@@ -1510,11 +1516,11 @@ def dsl_to_haskell():
                     + ''.join(
                         [
                             (
-                                'local' + board_env_cap + pascal_case(variable.name) + ' :: Int' + (' -> Int ' if is_array(variable) else ' ') + '-> ' + data_type_name + ' -> ' + variable_type(variable) + os.linesep
+                                'local' + board_env_cap + pascal_case(variable.name) + ' :: Integer' + (' -> Integer ' if is_array(variable) else ' ') + '-> ' + data_type_name + ' -> ' + variable_type(variable) + os.linesep
                                 + (
                                     ''.join(
                                         [
-                                            ('local' + board_env_cap + pascal_case(variable.name) + ' ' + str(number) + ' = local' + board_env_cap + pascal_case(variable.name) + str(number) + os.linesep)
+                                            ('local' + board_env_cap + pascal_case(variable.name) + ' ' + str(number) + ' = local' + board_env_cap + pascal_case(variable.name) + 'Location' + str(number) + os.linesep)
                                             for number in local_var_to_nodes[variable.name]
                                         ]
                                     )
@@ -1536,7 +1542,7 @@ def dsl_to_haskell():
             + os.linesep + '-- START OF GET FUNCTIONS FOR ARRAYS' + os.linesep + os.linesep
             + ''.join(
                 [
-                    board_env + pascal_case(variable.name) + ' :: Int -> ' + data_type_name + ' -> ' + variable_type(variable) + os.linesep
+                    board_env + pascal_case(variable.name) + ' :: Integer -> ' + data_type_name + ' -> ' + variable_type(variable) + os.linesep
                     + ''.join(
                         [
                             (board_env + pascal_case(variable.name) + ' ' + str(index) + ' = ' + board_env + pascal_case(variable.name) + 'Index' + str(index) + os.linesep)
@@ -1550,7 +1556,7 @@ def dsl_to_haskell():
             + (
                 ''.join(
                     [
-                        'local' + board_env_cap + pascal_case(variable.name) + 'Location' + str(variable_location) + ' :: Int -> ' + data_type_name_2 + ' -> ' + variable_type(variable) + os.linesep
+                        'local' + board_env_cap + pascal_case(variable.name) + 'Location' + str(variable_location) + ' :: Integer -> ' + data_type_name_2 + ' -> ' + variable_type(variable) + os.linesep
                         + ''.join(
                             [
                                 ('local' + board_env_cap + pascal_case(variable.name) + 'Location' + str(variable_location) + ' ' + str(index) + ' = local' + board_env_cap + pascal_case(variable.name) + 'Location' + str(variable_location) + 'Index' + str(index) + os.linesep)
@@ -1582,18 +1588,18 @@ def dsl_to_haskell():
                     map(
                         lambda var:
                         (
-                            'updateLocal' + board_env_cap + pascal_case(var.name) + ' :: Int -> ' + data_type_name_2 + ' -> ' + variable_type(var) + ' -> ' + data_type_name + os.linesep
+                            'updateLocal' + board_env_cap + pascal_case(var.name) + ' :: Integer -> ' + data_type_name_2 + ' -> ' + variable_type(var) + ' -> ' + data_type_name + os.linesep
                             + ''.join(
                                 map(
                                     lambda local_number:
-                                    ('updateLocal' + board_env_cap + pascal_case(var.name) + ' ' + str(local_number) + ' = updateLocal' + board_env_cap + pascal_case(var.name) + str(local_number) + os.linesep)
+                                    ('updateLocal' + board_env_cap + pascal_case(var.name) + ' ' + str(local_number) + ' = updateLocal' + board_env_cap + pascal_case(var.name) + 'Location' + str(local_number) + os.linesep)
                                     ,
                                     (local_var_to_nodes[var.name] if var.name in local_var_to_nodes else [])
                                 )
                             )
                             + 'updateLocal' + board_env_cap + pascal_case(var.name) + ' _ = error "local' + board_env_cap + pascal_case(var.name) + ' illegal local reference"' + os.linesep
                         ),
-                        filter(lambda var: (var.model_as == 'VAR' and is_local(var) and not is_array(var) and var in local_var_to_nodes), model.variables)
+                        filter(lambda var: (var.model_as == 'VAR' and is_local(var) and not is_array(var) and var.name in local_var_to_nodes), model.variables)
                     )
                 )
                 if blackboard_mode
@@ -1622,21 +1628,21 @@ def dsl_to_haskell():
                         if not is_local(variable)
                         else
                         ''.join(
-                            'updateLocalBoard' + pascal_case(variable.name) + ' :: Int -> Int -> ' + data_type_name + ' -> ' + variable_type(variable) + ' -> BTreeBlackboard' + os.linesep
+                            'updateLocalBoard' + pascal_case(variable.name) + ' :: Integer -> Integer -> ' + data_type_name + ' -> ' + variable_type(variable) + ' -> BTreeBlackboard' + os.linesep
                             + ''.join(
                                 map(
                                     lambda location:
-                                    'updateLocalBoard' + pascal_case(variable.name) + ' ' + str(location) + ' = updateLocalBoard' + pascal_case(variable.name) + str(location) + os.linesep
+                                    'updateLocalBoard' + pascal_case(variable.name) + ' ' + str(location) + ' = updateLocalBoard' + pascal_case(variable.name) + 'Location' + str(location) + os.linesep
                                     ,
                                     local_var_to_nodes[variable.name]
                                 )
                             )
                             + 'updateLocalBoard' + pascal_case(variable.name) + ' _ = error "localBoard' + pascal_case(variable.name) + ' illegal local reference"' + os.linesep
-                            + 'arrayUpdateLocalBoard' + pascal_case(variable.name) + ' :: Int -> ' + data_type_name + ' -> [(Int, ' + variable_type(variable) + ')] -> BTreeBlackboard' + os.linesep
+                            + 'arrayUpdateLocalBoard' + pascal_case(variable.name) + ' :: Integer -> ' + data_type_name + ' -> [(Integer, ' + variable_type(variable) + ')] -> BTreeBlackboard' + os.linesep
                             + ''.join(
                                 map(
                                     lambda location:
-                                    'arrayUpdateLocalBoard' + pascal_case(variable.name) + ' ' + str(location) + ' = arrayUpdateLocalBoard' + pascal_case(variable.name) + str(location) + os.linesep
+                                    'arrayUpdateLocalBoard' + pascal_case(variable.name) + ' ' + str(location) + ' = arrayUpdateLocalBoard' + pascal_case(variable.name) + 'Location' + str(location) + os.linesep
                                     ,
                                     local_var_to_nodes[variable.name]
                                 )
@@ -1707,7 +1713,7 @@ def dsl_to_haskell():
             # end of tick conditions.
             # ---------------------------------------------------------------------------------------
             + os.linesep + '-- START OF INITIAL ' + ('BLACKBOARD' if blackboard_mode else 'ENVIRONMENT') + ' VALUE' + os.linesep + os.linesep
-            + 'initial' + ('Blackboard' if blackboard_mode else 'Environment') + ' :: Int -> ' + data_type_name_2 + os.linesep
+            + 'initial' + ('Blackboard' if blackboard_mode else 'Environment') + ' :: Integer -> ' + data_type_name_2 + os.linesep
             + 'initial' + ('Blackboard' if blackboard_mode else 'Environment') + ' seed ' + ('' if blackboard_mode else (blackboard_name + ' ')) + '= ' + data_type_name + ' newSereneGenerator ' + ' '.join(map(lambda x : x['initial_name'], create_order))
             + indent(1) + 'where' + os.linesep
             + indent(2) + 'tempGen0 = getGenerator seed' + os.linesep
@@ -1788,7 +1794,7 @@ def dsl_to_haskell():
                         # node location is necessary so that we can access other local variables.
                         if is_array(variable):
                             running_dict[variable.name].append(
-                                'localBoard' + pascal_case(variable.name) + 'Location' + str(my_int) + ' :: Int -> BTreeBlackboard -> ' + cur_type + os.linesep
+                                'localBoard' + pascal_case(variable.name) + 'Location' + str(my_int) + ' :: Integer -> BTreeBlackboard -> ' + cur_type + os.linesep
                                 + ''.join(
                                     map(
                                         lambda index:
@@ -1896,16 +1902,18 @@ def dsl_to_haskell():
         return handle_blackboard_environment(create_order, True, local_macros, local_var_to_nodes)
 
     randomizer = (
-            'module SereneRandomizer where' + os.linesep
-            + 'import System.Random' + os.linesep
-            + os.linesep
-            + 'getGenerator :: Int -> StdGen' + os.linesep
-            + 'getGenerator = mkStdGen' + os.linesep
-            + os.linesep
-            + 'getRandomInt :: StdGen -> Int -> (Int, StdGen)' + os.linesep
-            + 'getRandomInt generator maxValue = randomR (0, maxValue) generator' + os.linesep
-            + os.linesep
-        )
+        'module SereneRandomizer where' + os.linesep
+        + 'import System.Random' + os.linesep
+        + os.linesep
+        + 'getGenerator :: Integer -> StdGen' + os.linesep
+        + 'getGenerator seed = mkStdGen (fromInteger seed)' + os.linesep
+        + os.linesep
+        + 'getRandomInteger :: StdGen -> Integer -> (Integer, StdGen)' + os.linesep
+        + 'getRandomInteger generator maxValue = (toInteger randomValue, newGenerator)' + os.linesep
+        + indent(1) + 'where' + os.linesep
+        + indent(2) + '(randomValue, newGenerator) = randomR (0, maxValue) generator' + os.linesep
+        + os.linesep
+    )
 
     standard_imports = (
         'import BehaviorTreeCore' + os.linesep
@@ -1937,7 +1945,7 @@ def dsl_to_haskell():
         + 'sereneIMPLIES False True = True' + os.linesep
         + 'sereneIMPLIES False False = True' + os.linesep
         + os.linesep
-        + 'sereneCOUNT :: Bool -> Bool -> Int' + os.linesep
+        + 'sereneCOUNT :: Bool -> Bool -> Integer' + os.linesep
         + 'sereneCOUNT True True = 2' + os.linesep
         + 'sereneCOUNT True False = 1' + os.linesep
         + 'sereneCOUNT False True = 1' + os.linesep
@@ -1982,20 +1990,24 @@ def dsl_to_haskell():
         write_file.write(create_blackboard(model))
 
     with open(my_location + pascal_case(args.output_file) + '.hs', 'w', encoding='utf-8') as write_file:
-        write_file.write(create_tree(model, args.output_file))
+        (seen_nodes, to_write) = create_tree(model, args.output_file)
+        write_file.write(to_write)
 
     with open(my_location + 'Main.hs', 'w', encoding='utf-8') as write_file:
         write_file.write(create_runner(model, args.output_file, args.max_iter))
 
     for action in model.action_nodes:
-        with open(my_location + 'BTree' + pascal_case(action.name) + '.hs', 'w', encoding='utf-8') as write_file:
-            write_file.write(build_action_node(action))
+        if action.name in seen_nodes:
+            with open(my_location + 'BTree' + pascal_case(action.name) + '.hs', 'w', encoding='utf-8') as write_file:
+                write_file.write(build_action_node(action))
     for check in model.check_nodes:
-        with open(my_location + 'BTree' + pascal_case(check.name) + '.hs', 'w', encoding='utf-8') as write_file:
-            write_file.write(build_check_node(check))
+        if check.name in seen_nodes:
+            with open(my_location + 'BTree' + pascal_case(check.name) + '.hs', 'w', encoding='utf-8') as write_file:
+                write_file.write(build_check_node(check))
     for check_env in model.environment_checks:
-        with open(my_location + 'BTree' + pascal_case(check_env.name) + '.hs', 'w', encoding='utf-8') as write_file:
-            write_file.write(build_check_environment_node(check_env))
+        if check_env.name in seen_nodes:
+            with open(my_location + 'BTree' + pascal_case(check_env.name) + '.hs', 'w', encoding='utf-8') as write_file:
+                write_file.write(build_check_environment_node(check_env))
 
     return
 

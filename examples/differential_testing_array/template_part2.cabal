@@ -47,4 +47,4 @@ executable simple-robot
     main-is:          Main.hs
 
     -- Modules included in this executable, other than Main.
-    other-modules: BTreeA1, BTreeA2, BTreeA3, BTreeA4, BTreeC1, BTreeC2, BehaviorTreeBlackboard, BehaviorTreeCore, BehaviorTreeEnvironment, SereneOperations, SereneRandomizer,
+    --other-modules: BTreeA1, BTreeA2, BTreeA3, BTreeA4, BTreeC1, BTreeC2, BehaviorTreeBlackboard, BehaviorTreeCore, BehaviorTreeEnvironment, SereneOperations, SereneRandomizer,

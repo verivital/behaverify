@@ -33,7 +33,7 @@ type PartialMemoryStatus = BTreeNodeStatus
 
 type FutureChanges = [(BTreeBlackboard, BTreeEnvironment) -> (BTreeBlackboard, BTreeEnvironment)]
 
-type TreeLocation = Int
+type TreeLocation = Integer
 
 type TreeOutput = (BTreeNodeStatus, TrueMemoryStorage, PartialMemoryStorage, BTreeBlackboard, BTreeEnvironment, FutureChanges)
 
