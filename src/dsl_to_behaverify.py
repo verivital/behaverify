@@ -4,7 +4,7 @@ This module is part of BehaVerify and used to convert .tree files to .smv files 
 
 Author: Serena Serafina Serbinowska
 Created: 2022-01-01 (Date not correct)
-Last Edit: 2023-08-22
+Last Edit: 2023-08-24
 '''
 import argparse
 import pprint
@@ -786,7 +786,7 @@ def dsl_to_behaverify(metamodel_file, model_file, keep_stage_0, keep_last_stage,
         while (not hasattr(current_node, 'name') or hasattr(current_node, 'sub_root')):
             if hasattr(current_node, 'leaf'):
                 argument_pairs = {
-                    current_node.leaf.argument_names[index]: handle_constant(current_node.arguments[index])
+                    current_node.leaf.arguments[index].argument_name: handle_constant(current_node.arguments[index])
                     for index in range(len(current_node.arguments))
                 }
                 current_node = current_node.leaf

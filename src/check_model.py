@@ -387,46 +387,38 @@ def validate_model(model, constants):
         return
 
 
-    def validate_check(node, arg_types):
+    def validate_check(node):
         trace.append('In Check: ' + node.name)
-        if len(arg_types) != len(node.argument_names):
-            raise BTreeException(trace, 'wrong number of arguments')
-        for index, _ in enumerate(arg_types):
-            constants[node.argument_names[index]] = dummy_value(arg_types[index])
+        for arg_pair in node.arguments:
+            constants[arg_pair.argument_name] = dummy_value(arg_pair.argument_type)
         read_variables = set(map(lambda x : x.name, node.read_variables))
         if len(read_variables) != len(node.read_variables):
             raise BTreeException(trace, 'duplicate read variables')
         validate_condition(node.condition, {'blackboard'}, read_variables, {'reg'})
-        for index in range(len(arg_types)):
-            constants.pop(node.argument_names[index])
+        for arg_pair in node.arguments:
+            constants.pop(arg_pair.argument_name)
         trace.pop()
         return
 
 
-    def validate_check_env(node, arg_types):
+    def validate_check_env(node):
         trace.append('In Environment Check: ' + node.name)
-        if len(arg_types) != len(node.argument_names):
-            raise BTreeException(trace, 'wrong number of arguments')
-        for index, _ in enumerate(arg_types):
-            constants[node.argument_names[index]] = dummy_value(arg_types[index])
+        for arg_pair in node.arguments:
+            constants[arg_pair.argument_name] = dummy_value(arg_pair.argument_type)
         read_variables = set(map(lambda x : x.name, node.read_variables))
         if len(read_variables) != len(node.read_variables):
             raise BTreeException(trace, 'duplicate read variables')
         validate_condition(node.condition, {'blackboard', 'environment'}, read_variables, {'reg'})
-        for index in range(len(arg_types)):
-            constants.pop(node.argument_names[index])
+        for arg_pair in node.arguments:
+            constants.pop(arg_pair.argument_name)
         trace.pop()
         return
 
 
-    def validate_action(node, arg_types):
-
+    def validate_action(node):
         trace.append('In Action: ' + node.name)
-
-        if len(arg_types) != len(node.argument_names):
-            raise BTreeException(trace, 'wrong number of arguments')
-        for index, _ in enumerate(arg_types):
-            constants[node.argument_names[index]] = dummy_value(arg_types[index])
+        for arg_pair in node.arguments:
+            constants[arg_pair.argument_name] = dummy_value(arg_pair.argument_type)
 
         all_vars = set(map(lambda x : x.name, itertools.chain(node.local_variables, node.read_variables, node.write_variables)))
         read_variables = set(map(lambda x : x.name, node.read_variables))
@@ -551,12 +543,10 @@ def validate_model(model, constants):
 
         for case_result in node.return_statement.case_results:
             validate_condition(case_result.condition, {'blackboard', 'local'}, all_vars, {'reg'})
-
-        for index in range(len(arg_types)):
-            constants.pop(node.argument_names[index])
+        for arg_pair in node.arguments:
+            constants.pop(arg_pair.argument_name)
         trace.pop()
         return
-
 
     def validate_variable(variable, scopes, variable_names):
         trace.append('In Variable: ' + variable.name)
@@ -599,14 +589,17 @@ def validate_model(model, constants):
         return
 
 
-    def walk_tree(current_node, node_names, node_names_map, node_to_args):
+    def walk_tree(current_node, node_names, node_names_map, nodes_to_check):
         while (not hasattr(current_node, 'name') or hasattr(current_node, 'sub_root')):
             if hasattr(current_node, 'leaf'):
-                if current_node.leaf.name not in node_to_args:
-                    node_to_args[current_node.leaf.name] = list(map(lambda x : constant_type(x, constants), current_node.arguments))
-                elif node_to_args[current_node.leaf.name] != list(map(lambda x : constant_type(x, constants), current_node.arguments)):
-                    raise BTreeException(trace, 'Node ' + current_node.leaf.name + ' was created with arguments of type: ' + str(node_to_args[current_node.leaf.name]) + ' but is now being created with arguments of type: ' + str(list(map(lambda x : constant_type(x, constants), current_node.arguments))))
+                current_args = current_node.arguments
                 current_node = current_node.leaf
+                if len(current_node.arguments) != len(current_args):
+                    raise BTreeException(trace, 'Node ' + current_node.name + ' needs ' + str(len(current_node.arguments)) + ' arguments but was created with ' + str(len(current_args)))
+                for (index, cur_arg) in enumerate(current_args):
+                    if current_node.arguments[index].argument_type != constant_type(cur_arg, constants):
+                        raise BTreeException(trace, 'Node ' + current_node.name + ' argument ' + str(index) + ' named ' + current_node.arguments[index].argument_name + ' was declared to be of type ' + current_node.arguments[index].argument_type + ' but is being created with type ' + constant_type(cur_arg, constants))
+                nodes_to_check.add(current_node.name)
             else:
                 current_node = current_node.sub_root
         # next, we get the name of this node, and correct for duplication
@@ -629,20 +622,20 @@ def validate_model(model, constants):
                 raise BTreeException(trace, 'Node ' + current_node.name + ' is of type X_is_Y where X==Y')
 
         if hasattr(current_node, 'child'):
-            (node_names, node_names_map, node_to_args) = walk_tree(current_node.child, node_names, node_names_map, node_to_args)
+            (node_names, node_names_map, nodes_to_check) = walk_tree(current_node.child, node_names, node_names_map, nodes_to_check)
         if hasattr(current_node, 'children'):
             if len(current_node.children) < 2:
                 raise BTreeException(trace, 'Node ' + current_node.name + ' has less than 2 children.')
             for child in current_node.children:
-                (node_names, node_names_map, node_to_args) = walk_tree(child, node_names, node_names_map, node_to_args)
-        return (node_names, node_names_map, node_to_args)
+                (node_names, node_names_map, nodes_to_check) = walk_tree(child, node_names, node_names_map, nodes_to_check)
+        return (node_names, node_names_map, nodes_to_check)
 
     # END OF METHODS. START OF SCRIPT -------------------------------------------------------------------------------------------------------------
 
     if 'serene_index' in constants:
         raise BTreeException(trace, 'serene_index was declared as a constant, but is resevered')
 
-    (all_node_names, _, node_to_args) = walk_tree(model.root, set(), {}, {})
+    (all_node_names, _, nodes_to_check) = walk_tree(model.root, set(), {}, set())
 
     require_trace_identifier = False
 
@@ -665,12 +658,12 @@ def validate_model(model, constants):
             validate_variable_assignment(assign_var, var_statement.assign, {'local', 'blackboard', 'environment'}, None, deterministic = False, init_mode = None)
     # no point in really checking nodes that aren't being used.
     # and checking them causes problems because we can't verify argument types.
-    for check in filter(lambda node: node.name in node_to_args, model.check_nodes):
-        validate_check(check, node_to_args[check.name])
-    for check_env in filter(lambda node: node.name in node_to_args, model.environment_checks):
-        validate_check_env(check_env, node_to_args[check_env.name])
-    for action in filter(lambda node: node.name in node_to_args, model.action_nodes):
-        validate_action(action, node_to_args[action.name])
+    for check in filter(lambda node: node.name in nodes_to_check, model.check_nodes):
+        validate_check(check)
+    for check_env in filter(lambda node: node.name in nodes_to_check, model.environment_checks):
+        validate_check_env(check_env)
+    for action in filter(lambda node: node.name in nodes_to_check, model.action_nodes):
+        validate_action(action)
 
     if model.tick_condition is not None:
         validate_condition(model.tick_condition, {'blackboard', 'local', 'environment'}, None, {'reg'})

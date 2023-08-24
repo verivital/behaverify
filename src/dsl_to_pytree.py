@@ -6,20 +6,20 @@ It contains a variety of utility functions.
 
 Author: Serena Serafina Serbinowska
 Created: 2022-01-01 (Date not correct)
-Last Edit: 2023-08-22
+Last Edit: 2023-08-24
 '''
 import argparse
 import os
 import itertools
 import textx
 from behaverify_common import indent, create_node_name
-from check_model import (validate_model
-                         , variable_type
-                         , is_local
-                         , is_env
-                         , is_blackboard
-                         , is_array
-                         , build_range_func)
+from check_model import (validate_model,
+                         variable_type,
+                         is_local,
+                         is_env,
+                         is_blackboard,
+                         is_array,
+                         build_range_func)
 
 
 def write_files(metamodel_file, model_file, main_name, write_location, serene_print, max_iter, no_var_print, py_tree_print):
@@ -34,6 +34,11 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
     @no_var_print ::> turns off printing vars
     @py_tree_print ::> turns on PyTree printing
     '''
+
+    # format_mode variable explained
+    # format_mode is a dict {'init' : init, 'loc' : loc).
+    # init is a boolean. if true, it means we are initializing. if false, we are not.
+    # loc is a location. location can be node, blackboard, or environment.
 
     def format_function_before(function_name, code, format_mode):
         return (
@@ -90,10 +95,6 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
         )
 
     def format_variable_name_only(variable, format_mode):
-        # format_mode variable explained
-        # format_mode is a dict {'init' : init, 'loc' : loc).
-        # init is a boolean. if true, it means we are initializing. if false, we are not.
-        # loc is a location. location can be node, blackboard, or environment.
         return (
             (
                 (
@@ -140,7 +141,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
     def handle_constant(constant):
         if constant in argument_pairs:
             return argument_pairs[constant]
-        return (constants[constant] if constant in constants else constant)
+        return (constants['serene_index'][-1] if constant == 'serene_index' else (constants[constant] if constant in constants else constant))
 
     def handle_constant_str(constant):
         if constant in argument_pairs:
@@ -152,11 +153,11 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
         return 'class ' + node_name + '(py_trees.behaviour.Behaviour):' + os.linesep
 
     def init_method_check(node):
-        return (indent(1) + 'def __init__(self, name' + ((', ' + ', '.join(node.argument_names)) if len(node.argument_names) > 0 else '') + '):' + os.linesep
+        return (indent(1) + 'def __init__(self, name' + ((', ' + ', '.join(map(lambda arg_pair: arg_pair.argument_name, node.arguments))) if len(node.arguments) > 0 else '') + '):' + os.linesep
                 + ''.join(
                     [
-                        (indent(2) + 'self.' + arg_name + ' = ' + arg_name + os.linesep)
-                        for arg_name in node.argument_names
+                        (indent(2) + 'self.' + arg_pair.argument_name + ' = ' + arg_pair.argument_name + os.linesep)
+                        for arg_pair in node.arguments
                     ]
                 )
                 + indent(2) + 'super(' + node.name + ', self).__init__(name)' + os.linesep
@@ -185,11 +186,11 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                 + indent(2) + 'return return_status' + os.linesep)
 
     def init_method_check_env(node):
-        return (indent(1) + 'def __init__(self, name, environment' + ((', ' + ', '.join(node.argument_names)) if len(node.argument_names) > 0 else '') + '):' + os.linesep
+        return (indent(1) + 'def __init__(self, name, environment' + ((', ' + ', '.join(map(lambda arg_pair: arg_pair.argument_name, node.arguments))) if len(node.arguments) > 0 else '') + '):' + os.linesep
                 + ''.join(
                     [
-                        (indent(2) + 'self.' + arg_name + ' = ' + arg_name + os.linesep)
-                        for arg_name in node.argument_names
+                        (indent(2) + 'self.' + arg_pair.argument_name + ' = ' + arg_pair.argument_name + os.linesep)
+                        for arg_pair in node.arguments
                     ]
                 )
                 + indent(2) + 'super(' + node.name + ', self).__init__(name)' + os.linesep
@@ -237,9 +238,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
             raise ValueError('variable had no valid values!')
         if len(values) == 1:
             return format_code(values[0], format_mode)
-        return ('random.choice(['
-                + ', '.join([format_code(value, format_mode) for value in values])
-                + '])')
+        return ('random.choice([' + ', '.join([format_code(value, format_mode) for value in values]) + '])')
 
     def variable_assignment(variable, assign_value, indent_level, format_mode, array_mode):
         safety_1 = '' if variable.model_as == 'DEFINE' else ('serene_safe_assignment.' + variable.name + '(')
@@ -290,7 +289,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                     max_val = handle_constant(statement.values[1])
                     serene_indices = list(filter(cond_func, range(min_val, max_val + 1)))
                 for index in serene_indices:
-                    constants['serene_index'] = index
+                    constants['serene_index'].append(index)
                     array_index = (
                         str(index)
                         if format_mode['init']
@@ -306,7 +305,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                         (array_index
                          , handle_assign(statement.assign if format_mode['init'] else statement.assign.assign, indent_level, format_mode))
                     )
-                constants.pop('serene_index')
+                    constants['serene_index'].pop()
             else:
                 for index, assign in enumerate(statement.assigns):
                     array_index = (
@@ -348,12 +347,12 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
             case_string = ''
             if range_mode:
                 for index in range(handle_constant(handle_constant(variable.array_size))):
-                    constants['serene_index'] = index
+                    constants['serene_index'].append(index)
                     case_string += (
                         indent(indent_level + 1) + ('if' if index == 0 else 'elif') + ' index == ' + str(index) + ':' + os.linesep
                         + indent(indent_level + 2) + 'return ' + handle_assign(assign, indent_level + 2, format_mode) + os.linesep
                     )
-                constants.pop('serene_index')
+                    constants['serene_index'].pop()
             else:
                 assign_list = assign
                 for index, assign_ in enumerate(assign_list):
@@ -457,11 +456,11 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                 )
 
     def init_method_action(node):
-        return (indent(1) + 'def __init__(self, name, environment' + ((', ' + ', '.join(node.argument_names)) if len(node.argument_names) > 0 else '') + '):' + os.linesep
+        return (indent(1) + 'def __init__(self, name, environment' + ((', ' + ', '.join(map(lambda arg_pair: arg_pair.argument_name, node.arguments))) if len(node.arguments) > 0 else '') + '):' + os.linesep
                 + ''.join(
                     [
-                        (indent(2) + 'self.' + arg_name + ' = ' + arg_name + os.linesep)
-                        for arg_name in node.argument_names
+                        (indent(2) + 'self.' + arg_pair.argument_name + ' = ' + arg_pair.argument_name + os.linesep)
+                        for arg_pair in node.arguments
                     ]
                 )
                 + indent(2) + 'super(' + node.name + ', self).__init__(name)' + os.linesep
@@ -484,8 +483,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                             else
                             ''
                         )
-                        for local_variable in node.local_variables if local_variable.model_as != 'DEFINE'
-                        # no need to initialize an empty array for define variables.
+                        for local_variable in node.local_variables if local_variable.model_as != 'DEFINE'  # no need to initialize an empty array for define variables.
                     ]
                 )
                 + ''.join(
@@ -579,18 +577,12 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
             else:
                 current_node = current_node.sub_root
         # next, we get the name of this node, and correct for duplication
-
         new_name = create_node_name(current_node.name.replace(' ', ''), node_names, node_names_map)
         node_name = new_name[0]
         modifier = new_name[1]
-
         node_names.add(node_name)
         node_names_map[node_name] = modifier
 
-        # ----------------------------------------------------------------------------------
-        # start of massive if statements, starting with composites
-        # -----------------------------------------------------------------------------------
-        # start of composite nodes
         if current_node.node_type in ('check', 'check_environment', 'action'):
             running_string += (indent(1) + node_name + ' = ' + current_node.name + '_file.' + current_node.name + '(' + "'" + node_name + "'"
                                + ('' if current_node.node_type == 'check' else ', environment')
@@ -628,7 +620,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
         children_names = '[' + ', '.join(children) + ']'
 
         if current_node.memory == 'with_true_memory':
-            raise NotImplementedError('ERROR: true memory not supported in py-trees. Only partial memory is supported.')
+            raise NotImplementedError('ERROR: true memory not supported in PyTrees. Only partial memory is supported.')
 
         if current_node.node_type == 'sequence':
             running_string += (indent(1) + node_name + ' = py_trees.composites.Sequence('
@@ -914,7 +906,6 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
         )
 
     def write_environment(model):
-
         def env_handle_check_env(node):
             return (
                 os.linesep
@@ -974,7 +965,6 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                     ]
                 )
             )
-
         to_write = (
             'import random' + os.linesep
             + 'import serene_safe_assignment' + os.linesep
@@ -1045,11 +1035,11 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
         )
         nonlocal argument_pairs
         for check_env in model.environment_checks:
-            argument_pairs = {arg_name: 'node.' + arg_name for arg_name in check_env.argument_names}
+            argument_pairs = {arg_pair.argument_name: 'node.' + arg_pair.argument_name for arg_pair in check_env.arguments}
             to_write += env_handle_check_env(check_env)
             argument_pairs = {}
         for action in model.action_nodes:
-            argument_pairs = {arg_name: 'node.' + arg_name for arg_name in action.argument_names}
+            argument_pairs = {arg_pair.argument_name: 'node.' + arg_pair.argument_name for arg_pair in action.arguments}
             for statement in itertools.chain(action.pre_update_statements, action.post_update_statements):
                 if statement.variable_statement is not None:
                     continue
@@ -1108,22 +1098,23 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
     }
     argument_pairs = {}
     validate_model(model, constants)
+    constants['serene_index'] = []
 
     with open(write_location + 'serene_safe_assignment.py', 'w', encoding = 'utf-8') as write_file:
-        write_file.write(create_safe_assignment(model))
+        write_file.write(create_safe_assignment(model))  # checked. No additional information required.
 
     for action in model.action_nodes:
-        argument_pairs = {arg_name: 'self.' + arg_name for arg_name in action.argument_names}
+        argument_pairs = {arg_pair.argument_name: 'self.' + arg_pair.argument_name for arg_pair in action.arguments}
         with open(write_location + action.name + '_file.py', 'w', encoding = 'utf-8') as write_file:
             write_file.write(build_action_node(action))
         argument_pairs = {}
     for check in model.check_nodes:
-        argument_pairs = {arg_name: 'self.' + arg_name for arg_name in check.argument_names}
+        argument_pairs = {arg_pair.argument_name: 'self.' + arg_pair.argument_name for arg_pair in check.arguments}
         with open(write_location + check.name + '_file.py', 'w', encoding = 'utf-8') as write_file:
             write_file.write(build_check_node(check))
         argument_pairs = {}
     for check_env in model.environment_checks:
-        argument_pairs = {arg_name: 'self.' + arg_name for arg_name in check_env.argument_names}
+        argument_pairs = {arg_pair.argument_name: 'self.' + arg_pair.argument_name for arg_pair in check_env.arguments}
         with open(write_location + check_env.name + '_file.py', 'w', encoding = 'utf-8') as write_file:
             write_file.write(build_check_environment_node(check_env))
         argument_pairs = {}
@@ -1188,7 +1179,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
         write_file.write(create_runner(list(filter(is_blackboard, model.variables)), list(filter(is_env, model.variables)), local_print_info))
     with open(write_location + project_environment_name + '.py', 'w', encoding = 'utf-8') as write_file:
         write_file.write(write_environment(model))
-    # END OF METHOD.
+    return
 
 
 if __name__ == '__main__':

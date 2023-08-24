@@ -92,23 +92,30 @@ node:
     (leaf = [action_node]) |
     (leaf = [check_environment_node]))
     '{'
-    arguments *= constant_value
+    arguments *= constant_value[',']
     '}'
+;
+    possible_argument_types:
+    'INT' | 'ENUM' | 'BOOLEAN'
+;
+
+    argument_pair:
+    '(' argument_name = STRING ',' argument_type = possible_argument_types ')'
 ;
     
     check_node:
     (node_type = 'check') '{'
     name = ID
-    'arguments' '{' argument_names *= STRING '}' ('end_arguments')?
-    'read_variables' '{' read_variables *= [variable]  '}' ('end_read_variables')?
+    'arguments' '{' arguments *= argument_pair[','] '}' ('end_arguments')?
+    'read_variables' '{' read_variables *= [variable][',']  '}' ('end_read_variables')?
     'condition' '{' condition = code_statement '}' ('end_condition')?
     '}' ('end_check')?
 ;
     check_environment_node:
     (node_type = 'check_environment') '{'
     name = ID
-    'arguments' '{' argument_names *= STRING '}' ('end_arguments')?
-    'read_variables' '{' read_variables *= [variable]  '}' ('end_read_variables')?
+    'arguments' '{' arguments *= argument_pair[','] '}' ('end_arguments')?
+    'read_variables' '{' read_variables *= [variable][',']  '}' ('end_read_variables')?
     'condition' '{' condition = code_statement '}' ('end_condition')?
     '}' ('end_check_environment')?
 ;
@@ -116,10 +123,10 @@ node:
     action_node:
     (node_type = 'action') '{'
     name = ID
-    'arguments' '{' argument_names *= STRING '}' ('end_arguments')?
-    'local_variables' '{' local_variables *= [variable] '}' ('end_local_variables')?
-    'read_variables' '{' read_variables *= [variable]  '}' ('end_read_variables')?
-    'write_variables' '{' write_variables *= [variable]  '}' ('end_write_variables')?
+    'arguments' '{' arguments *= argument_pair[','] '}' ('end_arguments')?
+    'local_variables' '{' local_variables *= [variable][','] '}' ('end_local_variables')?
+    'read_variables' '{' read_variables *= [variable][','] '}' ('end_read_variables')?
+    'write_variables' '{' write_variables *= [variable][','] '}' ('end_write_variables')?
     'initial_values' '{'
     init_statements *= variable_statement_initial
     '}' ('end_initial_values')?
