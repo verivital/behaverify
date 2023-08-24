@@ -6,7 +6,7 @@ It contains a variety of utility functions.
 
 Author: Serena Serafina Serbinowska
 Created: 2022-01-01 (Date not correct)
-Last Edit: 2023-08-23
+Last Edit: 2023-08-24
 '''
 import argparse
 import os
@@ -27,6 +27,15 @@ def dsl_to_haskell():
     '''
     this function is used to convert the dsl to haskell code
     '''
+    def to_haskell_type(constant_type):
+        '''Used to get the type of the constant'''
+        if constant_type == 'ENUM':
+            return 'String'
+        if constant_type == 'BOOLEAN':
+            return 'Bool'
+        if constant_type == 'INT':
+            return 'Integer'
+        raise ValueError('Constant ' + constant_type + ' is of an unsupported type. Only ENUM, BOOLEAN, and INT are supported')
     def variable_type(variable):
         '''returns the vaiable type, correctly formatted for haskell'''
         return (
@@ -248,6 +257,8 @@ def dsl_to_haskell():
 
     def handle_constant(constant, str_conversion):
         '''used to handle constnts and replace them with integer values'''
+        if constant in arguments:
+            return constant
         new_constant = ((constants['serene_index'][-1] if constant == 'serene_index' else constants[constant]) if constant in constants else constant)
         return (
             (
@@ -479,26 +490,42 @@ def dsl_to_haskell():
 
     def check_function(node):
         '''used to build check functions'''
+        indent_modifier = 2 if len(node.arguments) > 0 else 0
         return (
-            camel_case(node.name) + ' :: [BTreeNode] -> TreeLocation -> TrueMemoryStatus -> [TrueMemoryStorage] -> PartialMemoryStatus -> [PartialMemoryStorage] -> BTreeBlackboard -> BTreeEnvironment -> FutureChanges -> BTreeNodeOutput' + os.linesep
-            + camel_case(node.name) + ' _ nodeLocation _ _ _ _ blackboard environment futureChanges' + os.linesep
-            + indent(1) + '| ' + format_code(node.condition, None, 'blackboard', 'environment') + ' = (Success, [], [], blackboard, environment, futureChanges)' + os.linesep
-            + indent(1) + '| otherwise = (Failure, [], [], blackboard, environment, futureChanges)'
+            (
+                (
+                    'bTreeFunctionCreator' + pascal_case(node.name) + ' :: '
+                    + ' -> '.join(map(lambda arg_pair: to_haskell_type(arg_pair.argument_type), node.arguments))
+                    + ' -> ([BTreeNode] -> TreeLocation -> TrueMemoryStatus -> [TrueMemoryStorage] -> PartialMemoryStatus -> [PartialMemoryStorage] -> BTreeBlackboard -> BTreeEnvironment -> FutureChanges -> BTreeNodeOutput)' + os.linesep
+                    + 'bTreeFunctionCreator' + pascal_case(node.name) + ' '
+                    + ' '.join(map(lambda arg_pair: arg_pair.argument_name, node.arguments))
+                    + ' = bTreeFunction' + pascal_case(node.name) + os.linesep
+                    + indent(1) + 'where' + os.linesep
+                )
+                if len(node.arguments) > 0
+                else
+                ''
+            )
+            + indent(indent_modifier) + 'bTreeFunction' + pascal_case(node.name) + ' :: [BTreeNode] -> TreeLocation -> TrueMemoryStatus -> [TrueMemoryStorage] -> PartialMemoryStatus -> [PartialMemoryStorage] -> BTreeBlackboard -> BTreeEnvironment -> FutureChanges -> BTreeNodeOutput' + os.linesep
+            + indent(indent_modifier) + 'bTreeFunction' + pascal_case(node.name) + ' _ nodeLocation _ _ _ _ blackboard environment futureChanges' + os.linesep
+            + indent(1 + indent_modifier) + '| ' + format_code(node.condition, None, 'blackboard', 'environment') + ' = (Success, [], [], blackboard, environment, futureChanges)' + os.linesep
+            + indent(1 + indent_modifier) + '| otherwise = (Failure, [], [], blackboard, environment, futureChanges)'
         )
 
     def action_function(node):
         '''used to build action functions'''
+        indent_modifier = 2 if len(node.arguments) > 0 else 0
         pre = len(node.pre_update_statements)
         post = len(node.post_update_statements)
         pre_updates = []
         delay_updates = []
         post_updates = []
         for index in range(pre):
-            (new_pre, new_delay) = handle_statement(node.pre_update_statements[index], 2, None)
+            (new_pre, new_delay) = handle_statement(node.pre_update_statements[index], 2 + indent_modifier, None)
             pre_updates += new_pre
             delay_updates += new_delay
         for index in range(post):
-            (new_post, new_delay) = handle_statement(node.post_update_statements[index], 2, None)
+            (new_post, new_delay) = handle_statement(node.post_update_statements[index], 2 + indent_modifier, None)
             post_updates += new_post
             delay_updates += new_delay
         pre = len(pre_updates)
@@ -518,32 +545,46 @@ def dsl_to_haskell():
             )
 
         return (
-            camel_case(node.name) + ' :: [BTreeNode] -> TreeLocation -> TrueMemoryStatus -> [TrueMemoryStorage] -> PartialMemoryStatus -> [PartialMemoryStorage] -> BTreeBlackboard -> BTreeEnvironment -> FutureChanges -> BTreeNodeOutput' + os.linesep
-            + camel_case(node.name) + ' _ nodeLocation _ _ _ _ oldBlackboard oldEnvironment futureChanges = (returnStatus, [], [], newBlackboard, newEnvironment, newFutureChanges)' + os.linesep
-            + indent(1) + 'where' + os.linesep
+            (
+                (
+                    'bTreeFunctionCreator' + pascal_case(node.name) + ' :: '
+                    + ' -> '.join(map(lambda arg_pair: to_haskell_type(arg_pair.argument_type), node.arguments))
+                    + ' -> ([BTreeNode] -> TreeLocation -> TrueMemoryStatus -> [TrueMemoryStorage] -> PartialMemoryStatus -> [PartialMemoryStorage] -> BTreeBlackboard -> BTreeEnvironment -> FutureChanges -> BTreeNodeOutput)' + os.linesep
+                    + 'bTreeFunctionCreator' + pascal_case(node.name) + ' '
+                    + ' '.join(map(lambda arg_pair: arg_pair.argument_name, node.arguments))
+                    + ' = bTreeFunction' + pascal_case(node.name) + os.linesep
+                    + indent(1) + 'where' + os.linesep
+                )
+                if len(node.arguments) > 0
+                else
+                ''
+            )
+            + indent(indent_modifier) + 'bTreeFunction' + pascal_case(node.name) + ' :: [BTreeNode] -> TreeLocation -> TrueMemoryStatus -> [TrueMemoryStorage] -> PartialMemoryStatus -> [PartialMemoryStorage] -> BTreeBlackboard -> BTreeEnvironment -> FutureChanges -> BTreeNodeOutput' + os.linesep
+            + indent(indent_modifier) + 'bTreeFunction' + pascal_case(node.name) + ' _ nodeLocation _ _ _ _ oldBlackboard oldEnvironment futureChanges = (returnStatus, [], [], newBlackboard, newEnvironment, newFutureChanges)' + os.linesep
+            + indent(1 + indent_modifier) + 'where' + os.linesep
             + ('').join(
                 [
-                    (env_decl(index, 2) + value)
+                    (env_decl(index, 2 + indent_modifier) + value)
                     for index, value in enumerate(pre_updates)
                 ]
             )
             + handle_return_statement(node.return_statement)
             + ('').join(
                 [
-                    (env_decl(index + pre, 2) + value)
+                    (env_decl(index + pre, 2 + indent_modifier) + value)
                     for index, value in enumerate(post_updates)
                 ]
             )
             + ('').join(
                 [
-                    (code_decl(index, 2) + value)
+                    (code_decl(index, 2 + indent_modifier) + value)
                     for index, value in enumerate(delay_updates)
                 ]
             )
-            + indent(2) + 'preStatusBoardEnv = ' + ' . '.join(map(lambda x : 'boardEnvUpdate' + x, map(str, reversed(range(pre))))) + (' $ ' if pre > 1 else ' ') + '(oldBlackboard, oldEnvironment)' + os.linesep
-            + indent(2) + 'returnStatus = returnStatement preStatusBoardEnv' + os.linesep
-            + indent(2) + '(newBlackboard, newEnvironment) = ' + ' . '.join(map(lambda x : 'boardEnvUpdate' + x, map(str, reversed(range(pre, pre + post))))) + (' $ ' if post > 1 else ' ') + 'preStatusBoardEnv' + os.linesep
-            + indent(2) + 'newFutureChanges = ' + ' : '.join(map(lambda x : 'futureChanges' + x, map(str, reversed(range(delay))))) + (' : ' if delay > 0 else '') + 'futureChanges' + os.linesep
+            + indent(2 + indent_modifier) + 'preStatusBoardEnv = ' + ' . '.join(map(lambda x : 'boardEnvUpdate' + x, map(str, reversed(range(pre))))) + (' $ ' if pre > 1 else ' ') + '(oldBlackboard, oldEnvironment)' + os.linesep
+            + indent(2 + indent_modifier) + 'returnStatus = returnStatement preStatusBoardEnv' + os.linesep
+            + indent(2 + indent_modifier) + '(newBlackboard, newEnvironment) = ' + ' . '.join(map(lambda x : 'boardEnvUpdate' + x, map(str, reversed(range(pre, pre + post))))) + (' $ ' if post > 1 else ' ') + 'preStatusBoardEnv' + os.linesep
+            + indent(2 + indent_modifier) + 'newFutureChanges = ' + ' : '.join(map(lambda x : 'futureChanges' + x, map(str, reversed(range(delay))))) + (' : ' if delay > 0 else '') + 'futureChanges' + os.linesep
         )
 
     def build_check_node(node):
@@ -684,7 +725,9 @@ def dsl_to_haskell():
             )
 
         def walk_tree_recursive(current_node, seen_nodes, node_names, node_names_map, running_string, running_int, indent_level):
+            current_args = None
             while (not hasattr(current_node, 'name') or hasattr(current_node, 'sub_root')):
+                current_args = (current_node.arguments if hasattr(current_node, 'arguments') else None)
                 current_node = (current_node.leaf if hasattr(current_node, 'leaf') else current_node.sub_root)
 
             conflict_avoid_name = 'bTreeNode' + pascal_case(current_node.name)
@@ -697,8 +740,12 @@ def dsl_to_haskell():
 
             if current_node.node_type in ('check', 'check_environment', 'action'):
                 seen_nodes.add(current_node.name)
+                has_args = len(current_node.arguments) > 0
                 running_string = running_string + (
-                    indent(indent_level) + node_name + ' = BTreeNode ' + camel_case(current_node.name) + ' [] ' + str(my_int) + os.linesep
+                    indent(indent_level) + node_name + ' = BTreeNode '
+                    + ('(' if has_args else '') + 'bTreeFunction' + ('Creator' if has_args else '') + pascal_case(current_node.name)
+                    + ((' ' + ' '.join(map(lambda arg: handle_constant(arg, True), current_args)) + ')') if has_args else '')
+                    + ' [] ' + str(my_int) + os.linesep
                 )
             else:
                 child_names = []
@@ -1972,6 +2019,7 @@ def dsl_to_haskell():
 
     validate_model(model, constants)
     constants['serene_index'] = []
+    arguments = set()
 
     my_location = args.location + 'app/'
 
@@ -1998,16 +2046,22 @@ def dsl_to_haskell():
 
     for action in model.action_nodes:
         if action.name in seen_nodes:
+            arguments = {argument_pair.argument_name for argument_pair in action.arguments}
             with open(my_location + 'BTree' + pascal_case(action.name) + '.hs', 'w', encoding='utf-8') as write_file:
                 write_file.write(build_action_node(action))
+            arguments = set()
     for check in model.check_nodes:
         if check.name in seen_nodes:
+            arguments = {argument_pair.argument_name for argument_pair in check.arguments}
             with open(my_location + 'BTree' + pascal_case(check.name) + '.hs', 'w', encoding='utf-8') as write_file:
                 write_file.write(build_check_node(check))
+            arguments = set()
     for check_env in model.environment_checks:
         if check_env.name in seen_nodes:
+            arguments = {argument_pair.argument_name for argument_pair in check_env.arguments}
             with open(my_location + 'BTree' + pascal_case(check_env.name) + '.hs', 'w', encoding='utf-8') as write_file:
                 write_file.write(build_check_environment_node(check_env))
+            arguments = set()
 
     return
 
