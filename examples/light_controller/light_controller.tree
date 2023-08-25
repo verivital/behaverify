@@ -1,4 +1,4 @@
-#comment#
+#{
 
 Hello! This is the Light Controller Example. The premise is there is a tunnel with an East entrance and a West entrance. The tunnel is only wide enough for one car, but cars need to be able to in on both sides. Therefore, a Light Signal is used to tell cars when it is safe to enter.
 
@@ -17,26 +17,26 @@ Finally, each section with no indentation is required (except tick prequisite), 
 
 E.G., your file must have constants {} as the first section, but leaving it empty is fine.
 
-#end_comment#
+}#
 
 
 
 constants {
-	#comment# constants are used to synchronize values in a .tree file. #end_comment#
+	#{ constants are used to synchronize values in a .tree file. }#
 	
 	max_counter = 4
 
-	#comment# if you have more than one constant, we suggest putting them on separate lines.
+	#{ if you have more than one constant, we suggest putting them on separate lines.
 	example1 = 1
 	example2 = 2
-	#end_comment#
-	#comment# however, the following is also acceptable
+	}#
+	#{ however, the following is also acceptable
 	example1 = 1 example2 = 2
-	#end_comment#
+	}#
 } end_constants
 
 variables {
-	#comment# Variables have several options
+	#{ Variables have several options
 	variable {
 		bl | env | local
 		my_var_name
@@ -55,11 +55,11 @@ variables {
 	FROZENVAR :: variable has state, cannot change between ticks.
 	DEFINE :: variable is a macro that is replaced with the condition it represents
 	The assign will determine the initial value. You must have a default result. case-result pairs are optional
-	#end_comment#
+	}#
 
-	#comment# variables are initialized in order. If var B depends on var A, then A must be declared first #end_comment#
+	#{ variables are initialized in order. If var B depends on var A, then A must be declared first }#
 	variable {
-		bl fairness_counter VAR [0, 'max_counter'] #comment# max_counter is a constant equal to 4 #end_comment#
+		bl fairness_counter VAR [0, 'max_counter'] #{ max_counter is a constant equal to 4 }#
 		assign {
 			result {0}
 		}
@@ -108,7 +108,7 @@ variables {
 	}
 } end_variables
 
-#comment#
+#{
 In general, if we want to update a variable, we use a variable statement, which looks as follows:
 
 variable_statement {
@@ -121,11 +121,11 @@ variable_statement {
 }
 
 You must have a default result, but the case-result pairs are optional. If you specify multiple results, you comma seperate them, and this indicates nondeterminism.
-#end_comment#
+}#
 
 
 environment_update {
-	#comment# environment updates are used to update environment variables in between ticks. The updates will take place in the order they are presented #end_comment#
+	#{ environment updates are used to update environment variables in between ticks. The updates will take place in the order they are presented }#
 	variable_statement {
 		tunnel_state
 		assign {
@@ -155,22 +155,22 @@ environment_update {
 } end_environment_update
 
 
-#comment# We are now done with the variable section. Welcome to the node section #end_comment#
+#{ We are now done with the variable section. Welcome to the node section }#
 
 checks {
-	#comment# checks are used to check values of blackboard variables #end_comment#
+	#{ checks are used to check values of blackboard variables }#
 	check {
-		check_fairness #comment# the name of the check #end_comment#
-		read_variables {fairness_counter} #comment# what variables are read by this node (used for python generation). if multiple, space seperate them (no comma) #end_comment#
-		condition { (less_than, fairness_counter, 'max_counter')} #comment# a condition #end_comment#
+		check_fairness #{ the name of the check }#
+		read_variables {fairness_counter} #{ what variables are read by this node (used for python generation). if multiple, space seperate them (no comma) }#
+		condition { (less_than, fairness_counter, 'max_counter')} #{ a condition }#
 	}
 } end_checks
 
 environment_checks {
-	#comment# environment checks are used to check values of blackboard variables or environment variables #end_comment#
+	#{ environment checks are used to check values of blackboard variables or environment variables }#
 	check_environment {
 		check_west_and_east_cars
-		read_variables {} #comment# this still only specifies BLACKBOARD variables. #end_comment#
+		read_variables {} #{ this still only specifies BLACKBOARD variables. }#
 		condition {west_and_east_cars}
 	}
 	check_environment {
@@ -191,19 +191,19 @@ environment_checks {
 } end_environment_checks
 
 actions {
-	#comment# action nodes actually do stuff #end_comment#
+	#{ action nodes actually do stuff }#
 	action {
-		swap_direction #comment# name of the node #end_comment#
-		local_variables {} #comment# the local variables the node uses #end_comment#
-		read_variables {} #comment# the blackboard variables that are read by this node #end_comment#
-		write_variables {direction fairness_counter} #comment# the blackboard variables that are written to #end_comment#
-		initial_values {} #comment# initial values for local variables #end_comment#
+		swap_direction #{ name of the node }#
+		local_variables {} #{ the local variables the node uses }#
+		read_variables {} #{ the blackboard variables that are read by this node }#
+		write_variables {direction fairness_counter} #{ the blackboard variables that are written to }#
+		initial_values {} #{ initial values for local variables }#
 		update {
-			#comment# the update segments consists of variable statements and a return statement. The return statement doesn't need to be last.
+			#{ the update segments consists of variable statements and a return statement. The return statement doesn't need to be last.
 			You must have a return statement, but that is the only requirement.
 			If you are reading/writing environment variables, you need special syntax, which you will see later.
 			Variable updates occur in order.
-			#end_comment#
+			}#
 			variable_statement {
 				direction
 				assign {
@@ -219,7 +219,7 @@ actions {
 				}
 			}
 			return_statement {
-				#comment# we could have cases in here too. but, the results MUST be deterministic #end_comment#
+				#{ we could have cases in here too. but, the results MUST be deterministic }#
 				result { success}
 			}
 		}
@@ -273,7 +273,7 @@ actions {
 		}
 	}
 	action {
-		#comment# this action writes to the environment, therefore, we will need the write environment block in the update block #end_comment#
+		#{ this action writes to the environment, therefore, we will need the write environment block in the update block }#
 		send_light_signal
 		local_variables {}
 		read_variables {direction}
@@ -281,15 +281,15 @@ actions {
 		initial_values {}
 		update {
 			write_environment {
-				light_signal_func #comment# the name of this update #end_comment#
-				#comment# each of these variable statements must update an environment variable.
+				light_signal_func #{ the name of this update }#
+				#{ each of these variable statements must update an environment variable.
 				These updates take place in order, but occur at the end of the tick (before updates between ticks occur).
 				This represents the fact that doing stuff in the environment takes time, while the tree should be isntant.
 				If an update SHOULD be instant, it can be marked as such
-				#end_comment#
+				}#
 				variable_statement {
-					#comment#instant#end_comment#
-					#comment# if we uncommented the above, this would take place instantly #end_comment#
+					#{instant}#
+					#{ if we uncommented the above, this would take place instantly }#
 					west_light
 					assign {
 						case {(equal, direction, 'west_to_east')}
@@ -319,24 +319,24 @@ actions {
 	}
 } end_actions
 
-#comment# We are now done specifying nodes. We will now specify the tree. #end_comment#
+#{ We are now done specifying nodes. We will now specify the tree. }#
 
 sub_trees {
-	#comment# subtrees are smaller trees which can be inserted. This helps with readability and reusability#end_comment#
+	#{ subtrees are smaller trees which can be inserted. This helps with readability and reusability}#
 	sub_tree {
-		WEST_AND_EAST #comment# the name of the subtree#end_comment#
+		WEST_AND_EAST #{ the name of the subtree}#
 		composite {
-			try_west_and_east#comment# the name of the composite node #end_comment#
-			sequence #comment# the type of the composite node #end_comment#
+			try_west_and_east#{ the name of the composite node }#
+			sequence #{ the type of the composite node }#
 			children {
-				check_west_and_east_cars #comment# the first child is a check node we defined earlier #end_comment#
-				#comment# the second child is a composite node #end_comment#
+				check_west_and_east_cars #{ the first child is a check node we defined earlier }#
+				#{ the second child is a composite node }#
 				composite {
 					choose_fairly
 					selector
 					children {
-						check_fairness #comment# a check node we defined earlier #end_comment#
-						swap_direction #comment# an action node we defined earlier #end_comment#
+						check_fairness #{ a check node we defined earlier }#
+						swap_direction #{ an action node we defined earlier }#
 					}
 				}
 			}
@@ -383,7 +383,7 @@ sub_trees {
 			sequence
 			children {
 				check_safety
-				#comment#
+				#{
 				composite {
 					safety_check
 					selector
@@ -393,7 +393,7 @@ sub_trees {
 						check_east_west_safe
 					}
 				}
-				#end_comment#
+				}#
 				send_light_signal
 			}
 		}
@@ -401,44 +401,44 @@ sub_trees {
 } end_sub_trees
 
 tree {
-	#comment# this is our actual tree, and the actual root #end_comment#
+	#{ this is our actual tree, and the actual root }#
 	composite {
 		light_controller
 		sequence
 		children {
-			insert {DIRECTION_SUBTREE} #comment# here we are inserting a subtree of the name DIRECTION_SUBTREE #end_comment#
+			insert {DIRECTION_SUBTREE} #{ here we are inserting a subtree of the name DIRECTION_SUBTREE }#
 			insert {LIGHT_SUBTREE}
 		}
 	}
 } end_tree
 
-#comment# the tick_prerequisite is optional.
+#{ the tick_prerequisite is optional.
 If provided, it MUST have a condition. If the condition is true, the tree ticks. if it is false, the simulation halts.
-#end_comment#
-#comment#
+}#
+#{
 tick_prerequisite {} end_tick_prerequisite
-#end_comment#
+}#
 
 specifications {
-	#comment# Specifications are used to write specifications for our model #end_comment#
+	#{ Specifications are used to write specifications for our model }#
 	
 	INVARSPEC {(not, (and, west_light -1, east_light -1))}
-	#comment# ^ only one light at a time #end_comment#
+	#{ ^ only one light at a time }#
 	INVARSPEC {(not, (and, west_light -1, (equal, tunnel_state -1, 'east_to_west')))}
-	#comment# ^ can't have west light while going east to west #end_comment# 
+	#{ ^ can't have west light while going east to west }# 
 	INVARSPEC {(not, (and, east_light -1, (equal, tunnel_state -1, 'west_to_east')))}
-	#comment# ^ can't have east light while going west to east #end_comment#
+	#{ ^ can't have east light while going west to east }#
 
-	#comment# The below attempt to ensure that each car eventually gets to use the tunnel.
+	#{ The below attempt to ensure that each car eventually gets to use the tunnel.
 	They do this by stating that it is always the case that if there is a car waiting,
-	then the light will eventually let that car through.#end_comment#
-	#comment# These will fail, because cars are not guaranteed to ever leave the tunnel.#end_comment#
+	then the light will eventually let that car through.}#
+	#{ These will fail, because cars are not guaranteed to ever leave the tunnel.}#
 	CTLSPEC {(always_globally, (implies, west_cars -1, (always_finally, west_light -1)))}
 	CTLSPEC {(always_globally, (implies, east_cars -1, (always_finally, east_light -1)))}
 	LTLSPEC {(globally, (implies, west_cars -1, (finally, west_light -1)))}
 	LTLSPEC {(globally, (implies, east_cars -1, (finally, east_light -1)))}
 	
-	#comment# So we add a condition to force cars to leave. #end_comment#
+	#{ So we add a condition to force cars to leave. }#
 	CTLSPEC {(implies,
 			(always_globally, (always_finally, (equal, tunnel_state -1, 'empty'))),
 			(always_globally, (implies, west_cars -1, (always_finally, west_light -1)))
