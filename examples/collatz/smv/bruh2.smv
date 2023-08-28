@@ -1,0 +1,5 @@
+MODULE main
+    VAR
+	meh : 0..10;
+    ASSIGN
+	next(meh) := max(min(10, (meh + (meh = 10 ? 0 : 1)) - (meh = 0 ? 1 : 0)), 0);

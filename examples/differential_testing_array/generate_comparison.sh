@@ -22,6 +22,9 @@ fi
 if [[ $use_nuxmv == 1 ]]; then
     python3 ../../src/dsl_to_behaverify.py ../../metamodel/behaverify.tx $path_name/gen_files/$file_name.tree --output_file $path_name/gen_files/$file_name/$file_name.smv --do_not_trim --keep_last_stage
     python3 ../../src/dsl_to_behaverify.py ../../metamodel/behaverify.tx $path_name/gen_files/$file_name.tree --output_file $path_name/gen_files/$file_name/OPT_$file_name.smv
+elif [[ $use_nuxmv == 2 ]]; then
+    python3 ../../src/dsl_to_behaverify_manual.py ../../metamodel/behaverify.tx $path_name/gen_files/$file_name.tree --output_file $path_name/gen_files/$file_name/$file_name.smv --do_not_trim --keep_last_stage
+    python3 ../../src/dsl_to_behaverify_manual.py ../../metamodel/behaverify.tx $path_name/gen_files/$file_name.tree --output_file $path_name/gen_files/$file_name/OPT_$file_name.smv
 fi
 python3 ../../src/dsl_to_pytree.py ../../metamodel/behaverify.tx $path_name/gen_files/$file_name.tree $path_name/gen_files/$file_name/ $file_name --max_iter 10 --serene_print
 

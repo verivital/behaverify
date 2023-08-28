@@ -65,27 +65,32 @@ def create_blackboard(nodes, variables, root_node_name):
             if variable['mode'] == 'DEFINE':
                 if len(variable['next_value']) > 0:
                     for stage_num, (_, _, _, indexed_cond_pairs) in enumerate(variable['next_value']):
-                        define_string += (indent(2) + stage_name + str(stage_num) + ' := [' + ', '.join(map(lambda x: stage_name + str(stage_num) + '_index_' + str(x), range(variable['array_size']))) + '];' + os.linesep)
+                        # define_string += (indent(2) + stage_name + str(stage_num) + ' := [' + ', '.join(map(lambda x: stage_name + str(stage_num) + '_index_' + str(x), range(variable['array_size']))) + '];' + os.linesep)
                         for (index, condition_pairs) in indexed_cond_pairs:
                             define_string += (
                                 indent(2) + stage_name + str(stage_num) + '_index_' + str(index) + ' :=' + os.linesep
                                 + write_cases(None, None, condition_pairs, 3)
                             )
             elif variable['mode'] == 'FROZENVAR' or len(variable['next_value']) == 0:
-                frozenvar_string += (indent(2) + stage_name + '0 : array 0..' + str(variable['array_size'] - 1) + ' of '
-                                     + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean')))
-                                     + ';' + os.linesep)
+                frozenvar_string += ''.join(
+                    map(
+                        lambda index:
+                        indent(2) + stage_name + '0_index_' + str(index) + ' : ' + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean'))) + ';' + os.linesep
+                        ,
+                        range(variable['array_size'])
+                    )
+                )
                 (_, _, _, indexed_cond_pairs) = variable['initial_value']
                 for (index, condition_pairs) in indexed_cond_pairs:
                     init_string += (
-                        indent(2) + 'init(' + stage_name + '0[' + str(index) + ']) := ' + os.linesep
+                        indent(2) + 'init(' + stage_name + '0_index_' + str(index) + ') := ' + os.linesep
                         + write_cases(None, None, condition_pairs, 3)
                     )
             # --------------------------------
             # ok, so we've handled define and frozenvar, so all that's left
             # is actual variable.
             else:
-                define_string += (indent(2) + stage_name + '0 := [' + ', '.join(map(lambda x: stage_name + '0_index_' + str(x), range(variable['array_size']))) + '];' + os.linesep)
+                # define_string += (indent(2) + stage_name + '0 := [' + ', '.join(map(lambda x: stage_name + '0_index_' + str(x), range(variable['array_size']))) + '];' + os.linesep)
                 if variable['keep_stage_0']:
                     (_, _, _, indexed_cond_pairs) = variable['initial_value']
                     if variable['keep_last_stage']:
@@ -108,7 +113,7 @@ def create_blackboard(nodes, variables, root_node_name):
                     previous_stage = stage_name + '0'
                     start_location = 0
                 else:
-                    define_string += (indent(2) + stage_name + '1 := [' + ', '.join(map(lambda x: stage_name + '1_index_' + str(x), range(variable['array_size']))) + '];' + os.linesep)
+                    # define_string += (indent(2) + stage_name + '1 := [' + ', '.join(map(lambda x: stage_name + '1_index_' + str(x), range(variable['array_size']))) + '];' + os.linesep)
                     (_, _, _, indexed_cond_pairs) = variable['initial_value']
                     for (index, condition_pairs) in indexed_cond_pairs:
                         define_string += indent(2) + stage_name + '0_index_' + str(index) + ' := ' + stage_name + '1_index_' + str(index) + ';' + os.linesep
@@ -151,7 +156,7 @@ def create_blackboard(nodes, variables, root_node_name):
 
                 for counter in range(start_location, len(variable['next_value'])):
                     stage_num = str(counter + 1)
-                    define_string += (indent(2) + stage_name + stage_num + ' := [' + ', '.join(map(lambda x: stage_name + stage_num + '_index_' + str(x), range(variable['array_size']))) + '];' + os.linesep)
+                    # define_string += (indent(2) + stage_name + stage_num + ' := [' + ', '.join(map(lambda x: stage_name + stage_num + '_index_' + str(x), range(variable['array_size']))) + '];' + os.linesep)
                     (node_name, constant_index, non_determinism, indexed_cond_pairs) = variable['next_value'][counter]
                     (active_node_name, force_constant) = get_active_node_name(node_name)
                     if constant_index:

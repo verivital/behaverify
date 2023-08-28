@@ -36,7 +36,11 @@ nodes = set()
 variables = set()
 
 def normalize_var_name(cur_var_name):
-    return cur_var_name.replace('_', '').upper().replace('BOARD', '').replace('ENV', '')
+    # return cur_var_name.replace('_', '').upper().replace('BOARD', '').replace('ENV', '')
+    cur_var_name = cur_var_name.replace('_', '').upper()
+    scope = 'LOCAL' if 'LOCAL' in cur_var_name else ('BL' if 'BL' in cur_var_name else 'ENV')
+    model = 'FROZENVAR' if 'FROZENVAR' in cur_var_name else ('VAR' if 'VAR' in cur_var_name else 'DEFINE')
+    return scope + model + (cur_var_name.split(model)[1])
 
 python_run = []
 if python_file is not None:
@@ -89,12 +93,13 @@ if smv_file is not None:
                     status = line.split('=')[-1].strip()
                     nuxmv_run[-1][node_name] = status
                 elif '_stage_' in line:
-                    if '_index_' in line:
-                        continue
                     var_name_stage = line.split('=')[0]
                     var_name_stage = var_name_stage.strip()
                     index = -1
-                    if '[' in var_name_stage:
+                    if '_index_' in line:
+                        (var_name_stage, index) = var_name_stage.split('_index_')
+                        index = int(index)
+                    elif '[' in var_name_stage:
                         (var_name_stage, index) = var_name_stage.split('[')
                         index = index.replace(']', '')
                         index = int(index)
@@ -154,6 +159,7 @@ if opt_smv_file is not None:
                 arrays_to_build = {}
                 ignore = False
             elif not ignore:
+                line = line.replace('system.', '')
                 if '.status' in line:
                     node_name = line.split('.status')[0].strip()
                     # print(line)
@@ -161,12 +167,13 @@ if opt_smv_file is not None:
                     status = line.split('=')[-1].strip()
                     opt_nuxmv_run[-1][node_name] = status
                 elif '_stage_' in line:
-                    if '_index_' in line:
-                        continue
                     var_name_stage = line.split('=')[0]
                     var_name_stage = var_name_stage.strip()
                     index = -1
-                    if '[' in var_name_stage:
+                    if '_index_' in line:
+                        (var_name_stage, index) = var_name_stage.split('_index_')
+                        index = int(index)
+                    elif '[' in var_name_stage:
                         (var_name_stage, index) = var_name_stage.split('[')
                         index = index.replace(']', '')
                         index = int(index)
@@ -254,6 +261,8 @@ if use_haskell and len(haskell_run) < 10:
     print('Comparison failure! Not enough haskell ticks')
     sys.exit()
 
+# print(nuxmv_run[0])
+# print(opt_nuxmv_run[0])
 for tick in range(len(python_run)):
     try:
         python_tick = python_run[tick] if use_python else []
