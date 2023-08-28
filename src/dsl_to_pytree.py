@@ -6,7 +6,7 @@ It contains a variety of utility functions.
 
 Author: Serena Serafina Serbinowska
 Created: 2022-01-01 (Date not correct)
-Last Edit: 2023-08-24
+Last Edit: 2023-08-28
 '''
 import argparse
 import os
@@ -833,7 +833,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                     + indent(2) + 'return indent(1) + node.name + \'_DOT_\' + local_var[\'name\'] + \' : \' + str(var_attr) + os.linesep' + os.linesep
                     + indent(1) + 'if local_var[\'array_size\'] is None:' + os.linesep
                     + indent(2) + 'return indent(1) + node.name + \'_DOT_\' + local_var[\'name\'] + \' : \' + str(var_attr()) + os.linesep' + os.linesep
-                    + indent(1) + 'return indent(1) + node.name + \'_DOT_\' + local_var[\'name\'] + \' : [\' + \', \'.join(map(str, map(var_attr, range(local_var[\'array_size\'] - 1)))) + \']\''
+                    + indent(1) + 'return indent(1) + node.name + \'_DOT_\' + local_var[\'name\'] + \' : [\' + \', \'.join(map(str, map(var_attr, range(local_var[\'array_size\'] - 1)))) + \']\' + os.linesep'
                     + os.linesep
                     + os.linesep
                     + 'def print_locals_in_node(node, local_vars):' + os.linesep

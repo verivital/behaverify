@@ -6,6 +6,10 @@ use_haskell=$3  # 1 means yes, 0 means no.
 use_nuxmv=$4  # 1 means yes, 0 means no.
 real_path="${path_name}/gen_files/${file_name}"
 
+if [[ $use_nuxmv == 2 ]]; then
+    use_nuxmv=1
+fi
+
 
 echo "running python"
 python3 "${real_path}/${file_name}_runner.py" > "${real_path}/OUTPUT_PYTHON.txt"

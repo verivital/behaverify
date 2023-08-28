@@ -3,7 +3,7 @@ configuration {
 }
 constants {
     #{ constants are used to synchronize values in a .tree file. }#
-    #{ example = 0 }#
+    #{ example := 0 }#
     #{ to use example elsewhere, simply type 'example' in place of any integer (quotes included) }#
 } end_constants
 
@@ -112,7 +112,8 @@ tree {
 
 
 
-tick_prerequisite { #{ if the condition is True, the tree ticks.
-	If it is false, everything is done }# } end_tick_prerequisite
+tick_prerequisite { (True) } end_tick_prerequisite
+#{ if the condition is True, the tree ticks.
+    If it is false, everything is done }#
 
 specifications { #{ INVAR, LTL, and CTL specs go here }# } end_specifications

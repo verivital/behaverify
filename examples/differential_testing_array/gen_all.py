@@ -51,7 +51,7 @@ def get_status():
 
 def domain_compare(cur_var, domain):
     if domain == 'int':
-        return cur_var['domain'] in {'int_pos', 'int_neg', 'unbound'}
+        return cur_var['domain'] in {'int_pos', 'int_neg', 'int'}
     if domain == 'bool':
         return cur_var['domain'] == 'bool'
     if domain == 'enum':
@@ -214,7 +214,7 @@ def write_assign_statement(cur_var, condition_count, indent_level, bl, local, en
                             else
                             (
                                 create_int_value(-1, bl, local, env)
-                                if cur_var['domain'] == 'unbound'
+                                if cur_var['domain'] == 'int'
                                 else
                                 (
                                     create_bool_value(-1, bl, local, env)
@@ -241,7 +241,7 @@ def write_assign_statement(cur_var, condition_count, indent_level, bl, local, en
                 else
                 (
                     create_int_value(-1, bl, local, env)
-                    if cur_var['domain'] == 'unbound'
+                    if cur_var['domain'] == 'int'
                     else
                     (
                         create_bool_value(-1, bl, local, env)
@@ -375,7 +375,7 @@ def create_action_node(name):
     return (indent(1) + 'action {' + os.linesep
             + indent(2) + name + os.linesep
             + indent(2) + 'arguments{}' + os.linesep
-            + indent(2) + 'local_variables {' + ' '.join(map(lambda x: x['name'], my_local_vars)) + '}' + os.linesep
+            + indent(2) + 'local_variables {' + ', '.join(map(lambda x: x['name'], my_local_vars)) + '}' + os.linesep
             + indent(2) + 'read_variables { }' + os.linesep
             + indent(2) + 'write_variables ' + VAR_BL_STRING + os.linesep
             + indent(2) + 'initial_values {' + os.linesep
@@ -446,11 +446,11 @@ def write_tree(structure, indent_level):
 
 
 def create_var(num, can_array, mode, force_type = None):
-    my_domain = random.choice(('int_pos', 'int_neg', 'unbound', 'bool', 'enum'))
+    my_domain = random.choice(('int_pos', 'int_neg', 'int', 'bool', 'enum'))
     if my_domain == 'enum':
         global can_use_enums
         if mode == 'DEFINE' and not can_use_enums:
-            my_domain = random.choice(('int_pos', 'int_neg', 'unbound', 'bool'))
+            my_domain = random.choice(('int_pos', 'int_neg', 'int', 'bool'))
         else:
             can_use_enums = True
     if force_type is None:
@@ -477,7 +477,7 @@ def create_variable_declaration(cur_var, mode):
     if mode == 'DEFINE':
         cur_domain = (
             'INT'
-            if cur_var['domain'] in {'int_pos', 'int_neg', 'unbound'}
+            if cur_var['domain'] in {'int_pos', 'int_neg', 'int'}
             else
             (
                 'BOOLEAN'
@@ -496,8 +496,8 @@ def create_variable_declaration(cur_var, mode):
                 if cur_var['domain'] == 'int_neg'
                 else
                 (
-                    'UNBOUND'
-                    if cur_var['domain'] == 'unbound'
+                    'INT'
+                    if cur_var['domain'] == 'int'
                     else
                     (
                         'BOOLEAN'
@@ -620,8 +620,8 @@ for count in range(TO_GEN):
     D_VAR_NAMES_LOCAL = list(map(lambda x : x['name'], d_vars_local))
     D_VAR_NAMES_ENV = list(map(lambda x : x['name'], d_vars_env))
 
-    VAR_BL_STRING = '{' + ' '.join(VAR_NAMES_BL + F_VAR_NAMES_BL + D_VAR_NAMES_BL) + '}'
-    VAR_LOCAL_STRING = '{' + ' '.join(VAR_NAMES_LOCAL + F_VAR_NAMES_LOCAL + D_VAR_NAMES_LOCAL) + '}'
+    VAR_BL_STRING = '{' + ', '.join(VAR_NAMES_BL + F_VAR_NAMES_BL + D_VAR_NAMES_BL) + '}'
+    VAR_LOCAL_STRING = '{' + ', '.join(VAR_NAMES_LOCAL + F_VAR_NAMES_LOCAL + D_VAR_NAMES_LOCAL) + '}'
 
 
     node_count = 0
@@ -630,8 +630,8 @@ for count in range(TO_GEN):
         f.write(
             'configuration{}' + os.linesep
             + 'constants {' + os.linesep
-            + indent(1) + 'MIN_VAL = ' + str(MIN_VAL) + os.linesep
-            + indent(1) + 'MAX_VAL = ' + str(MAX_VAL) + os.linesep
+            + indent(1) + '\'MIN_VAL\' := ' + str(MIN_VAL) + ',' + os.linesep
+            + indent(1) + '\'MAX_VAL\' := ' + str(MAX_VAL) + os.linesep
             + '}' + os.linesep
             + 'variables { ' + os.linesep
             + ''.join(map(lambda x: x['declaration'], create_order))

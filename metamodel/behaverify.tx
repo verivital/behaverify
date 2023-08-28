@@ -5,7 +5,7 @@ BehaviorModel:
     (hypersafety ?= 'hypersafety')
     '}' ('end_configuration')?
     'constants' '{'
-    constants *= constant_declaration
+    constants *= constant_declaration[',']
     '}' ('end_constants')?
     'variables' '{'
     variables *= variable
@@ -41,13 +41,13 @@ reserved:
 //comments so that we can explain what is happening in a .tree file
 Comment:
     /#\{([^a]|a)*?\}#/
-;//i can't get it to match newlines without doing something janky like this.
+;//I can't get it to match newlines without doing something janky like this.
     
     //--------------------SEC:NODES-------------------------------
     //nodes are either composite, decorator, or leaf. 
 
 node:
-    sub_tree_reference  | composite_node | decorator_node | leaf_node
+    sub_tree_reference | composite_node | decorator_node | leaf_node
 ;
 
     sub_tree :
@@ -99,31 +99,31 @@ node:
     'INT' | 'ENUM' | 'BOOLEAN'
 ;
 
-    argument_pair:
-    '(' argument_name = STRING ',' argument_type = possible_argument_types ')'
+    argument_declaration:
+    argument_name = STRING ':=' argument_type = possible_argument_types
 ;
     
     check_node:
     (node_type = 'check') '{'
     name = ID
-    'arguments' '{' arguments *= argument_pair[','] '}' ('end_arguments')?
+    'arguments' '{' arguments *= argument_declaration[','] '}' ('end_arguments')?
     'read_variables' '{' read_variables *= [variable][',']  '}' ('end_read_variables')?
     'condition' '{' condition = code_statement '}' ('end_condition')?
     '}' ('end_check')?
 ;
     check_environment_node:
-    (node_type = 'check_environment') '{'
+    (node_type = 'environment_check') '{'
     name = ID
-    'arguments' '{' arguments *= argument_pair[','] '}' ('end_arguments')?
+    'arguments' '{' arguments *= argument_declaration[','] '}' ('end_arguments')?
     'read_variables' '{' read_variables *= [variable][',']  '}' ('end_read_variables')?
     'condition' '{' condition = code_statement '}' ('end_condition')?
-    '}' ('end_check_environment')?
+    '}' ('end_environment_check')?
 ;
     
     action_node:
     (node_type = 'action') '{'
     name = ID
-    'arguments' '{' arguments *= argument_pair[','] '}' ('end_arguments')?
+    'arguments' '{' arguments *= argument_declaration[','] '}' ('end_arguments')?
     'local_variables' '{' local_variables *= [variable][','] '}' ('end_local_variables')?
     'read_variables' '{' read_variables *= [variable][','] '}' ('end_read_variables')?
     'write_variables' '{' write_variables *= [variable][','] '}' ('end_write_variables')?
@@ -157,10 +157,11 @@ node:
 ;
     
     variable_domain:
-    (true_int = 'UNBOUND') |
     ('[' min_val = int_or_reference ',' max_val = int_or_reference (',' condition = range_code)? ']') |
+    ('{' enums += enumeration[','] '}') |
     (boolean = 'BOOLEAN') |
-    ('{' enums += enumeration[','] '}')
+    (true_int = 'INT') |
+    (true_real = 'REAL')
 ;
 
 
@@ -179,7 +180,7 @@ enumeration:
 ;
 
     constant_declaration:
-    name = ID '=' val = constant_value
+    name = STRING ':=' val = constant_value
 ;
     
 

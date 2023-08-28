@@ -1,5 +1,5 @@
 '''
-This module is part of BehaVerify and used to convert .tree files to .smv files for use with nuXmv.
+This module is part of BehaVerify and used to convert .tree files to .smv files for use with nuXmv. It indexes arrays manually.
 
 
 Author: Serena Serafina Serbinowska
@@ -12,7 +12,7 @@ import os
 import itertools
 import copy
 import textx
-from behaverify_to_smv import write_smv
+from behaverify_to_smv_manual import write_smv
 from check_model import (validate_model,
                          variable_type,
                          is_local,
@@ -82,11 +82,28 @@ def dsl_to_behaverify(metamodel_file, model_file, keep_stage_0, keep_last_stage,
             + ']'
             )
 
+    def case_index(formatted_variable, array_size, index_expression):
+        return (
+            '(case '
+            + ''.join(
+                map(
+                    lambda index:
+                    str(index) + ' = ' + index_expression + ' : ' + formatted_variable + '_index_' + str(index) + '; '
+                    ,
+                    range(array_size)
+                )
+            )
+            + 'esac)'
+        )
+
     def format_function_index(_, code, misc_args):
         '''variable[val]'''
-        return (
-            format_variable(code.function_call.variable, misc_args) + '[' + format_code(code.function_call.values[0], misc_args) + ']'
-        )
+        # return (
+        #     format_variable(code.function_call.variable, misc_args) + '[' + format_code(code.function_call.values[0], misc_args) + ']'
+        # )
+        formatted_variable = format_variable(code.function_call.variable, misc_args)
+        index_expression = format_code(code.function_call.values[0], misc_args)
+        return case_index(formatted_variable, handle_constant(code.function_call.variable.array_size), index_expression)
 
     def format_function(code, misc_args):
         '''this just calls the other format functions. moved here to make format_code less cluttered.'''
@@ -156,7 +173,7 @@ def dsl_to_behaverify(metamodel_file, model_file, keep_stage_0, keep_last_stage,
                     find_used_variables(code.code_statement, misc_args) if code.code_statement is not None else (
                         [variable for value in code.function_call.values for variable in find_used_variables(value, misc_args)]
                         +
-                        ([format_variable(code.function_call.variable, misc_args)] if code.function_call.function_name == 'index' else [])
+                        ([(format_variable(code.function_call.variable, misc_args) + '_index_' + str(index)) for index in range(handle_constant(code.function_call.variable.array_size))] if code.function_call.function_name == 'index' else [])
                     )
                 )
             )
@@ -343,7 +360,12 @@ def dsl_to_behaverify(metamodel_file, model_file, keep_stage_0, keep_last_stage,
                     )
                     (cur_non_determinism, cur_stage) = handle_assign(statement.assign if init_mode else statement.assign.assign, misc_args)
                     if condition is not None:
-                        cur_stage = [(condition, format_variable(assign_var, misc_args) + '[' + str(cur_index) + ']')] + cur_stage
+                        cur_stage = (
+                            [(condition, format_variable(assign_var, misc_args) + '_index_' + str(cur_index))]
+                            if init_mode or constant_index
+                            else
+                            [(condition, case_index(format_variable(assign_var, misc_args), handle_constant(assign_var.array_size), str(cur_index)))]
+                        ) + cur_stage
                     stage.append((cur_index, cur_stage))
                     if constant_index:
                         non_determinism[cur_index] = cur_non_determinism
@@ -365,7 +387,12 @@ def dsl_to_behaverify(metamodel_file, model_file, keep_stage_0, keep_last_stage,
                     )
                     (cur_non_determinism, cur_stage) = handle_assign(assign if init_mode else assign.assign, misc_args)
                     if condition is not None:
-                        cur_stage = [(condition, format_variable(assign_var, misc_args) + '[' + str(cur_index) + ']')] + cur_stage
+                        cur_stage = (
+                            [(condition, format_variable(assign_var, misc_args) + '_index_' + str(cur_index))]
+                            if init_mode or constant_index
+                            else
+                            [(condition, case_index(format_variable(assign_var, misc_args), handle_constant(assign_var.array_size), str(cur_index)))]
+                        ) + cur_stage
                     stage.append((cur_index, cur_stage))
                     if constant_index:
                         non_determinism[cur_index] = cur_non_determinism

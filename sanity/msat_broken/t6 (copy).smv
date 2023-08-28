@@ -1,0 +1,27 @@
+MODULE main
+    VAR
+        system : system_module;
+
+MODULE system_module
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        blVAR2_stage_1_index_1 := 
+            case
+                1 = min(2, max(0, -(-(39)))) :
+                    case
+			(blFROZENVAR3_stage_0 = 39) : no;
+			TRUE : blVAR2_stage_0_index_1;
+                    esac;
+                TRUE : blVAR2_stage_0_index_1;
+            esac;
+        blVAR2_stage_2_index_1 := blVAR2_stage_1_index_1;
+        blVAR2_stage_3_index_1 := blVAR2_stage_2_index_1;
+    FROZENVAR
+        blFROZENVAR3_stage_0 : integer;
+    VAR
+        blVAR2_stage_0_index_1 : {yes, no, both};
+    ASSIGN
+        init(blVAR2_stage_0_index_1) := no;
+        init(blFROZENVAR3_stage_0) := 0;
+        next(blVAR2_stage_0_index_1) := blVAR2_stage_3_index_1;
