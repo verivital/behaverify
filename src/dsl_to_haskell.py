@@ -6,7 +6,7 @@ It contains a variety of utility functions.
 
 Author: Serena Serafina Serbinowska
 Created: 2022-01-01 (Date not correct)
-Last Edit: 2023-08-24
+Last Edit: 2023-08-29
 '''
 import argparse
 import os
@@ -642,13 +642,16 @@ def dsl_to_haskell():
             + indent(3) + 'where' + os.linesep
             + indent(4) + '(_, nextMemory, nextPartial, tempBoard, tempEnv, futureChanges) = evaluateTree treeRoot memory partial blackboard environment' + os.linesep
             + indent(4) + '(nextBoard, nextEnv) = betweenTickUpdate (applyFutureChanges futureChanges (tempBoard, tempEnv))' + os.linesep
-            + indent(2) + 'eachBoardEnv = executionChain 0 (allInvalid treeRoot) (allInvalid treeRoot) initBoard initEnv'
-            + os.linesep + os.linesep
+            + indent(2) + 'eachBoardEnv = executionChain 0 (allInvalid treeRoot) (allInvalid treeRoot) initBoard initEnv'+ os.linesep
+            + os.linesep
+            + 'boardEnvToString :: (BTreeBlackboard, BTreeEnvironment) -> String' + os.linesep
+            + 'boardEnvToString (blackboard, environment) = "(" ++ fromBTreeBlackboardToString blackboard ++ ", " ++ fromBTreeEnvironmentToString blackboard environment ++ ")"' + os.linesep
+            + os.linesep
             + 'main :: IO ()' + os.linesep
             + 'main =' + os.linesep
             + indent(1) + 'do {' + os.linesep
             + indent(2) + 'args <- getArgs' + os.linesep
-            + indent(2) + '; let (seed1, seed2) = seedFromArgs args in mapM_ print (executeFromSeeds seed1 seed2 ' + str(int(max_iter) + 1) + ')' + os.linesep
+            + indent(2) + '; let (seed1, seed2) = seedFromArgs args in mapM_ putStrLn (map boardEnvToString (executeFromSeeds seed1 seed2 ' + str(int(max_iter) + 1) + '))' + os.linesep
             + indent(1) + '}' + os.linesep
             + indent(1) + 'where' + os.linesep
             + indent(2) + 'seedFromArgs :: [String] -> (Integer, Integer)' + os.linesep
@@ -1453,7 +1456,7 @@ def dsl_to_haskell():
             )
         )
 
-    def handle_blackboard_environment(create_order, blackboard_mode, local_macros, local_var_to_nodes):
+    def handle_blackboard_environment(define_print_info, create_order, blackboard_mode, local_macros, local_var_to_nodes):
         data_type_name = 'BTreeBlackboard' if blackboard_mode else 'BTreeEnvironment'
         data_type_name_2 = 'BTreeBlackboard' if blackboard_mode else 'BTreeBlackboard -> BTreeEnvironment'
         board_env_cap = 'Board' if blackboard_mode else 'Env'
@@ -1478,21 +1481,37 @@ def dsl_to_haskell():
             + (os.linesep + indent(1) + ', ').join([(variable_info['field_name'] + ' :: ' + variable_info['type']) for variable_info in create_order])
             + (os.linesep if len(create_order) > 0 else '')
             + indent(1) + '}' + os.linesep + os.linesep
+            # + (
+            #     'instance Show ' + data_type_name + ' where' + os.linesep
+            #     + indent(1) + 'show (' + data_type_name + ' _ '
+            #     + ' '.join(map(lambda x: x['field_name'], create_order))
+            #     + ') = '
+            #     + '"' + board_env_cap + ' = {"'
+            #     + ' ++ '
+            #     + ' ++ '.join(
+            #         [
+            #             ('"' + variable_info['field_name'] + ': " ++ show ' + variable_info['field_name'])
+            #             if index == 0
+            #             else
+            #             ('", ' + variable_info['field_name'] + ': " ++ show ' + variable_info['field_name'])
+            #             for index, variable_info in enumerate(create_order)
+            #         ]
+            #     )
+            #     + (' ++ ' if len(create_order) > 0 else '')
+            #     + '"}"' + os.linesep
+            # )
             + (
-                'instance Show ' + data_type_name + ' where' + os.linesep
-                + indent(1) + 'show (' + data_type_name + ' _ '
-                + ' '.join(map(lambda x: x['field_name'], create_order))
-                + ') = '
+                'from' + data_type_name + 'ToString :: ' + data_type_name_2 + ' -> String' + os.linesep
+                + 'from' + data_type_name + 'ToString ' + var_name_2 + ' = '
                 + '"' + board_env_cap + ' = {"'
                 + ' ++ '
-                + ' ++ '.join(
-                    [
-                        ('"' + variable_info['field_name'] + ': " ++ show ' + variable_info['field_name'])
-                        if index == 0
-                        else
-                        ('", ' + variable_info['field_name'] + ': " ++ show ' + variable_info['field_name'])
-                        for index, variable_info in enumerate(create_order)
-                    ]
+                + ' ++ ", " ++ '.join(
+                    list(map(
+                        lambda variable_info:
+                        variable_info['print_info']
+                        ,
+                        filter(lambda variable_info: variable_info['print_info'] is not None, create_order)
+                    )) + define_print_info
                 )
                 + (' ++ ' if len(create_order) > 0 else '')
                 + '"}"' + os.linesep
@@ -1782,9 +1801,29 @@ def dsl_to_haskell():
             # created initial blackboard. ---------------------------------------------------------------------------------------
         )
 
+    def get_print_info(variable, index, prefix, postfix, arguments):
+        return (
+            None
+            if is_array(variable) and index != 0
+            else
+            (
+                '"' + prefix + pascal_case(variable.name) + postfix + ': "' + (' ++ "["' if is_array(variable) else '')
+                + ' ++ ", "'.join(
+                    map(
+                        lambda nested_index:
+                        ' ++ show (' + prefix + pascal_case(variable.name) + ' ' + arguments(nested_index) + ')'
+                        ,
+                        range(handle_constant(variable.array_size, False) if is_array(variable) else 1)
+                    )
+                )
+                + ('++ "]"' if is_array(variable) else '')
+            )
+        )
+
     def create_environment(model):
         create_order = [
             {
+                'print_info' : get_print_info(variable, index, 'env', '', ((lambda x: str(x) + ' environment') if is_array(variable) else (lambda x: 'environment'))),
                 'category_name' : 'env' + pascal_case(variable.name),
                 'initial_name' : 'newVal' + pascal_case(variable.name) + (('Index' + str(index)) if is_array(variable) else ''),
                 'initial_func' : 'initVal' + pascal_case(variable.name) + (('Index' + str(index)) if is_array(variable) else ''),
@@ -1802,10 +1841,14 @@ def dsl_to_haskell():
             for variable in filter(lambda var: (var.model_as != 'DEFINE' and is_env(var)), model.variables)
             for index in range(handle_constant(variable.array_size, False) if is_array(variable) else 1)
         ]
-        return handle_blackboard_environment(create_order, False, None, {})
+        define_print_info = [
+            get_print_info(variable, 0, 'env', '', ((lambda x: str(x) + ' blackboard environment') if is_array(variable) else (lambda x: 'blackboard environment')))
+            for variable in filter(lambda var: (var.model_as == 'DEFINE' and is_env(var)), model.variables)
+        ]
+        return handle_blackboard_environment(define_print_info, create_order, False, None, {})
 
     def create_blackboard(model):
-        def walk_tree_recursive_blackboard(current_node, node_names, node_names_map, running_dict, running_int, location_info, running_create_order):
+        def walk_tree_recursive_blackboard(current_node, node_names, node_names_map, running_dict, running_int, location_info, running_create_order, running_define_print_info):
             while (not hasattr(current_node, 'name') or hasattr(current_node, 'sub_root')):
                 if hasattr(current_node, 'leaf'):
                     current_node = current_node.leaf
@@ -1865,6 +1908,9 @@ def dsl_to_haskell():
                                 'localBoard' + pascal_case(variable.name) + ' ' + str(my_int) + ' blackboard' + create_macro(cur_assign, 0, None)  # init_mode none here because we are operating in a func
                                 + indent(1) + 'where nodeLocation = ' + str(my_int) + os.linesep
                             )
+                        running_define_print_info.append(
+                            get_print_info(variable, 0, 'localBoard', 'Location' + str(my_int), ((lambda x: str(my_int) + ' ' + str(x) + ' blackboard') if is_array(variable) else (lambda x: str(my_int) + 'blackboard')))
+                        )
                     else:
                         cur_assign = variable.assign
                         cur_assigns = variable.assigns
@@ -1883,6 +1929,7 @@ def dsl_to_haskell():
                                 (
                                     overwritten,
                                     {
+                                        'print_info' : get_print_info(variable, index, 'localBoard', 'Location' + str(my_int), ((lambda x: str(my_int) + ' ' + str(x) + ' blackboard') if is_array(variable) else (lambda x: str(my_int) + 'blackboard'))),
                                         'category_name' : 'localBoard' + pascal_case(variable.name),
                                         'initial_name' : 'localNewVal' + pascal_case(variable.name) + 'Location' + str(my_int) + (('Index' + str(index)) if is_array(variable) else ''),
                                         'initial_func' : 'localInitVal' + pascal_case(variable.name) + 'Location' + str(my_int) + (('Index' + str(index)) if is_array(variable) else ''),
@@ -1904,7 +1951,7 @@ def dsl_to_haskell():
             else:
                 node_children = (current_node.children if hasattr(current_node, 'children') else [current_node.child])
                 for child in node_children:
-                    (cur_node_names, cur_node_names_map, running_dict, running_int, location_info, running_create_order) = walk_tree_recursive_blackboard(child, cur_node_names, cur_node_names_map, running_dict, running_int, location_info, running_create_order)
+                    (cur_node_names, cur_node_names_map, running_dict, running_int, location_info, running_create_order, running_define_print_info) = walk_tree_recursive_blackboard(child, cur_node_names, cur_node_names_map, running_dict, running_int, location_info, running_create_order, running_define_print_info)
             return (
                 (
                     (
@@ -1913,14 +1960,16 @@ def dsl_to_haskell():
                         running_dict,
                         running_int,
                         location_info,
-                        running_create_order
+                        running_create_order,
+                        running_define_print_info
                     )
                 )
             )
 
-        (_, _, local_macros, _, location_info, running_create_order) = walk_tree_recursive_blackboard(model.root, set(), {}, {}, -1, [], [])
+        (_, _, local_macros, _, location_info, running_create_order, running_define_print_info) = walk_tree_recursive_blackboard(model.root, set(), {}, {}, -1, [], [], [])
         create_order = [
             {
+                'print_info' : get_print_info(variable, 0, 'board', '', ((lambda x: str(x) + ' blackboard') if is_array(variable) else (lambda x: 'blackboard'))),
                 'category_name' : 'board' + pascal_case(variable.name),
                 'initial_name' : 'newVal' + pascal_case(variable.name) + (('Index' + str(index)) if is_array(variable) else ''),
                 'initial_func' : 'initVal' + pascal_case(variable.name) + (('Index' + str(index)) if is_array(variable) else ''),
@@ -1939,6 +1988,10 @@ def dsl_to_haskell():
             for index in range(handle_constant(variable.array_size, False) if is_array(variable) else 1)
         ] + list(map(lambda x: x[1], filter(lambda x: not x[0], running_create_order))) + list(map(lambda x: x[1], filter(lambda x: x[0], running_create_order)))
 
+        define_print_info = [
+            get_print_info(variable, 0, 'board', '', ((lambda x: str(x) + ' blackboard') if is_array(variable) else (lambda x: 'blackboard')))
+            for variable in filter(lambda var: (var.model_as =='DEFINE' and is_blackboard(var)), model.variables)
+        ] + running_define_print_info
         local_var_to_nodes = {}
         for (variable, my_int) in location_info:
             name = variable.name
@@ -1946,7 +1999,7 @@ def dsl_to_haskell():
                 local_var_to_nodes[name].append(my_int)
             else:
                 local_var_to_nodes[name] = [my_int]
-        return handle_blackboard_environment(create_order, True, local_macros, local_var_to_nodes)
+        return handle_blackboard_environment(define_print_info, create_order, True, local_macros, local_var_to_nodes)
 
     randomizer = (
         'module SereneRandomizer where' + os.linesep
