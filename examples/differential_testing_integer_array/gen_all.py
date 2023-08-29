@@ -446,11 +446,11 @@ def write_tree(structure, indent_level):
 
 
 def create_var(num, can_array, mode, force_type = None):
-    my_domain = random.choice(('int_pos', 'int_neg', 'bool', 'enum'))
+    my_domain = random.choice(('int_pos', 'int_neg', 'int', 'bool', 'enum'))
     if my_domain == 'enum':
         global can_use_enums
         if mode == 'DEFINE' and not can_use_enums:
-            my_domain = random.choice(('int_pos', 'int_neg', 'bool'))
+            my_domain = random.choice(('int_pos', 'int_neg', 'int', 'bool'))
         else:
             can_use_enums = True
     if force_type is None:
