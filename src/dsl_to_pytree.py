@@ -6,7 +6,7 @@ It contains a variety of utility functions.
 
 Author: Serena Serafina Serbinowska
 Created: 2022-01-01 (Date not correct)
-Last Edit: 2023-08-28
+Last Edit: 2023-09-02
 '''
 import argparse
 import os
@@ -185,7 +185,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                 )
                 + indent(2) + 'return return_status' + os.linesep)
 
-    def init_method_check_env(node):
+    def init_method_environment_check(node):
         return (indent(1) + 'def __init__(self, name, environment' + ((', ' + ', '.join(map(lambda arg_pair: arg_pair.argument_name, node.arguments))) if len(node.arguments) > 0 else '') + '):' + os.linesep
                 + ''.join(
                     [
@@ -206,7 +206,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                 + ''.join([(indent(2) + 'self.blackboard.register_key(key = (' + "'" + variable.name + "'" + '), access = py_trees.common.Access.READ)' + os.linesep) for variable in node.read_variables])
                 + os.linesep)
 
-    def update_method_check_env(node):
+    def update_method_environment_check(node):
         return (indent(1) + 'def update(self):' + os.linesep
                 + indent(2) + 'return_status = ((py_trees.common.Status.SUCCESS) if ('
                 + 'self.environment.' + node.name + '(self)'
@@ -551,13 +551,13 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                 + update_method_check(node)
                 )
 
-    def build_check_environment_node(node):
+    def build_environment_check_node(node):
         return (standard_imports
                 + os.linesep
                 + os.linesep
                 + class_definition(node.name)
-                + init_method_check_env(node)
-                + update_method_check_env(node)
+                + init_method_environment_check(node)
+                + update_method_environment_check(node)
                 )
 
     def build_action_node(node):
@@ -583,7 +583,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
         node_names.add(node_name)
         node_names_map[node_name] = modifier
 
-        if current_node.node_type in ('check', 'check_environment', 'action'):
+        if current_node.node_type in ('check', 'environment_check', 'action'):
             running_string += (indent(1) + node_name + ' = ' + current_node.name + '_file.' + current_node.name + '(' + "'" + node_name + "'"
                                + ('' if current_node.node_type == 'check' else ', environment')
                                + ((', ' + ', '.join(map(handle_constant_str, arguments))) if len(arguments) > 0 else '')
@@ -906,7 +906,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
         )
 
     def write_environment(model):
-        def env_handle_check_env(node):
+        def env_handle_environment_check(node):
             return (
                 os.linesep
                 + indent(1) + 'def '
@@ -1034,9 +1034,9 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
             )
         )
         nonlocal argument_pairs
-        for check_env in model.environment_checks:
-            argument_pairs = {arg_pair.argument_name: 'node.' + arg_pair.argument_name for arg_pair in check_env.arguments}
-            to_write += env_handle_check_env(check_env)
+        for environment_check in model.environment_checks:
+            argument_pairs = {arg_pair.argument_name: 'node.' + arg_pair.argument_name for arg_pair in environment_check.arguments}
+            to_write += env_handle_environment_check(environment_check)
             argument_pairs = {}
         for action in model.action_nodes:
             argument_pairs = {arg_pair.argument_name: 'node.' + arg_pair.argument_name for arg_pair in action.arguments}
@@ -1113,10 +1113,10 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
         with open(write_location + check.name + '_file.py', 'w', encoding = 'utf-8') as write_file:
             write_file.write(build_check_node(check))
         argument_pairs = {}
-    for check_env in model.environment_checks:
-        argument_pairs = {arg_pair.argument_name: 'self.' + arg_pair.argument_name for arg_pair in check_env.arguments}
-        with open(write_location + check_env.name + '_file.py', 'w', encoding = 'utf-8') as write_file:
-            write_file.write(build_check_environment_node(check_env))
+    for environment_check in model.environment_checks:
+        argument_pairs = {arg_pair.argument_name: 'self.' + arg_pair.argument_name for arg_pair in environment_check.arguments}
+        with open(write_location + environment_check.name + '_file.py', 'w', encoding = 'utf-8') as write_file:
+            write_file.write(build_environment_check_node(environment_check))
         argument_pairs = {}
 
     (root_name, _, _, running_string, local_print_info) = walk_tree_recursive(model.root, set(), {}, '', {})
