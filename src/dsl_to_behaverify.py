@@ -4,7 +4,7 @@ This module is part of BehaVerify and used to convert .tree files to .smv files 
 
 Author: Serena Serafina Serbinowska
 Created: 2022-01-01 (Date not correct)
-Last Edit: 2023-08-28
+Last Edit: 2023-09-02
 '''
 import argparse
 import pprint
@@ -874,7 +874,7 @@ def dsl_to_behaverify(metamodel_file, model_file, keep_stage_0, keep_last_stage,
         'X_is_Y' : create_X_is_Y,
         'inverter' : create_decorator,
         'check' : create_check,
-        'check_environment' : create_check,
+        'environment_check' : create_check,
         'action' : create_action
     }
 

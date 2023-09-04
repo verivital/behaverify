@@ -6,7 +6,7 @@ It contains a variety of utility functions.
 
 Author: Serena Serafina Serbinowska
 Created: 2022-01-01 (Date not correct)
-Last Edit: 2023-08-29
+Last Edit: 2023-09-02
 '''
 import argparse
 import os
@@ -596,7 +596,7 @@ def dsl_to_haskell():
                 + check_function(node)
                 )
 
-    def build_check_environment_node(node):
+    def build_environment_check_node(node):
         '''just calls check node lol'''
         return build_check_node(node)
 
@@ -741,7 +741,7 @@ def dsl_to_haskell():
             running_int = running_int + 1
             my_int = running_int
 
-            if current_node.node_type in ('check', 'check_environment', 'action'):
+            if current_node.node_type in ('check', 'environment_check', 'action'):
                 seen_nodes.add(current_node.name)
                 has_args = len(current_node.arguments) > 0
                 running_string = running_string + (
@@ -1946,7 +1946,7 @@ def dsl_to_haskell():
                                     }
                                 )
                             )
-            elif current_node.node_type in {'check', 'check_environment'}:
+            elif current_node.node_type in {'check', 'environment_check'}:
                 pass  # can't have local variables in checks.
             else:
                 node_children = (current_node.children if hasattr(current_node, 'children') else [current_node.child])
@@ -2109,11 +2109,11 @@ def dsl_to_haskell():
             with open(my_location + 'BTree' + pascal_case(check.name) + '.hs', 'w', encoding='utf-8') as write_file:
                 write_file.write(build_check_node(check))
             arguments = set()
-    for check_env in model.environment_checks:
-        if check_env.name in seen_nodes:
-            arguments = {argument_pair.argument_name for argument_pair in check_env.arguments}
-            with open(my_location + 'BTree' + pascal_case(check_env.name) + '.hs', 'w', encoding='utf-8') as write_file:
-                write_file.write(build_check_environment_node(check_env))
+    for environment_check in model.environment_checks:
+        if environment_check.name in seen_nodes:
+            arguments = {argument_pair.argument_name for argument_pair in environment_check.arguments}
+            with open(my_location + 'BTree' + pascal_case(environment_check.name) + '.hs', 'w', encoding='utf-8') as write_file:
+                write_file.write(build_environment_check_node(environment_check))
             arguments = set()
 
     return
