@@ -6,7 +6,7 @@ It contains a variety of utility functions.
 
 Author: Serena Serafina Serbinowska
 Created: 2022-01-01 (Date not correct)
-Last Edit: 2023-09-02
+Last Edit: 2023-09-06
 '''
 import argparse
 import os
@@ -568,7 +568,7 @@ def dsl_to_haskell():
                     for index, value in enumerate(pre_updates)
                 ]
             )
-            + handle_return_statement(node.return_statement)
+            + handle_return_statement(node.return_statement, 2 + indent_modifier)
             + ('').join(
                 [
                     (env_decl(index + pre, 2 + indent_modifier) + value)
