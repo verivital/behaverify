@@ -5,6 +5,7 @@ MODULE main
 --------------SPECIFICATIONS
 
 LTLSPEC G((H((system_1.low_input_stage_0 = system_2.low_input_stage_0)) -> (system_1.low_output_stage_0 = system_2.low_output_stage_0)));
+
 --------------END OF SPECIFICATIONS
 
 MODULE system_module

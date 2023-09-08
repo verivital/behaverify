@@ -10,6 +10,7 @@ import check_west_cars_file
 import check_east_cars_file
 import py_trees
 import serene_safe_assignment
+import random
 
 
 def create_blackboard():

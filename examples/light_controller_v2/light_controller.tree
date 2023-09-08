@@ -20,7 +20,7 @@
 }#
 
 configuration{}
-
+enumerations {'empty', 'east_to_west', 'west_to_east', 'off'}
 constants {
     #{ constants are used to synchronize values in a .tree file. }#
     

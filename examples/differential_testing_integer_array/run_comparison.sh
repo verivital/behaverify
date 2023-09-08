@@ -3,7 +3,7 @@
 path_name=$1
 file_name=$2
 use_haskell=$3  # 1 means yes, 0 means no.
-use_nuxmv=$4  # 1 means yes, 0 means no.
+use_nuxmv=$4  # 1 means yes, 0 means no. 2 is set to 1.
 real_path="${path_name}/gen_files/${file_name}"
 
 if [[ $use_nuxmv == 2 ]]; then

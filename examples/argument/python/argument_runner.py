@@ -37,7 +37,7 @@ def print_local_in_node(node, local_var):
         return indent(1) + node.name + '_DOT_' + local_var['name'] + ' : ' + str(var_attr) + os.linesep
     if local_var['array_size'] is None:
         return indent(1) + node.name + '_DOT_' + local_var['name'] + ' : ' + str(var_attr()) + os.linesep
-    return indent(1) + node.name + '_DOT_' + local_var['name'] + ' : [' + ', '.join(map(str, map(var_attr, range(local_var['array_size'] - 1)))) + ']'
+    return indent(1) + node.name + '_DOT_' + local_var['name'] + ' : [' + ', '.join(map(str, map(var_attr, range(local_var['array_size'] - 1)))) + ']' + os.linesep
 
 def print_locals_in_node(node, local_vars):
     return ''.join(map(lambda var: print_local_in_node(node, var), local_vars))

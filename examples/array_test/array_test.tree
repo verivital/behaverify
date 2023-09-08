@@ -1,6 +1,9 @@
 configuration {
     #{ Here you specify various configuration options, such as Hypersafety }#
 }
+enumerations {
+    'increase', 'decrease', 'nope'
+}
 constants {
     #{ constants are used to synchronize values in a .tree file. }#
     #{ example = 0 }#
@@ -14,9 +17,9 @@ variables {
 	If variable B depends on variable A, then variable A MUST be declared before B.
     }#
     variable{bl foo array 3 VAR [0, 10] range assign{result{'serene_index'}}}
-    variable{bl trom array 2 DEFINE INT assign{result{(addition, (index, foo, 0), (index, foo, 1), (index, foo, 2))}}assign{result{(multiplication, (index, foo, 0), (index, foo, 1), (index, foo, 2))}}}
+    variable{bl trom array 2 DEFINE INT per_index assign{result{(addition, (index, foo, 0), (index, foo, 1), (index, foo, 2))}}assign{result{(multiplication, (index, foo, 0), (index, foo, 1), (index, foo, 2))}}}
     variable{bl index_var VAR [0, 2] assign{result{0, 1, 2}}}
-    variable{local bar array 3 VAR {'increase', 'decrease', 'nope'} assign{result{'increase'}} assign{result{'increase', 'decrease'}} assign{case{False}result{'increase', 'decrease'}result{'nope'}}}
+    variable{local bar array 3 VAR {'increase', 'decrease', 'nope'} per_index assign{result{'increase'}} assign{result{'increase', 'decrease'}} assign{case{False}result{'increase', 'decrease'}result{'nope'}}}
 } end_variables
 
 environment_update {
@@ -85,6 +88,7 @@ actions {
 	update {
 	    variable_statement{
 		foo
+		per_index
 		index_of { index_var}
 		assign {
 		    case{(equal, 'increase', (index, bar, index_var))}
@@ -121,6 +125,7 @@ actions {
 	update {
 	    variable_statement{
 		foo
+		per_index
 		index_of { index_var}
 		assign {
 		    case{(equal, 'increase', (index, bar, index_var))}
@@ -154,6 +159,7 @@ actions {
 	    }
 	    variable_statement{
 		bar
+		per_index
 		index_of{index_var}
 		assign{
 		    case{(equal, 'increase', (index, bar, index_var))}

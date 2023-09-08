@@ -1,7 +1,7 @@
 configuration {
     hypersafety
 } end_configuration
-
+enumerations {}
 constants {
     #{ constants are used to synchronize values in a .tree file. }#
     #{ example = 0 }#
@@ -156,9 +156,7 @@ tree {
 
 
 #{ this section is optional. you may remove it }#
-#{
-    tick_prerequisite {  } end_tick_prerequisite
-}#
+tick_prerequisite { True} end_tick_prerequisite
 
 specifications { #{ INVAR, LTL, and CTL specs go here }#
     LTLSPEC {(globally, (implies, (historically, (equal, low_input 0 1, low_input 0 2)), (equal, low_output -1 1, low_output -1 2)))}

@@ -9,7 +9,7 @@ MODULE main
 
 MODULE system_module
     CONSTANTS
-        success, failure, running, invalid;
+        success, failure, running, invalid, Hello, yes;
     DEFINE
         resume_from_here_in_subtree__root_node := -3;
         resume_from_here_in_subtree__check_enum := -3;
@@ -109,16 +109,16 @@ MODULE check_boolean_module()
         success, failure, running, invalid;
     DEFINE
         status := active ? internal_status : invalid;
-        internal_status := (True) ? success : failure;
+        internal_status := (TRUE) ? success : failure;
 MODULE check_boolean_1_module()
     CONSTANTS
         success, failure, running, invalid;
     DEFINE
         status := active ? internal_status : invalid;
-        internal_status := (False) ? success : failure;
+        internal_status := (FALSE) ? success : failure;
 MODULE check_all_module()
     CONSTANTS
         success, failure, running, invalid;
     DEFINE
         status := active ? internal_status : invalid;
-        internal_status := (((yes = Hello) & (55 = 1) & (True = False))) ? success : failure;
+        internal_status := (((yes = Hello) & (55 = 1) & (TRUE = FALSE))) ? success : failure;

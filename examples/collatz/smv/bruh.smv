@@ -1,5 +1,0 @@
-MODULE main
-    VAR
-	meh : integer;
-    ASSIGN
-	next(meh) := meh mod 2;

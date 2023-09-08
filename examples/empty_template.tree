@@ -1,6 +1,9 @@
 configuration {
     #{ Here you specify various configuration options, such as Hypersafety }#
 }
+enumerations {
+    #{ here you specify the enumerations used in the model}#
+}
 constants {
     #{ constants are used to synchronize values in a .tree file. }#
     #{ example := 0 }#

@@ -1,6 +1,8 @@
 configuration {
     #{ Here you specify various configuration options, such as Hypersafety }#
 }
+enumerations {
+}
 constants {
     #{ constants are used to synchronize values in a .tree file. }#
     #{ example = 0 }#
@@ -8,7 +10,7 @@ constants {
 } end_constants
 
 variables {
-    variable { bl value VAR UNBOUND assign { result { range, 1, 20, True}}}
+    variable { bl value VAR INT assign { result { range, 1, 20, True}}}
     #{ Variable declarations go here.
 	it is suggested, but not required, that the order of declaration be
 	Blackboard, Local, Environment.
