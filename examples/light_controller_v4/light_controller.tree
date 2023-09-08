@@ -20,6 +20,7 @@
 }#
 
 configuration{}
+enumerations { 'empty', 'east_to_west', 'west_to_east', 'off'}
 
 constants {
     #{ constants are used to synchronize values in a .tree file. }#
@@ -288,7 +289,7 @@ actions {
 	send_light_signal
 	arguments {}
 	local_variables {}
-	read_variables {direction}
+	read_variables {direction, signal}
 	write_variables {fairness_counter}
 	initial_values {}
 	update {

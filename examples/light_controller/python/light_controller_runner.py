@@ -7,7 +7,7 @@ blackboard_reader = light_controller.create_blackboard()
 environment = light_controller_environment.light_controller_environment(blackboard_reader)
 root = light_controller.create_tree(environment)
 tree = py_trees.trees.BehaviourTree(root)
-py_trees.display.render_dot_tree(root)
+
 
 def full_tick():
     environment.pre_tick_environment_update()
@@ -49,7 +49,7 @@ def print_local_in_node(node, local_var):
         return indent(1) + node.name + '_DOT_' + local_var['name'] + ' : ' + str(var_attr) + os.linesep
     if local_var['array_size'] is None:
         return indent(1) + node.name + '_DOT_' + local_var['name'] + ' : ' + str(var_attr()) + os.linesep
-    return indent(1) + node.name + '_DOT_' + local_var['name'] + ' : [' + ', '.join(map(var_attr, range(local_var['array_size'] - 1))) + ']'
+    return indent(1) + node.name + '_DOT_' + local_var['name'] + ' : [' + ', '.join(map(str, map(var_attr, range(local_var['array_size'] - 1)))) + ']' + os.linesep
 
 def print_locals_in_node(node, local_vars):
     return ''.join(map(lambda var: print_local_in_node(node, var), local_vars))

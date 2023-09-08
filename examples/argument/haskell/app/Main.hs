@@ -22,11 +22,14 @@ executeFromSeeds seed1 seed2 maxIteration = eachBoardEnv
         (nextBoard, nextEnv) = betweenTickUpdate (applyFutureChanges futureChanges (tempBoard, tempEnv))
     eachBoardEnv = executionChain 0 (allInvalid treeRoot) (allInvalid treeRoot) initBoard initEnv
 
+boardEnvToString :: (BTreeBlackboard, BTreeEnvironment) -> String
+boardEnvToString (blackboard, environment) = "(" ++ fromBTreeBlackboardToString blackboard ++ ", " ++ fromBTreeEnvironmentToString blackboard environment ++ ")"
+
 main :: IO ()
 main =
   do {
     args <- getArgs
-    ; let (seed1, seed2) = seedFromArgs args in mapM_ print (executeFromSeeds seed1 seed2 101)
+    ; let (seed1, seed2) = seedFromArgs args in mapM_ putStrLn (map boardEnvToString (executeFromSeeds seed1 seed2 101))
   }
   where
     seedFromArgs :: [String] -> (Integer, Integer)

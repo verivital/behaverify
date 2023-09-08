@@ -1,0 +1,297 @@
+MODULE main
+    VAR
+        system : system_module;
+--------------SPECIFICATIONS
+
+INVARSPEC ((system.light_stage_1 = off) | (system.tunnel_state_stage_1 = empty) | (system.tunnel_state_stage_1 = system.light_stage_1));
+CTLSPEC AG((system.west_cars_stage_1 -> AF((system.light_stage_1 = west_to_east))));
+CTLSPEC AG((system.east_cars_stage_1 -> AF((system.light_stage_1 = east_to_west))));
+LTLSPEC G((system.west_cars_stage_1 -> F((system.light_stage_1 = west_to_east))));
+LTLSPEC G((system.east_cars_stage_1 -> F((system.light_stage_1 = east_to_west))));
+CTLSPEC (AG(AF((system.tunnel_state_stage_1 = empty))) -> AG((system.west_cars_stage_1 -> AF((system.light_stage_1 = west_to_east)))));
+CTLSPEC (AG(AF((system.tunnel_state_stage_1 = empty))) -> AG((system.east_cars_stage_1 -> AF((system.light_stage_1 = east_to_west)))));
+LTLSPEC (G(F((system.tunnel_state_stage_1 = empty))) -> G((system.west_cars_stage_1 -> F((system.light_stage_1 = west_to_east)))));
+LTLSPEC (G(F((system.tunnel_state_stage_1 = empty))) -> G((system.east_cars_stage_1 -> F((system.light_stage_1 = east_to_west)))));
+
+--------------END OF SPECIFICATIONS
+
+MODULE system_module
+    CONSTANTS
+        success, failure, running, invalid, east_to_west, empty, west_to_east, off;
+    DEFINE
+        resume_from_here_in_subtree__light_controller := -3;
+        resume_from_here_in_subtree__prepare_round := -3;
+        resume_from_here_in_subtree__select_direction := -3;
+        resume_from_here_in_subtree__send_light_signal := -3;
+        light_controller.active := TRUE;
+        --START OF BLACKBOARD DEFINITIONS
+        fairness_counter_stage_1 := 
+            case
+                !(swap_direction.active) : fairness_counter_stage_0;
+                TRUE : 0;
+            esac;
+        fairness_counter_stage_2 := 
+            case
+                !(set_direction.active) : fairness_counter_stage_1;
+                TRUE : 0;
+            esac;
+        fairness_counter_stage_3 := 
+            case
+                !(set_direction_1.active) : fairness_counter_stage_2;
+                TRUE : 0;
+            esac;
+        direction_stage_1 := 
+            case
+                !(swap_direction.active) : direction_stage_0;
+                (direction_stage_0 = west_to_east) : east_to_west;
+                TRUE : west_to_east;
+            esac;
+        direction_stage_2 := 
+            case
+                !(set_direction.active) : direction_stage_1;
+                TRUE : west_to_east;
+            esac;
+        direction_stage_3 := 
+            case
+                !(set_direction_1.active) : direction_stage_2;
+                TRUE : east_to_west;
+            esac;
+        signal_stage_1 := 
+            case
+                !(prepare_round.active) : signal_stage_0;
+                TRUE : TRUE;
+            esac;
+        signal_stage_2 := 
+            case
+                !(turn_light_off.active) : signal_stage_1;
+                TRUE : FALSE;
+            esac;
+        west_and_east_cars_stage_0 :=
+            case
+                TRUE : (west_cars_stage_0 & east_cars_stage_0);
+            esac;
+        light_stage_1 := 
+            case
+                !(light_controller.active) : light_stage_0;
+                signal_stage_2 : direction_stage_3;
+                TRUE : off;
+            esac;
+        --END OF BLACKBOARD DEFINITIONS
+    VAR
+        node_names : define_nodes;
+        prepare_round : running_DEFAULT_module();
+        check_tunnel_in_use : check_tunnel_in_use_module(tunnel_state_stage_0);
+        turn_light_off : running_DEFAULT_module();
+        tunnel_in_use : composite_sequence_without_memory_2(check_tunnel_in_use, turn_light_off);
+        check_west_and_east_cars : check_west_and_east_cars_module(west_and_east_cars_stage_0);
+        check_fairness : check_fairness_module(fairness_counter_stage_0);
+        swap_direction : success_DEFAULT_module();
+        choose_fairly : composite_selector_without_memory_2(check_fairness, swap_direction);
+        try_west_and_east : composite_sequence_without_memory_2(check_west_and_east_cars, choose_fairly);
+        check_west_cars : check_west_cars_module(west_cars_stage_0);
+        set_direction : success_DEFAULT_module();
+        try_west : composite_sequence_without_memory_2(check_west_cars, set_direction);
+        check_east_cars : check_east_cars_module(east_cars_stage_0);
+        set_direction_1 : success_DEFAULT_module();
+        try_east : composite_sequence_without_memory_2(check_east_cars, set_direction_1);
+        select_direction : composite_selector_without_memory_4(tunnel_in_use, try_west_and_east, try_west, try_east);
+        send_light_signal : success_DEFAULT_module();
+        light_controller : composite_parallel_success_on_one_without_memory_3(prepare_round, select_direction, send_light_signal);
+        --START OF BLACKBOARD VARIABLES DECLARATION
+        fairness_counter_stage_0 : 0..4;
+        direction_stage_0 : {east_to_west, west_to_east};
+        signal_stage_0 : boolean;
+        tunnel_state_stage_0 : {empty, east_to_west, west_to_east};
+        tunnel_state_stage_1 : {empty, east_to_west, west_to_east};
+        east_cars_stage_0 : boolean;
+        east_cars_stage_1 : boolean;
+        west_cars_stage_0 : boolean;
+        west_cars_stage_1 : boolean;
+        light_stage_0 : {west_to_east, east_to_west, off};
+        --END OF BLACKBOARD VARIABLES DECLARATION
+    ASSIGN
+        --START OF BLACKBOARD VARIABLES INITIALIZATION
+        init(fairness_counter_stage_0) := 
+            case
+                TRUE : 0;
+            esac;
+        init(direction_stage_0) := 
+            case
+                TRUE : west_to_east;
+            esac;
+        init(signal_stage_0) := 
+            case
+                TRUE : FALSE;
+            esac;
+        init(tunnel_state_stage_0) := 
+            case
+                TRUE : empty;
+            esac;
+        init(east_cars_stage_0) := 
+            case
+                TRUE : {TRUE, FALSE};
+            esac;
+        init(west_cars_stage_0) := 
+            case
+                TRUE : {TRUE, FALSE};
+            esac;
+        init(light_stage_0) := 
+            case
+                TRUE : off;
+            esac;
+        --END OF BLACKBOARD VARIABLES INITIALIZATION
+        --START OF BLACKBOARD VARIABLES TRANSITION
+        next(fairness_counter_stage_0) := 
+            case
+                !(send_light_signal.active) : fairness_counter_stage_3;
+                TRUE : min(4, (fairness_counter_stage_3 + 1));
+            esac;
+        next(direction_stage_0) := direction_stage_3;
+        next(signal_stage_0) := signal_stage_2;
+        next(tunnel_state_stage_0) := tunnel_state_stage_1;
+        tunnel_state_stage_1 := 
+            case
+                !(light_controller.active) : tunnel_state_stage_0;
+                (light_stage_1 = off) : {tunnel_state_stage_0, empty};
+                TRUE : {light_stage_1, empty};
+            esac;
+        next(east_cars_stage_0) := east_cars_stage_1;
+        east_cars_stage_1 := 
+            case
+                !(light_controller.active) : east_cars_stage_0;
+                (light_stage_1 = east_to_west) : {TRUE, FALSE};
+                TRUE : {TRUE, east_cars_stage_0};
+            esac;
+        next(west_cars_stage_0) := west_cars_stage_1;
+        west_cars_stage_1 := 
+            case
+                !(light_controller.active) : west_cars_stage_0;
+                (light_stage_1 = west_to_east) : {TRUE, FALSE};
+                TRUE : {TRUE, west_cars_stage_0};
+            esac;
+        next(light_stage_0) := light_stage_1;
+        --END OF BLACKBOARD VARIABLES TRANSITION
+
+MODULE define_nodes
+    DEFINE
+        light_controller := 0;
+        prepare_round := 1;
+        select_direction := 2;
+        tunnel_in_use := 3;
+        check_tunnel_in_use := 4;
+        turn_light_off := 5;
+        try_west_and_east := 6;
+        check_west_and_east_cars := 7;
+        choose_fairly := 8;
+        check_fairness := 9;
+        swap_direction := 10;
+        try_west := 11;
+        check_west_cars := 12;
+        set_direction := 13;
+        try_east := 14;
+        check_east_cars := 15;
+        set_direction_1 := 16;
+        send_light_signal := 17;
+MODULE composite_sequence_without_memory_2(child_0, child_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                !(child_0.internal_status = success) : child_0.internal_status;
+                !(child_1.internal_status = success) : child_1.internal_status;
+                TRUE : success;
+            esac;
+        child_0.active := active;
+        child_1.active := child_0.status = success;
+MODULE composite_selector_without_memory_4(child_0, child_1, child_2, child_3)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                !(child_0.internal_status = failure) : child_0.internal_status;
+                !(child_1.internal_status = failure) : child_1.internal_status;
+                !(child_2.internal_status = failure) : child_2.internal_status;
+                !(child_3.internal_status = failure) : child_3.internal_status;
+                TRUE : failure;
+            esac;
+        child_0.active := active;
+        child_1.active := child_0.status = failure;
+        child_2.active := child_1.status = failure;
+        child_3.active := child_2.status = failure;
+MODULE composite_selector_without_memory_2(child_0, child_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                !(child_0.internal_status = failure) : child_0.internal_status;
+                !(child_1.internal_status = failure) : child_1.internal_status;
+                TRUE : failure;
+            esac;
+        child_0.active := active;
+        child_1.active := child_0.status = failure;
+MODULE composite_parallel_success_on_one_without_memory_3(child_0, child_1, child_2)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                (child_0.internal_status = failure) : failure;
+                (child_1.internal_status = failure) : failure;
+                (child_2.internal_status = failure) : failure;
+                !(child_0.internal_status = running) : child_0.internal_status;
+                !(child_1.internal_status = running) : child_1.internal_status;
+                !(child_2.internal_status = running) : child_2.internal_status;
+                TRUE : running;
+            esac;
+        child_0.active := active;
+        child_1.active := active;
+        child_2.active := active;
+MODULE check_tunnel_in_use_module(tunnel_state_stage_0)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := ((tunnel_state_stage_0 != empty)) ? success : failure;
+MODULE check_west_and_east_cars_module(west_and_east_cars_stage_0)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := (west_and_east_cars_stage_0) ? success : failure;
+MODULE check_fairness_module(fairness_counter_stage_0)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := ((fairness_counter_stage_0 < 4)) ? success : failure;
+MODULE check_west_cars_module(west_cars_stage_0)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := (west_cars_stage_0) ? success : failure;
+MODULE check_east_cars_module(east_cars_stage_0)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := (east_cars_stage_0) ? success : failure;
+MODULE running_DEFAULT_module
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := running;
+MODULE success_DEFAULT_module
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := success;
