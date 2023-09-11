@@ -1,170 +1,265 @@
 ------------------------
-State after tick: 1
-dec_sf0 -> FAILURE
-  c1 -> SUCCESS
-
+Initial State
 blackboard
-  blVAR0: [-2, -2]
-  blDEFINE7: True
+  blVAR0: ['no', 'yes', 'yes']
+  blDEFINE5: [True, True]
 
 local
+  a3_DOT_localVAR2 : 5
+  a4_DOT_localVAR2 : 2
+  a4_DOT_localDEFINE3 : [-5]
 
 environment
-  envVAR1: [2, 5, 2]
-  envVAR2: [-2, -5, -2]
-  envVAR3: 5
-  envFROZENVAR4: [2, 2]
+  envVAR1: [-2, -2, -2]
+  envDEFINE4: -2
+
+------------------------
+State after tick: 1
+p_one0 -> FAILURE
+  a3 -> SUCCESS
+  dec_sf1 -> FAILURE
+    c1 -> SUCCESS
+  dec_sr2 -> RUNNING
+    p_one3 -> SUCCESS
+      a1 -> SUCCESS
+      a4 -> SUCCESS
+      c1_1 -> SUCCESS
+
+blackboard
+  blVAR0: ['no', 'yes', 'no']
+  blDEFINE5: [True, True]
+
+local
+  a3_DOT_localVAR2 : 5
+  a4_DOT_localVAR2 : 2
+  a4_DOT_localDEFINE3 : [-5]
+
+environment
+  envVAR1: [-2, -2, -5]
+  envDEFINE4: -2
 
 ------------------------
 State after tick: 2
-dec_sf0 -> FAILURE
-  c1 -> SUCCESS
+p_one0 -> FAILURE
+  a3 -> SUCCESS
+  dec_sf1 -> FAILURE
+    c1 -> SUCCESS
+  dec_sr2 -> RUNNING
+    p_one3 -> SUCCESS
+      a1 -> SUCCESS
+      a4 -> SUCCESS
+      c1_1 -> SUCCESS
 
 blackboard
-  blVAR0: [-2, -2]
-  blDEFINE7: True
+  blVAR0: ['no', 'yes', 'no']
+  blDEFINE5: [True, True]
 
 local
+  a3_DOT_localVAR2 : 5
+  a4_DOT_localVAR2 : 2
+  a4_DOT_localDEFINE3 : [-5]
 
 environment
-  envVAR1: [2, 5, 2]
-  envVAR2: [-2, -5, -2]
-  envVAR3: 5
-  envFROZENVAR4: [2, 2]
+  envVAR1: [-2, -2, -5]
+  envDEFINE4: -2
 
 ------------------------
 State after tick: 3
-dec_sf0 -> FAILURE
-  c1 -> SUCCESS
+p_one0 -> FAILURE
+  a3 -> SUCCESS
+  dec_sf1 -> FAILURE
+    c1 -> SUCCESS
+  dec_sr2 -> RUNNING
+    p_one3 -> SUCCESS
+      a1 -> SUCCESS
+      a4 -> SUCCESS
+      c1_1 -> SUCCESS
 
 blackboard
-  blVAR0: [-2, -2]
-  blDEFINE7: True
+  blVAR0: ['no', 'yes', 'no']
+  blDEFINE5: [True, True]
 
 local
+  a3_DOT_localVAR2 : 5
+  a4_DOT_localVAR2 : 2
+  a4_DOT_localDEFINE3 : [-5]
 
 environment
-  envVAR1: [2, 5, 2]
-  envVAR2: [-2, -5, -2]
-  envVAR3: 5
-  envFROZENVAR4: [2, 2]
+  envVAR1: [-2, -2, -5]
+  envDEFINE4: -2
 
 ------------------------
 State after tick: 4
-dec_sf0 -> FAILURE
-  c1 -> SUCCESS
+p_one0 -> FAILURE
+  a3 -> SUCCESS
+  dec_sf1 -> FAILURE
+    c1 -> SUCCESS
+  dec_sr2 -> RUNNING
+    p_one3 -> SUCCESS
+      a1 -> SUCCESS
+      a4 -> SUCCESS
+      c1_1 -> SUCCESS
 
 blackboard
-  blVAR0: [-2, -2]
-  blDEFINE7: True
+  blVAR0: ['no', 'yes', 'no']
+  blDEFINE5: [True, True]
 
 local
+  a3_DOT_localVAR2 : 5
+  a4_DOT_localVAR2 : 2
+  a4_DOT_localDEFINE3 : [-5]
 
 environment
-  envVAR1: [2, 5, 2]
-  envVAR2: [-2, -5, -2]
-  envVAR3: 5
-  envFROZENVAR4: [2, 2]
+  envVAR1: [-2, -2, -5]
+  envDEFINE4: -2
 
 ------------------------
 State after tick: 5
-dec_sf0 -> FAILURE
-  c1 -> SUCCESS
+p_one0 -> FAILURE
+  a3 -> SUCCESS
+  dec_sf1 -> FAILURE
+    c1 -> SUCCESS
+  dec_sr2 -> RUNNING
+    p_one3 -> SUCCESS
+      a1 -> SUCCESS
+      a4 -> SUCCESS
+      c1_1 -> SUCCESS
 
 blackboard
-  blVAR0: [-2, -2]
-  blDEFINE7: True
+  blVAR0: ['no', 'yes', 'no']
+  blDEFINE5: [True, True]
 
 local
+  a3_DOT_localVAR2 : 5
+  a4_DOT_localVAR2 : 2
+  a4_DOT_localDEFINE3 : [-5]
 
 environment
-  envVAR1: [2, 5, 2]
-  envVAR2: [-2, -5, -2]
-  envVAR3: 5
-  envFROZENVAR4: [2, 2]
+  envVAR1: [-2, -2, -5]
+  envDEFINE4: -2
 
 ------------------------
 State after tick: 6
-dec_sf0 -> FAILURE
-  c1 -> SUCCESS
+p_one0 -> FAILURE
+  a3 -> SUCCESS
+  dec_sf1 -> FAILURE
+    c1 -> SUCCESS
+  dec_sr2 -> RUNNING
+    p_one3 -> SUCCESS
+      a1 -> SUCCESS
+      a4 -> SUCCESS
+      c1_1 -> SUCCESS
 
 blackboard
-  blVAR0: [-2, -2]
-  blDEFINE7: True
+  blVAR0: ['no', 'yes', 'no']
+  blDEFINE5: [True, True]
 
 local
+  a3_DOT_localVAR2 : 5
+  a4_DOT_localVAR2 : 2
+  a4_DOT_localDEFINE3 : [-5]
 
 environment
-  envVAR1: [2, 5, 2]
-  envVAR2: [-2, -5, -2]
-  envVAR3: 5
-  envFROZENVAR4: [2, 2]
+  envVAR1: [-2, -2, -5]
+  envDEFINE4: -2
 
 ------------------------
 State after tick: 7
-dec_sf0 -> FAILURE
-  c1 -> SUCCESS
+p_one0 -> FAILURE
+  a3 -> SUCCESS
+  dec_sf1 -> FAILURE
+    c1 -> SUCCESS
+  dec_sr2 -> RUNNING
+    p_one3 -> SUCCESS
+      a1 -> SUCCESS
+      a4 -> SUCCESS
+      c1_1 -> SUCCESS
 
 blackboard
-  blVAR0: [-2, -2]
-  blDEFINE7: True
+  blVAR0: ['no', 'yes', 'no']
+  blDEFINE5: [True, True]
 
 local
+  a3_DOT_localVAR2 : 5
+  a4_DOT_localVAR2 : 2
+  a4_DOT_localDEFINE3 : [-5]
 
 environment
-  envVAR1: [2, 5, 2]
-  envVAR2: [-2, -5, -2]
-  envVAR3: 5
-  envFROZENVAR4: [2, 2]
+  envVAR1: [-2, -2, -5]
+  envDEFINE4: -2
 
 ------------------------
 State after tick: 8
-dec_sf0 -> FAILURE
-  c1 -> SUCCESS
+p_one0 -> FAILURE
+  a3 -> SUCCESS
+  dec_sf1 -> FAILURE
+    c1 -> SUCCESS
+  dec_sr2 -> RUNNING
+    p_one3 -> SUCCESS
+      a1 -> SUCCESS
+      a4 -> SUCCESS
+      c1_1 -> SUCCESS
 
 blackboard
-  blVAR0: [-2, -2]
-  blDEFINE7: True
+  blVAR0: ['no', 'yes', 'no']
+  blDEFINE5: [True, True]
 
 local
+  a3_DOT_localVAR2 : 5
+  a4_DOT_localVAR2 : 2
+  a4_DOT_localDEFINE3 : [-5]
 
 environment
-  envVAR1: [2, 5, 2]
-  envVAR2: [-2, -5, -2]
-  envVAR3: 5
-  envFROZENVAR4: [2, 2]
+  envVAR1: [-2, -2, -5]
+  envDEFINE4: -2
 
 ------------------------
 State after tick: 9
-dec_sf0 -> FAILURE
-  c1 -> SUCCESS
+p_one0 -> FAILURE
+  a3 -> SUCCESS
+  dec_sf1 -> FAILURE
+    c1 -> SUCCESS
+  dec_sr2 -> RUNNING
+    p_one3 -> SUCCESS
+      a1 -> SUCCESS
+      a4 -> SUCCESS
+      c1_1 -> SUCCESS
 
 blackboard
-  blVAR0: [-2, -2]
-  blDEFINE7: True
+  blVAR0: ['no', 'yes', 'no']
+  blDEFINE5: [True, True]
 
 local
+  a3_DOT_localVAR2 : 5
+  a4_DOT_localVAR2 : 2
+  a4_DOT_localDEFINE3 : [-5]
 
 environment
-  envVAR1: [2, 5, 2]
-  envVAR2: [-2, -5, -2]
-  envVAR3: 5
-  envFROZENVAR4: [2, 2]
+  envVAR1: [-2, -2, -5]
+  envDEFINE4: -2
 
 ------------------------
 State after tick: 10
-dec_sf0 -> FAILURE
-  c1 -> SUCCESS
+p_one0 -> FAILURE
+  a3 -> SUCCESS
+  dec_sf1 -> FAILURE
+    c1 -> SUCCESS
+  dec_sr2 -> RUNNING
+    p_one3 -> SUCCESS
+      a1 -> SUCCESS
+      a4 -> SUCCESS
+      c1_1 -> SUCCESS
 
 blackboard
-  blVAR0: [-2, -2]
-  blDEFINE7: True
+  blVAR0: ['no', 'yes', 'no']
+  blDEFINE5: [True, True]
 
 local
+  a3_DOT_localVAR2 : 5
+  a4_DOT_localVAR2 : 2
+  a4_DOT_localDEFINE3 : [-5]
 
 environment
-  envVAR1: [2, 5, 2]
-  envVAR2: [-2, -5, -2]
-  envVAR3: 5
-  envFROZENVAR4: [2, 2]
+  envVAR1: [-2, -2, -5]
+  envDEFINE4: -2
 

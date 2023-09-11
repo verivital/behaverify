@@ -15,42 +15,45 @@ class a2(py_trees.behaviour.Behaviour):
         self.blackboard.register_key(key = ('blVAR0'), access = py_trees.common.Access.WRITE)
         self.blackboard.register_key(key = ('blVAR2'), access = py_trees.common.Access.WRITE)
         self.blackboard.register_key(key = ('blVAR3'), access = py_trees.common.Access.WRITE)
-        self.blackboard.register_key(key = ('blFROZENVAR5'), access = py_trees.common.Access.WRITE)
-        self.blackboard.register_key(key = ('blDEFINE8'), access = py_trees.common.Access.WRITE)
-
-
-        def localDEFINE7(index):
-            if not isinstance(index, int):
-                raise Exception('Index must be an int when accessing localDEFINE7: ' + str(type(index)))
-            if index < 0 or index >= 2:
-                raise Exception('Index out of bounds when accessing localDEFINE7: ' + str(index))
-            if index == 0:
-                return self.blackboard.blVAR0[0]
-            elif index == 1:
-                return (
-                    'no'
-                    if (-18 >= self.blackboard.blVAR3) else
-                    (
-                    'both'
-                ))
-            raise Exception('Reached unreachable state when accessing localDEFINE7: ' + str(index))
-
-        self.localDEFINE7 = localDEFINE7
 
     def update(self):
-        if ((False == False) and (self.blackboard.blVAR2 and True)):
+        if (-1 <= self.blackboard.blVAR0):
             return_status = py_trees.common.Status.SUCCESS
-        elif self.blackboard.blVAR2:
-            return_status = py_trees.common.Status.FAILURE
+        elif (self.blackboard.blVAR0 == self.blackboard.blVAR0):
+            return_status = py_trees.common.Status.RUNNING
         else:
-            return_status = py_trees.common.Status.FAILURE
+            return_status = py_trees.common.Status.RUNNING
         self.__serene_print__ = return_status.value
-        self.blackboard.blVAR3 = serene_safe_assignment.blVAR3((
-            min(5, max(2, max(self.blackboard.blVAR3, 10)))
-            if True else
+        __temp_var__ = serene_safe_assignment.blVAR3([(min(1, max(0, min(100, max(-100, -(self.blackboard.blVAR0))))), (
+            'yes'
+            if (min(100, max(-100, max(24, -19))) <= min(100, max(-100, min(self.blackboard.blVAR0, self.blackboard.blVAR0)))) else
             (
-            min(5, max(2, abs(self.blackboard.blFROZENVAR5[2])))
-        )))
-        if self.environment.a2_read_after_0__condition(self):
-            self.blackboard.blVAR3 = serene_safe_assignment.blVAR3(self.environment.a2_read_after_0__0(self))
+                self.blackboard.blVAR2
+                if (17 < min(100, max(-100, (self.blackboard.blVAR0 + min(100, max(-100, -(self.blackboard.blVAR0))) + min(100, max(-100, (self.blackboard.blVAR0 * self.blackboard.blVAR0))))))) else
+                (
+                self.blackboard.blVAR3[1]
+        )))), (min(1, max(0, min(100, max(-100, (64 + self.blackboard.blVAR0))))), (
+            self.blackboard.blVAR3[0]
+            if (False == (False == True)) else
+            (
+                'no'
+                if (self.blackboard.blVAR0 <= self.blackboard.blVAR0) else
+                (
+                'both'
+        ))))])
+        for (index, val) in __temp_var__:
+            self.blackboard.blVAR3[index] = val
+        __temp_var__ = serene_safe_assignment.blVAR3([(min(1, max(0, min(100, max(-100, (min(100, max(-100, (-82 - self.blackboard.blVAR0))) * -59 * self.blackboard.blVAR0))))), (
+            'yes'
+            if (([(self.blackboard.blVAR0 <= ([(False ^ True), (self.blackboard.blVAR0 > self.blackboard.blVAR0), (self.blackboard.blVAR0 >= -10)].count(True))), (True or False), (True or True)].count(True)) >= ([(min(100, max(-100, (self.blackboard.blVAR0 + -80))) <= self.blackboard.blVAR0), (('both' == 'both') and False), (self.blackboard.blVAR0 >= self.blackboard.blVAR0), (False == True)].count(True))) else
+            (
+            self.blackboard.blVAR3[0]
+        ))), (min(1, max(0, min(100, max(-100, (63 + self.blackboard.blVAR0))))), (
+            'no'
+            if ('yes' != 'both') else
+            (
+            'both'
+        )))])
+        for (index, val) in __temp_var__:
+            self.blackboard.blVAR3[index] = val
         return return_status

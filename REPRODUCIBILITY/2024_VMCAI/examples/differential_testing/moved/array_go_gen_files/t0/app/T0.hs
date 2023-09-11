@@ -1,5 +1,8 @@
 module T0 where
 import BehaviorTreeCore
-import BTreeA1
-bTreeNodeA1 = BTreeNode bTreeFunctionA1 [] 1
-bTreeNodeDecFs0 = BTreeNode (decoratorCreator (xISyCreator Failure Success)) [bTreeNodeA1] 0
+import BTreeC2
+import BTreeA4
+bTreeNodeA4 = BTreeNode bTreeFunctionA4 [] 2
+bTreeNodeC2 = BTreeNode bTreeFunctionC2 [] 3
+bTreeNodePOne1 = BTreeNode (parallelCreator successOnOneFailureOne) [bTreeNodeA4, bTreeNodeC2] 1
+bTreeNodeDecSr0 = BTreeNode (decoratorCreator (xISyCreator Success Running)) [bTreeNodePOne1] 0

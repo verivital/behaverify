@@ -14,61 +14,25 @@ def create_blackboard():
     blackboard_reader.register_key(key = 'blVAR0', access = py_trees.common.Access.WRITE)
     blackboard_reader.register_key(key = 'blVAR2', access = py_trees.common.Access.WRITE)
     blackboard_reader.register_key(key = 'blVAR3', access = py_trees.common.Access.WRITE)
-    blackboard_reader.register_key(key = 'blFROZENVAR5', access = py_trees.common.Access.WRITE)
-    blackboard_reader.register_key(key = 'blDEFINE8', access = py_trees.common.Access.WRITE)
-    blackboard_reader.blVAR0 = [None] * 2
-    __temp_var__ = serene_safe_assignment.blVAR0([(0, 'no'), (1, (
-        'both'
-        if (3 > abs(abs(-4))) else
+    blackboard_reader.blVAR0 = serene_safe_assignment.blVAR0((
+        min(-2, max(-5, 97))
+        if (not ((False ^ ((14 <= -3) != (31 >= 24))))) else
         (
-        'both'
-    )))])
-    for (index, val) in __temp_var__:
-        blackboard_reader.blVAR0[index] = val
+        min(-2, max(-5, min(100, max(-100, (3 + 3 + 88 + -14)))))
+    )))
     blackboard_reader.blVAR2 = serene_safe_assignment.blVAR2((
-        ((not ((blackboard_reader.blVAR0[1] != blackboard_reader.blVAR0[0]))) or (('both' == blackboard_reader.blVAR0[1])))
-        if False else
+        'yes'
+        if (False and (min(100, max(-100, min(51, blackboard_reader.blVAR0))) > blackboard_reader.blVAR0)) else
         (
-        False
-    )))
-    blackboard_reader.blVAR3 = serene_safe_assignment.blVAR3((
-        min(5, max(2, 12))
-        if ((-3 < -4) or (39 != 4)) else
-        (
-        min(5, max(2, -5))
-    )))
-    blackboard_reader.blFROZENVAR5 = [None] * 3
-    __temp_var__ = serene_safe_assignment.blFROZENVAR5([(0, min(-2, max(-5, abs(blackboard_reader.blVAR3)))), (1, min(-2, max(-5, -55))), (2, min(-2, max(-5, (blackboard_reader.blVAR3 * 13 * blackboard_reader.blVAR3))))])
+            'no'
+            if (blackboard_reader.blVAR0 < blackboard_reader.blVAR0) else
+            (
+            'no'
+    ))))
+    blackboard_reader.blVAR3 = [None] * 2
+    __temp_var__ = serene_safe_assignment.blVAR3([(0, 'both'), (1, 'both')])
     for (index, val) in __temp_var__:
-        blackboard_reader.blFROZENVAR5[index] = val
-    blackboard_reader.blDEFINE8 = [None] * 2
-
-
-    def blDEFINE8(index):
-        if not isinstance(index, int):
-            raise Exception('Index must be an int when accessing blDEFINE8: ' + str(type(index)))
-        if index < 0 or index >= 2:
-            raise Exception('Index out of bounds when accessing blDEFINE8: ' + str(index))
-        if index == 0:
-            return (
-                min(5, max(2, ([((not (True)) or (True)), (max(blackboard_reader.blFROZENVAR5[0], blackboard_reader.blVAR3) >= ([((not ((True and blackboard_reader.blVAR2))) or ((-73 <= -28))), ((blackboard_reader.blFROZENVAR5[2] - blackboard_reader.blFROZENVAR5[0]) > 75), (min(blackboard_reader.blVAR3, 57) > -83)].count(True))), (-(70) <= blackboard_reader.blFROZENVAR5[0]), ((([(-33 == 69), (blackboard_reader.blVAR2 == True), (blackboard_reader.blFROZENVAR5[1] <= 90), ((not (True)) or (blackboard_reader.blVAR2))].count(True)) - blackboard_reader.blVAR3) < (blackboard_reader.blFROZENVAR5[1] * 40 * 32))].count(True))))
-                if ((-49 * max(blackboard_reader.blVAR3, blackboard_reader.blFROZENVAR5[1]) * 100) < 26) else
-                (
-                min(5, max(2, max((-89 * blackboard_reader.blFROZENVAR5[0] * blackboard_reader.blVAR3 * blackboard_reader.blVAR3), 53)))
-            ))
-        elif index == 1:
-            return (
-                min(5, max(2, (-96 * blackboard_reader.blVAR3)))
-                if (94 <= 92) else
-                (
-                    min(5, max(2, ([(blackboard_reader.blFROZENVAR5[1] >= 37), (not ((blackboard_reader.blVAR2 ^ False))), (blackboard_reader.blFROZENVAR5[1] <= -43)].count(True))))
-                    if ((76 > -74) and False) else
-                    (
-                    min(5, max(2, max(min(-45, 76), ([(-91 < blackboard_reader.blVAR3), (blackboard_reader.blVAR2 == True)].count(True)))))
-            )))
-        raise Exception('Reached unreachable state when accessing blDEFINE8: ' + str(index))
-
-    blackboard_reader.blDEFINE8 = blDEFINE8
+        blackboard_reader.blVAR3[index] = val
     return blackboard_reader
 
 import typing
@@ -334,15 +298,4 @@ def decorator_better_tick(self) -> typing.Iterator[py_trees.behaviour.Behaviour]
 
 def create_tree(environment):
     c1 = c1_file.c1('c1')
-    dec_rs1 = py_trees.decorators.RunningIsSuccess(name = 'dec_rs1', child = c1)
-    dec_rs1.tick = decorator_better_tick.__get__(dec_rs1, py_trees.decorators.Decorator)
-    a4 = a4_file.a4('a4', environment)
-    c1_1 = c1_file.c1('c1_1')
-    c1_2 = c1_file.c1('c1_2')
-    sel3 = py_trees.composites.Selector(name = 'sel3', memory = False, children = [a4, c1_1, c1_2])
-    sel3.tick = selector_better_tick.__get__(sel3, py_trees.composites.Selector)
-    dec_rf2 = py_trees.decorators.RunningIsFailure(name = 'dec_rf2', child = sel3)
-    dec_rf2.tick = decorator_better_tick.__get__(dec_rf2, py_trees.decorators.Decorator)
-    seq0 = py_trees.composites.Sequence(name = 'seq0', memory = True, children = [dec_rs1, dec_rf2])
-    seq0.tick = sequence_better_tick.__get__(seq0, py_trees.composites.Sequence)
-    return seq0
+    return c1

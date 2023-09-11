@@ -20,6 +20,8 @@ def full_tick():
 def print_blackboard():
     ret_string = 'blackboard' + os.linesep
     ret_string += indent(1) + 'blVAR0: ' + str(blackboard_reader.blVAR0) + os.linesep
+    ret_string += indent(1) + 'blVAR2: ' + str(blackboard_reader.blVAR2) + os.linesep
+    ret_string += indent(1) + 'blDEFINE4: ' + str(blackboard_reader.blDEFINE4()) + os.linesep
     return ret_string
 
 
@@ -27,14 +29,12 @@ def print_environment():
     ret_string = 'environment' + os.linesep
     ret_string += indent(1) + 'envVAR1: ' + str(environment.envVAR1) + os.linesep
     ret_string += indent(1) + 'envFROZENVAR3: ' + str(environment.envFROZENVAR3) + os.linesep
-    ret_string += indent(1) + 'envDEFINE5: ' + str([environment.envDEFINE5(x) for x in range(3)]) + os.linesep
-    ret_string += indent(1) + 'envDEFINE6: ' + str(environment.envDEFINE6()) + os.linesep
-    ret_string += indent(1) + 'envDEFINE7: ' + str(environment.envDEFINE7()) + os.linesep
+    ret_string += indent(1) + 'envDEFINE5: ' + str(environment.envDEFINE5()) + os.linesep
     return ret_string
 
 
 node_to_locals = {
-    'a1' : [],
+    'a4' : [],
 }
 
 
@@ -78,6 +78,11 @@ def reset_serene_tree_print(node):
     return
 
 
+print('------------------------')
+print('Initial State')
+print(print_blackboard())
+print(print_local())
+print(print_environment())
 for count in range(10):
     print('------------------------')
     print('State after tick: ' + str(count + 1))

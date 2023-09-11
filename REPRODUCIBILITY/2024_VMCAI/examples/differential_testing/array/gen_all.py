@@ -118,7 +118,8 @@ def create_int_value(depth_left, bl, local, env):
             )
             + '))'
         )
-    return '(' + func + ', ' + ', '.join([create_int_value(random.randint(0, depth_left - 1), bl, local, env) for _ in range(random.randint(min_arg, max_arg))]) + ')'
+    # return '(' + func + ', ' + ', '.join([create_int_value(random.randint(0, depth_left - 1), bl, local, env) for _ in range(random.randint(min_arg, max_arg))]) + ')'
+    return '(min, 100, (max, -100, (' + func + ', ' + ', '.join([create_int_value(random.randint(0, depth_left - 1), bl, local, env) for _ in range(random.randint(min_arg, max_arg))]) + ')))'
 
 
 def create_bool_value(depth_left, bl, local, env):

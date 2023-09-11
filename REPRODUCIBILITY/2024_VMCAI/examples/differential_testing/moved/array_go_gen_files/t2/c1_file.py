@@ -14,10 +14,8 @@ class c1(py_trees.behaviour.Behaviour):
         self.blackboard.register_key(key = ('blVAR0'), access = py_trees.common.Access.READ)
         self.blackboard.register_key(key = ('blVAR2'), access = py_trees.common.Access.READ)
         self.blackboard.register_key(key = ('blVAR3'), access = py_trees.common.Access.READ)
-        self.blackboard.register_key(key = ('blFROZENVAR5'), access = py_trees.common.Access.READ)
-        self.blackboard.register_key(key = ('blDEFINE8'), access = py_trees.common.Access.READ)
 
     def update(self):
-        return_status = ((py_trees.common.Status.SUCCESS) if ((True or self.blackboard.blVAR2)) else (py_trees.common.Status.FAILURE))
+        return_status = ((py_trees.common.Status.SUCCESS) if ((True or False)) else (py_trees.common.Status.FAILURE))
         self.__serene_print__ = return_status.value
         return return_status

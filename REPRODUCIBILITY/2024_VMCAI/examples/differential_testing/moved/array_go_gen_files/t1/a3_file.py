@@ -13,41 +13,27 @@ class a3(py_trees.behaviour.Behaviour):
         self.environment = environment
         self.blackboard = self.attach_blackboard_client(name = name)
         self.blackboard.register_key(key = ('blVAR0'), access = py_trees.common.Access.WRITE)
-        self.blackboard.register_key(key = ('blDEFINE7'), access = py_trees.common.Access.WRITE)
+        self.blackboard.register_key(key = ('blDEFINE5'), access = py_trees.common.Access.WRITE)
+        self.localVAR2 = serene_safe_assignment.localVAR2((
+            min(5, max(2, min(100, max(-100, (min(100, max(-100, (60 * -2 * 5 * -74))) + min(100, max(-100, (58 * 79))) + 2 + min(100, max(-100, abs(3))))))))
+            if (self.blackboard.blDEFINE5(1) and (-5 < 76)) else
+            (
+            min(5, max(2, 22))
+        )))
 
     def update(self):
-        return_status = py_trees.common.Status.RUNNING
+        if True:
+            return_status = py_trees.common.Status.SUCCESS
+        elif (not (((not ((True ^ self.blackboard.blDEFINE5(1)))) ^ (self.blackboard.blDEFINE5(1) == False)))):
+            return_status = py_trees.common.Status.RUNNING
+        elif ((self.localVAR2 <= self.localVAR2) == ((not (self.blackboard.blDEFINE5(1))) or (True))):
+            return_status = py_trees.common.Status.FAILURE
+        else:
+            return_status = py_trees.common.Status.SUCCESS
         self.__serene_print__ = return_status.value
-        __temp_var__ = serene_safe_assignment.blVAR0([(min(1, max(0, self.blackboard.blVAR0[0])), (
-            min(-2, max(-5, self.blackboard.blVAR0[0]))
-            if (self.blackboard.blDEFINE7() ^ self.blackboard.blDEFINE7()) else
-            (
-                min(-2, max(-5, 3))
-                if (-(self.blackboard.blVAR0[0]) >= (max(self.blackboard.blVAR0[1], 10) + abs(60) + 27)) else
-                (
-                min(-2, max(-5, self.blackboard.blVAR0[0]))
-        ))))])
-        for (index, val) in __temp_var__:
-            self.blackboard.blVAR0[index] = val
-        __temp_var__ = serene_safe_assignment.blVAR0([(min(1, max(0, self.blackboard.blVAR0[0])), (
-            min(-2, max(-5, -(-36)))
-            if (-(self.blackboard.blVAR0[0]) == min(max(12, self.blackboard.blVAR0[0]), (self.blackboard.blVAR0[0] - self.blackboard.blVAR0[1]))) else
-            (
-                min(-2, max(-5, self.blackboard.blVAR0[0]))
-                if (5 >= (31 + -78 + (-48 * self.blackboard.blVAR0[0] * self.blackboard.blVAR0[1] * -6))) else
-                (
-                min(-2, max(-5, 86))
-        )))), (min(1, max(0, (self.blackboard.blVAR0[0] * 61 * 40))), (
-            min(-2, max(-5, (self.blackboard.blVAR0[0] - self.blackboard.blVAR0[1])))
-            if ((-94 <= self.blackboard.blVAR0[1]) or (self.blackboard.blVAR0[1] > 90)) else
-            (
-                min(-2, max(-5, self.blackboard.blVAR0[1]))
-                if True else
-                (
-                min(-2, max(-5, ((self.blackboard.blVAR0[1] * -13 * -97) - self.blackboard.blVAR0[0])))
-        ))))])
-        for (index, val) in __temp_var__:
-            self.blackboard.blVAR0[index] = val
+        self.environment.a3_write_after_1__0(self)
+        self.environment.delay_this_action(self.environment.a3_write_after_1__1, self)
+        self.environment.a3_write_after_1__2(self)
         if self.environment.a3_read_after_0__condition(self):
             __temp_var__ = serene_safe_assignment.blVAR0(self.environment.a3_read_after_0__0(self))
             for (index, val) in __temp_var__:

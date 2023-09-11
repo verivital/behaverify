@@ -16,69 +16,6 @@ class t1_environment():
         return
 
     def post_tick_environment_update(self):
-        self.envVAR3 = serene_safe_assignment.envVAR3((
-            min(5, max(2, (self.blackboard.blVAR0[0] - self.envVAR1[1])))
-            if (self.blackboard.blDEFINE7() == (70 < self.blackboard.blVAR0[0])) else
-            (
-            min(5, max(2, ((self.envFROZENVAR4[0] * -16 * 61) * self.envFROZENVAR4[1] * self.blackboard.blVAR0[1] * max(76, -78))))
-        )))
-        __temp_var__ = serene_safe_assignment.envVAR2([(min(2, max(0, (max(self.envFROZENVAR4[1], 67) * max(abs(self.envVAR1[0]), 0) * (self.envVAR1[2] + -12 + self.envVAR2[2])))), (
-            min(-2, max(-5, -26))
-            if ((self.blackboard.blDEFINE7() and False) == True) else
-            (
-                min(-2, max(-5, ([((not (((True == True) ^ (False ^ False)))) or (False)), (-39 < self.envVAR1[1]), (not (((not ((self.blackboard.blDEFINE7() ^ self.blackboard.blDEFINE7()))) ^ ((not (False)) or (True))))), (-61 >= max(-82, self.blackboard.blVAR0[0]))].count(True))))
-                if self.blackboard.blDEFINE7() else
-                (
-                min(-2, max(-5, self.envFROZENVAR4[0]))
-        )))), (min(2, max(0, (-58 - -97))), (
-            min(-2, max(-5, self.blackboard.blVAR0[1]))
-            if ((not ((False ^ True))) and self.blackboard.blDEFINE7()) else
-            (
-                min(-2, max(-5, abs(min(self.envFROZENVAR4[1], -93))))
-                if (True or self.blackboard.blDEFINE7()) else
-                (
-                min(-2, max(-5, (max(([(False == True), (-54 <= self.envVAR2[0]), (True ^ self.blackboard.blDEFINE7())].count(True)), (self.envVAR3 * 6)) + -16 + -(26) + max(77, -24))))
-        )))), (min(2, max(0, -22)), (
-            min(-2, max(-5, -(73)))
-            if ((not (False)) or (self.blackboard.blDEFINE7())) else
-            (
-                min(-2, max(-5, max(max(self.envVAR3, self.envVAR3), -19)))
-                if ((-75 != self.envVAR2[1]) and self.blackboard.blDEFINE7()) else
-                (
-                min(-2, max(-5, 38))
-        ))))])
-        for (index, val) in __temp_var__:
-            self.envVAR2[index] = val
-        __temp_var__ = serene_safe_assignment.envVAR1([(min(2, max(0, ([((self.envVAR3 - -73) == (97 * self.envVAR1[0] * self.envVAR3)), ((-36 != self.envVAR2[0]) and (self.envVAR3 < 81)), (43 < self.envFROZENVAR4[0]), ((self.envFROZENVAR4[1] > self.envVAR2[1]) ^ True)].count(True)))), (
-            min(5, max(2, (min(self.envVAR3, -1) - -27)))
-            if (self.blackboard.blDEFINE7() or self.blackboard.blDEFINE7()) else
-            (
-                min(5, max(2, -59))
-                if (self.blackboard.blDEFINE7() == (self.envVAR1[1] < self.envVAR1[2])) else
-                (
-                min(5, max(2, (self.blackboard.blVAR0[0] * ((-99 * self.envVAR3 * 89) * abs(50)))))
-        )))), (min(2, max(0, (abs(39) * (-42 * self.blackboard.blVAR0[1] * -37 * -65) * ([(self.blackboard.blDEFINE7() or True), (-59 <= -65), (self.blackboard.blDEFINE7() == False), (-61 == 47)].count(True)) * (95 * 10 * 69)))), (
-            min(5, max(2, ([(True or True), (True == self.blackboard.blDEFINE7())].count(True))))
-            if ((not (self.blackboard.blDEFINE7())) or (True)) else
-            (
-                min(5, max(2, max(-62, -95)))
-                if (self.envVAR1[1] >= self.envVAR2[0]) else
-                (
-                min(5, max(2, max(self.envVAR3, self.envVAR3)))
-        )))), (min(2, max(0, abs(-38))), (
-            min(5, max(2, (((-77 * 26 * self.envVAR2[2] * self.blackboard.blVAR0[0]) - -94) - (self.envVAR2[1] - self.envVAR1[1]))))
-            if (self.blackboard.blDEFINE7() == (53 < 61)) else
-            (
-                min(5, max(2, (abs(self.envFROZENVAR4[0]) - ([(self.envVAR3 > -31), (not ((False ^ True)))].count(True)))))
-                if False else
-                (
-                min(5, max(2, self.envFROZENVAR4[0]))
-        ))))])
-        for (index, val) in __temp_var__:
-            self.envVAR1[index] = val
-        __temp_var__ = serene_safe_assignment.envVAR1([(min(2, max(0, ([(self.blackboard.blDEFINE7() or True), (self.blackboard.blDEFINE7() == False), (self.envFROZENVAR4[0] <= 93)].count(True)))), min(5, max(2, min(([(self.blackboard.blVAR0[1] <= -(self.blackboard.blVAR0[1])), ((not ((False or self.blackboard.blDEFINE7()))) or ((True and self.blackboard.blDEFINE7()))), (not (((not ((True ^ self.blackboard.blDEFINE7()))) ^ False)))].count(True)), abs(abs(-1)))))), (min(2, max(0, (42 * (-100 * -49)))), min(5, max(2, abs(self.envVAR3))))])
-        for (index, val) in __temp_var__:
-            self.envVAR1[index] = val
         return
 
     def check_tick_condition(self):
@@ -88,57 +25,188 @@ class t1_environment():
         self.blackboard = blackboard
         self.delayed_action_queue = []
 
+
+
+        def envDEFINE4():
+            return (
+                min(-2, max(-5, min(100, max(-100, (min(100, max(-100, min(self.envVAR1[0], 5))) * min(100, max(-100, max(4, self.envVAR1[2]))) * min(100, max(-100, max(min(100, max(-100, (self.envVAR1[0] - -13))), ([(True == True), (self.blackboard.blVAR0[0] == 'yes')].count(True))))))))))
+                if ('yes' == self.blackboard.blVAR0[0]) else
+                (
+                    min(-2, max(-5, min(100, max(-100, (self.envVAR1[2] - self.envVAR1[2])))))
+                    if ((not (True)) or (True)) else
+                    (
+                    min(-2, max(-5, self.envVAR1[2]))
+            )))
+
+        self.envDEFINE4 = envDEFINE4
         self.envVAR1 = [None] * 3
-        __temp_var__ = serene_safe_assignment.envVAR1([(0, (
-            min(5, max(2, abs(self.blackboard.blVAR0[1])))
-            if ((57 - 1) >= max(self.blackboard.blVAR0[1], self.blackboard.blVAR0[0])) else
-            (
-                min(5, max(2, abs(self.blackboard.blVAR0[1])))
-                if (((not (False)) or (True)) and False) else
-                (
-                min(5, max(2, 11))
-        )))), (1, min(5, max(2, -(([(False == False), (-80 > -59), ((not (True)) or (False))].count(True)))))), (2, min(5, max(2, abs(self.blackboard.blVAR0[0]))))])
-        for (index, val) in __temp_var__:
-            self.envVAR1[index] = val
-        self.envVAR2 = [None] * 3
-        __temp_var__ = serene_safe_assignment.envVAR2([(0, min(-2, max(-5, ([(False and (True ^ True)), (30 > 63)].count(True))))), (1, (
-            min(-2, max(-5, ((self.blackboard.blVAR0[0] * -22 * 89) - -10)))
-            if (abs(self.envVAR1[0]) < (-87 * -16 * self.envVAR1[1] * -1)) else
-            (
-                min(-2, max(-5, ((min(self.envVAR1[2], self.envVAR1[2]) * self.blackboard.blVAR0[0]) - (-28 * 8 * self.envVAR1[1] * self.envVAR1[0]))))
-                if (((self.envVAR1[0] - 74) > 54) ^ (36 <= self.envVAR1[1])) else
-                (
-                min(-2, max(-5, -61))
-        )))), (2, (
-            min(-2, max(-5, self.envVAR1[1]))
+        __temp_var__ = serene_safe_assignment.envVAR1([(0, min(-2, max(-5, min(100, max(-100, (-4 * min(100, max(-100, abs(-3))) * min(100, max(-100, -(5))) * min(100, max(-100, (80 - -3))))))))), (1, min(-2, max(-5, min(100, max(-100, min(94, 2)))))), (2, (
+            min(-2, max(-5, ([(True == True), (3 >= 4)].count(True))))
             if True else
             (
-            min(-2, max(-5, max((self.envVAR1[1] + 27), -3)))
+                min(-2, max(-5, 4))
+                if False else
+                (
+                min(-2, max(-5, min(100, max(-100, abs(-3)))))
+        ))))])
+        for (index, val) in __temp_var__:
+            self.envVAR1[index] = val
+
+    def a1_write_before_1__0(self, node):
+        __temp_var__ = serene_safe_assignment.envVAR1([(min(2, max(0, min(100, max(-100, min(min(100, max(-100, min(66, 94))), min(100, max(-100, min(-38, self.envVAR1[1])))))))), (
+            min(-2, max(-5, min(100, max(-100, (self.envDEFINE4() * self.envDEFINE4())))))
+            if (min(100, max(-100, (self.envVAR1[1] * min(100, max(-100, min(self.envDEFINE4(), 91))) * self.envVAR1[0]))) > min(100, max(-100, abs(83)))) else
+            (
+            min(-2, max(-5, ([((not (False)) or (self.blackboard.blDEFINE5(1))), (self.blackboard.blDEFINE5(0) or self.blackboard.blDEFINE5(1)), (not ((self.blackboard.blDEFINE5(1) ^ False))), (26 > self.envVAR1[2])].count(True))))
         )))])
         for (index, val) in __temp_var__:
-            self.envVAR2[index] = val
-        self.envVAR3 = serene_safe_assignment.envVAR3(min(5, max(2, ([(self.envVAR2[0] >= -36), (True == True)].count(True)))))
-        self.envFROZENVAR4 = [None] * 2
-        __temp_var__ = serene_safe_assignment.envFROZENVAR4([(0, min(5, max(2, self.blackboard.blVAR0[1]))), (1, min(5, max(2, self.blackboard.blVAR0[1])))])
+            self.envVAR1[index] = val
+        return
+
+    def a1_read_after_0__condition(self, node):
+        if (self.envDEFINE4() > self.envDEFINE4()):
+            return True
+        else:
+            return False
+
+
+    def a1_read_after_0__0(self, node):
+        return [(min(2, max(0, min(100, max(-100, (self.envVAR1[1] + self.envDEFINE4()))))), 'both'), (min(2, max(0, min(100, max(-100, abs(min(100, max(-100, abs(12)))))))), 'yes')]
+
+    def a2_read_before_0__condition(self, node):
+        if False:
+            return True
+        else:
+            return False
+
+
+    def a2_read_before_0__0(self, node):
+        return [(min(2, max(0, min(100, max(-100, min(([(self.envVAR1[2] == 83), ((self.envDEFINE4() < self.envDEFINE4()) == (False == self.blackboard.blDEFINE5(1))), (min(100, max(-100, abs(self.envDEFINE4()))) <= min(100, max(-100, -(1)))), (min(100, max(-100, (-97 + self.envVAR1[2] + 61))) <= -67)].count(True)), min(100, max(-100, (-89 + 9 + min(100, max(-100, -(self.envDEFINE4()))) + ([(36 <= self.envVAR1[2]), (False or self.blackboard.blDEFINE5(0)), (False == self.blackboard.blDEFINE5(0)), (self.blackboard.blDEFINE5(0) == self.blackboard.blDEFINE5(0))].count(True)))))))))), 'no'), (min(2, max(0, min(100, max(-100, -(min(100, max(-100, (-4 - 88)))))))), 'yes')]
+
+    def a2_read_before_0__1(self, node):
+        return [(min(2, max(0, ([(not (((self.envVAR1[0] == self.envVAR1[0]) ^ self.blackboard.blDEFINE5(1)))), (([(min(100, max(-100, (-15 - -29))) < -65), (self.blackboard.blVAR0[2] != self.blackboard.blVAR0[2]), ((self.envVAR1[0] <= self.envVAR1[0]) or False)].count(True)) <= min(100, max(-100, (self.envDEFINE4() + -43)))), (min(100, max(-100, abs(97))) < min(100, max(-100, (self.envDEFINE4() * self.envDEFINE4() * self.envVAR1[0] * -27)))), (([(self.blackboard.blDEFINE5(1) ^ False), (min(100, max(-100, -(self.envDEFINE4()))) >= min(100, max(-100, (self.envDEFINE4() - 96)))), (min(100, max(-100, abs(13))) < ([(not ((self.blackboard.blDEFINE5(0) ^ self.blackboard.blDEFINE5(1)))), (True and True), (False or True)].count(True)))].count(True)) <= min(100, max(-100, (-8 + self.envDEFINE4()))))].count(True)))), (
+            self.blackboard.blVAR0[0]
+            if (self.blackboard.blDEFINE5(1) == self.blackboard.blDEFINE5(0)) else
+            (
+                'both'
+                if ('no' == 'no') else
+                (
+                'no'
+        )))), (min(2, max(0, min(100, max(-100, (-58 - self.envDEFINE4()))))), (
+            self.blackboard.blVAR0[2]
+            if ((not ((not ((False ^ False))))) or ((-36 <= -61))) else
+            (
+                'both'
+                if (False ^ self.blackboard.blDEFINE5(1)) else
+                (
+                self.blackboard.blVAR0[0]
+        ))))]
+
+    def a3_write_after_1__0(self, node):
+        __temp_var__ = serene_safe_assignment.envVAR1([(min(2, max(0, -74)), (
+            min(-2, max(-5, -91))
+            if True else
+            (
+                min(-2, max(-5, min(100, max(-100, (min(100, max(-100, abs(self.envVAR1[1]))) - min(100, max(-100, abs(57))))))))
+                if True else
+                (
+                min(-2, max(-5, min(100, max(-100, min(-53, min(100, max(-100, (node.localVAR2 * -2 * self.envVAR1[2] * self.envVAR1[0]))))))))
+        ))))])
         for (index, val) in __temp_var__:
-            self.envFROZENVAR4[index] = val
+            self.envVAR1[index] = val
+        return
+
+    def a3_write_after_1__1(self, node):
+        __temp_var__ = serene_safe_assignment.envVAR1([(min(2, max(0, min(100, max(-100, (min(100, max(-100, (node.localVAR2 + 49 + self.envVAR1[0] + self.envVAR1[2]))) * min(100, max(-100, max(self.envDEFINE4(), self.envDEFINE4()))) * 96 * -98))))), (
+            min(-2, max(-5, ([(not (((not ((self.blackboard.blDEFINE5(0) ^ self.blackboard.blDEFINE5(0)))) ^ (False ^ True)))), (23 <= min(100, max(-100, max(46, 5)))), (self.envVAR1[0] > ([(self.envDEFINE4() <= self.envVAR1[2]), ('no' != 'both')].count(True)))].count(True))))
+            if False else
+            (
+                min(-2, max(-5, min(100, max(-100, (self.envVAR1[1] * self.envDEFINE4())))))
+                if ('yes' != self.blackboard.blVAR0[1]) else
+                (
+                min(-2, max(-5, -18))
+        )))), (min(2, max(0, min(100, max(-100, (32 - 67))))), (
+            min(-2, max(-5, min(100, max(-100, (min(100, max(-100, max(([(node.localVAR2 > 70), (node.localVAR2 >= self.envDEFINE4())].count(True)), min(100, max(-100, -(node.localVAR2)))))) * min(100, max(-100, (33 - -5))))))))
+            if (not ((False ^ (self.envVAR1[1] > self.envDEFINE4())))) else
+            (
+                min(-2, max(-5, ([(self.envDEFINE4() > self.envDEFINE4()), (node.localVAR2 >= self.envVAR1[2])].count(True))))
+                if ((min(100, max(-100, abs(self.envDEFINE4()))) == self.envDEFINE4()) ^ self.blackboard.blDEFINE5(0)) else
+                (
+                min(-2, max(-5, 48))
+        )))), (min(2, max(0, min(100, max(-100, (node.localVAR2 + 35 + min(100, max(-100, -(21)))))))), (
+            min(-2, max(-5, min(100, max(-100, (-24 - self.envVAR1[1])))))
+            if ((not (self.blackboard.blDEFINE5(0))) or (self.blackboard.blDEFINE5(1))) else
+            (
+                min(-2, max(-5, min(100, max(-100, (94 + -43 + 45 + 19)))))
+                if ((not (self.blackboard.blDEFINE5(1))) or (self.blackboard.blDEFINE5(0))) else
+                (
+                min(-2, max(-5, min(100, max(-100, (19 + -93 + -3)))))
+        ))))])
+        for (index, val) in __temp_var__:
+            self.envVAR1[index] = val
+        return
+
+    def a3_write_after_1__2(self, node):
+        __temp_var__ = serene_safe_assignment.envVAR1([(min(2, max(0, min(100, max(-100, (min(100, max(-100, (min(100, max(-100, max(-3, self.envDEFINE4()))) + min(100, max(-100, max(node.localVAR2, self.envVAR1[1]))) + min(100, max(-100, max(self.envDEFINE4(), 40)))))) * min(100, max(-100, -(min(100, max(-100, abs(-73))))))))))), (
+            min(-2, max(-5, min(100, max(-100, -(self.envDEFINE4())))))
+            if (self.envVAR1[0] > node.localVAR2) else
+            (
+                min(-2, max(-5, min(100, max(-100, max(12, -21)))))
+                if ((True and self.blackboard.blDEFINE5(1)) or (self.envDEFINE4() == -36)) else
+                (
+                min(-2, max(-5, min(100, max(-100, (([(71 <= 80), (-33 > -99), ((not (self.blackboard.blDEFINE5(0))) or (True)), (self.blackboard.blDEFINE5(1) and self.blackboard.blDEFINE5(1))].count(True)) * min(100, max(-100, (self.envDEFINE4() * -95))))))))
+        ))))])
+        for (index, val) in __temp_var__:
+            self.envVAR1[index] = val
+        return
 
     def a3_read_after_0__condition(self, node):
-        if (self.blackboard.blDEFINE7() or (38 >= -17)):
+        if True:
             return True
         else:
             return False
 
 
     def a3_read_after_0__0(self, node):
-        return [(min(1, max(0, abs(86))), min(-2, max(-5, max(self.envVAR1[2], min(([(15 > 85), ((not (self.blackboard.blDEFINE7())) or (False))].count(True)), abs(self.envVAR3))))))]
+        return [(min(2, max(0, min(100, max(-100, abs(node.localVAR2))))), 'both'), (min(2, max(0, min(100, max(-100, max(min(100, max(-100, abs(-39))), self.envVAR1[0]))))), self.blackboard.blVAR0[2]), (min(2, max(0, ([(True ^ False), (True ^ self.blackboard.blDEFINE5(1)), (self.blackboard.blDEFINE5(0) == False), (self.blackboard.blDEFINE5(0) != self.blackboard.blDEFINE5(1))].count(True)))), self.blackboard.blVAR0[1])]
 
-    def a4_read_before_0__condition(self, node):
-        if ((-47 == 87) == (42 < (5 * -17))):
+    def a4_read_after_2__condition(self, node):
+        if (node.localVAR2 > -26):
             return True
         else:
             return False
 
 
-    def a4_read_before_0__0(self, node):
-        return [(min(1, max(0, min(2, self.envVAR1[0]))), min(-2, max(-5, -(abs(self.blackboard.blVAR0[0])))))]
+    def a4_read_after_2__0(self, node):
+        return min(5, max(2, min(100, max(-100, -(min(100, max(-100, (self.envDEFINE4() * self.envVAR1[2]))))))))
+
+    def a4_read_after_2__1(self, node):
+        return [(min(2, max(0, min(100, max(-100, (min(100, max(-100, (66 * 69))) * node.localVAR2))))), (
+            self.blackboard.blVAR0[0]
+            if (self.envVAR1[1] != -52) else
+            (
+            self.blackboard.blVAR0[0]
+        ))), (min(2, max(0, min(100, max(-100, abs(min(100, max(-100, abs(45)))))))), (
+            self.blackboard.blVAR0[0]
+            if ((True and self.blackboard.blDEFINE5(1)) == False) else
+            (
+            'no'
+        )))]
+
+    def a4_read_after_0__condition(self, node):
+        if (50 >= min(100, max(-100, max(20, 23)))):
+            return True
+        else:
+            return False
+
+
+    def a4_read_after_0__0(self, node):
+        return (
+            min(5, max(2, min(100, max(-100, max(node.localDEFINE3(0), -20)))))
+            if ((self.blackboard.blDEFINE5(0) ^ self.blackboard.blDEFINE5(1)) or False) else
+            (
+                min(5, max(2, min(100, max(-100, (min(100, max(-100, max(self.envVAR1[1], self.envVAR1[0]))) * -95 * min(100, max(-100, (node.localVAR2 + node.localVAR2 + -28))) * min(100, max(-100, abs(-74))))))))
+                if ((self.envDEFINE4() > self.envDEFINE4()) and (93 >= node.localVAR2)) else
+                (
+                min(5, max(2, node.localDEFINE3(0)))
+        )))

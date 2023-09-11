@@ -12,25 +12,47 @@ import random
 def create_blackboard():
     blackboard_reader = py_trees.blackboard.Client()
     blackboard_reader.register_key(key = 'blVAR0', access = py_trees.common.Access.WRITE)
-    blackboard_reader.register_key(key = 'blDEFINE7', access = py_trees.common.Access.WRITE)
-    blackboard_reader.blVAR0 = [None] * 2
-    __temp_var__ = serene_safe_assignment.blVAR0([(0, min(-2, max(-5, 15))), (1, min(-2, max(-5, 15)))])
-    for (index, val) in __temp_var__:
-        blackboard_reader.blVAR0[index] = val
-
-
-    def blDEFINE7():
-        return (
-            (-(blackboard_reader.blVAR0[1]) != blackboard_reader.blVAR0[1])
+    blackboard_reader.register_key(key = 'blDEFINE5', access = py_trees.common.Access.WRITE)
+    blackboard_reader.blVAR0 = [None] * 3
+    __temp_var__ = serene_safe_assignment.blVAR0([(0, (
+        'no'
+        if (min(100, max(-100, max(2, -15))) > min(100, max(-100, min(89, -4)))) else
+        (
+            'both'
+            if (2 == -100) else
+            (
+            'yes'
+    )))), (1, (
+        'no'
+        if False else
+        (
+            'yes'
             if True else
             (
-                True
-                if ((not ((False ^ False))) and (blackboard_reader.blVAR0[0] >= ([(-26 <= blackboard_reader.blVAR0[1]), (-60 < blackboard_reader.blVAR0[1]), (-80 == 91), (True and True)].count(True)))) else
-                (
-                (((blackboard_reader.blVAR0[1] - -5) <= -(blackboard_reader.blVAR0[1])) and True)
-        )))
+            'no'
+    )))), (2, (
+        'yes'
+        if (2 >= 2) else
+        (
+        'yes'
+    )))])
+    for (index, val) in __temp_var__:
+        blackboard_reader.blVAR0[index] = val
+    blackboard_reader.blDEFINE5 = [None] * 2
 
-    blackboard_reader.blDEFINE7 = blDEFINE7
+
+    def blDEFINE5(index):
+        if not isinstance(index, int):
+            raise Exception('Index must be an int when accessing blDEFINE5: ' + str(type(index)))
+        if index < 0 or index >= 2:
+            raise Exception('Index out of bounds when accessing blDEFINE5: ' + str(index))
+        if index == 0:
+            return (min(100, max(-100, min(2, min(100, max(-100, (-9 + 24 + -39)))))) < min(100, max(-100, abs(2))))
+        elif index == 1:
+            return (min(100, max(-100, min(2, min(100, max(-100, (-9 + 24 + -39)))))) < min(100, max(-100, abs(2))))
+        raise Exception('Reached unreachable state when accessing blDEFINE5: ' + str(index))
+
+    blackboard_reader.blDEFINE5 = blDEFINE5
     return blackboard_reader
 
 import typing
@@ -295,7 +317,17 @@ def decorator_better_tick(self) -> typing.Iterator[py_trees.behaviour.Behaviour]
 
 
 def create_tree(environment):
+    a3 = a3_file.a3('a3', environment)
     c1 = c1_file.c1('c1')
-    dec_sf0 = py_trees.decorators.SuccessIsFailure(name = 'dec_sf0', child = c1)
-    dec_sf0.tick = decorator_better_tick.__get__(dec_sf0, py_trees.decorators.Decorator)
-    return dec_sf0
+    dec_sf1 = py_trees.decorators.SuccessIsFailure(name = 'dec_sf1', child = c1)
+    dec_sf1.tick = decorator_better_tick.__get__(dec_sf1, py_trees.decorators.Decorator)
+    a1 = a1_file.a1('a1', environment)
+    a4 = a4_file.a4('a4', environment)
+    c1_1 = c1_file.c1('c1_1')
+    p_one3 = py_trees.composites.Parallel(name = 'p_one3', policy = py_trees.common.ParallelPolicy.SuccessOnOne(), children = [a1, a4, c1_1])
+    p_one3.tick = parallel_better_tick.__get__(p_one3, py_trees.composites.Parallel)
+    dec_sr2 = py_trees.decorators.SuccessIsRunning(name = 'dec_sr2', child = p_one3)
+    dec_sr2.tick = decorator_better_tick.__get__(dec_sr2, py_trees.decorators.Decorator)
+    p_one0 = py_trees.composites.Parallel(name = 'p_one0', policy = py_trees.common.ParallelPolicy.SuccessOnOne(), children = [a3, dec_sf1, dec_sr2])
+    p_one0.tick = parallel_better_tick.__get__(p_one0, py_trees.composites.Parallel)
+    return p_one0

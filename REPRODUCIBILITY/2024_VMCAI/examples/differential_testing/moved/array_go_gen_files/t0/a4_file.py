@@ -13,15 +13,19 @@ class a4(py_trees.behaviour.Behaviour):
         self.environment = environment
         self.blackboard = self.attach_blackboard_client(name = name)
         self.blackboard.register_key(key = ('blVAR0'), access = py_trees.common.Access.WRITE)
+        self.blackboard.register_key(key = ('blVAR2'), access = py_trees.common.Access.WRITE)
+        self.blackboard.register_key(key = ('blDEFINE4'), access = py_trees.common.Access.WRITE)
 
     def update(self):
-        return_status = py_trees.common.Status.SUCCESS
+        if True:
+            return_status = py_trees.common.Status.RUNNING
+        elif (False ^ False):
+            return_status = py_trees.common.Status.FAILURE
+        else:
+            return_status = py_trees.common.Status.RUNNING
         self.__serene_print__ = return_status.value
-        self.environment.delay_this_action(self.environment.a4_write_after_2__0, self)
-        self.environment.delay_this_action(self.environment.a4_write_after_2__1, self)
-        if self.environment.a4_read_after_1__condition(self):
-            __temp_var__ = serene_safe_assignment.blVAR0(self.environment.a4_read_after_1__0(self))
+        if self.environment.a4_read_after_0__condition(self):
+            __temp_var__ = serene_safe_assignment.blVAR0(self.environment.a4_read_after_0__0(self))
             for (index, val) in __temp_var__:
                 self.blackboard.blVAR0[index] = val
-        self.environment.delay_this_action(self.environment.a4_write_after_0__0, self)
         return return_status
