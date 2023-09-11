@@ -27,7 +27,8 @@ encoding_combo = {
     'aut' : ['aut', 'aut_s'],
     'func' : ['func', 'norm', 'no_internal', 's_var'],
     'invar' : ['aut', 'func', 'norm', 'no_internal', 's_var'],
-    'opt' : ['no_opt', 'last_opt', 'first_opt', 'full_opt']
+    'opt' : ['no_opt', 'last_opt', 'first_opt', 'full_opt'],
+    'qual' : ['aut', 'aut_s', 'norm', 'no_internal']
 }
 encoding_name_to_result_name = {
     'aut' : 'aut_',

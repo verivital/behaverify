@@ -1,0 +1,124 @@
+MODULE main
+    VAR
+        system : system_module;
+--------------SPECIFICATIONS
+
+
+
+--------------END OF SPECIFICATIONS
+
+MODULE system_module
+    CONSTANTS
+        success, failure, running, invalid, Hello, yes;
+    DEFINE
+        resume_from_here_in_subtree__root_node := -3;
+        resume_from_here_in_subtree__check_enum := -3;
+        resume_from_here_in_subtree__check_enum_1 := -3;
+        resume_from_here_in_subtree__check_int := -3;
+        resume_from_here_in_subtree__check_int_1 := -3;
+        resume_from_here_in_subtree__check_boolean := -3;
+        resume_from_here_in_subtree__check_boolean_1 := -3;
+        resume_from_here_in_subtree__check_all := -3;
+        root_node.active := TRUE;
+        --START OF BLACKBOARD DEFINITIONS
+        --END OF BLACKBOARD DEFINITIONS
+    VAR
+        node_names : define_nodes;
+        check_enum : check_enum_module();
+        check_enum_1 : check_enum_1_module();
+        check_int : check_int_module();
+        check_int_1 : check_int_1_module();
+        check_boolean : check_boolean_module();
+        check_boolean_1 : check_boolean_1_module();
+        check_all : check_all_module();
+        root_node : composite_parallel_success_on_all_without_memory_7(check_enum, check_enum_1, check_int, check_int_1, check_boolean, check_boolean_1, check_all);
+        --START OF BLACKBOARD VARIABLES DECLARATION
+        --END OF BLACKBOARD VARIABLES DECLARATION
+    ASSIGN
+        --START OF BLACKBOARD VARIABLES INITIALIZATION
+        --END OF BLACKBOARD VARIABLES INITIALIZATION
+        --START OF BLACKBOARD VARIABLES TRANSITION
+        --END OF BLACKBOARD VARIABLES TRANSITION
+
+MODULE define_nodes
+    DEFINE
+        root_node := 0;
+        check_enum := 1;
+        check_enum_1 := 2;
+        check_int := 3;
+        check_int_1 := 4;
+        check_boolean := 5;
+        check_boolean_1 := 6;
+        check_all := 7;
+MODULE composite_parallel_success_on_all_without_memory_7(child_0, child_1, child_2, child_3, child_4, child_5, child_6)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                (child_0.internal_status = failure) : failure;
+                (child_1.internal_status = failure) : failure;
+                (child_2.internal_status = failure) : failure;
+                (child_3.internal_status = failure) : failure;
+                (child_4.internal_status = failure) : failure;
+                (child_5.internal_status = failure) : failure;
+                (child_6.internal_status = failure) : failure;
+                !(child_0.internal_status = success) : child_0.internal_status;
+                !(child_1.internal_status = success) : child_1.internal_status;
+                !(child_2.internal_status = success) : child_2.internal_status;
+                !(child_3.internal_status = success) : child_3.internal_status;
+                !(child_4.internal_status = success) : child_4.internal_status;
+                !(child_5.internal_status = success) : child_5.internal_status;
+                !(child_6.internal_status = success) : child_6.internal_status;
+                TRUE : success;
+            esac;
+        child_0.active := active;
+        child_1.active := active;
+        child_2.active := active;
+        child_3.active := active;
+        child_4.active := active;
+        child_5.active := active;
+        child_6.active := active;
+MODULE check_enum_module()
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := ((yes = Hello)) ? success : failure;
+MODULE check_enum_1_module()
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := ((Hello = Hello)) ? success : failure;
+MODULE check_int_module()
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := ((55 = 55)) ? success : failure;
+MODULE check_int_1_module()
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := ((1 = 55)) ? success : failure;
+MODULE check_boolean_module()
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := (TRUE) ? success : failure;
+MODULE check_boolean_1_module()
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := (FALSE) ? success : failure;
+MODULE check_all_module()
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := (((yes = Hello) & (55 = 1) & (TRUE = FALSE))) ? success : failure;

@@ -1,0 +1,190 @@
+------------------------
+State after tick: 1
+p_all0 -> RUNNING
+  a4 -> RUNNING
+  a1 -> RUNNING
+
+blackboard
+  blVAR0: True
+  blDEFINE3: 2
+  blDEFINE4: 2
+
+local
+
+environment
+  envVAR1: -2
+  envVAR2: no
+  envDEFINE5: [-2, -2]
+  envDEFINE6: [False, False, False]
+
+------------------------
+State after tick: 2
+p_all0 -> RUNNING
+  a4 -> RUNNING
+  a1 -> RUNNING
+
+blackboard
+  blVAR0: True
+  blDEFINE3: 2
+  blDEFINE4: 2
+
+local
+
+environment
+  envVAR1: -2
+  envVAR2: no
+  envDEFINE5: [-2, -2]
+  envDEFINE6: [False, False, False]
+
+------------------------
+State after tick: 3
+p_all0 -> RUNNING
+  a4 -> RUNNING
+  a1 -> RUNNING
+
+blackboard
+  blVAR0: True
+  blDEFINE3: 2
+  blDEFINE4: 2
+
+local
+
+environment
+  envVAR1: -2
+  envVAR2: no
+  envDEFINE5: [-2, -2]
+  envDEFINE6: [False, False, False]
+
+------------------------
+State after tick: 4
+p_all0 -> RUNNING
+  a4 -> RUNNING
+  a1 -> RUNNING
+
+blackboard
+  blVAR0: True
+  blDEFINE3: 2
+  blDEFINE4: 2
+
+local
+
+environment
+  envVAR1: -2
+  envVAR2: no
+  envDEFINE5: [-2, -2]
+  envDEFINE6: [False, False, False]
+
+------------------------
+State after tick: 5
+p_all0 -> RUNNING
+  a4 -> RUNNING
+  a1 -> RUNNING
+
+blackboard
+  blVAR0: True
+  blDEFINE3: 2
+  blDEFINE4: 2
+
+local
+
+environment
+  envVAR1: -2
+  envVAR2: no
+  envDEFINE5: [-2, -2]
+  envDEFINE6: [False, False, False]
+
+------------------------
+State after tick: 6
+p_all0 -> RUNNING
+  a4 -> RUNNING
+  a1 -> RUNNING
+
+blackboard
+  blVAR0: True
+  blDEFINE3: 2
+  blDEFINE4: 2
+
+local
+
+environment
+  envVAR1: -2
+  envVAR2: no
+  envDEFINE5: [-2, -2]
+  envDEFINE6: [False, False, False]
+
+------------------------
+State after tick: 7
+p_all0 -> RUNNING
+  a4 -> RUNNING
+  a1 -> RUNNING
+
+blackboard
+  blVAR0: True
+  blDEFINE3: 2
+  blDEFINE4: 2
+
+local
+
+environment
+  envVAR1: -2
+  envVAR2: no
+  envDEFINE5: [-2, -2]
+  envDEFINE6: [False, False, False]
+
+------------------------
+State after tick: 8
+p_all0 -> RUNNING
+  a4 -> RUNNING
+  a1 -> RUNNING
+
+blackboard
+  blVAR0: True
+  blDEFINE3: 2
+  blDEFINE4: 2
+
+local
+
+environment
+  envVAR1: -2
+  envVAR2: no
+  envDEFINE5: [-2, -2]
+  envDEFINE6: [False, False, False]
+
+------------------------
+State after tick: 9
+p_all0 -> RUNNING
+  a4 -> RUNNING
+  a1 -> RUNNING
+
+blackboard
+  blVAR0: True
+  blDEFINE3: 2
+  blDEFINE4: 2
+
+local
+
+environment
+  envVAR1: -2
+  envVAR2: no
+  envDEFINE5: [-2, -2]
+  envDEFINE6: [False, False, False]
+
+------------------------
+State after tick: 10
+p_all0 -> RUNNING
+  a4 -> RUNNING
+  a1 -> RUNNING
+
+blackboard
+  blVAR0: True
+  blDEFINE3: 2
+  blDEFINE4: 2
+
+local
+
+environment
+  envVAR1: -2
+  envVAR2: no
+  envDEFINE5: [-2, -2]
+  envDEFINE6: [False, False, False]
+
