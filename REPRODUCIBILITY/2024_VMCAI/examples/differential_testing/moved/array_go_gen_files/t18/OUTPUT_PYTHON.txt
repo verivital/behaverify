@@ -1,0 +1,240 @@
+------------------------
+State after tick: 1
+dec_rf0 -> FAILURE
+  p_all1 -> FAILURE
+    p_one2 -> FAILURE
+      a4 -> FAILURE
+      c1 -> FAILURE
+      a1 -> SUCCESS
+    a4_1 -> FAILURE
+
+blackboard
+  blVAR0: [-2, -2]
+  blVAR2: [2, 2, 2]
+  blDEFINE4: False
+  blDEFINE7: [5, 2, 5]
+
+local
+
+environment
+  envVAR1: ['no', 'yes', 'both']
+  envVAR3: 2
+  envDEFINE5: ['no', 'no']
+  envDEFINE6: [5, 2, 2]
+
+------------------------
+State after tick: 2
+dec_rf0 -> FAILURE
+  p_all1 -> FAILURE
+    p_one2 -> FAILURE
+      a4 -> FAILURE
+      c1 -> FAILURE
+      a1 -> SUCCESS
+    a4_1 -> FAILURE
+
+blackboard
+  blVAR0: [-2, -2]
+  blVAR2: [2, 2, 2]
+  blDEFINE4: False
+  blDEFINE7: [5, 2, 5]
+
+local
+
+environment
+  envVAR1: ['no', 'yes', 'both']
+  envVAR3: 2
+  envDEFINE5: ['no', 'no']
+  envDEFINE6: [5, 2, 2]
+
+------------------------
+State after tick: 3
+dec_rf0 -> FAILURE
+  p_all1 -> FAILURE
+    p_one2 -> FAILURE
+      a4 -> FAILURE
+      c1 -> FAILURE
+      a1 -> SUCCESS
+    a4_1 -> FAILURE
+
+blackboard
+  blVAR0: [-2, -2]
+  blVAR2: [2, 2, 2]
+  blDEFINE4: False
+  blDEFINE7: [5, 2, 5]
+
+local
+
+environment
+  envVAR1: ['no', 'yes', 'both']
+  envVAR3: 2
+  envDEFINE5: ['no', 'no']
+  envDEFINE6: [5, 2, 2]
+
+------------------------
+State after tick: 4
+dec_rf0 -> FAILURE
+  p_all1 -> FAILURE
+    p_one2 -> FAILURE
+      a4 -> FAILURE
+      c1 -> FAILURE
+      a1 -> SUCCESS
+    a4_1 -> FAILURE
+
+blackboard
+  blVAR0: [-2, -2]
+  blVAR2: [2, 2, 2]
+  blDEFINE4: False
+  blDEFINE7: [5, 2, 5]
+
+local
+
+environment
+  envVAR1: ['no', 'yes', 'both']
+  envVAR3: 2
+  envDEFINE5: ['no', 'no']
+  envDEFINE6: [5, 2, 2]
+
+------------------------
+State after tick: 5
+dec_rf0 -> FAILURE
+  p_all1 -> FAILURE
+    p_one2 -> FAILURE
+      a4 -> FAILURE
+      c1 -> FAILURE
+      a1 -> SUCCESS
+    a4_1 -> FAILURE
+
+blackboard
+  blVAR0: [-2, -2]
+  blVAR2: [2, 2, 2]
+  blDEFINE4: False
+  blDEFINE7: [5, 2, 5]
+
+local
+
+environment
+  envVAR1: ['no', 'yes', 'both']
+  envVAR3: 2
+  envDEFINE5: ['no', 'no']
+  envDEFINE6: [5, 2, 2]
+
+------------------------
+State after tick: 6
+dec_rf0 -> FAILURE
+  p_all1 -> FAILURE
+    p_one2 -> FAILURE
+      a4 -> FAILURE
+      c1 -> FAILURE
+      a1 -> SUCCESS
+    a4_1 -> FAILURE
+
+blackboard
+  blVAR0: [-2, -2]
+  blVAR2: [2, 2, 2]
+  blDEFINE4: False
+  blDEFINE7: [5, 2, 5]
+
+local
+
+environment
+  envVAR1: ['no', 'yes', 'both']
+  envVAR3: 2
+  envDEFINE5: ['no', 'no']
+  envDEFINE6: [5, 2, 2]
+
+------------------------
+State after tick: 7
+dec_rf0 -> FAILURE
+  p_all1 -> FAILURE
+    p_one2 -> FAILURE
+      a4 -> FAILURE
+      c1 -> FAILURE
+      a1 -> SUCCESS
+    a4_1 -> FAILURE
+
+blackboard
+  blVAR0: [-2, -2]
+  blVAR2: [2, 2, 2]
+  blDEFINE4: False
+  blDEFINE7: [5, 2, 5]
+
+local
+
+environment
+  envVAR1: ['no', 'yes', 'both']
+  envVAR3: 2
+  envDEFINE5: ['no', 'no']
+  envDEFINE6: [5, 2, 2]
+
+------------------------
+State after tick: 8
+dec_rf0 -> FAILURE
+  p_all1 -> FAILURE
+    p_one2 -> FAILURE
+      a4 -> FAILURE
+      c1 -> FAILURE
+      a1 -> SUCCESS
+    a4_1 -> FAILURE
+
+blackboard
+  blVAR0: [-2, -2]
+  blVAR2: [2, 2, 2]
+  blDEFINE4: False
+  blDEFINE7: [5, 2, 5]
+
+local
+
+environment
+  envVAR1: ['no', 'yes', 'both']
+  envVAR3: 2
+  envDEFINE5: ['no', 'no']
+  envDEFINE6: [5, 2, 2]
+
+------------------------
+State after tick: 9
+dec_rf0 -> FAILURE
+  p_all1 -> FAILURE
+    p_one2 -> FAILURE
+      a4 -> FAILURE
+      c1 -> FAILURE
+      a1 -> SUCCESS
+    a4_1 -> FAILURE
+
+blackboard
+  blVAR0: [-2, -2]
+  blVAR2: [2, 2, 2]
+  blDEFINE4: False
+  blDEFINE7: [5, 2, 5]
+
+local
+
+environment
+  envVAR1: ['no', 'yes', 'both']
+  envVAR3: 2
+  envDEFINE5: ['no', 'no']
+  envDEFINE6: [5, 2, 2]
+
+------------------------
+State after tick: 10
+dec_rf0 -> FAILURE
+  p_all1 -> FAILURE
+    p_one2 -> FAILURE
+      a4 -> FAILURE
+      c1 -> FAILURE
+      a1 -> SUCCESS
+    a4_1 -> FAILURE
+
+blackboard
+  blVAR0: [-2, -2]
+  blVAR2: [2, 2, 2]
+  blDEFINE4: False
+  blDEFINE7: [5, 2, 5]
+
+local
+
+environment
+  envVAR1: ['no', 'yes', 'both']
+  envVAR3: 2
+  envDEFINE5: ['no', 'no']
+  envDEFINE6: [5, 2, 2]
+

@@ -1,0 +1,170 @@
+------------------------
+State after tick: 1
+dec_sf0 -> FAILURE
+  c1 -> SUCCESS
+
+blackboard
+  blVAR0: [-2, -2]
+  blDEFINE7: True
+
+local
+
+environment
+  envVAR1: [2, 5, 2]
+  envVAR2: [-2, -5, -2]
+  envVAR3: 5
+  envFROZENVAR4: [2, 2]
+
+------------------------
+State after tick: 2
+dec_sf0 -> FAILURE
+  c1 -> SUCCESS
+
+blackboard
+  blVAR0: [-2, -2]
+  blDEFINE7: True
+
+local
+
+environment
+  envVAR1: [2, 5, 2]
+  envVAR2: [-2, -5, -2]
+  envVAR3: 5
+  envFROZENVAR4: [2, 2]
+
+------------------------
+State after tick: 3
+dec_sf0 -> FAILURE
+  c1 -> SUCCESS
+
+blackboard
+  blVAR0: [-2, -2]
+  blDEFINE7: True
+
+local
+
+environment
+  envVAR1: [2, 5, 2]
+  envVAR2: [-2, -5, -2]
+  envVAR3: 5
+  envFROZENVAR4: [2, 2]
+
+------------------------
+State after tick: 4
+dec_sf0 -> FAILURE
+  c1 -> SUCCESS
+
+blackboard
+  blVAR0: [-2, -2]
+  blDEFINE7: True
+
+local
+
+environment
+  envVAR1: [2, 5, 2]
+  envVAR2: [-2, -5, -2]
+  envVAR3: 5
+  envFROZENVAR4: [2, 2]
+
+------------------------
+State after tick: 5
+dec_sf0 -> FAILURE
+  c1 -> SUCCESS
+
+blackboard
+  blVAR0: [-2, -2]
+  blDEFINE7: True
+
+local
+
+environment
+  envVAR1: [2, 5, 2]
+  envVAR2: [-2, -5, -2]
+  envVAR3: 5
+  envFROZENVAR4: [2, 2]
+
+------------------------
+State after tick: 6
+dec_sf0 -> FAILURE
+  c1 -> SUCCESS
+
+blackboard
+  blVAR0: [-2, -2]
+  blDEFINE7: True
+
+local
+
+environment
+  envVAR1: [2, 5, 2]
+  envVAR2: [-2, -5, -2]
+  envVAR3: 5
+  envFROZENVAR4: [2, 2]
+
+------------------------
+State after tick: 7
+dec_sf0 -> FAILURE
+  c1 -> SUCCESS
+
+blackboard
+  blVAR0: [-2, -2]
+  blDEFINE7: True
+
+local
+
+environment
+  envVAR1: [2, 5, 2]
+  envVAR2: [-2, -5, -2]
+  envVAR3: 5
+  envFROZENVAR4: [2, 2]
+
+------------------------
+State after tick: 8
+dec_sf0 -> FAILURE
+  c1 -> SUCCESS
+
+blackboard
+  blVAR0: [-2, -2]
+  blDEFINE7: True
+
+local
+
+environment
+  envVAR1: [2, 5, 2]
+  envVAR2: [-2, -5, -2]
+  envVAR3: 5
+  envFROZENVAR4: [2, 2]
+
+------------------------
+State after tick: 9
+dec_sf0 -> FAILURE
+  c1 -> SUCCESS
+
+blackboard
+  blVAR0: [-2, -2]
+  blDEFINE7: True
+
+local
+
+environment
+  envVAR1: [2, 5, 2]
+  envVAR2: [-2, -5, -2]
+  envVAR3: 5
+  envFROZENVAR4: [2, 2]
+
+------------------------
+State after tick: 10
+dec_sf0 -> FAILURE
+  c1 -> SUCCESS
+
+blackboard
+  blVAR0: [-2, -2]
+  blDEFINE7: True
+
+local
+
+environment
+  envVAR1: [2, 5, 2]
+  envVAR2: [-2, -5, -2]
+  envVAR3: 5
+  envFROZENVAR4: [2, 2]
+

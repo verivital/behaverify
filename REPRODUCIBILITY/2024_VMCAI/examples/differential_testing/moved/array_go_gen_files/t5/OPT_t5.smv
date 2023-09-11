@@ -1,0 +1,180 @@
+MODULE main
+    VAR
+        system : system_module;
+--------------SPECIFICATIONS
+
+
+
+--------------END OF SPECIFICATIONS
+
+MODULE system_module
+    CONSTANTS
+        success, failure, running, invalid, no, yes, both;
+    DEFINE
+        resume_from_here_in_subtree__dec_rs0 := -3;
+        dec_rs0.active := TRUE;
+        --START OF BLACKBOARD DEFINITIONS
+        envVAR1_stage_1 := 
+            case
+                !(FALSE) : envVAR1_stage_0;
+                FALSE : min(5, max(2, max(envVAR1_stage_0, 74)));
+                (FALSE & TRUE) : min(5, max(2, ((blDEFINE6_stage_0 * envVAR1_stage_0 * 90) - abs(-98))));
+                TRUE : min(5, max(2, 4));
+            esac;
+        envVAR1_stage_2 := 
+            case
+                !(a1.active) : envVAR1_stage_1;
+                ((TRUE xnor TRUE) <-> (TRUE <-> FALSE)) : min(5, max(2, blDEFINE6_stage_0));
+                (37 >= (33 - -24)) : min(5, max(2, envVAR1_stage_1));
+                TRUE : min(5, max(2, -28));
+            esac;
+        envVAR1_stage_3 := 
+            case
+                !(a1.active) : envVAR1_stage_2;
+                (((FALSE xnor TRUE) = (TRUE & FALSE)) xor FALSE) : min(5, max(2, 20));
+                ((FALSE -> FALSE) & (TRUE xor FALSE)) : min(5, max(2, count((envDEFINE7_stage_0 != envDEFINE7_stage_0), (81 <= max(envVAR1_stage_2, 60)), (TRUE & (-25 < 78)))));
+                TRUE : min(5, max(2, (-77 - (case 0 = 1 : blFROZENVAR4_stage_0_index_0; 1 = 1 : blFROZENVAR4_stage_0_index_1; esac))));
+            esac;
+        envVAR1_stage_4 := 
+            case
+                !(a2.active) : envVAR1_stage_3;
+                (-86 <= envFROZENVAR5_stage_0) : min(5, max(2, a2_DOT_localVAR2_stage_0));
+                TRUE : min(5, max(2, (abs(a2_DOT_localVAR2_stage_0) * -35)));
+            esac;
+        blDEFINE6_stage_0 :=
+            case
+                ((-92 + -26) >= 96) : min(5, max(2, -(-14)));
+                TRUE : min(5, max(2, (65 + (case 0 = 1 : blFROZENVAR4_stage_0_index_0; 1 = 1 : blFROZENVAR4_stage_0_index_1; esac) + 0 + 92)));
+            esac;
+        envDEFINE7_stage_0 :=
+            case
+                (FALSE <-> FALSE) : no;
+                TRUE : both;
+            esac;
+        --END OF BLACKBOARD DEFINITIONS
+    FROZENVAR
+        --START OF BLACKBOARD FROZENVAR
+        blFROZENVAR4_stage_0_index_0 : 2..5;
+        blFROZENVAR4_stage_0_index_1 : 2..5;
+        envFROZENVAR5_stage_0 : 2..5;
+        a2_DOT_localVAR2_stage_0 : 2..5;
+        --END OF BLACKBOARD FROZENVAR
+    VAR
+        node_names : define_nodes;
+        a1 : failure_DEFAULT_module();
+        a2 : running_DEFAULT_module();
+        sel1 : composite_selector_without_memory_2(a1, a2);
+        dec_rs0 : decorator_X_is_Y(sel1, running, success);
+        --START OF BLACKBOARD VARIABLES DECLARATION
+        blVAR0_stage_0 : {yes, no, both};
+        envVAR1_stage_0 : 2..5;
+        a1_DOT_localVAR2_stage_0 : 2..5;
+        --END OF BLACKBOARD VARIABLES DECLARATION
+    ASSIGN
+        --START OF BLACKBOARD VARIABLES INITIALIZATION
+        init(blVAR0_stage_0) := 
+            case
+                ((2 + -13 + -18 + -48) >= -64) : no;
+                TRUE : no;
+            esac;
+        init(envVAR1_stage_0) := 
+            case
+                (4 < 5) : min(5, max(2, min(93, max(-91, 27))));
+                (FALSE xor FALSE) : min(5, max(2, count((((-2 - -27) + count((-14 <= 4), (TRUE <-> FALSE), (-4 != 3), (TRUE -> FALSE)) + (2 * 2 * 4 * -22)) > (-66 + -23 + -5 + -88)), ((blVAR0_stage_0 != yes) -> (FALSE <-> FALSE)))));
+                TRUE : min(5, max(2, (-60 * -81 * 4)));
+            esac;
+        init(blFROZENVAR4_stage_0_index_0) := 
+            case
+                FALSE : min(5, max(2, (max(-(2), -66) * (5 - 3))));
+                ((4 > -59) != FALSE) : min(5, max(2, min(-(abs(88)), count((77 <= 5), (FALSE & TRUE)))));
+                TRUE : min(5, max(2, abs(2)));
+            esac;
+        init(blFROZENVAR4_stage_0_index_1) := 
+            case
+                (3 <= -5) : min(5, max(2, count(((abs(2) * -22) >= (75 - count((yes = blVAR0_stage_0), (32 <= 3)))), ((-5 <= count((TRUE != TRUE), (FALSE <-> FALSE))) xnor FALSE), ((TRUE xnor (4 >= -40)) <-> TRUE))));
+                ((-4 != 2) != FALSE) : min(5, max(2, -(2)));
+                TRUE : min(5, max(2, ((2 + 5 + 4 + -2) - -2)));
+            esac;
+        init(envFROZENVAR5_stage_0) := 
+            case
+                TRUE : min(5, max(2, (envVAR1_stage_0 - -87)));
+            esac;
+        init(a1_DOT_localVAR2_stage_0) := 
+            case
+                TRUE : min(5, max(2, min(abs(blDEFINE6_stage_0), (case 0 = 1 : blFROZENVAR4_stage_0_index_0; 1 = 1 : blFROZENVAR4_stage_0_index_1; esac))));
+            esac;
+        init(a2_DOT_localVAR2_stage_0) := 
+            case
+                TRUE : min(5, max(2, max(78, -76)));
+            esac;
+        --END OF BLACKBOARD VARIABLES INITIALIZATION
+        --START OF BLACKBOARD VARIABLES TRANSITION
+        next(blVAR0_stage_0) := 
+            case
+                !(a1.active) : blVAR0_stage_0;
+                !((TRUE & (TRUE xor TRUE))) : blVAR0_stage_0;
+                (TRUE xnor (blDEFINE6_stage_0 < -62)) : no;
+                TRUE : both;
+            esac;
+        next(envVAR1_stage_0) := 
+            case
+                !(FALSE) : envVAR1_stage_4;
+                (min(-4, blDEFINE6_stage_0) > -(38)) : min(5, max(2, (-((case 0 = 1 : blFROZENVAR4_stage_0_index_0; 1 = 1 : blFROZENVAR4_stage_0_index_1; esac)) + abs(69) + blDEFINE6_stage_0 + (27 * max(18, 78)))));
+                TRUE : min(5, max(2, -(abs((case 0 = 0 : blFROZENVAR4_stage_0_index_0; 1 = 0 : blFROZENVAR4_stage_0_index_1; esac)))));
+            esac;
+        next(a1_DOT_localVAR2_stage_0) := 
+            case
+                !(a1.active) : a1_DOT_localVAR2_stage_0;
+                !((TRUE xor FALSE)) : a1_DOT_localVAR2_stage_0;
+                TRUE : min(5, max(2, max((case 0 = 0 : blFROZENVAR4_stage_0_index_0; 1 = 0 : blFROZENVAR4_stage_0_index_1; esac), envVAR1_stage_0)));
+                (FALSE -> (envDEFINE7_stage_0 != both)) : min(5, max(2, (91 - envVAR1_stage_0)));
+                TRUE : min(5, max(2, abs(abs(-82))));
+            esac;
+        --END OF BLACKBOARD VARIABLES TRANSITION
+
+MODULE define_nodes
+    DEFINE
+        dec_rs0 := 0;
+        sel1 := 1;
+        a1 := 2;
+        a2 := 3;
+MODULE decorator_X_is_Y(child_0, incoming_status, outgoing_status)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                child_0.internal_status = incoming_status : outgoing_status;
+                TRUE : child_0.internal_status;
+            esac;
+        child_0.active :=
+            case
+                !(active) : FALSE;
+                TRUE : TRUE;
+            esac;
+MODULE composite_selector_without_memory_2(child_0, child_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                !(child_0.internal_status = failure) : child_0.internal_status;
+                !(child_1.internal_status = failure) : child_1.internal_status;
+                TRUE : failure;
+            esac;
+        child_0.active := active;
+        child_1.active := child_0.status = failure;
+MODULE failure_DEFAULT_module
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := failure;
+MODULE running_DEFAULT_module
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := running;

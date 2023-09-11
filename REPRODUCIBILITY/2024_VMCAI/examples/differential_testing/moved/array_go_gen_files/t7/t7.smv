@@ -1,0 +1,559 @@
+MODULE main
+    VAR
+        system : system_module;
+--------------SPECIFICATIONS
+
+
+
+--------------END OF SPECIFICATIONS
+
+MODULE system_module
+    CONSTANTS
+        success, failure, running, invalid, yes, both, no;
+    DEFINE
+        trace_running_source_a4_1 := (a4_1.status = running) ? node_names.a4_1 : -2;
+        trace_running_source_sel1 := 
+            case
+                !(trace_running_source_a4_1 = -2) : trace_running_source_a4_1;
+                TRUE : -2;
+            esac;
+        trace_running_source_sel0 := 
+            case
+                !(trace_running_source_sel1 = -2) : trace_running_source_sel1;
+                TRUE : -2;
+            esac;
+        child_index_to_resume_from__sel1 := 
+            case
+                (resume_from_here_in_subtree__sel0 in {4}) : 2;
+                TRUE : -2;
+            esac;
+        sel0.active := TRUE;
+        --START OF BLACKBOARD DEFINITIONS
+        blVAR0_stage_1_index_0 := 
+            case
+                !(a4.active) : blVAR0_stage_0_index_0;
+                0 = min(2, max(0, abs(max((case 0 = 2 : blVAR0_stage_0_index_0; 1 = 2 : blVAR0_stage_0_index_1; 2 = 2 : blVAR0_stage_0_index_2; esac), a4_DOT_localDEFINE8_stage_0)))) :
+                    case
+                        TRUE : min(-2, max(-5, count((((case 0 = 2 : blVAR0_stage_0_index_0; 1 = 2 : blVAR0_stage_0_index_1; 2 = 2 : blVAR0_stage_0_index_2; esac) + a4_DOT_localDEFINE8_stage_0 + 41) >= count((TRUE xor FALSE), ((case 0 = 0 : blDEFINE7_stage_0_index_0; 1 = 0 : blDEFINE7_stage_0_index_1; esac) <-> TRUE), ((case 0 = 1 : blDEFINE7_stage_0_index_0; 1 = 1 : blDEFINE7_stage_0_index_1; esac) <-> FALSE))), ((TRUE <-> FALSE) -> (case 0 = 0 : blDEFINE7_stage_0_index_0; 1 = 0 : blDEFINE7_stage_0_index_1; esac)), ((-(-26) > a4_DOT_localFROZENVAR4_stage_0) xor (a4_DOT_localDEFINE8_stage_0 >= 99)), (a4_DOT_localDEFINE8_stage_0 <= ((a4_DOT_localDEFINE8_stage_0 * 39) - -75)))));
+                    esac;
+                TRUE : blVAR0_stage_0_index_0;
+            esac;
+        blVAR0_stage_1_index_1 := 
+            case
+                !(a4.active) : blVAR0_stage_0_index_1;
+                1 = min(2, max(0, abs(max((case 0 = 2 : blVAR0_stage_0_index_0; 1 = 2 : blVAR0_stage_0_index_1; 2 = 2 : blVAR0_stage_0_index_2; esac), a4_DOT_localDEFINE8_stage_0)))) :
+                    case
+                        TRUE : min(-2, max(-5, count((((case 0 = 2 : blVAR0_stage_0_index_0; 1 = 2 : blVAR0_stage_0_index_1; 2 = 2 : blVAR0_stage_0_index_2; esac) + a4_DOT_localDEFINE8_stage_0 + 41) >= count((TRUE xor FALSE), ((case 0 = 0 : blDEFINE7_stage_0_index_0; 1 = 0 : blDEFINE7_stage_0_index_1; esac) <-> TRUE), ((case 0 = 1 : blDEFINE7_stage_0_index_0; 1 = 1 : blDEFINE7_stage_0_index_1; esac) <-> FALSE))), ((TRUE <-> FALSE) -> (case 0 = 0 : blDEFINE7_stage_0_index_0; 1 = 0 : blDEFINE7_stage_0_index_1; esac)), ((-(-26) > a4_DOT_localFROZENVAR4_stage_0) xor (a4_DOT_localDEFINE8_stage_0 >= 99)), (a4_DOT_localDEFINE8_stage_0 <= ((a4_DOT_localDEFINE8_stage_0 * 39) - -75)))));
+                    esac;
+                TRUE : blVAR0_stage_0_index_1;
+            esac;
+        blVAR0_stage_1_index_2 := 
+            case
+                !(a4.active) : blVAR0_stage_0_index_2;
+                2 = min(2, max(0, abs(max((case 0 = 2 : blVAR0_stage_0_index_0; 1 = 2 : blVAR0_stage_0_index_1; 2 = 2 : blVAR0_stage_0_index_2; esac), a4_DOT_localDEFINE8_stage_0)))) :
+                    case
+                        TRUE : min(-2, max(-5, count((((case 0 = 2 : blVAR0_stage_0_index_0; 1 = 2 : blVAR0_stage_0_index_1; 2 = 2 : blVAR0_stage_0_index_2; esac) + a4_DOT_localDEFINE8_stage_0 + 41) >= count((TRUE xor FALSE), ((case 0 = 0 : blDEFINE7_stage_0_index_0; 1 = 0 : blDEFINE7_stage_0_index_1; esac) <-> TRUE), ((case 0 = 1 : blDEFINE7_stage_0_index_0; 1 = 1 : blDEFINE7_stage_0_index_1; esac) <-> FALSE))), ((TRUE <-> FALSE) -> (case 0 = 0 : blDEFINE7_stage_0_index_0; 1 = 0 : blDEFINE7_stage_0_index_1; esac)), ((-(-26) > a4_DOT_localFROZENVAR4_stage_0) xor (a4_DOT_localDEFINE8_stage_0 >= 99)), (a4_DOT_localDEFINE8_stage_0 <= ((a4_DOT_localDEFINE8_stage_0 * 39) - -75)))));
+                    esac;
+                TRUE : blVAR0_stage_0_index_2;
+            esac;
+        blVAR0_stage_2_index_0 := 
+            case
+                !(a2.active) : blVAR0_stage_1_index_0;
+                0 = min(2, max(0, count((envFROZENVAR3_stage_0 | envFROZENVAR3_stage_0), (a2_DOT_localDEFINE8_stage_0 < -90)))) :
+                    case
+                        !(((FALSE xnor (envFROZENVAR3_stage_0 <-> (case 0 = 0 : blDEFINE7_stage_1_index_0; 1 = 0 : blDEFINE7_stage_1_index_1; esac))) = ((case 0 = 0 : blVAR0_stage_1_index_0; 1 = 0 : blVAR0_stage_1_index_1; 2 = 0 : blVAR0_stage_1_index_2; esac) != 14))) : (case 0 = min(2, max(0, count((envFROZENVAR3_stage_0 | envFROZENVAR3_stage_0), (a2_DOT_localDEFINE8_stage_0 < -90)))) : blVAR0_stage_1_index_0; 1 = min(2, max(0, count((envFROZENVAR3_stage_0 | envFROZENVAR3_stage_0), (a2_DOT_localDEFINE8_stage_0 < -90)))) : blVAR0_stage_1_index_1; 2 = min(2, max(0, count((envFROZENVAR3_stage_0 | envFROZENVAR3_stage_0), (a2_DOT_localDEFINE8_stage_0 < -90)))) : blVAR0_stage_1_index_2; esac);
+                        (38 >= (case 0 = 1 : blVAR0_stage_1_index_0; 1 = 1 : blVAR0_stage_1_index_1; 2 = 1 : blVAR0_stage_1_index_2; esac)) : min(-2, max(-5, max((case 0 = 1 : envDEFINE6_stage_0_index_0; 1 = 1 : envDEFINE6_stage_0_index_1; 2 = 1 : envDEFINE6_stage_0_index_2; esac), (a2_DOT_localDEFINE8_stage_0 * -32))));
+                        (-11 <= (case 0 = 1 : blVAR0_stage_1_index_0; 1 = 1 : blVAR0_stage_1_index_1; 2 = 1 : blVAR0_stage_1_index_2; esac)) : min(-2, max(-5, count((((case 0 = 2 : envDEFINE6_stage_0_index_0; 1 = 2 : envDEFINE6_stage_0_index_1; 2 = 2 : envDEFINE6_stage_0_index_2; esac) <= (a2_DOT_localDEFINE8_stage_0 + 51 + (case 0 = 0 : envDEFINE6_stage_0_index_0; 1 = 0 : envDEFINE6_stage_0_index_1; 2 = 0 : envDEFINE6_stage_0_index_2; esac) + (case 0 = 1 : envDEFINE6_stage_0_index_0; 1 = 1 : envDEFINE6_stage_0_index_1; 2 = 1 : envDEFINE6_stage_0_index_2; esac))) & (envVAR1_stage_1 <-> (TRUE xnor FALSE))), (abs((case 0 = 1 : blVAR0_stage_1_index_0; 1 = 1 : blVAR0_stage_1_index_1; 2 = 1 : blVAR0_stage_1_index_2; esac)) != ((case 0 = 1 : blVAR0_stage_1_index_0; 1 = 1 : blVAR0_stage_1_index_1; 2 = 1 : blVAR0_stage_1_index_2; esac) - -58)), ((FALSE & FALSE) | (28 = (38 * -99 * a2_DOT_localDEFINE8_stage_0))))));
+                        TRUE : min(-2, max(-5, max((case 0 = 2 : blVAR0_stage_1_index_0; 1 = 2 : blVAR0_stage_1_index_1; 2 = 2 : blVAR0_stage_1_index_2; esac), min(-93, (case 0 = 1 : envDEFINE6_stage_0_index_0; 1 = 1 : envDEFINE6_stage_0_index_1; 2 = 1 : envDEFINE6_stage_0_index_2; esac)))));
+                    esac;
+                TRUE : blVAR0_stage_1_index_0;
+            esac;
+        blVAR0_stage_2_index_1 := 
+            case
+                !(a2.active) : blVAR0_stage_1_index_1;
+                1 = min(2, max(0, count((envFROZENVAR3_stage_0 | envFROZENVAR3_stage_0), (a2_DOT_localDEFINE8_stage_0 < -90)))) :
+                    case
+                        !(((FALSE xnor (envFROZENVAR3_stage_0 <-> (case 0 = 0 : blDEFINE7_stage_1_index_0; 1 = 0 : blDEFINE7_stage_1_index_1; esac))) = ((case 0 = 0 : blVAR0_stage_1_index_0; 1 = 0 : blVAR0_stage_1_index_1; 2 = 0 : blVAR0_stage_1_index_2; esac) != 14))) : (case 0 = min(2, max(0, count((envFROZENVAR3_stage_0 | envFROZENVAR3_stage_0), (a2_DOT_localDEFINE8_stage_0 < -90)))) : blVAR0_stage_1_index_0; 1 = min(2, max(0, count((envFROZENVAR3_stage_0 | envFROZENVAR3_stage_0), (a2_DOT_localDEFINE8_stage_0 < -90)))) : blVAR0_stage_1_index_1; 2 = min(2, max(0, count((envFROZENVAR3_stage_0 | envFROZENVAR3_stage_0), (a2_DOT_localDEFINE8_stage_0 < -90)))) : blVAR0_stage_1_index_2; esac);
+                        (38 >= (case 0 = 1 : blVAR0_stage_1_index_0; 1 = 1 : blVAR0_stage_1_index_1; 2 = 1 : blVAR0_stage_1_index_2; esac)) : min(-2, max(-5, max((case 0 = 1 : envDEFINE6_stage_0_index_0; 1 = 1 : envDEFINE6_stage_0_index_1; 2 = 1 : envDEFINE6_stage_0_index_2; esac), (a2_DOT_localDEFINE8_stage_0 * -32))));
+                        (-11 <= (case 0 = 1 : blVAR0_stage_1_index_0; 1 = 1 : blVAR0_stage_1_index_1; 2 = 1 : blVAR0_stage_1_index_2; esac)) : min(-2, max(-5, count((((case 0 = 2 : envDEFINE6_stage_0_index_0; 1 = 2 : envDEFINE6_stage_0_index_1; 2 = 2 : envDEFINE6_stage_0_index_2; esac) <= (a2_DOT_localDEFINE8_stage_0 + 51 + (case 0 = 0 : envDEFINE6_stage_0_index_0; 1 = 0 : envDEFINE6_stage_0_index_1; 2 = 0 : envDEFINE6_stage_0_index_2; esac) + (case 0 = 1 : envDEFINE6_stage_0_index_0; 1 = 1 : envDEFINE6_stage_0_index_1; 2 = 1 : envDEFINE6_stage_0_index_2; esac))) & (envVAR1_stage_1 <-> (TRUE xnor FALSE))), (abs((case 0 = 1 : blVAR0_stage_1_index_0; 1 = 1 : blVAR0_stage_1_index_1; 2 = 1 : blVAR0_stage_1_index_2; esac)) != ((case 0 = 1 : blVAR0_stage_1_index_0; 1 = 1 : blVAR0_stage_1_index_1; 2 = 1 : blVAR0_stage_1_index_2; esac) - -58)), ((FALSE & FALSE) | (28 = (38 * -99 * a2_DOT_localDEFINE8_stage_0))))));
+                        TRUE : min(-2, max(-5, max((case 0 = 2 : blVAR0_stage_1_index_0; 1 = 2 : blVAR0_stage_1_index_1; 2 = 2 : blVAR0_stage_1_index_2; esac), min(-93, (case 0 = 1 : envDEFINE6_stage_0_index_0; 1 = 1 : envDEFINE6_stage_0_index_1; 2 = 1 : envDEFINE6_stage_0_index_2; esac)))));
+                    esac;
+                TRUE : blVAR0_stage_1_index_1;
+            esac;
+        blVAR0_stage_2_index_2 := 
+            case
+                !(a2.active) : blVAR0_stage_1_index_2;
+                2 = min(2, max(0, count((envFROZENVAR3_stage_0 | envFROZENVAR3_stage_0), (a2_DOT_localDEFINE8_stage_0 < -90)))) :
+                    case
+                        !(((FALSE xnor (envFROZENVAR3_stage_0 <-> (case 0 = 0 : blDEFINE7_stage_1_index_0; 1 = 0 : blDEFINE7_stage_1_index_1; esac))) = ((case 0 = 0 : blVAR0_stage_1_index_0; 1 = 0 : blVAR0_stage_1_index_1; 2 = 0 : blVAR0_stage_1_index_2; esac) != 14))) : (case 0 = min(2, max(0, count((envFROZENVAR3_stage_0 | envFROZENVAR3_stage_0), (a2_DOT_localDEFINE8_stage_0 < -90)))) : blVAR0_stage_1_index_0; 1 = min(2, max(0, count((envFROZENVAR3_stage_0 | envFROZENVAR3_stage_0), (a2_DOT_localDEFINE8_stage_0 < -90)))) : blVAR0_stage_1_index_1; 2 = min(2, max(0, count((envFROZENVAR3_stage_0 | envFROZENVAR3_stage_0), (a2_DOT_localDEFINE8_stage_0 < -90)))) : blVAR0_stage_1_index_2; esac);
+                        (38 >= (case 0 = 1 : blVAR0_stage_1_index_0; 1 = 1 : blVAR0_stage_1_index_1; 2 = 1 : blVAR0_stage_1_index_2; esac)) : min(-2, max(-5, max((case 0 = 1 : envDEFINE6_stage_0_index_0; 1 = 1 : envDEFINE6_stage_0_index_1; 2 = 1 : envDEFINE6_stage_0_index_2; esac), (a2_DOT_localDEFINE8_stage_0 * -32))));
+                        (-11 <= (case 0 = 1 : blVAR0_stage_1_index_0; 1 = 1 : blVAR0_stage_1_index_1; 2 = 1 : blVAR0_stage_1_index_2; esac)) : min(-2, max(-5, count((((case 0 = 2 : envDEFINE6_stage_0_index_0; 1 = 2 : envDEFINE6_stage_0_index_1; 2 = 2 : envDEFINE6_stage_0_index_2; esac) <= (a2_DOT_localDEFINE8_stage_0 + 51 + (case 0 = 0 : envDEFINE6_stage_0_index_0; 1 = 0 : envDEFINE6_stage_0_index_1; 2 = 0 : envDEFINE6_stage_0_index_2; esac) + (case 0 = 1 : envDEFINE6_stage_0_index_0; 1 = 1 : envDEFINE6_stage_0_index_1; 2 = 1 : envDEFINE6_stage_0_index_2; esac))) & (envVAR1_stage_1 <-> (TRUE xnor FALSE))), (abs((case 0 = 1 : blVAR0_stage_1_index_0; 1 = 1 : blVAR0_stage_1_index_1; 2 = 1 : blVAR0_stage_1_index_2; esac)) != ((case 0 = 1 : blVAR0_stage_1_index_0; 1 = 1 : blVAR0_stage_1_index_1; 2 = 1 : blVAR0_stage_1_index_2; esac) - -58)), ((FALSE & FALSE) | (28 = (38 * -99 * a2_DOT_localDEFINE8_stage_0))))));
+                        TRUE : min(-2, max(-5, max((case 0 = 2 : blVAR0_stage_1_index_0; 1 = 2 : blVAR0_stage_1_index_1; 2 = 2 : blVAR0_stage_1_index_2; esac), min(-93, (case 0 = 1 : envDEFINE6_stage_0_index_0; 1 = 1 : envDEFINE6_stage_0_index_1; 2 = 1 : envDEFINE6_stage_0_index_2; esac)))));
+                    esac;
+                TRUE : blVAR0_stage_1_index_2;
+            esac;
+        blVAR0_stage_3_index_0 := 
+            case
+                !(a2.active) : blVAR0_stage_2_index_0;
+                0 = min(2, max(0, min(abs(32), -97))) :
+                    case
+                        TRUE : min(-2, max(-5, -14));
+                    esac;
+                0 = min(2, max(0, -29)) :
+                    case
+                        TRUE : min(-2, max(-5, max(-2, a2_DOT_localDEFINE8_stage_1)));
+                    esac;
+                0 = min(2, max(0, min((6 * min(2, a2_DOT_localDEFINE8_stage_1)), (69 * (case 0 = 2 : blVAR0_stage_2_index_0; 1 = 2 : blVAR0_stage_2_index_1; 2 = 2 : blVAR0_stage_2_index_2; esac))))) :
+                    case
+                        TRUE : min(-2, max(-5, ((case 0 = 1 : blVAR0_stage_2_index_0; 1 = 1 : blVAR0_stage_2_index_1; 2 = 1 : blVAR0_stage_2_index_2; esac) + max(86, 33) + max(a2_DOT_localDEFINE8_stage_1, -7) + max((case 0 = 1 : blVAR0_stage_2_index_0; 1 = 1 : blVAR0_stage_2_index_1; 2 = 1 : blVAR0_stage_2_index_2; esac), -33))));
+                    esac;
+                TRUE : blVAR0_stage_2_index_0;
+            esac;
+        blVAR0_stage_3_index_1 := 
+            case
+                !(a2.active) : blVAR0_stage_2_index_1;
+                1 = min(2, max(0, min(abs(32), -97))) :
+                    case
+                        TRUE : min(-2, max(-5, -14));
+                    esac;
+                1 = min(2, max(0, -29)) :
+                    case
+                        TRUE : min(-2, max(-5, max(-2, a2_DOT_localDEFINE8_stage_1)));
+                    esac;
+                1 = min(2, max(0, min((6 * min(2, a2_DOT_localDEFINE8_stage_1)), (69 * (case 0 = 2 : blVAR0_stage_2_index_0; 1 = 2 : blVAR0_stage_2_index_1; 2 = 2 : blVAR0_stage_2_index_2; esac))))) :
+                    case
+                        TRUE : min(-2, max(-5, ((case 0 = 1 : blVAR0_stage_2_index_0; 1 = 1 : blVAR0_stage_2_index_1; 2 = 1 : blVAR0_stage_2_index_2; esac) + max(86, 33) + max(a2_DOT_localDEFINE8_stage_1, -7) + max((case 0 = 1 : blVAR0_stage_2_index_0; 1 = 1 : blVAR0_stage_2_index_1; 2 = 1 : blVAR0_stage_2_index_2; esac), -33))));
+                    esac;
+                TRUE : blVAR0_stage_2_index_1;
+            esac;
+        blVAR0_stage_3_index_2 := 
+            case
+                !(a2.active) : blVAR0_stage_2_index_2;
+                2 = min(2, max(0, min(abs(32), -97))) :
+                    case
+                        TRUE : min(-2, max(-5, -14));
+                    esac;
+                2 = min(2, max(0, -29)) :
+                    case
+                        TRUE : min(-2, max(-5, max(-2, a2_DOT_localDEFINE8_stage_1)));
+                    esac;
+                2 = min(2, max(0, min((6 * min(2, a2_DOT_localDEFINE8_stage_1)), (69 * (case 0 = 2 : blVAR0_stage_2_index_0; 1 = 2 : blVAR0_stage_2_index_1; 2 = 2 : blVAR0_stage_2_index_2; esac))))) :
+                    case
+                        TRUE : min(-2, max(-5, ((case 0 = 1 : blVAR0_stage_2_index_0; 1 = 1 : blVAR0_stage_2_index_1; 2 = 1 : blVAR0_stage_2_index_2; esac) + max(86, 33) + max(a2_DOT_localDEFINE8_stage_1, -7) + max((case 0 = 1 : blVAR0_stage_2_index_0; 1 = 1 : blVAR0_stage_2_index_1; 2 = 1 : blVAR0_stage_2_index_2; esac), -33))));
+                    esac;
+                TRUE : blVAR0_stage_2_index_2;
+            esac;
+        blVAR0_stage_4_index_0 := 
+            case
+                !(a4_1.active) : blVAR0_stage_3_index_0;
+                0 = min(2, max(0, abs(max((case 0 = 2 : blVAR0_stage_3_index_0; 1 = 2 : blVAR0_stage_3_index_1; 2 = 2 : blVAR0_stage_3_index_2; esac), a4_1_DOT_localDEFINE8_stage_0)))) :
+                    case
+                        TRUE : min(-2, max(-5, count((((case 0 = 2 : blVAR0_stage_3_index_0; 1 = 2 : blVAR0_stage_3_index_1; 2 = 2 : blVAR0_stage_3_index_2; esac) + a4_1_DOT_localDEFINE8_stage_0 + 41) >= count((TRUE xor FALSE), ((case 0 = 0 : blDEFINE7_stage_3_index_0; 1 = 0 : blDEFINE7_stage_3_index_1; esac) <-> TRUE), ((case 0 = 1 : blDEFINE7_stage_3_index_0; 1 = 1 : blDEFINE7_stage_3_index_1; esac) <-> FALSE))), ((TRUE <-> FALSE) -> (case 0 = 0 : blDEFINE7_stage_3_index_0; 1 = 0 : blDEFINE7_stage_3_index_1; esac)), ((-(-26) > a4_1_DOT_localFROZENVAR4_stage_0) xor (a4_1_DOT_localDEFINE8_stage_0 >= 99)), (a4_1_DOT_localDEFINE8_stage_0 <= ((a4_1_DOT_localDEFINE8_stage_0 * 39) - -75)))));
+                    esac;
+                TRUE : blVAR0_stage_3_index_0;
+            esac;
+        blVAR0_stage_4_index_1 := 
+            case
+                !(a4_1.active) : blVAR0_stage_3_index_1;
+                1 = min(2, max(0, abs(max((case 0 = 2 : blVAR0_stage_3_index_0; 1 = 2 : blVAR0_stage_3_index_1; 2 = 2 : blVAR0_stage_3_index_2; esac), a4_1_DOT_localDEFINE8_stage_0)))) :
+                    case
+                        TRUE : min(-2, max(-5, count((((case 0 = 2 : blVAR0_stage_3_index_0; 1 = 2 : blVAR0_stage_3_index_1; 2 = 2 : blVAR0_stage_3_index_2; esac) + a4_1_DOT_localDEFINE8_stage_0 + 41) >= count((TRUE xor FALSE), ((case 0 = 0 : blDEFINE7_stage_3_index_0; 1 = 0 : blDEFINE7_stage_3_index_1; esac) <-> TRUE), ((case 0 = 1 : blDEFINE7_stage_3_index_0; 1 = 1 : blDEFINE7_stage_3_index_1; esac) <-> FALSE))), ((TRUE <-> FALSE) -> (case 0 = 0 : blDEFINE7_stage_3_index_0; 1 = 0 : blDEFINE7_stage_3_index_1; esac)), ((-(-26) > a4_1_DOT_localFROZENVAR4_stage_0) xor (a4_1_DOT_localDEFINE8_stage_0 >= 99)), (a4_1_DOT_localDEFINE8_stage_0 <= ((a4_1_DOT_localDEFINE8_stage_0 * 39) - -75)))));
+                    esac;
+                TRUE : blVAR0_stage_3_index_1;
+            esac;
+        blVAR0_stage_4_index_2 := 
+            case
+                !(a4_1.active) : blVAR0_stage_3_index_2;
+                2 = min(2, max(0, abs(max((case 0 = 2 : blVAR0_stage_3_index_0; 1 = 2 : blVAR0_stage_3_index_1; 2 = 2 : blVAR0_stage_3_index_2; esac), a4_1_DOT_localDEFINE8_stage_0)))) :
+                    case
+                        TRUE : min(-2, max(-5, count((((case 0 = 2 : blVAR0_stage_3_index_0; 1 = 2 : blVAR0_stage_3_index_1; 2 = 2 : blVAR0_stage_3_index_2; esac) + a4_1_DOT_localDEFINE8_stage_0 + 41) >= count((TRUE xor FALSE), ((case 0 = 0 : blDEFINE7_stage_3_index_0; 1 = 0 : blDEFINE7_stage_3_index_1; esac) <-> TRUE), ((case 0 = 1 : blDEFINE7_stage_3_index_0; 1 = 1 : blDEFINE7_stage_3_index_1; esac) <-> FALSE))), ((TRUE <-> FALSE) -> (case 0 = 0 : blDEFINE7_stage_3_index_0; 1 = 0 : blDEFINE7_stage_3_index_1; esac)), ((-(-26) > a4_1_DOT_localFROZENVAR4_stage_0) xor (a4_1_DOT_localDEFINE8_stage_0 >= 99)), (a4_1_DOT_localDEFINE8_stage_0 <= ((a4_1_DOT_localDEFINE8_stage_0 * 39) - -75)))));
+                    esac;
+                TRUE : blVAR0_stage_3_index_2;
+            esac;
+        blVAR0_stage_5_index_0 := 
+            case
+                !(a1.active) : blVAR0_stage_4_index_0;
+                0 = min(2, max(0, count((FALSE != (case 0 = 0 : blDEFINE7_stage_4_index_0; 1 = 0 : blDEFINE7_stage_4_index_1; esac)), (-((case 0 = 2 : blVAR0_stage_4_index_0; 1 = 2 : blVAR0_stage_4_index_1; 2 = 2 : blVAR0_stage_4_index_2; esac)) < 58)))) :
+                    case
+                        TRUE : min(-2, max(-5, -50));
+                    esac;
+                0 = min(2, max(0, min((a1_DOT_localDEFINE8_stage_0 * -12 * a1_DOT_localDEFINE8_stage_0 * (case 0 = 0 : blVAR0_stage_4_index_0; 1 = 0 : blVAR0_stage_4_index_1; 2 = 0 : blVAR0_stage_4_index_2; esac)), a1_DOT_localDEFINE8_stage_0))) :
+                    case
+                        TRUE : min(-2, max(-5, abs(20)));
+                    esac;
+                TRUE : blVAR0_stage_4_index_0;
+            esac;
+        blVAR0_stage_5_index_1 := 
+            case
+                !(a1.active) : blVAR0_stage_4_index_1;
+                1 = min(2, max(0, count((FALSE != (case 0 = 0 : blDEFINE7_stage_4_index_0; 1 = 0 : blDEFINE7_stage_4_index_1; esac)), (-((case 0 = 2 : blVAR0_stage_4_index_0; 1 = 2 : blVAR0_stage_4_index_1; 2 = 2 : blVAR0_stage_4_index_2; esac)) < 58)))) :
+                    case
+                        TRUE : min(-2, max(-5, -50));
+                    esac;
+                1 = min(2, max(0, min((a1_DOT_localDEFINE8_stage_0 * -12 * a1_DOT_localDEFINE8_stage_0 * (case 0 = 0 : blVAR0_stage_4_index_0; 1 = 0 : blVAR0_stage_4_index_1; 2 = 0 : blVAR0_stage_4_index_2; esac)), a1_DOT_localDEFINE8_stage_0))) :
+                    case
+                        TRUE : min(-2, max(-5, abs(20)));
+                    esac;
+                TRUE : blVAR0_stage_4_index_1;
+            esac;
+        blVAR0_stage_5_index_2 := 
+            case
+                !(a1.active) : blVAR0_stage_4_index_2;
+                2 = min(2, max(0, count((FALSE != (case 0 = 0 : blDEFINE7_stage_4_index_0; 1 = 0 : blDEFINE7_stage_4_index_1; esac)), (-((case 0 = 2 : blVAR0_stage_4_index_0; 1 = 2 : blVAR0_stage_4_index_1; 2 = 2 : blVAR0_stage_4_index_2; esac)) < 58)))) :
+                    case
+                        TRUE : min(-2, max(-5, -50));
+                    esac;
+                2 = min(2, max(0, min((a1_DOT_localDEFINE8_stage_0 * -12 * a1_DOT_localDEFINE8_stage_0 * (case 0 = 0 : blVAR0_stage_4_index_0; 1 = 0 : blVAR0_stage_4_index_1; 2 = 0 : blVAR0_stage_4_index_2; esac)), a1_DOT_localDEFINE8_stage_0))) :
+                    case
+                        TRUE : min(-2, max(-5, abs(20)));
+                    esac;
+                TRUE : blVAR0_stage_4_index_2;
+            esac;
+        envVAR1_stage_1 := 
+            case
+                !(a4.active) : envVAR1_stage_0;
+                TRUE : (FALSE | FALSE);
+            esac;
+        envVAR1_stage_2 := 
+            case
+                !(a4_1.active) : envVAR1_stage_1;
+                TRUE : (FALSE | FALSE);
+            esac;
+        envVAR1_stage_3 := 
+            case
+                !(a1.active) : envVAR1_stage_2;
+                (((a1_DOT_localDEFINE8_stage_1 * (case 0 = 1 : envDEFINE6_stage_1_index_0; 1 = 1 : envDEFINE6_stage_1_index_1; 2 = 1 : envDEFINE6_stage_1_index_2; esac) * 67) = -((case 0 = 0 : envDEFINE6_stage_1_index_0; 1 = 0 : envDEFINE6_stage_1_index_1; 2 = 0 : envDEFINE6_stage_1_index_2; esac))) xor TRUE) : ((envVAR1_stage_2 xor TRUE) = (min(a1_DOT_localDEFINE8_stage_1, -83) = count(((case 0 = 0 : blDEFINE5_stage_0_index_0; 1 = 0 : blDEFINE5_stage_0_index_1; 2 = 0 : blDEFINE5_stage_0_index_2; esac) = envFROZENVAR3_stage_0), (-51 > -9), (TRUE xor TRUE), (FALSE = envVAR1_stage_2))));
+                ((case 0 = 0 : blDEFINE7_stage_5_index_0; 1 = 0 : blDEFINE7_stage_5_index_1; esac) xor (FALSE -> envVAR2_stage_2)) : ((a1_DOT_localDEFINE8_stage_1 <= abs(a1_DOT_localDEFINE8_stage_1)) xnor (FALSE -> FALSE));
+                TRUE : FALSE;
+            esac;
+        envVAR2_stage_1 := 
+            case
+                !(a4.active) : envVAR2_stage_0;
+                TRUE : (envVAR1_stage_2 & envFROZENVAR3_stage_0);
+            esac;
+        envVAR2_stage_2 := 
+            case
+                !(a4_1.active) : envVAR2_stage_1;
+                TRUE : (envVAR1_stage_2 & envFROZENVAR3_stage_0);
+            esac;
+        blDEFINE5_stage_0_index_0 :=
+            case
+                (FALSE -> FALSE) : TRUE;
+                FALSE : FALSE;
+                TRUE : FALSE;
+            esac;
+        blDEFINE5_stage_0_index_1 :=
+            case
+                (FALSE -> FALSE) : TRUE;
+                FALSE : FALSE;
+                TRUE : FALSE;
+            esac;
+        blDEFINE5_stage_0_index_2 :=
+            case
+                (FALSE -> FALSE) : TRUE;
+                FALSE : FALSE;
+                TRUE : FALSE;
+            esac;
+        envDEFINE6_stage_0_index_0 :=
+            case
+                TRUE : min(5, max(2, (case 0 = 2 : blVAR0_stage_1_index_0; 1 = 2 : blVAR0_stage_1_index_1; 2 = 2 : blVAR0_stage_1_index_2; esac)));
+            esac;
+        envDEFINE6_stage_0_index_1 :=
+            case
+                TRUE : min(5, max(2, (case 0 = 2 : blVAR0_stage_1_index_0; 1 = 2 : blVAR0_stage_1_index_1; 2 = 2 : blVAR0_stage_1_index_2; esac)));
+            esac;
+        envDEFINE6_stage_0_index_2 :=
+            case
+                TRUE : min(5, max(2, (case 0 = 2 : blVAR0_stage_1_index_0; 1 = 2 : blVAR0_stage_1_index_1; 2 = 2 : blVAR0_stage_1_index_2; esac)));
+            esac;
+        envDEFINE6_stage_1_index_0 :=
+            case
+                TRUE : min(5, max(2, (case 0 = 2 : blVAR0_stage_5_index_0; 1 = 2 : blVAR0_stage_5_index_1; 2 = 2 : blVAR0_stage_5_index_2; esac)));
+            esac;
+        envDEFINE6_stage_1_index_1 :=
+            case
+                TRUE : min(5, max(2, (case 0 = 2 : blVAR0_stage_5_index_0; 1 = 2 : blVAR0_stage_5_index_1; 2 = 2 : blVAR0_stage_5_index_2; esac)));
+            esac;
+        envDEFINE6_stage_1_index_2 :=
+            case
+                TRUE : min(5, max(2, (case 0 = 2 : blVAR0_stage_5_index_0; 1 = 2 : blVAR0_stage_5_index_1; 2 = 2 : blVAR0_stage_5_index_2; esac)));
+            esac;
+        blDEFINE7_stage_0_index_0 :=
+            case
+                ((-25 = -(49)) = (FALSE & (case 0 = 1 : blDEFINE5_stage_0_index_0; 1 = 1 : blDEFINE5_stage_0_index_1; 2 = 1 : blDEFINE5_stage_0_index_2; esac))) : ((case 0 = 1 : blDEFINE5_stage_0_index_0; 1 = 1 : blDEFINE5_stage_0_index_1; 2 = 1 : blDEFINE5_stage_0_index_2; esac) xnor (case 0 = 2 : blDEFINE5_stage_0_index_0; 1 = 2 : blDEFINE5_stage_0_index_1; 2 = 2 : blDEFINE5_stage_0_index_2; esac));
+                ((50 >= (case 0 = 1 : blVAR0_stage_0_index_0; 1 = 1 : blVAR0_stage_0_index_1; 2 = 1 : blVAR0_stage_0_index_2; esac)) <-> ((case 0 = 0 : blVAR0_stage_0_index_0; 1 = 0 : blVAR0_stage_0_index_1; 2 = 0 : blVAR0_stage_0_index_2; esac) < (case 0 = 1 : blVAR0_stage_0_index_0; 1 = 1 : blVAR0_stage_0_index_1; 2 = 1 : blVAR0_stage_0_index_2; esac))) : (TRUE -> (-78 >= (case 0 = 0 : blVAR0_stage_0_index_0; 1 = 0 : blVAR0_stage_0_index_1; 2 = 0 : blVAR0_stage_0_index_2; esac)));
+                TRUE : ((case 0 = 2 : blDEFINE5_stage_0_index_0; 1 = 2 : blDEFINE5_stage_0_index_1; 2 = 2 : blDEFINE5_stage_0_index_2; esac) <-> ((case 0 = 1 : blDEFINE5_stage_0_index_0; 1 = 1 : blDEFINE5_stage_0_index_1; 2 = 1 : blDEFINE5_stage_0_index_2; esac) | (case 0 = 2 : blDEFINE5_stage_0_index_0; 1 = 2 : blDEFINE5_stage_0_index_1; 2 = 2 : blDEFINE5_stage_0_index_2; esac)));
+            esac;
+        blDEFINE7_stage_0_index_1 :=
+            case
+                (TRUE <-> (case 0 = 0 : blDEFINE5_stage_0_index_0; 1 = 0 : blDEFINE5_stage_0_index_1; 2 = 0 : blDEFINE5_stage_0_index_2; esac)) : ((case 0 = 1 : blVAR0_stage_0_index_0; 1 = 1 : blVAR0_stage_0_index_1; 2 = 1 : blVAR0_stage_0_index_2; esac) >= abs(27));
+                (((case 0 = 2 : blDEFINE5_stage_0_index_0; 1 = 2 : blDEFINE5_stage_0_index_1; 2 = 2 : blDEFINE5_stage_0_index_2; esac) = TRUE) & (((case 0 = 2 : blVAR0_stage_0_index_0; 1 = 2 : blVAR0_stage_0_index_1; 2 = 2 : blVAR0_stage_0_index_2; esac) * 8 * (case 0 = 2 : blVAR0_stage_0_index_0; 1 = 2 : blVAR0_stage_0_index_1; 2 = 2 : blVAR0_stage_0_index_2; esac) * 5) > (case 0 = 2 : blVAR0_stage_0_index_0; 1 = 2 : blVAR0_stage_0_index_1; 2 = 2 : blVAR0_stage_0_index_2; esac))) : (11 <= (case 0 = 1 : blVAR0_stage_0_index_0; 1 = 1 : blVAR0_stage_0_index_1; 2 = 1 : blVAR0_stage_0_index_2; esac));
+                TRUE : (case 0 = 1 : blDEFINE5_stage_0_index_0; 1 = 1 : blDEFINE5_stage_0_index_1; 2 = 1 : blDEFINE5_stage_0_index_2; esac);
+            esac;
+        blDEFINE7_stage_1_index_0 :=
+            case
+                ((-25 = -(49)) = (FALSE & (case 0 = 1 : blDEFINE5_stage_0_index_0; 1 = 1 : blDEFINE5_stage_0_index_1; 2 = 1 : blDEFINE5_stage_0_index_2; esac))) : ((case 0 = 1 : blDEFINE5_stage_0_index_0; 1 = 1 : blDEFINE5_stage_0_index_1; 2 = 1 : blDEFINE5_stage_0_index_2; esac) xnor (case 0 = 2 : blDEFINE5_stage_0_index_0; 1 = 2 : blDEFINE5_stage_0_index_1; 2 = 2 : blDEFINE5_stage_0_index_2; esac));
+                ((50 >= (case 0 = 1 : blVAR0_stage_1_index_0; 1 = 1 : blVAR0_stage_1_index_1; 2 = 1 : blVAR0_stage_1_index_2; esac)) <-> ((case 0 = 0 : blVAR0_stage_1_index_0; 1 = 0 : blVAR0_stage_1_index_1; 2 = 0 : blVAR0_stage_1_index_2; esac) < (case 0 = 1 : blVAR0_stage_1_index_0; 1 = 1 : blVAR0_stage_1_index_1; 2 = 1 : blVAR0_stage_1_index_2; esac))) : (TRUE -> (-78 >= (case 0 = 0 : blVAR0_stage_1_index_0; 1 = 0 : blVAR0_stage_1_index_1; 2 = 0 : blVAR0_stage_1_index_2; esac)));
+                TRUE : ((case 0 = 2 : blDEFINE5_stage_0_index_0; 1 = 2 : blDEFINE5_stage_0_index_1; 2 = 2 : blDEFINE5_stage_0_index_2; esac) <-> ((case 0 = 1 : blDEFINE5_stage_0_index_0; 1 = 1 : blDEFINE5_stage_0_index_1; 2 = 1 : blDEFINE5_stage_0_index_2; esac) | (case 0 = 2 : blDEFINE5_stage_0_index_0; 1 = 2 : blDEFINE5_stage_0_index_1; 2 = 2 : blDEFINE5_stage_0_index_2; esac)));
+            esac;
+        blDEFINE7_stage_1_index_1 :=
+            case
+                (TRUE <-> (case 0 = 0 : blDEFINE5_stage_0_index_0; 1 = 0 : blDEFINE5_stage_0_index_1; 2 = 0 : blDEFINE5_stage_0_index_2; esac)) : ((case 0 = 1 : blVAR0_stage_1_index_0; 1 = 1 : blVAR0_stage_1_index_1; 2 = 1 : blVAR0_stage_1_index_2; esac) >= abs(27));
+                (((case 0 = 2 : blDEFINE5_stage_0_index_0; 1 = 2 : blDEFINE5_stage_0_index_1; 2 = 2 : blDEFINE5_stage_0_index_2; esac) = TRUE) & (((case 0 = 2 : blVAR0_stage_1_index_0; 1 = 2 : blVAR0_stage_1_index_1; 2 = 2 : blVAR0_stage_1_index_2; esac) * 8 * (case 0 = 2 : blVAR0_stage_1_index_0; 1 = 2 : blVAR0_stage_1_index_1; 2 = 2 : blVAR0_stage_1_index_2; esac) * 5) > (case 0 = 2 : blVAR0_stage_1_index_0; 1 = 2 : blVAR0_stage_1_index_1; 2 = 2 : blVAR0_stage_1_index_2; esac))) : (11 <= (case 0 = 1 : blVAR0_stage_1_index_0; 1 = 1 : blVAR0_stage_1_index_1; 2 = 1 : blVAR0_stage_1_index_2; esac));
+                TRUE : (case 0 = 1 : blDEFINE5_stage_0_index_0; 1 = 1 : blDEFINE5_stage_0_index_1; 2 = 1 : blDEFINE5_stage_0_index_2; esac);
+            esac;
+        blDEFINE7_stage_2_index_0 :=
+            case
+                ((-25 = -(49)) = (FALSE & (case 0 = 1 : blDEFINE5_stage_0_index_0; 1 = 1 : blDEFINE5_stage_0_index_1; 2 = 1 : blDEFINE5_stage_0_index_2; esac))) : ((case 0 = 1 : blDEFINE5_stage_0_index_0; 1 = 1 : blDEFINE5_stage_0_index_1; 2 = 1 : blDEFINE5_stage_0_index_2; esac) xnor (case 0 = 2 : blDEFINE5_stage_0_index_0; 1 = 2 : blDEFINE5_stage_0_index_1; 2 = 2 : blDEFINE5_stage_0_index_2; esac));
+                ((50 >= (case 0 = 1 : blVAR0_stage_2_index_0; 1 = 1 : blVAR0_stage_2_index_1; 2 = 1 : blVAR0_stage_2_index_2; esac)) <-> ((case 0 = 0 : blVAR0_stage_2_index_0; 1 = 0 : blVAR0_stage_2_index_1; 2 = 0 : blVAR0_stage_2_index_2; esac) < (case 0 = 1 : blVAR0_stage_2_index_0; 1 = 1 : blVAR0_stage_2_index_1; 2 = 1 : blVAR0_stage_2_index_2; esac))) : (TRUE -> (-78 >= (case 0 = 0 : blVAR0_stage_2_index_0; 1 = 0 : blVAR0_stage_2_index_1; 2 = 0 : blVAR0_stage_2_index_2; esac)));
+                TRUE : ((case 0 = 2 : blDEFINE5_stage_0_index_0; 1 = 2 : blDEFINE5_stage_0_index_1; 2 = 2 : blDEFINE5_stage_0_index_2; esac) <-> ((case 0 = 1 : blDEFINE5_stage_0_index_0; 1 = 1 : blDEFINE5_stage_0_index_1; 2 = 1 : blDEFINE5_stage_0_index_2; esac) | (case 0 = 2 : blDEFINE5_stage_0_index_0; 1 = 2 : blDEFINE5_stage_0_index_1; 2 = 2 : blDEFINE5_stage_0_index_2; esac)));
+            esac;
+        blDEFINE7_stage_2_index_1 :=
+            case
+                (TRUE <-> (case 0 = 0 : blDEFINE5_stage_0_index_0; 1 = 0 : blDEFINE5_stage_0_index_1; 2 = 0 : blDEFINE5_stage_0_index_2; esac)) : ((case 0 = 1 : blVAR0_stage_2_index_0; 1 = 1 : blVAR0_stage_2_index_1; 2 = 1 : blVAR0_stage_2_index_2; esac) >= abs(27));
+                (((case 0 = 2 : blDEFINE5_stage_0_index_0; 1 = 2 : blDEFINE5_stage_0_index_1; 2 = 2 : blDEFINE5_stage_0_index_2; esac) = TRUE) & (((case 0 = 2 : blVAR0_stage_2_index_0; 1 = 2 : blVAR0_stage_2_index_1; 2 = 2 : blVAR0_stage_2_index_2; esac) * 8 * (case 0 = 2 : blVAR0_stage_2_index_0; 1 = 2 : blVAR0_stage_2_index_1; 2 = 2 : blVAR0_stage_2_index_2; esac) * 5) > (case 0 = 2 : blVAR0_stage_2_index_0; 1 = 2 : blVAR0_stage_2_index_1; 2 = 2 : blVAR0_stage_2_index_2; esac))) : (11 <= (case 0 = 1 : blVAR0_stage_2_index_0; 1 = 1 : blVAR0_stage_2_index_1; 2 = 1 : blVAR0_stage_2_index_2; esac));
+                TRUE : (case 0 = 1 : blDEFINE5_stage_0_index_0; 1 = 1 : blDEFINE5_stage_0_index_1; 2 = 1 : blDEFINE5_stage_0_index_2; esac);
+            esac;
+        blDEFINE7_stage_3_index_0 :=
+            case
+                ((-25 = -(49)) = (FALSE & (case 0 = 1 : blDEFINE5_stage_0_index_0; 1 = 1 : blDEFINE5_stage_0_index_1; 2 = 1 : blDEFINE5_stage_0_index_2; esac))) : ((case 0 = 1 : blDEFINE5_stage_0_index_0; 1 = 1 : blDEFINE5_stage_0_index_1; 2 = 1 : blDEFINE5_stage_0_index_2; esac) xnor (case 0 = 2 : blDEFINE5_stage_0_index_0; 1 = 2 : blDEFINE5_stage_0_index_1; 2 = 2 : blDEFINE5_stage_0_index_2; esac));
+                ((50 >= (case 0 = 1 : blVAR0_stage_3_index_0; 1 = 1 : blVAR0_stage_3_index_1; 2 = 1 : blVAR0_stage_3_index_2; esac)) <-> ((case 0 = 0 : blVAR0_stage_3_index_0; 1 = 0 : blVAR0_stage_3_index_1; 2 = 0 : blVAR0_stage_3_index_2; esac) < (case 0 = 1 : blVAR0_stage_3_index_0; 1 = 1 : blVAR0_stage_3_index_1; 2 = 1 : blVAR0_stage_3_index_2; esac))) : (TRUE -> (-78 >= (case 0 = 0 : blVAR0_stage_3_index_0; 1 = 0 : blVAR0_stage_3_index_1; 2 = 0 : blVAR0_stage_3_index_2; esac)));
+                TRUE : ((case 0 = 2 : blDEFINE5_stage_0_index_0; 1 = 2 : blDEFINE5_stage_0_index_1; 2 = 2 : blDEFINE5_stage_0_index_2; esac) <-> ((case 0 = 1 : blDEFINE5_stage_0_index_0; 1 = 1 : blDEFINE5_stage_0_index_1; 2 = 1 : blDEFINE5_stage_0_index_2; esac) | (case 0 = 2 : blDEFINE5_stage_0_index_0; 1 = 2 : blDEFINE5_stage_0_index_1; 2 = 2 : blDEFINE5_stage_0_index_2; esac)));
+            esac;
+        blDEFINE7_stage_3_index_1 :=
+            case
+                (TRUE <-> (case 0 = 0 : blDEFINE5_stage_0_index_0; 1 = 0 : blDEFINE5_stage_0_index_1; 2 = 0 : blDEFINE5_stage_0_index_2; esac)) : ((case 0 = 1 : blVAR0_stage_3_index_0; 1 = 1 : blVAR0_stage_3_index_1; 2 = 1 : blVAR0_stage_3_index_2; esac) >= abs(27));
+                (((case 0 = 2 : blDEFINE5_stage_0_index_0; 1 = 2 : blDEFINE5_stage_0_index_1; 2 = 2 : blDEFINE5_stage_0_index_2; esac) = TRUE) & (((case 0 = 2 : blVAR0_stage_3_index_0; 1 = 2 : blVAR0_stage_3_index_1; 2 = 2 : blVAR0_stage_3_index_2; esac) * 8 * (case 0 = 2 : blVAR0_stage_3_index_0; 1 = 2 : blVAR0_stage_3_index_1; 2 = 2 : blVAR0_stage_3_index_2; esac) * 5) > (case 0 = 2 : blVAR0_stage_3_index_0; 1 = 2 : blVAR0_stage_3_index_1; 2 = 2 : blVAR0_stage_3_index_2; esac))) : (11 <= (case 0 = 1 : blVAR0_stage_3_index_0; 1 = 1 : blVAR0_stage_3_index_1; 2 = 1 : blVAR0_stage_3_index_2; esac));
+                TRUE : (case 0 = 1 : blDEFINE5_stage_0_index_0; 1 = 1 : blDEFINE5_stage_0_index_1; 2 = 1 : blDEFINE5_stage_0_index_2; esac);
+            esac;
+        blDEFINE7_stage_4_index_0 :=
+            case
+                ((-25 = -(49)) = (FALSE & (case 0 = 1 : blDEFINE5_stage_0_index_0; 1 = 1 : blDEFINE5_stage_0_index_1; 2 = 1 : blDEFINE5_stage_0_index_2; esac))) : ((case 0 = 1 : blDEFINE5_stage_0_index_0; 1 = 1 : blDEFINE5_stage_0_index_1; 2 = 1 : blDEFINE5_stage_0_index_2; esac) xnor (case 0 = 2 : blDEFINE5_stage_0_index_0; 1 = 2 : blDEFINE5_stage_0_index_1; 2 = 2 : blDEFINE5_stage_0_index_2; esac));
+                ((50 >= (case 0 = 1 : blVAR0_stage_4_index_0; 1 = 1 : blVAR0_stage_4_index_1; 2 = 1 : blVAR0_stage_4_index_2; esac)) <-> ((case 0 = 0 : blVAR0_stage_4_index_0; 1 = 0 : blVAR0_stage_4_index_1; 2 = 0 : blVAR0_stage_4_index_2; esac) < (case 0 = 1 : blVAR0_stage_4_index_0; 1 = 1 : blVAR0_stage_4_index_1; 2 = 1 : blVAR0_stage_4_index_2; esac))) : (TRUE -> (-78 >= (case 0 = 0 : blVAR0_stage_4_index_0; 1 = 0 : blVAR0_stage_4_index_1; 2 = 0 : blVAR0_stage_4_index_2; esac)));
+                TRUE : ((case 0 = 2 : blDEFINE5_stage_0_index_0; 1 = 2 : blDEFINE5_stage_0_index_1; 2 = 2 : blDEFINE5_stage_0_index_2; esac) <-> ((case 0 = 1 : blDEFINE5_stage_0_index_0; 1 = 1 : blDEFINE5_stage_0_index_1; 2 = 1 : blDEFINE5_stage_0_index_2; esac) | (case 0 = 2 : blDEFINE5_stage_0_index_0; 1 = 2 : blDEFINE5_stage_0_index_1; 2 = 2 : blDEFINE5_stage_0_index_2; esac)));
+            esac;
+        blDEFINE7_stage_4_index_1 :=
+            case
+                (TRUE <-> (case 0 = 0 : blDEFINE5_stage_0_index_0; 1 = 0 : blDEFINE5_stage_0_index_1; 2 = 0 : blDEFINE5_stage_0_index_2; esac)) : ((case 0 = 1 : blVAR0_stage_4_index_0; 1 = 1 : blVAR0_stage_4_index_1; 2 = 1 : blVAR0_stage_4_index_2; esac) >= abs(27));
+                (((case 0 = 2 : blDEFINE5_stage_0_index_0; 1 = 2 : blDEFINE5_stage_0_index_1; 2 = 2 : blDEFINE5_stage_0_index_2; esac) = TRUE) & (((case 0 = 2 : blVAR0_stage_4_index_0; 1 = 2 : blVAR0_stage_4_index_1; 2 = 2 : blVAR0_stage_4_index_2; esac) * 8 * (case 0 = 2 : blVAR0_stage_4_index_0; 1 = 2 : blVAR0_stage_4_index_1; 2 = 2 : blVAR0_stage_4_index_2; esac) * 5) > (case 0 = 2 : blVAR0_stage_4_index_0; 1 = 2 : blVAR0_stage_4_index_1; 2 = 2 : blVAR0_stage_4_index_2; esac))) : (11 <= (case 0 = 1 : blVAR0_stage_4_index_0; 1 = 1 : blVAR0_stage_4_index_1; 2 = 1 : blVAR0_stage_4_index_2; esac));
+                TRUE : (case 0 = 1 : blDEFINE5_stage_0_index_0; 1 = 1 : blDEFINE5_stage_0_index_1; 2 = 1 : blDEFINE5_stage_0_index_2; esac);
+            esac;
+        blDEFINE7_stage_5_index_0 :=
+            case
+                ((-25 = -(49)) = (FALSE & (case 0 = 1 : blDEFINE5_stage_0_index_0; 1 = 1 : blDEFINE5_stage_0_index_1; 2 = 1 : blDEFINE5_stage_0_index_2; esac))) : ((case 0 = 1 : blDEFINE5_stage_0_index_0; 1 = 1 : blDEFINE5_stage_0_index_1; 2 = 1 : blDEFINE5_stage_0_index_2; esac) xnor (case 0 = 2 : blDEFINE5_stage_0_index_0; 1 = 2 : blDEFINE5_stage_0_index_1; 2 = 2 : blDEFINE5_stage_0_index_2; esac));
+                ((50 >= (case 0 = 1 : blVAR0_stage_5_index_0; 1 = 1 : blVAR0_stage_5_index_1; 2 = 1 : blVAR0_stage_5_index_2; esac)) <-> ((case 0 = 0 : blVAR0_stage_5_index_0; 1 = 0 : blVAR0_stage_5_index_1; 2 = 0 : blVAR0_stage_5_index_2; esac) < (case 0 = 1 : blVAR0_stage_5_index_0; 1 = 1 : blVAR0_stage_5_index_1; 2 = 1 : blVAR0_stage_5_index_2; esac))) : (TRUE -> (-78 >= (case 0 = 0 : blVAR0_stage_5_index_0; 1 = 0 : blVAR0_stage_5_index_1; 2 = 0 : blVAR0_stage_5_index_2; esac)));
+                TRUE : ((case 0 = 2 : blDEFINE5_stage_0_index_0; 1 = 2 : blDEFINE5_stage_0_index_1; 2 = 2 : blDEFINE5_stage_0_index_2; esac) <-> ((case 0 = 1 : blDEFINE5_stage_0_index_0; 1 = 1 : blDEFINE5_stage_0_index_1; 2 = 1 : blDEFINE5_stage_0_index_2; esac) | (case 0 = 2 : blDEFINE5_stage_0_index_0; 1 = 2 : blDEFINE5_stage_0_index_1; 2 = 2 : blDEFINE5_stage_0_index_2; esac)));
+            esac;
+        blDEFINE7_stage_5_index_1 :=
+            case
+                (TRUE <-> (case 0 = 0 : blDEFINE5_stage_0_index_0; 1 = 0 : blDEFINE5_stage_0_index_1; 2 = 0 : blDEFINE5_stage_0_index_2; esac)) : ((case 0 = 1 : blVAR0_stage_5_index_0; 1 = 1 : blVAR0_stage_5_index_1; 2 = 1 : blVAR0_stage_5_index_2; esac) >= abs(27));
+                (((case 0 = 2 : blDEFINE5_stage_0_index_0; 1 = 2 : blDEFINE5_stage_0_index_1; 2 = 2 : blDEFINE5_stage_0_index_2; esac) = TRUE) & (((case 0 = 2 : blVAR0_stage_5_index_0; 1 = 2 : blVAR0_stage_5_index_1; 2 = 2 : blVAR0_stage_5_index_2; esac) * 8 * (case 0 = 2 : blVAR0_stage_5_index_0; 1 = 2 : blVAR0_stage_5_index_1; 2 = 2 : blVAR0_stage_5_index_2; esac) * 5) > (case 0 = 2 : blVAR0_stage_5_index_0; 1 = 2 : blVAR0_stage_5_index_1; 2 = 2 : blVAR0_stage_5_index_2; esac))) : (11 <= (case 0 = 1 : blVAR0_stage_5_index_0; 1 = 1 : blVAR0_stage_5_index_1; 2 = 1 : blVAR0_stage_5_index_2; esac));
+                TRUE : (case 0 = 1 : blDEFINE5_stage_0_index_0; 1 = 1 : blDEFINE5_stage_0_index_1; 2 = 1 : blDEFINE5_stage_0_index_2; esac);
+            esac;
+        a4_DOT_localDEFINE8_stage_0 :=
+            case
+                ((TRUE xor (case 0 = 0 : blDEFINE7_stage_0_index_0; 1 = 0 : blDEFINE7_stage_0_index_1; esac)) | FALSE) : min(5, max(2, min(min((case 0 = 1 : blVAR0_stage_0_index_0; 1 = 1 : blVAR0_stage_0_index_1; 2 = 1 : blVAR0_stage_0_index_2; esac), (case 0 = 0 : blVAR0_stage_0_index_0; 1 = 0 : blVAR0_stage_0_index_1; 2 = 0 : blVAR0_stage_0_index_2; esac)), 72)));
+                TRUE : min(5, max(2, abs(-72)));
+            esac;
+        a2_DOT_localDEFINE8_stage_0 :=
+            case
+                (FALSE <-> TRUE) : min(5, max(2, abs((case 0 = 1 : blVAR0_stage_1_index_0; 1 = 1 : blVAR0_stage_1_index_1; 2 = 1 : blVAR0_stage_1_index_2; esac))));
+                (case 0 = 0 : blDEFINE7_stage_1_index_0; 1 = 0 : blDEFINE7_stage_1_index_1; esac) : min(5, max(2, ((case 0 = 1 : blVAR0_stage_1_index_0; 1 = 1 : blVAR0_stage_1_index_1; 2 = 1 : blVAR0_stage_1_index_2; esac) + (case 0 = 0 : blVAR0_stage_1_index_0; 1 = 0 : blVAR0_stage_1_index_1; 2 = 0 : blVAR0_stage_1_index_2; esac) + 55 + -97)));
+                TRUE : min(5, max(2, min(8, count((FALSE -> (case 0 = 0 : blDEFINE7_stage_1_index_0; 1 = 0 : blDEFINE7_stage_1_index_1; esac)), ((case 0 = 0 : blDEFINE5_stage_0_index_0; 1 = 0 : blDEFINE5_stage_0_index_1; 2 = 0 : blDEFINE5_stage_0_index_2; esac) & TRUE), ((case 0 = 1 : blDEFINE5_stage_0_index_0; 1 = 1 : blDEFINE5_stage_0_index_1; 2 = 1 : blDEFINE5_stage_0_index_2; esac) | FALSE)))));
+            esac;
+        a2_DOT_localDEFINE8_stage_1 :=
+            case
+                (FALSE <-> TRUE) : min(5, max(2, abs((case 0 = 1 : blVAR0_stage_2_index_0; 1 = 1 : blVAR0_stage_2_index_1; 2 = 1 : blVAR0_stage_2_index_2; esac))));
+                (case 0 = 0 : blDEFINE7_stage_2_index_0; 1 = 0 : blDEFINE7_stage_2_index_1; esac) : min(5, max(2, ((case 0 = 1 : blVAR0_stage_2_index_0; 1 = 1 : blVAR0_stage_2_index_1; 2 = 1 : blVAR0_stage_2_index_2; esac) + (case 0 = 0 : blVAR0_stage_2_index_0; 1 = 0 : blVAR0_stage_2_index_1; 2 = 0 : blVAR0_stage_2_index_2; esac) + 55 + -97)));
+                TRUE : min(5, max(2, min(8, count((FALSE -> (case 0 = 0 : blDEFINE7_stage_2_index_0; 1 = 0 : blDEFINE7_stage_2_index_1; esac)), ((case 0 = 0 : blDEFINE5_stage_0_index_0; 1 = 0 : blDEFINE5_stage_0_index_1; 2 = 0 : blDEFINE5_stage_0_index_2; esac) & TRUE), ((case 0 = 1 : blDEFINE5_stage_0_index_0; 1 = 1 : blDEFINE5_stage_0_index_1; 2 = 1 : blDEFINE5_stage_0_index_2; esac) | FALSE)))));
+            esac;
+        a4_1_DOT_localDEFINE8_stage_0 :=
+            case
+                ((TRUE xor (case 0 = 0 : blDEFINE7_stage_3_index_0; 1 = 0 : blDEFINE7_stage_3_index_1; esac)) | FALSE) : min(5, max(2, min(min((case 0 = 1 : blVAR0_stage_3_index_0; 1 = 1 : blVAR0_stage_3_index_1; 2 = 1 : blVAR0_stage_3_index_2; esac), (case 0 = 0 : blVAR0_stage_3_index_0; 1 = 0 : blVAR0_stage_3_index_1; 2 = 0 : blVAR0_stage_3_index_2; esac)), 72)));
+                TRUE : min(5, max(2, abs(-72)));
+            esac;
+        a1_DOT_localDEFINE8_stage_0 :=
+            case
+                ((case 0 = 1 : blDEFINE7_stage_4_index_0; 1 = 1 : blDEFINE7_stage_4_index_1; esac) xnor TRUE) : min(5, max(2, abs((case 0 = 2 : blVAR0_stage_4_index_0; 1 = 2 : blVAR0_stage_4_index_1; 2 = 2 : blVAR0_stage_4_index_2; esac))));
+                ((FALSE = ((case 0 = 1 : blDEFINE7_stage_4_index_0; 1 = 1 : blDEFINE7_stage_4_index_1; esac) xor (case 0 = 0 : blDEFINE7_stage_4_index_0; 1 = 0 : blDEFINE7_stage_4_index_1; esac))) xnor (case 0 = 1 : blDEFINE7_stage_4_index_0; 1 = 1 : blDEFINE7_stage_4_index_1; esac)) : min(5, max(2, max(-49, abs((case 0 = 2 : blVAR0_stage_4_index_0; 1 = 2 : blVAR0_stage_4_index_1; 2 = 2 : blVAR0_stage_4_index_2; esac)))));
+                TRUE : min(5, max(2, min((case 0 = 0 : blVAR0_stage_4_index_0; 1 = 0 : blVAR0_stage_4_index_1; 2 = 0 : blVAR0_stage_4_index_2; esac), (case 0 = 1 : blVAR0_stage_4_index_0; 1 = 1 : blVAR0_stage_4_index_1; 2 = 1 : blVAR0_stage_4_index_2; esac))));
+            esac;
+        a1_DOT_localDEFINE8_stage_1 :=
+            case
+                ((case 0 = 1 : blDEFINE7_stage_5_index_0; 1 = 1 : blDEFINE7_stage_5_index_1; esac) xnor TRUE) : min(5, max(2, abs((case 0 = 2 : blVAR0_stage_5_index_0; 1 = 2 : blVAR0_stage_5_index_1; 2 = 2 : blVAR0_stage_5_index_2; esac))));
+                ((FALSE = ((case 0 = 1 : blDEFINE7_stage_5_index_0; 1 = 1 : blDEFINE7_stage_5_index_1; esac) xor (case 0 = 0 : blDEFINE7_stage_5_index_0; 1 = 0 : blDEFINE7_stage_5_index_1; esac))) xnor (case 0 = 1 : blDEFINE7_stage_5_index_0; 1 = 1 : blDEFINE7_stage_5_index_1; esac)) : min(5, max(2, max(-49, abs((case 0 = 2 : blVAR0_stage_5_index_0; 1 = 2 : blVAR0_stage_5_index_1; 2 = 2 : blVAR0_stage_5_index_2; esac)))));
+                TRUE : min(5, max(2, min((case 0 = 0 : blVAR0_stage_5_index_0; 1 = 0 : blVAR0_stage_5_index_1; 2 = 0 : blVAR0_stage_5_index_2; esac), (case 0 = 1 : blVAR0_stage_5_index_0; 1 = 1 : blVAR0_stage_5_index_1; 2 = 1 : blVAR0_stage_5_index_2; esac))));
+            esac;
+        --END OF BLACKBOARD DEFINITIONS
+    FROZENVAR
+        --START OF BLACKBOARD FROZENVAR
+        envFROZENVAR3_stage_0 : boolean;
+        a4_DOT_localFROZENVAR4_stage_0 : 2..5;
+        a4_1_DOT_localFROZENVAR4_stage_0 : 2..5;
+        --END OF BLACKBOARD FROZENVAR
+    VAR
+        node_names : define_nodes;
+        resume_from_here_in_subtree__sel0 : {0, 4};
+        a4 : a4_module(blDEFINE5_stage_0_index_0, blDEFINE5_stage_0_index_1, blDEFINE5_stage_0_index_2, blDEFINE7_stage_1_index_0, blDEFINE7_stage_1_index_1);
+        a2 : a2_module(a2_DOT_localDEFINE8_stage_1);
+        a4_1 : a4_1_module(blDEFINE5_stage_0_index_0, blDEFINE5_stage_0_index_1, blDEFINE5_stage_0_index_2, blDEFINE7_stage_4_index_0, blDEFINE7_stage_4_index_1);
+        sel1 : composite_selector_with_partial_memory_3(a4, a2, a4_1, child_index_to_resume_from__sel1);
+        a1 : a1_module(blDEFINE5_stage_0_index_0, blDEFINE5_stage_0_index_1, blDEFINE5_stage_0_index_2, blDEFINE7_stage_5_index_0, blDEFINE7_stage_5_index_1);
+        c1 : c1_module();
+        sel0 : composite_selector_without_memory_3(sel1, a1, c1);
+        --START OF BLACKBOARD VARIABLES DECLARATION
+        blVAR0_stage_0_index_0 : -5..-2;
+        blVAR0_stage_0_index_1 : -5..-2;
+        blVAR0_stage_0_index_2 : -5..-2;
+        envVAR1_stage_0 : boolean;
+        envVAR2_stage_0 : boolean;
+        --END OF BLACKBOARD VARIABLES DECLARATION
+    ASSIGN
+        init(resume_from_here_in_subtree__sel0) := 0;
+        --START OF BLACKBOARD VARIABLES INITIALIZATION
+        init(blVAR0_stage_0_index_0) := 
+            case
+                (TRUE <-> ((-5 * 4) > max(-77, 5))) : min(-2, max(-5, abs(-5)));
+                (TRUE != (FALSE xnor TRUE)) : min(-2, max(-5, ((2 * -3 * 5 * -43) - -65)));
+                TRUE : min(-2, max(-5, abs(count((TRUE & TRUE), (FALSE & TRUE)))));
+            esac;
+        init(blVAR0_stage_0_index_1) := 
+            case
+                (TRUE <-> ((-5 * 4) > max(-77, 5))) : min(-2, max(-5, abs(-5)));
+                (TRUE != (FALSE xnor TRUE)) : min(-2, max(-5, ((2 * -3 * 5 * -43) - -65)));
+                TRUE : min(-2, max(-5, abs(count((TRUE & TRUE), (FALSE & TRUE)))));
+            esac;
+        init(blVAR0_stage_0_index_2) := 
+            case
+                (TRUE <-> ((-5 * 4) > max(-77, 5))) : min(-2, max(-5, abs(-5)));
+                (TRUE != (FALSE xnor TRUE)) : min(-2, max(-5, ((2 * -3 * 5 * -43) - -65)));
+                TRUE : min(-2, max(-5, abs(count((TRUE & TRUE), (FALSE & TRUE)))));
+            esac;
+        init(envVAR1_stage_0) := 
+            case
+                FALSE : ((case 0 = 0 : blVAR0_stage_0_index_0; 1 = 0 : blVAR0_stage_0_index_1; 2 = 0 : blVAR0_stage_0_index_2; esac) = min(-77, (case 0 = 0 : blVAR0_stage_0_index_0; 1 = 0 : blVAR0_stage_0_index_1; 2 = 0 : blVAR0_stage_0_index_2; esac)));
+                TRUE : (((case 0 = 1 : blVAR0_stage_0_index_0; 1 = 1 : blVAR0_stage_0_index_1; 2 = 1 : blVAR0_stage_0_index_2; esac) < -4) xor (FALSE xnor TRUE));
+            esac;
+        init(envVAR2_stage_0) := 
+            case
+                TRUE : ((case 0 = 0 : blVAR0_stage_0_index_0; 1 = 0 : blVAR0_stage_0_index_1; 2 = 0 : blVAR0_stage_0_index_2; esac) < ((case 0 = 1 : blVAR0_stage_0_index_0; 1 = 1 : blVAR0_stage_0_index_1; 2 = 1 : blVAR0_stage_0_index_2; esac) - (case 0 = 2 : blVAR0_stage_0_index_0; 1 = 2 : blVAR0_stage_0_index_1; 2 = 2 : blVAR0_stage_0_index_2; esac)));
+            esac;
+        init(envFROZENVAR3_stage_0) := 
+            case
+                TRUE : (envVAR2_stage_0 & TRUE);
+            esac;
+        init(a4_DOT_localFROZENVAR4_stage_0) := 
+            case
+                ((case 0 = 1 : blDEFINE5_stage_0_index_0; 1 = 1 : blDEFINE5_stage_0_index_1; 2 = 1 : blDEFINE5_stage_0_index_2; esac) | (FALSE & (case 0 = 0 : blDEFINE7_stage_0_index_0; 1 = 0 : blDEFINE7_stage_0_index_1; esac))) : min(5, max(2, -12));
+                (FALSE xor FALSE) : min(5, max(2, (-5 - -59)));
+                TRUE : min(5, max(2, (max(-91, -93) + (case 0 = 0 : blVAR0_stage_0_index_0; 1 = 0 : blVAR0_stage_0_index_1; 2 = 0 : blVAR0_stage_0_index_2; esac) + 8)));
+            esac;
+        init(a4_1_DOT_localFROZENVAR4_stage_0) := 
+            case
+                ((case 0 = 1 : blDEFINE5_stage_0_index_0; 1 = 1 : blDEFINE5_stage_0_index_1; 2 = 1 : blDEFINE5_stage_0_index_2; esac) | (FALSE & (case 0 = 0 : blDEFINE7_stage_0_index_0; 1 = 0 : blDEFINE7_stage_0_index_1; esac))) : min(5, max(2, -12));
+                (FALSE xor FALSE) : min(5, max(2, (-5 - -59)));
+                TRUE : min(5, max(2, (max(-91, -93) + (case 0 = 0 : blVAR0_stage_0_index_0; 1 = 0 : blVAR0_stage_0_index_1; 2 = 0 : blVAR0_stage_0_index_2; esac) + 8)));
+            esac;
+        --END OF BLACKBOARD VARIABLES INITIALIZATION
+        next(resume_from_here_in_subtree__sel0) := 
+            case
+                (sel0.status in {success, failure}) : node_names.sel0;
+                sel0.status = invalid : resume_from_here_in_subtree__sel0;
+                TRUE : max(trace_running_source_sel0, node_names.sel0);
+            esac;
+        --START OF BLACKBOARD VARIABLES TRANSITION
+        next(blVAR0_stage_0_index_0) := blVAR0_stage_5_index_0;
+        next(blVAR0_stage_0_index_1) := blVAR0_stage_5_index_1;
+        next(blVAR0_stage_0_index_2) := blVAR0_stage_5_index_2;
+        next(envVAR1_stage_0) := envVAR1_stage_3;
+        next(envVAR2_stage_0) := envVAR2_stage_2;
+        --END OF BLACKBOARD VARIABLES TRANSITION
+
+MODULE define_nodes
+    DEFINE
+        sel0 := 0;
+        sel1 := 1;
+        a4 := 2;
+        a2 := 3;
+        a4_1 := 4;
+        a1 := 5;
+        c1 := 6;
+MODULE composite_selector_with_partial_memory_3(child_0, child_1, child_2, resume_point)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                (0 >= resume_point) & !(child_0.internal_status = failure) : child_0.internal_status;
+                (1 >= resume_point) & !(child_1.internal_status = failure) : child_1.internal_status;
+                (2 >= resume_point) & !(child_2.internal_status = failure) : child_2.internal_status;
+                TRUE : failure;
+            esac;
+        child_0.active := active & (0 >= resume_point);
+        child_1.active := active & ((1 >= resume_point) & ((1 = resume_point) | (child_0.status = failure)));
+        child_2.active := active & ((2 >= resume_point) & ((2 = resume_point) | (child_1.status = failure)));
+MODULE composite_selector_without_memory_3(child_0, child_1, child_2)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                !(child_0.internal_status = failure) : child_0.internal_status;
+                !(child_1.internal_status = failure) : child_1.internal_status;
+                !(child_2.internal_status = failure) : child_2.internal_status;
+                TRUE : failure;
+            esac;
+        child_0.active := active;
+        child_1.active := child_0.status = failure;
+        child_2.active := child_1.status = failure;
+MODULE a4_module(blDEFINE5_stage_0_index_0, blDEFINE5_stage_0_index_1, blDEFINE5_stage_0_index_2, blDEFINE7_stage_1_index_0, blDEFINE7_stage_1_index_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := 
+            case
+                ((case 0 = 1 : blDEFINE7_stage_1_index_0; 1 = 1 : blDEFINE7_stage_1_index_1; esac) xnor (case 0 = 1 : blDEFINE5_stage_0_index_0; 1 = 1 : blDEFINE5_stage_0_index_1; 2 = 1 : blDEFINE5_stage_0_index_2; esac)) : running;
+                TRUE : failure;
+            esac;
+MODULE a2_module(a2_DOT_localDEFINE8_stage_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := 
+            case
+                (abs(94) >= 18) : success;
+                (abs(-67) < max(a2_DOT_localDEFINE8_stage_1, 75)) : failure;
+                TRUE : failure;
+            esac;
+MODULE a4_1_module(blDEFINE5_stage_0_index_0, blDEFINE5_stage_0_index_1, blDEFINE5_stage_0_index_2, blDEFINE7_stage_4_index_0, blDEFINE7_stage_4_index_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := 
+            case
+                ((case 0 = 1 : blDEFINE7_stage_4_index_0; 1 = 1 : blDEFINE7_stage_4_index_1; esac) xnor (case 0 = 1 : blDEFINE5_stage_0_index_0; 1 = 1 : blDEFINE5_stage_0_index_1; 2 = 1 : blDEFINE5_stage_0_index_2; esac)) : running;
+                TRUE : failure;
+            esac;
+MODULE a1_module(blDEFINE5_stage_0_index_0, blDEFINE5_stage_0_index_1, blDEFINE5_stage_0_index_2, blDEFINE7_stage_5_index_0, blDEFINE7_stage_5_index_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := 
+            case
+                ((case 0 = 1 : blDEFINE5_stage_0_index_0; 1 = 1 : blDEFINE5_stage_0_index_1; 2 = 1 : blDEFINE5_stage_0_index_2; esac) xnor ((case 0 = 2 : blDEFINE5_stage_0_index_0; 1 = 2 : blDEFINE5_stage_0_index_1; 2 = 2 : blDEFINE5_stage_0_index_2; esac) <-> (case 0 = 0 : blDEFINE7_stage_5_index_0; 1 = 0 : blDEFINE7_stage_5_index_1; esac))) : success;
+                (case 0 = 1 : blDEFINE7_stage_5_index_0; 1 = 1 : blDEFINE7_stage_5_index_1; esac) : running;
+                ((((case 0 = 2 : blDEFINE5_stage_0_index_0; 1 = 2 : blDEFINE5_stage_0_index_1; 2 = 2 : blDEFINE5_stage_0_index_2; esac) & FALSE) -> TRUE) xor (count((FALSE -> (case 0 = 2 : blDEFINE5_stage_0_index_0; 1 = 2 : blDEFINE5_stage_0_index_1; 2 = 2 : blDEFINE5_stage_0_index_2; esac)), ((case 0 = 0 : blDEFINE7_stage_5_index_0; 1 = 0 : blDEFINE7_stage_5_index_1; esac) <-> TRUE)) >= -46)) : success;
+                TRUE : running;
+            esac;
+MODULE c1_module()
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := (TRUE) ? success : failure;

@@ -1,0 +1,425 @@
+MODULE main
+    VAR
+        system : system_module;
+--------------SPECIFICATIONS
+
+
+
+--------------END OF SPECIFICATIONS
+
+MODULE system_module
+    CONSTANTS
+        success, failure, running, invalid, yes, both, no;
+    DEFINE
+        resume_from_here_in_subtree__p_all0 := -3;
+        resume_from_here_in_subtree__a2 := -3;
+        resume_from_here_in_subtree__p_all1 := -3;
+        p_all0.active := TRUE;
+        parallel_skip__p_all1 := [resume_from_here_in_subtree__a2_1, resume_from_here_in_subtree__a1];
+        --START OF BLACKBOARD DEFINITIONS
+        envVAR1_stage_1_index_0 := 
+            case
+                !(p_all0.active) : envVAR1_stage_0_index_0;
+                0 = min(2, max(0, (case 0 = 0 : envVAR1_stage_0_index_0; 1 = 0 : envVAR1_stage_0_index_1; 2 = 0 : envVAR1_stage_0_index_2; esac))) :
+                    case
+                        ((FALSE <-> (blVAR2_stage_1 | blVAR2_stage_1)) xor (blVAR0_stage_0 < (case 0 = 1 : envVAR1_stage_0_index_0; 1 = 1 : envVAR1_stage_0_index_1; 2 = 1 : envVAR1_stage_0_index_2; esac))) : min(5, max(2, count(((blVAR2_stage_1 | blVAR2_stage_1) xor (TRUE xnor TRUE)), ((TRUE <-> FALSE) <-> (TRUE & blVAR2_stage_1)), ((-19 >= 36) & (FALSE | (case 0 = 2 : envDEFINE5_stage_0_index_0; 1 = 2 : envDEFINE5_stage_0_index_1; 2 = 2 : envDEFINE5_stage_0_index_2; esac))), (-73 < abs(blDEFINE4_stage_1)))));
+                        TRUE : min(5, max(2, -28));
+                    esac;
+                0 = min(2, max(0, -(-4))) :
+                    case
+                        (((blVAR0_stage_0 - 35) * -76 * (blDEFINE4_stage_1 * blDEFINE4_stage_1 * 93 * blVAR0_stage_0) * -49) = blVAR0_stage_0) : min(5, max(2, -84));
+                        TRUE : min(5, max(2, blVAR0_stage_0));
+                    esac;
+                TRUE : envVAR1_stage_0_index_0;
+            esac;
+        envVAR1_stage_1_index_1 := 
+            case
+                !(p_all0.active) : envVAR1_stage_0_index_1;
+                1 = min(2, max(0, (case 0 = 0 : envVAR1_stage_0_index_0; 1 = 0 : envVAR1_stage_0_index_1; 2 = 0 : envVAR1_stage_0_index_2; esac))) :
+                    case
+                        ((FALSE <-> (blVAR2_stage_1 | blVAR2_stage_1)) xor (blVAR0_stage_0 < (case 0 = 1 : envVAR1_stage_0_index_0; 1 = 1 : envVAR1_stage_0_index_1; 2 = 1 : envVAR1_stage_0_index_2; esac))) : min(5, max(2, count(((blVAR2_stage_1 | blVAR2_stage_1) xor (TRUE xnor TRUE)), ((TRUE <-> FALSE) <-> (TRUE & blVAR2_stage_1)), ((-19 >= 36) & (FALSE | (case 0 = 2 : envDEFINE5_stage_0_index_0; 1 = 2 : envDEFINE5_stage_0_index_1; 2 = 2 : envDEFINE5_stage_0_index_2; esac))), (-73 < abs(blDEFINE4_stage_1)))));
+                        TRUE : min(5, max(2, -28));
+                    esac;
+                1 = min(2, max(0, -(-4))) :
+                    case
+                        (((blVAR0_stage_0 - 35) * -76 * (blDEFINE4_stage_1 * blDEFINE4_stage_1 * 93 * blVAR0_stage_0) * -49) = blVAR0_stage_0) : min(5, max(2, -84));
+                        TRUE : min(5, max(2, blVAR0_stage_0));
+                    esac;
+                TRUE : envVAR1_stage_0_index_1;
+            esac;
+        envVAR1_stage_1_index_2 := 
+            case
+                !(p_all0.active) : envVAR1_stage_0_index_2;
+                2 = min(2, max(0, (case 0 = 0 : envVAR1_stage_0_index_0; 1 = 0 : envVAR1_stage_0_index_1; 2 = 0 : envVAR1_stage_0_index_2; esac))) :
+                    case
+                        ((FALSE <-> (blVAR2_stage_1 | blVAR2_stage_1)) xor (blVAR0_stage_0 < (case 0 = 1 : envVAR1_stage_0_index_0; 1 = 1 : envVAR1_stage_0_index_1; 2 = 1 : envVAR1_stage_0_index_2; esac))) : min(5, max(2, count(((blVAR2_stage_1 | blVAR2_stage_1) xor (TRUE xnor TRUE)), ((TRUE <-> FALSE) <-> (TRUE & blVAR2_stage_1)), ((-19 >= 36) & (FALSE | (case 0 = 2 : envDEFINE5_stage_0_index_0; 1 = 2 : envDEFINE5_stage_0_index_1; 2 = 2 : envDEFINE5_stage_0_index_2; esac))), (-73 < abs(blDEFINE4_stage_1)))));
+                        TRUE : min(5, max(2, -28));
+                    esac;
+                2 = min(2, max(0, -(-4))) :
+                    case
+                        (((blVAR0_stage_0 - 35) * -76 * (blDEFINE4_stage_1 * blDEFINE4_stage_1 * 93 * blVAR0_stage_0) * -49) = blVAR0_stage_0) : min(5, max(2, -84));
+                        TRUE : min(5, max(2, blVAR0_stage_0));
+                    esac;
+                TRUE : envVAR1_stage_0_index_2;
+            esac;
+        envVAR1_stage_2_index_0 := 
+            case
+                !(p_all0.active) : envVAR1_stage_1_index_0;
+                0 = min(2, max(0, 13)) :
+                    case
+                        (FALSE = FALSE) : min(5, max(2, min(-11, abs(34))));
+                        TRUE : min(5, max(2, abs(count((TRUE -> (case 0 = 0 : envDEFINE5_stage_1_index_0; 1 = 0 : envDEFINE5_stage_1_index_1; 2 = 0 : envDEFINE5_stage_1_index_2; esac)), (FALSE <-> TRUE)))));
+                    esac;
+                TRUE : envVAR1_stage_1_index_0;
+            esac;
+        envVAR1_stage_2_index_1 := 
+            case
+                !(p_all0.active) : envVAR1_stage_1_index_1;
+                1 = min(2, max(0, 13)) :
+                    case
+                        (FALSE = FALSE) : min(5, max(2, min(-11, abs(34))));
+                        TRUE : min(5, max(2, abs(count((TRUE -> (case 0 = 0 : envDEFINE5_stage_1_index_0; 1 = 0 : envDEFINE5_stage_1_index_1; 2 = 0 : envDEFINE5_stage_1_index_2; esac)), (FALSE <-> TRUE)))));
+                    esac;
+                TRUE : envVAR1_stage_1_index_1;
+            esac;
+        envVAR1_stage_2_index_2 := 
+            case
+                !(p_all0.active) : envVAR1_stage_1_index_2;
+                2 = min(2, max(0, 13)) :
+                    case
+                        (FALSE = FALSE) : min(5, max(2, min(-11, abs(34))));
+                        TRUE : min(5, max(2, abs(count((TRUE -> (case 0 = 0 : envDEFINE5_stage_1_index_0; 1 = 0 : envDEFINE5_stage_1_index_1; 2 = 0 : envDEFINE5_stage_1_index_2; esac)), (FALSE <-> TRUE)))));
+                    esac;
+                TRUE : envVAR1_stage_1_index_2;
+            esac;
+        envVAR1_stage_3_index_0 := 
+            case
+                !(p_all0.active) : envVAR1_stage_2_index_0;
+                0 = min(2, max(0, abs(min(-(-37), -71)))) :
+                    case
+                        TRUE : min(5, max(2, -(blVAR0_stage_0)));
+                        TRUE : min(5, max(2, (27 * (39 * -77 * (44 - 48) * -11) * (case 0 = 0 : envVAR1_stage_2_index_0; 1 = 0 : envVAR1_stage_2_index_1; 2 = 0 : envVAR1_stage_2_index_2; esac))));
+                    esac;
+                0 = min(2, max(0, ((64 + -55) * (3 - (case 0 = 1 : envVAR1_stage_2_index_0; 1 = 1 : envVAR1_stage_2_index_1; 2 = 1 : envVAR1_stage_2_index_2; esac)) * count(((case 0 = 1 : envVAR1_stage_2_index_0; 1 = 1 : envVAR1_stage_2_index_1; 2 = 1 : envVAR1_stage_2_index_2; esac) = 41), (FALSE <-> TRUE), ((case 0 = 0 : envDEFINE5_stage_2_index_0; 1 = 0 : envDEFINE5_stage_2_index_1; 2 = 0 : envDEFINE5_stage_2_index_2; esac) xor (case 0 = 0 : envDEFINE5_stage_2_index_0; 1 = 0 : envDEFINE5_stage_2_index_1; 2 = 0 : envDEFINE5_stage_2_index_2; esac))) * blDEFINE4_stage_1))) :
+                    case
+                        TRUE : min(5, max(2, count((TRUE xor ((case 0 = 2 : envDEFINE5_stage_2_index_0; 1 = 2 : envDEFINE5_stage_2_index_1; 2 = 2 : envDEFINE5_stage_2_index_2; esac) -> FALSE)), (-80 > (-25 - -42)))));
+                        TRUE : min(5, max(2, min(15, blVAR0_stage_0)));
+                    esac;
+                TRUE : envVAR1_stage_2_index_0;
+            esac;
+        envVAR1_stage_3_index_1 := 
+            case
+                !(p_all0.active) : envVAR1_stage_2_index_1;
+                1 = min(2, max(0, abs(min(-(-37), -71)))) :
+                    case
+                        TRUE : min(5, max(2, -(blVAR0_stage_0)));
+                        TRUE : min(5, max(2, (27 * (39 * -77 * (44 - 48) * -11) * (case 0 = 0 : envVAR1_stage_2_index_0; 1 = 0 : envVAR1_stage_2_index_1; 2 = 0 : envVAR1_stage_2_index_2; esac))));
+                    esac;
+                1 = min(2, max(0, ((64 + -55) * (3 - (case 0 = 1 : envVAR1_stage_2_index_0; 1 = 1 : envVAR1_stage_2_index_1; 2 = 1 : envVAR1_stage_2_index_2; esac)) * count(((case 0 = 1 : envVAR1_stage_2_index_0; 1 = 1 : envVAR1_stage_2_index_1; 2 = 1 : envVAR1_stage_2_index_2; esac) = 41), (FALSE <-> TRUE), ((case 0 = 0 : envDEFINE5_stage_2_index_0; 1 = 0 : envDEFINE5_stage_2_index_1; 2 = 0 : envDEFINE5_stage_2_index_2; esac) xor (case 0 = 0 : envDEFINE5_stage_2_index_0; 1 = 0 : envDEFINE5_stage_2_index_1; 2 = 0 : envDEFINE5_stage_2_index_2; esac))) * blDEFINE4_stage_1))) :
+                    case
+                        TRUE : min(5, max(2, count((TRUE xor ((case 0 = 2 : envDEFINE5_stage_2_index_0; 1 = 2 : envDEFINE5_stage_2_index_1; 2 = 2 : envDEFINE5_stage_2_index_2; esac) -> FALSE)), (-80 > (-25 - -42)))));
+                        TRUE : min(5, max(2, min(15, blVAR0_stage_0)));
+                    esac;
+                TRUE : envVAR1_stage_2_index_1;
+            esac;
+        envVAR1_stage_3_index_2 := 
+            case
+                !(p_all0.active) : envVAR1_stage_2_index_2;
+                2 = min(2, max(0, abs(min(-(-37), -71)))) :
+                    case
+                        TRUE : min(5, max(2, -(blVAR0_stage_0)));
+                        TRUE : min(5, max(2, (27 * (39 * -77 * (44 - 48) * -11) * (case 0 = 0 : envVAR1_stage_2_index_0; 1 = 0 : envVAR1_stage_2_index_1; 2 = 0 : envVAR1_stage_2_index_2; esac))));
+                    esac;
+                2 = min(2, max(0, ((64 + -55) * (3 - (case 0 = 1 : envVAR1_stage_2_index_0; 1 = 1 : envVAR1_stage_2_index_1; 2 = 1 : envVAR1_stage_2_index_2; esac)) * count(((case 0 = 1 : envVAR1_stage_2_index_0; 1 = 1 : envVAR1_stage_2_index_1; 2 = 1 : envVAR1_stage_2_index_2; esac) = 41), (FALSE <-> TRUE), ((case 0 = 0 : envDEFINE5_stage_2_index_0; 1 = 0 : envDEFINE5_stage_2_index_1; 2 = 0 : envDEFINE5_stage_2_index_2; esac) xor (case 0 = 0 : envDEFINE5_stage_2_index_0; 1 = 0 : envDEFINE5_stage_2_index_1; 2 = 0 : envDEFINE5_stage_2_index_2; esac))) * blDEFINE4_stage_1))) :
+                    case
+                        TRUE : min(5, max(2, count((TRUE xor ((case 0 = 2 : envDEFINE5_stage_2_index_0; 1 = 2 : envDEFINE5_stage_2_index_1; 2 = 2 : envDEFINE5_stage_2_index_2; esac) -> FALSE)), (-80 > (-25 - -42)))));
+                        TRUE : min(5, max(2, min(15, blVAR0_stage_0)));
+                    esac;
+                TRUE : envVAR1_stage_2_index_2;
+            esac;
+        envVAR1_stage_4_index_0 := 
+            case
+                !(p_all0.active) : envVAR1_stage_3_index_0;
+                0 = min(2, max(0, max((case 0 = 1 : envVAR1_stage_3_index_0; 1 = 1 : envVAR1_stage_3_index_1; 2 = 1 : envVAR1_stage_3_index_2; esac), -86))) :
+                    case
+                        blVAR2_stage_1 : min(5, max(2, blDEFINE4_stage_1));
+                        TRUE : min(5, max(2, blVAR0_stage_0));
+                    esac;
+                0 = min(2, max(0, count((TRUE & (case 0 = 0 : envDEFINE5_stage_3_index_0; 1 = 0 : envDEFINE5_stage_3_index_1; 2 = 0 : envDEFINE5_stage_3_index_2; esac)), (blDEFINE4_stage_1 < -31), (TRUE -> TRUE)))) :
+                    case
+                        (-5 >= blDEFINE4_stage_1) : min(5, max(2, count((count((blVAR2_stage_1 = FALSE), (91 <= -39), ((case 0 = 2 : envDEFINE5_stage_3_index_0; 1 = 2 : envDEFINE5_stage_3_index_1; 2 = 2 : envDEFINE5_stage_3_index_2; esac) xor blVAR2_stage_1), (TRUE <-> TRUE)) > (49 + -29 + blVAR0_stage_0 + blVAR0_stage_0)), (((case 0 = 1 : envVAR1_stage_3_index_0; 1 = 1 : envVAR1_stage_3_index_1; 2 = 1 : envVAR1_stage_3_index_2; esac) < 95) & FALSE), ((blVAR2_stage_1 | blVAR2_stage_1) != TRUE), (max(76, -72) >= -2))));
+                        TRUE : min(5, max(2, abs(count((63 < blDEFINE4_stage_1), (blVAR2_stage_1 = TRUE)))));
+                    esac;
+                0 = min(2, max(0, 18)) :
+                    case
+                        (blVAR0_stage_0 = -(-29)) : min(5, max(2, -(min((case 0 = 0 : envVAR1_stage_3_index_0; 1 = 0 : envVAR1_stage_3_index_1; 2 = 0 : envVAR1_stage_3_index_2; esac), 95))));
+                        TRUE : min(5, max(2, max(max(44, blDEFINE4_stage_1), (66 * abs(blDEFINE4_stage_1) * -44 * -94))));
+                    esac;
+                TRUE : envVAR1_stage_3_index_0;
+            esac;
+        envVAR1_stage_4_index_1 := 
+            case
+                !(p_all0.active) : envVAR1_stage_3_index_1;
+                1 = min(2, max(0, max((case 0 = 1 : envVAR1_stage_3_index_0; 1 = 1 : envVAR1_stage_3_index_1; 2 = 1 : envVAR1_stage_3_index_2; esac), -86))) :
+                    case
+                        blVAR2_stage_1 : min(5, max(2, blDEFINE4_stage_1));
+                        TRUE : min(5, max(2, blVAR0_stage_0));
+                    esac;
+                1 = min(2, max(0, count((TRUE & (case 0 = 0 : envDEFINE5_stage_3_index_0; 1 = 0 : envDEFINE5_stage_3_index_1; 2 = 0 : envDEFINE5_stage_3_index_2; esac)), (blDEFINE4_stage_1 < -31), (TRUE -> TRUE)))) :
+                    case
+                        (-5 >= blDEFINE4_stage_1) : min(5, max(2, count((count((blVAR2_stage_1 = FALSE), (91 <= -39), ((case 0 = 2 : envDEFINE5_stage_3_index_0; 1 = 2 : envDEFINE5_stage_3_index_1; 2 = 2 : envDEFINE5_stage_3_index_2; esac) xor blVAR2_stage_1), (TRUE <-> TRUE)) > (49 + -29 + blVAR0_stage_0 + blVAR0_stage_0)), (((case 0 = 1 : envVAR1_stage_3_index_0; 1 = 1 : envVAR1_stage_3_index_1; 2 = 1 : envVAR1_stage_3_index_2; esac) < 95) & FALSE), ((blVAR2_stage_1 | blVAR2_stage_1) != TRUE), (max(76, -72) >= -2))));
+                        TRUE : min(5, max(2, abs(count((63 < blDEFINE4_stage_1), (blVAR2_stage_1 = TRUE)))));
+                    esac;
+                1 = min(2, max(0, 18)) :
+                    case
+                        (blVAR0_stage_0 = -(-29)) : min(5, max(2, -(min((case 0 = 0 : envVAR1_stage_3_index_0; 1 = 0 : envVAR1_stage_3_index_1; 2 = 0 : envVAR1_stage_3_index_2; esac), 95))));
+                        TRUE : min(5, max(2, max(max(44, blDEFINE4_stage_1), (66 * abs(blDEFINE4_stage_1) * -44 * -94))));
+                    esac;
+                TRUE : envVAR1_stage_3_index_1;
+            esac;
+        envVAR1_stage_4_index_2 := 
+            case
+                !(p_all0.active) : envVAR1_stage_3_index_2;
+                2 = min(2, max(0, max((case 0 = 1 : envVAR1_stage_3_index_0; 1 = 1 : envVAR1_stage_3_index_1; 2 = 1 : envVAR1_stage_3_index_2; esac), -86))) :
+                    case
+                        blVAR2_stage_1 : min(5, max(2, blDEFINE4_stage_1));
+                        TRUE : min(5, max(2, blVAR0_stage_0));
+                    esac;
+                2 = min(2, max(0, count((TRUE & (case 0 = 0 : envDEFINE5_stage_3_index_0; 1 = 0 : envDEFINE5_stage_3_index_1; 2 = 0 : envDEFINE5_stage_3_index_2; esac)), (blDEFINE4_stage_1 < -31), (TRUE -> TRUE)))) :
+                    case
+                        (-5 >= blDEFINE4_stage_1) : min(5, max(2, count((count((blVAR2_stage_1 = FALSE), (91 <= -39), ((case 0 = 2 : envDEFINE5_stage_3_index_0; 1 = 2 : envDEFINE5_stage_3_index_1; 2 = 2 : envDEFINE5_stage_3_index_2; esac) xor blVAR2_stage_1), (TRUE <-> TRUE)) > (49 + -29 + blVAR0_stage_0 + blVAR0_stage_0)), (((case 0 = 1 : envVAR1_stage_3_index_0; 1 = 1 : envVAR1_stage_3_index_1; 2 = 1 : envVAR1_stage_3_index_2; esac) < 95) & FALSE), ((blVAR2_stage_1 | blVAR2_stage_1) != TRUE), (max(76, -72) >= -2))));
+                        TRUE : min(5, max(2, abs(count((63 < blDEFINE4_stage_1), (blVAR2_stage_1 = TRUE)))));
+                    esac;
+                2 = min(2, max(0, 18)) :
+                    case
+                        (blVAR0_stage_0 = -(-29)) : min(5, max(2, -(min((case 0 = 0 : envVAR1_stage_3_index_0; 1 = 0 : envVAR1_stage_3_index_1; 2 = 0 : envVAR1_stage_3_index_2; esac), 95))));
+                        TRUE : min(5, max(2, max(max(44, blDEFINE4_stage_1), (66 * abs(blDEFINE4_stage_1) * -44 * -94))));
+                    esac;
+                TRUE : envVAR1_stage_3_index_2;
+            esac;
+        blVAR2_stage_1 := 
+            case
+                !(a1.active) : blVAR2_stage_0;
+                !((-(80) > (71 * -5 * max(-80, blVAR0_stage_0) * -32))) : blVAR2_stage_0;
+                TRUE : FALSE;
+            esac;
+        blDEFINE4_stage_0 :=
+            case
+                TRUE : min(-2, max(-5, count((-100 < blVAR0_stage_0), (blVAR2_stage_0 = FALSE), (blVAR0_stage_0 > 15), (blVAR0_stage_0 != blVAR0_stage_0))));
+            esac;
+        blDEFINE4_stage_1 :=
+            case
+                TRUE : min(-2, max(-5, count((-100 < blVAR0_stage_0), (blVAR2_stage_1 = FALSE), (blVAR0_stage_0 > 15), (blVAR0_stage_0 != blVAR0_stage_0))));
+            esac;
+        envDEFINE5_stage_0_index_0 :=
+            case
+                ((blVAR2_stage_1 <-> TRUE) -> TRUE) : (blVAR2_stage_1 <-> blVAR2_stage_1);
+                (blVAR2_stage_1 xor blVAR2_stage_1) : (-2 <= -3);
+                TRUE : (blVAR0_stage_0 != min(-95, blDEFINE4_stage_1));
+            esac;
+        envDEFINE5_stage_0_index_1 :=
+            case
+                (10 > 99) : TRUE;
+                blVAR2_stage_1 : (blVAR2_stage_1 xnor TRUE);
+                TRUE : ((0 - 42) >= blDEFINE4_stage_1);
+            esac;
+        envDEFINE5_stage_0_index_2 :=
+            case
+                (TRUE & (blDEFINE4_stage_1 >= blVAR0_stage_0)) : ((80 + -27 + (case 0 = 0 : envVAR1_stage_0_index_0; 1 = 0 : envVAR1_stage_0_index_1; 2 = 0 : envVAR1_stage_0_index_2; esac) + blVAR0_stage_0) > max(27, -51));
+                TRUE : (blVAR2_stage_1 <-> (blVAR0_stage_0 <= blDEFINE4_stage_1));
+            esac;
+        envDEFINE5_stage_1_index_0 :=
+            case
+                ((blVAR2_stage_1 <-> TRUE) -> TRUE) : (blVAR2_stage_1 <-> blVAR2_stage_1);
+                (blVAR2_stage_1 xor blVAR2_stage_1) : (-2 <= -3);
+                TRUE : (blVAR0_stage_0 != min(-95, blDEFINE4_stage_1));
+            esac;
+        envDEFINE5_stage_1_index_1 :=
+            case
+                (10 > 99) : TRUE;
+                blVAR2_stage_1 : (blVAR2_stage_1 xnor TRUE);
+                TRUE : ((0 - 42) >= blDEFINE4_stage_1);
+            esac;
+        envDEFINE5_stage_1_index_2 :=
+            case
+                (TRUE & (blDEFINE4_stage_1 >= blVAR0_stage_0)) : ((80 + -27 + (case 0 = 0 : envVAR1_stage_1_index_0; 1 = 0 : envVAR1_stage_1_index_1; 2 = 0 : envVAR1_stage_1_index_2; esac) + blVAR0_stage_0) > max(27, -51));
+                TRUE : (blVAR2_stage_1 <-> (blVAR0_stage_0 <= blDEFINE4_stage_1));
+            esac;
+        envDEFINE5_stage_2_index_0 :=
+            case
+                ((blVAR2_stage_1 <-> TRUE) -> TRUE) : (blVAR2_stage_1 <-> blVAR2_stage_1);
+                (blVAR2_stage_1 xor blVAR2_stage_1) : (-2 <= -3);
+                TRUE : (blVAR0_stage_0 != min(-95, blDEFINE4_stage_1));
+            esac;
+        envDEFINE5_stage_2_index_1 :=
+            case
+                (10 > 99) : TRUE;
+                blVAR2_stage_1 : (blVAR2_stage_1 xnor TRUE);
+                TRUE : ((0 - 42) >= blDEFINE4_stage_1);
+            esac;
+        envDEFINE5_stage_2_index_2 :=
+            case
+                (TRUE & (blDEFINE4_stage_1 >= blVAR0_stage_0)) : ((80 + -27 + (case 0 = 0 : envVAR1_stage_2_index_0; 1 = 0 : envVAR1_stage_2_index_1; 2 = 0 : envVAR1_stage_2_index_2; esac) + blVAR0_stage_0) > max(27, -51));
+                TRUE : (blVAR2_stage_1 <-> (blVAR0_stage_0 <= blDEFINE4_stage_1));
+            esac;
+        envDEFINE5_stage_3_index_0 :=
+            case
+                ((blVAR2_stage_1 <-> TRUE) -> TRUE) : (blVAR2_stage_1 <-> blVAR2_stage_1);
+                (blVAR2_stage_1 xor blVAR2_stage_1) : (-2 <= -3);
+                TRUE : (blVAR0_stage_0 != min(-95, blDEFINE4_stage_1));
+            esac;
+        envDEFINE5_stage_3_index_1 :=
+            case
+                (10 > 99) : TRUE;
+                blVAR2_stage_1 : (blVAR2_stage_1 xnor TRUE);
+                TRUE : ((0 - 42) >= blDEFINE4_stage_1);
+            esac;
+        envDEFINE5_stage_3_index_2 :=
+            case
+                (TRUE & (blDEFINE4_stage_1 >= blVAR0_stage_0)) : ((80 + -27 + (case 0 = 0 : envVAR1_stage_3_index_0; 1 = 0 : envVAR1_stage_3_index_1; 2 = 0 : envVAR1_stage_3_index_2; esac) + blVAR0_stage_0) > max(27, -51));
+                TRUE : (blVAR2_stage_1 <-> (blVAR0_stage_0 <= blDEFINE4_stage_1));
+            esac;
+        --END OF BLACKBOARD DEFINITIONS
+    FROZENVAR
+        --START OF BLACKBOARD FROZENVAR
+        blVAR0_stage_0 : -5..-2;
+        --END OF BLACKBOARD FROZENVAR
+    VAR
+        node_names : define_nodes;
+        resume_from_here_in_subtree__a2_1 : {3, -2};
+        resume_from_here_in_subtree__a1 : {4, -2};
+        a2 : a2_module(blDEFINE4_stage_0, blVAR2_stage_0);
+        a2_1 : a2_1_module(blDEFINE4_stage_0, blVAR2_stage_0);
+        a1 : a1_module(blVAR2_stage_1);
+        p_all1 : composite_parallel_success_on_all_with_partial_memory_2(a2_1, a1, parallel_skip__p_all1);
+        p_all0 : composite_parallel_success_on_all_without_memory_2(a2, p_all1);
+        --START OF BLACKBOARD VARIABLES DECLARATION
+        envVAR1_stage_0_index_0 : 2..5;
+        envVAR1_stage_0_index_1 : 2..5;
+        envVAR1_stage_0_index_2 : 2..5;
+        blVAR2_stage_0 : boolean;
+        --END OF BLACKBOARD VARIABLES DECLARATION
+    ASSIGN
+        init(resume_from_here_in_subtree__a2_1) := 3;
+        init(resume_from_here_in_subtree__a1) := 4;
+        --START OF BLACKBOARD VARIABLES INITIALIZATION
+        init(blVAR0_stage_0) := 
+            case
+                TRUE : min(-2, max(-5, abs((-3 + -97))));
+            esac;
+        init(envVAR1_stage_0_index_0) := 
+            case
+                ((TRUE | FALSE) -> (blVAR0_stage_0 = (-98 - blVAR0_stage_0))) : min(5, max(2, max((37 - blVAR0_stage_0), abs(blVAR0_stage_0))));
+                TRUE : min(5, max(2, blVAR0_stage_0));
+            esac;
+        init(envVAR1_stage_0_index_1) := 
+            case
+                ((TRUE | FALSE) -> (blVAR0_stage_0 = (-98 - blVAR0_stage_0))) : min(5, max(2, max((37 - blVAR0_stage_0), abs(blVAR0_stage_0))));
+                TRUE : min(5, max(2, blVAR0_stage_0));
+            esac;
+        init(envVAR1_stage_0_index_2) := 
+            case
+                ((TRUE | FALSE) -> (blVAR0_stage_0 = (-98 - blVAR0_stage_0))) : min(5, max(2, max((37 - blVAR0_stage_0), abs(blVAR0_stage_0))));
+                TRUE : min(5, max(2, blVAR0_stage_0));
+            esac;
+        init(blVAR2_stage_0) := 
+            case
+                TRUE : (FALSE xnor FALSE);
+            esac;
+        --END OF BLACKBOARD VARIABLES INITIALIZATION
+        next(resume_from_here_in_subtree__a2_1) := 
+            case
+                (p_all1.status in {success, failure}) : node_names.a2_1;
+                (p_all0.status in {success, failure}) : node_names.a2_1;
+                (a2_1.status = success) : -2;
+                (a2_1.status = failure) : node_names.a2_1;
+                a2_1.status = invalid : resume_from_here_in_subtree__a2_1;
+                TRUE : 3;
+            esac;
+        next(resume_from_here_in_subtree__a1) := 
+            case
+                (p_all1.status in {success, failure}) : node_names.a1;
+                (p_all0.status in {success, failure}) : node_names.a1;
+                (a1.status = success) : -2;
+                (a1.status = failure) : node_names.a1;
+                a1.status = invalid : resume_from_here_in_subtree__a1;
+                TRUE : 4;
+            esac;
+        --START OF BLACKBOARD VARIABLES TRANSITION
+        next(envVAR1_stage_0_index_0) := envVAR1_stage_4_index_0;
+        next(envVAR1_stage_0_index_1) := envVAR1_stage_4_index_1;
+        next(envVAR1_stage_0_index_2) := envVAR1_stage_4_index_2;
+        next(blVAR2_stage_0) := blVAR2_stage_1;
+        --END OF BLACKBOARD VARIABLES TRANSITION
+
+MODULE define_nodes
+    DEFINE
+        p_all0 := 0;
+        a2 := 1;
+        p_all1 := 2;
+        a2_1 := 3;
+        a1 := 4;
+MODULE composite_parallel_success_on_all_without_memory_2(child_0, child_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                (child_0.internal_status = failure) : failure;
+                (child_1.internal_status = failure) : failure;
+                !(child_0.internal_status = success) : child_0.internal_status;
+                !(child_1.internal_status = success) : child_1.internal_status;
+                TRUE : success;
+            esac;
+        child_0.active := active;
+        child_1.active := active;
+MODULE composite_parallel_success_on_all_with_partial_memory_2(child_0, child_1, skip_child)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                (child_0.internal_status = failure) & !(skip_child[0] = -2) : failure;
+                (child_1.internal_status = failure) & !(skip_child[1] = -2) : failure;
+                !(child_0.internal_status = success) & !(skip_child[0] = -2) : child_0.internal_status;
+                !(child_1.internal_status = success) & !(skip_child[1] = -2) : child_1.internal_status;
+                TRUE : success;
+            esac;
+        child_0.active := active & !(skip_child[0] = -2);
+        child_1.active := active & !(skip_child[1] = -2);
+MODULE a2_module(blDEFINE4_stage_0, blVAR2_stage_0)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := 
+            case
+                (blVAR2_stage_0 xnor TRUE) : failure;
+                ((-51 + blDEFINE4_stage_0) <= (98 - 40)) : failure;
+                TRUE : running;
+            esac;
+MODULE a2_1_module(blDEFINE4_stage_0, blVAR2_stage_0)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := 
+            case
+                (blVAR2_stage_0 xnor TRUE) : failure;
+                ((-51 + blDEFINE4_stage_0) <= (98 - 40)) : failure;
+                TRUE : running;
+            esac;
+MODULE a1_module(blVAR2_stage_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := 
+            case
+                (-36 < 98) : failure;
+                (blVAR2_stage_1 xor blVAR2_stage_1) : running;
+                TRUE : running;
+                TRUE : success;
+            esac;
