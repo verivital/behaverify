@@ -10,3 +10,4 @@ temp_output/**
 dist-newstyle/
 gen_files/
 **/nuXmv
+moved/
