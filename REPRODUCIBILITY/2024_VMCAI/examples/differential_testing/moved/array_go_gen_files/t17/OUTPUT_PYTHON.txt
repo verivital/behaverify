@@ -1,0 +1,260 @@
+------------------------
+State after tick: 1
+sel0 -> SUCCESS
+  sel1 -> SUCCESS
+    a1 -> FAILURE
+    c2 -> FAILURE
+    a4 -> SUCCESS
+  p_all2 -> INVALID
+    a4_1 -> INVALID
+    a1_1 -> INVALID
+  c1 -> INVALID
+
+blackboard
+  blVAR0: [-5, -2, -2]
+  blDEFINE5: -2
+
+local
+  a4_DOT_localVAR3 : [False, True]
+  a4_1_DOT_localVAR3 : [False, True]
+
+environment
+  envVAR1: ['yes', 'yes', 'yes']
+  envVAR2: ['no', 'yes', 'both']
+  envVAR4: True
+  envDEFINE6: True
+
+------------------------
+State after tick: 2
+sel0 -> SUCCESS
+  sel1 -> SUCCESS
+    a1 -> FAILURE
+    c2 -> FAILURE
+    a4 -> SUCCESS
+  p_all2 -> INVALID
+    a4_1 -> INVALID
+    a1_1 -> INVALID
+  c1 -> INVALID
+
+blackboard
+  blVAR0: [-2, -2, -2]
+  blDEFINE5: -2
+
+local
+  a4_DOT_localVAR3 : [False, True]
+  a4_1_DOT_localVAR3 : [False, True]
+
+environment
+  envVAR1: ['yes', 'yes', 'yes']
+  envVAR2: ['no', 'yes', 'both']
+  envVAR4: True
+  envDEFINE6: True
+
+------------------------
+State after tick: 3
+sel0 -> SUCCESS
+  sel1 -> SUCCESS
+    a1 -> FAILURE
+    c2 -> FAILURE
+    a4 -> SUCCESS
+  p_all2 -> INVALID
+    a4_1 -> INVALID
+    a1_1 -> INVALID
+  c1 -> INVALID
+
+blackboard
+  blVAR0: [-2, -2, -2]
+  blDEFINE5: -2
+
+local
+  a4_DOT_localVAR3 : [False, True]
+  a4_1_DOT_localVAR3 : [False, True]
+
+environment
+  envVAR1: ['yes', 'yes', 'yes']
+  envVAR2: ['no', 'yes', 'both']
+  envVAR4: True
+  envDEFINE6: True
+
+------------------------
+State after tick: 4
+sel0 -> SUCCESS
+  sel1 -> SUCCESS
+    a1 -> FAILURE
+    c2 -> FAILURE
+    a4 -> SUCCESS
+  p_all2 -> INVALID
+    a4_1 -> INVALID
+    a1_1 -> INVALID
+  c1 -> INVALID
+
+blackboard
+  blVAR0: [-2, -2, -2]
+  blDEFINE5: -2
+
+local
+  a4_DOT_localVAR3 : [False, True]
+  a4_1_DOT_localVAR3 : [False, True]
+
+environment
+  envVAR1: ['yes', 'yes', 'yes']
+  envVAR2: ['no', 'yes', 'both']
+  envVAR4: True
+  envDEFINE6: True
+
+------------------------
+State after tick: 5
+sel0 -> SUCCESS
+  sel1 -> SUCCESS
+    a1 -> FAILURE
+    c2 -> FAILURE
+    a4 -> SUCCESS
+  p_all2 -> INVALID
+    a4_1 -> INVALID
+    a1_1 -> INVALID
+  c1 -> INVALID
+
+blackboard
+  blVAR0: [-2, -2, -2]
+  blDEFINE5: -2
+
+local
+  a4_DOT_localVAR3 : [False, True]
+  a4_1_DOT_localVAR3 : [False, True]
+
+environment
+  envVAR1: ['yes', 'yes', 'yes']
+  envVAR2: ['no', 'yes', 'both']
+  envVAR4: True
+  envDEFINE6: True
+
+------------------------
+State after tick: 6
+sel0 -> SUCCESS
+  sel1 -> SUCCESS
+    a1 -> FAILURE
+    c2 -> FAILURE
+    a4 -> SUCCESS
+  p_all2 -> INVALID
+    a4_1 -> INVALID
+    a1_1 -> INVALID
+  c1 -> INVALID
+
+blackboard
+  blVAR0: [-2, -2, -2]
+  blDEFINE5: -2
+
+local
+  a4_DOT_localVAR3 : [False, True]
+  a4_1_DOT_localVAR3 : [False, True]
+
+environment
+  envVAR1: ['yes', 'yes', 'yes']
+  envVAR2: ['no', 'yes', 'both']
+  envVAR4: True
+  envDEFINE6: True
+
+------------------------
+State after tick: 7
+sel0 -> SUCCESS
+  sel1 -> SUCCESS
+    a1 -> FAILURE
+    c2 -> FAILURE
+    a4 -> SUCCESS
+  p_all2 -> INVALID
+    a4_1 -> INVALID
+    a1_1 -> INVALID
+  c1 -> INVALID
+
+blackboard
+  blVAR0: [-2, -2, -2]
+  blDEFINE5: -2
+
+local
+  a4_DOT_localVAR3 : [False, True]
+  a4_1_DOT_localVAR3 : [False, True]
+
+environment
+  envVAR1: ['yes', 'yes', 'yes']
+  envVAR2: ['no', 'yes', 'both']
+  envVAR4: True
+  envDEFINE6: True
+
+------------------------
+State after tick: 8
+sel0 -> SUCCESS
+  sel1 -> SUCCESS
+    a1 -> FAILURE
+    c2 -> FAILURE
+    a4 -> SUCCESS
+  p_all2 -> INVALID
+    a4_1 -> INVALID
+    a1_1 -> INVALID
+  c1 -> INVALID
+
+blackboard
+  blVAR0: [-2, -2, -2]
+  blDEFINE5: -2
+
+local
+  a4_DOT_localVAR3 : [False, True]
+  a4_1_DOT_localVAR3 : [False, True]
+
+environment
+  envVAR1: ['yes', 'yes', 'yes']
+  envVAR2: ['no', 'yes', 'both']
+  envVAR4: True
+  envDEFINE6: True
+
+------------------------
+State after tick: 9
+sel0 -> SUCCESS
+  sel1 -> SUCCESS
+    a1 -> FAILURE
+    c2 -> FAILURE
+    a4 -> SUCCESS
+  p_all2 -> INVALID
+    a4_1 -> INVALID
+    a1_1 -> INVALID
+  c1 -> INVALID
+
+blackboard
+  blVAR0: [-2, -2, -2]
+  blDEFINE5: -2
+
+local
+  a4_DOT_localVAR3 : [False, True]
+  a4_1_DOT_localVAR3 : [False, True]
+
+environment
+  envVAR1: ['yes', 'yes', 'yes']
+  envVAR2: ['no', 'yes', 'both']
+  envVAR4: True
+  envDEFINE6: True
+
+------------------------
+State after tick: 10
+sel0 -> SUCCESS
+  sel1 -> SUCCESS
+    a1 -> FAILURE
+    c2 -> FAILURE
+    a4 -> SUCCESS
+  p_all2 -> INVALID
+    a4_1 -> INVALID
+    a1_1 -> INVALID
+  c1 -> INVALID
+
+blackboard
+  blVAR0: [-2, -2, -2]
+  blDEFINE5: -2
+
+local
+  a4_DOT_localVAR3 : [False, True]
+  a4_1_DOT_localVAR3 : [False, True]
+
+environment
+  envVAR1: ['yes', 'yes', 'yes']
+  envVAR2: ['no', 'yes', 'both']
+  envVAR4: True
+  envDEFINE6: True
+

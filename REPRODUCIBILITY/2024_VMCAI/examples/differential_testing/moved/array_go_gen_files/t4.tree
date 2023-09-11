@@ -1,0 +1,357 @@
+configuration{}
+enumerations {
+	'yes', 'no', 'both'
+}
+constants {
+	'MIN_VAL' := 2,
+	'MAX_VAL' := 5
+}
+variables { 
+	variable { bl blVAR0 array 2 VAR [-5, -2]
+		range
+		assign {
+			case {(greater_than, (multiplication, 3, 4, -2, 27), (addition, 4, 5, -2))} result { (min, -2, (max, -5, 17))}
+			case {False} result { (min, -2, (max, -5, (max, -5, 4)))}
+			result {(min, -2, (max, -5, (min, (negative, 90), (multiplication, 5, (addition, -85, -4, -4, -27), (abs, 5)))))}
+		}
+	}
+	variable { env envVAR1 array 2 VAR [2, 5]
+		range
+		assign {
+			case {True} result { (min, 5, (max, 2, (min, (index, blVAR0, 0), 72)))}
+			case {False} result { (min, 5, (max, 2, (min, (count, (equal, False, True), (and, False, True), (equivalent, False, True), (or, False, True)), (max, (max, -6, 50), (count, (greater_than_or_equal, -55, (index, blVAR0, 1)), (equal, False, False), (or, True, False), (greater_than, (index, blVAR0, 1), (index, blVAR0, 1)))))))}
+			result {(min, 5, (max, 2, (min, (min, (index, blVAR0, 0), -89), -50)))}
+		}
+	}
+	variable { local localVAR2 array 2 VAR BOOLEAN
+		range
+		assign {
+			case {True} result { (greater_than_or_equal, (min, (negative, (index, blVAR0, 0)), (index, blVAR0, 0)), (index, blVAR0, 0))}
+			case {(xor, False, False)} result { True}
+			result {(not_equal, True, True)}
+		}
+	}
+	variable { local localVAR3 VAR BOOLEAN
+		assign {
+			case {(less_than_or_equal, 9, (index, blVAR0, 0))} result { (or, (less_than, 28, (negative, (index, blVAR0, 1))), (implies, False, True))}
+			result {False}
+		}
+	}
+	variable { local localDEFINE4 array 2 DEFINE INT
+		per_index
+		assign {
+			case {(equal, (not_equal, (index, blVAR0, 1), (index, blVAR0, 1)), (or, (greater_than, -32, (index, blVAR0, 1)), False))} result { (min, 5, (max, 2, (index, blVAR0, 1)))}
+			result {(min, 5, (max, 2, (subtraction, 8, (index, blVAR0, 0))))}
+		}
+		assign {
+			case {(less_than, (index, blVAR0, 1), (addition, (index, blVAR0, 1), (index, blVAR0, 0)))} result { (min, 5, (max, 2, (subtraction, 50, (index, blVAR0, 0))))}
+			case {(greater_than, (index, blVAR0, 0), (abs, (index, blVAR0, 1)))} result { (min, 5, (max, 2, (addition, (index, blVAR0, 0), (index, blVAR0, 0))))}
+			result {(min, 5, (max, 2, (index, blVAR0, 0)))}
+		}
+	}
+	variable { bl blDEFINE5 DEFINE INT
+		assign {
+			case {False} result { (min, 5, (max, 2, (min, -78, -20)))}
+			case {(equal, True, (or, False, False))} result { (min, 5, (max, 2, (addition, (count, (greater_than, (index, blVAR0, 1), -8), (xor, False, True), (or, True, True), (xnor, False, True)), (addition, (index, blVAR0, 1), (index, blVAR0, 0)))))}
+			result {(min, 5, (max, 2, (max, 81, (index, blVAR0, 0))))}
+		}
+	}
+	variable { local localDEFINE6 DEFINE BOOLEAN
+		assign {
+			case {True} result { (xor, True, True)}
+			case {(and, True, False)} result { False}
+			result {False}
+		}
+	}
+}
+environment_update {
+	variable_statement{ envVAR1
+		per_index
+		index_of { (min, 1, (max, 0, (max, blDEFINE5, (index, envVAR1, 0))))}
+		assign {
+			case {(not_equal, (index, envVAR1, 1), (abs, 95))} result { (min, 5, (max, 2, (index, envVAR1, 0)))}
+			case {(greater_than_or_equal, (index, envVAR1, 0), -68)} result { (min, 5, (max, 2, (subtraction, (index, blVAR0, 0), (index, blVAR0, 1))))}
+			result {(min, 5, (max, 2, (negative, 41)))}
+		}
+		index_of { (min, 1, (max, 0, -14))}
+		assign {
+			case {True} result { (min, 5, (max, 2, (count, (less_than_or_equal, (addition, blDEFINE5, -47, -100, blDEFINE5), 4), (implies, (implies, True, False), (or, True, False)), (not_equal, (max, (index, envVAR1, 0), (index, blVAR0, 1)), 90), (not_equal, (abs, -58), (addition, 99, -64, (index, blVAR0, 0), 79)))))}
+			case {(greater_than, (index, envVAR1, 1), 26)} result { (min, 5, (max, 2, (multiplication, (index, envVAR1, 1), -14, -4, (index, envVAR1, 0))))}
+			result {(min, 5, (max, 2, (index, blVAR0, 0)))}
+		}
+	}
+	variable_statement{ envVAR1
+		per_index
+		index_of { (min, 1, (max, 0, 81))}
+		assign {
+			result {(min, 5, (max, 2, (max, blDEFINE5, (index, envVAR1, 0))))}
+		}
+	}
+}
+checks{
+	check {
+		c1
+		arguments{}
+		read_variables {blVAR0, blDEFINE5}
+		condition{(greater_than_or_equal, (index, blVAR0, 0), (multiplication, (index, blVAR0, 0), 77, (index, blVAR0, 0)))}
+	}
+	check {
+		c2
+		arguments{}
+		read_variables {blVAR0, blDEFINE5}
+		condition{(greater_than, -54, blDEFINE5)}
+	}
+}
+environment_checks {}
+actions{
+	action {
+		a1
+		arguments{}
+		local_variables {localVAR3, localDEFINE4}
+		read_variables { }
+		write_variables {blVAR0, blDEFINE5}
+		initial_values {
+			variable_statement{ localVAR3
+			assign {
+				case {False} result { (equivalent, (less_than, (count, (less_than_or_equal, (index, blVAR0, 0), -83), (greater_than, -94, -94), (xnor, False, False), (and, False, False)), (max, -84, blDEFINE5)), (or, True, True))}
+				case {(equal, (addition, 3, (negative, 38)), (count, (equal, True, False), (xor, True, True), (equivalent, True, True)))} result { (and, False, False)}
+				result {(xor, (implies, False, (equal, blDEFINE5, (index, blVAR0, 0))), (less_than, blDEFINE5, -34))}
+			}
+			}
+
+		}
+		update {
+			return_statement {
+				case { (equal, (less_than_or_equal, -62, (index, localDEFINE4, 1)), (or, False, True))} result { success}
+				case { (greater_than, -78, blDEFINE5)} result { success}
+				case { False} result { running}
+				result {success}
+			}
+			write_environment {
+				a1_write_after_1
+				variable_statement{ envVAR1
+					per_index
+					index_of { (min, 1, (max, 0, (index, envVAR1, 0)))}
+					assign {
+						result {(min, 5, (max, 2, (abs, 77)))}
+					}
+					index_of { (min, 1, (max, 0, (min, 19, blDEFINE5)))}
+					assign {
+						result {(min, 5, (max, 2, (min, -60, (index, envVAR1, 1))))}
+					}
+				}
+				variable_statement{ envVAR1
+					per_index
+					index_of { (min, 1, (max, 0, 85))}
+					assign {
+						result {(min, 5, (max, 2, (min, blDEFINE5, (addition, -81, 85))))}
+					}
+					index_of { (min, 1, (max, 0, 15))}
+					assign {
+						result {(min, 5, (max, 2, (negative, 50)))}
+					}
+				}
+				variable_statement{ instant envVAR1
+					per_index
+					index_of { (min, 1, (max, 0, blDEFINE5))}
+					assign {
+						case {(equal, (less_than_or_equal, 84, blDEFINE5), False)} result { (min, 5, (max, 2, (negative, 71)))}
+						case {(and, False, True)} result { (min, 5, (max, 2, (negative, (subtraction, (index, blVAR0, 0), (index, envVAR1, 0)))))}
+						result {(min, 5, (max, 2, (index, envVAR1, 1)))}
+					}
+					index_of { (min, 1, (max, 0, (index, localDEFINE4, 1)))}
+					assign {
+						case {(xnor, False, (and, localVAR3, False))} result { (min, 5, (max, 2, (addition, 49, (index, localDEFINE4, 0))))}
+						case {localVAR3} result { (min, 5, (max, 2, (addition, (multiplication, -48, -79, -62, 59), (min, (index, envVAR1, 1), -78))))}
+						result {(min, 5, (max, 2, (index, blVAR0, 1)))}
+					}
+				}
+			}
+			write_environment {
+				a1_write_after_0
+				variable_statement{ instant envVAR1
+					per_index
+					index_of { (min, 1, (max, 0, (negative, (index, blVAR0, 1))))}
+					assign {
+						result {(min, 5, (max, 2, (count, (equivalent, (less_than_or_equal, -92, blDEFINE5), (greater_than, (index, blVAR0, 1), (index, envVAR1, 0))), (greater_than, (min, (index, blVAR0, 1), -26), (addition, 35, (index, localDEFINE4, 0), -82)), (xor, False, (equivalent, localVAR3, True)))))}
+					}
+					index_of { (min, 1, (max, 0, (abs, (index, blVAR0, 0))))}
+					assign {
+						result {(min, 5, (max, 2, 51))}
+					}
+				}
+			}
+		}
+	}
+	action {
+		a2
+		arguments{}
+		local_variables {localDEFINE4}
+		read_variables { }
+		write_variables {blVAR0, blDEFINE5}
+		initial_values {
+			variable_statement{ localDEFINE4
+				per_index
+				assign {
+					case {True} result { (min, 5, (max, 2, 15))}
+					result {(min, 5, (max, 2, 70))}
+				}
+				assign {
+					case {(equal, (multiplication, (index, blVAR0, 1), 37, -76, 86), (index, blVAR0, 1))} result { (min, 5, (max, 2, (count, (equivalent, (or, True, True), True), (greater_than_or_equal, (negative, (index, blVAR0, 0)), (subtraction, 96, -91)), (equivalent, (less_than_or_equal, -30, (index, blVAR0, 1)), (implies, False, True)))))}
+					result {(min, 5, (max, 2, (subtraction, 17, (multiplication, (multiplication, (index, blVAR0, 0), (index, blVAR0, 0)), 27))))}
+				}
+			}
+
+		}
+		update {
+			read_environment {
+				a2_read_before_0
+				condition {(greater_than, (subtraction, (index, blVAR0, 0), blDEFINE5), (addition, blDEFINE5, -68, (index, localDEFINE4, 0)))}
+				variable_statement{ blVAR0
+					per_index
+					index_of { (min, 1, (max, 0, -71))}
+					assign {
+						result {(min, -2, (max, -5, (subtraction, 63, 11)))}
+					}
+				}
+			}
+			return_statement {
+				result {running}
+			}
+			read_environment {
+				a2_read_after_0
+				condition {False}
+				variable_statement{ blVAR0
+					per_index
+					index_of { (min, 1, (max, 0, (min, (abs, (index, localDEFINE4, 0)), (index, blVAR0, 0))))}
+					assign {
+						case {(greater_than, (negative, 80), (addition, blDEFINE5, -96))} result { (min, -2, (max, -5, (multiplication, (index, localDEFINE4, 1), (index, localDEFINE4, 0), (index, localDEFINE4, 1), -86)))}
+						result {(min, -2, (max, -5, (subtraction, (subtraction, 34, -70), 25)))}
+					}
+					index_of { (min, 1, (max, 0, -30))}
+					assign {
+						case {(equal, False, (implies, False, False))} result { (min, -2, (max, -5, (multiplication, (index, blVAR0, 0), 3, (multiplication, (count, (equivalent, False, False), (or, True, True), (less_than_or_equal, (index, localDEFINE4, 0), blDEFINE5), (and, True, False)), (subtraction, (index, localDEFINE4, 0), 89), -61), (index, blVAR0, 1))))}
+						result {(min, -2, (max, -5, (index, blVAR0, 1)))}
+					}
+				}
+				variable_statement{ blVAR0
+					per_index
+					index_of { (min, 1, (max, 0, (abs, (index, blVAR0, 0))))}
+					assign {
+						case {True} result { (min, -2, (max, -5, (index, blVAR0, 1)))}
+						case {(equivalent, False, True)} result { (min, -2, (max, -5, (min, (negative, -26), (negative, (index, envVAR1, 1)))))}
+						result {(min, -2, (max, -5, (subtraction, (index, blVAR0, 0), -8)))}
+					}
+				}
+			}
+		}
+	}
+	action {
+		a3
+		arguments{}
+		local_variables {localVAR2, localDEFINE4}
+		read_variables { }
+		write_variables {blVAR0, blDEFINE5}
+		initial_values {
+			variable_statement{ localVAR2
+				per_index
+				assign {
+					case {(implies, False, False)} result { (greater_than, blDEFINE5, (index, blVAR0, 0))}
+					case {(implies, (equivalent, False, False), (or, False, True))} result { False}
+					result {(xnor, (greater_than, -76, 69), (not_equal, False, True))}
+				}
+				assign {
+					case {(and, False, True)} result { (xor, False, True)}
+					case {(and, (greater_than, blDEFINE5, 78), True)} result { True}
+					result {(not_equal, (and, True, False), False)}
+				}
+			}
+
+		}
+		update {
+			variable_statement{ localVAR2
+				per_index
+				index_of { (min, 1, (max, 0, (index, localDEFINE4, 1)))}
+				assign {
+					case {(equal, blDEFINE5, 15)} result { (not_equal, (subtraction, (index, blVAR0, 1), 67), (subtraction, 18, -4))}
+					result {(less_than, 99, (min, (index, blVAR0, 1), -29))}
+				}
+			}
+			return_statement {
+				case { (less_than, blDEFINE5, blDEFINE5)} result { failure}
+				result {running}
+			}
+			write_environment {
+				a3_write_after_1
+				variable_statement{ instant envVAR1
+					per_index
+					index_of { (min, 1, (max, 0, (min, -22, (index, blVAR0, 0))))}
+					assign {
+						case {False} result { (min, 5, (max, 2, (abs, (abs, (multiplication, -74, -52, (index, localDEFINE4, 0))))))}
+						case {(index, localVAR2, 0)} result { (min, 5, (max, 2, (negative, (index, localDEFINE4, 1))))}
+						result {(min, 5, (max, 2, (index, envVAR1, 1)))}
+					}
+					index_of { (min, 1, (max, 0, (min, (min, -6, -24), (min, 18, (index, blVAR0, 0)))))}
+					assign {
+						case {(index, localVAR2, 0)} result { (min, 5, (max, 2, (min, (index, localDEFINE4, 0), -56)))}
+						case {True} result { (min, 5, (max, 2, (multiplication, (multiplication, (multiplication, (index, blVAR0, 1), (index, localDEFINE4, 0)), (index, localDEFINE4, 1)), (multiplication, (negative, (index, localDEFINE4, 1)), (min, -28, 56), (count, (less_than, 41, (index, envVAR1, 1)), (less_than, -85, -51)), (index, localDEFINE4, 1)))))}
+						result {(min, 5, (max, 2, (subtraction, 8, -18)))}
+					}
+				}
+				variable_statement{ envVAR1
+					per_index
+					index_of { (min, 1, (max, 0, (addition, (min, -75, -65), (count, (equivalent, (index, localVAR2, 0), False), (implies, (index, localVAR2, 0), False), (equal, True, False), (less_than, (index, localDEFINE4, 0), 51)))))}
+					assign {
+						case {(equivalent, (index, localVAR2, 1), (equal, (index, localDEFINE4, 1), blDEFINE5))} result { (min, 5, (max, 2, (count, (not_equal, (xor, True, True), True), (less_than_or_equal, (index, localDEFINE4, 0), -57), (less_than, (subtraction, -9, (index, blVAR0, 0)), (index, localDEFINE4, 0)), (greater_than, -62, -94))))}
+						result {(min, 5, (max, 2, (addition, (abs, 72), (addition, 31, (index, blVAR0, 0)), (multiplication, (index, localDEFINE4, 0), (index, envVAR1, 1)), (index, envVAR1, 0))))}
+					}
+				}
+			}
+			write_environment {
+				a3_write_after_0
+				variable_statement{ instant envVAR1
+					per_index
+					index_of { (min, 1, (max, 0, -69))}
+					assign {
+						result {(min, 5, (max, 2, -19))}
+					}
+				}
+			}
+		}
+	}
+	action {
+		a4
+		arguments{}
+		local_variables {localVAR2}
+		read_variables { }
+		write_variables {blVAR0, blDEFINE5}
+		initial_values {
+			variable_statement{ localVAR2
+				per_index
+				assign {
+					case {(or, True, False)} result { (greater_than, (max, -63, blDEFINE5), (negative, (max, -55, (index, blVAR0, 1))))}
+					result {False}
+				}
+				assign {
+					case {False} result { (xor, (less_than, (index, blVAR0, 0), blDEFINE5), (xor, False, False))}
+					result {(or, (implies, True, False), (equivalent, False, False))}
+				}
+			}
+
+		}
+		update {
+			return_statement {
+				case { (equivalent, (equivalent, (index, localVAR2, 1), (index, localVAR2, 0)), (index, localVAR2, 0))} result { success}
+				case { (xnor, (index, localVAR2, 1), (greater_than, (index, blVAR0, 1), (index, blVAR0, 0)))} result { running}
+				case { (or, (index, localVAR2, 1), True)} result { failure}
+				result {failure}
+			}
+		}
+	}
+}
+sub_trees{}
+tree {
+	a3{}
+}
+tick_prerequisite{True}
+specifications { #{ INVAR, LTL, and CTL specs go here }# } end_specifications

@@ -1,0 +1,210 @@
+------------------------
+State after tick: 1
+dec_sf0 -> FAILURE
+  a2 -> FAILURE
+
+blackboard
+  blVAR0: 2
+  blVAR3: 5
+  blDEFINE7: [True, True, True]
+
+local
+  a2_DOT_localVAR4 : False
+  a2_DOT_localDEFINE8 : 2
+  a2_DOT_localDEFINE10 : True
+
+environment
+  envVAR1: True
+  envVAR2: yes
+  envFROZENVAR5: 2
+  envFROZENVAR6: [True, False]
+
+------------------------
+State after tick: 2
+dec_sf0 -> FAILURE
+  a2 -> FAILURE
+
+blackboard
+  blVAR0: 2
+  blVAR3: 5
+  blDEFINE7: [True, True, True]
+
+local
+  a2_DOT_localVAR4 : False
+  a2_DOT_localDEFINE8 : 2
+  a2_DOT_localDEFINE10 : True
+
+environment
+  envVAR1: True
+  envVAR2: yes
+  envFROZENVAR5: 2
+  envFROZENVAR6: [True, False]
+
+------------------------
+State after tick: 3
+dec_sf0 -> FAILURE
+  a2 -> FAILURE
+
+blackboard
+  blVAR0: 2
+  blVAR3: 5
+  blDEFINE7: [True, True, True]
+
+local
+  a2_DOT_localVAR4 : False
+  a2_DOT_localDEFINE8 : 2
+  a2_DOT_localDEFINE10 : True
+
+environment
+  envVAR1: True
+  envVAR2: yes
+  envFROZENVAR5: 2
+  envFROZENVAR6: [True, False]
+
+------------------------
+State after tick: 4
+dec_sf0 -> FAILURE
+  a2 -> FAILURE
+
+blackboard
+  blVAR0: 2
+  blVAR3: 5
+  blDEFINE7: [True, True, True]
+
+local
+  a2_DOT_localVAR4 : False
+  a2_DOT_localDEFINE8 : 2
+  a2_DOT_localDEFINE10 : True
+
+environment
+  envVAR1: True
+  envVAR2: yes
+  envFROZENVAR5: 2
+  envFROZENVAR6: [True, False]
+
+------------------------
+State after tick: 5
+dec_sf0 -> FAILURE
+  a2 -> FAILURE
+
+blackboard
+  blVAR0: 2
+  blVAR3: 5
+  blDEFINE7: [True, True, True]
+
+local
+  a2_DOT_localVAR4 : False
+  a2_DOT_localDEFINE8 : 2
+  a2_DOT_localDEFINE10 : True
+
+environment
+  envVAR1: True
+  envVAR2: yes
+  envFROZENVAR5: 2
+  envFROZENVAR6: [True, False]
+
+------------------------
+State after tick: 6
+dec_sf0 -> FAILURE
+  a2 -> FAILURE
+
+blackboard
+  blVAR0: 2
+  blVAR3: 5
+  blDEFINE7: [True, True, True]
+
+local
+  a2_DOT_localVAR4 : False
+  a2_DOT_localDEFINE8 : 2
+  a2_DOT_localDEFINE10 : True
+
+environment
+  envVAR1: True
+  envVAR2: yes
+  envFROZENVAR5: 2
+  envFROZENVAR6: [True, False]
+
+------------------------
+State after tick: 7
+dec_sf0 -> FAILURE
+  a2 -> FAILURE
+
+blackboard
+  blVAR0: 2
+  blVAR3: 5
+  blDEFINE7: [True, True, True]
+
+local
+  a2_DOT_localVAR4 : False
+  a2_DOT_localDEFINE8 : 2
+  a2_DOT_localDEFINE10 : True
+
+environment
+  envVAR1: True
+  envVAR2: yes
+  envFROZENVAR5: 2
+  envFROZENVAR6: [True, False]
+
+------------------------
+State after tick: 8
+dec_sf0 -> FAILURE
+  a2 -> FAILURE
+
+blackboard
+  blVAR0: 2
+  blVAR3: 5
+  blDEFINE7: [True, True, True]
+
+local
+  a2_DOT_localVAR4 : False
+  a2_DOT_localDEFINE8 : 2
+  a2_DOT_localDEFINE10 : True
+
+environment
+  envVAR1: True
+  envVAR2: yes
+  envFROZENVAR5: 2
+  envFROZENVAR6: [True, False]
+
+------------------------
+State after tick: 9
+dec_sf0 -> FAILURE
+  a2 -> FAILURE
+
+blackboard
+  blVAR0: 2
+  blVAR3: 5
+  blDEFINE7: [True, True, True]
+
+local
+  a2_DOT_localVAR4 : False
+  a2_DOT_localDEFINE8 : 2
+  a2_DOT_localDEFINE10 : True
+
+environment
+  envVAR1: True
+  envVAR2: yes
+  envFROZENVAR5: 2
+  envFROZENVAR6: [True, False]
+
+------------------------
+State after tick: 10
+dec_sf0 -> FAILURE
+  a2 -> FAILURE
+
+blackboard
+  blVAR0: 2
+  blVAR3: 5
+  blDEFINE7: [True, True, True]
+
+local
+  a2_DOT_localVAR4 : False
+  a2_DOT_localDEFINE8 : 2
+  a2_DOT_localDEFINE10 : True
+
+environment
+  envVAR1: True
+  envVAR2: yes
+  envFROZENVAR5: 2
+  envFROZENVAR6: [True, False]
+

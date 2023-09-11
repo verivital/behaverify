@@ -1,0 +1,175 @@
+MODULE main
+    VAR
+        system : system_module;
+--------------SPECIFICATIONS
+
+
+
+--------------END OF SPECIFICATIONS
+
+MODULE system_module
+    CONSTANTS
+        success, failure, running, invalid, both, no, yes;
+    DEFINE
+        resume_from_here_in_subtree__p_one0 := -3;
+        resume_from_here_in_subtree__c1 := -3;
+        resume_from_here_in_subtree__dec_sf1 := -3;
+        p_one0.active := TRUE;
+        --START OF BLACKBOARD DEFINITIONS
+        envVAR1_stage_1 := 
+            case
+                !(p_one0.active) : envVAR1_stage_0;
+                (FALSE | ((case 0 = 0 : blDEFINE5_stage_0_index_0; 1 = 0 : blDEFINE5_stage_0_index_1; esac) < (case 0 = 0 : blDEFINE5_stage_0_index_0; 1 = 0 : blDEFINE5_stage_0_index_1; esac))) : min(5, max(2, (case 0 = 1 : blDEFINE5_stage_0_index_0; 1 = 1 : blDEFINE5_stage_0_index_1; esac)));
+                TRUE : min(5, max(2, count((FALSE xor TRUE), (TRUE | FALSE), (FALSE != FALSE), (TRUE & FALSE))));
+            esac;
+        envVAR1_stage_2 := 
+            case
+                !(p_one0.active) : envVAR1_stage_1;
+                FALSE : min(5, max(2, (-45 * -66 * -14)));
+                TRUE : min(5, max(2, max(min(50, count((7 > 37), (FALSE xnor TRUE), (FALSE xor TRUE))), (case 0 = 0 : blDEFINE5_stage_0_index_0; 1 = 0 : blDEFINE5_stage_0_index_1; esac))));
+            esac;
+        envVAR1_stage_3 := 
+            case
+                !(p_one0.active) : envVAR1_stage_2;
+                (TRUE -> TRUE) : min(5, max(2, ((case 0 = 0 : blDEFINE5_stage_0_index_0; 1 = 0 : blDEFINE5_stage_0_index_1; esac) + ((41 + -36) + (case 0 = 0 : blDEFINE5_stage_0_index_0; 1 = 0 : blDEFINE5_stage_0_index_1; esac) + (case 0 = 0 : blDEFINE5_stage_0_index_0; 1 = 0 : blDEFINE5_stage_0_index_1; esac) + -(envVAR1_stage_2)) + (count((-10 >= envVAR1_stage_2), (envVAR1_stage_2 < envVAR1_stage_2), (FALSE -> FALSE)) + (case 0 = 1 : blDEFINE5_stage_0_index_0; 1 = 1 : blDEFINE5_stage_0_index_1; esac)) + 18)));
+                TRUE : min(5, max(2, (54 * (case 0 = 1 : blDEFINE5_stage_0_index_0; 1 = 1 : blDEFINE5_stage_0_index_1; esac))));
+            esac;
+        envVAR1_stage_4 := 
+            case
+                !(p_one0.active) : envVAR1_stage_3;
+                TRUE : min(5, max(2, min(66, 31)));
+                (-81 <= (case 0 = 1 : blDEFINE5_stage_0_index_0; 1 = 1 : blDEFINE5_stage_0_index_1; esac)) : min(5, max(2, min(envVAR1_stage_3, (case 0 = 0 : blDEFINE5_stage_0_index_0; 1 = 0 : blDEFINE5_stage_0_index_1; esac))));
+                TRUE : min(5, max(2, envVAR1_stage_3));
+            esac;
+        envVAR1_stage_5 := 
+            case
+                !(p_one0.active) : envVAR1_stage_4;
+                TRUE : min(5, max(2, -(((case 0 = 1 : blDEFINE5_stage_0_index_0; 1 = 1 : blDEFINE5_stage_0_index_1; esac) * 86 * 53))));
+            esac;
+        blDEFINE5_stage_0_index_0 :=
+            case
+                (-73 != (4 - 31)) : min(5, max(2, abs((5 + 2 + 28 + -18))));
+                FALSE : min(5, max(2, (-2 * 73)));
+                TRUE : min(5, max(2, count(((TRUE xnor TRUE) & (-2 < 2)), (FALSE | TRUE))));
+            esac;
+        blDEFINE5_stage_0_index_1 :=
+            case
+                TRUE : min(5, max(2, ((-6 - 85) * min(5, 3))));
+            esac;
+        --END OF BLACKBOARD DEFINITIONS
+    FROZENVAR
+        --START OF BLACKBOARD FROZENVAR
+        blVAR0_stage_0_index_0 : {yes, no, both};
+        blVAR0_stage_0_index_1 : {yes, no, both};
+        blVAR0_stage_0_index_2 : {yes, no, both};
+        blVAR3_stage_0 : {yes, no, both};
+        a3_DOT_localVAR2_stage_0_index_0 : 2..5;
+        a3_DOT_localVAR2_stage_0_index_1 : 2..5;
+        a3_DOT_localVAR2_stage_0_index_2 : 2..5;
+        --END OF BLACKBOARD FROZENVAR
+    VAR
+        node_names : define_nodes;
+        c1 : c1_module(blDEFINE5_stage_0_index_0, blDEFINE5_stage_0_index_1);
+        a3 : a3_module();
+        dec_sf1 : decorator_X_is_Y(a3, success, failure);
+        p_one0 : composite_parallel_success_on_one_without_memory_2(c1, dec_sf1);
+        --START OF BLACKBOARD VARIABLES DECLARATION
+        envVAR1_stage_0 : 2..5;
+        --END OF BLACKBOARD VARIABLES DECLARATION
+    ASSIGN
+        --START OF BLACKBOARD VARIABLES INITIALIZATION
+        init(blVAR0_stage_0_index_0) := 
+            case
+                (FALSE <-> (TRUE -> TRUE)) : both;
+                TRUE : yes;
+            esac;
+        init(blVAR0_stage_0_index_1) := 
+            case
+                ((2 >= 87) & TRUE) : both;
+                TRUE : both;
+            esac;
+        init(blVAR0_stage_0_index_2) := 
+            case
+                TRUE : yes;
+                TRUE : yes;
+            esac;
+        init(envVAR1_stage_0) := 
+            case
+                TRUE : min(5, max(2, count(((5 > 5) -> FALSE), (4 <= -(-87)), ((max(-34, -87) - max(-3, -84)) < (-4 + -2 + -5 + 3)), (TRUE xor (94 < abs(-2))))));
+                TRUE : min(5, max(2, -(-3)));
+            esac;
+        init(blVAR3_stage_0) := 
+            case
+                ((-4 + min(2, -5) + -3 + (38 + -98 + 4)) <= -5) : (case 0 = 1 : blVAR0_stage_0_index_0; 1 = 1 : blVAR0_stage_0_index_1; 2 = 1 : blVAR0_stage_0_index_2; esac);
+                TRUE : (case 0 = 2 : blVAR0_stage_0_index_0; 1 = 2 : blVAR0_stage_0_index_1; 2 = 2 : blVAR0_stage_0_index_2; esac);
+            esac;
+        init(a3_DOT_localVAR2_stage_0_index_0) := 
+            case
+                TRUE : min(5, max(2, -(abs((case 0 = 1 : blDEFINE5_stage_0_index_0; 1 = 1 : blDEFINE5_stage_0_index_1; esac)))));
+            esac;
+        init(a3_DOT_localVAR2_stage_0_index_1) := 
+            case
+                TRUE : min(5, max(2, (29 - ((8 * (case 0 = 0 : blDEFINE5_stage_0_index_0; 1 = 0 : blDEFINE5_stage_0_index_1; esac) * -63 * (case 0 = 0 : blDEFINE5_stage_0_index_0; 1 = 0 : blDEFINE5_stage_0_index_1; esac)) + min(-36, (case 0 = 0 : blDEFINE5_stage_0_index_0; 1 = 0 : blDEFINE5_stage_0_index_1; esac)) + ((case 0 = 1 : blDEFINE5_stage_0_index_0; 1 = 1 : blDEFINE5_stage_0_index_1; esac) - (case 0 = 1 : blDEFINE5_stage_0_index_0; 1 = 1 : blDEFINE5_stage_0_index_1; esac))))));
+            esac;
+        init(a3_DOT_localVAR2_stage_0_index_2) := 
+            case
+                TRUE : min(5, max(2, abs((-65 - (case 0 = 1 : blDEFINE5_stage_0_index_0; 1 = 1 : blDEFINE5_stage_0_index_1; esac)))));
+            esac;
+        --END OF BLACKBOARD VARIABLES INITIALIZATION
+        --START OF BLACKBOARD VARIABLES TRANSITION
+        next(envVAR1_stage_0) := envVAR1_stage_5;
+        --END OF BLACKBOARD VARIABLES TRANSITION
+
+MODULE define_nodes
+    DEFINE
+        p_one0 := 0;
+        c1 := 1;
+        dec_sf1 := 2;
+        a3 := 3;
+MODULE decorator_X_is_Y(child_0, incoming_status, outgoing_status)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                child_0.internal_status = incoming_status : outgoing_status;
+                TRUE : child_0.internal_status;
+            esac;
+        child_0.active :=
+            case
+                !(active) : FALSE;
+                TRUE : TRUE;
+            esac;
+MODULE composite_parallel_success_on_one_without_memory_2(child_0, child_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                (child_0.internal_status = failure) : failure;
+                (child_1.internal_status = failure) : failure;
+                !(child_0.internal_status = running) : child_0.internal_status;
+                !(child_1.internal_status = running) : child_1.internal_status;
+                TRUE : running;
+            esac;
+        child_0.active := active;
+        child_1.active := active;
+MODULE c1_module(blDEFINE5_stage_0_index_0, blDEFINE5_stage_0_index_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := ((-95 < ((case 0 = 0 : blDEFINE5_stage_0_index_0; 1 = 0 : blDEFINE5_stage_0_index_1; esac) - (case 0 = 1 : blDEFINE5_stage_0_index_0; 1 = 1 : blDEFINE5_stage_0_index_1; esac)))) ? success : failure;
+MODULE a3_module()
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := 
+            case
+                (FALSE xor FALSE) : success;
+                TRUE : running;
+                TRUE : failure;
+            esac;

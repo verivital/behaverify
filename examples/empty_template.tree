@@ -1,113 +1,122 @@
+configuration {
+    #{ Here you specify various configuration options, such as Hypersafety }#
+}
+enumerations {
+    #{ here you specify the enumerations used in the model}#
+}
 constants {
-	#comment# constants are used to synchronize values in a .tree file. #end_comment#
-	#comment# example = 0 #end_comment#
-	#comment# to use example elsewhere, simply type 'example' in place of any integer (quotes included) #end_comment#
+    #{ constants are used to synchronize values in a .tree file. }#
+    #{ example := 0 }#
+    #{ to use example elsewhere, simply type 'example' in place of any integer (quotes included) }#
 } end_constants
 
 variables {
-	#comment# Variable declarations go here.
+    #{ Variable declarations go here.
 	it is suggested, but not required, that the order of declaration be
 	Blackboard, Local, Environment.
 	If variable B depends on variable A, then variable A MUST be declared before B.
-	#end_comment#
-	#comment#
+    }#
+    #{
 	variable {
-		bl
-		x
-		VAR
-		[0, 10]
-		assign { result { 0 } end_result } end_assign
+	    bl
+	    x
+	    VAR
+	    [0, 10]
+	    assign { result { 0 } end_result } end_assign
 	} end_variable
-	#end_comment#
-	#comment#
+    }#
+    #{
 	variable {
-		local
-		y
-		VAR
-		{'potato', 'tomato', 'bawk'}
-		assign { result { 'bawk' } end_result } end_assign
+	    local
+	    y
+	    VAR
+	    {'potato', 'tomato', 'bawk'}
+	    assign { result { 'bawk' } end_result } end_assign
 	} end_variable
-	#end_comment#
-	#comment#
+    }#
+    #{
 	variable {
-		env
-		z
-		VAR
-		BOOLEAN
-		assign { case { (equal, 1, 0) } end_case result { False} end_result result { (equal, bl x, 0) } end_result } end_assign
+	    env
+	    z
+	    VAR
+	    BOOLEAN
+	    assign { case { (equal, 1, 0) } end_case result { False} end_result result { (equal, bl x, 0) } end_result } end_assign
 	} end_variable
-	#end_comment#
+    }#
 } end_variables
 
 environment_update {
-	#comment# update values for environment #end_comment#
-	#comment#
+    #{ update values for environment }#
+    #{
 	variable_statement {
-		z
-		assign {
-			case { (less_than, x, 5) } end_case result { True, False} end_result
-			case { (greater_than, x, 5) } end_case result { (equal, 0, (mod, x, 2)) } end_result
-			result { env z } end_result
-		} end_assign
+	    z
+	    assign {
+		case { (less_than, x, 5) } end_case result { True, False} end_result
+		case { (greater_than, x, 5) } end_case result { (equal, 0, (mod, x, 2)) } end_result
+		result { env z } end_result
+	    } end_assign
 	} end_variable_statement
-	#end_comment#
+    }#
 } end_environment_update
 
 checks {
-	#comment# check nodes are defined here #end_comment#
-	#comment#
+    #{ check nodes are defined here }#
+    #{
 	check {
-		x_idk
-		read_variables { x } end_read_variables
-		condition { (and, (less_than, (addition, x, 1), 4), True) } end_condition
+	    x_idk
+	    arguments{}
+	    read_variables { x } end_read_variables
+	    condition { (and, (less_than, (addition, x, 1), 4), True) } end_condition
 	} end_check
-	#end_comment#
+    }#
 } end_checks
 
 environment_checks {
-	#comment# check environment nodes are defined here #end_comment#
-	#comment#
+    #{ check environment nodes are defined here }#
+    #{
 	environment_check {
-		z_idk
-		read_variables {} end_read_variables
-		condition { z } end_condition
+	    z_idk
+	    arguments{}
+	    read_variables {} end_read_variables
+	    condition { z } end_condition
 	} end_environment_check
-	#end_comment#
+    }#
 } end_environment_checks
 
 actions {
-	#comment# action nodes are defined here #end_comment#
-	#comment#
+    #{ action nodes are defined here }#
+    #{
 	action {
-		y_do
-		local_variables { y } end_local_variables
-		read_variables { } end_read_variables
-		write_variables { x } end_write_variables
-		initial_values {} end_initial_values
-		update {
-			variable_statement {
-				x
-				result { (max, 'example', (subtraction, x, 1)) } end_result
-			} end_variable_statement
-			return_statement {
-				result { success} end_result
-			} end_return_statement
-		} end_update
+	    y_do
+	    arguments{}
+	    local_variables { y } end_local_variables
+	    read_variables { } end_read_variables
+	    write_variables { x } end_write_variables
+	    initial_values {} end_initial_values
+	    update {
+		variable_statement {
+		    x
+		    result { (max, 'example', (subtraction, x, 1)) } end_result
+		} end_variable_statement
+		return_statement {
+		    result { success} end_result
+		} end_return_statement
+	    } end_update
 	} end_action
-	#end_comment#
+    }#
 } end_actions
 
-sub_trees {#comment# subtrees go here. #end_comment#} end_sub_trees
+sub_trees {#{ subtrees go here. }#} end_sub_trees
 
 tree {
-	#comment# the tree is defined here#end_comment#
+    #{ the tree is defined here}#
 } end_tree
 
 
-#comment# this section is optional. you may remove it #end_comment#
-#comment#
-tick_prerequisite { #comment# if the condition is True, the tree ticks.
-If it is false, everything is done #end_comment# } end_tick_prerequisite
-#end_comment#
 
-specifications { #comment# INVAR, LTL, and CTL specs go here #end_comment# } end_specifications
+
+tick_prerequisite { (True) } end_tick_prerequisite
+#{ if the condition is True, the tree ticks.
+    If it is false, everything is done }#
+
+specifications { #{ INVAR, LTL, and CTL specs go here }# } end_specifications
