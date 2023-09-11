@@ -11,7 +11,7 @@ executeFromSeeds seed1 seed2 maxIteration = eachBoardEnv
   where
     initBoard = initialBlackboard seed1
     initEnv = initialEnvironment seed2 initBoard
-    treeRoot = bTreeNodeSeq0
+    treeRoot = bTreeNodeC1
     executionChain :: Integer -> TrueMemoryStorage -> PartialMemoryStorage -> BTreeBlackboard -> BTreeEnvironment -> [(BTreeBlackboard, BTreeEnvironment)]
     executionChain count memory partial blackboard environment
       | count >= maxIteration = [(blackboard, environment)]

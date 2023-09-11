@@ -12,10 +12,29 @@ import random
 def create_blackboard():
     blackboard_reader = py_trees.blackboard.Client()
     blackboard_reader.register_key(key = 'blVAR0', access = py_trees.common.Access.WRITE)
+    blackboard_reader.register_key(key = 'blVAR2', access = py_trees.common.Access.WRITE)
+    blackboard_reader.register_key(key = 'blDEFINE4', access = py_trees.common.Access.WRITE)
     blackboard_reader.blVAR0 = [None] * 2
-    __temp_var__ = serene_safe_assignment.blVAR0([(0, min(5, max(2, (-3 + 3 + -72 + 58)))), (1, min(5, max(2, (-3 + 3 + -72 + 58))))])
+    __temp_var__ = serene_safe_assignment.blVAR0([(0, min(5, max(2, min(100, max(-100, (min(100, max(-100, -(-12))) * min(100, max(-100, -(min(100, max(-100, -(2)))))) * -3 * min(100, max(-100, abs(4))))))))), (1, min(5, max(2, min(100, max(-100, (min(100, max(-100, -(-12))) * min(100, max(-100, -(min(100, max(-100, -(2)))))) * -3 * min(100, max(-100, abs(4)))))))))])
     for (index, val) in __temp_var__:
         blackboard_reader.blVAR0[index] = val
+    blackboard_reader.blVAR2 = serene_safe_assignment.blVAR2((
+        min(-2, max(-5, min(100, max(-100, -(min(100, max(-100, (blackboard_reader.blVAR0[1] * min(100, max(-100, max(blackboard_reader.blVAR0[1], blackboard_reader.blVAR0[1]))) * -24 * blackboard_reader.blVAR0[0]))))))))
+        if (blackboard_reader.blVAR0[0] > -29) else
+        (
+        min(-2, max(-5, min(100, max(-100, (blackboard_reader.blVAR0[0] * min(100, max(-100, (blackboard_reader.blVAR0[1] * -86 * -89))) * blackboard_reader.blVAR0[0] * blackboard_reader.blVAR0[1])))))
+    )))
+
+
+    def blDEFINE4():
+        return (
+            min(5, max(2, min(100, max(-100, -(99)))))
+            if True else
+            (
+            min(5, max(2, -36))
+        ))
+
+    blackboard_reader.blDEFINE4 = blDEFINE4
     return blackboard_reader
 
 import typing
@@ -280,7 +299,10 @@ def decorator_better_tick(self) -> typing.Iterator[py_trees.behaviour.Behaviour]
 
 
 def create_tree(environment):
-    a1 = a1_file.a1('a1', environment)
-    dec_fs0 = py_trees.decorators.FailureIsSuccess(name = 'dec_fs0', child = a1)
-    dec_fs0.tick = decorator_better_tick.__get__(dec_fs0, py_trees.decorators.Decorator)
-    return dec_fs0
+    a4 = a4_file.a4('a4', environment)
+    c2 = c2_file.c2('c2')
+    p_one1 = py_trees.composites.Parallel(name = 'p_one1', policy = py_trees.common.ParallelPolicy.SuccessOnOne(), children = [a4, c2])
+    p_one1.tick = parallel_better_tick.__get__(p_one1, py_trees.composites.Parallel)
+    dec_sr0 = py_trees.decorators.SuccessIsRunning(name = 'dec_sr0', child = p_one1)
+    dec_sr0.tick = decorator_better_tick.__get__(dec_sr0, py_trees.decorators.Decorator)
+    return dec_sr0

@@ -877,6 +877,11 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
             )
             + os.linesep
             + os.linesep
+            + "print('------------------------')" + os.linesep
+            + "print('Initial State')" + os.linesep
+            + 'print(print_blackboard())' + os.linesep
+            + 'print(print_local())' + os.linesep
+            + 'print(print_environment())' + os.linesep
             + 'for count in range(' + str(max_iter) + '):' + os.linesep
             + indent(1) + "print('------------------------')" + os.linesep
             + indent(1) + "print('State after tick: ' + str(count + 1))" + os.linesep

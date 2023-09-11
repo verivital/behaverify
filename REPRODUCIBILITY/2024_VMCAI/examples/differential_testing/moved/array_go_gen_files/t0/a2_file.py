@@ -13,32 +13,29 @@ class a2(py_trees.behaviour.Behaviour):
         self.environment = environment
         self.blackboard = self.attach_blackboard_client(name = name)
         self.blackboard.register_key(key = ('blVAR0'), access = py_trees.common.Access.WRITE)
+        self.blackboard.register_key(key = ('blVAR2'), access = py_trees.common.Access.WRITE)
+        self.blackboard.register_key(key = ('blDEFINE4'), access = py_trees.common.Access.WRITE)
 
     def update(self):
-        __temp_var__ = serene_safe_assignment.blVAR0([(min(1, max(0, abs(92))), (
-            min(5, max(2, self.blackboard.blVAR0[1]))
-            if ('both' == 'yes') else
+        self.blackboard.blVAR2 = serene_safe_assignment.blVAR2((
+            min(-2, max(-5, min(100, max(-100, (-42 + min(100, max(-100, -(self.blackboard.blDEFINE4()))) + min(100, max(-100, (-11 + self.blackboard.blVAR0[0]))))))))
+            if (min(100, max(-100, (self.blackboard.blVAR0[1] + self.blackboard.blVAR2 + 87))) <= -28) else
             (
-            min(5, max(2, max(self.blackboard.blVAR0[0], 30)))
-        ))), (min(1, max(0, self.blackboard.blVAR0[1])), (
-            min(5, max(2, -(self.blackboard.blVAR0[1])))
-            if True else
-            (
-            min(5, max(2, -8))
-        )))])
-        for (index, val) in __temp_var__:
-            self.blackboard.blVAR0[index] = val
+                min(-2, max(-5, min(100, max(-100, min(min(100, max(-100, max(-68, 95))), self.blackboard.blDEFINE4())))))
+                if True else
+                (
+                min(-2, max(-5, 35))
+        ))))
         if self.environment.a2_read_before_0__condition(self):
             __temp_var__ = serene_safe_assignment.blVAR0(self.environment.a2_read_before_0__0(self))
             for (index, val) in __temp_var__:
                 self.blackboard.blVAR0[index] = val
-            __temp_var__ = serene_safe_assignment.blVAR0(self.environment.a2_read_before_0__1(self))
-            for (index, val) in __temp_var__:
-                self.blackboard.blVAR0[index] = val
-        return_status = py_trees.common.Status.SUCCESS
+            self.blackboard.blVAR2 = serene_safe_assignment.blVAR2(self.environment.a2_read_before_0__1(self))
+        if True:
+            return_status = py_trees.common.Status.RUNNING
+        elif False:
+            return_status = py_trees.common.Status.SUCCESS
+        else:
+            return_status = py_trees.common.Status.FAILURE
         self.__serene_print__ = return_status.value
-        if self.environment.a2_read_after_0__condition(self):
-            __temp_var__ = serene_safe_assignment.blVAR0(self.environment.a2_read_after_0__0(self))
-            for (index, val) in __temp_var__:
-                self.blackboard.blVAR0[index] = val
         return return_status

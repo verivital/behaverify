@@ -45,7 +45,7 @@ RUN bash -c "source $HOME/.bashrc"
 
 RUN mkdir behaverify && cd behaverify && git init && \
     git remote add -f origin https://github.com/verivital/behaverify && \
-    echo "REPRODUCIBILITY/2023_SEFM/" >> .git/info/sparse-checkout && \
+    echo "REPRODUCIBILITY/2024_VMCAI/" >> .git/info/sparse-checkout && \
     git pull origin main
-RUN chmod -R +x /behaverify/REPRODUCIBILITY/2023_SEFM/*.sh
-#RUN chmod +x /behaverify/REPRODUCIBILITY/2023_SEFM/nuXmv
+RUN chmod -R +x /behaverify/REPRODUCIBILITY/2024_VMCAI/*.sh
+#RUN chmod +x /behaverify/REPRODUCIBILITY/2024_VMCAI/nuXmv

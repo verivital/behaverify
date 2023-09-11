@@ -1,250 +1,196 @@
 ------------------------
-State after tick: 1
-seq0 -> SUCCESS
-  dec_rs1 -> SUCCESS
-    c1 -> SUCCESS
-  dec_rf2 -> SUCCESS
-    sel3 -> SUCCESS
-      a4 -> SUCCESS
-      c1_1 -> INVALID
-      c1_2 -> INVALID
-
+Initial State
 blackboard
-  blVAR0: ['no', 'both']
-  blVAR2: False
-  blVAR3: 5
-  blFROZENVAR5: [-2, -5, -2]
-  blDEFINE8: [3, 2]
+  blVAR0: -2
+  blVAR2: no
+  blVAR3: ['both', 'both']
 
 local
 
 environment
-  envVAR1: [3, 5]
-  envFROZENVAR4: both
-  envDEFINE9: [False, False, False]
+  envVAR1: True
+  envDEFINE5: -5
+  envDEFINE6: no
+  envDEFINE7: 2
+  envDEFINE8: [2, 5]
+
+------------------------
+State after tick: 1
+c1 -> SUCCESS
+
+blackboard
+  blVAR0: -2
+  blVAR2: no
+  blVAR3: ['both', 'both']
+
+local
+
+environment
+  envVAR1: True
+  envDEFINE5: -5
+  envDEFINE6: no
+  envDEFINE7: 2
+  envDEFINE8: [2, 5]
 
 ------------------------
 State after tick: 2
-seq0 -> SUCCESS
-  dec_rs1 -> SUCCESS
-    c1 -> SUCCESS
-  dec_rf2 -> SUCCESS
-    sel3 -> SUCCESS
-      a4 -> SUCCESS
-      c1_1 -> INVALID
-      c1_2 -> INVALID
+c1 -> SUCCESS
 
 blackboard
-  blVAR0: ['no', 'both']
-  blVAR2: False
-  blVAR3: 5
-  blFROZENVAR5: [-2, -5, -2]
-  blDEFINE8: [3, 2]
+  blVAR0: -2
+  blVAR2: no
+  blVAR3: ['both', 'both']
 
 local
 
 environment
-  envVAR1: [3, 5]
-  envFROZENVAR4: both
-  envDEFINE9: [False, False, False]
+  envVAR1: True
+  envDEFINE5: -5
+  envDEFINE6: no
+  envDEFINE7: 2
+  envDEFINE8: [2, 5]
 
 ------------------------
 State after tick: 3
-seq0 -> SUCCESS
-  dec_rs1 -> SUCCESS
-    c1 -> SUCCESS
-  dec_rf2 -> SUCCESS
-    sel3 -> SUCCESS
-      a4 -> SUCCESS
-      c1_1 -> INVALID
-      c1_2 -> INVALID
+c1 -> SUCCESS
 
 blackboard
-  blVAR0: ['no', 'both']
-  blVAR2: False
-  blVAR3: 5
-  blFROZENVAR5: [-2, -5, -2]
-  blDEFINE8: [3, 2]
+  blVAR0: -2
+  blVAR2: no
+  blVAR3: ['both', 'both']
 
 local
 
 environment
-  envVAR1: [3, 5]
-  envFROZENVAR4: both
-  envDEFINE9: [False, False, False]
+  envVAR1: True
+  envDEFINE5: -5
+  envDEFINE6: no
+  envDEFINE7: 2
+  envDEFINE8: [2, 5]
 
 ------------------------
 State after tick: 4
-seq0 -> SUCCESS
-  dec_rs1 -> SUCCESS
-    c1 -> SUCCESS
-  dec_rf2 -> SUCCESS
-    sel3 -> SUCCESS
-      a4 -> SUCCESS
-      c1_1 -> INVALID
-      c1_2 -> INVALID
+c1 -> SUCCESS
 
 blackboard
-  blVAR0: ['no', 'both']
-  blVAR2: False
-  blVAR3: 5
-  blFROZENVAR5: [-2, -5, -2]
-  blDEFINE8: [3, 2]
+  blVAR0: -2
+  blVAR2: no
+  blVAR3: ['both', 'both']
 
 local
 
 environment
-  envVAR1: [3, 5]
-  envFROZENVAR4: both
-  envDEFINE9: [False, False, False]
+  envVAR1: True
+  envDEFINE5: -5
+  envDEFINE6: no
+  envDEFINE7: 2
+  envDEFINE8: [2, 5]
 
 ------------------------
 State after tick: 5
-seq0 -> SUCCESS
-  dec_rs1 -> SUCCESS
-    c1 -> SUCCESS
-  dec_rf2 -> SUCCESS
-    sel3 -> SUCCESS
-      a4 -> SUCCESS
-      c1_1 -> INVALID
-      c1_2 -> INVALID
+c1 -> SUCCESS
 
 blackboard
-  blVAR0: ['no', 'both']
-  blVAR2: False
-  blVAR3: 5
-  blFROZENVAR5: [-2, -5, -2]
-  blDEFINE8: [3, 2]
+  blVAR0: -2
+  blVAR2: no
+  blVAR3: ['both', 'both']
 
 local
 
 environment
-  envVAR1: [3, 5]
-  envFROZENVAR4: both
-  envDEFINE9: [False, False, False]
+  envVAR1: True
+  envDEFINE5: -5
+  envDEFINE6: no
+  envDEFINE7: 2
+  envDEFINE8: [2, 5]
 
 ------------------------
 State after tick: 6
-seq0 -> SUCCESS
-  dec_rs1 -> SUCCESS
-    c1 -> SUCCESS
-  dec_rf2 -> SUCCESS
-    sel3 -> SUCCESS
-      a4 -> SUCCESS
-      c1_1 -> INVALID
-      c1_2 -> INVALID
+c1 -> SUCCESS
 
 blackboard
-  blVAR0: ['no', 'both']
-  blVAR2: False
-  blVAR3: 5
-  blFROZENVAR5: [-2, -5, -2]
-  blDEFINE8: [3, 2]
+  blVAR0: -2
+  blVAR2: no
+  blVAR3: ['both', 'both']
 
 local
 
 environment
-  envVAR1: [3, 5]
-  envFROZENVAR4: both
-  envDEFINE9: [False, False, False]
+  envVAR1: True
+  envDEFINE5: -5
+  envDEFINE6: no
+  envDEFINE7: 2
+  envDEFINE8: [2, 5]
 
 ------------------------
 State after tick: 7
-seq0 -> SUCCESS
-  dec_rs1 -> SUCCESS
-    c1 -> SUCCESS
-  dec_rf2 -> SUCCESS
-    sel3 -> SUCCESS
-      a4 -> SUCCESS
-      c1_1 -> INVALID
-      c1_2 -> INVALID
+c1 -> SUCCESS
 
 blackboard
-  blVAR0: ['no', 'both']
-  blVAR2: False
-  blVAR3: 5
-  blFROZENVAR5: [-2, -5, -2]
-  blDEFINE8: [3, 2]
+  blVAR0: -2
+  blVAR2: no
+  blVAR3: ['both', 'both']
 
 local
 
 environment
-  envVAR1: [3, 5]
-  envFROZENVAR4: both
-  envDEFINE9: [False, False, False]
+  envVAR1: True
+  envDEFINE5: -5
+  envDEFINE6: no
+  envDEFINE7: 2
+  envDEFINE8: [2, 5]
 
 ------------------------
 State after tick: 8
-seq0 -> SUCCESS
-  dec_rs1 -> SUCCESS
-    c1 -> SUCCESS
-  dec_rf2 -> SUCCESS
-    sel3 -> SUCCESS
-      a4 -> SUCCESS
-      c1_1 -> INVALID
-      c1_2 -> INVALID
+c1 -> SUCCESS
 
 blackboard
-  blVAR0: ['no', 'both']
-  blVAR2: False
-  blVAR3: 5
-  blFROZENVAR5: [-2, -5, -2]
-  blDEFINE8: [3, 2]
+  blVAR0: -2
+  blVAR2: no
+  blVAR3: ['both', 'both']
 
 local
 
 environment
-  envVAR1: [3, 5]
-  envFROZENVAR4: both
-  envDEFINE9: [False, False, False]
+  envVAR1: True
+  envDEFINE5: -5
+  envDEFINE6: no
+  envDEFINE7: 2
+  envDEFINE8: [2, 5]
 
 ------------------------
 State after tick: 9
-seq0 -> SUCCESS
-  dec_rs1 -> SUCCESS
-    c1 -> SUCCESS
-  dec_rf2 -> SUCCESS
-    sel3 -> SUCCESS
-      a4 -> SUCCESS
-      c1_1 -> INVALID
-      c1_2 -> INVALID
+c1 -> SUCCESS
 
 blackboard
-  blVAR0: ['no', 'both']
-  blVAR2: False
-  blVAR3: 5
-  blFROZENVAR5: [-2, -5, -2]
-  blDEFINE8: [3, 2]
+  blVAR0: -2
+  blVAR2: no
+  blVAR3: ['both', 'both']
 
 local
 
 environment
-  envVAR1: [3, 5]
-  envFROZENVAR4: both
-  envDEFINE9: [False, False, False]
+  envVAR1: True
+  envDEFINE5: -5
+  envDEFINE6: no
+  envDEFINE7: 2
+  envDEFINE8: [2, 5]
 
 ------------------------
 State after tick: 10
-seq0 -> SUCCESS
-  dec_rs1 -> SUCCESS
-    c1 -> SUCCESS
-  dec_rf2 -> SUCCESS
-    sel3 -> SUCCESS
-      a4 -> SUCCESS
-      c1_1 -> INVALID
-      c1_2 -> INVALID
+c1 -> SUCCESS
 
 blackboard
-  blVAR0: ['no', 'both']
-  blVAR2: False
-  blVAR3: 5
-  blFROZENVAR5: [-2, -5, -2]
-  blDEFINE8: [3, 2]
+  blVAR0: -2
+  blVAR2: no
+  blVAR3: ['both', 'both']
 
 local
 
 environment
-  envVAR1: [3, 5]
-  envFROZENVAR4: both
-  envDEFINE9: [False, False, False]
+  envVAR1: True
+  envDEFINE5: -5
+  envDEFINE6: no
+  envDEFINE7: 2
+  envDEFINE8: [2, 5]
 
