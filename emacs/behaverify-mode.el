@@ -1,8 +1,7 @@
 ;;; behaverify-mode-el -- Major mode for editing BehaVerify files
 
 ;; Author: Serena Aura Serbinowska
-;; Created: 2023-07-03
-;; Last Edit: 2023-08-04
+;; Last Edit: 2023-09-11
 ;; Keywords: BehaVerify major-mode
 
 ;;; Commentary:
@@ -21,19 +20,19 @@
 
 (defconst behaverify-font-lock-keywords-1
   (list
-   '("\\<\\(actions\\|c\\(?:hecks\\|on\\(?:figuration\\|stants\\)\\)\\|en\\(?:d_\\(?:actions\\|c\\(?:hecks\\|on\\(?:figuration\\|stants\\)\\)\\|environment_\\(?:checks\\|update\\)\\|s\\(?:\\(?:pecification\\|ub_tree\\)s\\)\\|t\\(?:\\(?:ick_prerequisit\\|re\\)e\\)\\|variables\\)\\|vironment_\\(?:checks\\|update\\)\\)\\|s\\(?:\\(?:pecification\\|ub_tree\\)s\\)\\|t\\(?:\\(?:ick_prerequisit\\|re\\)e\\)\\|variables\\)\\>" . font-lock-warning-face))
+   '("\\<\\(actions\\|c\\(?:hecks\\|on\\(?:figuration\\|stants\\)\\)\\|en\\(?:d_\\(?:actions\\|c\\(?:hecks\\|on\\(?:figuration\\|stants\\)\\)\\|en\\(?:umerations\\|vironment_\\(?:checks\\|update\\)\\)\\|s\\(?:\\(?:pecification\\|ub_tree\\)s\\)\\|t\\(?:\\(?:ick_prerequisit\\|re\\)e\\)\\|variables\\)\\|umerations\\|vironment_\\(?:checks\\|update\\)\\)\\|s\\(?:\\(?:pecification\\|ub_tree\\)s\\)\\|t\\(?:\\(?:ick_prerequisit\\|re\\)e\\)\\|variables\\)\\>" . font-lock-warning-face))
   "Minimal highlighting expressions for BehaVerify mode.")
 
 (defconst behaverify-font-lock-keywords-2
   (append behaverify-font-lock-keywords-1
 		  (list
-		   '("\\<\\(action\\|c\\(?:heck\\(?:_environment\\)?\\|omposite\\)\\|decorator\\|end_\\(?:action\\|c\\(?:heck\\(?:_environment\\)?\\|omposite\\)\\|decorator\\|insert\\|sub_tree\\)\\|insert\\|sub_tree\\)\\>" . font-lock-variable-name-face)))
+		   '("\\<\\(action\\|c\\(?:heck\\|omposite\\)\\|decorator\\|en\\(?:d_\\(?:action\\|c\\(?:heck\\|omposite\\)\\|decorator\\|environment_check\\|insert\\|sub_tree\\)\\|vironment_check\\)\\|insert\\|sub_tree\\)\\>" . font-lock-variable-name-face)))
   "Additional Keywords to highlight in BehaVerify mode.")
 
 (defconst behaverify-font-lock-keywords-3
   (append behaverify-font-lock-keywords-2
 		  (list
-		   '("\\<\\(X_is_Y\\|arguments\\|c\\(?:hild\\(?:ren\\)?\\|onstant_index\\)\\|end_\\(?:arguments\\|child\\(?:ren\\)?\\|\\(?:local\\|read\\|write\\)_variables\\)\\|in\\(?:stant\\|verter\\)\\|local_variables\\|p\\(?:arallel\\|olicy\\)\\|r\\(?:ange\\|ead_variables\\)\\|s\\(?:e\\(?:lector\\|quence\\)\\|uccess_on_\\(?:all\\|one\\)\\)\\|w\\(?:ith_\\(?:\\(?:partial\\|true\\)_memory\\)\\|rite_variables\\)\\|[XY]\\)\\>" . font-lock-type-face)))
+		   '("\\<\\(X_is_Y\\|arguments\\|c\\(?:hild\\(?:ren\\)?\\|onstant_index\\)\\|end_\\(?:arguments\\|child\\(?:ren\\)?\\|\\(?:local\\|read\\|write\\)_variables\\)\\|in\\(?:stant\\|verter\\)\\|local_variables\\|p\\(?:arallel\\|er_index\\|olicy\\)\\|r\\(?:ange\\|ead_variables\\)\\|s\\(?:e\\(?:lector\\|quence\\)\\|uccess_on_\\(?:all\\|one\\)\\)\\|w\\(?:ith_\\(?:\\(?:partial\\|true\\)_memory\\)\\|rite_variables\\)\\|[XY]\\)\\>" . font-lock-type-face)))
   "Additional Keywords to highlight in BehaVerify mode.")
 
 (defconst behaverify-font-lock-keywords-4
@@ -45,7 +44,7 @@
 (defconst behaverify-font-lock-keywords-5
   (append behaverify-font-lock-keywords-4
 		  (list
-		   '("\\<\\(CTLSPEC\\|INVARSPEC\\|LTLSPEC\\|assign\\|c\\(?:ase\\|ondition\\)\\|end_\\(?:CTLSPEC\\|INVARSPEC\\|LTLSPEC\\|assign\\|c\\(?:ase\\|ondition\\)\\|result\\)\\|result\\)\\>" . font-lock-keyword-face)))
+		   '("\\<\\(CTLSPEC\\|INVARSPEC\\|LTLSPEC\\|assign\\|c\\(?:ase\\|ondition\\)\\|end_\\(?:CTLSPEC\\|INVARSPEC\\|LTLSPEC\\|assign\\|c\\(?:ase\\|ondition\\)\\|index_of\\|result\\)\\|index_of\\|result\\)\\>" . font-lock-keyword-face)))
   "Additional Keywords to highlight in BehaVerify mode.")
 
 (defconst behaverify-font-lock-keywords-6
