@@ -10,20 +10,6 @@ cd "${this_script_location}/examples"
 ./clean_all.sh
 
 
-# cd "${this_script_location}/scripts/build_scripts"
-# ./exp_3_node_no_var_create.sh
-# cd "${this_script_location}/scripts/comparison_scripts"
-# ./exp_3_node_no_var_run.sh
-
-
-# cd "${this_script_location}/scripts/build_scripts"
-# ./exp_bigger_fish_create.sh 9 200 10
-# cd "${this_script_location}/scripts/encoding_timing_scripts"
-# ./exp_bigger_fish_run.sh 9 200 10
-# cd "${this_script_location}/scripts/process_results_scripts"
-# ./exp_bigger_fish_table.sh 9 200 10
-
-
 cd "${this_script_location}/scripts/build_scripts"
 ./exp_bigger_fish_expanded_create.sh 50 600 50
 cd "${this_script_location}/scripts/encoding_timing_scripts"
@@ -32,26 +18,23 @@ cd "${this_script_location}/scripts/process_results_scripts"
 ./exp_bigger_fish_expanded_table.sh 50 600 50
 
 
-# cd "${this_script_location}/scripts/build_scripts"
-# ./exp_checklist_create.sh 1 50 1
-# cd "${this_script_location}/scripts/encoding_timing_scripts"
-# ./exp_checklist_run.sh 1 50 1
-# cd "${this_script_location}/scripts/process_results_scripts"
-# ./exp_checklist_table.sh 1 50 1
-
-
-# cd "${this_script_location}/scripts/build_scripts"
-# ./exp_checklist_invar_create.sh 1 50 1
-# cd "${this_script_location}/scripts/encoding_timing_scripts"
-# ./exp_checklist_invar_run.sh 1 50 1
-# cd "${this_script_location}/scripts/process_results_scripts"
-# ./exp_checklist_invar_table.sh 1 50 1
-
+mkdir "${this_script_location}/examples/differential_testing/moved"
 
 cd "${this_script_location}/scripts/build_scripts"
-./exp_random_haskell_create.sh 20 2 5
+./differential_testing_create.sh "../../examples/differential_testing/array" 20 2 5 1 1
 cd "${this_script_location}/scripts/comparison_scripts"
-./exp_random_haskell_run.sh 20
+./differential_testing_run.sh "../../examples/differential_testing/array" 20 1 1 0
+
+mv "${this_script_location}/examples/differential_testing/array/gen_files" "${this_script_location}/examples/differential_testing/moved/array_go_gen_files"
+mv "${this_script_location}/examples/differential_testing/array/results" "${this_script_location}/examples/differential_testing/moved/array_go_results"
+
+# cd "${this_script_location}/scripts/build_scripts"
+# ./differential_testing_create.sh "../../examples/differential_testing/array" 20 0 1000 1 1
+# cd "${this_script_location}/scripts/comparison_scripts"
+# ./differential_testing_run.sh "../../examples/differential_testing/array" 20 1 1 1
+
+# mv "${this_script_location}/examples/differential_testing/array/gen_files" "${this_script_location}/examples/differential_testing/moved/array_msat_gen_files"
+# mv "${this_script_location}/examples/differential_testing/array/results" "${this_script_location}/examples/differential_testing/moved/array_msat_results"
 
 
 cd "${this_script_location}/scripts/build_scripts"
@@ -60,14 +43,6 @@ cd "${this_script_location}/scripts/encoding_timing_scripts"
 ./exp_simple_robot_run.sh 2 3 4
 cd "${this_script_location}/scripts/process_results_scripts"
 ./exp_simple_robot_table.sh 2 3 4
-
-
-# cd "${this_script_location}/scripts/build_scripts"
-# ./exp_simplified_robot_create.sh 2 50 4
-# cd "${this_script_location}/scripts/encoding_timing_scripts"
-# ./exp_simplified_robot_run.sh 2 50 4
-# cd "${this_script_location}/scripts/process_results_scripts"
-# ./exp_simplified_robot_table.sh 2 50 4
 
 
 cd "${this_script_location}/scripts/build_scripts"
@@ -79,11 +54,11 @@ cd "${this_script_location}/scripts/process_results_scripts"
 
 
 cd "${this_script_location}/scripts/build_scripts"
-./exp_light_controller_create.sh
+./exp_light_controller_v3_create.sh
 cd "${this_script_location}/scripts/encoding_timing_scripts"
-./exp_light_controller_run.sh 
+./exp_light_controller_v3_run.sh 
 cd "${this_script_location}/scripts/process_results_scripts"
-./exp_light_controller_table.sh
+./exp_light_controller_v3_table.sh
 
 
-cd $pwd
+cd $start_location

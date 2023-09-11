@@ -1,0 +1,210 @@
+------------------------
+State after tick: 1
+p_all0 -> FAILURE
+  a3 -> SUCCESS
+  c1 -> FAILURE
+  a4 -> FAILURE
+
+blackboard
+  blVAR0: 2
+  blVAR3: ['no', 'no']
+  blDEFINE5: no
+
+local
+  a3_DOT_localDEFINE7 : 2
+  a4_DOT_localDEFINE6 : [-2, -5]
+
+environment
+  envVAR1: ['no', 'no', 'no']
+  envVAR2: ['both', 'no']
+  envVAR4: 2
+
+------------------------
+State after tick: 2
+p_all0 -> FAILURE
+  a3 -> SUCCESS
+  c1 -> FAILURE
+  a4 -> FAILURE
+
+blackboard
+  blVAR0: 2
+  blVAR3: ['no', 'no']
+  blDEFINE5: no
+
+local
+  a3_DOT_localDEFINE7 : 2
+  a4_DOT_localDEFINE6 : [-2, -5]
+
+environment
+  envVAR1: ['no', 'no', 'no']
+  envVAR2: ['both', 'no']
+  envVAR4: 2
+
+------------------------
+State after tick: 3
+p_all0 -> FAILURE
+  a3 -> SUCCESS
+  c1 -> FAILURE
+  a4 -> FAILURE
+
+blackboard
+  blVAR0: 2
+  blVAR3: ['no', 'no']
+  blDEFINE5: no
+
+local
+  a3_DOT_localDEFINE7 : 2
+  a4_DOT_localDEFINE6 : [-2, -5]
+
+environment
+  envVAR1: ['no', 'no', 'no']
+  envVAR2: ['both', 'no']
+  envVAR4: 2
+
+------------------------
+State after tick: 4
+p_all0 -> FAILURE
+  a3 -> SUCCESS
+  c1 -> FAILURE
+  a4 -> FAILURE
+
+blackboard
+  blVAR0: 2
+  blVAR3: ['no', 'no']
+  blDEFINE5: no
+
+local
+  a3_DOT_localDEFINE7 : 2
+  a4_DOT_localDEFINE6 : [-2, -5]
+
+environment
+  envVAR1: ['no', 'no', 'no']
+  envVAR2: ['both', 'no']
+  envVAR4: 2
+
+------------------------
+State after tick: 5
+p_all0 -> FAILURE
+  a3 -> SUCCESS
+  c1 -> FAILURE
+  a4 -> FAILURE
+
+blackboard
+  blVAR0: 2
+  blVAR3: ['no', 'no']
+  blDEFINE5: no
+
+local
+  a3_DOT_localDEFINE7 : 2
+  a4_DOT_localDEFINE6 : [-2, -5]
+
+environment
+  envVAR1: ['no', 'no', 'no']
+  envVAR2: ['both', 'no']
+  envVAR4: 2
+
+------------------------
+State after tick: 6
+p_all0 -> FAILURE
+  a3 -> SUCCESS
+  c1 -> FAILURE
+  a4 -> FAILURE
+
+blackboard
+  blVAR0: 2
+  blVAR3: ['no', 'no']
+  blDEFINE5: no
+
+local
+  a3_DOT_localDEFINE7 : 2
+  a4_DOT_localDEFINE6 : [-2, -5]
+
+environment
+  envVAR1: ['no', 'no', 'no']
+  envVAR2: ['both', 'no']
+  envVAR4: 2
+
+------------------------
+State after tick: 7
+p_all0 -> FAILURE
+  a3 -> SUCCESS
+  c1 -> FAILURE
+  a4 -> FAILURE
+
+blackboard
+  blVAR0: 2
+  blVAR3: ['no', 'no']
+  blDEFINE5: no
+
+local
+  a3_DOT_localDEFINE7 : 2
+  a4_DOT_localDEFINE6 : [-2, -5]
+
+environment
+  envVAR1: ['no', 'no', 'no']
+  envVAR2: ['both', 'no']
+  envVAR4: 2
+
+------------------------
+State after tick: 8
+p_all0 -> FAILURE
+  a3 -> SUCCESS
+  c1 -> FAILURE
+  a4 -> FAILURE
+
+blackboard
+  blVAR0: 2
+  blVAR3: ['no', 'no']
+  blDEFINE5: no
+
+local
+  a3_DOT_localDEFINE7 : 2
+  a4_DOT_localDEFINE6 : [-2, -5]
+
+environment
+  envVAR1: ['no', 'no', 'no']
+  envVAR2: ['both', 'no']
+  envVAR4: 2
+
+------------------------
+State after tick: 9
+p_all0 -> FAILURE
+  a3 -> SUCCESS
+  c1 -> FAILURE
+  a4 -> FAILURE
+
+blackboard
+  blVAR0: 2
+  blVAR3: ['no', 'no']
+  blDEFINE5: no
+
+local
+  a3_DOT_localDEFINE7 : 2
+  a4_DOT_localDEFINE6 : [-2, -5]
+
+environment
+  envVAR1: ['no', 'no', 'no']
+  envVAR2: ['both', 'no']
+  envVAR4: 2
+
+------------------------
+State after tick: 10
+p_all0 -> FAILURE
+  a3 -> SUCCESS
+  c1 -> FAILURE
+  a4 -> FAILURE
+
+blackboard
+  blVAR0: 2
+  blVAR3: ['no', 'no']
+  blDEFINE5: no
+
+local
+  a3_DOT_localDEFINE7 : 2
+  a4_DOT_localDEFINE6 : [-2, -5]
+
+environment
+  envVAR1: ['no', 'no', 'no']
+  envVAR2: ['both', 'no']
+  envVAR4: 2
+

@@ -7,7 +7,11 @@ def indent(n):
 
 
 def create_constants():
-    return ('constants { fish_cap = 1000 } end_constants' + os.linesep)
+    return (
+        'configuration {}' + os.linesep
+        + 'enumerations {}' + os.linesep
+        + 'constants { \'fish_cap\' := 1000 } end_constants' + os.linesep
+    )
 
 
 def create_variables():
@@ -20,26 +24,32 @@ def create_environment():
     )
 
 
-def create_check(x):
+#def create_check(x):
+def create_check():
     return (
         indent(1) + 'check {' + os.linesep
-        + indent(2) + 'biggest_fish_is' + str(x) + os.linesep
+        #+ indent(2) + 'biggest_fish_is' + str(x) + os.linesep
+        + indent(2) + 'biggest_fish_is_X' + os.linesep
+        + indent(2) + 'arguments{\'x\' := INT}' + os.linesep
         + indent(2) + 'read_variables { biggest_fish } end_read_variables' + os.linesep
-        + indent(2) + 'condition { (equal, biggest_fish, ' + str(x) + ') } end_condition' + os.linesep
+        #+ indent(2) + 'condition { (equal, biggest_fish, ' + str(x) + ') } end_condition' + os.linesep
+        + indent(2) + 'condition { (equal, biggest_fish, \'x\') } end_condition' + os.linesep
         + indent(1) + '} end_check' + os.linesep
     )
 
 
-def create_checks(x):
+#def create_checks(x):
+def create_checks():
     return (
         'checks {' + os.linesep
-        + ''.join(map(create_check, range(x+1)))
+        #+ ''.join(map(create_check, range(x+1)))
+        + create_check()
         + '} end_checks' + os.linesep
     )
 
 
 def create_environment_checks():
-    return ('environment_checks {#comment# check environment nodes are defined here #end_comment#} end_environment_checks' + os.linesep)
+    return ('environment_checks {#{ check environment nodes are defined here }#} end_environment_checks' + os.linesep)
 
 
 def create_actions():
@@ -47,6 +57,7 @@ def create_actions():
         'actions {' + os.linesep
         + indent(1) + 'action {' + os.linesep
         + indent(2) + 'bigger_fish' + os.linesep
+        + indent(2) + 'arguments {}' + os.linesep
         + indent(2) + 'local_variables {} end_local_variables' + os.linesep
         + indent(2) + 'read_variables {} end_read_variables' + os.linesep
         + indent(2) + 'write_variables { biggest_fish } end_write_variables' + os.linesep
@@ -65,7 +76,8 @@ def create_decorator_failure_is_running(indent_level, x):
         indent(indent_level) + 'decorator {' + os.linesep
         + indent(indent_level + 1) + 'decorator' + str(x) + os.linesep
         + indent(indent_level + 1) + 'X_is_Y X failure Y running' + os.linesep
-        + indent(indent_level + 1) + 'child { biggest_fish_is' + str(x) + '}' + os.linesep
+        #+ indent(indent_level + 1) + 'child { biggest_fish_is' + str(x) + '}' + os.linesep
+        + indent(indent_level + 1) + 'child { biggest_fish_is_X {' + str(x) + '}}' + os.linesep
         + indent(indent_level) + '} end_decorator' + os.linesep
     )
 
@@ -99,7 +111,7 @@ def create_subtree_parallel(indent_level, x):
 
 def create_tree_parallel(x):
     return (
-        'sub_trees {#comment# subtrees go here. #end_comment#} end_sub_trees' + os.linesep
+        'sub_trees {#{ subtrees go here. }#} end_sub_trees' + os.linesep
         + 'tree {' + os.linesep
         + 'composite {' + os.linesep
         + indent(1) + 'biggest_fish_sequence' + os.linesep
@@ -111,7 +123,7 @@ def create_tree_parallel(x):
         + indent(3) + 'child {' + os.linesep
         + create_subtree_parallel(3, x)
         + indent(2) + '}} end_decorator' + os.linesep
-        + indent(2) + 'bigger_fish' + os.linesep
+        + indent(2) + 'bigger_fish {}' + os.linesep
         + indent(1) + '} end_children' + os.linesep
         + '} end_composite' + os.linesep
         + '} end_tree' + os.linesep
@@ -123,7 +135,8 @@ def create_decorator_inverter(indent_level, x):
         indent(indent_level) + 'decorator {' + os.linesep
         + indent(indent_level + 1) + 'decorator' + str(x) + os.linesep
         + indent(indent_level + 1) + 'inverter' + os.linesep
-        + indent(indent_level + 1) + 'child { biggest_fish_is' + str(x) + '}' + os.linesep
+        #+ indent(indent_level + 1) + 'child { biggest_fish_is' + str(x) + '}' + os.linesep
+        + indent(indent_level + 1) + 'child { biggest_fish_is_X {' + str(x) + '}}' + os.linesep
         + indent(indent_level) + '} end_decorator' + os.linesep
     )
 
@@ -157,7 +170,7 @@ def create_subtree_sequence(indent_level, x):
 
 def create_tree_sequence(x):
     return (
-        'sub_trees {#comment# subtrees go here. #end_comment#} end_sub_trees' + os.linesep
+        'sub_trees {#{ subtrees go here. }#} end_sub_trees' + os.linesep
         + 'tree {' + os.linesep
         + 'composite {' + os.linesep
         + indent(1) + 'biggest_fish_sequence' + os.linesep
@@ -169,7 +182,7 @@ def create_tree_sequence(x):
         + indent(3) + 'child{' + os.linesep
         + create_subtree_sequence(3, x)
         + indent(2) + '}} end_decorator' + os.linesep
-        + indent(2) + 'bigger_fish' + os.linesep
+        + indent(2) + 'bigger_fish {}' + os.linesep
         + indent(1) + '} end_children' + os.linesep
         + '} end_composite' + os.linesep
         + '} end_tree' + os.linesep
@@ -178,7 +191,8 @@ def create_tree_sequence(x):
 
 def create_specifications(x):
     return (
-        'specifications {' + os.linesep
+        'tick_prerequisite { True }' + os.linesep
+        + 'specifications {' + os.linesep
         # + indent(1) + 'LTLSPEC { (finally, (globally, (not, (success, biggest_fish_sequence)))) } end_LTLSPEC' + os.linesep
         + indent(1) + 'LTLSPEC { (finally, (globally, (equal, biggest_fish 0, ' + str(x + 1) + '))) } end_LTLSPEC' + os.linesep
         # + indent(1) + 'CTLSPEC { (always_finally, (always_globally, (not, (success, biggest_fish_sequence)))) } end_CTLSPEC' + os.linesep
@@ -192,7 +206,8 @@ def create_fish_parallel(x):
         create_constants()
         + create_variables()
         + create_environment()
-        + create_checks(x)
+        #+ create_checks(x)
+        + create_checks()
         + create_environment_checks()
         + create_actions()
         + create_tree_parallel(x)
@@ -205,7 +220,8 @@ def create_fish_sequence(x):
         create_constants()
         + create_variables()
         + create_environment()
-        + create_checks(x)
+        #+ create_checks(x)
+        + create_checks()
         + create_environment_checks()
         + create_actions()
         + create_tree_sequence(x)

@@ -19,10 +19,11 @@ maintainer:         bserbinowski@gmail.com
 -- A copyright notice.
 -- copyright:
 -- category:
-extra-source-files: CHANGELOG.md
+--extra-source-files: CHANGELOG.md
 
 executable haskell
     main-is:          Main.hs
+    ghc-options: -w
 
     -- Modules included in this executable, other than Main.
     -- other-modules:

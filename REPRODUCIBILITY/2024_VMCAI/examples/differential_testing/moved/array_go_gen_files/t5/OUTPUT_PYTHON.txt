@@ -1,0 +1,220 @@
+------------------------
+State after tick: 1
+dec_rs0 -> SUCCESS
+  sel1 -> RUNNING
+    a1 -> FAILURE
+    a2 -> RUNNING
+    a3 -> INVALID
+
+blackboard
+  blVAR0: no
+  blFROZENVAR4: [2, 2]
+  blDEFINE6: 5
+
+local
+  a1_DOT_localVAR2 : 5
+  a2_DOT_localVAR2 : 5
+
+environment
+  envVAR1: 5
+  envFROZENVAR5: 5
+  envDEFINE7: no
+
+------------------------
+State after tick: 2
+dec_rs0 -> SUCCESS
+  sel1 -> RUNNING
+    a1 -> FAILURE
+    a2 -> RUNNING
+    a3 -> INVALID
+
+blackboard
+  blVAR0: no
+  blFROZENVAR4: [2, 2]
+  blDEFINE6: 5
+
+local
+  a1_DOT_localVAR2 : 5
+  a2_DOT_localVAR2 : 5
+
+environment
+  envVAR1: 5
+  envFROZENVAR5: 5
+  envDEFINE7: no
+
+------------------------
+State after tick: 3
+dec_rs0 -> SUCCESS
+  sel1 -> RUNNING
+    a1 -> FAILURE
+    a2 -> RUNNING
+    a3 -> INVALID
+
+blackboard
+  blVAR0: no
+  blFROZENVAR4: [2, 2]
+  blDEFINE6: 5
+
+local
+  a1_DOT_localVAR2 : 5
+  a2_DOT_localVAR2 : 5
+
+environment
+  envVAR1: 5
+  envFROZENVAR5: 5
+  envDEFINE7: no
+
+------------------------
+State after tick: 4
+dec_rs0 -> SUCCESS
+  sel1 -> RUNNING
+    a1 -> FAILURE
+    a2 -> RUNNING
+    a3 -> INVALID
+
+blackboard
+  blVAR0: no
+  blFROZENVAR4: [2, 2]
+  blDEFINE6: 5
+
+local
+  a1_DOT_localVAR2 : 5
+  a2_DOT_localVAR2 : 5
+
+environment
+  envVAR1: 5
+  envFROZENVAR5: 5
+  envDEFINE7: no
+
+------------------------
+State after tick: 5
+dec_rs0 -> SUCCESS
+  sel1 -> RUNNING
+    a1 -> FAILURE
+    a2 -> RUNNING
+    a3 -> INVALID
+
+blackboard
+  blVAR0: no
+  blFROZENVAR4: [2, 2]
+  blDEFINE6: 5
+
+local
+  a1_DOT_localVAR2 : 5
+  a2_DOT_localVAR2 : 5
+
+environment
+  envVAR1: 5
+  envFROZENVAR5: 5
+  envDEFINE7: no
+
+------------------------
+State after tick: 6
+dec_rs0 -> SUCCESS
+  sel1 -> RUNNING
+    a1 -> FAILURE
+    a2 -> RUNNING
+    a3 -> INVALID
+
+blackboard
+  blVAR0: no
+  blFROZENVAR4: [2, 2]
+  blDEFINE6: 5
+
+local
+  a1_DOT_localVAR2 : 5
+  a2_DOT_localVAR2 : 5
+
+environment
+  envVAR1: 5
+  envFROZENVAR5: 5
+  envDEFINE7: no
+
+------------------------
+State after tick: 7
+dec_rs0 -> SUCCESS
+  sel1 -> RUNNING
+    a1 -> FAILURE
+    a2 -> RUNNING
+    a3 -> INVALID
+
+blackboard
+  blVAR0: no
+  blFROZENVAR4: [2, 2]
+  blDEFINE6: 5
+
+local
+  a1_DOT_localVAR2 : 5
+  a2_DOT_localVAR2 : 5
+
+environment
+  envVAR1: 5
+  envFROZENVAR5: 5
+  envDEFINE7: no
+
+------------------------
+State after tick: 8
+dec_rs0 -> SUCCESS
+  sel1 -> RUNNING
+    a1 -> FAILURE
+    a2 -> RUNNING
+    a3 -> INVALID
+
+blackboard
+  blVAR0: no
+  blFROZENVAR4: [2, 2]
+  blDEFINE6: 5
+
+local
+  a1_DOT_localVAR2 : 5
+  a2_DOT_localVAR2 : 5
+
+environment
+  envVAR1: 5
+  envFROZENVAR5: 5
+  envDEFINE7: no
+
+------------------------
+State after tick: 9
+dec_rs0 -> SUCCESS
+  sel1 -> RUNNING
+    a1 -> FAILURE
+    a2 -> RUNNING
+    a3 -> INVALID
+
+blackboard
+  blVAR0: no
+  blFROZENVAR4: [2, 2]
+  blDEFINE6: 5
+
+local
+  a1_DOT_localVAR2 : 5
+  a2_DOT_localVAR2 : 5
+
+environment
+  envVAR1: 5
+  envFROZENVAR5: 5
+  envDEFINE7: no
+
+------------------------
+State after tick: 10
+dec_rs0 -> SUCCESS
+  sel1 -> RUNNING
+    a1 -> FAILURE
+    a2 -> RUNNING
+    a3 -> INVALID
+
+blackboard
+  blVAR0: no
+  blFROZENVAR4: [2, 2]
+  blDEFINE6: 5
+
+local
+  a1_DOT_localVAR2 : 5
+  a2_DOT_localVAR2 : 5
+
+environment
+  envVAR1: 5
+  envFROZENVAR5: 5
+  envDEFINE7: no
+

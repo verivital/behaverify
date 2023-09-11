@@ -1,0 +1,170 @@
+------------------------
+State after tick: 1
+dec_fs0 -> RUNNING
+  a1 -> RUNNING
+
+blackboard
+  blVAR0: [2, 2]
+
+local
+
+environment
+  envVAR1: [False, False, False]
+  envFROZENVAR3: ['both', 'both', 'no']
+  envDEFINE5: [-2, -2, -2]
+  envDEFINE6: True
+  envDEFINE7: True
+
+------------------------
+State after tick: 2
+dec_fs0 -> RUNNING
+  a1 -> RUNNING
+
+blackboard
+  blVAR0: [2, 2]
+
+local
+
+environment
+  envVAR1: [False, False, False]
+  envFROZENVAR3: ['both', 'both', 'no']
+  envDEFINE5: [-2, -2, -2]
+  envDEFINE6: True
+  envDEFINE7: True
+
+------------------------
+State after tick: 3
+dec_fs0 -> RUNNING
+  a1 -> RUNNING
+
+blackboard
+  blVAR0: [2, 2]
+
+local
+
+environment
+  envVAR1: [False, False, False]
+  envFROZENVAR3: ['both', 'both', 'no']
+  envDEFINE5: [-2, -2, -2]
+  envDEFINE6: True
+  envDEFINE7: True
+
+------------------------
+State after tick: 4
+dec_fs0 -> RUNNING
+  a1 -> RUNNING
+
+blackboard
+  blVAR0: [2, 2]
+
+local
+
+environment
+  envVAR1: [False, False, False]
+  envFROZENVAR3: ['both', 'both', 'no']
+  envDEFINE5: [-2, -2, -2]
+  envDEFINE6: True
+  envDEFINE7: True
+
+------------------------
+State after tick: 5
+dec_fs0 -> RUNNING
+  a1 -> RUNNING
+
+blackboard
+  blVAR0: [2, 2]
+
+local
+
+environment
+  envVAR1: [False, False, False]
+  envFROZENVAR3: ['both', 'both', 'no']
+  envDEFINE5: [-2, -2, -2]
+  envDEFINE6: True
+  envDEFINE7: True
+
+------------------------
+State after tick: 6
+dec_fs0 -> RUNNING
+  a1 -> RUNNING
+
+blackboard
+  blVAR0: [2, 2]
+
+local
+
+environment
+  envVAR1: [False, False, False]
+  envFROZENVAR3: ['both', 'both', 'no']
+  envDEFINE5: [-2, -2, -2]
+  envDEFINE6: True
+  envDEFINE7: True
+
+------------------------
+State after tick: 7
+dec_fs0 -> RUNNING
+  a1 -> RUNNING
+
+blackboard
+  blVAR0: [2, 2]
+
+local
+
+environment
+  envVAR1: [False, False, False]
+  envFROZENVAR3: ['both', 'both', 'no']
+  envDEFINE5: [-2, -2, -2]
+  envDEFINE6: True
+  envDEFINE7: True
+
+------------------------
+State after tick: 8
+dec_fs0 -> RUNNING
+  a1 -> RUNNING
+
+blackboard
+  blVAR0: [2, 2]
+
+local
+
+environment
+  envVAR1: [False, False, False]
+  envFROZENVAR3: ['both', 'both', 'no']
+  envDEFINE5: [-2, -2, -2]
+  envDEFINE6: True
+  envDEFINE7: True
+
+------------------------
+State after tick: 9
+dec_fs0 -> RUNNING
+  a1 -> RUNNING
+
+blackboard
+  blVAR0: [2, 2]
+
+local
+
+environment
+  envVAR1: [False, False, False]
+  envFROZENVAR3: ['both', 'both', 'no']
+  envDEFINE5: [-2, -2, -2]
+  envDEFINE6: True
+  envDEFINE7: True
+
+------------------------
+State after tick: 10
+dec_fs0 -> RUNNING
+  a1 -> RUNNING
+
+blackboard
+  blVAR0: [2, 2]
+
+local
+
+environment
+  envVAR1: [False, False, False]
+  envFROZENVAR3: ['both', 'both', 'no']
+  envDEFINE5: [-2, -2, -2]
+  envDEFINE6: True
+  envDEFINE7: True
+

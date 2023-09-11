@@ -1,0 +1,180 @@
+------------------------
+State after tick: 1
+dec_rf0 -> FAILURE
+  p_one1 -> FAILURE
+    a1 -> FAILURE
+    c2 -> SUCCESS
+
+blackboard
+  blVAR0: [True, True, True]
+  blDEFINE5: 2
+
+local
+
+environment
+  envVAR1: 2
+  envVAR2: ['no', 'no']
+  envFROZENVAR3: [2, 5]
+
+------------------------
+State after tick: 2
+dec_rf0 -> FAILURE
+  p_one1 -> FAILURE
+    a1 -> FAILURE
+    c2 -> SUCCESS
+
+blackboard
+  blVAR0: [True, True, True]
+  blDEFINE5: 2
+
+local
+
+environment
+  envVAR1: 2
+  envVAR2: ['no', 'no']
+  envFROZENVAR3: [2, 5]
+
+------------------------
+State after tick: 3
+dec_rf0 -> FAILURE
+  p_one1 -> FAILURE
+    a1 -> FAILURE
+    c2 -> SUCCESS
+
+blackboard
+  blVAR0: [True, True, True]
+  blDEFINE5: 2
+
+local
+
+environment
+  envVAR1: 2
+  envVAR2: ['no', 'no']
+  envFROZENVAR3: [2, 5]
+
+------------------------
+State after tick: 4
+dec_rf0 -> FAILURE
+  p_one1 -> FAILURE
+    a1 -> FAILURE
+    c2 -> SUCCESS
+
+blackboard
+  blVAR0: [True, True, True]
+  blDEFINE5: 2
+
+local
+
+environment
+  envVAR1: 2
+  envVAR2: ['no', 'no']
+  envFROZENVAR3: [2, 5]
+
+------------------------
+State after tick: 5
+dec_rf0 -> FAILURE
+  p_one1 -> FAILURE
+    a1 -> FAILURE
+    c2 -> SUCCESS
+
+blackboard
+  blVAR0: [True, True, True]
+  blDEFINE5: 2
+
+local
+
+environment
+  envVAR1: 2
+  envVAR2: ['no', 'no']
+  envFROZENVAR3: [2, 5]
+
+------------------------
+State after tick: 6
+dec_rf0 -> FAILURE
+  p_one1 -> FAILURE
+    a1 -> FAILURE
+    c2 -> SUCCESS
+
+blackboard
+  blVAR0: [True, True, True]
+  blDEFINE5: 2
+
+local
+
+environment
+  envVAR1: 2
+  envVAR2: ['no', 'no']
+  envFROZENVAR3: [2, 5]
+
+------------------------
+State after tick: 7
+dec_rf0 -> FAILURE
+  p_one1 -> FAILURE
+    a1 -> FAILURE
+    c2 -> SUCCESS
+
+blackboard
+  blVAR0: [True, True, True]
+  blDEFINE5: 2
+
+local
+
+environment
+  envVAR1: 2
+  envVAR2: ['no', 'no']
+  envFROZENVAR3: [2, 5]
+
+------------------------
+State after tick: 8
+dec_rf0 -> FAILURE
+  p_one1 -> FAILURE
+    a1 -> FAILURE
+    c2 -> SUCCESS
+
+blackboard
+  blVAR0: [True, True, True]
+  blDEFINE5: 2
+
+local
+
+environment
+  envVAR1: 2
+  envVAR2: ['no', 'no']
+  envFROZENVAR3: [2, 5]
+
+------------------------
+State after tick: 9
+dec_rf0 -> FAILURE
+  p_one1 -> FAILURE
+    a1 -> FAILURE
+    c2 -> SUCCESS
+
+blackboard
+  blVAR0: [True, True, True]
+  blDEFINE5: 2
+
+local
+
+environment
+  envVAR1: 2
+  envVAR2: ['no', 'no']
+  envFROZENVAR3: [2, 5]
+
+------------------------
+State after tick: 10
+dec_rf0 -> FAILURE
+  p_one1 -> FAILURE
+    a1 -> FAILURE
+    c2 -> SUCCESS
+
+blackboard
+  blVAR0: [True, True, True]
+  blDEFINE5: 2
+
+local
+
+environment
+  envVAR1: 2
+  envVAR2: ['no', 'no']
+  envFROZENVAR3: [2, 5]
+

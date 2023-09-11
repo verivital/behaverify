@@ -1,0 +1,157 @@
+MODULE main
+    VAR
+        system : system_module;
+--------------SPECIFICATIONS
+
+
+
+--------------END OF SPECIFICATIONS
+
+MODULE system_module
+    CONSTANTS
+        success, failure, running, invalid, both, no, yes;
+    DEFINE
+        resume_from_here_in_subtree__p_all0 := -3;
+        p_all0.active := TRUE;
+        parallel_skip__p_all0 := [resume_from_here_in_subtree__a4, resume_from_here_in_subtree__a1];
+        --START OF BLACKBOARD DEFINITIONS
+        blVAR0_stage_1 := 
+            case
+                !(a1.active) : blVAR0_stage_0;
+                blVAR0_stage_0 : (yes != no);
+                TRUE : FALSE;
+            esac;
+        envVAR1_stage_1 := 
+            case
+                !(p_all0.active) : envVAR1_stage_0;
+                blVAR0_stage_1 : min(-2, max(-5, (case 0 = 0 : envDEFINE5_stage_0_index_0; 1 = 0 : envDEFINE5_stage_0_index_1; esac)));
+                TRUE : min(-2, max(-5, -97));
+            esac;
+        envVAR2_stage_1 := 
+            case
+                !(a1.active) : envVAR2_stage_0;
+                TRUE : envVAR2_stage_0;
+            esac;
+        envVAR2_stage_2 := 
+            case
+                !(p_all0.active) : envVAR2_stage_1;
+                (case 0 = 0 : envDEFINE6_stage_0_index_0; 1 = 0 : envDEFINE6_stage_0_index_1; 2 = 0 : envDEFINE6_stage_0_index_2; esac) : envVAR2_stage_1;
+                TRUE : envVAR2_stage_1;
+            esac;
+        blDEFINE3_stage_0 :=
+            case
+                TRUE : min(5, max(2, (-(-26) * -(-5) * abs(91) * (84 * -2))));
+                TRUE : min(5, max(2, -(5)));
+            esac;
+        envDEFINE5_stage_0_index_0 :=
+            case
+                ((89 > blDEFINE3_stage_0) | ((envVAR1_stage_0 >= -31) -> FALSE)) : min(-2, max(-5, blDEFINE3_stage_0));
+                TRUE : min(-2, max(-5, -(-4)));
+            esac;
+        envDEFINE5_stage_0_index_1 :=
+            case
+                TRUE : min(-2, max(-5, 19));
+            esac;
+        envDEFINE6_stage_0_index_0 :=
+            case
+                TRUE : (86 <= 12);
+            esac;
+        envDEFINE6_stage_0_index_1 :=
+            case
+                TRUE : (86 <= 12);
+            esac;
+        envDEFINE6_stage_0_index_2 :=
+            case
+                TRUE : (86 <= 12);
+            esac;
+        --END OF BLACKBOARD DEFINITIONS
+    VAR
+        node_names : define_nodes;
+        resume_from_here_in_subtree__a4 : {1, -2};
+        resume_from_here_in_subtree__a1 : {2, -2};
+        a4 : running_DEFAULT_module();
+        a1 : a1_module();
+        p_all0 : composite_parallel_success_on_all_with_partial_memory_2(a4, a1, parallel_skip__p_all0);
+        --START OF BLACKBOARD VARIABLES DECLARATION
+        blVAR0_stage_0 : boolean;
+        envVAR1_stage_0 : -5..-2;
+        envVAR2_stage_0 : {yes, no, both};
+        --END OF BLACKBOARD VARIABLES DECLARATION
+    ASSIGN
+        init(resume_from_here_in_subtree__a4) := 1;
+        init(resume_from_here_in_subtree__a1) := 2;
+        --START OF BLACKBOARD VARIABLES INITIALIZATION
+        init(blVAR0_stage_0) := 
+            case
+                ((19 + -2 + -2) < 71) : TRUE;
+                (5 != -49) : (-(5) <= (-10 + -4 + -56 + -87));
+                TRUE : (TRUE xnor TRUE);
+            esac;
+        init(envVAR1_stage_0) := 
+            case
+                (-94 > -39) : min(-2, max(-5, 2));
+                TRUE : min(-2, max(-5, min(-71, abs(-3))));
+            esac;
+        init(envVAR2_stage_0) := 
+            case
+                TRUE : no;
+            esac;
+        --END OF BLACKBOARD VARIABLES INITIALIZATION
+        next(resume_from_here_in_subtree__a4) := 
+            case
+                (p_all0.status in {success, failure}) : node_names.a4;
+                (a4.status = success) : -2;
+                (a4.status = failure) : node_names.a4;
+                a4.status = invalid : resume_from_here_in_subtree__a4;
+                TRUE : 1;
+            esac;
+        next(resume_from_here_in_subtree__a1) := 
+            case
+                (p_all0.status in {success, failure}) : node_names.a1;
+                (a1.status = success) : -2;
+                (a1.status = failure) : node_names.a1;
+                a1.status = invalid : resume_from_here_in_subtree__a1;
+                TRUE : 2;
+            esac;
+        --START OF BLACKBOARD VARIABLES TRANSITION
+        next(blVAR0_stage_0) := blVAR0_stage_1;
+        next(envVAR1_stage_0) := envVAR1_stage_1;
+        next(envVAR2_stage_0) := envVAR2_stage_2;
+        --END OF BLACKBOARD VARIABLES TRANSITION
+
+MODULE define_nodes
+    DEFINE
+        p_all0 := 0;
+        a4 := 1;
+        a1 := 2;
+MODULE composite_parallel_success_on_all_with_partial_memory_2(child_0, child_1, skip_child)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                (child_0.internal_status = failure) & !(skip_child[0] = -2) : failure;
+                (child_1.internal_status = failure) & !(skip_child[1] = -2) : failure;
+                !(child_0.internal_status = success) & !(skip_child[0] = -2) : child_0.internal_status;
+                !(child_1.internal_status = success) & !(skip_child[1] = -2) : child_1.internal_status;
+                TRUE : success;
+            esac;
+        child_0.active := active & !(skip_child[0] = -2);
+        child_1.active := active & !(skip_child[1] = -2);
+MODULE a1_module()
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := 
+            case
+                TRUE : running;
+                TRUE : failure;
+            esac;
+MODULE running_DEFAULT_module
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := running;

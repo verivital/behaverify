@@ -1,0 +1,180 @@
+------------------------
+State after tick: 1
+a3 -> FAILURE
+
+blackboard
+  blVAR0: [-2, -2, -2]
+  blVAR3: False
+
+local
+  a3_DOT_localVAR4 : True
+  a3_DOT_localFROZENVAR5 : ['both', 'both']
+  a3_DOT_localFROZENVAR6 : True
+
+environment
+  envVAR1: ['no', 'yes']
+  envDEFINE7: -2
+  envDEFINE9: True
+
+------------------------
+State after tick: 2
+a3 -> FAILURE
+
+blackboard
+  blVAR0: [-2, -2, -2]
+  blVAR3: False
+
+local
+  a3_DOT_localVAR4 : True
+  a3_DOT_localFROZENVAR5 : ['both', 'both']
+  a3_DOT_localFROZENVAR6 : True
+
+environment
+  envVAR1: ['no', 'yes']
+  envDEFINE7: -2
+  envDEFINE9: True
+
+------------------------
+State after tick: 3
+a3 -> FAILURE
+
+blackboard
+  blVAR0: [-2, -2, -2]
+  blVAR3: False
+
+local
+  a3_DOT_localVAR4 : True
+  a3_DOT_localFROZENVAR5 : ['both', 'both']
+  a3_DOT_localFROZENVAR6 : True
+
+environment
+  envVAR1: ['no', 'yes']
+  envDEFINE7: -2
+  envDEFINE9: True
+
+------------------------
+State after tick: 4
+a3 -> FAILURE
+
+blackboard
+  blVAR0: [-2, -2, -2]
+  blVAR3: False
+
+local
+  a3_DOT_localVAR4 : True
+  a3_DOT_localFROZENVAR5 : ['both', 'both']
+  a3_DOT_localFROZENVAR6 : True
+
+environment
+  envVAR1: ['no', 'yes']
+  envDEFINE7: -2
+  envDEFINE9: True
+
+------------------------
+State after tick: 5
+a3 -> FAILURE
+
+blackboard
+  blVAR0: [-2, -2, -2]
+  blVAR3: False
+
+local
+  a3_DOT_localVAR4 : True
+  a3_DOT_localFROZENVAR5 : ['both', 'both']
+  a3_DOT_localFROZENVAR6 : True
+
+environment
+  envVAR1: ['no', 'yes']
+  envDEFINE7: -2
+  envDEFINE9: True
+
+------------------------
+State after tick: 6
+a3 -> FAILURE
+
+blackboard
+  blVAR0: [-2, -2, -2]
+  blVAR3: False
+
+local
+  a3_DOT_localVAR4 : True
+  a3_DOT_localFROZENVAR5 : ['both', 'both']
+  a3_DOT_localFROZENVAR6 : True
+
+environment
+  envVAR1: ['no', 'yes']
+  envDEFINE7: -2
+  envDEFINE9: True
+
+------------------------
+State after tick: 7
+a3 -> FAILURE
+
+blackboard
+  blVAR0: [-2, -2, -2]
+  blVAR3: False
+
+local
+  a3_DOT_localVAR4 : True
+  a3_DOT_localFROZENVAR5 : ['both', 'both']
+  a3_DOT_localFROZENVAR6 : True
+
+environment
+  envVAR1: ['no', 'yes']
+  envDEFINE7: -2
+  envDEFINE9: True
+
+------------------------
+State after tick: 8
+a3 -> FAILURE
+
+blackboard
+  blVAR0: [-2, -2, -2]
+  blVAR3: False
+
+local
+  a3_DOT_localVAR4 : True
+  a3_DOT_localFROZENVAR5 : ['both', 'both']
+  a3_DOT_localFROZENVAR6 : True
+
+environment
+  envVAR1: ['no', 'yes']
+  envDEFINE7: -2
+  envDEFINE9: True
+
+------------------------
+State after tick: 9
+a3 -> FAILURE
+
+blackboard
+  blVAR0: [-2, -2, -2]
+  blVAR3: False
+
+local
+  a3_DOT_localVAR4 : True
+  a3_DOT_localFROZENVAR5 : ['both', 'both']
+  a3_DOT_localFROZENVAR6 : True
+
+environment
+  envVAR1: ['no', 'yes']
+  envDEFINE7: -2
+  envDEFINE9: True
+
+------------------------
+State after tick: 10
+a3 -> FAILURE
+
+blackboard
+  blVAR0: [-2, -2, -2]
+  blVAR3: False
+
+local
+  a3_DOT_localVAR4 : True
+  a3_DOT_localFROZENVAR5 : ['both', 'both']
+  a3_DOT_localFROZENVAR6 : True
+
+environment
+  envVAR1: ['no', 'yes']
+  envDEFINE7: -2
+  envDEFINE9: True
+
