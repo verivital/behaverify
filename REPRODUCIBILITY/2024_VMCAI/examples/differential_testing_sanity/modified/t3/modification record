@@ -1,0 +1,9 @@
+changed line 1 in OUTPUT_HASKELL.txt from
+(Board = {boardBlVAR0: [3, 3, 3], boardBlDEFINE5: False, localBoardLocalDEFINE6Location2: [-5, -5, -5]}, Env = {envEnvVAR1: [3, 5, 2], envEnvDEFINE3: -5})
+to
+(Board = {boardBlVAR0: [3, 3, 1], boardBlDEFINE5: False, localBoardLocalDEFINE6Location2: [-5, -5, -5]}, Env = {envEnvVAR1: [3, 5, 2], envEnvDEFINE3: -5})
+
+changed line 4 in OUTPUT_PYTHON.txt from
+  blVAR0: [3, 3, 3]
+to
+  blVAR0: [3, 3, 1]

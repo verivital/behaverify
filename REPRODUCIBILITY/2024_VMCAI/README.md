@@ -16,6 +16,10 @@ Finally, note that this is a .md file, and as such, we escape various characters
 1. docker with the ability to run commands as a regular user (see https://docs.docker.com/engine/install/linux-postinstall/ )
 2. nuXmv (see  https://nuxmv.fbk.eu/download.html or https://nuxmv.fbk.eu/theme/download.php?file=nuXmv-2.0.0-linux64.tar.gz ). You only need to download nuXmv. There should be no installation. Please ensure you download the Linux 64-bit x86 version 2.0.0 (October 14, 2019). The executable will be located in **nuXmv-2.0.0-linux64/nuXmv-2.0.0-Linux/bin/nuXmv**. There should be **NO FILE EXTENSION**.
 
+## nuXmv
+
+Per the licensing agreement of nuXmv (see https://nuxmv.fbk.eu/downloads/LICENSE.txt ), we may not re-distribute the software in any form for any purpose. As such, while we appreciate that downloading nuXmv separately is tedious and means that this artifact is somewhat incomplete, we do not have any alternative available to us. Thank you for understanding.
+
 ## Additional Assumption
 
 The scripts assume you are able to run bash scripts. If you cannot, please run the commands present in the bash scripts manually. Note that this will require arguments to replaced. Specifically, $1 means the first argument provided to the bash script, $2 means the second argument provided to the bash script, etc.
@@ -108,7 +112,7 @@ Next, please run
 
 	./docker_add_nuxmv.sh /path/to/nuXmv
 
-This will copy nuXmv from the path you provided to the correct location in the docker and ensure it is runable and an executable. Note that you should not point to the folder containing nuXmv, but to nuXmv itself, and that the nuXmv version should be the linux version.
+This will copy nuXmv from the path you provided to the correct location in the docker and ensure it is runable and an executable. Note that you should not point to the folder containing nuXmv, but to nuXmv itself, and that the nuXmv version should be the Linux version.
 
 ### 3. Minimal Test (estimated time: 2 minutes)
 
@@ -198,11 +202,11 @@ This section is intentionally lengthy. If you are not interested in the details 
 		git clone https://github.com/verivital/behaverify
 19. Enable scripts<br />This will allow all the necessary scripts to run. Please navigate to the top level of our repository and run the following
 
-		sudo chmod -R +x /behaverify/REPRODUCIBILITY/2023_SEFM/*.sh
-20. Move nuXmv<br />You downloaded nuXmv in step 1. Please place it in behaverify/REPRODUCIBILITY/2023\_SEFM/
+		sudo chmod -R +x /behaverify/REPRODUCIBILITY/2024_VMCAI/*.sh
+20. Move nuXmv<br />You downloaded nuXmv in step 1. Please place it in behaverify/REPRODUCIBILITY/2024\_VMCAI/
 21. Enable nuXmv<br />Please navigate to the top level of our repository and run the following
 
-		sudo chmod +x /behaverify/REPRODUCIBILITY/2023_SEFM/nuXmv
+		sudo chmod +x /behaverify/REPRODUCIBILITY/2024_VMCAI/nuXmv
 
 
 You are now ready to run the scripts locally. Scroll past the concise installation instructions to see the scripts explanation.
@@ -241,13 +245,13 @@ Please follow the instructions at https://www.haskell.org/ghcup/ to install ghcu
 
 Please navigate to the top level of our repository and run the following
 
-	sudo chmod -R +x /behaverify/REPRODUCIBILITY/2023_SEFM/*.sh
+	sudo chmod -R +x /behaverify/REPRODUCIBILITY/2024_VMCAI/*.sh
 
-You downloaded nuXmv earlier. Please place it in behaverify/REPRODUCIBILITY/2023\_SEFM/
+You downloaded nuXmv earlier. Please place it in behaverify/REPRODUCIBILITY/2024\_VMCAI/
 
 Please navigate to the top level of our repository and run the following
 
-	sudo chmod +x /behaverify/REPRODUCIBILITY/2023_SEFM/nuXmv
+	sudo chmod +x /behaverify/REPRODUCIBILITY/2024_VMCAI/nuXmv
 
 You are now ready to run the scripts locally. 
 
@@ -260,27 +264,27 @@ Note that each script will erase all the relevant results before running, to ens
 
 ## Minimal Script
 
-To test everything is working, please navigate to behaverify/REPRODUCIBILITY/2023\_SEFM/ and run the following
+To test everything is working, please navigate to behaverify/REPRODUCIBILITY/2024\_VMCAI/ and run the following
 
 	./minimal_script.sh ./
 
-This will run a fairly small script. The results will be in behaverify/REPRODUCIBILITY/2023\_SEFM/examples/. Please see the Interpreting and Comparing Results section for an explanation of what results to look for.
+This will run a fairly small script. The results will be in behaverify/REPRODUCIBILITY/2024\_VMCAI/examples/. Please see the Interpreting and Comparing Results section for an explanation of what results to look for.
 
 ## Partial Script
 
-To create a subset of the results, please navigate to behaverify/REPRODUCIBILITY/2023\_SEFM/ and run the following
+To create a subset of the results, please navigate to behaverify/REPRODUCIBILITY/2024\_VMCAI/ and run the following
 
 	./partial_results_script.sh ./
 
-This will run a larger, but still fairly small script. The results will be in behaverify/REPRODUCIBILITY/2023\_SEFM/examples/. Please see the Interpreting and Comparing Results section for an explanation of what results to look for.
+This will run a larger, but still fairly small script. The results will be in behaverify/REPRODUCIBILITY/2024\_VMCAI/examples/. Please see the Interpreting and Comparing Results section for an explanation of what results to look for.
 
 ## Full Script
 
-To create all results, please navigate to behaverify/REPRODUCIBILITY/2023\_SEFM/ and run the following
+To create all results, please navigate to behaverify/REPRODUCIBILITY/2024\_VMCAI/ and run the following
 
 	./results_script.sh ./
 
-This will run a large script. The results will be in **behaverify/REPRODUCIBILITY/2023\_SEFM/examples/**. Please see the Interpreting and Comparing Results section for an explanation of what results to look for.
+This will run a large script. The results will be in **behaverify/REPRODUCIBILITY/2024\_VMCAI/examples/**. Please see the Interpreting and Comparing Results section for an explanation of what results to look for.
 
 
 
@@ -290,15 +294,13 @@ This will run a large script. The results will be in **behaverify/REPRODUCIBILIT
 
 Upon completing any of the test scripts, you should find that /path/to/writable/location/ has a folder containing the results. The name of this folder depends on which test was run. See the specific tests for details. Within this folder, you should find the following folders, each of which corresponds to an experiment:
 
-- light\_controller -> This experiment is called Light Controller in the paper (see **Section 6.1**). It is used in the paper.
+- light\_controller\_v3 -> This experiment is called Light Controller in the paper (see **Section 6.1**). It is used in the paper.
 - blueROV\_mod -> This experiment is called BlueROV in the paper (see **Section 6.2**). It is used in the paper.
 - bigger\_fish\_expanded -> This experiment is called Bigger Fish in the paper (see **Section 6.3**). It is used in the paper. 
 - simple\_robot -> This experiment is called Simple Robot in the paper (see **Section 6.4**). It is used in the paper.
-- random\_haskell -> This is the Differential Experimenting (see **Section 7**). It is used in the paper.
-- random\_sanity -> This is a confirmation that our comparison method works (see **Section 7.3**). It is used in the paper.
+- differential\_testing -> This is the Differential Experimenting (see **Section 7**). It is used in the paper.
+- differential\_testing\_sanity -> This is a confirmation that our comparison method works (see **Section 7.3**). It is used in the paper.
 - bigger\_fish -> This experiment was not run, as the results were not used in the paper. It should have a single python file.
-- checklist -> This experiment was not run, as the results were not used in the paper. It should have two python files and two .tree files.
-- checklist\_invar -> This experiment was not run, as the results were not used in the paper. It should have two python files.
 - simplified\_robot  -> This experiment was not run, as the results were not used in the paper. It should have a single python file and a single .tree file.
 
 Some of the information gathered by the experiments is not used in the paper.
@@ -311,7 +313,7 @@ The results should be in **/path/to/writable/location/behaverify\_install\_test\
 
 ### Results that can be Compared with the Paper
 
-- **light\_controller/processed\_data/tables/opt/** -> There should be a series of .tex files containing tables. In **Section 6.1** we make several numerical claims based on these tables.
+- **light\_controller\_v3/processed\_data/tables/opt/** -> There should be a series of .tex files containing tables. In **Section 6.1** we make several numerical claims based on these tables.
     - **light\_controller\_elapsed\_invar.tex** -> timing claim: results should be similar but may differ.
 	- **light\_controller\_elapsed\_ctl.tex** -> timing claim: results should be similar but may differ.
 	- **light\_controller\_elapsed\_ltl.tex** -> timing claim: results should be similar but may differ.
@@ -319,12 +321,12 @@ The results should be in **/path/to/writable/location/behaverify\_install\_test\
     - **blueROV\_mod\_elapsed\_invar.tex** -> timing claims: results should be similar but may differ. See **Table 1**.
 	- **blueROV\_mod\_reachable\_states.tex** -> state claim: results should be exact. See **Table 2**. The value for first\_opt should also be between 2^62 and 2^63 reachable states, corresponding to the numerical claim made in **Section 6.4**.
 - **blueROV\_mod/smv/** -> There should be a series of .smv files containing the nuXmv models. In **Section 6.4** we utilize information from these models.
-    - **first\_opt\_blueROV\_mod\_1.smv** -> Please search this file for the phrase 'MODULE define\_nodes'. Following this phrase you will see an enumeration of the nodes, starting from 0 and ending at 73, for a total of 74 nodes. This should be exact. (The paper states 73; this is a typo and will be corrected).
-- **random\_haskell/results/log.txt** -> This corresponds to **Section 7** of the paper. On each line, there should be a series of dashes and tX (X is a number, from 0 to 4). If there are any Comparison Failures, it means the results of the models differed. Note: if the Comparison Failure says "not enough ticks" (or something similar), then it is most likely indicating an installation error prevented one of the models from running correctly (probably the Haskell model). If you wish to double check the output of the models:
-    - **random\_haskell/gen\_files/t\*/OUTPUT\_\*.txt** -> These files will contain the output of the run of each model. If the tick failure occured, one of these is probably empty.
-	- **random\_haskell/gen\_files/t\*/\*.smv** -> These files will contain the nuXmv models used. You can run them with nuXmv.
-	- Python Files -> Inside **random\_haskell/gen\_files/t\*/** folder, run ```python3 t*_runner.py```. This will run the Python Model (replace * with relevant number).
-	- Haskell Files -> Inside **random\_haskell/gen\_files/t\*/** folder, run ```cabal run```. This will run the Haskell Model.
+    - **first\_opt\_blueROV\_mod\_1.smv** -> Please search this file for the phrase 'MODULE define\_nodes'. Following this phrase you will see an enumeration of the nodes, starting from 0 and ending at 73, for a total of 74 nodes. This should be exact.
+- **differential\_testing/moved/array\_go\_results/log.txt** -> This corresponds to **Section 7** of the paper. On each line, there should be a series of dashes and tX (X is a number, from 0 to 4). If there are any Comparison Failures, it means the results of the models differed. Note: if the Comparison Failure says "not enough ticks" (or something similar), then it is most likely indicating an installation error prevented one of the models from running correctly (probably the Haskell model). If you wish to double check the output of the models:
+    - **differential\_testing/moved/array\_go\_gen\_files/t\*/OUTPUT\_\*.txt** -> These files will contain the output of the run of each model. If the tick failure occured, one of these is probably empty.
+	- **differential\_testing/moved/array\_go\_gen\_files/t\*/\*.smv** -> These files will contain the nuXmv models used. You can run them with nuXmv.
+	- Python Files -> Inside **differential\_testing/moved/array\_go\_gen\_files/t\*/** folder, run ```python3 t*_runner.py```. This will run the Python Model (replace * with relevant number).
+	- Haskell Files -> Inside **differential\_testing/moved/array\_go\_gen\_files/t\*/** folder, run ```cabal run```. This will run the Haskell Model.
 		
 Note that the presence of Comparison failure in the Differential Results in **random\_haskell** is possible as the trials were randomized. This indicates a bug with one of the models (or an installation error). The Minimal test generates only 5 of these tests, while the Full test generate 5000.
 
@@ -341,7 +343,7 @@ The results should be in **/path/to/writable/location/behaverify\_partial\_resul
 
 ### Results that can be Compared with the Paper
 
-- **light\_controller/processed\_data/tables/opt/** -> There should be a series of .tex files containing tables. In **Section 6.1** we make several numerical claims based on these tables.
+- **light\_controller\_v3/processed\_data/tables/opt/** -> There should be a series of .tex files containing tables. In **Section 6.1** we make several numerical claims based on these tables.
     - **light\_controller\_elapsed\_invar.tex** -> timing claim: results should be similar but may differ.
 	- **light\_controller\_elapsed\_ctl.tex** -> timing claim: results should be similar but may differ.
 	- **light\_controller\_elapsed\_ltl.tex** -> timing claim: results should be similar but may differ.
@@ -351,14 +353,14 @@ The results should be in **/path/to/writable/location/behaverify\_partial\_resul
 - **bigger\_fish\_expanded/processed\_data/pictures/opt/** -> There should be a series of graphs. In **Section 6.3** we utilize some of these graphs.
     - **bigger\_fish\_parallel\_ctl.png** -> This corresponds to part of **Figure 7**. timing claim: results should be similar but may differ.
 	- **bigger\_fish\_parallel\_ltl.png** -> This corresponds to part of **Figure 7**. timing claim: results should be similar but may differ.
-- **bigger\_fish\_expanded/smv/** -> There should be a series of .smv files containing nuXmv models. In **Section 6.3** we claim that the models with 600 checks have 1355 nodes. To verify this claim, open any of the files with the number 600 in the name. Please search this file for the phrase 'MODULE define\_nodes'. Following this phrase you will see an enumeration of the nodes, starting from 0 and ending at 1354, for a total of 1355 nodes. This result should be exact. (The paper states 1354; this is a typo and will be corrected).
+- **bigger\_fish\_expanded/smv/** -> There should be a series of .smv files containing nuXmv models. In **Section 6.3** we claim that the models with 600 checks have 1355 nodes. To verify this claim, open any of the files with the number 600 in the name. Please search this file for the phrase 'MODULE define\_nodes'. Following this phrase you will see an enumeration of the nodes, starting from 0 and ending at 1354, for a total of 1355 nodes. This result should be exact.
 - **blueROV\_mod/smv/** -> There should be a series of .smv files containing the nuXmv models. In **Section 6.4** we utilize information from these models.
-    - **first\_opt\_blueROV\_mod\_1.smv** -> Please search this file for the phrase 'MODULE define\_nodes'. Following this phrase you will see an enumeration of the nodes, starting from 0 and ending at 73, for a total of 74 nodes. This result should be exact. (The paper states 73; this is a typo and will be corrected).
-- **random\_haskell/results/log.txt** -> This corresponds to **Section 7** of the paper. On each line, there should be a series of dashes and tX (X is a number, from 0 to 20). If there are any Comparison Failures, it means the results of the models differed. Note: if the Comparison Failure says "not enough ticks" (or something similar), then it is most likely indicating an installation error prevented one of the models from running correctly (probably the Haskell model). If you wish to double check the output of the models:
-    - **random\_haskell/gen\_files/t\*/OUTPUT\_\*.txt** -> These files will contain the output of the run of each model. If the tick failure occured, one of these is probably empty.
-	- **random\_haskell/gen\_files/t\*/\*.smv** -> These files will contain the nuXmv models used. You can run them with nuXmv.
-	- Python Files -> Inside **random\_haskell/gen\_files/t\*/** folder, run ```python3 t*_runner.py```. This will run the Python Model (replace * with relevant number).
-	- Haskell Files -> Inside **random\_haskell/gen\_files/t\*/** folder, run ```cabal run```. This will run the Haskell Model.
+    - **first\_opt\_blueROV\_mod\_1.smv** -> Please search this file for the phrase 'MODULE define\_nodes'. Following this phrase you will see an enumeration of the nodes, starting from 0 and ending at 73, for a total of 74 nodes. This result should be exact.
+- **differential\_testing/moved/array\_go\_results/log.txt** -> This corresponds to **Section 7** of the paper. On each line, there should be a series of dashes and tX (X is a number, from 0 to 20). If there are any Comparison Failures, it means the results of the models differed. Note: if the Comparison Failure says "not enough ticks" (or something similar), then it is most likely indicating an installation error prevented one of the models from running correctly (probably the Haskell model). If you wish to double check the output of the models:
+    - **differential\_testing/moved/array\_go\_gen\_files/t\*/OUTPUT\_\*.txt** -> These files will contain the output of the run of each model. If the tick failure occured, one of these is probably empty.
+	- **differential\_testing/moved/array\_go\_gen\_files/t\*/\*.smv** -> These files will contain the nuXmv models used. You can run them with nuXmv.
+	- Python Files -> Inside **differential\_testing/moved/array\_go\_gen\_files/t\*/** folder, run ```python3 t*_runner.py```. This will run the Python Model (replace * with relevant number).
+	- Haskell Files -> Inside **differential\_testing/moved/array\_go\_gen\_files/t\*/** folder, run ```cabal run```. This will run the Haskell Model.
 		
 Note that the presence of Comparison failure in the Differential Results in **random\_haskell** is possible as the trials were randomized. This indicates a bug with one of the models (or an installation error). The Partial Test generates only 20 of these tests, while the Full test generate 5000.
 
@@ -373,7 +375,7 @@ The results should be in **/path/to/writable/location/behaverify\_results/**.
 
 ### Results that can be Compared with the Paper
 
-- **light\_controller/processed\_data/tables/opt/** -> There should be a series of .tex files containing tables. In **Section 6.1** we make several numerical claims based on these tables.
+- **light\_controller\_v3/processed\_data/tables/opt/** -> There should be a series of .tex files containing tables. In **Section 6.1** we make several numerical claims based on these tables.
     - **light\_controller\_elapsed\_invar.tex** -> timing claim: results should be similar but may differ.
 	- **light\_controller\_elapsed\_ctl.tex** -> timing claim: results should be similar but may differ.
 	- **light\_controller\_elapsed\_ltl.tex** -> timing claim: results should be similar but may differ.
@@ -383,15 +385,15 @@ The results should be in **/path/to/writable/location/behaverify\_results/**.
 - **bigger\_fish\_expanded/processed\_data/pictures/opt/** -> There should be a series of graphs. In **Section 6.3** we utilize some of these graphs.
     - **bigger\_fish\_parallel\_ctl.png** -> This corresponds to part of **Figure 7**. timing claim: results should be similar but may differ.
 	- **bigger\_fish\_parallel\_ltl.png** -> This corresponds to part of **Figure 7**. timing claim: results should be similar but may differ.
-- **bigger\_fish\_expanded/smv/** -> There should be a series of .smv files containing nuXmv models. In **Section 6.3** we claim that the models with 600 checks have 1355 nodes. To verify this claim, open any of the files with the number 600 in the name. Please search this file for the phrase 'MODULE define\_nodes'. Following this phrase you will see an enumeration of the nodes, starting from 0 and ending at 1354, for a total of 1355 nodes. This shoudl be exact. (The paper states 1354; this is a typo and will be corrected).
+- **bigger\_fish\_expanded/smv/** -> There should be a series of .smv files containing nuXmv models. In **Section 6.3** we claim that the models with 600 checks have 1355 nodes. To verify this claim, open any of the files with the number 600 in the name. Please search this file for the phrase 'MODULE define\_nodes'. Following this phrase you will see an enumeration of the nodes, starting from 0 and ending at 1354, for a total of 1355 nodes. This shoudl be exact.
 - **blueROV\_mod/smv/** -> There should be a series of .smv files containing the nuXmv models. In **Section 6.4** we utilize information from these models.
-    - **first\_opt\_blueROV\_mod\_1.smv** -> Please search this file for the phrase 'MODULE define\_nodes'. Following this phrase you will see an enumeration of the nodes, starting from 0 and ending at 73, for a total of 74 nodes. This should be exact. (The paper states 73; this is a typo and will be corrected).
+    - **first\_opt\_blueROV\_mod\_1.smv** -> Please search this file for the phrase 'MODULE define\_nodes'. Following this phrase you will see an enumeration of the nodes, starting from 0 and ending at 73, for a total of 74 nodes. This should be exact.
 - **simple\_robot/processed\_data/pictures/opt/** -> There should be a series of graphs. In **Section 6.4** we utilize some of these graphs.
     - **simple\_robot\_ctl.png** -> This corresponds to part of **Figure 10**. timing claim: results should be similar but may differ.
 	- **simple\_robot\_ltl.png** -> This corresponds to part of **Figure 10**. timing claim: results should be similar but may differ.
 	- **simple\_robot\_reachable\_states.png** -> This corresponds to part of **Figure 10**. state claim: results should be exact.
 - **simple\_robot/smv/** -> There should be a series of .smv files containing the nuXmv models. In **Section 6.4** we utilize information from these models.
-    - **first\_opt\_simple\_robot\_50.smv** -> Please search this file for the phrase 'MODULE define\_nodes'. Following this phrase you will see an enumeration of the nodes, starting from 0 and ending at 21, for a total of 22 nodes. This should be exact. (The paper states 21; this is a typo and will be corrected).
+    - **first\_opt\_simple\_robot\_50.smv** -> Please search this file for the phrase 'MODULE define\_nodes'. Following this phrase you will see an enumeration of the nodes, starting from 0 and ending at 21, for a total of 22 nodes. This should be exact.
 	- **first\_opt\_simple\_robot\_50.smv** -> To verify the claim regarding number of reachable states, you will need to run nuXmv. Please execute the following commands:
 	```
 	nuXmv -int first_opt_simple_robot_50.smv
@@ -400,11 +402,11 @@ The results should be in **/path/to/writable/location/behaverify\_results/**.
 	quit
 	```
 	This will print the number of reachable states out of total states. Note that the go command will take more than 3 minutes to complete, but likely les than 10. You can then verify the claim that the model has about 2^25 reachable states.
-- **random\_haskell/results/log.txt** -> This corresponds to **Section 7** of the paper. On each line, there should be a series of dashes and tX (X is a number, from 0 to 4999). If there are any Comparison Failures, it means the results of the models differed. Note: if the Comparison Failure says "not enough ticks" (or something similar), then it is most likely indicating an installation error prevented one of the models from running correctly (probably the Haskell model). If you wish to double check the output of the models:
-    - **random\_haskell/gen\_files/t\*/OUTPUT\_\*.txt** -> These files will contain the output of the run of each model. If the tick failure occured, one of these is probably empty.
-	- **random\_haskell/gen\_files/t\*/\*.smv** -> These files will contain the nuXmv models used. You can run them with nuXmv.
-	- Python Files -> Inside **random\_haskell/gen\_files/t\*/** folder, run ```python3 t*_runner.py```. This will run the Python Model (replace * with relevant number).
-	- Haskell Files -> Inside **random\_haskell/gen\_files/t\*/** folder, run ```cabal run```. This will run the Haskell Model.
+- **differential\_testing/moved/array\_go\_results/log.txt** -> This corresponds to **Section 7** of the paper. On each line, there should be a series of dashes and tX (X is a number, from 0 to 4999). If there are any Comparison Failures, it means the results of the models differed. Note: if the Comparison Failure says "not enough ticks" (or something similar), then it is most likely indicating an installation error prevented one of the models from running correctly (probably the Haskell model). If you wish to double check the output of the models:
+    - **differential\_testing/moved/array\_go\_gen\_files/t\*/OUTPUT\_\*.txt** -> These files will contain the output of the run of each model. If the tick failure occured, one of these is probably empty.
+	- **differential\_testing/moved/array\_go\_gen\_files/t\*/\*.smv** -> These files will contain the nuXmv models used. You can run them with nuXmv.
+	- Python Files -> Inside **differential\_testing/moved/array\_go\_gen\_files/t\*/** folder, run ```python3 t*_runner.py```. This will run the Python Model (replace * with relevant number).
+	- Haskell Files -> Inside **differential\_testing/moved/array\_go\_gen\_files/t\*/** folder, run ```cabal run```. This will run the Haskell Model.
 		
 Note that the presence of Comparison failure in the Differential Results in **random\_haskell** is possible as the trials were randomized. This indicates a bug with one of the models (or an installation error). The Full test generates 5000 random trials.
 

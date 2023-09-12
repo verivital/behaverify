@@ -1,0 +1,20 @@
+-----------------------------t0-----------------------------
+Comparison failure! After tick 7, BL_VAR_0 was [-5, -5] in python_tick but [-5, -4] in haskell_tick
+-----------------------------t1-----------------------------
+Comparison failure! After tick 6, BL_DEFINE_7 was 1 in python_tick but 2 in haskell_tick
+-----------------------------t2-----------------------------
+Comparison failure! After tick 10, a2 was running in python_tick but failure in nuxmv_tick
+-----------------------------t3-----------------------------
+Comparison failure! After tick 0, BL_VAR_0 was [3, 3, 1] in python_tick but [3, 3, 3] in nuxmv_tick
+-----------------------------t4-----------------------------
+Comparison failure! After tick 5, a2 was success in opt_nuxmv_tick but invalid in nuxmv_tick
+-----------------------------t5-----------------------------
+Comparison failure! After tick 9, ENV_VAR_1 was [BOTH, YES] in python_tick but [BOTH, NO] in nuxmv_tick
+-----------------------------t6-----------------------------
+Comparison failure! After tick 9, a2 was failure in python_tick but success in nuxmv_tick
+-----------------------------t7-----------------------------
+Comparison failure! After tick 0, ENV_VAR_3 was TRUE in python_tick but FALSE in nuxmv_tick
+-----------------------------t8-----------------------------
+Comparison failure! After tick 10, ENV_VAR_1 was [TRUE, TRUE] in python_tick but [TRUE, FALSE] in nuxmv_tick
+-----------------------------t9-----------------------------
+Comparison failure! After tick 2, BL_VAR_0 was -1 in python_tick but -2 in nuxmv_tick

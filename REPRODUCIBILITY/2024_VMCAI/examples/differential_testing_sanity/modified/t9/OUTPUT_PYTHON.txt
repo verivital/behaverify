@@ -1,0 +1,163 @@
+------------------------
+Initial State
+blackboard
+  blVAR0: -2
+  blFROZENVAR4: [-2, -2]
+  blDEFINE6: [True, True]
+
+local
+
+environment
+  envVAR1: 2
+  envDEFINE5: ['no', 'no', 'yes']
+
+------------------------
+State after tick: 1
+a4 -> SUCCESS
+
+blackboard
+  blVAR0: -2
+  blFROZENVAR4: [-2, -2]
+  blDEFINE6: [True, True]
+
+local
+
+environment
+  envVAR1: 2
+  envDEFINE5: ['no', 'no', 'yes']
+
+------------------------
+State after tick: 2
+a4 -> SUCCESS
+
+blackboard
+  blVAR0: -1
+  blFROZENVAR4: [-2, -2]
+  blDEFINE6: [True, True]
+
+local
+
+environment
+  envVAR1: 2
+  envDEFINE5: ['no', 'no', 'yes']
+
+------------------------
+State after tick: 3
+a4 -> SUCCESS
+
+blackboard
+  blVAR0: -2
+  blFROZENVAR4: [-2, -2]
+  blDEFINE6: [True, True]
+
+local
+
+environment
+  envVAR1: 2
+  envDEFINE5: ['no', 'no', 'yes']
+
+------------------------
+State after tick: 4
+a4 -> SUCCESS
+
+blackboard
+  blVAR0: -2
+  blFROZENVAR4: [-2, -2]
+  blDEFINE6: [True, True]
+
+local
+
+environment
+  envVAR1: 2
+  envDEFINE5: ['no', 'no', 'yes']
+
+------------------------
+State after tick: 5
+a4 -> SUCCESS
+
+blackboard
+  blVAR0: -2
+  blFROZENVAR4: [-2, -2]
+  blDEFINE6: [True, True]
+
+local
+
+environment
+  envVAR1: 2
+  envDEFINE5: ['no', 'no', 'yes']
+
+------------------------
+State after tick: 6
+a4 -> SUCCESS
+
+blackboard
+  blVAR0: -2
+  blFROZENVAR4: [-2, -2]
+  blDEFINE6: [True, True]
+
+local
+
+environment
+  envVAR1: 2
+  envDEFINE5: ['no', 'no', 'yes']
+
+------------------------
+State after tick: 7
+a4 -> SUCCESS
+
+blackboard
+  blVAR0: -2
+  blFROZENVAR4: [-2, -2]
+  blDEFINE6: [True, True]
+
+local
+
+environment
+  envVAR1: 2
+  envDEFINE5: ['no', 'no', 'yes']
+
+------------------------
+State after tick: 8
+a4 -> SUCCESS
+
+blackboard
+  blVAR0: -2
+  blFROZENVAR4: [-2, -2]
+  blDEFINE6: [True, True]
+
+local
+
+environment
+  envVAR1: 2
+  envDEFINE5: ['no', 'no', 'yes']
+
+------------------------
+State after tick: 9
+a4 -> SUCCESS
+
+blackboard
+  blVAR0: -2
+  blFROZENVAR4: [-2, -2]
+  blDEFINE6: [True, True]
+
+local
+
+environment
+  envVAR1: 2
+  envDEFINE5: ['no', 'no', 'yes']
+
+------------------------
+State after tick: 10
+a4 -> SUCCESS
+
+blackboard
+  blVAR0: -2
+  blFROZENVAR4: [-2, -2]
+  blDEFINE6: [True, True]
+
+local
+
+environment
+  envVAR1: 2
+  envDEFINE5: ['no', 'no', 'yes']
+

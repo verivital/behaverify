@@ -1,0 +1,307 @@
+------------------------
+Initial State
+blackboard
+  blVAR0: [-2, -2]
+  blVAR2: ['yes', 'yes']
+
+local
+  a4_DOT_localDEFINE4 : [5]
+  a2_DOT_localDEFINE4 : [5]
+  a4_1_DOT_localDEFINE4 : [5]
+  a2_1_DOT_localDEFINE4 : [5]
+
+environment
+  envVAR1: [True, True]
+  envDEFINE3: 5
+  envDEFINE5: True
+
+------------------------
+State after tick: 1
+sel0 -> SUCCESS
+  p_one1 -> FAILURE
+    a4 -> FAILURE
+    a2 -> FAILURE
+    a3 -> FAILURE
+  dec_sr2 -> FAILURE
+    a4_1 -> FAILURE
+  sel3 -> SUCCESS
+    a2_1 -> FAILURE
+    c2 -> SUCCESS
+    c1 -> INVALID
+
+blackboard
+  blVAR0: [-2, -2]
+  blVAR2: ['yes', 'both']
+
+local
+  a4_DOT_localDEFINE4 : [5]
+  a2_DOT_localDEFINE4 : [5]
+  a4_1_DOT_localDEFINE4 : [5]
+  a2_1_DOT_localDEFINE4 : [5]
+
+environment
+  envVAR1: [True, True]
+  envDEFINE3: 5
+  envDEFINE5: True
+
+------------------------
+State after tick: 2
+sel0 -> SUCCESS
+  p_one1 -> FAILURE
+    a4 -> FAILURE
+    a2 -> FAILURE
+    a3 -> FAILURE
+  dec_sr2 -> FAILURE
+    a4_1 -> FAILURE
+  sel3 -> SUCCESS
+    a2_1 -> FAILURE
+    c2 -> SUCCESS
+    c1 -> INVALID
+
+blackboard
+  blVAR0: [-2, -2]
+  blVAR2: ['yes', 'both']
+
+local
+  a4_DOT_localDEFINE4 : [5]
+  a2_DOT_localDEFINE4 : [5]
+  a4_1_DOT_localDEFINE4 : [5]
+  a2_1_DOT_localDEFINE4 : [5]
+
+environment
+  envVAR1: [True, True]
+  envDEFINE3: 5
+  envDEFINE5: True
+
+------------------------
+State after tick: 3
+sel0 -> SUCCESS
+  p_one1 -> FAILURE
+    a4 -> FAILURE
+    a2 -> FAILURE
+    a3 -> FAILURE
+  dec_sr2 -> FAILURE
+    a4_1 -> FAILURE
+  sel3 -> SUCCESS
+    a2_1 -> FAILURE
+    c2 -> SUCCESS
+    c1 -> INVALID
+
+blackboard
+  blVAR0: [-2, -2]
+  blVAR2: ['yes', 'both']
+
+local
+  a4_DOT_localDEFINE4 : [5]
+  a2_DOT_localDEFINE4 : [5]
+  a4_1_DOT_localDEFINE4 : [5]
+  a2_1_DOT_localDEFINE4 : [5]
+
+environment
+  envVAR1: [True, True]
+  envDEFINE3: 5
+  envDEFINE5: True
+
+------------------------
+State after tick: 4
+sel0 -> SUCCESS
+  p_one1 -> FAILURE
+    a4 -> FAILURE
+    a2 -> FAILURE
+    a3 -> FAILURE
+  dec_sr2 -> FAILURE
+    a4_1 -> FAILURE
+  sel3 -> SUCCESS
+    a2_1 -> FAILURE
+    c2 -> SUCCESS
+    c1 -> INVALID
+
+blackboard
+  blVAR0: [-2, -2]
+  blVAR2: ['yes', 'both']
+
+local
+  a4_DOT_localDEFINE4 : [5]
+  a2_DOT_localDEFINE4 : [5]
+  a4_1_DOT_localDEFINE4 : [5]
+  a2_1_DOT_localDEFINE4 : [5]
+
+environment
+  envVAR1: [True, True]
+  envDEFINE3: 5
+  envDEFINE5: True
+
+------------------------
+State after tick: 5
+sel0 -> SUCCESS
+  p_one1 -> FAILURE
+    a4 -> FAILURE
+    a2 -> FAILURE
+    a3 -> FAILURE
+  dec_sr2 -> FAILURE
+    a4_1 -> FAILURE
+  sel3 -> SUCCESS
+    a2_1 -> FAILURE
+    c2 -> SUCCESS
+    c1 -> INVALID
+
+blackboard
+  blVAR0: [-2, -2]
+  blVAR2: ['yes', 'both']
+
+local
+  a4_DOT_localDEFINE4 : [5]
+  a2_DOT_localDEFINE4 : [5]
+  a4_1_DOT_localDEFINE4 : [5]
+  a2_1_DOT_localDEFINE4 : [5]
+
+environment
+  envVAR1: [True, True]
+  envDEFINE3: 5
+  envDEFINE5: True
+
+------------------------
+State after tick: 6
+sel0 -> SUCCESS
+  p_one1 -> FAILURE
+    a4 -> FAILURE
+    a2 -> FAILURE
+    a3 -> FAILURE
+  dec_sr2 -> FAILURE
+    a4_1 -> FAILURE
+  sel3 -> SUCCESS
+    a2_1 -> FAILURE
+    c2 -> SUCCESS
+    c1 -> INVALID
+
+blackboard
+  blVAR0: [-2, -2]
+  blVAR2: ['yes', 'both']
+
+local
+  a4_DOT_localDEFINE4 : [5]
+  a2_DOT_localDEFINE4 : [5]
+  a4_1_DOT_localDEFINE4 : [5]
+  a2_1_DOT_localDEFINE4 : [5]
+
+environment
+  envVAR1: [True, True]
+  envDEFINE3: 5
+  envDEFINE5: True
+
+------------------------
+State after tick: 7
+sel0 -> SUCCESS
+  p_one1 -> FAILURE
+    a4 -> FAILURE
+    a2 -> FAILURE
+    a3 -> FAILURE
+  dec_sr2 -> FAILURE
+    a4_1 -> FAILURE
+  sel3 -> SUCCESS
+    a2_1 -> FAILURE
+    c2 -> SUCCESS
+    c1 -> INVALID
+
+blackboard
+  blVAR0: [-2, -2]
+  blVAR2: ['yes', 'both']
+
+local
+  a4_DOT_localDEFINE4 : [5]
+  a2_DOT_localDEFINE4 : [5]
+  a4_1_DOT_localDEFINE4 : [5]
+  a2_1_DOT_localDEFINE4 : [5]
+
+environment
+  envVAR1: [True, True]
+  envDEFINE3: 5
+  envDEFINE5: True
+
+------------------------
+State after tick: 8
+sel0 -> SUCCESS
+  p_one1 -> FAILURE
+    a4 -> FAILURE
+    a2 -> FAILURE
+    a3 -> FAILURE
+  dec_sr2 -> FAILURE
+    a4_1 -> FAILURE
+  sel3 -> SUCCESS
+    a2_1 -> FAILURE
+    c2 -> SUCCESS
+    c1 -> INVALID
+
+blackboard
+  blVAR0: [-2, -2]
+  blVAR2: ['yes', 'both']
+
+local
+  a4_DOT_localDEFINE4 : [5]
+  a2_DOT_localDEFINE4 : [5]
+  a4_1_DOT_localDEFINE4 : [5]
+  a2_1_DOT_localDEFINE4 : [5]
+
+environment
+  envVAR1: [True, True]
+  envDEFINE3: 5
+  envDEFINE5: True
+
+------------------------
+State after tick: 9
+sel0 -> SUCCESS
+  p_one1 -> FAILURE
+    a4 -> FAILURE
+    a2 -> FAILURE
+    a3 -> FAILURE
+  dec_sr2 -> FAILURE
+    a4_1 -> FAILURE
+  sel3 -> SUCCESS
+    a2_1 -> FAILURE
+    c2 -> SUCCESS
+    c1 -> INVALID
+
+blackboard
+  blVAR0: [-2, -2]
+  blVAR2: ['yes', 'both']
+
+local
+  a4_DOT_localDEFINE4 : [5]
+  a2_DOT_localDEFINE4 : [5]
+  a4_1_DOT_localDEFINE4 : [5]
+  a2_1_DOT_localDEFINE4 : [5]
+
+environment
+  envVAR1: [True, True]
+  envDEFINE3: 5
+  envDEFINE5: True
+
+------------------------
+State after tick: 10
+sel0 -> SUCCESS
+  p_one1 -> FAILURE
+    a4 -> FAILURE
+    a2 -> FAILURE
+    a3 -> FAILURE
+  dec_sr2 -> FAILURE
+    a4_1 -> FAILURE
+  sel3 -> SUCCESS
+    a2_1 -> FAILURE
+    c2 -> SUCCESS
+    c1 -> INVALID
+
+blackboard
+  blVAR0: [-2, -2]
+  blVAR2: ['yes', 'both']
+
+local
+  a4_DOT_localDEFINE4 : [5]
+  a2_DOT_localDEFINE4 : [5]
+  a4_1_DOT_localDEFINE4 : [5]
+  a2_1_DOT_localDEFINE4 : [5]
+
+environment
+  envVAR1: [True, True]
+  envDEFINE3: 5
+  envDEFINE5: True
+
