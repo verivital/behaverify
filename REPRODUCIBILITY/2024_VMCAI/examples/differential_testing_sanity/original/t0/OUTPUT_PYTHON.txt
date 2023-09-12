@@ -1,0 +1,183 @@
+------------------------
+Initial State
+blackboard
+  blVAR0: [-5, -5]
+  blDEFINE5: [True, True, True]
+
+local
+  a4_DOT_localVAR2 : 2
+
+environment
+  envVAR1: [True, True, False]
+  envFROZENVAR3: no
+
+------------------------
+State after tick: 1
+seq0 -> FAILURE
+  c2 -> SUCCESS
+  a4 -> FAILURE
+
+blackboard
+  blVAR0: [-5, -5]
+  blDEFINE5: [True, True, True]
+
+local
+  a4_DOT_localVAR2 : 2
+
+environment
+  envVAR1: [True, False, False]
+  envFROZENVAR3: no
+
+------------------------
+State after tick: 2
+seq0 -> FAILURE
+  c2 -> SUCCESS
+  a4 -> FAILURE
+
+blackboard
+  blVAR0: [-5, -5]
+  blDEFINE5: [True, True, True]
+
+local
+  a4_DOT_localVAR2 : 2
+
+environment
+  envVAR1: [True, False, False]
+  envFROZENVAR3: no
+
+------------------------
+State after tick: 3
+seq0 -> FAILURE
+  c2 -> SUCCESS
+  a4 -> FAILURE
+
+blackboard
+  blVAR0: [-5, -5]
+  blDEFINE5: [True, True, True]
+
+local
+  a4_DOT_localVAR2 : 2
+
+environment
+  envVAR1: [True, False, False]
+  envFROZENVAR3: no
+
+------------------------
+State after tick: 4
+seq0 -> FAILURE
+  c2 -> SUCCESS
+  a4 -> FAILURE
+
+blackboard
+  blVAR0: [-5, -5]
+  blDEFINE5: [True, True, True]
+
+local
+  a4_DOT_localVAR2 : 2
+
+environment
+  envVAR1: [True, False, False]
+  envFROZENVAR3: no
+
+------------------------
+State after tick: 5
+seq0 -> FAILURE
+  c2 -> SUCCESS
+  a4 -> FAILURE
+
+blackboard
+  blVAR0: [-5, -5]
+  blDEFINE5: [True, True, True]
+
+local
+  a4_DOT_localVAR2 : 2
+
+environment
+  envVAR1: [True, False, False]
+  envFROZENVAR3: no
+
+------------------------
+State after tick: 6
+seq0 -> FAILURE
+  c2 -> SUCCESS
+  a4 -> FAILURE
+
+blackboard
+  blVAR0: [-5, -5]
+  blDEFINE5: [True, True, True]
+
+local
+  a4_DOT_localVAR2 : 2
+
+environment
+  envVAR1: [True, False, False]
+  envFROZENVAR3: no
+
+------------------------
+State after tick: 7
+seq0 -> FAILURE
+  c2 -> SUCCESS
+  a4 -> FAILURE
+
+blackboard
+  blVAR0: [-5, -5]
+  blDEFINE5: [True, True, True]
+
+local
+  a4_DOT_localVAR2 : 2
+
+environment
+  envVAR1: [True, False, False]
+  envFROZENVAR3: no
+
+------------------------
+State after tick: 8
+seq0 -> FAILURE
+  c2 -> SUCCESS
+  a4 -> FAILURE
+
+blackboard
+  blVAR0: [-5, -5]
+  blDEFINE5: [True, True, True]
+
+local
+  a4_DOT_localVAR2 : 2
+
+environment
+  envVAR1: [True, False, False]
+  envFROZENVAR3: no
+
+------------------------
+State after tick: 9
+seq0 -> FAILURE
+  c2 -> SUCCESS
+  a4 -> FAILURE
+
+blackboard
+  blVAR0: [-5, -5]
+  blDEFINE5: [True, True, True]
+
+local
+  a4_DOT_localVAR2 : 2
+
+environment
+  envVAR1: [True, False, False]
+  envFROZENVAR3: no
+
+------------------------
+State after tick: 10
+seq0 -> FAILURE
+  c2 -> SUCCESS
+  a4 -> FAILURE
+
+blackboard
+  blVAR0: [-5, -5]
+  blDEFINE5: [True, True, True]
+
+local
+  a4_DOT_localVAR2 : 2
+
+environment
+  envVAR1: [True, False, False]
+  envFROZENVAR3: no
+

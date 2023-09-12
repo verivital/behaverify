@@ -5,7 +5,7 @@ It contains a variety of utility functions.
 
 
 Author: Serena Serafina Serbinowska
-Last Edit: 2023-09-08
+Last Edit: 2023-09-12
 '''
 import argparse
 import os
@@ -1910,7 +1910,7 @@ def dsl_to_haskell():
                                 + indent(1) + 'where nodeLocation = ' + str(my_int) + os.linesep
                             )
                         running_define_print_info.append(
-                            get_print_info(variable, 0, 'localBoard', 'Location' + str(my_int), ((lambda x: str(my_int) + ' ' + str(x) + ' blackboard') if is_array(variable) else (lambda x: str(my_int) + 'blackboard')))
+                            get_print_info(variable, 0, 'localBoard', 'Location' + str(my_int), ((lambda x: str(my_int) + ' ' + str(x) + ' blackboard') if is_array(variable) else (lambda x: str(my_int) + 'blackboard')))  # index hard coded to 0 cuz we're not looping for the whole thing.
                         )
                     else:
                         cur_assign = variable.assign
@@ -1970,7 +1970,7 @@ def dsl_to_haskell():
         (_, _, local_macros, _, location_info, running_create_order, running_define_print_info) = walk_tree_recursive_blackboard(model.root, set(), {}, {}, -1, [], [], [])
         create_order = [
             {
-                'print_info' : get_print_info(variable, 0, 'board', '', ((lambda x: str(x) + ' blackboard') if is_array(variable) else (lambda x: 'blackboard'))),
+                'print_info' : get_print_info(variable, index, 'board', '', ((lambda x: str(x) + ' blackboard') if is_array(variable) else (lambda x: 'blackboard'))),
                 'category_name' : 'board' + pascal_case(variable.name),
                 'initial_name' : 'newVal' + pascal_case(variable.name) + (('Index' + str(index)) if is_array(variable) else ''),
                 'initial_func' : 'initVal' + pascal_case(variable.name) + (('Index' + str(index)) if is_array(variable) else ''),

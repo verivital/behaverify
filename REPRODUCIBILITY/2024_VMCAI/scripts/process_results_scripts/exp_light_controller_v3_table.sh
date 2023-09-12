@@ -22,4 +22,4 @@ for encoding_group in "${encoding_groups[@]}"; do
     mkdir "${path_name}/processed_data/pictures/${encoding_group}"
 done
 
-python3 ./build_table.py --folder_name light_controller --file_name light_controller --minV $min_val --maxV $max_val --step $step_size --xLabel "No Label" --encodings "opt"
+python3 ./build_table.py --folder_name light_controller_v3 --file_name light_controller --minV $min_val --maxV $max_val --step $step_size --xLabel "No Label" --encodings "opt"
