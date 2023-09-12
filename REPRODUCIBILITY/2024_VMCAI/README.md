@@ -29,6 +29,7 @@ The scripts assume you are able to run bash scripts. If you cannot, please run t
 1. The Minimal Test is mostly to test installation. However, it can also be used to confirm information for Light Controller and BlueROV. 
 2. The Partial Test fully runs the Bigger Fish experiment, BlueROV, and Light Controller. It runs 20 random iterations of the Differential Testing. It does not meaningfully run the Simple Robot experiment.
 3. The Full test replicates all results.
+4. The results in the paper were generated using a Dell Inc. OptiPlex 7040 with 64 GiB of Memory with an Intel i7–6700 CPU @ 3.40GHz with 8 cores.
 
 ---
 
@@ -44,7 +45,7 @@ The tests can be run using docker. We provide several methods for doing this. So
 We provide 3 scripts of each type (1 for each test from Test Information). Each of these scripts takes two command line arguments.
 	
 - **/path/to/nuXmv** -> this should point to the executable you downloaded as a prerequisite. There should be no file extension.
-- **/path/to/writable/location/** -> this should point to a folder where the results will be written.
+- **/path/to/writable/location/** -> this should point to a folder where the results will be written. The final **/** is optional.
 
 If a script fails because permission has been denied, please run the script without sudo (running docker without sudo requires some configuration). If the problem persists, please try a different location, as occasionally docker cannot write to secondary disks.
 
@@ -68,7 +69,7 @@ Build Script:
 
 Load Script:
 
-	./build_and_run_partial.sh /path/to/nuXmv /path/to/writable/location/
+	./load_and_run_partial.sh /path/to/nuXmv /path/to/writable/location/
 	
 The results will be written in **/path/to/writable/location/behaverify\_partial\_results**. See the Interpreting and Comparing Results section for more information.
 
@@ -80,7 +81,7 @@ Build Script:
 	
 Load Script:
 
-	./build_and_run_full.sh /path/to/nuXmv /path/to/writable/location/
+	./load_and_run_full.sh /path/to/nuXmv /path/to/writable/location/
 	
 The results will be written in **/path/to/writable/location/behaverify\_results**. See the Interpreting and Comparing Results section for more information.
 

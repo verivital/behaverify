@@ -2,6 +2,11 @@
 
 fileLoc=$1
 
+if ! test -d "${fileLoc}"; then
+    echo "${fileLoc} is not a folder. Exiting"
+    exit 1
+fi
+
 if [[ "${fileLoc: -1}" != "/" ]]; then
     fileLoc="{fileLoc}/"
 fi
