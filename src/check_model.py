@@ -5,8 +5,7 @@ It contains a variety of utility functions.
 
 
 Author: Serena Serafina Serbinowska
-Created: 2022-01-01 (Date not correct)
-Last Edit: 2023-08-28
+Last Edit: 2023-09-13
 '''
 import itertools
 import serene_functions
@@ -557,6 +556,10 @@ def validate_model(model, constants):
             elif variable.domain.min_val is not None:
                 min_val = handle_constant(variable.domain.min_val, constants)
                 max_val = handle_constant(variable.domain.max_val, constants)
+                if not isinstance(min_val, int):
+                    raise BTreeException(trace, 'Variable ' + variable.name + ' domain is not an integer and does not reference an integer: ' + str(min_val))
+                if not isinstance(max_val, int):
+                    raise BTreeException(trace, 'Variable ' + variable.name + ' domain is not an integer and does not reference an integer: ' + str(max_val))
                 if max_val < min_val:
                     raise BTreeException(trace, 'Variable ' + variable.name + ' domain has a minimum value of ' + str(min_val) + ' which is greater than its maximum value of ' + str(max_val))
                 if variable.domain.condition is not None:
@@ -641,10 +644,13 @@ def validate_model(model, constants):
     require_trace_identifier = False
 
     variables_so_far = set()
+    trace.append('In Variable validation')
     for variable in model.variables:
         validate_variable(variable, {'blackboard', 'environment'} if is_env(variable) else {'blackboard'}, variables_so_far)
         variables_so_far.add(variable.name)
+    trace.pop()
 
+    trace.append('In Environment Update Validation')
     for var_statement in model.update:
         # we allow local, blackboard, and environment variables to be referenced in between ticks for environment updates
         # TODO: make sure local variables are always referened with a node identifier here.
@@ -657,6 +663,7 @@ def validate_model(model, constants):
             if var_statement.assign is None or var_statement.array_mode == 'range':
                 raise BTreeException(trace, 'Environment update :: Variable is not an array, but has as an array like update: ' + assign_var.name)
             validate_variable_assignment(assign_var, var_statement.assign, {'local', 'blackboard', 'environment'}, None, deterministic = False, init_mode = None)
+    trace.pop()
     # no point in really checking nodes that aren't being used.
     # and checking them causes problems because we can't verify argument types.
     for check in filter(lambda node: node.name in nodes_to_check, model.check_nodes):
