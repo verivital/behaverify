@@ -5,7 +5,7 @@ min_val=50
 max_val=600
 step_size=50
 
-if [ "$#" == 3 ]; then
+if [[ $# -eq 3 ]]; then
     min_val=$1
     max_val=$2
     step_size=$3
@@ -19,7 +19,7 @@ echo "${path_name} ${exp_name}" > ./exp_info
 
 range_string=""
 
-for ((num=min_val; num<=max_val; num=(num + step_size))); do
+for (( num=min_val; num<=max_val; num=(num + step_size) )); do
     range_string="${range_string} ${num}"
 done
 

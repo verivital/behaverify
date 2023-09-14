@@ -4,7 +4,7 @@ min_val=2
 max_val=20
 step_size=1
 
-if [ "$#" == 3 ]; then
+if [[ $# -ge 3 ]]; then
     min_val=$1
     max_val=$2
     step_size=$3
@@ -18,7 +18,7 @@ echo "${path_name} ${exp_name}" > ./exp_info
 
 range_string=""
 
-for ((num=min_val; num<=max_val; num=(num + step_size))); do
+for (( num=min_val; num<=max_val; num=(num + step_size) )); do
     range_string="${range_string} ${num}"
 done
 
@@ -29,7 +29,8 @@ encodings="no_opt last_opt first_opt full_opt"
 
 echo "${encodings}" > ./encoding_info
 
-tests="test_ctl test_ctl_silent test_invar_silent test_ltl test_ltl_silent test_model test_states test_states_silent"
+#tests="test_ctl test_ctl_silent test_invar_silent test_ltl test_ltl_silent test_model test_states test_states_silent"
+tests="test_ctl test_ctl_silent test_ltl test_ltl_silent test_model test_states test_states_silent"
 
 echo "${tests}" > ./test_info
 

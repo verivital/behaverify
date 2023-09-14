@@ -7,7 +7,7 @@ max_val=15
 use_haskell=1
 use_nuxmv=1
 
-if [ "$#" == 6 ]; then
+if [[ $# -ge 6 ]]; then
     path_name=$1
     to_gen=$2
     min_val=$3

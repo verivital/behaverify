@@ -3,6 +3,12 @@
 nuXmvLoc=$1
 outputLoc=$2
 
+to_gen=5000
+if [[ $# -ge 3 ]]; then
+    to_gen=$3
+fi
+
+
 if ! test -f "${nuXmvLoc}"; then
     echo "${nuXmvLoc} is not a file. Exiting"
     exit 1
@@ -16,5 +22,5 @@ fi
 echo "docker load finished!"
 ./docker_add_nuxmv.sh $nuXmvLoc
 echo "added nuXmv!"
-./docker_replicate_results.sh $outputLoc
+./docker_replicate_results.sh $outputLoc $to_gen
 echo "replication of results finished!"

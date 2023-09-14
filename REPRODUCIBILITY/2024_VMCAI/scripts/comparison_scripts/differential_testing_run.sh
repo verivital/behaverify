@@ -6,7 +6,7 @@ use_haskell=1
 use_nuxmv=1
 use_msat=1 #1 means yes, else no. If no, uses go.
 
-if [ "$#" == 5 ]; then
+if [[ $# -ge 5 ]]; then
     path_name=$1
     to_gen=$2
     use_haskell=$3

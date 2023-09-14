@@ -25,7 +25,7 @@ num_tests="${#tests[@]}"
 timeout_array=()
 timeout_length=$((num_encodings * num_tests))
 
-for ((i=0; i<timeout_length; i++)); do
+for (( i=0; i<timeout_length; i++ )); do
     timeout_array[$i]=2
 done
 
@@ -44,7 +44,7 @@ for range_val in "${range_info[@]}"; do
 		echo "too many timeouts. skipping test"
 	    else
 		timeout 3m "../test_scripts/${test_val}.sh" $path_name $file_name $encoding_val
-		if [ $? == 124 ]; then
+		if [[ $? -eq 124 ]]; then
 		    timeout_array[$array_index]=$((cur_val - 1))
 		fi
 	    fi

@@ -3,6 +3,11 @@
 this_script_location_arg=$1
 start_location=$(pwd)
 
+to_gen=5000
+if [[ $# -ge 2 ]]; then
+    to_gen=$2
+fi
+
 cd "${this_script_location_arg}"
 this_script_location=$(pwd)
 
@@ -21,9 +26,9 @@ cd "${this_script_location}/scripts/process_results_scripts"
 mkdir "${this_script_location}/examples/differential_testing/moved"
 
 cd "${this_script_location}/scripts/build_scripts"
-./differential_testing_create.sh "../../examples/differential_testing/array" 5000 2 5 1 1
+./differential_testing_create.sh "../../examples/differential_testing/array" $to_gen 2 5 1 1
 cd "${this_script_location}/scripts/comparison_scripts"
-./differential_testing_run.sh "../../examples/differential_testing/array" 5000 1 1 0
+./differential_testing_run.sh "../../examples/differential_testing/array" $to_gen 1 1 0
 
 mv "${this_script_location}/examples/differential_testing/array/gen_files" "${this_script_location}/examples/differential_testing/moved/array_go_gen_files"
 mv "${this_script_location}/examples/differential_testing/array/results" "${this_script_location}/examples/differential_testing/moved/array_go_results"
