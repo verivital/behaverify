@@ -1,24 +1,26 @@
 FROM ubuntu:22.04
-RUN apt update -y
-RUN apt upgrade -y
-#RUN apt install sudo -y
+RUN apt-get update -y
+RUN apt-get upgrade -y
+#RUN apt-get install sudo -y
 #RUN useradd -u 1234 theUser
 #USER theUser
 
-RUN apt install python3 -y
-RUN apt install pip -y
+RUN apt-get install python3 -y
+RUN apt-get install pip -y
+ENV PIP_ROOT_USER_ACTION=ignore
+RUN python3 -m pip install --upgrade pip
 RUN python3 -m pip install py_trees
 RUN python3 -m pip install pandas
 RUN python3 -m pip install jinja2
 RUN python3 -m pip install textx
 RUN python3 -m pip install matplotlib
-RUN apt install graphviz -y
-RUN apt install git -y
+RUN apt-get install graphviz -y
+RUN apt-get install git -y
 
-RUN apt install build-essential curl libffi-dev libffi8ubuntu1 libgmp-dev libgmp10 libncurses-dev libncurses5 libtinfo5 -y
+RUN apt-get install build-essential curl libffi-dev libffi8ubuntu1 libgmp-dev libgmp10 libncurses-dev libncurses5 libtinfo5 -y
 
 #this seems to be necessary for some things
-RUN apt install libgmp3-dev
+RUN apt-get install libgmp3-dev
 
 # Install ghcup
 ENV BOOTSTRAP_HASKELL_NONINTERACTIVE=1

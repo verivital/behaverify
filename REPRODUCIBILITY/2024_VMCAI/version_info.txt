@@ -1,3 +1,5 @@
+docker version 20.10.24, build 297e128
+
 
 from pip
 
@@ -13,7 +15,7 @@ from apt
 
 python3=3.10.6-1~22.04
 graphviz=2.42.2-6
-pip=22.02
+pip=23.2.1
 
 
 from ghcup
