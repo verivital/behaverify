@@ -20,7 +20,7 @@ cp "${path_name}/blueROV_mod.tree" "${path_name}/tree/blueROV_mod_1.tree"
 
 encodings=("norm")
 
-for ((num=min_val; num<=max_val; num=(num + step_size))); do
+for (( num=min_val; num<=max_val; num=(num + step_size) )); do
     echo "now on iteration: "
     echo $num
     # ./generate_encoding.sh "${path_name}" blueROV_mod_$num "${encodings[@]}"

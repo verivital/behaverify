@@ -5,7 +5,7 @@ min_val=50
 max_val=600
 step_size=50
 
-if [ "$#" == 4 ]; then
+if [[ "$#" -ge 3 ]]; then
     min_val=$1
     max_val=$2
     step_size=$3

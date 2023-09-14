@@ -5,7 +5,7 @@ enumerations {
     #{ here you specify the enumerations used in the model}#
 }
 constants {
-    'x_min' := 0, 'y_min' := 0, 'x_max' := 10, 'y_max' := 10, 'tree_count' := 2, 'vision_range' := 4, 'tree_range' := 2, 'y_change' := 2, 'movement_cooldown' := 5
+    'x_min' := 0, 'y_min' := 0, 'x_max' := 6, 'y_max' := 6, 'tree_count' := 2, 'vision_range' := 4, 'tree_range' := 2, 'y_change' := 2, 'movement_cooldown' := 10
 } end_constants
 
 variables {
@@ -65,6 +65,7 @@ variables {
 } end_variables
 
 environment_update {
+    #{}#
     variable_statement {
 	tar_x
 	assign {
@@ -86,6 +87,7 @@ environment_update {
 	    result {(max, 0, (subtraction, timer, 1))}
 	}
     }
+    #{}#
 } end_environment_update
 
 checks {
@@ -130,8 +132,9 @@ environment_checks {
 	    (and,
 	    (less_than_or_equal, (addition, (abs, (subtraction, cur_x, tar_x)), (abs, (subtraction, cur_y, tar_y))), 'vision_range'),
 	    (or,
-	    (greater_than, (addition, (abs, (subtraction, (index, tree_x, 0), tar_x)), (abs, (subtraction, (index, tree_y, 0), tar_y))), 'vision_range'),
+	    (greater_than, (addition, (abs, (subtraction, (index, tree_x, 0), tar_x)), (abs, (subtraction, (index, tree_y, 0), tar_y))), 'tree_range'),
 	    (and, (equal, (index, tree_x, 0), cur_x), (equal, (index, tree_y, 0), cur_y)),
+	    (and, (equal, (index, tree_x, 0), tar_x), (equal, (index, tree_y, 0), tar_y)),
 	    (and, (less_than, (index, tree_x, 0), cur_x), (less_than, (index, tree_x, 0), tar_x)),
 	    (and, (less_than, (index, tree_y, 0), cur_y), (less_than, (index, tree_y, 0), tar_y)),
 	    (and, (greater_than, (index, tree_x, 0), cur_x), (greater_than, (index, tree_x, 0), tar_x)),

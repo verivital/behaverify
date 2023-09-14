@@ -13,7 +13,7 @@ Finally, note that this is a .md file, and as such, we escape various characters
 
 # Prerequisites and Information
 
-1. docker with the ability to run commands as a regular user (see https://docs.docker.com/engine/install/linux-postinstall/ )
+1. docker with the ability to run commands as a regular user (see https://docs.docker.com/engine/install/linux-postinstall/ ). Additionally, we will be using Ubuntu 22.04 inside docker. Some users appear to have issues with running commands like update or upgrade in docker when using Ubuntu 22.04; we do not have a workaround for this.
 2. nuXmv (see  https://nuxmv.fbk.eu/download.html or https://nuxmv.fbk.eu/theme/download.php?file=nuXmv-2.0.0-linux64.tar.gz ). You only need to download nuXmv. There should be no installation. Please ensure you download the Linux 64-bit x86 version 2.0.0 (October 14, 2019). The executable will be located in **nuXmv-2.0.0-linux64/nuXmv-2.0.0-Linux/bin/nuXmv**. There should be **NO FILE EXTENSION**.
 
 ## nuXmv
@@ -73,17 +73,17 @@ Load Script:
 	
 The results will be written in **/path/to/writable/location/behaverify\_partial\_results**. See the Interpreting and Comparing Results section for more information.
 
-### Single Script: Full (under 12 hours)
+### Single Script: Full (under 12 hours (this one varies substantially))
 
 Build Script:
 
-	./build_and_run_full.sh /path/to/nuXmv /path/to/writable/location/
+	./build_and_run_full.sh /path/to/nuXmv /path/to/writable/location/ to\_gen
 	
 Load Script:
 
-	./load_and_run_full.sh /path/to/nuXmv /path/to/writable/location/
+	./load_and_run_full.sh /path/to/nuXmv /path/to/writable/location/ to\_gen
 	
-The results will be written in **/path/to/writable/location/behaverify\_results**. See the Interpreting and Comparing Results section for more information.
+The results will be written in **/path/to/writable/location/behaverify\_results**. See the Interpreting and Comparing Results section for more information. to\_gen is a parameter indicating how many random examples should be generated and used for Differential Testing. It is optional. If not included, 5000 will be generated. A majority of the time is taken up by the Differential Testing, so using a smaller number for to\_gen (such as 1000, 500, 100 etc) will allow the time requirement to be cut substantially.
 
 ---
 
@@ -183,11 +183,11 @@ This section is intentionally lengthy. If you are not interested in the details 
 12. Haskell prerequisites<br />These are prerequisites required by Haskell.
 
 		sudo apt install build-essential curl libffi-dev libffi8ubuntu1 libgmp-dev libgmp10 libncurses-dev libncurses5 libtinfo5
-13. Additional haskell prerequisite<br />
+13. Additional Haskell prerequisite<br />
 
 		sudo apt install libgmp3-dev
-14. GHCUP<br />Please follow the instructions at https://www.haskell.org/ghcup/ to install ghcup, haskell, and cabal. These are used to run generated Haskell code. Please preappend (or append) your path when asked.
-15. Ghcup upgrade<br />This will upgrade ghcup.
+14. GHCUP<br />Please follow the instructions at https://www.haskell.org/ghcup/ to install GHCUP, Haskell, and cabal. These are used to run generated Haskell code. Please preappend (or append) your path when asked.
+15. GHCUP upgrade<br />This will upgrade GHCUP.
 
 		ghcup upgrade
 16. Cabal<br />This will install and set the specific version of cabal we used. Most likely, everything will work with a different version.
@@ -235,7 +235,7 @@ Please download nuXmv (see  https://nuxmv.fbk.eu/ ). You only need to download n
 	sudo apt install build-essential curl libffi-dev libffi8ubuntu1 libgmp-dev libgmp10 libncurses-dev libncurses5 libtinfo5
 	sudo apt install libgmp3-dev
 
-Please follow the instructions at https://www.haskell.org/ghcup/ to install ghcup, haskell, and cabal. These are used to run generated Haskell code. Please preappend (or append) your path when asked.
+Please follow the instructions at https://www.haskell.org/ghcup/ to install ghcup, Haskell, and cabal. These are used to run generated Haskell code. Please preappend (or append) your path when asked.
 
 	ghcup upgrade
 	ghcup install cabal 3.6.2.0
@@ -283,9 +283,9 @@ This will run a larger, but still fairly small script. The results will be in be
 
 To create all results, please navigate to behaverify/REPRODUCIBILITY/2024\_VMCAI/ and run the following
 
-	./results_script.sh ./
+	./results_script.sh ./ to\_gen
 
-This will run a large script. The results will be in **behaverify/REPRODUCIBILITY/2024\_VMCAI/examples/**. Please see the Interpreting and Comparing Results section for an explanation of what results to look for.
+This will run a large script. The results will be in **behaverify/REPRODUCIBILITY/2024\_VMCAI/examples/**. Please see the Interpreting and Comparing Results section for an explanation of what results to look for. to\_gen is an optional parameter that dictates how many random examples will be generated and used for Differential testing. As the Full Script is quite long, it may be advisable to utilize a smaller value (if not provided, 5000 examples will be generated).
 
 
 
@@ -324,12 +324,12 @@ The results should be in **/path/to/writable/location/behaverify\_install\_test\
 - **blueROV\_mod/smv/** -> There should be a series of .smv files containing the nuXmv models. In **Section 6.4** we utilize information from these models.
     - **first\_opt\_blueROV\_mod\_1.smv** -> Please search this file for the phrase 'MODULE define\_nodes'. Following this phrase you will see an enumeration of the nodes, starting from 0 and ending at 73, for a total of 74 nodes. This should be exact.
 - **differential\_testing/moved/array\_go\_results/log.txt** -> This corresponds to **Section 7** of the paper. On each line, there should be a series of dashes and tX (X is a number, from 0 to 4). If there are any Comparison Failures, it means the results of the models differed. Note: if the Comparison Failure says "not enough ticks" (or something similar), then it is most likely indicating an installation error prevented one of the models from running correctly (probably the Haskell model). If you wish to double check the output of the models:
-    - **differential\_testing/moved/array\_go\_gen\_files/t\*/OUTPUT\_\*.txt** -> These files will contain the output of the run of each model. If the tick failure occured, one of these is probably empty.
+    - **differential\_testing/moved/array\_go\_gen\_files/t\*/OUTPUT\_\*.txt** -> These files will contain the output of the run of each model. If the tick failure occurred, one of these is probably empty.
 	- **differential\_testing/moved/array\_go\_gen\_files/t\*/\*.smv** -> These files will contain the nuXmv models used. You can run them with nuXmv.
 	- Python Files -> Inside **differential\_testing/moved/array\_go\_gen\_files/t\*/** folder, run ```python3 t*_runner.py```. This will run the Python Model (replace * with relevant number).
 	- Haskell Files -> Inside **differential\_testing/moved/array\_go\_gen\_files/t\*/** folder, run ```cabal run```. This will run the Haskell Model.
 		
-Note that the presence of Comparison failure in the Differential Results in **random\_haskell** is possible as the trials were randomized. This indicates a bug with one of the models (or an installation error). The Minimal test generates only 5 of these tests, while the Full test generate 5000.
+Note that the presence of Comparison failure in the Differential Results is possible as the trials were randomized. This indicates a bug with one of the models (or an installation error). The Minimal test generates only 5 of these tests.
 
 ### Results that cannot be Compared with the Paper
 
@@ -363,7 +363,7 @@ The results should be in **/path/to/writable/location/behaverify\_partial\_resul
 	- Python Files -> Inside **differential\_testing/moved/array\_go\_gen\_files/t\*/** folder, run ```python3 t*_runner.py```. This will run the Python Model (replace * with relevant number).
 	- Haskell Files -> Inside **differential\_testing/moved/array\_go\_gen\_files/t\*/** folder, run ```cabal run```. This will run the Haskell Model.
 		
-Note that the presence of Comparison failure in the Differential Results in **random\_haskell** is possible as the trials were randomized. This indicates a bug with one of the models (or an installation error). The Partial Test generates only 20 of these tests, while the Full test generate 5000.
+Note that the presence of Comparison failure in the Differential Results is possible as the trials were randomized. This indicates a bug with one of the models (or an installation error). The Partial Test generates only 20 of these tests.
 
 ### Results that cannot be Compared with the Paper
 - **simple\_robot/processed\_data/pictures/opt/** -> There should be a series of graphs (note: the 'graphs' will only have one data point). The Partial test does not run this test in full.
@@ -403,13 +403,13 @@ The results should be in **/path/to/writable/location/behaverify\_results/**.
 	quit
 	```
 	This will print the number of reachable states out of total states. Note that the go command will take more than 3 minutes to complete, but likely les than 10. You can then verify the claim that the model has about 2^25 reachable states.
-- **differential\_testing/moved/array\_go\_results/log.txt** -> This corresponds to **Section 7** of the paper. On each line, there should be a series of dashes and tX (X is a number, from 0 to 4999). If there are any Comparison Failures, it means the results of the models differed. Note: if the Comparison Failure says "not enough ticks" (or something similar), then it is most likely indicating an installation error prevented one of the models from running correctly (probably the Haskell model). If you wish to double check the output of the models:
+- **differential\_testing/moved/array\_go\_results/log.txt** -> This corresponds to **Section 7** of the paper. On each line, there should be a series of dashes and tX (X is a number, from 0 to 4999 or to\_gen - 1 if to\_gen was provided ). If there are any Comparison Failures, it means the results of the models differed. Note: if the Comparison Failure says "not enough ticks" (or something similar), then it is most likely indicating an installation error prevented one of the models from running correctly (probably the Haskell model). If you wish to double check the output of the models:
     - **differential\_testing/moved/array\_go\_gen\_files/t\*/OUTPUT\_\*.txt** -> These files will contain the output of the run of each model. If the tick failure occured, one of these is probably empty.
 	- **differential\_testing/moved/array\_go\_gen\_files/t\*/\*.smv** -> These files will contain the nuXmv models used. You can run them with nuXmv.
 	- Python Files -> Inside **differential\_testing/moved/array\_go\_gen\_files/t\*/** folder, run ```python3 t*_runner.py```. This will run the Python Model (replace * with relevant number).
 	- Haskell Files -> Inside **differential\_testing/moved/array\_go\_gen\_files/t\*/** folder, run ```cabal run```. This will run the Haskell Model.
 		
-Note that the presence of Comparison failure in the Differential Results in **random\_haskell** is possible as the trials were randomized. This indicates a bug with one of the models (or an installation error). The Full test generates 5000 random trials.
+Note that the presence of Comparison failure in the Differential Results is possible as the trials were randomized. This indicates a bug with one of the models (or an installation error). The Full test generates 5000 random trials, unless a different value is provided with to\_gen.
 
 ---
 

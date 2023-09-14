@@ -20,7 +20,7 @@ cp "${path_name}/light_controller.tree" "${path_name}/tree/light_controller_1.tr
 
 encodings=("norm")
 
-for ((num=min_val; num<=max_val; num=(num + step_size))); do
+for (( num=min_val; num<=max_val; num=(num + step_size) )); do
     echo "now on iteration: "
     echo $num
     # ./generate_encoding.sh "${path_name}" light_controller_$num "${encodings[@]}"

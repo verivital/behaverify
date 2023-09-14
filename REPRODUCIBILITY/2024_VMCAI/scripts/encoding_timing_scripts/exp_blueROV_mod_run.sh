@@ -18,7 +18,7 @@ echo "${path_name} ${exp_name}" > ./exp_info
 
 range_string=""
 
-for ((num=min_val; num<=max_val; num=(num + step_size))); do
+for (( num=min_val; num<=max_val; num=(num + step_size) )); do
     range_string="${range_string} ${num}"
 done
 
