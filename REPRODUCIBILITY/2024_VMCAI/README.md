@@ -8,6 +8,7 @@ See version\_info.txt for information about dependency requirements.
 4. Running Tests Locally (verbose) -> this section will explain how to run tests locally. It also explains why each step of the installation is necessary.
 5. Running Tests Locally (concise) -> this section will explain how to run tests locally. It does not provide explanations.
 6. Interpreting and Comparing Results -> this section will explain how to interpret the generated results and what they correspond to in the paper.
+7. Potential Errors and Workarounds -> this section will explain how to deal with some of the potential errors encountered.
 
 Finally, note that this is a .md file, and as such, we escape various characters. If you are reading this using a text editor, please make sure to keep this in mind.
 
@@ -42,48 +43,48 @@ The tests can be run using docker. We provide several methods for doing this. So
 - Build Scripts -> These scripts use the Dockerfile to build a new image and then create a container. These scripts must be run in the same folder as the Dockerfile.
 - Load Scripts -> These scripts load the provided image and then create a container. These scripts must be run in the same folder as behaverify_image.tar.
 
-We provide 3 scripts of each type (1 for each test from Test Information). Each of these scripts takes two command line arguments.
+We provide 3 scripts of each type (1 for each test from Test Information). Each of these scripts takes four command line arguments.
 	
-- **/path/to/nuXmv** -> this should point to the executable you downloaded as a prerequisite. There should be no file extension.
-- **/path/to/writable/location/** -> this should point to a folder where the results will be written. The final **/** is optional.
-
-If a script fails because permission has been denied, please run the script without sudo (running docker without sudo requires some configuration). If the problem persists, please try a different location, as occasionally docker cannot write to secondary disks.
+- **/path/to/nuXmv** -> Required. This should point to the executable you downloaded as a prerequisite. There should be no file extension.
+- **/path/to/writable/location/** -> Required. This should point to a folder where the results will be written. The final **/** is optional.
+- **use\_haskell** -> Optional. 0 means do not use Haskell. 1 means use Haskell. Defaults to 1.
+- **to\_gen** -> Optional. The number of examples to generate for Differential Testing. Defaults to 3, 20, 5000 (depending on the test).
 
 ### Single Script: Minimal (about 8 minutes)
 
 Build Script:
 
-	./build_and_run_minimal.sh /path/to/nuXmv /path/to/writable/location/
+	./build_and_run_minimal.sh /path/to/nuXmv /path/to/writable/location/ 1 3
 
 Load Script:
 
-	./load_and_run_minimal.sh /path/to/nuXmv /path/to/writable/location/
+	./load_and_run_minimal.sh /path/to/nuXmv /path/to/writable/location/ 1 3
 	
-The results will be written in **/path/to/writable/location/behaverify\_install\_test\_results**. See the Interpreting and Comparing Results section for more information.
+The results will be written in **/path/to/writable/location/behaverify\_install\_test\_results**. See the Interpreting and Comparing Results section for more information. Replace 1 with 0 to not use haskell, and 3 with any positive integer to change number of Differential Testing Examples, or omit them both.
 
 ### Single Script: Partial (about 25 minutes)
 
 Build Script:
 
-	./build_and_run_partial.sh /path/to/nuXmv /path/to/writable/location/
+	./build_and_run_partial.sh /path/to/nuXmv /path/to/writable/location/ 1 20
 
 Load Script:
 
-	./load_and_run_partial.sh /path/to/nuXmv /path/to/writable/location/
+	./load_and_run_partial.sh /path/to/nuXmv /path/to/writable/location/ 1 20
 	
-The results will be written in **/path/to/writable/location/behaverify\_partial\_results**. See the Interpreting and Comparing Results section for more information.
+The results will be written in **/path/to/writable/location/behaverify\_partial\_results**. See the Interpreting and Comparing Results section for more information. Replace 1 with 0 to not use haskell, and 20 with any positive integer to change number of Differential Testing Examples, or omit them both.
 
 ### Single Script: Full (under 12 hours (this one varies substantially))
 
 Build Script:
 
-	./build_and_run_full.sh /path/to/nuXmv /path/to/writable/location/ to\_gen
+	./build_and_run_full.sh /path/to/nuXmv /path/to/writable/location/ 1 5000
 	
 Load Script:
 
-	./load_and_run_full.sh /path/to/nuXmv /path/to/writable/location/ to\_gen
+	./load_and_run_full.sh /path/to/nuXmv /path/to/writable/location/ 1 5000
 	
-The results will be written in **/path/to/writable/location/behaverify\_results**. See the Interpreting and Comparing Results section for more information. to\_gen is a parameter indicating how many random examples should be generated and used for Differential Testing. It is optional. If not included, 5000 will be generated. A majority of the time is taken up by the Differential Testing, so using a smaller number for to\_gen (such as 1000, 500, 100 etc) will allow the time requirement to be cut substantially.
+The results will be written in **/path/to/writable/location/behaverify\_results**. See the Interpreting and Comparing Results section for more information. Replace 1 with 0 to not use haskell, and 5000 with any positive integer to change number of Differential Testing Examples, or omit them both. A majority of the time is taken up by the Differential Testing, so using a smaller number for to\_gen (such as 1000, 500, 100 etc) will allow the time requirement to be cut substantially.
 
 ---
 
@@ -119,25 +120,24 @@ This will copy nuXmv from the path you provided to the correct location in the d
 
 The full test takes quite a while to run. To ensure everything works right, please run
 
-	./docker_test_install.sh /path/to/writable/location/
-
-If the script fails because permission has been denied, please run the script without sudo (running docker without sudo requires some configuration). If the problem persists, please try a different location, as occasionally docker cannot write to secondary disks.
-
+	./docker_test_install.sh /path/to/writable/location/ 1 3
+	
+Replace 1 with 0 to not use haskell, and 3 with any positive integer to change number of Differential Testing Examples, or omit them both.
 
 ### 4. Partial Test (estimated time: 20 minutes)
 
 The full test takes quite a while to run. To ensure everything works right, please run
 
-	./docker_replicate_partial.sh /path/to/writable/location/
+	./docker_replicate_partial.sh /path/to/writable/location/ 1 20
 
-If the script fails because permission has been denied, please run the script without sudo (running docker without sudo requires some configuration). If the problem persists, please try a different location, as occasionally docker cannot write to secondary disks.
+Replace 1 with 0 to not use haskell, and 20 with any positive integer to change number of Differential Testing Examples, or omit them both.
 
 
 ### 5. Full Results (estimated time: under 12 hours)
 
-	./docker_replicate_results.sh /path/to/writable/location/
+	./docker_replicate_results.sh /path/to/writable/location/ 1 5000
 
-If the script fails because permission has been denied, please run the script without sudo (running docker without sudo requires some configuration). If the problem persists, please try a different location, as occasionally docker cannot write to secondary disks.
+Replace 1 with 0 to not use haskell, and 5000 with any positive integer to change number of Differential Testing Examples, or omit them both.
 
 ---
 
@@ -267,25 +267,25 @@ Note that each script will erase all the relevant results before running, to ens
 
 To test everything is working, please navigate to behaverify/REPRODUCIBILITY/2024\_VMCAI/ and run the following
 
-	./minimal_script.sh ./
+	./test_script.sh ./ 1 3
 
-This will run a fairly small script. The results will be in behaverify/REPRODUCIBILITY/2024\_VMCAI/examples/. Please see the Interpreting and Comparing Results section for an explanation of what results to look for.
+This will run a fairly small script. The results will be in behaverify/REPRODUCIBILITY/2024\_VMCAI/examples/. Please see the Interpreting and Comparing Results section for an explanation of what results to look for. Replace 1 with 0 to not use haskell, and 3 with any positive integer to change number of Differential Testing Examples, or omit them both.
 
 ## Partial Script
 
 To create a subset of the results, please navigate to behaverify/REPRODUCIBILITY/2024\_VMCAI/ and run the following
 
-	./partial_results_script.sh ./
+	./partial_results_script.sh ./ 1 20
 
-This will run a larger, but still fairly small script. The results will be in behaverify/REPRODUCIBILITY/2024\_VMCAI/examples/. Please see the Interpreting and Comparing Results section for an explanation of what results to look for.
+This will run a larger, but still fairly small script. The results will be in behaverify/REPRODUCIBILITY/2024\_VMCAI/examples/. Please see the Interpreting and Comparing Results section for an explanation of what results to look for. Replace 1 with 0 to not use haskell, and 20 with any positive integer to change number of Differential Testing Examples, or omit them both.
 
 ## Full Script
 
 To create all results, please navigate to behaverify/REPRODUCIBILITY/2024\_VMCAI/ and run the following
 
-	./results_script.sh ./ to\_gen
+	./results_script.sh ./ 1 5000
 
-This will run a large script. The results will be in **behaverify/REPRODUCIBILITY/2024\_VMCAI/examples/**. Please see the Interpreting and Comparing Results section for an explanation of what results to look for. to\_gen is an optional parameter that dictates how many random examples will be generated and used for Differential testing. As the Full Script is quite long, it may be advisable to utilize a smaller value (if not provided, 5000 examples will be generated).
+This will run a large script. The results will be in **behaverify/REPRODUCIBILITY/2024\_VMCAI/examples/**. Please see the Interpreting and Comparing Results section for an explanation of what results to look for. Replace 1 with 0 to not use haskell, and 5000 with any positive integer to change number of Differential Testing Examples, or omit them both. As the Full Script is quite long, it may be advisable to utilize a smaller value (if not provided, 5000 examples will be generated).
 
 
 
@@ -323,13 +323,13 @@ The results should be in **/path/to/writable/location/behaverify\_install\_test\
 	- **blueROV\_mod\_reachable\_states.tex** -> state claim: results should be exact. See **Table 2**. The value for first\_opt should also be between 2^62 and 2^63 reachable states, corresponding to the numerical claim made in **Section 6.4**.
 - **blueROV\_mod/smv/** -> There should be a series of .smv files containing the nuXmv models. In **Section 6.4** we utilize information from these models.
     - **first\_opt\_blueROV\_mod\_1.smv** -> Please search this file for the phrase 'MODULE define\_nodes'. Following this phrase you will see an enumeration of the nodes, starting from 0 and ending at 73, for a total of 74 nodes. This should be exact.
-- **differential\_testing/moved/array\_go\_results/log.txt** -> This corresponds to **Section 7** of the paper. On each line, there should be a series of dashes and tX (X is a number, from 0 to 2). If there are any Comparison Failures, it means the results of the models differed. Note: if the Comparison Failure says "not enough ticks" (or something similar), then it is most likely indicating an installation error prevented one of the models from running correctly (probably the Haskell model). If you wish to double check the output of the models:
+- **differential\_testing/moved/array\_go\_results/log.txt** -> This corresponds to **Section 7** of the paper. On each line, there should be a series of dashes and tX (X is a number). If there are any Comparison Failures, it means the results of the models differed. Note: if the Comparison Failure says "not enough ticks" (or something similar), then it is most likely indicating an installation error prevented one of the models from running correctly (probably the Haskell model). If you wish to double check the output of the models:
     - **differential\_testing/moved/array\_go\_gen\_files/t\*/OUTPUT\_\*.txt** -> These files will contain the output of the run of each model. If the tick failure occurred, one of these is probably empty.
 	- **differential\_testing/moved/array\_go\_gen\_files/t\*/\*.smv** -> These files will contain the nuXmv models used. You can run them with nuXmv.
 	- Python Files -> Inside **differential\_testing/moved/array\_go\_gen\_files/t\*/** folder, run ```python3 t*_runner.py```. This will run the Python Model (replace * with relevant number).
 	- Haskell Files -> Inside **differential\_testing/moved/array\_go\_gen\_files/t\*/** folder, run ```cabal run```. This will run the Haskell Model.
 		
-Note that the presence of Comparison failure in the Differential Results is possible as the trials were randomized. This indicates a bug with one of the models (or an installation error). The Minimal test generates only 3 of these tests.
+Note that the presence of Comparison failure in the Differential Results is possible as the trials were randomized. This indicates a bug with one of the models (or an installation error). The Minimal test generates only 3 of these tests unless you provided a different value.
 
 ### Results that cannot be Compared with the Paper
 
@@ -357,13 +357,13 @@ The results should be in **/path/to/writable/location/behaverify\_partial\_resul
 - **bigger\_fish\_expanded/smv/** -> There should be a series of .smv files containing nuXmv models. In **Section 6.3** we claim that the models with 600 checks have 1355 nodes. To verify this claim, open any of the files with the number 600 in the name. Please search this file for the phrase 'MODULE define\_nodes'. Following this phrase you will see an enumeration of the nodes, starting from 0 and ending at 1354, for a total of 1355 nodes. This result should be exact.
 - **blueROV\_mod/smv/** -> There should be a series of .smv files containing the nuXmv models. In **Section 6.4** we utilize information from these models.
     - **first\_opt\_blueROV\_mod\_1.smv** -> Please search this file for the phrase 'MODULE define\_nodes'. Following this phrase you will see an enumeration of the nodes, starting from 0 and ending at 73, for a total of 74 nodes. This result should be exact.
-- **differential\_testing/moved/array\_go\_results/log.txt** -> This corresponds to **Section 7** of the paper. On each line, there should be a series of dashes and tX (X is a number, from 0 to 19). If there are any Comparison Failures, it means the results of the models differed. Note: if the Comparison Failure says "not enough ticks" (or something similar), then it is most likely indicating an installation error prevented one of the models from running correctly (probably the Haskell model). If you wish to double check the output of the models:
-    - **differential\_testing/moved/array\_go\_gen\_files/t\*/OUTPUT\_\*.txt** -> These files will contain the output of the run of each model. If the tick failure occured, one of these is probably empty.
+- **differential\_testing/moved/array\_go\_results/log.txt** -> This corresponds to **Section 7** of the paper. On each line, there should be a series of dashes and tX (X is a number). If there are any Comparison Failures, it means the results of the models differed. Note: if the Comparison Failure says "not enough ticks" (or something similar), then it is most likely indicating an installation error prevented one of the models from running correctly (probably the Haskell model). If you wish to double check the output of the models:
+    - **differential\_testing/moved/array\_go\_gen\_files/t\*/OUTPUT\_\*.txt** -> These files will contain the output of the run of each model. If the tick failure occurred, one of these is probably empty.
 	- **differential\_testing/moved/array\_go\_gen\_files/t\*/\*.smv** -> These files will contain the nuXmv models used. You can run them with nuXmv.
 	- Python Files -> Inside **differential\_testing/moved/array\_go\_gen\_files/t\*/** folder, run ```python3 t*_runner.py```. This will run the Python Model (replace * with relevant number).
 	- Haskell Files -> Inside **differential\_testing/moved/array\_go\_gen\_files/t\*/** folder, run ```cabal run```. This will run the Haskell Model.
 		
-Note that the presence of Comparison failure in the Differential Results is possible as the trials were randomized. This indicates a bug with one of the models (or an installation error). The Partial Test generates only 20 of these tests.
+Note that the presence of Comparison failure in the Differential Results is possible as the trials were randomized. This indicates a bug with one of the models (or an installation error). The Partial Test generates only 20 of these tests unless you provided a different value.
 
 ### Results that cannot be Compared with the Paper
 - **simple\_robot/processed\_data/pictures/opt/** -> There should be a series of graphs (note: the 'graphs' will only have one data point). The Partial test does not run this test in full.
@@ -386,7 +386,7 @@ The results should be in **/path/to/writable/location/behaverify\_results/**.
 - **bigger\_fish\_expanded/processed\_data/pictures/opt/** -> There should be a series of graphs. In **Section 6.3** we utilize some of these graphs.
     - **bigger\_fish\_parallel\_ctl.png** -> This corresponds to part of **Figure 7**. timing claim: results should be similar but may differ.
 	- **bigger\_fish\_parallel\_ltl.png** -> This corresponds to part of **Figure 7**. timing claim: results should be similar but may differ.
-- **bigger\_fish\_expanded/smv/** -> There should be a series of .smv files containing nuXmv models. In **Section 6.3** we claim that the models with 600 checks have 1355 nodes. To verify this claim, open any of the files with the number 600 in the name. Please search this file for the phrase 'MODULE define\_nodes'. Following this phrase you will see an enumeration of the nodes, starting from 0 and ending at 1354, for a total of 1355 nodes. This shoudl be exact.
+- **bigger\_fish\_expanded/smv/** -> There should be a series of .smv files containing nuXmv models. In **Section 6.3** we claim that the models with 600 checks have 1355 nodes. To verify this claim, open any of the files with the number 600 in the name. Please search this file for the phrase 'MODULE define\_nodes'. Following this phrase you will see an enumeration of the nodes, starting from 0 and ending at 1354, for a total of 1355 nodes. This should be exact.
 - **blueROV\_mod/smv/** -> There should be a series of .smv files containing the nuXmv models. In **Section 6.4** we utilize information from these models.
     - **first\_opt\_blueROV\_mod\_1.smv** -> Please search this file for the phrase 'MODULE define\_nodes'. Following this phrase you will see an enumeration of the nodes, starting from 0 and ending at 73, for a total of 74 nodes. This should be exact.
 - **simple\_robot/processed\_data/pictures/opt/** -> There should be a series of graphs. In **Section 6.4** we utilize some of these graphs.
@@ -402,14 +402,33 @@ The results should be in **/path/to/writable/location/behaverify\_results/**.
 	print_reachable_states
 	quit
 	```
-	This will print the number of reachable states out of total states. Note that the go command will take more than 3 minutes to complete, but likely les than 10. You can then verify the claim that the model has about 2^25 reachable states.
-- **differential\_testing/moved/array\_go\_results/log.txt** -> This corresponds to **Section 7** of the paper. On each line, there should be a series of dashes and tX (X is a number, from 0 to 4999 or to\_gen - 1 if to\_gen was provided ). If there are any Comparison Failures, it means the results of the models differed. Note: if the Comparison Failure says "not enough ticks" (or something similar), then it is most likely indicating an installation error prevented one of the models from running correctly (probably the Haskell model). If you wish to double check the output of the models:
-    - **differential\_testing/moved/array\_go\_gen\_files/t\*/OUTPUT\_\*.txt** -> These files will contain the output of the run of each model. If the tick failure occured, one of these is probably empty.
+	This will print the number of reachable states out of total states. Note that the go command will take more than 3 minutes to complete, but likely less than 10. You can then verify the claim that the model has about 2^25 reachable states.
+- **differential\_testing/moved/array\_go\_results/log.txt** -> This corresponds to **Section 7** of the paper. On each line, there should be a series of dashes and tX (X is a number). If there are any Comparison Failures, it means the results of the models differed. Note: if the Comparison Failure says "not enough ticks" (or something similar), then it is most likely indicating an installation error prevented one of the models from running correctly (probably the Haskell model). If you wish to double check the output of the models:
+    - **differential\_testing/moved/array\_go\_gen\_files/t\*/OUTPUT\_\*.txt** -> These files will contain the output of the run of each model. If the tick failure occurred, one of these is probably empty.
 	- **differential\_testing/moved/array\_go\_gen\_files/t\*/\*.smv** -> These files will contain the nuXmv models used. You can run them with nuXmv.
 	- Python Files -> Inside **differential\_testing/moved/array\_go\_gen\_files/t\*/** folder, run ```python3 t*_runner.py```. This will run the Python Model (replace * with relevant number).
 	- Haskell Files -> Inside **differential\_testing/moved/array\_go\_gen\_files/t\*/** folder, run ```cabal run```. This will run the Haskell Model.
 		
-Note that the presence of Comparison failure in the Differential Results is possible as the trials were randomized. This indicates a bug with one of the models (or an installation error). The Full test generates 5000 random trials, unless a different value is provided with to\_gen.
+Note that the presence of Comparison failure in the Differential Results is possible as the trials were randomized. This indicates a bug with one of the models (or an installation error). The Full test generates 5000 random trials unless you provided a different value.
+
+---
+
+# Potential Errors and Workarounds
+
+1. If a script fails because permission has been denied, please run the script without sudo (running docker without sudo requires some configuration). If the problem persists, please try a different location, as occasionally docker cannot write to secondary disks.
+2. If building from the Dockerfile fails, please try and use the load option instead.
+3. If everything runs to completion, but there are no files in the copied directory, please confirm if there are files in the results folders (e.g., **bigger\_fish\_expanded/results/**). If there re, then most likely you encountered errors similar to the following during execution:
+   ```
+   OpenBLAS blas_thread_init: pthread_create failed for thread 1 of 16: Operation not permitted
+   ```
+   Note that this error would not prevent the scripts from completing; it would only prevent the generation of graphs and tables. The internet suggests upgrading your docker version (we tested using docker version 20.10.24, build 297e128). Alternatively, you may by manually compile the results into graphs by calling the scripts at https://github.com/verivital/behaverify/tree/main/REPRODUCIBILITY/2024_VMCAI/scripts/process_results_scripts . These scripts assume they are being run in the repository folder structure.
+
+4. If every Differential Testing result fails with "Comparison failure! Not enough haskell ticks", then most likely you encountered an error of the form:
+   ```
+   cabal: The program 'ghc' version >=7.0.1 is required but the version of
+   /root/.ghcup/bin/ghc could not be determined.
+   ```
+   Note that this error would not prevent the scripts from completing; it would only prevent the running of Haskell code. In this case, please re-run the scripts without using Haskell.
 
 ---
 
