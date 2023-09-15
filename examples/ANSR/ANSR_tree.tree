@@ -18,8 +18,10 @@ variables {
     variable {bl dir VAR {-1, 1} assign {result {1}}}
     variable {bl victory VAR BOOLEAN assign {result {False}}}
     #{variable {env tree_locs array 'tree_count' FROZENVAR [0, 960] range assign {result{range, 0, 960, True}}}}#
-    variable {env tree_x array 'tree_count' FROZENVAR ['x_min', 'x_max'] range assign {result{range, 'x_min', 'x_max', True}}}
-    variable {env tree_y array 'tree_count' FROZENVAR ['y_min', 'y_max'] range assign {result{range, 'y_min', 'y_max', True}}}
+    #{variable {env tree_x array 'tree_count' FROZENVAR ['x_min', 'x_max'] range assign {result{range, 'x_min', 'x_max', True}}}
+    variable {env tree_y array 'tree_count' FROZENVAR ['y_min', 'y_max'] range assign {result{range, 'y_min', 'y_max', True}}}}#
+    variable {env tree_x array 'tree_count' DEFINE INT per_index assign {result{2}} assign {result{5}}}
+    variable {env tree_y array 'tree_count' DEFINE INT per_index assign {result{2}} assign {result{5}}}
     variable {env tar_x VAR ['x_min', 'x_max'] assign {result {range, 'x_min', 'x_max', True}}}
     variable {env tar_y VAR ['y_min', 'y_max'] assign {result {range, 'y_min', 'y_max', True}}}
     variable {env timer VAR [0, 'movement_cooldown'] assign {result{'movement_cooldown'}}}
@@ -124,6 +126,7 @@ checks {
 } end_checks
 
 environment_checks {
+    #{This currently only checks one tree}#
     environment_check {
 	target_in_sight
 	arguments{}
@@ -139,6 +142,15 @@ environment_checks {
 	    (and, (less_than, (index, tree_y, 0), cur_y), (less_than, (index, tree_y, 0), tar_y)),
 	    (and, (greater_than, (index, tree_x, 0), cur_x), (greater_than, (index, tree_x, 0), tar_x)),
 	    (and, (greater_than, (index, tree_y, 0), cur_y), (greater_than, (index, tree_y, 0), tar_y))
+	    ),
+	    (or,
+	    (greater_than, (addition, (abs, (subtraction, (index, tree_x, 1), tar_x)), (abs, (subtraction, (index, tree_y, 1), tar_y))), 'tree_range'),
+	    (and, (equal, (index, tree_x, 1), cur_x), (equal, (index, tree_y, 1), cur_y)),
+	    (and, (equal, (index, tree_x, 1), tar_x), (equal, (index, tree_y, 1), tar_y)),
+	    (and, (less_than, (index, tree_x, 1), cur_x), (less_than, (index, tree_x, 1), tar_x)),
+	    (and, (less_than, (index, tree_y, 1), cur_y), (less_than, (index, tree_y, 1), tar_y)),
+	    (and, (greater_than, (index, tree_x, 1), cur_x), (greater_than, (index, tree_x, 1), tar_x)),
+	    (and, (greater_than, (index, tree_y, 1), cur_y), (greater_than, (index, tree_y, 1), tar_y))
 	    )
 	    )
 	} end_condition
@@ -152,7 +164,7 @@ actions {
 	call_xy_net
 	arguments{}
 	local_variables {} end_local_variables
-	read_variables {dir, prev_dest_x, prev_dest_y, x_net_output_1, y_net_output_1} end_read_variables
+	read_variables {x_net_output_1, y_net_output_1} end_read_variables
 	write_variables {dest_x, dest_y} end_write_variables
 	initial_values {} end_initial_values
 	update {
@@ -334,11 +346,12 @@ tree {
 
 
 
-#{tick_prerequisite { (not, victory) } end_tick_prerequisite}#
-tick_prerequisite { True } end_tick_prerequisite
+tick_prerequisite { (not, victory) } end_tick_prerequisite
+#{tick_prerequisite { True } end_tick_prerequisite}#
 #{ if the condition is True, the tree ticks.
     If it is false, everything is done }#
 
 specifications { #{ INVAR, LTL, and CTL specs go here }#
     CTLSPEC {(always_finally, victory -1)}
+    #{CTLSPEC {(implies, (and, (equal, (index, tree_x 0, 0), 2), (equal, (index, tree_x 0, 1), 5), (equal, (index, tree_y 0, 0), 2), (equal, (index, tree_y 0, 1), 5)), (always_finally, victory -1))}}#
 } end_specifications
