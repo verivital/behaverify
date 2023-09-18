@@ -1,0 +1,42 @@
+MODULE main
+    DEFINE
+	a := 1.5;
+	c := floor(a);
+	d := a * 2;
+	e := c * 2;
+	f := c < a;
+	g :=
+	    case
+		c < a : -1;
+		c = a : 0;
+		c > a : 1;
+		TRUE : -100;
+	    esac;
+	x := 1.1;
+	y := 1.2;
+	z :=
+	    case
+		x < y : -1;
+		x = y : 0;
+		x > y : 1;
+		TRUE : -100;
+	    esac;
+	xx := 1;
+	yy := 2;
+	zz :=
+	    case
+		xx < yy : -1;
+		xx = yy : 0;
+		xx > yy : 1;
+		TRUE : -100;
+	    esac;
+	
+    -- VAR
+    -- 	b : 0..10;
+    -- ASSIGN
+    -- 	--init(b) := floor(a);
+    -- 	init(b) := a;
+    -- VAR
+    -- 	z : boolean;
+    -- ASSIGN
+    -- 	init(z) := c < a; 

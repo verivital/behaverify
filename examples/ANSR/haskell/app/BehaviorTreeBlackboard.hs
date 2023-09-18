@@ -27,9 +27,9 @@ boardXNet12 blackboard = (max ((boardDestX blackboard) - (boardPrevDestX blackbo
 boardXNet13 :: BTreeBlackboard -> Integer
 boardXNet13 blackboard = (max ((boardPrevDestX blackboard) - (boardDestX blackboard)) 0)
 boardXNet14 :: BTreeBlackboard -> Integer
-boardXNet14 blackboard = (max ((boardDestX blackboard) - (quot (0 + 6) 2)) 0)
+boardXNet14 blackboard = (max ((boardDestX blackboard) - (quot (0 + 10) 2)) 0)
 boardXNet15 :: BTreeBlackboard -> Integer
-boardXNet15 blackboard = (max ((quot (0 + 6) 2) - (boardDestX blackboard)) 0)
+boardXNet15 blackboard = (max ((quot (0 + 10) 2) - (boardDestX blackboard)) 0)
 boardXNet21 :: BTreeBlackboard -> Integer
 boardXNet21 blackboard = (max (boardXNet11 blackboard) 0)
 boardXNet22 :: BTreeBlackboard -> Integer
@@ -39,7 +39,7 @@ boardXNet23 blackboard = (max (1 - (boardXNet14 blackboard)) 0)
 boardXNet24 :: BTreeBlackboard -> Integer
 boardXNet24 blackboard = (max (1 - (boardXNet15 blackboard)) 0)
 boardXNet31 :: BTreeBlackboard -> Integer
-boardXNet31 blackboard = (max ((boardXNet21 blackboard) - ((boardXNet22 blackboard) * 6)) 0)
+boardXNet31 blackboard = (max ((boardXNet21 blackboard) - ((boardXNet22 blackboard) * 10)) 0)
 boardXNet32 :: BTreeBlackboard -> Integer
 boardXNet32 blackboard = (max (1 - (boardXNet22 blackboard)) 0)
 boardXNet33 :: BTreeBlackboard -> Integer
@@ -49,9 +49,9 @@ boardXNet34 blackboard = (max (boardXNet24 blackboard) 0)
 boardXNet41 :: BTreeBlackboard -> Integer
 boardXNet41 blackboard = (max (boardXNet31 blackboard) 0)
 boardXNet42 :: BTreeBlackboard -> Integer
-boardXNet42 blackboard = (max ((6 * (boardXNet33 blackboard)) - (6 * (boardXNet32 blackboard))) 0)
+boardXNet42 blackboard = (max ((10 * (boardXNet33 blackboard)) - (10 * (boardXNet32 blackboard))) 0)
 boardXNet43 :: BTreeBlackboard -> Integer
-boardXNet43 blackboard = (max ((0 * (boardXNet34 blackboard)) - (6 * (boardXNet32 blackboard))) 0)
+boardXNet43 blackboard = (max ((0 * (boardXNet34 blackboard)) - (10 * (boardXNet32 blackboard))) 0)
 boardXNetOutput1 :: BTreeBlackboard -> Integer
 boardXNetOutput1 blackboard = (max ((boardXNet41 blackboard) + ((boardXNet42 blackboard) + (boardXNet43 blackboard))) 0)
 boardYNet11 :: BTreeBlackboard -> Integer
@@ -94,32 +94,32 @@ boardYNetOutput1 blackboard = (max ((boardYNet31 blackboard) + ((2 * (boardYNet3
 
 checkValueBoardPrevDestX :: Integer -> Integer
 checkValueBoardPrevDestX value
-  | 0 > value || value > 6 = error "boardPrevDestX illegal value"
+  | 0 > value || value > 10 = error "boardPrevDestX illegal value"
   | otherwise = value
 
 checkValueBoardPrevDestY :: Integer -> Integer
 checkValueBoardPrevDestY value
-  | 0 > value || value > 6 = error "boardPrevDestY illegal value"
+  | 0 > value || value > 10 = error "boardPrevDestY illegal value"
   | otherwise = value
 
 checkValueBoardCurX :: Integer -> Integer
 checkValueBoardCurX value
-  | 0 > value || value > 6 = error "boardCurX illegal value"
+  | 0 > value || value > 10 = error "boardCurX illegal value"
   | otherwise = value
 
 checkValueBoardCurY :: Integer -> Integer
 checkValueBoardCurY value
-  | 0 > value || value > 6 = error "boardCurY illegal value"
+  | 0 > value || value > 10 = error "boardCurY illegal value"
   | otherwise = value
 
 checkValueBoardDestX :: Integer -> Integer
 checkValueBoardDestX value
-  | 0 > value || value > 6 = error "boardDestX illegal value"
+  | 0 > value || value > 10 = error "boardDestX illegal value"
   | otherwise = value
 
 checkValueBoardDestY :: Integer -> Integer
 checkValueBoardDestY value
-  | 0 > value || value > 6 = error "boardDestY illegal value"
+  | 0 > value || value > 10 = error "boardDestY illegal value"
   | otherwise = value
 
 checkValueBoardDir :: Integer -> Integer

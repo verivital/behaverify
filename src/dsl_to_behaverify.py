@@ -4,7 +4,7 @@ This module is part of BehaVerify and used to convert .tree files to .smv files 
 
 Author: Serena Serafina Serbinowska
 Created: 2022-01-01 (Date not correct)
-Last Edit: 2023-09-02
+Last Edit: 2023-09-18
 '''
 import argparse
 import pprint
@@ -181,6 +181,19 @@ def dsl_to_behaverify(metamodel_file, model_file, keep_stage_0, keep_last_stage,
             )
         )
 
+    def find_used_variables_without_formatting(code, _is_local_, node_name):
+        return (
+            [] if code.constant is not None else (
+                [variable_reference(code.variable.name, _is_local_, node_name)] if code.variable is not None else (
+                    find_used_variables_without_formatting(code.code_statement, _is_local_, node_name) if code.code_statement is not None else (
+                        [variable for value in code.function_call.values for variable in find_used_variables_without_formatting(value, _is_local_, node_name)]
+                        +
+                        ([variable_reference(code.function_call.variable.name, _is_local_, node_name)] if code.function_call.function_name == 'index' else [])
+                    )
+                )
+            )
+        )
+
     def assemble_variable(name, stage, use_next, trace_num, specification_writing):
         '''
         This method should only be called by format variable.
@@ -204,7 +217,11 @@ def dsl_to_behaverify(metamodel_file, model_file, keep_stage_0, keep_last_stage,
         @ not_next := only matters if use_next is true. In that case, this variable is replaced with a macro link.
         @ overwrite_stage := overwrite which stage we're asking for.
         '''
+        variable_key = variable_reference(variable_obj.name, is_local(variable_obj), misc_args['node_name'])
+        variable = variables[variable_key]
+        return format_variable_non_object(variable, variable_key, misc_args)
 
+    def format_variable_non_object(variable, variable_key, misc_args):
         node_name = misc_args['node_name']
         use_stages = misc_args['use_stages']
         use_next = misc_args['use_next']
@@ -214,41 +231,44 @@ def dsl_to_behaverify(metamodel_file, model_file, keep_stage_0, keep_last_stage,
         specification_writing = misc_args['specification_writing']
         specification_warning = misc_args['specification_warning']
 
-        variable_key = variable_reference(variable_obj.name, is_local(variable_obj), node_name)
-        variable = variables[variable_key]
-
         if variable['mode'] == 'DEFINE':
             if overwrite_stage is not None and len(variable['next_value']) > 0:
                 return assemble_variable(variable['name'], compute_stage(variable_key, misc_args), use_next, trace_num, specification_writing)
-            new_misc_args = create_misc_args(node_name, use_stages, use_next, not_next, overwrite_stage, False, specification_warning)
-            used_vars = []
-            var_statement = variable['initial_value']
-            var_assigns = var_statement.assigns
-            var_assign = var_statement.assign
-            var_array_mode = var_statement.array_mode
-            if is_array(variable_obj) and var_array_mode != 'range':
-                for assign in var_assigns:
-                    if assign.default_result.range_mode != 'range':
-                        for code_fragment in assign.default_result.values:
-                            used_vars += find_used_variables(code_fragment, new_misc_args)
-                    for case_result in assign.case_results:
-                        if case_result.range_mode != 'range':
-                            for code_fragment in case_result.values:
-                                used_vars += find_used_variables(code_fragment, new_misc_args)
-                        used_vars += find_used_variables(case_result.condition, new_misc_args)
-            else:
-                if var_assign.default_result.range_mode != 'range':
-                    for code_fragment in var_assign.default_result.values:
-                        used_vars += find_used_variables(code_fragment, new_misc_args)
-                for case_result in var_assign.case_results:
-                    if case_result.range_mode != 'range':
-                        for code_fragment in case_result.values:
-                            used_vars += find_used_variables(code_fragment, new_misc_args)
-                    used_vars += find_used_variables(case_result.condition, new_misc_args)
-            used_vars = tuple(sorted(list(set(used_vars))))
+            # new_misc_args = create_misc_args(node_name, use_stages, use_next, not_next, overwrite_stage, False, specification_warning)
+            # used_vars = []
+            # var_statement = variable['initial_value']
+            # var_assigns = var_statement.assigns
+            # var_assign = var_statement.assign
+            # var_array_mode = var_statement.array_mode
+            # if is_array(variable_obj) and var_array_mode != 'range':
+            #     for assign in var_assigns:
+            #         if assign.default_result.range_mode != 'range':
+            #             for code_fragment in assign.default_result.values:
+            #                 used_vars += find_used_variables(code_fragment, new_misc_args)
+            #         for case_result in assign.case_results:
+            #             if case_result.range_mode != 'range':
+            #                 for code_fragment in case_result.values:
+            #                     used_vars += find_used_variables(code_fragment, new_misc_args)
+            #             used_vars += find_used_variables(case_result.condition, new_misc_args)
+            # else:
+            #     if var_assign.default_result.range_mode != 'range':
+            #         for code_fragment in var_assign.default_result.values:
+            #             used_vars += find_used_variables(code_fragment, new_misc_args)
+            #     for case_result in var_assign.case_results:
+            #         if case_result.range_mode != 'range':
+            #             for code_fragment in case_result.values:
+            #                 used_vars += find_used_variables(code_fragment, new_misc_args)
+            #         used_vars += find_used_variables(case_result.condition, new_misc_args)
+            # used_vars = tuple(sorted(list(set(used_vars))))
+            # if used_vars not in variable['existing_definitions']:
+            #     variable['existing_definitions'][used_vars] = len(variable['next_value'])
+            #     variable['next_value'].append(handle_variable_statement(var_statement, variable_obj, None, new_misc_args))
+            # stage = variable['existing_definitions'][used_vars]
+            # return assemble_variable(variable['name'], stage, use_next, trace_num, specification_writing)
+            used_vars = tuple(map(lambda dependent_variable_key: format_variable_non_object(variables[dependent_variable_key], dependent_variable_key, misc_args), variable['depends_on']))
             if used_vars not in variable['existing_definitions']:
                 variable['existing_definitions'][used_vars] = len(variable['next_value'])
-                variable['next_value'].append(handle_variable_statement(var_statement, variable_obj, None, new_misc_args))
+                variable['next_value'].append(handle_variable_statement(variable['initial_value'], variable['initial_value'], None, create_misc_args(node_name, use_stages, use_next, not_next, overwrite_stage, False, specification_warning)))
             stage = variable['existing_definitions'][used_vars]
             return assemble_variable(variable['name'], stage, use_next, trace_num, specification_writing)
 
@@ -684,9 +704,36 @@ def dsl_to_behaverify(metamodel_file, model_file, keep_stage_0, keep_last_stage,
                 if is_local(variable):
                     local_variable_templates[variable.name]['existing_definitions'] = {}
                     local_variable_templates[variable.name]['initial_value'] = None
+                    local_variable_templates[variable.name]['depends_on'] = None
                 else:
                     variables[variable_reference(variable.name, False, '')]['existing_definitions'] = {}
                     variables[variable_reference(variable.name, False, '')]['initial_value'] = variable
+                    used_vars = []
+                    var_statement = variable
+                    var_assigns = var_statement.assigns
+                    var_assign = var_statement.assign
+                    var_array_mode = var_statement.array_mode
+                    if is_array(variable) and var_array_mode != 'range':
+                        for assign in var_assigns:
+                            if assign.default_result.range_mode != 'range':
+                                for code_fragment in assign.default_result.values:
+                                    used_vars += find_used_variables_without_formatting(code_fragment, False, None)
+                            for case_result in assign.case_results:
+                                if case_result.range_mode != 'range':
+                                    for code_fragment in case_result.values:
+                                        used_vars += find_used_variables_without_formatting(code_fragment, False, None)
+                                used_vars += find_used_variables_without_formatting(code_fragment, False, None)
+                    else:
+                        if var_assign.default_result.range_mode != 'range':
+                            for code_fragment in var_assign.default_result.values:
+                                used_vars += find_used_variables_without_formatting(code_fragment, False, None)
+                        for case_result in var_assign.case_results:
+                            if case_result.range_mode != 'range':
+                                for code_fragment in case_result.values:
+                                    used_vars += find_used_variables_without_formatting(code_fragment, False, None)
+                            used_vars += find_used_variables_without_formatting(code_fragment, False, None)
+                    used_vars = tuple(sorted(list(set(used_vars))))
+                    variables[variable_reference(variable.name, False, '')]['depends_on'] = used_vars
             else:
                 if is_local(variable):
                     local_variable_templates[variable.name]['initial_value'] = handle_variable_statement(variable, variable, None, create_misc_args(None, False, False, None, None, False, False))
@@ -700,6 +747,32 @@ def dsl_to_behaverify(metamodel_file, model_file, keep_stage_0, keep_last_stage,
             new_var['name'] = new_name
             if local_variable_pair[1].model_as == 'DEFINE':
                 new_var['initial_value'] = local_variable_pair[1]
+                used_vars = []
+                var_statement = local_variable_pair[1]
+                var_assigns = var_statement.assigns
+                var_assign = var_statement.assign
+                var_array_mode = var_statement.array_mode
+                if is_array(local_variable_pair[1]) and var_array_mode != 'range':
+                    for assign in var_assigns:
+                        if assign.default_result.range_mode != 'range':
+                            for code_fragment in assign.default_result.values:
+                                used_vars += find_used_variables_without_formatting(code_fragment, True, local_variable_pair[0])
+                        for case_result in assign.case_results:
+                            if case_result.range_mode != 'range':
+                                for code_fragment in case_result.values:
+                                    used_vars += find_used_variables_without_formatting(code_fragment, True, local_variable_pair[0])
+                            used_vars += find_used_variables_without_formatting(code_fragment, True, local_variable_pair[0])
+                else:
+                    if var_assign.default_result.range_mode != 'range':
+                        for code_fragment in var_assign.default_result.values:
+                            used_vars += find_used_variables_without_formatting(code_fragment, True, local_variable_pair[0])
+                    for case_result in var_assign.case_results:
+                        if case_result.range_mode != 'range':
+                            for code_fragment in case_result.values:
+                                used_vars += find_used_variables_without_formatting(code_fragment, True, local_variable_pair[0])
+                        used_vars += find_used_variables_without_formatting(code_fragment, True, local_variable_pair[0])
+                used_vars = tuple(sorted(list(set(used_vars))))
+                new_var['depends_on'] = used_vars
             variables[new_name] = new_var
 
         # handle initial statements FOR DEFINE ONLY.
@@ -921,12 +994,17 @@ def dsl_to_behaverify(metamodel_file, model_file, keep_stage_0, keep_last_stage,
     enum_constants = set(model.enumerations)
 
     (_, _, _, nodes, local_variables, initial_statements, statements) = walk_tree(model.root)
+    print('finished tree walk')
 
     variables = get_variables(model, local_variables, initial_statements, keep_stage_0, keep_last_stage)
+    print('finished variables')
     tick_condition = 'TRUE' if model.tick_condition is None else format_code(model.tick_condition, create_misc_args(None, True, False, None, None, False, False))
     complete_environment_variables(model, True)
+    print('completed environment variables, part 1')
     resolve_statements(statements, nodes)
+    print('resolved_statements')
     complete_environment_variables(model, False)
+    print('completed environment variables, part 2')
     # specification_writing = True
     # spec_warn = True
     specifications = handle_specifications(model.specifications)

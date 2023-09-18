@@ -12,10 +12,10 @@ MODULE main
 	x_net_1_4 := max(x_max - x1, 0);
 	
 	x_net_2_1 := max(x_net_1_1, 0);
-	x_net_2_2 := max(((-10)*x_net_1_2) + ((-10)*x_net_1_3) + 1, 0);
+	x_net_2_2 := max(((-10.3)*x_net_1_2) + ((-10.11)*x_net_1_3) + 1, 0);
 	x_net_2_3 := max(x_net_1_4, 0);
 
-	x_net_3_1 := max(x_net_2_1 + ((-100)*x_net_2_2), 0);
+	x_net_3_1 := max(x_net_2_1 + ((-100.3)*x_net_2_2), 0);
 	x_net_3_2 := max(1 - x_net_2_2, 0);
 	x_net_3_3 := max(x_net_2_3, 0);
 
@@ -33,7 +33,7 @@ MODULE main
 	y_net_1_5 := max(-1 * dir, 0);
 	
 	y_net_2_1 := max(y_net_1_1, 0);
-	y_net_2_2 := max(((-10)*y_net_1_2) + ((-10)*y_net_1_3) + 1, 0);
+	y_net_2_2 := max(((-10.3)*y_net_1_2) + ((-10.11)*y_net_1_3) + 1, 0);
 	y_net_2_3 := max(y_net_1_4, 0);
 	y_net_2_4 := max(y_net_1_5, 0);
 
@@ -59,8 +59,8 @@ MODULE main
 	
 	next(x0) := x1;
 	next(y0) := y1;
-	next(x1) := max(0, min(30, x_net_output));
-	next(y1) := max(0, min(30, y_net_output));
+	next(x1) := max(0, min(30, floor(x_net_output)));
+	next(y1) := max(0, min(30, floor(y_net_output)));
 
 	next(dir) :=
 	    case
