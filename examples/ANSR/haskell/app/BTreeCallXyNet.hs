@@ -11,11 +11,11 @@ bTreeFunctionCallXyNet :: [BTreeNode] -> TreeLocation -> TrueMemoryStatus -> [Tr
 bTreeFunctionCallXyNet _ nodeLocation _ _ _ _ oldBlackboard oldEnvironment futureChanges = (returnStatus, [], [], newBlackboard, newEnvironment, newFutureChanges)
   where
     boardEnvUpdate0 :: (BTreeBlackboard, BTreeEnvironment) -> (BTreeBlackboard, BTreeEnvironment)
-    boardEnvUpdate0 boardEnv = (updateBoardDestX blackboard (max 0 (min 6 (boardXNetOutput1 blackboard))), environment)
+    boardEnvUpdate0 boardEnv = (updateBoardDestX blackboard (max 0 (min 10 (boardXNetOutput1 blackboard))), environment)
       where
         (blackboard, environment) = boardEnv
     boardEnvUpdate1 :: (BTreeBlackboard, BTreeEnvironment) -> (BTreeBlackboard, BTreeEnvironment)
-    boardEnvUpdate1 boardEnv = (updateBoardDestY blackboard (max 0 (min 6 (boardYNetOutput1 blackboard))), environment)
+    boardEnvUpdate1 boardEnv = (updateBoardDestY blackboard (max 0 (min 10 (boardYNetOutput1 blackboard))), environment)
       where
         (blackboard, environment) = boardEnv
     returnStatement :: (BTreeBlackboard, BTreeEnvironment) -> BTreeNodeStatus

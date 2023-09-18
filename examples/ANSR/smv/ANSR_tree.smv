@@ -17,47 +17,47 @@ MODULE system_module
         cur_x_stage_1 := 
             case
                 !(move.active) : cur_x_stage_0;
-                TRUE : max(0, min(6, (0 + cur_x_stage_0)));
+                TRUE : max(0, min(10, (0 + cur_x_stage_0)));
             esac;
         cur_x_stage_2 := 
             case
                 !(move_1.active) : cur_x_stage_1;
-                TRUE : max(0, min(6, (0 + cur_x_stage_1)));
+                TRUE : max(0, min(10, (0 + cur_x_stage_1)));
             esac;
         cur_x_stage_3 := 
             case
                 !(move_2.active) : cur_x_stage_2;
-                TRUE : max(0, min(6, (-1 + cur_x_stage_2)));
+                TRUE : max(0, min(10, (-1 + cur_x_stage_2)));
             esac;
         cur_y_stage_1 := 
             case
                 !(move.active) : cur_y_stage_0;
-                TRUE : max(0, min(6, (1 + cur_y_stage_0)));
+                TRUE : max(0, min(10, (1 + cur_y_stage_0)));
             esac;
         cur_y_stage_2 := 
             case
                 !(move_1.active) : cur_y_stage_1;
-                TRUE : max(0, min(6, (-1 + cur_y_stage_1)));
+                TRUE : max(0, min(10, (-1 + cur_y_stage_1)));
             esac;
         cur_y_stage_3 := 
             case
                 !(move_2.active) : cur_y_stage_2;
-                TRUE : max(0, min(6, (0 + cur_y_stage_2)));
+                TRUE : max(0, min(10, (0 + cur_y_stage_2)));
             esac;
         dest_x_stage_1 := 
             case
                 !(call_xy_net.active) : dest_x_stage_0;
-                TRUE : max(0, min(6, x_net_output_1_stage_0));
+                TRUE : max(0, min(10, x_net_output_1_stage_0));
             esac;
         dest_y_stage_1 := 
             case
                 !(call_xy_net.active) : dest_y_stage_0;
-                TRUE : max(0, min(6, y_net_output_1_stage_0));
+                TRUE : max(0, min(10, y_net_output_1_stage_0));
             esac;
         dir_stage_1 := 
             case
                 !(update_direction.active) : dir_stage_0;
-                (cur_y_stage_0 = 6) : -1;
+                (cur_y_stage_0 = 10) : -1;
                 (cur_y_stage_0 = 0) : 1;
                 TRUE : dir_stage_0;
             esac;
@@ -96,11 +96,11 @@ MODULE system_module
             esac;
         x_net_1_4_stage_0 :=
             case
-                TRUE : max((dest_x_stage_0 - ((0 + 6) / 2)), 0);
+                TRUE : max((dest_x_stage_0 - ((0 + 10) / 2)), 0);
             esac;
         x_net_1_5_stage_0 :=
             case
-                TRUE : max((((0 + 6) / 2) - dest_x_stage_0), 0);
+                TRUE : max((((0 + 10) / 2) - dest_x_stage_0), 0);
             esac;
         x_net_2_1_stage_0 :=
             case
@@ -120,7 +120,7 @@ MODULE system_module
             esac;
         x_net_3_1_stage_0 :=
             case
-                TRUE : max((x_net_2_1_stage_0 - (x_net_2_2_stage_0 * 6)), 0);
+                TRUE : max((x_net_2_1_stage_0 - (x_net_2_2_stage_0 * 10)), 0);
             esac;
         x_net_3_2_stage_0 :=
             case
@@ -140,11 +140,11 @@ MODULE system_module
             esac;
         x_net_4_2_stage_0 :=
             case
-                TRUE : max(((6 * x_net_3_3_stage_0) - (6 * x_net_3_2_stage_0)), 0);
+                TRUE : max(((10 * x_net_3_3_stage_0) - (10 * x_net_3_2_stage_0)), 0);
             esac;
         x_net_4_3_stage_0 :=
             case
-                TRUE : max(((0 * x_net_3_4_stage_0) - (6 * x_net_3_2_stage_0)), 0);
+                TRUE : max(((0 * x_net_3_4_stage_0) - (10 * x_net_3_2_stage_0)), 0);
             esac;
         x_net_output_1_stage_0 :=
             case
@@ -230,16 +230,16 @@ MODULE system_module
         destination_and_movement : composite_sequence_without_memory_2(destination, movement);
         drone_control : composite_selector_without_memory_2(vision, destination_and_movement);
         --START OF BLACKBOARD VARIABLES DECLARATION
-        prev_dest_x_stage_0 : 0..6;
-        prev_dest_y_stage_0 : 0..6;
-        cur_x_stage_0 : 0..6;
-        cur_y_stage_0 : 0..6;
-        dest_x_stage_0 : 0..6;
-        dest_y_stage_0 : 0..6;
+        prev_dest_x_stage_0 : 0..10;
+        prev_dest_y_stage_0 : 0..10;
+        cur_x_stage_0 : 0..10;
+        cur_y_stage_0 : 0..10;
+        dest_x_stage_0 : 0..10;
+        dest_y_stage_0 : 0..10;
         dir_stage_0 : {-1, 1};
         victory_stage_0 : boolean;
-        tar_x_stage_0 : 0..6;
-        tar_y_stage_0 : 0..6;
+        tar_x_stage_0 : 0..10;
+        tar_y_stage_0 : 0..10;
         timer_stage_0 : 0..10;
         --END OF BLACKBOARD VARIABLES DECLARATION
     ASSIGN
@@ -278,11 +278,11 @@ MODULE system_module
             esac;
         init(tar_x_stage_0) := 
             case
-                TRUE : {0, 1, 2, 3, 4, 5, 6};
+                TRUE : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
             esac;
         init(tar_y_stage_0) := 
             case
-                TRUE : {0, 1, 2, 3, 4, 5, 6};
+                TRUE : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
             esac;
         init(timer_stage_0) := 
             case
@@ -303,12 +303,12 @@ MODULE system_module
         next(cur_x_stage_0) := 
             case
                 !(move_3.active) : cur_x_stage_3;
-                TRUE : max(0, min(6, (1 + cur_x_stage_3)));
+                TRUE : max(0, min(10, (1 + cur_x_stage_3)));
             esac;
         next(cur_y_stage_0) := 
             case
                 !(move_3.active) : cur_y_stage_3;
-                TRUE : max(0, min(6, (0 + cur_y_stage_3)));
+                TRUE : max(0, min(10, (0 + cur_y_stage_3)));
             esac;
         next(dest_x_stage_0) := dest_x_stage_1;
         next(dest_y_stage_0) := dest_y_stage_1;
@@ -317,13 +317,13 @@ MODULE system_module
         next(tar_x_stage_0) := 
             case
                 !(drone_control.active) : tar_x_stage_0;
-                (timer_stage_0 = 0) : {tar_x_stage_0, min(6, (tar_x_stage_0 + 1)), max(0, (tar_x_stage_0 - 1))};
+                (timer_stage_0 = 0) : {tar_x_stage_0, min(10, (tar_x_stage_0 + 1)), max(0, (tar_x_stage_0 - 1))};
                 TRUE : tar_x_stage_0;
             esac;
         next(tar_y_stage_0) := 
             case
                 !(drone_control.active) : tar_y_stage_0;
-                (timer_stage_0 = 0) : {tar_y_stage_0, min(6, (tar_y_stage_0 + 1)), max(0, (tar_y_stage_0 - 1))};
+                (timer_stage_0 = 0) : {tar_y_stage_0, min(10, (tar_y_stage_0 + 1)), max(0, (tar_y_stage_0 - 1))};
                 TRUE : tar_y_stage_0;
             esac;
         next(timer_stage_0) := 
@@ -377,19 +377,6 @@ MODULE composite_selector_without_memory_4(child_0, child_1, child_2, child_3)
         child_1.active := child_0.status = failure;
         child_2.active := child_1.status = failure;
         child_3.active := child_2.status = failure;
-MODULE composite_selector_without_memory_2(child_0, child_1)
-    CONSTANTS
-        success, failure, running, invalid;
-    DEFINE
-        status := active ? internal_status : invalid;
-        internal_status :=
-            case
-                !(child_0.internal_status = failure) : child_0.internal_status;
-                !(child_1.internal_status = failure) : child_1.internal_status;
-                TRUE : failure;
-            esac;
-        child_0.active := active;
-        child_1.active := child_0.status = failure;
 MODULE composite_sequence_without_memory_3(child_0, child_1, child_2)
     CONSTANTS
         success, failure, running, invalid;
@@ -405,6 +392,19 @@ MODULE composite_sequence_without_memory_3(child_0, child_1, child_2)
         child_0.active := active;
         child_1.active := child_0.status = success;
         child_2.active := child_1.status = success;
+MODULE composite_selector_without_memory_2(child_0, child_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                !(child_0.internal_status = failure) : child_0.internal_status;
+                !(child_1.internal_status = failure) : child_1.internal_status;
+                TRUE : failure;
+            esac;
+        child_0.active := active;
+        child_1.active := child_0.status = failure;
 MODULE composite_sequence_without_memory_2(child_0, child_1)
     CONSTANTS
         success, failure, running, invalid;
