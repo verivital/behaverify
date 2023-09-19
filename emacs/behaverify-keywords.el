@@ -22,9 +22,9 @@
 ;; END OF 3
 ;; font-lock-type-face
 
-(regexp-opt '("variable" "end_variable" "variable_statement" "end_variable_statement" "initial_values" "end_initial_values" "update" "end_update" "write_environment" "end_write_environment" "read_environment" "end_read_environment" "return_statement" "end_return_statement" "bl" "env" "local" "VAR" "FROZENVAR" "DEFINE" "BOOLEAN" "INT" "ENUM") t)
+(regexp-opt '("variable" "end_variable" "variable_statement" "end_variable_statement" "initial_values" "end_initial_values" "update" "end_update" "write_environment" "end_write_environment" "read_environment" "end_read_environment" "return_statement" "end_return_statement" "bl" "env" "local" "array" "VAR" "FROZENVAR" "DEFINE" "BOOLEAN" "INT" "ENUM") t)
 
-"\\(BOOLEAN\\|DEFINE\\|ENUM\\|FROZENVAR\\|INT\\|VAR\\|bl\\|en\\(?:d_\\(?:initial_values\\|re\\(?:\\(?:ad_environ\\|turn_state\\)ment\\)\\|update\\|variable\\(?:_statement\\)?\\|write_environment\\)\\|v\\)\\|initial_values\\|local\\|re\\(?:\\(?:ad_environ\\|turn_state\\)ment\\)\\|update\\|variable\\(?:_statement\\)?\\|write_environment\\)"
+"\\(BOOLEAN\\|DEFINE\\|ENUM\\|FROZENVAR\\|INT\\|VAR\\|array\\|bl\\|en\\(?:d_\\(?:initial_values\\|re\\(?:\\(?:ad_environ\\|turn_state\\)ment\\)\\|update\\|variable\\(?:_statement\\)?\\|write_environment\\)\\|v\\)\\|initial_values\\|local\\|re\\(?:\\(?:ad_environ\\|turn_state\\)ment\\)\\|update\\|variable\\(?:_statement\\)?\\|write_environment\\)"
 
 ;;"\\(BOOLEAN\\|VAR\\|bl\\|en\\(?:d_\\(?:initial_values\\|re\\(?:\\(?:ad_environ\\|turn_state\\)ment\\)\\|update\\|variable\\(?:_statement\\)?\\|write_environment\\)\\|v\\)\\|initial_values\\|local\\|re\\(?:\\(?:ad_environ\\|turn_state\\)ment\\)\\|update\\|variable\\(?:_statement\\)?\\|write_environment\\)"
 
@@ -38,16 +38,16 @@
 ;; END OF 5
 ;; font-lock-keyword-face
 
-(regexp-opt '("abs" "max" "min" "sin" "cos" "exp" "tan" "ln" "equal" "not_equal" "less_than" "greater_than" "less_than_or_equal" "greater_than_or_equal" "negative" "addition" "subtraction" "multiplication" "division" "mod" "count" "index" "not" "and" "or" "xor" "xnor" "implies" "equivalent" "active" "success" "running" "failure" "next" "globally" "globally_bounded" "finally" "finally_bounded" "until" "until_bounded" "release" "release_bounded" "previous" "not_previous_not" "historically" "historically_bounded" "once" "once_bounded" "since" "since_bounded" "triggered" "triggered_bounded" "exists_globally" "exists_next" "exists_finally" "exists_until" "always_globally" "always_next" "always_finally" "always_until") t)
+(regexp-opt '("abs" "max" "min" "sin" "cos" "exp" "tan" "ln" "eq" "neq" "lt" "gt" "lte" "gte" "neg" "add" "sub" "mult" "idiv" "rdiv" "floor" "mod" "count" "index" "not" "and" "or" "xor" "xnor" "implies" "equivalent" "active" "success" "running" "failure" "next" "globally" "globally_bounded" "finally" "finally_bounded" "until" "until_bounded" "release" "release_bounded" "previous" "not_previous_not" "historically" "historically_bounded" "once" "once_bounded" "since" "since_bounded" "triggered" "triggered_bounded" "exists_globally" "exists_next" "exists_finally" "exists_until" "always_globally" "always_next" "always_finally" "always_until") t)
 
-"\\(a\\(?:bs\\|ctive\\|ddition\\|lways_\\(?:finally\\|globally\\|next\\|until\\)\\|nd\\)\\|co\\(?:s\\|unt\\)\\|division\\|e\\(?:qu\\(?:al\\|ivalent\\)\\|x\\(?:ists_\\(?:finally\\|globally\\|next\\|until\\)\\|p\\)\\)\\|f\\(?:ailure\\|inally\\(?:_bounded\\)?\\)\\|g\\(?:lobally\\(?:_bounded\\)?\\|reater_than\\(?:_or_equal\\)?\\)\\|historically\\(?:_bounded\\)?\\|i\\(?:mplies\\|ndex\\)\\|l\\(?:ess_than\\(?:_or_equal\\)?\\|n\\)\\|m\\(?:ax\\|in\\|od\\|ultiplication\\)\\|n\\(?:e\\(?:gative\\|xt\\)\\|ot\\(?:_\\(?:equal\\|previous_not\\)\\)?\\)\\|o\\(?:nce\\(?:_bounded\\)?\\|r\\)\\|previous\\|r\\(?:elease\\(?:_bounded\\)?\\|unning\\)\\|s\\(?:in\\(?:ce\\(?:_bounded\\)?\\)?\\|u\\(?:btraction\\|ccess\\)\\)\\|t\\(?:an\\|riggered\\(?:_bounded\\)?\\)\\|until\\(?:_bounded\\)?\\|x\\(?:n?or\\)\\)"
+"\\(a\\(?:bs\\|ctive\\|dd\\|lways_\\(?:finally\\|globally\\|next\\|until\\)\\|nd\\)\\|co\\(?:s\\|unt\\)\\|e\\(?:q\\(?:uivalent\\)?\\|x\\(?:ists_\\(?:finally\\|globally\\|next\\|until\\)\\|p\\)\\)\\|f\\(?:ailure\\|inally\\(?:_bounded\\)?\\|loor\\)\\|g\\(?:lobally\\(?:_bounded\\)?\\|te?\\)\\|historically\\(?:_bounded\\)?\\|i\\(?:div\\|mplies\\|ndex\\)\\|l\\(?:te\\|[nt]\\)\\|m\\(?:ax\\|in\\|od\\|ult\\)\\|n\\(?:e\\(?:xt\\|[gq]\\)\\|ot\\(?:_previous_not\\)?\\)\\|o\\(?:nce\\(?:_bounded\\)?\\|r\\)\\|previous\\|r\\(?:div\\|elease\\(?:_bounded\\)?\\|unning\\)\\|s\\(?:in\\(?:ce\\(?:_bounded\\)?\\)?\\|u\\(?:b\\|ccess\\)\\)\\|t\\(?:an\\|riggered\\(?:_bounded\\)?\\)\\|until\\(?:_bounded\\)?\\|x\\(?:n?or\\)\\)"
 
 ;; END OF 6
 ;; font-lock-builtin-face
 
-(regexp-opt '("hypersafety" "True" "False" "success" "runnning" "failure") t)
+(regexp-opt '("hypersafety" "use_reals" "True" "False" "success" "runnning" "failure") t)
 
-"\\(False\\|True\\|failure\\|hypersafety\\|runnning\\|success\\)"
+"\\(False\\|True\\|failure\\|hypersafety\\|runnning\\|\\(?:succes\\|use_real\\)s\\)"
 
 ;;"\\(False\\|True\\|failure\\|runnning\\|success\\)"
 

@@ -3,8 +3,7 @@ This module is part of BehaVerify and used to convert .tree files to .smv files 
 
 
 Author: Serena Serafina Serbinowska
-Created: 2022-01-01 (Date not correct)
-Last Edit: 2023-09-18
+Last Edit: 2023-09-19
 '''
 import argparse
 import pprint
@@ -27,7 +26,7 @@ from behaverify_common import create_node_name, create_node_template, create_var
 # if the condition is true, then the result is used.
 # the last condition should always be TRUE
 
-def dsl_to_behaverify(metamodel_file, model_file, keep_stage_0, keep_last_stage, output_file, do_not_trim, behave_only):
+def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, keep_last_stage, do_not_trim, behave_only):
     '''
     This method is used to convert the dsl to behaverify.
     '''
@@ -40,13 +39,39 @@ def dsl_to_behaverify(metamodel_file, model_file, keep_stage_0, keep_last_stage,
             + ')'
             )
 
+    def __format_function_recursive_before__(function_name, values, misc_args, index_start):
+        if len(values) - index_start <= 2:
+            return (
+                function_name + '('
+                + ', '.join([format_code(value, misc_args) for value in values[index_start:]])
+                + ')'
+            )
+        cur_val = values[index_start]
+        return (
+            function_name + '(' + format_code(cur_val, misc_args) + ', ' + __format_function_recursive_before__(function_name, values, misc_args, index_start + 1) + ')'
+        )
+
+    def format_function_recursive_before(function_name, code, misc_args):
+        '''function_name(vals)'''
+        if len(code.function_call.values) <= 2:
+            return format_function_before(function_name, code, misc_args)
+        return __format_function_recursive_before__(function_name, code.function_call.values, misc_args, 0)
+
     def format_function_between(function_name, code, misc_args):
         '''(vals function_name vals)'''
         return (
             '('
             + (' ' + function_name + ' ').join([format_code(value, misc_args) for value in code.function_call.values])
             + ')'
-            )
+        )
+
+    def format_function_integer_division(function_name, code, misc_args):
+        '''(vals function_name vals)'''
+        return (
+            ('floor' if use_reals else '') + '('
+            + (' ' + function_name + ' ').join([format_code(value, misc_args) for value in code.function_call.values])
+            + ')'
+        )
 
     def format_function_after(function_name, code, misc_args):
         '''(node_name.function_name)'''
@@ -93,6 +118,7 @@ def dsl_to_behaverify(metamodel_file, model_file, keep_stage_0, keep_last_stage,
                     range(array_size)
                 )
             )
+            + 'TRUE : ' + formatted_variable + '_index_0; '
             + 'esac)'
         )
 
@@ -908,8 +934,8 @@ def dsl_to_behaverify(metamodel_file, model_file, keep_stage_0, keep_last_stage,
 
     function_format = {
         'abs' : ('abs', format_function_before),
-        'max' : ('max', format_function_before),
-        'min' : ('min', format_function_before),
+        'max' : ('max', format_function_recursive_before),
+        'min' : ('min', format_function_recursive_before),
         'sin' : ('sin', format_function_before),
         'cos' : ('cos', format_function_before),
         'tan' : ('tan', format_function_before),
@@ -919,20 +945,22 @@ def dsl_to_behaverify(metamodel_file, model_file, keep_stage_0, keep_last_stage,
         'or' : ('|', format_function_between),
         'xor' : ('xor', format_function_between),
         'xnor' : ('xnor', format_function_between),
-        'implies' : ('->', format_function_between),
-        'equivalent' : ('<->', format_function_between),
-        'equal' : ('=', format_function_between),
-        'not_equal' : ('!=', format_function_between),
-        'less_than' : ('<', format_function_between),
-        'greater_than' : ('>', format_function_between),
-        'less_than_or_equal' : ('<=', format_function_between),
-        'greater_than_or_equal' : ('>=', format_function_between),
-        'negative' : ('-', format_function_before),
-        'addition' : ('+', format_function_between),
-        'subtraction' : ('-', format_function_between),
-        'multiplication' : ('*', format_function_between),
-        'division' : ('/', format_function_between),
+        'imply' : ('->', format_function_between),
+        'equiv' : ('<->', format_function_between),
+        'eq' : ('=', format_function_between),
+        'neq' : ('!=', format_function_between),
+        'lt' : ('<', format_function_between),
+        'gt' : ('>', format_function_between),
+        'lte' : ('<=', format_function_between),
+        'gte' : ('>=', format_function_between),
+        'neg' : ('-', format_function_before),
+        'add' : ('+', format_function_between),
+        'sub' : ('-', format_function_between),
+        'mult' : ('*', format_function_between),
+        'idiv' : ('/', format_function_integer_division),
         'mod' : ('mod', format_function_between),
+        'rdiv' : ('/', format_function_between),
+        'floor' : ('floor', format_function_before),
         'count' : ('count', format_function_before),
         'index' : ('index', format_function_index),
         'active' : ('.active', format_function_after),
@@ -981,6 +1009,7 @@ def dsl_to_behaverify(metamodel_file, model_file, keep_stage_0, keep_last_stage,
     metamodel = textx.metamodel_from_file(metamodel_file, auto_init_attributes = False)
     model = metamodel.model_from_file(model_file)
     hyper_mode = model.hypersafety
+    use_reals = model.use_reals
     # specification_writing = False  # this is used to track whether or not code should make references to the trace and system or not.
     constants = {
         constant.name : constant.val
@@ -1039,10 +1068,12 @@ if __name__ == '__main__':
     arg_parser = argparse.ArgumentParser()
     arg_parser.add_argument('metamodel_file')
     arg_parser.add_argument('model_file')
+    arg_parser.add_argument('output_file', default = None)
     arg_parser.add_argument('--keep_stage_0', action = 'store_true')
     arg_parser.add_argument('--keep_last_stage', action = 'store_true')
-    arg_parser.add_argument('--output_file', default = None)
     arg_parser.add_argument('--do_not_trim', action = 'store_true')
     arg_parser.add_argument('--behave_only', action = 'store_true')
+    # arg_parser.add_argument('--reduce_definitions', action = 'store_true')
+    # arg_parser.add_argument('--eliminate_definitions', action = 'store_true')
     args = arg_parser.parse_args()
-    dsl_to_behaverify(args.metamodel_file, args.model_file, args.keep_stage_0, args.keep_last_stage, args.output_file, args.do_not_trim, args.behave_only)
+    dsl_to_behaverify(args.metamodel_file, args.model_file, args.output_file, args.keep_stage_0, args.keep_last_stage, args.do_not_trim, args.behave_only)

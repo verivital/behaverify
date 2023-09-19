@@ -1,11 +1,12 @@
+'''
+Just a quick think to train the x portion of the xy net to test whether or not we can encode it effectively.
+'''
+import os
 import tensorflow as tf
 import numpy
 from tensorflow import keras
-import pydot
-import os
 
 from keras.utils import plot_model
-from keras.models import Model
 from graphviz import Digraph
 
 
@@ -51,32 +52,6 @@ def train_model(input_dim, output_dim, input_data, labels, epochs, batch_size):
     # Train the model
     model.fit(input_data, labels, epochs=epochs, batch_size=batch_size, callbacks = [StopOnPoint(0.999)])
     return model
-    # Evaluate the model on the test set (replace with your test data)
-    # test_loss, test_acc = model.evaluate(X_test, y_test)
-    # print(f'Test accuracy: {test_acc}')
-
-def visualize_model_with_details(model, filename="model_with_details.png"):
-    plot_model(model, to_file='model.png', show_shapes=True, show_layer_names=False)
-
-    # Create a new Digraph object from Graphviz
-    dot = Digraph(comment='Neural Network Model', format='png')
-
-    # Add layers to the Digraph with details (weights and biases)
-    for layer in model.layers:
-        layer_name = layer.name
-        dot.node(layer_name, label=layer_name)
-
-        if isinstance(layer, keras.layers.Dense):
-            weights, biases = layer.get_weights()
-            for i, weight in enumerate(weights):
-                dot.node(f'{layer_name}_W{i}', label=f'W[{i}] = {weight.tolist()}')
-                dot.edge(f'{layer_name}_W{i}', layer_name)
-            for i, bias in enumerate(biases):
-                dot.node(f'{layer_name}_B{i}', label=f'B[{i}] = {bias}')
-                dot.edge(f'{layer_name}_B{i}', layer_name)
-
-    # Render the Digraph to a PNG file
-    dot.render(filename, view=False)
 
 def recursive_max(cur_node, layer_index):
     return (
@@ -108,31 +83,33 @@ def idk():
         #g=layer.get_config()
         (weights, biases) = layer.get_weights()
         for (node_index, node_weights) in enumerate(weights):
-            cur_string += 'variable {bl x_net_weight_from_' + str(layer_index) + '_' + str(node_index) + ' array ' + str(len(node_weights)) + ' DEFINE INT per_index '
+            cur_string += 'variable {bl x_net_weight_from_' + str(layer_index) + '_' + str(node_index) + ' array ' + str(len(node_weights)) + ' DEFINE REAL per_index '
             for node_weight in node_weights:
-                cur_string += 'assign{result{' + str(int(node_weight * 100)) + '}}'
+                #cur_string += 'assign{result{' + str(int(node_weight * 100)) + '}}'
+                cur_string += 'assign{result{' + str(node_weight) + '}}'
             cur_string += '}' + os.linesep
-        cur_string += 'variable {bl x_net_bias_from_' + str(layer_index) + ' array ' + str(len(biases)) + ' DEFINE INT per_index '
+        cur_string += 'variable {bl x_net_bias_from_' + str(layer_index) + ' array ' + str(len(biases)) + ' DEFINE REAL per_index '
         for bias_weight in biases:
-            cur_string += 'assign{result{' + str(int(bias_weight * 100)) + '}}'
+            #cur_string += 'assign{result{' + str(int(bias_weight * 100)) + '}}'
+            cur_string += 'assign{result{' + str(bias_weight) + '}}'
         cur_string += '}' + os.linesep
     structure = [2, 10, 10, 10, 10, 11]
     previous_structure = None
     for (layer_index, cur_structure) in enumerate(structure):
         if previous_structure is None:
             for node in range(cur_structure):
-                cur_string += 'variable {bl x_net_node_0_' + str(node) + ' DEFINE INT assign{result{' + ('dest_x' if node == 0 else 'prev_dest_x') + '}}}' + os.linesep
+                cur_string += 'variable {bl x_net_node_0_' + str(node) + ' DEFINE REAL assign{result{' + ('dest_x' if node == 0 else 'prev_dest_x') + '}}}' + os.linesep
         else:
             for node in range(cur_structure):
-                cur_string += 'variable {bl x_net_node_' + str(layer_index) + '_' + str(node) + ' DEFINE INT assign{result{' + ('(max, ' if layer_index < len(structure) - 1 else '') + '(addition, '
+                cur_string += 'variable {bl x_net_node_' + str(layer_index) + '_' + str(node) + ' DEFINE REAL assign{result{' + ('(max, ' if layer_index < len(structure) - 1 else '') + '(add, '
                 for prev_node in range(previous_structure):
-                    cur_string += '(multiplication, x_net_node_' + str(layer_index - 1) + '_' + str(prev_node) + ', (index, x_net_weight_from_' + str(layer_index - 1) + '_' + str(prev_node) + ', ' + str(node) + ')),'
+                    cur_string += '(mult, x_net_node_' + str(layer_index - 1) + '_' + str(prev_node) + ', (index, x_net_weight_from_' + str(layer_index - 1) + '_' + str(prev_node) + ', ' + str(node) + ')),'
                 cur_string += '(index, x_net_bias_from_' + str(layer_index - 1) + ', ' + str(node) + '))' + (', 0)' if layer_index < len(structure) - 1 else '') + '}}}' + os.linesep
         previous_structure = cur_structure
-    cur_string +='variable {bl x_net_output_max DEFINE INT assign{result{' + recursive_max(previous_structure - 1, layer_index) + '}}}' + os.linesep
+    cur_string +='variable {bl x_net_output_max DEFINE REAL assign{result{' + recursive_max(previous_structure - 1, layer_index) + '}}}' + os.linesep
     cur_string += (
-        'variable {bl x_net_output DEFINE INT assign{'
-        + ''.join(('case{(equal, x_net_output_max, x_net_node_' + str(layer_index) + '_' + str(cur_node) + ')}result{' + str(cur_node) + '}') for cur_node in range(previous_structure))
+        'variable {bl x_net_output DEFINE REAL assign{'
+        + ''.join(('case{(eq, x_net_output_max, x_net_node_' + str(layer_index) + '_' + str(cur_node) + ')}result{' + str(cur_node) + '}') for cur_node in range(previous_structure))
         + 'result{-1}'
         + '}}'
     ) + os.linesep

@@ -8,8 +8,19 @@ Author: Serena Serafina Serbinowska
 Last Edit: 2023-09-13
 '''
 import itertools
-import serene_functions
-from behaverify_common import create_node_name
+from serene_functions import build_range_func
+from behaverify_common import (create_node_name,
+                               BTreeException,
+                               constant_type,
+                               dummy_value,
+                               variable_type,
+                               is_local,
+                               is_env,
+                               is_blackboard,
+                               variable_scope,
+                               is_array,
+                               handle_constant,
+                               str_format)
 
 # TODO : function category (TL/INVAR/reg) - DONE?
 # TODO : node_types (idk what this means)
@@ -18,156 +29,31 @@ from behaverify_common import create_node_name
 # TODO : read at/node_name in functions
 # TODO : confirm enumerations are being enforced
 
-RANGE_FUNCTION = {
-    'abs' : serene_functions.serene_abs,
-    'max' : serene_functions.serene_max,
-    'min' : serene_functions.serene_min,
-    'sin' : serene_functions.serene_sin,
-    'cos' : serene_functions.serene_cos,
-    'tan' : serene_functions.serene_tan,
-    'ln' : serene_functions.serene_log,
-    'not' : serene_functions.serene_not,
-    'and' : serene_functions.serene_and,
-    'or' : serene_functions.serene_or,
-    'xor' : serene_functions.serene_xor,
-    'xnor' : serene_functions.serene_xnor,
-    'implies' : serene_functions.serene_implies,
-    'equivalent' : serene_functions.serene_eq,
-    'equal' : serene_functions.serene_eq,
-    'not_equal' : serene_functions.serene_ne,
-    'less_than' : serene_functions.serene_lt,
-    'greater_than' : serene_functions.serene_gt,
-    'less_than_or_equal' : serene_functions.serene_lte,
-    'greater_than_or_equal' : serene_functions.serene_gte,
-    'negative' : serene_functions.serene_neg,
-    'addition' : serene_functions.serene_sum,
-    'subtraction' : serene_functions.serene_sub,
-    'multiplication' : serene_functions.serene_mult,
-    'division' : serene_functions.serene_truediv,
-    'mod' : serene_functions.serene_mod,
-    'count' : serene_functions.serene_count
-}
-
-class BTreeException(Exception):
-    '''an exception that indicates something is wrong with the BTree'''
-    def __init__(self, trace, last_message):
-        self.message = ' -> '.join(trace) + ' ::-> ' + last_message
-        super().__init__(self.message)
-
-
-def constant_type(constant, constants):
-    '''Used to get the type of the constant'''
-    new_constant = (constants[constant] if constant in constants else constant)
-    if isinstance(new_constant, str):
-        return 'ENUM'
-    if isinstance(new_constant, bool):
-        return 'BOOLEAN'
-    if isinstance(new_constant, int):
-        return 'INT'
-    raise BTreeException([], 'Constant ' + constant + ' is of an unsupported type. Only ENUM, BOOLEAN, and INT are supported')
-
-
-def dummy_value(arg_type):
-    '''Used to get a Dummy Value of the specified type'''
-    if arg_type == 'ENUM':
-        return 'ENUM'
-    if arg_type == 'BOOLEAN':
-        return True
-    if arg_type == 'INT':
-        return 0
-    raise BTreeException([], 'Constant Type ' + arg_type + ' is of an unsupported type. Only ENUM, BOOLEAN, and INT are supported')
-
-
-def variable_type(variable, constants):
-    '''Used to determine the variable type'''
-    if variable.model_as == 'DEFINE':
-        return variable.domain
-    if variable.domain.boolean is not None:
-        return 'BOOLEAN'
-    if variable.domain.min_val is not None or variable.domain.true_int is not None:
-        return 'INT'
-    return constant_type(variable.domain.enums[0], constants)
-
-
-def is_local(variable):
-    '''checks if the variable is local'''
-    return variable.var_type == 'local'
-
-
-def is_env(variable):
-    '''checks if the variable is environment'''
-    return variable.var_type == 'env'
-
-
-def is_blackboard(variable):
-    '''checks if the variable is blackboard'''
-    return variable.var_type == 'bl'
-
-
-def variable_scope(variable):
-    '''used to return the scope of the environment'''
-    if is_local(variable):
-        return 'local'
-    if is_env(variable):
-        return 'environment'
-    if is_blackboard(variable):
-        return 'blackboard'
-    raise BTreeException([], 'Variable ' + variable.name + ' is not local, blackboard, or environment')
-
-
-def is_array(variable):
-    '''checks if the variable is an array'''
-    return variable.array_size is not None
-
-
-def handle_constant(constant, constants):
-    '''handsle the constant'''
-    return (constants[constant] if constant in constants else constant)
-
-
-def build_range_func(code, constants):
-    '''builds the range func'''
-    return (
-        (lambda x : handle_constant(code.constant, constants)) if code.constant is not None else (
-            (lambda x : x) if code.value else (
-                build_range_func(code.code_statement, constants) if code.code_statement is not None else (
-                    (lambda x : RANGE_FUNCTION[code.function_call.function_name]([build_range_func(value, constants) for value in code.function_call.values], x))
-                )
-            )
-        )
-    )
-
-
-def str_format(value):
-    '''formats string'''
-    if isinstance(value, str):
-        return '\'' + value + '\''
-    return str(value)
-
-
 def validate_model(model, constants):
     '''used to validate the model'''
     trace = []
     function_type_info = {
-        'abs' : {'return_type' : 'INT', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'INT', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'INVAR', 'reg'}},
-        'max' : {'return_type' : 'INT', 'min_arg' : 2, 'max_arg' : -1, 'arg_type' : 'INT', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'INVAR', 'reg'}},
-        'min' : {'return_type' : 'INT', 'min_arg' : 2, 'max_arg' : -1, 'arg_type' : 'INT', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'INVAR', 'reg'}},
+        'abs' : {'return_type' : 'NUM', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'NUM', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'INVAR', 'reg'}},
+        'max' : {'return_type' : 'NUM', 'min_arg' : 2, 'max_arg' : -1, 'arg_type' : 'NUM', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'INVAR', 'reg'}},
+        'min' : {'return_type' : 'NUM', 'min_arg' : 2, 'max_arg' : -1, 'arg_type' : 'NUM', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'INVAR', 'reg'}},
         # 'sin' : serene_functions.serene_sin,
         # 'cos' : serene_functions.serene_cos,
         # 'tan' : serene_functions.serene_tan,
         # 'ln' : serene_functions.serene_log,
-        'equal' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'depends', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'INVAR', 'reg'}},
-        'not_equal' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'depends', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'INVAR', 'reg'}},
-        'less_than' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'INT', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'INVAR', 'reg'}},
-        'greater_than' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'INT', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'INVAR', 'reg'}},
-        'less_than_or_equal' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'INT', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'INVAR', 'reg'}},
-        'greater_than_or_equal' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'INT', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'INVAR', 'reg'}},
-        'negative' : {'return_type' : 'INT', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'INT', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'INVAR', 'reg'}},
-        'addition' : {'return_type' : 'INT', 'min_arg' : 2, 'max_arg' : -1, 'arg_type' : 'INT', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'INVAR', 'reg'}},
-        'subtraction' : {'return_type' : 'INT', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'INT', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'INVAR', 'reg'}},
-        'multiplication' : {'return_type' : 'INT', 'min_arg' : 2, 'max_arg' : -1, 'arg_type' : 'INT', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'INVAR', 'reg'}},
-        'division' : {'return_type' : 'INT', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'INT', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'INVAR', 'reg'}},
+        'eq' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'depends', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'INVAR', 'reg'}},
+        'neq' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'depends', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'INVAR', 'reg'}},
+        'lt' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'NUM', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'INVAR', 'reg'}},
+        'gt' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'NUM', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'INVAR', 'reg'}},
+        'lte' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'NUM', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'INVAR', 'reg'}},
+        'gte' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'NUM', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'INVAR', 'reg'}},
+        'neg' : {'return_type' : 'NUM', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'NUM', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'INVAR', 'reg'}},
+        'add' : {'return_type' : 'NUM', 'min_arg' : 2, 'max_arg' : -1, 'arg_type' : 'NUM', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'INVAR', 'reg'}},
+        'sub' : {'return_type' : 'NUM', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'NUM', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'INVAR', 'reg'}},
+        'mult' : {'return_type' : 'NUM', 'min_arg' : 2, 'max_arg' : -1, 'arg_type' : 'NUM', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'INVAR', 'reg'}},
+        'idiv' : {'return_type' : 'INT', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'INT', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'INVAR', 'reg'}},
         'mod' : {'return_type' : 'INT', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'INT', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'INVAR', 'reg'}},
+        'rdiv' : {'return_type' : 'NUM', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'NUM', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'INVAR', 'reg'}},
+        'floor' : {'return_type' : 'INT', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'NUM', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'INVAR', 'reg'}},
         'count' : {'return_type' : 'INT', 'min_arg' : 1, 'max_arg' : -1, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'INVAR', 'reg'}},
         'index' : {'return_type' : 'depends', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'INT', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'INVAR', 'reg'}},
 
@@ -176,8 +62,8 @@ def validate_model(model, constants):
         'or' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : -1, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'CTL', 'LTL', 'INVAR', 'reg'}},
         'xor' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'CTL', 'LTL', 'INVAR', 'reg'}},
         'xnor' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'CTL', 'LTL', 'INVAR', 'reg'}},
-        'implies' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'CTL', 'LTL', 'INVAR', 'reg'}},
-        'equivalent' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'CTL', 'LTL', 'INVAR', 'reg'}},
+        'imply' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'CTL', 'LTL', 'INVAR', 'reg'}},
+        'equiv' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'CTL', 'LTL', 'INVAR', 'reg'}},
 
         'active' : {'return_type' : 'BOOLEAN', 'min_arg' : 0, 'max_arg' : 0, 'arg_type' : 'node_name', 'allowed_in' : {'CTL', 'LTL', 'INVAR'}, 'allows' : set()},
         'success' : {'return_type' : 'BOOLEAN', 'min_arg' : 0, 'max_arg' : 0, 'arg_type' : 'node_name', 'allowed_in' : {'CTL', 'LTL', 'INVAR'}, 'allows' : set()},
@@ -282,10 +168,13 @@ def validate_model(model, constants):
                 raise BTreeException(trace, 'Reference to a node that does not exist ' + code.function_call.node_name)
         if arg_type == 'depends':
             (arg_type, _, _) = validate_code(code.function_call.values[0], scopes, variable_names, new_allowed_functions)
+            arg_type = ('NUM' if arg_type in {'INT', 'REAL'} else arg_type)
         for index, value in enumerate(code.function_call.values):
             (cur_arg_type, cur_code_type, cur_code) = validate_code(value, scopes, variable_names, new_allowed_functions)
-            if cur_arg_type != arg_type:
+            if (cur_arg_type != arg_type) and ((arg_type != 'NUM') or (cur_arg_type not in {'INT', 'REAL'})):
                 raise BTreeException(trace, 'Function ' + code.function_call.function_name + ' expected ' + arg_type + ' but got ' + cur_arg_type + ' from argument number ' + str(index) + ' which is ' + cur_code_type + ' ' + cur_code)
+            return_type = ('REAL' if return_type == 'NUM' and cur_arg_type == 'REAL' else return_type)
+        return_type = ('INT' if return_type == 'NUM' else return_type)
         return (return_type, 'function', code.function_call.function_name)
 
     def validate_condition(code, scopes, variable_names, allowed_functions):
@@ -321,7 +210,7 @@ def validate_model(model, constants):
                 #     raise BTreeException(trace, 'needs to be updated deterministicly here but is being updated non-deterministicly')
                 for value in case_result.values:
                     (cur_arg_type, cur_code_type, cur_code) = validate_code(value, scopes, variable_names, {'reg'})
-                    if cur_arg_type != var_type:
+                    if (cur_arg_type != var_type) and not (cur_arg_type == 'INT' and var_type == 'REAL'):
                         raise BTreeException(trace, 'type ' + var_type + ' is being updated with ' + cur_code_type + ' ' + cur_code + ' which is of type ' + cur_arg_type)
         for case_result in assign.case_results:
             handle_case_result(case_result, False)
