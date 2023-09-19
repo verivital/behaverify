@@ -1,7 +1,7 @@
 ;;; behaverify-mode-el -- Major mode for editing BehaVerify files
 
 ;; Author: Serena Aura Serbinowska
-;; Last Edit: 2023-09-11
+;; Last Edit: 2023-09-19
 ;; Keywords: BehaVerify major-mode
 
 ;;; Commentary:
@@ -38,7 +38,7 @@
 (defconst behaverify-font-lock-keywords-4
   (append behaverify-font-lock-keywords-3
 		  (list
-		   '("\\<\\(BOOLEAN\\|DEFINE\\|ENUM\\|FROZENVAR\\|INT\\|VAR\\|bl\\|en\\(?:d_\\(?:initial_values\\|re\\(?:\\(?:ad_environ\\|turn_state\\)ment\\)\\|update\\|variable\\(?:_statement\\)?\\|write_environment\\)\\|v\\)\\|initial_values\\|local\\|re\\(?:\\(?:ad_environ\\|turn_state\\)ment\\)\\|update\\|variable\\(?:_statement\\)?\\|write_environment\\)\\>" . font-lock-function-name-face)))
+		   '("\\<\\(BOOLEAN\\|DEFINE\\|ENUM\\|FROZENVAR\\|INT\\|VAR\\|array\\|bl\\|en\\(?:d_\\(?:initial_values\\|re\\(?:\\(?:ad_environ\\|turn_state\\)ment\\)\\|update\\|variable\\(?:_statement\\)?\\|write_environment\\)\\|v\\)\\|initial_values\\|local\\|re\\(?:\\(?:ad_environ\\|turn_state\\)ment\\)\\|update\\|variable\\(?:_statement\\)?\\|write_environment\\)\\>" . font-lock-function-name-face)))
   "Additional Keywords to highlight in BehaVerify mode.")
 
 (defconst behaverify-font-lock-keywords-5
@@ -50,13 +50,13 @@
 (defconst behaverify-font-lock-keywords-6
   (append behaverify-font-lock-keywords-5
 		  (list
-		   '("\\<\\(a\\(?:bs\\|ctive\\|ddition\\|lways_\\(?:finally\\|globally\\|next\\|until\\)\\|nd\\)\\|co\\(?:s\\|unt\\)\\|division\\|e\\(?:qu\\(?:al\\|ivalent\\)\\|x\\(?:ists_\\(?:finally\\|globally\\|next\\|until\\)\\|p\\)\\)\\|f\\(?:ailure\\|inally\\(?:_bounded\\)?\\)\\|g\\(?:lobally\\(?:_bounded\\)?\\|reater_than\\(?:_or_equal\\)?\\)\\|historically\\(?:_bounded\\)?\\|i\\(?:mplies\\|ndex\\)\\|l\\(?:ess_than\\(?:_or_equal\\)?\\|n\\)\\|m\\(?:ax\\|in\\|od\\|ultiplication\\)\\|n\\(?:e\\(?:gative\\|xt\\)\\|ot\\(?:_\\(?:equal\\|previous_not\\)\\)?\\)\\|o\\(?:nce\\(?:_bounded\\)?\\|r\\)\\|previous\\|r\\(?:elease\\(?:_bounded\\)?\\|unning\\)\\|s\\(?:in\\(?:ce\\(?:_bounded\\)?\\)?\\|u\\(?:btraction\\|ccess\\)\\)\\|t\\(?:an\\|riggered\\(?:_bounded\\)?\\)\\|until\\(?:_bounded\\)?\\|x\\(?:n?or\\)\\)\\>" . font-lock-builtin-face)))
+		   '("\\<\\(a\\(?:bs\\|ctive\\|dd\\|lways_\\(?:finally\\|globally\\|next\\|until\\)\\|nd\\)\\|co\\(?:s\\|unt\\)\\|e\\(?:q\\(?:uivalent\\)?\\|x\\(?:ists_\\(?:finally\\|globally\\|next\\|until\\)\\|p\\)\\)\\|f\\(?:ailure\\|inally\\(?:_bounded\\)?\\|loor\\)\\|g\\(?:lobally\\(?:_bounded\\)?\\|te?\\)\\|historically\\(?:_bounded\\)?\\|i\\(?:div\\|mplies\\|ndex\\)\\|l\\(?:te\\|[nt]\\)\\|m\\(?:ax\\|in\\|od\\|ult\\)\\|n\\(?:e\\(?:xt\\|[gq]\\)\\|ot\\(?:_previous_not\\)?\\)\\|o\\(?:nce\\(?:_bounded\\)?\\|r\\)\\|previous\\|r\\(?:div\\|elease\\(?:_bounded\\)?\\|unning\\)\\|s\\(?:in\\(?:ce\\(?:_bounded\\)?\\)?\\|u\\(?:b\\|ccess\\)\\)\\|t\\(?:an\\|riggered\\(?:_bounded\\)?\\)\\|until\\(?:_bounded\\)?\\|x\\(?:n?or\\)\\)\\>" . font-lock-builtin-face)))
   "Additional Keywords to highlight in BehaVerify mode.")
 
 (defconst behaverify-font-lock-keywords-7
   (append behaverify-font-lock-keywords-6
 		  (list
-		   '("\\<\\(False\\|True\\|failure\\|hypersafety\\|runnning\\|success\\)\\>" . font-lock-constant-face)))
+		   '("\\<\\(False\\|True\\|failure\\|hypersafety\\|runnning\\|\\(?:succes\\|use_real\\)s\\)\\>" . font-lock-constant-face)))
   "Additional Keywords to highlight in BehaVerify mode.")
 
 (defvar behaverify-font-lock-keywords behaverify-font-lock-keywords-7
@@ -75,18 +75,18 @@
       (indent-line-to 0)  ; First line is always non-indented
     (let ((indent-level 0) (modify-indent-level 0))
       (beginning-of-line)  ; moves us to the start of the line.
-      (if (looking-at "^[[:blank:]]*}.*$") (setq modify-indent-level -1) nil)  ; if we have spaces then }, we would like that } to indent itself back.
+      (if (looking-at "^[[:blank:]]*[])}].*$") (setq modify-indent-level -1) nil)  ; if we have spaces then }, we would like that } to indent itself back.
       (save-excursion  ; we will save our current location
 	(let ((still-searching t))  ; this will be used to track if we are done looping
 	  (while still-searching  ; loop
 	    (forward-line -1)  ; go to the start of previous line.
 	    (if (bobp) (setq still-searching nil))  ; we will have to stop the loop if we're at the start.
 	    (if (looking-at "^[[:blank:]]*$") nil  ; if we're looking at a line with nothing in it, do nothing. otherwise, see below.
-	      (let ((num-open (how-many "{" (line-beginning-position) (line-end-position)))  ; the number of { in the line
-		    (num-closed (how-many "}" (line-beginning-position) (line-end-position))))  ; the number of } in the line
+	      (let ((num-open (how-many "[[({]" (line-beginning-position) (line-end-position)))  ; the number of { in the line
+		    (num-closed (how-many "[]})]" (line-beginning-position) (line-end-position))))  ; the number of } in the line
 		; (message "num-open = %d" num-open)
 		(setq still-searching nil)  ; done searching
-		(if (looking-at "^[[:blank:]]*}.*$") (setq modify-indent-level (+ 1 modify-indent-level)))  ; if the prior line also shifted back 1 as a ___} line, don't double it
+		(if (looking-at "^[[:blank:]]*[])}].*$") (setq modify-indent-level (+ 1 modify-indent-level)))  ; if the prior line also shifted back 1 as a ___} line, don't double it
 		(setq indent-level (+ (current-indentation) (* 4 (+ (- num-open num-closed) modify-indent-level))))  ; compute indent level
 		)  ; END progn
 	      )  ; END if looking at

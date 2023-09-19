@@ -4,8 +4,7 @@ It contains a variety of utility functions.
 
 
 Author: Serena Serafina Serbinowska
-Created: 2022-01-01 (Date not correct)
-Last Edit: 2023-01-01 (Date not correct)
+Last Edit: 2023-09-19
 '''
 # if not array
 
@@ -33,6 +32,91 @@ Last Edit: 2023-01-01 (Date not correct)
 # the last condition should always be TRUE
 
 # the initial value of a variable is a single stage with int based index.
+
+
+class BTreeException(Exception):
+    '''an exception that indicates something is wrong with the BTree'''
+    def __init__(self, trace, last_message):
+        self.message = ' -> '.join(trace) + ' ::-> ' + last_message
+        super().__init__(self.message)
+
+
+def constant_type(constant, constants):
+    '''Used to get the type of the constant'''
+    new_constant = (constants[constant] if constant in constants else constant)
+    if isinstance(new_constant, str):
+        return 'ENUM'
+    if isinstance(new_constant, bool):
+        return 'BOOLEAN'
+    if isinstance(new_constant, int):
+        return 'INT'
+    if isinstance(new_constant, float):
+        return 'REAL'
+    raise BTreeException([], 'Constant ' + constant + ' is of an unsupported type. Only ENUM, BOOLEAN, and INT are supported')
+
+
+def dummy_value(arg_type):
+    '''Used to get a Dummy Value of the specified type'''
+    if arg_type == 'ENUM':
+        return 'ENUM'
+    if arg_type == 'BOOLEAN':
+        return True
+    if arg_type == 'INT':
+        return 0
+    raise BTreeException([], 'Constant Type ' + arg_type + ' is of an unsupported type. Only ENUM, BOOLEAN, and INT are supported')
+
+
+def variable_type(variable, constants):
+    '''Used to determine the variable type'''
+    if variable.model_as == 'DEFINE':
+        return variable.domain
+    if variable.domain.boolean is not None:
+        return 'BOOLEAN'
+    if variable.domain.min_val is not None or variable.domain.true_int is not None:
+        return 'INT'
+    return constant_type(variable.domain.enums[0], constants)
+
+
+def is_local(variable):
+    '''checks if the variable is local'''
+    return variable.var_type == 'local'
+
+
+def is_env(variable):
+    '''checks if the variable is environment'''
+    return variable.var_type == 'env'
+
+
+def is_blackboard(variable):
+    '''checks if the variable is blackboard'''
+    return variable.var_type == 'bl'
+
+
+def variable_scope(variable):
+    '''used to return the scope of the environment'''
+    if is_local(variable):
+        return 'local'
+    if is_env(variable):
+        return 'environment'
+    if is_blackboard(variable):
+        return 'blackboard'
+    raise BTreeException([], 'Variable ' + variable.name + ' is not local, blackboard, or environment')
+
+
+def is_array(variable):
+    '''checks if the variable is an array'''
+    return variable.array_size is not None
+
+
+def handle_constant(constant, constants):
+    '''handles the constant'''
+    return (constants[constant] if constant in constants else constant)
+
+def str_format(value):
+    '''formats string'''
+    if isinstance(value, str):
+        return '\'' + value + '\''
+    return str(value)
 
 
 def create_variable_template(name, mode, array_size, custom_value_range,

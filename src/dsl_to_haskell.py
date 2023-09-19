@@ -190,20 +190,22 @@ def dsl_to_haskell():
         'or' : ('||', format_function_between),
         'xor' : ('sereneXOR', format_function_before),
         'xnor' : ('sereneXNOR', format_function_before),
-        'implies' : ('sereneIMPLIES', format_function_before),
-        'equivalent' : ('==', format_function_between),
-        'equal' : ('==', format_function_between),
-        'not_equal' : ('/=', format_function_between),
-        'less_than' : ('<', format_function_between),
-        'greater_than' : ('>', format_function_between),
-        'less_than_or_equal' : ('<=', format_function_between),
-        'greater_than_or_equal' : ('>=', format_function_between),
-        'negative' : ('-', format_function_before),
-        'addition' : ('+', format_function_between),
-        'subtraction' : ('-', format_function_between),
-        'multiplication' : ('*', format_function_between),
-        'division' : ('quot', format_function_before),  # quot rounds to 0, which is what nuxmv does.
-        'mod' : ('rem', format_function_before),  # rem matches the description of mod in the nuxmv user manual. do not use mod. will differ fro negatives.
+        'imply' : ('sereneIMPLIES', format_function_before),
+        'equiv' : ('==', format_function_between),
+        'eq' : ('==', format_function_between),
+        'neq' : ('/=', format_function_between),
+        'lt' : ('<', format_function_between),
+        'gt' : ('>', format_function_between),
+        'lte' : ('<=', format_function_between),
+        'gte' : ('>=', format_function_between),
+        'neg' : ('-', format_function_before),
+        'add' : ('+', format_function_between),
+        'sub' : ('-', format_function_between),
+        'mult' : ('*', format_function_between),
+        'idiv' : ('quot', format_function_before),  # quot rounds to 0, which is what nuxmv does.
+        'mod' : ('rem', format_function_before),  # rem matches the description of mod in the nuxmv user manual. do not use mod. will differ for negatives.
+        'rdiv' : ('/', format_function_before),  # quot rounds to 0, which is what nuxmv does.
+        'floor' : ('floor', format_function_before),
         'count' : ('sereneCOUNT', format_function_count),  # probably not usable now
         'index' : ('index', format_function_index)  # definitely not usable now
     }
