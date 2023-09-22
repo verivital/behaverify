@@ -5,8 +5,7 @@ It contains a variety of utility functions.
 
 
 Author: Serena Serafina Serbinowska
-Created: 2022-01-01 (Date not correct)
-Last Edit: 2023-09-08
+Last Edit: 2023-09-22
 '''
 import argparse
 import os
@@ -91,7 +90,8 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
             (format_variable_name_only(code.function_call.variable, format_mode) + '(' + format_code(code.function_call.values[0], format_mode) + ')')
             if code.function_call.variable.model_as == 'DEFINE'
             else
-            (format_variable_name_only(code.function_call.variable, format_mode) + '[' + format_code(code.function_call.values[0], format_mode) + ']')
+            (format_variable_name_only(code.function_call.variable, format_mode) + '[serene_safe_assignment.index_func(' + format_code(code.function_call.values[0], format_mode) + ', ' + handle_constant_str(code.function_call.variable.array_size) + ')]')
+            # (format_variable_name_only(code.function_call.variable, format_mode) + '[' + format_code(code.function_call.values[0], format_mode) + ']')
         )
 
     def format_variable_name_only(variable, format_mode):
@@ -364,12 +364,12 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                 os.linesep
                 + os.linesep
                 + indent(indent_level) + 'def ' + variable.name + '(index):' + os.linesep
-                + indent(indent_level + 1) + 'if not isinstance(index, int):' + os.linesep
-                + indent(indent_level + 2) + "raise Exception('Index must be an int when accessing " + variable.name + ": ' + str(type(index)))" + os.linesep
+                + indent(indent_level + 1) + 'if type(index) is not int:' + os.linesep
+                + indent(indent_level + 2) + "raise TypeError('Index must be an int when accessing " + variable.name + ": ' + str(type(index)))" + os.linesep
                 + indent(indent_level + 1) + 'if index < 0 or index >= ' + handle_constant_str(variable.array_size) + ':' + os.linesep
-                + indent(indent_level + 2) + "raise Exception('Index out of bounds when accessing " + variable.name + ": ' + str(index))" + os.linesep
+                + indent(indent_level + 2) + "raise ValueError('Index out of bounds when accessing " + variable.name + ": ' + str(index))" + os.linesep
                 + case_string
-                + indent(indent_level + 1) + "raise Exception('Reached unreachable state when accessing " + variable.name + ": ' + str(index))" + os.linesep
+                + indent(indent_level + 1) + "raise RuntimeError('Reached unreachable state when accessing " + variable.name + ": ' + str(index))" + os.linesep
                 + os.linesep
                 + indent(indent_level) + format_variable_name_only(variable, format_mode) + ' = ' + variable.name + os.linesep
             )
@@ -662,8 +662,8 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                                   else ('str')))
             return_string = (
                 indent(indent_level) + 'def ' + function_name + '(new_value):' + os.linesep
-                + indent(indent_level + 1) + 'if not isinstance(new_value, ' + cur_var_type + '):' + os.linesep
-                + indent(indent_level + 2) + 'raise SereneAssignmentException(' + "'variable " + variable.name + " expected type " + cur_var_type + " but received type ' + str(type(new_value)))" + os.linesep
+                + indent(indent_level + 1) + 'if type(new_value) is not ' + cur_var_type + ':' + os.linesep
+                + indent(indent_level + 2) + 'raise TypeError(' + "'variable " + variable.name + " expected type " + cur_var_type + " but received type ' + str(type(new_value)))" + os.linesep
             )
             if variable.domain.min_val is not None:
                 if variable.domain.condition is not None:
@@ -674,14 +674,14 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                         + ':' + os.linesep
                         + indent(indent_level + 2) + 'return new_value' + os.linesep
                         + indent(indent_level + 1) + 'else:' + os.linesep
-                        + indent(indent_level + 2) + 'raise SereneAssignmentException(' + "'variable " + variable.name + " expected value in " + value_list + " but received value ' + str(new_value))" + os.linesep
+                        + indent(indent_level + 2) + 'raise ValueError(' + "'variable " + variable.name + " expected value in " + value_list + " but received value ' + str(new_value))" + os.linesep
                     )
                 else:
                     return_string += (
                         indent(indent_level + 1) + 'if new_value >= ' + handle_constant_str(variable.domain.min_val) + ' and new_value <= ' + handle_constant_str(variable.domain.max_val) + ':' + os.linesep
                         + indent(indent_level + 2) + 'return new_value' + os.linesep
                         + indent(indent_level + 1) + 'else:' + os.linesep
-                        + indent(indent_level + 2) + 'raise SereneAssignmentException(' + "'variable " + variable.name + " expected value between " + handle_constant_str(variable.domain.min_val) + " and " + handle_constant_str(variable.domain.max_val) + " inclusive but received value ' + str(new_value))" + os.linesep
+                        + indent(indent_level + 2) + 'raise ValueError(' + "'variable " + variable.name + " expected value between " + handle_constant_str(variable.domain.min_val) + " and " + handle_constant_str(variable.domain.max_val) + " inclusive but received value ' + str(new_value))" + os.linesep
                     )
             elif variable.domain.boolean is not None or variable.domain.true_int is not None:
                 return_string += indent(indent_level + 1) + 'return new_value' + os.linesep
@@ -692,14 +692,22 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                     + ':' + os.linesep
                     + indent(indent_level + 2) + 'return new_value' + os.linesep
                     + indent(indent_level + 1) + 'else:' + os.linesep
-                    + indent(indent_level + 2) + 'raise SereneAssignmentException(' + '"variable ' + variable.name + ' expected value in ' + value_list + ' but received value \'" + new_value + "\'")' + os.linesep
+                    + indent(indent_level + 2) + 'raise ValueError(' + '"variable ' + variable.name + ' expected value in ' + value_list + ' but received value \'" + new_value + "\'")' + os.linesep
                 )
             return return_string
         outter_return_string = (
-            'class SereneAssignmentException(Exception):' + os.linesep
-            + indent(1) + 'def __init__(self, message):' + os.linesep
-            + indent(2) + 'super().__init__(message)' + os.linesep
-            + os.linesep
+            # 'class SereneAssignmentException(Exception):' + os.linesep
+            # + indent(1) + 'def __init__(self, message):' + os.linesep
+            # + indent(2) + 'super().__init__(message)' + os.linesep
+            # + os.linesep
+            # + os.linesep
+            'def index_func(index, array_size):' + os.linesep
+            + indent(1) + 'if type(index) is not int:' + os.linesep
+            + indent(2) + 'raise TypeError(\'Array index must be an int\')' + os.linesep
+            + indent(1) + 'if index < 0 or index >= array_size:' + os.linesep
+            + indent(2) + 'raise ValueError(\'Array index out of bounds\')' + os.linesep
+            + indent(1) + 'return index' + os.linesep
+            # + indent(1) + 'return max(0, min(array_size - 1, index))' + os.linesep
             + os.linesep
         )
         for variable in model.variables:
@@ -714,10 +722,10 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                     + indent(1) + 'return_pairs = []' + os.linesep
                     + indent(1) + 'seen_indices = set()' + os.linesep
                     + indent(1) + 'for (index, new_value) in new_values:' + os.linesep
-                    + indent(2) + 'if not isinstance(index, int):' + os.linesep
-                    + indent(3) + "raise SereneAssignmentException('Index must be an int when accessing " + variable.name + ": ' + str(type(index)))" + os.linesep
+                    + indent(2) + 'if type(index) is not int:' + os.linesep
+                    + indent(3) + "raise ValueError('Index must be an int when accessing " + variable.name + ": ' + str(type(index)))" + os.linesep
                     + indent(2) + 'if index < 0 or index >= ' + handle_constant_str(variable.array_size) + ':' + os.linesep
-                    + indent(3) + "raise SereneAssignmentException('Index out of bounds when accessing " + variable.name + ": ' + str(index))" + os.linesep
+                    + indent(3) + "raise ValueError('Index out of bounds when accessing " + variable.name + ": ' + str(index))" + os.linesep
                     + indent(2) + 'checked_value = ' + variable.name + '__internal_type_check(new_value)' + os.linesep
                     + indent(2) + 'if index not in seen_indices:' + os.linesep
                     + indent(3) + 'seen_indices.add(index)' + os.linesep
