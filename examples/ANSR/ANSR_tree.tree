@@ -38,16 +38,16 @@ variables {
     variable {bl x_net_2_2 DEFINE INT assign {result{ (max, (add, (neg, x_net_1_2), (neg, x_net_1_3), 1), 0)}}}
     variable {bl x_net_2_3 DEFINE INT assign {result{ (max, (sub, 1, x_net_1_4), 0)}}}
     variable {bl x_net_2_4 DEFINE INT assign {result{ (max, (sub, 1, x_net_1_5), 0)}}}
-
+    
     variable {bl x_net_3_1 DEFINE INT assign {result{ (max, (sub, x_net_2_1, (mult, x_net_2_2, 'x_max')), 0)}}}
     variable {bl x_net_3_2 DEFINE INT assign {result{ (max, (sub, 1, x_net_2_2), 0)}}}
     variable {bl x_net_3_3 DEFINE INT assign {result{ (max, x_net_2_3, 0)}}}
     variable {bl x_net_3_4 DEFINE INT assign {result{ (max, x_net_2_4, 0)}}}
-
+    
     variable {bl x_net_4_1 DEFINE INT assign {result{ (max, x_net_3_1, 0)}}}
     variable {bl x_net_4_2 DEFINE INT assign {result{ (max, (sub, (mult, 'x_max', x_net_3_3), (mult, 'x_max', x_net_3_2)), 0)}}}
     variable {bl x_net_4_3 DEFINE INT assign {result{ (max, (sub, (mult, 'x_min', x_net_3_4), (mult, 'x_max', x_net_3_2)), 0)}}}
-
+    
     variable {bl x_net_output DEFINE INT assign {result{ (max, (add, x_net_4_1, x_net_4_2, x_net_4_3), 0)}}}
     #{START OF Y_NET}#
     variable {bl y_net_1_1 DEFINE INT assign {result{ (max, dest_y, 0)}}}
@@ -60,11 +60,11 @@ variables {
     variable {bl y_net_2_2 DEFINE INT assign {result{ (max, (add, (neg, y_net_1_2), (neg, y_net_1_3), 1), 0)}}}
     variable {bl y_net_2_3 DEFINE INT assign {result{ (max, y_net_1_4, 0)}}}
     variable {bl y_net_2_4 DEFINE INT assign {result{ (max, y_net_1_5, 0)}}}
-
+    
     variable {bl y_net_3_1 DEFINE INT assign {result{ (max, y_net_2_1, 0)}}}
     variable {bl y_net_3_2 DEFINE INT assign {result{ (max, (add, y_net_2_2, y_net_2_3, -1), 0)}}}
     variable {bl y_net_3_3 DEFINE INT assign {result{ (max, (add, y_net_2_2, y_net_2_4, -1), 0)}}}
-
+    
     variable {bl y_net_output DEFINE INT assign {result{ (max, (add, y_net_3_1, (mult, 'y_change', y_net_3_2), (mult, -1, 'y_change', y_net_3_3)), 0)}}}
 } end_variables
 
@@ -80,7 +80,7 @@ environment_update {
     variable_statement {
 	tar_y
 	assign {
-	    case { (eq, timer, 0) } end_case result {tar_y, (min, 'x_max', (add, tar_y, 1)), (max, 'x_min', (sub, tar_y, 1))} end_result
+	    case { (eq, timer, 0) } end_case result {tar_y, (min, 'y_max', (add, tar_y, 1)), (max, 'y_min', (sub, tar_y, 1))} end_result
 	    result { tar_y } end_result
 	} end_assign
     } end_variable_statement
@@ -135,25 +135,25 @@ environment_checks {
 	read_variables {cur_x, cur_y} end_read_variables
 	condition {
 	    (and,
-	    (lte, (add, (abs, (sub, cur_x, tar_x)), (abs, (sub, cur_y, tar_y))), 'vision_range'),
-	    (or,
-	    (gt, (add, (abs, (sub, (index, tree_x, 0), tar_x)), (abs, (sub, (index, tree_y, 0), tar_y))), 'tree_range'),
-	    (and, (eq, (index, tree_x, 0), cur_x), (eq, (index, tree_y, 0), cur_y)),
-	    (and, (eq, (index, tree_x, 0), tar_x), (eq, (index, tree_y, 0), tar_y)),
-	    (and, (lt, (index, tree_x, 0), cur_x), (lt, (index, tree_x, 0), tar_x)),
-	    (and, (lt, (index, tree_y, 0), cur_y), (lt, (index, tree_y, 0), tar_y)),
-	    (and, (gt, (index, tree_x, 0), cur_x), (gt, (index, tree_x, 0), tar_x)),
-	    (and, (gt, (index, tree_y, 0), cur_y), (gt, (index, tree_y, 0), tar_y))
-	    ),
-	    (or,
-	    (gt, (add, (abs, (sub, (index, tree_x, 1), tar_x)), (abs, (sub, (index, tree_y, 1), tar_y))), 'tree_range'),
-	    (and, (eq, (index, tree_x, 1), cur_x), (eq, (index, tree_y, 1), cur_y)),
-	    (and, (eq, (index, tree_x, 1), tar_x), (eq, (index, tree_y, 1), tar_y)),
-	    (and, (lt, (index, tree_x, 1), cur_x), (lt, (index, tree_x, 1), tar_x)),
-	    (and, (lt, (index, tree_y, 1), cur_y), (lt, (index, tree_y, 1), tar_y)),
-	    (and, (gt, (index, tree_x, 1), cur_x), (gt, (index, tree_x, 1), tar_x)),
-	    (and, (gt, (index, tree_y, 1), cur_y), (gt, (index, tree_y, 1), tar_y))
-	    )
+		(lte, (add, (abs, (sub, cur_x, tar_x)), (abs, (sub, cur_y, tar_y))), 'vision_range'),
+		(or,
+		    (gt, (add, (abs, (sub, (index, tree_x, 0), tar_x)), (abs, (sub, (index, tree_y, 0), tar_y))), 'tree_range'),
+		    (and, (eq, (index, tree_x, 0), cur_x), (eq, (index, tree_y, 0), cur_y)),
+		    (and, (eq, (index, tree_x, 0), tar_x), (eq, (index, tree_y, 0), tar_y)),
+		    (and, (lt, (index, tree_x, 0), cur_x), (lt, (index, tree_x, 0), tar_x)),
+		    (and, (lt, (index, tree_y, 0), cur_y), (lt, (index, tree_y, 0), tar_y)),
+		    (and, (gt, (index, tree_x, 0), cur_x), (gt, (index, tree_x, 0), tar_x)),
+		    (and, (gt, (index, tree_y, 0), cur_y), (gt, (index, tree_y, 0), tar_y))
+		),
+		(or,
+		    (gt, (add, (abs, (sub, (index, tree_x, 1), tar_x)), (abs, (sub, (index, tree_y, 1), tar_y))), 'tree_range'),
+		    (and, (eq, (index, tree_x, 1), cur_x), (eq, (index, tree_y, 1), cur_y)),
+		    (and, (eq, (index, tree_x, 1), tar_x), (eq, (index, tree_y, 1), tar_y)),
+		    (and, (lt, (index, tree_x, 1), cur_x), (lt, (index, tree_x, 1), tar_x)),
+		    (and, (lt, (index, tree_y, 1), cur_y), (lt, (index, tree_y, 1), tar_y)),
+		    (and, (gt, (index, tree_x, 1), cur_x), (gt, (index, tree_x, 1), tar_x)),
+		    (and, (gt, (index, tree_y, 1), cur_y), (gt, (index, tree_y, 1), tar_y))
+		)
 	    )
 	} end_condition
     } end_environment_check
@@ -355,5 +355,6 @@ tick_prerequisite { (not, victory) } end_tick_prerequisite
 
 specifications { #{ INVAR, LTL, and CTL specs go here }#
     CTLSPEC {(always_finally, victory -1)}
+    LTLSPEC {(finally_bounded, [0, 200], victory -1)}
     #{CTLSPEC {(imply, (and, (eq, (index, tree_x 0, 0), 2), (eq, (index, tree_x 0, 1), 5), (eq, (index, tree_y 0, 0), 2), (eq, (index, tree_y 0, 1), 5)), (always_finally, victory -1))}}#
 } end_specifications

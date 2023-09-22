@@ -86,7 +86,7 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
     def format_function_before_bounded(function_name, code, misc_args):
         '''function_name [min, max] (vals)'''
         return (
-            function_name + ' [' + str(code.lower_bound) + ', ' + str(code.upper_bound) + '] '  '('
+            function_name + ' [' + str(handle_constant(code.function_call.bound.lower_bound)) + ', ' + str(handle_constant(code.function_call.bound.upper_bound)) + '] '  '('
             + ', '.join([format_code(value, misc_args) for value in code.function_call.values])
             + ')'
             )
@@ -95,7 +95,7 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
         ''' honestly not sure '''
         return (
             '('
-            + (' ' + function_name + ' [' + str(code.lower_bound) + ', ' + str(code.upper_bound) + '] ').join([format_code(value, misc_args) for value in code.function_call.values])
+            + (' ' + function_name + ' [' + str(handle_constant(code.function_call.bound.lower_bound)) + ', ' + str(handle_constant(code.function_call.bound.upper_bound)) + '] ').join([format_code(value, misc_args) for value in code.function_call.values])
             + ')'
             )
 
@@ -118,7 +118,7 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
                     range(array_size)
                 )
             )
-            + 'TRUE : ' + formatted_variable + '_index_0; '
+            # + 'TRUE : ' + formatted_variable + '_index_0; '
             + 'esac)'
         )
 
