@@ -118,18 +118,52 @@ def save_model_real_original(model):
     with open('./x_net_weights', 'w', encoding = 'utf-8') as write_file:
         write_file.write(cur_string)
 
+def save_model_real_new(model):
+    cur_string = ''
+    str_weights = {}
+    str_biases = {}
+    for (layer_index, layer) in enumerate(model.layers):
+        (weights, biases) = layer.get_weights()
+        for (source_node_index, node_weights) in enumerate(weights):
+            for (target_node_index, node_weight) in enumerate(node_weights):
+                str_weights[(layer_index, source_node_index, target_node_index)] = str(node_weight)
+        for (target_node_index, bias_weight) in enumerate(biases):
+            str_biases[(layer_index, target_node_index)] = str(bias_weight)
+    structure = [2, 10, 10, 10, 10, 11]
+    previous_structure = None
+    print(str_weights)
+    for (layer_index, cur_structure) in enumerate(structure):
+        if previous_structure is None:
+            for node in range(cur_structure):
+                cur_string += 'variable {bl x_net_node_0_' + str(node) + ' DEFINE REAL assign{result{' + ('dest_x' if node == 0 else 'prev_dest_x') + '}}}' + os.linesep
+        else:
+            for node in range(cur_structure):
+                cur_string += 'variable {bl x_net_node_' + str(layer_index) + '_' + str(node) + ' DEFINE REAL assign{result{' + ('(max, ' if layer_index < len(structure) - 1 else '') + '(add, '
+                for prev_node in range(previous_structure):
+                    cur_string += '(mult, x_net_node_' + str(layer_index - 1) + '_' + str(prev_node) + ', ' + str_weights[((layer_index - 1), prev_node, node)] + '),'
+                cur_string += str_biases[((layer_index - 1), node)] + ')' + (', 0)' if layer_index < len(structure) - 1 else '') + '}}}' + os.linesep
+        previous_structure = cur_structure
+    cur_string +='variable {bl x_net_output_max DEFINE REAL assign{result{(max, ' + ', '.join(('x_net_node_' + str(layer_index) + '_' + str(node)) for node in range(previous_structure)) + ')}}}' + os.linesep
+    cur_string += (
+        'variable {bl x_net_output DEFINE REAL assign{'
+        + ''.join(('case{(eq, x_net_output_max, x_net_node_' + str(layer_index) + '_' + str(cur_node) + ')}result{' + str(cur_node) + '}') for cur_node in range(previous_structure))
+        + 'result{-1}'
+        + '}}'
+    ) + os.linesep
+    with open('./x_net_weights', 'w', encoding = 'utf-8') as write_file:
+        write_file.write(cur_string)
+
 def save_model_int(model):
     cur_string = ''
     str_weights = {}
     str_biases = {}
     for (layer_index, layer) in enumerate(model.layers):
-        print(layer.get_weights())
-        # (weights, biases) = layer.get_weights()
-        # for (source_node_index, node_weights) in enumerate(weights):
-        #     for (target_node_index, node_weight) in enumerate(node_weights):
-        #         str_weights[(layer_index, source_node_index, target_node_index)] = str(node_weight)
-        # for (target_node_index, bias_weight) in biases:
-        #     str_biases[(layer_index, target_node_index)] = str(bias_weight)
+        (weights, biases) = layer.get_weights()
+        for (source_node_index, node_weights) in enumerate(weights):
+            for (target_node_index, node_weight) in enumerate(node_weights):
+                str_weights[(layer_index, source_node_index, target_node_index)] = str(node_weight)
+        for (target_node_index, bias_weight) in biases:
+            str_biases[(layer_index, target_node_index)] = str(bias_weight)
     structure = [2, 10, 10, 10, 10, 11]
     previous_structure = None
     for (layer_index, cur_structure) in enumerate(structure):
@@ -160,57 +194,15 @@ def idk():
     (input_data, labels) = create_labeled_dataset(0, 10)
     model = train_model(2, 11, input_data, labels, 1500, 4)
 
-    #model_input = tf.keras.layers.Input(shape=(2,))
-    #functional_model = model(model_input)
-    # annotated_model = tfmot.quantization.keras.quantize_annotate_model(model)
-    # quantized_model = tfmot.quantization.keras.quantize_apply(annotated_model)
-    # quantized_model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
-    #save_model_int(quantized_model)
+    save_model_real_new(model)
 
-    converter = tf.lite.TFLiteConverter.from_keras_model(model)
-    converter.optimizations = [tf.lite.Optimize.DEFAULT]
-    converter.representative_dataset = yield_inputs
-    converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS_INT8]
-    converter.inference_input_type = tf.int8  # or tf.uint8
-    converter.inference_output_type = tf.int8  # or tf.uint8
-    tflite_model = converter.convert()
-    with open('tflite_model.tflite', 'wb') as f:
-        f.write(tflite_model)
-
-    # interpreter = tf.lite.Interpreter(model_content=tflite_model)
-    # interpreter.allocate_tensors()
-
-    # # Initialize lists to store weights and biases
-    # weights_and_biases = []
-
-    # # Iterate through layers in the model
-    # for layer_idx in range(len(interpreter.get_tensor_details())):
-    #     print('hello')
-    #     tensor_details = interpreter.get_tensor_details()[layer_idx]
-
-    #     # Check if the tensor is a weight tensor (typically weights have "weight" in their name)
-    #     print(tensor_details)
-    #     if "weight" in tensor_details["name"]:
-    #         print('---------------------------------------------')
-    #         layer_name = tensor_details["name"]
-    #         weights = interpreter.get_tensor(layer_idx)
-
-    #         # Find the corresponding bias tensor
-    #         bias_name = layer_name.replace("weight", "bias")
-    #         bias_idx = None
-    #         for i, tensor_info in enumerate(interpreter.get_tensor_details()):
-    #             if tensor_info["name"] == bias_name:
-    #                 bias_idx = i
-    #                 break
-
-    #         if bias_idx is not None:
-    #             biases = interpreter.get_tensor(bias_idx)
-    #             weights_and_biases.append((weights, biases))
-
-    # # Print or use the extracted weights and biases as needed
-    # for i, (w, b) in enumerate(weights_and_biases):
-    #     print(f"Layer {i + 1}:")
-    #     print("Weights:", w)
-    #     print("Biases:", b)
-    #     print("=" * 50)
+    # converter = tf.lite.TFLiteConverter.from_keras_model(model)
+    # converter.optimizations = [tf.lite.Optimize.DEFAULT]
+    # converter.representative_dataset = yield_inputs
+    # converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS_INT8]
+    # converter.inference_input_type = tf.int8  # or tf.uint8
+    # converter.inference_output_type = tf.int8  # or tf.uint8
+    # tflite_model = converter.convert()
+    # with open('tflite_model.tflite', 'wb') as f:
+    #     f.write(tflite_model)
 idk()
