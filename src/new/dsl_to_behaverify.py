@@ -12,12 +12,10 @@ import itertools
 import copy
 import textx
 from behaverify_to_smv import write_smv
-from check_model import (validate_model,
-                         is_local,
-                         is_array,
-                         build_range_func)
+from serene_functions import build_meta_func
+from check_model import validate_model
 
-from behaverify_common import create_node_name, create_node_template, create_variable_template, indent
+from behaverify_common import create_node_name, create_node_template, create_variable_template, indent, is_local, is_array, handle_constant_or_reference, handle_constant_or_reference_val
 
 # a NEXT_VALLUE is defined as a triple (node_name, non_determinism, STAGE)
 # node_name is a string representing the node where this update happens or none if it's environmental
@@ -86,7 +84,7 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
     def format_function_before_bounded(function_name, code, misc_args):
         '''function_name [min, max] (vals)'''
         return (
-            function_name + ' [' + str(handle_constant(code.function_call.bound.lower_bound)) + ', ' + str(handle_constant(code.function_call.bound.upper_bound)) + '] '  '('
+            function_name + ' [' + str(handle_constant_or_reference_val(code.function_call.bound.lower_bound, variables, constants)) + ', ' + str(handle_constant_or_reference_val(code.function_call.bound.upper_bound, variables, constants)) + '] '  '('
             + ', '.join([format_code(value, misc_args) for value in code.function_call.values])
             + ')'
             )
@@ -95,7 +93,7 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
         ''' honestly not sure '''
         return (
             '('
-            + (' ' + function_name + ' [' + str(handle_constant(code.function_call.bound.lower_bound)) + ', ' + str(handle_constant(code.function_call.bound.upper_bound)) + '] ').join([format_code(value, misc_args) for value in code.function_call.values])
+            + (' ' + function_name + ' [' + str(handle_constant_or_reference_val(code.function_call.bound.lower_bound, variables, constants)) + ', ' + str(handle_constant_or_reference_val(code.function_call.bound.upper_bound, variables, constants)) + '] ').join([format_code(value, misc_args) for value in code.function_call.values])
             + ')'
             )
 
@@ -129,7 +127,7 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
         # )
         formatted_variable = format_variable(code.function_call.variable, misc_args)
         index_expression = format_code(code.function_call.values[0], misc_args)
-        return case_index(formatted_variable, handle_constant(code.function_call.variable.array_size), index_expression)
+        return case_index(formatted_variable, handle_constant_or_reference_val(code.function_call.variable.array_size, variables, constants), index_expression)
 
     def format_function(code, misc_args):
         '''this just calls the other format functions. moved here to make format_code less cluttered.'''
@@ -170,7 +168,7 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
         -- side effects
         none.
         '''
-        variable = variables[variable_key]
+        variable = behaverify_variables[variable_key]
         overwrite_stage = misc_args['overwrite_stage']
         return (
             (
@@ -183,39 +181,28 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
             else
             min(overwrite_stage, len(variable['next_value']))
         )
-        # return (
-        #     '_stage_'
-        #     + str(
-        #         len(variable['next_value'])
-        #         if overwrite_stage is None or overwrite_stage < 0
-        #         else
-        #         min(overwrite_stage, len(variable['next_value']))
-        #     )
-        # )
 
     def find_used_variables(code, misc_args):
         '''Returns the list of used variables (will also format them)'''
+        (atom_class, _, atom) = (handle_constant_or_reference(code.atom, variables, constants) if code.atom is not None else (None, None, None))
         return (
-            [] if code.constant is not None else (
-                [format_variable(code.variable, misc_args)] if code.variable is not None else (
-                    find_used_variables(code.code_statement, misc_args) if code.code_statement is not None else (
-                        [variable for value in code.function_call.values for variable in find_used_variables(value, misc_args)]
-                        +
-                        ([(format_variable(code.function_call.variable, misc_args) + '_index_' + str(index)) for index in range(handle_constant(code.function_call.variable.array_size))] if code.function_call.function_name == 'index' else [])
-                    )
+            ([format_variable(atom, adjust_args(code, misc_args))] if atom_class == 'VARIABLE' else []) if atom is not None else (
+                find_used_variables(code.code_statement, misc_args) if code.code_statement is not None else (
+                    [variable for value in code.function_call.values for variable in find_used_variables(value, misc_args)]
+                    +
+                    ([(format_variable(code.function_call.variable, misc_args) + '_index_' + str(index)) for index in range(handle_constant_or_reference_val(code.function_call.variable.array_size, variables, constants))] if code.function_call.function_name == 'index' else [])
                 )
             )
         )
 
     def find_used_variables_without_formatting(code, _is_local_, node_name):
+        (atom_class, _, atom) = (handle_constant_or_reference(code.atom, variables, constants) if code.atom is not None else (None, None, None))
         return (
-            [] if code.constant is not None else (
-                [variable_reference(code.variable.name, _is_local_, node_name)] if code.variable is not None else (
-                    find_used_variables_without_formatting(code.code_statement, _is_local_, node_name) if code.code_statement is not None else (
-                        [variable for value in code.function_call.values for variable in find_used_variables_without_formatting(value, _is_local_, node_name)]
-                        +
-                        ([variable_reference(code.function_call.variable.name, _is_local_, node_name)] if code.function_call.function_name == 'index' else [])
-                    )
+            ([variable_reference(atom.name, _is_local_, node_name)] if atom_class == 'VARIABLE' else []) if atom is not None else (
+                find_used_variables_without_formatting(code.code_statement, _is_local_, node_name) if code.code_statement is not None else (
+                    [variable for value in code.function_call.values for variable in find_used_variables_without_formatting(value, _is_local_, node_name)]
+                    +
+                    ([variable_reference(code.function_call.variable.name, _is_local_, node_name)] if code.function_call.function_name == 'index' else [])
                 )
             )
         )
@@ -244,7 +231,7 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
         @ overwrite_stage := overwrite which stage we're asking for.
         '''
         variable_key = variable_reference(variable_obj.name, is_local(variable_obj), misc_args['node_name'])
-        variable = variables[variable_key]
+        variable = behaverify_variables[variable_key]
         return format_variable_non_object(variable, variable_key, misc_args)
 
     def format_variable_non_object(variable, variable_key, misc_args):
@@ -260,38 +247,7 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
         if variable['mode'] == 'DEFINE':
             if overwrite_stage is not None and len(variable['next_value']) > 0:
                 return assemble_variable(variable['name'], compute_stage(variable_key, misc_args), use_next, trace_num, specification_writing)
-            # new_misc_args = create_misc_args(node_name, use_stages, use_next, not_next, overwrite_stage, False, specification_warning)
-            # used_vars = []
-            # var_statement = variable['initial_value']
-            # var_assigns = var_statement.assigns
-            # var_assign = var_statement.assign
-            # var_array_mode = var_statement.array_mode
-            # if is_array(variable_obj) and var_array_mode != 'range':
-            #     for assign in var_assigns:
-            #         if assign.default_result.range_mode != 'range':
-            #             for code_fragment in assign.default_result.values:
-            #                 used_vars += find_used_variables(code_fragment, new_misc_args)
-            #         for case_result in assign.case_results:
-            #             if case_result.range_mode != 'range':
-            #                 for code_fragment in case_result.values:
-            #                     used_vars += find_used_variables(code_fragment, new_misc_args)
-            #             used_vars += find_used_variables(case_result.condition, new_misc_args)
-            # else:
-            #     if var_assign.default_result.range_mode != 'range':
-            #         for code_fragment in var_assign.default_result.values:
-            #             used_vars += find_used_variables(code_fragment, new_misc_args)
-            #     for case_result in var_assign.case_results:
-            #         if case_result.range_mode != 'range':
-            #             for code_fragment in case_result.values:
-            #                 used_vars += find_used_variables(code_fragment, new_misc_args)
-            #         used_vars += find_used_variables(case_result.condition, new_misc_args)
-            # used_vars = tuple(sorted(list(set(used_vars))))
-            # if used_vars not in variable['existing_definitions']:
-            #     variable['existing_definitions'][used_vars] = len(variable['next_value'])
-            #     variable['next_value'].append(handle_variable_statement(var_statement, variable_obj, None, new_misc_args))
-            # stage = variable['existing_definitions'][used_vars]
-            # return assemble_variable(variable['name'], stage, use_next, trace_num, specification_writing)
-            used_vars = tuple(map(lambda dependent_variable_key: format_variable_non_object(variables[dependent_variable_key], dependent_variable_key, misc_args), variable['depends_on']))
+            used_vars = tuple(map(lambda dependent_variable_key: format_variable_non_object(behaverify_variables[dependent_variable_key], dependent_variable_key, misc_args), variable['depends_on']))
             if used_vars not in variable['existing_definitions']:
                 variable['existing_definitions'][used_vars] = len(variable['next_value'])
                 variable['next_value'].append(handle_variable_statement(variable['initial_value'], variable['initial_value'], None, create_misc_args(node_name, use_stages, use_next, not_next, overwrite_stage, False, specification_warning)))
@@ -319,19 +275,21 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
         new_misc_args = copy.deepcopy(misc_args)
         new_misc_args['node_name'] = new_misc_args['node_name'] if code.node_name is None else code.node_name
         new_misc_args['overwrite_stage'] = new_misc_args['overwrite_stage'] if code.read_at is None else code.read_at
-        new_misc_args['trace_num'] = new_misc_args['trace_num'] if code.trace_num is None else str(handle_constant(code.trace_num))
+        new_misc_args['trace_num'] = new_misc_args['trace_num'] if code.trace_num is None else str(handle_constant_or_reference_val(code.trace_num, variables, constants))
         return new_misc_args
+
+    def handle_atom(code, misc_args):
+        (atom_class, atom_type, atom) = handle_constant_or_reference(code.atom, variables, constants)
+        return (str(atom).upper() if atom_type == 'BOOLEAN' else str(atom)) if atom_class == 'CONSTANT' else (format_variable(atom, adjust_args(code, misc_args)))
 
     def format_code(code, misc_args):
         '''
         format a code fragment
         '''
         return (
-            (str(handle_constant(code.constant)).upper() if isinstance(handle_constant(code.constant), bool) else str(handle_constant(code.constant))) if code.constant is not None else (
-                format_variable(code.variable, adjust_args(code, misc_args)) if code.variable is not None else (
-                    ('(' + format_code(code.code_statement, misc_args) + ')') if code.code_statement is not None else (
-                        format_function(code, misc_args)
-                    )
+            handle_atom(code, misc_args) if code.atom is not None else (
+                ('(' + format_code(code.code_statement, misc_args) + ')') if code.code_statement is not None else (
+                    format_function(code, misc_args)
                 )
             )
         )
@@ -340,16 +298,9 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
         '''
         should only be called by handle_assign
         '''
-        if result.range_mode == 'range':
-            cond_func = build_range_func(result.values[2], constants)
-            min_val = handle_constant(result.values[0])
-            max_val = handle_constant(result.values[1])
-            vals = list(map(str, filter(cond_func, range(min_val, max_val + 1))))
-        else:
-            vals = [
-                format_code(value, misc_args)
-                for value in result.values
-            ]
+        vals = []
+        for value in result.values:
+            vals.extend(format_code(value, misc_args))
         non_determinism = len(vals) > 1
         return (non_determinism, ('{' + ', '.join(vals) + '}') if non_determinism else vals[0])
 
@@ -383,15 +334,15 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
             stage = []
             non_determinism = {} if constant_index else False
 
-            if statement.array_mode == 'range':
+            if statement.array_mode == 'loop':
                 serene_indices = []
                 if init_mode or len(statement.values) == 0:
-                    serene_indices = list(range(handle_constant(assign_var.array_size)))
+                    serene_indices = list(range(handle_constant_or_reference_val(assign_var.array_size, variables, constants)))
                 else:
-                    cond_func = build_range_func(statement.values[2], constants)
-                    min_val = handle_constant(statement.values[0])
-                    max_val = handle_constant(statement.values[1])
-                    serene_indices = list(filter(cond_func, range(min_val, max_val + 1)))
+                    cond_func = build_meta_func(statement.values[2])
+                    min_val = handle_constant_or_reference_val(statement.values[0], variables, constants)
+                    max_val = handle_constant_or_reference_val(statement.values[1], variables, constants)
+                    serene_indices = list(filter(lambda x: cond_func(({statement.loop_variable : x}, constants)), range(min_val, max_val + 1)))
                 for index in serene_indices:
                     serene_index.append(index)
                     cur_index = (
@@ -399,7 +350,7 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
                         if init_mode
                         else
                         (
-                            handle_constant(statement.assign.index_expr)
+                            handle_constant_or_reference_val(statement.assign.index_expr, variables, constants)
                             if constant_index
                             else
                             format_code(statement.assign.index_expr, misc_args)
@@ -411,7 +362,7 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
                             [(condition, format_variable(assign_var, misc_args) + '_index_' + str(cur_index))]
                             if init_mode or constant_index
                             else
-                            [(condition, case_index(format_variable(assign_var, misc_args), handle_constant(assign_var.array_size), str(cur_index)))]
+                            [(condition, case_index(format_variable(assign_var, misc_args), handle_constant_or_reference_val(assign_var.array_size, variables, constants), str(cur_index)))]
                         ) + cur_stage
                     stage.append((cur_index, cur_stage))
                     if constant_index:
@@ -426,7 +377,7 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
                         if init_mode
                         else
                         (
-                            handle_constant(assign.index_expr)
+                            handle_constant_or_reference_val(assign.index_expr, variables, constants)
                             if constant_index
                             else
                             format_code(assign.index_expr, misc_args)
@@ -438,7 +389,7 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
                             [(condition, format_variable(assign_var, misc_args) + '_index_' + str(cur_index))]
                             if init_mode or constant_index
                             else
-                            [(condition, case_index(format_variable(assign_var, misc_args), handle_constant(assign_var.array_size), str(cur_index)))]
+                            [(condition, case_index(format_variable(assign_var, misc_args), handle_constant_or_reference_val(assign_var.array_size, variables, constants), str(cur_index)))]
                         ) + cur_stage
                     stage.append((cur_index, cur_stage))
                     if constant_index:
@@ -463,14 +414,14 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
         node_name = misc_args['node_name']
 
         variable_key = variable_reference(assign_var.name, is_local(assign_var), node_name)
-        variable = variables[variable_key]
+        variable = behaverify_variables[variable_key]
         keep_stage_0 = variable['keep_stage_0']
         # keep_last_stage = variable['keep_last_stage']
         # we don't need to track keep_last_stage here, because we're going to reset the value after adding a new stage anyways. see below.
         if textx.textx_isinstance(statement, metamodel['read_statement']):
             non_determinism = statement.non_determinism
             if is_array(assign_var):
-                the_index = handle_constant(statement.index_of) if statement.is_const == 'constant_index_of' else format_code(statement.index_of, misc_args)
+                the_index = handle_constant_or_reference_val(statement.index_of, variables, constants) if statement.is_const == 'constant_index_of' else format_code(statement.index_of, misc_args)
                 next_value = (
                     node_name, True, {the_index : non_determinism} if statement.is_const == 'constant_index_of' else non_determinism,
                     [
@@ -520,11 +471,11 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
             for specification in specifications
         ]
 
-    def handle_constant(constant):
-        '''this handles a constant by checking if it is in constants and replacing if appropriate'''
-        if constant == 'serene_index':
-            return serene_index[-1]
-        return (constants[constant] if constant in constants else constant)
+    # def handle_constant(constant):
+    #     '''this handles a constant by checking if it is in constants and replacing if appropriate'''
+    #     if constant == 'serene_index':
+    #         return serene_index[-1]
+    #     return (constants[constant] if constant in constants else constant)
 
     def variable_reference(base_name, _is_local_, node_name):
         '''
@@ -551,7 +502,7 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
                     + (
                         (
                             '['
-                            + (format_code(statement.index_of, misc_args) if statement.is_const == 'index_of' else str(handle_constant(statement.index_of)))
+                            + (format_code(statement.index_of, misc_args) if statement.is_const == 'index_of' else str(handle_constant_or_reference_val(statement.index_of, variables, constants)))
                             + ']'
                         )
                         if is_array(statement.condition_variable)
@@ -682,7 +633,7 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
                 # pre_tick means before the tick.
                 handle_variable_assignment(statement, statement.variable, None, create_misc_args(None, True, False, None, None, False, False))
 
-    def get_variables(model, local_variables, initial_statements, keep_stage_0, keep_last_stage):
+    def get_behaverify_variables(model, local_variables, initial_statements, keep_stage_0, keep_last_stage):
         '''
         this constructs and returns variables and local variables.
         variables are constructed based on variables and environment_variables
@@ -696,16 +647,44 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
         none. purely functional.
         '''
         # create each variable type using the template.
-        nonlocal variables  # this is necessary right now because we need to be able to access already created variables during other variable initializations.
-        variables = {
+        #nonlocal behaverify_variables_  # this is necessary right now because we need to be able to access already created variables during other variable initializations.
+        def custom_int_domain(variable):
+            cond_func = build_meta_func(variable.domain.condition)
+            return '{' + ', '.join(map(str, filter(cond_func, range(handle_constant_or_reference_val(variable.domain.min_val, variables, constants),
+                                                                    handle_constant_or_reference_val(variable.domain.max_val, variables, constants) + 1)))) + '}'
+        behaverify_variables_ = {
             variable_reference(variable.name, False, '') :
             (
-                create_variable_template(variable.name, variable.model_as, handle_constant(variable.array_size), None, 0, 0, None, [], True, True)
+                create_variable_template(variable.name, variable.model_as, handle_constant_or_reference_val(variable.array_size, variables, constants) if is_array(variable) else None, None, 0, 0, None, [], True, True)
                 if variable.model_as == 'DEFINE' else
-                create_variable_template(variable.name, variable.model_as, handle_constant(variable.array_size),
-                                         ('integer' if variable.domain.true_int is not None else (None if (variable.domain.min_val is not None or variable.model_as == 'DEFINE') else ('{TRUE, FALSE}' if variable.domain.boolean is not None else ('{' + ', '.join(map(str, map(handle_constant, variable.domain.enums))) + '}')))),
-                                         0 if variable.domain.min_val is None else int(handle_constant(variable.domain.min_val)),
-                                         1 if variable.domain.min_val is None else int(handle_constant(variable.domain.max_val)),
+                create_variable_template(variable.name, variable.model_as, handle_constant_or_reference_val(variable.array_size, variables, constants) if is_array(variable) else None,
+                                         (
+                                             'integer'
+                                             if variable.domain.true_int is not None
+                                             else
+                                             (
+                                                 (
+                                                     None
+                                                     if variable.domain.condition is None
+                                                     else
+                                                     (
+                                                         custom_int_domain(variable)
+                                                     )
+                                                 )
+                                                 if (variable.domain.min_val is not None or variable.model_as == 'DEFINE')
+                                                 else
+                                                 (
+                                                     '{TRUE, FALSE}'
+                                                     if variable.domain.boolean is not None
+                                                     else
+                                                     (
+                                                         '{' + ', '.join(map(str, map(lambda enum: handle_constant_or_reference_val(enum, variables, constants), variable.domain.enums))) + '}'
+                                                     )
+                                                 )
+                                             )
+                                         ),
+                                         0 if variable.domain.min_val is None else int(handle_constant_or_reference_val(variable.domain.min_val, variables, constants)),
+                                         1 if variable.domain.min_val is None else int(handle_constant_or_reference_val(variable.domain.max_val, variables, constants)),
                                          None, [], keep_stage_0, keep_last_stage
                                          )
             )
@@ -714,12 +693,36 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
         local_variable_templates = {
             variable.name :
             (
-                create_variable_template(variable.name, variable.model_as, handle_constant(variable.array_size), None, 0, 0, None, [], True, True)
+                create_variable_template(variable.name, variable.model_as, handle_constant_or_reference_val(variable.array_size, variables, constants) if is_array(variable) else None, None, 0, 0, None, [], True, True)
                 if variable.model_as == 'DEFINE' else
-                create_variable_template(variable.name, variable.model_as, handle_constant(variable.array_size),
-                                         ('integer' if variable.domain.true_int is not None else (None if (variable.domain.min_val is not None or variable.model_as == 'DEFINE') else ('{TRUE, FALSE}' if variable.domain.boolean is not None else ('{' + ', '.join(map(str, map(handle_constant, variable.domain.enums))) + '}')))),
-                                         0 if variable.domain.min_val is None else int(handle_constant(variable.domain.min_val)),
-                                         1 if variable.domain.min_val is None else int(handle_constant(variable.domain.max_val)),
+                create_variable_template(variable.name, variable.model_as, handle_constant_or_reference_val(variable.array_size, variables, constants) if is_array(variable) else None,
+                                         (
+                                             'integer'
+                                             if variable.domain.true_int is not None
+                                             else
+                                             (
+                                                 (
+                                                     None
+                                                     if variable.condition is None
+                                                     else
+                                                     (
+                                                         custom_int_domain(variable)
+                                                     )
+                                                 )
+                                                 if (variable.domain.min_val is not None or variable.model_as == 'DEFINE')
+                                                 else
+                                                 (
+                                                     '{TRUE, FALSE}'
+                                                     if variable.domain.boolean is not None
+                                                     else
+                                                     (
+                                                         '{' + ', '.join(map(str, map(lambda enum: handle_constant_or_reference_val(enum, variables, constants), variable.domain.enums))) + '}'
+                                                     )
+                                                 )
+                                             )
+                                         ),
+                                         0 if variable.domain.min_val is None else int(handle_constant_or_reference_val(variable.domain.min_val, variables, constants)),
+                                         1 if variable.domain.min_val is None else int(handle_constant_or_reference_val(variable.domain.max_val, variables, constants)),
                                          None, [], keep_stage_0, keep_last_stage
                                          )
             )
@@ -732,39 +735,35 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
                     local_variable_templates[variable.name]['initial_value'] = None
                     local_variable_templates[variable.name]['depends_on'] = None
                 else:
-                    variables[variable_reference(variable.name, False, '')]['existing_definitions'] = {}
-                    variables[variable_reference(variable.name, False, '')]['initial_value'] = variable
+                    behaverify_variables_[variable_reference(variable.name, False, '')]['existing_definitions'] = {}
+                    behaverify_variables_[variable_reference(variable.name, False, '')]['initial_value'] = variable
                     used_vars = []
                     var_statement = variable
                     var_assigns = var_statement.assigns
                     var_assign = var_statement.assign
                     var_array_mode = var_statement.array_mode
-                    if is_array(variable) and var_array_mode != 'range':
+                    if is_array(variable) and var_array_mode == 'per_index':
                         for assign in var_assigns:
-                            if assign.default_result.range_mode != 'range':
-                                for code_fragment in assign.default_result.values:
-                                    used_vars += find_used_variables_without_formatting(code_fragment, False, None)
+                            for code_fragment in assign.default_result.values:
+                                used_vars += find_used_variables_without_formatting(code_fragment, False, None)
                             for case_result in assign.case_results:
-                                if case_result.range_mode != 'range':
-                                    for code_fragment in case_result.values:
-                                        used_vars += find_used_variables_without_formatting(code_fragment, False, None)
-                                used_vars += find_used_variables_without_formatting(code_fragment, False, None)
-                    else:
-                        if var_assign.default_result.range_mode != 'range':
-                            for code_fragment in var_assign.default_result.values:
-                                used_vars += find_used_variables_without_formatting(code_fragment, False, None)
-                        for case_result in var_assign.case_results:
-                            if case_result.range_mode != 'range':
                                 for code_fragment in case_result.values:
                                     used_vars += find_used_variables_without_formatting(code_fragment, False, None)
+                                used_vars += find_used_variables_without_formatting(code_fragment, False, None)
+                    else:
+                        for code_fragment in var_assign.default_result.values:
+                            used_vars += find_used_variables_without_formatting(code_fragment, False, None)
+                        for case_result in var_assign.case_results:
+                            for code_fragment in case_result.values:
+                                used_vars += find_used_variables_without_formatting(code_fragment, False, None)
                             used_vars += find_used_variables_without_formatting(code_fragment, False, None)
                     used_vars = tuple(sorted(list(set(used_vars))))
-                    variables[variable_reference(variable.name, False, '')]['depends_on'] = used_vars
+                    behaverify_variables_[variable_reference(variable.name, False, '')]['depends_on'] = used_vars
             else:
                 if is_local(variable):
                     local_variable_templates[variable.name]['initial_value'] = handle_variable_statement(variable, variable, None, create_misc_args(None, False, False, None, None, False, False))
                 else:
-                    variables[variable_reference(variable.name, False, '')]['initial_value'] = handle_variable_statement(variable, variable, None, create_misc_args(None, False, False, None, None, False, False))
+                    behaverify_variables_[variable_reference(variable.name, False, '')]['initial_value'] = handle_variable_statement(variable, variable, None, create_misc_args(None, False, False, None, None, False, False))
 
         # create local variables.
         for local_variable_pair in local_variables:
@@ -799,7 +798,7 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
                         used_vars += find_used_variables_without_formatting(code_fragment, True, local_variable_pair[0])
                 used_vars = tuple(sorted(list(set(used_vars))))
                 new_var['depends_on'] = used_vars
-            variables[new_name] = new_var
+            behaverify_variables_[new_name] = new_var
 
         # handle initial statements FOR DEFINE ONLY.
         # we have to parse and update this first. only after that can we go through non-define macros.
@@ -810,7 +809,7 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
             assign_var = initial_statement.variable
             if assign_var.model_as == 'DEFINE':
                 # variables[variable_reference(assign_var.name, is_local(assign_var), node_name)]['initial_value'] = handle_variable_statement(initial_statement, assign_var, None, create_misc_args(node_name, False, False, None, None))
-                variables[variable_reference(assign_var.name, is_local(assign_var), node_name)]['initial_value'] = initial_statement
+                behaverify_variables_[variable_reference(assign_var.name, is_local(assign_var), node_name)]['initial_value'] = initial_statement
             for argument_name in argument_pairs:
                 constants.pop(argument_name)
         for (node_name, argument_pairs, initial_statement) in initial_statements:
@@ -818,11 +817,11 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
                 constants[argument_name] = argument_pairs[argument_name]
             assign_var = initial_statement.variable
             if assign_var.model_as != 'DEFINE':
-                variables[variable_reference(assign_var.name, is_local(assign_var), node_name)]['initial_value'] = handle_variable_statement(initial_statement, assign_var, None, create_misc_args(node_name, False, False, None, None, False, False))
+                behaverify_variables_[variable_reference(assign_var.name, is_local(assign_var), node_name)]['initial_value'] = handle_variable_statement(initial_statement, assign_var, None, create_misc_args(node_name, False, False, None, None, False, False))
             for argument_name in argument_pairs:
                 constants.pop(argument_name)
 
-        return variables
+        return behaverify_variables_
 
     def create_composite(current_node, node_name, modifier, node_names, node_names_map, parent_name):
         cur_node_names = {node_name}.union(node_names)
@@ -912,7 +911,7 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
         while (not hasattr(current_node, 'name') or hasattr(current_node, 'sub_root')):
             if hasattr(current_node, 'leaf'):
                 argument_pairs = {
-                    current_node.leaf.arguments[index].argument_name: handle_constant(current_node.arguments[index])
+                    current_node.leaf.arguments[index].argument_name: handle_constant_or_reference_val(current_node.arguments[index], variables, constants)
                     for index in range(len(current_node.arguments))
                 }
                 current_node = current_node.leaf
@@ -924,7 +923,6 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
         new_name = create_node_name(current_node.name.replace(' ', ''), node_names, node_names_map)
         node_name = new_name[0]
         modifier = new_name[1]
-        # print(node_name + ' : ' + str(parent_name))
         return (
             create_node[current_node.node_type](current_node, node_name, modifier, node_names, node_names_map, parent_name)
             if argument_pairs is None
@@ -1011,21 +1009,15 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
     hyper_mode = model.hypersafety
     use_reals = model.use_reals
     # specification_writing = False  # this is used to track whether or not code should make references to the trace and system or not.
-    constants = {
-        constant.name : constant.val
-        for constant in model.constants
-    }
     serene_index = []
-    variables = {}
+    behaverify_variables = {}
     # spec_warn = False
-    validate_model(model, constants)
-
-    enum_constants = set(model.enumerations)
+    (variables, constants, declared_enumerations) = validate_model(model)
 
     (_, _, _, nodes, local_variables, initial_statements, statements) = walk_tree(model.root)
     print('finished tree walk')
 
-    variables = get_variables(model, local_variables, initial_statements, keep_stage_0, keep_last_stage)
+    behaverify_variables = get_behaverify_variables(model, local_variables, initial_statements, keep_stage_0, keep_last_stage)
     print('finished variables')
     tick_condition = 'TRUE' if model.tick_condition is None else format_code(model.tick_condition, create_misc_args(None, True, False, None, None, False, False))
     complete_environment_variables(model, True)
@@ -1039,28 +1031,24 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
     specifications = handle_specifications(model.specifications)
     # spec_warn = False
 
-    # for variable in model.variables:
-    #     if variable_type(variable, constants) == 'ENUM' and variable.model_as != 'DEFINE':
-    #         enum_constants.update(variable.domain.enums)
-
     if behave_only:
         if output_file is None:
             printer = pprint.PrettyPrinter(indent = 4)
             printer.pprint({'nodes' : nodes
-                            , 'variables' : variables
-                            , 'enum_constants' : enum_constants
+                            , 'variables' : behaverify_variables
+                            , 'declared_enumerations' : declared_enumerations
                             , 'tick_condition' : tick_condition
                             , 'specifications' : specifications})
         else:
             with open(output_file, 'w', encoding = 'utf-8') as write_file:
                 printer = pprint.PrettyPrinter(indent = 4, stream = write_file)
                 printer.pprint({'nodes' : nodes
-                                , 'variables' : variables
-                                , 'enum_constants' : enum_constants
+                                , 'variables' : behaverify_variables
+                                , 'declared_enumerations' : declared_enumerations
                                 , 'tick_condition' : tick_condition
                                 , 'specifications' : specifications})
     else:
-        write_smv(nodes, variables, enum_constants, tick_condition, specifications, hyper_mode, output_file, do_not_trim)
+        write_smv(nodes, behaverify_variables, declared_enumerations, tick_condition, specifications, hyper_mode, output_file, do_not_trim)
     return
 
 
@@ -1073,7 +1061,5 @@ if __name__ == '__main__':
     arg_parser.add_argument('--keep_last_stage', action = 'store_true')
     arg_parser.add_argument('--do_not_trim', action = 'store_true')
     arg_parser.add_argument('--behave_only', action = 'store_true')
-    # arg_parser.add_argument('--reduce_definitions', action = 'store_true')
-    # arg_parser.add_argument('--eliminate_definitions', action = 'store_true')
     args = arg_parser.parse_args()
     dsl_to_behaverify(args.metamodel_file, args.model_file, args.output_file, args.keep_stage_0, args.keep_last_stage, args.do_not_trim, args.behave_only)
