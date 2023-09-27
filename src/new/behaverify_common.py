@@ -4,7 +4,7 @@ It contains a variety of utility functions.
 
 
 Author: Serena Serafina Serbinowska
-Last Edit: 2023-09-19
+Last Edit: 2023-09-27
 '''
 # if not array
 
@@ -33,27 +33,38 @@ Last Edit: 2023-09-19
 
 # the initial value of a variable is a single stage with int based index.
 
-
 class BTreeException(Exception):
     '''an exception that indicates something is wrong with the BTree'''
     def __init__(self, trace, last_message):
         self.message = ' -> '.join(trace) + ' ::-> ' + last_message
         super().__init__(self.message)
 
-
-def constant_type(constant, constants):
+def constant_type(constant):
     '''Used to get the type of the constant'''
-    new_constant = (constants[constant] if constant in constants else constant)
-    if isinstance(new_constant, str):
+    if isinstance(constant, str):
         return 'ENUM'
-    if isinstance(new_constant, bool):
+    if isinstance(constant, bool):
         return 'BOOLEAN'
-    if isinstance(new_constant, int):
+    if isinstance(constant, int):
         return 'INT'
-    if isinstance(new_constant, float):
+    if isinstance(constant, float):
         return 'REAL'
-    raise BTreeException([], 'Constant ' + constant + ' is of an unsupported type. Only ENUM, BOOLEAN, and INT are supported')
+    raise BTreeException([], 'Constant ' + constant + ' is of an unsupported type. Only ENUM, BOOLEAN, INT, and REAL are supported')
 
+def handle_constant_or_reference_val(constant_or_reference, variables, constants):
+    return handle_constant_or_reference(constant_or_reference, variables, constants)[2]
+
+def handle_constant_or_reference(constant_or_reference, variables, constants):
+    if constant_or_reference.constant is None:
+        return resolve_reference(constant_or_reference.reference, variables, constants)
+    return ('CONSTANT', constant_type(constant_or_reference.constant), constant_or_reference.constant)
+
+def resolve_reference(reference, variables, constants):
+    return (
+        ('VARIABLE', variable_type(variables[reference], variables, constants), variables[reference])
+        if reference in variables else
+        ('CONSTANT', constant_type(constants[reference]), constants[reference])
+    )
 
 def dummy_value(arg_type):
     '''Used to get a Dummy Value of the specified type'''
@@ -63,10 +74,11 @@ def dummy_value(arg_type):
         return True
     if arg_type == 'INT':
         return 0
-    raise BTreeException([], 'Constant Type ' + arg_type + ' is of an unsupported type. Only ENUM, BOOLEAN, and INT are supported')
+    if arg_type == 'REAL':
+        return 0.0
+    raise BTreeException([], 'Constant Type ' + arg_type + ' is of an unsupported type. Only ENUM, BOOLEAN, INT, and REAL are supported')
 
-
-def variable_type(variable, constants):
+def variable_type(variable, variables, constants):
     '''Used to determine the variable type'''
     if variable.model_as == 'DEFINE':
         return variable.domain
@@ -74,23 +86,21 @@ def variable_type(variable, constants):
         return 'BOOLEAN'
     if variable.domain.min_val is not None or variable.domain.true_int is not None:
         return 'INT'
-    return constant_type(variable.domain.enums[0], constants)
-
+    if variable.domain.true_real is not None:
+        return 'REAL'
+    return handle_constant_or_reference(variable.domain.enums[0], variables, constants)[1]
 
 def is_local(variable):
     '''checks if the variable is local'''
     return variable.var_type == 'local'
 
-
 def is_env(variable):
     '''checks if the variable is environment'''
     return variable.var_type == 'env'
 
-
 def is_blackboard(variable):
     '''checks if the variable is blackboard'''
     return variable.var_type == 'bl'
-
 
 def variable_scope(variable):
     '''used to return the scope of the environment'''
@@ -102,22 +112,15 @@ def variable_scope(variable):
         return 'blackboard'
     raise BTreeException([], 'Variable ' + variable.name + ' is not local, blackboard, or environment')
 
-
 def is_array(variable):
     '''checks if the variable is an array'''
     return variable.array_size is not None
-
-
-def handle_constant(constant, constants):
-    '''handles the constant'''
-    return (constants[constant] if constant in constants else constant)
 
 def str_format(value):
     '''formats string'''
     if isinstance(value, str):
         return '\'' + value + '\''
     return str(value)
-
 
 def create_variable_template(name, mode, array_size, custom_value_range,
                              min_value, max_value,
