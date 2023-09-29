@@ -190,21 +190,17 @@ statement:
     (read_statement = read_statement) |
     (write_statement = write_statement)
 ;
-
-    non_determinism_string:
-    'non_determinism' ','
-    ;
     
     read_statement:
     'read_environment' '{'
     name = ID
     ('condition_variable' '{'
-    (('(' is_const = 'constant_index_of' condition_variable = [variable] ',' index_of = meta_code ')') |
-    ('(' is_const = 'index_of' condition_variable = [variable] ',' index_of = code_statement ')') |
+    (('(' constant_index = 'constant_index' condition_variable = [variable] ',' index_of = meta_code ')') |
+    ('(' constant_intdex = '' condition_variable = [variable] ',' index_of = code_statement ')') |
     (condition_variable = [variable]))
     '}' ('end_condition_variable')?)?
     'condition' '{'
-    non_determinism ?= non_determinism_string condition = code_statement
+    ((non_determinism = 'non_determinism' ',') | (non_determinism = '')) condition = code_statement
     '}' ('end_condition')?
     variable_statements += variable_statement
     '}' ('end_read_environment')?
