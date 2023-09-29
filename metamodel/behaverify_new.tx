@@ -93,7 +93,7 @@ node:
     (leaf = [action_node]) |
     (leaf = [check_environment_node]))
     '{'
-    arguments *= constant_or_reference[',']
+    arguments *= meta_code[',']
     '}'
 ;
     possible_argument_types:
@@ -144,25 +144,26 @@ node:
     'variable' '{'
     ((var_type = 'bl') | (var_type = 'local') | (var_type = 'env'))
     name = ID
-    (('array' array_size = constant_or_reference
+    (('array' array_size = meta_code
     ((model_as = 'VAR' domain = variable_domain) |
     (model_as = 'FROZENVAR' domain = variable_domain) |
     (model_as = 'DEFINE' ((domain = 'INT') | (domain = 'ENUM') | (domain = 'BOOLEAN') | (domain = 'REAL'))))
-    ((array_mode = 'loop' '(' loop_variable = ID ')' assign = assign_value) | (array_mode = 'per_index' assigns += assign_value)))
+    'default' default_value = meta_code
+    ((constant_index = 'constant_index' assigns *= array_index_constant) | (constant_index = '' assigns *= array_index)))
     |
     (((model_as = 'VAR' domain = variable_domain) |
     (model_as = 'FROZENVAR' domain = variable_domain) |
     (model_as = 'DEFINE' ((domain = 'INT') | (domain = 'ENUM') | (domain = 'BOOLEAN') | (domain = 'REAL'))))
-    array_mode = '' assign = assign_value))
+    assign = assign_value))
     '}' ('end_variable')?
 ;
     
     variable_domain:
-    ('[' min_val = constant_or_reference ',' max_val = constant_or_reference (',' loop_variable = ID ',' condition = meta_code)? ']') |
-    ('{' enums += constant_or_reference[','] '}') |
     (boolean = 'BOOLEAN') |
     (true_int = 'INT') |
-    (true_real = 'REAL')
+    (true_real = 'REAL') |
+    ('[' min_val = meta_code ',' max_val = meta_code ']') |
+    ('{' domain_codes += meta_code[','] '}')
 ;
     
     constant_value:
@@ -198,7 +199,7 @@ statement:
     'read_environment' '{'
     name = ID
     ('condition_variable' '{'
-    (('(' is_const = 'constant_index_of' condition_variable = [variable] ',' index_of = constant_or_reference ')') |
+    (('(' is_const = 'constant_index_of' condition_variable = [variable] ',' index_of = meta_code ')') |
     ('(' is_const = 'index_of' condition_variable = [variable] ',' index_of = code_statement ')') |
     (condition_variable = [variable]))
     '}' ('end_condition_variable')?)?
@@ -222,32 +223,16 @@ statement:
     'variable_statement' '{'
     instant ?= 'instant'
     variable = [variable]
-    //start of variable match. this will go through array loop, array per_index, and non-array
-    (
-    (array_mode = 'loop' '(' loop_variable = ID (',' values = constant_or_reference ',' values = constant_or_reference ',' values = meta_code)? ')'
-    ((constant_index = 'constant_index' assign = array_index_constant) | (constant_index = '' assign = array_index)))
-    //in the above we are using a loop variable to index into an array. the variable MUST be an array
+    (((constant_index = 'constant_index' assigns += array_index_constant) | (constant_index = '' assigns += array_index))
     |
-    (array_mode = 'per_index'
-    ((constant_index = 'constant_index' assigns += array_index_constant) | (constant_index = '' assigns += array_index)))
-    //in the above we are indexing without a loop variable. the variable MUST be an array
-    |
-    (array_mode = ''
-    (constant_index = '' assign = assign_value))
-    )
+    (assign = assign_value))
     '}' ('end_variable_statement')?
     ;
 
     variable_statement_initial:
     'variable_statement' '{'
     variable = [variable]
-    (
-    (array_mode = 'loop' '(' loop_variable = ID ')' assign = assign_value)
-    |
-    (array_mode = 'per_index' assigns += assign_value)
-    |
-    (array_mode = '' assign = assign_value)
-    )
+    (('default' default_value = meta_code ((constant_index = 'constant_index' assigns *= array_index_constant) | (constant_index = '' assigns *= array_index))) | (assign = assign_value))
     '}' ('end_variable_statement')?
 ;
     
@@ -259,11 +244,11 @@ statement:
 ;
     //--------------------SEC:ARRAY_INDEX_OF--------------------------
     array_index:
-    'index_of' '{' index_expr = code_statement '}' ('end_index_of')?
+    'index_of' '{' index_expr += code_statement[','] '}' ('end_index_of')?
     assign = assign_value
 ;
     array_index_constant:
-    'index_of' '{' index_expr = constant_or_reference '}' ('end_index_of')?
+    'index_of' '{' index_expr += meta_code[','] '}' ('end_index_of')?
     assign = assign_value
 ;
     assign_value:
@@ -304,41 +289,41 @@ statement:
     //--------------------SEC:CODE--------------------------------
 
     meta_code:
-    (atom = constant_or_reference) |
     ('(' function_call = meta_function ')') |
-    ('(' code_statement = meta_code ')')
+    ('(' code_statement = meta_code ')') |
+    (atom = constant_or_reference)
 ;
 
     code_statement:
     ('(' function_call = function ')') |
     ('(' code_statement = code_statement ')') |
-    (atom = constant_or_reference (node_name = ID)? (read_at = constant_or_reference)? (trace_num = constant_or_reference)?)
+    (atom = constant_or_reference (node_name = meta_code)? (read_at = meta_code)? (trace_num = meta_code)?)
 ;
 
     //--------------------SEC:FUNCTION_BL_LOCALS--------------------------------
 
     meta_function:
-    (function_name = 'loop' ',' loop_variable = ID ',' (('{' loop_variable_domain += constant_or_reference[','] '}') | ('[' min_val = constant_or_reference ',' max_val = constant_or_reference ']')) 'such_that' loop_condition = meta_code ',' values = meta_code) |
+    (function_name = 'loop' ',' loop_variable = ID ',' (('{' loop_variable_domain += meta_code[','] '}') | ('[' min_val = meta_code ',' max_val = meta_code ']')) 'such_that' loop_condition = meta_code ',' values = meta_code) |
     (function_name = meta_function_names ',' values += meta_code[','])
 ;
    
     function:
-    (function_name = 'loop' ',' loop_variable = ID ',' (('{' loop_variable_domain += constant_or_reference[','] '}') | ('[' min_val = constant_or_reference ',' max_val = constant_or_reference ']')) 'such_that' loop_condition = meta_code ',' values = code_statement) |
-    (function_name = 'index' ',' atom = constant_or_reference (node_name = ID)? (read_at = constant_or_reference)? (trace_num = constant_or_reference)? ',' values = code_statement) |
+    (function_name = 'loop' ',' loop_variable = ID ',' (('{' loop_variable_domain += meta_code[','] '}') | ('[' min_val = meta_code ',' max_val = meta_code ']')) 'such_that' loop_condition = meta_code ',' values = code_statement) |
+    (function_name = 'index' ',' to_index = meta_code (node_name = meta_code)? (read_at = meta_code)? (trace_num = meta_code)? ',' values = code_statement) |
     (function_name = bounded_function_names ',' bound = bound_statement ',' values = code_statement) |
     (function_name = function_names ',' values += code_statement[',']) |
-    (function_name = status_function_names ',' node_name = ID)
+    (function_name = status_function_names ',' node_name = meta_code)
 ;
 
     bound_statement:
-    '[' lower_bound = constant_or_reference ',' ((upper_bound = constant_or_reference) |  (upper_bound = '+oo')) ']'
+    '[' lower_bound = meta_code ',' upper_bound = meta_code ']'
 ;
 
     meta_function_names:
-    'abs' | 'max' | 'min' | 'sin' | 'cos' | 'exp' | 'tan' | 'ln' | 'not' | 'and' | 'or' | 'xor' | 'xnor' | 'imply' | 'equiv' | 'eq' | 'neq' | 'lte' | 'gte' | 'lt' | 'gt' | 'neg' | 'add' | 'sub' | 'mult' | 'idiv' | 'mod' | 'rdiv' | 'floor' | 'count'
+    'if' | 'abs' | 'max' | 'min' | 'sin' | 'cos' | 'exp' | 'tan' | 'ln' | 'not' | 'and' | 'or' | 'xor' | 'xnor' | 'imply' | 'equiv' | 'eq' | 'neq' | 'lte' | 'gte' | 'lt' | 'gt' | 'neg' | 'add' | 'sub' | 'mult' | 'idiv' | 'mod' | 'rdiv' | 'floor' | 'count'
 ;
     function_names:
-    'abs' | 'max' | 'min' | 'sin' | 'cos' | 'exp' | 'tan' | 'ln' | 'eq' | 'neq' | 'lte' | 'gte' | 'lt' | 'gt' | 'neg' | 'add' | 'sub' | 'mult' | 'idiv' | 'mod' | 'rdiv' | 'floor' | 'count' |
+    'if' | 'abs' | 'max' | 'min' | 'sin' | 'cos' | 'exp' | 'tan' | 'ln' | 'eq' | 'neq' | 'lte' | 'gte' | 'lt' | 'gt' | 'neg' | 'add' | 'sub' | 'mult' | 'idiv' | 'mod' | 'rdiv' | 'floor' | 'count' |
     //these functions permit the continuation of ltl/ctl specific functions
     'not' | 'and' | 'or' | 'xor' | 'xnor' | 'imply' | 'equiv' |
     //start of ltl specific

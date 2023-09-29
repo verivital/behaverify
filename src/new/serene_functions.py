@@ -9,24 +9,32 @@ Last Edit: 2023-09-27
 '''
 import operator
 import math
-from behaverify_common import handle_constant_or_reference, handle_constant_or_reference_val
+import copy
+
+
+def serene_if(function_call):
+    # this one returns an array by directly returning a build_meta_func result.
+    return lambda references : (
+        build_meta_func(function_call.values[1])(references)
+        if build_meta_func(function_call.values[0])(references)[0][1] else
+        build_meta_func(function_call.values[2])(references)
+    )
 
 def update_dictionary(dictionary, key, value):
-    dictionary[key] = value
-    return dictionary
+    new_dictionary = copy.deepcopy(dictionary)
+    new_dictionary[key] = value
+    return new_dictionary
 
 def serene_loop(function_call):
     sub_func = build_meta_func(function_call.values[0])
     return lambda references : [
-        sub_func((update_dictionary(references[0], function_call.loop_variable, loop_value), references[1]))
+        sub_func((references[0], update_dictionary(references[1], function_call.loop_variable, loop_value)))
         for loop_value in (
-                range(handle_constant_or_reference_val(function_call.min_val, references[0], references[1]),
-                      handle_constant_or_reference_val(function_call.max_val, references[0], references[1]) + 1)
+                range(build_meta_func(function_call.min_val)(references)[0],
+                      build_meta_func(function_call.min_val)(references)[1] + 1)
                 if function_call.min_val is None
                 else
-                [
-                    handle_constant_or_reference_val(loop_value_ref, references[0], references[1]) for loop_value_ref in function_call.loop_variable_domain
-                ]
+                [loop_value_ref for loop_value_code in function_call.loop_variable_domain for loop_value_ref in build_meta_func(loop_value_code)(references)]
         )
     ]
 
@@ -126,6 +134,7 @@ def serene_mult(function_call):
 
 
 RANGE_FUNCTION = {
+    'if' : serene_if,
     'loop' : serene_loop,
     'abs' : serene_abs,
     'max' : serene_max,
@@ -158,15 +167,32 @@ RANGE_FUNCTION = {
     'count' : serene_add
 }
 
+def handle_constant_or_reference_meta(constant_or_reference, constants, loop_references):
+    return (
+        constant_or_reference.constant
+        if constant_or_reference.constant is not None else
+        (
+            constants[constant_or_reference.reference]
+            if constant_or_reference.reference in constants else
+            (
+                loop_references[constant_or_reference.reference]
+                if constant_or_reference.reference in loop_references else
+                constant_or_reference.reference
+            )
+        )
+    )
+
 def build_meta_func(code):
     '''
     builds the meta func.
     return lambda references : s a function which takes a single parameter: references
+    references is (constants, loop_references).
     the function returns a list of values.
-    references is (loop_constants)
+    each value returned can be be a Constant or a Reference.
+    Note that string overlaps both Constant and Reference. It is up to the subsequent user to distinguish them.
     '''
     return (
-        (lambda references : [handle_constant_or_reference(code.atom, references[0], references[1])])
+        (lambda references : [handle_constant_or_reference_meta(code.atom, references[0], references[1])])
         if code.atom is not None
         else
         (

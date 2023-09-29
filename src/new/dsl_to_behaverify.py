@@ -28,80 +28,89 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
     '''
     This method is used to convert the dsl to behaverify.
     '''
+    def format_function_loop(_, function_call, misc_args):
+        # formatted_values = []
+        # new_misc_args = copy.deepcopy(misc_args)
+        # cond_func = build_meta_func(function_call.loop_condition)
+        # loop_domain = function_call.range(handle_constant_or_reference_val(min_val, new_misc_args['temporary_constants'])
+        # for var_value in loop_domain:
+        #     new_misc_args['temporary_constants'][function_call.loop_variable] = var_value
+        #     formatted_values.extend(format_code(function_call.values[0], new_misc_args))
+        # return formatted_values
+        pass
 
-    def format_function_before(function_name, code, misc_args):
+    def format_function_before(function_name, function_call, misc_args):
         '''function_name(vals)'''
-        return (
+        return [
             function_name + '('
-            + ', '.join([format_code(value, misc_args) for value in code.function_call.values])
+            + ', '.join([', '.join(format_code(value, misc_args)) for value in function_call.values])
             + ')'
-            )
+        ]
 
-    def __format_function_recursive_before__(function_name, values, misc_args, index_start):
-        if len(values) - index_start <= 2:
-            return (
-                function_name + '('
-                + ', '.join([format_code(value, misc_args) for value in values[index_start:]])
-                + ')'
-            )
-        cur_val = values[index_start]
-        return (
-            function_name + '(' + format_code(cur_val, misc_args) + ', ' + __format_function_recursive_before__(function_name, values, misc_args, index_start + 1) + ')'
-        )
-
-    def format_function_recursive_before(function_name, code, misc_args):
+    def format_function_recursive_before(function_name, function_call, misc_args):
         '''function_name(vals)'''
-        if len(code.function_call.values) <= 2:
-            return format_function_before(function_name, code, misc_args)
-        return __format_function_recursive_before__(function_name, code.function_call.values, misc_args, 0)
+        formatted_values = []
+        for value in function_call.values:
+            formatted_values.extend(format_code(value, misc_args))
+        return [
+            ''.join([(function_name + '(' + formatted_value + ', ') for formatted_value in formatted_values[0:-2]])
+            + function_name + '(' + formatted_values[-2] + ', ' + formatted_values[-1] + ')'
+            + ')'*(len(formatted_values[0:-2]))
+        ]
 
-    def format_function_between(function_name, code, misc_args):
+    def format_function_between(function_name, function_call, misc_args):
         '''(vals function_name vals)'''
-        return (
+        return [
             '('
-            + (' ' + function_name + ' ').join([format_code(value, misc_args) for value in code.function_call.values])
+            + (' ' + function_name + ' ').join([(' ' + function_name + ' ').join(format_code(value, misc_args)) for value in function_call.values])
             + ')'
-        )
+        ]
 
-    def format_function_integer_division(function_name, code, misc_args):
+    def format_function_integer_division(function_name, function_call, misc_args):
         '''(vals function_name vals)'''
-        return (
+        return [
             ('floor' if use_reals else '') + '('
-            + (' ' + function_name + ' ').join([format_code(value, misc_args) for value in code.function_call.values])
+            + (' ' + function_name + ' ').join([(' ' + function_name + ' ').join(format_code(value, misc_args)) for value in function_call.values])
             + ')'
-        )
+        ]
 
-    def format_function_after(function_name, code, misc_args):
+    def format_function_after(function_name, function_call, misc_args):
         '''(node_name.function_name)'''
-        return (
+        return [
             '('
             + (('system' + (('_' + misc_args['trace_num']) if hyper_mode else '') + '.') if misc_args['specification_writing'] else '')
-            + code.function_call.node_name
+            + function_call.node_name
             + function_name
             + ')'
-        )
+        ]
 
-    def format_function_before_bounded(function_name, code, misc_args):
+    def format_function_before_bounded(function_name, function_call, misc_args):
         '''function_name [min, max] (vals)'''
-        return (
-            function_name + ' [' + str(handle_constant_or_reference_val(code.function_call.bound.lower_bound, variables, constants)) + ', ' + str(handle_constant_or_reference_val(code.function_call.bound.upper_bound, variables, constants)) + '] '  '('
-            + ', '.join([format_code(value, misc_args) for value in code.function_call.values])
+        return [
+            function_name + ' [' + str(handle_constant_or_reference_val(function_call.bound.lower_bound, variables, constants)) + ', ' + str(handle_constant_or_reference_val(function_call.bound.upper_bound, variables, constants)) + '] '  '('
+            + ', '.join([', '.join(format_code(value, misc_args)) for value in function_call.values])
             + ')'
-            )
+        ]
 
-    def format_function_between_bounded(function_name, code, misc_args):
+    def format_function_between_bounded(function_name, function_call, misc_args):
         ''' honestly not sure '''
-        return (
+        formatted_values = []
+        for value in function_call.values:
+            formatted_values.extend(format_code(value, misc_args))
+        return [
             '('
-            + (' ' + function_name + ' [' + str(handle_constant_or_reference_val(code.function_call.bound.lower_bound, variables, constants)) + ', ' + str(handle_constant_or_reference_val(code.function_call.bound.upper_bound, variables, constants)) + '] ').join([format_code(value, misc_args) for value in code.function_call.values])
+            + (' ' + function_name + ' [' + str(handle_constant_or_reference_val(function_call.bound.lower_bound, variables, constants)) + ', ' + str(handle_constant_or_reference_val(function_call.bound.upper_bound, variables, constants)) + '] ').join(formatted_values)
             + ')'
-            )
+        ]
 
-    def format_function_before_between(function_name, code, misc_args):
+    def format_function_before_between(function_name, function_call, misc_args):
         '''probably some spec thing'''
+        formatted_values = []
+        for value in function_call.values:
+            formatted_values.extend(format_code(value, misc_args))
         return (
             function_name[0] + '['
-            + (' ' + function_name[1] + ' ').join([format_code(value, misc_args) for value in code.function_call.values])
+            + (' ' + function_name[1] + ' ').join(formatted_values)
             + ']'
             )
 
@@ -120,21 +129,21 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
             + 'esac)'
         )
 
-    def format_function_index(_, code, misc_args):
+    def format_function_index(_, function_call, misc_args):
         '''variable[val]'''
         # return (
-        #     format_variable(code.function_call.variable, misc_args) + '[' + format_code(code.function_call.values[0], misc_args) + ']'
+        #     format_variable(function_call.variable, misc_args) + '[' + format_code(function_call.values[0], misc_args) + ']'
         # )
-        formatted_variable = format_variable(code.function_call.variable, misc_args)
-        index_expression = format_code(code.function_call.values[0], misc_args)
-        return case_index(formatted_variable, handle_constant_or_reference_val(code.function_call.variable.array_size, variables, constants), index_expression)
+        formatted_variable = format_variable(function_call.variable, misc_args)
+        index_expression = format_code(function_call.values[0], misc_args)[0]
+        return [case_index(formatted_variable, handle_constant_or_reference_val(function_call.variable.array_size, variables, constants), index_expression)]
 
-    def format_function(code, misc_args):
+    def format_function(function_call, misc_args):
         '''this just calls the other format functions. moved here to make format_code less cluttered.'''
-        (function_name, function_to_call) = function_format[code.function_call.function_name]
-        return function_to_call(function_name, code, misc_args)
+        (function_name, function_to_call) = function_format[function_call.function_name]
+        return function_to_call(function_name, function_call, misc_args)
 
-    def create_misc_args(node_name, use_stages, use_next, not_next, overwrite_stage, specification_writing, specification_warning):
+    def create_misc_args(temporary_constants, node_name, use_stages, use_next, not_next, overwrite_stage, specification_writing, specification_warning):
         '''
         -- ARGUMENTS
         @ node_name := the name of the node which caused this to be called. used for formatting local variables.
@@ -144,6 +153,7 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
         @ overwrite_stage := overwrite which stage we're asking for.
         '''
         return {
+            'temporary_constants' : temporary_constants,
             'node_name' : node_name,
             'use_stages' : use_stages,
             'use_next' : use_next,
@@ -287,8 +297,8 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
         format a code fragment
         '''
         return (
-            handle_atom(code, misc_args) if code.atom is not None else (
-                ('(' + format_code(code.code_statement, misc_args) + ')') if code.code_statement is not None else (
+            [handle_atom(code, misc_args)] if code.atom is not None else (
+                ['(' + format_code(code.code_statement, misc_args) + ')'] if code.code_statement is not None else (
                     format_function(code, misc_args)
                 )
             )
@@ -1009,7 +1019,7 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
     hyper_mode = model.hypersafety
     use_reals = model.use_reals
     # specification_writing = False  # this is used to track whether or not code should make references to the trace and system or not.
-    serene_index = []
+    # serene_index = []
     behaverify_variables = {}
     # spec_warn = False
     (variables, constants, declared_enumerations) = validate_model(model)
