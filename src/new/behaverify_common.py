@@ -40,6 +40,18 @@ class BTreeException(Exception):
         self.message = ' -> '.join(trace) + ' ::-> ' + last_message
         super().__init__(self.message)
 
+        
+def get_min_max(min_code, max_code, declared_enumerations, node_names, variables, constants, loop_references):
+    min_func = build_meta_func(min_code)
+    max_func = build_meta_func(max_code)
+    min_val = resolve_potential_reference_no_type(min_func((constants, loop_references))[0], declared_enumerations, node_names, variables, constants, loop_references)[1]
+    max_val = resolve_potential_reference_no_type(max_func((constants, loop_references))[0], declared_enumerations, node_names, variables, constants, loop_references)[1]
+    return (min_val, max_val)
+
+def variable_array_size(variable, declared_enumerations, node_names, variables, constants, loop_references):
+    array_size_func = build_meta_func(variable.array_size)
+    return resolve_potential_reference_no_type(array_size_func((constants, loop_references))[0], declared_enumerations, node_names, variables, constants, loop_references)[1]
+
 def constant_type(constant, declared_enumerations, no_exceptions = False):
     '''Used to get the type of the constant'''
     if constant in declared_enumerations:
@@ -54,26 +66,32 @@ def constant_type(constant, declared_enumerations, no_exceptions = False):
         return True
     raise BTreeException([], 'Constant ' + constant + ' is of an unsupported type. Only ENUM, BOOLEAN, INT, and REAL are supported')
 
-def handle_constant_or_reference_val(constant_or_reference, declared_enumerations, node_names, variables, constants, loop_references):
+def handle_constant_or_reference_no_type(constant_or_reference, declared_enumerations, node_names, variables, constants, loop_references):
     return (
-        constant_or_reference.constant
+        ('CONSTANT', constant_or_reference.constant)
         if constant_or_reference.constant is not None else
         (
-            constant_or_reference.reference
+            ('NODE', constant_or_reference.reference)
             if constant_or_reference.reference in node_names else
             (
-                variables[constant_or_reference.reference]
+                ('VARIABLE', variables[constant_or_reference.reference])
                 if constant_or_reference.reference in variables else
                 (
-                    constants[constant_or_reference.reference]
+                    ('CONSTANT', constants[constant_or_reference.reference])
                     if constant_or_reference.reference in constants else
                     (
-                        loop_references[constant_or_reference.reference]
+                        (
+                            ('VARIABLE', loop_references[constant_or_reference.reference])
+                            if hasattr(loop_references[constant_or_reference.reference], 'name') else
+                            (
+                                ('NODE', loop_references[constant_or_reference.reference])
+                                if loop_references[constant_or_reference.reference] in node_names else
+                                ('CONSTANT', loop_references[constant_or_reference.reference])
+                            )
+                        )
                         if constant_or_reference.reference in loop_references else
                         (
-                            constant_or_reference.reference
-                            if constant_type(constant_or_reference.reference, declared_enumerations) is not None else
-                            None # this isn't actually reachable. It will throw an exception before getting here.
+                            ('CONSTANT', constant_or_reference.reference)
                         )
                     )
                 )
@@ -105,12 +123,42 @@ def resolve_potential_reference(reference, declared_enumerations, node_names, va
                         if hasattr(loop_references[reference], 'name') else
                         (
                             ('NODE', 'NODE', loop_references[reference])
-                            if constant_type(loop_references[reference], declared_enumerations, True) is None else
+                            if loop_references[reference] in node_names else
                             ('CONSTANT', constant_type(loop_references[reference], declared_enumerations), loop_references[reference])
                         )
                     )
                     if reference in loop_references else
                     ('CONSTANT', constant_type(reference, declared_enumerations), reference)
+                )
+            )
+        )
+    )
+
+def resolve_potential_reference_no_type(reference, declared_enumerations, node_names, variables, constants, loop_references):
+    '''
+    used to resolve references and also results from meta functions.
+    '''
+    return (
+        ('NODE', reference)
+        if reference in node_names else
+        (
+            ('VARIABLE', variables[reference])
+            if reference in variables else
+            (
+                ('CONSTANT', constants[reference])
+                if reference in constants else
+                (
+                    (
+                        ('VARIABLE', variables[reference])
+                        if hasattr(loop_references[reference], 'name') else
+                        (
+                            ('NODE', loop_references[reference])
+                            if constant_type(loop_references[reference], declared_enumerations, True) is None else
+                            ('CONSTANT', loop_references[reference])
+                        )
+                    )
+                    if reference in loop_references else
+                    ('CONSTANT', reference)
                 )
             )
         )
@@ -174,8 +222,7 @@ def str_format(value):
         return '\'' + value + '\''
     return str(value)
 
-def create_variable_template(name, mode, array_size, custom_value_range,
-                             min_value, max_value,
+def create_variable_template(name, mode, array_size, custom_value_range, min_max_pair,
                              initial_value, next_value, keep_stage_0, keep_last_stage):
     '''
     Use this method to create variable templates
@@ -187,8 +234,8 @@ def create_variable_template(name, mode, array_size, custom_value_range,
         'array' : array_size is not None,
         'array_size' : None if array_size is None else array_size,
         'custom_value_range' : custom_value_range,
-        'min_value' : min_value,
-        'max_value' : max_value,
+        'min_value' : min_max_pair[0],
+        'max_value' : min_max_pair[1],
         'initial_value' : initial_value,
         'next_value' : next_value,
         'keep_stage_0' : keep_stage_0,  # keep stage_0 takes precedence over keep_last_stage. if keep_stage_0 is false, keep_last_stage is ignored.

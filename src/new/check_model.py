@@ -37,7 +37,8 @@ def validate_model(model):
     '''used to validate the model'''
     trace = []
     function_type_info = {
-        'loop' : {'return_type' : 'depends', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'NUM', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'CTL', 'LTL', 'INVAR', 'reg'}},
+        'if' : {'return_type' : 'depends', 'min_arg' : 3, 'max_arg' : 3, 'arg_type' : 'any', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'CTL', 'LTL', 'INVAR', 'reg'}},
+        'loop' : {'return_type' : 'depends', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'any', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'CTL', 'LTL', 'INVAR', 'reg'}},
         'abs' : {'return_type' : 'NUM', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'NUM', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'INVAR', 'reg'}},
         'max' : {'return_type' : 'NUM', 'min_arg' : 2, 'max_arg' : -1, 'arg_type' : 'NUM', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'INVAR', 'reg'}},
         'min' : {'return_type' : 'NUM', 'min_arg' : 2, 'max_arg' : -1, 'arg_type' : 'NUM', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'INVAR', 'reg'}},
@@ -108,24 +109,25 @@ def validate_model(model):
     def verify_min_max(min_code, max_code, bound):
         min_func = build_meta_func(min_code)
         max_func = build_meta_func(max_code)
-        new_references = copy.deepcopy(loop_references)
-        min_values = min_func((constants, new_references))
-        new_references = copy.deepcopy(loop_references)
-        max_values = max_func((constants, new_references))
+        min_values = min_func((constants, loop_references))
+        max_values = max_func((constants, loop_references))
         if len(min_values) != 1:
             raise BTreeException(trace, 'Must have exactly one value for min')
         if len(max_values) != 1:
             raise BTreeException(trace, 'Must have exactly one value for max')
         min_val = min_values[0]
         max_val = max_values[0]
-        min_type = constant_type(min_values[0], declared_enumerations)
+        (min_class, min_type, min_val) = resolve_potential_reference(min_val, declared_enumerations, all_node_names, variables, constants, loop_references)
+        if min_class != 'CONSTANT' or min_type != 'INT':
+            raise BTreeException(trace, 'Min value must be a constant of type INT. Got: ' + min_class + ', ' + min_type + ', ' + str(min_val))
         if bound and max_val == '+oo':
+            max_class = 'CONSTANT'
             max_type = 'INT'
             max_val = min_val + 1
         else:
-            max_type = constant_type(max_values[0], declared_enumerations)
-        if min_type != 'INT' or max_type != 'INT':
-            raise BTreeException(trace, 'Min/max value must be of type INT. In bounds, Max can be the string \'+oo\'')
+            (max_class, max_type, max_val) = resolve_potential_reference(max_val, declared_enumerations, all_node_names, variables, constants, loop_references)
+        if max_class != 'CONSTANT' or max_type != 'INT':
+            raise BTreeException(trace, 'Max value must be a constant of type INT (or +oo for bound). Got: ' + max_class + ', ' + max_type + ', ' + str(max_val))
         if min_val > max_val:
             raise BTreeException(trace, 'min of bound statement cannot be greater than max')
         return ((min_type, min_val), (max_type, max_val))
@@ -179,38 +181,42 @@ def validate_model(model):
         if len(func_info['allowed_in'].intersection(allowed_functions)) == 0:
             raise BTreeException(trace, 'Function ' + code.function_call.function_name + ' is only allowed in ' + str(func_info['allowed_in']) + ' but we are in ' + str(allowed_functions))
         new_allowed_functions = func_info['allows'].intersection(allowed_functions)
+        if code.function_call.function_name == 'if':
+            if len(code.function_call.values) != 3:
+                raise BTreeException(trace, 'if requires exactly 3 arguments')
+            validate_condition(code.function_call.values[0], scopes, variable_names, allowed_functions)
+            return_vals1 = validate_code(code.function_call.values[1], scopes, variable_names, allowed_functions)
+            return_vals2 = validate_code(code.function_call.values[2], scopes, variable_names, allowed_functions)
+            if len(return_vals1) != 1 or len(return_vals2) != 1:
+                raise BTreeException(trace, 'currently, if must return exactly 1 argument (encoding issues down the line require this)')
+            # we don't have a good way to verify that both halves work.
+            # we could require that they be the same types?
+            # TODO: think about this.
+            return return_vals1
         if code.function_call.function_name == 'loop':
             loop_variable = code.function_call.loop_variable
             if loop_variable in constants or loop_variable in variables:
                 raise BTreeException(trace, 'Loop Variable ' + loop_variable + ' name clashes with existing name')
             return_vals = []
+            all_domain_values = []
             if code.function_call.min_val is None:
-                all_domain_values = []
                 for domain_code in code.function_call.loop_variable_domain:
                     domain_func = build_meta_func(domain_code)
-                    new_references = copy.deepcopy(loop_references)
-                    all_domain_values.extend(domain_func((constants, new_references)))
-                for domain_member in all_domain_values:
-                    (atom_class, _, atom) = resolve_potential_reference(domain_member, declared_enumerations, all_node_names, variables, constants, loop_references)
-                    loop_references[loop_variable] = atom
-                    return_vals.extend(validate_code(code.function_call.values[0], scopes, variable_names, allowed_functions))
-                    loop_references.pop(loop_variable)
-                    # if atom_class == 'VARIABLE':
-                    #     loop_references[loop_variable] = atom
-                    #     variable_names.add(loop_variable)
-                    #     return_vals.extend(validate_code(code.function_call.values[0], scopes, variable_names, allowed_functions))
-                    #     variable_names.remove(loop_variable)
-                    #     loop_references.pop(loop_variable)
-                    # else:
-                    #     loop_references[loop_variable] = atom
-                    #     return_vals.extend(validate_code(code.function_call.values[0], scopes, variable_names, allowed_functions))
-                    #     loop_references.pop(loop_variable)
+                    # new_references = copy.deepcopy(loop_references)  # the meta function is guaranteed to not change this.
+                    for domain_value in domain_func((constants, loop_references)):
+                        all_domain_values.append(resolve_potential_reference(domain_value, declared_enumerations, all_node_names, variables, constants, loop_references)[2])
             else:
                 ((_, min_val), (_, max_val)) = verify_min_max(code.function_call.min_val, code.function_call.max_val, False)
-                for domain_member in range(min_val, max_val + 1):
-                    loop_references[loop_variable] = domain_member
+                all_domain_values = range(min_val, max_val + 1)
+            cond_func = build_meta_func(code.function_call.loop_condition)
+            for domain_member in all_domain_values:
+                loop_references[loop_variable] = domain_member
+                returned_vals = cond_func((constants, loop_references))
+                if len(returned_vals) != 1:
+                    raise BTreeException(trace, 'Loop Condition function is expected to return exactly 1 value')
+                if returned_vals[0]:
                     return_vals.extend(validate_code(code.function_call.values[0], scopes, variable_names, allowed_functions))
-                    loop_references.pop(loop_variable)
+                loop_references.pop(loop_variable)
             return return_vals
         # handle index specially, and return.
         if code.function_call.function_name == 'index':
