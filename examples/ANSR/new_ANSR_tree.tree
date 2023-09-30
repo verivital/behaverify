@@ -22,8 +22,8 @@ variables {
 	variable {env tree_x array tree_count FROZENVAR [x_min, x_max] range assign {result{range, x_min, x_max, True}}}
 	variable {env tree_y array tree_count FROZENVAR [y_min, y_max] range assign {result{range, y_min, y_max, True}}}
     }#
-    variable {env tree_x array tree_count DEFINE INT default 2 index_of{1} assign {result{5}}}
-    variable {env tree_y array tree_count DEFINE INT default 2 index_of{1} assign {result{5}}}
+    variable {env tree_x array tree_count DEFINE INT default { assign{result{2}}} constant_index index_of{(max, 0, 1)} assign {result{5}}}
+    variable {env tree_y array tree_count DEFINE INT default { assign{result{2}}} constant_index index_of{1} assign {result{5}}}
     variable {env tar_x VAR [x_min, x_max] assign {result {(loop, meh, [x_min, x_max] such_that True, meh)}}}
     variable {env tar_y VAR [y_min, y_max] assign {result {(loop, meh, [y_min, y_max] such_that True, meh)}}}
     variable {env timer VAR [0, movement_cooldown] assign {result{movement_cooldown}}}
@@ -136,15 +136,15 @@ environment_checks {
 	condition {
 	    (and,
 		(lte, (add, (abs, (sub, cur_x, tar_x)), (abs, (sub, cur_y, tar_y))), vision_range),
-		(loop, loop_index, [0, tree_count] such_that True,
+		(loop, loop_index, [0, (sub, tree_count, 1)] such_that True,
 		    (or,
-			(gt, (add, (abs, (sub, (index, tree_x, loop_index), tar_x)), (abs, (sub, (index, tree_y, loop_index), tar_y))), tree_range),
-			(and, (eq, (index, tree_x, loop_index), cur_x), (eq, (index, tree_y, loop_index), cur_y)),
-			(and, (eq, (index, tree_x, loop_index), tar_x), (eq, (index, tree_y, loop_index), tar_y)),
-			(and, (lt, (index, tree_x, loop_index), cur_x), (lt, (index, tree_x, loop_index), tar_x)),
-			(and, (lt, (index, tree_y, loop_index), cur_y), (lt, (index, tree_y, loop_index), tar_y)),
-			(and, (gt, (index, tree_x, loop_index), cur_x), (gt, (index, tree_x, loop_index), tar_x)),
-			(and, (gt, (index, tree_y, loop_index), cur_y), (gt, (index, tree_y, loop_index), tar_y))
+			(gt, (add, (abs, (sub, (index, tree_x, constant_index loop_index), tar_x)), (abs, (sub, (index, tree_y, constant_index loop_index), tar_y))), tree_range),
+			(and, (eq, (index, tree_x, constant_index loop_index), cur_x), (eq, (index, tree_y, constant_index loop_index), cur_y)),
+			(and, (eq, (index, tree_x, constant_index loop_index), tar_x), (eq, (index, tree_y, constant_index loop_index), tar_y)),
+			(and, (lt, (index, tree_x, constant_index loop_index), cur_x), (lt, (index, tree_x, constant_index loop_index), tar_x)),
+			(and, (lt, (index, tree_y, constant_index loop_index), cur_y), (lt, (index, tree_y, constant_index loop_index), tar_y)),
+			(and, (gt, (index, tree_x, constant_index loop_index), cur_x), (gt, (index, tree_x, constant_index loop_index), tar_x)),
+			(and, (gt, (index, tree_y, constant_index loop_index), cur_y), (gt, (index, tree_y, constant_index loop_index), tar_y))
 		    )
 		)
 	    )

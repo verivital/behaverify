@@ -47,12 +47,12 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
         for domain_member in all_domain_values:
             loop_references[function_call.loop_variable] = domain_member
             if cond_func((constants, loop_references))[0]:
-                return_vals.extend(to_call(function_call.values[0], misc_args))
+                return_vals.extend(to_call(function_call.values[0], new_misc_args))
             loop_references.pop(function_call.loop_variable)
         return return_vals
 
     def format_function_if(_, function_call, misc_args):
-        return [format_code(function_call.values[0], misc_args) + ' ? ' + format_code(function_call.values[1], misc_args) + ' : ' + format_code(function_call.values[2], misc_args)]
+        return [format_code(function_call.values[0], misc_args)[0] + ' ? ' + format_code(function_call.values[1], misc_args)[0] + ' : ' + format_code(function_call.values[2], misc_args)[0]]
 
     def format_function_loop(_, function_call, misc_args):
         return execute_loop(function_call, format_code, misc_args)
@@ -154,17 +154,21 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
         # return (
         #     format_variable(function_call.variable, misc_args) + '[' + format_code(function_call.values[0], misc_args) + ']'
         # )
-        var_func = build_meta_func(function_call.to_index)
-        variable = resolve_potential_reference_no_type(var_func((constants, misc_args['loop_references']))[0], declared_enumerations, nodes, variables, constants, misc_args['loop_references'])[1]
         new_misc_args = adjust_args(function_call, misc_args)
+        var_func = build_meta_func(function_call.to_index)
+        variable = resolve_potential_reference_no_type(var_func((constants, new_misc_args['loop_references']))[0], declared_enumerations, nodes, variables, constants, new_misc_args['loop_references'])[1]
         formatted_variable = format_variable(variable, new_misc_args)
-        index_expression = format_code(function_call.values[0], new_misc_args)
+        if function_call.constant_index == 'constant_index':
+            index_func = build_meta_func(function_call.values[0])
+            index = resolve_potential_reference_no_type(index_func((constants, new_misc_args['loop_references']))[0], declared_enumerations, nodes, variables, constants, new_misc_args['loop_references'])[1]
+            return [formatted_variable + '_index_' + str(index)]
+        index_expression = format_code(function_call.values[0], new_misc_args)[0]
         return [case_index(formatted_variable, variable_array_size(variable, declared_enumerations, nodes, variables, constants, misc_args['loop_references']), index_expression)]
 
-    def format_function(function_call, misc_args):
+    def format_function(code, misc_args):
         '''this just calls the other format functions. moved here to make format_code less cluttered.'''
-        (function_name, function_to_call) = function_format[function_call.function_name]
-        return function_to_call(function_name, function_call, misc_args)
+        (function_name, function_to_call) = function_format[code.function_call.function_name]
+        return function_to_call(function_name, code.function_call, misc_args)
 
     def create_misc_args(loop_references, node_name, use_stages, use_next, not_next, overwrite_stage, specification_writing, specification_warning):
         '''
@@ -305,13 +309,13 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
         new_misc_args = copy.deepcopy(misc_args)
         if code.node_name is not None:
             node_name_func = build_meta_func(code.node_name)
-            new_misc_args['node_name'] = resolve_potential_reference_no_type(node_name_func((constants, new_misc_args['loop_references'])), declared_enumerations, nodes, variables, constants, new_misc_args['loop_references'])
+            new_misc_args['node_name'] = resolve_potential_reference_no_type(node_name_func((constants, new_misc_args['loop_references']))[0], declared_enumerations, nodes, variables, constants, new_misc_args['loop_references'])
         if code.read_at is not None:
             read_at_func = build_meta_func(code.read_at)
-            new_misc_args['overwrite_stage'] = resolve_potential_reference_no_type(read_at_func((constants, new_misc_args['loop_references'])), declared_enumerations, nodes, variables, constants, new_misc_args['loop_references'])
+            new_misc_args['overwrite_stage'] = resolve_potential_reference_no_type(read_at_func((constants, new_misc_args['loop_references']))[0], declared_enumerations, nodes, variables, constants, new_misc_args['loop_references'])
         if code.trace_num is not None:
             trace_num_func = build_meta_func(code.trace_num)
-            new_misc_args['trace_num'] = resolve_potential_reference_no_type(trace_num_func((constants, new_misc_args['loop_references'])), declared_enumerations, nodes, variables, constants, new_misc_args['loop_references'])
+            new_misc_args['trace_num'] = resolve_potential_reference_no_type(trace_num_func((constants, new_misc_args['loop_references']))[0], declared_enumerations, nodes, variables, constants, new_misc_args['loop_references'])
         return new_misc_args
 
     def handle_atom(code, misc_args):
@@ -319,9 +323,7 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
         return (str(atom).upper() if atom_type == 'BOOLEAN' else str(atom)) if atom_class == 'CONSTANT' else (format_variable(atom, adjust_args(code, misc_args)))
 
     def format_code(code, misc_args):
-        '''
-        format a code fragment
-        '''
+        '''format a code fragment'''
         return (
             [handle_atom(code, misc_args)] if code.atom is not None else (
                 ['(' + format_code(code.code_statement, misc_args) + ')'] if code.code_statement is not None else (
@@ -331,9 +333,7 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
         )
 
     def handle_result(result, misc_args):
-        '''
-        should only be called by handle_assign
-        '''
+        '''should only be called by handle_assign'''
         vals = []
         for value in result.values:
             vals.extend(format_code(value, misc_args))
@@ -341,38 +341,33 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
         return (non_determinism, ('{' + ', '.join(vals) + '}') if non_determinism else vals[0])
 
     def handle_assign(assign, stage, misc_args):
-        '''
-        should only be called by handle_variable_statement
-        '''
+        '''should only be called by handle_variable_statement'''
         case_results = assign.case_results
         default_result = assign.default_result
         non_determinism = False
         for case_result in case_results:
             (new_non_det, stage_part) = handle_result(case_result, misc_args)
             non_determinism = non_determinism or new_non_det
-            stage.append((format_code(case_result.condition, misc_args), stage_part))
+            stage.append((format_code(case_result.condition, misc_args)[0], stage_part))
         (new_non_det, stage_part) = handle_result(default_result, misc_args)
         non_determinism = non_determinism or new_non_det
         stage.append(('TRUE', stage_part))
         return (non_determinism, stage)
-
-    def handle_array_default(statement):
-        default_func = build_meta_func(statement.default_value)
-        return str(resolve_potential_reference_no_type(default_func((constants, {}))[0], declared_enumerations, nodes, variables, constants, {})[1])
 
     def handle_array_constant_index(statement, assign_var, condition, misc_args):
         non_determinism = {}
         stage = []
         formatted_variable = format_variable(assign_var, misc_args) + '_index_'
         for index_assign in statement.assigns:
-            index_func = build_meta_func(index_assign.index_expr)
             (cur_non_determinism, cur_stage) = handle_assign(index_assign.assign, [] if condition is None else ['replace'], misc_args)
-            for index in index_func((constants, misc_args['loop_references'])):
-                new_index = resolve_potential_reference_no_type(index, declared_enumerations, nodes, variables, constants, misc_args['loop_references'])[1]
-                non_determinism[new_index] = cur_non_determinism
-                if condition is not None:
-                    cur_stage[0] = [(condition, formatted_variable + str(new_index))]
-                stage.append((new_index, cur_stage))
+            for index_code in index_assign.index_expr:
+                index_func = build_meta_func(index_code)
+                for index in index_func((constants, misc_args['loop_references'])):
+                    new_index = resolve_potential_reference_no_type(index, declared_enumerations, nodes, variables, constants, misc_args['loop_references'])[1]
+                    non_determinism[new_index] = cur_non_determinism
+                    if condition is not None:
+                        cur_stage[0] = [(condition, formatted_variable + str(new_index))]
+                    stage.append((new_index, cur_stage))
         return (misc_args['node_name'], True, non_determinism, stage)
 
     def handle_array_unknown_index(statement, assign_var, condition, misc_args):
@@ -381,14 +376,13 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
         formatted_variable = format_variable(assign_var, misc_args)
         array_size = -1 if condition is None else variable_array_size(assign_var, declared_enumerations, nodes, variables, constants, misc_args['loop_references'])
         for index_assign in statement.assigns:
-            index_func = build_meta_func(index_assign.index_expr)
             (cur_non_determinism, cur_stage) = handle_assign(index_assign.assign, [] if condition is None else ['replace'], misc_args)
-            for index in index_func((constants, misc_args['loop_references'])):
-                new_index = resolve_potential_reference_no_type(index, declared_enumerations, nodes, variables, constants, misc_args['loop_references'])[1]
-                non_determinism = non_determinism or cur_non_determinism
-                if condition is not None:
-                    cur_stage[0] = [(condition, case_index(formatted_variable + str(new_index), array_size, str(new_index)))]
-                stage.append((str(new_index), cur_stage))
+            non_determinism = non_determinism or cur_non_determinism
+            for index_code in index_assign.index_expr:
+                for index in format_code(index_code, misc_args):
+                    if condition is not None:
+                        cur_stage[0] = [(condition, case_index(formatted_variable, array_size, index))]
+                    stage.append((index, cur_stage))
         return(misc_args['node_name'], False, non_determinism, stage)
 
     def handle_variable_statement(statement, assign_var, condition, misc_args):
@@ -424,11 +418,11 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
                     index_func = build_meta_func(statement.index_of)
                     index = resolve_potential_reference_no_type(index_func((constants, misc_args['loop_references']))[0], declared_enumerations, nodes, variables, constants, misc_args['loop_references'])[1]
                     next_value = (misc_args['node_name'], True, {index : non_determinism},
-                                  [(index, [(format_code(statement.condition, misc_args), '{TRUE, FALSE}' if non_determinism else 'TRUE'), ('TRUE', 'FALSE')])])
+                                  [(index, [(format_code(statement.condition, misc_args)[0], '{TRUE, FALSE}' if non_determinism else 'TRUE'), ('TRUE', 'FALSE')])])
                 else:
-                    index = format_code(statement.index_of, misc_args)
+                    index = format_code(statement.index_of, misc_args)[0]
                     next_value = (misc_args['node_name'], False, non_determinism,
-                                  [(index, [(format_code(statement.condition, misc_args), '{TRUE, FALSE}' if non_determinism else 'TRUE'), ('TRUE', 'FALSE')])])
+                                  [(index, [(format_code(statement.condition, misc_args)[0], '{TRUE, FALSE}' if non_determinism else 'TRUE'), ('TRUE', 'FALSE')])])
         else:
             next_value = handle_variable_statement(statement, assign_var, condition, misc_args)
             non_determinism = next_value[-2]
@@ -449,7 +443,7 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
             (
                 specification.spec_type
                 + ' '
-                + format_code(specification.code_statement, create_misc_args({}, None, True, False, None, None, True, True))
+                + format_code(specification.code_statement, create_misc_args({}, None, True, False, None, None, True, True))[0]
                 + ';'
             )
             for specification in specifications
@@ -479,7 +473,7 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
                     + ')'
                 )
             else:
-                condition = '!(' + format_code(statement.condition, misc_args) + ')'
+                condition = '!(' + format_code(statement.condition, misc_args)[0] + ')'
             for variable_statement in statement.variable_statements:
                 handle_variable_assignment(variable_statement, variable_statement.variable, condition, False, misc_args)
             return
@@ -525,7 +519,7 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
                     + indent(2) + 'internal_status := ' + os.linesep
                     + indent(3) + 'case' + os.linesep
                     + ('').join([(indent(4) + ''
-                                  + format_code(case_result.condition, misc_args)
+                                  + format_code(case_result.condition, misc_args)[0]
                                   + ' : '
                                   + case_result.status
                                   + ';' + os.linesep)
@@ -550,7 +544,7 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
                 + indent(1) + 'DEFINE' + os.linesep
                 + indent(2) + 'status := active ? internal_status : invalid;' + os.linesep
                 + indent(2) + 'internal_status := ('
-                + format_code(condition, misc_args)
+                + format_code(condition, misc_args)[0]
                 + ') ? success : failure;' + os.linesep
             )
             return
@@ -676,7 +670,7 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
                                                      if variable.domain.true_real is not None else
                                                      (
                                                          None
-                                                         if variable.domain.min_val is None else
+                                                         if variable.domain.min_val is not None else
                                                          (
                                                              '{'
                                                              + ', '.join([''.join(map(str, build_meta_func(domain_code)((constants, {})))) for domain_code in variable.domain.domain_codes])
@@ -728,15 +722,17 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
             var_key = variable_reference(variable.name, is_local(variable), '')
             if is_array(variable):
                 if is_local(variable):
-                    local_variable_templates[variable.name]['default_array_val'] = handle_array_default(variable)
+                    local_variable_templates[variable.name]['default_array_val'] = handle_assign(variable.default_value, [], create_misc_args({}, None, True, True, False, None, False, False))
                 else:
-                    behaverify_variables[var_key]['default_array_val'] = handle_array_default(variable)
+                    behaverify_variables[var_key]['default_array_val'] = handle_assign(variable.default_value, [], create_misc_args({}, None, True, True, False, None, False, False))
             if variable.model_as == 'DEFINE':
-                local_variable_templates[variable.name]['existing_definitions'] = {}
-                local_variable_templates[variable.name]['initial_value'] = variable
                 if is_local(variable):
+                    local_variable_templates[variable.name]['existing_definitions'] = {}
+                    local_variable_templates[variable.name]['initial_value'] = variable
                     local_variable_templates[variable.name]['depends_on'] = None
                 else:
+                    behaverify_variables[variable.name]['existing_definitions'] = {}
+                    behaverify_variables[variable.name]['initial_value'] = variable
                     behaverify_variables[var_key]['depends_on'] = tuple(sorted(list(set(find_used_variables_without_formatting_in_statement(variable, is_array(variable), None)))))
             else:
                 if is_local(variable):
@@ -760,17 +756,22 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
             for argument_name in argument_pairs:
                 constants[argument_name] = argument_pairs[argument_name]
             assign_var = initial_statement.variable
+            var_key = variable_reference(assign_var.name, is_local(assign_var), node_name)
+            if is_array(assign_var):
+                behaverify_variables[var_key]['default_array_val'] = handle_assign(initial_statement.default_value, [], create_misc_args({}, node_name, True, True, False, None, False, False))
             if assign_var.model_as == 'DEFINE':
-                # variables[variable_reference(assign_var.name, is_local(assign_var), node_name)]['initial_value'] = handle_variable_statement(initial_statement, assign_var, None, create_misc_args(node_name, False, False, None, None))
-                behaverify_variables[variable_reference(assign_var.name, is_local(assign_var), node_name)]['initial_value'] = initial_statement
+                behaverify_variables[var_key]['initial_value'] = initial_statement
             for argument_name in argument_pairs:
                 constants.pop(argument_name)
         for (node_name, argument_pairs, initial_statement) in initial_statements:
             for argument_name in argument_pairs:
                 constants[argument_name] = argument_pairs[argument_name]
             assign_var = initial_statement.variable
+            var_key = variable_reference(assign_var.name, is_local(assign_var), node_name)
+            if is_array(assign_var):
+                behaverify_variables[var_key]['default_array_val'] = handle_assign(initial_statement.default_value, [], create_misc_args({}, node_name, True, True, False, None, False, False))
             if assign_var.model_as != 'DEFINE':
-                behaverify_variables[variable_reference(assign_var.name, is_local(assign_var), node_name)]['initial_value'] = handle_variable_statement(initial_statement, assign_var, None, create_misc_args({}, node_name, False, False, None, None, False, False))
+                behaverify_variables[var_key]['initial_value'] = handle_variable_statement(initial_statement, assign_var, None, create_misc_args({}, node_name, False, False, None, None, False, False))
             for argument_name in argument_pairs:
                 constants.pop(argument_name)
 
@@ -978,8 +979,9 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
 
     behaverify_variables = {} # here to make sure the variable is in the namespace.
     behaverify_variables = get_behaverify_variables(model, local_variables, initial_statements, keep_stage_0, keep_last_stage)
+    #print(behaverify_variables)
     print('finished variables')
-    tick_condition = 'TRUE' if model.tick_condition is None else format_code(model.tick_condition, create_misc_args({}, None, True, False, None, None, False, False))
+    tick_condition = 'TRUE' if model.tick_condition is None else format_code(model.tick_condition, create_misc_args({}, None, True, False, None, None, False, False))[0]
     complete_environment_variables(model, True)
     print('completed environment variables, part 1')
     resolve_statements(statements, nodes)
@@ -990,6 +992,8 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
     # spec_warn = True
     specifications = handle_specifications(model.specifications)
     # spec_warn = False
+
+    print(behaverify_variables['tree_x'])
 
     if behave_only:
         if output_file is None:
