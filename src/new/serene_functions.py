@@ -31,9 +31,8 @@ def serene_loop(function_call):
         sub_func((references[0], update_dictionary(references[1], function_call.loop_variable, loop_value)))
         for loop_value in (
                 range(build_meta_func(function_call.min_val)(references)[0],
-                      build_meta_func(function_call.min_val)(references)[1] + 1)
-                if function_call.min_val is None
-                else
+                      build_meta_func(function_call.max_val)(references)[1] + 1)
+                if function_call.min_val is not None else
                 [loop_value_ref for loop_value_code in function_call.loop_variable_domain for loop_value_ref in build_meta_func(loop_value_code)(references)]
         )
     ]

@@ -40,12 +40,17 @@ class BTreeException(Exception):
         self.message = ' -> '.join(trace) + ' ::-> ' + last_message
         super().__init__(self.message)
 
-        
 def get_min_max(min_code, max_code, declared_enumerations, node_names, variables, constants, loop_references):
-    min_func = build_meta_func(min_code)
-    max_func = build_meta_func(max_code)
-    min_val = resolve_potential_reference_no_type(min_func((constants, loop_references))[0], declared_enumerations, node_names, variables, constants, loop_references)[1]
-    max_val = resolve_potential_reference_no_type(max_func((constants, loop_references))[0], declared_enumerations, node_names, variables, constants, loop_references)[1]
+    if min_code is not None:
+        min_func = build_meta_func(min_code)
+        min_val = resolve_potential_reference_no_type(min_func((constants, loop_references))[0], declared_enumerations, node_names, variables, constants, loop_references)[1]
+    else:
+        min_val = 0
+    if max_code is not None:
+        max_func = build_meta_func(max_code)
+        max_val = resolve_potential_reference_no_type(max_func((constants, loop_references))[0], declared_enumerations, node_names, variables, constants, loop_references)[1]
+    else:
+        max_val = 1
     return (min_val, max_val)
 
 def variable_array_size(variable, declared_enumerations, node_names, variables, constants, loop_references):
@@ -135,9 +140,7 @@ def resolve_potential_reference(reference, declared_enumerations, node_names, va
     )
 
 def resolve_potential_reference_no_type(reference, declared_enumerations, node_names, variables, constants, loop_references):
-    '''
-    used to resolve references and also results from meta functions.
-    '''
+    '''used to resolve references and also results from meta functions.'''
     return (
         ('NODE', reference)
         if reference in node_names else

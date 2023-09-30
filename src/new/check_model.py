@@ -32,6 +32,7 @@ from behaverify_common import (create_node_name,
 # TODO : read at/node_name in functions
 # TODO : confirm enumerations are being enforced
 # todo : make sure loop variables don't conflict
+# todo : make sure define variables are deterministicly updated.
 
 def validate_model(model):
     '''used to validate the model'''
@@ -143,8 +144,7 @@ def validate_model(model):
         if var_scope == 'local':
             if code.node_name is not None:
                 node_func = build_meta_func(code.node_name)
-                new_references = copy.deepcopy(loop_references)
-                node_name_vals = node_func((constants, new_references))
+                node_name_vals = node_func((constants, loop_references))
                 if len(node_name_vals) != 1:
                     raise BTreeException(trace, 'Expected exactly one node reference')
                 if node_name_vals[0] not in all_node_names:
@@ -221,8 +221,7 @@ def validate_model(model):
         # handle index specially, and return.
         if code.function_call.function_name == 'index':
             to_index_func = build_meta_func(code.function_call.to_index)
-            new_references = copy.deepcopy(loop_references)
-            indexed_vars = to_index_func((constants, new_references))
+            indexed_vars = to_index_func((constants, loop_references))
             if len(indexed_vars) != 1:
                 raise BTreeException(trace, 'Expected exactly 1 variable to index')
             (atom_class, atom_type, atom) = resolve_potential_reference(indexed_vars[0], declared_enumerations, all_node_names, variables, constants, loop_references)
@@ -231,10 +230,15 @@ def validate_model(model):
             var_checks(code.function_call, atom, scopes, variable_names)
             if len(code.function_call.values) != 1:
                 raise BTreeException(trace, 'Index into variable ' + code.function_call.variable.name + ' should have exactly 1 argument')
-            returned_values = validate_code(code.function_call.values[0], scopes, variable_names, new_allowed_functions)
-            if len(returned_values) != 1:
-                raise BTreeException(trace, 'Index expects exactly one value but got ' + str(len(returned_values)))
-            (cur_arg_type, cur_code_type, cur_code) = returned_values[0]
+            if code.function_call.constant_index == 'constant_index':
+                index_func = build_meta_func(code.function_call.values[0])
+                returned_vals = index_func((constants, loop_references))
+                cur_arg_type = resolve_potential_reference(returned_vals[0], declared_enumerations, all_node_names, variables, constants, loop_references)[1]
+            else:
+                returned_vals = validate_code(code.function_call.values[0], scopes, variable_names, new_allowed_functions)
+                (cur_arg_type, _, _) = returned_vals[0]
+            if len(returned_vals) != 1:
+                raise BTreeException(trace, 'Index expects exactly one value but got ' + str(len(returned_vals)))
             if cur_arg_type != 'INT':
                 raise BTreeException(trace, 'Index into variable ' + code.function_call.variable.name + ' should be an integer')
             return [(atom_type, 'indexed variable', atom.name)]
@@ -246,8 +250,7 @@ def validate_model(model):
         arg_type = func_info['arg_type']
         if arg_type == 'node_name':
             node_func = build_meta_func(code.node_name)
-            new_references = copy.deepcopy(loop_references)
-            node_name_vals = node_func((constants, new_references))
+            node_name_vals = node_func((constants, loop_references))
             if len(node_name_vals) != 1:
                 raise BTreeException(trace, 'Expected exactly one node reference')
             if node_name_vals[0] not in all_node_names:
@@ -312,14 +315,7 @@ def validate_model(model):
         if not is_array(assign_var):
             raise BTreeException(trace, 'updated as array but is not an array')
         if hasattr(statement, 'default_value'):
-            default_func = build_meta_func(statement.default_value)
-            default_vals = default_func((constants, {}))
-            if len(default_vals) != 1:
-                raise BTreeException(trace, 'Initial Assignment must have exactly 1 default value')
-            default_val = default_vals[0]
-            default_type = constant_type(default_val, declared_enumerations)
-            if default_type != variable_type(variable, declared_enumerations, constants):
-                raise BTreeException(trace, 'Initial Assignment Default type must match variable domain type')
+            validate_variable_assignment(assign_var, statement.default_value, scopes, variable_names, deterministic, init_mode)
         seen_constants = set()
         for index_assign in statement.assigns:
             for index in index_assign.index_expr:

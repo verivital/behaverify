@@ -148,7 +148,7 @@ node:
     ((model_as = 'VAR' domain = variable_domain) |
     (model_as = 'FROZENVAR' domain = variable_domain) |
     (model_as = 'DEFINE' ((domain = 'INT') | (domain = 'ENUM') | (domain = 'BOOLEAN') | (domain = 'REAL'))))
-    'default' default_value = meta_code
+    'default' '{' default_value = assign_value '}' ('end_default')?
     ((constant_index = 'constant_index' assigns *= array_index_constant) | (constant_index = '' assigns *= array_index)))
     |
     (((model_as = 'VAR' domain = variable_domain) |
@@ -228,7 +228,7 @@ statement:
     variable_statement_initial:
     'variable_statement' '{'
     variable = [variable]
-    (('default' default_value = meta_code ((constant_index = 'constant_index' assigns *= array_index_constant) | (constant_index = '' assigns *= array_index))) | (assign = assign_value))
+    (('default' '{' default_value = assign_value '}' ('end_default')? ((constant_index = 'constant_index' assigns *= array_index_constant) | (constant_index = '' assigns *= array_index))) | (assign = assign_value))
     '}' ('end_variable_statement')?
 ;
     
@@ -305,7 +305,7 @@ statement:
    
     function:
     (function_name = 'loop' ',' loop_variable = ID ',' (('{' loop_variable_domain += meta_code[','] '}') | ('[' min_val = meta_code ',' max_val = meta_code ']')) 'such_that' loop_condition = meta_code ',' values = code_statement) |
-    (function_name = 'index' ',' to_index = meta_code (node_name = meta_code)? (read_at = meta_code)? (trace_num = meta_code)? ',' values = code_statement) |
+    (function_name = 'index' ',' to_index = meta_code (node_name = meta_code)? (read_at = meta_code)? (trace_num = meta_code)? ',' ((constant_index = 'constant_index' values = meta_code) | (constant_index = '' values = code_statement))) |
     (function_name = bounded_function_names ',' bound = bound_statement ',' values = code_statement) |
     (function_name = function_names ',' values += code_statement[',']) |
     (function_name = status_function_names ',' node_name = meta_code)
