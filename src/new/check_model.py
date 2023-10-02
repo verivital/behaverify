@@ -342,13 +342,13 @@ def validate_model(model):
     def validate_check(node):
         trace.append('In Check: ' + node.name)
         for arg_pair in node.arguments:
-            constants[arg_pair.argument_name] = dummy_value(arg_pair.argument_type)
+            loop_references[arg_pair.argument_name] = dummy_value(arg_pair.argument_type)
         read_variables = set(map(lambda x : x.name, node.read_variables))
         if len(read_variables) != len(node.read_variables):
             raise BTreeException(trace, 'duplicate read variables')
         validate_condition(node.condition, {'blackboard'}, read_variables, {'reg'})
         for arg_pair in node.arguments:
-            constants.pop(arg_pair.argument_name)
+            loop_references.pop(arg_pair.argument_name)
         trace.pop()
         return
 
@@ -356,13 +356,13 @@ def validate_model(model):
     def validate_check_env(node):
         trace.append('In Environment Check: ' + node.name)
         for arg_pair in node.arguments:
-            constants[arg_pair.argument_name] = dummy_value(arg_pair.argument_type)
+            loop_references[arg_pair.argument_name] = dummy_value(arg_pair.argument_type)
         read_variables = set(map(lambda x : x.name, node.read_variables))
         if len(read_variables) != len(node.read_variables):
             raise BTreeException(trace, 'duplicate read variables')
         validate_condition(node.condition, {'blackboard', 'environment'}, read_variables, {'reg'})
         for arg_pair in node.arguments:
-            constants.pop(arg_pair.argument_name)
+            loop_references.pop(arg_pair.argument_name)
         trace.pop()
         return
 
@@ -370,7 +370,7 @@ def validate_model(model):
     def validate_action(node):
         trace.append('In Action: ' + node.name)
         for arg_pair in node.arguments:
-            constants[arg_pair.argument_name] = dummy_value(arg_pair.argument_type)
+            loop_references[arg_pair.argument_name] = dummy_value(arg_pair.argument_type)
 
         all_vars = set(map(lambda x : x.name, itertools.chain(node.local_variables, node.read_variables, node.write_variables)))
         read_variables = set(map(lambda x : x.name, node.read_variables))
@@ -502,7 +502,7 @@ def validate_model(model):
         for case_result in node.return_statement.case_results:
             validate_condition(case_result.condition, {'blackboard', 'local'}, all_vars, {'reg'})
         for arg_pair in node.arguments:
-            constants.pop(arg_pair.argument_name)
+            loop_references.pop(arg_pair.argument_name)
         trace.pop()
         return
 

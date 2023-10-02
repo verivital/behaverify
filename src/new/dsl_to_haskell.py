@@ -5,74 +5,30 @@ It contains a variety of utility functions.
 
 
 Author: Serena Serafina Serbinowska
-Last Edit: 2023-09-12
+Last Edit: 2023-10-02
 '''
 import argparse
 import os
 import shutil
 import itertools
 import textx
-from behaverify_common import haskell_indent as indent, create_node_name
-
-from check_model import (validate_model,
-                         is_local,
-                         is_env,
-                         is_blackboard,
-                         is_array,
-                         build_range_func)
+from behaverify_common import haskell_indent as indent, create_node_name, is_local, is_env, is_blackboard, is_array
+from serene_functions import build_meta_func
+from check_model import validate_model
 
 
 def dsl_to_haskell():
     '''
     this function is used to convert the dsl to haskell code
     '''
-    def to_haskell_type(constant_type):
-        '''Used to get the type of the constant'''
-        if constant_type == 'ENUM':
+    def to_haskell_type(behaverify_type):
+        if behaverify_type == 'ENUM':
             return 'String'
-        if constant_type == 'BOOLEAN':
+        if behaverify_type == 'BOOLEAN':
             return 'Bool'
-        if constant_type == 'INT':
+        if behaverify_type == 'INT':
             return 'Integer'
-        raise ValueError('Constant ' + constant_type + ' is of an unsupported type. Only ENUM, BOOLEAN, and INT are supported')
-    def variable_type(variable):
-        '''returns the vaiable type, correctly formatted for haskell'''
-        return (
-            (
-                'Integer'
-                if variable.domain == 'INT'
-                else
-                (
-                    'String'
-                    if variable.domain == 'ENUM'
-                    else
-                    'Bool'
-                )
-            )
-            if variable.model_as == 'DEFINE'
-            else
-            (
-                'Bool'
-                if variable.domain.boolean is not None
-                else
-                (
-                    (
-                        'Integer'
-                        if variable.domain.true_int is not None
-                        else
-                        (
-                            'String'
-                            if isinstance(handle_constant(variable.domain.enums[0], False), str)
-                            else
-                            'Integer'
-                        )
-                    )
-                    if variable.domain.min_val is None
-                    else
-                    'Integer'
-                )
-            )
-        )
+        raise ValueError(behaverify_type + ' is of an unsupported type. Only ENUM, BOOLEAN, and INT are supported')
 
     def pascal_case(variable_name):
         '''removes underscores, capitalizes'''
@@ -242,6 +198,20 @@ def dsl_to_haskell():
             )
         )
 
+    def handle_atom(code, misc_args):
+        (atom_class, atom_type, atom) = handle_constant_or_reference(code.atom, declared_enumerations, nodes, variables, constants, misc_args['loop_references'])
+        return str_conversion(atom_type, atom) if atom_class == 'CONSTANT' else format_variable(atom, misc_args)
+
+    def format_code(code, misc_args):
+        '''format a code fragment'''
+        return (
+            [handle_atom(code, misc_args)] if code.atom is not None else (
+                ['(' + format_code(code.code_statement, misc_args) + ')'] if code.code_statement is not None else (
+                    format_function(code, misc_args)
+                )
+            )
+        )
+
     def format_code(code, init_mode, blackboard_name, environment_name):
         '''used to format code'''
         return (
@@ -256,31 +226,19 @@ def dsl_to_haskell():
             )
         )
 
-    def handle_constant(constant, str_conversion):
-        '''used to handle constnts and replace them with integer values'''
-        if constant in arguments:
-            return constant
-        new_constant = ((constants['serene_index'][-1] if constant == 'serene_index' else constants[constant]) if constant in constants else constant)
+    def str_conversion(atom_type, atom):
         return (
+            ('"' + atom + '"')
+            if atom_type == 'ENUM' else
             (
-                ('"' + new_constant + '"')
-                if isinstance(new_constant, str)
-                else
+                str(atom)
+                if atom_type == 'BOOLEAN' else
                 (
-                    str(new_constant)
-                    if isinstance(new_constant, bool)
-                    else
-                    (
-                        ('(' + str(new_constant) + ')')
-                        if new_constant < 0
-                        else
-                        str(new_constant)
-                    )
+                    ('(' + str(atom) + ')')
+                    if atom < 0 else
+                    str(atom)
                 )
             )
-            if str_conversion
-            else
-            new_constant
         )
 
     def handle_variable_statement(statement, indent_level, init_mode, board_env_name, blackboard_name, environment_name):
@@ -2068,13 +2026,7 @@ def dsl_to_haskell():
     metamodel = textx.metamodel_from_file(args.metamodel_file, auto_init_attributes = False)
     model = metamodel.model_from_file(args.model_file)
 
-    constants = {
-        constant.name : constant.val
-        for constant in model.constants
-    }
-
-    validate_model(model, constants)
-    constants['serene_index'] = []
+    (variables, constants, declared_enumerations) = validate_model(model)
     arguments = set()
 
     my_location = args.location + 'app/'
