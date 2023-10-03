@@ -1,6 +1,6 @@
     //This is intended to be used with BehaVerify
     //Author: Serena Serafina Serbinowska
-    //last edit: 2023-09-19
+    //last edit: 2023-10-03
 BehaviorModel:
     'configuration' '{'
     (hypersafety ?= 'hypersafety')
@@ -38,19 +38,15 @@ BehaviorModel:
     specifications *= specification
     '}' ('end_specifications')?
 ;
-
 //comments so that we can explain what is happening in a .tree file
 Comment:
     /#\{([^a]|a)*?\}#/
 ;//I can't get it to match newlines without doing something janky like this.
-    
     //--------------------SEC:NODES-------------------------------
     //nodes are either composite, decorator, or leaf. 
-
 node:
     sub_tree_reference | composite_node | decorator_node | leaf_node
 ;
-
     sub_tree :
     'sub_tree' '{'
     name = ID
@@ -62,7 +58,6 @@ node:
     sub_root = [sub_tree]
     '}' ('end_insert')?
 ;
-    
     composite_node:
     'composite' '{'
     name = ID
@@ -76,7 +71,6 @@ node:
     '}' ('end_children')?
     '}' ('end_composite')?
 ;
-    
     decorator_node:
     'decorator' '{'
     name = ID
@@ -87,7 +81,6 @@ node:
     'child' '{' child = node '}' ('end_child')?
     '}' ('end_decorator')?
 ;
-
     leaf_node:
     ((leaf = [check_node]) |
     (leaf = [action_node]) |
@@ -99,11 +92,9 @@ node:
     possible_argument_types:
     'INT' | 'ENUM' | 'BOOLEAN' | 'REAL'
 ;
-
     argument_declaration:
     argument_name = ID ':=' argument_type = possible_argument_types
 ;
-    
     check_node:
     (node_type = 'check') '{'
     name = ID
@@ -120,7 +111,6 @@ node:
     'condition' '{' condition = code_statement '}' ('end_condition')?
     '}' ('end_environment_check')?
 ;
-    
     action_node:
     (node_type = 'action') '{'
     name = ID
@@ -166,28 +156,21 @@ node:
     constant_value:
     STRICTFLOAT | INT | STRING | BOOL
 ;
-    
     constant_or_reference:
     (constant = constant_value) | (reference = ID)
 ;
-
     constant_declaration:
     name = ID ':=' val = constant_value
 ;
-    
-
 status:
     'success' | 'running' | 'failure'
 ;
-
-    //--------------------SEC:STATEMENTS--------------------------
-    
+    //--------------------SEC:STATEMENTS--------------------------   
 statement:
     (variable_statement = variable_statement) |
     (read_statement = read_statement) |
     (write_statement = write_statement)
-;
-    
+;   
     read_statement:
     'read_environment' '{'
     name = ID
@@ -202,16 +185,13 @@ statement:
     variable_statements += variable_statement
     '}' ('end_read_environment')?
 ;
-    
     write_statement:
     'write_environment' '{'
     name = ID
     update *= variable_statement
     '}' ('end_write_environment')?
 ;
-
     //--------------------SEC:VAR_STATEMENTS--------------------------
-
     variable_statement:
     'variable_statement' '{'
     instant ?= 'instant'
@@ -220,15 +200,13 @@ statement:
     |
     (assign = assign_value))
     '}' ('end_variable_statement')?
-    ;
-
+;
     variable_statement_initial:
     'variable_statement' '{'
     variable = [variable]
     (('default' '{' default_value = assign_value '}' ('end_default')? ((constant_index = 'constant_index' assigns *= array_index_constant) | (constant_index = '' assigns *= array_index))) | (assign = assign_value))
     '}' ('end_variable_statement')?
 ;
-    
     return_statement:
     'return_statement' '{'
     case_results *=  status_case_result

@@ -66,6 +66,18 @@ variables {
     variable {bl y_net_3_3 DEFINE INT assign {result{ (max, (add, y_net_2_2, y_net_2_4, -1), 0)}}}
     
     variable {bl y_net_output DEFINE INT assign {result{ (max, (add, y_net_3_1, (mult, y_change, y_net_3_2), (mult, -1, y_change, y_net_3_3)), 0)}}}
+
+    variable {bl test array 16 VAR [0, 63] default {assign {result {0}}} index_of{
+	    (loop, loop_index, [0, 3] such_that True,
+		(loop, loop_index2, [0, 3] such_that True,
+		    (loop, loop_index3, [0, 3] such_that True,
+			(add, loop_index3, (mult, (add, loop_index2, (mult, loop_index, 4)), 4))
+		    )
+		)
+	    )
+	}
+	assign {result{1}}
+    }
 } end_variables
 
 environment_update {
