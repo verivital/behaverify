@@ -326,7 +326,7 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
         '''format a code fragment'''
         return (
             [handle_atom(code, misc_args)] if code.atom is not None else (
-                ['(' + format_code(code.code_statement, misc_args) + ')'] if code.code_statement is not None else (
+                ['(' + formatted_code + ')' for formatted_code in format_code(code.code_statement, misc_args)] if code.code_statement is not None else (
                     format_function(code, misc_args)
                 )
             )
@@ -374,7 +374,7 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
         non_determinism = False
         stage = []
         formatted_variable = format_variable(assign_var, misc_args)
-        array_size = -1 if condition is None else variable_array_size(assign_var, declared_enumerations, nodes, variables, constants, misc_args['loop_references'])
+        array_size = -1 if condition is None else variable_array_size(assign_var, declared_enumerations, nodes, variables, constants, misc_args['loop_references']) # the point is we only want to do this calcultion if codition is not None
         for index_assign in statement.assigns:
             (cur_non_determinism, cur_stage) = handle_assign(index_assign.assign, [] if condition is None else ['replace'], misc_args)
             non_determinism = non_determinism or cur_non_determinism
