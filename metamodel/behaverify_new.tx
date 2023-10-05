@@ -1,6 +1,6 @@
     //This is intended to be used with BehaVerify
     //Author: Serena Serafina Serbinowska
-    //last edit: 2023-09-19
+    //last edit: 2023-10-03
 BehaviorModel:
     'configuration' '{'
     (hypersafety ?= 'hypersafety')
@@ -38,19 +38,15 @@ BehaviorModel:
     specifications *= specification
     '}' ('end_specifications')?
 ;
-
 //comments so that we can explain what is happening in a .tree file
 Comment:
     /#\{([^a]|a)*?\}#/
 ;//I can't get it to match newlines without doing something janky like this.
-    
     //--------------------SEC:NODES-------------------------------
     //nodes are either composite, decorator, or leaf. 
-
 node:
     sub_tree_reference | composite_node | decorator_node | leaf_node
 ;
-
     sub_tree :
     'sub_tree' '{'
     name = ID
@@ -62,7 +58,6 @@ node:
     sub_root = [sub_tree]
     '}' ('end_insert')?
 ;
-    
     composite_node:
     'composite' '{'
     name = ID
@@ -76,7 +71,6 @@ node:
     '}' ('end_children')?
     '}' ('end_composite')?
 ;
-    
     decorator_node:
     'decorator' '{'
     name = ID
@@ -87,23 +81,20 @@ node:
     'child' '{' child = node '}' ('end_child')?
     '}' ('end_decorator')?
 ;
-
     leaf_node:
     ((leaf = [check_node]) |
     (leaf = [action_node]) |
     (leaf = [check_environment_node]))
     '{'
-    arguments *= meta_code[',']
+    arguments *= code_statement[',']
     '}'
 ;
     possible_argument_types:
     'INT' | 'ENUM' | 'BOOLEAN' | 'REAL'
 ;
-
     argument_declaration:
     argument_name = ID ':=' argument_type = possible_argument_types
 ;
-    
     check_node:
     (node_type = 'check') '{'
     name = ID
@@ -120,7 +111,6 @@ node:
     'condition' '{' condition = code_statement '}' ('end_condition')?
     '}' ('end_environment_check')?
 ;
-    
     action_node:
     (node_type = 'action') '{'
     name = ID
@@ -138,13 +128,12 @@ node:
     '}' ('end_update')?
     '}' ('end_action')?
 ;
-
     //--------------------SEC:VARIABLES---------------------------
     variable:
     'variable' '{'
     ((var_type = 'bl') | (var_type = 'local') | (var_type = 'env'))
     name = ID
-    (('array' array_size = meta_code
+    (('array' array_size = code_statement
     ((model_as = 'VAR' domain = variable_domain) |
     (model_as = 'FROZENVAR' domain = variable_domain) |
     (model_as = 'DEFINE' ((domain = 'INT') | (domain = 'ENUM') | (domain = 'BOOLEAN') | (domain = 'REAL'))))
@@ -157,45 +146,36 @@ node:
     assign = assign_value))
     '}' ('end_variable')?
 ;
-    
     variable_domain:
     (boolean = 'BOOLEAN') |
     (true_int = 'INT') |
     (true_real = 'REAL') |
-    ('[' min_val = meta_code ',' max_val = meta_code ']') |
-    ('{' domain_codes += meta_code[','] '}')
+    ('[' min_val = code_statement ',' max_val = code_statement ']') |
+    ('{' domain_codes += code_statement[','] '}')
 ;
-    
     constant_value:
     STRICTFLOAT | INT | STRING | BOOL
 ;
-    
     constant_or_reference:
     (constant = constant_value) | (reference = ID)
 ;
-
     constant_declaration:
     name = ID ':=' val = constant_value
 ;
-    
-
 status:
     'success' | 'running' | 'failure'
 ;
-
-    //--------------------SEC:STATEMENTS--------------------------
-    
+    //--------------------SEC:STATEMENTS--------------------------   
 statement:
     (variable_statement = variable_statement) |
     (read_statement = read_statement) |
     (write_statement = write_statement)
-;
-    
+;   
     read_statement:
     'read_environment' '{'
     name = ID
     ('condition_variable' '{'
-    (('(' constant_index = 'constant_index' condition_variable = [variable] ',' index_of = meta_code ')') |
+    (('(' constant_index = 'constant_index' condition_variable = [variable] ',' index_of = code_statement ')') |
     ('(' constant_intdex = '' condition_variable = [variable] ',' index_of = code_statement ')') |
     (condition_variable = [variable]))
     '}' ('end_condition_variable')?)?
@@ -205,16 +185,13 @@ statement:
     variable_statements += variable_statement
     '}' ('end_read_environment')?
 ;
-    
     write_statement:
     'write_environment' '{'
     name = ID
     update *= variable_statement
     '}' ('end_write_environment')?
 ;
-
     //--------------------SEC:VAR_STATEMENTS--------------------------
-
     variable_statement:
     'variable_statement' '{'
     instant ?= 'instant'
@@ -223,15 +200,13 @@ statement:
     |
     (assign = assign_value))
     '}' ('end_variable_statement')?
-    ;
-
+;
     variable_statement_initial:
     'variable_statement' '{'
     variable = [variable]
     (('default' '{' default_value = assign_value '}' ('end_default')? ((constant_index = 'constant_index' assigns *= array_index_constant) | (constant_index = '' assigns *= array_index))) | (assign = assign_value))
     '}' ('end_variable_statement')?
 ;
-    
     return_statement:
     'return_statement' '{'
     case_results *=  status_case_result
@@ -244,7 +219,7 @@ statement:
     assign = assign_value
 ;
     array_index_constant:
-    'index_of' '{' index_expr += meta_code[','] '}' ('end_index_of')?
+    'index_of' '{' index_expr += code_statement[','] '}' ('end_index_of')?
     assign = assign_value
 ;
     assign_value:
@@ -253,70 +228,45 @@ statement:
     default_result = default_result
     '}' ('end_assign')?
 ;
-
     //--------------------SEC:CASE_RESULT--------------------------
-
     case_result:
     'case' '{' condition = code_statement '}' ('end_case')?
     'result' '{'
     values += code_statement[',']
     '}' ('end_result')?
 ;
-        
     default_result:
     'result' '{'
     values += code_statement[',']
     '}' ('end_result')?
 ;
-
     status_case_result:
     'case' '{' condition = code_statement '}' ('end_case')?
     'result' '{'
     status = status
     '}' ('end_result')?
-;
-    
+;   
     status_default_result:
     'result' '{'
     status = status
     '}' ('end_result')?
 ;
-
     //--------------------SEC:CODE--------------------------------
-
-    meta_code:
-    ('(' function_call = meta_function ')') |
-    ('(' code_statement = meta_code ')') |
-    (atom = constant_or_reference)
-;
-
     code_statement:
     ('(' function_call = function ')') |
     ('(' code_statement = code_statement ')') |
-    (atom = constant_or_reference (node_name = meta_code)? (read_at = meta_code)? (trace_num = meta_code)?)
+    (atom = constant_or_reference ('node' node_name = code_statement)? ('at' read_at = code_statement)? ('trace' trace_num = code_statement)?)
 ;
-
-    //--------------------SEC:FUNCTION_BL_LOCALS--------------------------------
-
-    meta_function:
-    (function_name = 'loop' ',' loop_variable = ID ',' (('{' loop_variable_domain += meta_code[','] '}') | ('[' min_val = meta_code ',' max_val = meta_code ']')) 'such_that' loop_condition = meta_code ',' values = meta_code) |
-    (function_name = meta_function_names ',' values += meta_code[','])
-;
-   
+    //--------------------SEC:FUNCTION_BL_LOCALS--------------------------------  
     function:
-    (function_name = 'loop' ',' loop_variable = ID ',' (('{' loop_variable_domain += meta_code[','] '}') | ('[' min_val = meta_code ',' max_val = meta_code ']')) 'such_that' loop_condition = meta_code ',' values = code_statement) |
-    (function_name = 'index' ',' to_index = meta_code (node_name = meta_code)? (read_at = meta_code)? (trace_num = meta_code)? ',' ((constant_index = 'constant_index' values = meta_code) | (constant_index = '' values = code_statement))) |
+    (function_name = 'loop' ',' loop_variable = ID ',' (('{' loop_variable_domain += code_statement[','] '}') | ('[' min_val = code_statement ',' max_val = code_statement ']')) 'such_that' loop_condition = code_statement ',' values = code_statement) |
+    (function_name = 'index' ',' to_index = code_statement (node_name = code_statement)? (read_at = code_statement)? (trace_num = code_statement)? ',' ((constant_index = 'constant_index' values = code_statement) | (constant_index = '' values = code_statement))) |
     (function_name = bounded_function_names ',' bound = bound_statement ',' values = code_statement) |
     (function_name = function_names ',' values += code_statement[',']) |
-    (function_name = status_function_names ',' node_name = meta_code)
+    (function_name = status_function_names ',' node_name = code_statement)
 ;
-
     bound_statement:
-    '[' lower_bound = meta_code ',' upper_bound = meta_code ']'
-;
-
-    meta_function_names:
-    'if' | 'abs' | 'max' | 'min' | 'sin' | 'cos' | 'exp' | 'tan' | 'ln' | 'not' | 'and' | 'or' | 'xor' | 'xnor' | 'imply' | 'equiv' | 'eq' | 'neq' | 'lte' | 'gte' | 'lt' | 'gt' | 'neg' | 'add' | 'sub' | 'mult' | 'idiv' | 'mod' | 'rdiv' | 'floor' | 'count'
+    '[' lower_bound = code_statement ',' upper_bound = code_statement ']'
 ;
     function_names:
     'if' | 'abs' | 'max' | 'min' | 'sin' | 'cos' | 'exp' | 'tan' | 'ln' | 'eq' | 'neq' | 'lte' | 'gte' | 'lt' | 'gt' | 'neg' | 'add' | 'sub' | 'mult' | 'idiv' | 'mod' | 'rdiv' | 'floor' | 'count' |
@@ -334,7 +284,6 @@ statement:
     //these functions permitted only in specifications
     'active' | 'success' | 'running' | 'failure'
 ;
-
 specification:
     (spec_type = 'LTLSPEC' '{' code_statement = code_statement '}' ('end_LTLSPEC')?) |
     (spec_type = 'CTLSPEC' '{' code_statement = code_statement '}' ('end_CTLSPEC')?) |
