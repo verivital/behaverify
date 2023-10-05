@@ -8,7 +8,7 @@ if ! test -d "${fileLoc}"; then
 fi
 
 if [[ "${fileLoc: -1}" != "/" ]]; then
-    fileLoc="{fileLoc}/"
+    fileLoc="${fileLoc}/"
 fi
 use_haskell=1
 to_gen=20
