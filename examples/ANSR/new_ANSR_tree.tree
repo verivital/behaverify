@@ -66,6 +66,18 @@ variables {
     variable {bl y_net_3_3 DEFINE INT assign {result{ (max, (add, y_net_2_2, y_net_2_4, -1), 0)}}}
     
     variable {bl y_net_output DEFINE INT assign {result{ (max, (add, y_net_3_1, (mult, y_change, y_net_3_2), (mult, -1, y_change, y_net_3_3)), 0)}}}
+
+    variable {bl test array 16 VAR [0, 63] default {assign {result {0}}} index_of{
+	    (loop, loop_index, [0, 3] such_that True,
+		(loop, loop_index2, [0, 3] such_that True,
+		    (loop, loop_index3, [0, 3] such_that True,
+			(add, loop_index3, (mult, (add, loop_index2, (mult, loop_index, 4)), 4))
+		    )
+		)
+	    )
+	}
+	assign {result{1}}
+    }
 } end_variables
 
 environment_update {
@@ -347,7 +359,7 @@ tick_prerequisite { (not, victory) } end_tick_prerequisite
     If it is false, everything is done }#
 
 specifications { #{ INVAR, LTL, and CTL specs go here }#
-    CTLSPEC {(always_finally, victory -1)}
-    LTLSPEC {(finally_bounded, [0, 200], victory -1)}
+    CTLSPEC {(always_finally, victory at -1)}
+    LTLSPEC {(finally_bounded, [0, 200], victory at -1)}
     #{CTLSPEC {(imply, (and, (eq, (index, tree_x 0, 0), 2), (eq, (index, tree_x 0, 1), 5), (eq, (index, tree_y 0, 0), 2), (eq, (index, tree_y 0, 1), 5)), (always_finally, victory -1))}}#
 } end_specifications
