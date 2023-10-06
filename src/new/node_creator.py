@@ -125,7 +125,7 @@ def create_blackboard(nodes, variables, root_node_name):
                     ]
                 )
                 (_, constant_index, _, indexed_cond_pairs) = variable['initial_value']
-                init_string += handle_initial_value(constant_index, indexed_cond_pairs, variable['array_size'], None, stage_name, 0, default_array_cases[constant_index], 2)
+                init_string += handle_initial_value(constant_index, indexed_cond_pairs, variable['array_size'], 'init', stage_name, 0, default_array_cases[constant_index], 2)
             # --------------------------------
             # ok, so we've handled define and frozenvar, so all that's left
             # is actual variable.
@@ -142,7 +142,7 @@ def create_blackboard(nodes, variables, root_node_name):
                                        + ';' + os.linesep)
                         next_string += indent(2) + 'next(' + stage_name + '0_index_' + str(index) + ') := ' + stage_name + str(len(variable['next_value'])) + '_index_' + str(index) + ';' + os.linesep
                     (_, constant_index, _, indexed_cond_pairs) = variable['initial_value']
-                    init_string += handle_initial_value(constant_index, indexed_cond_pairs, variable['array_size'], None, stage_name, 0, default_array_cases[constant_index], 2)
+                    init_string += handle_initial_value(constant_index, indexed_cond_pairs, variable['array_size'], 'init', stage_name, 0, default_array_cases[constant_index], 2)
                     previous_stage = stage_name + '0'
                     start_location = 0
                 else:
@@ -154,7 +154,7 @@ def create_blackboard(nodes, variables, root_node_name):
                                        + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean')))
                                        + ';' + os.linesep)
                     (_, constant_index, _, indexed_cond_pairs) = variable['initial_value']
-                    init_string += handle_initial_value(constant_index, indexed_cond_pairs, variable['array_size'], None, stage_name, 1, default_array_cases[constant_index], 2)
+                    init_string += handle_initial_value(constant_index, indexed_cond_pairs, variable['array_size'], 'init', stage_name, 1, default_array_cases[constant_index], 2)
                     (node_name, constant_index, non_determinism, indexed_cond_pairs) = variable['next_value'][0]
                     (active_node_name, _) = get_active_node_name(node_name)
                     if constant_index:

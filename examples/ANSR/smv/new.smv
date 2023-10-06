@@ -173,7 +173,7 @@ MODULE system_module
         init(tar_x_stage_0) := {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
         init(tar_y_stage_0) := {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
         init(timer_stage_0) := 10;
-        test_stage_0_index_0 := 
+        init(test_stage_0_index_0) := 
             case
                 0 = (0 + ((0 + (0 * 4)) * 4)) : 1;
                 0 = (1 + ((0 + (0 * 4)) * 4)) : 1;
@@ -241,7 +241,7 @@ MODULE system_module
                 0 = (3 + ((3 + (3 * 4)) * 4)) : 1;
                 TRUE : 0;
             esac;
-        test_stage_0_index_1 := 
+        init(test_stage_0_index_1) := 
             case
                 1 = (0 + ((0 + (0 * 4)) * 4)) : 1;
                 1 = (1 + ((0 + (0 * 4)) * 4)) : 1;
@@ -309,7 +309,7 @@ MODULE system_module
                 1 = (3 + ((3 + (3 * 4)) * 4)) : 1;
                 TRUE : 0;
             esac;
-        test_stage_0_index_2 := 
+        init(test_stage_0_index_2) := 
             case
                 2 = (0 + ((0 + (0 * 4)) * 4)) : 1;
                 2 = (1 + ((0 + (0 * 4)) * 4)) : 1;
@@ -377,7 +377,7 @@ MODULE system_module
                 2 = (3 + ((3 + (3 * 4)) * 4)) : 1;
                 TRUE : 0;
             esac;
-        test_stage_0_index_3 := 
+        init(test_stage_0_index_3) := 
             case
                 3 = (0 + ((0 + (0 * 4)) * 4)) : 1;
                 3 = (1 + ((0 + (0 * 4)) * 4)) : 1;
@@ -445,7 +445,7 @@ MODULE system_module
                 3 = (3 + ((3 + (3 * 4)) * 4)) : 1;
                 TRUE : 0;
             esac;
-        test_stage_0_index_4 := 
+        init(test_stage_0_index_4) := 
             case
                 4 = (0 + ((0 + (0 * 4)) * 4)) : 1;
                 4 = (1 + ((0 + (0 * 4)) * 4)) : 1;
@@ -513,7 +513,7 @@ MODULE system_module
                 4 = (3 + ((3 + (3 * 4)) * 4)) : 1;
                 TRUE : 0;
             esac;
-        test_stage_0_index_5 := 
+        init(test_stage_0_index_5) := 
             case
                 5 = (0 + ((0 + (0 * 4)) * 4)) : 1;
                 5 = (1 + ((0 + (0 * 4)) * 4)) : 1;
@@ -581,7 +581,7 @@ MODULE system_module
                 5 = (3 + ((3 + (3 * 4)) * 4)) : 1;
                 TRUE : 0;
             esac;
-        test_stage_0_index_6 := 
+        init(test_stage_0_index_6) := 
             case
                 6 = (0 + ((0 + (0 * 4)) * 4)) : 1;
                 6 = (1 + ((0 + (0 * 4)) * 4)) : 1;
@@ -649,7 +649,7 @@ MODULE system_module
                 6 = (3 + ((3 + (3 * 4)) * 4)) : 1;
                 TRUE : 0;
             esac;
-        test_stage_0_index_7 := 
+        init(test_stage_0_index_7) := 
             case
                 7 = (0 + ((0 + (0 * 4)) * 4)) : 1;
                 7 = (1 + ((0 + (0 * 4)) * 4)) : 1;
@@ -717,7 +717,7 @@ MODULE system_module
                 7 = (3 + ((3 + (3 * 4)) * 4)) : 1;
                 TRUE : 0;
             esac;
-        test_stage_0_index_8 := 
+        init(test_stage_0_index_8) := 
             case
                 8 = (0 + ((0 + (0 * 4)) * 4)) : 1;
                 8 = (1 + ((0 + (0 * 4)) * 4)) : 1;
@@ -785,7 +785,7 @@ MODULE system_module
                 8 = (3 + ((3 + (3 * 4)) * 4)) : 1;
                 TRUE : 0;
             esac;
-        test_stage_0_index_9 := 
+        init(test_stage_0_index_9) := 
             case
                 9 = (0 + ((0 + (0 * 4)) * 4)) : 1;
                 9 = (1 + ((0 + (0 * 4)) * 4)) : 1;
@@ -853,7 +853,7 @@ MODULE system_module
                 9 = (3 + ((3 + (3 * 4)) * 4)) : 1;
                 TRUE : 0;
             esac;
-        test_stage_0_index_10 := 
+        init(test_stage_0_index_10) := 
             case
                 10 = (0 + ((0 + (0 * 4)) * 4)) : 1;
                 10 = (1 + ((0 + (0 * 4)) * 4)) : 1;
@@ -921,7 +921,7 @@ MODULE system_module
                 10 = (3 + ((3 + (3 * 4)) * 4)) : 1;
                 TRUE : 0;
             esac;
-        test_stage_0_index_11 := 
+        init(test_stage_0_index_11) := 
             case
                 11 = (0 + ((0 + (0 * 4)) * 4)) : 1;
                 11 = (1 + ((0 + (0 * 4)) * 4)) : 1;
@@ -989,7 +989,7 @@ MODULE system_module
                 11 = (3 + ((3 + (3 * 4)) * 4)) : 1;
                 TRUE : 0;
             esac;
-        test_stage_0_index_12 := 
+        init(test_stage_0_index_12) := 
             case
                 12 = (0 + ((0 + (0 * 4)) * 4)) : 1;
                 12 = (1 + ((0 + (0 * 4)) * 4)) : 1;
@@ -1057,7 +1057,7 @@ MODULE system_module
                 12 = (3 + ((3 + (3 * 4)) * 4)) : 1;
                 TRUE : 0;
             esac;
-        test_stage_0_index_13 := 
+        init(test_stage_0_index_13) := 
             case
                 13 = (0 + ((0 + (0 * 4)) * 4)) : 1;
                 13 = (1 + ((0 + (0 * 4)) * 4)) : 1;
@@ -1125,7 +1125,7 @@ MODULE system_module
                 13 = (3 + ((3 + (3 * 4)) * 4)) : 1;
                 TRUE : 0;
             esac;
-        test_stage_0_index_14 := 
+        init(test_stage_0_index_14) := 
             case
                 14 = (0 + ((0 + (0 * 4)) * 4)) : 1;
                 14 = (1 + ((0 + (0 * 4)) * 4)) : 1;
@@ -1193,7 +1193,7 @@ MODULE system_module
                 14 = (3 + ((3 + (3 * 4)) * 4)) : 1;
                 TRUE : 0;
             esac;
-        test_stage_0_index_15 := 
+        init(test_stage_0_index_15) := 
             case
                 15 = (0 + ((0 + (0 * 4)) * 4)) : 1;
                 15 = (1 + ((0 + (0 * 4)) * 4)) : 1;
@@ -1346,6 +1346,21 @@ MODULE composite_sequence_without_memory_2(child_0, child_1)
             esac;
         child_0.active := active;
         child_1.active := child_0.status = success;
+MODULE composite_sequence_without_memory_3(child_0, child_1, child_2)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                !(child_0.internal_status = success) : child_0.internal_status;
+                !(child_1.internal_status = success) : child_1.internal_status;
+                !(child_2.internal_status = success) : child_2.internal_status;
+                TRUE : success;
+            esac;
+        child_0.active := active;
+        child_1.active := child_0.status = success;
+        child_2.active := child_1.status = success;
 MODULE composite_selector_without_memory_4(child_0, child_1, child_2, child_3)
     CONSTANTS
         success, failure, running, invalid;
@@ -1363,21 +1378,6 @@ MODULE composite_selector_without_memory_4(child_0, child_1, child_2, child_3)
         child_1.active := child_0.status = failure;
         child_2.active := child_1.status = failure;
         child_3.active := child_2.status = failure;
-MODULE composite_sequence_without_memory_3(child_0, child_1, child_2)
-    CONSTANTS
-        success, failure, running, invalid;
-    DEFINE
-        status := active ? internal_status : invalid;
-        internal_status :=
-            case
-                !(child_0.internal_status = success) : child_0.internal_status;
-                !(child_1.internal_status = success) : child_1.internal_status;
-                !(child_2.internal_status = success) : child_2.internal_status;
-                TRUE : success;
-            esac;
-        child_0.active := active;
-        child_1.active := child_0.status = success;
-        child_2.active := child_1.status = success;
 MODULE composite_selector_without_memory_2(child_0, child_1)
     CONSTANTS
         success, failure, running, invalid;

@@ -106,6 +106,9 @@ def validate_model(model):
         'triggered' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'LTL'}, 'allows' : {'LTL', 'INVAR', 'reg'}},
         'triggered_bounded' : {'return_type' : 'BOOLEAN', 'bounded' : True, 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'LTL'}, 'allows' : {'LTL', 'INVAR', 'reg'}}
     }
+    def validate_name(name):
+        if name in declared_enumerations or name in all_node_names or name in variables or name in constants or name in loop_references:
+            raise BTreeException(trace, 'Name ' + name + ' clashes with an existing name')
 
     def verify_min_max(min_code, max_code, bound):
         min_func = build_meta_func(min_code)
@@ -195,8 +198,7 @@ def validate_model(model):
             return return_vals1
         if code.function_call.function_name == 'loop':
             loop_variable = code.function_call.loop_variable
-            if loop_variable in constants or loop_variable in variables:
-                raise BTreeException(trace, 'Loop Variable ' + loop_variable + ' name clashes with existing name')
+            validate_name(loop_variable)
             return_vals = []
             all_domain_values = []
             if code.function_call.min_val is None:
@@ -308,6 +310,53 @@ def validate_model(model):
         trace.pop()
         return
 
+    def validate_loop_array_index(loop_array_index, assign_var, constant_index, scopes, variable_names, deterministic = True, init_mode = None):
+        seen_constants = set()
+        if loop_array_index.array_index is not None:
+            for index in loop_array_index.array_index.index_expr:
+                if constant_index == 'constant_index':
+                    index_func = build_meta_func(index)
+                    values = index_func((constants, {}))
+                    for value in values:
+                        cur_type = constant_type(value, declared_enumerations)
+                        if cur_type != 'INT':
+                            raise BTreeException(trace, 'indexed using type of ' + cur_type + ' instead of INT')
+                        if value in seen_constants:
+                            raise BTreeException(trace, 'array is being indexed with constants and a constant appears twice. New: ' + str(value) + '. Already seen: ' + str(seen_constants))
+                        seen_constants.add(value)
+                else:
+                    returned_vals = validate_code(index, scopes, variable_names, {'reg'})
+                    for (cur_type, _, _) in returned_vals:
+                        if cur_type != 'INT':
+                            raise BTreeException(trace, 'indexed using type of ' + cur_type + ' instead of INT')
+            validate_variable_assignment(assign_var, loop_array_index.array_index.assign, scopes, variable_names, deterministic, init_mode)
+            return seen_constants
+        loop_variable = loop_array_index.loop_variable
+        validate_name(loop_variable)
+        all_domain_values = []
+        if loop_array_index.min_val is None:
+            for domain_code in loop_array_index.loop_variable_domain:
+                domain_func = build_meta_func(domain_code)
+                for domain_value in domain_func((constants, loop_references)):
+                    all_domain_values.append(resolve_potential_reference(domain_value, declared_enumerations, all_node_names, variables, constants, loop_references)[2])
+        else:
+            ((_, min_val), (_, max_val)) = verify_min_max(loop_array_index.min_val, loop_array_index.max_val, False)
+            all_domain_values = range(min_val, max_val + 1)
+        cond_func = build_meta_func(loop_array_index.loop_condition)
+        for domain_member in all_domain_values:
+            loop_references[loop_variable] = domain_member
+            returned_vals = cond_func((constants, loop_references))
+            if len(returned_vals) != 1:
+                raise BTreeException(trace, 'Loop Condition function is expected to return exactly 1 value')
+            if returned_vals[0]:
+                new_constants = validate_loop_array_index(loop_array_index.loop_array_index, assign_var, constant_index, scopes, variable_names, deterministic, init_mode)
+                if constant_index:
+                    if not seen_constants.isdisjoint(new_constants):
+                        raise BTreeException(trace, 'array is being indexed with constants and a constant appears twice. New: ' + str(new_constants) + '. Already seen: ' + str(seen_constants))
+                    seen_constants.update(new_constants)
+            loop_references.pop(loop_variable)
+        return seen_constants
+
 
     def validate_array_assign(statement, scopes, variable_names, deterministic = True, init_mode = None):
         assign_var = statement.variable if hasattr(statement, 'variable') else statement
@@ -317,24 +366,12 @@ def validate_model(model):
         if hasattr(statement, 'default_value'):
             validate_variable_assignment(assign_var, statement.default_value, scopes, variable_names, deterministic, init_mode)
         seen_constants = set()
-        for index_assign in statement.assigns:
-            for index in index_assign.index_expr:
-                if statement.constant_index == 'constant_index':
-                    index_func = build_meta_func(index)
-                    values = index_func((constants, {}))
-                    for value in values:
-                        cur_type = constant_type(value, declared_enumerations)
-                        if cur_type != 'INT':
-                            raise BTreeException(trace, 'indexed using type of ' + cur_type + ' instead of INT')
-                        if value in seen_constants:
-                            raise BTreeException(trace, 'array is being indexed with constants and a constant appears twice')
-                        seen_constants.add(value)
-                else:
-                    returned_vals = validate_code(index, scopes, variable_names, {'reg'})
-                    for (cur_type, _, _) in returned_vals:
-                        if cur_type != 'INT':
-                            raise BTreeException(trace, 'indexed using type of ' + cur_type + ' instead of INT')
-            validate_variable_assignment(assign_var, index_assign.assign, scopes, variable_names, deterministic, init_mode)
+        for loop_array_index in statement.assigns:
+            new_constants = validate_loop_array_index(loop_array_index, assign_var, statement.constant_index, scopes, variable_names, deterministic, init_mode)
+            if statement.constant_index:
+                if not seen_constants.isdisjoint(new_constants):
+                    raise BTreeException(trace, 'array is being indexed with constants and a constant appears twice. New: ' + str(new_constants) + '. Already seen: ' + str(seen_constants))
+                seen_constants.update(new_constants)
         trace.pop()
         return
 

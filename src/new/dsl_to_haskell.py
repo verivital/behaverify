@@ -12,6 +12,7 @@ import os
 import shutil
 import itertools
 import textx
+import copy
 from behaverify_common import haskell_indent as indent, create_node_name, is_local, is_env, is_blackboard, is_array, handle_constant_or_reference, handle_constant_or_reference_no_type, resolve_potential_reference_no_type, variable_array_size, get_min_max, variable_type
 from serene_functions import build_meta_func
 from check_model import validate_model
@@ -29,6 +30,21 @@ def dsl_to_haskell():
         if behaverify_type == 'INT':
             return 'Integer'
         raise ValueError(behaverify_type + ' is of an unsupported type. Only ENUM, BOOLEAN, and INT are supported')
+
+    def str_conversion(atom_type, atom):
+        return (
+            ('"' + atom + '"')
+            if atom_type == 'ENUM' else
+            (
+                str(atom)
+                if atom_type == 'BOOLEAN' else
+                (
+                    ('(' + str(atom) + ')')
+                    if atom < 0 else
+                    str(atom)
+                )
+            )
+        )
 
     def pascal_case(variable_name):
         '''removes underscores, capitalizes'''
@@ -56,13 +72,12 @@ def dsl_to_haskell():
             )
         )
 
-    def execute_loop(function_call, to_call, misc_args):
+    def execute_loop(function_call, to_call, packaged_args, misc_args):
         return_vals = []
         all_domain_values = []
         if function_call.min_val is None:
             for domain_code in function_call.loop_variable_domain:
-                domain_func = build_meta_func(domain_code)
-                for domain_value in domain_func((constants, loop_references)):
+                for domain_value in execute_code(domain_code):
                     resolved = resolve_potential_reference_no_type(domain_value, declared_enumerations, {}, variables, constants, loop_references)
                     all_domain_values.append(resolved[1])
         else:
@@ -72,15 +87,19 @@ def dsl_to_haskell():
         for domain_member in all_domain_values:
             loop_references[function_call.loop_variable] = domain_member
             if cond_func((constants, loop_references))[0]:
-                return_vals.extend(to_call(function_call.values[0], misc_args))
+                return_vals.extend(to_call(packaged_args, misc_args))
             loop_references.pop(function_call.loop_variable)
         return return_vals
+
+    def execute_code(code):
+        cur_func = build_meta_func(code)
+        return cur_func((constants, loop_references))
 
     def format_function_if(_, function_call, misc_args):
         return ['(if ' + format_code(function_call.values[0], misc_args)[0] + ' then ' + format_code(function_call.values[1], misc_args)[0] + ' else ' + format_code(function_call.values[2], misc_args)[0] + ')']
 
     def format_function_loop(_, function_call, misc_args):
-        return execute_loop(function_call, format_code, misc_args)
+        return execute_loop(function_call, format_code, function_call.values[0], misc_args)
 
     def format_function_before(function_name, function_call, misc_args):
         formatted_values = []
@@ -130,10 +149,21 @@ def dsl_to_haskell():
         (function_name, function_to_call) = function_format[code.function_call.function_name]
         return function_to_call(function_name, code.function_call, misc_args)
 
+    def create_misc_args(init_mode, indent_level, board_env_name):
+        return {
+            'init_mode' : init_mode,  # 'env', 'board', or 'none'
+            'indent_level' : indent_level,
+            'board_env_name' : board_env_name  # None means 'boardEnv'.
+        }
+
+    def modify_indent(misc_args, new_indent):
+        new_misc_args = copy.deepcopy(misc_args)
+        new_misc_args['indent_level'] = new_indent
+        return new_misc_args
+
     def format_variable(variable, misc_args):
         '''used to format variable names'''
-        if variable.model_as == 'DEFINE':
-            misc_args = None  # we do this to allow defines to work in a partially finished blackboard/environtmen
+        init_mode = None if variable.model_as == 'DEFINE' else misc_args['init_mode'] # done to ensure we can use partial definitions in blackboard and environment declarations
         return (
             ('(localBoard' + pascal_case(variable.name) + ' nodeLocation ' + 'blackboard' + ')')
             if is_local(variable)
@@ -141,7 +171,7 @@ def dsl_to_haskell():
             (
                 (
                     ('newVal' + pascal_case(variable.name))
-                    if misc_args == 'env'
+                    if init_mode == 'env'
                     else
                     (
                         ('(env' + pascal_case(variable.name) + ' ' + 'blackboard' + ' ' + 'environment' + ')')
@@ -154,8 +184,7 @@ def dsl_to_haskell():
                 else
                 (
                     ('newVal' + pascal_case(variable.name))
-                    # if 'board' in misc_args
-                    if misc_args == 'board'
+                    if init_mode == 'board'
                     else
                     ('(board' + pascal_case(variable.name) + ' ' + 'blackboard' + ')')
                 )
@@ -176,135 +205,87 @@ def dsl_to_haskell():
             )
         )
 
-    def str_conversion(atom_type, atom):
-        return (
-            ('"' + atom + '"')
-            if atom_type == 'ENUM' else
-            (
-                str(atom)
-                if atom_type == 'BOOLEAN' else
-                (
-                    ('(' + str(atom) + ')')
-                    if atom < 0 else
-                    str(atom)
-                )
-            )
-        )
-
-    def handle_variable_statement(statement, indent_level, misc_args, board_env_name):
-        '''handles variable statements. the function declaration was created elsewhere. this creates the logic of the variable udpate.'''
-        assign_var = statement.variable
-        if is_array(assign_var):
-            # todo: fix this area to deal with constant index. right now only works with variable index.
-            number_of_updates = 0
-            update_pair_strings = []
-            update_value_strings = []
-            random_gen_strings = []
-            needs_random = False
-            if statement.constant_index:
-                for index_assign in statement.assigns:
-                    index_func = build_meta_func(index_assign.index_expr)
+    def handle_loop_array_index(packed_args, misc_args):
+        (loop_array_index, assign_var, constant_index, update_pair_strings, update_value_strings, random_gen_strings) = packed_args
+        indent_level = misc_args['indent_level']
+        if loop_array_index.array_index is not None:
+            for index_expr in loop_array_index.array_index:
+                if constant_index:
+                    index_func = build_meta_func(index_expr)
                     for index in index_func((constants, loop_references)):
                         new_index = resolve_potential_reference_no_type(index, declared_enumerations, {}, variables, constants, loop_references)[1]
                         update_pair_strings.append(indent(indent_level + 2) + 'updatePair' + str(len(update_pair_strings)) + ' = '
                                                    + '(' + str(new_index) + ', updateValue' + str(len(update_value_strings)) + ')' + os.linesep)
-                        number_of_updates = number_of_updates + 1
-                    (assign_string, needs_random) = handle_assign(index_assign.assign, assign_var, indent_level + 2, misc_args, None, True, 'randomGenerator' + str(len(random_gen_strings)))
-                    update_value_strings.append(indent(indent_level + 2) + 'updateValue' + str(len(update_value_strings)) + assign_string)
-                    if needs_random:
-                        random_gen_strings.append(
-                            indent(indent_level + 2) + 'randomGenerator' + str(len(random_gen_strings)) + ' = '
-                            + (
-                                (('sereneEnvGenerator ' + 'environment') if is_env(assign_var) else ('sereneBoardGenerator ' + 'blackboard'))
-                                if len(random_gen_strings) == 0
-                                else
-                                ('snd (getRandomInteger randomGenerator' + str(len(random_gen_strings) - 1) + ' 1)')
-                            )
-                            + os.linesep
-                        )
-            else:
-                for index_assign in statement.assigns:
-                    update_pair_strings.append(indent(indent_level + 2) + 'updatePair' + str(len(update_pair_strings)) + ' = '
-                                               + '[(curIndex, updateValue' + str(len(update_value_strings)) + ') | curIndex <- [' + ', '.join(
-            if statement.array_mode == 'range':
-                needs_random = any(case_result.range_mode == 'range' or len(case_result.values) > 1 for case_result in statement.assign.assign.case_results) or statement.assign.assign.default_result.range_mode == 'range' or len(statement.assign.assign.default_result.values) > 1
-                if len(statement.values) == 0:
-                    number_of_updates = handle_constant(assign_var.array_size, False)
-                    update_range = range(number_of_updates)
                 else:
-                    cond_func = build_range_func(statement.values[2], constants)
-                    update_range = list(filter(cond_func, range(handle_constant(statement.values[0], False), handle_constant(statement.values[1], False) + 1)))
-                    number_of_updates = len(update_range)
-                for index, range_val in enumerate(update_range):
-                    constants['serene_index'].append(range_val)
-                    update_value_strings.append(indent(indent_level + 2) + 'updateValue' + str(index) + handle_assign(statement.assign.assign, assign_var, indent_level + 2, misc_args, board_env_name, True, 'randomGenerator' + str(len(random_gen_strings)) if needs_random else None))
-                    update_pair_strings.append(
-                        indent(indent_level + 2) + 'updatePair' + str(index) + ' = '
-                        + '(' + (handle_constant(statement.assign.index_expr, True) if statement.constant_index == 'constant_index' else format_code(statement.assign.index_expr, misc_args)) + ', updateValue' + str(index) + ')'
+                    for index in format_code(index_expr, misc_args):
+                        update_pair_strings.append(indent(indent_level + 2) + 'updatePair' + str(len(update_pair_strings)) + ' = '
+                                                   + '(' + index + ', updateValue' + str(len(update_value_strings)) + ')' + os.linesep)
+                (assign_string, needs_random) = handle_assign(loop_array_index.array_index.assign, assign_var, indent_level + 2, misc_args, None, True, 'randomGenerator' + str(len(random_gen_strings)))
+                update_value_strings.append(indent(indent_level + 2) + 'updateValue' + str(len(update_value_strings)) + assign_string)
+                if needs_random:
+                    random_gen_strings.append(
+                        indent(indent_level + 2) + 'randomGenerator' + str(len(random_gen_strings)) + ' = '
+                        + (
+                            (('sereneEnvGenerator ' + 'environment') if is_env(assign_var) else ('sereneBoardGenerator ' + 'blackboard'))
+                            if len(random_gen_strings) == 0
+                            else
+                            ('snd (getRandomInteger randomGenerator' + str(len(random_gen_strings) - 1) + ' 1)')
+                        )
                         + os.linesep
                     )
-                    constants['serene_index'].pop()
-                    if needs_random:
-                        random_gen_strings.append(
-                            indent(indent_level + 2) + 'randomGenerator' + str(len(random_gen_strings)) + ' = '
-                            + (
-                                (('sereneEnvGenerator ' + 'environment') if is_env(assign_var) else ('sereneBoardGenerator ' + 'blackboard'))
-                                if len(random_gen_strings) == 0
-                                else
-                                ('snd (getRandomInteger randomGenerator' + str(len(random_gen_strings) - 1) + ' 1)')
-                            )
-                            + os.linesep
-                        )
-            else:
-                number_of_updates = len(statement.assigns)
-                for index, array_index in enumerate(statement.assigns):
-                    currently_random = any(case_result.range_mode == 'range' or len(case_result.values) > 1 for case_result in array_index.assign.case_results) or array_index.assign.default_result.range_mode == 'range' or len(array_index.assign.default_result.values) > 1
-                    needs_random = needs_random or currently_random
-                    update_value_strings.append(indent(indent_level + 2) + 'updateValue' + str(index) + handle_assign(array_index.assign, assign_var, indent_level + 2, misc_args, board_env_name, True, 'randomGenerator' + str(len(random_gen_strings)) if currently_random else None))
-                    update_pair_strings.append(
-                        indent(indent_level + 2) + 'updatePair' + str(index)
-                        + ' = '
-                        + '(' + (handle_constant(array_index.index_expr, True) if statement.constant_index == 'constant_index' else format_code(array_index.index_expr, misc_args)) + ', updateValue' + str(index)  + ')'
-                        + os.linesep
-                    )
-                    if currently_random:
-                        random_gen_strings.append(
-                            indent(indent_level + 2) + 'randomGenerator' + str(len(random_gen_strings)) + ' = '
-                            + (
-                                (('sereneEnvGenerator ' + 'environment') if is_env(assign_var) else ('sereneBoardGenerator ' + 'blackboard'))
-                                if len(random_gen_strings) == 0
-                                else
-                                ('snd (getRandomInteger randomGenerator' + str(len(random_gen_strings) - 1) + ' 1)')
-                            )
-                            + os.linesep
-                        )
+            return
+        execute_loop(loop_array_index, handle_loop_array_index, (loop_array_index.loop_array_index, assign_var, constant_index, update_pair_strings, update_value_strings, random_gen_strings), misc_args)
+        return
+
+    def handle_variable_statement(statement, misc_args):
+        '''handles variable statements. the function declaration was created elsewhere. this creates the logic of the variable udpate.'''
+        indent_level = misc_args['indent_level']
+        board_env_name = misc_args['board_env_name']
+        init_mode = misc_args['init_mode']
+        assign_var = statement.variable
+        if is_array(assign_var):
+            update_pair_strings = []
+            update_value_strings = []
+            random_gen_strings = []
+            constant_index = statement.constant_index == 'constant_index'
+            for loop_array_index in statement.assigns:
+                handle_loop_array_index((loop_array_index, assign_var, constant_index, update_pair_strings, update_value_strings, random_gen_strings), misc_args)
+            # else:
+            #     for index_assign in statement.assigns:
+            #         update_pair_strings.append(indent(indent_level + 2) + 'updatePair' + str(len(update_pair_strings)) + ' = '
+            #                                    + '[(curIndex, updateValue' + str(len(update_value_strings)) + ') | curIndex <- [' + ', '.join(
             return (
                 ' = '
                 + (
-                    ('arrayUpdateEnv' + pascal_case(assign_var.name) + ' ' + (('(updateEnvGenerator ' + 'environment' + ' randomGenerator' + str(len(random_gen_strings) - 1)  + ')') if needs_random else 'environment') + ' updates')
+                    ('arrayUpdateEnv' + pascal_case(assign_var.name) + ' ' + (('(updateEnvGenerator environment randomGenerator' + str(len(random_gen_strings) - 1)  + ')') if len(random_gen_strings) > 0 else 'environment') + ' updates')
                     if board_env_name is None
                     else
                     (
-                        ('(' + 'blackboard' + ', arrayUpdateEnv' + pascal_case(assign_var.name) + ' ' + (('(updateEnvGenerator ' + 'environment' + ' randomGenerator' + str(len(random_gen_strings) - 1)  + ')') if needs_random else 'environment') + ' updates)')
+                        ('(' + 'blackboard' + ', arrayUpdateEnv' + pascal_case(assign_var.name) + ' ' + (('(updateEnvGenerator ' + 'environment' + ' randomGenerator' + str(len(random_gen_strings) - 1)  + ')') if len(random_gen_strings) > 0 else 'environment') + ' updates)')
                         if is_env(assign_var)
                         else
-                        (('(arrayUpdateLocalBoard' if is_local(assign_var) else '(arrayUpdateBoard') + pascal_case(assign_var.name) + (' nodeLocation' if is_local(assign_var) else '') + ' ' + (('(updateBoardGenerator ' + 'blackboard' + ' randomGenerator' + str(len(random_gen_strings) - 1)  + ')') if needs_random else 'blackboard') + ' updates, ' + 'environment' + ')')
+                        (('(arrayUpdateLocalBoard' if is_local(assign_var) else '(arrayUpdateBoard') + pascal_case(assign_var.name) + (' nodeLocation' if is_local(assign_var) else '') + ' ' + (('(updateBoardGenerator ' + 'blackboard' + ' randomGenerator' + str(len(random_gen_strings) - 1)  + ')') if len(random_gen_strings) > 0 else 'blackboard') + ' updates, ' + 'environment' + ')')
                     )
                 )
                 + os.linesep
                 + indent(indent_level + 1) + 'where' + os.linesep
-                + ('' if board_env_name is None else (indent(indent_level + 2) + '(' + 'blackboard' + ', ' +  'environment' + ') = ' + board_env_name + os.linesep))
+                + indent(indent_level + 2)
+                + (
+                    'blackboard = '
+                    if init_mode == 'board' else
+                    ('environment = ' if init_mode == 'env' else '(blackboard, environment) = ')
+                )
+                + board_env_name + os.linesep
                 + ''.join(random_gen_strings)
-                + indent(indent_level + 2) + 'updates = [' + ', '.join(map(lambda x: 'updatePair' + str(x), range(number_of_updates))) + ']' + os.linesep
-                # + indent(indent_level + 2) + 'updates = [' + ', '.join(map(lambda x: 'updatePair' + str(x), range(number_of_updates))) + ']' + os.linesep
+                + indent(indent_level + 2) + 'updates = [' + ', '.join(map(lambda x: 'updatePair' + str(x), range(len(update_pair_strings)))) + ']' + os.linesep
                 + ''.join(update_pair_strings)
                 + ''.join(update_value_strings)
-                # + board_env_post_script(indent_level + 2, board_env_name) # handled elsewhere
             )
         return handle_assign(statement.assign, assign_var, indent_level, misc_args, board_env_name, False, None)
 
-    def handle_read_statement(statement, indent_level, misc_args):
+    def handle_read_statement(statement, misc_args):
         '''used to handle read statements'''
+        indent_level = misc_args['indent_level']
         cond_var = statement.condition_variable
         inject_string = ''
         shift = (0 if cond_var is None else 1)
@@ -335,7 +316,7 @@ def dsl_to_haskell():
             [
                 (
                     os.linesep
-                    + indent(indent_level + 1) + '| not (' + format_code(statement.condition, misc_args, 'conditionBlackboard', 'conditionEnvironment') + ') = boardEnv' + os.linesep
+                    + indent(indent_level + 1) + '| not (' + format_code(statement.condition, misc_args) + ') = boardEnv' + os.linesep
                     + (
                         (indent(indent_level + 1) + '| conditionRandomInteger == 0 = privateTempBoardEnv0' + os.linesep)
                         if statement.non_determinism
@@ -344,14 +325,14 @@ def dsl_to_haskell():
                     )
                     + indent(indent_level + 1) + '| otherwise = privateBoardEnv' + os.linesep  # this needs to be changed to handle non-determinism
                     + indent(indent_level + 1) + 'where' + os.linesep
-                    + indent(indent_level + 2) + '(conditionBlackboard, conditionEnvironment) = boardEnv' + os.linesep
+                    # + indent(indent_level + 2) + '(conditionBlackboard, conditionEnvironment) = boardEnv' + os.linesep
                     + inject_string
                     + indent(indent_level + 2) + 'privateBoardEnv = privateTempBoardEnv' + str(len(statement.variable_statements) + shift) + os.linesep
                     + ''.join(
                         [
                             (
                                 indent(indent_level + 2) + 'privateTempBoardEnv' + str(x + shift + 1)  # no os.linesep here intentionally, handled by varirable statement
-                                + handle_variable_statement(variable_statement, indent_level + 2, misc_args, 'privateTempBoardEnv' + str(x + shift))
+                                + handle_variable_statement(variable_statement, create_misc_args(misc_args['init_mode'], indent_level + 2,  'privateTempBoardEnv' + str(x + shift)))
                             )
                             for x, variable_statement in enumerate(statement.variable_statements)
                         ]
@@ -361,31 +342,22 @@ def dsl_to_haskell():
             []
         )
 
-    def handle_write_statement(statement, indent_level, misc_args):
+    def handle_write_statement(statement, misc_args):
         '''handles write statements'''
         return (
-            [
-                (
-                    handle_variable_statement(update, indent_level, misc_args, 'boardEnv')
-                )
-                for update in statement.update if update.instant
-            ],
-            [
-                (
-                    handle_variable_statement(update, indent_level, misc_args, 'boardEnv')
-                )
-                for update in statement.update if not update.instant
-            ]
+            [handle_variable_statement(update, misc_args)
+             for update in statement.update if update.instant],
+            [handle_variable_statement(update, misc_args)
+             for update in statement.update if not update.instant]
         )
 
     def format_returns(status_result):
         '''fixes capitalization'''
         return status_result.status.capitalize()
 
-    def handle_return_statement(statement, indent_level = 2):
+    def handle_return_statement(statement, misc_args):
         '''handles return statements'''
-        
-        
+        indent_level = misc_args['indent_level']
         return (
             indent(indent_level) + 'returnStatement :: (BTreeBlackboard, BTreeEnvironment) -> BTreeNodeStatus' + os.linesep
             + indent(indent_level) + 'returnStatement boardEnv'
@@ -410,12 +382,12 @@ def dsl_to_haskell():
             + indent(indent_level + 2) + '(blackboard, environment) = boardEnv' + os.linesep
         )
 
-    def handle_statement(statement, indent_level, misc_args):
+    def handle_statement(statement, misc_args):
         '''switches between the three statement types'''
         return (
-            ([handle_variable_statement(statement.variable_statement, indent_level, misc_args, 'boardEnv')], []) if statement.variable_statement is not None else (
-                handle_read_statement(statement.read_statement, indent_level, misc_args) if statement.read_statement is not None else (
-                    handle_write_statement(statement.write_statement, indent_level, misc_args)
+            ([handle_variable_statement(statement.variable_statement, misc_args)], []) if statement.variable_statement is not None else (
+                handle_read_statement(statement.read_statement, misc_args) if statement.read_statement is not None else (
+                    handle_write_statement(statement.write_statement, misc_args)
                     )
                 )
             )
@@ -457,11 +429,11 @@ def dsl_to_haskell():
         delay_updates = []
         post_updates = []
         for index in range(pre):
-            (new_pre, new_delay) = handle_statement(node.pre_update_statements[index], 2 + indent_modifier, None)
+            (new_pre, new_delay) = handle_statement(node.pre_update_statements[index], create_misc_args(None, 2 + indent_modifier, None))
             pre_updates += new_pre
             delay_updates += new_delay
         for index in range(post):
-            (new_post, new_delay) = handle_statement(node.post_update_statements[index], 2 + indent_modifier, None)
+            (new_post, new_delay) = handle_statement(node.post_update_statements[index], create_misc_args(None, 2 + indent_modifier, None))
             post_updates += new_post
             delay_updates += new_delay
         pre = len(pre_updates)
@@ -683,7 +655,7 @@ def dsl_to_haskell():
                 running_string = running_string + (
                     indent(indent_level) + node_name + ' = BTreeNode '
                     + ('(' if has_args else '') + 'bTreeFunction' + ('Creator' if has_args else '') + pascal_case(current_node.name)
-                    + ((' ' + ' '.join(map(lambda arg: handle_constant(arg, True), current_args)) + ')') if has_args else '')
+                    + ((' ' + ' '.join([' '.join(val) for cur_arg in current_args for val in execute_code(cur_arg)]) + ')') if has_args else '')
                     + ' [] ' + str(my_int) + os.linesep
                 )
             else:
@@ -728,7 +700,11 @@ def dsl_to_haskell():
             + indent(indent_level + 2) + '(' + 'blackboard' + ', ' + 'environment' + ') = ' + board_env_name + os.linesep
         )
 
-    def create_random_func(formatted_values, function_name, var_type, indent_level):
+    def create_random_function_name(function_number):
+        return ('privateRandom' + str(function_number), 'privateRandomNumber' + str(function_number), 'privateRandomGenerator' + str(function_number))
+
+    def create_random_func(formatted_values, function_number, var_type, indent_level):
+        function_name = create_random_function_name(function_number)[0]
         if len(formatted_values) > 1:
             return (
                 indent(indent_level) + function_name + ' :: Integer -> ' + var_type + os.linesep
@@ -741,32 +717,62 @@ def dsl_to_haskell():
             )
         return ''
 
-    def handle_case_result(case_result, case_mode, misc_args, indent_level, assign_var, env_board, env_board_random, env_board_generator, update_generator, update_env_board, board_env_name, unique_id, value_only_mode, random_gen_string):
+    def format_value_for_case_result(assign_var, init_mode, formatted_values, value_only_mode, function_number, random_gen_string):
+        (function_name, number_name, gen_name) = create_random_function_name(function_number)
+        return (
+            (
+                formatted_values[0]
+                if value_only_mode else
+                (
+                    ('updateBoard' + pascal_case(assign_var.name) + ' blackboard ' + formatted_values[0])
+                    if init_mode == 'board' else
+                    (
+                        ('updateEnv' + pascal_case(assign_var.name) + ' environment ' + formatted_values[0])
+                        if init_mode == 'env' else
+                        (
+                            ('(updateBoard' + pascal_case(assign_var.name) + ' blackboard ' + formatted_values[0] + ', environment)')
+                            if is_blackboard(assign_var) else
+                            ('(blackboard, updateEnv environment ' + formatted_values[0] + ')')
+                        )
+                    )
+                )
+            )
+            if len(formatted_values) == 1 else
+            (
+                (function_name + ' (fst (getRandomInteger ' + random_gen_string + ' ' + str(len(formatted_values) - 1) + '))')
+                if value_only_mode else
+                (
+                    ('updateBoard' + pascal_case(assign_var.name) + ' (updateBoardGenerator blackboard ' + gen_name + ') (' + function_name + ' ' number_name  ')')
+                    if init_mode == 'board' else
+                    (
+                        ('updateEnv' + pascal_case(assign_var.name) + ' environment ' + formatted_values[0])
+                        if init_mode == 'env' else
+                        (
+                            ('(updateBoard' + pascal_case(assign_var.name) + ' blackboard ' + formatted_values[0] + ', environment)')
+                            if is_blackboard(assign_var) else
+                            ('(blackboard, updateEnv environment ' + formatted_values[0] + ')')
+                        )
+                    )
+                )
+            )
+        )
+
+    def handle_case_result(case_result, case_mode, misc_args, assign_var, env_board, env_board_random, env_board_generator, update_generator, update_env_board, unique_id, value_only_mode, random_gen_string):
         '''
         case_mode = 'case' -> this is a case result
         case_mode = 'default' -> this is a default result
         case_mode = 'only' -> this is a default result with no case results.
         '''
         formatted_values = []
+        indent_level = misc_args['indent_level']
+        board_env_name = misc_args['board_env_name']
+        init_mode = misc_args['init_mode']
+        value_only_mode = is_array(assign_var)
         for value in case_result.values:
             formatted_values.extend(format_code(value, misc_args))
         if case_mode == 'only' and len(formatted_values) == 1:
             # use a special case if we're just setting to a constant value. no need for special bells and whistles.
-            return (
-                (
-                    ' = '
-                    + (
-                        formatted_values[0]
-                        if value_only_mode else
-                        (
-                            ('' if board_env_name is None else ('(' + 'blackboard' + ', ' if is_env(assign_var) else '('))
-                            + update_env_board + pascal_case(assign_var.name) + ' ' + env_board + ' ' + formatted_values[0]
-                            + ('' if board_env_name is None else (')' if is_env(assign_var) else ', ' + 'environment' + ')'))
-                        )
-                    )
-                ),
-                ''
-            )
+            return ((' = ' + format_value_for_case_result(assign_var, init_mode, formatted_values, value_only_mode)), '')
         return_string = (
             (os.linesep + indent(indent_level + 1) + '| ' + format_code(case_result.condition, misc_args)[0] + ' = ')
             if case_mode == 'case' else
@@ -850,8 +856,8 @@ def dsl_to_haskell():
         strings.append(
             handle_case_result(assign.default_result, 'only' if len(assign.case_results) == 0 else 'default', misc_args, indent_level, assign_var, env_board, env_board_random, env_board_generator, update_generator, update_env_board, board_env_name, 0, value_only_mode, random_gen_string)
         )
-        return_string = ''.join(map(lambda x: x[0], strings))
-        where_string = ''.join(map(lambda x: x[1], strings))
+        return_string = ''.join([x[0] for x in strings])
+        where_string = ''.join([x[1] for x in strings])
         needs_random = any(map(lambda x: x[2], strings))
         return (
             return_string + os.linesep
@@ -861,14 +867,16 @@ def dsl_to_haskell():
             , needs_random
         )
 
-    def handle_initial_value(assign, var_type, indent_level, misc_args, partial_string, node_location, array_index = None):
+    def handle_initial_value(assign, var_type, misc_args, partial_string, node_location, array_index):
+        indent_level = misc_args['indent_level']
+        init_mode = misc_args['init_mode']
         if array_index is not None:
             constants['serene_index'].append(array_index)
 
         def post_script(indent_level):
             return (
                 indent(indent_level + 1) + 'where' + os.linesep
-                + indent(indent_level + 2) + ('blackboard' if misc_args == 'board' else 'environment') + ' = ' +  partial_string + os.linesep
+                + indent(indent_level + 2) + ('blackboard' if init_mode == 'board' else 'environment') + ' = ' +  partial_string + os.linesep
                 + ((indent(indent_level + 2) + 'nodeLocation = ' + str(node_location) + os.linesep) if node_location is not None else '')
             )
 
@@ -948,84 +956,6 @@ def dsl_to_haskell():
         )
         where_string += create_random_func(function_name, case_result.values, case_result.range_mode, var_type, cond_func, random_range, indent_level)
         return return_string + post_script(indent_level) + (where_string if unique_id > 0 else '')
-
-    def handle_update_value(assign, variable_name, var_type, indent_level, misc_args):
-        if len(assign.case_results) == 0:
-            if (not assign.default_result.range_mode) and len(assign.default_result.values) == 1:
-                return (' = environment { env' + pascal_case(variable_name) + ' = ' + format_code(assign.default_result.values[0], misc_args) + '}' + os.linesep)
-
-        def post_script(indent_level):
-            return (
-                indent(indent_level + 1) + 'where' + os.linesep
-            )
-
-        default = assign.default_result
-        return_string = ('' if len(assign.case_results) == 0 else os.linesep)
-        where_string = ''
-        unique_id = 0
-        for case_result in assign.case_results:
-            return_string += (
-                indent(indent_level + 1) + '| ' + format_code(case_result.condition, misc_args) + ' = '
-            )
-            if (not case_result.range_mode) and (len(case_result.values) == 1):
-                cond_func = None
-                random_range = 0
-                function_name = ''
-            elif case_result.range_mode:
-                cond_func = build_range_func(case_result.values[2], constants)
-                random_range = len(list(filter(cond_func, range(handle_constant(case_result.values[0], False), handle_constant(case_result.values[1], False) + 1)))) - 1
-                function_name = 'privateRandom' + str(unique_id)
-                unique_id = unique_id + 1
-            else:
-                cond_func = None
-                random_range = len(case_result.values) - 1
-                function_name = 'privateRandom' + str(unique_id)
-                unique_id = unique_id + 1
-
-            return_string += (
-                (
-                    'environment { env' + pascal_case(variable_name) + ' = ' + format_code(case_result.values[0], misc_args) + ' }' + os.linesep
-                )
-                if (not case_result.range_mode) and (len(case_result.values) == 1)
-                else
-                (
-                    'environment { sereneEnvGenerator = (snd (getRandomInteger (sereneEnvGenerator environment) ' + str(random_range) + ')), env' + pascal_case(variable_name) + ' = ' + function_name + ' (fst (getRandomInteger (sereneEnvGenerator environment) ' + str(random_range) + ')) }' + os.linesep
-                )
-            )
-            where_string += create_random_func(function_name, case_result.values, case_result.range_mode, var_type, cond_func, random_range, indent_level)
-        return_string += (
-            (
-                ' = '
-            )
-            if len(assign.case_results) == 0
-            else
-            (
-                indent(indent_level + 1) + '| otherwise = '
-            )
-        )
-        if (not default.range_mode) and (len(default.values) == 1):
-            cond_func = None
-            random_range = 0
-            function_name = ''
-        elif default.range_mode:
-            cond_func = build_range_func(default.values[2], constants)
-            random_range = len(list(filter(cond_func, range(handle_constant(default.values[0], False), handle_constant(default.values[1], False) + 1)))) - 1
-            function_name = 'privateRandom' + str(unique_id)
-            unique_id = unique_id + 1
-        else:
-            cond_func = None
-            random_range = len(default.values) - 1
-            function_name = 'privateRandom' + str(unique_id)
-            unique_id = unique_id + 1
-
-        return_string += (
-            ('environment { env' + pascal_case(variable_name) + ' = ' + format_code(default.values[0], misc_args) + ' }' + os.linesep)
-            if (not default.range_mode) and (len(default.values) == 1)
-            else
-            ('environment { sereneEnvGenerator = (snd (getRandomInteger (sereneEnvGenerator environment) ' + str(random_range) + ')), env' + pascal_case(variable_name) + ' = ' + function_name + ' (fst (getRandomInteger (sereneEnvGenerator environment) ' + str(random_range) + ')) }' + os.linesep)
-        )
-        where_string += create_random_func(function_name, default.values, default.range_mode, var_type, cond_func, random_range, indent_level)
-        return return_string + ((post_script(indent_level) + where_string) if unique_id > 0 else '')
 
     def create_macro(assign, indent_level, misc_args, array_index = None):
         if array_index is not None:
@@ -1620,7 +1550,6 @@ def dsl_to_haskell():
                         [
                             (
                                 indent(2) + 'tickUpdate' + str(index + 1) + pascal_case(update.variable.name) + ' :: BTreeEnvironment -> BTreeEnvironment' + os.linesep
-                                #+ indent(2) + 'tickUpdate' + str(index + 1) + pascal_case(update.variable.name) + ' environment' + handle_update_value(update.assign, update.variable.name, variable_type(update.variable), 2, None)
                                 + indent(2) + 'tickUpdate' + str(index + 1) + pascal_case(update.variable.name) + ' environment' + handle_variable_statement(update, 2, None, None)
                                 + os.linesep
                                 + indent(2) + 'tempEnvironment' + str(index + 1) + ' = tickUpdate' + str(index + 1) + pascal_case(update.variable.name) + ' tempEnvironment' + str(index) + os.linesep
