@@ -29,7 +29,7 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
     This method is used to convert the dsl to behaverify.
     '''
 
-    def execute_loop(function_call, to_call, misc_args):
+    def execute_loop(function_call, to_call, packaged_args, misc_args):
         new_misc_args = copy.deepcopy(misc_args)
         loop_references = new_misc_args['loop_references']
         return_vals = []
@@ -47,7 +47,7 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
         for domain_member in all_domain_values:
             loop_references[function_call.loop_variable] = domain_member
             if cond_func((constants, loop_references))[0]:
-                return_vals.extend(to_call(function_call.values[0], new_misc_args))
+                return_vals.extend(to_call(packaged_args, new_misc_args))
             loop_references.pop(function_call.loop_variable)
         return return_vals
 
@@ -55,7 +55,7 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
         return [format_code(function_call.values[0], misc_args)[0] + ' ? ' + format_code(function_call.values[1], misc_args)[0] + ' : ' + format_code(function_call.values[2], misc_args)[0]]
 
     def format_function_loop(_, function_call, misc_args):
-        return execute_loop(function_call, format_code, misc_args)
+        return execute_loop(function_call, format_code, function_call.values[0], misc_args)
 
     def format_function_before(function_name, function_call, misc_args):
         '''function_name(vals)'''
@@ -228,7 +228,7 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
             return find_used_variables(code.code_statement, misc_args)
         function_call = code.function_call
         if function_call.function_name == 'loop':
-            return execute_loop(function_call, find_used_variables, misc_args)
+            return execute_loop(function_call, find_used_variables, function_call.values[0], misc_args)
         used_variables = []
         for value in function_call.values:
             used_variables.extend(find_used_variables(value, misc_args))
@@ -354,13 +354,13 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
         stage.append(('TRUE', stage_part))
         return (non_determinism, stage)
 
-    def handle_array_constant_index(statement, assign_var, condition, misc_args):
+    def handle_array_constant_index_loop(packaged_args, misc_args):
+        (loop_array_index, formatted_variable, condition) = packaged_args
         non_determinism = {}
         stage = []
-        formatted_variable = format_variable(assign_var, misc_args) + '_index_'
-        for index_assign in statement.assigns:
-            (cur_non_determinism, cur_stage) = handle_assign(index_assign.assign, [] if condition is None else ['replace'], misc_args)
-            for index_code in index_assign.index_expr:
+        if loop_array_index.array_index is not None:
+            (cur_non_determinism, cur_stage) = handle_assign(loop_array_index.array_index.assign, [] if condition is None else ['replace'], misc_args)
+            for index_code in loop_array_index.array_index.index_expr:
                 index_func = build_meta_func(index_code)
                 for index in index_func((constants, misc_args['loop_references'])):
                     new_index = resolve_potential_reference_no_type(index, declared_enumerations, nodes, variables, constants, misc_args['loop_references'])[1]
@@ -368,22 +368,50 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
                     if condition is not None:
                         cur_stage[0] = [(condition, formatted_variable + str(new_index))]
                     stage.append((new_index, cur_stage))
+        else:
+            for (new_stage, new_non_determinism) in execute_loop(loop_array_index, handle_array_constant_index_loop, (loop_array_index.loop_array_index, formatted_variable, condition), misc_args):
+                stage.extend(new_stage)
+                non_determinism.update(new_non_determinism)
+        return (stage, non_determinism)
+
+    def handle_array_constant_index(statement, assign_var, condition, misc_args):
+        non_determinism = {}
+        stage = []
+        formatted_variable = format_variable(assign_var, misc_args) + '_index_'
+        for loop_array_index in statement.assigns:
+            (new_stage, new_non_determinism) = handle_array_constant_index_loop((loop_array_index, formatted_variable, condition), misc_args)
+            stage.extend(new_stage)
+            non_determinism.update(new_non_determinism)
         return (misc_args['node_name'], True, non_determinism, stage)
 
-    def handle_array_unknown_index(statement, assign_var, condition, misc_args):
+    def handle_array_unknown_index_loop(packaged_args, misc_args):
+        (loop_array_index, formatted_variable, array_size, condition) = packaged_args
         non_determinism = False
         stage = []
-        formatted_variable = format_variable(assign_var, misc_args)
-        array_size = -1 if condition is None else variable_array_size(assign_var, declared_enumerations, nodes, variables, constants, misc_args['loop_references']) # the point is we only want to do this calcultion if codition is not None
-        for index_assign in statement.assigns:
-            (cur_non_determinism, cur_stage) = handle_assign(index_assign.assign, [] if condition is None else ['replace'], misc_args)
+        if loop_array_index.array_index is not None:
+            (cur_non_determinism, cur_stage) = handle_assign(loop_array_index.array_index.assign, [] if condition is None else ['replace'], misc_args)
             non_determinism = non_determinism or cur_non_determinism
-            for index_code in index_assign.index_expr:
+            for index_code in loop_array_index.array_index.index_expr:
                 for index in format_code(index_code, misc_args):
                     if condition is not None:
                         cur_stage[0] = [(condition, case_index(formatted_variable, array_size, index))]
                     stage.append((index, cur_stage))
-        return(misc_args['node_name'], False, non_determinism, stage)
+        else:
+            for (new_stage, new_non_determinism) in execute_loop(loop_array_index, handle_array_constant_index_loop, (loop_array_index.loop_array_index, formatted_variable, array_size, condition), misc_args):
+                stage.extend(new_stage)
+                non_determinism = non_determinism or new_non_determinism
+        return (stage, non_determinism)
+
+    def handle_array_unknown_index(statement, assign_var, condition, misc_args):
+        non_determinism = False
+        stage = []
+        formatted_variable = format_variable(assign_var, misc_args) + '_index_'
+        array_size = -1 if condition is None else variable_array_size(assign_var, declared_enumerations, nodes, variables, constants, misc_args['loop_references']) # the point is we only want to do this calcultion if codition is not None
+        for loop_array_index in statement.assigns:
+            (new_stage, new_non_determinism) = handle_array_unknown_index_loop((loop_array_index, formatted_variable, array_size, condition), misc_args)
+            stage.extend(new_stage)
+            non_determinism = non_determinism or new_non_determinism
+        return (misc_args['node_name'], False, non_determinism, stage)
 
     def handle_variable_statement(statement, assign_var, condition, misc_args):
         '''
@@ -616,7 +644,7 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
                 return find_used_variables_without_formatting_in_code(code.code_statement, misc_args)
             function_call = code.function_call
             if function_call.function_name == 'loop':
-                return execute_loop(function_call, find_used_variables_without_formatting_in_code, misc_args)
+                return execute_loop(function_call, find_used_variables_without_formatting_in_code, function_call.values[0], misc_args)
             used_variables = []
             for value in function_call.values:
                 used_variables.extend(find_used_variables_without_formatting_in_code(value, misc_args))
@@ -628,27 +656,35 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
             used_variables.append(variable_reference(variable.name, is_local(variable), new_misc_args['node_name']))
             return used_variables
 
-        def find_used_variables_without_formatting_in_assign(assign, node_name):
+        def find_used_variables_without_formatting_in_assign(assign, misc_args):
             used_variables = []
             for case_result in assign.case_results:
-                used_variables.extend(find_used_variables_without_formatting_in_code(case_result.condition, create_misc_args({}, node_name, False, False, False, False, False, False)))
+                used_variables.extend(find_used_variables_without_formatting_in_code(case_result.condition, misc_args))
                 for value in case_result.values:
-                    used_variables.extend(find_used_variables_without_formatting_in_code(value, create_misc_args({}, node_name, False, False, False, False, False, False)))
+                    used_variables.extend(find_used_variables_without_formatting_in_code(value, misc_args))
+            return used_variables
+
+        def find_used_variables_without_formatting_in_loop_array_index(packaged_args, misc_args):
+            (loop_array_index, is_constant) = packaged_args
+            if loop_array_index.array_index is not None:
+                used_variables = find_used_variables_without_formatting_in_assign(loop_array_index.array_index.assign, misc_args)
+                if not is_constant:
+                    for index in loop_array_index.array_index.index_expr:
+                        used_variables.extend(find_used_variables_without_formatting_in_code(index, misc_args))
+                return used_variables
+            used_variables = []
+            for new_used_variables in execute_loop(loop_array_index, find_used_variables_without_formatting_in_loop_array_index, (loop_array_index.loop_array_index, is_constant), misc_args):
+                used_variables.extend(new_used_variables)
             return used_variables
 
         def find_used_variables_without_formatting_in_statement(statement, array_mode, node_name):
             if array_mode:
                 used_variables = []
-                if statement.constant_index == 'constant_index':
-                    for index_assign in statement.assigns:
-                        used_variables.extend(find_used_variables_without_formatting_in_assign(index_assign.assign, node_name))
-                else:
-                    for index_assign in statement.assigns:
-                        for index in index_assign.index_expr:
-                            used_variables.extend(find_used_variables_without_formatting_in_code(index, create_misc_args({}, node_name, False, False, False, False, False, False)))
-                        used_variables.extend(find_used_variables_without_formatting_in_assign(index_assign.assign, node_name))
+                is_constant = statement.constant_index == 'constant_index'
+                for loop_array_index in statement.assigns:
+                    used_variables.extend(find_used_variables_without_formatting_in_loop_array_index((loop_array_index, is_constant), create_misc_args({}, node_name, False, False, False, False, False, False)))
                 return used_variables
-            return find_used_variables_without_formatting_in_assign(statement.assign, node_name)
+            return find_used_variables_without_formatting_in_assign(statement.assign, create_misc_args({}, node_name, False, False, False, False, False, False))
 
         # create each variable type using the template.
         nonlocal behaverify_variables  # this is necessary right now because we need to be able to access already created variables during other variable initializations.

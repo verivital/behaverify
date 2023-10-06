@@ -138,7 +138,7 @@ node:
     (model_as = 'FROZENVAR' domain = variable_domain) |
     (model_as = 'DEFINE' ((domain = 'INT') | (domain = 'ENUM') | (domain = 'BOOLEAN') | (domain = 'REAL'))))
     'default' '{' default_value = assign_value '}' ('end_default')?
-    ((constant_index = 'constant_index' assigns *= array_index_constant) | (constant_index = '' assigns *= array_index)))
+    ((constant_index = 'constant_index' assigns *= loop_array_index) | (constant_index = '' assigns *= loop_array_index)))
     |
     (((model_as = 'VAR' domain = variable_domain) |
     (model_as = 'FROZENVAR' domain = variable_domain) |
@@ -196,7 +196,7 @@ statement:
     'variable_statement' '{'
     instant ?= 'instant'
     variable = [variable]
-    (((constant_index = 'constant_index' assigns += array_index_constant) | (constant_index = '' assigns += array_index))
+    (((constant_index = 'constant_index' assigns += loop_array_index) | (constant_index = '' assigns += loop_array_index))
     |
     (assign = assign_value))
     '}' ('end_variable_statement')?
@@ -204,7 +204,7 @@ statement:
     variable_statement_initial:
     'variable_statement' '{'
     variable = [variable]
-    (('default' '{' default_value = assign_value '}' ('end_default')? ((constant_index = 'constant_index' assigns *= array_index_constant) | (constant_index = '' assigns *= array_index))) | (assign = assign_value))
+    (('default' '{' default_value = assign_value '}' ('end_default')? ((constant_index = 'constant_index' assigns *= loop_array_index) | (constant_index = '' assigns *= loop_array_index))) | (assign = assign_value))
     '}' ('end_variable_statement')?
 ;
     return_statement:
@@ -214,11 +214,11 @@ statement:
     '}' ('end_return_statement')?
 ;
     //--------------------SEC:ARRAY_INDEX_OF--------------------------
-    array_index:
-    'index_of' '{' index_expr += code_statement[','] '}' ('end_index_of')?
-    assign = assign_value
+    loop_array_index:
+    ('(' 'loop' ',' loop_variable = ID ',' (('{' loop_variable_domain += code_statement[','] '}') | ('[' min_val = code_statement ',' max_val = code_statement ']')) 'such_that' loop_condition = code_statement ',' loop_array_index = loop_array_index ')')
+    | (array_index = array_index)
 ;
-    array_index_constant:
+    array_index:
     'index_of' '{' index_expr += code_statement[','] '}' ('end_index_of')?
     assign = assign_value
 ;
