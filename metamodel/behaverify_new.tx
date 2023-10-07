@@ -175,8 +175,7 @@ statement:
     'read_environment' '{'
     name = ID
     ('condition_variable' '{'
-    (('(' constant_index = 'constant_index' condition_variable = [variable] ',' index_of = code_statement ')') |
-    ('(' constant_intdex = '' condition_variable = [variable] ',' index_of = code_statement ')') |
+    (('(' (constant_index = 'constant_index' | constant_index = '') condition_variable = [variable] ',' index_of = code_statement ')') |
     (condition_variable = [variable]))
     '}' ('end_condition_variable')?)?
     'condition' '{'
@@ -188,7 +187,7 @@ statement:
     write_statement:
     'write_environment' '{'
     name = ID
-    update *= variable_statement
+    update += variable_statement
     '}' ('end_write_environment')?
 ;
     //--------------------SEC:VAR_STATEMENTS--------------------------
@@ -197,14 +196,14 @@ statement:
     instant ?= 'instant'
     variable = [variable]
     (((constant_index = 'constant_index' assigns += loop_array_index) | (constant_index = '' assigns += loop_array_index))
-    |
-    (assign = assign_value))
+    | (assign = assign_value))
     '}' ('end_variable_statement')?
 ;
     variable_statement_initial:
     'variable_statement' '{'
     variable = [variable]
-    (('default' '{' default_value = assign_value '}' ('end_default')? ((constant_index = 'constant_index' assigns *= loop_array_index) | (constant_index = '' assigns *= loop_array_index))) | (assign = assign_value))
+    (('default' '{' default_value = assign_value '}' ('end_default')? ((constant_index = 'constant_index' assigns *= loop_array_index) | (constant_index = '' assigns *= loop_array_index)))
+    | (assign = assign_value))
     '}' ('end_variable_statement')?
 ;
     return_statement:
