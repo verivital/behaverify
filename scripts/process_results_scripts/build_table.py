@@ -361,8 +361,6 @@ for encoding_code in encoding_codes:
             df = pd.DataFrame(maximum_resident_invar, columns=experiments, index=escaped_encodings)
             df.to_latex(PATH_DIRECTION + group_name + '/processed_data/tables/' + encoding_code + '/' + file_name + '_maximum_resident_invar.tex', caption=escaped_file_name + ', Maximum Resident Size in K to Compute INVAR', label=file_name + '_INVAR_size')
 
-        # print(len(elapsed_time_ltl))
-
         for (thing, skip) in [
                 ('diameters', skip_diamater),
                 ('reachable', skip_compute_reachable),
@@ -481,7 +479,7 @@ for encoding_code in encoding_codes:
             plt.title(title)
             plt.legend(encodings)
             plt.tight_layout()
-            plt.savefig(PATH_DIRECTION + group_name + '/processed_data/pictures/' + encoding_code + '/' + file_name + '_' + file_end + '.png')
+            plt.savefig(PATH_DIRECTION + group_name + '/processed_data/pictures/' + encoding_code + '/' + file_name + '_' + file_end + '.png', bbox_inches = 'tight')
 
             plt.clf()
 

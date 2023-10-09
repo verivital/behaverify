@@ -75,8 +75,6 @@ MIN_VAL = int(sys.argv[3])
 MAX_VAL = int(sys.argv[4]) + 1
 STEP_SIZE =int( sys.argv[5])
 
-print('hello')
-
 for count in range(MIN_VAL, MAX_VAL, STEP_SIZE):
     print(count)
     write_flat_file(count)
