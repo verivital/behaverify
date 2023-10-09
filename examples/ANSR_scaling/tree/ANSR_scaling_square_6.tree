@@ -66,20 +66,44 @@ variables {
     variable {bl y_net_3_3 DEFINE INT assign {result{ (max, (add, y_net_2_2, y_net_2_4, -1), 0)}}}
     
     variable {bl y_net_output DEFINE INT assign {result{ (max, (add, y_net_3_1, (mult, y_change, y_net_3_2), (mult, -1, y_change, y_net_3_3)), 0)}}}
+variable {bl fake_net_0_0 DEFINE INT assign {result{prev_dest_x}}}
+variable {bl fake_net_0_1 DEFINE INT assign {result{prev_dest_y}}}
+variable {bl fake_net_0_2 DEFINE INT assign {result{prev_dest_x}}}
+variable {bl fake_net_0_3 DEFINE INT assign {result{prev_dest_y}}}
+variable {bl fake_net_0_4 DEFINE INT assign {result{prev_dest_x}}}
+variable {bl fake_net_0_5 DEFINE INT assign {result{prev_dest_y}}}
+variable {bl fake_net_1_0 DEFINE INT assign {result{(max, 0, (add, (mult, fake_net_0_0, -4), -1, (mult, fake_net_0_1, 5), 5, (mult, fake_net_0_2, 4), -4, (mult, fake_net_0_3, -4), 3, (mult, fake_net_0_4, -4), 5, (mult, fake_net_0_5, 3), -5))}}}
+variable {bl fake_net_1_1 DEFINE INT assign {result{(max, 0, (add, (mult, fake_net_0_0, 1), 1, (mult, fake_net_0_1, -1), -1, (mult, fake_net_0_2, 4), -1, (mult, fake_net_0_3, -4), -4, (mult, fake_net_0_4, 3), -1, (mult, fake_net_0_5, 5), -4))}}}
+variable {bl fake_net_1_2 DEFINE INT assign {result{(max, 0, (add, (mult, fake_net_0_0, -3), -5, (mult, fake_net_0_1, -3), 2, (mult, fake_net_0_2, 0), -4, (mult, fake_net_0_3, 0), -2, (mult, fake_net_0_4, 5), -1, (mult, fake_net_0_5, -3), -1))}}}
+variable {bl fake_net_1_3 DEFINE INT assign {result{(max, 0, (add, (mult, fake_net_0_0, 1), -5, (mult, fake_net_0_1, 3), -1, (mult, fake_net_0_2, 0), -3, (mult, fake_net_0_3, -4), 4, (mult, fake_net_0_4, 5), 2, (mult, fake_net_0_5, 0), 2))}}}
+variable {bl fake_net_1_4 DEFINE INT assign {result{(max, 0, (add, (mult, fake_net_0_0, -1), 1, (mult, fake_net_0_1, 3), 4, (mult, fake_net_0_2, -2), -1, (mult, fake_net_0_3, 0), -3, (mult, fake_net_0_4, -1), 0, (mult, fake_net_0_5, 1), 0))}}}
+variable {bl fake_net_1_5 DEFINE INT assign {result{(max, 0, (add, (mult, fake_net_0_0, -5), 2, (mult, fake_net_0_1, -5), -2, (mult, fake_net_0_2, 2), 2, (mult, fake_net_0_3, 2), 0, (mult, fake_net_0_4, 5), 0, (mult, fake_net_0_5, 5), -2))}}}
+variable {bl fake_net_2_0 DEFINE INT assign {result{(max, 0, (add, (mult, fake_net_1_0, 0), 5, (mult, fake_net_1_1, -2), -4, (mult, fake_net_1_2, 0), 4, (mult, fake_net_1_3, -4), 1, (mult, fake_net_1_4, -5), -5, (mult, fake_net_1_5, -5), -5))}}}
+variable {bl fake_net_2_1 DEFINE INT assign {result{(max, 0, (add, (mult, fake_net_1_0, -4), -4, (mult, fake_net_1_1, -3), 5, (mult, fake_net_1_2, -2), 0, (mult, fake_net_1_3, 1), -3, (mult, fake_net_1_4, -1), -4, (mult, fake_net_1_5, 3), 0))}}}
+variable {bl fake_net_2_2 DEFINE INT assign {result{(max, 0, (add, (mult, fake_net_1_0, 3), 3, (mult, fake_net_1_1, -3), -4, (mult, fake_net_1_2, 5), 2, (mult, fake_net_1_3, -5), 1, (mult, fake_net_1_4, -1), -2, (mult, fake_net_1_5, -4), -1))}}}
+variable {bl fake_net_2_3 DEFINE INT assign {result{(max, 0, (add, (mult, fake_net_1_0, 0), -3, (mult, fake_net_1_1, 1), 1, (mult, fake_net_1_2, -1), -2, (mult, fake_net_1_3, 0), -5, (mult, fake_net_1_4, -1), -3, (mult, fake_net_1_5, -1), 0))}}}
+variable {bl fake_net_2_4 DEFINE INT assign {result{(max, 0, (add, (mult, fake_net_1_0, -2), 3, (mult, fake_net_1_1, 4), -2, (mult, fake_net_1_2, -3), 2, (mult, fake_net_1_3, 5), -4, (mult, fake_net_1_4, -3), -3, (mult, fake_net_1_5, 1), -2))}}}
+variable {bl fake_net_2_5 DEFINE INT assign {result{(max, 0, (add, (mult, fake_net_1_0, -5), 4, (mult, fake_net_1_1, 1), 4, (mult, fake_net_1_2, 0), -2, (mult, fake_net_1_3, -3), 5, (mult, fake_net_1_4, 4), 5, (mult, fake_net_1_5, 1), 4))}}}
+variable {bl fake_net_3_0 DEFINE INT assign {result{(max, 0, (add, (mult, fake_net_2_0, 0), 4, (mult, fake_net_2_1, -1), -1, (mult, fake_net_2_2, 2), -4, (mult, fake_net_2_3, -3), 0, (mult, fake_net_2_4, 4), 4, (mult, fake_net_2_5, -5), -5))}}}
+variable {bl fake_net_3_1 DEFINE INT assign {result{(max, 0, (add, (mult, fake_net_2_0, 4), 0, (mult, fake_net_2_1, -4), 0, (mult, fake_net_2_2, -1), 4, (mult, fake_net_2_3, -1), -1, (mult, fake_net_2_4, -2), -1, (mult, fake_net_2_5, 0), 2))}}}
+variable {bl fake_net_3_2 DEFINE INT assign {result{(max, 0, (add, (mult, fake_net_2_0, -4), 4, (mult, fake_net_2_1, -3), -5, (mult, fake_net_2_2, 3), 1, (mult, fake_net_2_3, -5), 0, (mult, fake_net_2_4, 0), -1, (mult, fake_net_2_5, -4), -2))}}}
+variable {bl fake_net_3_3 DEFINE INT assign {result{(max, 0, (add, (mult, fake_net_2_0, 1), 5, (mult, fake_net_2_1, 1), 0, (mult, fake_net_2_2, 5), 0, (mult, fake_net_2_3, 3), 3, (mult, fake_net_2_4, -4), -5, (mult, fake_net_2_5, -1), -3))}}}
+variable {bl fake_net_3_4 DEFINE INT assign {result{(max, 0, (add, (mult, fake_net_2_0, -1), 4, (mult, fake_net_2_1, -2), 3, (mult, fake_net_2_2, 1), -4, (mult, fake_net_2_3, -2), 5, (mult, fake_net_2_4, 5), 0, (mult, fake_net_2_5, 4), 0))}}}
+variable {bl fake_net_3_5 DEFINE INT assign {result{(max, 0, (add, (mult, fake_net_2_0, -5), -4, (mult, fake_net_2_1, -5), 1, (mult, fake_net_2_2, 0), 2, (mult, fake_net_2_3, 5), 3, (mult, fake_net_2_4, 0), 5, (mult, fake_net_2_5, -5), 2))}}}
+variable {bl fake_net_4_0 DEFINE INT assign {result{(max, 0, (add, (mult, fake_net_3_0, 2), -3, (mult, fake_net_3_1, 4), 0, (mult, fake_net_3_2, 3), 1, (mult, fake_net_3_3, 0), -3, (mult, fake_net_3_4, -4), -4, (mult, fake_net_3_5, -1), -4))}}}
+variable {bl fake_net_4_1 DEFINE INT assign {result{(max, 0, (add, (mult, fake_net_3_0, -5), 4, (mult, fake_net_3_1, 0), 1, (mult, fake_net_3_2, 2), 0, (mult, fake_net_3_3, -5), 0, (mult, fake_net_3_4, 1), -1, (mult, fake_net_3_5, 0), 1))}}}
+variable {bl fake_net_4_2 DEFINE INT assign {result{(max, 0, (add, (mult, fake_net_3_0, -1), 1, (mult, fake_net_3_1, 5), 2, (mult, fake_net_3_2, -1), -4, (mult, fake_net_3_3, -3), 0, (mult, fake_net_3_4, 0), -1, (mult, fake_net_3_5, 2), 3))}}}
+variable {bl fake_net_4_3 DEFINE INT assign {result{(max, 0, (add, (mult, fake_net_3_0, 0), -5, (mult, fake_net_3_1, -3), -2, (mult, fake_net_3_2, -5), -4, (mult, fake_net_3_3, -5), -1, (mult, fake_net_3_4, 1), 4, (mult, fake_net_3_5, 3), 0))}}}
+variable {bl fake_net_4_4 DEFINE INT assign {result{(max, 0, (add, (mult, fake_net_3_0, -2), -5, (mult, fake_net_3_1, 0), -1, (mult, fake_net_3_2, 0), 1, (mult, fake_net_3_3, 0), 0, (mult, fake_net_3_4, -2), 0, (mult, fake_net_3_5, -4), 1))}}}
+variable {bl fake_net_4_5 DEFINE INT assign {result{(max, 0, (add, (mult, fake_net_3_0, 4), -3, (mult, fake_net_3_1, 0), -3, (mult, fake_net_3_2, 2), -4, (mult, fake_net_3_3, 4), 3, (mult, fake_net_3_4, 5), 2, (mult, fake_net_3_5, 4), 2))}}}
+variable {bl fake_net_5_0 DEFINE INT assign {result{(max, 0, (add, (mult, fake_net_4_0, 4), -2, (mult, fake_net_4_1, -2), 2, (mult, fake_net_4_2, 0), -4, (mult, fake_net_4_3, -5), -2, (mult, fake_net_4_4, 5), -2, (mult, fake_net_4_5, -5), -3))}}}
+variable {bl fake_net_5_1 DEFINE INT assign {result{(max, 0, (add, (mult, fake_net_4_0, -5), 5, (mult, fake_net_4_1, 4), -2, (mult, fake_net_4_2, 0), 0, (mult, fake_net_4_3, 2), 3, (mult, fake_net_4_4, -3), -3, (mult, fake_net_4_5, 5), -5))}}}
+variable {bl fake_net_5_2 DEFINE INT assign {result{(max, 0, (add, (mult, fake_net_4_0, -1), 2, (mult, fake_net_4_1, -4), 0, (mult, fake_net_4_2, -5), 5, (mult, fake_net_4_3, -5), -1, (mult, fake_net_4_4, -2), -3, (mult, fake_net_4_5, 1), 4))}}}
+variable {bl fake_net_5_3 DEFINE INT assign {result{(max, 0, (add, (mult, fake_net_4_0, -1), 3, (mult, fake_net_4_1, -3), -5, (mult, fake_net_4_2, 0), 0, (mult, fake_net_4_3, -5), 2, (mult, fake_net_4_4, 4), 0, (mult, fake_net_4_5, 5), -4))}}}
+variable {bl fake_net_5_4 DEFINE INT assign {result{(max, 0, (add, (mult, fake_net_4_0, 1), -1, (mult, fake_net_4_1, -4), -3, (mult, fake_net_4_2, -5), -5, (mult, fake_net_4_3, 0), -4, (mult, fake_net_4_4, 0), 3, (mult, fake_net_4_5, -2), 4))}}}
+variable {bl fake_net_5_5 DEFINE INT assign {result{(max, 0, (add, (mult, fake_net_4_0, 3), -2, (mult, fake_net_4_1, 3), -3, (mult, fake_net_4_2, -3), -3, (mult, fake_net_4_3, 1), 0, (mult, fake_net_4_4, 2), -1, (mult, fake_net_4_5, -2), -4))}}}
+variable {bl fake_net_output DEFINE INT assign {result{(max, 0, (add, (mult, fake_net_5_0, 4), 0, (mult, fake_net_5_1, 1), 2, (mult, fake_net_5_2, -4), 4, (mult, fake_net_5_3, 0), 5, (mult, fake_net_5_4, 0), 2, (mult, fake_net_5_5, 4), -3))}}}
 
-    #{
-    variable {bl test array 16 VAR [0, 63] default {assign {result {0}}} index_of{
-	    (loop, loop_index, [0, 3] such_that True,
-		(loop, loop_index2, [0, 3] such_that True,
-		    (loop, loop_index3, [0, 3] such_that True,
-			(add, loop_index3, (mult, (add, loop_index2, (mult, loop_index, 4)), 4))
-		    )
-		)
-	    )
-	}
-	assign {result{1}}
-    }
-}#
 } end_variables
 
 environment_update {
@@ -364,4 +388,5 @@ specifications { #{ INVAR, LTL, and CTL specs go here }#
     CTLSPEC {(always_finally, victory at -1)}
     LTLSPEC {(finally_bounded, [0, 200], victory at -1)}
     #{CTLSPEC {(imply, (and, (eq, (index, tree_x 0, 0), 2), (eq, (index, tree_x 0, 1), 5), (eq, (index, tree_y 0, 0), 2), (eq, (index, tree_y 0, 1), 5)), (always_finally, victory -1))}}#
+INVARSPEC { (eq, 0, fake_net_output)}
 } end_specifications
