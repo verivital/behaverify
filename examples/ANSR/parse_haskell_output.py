@@ -62,5 +62,5 @@ def create_gif(count, x_size, y_size):
     frames = [Image.open('./' + str(x_size) + 'x' + str(y_size) + '_images' + ('_trained' if TRAINED else '') + '/' + str(image) + '.png') for image in range(count)]
     frame_one = frames[0]
     frame_one.save('./drone.gif', format = 'GIF', append_images = frames, save_all = True, duration = 300, loop = 0)
-TRAINED = bool(sys.argv[1])
+TRAINED = int(sys.argv[1]) > 0
 create_gif(handle_file(int(sys.argv[2]), int(sys.argv[3])), int(sys.argv[2]), int(sys.argv[3]))

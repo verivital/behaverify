@@ -23,4 +23,4 @@ for encoding_group in "${encoding_groups[@]}"; do
     mkdir "${path_name}/processed_data/pictures/${encoding_group}"
 done
 
-python3 ./build_table.py --folder_name ANSR_scaling --file_name ANSR_scaling_flat ANSR_scaling_square --minV $min_val --maxV $max_val --step $step_size --xLabel "Square Root of n" --encodings "full_opt"
+python3 ./build_table.py --folder_name ANSR_scaling --file_name ANSR_scaling_flat ANSR_scaling_square --minV $min_val --maxV $max_val --step $step_size --xLabel "n" --encodings "full_opt"
