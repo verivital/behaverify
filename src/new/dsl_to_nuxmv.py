@@ -3,7 +3,7 @@ This module is part of BehaVerify and used to convert .tree files to .smv files 
 
 
 Author: Serena Serafina Serbinowska
-Last Edit: 2023-09-29
+Last Edit: 2023-10-13
 '''
 import argparse
 import pprint
@@ -24,7 +24,7 @@ from behaverify_common import create_node_name, create_node_template, create_var
 # if the condition is true, then the result is used.
 # the last condition should always be TRUE
 
-def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, keep_last_stage, do_not_trim, behave_only):
+def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_last_stage, do_not_trim, behave_only):
     '''
     This method is used to convert the dsl to behaverify.
     '''
@@ -323,7 +323,6 @@ def dsl_to_behaverify(metamodel_file, model_file, output_file, keep_stage_0, kee
         return (str(atom).upper() if atom_type == 'BOOLEAN' else str(atom)) if atom_class == 'CONSTANT' else (format_variable(atom, adjust_args(code, misc_args)))
 
     def format_code(code, misc_args):
-        '''format a code fragment'''
         return (
             [handle_atom(code, misc_args)] if code.atom is not None else (
                 ['(' + formatted_code + ')' for formatted_code in format_code(code.code_statement, misc_args)] if code.code_statement is not None else (
@@ -1062,4 +1061,4 @@ if __name__ == '__main__':
     arg_parser.add_argument('--do_not_trim', action = 'store_true')
     arg_parser.add_argument('--behave_only', action = 'store_true')
     args = arg_parser.parse_args()
-    dsl_to_behaverify(args.metamodel_file, args.model_file, args.output_file, args.keep_stage_0, args.keep_last_stage, args.do_not_trim, args.behave_only)
+    dsl_to_nuxmv(args.metamodel_file, args.model_file, args.output_file, args.keep_stage_0, args.keep_last_stage, args.do_not_trim, args.behave_only)
