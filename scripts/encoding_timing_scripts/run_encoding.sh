@@ -43,7 +43,7 @@ for range_val in "${range_info[@]}"; do
 	    if [[ "$cur_val" -le 1 ]]; then
 		echo "too many timeouts. skipping test"
 	    else
-		timeout 10m "../test_scripts/${test_val}.sh" $path_name $file_name $encoding_val
+		timeout 3m "../test_scripts/${test_val}.sh" $path_name $file_name $encoding_val
 		if [[ $? -eq 124 ]]; then
 		    timeout_array[$array_index]=$((cur_val - 1))
 		fi
