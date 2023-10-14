@@ -56,7 +56,7 @@ encoding_mark = {
     'no_opt' : ('red', 'o'),
     'last_opt' : ('blue', 'v'),
     'first_opt' : ('green', '^'),
-    'full_opt' : ('yellow', '*'),
+    'full_opt' : ('black', '*'),
 }
 
 reach = re.compile('reachable states: (?P<val1>\d+(\.\d+e\+\d+|)) \(2\^(?P<val2>\d+(\.\d+|))\) out of (?P<val3>\d+(\.\d+e\+\d+|)) \(2\^(?P<val4>\d+(\.\d+|))\)')
