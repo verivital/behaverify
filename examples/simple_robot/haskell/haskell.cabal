@@ -19,17 +19,16 @@ maintainer:         bserbinowski@gmail.com
 -- A copyright notice.
 -- copyright:
 -- category:
---extra-source-files: CHANGELOG.md
+extra-source-files: CHANGELOG.md
 
 executable haskell
     main-is:          Main.hs
-    ghc-options: -w
 
     -- Modules included in this executable, other than Main.
     -- other-modules:
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
-    build-depends:    base ^>=4.16.4.0, random
+    build-depends:    base ^>=4.16.4.0
     hs-source-dirs:   app
     default-language: Haskell2010

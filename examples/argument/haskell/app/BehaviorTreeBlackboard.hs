@@ -4,11 +4,14 @@ import System.Random
 import SereneOperations
 
 data BTreeBlackboard = BTreeBlackboard {
-  sereneBoardGenerator :: StdGen
+    boardGenerator :: StdGen
   }
 
 fromBTreeBlackboardToString :: BTreeBlackboard -> String
-fromBTreeBlackboardToString blackboard = "Board = {" ++ "}"
+fromBTreeBlackboardToString blackboard = "board = {" ++ "}"
+
+-- START OF GET FUNCTIONS FOR LOCAL VARIABLES
+
 
 -- START OF BLACKBOARD FUNCTIONS
 
@@ -16,27 +19,21 @@ fromBTreeBlackboardToString blackboard = "Board = {" ++ "}"
 -- START OF LOCAL BLACKBOARD FUNCTIONS
 
 
--- START OF GET FUNCTIONS FOR LOCAL VARIABLES
+-- START OF INDEX FUNCTIONS FOR ARRAYS
 
 
--- START OF GET FUNCTIONS FOR ARRAYS
+-- START OF NEW ARRAY FUNCTIONS
 
 
--- START OF TYPE CHECKING FUNCTIONS
-
-
--- START OF SET FUNCTIONS
-
-updateBoardGenerator :: BTreeBlackboard -> StdGen -> BTreeBlackboard
-updateBoardGenerator blackboard newGen = blackboard { sereneBoardGenerator = newGen }
-
--- START OF SET FUNCTIONS FOR ARRAYS
+-- START OF UPDATES
 
 
 -- START OF INITIAL BLACKBOARD VALUE
 
 initialBlackboard :: Integer -> BTreeBlackboard
-initialBlackboard seed = BTreeBlackboard newSereneGenerator   where
-    tempGen0 = getGenerator seed
-    newSereneGenerator = tempGen0
+initialBlackboard seed = newBlackboard
+  where
+    firstGen = getGenerator seed
+    dummy = BTreeBlackboard firstGen 
+    newBlackboard = dummy
 

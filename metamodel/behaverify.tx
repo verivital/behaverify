@@ -1,6 +1,6 @@
     //This is intended to be used with BehaVerify
     //Author: Serena Serafina Serbinowska
-    //last edit: 2023-09-19
+    //last edit: 2023-10-03
 BehaviorModel:
     'configuration' '{'
     (hypersafety ?= 'hypersafety')
@@ -38,23 +38,15 @@ BehaviorModel:
     specifications *= specification
     '}' ('end_specifications')?
 ;
-
-reserved:
-    'bl' | 'local' | 'env' | 'value'
-;
-
 //comments so that we can explain what is happening in a .tree file
 Comment:
     /#\{([^a]|a)*?\}#/
 ;//I can't get it to match newlines without doing something janky like this.
-    
     //--------------------SEC:NODES-------------------------------
     //nodes are either composite, decorator, or leaf. 
-
 node:
     sub_tree_reference | composite_node | decorator_node | leaf_node
 ;
-
     sub_tree :
     'sub_tree' '{'
     name = ID
@@ -66,7 +58,6 @@ node:
     sub_root = [sub_tree]
     '}' ('end_insert')?
 ;
-    
     composite_node:
     'composite' '{'
     name = ID
@@ -80,7 +71,6 @@ node:
     '}' ('end_children')?
     '}' ('end_composite')?
 ;
-    
     decorator_node:
     'decorator' '{'
     name = ID
@@ -91,23 +81,20 @@ node:
     'child' '{' child = node '}' ('end_child')?
     '}' ('end_decorator')?
 ;
-
     leaf_node:
     ((leaf = [check_node]) |
     (leaf = [action_node]) |
     (leaf = [check_environment_node]))
     '{'
-    arguments *= constant_value[',']
+    arguments *= code_statement[',']
     '}'
 ;
     possible_argument_types:
     'INT' | 'ENUM' | 'BOOLEAN' | 'REAL'
 ;
-
     argument_declaration:
-    argument_name = STRING ':=' argument_type = possible_argument_types
+    argument_name = ID ':=' argument_type = possible_argument_types
 ;
-    
     check_node:
     (node_type = 'check') '{'
     name = ID
@@ -124,7 +111,6 @@ node:
     'condition' '{' condition = code_statement '}' ('end_condition')?
     '}' ('end_environment_check')?
 ;
-    
     action_node:
     (node_type = 'action') '{'
     name = ID
@@ -142,126 +128,84 @@ node:
     '}' ('end_update')?
     '}' ('end_action')?
 ;
-
     //--------------------SEC:VARIABLES---------------------------
     variable:
     'variable' '{'
     ((var_type = 'bl') | (var_type = 'local') | (var_type = 'env'))
     name = ID
-    (('array' array_size = int_or_reference
+    (('array' array_size = code_statement
     ((model_as = 'VAR' domain = variable_domain) |
     (model_as = 'FROZENVAR' domain = variable_domain) |
     (model_as = 'DEFINE' ((domain = 'INT') | (domain = 'ENUM') | (domain = 'BOOLEAN') | (domain = 'REAL'))))
-    ((array_mode = 'range' assign = assign_value) | (array_mode = 'per_index' assigns += assign_value)))
+    'default' '{' default_value = assign_value '}' ('end_default')?
+    ((constant_index = 'constant_index' assigns *= loop_array_index) | (constant_index = '' assigns *= loop_array_index)))
     |
     (((model_as = 'VAR' domain = variable_domain) |
     (model_as = 'FROZENVAR' domain = variable_domain) |
     (model_as = 'DEFINE' ((domain = 'INT') | (domain = 'ENUM') | (domain = 'BOOLEAN') | (domain = 'REAL'))))
-    array_mode = '' assign = assign_value))
+    assign = assign_value))
     '}' ('end_variable')?
 ;
-    
     variable_domain:
-    ('[' min_val = int_or_reference ',' max_val = int_or_reference (',' condition = range_code)? ']') |
-    ('{' enums += enumeration[','] '}') |
     (boolean = 'BOOLEAN') |
     (true_int = 'INT') |
-    (true_real = 'REAL')
+    (true_real = 'REAL') |
+    ('[' min_val = code_statement ',' max_val = code_statement ']') |
+    ('{' domain_codes += code_statement[','] '}')
 ;
-
-
-    //note that string enumerations could be constant reference
-enumeration:
-    INT | STRING
-;
-
-    //the model checker will ensure in these cases that the string is a constant that refers to an int
-    int_or_reference:
-    INT | STRING
-;
-    
     constant_value:
     STRICTFLOAT | INT | STRING | BOOL
 ;
-
-    constant_declaration:
-    name = STRING ':=' val = constant_value
+    constant_or_reference:
+    (constant = constant_value) | (reference = ID)
 ;
-    
-
+    constant_declaration:
+    name = ID ':=' val = constant_value
+;
 status:
     'success' | 'running' | 'failure'
 ;
-
-    //--------------------SEC:STATEMENTS--------------------------
-    
+    //--------------------SEC:STATEMENTS--------------------------   
 statement:
     (variable_statement = variable_statement) |
     (read_statement = read_statement) |
     (write_statement = write_statement)
-;
-
-    non_determinism_string:
-    'non_determinism' ','
-    ;
-    
+;   
     read_statement:
     'read_environment' '{'
     name = ID
     ('condition_variable' '{'
-    (('(' is_const = 'constant_index_of' condition_variable = [variable] ',' index_of = int_or_reference ')') |
-    ('(' is_const = 'index_of' condition_variable = [variable] ',' index_of = code_statement ')') |
+    (('(' (constant_index = 'constant_index' | constant_index = '') condition_variable = [variable] ',' index_of = code_statement ')') |
     (condition_variable = [variable]))
     '}' ('end_condition_variable')?)?
     'condition' '{'
-    non_determinism ?= non_determinism_string condition = code_statement
+    ((non_determinism = 'non_determinism' ',') | (non_determinism = '')) condition = code_statement
     '}' ('end_condition')?
     variable_statements += variable_statement
     '}' ('end_read_environment')?
 ;
-    
     write_statement:
     'write_environment' '{'
     name = ID
-    update *= variable_statement
+    update += variable_statement
     '}' ('end_write_environment')?
 ;
-
     //--------------------SEC:VAR_STATEMENTS--------------------------
-
     variable_statement:
     'variable_statement' '{'
     instant ?= 'instant'
     variable = [variable]
-    //start of variable match. this will go through array range, array per_index, and non-array
-    (
-    (array_mode = 'range' (',' values = int_or_reference ',' values = int_or_reference ',' values = range_code)?
-    ((constant_index = 'constant_index' assign = array_index_constant) | (constant_index = '' assign = array_index)))
-    //in the above we are using a range variable to index into an array. the variable MUST be an array
-    |
-    (array_mode = 'per_index'
-    ((constant_index = 'constant_index' assigns += array_index_constant) | (constant_index = '' assigns += array_index)))
-    //in the above we are indexing without a range variable. the variable MUST be an array
-    |
-    (array_mode = ''
-    (constant_index = '' assign = assign_value))
-    )
+    (((constant_index = 'constant_index' assigns += loop_array_index) | (constant_index = '' assigns += loop_array_index))
+    | (assign = assign_value))
     '}' ('end_variable_statement')?
-    ;
-
+;
     variable_statement_initial:
     'variable_statement' '{'
     variable = [variable]
-    (
-    (array_mode = 'range' assign = assign_value)
-    |
-    (array_mode = 'per_index' assigns += assign_value)
-    |
-    (array_mode = '' assign = assign_value)
-    )
+    (('default' '{' default_value = assign_value '}' ('end_default')? ((constant_index = 'constant_index' assigns *= loop_array_index) | (constant_index = '' assigns *= loop_array_index)))
+    | (assign = assign_value))
     '}' ('end_variable_statement')?
 ;
-    
     return_statement:
     'return_statement' '{'
     case_results *=  status_case_result
@@ -269,12 +213,12 @@ statement:
     '}' ('end_return_statement')?
 ;
     //--------------------SEC:ARRAY_INDEX_OF--------------------------
-    array_index:
-    'index_of' '{' index_expr = code_statement '}' ('end_index_of')?
-    assign = assign_value
+    loop_array_index:
+    ('(' 'loop' ',' loop_variable = ID ',' (('{' loop_variable_domain += code_statement[','] '}') | ('[' min_val = code_statement ',' max_val = code_statement ']')) 'such_that' loop_condition = code_statement ',' loop_array_index = loop_array_index ')')
+    | (array_index = array_index)
 ;
-    array_index_constant:
-    'index_of' '{' index_expr = int_or_reference '}' ('end_index_of')?
+    array_index:
+    'index_of' '{' index_expr += code_statement[','] '}' ('end_index_of')?
     assign = assign_value
 ;
     assign_value:
@@ -283,234 +227,65 @@ statement:
     default_result = default_result
     '}' ('end_assign')?
 ;
-
     //--------------------SEC:CASE_RESULT--------------------------
-
     case_result:
     'case' '{' condition = code_statement '}' ('end_case')?
     'result' '{'
-    ((range_mode = 'range' ',' values = int_or_reference ',' values = int_or_reference ',' values = range_code) | 
-    (range_mode = '' values += code_statement[',']))
+    values += code_statement[',']
     '}' ('end_result')?
 ;
-        
     default_result:
     'result' '{'
-    ((range_mode = 'range' ',' values = int_or_reference ',' values = int_or_reference ',' values = range_code) | 
-    (range_mode = '' values += code_statement[',']))
+    values += code_statement[',']
     '}' ('end_result')?
 ;
-
     status_case_result:
     'case' '{' condition = code_statement '}' ('end_case')?
     'result' '{'
     status = status
     '}' ('end_result')?
-;
-    
+;   
     status_default_result:
     'result' '{'
     status = status
     '}' ('end_result')?
 ;
-
-
     //--------------------SEC:CODE--------------------------------
-
-    range_code:
-    (value ?= 'value') |
-    (constant = constant_value) |
-    ('(' function_call = range_function ')') |
-    ('(' code_statement = range_code ')')
-;
-
     code_statement:
-    (constant = constant_value) |
-    (variable = [variable] (node_name = ID)? (read_at = int_or_reference)? (trace_num = int_or_reference)?) |
     ('(' function_call = function ')') |
-    ('(' code_statement = code_statement ')')
+    ('(' code_statement = code_statement ')') |
+    (atom = constant_or_reference ('node' node_name = code_statement)? ('at' read_at = code_statement)? ('trace' trace_num = code_statement)?)
 ;
-
-    //--------------------SEC:FUNCTION_BL_LOCALS--------------------------------
-
-    range_function:
-    (function_name = 'abs' ',' values = range_code) |
-    (function_name = 'max' ',' values += range_code[',']) |
-    (function_name = 'min' ',' values += range_code[',']) |
-    (function_name = 'sin' ',' values = range_code) |
-    (function_name = 'cos' ',' values = range_code) |
-    (function_name = 'exp' ',' values = range_code) |
-    (function_name = 'tan' ',' values = range_code) |
-    (function_name = 'ln' ',' values = range_code) |
-    (function_name = 'not' ',' values = range_code) |
-    (function_name = 'and' ',' values += range_code[',']) |
-    (function_name = 'or' ',' values += range_code[',']) |
-    (function_name = 'xor' ',' values = range_code ',' values = range_code) |
-    (function_name = 'xnor' ',' values = range_code ',' values = range_code) |
-    (function_name = 'imply' ',' values = range_code ',' values = range_code) |
-    (function_name = 'equiv' ',' values = range_code ',' values = range_code) |
-    (function_name = 'eq' ',' values = range_code ',' values = range_code) |
-    (function_name = 'neq' ',' values = range_code ',' values = range_code) |
-    (function_name = 'lt' ',' values = range_code ',' values = range_code) |
-    (function_name = 'gt' ',' values = range_code ',' values = range_code) |
-    (function_name = 'lte' ',' values = range_code ',' values = range_code) |
-    (function_name = 'gte' ',' values = range_code ',' values = range_code) |
-    (function_name = 'neg' ',' values = range_code) |
-    (function_name = 'add' ',' values += range_code[',']) |
-    (function_name = 'sub' ',' values = range_code ',' values = range_code) |
-    (function_name = 'mult' ',' values += range_code[',']) |
-    (function_name = 'idiv' ',' values = range_code ',' values = range_code) |
-    (function_name = 'mod' ',' values = range_code ',' values = range_code) |
-    (function_name = 'rdiv' ',' values = range_code ',' values = range_code) |
-    (function_name = 'floor' ',' values = range_code) |
-    (function_name = 'count' ',' values += range_code[','])
-;
-
+    //--------------------SEC:FUNCTION_BL_LOCALS--------------------------------  
     function:
-    (function_name = 'abs' ',' values = code_statement) |
-    (function_name = 'max' ',' values += code_statement[',']) |
-    (function_name = 'min' ',' values += code_statement[',']) |
-    (function_name = 'sin' ',' values = code_statement) |
-    (function_name = 'cos' ',' values = code_statement) |
-    (function_name = 'exp' ',' values = code_statement) |
-    (function_name = 'tan' ',' values = code_statement) |
-    (function_name = 'ln' ',' values = code_statement) |
-    (function_name = 'eq' ',' values = code_statement ',' values = code_statement) |
-    (function_name = 'neq' ',' values = code_statement ',' values = code_statement) |
-    (function_name = 'lt' ',' values = code_statement ',' values = code_statement) |
-    (function_name = 'gt' ',' values = code_statement ',' values = code_statement) |
-    (function_name = 'lte' ',' values = code_statement ',' values = code_statement) |
-    (function_name = 'gte' ',' values = code_statement ',' values = code_statement) |
-    (function_name = 'neg' ',' values = code_statement) |
-    (function_name = 'add' ',' values += code_statement[',']) |
-    (function_name = 'sub' ',' values = code_statement ',' values = code_statement) |
-    (function_name = 'mult' ',' values += code_statement[',']) |
-    (function_name = 'idiv' ',' values = code_statement ',' values = code_statement) |
-    (function_name = 'mod' ',' values = code_statement ',' values = code_statement) |
-    (function_name = 'rdiv' ',' values = code_statement ',' values = code_statement) |
-    (function_name = 'floor' ',' values = code_statement) |
-    (function_name = 'count' ',' values += code_statement[',']) |
-    (function_name = 'index' ',' variable = [variable] (node_name = ID)? (read_at = int_or_reference)? (trace_num = int_or_reference)? ',' values = code_statement) |
-
-    //these functions permit the continuation of ltl/ctl specific functions
-    (function_name = 'not' ',' values = code_statement) |
-    (function_name = 'and' ',' values += code_statement[',']) |
-    (function_name = 'or' ',' values += code_statement[',']) |
-    (function_name = 'xor' ',' values = code_statement ',' values = code_statement) |
-    (function_name = 'xnor' ',' values = code_statement ',' values = code_statement) |
-    (function_name = 'imply' ',' values = code_statement ',' values = code_statement) |
-    (function_name = 'equiv' ',' values = code_statement ',' values = code_statement) |
-
-    //these functions permitted only in specifications
-    (function_name = 'active' ',' node_name = ID) |
-    (function_name = 'success' ',' node_name = ID) |
-    (function_name = 'running' ',' node_name = ID) |
-    (function_name = 'failure' ',' node_name = ID) |
-
-    //start of ltl specific
-    (function_name = 'next' ',' values = code_statement) |
-    (function_name = 'globally' ',' values = code_statement) |
-    (function_name = 'globally_bounded' ',' bound = bound_statement ',' values = code_statement) |
-    (function_name = 'finally' ',' values = code_statement) |
-    (function_name = 'finally_bounded' ',' bound = bound_statement ',' values = code_statement) |
-    (function_name = 'until' ',' values = code_statement ',' values = code_statement) |
-    (function_name = 'until_bounded' ',' bound = bound_statement ',' values = code_statement ',' values = code_statement) |
-    (function_name = 'release' ',' values = code_statement ',' values = code_statement) |
-    (function_name = 'release_bounded' ',' bound = bound_statement ',' values = code_statement ',' values = code_statement) |
-    (function_name = 'previous' ',' values = code_statement) |
-    (function_name = 'not_previous_not' ',' values = code_statement) |
-    (function_name = 'historically' ',' values = code_statement) |
-    (function_name = 'historically_bounded' ',' bound = bound_statement ',' values = code_statement) |
-    (function_name = 'once' ',' values = code_statement) |
-    (function_name = 'once_bounded' ',' bound = bound_statement ',' values = code_statement) |
-    (function_name = 'since' ',' values = code_statement ',' values = code_statement) |
-    (function_name = 'since_bounded' ',' bound = bound_statement ',' values = code_statement ',' values = code_statement) |
-    (function_name = 'triggered' ',' values = code_statement ',' values = code_statement) |
-    (function_name = 'triggered_bounded' ',' bound = bound_statement ',' values = code_statement ',' values = code_statement) |
-
-    //start of ctl specific
-    (function_name = 'exists_globally' ',' values = code_statement) |
-    (function_name = 'exists_next' ',' values = code_statement) |
-    (function_name = 'exists_finally' ',' values = code_statement) |
-    (function_name = 'exists_until' ',' values = code_statement ',' values = code_statement) |
-    (function_name = 'always_globally' ',' values = code_statement) |
-    (function_name = 'always_next' ',' values = code_statement) |
-    (function_name = 'always_finally' ',' values = code_statement) |
-    (function_name = 'always_until' ',' values = code_statement ',' values = code_statement)
+    (function_name = 'loop' ',' loop_variable = ID ',' (('{' loop_variable_domain += code_statement[','] '}') | ('[' min_val = code_statement ',' max_val = code_statement ']')) 'such_that' loop_condition = code_statement ',' values = code_statement) |
+    (function_name = 'index' ',' to_index = code_statement (node_name = code_statement)? (read_at = code_statement)? (trace_num = code_statement)? ',' ((constant_index = 'constant_index' values = code_statement) | (constant_index = '' values = code_statement))) |
+    (function_name = bounded_function_names ',' bound = bound_statement ',' values = code_statement) |
+    (function_name = function_names ',' values += code_statement[',']) |
+    (function_name = status_function_names ',' node_name = code_statement)
 ;
-
     bound_statement:
-    '[' lower_bound = int_or_reference ',' ((upper_bound = int_or_reference) |  (upper_bound = '+oo')) ']'
+    '[' lower_bound = code_statement ',' upper_bound = code_statement ']'
 ;
-
+    function_names://these need to be ordered so that something like eq is AFTER equiv, otherwise equiv will match eq and cause problems.
+    //start of ctl specific
+    'exists_globally' | 'exists_next' | 'exists_finally' | 'exists_until' | 'always_globally' | 'always_next' | 'always_finally' | 'always_until'
+    //start of ltl specific
+    'next' | 'globally' | 'finally' | 'until' | 'release' | 'previous' | 'not_previous_not' | 'historically' | 'once' | 'since' | 'triggered' | 
+    //these functions permit the continuation of ltl/ctl specific functions
+    'not' | 'and' | 'or' | 'xor' | 'xnor' | 'imply' | 'equiv' |
+    //the rest.
+    'if' | 'abs' | 'max' | 'min' | 'sin' | 'cos' | 'exp' | 'tan' | 'ln' | 'eq' | 'neq' | 'lte' | 'gte' | 'lt' | 'gt' | 'neg' | 'add' | 'sub' | 'mult' | 'idiv' | 'mod' | 'rdiv' | 'floor' | 'count'
+;
+    bounded_function_names:
+    'globally_bounded' | 'finally_bounded' | 'until_bounded' | 'release_bounded' | 'historically_bounded' | 'once_bounded' | 'since_bounded' | 'triggered_bounded'
+;
+    status_function_names:
+    //these functions permitted only in specifications
+    'active' | 'success' | 'running' | 'failure'
+;
 specification:
     (spec_type = 'LTLSPEC' '{' code_statement = code_statement '}' ('end_LTLSPEC')?) |
     (spec_type = 'CTLSPEC' '{' code_statement = code_statement '}' ('end_CTLSPEC')?) |
     (spec_type = 'INVARSPEC' '{' code_statement = code_statement '}' ('end_INVARSPEC')?)
 ;
-
-
-//OLD NAMES
-//     range_function:
-//     (function_name = 'abs' ',' values = range_code) |
-//     (function_name = 'max' ',' values = range_code ',' values = range_code) |
-//     (function_name = 'min' ',' values = range_code ',' values = range_code) |
-//     (function_name = 'sin' ',' values = range_code) |
-//     (function_name = 'cos' ',' values = range_code) |
-//     (function_name = 'exp' ',' values = range_code) |
-//     (function_name = 'tan' ',' values = range_code) |
-//     (function_name = 'ln' ',' values = range_code) |
-//     (function_name = 'not' ',' values = range_code) |
-//     (function_name = 'and' ',' values += range_code[',']) |
-//     (function_name = 'or' ',' values += range_code[',']) |
-//     (function_name = 'xor' ',' values = range_code ',' values = range_code) |
-//     (function_name = 'xnor' ',' values = range_code ',' values = range_code) |
-//     (function_name = 'implies' ',' values = range_code ',' values = range_code) |
-//     (function_name = 'equivalent' ',' values = range_code ',' values = range_code) |
-//     (function_name = 'equal' ',' values = range_code ',' values = range_code) |
-//     (function_name = 'not_equal' ',' values = range_code ',' values = range_code) |
-//     (function_name = 'less_than' ',' values = range_code ',' values = range_code) |
-//     (function_name = 'greater_than' ',' values = range_code ',' values = range_code) |
-//     (function_name = 'less_than_or_equal' ',' values = range_code ',' values = range_code) |
-//     (function_name = 'greater_than_or_equal' ',' values = range_code ',' values = range_code) |
-//     (function_name = 'negative' ',' values = range_code) |
-//     (function_name = 'addition' ',' values += range_code[',']) |
-//     (function_name = 'subtraction' ',' values = range_code ',' values = range_code) |
-//     (function_name = 'multiplication' ',' values += range_code[',']) |
-//     (function_name = 'division' ',' values = range_code ',' values = range_code) |
-//     (function_name = 'mod' ',' values = range_code ',' values = range_code) |
-//     (function_name = 'count' ',' values += range_code[','])
-// ;
-    
-    // function:
-    // (function_name = 'abs' ',' values = code_statement) |
-    // (function_name = 'max' ',' values = code_statement ',' values = code_statement) |
-    // (function_name = 'min' ',' values = code_statement ',' values = code_statement) |
-    // (function_name = 'sin' ',' values = code_statement) |
-    // (function_name = 'cos' ',' values = code_statement) |
-    // (function_name = 'exp' ',' values = code_statement) |
-    // (function_name = 'tan' ',' values = code_statement) |
-    // (function_name = 'ln' ',' values = code_statement) |
-    // (function_name = 'equal' ',' values = code_statement ',' values = code_statement) |
-    // (function_name = 'not_equal' ',' values = code_statement ',' values = code_statement) |
-    // (function_name = 'less_than' ',' values = code_statement ',' values = code_statement) |
-    // (function_name = 'greater_than' ',' values = code_statement ',' values = code_statement) |
-    // (function_name = 'less_than_or_equal' ',' values = code_statement ',' values = code_statement) |
-    // (function_name = 'greater_than_or_equal' ',' values = code_statement ',' values = code_statement) |
-    // (function_name = 'negative' ',' values = code_statement) |
-    // (function_name = 'addition' ',' values += code_statement[',']) |
-    // (function_name = 'subtraction' ',' values = code_statement ',' values = code_statement) |
-    // (function_name = 'multiplication' ',' values += code_statement[',']) |
-    // (function_name = 'division' ',' values = code_statement ',' values = code_statement) |
-    // (function_name = 'mod' ',' values = code_statement ',' values = code_statement) |
-    // (function_name = 'count' ',' values += code_statement[',']) |
-    // (function_name = 'index' ',' variable = [variable] (node_name = ID)? (read_at = int_or_reference)? (trace_num = int_or_reference)? ',' values = code_statement) |
-
-    // //these functions permit the continuation of ltl/ctl specific functions
-    // (function_name = 'not' ',' values = code_statement) |
-    // (function_name = 'and' ',' values += code_statement[',']) |
-    // (function_name = 'or' ',' values += code_statement[',']) |
-    // (function_name = 'xor' ',' values = code_statement ',' values = code_statement) |
-    // (function_name = 'xnor' ',' values = code_statement ',' values = code_statement) |
-    // (function_name = 'implies' ',' values = code_statement ',' values = code_statement) |
-    // (function_name = 'equivalent' ',' values = code_statement ',' values = code_statement) |

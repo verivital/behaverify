@@ -1,40 +1,22 @@
 configuration {
-    #{ Here you specify various configuration options, such as Hypersafety }#
 }
 enumerations {
     'increase', 'decrease', 'nope'
 }
 constants {
-    #{ constants are used to synchronize values in a .tree file. }#
-    #{ example = 0 }#
-    #{ to use example elsewhere, simply type 'example' in place of any integer (quotes included) }#
 } end_constants
 
 variables {
-    #{ Variable declarations go here.
-	it is suggested, but not required, that the order of declaration be
-	Blackboard, Local, Environment.
-	If variable B depends on variable A, then variable A MUST be declared before B.
-    }#
-    variable{bl foo array 3 VAR [0, 10] range assign{result{'serene_index'}}}
-    variable{bl trom array 2 DEFINE INT per_index assign{result{(addition, (index, foo, 0), (index, foo, 1), (index, foo, 2))}}assign{result{(multiplication, (index, foo, 0), (index, foo, 1), (index, foo, 2))}}}
+    variable{bl foo array 3 VAR [0, 10] default{0} constant_index (loop, bruh, [0, 10] such_that True, assign{result{bruh}})}
+    variable{bl trom array 2 DEFINE INT default{0} assign{result{(addition, (index, foo, 0), (index, foo, 1), (index, foo, 2))}}assign{result{(multiplication, (index, foo, 0), (index, foo, 1), (index, foo, 2))}}}
     variable{bl index_var VAR [0, 2] assign{result{0, 1, 2}}}
-    variable{local bar array 3 VAR {'increase', 'decrease', 'nope'} per_index assign{result{'increase'}} assign{result{'increase', 'decrease'}} assign{case{False}result{'increase', 'decrease'}result{'nope'}}}
+    variable{local bar array 3 VAR {'increase', 'decrease', 'nope'} default{'increase'} assign{result{'increase'}} assign{result{'increase', 'decrease'}} assign{case{False}result{'increase', 'decrease'}result{'nope'}}}
 } end_variables
 
 environment_update {
 } end_environment_update
 
 checks {
-    #{ check nodes are defined here }#
-    #{
-	check {
-	    x_idk
-	    arguments{}
-	    read_variables { x } end_read_variables
-	    condition { (and, (less_than, (addition, x, 1), 4), True) } end_condition
-	} end_check
-    }#
     check {
 	addition_more
 	arguments{}
@@ -44,15 +26,6 @@ checks {
 } end_checks
 
 environment_checks {
-    #{ check environment nodes are defined here }#
-    #{
-	environment_check {
-	    z_idk
-	    arguments{}
-	    read_variables {} end_read_variables
-	    condition { z } end_condition
-	} end_environment_check
-    }#
 } end_environment_checks
 
 actions {
@@ -79,10 +52,10 @@ actions {
 	write_variables {foo}
 	initial_values{
 	    variable_statement{
-		bar
-		range
-		assign{case{(equal, 0, 'serene_index')}result{'increase'}case{(equal, 1, 'serene_index')}result{'decrease'}result{'nope'}}
-
+		bar default {'increase'} constant_index
+		(loop, i, [0, 3] such_that True,
+		    assign{case{(equal, 0, i)}result{'increase'}case{(equal, 1, i)}result{'decrease'}result{'nope'}}
+		)
 	    }
 	}
 	update {

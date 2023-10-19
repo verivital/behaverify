@@ -1,0 +1,642 @@
+configuration{}
+enumerations {
+    'unknown', 'safe', 'hole', 'goal'
+}
+constants {
+    #{ constants are used to synchronize values in a .tree file. }#
+    #{ example = 0 }#
+    #{ to use example elsewhere, simply type 'example' in place of any integer (quotes included) }#
+    'loc_min' := 0,
+    'loc_max' := 15,
+    'loc_array_size' := 16,
+    'x_min' := 0,
+    'x_max' := 3,
+    'x_size' := 4,
+    'y_min' := 0,
+    'y_max' := 3,
+    'y_size' := 4,
+    'reset' := -1,
+    'hold' := -2,
+    'reset' := -1,
+    'left' := 0,
+    'down' := 1,
+    'right' := 2,
+    'up' := 3
+} end_constants
+
+variables {
+    variable { bl tiles array 'loc_array_size' VAR {'unknown', 'safe', 'hole', 'goal'} range assign { result { 'unknown'}}}
+    variable { bl action VAR {'hold', 'reset', 'left', 'down', 'right', 'up'} assign {result { 'hold'}}}
+    variable { bl sometimes VAR BOOLEAN assign { result { False}}}
+    variable { bl strategy VAR {'x_first', 'y_first'} assign { result { 'x_first'}}}
+    variable { bl subgoal VAR ['loc_min', 'loc_max'] assign { result {'loc_min'}}}
+    variable { bl x_subgoal DEFINE INT assign { result{ (mod, subgoal, 'x_size') }}}
+    variable { bl y_subgoal DEFINE INT assign { result{ (division, (subtraction, subgoal, x_subgoal), 'x_size') }}} #{ this is intentionally x_size }#
+    variable { env start_loc FROZENVAR ['loc_min', 'loc_max'] assign { result{range, 'loc_min', 'loc_max', True}}}
+    variable { env goal_loc FROZENVAR ['loc_min', 'loc_max'] assign { result{range, 'loc_min', 'loc_max', True}}}
+    variable { env loc VAR ['loc_min', 'loc_max'] assign {result { start_loc}}}
+    variable { env x_loc DEFINE INT assign { result{ (mod, loc, 'x_size') }}}
+    variable { env y_loc DEFINE INT assign { result{ (division, (subtraction, loc, x_loc), 'x_size') }}} #{ this is intentionally x_size }#
+    variable { env hole_loc FROZENVAR ['loc_min', 'loc_max'] assign {
+	    case { (equal, start_loc, 0) } result {range, 'loc_min', 'loc_max', (not_equal, value, 0)}
+	    case { (equal, start_loc, 1) } result {range, 'loc_min', 'loc_max', (not_equal, value, 1)}
+	    case { (equal, start_loc, 2) } result {range, 'loc_min', 'loc_max', (not_equal, value, 2)}
+	    case { (equal, start_loc, 3) } result {range, 'loc_min', 'loc_max', (not_equal, value, 3)}
+	    case { (equal, start_loc, 4) } result {range, 'loc_min', 'loc_max', (not_equal, value, 4)}
+	    case { (equal, start_loc, 5) } result {range, 'loc_min', 'loc_max', (not_equal, value, 5)}
+	    case { (equal, start_loc, 6) } result {range, 'loc_min', 'loc_max', (not_equal, value, 6)}
+	    case { (equal, start_loc, 7) } result {range, 'loc_min', 'loc_max', (not_equal, value, 7)}
+	    case { (equal, start_loc, 8) } result {range, 'loc_min', 'loc_max', (not_equal, value, 8)}
+	    case { (equal, start_loc, 9) } result {range, 'loc_min', 'loc_max', (not_equal, value, 9)}
+	    case { (equal, start_loc, 10) } result {range, 'loc_min', 'loc_max', (not_equal, value, 10)}
+	    case { (equal, start_loc, 11) } result {range, 'loc_min', 'loc_max', (not_equal, value, 11)}
+	    case { (equal, start_loc, 12) } result {range, 'loc_min', 'loc_max', (not_equal, value, 12)}
+	    case { (equal, start_loc, 13) } result {range, 'loc_min', 'loc_max', (not_equal, value, 13)}
+	    case { (equal, start_loc, 14) } result {range, 'loc_min', 'loc_max', (not_equal, value, 14)}
+	    case { (equal, start_loc, 15) } result {range, 'loc_min', 'loc_max', (not_equal, value, 15)}
+	    result { 'loc_min'}
+	}}
+    variable { env falls_remaining VAR [-1, 1] assign { result { 1}}}
+    
+}
+environment_update {
+    variable_statement{ loc assign{
+	    case { (equal, action, 'reset') } result { start_loc}
+	    case { (equal, action, 'up') } result { (addition, x_loc, (multiplication, 'x_size', (max, 'y_min', (subtraction, y_loc, 1)))) }
+	    case { (equal, action, 'down') } result { (addition, x_loc, (multiplication, 'x_size', (min, 'y_max', (addition, y_loc, 1)))) }
+	    case { (equal, action, 'left') } result { (addition, (max, 'x_min', (subtraction, x_loc, 1)), (multiplication, 'x_size', y_loc)) }
+	    case { (equal, action, 'right') } result { (addition, (min, 'x_max', (addition, x_loc, 1)), (multiplication, 'x_size', y_loc)) }
+	    result { loc}
+	}}
+    variable_statement{ falls_remaining assign { case { (equal, loc, hole_loc) } result { (max, -1, (subtraction, falls_remaining, 1))} result { falls_remaining}}}
+}
+
+checks {
+    check {
+	x_strategy
+	arguments {}
+	read_variables {strategy}
+	condition { (equal, strategy, 'x_first')}
+    }
+    check {
+	y_strategy
+	arguments {}
+	read_variables {strategy}
+	condition { (equal, strategy, 'y_first')}
+    }
+} end_checks
+
+environment_checks {
+    environment_check {
+	fell_in_hole
+	arguments {}
+	read_variables {tiles}
+	condition { (equal, (index, tiles, loc), 'hole') }
+    }
+    environment_check {
+	up_bad
+	arguments {}
+	read_variables {tiles}
+	condition { (or,
+	    (equal, 'hole', (index, tiles, (addition, x_loc, (multiplication, 4, (max, 'y_min', (subtraction, y_loc, 1)))))),
+	    (equal, y_loc, 'y_min')
+	    )
+	}
+    }
+    environment_check {
+	down_bad
+	arguments {}
+	read_variables {tiles}
+	condition { (or,
+	    (equal, 'hole', (index, tiles, (addition, x_loc, (multiplication, 4, (min, 'y_max', (addition, y_loc, 1)))))),
+	    (equal, y_loc, 'y_max')
+	    )
+	}
+    }
+    environment_check {
+	left_bad
+	arguments {}
+	read_variables {tiles}
+	condition { (or,
+	    (equal, 'hole', (index, tiles, (addition, (max, 'x_min', (subtraction, x_loc, 1)), (multiplication, 4, y_loc)))),
+	    (equal, x_loc, 'x_min')
+	    )
+	}
+    }
+    environment_check {
+	right_bad
+	arguments {}
+	read_variables {tiles}
+	condition { (or,
+	    (equal, 'hole', (index, tiles, (addition, (min, 'x_max', (addition, x_loc, 1)), (multiplication, 4, y_loc)))),
+	    (equal, x_loc, 'x_max')
+	    )
+	}
+    }
+    environment_check {
+	up_unknown
+	arguments {}
+	read_variables {tiles}
+	condition { (and,
+	    (equal, 'unknown', (index, tiles, (addition, x_loc, (multiplication, 4, (max, 'y_min', (subtraction, y_loc, 1)))))),
+	    (not_equal, y_loc, 'y_min')
+	    )
+	}
+    }
+    environment_check {
+	down_unknown
+	arguments {}
+	read_variables {tiles}
+	condition { (and,
+	    (equal, 'unknown', (index, tiles, (addition, x_loc, (multiplication, 4, (min, 'y_max', (addition, y_loc, 1)))))),
+	    (not_equal, y_loc, 'y_max')
+	    )
+	}
+    }
+    environment_check {
+	left_unknown
+	arguments {}
+	read_variables {tiles}
+	condition { (and,
+	    (equal, 'unknown', (index, tiles, (addition, (max, 'x_min', (subtraction, x_loc, 1)), (multiplication, 4, y_loc)))),
+	    (not_equal, x_loc, 'x_min')
+	    )
+	}
+    }
+    environment_check {
+	right_unknown
+	arguments {}
+	read_variables {tiles}
+	condition { (and,
+	    (equal, 'unknown', (index, tiles, (addition, (min, 'x_max', (addition, x_loc, 1)), (multiplication, 4, y_loc)))),
+	    (not_equal, x_loc, 'x_max')
+	    )
+	}
+    }
+    environment_check {
+	need_new_subgoal
+	arguments {}
+	read_variables {tiles, x_subgoal, y_subgoal, subgoal}
+	condition { (or,
+	    (equal, 'hole', (index, tiles, (addition, x_subgoal, (multiplication, 4, y_subgoal)))),
+	    (equal, loc, subgoal)
+	    )
+	}
+    }
+    environment_check {
+	need_up
+	arguments {}
+	read_variables {y_subgoal}
+	condition { (greater_than, y_loc, y_subgoal)}
+    }
+    environment_check {
+	need_down
+	arguments {}
+	read_variables {y_subgoal}
+	condition { (less_than, y_loc, y_subgoal)}
+    }
+    environment_check {
+	need_left
+	arguments {}
+	read_variables {x_subgoal}
+	condition { (greater_than, x_loc, x_subgoal)}
+    }
+    environment_check {
+	need_right
+	arguments {}
+	read_variables {x_subgoal}
+	condition { (less_than, x_loc, x_subgoal)}
+    }
+    environment_check {
+	reached_goal
+	arguments {}
+	read_variables {tiles}
+	condition { (equal, 'goal', (index, tiles, loc))}
+    }
+    environment_check {
+	subgoal_unreachable
+	arguments {}
+	read_variables {tiles, subgoal}
+	condition { (equal, 'hole', (index, tiles, subgoal))}
+    }
+}
+
+actions {
+    action {
+	get_info
+	arguments {}
+	local_variables {} end_local_variables
+	read_variables {} end_read_variables
+	write_variables { tiles } end_write_variables
+	initial_values {} end_initial_values
+	update {
+	    read_environment {
+		get_info_func
+		condition { True } end_condition
+		variable_statement { tiles per_index index_of {loc} assign { case {(equal, loc, goal_loc) } result { 'goal' } case {(equal, loc, hole_loc)} result {'hole'} result {'safe'}}}
+	    } end_read_environment
+	    return_statement { result { success } end_result } end_return_statement
+	} end_update
+    } end_action
+    action {
+	request_hold
+	arguments {}
+	local_variables {}
+	read_variables {}
+	write_variables {action}
+	initial_values {}
+	update {
+	    variable_statement {action assign { result { 'hold'}}}
+	    return_statement { result { success}}
+	}
+    }
+    action {
+	request_reset
+	arguments {}
+	local_variables {}
+	read_variables {}
+	write_variables {action}
+	initial_values {}
+	update {
+	    variable_statement {action assign { result { 'reset'}}}
+	    return_statement { result { success}}
+	}
+    }
+    action {
+	request_up
+	arguments {}
+	local_variables {}
+	read_variables {}
+	write_variables {action}
+	initial_values {}
+	update {
+	    variable_statement {action assign { result { 'up'}}}
+	    return_statement { result { success}}
+	}
+    }
+    action {
+	request_down
+	arguments {}
+	local_variables {}
+	read_variables {}
+	write_variables {action}
+	initial_values {}
+	update {
+	    variable_statement {action assign { result { 'down'}}}
+	    return_statement { result { success}}
+	}
+    }
+    action {
+	request_left
+	arguments {}
+	local_variables {}
+	read_variables {}
+	write_variables {action}
+	initial_values {}
+	update {
+	    variable_statement {action assign { result { 'left'}}}
+	    return_statement { result { success}}
+	}
+    }
+    action {
+	request_right
+	arguments {}
+	local_variables {}
+	read_variables {}
+	write_variables {action}
+	initial_values {}
+	update {
+	    variable_statement {action assign { result { 'right'}}}
+	    return_statement { result { success}}
+	}
+    }
+    action {
+	set_new_subgoal
+	arguments {}
+	local_variables {}
+	read_variables {}
+	write_variables {subgoal}
+	initial_values {}
+	update {
+	    variable_statement {subgoal assign { case {(equal, subgoal, 'loc_max') } result {'loc_min'} result { (addition, 1, subgoal)}}}
+	    return_statement { result { success}}
+	}
+    }
+    action {
+	change_strategy
+	arguments {}
+	local_variables {}
+	read_variables {}
+	write_variables {strategy}
+	initial_values {}
+	update {
+	    variable_statement {strategy assign { case {(equal, strategy, 'x_first') } result {'y_first'} result { 'x_first'}}}
+	    return_statement { result { success}}
+	}
+    }
+    action {
+	sometimes_change_strategy
+	arguments {}
+	local_variables {}
+	read_variables {}
+	write_variables { sometimes, strategy}
+	initial_values {}
+	update {
+	    variable_statement {sometimes assign { result { (not, sometimes) } } }
+	    variable_statement {strategy assign { case{ (not, sometimes) } result {strategy} case {(equal, strategy, 'x_first') } result {'y_first'} result { 'x_first'}}}
+	    return_statement { result { success}}
+	}
+    }
+    
+} end_actions
+
+sub_trees {
+    sub_tree {
+	DONE
+	composite {
+	    at_goal_sequence
+	    sequence
+	    children {
+		reached_goal {} #{ exists }#
+		request_hold {} #{ exists }#
+	    }
+	}
+    }
+    sub_tree {
+	RESET_TREE
+	composite {
+	    reset_sequence
+	    sequence
+	    children {
+		fell_in_hole {} #{ exists }#
+		request_reset {} #{ exists }#
+	    }
+	}
+    }
+    sub_tree {
+	ADJACENT_UNKNOWN_TREE
+	composite {
+	    adjacent_unknown
+	    selector
+	    children {
+		composite {
+		    up_unknown_seq
+		    sequence
+		    children {
+			up_unknown {} #{ exists }#
+			request_up {} #{ exists }#
+		    }
+		}
+		composite {
+		    down_unknown_seq
+		    sequence
+		    children {
+			down_unknown {} #{ exists }#
+			request_down {} #{ exists }#
+		    }
+		}
+		composite {
+		    left_unknown_seq
+		    sequence
+		    children {
+			left_unknown {} #{ exists }#
+			request_left {} #{ exists }#
+		    }
+		}
+		composite {
+		    right_unknown_seq
+		    sequence
+		    children {
+			right_unknown {} #{ exists }#
+			request_right {} #{ exists }#
+		    }
+		}
+	    }
+	}
+    }
+    sub_tree {
+	SUBGOAL_TREE
+	decorator {
+	    subgoal_failure_is_success
+	    X_is_Y X failure Y success
+	    child {
+		composite {
+		    subgoal_seq
+		    sequence
+		    children {
+			need_new_subgoal {}#{ exists }#
+			set_new_subgoal {} #{ exists }#
+		    }
+		}
+	    }
+	}
+    }
+    sub_tree { up_good decorator { up_bad_inverter inverter child {up_bad{}} } }
+    sub_tree { down_good decorator { down_bad_inverter inverter child {down_bad{}} } }
+    sub_tree { left_good decorator { left_bad_inverter inverter child {left_bad{}} } }
+    sub_tree { right_good decorator { right_bad_inverter inverter child {right_bad{}} } }
+    sub_tree {
+	x_movement
+	composite {
+	    try_x
+	    selector
+	    children {
+		composite {
+		    try_left
+		    sequence
+		    children {
+			need_left{} #{ exists }#
+			insert { left_good} #{ exists }#
+			request_left{} #{ exists }#
+		    }
+		}
+		composite {
+		    try_right
+		    sequence
+		    children {
+			need_right{} #{ exists }#
+			insert { right_good} #{ exists }#
+			request_right{} #{ exists }#
+		    }
+		}
+	    }
+	}
+    }
+    sub_tree {
+	y_movement
+	composite {
+	    try_y
+	    selector
+	    children {
+		composite {
+		    try_up
+		    sequence
+		    children {
+			need_up {} #{ exists }#
+			insert { up_good}
+			request_up {}
+		    }
+		}
+		composite {
+		    try_down
+		    sequence
+		    children {
+			need_down {}#{ exists }#
+			insert { down_good}
+			request_down{}
+		    }
+		}
+	    }
+	}
+    }
+    sub_tree {
+	MOVE_TREE
+	composite {
+	    move_selector
+	    selector
+	    children {
+		composite {
+		    x_or_y_movement_selector
+		    selector
+		    children {
+			composite {
+			    opt_x_movement
+			    sequence
+			    children {
+				x_strategy {} #{ exists }#
+				insert { x_movement} #{ exists }#
+			    }
+			}
+			composite {
+			    opt_y_movement
+			    sequence
+			    children {
+				y_strategy {}#{ exists }#
+				insert { y_movement} #{ exists }#
+			    }
+			}
+		    }
+		}
+		insert {x_movement}
+		insert {y_movement}
+		composite {
+		    failure_plan
+		    selector
+		    children {
+			composite {
+			    new_subgoal_strategy
+			    sequence
+			    children {
+				subgoal_unreachable {}#{ exists }#
+				request_hold {}#{ exists }#
+			    }
+			}
+			composite {
+			    new_navigation_strategy
+			    selector
+			    children {
+				composite {
+				    navi_up
+				    sequence
+				    children {
+					x_strategy {}
+					insert { up_good} #{ exists }#
+					request_up {}#{ exists }#
+					sometimes_change_strategy {}
+				    }
+				}
+				composite {
+				    navi_down
+				    sequence
+				    children {
+					x_strategy {}
+					insert { down_good} #{ exists }#
+					request_down {}#{ exists }#
+					sometimes_change_strategy {}
+				    }
+				}
+				composite {
+				    navi_left
+				    sequence
+				    children {
+					y_strategy {}
+					insert { left_good} #{ exists }#
+					request_left {}#{ exists }#
+					sometimes_change_strategy{}
+				    }
+				}
+				composite {
+				    navi_right
+				    sequence
+				    children {
+					y_strategy {}
+					insert { right_good} #{ exists }#
+					request_right {}#{ exists }#
+					sometimes_change_strategy{}
+				    }
+				}
+				composite {
+				    hold_and_change
+				    sequence
+				    children {
+					request_hold{}
+					change_strategy{}
+				    }
+				}
+			    }
+			}
+		    }
+		}
+	    }
+	}
+    }
+    sub_tree {
+	NAVIGATE
+	composite {
+	    navigation_sequence
+	    sequence
+	    children {
+		insert { SUBGOAL_TREE }
+		insert { MOVE_TREE}
+	    }
+	}
+    }
+} end_sub_trees
+
+tree {
+    #{ the tree is defined here}#
+    composite {
+	execution_sequence
+	sequence
+	children {
+	    get_info {}
+	    composite {
+		pick_action
+		selector
+		children{
+		    insert { DONE }
+		    insert { RESET_TREE }
+		    insert { ADJACENT_UNKNOWN_TREE }
+		    insert { NAVIGATE }
+		}
+	    }
+	} end_children
+    } end_composite
+} end_tree
+
+
+tick_prerequisite{True}
+
+
+specifications {
+    INVARSPEC { (greater_than_or_equal, falls_remaining -1, -1) }
+    LTLSPEC { (globally, (greater_than_or_equal, falls_remaining -1, -1)) }
+    CTLSPEC { (always_globally, (greater_than_or_equal, falls_remaining -1, -1)) }
+    #{ this fails because the hole location and goal location can be the same}#
+    #{
+	LTLSPEC { (finally, (equal, loc -1, goal_loc -1)) }
+	CTLSPEC { (always_finally, (equal, loc -1, goal_loc -1)) }
+    }#
+    LTLSPEC { (implies, (not_equal, goal_loc -1, hole_loc -1), (finally, (equal, loc -1, goal_loc -1))) }
+    CTLSPEC { (implies, (not_equal, goal_loc -1, hole_loc -1), (always_finally, (equal, loc -1, goal_loc -1))) }
+    #{ INVAR, LTL, and CTL specs go here }# } end_specifications

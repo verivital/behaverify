@@ -5,27 +5,22 @@ import SereneOperations
 import BehaviorTreeBlackboard
 
 data BTreeEnvironment = BTreeEnvironment {
-  sereneEnvGenerator :: StdGen
+    envGenerator :: StdGen
   }
 
 fromBTreeEnvironmentToString :: BTreeBlackboard -> BTreeEnvironment -> String
-fromBTreeEnvironmentToString blackboard environment = "Env = {" ++ "}"
+fromBTreeEnvironmentToString blackboard environment = "env = {" ++ "}"
 
 -- START OF ENVIRONMENT FUNCTIONS
 
 
--- START OF GET FUNCTIONS FOR ARRAYS
+-- START OF INDEX FUNCTIONS FOR ARRAYS
 
 
--- START OF TYPE CHECKING FUNCTIONS
+-- START OF NEW ARRAY FUNCTIONS
 
 
--- START OF SET FUNCTIONS
-
-updateEnvGenerator :: BTreeEnvironment -> StdGen -> BTreeEnvironment
-updateEnvGenerator environment newGen = environment { sereneEnvGenerator = newGen }
-
--- START OF SET FUNCTIONS FOR ARRAYS
+-- START OF UPDATES
 
 
 -- START OF TICK CONDITION
@@ -42,16 +37,16 @@ applyFutureChanges futureChanges = head futureChanges . applyFutureChanges (tail
 -- START OF BETWEEN TICK CHANGES
 
 betweenTickUpdate :: (BTreeBlackboard, BTreeEnvironment) -> (BTreeBlackboard, BTreeEnvironment)
-betweenTickUpdate (blackboard, curEnvironment) = (blackboard, newEnvironment)
+betweenTickUpdate (blackboard, environment) = (newBlackboard, newEnvironment)
   where
-    tempEnvironment0 = curEnvironment
-    newEnvironment = tempEnvironment0
-
+    (newBlackboard, newEnvironment) = (blackboard, environment)
 
 -- START OF INITIAL ENVIRONMENT VALUE
 
 initialEnvironment :: Integer -> BTreeBlackboard -> BTreeEnvironment
-initialEnvironment seed blackboard = BTreeEnvironment newSereneGenerator   where
-    tempGen0 = getGenerator seed
-    newSereneGenerator = tempGen0
+initialEnvironment seed blackboard = newEnvironment
+  where
+    firstGen = getGenerator seed
+    dummy = BTreeEnvironment firstGen 
+    (_, newEnvironment) = (blackboard, dummy)
 

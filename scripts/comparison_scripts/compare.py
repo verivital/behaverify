@@ -128,16 +128,16 @@ def handle_haskell(the_file):
             #     continue
             line.strip()
             the_run.append({})
-            line = line.replace('(Board = {', '').replace('}, Env = {', ', ').replace('})', '')
+            line = line.replace('(board = {', '').replace('}, env = {', ', ').replace('})', '')
             in_array = False
             var_and_vals = []
             for var_and_val in line.split(','):
                 if in_array:
-                    if ']' in var_and_val:
+                    if ')' in var_and_val:
                         in_array = False
                     var_and_vals[-1] += ', ' + var_and_val.strip()
                     continue
-                if '[' in var_and_val:
+                if '(' in var_and_val:
                     in_array = True
                 var_and_vals.append(var_and_val)
             # print(var_and_vals)
@@ -148,6 +148,7 @@ def handle_haskell(the_file):
                     continue
                 (var_name, var_val) = var_and_val.split(':')
                 var_val = var_val.strip().upper().replace('\'', '').replace('"', '')
+                var_val = var_val.replace('(', '[').replace(')', ']')
                 var_name = var_name.strip()
                 var_name = normalize_var_name(var_name, 'haskell')
                 # if 'INDEX' in var_name:
