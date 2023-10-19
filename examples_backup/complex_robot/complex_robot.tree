@@ -1,0 +1,534 @@
+#{
+    0-9 -> home
+    10-20 -> maze
+    21-25 -> target
+}#
+configuration{}
+enumerations {'home', 'maze', 'target'}
+
+constants {
+    'x_max' := 18,
+    'y_max' := 2,
+    'home_end' := 3,
+    'maze_start' := 4,
+    'maze_end' := 14,
+    'target_start' := 15
+} end_constants
+
+variables {
+    #{ Variable declarations go here }#
+    variable {bl zone VAR {'home', 'maze', 'target'} assign { result { 'home' } end_result } end_assign} end_variable
+    variable {bl side VAR {-1, 1} assign { result { 1 } end_result } end_assign } end_variable
+    variable {bl have_flag VAR BOOLEAN assign { result { False } end_result } end_assign } end_variable
+    variable {bl need_side_reached VAR BOOLEAN assign { result { True } end_result } end_assign } end_variable
+    variable {bl forward DEFINE INT
+	assign {
+	    case {
+		have_flag
+	    } end_case
+	    result { -1 } end_result
+	    result { 1 } end_result
+	} end_assign
+    } end_variable
+    variable {local tile_searched VAR BOOLEAN assign { result { False } end_result } end_assign}
+    variable {local will_collide VAR BOOLEAN assign { result { False } end_result } end_assign}
+    variable {env x VAR [0, 'x_max'] assign { result {0} end_result} end_assign} end_variable
+    variable {env y VAR [0, 'y_max'] assign {result {0} end_result} end_assign} end_variable
+    variable {env hole_1 FROZENVAR [0, 'y_max'] assign { result { range, 0, 'y_max', True } end_result } end_assign} end_variable
+    variable {env hole_2 FROZENVAR [0, 'y_max'] assign { result { range, 0, 'y_max', True } end_result } end_assign} end_variable
+    variable {env hole_3 FROZENVAR [0, 'y_max'] assign { result { range, 0, 'y_max', True } end_result } end_assign} end_variable
+    variable {env hole_4 FROZENVAR [0, 'y_max'] assign { result { range, 0, 'y_max', True } end_result } end_assign} end_variable
+    variable {env hole_5 FROZENVAR [0, 'y_max'] assign { result { range, 0, 'y_max', True } end_result } end_assign} end_variable
+    variable {env hole_6 FROZENVAR [0, 'y_max'] assign { result { range, 0, 'y_max', True } end_result } end_assign} end_variable
+    variable {env hole_7 FROZENVAR [0, 'y_max'] assign { result { range, 0, 'y_max', True } end_result } end_assign} end_variable
+    variable {env hole_8 FROZENVAR [0, 'y_max'] assign { result { range, 0, 'y_max', True } end_result } end_assign} end_variable
+    variable {env hole_9 FROZENVAR [0, 'y_max'] assign { result { range, 0, 'y_max', True } end_result } end_assign} end_variable
+    variable {env
+	active_hole
+	DEFINE INT
+	assign {
+	    case { (equal, (addition,x, (min, 0,forward)), 'maze_start') } end_case result {hole_1 } end_result
+	    case { (equal, (addition,x, (min, 0,forward)), (addition, 'maze_start', 1)) } end_case result {hole_2 } end_result
+	    case { (equal, (addition,x, (min, 0,forward)), (addition, 'maze_start', 2)) } end_case result {hole_3 } end_result
+	    case { (equal, (addition,x, (min, 0,forward)), (addition, 'maze_start', 3)) } end_case result {hole_4 } end_result
+	    case { (equal, (addition,x, (min, 0,forward)), (addition, 'maze_start', 4)) } end_case result {hole_5 } end_result
+	    case { (equal, (addition,x, (min, 0,forward)), (addition, 'maze_start', 5)) } end_case result {hole_6 } end_result
+	    case { (equal, (addition,x, (min, 0,forward)), (addition, 'maze_start', 6)) } end_case result {hole_7 } end_result
+	    case { (equal, (addition,x, (min, 0,forward)), (addition, 'maze_start', 7)) } end_case result {hole_8 } end_result
+	    case { (equal, (addition,x, (min, 0,forward)), (addition, 'maze_start', 8)) } end_case result {hole_9 } end_result
+	    result { -1 } end_result
+	} end_assign
+    } end_variable
+    variable {env flag_x VAR ['target_start', 'x_max'] assign { result { range, 0, 'x_max', (greater_than_or_equal, value, 'target_start') } end_result } end_assign } end_variable
+    variable {env flag_y VAR [0, 'y_max'] assign { result { range, 0, 'y_max', True } end_result } end_assign} end_variable
+    variable {env flag_returned DEFINE BOOLEAN assign { result { (and, have_flag, (less_than_or_equal, x, 'home_end')) } end_result } end_assign } end_variable
+    variable {env tile_progress VAR [0, 2] assign { result { 0 } end_result } end_assign} end_variable
+    variable {env tile_tracker VAR [0, 2] assign { result { 0 } end_result } end_assign} end_variable
+    
+}
+
+
+environment_update {
+    variable_statement {
+	tile_progress
+	assign {
+	    case { (equal,tile_tracker,tile_progress) } end_case result { 0 } end_result
+	    result {tile_progress } end_result
+	}
+    }
+    variable_statement {
+	tile_tracker
+	assign{
+	    result {tile_progress } end_result
+	}
+    }
+    
+} 
+
+checks {
+    #{ check nodes are defined here }#
+    check {
+	in_home
+	arguments {}
+	read_variables { zone } end_read_variables
+	condition { (equal,zone, 'home') } end_condition
+    } end_check
+    check {
+	in_maze
+	arguments {}
+	read_variables { zone } end_read_variables
+	condition { (equal,zone, 'maze') } end_condition
+    } end_check
+    check {
+	in_target
+	arguments {}
+	read_variables { zone } end_read_variables
+	condition { (equal,zone, 'target') } end_condition
+    } end_check
+    check {
+	flag_found
+	arguments {}
+	read_variables { have_flag } end_read_variables
+	condition {have_flag } end_condition
+    } end_check
+    check {
+	need_side
+	arguments {}
+	read_variables { need_side_reached } end_read_variables
+	condition {need_side_reached } end_condition
+    } end_check
+    check {
+	success_node
+	arguments {}
+	read_variables {} end_read_variables
+	condition { True } end_condition
+    } end_check
+} end_checks
+
+environment_checks {
+    #{ check environment nodes are defined here }#
+    environment_check {
+	flag_not_returned
+	arguments {}
+	read_variables {} end_read_variables
+	condition { (not,flag_returned) } end_condition
+    } end_environment_check
+    environment_check {
+	can_move_forward
+	arguments {}
+	read_variables { forward } end_read_variables
+	condition {
+	    (and,
+	    (greater_than_or_equal, (addition,forward,x), 0),
+	    (less_than_or_equal, (addition,forward,x), 'x_max'),
+	    (or,
+	    (equal,active_hole, -1),
+	    (equal,active_hole,y)
+	    )
+	    )
+	} end_condition
+    } end_environment_check
+    environment_check {
+	can_move_side
+	arguments {}
+	read_variables {side} end_read_variables
+	condition {
+	    (and,
+	    (greater_than_or_equal, (addition,side,y), 0),
+	    (less_than_or_equal, (addition,side,y), 'y_max')
+	    )
+	} end_condition
+    } end_environment_check
+} end_environment_checks
+
+actions {
+    #{ action nodes are defined here }#
+    
+    
+    action {
+	change_side
+	arguments {}
+	local_variables {} end_local_variables
+	read_variables {} end_read_variables
+	write_variables { side } end_write_variables
+	initial_values {} end_initial_values
+	update {
+	    variable_statement {
+		side
+		assign{
+		case { (equal,side, 1) } end_case result { -1 } end_result
+		result { 1 } end_result
+		}
+	    } end_variable_statement
+	    return_statement {
+		result { success } end_result
+	    } end_return_statement
+	} end_update
+    } end_action
+    
+    action {
+	go_forward
+	arguments {}
+	local_variables {} end_local_variables
+	read_variables {forward} end_read_variables
+	write_variables {} end_write_variables
+	initial_values {} end_initial_values
+	update {
+	    write_environment {
+		go_forward_func
+		
+		    variable_statement {
+			x
+			assign {
+			case {
+			    (and,
+			    (greater_than_or_equal, (addition, forward, x), 0),
+			    (less_than_or_equal, (addition, forward, x), 'x_max'),
+			    (or,
+			    (equal, active_hole, -1),
+			    (equal, active_hole, y)
+			    )
+			    )
+			} end_case
+			result { (addition,x,forward) } end_result
+			result {x } end_result
+			}
+		    } end_variable_statement
+		
+	    } end_write_environment
+	    return_statement {
+		result { running } end_result
+	    } end_return_statement
+	} end_update
+    } end_action
+    
+    
+    action {
+	go_side
+	arguments {}
+	local_variables {} end_local_variables
+	read_variables {side} end_read_variables
+	write_variables {} end_write_variables
+	initial_values {
+	} end_initial_values
+	update {
+	    write_environment {
+		go_side_func
+		
+		    variable_statement {
+			y
+			assign {
+			case {
+			    (and,
+			    (greater_than_or_equal, (addition, side, y), 0),
+			    (less_than_or_equal, (addition, side, y), 'y_max')
+			    )
+			} end_case
+			result { (addition, y, side) } end_result
+			result {y } end_result
+			}
+		    } end_variable_statement
+		
+	    } end_write_environment
+	    return_statement {
+		result { running } end_result
+	    } end_return_statement
+	} end_update
+    } end_action
+    
+    action {
+	never_need_side
+	arguments {}
+	local_variables {} end_local_variables
+	read_variables {} end_read_variables
+	write_variables {need_side_reached} end_write_variables
+	initial_values {
+	} end_initial_values
+	update {
+	    variable_statement {
+		need_side_reached
+		assign{
+		    result { False } end_result
+		    }
+	    } end_variable_statement
+	    return_statement {
+		result { success } end_result
+	    } end_return_statement
+	} end_update
+    } end_action
+    
+    
+    
+    action {
+	search_tile
+	arguments {}
+	local_variables {tile_searched} end_local_variables
+	read_variables {} end_read_variables
+	write_variables { have_flag } end_write_variables
+	initial_values {} end_initial_values
+	update {
+	    read_environment {
+		search_tile_func
+		condition { True } end_condition
+		variable_statement {
+		    tile_searched
+		    assign{
+		    case { (equal,tile_progress, 2) } end_case result { True } end_result
+		    result { True, False } end_result
+		    }
+		}  
+		variable_statement {
+		    have_flag
+		    assign {
+		    case {have_flag} end_case result { True } end_result
+		    result { (and,tile_searched, (equal, x, flag_x), (equal, y, flag_y)) } end_result
+		    }
+		}  
+	    }  
+	    write_environment {
+		update_search_func
+		
+		    variable_statement {
+			tile_progress
+			assign {
+			case {tile_searched } end_case result { 2 } end_result
+			result { (min, 2, (addition, 1, tile_progress)) } end_result
+			}
+		    } end_variable_statement
+		
+	    } end_write_environment
+	    return_statement {
+		case {(and,tile_searched,have_flag)} end_case result {success} end_result
+		case {tile_searched} end_case result {failure} end_result
+		result { running } end_result
+	    } end_return_statement
+	} end_update
+    } end_action
+    
+    
+    action {
+	set_zone
+	arguments {}
+	local_variables {} end_local_variables
+	read_variables {} end_read_variables
+	write_variables { zone } end_write_variables
+	initial_values {} end_initial_values
+	update {
+	    read_environment {
+		compute_zone_func
+		condition { True } end_condition
+		variable_statement {
+		    zone
+		    assign {
+		    case { (less_than_or_equal,x, 'home_end') } end_case result { 'home' } end_result
+		    case { (greater_than_or_equal,x, 'target_start') } end_case result { 'target' } end_result
+		    result { 'maze' } end_result
+		    }
+		}  
+	    }  
+	    return_statement {
+		result { success } end_result
+	    } end_return_statement
+	} end_update
+    } end_action
+    
+} end_actions
+
+sub_trees {
+    sub_tree {
+	sub_forward
+	composite {
+	    try_forward
+	    sequence
+	    children {
+		can_move_forward {}
+		go_forward {}
+	    } end_children
+	} end_composite
+    } end_sub_tree
+    
+    sub_tree {
+	sub_side
+	composite {
+	    try_side_or_change
+	    selector
+	    children {
+		composite {
+		    try_side
+		    sequence
+		    children {
+			can_move_side {}
+			go_side {}
+		    } end_children
+		} end_composite
+		decorator {
+		    return_failure
+		    X_is_Y X success Y failure
+		    child {change_side {}}
+		} end_decorator
+	    } end_children
+	} end_composite
+    } end_sub_tree
+    
+    sub_tree {
+	sub_flag
+	decorator {
+	    flag_inverter
+	    inverter
+	    child {flag_found {}}
+	} end_decorator
+    } end_sub_tree
+} end_sub_trees
+
+
+tree {
+    composite {
+	control
+	parallel policy success_on_all
+	children {
+	    set_zone {}
+	    composite {
+		control_sequence
+		sequence
+		children {
+		    flag_not_returned {}
+		    composite {
+			control_selector
+			selector
+			children {
+			    composite {
+				navigate_maze
+				sequence
+				children {
+				    in_maze {}
+				    decorator {
+					move_through_maze_decorator
+					X_is_Y X success Y running
+					child{
+					    composite {
+						move_through_maze
+						selector
+						children {
+						    insert { sub_forward } end_insert
+						    insert { sub_side } end_insert
+						    success_node {}
+						} end_children
+					    } end_composite
+					}
+				    } end_decorator
+				} end_children
+			    } end_composite
+			    composite {
+				enter_maze
+				sequence
+				children {
+				    decorator {
+					maze_inverter
+					inverter
+					child {in_maze{}}
+				    } end_decorator
+				    composite {
+					traversal_needed
+					selector
+					children {
+					    composite {
+						go_home
+						sequence
+						children {
+						    in_target {}
+						    flag_found {}
+						} end_children
+					    } end_composite
+					    composite {
+						go_target
+						sequence
+						children {
+						    in_home {}
+						    insert { sub_flag } end_insert
+						} end_children
+					    } end_composite
+					} end_children
+				    } end_composite
+				    go_forward {}
+				} end_children
+			    } end_composite
+			    composite {
+				to_side
+				sequence
+				children {
+				    in_target {}
+				    need_side {}
+				    decorator {
+					side_reached
+					X_is_Y X failure Y success
+					child {insert {sub_side} end_insert}
+				    } end_decorator
+				    never_need_side {}
+				} end_children
+			    } end_composite
+			    composite {
+				search_target
+				sequence
+				children {
+				    in_target {}
+				    insert { sub_flag } end_insert
+				    composite {
+					search_for_flag
+					selector
+					children {
+					    search_tile {}
+					    composite {
+						move_for_flag
+						selector
+						children {
+						    insert { sub_side } end_insert
+						    go_forward {}
+						} end_children
+					    } end_composite
+					} end_children
+				    } end_composite
+				} end_children
+			    } end_composite
+			} end_children
+		    } end_composite
+		} end_children
+	    } end_composite
+	} end_children
+    } end_composite
+} end_tree
+
+#{ this section is optional. you may remove it }#
+tick_prerequisite {
+    #{ if the condition is True, the tree ticks.
+	If it is false, everything is done }#
+    True
+} end_tick_prerequisite
+
+
+specifications {
+    #{ INVAR, LTL, and CTL specs go here }#
+    CTLSPEC { (always_finally,flag_returned 0) } end_CTLSPEC
+    LTLSPEC { (finally,flag_returned 0) } end_LTLSPEC
+    CTLSPEC { (always_globally, (implies, (equal,zone 0, 'target'), (always_globally, (implies, (not_equal,zone 0, 'target'),have_flag 0)))) } end_CTLSPEC 
+    LTLSPEC { (globally, (implies, (equal,zone 0, 'target'), (globally, (implies, (not_equal,zone 0, 'target'),have_flag 0)))) } end_LTLSPEC
+} end_specifications

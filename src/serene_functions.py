@@ -5,98 +5,136 @@ Each function
 
 
 Author: Serena Serafina Serbinowska
-Last Edit: 2023-09-19
+Last Edit: 2023-09-27
 '''
 import operator
 import math
-from behaverify_common import handle_constant
+import copy
 
-def serene_abs(values, x):
-    return abs(values[0](x))
 
-def serene_max(values, x):
-    return max([value(x) for value in values])
+def serene_if(function_call):
+    # this one returns an array by directly returning a build_meta_func result.
+    return lambda references : (
+        build_meta_func(function_call.values[1])(references)
+        if build_meta_func(function_call.values[0])(references)[0][1] else
+        build_meta_func(function_call.values[2])(references)
+    )
 
-def serene_min(values, x):
-    return min([value(x) for value in values])
+def update_dictionary(dictionary, key, value):
+    new_dictionary = copy.deepcopy(dictionary)
+    new_dictionary[key] = value
+    return new_dictionary
 
-def serene_sin(values, x):
-    return math.sin(values[0](x))
+def serene_loop(function_call):
+    sub_func = build_meta_func(function_call.values[0])
+    return lambda references : [
+        sub_func((references[0], update_dictionary(references[1], function_call.loop_variable, loop_value)))
+        for loop_value in (
+                range(build_meta_func(function_call.min_val)(references)[0],
+                      build_meta_func(function_call.max_val)(references)[1] + 1)
+                if function_call.min_val is not None else
+                [loop_value_ref for loop_value_code in function_call.loop_variable_domain for loop_value_ref in build_meta_func(loop_value_code)(references)]
+        )
+    ]
 
-def serene_cos(values, x):
-    return math.cos(values[0](x))
+def serene_abs(function_call):
+    return lambda references : [abs(build_meta_func(function_call.values[0])(references)[0])]
 
-def serene_tan(values, x):
-    return math.tan(values[0](x))
+def serene_max(function_call):
+    return lambda references : [max(max(build_meta_func(value)(references)) for value in function_call.values)]
 
-def serene_log(values, x):
-    return math.log(values[0](x))
+def serene_min(function_call):
+    return lambda references : [min(min(build_meta_func(value)(references)) for value in function_call.values)]
 
-def serene_not(values, x):
-    return not values[0](x)
+def serene_sin(function_call):
+    return lambda references : [math.sin(build_meta_func(function_call.values[0])(references)[0])]
 
-def serene_xor(values, x):
-    return operator.xor(values[0](x), values[1](x))
+def serene_cos(function_call):
+    return lambda references : [math.cos(build_meta_func(function_call.values[0])(references)[0])]
 
-def serene_eq(values, x):
-    return values[0](x) == values[1](x)
+def serene_tan(function_call):
+    return lambda references : [math.tan(build_meta_func(function_call.values[0])(references)[0])]
 
-def serene_ne(values, x):
-    return values[0](x) != values[1](x)
+def serene_log(function_call):
+    return lambda references : [math.log(build_meta_func(function_call.values[0])(references)[0])]
 
-def serene_lt(values, x):
-    return values[0](x) < values[1](x)
+def serene_not(function_call):
+    return lambda references : [not build_meta_func(function_call.values[0])(references)[0]]
 
-def serene_gt(values, x):
-    return values[0](x) > values[1](x)
+def serene_xor(function_call):
+    return lambda references : [operator.xor(build_meta_func(function_call.values[0])(references)[0],
+                                             build_meta_func(function_call.values[1])(references)[0])]
 
-def serene_lte(values, x):
-    return values[0](x) <= values[1](x)
+def serene_eq(function_call):
+    return lambda references : [build_meta_func(function_call.values[0])(references)[0] ==
+                                build_meta_func(function_call.values[1])(references)[0]]
 
-def serene_gte(values, x):
-    return values[0](x) >= values[1](x)
+def serene_ne(function_call):
+    return lambda references : [build_meta_func(function_call.values[0])(references)[0] !=
+                                build_meta_func(function_call.values[1])(references)[0]]
 
-def serene_neg(values, x):
-    return (-1)*values[0](x)
+def serene_lt(function_call):
+    return lambda references : [build_meta_func(function_call.values[0])(references)[0] <
+                                build_meta_func(function_call.values[1])(references)[0]]
 
-def serene_sub(values, x):
-    return values[0](x) - values[1](x)
+def serene_gt(function_call):
+    return lambda references : [build_meta_func(function_call.values[0])(references)[0] >
+                                build_meta_func(function_call.values[1])(references)[0]]
 
-def serene_integer_div(values, x):
-    return int(values[0](x) / values[1](x))
+def serene_lte(function_call):
+    return lambda references : [build_meta_func(function_call.values[0])(references)[0] <=
+                                build_meta_func(function_call.values[1])(references)[0]]
 
-def serene_mod(values, x):
-    return values[0](x) % values[1](x)
+def serene_gte(function_call):
+    return lambda references : [build_meta_func(function_call.values[0])(references)[0] >=
+                                build_meta_func(function_call.values[1])(references)[0]]
 
-def serene_real_div(values, x):
-    return values[0](x) / values[1](x)
+def serene_neg(function_call):
+    return lambda references : [(-1)*build_meta_func(function_call.values[0])(references)[0]]
 
-def serene_floor(values, x):
-    return math.floor(values[0](x))
+def serene_sub(function_call):
+    return lambda references : [build_meta_func(function_call.values[0])(references)[0] -
+                                build_meta_func(function_call.values[1])(references)[0]]
 
-def serene_and(values, x):
-    return (values[0](x) and serene_and(values[1:], x)) if values else True
+def serene_integer_div(function_call):
+    return lambda references : [int(build_meta_func(function_call.values[0])(references)[0] /
+                                    build_meta_func(function_call.values[1])(references)[0])]
 
-def serene_or(values, x):
-    return (values[0](x) or serene_or(values[1:], x)) if values else False
+def serene_mod(function_call):
+    return lambda references : [build_meta_func(function_call.values[0])(references)[0] %
+                                build_meta_func(function_call.values[1])(references)[0]]
 
-def serene_xnor(values, x):
-    return (not (operator.xor(values[0](x), values[1](x))))
+def serene_real_div(function_call):
+    return lambda references : [build_meta_func(function_call.values[0])(references)[0] /
+                                build_meta_func(function_call.values[1])(references)[0]]
 
-def serene_implies(values, x):
-    return (not (values[0](x)) or values[1](x))
+def serene_floor(function_call):
+    return lambda references : [math.floor(build_meta_func(function_call.values[0])(references)[0])]
 
-def serene_sum(values, x):
-    return (values[0](x) + serene_sum(values[1:], x)) if values else 0
+def serene_and(function_call):
+    return lambda references : [all(all(build_meta_func(value)(references)) for value in function_call.values)]
 
-def serene_mult(values, x):
-    return (values[0](x) * serene_mult(values[1:], x)) if values else 1
+def serene_or(function_call):
+    return lambda references : [any(any(build_meta_func(value)(references)) for value in function_call.values)]
 
-def serene_count(values, x):
-    return (int(bool(values[0](x))) + serene_count(values[1:], x)) if values else 0
+def serene_xnor(function_call):
+    return lambda references : [not (operator.xor(build_meta_func(function_call.values[0])(references)[0],
+                                                   build_meta_func(function_call.values[1])(references)[0]))]
+
+def serene_implies(function_call):
+    return lambda references : [(not (build_meta_func(function_call.values[0])(references)[0])) or
+                                build_meta_func(function_call.values[1])(references)[0]]
+
+def serene_add(function_call):
+    return lambda references : [sum(sum(build_meta_func(value)(references)) for value in function_call.values)]
+
+def serene_mult(function_call):
+    return lambda references : [math.prod(math.prod(build_meta_func(value)(references)) for value in function_call.values)]
 
 
 RANGE_FUNCTION = {
+    'if' : serene_if,
+    'loop' : serene_loop,
     'abs' : serene_abs,
     'max' : serene_max,
     'min' : serene_min,
@@ -118,24 +156,48 @@ RANGE_FUNCTION = {
     'lte' : serene_lte,
     'gte' : serene_gte,
     'neg' : serene_neg,
-    'add' : serene_sum,
+    'add' : serene_add,
     'sub' : serene_sub,
     'mult' : serene_mult,
     'idiv' : serene_integer_div,
     'mod' : serene_mod,
     'rdiv' : serene_real_div,
     'floor' : serene_floor,
-    'count' : serene_count
+    'count' : serene_add  # sum of booleans is exactrly what we want.
 }
 
-def build_range_func(code, constants):
-    '''builds the range func'''
+def handle_constant_or_reference_meta(constant_or_reference, constants, loop_references):
     return (
-        (lambda x : handle_constant(code.constant, constants)) if code.constant is not None else (
-            (lambda x : x) if code.value else (
-                build_range_func(code.code_statement, constants) if code.code_statement is not None else (
-                    (lambda x : RANGE_FUNCTION[code.function_call.function_name]([build_range_func(value, constants) for value in code.function_call.values], x))
-                )
+        constant_or_reference.constant
+        if constant_or_reference.constant is not None else
+        (
+            constants[constant_or_reference.reference]
+            if constant_or_reference.reference in constants else
+            (
+                loop_references[constant_or_reference.reference]
+                if constant_or_reference.reference in loop_references else
+                constant_or_reference.reference
             )
+        )
+    )
+
+def build_meta_func(code):
+    '''
+    builds the meta func.
+    return lambda references : s a function which takes a single parameter: references
+    references is (constants, loop_references).
+    the function returns a list of values.
+    each value returned can be be a Constant or a Reference.
+    Note that string overlaps both Constant and Reference. It is up to the subsequent user to distinguish them.
+    '''
+    return (
+        (lambda references : [handle_constant_or_reference_meta(code.atom, references[0], references[1])])
+        if code.atom is not None
+        else
+        (
+            build_meta_func(code.code_statement)
+            if code.code_statement is not None
+            else
+            RANGE_FUNCTION[code.function_call.function_name]((code.function_call))
         )
     )

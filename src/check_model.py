@@ -5,12 +5,16 @@ It contains a variety of utility functions.
 
 
 Author: Serena Serafina Serbinowska
-Last Edit: 2023-09-13
+Last Edit: 2023-09-27
 '''
 import itertools
-from serene_functions import build_range_func
+import re
+import copy
+from serene_functions import build_meta_func
 from behaverify_common import (create_node_name,
                                BTreeException,
+                               handle_constant_or_reference,
+                               resolve_potential_reference,
                                constant_type,
                                dummy_value,
                                variable_type,
@@ -19,7 +23,6 @@ from behaverify_common import (create_node_name,
                                is_blackboard,
                                variable_scope,
                                is_array,
-                               handle_constant,
                                str_format)
 
 # TODO : function category (TL/INVAR/reg) - DONE?
@@ -28,11 +31,15 @@ from behaverify_common import (create_node_name,
 # TODO : array updates
 # TODO : read at/node_name in functions
 # TODO : confirm enumerations are being enforced
+# todo : make sure loop variables don't conflict
+# todo : make sure define variables are deterministicly updated.
 
-def validate_model(model, constants):
+def validate_model(model):
     '''used to validate the model'''
     trace = []
     function_type_info = {
+        'if' : {'return_type' : 'depends', 'min_arg' : 3, 'max_arg' : 3, 'arg_type' : 'any', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'CTL', 'LTL', 'INVAR', 'reg'}},
+        'loop' : {'return_type' : 'depends', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'any', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'CTL', 'LTL', 'INVAR', 'reg'}},
         'abs' : {'return_type' : 'NUM', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'NUM', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'INVAR', 'reg'}},
         'max' : {'return_type' : 'NUM', 'min_arg' : 2, 'max_arg' : -1, 'arg_type' : 'NUM', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'INVAR', 'reg'}},
         'min' : {'return_type' : 'NUM', 'min_arg' : 2, 'max_arg' : -1, 'arg_type' : 'NUM', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'INVAR', 'reg'}},
@@ -99,86 +106,179 @@ def validate_model(model, constants):
         'triggered' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'LTL'}, 'allows' : {'LTL', 'INVAR', 'reg'}},
         'triggered_bounded' : {'return_type' : 'BOOLEAN', 'bounded' : True, 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'LTL'}, 'allows' : {'LTL', 'INVAR', 'reg'}}
     }
+    def validate_name(name):
+        if name in declared_enumerations or name in all_node_names or name in variables or name in constants or name in loop_references:
+            raise BTreeException(trace, 'Name ' + name + ' clashes with an existing name')
+
+    def verify_min_max(min_code, max_code, bound):
+        min_func = build_meta_func(min_code)
+        max_func = build_meta_func(max_code)
+        min_values = min_func((constants, loop_references))
+        max_values = max_func((constants, loop_references))
+        if len(min_values) != 1:
+            raise BTreeException(trace, 'Must have exactly one value for min')
+        if len(max_values) != 1:
+            raise BTreeException(trace, 'Must have exactly one value for max')
+        min_val = min_values[0]
+        max_val = max_values[0]
+        (min_class, min_type, min_val) = resolve_potential_reference(min_val, declared_enumerations, all_node_names, variables, constants, loop_references)
+        if min_class != 'CONSTANT' or min_type != 'INT':
+            raise BTreeException(trace, 'Min value must be a constant of type INT. Got: ' + min_class + ', ' + min_type + ', ' + str(min_val))
+        if bound and max_val == '+oo':
+            max_class = 'CONSTANT'
+            max_type = 'INT'
+            max_val = min_val + 1
+        else:
+            (max_class, max_type, max_val) = resolve_potential_reference(max_val, declared_enumerations, all_node_names, variables, constants, loop_references)
+        if max_class != 'CONSTANT' or max_type != 'INT':
+            raise BTreeException(trace, 'Max value must be a constant of type INT (or +oo for bound). Got: ' + max_class + ', ' + max_type + ', ' + str(max_val))
+        if min_val > max_val:
+            raise BTreeException(trace, 'min of bound statement cannot be greater than max')
+        return ((min_type, min_val), (max_type, max_val))
+
+    def var_checks(code, variable, scopes, variable_names):
+        var_scope = variable_scope(variable)
+        if var_scope not in scopes:
+            raise BTreeException(trace, 'Expected a variable in one of the following scopes: [' + ', '.join(scopes) + '] but got ' + variable.name + ' in scope ' + var_scope)
+        if var_scope != 'environment':
+            if variable_names is not None:
+                if variable.name not in variable_names:
+                    raise BTreeException(trace, 'Expected only the following variables: [' + ', '.join(variable_names) + '] but got ' + variable.name)
+        if var_scope == 'local':
+            if code.node_name is not None:
+                node_func = build_meta_func(code.node_name)
+                node_name_vals = node_func((constants, loop_references))
+                if len(node_name_vals) != 1:
+                    raise BTreeException(trace, 'Expected exactly one node reference')
+                if node_name_vals[0] not in all_node_names:
+                    raise BTreeException(trace, 'Reference to a node that does not exist (maybe it was renamed): ' + node_name_vals[0])
+                # TODO: add a check here which confirms that the node actually uses the local variable.
+                # this will prevent the user from specificying a specification using a node that doesn't have this variable.
+            else:
+                # TODO: double check, we should make sure we're in a node doing this, and not from invar, and that the node uses the variable
+                pass
+        # todo: confirm read_at and trace_num are correct.
+        return
 
     def validate_code(code, scopes, variable_names, allowed_functions):
 
-        def var_checks(code):
-            var_scope = variable_scope(code.variable)
-            if var_scope not in scopes:
-                raise BTreeException(trace, 'Expected a variable in one of the following scopes: [' + ', '.join(scopes) + '] but got ' + code.variable.name + ' in scope ' + var_scope)
-            if var_scope != 'environment':
-                if variable_names is not None:
-                    if code.variable.name not in variable_names:
-                        raise BTreeException(trace, 'Expected only the following variables: [' + ', '.join(variable_names) + '] but got ' + code.variable.name)
-            if var_scope == 'local':
-                if code.node_name is not None:
-                    if code.node_name not in all_node_names:
-                        raise BTreeException(trace, 'Reference to a node that does not exist ' + code.node_name)
-                    # TODO: add a check here which confirms that the node actually uses the local variable.
-                    # this will prevent the user from specificying a specification using a node that doesn't have this variable.
-                else:
-                    # TODO: double check, we should make sure we're in a node doing this, and not from invar, and that the node uses the variable
-                    pass
-            return
-
-        if code.constant is not None:
-            return (constant_type(code.constant, constants), 'constant', str_format(code.constant))
-        if code.variable is not None:
-            var_checks(code)
-            if is_array(code.variable):
-                raise BTreeException(trace, 'Variable ' + code.variable.name + ' is an array but appears without being indexed')
+        if code.atom is not None:
+            (atom_class, atom_type, atom) = handle_constant_or_reference(code.atom, declared_enumerations, all_node_names, variables, constants, loop_references)
+            if atom_class == 'CONSTANT':
+                return [(atom_type, 'constant', str_format(atom))]
+            if atom_class == 'NODE':
+                raise BTreeException(trace, 'Received a node where it was not expected: ' + str(atom))
+            var_checks(code, atom, scopes, variable_names)
+            if is_array(atom):
+                raise BTreeException(trace, 'Variable ' + atom.name + ' is an array but appears without being indexed')
             if require_trace_identifier == (code.trace_num is None):
                 #print(require_trace_identifier)
                 #print(code.trace_num)
-                raise BTreeException(trace, 'Variable ' + code.variable.name + ' is being referenced ' + ('without' if require_trace_identifier else 'with') + ' a trace identifier.')
-            return (variable_type(code.variable, constants), 'variable', code.variable.name)
+                raise BTreeException(trace, 'Variable ' + atom.name + ' is being referenced ' + ('without' if require_trace_identifier else 'with') + ' a trace identifier.')
+            return [(atom_type, 'variable', atom.name)]
         if code.code_statement is not None:
-            return validate_code(code.code_statement, scopes, variable_names, allowed_functions)
+            return [validate_code(code.code_statement, scopes, variable_names, allowed_functions)]
         if code.function_call.function_name not in function_type_info:
             raise BTreeException(trace, 'Function ' + code.function_call.function_name + ' is not yet supported')
         func_info = function_type_info[code.function_call.function_name]
         if len(func_info['allowed_in'].intersection(allowed_functions)) == 0:
             raise BTreeException(trace, 'Function ' + code.function_call.function_name + ' is only allowed in ' + str(func_info['allowed_in']) + ' but we are in ' + str(allowed_functions))
         new_allowed_functions = func_info['allows'].intersection(allowed_functions)
+        if code.function_call.function_name == 'if':
+            if len(code.function_call.values) != 3:
+                raise BTreeException(trace, 'if requires exactly 3 arguments')
+            validate_condition(code.function_call.values[0], scopes, variable_names, allowed_functions)
+            return_vals1 = validate_code(code.function_call.values[1], scopes, variable_names, allowed_functions)
+            return_vals2 = validate_code(code.function_call.values[2], scopes, variable_names, allowed_functions)
+            if len(return_vals1) != 1 or len(return_vals2) != 1:
+                raise BTreeException(trace, 'currently, if must return exactly 1 argument (encoding issues down the line require this)')
+            # we don't have a good way to verify that both halves work.
+            # we could require that they be the same types?
+            # TODO: think about this.
+            return return_vals1
+        if code.function_call.function_name == 'loop':
+            loop_variable = code.function_call.loop_variable
+            validate_name(loop_variable)
+            return_vals = []
+            all_domain_values = []
+            if code.function_call.min_val is None:
+                for domain_code in code.function_call.loop_variable_domain:
+                    domain_func = build_meta_func(domain_code)
+                    # new_references = copy.deepcopy(loop_references)  # the meta function is guaranteed to not change this.
+                    for domain_value in domain_func((constants, loop_references)):
+                        all_domain_values.append(resolve_potential_reference(domain_value, declared_enumerations, all_node_names, variables, constants, loop_references)[2])
+            else:
+                ((_, min_val), (_, max_val)) = verify_min_max(code.function_call.min_val, code.function_call.max_val, False)
+                all_domain_values = range(min_val, max_val + 1)
+            cond_func = build_meta_func(code.function_call.loop_condition)
+            for domain_member in all_domain_values:
+                loop_references[loop_variable] = domain_member
+                returned_vals = cond_func((constants, loop_references))
+                if len(returned_vals) != 1:
+                    raise BTreeException(trace, 'Loop Condition function is expected to return exactly 1 value')
+                if returned_vals[0]:
+                    return_vals.extend(validate_code(code.function_call.values[0], scopes, variable_names, allowed_functions))
+                loop_references.pop(loop_variable)
+            return return_vals
         # handle index specially, and return.
         if code.function_call.function_name == 'index':
-            var_checks(code.function_call)
+            to_index_func = build_meta_func(code.function_call.to_index)
+            indexed_vars = to_index_func((constants, loop_references))
+            if len(indexed_vars) != 1:
+                raise BTreeException(trace, 'Expected exactly 1 variable to index')
+            (atom_class, atom_type, atom) = resolve_potential_reference(indexed_vars[0], declared_enumerations, all_node_names, variables, constants, loop_references)
+            if atom_class != 'VARIABLE':
+                raise BTreeException(trace, 'You can only index variables')
+            var_checks(code.function_call, atom, scopes, variable_names)
             if len(code.function_call.values) != 1:
                 raise BTreeException(trace, 'Index into variable ' + code.function_call.variable.name + ' should have exactly 1 argument')
-            (cur_arg_type, cur_code_type, cur_code) = validate_code(code.function_call.values[0], scopes, variable_names, new_allowed_functions)
+            if code.function_call.constant_index == 'constant_index':
+                index_func = build_meta_func(code.function_call.values[0])
+                returned_vals = index_func((constants, loop_references))
+                cur_arg_type = resolve_potential_reference(returned_vals[0], declared_enumerations, all_node_names, variables, constants, loop_references)[1]
+            else:
+                returned_vals = validate_code(code.function_call.values[0], scopes, variable_names, new_allowed_functions)
+                (cur_arg_type, _, _) = returned_vals[0]
+            if len(returned_vals) != 1:
+                raise BTreeException(trace, 'Index expects exactly one value but got ' + str(len(returned_vals)))
             if cur_arg_type != 'INT':
                 raise BTreeException(trace, 'Index into variable ' + code.function_call.variable.name + ' should be an integer')
-            return (variable_type(code.function_call.variable, constants), 'indexed variable', code.function_call.variable.name)
+            return [(atom_type, 'indexed variable', atom.name)]
         # handle bounded specially
         if 'bounded' in func_info:
-            if code.function_call.bound.upper_bound != '+oo':
-                lower = handle_constant(code.function_call.bound.lower_bound, constants)
-                upper = handle_constant(code.function_call.bound.upper_bound, constants)
-                if upper < lower:
-                    raise BTreeException(trace, 'A specification bound has a lower bound of ' + str(lower) + ' which is more than the upper bound of ' + str(upper))
-        if func_info['max_arg'] != -1:
-            if len(code.function_call.values) > func_info['max_arg']:
-                raise BTreeException(trace, 'Function ' + code.function_call.function_name + ' expected at most ' + str(func_info['max_arg']) + ' but got ' + len(code.function_call.values))
-        if len(code.function_call.values) < func_info['min_arg']:
-            raise BTreeException(trace, 'Function ' + code.function_call.function_name + ' expected at least ' + str(func_info['min_arg']) + ' but got ' + str(len(code.function_call.values)))
+            verify_min_max(code.function_call.bound.lower_bound, code.function_call.bound.upper_bound, True)
+        returned_values = []
         return_type = func_info['return_type']
         arg_type = func_info['arg_type']
         if arg_type == 'node_name':
-            if code.function_call.node_name not in all_node_names:
-                raise BTreeException(trace, 'Reference to a node that does not exist ' + code.function_call.node_name)
+            node_func = build_meta_func(code.node_name)
+            node_name_vals = node_func((constants, loop_references))
+            if len(node_name_vals) != 1:
+                raise BTreeException(trace, 'Expected exactly one node reference')
+            if node_name_vals[0] not in all_node_names:
+                raise BTreeException(trace, 'Reference to a node that does not exist ' + node_name_vals[0])
         if arg_type == 'depends':
-            (arg_type, _, _) = validate_code(code.function_call.values[0], scopes, variable_names, new_allowed_functions)
+            (arg_type, _, _) = validate_code(code.function_call.values[0], scopes, variable_names, new_allowed_functions)[0]
             arg_type = ('NUM' if arg_type in {'INT', 'REAL'} else arg_type)
-        for index, value in enumerate(code.function_call.values):
-            (cur_arg_type, cur_code_type, cur_code) = validate_code(value, scopes, variable_names, new_allowed_functions)
+        for value in code.function_call.values:
+            returned_values.extend(validate_code(value, scopes, variable_names, new_allowed_functions))
+        if func_info['max_arg'] != -1:
+            if len(returned_values) > func_info['max_arg']:
+                raise BTreeException(trace, 'Function ' + code.function_call.function_name + ' expected at most ' + str(func_info['max_arg']) + ' but got ' + str(len(returned_values)))
+        if len(returned_values) < func_info['min_arg']:
+            raise BTreeException(trace, 'Function ' + code.function_call.function_name + ' expected at least ' + str(func_info['min_arg']) + ' but got ' + str(len(returned_values)))
+        for (cur_arg_type, cur_code_type, cur_code) in returned_values:
             if (cur_arg_type != arg_type) and ((arg_type != 'NUM') or (cur_arg_type not in {'INT', 'REAL'})):
-                raise BTreeException(trace, 'Function ' + code.function_call.function_name + ' expected ' + arg_type + ' but got ' + cur_arg_type + ' from argument number ' + str(index) + ' which is ' + cur_code_type + ' ' + cur_code)
+                raise BTreeException(trace, 'Function ' + code.function_call.function_name + ' expected ' + arg_type + ' but got ' + cur_arg_type + ' from an argument which is ' + cur_code_type + ' ' + cur_code)
             return_type = ('REAL' if return_type == 'NUM' and cur_arg_type == 'REAL' else return_type)
         return_type = ('INT' if return_type == 'NUM' else return_type)
-        return (return_type, 'function', code.function_call.function_name)
+        return [(return_type, 'function', code.function_call.function_name)]
 
     def validate_condition(code, scopes, variable_names, allowed_functions):
-        (cur_arg_type, cur_code_type, cur_code) = validate_code(code, scopes, variable_names, allowed_functions)
+        returned_values = validate_code(code, scopes, variable_names, allowed_functions)
+        if len(returned_values) != 1:
+            raise BTreeException(trace, 'Condition expects exactly one value but got ' + str(len(returned_values)))
+        (cur_arg_type, cur_code_type, cur_code) = returned_values[0]
         if cur_arg_type != 'BOOLEAN':
             raise BTreeException(trace, 'Conditition expected BOOLEAN but got ' + cur_arg_type + ' from ' + cur_code_type + ' ' + cur_code)
         return
@@ -192,24 +292,16 @@ def validate_model(model, constants):
         if init_mode == 'node' and (not is_local(variable)):
             raise BTreeException(trace, 'initializes non_local variable')
 
-        var_type = variable_type(variable, constants)
+        var_type = variable_type(variable, declared_enumerations, constants)
 
         def handle_case_result(case_result, is_default):
             if not is_default:
                 validate_condition(case_result.condition, scopes, variable_names, {'reg'})
-            if case_result.range_mode:
-                # if deterministic:
-                #     raise BTreeException(trace, 'needs to be updated deterministicly here but is being updated non-deterministicly')
-                if var_type != 'INT':
-                    raise BTreeException(trace, 'type ' + var_type + ' is being updated using range_mode')
-                cond_func = build_range_func(case_result.values[2], constants)
-                if not any(map(cond_func, range(handle_constant(case_result.values[0], constants), handle_constant(case_result.values[1], constants) + 1))):
-                    raise BTreeException(trace, 'assigned a value using range_mode but the range is empty')
-            else:
-                # if deterministic and len(case_result.values) > 1:
-                #     raise BTreeException(trace, 'needs to be updated deterministicly here but is being updated non-deterministicly')
-                for value in case_result.values:
-                    (cur_arg_type, cur_code_type, cur_code) = validate_code(value, scopes, variable_names, {'reg'})
+            # if deterministic and len(case_result.values) > 1:
+            #     raise BTreeException(trace, 'needs to be updated deterministicly here but is being updated non-deterministicly')
+            for value in case_result.values:
+                returned_vals = validate_code(value, scopes, variable_names, {'reg'})
+                for (cur_arg_type, cur_code_type, cur_code) in returned_vals:
                     if (cur_arg_type != var_type) and not (cur_arg_type == 'INT' and var_type == 'REAL'):
                         raise BTreeException(trace, 'type ' + var_type + ' is being updated with ' + cur_code_type + ' ' + cur_code + ' which is of type ' + cur_arg_type)
         for case_result in assign.case_results:
@@ -218,60 +310,71 @@ def validate_model(model, constants):
         trace.pop()
         return
 
+    def validate_loop_array_index(loop_array_index, assign_var, constant_index, scopes, variable_names, deterministic = True, init_mode = None):
+        seen_constants = set()
+        if loop_array_index.array_index is not None:
+            for index in loop_array_index.array_index.index_expr:
+                if constant_index == 'constant_index':
+                    index_func = build_meta_func(index)
+                    values = index_func((constants, {}))
+                    for value in values:
+                        cur_type = constant_type(value, declared_enumerations)
+                        if cur_type != 'INT':
+                            raise BTreeException(trace, 'indexed using type of ' + cur_type + ' instead of INT')
+                        if value in seen_constants:
+                            raise BTreeException(trace, 'array is being indexed with constants and a constant appears twice. New: ' + str(value) + '. Already seen: ' + str(seen_constants))
+                        seen_constants.add(value)
+                else:
+                    returned_vals = validate_code(index, scopes, variable_names, {'reg'})
+                    for (cur_type, _, _) in returned_vals:
+                        if cur_type != 'INT':
+                            raise BTreeException(trace, 'indexed using type of ' + cur_type + ' instead of INT')
+            validate_variable_assignment(assign_var, loop_array_index.array_index.assign, scopes, variable_names, deterministic, init_mode)
+            return seen_constants
+        loop_variable = loop_array_index.loop_variable
+        validate_name(loop_variable)
+        all_domain_values = []
+        if loop_array_index.min_val is None:
+            for domain_code in loop_array_index.loop_variable_domain:
+                try:
+                    domain_func = build_meta_func(domain_code)
+                    for domain_value in domain_func((constants, loop_references)):
+                        all_domain_values.append(resolve_potential_reference(domain_value, declared_enumerations, all_node_names, variables, constants, loop_references)[2])
+                except Exception as error:
+                    raise BTreeException(trace, 'unknown error') from error
+        else:
+            ((_, min_val), (_, max_val)) = verify_min_max(loop_array_index.min_val, loop_array_index.max_val, False)
+            all_domain_values = range(min_val, max_val + 1)
+        cond_func = build_meta_func(loop_array_index.loop_condition)
+        for domain_member in all_domain_values:
+            loop_references[loop_variable] = domain_member
+            returned_vals = cond_func((constants, loop_references))
+            if len(returned_vals) != 1:
+                raise BTreeException(trace, 'Loop Condition function is expected to return exactly 1 value')
+            if returned_vals[0]:
+                new_constants = validate_loop_array_index(loop_array_index.loop_array_index, assign_var, constant_index, scopes, variable_names, deterministic, init_mode)
+                if constant_index:
+                    if not seen_constants.isdisjoint(new_constants):
+                        raise BTreeException(trace, 'array is being indexed with constants and a constant appears twice. New: ' + str(new_constants) + '. Already seen: ' + str(seen_constants))
+                    seen_constants.update(new_constants)
+            loop_references.pop(loop_variable)
+        return seen_constants
 
-    def validate_array_assign(statement, constant_index, scopes, variable_names, node, deterministic = True, init_mode = None):
-        trace.append('In Array Assignment for: ' + statement.variable.name)
-        assign_var = statement.variable
+
+    def validate_array_assign(statement, scopes, variable_names, deterministic = True, init_mode = None):
+        assign_var = statement.variable if hasattr(statement, 'variable') else statement
+        trace.append('In Array Assignment for: ' + assign_var.name)
         if not is_array(assign_var):
             raise BTreeException(trace, 'updated as array but is not an array')
-        if statement.array_mode == 'range':
-            if statement.assign is None:
-                raise BTreeException(trace, 'updated with incorrect syntax')
-            if not hasattr(statement, 'values') or len(statement.values) == 0:
-                serene_indices = list(range(assign_var.array_size))
-            else:
-                cond_func = build_range_func(statement.values[2], constants)
-                min_val = handle_constant(statement.values[0], constants)
-                max_val = handle_constant(statement.values[1], constants)
-                if max_val < min_val:
-                    raise BTreeException(trace, 'max_val is less than min_val')
-                serene_indices = list(filter(cond_func, range(min_val, max_val + 1)))
-            if len(serene_indices) == 0:
-                raise BTreeException(trace, 'is being updated using a range with no values')
-            constants['serene_index'] = 0  # this just used to confirm the types, not an actual value
-            if init_mode == 'node':
-                validate_variable_assignment(assign_var, statement.assign, scopes, variable_names, deterministic, init_mode)
-            else:
-                if constant_index:
-                    cur_type = constant_type(statement.assign.index_expr, constants)
-                else:
-                    (cur_type, _, _) = validate_code(statement.assign.index_expr, scopes, variable_names, {'reg'})
-                if cur_type != 'INT':
-                    raise BTreeException(trace, 'indexed using type of ' + cur_type + ' instead of INT')
-                validate_variable_assignment(assign_var, statement.assign.assign, scopes, variable_names, deterministic, init_mode)
-            constants.pop('serene_index')
-            trace.pop()
-            return
-
-        if init_mode == 'node' and len(statement.assigns) != assign_var.array_size:
-            raise BTreeException(trace, 'array of size ' + str(assign_var.array_size) + ' was initialized with ' + str(len(statement.assigns)) + ' values')
-        if len(statement.assigns) == 0:
-            raise BTreeException(trace, 'array variable updated with wrong syntax')
+        if hasattr(statement, 'default_value'):
+            validate_variable_assignment(assign_var, statement.default_value, scopes, variable_names, deterministic, init_mode)
         seen_constants = set()
-        for assign in statement.assigns:
-            if init_mode == 'node':
-                validate_variable_assignment(assign_var, assign, scopes, variable_names, deterministic, init_mode)
-            else:
-                if constant_index:
-                    cur_type = constant_type(assign.index_expr, constants)
-                    if handle_constant(assign.index_expr, constants) in seen_constants:
-                        raise BTreeException(trace, 'array is being indexed with constants and a constant appears twice')
-                    seen_constants.add(handle_constant(assign.index_expr, constants))
-                else:
-                    (cur_type, _, _) = validate_code(assign.index_expr, scopes, variable_names, {'reg'})
-                if cur_type != 'INT':
-                    raise BTreeException(trace, 'indexed using type of ' + cur_type + ' instead of INT')
-                validate_variable_assignment(assign_var, assign.assign, scopes, variable_names, deterministic, init_mode)
+        for loop_array_index in statement.assigns:
+            new_constants = validate_loop_array_index(loop_array_index, assign_var, statement.constant_index, scopes, variable_names, deterministic, init_mode)
+            if statement.constant_index:
+                if not seen_constants.isdisjoint(new_constants):
+                    raise BTreeException(trace, 'array is being indexed with constants and a constant appears twice. New: ' + str(new_constants) + '. Already seen: ' + str(seen_constants))
+                seen_constants.update(new_constants)
         trace.pop()
         return
 
@@ -279,13 +382,13 @@ def validate_model(model, constants):
     def validate_check(node):
         trace.append('In Check: ' + node.name)
         for arg_pair in node.arguments:
-            constants[arg_pair.argument_name] = dummy_value(arg_pair.argument_type)
+            loop_references[arg_pair.argument_name] = dummy_value(arg_pair.argument_type, declared_enumerations)
         read_variables = set(map(lambda x : x.name, node.read_variables))
         if len(read_variables) != len(node.read_variables):
             raise BTreeException(trace, 'duplicate read variables')
         validate_condition(node.condition, {'blackboard'}, read_variables, {'reg'})
         for arg_pair in node.arguments:
-            constants.pop(arg_pair.argument_name)
+            loop_references.pop(arg_pair.argument_name)
         trace.pop()
         return
 
@@ -293,13 +396,13 @@ def validate_model(model, constants):
     def validate_check_env(node):
         trace.append('In Environment Check: ' + node.name)
         for arg_pair in node.arguments:
-            constants[arg_pair.argument_name] = dummy_value(arg_pair.argument_type)
+            loop_references[arg_pair.argument_name] = dummy_value(arg_pair.argument_type, declared_enumerations)
         read_variables = set(map(lambda x : x.name, node.read_variables))
         if len(read_variables) != len(node.read_variables):
             raise BTreeException(trace, 'duplicate read variables')
         validate_condition(node.condition, {'blackboard', 'environment'}, read_variables, {'reg'})
         for arg_pair in node.arguments:
-            constants.pop(arg_pair.argument_name)
+            loop_references.pop(arg_pair.argument_name)
         trace.pop()
         return
 
@@ -307,7 +410,7 @@ def validate_model(model, constants):
     def validate_action(node):
         trace.append('In Action: ' + node.name)
         for arg_pair in node.arguments:
-            constants[arg_pair.argument_name] = dummy_value(arg_pair.argument_type)
+            loop_references[arg_pair.argument_name] = dummy_value(arg_pair.argument_type, declared_enumerations)
 
         all_vars = set(map(lambda x : x.name, itertools.chain(node.local_variables, node.read_variables, node.write_variables)))
         read_variables = set(map(lambda x : x.name, node.read_variables))
@@ -330,9 +433,9 @@ def validate_model(model, constants):
             if assign_var.name not in local_variables:
                 raise BTreeException(trace, 'initializing local variable ' + assign_var.name + ' but it it does not appear in the local variable list for the node: [' + ', '.join(local_variables) + ']')
             if is_array(assign_var):
-                validate_array_assign(var_statement, True, {'blackboard', 'local'}, all_vars, node, deterministic = True, init_mode = 'node')
+                validate_array_assign(var_statement, {'blackboard', 'local'}, all_vars, deterministic = True, init_mode = 'node')
             else:
-                if var_statement.assign is None or var_statement.array_mode == 'range':
+                if var_statement.assign is None:
                     raise BTreeException(trace, 'Variable is not an array, but has as an array like update: ' + assign_var.name)
                 validate_variable_assignment(assign_var, var_statement.assign, {'blackboard', 'local'}, all_vars, deterministic = True, init_mode = 'node')
 
@@ -346,9 +449,9 @@ def validate_model(model, constants):
                 if assign_var.name not in local_variables and assign_var.name not in write_variables:
                     raise BTreeException(trace, 'updating variable ' + assign_var.name + ' but it is not listed in the local or write variables')
                 if is_array(assign_var):
-                    validate_array_assign(var_statement, var_statement.constant_index == 'constant_index', {'blackboard', 'local'}, all_vars, node, deterministic = True, init_mode = None)
+                    validate_array_assign(var_statement, {'blackboard', 'local'}, all_vars, deterministic = True, init_mode = None)
                 else:
-                    if var_statement.assign is None or var_statement.array_mode == 'range':
+                    if var_statement.assign is None:
                         raise BTreeException(trace, 'Variable is not an array, but has as an array like update: ' + assign_var.name)
                     validate_variable_assignment(assign_var, var_statement.assign, {'blackboard', 'local'}, all_vars, deterministic = True, init_mode = None)
                 trace.pop()
@@ -365,9 +468,16 @@ def validate_model(model, constants):
                         if read_statement.index_of is None:
                             raise BTreeException(trace, 'Action ' + node.name + ' is using array ' + cond_var.name + ' without an index as a condition variable')
                         if read_statement.is_const == 'index_of':
-                            (cur_type, _, _) = validate_code(read_statement.index_of, {'local', 'blackboard'}, all_vars, {'reg'})
+                            returned_vals = validate_code(read_statement.index_of, {'local', 'blackboard'}, all_vars, {'reg'})
+                            if len(returned_vals) != 1:
+                                raise BTreeException(trace, 'attempted to index read variable with multiple values (or no values)')
+                            (cur_type, _, _) = returned_vals[0]
                         else:
-                            cur_type = constant_type(read_statement.index_of, constants)
+                            index_func = build_meta_func(read_statement.index_of)
+                            values = index_func((constants, {}))
+                            if len(values) != 1:
+                                raise BTreeException(trace, 'attempted to index read variable with multiple values (or no values)')
+                            cur_type = constant_type(values[0], declared_enumerations)
                         if cur_type != 'INT':
                             raise BTreeException(trace, 'indexing into ' + cond_var.name + ' with something other than an int')
                     if not is_array(cond_var) and read_statement.index_of is not None:
@@ -376,13 +486,12 @@ def validate_model(model, constants):
                         raise BTreeException(trace, cond_var.name + ' used as a condition variable but it is an Environment Variable')
                     if cond_var.name not in local_variables and cond_var.name not in write_variables:
                         raise BTreeException(trace, 'updating condition variable ' + cond_var.name + ' but it is not listed in the local or write variables')
-                    if variable_type(cond_var, constants) != 'BOOLEAN':
-                        raise BTreeException(trace, 'Condition variable for read statement is ' + cond_var.name + ' but ' + cond_var.name + ' is of type ' + variable_type(cond_var, constants) + ' and not BOOLEAN')
+                    temp_var_type = variable_type(cond_var, declared_enumerations, constants,)
+                    if temp_var_type != 'BOOLEAN':
+                        raise BTreeException(trace, 'Condition variable for read statement is ' + cond_var.name + ' but ' + cond_var.name + ' is of type ' + temp_var_type + ' and not BOOLEAN')
                     if cond_var.model_as != 'VAR':
                         raise BTreeException(trace, 'Condition variable for read statement is ' + cond_var.name + ' but ' + cond_var.name + ' is modeled as ' + cond_var.model_as)
-                (cur_arg_type, _, _) = validate_code(read_statement.condition, {'blackboard', 'local', 'environment'}, all_vars, {'reg'})
-                if cur_arg_type != 'BOOLEAN':
-                    raise BTreeException(trace, 'read statement with a condition of type ' + cur_arg_type + ' instead of BOOLEAN')
+                validate_condition(read_statement.condition, {'blackboard', 'local', 'environment'}, all_vars, {'reg'})
                 if read_statement.non_determinism and cond_var is None:
                     raise BTreeException(trace, 'non-deterministic read statement but no condition variable')
                 for var_statement in read_statement.variable_statements:
@@ -398,9 +507,9 @@ def validate_model(model, constants):
                     if assign_var.name not in write_variables and assign_var.name not in local_variables:
                         raise BTreeException(trace, 'updating ' + assign_var.name + ' but ' + assign_var.name + ' is not declared in write_variables: [' + ', '.join(write_variables) + '] or in local_variables: [' + ', '.join(local_variables) + ']')
                     if is_array(assign_var):
-                        validate_array_assign(var_statement, var_statement.constant_index == 'constant_index', {'blackboard', 'local', 'environment'}, all_vars, node, deterministic = False, init_mode = None)
+                        validate_array_assign(var_statement, {'blackboard', 'local', 'environment'}, all_vars, deterministic = False, init_mode = None)
                     else:
-                        if var_statement.assign is None or var_statement.array_mode == 'range':
+                        if var_statement.assign is None:
                             raise BTreeException(trace, 'Variable is not an array, but has as an array like update: ' + assign_var.name)
                         validate_variable_assignment(assign_var, var_statement.assign, {'blackboard', 'local', 'environment'}, all_vars, deterministic = False, init_mode = None)
                     trace.pop()
@@ -417,9 +526,9 @@ def validate_model(model, constants):
                     if not is_env(assign_var):
                         raise BTreeException(trace, 'updating ' + assign_var.name + ' as part of a write statement but it is not an Environment Variable')
                     if is_array(assign_var):
-                        validate_array_assign(var_statement, var_statement.constant_index == 'constant_index', {'blackboard', 'local', 'environment'}, all_vars, node, deterministic = False, init_mode = None)
+                        validate_array_assign(var_statement, {'blackboard', 'local', 'environment'}, all_vars, deterministic = False, init_mode = None)
                     else:
-                        if var_statement.assign is None or var_statement.array_mode == 'range':
+                        if var_statement.assign is None:
                             raise BTreeException(trace, 'Variable is not an array, but has as an array like update: ' + assign_var.name)
                         validate_variable_assignment(assign_var, var_statement.assign, {'blackboard', 'local', 'environment'}, all_vars, deterministic = False, init_mode = None)
                     trace.pop()
@@ -433,7 +542,7 @@ def validate_model(model, constants):
         for case_result in node.return_statement.case_results:
             validate_condition(case_result.condition, {'blackboard', 'local'}, all_vars, {'reg'})
         for arg_pair in node.arguments:
-            constants.pop(arg_pair.argument_name)
+            loop_references.pop(arg_pair.argument_name)
         trace.pop()
         return
 
@@ -443,39 +552,35 @@ def validate_model(model, constants):
             if variable.domain.true_int is not None:
                 pass
             elif variable.domain.min_val is not None:
-                min_val = handle_constant(variable.domain.min_val, constants)
-                max_val = handle_constant(variable.domain.max_val, constants)
-                if not isinstance(min_val, int):
-                    raise BTreeException(trace, 'Variable ' + variable.name + ' domain is not an integer and does not reference an integer: ' + str(min_val))
-                if not isinstance(max_val, int):
-                    raise BTreeException(trace, 'Variable ' + variable.name + ' domain is not an integer and does not reference an integer: ' + str(max_val))
-                if max_val < min_val:
-                    raise BTreeException(trace, 'Variable ' + variable.name + ' domain has a minimum value of ' + str(min_val) + ' which is greater than its maximum value of ' + str(max_val))
-                if variable.domain.condition is not None:
-                    cond_func = build_range_func(variable.domain.condition, constants)
-                    if not any(map(cond_func, range(min_val, max_val + 1))):
-                        raise BTreeException(trace, 'Variable ' + variable.name + ' has an empty range domain when condition is applied')
+                verify_min_max(variable.domain.min_val, variable.domain.max_val, False)
             elif variable.domain.boolean is not None:
                 pass
             else:
-                var_type = variable_type(variable, constants)
-                for enum in variable.domain.enums:
-                    if constant_type(enum, constants) != var_type:
-                        raise BTreeException(trace, 'Variable ' + variable.name + ' mixes enumeration types')
+                values = []
+                for domain_code in variable.domain.domain_codes:
+                    domain_func = build_meta_func(domain_code)
+                    values.extend(domain_func((constants, {})))
+                if len(values) == 0:
+                    raise BTreeException(trace, 'Variable ' + variable.name + ' has an empty domain')
+                value_type = constant_type(values[0], declared_enumerations)
+                if value_type not in {'ENUM', 'INT'}:
+                    raise BTreeException(trace, 'Variable ' + variable.name + ' must be ENUM or INT (loop domain)')
+                for value in values:
+                    cur_type = constant_type(value, declared_enumerations)
+                    if cur_type != value_type:
+                        raise BTreeException(trace, 'Variable ' + variable.name + ' has multiple types (cannot use reals here): ' + value_type + ', ' + cur_type)
         if is_array(variable):
-            array_size = handle_constant(variable.array_size, constants)
+            array_size_func = build_meta_func(variable.array_size)
+            array_sizes = array_size_func((constants, {}))
+            if len(array_sizes) != 1:
+                raise BTreeException(trace, 'must have exactly 1 array size')
+            array_size = array_sizes[0]
+            array_size_type = constant_type(array_size, declared_enumerations)
+            if array_size_type != 'INT':
+                raise BTreeException(trace, 'Array size must be an INT')
             if array_size < 2:
                 raise BTreeException(trace, 'Variable ' + variable.name + ' is an array of size ' + str(array_size))
-            if variable.array_mode == 'range':
-                for index in range(handle_constant(array_size, constants)):
-                    constants['serene_index'] = index
-                    validate_variable_assignment(variable, variable.assign, scopes, variable_names, deterministic = not is_env(variable), init_mode = 'default')
-                constants.pop('serene_index')
-            else:
-                if len(variable.assigns) != array_size:
-                    raise BTreeException(trace, 'Variable ' + variable.name + ' is an array of size ' + str(array_size) + ' but was initialized with ' + str(len(variable.assigns)) + ' values')
-                for assign in variable.assigns:
-                    validate_variable_assignment(variable, assign, scopes, variable_names, deterministic = not is_env(variable), init_mode = 'default')
+            validate_array_assign(variable, scopes, variable_names, deterministic = not is_env(variable), init_mode = 'default')
         else:
             validate_variable_assignment(variable, variable.assign, scopes, variable_names, deterministic = not is_env(variable), init_mode = 'default')
         trace.pop()
@@ -487,17 +592,24 @@ def validate_model(model, constants):
             if hasattr(current_node, 'leaf'):
                 current_args = current_node.arguments
                 current_node = current_node.leaf
-                if len(current_node.arguments) != len(current_args):
-                    raise BTreeException(trace, 'Node ' + current_node.name + ' needs ' + str(len(current_node.arguments)) + ' arguments but was created with ' + str(len(current_args)))
-                for (index, cur_arg) in enumerate(current_args):
-                    if current_node.arguments[index].argument_type != constant_type(cur_arg, constants):
-                        raise BTreeException(trace, 'Node ' + current_node.name + ' argument ' + str(index) + ' named ' + current_node.arguments[index].argument_name + ' was declared to be of type ' + current_node.arguments[index].argument_type + ' but is being created with type ' + constant_type(cur_arg, constants))
+                all_current_args = []
+                for cur_arg in current_args:
+                    arg_func = build_meta_func(cur_arg)
+                    all_current_args.extend(arg_func((constants, {})))
+                if len(current_node.arguments) != len(all_current_args):
+                    raise BTreeException(trace, 'Node ' + current_node.name + ' needs ' + str(len(current_node.arguments)) + ' arguments but was created with ' + str(len(all_current_args)))
+                for (index, cur_arg) in enumerate(all_current_args):
+                    cur_type = resolve_potential_reference(cur_arg, declared_enumerations, {}, {}, constants, {})[1]
+                    if current_node.arguments[index].argument_type != cur_type:
+                        raise BTreeException(trace, 'Node ' + current_node.name + ' argument ' + str(index) + ' named ' + current_node.arguments[index].argument_name + ' was declared to be of type ' + current_node.arguments[index].argument_type + ' but is being created with type ' + cur_type)
                 nodes_to_check.add(current_node.name)
             else:
                 current_node = current_node.sub_root
         # next, we get the name of this node, and correct for duplication
 
-        new_name = create_node_name(current_node.name.replace(' ', ''), node_names, node_names_map)
+        new_name = create_node_name(current_node.name, node_names, node_names_map)
+        if new_name in constants or new_name in declared_enumerations:
+            raise BTreeException(trace, 'Node name ' + new_name + ' clashes with existing constant or enumeration')
         node_name = new_name[0]
         modifier = new_name[1]
 
@@ -523,20 +635,48 @@ def validate_model(model, constants):
                 (node_names, node_names_map, nodes_to_check) = walk_tree(child, node_names, node_names_map, nodes_to_check)
         return (node_names, node_names_map, nodes_to_check)
 
+    def valid_enumeration(value):
+        if not isinstance(value, str):
+            raise BTreeException(trace, 'Value ' + str(value) + ' is not a valid enumeration (not a string)')
+        if re.fullmatch(r'[^\d\W]\w*', value) is None:
+            raise BTreeException(trace, 'Value ' + value + ' is not a valid enumeration')
+        return value
+
+    def valid_constant(value):
+        if isinstance(value, str) and value not in declared_enumerations:
+            raise BTreeException(trace, 'Value ' + value + ' is not a valid enumeration')
+        return value
+
+    def valid_constant_name(name):
+        if name in declared_enumerations:
+            raise BTreeException(trace, 'Constant ' + name + ' is already an enumeration')
+        return name
+
     # END OF METHODS. START OF SCRIPT -------------------------------------------------------------------------------------------------------------
 
-    if 'serene_index' in constants:
-        raise BTreeException(trace, 'serene_index was declared as a constant, but is resevered')
-
+    trace.append('In Enumeration Validation')
+    declared_enumerations = set(map(valid_enumeration, model.enumerations))
+    trace.pop()
+    trace.append('In Constant Validation')
+    constants = {
+        valid_constant_name(constant.name) : valid_constant(constant.val)
+        for constant in model.constants
+    }
+    loop_references = {}
+    trace.pop()
     (all_node_names, _, nodes_to_check) = walk_tree(model.root, set(), {}, set())
 
     require_trace_identifier = False
 
     variables_so_far = set()
+    variables = {}
     trace.append('In Variable validation')
     for variable in model.variables:
+        if variable.name in all_node_names or variable.name in declared_enumerations or variable.name in constants:
+            raise BTreeException(trace, 'Variable name ' + variable.name + ' clashes with existing names')
         validate_variable(variable, {'blackboard', 'environment'} if is_env(variable) else {'blackboard'}, variables_so_far)
         variables_so_far.add(variable.name)
+        variables[variable.name] = variable
     trace.pop()
 
     trace.append('In Environment Update Validation')
@@ -547,9 +687,9 @@ def validate_model(model, constants):
         if not is_env(assign_var):
             raise BTreeException(trace, 'A pre/post tick update is updating a non-environment variable: ' + assign_var.name)
         if is_array(assign_var):
-            validate_array_assign(var_statement, var_statement.constant_index == 'constant_index', {'local', 'blackboard', 'environment'}, None, None, deterministic = False, init_mode = None)
+            validate_array_assign(var_statement, {'local', 'blackboard', 'environment'}, None, deterministic = False, init_mode = None)
         else:
-            if var_statement.assign is None or var_statement.array_mode == 'range':
+            if var_statement.assign is None:
                 raise BTreeException(trace, 'Environment update :: Variable is not an array, but has as an array like update: ' + assign_var.name)
             validate_variable_assignment(assign_var, var_statement.assign, {'local', 'blackboard', 'environment'}, None, deterministic = False, init_mode = None)
     trace.pop()
@@ -577,4 +717,4 @@ def validate_model(model, constants):
             raise BTreeException(trace, 'unknown specification type: ' + specification.spec_type)
         validate_condition(specification.code_statement, {'blackboard', 'local', 'environment'}, None, allowed)
     print('model check complete')
-    return
+    return (variables, constants, declared_enumerations)

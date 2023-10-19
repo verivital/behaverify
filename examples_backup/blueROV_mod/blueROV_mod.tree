@@ -1,0 +1,1389 @@
+configuration {}
+enumerations {
+    'waypoint_following', 'e_stop', 'pipe_following',
+    'cm_surface_task', 'cm_rth_task', 'cm_loiter_task', 'cm_obstacle_avoidance_task', 'cm_tracking_task', 'cm_waypoint_task',
+    'danger_zone', 'safe',
+    'uuv_min_speed', 'uuv_max_speed',
+    'speed', 'pipe', 'speed_pipe',
+    'short', 'long', 'short_long',
+    'xy_warn', 'z_warn'
+}
+constants {
+    #{ constants are used to synchronize values in a .tree file. }#
+    #{ example = 0 }#
+    #{ to use example elsewhere, simply type 'example' in place of any integer (quotes included) }#
+} end_constants
+
+variables {
+    
+    variable {env battery VAR [0, 1] assign { result {1}}}
+    variable {bl battery_low_warning VAR BOOLEAN assign { result {False}}}
+    variable {bl bb_fls_warning VAR BOOLEAN assign { result {False}}}
+    variable {env bb_geofence VAR BOOLEAN assign { result {False}}}
+    variable {bl bb_geofence_warning VAR BOOLEAN assign { result {False}}}
+    variable {env bb_home_dist VAR {10, 100} assign { result {10}}}
+    variable {bl bb_home_reached VAR BOOLEAN assign { result {False}}}
+    
+    variable {bl bb_mission VAR {'waypoint_following', 'e_stop', 'pipe_following'} assign { result {'waypoint_following'}}}
+    variable {bl bb_obstacle_warning VAR BOOLEAN assign { result {False}}}
+    variable {env bb_pipelost VAR BOOLEAN assign { result {False}}}
+    variable {bl bb_pipe_lost_warning VAR BOOLEAN assign { result {False}}}
+    variable {bl bb_pipe_mapping_enable VAR BOOLEAN assign { result {False}}}
+    variable {env bb_rth VAR BOOLEAN assign { result {False}}}
+    variable {bl bb_rth_warning VAR BOOLEAN assign { result {False}}}
+    variable {env bb_sensor_failure VAR BOOLEAN assign { result {False}}}
+    variable {bl bb_sensor_failure_warning VAR BOOLEAN assign { result {False}}}
+    variable {env bb_waypoints_completed VAR BOOLEAN assign { result {False}}}
+    variable {bl cm_hsd_input VAR {'cm_surface_task', 'cm_rth_task', 'cm_loiter_task', 'cm_obstacle_avoidance_task', 'cm_tracking_task', 'cm_waypoint_task'} assign { result {'cm_loiter_task'}}}
+    variable {bl dd_xy_axis_degradation VAR BOOLEAN assign { result {False}}}
+    variable {bl dd_z_axis_warning VAR BOOLEAN assign { result {False}}}
+    variable {bl emergency_stop_warning VAR BOOLEAN assign { result {False}}}
+    variable {env fls_range VAR {'danger_zone', 'safe'} assign { result {'safe'}}}
+    
+    variable {bl HSD_out VAR {'uuv_min_speed', 'uuv_max_speed'} assign { result {'uuv_max_speed'}}}
+    variable {env lec_dd_am VAR BOOLEAN assign { result {False}}}
+    variable {bl lec_dd_am_warning VAR BOOLEAN assign { result {False}}}
+    variable {env lec2_am_l VAR {'safe', 'speed', 'pipe', 'speed_pipe'} assign { result {'safe'}}}
+    variable {bl lec2_am_l_speed_warning VAR BOOLEAN assign { result {False}}}
+    variable {bl lec2_am_l_pipe_warning VAR BOOLEAN assign { result {False}}}
+    variable {env lec2_am_r VAR {'safe', 'speed', 'pipe', 'speed_pipe'} assign { result {'safe'}}}
+    variable {bl lec2_am_r_speed_warning VAR BOOLEAN assign { result {False}}}
+    variable {bl lec2_am_r_pipe_warning VAR BOOLEAN assign { result {False}}}
+    variable {bl next_mission VAR BOOLEAN assign { result {False}}}
+    variable {bl pipe_mapping_enable VAR BOOLEAN assign { result {False}}}
+    variable {env obstacle_in_view VAR BOOLEAN assign { result {False}}}
+    variable {bl obstacle_standoff_warning VAR BOOLEAN assign { result {False}}}
+    variable {bl rtreach_long_term_warning VAR BOOLEAN assign { result {False}}}
+    variable {bl rtreach_obstacle_warning VAR BOOLEAN assign { result {False}}}
+    variable {env rtreach_result VAR {'safe', 'short', 'long', 'short_long'} assign { result {'safe'}}}
+    variable {bl rtreach_warning VAR BOOLEAN assign { result {False}}}
+    
+    variable {bl finished_missions VAR BOOLEAN assign { result {False}}}
+    variable {bl dd_output VAR {'safe', 'xy_warn', 'z_warn'} assign { result {'safe'}}}
+    variable {bl BLUEROV_SURFACED VAR BOOLEAN assign { result {False}}}
+    
+    variable {local read_success VAR BOOLEAN assign { result { False}}}
+    
+} end_variables
+
+environment_update {
+    
+    variable_statement { #{instant}#
+	fls_range
+	assign {result {'danger_zone', 'safe'}}
+    }
+    variable_statement { #{instant}#
+	obstacle_in_view
+	assign { result {True, False}}
+    }
+    variable_statement { #{instant}#
+	battery
+	assign{result {0, 1}}
+    }
+    variable_statement { #{instant}#
+	lec_dd_am
+	assign{result {True, False}}
+    }
+    variable_statement { #{instant}#
+        bb_rth
+        assign { result {True, False}}
+    }
+    variable_statement { #{instant}#
+        bb_geofence
+        assign { result {True, False}}
+    }
+    variable_statement { #{instant}#
+        lec2_am_l
+        assign { result {'safe', 'speed', 'pipe', 'speed_pipe'}}
+    }
+    variable_statement { #{instant}#
+        lec2_am_r
+        assign { result {'safe', 'speed', 'pipe', 'speed_pipe'}}
+    }
+    variable_statement { #{instant}#
+        bb_pipelost
+        assign { result {True, False}}
+    }
+    variable_statement { #{instant}#
+        bb_sensor_failure
+        assign { result {True, False}}
+    }
+    variable_statement { #{instant}#
+        bb_waypoints_completed
+        assign { result {True, False}}
+    }
+    variable_statement { #{instant}#
+        bb_home_dist
+        assign { result {10, 100}}
+    }
+    variable_statement { #{instant}#
+        rtreach_result
+        assign { result {'safe', 'short', 'long', 'short_long'}}
+    }
+} end_environment_update
+
+checks {
+    
+    check {
+	emergency_stop_fs
+	arguments {}
+	read_variables { emergency_stop_warning } end_read_variables
+	condition { (equal, emergency_stop_warning, False) } end_condition
+    } end_check
+    
+    check {
+	obstacle_standoff_fs
+	arguments {}
+	read_variables { obstacle_standoff_warning } end_read_variables
+	condition { (equal, obstacle_standoff_warning, True) } end_condition
+    } end_check
+    
+    check {
+	is_reallocation_requested
+	arguments {}
+	read_variables { dd_xy_axis_degradation } end_read_variables
+	condition { (equal, dd_xy_axis_degradation, False) } end_condition
+    } end_check
+    
+    check {
+	check_dd_am
+	arguments {}
+	read_variables { lec_dd_am_warning } end_read_variables
+	condition { (equal, lec_dd_am_warning, False) } end_condition
+    } end_check
+    
+    check {
+	check_lec2am_ls
+	arguments {}
+	read_variables { lec2_am_l_speed_warning } end_read_variables
+	condition { (equal, lec2_am_l_speed_warning, True) } end_condition
+    } end_check
+    
+    check {
+	check_lec2am_rs
+	arguments {}
+	read_variables { lec2_am_r_speed_warning } end_read_variables
+	condition { (equal, lec2_am_r_speed_warning, True) } end_condition
+    } end_check
+    
+    check {
+	check_lec2am_lp
+	arguments {}
+	read_variables { lec2_am_l_pipe_warning } end_read_variables
+	condition { (equal, lec2_am_l_pipe_warning, False) } end_condition
+    } end_check
+    
+    check {
+	check_lec2am_rp
+	arguments {}
+	read_variables { lec2_am_r_pipe_warning } end_read_variables
+	condition { (equal, lec2_am_r_pipe_warning, False) } end_condition
+    } end_check
+    
+    check {
+	check_geofence
+	arguments {}
+	read_variables { bb_geofence_warning } end_read_variables
+	condition { (equal, bb_geofence_warning, True) } end_condition
+    } end_check
+    
+    check {
+	check_rth
+	arguments {}
+	read_variables { bb_rth_warning } end_read_variables
+	condition { (equal, bb_rth_warning, True) } end_condition
+    } end_check
+    
+    check {
+	check_surface
+	arguments {}
+	read_variables { bb_home_reached } end_read_variables
+	condition { (equal, bb_home_reached, True) } end_condition
+    } end_check
+    
+    check {
+	check_pipe_lost
+	arguments {}
+	read_variables { bb_pipe_lost_warning } end_read_variables
+	condition { (equal, bb_pipe_lost_warning, False) } end_condition
+    } end_check
+    
+    
+    
+    check {
+	check_sensor_failure
+	arguments {}
+	read_variables { bb_sensor_failure_warning } end_read_variables
+	condition { (equal, bb_sensor_failure_warning, True) } end_condition
+    } end_check
+    
+    check {
+	battery_low_fs
+	arguments {}
+	read_variables { battery_low_warning } end_read_variables
+	condition { (equal, battery_low_warning, True) } end_condition
+    } end_check
+    
+    check {
+	is_track_pipe_mission_requested
+	arguments {}
+	read_variables { bb_mission } end_read_variables
+	condition { (equal, bb_mission, "pipe_following") } end_condition
+    } end_check
+    
+    check {
+	is_waypoint_requested
+	arguments {}
+	read_variables { bb_mission } end_read_variables
+	condition { (equal, bb_mission, "waypoint_following") } end_condition
+    } end_check
+    
+    check {
+	is_snr_requested
+	arguments {}
+	read_variables { bb_mission } end_read_variables
+	condition { (equal, bb_mission, "fdr") } end_condition
+    } end_check
+    
+    check {
+	is_loiter_requested
+	arguments {}
+	read_variables { bb_mission } end_read_variables
+	condition { (equal, bb_mission, "loitering") } end_condition
+    } end_check
+    
+    check {
+	dd_z_axis
+	arguments {}
+	read_variables { dd_z_axis_warning } end_read_variables
+	condition { (equal, dd_z_axis_warning, False) } end_condition
+    } end_check
+    
+    check {
+	dd_xy_axis
+	arguments {}
+	read_variables { dd_xy_axis_degradation } end_read_variables
+	condition { (equal, dd_xy_axis_degradation, False) } end_condition
+    } end_check
+    
+    check {
+	rtreach_check
+	arguments {}
+	read_variables { rtreach_warning } end_read_variables
+	condition { (equal, rtreach_warning, False) } end_condition
+    } end_check
+    
+    check {
+	rtreach_obstacle_check
+	arguments {}
+	read_variables { rtreach_obstacle_warning } end_read_variables
+	condition { (equal, rtreach_obstacle_warning, False) } end_condition
+    } end_check
+    
+    check {
+	rtreach_long_term_check
+	arguments {}
+	read_variables { rtreach_long_term_warning } end_read_variables
+	condition { (equal, rtreach_long_term_warning, False) } end_condition
+    } end_check
+    
+    check {
+	obstacle_avoidance_required
+	arguments {}
+	read_variables { bb_obstacle_warning } end_read_variables
+	condition { (equal, bb_obstacle_warning, True) } end_condition
+    } end_check
+    
+} end_checks
+
+#{ ------------------------------------------------------------------------------------------}#
+environment_checks {
+    
+    environment_check {
+	check_waypoints_completed
+	arguments {}
+	read_variables { } end_read_variables
+	condition { (equal, bb_waypoints_completed, True) } end_condition
+    }
+    
+} end_environment_checks
+
+#{ ------------------------------------------------------------------------------------------}#
+
+
+actions {
+    action {
+	fls2bb
+	arguments {}
+	local_variables { read_success } end_local_variables
+	read_variables { } end_read_variables
+	write_variables { fls_range, obstacle_standoff_warning } end_write_variables
+	initial_values {} end_initial_values
+	update {
+	    read_environment {
+		fls2bb_read
+		condition_variable { read_success}
+		condition { non_determinism, True}
+		variable_statement {
+		    obstacle_standoff_warning
+		    assign{result { (equal, fls_range, 'danger_zone') } end_result}
+		}
+	    } 
+	    return_statement {
+		case { read_success} result { success}
+		result { running }
+	    } end_return_statement
+	} end_update
+    } end_action
+    action {
+	fls_warning2bb
+	arguments {}
+	local_variables { read_success } end_local_variables
+	read_variables { } end_read_variables
+	write_variables { bb_fls_warning, emergency_stop_warning, obstacle_in_view } end_write_variables
+	initial_values {} end_initial_values
+	update {
+	    read_environment {fls_warning2bb_read
+		condition_variable { read_success}
+		condition { non_determinism, True}
+		variable_statement {
+		    bb_fls_warning
+		    assign {result { (or, bb_fls_warning, obstacle_in_view) } end_result}
+		}
+		variable_statement {
+		    emergency_stop_warning
+		    assign {result { (or, emergency_stop_warning, obstacle_in_view)} end_result}
+		}
+	    } 
+	    return_statement {
+		case { read_success} result { success}
+		result { running }
+	    } end_return_statement
+	} end_update
+    } end_action
+    
+    action {
+	battery2bb
+	arguments {}
+	local_variables { read_success } end_local_variables
+	read_variables { } end_read_variables
+	write_variables { battery, battery_low_warning } end_write_variables
+	initial_values {} end_initial_values
+	update {
+	    read_environment {battery2bb_read
+		condition_variable { read_success}
+		condition { non_determinism, True}
+		variable_statement {
+		    battery_low_warning
+		    assign{result { (less_than_or_equal, battery, 0) } end_result}
+		}
+	    } 
+	    return_statement {
+		case { read_success} result { success}
+		result { running }
+	    } end_return_statement
+	} end_update
+    } end_action
+    
+    action {
+	ddlecam2bb
+	arguments {}
+	local_variables { read_success } end_local_variables
+	read_variables { } end_read_variables
+	write_variables { lec_dd_am, lec_dd_am_warning } end_write_variables
+	initial_values {} end_initial_values
+	update {
+	    read_environment {ddlecam2bb_read
+		condition_variable { read_success}
+		condition { non_determinism, True}
+		variable_statement {
+		    lec_dd_am_warning
+		    assign{result { lec_dd_am } end_result}
+		}
+	    } 
+	    return_statement {
+		case { read_success} result { success}
+		result { running }
+	    } end_return_statement
+	} end_update
+    } end_action
+    
+    action {
+	rth2bb
+	arguments {}
+	local_variables { read_success } end_local_variables
+	read_variables { } end_read_variables
+	write_variables { bb_rth_warning, bb_rth } end_write_variables
+	initial_values {} end_initial_values
+	update {
+            read_environment {rth2bb_read
+		condition_variable { read_success}
+		condition { non_determinism, True}
+		variable_statement {
+                    bb_rth_warning
+                    assign {result { (or, bb_rth_warning, bb_rth) } end_result}
+		}
+            } 
+            return_statement {
+		case { read_success} result { success}
+		result { running }
+            } end_return_statement
+	} end_update
+    } end_action
+    
+    action {
+	geofence2bb
+	arguments {}
+	local_variables { read_success } end_local_variables
+	read_variables { } end_read_variables
+	write_variables { bb_geofence_warning, bb_geofence } end_write_variables
+	initial_values {} end_initial_values
+	update {
+            read_environment {geofence2bb_read
+		condition_variable { read_success}
+		condition { non_determinism, True}
+		variable_statement {
+                    bb_geofence_warning
+                    assign {result { (or, bb_geofence_warning, bb_geofence) } end_result}
+		}
+            } 
+            return_statement {
+		case { read_success} result { success}
+		result { running }
+            } end_return_statement
+	} end_update
+    } end_action
+    
+    action {
+	lec2_am_l_2bb
+	arguments {}
+	local_variables { read_success } end_local_variables
+	read_variables { } end_read_variables
+	write_variables { lec2_am_l_speed_warning, lec2_am_l_pipe_warning, lec2_am_l} end_write_variables
+	initial_values {} end_initial_values
+	update {
+            read_environment {lec2_am_l_2bb_read
+		condition_variable { read_success}
+		condition { non_determinism, True}
+		variable_statement {
+                    lec2_am_l_speed_warning
+                    assign {result { (or, (equal, lec2_am_l, 'speed'), (equal, lec2_am_l, 'speed_pipe')) } end_result}
+		}
+		variable_statement {
+                    lec2_am_l_pipe_warning
+                    assign {result { (or, (equal, lec2_am_l, 'pipe'), (equal, lec2_am_l, 'speed_pipe')) } end_result}
+		}
+            } 
+            return_statement {
+		case { read_success} result { success}
+		result { running }
+            } end_return_statement
+	} end_update
+    } end_action
+    
+    
+    action {
+	lec2_am_r_2bb
+	arguments {}
+	local_variables { read_success } end_local_variables
+	read_variables { } end_read_variables
+	write_variables { lec2_am_r_speed_warning, lec2_am_r_pipe_warning, lec2_am_r} end_write_variables
+	initial_values {} end_initial_values
+	update {
+            read_environment {lec2_am_r_2bb_read
+		condition_variable { read_success}
+		condition { non_determinism, True}
+		variable_statement {
+                    lec2_am_r_speed_warning
+                    assign {result { (or, (equal, lec2_am_r, 'speed'), (equal, lec2_am_r, 'speed_pipe')) } end_result}
+		}
+		variable_statement {
+                    lec2_am_r_pipe_warning
+                    assign {result { (or, (equal, lec2_am_r, 'pipe'), (equal, lec2_am_r, 'speed_pipe')) } end_result}
+		}
+            } 
+            return_statement {
+		case { read_success} result { success}
+		result { running }
+            } end_return_statement
+	} end_update
+    } end_action
+    
+    action {
+	pipe_lost2bb
+	arguments {}
+	local_variables { read_success } end_local_variables
+	read_variables { bb_mission } end_read_variables
+	write_variables { bb_pipe_lost_warning, bb_pipelost } end_write_variables
+	initial_values {} end_initial_values
+	update {
+            read_environment {pipe_lost2bb_read
+		condition_variable { read_success}
+		condition { non_determinism, True}
+		variable_statement {
+                    bb_pipe_lost_warning
+                    assign {result { (and, bb_pipelost, (equal, bb_mission, 'pipe_following')) } end_result}
+		}
+            } 
+            return_statement {
+		case { read_success} result { success}
+		result { running }
+            } end_return_statement
+	} end_update
+    } end_action
+    
+    
+    action {
+	sensor_failure2bb
+	arguments {}
+	local_variables { read_success } end_local_variables
+	read_variables { } end_read_variables
+	write_variables { bb_sensor_failure_warning, bb_sensor_failure } end_write_variables
+	initial_values {} end_initial_values
+	update {
+            read_environment {sensor_failure2bb_read
+		condition_variable { read_success}
+		condition { non_determinism, True}
+		variable_statement {
+                    bb_sensor_failure_warning
+                    assign {result { (or, bb_sensor_failure_warning, bb_sensor_failure) } end_result}
+		}
+            } 
+            return_statement {
+		case { read_success} result { success}
+		result { running }
+            } end_return_statement
+	} end_update
+    } end_action
+    
+    action {
+	waypoints_completed2bb
+	arguments {}
+	local_variables { read_success } end_local_variables
+	read_variables { } end_read_variables
+	write_variables { bb_waypoints_completed } end_write_variables
+	initial_values {} end_initial_values
+	update {
+            read_environment {waypoints_completed2bb_read
+		condition { True}
+		variable_statement { read_success assign { result { True, False}}}
+            } 
+            return_statement {
+		case { read_success} result { success}
+		result { running }
+            } end_return_statement
+	} end_update
+    } end_action
+    
+    action {
+	home2bb
+	arguments {}
+	local_variables { read_success } end_local_variables
+	read_variables { } end_read_variables
+	write_variables { bb_home_dist, bb_home_reached } end_write_variables
+	initial_values {} end_initial_values
+	update {
+            read_environment {home2bb_read
+		condition_variable { read_success}
+		condition { non_determinism, True}
+		variable_statement {
+                    bb_home_reached
+                    assign {result { (or, bb_home_reached, (less_than, bb_home_dist, 15)) } end_result}
+		}
+            } 
+            return_statement {
+		case { read_success} result { success}
+		result { running }
+            } end_return_statement
+	} end_update
+    } end_action
+    
+    
+    #{
+	action {
+	    rtreach_index2bb
+	    arguments {}
+	    local_variables { read_success } end_local_variables
+	    read_variables { } end_read_variables
+	    write_variables { } end_write_variables
+	    initial_values {} end_initial_values
+	    update {
+		return_statement {
+		    result { success}
+		} end_return_statement
+	    } end_update
+	} end_action
+    }#
+    
+    action {
+	rtreach2bb
+	arguments {}
+	local_variables { read_success } end_local_variables
+	read_variables { } end_read_variables
+	write_variables { rtreach_result, rtreach_warning, rtreach_long_term_warning} end_write_variables
+	initial_values {} end_initial_values
+	update {
+            read_environment {rtreach2bb_read
+		condition_variable { read_success}
+		condition { non_determinism, True}
+		variable_statement {
+                    rtreach_long_term_warning
+                    assign {result { (or, (equal, rtreach_result, 'long'), (equal, rtreach_result, 'short_long')) } end_result}
+		}
+		variable_statement {
+                    rtreach_warning
+                    assign {result { (or, (equal, rtreach_result, 'short'), (equal, rtreach_result, 'short_long')) } end_result}
+		}
+            } 
+            return_statement {
+		case { read_success} result { success}
+		result { running }
+            } end_return_statement
+	} end_update
+    } end_action
+    
+    #{
+	action {
+	    rtreach_unsafe_value2bb
+	    arguments {}
+	    local_variables { read_success } end_local_variables
+	    read_variables { } end_read_variables
+	    write_variables { rtreach_unsafe_value rtreach_fence_warning rtreach_obstacle_warning } end_write_variables
+	    initial_values {} end_initial_values
+	    update {
+		read_environment {
+		    condition_variable { read_success}
+		    condition { non_determinism, True}
+		    variable_statement {
+			rtreach_unsafe_value
+			assign { result {True, False}}
+		    }
+		} 
+		return_statement {
+		    case { read_success} result { success}
+		    result { running }
+		} end_return_statement
+	    } end_update
+	} end_action
+    }#
+    
+    #{ end of INPUT action nodes }#
+    #{ start of TASK action nodes }#
+    
+    
+    action {
+	emergency_stop_task
+	arguments {}
+	local_variables { } end_local_variables
+	read_variables { } end_read_variables
+	write_variables { } end_write_variables
+	initial_values {} end_initial_values
+	update {
+	    return_statement {
+		result { success }
+	    } end_return_statement
+	} end_update
+    } end_action
+    
+    
+    action {
+	surface_task
+	arguments {}
+	local_variables { } end_local_variables
+	read_variables { } end_read_variables
+	write_variables { cm_hsd_input, BLUEROV_SURFACED} end_write_variables
+	initial_values {} end_initial_values
+	update {
+            variable_statement {
+		cm_hsd_input
+		assign { result {'cm_surface_task'}}
+            }
+            variable_statement {
+		BLUEROV_SURFACED
+		assign { result {True}}
+            }
+	    
+	    return_statement {
+		result { running }
+	    } end_return_statement
+	} end_update
+    } end_action
+    
+    action {
+	rth_task
+	arguments {}
+	local_variables { } end_local_variables
+	read_variables { } end_read_variables
+	write_variables { cm_hsd_input } end_write_variables
+	initial_values {} end_initial_values
+	update {
+            variable_statement {
+		cm_hsd_input
+		assign { result {'cm_rth_task'}}
+            }
+	    return_statement {
+		result { running }
+	    } end_return_statement
+	} end_update
+    } end_action
+    
+    action {
+	loiter_task
+	arguments {}
+	local_variables { } end_local_variables
+	read_variables { } end_read_variables
+	write_variables { cm_hsd_input } end_write_variables
+	initial_values {} end_initial_values
+	update {
+            variable_statement {
+		cm_hsd_input
+		assign { result {'cm_loiter_task'}}
+            }
+	    return_statement {
+		result { running }
+	    } end_return_statement
+	} end_update
+    } end_action
+    
+    action {
+	obstacle_avoidance
+	arguments {}
+	local_variables { } end_local_variables
+	read_variables { } end_read_variables
+	write_variables { bb_obstacle_warning, cm_hsd_input } end_write_variables
+	initial_values {} end_initial_values
+	update {
+    	    read_environment{ obstacle_avoidance_read
+		condition { True}
+        	variable_statement {
+            	    bb_obstacle_warning
+            	    assign {
+                	result { True, False }
+            	    }
+        	}
+	    }
+            variable_statement {
+		cm_hsd_input
+		assign {
+	    	    case {bb_obstacle_warning} result {'cm_obstacle_avoidance_task'}
+                    result {
+			cm_hsd_input
+                    }
+		}
+            }
+	    return_statement {
+		result { running }
+	    } end_return_statement
+	} end_update
+    } end_action
+    
+    
+    action {
+	mission_server
+	arguments {}
+	local_variables { } end_local_variables
+	read_variables { } end_read_variables
+	write_variables { finished_missions, bb_rth_warning, bb_mission, emergency_stop_warning, next_mission } end_write_variables
+	initial_values {} end_initial_values
+	update {
+    	    read_environment{ mission_server_read
+		condition { True}
+		variable_statement {
+		    finished_missions
+		    assign {
+	    		case{(and, next_mission, finished_missions)} result {True, False}
+			result { finished_missions
+			}
+		    }
+		}}
+            variable_statement {
+		bb_rth_warning
+		assign {
+	    	    case { next_mission} result { finished_missions}
+                    result { bb_rth_warning
+                    }
+		}
+            }
+    	    read_environment{ mission_server_read2
+		condition { True}
+		variable_statement {
+		    bb_mission
+		    assign {
+	    		case { (and, next_mission, (not, finished_missions))} result { 'waypoint_following', 'e_stop', 'pipe_following'}
+			result {
+			    bb_mission
+			}
+		    }
+		}}
+            variable_statement {
+		emergency_stop_warning
+		assign {
+	    	    case {(and, (and, next_mission, (not, finished_missions)), (equal, 'e_stop', bb_mission))} result {True}
+		    result { emergency_stop_warning}
+		}
+            }
+            variable_statement {
+		next_mission
+		assign {
+                    result { False }
+		}
+            }
+	    return_statement {
+		result { running }
+	    } end_return_statement
+	} end_update
+    } end_action
+    
+    
+    action {
+	next_mission_node
+	arguments {}
+	local_variables { } end_local_variables
+	read_variables { } end_read_variables
+	write_variables { next_mission } end_write_variables
+	initial_values {} end_initial_values
+	update {
+            variable_statement {
+		next_mission
+		assign { result { True } }
+            }
+	    
+	    return_statement {
+		result { success }
+	    } end_return_statement
+	} end_update
+    } end_action
+    
+    
+    action {
+	speed_max_task
+	arguments {}
+	local_variables { } end_local_variables
+	read_variables { } end_read_variables
+	write_variables { HSD_out } end_write_variables
+	initial_values {} end_initial_values
+	update {
+            variable_statement {
+		HSD_out
+		assign { result { 'uuv_max_speed' } }
+            }
+	    
+	    return_statement {
+		result { success }
+	    } end_return_statement
+	} end_update
+    } end_action
+    
+    action {
+	speed_min_task
+	arguments {}
+	local_variables { } end_local_variables
+	read_variables { } end_read_variables
+	write_variables { HSD_out } end_write_variables
+	initial_values {} end_initial_values
+	update {
+            variable_statement {
+		HSD_out
+		assign { result { 'uuv_min_speed' } }
+            }
+	    
+	    return_statement {
+		result { success }
+	    } end_return_statement
+	} end_update
+    } end_action
+    
+    action {
+	pipe_mapping_enable_task
+	arguments {}
+	local_variables { } end_local_variables
+	read_variables { } end_read_variables
+	write_variables { pipe_mapping_enable } end_write_variables
+	initial_values {} end_initial_values
+	update {
+            variable_statement {
+		pipe_mapping_enable
+		assign { result { True } }
+            }
+	    
+	    return_statement {
+		result { success }
+	    } end_return_statement
+	} end_update
+    } end_action
+    
+    action {
+	pipe_mapping_disable_task
+	arguments {}
+	local_variables { } end_local_variables
+	read_variables { } end_read_variables
+	write_variables { pipe_mapping_enable } end_write_variables
+	initial_values {} end_initial_values
+	update {
+            variable_statement {
+		pipe_mapping_enable
+		assign { result { False } }
+            }
+	    
+	    return_statement {
+		result { running }
+	    } end_return_statement
+	} end_update
+    } end_action
+    
+    action {
+	tracking_task
+	arguments {}
+	local_variables { } end_local_variables
+	read_variables { } end_read_variables
+	write_variables { cm_hsd_input } end_write_variables
+	initial_values {} end_initial_values
+	update {
+            variable_statement {
+		cm_hsd_input
+		assign { result {'cm_tracking_task'}}
+            }
+	    
+	    return_statement {
+		result { success }
+	    } end_return_statement
+	} end_update
+    } end_action
+    
+    action {
+	waypoint_task
+	arguments {}
+	local_variables { } end_local_variables
+	read_variables { } end_read_variables
+	write_variables { cm_hsd_input } end_write_variables
+	initial_values {} end_initial_values
+	update {
+            variable_statement {
+		cm_hsd_input
+		assign { result {'cm_waypoint_task'}}
+            }
+	    return_statement {
+		result { success }
+	    } end_return_statement
+	} end_update
+    } end_action
+    
+    action {
+	reallocate_task
+	arguments {}
+	local_variables { } end_local_variables
+	read_variables { } end_read_variables
+	write_variables { } end_write_variables
+	initial_values {} end_initial_values
+	update {
+	    return_statement {
+		result { running }
+	    } end_return_statement
+	} end_update
+    } end_action
+    
+    action {
+	dd_lec_task
+	arguments {}
+	local_variables { } end_local_variables
+	read_variables { } end_read_variables
+	write_variables { dd_z_axis_warning, dd_xy_axis_degradation, dd_output } end_write_variables
+	initial_values {} end_initial_values
+	update {
+	    
+    	    read_environment{ dd_lec_read
+		condition { True}
+		variable_statement {
+		    dd_output
+		    assign { result {'safe', 'z_warn', 'xy_warn' } }
+		}}
+            variable_statement {
+		dd_z_axis_warning
+		assign {
+                    result {
+			(or, (equal, dd_output, 'z_warn'), (and, dd_z_axis_warning, (not, (equal, dd_output, 'safe'))))
+                    }
+		}
+            }
+            variable_statement {
+		dd_xy_axis_degradation
+		assign {
+                    result {
+			(or, (equal, dd_output, 'xy_warn'), (and, dd_xy_axis_degradation, (not, (equal, dd_output, 'safe'))))
+                    }
+		}
+            }
+	    return_statement {
+		result { failure }
+	    } end_return_statement
+	} end_update
+    } end_action
+    
+    action {
+	publish_HSD_command
+	arguments {}
+	local_variables { } end_local_variables
+	read_variables { } end_read_variables
+	write_variables { } end_write_variables
+	initial_values {} end_initial_values
+	update {
+	    return_statement {
+		result { running }
+	    } end_return_statement
+	} end_update
+    } end_action
+    
+    action{
+	failure_node
+	arguments {}
+	local_variables {} end_local_variables
+	read_variables {}
+	write_variables {}
+	initial_values{}
+	update { return_statement { result { failure}}}
+    }
+    
+} end_actions
+
+sub_trees {#{ subtrees go here. }#
+    sub_tree {
+	TOPICS_sub
+	composite {
+	    topics2bb parallel policy success_on_all
+	    children {
+		battery2bb {} rth2bb {} geofence2bb {}
+		lec2_am_r_2bb {} lec2_am_l_2bb {} pipe_lost2bb {}
+		sensor_failure2bb {} waypoints_completed2bb {}
+		fls2bb {} fls_warning2bb {}
+		rtreach2bb {}
+		#{ rtreach_unsafe_value2bb }#
+		#{ rtreach_index2bb }#
+		home2bb {}
+	    }
+	}
+    }
+    sub_tree {
+	TASKS_sub
+	composite {
+	    dd_tasks selector
+	    children {
+		dd_lec_task {}
+		decorator {
+		    emergency_stop_check_SIF X_is_Y X success Y failure
+		    child {
+			composite {
+			    emergency_stop_check
+			    selector
+			    children {
+				is_reallocation_requested {}
+				reallocate_task {}
+			    }
+			}
+		    }
+		}
+	    }
+	}
+    }
+    sub_tree {
+	MISSION_sub
+	composite {
+	    mission_end
+	    sequence
+	    children {
+		composite {
+		    confirm_mission_ended
+		    selector
+		    children {
+			composite {
+			    waypoint_mission_end
+			    sequence
+			    children {
+				is_waypoint_requested {}
+				check_waypoints_completed {}
+			    }
+			}
+			composite {
+			    pipe_tracking_misison_end
+			    sequence
+			    children {
+				is_track_pipe_mission_requested {}
+				failure_node {}
+			    }
+			}
+		    }
+		}
+		next_mission_node {}
+	    }
+	}
+    }
+    sub_tree {
+	PRIORITIES_sub
+	composite {
+	    priorities
+	    selector
+	    children {
+		decorator {
+		    emergency_stop_check_SIF X_is_Y X success Y failure
+		    child {
+			composite {
+			    emergency_stop_check
+			    selector
+			    children {
+				emergency_stop_fs {}
+				composite {
+				    emergency_stop_tasks
+				    sequence
+				    children {
+					emergency_stop_task {}
+					surface_task {}
+				    }
+				}
+			    }
+			}
+		    }
+		}
+		obstacle_avoidance_required {}
+		composite {
+		    failsafe_surface
+		    sequence
+		    children {
+			composite {
+			    failsafe_triggered
+			    selector
+			    children {
+				battery_low_fs {}
+				check_sensor_failure {}
+				obstacle_standoff_fs {}
+				composite {
+				    rth_surface
+				    sequence
+				    children {
+					composite {
+					    rth_needed selector
+					    children {
+						check_rth {}
+						check_geofence {}
+					    }
+					}
+					check_surface {}
+				    }
+				}
+			    }
+			}
+			surface_task {}
+		    }
+		}
+		composite {
+		    rth sequence
+		    children {
+			composite {
+			    rth_needed selector
+			    children {
+				check_rth {}
+				check_geofence {}
+			    }
+			}
+			rth_task {}
+		    }
+		}
+		decorator {
+		    pipe_lost_selector_SIF X_is_Y X success Y failure
+		    child {
+			composite {
+			    pipe_lost_selector selector
+			    children {
+				check_pipe_lost {}
+				loiter_task {}
+			    }
+			}
+		    }
+		}
+		composite {
+		    track_pipe_mission sequence
+		    children {
+			is_track_pipe_mission_requested {}
+			tracking_task {}
+			composite {
+			    lec2am_speed_cmd selector
+			    children {
+				composite {
+				    speed_min sequence
+				    children {
+					composite {
+					    speed_warning selector
+					    children {
+						check_lec2am_ls {}
+						check_lec2am_rs {}
+					    }
+					}
+					speed_min_task {}
+				    }
+				}
+				speed_max_task {}
+			    }
+			}
+		    }
+		}
+		composite {
+		    waypoint_mission sequence
+		    children {
+			is_waypoint_requested {}
+			waypoint_task {}
+		    }
+		}
+		loiter_task {}
+	    }
+	}
+    }
+} end_sub_trees
+
+tree {
+    #{ the tree is defined here}#
+    composite {
+	blueROV parallel policy success_on_all
+	children {
+	    insert {TOPICS_sub}
+	    insert {TASKS_sub}
+	    insert {MISSION_sub}
+	    mission_server {}
+	    obstacle_avoidance {}
+	    insert {PRIORITIES_sub}
+	    publish_HSD_command {}
+	}
+    }
+} end_tree
+
+tick_prerequisite { (not, BLUEROV_SURFACED) } end_tick_prerequisite
+
+specifications {
+    #{
+	// ---------------------------------------------------------------------------------------------------------------
+	// -- --1. Do No Harm
+	// -- --2. Preserve UUV
+	// -- --3. Complete Missions
+	// ---------------------------------------------------------------------------------------------------------------
+	
+	// -- --1. Do No Harm
+	// -- --To ensure no harm is done, we will prioritize avoiding obstacles. Thus we either engage in obstacle avoidance or halt (or are halted) if obstacles are present.
+    }#
+    
+    
+    INVARSPEC {(implies, bb_fls_warning 1, (or, BLUEROV_SURFACED 0, (equal, cm_hsd_input -1, 'cm_surface_task'))) } end_INVARSPEC
+    #{
+	// -- TRUE
+	// -- --This specification confirms that if the FLS warning is set to true, then one of the following is true
+	// -- --1. We have already surfaced and are done
+	// -- --2. We executed the emergecny_stop_task and the command sent to the blueROV is surface	
+    }#
+    
+    
+    INVARSPEC { (implies, (and, (not, bb_fls_warning 1), (not, (equal, bb_mission 1, 'e_stop')), bb_obstacle_warning 1), (or, BLUEROV_SURFACED 0, (equal, cm_hsd_input -1, 'cm_obstacle_avoidance_task'))) } end_INVARSPEC
+    #{
+	// -- TRUE
+	// -- --This specification confirms that if the FLS warning is NOT set to true and we are not executing an e_stop mission, then one of the following is true
+	// -- --1. We have already surfaced and are done
+	// -- --2. The commmand sent to the blueROV is obstacle avoidance
+	
+	// -- --between these two specifications we have handled avoiding obstacles. if we cannot go around the obstacle (FLS warning true), then we attempt to stop. If we can go around and are not stopping for some other reason, then we do so.
+	
+	
+	
+	// -- --2. Preserve UUV
+	// -- --Preservation of the UUV consists of two factors. The first is not crashing into things. Fortunately, this is handled by objective [1. Do No Harm]. Therefore, we are now only interested in the second aspect: ensuring that we surface if a failsafe is set and that the UUV is not lost underwater.
+    }#
+    
+    INVARSPEC { (implies, (and, (not, bb_obstacle_warning 1), (or, emergency_stop_warning 2, battery_low_warning 1, bb_sensor_failure_warning 1, obstacle_standoff_warning 1)), (or, BLUEROV_SURFACED 0, (equal, cm_hsd_input -1, 'cm_surface_task'))) } end_INVARSPEC
+    #{
+	// -- TRUE
+	// -- --This specification confirms that if we're not doing basic obstacle avoidance, then any failsafe being triggered (emergency_stop_warning, battery_low_warning, sensor_failure_warning, obstacle_standoff_warning) mean one of the following are true
+	// -- --1. We have already surfaced and are done
+	// -- --2. The command sent to the blueROV is surface
+    }#
+    
+    INVARSPEC { (implies, (and, (not, bb_obstacle_warning 1), (and, (or, bb_rth_warning 2, bb_geofence 0), bb_home_reached 1)), (or, BLUEROV_SURFACED 0, (equal, cm_hsd_input -1, 'cm_surface_task'), (not, (read_success geofence2bb -1)))) } end_INVARSPEC
+    #{
+	// -- TRUE
+	// -- --This specification confirms that if we're not doing basic obstacle avoidance, then if we were returning home and have reached home, one of the following are true
+	// -- --1. We have already surfaced and are done
+	// -- --2. The command sent to the blueROV is surface
+	// -- --3. We failed to read from the environment.
+	
+	// -- -- NOTE: in the above spec, we changed bb_geofence 1 to bb_geofence 0, because we are now updating bb_geofence as part of the environment.
+    }#
+    
+    
+    INVARSPEC { (implies, (and, (not, bb_obstacle_warning 1), (and, (or, bb_rth_warning 2, bb_geofence 0), (not, (equal, cm_hsd_input -1, 'cm_surface_task')))), (or, BLUEROV_SURFACED 0, (equal, cm_hsd_input -1, 'cm_rth_task'), (not, (read_success geofence2bb -1)))) } end_INVARSPEC
+    #{
+	// -- TRUE
+	// -- --This specification confirms that if we're not doing basic obstacle avoidance and we are not issuing the surface command, then if either geofence_warning or rth_warning have been set, one of the following are true
+	// -- --1. We have already surfaced and are done
+	// -- --2. The command sent to the blueROV is rth (return to home)
+	// -- --3. we failed to read from the environment
+	
+	// -- -- NOTE: in the above spec, we changed bb_geofence 1 to bb_geofence 0, because we are now updating bb_geofence as part of the environment.
+	
+	// -- --Between these three specifications, we have confirmed that if we're not doing obstacle avoidance then failsafes will cause us to surface, reaching home will cause us to surface, and exceeding the geofence or getting an RTH from some other source will cause us to attempt to return to home (and if we reach home we will surface by the 2nd specification).
+	// -- --This confirms that the UUV will attempt to preserve itself if it is not prioritizing [1. Do No Harm].
+	
+	
+	
+	// -- --3. Complete Missions
+	// -- --Finally, if we possible, we would like to focus on completing missions. The two mission types are pipe_tracking and waypoint_following
+    }#
+    
+    INVARSPEC { (implies, (not, (or, (equal, cm_hsd_input -1, 'cm_surface_task'), (equal, cm_hsd_input -1, 'cm_rth_task'), (equal, cm_hsd_input -1, 'cm_obstacle_avoidance_task'))), (or, BLUEROV_SURFACED 0, (equal, cm_hsd_input -1, 'cm_loiter_task'), (equal, cm_hsd_input -1, 'cm_tracking_task'), (equal, cm_hsd_input -1, 'cm_waypoint_task'))) } end_INVARSPEC
+    #{
+	// --TRUE
+	// -- --This specification confirms that if we are not busy with surfacing, returning to home, or avoiding obstacles, then one of the following is true
+	// -- --1. We have already surfaced and are done
+	// -- --2. The command sent is mission related.
+	// -- --While this specification is true, it's also trivially true....because the full domain for cm_hsd_input is {cm_surface_task, cm_rth_task, cm_obstacle_avoidance_task} UNION {cm_loiter_task, cm_tracking_task, cm_waypoint_task}...so by excluding the first half in the assertion, the implication is trivially true. In fact, we can even remove var_BLUEROV_SURFACED.
+    }#
+    INVARSPEC { (implies, (not, (or, (equal, cm_hsd_input -1, 'cm_surface_task'), (equal, cm_hsd_input -1, 'cm_rth_task'), (equal, cm_hsd_input -1, 'cm_obstacle_avoidance_task'))), (or, (equal, cm_hsd_input -1, 'cm_loiter_task'), (equal, cm_hsd_input -1, 'cm_tracking_task'), (equal, cm_hsd_input -1, 'cm_waypoint_task'))) } end_INVARSPEC
+    #{
+	// --TRUE
+	// -- --The specification still holds. Let us move to more interesting mission statements.
+    }#
+    
+    
+    INVARSPEC { (implies, (not, (or, (equal, cm_hsd_input -1, 'cm_surface_task'), (equal, cm_hsd_input -1, 'cm_rth_task'), (equal, cm_hsd_input -1, 'cm_obstacle_avoidance_task'))), (or, BLUEROV_SURFACED 0, (and, (equal, bb_mission 1, 'pipe_following'), bb_pipe_lost_warning 1, (equal, cm_hsd_input -1, 'cm_loiter_task')), (and, (equal, bb_mission 1, 'pipe_following'), (not, bb_pipe_lost_warning 1), (equal, cm_hsd_input -1, 'cm_tracking_task')), (and, (equal, bb_mission 1, 'waypoint_following'), (equal, cm_hsd_input -1, 'cm_waypoint_task')))) } end_INVARSPEC
+    #{
+	// --TRUE
+	// -- --This specification confirms that if we are not busy with surfacing, returning to home, or avoiding obstacles, then one of the following is true
+	// -- --1. We have already surfaced and are done
+	// -- --2. Our mission is follow a pipe and we have lost the pipe, so we are loitering until it reappears
+	// -- --3. Our mission is follow a pipe and we have not lost the pipe, so we are following the pipe
+	// -- --4. Our mission is go to a waypoint and we are going to a waypoint
+	
+	
+	// -- --Thus, if we are not busy with [1. Do No Harm] or [2. Preserve UUV], we will be doing out best to [3. Complete Missions].
+    }#
+    
+    #{
+	// ------------------------------------------------------------------------------------------------------------------
+	// -- --Misc Tree makes sense checks
+	
+	// -- --Speed min and speed_max are mutually exclusive
+    }#
+    INVARSPEC { (implies, (active, speed_min_task), (not, (active, speed_max_task))) } end_INVARSPEC #{ // --TRUE }#
+    INVARSPEC { (implies, (active, speed_max_task), (not, (active, speed_min_task))) } end_INVARSPEC #{ // --TRUE }#
+    
+    #{
+	// -- --The last loiter task is included, but can never be reached.
+    }#
+    INVARSPEC { (not, (active, loiter_task_1)) } end_INVARSPEC
+    #{
+	// --TRUE, but only if we don't prune.
+	// -- --If we have not surfaced, then one of the tasks is selected by the priorities selected, or we're doing obstacle avoidance
+    }#
+    INVARSPEC { (implies, (not, BLUEROV_SURFACED 0), (or, (equal, (count, (active, surface_task), (active, surface_task_1), (active, rth_task), (active, loiter_task), (active, tracking_task), (active, waypoint_task)), 1), (equal, cm_hsd_input -1, 'cm_obstacle_avoidance_task'))) } end_INVARSPEC
+    #{
+	// --TRUE
+    }#
+    
+    INVARSPEC { (not, next_mission -1) } end_INVARSPEC
+    #{
+	// --TRUE
+	// -- --We should always be reading the next available mission as soon as possible
+    }#
+} end_specifications

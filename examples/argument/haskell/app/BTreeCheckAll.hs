@@ -12,5 +12,5 @@ bTreeFunctionCreatorCheckAll enum0 enum1 int0 int1 bool0 bool1 = bTreeFunctionCh
   where
     bTreeFunctionCheckAll :: [BTreeNode] -> TreeLocation -> TrueMemoryStatus -> [TrueMemoryStorage] -> PartialMemoryStatus -> [PartialMemoryStorage] -> BTreeBlackboard -> BTreeEnvironment -> FutureChanges -> BTreeNodeOutput
     bTreeFunctionCheckAll _ nodeLocation _ _ _ _ blackboard environment futureChanges
-      | ((enum0 == enum1) && ((int0 == int1) && (bool0 == bool1))) = (Success, [], [], blackboard, environment, futureChanges)
+      | ( (enum0 == enum1)&&((int0 == int1) && (bool0 == bool1))) = (Success, [], [], blackboard, environment, futureChanges)
       | otherwise = (Failure, [], [], blackboard, environment, futureChanges)

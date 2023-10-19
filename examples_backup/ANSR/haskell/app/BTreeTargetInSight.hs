@@ -1,0 +1,13 @@
+module BTreeTargetInSight where
+import BehaviorTreeCore
+import BehaviorTreeBlackboard
+import BehaviorTreeEnvironment
+import SereneRandomizer
+import SereneOperations
+
+
+
+bTreeFunctionTargetInSight :: [BTreeNode] -> TreeLocation -> TrueMemoryStatus -> [TrueMemoryStorage] -> PartialMemoryStatus -> [PartialMemoryStorage] -> BTreeBlackboard -> BTreeEnvironment -> FutureChanges -> BTreeNodeOutput
+bTreeFunctionTargetInSight _ nodeLocation _ _ _ _ blackboard environment futureChanges
+  | ((((abs ((boardCurX blackboard) - (envTarX environment))) + (abs ((boardCurY blackboard) - (envTarY environment)))) <= 4) && (((((abs ((envTreeX 0 blackboard environment) - (envTarX environment))) + (abs ((envTreeY 0 blackboard environment) - (envTarY environment)))) > 2) || ((((envTreeX 0 blackboard environment) == (boardCurX blackboard)) && ((envTreeY 0 blackboard environment) == (boardCurY blackboard))) || ((((envTreeX 0 blackboard environment) == (envTarX environment)) && ((envTreeY 0 blackboard environment) == (envTarY environment))) || ((((envTreeX 0 blackboard environment) < (boardCurX blackboard)) && ((envTreeX 0 blackboard environment) < (envTarX environment))) || ((((envTreeY 0 blackboard environment) < (boardCurY blackboard)) && ((envTreeY 0 blackboard environment) < (envTarY environment))) || ((((envTreeX 0 blackboard environment) > (boardCurX blackboard)) && ((envTreeX 0 blackboard environment) > (envTarX environment))) || (((envTreeY 0 blackboard environment) > (boardCurY blackboard)) && ((envTreeY 0 blackboard environment) > (envTarY environment))))))))) && ((((abs ((envTreeX 1 blackboard environment) - (envTarX environment))) + (abs ((envTreeY 1 blackboard environment) - (envTarY environment)))) > 2) || ((((envTreeX 1 blackboard environment) == (boardCurX blackboard)) && ((envTreeY 1 blackboard environment) == (boardCurY blackboard))) || ((((envTreeX 1 blackboard environment) == (envTarX environment)) && ((envTreeY 1 blackboard environment) == (envTarY environment))) || ((((envTreeX 1 blackboard environment) < (boardCurX blackboard)) && ((envTreeX 1 blackboard environment) < (envTarX environment))) || ((((envTreeY 1 blackboard environment) < (boardCurY blackboard)) && ((envTreeY 1 blackboard environment) < (envTarY environment))) || ((((envTreeX 1 blackboard environment) > (boardCurX blackboard)) && ((envTreeX 1 blackboard environment) > (envTarX environment))) || (((envTreeY 1 blackboard environment) > (boardCurY blackboard)) && ((envTreeY 1 blackboard environment) > (envTarY environment))))))))))) = (Success, [], [], blackboard, environment, futureChanges)
+  | otherwise = (Failure, [], [], blackboard, environment, futureChanges)

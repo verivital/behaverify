@@ -1,0 +1,395 @@
+configuration {
+    #{ Here you specify various configuration options, such as Hypersafety }#
+}
+enumerations {
+    #{ here you specify the enumerations used in the model}#
+}
+constants {
+    'x_min' := 0, 'y_min' := 0, 'x_max' := 10, 'y_max' := 10, 'tree_count' := 2, 'vision_range' := 4, 'tree_range' := 2, 'y_change' := 2, 'movement_cooldown' := 10
+} end_constants
+
+variables {
+    variable {bl prev_dest_x VAR ['x_min', 'x_max'] assign {result {'x_min'}}}
+    variable {bl prev_dest_y VAR ['y_min', 'y_max'] assign {result {(add, 'y_min', 1)}}}
+    variable {bl cur_x VAR ['x_min', 'x_max'] assign {result {'x_min'}}}
+    variable {bl cur_y VAR ['y_min', 'y_max'] assign {result {'y_min'}}}
+    variable {bl dest_x VAR ['x_min', 'x_max'] assign {result {'x_min'}}}
+    variable {bl dest_y VAR ['y_min', 'y_max'] assign {result {'y_min'}}}
+    variable {bl dir VAR {-1, 1} assign {result {1}}}
+    variable {bl victory VAR BOOLEAN assign {result {False}}}
+    #{variable {env tree_locs array 'tree_count' FROZENVAR [0, 960] range assign {result{range, 0, 960, True}}}}#
+    #{
+	variable {env tree_x array 'tree_count' FROZENVAR ['x_min', 'x_max'] range assign {result{range, 'x_min', 'x_max', True}}}
+	variable {env tree_y array 'tree_count' FROZENVAR ['y_min', 'y_max'] range assign {result{range, 'y_min', 'y_max', True}}}
+    }#
+    variable {env tree_x array 'tree_count' DEFINE INT per_index assign {result{2}} assign {result{5}}}
+    variable {env tree_y array 'tree_count' DEFINE INT per_index assign {result{2}} assign {result{5}}}
+    variable {env tar_x VAR ['x_min', 'x_max'] assign {result {range, 'x_min', 'x_max', True}}}
+    variable {env tar_y VAR ['y_min', 'y_max'] assign {result {range, 'y_min', 'y_max', True}}}
+    variable {env timer VAR [0, 'movement_cooldown'] assign {result{'movement_cooldown'}}}
+    #{START OF X_NET}#
+    variable {bl x_net_node_0_0 DEFINE INT assign{result{dest_x}}}
+variable {bl x_net_node_0_1 DEFINE INT assign{result{prev_dest_x}}}
+variable {bl x_net_node_1_0 DEFINE INT assign{result{(max, (add, (mult, x_net_node_0_0, -127),(mult, x_net_node_0_1, 127),11), 0)}}}
+variable {bl x_net_node_1_1 DEFINE INT assign{result{(max, (add, (mult, x_net_node_0_0, -77),(mult, x_net_node_0_1, 72),940), 0)}}}
+variable {bl x_net_node_1_2 DEFINE INT assign{result{(max, (add, (mult, x_net_node_0_0, 18),(mult, x_net_node_0_1, 56),6467), 0)}}}
+variable {bl x_net_node_1_3 DEFINE INT assign{result{(max, (add, (mult, x_net_node_0_0, -34),(mult, x_net_node_0_1, -37),0), 0)}}}
+variable {bl x_net_node_1_4 DEFINE INT assign{result{(max, (add, (mult, x_net_node_0_0, 106),(mult, x_net_node_0_1, 4),-1971), 0)}}}
+variable {bl x_net_node_1_5 DEFINE INT assign{result{(max, (add, (mult, x_net_node_0_0, 105),(mult, x_net_node_0_1, 96),-3699), 0)}}}
+variable {bl x_net_node_1_6 DEFINE INT assign{result{(max, (add, (mult, x_net_node_0_0, -19),(mult, x_net_node_0_1, -85),0), 0)}}}
+variable {bl x_net_node_1_7 DEFINE INT assign{result{(max, (add, (mult, x_net_node_0_0, 107),(mult, x_net_node_0_1, -107),-68), 0)}}}
+variable {bl x_net_node_1_8 DEFINE INT assign{result{(max, (add, (mult, x_net_node_0_0, 79),(mult, x_net_node_0_1, 56),-2059), 0)}}}
+variable {bl x_net_node_1_9 DEFINE INT assign{result{(max, (add, (mult, x_net_node_0_0, 61),(mult, x_net_node_0_1, 21),-4435), 0)}}}
+variable {bl x_net_node_2_0 DEFINE INT assign{result{(max, (add, (mult, x_net_node_1_0, 0),(mult, x_net_node_1_1, 11),(mult, x_net_node_1_2, -10),(mult, x_net_node_1_3, 22),(mult, x_net_node_1_4, -5),(mult, x_net_node_1_5, -12),(mult, x_net_node_1_6, 14),(mult, x_net_node_1_7, 18),(mult, x_net_node_1_8, -16),(mult, x_net_node_1_9, -9),-16), 0)}}}
+variable {bl x_net_node_2_1 DEFINE INT assign{result{(max, (add, (mult, x_net_node_1_0, -56),(mult, x_net_node_1_1, -27),(mult, x_net_node_1_2, 30),(mult, x_net_node_1_3, 9),(mult, x_net_node_1_4, -4),(mult, x_net_node_1_5, 17),(mult, x_net_node_1_6, -18),(mult, x_net_node_1_7, -32),(mult, x_net_node_1_8, 26),(mult, x_net_node_1_9, 3),1264), 0)}}}
+variable {bl x_net_node_2_2 DEFINE INT assign{result{(max, (add, (mult, x_net_node_1_0, -12),(mult, x_net_node_1_1, 7),(mult, x_net_node_1_2, 34),(mult, x_net_node_1_3, -9),(mult, x_net_node_1_4, 6),(mult, x_net_node_1_5, 8),(mult, x_net_node_1_6, -3),(mult, x_net_node_1_7, 36),(mult, x_net_node_1_8, -5),(mult, x_net_node_1_9, -28),1319), 0)}}}
+variable {bl x_net_node_2_3 DEFINE INT assign{result{(max, (add, (mult, x_net_node_1_0, -11),(mult, x_net_node_1_1, -15),(mult, x_net_node_1_2, -1),(mult, x_net_node_1_3, -6),(mult, x_net_node_1_4, -9),(mult, x_net_node_1_5, 5),(mult, x_net_node_1_6, 17),(mult, x_net_node_1_7, -23),(mult, x_net_node_1_8, -16),(mult, x_net_node_1_9, 19),0), 0)}}}
+variable {bl x_net_node_2_4 DEFINE INT assign{result{(max, (add, (mult, x_net_node_1_0, -12),(mult, x_net_node_1_1, 16),(mult, x_net_node_1_2, -11),(mult, x_net_node_1_3, 20),(mult, x_net_node_1_4, -2),(mult, x_net_node_1_5, -15),(mult, x_net_node_1_6, -5),(mult, x_net_node_1_7, -8),(mult, x_net_node_1_8, -21),(mult, x_net_node_1_9, 16),-22), 0)}}}
+variable {bl x_net_node_2_5 DEFINE INT assign{result{(max, (add, (mult, x_net_node_1_0, 39),(mult, x_net_node_1_1, 20),(mult, x_net_node_1_2, 30),(mult, x_net_node_1_3, -21),(mult, x_net_node_1_4, -28),(mult, x_net_node_1_5, -23),(mult, x_net_node_1_6, 10),(mult, x_net_node_1_7, 30),(mult, x_net_node_1_8, -29),(mult, x_net_node_1_9, -18),416), 0)}}}
+variable {bl x_net_node_2_6 DEFINE INT assign{result{(max, (add, (mult, x_net_node_1_0, 15),(mult, x_net_node_1_1, -9),(mult, x_net_node_1_2, -26),(mult, x_net_node_1_3, -1),(mult, x_net_node_1_4, 22),(mult, x_net_node_1_5, 21),(mult, x_net_node_1_6, -7),(mult, x_net_node_1_7, 17),(mult, x_net_node_1_8, 19),(mult, x_net_node_1_9, 33),-1253), 0)}}}
+variable {bl x_net_node_2_7 DEFINE INT assign{result{(max, (add, (mult, x_net_node_1_0, 42),(mult, x_net_node_1_1, -9),(mult, x_net_node_1_2, 4),(mult, x_net_node_1_3, 18),(mult, x_net_node_1_4, 50),(mult, x_net_node_1_5, 4),(mult, x_net_node_1_6, -4),(mult, x_net_node_1_7, 127),(mult, x_net_node_1_8, 28),(mult, x_net_node_1_9, 28),-109), 0)}}}
+variable {bl x_net_node_2_8 DEFINE INT assign{result{(max, (add, (mult, x_net_node_1_0, 24),(mult, x_net_node_1_1, 33),(mult, x_net_node_1_2, 31),(mult, x_net_node_1_3, -19),(mult, x_net_node_1_4, 8),(mult, x_net_node_1_5, -21),(mult, x_net_node_1_6, 12),(mult, x_net_node_1_7, 8),(mult, x_net_node_1_8, -4),(mult, x_net_node_1_9, -5),1263), 0)}}}
+variable {bl x_net_node_2_9 DEFINE INT assign{result{(max, (add, (mult, x_net_node_1_0, 14),(mult, x_net_node_1_1, -23),(mult, x_net_node_1_2, 0),(mult, x_net_node_1_3, 20),(mult, x_net_node_1_4, 17),(mult, x_net_node_1_5, 27),(mult, x_net_node_1_6, 1),(mult, x_net_node_1_7, 35),(mult, x_net_node_1_8, 26),(mult, x_net_node_1_9, 45),-997), 0)}}}
+variable {bl x_net_node_3_0 DEFINE INT assign{result{(max, (add, (mult, x_net_node_2_0, -25),(mult, x_net_node_2_1, 56),(mult, x_net_node_2_2, 31),(mult, x_net_node_2_3, 19),(mult, x_net_node_2_4, 5),(mult, x_net_node_2_5, -47),(mult, x_net_node_2_6, 25),(mult, x_net_node_2_7, 56),(mult, x_net_node_2_8, 10),(mult, x_net_node_2_9, 24),87), 0)}}}
+variable {bl x_net_node_3_1 DEFINE INT assign{result{(max, (add, (mult, x_net_node_2_0, 1),(mult, x_net_node_2_1, 6),(mult, x_net_node_2_2, -19),(mult, x_net_node_2_3, 8),(mult, x_net_node_2_4, -21),(mult, x_net_node_2_5, 24),(mult, x_net_node_2_6, -14),(mult, x_net_node_2_7, -20),(mult, x_net_node_2_8, -17),(mult, x_net_node_2_9, -2),-13), 0)}}}
+variable {bl x_net_node_3_2 DEFINE INT assign{result{(max, (add, (mult, x_net_node_2_0, -6),(mult, x_net_node_2_1, -3),(mult, x_net_node_2_2, 7),(mult, x_net_node_2_3, 22),(mult, x_net_node_2_4, 20),(mult, x_net_node_2_5, -4),(mult, x_net_node_2_6, -2),(mult, x_net_node_2_7, -4),(mult, x_net_node_2_8, -27),(mult, x_net_node_2_9, -15),0), 0)}}}
+variable {bl x_net_node_3_3 DEFINE INT assign{result{(max, (add, (mult, x_net_node_2_0, -6),(mult, x_net_node_2_1, 18),(mult, x_net_node_2_2, 36),(mult, x_net_node_2_3, 14),(mult, x_net_node_2_4, 15),(mult, x_net_node_2_5, -74),(mult, x_net_node_2_6, -34),(mult, x_net_node_2_7, 9),(mult, x_net_node_2_8, 51),(mult, x_net_node_2_9, -21),361), 0)}}}
+variable {bl x_net_node_3_4 DEFINE INT assign{result{(max, (add, (mult, x_net_node_2_0, 5),(mult, x_net_node_2_1, 32),(mult, x_net_node_2_2, 22),(mult, x_net_node_2_3, -26),(mult, x_net_node_2_4, 22),(mult, x_net_node_2_5, 107),(mult, x_net_node_2_6, -31),(mult, x_net_node_2_7, -18),(mult, x_net_node_2_8, 74),(mult, x_net_node_2_9, -27),216), 0)}}}
+variable {bl x_net_node_3_5 DEFINE INT assign{result{(max, (add, (mult, x_net_node_2_0, -12),(mult, x_net_node_2_1, 9),(mult, x_net_node_2_2, 23),(mult, x_net_node_2_3, 14),(mult, x_net_node_2_4, -3),(mult, x_net_node_2_5, -32),(mult, x_net_node_2_6, -27),(mult, x_net_node_2_7, 2),(mult, x_net_node_2_8, 127),(mult, x_net_node_2_9, -6),341), 0)}}}
+variable {bl x_net_node_3_6 DEFINE INT assign{result{(max, (add, (mult, x_net_node_2_0, -21),(mult, x_net_node_2_1, -34),(mult, x_net_node_2_2, 18),(mult, x_net_node_2_3, 13),(mult, x_net_node_2_4, -22),(mult, x_net_node_2_5, 84),(mult, x_net_node_2_6, 40),(mult, x_net_node_2_7, 30),(mult, x_net_node_2_8, 7),(mult, x_net_node_2_9, 21),-245), 0)}}}
+variable {bl x_net_node_3_7 DEFINE INT assign{result{(max, (add, (mult, x_net_node_2_0, -11),(mult, x_net_node_2_1, 22),(mult, x_net_node_2_2, -19),(mult, x_net_node_2_3, 8),(mult, x_net_node_2_4, -7),(mult, x_net_node_2_5, 7),(mult, x_net_node_2_6, 18),(mult, x_net_node_2_7, -1),(mult, x_net_node_2_8, -24),(mult, x_net_node_2_9, -24),-21), 0)}}}
+variable {bl x_net_node_3_8 DEFINE INT assign{result{(max, (add, (mult, x_net_node_2_0, 2),(mult, x_net_node_2_1, 55),(mult, x_net_node_2_2, 18),(mult, x_net_node_2_3, -18),(mult, x_net_node_2_4, -1),(mult, x_net_node_2_5, -48),(mult, x_net_node_2_6, 27),(mult, x_net_node_2_7, 0),(mult, x_net_node_2_8, -31),(mult, x_net_node_2_9, 23),137), 0)}}}
+variable {bl x_net_node_3_9 DEFINE INT assign{result{(max, (add, (mult, x_net_node_2_0, 17),(mult, x_net_node_2_1, 29),(mult, x_net_node_2_2, 34),(mult, x_net_node_2_3, 2),(mult, x_net_node_2_4, -6),(mult, x_net_node_2_5, 55),(mult, x_net_node_2_6, -52),(mult, x_net_node_2_7, -18),(mult, x_net_node_2_8, 70),(mult, x_net_node_2_9, -9),349), 0)}}}
+variable {bl x_net_node_4_0 DEFINE INT assign{result{(max, (add, (mult, x_net_node_3_0, 13),(mult, x_net_node_3_1, -2),(mult, x_net_node_3_2, -15),(mult, x_net_node_3_3, 18),(mult, x_net_node_3_4, -72),(mult, x_net_node_3_5, 39),(mult, x_net_node_3_6, -22),(mult, x_net_node_3_7, -2),(mult, x_net_node_3_8, 29),(mult, x_net_node_3_9, -7),54), 0)}}}
+variable {bl x_net_node_4_1 DEFINE INT assign{result{(max, (add, (mult, x_net_node_3_0, 28),(mult, x_net_node_3_1, 12),(mult, x_net_node_3_2, -19),(mult, x_net_node_3_3, 14),(mult, x_net_node_3_4, -38),(mult, x_net_node_3_5, 20),(mult, x_net_node_3_6, 33),(mult, x_net_node_3_7, -9),(mult, x_net_node_3_8, 11),(mult, x_net_node_3_9, -9),26), 0)}}}
+variable {bl x_net_node_4_2 DEFINE INT assign{result{(max, (add, (mult, x_net_node_3_0, -49),(mult, x_net_node_3_1, 24),(mult, x_net_node_3_2, 21),(mult, x_net_node_3_3, -12),(mult, x_net_node_3_4, 25),(mult, x_net_node_3_5, 27),(mult, x_net_node_3_6, -31),(mult, x_net_node_3_7, 10),(mult, x_net_node_3_8, -21),(mult, x_net_node_3_9, 14),24), 0)}}}
+variable {bl x_net_node_4_3 DEFINE INT assign{result{(max, (add, (mult, x_net_node_3_0, 6),(mult, x_net_node_3_1, -12),(mult, x_net_node_3_2, -9),(mult, x_net_node_3_3, -47),(mult, x_net_node_3_4, 64),(mult, x_net_node_3_5, -51),(mult, x_net_node_3_6, 29),(mult, x_net_node_3_7, 18),(mult, x_net_node_3_8, -1),(mult, x_net_node_3_9, 127),-59), 0)}}}
+variable {bl x_net_node_4_4 DEFINE INT assign{result{(max, (add, (mult, x_net_node_3_0, 15),(mult, x_net_node_3_1, 4),(mult, x_net_node_3_2, -19),(mult, x_net_node_3_3, -34),(mult, x_net_node_3_4, 39),(mult, x_net_node_3_5, -82),(mult, x_net_node_3_6, 18),(mult, x_net_node_3_7, -4),(mult, x_net_node_3_8, 28),(mult, x_net_node_3_9, 20),-127), 0)}}}
+variable {bl x_net_node_4_5 DEFINE INT assign{result{(max, (add, (mult, x_net_node_3_0, -15),(mult, x_net_node_3_1, -16),(mult, x_net_node_3_2, -16),(mult, x_net_node_3_3, 3),(mult, x_net_node_3_4, -7),(mult, x_net_node_3_5, 2),(mult, x_net_node_3_6, -12),(mult, x_net_node_3_7, -18),(mult, x_net_node_3_8, -12),(mult, x_net_node_3_9, -12),0), 0)}}}
+variable {bl x_net_node_4_6 DEFINE INT assign{result{(max, (add, (mult, x_net_node_3_0, -79),(mult, x_net_node_3_1, 1),(mult, x_net_node_3_2, 6),(mult, x_net_node_3_3, -50),(mult, x_net_node_3_4, 18),(mult, x_net_node_3_5, 6),(mult, x_net_node_3_6, 9),(mult, x_net_node_3_7, -13),(mult, x_net_node_3_8, -23),(mult, x_net_node_3_9, 32),60), 0)}}}
+variable {bl x_net_node_4_7 DEFINE INT assign{result{(max, (add, (mult, x_net_node_3_0, -30),(mult, x_net_node_3_1, -15),(mult, x_net_node_3_2, -19),(mult, x_net_node_3_3, -38),(mult, x_net_node_3_4, 58),(mult, x_net_node_3_5, 11),(mult, x_net_node_3_6, 40),(mult, x_net_node_3_7, 15),(mult, x_net_node_3_8, -85),(mult, x_net_node_3_9, 10),29), 0)}}}
+variable {bl x_net_node_4_8 DEFINE INT assign{result{(max, (add, (mult, x_net_node_3_0, 29),(mult, x_net_node_3_1, 25),(mult, x_net_node_3_2, 8),(mult, x_net_node_3_3, 2),(mult, x_net_node_3_4, -25),(mult, x_net_node_3_5, -17),(mult, x_net_node_3_6, -17),(mult, x_net_node_3_7, -6),(mult, x_net_node_3_8, 33),(mult, x_net_node_3_9, -33),35), 0)}}}
+variable {bl x_net_node_4_9 DEFINE INT assign{result{(max, (add, (mult, x_net_node_3_0, 3),(mult, x_net_node_3_1, 14),(mult, x_net_node_3_2, 19),(mult, x_net_node_3_3, 54),(mult, x_net_node_3_4, 22),(mult, x_net_node_3_5, 26),(mult, x_net_node_3_6, -24),(mult, x_net_node_3_7, -10),(mult, x_net_node_3_8, 1),(mult, x_net_node_3_9, 35),109), 0)}}}
+variable {bl x_net_node_5_0 DEFINE INT assign{result{(add, (mult, x_net_node_4_0, 9),(mult, x_net_node_4_1, -7),(mult, x_net_node_4_2, 11),(mult, x_net_node_4_3, 4),(mult, x_net_node_4_4, 8),(mult, x_net_node_4_5, 2),(mult, x_net_node_4_6, 50),(mult, x_net_node_4_7, 28),(mult, x_net_node_4_8, 6),(mult, x_net_node_4_9, -1),-60)}}}
+variable {bl x_net_node_5_1 DEFINE INT assign{result{(add, (mult, x_net_node_4_0, -47),(mult, x_net_node_4_1, -40),(mult, x_net_node_4_2, -13),(mult, x_net_node_4_3, 23),(mult, x_net_node_4_4, -11),(mult, x_net_node_4_5, -9),(mult, x_net_node_4_6, -61),(mult, x_net_node_4_7, 31),(mult, x_net_node_4_8, -22),(mult, x_net_node_4_9, -5),14)}}}
+variable {bl x_net_node_5_2 DEFINE INT assign{result{(add, (mult, x_net_node_4_0, -55),(mult, x_net_node_4_1, -8),(mult, x_net_node_4_2, -106),(mult, x_net_node_4_3, 38),(mult, x_net_node_4_4, -20),(mult, x_net_node_4_5, -12),(mult, x_net_node_4_6, -67),(mult, x_net_node_4_7, -15),(mult, x_net_node_4_8, -28),(mult, x_net_node_4_9, 10),32)}}}
+variable {bl x_net_node_5_3 DEFINE INT assign{result{(add, (mult, x_net_node_4_0, 9),(mult, x_net_node_4_1, 26),(mult, x_net_node_4_2, -18),(mult, x_net_node_4_3, 9),(mult, x_net_node_4_4, -30),(mult, x_net_node_4_5, -5),(mult, x_net_node_4_6, -6),(mult, x_net_node_4_7, -21),(mult, x_net_node_4_8, -72),(mult, x_net_node_4_9, 6),38)}}}
+variable {bl x_net_node_5_4 DEFINE INT assign{result{(add, (mult, x_net_node_4_0, 21),(mult, x_net_node_4_1, 9),(mult, x_net_node_4_2, -28),(mult, x_net_node_4_3, -7),(mult, x_net_node_4_4, -102),(mult, x_net_node_4_5, -7),(mult, x_net_node_4_6, -22),(mult, x_net_node_4_7, -8),(mult, x_net_node_4_8, -18),(mult, x_net_node_4_9, 7),33)}}}
+variable {bl x_net_node_5_5 DEFINE INT assign{result{(add, (mult, x_net_node_4_0, 17),(mult, x_net_node_4_1, 10),(mult, x_net_node_4_2, -23),(mult, x_net_node_4_3, -20),(mult, x_net_node_4_4, -43),(mult, x_net_node_4_5, 11),(mult, x_net_node_4_6, -23),(mult, x_net_node_4_7, -32),(mult, x_net_node_4_8, -1),(mult, x_net_node_4_9, -7),24)}}}
+variable {bl x_net_node_5_6 DEFINE INT assign{result{(add, (mult, x_net_node_4_0, 10),(mult, x_net_node_4_1, 14),(mult, x_net_node_4_2, -21),(mult, x_net_node_4_3, -86),(mult, x_net_node_4_4, 1),(mult, x_net_node_4_5, -15),(mult, x_net_node_4_6, -20),(mult, x_net_node_4_7, -7),(mult, x_net_node_4_8, -8),(mult, x_net_node_4_9, -7),11)}}}
+variable {bl x_net_node_5_7 DEFINE INT assign{result{(add, (mult, x_net_node_4_0, -7),(mult, x_net_node_4_1, 9),(mult, x_net_node_4_2, -24),(mult, x_net_node_4_3, -20),(mult, x_net_node_4_4, -13),(mult, x_net_node_4_5, 9),(mult, x_net_node_4_6, -6),(mult, x_net_node_4_7, -26),(mult, x_net_node_4_8, 17),(mult, x_net_node_4_9, -34),12)}}}
+variable {bl x_net_node_5_8 DEFINE INT assign{result{(add, (mult, x_net_node_4_0, -4),(mult, x_net_node_4_1, 11),(mult, x_net_node_4_2, -19),(mult, x_net_node_4_3, -17),(mult, x_net_node_4_4, -9),(mult, x_net_node_4_5, 9),(mult, x_net_node_4_6, -4),(mult, x_net_node_4_7, -14),(mult, x_net_node_4_8, 12),(mult, x_net_node_4_9, -124),10)}}}
+variable {bl x_net_node_5_9 DEFINE INT assign{result{(add, (mult, x_net_node_4_0, 1),(mult, x_net_node_4_1, 9),(mult, x_net_node_4_2, -32),(mult, x_net_node_4_3, 4),(mult, x_net_node_4_4, 11),(mult, x_net_node_4_5, 2),(mult, x_net_node_4_6, -4),(mult, x_net_node_4_7, -13),(mult, x_net_node_4_8, -9),(mult, x_net_node_4_9, -127),-24)}}}
+variable {bl x_net_node_5_10 DEFINE INT assign{result{(add, (mult, x_net_node_4_0, -19),(mult, x_net_node_4_1, 5),(mult, x_net_node_4_2, 9),(mult, x_net_node_4_3, 24),(mult, x_net_node_4_4, 18),(mult, x_net_node_4_5, 4),(mult, x_net_node_4_6, 17),(mult, x_net_node_4_7, -16),(mult, x_net_node_4_8, -7),(mult, x_net_node_4_9, 14),-70)}}}
+variable {bl x_net_output_max DEFINE INT assign{result{(max, x_net_node_5_0, x_net_node_5_1, x_net_node_5_2, x_net_node_5_3, x_net_node_5_4, x_net_node_5_5, x_net_node_5_6, x_net_node_5_7, x_net_node_5_8, x_net_node_5_9, x_net_node_5_10)}}}
+variable {bl x_net_output DEFINE INT assign{case{(eq, x_net_output_max, x_net_node_5_0)}result{0}case{(eq, x_net_output_max, x_net_node_5_1)}result{1}case{(eq, x_net_output_max, x_net_node_5_2)}result{2}case{(eq, x_net_output_max, x_net_node_5_3)}result{3}case{(eq, x_net_output_max, x_net_node_5_4)}result{4}case{(eq, x_net_output_max, x_net_node_5_5)}result{5}case{(eq, x_net_output_max, x_net_node_5_6)}result{6}case{(eq, x_net_output_max, x_net_node_5_7)}result{7}case{(eq, x_net_output_max, x_net_node_5_8)}result{8}case{(eq, x_net_output_max, x_net_node_5_9)}result{9}case{(eq, x_net_output_max, x_net_node_5_10)}result{10}result{-1}}}
+
+    #{START OF Y_NET}#
+    variable {bl y_net_1_1 DEFINE INT assign {result{ (max, dest_y, 0)}}}
+    variable {bl y_net_1_2 DEFINE INT assign {result{ (max, (sub, dest_y, prev_dest_y), 0)}}}
+    variable {bl y_net_1_3 DEFINE INT assign {result{ (max, (sub, prev_dest_y, dest_y), 0)}}}
+    variable {bl y_net_1_4 DEFINE INT assign {result{ (max, dir, 0)}}}
+    variable {bl y_net_1_5 DEFINE INT assign {result{ (max, (neg, dir), 0)}}}
+    
+    variable {bl y_net_2_1 DEFINE INT assign {result{ (max, y_net_1_1, 0)}}}
+    variable {bl y_net_2_2 DEFINE INT assign {result{ (max, (add, (neg, y_net_1_2), (neg, y_net_1_3), 1), 0)}}}
+    variable {bl y_net_2_3 DEFINE INT assign {result{ (max, y_net_1_4, 0)}}}
+    variable {bl y_net_2_4 DEFINE INT assign {result{ (max, y_net_1_5, 0)}}}
+    
+    variable {bl y_net_3_1 DEFINE INT assign {result{ (max, y_net_2_1, 0)}}}
+    variable {bl y_net_3_2 DEFINE INT assign {result{ (max, (add, y_net_2_2, y_net_2_3, -1), 0)}}}
+    variable {bl y_net_3_3 DEFINE INT assign {result{ (max, (add, y_net_2_2, y_net_2_4, -1), 0)}}}
+    
+    variable {bl y_net_output DEFINE INT assign {result{ (max, (add, y_net_3_1, (mult, 'y_change', y_net_3_2), (mult, -1, 'y_change', y_net_3_3)), 0)}}}
+} end_variables
+
+environment_update {
+    #{}#
+    variable_statement {
+	tar_x
+	assign {
+	    case { (eq, timer, 0) } end_case result {tar_x, (min, 'x_max', (add, tar_x, 1)), (max, 'x_min', (sub, tar_x, 1))} end_result
+	    result { tar_x } end_result
+	} end_assign
+    } end_variable_statement
+    variable_statement {
+	tar_y
+	assign {
+	    case { (eq, timer, 0) } end_case result {tar_y, (min, 'y_max', (add, tar_y, 1)), (max, 'y_min', (sub, tar_y, 1))} end_result
+	    result { tar_y } end_result
+	} end_assign
+    } end_variable_statement
+    variable_statement {
+	timer
+	assign {
+	    case {(eq, timer, 0) } result {'movement_cooldown'}
+	    result {(max, 0, (sub, timer, 1))}
+	}
+    }
+    #{}#
+} end_environment_update
+
+checks {
+    check {
+	not_at_destination
+	arguments {}
+	read_variables {cur_x, cur_y, dest_x, dest_y}
+	condition { (not, (and, (eq, cur_x, dest_x), (eq, cur_y, dest_y)))}
+    }
+    check {
+	y_too_small
+	arguments {}
+	read_variables {cur_y, dest_y}
+	condition { (lt, cur_y, dest_y)}
+    }
+    check {
+	y_too_big
+	arguments {}
+	read_variables {cur_y, dest_y}
+	condition { (gt, cur_y, dest_y)}
+    }
+    check {
+	x_too_small
+	arguments {}
+	read_variables {cur_x, dest_x}
+	condition { (lt, cur_x, dest_x)}
+    }
+    check {
+	x_too_big
+	arguments {}
+	read_variables {cur_x, dest_x}
+	condition { (gt, cur_x, dest_x)}
+    }
+} end_checks
+
+environment_checks {
+    #{This currently only checks one tree}#
+    environment_check {
+	target_in_sight
+	arguments{}
+	read_variables {cur_x, cur_y} end_read_variables
+	condition {
+	    (and,
+		(lte, (add, (abs, (sub, cur_x, tar_x)), (abs, (sub, cur_y, tar_y))), 'vision_range'),
+		(or,
+		    (gt, (add, (abs, (sub, (index, tree_x, 0), tar_x)), (abs, (sub, (index, tree_y, 0), tar_y))), 'tree_range'),
+		    (and, (eq, (index, tree_x, 0), cur_x), (eq, (index, tree_y, 0), cur_y)),
+		    (and, (eq, (index, tree_x, 0), tar_x), (eq, (index, tree_y, 0), tar_y)),
+		    (and, (lt, (index, tree_x, 0), cur_x), (lt, (index, tree_x, 0), tar_x)),
+		    (and, (lt, (index, tree_y, 0), cur_y), (lt, (index, tree_y, 0), tar_y)),
+		    (and, (gt, (index, tree_x, 0), cur_x), (gt, (index, tree_x, 0), tar_x)),
+		    (and, (gt, (index, tree_y, 0), cur_y), (gt, (index, tree_y, 0), tar_y))
+		),
+		(or,
+		    (gt, (add, (abs, (sub, (index, tree_x, 1), tar_x)), (abs, (sub, (index, tree_y, 1), tar_y))), 'tree_range'),
+		    (and, (eq, (index, tree_x, 1), cur_x), (eq, (index, tree_y, 1), cur_y)),
+		    (and, (eq, (index, tree_x, 1), tar_x), (eq, (index, tree_y, 1), tar_y)),
+		    (and, (lt, (index, tree_x, 1), cur_x), (lt, (index, tree_x, 1), tar_x)),
+		    (and, (lt, (index, tree_y, 1), cur_y), (lt, (index, tree_y, 1), tar_y)),
+		    (and, (gt, (index, tree_x, 1), cur_x), (gt, (index, tree_x, 1), tar_x)),
+		    (and, (gt, (index, tree_y, 1), cur_y), (gt, (index, tree_y, 1), tar_y))
+		)
+	    )
+	} end_condition
+    } end_environment_check
+    
+} end_environment_checks
+
+actions {
+    #{ action nodes are defined here }#
+    action {
+	call_xy_net
+	arguments{}
+	local_variables {} end_local_variables
+	read_variables {x_net_output, y_net_output} end_read_variables
+	write_variables {dest_x, dest_y} end_write_variables
+	initial_values {} end_initial_values
+	update {
+	    variable_statement {
+		dest_x
+		assign {
+		    result {(max, 'x_min', (min, 'x_max', x_net_output))}
+		}
+	    }
+	    variable_statement {
+		dest_y
+		assign {
+		    result {(max, 'y_min', (min, 'y_max', y_net_output))}
+		}
+	    }
+	    return_statement {
+		result {success} end_result
+	    } end_return_statement
+	} end_update
+    } end_action
+    action {
+	move
+	arguments{'delta_x' := INT, 'delta_y' := INT}
+	local_variables { } end_local_variables
+	read_variables {} end_read_variables
+	write_variables {cur_x, cur_y} end_write_variables
+	initial_values {} end_initial_values
+	update {
+	    variable_statement {
+		cur_x assign {result {(max, 'x_min', (min, 'x_max', (add, 'delta_x', cur_x)))}}
+	    }
+	    variable_statement {
+		cur_y assign {result {(max, 'y_min', (min, 'y_max', (add, 'delta_y', cur_y)))}}
+	    }
+	    return_statement {
+		result {success} end_result
+	    } end_return_statement
+	} end_update
+    } end_action
+    action {
+	send_victory
+	arguments{}
+	local_variables { } end_local_variables
+	read_variables {} end_read_variables
+	write_variables {victory} end_write_variables
+	initial_values {} end_initial_values
+	update {
+	    variable_statement {
+		victory assign {result {True}}
+	    }
+	    return_statement {
+		result {success} end_result
+	    } end_return_statement
+	} end_update
+    } end_action
+    action {
+	update_direction
+	arguments{}
+	local_variables { } end_local_variables
+	read_variables {cur_y} end_read_variables
+	write_variables {dir} end_write_variables
+	initial_values {} end_initial_values
+	update {
+	    variable_statement {
+		dir
+		assign {
+		    case { (eq, cur_y, 'y_max')}
+		    result {-1}
+		    case { (eq, cur_y, 'y_min')}
+		    result {1}
+		    result {dir}
+		}
+	    }
+	    return_statement {
+		result {success} end_result
+	    } end_return_statement
+	} end_update
+    }
+    action {
+	update_previous_destination
+	arguments{}
+	local_variables { } end_local_variables
+	read_variables {cur_x, cur_y} end_read_variables
+	write_variables {prev_dest_x, prev_dest_y} end_write_variables
+	initial_values {} end_initial_values
+	update {
+	    variable_statement {
+		prev_dest_x assign {result {cur_x}}
+	    }
+	    variable_statement {
+		prev_dest_y assign {result {cur_y}}
+	    }
+	    return_statement {
+		result {success} end_result
+	    } end_return_statement
+	} end_update
+    } end_action
+} end_actions
+
+sub_trees {
+    sub_tree {
+	DESTINATION_SUBTREE
+	composite {
+	    destination selector
+	    children {
+		not_at_destination {} #{Checks destination}#
+		composite {
+		    new_destination sequence
+		    children {
+			update_direction {} #{Updates the direction we're going in.}#
+			call_xy_net {} #{Calls the neural networks}#
+			update_previous_destination {} #{sets the current location to the previous destination.}#
+		    }
+		}
+	    }
+	}
+    }
+    sub_tree {
+	MOVEMENT_SUBTREE
+	composite {
+	    destination_and_movement sequence
+	    children {
+		insert {DESTINATION_SUBTREE}
+		composite {
+		    movement selector
+		    children {
+			composite {
+			    try_up sequence
+			    children {
+				y_too_small {}
+				move {0, 1}
+			    }
+			}
+			composite {
+			    try_down sequence
+			    children {
+				y_too_big {}
+				move {0, -1}
+			    }
+			}
+			composite {
+			    try_left sequence
+			    children {
+				x_too_big {}
+				move {-1, 0}
+			    }
+			}
+			composite {
+			    try_right sequence
+			    children {
+				x_too_small {}
+				move {1, 0}
+			    }
+			}
+		    }
+		}
+	    }
+	}
+    }
+} end_sub_trees
+
+tree {
+    composite {
+	drone_control selector
+	children {
+	    composite {
+		vision sequence
+		children {
+		    target_in_sight {}
+		    send_victory {}
+		    
+		}
+	    }
+	    insert {MOVEMENT_SUBTREE}
+	}
+    }
+} end_tree
+
+
+
+
+tick_prerequisite { (not, victory) } end_tick_prerequisite
+#{tick_prerequisite { True } end_tick_prerequisite}#
+#{ if the condition is True, the tree ticks.
+    If it is false, everything is done }#
+
+specifications { #{ INVAR, LTL, and CTL specs go here }#
+    CTLSPEC {(always_finally, victory -1)}
+    LTLSPEC {(finally_bounded, [0, 200], victory -1)}
+    #{CTLSPEC {(imply, (and, (eq, (index, tree_x 0, 0), 2), (eq, (index, tree_x 0, 1), 5), (eq, (index, tree_y 0, 0), 2), (eq, (index, tree_y 0, 1), 5)), (always_finally, victory -1))}}#
+} end_specifications

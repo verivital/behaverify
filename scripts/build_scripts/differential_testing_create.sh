@@ -17,8 +17,12 @@ if [[ $# -ge 6 ]]; then
 fi
 
 
-if test -e "${path_name}/gen_files"; then
+if test -f "${path_name}/gen_files"; then
     rm "${path_name}/gen_files"
+fi
+
+if test -d "${path_name}/gen_files"; then
+    rm -r "${path_name}/gen_files"
 fi
 
 mkdir "${path_name}/gen_files"

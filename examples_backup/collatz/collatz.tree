@@ -1,0 +1,172 @@
+configuration {
+    #{ Here you specify various configuration options, such as Hypersafety }#
+}
+enumerations {
+}
+constants {
+    #{ constants are used to synchronize values in a .tree file. }#
+    #{ example = 0 }#
+    #{ to use example elsewhere, simply type 'example' in place of any integer (quotes included) }#
+} end_constants
+
+variables {
+    variable { bl value VAR INT assign { result { range, 1, 20, True}}}
+    #{ Variable declarations go here.
+	it is suggested, but not required, that the order of declaration be
+	Blackboard, Local, Environment.
+	If variable B depends on variable A, then variable A MUST be declared before B.
+    }#
+    #{
+	variable {
+	    bl
+	    x
+	    VAR
+	    [0, 10]
+	    assign { result { 0 } end_result } end_assign
+	} end_variable
+    }#
+    #{
+	variable {
+	    local
+	    y
+	    VAR
+	    {'potato', 'tomato', 'bawk'}
+	    assign { result { 'bawk' } end_result } end_assign
+	} end_variable
+    }#
+    #{
+	variable {
+	    env
+	    z
+	    VAR
+	    BOOLEAN
+	    assign { case { (equal, 1, 0) } end_case result { False} end_result result { (equal, bl x, 0) } end_result } end_assign
+	} end_variable
+    }#
+} end_variables
+
+environment_update {
+    #{ update values for environment }#
+    #{
+	variable_statement {
+	    z
+	    assign {
+		case { (less_than, x, 5) } end_case result { True, False} end_result
+		case { (greater_than, x, 5) } end_case result { (equal, 0, (mod, x, 2)) } end_result
+		result { env z } end_result
+	    } end_assign
+	} end_variable_statement
+    }#
+} end_environment_update
+
+checks {
+    #{ check nodes are defined here }#
+    #{
+	check {
+	    x_idk
+	    read_variables { x } end_read_variables
+	    condition { (and, (less_than, (addition, x, 1), 4), True) } end_condition
+	} end_check
+    }#
+    check {
+	is_even
+	arguments{}
+	read_variables { value}
+	#{condition { (equal, 0, (mod, value, 2))}}#
+	condition{ (equal, value, (multiplication, 2, (division, value, 2))) }
+    }
+} end_checks
+
+environment_checks {
+    #{ check environment nodes are defined here }#
+    #{
+	environment_check {
+	    z_idk
+	    read_variables {} end_read_variables
+	    condition { z } end_condition
+	} end_environment_check
+    }#
+} end_environment_checks
+
+actions {
+    #{ action nodes are defined here }#
+    #{
+	action {
+	    y_do
+	    local_variables { y } end_local_variables
+	    read_variables { } end_read_variables
+	    write_variables { x } end_write_variables
+	    initial_values {} end_initial_values
+	    update {
+		variable_statement {
+		    x
+		    result { (max, 'example', (subtraction, x, 1)) } end_result
+		} end_variable_statement
+		return_statement {
+		    result { success} end_result
+		} end_return_statement
+	    } end_update
+	} end_action
+    }#
+    action {
+	divide_by_2
+	arguments{}
+	local_variables{}
+	read_variables{}
+	write_variables{value}
+	initial_values{}
+	update{
+	    variable_statement{
+		value
+		assign{
+		    result{(division, value, 2)}
+		}
+	    }
+	    return_statement{result{success}}
+	}
+    }
+    action {
+	multiply_and_add
+	arguments{}
+	local_variables{}
+	read_variables{}
+	write_variables{value}
+	initial_values{}
+	update{
+	    variable_statement{
+		value
+		assign{
+		    result{(addition, (multiplication, value, 3), 1)}
+		}
+	    }
+	    return_statement{result{success}}
+	}
+    }
+} end_actions
+
+sub_trees {#{ subtrees go here. }#} end_sub_trees
+
+tree {
+    #{ the tree is defined here}#
+    composite {
+	collatz selector
+	children {
+	    composite{
+		even_case sequence children { is_even{} divide_by_2{}}
+	    }
+	    multiply_and_add{}
+	}
+    }
+} end_tree
+
+
+
+
+tick_prerequisite { (not_equal, value, 1) } end_tick_prerequisite
+
+specifications {
+    #{LTLSPEC {(finally, (equal, value -1, 1))}}#
+    LTLSPEC {(globally, (not_equal, value -1, 1))}
+    LTLSPEC {(implies, (not_equal, value 0, 1), (globally, (not_equal, value -1, 1)))}
+    LTLSPEC {(implies, (and, (not_equal, value 0, 1), (not_equal, value 0, 2)), (globally, (not_equal, value -1, 1)))}
+} end_specifications

@@ -15,8 +15,12 @@ if [[ $# -ge 5 ]]; then
 fi
 
 
-if test -e "${path_name}/results"; then
+if test -f "${path_name}/results"; then
     rm "${path_name}/results"
+fi
+
+if test -d "${path_name}/results"; then
+    rm  -r "${path_name}/results"
 fi
 
 mkdir $path_name/results
