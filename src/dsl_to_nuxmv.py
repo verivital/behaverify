@@ -3,7 +3,7 @@ This module is part of BehaVerify and used to convert .tree files to .smv files 
 
 
 Author: Serena Serafina Serbinowska
-Last Edit: 2023-10-18
+Last Edit: 2023-10-20
 '''
 import argparse
 import pprint
@@ -60,7 +60,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
         return return_vals
 
     def format_function_if(_, function_call, misc_args):
-        return [format_code(function_call.values[0], misc_args)[0] + ' ? ' + format_code(function_call.values[1], misc_args)[0] + ' : ' + format_code(function_call.values[2], misc_args)[0]]
+        return ['(' + format_code(function_call.values[0], misc_args)[0] + ' ? ' + format_code(function_call.values[1], misc_args)[0] + ' : ' + format_code(function_call.values[2], misc_args)[0] + ')']
 
     def format_function_loop(_, function_call, misc_args):
         return execute_loop(function_call, format_code, function_call.values[0], misc_args)
@@ -953,8 +953,8 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
         'or' : ('|', format_function_between),
         'xor' : ('xor', format_function_between),
         'xnor' : ('xnor', format_function_between),
-        'imply' : ('->', format_function_between),
-        'equiv' : ('<->', format_function_between),
+        'implies' : ('->', format_function_between),
+        'equivalent' : ('<->', format_function_between),
         'eq' : ('=', format_function_between),
         'neq' : ('!=', format_function_between),
         'lt' : ('<', format_function_between),

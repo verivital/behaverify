@@ -69,8 +69,8 @@ def validate_model(model):
         'or' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : -1, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'CTL', 'LTL', 'INVAR', 'reg'}},
         'xor' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'CTL', 'LTL', 'INVAR', 'reg'}},
         'xnor' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'CTL', 'LTL', 'INVAR', 'reg'}},
-        'imply' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'CTL', 'LTL', 'INVAR', 'reg'}},
-        'equiv' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'CTL', 'LTL', 'INVAR', 'reg'}},
+        'implies' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'CTL', 'LTL', 'INVAR', 'reg'}},
+        'equivalent' : {'return_type' : 'BOOLEAN', 'min_arg' : 2, 'max_arg' : 2, 'arg_type' : 'BOOLEAN', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'CTL', 'LTL', 'INVAR', 'reg'}},
 
         'active' : {'return_type' : 'BOOLEAN', 'min_arg' : 0, 'max_arg' : 0, 'arg_type' : 'node_name', 'allowed_in' : {'CTL', 'LTL', 'INVAR'}, 'allows' : set()},
         'success' : {'return_type' : 'BOOLEAN', 'min_arg' : 0, 'max_arg' : 0, 'arg_type' : 'node_name', 'allowed_in' : {'CTL', 'LTL', 'INVAR'}, 'allows' : set()},
@@ -177,7 +177,7 @@ def validate_model(model):
                 raise BTreeException(trace, 'Variable ' + atom.name + ' is being referenced ' + ('without' if require_trace_identifier else 'with') + ' a trace identifier.')
             return [(atom_type, 'variable', atom.name)]
         if code.code_statement is not None:
-            return [validate_code(code.code_statement, scopes, variable_names, allowed_functions)]
+            return validate_code(code.code_statement, scopes, variable_names, allowed_functions)
         if code.function_call.function_name not in function_type_info:
             raise BTreeException(trace, 'Function ' + code.function_call.function_name + ' is not yet supported')
         func_info = function_type_info[code.function_call.function_name]
@@ -203,10 +203,13 @@ def validate_model(model):
             all_domain_values = []
             if code.function_call.min_val is None:
                 for domain_code in code.function_call.loop_variable_domain:
-                    domain_func = build_meta_func(domain_code)
-                    # new_references = copy.deepcopy(loop_references)  # the meta function is guaranteed to not change this.
-                    for domain_value in domain_func((constants, loop_references)):
-                        all_domain_values.append(resolve_potential_reference(domain_value, declared_enumerations, all_node_names, variables, constants, loop_references)[2])
+                    try:
+                        domain_func = build_meta_func(domain_code)
+                        # new_references = copy.deepcopy(loop_references)  # the meta function is guaranteed to not change this.
+                        for domain_value in domain_func((constants, loop_references)):
+                            all_domain_values.append(resolve_potential_reference(domain_value, declared_enumerations, all_node_names, variables, constants, loop_references)[2])
+                    except Exception as error:
+                        raise BTreeException(trace, 'Unknown error') from error
             else:
                 ((_, min_val), (_, max_val)) = verify_min_max(code.function_call.min_val, code.function_call.max_val, False)
                 all_domain_values = range(min_val, max_val + 1)
