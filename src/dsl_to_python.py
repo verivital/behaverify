@@ -5,18 +5,17 @@ It contains a variety of utility functions.
 
 
 Author: Serena Serafina Serbinowska
-Last Edit: 2023-10-18
+Last Edit: 2023-10-27
 '''
 import argparse
 import os
 import itertools
-import textx
 from behaverify_common import indent, create_node_name, is_local, is_env, is_blackboard, is_array, handle_constant_or_reference, resolve_potential_reference_no_type, variable_array_size, get_min_max, variable_type, BTreeException, constant_type
 from serene_functions import build_meta_func
-from check_model import validate_model
+from check_grammar import validate_model
 
 
-def write_files(metamodel_file, model_file, main_name, write_location, serene_print, max_iter, no_var_print, py_tree_print):
+def write_files(metamodel_file, model_file, main_name, write_location, serene_print, max_iter, no_var_print, py_tree_print, recursion_limit):
     '''
     Used to write all the files.
     @metamodel_file ::> points to the file with the metamodel
@@ -1107,9 +1106,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                         + 'import random' + os.linesep
                         + 'import serene_safe_assignment' + os.linesep)
 
-    metamodel = textx.metamodel_from_file(metamodel_file, auto_init_attributes = False)
-    model = metamodel.model_from_file(model_file)
-    (variables, constants, declared_enumerations) = validate_model(model)
+    (model, variables, constants, declared_enumerations) = validate_model(metamodel_file, model_file, recursion_limit)
     variable_type_map = {
         variable.name : to_python_type(variable_type(variable, declared_enumerations, constants))
         for variable in model.variables
@@ -1201,5 +1198,6 @@ if __name__ == '__main__':
     arg_parser.add_argument('--no_var_print', action = 'store_true')
     arg_parser.add_argument('--serene_print', action = 'store_true')
     arg_parser.add_argument('--py_tree_print', action = 'store_true')
+    arg_parser.add_argument('--recursion_limit', type = int, default = 0)
     args = arg_parser.parse_args()
-    write_files(args.metamodel_file, args.model_file, args.name, args.location, args.serene_print, args.max_iter, args.no_var_print, args.py_tree_print)
+    write_files(args.metamodel_file, args.model_file, args.name, args.location, args.serene_print, args.max_iter, args.no_var_print, args.py_tree_print, args.recursion_limit)

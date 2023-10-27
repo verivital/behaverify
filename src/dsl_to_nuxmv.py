@@ -3,17 +3,16 @@ This module is part of BehaVerify and used to convert .tree files to .smv files 
 
 
 Author: Serena Serafina Serbinowska
-Last Edit: 2023-10-20
+Last Edit: 2023-10-27
 '''
 import argparse
 import pprint
 import os
 import itertools
 import copy
-import textx
 from behaverify_to_smv import write_smv
 from serene_functions import build_meta_func
-from check_model import validate_model
+from check_grammar import validate_model
 
 from behaverify_common import create_node_name, create_node_template, create_variable_template, indent, is_local, is_array, handle_constant_or_reference, handle_constant_or_reference_no_type, resolve_potential_reference_no_type, variable_array_size, get_min_max
 
@@ -24,7 +23,7 @@ from behaverify_common import create_node_name, create_node_template, create_var
 # if the condition is true, then the result is used.
 # the last condition should always be TRUE
 
-def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_last_stage, do_not_trim, behave_only):
+def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_last_stage, do_not_trim, behave_only, recursion_limit):
     '''
     This method is used to convert the dsl to behaverify.
     '''
@@ -1013,16 +1012,13 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
         'environment_check' : create_check,
         'action' : create_action
     }
-
-    metamodel = textx.metamodel_from_file(metamodel_file, auto_init_attributes = False)
-    model = metamodel.model_from_file(model_file)
+    (model, variables, constants, declared_enumerations) = validate_model(metamodel_file, model_file, recursion_limit)
     hyper_mode = model.hypersafety
     use_reals = model.use_reals
     # specification_writing = False  # this is used to track whether or not code should make references to the trace and system or not.
     # serene_index = []
     behaverify_variables = {}
     # spec_warn = False
-    (variables, constants, declared_enumerations) = validate_model(model)
 
     (_, _, _, nodes, local_variables, initial_statements, statements) = walk_tree(model.root)
     # print('finished tree walk')
@@ -1068,10 +1064,11 @@ if __name__ == '__main__':
     arg_parser = argparse.ArgumentParser()
     arg_parser.add_argument('metamodel_file')
     arg_parser.add_argument('model_file')
-    arg_parser.add_argument('output_file', default = None)
+    arg_parser.add_argument('output_file')
     arg_parser.add_argument('--keep_stage_0', action = 'store_true')
     arg_parser.add_argument('--keep_last_stage', action = 'store_true')
     arg_parser.add_argument('--do_not_trim', action = 'store_true')
     arg_parser.add_argument('--behave_only', action = 'store_true')
+    arg_parser.add_argument('--recursion_limit', type = int, default = 0)
     args = arg_parser.parse_args()
-    dsl_to_nuxmv(args.metamodel_file, args.model_file, args.output_file, args.keep_stage_0, args.keep_last_stage, args.do_not_trim, args.behave_only)
+    dsl_to_nuxmv(args.metamodel_file, args.model_file, args.output_file, args.keep_stage_0, args.keep_last_stage, args.do_not_trim, args.behave_only, args.recursion_limit)

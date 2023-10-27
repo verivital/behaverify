@@ -4,19 +4,18 @@ It is used to create Haskell code from BehaVerify DSL for Behavior Trees.
 It contains a variety of utility functions.
 
 Author: Serena Serafina Serbinowska
-Last Edit: 2023-10-18
+Last Edit: 2023-10-27
 '''
 import argparse
 import os
 import shutil
 import itertools
-import textx
 from behaverify_common import haskell_indent as indent, create_node_name, is_local, is_env, is_blackboard, is_array, handle_constant_or_reference, resolve_potential_reference_no_type, variable_array_size, get_min_max, variable_type, BTreeException, constant_type
 from serene_functions import build_meta_func
-from check_model import validate_model
+from check_grammar import validate_model
 
 
-def dsl_to_haskell():
+def dsl_to_haskell(metamodel_file, model_file, location, output_file, max_iter, recursion_limit):
     '''
     this function is used to convert the dsl to haskell code
     '''
@@ -1288,17 +1287,7 @@ def dsl_to_haskell():
         + os.linesep
     )
 
-    arg_parser = argparse.ArgumentParser()
-    arg_parser.add_argument('metamodel_file')
-    arg_parser.add_argument('model_file')
-    arg_parser.add_argument('location', default = './')
-    arg_parser.add_argument('output_file')
-    arg_parser.add_argument('--max_iter', default = 100)
-    # arg_parser.add_argument('--keep_names', action = 'store_true')
-    args = arg_parser.parse_args()
-    metamodel = textx.metamodel_from_file(args.metamodel_file, auto_init_attributes = False)
-    model = metamodel.model_from_file(args.model_file)
-    (variables, constants, declared_enumerations) = validate_model(model)
+    (model, variables, constants, declared_enumerations) = validate_model(metamodel_file, model_file, recursion_limit)
     variable_type_map = {
         variable.name : to_haskell_type(variable_type(variable, declared_enumerations, constants))
         for variable in model.variables
@@ -1350,4 +1339,13 @@ def dsl_to_haskell():
 
 
 if __name__ == '__main__':
-    dsl_to_haskell()
+    arg_parser = argparse.ArgumentParser()
+    arg_parser.add_argument('metamodel_file')
+    arg_parser.add_argument('model_file')
+    arg_parser.add_argument('location', default = './')
+    arg_parser.add_argument('output_file')
+    arg_parser.add_argument('--max_iter', default = 100)
+    arg_parser.add_argument('--recursion_limit', type = int, default = 0)
+    # arg_parser.add_argument('--keep_names', action = 'store_true')
+    args = arg_parser.parse_args()
+    dsl_to_haskell(args.metamodel_file, args.model_file, args.location, args.output_file, args.max_iter, args.recursion_limit)

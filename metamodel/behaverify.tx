@@ -273,7 +273,7 @@ statement:
     //start of ltl specific
     'next' | 'globally' | 'finally' | 'until' | 'release' | 'previous' | 'not_previous_not' | 'historically' | 'once' | 'since' | 'triggered' | 
     //these functions permit the continuation of ltl/ctl specific functions
-    'not' | 'and' | 'or' | 'xor' | 'xnor' | 'imply' | 'equiv' |
+    'not' | 'and' | 'or' | 'xor' | 'xnor' | 'implies' | 'equivalent' |
     //the rest.
     'if' | 'abs' | 'max' | 'min' | 'sin' | 'cos' | 'exp' | 'tan' | 'ln' | 'eq' | 'neq' | 'lte' | 'gte' | 'lt' | 'gt' | 'neg' | 'add' | 'sub' | 'mult' | 'idiv' | 'mod' | 'rdiv' | 'floor' | 'count'
 ;
