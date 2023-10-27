@@ -5,11 +5,12 @@ It contains a variety of utility functions.
 
 
 Author: Serena Serafina Serbinowska
-Last Edit: 2023-09-27
+Last Edit: 2023-10-27
 '''
 import itertools
 import re
-import copy
+import sys
+import textx
 from serene_functions import build_meta_func
 from behaverify_common import (create_node_name,
                                BTreeException,
@@ -34,7 +35,7 @@ from behaverify_common import (create_node_name,
 # todo : make sure loop variables don't conflict
 # todo : make sure define variables are deterministicly updated.
 
-def validate_model(model):
+def validate_model(metamodel_file, model_file, recursion_limit):
     '''used to validate the model'''
     trace = []
     function_type_info = {
@@ -656,6 +657,10 @@ def validate_model(model):
         return name
 
     # END OF METHODS. START OF SCRIPT -------------------------------------------------------------------------------------------------------------
+    if recursion_limit > 1000:
+        sys.setrecursionlimit(recursion_limit)
+    metamodel = textx.metamodel_from_file(metamodel_file, auto_init_attributes = False)
+    model = metamodel.model_from_file(model_file)
 
     trace.append('In Enumeration Validation')
     declared_enumerations = set(map(valid_enumeration, model.enumerations))
@@ -719,5 +724,5 @@ def validate_model(model):
         else:
             raise BTreeException(trace, 'unknown specification type: ' + specification.spec_type)
         validate_condition(specification.code_statement, {'blackboard', 'local', 'environment'}, None, allowed)
-    print('model check complete')
-    return (variables, constants, declared_enumerations)
+    print('grammar check complete')
+    return (model, variables, constants, declared_enumerations)

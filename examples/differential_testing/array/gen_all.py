@@ -36,7 +36,7 @@ CONSTANTS_BOOL = ['True', 'False']
 # FUNCTIONS = [('abs', 1, 1), ('max', 2, 2), ('min', 2, 2), ('negative', 1, 1), ('addition', 2, 5), ('subtraction', 2, 2), ('multiplication', 2, 5), ('division', 2, 2), ('mod', 2, 2), ('count', 2, 5)]
 # FUNCTIONS = [('abs', 1, 1), ('max', 2, 2), ('min', 2, 2), ('negative', 1, 1), ('addition', 2, 4), ('subtraction', 2, 2), ('multiplication', 2, 4), ('division', 2, 2), ('count', 2, 4)]
 FUNCTIONS = [('abs', 1, 1), ('max', 2, 2), ('min', 2, 2), ('neg', 1, 1), ('add', 2, 4), ('sub', 2, 2), ('mult', 2, 4), ('count', 2, 4)]
-COMPARISONS = ['eq', 'neq', 'lt', 'gt', 'lte', 'gte', 'and', 'or', 'xor', 'xnor', 'imply', 'equiv']
+COMPARISONS = ['eq', 'neq', 'lt', 'gt', 'lte', 'gte', 'and', 'or', 'xor', 'xnor', 'implies', 'equivalent']
 STATUSES = ['success', 'failure', 'running']
 
 
@@ -87,7 +87,7 @@ def get_var(bl, local, env, var_only, domain, array_allowed = True):
 
 
 def get_loop_ref(loop_references, domain, variable_allowed):
-    if 'next' not in loop_references:
+    if loop_references['next'] == 0:
         return None
     if variable_allowed:
         cumulative = [loop_references[index][0] for index in range(loop_references['next']) if loop_references[index][2] == domain]
@@ -102,7 +102,7 @@ def create_int_value(depth_left, loop_references, bl, local, env):
         depth_left = random.randint(0, STATEMENT_DEPTH)
     if depth_left == 0:
         if random.choice([True, False]):
-            return str(random.randint(-100, 100))
+            return str(random.randint(-50, 50))
         if random.choice([True, False]):
             variables_allowed = bl or env or len(local) > 1
             ret_loop_ref = get_loop_ref(loop_references, variables_allowed, 'int')
@@ -120,6 +120,8 @@ def create_int_value(depth_left, loop_references, bl, local, env):
             CUR_TIMES_INDEXED = CUR_TIMES_INDEXED + 1
             return '(index, ' + ret_var['name'] + ', (max, 0, (min, ' + str(ret_var['array'] - 1) + ', ' + create_int_value(random.randint(0, MAX_INDEX_DEPTH), loop_references, bl, local, env) + ')))'
         return '(index, ' + ret_var['name'] + ', ' + str(random.randint(0, ret_var['array'] - 1)) + ')'
+    if random.choice((0, 1, 2, 3, 4, 5)) == 0:
+        return '(if, ' + create_bool_value(depth_left, loop_references, bl, local, env) + ', ' + create_int_value(depth_left - 1, loop_references, bl, local, env) + ', ' + create_int_value(depth_left - 1, loop_references, bl, local, env) + ')'
     (func, min_arg, max_arg) = random.choice(FUNCTIONS)
     if func == 'count':
         return '(count, ' + ', '.join([create_bool_value(depth_left, loop_references, bl, local, env) for _ in range(random.randint(min_arg, max_arg))]) + ')'
@@ -135,7 +137,37 @@ def create_int_value(depth_left, loop_references, bl, local, env):
             )
             + '))'
         )
-    return '(' + func + ', ' + ', '.join([create_int_value(random.randint(0, depth_left - 1), loop_references, bl, local, env) for _ in range(random.randint(min_arg, max_arg))]) + ')'
+    args_left = random.randint(min_arg, max_arg)
+    the_args = []
+    next_loop = loop_references['next']
+    loop_references = copy.deepcopy(loop_references)
+    while args_left > 0:
+        loop_size = random.randint(1, args_left)
+        args_left = args_left - loop_size
+        if loop_size == 1:
+            the_args.append(create_int_value(random.randint(0, depth_left - 1), loop_references, bl, local, env))
+            continue
+        vals = []
+        constant = random.choice((True, False))
+        if not constant:
+            # variable
+            domain = random.choice(('int', 'enum', 'bool'))
+            temp_vals = [get_var(bl, local, env, False, domain, False) for _ in range(loop_size)]
+            if temp_vals[0] is None:
+                constant = True
+            else:
+                vals = [var['name'] for var in temp_vals]
+        if constant:
+            # constant
+            domain = random.choice(('int', 'enum', 'bool'))
+            mode = create_int_value if domain == 'int' else (create_bool_value if domain == 'bool' else create_enum_value)
+            vals = [str(mode(-1, loop_references, False, [], False)) for _ in range(loop_size)]
+        loop_references[next_loop] = ('loop_' + str(next_loop), constant, domain)
+        loop_references['next'] = next_loop + 1
+        the_args.append('(loop, loop_' + str(next_loop) + ', {' + ', '.join(vals) + '} such_that True, ' + create_int_value(random.randint(0, depth_left - 1), loop_references, bl, local, env) + ')')
+        loop_references['next'] = next_loop
+        loop_references.pop(next_loop)
+    return '((min, 50, (max, -50, (' + func + ', ' + ', '.join(the_args) + '))))'
 
 
 def create_bool_value(depth_left, loop_references, bl, local, env):
@@ -206,7 +238,7 @@ def create_check_node(name):
             + indent(2) + name + os.linesep
             + indent(2) + 'arguments{}' + os.linesep
             + indent(2) + 'read_variables ' + VAR_BL_STRING + os.linesep
-            + indent(2) + 'condition{' + create_bool_value(-1, {}, True, [], False) + '}' + os.linesep
+            + indent(2) + 'condition{' + create_bool_value(-1, {'next' : 0}, True, [], False) + '}' + os.linesep
             + indent(1) + '}' + os.linesep
             )
 
@@ -217,7 +249,7 @@ def create_check_env_node(name):
             + indent(2) + name + os.linesep
             + indent(2) + 'arguments{}' + os.linesep
             + indent(2) + 'read_variables ' + VAR_BL_STRING + os.linesep
-            + indent(2) + 'condition{' + create_bool_value(-1, {}, True, [], True) + '}' + os.linesep
+            + indent(2) + 'condition{' + create_bool_value(-1, {'next' : 0}, True, [], True) + '}' + os.linesep
             + indent(1) + '}' + os.linesep
             )
 
@@ -285,7 +317,7 @@ def write_loop_array_index(cur_var, loop_depth, loop_references, bl, local, env)
         loop_depth = random.randint(0, STATEMENT_DEPTH)
     if loop_depth == 0:
         return write_array_index(cur_var, False, loop_references, bl, local, env)
-    next_val = loop_references['next']
+    next_loop = loop_references['next']
     loop_references = copy.deepcopy(loop_references)
     vals = []
     constant = random.choice((True, False))
@@ -301,9 +333,9 @@ def write_loop_array_index(cur_var, loop_depth, loop_references, bl, local, env)
         if temp_vals[0] is None:
             return write_loop_array_index(cur_var, loop_depth - 1, loop_references, bl, local, env)
         vals = [var['name'] for var in temp_vals]
-    loop_references[next_val] = ('loop_' + str(next_val), constant, domain)
-    loop_references['next'] = next_val + 1
-    return '(loop, loop_' + str(next_val) + ', {' + ', '.join(vals) + '} such_that True, ' + write_loop_array_index(cur_var, loop_depth - 1, loop_references, bl, local, env) + ')'
+    loop_references[next_loop] = ('loop_' + str(next_loop), constant, domain)
+    loop_references['next'] = next_loop + 1
+    return '(loop, loop_' + str(next_loop) + ', {' + ', '.join(vals) + '} such_that True, ' + write_loop_array_index(cur_var, loop_depth - 1, loop_references, bl, local, env) + ')'
 
 def write_loop_arrays(cur_var, bl, local, env):
     if random.choice((True, False)):
@@ -316,9 +348,9 @@ def write_variable_statement(cur_var, instant, indent_level, bl, local, env, ini
     return (
         indent(indent_level) + 'variable_statement{ ' + ('instant ' if instant else '') + cur_var['name'] + os.linesep
         + (
-            write_assign_value(cur_var, {}, bl, local, env)
+            write_assign_value(cur_var, {'next' : 0}, bl, local, env)
             if cur_var['array'] is None else
-            ((('default{' + write_assign_value(cur_var, {}, bl, local, env) + '}') if init else '') + write_loop_arrays(cur_var, bl, local, env))
+            ((('default{' + write_assign_value(cur_var, {'next' : 0}, bl, local, env) + '}') if init else '') + write_loop_arrays(cur_var, bl, local, env))
         )
         + indent(indent_level) + '}' + os.linesep
     )
@@ -363,7 +395,7 @@ def create_action_node(name):
             update_string = (
                 indent(3) + 'read_environment {' + os.linesep
                 + indent(4) + name + '_read_' + ('before_' if before_mode else 'after_') + str(num_left) + os.linesep
-                + indent(4) + 'condition {' + create_bool_value(-1, {}, True, my_local_vars, True) + '}' + os.linesep
+                + indent(4) + 'condition {' + create_bool_value(-1, {'next' : 0}, True, my_local_vars, True) + '}' + os.linesep
                 + ''.join(
                     [
                         write_variable_statement(get_var(True, my_local_vars, False, True, 'any'), False, 4, True, my_local_vars, True, init = False)
@@ -400,7 +432,7 @@ def create_action_node(name):
         + indent(3) + 'return_statement {' + os.linesep
         + ''.join(
             [
-                (indent(4) + 'case { ' + create_bool_value(-1, {}, True, my_local_vars, False) + '} result { ' + get_status() + '}' + os.linesep)
+                (indent(4) + 'case { ' + create_bool_value(-1, {'next' : 0}, True, my_local_vars, False) + '} result { ' + get_status() + '}' + os.linesep)
                 for _ in range(condition_count)
             ]
         )
@@ -549,10 +581,10 @@ def create_variable_declaration(cur_var, mode):
         + ' ' + mode + ' '
         + cur_domain + os.linesep
         + (
-            write_assign_value(cur_var, {}, True, [], cur_var['type'] == 'env')
+            write_assign_value(cur_var, {'next' : 0}, True, [], cur_var['type'] == 'env')
             if cur_var['array'] is None else
             (
-                'default {' + write_assign_value(cur_var, {}, True, [], cur_var['type'] == 'env') + '}'
+                'default {' + write_assign_value(cur_var, {'next' : 0}, True, [], cur_var['type'] == 'env') + '}'
                 + write_loop_arrays(cur_var, True, [], cur_var['type'] == 'env')
             )
         )
