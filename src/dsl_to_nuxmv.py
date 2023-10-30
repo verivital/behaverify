@@ -3,7 +3,7 @@ This module is part of BehaVerify and used to convert .tree files to .smv files 
 
 
 Author: Serena Serafina Serbinowska
-Last Edit: 2023-10-27
+Last Edit: 2023-10-30
 '''
 import argparse
 import pprint
@@ -292,11 +292,13 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
                 return assemble_variable(variable['name'], compute_stage(variable_key, misc_args), use_next, trace_num, specification_writing)
             used_vars = tuple(map(lambda dependent_variable_key: format_variable_non_object(behaverify_variables[dependent_variable_key], dependent_variable_key, misc_args), variable['depends_on']))
             if used_vars not in variable['existing_definitions']:
+                if variable_key == 'envDEFINE6':
+                    print(used_vars)
                 variable['existing_definitions'][used_vars] = len(variable['next_value'])
                 variable['next_value'].append(handle_variable_statement(variable['initial_value'], None, create_misc_args(copy_loop_references(loop_references), node_name, use_stages, use_next, not_next, overwrite_stage, False, specification_warning)))
             stage = variable['existing_definitions'][used_vars]
             return assemble_variable(variable['name'], stage, use_next, trace_num, specification_writing)
-
+        # the not define variables are formatted below.
         if use_stages and (len(variable['next_value']) == 0 or overwrite_stage == 0):
             if specification_warning and not variable['keep_stage_0']:
                 print('A specification is preventing the removal of stage 0 for: ' + variable['name'])
@@ -674,6 +676,8 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
                 used_variables.extend(find_used_variables_without_formatting_in_code(case_result.condition, misc_args))
                 for value in case_result.values:
                     used_variables.extend(find_used_variables_without_formatting_in_code(value, misc_args))
+            for value in assign.default_result.values:
+                used_variables.extend(find_used_variables_without_formatting_in_code(value, misc_args))
             return used_variables
 
         def find_used_variables_without_formatting_in_loop_array_index(packaged_args, misc_args):
@@ -692,8 +696,10 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
                 is_constant = statement.constant_index == 'constant_index'
                 for loop_array_index in statement.assigns:
                     used_variables.extend(find_used_variables_without_formatting_in_loop_array_index((loop_array_index, is_constant), create_misc_args({}, node_name, False, False, False, False, False, False)))
+                used_variables.extend(find_used_variables_without_formatting_in_assign(statement.default_value, create_misc_args({}, node_name, False, False, False, False, False, False)))
                 return used_variables
-            return find_used_variables_without_formatting_in_assign(statement.assign, create_misc_args({}, node_name, False, False, False, False, False, False))
+            to_return = find_used_variables_without_formatting_in_assign(statement.assign, create_misc_args({}, node_name, False, False, False, False, False, False))
+            return to_return
 
         # create each variable type using the template.
         nonlocal behaverify_variables  # this is necessary right now because we need to be able to access already created variables during other variable initializations.
@@ -1025,6 +1031,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
 
     behaverify_variables = {} # here to make sure the variable is in the namespace.
     behaverify_variables = get_behaverify_variables(model, local_variables, initial_statements, keep_stage_0, keep_last_stage)
+    print(behaverify_variables['envDEFINE6'])
     # print(behaverify_variables)
     # print('finished variables')
     tick_condition = 'TRUE' if model.tick_condition is None else format_code(model.tick_condition, create_misc_args({}, None, True, False, None, None, False, False))[0]
@@ -1038,6 +1045,11 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
     # spec_warn = True
     specifications = handle_specifications(model.specifications)
     # spec_warn = False
+    print(behaverify_variables['envDEFINE6'])
+    print('---------------------------------')
+    print('---------------------------------')
+    print('---------------------------------')
+    print(behaverify_variables['envDEFINE6']['next_value'][-1])
 
     if behave_only:
         if output_file is None:

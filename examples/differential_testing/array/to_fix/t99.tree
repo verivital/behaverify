@@ -1,0 +1,190 @@
+configuration{}
+enumerations {
+    'yes', 'no', 'both'
+}
+constants {
+    MIN_VAL := 2,
+    MAX_VAL := 5
+}
+variables { 
+    variable { bl blVAR0 VAR BOOLEAN
+	assign {case {False} result { (neq, (gt, -21, -41), True)}result {(equivalent, (and, True, True), False)}}	}
+    variable { env envVAR1 VAR [-5, -2]
+	assign {case {(xnor, (neq, blVAR0, True), (eq, True, False))} result { (min, -2, (max, -5, 3))}result {(min, -2, (max, -5, ((min, 50, (max, -50, (sub, ((min, 50, (max, -50, (mult, ((min, 50, (max, -50, (mult, (loop, loop_0, {(xnor, False, True), (and, (lte, -13, 6), (and, True, (lt, -20, -15)))} such_that True, -5), -34, 4)))), 35, 50)))), (if, (lt, 32, 3), -2, 2)))))))}}	}
+    variable { bl blVAR2 array 2 VAR {'yes', 'no', 'both'}
+	default {assign {case {(lt, -4, 4)} result { 'no'}case {(gte, -26, 34)} result { 'both'}result {'both'}}}(loop, loop_0, {(implies, False, True), (equivalent, (lt, 2, -4), (lt, 4, 14)), (lte, ((min, 50, (max, -50, (sub, (loop, loop_0, {((min, 50, (max, -50, (sub, (loop, loop_0, {((min, 50, (max, -50, (neg, 9)))), (count, (xor, False, True), (gt, -17, 2), (and, True, True))} such_that True, -4))))), ((min, 50, (max, -50, (neg, -4))))} such_that True, (count, (neq, -5, -13), (equivalent, False, False), (implies, True, True))))))), ((min, 50, (max, -50, (sub, (loop, loop_0, {(equivalent, (gt, 28, ((min, 50, (max, -50, (abs, 3))))), False), False} such_that True, ((min, 50, (max, -50, (sub, 3, 4))))))))))} such_that True, index_of {(max, 0, (min, 1, ((min, 50, (max, -50, (add, (loop, loop_1, {'both', 'no'} such_that True, (count, (gt, -5, 7), (gte, 5, 21), (gt, 32, 4))), ((min, 50, (max, -50, (max, (loop, loop_1, {'yes', 'no'} such_that True, -3)))))))))))}assign {case {(xor, (lt, 10, (if, (or, False, blVAR0), -38, 35)), (or, False, blVAR0))} result { 'no'}result {'both'}})	}
+    variable { bl blVAR3 array 2 VAR BOOLEAN
+	default {assign {case {(or, (equivalent, False, False), (and, True, True))} result { (eq, (index, blVAR2, (max, 0, (min, 1, 4))), 'yes')}case {(gt, 5, 24)} result { (eq, 10, 4)}result {(equivalent, (implies, True, True), (gt, 1, -1))}}}(loop, loop_0, {((min, 50, (max, -50, (sub, (if, (equivalent, True, True), 5, -5), ((min, 50, (max, -50, (mult, (loop, loop_0, {(if, (implies, True, True), 5, 9), (count, (lt, ((min, 50, (max, -50, (mult, (loop, loop_0, {(if, (gte, 5, 13), -4, -3), 5} such_that True, (if, (equivalent, True, False), -9, 3)), (loop, loop_0, {'both', 'no'} such_that True, 2))))), 19), (implies, False, True), (lt, 46, (if, (implies, False, True), -41, 5)), (eq, True, (xor, (or, False, True), (eq, -4, 3)))), -50} such_that True, 5))))))))), (if, (implies, False, True), 5, -35), -33, (count, (or, (lte, 9, 5), (xnor, True, False)), (lt, ((min, 50, (max, -50, (sub, (loop, loop_0, {'both', 'both'} such_that True, -16))))), -3), (or, False, (implies, True, True)), (implies, (and, True, False), False))} such_that True, index_of {(max, 0, (min, 1, ((min, 50, (max, -50, (add, (loop, loop_1, {'no', 'yes'} such_that True, ((min, 50, (max, -50, (add, (loop, loop_2, {(xnor, False, (equivalent, False, False)), (lt, ((min, 50, (max, -50, (neg, -37)))), -4)} such_that True, -3), -41)))))))))))}assign {case {(implies, blVAR0, blVAR0)} result { (gte, ((min, 50, (max, -50, (sub, (loop, loop_1, {(gt, 4, 4), (lte, 4, -49)} such_that True, 19))))), ((min, 50, (max, -50, (mult, -4, (loop, loop_1, {(gt, ((min, 50, (max, -50, (min, (loop, loop_1, {((min, 50, (max, -50, (add, (loop, loop_1, {'no', 'no', 'yes'} such_that True, ((min, 50, (max, -50, (mult, (loop, loop_2, {(and, (eq, -3, 5), True), (or, False, False)} such_that True, ((min, 50, (max, -50, (min, (loop, loop_3, {'no', 'both'} such_that True, -49)))))), (loop, loop_2, {(and, (xor, True, False), (neq, True, False)), (gte, -2, 1)} such_that True, (count, (xor, False, True), (gte, 4, -6), (neq, False, False)))))))), ((min, 50, (max, -50, (neg, ((min, 50, (max, -50, (min, 4, -5)))))))))))), ((min, 50, (max, -50, (max, (loop, loop_1, {(xor, False, False), (lt, ((min, 50, (max, -50, (max, (loop, loop_1, {((min, 50, (max, -50, (sub, ((min, 50, (max, -50, (mult, 5, -5, 5, 25)))), -45)))), -3} such_that True, 36))))), ((min, 50, (max, -50, (max, (loop, loop_1, {'no', 'both'} such_that True, -25))))))} such_that True, -4)))))} such_that True, -24))))), -2), False, (implies, True, False)} such_that True, 33))))))}result {(or, (and, (neq, 5, -26), (xnor, False, blVAR0)), (xor, blVAR0, True))}})index_of {(max, 0, (min, 1, ((min, 50, (max, -50, (max, ((min, 50, (max, -50, (mult, 4, 4)))), ((min, 50, (max, -50, (mult, (loop, loop_0, {'yes', 'yes'} such_that True, -2), -4))))))))))}assign {result {False}}	}
+    variable { env envDEFINE4 array 2 DEFINE INT
+	default {assign {case {(implies, blVAR0, blVAR0)} result { (min, 5, (max, 2, envVAR1))}result {(min, 5, (max, 2, ((min, 50, (max, -50, (mult, (loop, loop_0, {(implies, True, False), (implies, (gt, -40, 38), (neq, 'both', 'both'))} such_that True, -33), envVAR1))))))}}}constant_index index_of {0, 1}assign {case {blVAR0} result { (min, 5, (max, 2, ((min, 50, (max, -50, (min, envVAR1, envVAR1))))))}case {(lte, ((min, 50, (max, -50, (add, envVAR1, envVAR1, 13)))), -22)} result { (min, 5, (max, 2, -4))}result {(min, 5, (max, 2, ((min, 50, (max, -50, (min, (loop, loop_0, {envVAR1, envVAR1} such_that True, ((min, 50, (max, -50, (sub, ((min, 50, (max, -50, (max, (loop, loop_1, {((min, 50, (max, -50, (sub, 5, 5)))), ((min, 50, (max, -50, (mult, 30, (loop, loop_1, {(xor, (xor, True, False), True), (and, (xnor, (gt, -3, -20), (eq, 4, -5)), False)} such_that True, (if, (xnor, True, False), -2, 5))))))} such_that True, -32))))), envVAR1)))))))))))}}	}
+    
+    variable { bl blDEFINE5 DEFINE ENUM
+	assign {
+	    result {(index, blVAR2, (max, 0, (min, 1, 1)))}
+	}
+    }
+    
+    variable { local localDEFINE6 DEFINE ENUM
+	assign {case {(equivalent, blVAR0, (gt, 4, 40))} result { 'yes'}case {(and, (xnor, (xor, True, (index, blVAR3, (max, 0, (min, 1, -5)))), True), (xnor, (and, blVAR0, True), blVAR0))} result { 'both'}result {'both'}}	}
+}
+environment_update {
+}
+checks{
+    check {
+	c1
+	arguments{}
+	read_variables {blVAR0, blVAR2, blVAR3, blDEFINE5}
+	condition{(xor, True, False)}
+    }
+    check {
+	c2
+	arguments{}
+	read_variables {blVAR0, blVAR2, blVAR3, blDEFINE5}
+	condition{False}
+    }
+}
+environment_checks {}
+actions{
+    action {
+	a1
+	arguments{}
+	local_variables {}
+	read_variables { }
+	write_variables {blVAR0, blVAR2, blVAR3, blDEFINE5}
+	initial_values {
+	    
+	}
+	update {
+	    write_environment {
+		a1_write_before_1
+		variable_statement{ instant envVAR1
+		    assign {case {(index, blVAR3, (max, 0, (min, 1, envVAR1)))} result { (min, -2, (max, -5, ((min, 50, (max, -50, (sub, (loop, loop_0, {'no', 'yes'} such_that True, (count, (neq, 'no', 'no'), (neq, (implies, True, False), False), (or, True, False), (implies, True, False)))))))))}result {(min, -2, (max, -5, ((min, 50, (max, -50, (sub, (loop, loop_0, {'yes', 'yes'} such_that True, ((min, 50, (max, -50, (max, (loop, loop_1, {blVAR0, blVAR0} such_that True, 4))))))))))))}}				}
+	    }
+	    write_environment {
+		a1_write_before_0
+		variable_statement{ instant envVAR1
+		    assign {result {(min, -2, (max, -5, ((min, 50, (max, -50, (sub, (index, envDEFINE4, (max, 0, (min, 1, envVAR1))), envVAR1))))))}}				}
+	    }
+	    return_statement {
+		case { (xor, False, (gt, 5, -9))} result { failure}
+		result {failure}
+	    }
+	    variable_statement{ blVAR2
+		constant_index
+		index_of {0, 1}
+		assign {
+		    case {(lt, -5, 2)}
+		    result { blDEFINE5}
+		    case {(lte, ((min, 50, (max, -50, (sub, -4, 28)))), 4)}
+		    result { blDEFINE5}
+		    result {blDEFINE5}}
+	    }
+	}
+    }
+    action {
+	a2
+	arguments{}
+	local_variables {}
+	read_variables { }
+	write_variables {blVAR0, blVAR2, blVAR3, blDEFINE5}
+	initial_values {
+	    
+	}
+	update {
+	    variable_statement{ blVAR3
+		constant_index index_of {0, 1}assign {case {(neq, (neq, False, True), (gt, -38, 5))} result { (and, (gt, -39, ((min, 50, (max, -50, (abs, -2))))), False)}result {(lt, ((min, 50, (max, -50, (mult, (loop, loop_0, {blVAR0, blVAR0} such_that True, ((min, 50, (max, -50, (max, (loop, loop_1, {'yes', 'both'} such_that True, 4)))))))))), ((min, 50, (max, -50, (sub, -24, ((min, 50, (max, -50, (add, (loop, loop_0, {blDEFINE5, blDEFINE5, blDEFINE5, blDEFINE5} such_that True, 18))))))))))}}			}
+	    variable_statement{ blVAR2
+		constant_index index_of {0, 1}assign {case {(equivalent, True, (lte, -5, -30))} result { 'yes'}case {(implies, (eq, 'yes', (index, blVAR2, (max, 0, (min, 1, -13)))), (and, True, blVAR0))} result { 'yes'}result {blDEFINE5}}			}
+	    variable_statement{ blVAR3
+		index_of {(max, 0, (min, 1, (if, (equivalent, True, False), -3, 2)))}assign {result {(and, (lt, -30, 46), True)}}			}
+	    return_statement {
+		case { (implies, blVAR0, (gte, -2, -44))} result { failure}
+		result {failure}
+	    }
+	}
+    }
+    action {
+	a3
+	arguments{}
+	local_variables {}
+	read_variables { }
+	write_variables {blVAR0, blVAR2, blVAR3, blDEFINE5}
+	initial_values {
+	    
+	}
+	update {
+	    write_environment {
+		a3_write_before_0
+		variable_statement{ instant envVAR1
+		    assign {case {True} result { (min, -2, (max, -5, (if, (eq, (index, blVAR3, (max, 0, (min, 1, -20))), True), 19, 2)))}case {True} result { (min, -2, (max, -5, ((min, 50, (max, -50, (abs, 4))))))}result {(min, -2, (max, -5, envVAR1))}}				}
+	    }
+	    return_statement {
+		case { (xor, (neq, -2, -33), blVAR0)} result { failure}
+		result {failure}
+	    }
+	    variable_statement{ blVAR0
+		assign {case {(or, (index, blVAR3, (max, 0, (min, 1, -2))), True)} result { (equivalent, (or, False, True), (equivalent, False, blVAR0))}case {(lte, ((min, 50, (max, -50, (mult, (loop, loop_0, {blDEFINE5, blDEFINE5} such_that True, 13), -5, 47)))), ((min, 50, (max, -50, (min, 2, 41)))))} result { (gte, 37, -23)}result {(xor, (equivalent, (neq, blVAR0, blVAR0), (xnor, True, True)), (equivalent, (equivalent, True, blVAR0), True))}}			}
+	    read_environment {
+		a3_read_after_1
+		condition {(xor, (and, (implies, blVAR0, True), (xnor, False, True)), (and, False, False))}
+		variable_statement{ blVAR2
+		    (loop, loop_0, {'both', 'no', 'both', 'no'} such_that True, (loop, loop_1, {envVAR1, envVAR1, envVAR1} such_that True, (loop, loop_2, {(implies, (implies, False, False), (gt, -3, 3)), (equivalent, True, False)} such_that True, index_of {(max, 0, (min, 1, (if, (xor, True, blVAR0), 29, 19))), (max, 0, (min, 1, ((min, 50, (max, -50, (min, (loop, loop_3, {blDEFINE5, blDEFINE5} such_that True, -34)))))))}assign {result {'both'}})))				}
+	    }
+	    variable_statement{ blVAR0
+		assign {result {(eq, (index, blVAR3, (max, 0, (min, 1, -50))), (or, True, blVAR0))}}			}
+	}
+    }
+    action {
+	a4
+	arguments{}
+	local_variables {}
+	read_variables { }
+	write_variables {blVAR0, blVAR2, blVAR3, blDEFINE5}
+	initial_values {
+	    
+	}
+	update {
+	    return_statement {
+		result {failure}
+	    }
+	    read_environment {
+		a4_read_after_0
+		condition {(xnor, False, blVAR0)}
+		variable_statement{ blVAR0
+		    assign {result {(neq, (or, (index, blVAR3, (max, 0, (min, 1, envVAR1))), (lte, 5, -26)), (implies, True, (neq, 3, -2)))}}				}
+	    }
+	}
+    }
+}
+sub_trees{}
+tree {
+    composite {
+	p_all0
+	parallel policy success_on_all
+	with_partial_memory
+	children {
+	    composite {
+		sel1
+		selector
+		
+		children {
+		    c2{}
+		    a3{}
+		}
+	    }
+	    a2{}
+	    composite {
+		sel2
+		selector
+		with_partial_memory
+		children {
+		    a1{}
+		    c2{}
+		    c2{}
+		}
+	    }
+	}
+    }
+}
+tick_prerequisite{True}
+specifications { #{ INVAR, LTL, and CTL specs go here }# } end_specifications
