@@ -25,16 +25,16 @@ if [[ $use_haskell -eq 1 ]]; then
     mkdir ./app
     cd $cur_loc
     ./fix_haskell.sh "${path_name}/gen_files/${file_name}" $file_name
-    python3 ../../src/dsl_to_haskell.py ../../metamodel/behaverify.tx $path_name/gen_files/$file_name.tree $path_name/gen_files/$file_name/ $file_name --max_iter 10
+    python3 ../../src/dsl_to_haskell.py ../../metamodel/behaverify.tx $path_name/gen_files/$file_name.tree $path_name/gen_files/$file_name/ $file_name --max_iter 10 --recursion_limit 5000
 fi
 
 
 if [[ $use_nuxmv -eq 1 ]]; then
-    python3 ../../src/dsl_to_nuxmv.py ../../metamodel/behaverify.tx $path_name/gen_files/$file_name.tree $path_name/gen_files/$file_name/$file_name.smv --do_not_trim --keep_last_stage
-    python3 ../../src/dsl_to_nuxmv.py ../../metamodel/behaverify.tx $path_name/gen_files/$file_name.tree $path_name/gen_files/$file_name/OPT_$file_name.smv
+    python3 ../../src/dsl_to_nuxmv.py ../../metamodel/behaverify.tx $path_name/gen_files/$file_name.tree $path_name/gen_files/$file_name/$file_name.smv --do_not_trim --keep_last_stage --recursion_limit 5000
+    python3 ../../src/dsl_to_nuxmv.py ../../metamodel/behaverify.tx $path_name/gen_files/$file_name.tree $path_name/gen_files/$file_name/OPT_$file_name.smv --recursion_limit 5000
 elif [[ $use_nuxmv -eq 2 ]]; then
-    python3 ../../src/dsl_to_behaverify_old_index.py ../../metamodel/behaverify.tx $path_name/gen_files/$file_name.tree --output_file $path_name/gen_files/$file_name/$file_name.smv --do_not_trim --keep_last_stage
-    python3 ../../src/dsl_to_behaverify_old_index.py ../../metamodel/behaverify.tx $path_name/gen_files/$file_name.tree --output_file $path_name/gen_files/$file_name/OPT_$file_name.smv
+    python3 ../../src/dsl_to_behaverify_old_index.py ../../metamodel/behaverify.tx $path_name/gen_files/$file_name.tree --output_file $path_name/gen_files/$file_name/$file_name.smv --do_not_trim --keep_last_stage --recursion_limit 5000
+    python3 ../../src/dsl_to_behaverify_old_index.py ../../metamodel/behaverify.tx $path_name/gen_files/$file_name.tree --output_file $path_name/gen_files/$file_name/OPT_$file_name.smv --recursion_limit 5000
 fi
-python3 ../../src/dsl_to_python.py ../../metamodel/behaverify.tx $path_name/gen_files/$file_name.tree $path_name/gen_files/$file_name/ $file_name --max_iter 10 --serene_print
+python3 ../../src/dsl_to_python.py ../../metamodel/behaverify.tx $path_name/gen_files/$file_name.tree $path_name/gen_files/$file_name/ $file_name --max_iter 10 --serene_print --recursion_limit 5000
 

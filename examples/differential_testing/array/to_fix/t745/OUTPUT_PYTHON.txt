@@ -1,0 +1,215 @@
+------------------------
+Initial State
+blackboard
+  blVAR0: both
+
+local
+
+environment
+  envVAR1: ['no', 'both']
+  envVAR2: 5
+  envVAR3: -2
+  envFROZENVAR4: both
+  envDEFINE6: [True, False]
+  envDEFINE7: [-2, -5]
+
+------------------------
+State after tick: 1
+seq0 -> RUNNING
+  a4 -> RUNNING
+  a3 -> INVALID
+  a3_1 -> INVALID
+
+blackboard
+  blVAR0: both
+
+local
+
+environment
+  envVAR1: ['both', 'both']
+  envVAR2: 2
+  envVAR3: -2
+  envFROZENVAR4: both
+  envDEFINE6: [True, True]
+  envDEFINE7: [-2, -2]
+
+------------------------
+State after tick: 2
+seq0 -> RUNNING
+  a4 -> RUNNING
+  a3 -> INVALID
+  a3_1 -> INVALID
+
+blackboard
+  blVAR0: both
+
+local
+
+environment
+  envVAR1: ['both', 'both']
+  envVAR2: 2
+  envVAR3: -2
+  envFROZENVAR4: both
+  envDEFINE6: [True, True]
+  envDEFINE7: [-2, -2]
+
+------------------------
+State after tick: 3
+seq0 -> RUNNING
+  a4 -> RUNNING
+  a3 -> INVALID
+  a3_1 -> INVALID
+
+blackboard
+  blVAR0: both
+
+local
+
+environment
+  envVAR1: ['both', 'both']
+  envVAR2: 2
+  envVAR3: -2
+  envFROZENVAR4: both
+  envDEFINE6: [True, True]
+  envDEFINE7: [-2, -2]
+
+------------------------
+State after tick: 4
+seq0 -> RUNNING
+  a4 -> RUNNING
+  a3 -> INVALID
+  a3_1 -> INVALID
+
+blackboard
+  blVAR0: both
+
+local
+
+environment
+  envVAR1: ['both', 'both']
+  envVAR2: 2
+  envVAR3: -2
+  envFROZENVAR4: both
+  envDEFINE6: [True, True]
+  envDEFINE7: [-2, -2]
+
+------------------------
+State after tick: 5
+seq0 -> RUNNING
+  a4 -> RUNNING
+  a3 -> INVALID
+  a3_1 -> INVALID
+
+blackboard
+  blVAR0: both
+
+local
+
+environment
+  envVAR1: ['both', 'both']
+  envVAR2: 2
+  envVAR3: -2
+  envFROZENVAR4: both
+  envDEFINE6: [True, True]
+  envDEFINE7: [-2, -2]
+
+------------------------
+State after tick: 6
+seq0 -> RUNNING
+  a4 -> RUNNING
+  a3 -> INVALID
+  a3_1 -> INVALID
+
+blackboard
+  blVAR0: both
+
+local
+
+environment
+  envVAR1: ['both', 'both']
+  envVAR2: 2
+  envVAR3: -2
+  envFROZENVAR4: both
+  envDEFINE6: [True, True]
+  envDEFINE7: [-2, -2]
+
+------------------------
+State after tick: 7
+seq0 -> RUNNING
+  a4 -> RUNNING
+  a3 -> INVALID
+  a3_1 -> INVALID
+
+blackboard
+  blVAR0: both
+
+local
+
+environment
+  envVAR1: ['both', 'both']
+  envVAR2: 2
+  envVAR3: -2
+  envFROZENVAR4: both
+  envDEFINE6: [True, True]
+  envDEFINE7: [-2, -2]
+
+------------------------
+State after tick: 8
+seq0 -> RUNNING
+  a4 -> RUNNING
+  a3 -> INVALID
+  a3_1 -> INVALID
+
+blackboard
+  blVAR0: both
+
+local
+
+environment
+  envVAR1: ['both', 'both']
+  envVAR2: 2
+  envVAR3: -2
+  envFROZENVAR4: both
+  envDEFINE6: [True, True]
+  envDEFINE7: [-2, -2]
+
+------------------------
+State after tick: 9
+seq0 -> RUNNING
+  a4 -> RUNNING
+  a3 -> INVALID
+  a3_1 -> INVALID
+
+blackboard
+  blVAR0: both
+
+local
+
+environment
+  envVAR1: ['both', 'both']
+  envVAR2: 2
+  envVAR3: -2
+  envFROZENVAR4: both
+  envDEFINE6: [True, True]
+  envDEFINE7: [-2, -2]
+
+------------------------
+State after tick: 10
+seq0 -> RUNNING
+  a4 -> RUNNING
+  a3 -> INVALID
+  a3_1 -> INVALID
+
+blackboard
+  blVAR0: both
+
+local
+
+environment
+  envVAR1: ['both', 'both']
+  envVAR2: 2
+  envVAR3: -2
+  envFROZENVAR4: both
+  envDEFINE6: [True, True]
+  envDEFINE7: [-2, -2]
+
