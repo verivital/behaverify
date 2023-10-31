@@ -3,7 +3,7 @@ This module is part of BehaVerify and used to convert .tree files to .smv files 
 
 
 Author: Serena Serafina Serbinowska
-Last Edit: 2023-10-30
+Last Edit: 2023-10-31
 '''
 import argparse
 import pprint
@@ -33,7 +33,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
             for key in loop_references
         }
     def copy_misc_args(misc_args):
-        return create_misc_args(copy_loop_references(misc_args['loop_references']), misc_args['node_name'], misc_args['use_stages'], misc_args['use_next'], misc_args['not_next'], misc_args['overwrite_stage'], misc_args['specification_writing'], misc_args['specification_warning'])
+        return create_misc_args(copy_loop_references(misc_args['loop_references']), misc_args['node_name'], misc_args['use_stages'], misc_args['overwrite_stage'], misc_args['define_substitutions'], misc_args['specification_writing'], misc_args['specification_warning'])
 
     def execute_loop(function_call, to_call, packaged_args, misc_args):
         # to_call is expected to return a list (or something) of items to be added. (E.G., format_code)
@@ -124,11 +124,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
         formatted_values = []
         for value in function_call.values:
             formatted_values.extend(format_code(value, misc_args))
-        return [
-            '('
-            + (' ' + function_name + ' [' + str(min_val) + ', ' + str(max_val) + '] ').join(formatted_values)
-            + ')'
-        ]
+        return ['(' + (' ' + function_name + ' [' + str(min_val) + ', ' + str(max_val) + '] ').join(formatted_values) + ')']
 
     def format_function_before_between(function_name, function_call, misc_args):
         '''probably some spec thing'''
@@ -152,15 +148,10 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
                     range(array_size)
                 )
             )
-            # + 'TRUE : ' + formatted_variable + '_index_0; '
             + 'esac)'
         )
 
     def format_function_index(_, function_call, misc_args):
-        '''variable[val]'''
-        # return (
-        #     format_variable(function_call.variable, misc_args) + '[' + format_code(function_call.values[0], misc_args) + ']'
-        # )
         new_misc_args = adjust_args(function_call, misc_args)
         var_func = build_meta_func(function_call.to_index)
         variable = resolve_potential_reference_no_type(var_func((constants, new_misc_args['loop_references']))[0], declared_enumerations, nodes, variables, constants, new_misc_args['loop_references'])[1]
@@ -177,56 +168,31 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
         (function_name, function_to_call) = function_format[code.function_call.function_name]
         return function_to_call(function_name, code.function_call, misc_args)
 
-    def create_misc_args(loop_references, node_name, use_stages, use_next, not_next, overwrite_stage, specification_writing, specification_warning):
+    def create_misc_args(loop_references, node_name, use_stages, overwrite_stage, define_substitutions, specification_writing, specification_warning):
         '''
         -- ARGUMENTS
         @ node_name := the name of the node which caused this to be called. used for formatting local variables.
         @ use_stages := are we using stages for this? (note: does not affect variable renaming).
-        @ use_next := are we making a 'next' call for this. (only used in optimization cases where we're optimizing out stage_0
-        @ not_next := only matters if use_next is true. In that case, this variable is replaced with a macro link.
         @ overwrite_stage := overwrite which stage we're asking for.
         '''
-        if use_next:
-            raise Exception('Crash here')
         return {
             'loop_references' : loop_references,
             'node_name' : node_name,
             'use_stages' : use_stages,
-            'use_next' : use_next,
-            'not_next' : not_next,
             'overwrite_stage' : overwrite_stage,
-            'trace_num' : 1,
+            'define_substitutions' : define_substitutions,
+            'trace_num' : 1,  # this can only be modified when dealing with specifications.
             'specification_writing' : specification_writing,
             'specification_warning' : specification_warning
         }
 
     def compute_stage(variable_key, misc_args):
-        '''
-        compute the stage for the variable now
-        -- GLOBALS
-        @ variables := a dictionary of variables
-        -- arguments
-        @ variable_key := used to index into the variable.
-        @ use_stages := if true, use stages
-        @ overwrite_stage := forces a specific stage
-        -- return
-        @ the string with appropriate stage number
-        -- side effects
-        none.
-        '''
         variable = behaverify_variables[variable_key]
         overwrite_stage = misc_args['overwrite_stage']
-        return (
-            (
-                (len(variable['next_value']) - 1)
-                if variable['mode'] == 'DEFINE'
-                else
-                len(variable['next_value'])
-            )
-            if overwrite_stage is None or overwrite_stage < 0
-            else
-            min(overwrite_stage, len(variable['next_value']))
-        )
+        last_stage = (len(variable['existing_definitions']) - 1) if variable['mode'] == 'DEFINE' else len(variable['next_value'])
+        # if define:  minus one because stage 0 appears when we first create a definition
+        # if not define: no minus one. Stage 0 always created.
+        return (last_stage if overwrite_stage is None or overwrite_stage < 0 else min(overwrite_stage, last_stage))
 
     def find_used_variables(code, misc_args):
         '''Returns the list of used variables (will also format them)'''
@@ -249,16 +215,13 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
         formatted_variable = format_variable(variable, new_misc_args)
         return used_variables + [(formatted_variable + '_index_' + str(index)) for index in range(variable_array_size(variable, declared_enumerations, nodes, variables, constants, new_misc_args['loop_references']))]
 
-    def assemble_variable(name, stage, use_next, trace_num, specification_writing):
-        '''
-        This method should only be called by format variable.
-        '''
+    def assemble_variable(name, stage, trace_num, specification_writing):
+        '''This method should only be called by format variable.'''
         return (
-            ('' if not use_next else 'next(')
-            + (('system' + (('_' + str(trace_num)) if hyper_mode else '') + '.') if specification_writing else '')
+            (('system' + (('_' + str(trace_num)) if hyper_mode else '') + '.') if specification_writing else '')
             + name
             + '_stage_' + str(stage)
-            + ('' if not use_next else ')'))
+        )
 
     def format_variable(variable_obj, misc_args):
         '''
@@ -268,8 +231,6 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
         @ variable_obj := a textx object of a variable that we will be formatting.
         @ node_name := the name of the node which caused this to be called.
         @ use_stages := are we using stages for this?
-        @ use_next := are we making a 'next' call for this. (only used in optimization cases where we're optimizing out stage_0
-        @ not_next := only matters if use_next is true. In that case, this variable is replaced with a macro link.
         @ overwrite_stage := overwrite which stage we're asking for.
         '''
         variable_key = variable_reference(variable_obj.name, is_local(variable_obj), misc_args['node_name'])
@@ -277,27 +238,22 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
         return format_variable_non_object(variable, variable_key, misc_args)
 
     def format_variable_non_object(variable, variable_key, misc_args):
-        loop_references = misc_args['loop_references']
-        node_name = misc_args['node_name']
         use_stages = misc_args['use_stages']
-        use_next = misc_args['use_next']
-        not_next = misc_args['not_next']
         overwrite_stage = misc_args['overwrite_stage']
         trace_num = misc_args['trace_num']
         specification_writing = misc_args['specification_writing']
         specification_warning = misc_args['specification_warning']
+        if misc_args['define_substitutions'] is not None:
+            return misc_args['define_substitutions'][variable_key]
 
         if variable['mode'] == 'DEFINE':
             if overwrite_stage is not None and len(variable['next_value']) > 0:
-                return assemble_variable(variable['name'], compute_stage(variable_key, misc_args), use_next, trace_num, specification_writing)
-            used_vars = tuple(map(lambda dependent_variable_key: format_variable_non_object(behaverify_variables[dependent_variable_key], dependent_variable_key, misc_args), variable['depends_on']))
+                return assemble_variable(variable['name'], compute_stage(variable_key, misc_args), trace_num, specification_writing)
+            used_vars = tuple(format_variable_non_object(behaverify_variables[dependant_variable_key], dependant_variable_key, misc_args) for dependant_variable_key in variable['depends_on'])
             if used_vars not in variable['existing_definitions']:
-                if variable_key == 'envDEFINE6':
-                    print(used_vars)
-                variable['existing_definitions'][used_vars] = len(variable['next_value'])
-                variable['next_value'].append(handle_variable_statement(variable['initial_value'], None, create_misc_args(copy_loop_references(loop_references), node_name, use_stages, use_next, not_next, overwrite_stage, False, specification_warning)))
+                variable['existing_definitions'][used_vars] = len(variable['existing_definitions'])
             stage = variable['existing_definitions'][used_vars]
-            return assemble_variable(variable['name'], stage, use_next, trace_num, specification_writing)
+            return assemble_variable(variable['name'], stage, trace_num, specification_writing)
         # the not define variables are formatted below.
         if use_stages and (len(variable['next_value']) == 0 or overwrite_stage == 0):
             if specification_warning and not variable['keep_stage_0']:
@@ -308,9 +264,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
             if specification_warning and not variable['keep_last_stage']:
                 print('A specification is preventing the removal of last stage for: ' + variable['name'])
             variable['keep_last_stage'] = True
-        if use_next and variable_key == not_next:
-            return (('system' + (('_' + str(trace_num)) if hyper_mode else '') + '.') if specification_writing else '') + 'LINK_TO_PREVIOUS_FINAL_' + variable['name']
-        return assemble_variable(variable['name'], compute_stage(variable_key, misc_args), use_next, trace_num, specification_writing)
+        return assemble_variable(variable['name'], compute_stage(variable_key, misc_args), trace_num, specification_writing)
 
     def adjust_args(code, misc_args):
         '''
@@ -425,9 +379,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
         return (misc_args['node_name'], False, non_determinism, stage)
 
     def handle_variable_statement(variable_statement, condition, misc_args):
-        '''
-        should only be called if init_mode is true or from variable_assignment
-        '''
+        '''should only be called if init_mode is true or from variable_assignment'''
         assign_var = variable_statement.variable if hasattr(variable_statement, 'variable') else variable_statement
         if is_array(assign_var):
             return (
@@ -485,7 +437,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
             (
                 specification.spec_type
                 + ' '
-                + format_code(specification.code_statement, create_misc_args({}, None, True, False, None, None, True, True))[0]
+                + format_code(specification.code_statement, create_misc_args(loop_references = {}, node_name = None, use_stages = True, overwrite_stage = None, define_substitutions = None, specification_writing = True, specification_warning = True))[0]
                 + ';'
             )
             for specification in specifications
@@ -596,22 +548,22 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
             for argument_name in argument_pairs:
                 constants[argument_name] = argument_pairs[argument_name]
             if statement_type == 'check':
-                handle_condition(statement, nodes, create_misc_args({}, node_name, True, False, None, None, False, False))
+                handle_condition(statement, nodes, create_misc_args(loop_references = {}, node_name = node_name, use_stages = True, overwrite_stage = None, define_substitutions = None, specification_writing = False, specification_warning = False))
             elif statement_type == 'return':
-                handle_return_statement(statement, nodes, create_misc_args({}, node_name, True, False, None, None, False, False))
+                handle_return_statement(statement, nodes, create_misc_args(loop_references = {}, node_name = node_name, use_stages = True, overwrite_stage = None, define_substitutions = None, specification_writing = False, specification_warning = False))
             else:
                 if statement.variable_statement is not None:
-                    handle_variable_assignment(statement.variable_statement, None, False, create_misc_args({}, node_name, True, False, None, None, False, False))
+                    handle_variable_assignment(statement.variable_statement, None, False, create_misc_args(loop_references = {}, node_name = node_name, use_stages = True, overwrite_stage = None, define_substitutions = None, specification_writing = False, specification_warning = False))
                 elif statement.read_statement is not None:
-                    handle_read_statement(statement.read_statement, create_misc_args({}, node_name, True, False, None, None, False, False))
+                    handle_read_statement(statement.read_statement, create_misc_args(loop_references = {}, node_name = node_name, use_stages = True, overwrite_stage = None, define_substitutions = None, specification_writing = False, specification_warning = False))
                 else:
-                    delayed_statements += handle_write_statement(statement.write_statement, create_misc_args({}, node_name, True, False, None, None, False, False))
+                    delayed_statements += handle_write_statement(statement.write_statement, create_misc_args(loop_references = {}, node_name = node_name, use_stages = True, overwrite_stage = None, define_substitutions = None, specification_writing = False, specification_warning = False))
             for argument_name in argument_pairs:
                 constants.pop(argument_name)
         for (node_name, argument_pairs, statement) in delayed_statements:
             for argument_name in argument_pairs:
                 constants[argument_name] = argument_pairs[argument_name]
-            handle_variable_assignment(statement, None, False, create_misc_args({}, node_name, True, False, None, None, False, False))
+            handle_variable_assignment(statement, None, False, create_misc_args(loop_references = {}, node_name = node_name, use_stages = True, overwrite_stage = None, define_substitutions = None, specification_writing = False, specification_warning = False))
             for argument_name in argument_pairs:
                 constants.pop(argument_name)
         return
@@ -629,12 +581,10 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
         -- side effects
         changes variables.
         '''
-
         for statement in model.update:
             if statement.instant == pre_tick:
-                # things marked as instant happen before the tick.
-                # pre_tick means before the tick.
-                handle_variable_assignment(statement, None, False, create_misc_args({}, None, True, False, None, None, False, False))
+                # things marked as instant happen before the tick. pre_tick means before the tick. This is called twice, once before and once after.
+                handle_variable_assignment(statement, None, False, create_misc_args(loop_references = {}, node_name = None, use_stages = True, overwrite_stage = None, define_substitutions = None, specification_writing = False, specification_warning = False))
 
     def get_behaverify_variables(model, local_variables, initial_statements, keep_stage_0, keep_last_stage):
         '''
@@ -695,11 +645,10 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
                 used_variables = []
                 is_constant = statement.constant_index == 'constant_index'
                 for loop_array_index in statement.assigns:
-                    used_variables.extend(find_used_variables_without_formatting_in_loop_array_index((loop_array_index, is_constant), create_misc_args({}, node_name, False, False, False, False, False, False)))
-                used_variables.extend(find_used_variables_without_formatting_in_assign(statement.default_value, create_misc_args({}, node_name, False, False, False, False, False, False)))
+                    used_variables.extend(find_used_variables_without_formatting_in_loop_array_index((loop_array_index, is_constant), create_misc_args(loop_references = {}, node_name = node_name, use_stages = False, overwrite_stage = False, define_substitutions = None, specification_writing = False, specification_warning = False)))
+                used_variables.extend(find_used_variables_without_formatting_in_assign(statement.default_value, create_misc_args(loop_references = {}, node_name = node_name, use_stages = False, overwrite_stage = False, define_substitutions = None, specification_writing = False, specification_warning = False)))
                 return used_variables
-            to_return = find_used_variables_without_formatting_in_assign(statement.assign, create_misc_args({}, node_name, False, False, False, False, False, False))
-            return to_return
+            return find_used_variables_without_formatting_in_assign(statement.assign, create_misc_args(loop_references = {}, node_name = node_name, use_stages = False, overwrite_stage = False, define_substitutions = None, specification_writing = False, specification_warning = False))
 
         # create each variable type using the template.
         nonlocal behaverify_variables  # this is necessary right now because we need to be able to access already created variables during other variable initializations.
@@ -771,39 +720,39 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
         }
         for variable in model.variables:
             var_key = variable_reference(variable.name, is_local(variable), '')
-            if is_array(variable):
-                if is_local(variable):
-                    local_variable_templates[variable.name]['default_array_val'] = handle_assign(variable.default_value, create_misc_args({}, None, True, False, None, None, False, False))
-                else:
-                    behaverify_variables[var_key]['default_array_val'] = handle_assign(variable.default_value, create_misc_args({}, None, True, False, None, None, False, False))
+            if is_local(variable):
+                continue  # this is handled below
+            define_substitutions = None
             if variable.model_as == 'DEFINE':
-                if is_local(variable):
-                    # this is handled below.
-                    pass
-                else:
-                    behaverify_variables[variable.name]['existing_definitions'] = {}
-                    behaverify_variables[variable.name]['initial_value'] = variable
-                    behaverify_variables[var_key]['depends_on'] = tuple(sorted(list(set(find_used_variables_without_formatting_in_statement(variable, is_array(variable), None)))))
-            else:
-                if is_local(variable):
-                    # this is handled below.
-                    pass
-                else:
-                    behaverify_variables[var_key]['initial_value'] = handle_variable_statement(variable, None, create_misc_args({}, None, True, False, None, None, False, False))
-
+                behaverify_variables[variable.name]['existing_definitions'] = {}
+                behaverify_variables[var_key]['depends_on'] = tuple(sorted(list(set(find_used_variables_without_formatting_in_statement(variable, is_array(variable), None)))))
+                define_substitutions = {
+                    sub_key : 'SUBSTITUTE_' + str(index) + '_ME'
+                    for (index, sub_key) in enumerate(behaverify_variables[var_key]['depends_on'])
+                }
+                define_substitutions[var_key] = 'SUBSTITUTE_SELF'
+            behaverify_variables[var_key]['initial_value'] = handle_variable_statement(variable, None, create_misc_args(loop_references = {}, node_name = None, use_stages = True, overwrite_stage = None, define_substitutions = define_substitutions, specification_writing = False, specification_warning = False))
+            if is_array(variable):
+                behaverify_variables[var_key]['default_array_val'] = handle_assign(variable.default_value, create_misc_args(loop_references = {}, node_name = None, use_stages = True, overwrite_stage = None, define_substitutions = define_substitutions, specification_writing = False, specification_warning = False))
+        # at this point we've finished everything that isn't a local variable.
         # create local variables.
         for (node_name, variable) in local_variables:
-            new_name = variable_reference(variable.name, True, node_name)
+            var_key = variable_reference(variable.name, True, node_name)
             new_var = copy.deepcopy(local_variable_templates[variable.name])
-            behaverify_variables[new_name] = new_var
-            new_var['name'] = new_name
+            behaverify_variables[var_key] = new_var
+            behaverify_variables[var_key]['name'] = var_key
+            define_substitutions = None
             if variable.model_as == 'DEFINE':
-                new_var['existing_definitions'] = {}
-                new_var['initial_value'] = variable
-                new_var['depends_on'] = tuple(sorted(list(set(find_used_variables_without_formatting_in_statement(variable, is_array(variable), None)))))
-            else:
-                new_var['initial_value'] = handle_variable_statement(variable, None, create_misc_args({}, node_name, True, False, None, None, False, False))
-
+                behaverify_variables[var_key]['existing_definitions'] = {}
+                behaverify_variables[var_key]['depends_on'] = tuple(sorted(list(set(find_used_variables_without_formatting_in_statement(variable, is_array(variable), None)))))
+                define_substitutions = {
+                    sub_key : 'SUBSTITUTE_' + str(index) + '_ME'
+                    for (index, sub_key) in enumerate(behaverify_variables[var_key]['depends_on'])
+                }
+                define_substitutions[var_key] = 'SUBSTITUTE_SELF'
+            behaverify_variables[var_key]['initial_value'] = handle_variable_statement(variable, None, create_misc_args(loop_references = {}, node_name = node_name, use_stages = True, overwrite_stage = None, define_substitutions = define_substitutions, specification_writing = False, specification_warning = False))
+            if is_array(variable):
+                behaverify_variables[var_key]['default_array_val'] = handle_assign(variable.default_value, create_misc_args(loop_references = {}, node_name = None, use_stages = True, overwrite_stage = None, define_substitutions = define_substitutions, specification_writing = False, specification_warning = False))
         # handle initial statements FOR DEFINE ONLY.
         # we have to parse and update this first. only after that can we go through non-define macros.
         # this is so we populate the definitions and what not.
@@ -811,25 +760,32 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
             for argument_name in argument_pairs:
                 constants[argument_name] = argument_pairs[argument_name]
             assign_var = initial_statement.variable
-            var_key = variable_reference(assign_var.name, is_local(assign_var), node_name)
-            if is_array(assign_var):
-                behaverify_variables[var_key]['default_array_val'] = handle_assign(initial_statement.default_value, create_misc_args({}, node_name, True, False, None, None, False, False))
             if assign_var.model_as == 'DEFINE':
-                behaverify_variables[var_key]['initial_value'] = initial_statement
+                var_key = variable_reference(assign_var.name, is_local(assign_var), node_name)
+                behaverify_variables[var_key]['existing_definitions'] = {}
+                behaverify_variables[var_key]['depends_on'] = tuple(sorted(list(set(find_used_variables_without_formatting_in_statement(initial_statement, is_array(assign_var), node_name)))))
+                define_substitutions = {
+                    sub_key : 'SUBSTITUTE_' + str(index) + '_ME'
+                    for (index, sub_key) in enumerate(behaverify_variables[var_key]['depends_on'])
+                }
+                define_substitutions[var_key] = 'SUBSTITUTE_SELF'
+                behaverify_variables[var_key]['initial_value'] = handle_variable_statement(initial_statement, None, create_misc_args(loop_references = {}, node_name = node_name, use_stages = True, overwrite_stage = None, define_substitutions = define_substitutions, specification_writing = False, specification_warning = False))
+                if is_array(assign_var):
+                    behaverify_variables[var_key]['default_array_val'] = handle_assign(initial_statement.default_value, create_misc_args(loop_references = {}, node_name = node_name, use_stages = True,  overwrite_stage = None, define_substitutions = define_substitutions, specification_writing = False, specification_warning = False))
             for argument_name in argument_pairs:
                 constants.pop(argument_name)
+        # now we go through all the not define.
         for (node_name, argument_pairs, initial_statement) in initial_statements:
             for argument_name in argument_pairs:
                 constants[argument_name] = argument_pairs[argument_name]
             assign_var = initial_statement.variable
-            var_key = variable_reference(assign_var.name, is_local(assign_var), node_name)
-            if is_array(assign_var):
-                behaverify_variables[var_key]['default_array_val'] = handle_assign(initial_statement.default_value, create_misc_args({}, node_name, True, False, None, None, False, False))
             if assign_var.model_as != 'DEFINE':
-                behaverify_variables[var_key]['initial_value'] = handle_variable_statement(initial_statement, None, create_misc_args({}, node_name, True, False, None, None, False, False))
+                var_key = variable_reference(assign_var.name, is_local(assign_var), node_name)
+                behaverify_variables[var_key]['initial_value'] = handle_variable_statement(initial_statement, None, create_misc_args(loop_references = {}, node_name = node_name, use_stages = True, overwrite_stage = None, define_substitutions = None, specification_writing = False, specification_warning = False))
+                if is_array(assign_var):
+                    behaverify_variables[var_key]['default_array_val'] = handle_assign(initial_statement.default_value, create_misc_args(loop_references = {}, node_name = node_name, use_stages = True, overwrite_stage = None, define_substitutions = None, specification_writing = False, specification_warning = False))
             for argument_name in argument_pairs:
                 constants.pop(argument_name)
-
         return behaverify_variables
 
     def create_composite(current_node, node_name, modifier, node_names, node_names_map, parent_name):
@@ -1021,35 +977,17 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
     (model, variables, constants, declared_enumerations) = validate_model(metamodel_file, model_file, recursion_limit)
     hyper_mode = model.hypersafety
     use_reals = model.use_reals
-    # specification_writing = False  # this is used to track whether or not code should make references to the trace and system or not.
-    # serene_index = []
     behaverify_variables = {}
-    # spec_warn = False
 
     (_, _, _, nodes, local_variables, initial_statements, statements) = walk_tree(model.root)
-    # print('finished tree walk')
 
     behaverify_variables = {} # here to make sure the variable is in the namespace.
     behaverify_variables = get_behaverify_variables(model, local_variables, initial_statements, keep_stage_0, keep_last_stage)
-    print(behaverify_variables['envDEFINE6'])
-    # print(behaverify_variables)
-    # print('finished variables')
-    tick_condition = 'TRUE' if model.tick_condition is None else format_code(model.tick_condition, create_misc_args({}, None, True, False, None, None, False, False))[0]
+    tick_condition = 'TRUE' if model.tick_condition is None else format_code(model.tick_condition, create_misc_args(loop_references = {}, node_name = None, use_stages = True, overwrite_stage = None, define_substitutions = None, specification_writing = False, specification_warning = False))[0]
     complete_environment_variables(model, True)
-    # print('completed environment variables, part 1')
     resolve_statements(statements, nodes)
-    # print('resolved_statements')
     complete_environment_variables(model, False)
-    # print('completed environment variables, part 2')
-    # specification_writing = True
-    # spec_warn = True
     specifications = handle_specifications(model.specifications)
-    # spec_warn = False
-    print(behaverify_variables['envDEFINE6'])
-    print('---------------------------------')
-    print('---------------------------------')
-    print('---------------------------------')
-    print(behaverify_variables['envDEFINE6']['next_value'][-1])
 
     if behave_only:
         if output_file is None:
