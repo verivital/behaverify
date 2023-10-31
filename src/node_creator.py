@@ -5,12 +5,11 @@ It contains a variety of functions to format BehaVerify for use with nuXmv.
 
 
 Author: Serena Serafina Serbinowska
-First Created: 2022-01-01 (Date not correct)
-Last Edit: 2023-09-04 
+Last Edit: 2023-10-31 
 '''
 import os
+import re
 from behaverify_common import indent
-
 
 def create_names_module(node_name_to_number):
     return ('MODULE define_nodes' + os.linesep
@@ -21,11 +20,13 @@ def create_names_module(node_name_to_number):
 
 def create_blackboard(nodes, variables, root_node_name):
 
+    def create_replace_define_placeholders_function(replacement_dictionary):
+        return (lambda match_object: replace_define_placeholders(replacement_dictionary, match_object))
+
+    def replace_define_placeholders(replacement_dictionary, match_object):
+        return replacement_dictionary[match_object.group(0)]
+
     def write_cases(active_node_name, default_value, condition_pairs, indent_level):
-        # print('-------------')
-        # print(condition_pairs)
-        # for condition_pair in condition_pairs:
-        #     print(condition_pair)
         if active_node_name is None and len(condition_pairs) == 1:
             return (' ' + condition_pairs[0][1] + ';' + os.linesep)
         return (
@@ -94,7 +95,7 @@ def create_blackboard(nodes, variables, root_node_name):
             force_constant = False
         else:
             # this means we pruned a node, but it was updating a variable. since the node was unreachable, it was never going to update anything
-            # therefore, we cna force constant.
+            # therefore, we can force constant.
             active_node_name = 'FALSE'
             force_constant = True
         return (active_node_name, force_constant)
@@ -116,8 +117,21 @@ def create_blackboard(nodes, variables, root_node_name):
                 False : write_cases(None, None, variable['default_array_val'][1], 5)
             }
             if variable['mode'] == 'DEFINE':
+                if len(variable['existing_definitions']) == 0: # nothing to do.
+                    continue
+                (_, constant_index, _, indexed_cond_pairs) = variable['initial_value']
+                for existing_definition in variable['existing_definitions']:
+                    stage_num = variable['existing_definitions'][existing_definition]
+                    temp_string = handle_initial_value(constant_index, indexed_cond_pairs, variable['array_size'], None, stage_name, stage_num, default_array_cases[constant_index], 2)
+                    replacement_dictionary = {
+                        'SUBSTITUTE_' + str(index) + '_ME' : sub_var
+                        for (index, sub_var) in enumerate(existing_definition)
+                    }
+                    replacement_dictionary['SUBSTITUTE_SELF'] = stage_name + str(stage_num)
+                    define_string += re.sub(r'SUBSTITUTE_[0-9]+_ME', create_replace_define_placeholders_function(replacement_dictionary), temp_string)
                 for stage_num, (_, constant_index, _, indexed_cond_pairs) in enumerate(variable['next_value']):
-                    define_string += handle_initial_value(constant_index, indexed_cond_pairs, variable['array_size'], None, stage_name, stage_num, default_array_cases[constant_index], 2)
+                    temp_string = handle_initial_value(constant_index, indexed_cond_pairs, variable['array_size'], None, stage_name, stage_num, default_array_cases[constant_index], 2)
+                    define_string += temp_string
             elif variable['mode'] == 'FROZENVAR' or len(variable['next_value']) == 0:
                 frozenvar_string += ''.join(
                     [
@@ -253,12 +267,21 @@ def create_blackboard(nodes, variables, root_node_name):
             # NOT AN ARRAY
             # define are static.
             if variable['mode'] == 'DEFINE':
-                if len(variable['next_value']) > 0:
-                    for stage_num, (_, _, condition_pairs) in enumerate(variable['next_value']):
-                        define_string += (
-                            indent(2) + stage_name + str(stage_num) + ' :='
-                            + write_cases(None, None, condition_pairs, 3)
-                        )
+                if len(variable['existing_definitions']) == 0: # nothing to do.
+                    continue
+                (_, _, condition_pairs) = variable['initial_value']
+                for existing_definition in variable['existing_definitions']:
+                    stage_num = variable['existing_definitions'][existing_definition]
+                    temp_string = (
+                        indent(2) + stage_name + str(stage_num) + ' :='
+                        + write_cases(None, None, condition_pairs, 3)
+                    )
+                    replacement_dictionary = {
+                        'SUBSTITUTE_' + str(index) + '_ME' : sub_var
+                        for (index, sub_var) in enumerate(existing_definition)
+                    }
+                    replacement_dictionary['SUBSTITUTE_SELF'] = stage_name + str(stage_num)
+                    define_string += re.sub(r'SUBSTITUTE_[0-9]+_ME', create_replace_define_placeholders_function(replacement_dictionary), temp_string)
             elif variable['mode'] == 'FROZENVAR' or len(variable['next_value']) == 0:
                 frozenvar_string += (indent(2) + '' + stage_name + '0 : '
                                      + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean')))
