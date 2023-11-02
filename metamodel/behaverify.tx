@@ -144,6 +144,8 @@ node:
     (model_as = 'FROZENVAR' domain = variable_domain) |
     (model_as = 'DEFINE' ((domain = 'INT') | (domain = 'ENUM') | (domain = 'BOOLEAN') | (domain = 'REAL'))))
     assign = assign_value))
+    |
+    (model_as = 'NEURAL' 'inputs' '{' inputs += code_statement[','] '}' ('end_inputs')? 'num_outputs' '{' num_outputs = code_statement '}' ('end_num_outputs')? 'source' '{' source = code_statement '}' ('end_source')?)
     '}' ('end_variable')?
 ;
     variable_domain:
