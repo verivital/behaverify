@@ -16,9 +16,6 @@ def update_dictionary(dictionary, key, value):
     new_dictionary[key] = value
     return new_dictionary
 
-
-EMPTY = ({}, {})
-
 def serene_loop(function_call):
     sub_func = build_meta_func(function_call.values[0])
     def evaluate_loop(references):
@@ -142,7 +139,11 @@ def build_meta_func(code):
                 (
                     serene_if(code.function_call)
                     if code.function_call.function_name == 'if' else
-                    create_lambda_to_apply_function(*FUNCTIONS[code.function_call.function_name], code.function_call.values)
+                    (
+                        build_meta_func(code.function_call.to_index)  # this should only be used when doing neural network reachability stuff.
+                        if code.function_call.function_name == 'index' else
+                        create_lambda_to_apply_function(*FUNCTIONS[code.function_call.function_name], code.function_call.values)
+                    )
                 )
             )
         )

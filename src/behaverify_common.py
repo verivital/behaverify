@@ -4,7 +4,7 @@ It contains a variety of utility functions.
 
 
 Author: Serena Serafina Serbinowska
-Last Edit: 2023-09-27
+Last Edit: 2023-11-03
 '''
 # if not array
 
@@ -45,15 +45,19 @@ def get_min_max(min_code, max_code, declared_enumerations, node_names, variables
         min_func = build_meta_func(min_code)
         min_val = resolve_potential_reference_no_type(min_func((constants, loop_references))[0], declared_enumerations, node_names, variables, constants, loop_references)[1]
     else:
-        min_val = 0
+        # min_val = 0
+        return None
     if max_code is not None:
         max_func = build_meta_func(max_code)
         max_val = resolve_potential_reference_no_type(max_func((constants, loop_references))[0], declared_enumerations, node_names, variables, constants, loop_references)[1]
     else:
-        max_val = 1
+        # max_val = 1
+        return None
     return (min_val, max_val)
 
 def variable_array_size(variable, declared_enumerations, node_names, variables, constants, loop_references):
+    if variable.model_as == 'NEURAL':
+        return resolve_potential_reference_no_type((build_meta_func(variable.num_outputs)((constants, loop_references)))[0], declared_enumerations, node_names, variables, constants, loop_references)[1]
     array_size_func = build_meta_func(variable.array_size)
     return resolve_potential_reference_no_type(array_size_func((constants, loop_references))[0], declared_enumerations, node_names, variables, constants, loop_references)[1]
 
@@ -183,6 +187,8 @@ def dummy_value(arg_type, declared_enumerations):
 
 def variable_type(variable, declared_enumerations, constants):
     '''Used to determine the variable type'''
+    if variable.model_as == 'NEURAL':
+        return 'INT'
     if variable.model_as == 'DEFINE':
         return variable.domain
     if variable.domain.boolean is not None:
@@ -239,8 +245,8 @@ def create_variable_template(name, mode, array_size, custom_value_range, min_max
         'array' : array_size is not None,
         'array_size' : None if array_size is None else array_size,
         'custom_value_range' : custom_value_range,
-        'min_value' : min_max_pair[0],
-        'max_value' : min_max_pair[1],
+        'min_value' : min_max_pair[0] if min_max_pair is not None else None,
+        'max_value' : min_max_pair[1] if min_max_pair is not None else None,
         'initial_value' : initial_value,
         'next_value' : next_value,
         'keep_stage_0' : keep_stage_0,  # keep stage_0 takes precedence over keep_last_stage. if keep_stage_0 is false, keep_last_stage is ignored.

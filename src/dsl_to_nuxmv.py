@@ -3,7 +3,7 @@ This module is part of BehaVerify and used to convert .tree files to .smv files 
 
 
 Author: Serena Serafina Serbinowska
-Last Edit: 2023-10-31
+Last Edit: 2023-11-03
 '''
 import argparse
 import pprint
@@ -650,49 +650,97 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
                 return used_variables
             return find_used_variables_without_formatting_in_assign(statement.assign, create_misc_args(loop_references = {}, node_name = node_name, use_stages = False, overwrite_stage = False, define_substitutions = None, specification_writing = False, specification_warning = False))
 
+        def create_possible_values(var_keys):
+            # does not work with local variables. Doesn't need to; neural networks cannot be local, and therefore cannot depends on local variables.
+            possible_values = []
+            for var_key in var_keys:
+                fix_domain_of_variable(var_key)
+                variable = behaverify_variables[var_key]
+                domain =  variable['custom_value_range'] if variable['custom_value_range'] is not None else set(range(variable['min_value'], variable['max_value'] + 1))
+                var_name = (var_key_to_obj[var_key]).name
+                if len(possible_values) == 0:
+                    possible_values = [[(var_name, val)] for val in domain]
+                else:
+                    possible_values = [[*old_val, (var_name, val)] for val in domain for old_val in possible_values]
+            return possible_values
+        def possible_values_from_loop_array_index(loop_array_index, packaged_args, misc_args):
+            loop_references = misc_args['loop_references']
+            (list_of_list_of_inputs, ) = packaged_args
+            if loop_array_index.array_index is not None:
+                return possible_values_from_assign(loop_array_index.array_index.assign, list_of_list_of_inputs, loop_references)
+            return set(execute_loop(loop_array_index, possible_values_from_loop_array_index, packaged_args, misc_args))
+        def possible_values_from_assign(assign, list_of_list_of_inputs, loop_references):
+            domain_values = set()
+            value_funcs = []
+            for case_result in assign.case_results:
+                value_funcs.append(build_meta_func(case_result.values[0]))
+            value_funcs.append(assign.default_result.values[0])
+            for list_of_inputs in list_of_list_of_inputs:
+                new_loop_references = dict(list_of_inputs)
+                new_loop_references.update(loop_references)
+                for value_func in value_funcs:
+                    domain_values.add(resolve_potential_reference_no_type(value_func((constants, loop_references))[0], declared_enumerations, {}, {}, constants, new_loop_references))
+            return domain_values
+        def fix_domain_of_variable(var_key):
+            # does not work with local variables. Doesn't need to; neural networks cannot be local, and therefore cannot depends on local variables.
+            variable = behaverify_variables[var_key]
+            if variable['mode'] != 'DEFINE' or variable['custom_value_range'] is not None or variable['min_value'] is not None:
+                return
+            var_obj = var_key_to_obj[var_key]
+            list_of_list_of_inputs = create_possible_values(variable['depends_on'])
+            if variable['array_size'] is not None:
+                domain_values = possible_values_from_assign(var_obj.default_value, list_of_list_of_inputs, {})
+                for loop_array_index in var_obj.assigns:
+                    domain_values.update(possible_values_from_loop_array_index(loop_array_index, (list_of_list_of_inputs, ), create_misc_args(loop_references = {}, node_name = None, use_stages = False, overwrite_stage = None, define_substitutions = None, specification_writing = False, specification_warning = False)))
+            else:
+                domain_values = possible_values_from_assign(var_obj.assign, list_of_list_of_inputs, {})
+            variable['custom_value_range'] = domain_values
+            return
+
         # create each variable type using the template.
         nonlocal behaverify_variables  # this is necessary right now because we need to be able to access already created variables during other variable initializations.
         # specifically, if we make var A, and then var B depends on var A, it will assume var A is in behaverify_variables
+        var_key_to_obj = {variable_reference(variable.name, False, None) : variable for variable in model.variables if not is_local(variable)} if model.neural else None
         behaverify_variables = {
             variable_reference(variable.name, False, '') :
             (
-                create_variable_template(variable.name, variable.model_as, variable_array_size(variable, {}, {}, {}, constants, {}) if is_array(variable) else None, None, (0, 0), None, [], True, True)
-                if variable.model_as == 'DEFINE' else
-                create_variable_template(variable.name, variable.model_as, variable_array_size(variable, {}, {}, {}, constants, {}) if is_array(variable) else None,
-                                         (
-                                             '{TRUE, FALSE}'
-                                             if variable.domain.boolean is not None else
+                create_variable_template(variable.name, 'DEFINE', variable_array_size(variable, {}, {}, {}, constants, {}), None, None, None, [], True, True)
+                if variable.model_as == 'NEURAL' else
+                (
+                    create_variable_template(variable.name, variable.model_as, variable_array_size(variable, {}, {}, {}, constants, {}) if is_array(variable) else None, None, None, None, [], True, True)
+                    if variable.model_as == 'DEFINE' else
+                    create_variable_template(variable.name, variable.model_as, variable_array_size(variable, {}, {}, {}, constants, {}) if is_array(variable) else None,
                                              (
-                                                 'integer'
-                                                 if variable.domain.true_int is not None else
+                                                 {True, False}
+                                                 if variable.domain.boolean is not None else
                                                  (
-                                                     'real'
-                                                     if variable.domain.true_real is not None else
+                                                     'integer'
+                                                     if variable.domain.true_int is not None else
                                                      (
-                                                         None
-                                                         if variable.domain.min_val is not None else
+                                                         'real'
+                                                         if variable.domain.true_real is not None else
                                                          (
-                                                             '{'
-                                                             + ', '.join([''.join(map(str, build_meta_func(domain_code)((constants, {})))) for domain_code in variable.domain.domain_codes])
-                                                             + '}'
+                                                             None
+                                                             if variable.domain.min_val is not None else
+                                                             {val for domain_code in variable.domain.domain_codes for val in build_meta_func(domain_code)((constants, {}))}
                                                          )
                                                      )
                                                  )
+                                             ),
+                                             get_min_max(variable.domain.min_val, variable.domain.max_val, {}, {}, {}, constants, {}),
+                                             None, [], keep_stage_0, keep_last_stage
                                              )
-                                         ),
-                                         get_min_max(variable.domain.min_val, variable.domain.max_val, {}, {}, {}, constants, {}),
-                                         None, [], keep_stage_0, keep_last_stage
-                                         )
+                )
             ) for variable in model.variables if not is_local(variable)
         }
         local_variable_templates = {
             variable.name :
             (
-                create_variable_template(variable.name, variable.model_as, variable_array_size(variable, {}, {}, {}, constants, {}) if is_array(variable) else None, None, (0, 0), None, [], True, True)
+                create_variable_template(variable.name, variable.model_as, variable_array_size(variable, {}, {}, {}, constants, {}) if is_array(variable) else None, None, None, None, [], True, True)
                 if variable.model_as == 'DEFINE' else
                 create_variable_template(variable.name, variable.model_as, variable_array_size(variable, {}, {}, {}, constants, {}) if is_array(variable) else None,
                                          (
-                                             '{TRUE, FALSE}'
+                                             {True, False}
                                              if variable.domain.boolean is not None else
                                              (
                                                  'integer'
@@ -703,11 +751,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
                                                      (
                                                          None
                                                          if variable.domain.min_val is not None else
-                                                         (
-                                                             '{'
-                                                             + ', '.join([''.join(map(str, build_meta_func(domain_code)((constants, {})))) for domain_code in variable.domain.domain_codes])
-                                                             + '}'
-                                                         )
+                                                         {val for domain_code in variable.domain.domain_codes for val in build_meta_func(domain_code)((constants, {}))}
                                                      )
                                                  )
                                              )
@@ -722,6 +766,57 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
             var_key = variable_reference(variable.name, is_local(variable), '')
             if is_local(variable):
                 continue  # this is handled below
+            if variable.model_as == 'NEURAL':
+                behaverify_variables[variable.name]['existing_definitions'] = {}
+                depends_on = set()
+                domain_values = set()
+                input_order = []
+                for input_code in variable.inputs:
+                    input_func = build_meta_func(input_code)
+                    variable_inputs = input_func((constants, {}))
+                    for variable_input in variable_inputs:
+                        (atom_class, atom) = resolve_potential_reference_no_type(variable_input, declared_enumerations, {}, variables, constants, {})
+                        if atom_class == 'VARIABLE':
+                            depends_on.add(variable_reference(atom.name, False, None))
+                        input_order.append((atom_class, atom))
+                behaverify_variables[var_key]['depends_on'] = tuple(sorted(list(depends_on)))
+                define_substitutions = {
+                    sub_key : 'SUBSTITUTE_' + str(index) + '_ME'
+                    for (index, sub_key) in enumerate(behaverify_variables[var_key]['depends_on'])
+                }
+                define_substitutions[var_key] = 'SUBSTITUTE_SELF'
+                list_of_list_of_inputs = create_possible_values(behaverify_variables[var_key]['depends_on'])
+                file_prefix = model_file.rsplit('/', 1)[0]
+                source_func = build_meta_func(variable.source)
+                source_vals = source_func((constants, {}))
+                source = source_vals[0]
+                source = resolve_potential_reference_no_type(source, declared_enumerations, {}, variables, constants, {})[1]
+                source = file_prefix + '/' + source
+                session = onnxruntime.InferenceSession(source)
+                input_name = session.get_inputs()[0].name
+                cur_stage = []
+                for index in range(behaverify_variables[var_key]['array_size']):
+                    cur_stage.append((index, []))
+                for list_of_inputs in list_of_list_of_inputs:
+                    cur_ref = dict(list_of_inputs)
+                    current_input = []
+                    for (atom_class, atom) in input_order:
+                        if atom_class == 'VARIABLE':
+                            current_input.append(cur_ref[atom.name])
+                        else:
+                            current_input.append(atom)
+                    current_outputs = session.run(None, {input_name : [current_input]})
+                    condition = ' & '.join(['(' + define_substitutions[variable_reference(var_name, False, None)] + ' = ' + str(var_val) + ')' for (var_name, var_val) in list_of_inputs])
+                    for index in range(len(current_outputs[0][0])):
+                        output = int(current_outputs[0][0][index])
+                        cur_stage[index][1].append((condition, str(output)))
+                        domain_values.add(output)
+                for index in range(behaverify_variables[var_key]['array_size']):
+                    cur_stage[index][1].append(('TRUE', '66'))
+                behaverify_variables[var_key]['initial_value'] = (None, True, {index : False for index in range(behaverify_variables[var_key]['array_size'])}, cur_stage)
+                behaverify_variables[var_key]['custom_value_range'] = domain_values
+                behaverify_variables[var_key]['default_array_val'] = (False, [('TRUE', '66')])
+                continue  # don't do the other stuff for neural networks
             define_substitutions = None
             if variable.model_as == 'DEFINE':
                 behaverify_variables[variable.name]['existing_definitions'] = {}
@@ -894,8 +989,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
         modifier = new_name[1]
         return (
             create_node[current_node.node_type](current_node, node_name, modifier, node_names, node_names_map, parent_name)
-            if argument_pairs is None
-            else
+            if argument_pairs is None else
             create_node[current_node.node_type](current_node, argument_pairs, node_name, modifier, node_names, node_names_map, parent_name)
         )
 
@@ -977,6 +1071,8 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
     (model, variables, constants, declared_enumerations) = validate_model(metamodel_file, model_file, recursion_limit)
     hyper_mode = model.hypersafety
     use_reals = model.use_reals
+    if model.neural:
+        import onnxruntime
     behaverify_variables = {}
 
     (_, _, _, nodes, local_variables, initial_statements, statements) = walk_tree(model.root)
@@ -988,6 +1084,16 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
     resolve_statements(statements, nodes)
     complete_environment_variables(model, False)
     specifications = handle_specifications(model.specifications)
+
+    for var_key in behaverify_variables:
+        if behaverify_variables[var_key]['custom_value_range'] in ('integer', 'real'):
+            continue
+        if behaverify_variables[var_key]['min_value'] is not None:
+            behaverify_variables[var_key]['custom_value_range'] = str(behaverify_variables[var_key]['min_value']) + '..' + str(behaverify_variables[var_key]['max_value'])
+        elif behaverify_variables[var_key]['custom_value_range'] is not None:
+            behaverify_variables[var_key]['custom_value_range'] = '{' + ', '.join(map(str, behaverify_variables[var_key]['custom_value_range'])) + '}'
+            behaverify_variables[var_key]['custom_value_range'] = behaverify_variables[var_key]['custom_value_range'].replace('{True, False}', 'boolean')
+            behaverify_variables[var_key]['custom_value_range'] = behaverify_variables[var_key]['custom_value_range'].replace('{False, True}', 'boolean')
 
     if behave_only:
         if output_file is None:
