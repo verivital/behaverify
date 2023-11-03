@@ -5,10 +5,11 @@ It contains a variety of utility functions.
 
 
 Author: Serena Serafina Serbinowska
-Last Edit: 2023-10-27
+Last Edit: 2023-11-03
 '''
 import argparse
 import os
+import shutil
 import itertools
 from behaverify_common import indent, create_node_name, is_local, is_env, is_blackboard, is_array, handle_constant_or_reference, resolve_potential_reference_no_type, variable_array_size, get_min_max, variable_type, BTreeException, constant_type
 from serene_functions import build_meta_func
@@ -361,6 +362,25 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
             )
             return (variable_assignment(variable, assign_string, misc_args, array_mode = True) if assign_to_var else assign_string)
         return (variable_assignment(variable, handle_assign(variable_statement.assign, misc_args), misc_args, array_mode = False) if assign_to_var else handle_assign(variable_statement.assign, misc_args))
+
+    def create_neural_network(variable, misc_args):
+        file_prefix = model_file.rsplit('/', 1)[0]
+        source_func = build_meta_func(variable.source)
+        source_vals = source_func((constants, {}))
+        source = source_vals[0]
+        source = resolve_potential_reference_no_type(source, declared_enumerations, {}, variables, constants, {})[1]
+        shutil.copy(file_prefix + '/' + source, write_location + '/' + source)
+        # NOT DONE. Need some way of storing the network
+        # current idea: have some variable like variable.name + '__actual__network' which this call.
+        # ugh, what a pain.
+        return (
+            os.linesep + os.linesep
+            + indent(misc_args['indent_level']) + 'def ' + variable.name + '(index):' + os.linesep
+            + indent(misc_args['indent_level'] + 1) + 'if type(index) is not int:' + os.linesep
+            + indent(misc_args['indent_level'] + 2) + "raise TypeError('Index must be an int when accessing " + variable.name + ": ' + str(type(index)))" + os.linesep
+            + indent(misc_args['indent_level'] + 1) + 'if index < 0 or index >= ' + str(variable_array_size_map[variable.name]) + ':' + os.linesep
+            + indent(misc_args['indent_level'] + 2) + "raise ValueError('Index out of bounds when accessing " + variable.name + ": ' + str(index))" + os.linesep
+        )
 
     def create_variable_macro(variable_statement, misc_args):
         variable = variable_statement.variable if hasattr(variable_statement, 'variable') else variable_statement
@@ -997,6 +1017,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
         initial_misc_args = create_misc_args(True, 'environment', 2)
         to_write = (
             'import random' + os.linesep
+            + (('import onnxruntime' + os.linesep) if model.neural else '')
             + 'import serene_safe_assignment' + os.linesep
             + os.linesep + os.linesep
             + 'class ' + project_environment_name + '():' + os.linesep
@@ -1040,14 +1061,18 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
             + (os.linesep if any(map(is_env, model.variables)) else '')
             + ''.join(
                 [
-                    create_variable_macro(variable, initial_misc_args)
-                    if variable.model_as == 'DEFINE' else
+                    create_neural_network(variable, initial_misc_args)
+                    if variable.model_as == 'NEURAL' else
                     (
+                        create_variable_macro(variable, initial_misc_args)
+                        if variable.model_as == 'DEFINE' else
                         (
-                            (indent(2) + format_variable(variable, initial_misc_args) + ' = [' + handle_assign(variable.default_value, initial_misc_args) + ' for _ in range(' + str(variable_array_size_map[variable.name]) + ')]' + os.linesep)
-                            if is_array(variable) else
-                            ''
-                        ) + handle_variable_statement(variable, initial_misc_args, assign_to_var = True)
+                            (
+                                (indent(2) + format_variable(variable, initial_misc_args) + ' = [' + handle_assign(variable.default_value, initial_misc_args) + ' for _ in range(' + str(variable_array_size_map[variable.name]) + ')]' + os.linesep)
+                                if is_array(variable) else
+                                ''
+                            ) + handle_variable_statement(variable, initial_misc_args, assign_to_var = True)
+                        )
                     )
                     for variable in model.variables if is_env(variable)
                 ]

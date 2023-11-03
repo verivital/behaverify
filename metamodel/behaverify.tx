@@ -5,6 +5,7 @@ BehaviorModel:
     'configuration' '{'
     (hypersafety ?= 'hypersafety')
     (use_reals ?= 'use_reals')
+    (neural ?= 'neural')
     '}' ('end_configuration')?
     'enumerations' '{'
     enumerations *= STRING[',']
@@ -143,9 +144,9 @@ node:
     (((model_as = 'VAR' domain = variable_domain) |
     (model_as = 'FROZENVAR' domain = variable_domain) |
     (model_as = 'DEFINE' ((domain = 'INT') | (domain = 'ENUM') | (domain = 'BOOLEAN') | (domain = 'REAL'))))
-    assign = assign_value))
+    assign = assign_value)
     |
-    (model_as = 'NEURAL' 'inputs' '{' inputs += code_statement[','] '}' ('end_inputs')? 'num_outputs' '{' num_outputs = code_statement '}' ('end_num_outputs')? 'source' '{' source = code_statement '}' ('end_source')?)
+    (model_as = 'NEURAL' 'inputs' '{' inputs += code_statement[','] '}' ('end_inputs')? 'num_outputs' '{' num_outputs = code_statement '}' ('end_num_outputs')? 'source' '{' source = code_statement '}' ('end_source')?))
     '}' ('end_variable')?
 ;
     variable_domain:

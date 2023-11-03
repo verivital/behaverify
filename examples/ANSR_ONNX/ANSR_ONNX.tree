@@ -1,5 +1,6 @@
 configuration {
     #{ Here you specify various configuration options, such as Hypersafety }#
+    neural
 }
 enumerations {
     #{ here you specify the enumerations used in the model}#

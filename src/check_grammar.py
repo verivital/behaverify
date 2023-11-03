@@ -5,17 +5,19 @@ It contains a variety of utility functions.
 
 
 Author: Serena Serafina Serbinowska
-Last Edit: 2023-10-27
+Last Edit: 2023-11-03
 '''
 import itertools
 import re
 import sys
+from os.path import isfile
 import textx
 from serene_functions import build_meta_func
 from behaverify_common import (create_node_name,
                                BTreeException,
                                handle_constant_or_reference,
                                resolve_potential_reference,
+                               resolve_potential_reference_no_type,
                                constant_type,
                                dummy_value,
                                variable_type,
@@ -364,7 +366,6 @@ def validate_model(metamodel_file, model_file, recursion_limit):
             loop_references.pop(loop_variable)
         return seen_constants
 
-
     def validate_array_assign(statement, scopes, variable_names, deterministic = True, init_mode = None):
         assign_var = statement.variable if hasattr(statement, 'variable') else statement
         trace.append('In Array Assignment for: ' + assign_var.name)
@@ -381,7 +382,6 @@ def validate_model(metamodel_file, model_file, recursion_limit):
                 seen_constants.update(new_constants)
         trace.pop()
         return
-
 
     def validate_check(node):
         trace.append('In Check: ' + node.name)
@@ -409,7 +409,6 @@ def validate_model(metamodel_file, model_file, recursion_limit):
             loop_references.pop(arg_pair.argument_name)
         trace.pop()
         return
-
 
     def validate_action(node):
         trace.append('In Action: ' + node.name)
@@ -552,6 +551,52 @@ def validate_model(metamodel_file, model_file, recursion_limit):
 
     def validate_variable(variable, scopes, variable_names):
         trace.append('In Variable: ' + variable.name)
+        if variable.model_as == 'NEURAL':
+            if not model.neural:
+                raise BTreeException(trace, 'Model configuration did not include \'neural\' but uses neural networks')
+            num_inputs = 0
+            for input_code in variable.inputs:
+                variable_func = build_meta_func(input_code)
+                input_variables = variable_func((constants, {}))
+                for input_variable in input_variables:
+                    (atom_class, atom_type, _) = resolve_potential_reference(input_variable, declared_enumerations, all_node_names, variables, constants, {})
+                    if atom_class not in ('VARIABLE', 'CONSTANT'):
+                        raise BTreeException(trace, 'Neural Network has an input of class: ' + str(atom_class) + '. Neural network inputs must be of class VARIABLE or CONSTANT')
+                    if atom_type != 'INT':
+                        raise BTreeException(trace, 'Neural Network inputs must be of type INT')
+                num_inputs += len(input_variables)
+            output_func = build_meta_func(variable.num_outputs)
+            output_vals = output_func((constants, {}))
+            if len(output_vals) != 1:
+                raise BTreeException(trace, 'Neural Network output size must resolve to a single integer value. Received: ' + str(len(output_vals)))
+            num_outputs = output_vals[0]
+            (atom_class, atom_type, num_outputs) = resolve_potential_reference(num_outputs, declared_enumerations, all_node_names, variables, constants, {})
+            if atom_class != 'CONSTANT':
+                raise BTreeException(trace, 'Neural Network output size must be a constant')
+            if atom_type != 'INT':
+                raise BTreeException(trace, 'Neural Network output size must be an INT')
+            file_prefix = model_file.rsplit('/', 1)[0]
+            source_func = build_meta_func(variable.source)
+            source_vals = source_func((constants, {}))
+            if len(source_vals) != 1:
+                raise BTreeException(trace, 'Neural Networks must have exactly 1 source file. Received: ' + str(len(source_vals)))
+            source = source_vals[0]
+            (atom_class, source) = resolve_potential_reference_no_type(source, declared_enumerations, all_node_names, variables, constants, {})
+            if atom_class != 'CONSTANT':
+                raise BTreeException(trace, 'Neural Network source must be a constant')
+            source = file_prefix + '/' + source
+            if not isfile(source):
+                raise BTreeException(trace, 'Neural Network source: ' + source + ' is not a file')
+            try:
+                session = onnxruntime.InferenceSession(source)
+                input_name = session.get_inputs()[0].name
+                results = session.run(None, {input_name : [[0] * num_inputs]})
+                if len(results[0][0]) != num_outputs:
+                    raise ValueError('Expected output to be of size ' + str(num_outputs))
+            except Exception as error:
+                raise BTreeException(trace, 'Encountered an error while running network from: ' + source) from error
+            trace.pop()
+            return
         if variable.model_as != 'DEFINE':
             if variable.domain.true_int is not None:
                 pass
@@ -589,7 +634,6 @@ def validate_model(metamodel_file, model_file, recursion_limit):
             validate_variable_assignment(variable, variable.assign, scopes, variable_names, deterministic = not is_env(variable), init_mode = 'default')
         trace.pop()
         return
-
 
     def walk_tree(current_node, node_names, node_names_map, nodes_to_check):
         while (not hasattr(current_node, 'name') or hasattr(current_node, 'sub_root')):
@@ -661,6 +705,8 @@ def validate_model(metamodel_file, model_file, recursion_limit):
         sys.setrecursionlimit(recursion_limit)
     metamodel = textx.metamodel_from_file(metamodel_file, auto_init_attributes = False)
     model = metamodel.model_from_file(model_file)
+    if model.neural:
+        import onnxruntime
 
     trace.append('In Enumeration Validation')
     declared_enumerations = set(map(valid_enumeration, model.enumerations))

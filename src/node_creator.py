@@ -135,7 +135,7 @@ def create_blackboard(nodes, variables, root_node_name):
             elif variable['mode'] == 'FROZENVAR' or len(variable['next_value']) == 0:
                 frozenvar_string += ''.join(
                     [
-                        (indent(2) + stage_name + '0_index_' + str(index) + ' : ' + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean'))) + ';' + os.linesep)
+                        (indent(2) + stage_name + '0_index_' + str(index) + ' : ' + variable['custom_value_range'] + ';' + os.linesep)
                         for index in range(variable['array_size'])
                     ]
                 )
@@ -152,9 +152,7 @@ def create_blackboard(nodes, variables, root_node_name):
                     else:
                         print('removal of last stage for array variables not yet implemented.')
                     for index in range(variable['array_size']):
-                        var_string += (indent(2) + '' + stage_name + '0_index_' + str(index) + ' : '
-                                       + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean')))
-                                       + ';' + os.linesep)
+                        var_string += indent(2) + '' + stage_name + '0_index_' + str(index) + ' : ' + variable['custom_value_range'] + ';' + os.linesep
                         next_string += indent(2) + 'next(' + stage_name + '0_index_' + str(index) + ') := ' + stage_name + str(len(variable['next_value'])) + '_index_' + str(index) + ';' + os.linesep
                     (_, constant_index, _, indexed_cond_pairs) = variable['initial_value']
                     init_string += handle_initial_value(constant_index, indexed_cond_pairs, variable['array_size'], 'init', stage_name, 0, default_array_cases[constant_index], 2)
@@ -165,9 +163,7 @@ def create_blackboard(nodes, variables, root_node_name):
                     for index in range(variable['array_size']):
                         define_string += indent(2) + stage_name + '0_index_' + str(index) + ' := ' + stage_name + '1_index_' + str(index) + ';' + os.linesep
                         define_string += indent(2) + 'LINK_TO_PREVIOUS_FINAL_' + variable_name + '_index_' + str(index) + ' := ' + stage_name + str(len(variable['next_value'])) + '_index_' + str(index) + ';' + os.linesep
-                        var_string += (indent(2) + '' + stage_name + '1_index_' + str(index) + ' : '
-                                       + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean')))
-                                       + ';' + os.linesep)
+                        var_string += indent(2) + '' + stage_name + '1_index_' + str(index) + ' : ' + variable['custom_value_range'] + ';' + os.linesep
                     (_, constant_index, _, indexed_cond_pairs) = variable['initial_value']
                     init_string += handle_initial_value(constant_index, indexed_cond_pairs, variable['array_size'], 'init', stage_name, 1, default_array_cases[constant_index], 2)
                     (node_name, constant_index, non_determinism, indexed_cond_pairs) = variable['next_value'][0]
@@ -208,10 +204,7 @@ def create_blackboard(nodes, variables, root_node_name):
                         for (index, condition_pairs) in indexed_cond_pairs:
                             indices_to_do.remove(index)
                             if non_determinism[index] and not force_constant:
-                                var_string += (
-                                    indent(2) + stage_name + stage_num + '_index_' + str(index) + ' : '
-                                    + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean')))
-                                    + ';' + os.linesep)
+                                var_string += indent(2) + stage_name + stage_num + '_index_' + str(index) + ' : ' + variable['custom_value_range'] + ';' + os.linesep
                                 next_string += (
                                     indent(2) + stage_name + stage_num + '_index_' + str(index) + ' :='
                                     + write_cases(active_node_name, previous_stage + '_index_' + str(index), condition_pairs, 3)
@@ -226,10 +219,7 @@ def create_blackboard(nodes, variables, root_node_name):
                     else:
                         if non_determinism and not force_constant:
                             for index in range(variable['array_size']):
-                                var_string += (
-                                    indent(2) + stage_name + stage_num + '_index_' + str(index) + ' : '
-                                    + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean')))
-                                    + ';' + os.linesep)
+                                var_string += indent(2) + stage_name + stage_num + '_index_' + str(index) + ' : ' + variable['custom_value_range'] + ';' + os.linesep
                                 next_string += (
                                     indent(2) + stage_name + stage_num + '_index_' + str(index) + ' := ' + os.linesep
                                     + indent(3) + 'case' + os.linesep
@@ -283,9 +273,7 @@ def create_blackboard(nodes, variables, root_node_name):
                     replacement_dictionary['SUBSTITUTE_SELF'] = stage_name + str(stage_num)
                     define_string += re.sub(r'SUBSTITUTE_[0-9]+_ME', create_replace_define_placeholders_function(replacement_dictionary), temp_string)
             elif variable['mode'] == 'FROZENVAR' or len(variable['next_value']) == 0:
-                frozenvar_string += (indent(2) + '' + stage_name + '0 : '
-                                     + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean')))
-                                     + ';' + os.linesep)
+                frozenvar_string += indent(2) + '' + stage_name + '0 : ' + variable['custom_value_range'] + ';' + os.linesep
                 (_, _, condition_pairs) = variable['initial_value']
                 init_string += (
                     indent(2) + 'init(' + stage_name + '0) :='
@@ -296,9 +284,7 @@ def create_blackboard(nodes, variables, root_node_name):
             # is actual variable.
             else:
                 if variable['keep_stage_0']:
-                    var_string += (indent(2) + '' + stage_name + '0 : '
-                                   + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean')))
-                                   + ';' + os.linesep)
+                    var_string += indent(2) + '' + stage_name + '0 : ' + variable['custom_value_range'] + ';' + os.linesep
                     (_, _, condition_pairs) = variable['initial_value']
                     init_string += (
                         indent(2) + 'init(' + stage_name + '0) :='
@@ -325,9 +311,7 @@ def create_blackboard(nodes, variables, root_node_name):
                 else:
                     define_string += indent(2) + '' + stage_name + '0 := ' + stage_name + '1;' + os.linesep
                     define_string += indent(2) + 'LINK_TO_PREVIOUS_FINAL_' + variable_name + ' := ' + stage_name + str(len(variable['next_value'])) + ';' + os.linesep
-                    var_string += (indent(2) + '' + stage_name + '1' + ' : '
-                                   + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean')))
-                                   + ';' + os.linesep)
+                    var_string += indent(2) + '' + stage_name + '1' + ' : ' + variable['custom_value_range'] + ';' + os.linesep
                     (_, _, condition_pairs) = variable['initial_value']
                     init_string += (
                         indent(2) + 'init(' + stage_name + '1) :='
@@ -348,9 +332,7 @@ def create_blackboard(nodes, variables, root_node_name):
                     (node_name, non_determinism, condition_pairs) = variable['next_value'][index]
                     (active_node_name, force_constant) = get_active_node_name(node_name)
                     if non_determinism and not force_constant:
-                        var_string += (indent(2) + '' + stage_name + stage_num + ' : '
-                                       + ((str(variable['min_value']) + '..' + str(variable['max_value'])) if variable['custom_value_range'] is None else (variable['custom_value_range'].replace('{TRUE, FALSE}', 'boolean')))
-                                       + ';' + os.linesep)
+                        var_string += indent(2) + '' + stage_name + stage_num + ' : ' + variable['custom_value_range'] + ';' + os.linesep
                         next_string += (
                             indent(2) + '' + stage_name + stage_num + ' :='
                             + write_cases(active_node_name, previous_stage, condition_pairs, 3)
