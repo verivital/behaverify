@@ -11,6 +11,7 @@ import argparse
 import os
 import shutil
 import itertools
+import onnxruntime
 from behaverify_common import indent, create_node_name, is_local, is_env, is_blackboard, is_array, handle_constant_or_reference, resolve_potential_reference_no_type, variable_array_size, get_min_max, variable_type, BTreeException, constant_type
 from serene_functions import build_meta_func
 from check_grammar import validate_model
@@ -142,7 +143,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
             formatted_index = format_code(function_call.values[0], misc_args)[0]
         return [
             (formatted_variable + '(' + formatted_index + ')')
-            if variable.model_as == 'DEFINE' else
+            if variable.model_as in ('DEFINE', 'NEURAL') else
             (formatted_variable + '[serene_safe_assignment.index_func(' + formatted_index + ', ' + str(variable_array_size_map[variable.name]) + ')]')
         ]
 
@@ -274,7 +275,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                 [
                     '(' + value
                     + (
-                        (' if (temp := random.randint(0, ' + str(len(formatted_values) - 1) + ')) else ')
+                        (' if ((temp := random.randint(0, ' + str(len(formatted_values) - 1) + ')) == 0) else ')
                         if index == 0 else
                         (
                             (' if temp == ' + str(index) + ' else ')
@@ -369,17 +370,81 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
         source_vals = source_func((constants, {}))
         source = source_vals[0]
         source = resolve_potential_reference_no_type(source, declared_enumerations, {}, variables, constants, {})[1]
-        shutil.copy(file_prefix + '/' + source, write_location + '/' + source)
+        shutil.copy(file_prefix + '/' + source, write_location + source)
         # NOT DONE. Need some way of storing the network
         # current idea: have some variable like variable.name + '__actual__network' which this call.
         # ugh, what a pain.
+        input_order = []
+        for input_code in variable.inputs:
+            input_func = build_meta_func(input_code)
+            variable_inputs = input_func((constants, {}))
+            for variable_input in variable_inputs:
+                (atom_class, atom) = resolve_potential_reference_no_type(variable_input, declared_enumerations, {}, variables, constants, {})
+                input_order.append((atom_class, atom))
+        session = onnxruntime.InferenceSession(file_prefix + '/' + source)
+        input_name = session.get_inputs()[0].name
+        formatted_variable = format_variable_name_only(variable, misc_args)
+        # return (
+        #     os.linesep + os.linesep
+        #     + indent(misc_args['indent_level']) + variable.name + '__session__ = onnxruntime.InferenceSession(\'' + source + '\')' + os.linesep
+        #     + indent(misc_args['indent_level']) + variable.name + '__previous_input__ = None' + os.linesep
+        #     + indent(misc_args['indent_level']) + variable.name + '__previous_output__ = None' + os.linesep
+        #     + indent(misc_args['indent_level']) + 'def ' + variable.name + '(index):' + os.linesep
+        #     + indent(misc_args['indent_level'] + 1) + 'if type(index) is not int:' + os.linesep
+        #     + indent(misc_args['indent_level'] + 2) + "raise TypeError('Index must be an int when accessing " + variable.name + ": ' + str(type(index)))" + os.linesep
+        #     + indent(misc_args['indent_level'] + 1) + 'if index < 0 or index >= ' + str(variable_array_size_map[variable.name]) + ':' + os.linesep
+        #     + indent(misc_args['indent_level'] + 2) + "raise ValueError('Index out of bounds when accessing " + variable.name + ": ' + str(index))" + os.linesep
+        #     + indent(misc_args['indent_level'] + 1) + 'input_values = ['
+        #     + ', '.join(
+        #         [
+        #             (
+        #                 format_variable(atom, create_misc_args(init = False, loc = misc_args['loc'], indent_level = misc_args['indent_level'] + 2))
+        #                 if atom_class == 'VARIABLE' else
+        #                 atom
+        #             )
+        #             for (atom_class, atom) in input_order
+        #         ]
+        #     )
+        #     + ']' + os.linesep
+        #     + indent(misc_args['indent_level'] + 1) + 'if input_values != ' + formatted_variable + '__previous_input__:' + os.linesep
+        #     + indent(misc_args['indent_level'] + 2) + 'temp = ' + formatted_variable + '__session__.run(None, {\'' + input_name + '\' : [input_values]})' + os.linesep
+        #     + indent(misc_args['indent_level'] + 2) + formatted_variable + '__previous_input__ = input_values' + os.linesep
+        #     + indent(misc_args['indent_level'] + 2) + formatted_variable + '__previous_output__ = temp[0][0]' + os.linesep
+        #     + indent(misc_args['indent_level'] + 1) + 'return ' + ('int(' if variable.domain == 'INT' else '') + formatted_variable + '__previous_output__[index]' + (')' if variable.domain == 'INT' else '') + os.linesep
+        #     + indent(misc_args['indent_level']) + formatted_variable + ' = ' + variable.name + os.linesep
+        #     + indent(misc_args['indent_level']) + formatted_variable + '__session__ = ' + variable.name + '__session__' + os.linesep
+        #     + indent(misc_args['indent_level']) + formatted_variable + '__previous_input__ = ' + variable.name + '__previous_input__' + os.linesep
+        #     + indent(misc_args['indent_level']) + formatted_variable + '__previous_output__ = ' + variable.name + '__previous_output__' + os.linesep
+        # )
         return (
             os.linesep + os.linesep
+            + indent(misc_args['indent_level']) + variable.name + '__session__ = onnxruntime.InferenceSession(\'' + source + '\')' + os.linesep
+            + indent(misc_args['indent_level']) + variable.name + '__previous_input__ = None' + os.linesep
+            + indent(misc_args['indent_level']) + variable.name + '__previous_output__ = None' + os.linesep
             + indent(misc_args['indent_level']) + 'def ' + variable.name + '(index):' + os.linesep
             + indent(misc_args['indent_level'] + 1) + 'if type(index) is not int:' + os.linesep
             + indent(misc_args['indent_level'] + 2) + "raise TypeError('Index must be an int when accessing " + variable.name + ": ' + str(type(index)))" + os.linesep
             + indent(misc_args['indent_level'] + 1) + 'if index < 0 or index >= ' + str(variable_array_size_map[variable.name]) + ':' + os.linesep
             + indent(misc_args['indent_level'] + 2) + "raise ValueError('Index out of bounds when accessing " + variable.name + ": ' + str(index))" + os.linesep
+            + indent(misc_args['indent_level'] + 1) + 'input_values = ['
+            + ', '.join(
+                [
+                    (
+                        format_variable(atom, create_misc_args(init = False, loc = misc_args['loc'], indent_level = misc_args['indent_level'] + 2))
+                        if atom_class == 'VARIABLE' else
+                        atom
+                    )
+                    for (atom_class, atom) in input_order
+                ]
+            )
+            + ']' + os.linesep
+            + indent(misc_args['indent_level'] + 1) + 'nonlocal ' + variable.name + '__session__, ' + variable.name + '__previous_input__, ' + variable.name + '__previous_output__' + os.linesep 
+            + indent(misc_args['indent_level'] + 1) + 'if input_values != ' + variable.name + '__previous_input__:' + os.linesep
+            + indent(misc_args['indent_level'] + 2) + 'temp = ' + variable.name + '__session__.run(None, {\'' + input_name + '\' : [input_values]})' + os.linesep
+            + indent(misc_args['indent_level'] + 2) + variable.name + '__previous_input__ = input_values' + os.linesep
+            + indent(misc_args['indent_level'] + 2) + variable.name + '__previous_output__ = temp[0][0]' + os.linesep
+            + indent(misc_args['indent_level'] + 1) + 'return ' + ('int(' if variable.domain == 'INT' else '') + variable.name + '__previous_output__[index]' + (')' if variable.domain == 'INT' else '') + os.linesep
+            + indent(misc_args['indent_level']) + formatted_variable + ' = ' + variable.name + os.linesep
         )
 
     def create_variable_macro(variable_statement, misc_args):
@@ -755,7 +820,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
             + os.linesep
         )
         for variable in model.variables:
-            if variable.model_as == 'DEFINE':
+            if variable.model_as in ('DEFINE', 'NEURAL'):
                 continue
             outter_return_string += os.linesep + os.linesep
             if is_array(variable):
@@ -1138,7 +1203,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
     }
     variable_array_size_map = {
         variable.name : variable_array_size(variable, declared_enumerations, {}, variables, constants, {})
-        for variable in model.variables if is_array(variable)
+        for variable in model.variables if is_array(variable) or (variable.model_as == 'NEURAL')
     }
     loop_references = {}
 
@@ -1173,6 +1238,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
             + 'import py_trees' + os.linesep
             + 'import serene_safe_assignment' + os.linesep
             + 'import random' + os.linesep
+            + (('import onnxruntime' + os.linesep) if model.neural else '')
             + os.linesep + os.linesep
             + 'def create_blackboard():' + os.linesep
             + indent(1) + 'blackboard_reader = py_trees.blackboard.Client()' + os.linesep
@@ -1184,14 +1250,18 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
             )
             + ''.join(
                 [
-                    create_variable_macro(variable, initial_misc_args)
-                    if variable.model_as == 'DEFINE' else
+                    create_neural_network(variable, initial_misc_args)
+                    if variable.model_as == 'NEURAL' else
                     (
+                        create_variable_macro(variable, initial_misc_args)
+                        if variable.model_as == 'DEFINE' else
                         (
-                            (indent(1) + format_variable_name_only(variable, initial_misc_args) + ' = [' + handle_assign(variable.default_value, initial_misc_args) + ' for _ in range(' + str(variable_array_size_map[variable.name]) + ')]' + os.linesep)
-                            if is_array(variable) else
-                            ''
-                        ) +  handle_variable_statement(variable, initial_misc_args, assign_to_var = True)
+                            (
+                                (indent(1) + format_variable_name_only(variable, initial_misc_args) + ' = [' + handle_assign(variable.default_value, initial_misc_args) + ' for _ in range(' + str(variable_array_size_map[variable.name]) + ')]' + os.linesep)
+                                if is_array(variable) else
+                                ''
+                            ) +  handle_variable_statement(variable, initial_misc_args, assign_to_var = True)
+                        )
                     )
                     for variable in model.variables if is_blackboard(variable)
                 ]
