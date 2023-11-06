@@ -5,7 +5,7 @@ It contains a variety of utility functions.
 
 
 Author: Serena Serafina Serbinowska
-Last Edit: 2023-11-03
+Last Edit: 2023-11-06
 '''
 import argparse
 import os
@@ -1144,6 +1144,8 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
 
     project_name = main_name
     project_environment_name = main_name + '_environment'
+
+    write_location = write_location + ('' if write_location[-1] == '/' else '/')
 
     with open(write_location + 'serene_safe_assignment.py', 'w', encoding = 'utf-8') as write_file:
         write_file.write(create_safe_assignment(model))  # checked. No additional information required.

@@ -3,7 +3,7 @@ This module is part of BehaVerify and used to convert .tree files to .smv files 
 
 
 Author: Serena Serafina Serbinowska
-Last Edit: 2023-11-03
+Last Edit: 2023-11-06
 '''
 import argparse
 import pprint
@@ -674,12 +674,12 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
             value_funcs = []
             for case_result in assign.case_results:
                 value_funcs.append(build_meta_func(case_result.values[0]))
-            value_funcs.append(assign.default_result.values[0])
+            value_funcs.append(build_meta_func(assign.default_result.values[0]))
             for list_of_inputs in list_of_list_of_inputs:
                 new_loop_references = dict(list_of_inputs)
                 new_loop_references.update(loop_references)
                 for value_func in value_funcs:
-                    domain_values.add(resolve_potential_reference_no_type(value_func((constants, loop_references))[0], declared_enumerations, {}, {}, constants, new_loop_references))
+                    domain_values.add(resolve_potential_reference_no_type(value_func((constants, loop_references))[0], declared_enumerations, {}, {}, constants, new_loop_references)[1])
             return domain_values
         def fix_domain_of_variable(var_key):
             # does not work with local variables. Doesn't need to; neural networks cannot be local, and therefore cannot depends on local variables.
