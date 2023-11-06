@@ -4,7 +4,7 @@ It is used to create Haskell code from BehaVerify DSL for Behavior Trees.
 It contains a variety of utility functions.
 
 Author: Serena Serafina Serbinowska
-Last Edit: 2023-10-27
+Last Edit: 2023-11-06
 '''
 import argparse
 import os
@@ -341,17 +341,26 @@ def dsl_to_haskell(metamodel_file, model_file, location, output_file, max_iter, 
 
     def handle_return_statement(return_statement, misc_args):
         indent_level = misc_args['indent_level']
+        return_string = (
+            indent(indent_level) + 'returnStatusFunction :: BTreeBlackboard -> BTreeEnvironment -> BTreeNodeStatus' + os.linesep
+            + indent(indent_level) + 'returnStatusFunction blackboard environment = returnStatus' + os.linesep
+            + indent(indent_level + 1) + 'where' + os.linesep
+        )
         if len(return_statement.case_results) == 0:
-            return indent(indent_level) + 'returnStatus = ' + format_returns(return_statement.default_result) + os.linesep
+            return (
+                return_string
+                + indent(indent_level + 2) + 'returnStatus = ' + format_returns(return_statement.default_result) + os.linesep
+            )
         return (
-            indent(indent_level) + 'returnStatus' + os.linesep
+            return_string
+            + indent(indent_level + 2) + 'returnStatus' + os.linesep
             + ''.join(
                 [
-                    (indent(indent_level + 1) + '| ' + format_code(case_result.condition, None)[0] + ' = ' + format_returns(case_result) + os.linesep)
+                    (indent(indent_level + 3) + '| ' + format_code(case_result.condition, create_misc_args(init_mode = False, indent_level = indent_level + 3))[0] + ' = ' + format_returns(case_result) + os.linesep)
                     for case_result in return_statement.case_results
                 ]
             )
-            + indent(indent_level + 1) + '| otherwise = ' + format_returns(return_statement.default_result) + os.linesep
+            + indent(indent_level + 3) + '| otherwise = ' + format_returns(return_statement.default_result) + os.linesep
         )
 
     def handle_statement(statement, statement_number, misc_args):
@@ -414,6 +423,7 @@ def dsl_to_haskell(metamodel_file, model_file, location, output_file, max_iter, 
             return_string += temp[0]
             delayed_updates.extend(temp[1])
             statement_number = statement_number + temp[2]
+        mid_point_number = statement_number
         return_string += handle_return_statement(node.return_statement, create_misc_args(None, 2 + indent_modifier))
         for statement in node.post_update_statements:
             temp = handle_statement(statement, statement_number, create_misc_args(None, 2 + indent_modifier))
@@ -444,9 +454,11 @@ def dsl_to_haskell(metamodel_file, model_file, location, output_file, max_iter, 
             + indent(indent_modifier) + 'bTreeFunction' + pascal_case(node.name) + ' :: [BTreeNode] -> TreeLocation -> TrueMemoryStatus -> [TrueMemoryStorage] -> PartialMemoryStatus -> [PartialMemoryStorage] -> BTreeBlackboard -> BTreeEnvironment -> FutureChanges -> BTreeNodeOutput' + os.linesep
             + indent(indent_modifier) + 'bTreeFunction' + pascal_case(node.name) + ' _ nodeLocation _ _ _ _ blackboard environment futureChanges = (returnStatus, [], [], newBlackboard, newEnvironment, newFutureChanges)' + os.linesep
             + indent(1 + indent_modifier) + 'where' + os.linesep
-            + indent(2 + indent_modifier) + '(newBlackboard, newEnvironment) = ' + ''.join(['(statement' + str(index) + ' ' for index in reversed(range(statement_number))]) + '(blackboard, environment)' + ')' * statement_number + os.linesep
-            + return_string
+            + indent(2 + indent_modifier) + 'returnStatus = returnStatusFunction midBlackboard midEnvironment' + os.linesep
+            + indent(2 + indent_modifier) + '(newBlackboard, newEnvironment) = ' + ''.join(['(statement' + str(index) + ' ' for index in reversed(range(mid_point_number, statement_number))]) + '(midBlackboard, midEnvironment)' + ')' * (statement_number - mid_point_number) + os.linesep
             + indent(2 + indent_modifier) + 'newFutureChanges = ' + ' : '.join(map(lambda x : 'futureChanges' + x, map(str, reversed(range(len(delayed_updates)))))) + (' : ' if len(delayed_updates) > 0 else '') + 'futureChanges' + os.linesep
+            + indent(2 + indent_modifier) + '(midBlackboard, midEnvironment) = ' + ''.join(['(statement' + str(index) + ' ' for index in reversed(range(mid_point_number))]) + '(blackboard, environment)' + ')' * mid_point_number + os.linesep
+            + return_string
         )
 
     def build_check_node(node):
@@ -1053,9 +1065,7 @@ def dsl_to_haskell(metamodel_file, model_file, location, output_file, max_iter, 
             + os.linesep + '-- START OF NEW ARRAY FUNCTIONS' + os.linesep + os.linesep
             + ''.join(
                 [
-                    (
-                        array_set_creator(variable)
-                    )
+                    array_set_creator(variable)
                     for variable in model.variables
                     if is_array(variable) and deal_with_variable(variable)
                 ]
@@ -1301,7 +1311,8 @@ def dsl_to_haskell(metamodel_file, model_file, location, output_file, max_iter, 
     # arguments = set()
     local_var_to_nodes = {}
     loop_references = {}
-    my_location = args.location + 'app/'
+    location = location + ('' if location[-1] == '/' else '/')
+    my_location = location + 'app/'
     shutil.copy(os.path.dirname(os.path.realpath(__file__)) + '/haskell_file/BehaviorTreeCore.hs', my_location + 'BehaviorTreeCore.hs')
     with open(my_location + 'SereneRandomizer.hs', 'w', encoding='utf-8') as write_file:
         write_file.write(randomizer)
@@ -1311,11 +1322,11 @@ def dsl_to_haskell(metamodel_file, model_file, location, output_file, max_iter, 
         write_file.write(create_environment())
     with open(my_location + 'BehaviorTreeBlackboard.hs', 'w', encoding='utf-8') as write_file:
         write_file.write(create_blackboard())
-    with open(my_location + pascal_case(args.output_file) + '.hs', 'w', encoding='utf-8') as write_file:
-        (seen_nodes, to_write) = create_tree(model, args.output_file)
+    with open(my_location + pascal_case(output_file) + '.hs', 'w', encoding='utf-8') as write_file:
+        (seen_nodes, to_write) = create_tree(model, output_file)
         write_file.write(to_write)
     with open(my_location + 'Main.hs', 'w', encoding='utf-8') as write_file:
-        write_file.write(create_runner(model, args.output_file, args.max_iter))
+        write_file.write(create_runner(model, output_file, max_iter))
 
     for action in model.action_nodes:
         if action.name in seen_nodes:
