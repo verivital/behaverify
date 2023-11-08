@@ -1,0 +1,45 @@
+{
+    "name" : "a",
+    "type": "sequence",
+    "children": [
+	{
+	    "name" : "b",
+	    "type": "selector",
+	    "children": [
+		{
+		    "name" : "c",
+		    "type": "sequence",
+		    "children": [
+			{ "type": "condition", "name": "XTooSmall" },
+			{ "type": "action", "name": "Right" }
+		    ]
+		},
+		{
+		    "name" : "d",
+		    "type": "sequence",
+		    "children": [
+			{ "type": "condition", "name": "XTooBig" },
+			{ "type": "action", "name": "Left" }
+		    ]
+		},
+		{
+		    "name" : "e",
+		    "type": "sequence",
+		    "children": [
+			{ "type": "condition", "name": "YTooSmall" },
+			{ "type": "action", "name": "Up" }
+		    ]
+		},
+		{
+		    "name" : "f",
+		    "type": "sequence",
+		    "children": [
+			{ "type": "condition", "name": "YTooBig" },
+			{ "type": "action", "name": "Down" }
+		    ]
+		}
+	    ]
+	},
+	{ "type": "condition", "name": "AtTarget" }
+    ]
+}
