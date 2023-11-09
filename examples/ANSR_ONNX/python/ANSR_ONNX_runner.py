@@ -48,10 +48,10 @@ node_to_locals = {
     'update_direction' : [],
     'call_xy_net' : [],
     'update_previous_destination' : [],
-    'move' : [],
-    'move_1' : [],
-    'move_2' : [],
-    'move_3' : [],
+    'go_up' : [],
+    'go_down' : [],
+    'go_left' : [],
+    'go_right' : [],
 }
 
 

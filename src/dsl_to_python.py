@@ -675,14 +675,17 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                 )
 
     def walk_tree_recursive(current_node, node_names, node_names_map, running_string, variable_print_info):
-        while (not hasattr(current_node, 'name') or hasattr(current_node, 'sub_root')):
+        while True:
+            if hasattr(current_node, 'sub_root'):
+                current_node = current_node.sub_root
+                continue
+            current_name = current_node.leaf.name if current_node.name is None else current_node.name
             if hasattr(current_node, 'leaf'):
                 arguments = current_node.arguments
                 current_node = current_node.leaf
-            else:
-                current_node = current_node.sub_root
+            break
         # next, we get the name of this node, and correct for duplication
-        new_name = create_node_name(current_node.name.replace(' ', ''), node_names, node_names_map)
+        new_name = create_node_name(current_name, node_names, node_names_map)
         node_name = new_name[0]
         modifier = new_name[1]
         node_names.add(node_name)

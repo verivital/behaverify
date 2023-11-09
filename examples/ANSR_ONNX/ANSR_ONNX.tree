@@ -300,7 +300,7 @@ sub_trees {
 		    children {
 			update_direction {} #{Updates the direction we're going in.}#
 			call_xy_net {} #{Calls the neural networks}#
-			update_previous_destination {} #{sets the current location to the previous destination.}#
+			update_previous_destination {} #{sets the current location as the previous destination.}#
 		    }
 		}
 	    }
@@ -319,28 +319,28 @@ sub_trees {
 			    try_up sequence
 			    children {
 				y_too_small {}
-				move {0, 1} #{These are the arguments for the node.}#
+				go_up: move {0, 1} #{These are the arguments for the node.}#
 			    }
 			}
 			composite {
 			    try_down sequence
 			    children {
 				y_too_big {}
-				move {0, -1}
+				go_down: move {0, -1}
 			    }
 			}
 			composite {
 			    try_left sequence
 			    children {
 				x_too_big {}
-				move {-1, 0}
+				go_left: move {-1, 0}
 			    }
 			}
 			composite {
 			    try_right sequence
 			    children {
 				x_too_small {}
-				move {1, 0}
+				go_right: move {1, 0}
 			    }
 			}
 		    }

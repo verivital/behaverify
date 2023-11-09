@@ -83,6 +83,7 @@ node:
     '}' ('end_decorator')?
 ;
     leaf_node:
+    (name = ID ':')?
     ((leaf = [check_node]) |
     (leaf = [action_node]) |
     (leaf = [check_environment_node]))
