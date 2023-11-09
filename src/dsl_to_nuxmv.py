@@ -23,7 +23,7 @@ from behaverify_common import create_node_name, create_node_template, create_var
 # if the condition is true, then the result is used.
 # the last condition should always be TRUE
 
-def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_last_stage, do_not_trim, behave_only, recursion_limit):
+def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_last_stage, do_not_trim, behave_only, recursion_limit, return_values):
     '''
     This method is used to convert the dsl to behaverify.
     '''
@@ -968,7 +968,11 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
         if node_names_map is None:
             node_names_map = {}
         argument_pairs = None
-        while (not hasattr(current_node, 'name') or hasattr(current_node, 'sub_root')):
+        while True:
+            if hasattr(current_node, 'sub_root'):
+                current_node = current_node.sub_root
+                continue
+            current_name = current_node.leaf.name if current_node.name is None else current_node.name
             if hasattr(current_node, 'leaf'):
                 all_arguments = []
                 for argument in current_node.arguments:
@@ -979,12 +983,11 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
                     for index in range(len(current_node.arguments))
                 }
                 current_node = current_node.leaf
-            else:
-                current_node = current_node.sub_root
+            break
         # the above deals with sub_trees and leaf nodes, ensuring that the current_node variable has the next actual node at this point
         # next, we get the name of this node, and correct for duplication
 
-        new_name = create_node_name(current_node.name.replace(' ', ''), node_names, node_names_map)
+        new_name = create_node_name(current_name, node_names, node_names_map)
         node_name = new_name[0]
         modifier = new_name[1]
         return (
@@ -1095,6 +1098,8 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
             behaverify_variables[var_key]['custom_value_range'] = behaverify_variables[var_key]['custom_value_range'].replace('{True, False}', 'boolean')
             behaverify_variables[var_key]['custom_value_range'] = behaverify_variables[var_key]['custom_value_range'].replace('{False, True}', 'boolean')
 
+    if return_values:
+        return (nodes, behaverify_variables)
     if behave_only:
         if output_file is None:
             printer = pprint.PrettyPrinter(indent = 4)
@@ -1127,4 +1132,4 @@ if __name__ == '__main__':
     arg_parser.add_argument('--behave_only', action = 'store_true')
     arg_parser.add_argument('--recursion_limit', type = int, default = 0)
     args = arg_parser.parse_args()
-    dsl_to_nuxmv(args.metamodel_file, args.model_file, args.output_file, args.keep_stage_0, args.keep_last_stage, args.do_not_trim, args.behave_only, args.recursion_limit)
+    dsl_to_nuxmv(args.metamodel_file, args.model_file, args.output_file, args.keep_stage_0, args.keep_last_stage, args.do_not_trim, args.behave_only, args.recursion_limit, False)

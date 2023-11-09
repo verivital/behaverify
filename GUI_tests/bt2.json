@@ -1,0 +1,43 @@
+{
+  "type": "sequence",
+  "children": [
+    {
+      "type": "selector",
+      "children": [
+        {
+          "type": "sequence",
+          "children": [
+            { "type": "XTooSmall", "params": {"targetX": "x2"} },
+            { "type": "Right" }
+          ]
+        },
+        {
+          "type": "sequence",
+          "children": [
+            { "type": "XTooBig", "params": {"targetX": "x2"} },
+            { "type": "Left" }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "selector",
+      "children": [
+        {
+          "type": "sequence",
+          "children": [
+            { "type": "YTooSmall", "params": {"targetY": "y2"} },
+            { "type": "Up" }
+          ]
+        },
+        {
+          "type": "sequence",
+          "children": [
+            { "type": "YTooBig", "params": {"targetY": "y2"} },
+            { "type": "Down" }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -483,12 +483,15 @@ def dsl_to_haskell(metamodel_file, model_file, location, output_file, max_iter, 
     def create_runner(model, name, max_iter):
         '''creates the runner for haskell code'''
         current_node = model.root
-        while (not hasattr(current_node, 'name') or hasattr(current_node, 'sub_root')):
+        while True:
+            if hasattr(current_node, 'sub_root'):
+                current_node = current_node.sub_root
+                continue
+            current_name = current_node.leaf.name if current_node.name is None else current_node.name
             if hasattr(current_node, 'leaf'):
                 current_node = current_node.leaf
-            else:
-                current_node = current_node.sub_root
-        root_name = current_node.name
+            break
+        root_name = current_name
         return (
             'module Main where' + os.linesep
             + 'import ' + pascal_case(name) + os.linesep
@@ -584,10 +587,14 @@ def dsl_to_haskell(metamodel_file, model_file, location, output_file, max_iter, 
 
         def walk_tree_recursive(current_node, seen_nodes, node_names, node_names_map, running_string, running_int, indent_level):
             current_args = None
-            while (not hasattr(current_node, 'name') or hasattr(current_node, 'sub_root')):
+            while True:
+                if hasattr(current_node, 'sub_root'):
+                    current_node = current_node.sub_root
+                    continue
+                current_name = current_node.leaf.name if current_node.name is None else current_node.name
                 current_args = (current_node.arguments if hasattr(current_node, 'arguments') else None)
                 current_node = (current_node.leaf if hasattr(current_node, 'leaf') else current_node.sub_root)
-            conflict_avoid_name = 'bTreeNode' + pascal_case(current_node.name)
+            conflict_avoid_name = 'bTreeNode' + pascal_case(current_name)
             (node_name, modifier) = create_node_name(conflict_avoid_name, node_names, node_names_map)
             cur_node_names = {node_name}.union(node_names)
             cur_node_names_map = {name : (modifier if name == node_name else node_names_map[name]) for name in node_names_map}
@@ -1170,12 +1177,15 @@ def dsl_to_haskell(metamodel_file, model_file, location, output_file, max_iter, 
 
     def create_blackboard():
         def walk_tree_recursive_blackboard(current_node, node_names, node_names_map, running_int, location_info, local_initial_statements):
-            while (not hasattr(current_node, 'name') or hasattr(current_node, 'sub_root')):
+            while True:
+                if hasattr(current_node, 'sub_root'):
+                    current_node = current_node.sub_root
+                    continue
+                current_name = current_node.leaf.name if current_node.name is None else current_node.name
                 if hasattr(current_node, 'leaf'):
                     current_node = current_node.leaf
-                else:
-                    current_node = current_node.sub_root
-            conflict_avoid_name = current_node.name + '__node'
+                break
+            conflict_avoid_name = current_name + '__node'
             (node_name, modifier) = create_node_name(conflict_avoid_name, node_names, node_names_map)
             cur_node_names = {node_name}.union(node_names)
             cur_node_names_map = {name : (modifier if name == node_name else node_names_map[name]) for name in node_names_map}

@@ -17,32 +17,32 @@ MODULE system_module
         --START OF BLACKBOARD DEFINITIONS
         cur_x_stage_1 :=
             case
-                !(move.active) : cur_x_stage_0;
+                !(go_up.active) : cur_x_stage_0;
                 TRUE : max(0, min(8, (0 + cur_x_stage_0)));
             esac;
         cur_x_stage_2 :=
             case
-                !(move_1.active) : cur_x_stage_1;
+                !(go_down.active) : cur_x_stage_1;
                 TRUE : max(0, min(8, (0 + cur_x_stage_1)));
             esac;
         cur_x_stage_3 :=
             case
-                !(move_2.active) : cur_x_stage_2;
+                !(go_left.active) : cur_x_stage_2;
                 TRUE : max(0, min(8, (-1 + cur_x_stage_2)));
             esac;
         cur_y_stage_1 :=
             case
-                !(move.active) : cur_y_stage_0;
+                !(go_up.active) : cur_y_stage_0;
                 TRUE : max(0, min(8, (1 + cur_y_stage_0)));
             esac;
         cur_y_stage_2 :=
             case
-                !(move_1.active) : cur_y_stage_1;
+                !(go_down.active) : cur_y_stage_1;
                 TRUE : max(0, min(8, (-1 + cur_y_stage_1)));
             esac;
         cur_y_stage_3 :=
             case
-                !(move_2.active) : cur_y_stage_2;
+                !(go_left.active) : cur_y_stage_2;
                 TRUE : max(0, min(8, (0 + cur_y_stage_2)));
             esac;
         dest_x_stage_1 :=
@@ -340,17 +340,17 @@ MODULE system_module
         new_destination : composite_sequence_without_memory_3(update_direction, call_xy_net, update_previous_destination);
         destination : composite_selector_without_memory_2(not_at_destination, new_destination);
         y_too_small : y_too_small_module(cur_y_stage_0, dest_y_stage_1);
-        move : success_DEFAULT_module();
-        try_up : composite_sequence_without_memory_2(y_too_small, move);
+        go_up : success_DEFAULT_module();
+        try_up : composite_sequence_without_memory_2(y_too_small, go_up);
         y_too_big : y_too_big_module(cur_y_stage_1, dest_y_stage_1);
-        move_1 : success_DEFAULT_module();
-        try_down : composite_sequence_without_memory_2(y_too_big, move_1);
+        go_down : success_DEFAULT_module();
+        try_down : composite_sequence_without_memory_2(y_too_big, go_down);
         x_too_big : x_too_big_module(cur_x_stage_2, dest_x_stage_1);
-        move_2 : success_DEFAULT_module();
-        try_left : composite_sequence_without_memory_2(x_too_big, move_2);
+        go_left : success_DEFAULT_module();
+        try_left : composite_sequence_without_memory_2(x_too_big, go_left);
         x_too_small : x_too_small_module(cur_x_stage_3, dest_x_stage_1);
-        move_3 : success_DEFAULT_module();
-        try_right : composite_sequence_without_memory_2(x_too_small, move_3);
+        go_right : success_DEFAULT_module();
+        try_right : composite_sequence_without_memory_2(x_too_small, go_right);
         movement : composite_selector_without_memory_4(try_up, try_down, try_left, try_right);
         destination_and_movement : composite_sequence_without_memory_2(destination, movement);
         drone_control : composite_selector_without_memory_2(vision, destination_and_movement);
@@ -394,12 +394,12 @@ MODULE system_module
             esac;
         next(cur_x_stage_0) :=
             case
-                !(move_3.active) : cur_x_stage_3;
+                !(go_right.active) : cur_x_stage_3;
                 TRUE : max(0, min(8, (1 + cur_x_stage_3)));
             esac;
         next(cur_y_stage_0) :=
             case
-                !(move_3.active) : cur_y_stage_3;
+                !(go_right.active) : cur_y_stage_3;
                 TRUE : max(0, min(8, (0 + cur_y_stage_3)));
             esac;
         next(dest_x_stage_0) := dest_x_stage_1;
@@ -442,16 +442,46 @@ MODULE define_nodes
         movement := 11;
         try_up := 12;
         y_too_small := 13;
-        move := 14;
+        go_up := 14;
         try_down := 15;
         y_too_big := 16;
-        move_1 := 17;
+        go_down := 17;
         try_left := 18;
         x_too_big := 19;
-        move_2 := 20;
+        go_left := 20;
         try_right := 21;
         x_too_small := 22;
-        move_3 := 23;
+        go_right := 23;
+MODULE composite_selector_without_memory_4(child_0, child_1, child_2, child_3)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                !(child_0.internal_status = failure) : child_0.internal_status;
+                !(child_1.internal_status = failure) : child_1.internal_status;
+                !(child_2.internal_status = failure) : child_2.internal_status;
+                !(child_3.internal_status = failure) : child_3.internal_status;
+                TRUE : failure;
+            esac;
+        child_0.active := active;
+        child_1.active := child_0.status = failure;
+        child_2.active := child_1.status = failure;
+        child_3.active := child_2.status = failure;
+MODULE composite_selector_without_memory_2(child_0, child_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                !(child_0.internal_status = failure) : child_0.internal_status;
+                !(child_1.internal_status = failure) : child_1.internal_status;
+                TRUE : failure;
+            esac;
+        child_0.active := active;
+        child_1.active := child_0.status = failure;
 MODULE composite_sequence_without_memory_2(child_0, child_1)
     CONSTANTS
         success, failure, running, invalid;
@@ -480,36 +510,6 @@ MODULE composite_sequence_without_memory_3(child_0, child_1, child_2)
         child_0.active := active;
         child_1.active := child_0.status = success;
         child_2.active := child_1.status = success;
-MODULE composite_selector_without_memory_2(child_0, child_1)
-    CONSTANTS
-        success, failure, running, invalid;
-    DEFINE
-        status := active ? internal_status : invalid;
-        internal_status :=
-            case
-                !(child_0.internal_status = failure) : child_0.internal_status;
-                !(child_1.internal_status = failure) : child_1.internal_status;
-                TRUE : failure;
-            esac;
-        child_0.active := active;
-        child_1.active := child_0.status = failure;
-MODULE composite_selector_without_memory_4(child_0, child_1, child_2, child_3)
-    CONSTANTS
-        success, failure, running, invalid;
-    DEFINE
-        status := active ? internal_status : invalid;
-        internal_status :=
-            case
-                !(child_0.internal_status = failure) : child_0.internal_status;
-                !(child_1.internal_status = failure) : child_1.internal_status;
-                !(child_2.internal_status = failure) : child_2.internal_status;
-                !(child_3.internal_status = failure) : child_3.internal_status;
-                TRUE : failure;
-            esac;
-        child_0.active := active;
-        child_1.active := child_0.status = failure;
-        child_2.active := child_1.status = failure;
-        child_3.active := child_2.status = failure;
 MODULE target_in_sight_module(cur_x_stage_0, cur_y_stage_0, tar_x_stage_0, tar_y_stage_0, tree_x_stage_0_index_0, tree_x_stage_0_index_1, tree_y_stage_0_index_0, tree_y_stage_0_index_1)
     CONSTANTS
         success, failure, running, invalid;

@@ -5,7 +5,7 @@ It contains a variety of utility functions.
 
 
 Author: Serena Serafina Serbinowska
-Last Edit: 2023-11-03
+Last Edit: 2023-11-09
 '''
 import itertools
 import re
@@ -636,7 +636,11 @@ def validate_model(metamodel_file, model_file, recursion_limit):
         return
 
     def walk_tree(current_node, node_names, node_names_map, nodes_to_check):
-        while (not hasattr(current_node, 'name') or hasattr(current_node, 'sub_root')):
+        while True:
+            if hasattr(current_node, 'sub_root'):
+                current_node = current_node.sub_root
+                continue
+            current_name = current_node.leaf.name if current_node.name is None else current_node.name
             if hasattr(current_node, 'leaf'):
                 current_args = current_node.arguments
                 current_node = current_node.leaf
@@ -651,15 +655,14 @@ def validate_model(metamodel_file, model_file, recursion_limit):
                     if current_node.arguments[index].argument_type != cur_type:
                         raise BTreeException(trace, 'Node ' + current_node.name + ' argument ' + str(index) + ' named ' + current_node.arguments[index].argument_name + ' was declared to be of type ' + current_node.arguments[index].argument_type + ' but is being created with type ' + cur_type)
                 nodes_to_check.add(current_node.name)
-            else:
-                current_node = current_node.sub_root
+            break
         # next, we get the name of this node, and correct for duplication
 
-        new_name = create_node_name(current_node.name, node_names, node_names_map)
-        if new_name in constants or new_name in declared_enumerations:
-            raise BTreeException(trace, 'Node name ' + new_name + ' clashes with existing constant or enumeration')
+        new_name = create_node_name(current_name, node_names, node_names_map)
         node_name = new_name[0]
         modifier = new_name[1]
+        if node_name in constants or new_name in declared_enumerations:
+            raise BTreeException(trace, 'Node name ' + node_name + ' clashes with existing constant or enumeration')
 
         node_names.add(node_name)
         node_names_map[node_name] = modifier
