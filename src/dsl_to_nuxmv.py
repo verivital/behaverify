@@ -937,7 +937,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
             node_name, cur_node_names, cur_node_names_map,
             {node_name : create_node_template(node_name, parent_name, [],
                                               'leaf', current_node.node_type, '', '',
-                                              True, False, True)
+                                              True, False, True, custom_type = current_node.name)
              },
             [], [], [(node_name, argument_pairs, 'check', current_node.condition)]
         )
@@ -949,7 +949,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
             node_name, cur_node_names, cur_node_names_map,
             {node_name : create_node_template(node_name, parent_name, [],
                                               'leaf', current_node.node_type, '', '',
-                                              True, True, True)
+                                              True, True, True, custom_type = current_node.name)
              },
             list(map(lambda x : (node_name, x), current_node.local_variables)),
             list(map(lambda x : (node_name, argument_pairs, x), current_node.init_statements)),
