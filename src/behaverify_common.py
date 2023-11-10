@@ -260,13 +260,15 @@ def create_node_template(node_name, parent_name, children,
                          success, running, failure,
                          additional_arguments = None,
                          internal_status_module_name = None,
-                         internal_status_module_code = None):
+                         internal_status_module_code = None,
+                         custom_type = None):
     return {
         'name' : node_name,
         'parent' : parent_name,
         'children' : children,
         'category' : category,
         'type' : node_type,
+        'custom_type' : custom_type,
         'policy' : policy,
         'memory' : memory,  # 'with_true_memory', 'with_partial_memory', ''
         'return_possibilities' : {

@@ -1,5 +1,8 @@
 '''
 Module for visualizing Behavior Trees
+
+Author: Serena Serafina Serbinowska
+Last Edit: 2023-11-10
 '''
 import os
 import json
@@ -7,6 +10,7 @@ import tkinter
 from tkinter import ttk
 import graphviz
 from dsl_to_nuxmv import dsl_to_nuxmv
+from behaverify_common import BTreeException, indent
 
 def handle_smv(trace_file_string):
     smv_run = []  # an array of dicts where each dict maps node_names to statuses and maps var_names to dicts which map integers (stages) to values.
@@ -90,11 +94,23 @@ def chatGPT_json_to_BehaVerify_json(node, parent_name = None, nodes = None):
     node_name = fix_name(base_name, nodes)
     nodes[node_name] = 'temp'
     children = []
-    if 'children' in node:
-        for child in node['children']:
-            (child_name, nodes) = chatGPT_json_to_BehaVerify_json(child, node_name, nodes)
-            children.append(child_name)
-    nodes[node_name] = {'parent' : parent_name, 'type' : node_type, 'children' : children}
+    the_children = node.get('children', node.get('nodes', []))
+    for child in the_children:
+        (child_name, nodes) = chatGPT_json_to_BehaVerify_json(child, node_name, nodes)
+        children.append(child_name)
+    if node_type in ('selector', 'sequence', 'parallel', 'inverter', 'success_is_failure', 'success_is_running', 'running_is_failure', 'running_is_success', 'failure_is_success', 'failure_is_running'):
+        custom_type = None
+    else:
+        if node_type in ('check', 'condition', 'guard'):
+            custom_type = 'unknown'
+            node_type = 'check'
+        elif node_type == 'action':
+            custom_type = 'unknown'
+            node_type = 'action'
+        else:
+            custom_type = node_type
+            node_type = 'action'
+    nodes[node_name] = {'parent' : parent_name, 'type' : node_type, 'custom_type' : custom_type, 'children' : children}
     return (node_name, nodes)
 
 SHAPES = {
@@ -123,14 +139,28 @@ COLORS = {
     'failure_is_running' : '#FFFFFF'
 }
 
+STATUS_COLORS = {
+    'invalid' : 'gray',
+    'success' : 'blue',
+    'failure' : 'red',
+    'running' : 'black'
+}
+
+SHORT_TYPE = {
+    'action' : 'A',
+    'check' : 'C',
+    'environment_check' : 'E'
+}
+
 def create_dot_from_BehaVerify_json(nodes, root_node_name, output_file = 'behavior_tree'):
     dot = graphviz.Digraph(format='png', filename=output_file)
     def process_node(node_name):
         node = nodes[node_name]
         node_type = node['type']
         parent_name = node['parent']
-        node_label = node_name if node_type in SHAPES else (node_name + os.linesep + node_type)
-        dot.node(node_name, label = node_label, style = 'filled', fillcolor = COLORS.get(node_type, '#C0C0C0'), shape = SHAPES.get(node_type, 'oval'))
+        node_label = node_name if node_type in SHAPES else (node_name + os.linesep + SHORT_TYPE.get(node['type'], '?') + ' -> ' + str(node.get('custom_type', None)))
+        #node_label = node_name if node_type in SHAPES else (node_name + os.linesep + str(node.get('custom_type', None)))
+        dot.node(node_name, label = node_label, style = 'filled', fillcolor = COLORS.get(node_type, '#C0C0C0'), shape = SHAPES.get(node_type, 'oval'), fontcolor = ('red' if node.get('custom_type', None) in ('check', 'environment_check') else '#000000'))
         if parent_name is not None:
             dot.edge(parent_name, node_name)
         for child in node['children']:
@@ -152,9 +182,11 @@ def get_root_from_BehaVerify_json(nodes):
     raise ValueError('No node without a parent')
 
 def main():
-
     def load_json():
         nonlocal root_node_name, nodes
+        if not os.path.isfile(from_file_entry.get()):
+            status_text.config(text = 'Not a file: "' + from_file_entry.get() + '"')
+            return
         try:
             with open(from_file_entry.get(), 'r', encoding = 'utf-8') as input_file:
                 behavior_tree_json = json.load(input_file)
@@ -175,20 +207,139 @@ def main():
         except:
             status_text.config(text = 'An exception occurred during Saving')
     def visualize():
-        if len(nodes) == 0:
-            status_text.config(text = 'You must Load Json before Visualizing')
-            return
         try:
             visualize_BehaVerify_json(nodes, root_node_name, output_file = to_file_entry.get(), mode = 'view')
             status_text.config(text = 'Visualization finished. root node name: ' + root_node_name)
         except Exception as cur_exception:
             status_text.config(text = 'An exception occurred during Visualization: ' + str(cur_exception))
     def export_dsl():
-        status_text.config(text = 'EXPORT DSL NOT IMPLEMENTED. root node name: ' + root_node_name)
-    def add_node():
-        if len(nodes) == 0:
-            status_text.config(text = 'You must Load Json before adding nodes')
+        warning_string = ''
+        check_string = ''
+        env_check_string = ''
+        action_string = ''
+        tree_string = ''
+        action_names = set()
+        check_names = set()
+        env_check_names = set()
+        def recursive_walk(node_name, indent_level):
+            node = nodes[node_name]
+            nonlocal tree_string, check_string, action_string, env_check_string, warning_string, action_names, check_names, env_check_names
+            if node['custom_type'] is not None:
+                tree_string += indent(indent_level) + node_name + ' : ' + node['custom_type'] + '{}' + os.linesep
+                if node['type'] == 'check':
+                    if node['custom_type'] in check_names:
+                        return
+                    if node['custom_type'] in action_names or node_name in env_check_names:
+                        warning_string += 'Duplicate leaf type: ' + node['custom_type'] + '. '
+                    check_names.add(node['custom_type'])
+                    check_string += (
+                        indent(1) + 'check {' + os.linesep
+                        + indent(2) + node['custom_type'] + os.linesep
+                        + indent(2) + 'arguments {}' + os.linesep
+                        + indent(2) + 'read_variables {}' + os.linesep
+                        + indent(2) + 'condition {True}' + os.linesep
+                        + indent(1) + '}' + os.linesep
+                    )
+                    return
+                if node['type'] == 'environment_check':
+                    if node['custom_type'] in env_check_names:
+                        return
+                    if node['custom_type'] in action_names or node_name in check_names:
+                        warning_string += 'Duplicate leaf type: ' + node['custom_type'] + '. '
+                    env_check_names.add(node['custom_type'])
+                    env_check_string += (
+                        indent(1) + 'environment_check {' + os.linesep
+                        + indent(2) + node['custom_type'] + os.linesep
+                        + indent(2) + 'arguments {}' + os.linesep
+                        + indent(2) + 'read_variables {}' + os.linesep
+                        + indent(2) + 'condition {True}' + os.linesep
+                        + indent(1) + '}' + os.linesep
+                    )
+                    return
+                if node['custom_type'] in action_names:
+                    return
+                if node['custom_type'] in check_names or node_name in env_check_names:
+                    warning_string += 'Duplicate leaf type: ' + node['custom_type'] + '. '
+                action_names.add(node['custom_type'])
+                action_string += (
+                    indent(1) + 'action {' + os.linesep
+                    + indent(2) + node['custom_type'] + os.linesep
+                    + indent(2) + 'arguments {}' + os.linesep
+                    + indent(2) + 'local_variables {}' + os.linesep
+                    + indent(2) + 'read_variables {}' + os.linesep
+                    + indent(2) + 'write_variables {}' + os.linesep
+                    + indent(2) + 'initial_values {}' + os.linesep
+                    + indent(2) + 'update {' + os.linesep
+                    + indent(3) + 'return_statement {success}' + os.linesep
+                    + indent(2) + '}' + os.linesep
+                    + indent(1) + '}' + os.linesep
+                )
+                return
+            if node['type'] in ('parallel', 'selector', 'sequence'):
+                tree_string += (
+                    indent(indent_level) + 'composite {' + os.linesep
+                    + indent(indent_level + 1) + node_name + ' ' + node['type'] + (' policy success_on_all' if node['type'] == 'parallel' else '') + os.linesep
+                    + indent(indent_level + 1) + 'children {' + os.linesep
+                )
+                for child in node['children']:
+                    recursive_walk(child, indent_level + 2)
+                tree_string += (
+                    indent(indent_level + 1) + '}' + os.linesep
+                    + indent(indent_level) + '}' + os.linesep
+                )
+                return
+            if node['type'] == 'inverter':
+                tree_string += (
+                    indent(indent_level) + 'decorator {' + os.linesep
+                    + indent(indent_level + 1) + node_name + ' inverter' + os.linesep
+                    + indent(indent_level + 1) + 'child {' + os.linesep
+                )
+                for child in node['children']:
+                    recursive_walk(child, indent_level + 2)
+                tree_string += (
+                    indent(indent_level + 1) + '}' + os.linesep
+                    + indent(indent_level) + '}' + os.linesep
+                )
+                return
+            (x_status, y_status) = node['type'].split('_is_')
+            tree_string += (
+                indent(indent_level) + 'decorator {' + os.linesep
+                + indent(indent_level + 1) + node_name + ' X_is_Y ' + x_status + ' ' + y_status + os.linesep
+                + indent(indent_level + 1) + 'child {' + os.linesep
+            )
+            for child in node['children']:
+                recursive_walk(child, indent_level + 2)
+            tree_string += (
+                indent(indent_level + 1) + '}' + os.linesep
+                + indent(indent_level) + '}' + os.linesep
+            )
             return
+        recursive_walk(root_node_name, 1)
+        with open (to_file_entry.get() + '.tree', 'w', encoding = 'utf-8') as write_file:
+            write_file.write(
+                'configuration {}' + os.linesep
+                + 'enumerations {}' + os.linesep
+                + 'constants {}' + os.linesep
+                + 'variables {}' + os.linesep
+                + 'environment_update {}' + os.linesep
+                + 'checks { ' + os.linesep
+                + check_string
+                + '}' + os.linesep
+                + 'environment_checks { ' + os.linesep
+                + env_check_string
+                + '}' + os.linesep
+                + 'actions { ' + os.linesep
+                + action_string
+                + '}' + os.linesep
+                + 'sub_trees {}' + os.linesep
+                + 'tree {' + os.linesep
+                + tree_string
+                + '}' + os.linesep
+                + 'tick_prerequisite {True}' + os.linesep
+                + 'specifications {}' + os.linesep
+            )
+        status_text.config(text = 'Exported DSL. ' + warning_string)
+    def add_node():
         parent_name = parent_name_entry.get()
         if parent_name not in nodes:
             status_text.config(text = 'Parent Node: "' + parent_name + '" does not exist')
@@ -201,8 +352,9 @@ def main():
             status_text.config(text = 'Cannot add more children to node type: ' + parent['type'])
             return
         node_name = fix_name(node_name_entry.get(), nodes)
-        node_type = (custom_type_entry.get() if node_type_var.get() == 'Custom' else node_type_var.get())
-        nodes[node_name] = {'parent' : parent_name, 'type' : node_type, 'children' : []}
+        node_custom_type = (custom_type_entry.get() if node_type_var.get() == 'Custom' else None)
+        node_type = (custom_class.get() if node_type_var.get() == 'Custom' else node_type_var.get())
+        nodes[node_name] = {'parent' : parent_name, 'type' : node_type, 'custom_type' : node_custom_type, 'children' : []}
         index = 0
         try:
             index = int(child_number_entry.get())
@@ -216,9 +368,6 @@ def main():
         status_text.config(text = 'Added node: ' + node_name)
         return
     def change_node():
-        if len(nodes) == 0:
-            status_text.config(text = 'You must Load Json before changing nodes')
-            return
         node_name = change_name_entry.get()
         if node_name not in nodes:
             status_text.config(text = 'Current Node: "' + node_name + '" does not exist')
@@ -244,7 +393,10 @@ def main():
             elif node_type in ('inverter', 'success_is_failure', 'success_is_running', 'running_is_failure', 'running_is_success', 'failure_is_success', 'failure_is_running') and len(nodes[node_name]['children'] > 1):
                 status_string += 'Cannot Change node with this many children to type: ' + node_type + '. '
             else:
+                node_custom_type = (custom_type_entry.get() if node_type_var.get() == 'Custom' else None)
+                node_type = (custom_class.get() if node_type_var.get() == 'Custom' else node_type_var.get())
                 nodes[node_name]['type'] = node_type
+                nodes[node_name]['custom_type'] = node_custom_type
                 status_string += 'Updated Type. '
         if var_change_parent.get() == 1:
             original_parent = nodes[node_name]['parent']
@@ -307,9 +459,6 @@ def main():
         nodes.pop(to_delete_name)
         return
     def delete_node():
-        if len(nodes) == 0:
-            status_text.config(text = 'You must Load Json before changing nodes')
-            return
         node_name = delete_name_entry.get()
         if node_name not in nodes:
             status_text.config(text = 'Delete Node: "' + node_name + '" does not exist')
@@ -340,11 +489,15 @@ def main():
         return
     def import_dsl():
         nonlocal nodes, root_node_name, variables
+        if not os.path.isfile(from_file_entry.get()):
+            status_text.config(text = 'Not a file: "' + from_file_entry.get() + '"')
+            return
         try:
             (nodes, variables) = dsl_to_nuxmv('../metamodel/behaverify.tx', from_file_entry.get(), None, False, False, False, None, 0, True)
             root_node_name = get_root_from_BehaVerify_json(nodes)
             status_text.config(text = 'Imported DSL, root node name: ' + root_node_name)
         except Exception as error:
+            print(error)
             status_text.config(text = 'An exception occurred during Import: ' + str(error))
     def visualize_trace():
         smv_run = handle_smv(from_file_entry.get())
@@ -370,151 +523,189 @@ def main():
                             misc_var_values.append(string_to_add)
             for node_name in nodes:
                 node_info = (nodes_to_status[node_name] + os.linesep + (os.linesep).join(sorted(nodes_to_var_values[node_name]))) if node_name in nodes_to_var_values else nodes_to_status[node_name]
-                dot.node(node_name + '_INFO', label = node_info, shape = 'plaintext', fontcolor = 'blue')
+                dot.node(node_name + '_INFO', label = node_info, shape = 'plaintext', fontcolor = STATUS_COLORS[nodes_to_status[node_name]])
                 dot.edge(node_name, node_name + '_INFO')
-            dot.node('MISC_INFO', label = (os.linesep).join(sorted(misc_var_values)), shape = 'note', fontcolor = 'red')
+            dot.node('MISC_INFO', label = (os.linesep).join(sorted(misc_var_values)), shape = 'note', fontcolor = '#000000')
             dot.render()
         return
 
     #../examples/ANSR_ONNX/ANSR_ONNX.tree
     #../examples/ANSR_ONNX/smv/trace.txt
-    nodes = {}
-    root_node_name = None
+    nodes = {'root' : {'parent' : None, 'type' : 'selector', 'custom_type' : None, 'children' : []}}
+    root_node_name = 'root'
     variables = {}
 
     root = tkinter.Tk()
-    root.title('Dot Graph Viewer')
+    root.title('BehaVerify Tree Visualizer')
 
-
-    frame = ttk.Frame(root, padding=10)
-    frame.grid(column=0, row=0)
-
-    status_text = ttk.Label(frame, text = 'Nothing Loaded')
-    status_text.grid(column = 0, row = 0)
+    status_text = ttk.Label(root, text = 'Default Loaded')
+    status_text.grid(column = 0, row = 0, sticky = tkinter.W)
 
     ########################################################################
 
-    load_json_button = ttk.Button(frame, text='Load JSON', command = load_json)
-    load_json_button.grid(column=0, row=1)
+    state_frame = ttk.Frame(root, padding = 5)
+    state_frame.grid(column = 0, row = 1, sticky = tkinter.W)
 
-    save_json_button = ttk.Button(frame, text='Save JSON', command = save_json)
-    save_json_button.grid(column=1, row=1)
+    load_json_button = ttk.Button(state_frame, text='Load JSON', command = load_json)
+    load_json_button.grid(column=0, row=0)
 
-    visualize_button = ttk.Button(frame, text='Visualize', command = visualize)
-    visualize_button.grid(column=2, row=1)
+    save_json_button = ttk.Button(state_frame, text='Save JSON', command = save_json)
+    save_json_button.grid(column=1, row=0)
 
-    import_dsl_button = ttk.Button(frame, text='Import DSL', command = import_dsl)
-    import_dsl_button.grid(column=3, row=1)
+    visualize_button = ttk.Button(state_frame, text='Visualize', command = visualize)
+    visualize_button.grid(column=2, row=0)
 
-    export_dsl_button = ttk.Button(frame, text='Export DSL', command = export_dsl)
-    export_dsl_button.grid(column=4, row=1)
+    import_dsl_button = ttk.Button(state_frame, text='Import DSL', command = import_dsl)
+    import_dsl_button.grid(column=3, row=0)
 
-    visualize_button = ttk.Button(frame, text='Visualize Trace', command = visualize_trace)
-    visualize_button.grid(column=5, row=1)
+    export_dsl_button = ttk.Button(state_frame, text='Export DSL Template', command = export_dsl)
+    export_dsl_button.grid(column=4, row=0)
+
+    visualize_button = ttk.Button(state_frame, text='Visualize Trace', command = visualize_trace)
+    visualize_button.grid(column=5, row=0)
 
     ########################################################################
 
-    from_file_label = ttk.Label(frame, text='From File:')
-    from_file_label.grid(column = 0, row = 2)
+    from_file_frame = ttk.Frame(root, padding = 5)
+    from_file_frame.grid(column = 0, row = 2, sticky = tkinter.W)
 
-    from_file_entry = ttk.Entry(frame)
-    from_file_entry.grid(column = 1, row = 2)
+    from_file_label = ttk.Label(from_file_frame, text='From File:')
+    from_file_label.grid(column = 0, row = 0, sticky = tkinter.E)
+
+    from_file_entry = ttk.Entry(from_file_frame)
+    from_file_entry.grid(column = 1, row = 0)
 
     json_type = tkinter.StringVar()
-    json_type.set('Recursive Json')  # Default node type
+    json_type.set('Recursive Json')
 
-    json_type_selector = ttk.OptionMenu(frame, json_type, 'Recursive Json', 'Recursive Json', 'Reference Json')
-    json_type_selector.grid(column = 2, row = 2)
+    json_type_radio1 = ttk.Radiobutton(from_file_frame, variable = json_type, text = 'Recursive Json', value = 'Recursive Json')
+    json_type_radio1.grid(column = 2, row = 0)
 
-    ########################################################################
-
-    to_file_label = ttk.Label(frame, text='To File (no extension):')
-    to_file_label.grid(column = 0, row = 3)
-
-    to_file_entry = ttk.Entry(frame)
-    to_file_entry.grid(column = 1, row = 3)
+    json_type_radio2 = ttk.Radiobutton(from_file_frame, variable = json_type, text = 'Reference Json', value = 'Reference Json')
+    json_type_radio2.grid(column = 3, row = 0)
 
     ########################################################################
 
-    add_node_button = ttk.Button(frame, text='Add Node', command = add_node)
-    add_node_button.grid(column=0, row=4)
+    to_file_frame = ttk.Frame(root, padding = 5)
+    to_file_frame.grid(column = 0, row = 3, sticky = tkinter.W)
 
-    node_type_label = ttk.Label(frame, text='Node Type:')
-    node_type_label.grid(column = 1, row = 4)
+    to_file_label = ttk.Label(to_file_frame, text='To File (no extension):')
+    to_file_label.grid(column = 0, row = 0, sticky = tkinter.E)
+
+    to_file_entry = ttk.Entry(to_file_frame)
+    to_file_entry.grid(column = 1, row = 0)
+
+    ########################################################################
+
+    add_node_frame = ttk.Frame(root, padding = 5)
+    add_node_frame.grid(column = 0, row = 4, sticky = tkinter.W)
+
+    add_node_button = ttk.Button(add_node_frame, text='Add Node', command = add_node)
+    add_node_button.grid(column=0, row=0)
+
+    add_node_frame1 = ttk.Frame(add_node_frame, padding = 5)
+    add_node_frame1.grid(column = 1, row = 0, sticky = tkinter.W)
+
+    node_type_label = ttk.Label(add_node_frame1, text='Node Type:')
+    node_type_label.grid(column = 0, row = 0, sticky = tkinter.E)
 
     node_type_var = tkinter.StringVar()
     node_type_var.set('Custom')  # Default node type
 
-    node_type_selector = ttk.OptionMenu(frame, node_type_var, 'Custom', 'selector', 'sequence', 'parallel', 'inverter', 'success_is_failure', 'success_is_running', 'running_is_failure', 'running_is_success', 'failure_is_success', 'failure_is_running')
-    node_type_selector.grid(column = 2, row = 4)
+    node_type_selector = ttk.OptionMenu(add_node_frame1, node_type_var, 'Custom', 'selector', 'sequence', 'parallel', 'inverter', 'success_is_failure', 'success_is_running', 'running_is_failure', 'running_is_success', 'failure_is_success', 'failure_is_running')
+    node_type_selector.grid(column = 1, row = 0)
 
-    custom_type_label = ttk.Label(frame, text='Custom Type:')
-    custom_type_label.grid(column = 3, row = 4)
+    custom_type_frame = ttk.Frame(add_node_frame1, padding = 1)
+    custom_type_frame.grid(column=2, row=0, sticky = tkinter.W)
 
-    custom_type_entry = ttk.Entry(frame)
-    custom_type_entry.grid(column = 4, row = 4)
+    custom_type_label = ttk.Label(custom_type_frame, text='Custom Type:')
+    custom_type_label.grid(column = 0, row = 1, sticky = tkinter.W)
 
-    node_name_label = ttk.Label(frame, text='Node Name:')
-    node_name_label.grid(column = 5, row = 4)
+    custom_class = tkinter.StringVar()
+    custom_class.set('action')
 
-    node_name_entry = ttk.Entry(frame)
-    node_name_entry.grid(column = 6, row = 4)
+    custom_class_radio1 = ttk.Radiobutton(custom_type_frame, variable = custom_class, text = 'Action', value = 'action')
+    custom_class_radio1.grid(column = 1, row = 0, sticky = tkinter.W)
 
-    parent_name_label = ttk.Label(frame, text='Parent Name:')
-    parent_name_label.grid(column = 1, row = 5)
+    custom_class_radio2 = ttk.Radiobutton(custom_type_frame, variable = custom_class, text = 'Check', value = 'check')
+    custom_class_radio2.grid(column = 1, row = 1, sticky = tkinter.W)
 
-    parent_name_entry = ttk.Entry(frame)
-    parent_name_entry.grid(column = 2, row = 5)
+    custom_class_radio3 = ttk.Radiobutton(custom_type_frame, variable = custom_class, text = 'Env Check', value = 'environment_check')
+    custom_class_radio3.grid(column = 1, row = 2, sticky = tkinter.W)
 
-    child_number_label = ttk.Label(frame, text='Child Number (-1 for Last):')
-    child_number_label.grid(column = 3, row = 5)
+    custom_type_entry = ttk.Entry(custom_type_frame)
+    custom_type_entry.grid(column = 2, row = 1)
 
-    child_number_entry = ttk.Entry(frame)
-    child_number_entry.grid(column = 4, row = 5)
+    add_node_frame2 = ttk.Frame(add_node_frame, padding = 5)
+    add_node_frame2.grid(column = 1, row = 1, sticky = tkinter.W)
+
+    node_name_label = ttk.Label(add_node_frame2, text='Node Name:')
+    node_name_label.grid(column = 0, row = 0, sticky = tkinter.E)
+
+    node_name_entry = ttk.Entry(add_node_frame2)
+    node_name_entry.grid(column = 1, row = 0, sticky = tkinter.W)
+
+    parent_name_label = ttk.Label(add_node_frame2, text='Parent Name:')
+    parent_name_label.grid(column = 2, row = 0, sticky = tkinter.E)
+
+    parent_name_entry = ttk.Entry(add_node_frame2)
+    parent_name_entry.grid(column = 3, row = 0, sticky = tkinter.W)
+
+    child_number_label = ttk.Label(add_node_frame2, text='Child Number (-1 for Last):')
+    child_number_label.grid(column = 4, row = 0, sticky = tkinter.E)
+
+    child_number_entry = ttk.Entry(add_node_frame2)
+    child_number_entry.grid(column = 5, row = 0, sticky = tkinter.W)
 
     ########################################################################
 
-    change_node_button = ttk.Button(frame, text='Change Node', command = change_node)
-    change_node_button.grid(column=0, row=6)
+    change_node_frame = ttk.Frame(root, padding = 5)
+    change_node_frame.grid(column = 0, row = 5, sticky = tkinter.W)
 
-    change_name_label = ttk.Label(frame, text='Current Name:')
-    change_name_label.grid(column = 1, row = 6)
+    change_node_button = ttk.Button(change_node_frame, text='Change Node', command = change_node)
+    change_node_button.grid(column = 0, row = 0)
 
-    change_name_entry = ttk.Entry(frame)
-    change_name_entry.grid(column = 2, row = 6)
+    change_name_label = ttk.Label(change_node_frame, text='Current Name:')
+    change_name_label.grid(column = 1, row = 0, sticky = tkinter.E)
+
+    change_name_entry = ttk.Entry(change_node_frame)
+    change_name_entry.grid(column = 2, row = 0, sticky = tkinter.W)
 
     var_change_name = tkinter.IntVar()
     var_change_type = tkinter.IntVar()
     var_change_parent = tkinter.IntVar()
     var_change_number = tkinter.IntVar()
 
-    change_name_button = ttk.Checkbutton(frame, text = 'Change Name', variable = var_change_name, onvalue = 1, offvalue = 0)
-    change_name_button.grid(column = 3, row = 6)
+    change_name_button = ttk.Checkbutton(change_node_frame, text = 'Change Name', variable = var_change_name, onvalue = 1, offvalue = 0)
+    change_name_button.grid(column = 3, row = 0)
 
-    change_type_button = ttk.Checkbutton(frame, text = 'Change Type', variable = var_change_type, onvalue = 1, offvalue = 0)
-    change_type_button.grid(column = 4, row = 6)
+    change_type_button = ttk.Checkbutton(change_node_frame, text = 'Change Type', variable = var_change_type, onvalue = 1, offvalue = 0)
+    change_type_button.grid(column = 4, row = 0)
 
-    change_parent_button = ttk.Checkbutton(frame, text = 'Change Parent', variable = var_change_parent, onvalue = 1, offvalue = 0)
-    change_parent_button.grid(column = 5, row = 6)
+    change_parent_button = ttk.Checkbutton(change_node_frame, text = 'Change Parent', variable = var_change_parent, onvalue = 1, offvalue = 0)
+    change_parent_button.grid(column = 5, row = 0)
 
-    change_number_button = ttk.Checkbutton(frame, text = 'Change Number', variable = var_change_number, onvalue = 1, offvalue = 0)
-    change_number_button.grid(column = 6, row = 6)
+    change_number_button = ttk.Checkbutton(change_node_frame, text = 'Change Number', variable = var_change_number, onvalue = 1, offvalue = 0)
+    change_number_button.grid(column = 6, row = 0)
 
     ########################################################################
 
-    delete_node_button = ttk.Button(frame, text='Delete Node', command = delete_node)
-    delete_node_button.grid(column=0, row=7)
+    delete_node_frame = ttk.Frame(root, padding = 5)
+    delete_node_frame.grid(column = 0, row = 6, sticky = tkinter.W)
 
-    delete_name_label = ttk.Label(frame, text='To Delete Name:')
-    delete_name_label.grid(column = 1, row = 7)
+    delete_node_button = ttk.Button(delete_node_frame, text='Delete Node', command = delete_node)
+    delete_node_button.grid(column=0, row=0)
 
-    delete_name_entry = ttk.Entry(frame)
-    delete_name_entry.grid(column = 2, row = 7)
+    delete_name_label = ttk.Label(delete_node_frame, text='To Delete Name:')
+    delete_name_label.grid(column = 1, row = 0, sticky = tkinter.E)
+
+    delete_name_entry = ttk.Entry(delete_node_frame)
+    delete_name_entry.grid(column = 2, row = 0)
 
     var_delete_children = tkinter.IntVar()
 
-    delete_children_button = ttk.Checkbutton(frame, text = 'Delete Children', variable = var_delete_children, onvalue = 1, offvalue = 0)
-    delete_children_button.grid(column = 3, row = 7)
+    delete_children_button = ttk.Checkbutton(delete_node_frame, text = 'Delete Children', variable = var_delete_children, onvalue = 1, offvalue = 0)
+    delete_children_button.grid(column = 3, row = 0)
 
     root.mainloop()
 

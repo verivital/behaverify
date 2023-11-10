@@ -1,41 +1,47 @@
 {
-  "type": "sequence",
-  "children": [
+  "type": "selector",
+  "nodes": [
     {
-      "type": "selector",
-      "children": [
+      "type": "sequence",
+      "nodes": [
         {
-          "type": "sequence",
-          "children": [
-            { "type": "XTooSmall", "params": {"targetX": "x2"} },
-            { "type": "Right" }
-          ]
+          "type": "XTooSmall"
         },
         {
-          "type": "sequence",
-          "children": [
-            { "type": "XTooBig", "params": {"targetX": "x2"} },
-            { "type": "Left" }
-          ]
+          "type": "Left"
         }
       ]
     },
     {
-      "type": "selector",
-      "children": [
+      "type": "sequence",
+      "nodes": [
         {
-          "type": "sequence",
-          "children": [
-            { "type": "YTooSmall", "params": {"targetY": "y2"} },
-            { "type": "Up" }
-          ]
+          "type": "XTooBig"
         },
         {
-          "type": "sequence",
-          "children": [
-            { "type": "YTooBig", "params": {"targetY": "y2"} },
-            { "type": "Down" }
-          ]
+          "type": "Right"
+        }
+      ]
+    },
+    {
+      "type": "sequence",
+      "nodes": [
+        {
+          "type": "YTooSmall"
+        },
+        {
+          "type": "Down"
+        }
+      ]
+    },
+    {
+      "type": "sequence",
+      "nodes": [
+        {
+          "type": "YTooBig"
+        },
+        {
+          "type": "Up"
         }
       ]
     }
