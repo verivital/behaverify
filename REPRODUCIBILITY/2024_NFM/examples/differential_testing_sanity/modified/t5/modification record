@@ -1,0 +1,4 @@
+in OUTPUT_NUXMV.txt changed line 353 from
+    system.envVAR1_stage_6_index_1 = yes
+to
+    system.envVAR1_stage_6_index_1 = no

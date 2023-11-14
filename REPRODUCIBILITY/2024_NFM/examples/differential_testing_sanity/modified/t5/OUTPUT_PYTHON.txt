@@ -1,0 +1,174 @@
+------------------------
+Initial State
+blackboard
+  blVAR0: ['yes', 'yes', 'no']
+  blVAR3: True
+  blDEFINE6: [-2, -2, -2]
+  blDEFINE7: ['yes', 'yes', 'yes']
+
+local
+  a1_DOT_localVAR2 : 2
+
+environment
+  envVAR1: ['no', 'no']
+
+------------------------
+State after tick: 1
+a1 -> FAILURE
+
+blackboard
+  blVAR0: ['yes', 'both', 'yes']
+  blVAR3: True
+  blDEFINE6: [-2, -2, -2]
+  blDEFINE7: ['both', 'both', 'yes']
+
+local
+  a1_DOT_localVAR2 : 5
+
+environment
+  envVAR1: ['both', 'yes']
+
+------------------------
+State after tick: 2
+a1 -> FAILURE
+
+blackboard
+  blVAR0: ['yes', 'both', 'yes']
+  blVAR3: True
+  blDEFINE6: [-2, -2, -2]
+  blDEFINE7: ['both', 'both', 'yes']
+
+local
+  a1_DOT_localVAR2 : 5
+
+environment
+  envVAR1: ['both', 'yes']
+
+------------------------
+State after tick: 3
+a1 -> FAILURE
+
+blackboard
+  blVAR0: ['yes', 'both', 'yes']
+  blVAR3: True
+  blDEFINE6: [-2, -2, -2]
+  blDEFINE7: ['both', 'both', 'yes']
+
+local
+  a1_DOT_localVAR2 : 5
+
+environment
+  envVAR1: ['both', 'yes']
+
+------------------------
+State after tick: 4
+a1 -> FAILURE
+
+blackboard
+  blVAR0: ['yes', 'both', 'yes']
+  blVAR3: True
+  blDEFINE6: [-2, -2, -2]
+  blDEFINE7: ['both', 'both', 'yes']
+
+local
+  a1_DOT_localVAR2 : 5
+
+environment
+  envVAR1: ['both', 'yes']
+
+------------------------
+State after tick: 5
+a1 -> FAILURE
+
+blackboard
+  blVAR0: ['yes', 'both', 'yes']
+  blVAR3: True
+  blDEFINE6: [-2, -2, -2]
+  blDEFINE7: ['both', 'both', 'yes']
+
+local
+  a1_DOT_localVAR2 : 5
+
+environment
+  envVAR1: ['both', 'yes']
+
+------------------------
+State after tick: 6
+a1 -> FAILURE
+
+blackboard
+  blVAR0: ['yes', 'both', 'yes']
+  blVAR3: True
+  blDEFINE6: [-2, -2, -2]
+  blDEFINE7: ['both', 'both', 'yes']
+
+local
+  a1_DOT_localVAR2 : 5
+
+environment
+  envVAR1: ['both', 'yes']
+
+------------------------
+State after tick: 7
+a1 -> FAILURE
+
+blackboard
+  blVAR0: ['yes', 'both', 'yes']
+  blVAR3: True
+  blDEFINE6: [-2, -2, -2]
+  blDEFINE7: ['both', 'both', 'yes']
+
+local
+  a1_DOT_localVAR2 : 5
+
+environment
+  envVAR1: ['both', 'yes']
+
+------------------------
+State after tick: 8
+a1 -> FAILURE
+
+blackboard
+  blVAR0: ['yes', 'both', 'yes']
+  blVAR3: True
+  blDEFINE6: [-2, -2, -2]
+  blDEFINE7: ['both', 'both', 'yes']
+
+local
+  a1_DOT_localVAR2 : 5
+
+environment
+  envVAR1: ['both', 'yes']
+
+------------------------
+State after tick: 9
+a1 -> FAILURE
+
+blackboard
+  blVAR0: ['yes', 'both', 'yes']
+  blVAR3: True
+  blDEFINE6: [-2, -2, -2]
+  blDEFINE7: ['both', 'both', 'yes']
+
+local
+  a1_DOT_localVAR2 : 5
+
+environment
+  envVAR1: ['both', 'yes']
+
+------------------------
+State after tick: 10
+a1 -> FAILURE
+
+blackboard
+  blVAR0: ['yes', 'both', 'yes']
+  blVAR3: True
+  blDEFINE6: [-2, -2, -2]
+  blDEFINE7: ['both', 'both', 'yes']
+
+local
+  a1_DOT_localVAR2 : 5
+
+environment
+  envVAR1: ['both', 'yes']
+

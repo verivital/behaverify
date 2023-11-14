@@ -89,19 +89,16 @@ def fix_name(base_name, nodes):
 def chatGPT_json_to_BehaVerify_json(node, parent_name = None, nodes = None):
     if nodes is None:
         nodes = {}
-    node_type = node['type']
-    base_name = node.get('name', node_type)
-    node_name = fix_name(base_name, nodes)
-    nodes[node_name] = 'temp'
-    children = []
-    the_children = node.get('children', node.get('nodes', []))
-    for child in the_children:
-        (child_name, nodes) = chatGPT_json_to_BehaVerify_json(child, node_name, nodes)
-        children.append(child_name)
-    if node_type in ('selector', 'sequence', 'parallel', 'inverter', 'success_is_failure', 'success_is_running', 'running_is_failure', 'running_is_success', 'failure_is_success', 'failure_is_running'):
+    node_type = node['type'].strip()  # remove annoying whitespace
+    base_name = ''
+    node_name = ''
+    if node_type.lower() in ('selector', 'fallback', 'sequence', 'parallel', 'inverter', 'success_is_failure', 'success_is_running', 'running_is_failure', 'running_is_success', 'failure_is_success', 'failure_is_running'):
         custom_type = None
+        node_type = node_type.lower()
+        node_name = fix_name(node_type, nodes)  # fix the name
     else:
-        if node_type in ('check', 'condition', 'guard'):
+        node_name = fix_name(node_type, nodes)  # fix the name
+        if node_type.lower() in ('check', 'condition', 'guard'):
             custom_type = 'unknown'
             node_type = 'check'
         elif node_type == 'action':
@@ -110,8 +107,25 @@ def chatGPT_json_to_BehaVerify_json(node, parent_name = None, nodes = None):
         else:
             custom_type = node_type
             node_type = 'action'
+
+    nodes[node_name] = 'temp'
+    children = []
+    the_children = node.get('children', node.get('nodes', []))
+    for child in the_children:
+        (child_name, nodes) = chatGPT_json_to_BehaVerify_json(child, node_name, nodes)
+        children.append(child_name)
     nodes[node_name] = {'parent' : parent_name, 'type' : node_type, 'custom_type' : custom_type, 'children' : children}
     return (node_name, nodes)
+
+
+def behaVerify_json_to_chatGPT_json(nodes, root_node_name):
+    node = nodes[root_node_name]
+    if node['type'] in ('selector', 'sequence', 'parallel', 'inverter', 'success_is_failure', 'success_is_running', 'running_is_failure', 'running_is_success', 'failure_is_success', 'failure_is_running'):
+        return {
+            'type' : node['type'],
+            'children' : [behaVerify_json_to_chatGPT_json(nodes, child_name) for child_name in node['children']]
+        }
+    return {'type' : root_node_name}
 
 SHAPES = {
     'selector' : 'octagon',
@@ -152,13 +166,21 @@ SHORT_TYPE = {
     'environment_check' : 'E'
 }
 
-def create_dot_from_BehaVerify_json(nodes, root_node_name, output_file = 'behavior_tree'):
+def create_dot_from_BehaVerify_json(nodes, root_node_name, output_file = 'behavior_tree', detailed_nodes = True):
     dot = graphviz.Digraph(format='png', filename=output_file)
     def process_node(node_name):
         node = nodes[node_name]
         node_type = node['type']
         parent_name = node['parent']
-        node_label = node_name if node_type in SHAPES else (node_name + os.linesep + SHORT_TYPE.get(node['type'], '?') + ' -> ' + str(node.get('custom_type', None)))
+        node_label = (
+            (
+                node_name
+                if node_type in SHAPES else
+                (node_name + os.linesep + SHORT_TYPE.get(node['type'], '?') + ' -> ' + str(node.get('custom_type', None)))
+            )
+            if detailed_nodes else
+            node_name
+        )
         #node_label = node_name if node_type in SHAPES else (node_name + os.linesep + str(node.get('custom_type', None)))
         dot.node(node_name, label = node_label, style = 'filled', fillcolor = COLORS.get(node_type, '#C0C0C0'), shape = SHAPES.get(node_type, 'oval'), fontcolor = ('red' if node.get('custom_type', None) in ('check', 'environment_check') else '#000000'))
         if parent_name is not None:
@@ -168,8 +190,8 @@ def create_dot_from_BehaVerify_json(nodes, root_node_name, output_file = 'behavi
     process_node(root_node_name)
     return dot
 
-def visualize_BehaVerify_json(nodes, root_node_name, output_file = 'behavior_tree', mode = 'render'):
-    dot = create_dot_from_BehaVerify_json(nodes, root_node_name, output_file)
+def visualize_BehaVerify_json(nodes, root_node_name, output_file = 'behavior_tree', mode = 'render', detailed_nodes = True):
+    dot = create_dot_from_BehaVerify_json(nodes, root_node_name, output_file, detailed_nodes)
     if mode == 'render':
         dot.render()
     else:
@@ -182,7 +204,7 @@ def get_root_from_BehaVerify_json(nodes):
     raise ValueError('No node without a parent')
 
 def main():
-    def load_json():
+    def import_json():
         nonlocal root_node_name, nodes
         if not os.path.isfile(from_file_entry.get()):
             status_text.config(text = 'Not a file: "' + from_file_entry.get() + '"')
@@ -190,25 +212,21 @@ def main():
         try:
             with open(from_file_entry.get(), 'r', encoding = 'utf-8') as input_file:
                 behavior_tree_json = json.load(input_file)
-            if json_type.get() == 'Recursive Json':
-                (root_node_name, nodes) = chatGPT_json_to_BehaVerify_json(behavior_tree_json)
-            else:
-                nodes = behavior_tree_json
-                root_node_name = get_root_from_BehaVerify_json(nodes)
-            status_text.config(text = 'Loaded Json, root node name: ' + root_node_name)
+            (root_node_name, nodes) = chatGPT_json_to_BehaVerify_json(behavior_tree_json)
+            status_text.config(text = 'Imported Json, root node name: ' + root_node_name)
         except:
             status_text.config(text = 'An exception occurred during Loading')
-    def save_json():
-        nonlocal nodes
+    def export_json():
+        nonlocal nodes, root_node_name
         try:
             with open(to_file_entry.get() + '.json', 'w', encoding = 'utf-8') as input_file:
-                json.dump(nodes, input_file)
-            status_text.config(text = 'Saved Json, root node name: ' + root_node_name)
+                json.dump(behaVerify_json_to_chatGPT_json(nodes, root_node_name), input_file)
+            status_text.config(text = 'Exported Json, root node name: ' + root_node_name)
         except:
             status_text.config(text = 'An exception occurred during Saving')
     def visualize():
         try:
-            visualize_BehaVerify_json(nodes, root_node_name, output_file = to_file_entry.get(), mode = 'view')
+            visualize_BehaVerify_json(nodes, root_node_name, output_file = to_file_entry.get(), mode = 'view', detailed_nodes = (True if var_detailed_nodes.get() == 1 else 0))
             status_text.config(text = 'Visualization finished. root node name: ' + root_node_name)
         except Exception as cur_exception:
             status_text.config(text = 'An exception occurred during Visualization: ' + str(cur_exception))
@@ -502,7 +520,7 @@ def main():
     def visualize_trace():
         smv_run = handle_smv(from_file_entry.get())
         for (tick_number, state) in enumerate(smv_run):
-            dot = create_dot_from_BehaVerify_json(nodes, root_node_name, output_file = to_file_entry.get() + '/' + str(tick_number))
+            dot = create_dot_from_BehaVerify_json(nodes, root_node_name, output_file = to_file_entry.get() + '/' + str(tick_number), detailed_nodes = (True if var_detailed_nodes.get() == 1 else 0))
             nodes_to_status = {}
             nodes_to_var_values = {}
             misc_var_values = []
@@ -546,10 +564,10 @@ def main():
     state_frame = ttk.Frame(root, padding = 5)
     state_frame.grid(column = 0, row = 1, sticky = tkinter.W)
 
-    load_json_button = ttk.Button(state_frame, text='Load JSON', command = load_json)
+    load_json_button = ttk.Button(state_frame, text='Import JSON', command = import_json)
     load_json_button.grid(column=0, row=0)
 
-    save_json_button = ttk.Button(state_frame, text='Save JSON', command = save_json)
+    save_json_button = ttk.Button(state_frame, text='Export JSON', command = export_json)
     save_json_button.grid(column=1, row=0)
 
     visualize_button = ttk.Button(state_frame, text='Visualize', command = visualize)
@@ -564,6 +582,11 @@ def main():
     visualize_button = ttk.Button(state_frame, text='Visualize Trace', command = visualize_trace)
     visualize_button.grid(column=5, row=0)
 
+    var_detailed_nodes = tkinter.IntVar()
+
+    detailed_nodes_button = ttk.Checkbutton(state_frame, text = 'Detailed Nodes', variable = var_detailed_nodes, onvalue = 1, offvalue = 0)
+    detailed_nodes_button.grid(column = 6, row = 0)
+
     ########################################################################
 
     from_file_frame = ttk.Frame(root, padding = 5)
@@ -574,15 +597,6 @@ def main():
 
     from_file_entry = ttk.Entry(from_file_frame)
     from_file_entry.grid(column = 1, row = 0)
-
-    json_type = tkinter.StringVar()
-    json_type.set('Recursive Json')
-
-    json_type_radio1 = ttk.Radiobutton(from_file_frame, variable = json_type, text = 'Recursive Json', value = 'Recursive Json')
-    json_type_radio1.grid(column = 2, row = 0)
-
-    json_type_radio2 = ttk.Radiobutton(from_file_frame, variable = json_type, text = 'Reference Json', value = 'Reference Json')
-    json_type_radio2.grid(column = 3, row = 0)
 
     ########################################################################
 
@@ -612,7 +626,7 @@ def main():
     node_type_var = tkinter.StringVar()
     node_type_var.set('Custom')  # Default node type
 
-    node_type_selector = ttk.OptionMenu(add_node_frame1, node_type_var, 'Custom', 'selector', 'sequence', 'parallel', 'inverter', 'success_is_failure', 'success_is_running', 'running_is_failure', 'running_is_success', 'failure_is_success', 'failure_is_running')
+    node_type_selector = ttk.OptionMenu(add_node_frame1, node_type_var, 'Custom', 'Custom', 'selector', 'sequence', 'parallel', 'inverter', 'success_is_failure', 'success_is_running', 'running_is_failure', 'running_is_success', 'failure_is_success', 'failure_is_running')
     node_type_selector.grid(column = 1, row = 0)
 
     custom_type_frame = ttk.Frame(add_node_frame1, padding = 1)

@@ -1,0 +1,9 @@
+in OUTPUT_NUXMV.txt changed line 853 from
+    system.envVAR1_stage_2_index_1 = TRUE
+to
+    system.envVAR1_stage_2_index_1 = FALSE
+
+in OUTPUT_OPT_NUXMV.txt changed line 853 from
+    system.envVAR1_stage_2_index_1 = TRUE
+to
+    system.envVAR1_stage_2_index_1 = FALSE

@@ -1,0 +1,11 @@
+digraph {
+	root [label=root fillcolor="#00FFFF" fontcolor="#000000" shape=octagon style=filled]
+	b [label=b fillcolor="#00FFFF" fontcolor="#000000" shape=octagon style=filled]
+	root -> b
+	checkSome [label=checkSome fillcolor="#C0C0C0" fontcolor="#000000" shape=oval style=filled]
+	b -> checkSome
+	doSome [label=doSome fillcolor="#C0C0C0" fontcolor="#000000" shape=oval style=filled]
+	b -> doSome
+	a [label=a fillcolor="#C0C0C0" fontcolor="#000000" shape=oval style=filled]
+	root -> a
+}
