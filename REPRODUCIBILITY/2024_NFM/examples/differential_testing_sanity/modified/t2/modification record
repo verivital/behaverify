@@ -1,0 +1,4 @@
+changed line 247 in OUTPUT_NUXMV.txt from
+    system.a2.status = running
+to
+    system.a2.status = failure

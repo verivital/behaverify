@@ -1,0 +1,196 @@
+------------------------
+Initial State
+blackboard
+  blVAR0: 2
+  blVAR3: ['no', 'no', 'no']
+  blVAR4: -2
+  blFROZENVAR5: 2
+  blDEFINE7: 2
+  blDEFINE9: [-2, -2]
+
+local
+
+environment
+  envVAR1: [True, True, True]
+  envVAR2: [2, 2, 2]
+
+------------------------
+State after tick: 1
+c1 -> FAILURE
+
+blackboard
+  blVAR0: 2
+  blVAR3: ['no', 'no', 'no']
+  blVAR4: -2
+  blFROZENVAR5: 2
+  blDEFINE7: 2
+  blDEFINE9: [-2, -2]
+
+local
+
+environment
+  envVAR1: [True, True, True]
+  envVAR2: [2, 2, 2]
+
+------------------------
+State after tick: 2
+c1 -> FAILURE
+
+blackboard
+  blVAR0: 2
+  blVAR3: ['no', 'no', 'no']
+  blVAR4: -2
+  blFROZENVAR5: 2
+  blDEFINE7: 2
+  blDEFINE9: [-2, -2]
+
+local
+
+environment
+  envVAR1: [True, True, True]
+  envVAR2: [2, 2, 2]
+
+------------------------
+State after tick: 3
+c1 -> FAILURE
+
+blackboard
+  blVAR0: 2
+  blVAR3: ['no', 'no', 'no']
+  blVAR4: -2
+  blFROZENVAR5: 2
+  blDEFINE7: 2
+  blDEFINE9: [-2, -2]
+
+local
+
+environment
+  envVAR1: [True, True, True]
+  envVAR2: [2, 2, 2]
+
+------------------------
+State after tick: 4
+c1 -> FAILURE
+
+blackboard
+  blVAR0: 2
+  blVAR3: ['no', 'no', 'no']
+  blVAR4: -2
+  blFROZENVAR5: 2
+  blDEFINE7: 2
+  blDEFINE9: [-2, -2]
+
+local
+
+environment
+  envVAR1: [True, True, True]
+  envVAR2: [2, 2, 2]
+
+------------------------
+State after tick: 5
+c1 -> FAILURE
+
+blackboard
+  blVAR0: 2
+  blVAR3: ['no', 'no', 'no']
+  blVAR4: -2
+  blFROZENVAR5: 2
+  blDEFINE7: 2
+  blDEFINE9: [-2, -2]
+
+local
+
+environment
+  envVAR1: [True, True, True]
+  envVAR2: [2, 2, 2]
+
+------------------------
+State after tick: 6
+c1 -> FAILURE
+
+blackboard
+  blVAR0: 2
+  blVAR3: ['no', 'no', 'no']
+  blVAR4: -2
+  blFROZENVAR5: 2
+  blDEFINE7: 2
+  blDEFINE9: [-2, -2]
+
+local
+
+environment
+  envVAR1: [True, True, True]
+  envVAR2: [2, 2, 2]
+
+------------------------
+State after tick: 7
+c1 -> FAILURE
+
+blackboard
+  blVAR0: 2
+  blVAR3: ['no', 'no', 'no']
+  blVAR4: -2
+  blFROZENVAR5: 2
+  blDEFINE7: 2
+  blDEFINE9: [-2, -2]
+
+local
+
+environment
+  envVAR1: [True, True, True]
+  envVAR2: [2, 2, 2]
+
+------------------------
+State after tick: 8
+c1 -> FAILURE
+
+blackboard
+  blVAR0: 2
+  blVAR3: ['no', 'no', 'no']
+  blVAR4: -2
+  blFROZENVAR5: 2
+  blDEFINE7: 2
+  blDEFINE9: [-2, -2]
+
+local
+
+environment
+  envVAR1: [True, True, True]
+  envVAR2: [2, 2, 2]
+
+------------------------
+State after tick: 9
+c1 -> FAILURE
+
+blackboard
+  blVAR0: 2
+  blVAR3: ['no', 'no', 'no']
+  blVAR4: -2
+  blFROZENVAR5: 2
+  blDEFINE7: 2
+  blDEFINE9: [-2, -2]
+
+local
+
+environment
+  envVAR1: [True, True, True]
+  envVAR2: [2, 2, 2]
+
+------------------------
+State after tick: 10
+c1 -> FAILURE
+
+blackboard
+  blVAR0: 2
+  blVAR3: ['no', 'no', 'no']
+  blVAR4: -2
+  blFROZENVAR5: 2
+  blDEFINE7: 2
+  blDEFINE9: [-2, -2]
+
+local
+
+environment
+  envVAR1: [True, True, True]
+  envVAR2: [2, 2, 2]
+
