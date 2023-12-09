@@ -968,22 +968,19 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
         if node_names_map is None:
             node_names_map = {}
         argument_pairs = None
-        while True:
-            if hasattr(current_node, 'sub_root'):
-                current_node = current_node.sub_root
-                continue
-            current_name = current_node.leaf.name if current_node.name is None else current_node.name
-            if hasattr(current_node, 'leaf'):
-                all_arguments = []
-                for argument in current_node.arguments:
-                    arg_func = build_meta_func(argument)
-                    all_arguments.extend(arg_func((constants, {})))
-                argument_pairs = {
-                    current_node.leaf.arguments[index].argument_name: all_arguments[index]
-                    for index in range(len(current_node.arguments))
-                }
-                current_node = current_node.leaf
-            break
+        while hasattr(current_node, 'sub_root'):
+            current_node = current_node.sub_root
+        current_name = current_node.leaf.name if current_node.name is None else current_node.name
+        if hasattr(current_node, 'leaf'):
+            all_arguments = []
+            for argument in current_node.arguments:
+                arg_func = build_meta_func(argument)
+                all_arguments.extend(arg_func((constants, {})))
+            argument_pairs = {
+                current_node.leaf.arguments[index].argument_name: all_arguments[index]
+                for index in range(len(current_node.arguments))
+            }
+            current_node = current_node.leaf
         # the above deals with sub_trees and leaf nodes, ensuring that the current_node variable has the next actual node at this point
         # next, we get the name of this node, and correct for duplication
 

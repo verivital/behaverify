@@ -587,13 +587,12 @@ def dsl_to_haskell(metamodel_file, model_file, location, output_file, max_iter, 
 
         def walk_tree_recursive(current_node, seen_nodes, node_names, node_names_map, running_string, running_int, indent_level):
             current_args = None
-            while True:
-                if hasattr(current_node, 'sub_root'):
-                    current_node = current_node.sub_root
-                    continue
-                current_name = current_node.leaf.name if current_node.name is None else current_node.name
-                current_args = (current_node.arguments if hasattr(current_node, 'arguments') else None)
-                current_node = (current_node.leaf if hasattr(current_node, 'leaf') else current_node.sub_root)
+            while  hasattr(current_node, 'sub_root'):
+                current_node = current_node.sub_root
+            current_name = current_node.leaf.name if current_node.name is None else current_node.name
+            current_args = (current_node.arguments if hasattr(current_node, 'arguments') else None)
+            current_node = (current_node.leaf if hasattr(current_node, 'leaf') else current_node)
+
             conflict_avoid_name = 'bTreeNode' + pascal_case(current_name)
             (node_name, modifier) = create_node_name(conflict_avoid_name, node_names, node_names_map)
             cur_node_names = {node_name}.union(node_names)
