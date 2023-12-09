@@ -37,31 +37,33 @@ from serene_functions import build_meta_func
 class BTreeException(Exception):
     '''an exception that indicates something is wrong with the BTree'''
     def __init__(self, trace, last_message):
+        if trace is None:
+            trace = []
         self.message = ' -> '.join(trace) + ' ::-> ' + last_message
         super().__init__(self.message)
 
-def get_min_max(min_code, max_code, declared_enumerations, node_names, variables, constants, loop_references):
+def get_min_max(min_code, max_code, declared_enumerations, node_names, variables, constants, loop_references, trace = None):
     if min_code is not None:
         min_func = build_meta_func(min_code)
-        min_val = resolve_potential_reference_no_type(min_func((constants, loop_references))[0], declared_enumerations, node_names, variables, constants, loop_references)[1]
+        min_val = resolve_potential_reference_no_type(min_func((constants, loop_references))[0], declared_enumerations, node_names, variables, constants, loop_references, trace = trace)[1]
     else:
         # min_val = 0
         return None
     if max_code is not None:
         max_func = build_meta_func(max_code)
-        max_val = resolve_potential_reference_no_type(max_func((constants, loop_references))[0], declared_enumerations, node_names, variables, constants, loop_references)[1]
+        max_val = resolve_potential_reference_no_type(max_func((constants, loop_references))[0], declared_enumerations, node_names, variables, constants, loop_references, trace = trace)[1]
     else:
         # max_val = 1
         return None
     return (min_val, max_val)
 
-def variable_array_size(variable, declared_enumerations, node_names, variables, constants, loop_references):
+def variable_array_size(variable, declared_enumerations, node_names, variables, constants, loop_references, trace = None):
     if variable.model_as == 'NEURAL':
-        return resolve_potential_reference_no_type((build_meta_func(variable.num_outputs)((constants, loop_references)))[0], declared_enumerations, node_names, variables, constants, loop_references)[1]
+        return resolve_potential_reference_no_type((build_meta_func(variable.num_outputs)((constants, loop_references)))[0], declared_enumerations, node_names, variables, constants, loop_references, trace = trace)[1]
     array_size_func = build_meta_func(variable.array_size)
-    return resolve_potential_reference_no_type(array_size_func((constants, loop_references))[0], declared_enumerations, node_names, variables, constants, loop_references)[1]
+    return resolve_potential_reference_no_type(array_size_func((constants, loop_references))[0], declared_enumerations, node_names, variables, constants, loop_references, trace = trace)[1]
 
-def constant_type(constant, declared_enumerations, no_exceptions = False):
+def constant_type(constant, declared_enumerations, no_exceptions = False, trace = None):
     '''Used to get the type of the constant'''
     if constant in declared_enumerations:
         return 'ENUM'
@@ -73,9 +75,9 @@ def constant_type(constant, declared_enumerations, no_exceptions = False):
         return 'REAL'
     if no_exceptions:
         return True
-    raise BTreeException([], 'Constant ' + constant + ' is of an unsupported type. Only ENUM, BOOLEAN, INT, and REAL are supported')
+    raise BTreeException(trace, 'Constant ' + constant + ' is of an unsupported type. Only ENUM, BOOLEAN, INT, and REAL are supported')
 
-def handle_constant_or_reference_no_type(constant_or_reference, declared_enumerations, node_names, variables, constants, loop_references):
+def handle_constant_or_reference_no_type(constant_or_reference, declared_enumerations, node_names, variables, constants, loop_references, trace = None):
     return (
         ('CONSTANT', constant_or_reference.constant)
         if constant_or_reference.constant is not None else
@@ -108,12 +110,12 @@ def handle_constant_or_reference_no_type(constant_or_reference, declared_enumera
         )
     )
 
-def handle_constant_or_reference(constant_or_reference, declared_enumerations, node_names, variables, constants, loop_references):
+def handle_constant_or_reference(constant_or_reference, declared_enumerations, node_names, variables, constants, loop_references, trace = None):
     if constant_or_reference.constant is None:
-        return resolve_potential_reference(constant_or_reference.reference, declared_enumerations, node_names, variables, constants, loop_references)
-    return ('CONSTANT', constant_type(constant_or_reference.constant, declared_enumerations), constant_or_reference.constant)
+        return resolve_potential_reference(constant_or_reference.reference, declared_enumerations, node_names, variables, constants, loop_references, trace = trace)
+    return ('CONSTANT', constant_type(constant_or_reference.constant, declared_enumerations, trace = trace), constant_or_reference.constant)
 
-def resolve_potential_reference(reference, declared_enumerations, node_names, variables, constants, loop_references):
+def resolve_potential_reference(reference, declared_enumerations, node_names, variables, constants, loop_references, trace = None):
     '''
     used to resolve references and also results from meta functions.
     '''
@@ -121,29 +123,29 @@ def resolve_potential_reference(reference, declared_enumerations, node_names, va
         ('NODE', 'NODE', reference)
         if reference in node_names else
         (
-            ('VARIABLE', variable_type(variables[reference], declared_enumerations, constants), variables[reference])
+            ('VARIABLE', variable_type(variables[reference], declared_enumerations, constants, trace = trace), variables[reference])
             if reference in variables else
             (
-                ('CONSTANT', constant_type(constants[reference], declared_enumerations), constants[reference])
+                ('CONSTANT', constant_type(constants[reference], declared_enumerations, trace = trace), constants[reference])
                 if reference in constants else
                 (
                     (
-                        ('VARIABLE', variable_type(loop_references[reference], declared_enumerations, constants), variables[reference])
+                        ('VARIABLE', variable_type(loop_references[reference], declared_enumerations, constants, trace = trace), variables[reference])
                         if hasattr(loop_references[reference], 'name') else
                         (
                             ('NODE', 'NODE', loop_references[reference])
                             if loop_references[reference] in node_names else
-                            ('CONSTANT', constant_type(loop_references[reference], declared_enumerations), loop_references[reference])
+                            ('CONSTANT', constant_type(loop_references[reference], declared_enumerations, trace = trace), loop_references[reference])
                         )
                     )
                     if reference in loop_references else
-                    ('CONSTANT', constant_type(reference, declared_enumerations), reference)
+                    ('CONSTANT', constant_type(reference, declared_enumerations, trace = trace), reference)
                 )
             )
         )
     )
 
-def resolve_potential_reference_no_type(reference, declared_enumerations, node_names, variables, constants, loop_references):
+def resolve_potential_reference_no_type(reference, declared_enumerations, node_names, variables, constants, loop_references, trace = None):
     '''used to resolve references and also results from meta functions.'''
     return (
         ('NODE', reference)
@@ -160,7 +162,7 @@ def resolve_potential_reference_no_type(reference, declared_enumerations, node_n
                         if hasattr(loop_references[reference], 'name') else
                         (
                             ('NODE', loop_references[reference])
-                            if constant_type(loop_references[reference], declared_enumerations, True) is None else
+                            if constant_type(loop_references[reference], declared_enumerations, True, trace = trace) is None else
                             ('CONSTANT', loop_references[reference])
                         )
                     )
@@ -171,7 +173,7 @@ def resolve_potential_reference_no_type(reference, declared_enumerations, node_n
         )
     )
 
-def dummy_value(arg_type, declared_enumerations):
+def dummy_value(arg_type, declared_enumerations, trace = None):
     '''Used to get a Dummy Value of the specified type'''
     if arg_type == 'ENUM':
         for enum in declared_enumerations:
@@ -183,9 +185,9 @@ def dummy_value(arg_type, declared_enumerations):
         return 0
     if arg_type == 'REAL':
         return 0.0
-    raise BTreeException([], 'Constant Type ' + arg_type + ' is of an unsupported type. Only ENUM, BOOLEAN, INT, and REAL are supported')
+    raise BTreeException(trace, 'Constant Type ' + arg_type + ' is of an unsupported type. Only ENUM, BOOLEAN, INT, and REAL are supported')
 
-def variable_type(variable, declared_enumerations, constants):
+def variable_type(variable, declared_enumerations, constants, trace = None):
     '''Used to determine the variable type'''
     if variable.model_as == 'NEURAL':
         return 'INT'
@@ -199,7 +201,7 @@ def variable_type(variable, declared_enumerations, constants):
         return 'REAL'
     domain_func = build_meta_func(variable.domain.domain_codes[0])
     values = domain_func((constants, {}))
-    return constant_type(values[0], declared_enumerations)
+    return constant_type(values[0], declared_enumerations, trace = trace)
 
 def is_local(variable):
     '''checks if the variable is local'''
@@ -213,7 +215,7 @@ def is_blackboard(variable):
     '''checks if the variable is blackboard'''
     return variable.var_type == 'bl'
 
-def variable_scope(variable):
+def variable_scope(variable, trace = None):
     '''used to return the scope of the environment'''
     if is_local(variable):
         return 'local'
@@ -221,7 +223,7 @@ def variable_scope(variable):
         return 'environment'
     if is_blackboard(variable):
         return 'blackboard'
-    raise BTreeException([], 'Variable ' + variable.name + ' is not local, blackboard, or environment')
+    raise BTreeException(trace, 'Variable ' + variable.name + ' is not local, blackboard, or environment')
 
 def is_array(variable):
     '''checks if the variable is an array'''

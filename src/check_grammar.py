@@ -124,7 +124,7 @@ def validate_model(metamodel_file, model_file, recursion_limit):
             raise BTreeException(trace, 'Must have exactly one value for max')
         min_val = min_values[0]
         max_val = max_values[0]
-        (min_class, min_type, min_val) = resolve_potential_reference(min_val, declared_enumerations, all_node_names, variables, constants, loop_references)
+        (min_class, min_type, min_val) = resolve_potential_reference(min_val, declared_enumerations, all_node_names, variables, constants, loop_references, trace = trace)
         if min_class != 'CONSTANT' or min_type != 'INT':
             raise BTreeException(trace, 'Min value must be a constant of type INT. Got: ' + min_class + ', ' + min_type + ', ' + str(min_val))
         if bound and max_val == '+oo':
@@ -132,7 +132,7 @@ def validate_model(metamodel_file, model_file, recursion_limit):
             max_type = 'INT'
             max_val = min_val + 1
         else:
-            (max_class, max_type, max_val) = resolve_potential_reference(max_val, declared_enumerations, all_node_names, variables, constants, loop_references)
+            (max_class, max_type, max_val) = resolve_potential_reference(max_val, declared_enumerations, all_node_names, variables, constants, loop_references, trace = trace)
         if max_class != 'CONSTANT' or max_type != 'INT':
             raise BTreeException(trace, 'Max value must be a constant of type INT (or +oo for bound). Got: ' + max_class + ', ' + max_type + ', ' + str(max_val))
         if min_val > max_val:
@@ -140,7 +140,7 @@ def validate_model(metamodel_file, model_file, recursion_limit):
         return ((min_type, min_val), (max_type, max_val))
 
     def var_checks(code, variable, scopes, variable_names):
-        var_scope = variable_scope(variable)
+        var_scope = variable_scope(variable, trace = trace)
         if var_scope not in scopes:
             raise BTreeException(trace, 'Expected a variable in one of the following scopes: [' + ', '.join(scopes) + '] but got ' + variable.name + ' in scope ' + var_scope)
         if var_scope != 'environment':
@@ -166,7 +166,7 @@ def validate_model(metamodel_file, model_file, recursion_limit):
     def validate_code(code, scopes, variable_names, allowed_functions):
 
         if code.atom is not None:
-            (atom_class, atom_type, atom) = handle_constant_or_reference(code.atom, declared_enumerations, all_node_names, variables, constants, loop_references)
+            (atom_class, atom_type, atom) = handle_constant_or_reference(code.atom, declared_enumerations, all_node_names, variables, constants, loop_references, trace = trace)
             if atom_class == 'CONSTANT':
                 return [(atom_type, 'constant', str_format(atom))]
             if atom_class == 'NODE':
@@ -210,7 +210,7 @@ def validate_model(metamodel_file, model_file, recursion_limit):
                         domain_func = build_meta_func(domain_code)
                         # new_references = copy.deepcopy(loop_references)  # the meta function is guaranteed to not change this.
                         for domain_value in domain_func((constants, loop_references)):
-                            all_domain_values.append(resolve_potential_reference(domain_value, declared_enumerations, all_node_names, variables, constants, loop_references)[2])
+                            all_domain_values.append(resolve_potential_reference(domain_value, declared_enumerations, all_node_names, variables, constants, loop_references, trace = trace)[2])
                     except Exception as error:
                         raise BTreeException(trace, 'Unknown error') from error
             else:
@@ -232,7 +232,7 @@ def validate_model(metamodel_file, model_file, recursion_limit):
             indexed_vars = to_index_func((constants, loop_references))
             if len(indexed_vars) != 1:
                 raise BTreeException(trace, 'Expected exactly 1 variable to index')
-            (atom_class, atom_type, atom) = resolve_potential_reference(indexed_vars[0], declared_enumerations, all_node_names, variables, constants, loop_references)
+            (atom_class, atom_type, atom) = resolve_potential_reference(indexed_vars[0], declared_enumerations, all_node_names, variables, constants, loop_references, trace = trace)
             if atom_class != 'VARIABLE':
                 raise BTreeException(trace, 'You can only index variables')
             var_checks(code.function_call, atom, scopes, variable_names)
@@ -241,7 +241,7 @@ def validate_model(metamodel_file, model_file, recursion_limit):
             if code.function_call.constant_index == 'constant_index':
                 index_func = build_meta_func(code.function_call.values[0])
                 returned_vals = index_func((constants, loop_references))
-                cur_arg_type = resolve_potential_reference(returned_vals[0], declared_enumerations, all_node_names, variables, constants, loop_references)[1]
+                cur_arg_type = resolve_potential_reference(returned_vals[0], declared_enumerations, all_node_names, variables, constants, loop_references, trace = trace)[1]
             else:
                 returned_vals = validate_code(code.function_call.values[0], scopes, variable_names, new_allowed_functions)
                 (cur_arg_type, _, _) = returned_vals[0]
@@ -298,7 +298,7 @@ def validate_model(metamodel_file, model_file, recursion_limit):
         if init_mode == 'node' and (not is_local(variable)):
             raise BTreeException(trace, 'initializes non_local variable')
 
-        var_type = variable_type(variable, declared_enumerations, constants)
+        var_type = variable_type(variable, declared_enumerations, constants, trace = trace)
 
         def handle_case_result(case_result, is_default):
             if not is_default:
@@ -324,7 +324,7 @@ def validate_model(metamodel_file, model_file, recursion_limit):
                     index_func = build_meta_func(index)
                     values = index_func((constants, {}))
                     for value in values:
-                        cur_type = constant_type(value, declared_enumerations)
+                        cur_type = constant_type(value, declared_enumerations, trace = trace)
                         if cur_type != 'INT':
                             raise BTreeException(trace, 'indexed using type of ' + cur_type + ' instead of INT')
                         if value in seen_constants:
@@ -345,7 +345,7 @@ def validate_model(metamodel_file, model_file, recursion_limit):
                 try:
                     domain_func = build_meta_func(domain_code)
                     for domain_value in domain_func((constants, loop_references)):
-                        all_domain_values.append(resolve_potential_reference(domain_value, declared_enumerations, all_node_names, variables, constants, loop_references)[2])
+                        all_domain_values.append(resolve_potential_reference(domain_value, declared_enumerations, all_node_names, variables, constants, loop_references, trace = trace)[2])
                 except Exception as error:
                     raise BTreeException(trace, 'unknown error') from error
         else:
@@ -386,7 +386,7 @@ def validate_model(metamodel_file, model_file, recursion_limit):
     def validate_check(node):
         trace.append('In Check: ' + node.name)
         for arg_pair in node.arguments:
-            loop_references[arg_pair.argument_name] = dummy_value(arg_pair.argument_type, declared_enumerations)
+            loop_references[arg_pair.argument_name] = dummy_value(arg_pair.argument_type, declared_enumerations, trace = trace)
         read_variables = set(map(lambda x : x.name, node.read_variables))
         if len(read_variables) != len(node.read_variables):
             raise BTreeException(trace, 'duplicate read variables')
@@ -400,7 +400,7 @@ def validate_model(metamodel_file, model_file, recursion_limit):
     def validate_check_env(node):
         trace.append('In Environment Check: ' + node.name)
         for arg_pair in node.arguments:
-            loop_references[arg_pair.argument_name] = dummy_value(arg_pair.argument_type, declared_enumerations)
+            loop_references[arg_pair.argument_name] = dummy_value(arg_pair.argument_type, declared_enumerations, trace = trace)
         read_variables = set(map(lambda x : x.name, node.read_variables))
         if len(read_variables) != len(node.read_variables):
             raise BTreeException(trace, 'duplicate read variables')
@@ -413,7 +413,7 @@ def validate_model(metamodel_file, model_file, recursion_limit):
     def validate_action(node):
         trace.append('In Action: ' + node.name)
         for arg_pair in node.arguments:
-            loop_references[arg_pair.argument_name] = dummy_value(arg_pair.argument_type, declared_enumerations)
+            loop_references[arg_pair.argument_name] = dummy_value(arg_pair.argument_type, declared_enumerations, trace = trace)
 
         all_vars = set(map(lambda x : x.name, itertools.chain(node.local_variables, node.read_variables, node.write_variables)))
         read_variables = set(map(lambda x : x.name, node.read_variables))
@@ -480,7 +480,7 @@ def validate_model(metamodel_file, model_file, recursion_limit):
                             values = index_func((constants, {}))
                             if len(values) != 1:
                                 raise BTreeException(trace, 'attempted to index read variable with multiple values (or no values)')
-                            cur_type = constant_type(values[0], declared_enumerations)
+                            cur_type = constant_type(values[0], declared_enumerations, trace = trace)
                         if cur_type != 'INT':
                             raise BTreeException(trace, 'indexing into ' + cond_var.name + ' with something other than an int')
                     if not is_array(cond_var) and read_statement.index_of is not None:
@@ -489,7 +489,7 @@ def validate_model(metamodel_file, model_file, recursion_limit):
                         raise BTreeException(trace, cond_var.name + ' used as a condition variable but it is an Environment Variable')
                     if cond_var.name not in local_variables and cond_var.name not in write_variables:
                         raise BTreeException(trace, 'updating condition variable ' + cond_var.name + ' but it is not listed in the local or write variables')
-                    temp_var_type = variable_type(cond_var, declared_enumerations, constants,)
+                    temp_var_type = variable_type(cond_var, declared_enumerations, constants, trace = trace)
                     if temp_var_type != 'BOOLEAN':
                         raise BTreeException(trace, 'Condition variable for read statement is ' + cond_var.name + ' but ' + cond_var.name + ' is of type ' + temp_var_type + ' and not BOOLEAN')
                     if cond_var.model_as != 'VAR':
@@ -559,7 +559,7 @@ def validate_model(metamodel_file, model_file, recursion_limit):
                 variable_func = build_meta_func(input_code)
                 input_variables = variable_func((constants, {}))
                 for input_variable in input_variables:
-                    (atom_class, atom_type, _) = resolve_potential_reference(input_variable, declared_enumerations, all_node_names, variables, constants, {})
+                    (atom_class, atom_type, _) = resolve_potential_reference(input_variable, declared_enumerations, all_node_names, variables, constants, {}, trace = trace)
                     if atom_class not in ('VARIABLE', 'CONSTANT'):
                         raise BTreeException(trace, 'Neural Network has an input of class: ' + str(atom_class) + '. Neural network inputs must be of class VARIABLE or CONSTANT')
                     if atom_type != 'INT':
@@ -570,7 +570,7 @@ def validate_model(metamodel_file, model_file, recursion_limit):
             if len(output_vals) != 1:
                 raise BTreeException(trace, 'Neural Network output size must resolve to a single integer value. Received: ' + str(len(output_vals)))
             num_outputs = output_vals[0]
-            (atom_class, atom_type, num_outputs) = resolve_potential_reference(num_outputs, declared_enumerations, all_node_names, variables, constants, {})
+            (atom_class, atom_type, num_outputs) = resolve_potential_reference(num_outputs, declared_enumerations, all_node_names, variables, constants, {}, trace = trace)
             if atom_class != 'CONSTANT':
                 raise BTreeException(trace, 'Neural Network output size must be a constant')
             if atom_type != 'INT':
@@ -581,7 +581,7 @@ def validate_model(metamodel_file, model_file, recursion_limit):
             if len(source_vals) != 1:
                 raise BTreeException(trace, 'Neural Networks must have exactly 1 source file. Received: ' + str(len(source_vals)))
             source = source_vals[0]
-            (atom_class, source) = resolve_potential_reference_no_type(source, declared_enumerations, all_node_names, variables, constants, {})
+            (atom_class, source) = resolve_potential_reference_no_type(source, declared_enumerations, all_node_names, variables, constants, {}, trace = trace)
             if atom_class != 'CONSTANT':
                 raise BTreeException(trace, 'Neural Network source must be a constant')
             source = file_prefix + '/' + source
@@ -611,11 +611,11 @@ def validate_model(metamodel_file, model_file, recursion_limit):
                     values.extend(domain_func((constants, {})))
                 if len(values) == 0:
                     raise BTreeException(trace, 'Variable ' + variable.name + ' has an empty domain')
-                value_type = constant_type(values[0], declared_enumerations)
+                value_type = constant_type(values[0], declared_enumerations, trace = trace)
                 if value_type not in {'ENUM', 'INT'}:
                     raise BTreeException(trace, 'Variable ' + variable.name + ' must be ENUM or INT (loop domain)')
                 for value in values:
-                    cur_type = constant_type(value, declared_enumerations)
+                    cur_type = constant_type(value, declared_enumerations, trace = trace)
                     if cur_type != value_type:
                         raise BTreeException(trace, 'Variable ' + variable.name + ' has multiple types (cannot use reals here): ' + value_type + ', ' + cur_type)
         if is_array(variable):
@@ -624,7 +624,7 @@ def validate_model(metamodel_file, model_file, recursion_limit):
             if len(array_sizes) != 1:
                 raise BTreeException(trace, 'must have exactly 1 array size')
             array_size = array_sizes[0]
-            array_size_type = constant_type(array_size, declared_enumerations)
+            array_size_type = constant_type(array_size, declared_enumerations, trace = trace)
             if array_size_type != 'INT':
                 raise BTreeException(trace, 'Array size must be an INT')
             if array_size < 2:
@@ -651,7 +651,7 @@ def validate_model(metamodel_file, model_file, recursion_limit):
                 if len(current_node.arguments) != len(all_current_args):
                     raise BTreeException(trace, 'Node ' + current_node.name + ' needs ' + str(len(current_node.arguments)) + ' arguments but was created with ' + str(len(all_current_args)))
                 for (index, cur_arg) in enumerate(all_current_args):
-                    cur_type = resolve_potential_reference(cur_arg, declared_enumerations, {}, {}, constants, {})[1]
+                    cur_type = resolve_potential_reference(cur_arg, declared_enumerations, {}, {}, constants, {}, trace = trace)[1]
                     if current_node.arguments[index].argument_type != cur_type:
                         raise BTreeException(trace, 'Node ' + current_node.name + ' argument ' + str(index) + ' named ' + current_node.arguments[index].argument_name + ' was declared to be of type ' + current_node.arguments[index].argument_type + ' but is being created with type ' + cur_type)
                 nodes_to_check.add(current_node.name)
