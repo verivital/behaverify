@@ -11,32 +11,19 @@ def handle_file(file_name, output_name, x_size, y_size):
         for line in input_file.readlines():
             if 'State' in line:
                 list_of_states.append({})
-            if 'cur_x' in line:
+            if 'x_true' in line:
                 list_of_states[-1]['drone_x'] = int(line.split(':')[1].strip())
-            if 'cur_y' in line:
+            if 'y_true' in line:
                 list_of_states[-1]['drone_y'] = int(line.split(':')[1].strip())
-            if 'tree_x' in line:
-                list_of_states[-1]['tree_x'] = [
-                    int(tree_x.strip())
-                    for tree_x in line.split(':')[1].strip().replace('[', '').replace(']', '').split(',')
-                ]
-            if 'tree_y' in line:
-                list_of_states[-1]['tree_y'] = [
-                    int(tree_x.strip())
-                    for tree_x in line.split(':')[1].strip().replace('[', '').replace(']', '').split(',')
-                ]
-            if 'tar_x' in line:
+            if 'x_goal' in line:
                 list_of_states[-1]['target_x'] = int(line.split(':')[1].strip())
-            if 'tar_y' in line:
+            if 'y_goal' in line:
                 list_of_states[-1]['target_y'] = int(line.split(':')[1].strip())
         draw_grid(list_of_states, output_name, x_size, y_size)
     return
 
 def create_grid_from_list_of_states(states, x_size, y_size):
     grid = [['-' for _ in range(y_size)] for _ in range(x_size)]
-    for tree_count in range(min(len(states['tree_x']), len(states['tree_y']))):
-        grid[states['tree_x'][tree_count]][states['tree_y'][tree_count]] = 'O'
-    grid[states['target_x']][states['target_y']] = 'T'
     grid[states['drone_x']][states['drone_y']] = 'D'
     return grid
 
@@ -60,15 +47,17 @@ def draw_grid(list_of_states, output_name, x_size, y_size):
         draw.line([(0, tile_side * y), (size[0], tile_side * y)], fill = 'black', width = line_size)
         draw.line([(0, tile_side * y + line_size), (size[0], tile_side * y + line_size)], fill = 'black', width = line_size)
     drone_line = [(list_of_states[0]['drone_x'] * tile_side + int(tile_side/2), list_of_states[0]['drone_y'] * tile_side + int(tile_side/2))]
-    target_line = [(list_of_states[0]['target_x'] * tile_side + int(tile_side/2), list_of_states[0]['target_y'] * tile_side + int(tile_side/2))]
+    target_count = 0
+    target = (-1, -1)
     for index in range(1, len(list_of_states)):
         current_states = list_of_states[index]
         if current_states['drone_x'] != drone_line[-1][0] or current_states['drone_y'] != drone_line[-1][1]:
             drone_line.append((current_states['drone_x'] * tile_side + int(tile_side/2), current_states['drone_y'] * tile_side + int(tile_side/2)))
-        if current_states['target_x'] != target_line[-1][0] or current_states['target_y'] != target_line[-1][1]:
-            target_line.append((current_states['target_x'] * tile_side + int(tile_side/2), current_states['target_y'] * tile_side + int(tile_side/2)))
+        if current_states['target_x'] != target[0] or current_states['target_y'] != target[1]:
+            target_count = target_count + 1
+            target = (current_states['target_x'], current_states['target_y'])
+            draw.text((target[0] * tile_side + int(tile_side/2), target[1] * tile_side + int(tile_side/2)), str(target_count), fill = COLORS['T'])
     draw.line(drone_line, fill = COLORS['D'], width = line_size)
-    draw.line(target_line, fill = COLORS['T'], width = line_size)
     image.save(output_name + '.png')
 
 handle_file(sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4]))

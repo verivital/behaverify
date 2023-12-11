@@ -1,9 +1,3 @@
-configuration{}
-enumerations{}
-constants{
-    x_max := 20,
-    y_max := 20
-}
 
 variables {
     variable { bl x_true VAR [0, x_max] assign {result {(loop, loop_var, [0, x_max] such_that True, loop_var)} } }
