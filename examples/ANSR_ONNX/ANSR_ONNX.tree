@@ -24,7 +24,7 @@ enumerations {
 }
 constants {
     #{here we declare constant values that can be used throughout the model. Note that you could set these to be equal to enmerations.}#
-    x_min := 0, y_min := 0, x_max := 8, y_max := 8, tree_count := 2, vision_range := 4, tree_range := 2, y_change := 2, movement_cooldown := 10
+    x_min := 0, y_min := 0, x_max := 10, y_max := 10, tree_count := 2, vision_range := 4, tree_range := 2, y_change := 2, movement_cooldown := 5
 } end_constants
 
 variables {
@@ -163,13 +163,29 @@ environment_checks {
 		(lte, (add, (abs, (sub, cur_x, tar_x)), (abs, (sub, cur_y, tar_y))), vision_range),
 		(loop, loop_index, [0, (sub, tree_count, 1)] such_that True,
 		    (or,
-			(gt, (add, (abs, (sub, (index, tree_x, constant_index loop_index), tar_x)), (abs, (sub, (index, tree_y, constant_index loop_index), tar_y))), tree_range),
-			(and, (eq, (index, tree_x, constant_index loop_index), cur_x), (eq, (index, tree_y, constant_index loop_index), cur_y)),
-			(and, (eq, (index, tree_x, constant_index loop_index), tar_x), (eq, (index, tree_y, constant_index loop_index), tar_y)),
-			(and, (lt, (index, tree_x, constant_index loop_index), cur_x), (lt, (index, tree_x, constant_index loop_index), tar_x)),
-			(and, (lt, (index, tree_y, constant_index loop_index), cur_y), (lt, (index, tree_y, constant_index loop_index), tar_y)),
-			(and, (gt, (index, tree_x, constant_index loop_index), cur_x), (gt, (index, tree_x, constant_index loop_index), tar_x)),
-			(and, (gt, (index, tree_y, constant_index loop_index), cur_y), (gt, (index, tree_y, constant_index loop_index), tar_y))
+			(gt,
+			    (add,
+				(abs, (sub, (index, tree_x, constant_index loop_index), tar_x)),
+				(abs, (sub, (index, tree_y, constant_index loop_index), tar_y))),
+			    tree_range),
+			(and,
+			    (eq, (index, tree_x, constant_index loop_index), cur_x),
+			    (eq, (index, tree_y, constant_index loop_index), cur_y)),
+			(and,
+			    (eq, (index, tree_x, constant_index loop_index), tar_x),
+			    (eq, (index, tree_y, constant_index loop_index), tar_y)),
+			(and,
+			    (lt, (index, tree_x, constant_index loop_index), cur_x),
+			    (lt, (index, tree_x, constant_index loop_index), tar_x)),
+			(and,
+			    (lt, (index, tree_y, constant_index loop_index), cur_y),
+			    (lt, (index, tree_y, constant_index loop_index), tar_y)),
+			(and,
+			    (gt, (index, tree_x, constant_index loop_index), cur_x),
+			    (gt, (index, tree_x, constant_index loop_index), tar_x)),
+			(and,
+			    (gt, (index, tree_y, constant_index loop_index), cur_y),
+			    (gt, (index, tree_y, constant_index loop_index), tar_y))
 		    )
 		)
 	    )
