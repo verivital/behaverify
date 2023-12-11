@@ -1,6 +1,4 @@
-import re
 import sys
-import os
 from PIL import Image, ImageDraw
 
 
@@ -47,13 +45,20 @@ def create_grid_from_states(states, x_size, y_size):
 
 def draw_grid(grid, index, output_name, x_size, y_size):
     tile_side = int(400 / max(x_size, y_size))
-    size = (x_size * tile_side, y_size * tile_side)
+    line_size = int(tile_side/20) + 1
+    size = (x_size * tile_side + 2*line_size, y_size * tile_side + 2*line_size)
     image = Image.new('RGB', size, 'black')
     draw = ImageDraw.Draw(image)
     for y in range(y_size):
         for x in range(x_size):
             cell_value = grid[y][x]
             draw.rectangle([(x * tile_side, y * tile_side), ((x + 1) * tile_side, (y + 1) * tile_side)], fill=COLORS[cell_value])
+    for x in range(x_size + 1):
+        draw.line([(tile_side * x, 0), (tile_side * x, size[1])], fill = 'black', width = line_size)
+        draw.line([(tile_side * x + line_size, 0), (tile_side * x + line_size, size[1])], fill = 'black', width = line_size)
+    for y in range(y_size + 1):
+        draw.line([(0, tile_side * y), (size[0], tile_side * y)], fill = 'black', width = line_size)
+        draw.line([(0, tile_side * y + line_size), (size[0], tile_side * y + line_size)], fill = 'black', width = line_size)
     for x in range(x_size):
         draw.line([(tile_side * x, 0), (tile_side * x, size[1])], fill = 'black', width = int(tile_side/10) + 1)
     for y in range(y_size):

@@ -1,0 +1,911 @@
+------------------------
+Initial State
+blackboard
+  x_true: 11
+  y_true: 20
+
+local
+
+environment
+  x_goal: 5
+  y_goal: 14
+  remaining_goals: 3
+  goal_reached: False
+
+------------------------
+State after tick: 1
+blackboard
+  x_true: 10
+  y_true: 20
+
+local
+
+environment
+  x_goal: 5
+  y_goal: 14
+  remaining_goals: 3
+  goal_reached: False
+
+------------------------
+State after tick: 2
+blackboard
+  x_true: 9
+  y_true: 20
+
+local
+
+environment
+  x_goal: 5
+  y_goal: 14
+  remaining_goals: 3
+  goal_reached: False
+
+------------------------
+State after tick: 3
+blackboard
+  x_true: 8
+  y_true: 20
+
+local
+
+environment
+  x_goal: 5
+  y_goal: 14
+  remaining_goals: 3
+  goal_reached: False
+
+------------------------
+State after tick: 4
+blackboard
+  x_true: 7
+  y_true: 20
+
+local
+
+environment
+  x_goal: 5
+  y_goal: 14
+  remaining_goals: 3
+  goal_reached: False
+
+------------------------
+State after tick: 5
+blackboard
+  x_true: 6
+  y_true: 20
+
+local
+
+environment
+  x_goal: 5
+  y_goal: 14
+  remaining_goals: 3
+  goal_reached: False
+
+------------------------
+State after tick: 6
+blackboard
+  x_true: 5
+  y_true: 20
+
+local
+
+environment
+  x_goal: 5
+  y_goal: 14
+  remaining_goals: 3
+  goal_reached: False
+
+------------------------
+State after tick: 7
+blackboard
+  x_true: 5
+  y_true: 19
+
+local
+
+environment
+  x_goal: 5
+  y_goal: 14
+  remaining_goals: 3
+  goal_reached: False
+
+------------------------
+State after tick: 8
+blackboard
+  x_true: 5
+  y_true: 18
+
+local
+
+environment
+  x_goal: 5
+  y_goal: 14
+  remaining_goals: 3
+  goal_reached: False
+
+------------------------
+State after tick: 9
+blackboard
+  x_true: 5
+  y_true: 17
+
+local
+
+environment
+  x_goal: 5
+  y_goal: 14
+  remaining_goals: 3
+  goal_reached: False
+
+------------------------
+State after tick: 10
+blackboard
+  x_true: 5
+  y_true: 16
+
+local
+
+environment
+  x_goal: 5
+  y_goal: 14
+  remaining_goals: 3
+  goal_reached: False
+
+------------------------
+State after tick: 11
+blackboard
+  x_true: 5
+  y_true: 15
+
+local
+
+environment
+  x_goal: 5
+  y_goal: 14
+  remaining_goals: 3
+  goal_reached: False
+
+------------------------
+State after tick: 12
+blackboard
+  x_true: 5
+  y_true: 14
+
+local
+
+environment
+  x_goal: 16
+  y_goal: 3
+  remaining_goals: 2
+  goal_reached: True
+
+------------------------
+State after tick: 13
+blackboard
+  x_true: 6
+  y_true: 14
+
+local
+
+environment
+  x_goal: 16
+  y_goal: 3
+  remaining_goals: 2
+  goal_reached: False
+
+------------------------
+State after tick: 14
+blackboard
+  x_true: 7
+  y_true: 14
+
+local
+
+environment
+  x_goal: 16
+  y_goal: 3
+  remaining_goals: 2
+  goal_reached: False
+
+------------------------
+State after tick: 15
+blackboard
+  x_true: 8
+  y_true: 14
+
+local
+
+environment
+  x_goal: 16
+  y_goal: 3
+  remaining_goals: 2
+  goal_reached: False
+
+------------------------
+State after tick: 16
+blackboard
+  x_true: 9
+  y_true: 14
+
+local
+
+environment
+  x_goal: 16
+  y_goal: 3
+  remaining_goals: 2
+  goal_reached: False
+
+------------------------
+State after tick: 17
+blackboard
+  x_true: 10
+  y_true: 14
+
+local
+
+environment
+  x_goal: 16
+  y_goal: 3
+  remaining_goals: 2
+  goal_reached: False
+
+------------------------
+State after tick: 18
+blackboard
+  x_true: 11
+  y_true: 14
+
+local
+
+environment
+  x_goal: 16
+  y_goal: 3
+  remaining_goals: 2
+  goal_reached: False
+
+------------------------
+State after tick: 19
+blackboard
+  x_true: 12
+  y_true: 14
+
+local
+
+environment
+  x_goal: 16
+  y_goal: 3
+  remaining_goals: 2
+  goal_reached: False
+
+------------------------
+State after tick: 20
+blackboard
+  x_true: 13
+  y_true: 14
+
+local
+
+environment
+  x_goal: 16
+  y_goal: 3
+  remaining_goals: 2
+  goal_reached: False
+
+------------------------
+State after tick: 21
+blackboard
+  x_true: 14
+  y_true: 14
+
+local
+
+environment
+  x_goal: 16
+  y_goal: 3
+  remaining_goals: 2
+  goal_reached: False
+
+------------------------
+State after tick: 22
+blackboard
+  x_true: 15
+  y_true: 14
+
+local
+
+environment
+  x_goal: 16
+  y_goal: 3
+  remaining_goals: 2
+  goal_reached: False
+
+------------------------
+State after tick: 23
+blackboard
+  x_true: 16
+  y_true: 14
+
+local
+
+environment
+  x_goal: 16
+  y_goal: 3
+  remaining_goals: 2
+  goal_reached: False
+
+------------------------
+State after tick: 24
+blackboard
+  x_true: 16
+  y_true: 13
+
+local
+
+environment
+  x_goal: 16
+  y_goal: 3
+  remaining_goals: 2
+  goal_reached: False
+
+------------------------
+State after tick: 25
+blackboard
+  x_true: 16
+  y_true: 12
+
+local
+
+environment
+  x_goal: 16
+  y_goal: 3
+  remaining_goals: 2
+  goal_reached: False
+
+------------------------
+State after tick: 26
+blackboard
+  x_true: 16
+  y_true: 11
+
+local
+
+environment
+  x_goal: 16
+  y_goal: 3
+  remaining_goals: 2
+  goal_reached: False
+
+------------------------
+State after tick: 27
+blackboard
+  x_true: 16
+  y_true: 10
+
+local
+
+environment
+  x_goal: 16
+  y_goal: 3
+  remaining_goals: 2
+  goal_reached: False
+
+------------------------
+State after tick: 28
+blackboard
+  x_true: 16
+  y_true: 9
+
+local
+
+environment
+  x_goal: 16
+  y_goal: 3
+  remaining_goals: 2
+  goal_reached: False
+
+------------------------
+State after tick: 29
+blackboard
+  x_true: 16
+  y_true: 8
+
+local
+
+environment
+  x_goal: 16
+  y_goal: 3
+  remaining_goals: 2
+  goal_reached: False
+
+------------------------
+State after tick: 30
+blackboard
+  x_true: 16
+  y_true: 7
+
+local
+
+environment
+  x_goal: 16
+  y_goal: 3
+  remaining_goals: 2
+  goal_reached: False
+
+------------------------
+State after tick: 31
+blackboard
+  x_true: 16
+  y_true: 6
+
+local
+
+environment
+  x_goal: 16
+  y_goal: 3
+  remaining_goals: 2
+  goal_reached: False
+
+------------------------
+State after tick: 32
+blackboard
+  x_true: 16
+  y_true: 5
+
+local
+
+environment
+  x_goal: 16
+  y_goal: 3
+  remaining_goals: 2
+  goal_reached: False
+
+------------------------
+State after tick: 33
+blackboard
+  x_true: 16
+  y_true: 4
+
+local
+
+environment
+  x_goal: 16
+  y_goal: 3
+  remaining_goals: 2
+  goal_reached: False
+
+------------------------
+State after tick: 34
+blackboard
+  x_true: 16
+  y_true: 3
+
+local
+
+environment
+  x_goal: 4
+  y_goal: 20
+  remaining_goals: 1
+  goal_reached: True
+
+------------------------
+State after tick: 35
+blackboard
+  x_true: 15
+  y_true: 3
+
+local
+
+environment
+  x_goal: 4
+  y_goal: 20
+  remaining_goals: 1
+  goal_reached: False
+
+------------------------
+State after tick: 36
+blackboard
+  x_true: 14
+  y_true: 3
+
+local
+
+environment
+  x_goal: 4
+  y_goal: 20
+  remaining_goals: 1
+  goal_reached: False
+
+------------------------
+State after tick: 37
+blackboard
+  x_true: 13
+  y_true: 3
+
+local
+
+environment
+  x_goal: 4
+  y_goal: 20
+  remaining_goals: 1
+  goal_reached: False
+
+------------------------
+State after tick: 38
+blackboard
+  x_true: 12
+  y_true: 3
+
+local
+
+environment
+  x_goal: 4
+  y_goal: 20
+  remaining_goals: 1
+  goal_reached: False
+
+------------------------
+State after tick: 39
+blackboard
+  x_true: 11
+  y_true: 3
+
+local
+
+environment
+  x_goal: 4
+  y_goal: 20
+  remaining_goals: 1
+  goal_reached: False
+
+------------------------
+State after tick: 40
+blackboard
+  x_true: 10
+  y_true: 3
+
+local
+
+environment
+  x_goal: 4
+  y_goal: 20
+  remaining_goals: 1
+  goal_reached: False
+
+------------------------
+State after tick: 41
+blackboard
+  x_true: 9
+  y_true: 3
+
+local
+
+environment
+  x_goal: 4
+  y_goal: 20
+  remaining_goals: 1
+  goal_reached: False
+
+------------------------
+State after tick: 42
+blackboard
+  x_true: 8
+  y_true: 3
+
+local
+
+environment
+  x_goal: 4
+  y_goal: 20
+  remaining_goals: 1
+  goal_reached: False
+
+------------------------
+State after tick: 43
+blackboard
+  x_true: 7
+  y_true: 3
+
+local
+
+environment
+  x_goal: 4
+  y_goal: 20
+  remaining_goals: 1
+  goal_reached: False
+
+------------------------
+State after tick: 44
+blackboard
+  x_true: 6
+  y_true: 3
+
+local
+
+environment
+  x_goal: 4
+  y_goal: 20
+  remaining_goals: 1
+  goal_reached: False
+
+------------------------
+State after tick: 45
+blackboard
+  x_true: 5
+  y_true: 3
+
+local
+
+environment
+  x_goal: 4
+  y_goal: 20
+  remaining_goals: 1
+  goal_reached: False
+
+------------------------
+State after tick: 46
+blackboard
+  x_true: 4
+  y_true: 3
+
+local
+
+environment
+  x_goal: 4
+  y_goal: 20
+  remaining_goals: 1
+  goal_reached: False
+
+------------------------
+State after tick: 47
+blackboard
+  x_true: 4
+  y_true: 4
+
+local
+
+environment
+  x_goal: 4
+  y_goal: 20
+  remaining_goals: 1
+  goal_reached: False
+
+------------------------
+State after tick: 48
+blackboard
+  x_true: 4
+  y_true: 5
+
+local
+
+environment
+  x_goal: 4
+  y_goal: 20
+  remaining_goals: 1
+  goal_reached: False
+
+------------------------
+State after tick: 49
+blackboard
+  x_true: 4
+  y_true: 6
+
+local
+
+environment
+  x_goal: 4
+  y_goal: 20
+  remaining_goals: 1
+  goal_reached: False
+
+------------------------
+State after tick: 50
+blackboard
+  x_true: 4
+  y_true: 7
+
+local
+
+environment
+  x_goal: 4
+  y_goal: 20
+  remaining_goals: 1
+  goal_reached: False
+
+------------------------
+State after tick: 51
+blackboard
+  x_true: 4
+  y_true: 8
+
+local
+
+environment
+  x_goal: 4
+  y_goal: 20
+  remaining_goals: 1
+  goal_reached: False
+
+------------------------
+State after tick: 52
+blackboard
+  x_true: 4
+  y_true: 9
+
+local
+
+environment
+  x_goal: 4
+  y_goal: 20
+  remaining_goals: 1
+  goal_reached: False
+
+------------------------
+State after tick: 53
+blackboard
+  x_true: 4
+  y_true: 10
+
+local
+
+environment
+  x_goal: 4
+  y_goal: 20
+  remaining_goals: 1
+  goal_reached: False
+
+------------------------
+State after tick: 54
+blackboard
+  x_true: 4
+  y_true: 11
+
+local
+
+environment
+  x_goal: 4
+  y_goal: 20
+  remaining_goals: 1
+  goal_reached: False
+
+------------------------
+State after tick: 55
+blackboard
+  x_true: 4
+  y_true: 12
+
+local
+
+environment
+  x_goal: 4
+  y_goal: 20
+  remaining_goals: 1
+  goal_reached: False
+
+------------------------
+State after tick: 56
+blackboard
+  x_true: 4
+  y_true: 13
+
+local
+
+environment
+  x_goal: 4
+  y_goal: 20
+  remaining_goals: 1
+  goal_reached: False
+
+------------------------
+State after tick: 57
+blackboard
+  x_true: 4
+  y_true: 14
+
+local
+
+environment
+  x_goal: 4
+  y_goal: 20
+  remaining_goals: 1
+  goal_reached: False
+
+------------------------
+State after tick: 58
+blackboard
+  x_true: 4
+  y_true: 15
+
+local
+
+environment
+  x_goal: 4
+  y_goal: 20
+  remaining_goals: 1
+  goal_reached: False
+
+------------------------
+State after tick: 59
+blackboard
+  x_true: 4
+  y_true: 16
+
+local
+
+environment
+  x_goal: 4
+  y_goal: 20
+  remaining_goals: 1
+  goal_reached: False
+
+------------------------
+State after tick: 60
+blackboard
+  x_true: 4
+  y_true: 17
+
+local
+
+environment
+  x_goal: 4
+  y_goal: 20
+  remaining_goals: 1
+  goal_reached: False
+
+------------------------
+State after tick: 61
+blackboard
+  x_true: 4
+  y_true: 18
+
+local
+
+environment
+  x_goal: 4
+  y_goal: 20
+  remaining_goals: 1
+  goal_reached: False
+
+------------------------
+State after tick: 62
+blackboard
+  x_true: 4
+  y_true: 19
+
+local
+
+environment
+  x_goal: 4
+  y_goal: 20
+  remaining_goals: 1
+  goal_reached: False
+
+------------------------
+State after tick: 63
+blackboard
+  x_true: 4
+  y_true: 20
+
+local
+
+environment
+  x_goal: 4
+  y_goal: 20
+  remaining_goals: 0
+  goal_reached: True
+
+------------------------
+State after tick: 64
+after 63 ticks, tick_condition no longer holds. Printing blackboard and environment, then exiting
+blackboard
+  x_true: 4
+  y_true: 20
+
+local
+
+environment
+  x_goal: 4
+  y_goal: 20
+  remaining_goals: 0
+  goal_reached: True
+
