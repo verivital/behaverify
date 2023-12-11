@@ -190,19 +190,6 @@ MODULE define_nodes
         try_right := 20;
         x_too_small := 21;
         move_3 := 22;
-MODULE composite_selector_without_memory_2(child_0, child_1)
-    CONSTANTS
-        success, failure, running, invalid;
-    DEFINE
-        status := active ? internal_status : invalid;
-        internal_status :=
-            case
-                !(child_0.internal_status = failure) : child_0.internal_status;
-                !(child_1.internal_status = failure) : child_1.internal_status;
-                TRUE : failure;
-            esac;
-        child_0.active := active;
-        child_1.active := child_0.status = failure;
 MODULE composite_sequence_without_memory_2(child_0, child_1)
     CONSTANTS
         success, failure, running, invalid;
@@ -233,6 +220,19 @@ MODULE composite_selector_without_memory_4(child_0, child_1, child_2, child_3)
         child_1.active := child_0.status = failure;
         child_2.active := child_1.status = failure;
         child_3.active := child_2.status = failure;
+MODULE composite_selector_without_memory_2(child_0, child_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                !(child_0.internal_status = failure) : child_0.internal_status;
+                !(child_1.internal_status = failure) : child_1.internal_status;
+                TRUE : failure;
+            esac;
+        child_0.active := active;
+        child_1.active := child_0.status = failure;
 MODULE target_in_sight_module(cur_x_stage_0, cur_y_stage_0, tar_x_stage_0, tar_y_stage_0, tree_x_stage_0_index_0, tree_x_stage_0_index_1, tree_y_stage_0_index_0, tree_y_stage_0_index_1)
     CONSTANTS
         success, failure, running, invalid;

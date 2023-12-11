@@ -54,7 +54,7 @@ MODULE system_module
         dest_y_stage_1 :=
             case
                 !(update_destination.active) : dest_y_stage_0;
-                !(x_mode_stage_1) : min(10, max(0, (dest_y_stage_0 + (y_dir_stage_1 * 2))));
+                !(x_mode_stage_1) : min(10, max(0, (dest_y_stage_0 + (y_dir_stage_1 * 1))));
                 TRUE : dest_y_stage_0;
             esac;
         x_mode_stage_1 :=
@@ -203,19 +203,6 @@ MODULE composite_selector_without_memory_2(child_0, child_1)
             esac;
         child_0.active := active;
         child_1.active := child_0.status = failure;
-MODULE composite_sequence_without_memory_2(child_0, child_1)
-    CONSTANTS
-        success, failure, running, invalid;
-    DEFINE
-        status := active ? internal_status : invalid;
-        internal_status :=
-            case
-                !(child_0.internal_status = success) : child_0.internal_status;
-                !(child_1.internal_status = success) : child_1.internal_status;
-                TRUE : success;
-            esac;
-        child_0.active := active;
-        child_1.active := child_0.status = success;
 MODULE composite_selector_without_memory_4(child_0, child_1, child_2, child_3)
     CONSTANTS
         success, failure, running, invalid;
@@ -233,6 +220,19 @@ MODULE composite_selector_without_memory_4(child_0, child_1, child_2, child_3)
         child_1.active := child_0.status = failure;
         child_2.active := child_1.status = failure;
         child_3.active := child_2.status = failure;
+MODULE composite_sequence_without_memory_2(child_0, child_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                !(child_0.internal_status = success) : child_0.internal_status;
+                !(child_1.internal_status = success) : child_1.internal_status;
+                TRUE : success;
+            esac;
+        child_0.active := active;
+        child_1.active := child_0.status = success;
 MODULE target_in_sight_module(cur_x_stage_0, cur_y_stage_0, tar_x_stage_0, tar_y_stage_0, tree_x_stage_0_index_0, tree_x_stage_0_index_1, tree_y_stage_0_index_0, tree_y_stage_0_index_1)
     CONSTANTS
         success, failure, running, invalid;
