@@ -9,7 +9,7 @@ import numpy
 # https://github.com/onnx/onnx/blob/main/onnx/onnx.proto
 
 y_min = 0
-y_max = 8
+y_max = 10
 y_mid = (y_min + y_max) / 2
 delta_y = 2
 
@@ -77,7 +77,7 @@ converted_onnx_model = onnx.version_converter.convert_version(onnx_model, 19)
 onnx.checker.check_model(converted_onnx_model)
 onnx.save_model(converted_onnx_model, 'y_net.onnx')
 
-session = onnxruntime.InferenceSession('/home/serene/temp/y_net.onnx')
+session = onnxruntime.InferenceSession('./y_net.onnx')
 print('direction, up')
 for dx in range(y_min, y_max + 1):
     print_string = ''

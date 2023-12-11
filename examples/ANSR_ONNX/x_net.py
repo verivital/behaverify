@@ -9,7 +9,7 @@ import numpy
 # https://github.com/onnx/onnx/blob/main/onnx/onnx.proto
 
 x_min = 0
-x_max = 8
+x_max = 10
 x_mid = (x_min + x_max) / 2
 
 # Create one input (ValueInfoProto)
@@ -82,7 +82,7 @@ converted_onnx_model = onnx.version_converter.convert_version(onnx_model, 19)
 onnx.checker.check_model(converted_onnx_model)
 onnx.save_model(converted_onnx_model, 'x_net.onnx')
 
-session = onnxruntime.InferenceSession('/home/serene/temp/x_net.onnx')
+session = onnxruntime.InferenceSession('./x_net.onnx')
 for dx in range(x_min, x_max + 1):
     print_string = ''
     for px in range(x_min, x_max + 1):
