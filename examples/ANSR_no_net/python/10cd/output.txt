@@ -1,0 +1,561 @@
+------------------------
+Initial State
+blackboard
+  cur_x: 0
+  cur_y: 0
+  dest_x: 0
+  dest_y: 0
+  x_mode: False
+  y_dir: 1
+  victory: False
+
+local
+
+environment
+  tree_x: [2, 5]
+  tree_y: [2, 5]
+  tar_x: 1
+  tar_y: 7
+  timer: 10
+
+------------------------
+State after tick: 1
+blackboard
+  cur_x: 1
+  cur_y: 0
+  dest_x: 10
+  dest_y: 0
+  x_mode: True
+  y_dir: 1
+  victory: False
+
+local
+
+environment
+  tree_x: [2, 5]
+  tree_y: [2, 5]
+  tar_x: 1
+  tar_y: 7
+  timer: 9
+
+------------------------
+State after tick: 2
+blackboard
+  cur_x: 2
+  cur_y: 0
+  dest_x: 10
+  dest_y: 0
+  x_mode: True
+  y_dir: 1
+  victory: False
+
+local
+
+environment
+  tree_x: [2, 5]
+  tree_y: [2, 5]
+  tar_x: 1
+  tar_y: 7
+  timer: 8
+
+------------------------
+State after tick: 3
+blackboard
+  cur_x: 3
+  cur_y: 0
+  dest_x: 10
+  dest_y: 0
+  x_mode: True
+  y_dir: 1
+  victory: False
+
+local
+
+environment
+  tree_x: [2, 5]
+  tree_y: [2, 5]
+  tar_x: 1
+  tar_y: 7
+  timer: 7
+
+------------------------
+State after tick: 4
+blackboard
+  cur_x: 4
+  cur_y: 0
+  dest_x: 10
+  dest_y: 0
+  x_mode: True
+  y_dir: 1
+  victory: False
+
+local
+
+environment
+  tree_x: [2, 5]
+  tree_y: [2, 5]
+  tar_x: 1
+  tar_y: 7
+  timer: 6
+
+------------------------
+State after tick: 5
+blackboard
+  cur_x: 5
+  cur_y: 0
+  dest_x: 10
+  dest_y: 0
+  x_mode: True
+  y_dir: 1
+  victory: False
+
+local
+
+environment
+  tree_x: [2, 5]
+  tree_y: [2, 5]
+  tar_x: 1
+  tar_y: 7
+  timer: 5
+
+------------------------
+State after tick: 6
+blackboard
+  cur_x: 6
+  cur_y: 0
+  dest_x: 10
+  dest_y: 0
+  x_mode: True
+  y_dir: 1
+  victory: False
+
+local
+
+environment
+  tree_x: [2, 5]
+  tree_y: [2, 5]
+  tar_x: 1
+  tar_y: 7
+  timer: 4
+
+------------------------
+State after tick: 7
+blackboard
+  cur_x: 7
+  cur_y: 0
+  dest_x: 10
+  dest_y: 0
+  x_mode: True
+  y_dir: 1
+  victory: False
+
+local
+
+environment
+  tree_x: [2, 5]
+  tree_y: [2, 5]
+  tar_x: 1
+  tar_y: 7
+  timer: 3
+
+------------------------
+State after tick: 8
+blackboard
+  cur_x: 8
+  cur_y: 0
+  dest_x: 10
+  dest_y: 0
+  x_mode: True
+  y_dir: 1
+  victory: False
+
+local
+
+environment
+  tree_x: [2, 5]
+  tree_y: [2, 5]
+  tar_x: 1
+  tar_y: 7
+  timer: 2
+
+------------------------
+State after tick: 9
+blackboard
+  cur_x: 9
+  cur_y: 0
+  dest_x: 10
+  dest_y: 0
+  x_mode: True
+  y_dir: 1
+  victory: False
+
+local
+
+environment
+  tree_x: [2, 5]
+  tree_y: [2, 5]
+  tar_x: 1
+  tar_y: 7
+  timer: 1
+
+------------------------
+State after tick: 10
+blackboard
+  cur_x: 10
+  cur_y: 0
+  dest_x: 10
+  dest_y: 0
+  x_mode: True
+  y_dir: 1
+  victory: False
+
+local
+
+environment
+  tree_x: [2, 5]
+  tree_y: [2, 5]
+  tar_x: 1
+  tar_y: 7
+  timer: 0
+
+------------------------
+State after tick: 11
+blackboard
+  cur_x: 10
+  cur_y: 1
+  dest_x: 10
+  dest_y: 2
+  x_mode: False
+  y_dir: 1
+  victory: False
+
+local
+
+environment
+  tree_x: [2, 5]
+  tree_y: [2, 5]
+  tar_x: 1
+  tar_y: 8
+  timer: 10
+
+------------------------
+State after tick: 12
+blackboard
+  cur_x: 10
+  cur_y: 2
+  dest_x: 10
+  dest_y: 2
+  x_mode: False
+  y_dir: 1
+  victory: False
+
+local
+
+environment
+  tree_x: [2, 5]
+  tree_y: [2, 5]
+  tar_x: 1
+  tar_y: 8
+  timer: 9
+
+------------------------
+State after tick: 13
+blackboard
+  cur_x: 9
+  cur_y: 2
+  dest_x: 0
+  dest_y: 2
+  x_mode: True
+  y_dir: 1
+  victory: False
+
+local
+
+environment
+  tree_x: [2, 5]
+  tree_y: [2, 5]
+  tar_x: 1
+  tar_y: 8
+  timer: 8
+
+------------------------
+State after tick: 14
+blackboard
+  cur_x: 8
+  cur_y: 2
+  dest_x: 0
+  dest_y: 2
+  x_mode: True
+  y_dir: 1
+  victory: False
+
+local
+
+environment
+  tree_x: [2, 5]
+  tree_y: [2, 5]
+  tar_x: 1
+  tar_y: 8
+  timer: 7
+
+------------------------
+State after tick: 15
+blackboard
+  cur_x: 7
+  cur_y: 2
+  dest_x: 0
+  dest_y: 2
+  x_mode: True
+  y_dir: 1
+  victory: False
+
+local
+
+environment
+  tree_x: [2, 5]
+  tree_y: [2, 5]
+  tar_x: 1
+  tar_y: 8
+  timer: 6
+
+------------------------
+State after tick: 16
+blackboard
+  cur_x: 6
+  cur_y: 2
+  dest_x: 0
+  dest_y: 2
+  x_mode: True
+  y_dir: 1
+  victory: False
+
+local
+
+environment
+  tree_x: [2, 5]
+  tree_y: [2, 5]
+  tar_x: 1
+  tar_y: 8
+  timer: 5
+
+------------------------
+State after tick: 17
+blackboard
+  cur_x: 5
+  cur_y: 2
+  dest_x: 0
+  dest_y: 2
+  x_mode: True
+  y_dir: 1
+  victory: False
+
+local
+
+environment
+  tree_x: [2, 5]
+  tree_y: [2, 5]
+  tar_x: 1
+  tar_y: 8
+  timer: 4
+
+------------------------
+State after tick: 18
+blackboard
+  cur_x: 4
+  cur_y: 2
+  dest_x: 0
+  dest_y: 2
+  x_mode: True
+  y_dir: 1
+  victory: False
+
+local
+
+environment
+  tree_x: [2, 5]
+  tree_y: [2, 5]
+  tar_x: 1
+  tar_y: 8
+  timer: 3
+
+------------------------
+State after tick: 19
+blackboard
+  cur_x: 3
+  cur_y: 2
+  dest_x: 0
+  dest_y: 2
+  x_mode: True
+  y_dir: 1
+  victory: False
+
+local
+
+environment
+  tree_x: [2, 5]
+  tree_y: [2, 5]
+  tar_x: 1
+  tar_y: 8
+  timer: 2
+
+------------------------
+State after tick: 20
+blackboard
+  cur_x: 2
+  cur_y: 2
+  dest_x: 0
+  dest_y: 2
+  x_mode: True
+  y_dir: 1
+  victory: False
+
+local
+
+environment
+  tree_x: [2, 5]
+  tree_y: [2, 5]
+  tar_x: 1
+  tar_y: 8
+  timer: 1
+
+------------------------
+State after tick: 21
+blackboard
+  cur_x: 1
+  cur_y: 2
+  dest_x: 0
+  dest_y: 2
+  x_mode: True
+  y_dir: 1
+  victory: False
+
+local
+
+environment
+  tree_x: [2, 5]
+  tree_y: [2, 5]
+  tar_x: 1
+  tar_y: 8
+  timer: 0
+
+------------------------
+State after tick: 22
+blackboard
+  cur_x: 0
+  cur_y: 2
+  dest_x: 0
+  dest_y: 2
+  x_mode: True
+  y_dir: 1
+  victory: False
+
+local
+
+environment
+  tree_x: [2, 5]
+  tree_y: [2, 5]
+  tar_x: 2
+  tar_y: 7
+  timer: 10
+
+------------------------
+State after tick: 23
+blackboard
+  cur_x: 0
+  cur_y: 3
+  dest_x: 0
+  dest_y: 4
+  x_mode: False
+  y_dir: 1
+  victory: False
+
+local
+
+environment
+  tree_x: [2, 5]
+  tree_y: [2, 5]
+  tar_x: 2
+  tar_y: 7
+  timer: 9
+
+------------------------
+State after tick: 24
+blackboard
+  cur_x: 0
+  cur_y: 4
+  dest_x: 0
+  dest_y: 4
+  x_mode: False
+  y_dir: 1
+  victory: False
+
+local
+
+environment
+  tree_x: [2, 5]
+  tree_y: [2, 5]
+  tar_x: 2
+  tar_y: 7
+  timer: 8
+
+------------------------
+State after tick: 25
+blackboard
+  cur_x: 1
+  cur_y: 4
+  dest_x: 10
+  dest_y: 4
+  x_mode: True
+  y_dir: 1
+  victory: False
+
+local
+
+environment
+  tree_x: [2, 5]
+  tree_y: [2, 5]
+  tar_x: 2
+  tar_y: 7
+  timer: 7
+
+------------------------
+State after tick: 26
+blackboard
+  cur_x: 1
+  cur_y: 4
+  dest_x: 10
+  dest_y: 4
+  x_mode: True
+  y_dir: 1
+  victory: True
+
+local
+
+environment
+  tree_x: [2, 5]
+  tree_y: [2, 5]
+  tar_x: 2
+  tar_y: 7
+  timer: 6
+
+------------------------
+State after tick: 27
+after 26 ticks, tick_condition no longer holds. Printing blackboard and environment, then exiting
+blackboard
+  cur_x: 1
+  cur_y: 4
+  dest_x: 10
+  dest_y: 4
+  x_mode: True
+  y_dir: 1
+  victory: True
+
+local
+
+environment
+  tree_x: [2, 5]
+  tree_y: [2, 5]
+  tar_x: 2
+  tar_y: 7
+  timer: 6
+
