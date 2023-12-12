@@ -114,7 +114,7 @@ MODULE system_module
         victory_stage_0 : boolean;
         tar_x_stage_0 : 0..10;
         tar_y_stage_0 : 0..10;
-        timer_stage_0 : 0..5;
+        timer_stage_0 : 0..10;
         --END OF BLACKBOARD VARIABLES DECLARATION
     ASSIGN
         --START OF BLACKBOARD VARIABLES INITIALIZATION
@@ -127,7 +127,7 @@ MODULE system_module
         init(victory_stage_0) := FALSE;
         init(tar_x_stage_0) := {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
         init(tar_y_stage_0) := {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-        init(timer_stage_0) := 5;
+        init(timer_stage_0) := 10;
         --END OF BLACKBOARD VARIABLES INITIALIZATION
         --START OF BLACKBOARD VARIABLES TRANSITION
         next(cur_x_stage_0) :=
@@ -160,7 +160,7 @@ MODULE system_module
         next(timer_stage_0) :=
             case
                 !(drone_control.active) : timer_stage_0;
-                (timer_stage_0 = 0) : 5;
+                (timer_stage_0 = 0) : 10;
                 TRUE : max(0, (timer_stage_0 - 1));
             esac;
         --END OF BLACKBOARD VARIABLES TRANSITION
@@ -190,19 +190,6 @@ MODULE define_nodes
         try_right := 20;
         x_too_small := 21;
         move_3 := 22;
-MODULE composite_selector_without_memory_2(child_0, child_1)
-    CONSTANTS
-        success, failure, running, invalid;
-    DEFINE
-        status := active ? internal_status : invalid;
-        internal_status :=
-            case
-                !(child_0.internal_status = failure) : child_0.internal_status;
-                !(child_1.internal_status = failure) : child_1.internal_status;
-                TRUE : failure;
-            esac;
-        child_0.active := active;
-        child_1.active := child_0.status = failure;
 MODULE composite_selector_without_memory_4(child_0, child_1, child_2, child_3)
     CONSTANTS
         success, failure, running, invalid;
@@ -233,6 +220,19 @@ MODULE composite_sequence_without_memory_2(child_0, child_1)
             esac;
         child_0.active := active;
         child_1.active := child_0.status = success;
+MODULE composite_selector_without_memory_2(child_0, child_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                !(child_0.internal_status = failure) : child_0.internal_status;
+                !(child_1.internal_status = failure) : child_1.internal_status;
+                TRUE : failure;
+            esac;
+        child_0.active := active;
+        child_1.active := child_0.status = failure;
 MODULE target_in_sight_module(cur_x_stage_0, cur_y_stage_0, tar_x_stage_0, tar_y_stage_0, tree_x_stage_0_index_0, tree_x_stage_0_index_1, tree_y_stage_0_index_0, tree_y_stage_0_index_1)
     CONSTANTS
         success, failure, running, invalid;
