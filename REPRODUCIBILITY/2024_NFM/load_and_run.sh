@@ -2,6 +2,7 @@
 
 nuXmvLoc=$1
 outputLoc=$2
+mode=$3
 
 if ! test -f "${nuXmvLoc}"; then
     echo "${nuXmvLoc} is not a file. Exiting"
@@ -11,22 +12,25 @@ if ! test -d "${outputLoc}"; then
     echo "${outputLoc} is not a folder. Exiting"
     exit 1
 fi
-use_haskell=1
-to_gen=5000
-if [[ $# -ge 2 ]]; then
-    use_haskell=$3
-fi
-if [[ $# -ge 3 ]]; then
-    to_gen=$4
-fi
 
 ./docker_load_script.sh
 echo "docker load finished!"
 ./docker_add_nuxmv.sh $nuXmvLoc
 echo "added nuXmv!"
-./docker_test_install.sh $outputLoc $use_haskell $to_gen
-echo "installation test finished!"
-./docker_replicate_partial.sh $outputLoc $use_haskell $to_gen
-echo "replication of partial results finished!"
-./docker_replicate_results.sh $outputLoc $use_haskell $to_gen
-echo "replication of results finished!"
+if [[ "${mode}" == "full" ]]; then
+    echo "running full results"
+    mode="behaverify_nfm_full_results"
+elif [[ "${mode}" == "partial" ]]; then
+    echo "running partial results"
+    mode="behaverify_nfm_partial_results"
+elif [[ "${mode}" == "test" ]]; then
+    echo "testing install"
+    mode="behaverify_nfm_install_test"
+else
+    echo "unknown mode, defaulting to testing install"
+    mode="behaverify_nfm_install_test"
+fi
+
+
+./docker_replicate_results.sh $outputLoc $mode
+echo "finished!"
