@@ -24,8 +24,8 @@ USER $USER
 
 
 
-RUN apt-get install python3 -y
-RUN apt-get install pip -y
+RUN sudo apt-get install python3 -y
+RUN sudo apt-get install pip -y
 ENV PIP_ROOT_USER_ACTION=ignore
 RUN python3 -m pip install --upgrade pip
 RUN python3 -m pip install py_trees
@@ -45,4 +45,4 @@ RUN mkdir behaverify && cd behaverify && git init && \
     git remote add -f origin https://github.com/verivital/behaverify && \
     echo "REPRODUCIBILITY/2024_NFM/" >> .git/info/sparse-checkout && \
     git pull origin main
-RUN chmod -R +x /behaverify/REPRODUCIBILITY/2024_NFM/*.sh
+RUN chmod -R +x /home/user/behaverify/REPRODUCIBILITY/2024_NFM/*.sh
