@@ -3,6 +3,6 @@
 nuXmvLoc=$1
 
 docker start behaverify
-docker cp $nuXmvLoc behaverify:/behaverify/REPRODUCIBILITY/2024_VMCAI/nuXmv
-docker exec behaverify chmod +x /behaverify/REPRODUCIBILITY/2024_VMCAI/nuXmv
+docker cp $nuXmvLoc behaverify:/home/user/behaverify/REPRODUCIBILITY/2024_NFM/nuXmv
+docker exec behaverify chmod +x /home/user/behaverify/REPRODUCIBILITY/2024_NFM/nuXmv
 docker stop behaverify

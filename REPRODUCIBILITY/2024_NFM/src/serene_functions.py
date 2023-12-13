@@ -1,115 +1,150 @@
 '''
 This module is for internal use with BehaVerify.
 It contains utility functions for computations.
+Each function 
 
 
 Author: Serena Serafina Serbinowska
-Created: 2022-01-01 (Date not correct)
-Last Edit: 2023-01-01 (Date not correct)
+Last Edit: 2023-10-20
 '''
 import operator
 import math
+import copy
 
+def update_dictionary(dictionary, key, value):
+    new_dictionary = copy.copy(dictionary) # don't need to deep copy; we don't modify objects
+    new_dictionary[key] = value
+    return new_dictionary
 
-def serene_abs(values, x):
-    return abs(values[0](x))
+def serene_loop(function_call):
+    sub_func = build_meta_func(function_call.values[0])
+    def evaluate_loop(references):
+        return [
+            value
+            for loop_value in (
+                    range(build_meta_func(function_call.min_val)(references)[0],
+                          build_meta_func(function_call.max_val)(references)[0] + 1)
+                    if function_call.min_val is not None else
+                    [loop_value_ref for loop_value_code in function_call.loop_variable_domain for loop_value_ref in build_meta_func(loop_value_code)(references)]
+            )
+            for value in sub_func((references[0], update_dictionary(references[1], function_call.loop_variable, loop_value)))
+        ]
+    return evaluate_loop
 
+def serene_if(function_call):
+    # since both return options return a list, we always return a list, so we don't have wo worry about that.
+    def evaluate_if(references):
+        return (
+            build_meta_func(function_call.values[1])(references)  # this returns a list
+            if build_meta_func(function_call.values[0])(references)[0] else
+            build_meta_func(function_call.values[2])(references)  # this also returns a list
+        )
+    return evaluate_if
 
-def serene_max(values, x):
-    return max([value(x) for value in values])
+def create_lambda_to_apply_function(function, unpack, values):
+    if unpack:
+        def evaluate_function_unpack(references):
+            return [
+                function(
+                    *[
+                        value
+                        for code in values
+                        for value in build_meta_func(code)(references)
+                    ]
+                )
+            ]
+        return evaluate_function_unpack
+    def evaluate_function(references):
+        return [
+            function(
+                [
+                    value
+                    for code in values
+                    for value in build_meta_func(code)(references)
+                ]
+            )
+        ]
+    return evaluate_function
 
+FUNCTIONS = {
+    # 'if' : serene_if,  # handled seperately
+    # 'loop' : serene_loop,  # handled seperately
+    'abs' : (abs, True),
+    'max' : (max, True),
+    'min' : (min, True),
+    'sin' : (math.sin, True),
+    'cos' : (math.cos, True),
+    'tan' : (math.tan, True),
+    'ln' : (math.log, True),
+    'not' : (operator.not_, True),
+    'and' : (all, False),
+    'or' : (any, False),
+    'xor' : (operator.xor, True),
+    'xnor' : (lambda x : operator.not_(operator.xor(x[0], x[1])), False),
+    'implies' : (lambda x : (not x[0]) or x[1], False),
+    'equivalent' : (operator.eq, True),
+    'eq' : (operator.eq, True),
+    'neq' : (operator.ne, True),
+    #'neq' : (lambda x : operator.ne(x[0], x[1]), False),
+    'lt' : (operator.lt, True),
+    'gt' : (operator.gt, True),
+    'lte' : (operator.le, True),
+    'gte' : (operator.ge, True),
+    'neg' : (operator.neg, True),
+    'add' : (sum, False),
+    'sub' : (operator.sub, True),
+    'mult' : (math.prod, False),
+    'idiv' : (lambda x : int(x[0]/x[1]), False),
+    'mod' : (operator.mod, True),
+    'rdiv' : (operator.truediv, True),
+    'floor' : (math.floor, True),
+    'count' : (sum, False)  # sum of booleans is exactly what we want.
+}
 
-def serene_min(values, x):
-    return min([value(x) for value in values])
+def handle_constant_or_reference_meta(constant_or_reference, constants, loop_references):
+    return (
+        constant_or_reference.constant
+        if constant_or_reference.constant is not None else
+        (
+            constants[constant_or_reference.reference]
+            if constant_or_reference.reference in constants else
+            (
+                loop_references[constant_or_reference.reference]
+                if constant_or_reference.reference in loop_references else
+                constant_or_reference.reference
+            )
+        )
+    )
 
-
-def serene_sin(values, x):
-    return math.sin(values[0](x))
-
-
-def serene_cos(values, x):
-    return math.cos(values[0](x))
-
-
-def serene_tan(values, x):
-    return math.tan(values[0](x))
-
-
-def serene_log(values, x):
-    return math.log(values[0](x))
-
-
-def serene_not(values, x):
-    return not values[0](x)
-
-
-def serene_xor(values, x):
-    return operator.xor(values[0](x), values[1](x))
-
-
-def serene_eq(values, x):
-    return values[0](x) == values[1](x)
-
-
-def serene_ne(values, x):
-    return values[0](x) != values[1](x)
-
-
-def serene_lt(values, x):
-    return values[0](x) < values[1](x)
-
-
-def serene_gt(values, x):
-    return values[0](x) > values[1](x)
-
-
-def serene_lte(values, x):
-    return values[0](x) <= values[1](x)
-
-
-def serene_gte(values, x):
-    return values[0](x) >= values[1](x)
-
-
-def serene_neg(values, x):
-    return (-1)*values[0](x)
-
-
-def serene_sub(values, x):
-    return values[0](x) - values[1](x)
-
-
-def serene_truediv(values, x):
-    return values[0](x) / values[1](x)
-
-
-def serene_mod(values, x):
-    return values[0](x) % values[1](x)
-
-
-def serene_and(values, x):
-    return (values[0](x) and serene_and(values[1:], x)) if values else True
-
-
-def serene_or(values, x):
-    return (values[0](x) or serene_or(values[1:], x)) if values else False
-
-
-def serene_xnor(values, x):
-    return (not (operator.xor(values[0](x), values[1](x))))
-
-
-def serene_implies(values, x):
-    return (not (values[0](x)) or values[1](x))
-
-
-def serene_sum(values, x):
-    return (values[0](x) + serene_sum(values[1:], x)) if values else 0
-
-
-def serene_mult(values, x):
-    return (values[0](x) * serene_mult(values[1:], x)) if values else 1
-
-
-def serene_count(values, x):
-    return (int(bool(values[0](x))) + serene_count(values[1:], x)) if values else 0
+def build_meta_func(code):
+    '''
+    builds the meta func.
+    return lambda references : s a function which takes a single parameter: references
+    references is (constants, loop_references).
+    the function returns a list of values.
+    each value returned can be be a Constant or a Reference.
+    Note that string overlaps both Constant and Reference. It is up to the subsequent user to distinguish them.
+    '''
+    return (
+        (lambda references : [handle_constant_or_reference_meta(code.atom, references[0], references[1])])
+        if code.atom is not None
+        else
+        (
+            build_meta_func(code.code_statement)
+            if code.code_statement is not None
+            else
+            (
+                serene_loop(code.function_call)
+                if code.function_call.function_name == 'loop' else
+                (
+                    serene_if(code.function_call)
+                    if code.function_call.function_name == 'if' else
+                    (
+                        build_meta_func(code.function_call.to_index)  # this should only be used when doing neural network reachability stuff.
+                        if code.function_call.function_name == 'index' else
+                        create_lambda_to_apply_function(*FUNCTIONS[code.function_call.function_name], code.function_call.values)
+                    )
+                )
+            )
+        )
+    )

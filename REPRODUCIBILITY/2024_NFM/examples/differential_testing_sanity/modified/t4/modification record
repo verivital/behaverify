@@ -1,4 +1,0 @@
-changed line 334 in OUTPUT_OPT_NUXMV.txt from
-    system.a2.status = invalid
-to
-    system.a2.status = success
