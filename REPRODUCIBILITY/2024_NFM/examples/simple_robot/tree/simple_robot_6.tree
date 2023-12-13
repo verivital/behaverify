@@ -1,0 +1,151 @@
+configuration {}
+enumerations {}
+constants {
+	x_max := 5, y_max := 5
+} end_constants
+
+variables {
+    variable { bl x_true VAR [0, x_max] assign {result {(loop, loop_var, [0, x_max] such_that True, loop_var)} } }
+    variable { bl y_true VAR [0, y_max] assign {result {(loop, loop_var, [0, y_max] such_that True, loop_var)} } }
+    variable { env x_goal VAR [0, x_max] assign {result {(loop, loop_var, [0, x_max] such_that True, loop_var)} } }
+    variable { env y_goal VAR [0, y_max] assign {result {(loop, loop_var, [0, y_max] such_that True, loop_var)} } }
+    variable { env remaining_goals VAR [0, 3] assign {result {3} } }
+    variable { env goal_reached VAR BOOLEAN assign {result {False}}}
+}
+
+environment_update {
+    variable_statement {
+	goal_reached
+	assign{
+	    result { (and, (eq, x_goal, x_true), (eq, y_goal, y_true)) }
+	}
+    }
+    variable_statement {
+	remaining_goals
+	assign{
+	    case { goal_reached} end_case
+	    result { (max, 0, (sub, remaining_goals, 1)) } 
+	    result { remaining_goals } 
+	}
+    }
+    variable_statement {
+	x_goal
+	assign{
+	    case { (eq, 0, remaining_goals ) } end_case
+	    result { x_goal } 
+	    case { goal_reached} end_case
+	    result {(loop, loop_var, [0, x_max] such_that True, loop_var)} 
+	    result { x_goal } 
+	}
+    }
+    variable_statement {
+	y_goal
+	assign {
+	    case { (eq, 0, remaining_goals) } end_case
+	    result { y_goal } 
+	    case { goal_reached } end_case
+	    result {(loop, loop_var, [0, y_max] such_that True, loop_var)} 
+	    result { y_goal } 
+	}
+    }
+}
+
+checks {
+} end_checks
+
+environment_checks {
+    environment_check {
+	x_too_small
+	arguments {}
+	read_variables {x_true} end_read_variables
+	condition { (lt, x_true, x_goal) } end_condition
+    }
+    environment_check {
+	x_too_big
+	arguments {}
+	read_variables {x_true} end_read_variables
+	condition { (gt, x_true, x_goal) } end_condition
+    }
+    environment_check {
+	y_too_small
+	arguments {}
+	read_variables {y_true} end_read_variables
+	condition { (lt, y_true, y_goal) } end_condition
+    }
+    environment_check {
+	y_too_big
+	arguments {}
+	read_variables {y_true} end_read_variables
+	condition { (gt, y_true, y_goal) } end_condition
+    }
+} end_environment_checks
+
+actions {
+    
+    action {
+	move
+	arguments {x_dir := INT, y_dir := INT}
+	local_variables {} end_local_variables
+	read_variables {} end_read_variables
+	write_variables {x_true, y_true} end_write_variables
+	initial_values {} end_initial_values
+	update {
+	    variable_statement {
+		x_true assign{result { (max, 0, (min, x_max, (add, x_true, x_dir))) } }
+	    }
+	    variable_statement {
+		y_true assign{result { (max, 0, (min, y_max, (add, y_true, y_dir))) } }
+	    }
+	    return_statement { result { success }  } end_return_statement
+	} end_update
+    } end_action
+} end_actions
+
+sub_trees {
+}end_sub_trees
+tree{
+    composite {
+	move_robot
+	selector
+	children {
+	    composite {
+		try_right
+		sequence
+		children {
+		    x_too_small {}
+		    move {1, 0}
+		} end_children
+	    } end_composite
+	    composite {
+		try_left
+		sequence
+		children {
+		    x_too_big {}
+		    move {-1, 0}
+		} end_children
+	    } end_composite
+	    composite {
+		try_up
+		sequence
+		children {
+		    y_too_small {}
+		    move {0, 1}
+		} end_children
+	    } end_composite
+	    composite {
+		try_down
+		sequence
+		children {
+		    y_too_big {}
+		    move {0, -1}
+		} end_children
+	    } end_composite
+	} end_children
+    } end_composite
+} end_tree
+
+tick_prerequisite { (gt, remaining_goals, 0) } end_tick_prerequisite
+specifications {
+    LTLSPEC { (finally, (eq, remaining_goals at -1, 0)) } end_LTLSPEC
+    CTLSPEC { (always_finally, (eq, remaining_goals at -1, 0)) } end_CTLSPEC
+} end_specifications

@@ -4,15 +4,14 @@ It contains a variety of utility functions.
 
 
 Author: Serena Serafina Serbinowska
-Created: 2022-01-01 (Date not correct)
-Last Edit: 2023-01-01 (Date not correct)
+Last Edit: 2023-11-03
 '''
 # if not array
 
 # a NEXT_VALUE is defined as a triple (node_name, non_determinism, STAGE)
 # node_name is a string representing the node where this update happens or none if it's environmental
 # non_determinism indicates if this update is non-deterministic
-# STAGE is a list of pairs (condition, result)
+# STAGE : [(condition, result)]
 # if the condition is true, then the result is used.
 # the last condition should always be TRUE
 
@@ -26,17 +25,217 @@ Last Edit: 2023-01-01 (Date not correct)
 # non_determinism depends on constant_index
 # if constant_index is True -> non_determinism is a map from Int to bool, where the ints represent indices, while the bools represent if the update for that index is nondeterministic.
 # if constant_index is False -> non_determinism is a bool indicating if non-determinism appears anywhere within the update
-# STAGE is a list of pairs (index, [(condition, result)])
+# STAGE : [(index, [(condition, result)])]
 # if constant_index is true, index is an int
 # if constant_index is false, index is a string.
 # if the condition is true, then the result is used.
 # the last condition should always be TRUE
 
 # the initial value of a variable is a single stage with int based index.
+from serene_functions import build_meta_func
 
+class BTreeException(Exception):
+    '''an exception that indicates something is wrong with the BTree'''
+    def __init__(self, trace, last_message):
+        if trace is None:
+            trace = []
+        self.message = ' -> '.join(trace) + ' ::-> ' + last_message
+        super().__init__(self.message)
 
-def create_variable_template(name, mode, array_size, custom_value_range,
-                             min_value, max_value,
+def get_min_max(min_code, max_code, declared_enumerations, node_names, variables, constants, loop_references, trace = None):
+    if min_code is not None:
+        min_func = build_meta_func(min_code)
+        min_val = resolve_potential_reference_no_type(min_func((constants, loop_references))[0], declared_enumerations, node_names, variables, constants, loop_references, trace = trace)[1]
+    else:
+        # min_val = 0
+        return None
+    if max_code is not None:
+        max_func = build_meta_func(max_code)
+        max_val = resolve_potential_reference_no_type(max_func((constants, loop_references))[0], declared_enumerations, node_names, variables, constants, loop_references, trace = trace)[1]
+    else:
+        # max_val = 1
+        return None
+    return (min_val, max_val)
+
+def variable_array_size(variable, declared_enumerations, node_names, variables, constants, loop_references, trace = None):
+    if variable.model_as == 'NEURAL':
+        return resolve_potential_reference_no_type((build_meta_func(variable.num_outputs)((constants, loop_references)))[0], declared_enumerations, node_names, variables, constants, loop_references, trace = trace)[1]
+    array_size_func = build_meta_func(variable.array_size)
+    return resolve_potential_reference_no_type(array_size_func((constants, loop_references))[0], declared_enumerations, node_names, variables, constants, loop_references, trace = trace)[1]
+
+def constant_type(constant, declared_enumerations, no_exceptions = False, trace = None):
+    '''Used to get the type of the constant'''
+    if constant in declared_enumerations:
+        return 'ENUM'
+    if isinstance(constant, bool):
+        return 'BOOLEAN'
+    if isinstance(constant, int):
+        return 'INT'
+    if isinstance(constant, float):
+        return 'REAL'
+    if no_exceptions:
+        return True
+    raise BTreeException(trace, 'Constant ' + constant + ' is of an unsupported type. Only ENUM, BOOLEAN, INT, and REAL are supported')
+
+def handle_constant_or_reference_no_type(constant_or_reference, declared_enumerations, node_names, variables, constants, loop_references, trace = None):
+    return (
+        ('CONSTANT', constant_or_reference.constant)
+        if constant_or_reference.constant is not None else
+        (
+            ('NODE', constant_or_reference.reference)
+            if constant_or_reference.reference in node_names else
+            (
+                ('VARIABLE', variables[constant_or_reference.reference])
+                if constant_or_reference.reference in variables else
+                (
+                    ('CONSTANT', constants[constant_or_reference.reference])
+                    if constant_or_reference.reference in constants else
+                    (
+                        (
+                            ('VARIABLE', loop_references[constant_or_reference.reference])
+                            if hasattr(loop_references[constant_or_reference.reference], 'name') else
+                            (
+                                ('NODE', loop_references[constant_or_reference.reference])
+                                if loop_references[constant_or_reference.reference] in node_names else
+                                ('CONSTANT', loop_references[constant_or_reference.reference])
+                            )
+                        )
+                        if constant_or_reference.reference in loop_references else
+                        (
+                            ('CONSTANT', constant_or_reference.reference)
+                        )
+                    )
+                )
+            )
+        )
+    )
+
+def handle_constant_or_reference(constant_or_reference, declared_enumerations, node_names, variables, constants, loop_references, trace = None):
+    if constant_or_reference.constant is None:
+        return resolve_potential_reference(constant_or_reference.reference, declared_enumerations, node_names, variables, constants, loop_references, trace = trace)
+    return ('CONSTANT', constant_type(constant_or_reference.constant, declared_enumerations, trace = trace), constant_or_reference.constant)
+
+def resolve_potential_reference(reference, declared_enumerations, node_names, variables, constants, loop_references, trace = None):
+    '''
+    used to resolve references and also results from meta functions.
+    '''
+    return (
+        ('NODE', 'NODE', reference)
+        if reference in node_names else
+        (
+            ('VARIABLE', variable_type(variables[reference], declared_enumerations, constants, trace = trace), variables[reference])
+            if reference in variables else
+            (
+                ('CONSTANT', constant_type(constants[reference], declared_enumerations, trace = trace), constants[reference])
+                if reference in constants else
+                (
+                    (
+                        ('VARIABLE', variable_type(loop_references[reference], declared_enumerations, constants, trace = trace), variables[reference])
+                        if hasattr(loop_references[reference], 'name') else
+                        (
+                            ('NODE', 'NODE', loop_references[reference])
+                            if loop_references[reference] in node_names else
+                            ('CONSTANT', constant_type(loop_references[reference], declared_enumerations, trace = trace), loop_references[reference])
+                        )
+                    )
+                    if reference in loop_references else
+                    ('CONSTANT', constant_type(reference, declared_enumerations, trace = trace), reference)
+                )
+            )
+        )
+    )
+
+def resolve_potential_reference_no_type(reference, declared_enumerations, node_names, variables, constants, loop_references, trace = None):
+    '''used to resolve references and also results from meta functions.'''
+    return (
+        ('NODE', reference)
+        if reference in node_names else
+        (
+            ('VARIABLE', variables[reference])
+            if reference in variables else
+            (
+                ('CONSTANT', constants[reference])
+                if reference in constants else
+                (
+                    (
+                        ('VARIABLE', variables[reference])
+                        if hasattr(loop_references[reference], 'name') else
+                        (
+                            ('NODE', loop_references[reference])
+                            if constant_type(loop_references[reference], declared_enumerations, True, trace = trace) is None else
+                            ('CONSTANT', loop_references[reference])
+                        )
+                    )
+                    if reference in loop_references else
+                    ('CONSTANT', reference)
+                )
+            )
+        )
+    )
+
+def dummy_value(arg_type, declared_enumerations, trace = None):
+    '''Used to get a Dummy Value of the specified type'''
+    if arg_type == 'ENUM':
+        for enum in declared_enumerations:
+            break
+        return enum
+    if arg_type == 'BOOLEAN':
+        return True
+    if arg_type == 'INT':
+        return 0
+    if arg_type == 'REAL':
+        return 0.0
+    raise BTreeException(trace, 'Constant Type ' + arg_type + ' is of an unsupported type. Only ENUM, BOOLEAN, INT, and REAL are supported')
+
+def variable_type(variable, declared_enumerations, constants, trace = None):
+    '''Used to determine the variable type'''
+    if variable.model_as == 'NEURAL':
+        return 'INT'
+    if variable.model_as == 'DEFINE':
+        return variable.domain
+    if variable.domain.boolean is not None:
+        return 'BOOLEAN'
+    if variable.domain.min_val is not None or variable.domain.true_int is not None:
+        return 'INT'
+    if variable.domain.true_real is not None:
+        return 'REAL'
+    domain_func = build_meta_func(variable.domain.domain_codes[0])
+    values = domain_func((constants, {}))
+    return constant_type(values[0], declared_enumerations, trace = trace)
+
+def is_local(variable):
+    '''checks if the variable is local'''
+    return variable.var_type == 'local'
+
+def is_env(variable):
+    '''checks if the variable is environment'''
+    return variable.var_type == 'env'
+
+def is_blackboard(variable):
+    '''checks if the variable is blackboard'''
+    return variable.var_type == 'bl'
+
+def variable_scope(variable, trace = None):
+    '''used to return the scope of the environment'''
+    if is_local(variable):
+        return 'local'
+    if is_env(variable):
+        return 'environment'
+    if is_blackboard(variable):
+        return 'blackboard'
+    raise BTreeException(trace, 'Variable ' + variable.name + ' is not local, blackboard, or environment')
+
+def is_array(variable):
+    '''checks if the variable is an array'''
+    return variable.array_size is not None
+
+def str_format(value):
+    '''formats string'''
+    if isinstance(value, str):
+        return '\'' + value + '\''
+    return str(value)
+
+def create_variable_template(name, mode, array_size, custom_value_range, min_max_pair,
                              initial_value, next_value, keep_stage_0, keep_last_stage):
     '''
     Use this method to create variable templates
@@ -48,8 +247,8 @@ def create_variable_template(name, mode, array_size, custom_value_range,
         'array' : array_size is not None,
         'array_size' : None if array_size is None else array_size,
         'custom_value_range' : custom_value_range,
-        'min_value' : min_value,
-        'max_value' : max_value,
+        'min_value' : min_max_pair[0] if min_max_pair is not None else None,
+        'max_value' : min_max_pair[1] if min_max_pair is not None else None,
         'initial_value' : initial_value,
         'next_value' : next_value,
         'keep_stage_0' : keep_stage_0,  # keep stage_0 takes precedence over keep_last_stage. if keep_stage_0 is false, keep_last_stage is ignored.
@@ -63,13 +262,15 @@ def create_node_template(node_name, parent_name, children,
                          success, running, failure,
                          additional_arguments = None,
                          internal_status_module_name = None,
-                         internal_status_module_code = None):
+                         internal_status_module_code = None,
+                         custom_type = None):
     return {
         'name' : node_name,
         'parent' : parent_name,
         'children' : children,
         'category' : category,
         'type' : node_type,
+        'custom_type' : custom_type,
         'policy' : policy,
         'memory' : memory,  # 'with_true_memory', 'with_partial_memory', ''
         'return_possibilities' : {

@@ -1,0 +1,294 @@
+configuration {}
+enumerations {}
+constants { fish_cap := 1000 } end_constants
+variables {variable { bl biggest_fish VAR [0, fish_cap] assign { result {0} end_result} }}
+environment_update {} 
+checks {
+    check {
+        biggest_fish_is_X
+        arguments{x := INT}
+        read_variables { biggest_fish } end_read_variables
+        condition { (eq, biggest_fish, x) } end_condition
+    } end_check
+} end_checks
+environment_checks {#{ check environment nodes are defined here }#} end_environment_checks
+actions {
+    action {
+        bigger_fish
+        arguments {}
+        local_variables {} end_local_variables
+        read_variables {} end_read_variables
+        write_variables { biggest_fish } end_write_variables
+        initial_values {} end_initial_values
+        update {
+            variable_statement { biggest_fish assign {result { (min, (add, 1, biggest_fish), fish_cap) } } } end_variable_statement
+            return_statement { result { success } end_result } end_return_statement
+        } end_update
+    } end_action
+} end_actions
+sub_trees {#{ subtrees go here. }#} end_sub_trees
+tree {
+composite {
+    biggest_fish_sequence
+    sequence
+    children {
+        composite {
+            selector100
+            selector
+            children {
+                biggest_fish_is_X {97}
+                biggest_fish_is_X {98}
+                biggest_fish_is_X {99}
+                biggest_fish_is_X {100}
+                composite {
+                    selector96
+                    selector
+                    children {
+                        biggest_fish_is_X {93}
+                        biggest_fish_is_X {94}
+                        biggest_fish_is_X {95}
+                        biggest_fish_is_X {96}
+                        composite {
+                            selector92
+                            selector
+                            children {
+                                biggest_fish_is_X {89}
+                                biggest_fish_is_X {90}
+                                biggest_fish_is_X {91}
+                                biggest_fish_is_X {92}
+                                composite {
+                                    selector88
+                                    selector
+                                    children {
+                                        biggest_fish_is_X {85}
+                                        biggest_fish_is_X {86}
+                                        biggest_fish_is_X {87}
+                                        biggest_fish_is_X {88}
+                                        composite {
+                                            selector84
+                                            selector
+                                            children {
+                                                biggest_fish_is_X {81}
+                                                biggest_fish_is_X {82}
+                                                biggest_fish_is_X {83}
+                                                biggest_fish_is_X {84}
+                                                composite {
+                                                    selector80
+                                                    selector
+                                                    children {
+                                                        biggest_fish_is_X {77}
+                                                        biggest_fish_is_X {78}
+                                                        biggest_fish_is_X {79}
+                                                        biggest_fish_is_X {80}
+                                                        composite {
+                                                            selector76
+                                                            selector
+                                                            children {
+                                                                biggest_fish_is_X {73}
+                                                                biggest_fish_is_X {74}
+                                                                biggest_fish_is_X {75}
+                                                                biggest_fish_is_X {76}
+                                                                composite {
+                                                                    selector72
+                                                                    selector
+                                                                    children {
+                                                                        biggest_fish_is_X {69}
+                                                                        biggest_fish_is_X {70}
+                                                                        biggest_fish_is_X {71}
+                                                                        biggest_fish_is_X {72}
+                                                                        composite {
+                                                                            selector68
+                                                                            selector
+                                                                            children {
+                                                                                biggest_fish_is_X {65}
+                                                                                biggest_fish_is_X {66}
+                                                                                biggest_fish_is_X {67}
+                                                                                biggest_fish_is_X {68}
+                                                                                composite {
+                                                                                    selector64
+                                                                                    selector
+                                                                                    children {
+                                                                                        biggest_fish_is_X {61}
+                                                                                        biggest_fish_is_X {62}
+                                                                                        biggest_fish_is_X {63}
+                                                                                        biggest_fish_is_X {64}
+                                                                                        composite {
+                                                                                            selector60
+                                                                                            selector
+                                                                                            children {
+                                                                                                biggest_fish_is_X {57}
+                                                                                                biggest_fish_is_X {58}
+                                                                                                biggest_fish_is_X {59}
+                                                                                                biggest_fish_is_X {60}
+                                                                                                composite {
+                                                                                                    selector56
+                                                                                                    selector
+                                                                                                    children {
+                                                                                                        biggest_fish_is_X {53}
+                                                                                                        biggest_fish_is_X {54}
+                                                                                                        biggest_fish_is_X {55}
+                                                                                                        biggest_fish_is_X {56}
+                                                                                                        composite {
+                                                                                                            selector52
+                                                                                                            selector
+                                                                                                            children {
+                                                                                                                biggest_fish_is_X {49}
+                                                                                                                biggest_fish_is_X {50}
+                                                                                                                biggest_fish_is_X {51}
+                                                                                                                biggest_fish_is_X {52}
+                                                                                                                composite {
+                                                                                                                    selector48
+                                                                                                                    selector
+                                                                                                                    children {
+                                                                                                                        biggest_fish_is_X {45}
+                                                                                                                        biggest_fish_is_X {46}
+                                                                                                                        biggest_fish_is_X {47}
+                                                                                                                        biggest_fish_is_X {48}
+                                                                                                                        composite {
+                                                                                                                            selector44
+                                                                                                                            selector
+                                                                                                                            children {
+                                                                                                                                biggest_fish_is_X {41}
+                                                                                                                                biggest_fish_is_X {42}
+                                                                                                                                biggest_fish_is_X {43}
+                                                                                                                                biggest_fish_is_X {44}
+                                                                                                                                composite {
+                                                                                                                                    selector40
+                                                                                                                                    selector
+                                                                                                                                    children {
+                                                                                                                                        biggest_fish_is_X {37}
+                                                                                                                                        biggest_fish_is_X {38}
+                                                                                                                                        biggest_fish_is_X {39}
+                                                                                                                                        biggest_fish_is_X {40}
+                                                                                                                                        composite {
+                                                                                                                                            selector36
+                                                                                                                                            selector
+                                                                                                                                            children {
+                                                                                                                                                biggest_fish_is_X {33}
+                                                                                                                                                biggest_fish_is_X {34}
+                                                                                                                                                biggest_fish_is_X {35}
+                                                                                                                                                biggest_fish_is_X {36}
+                                                                                                                                                composite {
+                                                                                                                                                    selector32
+                                                                                                                                                    selector
+                                                                                                                                                    children {
+                                                                                                                                                        biggest_fish_is_X {29}
+                                                                                                                                                        biggest_fish_is_X {30}
+                                                                                                                                                        biggest_fish_is_X {31}
+                                                                                                                                                        biggest_fish_is_X {32}
+                                                                                                                                                        composite {
+                                                                                                                                                            selector28
+                                                                                                                                                            selector
+                                                                                                                                                            children {
+                                                                                                                                                                biggest_fish_is_X {25}
+                                                                                                                                                                biggest_fish_is_X {26}
+                                                                                                                                                                biggest_fish_is_X {27}
+                                                                                                                                                                biggest_fish_is_X {28}
+                                                                                                                                                                composite {
+                                                                                                                                                                    selector24
+                                                                                                                                                                    selector
+                                                                                                                                                                    children {
+                                                                                                                                                                        biggest_fish_is_X {21}
+                                                                                                                                                                        biggest_fish_is_X {22}
+                                                                                                                                                                        biggest_fish_is_X {23}
+                                                                                                                                                                        biggest_fish_is_X {24}
+                                                                                                                                                                        composite {
+                                                                                                                                                                            selector20
+                                                                                                                                                                            selector
+                                                                                                                                                                            children {
+                                                                                                                                                                                biggest_fish_is_X {17}
+                                                                                                                                                                                biggest_fish_is_X {18}
+                                                                                                                                                                                biggest_fish_is_X {19}
+                                                                                                                                                                                biggest_fish_is_X {20}
+                                                                                                                                                                                composite {
+                                                                                                                                                                                    selector16
+                                                                                                                                                                                    selector
+                                                                                                                                                                                    children {
+                                                                                                                                                                                        biggest_fish_is_X {13}
+                                                                                                                                                                                        biggest_fish_is_X {14}
+                                                                                                                                                                                        biggest_fish_is_X {15}
+                                                                                                                                                                                        biggest_fish_is_X {16}
+                                                                                                                                                                                        composite {
+                                                                                                                                                                                            selector12
+                                                                                                                                                                                            selector
+                                                                                                                                                                                            children {
+                                                                                                                                                                                                biggest_fish_is_X {9}
+                                                                                                                                                                                                biggest_fish_is_X {10}
+                                                                                                                                                                                                biggest_fish_is_X {11}
+                                                                                                                                                                                                biggest_fish_is_X {12}
+                                                                                                                                                                                                composite {
+                                                                                                                                                                                                    selector8
+                                                                                                                                                                                                    selector
+                                                                                                                                                                                                    children {
+                                                                                                                                                                                                        biggest_fish_is_X {5}
+                                                                                                                                                                                                        biggest_fish_is_X {6}
+                                                                                                                                                                                                        biggest_fish_is_X {7}
+                                                                                                                                                                                                        biggest_fish_is_X {8}
+                                                                                                                                                                                                        composite {
+                                                                                                                                                                                                            selector4
+                                                                                                                                                                                                            selector
+                                                                                                                                                                                                            children {
+                                                                                                                                                                                                                biggest_fish_is_X {1}
+                                                                                                                                                                                                                biggest_fish_is_X {2}
+                                                                                                                                                                                                                biggest_fish_is_X {3}
+                                                                                                                                                                                                                biggest_fish_is_X {4}
+                                                                                                                                                                                                                biggest_fish_is_X {0}
+                                                                                                                                                                                                            } end_children
+                                                                                                                                                                                                        } end_composite
+                                                                                                                                                                                                    } end_children
+                                                                                                                                                                                                } end_composite
+                                                                                                                                                                                            } end_children
+                                                                                                                                                                                        } end_composite
+                                                                                                                                                                                    } end_children
+                                                                                                                                                                                } end_composite
+                                                                                                                                                                            } end_children
+                                                                                                                                                                        } end_composite
+                                                                                                                                                                    } end_children
+                                                                                                                                                                } end_composite
+                                                                                                                                                            } end_children
+                                                                                                                                                        } end_composite
+                                                                                                                                                    } end_children
+                                                                                                                                                } end_composite
+                                                                                                                                            } end_children
+                                                                                                                                        } end_composite
+                                                                                                                                    } end_children
+                                                                                                                                } end_composite
+                                                                                                                            } end_children
+                                                                                                                        } end_composite
+                                                                                                                    } end_children
+                                                                                                                } end_composite
+                                                                                                            } end_children
+                                                                                                        } end_composite
+                                                                                                    } end_children
+                                                                                                } end_composite
+                                                                                            } end_children
+                                                                                        } end_composite
+                                                                                    } end_children
+                                                                                } end_composite
+                                                                            } end_children
+                                                                        } end_composite
+                                                                    } end_children
+                                                                } end_composite
+                                                            } end_children
+                                                        } end_composite
+                                                    } end_children
+                                                } end_composite
+                                            } end_children
+                                        } end_composite
+                                    } end_children
+                                } end_composite
+                            } end_children
+                        } end_composite
+                    } end_children
+                } end_composite
+            } end_children
+        } end_composite
+        bigger_fish {}
+    } end_children
+} end_composite
+} end_tree
+tick_prerequisite { True }
+specifications {
+    LTLSPEC { (finally, (globally, (eq, biggest_fish at 0, 101))) } end_LTLSPEC
+    CTLSPEC { (always_finally, (always_globally, (eq, biggest_fish at 0, 101))) } end_CTLSPEC
+} end_specifications

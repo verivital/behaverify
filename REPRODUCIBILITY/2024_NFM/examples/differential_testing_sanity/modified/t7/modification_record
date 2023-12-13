@@ -1,9 +1,0 @@
-in OUTPUT_HASKELL.txt changed line 1 from
-(Board = {boardBlVAR0: [2, 5, 3], localBoardLocalFROZENVAR5Location4: [-2, -2], boardBlDEFINE8: True, localBoardLocalDEFINE6Location3: True, localBoardLocalDEFINE6Location4: False}, Env = {envEnvVAR1: [5, 5, 5], envEnvVAR2: [-2, -2, -5], envEnvVAR3: True, envEnvVAR4: ["no", "both", "yes"], envEnvDEFINE7: False, envEnvDEFINE9: [-5, -2, -2]})
-to
-(Board = {boardBlVAR0: [2, 5, 3], localBoardLocalFROZENVAR5Location4: [-2, -2], boardBlDEFINE8: True, localBoardLocalDEFINE6Location3: True, localBoardLocalDEFINE6Location4: False}, Env = {envEnvVAR1: [5, 5, 5], envEnvVAR2: [-2, -2, -5], envEnvVAR3: False, envEnvVAR4: ["no", "both", "yes"], envEnvDEFINE7: False, envEnvDEFINE9: [-5, -2, -2]})
-
-in OUTPUT_NUXMV.txt changed line 32 from
-    system.envVAR3_stage_0 = TRUE
-to
-    system.envVAR3_stage_0 = FALSE

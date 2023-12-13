@@ -14,8 +14,10 @@ with open(template_location + '/' + 'template.tree', 'r') as f:
 for i in range(min_val, max_val + 1, step_size):
     with open(location + '/' + 'simple_robot_' + str(i) + '.tree', 'w') as f:
         preamble = (
-            'configuration{}' + os.linesep
-            + 'enumerations{}' + os.linesep
-            + 'constants {\'x_max\' := ' + str(i - 1) + ', \'y_max\' := ' + str(i - 1) + '} end_constants' + os.linesep
+            'configuration {}' + os.linesep
+            + 'enumerations {}' + os.linesep
+            + 'constants {' + os.linesep
+            + '\tx_max := ' + str(i - 1) + ', y_max := ' + str(i - 1) + os.linesep
+            + '} end_constants' + os.linesep
         )
         f.write(preamble + template)
