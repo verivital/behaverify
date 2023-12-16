@@ -12,8 +12,8 @@ def create_blackboard():
     blackboard_reader = py_trees.blackboard.Client()
     blackboard_reader.register_key(key = 'x_true', access = py_trees.common.Access.WRITE)
     blackboard_reader.register_key(key = 'y_true', access = py_trees.common.Access.WRITE)
-    blackboard_reader.x_true = serene_safe_assignment.x_true((0 if ((temp := random.randint(0, 20)) == 0) else (1 if temp == 1 else (2 if temp == 2 else (3 if temp == 3 else (4 if temp == 4 else (5 if temp == 5 else (6 if temp == 6 else (7 if temp == 7 else (8 if temp == 8 else (9 if temp == 9 else (10 if temp == 10 else (11 if temp == 11 else (12 if temp == 12 else (13 if temp == 13 else (14 if temp == 14 else (15 if temp == 15 else (16 if temp == 16 else (17 if temp == 17 else (18 if temp == 18 else (19 if temp == 19 else (20))))))))))))))))))))))
-    blackboard_reader.y_true = serene_safe_assignment.y_true((0 if ((temp := random.randint(0, 20)) == 0) else (1 if temp == 1 else (2 if temp == 2 else (3 if temp == 3 else (4 if temp == 4 else (5 if temp == 5 else (6 if temp == 6 else (7 if temp == 7 else (8 if temp == 8 else (9 if temp == 9 else (10 if temp == 10 else (11 if temp == 11 else (12 if temp == 12 else (13 if temp == 13 else (14 if temp == 14 else (15 if temp == 15 else (16 if temp == 16 else (17 if temp == 17 else (18 if temp == 18 else (19 if temp == 19 else (20))))))))))))))))))))))
+    blackboard_reader.x_true = serene_safe_assignment.x_true((0 if ((temp := random.randint(0, 10)) == 0) else (1 if temp == 1 else (2 if temp == 2 else (3 if temp == 3 else (4 if temp == 4 else (5 if temp == 5 else (6 if temp == 6 else (7 if temp == 7 else (8 if temp == 8 else (9 if temp == 9 else (10))))))))))))
+    blackboard_reader.y_true = serene_safe_assignment.y_true((0 if ((temp := random.randint(0, 10)) == 0) else (1 if temp == 1 else (2 if temp == 2 else (3 if temp == 3 else (4 if temp == 4 else (5 if temp == 5 else (6 if temp == 6 else (7 if temp == 7 else (8 if temp == 8 else (9 if temp == 9 else (10))))))))))))
     return blackboard_reader
 
 

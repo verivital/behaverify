@@ -10,37 +10,37 @@ def index_func(index, array_size):
 def x_true(new_value):
     if type(new_value) is not int:
         raise TypeError('variable x_true expected type int but received type ' + str(type(new_value)))
-    if new_value >= 0 and new_value <= 20:
+    if new_value >= 0 and new_value <= 10:
         return new_value
     else:
-        raise ValueError('variable x_true expected value between 0 and 20 inclusive but received value ' + str(new_value))
+        raise ValueError('variable x_true expected value between 0 and 10 inclusive but received value ' + str(new_value))
 
 
 def y_true(new_value):
     if type(new_value) is not int:
         raise TypeError('variable y_true expected type int but received type ' + str(type(new_value)))
-    if new_value >= 0 and new_value <= 20:
+    if new_value >= 0 and new_value <= 10:
         return new_value
     else:
-        raise ValueError('variable y_true expected value between 0 and 20 inclusive but received value ' + str(new_value))
+        raise ValueError('variable y_true expected value between 0 and 10 inclusive but received value ' + str(new_value))
 
 
 def x_goal(new_value):
     if type(new_value) is not int:
         raise TypeError('variable x_goal expected type int but received type ' + str(type(new_value)))
-    if new_value >= 0 and new_value <= 20:
+    if new_value >= 0 and new_value <= 10:
         return new_value
     else:
-        raise ValueError('variable x_goal expected value between 0 and 20 inclusive but received value ' + str(new_value))
+        raise ValueError('variable x_goal expected value between 0 and 10 inclusive but received value ' + str(new_value))
 
 
 def y_goal(new_value):
     if type(new_value) is not int:
         raise TypeError('variable y_goal expected type int but received type ' + str(type(new_value)))
-    if new_value >= 0 and new_value <= 20:
+    if new_value >= 0 and new_value <= 10:
         return new_value
     else:
-        raise ValueError('variable y_goal expected value between 0 and 20 inclusive but received value ' + str(new_value))
+        raise ValueError('variable y_goal expected value between 0 and 10 inclusive but received value ' + str(new_value))
 
 
 def remaining_goals(new_value):
