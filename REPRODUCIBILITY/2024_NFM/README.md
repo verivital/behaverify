@@ -52,39 +52,39 @@ We provide 3 scripts of each type (1 for each test from Test Information). Each 
 - **/path/to/writable/location/** -> Required. This should point to a folder where the results will be written. The final **/** is optional.
 - **mode** -> Required, sort of. This should be **test**, **partial**, or **full**. It is used to select the tests to run. It will default to **test** if it doesn't match any of the options.
 
-### Single Script: Minimal (estimated time: ??)
+### Single Script: Minimal (estimated time: 4 minutes. 6 minutes on Chromebook)
 
 Build Script:
 
-	./build_and_run_minimal.sh /path/to/nuXmv /path/to/writable/location/ test
+	./build_and_run.sh /path/to/nuXmv /path/to/writable/location/ test
 
 Load Script:
 
-	./load_and_run_minimal.sh /path/to/nuXmv /path/to/writable/location/ test
+	./load_and_run.sh /path/to/nuXmv /path/to/writable/location/ test
 	
 The results will be written in **/path/to/writable/location/behaverify\_nfm\_install\_test**. See the Interpreting and Comparing Results section for more information.
 
-### Single Script: Partial (estimated time: ??)
+### Single Script: Partial (estimated time: 13 minutes. 40 minutes on Chromebook)
 
 Build Script:
 
-	./build_and_run_partial.sh /path/to/nuXmv /path/to/writable/location/ partial
+	./build_and_run.sh /path/to/nuXmv /path/to/writable/location/ partial
 
 Load Script:
 
-	./load_and_run_partial.sh /path/to/nuXmv /path/to/writable/location/ partial
+	./load_and_run.sh /path/to/nuXmv /path/to/writable/location/ partial
 	
 The results will be written in **/path/to/writable/location/behaverify\_nfm\_partial\_results**. See the Interpreting and Comparing Results section for more information.
 
-### Single Script: Full (estimated time: ??)
+### Single Script: Full (estimated time: 20 minutes. 1 hour on Chromebook)
 
 Build Script:
 
-	./build_and_run_full.sh /path/to/nuXmv /path/to/writable/location/ full
+	./build_and_run.sh /path/to/nuXmv /path/to/writable/location/ full
 	
 Load Script:
 
-	./load_and_run_full.sh /path/to/nuXmv /path/to/writable/location/ full
+	./load_and_run.sh /path/to/nuXmv /path/to/writable/location/ full
 	
 The results will be written in **/path/to/writable/location/behaverify\_nfm\_full\_results**. See the Interpreting and Comparing Results section for more information.
 
@@ -94,7 +94,7 @@ The results will be written in **/path/to/writable/location/behaverify\_nfm\_ful
 
 This section will explain how to utilize either the provided docker image or Dockerfile to recreate the tests using docker.
 
-### 1a. Creation of the Docker Image and Container (estimated time: ??)
+### 1a. Creation of the Docker Image and Container (estimated time: 3 minutes. 5 minutes on Chromebook )
 
 You only need to execute 1a or 1b. See 1b for steps using the image. However, should you wish to build the docker image yourself, please run
 
@@ -121,19 +121,19 @@ Next, please run
 
 This will copy nuXmv from the path you provided to the correct location in the docker and ensure it is runable and an executable. Note that you should not point to the folder containing nuXmv, but to nuXmv itself, and that the nuXmv version should be the Linux version.
 
-### 3. Minimal Test (estimated time: ??)
+### 3. Minimal Test (estimated time: 30 seconds. 1 minute on Chromebook)
 
 The full test takes quite a while to run. To ensure everything works right, please run
 
 	./docker_replicate_results.sh /path/to/writable/location/ behaverify_nfm_install_test
 
-### 4. Partial Test (estimated time: ??)
+### 4. Partial Test (estimated time: 10 minutes. 35 minutes on Chromebook)
 
 The full test takes quite a while to run. To ensure everything works right, please run
 
 	./docker_replicate_results.sh /path/to/writable/location/ behaverify_nfm_partial_results
 
-### 5. Full Results (estimated time: ??)
+### 5. Full Results (estimated time: 17 minutes. 1 hour on Chromebook)
 
 	./docker_replicate_results.sh /path/to/writable/location/ behaverify_nfm_full_results
 
@@ -380,7 +380,8 @@ The results should be in **/path/to/writable/location/behaverify\_nfm\_full\_res
 
 1. If a script fails because permission has been denied, please run the script without sudo (running docker without sudo requires some configuration). If the problem persists, please try a different location, as occasionally docker cannot write to secondary disks.
 2. If building from the Dockerfile fails, please try and use the load option instead.
-3. If everything runs to completion, but there are no images in the copied directory, please confirm if there are files in the results folders (e.g., **bigger\_fish\_selector/results/**). If there are, then most likely you encountered errors similar to the following during execution:
+3. If building from the Dockerfile fails and the load option is not available, please consider running **clean\_docker.sh**. THIS WILL REMOVE ALL EXISTING DOCKER CONTAINERS AND IMAGES. For some reason, this sometimes seems to help.
+4. If everything runs to completion, but there are no images in the copied directory, please confirm if there are files in the results folders (e.g., **bigger\_fish\_selector/results/**). If there are, then most likely you encountered errors similar to the following during execution:
    ```
    OpenBLAS blas_thread_init: pthread_create failed for thread 1 of 16: Operation not permitted
    ```
@@ -394,11 +395,12 @@ The results should be in **/path/to/writable/location/behaverify\_nfm\_full\_res
 - **behaverify\_nfm\_partial\_results.sh** -> This is the script to locally run almost everything for the NFM results. It is also used by the docker scripts.
 - **behaverify\_nfm\_partial\_results.sh** -> This is the script to locally test the install. It is also used by the docker scripts.
 - **build\_and\_run.sh** -> This is used to build the docker container and image from the Dockerfile, add nuXmv, and then run a test.
+- **clean\_docker.sh** -> This is a script used to remove all existing docker containers and images. It is not executed by any of the scripts. It is provided for convenience.
 - **docker\_add\_nuxmv.sh** -> This is used to add nuXmv to a docker container.
 - **docker\_build\_script.sh** ->  This is used to build the docker container and image from the Dockerfile.
 - **docker\_load\_script.sh** ->  This is used to build the docker container and image from the Docker Image.
 - **docker\_replicate\_results.sh** -> This is used to run a test.
-- **docker\_save\_image.sh** -> This is used to save a Dockerimage.
+- **docker\_save\_image.sh** -> This is used to save a Dockerimage. It is not executed by any of the scripts. It is provided for convenience.
 - **Dockerfile** -> This is a Dockerfile for BehaVerify NFM edition.
 - **load\_and\_run.sh** -> This is used to load the docker container and image from the Docker image, add nuXmv, and then run a test.
 - **nuXmv** -> This doesn't exist but you should make it exist if you plan to run tests locally.
