@@ -9,7 +9,7 @@ See version\_info.txt for information about dependency requirements.
 3. Running Tests using Docker -> this section will explain how to run the tests using Docker.
 4. Running Tests Locally (verbose) -> this section will explain how to run tests locally. It also explains why each step of the installation is necessary.
 5. Running Tests Locally (concise) -> this section will explain how to run tests locally. It does not provide explanations.
-6. MoVe4BT Information -> this section will provide information about MoVe4BT. Unfortunately, we were not able to find a way to use it from the commandline.
+6. MoVe4BT Information -> this section will provide information about MoVe4BT. Unfortunately, we were not able to find a way to use it from the command-line.
 7. Interpreting and Comparing Results -> this section will explain how to interpret the generated results and what they correspond to in the paper.
 8. Potential Errors and Workarounds -> this section will explain how to deal with some of the potential errors encountered.
 9. Directory Explained -> this section will provide detailed information about everything in this directory.
@@ -166,7 +166,7 @@ This section is intentionally lengthy. If you are not interested in the details 
 7. jinja2<br />jinja2 is used by something for graph/table creations.
 
 		python3 -m pip install jinja2
-8. textX<br />textX is used by BehaVerify for parsing. It is necessary for BehaVerify ro run in any capacity
+8. textX<br />textX is used by BehaVerify for parsing. It is necessary for BehaVerify to run in any capacity
 
 		python3 -m pip install textX
 9. matplotlib<br />matplotlib is used for generating graphs and plots.
@@ -302,17 +302,26 @@ This will run a large script. The results will be in **behaverify/REPRODUCIBILIT
 
 # MoVe4BT Information
 
-Our NFM paper compared to MoVe4BT. See https://move4bt.github.io/ . We found that installing the tool using the instruction at https://move4bt.github.io/manual was fairly painless, but your experience may vary. Unfortuantely, we did not find a way to run the tool from the comandline, so we cannot automate the process in Docker.
-
-NOTE: As of 2023-12-16, because of a Blunder, the XML files are not yet included in the repository. We apologize for the inconvenience. This will be corrected by 2024-01-06.
+Our NFM paper compared to MoVe4BT. See https://move4bt.github.io/ . We found that installing the tool using the instruction at https://move4bt.github.io/manual was fairly painless, but your experience may vary. Unfortunately, we did not find a way to run the tool from the command-line, so we cannot automate the process in Docker.
 
 1. After following those instructions and launching MoVe4BT, please press the editor button.
 2. Then click Load Tree on the left side of the GUI.
-3. Please Load an xml file from **/behaverify/REPRODUCIBILITY/2024\_NFM/MoVe4BT\_XML/**.
+3. Please Load an xml file from **/behaverify/REPRODUCIBILITY/2024\_NFM/MoVe4BT\_XML\_Files/xml/**.
 4. The file may take a while to load, especially for the bigger examples.
 5. Click verifications.
 6. The GUI may freeze. Feel free to ignore the wait/force quit option, or repeatedly click wait. Eventually, it will print results, or produce a blank screen.
 
+The code for generating the files is in **/behaverify/REPRODUCIBILITY/2024\_NFM/MoVe4BT\_XML\_Files/create\_bigger\_fish\_MoVe4BT\_xml.py**. Run using the following command
+
+```
+python3 create_bigger_fish_MoVe4BT_xml.py /path/to/output/location min max step
+```
+
+Where the path is where the files will be outputted (must be a folder, do not include final slash), min is the smallest size file to generate, max is the largest (inclusive) and step is the step size. Therefore, the command used to generate the used xml files is
+
+```
+python3 create_bigger_fish_MoVe4BT_xml.py /path/to/output/location 50 1000 50
+```
 
 ---
 
@@ -400,7 +409,7 @@ The results should be in **/path/to/writable/location/behaverify\_nfm\_full\_res
 - **docker\_build\_script.sh** ->  This is used to build the docker container and image from the Dockerfile.
 - **docker\_load\_script.sh** ->  This is used to build the docker container and image from the Docker Image.
 - **docker\_replicate\_results.sh** -> This is used to run a test.
-- **docker\_save\_image.sh** -> This is used to save a Dockerimage. It is not executed by any of the scripts. It is provided for convenience.
+- **docker\_save\_image.sh** -> This is used to save a Docker image. It is not executed by any of the scripts. It is provided for convenience.
 - **Dockerfile** -> This is a Dockerfile for BehaVerify NFM edition.
 - **load\_and\_run.sh** -> This is used to load the docker container and image from the Docker image, add nuXmv, and then run a test.
 - **nuXmv** -> This doesn't exist but you should make it exist if you plan to run tests locally.
@@ -411,7 +420,7 @@ The results should be in **/path/to/writable/location/behaverify\_nfm\_full\_res
 	- **ANSR\_no\_net** -> This contains the ISR experiment
 		- **ANSR\_no\_net\_5.tree** -> This is the DSL specification for when the target can move every 5 turns.
 		- **ANSR\_no\_net\_10.tree** -> This is the DSL specification for when the target can move every 10 turns.
-		- **parse\_nuxmv\_output.py** -> This is used to visualize the countereample.
+		- **parse\_nuxmv\_output.py** -> This is used to visualize the counterexample.
 		- **parse\_python\_output.py** -> This is used to visualize a random trace. This was used to generate **Section 4.4**, **Figure 3**. It is not used in the tests.
 		- **processed\_data/pictures** -> This will contain the counterexample visualization.
 		- **results** -> This will contain the outputs of nuXmv.
@@ -434,8 +443,8 @@ The results should be in **/path/to/writable/location/behaverify\_nfm\_full\_res
 		- **tree** This will contain the DSL specifications for the Bigger Fish models.
 - **metamodel/behaverify.tx** -> This is the file containing the structure of the DSL. TextX uses it to parse .tree files.
 - **scripts** -> This folder contains various scripts for building and running experiments. We will not describe all of them.
-- **src** -> This containts the source code for BehaVerify.
-  - **behaverify\_common.py** -> This contains methods used by mutliple parts of BehaVerify.
+- **src** -> This contains the source code for BehaVerify.
+  - **behaverify\_common.py** -> This contains methods used by multiple parts of BehaVerify.
   - **behaverify\_gui.py** -> This can be used to run a basic GUI for BehaVerify. It's main use is tree visualization and generating visualizations of trace counterexamples.
   - **behaverify\_to\_smv.py** -> This is used by dsl\_to\_nuxmv.py to write the nuXmv model.
   - **check\_grammar.py** -> This is used to ensure the user didn't do anything weird in the DSL model (e.g. True + 3 + 'hello').
