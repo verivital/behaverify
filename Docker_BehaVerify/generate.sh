@@ -43,6 +43,6 @@ fi
 docker start behaverify
 docker exec behaverify /home/user/behaverify/Docker_BehaVerify/setup_directory.sh "${input_name_only}"
 docker cp "${input_file}" "behaverify:/home/user/${input_name_only}/${input_name}" 
-docker exec behaverify python3 "home/user/behaverify/src/${command}.py" "/home/user/behaverify/metamodel/behaverify.tx" "/home/user/${input_name_only}/${input_name}" "${command_flags}" "${user_flags}"
+docker exec behaverify python3 "/home/user/behaverify/src/${command}.py" "/home/user/behaverify/metamodel/behaverify.tx" "/home/user/${input_name_only}/${input_name}" "${command_flags}" "${user_flags}"
 docker cp "behaverify:/home/user/${input_name_only}" "${output_location}${input_name_only}"
-docker stop behaverfiy
+docker stop behaverify
