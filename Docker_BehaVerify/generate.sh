@@ -2,7 +2,7 @@
 
 input_file=$1
 input_name=$(basename "${input_file}")
-input_name_only="${name%.*}"
+input_name_only="${input_name%.*}"
 output_location=$2
 command=$3
 command_flags=""
