@@ -1,5 +1,5 @@
 #{
-    comments are anyhting inside the hashtag curly bracket set.
+    comments are anything inside the hashtag curly bracket set.
     Any time you see end_X, that is optional. It is there for readability, but can be removed.
     Note that there are many places where this is ommitted, for brevity, but basically any {} can be ended with an end_X
     run
