@@ -675,6 +675,11 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
             for case_result in assign.case_results:
                 value_funcs.append(build_meta_func(case_result.values[0]))
             value_funcs.append(build_meta_func(assign.default_result.values[0]))
+            if len(list_of_list_of_inputs) == 0:
+                # the value would appear to be a constant
+                # we can compute this directly then.
+                for value_func in value_funcs:
+                    domain_values.add(resolve_potential_reference_no_type(value_func((constants, loop_references))[0], declared_enumerations, {}, {}, constants, loop_references)[1])
             for list_of_inputs in list_of_list_of_inputs:
                 new_loop_references = dict(list_of_inputs)
                 new_loop_references.update(loop_references)
