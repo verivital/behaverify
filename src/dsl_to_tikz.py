@@ -5,11 +5,11 @@ It contains a variety of utility functions.
 
 
 Author: Serena Serafina Serbinowska
-Last Edit: 2023-11-06
+Last Edit: 2024-01-19
 '''
 import argparse
 import os
-from behaverify_common import indent, create_node_name, is_local, is_env, is_array, handle_constant_or_reference, resolve_potential_reference_no_type, variable_array_size, get_min_max, variable_type, BTreeException, constant_type
+from behaverify_common import indent, create_node_name, is_local, is_env, is_array, handle_constant_or_reference, resolve_potential_reference_no_type, variable_array_size, get_min_max, BTreeException, constant_type
 from serene_functions import build_meta_func
 from check_grammar import validate_model
 
@@ -33,15 +33,6 @@ def write_files(metamodel_file, model_file, output_file, recursion_limit):
     # loc is a location. location can be node, blackboard, or environment.
     def create_misc_args(init, loc, indent_level):
         return {'init' : init, 'loc' : loc, 'indent_level' : indent_level}
-
-    def to_python_type(behaverify_type):
-        if behaverify_type == 'ENUM':
-            return 'str'
-        if behaverify_type == 'BOOLEAN':
-            return 'bool'
-        if behaverify_type == 'INT':
-            return 'int'
-        raise ValueError(behaverify_type + ' is of an unsupported type. Only ENUM, BOOLEAN, and INT are supported')
 
     def str_conversion(atom_type, atom):
         if atom_type in ('VARIABLE', 'NODE'):
@@ -105,27 +96,8 @@ def write_files(metamodel_file, model_file, output_file, recursion_limit):
             + ')'
         ]
 
-    def format_function_implies(_, function_call, misc_args):
-        formatted_values = []
-        for value in function_call.values:
-            formatted_values.extend(format_code(value, misc_args))
-        return ['(' + '(not ' + formatted_values[0] + ') or ' + formatted_values[1] + ')']
-
-    def format_function_division(_, function_call, misc_args):
-        formatted_values = []
-        for value in function_call.values:
-            formatted_values.extend(format_code(value, misc_args))
-        return ['(int(' + formatted_values[0] + ' / ' + formatted_values[1] + '))']
-
-    def format_function_xnor(_, function_call, misc_args):
-        return ['(not (' + function_format['xor'][1](function_format['xor'][0], function_call, misc_args)[0] + '))']
-
-    def format_function_count(_, function_call, misc_args):
-        return [
-            '('
-            + '[' + ', '.join([', '.join(format_code(value, misc_args)) for value in function_call.values]) + '].count(True)'
-            + ')'
-        ]
+    def format_function_one_arg(function_name, function_call, misc_args):
+        return [function_name + '{' + format_code(function_call.values[0], misc_args) + '}']
 
     def format_function_index(_, function_call, misc_args):
         var_func = build_meta_func(function_call.to_index)
@@ -191,80 +163,25 @@ def write_files(metamodel_file, model_file, output_file, recursion_limit):
             )
         )
 
-    def class_definition(node_name):
-        return 'class ' + node_name + '(py_trees.behaviour.Behaviour):' + os.linesep
-
-    def init_method_check(node):
-        return (indent(1) + 'def __init__(self, name' + ((', ' + ', '.join(map(lambda arg_pair: arg_pair.argument_name, node.arguments))) if len(node.arguments) > 0 else '') + '):' + os.linesep
-                + ''.join(
-                    [
-                        (indent(2) + 'self.' + arg_pair.argument_name + ' = ' + arg_pair.argument_name + os.linesep)
-                        for arg_pair in node.arguments
-                    ]
-                )
-                + indent(2) + 'super(' + node.name + ', self).__init__(name)' + os.linesep
-                + indent(2) + 'self.name = name' + os.linesep
-                + indent(2) + 'self.blackboard = self.attach_blackboard_client(name = name)' + os.linesep
-                + ''.join([(indent(2) + 'self.blackboard.register_key(key = (' + "'" + variable.name + "'" + '), access = py_trees.common.Access.READ)' + os.linesep) for variable in node.read_variables])
-                + os.linesep)
-
     def update_method_check(node):
-        return (indent(1) + 'def update(self):' + os.linesep
-                + indent(2) + 'return_status = ((py_trees.common.Status.SUCCESS) if ('
-                + format_code(node.condition, create_misc_args(False, 'node', 2))[0]
-                + ') else (py_trees.common.Status.FAILURE))' + os.linesep
-                + indent(2) + 'return return_status' + os.linesep)
-
-    def init_method_environment_check(node):
-        return (indent(1) + 'def __init__(self, name, environment' + ((', ' + ', '.join(map(lambda arg_pair: arg_pair.argument_name, node.arguments))) if len(node.arguments) > 0 else '') + '):' + os.linesep
-                + ''.join(
-                    [
-                        (indent(2) + 'self.' + arg_pair.argument_name + ' = ' + arg_pair.argument_name + os.linesep)
-                        for arg_pair in node.arguments
-                    ]
-                )
-                + indent(2) + 'super(' + node.name + ', self).__init__(name)' + os.linesep
-                + indent(2) + 'self.name = name' + os.linesep
-                + indent(2) + 'self.environment = environment' + os.linesep
-                + indent(2) + 'self.blackboard = self.attach_blackboard_client(name = name)' + os.linesep
-                + ''.join([(indent(2) + 'self.blackboard.register_key(key = (\'' + variable.name + '\'), access = py_trees.common.Access.READ)' + os.linesep) for variable in node.read_variables])
-                + os.linesep)
+        return (
+            '\\node[Blackboard]{\begin{tabular}{l}' + os.linesep
+            + ('$' + format_code(node.condition, create_misc_args(False, 'node', 2))[0].replace('_', '\\_') + '$\\\\' + os.linesep)
+            + '\\end{tabular}};'
+        )
 
     def update_method_environment_check(node):
-        return (indent(1) + 'def update(self):' + os.linesep
-                + indent(2) + 'return_status = ((py_trees.common.Status.SUCCESS) if ('
-                + 'self.environment.' + node.name + '(self)'
-                + ') else (py_trees.common.Status.FAILURE))' + os.linesep
-                + indent(2) + 'return return_status' + os.linesep)
+        return (
+            '\\node[Blackboard]{\begin{tabular}{l}' + os.linesep
+            + ('$' + format_code(node.condition, create_misc_args(False, 'node', 2))[0].replace('_', '\\_') + '$\\\\' + os.linesep)
+            + '\\end{tabular}};'
+        )
 
     def resolve_variable_nondeterminism(values, misc_args):
         formatted_values = []
         for value in values:
             formatted_values.extend(format_code(value, misc_args))
-        if len(formatted_values) == 0:
-            raise ValueError('variable had no valid values!')
-        if len(formatted_values) == 1:
-            return formatted_values[0]
-        if len(formatted_values) == 2:
-            return '(' + formatted_values[0] + ' if random.choice((True, False)) else ' + formatted_values[1] + ')'
-        return  (
-            ''.join(
-                [
-                    '(' + value
-                    + (
-                        (' if ((temp := random.randint(0, ' + str(len(formatted_values) - 1) + ')) == 0) else ')
-                        if index == 0 else
-                        (
-                            (' if temp == ' + str(index) + ' else ')
-                            if index < len(formatted_values) - 1 else
-                            ''
-                        )
-                    )
-                    for (index, value) in enumerate(formatted_values)
-                ]
-            )
-            + ')' * len(formatted_values)
-        )
+        return '\\{' + ', '.join(formatted_values) + '\\}'
 
     def handle_assign(assign, misc_args):
         case_results = assign.case_results
@@ -341,47 +258,6 @@ def write_files(metamodel_file, model_file, output_file, recursion_limit):
             return (variable_assignment(variable, assign_string, misc_args, array_mode = True) if assign_to_var else assign_string)
         return (variable_assignment(variable, handle_assign(variable_statement.assign, misc_args), misc_args, array_mode = False) if assign_to_var else handle_assign(variable_statement.assign, misc_args))
 
-    def create_variable_macro(variable_statement, misc_args):
-        variable = variable_statement.variable if hasattr(variable_statement, 'variable') else variable_statement
-        new_misc_args = create_misc_args(misc_args['init'], misc_args['loc'], misc_args['indent_level'] + 1)
-        if is_array(variable):
-            # todo: consider optimizing this for constant index. No reason to compute everything when we know the index.
-            default_value = handle_assign(variable_statement.default_value, new_misc_args)
-            new_values = handle_variable_statement(variable_statement, new_misc_args, assign_to_var = False)
-            return (
-                os.linesep
-                + os.linesep
-                + indent(misc_args['indent_level']) + 'def ' + variable.name + '(index):' + os.linesep
-                + indent(misc_args['indent_level'] + 1) + 'if type(index) is not int:' + os.linesep
-                + indent(misc_args['indent_level'] + 2) + "raise TypeError('Index must be an int when accessing " + variable.name + ": ' + str(type(index)))" + os.linesep
-                + indent(misc_args['indent_level'] + 1) + 'if index < 0 or index >= ' + str(variable_array_size_map[variable.name]) + ':' + os.linesep
-                + indent(misc_args['indent_level'] + 2) + "raise ValueError('Index out of bounds when accessing " + variable.name + ": ' + str(index))" + os.linesep
-                + indent(misc_args['indent_level'] + 1) + variable.name + ' = [' + default_value + ' for _ in range(' + str(variable_array_size_map[variable.name]) + ')]' + os.linesep
-                + indent(misc_args['indent_level'] + 1) + 'seen_indices = set()' + os.linesep
-                + indent(misc_args['indent_level'] + 1) + 'for (new_index, new_value) in ' + new_values + ':' + os.linesep
-                + indent(misc_args['indent_level'] + 2) + 'if new_index in seen_indices:' + os.linesep
-                + indent(misc_args['indent_level'] + 3) + 'continue' + os.linesep
-                + indent(misc_args['indent_level'] + 2) + 'seen_indices.add(new_index)' + os.linesep
-                + indent(misc_args['indent_level'] + 2) + 'if type(new_index) is not int:' + os.linesep
-                + indent(misc_args['indent_level'] + 3) + "raise TypeError('Index must be an int when accessing " + variable.name + ": ' + str(type(new_index)))" + os.linesep
-                + indent(misc_args['indent_level'] + 2) + 'if new_index < 0 or new_index >= ' + str(variable_array_size_map[variable.name]) + ':' + os.linesep
-                + indent(misc_args['indent_level'] + 3) + "raise ValueError('Index out of bounds when accessing " + variable.name + ": ' + str(new_index))" + os.linesep
-                + indent(misc_args['indent_level'] + 2) + 'if type(new_value) is not ' + variable_type_map[variable.name] + ':' + os.linesep
-                + indent(misc_args['indent_level'] + 3) + "raise ValueError('Variable " + variable.name + " is type " + variable_type_map[variable.name] + ". Got type(new_value)')" + os.linesep
-                + indent(misc_args['indent_level'] + 2) + variable.name + '[new_index] = new_value' + os.linesep
-                + indent(misc_args['indent_level'] + 1) + 'return ' + variable.name + '[index]' + os.linesep
-                + os.linesep
-                + indent(misc_args['indent_level']) + format_variable_name_only(variable, misc_args) + ' = ' + variable.name + os.linesep
-            )
-        return (
-            os.linesep
-            + os.linesep
-            + indent(misc_args['indent_level']) + 'def ' + variable.name + '():' + os.linesep
-            + indent(misc_args['indent_level'] + 1) + 'return ' + handle_assign(variable_statement.assign, new_misc_args) + os.linesep
-            + os.linesep
-            + indent(misc_args['indent_level']) + format_variable_name_only(variable, misc_args) + ' = ' + variable.name + os.linesep
-        )
-
     def handle_read_statement(read_statement, misc_args):
         new_misc_args = create_misc_args(misc_args['init'], misc_args['loc'], misc_args['indent_level'] + 1)
         return (
@@ -449,7 +325,7 @@ def write_files(metamodel_file, model_file, output_file, recursion_limit):
         )
 
     def format_returns(status_result):
-        return 'py_trees.common.Status.' + status_result.status.upper()
+        return '\\' + status_result.status.to_lower().capitalize()
 
     def handle_return_statement(statement, misc_args):
         variable_name = 'return_status'
@@ -467,53 +343,6 @@ def write_files(metamodel_file, model_file, output_file, recursion_limit):
             + indent(misc_args['indent_level'] + 1) + variable_name + ' = ' + format_returns(statement.default_result) + os.linesep
         )
 
-    def init_method_action(node):
-        misc_args = create_misc_args(True, 'node', 2)
-        return (indent(1) + 'def __init__(self, name, environment' + ((', ' + ', '.join(map(lambda arg_pair: arg_pair.argument_name, node.arguments))) if len(node.arguments) > 0 else '') + '):' + os.linesep
-                + ''.join(
-                    [
-                        (indent(2) + 'self.' + arg_pair.argument_name + ' = ' + arg_pair.argument_name + os.linesep)
-                        for arg_pair in node.arguments
-                    ]
-                )
-                + indent(2) + 'super(' + node.name + ', self).__init__(name)' + os.linesep
-                + indent(2) + 'self.name = name' + os.linesep
-                + indent(2) + 'self.environment = environment' + os.linesep
-                + indent(2) + 'self.blackboard = self.attach_blackboard_client(name = name)' + os.linesep
-                + ''.join([(indent(2) + 'self.blackboard.register_key(key = (\'' + variable.name + '\'), access = py_trees.common.Access.READ)' + os.linesep) for variable in node.read_variables])
-                + ''.join([(indent(2) + 'self.blackboard.register_key(key = (\'' + variable.name + '\'), access = py_trees.common.Access.WRITE)' + os.linesep) for variable in node.write_variables])
-                + ''.join(
-                    [
-                        create_variable_macro(local_variable, misc_args = misc_args)
-                        if local_variable.model_as == 'DEFINE' else
-                        (
-                            (
-                                (indent(2) + format_variable_name_only(local_variable, misc_args = misc_args) + ' = [' + handle_assign(local_variable.default_value, misc_args) + ' for _ in range(' + str(variable_array_size_map[local_variable.name]) + ')]'  + os.linesep)
-                                if is_array(local_variable) else
-                                ''
-                            )
-                            + handle_variable_statement(local_variable, misc_args = misc_args, assign_to_var = True)
-                        )
-                        for local_variable in node.local_variables if local_variable not in [statement.variable for statement in node.init_statements]
-                    ]
-                )
-                + ''.join(
-                    [
-                        create_variable_macro(statement, misc_args = misc_args)
-                        if statement.variable.model_as == 'DEFINE' else
-                        (
-                            (
-                                (indent(2) + format_variable_name_only(statement.variable, misc_args = misc_args) + ' = [' + handle_assign(statement.default_value, misc_args) + ' for _ in range(' + str(variable_array_size_map[statement.variable.name]) + ')]'  + os.linesep)
-                                if is_array(statement.variable) else
-                                ''
-                            )
-                            + handle_variable_statement(statement, misc_args = misc_args, assign_to_var = True)
-                        )
-                        for statement in node.init_statements
-                    ]
-                )
-                + os.linesep)
-
     def handle_statement(statement, misc_args):
         return (
             handle_variable_statement(statement.variable_statement, misc_args, assign_to_var = True)
@@ -527,36 +356,13 @@ def write_files(metamodel_file, model_file, output_file, recursion_limit):
 
     def update_method_action(node):
         misc_args = create_misc_args(False, 'node', 2)
-        return (indent(1) + 'def update(self):' + os.linesep
-                + ''.join([handle_statement(statement, misc_args) for statement in node.pre_update_statements])
-                + handle_return_statement(node.return_statement, misc_args)
-                + ''.join([handle_statement(statement, misc_args) for statement in node.post_update_statements])
-                + indent(2) + 'return return_status' + os.linesep
-                )
-
-    def build_check_node(node):
-        return (standard_imports
-                + os.linesep + os.linesep
-                + class_definition(node.name)
-                + init_method_check(node)
-                + update_method_check(node)
-                )
-
-    def build_environment_check_node(node):
-        return (standard_imports
-                + os.linesep + os.linesep
-                + class_definition(node.name)
-                + init_method_environment_check(node)
-                + update_method_environment_check(node)
-                )
-
-    def build_action_node(node):
-        return (standard_imports
-                + os.linesep + os.linesep
-                + class_definition(node.name)
-                + init_method_action(node)
-                + update_method_action(node)
-                )
+        return (
+            '\\node[Blackboard]{\begin{tabular}{l}' + os.linesep
+            + ''.join([('$' + handle_statement(statement, misc_args).replace('_', '\\_') + '$\\\\' + os.linesep) for statement in node.pre_update_statements])
+            + ('$' + handle_return_statement(node.return_statement, misc_args).replace('_', '\\_') + '$\\\\' + os.linesep)
+            + ''.join([('$' + handle_statement(statement, misc_args).replace('_', '\\_') + '$\\\\' + os.linesep) for statement in node.post_update_statements])
+            + '\\end{tabular}};'
+        )
 
     def walk_tree_recursive(current_node, node_names, node_names_map, tikz_nodes):
         while True:
@@ -576,18 +382,18 @@ def write_files(metamodel_file, model_file, output_file, recursion_limit):
 
         if current_node.node_type in ('check', 'environment_check', 'action'):
             if current_node.node_type == 'action':
-                #return '[.\\node[Action](' + node_name + '){' + node_name + '};' + tikz_nodes[current_name] + ']' + os.linesep
-                return '[.\\node[Action](' + node_name + '){' + node_name + '};' +']' + os.linesep
-            #return '[.\\node[Check](' + node_name + '){' + node_name + '};' + tikz_nodes[current_name] + ']' + os.linesep
-            return '[.\\node[Check](' + node_name + '){' + node_name + '};' + ']' + os.linesep
+                # return '[.\\node[Action](' + node_name.replace('_', '') + '){$' + current_name.replace('_', '\\_') + '$};' + tikz_nodes[current_name] + ']' + os.linesep
+                return '[.\\node[Action](' + node_name.replace('_', '') + '){$' + current_name.replace('_', '\\_') + '$};' + ']' + os.linesep
+            # return '[.\\node[Check](' + node_name.replace('_', '') + '){$' + current_name.replace('_', '\\_') + '$};' + tikz_nodes[current_name] + ']' + os.linesep
+            return '[.\\node[Check](' + node_name.replace('_', '') + '){$' + current_name.replace('_', '\\_') + '$};' + ']' + os.linesep
         if current_node.node_type in ('X_is_Y', 'inverter'):
             return (
-                '[.\\node[Decorator](' + node_name + '){' + node_name + '};' + os.linesep
+                '[.\\node[Decorator](' + node_name.replace('_', '') + '){$' + current_name.replace('_', '\\_') + '$};' + os.linesep
                 + walk_tree_recursive(current_node.child, node_names, node_names_map, tikz_nodes)
                 + ']' + os.linesep
             )
         return (
-            '[.\\node[' + current_node.node_type.capitalize() + '](' + node_name + '){' + node_name + '};' + os.linesep
+            '[.\\node[' + current_node.node_type.capitalize() + '](' + node_name.replace('_', '') + '){$' + current_name.replace('_', '\\_') + '$};' + os.linesep
             + ''.join([
                 walk_tree_recursive(child, node_names, node_names_map, tikz_nodes)
                 for child in current_node.children
@@ -598,49 +404,40 @@ def write_files(metamodel_file, model_file, output_file, recursion_limit):
     function_format = {
         'if' : ('', format_function_if),
         'loop' : ('', format_function_loop),
-        'abs' : ('abs', format_function_before),
+        'abs' : ('abs', format_function_one_arg),
         'max' : ('max', format_function_before),
         'min' : ('min', format_function_before),
-        'sin' : ('math.sin', format_function_before),
-        'cos' : ('math.cos', format_function_before),
-        'tan' : ('math.tan', format_function_before),
-        'ln' : ('math.log', format_function_before),
-        'not' : ('not ', format_function_before),  # space intentionally added here.
-        'and' : ('and', format_function_between),
-        'or' : ('or', format_function_between),
-        'xor' : ('^', format_function_between),
-        'xnor' : ('xnor', format_function_xnor),
-        'implies' : ('->', format_function_implies),
-        'equivalent' : ('==', format_function_between),
-        'eq' : ('==', format_function_between),
-        'neq' : ('!=', format_function_between),
+        'sin' : ('sin', format_function_before),
+        'cos' : ('cos', format_function_before),
+        'tan' : ('tan', format_function_before),
+        'ln' : ('log', format_function_before),
+        'not' : ('\\neg ', format_function_before),  # space intentionally added here.
+        'and' : ('\\land', format_function_between),
+        'or' : ('\\lor', format_function_between),
+        'xor' : ('\\oplus', format_function_between),
+        'xnor' : ('\\odot', format_function_between),
+        'implies' : ('\\implies', format_function_between),
+        'equivalent' : ('\\Biconditional', format_function_between),
+        'eq' : ('=', format_function_between),
+        'neq' : ('\neq', format_function_between),
         'lt' : ('<', format_function_between),
         'gt' : ('>', format_function_between),
-        'lte' : ('<=', format_function_between),
-        'gte' : ('>=', format_function_between),
+        'lte' : ('\\lte', format_function_between),
+        'gte' : ('\\gte', format_function_between),
         'neg' : ('-', format_function_before),
         'add' : ('+', format_function_between),
         'sub' : ('-', format_function_between),
-        'mult' : ('*', format_function_between),
+        'mult' : ('\\Multiply', format_function_between),
         # 'division' : ('//', format_function_between),  # this rounds to negative infinity, we want rounds to 0.
-        'idiv' : ('division', format_function_division),
-        'mod' : ('%', format_function_between),
+        'idiv' : ('//', format_function_between),
+        'mod' : ('mod', format_function_between),
         'rdiv' : ('/', format_function_between),
-        'floor' : ('math.floor', format_function_before),
-        'count' : ('count', format_function_count),
+        'floor' : ('\\floor', format_function_one_arg),
+        'count' : ('count', format_function_before),
         'index' : ('index', format_function_index)
     }
-    standard_imports = ('import py_trees' + os.linesep
-                        + 'import math' + os.linesep
-                        + 'import operator' + os.linesep
-                        + 'import random' + os.linesep
-                        + 'import serene_safe_assignment' + os.linesep)
 
     (model, variables, constants, declared_enumerations) = validate_model(metamodel_file, model_file, recursion_limit)
-    variable_type_map = {
-        variable.name : to_python_type(variable_type(variable, declared_enumerations, constants))
-        for variable in model.variables
-    }
     variable_array_size_map = {
         variable.name : variable_array_size(variable, declared_enumerations, {}, variables, constants, {})
         for variable in model.variables if is_array(variable) or (variable.model_as == 'NEURAL')
@@ -649,11 +446,11 @@ def write_files(metamodel_file, model_file, output_file, recursion_limit):
 
     # tikz_nodes = {}
     # for action in model.action_nodes:
-    #     tikz_nodes[action.name] = build_action_node(action)
+    #     tikz_nodes[action.name] = update_method_action(action)
     # for check in model.check_nodes:
-    #     tikz_nodes[check.name] = build_check_node(check)
+    #     tikz_nodes[check.name] = update_method_check(check)
     # for environment_check in model.environment_checks:
-    #     tikz_nodes[environment_check.name] = build_environment_check_node(environment_check)
+    #     tikz_nodes[environment_check.name] = update_method_environment_check(environment_check)
 
     with open(output_file, 'w', encoding = 'utf-8') as output_file_:
         output_file_.write(

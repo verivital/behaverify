@@ -370,6 +370,10 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
         source_vals = source_func((constants, {}))
         source = source_vals[0]
         source = resolve_potential_reference_no_type(source, declared_enumerations, {}, variables, constants, {})[1]
+        if '/' in source:
+            source_prefix = source.rsplit('/', 1)[0]
+            if not os.path.exists(write_location + source_prefix):
+                os.makedirs(write_location + source_prefix)
         shutil.copy(file_prefix + '/' + source, write_location + source)
         # NOT DONE. Need some way of storing the network
         # current idea: have some variable like variable.name + '__actual__network' which this call.

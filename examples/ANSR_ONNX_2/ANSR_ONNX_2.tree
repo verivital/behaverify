@@ -334,7 +334,9 @@ sub_trees {
 			    try_up sequence
 			    children {
 				y_too_small {}
-				go_up: move {0, 1} #{These are the arguments for the node.}#
+				go_up: move {0, 1}
+				#{Node name is go_up, but we're using the code from move
+				    These are the arguments for the node.}#
 			    }
 			}
 			composite {
