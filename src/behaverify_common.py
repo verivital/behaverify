@@ -75,7 +75,8 @@ def constant_type(constant, declared_enumerations, no_exceptions = False, trace 
         return 'REAL'
     if no_exceptions:
         return True
-    raise BTreeException(trace, 'Constant ' + constant + ' is of an unsupported type. Only ENUM, BOOLEAN, INT, and REAL are supported')
+    print(constant)
+    raise BTreeException(trace, 'Constant ' + constant + ' is of an unsupported type (' + str(type(constant)) + '). Only ENUM, BOOLEAN, INT, and REAL are supported')
 
 def handle_constant_or_reference_no_type(constant_or_reference, declared_enumerations, node_names, variables, constants, loop_references, trace = None):
     return (

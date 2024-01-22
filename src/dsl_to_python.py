@@ -44,6 +44,8 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
             return 'bool'
         if behaverify_type == 'INT':
             return 'int'
+        if behaverify_type == 'REAL':
+            return 'float'
         raise ValueError(behaverify_type + ' is of an unsupported type. Only ENUM, BOOLEAN, and INT are supported')
 
     def str_conversion(atom_type, atom):
@@ -476,8 +478,17 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                 + indent(misc_args['indent_level'] + 3) + "raise TypeError('Index must be an int when accessing " + variable.name + ": ' + str(type(new_index)))" + os.linesep
                 + indent(misc_args['indent_level'] + 2) + 'if new_index < 0 or new_index >= ' + str(variable_array_size_map[variable.name]) + ':' + os.linesep
                 + indent(misc_args['indent_level'] + 3) + "raise ValueError('Index out of bounds when accessing " + variable.name + ": ' + str(new_index))" + os.linesep
-                + indent(misc_args['indent_level'] + 2) + 'if type(new_value) is not ' + variable_type_map[variable.name] + ':' + os.linesep
-                + indent(misc_args['indent_level'] + 3) + "raise ValueError('Variable " + variable.name + " is type " + variable_type_map[variable.name] + ". Got type(new_value)')" + os.linesep
+                + (
+                    (
+                        indent(misc_args['indent_level'] + 2) + 'if type(new_value) not in {int, float}:' + os.linesep
+                        + indent(misc_args['indent_level'] + 3) + "raise ValueError('Variable " + variable.name + " is type " + variable_type_map[variable.name] + ". Got ' + str(type(new_value)))" + os.linesep
+                    )
+                    if variable_type_map[variable.name] == 'float' else
+                    (
+                        indent(misc_args['indent_level'] + 2) + 'if type(new_value) is not ' + variable_type_map[variable.name] + ':' + os.linesep
+                        + indent(misc_args['indent_level'] + 3) + "raise ValueError('Variable " + variable.name + " is type " + variable_type_map[variable.name] + ". Got ' + str(type(new_value)))" + os.linesep
+                    )
+                )
                 + indent(misc_args['indent_level'] + 2) + variable.name + '[new_index] = new_value' + os.linesep
                 + indent(misc_args['indent_level'] + 1) + 'return ' + variable.name + '[index]' + os.linesep
                 + os.linesep
@@ -779,11 +790,19 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
     def create_safe_assignment(model):
         def create_type_check_function(variable, function_name, indent_level):
             cur_var_type = variable_type_map[variable.name]
-            return_string = (
-                indent(indent_level) + 'def ' + function_name + '(new_value):' + os.linesep
-                + indent(indent_level + 1) + 'if type(new_value) is not ' + cur_var_type + ':' + os.linesep
-                + indent(indent_level + 2) + 'raise TypeError(' + "'variable " + variable.name + " expected type " + cur_var_type + " but received type ' + str(type(new_value)))" + os.linesep
-            )
+            return_string = ''
+            if cur_var_type == 'float':
+                return_string = (
+                    indent(indent_level) + 'def ' + function_name + '(new_value):' + os.linesep
+                    + indent(indent_level + 1) + 'if type(new_value) not in {int, float}:' + os.linesep
+                    + indent(indent_level + 2) + 'raise TypeError(' + "'variable " + variable.name + " expected type int or float but received type ' + str(type(new_value)))" + os.linesep
+                )
+            else:
+                return_string = (
+                    indent(indent_level) + 'def ' + function_name + '(new_value):' + os.linesep
+                    + indent(indent_level + 1) + 'if type(new_value) is not ' + cur_var_type + ':' + os.linesep
+                    + indent(indent_level + 2) + 'raise TypeError(' + "'variable " + variable.name + " expected type " + cur_var_type + " but received type ' + str(type(new_value)))" + os.linesep
+                )
             if variable.domain.min_val is not None:
                 min_val = resolve_potential_reference_no_type(execute_code(variable.domain.min_val)[0], declared_enumerations, {}, variables, constants, loop_references)[1]
                 max_val = resolve_potential_reference_no_type(execute_code(variable.domain.max_val)[0], declared_enumerations, {}, variables, constants, loop_references)[1]

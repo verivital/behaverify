@@ -322,7 +322,7 @@ def validate_model(metamodel_file, model_file, recursion_limit):
             for index in loop_array_index.array_index.index_expr:
                 if constant_index == 'constant_index':
                     index_func = build_meta_func(index)
-                    values = index_func((constants, {}))
+                    values = index_func((constants, loop_references)) # if this loop_array_index is inside another, loop_references is non_empty
                     for value in values:
                         cur_type = constant_type(value, declared_enumerations, trace = trace)
                         if cur_type != 'INT':
@@ -599,6 +599,8 @@ def validate_model(metamodel_file, model_file, recursion_limit):
             return
         if variable.model_as != 'DEFINE':
             if variable.domain.true_int is not None:
+                pass
+            elif variable.domain.true_real is not None:
                 pass
             elif variable.domain.min_val is not None:
                 verify_min_max(variable.domain.min_val, variable.domain.max_val, False)
