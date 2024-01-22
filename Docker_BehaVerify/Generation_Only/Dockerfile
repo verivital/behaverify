@@ -22,22 +22,7 @@ WORKDIR /home/$USER
 # Switch to the non-root user
 USER $USER
 
-
-
-RUN sudo apt-get install python3 -y
-RUN sudo apt-get install pip -y
+RUN sudo apt-get install python3 pip git -y
 ENV PIP_ROOT_USER_ACTION=ignore
 RUN python3 -m pip install --upgrade pip
-RUN python3 -m pip install py_trees
-RUN python3 -m pip install textx
-RUN python3 -m pip install onnxruntime
-RUN sudo apt-get install git -y
-
-
-RUN mkdir behaverify && cd behaverify && git init && \
-    git remote add -f origin https://github.com/verivital/behaverify && \
-    echo "src/" >> .git/info/sparse-checkout && \
-    echo "metamodel/" >> .git/info/sparse-checkout && \
-    echo "Docker_BehaVerify/" >> .git/info/sparse-checkout && \
-    git pull origin main
-RUN chmod -R +x /home/user/behaverify/Docker_BehaVerify/*.sh
+RUN python3 -m pip install py_trees textx onnxruntime
