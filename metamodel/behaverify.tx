@@ -271,6 +271,7 @@ statement:
     bound_statement:
     '[' lower_bound = code_statement ',' upper_bound = code_statement ']'
 ;
+    //if is 3 args, COND, TRUE, FALSE
     function_names://these need to be ordered so that something like eq is AFTER equiv, otherwise equiv will match eq and cause problems.
     //start of ctl specific
     'exists_globally' | 'exists_next' | 'exists_finally' | 'exists_until' | 'always_globally' | 'always_next' | 'always_finally' | 'always_until'
