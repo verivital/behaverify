@@ -1,8 +1,6 @@
 import py_trees
 import math
 import operator
-import random
-import serene_safe_assignment
 
 
 class target_in_sight(py_trees.behaviour.Behaviour):

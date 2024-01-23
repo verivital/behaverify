@@ -1,9 +1,8 @@
-import random
+from pathlib import Path
 import onnxruntime
-import serene_safe_assignment
 
 
-class ANSR_ONNX_environment():
+class ANSR_ONNX_2_environment():
     def delay_this_action(self, action, node):
         self.delayed_action_queue.append((action, node))
 
@@ -14,27 +13,29 @@ class ANSR_ONNX_environment():
         return
 
     def pre_tick_environment_update(self):
+        node = None
         return
 
     def post_tick_environment_update(self):
-        self.tar_x = serene_safe_assignment.tar_x((
-            (self.tar_x if ((temp := random.randint(0, 2)) == 0) else (min(8, (self.tar_x + 1)) if temp == 1 else (max(0, (self.tar_x - 1)))))
+        node = None
+        self.tar_x = (
+            self.blackboard.serene_randomizer.r_22(node)
             if (self.timer == 0) else
             (
-            self.tar_x
-        )))
-        self.tar_y = serene_safe_assignment.tar_y((
-            (self.tar_y if ((temp := random.randint(0, 2)) == 0) else (min(8, (self.tar_y + 1)) if temp == 1 else (max(0, (self.tar_y - 1)))))
+            self.blackboard.serene_randomizer.r_23(node)
+        ))
+        self.tar_y = (
+            self.blackboard.serene_randomizer.r_24(node)
             if (self.timer == 0) else
             (
-            self.tar_y
-        )))
-        self.timer = serene_safe_assignment.timer((
-            10
+            self.blackboard.serene_randomizer.r_25(node)
+        ))
+        self.timer = (
+            self.blackboard.serene_randomizer.r_26(node)
             if (self.timer == 0) else
             (
-            max(0, (self.timer - 1))
-        )))
+            self.blackboard.serene_randomizer.r_27(node)
+        ))
         return
 
     def check_tick_condition(self):
@@ -44,25 +45,24 @@ class ANSR_ONNX_environment():
         self.blackboard = blackboard
         self.delayed_action_queue = []
 
+        self.tree_x = None
+        self.tree_y = None
+        self.tar_x = None
+        self.tar_y = None
+        self.timer = None
+        return
+
+    def initialize_environment(self):
+        node = None
 
 
         def tree_x(index):
-            if type(index) is not int:
-                raise TypeError('Index must be an int when accessing tree_x: ' + str(type(index)))
-            if index < 0 or index >= 2:
-                raise ValueError('Index out of bounds when accessing tree_x: ' + str(index))
-            tree_x = [2 for _ in range(2)]
+            tree_x = [self.blackboard.serene_randomizer.r_28(node) for _ in range(2)]
             seen_indices = set()
-            for (new_index, new_value) in [(1, 5)]:
+            for (new_index, new_value) in [(1, self.blackboard.serene_randomizer.r_29(node))]:
                 if new_index in seen_indices:
                     continue
                 seen_indices.add(new_index)
-                if type(new_index) is not int:
-                    raise TypeError('Index must be an int when accessing tree_x: ' + str(type(new_index)))
-                if new_index < 0 or new_index >= 2:
-                    raise ValueError('Index out of bounds when accessing tree_x: ' + str(new_index))
-                if type(new_value) is not int:
-                    raise ValueError('Variable tree_x is type int. Got type(new_value)')
                 tree_x[new_index] = new_value
             return tree_x[index]
 
@@ -70,29 +70,21 @@ class ANSR_ONNX_environment():
 
 
         def tree_y(index):
-            if type(index) is not int:
-                raise TypeError('Index must be an int when accessing tree_y: ' + str(type(index)))
-            if index < 0 or index >= 2:
-                raise ValueError('Index out of bounds when accessing tree_y: ' + str(index))
-            tree_y = [2 for _ in range(2)]
+            tree_y = [self.blackboard.serene_randomizer.r_30(node) for _ in range(2)]
             seen_indices = set()
-            for (new_index, new_value) in [(1, 5)]:
+            for (new_index, new_value) in [(1, self.blackboard.serene_randomizer.r_31(node))]:
                 if new_index in seen_indices:
                     continue
                 seen_indices.add(new_index)
-                if type(new_index) is not int:
-                    raise TypeError('Index must be an int when accessing tree_y: ' + str(type(new_index)))
-                if new_index < 0 or new_index >= 2:
-                    raise ValueError('Index out of bounds when accessing tree_y: ' + str(new_index))
-                if type(new_value) is not int:
-                    raise ValueError('Variable tree_y is type int. Got type(new_value)')
                 tree_y[new_index] = new_value
             return tree_y[index]
 
         self.tree_y = tree_y
-        self.tar_x = serene_safe_assignment.tar_x((0 if ((temp := random.randint(0, 8)) == 0) else (1 if temp == 1 else (2 if temp == 2 else (3 if temp == 3 else (4 if temp == 4 else (5 if temp == 5 else (6 if temp == 6 else (7 if temp == 7 else (8))))))))))
-        self.tar_y = serene_safe_assignment.tar_y((0 if ((temp := random.randint(0, 8)) == 0) else (1 if temp == 1 else (2 if temp == 2 else (3 if temp == 3 else (4 if temp == 4 else (5 if temp == 5 else (6 if temp == 6 else (7 if temp == 7 else (8))))))))))
-        self.timer = serene_safe_assignment.timer(10)
+        self.tar_x = self.blackboard.serene_randomizer.r_32(node)
+        self.tar_y = self.blackboard.serene_randomizer.r_33(node)
+        self.timer = self.blackboard.serene_randomizer.r_34(node)
+        return
+
 
     def target_in_sight(self, node):
         '''

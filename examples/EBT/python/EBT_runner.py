@@ -2,22 +2,17 @@ import os
 import py_trees
 import EBT
 import EBT_environment
-
-blackboard_reader = EBT.create_blackboard()
-environment = EBT_environment.EBT_environment(blackboard_reader)
-root = EBT.create_tree(environment)
-tree = py_trees.trees.BehaviourTree(root)
+import serene_randomizer as serene_randomizer_module
 
 
-def full_tick():
+def full_tick(tree, environment):
     environment.pre_tick_environment_update()
     tree.tick()
     environment.execute_delayed_action_queue()
     environment.post_tick_environment_update()
     return
 
-
-def print_blackboard():
+def print_blackboard(blackboard_reader):
     ret_string = 'blackboard' + os.linesep
     ret_string += indent(1) + 'path_computed_bool: ' + str(blackboard_reader.path_computed_bool) + os.linesep
     ret_string += indent(1) + 'drone_location: ' + str(blackboard_reader.drone_location) + os.linesep
@@ -31,7 +26,7 @@ def print_blackboard():
     return ret_string
 
 
-def print_environment():
+def print_environment(environment):
     ret_string = 'environment' + os.linesep
     return ret_string
 
@@ -62,7 +57,7 @@ def _print_local_(node):
     return ''.join(map(_print_local_, node.children))
 
 
-def print_local():
+def print_local(root):
     return 'local' + os.linesep + _print_local_(root)
 
 
@@ -72,22 +67,35 @@ def indent(n):
 
 
 
-print('------------------------')
-print('Initial State')
-print(print_blackboard())
-print(print_local())
-print(print_environment())
-for count in range(100):
+def run_tree():
+    serene_randomizer = serene_randomizer_module.serene_randomizer()
+    blackboard_reader = EBT.create_blackboard(serene_randomizer)
+    environment = EBT_environment.EBT_environment(blackboard_reader)
+    serene_randomizer.set_blackboard_and_environment(blackboard_reader, environment)
+    EBT.initialize_blackboard(blackboard_reader)
+    environment.initialize_environment()
+    root = EBT.create_tree(environment)
+    tree = py_trees.trees.BehaviourTree(root)
     print('------------------------')
-    print('State after tick: ' + str(count + 1))
-    if environment.check_tick_condition():
-        full_tick()
-        print(print_blackboard())
-        print(print_local())
-        print(print_environment())
-    else:
-        print('after ' + str(count) + ' ticks, tick_condition no longer holds. Printing blackboard and environment, then exiting')
-        print(print_blackboard())
-        print(print_local())
-        print(print_environment())
-        break
+    print('Initial State')
+    print(print_blackboard(blackboard_reader))
+    print(print_local(root))
+    print(print_environment(environment))
+    for count in range(100):
+        print('------------------------')
+        print('State after tick: ' + str(count + 1))
+        if environment.check_tick_condition():
+            full_tick(tree, environment)
+            print(print_blackboard(blackboard_reader))
+            print(print_local(root))
+            print(print_environment(environment))
+        else:
+            print('after ' + str(count) + ' ticks, tick_condition no longer holds. Printing blackboard and environment, then exiting')
+            print(print_blackboard(blackboard_reader))
+            print(print_local(root))
+            print(print_environment(environment))
+            break
+
+
+if __name__ == '__main__':
+    run_tree()

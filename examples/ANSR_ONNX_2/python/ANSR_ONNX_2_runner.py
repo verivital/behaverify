@@ -1,28 +1,24 @@
 import os
 import py_trees
-import ANSR_ONNX
-import ANSR_ONNX_environment
-
-blackboard_reader = ANSR_ONNX.create_blackboard()
-environment = ANSR_ONNX_environment.ANSR_ONNX_environment(blackboard_reader)
-root = ANSR_ONNX.create_tree(environment)
-tree = py_trees.trees.BehaviourTree(root)
+import ANSR_ONNX_2
+import ANSR_ONNX_2_environment
+import serene_randomizer as serene_randomizer_module
 
 
-def full_tick():
+def full_tick(tree, environment):
     environment.pre_tick_environment_update()
     tree.tick()
     environment.execute_delayed_action_queue()
     environment.post_tick_environment_update()
     return
 
-
-def print_blackboard():
+def print_blackboard(blackboard_reader):
     ret_string = 'blackboard' + os.linesep
     ret_string += indent(1) + 'prev_dest_x: ' + str(blackboard_reader.prev_dest_x) + os.linesep
-    ret_string += indent(1) + 'prev_dest_y: ' + str(blackboard_reader.prev_dest_y) + os.linesep
     ret_string += indent(1) + 'cur_x: ' + str(blackboard_reader.cur_x) + os.linesep
     ret_string += indent(1) + 'cur_y: ' + str(blackboard_reader.cur_y) + os.linesep
+    ret_string += indent(1) + 'x_mid: ' + str(blackboard_reader.x_mid()) + os.linesep
+    ret_string += indent(1) + 'cur_x_bool: ' + str(blackboard_reader.cur_x_bool()) + os.linesep
     ret_string += indent(1) + 'dest_x: ' + str(blackboard_reader.dest_x) + os.linesep
     ret_string += indent(1) + 'dest_y: ' + str(blackboard_reader.dest_y) + os.linesep
     ret_string += indent(1) + 'dir: ' + str(blackboard_reader.dir) + os.linesep
@@ -33,7 +29,7 @@ def print_blackboard():
     return ret_string
 
 
-def print_environment():
+def print_environment(environment):
     ret_string = 'environment' + os.linesep
     ret_string += indent(1) + 'tree_x: ' + str([environment.tree_x(x) for x in range(2)]) + os.linesep
     ret_string += indent(1) + 'tree_y: ' + str([environment.tree_y(x) for x in range(2)]) + os.linesep
@@ -73,7 +69,7 @@ def _print_local_(node):
     return ''.join(map(_print_local_, node.children))
 
 
-def print_local():
+def print_local(root):
     return 'local' + os.linesep + _print_local_(root)
 
 
@@ -83,22 +79,35 @@ def indent(n):
 
 
 
-print('------------------------')
-print('Initial State')
-print(print_blackboard())
-print(print_local())
-print(print_environment())
-for count in range(100):
+def run_tree():
+    serene_randomizer = serene_randomizer_module.serene_randomizer()
+    blackboard_reader = ANSR_ONNX_2.create_blackboard(serene_randomizer)
+    environment = ANSR_ONNX_2_environment.ANSR_ONNX_2_environment(blackboard_reader)
+    serene_randomizer.set_blackboard_and_environment(blackboard_reader, environment)
+    ANSR_ONNX_2.initialize_blackboard(blackboard_reader)
+    environment.initialize_environment()
+    root = ANSR_ONNX_2.create_tree(environment)
+    tree = py_trees.trees.BehaviourTree(root)
     print('------------------------')
-    print('State after tick: ' + str(count + 1))
-    if environment.check_tick_condition():
-        full_tick()
-        print(print_blackboard())
-        print(print_local())
-        print(print_environment())
-    else:
-        print('after ' + str(count) + ' ticks, tick_condition no longer holds. Printing blackboard and environment, then exiting')
-        print(print_blackboard())
-        print(print_local())
-        print(print_environment())
-        break
+    print('Initial State')
+    print(print_blackboard(blackboard_reader))
+    print(print_local(root))
+    print(print_environment(environment))
+    for count in range(100):
+        print('------------------------')
+        print('State after tick: ' + str(count + 1))
+        if environment.check_tick_condition():
+            full_tick(tree, environment)
+            print(print_blackboard(blackboard_reader))
+            print(print_local(root))
+            print(print_environment(environment))
+        else:
+            print('after ' + str(count) + ' ticks, tick_condition no longer holds. Printing blackboard and environment, then exiting')
+            print(print_blackboard(blackboard_reader))
+            print(print_local(root))
+            print(print_environment(environment))
+            break
+
+
+if __name__ == '__main__':
+    run_tree()

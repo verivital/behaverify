@@ -5,7 +5,7 @@ It contains a variety of utility functions.
 
 
 Author: Serena Serafina Serbinowska
-Last Edit: 2023-11-06
+Last Edit: 2024-01-23
 '''
 import argparse
 import os
@@ -17,7 +17,7 @@ from serene_functions import build_meta_func
 from check_grammar import validate_model
 
 
-def write_files(metamodel_file, model_file, main_name, write_location, serene_print, max_iter, no_var_print, py_tree_print, recursion_limit):
+def write_files(metamodel_file, model_file, main_name, write_location, serene_print, max_iter, no_var_print, py_tree_print, recursion_limit, safe_assignment):
     '''
     Used to write all the files.
     @metamodel_file ::> points to the file with the metamodel
@@ -33,7 +33,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
     # misc_args variable explained
     # misc_args is a dict {'init' : init, 'loc' : loc, 'indent_level' : indent_level}.
     # init is a boolean. if true, it means we are initializing. if false, we are not.
-    # loc is a location. location can be node, blackboard, or environment.
+    # loc is a location. location can be node, blackboard, or environment. now testing out loc = random? which will use a bit of both.
     def create_misc_args(init, loc, indent_level):
         return {'init' : init, 'loc' : loc, 'indent_level' : indent_level}
 
@@ -146,7 +146,15 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
         return [
             (formatted_variable + '(' + formatted_index + ')')
             if variable.model_as in ('DEFINE', 'NEURAL') else
-            (formatted_variable + '[serene_safe_assignment.index_func(' + formatted_index + ', ' + str(variable_array_size_map[variable.name]) + ')]')
+            (
+                formatted_variable + '['
+                + (
+                    ('serene_safe_assignment.index_func(' + formatted_index + ', ' + str(variable_array_size_map[variable.name]) + ')')
+                    if safe_assignment else
+                    formatted_index
+                )
+                + ']'
+            )
         ]
 
     def format_function(code, misc_args):
@@ -157,18 +165,22 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
         return (
             (
                 ('node.' if is_local(variable) else ('self.' if is_env(variable) else 'self.blackboard.'))
-                + variable.name
-            )
-            if misc_args['loc'] == 'environment'
-            else
-            (
+                if misc_args['loc'] == 'environment' else
                 (
-                    ('blackboard_reader.')
+                    'blackboard_reader.'
                     if misc_args['loc'] == 'blackboard' else
-                    ('self.' + ('' if is_local(variable) else 'blackboard.'))
+                    (
+                        ('self.' + ('' if is_local(variable) else 'blackboard.'))
+                        if misc_args['loc'] == 'node' else
+                        (
+                            ('node.' if is_local(variable) else ('self.environment.' if is_env(variable) else 'self.blackboard.'))
+                            if misc_args['loc'] == 'random' else
+                            'ERROR ERROR ERROR'
+                        )
+                    )
                 )
-                + variable.name
             )
+            + variable.name
         )
 
     def format_variable(variable, misc_args):
@@ -180,7 +192,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
         except BTreeException as bt_e:  # this should be an argument.
             if misc_args['loc'] == 'node':
                 return 'self.' + code.atom.reference
-            if misc_args['loc'] == 'environment':
+            if misc_args['loc'] in {'environment', 'random'}:
                 return 'node.' + code.atom.reference
             raise BTreeException([], 'Encountered unknown reference: ' + str(code.atom.reference)) from bt_e
         return str_conversion(atom_type, atom) if atom_class == 'CONSTANT' else format_variable(atom, misc_args)
@@ -262,33 +274,56 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                 )
                 + indent(2) + 'return return_status' + os.linesep)
 
-    def resolve_variable_nondeterminism(values, misc_args):
-        formatted_values = []
-        for value in values:
-            formatted_values.extend(format_code(value, misc_args))
-        if len(formatted_values) == 0:
-            raise ValueError('variable had no valid values!')
-        if len(formatted_values) == 1:
-            return formatted_values[0]
-        if len(formatted_values) == 2:
-            return '(' + formatted_values[0] + ' if random.choice((True, False)) else ' + formatted_values[1] + ')'
-        return  (
+    randomizer_count = 0
+    def add_new_randomizer(formatted_values):
+        nonlocal randomizer_count
+        randomizer_name = 'r_' + str(randomizer_count)
+        randomizer_string = (
             ''.join(
                 [
-                    '(' + value
-                    + (
-                        (' if ((temp := random.randint(0, ' + str(len(formatted_values) - 1) + ')) == 0) else ')
-                        if index == 0 else
-                        (
-                            (' if temp == ' + str(index) + ' else ')
-                            if index < len(formatted_values) - 1 else
-                            ''
-                        )
+                    (
+                        indent(1) + 'def ' + randomizer_name + '_' + str(index) + '(self, node):' + os.linesep
+                        + indent(2) + 'return (' + value + ')' + os.linesep + os.linesep
                     )
                     for (index, value) in enumerate(formatted_values)
                 ]
             )
-            + ')' * len(formatted_values)
+            + indent(1) + 'def ' + randomizer_name + '(self, node):' + os.linesep
+            + indent(2) + 'random_val = random.randint(0, ' + str(len(formatted_values) - 1) + ')' + os.linesep
+            + indent(2) + 'function_name = \'' + randomizer_name + '_\' + str(random_val)' + os.linesep
+            + indent(2) + 'function = getattr(self, function_name)' + os.linesep
+            + indent(2) + 'return function(node)' + os.linesep + os.linesep
+            + indent(1) + '#---------------------' + os.linesep
+        )
+        with open(write_location + 'serene_randomizer.py', 'a', encoding = 'utf-8') as write_file:
+            write_file.write(randomizer_string)
+        randomizer_count = randomizer_count + 1
+        return randomizer_name
+
+    def resolve_variable_nondeterminism(values, misc_args):
+        new_misc_args = create_misc_args(False, 'random', 2)
+        formatted_values = []
+        for value in values:
+            formatted_values.extend(format_code(value, new_misc_args))
+        if len(formatted_values) == 0:
+            raise ValueError('variable had no valid values!')
+        randomizer_name = add_new_randomizer(formatted_values)
+        return (
+            ('blackboard_reader.serene_randomizer.' + randomizer_name + '(None)')
+            if misc_args['loc'] == 'blackboard' else
+            (
+                ('self.blackboard.serene_randomizer.' + randomizer_name + '(node)')
+                if misc_args['loc'] == 'environment' else
+                (
+                    ('self.blackboard.serene_randomizer.' + randomizer_name + '(self)')
+                    if misc_args['loc'] == 'node' else
+                    (
+                        ('self.' + randomizer_name + '(node)')
+                        if misc_args['loc'] == 'random' else
+                        'ERROR ERROR ERROR'
+                    )
+                )
+            )
         )
 
     def handle_assign(assign, misc_args):
@@ -332,8 +367,8 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
 
     def variable_assignment(variable, assign_value, misc_args, array_mode):
         # i don't think we should be able to have define variables here.
-        safety_1 = '' if variable.model_as == 'DEFINE' else ('serene_safe_assignment.' + variable.name + '(')
-        safety_2 = '' if variable.model_as == 'DEFINE' else ')'
+        safety_1 = '' if (variable.model_as == 'DEFINE' or not safe_assignment) else ('serene_safe_assignment.' + variable.name + '(')
+        safety_2 = '' if (variable.model_as == 'DEFINE' or not safe_assignment) else ')'
         return (
             (
                 indent(misc_args['indent_level']) + '__temp_var__ = ' + safety_1 + assign_value + safety_2 + os.linesep
@@ -367,16 +402,16 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
         return (variable_assignment(variable, handle_assign(variable_statement.assign, misc_args), misc_args, array_mode = False) if assign_to_var else handle_assign(variable_statement.assign, misc_args))
 
     def create_neural_network(variable, misc_args):
-        file_prefix = model_file.rsplit('/', 1)[0]
+        file_prefix = model_file.rsplit('/', 1)[0]  # this points to the folder where the model file is
         source_func = build_meta_func(variable.source)
         source_vals = source_func((constants, {}))
         source = source_vals[0]
-        source = resolve_potential_reference_no_type(source, declared_enumerations, {}, variables, constants, {})[1]
+        source = resolve_potential_reference_no_type(source, declared_enumerations, {}, variables, constants, {})[1]  # this points to the neural network.
         if '/' in source:
-            source_prefix = source.rsplit('/', 1)[0]
+            source_prefix = source.rsplit('/', 1)[0]  # this points to the folder the neural network is in, relative to the model file.
             if not os.path.exists(write_location + source_prefix):
-                os.makedirs(write_location + source_prefix)
-        shutil.copy(file_prefix + '/' + source, write_location + source)
+                os.makedirs(write_location + source_prefix)  # we have now ensured that relative to where we are outputting, the appropriate file structure for the network exists
+        shutil.copy(file_prefix + '/' + source, write_location + source)  # copy FROM model file + relative path from model file to network, TO write_location + relative path
         # NOT DONE. Need some way of storing the network
         # current idea: have some variable like variable.name + '__actual__network' which this call.
         # ugh, what a pain.
@@ -424,14 +459,19 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
         # )
         return (
             os.linesep + os.linesep
-            + indent(misc_args['indent_level']) + variable.name + '__session__ = onnxruntime.InferenceSession(\'' + source + '\')' + os.linesep
+            + indent(misc_args['indent_level']) + variable.name + '__session__ = onnxruntime.InferenceSession(str(Path(__file__).parent.resolve()) + \'/' + source + '\')' + os.linesep
             + indent(misc_args['indent_level']) + variable.name + '__previous_input__ = None' + os.linesep
             + indent(misc_args['indent_level']) + variable.name + '__previous_output__ = None' + os.linesep
             + indent(misc_args['indent_level']) + 'def ' + variable.name + '(index):' + os.linesep
-            + indent(misc_args['indent_level'] + 1) + 'if type(index) is not int:' + os.linesep
-            + indent(misc_args['indent_level'] + 2) + "raise TypeError('Index must be an int when accessing " + variable.name + ": ' + str(type(index)))" + os.linesep
-            + indent(misc_args['indent_level'] + 1) + 'if index < 0 or index >= ' + str(variable_array_size_map[variable.name]) + ':' + os.linesep
-            + indent(misc_args['indent_level'] + 2) + "raise ValueError('Index out of bounds when accessing " + variable.name + ": ' + str(index))" + os.linesep
+            + (
+                (
+                    indent(misc_args['indent_level'] + 1) + 'if type(index) is not int:' + os.linesep
+                    + indent(misc_args['indent_level'] + 2) + "raise TypeError('Index must be an int when accessing " + variable.name + ": ' + str(type(index)))" + os.linesep
+                    + indent(misc_args['indent_level'] + 1) + 'if index < 0 or index >= ' + str(variable_array_size_map[variable.name]) + ':' + os.linesep
+                    + indent(misc_args['indent_level'] + 2) + "raise ValueError('Index out of bounds when accessing " + variable.name + ": ' + str(index))" + os.linesep
+                )
+                if safe_assignment else ''
+            )
             + indent(misc_args['indent_level'] + 1) + 'input_values = ['
             + ', '.join(
                 [
@@ -444,7 +484,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                 ]
             )
             + ']' + os.linesep
-            + indent(misc_args['indent_level'] + 1) + 'nonlocal ' + variable.name + '__session__, ' + variable.name + '__previous_input__, ' + variable.name + '__previous_output__' + os.linesep 
+            + indent(misc_args['indent_level'] + 1) + 'nonlocal ' + variable.name + '__session__, ' + variable.name + '__previous_input__, ' + variable.name + '__previous_output__' + os.linesep
             + indent(misc_args['indent_level'] + 1) + 'if input_values != ' + variable.name + '__previous_input__:' + os.linesep
             + indent(misc_args['indent_level'] + 2) + 'temp = ' + variable.name + '__session__.run(None, {\'' + input_name + '\' : [input_values]})' + os.linesep
             + indent(misc_args['indent_level'] + 2) + variable.name + '__previous_input__ = input_values' + os.linesep
@@ -464,30 +504,40 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                 os.linesep
                 + os.linesep
                 + indent(misc_args['indent_level']) + 'def ' + variable.name + '(index):' + os.linesep
-                + indent(misc_args['indent_level'] + 1) + 'if type(index) is not int:' + os.linesep
-                + indent(misc_args['indent_level'] + 2) + "raise TypeError('Index must be an int when accessing " + variable.name + ": ' + str(type(index)))" + os.linesep
-                + indent(misc_args['indent_level'] + 1) + 'if index < 0 or index >= ' + str(variable_array_size_map[variable.name]) + ':' + os.linesep
-                + indent(misc_args['indent_level'] + 2) + "raise ValueError('Index out of bounds when accessing " + variable.name + ": ' + str(index))" + os.linesep
+                + (
+                    (
+                        indent(misc_args['indent_level'] + 1) + 'if type(index) is not int:' + os.linesep
+                        + indent(misc_args['indent_level'] + 2) + "raise TypeError('Index must be an int when accessing " + variable.name + ": ' + str(type(index)))" + os.linesep
+                        + indent(misc_args['indent_level'] + 1) + 'if index < 0 or index >= ' + str(variable_array_size_map[variable.name]) + ':' + os.linesep
+                        + indent(misc_args['indent_level'] + 2) + "raise ValueError('Index out of bounds when accessing " + variable.name + ": ' + str(index))" + os.linesep
+                    )
+                    if safe_assignment else ''
+                )
                 + indent(misc_args['indent_level'] + 1) + variable.name + ' = [' + default_value + ' for _ in range(' + str(variable_array_size_map[variable.name]) + ')]' + os.linesep
                 + indent(misc_args['indent_level'] + 1) + 'seen_indices = set()' + os.linesep
                 + indent(misc_args['indent_level'] + 1) + 'for (new_index, new_value) in ' + new_values + ':' + os.linesep
                 + indent(misc_args['indent_level'] + 2) + 'if new_index in seen_indices:' + os.linesep
                 + indent(misc_args['indent_level'] + 3) + 'continue' + os.linesep
                 + indent(misc_args['indent_level'] + 2) + 'seen_indices.add(new_index)' + os.linesep
-                + indent(misc_args['indent_level'] + 2) + 'if type(new_index) is not int:' + os.linesep
-                + indent(misc_args['indent_level'] + 3) + "raise TypeError('Index must be an int when accessing " + variable.name + ": ' + str(type(new_index)))" + os.linesep
-                + indent(misc_args['indent_level'] + 2) + 'if new_index < 0 or new_index >= ' + str(variable_array_size_map[variable.name]) + ':' + os.linesep
-                + indent(misc_args['indent_level'] + 3) + "raise ValueError('Index out of bounds when accessing " + variable.name + ": ' + str(new_index))" + os.linesep
                 + (
                     (
-                        indent(misc_args['indent_level'] + 2) + 'if type(new_value) not in {int, float}:' + os.linesep
-                        + indent(misc_args['indent_level'] + 3) + "raise ValueError('Variable " + variable.name + " is type " + variable_type_map[variable.name] + ". Got ' + str(type(new_value)))" + os.linesep
+                        indent(misc_args['indent_level'] + 2) + 'if type(new_index) is not int:' + os.linesep
+                        + indent(misc_args['indent_level'] + 3) + "raise TypeError('Index must be an int when accessing " + variable.name + ": ' + str(type(new_index)))" + os.linesep
+                        + indent(misc_args['indent_level'] + 2) + 'if new_index < 0 or new_index >= ' + str(variable_array_size_map[variable.name]) + ':' + os.linesep
+                        + indent(misc_args['indent_level'] + 3) + "raise ValueError('Index out of bounds when accessing " + variable.name + ": ' + str(new_index))" + os.linesep
+                        + (
+                            (
+                                indent(misc_args['indent_level'] + 2) + 'if type(new_value) not in {int, float}:' + os.linesep
+                                + indent(misc_args['indent_level'] + 3) + "raise ValueError('Variable " + variable.name + " is type " + variable_type_map[variable.name] + ". Got ' + str(type(new_value)))" + os.linesep
+                            )
+                            if variable_type_map[variable.name] == 'float' else
+                            (
+                                indent(misc_args['indent_level'] + 2) + 'if type(new_value) is not ' + variable_type_map[variable.name] + ':' + os.linesep
+                                + indent(misc_args['indent_level'] + 3) + "raise ValueError('Variable " + variable.name + " is type " + variable_type_map[variable.name] + ". Got ' + str(type(new_value)))" + os.linesep
+                            )
+                        )
                     )
-                    if variable_type_map[variable.name] == 'float' else
-                    (
-                        indent(misc_args['indent_level'] + 2) + 'if type(new_value) is not ' + variable_type_map[variable.name] + ':' + os.linesep
-                        + indent(misc_args['indent_level'] + 3) + "raise ValueError('Variable " + variable.name + " is type " + variable_type_map[variable.name] + ". Got ' + str(type(new_value)))" + os.linesep
-                    )
+                    if safe_assignment else ''
                 )
                 + indent(misc_args['indent_level'] + 2) + variable.name + '[new_index] = new_value' + os.linesep
                 + indent(misc_args['indent_level'] + 1) + 'return ' + variable.name + '[index]' + os.linesep
@@ -606,6 +656,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                 + indent(2) + 'self.name = name' + os.linesep
                 + indent(2) + 'self.environment = environment' + os.linesep
                 + indent(2) + 'self.blackboard = self.attach_blackboard_client(name = name)' + os.linesep
+                + indent(2) + 'self.blackboard.register_key(key = (\'serene_randomizer\'), access = py_trees.common.Access.READ)' + os.linesep
                 + ''.join([(indent(2) + 'self.blackboard.register_key(key = (\'' + variable.name + '\'), access = py_trees.common.Access.READ)' + os.linesep) for variable in node.read_variables])
                 + ''.join([(indent(2) + 'self.blackboard.register_key(key = (\'' + variable.name + '\'), access = py_trees.common.Access.WRITE)' + os.linesep) for variable in node.write_variables])
                 + ''.join(
@@ -883,34 +934,21 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
             + 'import py_trees' + os.linesep
             + 'import ' + project_name + os.linesep
             + 'import ' + project_environment_name + os.linesep
-            + os.linesep
-            + 'blackboard_reader = ' + project_name + '.create_blackboard()' + os.linesep
-            + 'environment = ' + project_environment_name + '.' + project_environment_name + '(blackboard_reader)' + os.linesep
-            + 'root = ' + project_name + '.create_tree(environment)' + os.linesep
-            + 'tree = py_trees.trees.BehaviourTree(root)' + os.linesep
-            + (
-                (
-                    'visualizer = py_trees.visitors.DisplaySnapshotVisitor()' + os.linesep
-                    + 'tree.add_visitor(visualizer)' + os.linesep
-                )
-                if py_tree_print else
-                ''
-            )
+            + 'import serene_randomizer as serene_randomizer_module' + os.linesep
             + os.linesep
             + os.linesep
-            + 'def full_tick():' + os.linesep
+            + 'def full_tick(tree, environment):' + os.linesep
             + indent(1) + 'environment.pre_tick_environment_update()' + os.linesep
             + indent(1) + 'tree.tick()' + os.linesep
             + indent(1) + 'environment.execute_delayed_action_queue()' + os.linesep
             + indent(1) + 'environment.post_tick_environment_update()' + os.linesep
             + indent(1) + 'return' + os.linesep
             + os.linesep
-            + os.linesep
             + (
                 ''
                 if no_var_print else
                 (
-                    'def print_blackboard():' + os.linesep
+                    'def print_blackboard(blackboard_reader):' + os.linesep
                     + indent(1) + 'ret_string = \'blackboard\' + os.linesep' + os.linesep
                     + ''.join(
                         [
@@ -932,7 +970,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                     + indent(1) + 'return ret_string' + os.linesep
                     + os.linesep
                     + os.linesep
-                    + 'def print_environment():' + os.linesep
+                    + 'def print_environment(environment):' + os.linesep
                     + indent(1) + 'ret_string = \'environment\' + os.linesep' + os.linesep
                     + ''.join(
                         [
@@ -984,7 +1022,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                     + indent(1) + 'return \'\'.join(map(_print_local_, node.children))' + os.linesep
                     + os.linesep
                     + os.linesep
-                    + 'def print_local():' + os.linesep
+                    + 'def print_local(root):' + os.linesep
                     + indent(1) + 'return \'local\' + os.linesep + _print_local_(root)' + os.linesep
                 )
             )
@@ -1014,35 +1052,56 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
             )
             + os.linesep
             + os.linesep
-            + "print('------------------------')" + os.linesep
-            + "print('Initial State')" + os.linesep
-            + 'print(print_blackboard())' + os.linesep
-            + 'print(print_local())' + os.linesep
-            + 'print(print_environment())' + os.linesep
-            + 'for count in range(' + str(max_iter) + '):' + os.linesep
+            + 'def run_tree():' + os.linesep
+            + indent(1) + 'serene_randomizer = serene_randomizer_module.serene_randomizer()' + os.linesep
+            + indent(1) + 'blackboard_reader = ' + project_name + '.create_blackboard(serene_randomizer)' + os.linesep
+            + indent(1) + 'environment = ' + project_environment_name + '.' + project_environment_name + '(blackboard_reader)' + os.linesep
+            + indent(1) + 'serene_randomizer.set_blackboard_and_environment(blackboard_reader, environment)' + os.linesep
+            + indent(1) + project_name + '.initialize_blackboard(blackboard_reader)' + os.linesep
+            + indent(1) + 'environment.initialize_environment()' + os.linesep
+            + indent(1) + 'root = ' + project_name + '.create_tree(environment)' + os.linesep
+            + indent(1) + 'tree = py_trees.trees.BehaviourTree(root)' + os.linesep
+            + (
+                (
+                    indent(1) + 'visualizer = py_trees.visitors.DisplaySnapshotVisitor()' + os.linesep
+                    + indent(1) + 'tree.add_visitor(visualizer)' + os.linesep
+                )
+                if py_tree_print else
+                ''
+            )
             + indent(1) + "print('------------------------')" + os.linesep
-            + indent(1) + "print('State after tick: ' + str(count + 1))" + os.linesep
-            + indent(1) + 'if environment.check_tick_condition():' + os.linesep
+            + indent(1) + "print('Initial State')" + os.linesep
+            + indent(1) + 'print(print_blackboard(blackboard_reader))' + os.linesep
+            + indent(1) + 'print(print_local(root))' + os.linesep
+            + indent(1) + 'print(print_environment(environment))' + os.linesep
+            + indent(1) + 'for count in range(' + str(max_iter) + '):' + os.linesep
+            + indent(2) + "print('------------------------')" + os.linesep
+            + indent(2) + "print('State after tick: ' + str(count + 1))" + os.linesep
+            + indent(2) + 'if environment.check_tick_condition():' + os.linesep
             + (
-                (indent(2) + 'reset_serene_tree_print(root)' + os.linesep)
+                (indent(3) + 'reset_serene_tree_print(root)' + os.linesep)
                 if serene_print else
                 ''
             )
-            + indent(2) + 'full_tick()' + os.linesep
+            + indent(3) + 'full_tick(tree, environment)' + os.linesep
             + (
-                (indent(2) + 'print(tree_printer(root, 0))' + os.linesep)
+                (indent(3) + 'print(tree_printer(root, 0))' + os.linesep)
                 if serene_print else
                 ''
             )
-            + indent(2) + 'print(print_blackboard())' + os.linesep
-            + indent(2) + 'print(print_local())' + os.linesep
-            + indent(2) + 'print(print_environment())' + os.linesep
-            + indent(1) + 'else:' + os.linesep
-            + indent(2) + "print('after ' + str(count) + ' ticks, tick_condition no longer holds. Printing blackboard and environment, then exiting')" + os.linesep
-            + indent(2) + 'print(print_blackboard())' + os.linesep
-            + indent(2) + 'print(print_local())' + os.linesep
-            + indent(2) + 'print(print_environment())' + os.linesep
-            + indent(2) + 'break' + os.linesep
+            + indent(3) + 'print(print_blackboard(blackboard_reader))' + os.linesep
+            + indent(3) + 'print(print_local(root))' + os.linesep
+            + indent(3) + 'print(print_environment(environment))' + os.linesep
+            + indent(2) + 'else:' + os.linesep
+            + indent(3) + "print('after ' + str(count) + ' ticks, tick_condition no longer holds. Printing blackboard and environment, then exiting')" + os.linesep
+            + indent(3) + 'print(print_blackboard(blackboard_reader))' + os.linesep
+            + indent(3) + 'print(print_local(root))' + os.linesep
+            + indent(3) + 'print(print_environment(environment))' + os.linesep
+            + indent(3) + 'break' + os.linesep
+            + os.linesep
+            + os.linesep
+            + 'if __name__ == \'__main__\':' + os.linesep
+            + indent(1) + 'run_tree()' + os.linesep
         )
 
     def write_environment(model):
@@ -1107,9 +1166,10 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
         update_misc_args = create_misc_args(False, 'environment', 2)
         initial_misc_args = create_misc_args(True, 'environment', 2)
         to_write = (
-            'import random' + os.linesep
+            'from pathlib import Path' + os.linesep
+            + 'import random' + os.linesep
             + (('import onnxruntime' + os.linesep) if model.neural else '')
-            + 'import serene_safe_assignment' + os.linesep
+            + (('import serene_safe_assignment' + os.linesep) if safe_assignment else '')
             + os.linesep + os.linesep
             + 'class ' + project_environment_name + '():' + os.linesep
             + indent(1) + 'def delay_this_action(self, action, node):' + os.linesep
@@ -1122,6 +1182,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
             + indent(2) + 'return' + os.linesep
             + os.linesep
             + indent(1) + 'def pre_tick_environment_update(self):' + os.linesep
+            + indent(2) + 'node = None' + os.linesep
             + ''.join(
                 [
                     handle_variable_statement(update, update_misc_args, assign_to_var = True)
@@ -1131,6 +1192,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
             + indent(2) + 'return' + os.linesep
             + os.linesep
             + indent(1) + 'def post_tick_environment_update(self):' + os.linesep
+            + indent(2) + 'node = None' + os.linesep
             + ''.join(
                 [
                     handle_variable_statement(update, update_misc_args, assign_to_var = True)
@@ -1150,6 +1212,10 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
             + indent(2) + 'self.blackboard = blackboard' + os.linesep
             + indent(2) + 'self.delayed_action_queue = []' + os.linesep
             + (os.linesep if any(map(is_env, model.variables)) else '')
+            + ''.join([(indent(2) + 'self.' + variable.name + ' = None' + os.linesep) for variable in model.variables if is_env(variable)])
+            + indent(2) + 'return' + os.linesep + os.linesep
+            + indent(1) + 'def initialize_environment(self):' + os.linesep
+            + indent(2) + 'node = None' + os.linesep
             + ''.join(
                 [
                     create_neural_network(variable, initial_misc_args)
@@ -1168,6 +1234,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                     for variable in model.variables if is_env(variable)
                 ]
             )
+            + indent(2) + 'return' + os.linesep + os.linesep
         )
         for environment_check in model.environment_checks:
             to_write += env_handle_environment_check(environment_check)
@@ -1219,8 +1286,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
     standard_imports = ('import py_trees' + os.linesep
                         + 'import math' + os.linesep
                         + 'import operator' + os.linesep
-                        + 'import random' + os.linesep
-                        + 'import serene_safe_assignment' + os.linesep)
+                        + (('import serene_safe_assignment' + os.linesep) if safe_assignment else ''))
 
     (model, variables, constants, declared_enumerations) = validate_model(metamodel_file, model_file, recursion_limit)
     variable_type_map = {
@@ -1238,8 +1304,24 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
 
     write_location = write_location + ('' if write_location[-1] == '/' else '/')
 
-    with open(write_location + 'serene_safe_assignment.py', 'w', encoding = 'utf-8') as write_file:
-        write_file.write(create_safe_assignment(model))  # checked. No additional information required.
+    with open(write_location + 'serene_randomizer.py', 'w', encoding = 'utf-8') as write_file:
+        write_file.write(
+            'import random' + os.linesep
+            + os.linesep
+            + 'class serene_randomizer():' + os.linesep
+            + indent(1) + 'def __init__(self):' + os.linesep
+            + indent(2) + 'self.blackboard = None' + os.linesep
+            + indent(2) + 'self.environment = None' + os.linesep
+            + indent(2) + 'return' + os.linesep + os.linesep
+            + indent(1) + 'def set_blackboard_and_environment(self, blackboard, environment):' + os.linesep
+            + indent(2) + 'self.blackboard = blackboard' + os.linesep
+            + indent(2) + 'self.environment = environment' + os.linesep
+            + indent(2) + 'return' + os.linesep + os.linesep
+        )
+
+    if safe_assignment:
+        with open(write_location + 'serene_safe_assignment.py', 'w', encoding = 'utf-8') as write_file:
+            write_file.write(create_safe_assignment(model))  # checked. No additional information required.
 
     for action in model.action_nodes:
         with open(write_location + action.name + '_file.py', 'w', encoding = 'utf-8') as write_file:
@@ -1260,20 +1342,25 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
     initial_misc_args = create_misc_args(True, 'blackboard', 1)
     with open(write_location + project_name + '.py', 'w', encoding = 'utf-8') as write_file:
         write_file.write(
-            ''.join([('import ' + node.name + '_file' + os.linesep) for node in itertools.chain(model.check_nodes, model.action_nodes, model.environment_checks)])
+            'from pathlib import Path' + os.linesep
             + 'import py_trees' + os.linesep
-            + 'import serene_safe_assignment' + os.linesep
-            + 'import random' + os.linesep
+            + ''.join([('import ' + node.name + '_file' + os.linesep) for node in itertools.chain(model.check_nodes, model.action_nodes, model.environment_checks)])
+            + (('import serene_safe_assignment' + os.linesep) if safe_assignment else '')
             + (('import onnxruntime' + os.linesep) if model.neural else '')
             + os.linesep + os.linesep
-            + 'def create_blackboard():' + os.linesep
+            + 'def create_blackboard(serene_randomizer):' + os.linesep
             + indent(1) + 'blackboard_reader = py_trees.blackboard.Client()' + os.linesep
+            + indent(1) + 'blackboard_reader.register_key(key = ' + "'serene_randomizer'" + ', access = py_trees.common.Access.WRITE)' + os.linesep
+            + indent(1) + 'blackboard_reader.serene_randomizer = serene_randomizer' + os.linesep
             + ''.join(
                 [
-                    (indent(1) + 'blackboard_reader.register_key(key = ' + "'" + blackboard_variable.name + "'" + ', access = py_trees.common.Access.WRITE)' + os.linesep)
+                    (indent(1) + 'blackboard_reader.register_key(key = ' + "'" + blackboard_variable.name + "'" + ', access = py_trees.common.Access.WRITE)' + os.linesep
+                     + indent(1) + 'blackboard_reader.' + blackboard_variable.name + ' = None' + os.linesep)
                     for blackboard_variable in model.variables if is_blackboard(blackboard_variable)
                 ]
             )
+            + indent(1) + 'return blackboard_reader' + os.linesep + os.linesep
+            + 'def initialize_blackboard(blackboard_reader):' + os.linesep
             + ''.join(
                 [
                     create_neural_network(variable, initial_misc_args)
@@ -1283,7 +1370,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                         if variable.model_as == 'DEFINE' else
                         (
                             (
-                                (indent(1) + format_variable_name_only(variable, initial_misc_args) + ' = [' + handle_assign(variable.default_value, initial_misc_args) + ' for _ in range(' + str(variable_array_size_map[variable.name]) + ')]' + os.linesep)
+                                (indent(1) + format_variable_name_only(variable, initial_misc_args) + ' = [' + handle_assign(variable.default_value, initial_misc_args) + ' for _ in range(' + str(variable_array_size_map[variable.name]) + ')]' + os.linesep)  # this handles the default value of the array. Then, we overwrite values as necessary using handle_Variable_statement.
                                 if is_array(variable) else
                                 ''
                             ) +  handle_variable_statement(variable, initial_misc_args, assign_to_var = True)
@@ -1292,7 +1379,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                     for variable in model.variables if is_blackboard(variable)
                 ]
             )
-            + indent(1) + 'return blackboard_reader' + os.linesep
+            + indent(1) + 'return' + os.linesep
             + (
                 better_ticks
                 if serene_print else
@@ -1322,5 +1409,6 @@ if __name__ == '__main__':
     arg_parser.add_argument('--serene_print', action = 'store_true')
     arg_parser.add_argument('--py_tree_print', action = 'store_true')
     arg_parser.add_argument('--recursion_limit', type = int, default = 0)
+    arg_parser.add_argument('--safe_assignment', action = 'store_true')
     args = arg_parser.parse_args()
-    write_files(args.metamodel_file, args.model_file, args.name, args.location, args.serene_print, args.max_iter, args.no_var_print, args.py_tree_print, args.recursion_limit)
+    write_files(args.metamodel_file, args.model_file, args.name, args.location, args.serene_print, args.max_iter, args.no_var_print, args.py_tree_print, args.recursion_limit, args.safe_assignment)
