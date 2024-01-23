@@ -1,3 +1,5 @@
+from pathlib import Path
+import py_trees
 import not_at_destination_file
 import y_too_small_file
 import y_too_big_file
@@ -9,55 +11,82 @@ import send_victory_file
 import update_direction_file
 import update_previous_destination_file
 import target_in_sight_file
-import py_trees
-import serene_safe_assignment
-import random
 import onnxruntime
 
 
-def create_blackboard():
+def create_blackboard(serene_randomizer):
     blackboard_reader = py_trees.blackboard.Client()
+    blackboard_reader.register_key(key = 'serene_randomizer', access = py_trees.common.Access.WRITE)
+    blackboard_reader.serene_randomizer = serene_randomizer
     blackboard_reader.register_key(key = 'prev_dest_x', access = py_trees.common.Access.WRITE)
-    blackboard_reader.register_key(key = 'prev_dest_y', access = py_trees.common.Access.WRITE)
+    blackboard_reader.prev_dest_x = None
     blackboard_reader.register_key(key = 'cur_x', access = py_trees.common.Access.WRITE)
+    blackboard_reader.cur_x = None
     blackboard_reader.register_key(key = 'cur_y', access = py_trees.common.Access.WRITE)
+    blackboard_reader.cur_y = None
+    blackboard_reader.register_key(key = 'x_mid', access = py_trees.common.Access.WRITE)
+    blackboard_reader.x_mid = None
+    blackboard_reader.register_key(key = 'cur_x_bool', access = py_trees.common.Access.WRITE)
+    blackboard_reader.cur_x_bool = None
     blackboard_reader.register_key(key = 'dest_x', access = py_trees.common.Access.WRITE)
+    blackboard_reader.dest_x = None
     blackboard_reader.register_key(key = 'dest_y', access = py_trees.common.Access.WRITE)
+    blackboard_reader.dest_y = None
     blackboard_reader.register_key(key = 'dir', access = py_trees.common.Access.WRITE)
+    blackboard_reader.dir = None
     blackboard_reader.register_key(key = 'dir_int', access = py_trees.common.Access.WRITE)
+    blackboard_reader.dir_int = None
     blackboard_reader.register_key(key = 'victory', access = py_trees.common.Access.WRITE)
+    blackboard_reader.victory = None
     blackboard_reader.register_key(key = 'x_net', access = py_trees.common.Access.WRITE)
+    blackboard_reader.x_net = None
     blackboard_reader.register_key(key = 'y_net', access = py_trees.common.Access.WRITE)
-    blackboard_reader.prev_dest_x = serene_safe_assignment.prev_dest_x(0)
-    blackboard_reader.prev_dest_y = serene_safe_assignment.prev_dest_y((0 + 1))
-    blackboard_reader.cur_x = serene_safe_assignment.cur_x(0)
-    blackboard_reader.cur_y = serene_safe_assignment.cur_y(0)
-    blackboard_reader.dest_x = serene_safe_assignment.dest_x(0)
-    blackboard_reader.dest_y = serene_safe_assignment.dest_y(0)
-    blackboard_reader.dir = serene_safe_assignment.dir('Up')
+    blackboard_reader.y_net = None
+    return blackboard_reader
+
+def initialize_blackboard(blackboard_reader):
+    blackboard_reader.prev_dest_x = blackboard_reader.serene_randomizer.r_10(None)
+    blackboard_reader.cur_x = blackboard_reader.serene_randomizer.r_11(None)
+    blackboard_reader.cur_y = blackboard_reader.serene_randomizer.r_12(None)
+
+
+    def x_mid():
+        return blackboard_reader.serene_randomizer.r_13(None)
+
+    blackboard_reader.x_mid = x_mid
+
+
+    def cur_x_bool():
+        return (
+            blackboard_reader.serene_randomizer.r_14(None)
+            if (blackboard_reader.cur_x < blackboard_reader.x_mid()) else
+            (
+            blackboard_reader.serene_randomizer.r_15(None)
+        ))
+
+    blackboard_reader.cur_x_bool = cur_x_bool
+    blackboard_reader.dest_x = blackboard_reader.serene_randomizer.r_16(None)
+    blackboard_reader.dest_y = blackboard_reader.serene_randomizer.r_17(None)
+    blackboard_reader.dir = blackboard_reader.serene_randomizer.r_18(None)
 
 
     def dir_int():
         return (
-            1
+            blackboard_reader.serene_randomizer.r_19(None)
             if (blackboard_reader.dir == 'Up') else
             (
-            (-1)
+            blackboard_reader.serene_randomizer.r_20(None)
         ))
 
     blackboard_reader.dir_int = dir_int
-    blackboard_reader.victory = serene_safe_assignment.victory(False)
+    blackboard_reader.victory = blackboard_reader.serene_randomizer.r_21(None)
 
 
-    x_net__session__ = onnxruntime.InferenceSession('./x_net.onnx')
+    x_net__session__ = onnxruntime.InferenceSession(str(Path(__file__).parent.resolve()) + '/./networks/x_net.onnx')
     x_net__previous_input__ = None
     x_net__previous_output__ = None
     def x_net(index):
-        if type(index) is not int:
-            raise TypeError('Index must be an int when accessing x_net: ' + str(type(index)))
-        if index < 0 or index >= 1:
-            raise ValueError('Index out of bounds when accessing x_net: ' + str(index))
-        input_values = [blackboard_reader.dest_x, blackboard_reader.prev_dest_x]
+        input_values = [blackboard_reader.prev_dest_x]
         nonlocal x_net__session__, x_net__previous_input__, x_net__previous_output__
         if input_values != x_net__previous_input__:
             temp = x_net__session__.run(None, {'my_inputs' : [input_values]})
@@ -67,15 +96,11 @@ def create_blackboard():
     blackboard_reader.x_net = x_net
 
 
-    y_net__session__ = onnxruntime.InferenceSession('./y_net.onnx')
+    y_net__session__ = onnxruntime.InferenceSession(str(Path(__file__).parent.resolve()) + '/./networks/y_net.onnx')
     y_net__previous_input__ = None
     y_net__previous_output__ = None
     def y_net(index):
-        if type(index) is not int:
-            raise TypeError('Index must be an int when accessing y_net: ' + str(type(index)))
-        if index < 0 or index >= 1:
-            raise ValueError('Index out of bounds when accessing y_net: ' + str(index))
-        input_values = [blackboard_reader.dest_y, blackboard_reader.prev_dest_y, blackboard_reader.dir_int()]
+        input_values = [blackboard_reader.cur_x_bool(), blackboard_reader.prev_dest_x]
         nonlocal y_net__session__, y_net__previous_input__, y_net__previous_output__
         if input_values != y_net__previous_input__:
             temp = y_net__session__.run(None, {'my_inputs' : [input_values]})
@@ -83,7 +108,7 @@ def create_blackboard():
             y_net__previous_output__ = temp[0][0]
         return int(y_net__previous_output__[index])
     blackboard_reader.y_net = y_net
-    return blackboard_reader
+    return
 
 
 def create_tree(environment):

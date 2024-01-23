@@ -1,3 +1,5 @@
+from pathlib import Path
+import py_trees
 import is_path_computed_file
 import is_waypoint_reached_file
 import is_close_to_landmark_file
@@ -5,73 +7,74 @@ import compute_path_file
 import get_next_landmark_file
 import get_next_subgoal_file
 import move_action_file
-import py_trees
-import serene_safe_assignment
-import random
 import onnxruntime
 
 
-def create_blackboard():
+def create_blackboard(serene_randomizer):
     blackboard_reader = py_trees.blackboard.Client()
+    blackboard_reader.register_key(key = 'serene_randomizer', access = py_trees.common.Access.WRITE)
+    blackboard_reader.serene_randomizer = serene_randomizer
     blackboard_reader.register_key(key = 'path_computed_bool', access = py_trees.common.Access.WRITE)
+    blackboard_reader.path_computed_bool = None
     blackboard_reader.register_key(key = 'drone_location', access = py_trees.common.Access.WRITE)
+    blackboard_reader.drone_location = None
     blackboard_reader.register_key(key = 'drone_velocity', access = py_trees.common.Access.WRITE)
+    blackboard_reader.drone_velocity = None
     blackboard_reader.register_key(key = 'waypoint_location', access = py_trees.common.Access.WRITE)
+    blackboard_reader.waypoint_location = None
     blackboard_reader.register_key(key = 'path_storage_x', access = py_trees.common.Access.WRITE)
+    blackboard_reader.path_storage_x = None
     blackboard_reader.register_key(key = 'path_storage_y', access = py_trees.common.Access.WRITE)
+    blackboard_reader.path_storage_y = None
     blackboard_reader.register_key(key = 'landmark_index', access = py_trees.common.Access.WRITE)
+    blackboard_reader.landmark_index = None
     blackboard_reader.register_key(key = 'current_landmark', access = py_trees.common.Access.WRITE)
+    blackboard_reader.current_landmark = None
     blackboard_reader.register_key(key = 'subgoal', access = py_trees.common.Access.WRITE)
-    blackboard_reader.path_computed_bool = serene_safe_assignment.path_computed_bool(False)
-    blackboard_reader.drone_location = [0 for _ in range(2)]
-    __temp_var__ = serene_safe_assignment.drone_location([])
+    blackboard_reader.subgoal = None
+    return blackboard_reader
+
+def initialize_blackboard(blackboard_reader):
+    blackboard_reader.path_computed_bool = blackboard_reader.serene_randomizer.r_2(None)
+    blackboard_reader.drone_location = [blackboard_reader.serene_randomizer.r_3(None) for _ in range(2)]
+    __temp_var__ = []
     for (index, val) in __temp_var__:
         blackboard_reader.drone_location[index] = val
-    blackboard_reader.drone_velocity = [0 for _ in range(2)]
-    __temp_var__ = serene_safe_assignment.drone_velocity([])
+    blackboard_reader.drone_velocity = [blackboard_reader.serene_randomizer.r_4(None) for _ in range(2)]
+    __temp_var__ = []
     for (index, val) in __temp_var__:
         blackboard_reader.drone_velocity[index] = val
-    blackboard_reader.waypoint_location = [1 for _ in range(2)]
-    __temp_var__ = serene_safe_assignment.waypoint_location([])
+    blackboard_reader.waypoint_location = [blackboard_reader.serene_randomizer.r_5(None) for _ in range(2)]
+    __temp_var__ = []
     for (index, val) in __temp_var__:
         blackboard_reader.waypoint_location[index] = val
-    blackboard_reader.path_storage_x = [0 for _ in range(25)]
-    __temp_var__ = serene_safe_assignment.path_storage_x([])
+    blackboard_reader.path_storage_x = [blackboard_reader.serene_randomizer.r_6(None) for _ in range(25)]
+    __temp_var__ = []
     for (index, val) in __temp_var__:
         blackboard_reader.path_storage_x[index] = val
-    blackboard_reader.path_storage_y = [0 for _ in range(25)]
-    __temp_var__ = serene_safe_assignment.path_storage_y([])
+    blackboard_reader.path_storage_y = [blackboard_reader.serene_randomizer.r_7(None) for _ in range(25)]
+    __temp_var__ = []
     for (index, val) in __temp_var__:
         blackboard_reader.path_storage_y[index] = val
-    blackboard_reader.landmark_index = serene_safe_assignment.landmark_index(0)
+    blackboard_reader.landmark_index = blackboard_reader.serene_randomizer.r_8(None)
 
 
     def current_landmark(index):
-        if type(index) is not int:
-            raise TypeError('Index must be an int when accessing current_landmark: ' + str(type(index)))
-        if index < 0 or index >= 2:
-            raise ValueError('Index out of bounds when accessing current_landmark: ' + str(index))
-        current_landmark = [0 for _ in range(2)]
+        current_landmark = [blackboard_reader.serene_randomizer.r_9(None) for _ in range(2)]
         seen_indices = set()
-        for (new_index, new_value) in [(0, blackboard_reader.path_storage_x[serene_safe_assignment.index_func(blackboard_reader.landmark_index, 25)]), (1, blackboard_reader.path_storage_y[serene_safe_assignment.index_func(blackboard_reader.landmark_index, 25)])]:
+        for (new_index, new_value) in [(0, blackboard_reader.serene_randomizer.r_10(None)), (1, blackboard_reader.serene_randomizer.r_11(None))]:
             if new_index in seen_indices:
                 continue
             seen_indices.add(new_index)
-            if type(new_index) is not int:
-                raise TypeError('Index must be an int when accessing current_landmark: ' + str(type(new_index)))
-            if new_index < 0 or new_index >= 2:
-                raise ValueError('Index out of bounds when accessing current_landmark: ' + str(new_index))
-            if type(new_value) not in {int, float}:
-                raise ValueError('Variable current_landmark is type float. Got ' + str(type(new_value)))
             current_landmark[new_index] = new_value
         return current_landmark[index]
 
     blackboard_reader.current_landmark = current_landmark
-    blackboard_reader.subgoal = [0 for _ in range(2)]
-    __temp_var__ = serene_safe_assignment.subgoal([])
+    blackboard_reader.subgoal = [blackboard_reader.serene_randomizer.r_12(None) for _ in range(2)]
+    __temp_var__ = []
     for (index, val) in __temp_var__:
         blackboard_reader.subgoal[index] = val
-    return blackboard_reader
+    return
 
 
 def create_tree(environment):

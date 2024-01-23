@@ -1,8 +1,6 @@
 import py_trees
 import math
 import operator
-import random
-import serene_safe_assignment
 
 
 class compute_path(py_trees.behaviour.Behaviour):
@@ -11,18 +9,24 @@ class compute_path(py_trees.behaviour.Behaviour):
         self.name = name
         self.environment = environment
         self.blackboard = self.attach_blackboard_client(name = name)
+        self.blackboard.register_key(key = ('serene_randomizer'), access = py_trees.common.Access.READ)
         self.blackboard.register_key(key = ('path_computed_bool'), access = py_trees.common.Access.WRITE)
         self.blackboard.register_key(key = ('path_storage_x'), access = py_trees.common.Access.WRITE)
         self.blackboard.register_key(key = ('path_storage_y'), access = py_trees.common.Access.WRITE)
 
     def update(self):
         if self.environment.calculate_path__condition(self):
-            __temp_var__ = serene_safe_assignment.path_storage_x(self.environment.calculate_path__0(self))
+            self.blackboard.path_computed_bool = True
+            __temp_var__ = self.environment.calculate_path__0(self)
             for (index, val) in __temp_var__:
                 self.blackboard.path_storage_x[index] = val
-            __temp_var__ = serene_safe_assignment.path_storage_y(self.environment.calculate_path__1(self))
+            __temp_var__ = self.environment.calculate_path__1(self)
             for (index, val) in __temp_var__:
                 self.blackboard.path_storage_y[index] = val
-        self.blackboard.path_computed_bool = serene_safe_assignment.path_computed_bool(True)
-        return_status = py_trees.common.Status.SUCCESS
+        else:
+            self.blackboard.path_computed_bool = False
+        if self.blackboard.path_computed_bool:
+            return_status = py_trees.common.Status.SUCCESS
+        else:
+            return_status = py_trees.common.Status.FAILURE
         return return_status
