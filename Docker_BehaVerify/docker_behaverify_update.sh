@@ -1,5 +1,6 @@
 #!/bin/bash
 
 docker start behaverify
-docker exec -w /home/user/behaverify behaverify git pull
+docker exec behaverify rm -rf /home/user/behaverify
+./docker_behaverify_clone.sh
 docker stop behaverify
