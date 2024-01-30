@@ -1,9 +1,7 @@
 #!/bin/bash
 
-user=behaverify
-
 docker start behaverify
-docker exec behaverify rm -rf "/home/${user}/behaverify"
-docker exec behaverify rm -rf "/home/${user}/behaverify_venv" 
-./docker_behaverify_clone.sh
+docker exec -w '/home/behaverify/behaverify' behaverify git checkout
+docker exec behaverify '/home/behaverify/behaverify_venv/bin/python3' -m pip install --upgrade pip
+docker exec behaverify '/home/behaverify/behaverify_venv/bin/python3' -m pip install -r '/home/behaverify/behaverify/Docker_BehaVerify/Additional_Files/requirements.txt'
 docker stop behaverify
