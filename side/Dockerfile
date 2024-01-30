@@ -1,11 +1,11 @@
-FROM ubuntu:22.04
-RUN apt-get update -y
-RUN apt-get upgrade -y
+FROM ubuntu:23.10
+RUN apt-get update -y \
+    && apt-get upgrade -y
 
 # Set the non-root user information
-ARG USER=user
-ARG UID=1000
-ARG GID=1000
+ARG USER=haskell_BehaVerify
+ARG UID=523415072
+ARG GID=523415072
 
 # Create a non-root user
 RUN groupadd -g $GID $USER \
@@ -22,7 +22,7 @@ WORKDIR /home/$USER
 # Switch to the non-root user
 USER $USER
 
-RUN sudo apt-get install python3 pip git -y
-ENV PIP_ROOT_USER_ACTION=ignore
-RUN python3 -m pip install --upgrade pip
-RUN python3 -m pip install py_trees textx onnxruntime
+RUN sudo apt-get install python3 pip git python3-venv -y
+
+RUN sudo apt-get install g++ cmake -y
+RUN sudo apt-get install libghc-copilot-dev -y

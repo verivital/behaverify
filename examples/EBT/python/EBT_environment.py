@@ -78,4 +78,7 @@ class EBT_environment():
         return [(0, self.blackboard.serene_randomizer.r_67(node)), (1, self.blackboard.serene_randomizer.r_68(node))]
 
     def send_action__1(self, node):
+        # actual code here
+        print('aaaaaaaaoffgi;hbaspifghapigfdubhaipufgbap[oigubnapiofguipafgubpaifgbuipafdgubapifdsguba;pifdgagfi;')
+        print(self.blackboard.drone_location)
         return [(0, self.blackboard.serene_randomizer.r_69(node)), (1, self.blackboard.serene_randomizer.r_70(node))]

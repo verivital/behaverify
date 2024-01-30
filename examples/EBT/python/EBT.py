@@ -8,10 +8,12 @@ import get_next_landmark_file
 import get_next_subgoal_file
 import move_action_file
 import onnxruntime
+import user_blackboard_generator
 
 
 def create_blackboard(serene_randomizer):
-    blackboard_reader = py_trees.blackboard.Client()
+    blackboard_reader = user_blackboard_generator.create_blackboard()
+    # blackboard_reader = py_trees.blackboard.Client()
     blackboard_reader.register_key(key = 'serene_randomizer', access = py_trees.common.Access.WRITE)
     blackboard_reader.serene_randomizer = serene_randomizer
     blackboard_reader.register_key(key = 'path_computed_bool', access = py_trees.common.Access.WRITE)
@@ -32,6 +34,7 @@ def create_blackboard(serene_randomizer):
     blackboard_reader.current_landmark = None
     blackboard_reader.register_key(key = 'subgoal', access = py_trees.common.Access.WRITE)
     blackboard_reader.subgoal = None
+    
     return blackboard_reader
 
 def initialize_blackboard(blackboard_reader):

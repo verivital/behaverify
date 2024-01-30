@@ -1,0 +1,209 @@
+configuration {
+    #{ Here you specify various configuration options, such as Hypersafety }#
+    use_reals
+    neural
+}
+enumerations {
+    #{ here you specify the enumerations used in the model}#
+}
+constants {
+    #{ constants are used to synchronize values in a .tree file. }#
+    #{ example := 0 }#
+    #{ to use example elsewhere, simply type 'example' in place of any integer (quotes included) }#
+    path_size := 25, x_min := -150, x_max := 150, y_min := -150, y_max := 150
+} end_constants
+
+variables {
+    #{ Variable declarations go here.
+	it is suggested, but not required, that the order of declaration be
+	Blackboard, Local, Environment.
+	If variable B depends on variable A, then variable A MUST be declared before B.
+    }#
+    variable {
+	bl
+	path_computed_bool VAR BOOLEAN
+	assign { result { False }}
+    }
+    variable { bl drone_location array 2 VAR REAL default {assign {result{0}}}}
+    variable { bl drone_velocity array 2 VAR REAL default {assign {result{0}}}}
+    variable { local drone_action array 2 VAR REAL default {assign {result{0}}}}
+    variable { bl waypoint_location array 2 VAR REAL default {assign {result {1}}}}
+    variable { bl path_storage_x array path_size VAR REAL default {assign {result {0}}}} #{ each entry is a landmark }#
+    variable { bl path_storage_y array path_size VAR REAL default {assign {result{0}}}}
+    variable { bl landmark_index VAR [0, (sub, path_size, 1)] assign {result {0}}}
+    variable { bl current_landmark array 2 DEFINE REAL default {assign {result {0}}} constant_index index_of {0} assign {result{(index, path_storage_x, landmark_index)}} index_of {1} assign {result{(index, path_storage_y, landmark_index)}}}  
+    variable { bl subgoal array 2 VAR REAL default {assign {result{0}}}}
+} end_variables
+
+environment_update {
+    #{ update values for environment }#
+    #{
+	variable_statement {
+	    z
+	    assign {
+		case { (less_than, x, 5) } end_case result { True, False} end_result
+		case { (greater_than, x, 5) } end_case result { (equal, 0, (mod, x, 2)) } end_result
+		result { env z } end_result
+	    } end_assign
+	} end_variable_statement
+    }#
+} end_environment_update
+
+checks {
+    #{ check nodes are defined here }#
+    #{
+	check {
+	    x_idk
+	    arguments{}
+	    read_variables { x } end_read_variables
+	    condition { (and, (less_than, (addition, x, 1), 4), True) } end_condition
+	} end_check
+    }#
+    check {
+	is_path_computed
+	arguments {}
+	read_variables {path_computed_bool}
+	condition {path_computed_bool}
+    }
+    check {
+	is_waypoint_reached
+	arguments {}
+	read_variables {path_computed_bool, waypoint_location, drone_location}
+	condition {(and, (loop, loop_index, [0, 1] such_that True, (eq, (index, drone_location, constant_index loop_index), (index, waypoint_location, constant_index loop_index))))}
+    }
+    check {
+	is_close_to_landmark
+	arguments {}
+	read_variables {current_landmark, drone_location}
+	condition {(and, (loop, loop_index, [0, 1] such_that True, (eq, (index, drone_location, constant_index loop_index), (index, current_landmark, constant_index loop_index))))}
+    }
+} end_checks
+
+environment_checks {
+} end_environment_checks
+
+actions {
+    action {
+	compute_path arguments {} local_variables {}
+	read_variables {}
+	write_variables{path_computed_bool, path_storage_x, path_storage_y}
+	initial_values {}
+	update {
+	    read_environment {
+		calculate_path
+		condition_variable { path_computed_bool }
+		condition {non_determinism, True}
+		variable_statement {
+		    path_storage_x constant_index (loop, loop_var, [0, (sub, path_size, 1)] such_that True, index_of {loop_var} assign {result {(loop, loop_var2, [x_min, x_max] such_that True, loop_var2)}})
+		}
+		variable_statement {
+		    path_storage_y constant_index (loop, loop_var, [0, (sub, path_size, 1)] such_that True, index_of {loop_var} assign {result {(loop, loop_var2, [y_min, y_max] such_that True, loop_var2)}})
+ 		}
+	    }
+	    return_statement { case{path_computed_bool} result {success} result {failure}}
+	}
+    }
+    action {
+	get_next_landmark arguments {} local_variables {}
+	read_variables {}
+	write_variables{landmark_index}
+	initial_values {}
+	update {
+	    variable_statement {
+		landmark_index
+		assign{result{(min, (sub, path_size, 1), (add, landmark_index, 1))}}
+	    }
+	    return_statement { result {success}}
+	}
+    }
+    action {
+	get_next_subgoal arguments {} local_variables {}
+	read_variables {}
+	write_variables{subgoal}
+	initial_values {}
+	update {
+	    read_environment {
+		subgoal_calculation
+		condition {True}
+		variable_statement {
+		    subgoal constant_index (loop, loop_var, [0, 1] such_that True, index_of {loop_var} assign {result {(loop, loop_var2, [(if, (eq, loop_var, 0), x_min, y_min), (if, (eq, loop_var, 0), x_max, y_max)] such_that True, loop_var2)}})
+		}
+	    }
+	    return_statement { result {success}}
+	}
+    }
+    action {
+	move_action arguments {} local_variables {drone_action}
+	read_variables {subgoal}
+	write_variables{drone_velocity, drone_location}
+	initial_values {}
+	update {
+	    read_environment {
+		compute_state
+		condition {True}
+		variable_statement {
+		    drone_action constant_index (loop, loop_var, [0, 1] such_that True, index_of {loop_var} assign {result {(loop, loop_var2, [-10, 10] such_that True, loop_var2)}})
+		}
+	    }
+	    read_environment {
+		send_action
+		condition {True}
+		variable_statement {
+		    drone_velocity constant_index (loop, loop_var, [0, 1] such_that True, index_of {loop_var} assign {result {(loop, loop_var2, [-10, 10] such_that True, loop_var2)}})
+		}
+		variable_statement {
+		    drone_location constant_index (loop, loop_var, [0, 1] such_that True, index_of {loop_var} assign {result {(add, (index, drone_location, constant_index loop_var), (index, drone_velocity, constant_index loop_var))}})
+		}
+	    }
+	    return_statement { result {success}}
+	}
+    }
+} end_actions
+
+sub_trees {#{ subtrees go here. }#
+    sub_tree {
+	INITIAL_SETUP_SUBTREE
+	composite {
+	    path_selector selector
+	    children {
+		is_path_computed {}
+		compute_path {}
+	    }
+	}
+    }
+    sub_tree {
+	MAIN_SUBTREE
+	composite {
+	    main_selector selector
+	    children {
+		is_waypoint_reached {}
+		composite {
+		    landmark_sequence sequence children{ is_close_to_landmark {} get_next_landmark {} }
+		}
+		composite {
+		    movement_sequence sequence children{ get_next_subgoal {} move_action {} }
+		}
+	    }
+	}
+    }
+} end_sub_trees
+
+tree {
+    #{ the tree is defined here}#
+    composite {
+	ebt_root sequence
+	children {
+	    insert {INITIAL_SETUP_SUBTREE}
+	    insert {MAIN_SUBTREE}
+	}
+    }
+} end_tree
+
+
+
+
+tick_prerequisite { (True) } end_tick_prerequisite
+#{ if the condition is True, the tree ticks.
+    If it is false, everything is done }#
+
+specifications { #{ INVAR, LTL, and CTL specs go here }# } end_specifications
