@@ -1,7 +1,5 @@
 #!/bin/bash
 
-user=behaverify
-
 input_file=$1
 input_name=$(basename "${input_file}")
 input_name_only="${input_name%.*}"
@@ -52,34 +50,34 @@ fi
 if [[ "${command}" == "nuXmv" ]]; then
     echo "generating nuXmv model"
     command="dsl_to_nuxmv"
-    command_flags="/home/${user}/${input_name_only}/app/${input_name_only}.smv"
+    command_flags="/home/behaverify/${input_name_only}/app/${input_name_only}.smv"
 elif [[ "${command}" == "Python" ]]; then
     echo "generating Python code"
     command="dsl_to_python"
-    command_flags="/home/${user}/${input_name_only}/app/ ${input_name_only}"
+    command_flags="/home/behaverify/${input_name_only}/app/ ${input_name_only}"
 elif [[ "${command}" == "Haskell" ]]; then
     echo "generating Haskell code"
     command="dsl_to_haskell"
-    command_flags="/home/${user}/${input_name_only}/ ${input_name_only}"
+    command_flags="/home/behaverify/${input_name_only}/ ${input_name_only}"
 else
     echo "unknown command. Exiting"
     exit 4
 fi
 
 command_args=($command_flags)
-echo "/home/${user}/${input_name_only}/${input_name}"
+echo "/home/behaverify/${input_name_only}/${input_name}"
 
 docker start behaverify
-docker exec behaverify "/home/${user}/behaverify/Docker_BehaVerify/Additional_Files/setup_directory.sh" "${input_name_only}"
-docker cp "${input_file}" "behaverify:/home/${user}/${input_name_only}/${input_name}"
+docker exec behaverify "/home/behaverify/behaverify/Docker_BehaVerify/Additional_Files/setup_directory.sh" "${input_name_only}"
+docker cp "${input_file}" "behaverify:/home/behaverify/${input_name_only}/${input_name}"
 if [[ -n "${network_folder}" ]]; then
-    docker cp "${network_folder}" "behaverify:/home/${user}/${input_name_only}/${network_folder_name}"
+    docker cp "${network_folder}" "behaverify:/home/behaverify/${input_name_only}/${network_folder_name}"
 fi
 if [[ -z $user_flags ]]; then
-    docker exec behaverify "/home/${user}/behaverify_venv/bin/python3" "/home/${user}/behaverify/src/${command}.py" "/home/${user}/behaverify/metamodel/behaverify.tx" "/home/${user}/${input_name_only}/${input_name}" "${command_args[@]}"
+    docker exec behaverify "/home/behaverify/behaverify_venv/bin/python3" "/home/behaverify/behaverify/src/${command}.py" "/home/behaverify/behaverify/metamodel/behaverify.tx" "/home/behaverify/${input_name_only}/${input_name}" "${command_args[@]}"
 fi
 if [[ -n $user_flags ]]; then
-    docker exec behaverify "/home/${user}/behaverify_venv/bin/python3" "/home/${user}/behaverify/src/${command}.py" "/home/${user}/behaverify/metamodel/behaverify.tx" "/home/${user}/${input_name_only}/${input_name}" "${command_args[@]}" "${user_args[@]}"
+    docker exec behaverify "/home/behaverify/behaverify_venv/bin/python3" "/home/behaverify/behaverify/src/${command}.py" "/home/behaverify/behaverify/metamodel/behaverify.tx" "/home/behaverify/${input_name_only}/${input_name}" "${command_args[@]}" "${user_args[@]}"
 fi
-docker cp "behaverify:/home/${user}/${input_name_only}" "${output_location}${input_name_only}"
+docker cp "behaverify:/home/behaverify/${input_name_only}" "${output_location}${input_name_only}"
 docker stop behaverify

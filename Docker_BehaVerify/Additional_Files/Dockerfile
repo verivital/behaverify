@@ -4,8 +4,8 @@ RUN apt-get update -y \
 
 # Set the non-root user information
 ARG USER=behaverify
-ARG UID=301850285
-ARG GID=301850285
+ARG UID=16227
+ARG GID=16227
 
 # Create a non-root user
 RUN groupadd -g $GID $USER \

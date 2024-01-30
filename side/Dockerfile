@@ -4,8 +4,8 @@ RUN apt-get update -y \
 
 # Set the non-root user information
 ARG USER=haskell_BehaVerify
-ARG UID=523415072
-ARG GID=523415072
+ARG UID=45183
+ARG GID=45183
 
 # Create a non-root user
 RUN groupadd -g $GID $USER \
