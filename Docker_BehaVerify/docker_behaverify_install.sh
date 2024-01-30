@@ -23,7 +23,7 @@ fi
 
 current_location=$(pwd)
 if [[ "${mode}" == "generate" ]]; then
-    cd "./Generation_Only"
+    cd "./Additional_Files"
 elif [[ "${mode}" == "full" ]]; then
     echo "Just kidding. That's not supported yet. Exiting."
     exit

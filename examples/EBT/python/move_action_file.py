@@ -17,6 +17,10 @@ class move_action(py_trees.behaviour.Behaviour):
         __temp_var__ = []
         for (index, val) in __temp_var__:
             self.drone_action[index] = val
+        #########################
+        #user added code goes here
+        
+        #end user added code
 
     def update(self):
         if self.environment.compute_state__condition(self):

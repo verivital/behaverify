@@ -307,6 +307,11 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
             formatted_values.extend(format_code(value, new_misc_args))
         if len(formatted_values) == 0:
             raise ValueError('variable had no valid values!')
+        if len(formatted_values) == 1:
+            formatted_values = []
+            for value in values:
+                formatted_values.extend(format_code(value, misc_args))
+            return formatted_values[0]
         randomizer_name = add_new_randomizer(formatted_values)
         return (
             ('blackboard_reader.serene_randomizer.' + randomizer_name + '(None)')
