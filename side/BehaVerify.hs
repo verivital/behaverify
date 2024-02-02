@@ -1,96 +1,121 @@
 module BehaVerify where
 
+
+data ConstantValue = ConstantInteger Integer | ConstantBool Bool | ConstantDouble Double
 data State = State {
-  x_stage_0 :: Bool
-  , x_stage_1 :: Bool
-  , y_stage_0 :: Bool
-  , y_stage_1 :: Bool
+  vInt1 :: Integer
+  , vInt2 :: Integer
+  , vBool1 :: Bool
+  , vBool2 :: Bool
   }
+
+type VariableID = Integer
 
 stateToString :: State -> String
-stateToString state = "(" ++ (show (x_stage_0 state)) ++ (show (x_stage_1 state)) ++ (show (y_stage_0 state)) ++ (show (y_stage_1 state)) ++ ")"
+stateToString state = "(" ++ show (vInt1 state) ++ ", " ++ show (vInt2 state) ++ ", " ++ show (vBool1 state) ++ ", " ++ show (vBool2 state) ++ ")"
 
-updateByID :: State -> VariableID -> Bool -> State
-updateByID state 0 val = state { x_stage_0 = val}
-updateByID state 1 val = state { x_stage_1 = val}
-updateByID state 2 val = state { y_stage_0 = val}
-updateByID state 3 val = state { y_stage_1 = val}
+updateByID :: State -> VariableID -> ConstantValue -> State
+updateByID state 0 (ConstantInteger val) = state { vInt1 = val}
+updateByID state 1 (ConstantInteger val) = state { vInt2 = val}
+updateByID state 2 (ConstantBool val) = state { vBool1 = val}
+updateByID state 3 (ConstantBool val) = state { vBool2 = val}
+updateByID _ _ _ = error "illegal varID"
 
-varIDToVarVal :: VariableID -> State -> Bool
-varIDToVarVal 0 state = x_stage_0 state
-varIDToVarVal 1 state = x_stage_1 state
-varIDToVarVal 2 state = y_stage_0 state
-varIDToVarVal 3 state = y_stage_1 state
+varIDToVarVal :: VariableID -> State -> ConstantValue
+varIDToVarVal 0 state = ConstantInteger (vInt1 state)
+varIDToVarVal 1 state = ConstantInteger (vInt2 state)
+varIDToVarVal 2 state = ConstantBool (vBool1 state)
+varIDToVarVal 3 state = ConstantBool (vBool2 state)
 varIDToVarVal _ _ = error "illegal varID"
 
-data Function = EQ | NE | OR | AND
-  deriving (Enum)
-
-convertFunction :: FunctionID -> (Bool -> Bool -> Bool)
-convertFunction 1 = sereneEQ
-convertFunction 2 = sereneNE
-convertFunction 3 = sereneOR
-convertFunction 4 = sereneAND
-convertFunction _ = error "illegal function"
-
-sereneEQ :: Bool -> Bool -> Bool
-sereneEQ a b = a == b
-
-sereneNE :: Bool -> Bool -> Bool
-sereneNE a b = a /= b
-
-sereneOR :: Bool -> Bool -> Bool
-sereneOR a b = a || b
-
-sereneAND :: Bool -> Bool -> Bool
-sereneAND a b = a && b
+type OneArgFunc = Element -> State -> ConstantValue
+type TwoArgFunc = Element -> Element -> State -> ConstantValue
 
 
-type FunctionID = Integer -- 1=eq, 2=ne, 3=or, 4=and
-type ElementType = Integer -- 1=Condition, 2=Variable, 3=Constant
-type VariableID = Integer
-type ConstantVal = Bool
+numToBool2 :: ((RealFrac a, RealFrac b) => a -> b -> Bool) -> ConstantValue -> ConstantValue -> ConstantValue
+numToBool2 function (ConstantInteger cArg1) (ConstantInteger cArg2) = ConstantBool (function cArg1 cArg2)
+numToBool2 function (ConstantInteger cArg1) (ConstantDouble cArg2) = ConstantBool (function cArg1 cArg2)
+numToBool2 function (ConstantDouble cArg1) (ConstantInteger cArg2) = ConstantBool (function cArg1 cArg2)
+numToBool2 function (ConstantDouble cArg1) (ConstantDouble cArg2) = ConstantBool (function cArg1 cArg2)
+numToBool2 _ _ _ = error "illegal arguments"
 
-type PredicateValue = (ElementType, PredicateEquation, VariableID, ConstantVal) -- Element type determines which one is relevant, Condition is more code, first Integer is 
+numToNum2 :: (a -> a -> a) -> ConstantValue -> ConstantValue -> ConstantValue
+numToNum2 function (ConstantInteger cArg1) (ConstantInteger cArg2) = ConstantInteger (function cArg1 cArg2)
+numToNum2 function (ConstantInteger cArg1) (ConstantDouble cArg2) = ConstantDouble (function cArg1 cArg2)
+numToNum2 function (ConstantDouble cArg1) (ConstantInteger cArg2) = ConstantDouble (function cArg1 cArg2)
+numToNum2 function (ConstantDouble cArg1) (ConstantDouble cArg2) = ConstantDouble (function cArg1 cArg2)
+numToNum2 _ _ _ = error "illegal arguments"
 
-data PredicateEquation = PredicateEquation {
-  function :: FunctionID
-  , arg1 :: PredicateValue
-  , arg2 :: PredicateValue
-  }
-
-evaluatePredicate :: State -> PredicateValue -> Bool
-evaluatePredicate _ (3, _, _, a) = a
-evaluatePredicate state (2, _, a, _) = varIDToVarVal a state
-evaluatePredicate state (1, pred, _, _) = (convertFunction (function pred)) (evaluatePredicate state (arg1 pred)) (evaluatePredicate state (arg2 pred))
-evaluatePredicate _ _ = error "invalid Predicate Equation"
+boolToBool2 :: (Bool -> Bool -> Bool) -> ConstantValue -> ConstantValue -> ConstantValue
+boolToBool2 function (ConstantBool cArg1) (ConstantBool cArg2) = ConstantBool (function cArg1 cArg2)
+boolToBool2 _ _ _ = error "illegal arguments"
 
 
-nextVariable :: State -> [PredicateValue] -> [Bool]
-nextVariable state conditions = result
+
+eqFunc :: TwoArgFunc
+eqFunc arg1 arg2 state = result
+  where
+    comparison :: ConstantValue -> ConstantValue -> ConstantValue
+    comparison (ConstantBool cArg1) (ConstantBool cArg2) = ConstantBool (cArg1 == cArg2)
+    comparison (ConstantInteger cArg1) (ConstantInteger cArg2) = ConstantBool (cArg1 == cArg2)
+    comparison (ConstantInteger cArg1) (ConstantDouble cArg2) = ConstantBool (cArg1 == cArg2)
+    comparison (ConstantDouble cArg1) (ConstantInteger cArg2) = ConstantBool (cArg1 == cArg2)
+    comparison (ConstantDouble cArg1) (ConstantDouble cArg2) = ConstantBool (cArg1 == cArg2)
+    comparison _ _ = error "illegal comparison"
+    constantValue1 = evaluateElement arg1 state
+    constantValue2 = evaluateElement arg2 state
+    result = comparison constantValue1 constantValue2
+
+data Element =
+  ElementEquation1 OneArgFunc Element
+  | ElementEquation2 TwoArgFunc Element Element
+  | ElementVariable VariableID
+  | ElementConstant ConstantValue
+
+evaluateElement ::  Element -> State -> ConstantValue
+evaluateElement (ElementConstant val) _ = val
+evaluateElement (ElementVariable varID) state = varIDToVarVal varID state
+evaluateElement (ElementEquation1 curFun arg1) state = curFun arg1 state
+evaluateElement (ElementEquation2 curFun arg1 arg2) state = curFun arg1 arg2 state
+--evaluateElement _ = error "invalid Predicate Equation"
+
+
+getPossibleValues :: [Element] -> State -> [ConstantValue]
+getPossibleValues elements state = possibleValues
   where
     result
       | falsePossible && truePossible = [True, False]
       | truePossible = [True]
       | falsePossible = [False]
       | otherwise = error "no valid value"
-    falsePossible = not (and (map evaluatePredicate conditions))
-    truePossible = or (map evaluatePredicate conditions)
+    --falsePossible = not (and (map (evaluateElement state) conditions))
+    falsePossible = not (all (evaluateElement state) conditions)
+    --truePossible = or (map (evaluateElement state) conditions)
+    truePossible = any (evaluateElement state) conditions
 
-nextState :: [[PredicateValue]] -> VariableID -> State -> [State]
+nextState :: [[Element]] -> VariableID -> State -> [State]
+nextState [] _ state = [state]
 nextState (conditions:future) varID state = nxtStates
   where
-    curStates = map (updateById state varID) (nextVariable state conditions)
-    nxtStates = map (nextState future (varID + 1)) curStates
+    curStates = map (updateByID state varID) (nextVariable state conditions)
+    nxtStates = concatMap (nextState future (varID + 1)) curStates
     
 
 
 main :: IO ()
 main =
   do {
-    mapM_ putStrLn (map stateToString (nextState conds 0 initState))
+    --mapM_ print (nextVariable initState [ElementConstant True, ElementConstant False])
+    --mapM_ (putStrLn . stateToString) (map (updateByID initState 0) (nextVariable initState [ElementConstant True, ElementConstant False]))
+    mapM_ (putStrLn . stateToString) (nextState conds 0 initState)
+    --mapM_ (putStrLn . stateToString) (states)
   }
   where
-    emptyEq = PredicateEquation {0
     initState = State False False False False
-    conds = [[(True], [True, 
+    --initState = State False
+    --states = [State False, State True]
+    conds = [[ElementConstant True], [ElementConstant False, ElementConstant True], [ElementVariable 0], [ElementEquation2 3 (ElementVariable 0) (ElementVariable 1)]]
+    --conds = [[ElementConstant True], [ElementConstant True], [ElementConstant True], [ElementConstant False, ElementConstant True]]
+    --conds = [[ElementConstant True, ElementConstant False]]
+    --conds = [[ElementConstant True]]
+    --conds = [[ElementConstant False]]

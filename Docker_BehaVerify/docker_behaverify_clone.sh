@@ -9,6 +9,7 @@ docker exec behaverify bash -c 'echo /metamodel >> /home/behaverify/behaverify/.
 docker exec behaverify bash -c 'echo /Docker_BehaVerify >> /home/behaverify/behaverify/.git/info/sparse-checkout'
 docker exec -w '/home/behaverify/behaverify' behaverify git checkout
 docker exec behaverify bash -c 'chmod -R +x /home/behaverify/behaverify/Docker_BehaVerify/*.sh'
+docker exec behaverify bash -c 'chmod -R +x /home/behaverify/behaverify/Docker_BehaVerify/Additional_Files/*.sh'
 docker exec behaverify python3 -m venv '/home/behaverify/behaverify_venv'
 docker exec behaverify '/home/behaverify/behaverify_venv/bin/python3' -m pip install --upgrade pip
 docker exec behaverify '/home/behaverify/behaverify_venv/bin/python3' -m pip install -r '/home/behaverify/behaverify/Docker_BehaVerify/Additional_Files/requirements.txt'
