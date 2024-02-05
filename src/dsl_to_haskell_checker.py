@@ -164,9 +164,9 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
         return [case_index(formatted_variable, variable_array_size(variable, declared_enumerations, nodes, variables, constants, misc_args['loop_references']), index_expression)]
 
     def format_function(code, misc_args):
-        '''this just calls the other format functions. moved here to make format_code less cluttered.'''
-        if misc_args['code_mode'] == 'ctl':
-            
+        '''this just calls the other format functions. moved here to make format_code less cluttered.
+        returns ::> (formated string, list of return types of each 
+        ''' 
         (function_name, function_to_call) = function_format[code.function_call.function_name]
         return function_to_call(function_name, code.function_call, misc_args)
 
@@ -1001,42 +1001,43 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
         )
 
     function_format = {
-        'if' : ('', format_function_if),
-        'loop' : ('', format_function_loop),
-        'abs' : ('abs', format_function_before),
-        'max' : ('max', format_function_recursive_before),
-        'min' : ('min', format_function_recursive_before),
-        'sin' : ('sin', format_function_before),
-        'cos' : ('cos', format_function_before),
-        'tan' : ('tan', format_function_before),
-        'ln' : ('ln', format_function_before),
-        'not' : ('!', format_function_before),
-        'and' : ('&', format_function_between),
-        'or' : ('|', format_function_between),
-        'xor' : ('xor', format_function_between),
-        'xnor' : ('xnor', format_function_between),
-        'implies' : ('->', format_function_between),
-        'equivalent' : ('<->', format_function_between),
-        'eq' : ('=', format_function_between),
-        'neq' : ('!=', format_function_between),
-        'lt' : ('<', format_function_between),
-        'gt' : ('>', format_function_between),
-        'lte' : ('<=', format_function_between),
-        'gte' : ('>=', format_function_between),
-        'neg' : ('-', format_function_before),
-        'add' : ('+', format_function_between),
-        'sub' : ('-', format_function_between),
-        'mult' : ('*', format_function_between),
-        'idiv' : ('/', format_function_integer_division),
-        'mod' : ('mod', format_function_between),
-        'rdiv' : ('/', format_function_between),
-        'floor' : ('floor', format_function_before),
-        'count' : ('count', format_function_before),
-        'index' : ('index', format_function_index),
-        'active' : ('.active', format_function_after),
-        'success' : ('.status = success', format_function_after),
-        'running' : ('.status = running', format_function_after),
-        'failure' : ('.status = failure', format_function_after),
+        # (name, overwrite, inputs, output)
+        'if' : ('', None, , 'input'),
+        'loop' : ('', None, -1, ),
+        'abs' : ('abs', None, 1),
+        'max' : ('max', None, 2),
+        'min' : ('min', None, 2),
+        'sin' : ('sin', None, 1),
+        'cos' : ('cos', None, 1),
+        'tan' : ('tan', None, 1),
+        'ln' : ('ln', None, 1),
+        'not' : ('!', None, 1),
+        'and' : ('&', None, 2),
+        'or' : ('|', None, 2),
+        'xor' : ('xor', None, 2),
+        'xnor' : ('xnor', None, 2),
+        'implies' : ('->', None, 2),
+        'equivalent' : ('<->', None, 2),
+        'eq' : ('=', None, 2),
+        'neq' : ('!=', None, 2),
+        'lt' : ('<', None, 2),
+        'gt' : ('>', None, 2),
+        'lte' : ('<=', None, 2),
+        'gte' : ('>=', None, 2),
+        'neg' : ('-', None, 1),
+        'add' : ('+', None, 2),
+        'sub' : ('-', None, 2),
+        'mult' : ('*', None, 2),
+        'idiv' : ('/', None, 2),
+        'mod' : ('mod', None, 2),
+        'rdiv' : ('/', None, 2),
+        'floor' : ('floor', None, 2),
+        'count' : ('count', None, 2),
+        'index' : ('index', None, -2),
+        'active' : ('.active', None, 1),
+        'success' : ('.status = success', None, 1),
+        'running' : ('.status = running', None, 1),
+        'failure' : ('.status = failure', None, 1),
         # 'next' : ('X', format_function_before),
         # 'globally' : ('G', format_function_before),
         # 'globally_bounded' : ('G', format_function_before_bounded),
@@ -1056,14 +1057,14 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
         # 'since_bounded' : ('S', format_function_between_bounded),
         # 'triggered' : ('T', format_function_between),
         # 'triggered_bounded' : ('T', format_function_between_bounded),
-        'exists_globally' : ('EG', format_function_before),
-        'exists_next' : ('EX', format_function_before),
-        'exists_finally' : ('EF', format_function_before),
-        'exists_until' : (('E', 'U'), format_function_before_between),
-        'always_globally' : ('AG', format_function_before),
-        'always_next' : ('CTLAlwaysNext', format_function_before),
-        'always_finally' : ('AF', format_function_before),
-        'always_until' : (('A', 'U'), format_function_before_between)
+        'exists_globally' : ('EG', 'ExistsGlobally', 1),
+        'exists_next' : ('EX', 'ExistsNext', 1),
+        'exists_finally' : ('EF', 'ExistsFinally', 1),
+        'exists_until' : (('E', 'U'), 'ExistsUntil', 2),
+        'always_globally' : ('AG', 'AlwaysGlobally', 1),
+        'always_next' : ('CTLAlwaysNext', 'AlwaysNext', 1),
+        'always_finally' : ('AF', 'AlwaysFinally', 1),
+        'always_until' : (('A', 'U'), 'AlwaysUntil', 2)
     }
     create_node = {
         'sequence' : create_composite,
