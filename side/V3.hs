@@ -193,28 +193,23 @@ nextStates state = nextStates
     
 reachableStates = reachableStatesFunc Set.empty initialStates
   where
-    reachableStates_ :: Set.Set State -> Set.Set State -> Set.Set State
-    reachableStates_ seenStates statesToExplore
+    reachableStatesFunc :: Set.Set State -> Set.Set State -> Set.Set State
+    reachableStatesFunc seenStates statesToExplore
       | Set.null unvisitedStates = seenStates
       | otherwise = reachable
       where
         unvisitedStates = Set.difference statesToExplore seenStates
-        reachable = reachableStates (Set.union seenStates unvisitedStates) (Set.unions (Set.map nextStates unvisitedStates))
+        reachable = reachableStatesFunc (Set.union seenStates unvisitedStates) (Set.unions (Set.map nextStates unvisitedStates))
 
-
-constructStateMap :: [[Element]] -> [[Element]] -> State -> StateMap
-constructStateMap initialElements nextElements defaultState = stateMap
+stateMap = constructStateMap
   where
-    initialStates = nextState initialElements 0 defaultState
-    dummyNextState :: [[Element]] -> VariableID -> State -> a -> Set.Set State
-    dummyNextState arg1 arg2 arg3 _ = nextState arg1 arg2 arg3
-    populateStateMap :: StateMap -> StateMap -> StateMap
-    populateStateMap  seenMap exploreMap
-      | Map.null toExploreMap = seenMap
+    constructStateMap :: StateMap -> StateMap -> StateMap
+    constructStateMap seenMap toExploreMap
+      | Map.null unvisitedMap = seenMap
       | otherwise = fullMap
       where
-        toExploreMap = Map.difference exploreMap seenMap
-        exploredMap = Map.mapWithKey (dummyNextState nextElements 0) toExploreMap
+        unvisitedMap = Map.difference toExploreMap seenMap
+        exploredMap = Map.mapWithKey (dummyNextState nextElements 0) unvisitedMap
         newSeenMap = Map.union exploredMap seenMap
         nextExplore = Map.fromList [(newState, Set.empty) | newState <- Set.toList (Set.unions (Map.elems exploredMap))]
         fullMap = populateStateMap newSeenMap nextExplore
