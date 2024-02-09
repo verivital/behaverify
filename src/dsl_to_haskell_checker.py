@@ -3,7 +3,7 @@ This module is part of BehaVerify and used to convert .tree files to .smv files 
 
 
 Author: Serena Serafina Serbinowska
-Last Edit: 2024-02-02
+Last Edit: 2024-02-09
 '''
 import argparse
 import pprint
@@ -164,6 +164,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
     def format_variable_non_object(variable, variable_key, misc_args):
         if misc_args['define_substitutions'] is not None:
             return misc_args['define_substitutions'][variable_key]
+        # probably add a condition here that goes through and checks if we want state or just name.
         return (
             ('(' + variable['name'] + '___ ' + ' '.join([('(' + format_variable_non_object(behaverify_variables[dependant_variable_key], dependant_variable_key, misc_args) + ' state)') for dependant_variable_key in variable['depends_on']]) + ')')
             if variable['mode'] == 'DEFINE' else
