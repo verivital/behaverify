@@ -14,7 +14,7 @@ from behaverify_to_smv import write_smv
 from serene_functions import build_meta_func
 from check_grammar import validate_model
 
-from behaverify_common import create_node_name, create_node_template, create_variable_template, indent, is_local, is_array, handle_constant_or_reference, handle_constant_or_reference_no_type, resolve_potential_reference_no_type, variable_array_size, get_min_max
+from behaverify_common import create_node_name, create_node_template, create_variable_template, indent, is_local, is_array, handle_constant_or_reference, handle_constant_or_reference_no_type, resolve_potential_reference_no_type, variable_array_size, get_min_max, BTreeException
 
 # a NEXT_VALUE is defined as a triple (node_name, non_determinism, STAGE)
 # node_name is a string representing the node where this update happens or none if it's environmental
@@ -59,114 +59,44 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
         return return_vals
 
     def format_function_if(_, function_call, misc_args):
-        return ['(' + format_code(function_call.values[0], misc_args)[0] + ' ? ' + format_code(function_call.values[1], misc_args)[0] + ' : ' + format_code(function_call.values[2], misc_args)[0] + ')']
+        return ['(ifThenElse ' + format_code(function_call.values[0], misc_args)[0] + ' ' + format_code(function_call.values[1], misc_args)[0] + ' ' + format_code(function_call.values[2], misc_args)[0] + ')']
 
     def format_function_loop(_, function_call, misc_args):
         return execute_loop(function_call, format_code, function_call.values[0], misc_args)
 
-    def format_function_before(function_name, function_call, misc_args):
-        '''function_name(vals)'''
-        return [
-            function_name + '('
-            + ', '.join([', '.join(format_code(value, misc_args)) for value in function_call.values])
-            + ')'
-        ]
-
-    def format_function_recursive_before(function_name, function_call, misc_args):
-        '''function_name(vals)'''
+    def format_function_ctl(function_name, function_call, misc_args):
+        '''this is used to format the majority of functions'''
         formatted_values = []
         for value in function_call.values:
             formatted_values.extend(format_code(value, misc_args))
-        return [
-            ''.join([(function_name + '(' + formatted_value + ', ') for formatted_value in formatted_values[0:-2]])
-            + function_name + '(' + formatted_values[-2] + ', ' + formatted_values[-1] + ')'
-            + ')'*(len(formatted_values[0:-2]))
-        ]
+        if len(formatted_values) <= 0:
+            raise BTreeException([], 'no arguments for function')
+        return ['(' + function_name + ' ' + ' '.join([('(\\state -> ' + formatted_value + ')') for formatted_value in formatted_values])]
 
-    def format_function_between(function_name, function_call, misc_args):
-        '''(vals function_name vals)'''
-        return [
-            '('
-            + (' ' + function_name + ' ').join([(' ' + function_name + ' ').join(format_code(value, misc_args)) for value in function_call.values])
-            + ')'
-        ]
-
-    def format_function_integer_division(function_name, function_call, misc_args):
-        '''(vals function_name vals)'''
-        return [
-            ('floor' if use_reals else '') + '('
-            + (' ' + function_name + ' ').join([(' ' + function_name + ' ').join(format_code(value, misc_args)) for value in function_call.values])
-            + ')'
-        ]
-
-    def format_function_after(function_name, function_call, misc_args):
-        '''(node_name.function_name)'''
-        return [
-            '('
-            + (('system' + (('_' + str(misc_args['trace_num'])) if hyper_mode else '') + '.') if misc_args['specification_writing'] else '')
-            + function_call.node_name
-            + function_name
-            + ')'
-        ]
-
-    def format_function_before_bounded(function_name, function_call, misc_args):
-        '''function_name [min, max] (vals)'''
-        (min_val, max_val) = get_min_max(function_call.bound.lower_bound, function_call.bound.upper_bound, declared_enumerations, nodes, variables, constants, misc_args['loop_references'])
-        return [
-            function_name + ' [' + str(min_val) + ', ' + str(max_val) + '] '  '('
-            + ', '.join([', '.join(format_code(value, misc_args)) for value in function_call.values])
-            + ')'
-        ]
-
-    def format_function_between_bounded(function_name, function_call, misc_args):
-        ''' honestly not sure '''
-        (min_val, max_val) = get_min_max(function_call.bound.lower_bound, function_call.bound.upper_bound, declared_enumerations, nodes, variables, constants, misc_args['loop_references'])
-        formatted_values = []
-        for value in function_call.values:
-            formatted_values.extend(format_code(value, misc_args))
-        return ['(' + (' ' + function_name + ' [' + str(min_val) + ', ' + str(max_val) + '] ').join(formatted_values) + ')']
-
-    def format_function_before_between(function_name, function_call, misc_args):
-        '''probably some spec thing'''
-        formatted_values = []
-        for value in function_call.values:
-            formatted_values.extend(format_code(value, misc_args))
+    def format_function_default_recursion(function_name, formatted_values, index):
         return (
-            function_name[0] + '['
-            + (' ' + function_name[1] + ' ').join(formatted_values)
-            + ']'
+            ('(' + function_name + ' ' + formatted_values[index] + ')')
+            if len(formatted_values) - index == 0 else
+            (
+                ('(' + function_name + ' ' + formatted_values[index] + ' ' + formatted_values[index + 1] + ')')
+                if len(formatted_values) - index == 1 else
+                ('(' + function_name + ' ' + formatted_values[index] + ' ' + format_function_default_recursion(function_name, formatted_values, index + 1) + ')')
             )
-
-    def case_index(formatted_variable, array_size, index_expression):
-        return (
-            '(case '
-            + ''.join(
-                map(
-                    lambda index:
-                    str(index) + ' = ' + index_expression + ' : ' + formatted_variable + '_index_' + str(index) + '; '
-                    ,
-                    range(array_size)
-                )
-            )
-            + 'esac)'
         )
 
-    def format_function_index(_, function_call, misc_args):
-        new_misc_args = adjust_args(function_call, misc_args)
-        var_func = build_meta_func(function_call.to_index)
-        variable = resolve_potential_reference_no_type(var_func((constants, new_misc_args['loop_references']))[0], declared_enumerations, nodes, variables, constants, new_misc_args['loop_references'])[1]
-        formatted_variable = format_variable(variable, new_misc_args)
-        if function_call.constant_index == 'constant_index':
-            index_func = build_meta_func(function_call.values[0])
-            index = resolve_potential_reference_no_type(index_func((constants, new_misc_args['loop_references']))[0], declared_enumerations, nodes, variables, constants, new_misc_args['loop_references'])[1]
-            return [formatted_variable + '_index_' + str(index)]
-        index_expression = format_code(function_call.values[0], new_misc_args)[0]
-        return [case_index(formatted_variable, variable_array_size(variable, declared_enumerations, nodes, variables, constants, misc_args['loop_references']), index_expression)]
+    def format_function_default(function_name, function_call, misc_args):
+        '''this is used to format the majority of functions'''
+        formatted_values = []
+        for value in function_call.values:
+            formatted_values.extend(format_code(value, misc_args))
+        if len(formatted_values) <= 0:
+            raise BTreeException([], 'no arguments for function')
+        return [format_function_default_recursion(function_name, formatted_values, 0)]
 
     def format_function(code, misc_args):
         '''this just calls the other format functions. moved here to make format_code less cluttered.
         returns ::> (formated string, list of return types of each 
-        ''' 
+        '''
         (function_name, function_to_call) = function_format[code.function_call.function_name]
         return function_to_call(function_name, code.function_call, misc_args)
 
@@ -217,14 +147,6 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
         formatted_variable = format_variable(variable, new_misc_args)
         return used_variables + [(formatted_variable + '_index_' + str(index)) for index in range(variable_array_size(variable, declared_enumerations, nodes, variables, constants, new_misc_args['loop_references']))]
 
-    def assemble_variable(name, stage, trace_num, specification_writing):
-        '''This method should only be called by format variable.'''
-        return (
-            (('system' + (('_' + str(trace_num)) if hyper_mode else '') + '.') if specification_writing else '')
-            + name
-            + '_stage_' + str(stage)
-        )
-
     def format_variable(variable_obj, misc_args):
         '''
         -- GLOBALS
@@ -240,33 +162,13 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
         return format_variable_non_object(variable, variable_key, misc_args)
 
     def format_variable_non_object(variable, variable_key, misc_args):
-        use_stages = misc_args['use_stages']
-        overwrite_stage = misc_args['overwrite_stage']
-        trace_num = misc_args['trace_num']
-        specification_writing = misc_args['specification_writing']
-        specification_warning = misc_args['specification_warning']
         if misc_args['define_substitutions'] is not None:
             return misc_args['define_substitutions'][variable_key]
-
-        if variable['mode'] == 'DEFINE':
-            if overwrite_stage is not None and len(variable['next_value']) > 0:
-                return assemble_variable(variable['name'], compute_stage(variable_key, misc_args), trace_num, specification_writing)
-            used_vars = tuple(format_variable_non_object(behaverify_variables[dependant_variable_key], dependant_variable_key, misc_args) for dependant_variable_key in variable['depends_on'])
-            if used_vars not in variable['existing_definitions']:
-                variable['existing_definitions'][used_vars] = len(variable['existing_definitions'])
-            stage = variable['existing_definitions'][used_vars]
-            return assemble_variable(variable['name'], stage, trace_num, specification_writing)
-        # the not define variables are formatted below.
-        if use_stages and (len(variable['next_value']) == 0 or overwrite_stage == 0):
-            if specification_warning and not variable['keep_stage_0']:
-                print('A specification is preventing the removal of stage 0 for: ' + variable['name'])
-            variable['keep_stage_0'] = True
-        if use_stages and (overwrite_stage is None or overwrite_stage < 0 or overwrite_stage == len(variable['next_value'])):
-            # we don't need to subtract one from len of next_value because we have one stage not represented in next_value.
-            if specification_warning and not variable['keep_last_stage']:
-                print('A specification is preventing the removal of last stage for: ' + variable['name'])
-            variable['keep_last_stage'] = True
-        return assemble_variable(variable['name'], compute_stage(variable_key, misc_args), trace_num, specification_writing)
+        return (
+            ('(' + variable['name'] + '___ ' + ' '.join([('(' + format_variable_non_object(behaverify_variables[dependant_variable_key], dependant_variable_key, misc_args) + ' state)') for dependant_variable_key in variable['depends_on']]) + ')')
+            if variable['mode'] == 'DEFINE' else
+            ('(' + variable['name'] + '___ state)')
+        )
 
     def adjust_args(code, misc_args):
         '''
@@ -1002,69 +904,50 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
 
     function_format = {
         # (name, overwrite, inputs, output)
-        'if' : ('', None, , 'input'),
-        'loop' : ('', None, -1, ),
-        'abs' : ('abs', None, 1),
-        'max' : ('max', None, 2),
-        'min' : ('min', None, 2),
-        'sin' : ('sin', None, 1),
-        'cos' : ('cos', None, 1),
-        'tan' : ('tan', None, 1),
-        'ln' : ('ln', None, 1),
-        'not' : ('!', None, 1),
-        'and' : ('&', None, 2),
-        'or' : ('|', None, 2),
-        'xor' : ('xor', None, 2),
-        'xnor' : ('xnor', None, 2),
-        'implies' : ('->', None, 2),
-        'equivalent' : ('<->', None, 2),
-        'eq' : ('=', None, 2),
-        'neq' : ('!=', None, 2),
-        'lt' : ('<', None, 2),
-        'gt' : ('>', None, 2),
-        'lte' : ('<=', None, 2),
-        'gte' : ('>=', None, 2),
-        'neg' : ('-', None, 1),
-        'add' : ('+', None, 2),
-        'sub' : ('-', None, 2),
-        'mult' : ('*', None, 2),
-        'idiv' : ('/', None, 2),
-        'mod' : ('mod', None, 2),
-        'rdiv' : ('/', None, 2),
-        'floor' : ('floor', None, 2),
-        'count' : ('count', None, 2),
-        'index' : ('index', None, -2),
-        'active' : ('.active', None, 1),
-        'success' : ('.status = success', None, 1),
-        'running' : ('.status = running', None, 1),
-        'failure' : ('.status = failure', None, 1),
-        # 'next' : ('X', format_function_before),
-        # 'globally' : ('G', format_function_before),
-        # 'globally_bounded' : ('G', format_function_before_bounded),
-        # 'finally' : ('F', format_function_before),
-        # 'finally_bounded' : ('F', format_function_before_bounded),
-        # 'until' : ('U', format_function_between),
-        # 'until_bounded' : ('U', format_function_between_bounded),
-        # 'release' : ('V', format_function_between),
-        # 'release_bounded' : ('V', format_function_between_bounded),
-        # 'previous' : ('Y', format_function_before),
-        # 'not_previous_not' : ('Z', format_function_before),
-        # 'historically' : ('H', format_function_before),
-        # 'historically_bounded' : ('H', format_function_before_bounded),
-        # 'once' : ('O', format_function_before),
-        # 'once_bounded' : ('O', format_function_before_bounded),
-        # 'since' : ('S', format_function_between),
-        # 'since_bounded' : ('S', format_function_between_bounded),
-        # 'triggered' : ('T', format_function_between),
-        # 'triggered_bounded' : ('T', format_function_between_bounded),
-        'exists_globally' : ('EG', 'ExistsGlobally', 1),
-        'exists_next' : ('EX', 'ExistsNext', 1),
-        'exists_finally' : ('EF', 'ExistsFinally', 1),
-        'exists_until' : (('E', 'U'), 'ExistsUntil', 2),
-        'always_globally' : ('AG', 'AlwaysGlobally', 1),
-        'always_next' : ('CTLAlwaysNext', 'AlwaysNext', 1),
-        'always_finally' : ('AF', 'AlwaysFinally', 1),
-        'always_until' : (('A', 'U'), 'AlwaysUntil', 2)
+        'if' : ('ifThenElse', format_function_if),
+        'loop' : ('loop', format_function_loop),
+        'abs' : ('abs', format_function_default),
+        'max' : ('max', format_function_default),
+        'min' : ('min', format_function_default),
+        'sin' : ('sin', format_function_default),
+        'cos' : ('cos', format_function_default),
+        'tan' : ('tan', format_function_default),
+        'ln' : ('log', format_function_default),
+        'not' : ('not', format_function_default),
+        'and' : ('(&&)', format_function_default),
+        'or' : ('(||)', format_function_default),
+        'xor' : ('sereneXOR', format_function_default),
+        'xnor' : ('sereneXNOR', format_function_default),
+        'implies' : ('sereneIMPLIES', format_function_default),
+        'equivalent' : ('(==)', format_function_default),
+        'eq' : ('(==)', format_function_default),
+        'neq' : ('(/=)', format_function_default),
+        'lt' : ('(<)', format_function_default),
+        'gt' : ('(>)', format_function_default),
+        'lte' : ('(<=)', format_function_default),
+        'gte' : ('(>=)', format_function_default),
+        'neg' : ('negate', format_function_default),
+        'add' : ('(+)', format_function_default),
+        'sub' : ('(-)', format_function_default),
+        'mult' : ('(*)', format_function_default),
+        'idiv' : ('quot', format_function_default),  #quot does integer division and rounds to 0.
+        'mod' : ('mod', format_function_default),
+        'rdiv' : ('/', format_function_default),
+        'floor' : ('floor', format_function_default),
+        'count' : ('count', format_function_default),
+        'index' : ('(!)', format_function_default),
+        'active' : ('.active', format_function_default),
+        'success' : ('.status = success', format_function_default),
+        'running' : ('.status = running', format_function_default),
+        'failure' : ('.status = failure', format_function_default),
+        'exists_globally' : ('ctlEG', format_function_ctl),
+        'exists_next' : ('ctlEX', format_function_ctl),
+        'exists_finally' : ('ctlEF', format_function_ctl),
+        'exists_until' : ('ctlEU', format_function_ctl),
+        'always_globally' : ('ctlAG', format_function_ctl),
+        'always_next' : ('ctlAX', format_function_ctl),
+        'always_finally' : ('ctlAF', format_function_ctl),
+        'always_until' : ('ctlAU', format_function_ctl)
     }
     create_node = {
         'sequence' : create_composite,

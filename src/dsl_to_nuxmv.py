@@ -416,6 +416,8 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
                     index = format_code(statement.index_of, misc_args)[0]
                     next_value = (misc_args['node_name'], False, non_determinism,
                                   [(index, [(format_code(statement.condition, misc_args)[0], '{TRUE, FALSE}' if non_determinism else 'TRUE'), ('TRUE', 'FALSE')])])
+            else:
+                next_value = (misc_args['node_name'], non_determinism, [(format_code(statement.condition, misc_args)[0], '{TRUE, FALSE}' if non_determinism else 'TRUE'), ('TRUE', 'FALSE')])
         else:
             # this means it was a variable_statement
             next_value = handle_variable_statement(statement, condition, misc_args)
@@ -427,7 +429,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
         # if force_last_stage is false, then if this variable shows up in someone elses update after this point, we'll keep the last stage
         # if it never shows up after this point, then we can axe it.
         # note: keep_stage_0 takes precedence
-        if read_statement_assign_condition:
+        if read_statement_assign_condition and is_array(assign_var):
             return index
         return None
 
@@ -449,7 +451,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
     def resolve_statements(statements, nodes):
         def handle_read_statement(statement, misc_args):
             if statement.condition_variable is not None:
-                index = handle_variable_assignment(statement, None, True, misc_args)
+                index = handle_variable_assignment(statement, None, True, misc_args) # if it's not an array, index will be filled with None, but we don't midn that.
                 condition = (
                     '!('
                     + (

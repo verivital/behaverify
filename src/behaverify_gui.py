@@ -11,6 +11,7 @@ from tkinter import ttk
 import graphviz
 from dsl_to_nuxmv import dsl_to_nuxmv
 from behaverify_common import BTreeException, indent
+import traceback
 
 def handle_smv(trace_file_string):
     smv_run = []  # an array of dicts where each dict maps node_names to statuses and maps var_names to dicts which map integers (stages) to values.
@@ -515,6 +516,7 @@ def main():
             root_node_name = get_root_from_BehaVerify_json(nodes)
             status_text.config(text = 'Imported DSL, root node name: ' + root_node_name)
         except Exception as error:
+            print(traceback.format_exc())
             print(error)
             status_text.config(text = 'An exception occurred during Import: ' + str(error))
     def visualize_trace():
