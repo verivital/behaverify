@@ -29,6 +29,17 @@ initialStates = iStates
     varA_init = varA_init_func 0
     varB_init = Set.singleton (IArray.array (0, 3) [(i, 0) | i <- [0..3]])
     iStates = Set.fromList [State varA_val varB_val | varA_val <- Set.toList varA_init, varB_val <- Set.toList varB_init]
+  
+initialStates2 :: Set.Set State
+initialStates2 = iStates
+  where
+    varA_init_func :: Integer -> Set.Set Integer
+    varA_init_func _ = result_true
+      where
+        result_true = Set.fromList [1, 3]
+    varA_init = varA_init_func 0
+    varB_init = Set.fromList [IArray.array (0, 0) [(0, 0)], IArray.array (0, 0) [(0, 2)]]
+    iStates = Set.fromList [State varA_val varB_val | varA_val <- Set.toList varA_init, varB_val <- Set.toList varB_init]
       
 
 nextStates :: State -> Set.Set State
@@ -219,6 +230,7 @@ main =
     ; print ctl1
     ; print ctl2
     ; print ctl3
+    ; print initialStates2
     -- ; print (evaluateCTLAllInitial initialStates stateMap ctlSpec1)
     -- ; print (evaluateCTLAllInitial initialStates stateMap ctlSpec2)
     -- ; print (evaluateCTLAllInitial initialStates stateMap ctlSpec3)
