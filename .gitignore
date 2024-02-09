@@ -4,6 +4,7 @@
 *.fuse
 *.hi
 *.o
+*.nope
 *.goutputstream-*
 **/__pycache__/**
 __pycache__/
