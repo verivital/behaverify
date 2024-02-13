@@ -6,6 +6,10 @@ To recreate tests, see REPRODUCIBILITY.
 
 Older versions can be found in subfolders of /src/versions/. The documentation for older versions may not be accurate.
 
+# References
+
+Serbinowski, B., Johnson, T.T. (2022). BehaVerify: Verifying Temporal Logic Specifications for Behavior Trees. In: Schlingloff, BH., Chai, M. (eds) Software Engineering and Formal Methods. SEFM 2022. Lecture Notes in Computer Science, vol 13550. Springer, Cham. https://doi.org/10.1007/978-3-031-17108-6_19
+
 # Installation/Requirements
 
 We have no reason to believe that BehaVerify would work only on Ubuntu 22.04. However, that is the only system we have tested on.
