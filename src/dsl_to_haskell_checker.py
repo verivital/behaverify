@@ -3,18 +3,17 @@ This module is part of BehaVerify and used to convert .tree files to .smv files 
 
 
 Author: Serena Serafina Serbinowska
-Last Edit: 2024-02-09
+Last Edit: 2024-02-12
 '''
 import argparse
 import pprint
 import os
-import itertools
 import copy
 from behaverify_to_smv import write_smv
 from serene_functions import build_meta_func
 from check_grammar import validate_model
 
-from behaverify_common import create_node_name, create_node_template, create_variable_template, indent, is_local, is_array, handle_constant_or_reference, handle_constant_or_reference_no_type, resolve_potential_reference_no_type, variable_array_size, get_min_max, BTreeException
+from behaverify_common import create_node_name, create_node_template, create_variable_template, indent, is_local, is_array, handle_constant_or_reference, handle_constant_or_reference_no_type, resolve_potential_reference_no_type, variable_array_size, get_min_max, BTreeException, variable_type
 
 # a NEXT_VALUE is defined as a triple (node_name, non_determinism, STAGE)
 # node_name is a string representing the node where this update happens or none if it's environmental
@@ -23,7 +22,7 @@ from behaverify_common import create_node_name, create_node_template, create_var
 # if the condition is true, then the result is used.
 # the last condition should always be TRUE
 
-def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_last_stage, do_not_trim, behave_only, recursion_limit, return_values):
+def dsl_to_nuxmv(metamodel_file, model_file, output_file, recursion_limit):
     '''
     This method is used to convert the dsl to behaverify.
     '''
@@ -100,7 +99,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
         (function_name, function_to_call) = function_format[code.function_call.function_name]
         return function_to_call(function_name, code.function_call, misc_args)
 
-    def create_misc_args(loop_references, node_name, use_stages, overwrite_stage, define_substitutions, specification_writing, specification_warning):
+    def create_misc_args(define_call, loop_references, node_name, specification_mode):
         '''
         -- ARGUMENTS
         @ node_name := the name of the node which caused this to be called. used for formatting local variables.
@@ -108,46 +107,24 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
         @ overwrite_stage := overwrite which stage we're asking for.
         '''
         return {
+            'define_call' : define_call,
             'loop_references' : loop_references,
             'node_name' : node_name,
-            'use_stages' : use_stages,
-            'overwrite_stage' : overwrite_stage,
-            'define_substitutions' : define_substitutions,
-            'trace_num' : 1,  # this can only be modified when dealing with specifications.
-            'specification_writing' : specification_writing,
-            'specification_warning' : specification_warning
+            'specification_mode' : specification_mode
         }
 
-    def compute_stage(variable_key, misc_args):
-        variable = behaverify_variables[variable_key]
-        overwrite_stage = misc_args['overwrite_stage']
-        last_stage = (len(variable['existing_definitions']) - 1) if variable['mode'] == 'DEFINE' else len(variable['next_value'])
-        # if define:  minus one because stage 0 appears when we first create a definition
-        # if not define: no minus one. Stage 0 always created.
-        return (last_stage if overwrite_stage is None or overwrite_stage < 0 else min(overwrite_stage, last_stage))
+    def format_variable_name_only(variable, misc_args):
+        return (
+            (((misc_args['node_name'] + '___') if is_local(variable) else '') + variable.name + '___DEF')
+            if variable.model_as == 'DEFINE' else
+            (
+                (((misc_args['node_name'] + '___') if is_local(variable) else '') + variable.name + '___')
+                if misc_args['specification_mode'] else
+                (((misc_args['node_name'] + '___') if is_local(variable) else '') + variable.name + '___VAL')
+            )
+        )
 
-    def find_used_variables(code, misc_args):
-        '''Returns the list of used variables (will also format them)'''
-        if code.atom is not None:
-            (atom_class, atom) = handle_constant_or_reference_no_type(code.atom, declared_enumerations, nodes, variables, constants, misc_args['loop_references'])
-            return [format_variable(atom, adjust_args(code, misc_args))] if atom_class == 'VARIABLE' else []
-        if code.code_statement is not None:
-            return find_used_variables(code.code_statement, misc_args)
-        function_call = code.function_call
-        if function_call.function_name == 'loop':
-            return execute_loop(function_call, find_used_variables, function_call.values[0], misc_args)
-        used_variables = []
-        for value in function_call.values:
-            used_variables.extend(find_used_variables(value, misc_args))
-        if function_call.function_name != 'index':
-            return used_variables
-        var_func = build_meta_func(function_call.to_index)
-        variable = resolve_potential_reference_no_type(var_func((constants, misc_args['loop_references']))[0], declared_enumerations, nodes, variables, constants, misc_args['loop_references'])[1]
-        new_misc_args = adjust_args(function_call, misc_args)
-        formatted_variable = format_variable(variable, new_misc_args)
-        return used_variables + [(formatted_variable + '_index_' + str(index)) for index in range(variable_array_size(variable, declared_enumerations, nodes, variables, constants, new_misc_args['loop_references']))]
-
-    def format_variable(variable_obj, misc_args):
+    def format_variable(variable, misc_args):
         '''
         -- GLOBALS
         @ variables := a dict of all variables
@@ -157,40 +134,31 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
         @ use_stages := are we using stages for this?
         @ overwrite_stage := overwrite which stage we're asking for.
         '''
-        variable_key = variable_reference(variable_obj.name, is_local(variable_obj), misc_args['node_name'])
-        variable = behaverify_variables[variable_key]
-        return format_variable_non_object(variable, variable_key, misc_args)
-
-    def format_variable_non_object(variable, variable_key, misc_args):
-        if misc_args['define_substitutions'] is not None:
-            return misc_args['define_substitutions'][variable_key]
-        # probably add a condition here that goes through and checks if we want state or just name.
         return (
-            ('(' + variable['name'] + '___ ' + ' '.join([('(' + format_variable_non_object(behaverify_variables[dependant_variable_key], dependant_variable_key, misc_args) + ' state)') for dependant_variable_key in variable['depends_on']]) + ')')
-            if variable['mode'] == 'DEFINE' else
-            ('(' + variable['name'] + '___ state)')
+            misc_args['define_call'][format_variable_name_only(variable, misc_args)]
+            if variable.model_as == 'DEFINE' else
+            (
+                ('(' + format_variable_name_only(variable, misc_args) + ' state)')
+                if misc_args['specification_mode'] else
+                format_variable_name_only(variable, misc_args)
+            )
         )
 
     def adjust_args(code, misc_args):
         '''
-        creates a new arg based on the old one, but modifies it. should only be used by format_code
+        creates a new arg based on the old one, but modifies it (if necessary). should only be used by format_code
         Declared not as nested function cuz that would tank performance.
         '''
-        new_misc_args = copy_misc_args(misc_args)
         if code.node_name is not None:
+            new_misc_args = copy_misc_args(misc_args)
             node_name_func = build_meta_func(code.node_name)
             new_misc_args['node_name'] = resolve_potential_reference_no_type(node_name_func((constants, new_misc_args['loop_references']))[0], declared_enumerations, nodes, variables, constants, new_misc_args['loop_references'])[1]
-        if code.read_at is not None:
-            read_at_func = build_meta_func(code.read_at)
-            new_misc_args['overwrite_stage'] = resolve_potential_reference_no_type(read_at_func((constants, new_misc_args['loop_references']))[0], declared_enumerations, nodes, variables, constants, new_misc_args['loop_references'])[1]
-        if code.trace_num is not None:
-            trace_num_func = build_meta_func(code.trace_num)
-            new_misc_args['trace_num'] = resolve_potential_reference_no_type(trace_num_func((constants, new_misc_args['loop_references']))[0], declared_enumerations, nodes, variables, constants, new_misc_args['loop_references'])[1]
-        return new_misc_args
+            return new_misc_args
+        return misc_args
 
     def handle_atom(code, misc_args):
         (atom_class, atom_type, atom) = handle_constant_or_reference(code.atom, declared_enumerations, nodes, variables, constants, misc_args['loop_references'])
-        return (str(atom).upper() if atom_type == 'BOOLEAN' else str(atom)) if atom_class == 'CONSTANT' else (format_variable(atom, adjust_args(code, misc_args)))
+        return (str(atom).capitalize() if atom_type == 'BOOLEAN' else str(atom)) if atom_class == 'CONSTANT' else (format_variable(atom, adjust_args(code, misc_args)))
 
     def format_code(code, misc_args):
         return (
@@ -201,297 +169,133 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
             )
         )
 
-    def handle_result(result, misc_args):
-        '''should only be called by handle_assign'''
+    def handle_case_result(case_result, case_number, misc_args):
+        guard_string = indent(misc_args['indent_level']) + 'guard_' + str(case_number) + ' = ' + (
+            format_code(case_result.condition, misc_args)
+            if hasattr(case_result, 'condition') else
+            'True'
+        ) + os.linesep
         vals = []
-        for value in result.values:
+        for value in case_result.values:
             vals.extend(format_code(value, misc_args))
-        non_determinism = len(vals) > 1
-        return (non_determinism, ('{' + ', '.join(vals) + '}') if non_determinism else vals[0])
+        value_string = ''.join([
+            (indent(misc_args['indent_level']) + 'value_' + str(case_number) + '_' + str(value_number) + ' = ' + value + os.linesep)
+            for (value_number, value) in enumerate(vals)
+        ])
+        return (
+            guard_string + value_string,
+            indent(misc_args['indent_level'] + 1) + '| guard_' + str(case_number) + ' = ' + (
+                ('Set.singleton value_' + str(case_number) + '_0')
+                if len(vals) > 1 else
+                ('Set.fromList [' + ', '.join(map(lambda x: 'value_' + str(case_number) + '_' + str(x), range(len(vals)))) + ']')
+            ) + os.linesep
+        )
 
-    def handle_assign(assign, misc_args):
-        '''should only be called by handle_variable_statement'''
-        condition_results = []
-        case_results = assign.case_results
-        default_result = assign.default_result
-        non_determinism = False
-        for case_result in case_results:
-            (new_non_det, result) = handle_result(case_result, misc_args)
-            non_determinism = non_determinism or new_non_det
-            condition_results.append((format_code(case_result.condition, misc_args)[0], result))
-        (new_non_det, result) = handle_result(default_result, misc_args)
-        non_determinism = non_determinism or new_non_det
-        condition_results.append(('TRUE', result))
-        return (non_determinism, condition_results)
+    def handle_assign_value(variable, assign_value, misc_args):
+        case_result_strings = [handle_case_result(case_result, case_number, misc_args) for (case_number, case_result) in enumerate(assign_value.case_results)] + [handle_case_result(assign_value.default_result, len(assign_value.case_results), misc_args)]
+        return (
+            indent(misc_args['indent_level']) + '-- for ' + format_variable_name_only(variable, misc_args) + os.linesep
+            + ''.join(map(lambda x: x[0], case_result_strings))
+            + indent(misc_args['indent_level']) + 'values' + os.linesep
+            + ((indent(misc_args['indent_level'] + 1) + '| ' + misc_args['inactive_condition'] + ' = ' + format_variable_name_only(variable, misc_args) + os.linesep) if misc_args['inactive_condition'] is not None else '')
+            + ''.join(map(lambda x: x[1], case_result_strings))
+            + indent(misc_args['indent_level']) + 'result = Set.foldr (Set.union . next_func) Set.empty values' + os.linesep
+            + indent(misc_args['indent_level'] + 1) + 'where' + os.linesep
+            + indent(misc_args['indent_level'] + 2) + 'next_func :: ' + variable_type(variable) + ' -> Set.Set State' + os.linesep
+            + indent(misc_args['indent_level'] + 2) + 'next_func ' + format_variable_name_only(variable, misc_args) + ' = result' + os.linesep
+            + indent(misc_args['indent_level'] + 3) + 'where' + os.linesep
+        )
 
-    def handle_array_constant_index_loop(packaged_args, misc_args):
-        (loop_array_index, formatted_variable, condition) = packaged_args
-        non_determinism = {}
-        stage = []
-        if loop_array_index.array_index is not None:
-            (cur_non_determinism, cur_condition_results) = handle_assign(loop_array_index.array_index.assign, misc_args)
-            for index_code in loop_array_index.array_index.index_expr:
-                index_func = build_meta_func(index_code)
-                for index in index_func((constants, misc_args['loop_references'])):
-                    new_index = resolve_potential_reference_no_type(index, declared_enumerations, nodes, variables, constants, misc_args['loop_references'])[1]
-                    non_determinism[new_index] = cur_non_determinism
-                    stage.append((new_index,
-                                  ([] if condition is None else [(condition, formatted_variable + '_index_' + str(new_index))]) + cur_condition_results))
-        else:
-            for (new_stage, new_non_determinism) in execute_loop(loop_array_index, handle_array_constant_index_loop, (loop_array_index.loop_array_index, formatted_variable, condition), misc_args):
-                stage.extend(new_stage)
-                non_determinism.update(new_non_determinism)
-        return [(stage, non_determinism)]
+    def handle_return_statement(node_name, return_statement, misc_args):
+        return (
+            indent(misc_args['indent_level']) + '-- for ' + node_name + os.linesep
+            + indent(misc_args['indent_level']) + 'values' + os.linesep
+            + ((indent(misc_args['indent_level'] + 1) + '| ' + misc_args['inactive_condition'] + ' = Invalid' + os.linesep) if misc_args['inactive_condition'] is not None else '')
+            + ''.join(
+                [
+                    (indent(misc_args['indent_level'] + 1) + '| ' + format_code(case_result.condition, misc_args) + ' = ' + format_return_status(case_result.status))
+                    for case_result in return_statement.case_results
+                ]
+            )
+            + (indent(misc_args['indent_level'] + 1) + '| otherwise = ' + format_return_status(return_statement.status_default_result.status))
+            + indent(misc_args['indent_level']) + 'result = Set.foldr (Set.union . next_func) Set.empty values' + os.linesep
+            + indent(misc_args['indent_level'] + 1) + 'where' + os.linesep
+            + indent(misc_args['indent_level'] + 2) + 'next_func :: NodeStatus -> Set.Set State' + os.linesep
+            + indent(misc_args['indent_level'] + 2) + 'next_func ' + node_name + '___val = result' + os.linesep
+            + indent(misc_args['indent_level'] + 3) + 'where' + os.linesep
+        )
 
-    def handle_array_constant_index(variable_statement, condition, misc_args):
-        assign_var = variable_statement.variable if hasattr(variable_statement, 'variable') else variable_statement
-        non_determinism = {}
-        stage = []
-        formatted_variable = format_variable(assign_var, misc_args)
-        for loop_array_index in variable_statement.assigns:
-            (new_stage, new_non_determinism) = handle_array_constant_index_loop((loop_array_index, formatted_variable, condition), misc_args)[0]
-            stage.extend(new_stage)
-            non_determinism.update(new_non_determinism)
-        return (misc_args['node_name'], True, non_determinism, stage)
-
-    def handle_array_unknown_index_loop(packaged_args, misc_args):
-        (loop_array_index, formatted_variable, array_size, condition) = packaged_args
-        non_determinism = False
-        stage = []
-        if loop_array_index.array_index is not None:
-            (cur_non_determinism, cur_condition_results) = handle_assign(loop_array_index.array_index.assign, misc_args)
-            non_determinism = non_determinism or cur_non_determinism
-            for index_code in loop_array_index.array_index.index_expr:
-                for index in format_code(index_code, misc_args):
-                    stage.append((index,
-                                  ([] if condition is None else [(condition, case_index(formatted_variable, array_size, index))]) + cur_condition_results))
-        else:
-            for (cur_condition_results, new_non_determinism) in execute_loop(loop_array_index, handle_array_unknown_index_loop, (loop_array_index.loop_array_index, formatted_variable, array_size, condition), misc_args):
-                stage.extend(cur_condition_results)
-                non_determinism = non_determinism or new_non_determinism
-        return [(stage, non_determinism)]
-
-    def handle_array_unknown_index(variable_statement, condition, misc_args):
-        assign_var = variable_statement.variable if hasattr(variable_statement, 'variable') else variable_statement
-        non_determinism = False
-        stage = []
-        formatted_variable = format_variable(assign_var, misc_args)
-        array_size = -1 if condition is None else variable_array_size(assign_var, declared_enumerations, nodes, variables, constants, misc_args['loop_references']) # the point is we only want to do this calcultion if codition is not None
-        for loop_array_index in variable_statement.assigns:
-            (new_stage, new_non_determinism) = handle_array_unknown_index_loop((loop_array_index, formatted_variable, array_size, condition), misc_args)[0]
-            stage.extend(new_stage)
-            non_determinism = non_determinism or new_non_determinism
-        return (misc_args['node_name'], False, non_determinism, stage)
-
-    def handle_variable_statement(variable_statement, condition, misc_args):
+    def handle_variable_statement(variable_statement, misc_args):
         '''should only be called if init_mode is true or from variable_assignment'''
         assign_var = variable_statement.variable if hasattr(variable_statement, 'variable') else variable_statement
+        # if is_array(assign_var):
+        #     return (
+        #         handle_array_constant_index(variable_statement, condition, misc_args)
+        #         if variable_statement.constant_index == 'constant_index' else
+        #         handle_array_unknown_index(variable_statement, condition, misc_args)
+        #     )
         if is_array(assign_var):
-            return (
-                handle_array_constant_index(variable_statement, condition, misc_args)
-                if variable_statement.constant_index == 'constant_index' else
-                handle_array_unknown_index(variable_statement, condition, misc_args)
+            raise ValueError
+        return (handle_assign_value(assign_var, variable_statement.assign, misc_args), misc_args['indent_level'] + 4)
+
+    def handle_write_statement(write_statement, misc_args):
+        new_misc_args = copy_misc_args(misc_args)
+        result = ''
+        for variable_statement in write_statement.update:
+            (new_string, new_indent) = handle_variable_statement(variable_statement, new_misc_args)
+            result += new_string
+            new_misc_args['indent_level'] = new_indent
+        return (result, new_misc_args['indent_level'])
+
+    def handle_read_statement(read_statement, misc_args):
+        new_misc_args = copy_misc_args(misc_args)
+        result = (
+            indent(new_misc_args['indent_level']) + '-- for READ STATEMENT: ' + str(read_statement.name) + os.linesep
+            + indent(new_misc_args['indent_level']) + 'values' + os.linesep
+            + ((indent(new_misc_args['indent_level'] + 1) + '| ' + new_misc_args['inactive_condition'] + ' = Set.singleton False' + os.linesep) if new_misc_args['inactive_condition'] is not None else '')
+            + indent(new_misc_args['indent_level'] + 1) + '| ' + format_code(read_statement.condition, new_misc_args) + ' = ' + ('Set.fromList [True, False]' if read_statement.non_determinism else 'Set.singleton True') + os.linesep
+            + indent(new_misc_args['indent_level'] + 1) + '| otherwise = Set.singleton False' + os.linesep
+            + indent(misc_args['indent_level']) + 'result = Set.foldr (Set.union . next_func) Set.empty values' + os.linesep
+            + indent(misc_args['indent_level'] + 1) + 'where' + os.linesep
+            + indent(misc_args['indent_level'] + 2) + 'next_func :: Bool -> Set.Set State' + os.linesep
+            + indent(misc_args['indent_level'] + 2) + 'next_func read_condition = result' + os.linesep
+            + indent(misc_args['indent_level'] + 3) + 'where' + os.linesep
+        )
+        new_misc_args['indent_level'] += 4
+        if read_statement.condition_variable is not None:
+            if is_array(read_statement.condition_variable):
+                raise ValueError
+            result += (
+                indent(new_misc_args['indent_level']) + 'values' + os.linesep
+                + ((indent(misc_args['indent_level'] + 1) + '| ' + new_misc_args['inactive_condition'] + ' = ' + format_variable_name_only(read_statement.condition_variable, misc_args) + os.linesep) if new_misc_args['inactive_condition'] is not None else '')
+                + indent(misc_args['indent_level'] + 1) + '| read_condition = ' + (('Set.fromList [True, False]') if read_statement.non_determinism == 'non_determinism' else 'Set.singleton True') + os.linesep
+                + indent(misc_args['indent_level'] + 1) + '| otherwise = Set.singleton False' + os.linesep
+                + indent(misc_args['indent_level']) + 'result = Set.foldr (Set.union . next_func) Set.empty values' + os.linesep
+                + indent(misc_args['indent_level'] + 1) + 'where' + os.linesep
+                + indent(misc_args['indent_level'] + 2) + 'next_func :: Bool -> Set.Set State' + os.linesep
+                + indent(misc_args['indent_level'] + 2) + 'next_func ' + format_variable_name_only(read_statement.condition_variable, new_misc_args) + ' = result' + os.linesep
+                + indent(misc_args['indent_level'] + 3) + 'where' + os.linesep
             )
-        (non_determinism, stage) = handle_assign(variable_statement.assign, misc_args)
-        return (misc_args['node_name'], non_determinism, ([] if condition is None else [(condition, format_variable(assign_var, misc_args))]) + stage)
+            new_misc_args['indent_level'] += 4
+        new_misc_args['inactive_condition'] = '(||) ' + new_misc_args['inactive_condition'] + '(not read_condition)'
+        for variable_statement in read_statement.variable_statements:
+            (new_string, new_indent) = handle_variable_statement(variable_statement, new_misc_args)
+            result += new_string
+            new_misc_args['indent_level'] = new_indent
+        return (result, new_misc_args['indent_level'])
 
-    def handle_variable_assignment(statement, condition, read_statement_assign_condition, misc_args):
-        '''
-        this handles variable assignment
-        this should be called if you have a variable assignment and it is not initial
-        if you have an initial variable value, call handle_variable_statement
-        We keep this seperate so we can track stage removal.
-        '''
-        assign_var = statement.condition_variable if read_statement_assign_condition else (statement.variable if hasattr(statement, 'variable') else statement)
-
-        variable_key = variable_reference(assign_var.name, is_local(assign_var), misc_args['node_name'])
-        variable = behaverify_variables[variable_key]
-        keep_stage_0 = variable['keep_stage_0']
-        # keep_last_stage = variable['keep_last_stage']
-        # we don't need to track keep_last_stage here, because we're going to reset the value after adding a new stage anyways. see below.
-        if read_statement_assign_condition:
-            non_determinism = statement.non_determinism == 'non_determinism'
-            if is_array(assign_var):
-                if statement.constant_index == 'constant_index':
-                    index_func = build_meta_func(statement.index_of)
-                    index = resolve_potential_reference_no_type(index_func((constants, misc_args['loop_references']))[0], declared_enumerations, nodes, variables, constants, misc_args['loop_references'])[1]
-                    next_value = (misc_args['node_name'], True, {index : non_determinism},
-                                  [(index, [(format_code(statement.condition, misc_args)[0], '{TRUE, FALSE}' if non_determinism else 'TRUE'), ('TRUE', 'FALSE')])])
-                else:
-                    index = format_code(statement.index_of, misc_args)[0]
-                    next_value = (misc_args['node_name'], False, non_determinism,
-                                  [(index, [(format_code(statement.condition, misc_args)[0], '{TRUE, FALSE}' if non_determinism else 'TRUE'), ('TRUE', 'FALSE')])])
-        else:
-            # this means it was a variable_statement
-            next_value = handle_variable_statement(statement, condition, misc_args)
-            non_determinism = next_value[-2]
-        keep_stage_0 = keep_stage_0 or (not non_determinism)  # there is no point in deleting stage_0 if stage_1 was going to be deterministic.
-        variable['next_value'].append(next_value)
-        variable['keep_stage_0'] = keep_stage_0
-        variable['keep_last_stage'] = variable['force_last_stage']  # and now we've reset it. if force_last_stage is true, this will ensure we use the last stage
-        # if force_last_stage is false, then if this variable shows up in someone elses update after this point, we'll keep the last stage
-        # if it never shows up after this point, then we can axe it.
-        # note: keep_stage_0 takes precedence
-        if read_statement_assign_condition:
-            return index
-        return None
-
-    def handle_specifications(specifications):
-        '''this handles specifications'''
-        return [
+    def handle_statement(statement, misc_args):
+        return (
+            handle_variable_statement(statement.variable_statement, misc_args)
+            if statement.variable_statement is not None else
             (
-                specification.spec_type
-                + ' '
-                + format_code(specification.code_statement, create_misc_args(loop_references = {}, node_name = None, use_stages = True, overwrite_stage = None, define_substitutions = None, specification_writing = True, specification_warning = True))[0]
-                + ';'
+                handle_read_statement(statement.read_statement, misc_args)
+                if statement.read_statement is not None else
+                handle_write_statement(statement.write_statement, misc_args)
             )
-            for specification in specifications
-        ]
+        )
 
-    def variable_reference(base_name, _is_local_, node_name):
-        return ((node_name + '_DOT_' + base_name) if _is_local_ else base_name)
-
-    def resolve_statements(statements, nodes):
-        def handle_read_statement(statement, misc_args):
-            if statement.condition_variable is not None:
-                index = handle_variable_assignment(statement, None, True, misc_args)
-                condition = (
-                    '!('
-                    + (
-                        (
-                            format_variable(statement.condition_variable, misc_args) + '_index_' + str(index)
-                            if statement.constant_index == 'constant_index' else
-                            case_index(format_variable(statement.condition_variable, misc_args),
-                                       variable_array_size(statement.condition_variable, declared_enumerations, nodes, variables, constants, misc_args['loop_references']),
-                                       index
-                                       )
-                        )
-                        if is_array(statement.condition_variable) else
-                        format_variable(statement.condition_variable, misc_args)
-                    )
-                    + ')'
-                )
-            else:
-                condition = '!(' + format_code(statement.condition, misc_args)[0] + ')'
-            for variable_statement in statement.variable_statements:
-                handle_variable_assignment(variable_statement, condition, False, misc_args)
-            return
-
-        def handle_write_statement(statement, misc_args):
-            delayed = []
-            for var_update in statement.update:
-                if var_update.instant:
-                    handle_variable_assignment(var_update, None, False, misc_args)
-                else:
-                    delayed.append((misc_args['node_name'], argument_pairs, var_update))
-            return delayed
-
-        def handle_return_statement(statement, nodes, misc_args):
-            node_name = misc_args['node_name']
-            node = nodes[node_name]
-            statuses = {result.status for result in itertools.chain([statement.default_result], statement.case_results)}
-            node['return_possibilities']['success'] = 'success' in statuses
-            node['return_possibilities']['running'] = 'running' in statuses
-            node['return_possibilities']['failure'] = 'failure' in statuses
-            variable_list = []
-            if not (len(statement.case_results) == 0 or len(statuses) == 1):
-                for case_result in statement.case_results:
-                    variable_list += find_used_variables(case_result.condition, misc_args)
-            variable_list = sorted(list(set(variable_list)))
-            node['additional_arguments'] = variable_list
-            node['internal_status_module_name'] = (
-                None
-                if (len(statement.case_results) == 0 or len(statuses) == 1) else
-                (
-                    node_name + '_module'
-                )
-            )
-            node['internal_status_module_code'] = (
-                None
-                if (len(statement.case_results) == 0 or len(statuses) == 1) else
-                (
-                    'MODULE ' + node_name + '_module(' + ', '.join(variable_list) + ')' + os.linesep
-                    + indent(1) + 'CONSTANTS' + os.linesep
-                    + indent(2) + 'success, failure, running, invalid;' + os.linesep
-                    + indent(1) + 'DEFINE' + os.linesep
-                    + indent(2) + 'status := active ? internal_status : invalid;' + os.linesep
-                    + indent(2) + 'internal_status := ' + os.linesep
-                    + indent(3) + 'case' + os.linesep
-                    + ('').join([(indent(4) + ''
-                                  + format_code(case_result.condition, misc_args)[0]
-                                  + ' : '
-                                  + case_result.status
-                                  + ';' + os.linesep)
-                                 for case_result in statement.case_results])
-                    + indent(4) + 'TRUE : ' + statement.default_result.status + ';' + os.linesep
-                    + indent(3) + 'esac;' + os.linesep
-                )
-            )
-            return
-
-        def handle_condition(condition, nodes, misc_args):
-            node_name = misc_args['node_name']
-            node = nodes[node_name]
-            variable_list = find_used_variables(condition, misc_args)
-            variable_list = sorted(list(set(variable_list)))
-            node['additional_arguments'] = variable_list
-            node['internal_status_module_name'] = node_name + '_module'
-            node['internal_status_module_code'] = (
-                'MODULE ' + node_name + '_module(' + ', '.join(variable_list) + ')' + os.linesep
-                + indent(1) + 'CONSTANTS' + os.linesep
-                + indent(2) + 'success, failure, running, invalid;' + os.linesep
-                + indent(1) + 'DEFINE' + os.linesep
-                + indent(2) + 'status := active ? internal_status : invalid;' + os.linesep
-                + indent(2) + 'internal_status := ('
-                + format_code(condition, misc_args)[0]
-                + ') ? success : failure;' + os.linesep
-            )
-            return
-
-        delayed_statements = []
-        for (node_name, argument_pairs, statement_type, statement) in statements:
-            for argument_name in argument_pairs:
-                constants[argument_name] = argument_pairs[argument_name]
-            if statement_type == 'check':
-                handle_condition(statement, nodes, create_misc_args(loop_references = {}, node_name = node_name, use_stages = True, overwrite_stage = None, define_substitutions = None, specification_writing = False, specification_warning = False))
-            elif statement_type == 'return':
-                handle_return_statement(statement, nodes, create_misc_args(loop_references = {}, node_name = node_name, use_stages = True, overwrite_stage = None, define_substitutions = None, specification_writing = False, specification_warning = False))
-            else:
-                if statement.variable_statement is not None:
-                    handle_variable_assignment(statement.variable_statement, None, False, create_misc_args(loop_references = {}, node_name = node_name, use_stages = True, overwrite_stage = None, define_substitutions = None, specification_writing = False, specification_warning = False))
-                elif statement.read_statement is not None:
-                    handle_read_statement(statement.read_statement, create_misc_args(loop_references = {}, node_name = node_name, use_stages = True, overwrite_stage = None, define_substitutions = None, specification_writing = False, specification_warning = False))
-                else:
-                    delayed_statements += handle_write_statement(statement.write_statement, create_misc_args(loop_references = {}, node_name = node_name, use_stages = True, overwrite_stage = None, define_substitutions = None, specification_writing = False, specification_warning = False))
-            for argument_name in argument_pairs:
-                constants.pop(argument_name)
-        for (node_name, argument_pairs, statement) in delayed_statements:
-            for argument_name in argument_pairs:
-                constants[argument_name] = argument_pairs[argument_name]
-            handle_variable_assignment(statement, None, False, create_misc_args(loop_references = {}, node_name = node_name, use_stages = True, overwrite_stage = None, define_substitutions = None, specification_writing = False, specification_warning = False))
-            for argument_name in argument_pairs:
-                constants.pop(argument_name)
-        return
-
-    def complete_environment_variables(model, pre_tick):
-        '''
-        completes the environment variables.
-        -- arguments
-        @ model := a model.
-        @ variables := a dictionary of variables
-        @ local_variables := a dictionary of local variables that will be used to create new variable
-        @ delayed_statements := a list of statements that need to be processed now
-        -- return
-        no return
-        -- side effects
-        changes variables.
-        '''
-        for statement in model.update:
-            if statement.instant == pre_tick:
-                # things marked as instant happen before the tick. pre_tick means before the tick. This is called twice, once before and once after.
-                handle_variable_assignment(statement, None, False, create_misc_args(loop_references = {}, node_name = None, use_stages = True, overwrite_stage = None, define_substitutions = None, specification_writing = False, specification_warning = False))
-
-    def get_behaverify_variables(model, local_variables, initial_statements, keep_stage_0, keep_last_stage):
+    def create_define_statements(model, local_variables, initial_statements):
         '''
         this constructs and returns variables and local variables.
         variables are constructed based on variables and environment_variables
@@ -508,7 +312,18 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
         def find_used_variables_without_formatting_in_code(code, misc_args):
             if code.atom is not None:
                 (atom_class, atom) = handle_constant_or_reference_no_type(code.atom, declared_enumerations, nodes, variables, constants, misc_args['loop_references'])
-                return [variable_reference(atom.name, is_local(atom), misc_args['node_name'])] if atom_class == 'VARIABLE' else []
+                return (
+                    (
+                        known_dependencies[format_variable_name_only(atom, misc_args)]
+                        if atom.model_as == 'DEFINE' else
+                        [(
+                            format_variable_name_only(atom, create_misc_args(define_call = None, loop_references = None, node_name = misc_args['node_name'], specification_mode = False)),
+                            format_variable_name_only(atom, create_misc_args(define_call = None, loop_references = None, node_name = misc_args['node_name'], specification_mode = True)),
+                            variable_type(atom, declared_enumerations, constants)
+                        )]
+                    )
+                    if atom_class == 'VARIABLE' else []
+                )
             if code.code_statement is not None:
                 return find_used_variables_without_formatting_in_code(code.code_statement, misc_args)
             function_call = code.function_call
@@ -522,7 +337,11 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
             var_func = build_meta_func(function_call.to_index)
             variable = resolve_potential_reference_no_type(var_func((constants, misc_args['loop_references']))[0], declared_enumerations, nodes, variables, constants, misc_args['loop_references'])[1]
             new_misc_args = adjust_args(function_call, misc_args)
-            used_variables.append(variable_reference(variable.name, is_local(variable), new_misc_args['node_name']))
+            used_variables.append((
+                format_variable_name_only(variable, create_misc_args(define_call = None, loop_references = None, node_name = new_misc_args['node_name'], specification_mode = False)),
+                format_variable_name_only(variable, create_misc_args(define_call = None, loop_references = None, node_name = new_misc_args['node_name'], specification_mode = True)),
+                variable_type(atom, declared_enumerations, constants)
+            ))
             return used_variables
 
         def find_used_variables_without_formatting_in_assign(assign, misc_args):
@@ -546,14 +365,15 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
             return execute_loop(loop_array_index, find_used_variables_without_formatting_in_loop_array_index, (loop_array_index.loop_array_index, is_constant), misc_args)
 
         def find_used_variables_without_formatting_in_statement(statement, array_mode, node_name):
+            misc_args = create_misc_args(define_call = {}, loop_references = {}, node_name = node_name, specification_mode = False)
             if array_mode:
                 used_variables = []
                 is_constant = statement.constant_index == 'constant_index'
                 for loop_array_index in statement.assigns:
-                    used_variables.extend(find_used_variables_without_formatting_in_loop_array_index((loop_array_index, is_constant), create_misc_args(loop_references = {}, node_name = node_name, use_stages = False, overwrite_stage = False, define_substitutions = None, specification_writing = False, specification_warning = False)))
-                used_variables.extend(find_used_variables_without_formatting_in_assign(statement.default_value, create_misc_args(loop_references = {}, node_name = node_name, use_stages = False, overwrite_stage = False, define_substitutions = None, specification_writing = False, specification_warning = False)))
+                    used_variables.extend(find_used_variables_without_formatting_in_loop_array_index((loop_array_index, is_constant), misc_args))
+                used_variables.extend(find_used_variables_without_formatting_in_assign(statement.default_value, misc_args))
                 return used_variables
-            return find_used_variables_without_formatting_in_assign(statement.assign, create_misc_args(loop_references = {}, node_name = node_name, use_stages = False, overwrite_stage = False, define_substitutions = None, specification_writing = False, specification_warning = False))
+            return find_used_variables_without_formatting_in_assign(statement.assign, misc_args)
 
         def create_possible_values(var_keys):
             # does not work with local variables. Doesn't need to; neural networks cannot be local, and therefore cannot depends on local variables.
@@ -607,191 +427,29 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
             variable['custom_value_range'] = domain_values
             return
 
-        # create each variable type using the template.
-        nonlocal behaverify_variables  # this is necessary right now because we need to be able to access already created variables during other variable initializations.
-        # specifically, if we make var A, and then var B depends on var A, it will assume var A is in behaverify_variables
-        var_key_to_obj = {variable_reference(variable.name, False, None) : variable for variable in model.variables if not is_local(variable)} if model.neural else None
-        behaverify_variables = {
-            variable_reference(variable.name, False, '') :
-            (
-                create_variable_template(variable.name, 'DEFINE', variable_array_size(variable, {}, {}, {}, constants, {}), None, None, None, [], True, True)
-                if variable.model_as == 'NEURAL' else
-                (
-                    create_variable_template(variable.name, variable.model_as, variable_array_size(variable, {}, {}, {}, constants, {}) if is_array(variable) else None, None, None, None, [], True, True)
-                    if variable.model_as == 'DEFINE' else
-                    create_variable_template(variable.name, variable.model_as, variable_array_size(variable, {}, {}, {}, constants, {}) if is_array(variable) else None,
-                                             (
-                                                 {True, False}
-                                                 if variable.domain.boolean is not None else
-                                                 (
-                                                     'integer'
-                                                     if variable.domain.true_int is not None else
-                                                     (
-                                                         'real'
-                                                         if variable.domain.true_real is not None else
-                                                         (
-                                                             None
-                                                             if variable.domain.min_val is not None else
-                                                             {val for domain_code in variable.domain.domain_codes for val in build_meta_func(domain_code)((constants, {}))}
-                                                         )
-                                                     )
-                                                 )
-                                             ),
-                                             get_min_max(variable.domain.min_val, variable.domain.max_val, {}, {}, {}, constants, {}),
-                                             None, [], keep_stage_0, keep_last_stage
-                                             )
-                )
-            ) for variable in model.variables if not is_local(variable)
-        }
-        local_variable_templates = {
-            variable.name :
-            (
-                create_variable_template(variable.name, variable.model_as, variable_array_size(variable, {}, {}, {}, constants, {}) if is_array(variable) else None, None, None, None, [], True, True)
-                if variable.model_as == 'DEFINE' else
-                create_variable_template(variable.name, variable.model_as, variable_array_size(variable, {}, {}, {}, constants, {}) if is_array(variable) else None,
-                                         (
-                                             {True, False}
-                                             if variable.domain.boolean is not None else
-                                             (
-                                                 'integer'
-                                                 if variable.domain.true_int is not None else
-                                                 (
-                                                     'real'
-                                                     if variable.domain.true_real is not None else
-                                                     (
-                                                         None
-                                                         if variable.domain.min_val is not None else
-                                                         {val for domain_code in variable.domain.domain_codes for val in build_meta_func(domain_code)((constants, {}))}
-                                                     )
-                                                 )
-                                             )
-                                         ),
-                                         get_min_max(variable.domain.min_val, variable.domain.max_val, {}, {}, {}, constants, {}),
-                                         None, [], keep_stage_0, keep_last_stage
-                                         )
-            )
-            for variable in model.variables if is_local(variable)
-        }
+        known_dependencies = {}
+        definition_functions = {}
+        definition_function_calls_spec = {}
+        definition_function_calls_iter = {}
+        misc_args_fake = create_misc_args(define_call = {}, loop_references = {}, node_name = None, specification_mode = True)
         for variable in model.variables:
-            var_key = variable_reference(variable.name, is_local(variable), '')
-            if is_local(variable):
-                continue  # this is handled below
-            if variable.model_as == 'NEURAL':
-                behaverify_variables[variable.name]['existing_definitions'] = {}
-                depends_on = set()
-                domain_values = set()
-                input_order = []
-                for input_code in variable.inputs:
-                    input_func = build_meta_func(input_code)
-                    variable_inputs = input_func((constants, {}))
-                    for variable_input in variable_inputs:
-                        (atom_class, atom) = resolve_potential_reference_no_type(variable_input, declared_enumerations, {}, variables, constants, {})
-                        if atom_class == 'VARIABLE':
-                            depends_on.add(variable_reference(atom.name, False, None))
-                        input_order.append((atom_class, atom))
-                behaverify_variables[var_key]['depends_on'] = tuple(sorted(list(depends_on)))
-                define_substitutions = {
-                    sub_key : 'SUBSTITUTE_' + str(index) + '_ME'
-                    for (index, sub_key) in enumerate(behaverify_variables[var_key]['depends_on'])
-                }
-                define_substitutions[var_key] = 'SUBSTITUTE_SELF'
-                list_of_list_of_inputs = create_possible_values(behaverify_variables[var_key]['depends_on'])
-                file_prefix = model_file.rsplit('/', 1)[0]
-                source_func = build_meta_func(variable.source)
-                source_vals = source_func((constants, {}))
-                source = source_vals[0]
-                source = resolve_potential_reference_no_type(source, declared_enumerations, {}, variables, constants, {})[1]
-                source = file_prefix + '/' + source
-                session = onnxruntime.InferenceSession(source)
-                input_name = session.get_inputs()[0].name
-                cur_stage = []
-                for index in range(behaverify_variables[var_key]['array_size']):
-                    cur_stage.append((index, []))
-                for list_of_inputs in list_of_list_of_inputs:
-                    cur_ref = dict(list_of_inputs)
-                    current_input = []
-                    for (atom_class, atom) in input_order:
-                        if atom_class == 'VARIABLE':
-                            current_input.append(cur_ref[atom.name])
-                        else:
-                            current_input.append(atom)
-                    current_outputs = session.run(None, {input_name : [current_input]})
-                    condition = ' & '.join(['(' + define_substitutions[variable_reference(var_name, False, None)] + ' = ' + str(var_val) + ')' for (var_name, var_val) in list_of_inputs])
-                    for index in range(len(current_outputs[0][0])):
-                        output = int(current_outputs[0][0][index])
-                        cur_stage[index][1].append((condition, str(output)))
-                        domain_values.add(output)
-                for index in range(behaverify_variables[var_key]['array_size']):
-                    cur_stage[index][1].append(('TRUE', '66'))
-                behaverify_variables[var_key]['initial_value'] = (None, True, {index : False for index in range(behaverify_variables[var_key]['array_size'])}, cur_stage)
-                behaverify_variables[var_key]['custom_value_range'] = domain_values
-                behaverify_variables[var_key]['default_array_val'] = (False, [('TRUE', '66')])
-                continue  # don't do the other stuff for neural networks
-            define_substitutions = None
             if variable.model_as == 'DEFINE':
-                behaverify_variables[variable.name]['existing_definitions'] = {}
-                behaverify_variables[var_key]['depends_on'] = tuple(sorted(list(set(find_used_variables_without_formatting_in_statement(variable, is_array(variable), None)))))
-                define_substitutions = {
-                    sub_key : 'SUBSTITUTE_' + str(index) + '_ME'
-                    for (index, sub_key) in enumerate(behaverify_variables[var_key]['depends_on'])
-                }
-                define_substitutions[var_key] = 'SUBSTITUTE_SELF'
-            behaverify_variables[var_key]['initial_value'] = handle_variable_statement(variable, None, create_misc_args(loop_references = {}, node_name = None, use_stages = True, overwrite_stage = None, define_substitutions = define_substitutions, specification_writing = False, specification_warning = False))
-            if is_array(variable):
-                behaverify_variables[var_key]['default_array_val'] = handle_assign(variable.default_value, create_misc_args(loop_references = {}, node_name = None, use_stages = True, overwrite_stage = None, define_substitutions = define_substitutions, specification_writing = False, specification_warning = False))
-        # at this point we've finished everything that isn't a local variable.
-        # create local variables.
-        for (node_name, variable) in local_variables:
-            var_key = variable_reference(variable.name, True, node_name)
-            new_var = copy.deepcopy(local_variable_templates[variable.name])
-            behaverify_variables[var_key] = new_var
-            behaverify_variables[var_key]['name'] = var_key
-            define_substitutions = None
-            if variable.model_as == 'DEFINE':
-                behaverify_variables[var_key]['existing_definitions'] = {}
-                behaverify_variables[var_key]['depends_on'] = tuple(sorted(list(set(find_used_variables_without_formatting_in_statement(variable, is_array(variable), None)))))
-                define_substitutions = {
-                    sub_key : 'SUBSTITUTE_' + str(index) + '_ME'
-                    for (index, sub_key) in enumerate(behaverify_variables[var_key]['depends_on'])
-                }
-                define_substitutions[var_key] = 'SUBSTITUTE_SELF'
-            behaverify_variables[var_key]['initial_value'] = handle_variable_statement(variable, None, create_misc_args(loop_references = {}, node_name = node_name, use_stages = True, overwrite_stage = None, define_substitutions = define_substitutions, specification_writing = False, specification_warning = False))
-            if is_array(variable):
-                behaverify_variables[var_key]['default_array_val'] = handle_assign(variable.default_value, create_misc_args(loop_references = {}, node_name = None, use_stages = True, overwrite_stage = None, define_substitutions = define_substitutions, specification_writing = False, specification_warning = False))
-        # handle initial statements FOR DEFINE ONLY.
-        # we have to parse and update this first. only after that can we go through non-define macros.
-        # this is so we populate the definitions and what not.
-        for (node_name, argument_pairs, initial_statement) in initial_statements:
-            for argument_name in argument_pairs:
-                constants[argument_name] = argument_pairs[argument_name]
-            assign_var = initial_statement.variable
-            if assign_var.model_as == 'DEFINE':
-                var_key = variable_reference(assign_var.name, is_local(assign_var), node_name)
-                behaverify_variables[var_key]['existing_definitions'] = {}
-                behaverify_variables[var_key]['depends_on'] = tuple(sorted(list(set(find_used_variables_without_formatting_in_statement(initial_statement, is_array(assign_var), node_name)))))
-                define_substitutions = {
-                    sub_key : 'SUBSTITUTE_' + str(index) + '_ME'
-                    for (index, sub_key) in enumerate(behaverify_variables[var_key]['depends_on'])
-                }
-                define_substitutions[var_key] = 'SUBSTITUTE_SELF'
-                behaverify_variables[var_key]['initial_value'] = handle_variable_statement(initial_statement, None, create_misc_args(loop_references = {}, node_name = node_name, use_stages = True, overwrite_stage = None, define_substitutions = define_substitutions, specification_writing = False, specification_warning = False))
-                if is_array(assign_var):
-                    behaverify_variables[var_key]['default_array_val'] = handle_assign(initial_statement.default_value, create_misc_args(loop_references = {}, node_name = node_name, use_stages = True,  overwrite_stage = None, define_substitutions = define_substitutions, specification_writing = False, specification_warning = False))
-            for argument_name in argument_pairs:
-                constants.pop(argument_name)
-        # now we go through all the not define.
-        for (node_name, argument_pairs, initial_statement) in initial_statements:
-            for argument_name in argument_pairs:
-                constants[argument_name] = argument_pairs[argument_name]
-            assign_var = initial_statement.variable
-            if assign_var.model_as != 'DEFINE':
-                var_key = variable_reference(assign_var.name, is_local(assign_var), node_name)
-                behaverify_variables[var_key]['initial_value'] = handle_variable_statement(initial_statement, None, create_misc_args(loop_references = {}, node_name = node_name, use_stages = True, overwrite_stage = None, define_substitutions = None, specification_writing = False, specification_warning = False))
-                if is_array(assign_var):
-                    behaverify_variables[var_key]['default_array_val'] = handle_assign(initial_statement.default_value, create_misc_args(loop_references = {}, node_name = node_name, use_stages = True, overwrite_stage = None, define_substitutions = None, specification_writing = False, specification_warning = False))
-            for argument_name in argument_pairs:
-                constants.pop(argument_name)
-        return behaverify_variables
+                depends_on = sorted(list(set(find_used_variables_without_formatting_in_statement(variable, is_array(variable), None))))
+                variable_name = format_variable_name_only(variable, misc_args_fake)
+                known_dependencies[variable_name] = depends_on
+                definition_functions[variable_name] = (
+                    variable_name + ' :: ' + ' -> '.join(map(lambda x : x[2], depends_on)) + (' -> ' if len(depends_on) > 0 else '') + variable_type(variable, declared_enumerations, constants) + os.linesep
+                    + variable_name + ' ' + ' '.join(map(lambda x : x[0], depends_on)) + ' = result' + os.linesep
+                )
+                definition_function_calls_spec[variable_name] = '(' + variable_name + ' ' + ' '.join(map(lambda x : '(' + x[1] + ' stage)')) + ')'
+                definition_function_calls_iter[variable_name] = '(' + variable_name + ' ' + ' '.join(map(lambda x : x[1])) + ')'
+        for variable in model.variables:
+            if variable.model_as == "DEFINE":
+                if is_array(variable):
+                    definition_functions[variable_name] += (
+                        indent(1) + 'where' + os.linesep
+                        + indent(2) + 'default_value = '
+                        )
 
     def create_composite(current_node, node_name, modifier, node_names, node_names_map, parent_name):
         cur_node_names = {node_name}.union(node_names)
@@ -986,9 +644,6 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
             behaverify_variables[var_key]['custom_value_range'] = '{' + ', '.join(map(str, behaverify_variables[var_key]['custom_value_range'])) + '}'
             behaverify_variables[var_key]['custom_value_range'] = behaverify_variables[var_key]['custom_value_range'].replace('{True, False}', 'boolean')
             behaverify_variables[var_key]['custom_value_range'] = behaverify_variables[var_key]['custom_value_range'].replace('{False, True}', 'boolean')
-
-    if return_values:
-        return (nodes, behaverify_variables)
     if behave_only:
         if output_file is None:
             printer = pprint.PrettyPrinter(indent = 4)
@@ -1015,10 +670,6 @@ if __name__ == '__main__':
     arg_parser.add_argument('metamodel_file')
     arg_parser.add_argument('model_file')
     arg_parser.add_argument('output_file')
-    arg_parser.add_argument('--keep_stage_0', action = 'store_true')
-    arg_parser.add_argument('--keep_last_stage', action = 'store_true')
-    arg_parser.add_argument('--do_not_trim', action = 'store_true')
-    arg_parser.add_argument('--behave_only', action = 'store_true')
     arg_parser.add_argument('--recursion_limit', type = int, default = 0)
     args = arg_parser.parse_args()
-    dsl_to_nuxmv(args.metamodel_file, args.model_file, args.output_file, args.keep_stage_0, args.keep_last_stage, args.do_not_trim, args.behave_only, args.recursion_limit, False)
+    dsl_to_nuxmv(args.metamodel_file, args.model_file, args.output_file, args.recursion_limit)
