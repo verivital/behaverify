@@ -44,7 +44,9 @@ initialStates = next_func
                 result = Set.foldr (Set.union . next_func) Set.empty varB_vals
                   where
                     next_func :: Integer -> Set.Set State
-                    next_func varB_val = Set.singleton (State varA_val varB_val Invalid Invalid Invalid)
+                    next_func varB_val = result
+                      where
+                        result = Set.singleton (State varA_val varB_val Invalid Invalid Invalid)
 
 nextStates :: State -> Set.Set State
 nextStates state = next_func
@@ -274,7 +276,7 @@ ctl6 = Set.foldr ((&&) . ctl_func) True initialStates
     ctl_func state = ctlAW (\state -> (==) (varB state) 0) (\state -> (>) (varB state) 0) state
 
 ctl7 ::Bool
-ctl7 = Set.foldr ((&&) .ctl_func) True initialStates
+ctl7 = Set.foldr ((&&) . ctl_func) True initialStates
   where
     ctl_func :: State -> Bool
     ctl_func state = ctlAF (\state -> (>) (varA state) 1) state
