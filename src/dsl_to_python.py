@@ -5,7 +5,7 @@ It contains a variety of utility functions.
 
 
 Author: Serena Serafina Serbinowska
-Last Edit: 2024-01-23
+Last Edit: 2024-02-19
 '''
 import argparse
 import os
@@ -745,22 +745,14 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                 + update_method_action(node)
                 )
 
-    def walk_tree_recursive(current_node, node_names, node_names_map, running_string, variable_print_info):
-        while True:
-            if hasattr(current_node, 'sub_root'):
-                current_node = current_node.sub_root
-                continue
-            current_name = current_node.leaf.name if current_node.name is None else current_node.name
-            if hasattr(current_node, 'leaf'):
-                arguments = current_node.arguments
-                current_node = current_node.leaf
-            break
-        # next, we get the name of this node, and correct for duplication
-        new_name = create_node_name(current_name, node_names, node_names_map)
-        node_name = new_name[0]
-        modifier = new_name[1]
+    def walk_tree_recursive(current_node, node_names, running_string, variable_print_info):
+        while hasattr(current_node, 'sub_root'):
+            current_node = current_node.sub_root
+        node_name = current_node.name if hasattr(current_node, 'name') and current_node.name is not None else current_node.leaf.name
+        if hasattr(current_node, 'leaf'):
+            arguments = current_node.arguments
+            current_node = current_node.leaf
         node_names.add(node_name)
-        node_names_map[node_name] = modifier
 
         if current_node.node_type in ('check', 'environment_check', 'action'):
             running_string += (indent(1) + node_name + ' = ' + current_node.name + '_file.' + current_node.name + '(' + "'" + node_name + "'"
@@ -786,30 +778,30 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                                + ')' + os.linesep)
             if current_node.node_type == 'action':
                 variable_print_info[node_name] = current_node.local_variables
-            return (node_name, node_names, node_names_map, running_string, variable_print_info)
+            return (node_name, node_names, running_string, variable_print_info)
         if current_node.node_type == 'X_is_Y':
             if current_node.x == current_node.y:
                 raise ValueError('Decorator ' + current_node.name + ' has the same X and Y. Exiting.')
             decorator_type = current_node.x.capitalize() + 'Is' + current_node.y.capitalize()
-            (child_name, node_names, node_names_map, running_string, variable_print_info) = walk_tree_recursive(current_node.child, node_names, node_names_map, running_string, variable_print_info)
+            (child_name, node_names, running_string, variable_print_info) = walk_tree_recursive(current_node.child, node_names, running_string, variable_print_info)
             running_string += (indent(1) + node_name + ' = py_trees.decorators.' + decorator_type + '('
                                + 'name = ' + "'" + node_name + "'" + ', child = ' + child_name + ')' + os.linesep)
             if serene_print:
                 running_string += (indent(1) + node_name + '.tick = decorator_better_tick.__get__(' + node_name + ', py_trees.decorators.Decorator)' + os.linesep)
-            return (node_name, node_names, node_names_map, running_string, variable_print_info)
+            return (node_name, node_names, running_string, variable_print_info)
         if current_node.node_type == 'inverter':
             decorator_type = 'Inverter'
-            (child_name, node_names, node_names_map, running_string, variable_print_info) = walk_tree_recursive(current_node.child, node_names, node_names_map, running_string, variable_print_info)
+            (child_name, node_names, running_string, variable_print_info) = walk_tree_recursive(current_node.child, node_names, running_string, variable_print_info)
             running_string += (indent(1) + node_name + ' = py_trees.decorators.' + decorator_type + '('
                                + 'name = ' + "'" + node_name + "'" + ', child = ' + child_name + ')' + os.linesep)
             if serene_print:
                 running_string += (indent(1) + node_name + '.tick = decorator_better_tick.__get__(' + node_name + ', py_trees.decorators.Decorator)' + os.linesep)
-            return (node_name, node_names, node_names_map, running_string, variable_print_info)
+            return (node_name, node_names, running_string, variable_print_info)
 
         # so at this point, we're in composite node territory
         children = []
         for child in current_node.children:
-            (child_name, node_names, node_names_map, running_string, variable_print_info) = walk_tree_recursive(child, node_names, node_names_map, running_string, variable_print_info)
+            (child_name, node_names, running_string, variable_print_info) = walk_tree_recursive(child, node_names, running_string, variable_print_info)
             children.append(child_name)
         children_names = '[' + ', '.join(children) + ']'
 
@@ -841,7 +833,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                                + ')' + os.linesep)
             if serene_print:
                 running_string += (indent(1) + node_name + '.tick = parallel_better_tick.__get__(' + node_name + ', py_trees.composites.Parallel)' + os.linesep)
-        return (node_name, node_names, node_names_map, running_string, variable_print_info)
+        return (node_name, node_names, running_string, variable_print_info)
 
     def create_safe_assignment(model):
         def create_type_check_function(variable, function_name, indent_level):
@@ -1338,7 +1330,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
         with open(write_location + environment_check.name + '_file.py', 'w', encoding = 'utf-8') as write_file:
             write_file.write(build_environment_check_node(environment_check))
 
-    (root_name, _, _, running_string, local_print_info) = walk_tree_recursive(model.root, set(), {}, '', {})
+    (root_name, _, running_string, local_print_info) = walk_tree_recursive(model.root, set(), '', {})
 
     if serene_print:
         with open(os.path.dirname(os.path.realpath(__file__)) + '/tick_overwrite/tick_overwrite.py', 'r', encoding = 'utf-8') as write_file:

@@ -3,7 +3,7 @@ This module is part of BehaVerify and used to convert .tree files to .smv files 
 
 
 Author: Serena Serafina Serbinowska
-Last Edit: 2023-11-06
+Last Edit: 2024-02-19
 '''
 import argparse
 import pprint
@@ -773,7 +773,58 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
             var_key = variable_reference(variable.name, is_local(variable), '')
             if is_local(variable):
                 continue  # this is handled below
-            if variable.model_as == 'NEURAL':
+            if variable.model_as == 'NEURAL' and variable.domain == 'INT':
+                behaverify_variables[variable.name]['existing_definitions'] = {}
+                depends_on = set()
+                domain_values = set()
+                input_order = []
+                for input_code in variable.inputs:
+                    input_func = build_meta_func(input_code)
+                    variable_inputs = input_func((constants, {}))
+                    for variable_input in variable_inputs:
+                        (atom_class, atom) = resolve_potential_reference_no_type(variable_input, declared_enumerations, {}, variables, constants, {})
+                        if atom_class == 'VARIABLE':
+                            depends_on.add(variable_reference(atom.name, False, None))
+                        input_order.append((atom_class, atom))
+                behaverify_variables[var_key]['depends_on'] = tuple(sorted(list(depends_on)))
+                define_substitutions = {
+                    sub_key : 'SUBSTITUTE_' + str(index) + '_ME'
+                    for (index, sub_key) in enumerate(behaverify_variables[var_key]['depends_on'])
+                }
+                define_substitutions[var_key] = 'SUBSTITUTE_SELF'
+                list_of_list_of_inputs = create_possible_values(behaverify_variables[var_key]['depends_on'])
+                file_prefix = model_file.rsplit('/', 1)[0]
+                source_func = build_meta_func(variable.source)
+                source_vals = source_func((constants, {}))
+                source = source_vals[0]
+                source = resolve_potential_reference_no_type(source, declared_enumerations, {}, variables, constants, {})[1]
+                source = file_prefix + '/' + source
+                session = onnxruntime.InferenceSession(source)
+                input_name = session.get_inputs()[0].name
+                cur_stage = []
+                for index in range(behaverify_variables[var_key]['array_size']):
+                    cur_stage.append((index, []))
+                for list_of_inputs in list_of_list_of_inputs:
+                    cur_ref = dict(list_of_inputs)
+                    current_input = []
+                    for (atom_class, atom) in input_order:
+                        if atom_class == 'VARIABLE':
+                            current_input.append(cur_ref[atom.name])
+                        else:
+                            current_input.append(atom)
+                    current_outputs = session.run(None, {input_name : [current_input]})
+                    condition = ' & '.join(['(' + define_substitutions[variable_reference(var_name, False, None)] + ' = ' + str(var_val) + ')' for (var_name, var_val) in list_of_inputs])
+                    for index in range(len(current_outputs[0][0])):
+                        output = int(current_outputs[0][0][index])
+                        cur_stage[index][1].append((condition, str(output)))
+                        domain_values.add(output)
+                for index in range(behaverify_variables[var_key]['array_size']):
+                    cur_stage[index][1].append(('TRUE', '66'))
+                behaverify_variables[var_key]['initial_value'] = (None, True, {index : False for index in range(behaverify_variables[var_key]['array_size'])}, cur_stage)
+                behaverify_variables[var_key]['custom_value_range'] = domain_values
+                behaverify_variables[var_key]['default_array_val'] = (False, [('TRUE', '66')])
+                continue  # don't do the other stuff for neural networks
+            if variable.model_as == 'NEURAL' and variable.domain == 'REAL':
                 behaverify_variables[variable.name]['existing_definitions'] = {}
                 depends_on = set()
                 domain_values = set()
@@ -890,9 +941,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
                 constants.pop(argument_name)
         return behaverify_variables
 
-    def create_composite(current_node, node_name, modifier, node_names, node_names_map, parent_name):
-        cur_node_names = {node_name}.union(node_names)
-        cur_node_names_map = {name : (modifier if name == node_name else node_names_map[name]) for name in node_names_map}
+    def create_composite(current_node, node_name, node_names, parent_name):
         children = []
         nodes = {}
         local_variables = []
@@ -900,48 +949,42 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
         statements = []
         for child in current_node.children:
             # (child_name, node_names, nodes, local_variables, initial_statements, statements)
-            new_vals = walk_tree(child, node_name, cur_node_names, cur_node_names_map)
+            new_vals = walk_tree(child, node_name, node_names)
             children.append(new_vals[0])
             cur_node_names = new_vals[1]
-            cur_node_names_map = new_vals[2]
-            nodes.update(new_vals[3])
-            local_variables = local_variables + new_vals[4]
-            initial_statements = initial_statements + new_vals[5]
-            statements = statements + new_vals[6]
+            nodes.update(new_vals[2])
+            local_variables = local_variables + new_vals[3]
+            initial_statements = initial_statements + new_vals[4]
+            statements = statements + new_vals[5]
         nodes[node_name] = create_node_template(node_name, parent_name, children,
                                                 'composite', current_node.node_type, (('_' + current_node.parallel_policy) if current_node.node_type == 'parallel' else ''), current_node.memory,
                                                 True, True, True)
-        return (node_name, cur_node_names, cur_node_names_map, nodes, local_variables, initial_statements, statements)
+        return (node_name, cur_node_names, nodes, local_variables, initial_statements, statements)
 
-    def create_decorator(current_node, node_name, modifier, node_names, node_names_map, parent_name, additional_arguments = None):
-        cur_node_names = {node_name}.union(node_names)
-        cur_node_names_map = {name : (modifier if name == node_name else node_names_map[name]) for name in node_names_map}
+    def create_decorator(current_node, node_name, node_names, parent_name, additional_arguments = None):
         children = []
         nodes = {}
         local_variables = []
         initial_statements = []
         statements = []
-        new_vals = walk_tree(current_node.child, node_name, cur_node_names, cur_node_names_map)
+        new_vals = walk_tree(current_node.child, node_name, node_names)
         children.append(new_vals[0])
-        cur_node_names = new_vals[1]
-        cur_node_names_map = new_vals[2]
-        nodes.update(new_vals[3])
-        local_variables = local_variables + new_vals[4]
-        initial_statements = initial_statements + new_vals[5]
-        statements = statements + new_vals[6]
+        node_names = new_vals[1]
+        nodes.update(new_vals[2])
+        local_variables = local_variables + new_vals[3]
+        initial_statements = initial_statements + new_vals[4]
+        statements = statements + new_vals[5]
         nodes[node_name] = create_node_template(node_name, parent_name, children,
                                                 'decorator', current_node.node_type, '', '',
                                                 True, True, True, additional_arguments)
-        return (node_name, cur_node_names, cur_node_names_map, nodes, local_variables, initial_statements, statements)
+        return (node_name, node_names, nodes, local_variables, initial_statements, statements)
 
-    def create_X_is_Y(current_node, node_name, modifier, node_names, node_names_map, parent_name):
-        return create_decorator(current_node, node_name, modifier, node_names, node_names_map, parent_name, [current_node.x, current_node.y])
+    def create_X_is_Y(current_node, node_name, node_names, parent_name):
+        return create_decorator(current_node, node_name, node_names, parent_name, [current_node.x, current_node.y])
 
-    def create_check(current_node, argument_pairs, node_name, modifier, node_names, node_names_map, parent_name):
-        cur_node_names = {node_name}.union(node_names)
-        cur_node_names_map = {name : (modifier if name == node_name else node_names_map[name]) for name in node_names_map}
+    def create_check(current_node, argument_pairs, node_name, node_names, parent_name):
         return (
-            node_name, cur_node_names, cur_node_names_map,
+            node_name, node_names,
             {node_name : create_node_template(node_name, parent_name, [],
                                               'leaf', current_node.node_type, '', '',
                                               True, False, True, custom_type = current_node.name)
@@ -949,11 +992,9 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
             [], [], [(node_name, argument_pairs, 'check', current_node.condition)]
         )
 
-    def create_action(current_node, argument_pairs, node_name, modifier, node_names, node_names_map, parent_name):
-        cur_node_names = {node_name}.union(node_names)
-        cur_node_names_map = {name : (modifier if name == node_name else node_names_map[name]) for name in node_names_map}
+    def create_action(current_node, argument_pairs, node_name, node_names, parent_name):
         return (
-            node_name, cur_node_names, cur_node_names_map,
+            node_name, node_names,
             {node_name : create_node_template(node_name, parent_name, [],
                                               'leaf', current_node.node_type, '', '',
                                               True, True, True, custom_type = current_node.name)
@@ -969,15 +1010,13 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
             )
         )
 
-    def walk_tree(current_node, parent_name = None, node_names = None, node_names_map = None):
+    def walk_tree(current_node, parent_name = None, node_names = None):
         if node_names is None:
             node_names = set()
-        if node_names_map is None:
-            node_names_map = {}
         argument_pairs = None
         while hasattr(current_node, 'sub_root'):
             current_node = current_node.sub_root
-        current_name = current_node.leaf.name if current_node.name is None else current_node.name
+        node_name = current_node.name if hasattr(current_node, 'name') and current_node.name is not None else current_node.leaf.name
         if hasattr(current_node, 'leaf'):
             all_arguments = []
             for argument in current_node.arguments:
@@ -990,14 +1029,11 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
             current_node = current_node.leaf
         # the above deals with sub_trees and leaf nodes, ensuring that the current_node variable has the next actual node at this point
         # next, we get the name of this node, and correct for duplication
-
-        new_name = create_node_name(current_name, node_names, node_names_map)
-        node_name = new_name[0]
-        modifier = new_name[1]
+        cur_node_names = {node_name}.union(node_names)
         return (
-            create_node[current_node.node_type](current_node, node_name, modifier, node_names, node_names_map, parent_name)
+            create_node[current_node.node_type](current_node, node_name, cur_node_names, parent_name)
             if argument_pairs is None else
-            create_node[current_node.node_type](current_node, argument_pairs, node_name, modifier, node_names, node_names_map, parent_name)
+            create_node[current_node.node_type](current_node, argument_pairs, node_name, cur_node_names, parent_name)
         )
 
     function_format = {
@@ -1080,6 +1116,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
     use_reals = model.use_reals
     if model.neural:
         import onnxruntime
+        import onnx
     behaverify_variables = {}
 
     (_, _, _, nodes, local_variables, initial_statements, statements) = walk_tree(model.root)

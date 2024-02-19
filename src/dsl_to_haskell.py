@@ -4,7 +4,7 @@ It is used to create Haskell code from BehaVerify DSL for Behavior Trees.
 It contains a variety of utility functions.
 
 Author: Serena Serafina Serbinowska
-Last Edit: 2023-11-06
+Last Edit: 2024-02-19
 '''
 import argparse
 import os
@@ -585,18 +585,16 @@ def dsl_to_haskell(metamodel_file, model_file, location, output_file, max_iter, 
                 + ')'
             )
 
-        def walk_tree_recursive(current_node, seen_nodes, node_names, node_names_map, running_string, running_int, indent_level):
+        def walk_tree_recursive(current_node, seen_nodes, node_names, running_string, running_int, indent_level):
             current_args = None
             while  hasattr(current_node, 'sub_root'):
                 current_node = current_node.sub_root
-            current_name = current_node.leaf.name if current_node.name is None else current_node.name
+            current_name = current_node.name if hasattr(current_node, 'name') and current_node.name is not None else current_node.leaf.name
             current_args = (current_node.arguments if hasattr(current_node, 'arguments') else None)
             current_node = (current_node.leaf if hasattr(current_node, 'leaf') else current_node)
 
-            conflict_avoid_name = 'bTreeNode' + pascal_case(current_name)
-            (node_name, modifier) = create_node_name(conflict_avoid_name, node_names, node_names_map)
+            node_name = 'bTreeNode' + pascal_case(current_name)
             cur_node_names = {node_name}.union(node_names)
-            cur_node_names_map = {name : (modifier if name == node_name else node_names_map[name]) for name in node_names_map}
             running_int = running_int + 1
             my_int = running_int
             node_names_to_node_locations[current_node.name] = my_int
@@ -613,7 +611,7 @@ def dsl_to_haskell(metamodel_file, model_file, location, output_file, max_iter, 
                 child_names = []
                 node_children = (current_node.children if hasattr(current_node, 'children') else [current_node.child])
                 for child in node_children:
-                    (child_name, seen_nodes, cur_node_names, cur_node_names_map, running_string, running_int, indent_level) = walk_tree_recursive(child, seen_nodes, cur_node_names, cur_node_names_map, running_string, running_int, indent_level)
+                    (child_name, seen_nodes, cur_node_names, running_string, running_int, indent_level) = walk_tree_recursive(child, seen_nodes, cur_node_names, running_string, running_int, indent_level)
                     child_names.append(child_name)
                 running_string = running_string + (
                     indent(indent_level) + node_name + ' = BTreeNode ' + node_function(current_node) + ' ' + '[' + ', '.join(child_names) + '] ' + str(my_int) + os.linesep
@@ -622,13 +620,12 @@ def dsl_to_haskell(metamodel_file, model_file, location, output_file, max_iter, 
                 node_name,
                 seen_nodes,
                 cur_node_names,
-                cur_node_names_map,
                 running_string,
                 running_int,
                 indent_level
             )
 
-        (_, seen_nodes,  _, _, node_declarations, _, _) = walk_tree_recursive(model.root, set(), set(), {}, '', -1, 0)
+        (_, seen_nodes,  _, node_declarations, _, _) = walk_tree_recursive(model.root, set(), set(), '', -1, 0)
 
         return (
             seen_nodes,
@@ -1175,19 +1172,14 @@ def dsl_to_haskell(metamodel_file, model_file, location, output_file, max_iter, 
         return handle_blackboard_environment(False, [])
 
     def create_blackboard():
-        def walk_tree_recursive_blackboard(current_node, node_names, node_names_map, running_int, location_info, local_initial_statements):
-            while True:
-                if hasattr(current_node, 'sub_root'):
-                    current_node = current_node.sub_root
-                    continue
-                current_name = current_node.leaf.name if current_node.name is None else current_node.name
-                if hasattr(current_node, 'leaf'):
-                    current_node = current_node.leaf
-                break
-            conflict_avoid_name = current_name + '__node'
-            (node_name, modifier) = create_node_name(conflict_avoid_name, node_names, node_names_map)
+        def walk_tree_recursive_blackboard(current_node, node_names, running_int, location_info, local_initial_statements):
+            while hasattr(current_node, 'sub_root'):
+                current_node = current_node.sub_root
+            current_name = current_node.leaf.name if current_node.name is None else current_node.name
+            if hasattr(current_node, 'leaf'):
+                current_node = current_node.leaf
+            node_name = current_name + '__node'
             cur_node_names = {node_name}.union(node_names)
-            cur_node_names_map = {name : (modifier if name == node_name else node_names_map[name]) for name in node_names_map}
             running_int = running_int + 1
             my_int = running_int
             if current_node.node_type == 'action':
@@ -1204,16 +1196,15 @@ def dsl_to_haskell(metamodel_file, model_file, location, output_file, max_iter, 
             else:
                 node_children = (current_node.children if hasattr(current_node, 'children') else [current_node.child])
                 for child in node_children:
-                    (cur_node_names, cur_node_names_map, running_int, location_info, local_initial_statements) = walk_tree_recursive_blackboard(child, cur_node_names, cur_node_names_map, running_int, location_info, local_initial_statements)
+                    (cur_node_names, running_int, location_info, local_initial_statements) = walk_tree_recursive_blackboard(child, cur_node_names, running_int, location_info, local_initial_statements)
             return (
                 cur_node_names,
-                cur_node_names_map,
                 running_int,
                 location_info,
                 local_initial_statements
             )
 
-        (_, _, _, location_info, local_initial_statements) = walk_tree_recursive_blackboard(model.root, set(), {}, -1, [], [])
+        (_, _, location_info, local_initial_statements) = walk_tree_recursive_blackboard(model.root, set(), -1, [], [])
         for (variable, my_int) in location_info:
             name = variable.name
             if name in local_var_to_nodes:

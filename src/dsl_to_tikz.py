@@ -364,38 +364,31 @@ def write_files(metamodel_file, model_file, output_file, recursion_limit):
             + '\\end{tabular}};'
         )
 
-    def walk_tree_recursive(current_node, node_names, node_names_map, tikz_nodes):
-        while True:
-            if hasattr(current_node, 'sub_root'):
-                current_node = current_node.sub_root
-                continue
-            current_name = current_node.leaf.name if current_node.name is None else current_node.name
-            if hasattr(current_node, 'leaf'):
-                current_node = current_node.leaf
-            break
+    def walk_tree_recursive(current_node, node_names, tikz_nodes):
+        while hasattr(current_node, 'sub_root'):
+            current_node = current_node.sub_root
+        node_name = current_node.name if hasattr(current_node, 'name') and current_node.name is not None else current_node.leaf.name
+        if hasattr(current_node, 'leaf'):
+            current_node = current_node.leaf
         # next, we get the name of this node, and correct for duplication
-        new_name = create_node_name(current_name, node_names, node_names_map)
-        node_name = new_name[0]
-        modifier = new_name[1]
         node_names.add(node_name)
-        node_names_map[node_name] = modifier
 
         if current_node.node_type in ('check', 'environment_check', 'action'):
             if current_node.node_type == 'action':
                 # return '[.\\node[Action](' + node_name.replace('_', '') + '){$' + current_name.replace('_', '\\_') + '$};' + tikz_nodes[current_name] + ']' + os.linesep
-                return '[.\\node[Action](' + node_name.replace('_', '') + '){$' + current_name.replace('_', '\\_') + '$};' + ']' + os.linesep
+                return '[.\\node[Action](' + node_name.replace('_', '') + '){$' + node_name.replace('_', '\\_') + '$};' + ']' + os.linesep
             # return '[.\\node[Check](' + node_name.replace('_', '') + '){$' + current_name.replace('_', '\\_') + '$};' + tikz_nodes[current_name] + ']' + os.linesep
-            return '[.\\node[Check](' + node_name.replace('_', '') + '){$' + current_name.replace('_', '\\_') + '$};' + ']' + os.linesep
+            return '[.\\node[Check](' + node_name.replace('_', '') + '){$' + node_name.replace('_', '\\_') + '$};' + ']' + os.linesep
         if current_node.node_type in ('X_is_Y', 'inverter'):
             return (
-                '[.\\node[Decorator](' + node_name.replace('_', '') + '){$' + current_name.replace('_', '\\_') + '$};' + os.linesep
-                + walk_tree_recursive(current_node.child, node_names, node_names_map, tikz_nodes)
+                '[.\\node[Decorator](' + node_name.replace('_', '') + '){$' + node_name.replace('_', '\\_') + '$};' + os.linesep
+                + walk_tree_recursive(current_node.child, node_names, tikz_nodes)
                 + ']' + os.linesep
             )
         return (
-            '[.\\node[' + current_node.node_type.capitalize() + '](' + node_name.replace('_', '') + '){$' + current_name.replace('_', '\\_') + '$};' + os.linesep
+            '[.\\node[' + current_node.node_type.capitalize() + '](' + node_name.replace('_', '') + '){$' + node_name.replace('_', '\\_') + '$};' + os.linesep
             + ''.join([
-                walk_tree_recursive(child, node_names, node_names_map, tikz_nodes)
+                walk_tree_recursive(child, node_names, tikz_nodes)
                 for child in current_node.children
             ])
             + ']' + os.linesep
@@ -458,7 +451,7 @@ def write_files(metamodel_file, model_file, output_file, recursion_limit):
             + '\\tikzset{level distance=22pt}' + os.linesep
             + '\\tikzset{sibling distance=0.5pt}' + os.linesep
             + '\\Tree'
-            +  walk_tree_recursive(model.root, set(), {}, {})
+            +  walk_tree_recursive(model.root, set(), {})
             # +  walk_tree_recursive(model.root, set(), {}, tikz_nodes)
             + '\\end{tikzpicture}' + os.linesep
         )
