@@ -168,7 +168,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, recursion_limit):
 
     def handle_atom(code, misc_args):
         (atom_class, atom_type, atom) = handle_constant_or_reference(code.atom, declared_enumerations, node_names, variables, constants, misc_args['loop_references'])
-        return ((str(atom).capitalize() if atom_type == 'BOOLEAN' else ('(' + str(atom) + ')' if atom_type in {'REAL', 'INT'} and atom < 0 else str(atom))) if atom_class == 'CONSTANT' else (format_variable(atom, adjust_args(code, misc_args))))
+        return (str(atom).capitalize() if atom_type == 'BOOLEAN' else ('(' + str(atom) + ')')) if atom_class == 'CONSTANT' else (format_variable(atom, adjust_args(code, misc_args)))
 
     def format_code(code, misc_args):
         return (
@@ -179,15 +179,36 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, recursion_limit):
             )
         )
 
-    def handle_case_result(case_result, misc_args):
+    def handle_case_result(case_result, case_number, misc_args):
+        guard_string = 'guard_' + str(case_number) + ' = ' + (
+            format_code(case_result.condition, misc_args)[0]
+            if hasattr(case_result, 'condition') else
+            'True'
+        ) + os.linesep
         vals = []
         for value in case_result.values:
             vals.extend(format_code(value, misc_args))
+        # IF YOU USE THE BELOW VERSION, MAKE SURE TO CHANGE handle_assign_value to MODE 0
+        # value_string = ''.join([
+        #     ('value_' + str(case_number) + '_' + str(value_number) + ' = ' + value + os.linesep)
+        #     for (value_number, value) in enumerate(vals)
+        # ])
+        # return (
+        #     guard_string + value_string,
+        #     indent(1) + '| guard_' + str(case_number) + ' = ' + (
+        #         ('Set.singleton value_' + str(case_number) + '_0')
+        #         if len(vals) == 1 else
+        #         ('Set.fromList [' + ', '.join(map(lambda x: 'value_' + str(case_number) + '_' + str(x), range(len(vals)))) + ']')
+        #     ) + os.linesep
+        # )
+        # This is MODE 1
         return (
-            format_code(case_result.condition, misc_args)[0]
-            if hasattr(case_result, 'condition') else
-            'True',
-            vals
+            indent(1) + '| ' + (format_code(case_result.condition, misc_args)[0] if hasattr(case_result, 'condition') else 'True')
+            + ' = ' + (
+                ('Set.singleton ' + vals[0])
+                if len(vals) == 1 else
+                ('Set.fromList [' + ', '.join(vals) + ']')
+            ) + os.linesep
         )
 
     def handle_case_result_define(case_result, misc_args):
@@ -197,50 +218,20 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, recursion_limit):
         # define must be deterministic, so there should only be one value actually.
         return ((format_code(case_result.condition, misc_args) if hasattr(case_result, 'condition') else 'True'), vals[0])
 
-    def recursive_if_then_else_generator(case_result_strings, index):
-        return (
-            ('[' + ', '.join(case_result_strings[index][1]) + ']')
-            if index + 1 == len(case_result_strings) else
-            (
-                ('(if_then_else ' + case_result_strings[index][0] + ' [' + ', '.join(case_result_strings[index][1]) + '] [' + ', '.join(case_result_strings[index + 1][1]) + '])')
-                if index + 2 == len(case_result_strings) else
-                ('(if_then_else ' + case_result_strings[index][0] + ' [' + ', '.join(case_result_strings[index][1]) + '] ' + recursive_if_then_else_generator(case_result_strings, index + 1) + ')')
-            )
-        )
-
-    def recursive_if_then_else_let(case_result_strings, index):
-        return (
-            case_result_strings[index][1]
-            if index + 1 == len(case_result_strings) else
-            (
-                ('(if_then_else ' + case_result_strings[index][0] + ' ' + case_result_strings[index][1] + ' ' + case_result_strings[index + 1][1] + ')')
-                if index + 2 == len(case_result_strings) else
-                ('(if_then_else ' + case_result_strings[index][0] + ' ' + case_result_strings[index][1] + ' ' + recursive_if_then_else_let(case_result_strings, index + 1) + ')')
-            )
-        )
-
-    def recursive_if_then_else_let_alt(case_result_strings, index):
-        return (
-            case_result_strings[index][1][0]
-            if index + 1 == len(case_result_strings) else
-            (
-                ('(if_then_else ' + case_result_strings[index][0] + ' ' + case_result_strings[index][1][0] + ' ' + case_result_strings[index + 1][1][0] + ')')
-                if index + 2 == len(case_result_strings) else
-                ('(if_then_else ' + case_result_strings[index][0] + ' ' + case_result_strings[index][1][0] + ' ' + recursive_if_then_else_let(case_result_strings, index + 1) + ')')
-            )
-        )
-
     def handle_assign_value(variable, assign_value, misc_args):
-        case_result_strings = (
-            ([] if misc_args['inactive_condition'] == 'False' else [(misc_args['inactive_condition'], [format_variable_name_only(variable, misc_args)])])
-            + [handle_case_result(case_result, misc_args) for (case_number, case_result) in enumerate(assign_value.case_results)]
-            + [handle_case_result(assign_value.default_result, misc_args)]
-        )
-        deterministic = all(map(lambda x: len(x[1]) == 1, case_result_strings))
+        case_result_strings = [handle_case_result(case_result, case_number, misc_args) for (case_number, case_result) in enumerate(assign_value.case_results)] + [handle_case_result(assign_value.default_result, len(assign_value.case_results), misc_args)]
         return (
-            (', let ' + format_variable_name_only(variable, misc_args) + ' = ' + recursive_if_then_else_let_alt(case_result_strings, 0))
-            if deterministic else
-            (', ' + format_variable_name_only(variable, misc_args) + ' <- ' + recursive_if_then_else_generator(case_result_strings, 0))
+            '-- for ' + format_variable_name_only(variable, misc_args) + os.linesep
+            # + ''.join(map(lambda x: x[0], case_result_strings))  # MODE 0
+            + 'values' + os.linesep
+            + indent(1) + '| ' + misc_args['inactive_condition'] + ' = Set.singleton ' + format_variable_name_only(variable, misc_args) + os.linesep
+            # + ''.join(map(lambda x: x[1], case_result_strings))  # MODE 0
+            + ''.join(case_result_strings)  # MODE 1
+            + 'result = Set.foldr (Set.union . next_func) Set.empty values' + os.linesep
+            + indent(1) + 'where' + os.linesep
+            + indent(2) + 'next_func :: ' + variable_type(variable) + ' -> Set.Set STATE' + os.linesep
+            + indent(2) + 'next_func ' + format_variable_name_only(variable, misc_args) + ' = result' + os.linesep
+            + indent(3) + 'where' + os.linesep
         )
 
     def handle_assign_value_define(assign_value, misc_args):
@@ -281,29 +272,50 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, recursion_limit):
         #     )
         if is_array(assign_var):
             raise ValueError
-        return ([handle_assign_value(assign_var, variable_statement.assign, misc_args)], [])
+        return ([(handle_assign_value(assign_var, variable_statement.assign, misc_args), 4)], [])
 
     def handle_write_statement(write_statement, misc_args):
+        new_misc_args = copy_misc_args(misc_args)
+        delayed_misc_args = copy_misc_args(misc_args)
+        delayed_misc_args['indent_level'] = 0
         results = []
         delayed_results = []
         for variable_statement in write_statement.update:
             if variable_statement.instant:
-                results.extend(handle_variable_statement(variable_statement, misc_args)[0])
+                results.extend(handle_variable_statement(variable_statement, new_misc_args)[0])
             else:
-                delayed_results.extend(handle_variable_statement(variable_statement, misc_args)[0])
+                delayed_results.extend(handle_variable_statement(variable_statement, new_misc_args)[0])
         return (results, delayed_results)
 
     def handle_read_statement(read_statement, misc_args):
         misc_args = copy_misc_args(misc_args)
-        case_result_strings = (
-            ([] if misc_args['inactive_condition'] == 'False' else [(misc_args['inactive_condition'], ['False'])])
-            + [(format_code(read_statement.condition, misc_args), ['True', 'False'] if read_statement.non_determinism else ['True'])]
-            + [('True', ['False'])]
-        )
-        results = [', read_condition <- ' + recursive_if_then_else_generator(case_result_strings, 0) ]
+        results = [(
+            '-- for READ STATEMENT: ' + str(read_statement.name) + os.linesep
+            + 'values' + os.linesep
+            + indent(1) + '| ' + misc_args['inactive_condition'] + ' = Set.singleton False' + os.linesep
+            + indent(1) + '| ' + format_code(read_statement.condition, misc_args) + ' = ' + ('Set.fromList [True, False]' if read_statement.non_determinism else 'Set.singleton True') + os.linesep
+            + indent(1) + '| otherwise = Set.singleton False' + os.linesep
+            + 'result = Set.foldr (Set.union . next_func) Set.empty values' + os.linesep
+            + indent(1) + 'where' + os.linesep
+            + indent(2) + 'next_func :: Bool -> Set.Set STATE' + os.linesep
+            + indent(2) + 'next_func read_condition = result' + os.linesep
+            + indent(3) + 'where' + os.linesep
+            , 4)]
         if read_statement.condition_variable is not None:
-            results.append(', let ' + format_variable_name_only(read_statement.condition_variable, misc_args) + ' = read_condition' )
-        misc_args['inactive_condition'] = '(not read_condition) ' if misc_args['inactive_condition'] == 'False' else ('(||) ' + misc_args['inactive_condition'] + ' (not read_condition)')
+            if is_array(read_statement.condition_variable):
+                raise ValueError
+            results.append((
+                'values' + os.linesep
+                + indent(1) + '| ' + misc_args['inactive_condition'] + ' = Set.singleton ' + format_variable_name_only(read_statement.condition_variable, misc_args) + os.linesep
+                + indent(1) + '| read_condition = ' + (('Set.fromList [True, False]') if read_statement.non_determinism == 'non_determinism' else 'Set.singleton True') + os.linesep
+                + indent(1) + '| otherwise = Set.singleton False' + os.linesep
+                + 'result = Set.foldr (Set.union . next_func) Set.empty values' + os.linesep
+                + indent(1) + 'where' + os.linesep
+                + indent(2) + 'next_func :: Bool -> Set.Set STATE' + os.linesep
+                + indent(2) + 'next_func ' + format_variable_name_only(read_statement.condition_variable, misc_args) + ' = result' + os.linesep
+                + indent(3) + 'where' + os.linesep
+                , 4))
+        misc_args['inactive_condition'] = '(||) ' + misc_args['inactive_condition'] + '(not read_condition)'
         for variable_statement in read_statement.variable_statements:
             results.extend(handle_variable_statement(variable_statement, misc_args)[0])
         return (results, [])
@@ -312,6 +324,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, recursion_limit):
         '''
         1 ::> result
         2 ::> delayed_results
+        3 ::> new_indent_level
         '''
         return (
             handle_variable_statement(statement.variable_statement, misc_args)
@@ -399,14 +412,20 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, recursion_limit):
             child_name = walk_tree(child, inactive_condition)
             names.append(child_name + 'VAL')
         misc_args = create_misc_args(loop_references = {}, node_name = node_name, specification_mode = False, inactive_condition = original_inactive_condition)
-        next_states_list.append(', let children = [' + ', '.join(names) + ']' )
-        case_result_strings = (
-            ([] if misc_args['inactive_condition'] == 'False' else [(misc_args['inactive_condition'], format_return_status('invalid'))])
-            + [('(elem ' + format_return_status('failure') + ' children)', format_return_status('failure')),
-               ('(elem ' + format_return_status('success') + ' children)', format_return_status('success')),
-               ('True', format_return_status('running'))]
-        )
-        next_states_list.append(', let ' + node_name + 'VAL = ' + recursive_if_then_else_let(case_result_strings, 0) )
+        next_states_list.append((
+            '-- for ' + node_name + os.linesep
+            + 'children = [' + ', '.join(names) + ']' + os.linesep
+            + 'value' + os.linesep
+            + indent(1) + '| ' + misc_args['inactive_condition'] + ' = ' + format_return_status('invalid') + os.linesep
+            + indent(1) + '| elem ' + format_return_status('failure') + ' children = ' + format_return_status('failure') + os.linesep
+            + indent(1) + '| elem ' + format_return_status('success') + ' children = ' + format_return_status('success') + os.linesep
+            + indent(1) + '| otherwise' + ' = ' + format_return_status('running') + os.linesep
+            + 'result = next_func value' + os.linesep
+            + indent(1) + 'where' + os.linesep
+            + indent(2) + 'next_func :: NODE_STATUS -> Set.Set STATE' + os.linesep
+            + indent(2) + 'next_func ' + node_name + 'VAL = result' + os.linesep
+            + indent(3) + 'where' + os.linesep
+            , 4))
         return node_name
 
     def create_parallel_all(current_node, node_name, inactive_condition):
@@ -416,14 +435,20 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, recursion_limit):
             child_name = walk_tree(child, inactive_condition)
             names.append(child_name + 'VAL')
         misc_args = create_misc_args(loop_references = {}, node_name = node_name, specification_mode = False, inactive_condition = original_inactive_condition)
-        next_states_list.append(', let children = [' + ', '.join(names) + ']' )
-        case_result_strings = (
-            ([] if misc_args['inactive_condition'] == 'False' else [(misc_args['inactive_condition'], format_return_status('invalid'))])
-            + [('(elem ' + format_return_status('failure') + ' children)', format_return_status('failure')),
-               ('(elem ' + format_return_status('running') + ' children)', format_return_status('running')),
-               ('True', format_return_status('success'))]
-        )
-        next_states_list.append(', let ' + node_name + 'VAL = ' + recursive_if_then_else_let(case_result_strings, 0) )
+        next_states_list.append((
+            '-- for ' + node_name + os.linesep
+            + 'children = [' + ', '.join(names) + ']' + os.linesep
+            + 'value' + os.linesep
+            + indent(1) + '| ' + misc_args['inactive_condition'] + ' = ' + format_return_status('invalid') + os.linesep
+            + indent(1) + '| elem ' + format_return_status('failure') + ' children = ' + format_return_status('failure') + os.linesep
+            + indent(1) + '| elem ' + format_return_status('running') + ' children = ' + format_return_status('running') + os.linesep
+            + indent(1) + '| otherwise' + ' = ' + format_return_status('success') + os.linesep
+            + 'result = next_func value' + os.linesep
+            + indent(1) + 'where' + os.linesep
+            + indent(2) + 'next_func :: NODE_STATUS -> Set.Set STATE' + os.linesep
+            + indent(2) + 'next_func ' + node_name + 'VAL = result' + os.linesep
+            + indent(3) + 'where' + os.linesep
+            , 4))
         return node_name
 
     def create_parallel(current_node, node_name, _, inactive_condition):
@@ -437,14 +462,20 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, recursion_limit):
             names.append(child_name + 'VAL')
             inactive_condition = '((/=) ' + child_name + 'VAL ' + format_return_status('success') + ')'
         misc_args = create_misc_args(loop_references = {}, node_name = node_name, specification_mode = False, inactive_condition = original_inactive_condition)
-        next_states_list.append(', let children = [' + ', '.join(names) + ']' )
-        case_result_strings = (
-            ([] if misc_args['inactive_condition'] == 'False' else [(misc_args['inactive_condition'], format_return_status('invalid'))])
-            + [('(elem ' + format_return_status('failure') + ' children)', format_return_status('failure')),
-               ('(elem ' + format_return_status('running') + ' children)', format_return_status('running')),
-               ('True', format_return_status('success'))]
-        )
-        next_states_list.append(', let ' + node_name + 'VAL = ' + recursive_if_then_else_let(case_result_strings, 0) )
+        next_states_list.append((
+            '-- for ' + node_name + os.linesep
+            + 'children = [' + ', '.join(names) + ']' + os.linesep
+            + 'value' + os.linesep
+            + indent(1) + '| ' + misc_args['inactive_condition'] + ' = ' + format_return_status('invalid') + os.linesep
+            + indent(1) + '| elem ' + format_return_status('failure')  + ' children = ' + format_return_status('failure') + os.linesep
+            + indent(1) + '| elem ' + format_return_status('running')  + ' children = ' + format_return_status('running') + os.linesep
+            + indent(1) + '| otherwise' + ' = ' + format_return_status('success') + os.linesep
+            + 'result = next_func value' + os.linesep
+            + indent(1) + 'where' + os.linesep
+            + indent(2) + 'next_func :: NODE_STATUS -> Set.Set STATE' + os.linesep
+            + indent(2) + 'next_func ' + node_name + 'VAL = result' + os.linesep
+            + indent(3) + 'where' + os.linesep
+            , 4))
         return node_name
 
     def create_selector(current_node, node_name, _, inactive_condition):
@@ -455,49 +486,73 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, recursion_limit):
             names.append(child_name + 'VAL')
             inactive_condition = '((/=) ' + child_name + 'VAL ' + format_return_status('failure') + ')'
         misc_args = create_misc_args(loop_references = {}, node_name = node_name, specification_mode = False, inactive_condition = original_inactive_condition)
-        next_states_list.append(', let children = [' + ', '.join(names) + ']' )
-        case_result_strings = (
-            ([] if misc_args['inactive_condition'] == 'False' else [(misc_args['inactive_condition'], format_return_status('invalid'))])
-            + [('(elem ' + format_return_status('success') + ' children)', format_return_status('success')),
-               ('(elem ' + format_return_status('running') + ' children)', format_return_status('running')),
-               ('True', format_return_status('failure'))]
-        )
-        next_states_list.append(', let ' + node_name + 'VAL = ' + recursive_if_then_else_let(case_result_strings, 0) )
+        next_states_list.append((
+            '-- for ' + node_name + os.linesep
+            + 'children = [' + ', '.join(names) + ']' + os.linesep
+            + 'value' + os.linesep
+            + indent(1) + '| ' + misc_args['inactive_condition'] + ' = ' + format_return_status('invalid') + os.linesep
+            + indent(1) + '| elem ' + format_return_status('success')  + ' children = ' + format_return_status('success') + os.linesep
+            + indent(1) + '| elem ' + format_return_status('running')  + ' children = ' + format_return_status('running') + os.linesep
+            + indent(1) + '| otherwise' + ' = ' + format_return_status('failure') + os.linesep
+            + 'result = next_func value' + os.linesep
+            + indent(1) + 'where' + os.linesep
+            + indent(2) + 'next_func :: NODE_STATUS -> Set.Set STATE' + os.linesep
+            + indent(2) + 'next_func ' + node_name + 'VAL = result' + os.linesep
+            + indent(3) + 'where' + os.linesep
+            , 4))
         return node_name
 
     def create_inverter(current_node, node_name, _, inactive_condition):
         child_name = walk_tree(current_node.child, inactive_condition)
         misc_args = create_misc_args(loop_references = {}, node_name = node_name, specification_mode = False, inactive_condition = inactive_condition)
-        case_result_strings = (
-            ([] if misc_args['inactive_condition'] == 'False' else [(misc_args['inactive_condition'], format_return_status('invalid'))])
-            + [('(' + child_name + 'VAL == ' +  format_return_status('failure') + ')', format_return_status('success')),
-               ('(' + child_name + 'VAL == ' +  format_return_status('success') + ')', format_return_status('failure')),
-               ('True', format_return_status('running'))]
-        )
-        next_states_list.append(', let ' + node_name + 'VAL = ' + recursive_if_then_else_let(case_result_strings, 0) )
+        next_states_list.append((
+            '-- for ' + node_name + os.linesep
+            + 'value' + os.linesep
+            + indent(1) + '| ' + misc_args['inactive_condition'] + ' = ' + format_return_status('invalid') + os.linesep
+            + indent(1) + '| ' + child_name + 'VAL == ' + format_return_status('failure')  + ' = ' + format_return_status('success') + os.linesep
+            + indent(1) + '| ' + child_name + 'VAL == ' + format_return_status('success')  + ' = ' + format_return_status('failure') + os.linesep
+            + indent(1) + '| otherwise' + ' = ' + child_name + 'VAL' + os.linesep
+            + 'result = next_func value' + os.linesep
+            + indent(1) + 'where' + os.linesep
+            + indent(2) + 'next_func :: NODE_STATUS -> Set.Set STATE' + os.linesep
+            + indent(2) + 'next_func ' + node_name + 'VAL = result' + os.linesep
+            + indent(3) + 'where' + os.linesep
+            , 4))
         return node_name
 
     def create_X_is_Y(current_node, node_name, _, inactive_condition):
         child_name = walk_tree(current_node.child, inactive_condition)
         misc_args = create_misc_args(loop_references = {}, node_name = node_name, specification_mode = False, inactive_condition = inactive_condition)
-        case_result_strings = (
-            ([] if misc_args['inactive_condition'] == 'False' else [(misc_args['inactive_condition'], format_return_status('invalid'))])
-            + [('(' + child_name + 'VAL == ' + format_return_status(current_node.x) + ')', format_return_status(current_node.y)),
-               ('True', child_name + 'VAL')]
-        )
-        next_states_list.append(', let ' + node_name + 'VAL = ' + recursive_if_then_else_let(case_result_strings, 0) )
+        next_states_list.append((
+            '-- for ' + node_name + os.linesep
+            + 'value' + os.linesep
+            + indent(1) + '| ' + misc_args['inactive_condition'] + ' = ' + format_return_status('invalid') + os.linesep
+            + indent(1) + '| ' + child_name + 'VAL == ' + format_return_status(current_node.x)  + ' = ' + format_return_status(current_node.y) + os.linesep
+            + indent(1) + '| otherwise' + ' = ' + child_name + 'VAL' + os.linesep
+            + 'result = next_func value' + os.linesep
+            + indent(1) + 'where' + os.linesep
+            + indent(2) + 'next_func :: NODE_STATUS -> Set.Set STATE' + os.linesep
+            + indent(2) + 'next_func ' + node_name + 'VAL = result' + os.linesep
+            + indent(3) + 'where' + os.linesep
+            , 4))
         return node_name
 
     def create_check(current_node, node_name, argument_pairs, inactive_condition):
         for argument_name in argument_pairs:
             constants[argument_name] = argument_pairs[argument_name]
         misc_args = create_misc_args(loop_references = {}, node_name = node_name, specification_mode = False, inactive_condition = inactive_condition)
-        case_result_strings = (
-            ([] if misc_args['inactive_condition'] == 'False' else [(misc_args['inactive_condition'], format_return_status('invalid'))])
-            + [(format_code(current_node.condition, misc_args)[0], format_return_status('success')),
-               ('True', format_return_status('failure'))]
-        )
-        next_states_list.append(', let ' + node_name + 'VAL = ' + recursive_if_then_else_let(case_result_strings, 0) )
+        next_states_list.append((
+            '-- for ' + node_name + os.linesep
+            + 'value' + os.linesep
+            + indent(1) + '| ' + misc_args['inactive_condition'] + ' = ' + format_return_status('invalid') + os.linesep
+            + indent(1) + '| ' + format_code(current_node.condition, misc_args)[0] + ' = ' + format_return_status('success') + os.linesep
+            + indent(1) + '| otherwise' + ' = ' + format_return_status('failure') + os.linesep
+            + 'result = next_func value' + os.linesep
+            + indent(1) + 'where' + os.linesep
+            + indent(2) + 'next_func :: NODE_STATUS -> Set.Set STATE' + os.linesep
+            + indent(2) + 'next_func ' + node_name + 'VAL = result' + os.linesep
+            + indent(3) + 'where' + os.linesep
+            , 4))
         for argument_name in argument_pairs:
             constants.pop(argument_name)
         return node_name
@@ -548,12 +603,23 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, recursion_limit):
             result = handle_statement(statement, misc_args_iter)
             next_states_list.extend(result[0])
             next_states_delayed_list.extend(result[1])
-        case_result_strings = (
-            ([] if misc_args_iter['inactive_condition'] == 'False' else [(misc_args_iter['inactive_condition'], format_return_status('invalid'))])
-            + [(format_code(case_result.condition, misc_args_iter)[0], format_return_status(case_result.status)) for case_result in current_node.return_statement.case_results]
-            + [('True', format_return_status(current_node.return_statement.default_result.status))]
-        )
-        next_states_list.append(', let ' + node_name + 'VAL = ' + recursive_if_then_else_let(case_result_strings, 0))
+        next_states_list.append((
+            '-- for ' + node_name + os.linesep
+            + 'value' + os.linesep
+            + indent(1) + '| ' + misc_args_iter['inactive_condition'] + ' = '  + format_return_status('invalid') + os.linesep
+            + ''.join(
+                [
+                    (indent(1) + '| ' + format_code(case_result.condition, misc_args_iter)[0] + ' = ' + format_return_status(case_result.status) + os.linesep)
+                    for case_result in current_node.return_statement.case_results
+                ]
+            )
+            + indent(1) + '| otherwise = ' + format_return_status(current_node.return_statement.default_result.status) + os.linesep
+            + 'result = next_func value' + os.linesep
+            + indent(1) + 'where' + os.linesep
+            + indent(2) + 'next_func :: NODE_STATUS -> Set.Set STATE' + os.linesep
+            + indent(2) + 'next_func ' + node_name + 'VAL = result' + os.linesep
+            + indent(3) + 'where' + os.linesep
+            , 4))
         for statement in current_node.post_update_statements:
             result = handle_statement(statement, misc_args_iter)
             next_states_list.extend(result[0])
@@ -698,41 +764,41 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, recursion_limit):
         write_string += (
             'data STATE = STATE {' + os.linesep
             + (indent(1) if len(state_variables) + len(node_variables) > 0 else '')
-            + (', ').join(map(lambda x: indent(1) + x[0] + ' :: ' + x[2] + os.linesep, state_variables + node_variables))
+            + (indent(1) + ', ').join(map(lambda x: x[0] + ' :: ' + x[2] + os.linesep, state_variables + node_variables))
             + indent(1) + '}' + os.linesep
             + indent(1) + 'deriving (Eq, Ord, Show)' + os.linesep
             + os.linesep
         )
         write_string += (
             'initial_states :: Set.Set STATE' + os.linesep
-            + 'initial_states = Set.fromList [' + os.linesep
-            + indent(1) + 'STATE ' + ' '.join(map(lambda x: x[1], state_variables)) + ((' ' + format_return_status('invalid')) * len(node_variables)) + os.linesep
-            + ''.join(map(lambda x: indent(1) + ', let ' + x[1] + ' = ' + dummy_value(x[2]) + os.linesep, state_variables)).replace(',', '|', 1)
-            + ''.join(map(lambda x: indent(1) + x + os.linesep, initial_states_list))
-            + indent(1) + ']' + os.linesep + os.linesep
+            + 'initial_states = next_func' + os.linesep
+            + indent(1) + 'where' + os.linesep
+            + ''.join(map(lambda x: indent(2) + x[1] + ' = ' + dummy_value(x[2]) + os.linesep, state_variables))
+            + indent(2) + 'next_func :: Set.Set STATE' + os.linesep
+            + indent(2) + 'next_func = result' + os.linesep
+            + indent(3) + 'where' + os.linesep
         )
+        cur_indent_level = 4
+        for (to_write, indent_delta) in initial_states_list:
+            write_string += ''.join(map(lambda x: indent(cur_indent_level) + x + os.linesep, to_write.split(os.linesep)))
+            cur_indent_level = cur_indent_level + indent_delta
+        write_string += indent(cur_indent_level) + 'result = Set.singleton (STATE ' + ' '.join(map(lambda x: x[0] + 'VAL', state_variables)) + ((' ' + format_return_status('invalid')) * len(node_variables)) + ')' + os.linesep + os.linesep
         write_string += (
-            (
-                'next_states :: STATE -> Set.Set STATE' + os.linesep
-                + 'next_states state ' + os.linesep + '= Set.fromList [' + os.linesep
-            )
-            if model.tick_condition is None else
-            (
-                'next_states :: STATE -> Set.Set STATE' + os.linesep
-                + 'next_states state ' + os.linesep
-                + indent(1) + '| ' + format_code(model.tick_condition, create_misc_args(loop_references = {}, node_name = None, specification_mode = True, inactive_condition = ''))[0] + ' = result' + os.linesep
-                + indent(1) + '| otherwise = Set.singleton state' + os.linesep
-                + indent(1) + 'where' + os.linesep
-                + indent(2) + 'result = Set.fromList [' + os.linesep
-            )
+            'next_states :: STATE -> Set.Set STATE' + os.linesep
+            + 'next_states state ' + os.linesep
+            + indent(1) + '| ' + ('True' if model.tick_condition is None else format_code(model.tick_condition, create_misc_args(loop_references = {}, node_name = None, specification_mode = True, inactive_condition = ''))[0] )+ ' = next_func' + os.linesep
+            + indent(1) + '| otherwise = Set.singleton state' + os.linesep
+            + indent(1) + 'where' + os.linesep
+            + ''.join(map(lambda x: indent(2) + x[1] + ' = ' + x[0] + ' state' + os.linesep, state_variables + node_variables))
+            + indent(2) + 'next_func :: Set.Set STATE' + os.linesep
+            + indent(2) + 'next_func = result' + os.linesep
+            + indent(3) + 'where' + os.linesep
         )
-        temp_indent_val = 1 if model.tick_condition is None else 3
-        write_string += (
-            indent(temp_indent_val) + 'STATE ' + ' '.join(map(lambda x: x[1], state_variables + node_variables)) + os.linesep
-            + ''.join(map(lambda x: indent(temp_indent_val) + ', let ' + x[1] + ' = ' + x[0] + ' state' + os.linesep, state_variables)).replace(',', '|', 1)
-            + ''.join(map(lambda x: indent(temp_indent_val) + x + os.linesep, next_states_list))
-            + indent(temp_indent_val) + ']' + os.linesep + os.linesep
-        )
+        cur_indent_level = 4
+        for (to_write, indent_delta) in next_states_list:
+            write_string += ''.join(map(lambda x: indent(cur_indent_level) + x + os.linesep, to_write.split(os.linesep)))
+            cur_indent_level = cur_indent_level + indent_delta
+        write_string += indent(cur_indent_level) + 'result = Set.singleton (STATE ' + ' '.join(map(lambda x: x[1], state_variables + node_variables)) + ')' + os.linesep + os.linesep
         with open('./haskell_checker_file/core.hs_template', 'r', encoding = 'utf-8') as in_file:
             write_string += in_file.read()
         spec_misc_args = create_misc_args(loop_references = {}, node_name = None, specification_mode = True, inactive_condition = '')

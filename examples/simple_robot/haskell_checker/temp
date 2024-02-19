@@ -1,0 +1,112 @@
+   [STATE
+    x_true___VAL y_true___VAL x_goal___VAL y_goal___VAL
+    remaining_goals___VAL goal_reached___VAL move_robot___VAL
+    try_right___VAL x_too_small___VAL go_right___VAL try_left___VAL
+    x_too_big___VAL go_left___VAL try_up___VAL y_too_small___VAL
+    go_up___VAL try_down___VAL y_too_big___VAL go_down___VAL |
+    let x_true___VAL = x_true___ state,
+    let y_true___VAL = y_true___ state,
+    let x_goal___VAL = x_goal___ state,
+    let y_goal___VAL = y_goal___ state,
+    let remaining_goals___VAL = remaining_goals___ state,
+    let goal_reached___VAL = goal_reached___ state,
+    let x_too_small___VAL
+          = (if_then_else ((<) x_true___VAL x_goal___VAL) SUCCESS FAILURE),
+    x_true___VAL <- (if_then_else
+                       ((/=) x_too_small___VAL SUCCESS) [x_true___VAL]
+                       [(max 0 (min 50 ((+) x_true___VAL 1)))]),
+    y_true___VAL <- (if_then_else
+                       ((/=) x_too_small___VAL SUCCESS) [y_true___VAL]
+                       [(max 0 (min 50 ((+) y_true___VAL 0)))]),
+    let go_right___VAL
+          = (if_then_else ((/=) x_too_small___VAL SUCCESS) INVALID SUCCESS),
+    let children = [x_too_small___VAL, go_right___VAL],
+    let try_right___VAL
+          = (if_then_else
+               (elem FAILURE children) FAILURE
+               (if_then_else (elem RUNNING children) RUNNING SUCCESS)),
+    let x_too_big___VAL
+          = (if_then_else
+               ((/=) try_right___VAL FAILURE) INVALID
+               (if_then_else ((>) x_true___VAL x_goal___VAL) SUCCESS FAILURE)),
+    x_true___VAL <- (if_then_else
+                       ((/=) x_too_big___VAL SUCCESS) [x_true___VAL]
+                       [(max 0 (min 50 ((+) x_true___VAL (- 1))))]),
+    y_true___VAL <- (if_then_else
+                       ((/=) x_too_big___VAL SUCCESS) [y_true___VAL]
+                       [(max 0 (min 50 ((+) y_true___VAL 0)))]),
+    let go_left___VAL
+          = (if_then_else ((/=) x_too_big___VAL SUCCESS) INVALID SUCCESS),
+    let children = [x_too_big___VAL, go_left___VAL],
+    let try_left___VAL
+          = (if_then_else
+               ((/=) try_right___VAL FAILURE) INVALID
+               (if_then_else
+                  (elem FAILURE children) FAILURE
+                  (if_then_else (elem RUNNING children) RUNNING SUCCESS))),
+    let y_too_small___VAL
+          = (if_then_else
+               ((/=) try_left___VAL FAILURE) INVALID
+               (if_then_else ((<) y_true___VAL y_goal___VAL) SUCCESS FAILURE)),
+    x_true___VAL <- (if_then_else
+                       ((/=) y_too_small___VAL SUCCESS) [x_true___VAL]
+                       [(max 0 (min 50 ((+) x_true___VAL 0)))]),
+    y_true___VAL <- (if_then_else
+                       ((/=) y_too_small___VAL SUCCESS) [y_true___VAL]
+                       [(max 0 (min 50 ((+) y_true___VAL 1)))]),
+    let go_up___VAL
+          = (if_then_else ((/=) y_too_small___VAL SUCCESS) INVALID SUCCESS),
+    let children = [y_too_small___VAL, go_up___VAL],
+    let try_up___VAL
+          = (if_then_else
+               ((/=) try_left___VAL FAILURE) INVALID
+               (if_then_else
+                  (elem FAILURE children) FAILURE
+                  (if_then_else (elem RUNNING children) RUNNING SUCCESS))),
+    let y_too_big___VAL
+          = (if_then_else
+               ((/=) try_up___VAL FAILURE) INVALID
+               (if_then_else ((>) y_true___VAL y_goal___VAL) SUCCESS FAILURE)),
+    x_true___VAL <- (if_then_else
+                       ((/=) y_too_big___VAL SUCCESS) [x_true___VAL]
+                       [(max 0 (min 50 ((+) x_true___VAL 0)))]),
+    y_true___VAL <- (if_then_else
+                       ((/=) y_too_big___VAL SUCCESS) [y_true___VAL]
+                       [(max 0 (min 50 ((+) y_true___VAL (- 1))))]),
+    let go_down___VAL
+          = (if_then_else ((/=) y_too_big___VAL SUCCESS) INVALID SUCCESS),
+    let children = [y_too_big___VAL, go_down___VAL],
+    let try_down___VAL
+          = (if_then_else
+               ((/=) try_up___VAL FAILURE) INVALID
+               (if_then_else
+                  (elem FAILURE children) FAILURE
+                  (if_then_else (elem RUNNING children) RUNNING SUCCESS))),
+    let children
+          = [try_right___VAL, try_left___VAL, try_up___VAL, try_down___VAL],
+    let move_robot___VAL
+          = (if_then_else
+               (elem SUCCESS children) SUCCESS
+               (if_then_else (elem RUNNING children) RUNNING FAILURE)),
+    goal_reached___VAL <- [((&&)
+                              ((==) x_goal___VAL x_true___VAL)
+                              ((==) y_goal___VAL y_true___VAL))],
+    remaining_goals___VAL <- (if_then_else
+                                goal_reached___VAL [(max 0 ((-) remaining_goals___VAL 1))]
+                                [remaining_goals___VAL]),
+    x_goal___VAL <- (if_then_else
+                       ((==) 0 remaining_goals___VAL) [x_goal___VAL]
+                       (if_then_else
+                          goal_reached___VAL
+                          [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+                           19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35,
+                           36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50]
+                          [x_goal___VAL])),
+    y_goal___VAL <- (if_then_else
+                       ((==) 0 remaining_goals___VAL) [y_goal___VAL]
+                       (if_then_else
+                          goal_reached___VAL
+                          [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+                           19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35,
+                           36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50]
+                          [y_goal___VAL]))]
