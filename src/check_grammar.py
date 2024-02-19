@@ -5,7 +5,7 @@ It contains a variety of utility functions.
 
 
 Author: Serena Serafina Serbinowska
-Last Edit: 2023-11-09
+Last Edit: 2024-02-19
 '''
 import itertools
 import re
@@ -637,37 +637,33 @@ def validate_model(metamodel_file, model_file, recursion_limit):
         trace.pop()
         return
 
-    def walk_tree(current_node, node_names, node_names_map, nodes_to_check):
-        while True:
-            if hasattr(current_node, 'sub_root'):
-                current_node = current_node.sub_root
-                continue
-            current_name = current_node.leaf.name if current_node.name is None else current_node.name
-            if hasattr(current_node, 'leaf'):
-                current_args = current_node.arguments
-                current_node = current_node.leaf
-                all_current_args = []
-                for cur_arg in current_args:
-                    arg_func = build_meta_func(cur_arg)
-                    all_current_args.extend(arg_func((constants, {})))
-                if len(current_node.arguments) != len(all_current_args):
-                    raise BTreeException(trace, 'Node ' + current_node.name + ' needs ' + str(len(current_node.arguments)) + ' arguments but was created with ' + str(len(all_current_args)))
-                for (index, cur_arg) in enumerate(all_current_args):
-                    cur_type = resolve_potential_reference(cur_arg, declared_enumerations, {}, {}, constants, {}, trace = trace)[1]
-                    if current_node.arguments[index].argument_type != cur_type:
-                        raise BTreeException(trace, 'Node ' + current_node.name + ' argument ' + str(index) + ' named ' + current_node.arguments[index].argument_name + ' was declared to be of type ' + current_node.arguments[index].argument_type + ' but is being created with type ' + cur_type)
-                nodes_to_check.add(current_node.name)
-            break
-        # next, we get the name of this node, and correct for duplication
-
-        new_name = create_node_name(current_name, node_names, node_names_map)
-        node_name = new_name[0]
-        modifier = new_name[1]
-        if node_name in constants or new_name in declared_enumerations:
+    def walk_tree(current_node, node_names, nodes_to_check):
+        while hasattr(current_node, 'sub_root'):
+            current_node = current_node.sub_root
+        current_name = ''
+        if hasattr(current_node, 'leaf'):
+            node_name = current_node.name if hasattr(current_node, 'name') and current_node.name is not None else current_node.leaf.name
+            current_args = current_node.arguments
+            current_node = current_node.leaf
+            all_current_args = []
+            for cur_arg in current_args:
+                arg_func = build_meta_func(cur_arg)
+                all_current_args.extend(arg_func((constants, {})))
+            if len(current_node.arguments) != len(all_current_args):
+                raise BTreeException(trace, 'Node ' + current_node.name + ' needs ' + str(len(current_node.arguments)) + ' arguments but was created with ' + str(len(all_current_args)))
+            for (index, cur_arg) in enumerate(all_current_args):
+                cur_type = resolve_potential_reference(cur_arg, declared_enumerations, {}, {}, constants, {}, trace = trace)[1]
+                if current_node.arguments[index].argument_type != cur_type:
+                    raise BTreeException(trace, 'Node ' + current_node.name + ' argument ' + str(index) + ' named ' + current_node.arguments[index].argument_name + ' was declared to be of type ' + current_node.arguments[index].argument_type + ' but is being created with type ' + cur_type)
+            nodes_to_check.add(current_node.name)
+        else:
+            node_name = current_node.name
+        if node_name in node_names:
+            raise BTreeException(trace, 'Node name ' + node_name + ' already exists. Please use a different name.')
+        if node_name in constants or node_name in declared_enumerations:
             raise BTreeException(trace, 'Node name ' + node_name + ' clashes with existing constant or enumeration')
 
         node_names.add(node_name)
-        node_names_map[node_name] = modifier
 
         if hasattr(current_node, 'memory'):
             if current_node.memory == 'with_true_memory':
@@ -680,13 +676,13 @@ def validate_model(metamodel_file, model_file, recursion_limit):
                 raise BTreeException(trace, 'Node ' + current_node.name + ' is of type X_is_Y where X==Y')
 
         if hasattr(current_node, 'child'):
-            (node_names, node_names_map, nodes_to_check) = walk_tree(current_node.child, node_names, node_names_map, nodes_to_check)
+            (node_names, nodes_to_check) = walk_tree(current_node.child, node_names, nodes_to_check)
         if hasattr(current_node, 'children'):
             if len(current_node.children) < 2:
                 raise BTreeException(trace, 'Node ' + current_node.name + ' has less than 2 children.')
             for child in current_node.children:
-                (node_names, node_names_map, nodes_to_check) = walk_tree(child, node_names, node_names_map, nodes_to_check)
-        return (node_names, node_names_map, nodes_to_check)
+                (node_names, nodes_to_check) = walk_tree(child, node_names, nodes_to_check)
+        return (node_names, nodes_to_check)
 
     def valid_enumeration(value):
         if not isinstance(value, str):
@@ -723,7 +719,7 @@ def validate_model(metamodel_file, model_file, recursion_limit):
     }
     loop_references = {}
     trace.pop()
-    (all_node_names, _, nodes_to_check) = walk_tree(model.root, set(), {}, set())
+    (all_node_names, nodes_to_check) = walk_tree(model.root, set(), set())
 
     require_trace_identifier = False
 
