@@ -88,6 +88,7 @@ FUNCTIONS = {
     #'neq' : (lambda x : operator.ne(x[0], x[1]), False),
     'lt' : (operator.lt, True),
     'gt' : (operator.gt, True),
+    # 'gt' : (gt_override, True),
     'lte' : (operator.le, True),
     'gte' : (operator.ge, True),
     'neg' : (operator.neg, True),
