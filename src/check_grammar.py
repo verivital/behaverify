@@ -226,6 +226,35 @@ def validate_model(metamodel_file, model_file, recursion_limit):
                     return_vals.extend(validate_code(code.function_call.values[0], scopes, variable_names, allowed_functions))
                 loop_references.pop(loop_variable)
             return return_vals
+        if code.function_call.function_name == 'case_loop':
+            loop_variable = code.function_call.loop_variable
+            validate_name(loop_variable)
+            return_vals = []
+            all_domain_values = []
+            if code.function_call.min_val is None:
+                for domain_code in code.function_call.loop_variable_domain:
+                    try:
+                        domain_func = build_meta_func(domain_code)
+                        # new_references = copy.deepcopy(loop_references)  # the meta function is guaranteed to not change this.
+                        for domain_value in domain_func((constants, loop_references)):
+                            all_domain_values.append(resolve_potential_reference(domain_value, declared_enumerations, all_node_names, variables, constants, loop_references, trace = trace)[2])
+                    except Exception as error:
+                        raise BTreeException(trace, 'Unknown error') from error
+            else:
+                ((_, min_val), (_, max_val)) = verify_min_max(code.function_call.min_val, code.function_call.max_val, False)
+                all_domain_values = range(min_val, max_val + 1)
+            cond_func = build_meta_func(code.function_call.loop_condition)
+            for domain_member in all_domain_values:
+                loop_references[loop_variable] = domain_member
+                returned_vals = cond_func((constants, loop_references))
+                if len(returned_vals) != 1:
+                    raise BTreeException(trace, 'Case Loop Condition function is expected to return exactly 1 value')
+                if returned_vals[0]:
+                    validate_condition(code.function_call.cond_values, scopes, variable_names, allowed_functions)
+                    for value in code.function_call.values:
+                        return_vals.extend(validate_code(value, scopes, variable_names, allowed_functions))
+                loop_references.pop(loop_variable)
+            return return_vals
         # handle index specially, and return.
         if code.function_call.function_name == 'index':
             to_index_func = build_meta_func(code.function_call.to_index)

@@ -31,6 +31,21 @@ def serene_loop(function_call):
         ]
     return evaluate_loop
 
+def serene_case_loop(function_call):
+    sub_func = build_meta_func(function_call.values[0])
+    def evaluate_case_loop(references):
+        return [
+            value
+            for loop_value in (
+                    range(build_meta_func(function_call.min_val)(references)[0],
+                          build_meta_func(function_call.max_val)(references)[0] + 1)
+                    if function_call.min_val is not None else
+                    [loop_value_ref for loop_value_code in function_call.loop_variable_domain for loop_value_ref in build_meta_func(loop_value_code)(references)]
+            )
+            for value in sub_func((references[0], update_dictionary(references[1], function_call.loop_variable, loop_value)))
+        ]
+    return evaluate_case_loop
+
 def serene_if(function_call):
     # since both return options return a list, we always return a list, so we don't have wo worry about that.
     def evaluate_if(references):

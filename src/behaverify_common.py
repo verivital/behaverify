@@ -318,7 +318,6 @@ def format_node_type(node, children = True):
         )
     )
 
-
 # def create_node_template(node_name, parent_name, category, node_type,
 #                          success, running, failure,
 #                          additional_arguments = None,
@@ -340,7 +339,6 @@ def format_node_type(node, children = True):
 #             'internal_status_module_code' : internal_status_module_code
 #         }
 
-
 # def create_node_name(base_name, node_names, modifier = 0):
 #     formatted_name = base_name + (('_' + str(modifier)) if modifier > 0 else '')
 #     return (create_node_name(base_name, node_names, modifier + 1)
@@ -348,7 +346,6 @@ def format_node_type(node, children = True):
 #                     formatted_name
 #                     )
 #             )
-
 
 def create_node_name(base_name, node_names, node_names_map, modifier = 0):
     if modifier == 0:

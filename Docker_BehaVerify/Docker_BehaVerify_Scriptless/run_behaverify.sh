@@ -41,13 +41,32 @@ if [[ -n "${network_folder}" ]]; then
 fi
 
 
-if ! test -d "${output_location}"; then
-    echo "Output Location needs to be a directory. ${output_location} is not a directory. Exiting"
-    exit 3
-fi
 if ! [[ "${output_location: -1}" != "/" ]]; then
     output_location="${output_location}/"
 fi
+if test -e "${output_location}"; then
+    rm -rf "${output_location}"
+fi
+
+
+
+if ! test -f "${input_file}"; then
+    echo "${input_file} is not a file (after ${output_location} was cleared). Exiting"
+    exit 1
+fi
+
+if [[ "${network_folder}" == "-" ]]; then
+    network_folder=""
+fi
+if [[ -n "${network_folder}" ]]; then
+    if ! test -d "${network_folder}"; then
+	echo "Network Folder must either be - or a directory. ${network_folder} is neither (after ${output_location} was cleared). Exiting"
+	exit 2
+    fi
+fi
+
+mkdir "${output_location}"
+mkdir "${output_location}/app"
 
 
 if [[ "${command}" == "nuXmv" ]]; then
@@ -68,19 +87,10 @@ else
 fi
 
 command_args=($command_flags)
-echo "/home/${USER}/${input_name_only}/${input_name}"
 
-docker start behaverify
-docker exec behaverify "/home/${USER}/behaverify/Docker_BehaVerify/Additional_Files/setup_directory.sh" "${input_name_only}"
-docker cp "${input_file}" "behaverify:/home/${USER}/${input_name_only}/${input_name}"
-if [[ -n "${network_folder}" ]]; then
-    docker cp "${network_folder}" "behaverify:/home/${USER}/${input_name_only}/${network_folder_name}"
-fi
 if [[ -z $user_flags ]]; then
-    docker exec behaverify "/home/${USER}/behaverify_venv/bin/python3" "/home/${USER}/behaverify/src/${command}.py" "/home/${USER}/behaverify/metamodel/behaverify.tx" "/home/${USER}/${input_name_only}/${input_name}" "${command_args[@]}"
+    "/home/${USER}/behaverify_venv/bin/python3" "/home/${USER}/behaverify/src/${command}.py" "/home/${USER}/behaverify/metamodel/behaverify.tx" "/home/${USER}/${input_name_only}/${input_name}" "${command_args[@]}"
 fi
 if [[ -n $user_flags ]]; then
-    docker exec behaverify "/home/${USER}/behaverify_venv/bin/python3" "/home/${USER}/behaverify/src/${command}.py" "/home/${USER}/behaverify/metamodel/behaverify.tx" "/home/${USER}/${input_name_only}/${input_name}" "${command_args[@]}" "${user_args[@]}"
+    "/home/${USER}/behaverify_venv/bin/python3" "/home/${USER}/behaverify/src/${command}.py" "/home/${USER}/behaverify/metamodel/behaverify.tx" "/home/${USER}/${input_name_only}/${input_name}" "${command_args[@]}" "${user_args[@]}"
 fi
-docker cp "behaverify:/home/${USER}/${input_name_only}" "${output_location}${input_name_only}"
-docker stop behaverify
