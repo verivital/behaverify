@@ -1119,7 +1119,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
         import onnx
     behaverify_variables = {}
 
-    (_, _, _, nodes, local_variables, initial_statements, statements) = walk_tree(model.root)
+    (_, _, nodes, local_variables, initial_statements, statements) = walk_tree(model.root)
 
     behaverify_variables = {} # here to make sure the variable is in the namespace.
     behaverify_variables = get_behaverify_variables(model, local_variables, initial_statements, keep_stage_0, keep_last_stage)
