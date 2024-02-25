@@ -72,15 +72,15 @@ mkdir "${output_location}/app"
 if [[ "${command}" == "nuXmv" ]]; then
     echo "generating nuXmv model"
     command="dsl_to_nuxmv"
-    command_flags="/home/${USER}/${input_name_only}/app/${input_name_only}.smv"
+    command_flags="${output_location}/app/${input_name_only}.smv"
 elif [[ "${command}" == "Python" ]]; then
     echo "generating Python code"
     command="dsl_to_python"
-    command_flags="/home/${USER}/${input_name_only}/app/ ${input_name_only}"
+    command_flags="${output_location}/app/ ${input_name_only}"
 elif [[ "${command}" == "Haskell" ]]; then
     echo "generating Haskell code"
     command="dsl_to_haskell"
-    command_flags="/home/${USER}/${input_name_only}/ ${input_name_only}"
+    command_flags="${output_location}/ ${input_name_only}"
 else
     echo "unknown command. Exiting"
     exit 4
@@ -89,7 +89,7 @@ fi
 command_args=($command_flags)
 
 if [[ -z $user_flags ]]; then
-    "/home/${USER}/behaverify_venv/bin/python3" "/home/${USER}/behaverify/src/${command}.py" "/home/${USER}/behaverify/metamodel/behaverify.tx" "/home/${USER}/${input_name_only}/${input_name}" "${command_args[@]}"
+    "/home/${USER}/behaverify_venv/bin/python3" "/home/${USER}/behaverify/src/${command}.py" "/home/${USER}/behaverify/metamodel/behaverify.tx" "${input_file}" "${command_args[@]}"
 fi
 if [[ -n $user_flags ]]; then
     "/home/${USER}/behaverify_venv/bin/python3" "/home/${USER}/behaverify/src/${command}.py" "/home/${USER}/behaverify/metamodel/behaverify.tx" "/home/${USER}/${input_name_only}/${input_name}" "${command_args[@]}" "${user_args[@]}"
