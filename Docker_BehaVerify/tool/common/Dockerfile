@@ -34,13 +34,14 @@ RUN git sparse-checkout set --no-cone
 RUN echo !/* > /home/$USER/behaverify/.git/info/sparse-checkout
 RUN echo /src >> /home/$USER/behaverify/.git/info/sparse-checkout
 RUN echo /metamodel >> /home/$USER/behaverify/.git/info/sparse-checkout
-RUN echo /Docker_BehaVerify >> /home/$USER/behaverify/.git/info/sparse-checkout
+RUN echo /Docker_BehaVerify/tool >> /home/$USER/behaverify/.git/info/sparse-checkout
+RUN echo /requirements >> /home/$USER/behaverify/.git/info/sparse-checkout
+RUN echo /scripts/nuxmv_commands >> /home/$USER/behaverify/.git/info/sparse-checkout
 RUN git checkout
-RUN chmod -R +x /home/$USER/behaverify/Docker_BehaVerify/*.sh
-RUN chmod -R +x /home/$USER/behaverify/Docker_BehaVerify/Additional_Files/*.sh
-RUN chmod -R +x /home/$USER/behaverify/Docker_BehaVerify/Docker_BehaVerify_Scriptless/*.sh
+RUN chmod -R +x /home/$USER/behaverify/Docker_BehaVerify/tool/common/*.sh
 RUN python3 -m venv /home/$USER/behaverify_venv
 RUN /home/$USER/behaverify_venv/bin/python3 -m pip install --upgrade pip
-RUN /home/$USER/behaverify_venv/bin/python3 -m pip install -r /home/$USER/behaverify/Docker_BehaVerify/Additional_Files/requirements.txt
+RUN /home/$USER/behaverify_venv/bin/python3 -m pip install -r /home/$USER/behaverify/requirements/core.txt
+RUN mkdir /home/$USER/user_files
 
 WORKDIR /home/$USER
