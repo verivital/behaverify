@@ -9,13 +9,15 @@ def move_files(behaverify, input_path, networks_path):
     (input_name_only, _) = os.path.splitext(input_name)
     print('Starting to copy relevant files from source to container.')
     behaverify.exec_run('/home/behaverify/behaverify/Docker_BehaVerify/util/setup_directory.sh ' + input_name_only)
-    copy_into(behaverify, input_path, '/home/behaverify/user_files/' + input_name_only)
+    if not copy_into(behaverify, input_path, '/home/behaverify/user_files/' + input_name_only):
+        raise RuntimeError('Failed to copy input!')
     if networks_path != '-':
         (networks_location, networks_name) = os.path.split(networks_path)
         if networks_name == '':
             networks_path = networks_location
             (networks_location, networks_name) = os.path.split(networks_path)
-        copy_into(behaverify, networks_path, '/home/behaverify/user_files/' + input_name_only)
+        if not copy_into(behaverify, networks_path, '/home/behaverify/user_files/' + input_name_only):
+            raise RuntimeError('Failed to copy input!')
     print('Finished copying relevant files from source to container.')
     return (input_name, input_name_only)
 
@@ -46,7 +48,9 @@ def generate(behaverify, input_name, input_name_only, to_generate, flags):
         + [flags]
     )
     print('Started generating requested code/model.')
-    behaverify.exec_run(command_string)
+    (_, exec_stream) = behaverify.exec_run(command_string, stream = True)
+    for data in exec_stream:
+        print(data.decode())
     print('Finished generating requested code/model.')
     return
 
@@ -82,7 +86,9 @@ def evaluate(behaverify, input_name_only, to_generate, command):
                 ]) + '\''
             ]
         )
-    behaverify.exec_run(command_string)
+    (_, exec_stream) = behaverify.exec_run(command_string, stream = True)
+    for data in exec_stream:
+        print(data.decode())
     print('Finished.')
     return
 
@@ -194,7 +200,7 @@ def demo_mode():
     elif demo == 'ANSR_ONNX_2_counter':
         special_command = ' '.join([
             '/home/behaverify/draw_venv/bin/python3',
-            '/home/behaverify/behaverify/demo/ANSR_ONNX_2_counter/parse_nuxmv_output.py',
+            '/home/behaverify/behaverify/demos/ANSR_ONNX_2_counter/parse_nuxmv_output.py',
             '/home/behaverify/user_files/' + demo + '/output/nuxmv_ctl_results.txt',
             '/home/behaverify/user_files/' + demo + '/output/' + demo,
             '11',
@@ -202,7 +208,9 @@ def demo_mode():
         ])
     if special_command is not None:
         print('Running special commands for demo.')
-        behaverify.exec_run(special_command)
+        (_, exec_stream) = behaverify.exec_run(special_command, stream = True)
+        for data in exec_stream:
+            print(data.decode())
         print('Finished running special commands for demo.')
     ##### END SPECIAL ZONE
     print('Started to copy output back to source.')
