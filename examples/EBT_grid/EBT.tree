@@ -8,7 +8,7 @@ constants {
     #{ constants are used to synchronize values in a .tree file. }#
     #{ example := 0 }#
     #{ to use example elsewhere, simply type 'example' in place of any integer (quotes included) }#
-    path_size := 25, x_min := 0, x_max := 24, y_min := 0, y_max := 24, obs_count := 20
+    path_size := 25, x_min := 0, x_max := 20, y_min := 0, y_max := 20, obs_count := 20
 } end_constants
 
 variables {
@@ -46,6 +46,28 @@ variables {
 	index_of {18} assign {result{17}}
 	index_of {19} assign {result{12}}
     }
+    variable { bl x_sort array obs_count DEFINE INT default  {assign{ result{0}}} constant_index
+	index_of {0} assign {result{9}} #{0}#
+	index_of {1} assign {result{1}} #{2}#
+	index_of {2} assign {result{15}} #{2}#
+	index_of {3} assign {result{11}} #{4}#
+	index_of {4} assign {result{12}} #{4}#
+	index_of {5} assign {result{2}} #{5}#
+	index_of {6} assign {result{4}} #{5}#
+	index_of {7} assign {result{0}} #{7}#
+	index_of {8} assign {result{7}} #{7}#
+	index_of {9} assign {result{8}} #{7}#
+	index_of {10} assign {result{16}} #{8}#
+	index_of {11} assign {result{13}} #{9}#
+	index_of {12} assign {result{14}} #{10}#
+	index_of {13} assign {result{5}} #{11}#
+	index_of {14} assign {result{6}} #{12}#
+	index_of {15} assign {result{19}} #{12}#
+	index_of {16} assign {result{10}} #{15}#
+	index_of {17} assign {result{17}} #{15}#
+	index_of {18} assign {result{3}} #{16}#
+	index_of {19} assign {result{18}} #{17}#
+    }
     variable { bl obstacles_y array obs_count DEFINE INT default {assign {result{0}}} constant_index
 	index_of {0} assign {result{0}}
 	index_of {1} assign {result{2}}
@@ -68,6 +90,7 @@ variables {
 	index_of {18} assign {result{17}}
 	index_of {19} assign {result{18}}
     }
+    #{Don't need y_sort, it's already sorted.}#
     variable { bl waypoint_x VAR [x_min, x_max] assign {result{(loop, loop_var, [x_min, x_max] such_that True, loop_var)}}}
     variable { bl waypoint_y VAR [y_min, y_max] assign {result{(loop, loop_var, [y_min, y_max] such_that
 		    (not, (or,
@@ -77,322 +100,322 @@ variables {
     variable { bl landmark_1_x DEFINE INT assign {
 	    case {(eq, 0, waypoint_x)} result{0}
 	    case {(lt, 0, waypoint_x)} result{
-		(sub, 
-		    (min, (add, waypoint_x, 1),
-			(loop, obs_index, [0, (sub, obs_count, 1)] such_that (and,
-				(eq, (index, obstacles_y, constant_index obs_index), 0),
-				(gt, (index, obstacles_x, constant_index obs_index), 0),
-				(lte, (index, obstacles_x, constant_index obs_index), waypoint_x)
-			    ), (index, obstacles_x, constant_index obs_index) 
-			))
-		    , 1)}
+		(case_loop, obs_index, [0, (sub, obs_count, 1)] such_that True,
+		    (and,
+			(eq, (index, obstacles_y, (index, x_sort, obs_index)), 0),
+			(gt, (index, obstacles_x, (index, x_sort, obs_index)), 0),
+			(lte, (index, obstacles_x, (index, x_sort, obs_index)), waypoint_x)
+		    ),
+		    (sub, (index, obstacles_x, (index, x_sort, obs_index)), 1),
+		    waypoint_x
+		)}
 	    result {
-		(add,
-		    (max, (sub, waypoint_x, 1),
-			(loop, obs_index, [0, (sub, obs_count, 1)] such_that (and,
-				(eq, (index, obstacles_y, constant_index obs_index), 0),
-				(lt, (index, obstacles_x, constant_index obs_index), 0),
-				(gte, (index, obstacles_x, constant_index obs_index), waypoint_x)
-			    ), (index, obstacles_x, constant_index obs_index) 
-			))
-		    , 1)}
+		(case_loop, obs_index, [0, (sub, obs_count, 1)] such_that True,
+		    (and,
+			(eq, (index, obstacles_y, (index, x_sort, obs_index)), 0),
+			(lt, (index, obstacles_x, (index, x_sort, obs_index)), 0),
+			(gte, (index, obstacles_x, (index, x_sort, obs_index)), waypoint_x)
+		    ),
+		    (add, (index, obstacles_x, (index, x_sort, obs_index)), 1),
+		    waypoint_x
+		)}
 	}}
     variable { bl landmark_1_y DEFINE INT assign {result{0}}}
     variable { bl landmark_2_x DEFINE INT assign {result{landmark_1_x}}}
     variable { bl landmark_2_y DEFINE INT assign {
 	    case {(eq, landmark_1_y, waypoint_y)} result{landmark_1_y}
 	    case {(lt, landmark_1_y, waypoint_y)} result{
-		(sub, 
-		    (min, (add, waypoint_y, 1),
-			(loop, obs_index, [0, (sub, obs_count, 1)] such_that (and,
-				(eq, (index, obstacles_x, constant_index obs_index), landmark_1_x),
-				(gt, (index, obstacles_y, constant_index obs_index), landmark_1_y),
-				(lte, (index, obstacles_y, constant_index obs_index), waypoint_y)
-			    ), (index, obstacles_y, constant_index obs_index)
-			))
-		    , 1)}
+		(case_loop, obs_index, [0, (sub, obs_count, 1)] such_that True,
+		    (and,
+			(eq, (index, obstacles_x, constant_index obs_index), landmark_1_x),
+			(gt, (index, obstacles_y, constant_index obs_index), landmark_1_y),
+			(lte, (index, obstacles_y, constant_index obs_index), waypoint_y)
+		    ),
+		    (sub, (index, obstacles_y, constant_index obs_index), 1),
+		    waypoint_y
+		)}
 	    result {
-		(add,
-		    (max, (sub, waypoint_y, 1),
-			(loop, obs_index, [0, (sub, obs_count, 1)] such_that (and,
-				(eq, (index, obstacles_x, constant_index obs_index), landmark_1_x),
-				(lt, (index, obstacles_y, constant_index obs_index), landmark_1_y),
-				(gte, (index, obstacles_y, constant_index obs_index), waypoint_y)
-			    ), (index, obstacles_y, constant_index obs_index) 
-			))
-		    , 1)}
+		(case_loop, obs_index, [0, (sub, obs_count, 1)] such_that True,
+		    (and,
+			(eq, (index, obstacles_x, constant_index obs_index), landmark_1_x),
+			(lt, (index, obstacles_y, constant_index obs_index), landmark_1_y),
+			(gte, (index, obstacles_y, constant_index obs_index), waypoint_y)
+		    ),
+		    (add, (index, obstacles_y, constant_index obs_index), 1),
+		    waypoint_y
+		)}
 	}}
     variable { bl landmark_3_x DEFINE INT assign {
 	    case {(and, (eq, landmark_2_x, landmark_1_x), (eq, landmark_2_y, landmark_1_y))} result {
-		(sub, 
-		    (min, (add, x_max, 1),
-			(loop, obs_index, [0, (sub, obs_count, 1)] such_that (and,
-				(eq, (index, obstacles_y, constant_index obs_index), landmark_2_y),
-				(gt, (index, obstacles_x, constant_index obs_index), landmark_2_x),
-				(lte, (index, obstacles_x, constant_index obs_index), x_max)
-			    ), (index, obstacles_x, constant_index obs_index) 
-			))
-		    , 1)}
+		(case_loop, obs_index, [0, (sub, obs_count, 1)] such_that True,
+		    (and,
+			(eq, (index, obstacles_y, (index, x_sort, obs_index)), landmark_2_y),
+			(gt, (index, obstacles_x, (index, x_sort, obs_index)), landmark_2_x),
+			(lte, (index, obstacles_x, (index, x_sort, obs_index)), x_max)
+		    ),
+		    (sub, (index, obstacles_x, (index, x_sort, obs_index)), 1),
+		    x_max
+		)}
 	    case {(eq, landmark_2_x, waypoint_x)} result{landmark_2_x}
 	    case {(lt, landmark_2_x, waypoint_x)} result{
-		(sub, 
-		    (min, (add, waypoint_x, 1),
-			(loop, obs_index, [0, (sub, obs_count, 1)] such_that (and,
-				(eq, (index, obstacles_y, constant_index obs_index), landmark_2_y),
-				(gt, (index, obstacles_x, constant_index obs_index), landmark_2_x),
-				(lte, (index, obstacles_x, constant_index obs_index), waypoint_x)
-			    ), (index, obstacles_x, constant_index obs_index) 
-			))
-		    , 1)}
+		(case_loop, obs_index, [0, (sub, obs_count, 1)] such_that True,
+		    (and,
+			(eq, (index, obstacles_y, (index, x_sort, obs_index)), landmark_2_y),
+			(gt, (index, obstacles_x, (index, x_sort, obs_index)), landmark_2_x),
+			(lte, (index, obstacles_x, (index, x_sort, obs_index)), waypoint_x)
+		    ),
+		    (sub, (index, obstacles_x, (index, x_sort, obs_index)), 1),
+		    waypoint_x
+		)}
 	    result {
-		(add,
-		    (max, (sub, waypoint_x, 1),
-			(loop, obs_index, [0, (sub, obs_count, 1)] such_that (and,
-				(eq, (index, obstacles_y, constant_index obs_index), landmark_2_y),
-				(lt, (index, obstacles_x, constant_index obs_index), landmark_2_x),
-				(gte, (index, obstacles_x, constant_index obs_index), waypoint_x)
-			    ), (index, obstacles_x, constant_index obs_index) 
-			))
-		    , 1)}
+		(case_loop, obs_index, [0, (sub, obs_count, 1)] such_that True,
+		    (and,
+			(eq, (index, obstacles_y, (index, x_sort, obs_index)), landmark_2_y),
+			(lt, (index, obstacles_x, (index, x_sort, obs_index)), landmark_2_x),
+			(gte, (index, obstacles_x, (index, x_sort, obs_index)), waypoint_x)
+		    ),
+		    (add, (index, obstacles_x, (index, x_sort, obs_index)), 1),
+		    waypoint_x
+		)}
 	}}
     variable { bl landmark_3_y DEFINE INT assign {result{landmark_2_y}}}
     variable { bl landmark_4_x DEFINE INT assign {result{landmark_3_x}}}
     variable { bl landmark_4_y DEFINE INT assign {
 	    case {(and, (eq, landmark_3_x, landmark_2_x), (eq, landmark_3_y, landmark_2_y))} result {
-		(sub, 
-		    (min, (add, y_max, 1),
-			(loop, obs_index, [0, (sub, obs_count, 1)] such_that (and,
-				(eq, (index, obstacles_x, constant_index obs_index), landmark_3_x),
-				(gt, (index, obstacles_y, constant_index obs_index), landmark_3_y),
-				(lte, (index, obstacles_y, constant_index obs_index), y_max)
-			    ), (index, obstacles_y, constant_index obs_index) 
-			))
-		    , 1)}
+		(case_loop, obs_index, [0, (sub, obs_count, 1)] such_that True,
+		    (and,
+			(eq, (index, obstacles_x, constant_index obs_index), landmark_3_x),
+			(gt, (index, obstacles_y, constant_index obs_index), landmark_3_y),
+			(lte, (index, obstacles_y, constant_index obs_index), y_max)
+		    ),
+		    (sub, (index, obstacles_y, constant_index obs_index), 1),
+		    y_max
+		)}
 	    case {(eq, landmark_3_y, waypoint_y)} result{landmark_3_y}
 	    case {(lt, landmark_3_y, waypoint_y)} result{
-		(sub, 
-		    (min, (add, waypoint_y, 1),
-			(loop, obs_index, [0, (sub, obs_count, 1)] such_that (and,
-				(eq, (index, obstacles_x, constant_index obs_index), landmark_3_x),
-				(gt, (index, obstacles_y, constant_index obs_index), landmark_3_y),
-				(lte, (index, obstacles_y, constant_index obs_index), waypoint_y)
-			    ), (index, obstacles_y, constant_index obs_index)
-			))
-		    , 1)}
+		(case_loop, obs_index, [0, (sub, obs_count, 1)] such_that True,
+		    (and,
+			(eq, (index, obstacles_x, constant_index obs_index), landmark_3_x),
+			(gt, (index, obstacles_y, constant_index obs_index), landmark_3_y),
+			(lte, (index, obstacles_y, constant_index obs_index), waypoint_y)
+		    ),
+		    (sub, (index, obstacles_y, constant_index obs_index), 1),
+		    waypoint_y
+		)}
 	    result {
-		(add,
-		    (max, (sub, waypoint_y, 1),
-			(loop, obs_index, [0, (sub, obs_count, 1)] such_that (and,
-				(eq, (index, obstacles_x, constant_index obs_index), landmark_3_x),
-				(lt, (index, obstacles_y, constant_index obs_index), landmark_3_y),
-				(gte, (index, obstacles_y, constant_index obs_index), waypoint_y)
-			    ), (index, obstacles_y, constant_index obs_index) 
-			))
-		    , 1)}
+		(case_loop, obs_index, [0, (sub, obs_count, 1)] such_that True,
+		    (and,
+			(eq, (index, obstacles_x, constant_index obs_index), landmark_3_x),
+			(lt, (index, obstacles_y, constant_index obs_index), landmark_3_y),
+			(gte, (index, obstacles_y, constant_index obs_index), waypoint_y)
+		    ),
+		    (add, (index, obstacles_y, constant_index obs_index), 1),
+		    waypoint_y
+		)}
 	}}
     variable { bl landmark_5_x DEFINE INT assign {
 	    case {(and, (eq, landmark_4_x, landmark_3_x), (eq, landmark_4_y, landmark_3_y))} result {
-		(add,
-		    (max, (sub, x_min, 1),
-			(loop, obs_index, [0, (sub, obs_count, 1)] such_that (and,
-				(eq, (index, obstacles_y, constant_index obs_index), landmark_4_y),
-				(lt, (index, obstacles_x, constant_index obs_index), landmark_4_x),
-				(gte, (index, obstacles_x, constant_index obs_index), x_min)
-			    ), (index, obstacles_x, constant_index obs_index) 
-			))
-		    , 1)}
+		(case_loop, obs_index, [0, (sub, obs_count, 1)] such_that True,
+		    (and,
+			(eq, (index, obstacles_y, (index, x_sort, obs_index)), landmark_4_y),
+			(lt, (index, obstacles_x, (index, x_sort, obs_index)), landmark_4_x),
+			(gte, (index, obstacles_x, (index, x_sort, obs_index)), x_min)
+		    ),
+		    (add, (index, obstacles_x, (index, x_sort, obs_index)), 1),
+		    x_min
+		)}
 	    case {(eq, landmark_4_x, waypoint_x)} result{landmark_4_x}
 	    case {(lt, landmark_4_x, waypoint_x)} result{
-		(sub, 
-		    (min, (add, waypoint_x, 1),
-			(loop, obs_index, [0, (sub, obs_count, 1)] such_that (and,
-				(eq, (index, obstacles_y, constant_index obs_index), landmark_4_y),
-				(gt, (index, obstacles_x, constant_index obs_index), landmark_4_x),
-				(lte, (index, obstacles_x, constant_index obs_index), waypoint_x)
-			    ), (index, obstacles_x, constant_index obs_index) 
-			))
-		    , 1)}
+		(case_loop, obs_index, [0, (sub, obs_count, 1)] such_that True,
+		    (and,
+			(eq, (index, obstacles_y, (index, x_sort, obs_index)), landmark_4_y),
+			(gt, (index, obstacles_x, (index, x_sort, obs_index)), landmark_4_x),
+			(lte, (index, obstacles_x, (index, x_sort, obs_index)), waypoint_x)
+		    ),
+		    (sub, (index, obstacles_x, (index, x_sort, obs_index)), 1),
+		    waypoint_x
+		)}
 	    result {
-		(add,
-		    (max, (sub, waypoint_x, 1),
-			(loop, obs_index, [0, (sub, obs_count, 1)] such_that (and,
-				(eq, (index, obstacles_y, constant_index obs_index), landmark_4_y),
-				(lt, (index, obstacles_x, constant_index obs_index), landmark_4_x),
-				(gte, (index, obstacles_x, constant_index obs_index), waypoint_x)
-			    ), (index, obstacles_x, constant_index obs_index) 
-			))
-		    , 1)}
+		(case_loop, obs_index, [0, (sub, obs_count, 1)] such_that True,
+		    (and,
+			(eq, (index, obstacles_y, (index, x_sort, obs_index)), landmark_4_y),
+			(lt, (index, obstacles_x, (index, x_sort, obs_index)), landmark_4_x),
+			(gte, (index, obstacles_x, (index, x_sort, obs_index)), waypoint_x)
+		    ),
+		    (add, (index, obstacles_x, (index, x_sort, obs_index)), 1),
+		    waypoint_x
+		)}
 	}}
     variable { bl landmark_5_y DEFINE INT assign {result{landmark_4_y}}}
     variable { bl landmark_6_x DEFINE INT assign {result{landmark_5_x}}}
     variable { bl landmark_6_y DEFINE INT assign {
 	    case {(and, (eq, landmark_5_x, landmark_4_x), (eq, landmark_5_y, landmark_4_y))} result {
-		(add,
-		    (max, (sub, y_min, 1),
-			(loop, obs_index, [0, (sub, obs_count, 1)] such_that (and,
-				(eq, (index, obstacles_x, constant_index obs_index), landmark_5_x),
-				(lt, (index, obstacles_y, constant_index obs_index), landmark_5_y),
-				(gte, (index, obstacles_y, constant_index obs_index), y_min)
-			    ), (index, obstacles_y, constant_index obs_index) 
-			))
-		    , 1)}
+		(case_loop, obs_index, [0, (sub, obs_count, 1)] such_that True,
+		    (and,
+			(eq, (index, obstacles_x, constant_index obs_index), landmark_5_x),
+			(lt, (index, obstacles_y, constant_index obs_index), landmark_5_y),
+			(gte, (index, obstacles_y, constant_index obs_index), y_min)
+		    ),
+		    (add, (index, obstacles_y, constant_index obs_index), 1),
+		    y_min
+		)}
 	    case {(eq, landmark_5_y, waypoint_y)} result{landmark_5_y}
 	    case {(lt, landmark_5_y, waypoint_y)} result{
-		(sub, 
-		    (min, (add, waypoint_y, 1),
-			(loop, obs_index, [0, (sub, obs_count, 1)] such_that (and,
-				(eq, (index, obstacles_x, constant_index obs_index), landmark_5_x),
-				(gt, (index, obstacles_y, constant_index obs_index), landmark_5_y),
-				(lte, (index, obstacles_y, constant_index obs_index), waypoint_y)
-			    ), (index, obstacles_y, constant_index obs_index)
-			))
-		    , 1)}
+		(case_loop, obs_index, [0, (sub, obs_count, 1)] such_that True,
+		    (and,
+			(eq, (index, obstacles_x, constant_index obs_index), landmark_5_x),
+			(gt, (index, obstacles_y, constant_index obs_index), landmark_5_y),
+			(lte, (index, obstacles_y, constant_index obs_index), waypoint_y)
+		    ),
+		    (sub, (index, obstacles_y, constant_index obs_index), 1),
+		    waypoint_y
+		)}
 	    result {
-		(add,
-		    (max, (sub, waypoint_y, 1),
-			(loop, obs_index, [0, (sub, obs_count, 1)] such_that (and,
-				(eq, (index, obstacles_x, constant_index obs_index), landmark_5_x),
-				(lt, (index, obstacles_y, constant_index obs_index), landmark_5_y),
-				(gte, (index, obstacles_y, constant_index obs_index), waypoint_y)
-			    ), (index, obstacles_y, constant_index obs_index) 
-			))
-		    , 1)}
+		(case_loop, obs_index, [0, (sub, obs_count, 1)] such_that True,
+		    (and,
+			(eq, (index, obstacles_x, constant_index obs_index), landmark_5_x),
+			(lt, (index, obstacles_y, constant_index obs_index), landmark_5_y),
+			(gte, (index, obstacles_y, constant_index obs_index), waypoint_y)
+		    ),
+		    (add, (index, obstacles_y, constant_index obs_index), 1),
+		    waypoint_y
+		)}
 	}}
     variable { bl landmark_7_x DEFINE INT assign {
 	    case {(and, (eq, landmark_6_x, landmark_5_x), (eq, landmark_6_y, landmark_5_y))} result {
-		(sub, 
-		    (min, (add, x_max, 1),
-			(loop, obs_index, [0, (sub, obs_count, 1)] such_that (and,
-				(eq, (index, obstacles_y, constant_index obs_index), landmark_6_y),
-				(gt, (index, obstacles_x, constant_index obs_index), landmark_6_x),
-				(lte, (index, obstacles_x, constant_index obs_index), x_max)
-			    ), (index, obstacles_x, constant_index obs_index) 
-			))
-		    , 1)}
+		(case_loop, obs_index, [0, (sub, obs_count, 1)] such_that True,
+		    (and,
+			(eq, (index, obstacles_y, (index, x_sort, obs_index)), landmark_6_y),
+			(gt, (index, obstacles_x, (index, x_sort, obs_index)), landmark_6_x),
+			(lte, (index, obstacles_x, (index, x_sort, obs_index)), x_max)
+		    ),
+		    (sub, (index, obstacles_x, (index, x_sort, obs_index)), 1),
+		    x_max
+		)}
 	    case {(eq, landmark_6_x, waypoint_x)} result{landmark_6_x}
 	    case {(lt, landmark_6_x, waypoint_x)} result{
-		(sub, 
-		    (min, (add, waypoint_x, 1),
-			(loop, obs_index, [0, (sub, obs_count, 1)] such_that (and,
-				(eq, (index, obstacles_y, constant_index obs_index), landmark_6_y),
-				(gt, (index, obstacles_x, constant_index obs_index), landmark_6_x),
-				(lte, (index, obstacles_x, constant_index obs_index), waypoint_x)
-			    ), (index, obstacles_x, constant_index obs_index) 
-			))
-		    , 1)}
+		(case_loop, obs_index, [0, (sub, obs_count, 1)] such_that True,
+		    (and,
+			(eq, (index, obstacles_y, (index, x_sort, obs_index)), landmark_6_y),
+			(gt, (index, obstacles_x, (index, x_sort, obs_index)), landmark_6_x),
+			(lte, (index, obstacles_x, (index, x_sort, obs_index)), waypoint_x)
+		    ),
+		    (sub, (index, obstacles_x, (index, x_sort, obs_index)), 1),
+		    waypoint_x
+		)}
 	    result {
-		(add,
-		    (max, (sub, waypoint_x, 1),
-			(loop, obs_index, [0, (sub, obs_count, 1)] such_that (and,
-				(eq, (index, obstacles_y, constant_index obs_index), landmark_6_y),
-				(lt, (index, obstacles_x, constant_index obs_index), landmark_6_x),
-				(gte, (index, obstacles_x, constant_index obs_index), waypoint_x)
-			    ), (index, obstacles_x, constant_index obs_index) 
-			))
-		    , 1)}
+		(case_loop, obs_index, [0, (sub, obs_count, 1)] such_that True,
+		    (and,
+			(eq, (index, obstacles_y, (index, x_sort, obs_index)), landmark_6_y),
+			(lt, (index, obstacles_x, (index, x_sort, obs_index)), landmark_6_x),
+			(gte, (index, obstacles_x, (index, x_sort, obs_index)), waypoint_x)
+		    ),
+		    (add, (index, obstacles_x, (index, x_sort, obs_index)), 1),
+		    waypoint_x
+		)}
 	}}
     variable { bl landmark_7_y DEFINE INT assign {result{landmark_6_y}}}
     variable { bl landmark_8_x DEFINE INT assign {result{landmark_7_x}}}
     variable { bl landmark_8_y DEFINE INT assign {
 	    case {(and, (eq, landmark_7_x, landmark_6_x), (eq, landmark_7_y, landmark_6_y))} result {
-		(add,
-		    (max, (sub, y_min, 1),
-			(loop, obs_index, [0, (sub, obs_count, 1)] such_that (and,
-				(eq, (index, obstacles_x, constant_index obs_index), landmark_7_x),
-				(lt, (index, obstacles_y, constant_index obs_index), landmark_7_y),
-				(gte, (index, obstacles_y, constant_index obs_index), y_min)
-			    ), (index, obstacles_y, constant_index obs_index) 
-			))
-		    , 1)}
+		(case_loop, obs_index, [0, (sub, obs_count, 1)] such_that True,
+		    (and,
+			(eq, (index, obstacles_x, constant_index obs_index), landmark_7_x),
+			(lt, (index, obstacles_y, constant_index obs_index), landmark_7_y),
+			(gte, (index, obstacles_y, constant_index obs_index), y_min)
+		    ),
+		    (add, (index, obstacles_y, constant_index obs_index), 1),
+		    y_min
+		)}
 	    case {(eq, landmark_7_y, waypoint_y)} result{landmark_7_y}
 	    case {(lt, landmark_7_y, waypoint_y)} result{
-		(sub, 
-		    (min, (add, waypoint_y, 1),
-			(loop, obs_index, [0, (sub, obs_count, 1)] such_that (and,
-				(eq, (index, obstacles_x, constant_index obs_index), landmark_7_x),
-				(gt, (index, obstacles_y, constant_index obs_index), landmark_7_y),
-				(lte, (index, obstacles_y, constant_index obs_index), waypoint_y)
-			    ), (index, obstacles_y, constant_index obs_index)
-			))
-		    , 1)}
+		(case_loop, obs_index, [0, (sub, obs_count, 1)] such_that True,
+		    (and,
+			(eq, (index, obstacles_x, constant_index obs_index), landmark_7_x),
+			(gt, (index, obstacles_y, constant_index obs_index), landmark_7_y),
+			(lte, (index, obstacles_y, constant_index obs_index), waypoint_y)
+		    ),
+		    (sub, (index, obstacles_y, constant_index obs_index), 1),
+		    waypoint_y
+		)}
 	    result {
-		(add,
-		    (max, (sub, waypoint_y, 1),
-			(loop, obs_index, [0, (sub, obs_count, 1)] such_that (and,
-				(eq, (index, obstacles_x, constant_index obs_index), landmark_7_x),
-				(lt, (index, obstacles_y, constant_index obs_index), landmark_7_y),
-				(gte, (index, obstacles_y, constant_index obs_index), waypoint_y)
-			    ), (index, obstacles_y, constant_index obs_index) 
-			))
-		    , 1)}
+		(case_loop, obs_index, [0, (sub, obs_count, 1)] such_that True,
+		    (and,
+			(eq, (index, obstacles_x, constant_index obs_index), landmark_7_x),
+			(lt, (index, obstacles_y, constant_index obs_index), landmark_7_y),
+			(gte, (index, obstacles_y, constant_index obs_index), waypoint_y)
+		    ),
+		    (add, (index, obstacles_y, constant_index obs_index), 1),
+		    waypoint_y
+		)}
 	}}
     variable { bl landmark_9_x DEFINE INT assign {
 	    case {(and, (eq, landmark_8_x, landmark_7_x), (eq, landmark_8_y, landmark_7_y))} result {
-		(add,
-		    (max, (sub, x_max, 1),
-			(loop, obs_index, [0, (sub, obs_count, 1)] such_that (and,
-				(eq, (index, obstacles_y, constant_index obs_index), landmark_8_y),
-				(lt, (index, obstacles_x, constant_index obs_index), landmark_8_x),
-				(gte, (index, obstacles_x, constant_index obs_index), x_max)
-			    ), (index, obstacles_x, constant_index obs_index) 
-			))
-		    , 1)}
+		(case_loop, obs_index, [0, (sub, obs_count, 1)] such_that True,
+		    (and,
+			(eq, (index, obstacles_y, (index, x_sort, obs_index)), landmark_8_y),
+			(lt, (index, obstacles_x, (index, x_sort, obs_index)), landmark_8_x),
+			(gte, (index, obstacles_x, (index, x_sort, obs_index)), x_min)
+		    ),
+		    (add, (index, obstacles_x, (index, x_sort, obs_index)), 1),
+		    x_min
+		)}
 	    case {(eq, landmark_8_x, waypoint_x)} result{landmark_8_x}
 	    case {(lt, landmark_8_x, waypoint_x)} result{
-		(sub, 
-		    (min, (add, waypoint_x, 1),
-			(loop, obs_index, [0, (sub, obs_count, 1)] such_that (and,
-				(eq, (index, obstacles_y, constant_index obs_index), landmark_8_y),
-				(gt, (index, obstacles_x, constant_index obs_index), landmark_8_x),
-				(lte, (index, obstacles_x, constant_index obs_index), waypoint_x)
-			    ), (index, obstacles_x, constant_index obs_index) 
-			))
-		    , 1)}
+		(case_loop, obs_index, [0, (sub, obs_count, 1)] such_that True,
+		    (and,
+			(eq, (index, obstacles_y, (index, x_sort, obs_index)), landmark_8_y),
+			(gt, (index, obstacles_x, (index, x_sort, obs_index)), landmark_8_x),
+			(lte, (index, obstacles_x, (index, x_sort, obs_index)), waypoint_x)
+		    ),
+		    (sub, (index, obstacles_x, (index, x_sort, obs_index)), 1),
+		    waypoint_x
+		)}
 	    result {
-		(add,
-		    (max, (sub, waypoint_x, 1),
-			(loop, obs_index, [0, (sub, obs_count, 1)] such_that (and,
-				(eq, (index, obstacles_y, constant_index obs_index), landmark_8_y),
-				(lt, (index, obstacles_x, constant_index obs_index), landmark_8_x),
-				(gte, (index, obstacles_x, constant_index obs_index), waypoint_x)
-			    ), (index, obstacles_x, constant_index obs_index) 
-			))
-		    , 1)}
+		(case_loop, obs_index, [0, (sub, obs_count, 1)] such_that True,
+		    (and,
+			(eq, (index, obstacles_y, (index, x_sort, obs_index)), landmark_8_y),
+			(lt, (index, obstacles_x, (index, x_sort, obs_index)), landmark_8_x),
+			(gte, (index, obstacles_x, (index, x_sort, obs_index)), waypoint_x)
+		    ),
+		    (add, (index, obstacles_x, (index, x_sort, obs_index)), 1),
+		    waypoint_x
+		)}
 	}}
     variable { bl landmark_9_y DEFINE INT assign {result{landmark_8_y}}}
     variable { bl landmark_10_x DEFINE INT assign {result{landmark_9_x}}}
     variable { bl landmark_10_y DEFINE INT assign {
 	    case {(and, (eq, landmark_9_x, landmark_8_x), (eq, landmark_9_y, landmark_8_y))} result {
-		(sub, 
-		    (min, (add, y_min, 1),
-			(loop, obs_index, [0, (sub, obs_count, 1)] such_that (and,
-				(eq, (index, obstacles_x, constant_index obs_index), landmark_9_x),
-				(gt, (index, obstacles_y, constant_index obs_index), landmark_9_y),
-				(lte, (index, obstacles_y, constant_index obs_index), y_min)
-			    ), (index, obstacles_y, constant_index obs_index)
-			))
-		    , 1)}
+		(case_loop, obs_index, [0, (sub, obs_count, 1)] such_that True,
+		    (and,
+			(eq, (index, obstacles_x, constant_index obs_index), landmark_9_x),
+			(gt, (index, obstacles_y, constant_index obs_index), landmark_9_y),
+			(lte, (index, obstacles_y, constant_index obs_index), y_max)
+		    ),
+		    (sub, (index, obstacles_y, constant_index obs_index), 1),
+		    y_max
+		)}
 	    case {(eq, landmark_9_y, waypoint_y)} result{landmark_9_y}
 	    case {(lt, landmark_9_y, waypoint_y)} result{
-		(sub, 
-		    (min, (add, waypoint_y, 1),
-			(loop, obs_index, [0, (sub, obs_count, 1)] such_that (and,
-				(eq, (index, obstacles_x, constant_index obs_index), landmark_9_x),
-				(gt, (index, obstacles_y, constant_index obs_index), landmark_9_y),
-				(lte, (index, obstacles_y, constant_index obs_index), waypoint_y)
-			    ), (index, obstacles_y, constant_index obs_index)
-			))
-		    , 1)}
+		(case_loop, obs_index, [0, (sub, obs_count, 1)] such_that True,
+		    (and,
+			(eq, (index, obstacles_x, constant_index obs_index), landmark_9_x),
+			(gt, (index, obstacles_y, constant_index obs_index), landmark_9_y),
+			(lte, (index, obstacles_y, constant_index obs_index), waypoint_y)
+		    ),
+		    (sub, (index, obstacles_y, constant_index obs_index), 1),
+		    waypoint_y
+		)}
 	    result {
-		(add,
-		    (max, (sub, waypoint_y, 1),
-			(loop, obs_index, [0, (sub, obs_count, 1)] such_that (and,
-				(eq, (index, obstacles_x, constant_index obs_index), landmark_9_x),
-				(lt, (index, obstacles_y, constant_index obs_index), landmark_9_y),
-				(gte, (index, obstacles_y, constant_index obs_index), waypoint_y)
-			    ), (index, obstacles_y, constant_index obs_index) 
-			))
-		    , 1)}
+		(case_loop, obs_index, [0, (sub, obs_count, 1)] such_that True,
+		    (and,
+			(eq, (index, obstacles_x, constant_index obs_index), landmark_9_x),
+			(lt, (index, obstacles_y, constant_index obs_index), landmark_9_y),
+			(gte, (index, obstacles_y, constant_index obs_index), waypoint_y)
+		    ),
+		    (add, (index, obstacles_y, constant_index obs_index), 1),
+		    waypoint_y
+		)}
 	}}
     variable { bl current_landmark_x DEFINE INT assign {
 	    case {(eq, landmark_index, 1)} result {landmark_1_x}
@@ -553,5 +576,5 @@ tick_prerequisite { (True) } end_tick_prerequisite
     If it is false, everything is done }#
 
 specifications {
-    CTLSPEC {(always_finally, (and, (eq, drone_x at -1, goal_x at -1), (eq, drone_y at -1, goal_y at -1)))}
+    CTLSPEC {(always_finally, (and, (eq, drone_x at -1, waypoint_x at -1), (eq, drone_y at -1, waypoint_y at -1)))}
 } end_specifications

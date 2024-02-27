@@ -43,6 +43,7 @@ def validate_model(metamodel_file, model_file, recursion_limit):
     function_type_info = {
         'if' : {'return_type' : 'depends', 'min_arg' : 3, 'max_arg' : 3, 'arg_type' : 'any', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'CTL', 'LTL', 'INVAR', 'reg'}},
         'loop' : {'return_type' : 'depends', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'any', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'CTL', 'LTL', 'INVAR', 'reg'}},
+        'case_loop' : {'return_type' : 'depends', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'any', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'CTL', 'LTL', 'INVAR', 'reg'}},
         'abs' : {'return_type' : 'NUM', 'min_arg' : 1, 'max_arg' : 1, 'arg_type' : 'NUM', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'INVAR', 'reg'}},
         'max' : {'return_type' : 'NUM', 'min_arg' : 2, 'max_arg' : -1, 'arg_type' : 'NUM', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'INVAR', 'reg'}},
         'min' : {'return_type' : 'NUM', 'min_arg' : 2, 'max_arg' : -1, 'arg_type' : 'NUM', 'allowed_in' : {'CTL', 'LTL', 'INVAR', 'reg'}, 'allows' : {'INVAR', 'reg'}},
@@ -250,11 +251,13 @@ def validate_model(metamodel_file, model_file, recursion_limit):
                 if len(returned_vals) != 1:
                     raise BTreeException(trace, 'Case Loop Condition function is expected to return exactly 1 value')
                 if returned_vals[0]:
-                    validate_condition(code.function_call.cond_values, scopes, variable_names, allowed_functions)
+                    validate_condition(code.function_call.cond_value, scopes, variable_names, allowed_functions)
                     for value in code.function_call.values:
                         return_vals.extend(validate_code(value, scopes, variable_names, allowed_functions))
                 loop_references.pop(loop_variable)
-            return return_vals
+            # we can't actually validate each path. Imagine that the above expects exactly one value, but we return like 30, because we had 30 cases where each returned 1 val.
+            # the struggle is real. return default only.
+            return validate_code(code.function_call.default_value, scopes, variable_names, allowed_functions)
         # handle index specially, and return.
         if code.function_call.function_name == 'index':
             to_index_func = build_meta_func(code.function_call.to_index)

@@ -263,7 +263,7 @@ statement:
     //--------------------SEC:FUNCTION_BL_LOCALS--------------------------------  
     function:
     (function_name = 'loop' ',' loop_variable = ID ',' (('{' loop_variable_domain += code_statement[','] '}') | ('[' min_val = code_statement ',' max_val = code_statement ']')) 'such_that' loop_condition = code_statement ',' values = code_statement) |
-    (function_name = 'case_loop' ',' loop_variable = ID ',' (('{' loop_variable_domain += code_statement[','] '}') | ('[' min_val = code_statement ',' max_val = code_statement ']')) 'such_that' loop_condition = code_statement ',' cond_values = code_statement ',' values = code_statement) | //the first value must always be a boolean, the rest are then the values used.
+    (function_name = 'case_loop' ',' loop_variable = ID ',' (('{' loop_variable_domain += code_statement[','] '}') | ('[' min_val = code_statement ',' max_val = code_statement ']')) 'such_that' loop_condition = code_statement ',' cond_value = code_statement ',' values = code_statement ',' default_value = code_statement) | //if each cond is false, use the last values. default_value cannot use loop_variable.
     (function_name = 'index' ',' to_index = code_statement (node_name = code_statement)? (read_at = code_statement)? (trace_num = code_statement)? ',' ((constant_index = 'constant_index' values = code_statement) | (constant_index = '' values = code_statement))) |
     (function_name = bounded_function_names ',' bound = bound_statement ',' values = code_statement) |
     (function_name = function_names ',' values += code_statement[',']) |
