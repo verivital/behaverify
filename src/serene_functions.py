@@ -16,17 +16,20 @@ def update_dictionary(dictionary, key, value):
     new_dictionary[key] = value
     return new_dictionary
 
+def reverse_thing_if_true(bool_val, thing):
+    return reversed(thing) if bool_val else thing
+
 def serene_loop(function_call):
     sub_func = build_meta_func(function_call.values[0])
     def evaluate_loop(references):
         return [
             value
-            for loop_value in (
+            for loop_value in reverse_thing_if_true(function_call.reverse == 'reverse', (
                     range(build_meta_func(function_call.min_val)(references)[0],
                           build_meta_func(function_call.max_val)(references)[0] + 1)
                     if function_call.min_val is not None else
                     [loop_value_ref for loop_value_code in function_call.loop_variable_domain for loop_value_ref in build_meta_func(loop_value_code)(references)]
-            )
+            ))
             for value in sub_func((references[0], update_dictionary(references[1], function_call.loop_variable, loop_value)))
         ]
     return evaluate_loop
@@ -36,12 +39,12 @@ def serene_case_loop(function_call):
     sub_func = build_meta_func(function_call.values[0])
     default_func = build_meta_func(function_call.default_value)
     def evaluate_case_loop(references):
-        domain_vals = (
+        domain_vals = reverse_thing_if_true(function_call.reverse == 'reverse', (
             range(build_meta_func(function_call.min_val)(references)[0],
                   build_meta_func(function_call.max_val)(references)[0] + 1)
             if function_call.min_val is not None else
             [loop_value_ref for loop_value_code in function_call.loop_variable_domain for loop_value_ref in build_meta_func(loop_value_code)(references)]
-        )
+        ))
         for loop_value in domain_vals:
             if cond_func((references[0], update_dictionary(references[1], function_call.loop_variable, loop_value)))[0]:
                 return sub_func((references[0], update_dictionary(references[1], function_call.loop_variable, loop_value)))
