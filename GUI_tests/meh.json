@@ -1,1 +1,0 @@
-{"type": "selector", "children": [{"type": "selector", "children": [{"type": "checkSome"}, {"type": "doSome"}]}, {"type": "a"}]}

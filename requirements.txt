@@ -1,7 +1,0 @@
-py_trees
-pandas
-jinja2
-textX
-matplotlib
-onnx
-onnxruntime
