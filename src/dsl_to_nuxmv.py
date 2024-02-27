@@ -3,7 +3,7 @@ This module is part of BehaVerify and used to convert .tree files to .smv files 
 
 
 Author: Serena Serafina Serbinowska
-Last Edit: 2024-02-19
+Last Edit: 2024-02-27
 '''
 import argparse
 import pprint
@@ -50,6 +50,8 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
         else:
             (min_val, max_val) = get_min_max(function_call.min_val, function_call.max_val, declared_enumerations, nodes, variables, constants, loop_references)
             all_domain_values = range(min_val, max_val + 1)
+        if function_call.reverse == 'reverse':
+            all_domain_values = reversed(all_domain_values)
         cond_func = build_meta_func(function_call.loop_condition)
         for domain_member in all_domain_values:
             loop_references[function_call.loop_variable] = domain_member
@@ -79,6 +81,8 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
         else:
             (min_val, max_val) = get_min_max(function_call.min_val, function_call.max_val, declared_enumerations, nodes, variables, constants, loop_references)
             all_domain_values = range(min_val, max_val + 1)
+        if function_call.reverse == 'reverse':
+            all_domain_values = reversed(all_domain_values)
         cond_func = build_meta_func(function_call.loop_condition)
         for domain_member in all_domain_values:
             loop_references[function_call.loop_variable] = domain_member

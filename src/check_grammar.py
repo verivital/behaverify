@@ -217,6 +217,8 @@ def validate_model(metamodel_file, model_file, recursion_limit):
             else:
                 ((_, min_val), (_, max_val)) = verify_min_max(code.function_call.min_val, code.function_call.max_val, False)
                 all_domain_values = range(min_val, max_val + 1)
+            if code.function_call.reverse == 'reverse':
+                all_domain_values = reversed(all_domain_values)
             cond_func = build_meta_func(code.function_call.loop_condition)
             for domain_member in all_domain_values:
                 loop_references[loop_variable] = domain_member
@@ -244,6 +246,8 @@ def validate_model(metamodel_file, model_file, recursion_limit):
             else:
                 ((_, min_val), (_, max_val)) = verify_min_max(code.function_call.min_val, code.function_call.max_val, False)
                 all_domain_values = range(min_val, max_val + 1)
+            if code.function_call.reverse == 'reverse':
+                all_domain_values = reversed(all_domain_values)
             cond_func = build_meta_func(code.function_call.loop_condition)
             for domain_member in all_domain_values:
                 loop_references[loop_variable] = domain_member
@@ -383,6 +387,8 @@ def validate_model(metamodel_file, model_file, recursion_limit):
         else:
             ((_, min_val), (_, max_val)) = verify_min_max(loop_array_index.min_val, loop_array_index.max_val, False)
             all_domain_values = range(min_val, max_val + 1)
+        if loop_array_index.reverse == 'reverse':
+            all_domain_values = reversed(all_domain_values)
         cond_func = build_meta_func(loop_array_index.loop_condition)
         for domain_member in all_domain_values:
             loop_references[loop_variable] = domain_member
