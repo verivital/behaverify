@@ -64,6 +64,30 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
     def format_function_loop(_, function_call, misc_args):
         return execute_loop(function_call, format_code, function_call.values[0], misc_args)
 
+    def format_function_case_loop(_, function_call, misc_args):
+        # can't use execute loop because we need to be able to track both the condition and the values at the same time.
+        new_misc_args = copy_misc_args(misc_args)
+        loop_references = new_misc_args['loop_references']
+        case_value_pairs = []
+        all_domain_values = []
+        if function_call.min_val is None:
+            for domain_code in function_call.loop_variable_domain:
+                domain_func = build_meta_func(domain_code)
+                for domain_value in domain_func((constants, loop_references)):
+                    resolved = resolve_potential_reference_no_type(domain_value, declared_enumerations, nodes, variables, constants, loop_references)
+                    all_domain_values.append(resolved[1])
+        else:
+            (min_val, max_val) = get_min_max(function_call.min_val, function_call.max_val, declared_enumerations, nodes, variables, constants, loop_references)
+            all_domain_values = range(min_val, max_val + 1)
+        cond_func = build_meta_func(function_call.loop_condition)
+        for domain_member in all_domain_values:
+            loop_references[function_call.loop_variable] = domain_member
+            if cond_func((constants, loop_references))[0]:
+                case_value_pairs.append((format_code(function_call.cond_value, new_misc_args)[0], format_code(function_call.values[0], new_misc_args)))
+            loop_references.pop(function_call.loop_variable)
+        case_value_pairs[-1] = ('TRUE', format_code(function_call.default_value, misc_args)) # use original misc_args! Can't use loop_variable in default value
+        return ['(case ' + ''.join(map(lambda x: x[0] + ' : ' + (x[1][0] if len(x[1]) == 1 else ('{' + ', '.join(x[1]) + '}')) + '; ', case_value_pairs)) + 'esac)']
+
     def format_function_before(function_name, function_call, misc_args):
         '''function_name(vals)'''
         return [
@@ -204,6 +228,12 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
         function_call = code.function_call
         if function_call.function_name == 'loop':
             return execute_loop(function_call, find_used_variables, function_call.values[0], misc_args)
+        if function_call.function_name == 'case_loop':
+            return (
+                execute_loop(function_call, find_used_variables, function_call.cond_value, misc_args)
+                + execute_loop(function_call, find_used_variables, function_call.values[0], misc_args)
+                + find_used_variables(function_call.defaul_value, misc_args)
+            )
         used_variables = []
         for value in function_call.values:
             used_variables.extend(find_used_variables(value, misc_args))
@@ -611,6 +641,12 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
             function_call = code.function_call
             if function_call.function_name == 'loop':
                 return execute_loop(function_call, find_used_variables_without_formatting_in_code, function_call.values[0], misc_args)
+            if function_call.function_name == 'case_loop':
+                return (
+                    execute_loop(function_call, find_used_variables_without_formatting_in_code, function_call.cond_value, misc_args)
+                    + execute_loop(function_call, find_used_variables_without_formatting_in_code, function_call.values[0], misc_args)
+                    + find_used_variables_without_formatting_in_code(function_call.default_value, misc_args)
+                )
             used_variables = []
             for value in function_call.values:
                 used_variables.extend(find_used_variables_without_formatting_in_code(value, misc_args))
@@ -1039,6 +1075,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
     function_format = {
         'if' : ('', format_function_if),
         'loop' : ('', format_function_loop),
+        'case_loop' : ('', format_function_case_loop),
         'abs' : ('abs', format_function_before),
         'max' : ('max', format_function_recursive_before),
         'min' : ('min', format_function_recursive_before),
