@@ -7,6 +7,7 @@ from docker_copy_util import copy_into, copy_out_of
 def move_files(behaverify, input_path, networks_path):
     input_name = os.path.basename(input_path)
     (input_name_only, _) = os.path.splitext(input_name)
+    print('Starting to copy relevant files from source to container.')
     behaverify.exec_run('/home/behaverify/behaverify/Docker_BehaVerify/util/setup_directory.sh ' + input_name_only)
     copy_into(behaverify, input_path, '/home/behaverify/user_files/' + input_name_only)
     if networks_path != '-':
@@ -15,12 +16,15 @@ def move_files(behaverify, input_path, networks_path):
             networks_path = networks_location
             (networks_location, networks_name) = os.path.split(networks_path)
         copy_into(behaverify, networks_path, '/home/behaverify/user_files/' + input_name_only)
+    print('Finished copying relevant files from source to container.')
     return (input_name, input_name_only)
 
 def move_files_demo(behaverify, input_name_only):
+    print('Starting preparations for ' + input_name_only + '.')
     behaverify.exec_run('/home/behaverify/behaverify/Docker_BehaVerify/util/setup_directory.sh ' + input_name_only)
     behaverify.exec_run('bash -c \'cp /home/behaverify/behaverify/demos/' + input_name_only + '/' + input_name_only + '.tree /home/behaverify/user_files/' + input_name_only + '\'')
     behaverify.exec_run('bash -c \'cp -r /home/behaverify/behaverify/demos/' + input_name_only + '/networks /home/behaverify/user_files/' + input_name_only + '\'')
+    print('Finished preparations for ' + input_name_only + '.')
     return
 
 def generate(behaverify, input_name, input_name_only, to_generate, flags):
@@ -41,7 +45,9 @@ def generate(behaverify, input_name, input_name_only, to_generate, flags):
         )
         + [flags]
     )
+    print('Started generating requested code/model.')
     behaverify.exec_run(command_string)
+    print('Finished generating requested code/model.')
     return
 
 def evaluate(behaverify, input_name_only, to_generate, command):
@@ -77,6 +83,7 @@ def evaluate(behaverify, input_name_only, to_generate, command):
             ]
         )
     behaverify.exec_run(command_string)
+    print('Finished.')
     return
 
 def verify_args(args):
@@ -147,13 +154,20 @@ def non_demo_mode():
     generate(behaverify, input_name, input_name_only, args.to_generate, flags)
     if args.command != 'generate':
         evaluate(behaverify, input_name_only, args.to_generate, args.command)
-    copy_out_of(behaverify, '/home/behaverify/user_files/' + input_name_only, args.output_path)
+    print('Started to copy output back to source.')
+    copy_out_of(behaverify, '/home/behaverify/user_files/' + input_name_only, args.output_path + '.tar')
+    print('Finished copying output back to source.')
     behaverify.stop()
 
 def demo_mode():
     arg_parser = argparse.ArgumentParser()
     arg_parser.add_argument('demo')
+    arg_parser.add_argument('output_path')
     args = arg_parser.parse_args()
+    if os.path.exists(args.output_path):
+        raise ValueError('Output Path exists.')
+    if not os.path.isdir(os.path.split(args.output_path)[0]):
+        raise ValueError('Output Path is in a directory that does not exist.')
     demo = args.demo
     current_demos = {'ANSR_ONNX_2', 'ANSR_ONNX_2_counter'}
     if demo not in current_demos:
@@ -180,19 +194,24 @@ def demo_mode():
     elif demo == 'ANSR_ONNX_2_counter':
         special_command = ' '.join([
             '/home/behaverify/draw_venv/bin/python3',
+            '/home/behaverify/behaverify/demo/ANSR_ONNX_2_counter/parse_nuxmv_output.py',
             '/home/behaverify/user_files/' + demo + '/output/nuxmv_ctl_results.txt',
             '/home/behaverify/user_files/' + demo + '/output/' + demo,
             '11',
             '11'
         ])
     if special_command is not None:
+        print('Running special commands for demo.')
         behaverify.exec_run(special_command)
+        print('Finished running special commands for demo.')
     ##### END SPECIAL ZONE
-    copy_out_of(behaverify, '/home/behaverify/user_files/' + demo, args.output_path)
+    print('Started to copy output back to source.')
+    copy_out_of(behaverify, '/home/behaverify/user_files/' + demo, args.output_path + '.tar')
+    print('Finished copying output back to source.')
     behaverify.stop()
 
 if __name__ == '__main__':
-    if len(sys.argv) == 2:
+    if len(sys.argv) == 3:
         demo_mode()
     else:
         non_demo_mode()

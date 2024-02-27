@@ -45,7 +45,7 @@ RUN /home/$USER/behaverify_venv/bin/python3 -m pip install --upgrade pip
 RUN /home/$USER/behaverify_venv/bin/python3 -m pip install -r /home/$USER/behaverify/requirements/core.txt
 RUN python3 -m venv /home/$USER/draw_venv
 RUN /home/$USER/draw_venv/bin/python3 -m pip install --upgrade pip
-RUN /home/$USER/draw_venv/bin/python3 -m pip install -r /home/$USER/behaverify/requirements/draw.txt
+RUN /home/$USER/draw_venv/bin/python3 -m pip install -r /home/$USER/behaverify/requirements/drawing.txt
 RUN mkdir /home/$USER/user_files
 
 WORKDIR /home/$USER
