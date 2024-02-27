@@ -135,7 +135,7 @@ node:
     'variable' '{'
     ((var_type = 'bl') | (var_type = 'local') | (var_type = 'env'))
     name = ID
-    (('array' array_size = code_statement
+    (('array' '(' array_size += code_statement[','] ')'
     ((model_as = 'VAR' domain = variable_domain) |
     (model_as = 'FROZENVAR' domain = variable_domain) |
     (model_as = 'DEFINE' ((domain = 'INT') | (domain = 'ENUM') | (domain = 'BOOLEAN') | (domain = 'REAL'))))
