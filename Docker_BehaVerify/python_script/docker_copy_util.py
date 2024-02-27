@@ -18,8 +18,7 @@ def copy_into(container, source_path, destination_path):
                 info = tar_object.gettarinfo(fileobj = source_file)
                 info.name = os.path.basename(source_path)
                 tar_object.addfile(info, source_file)
-    container.put_archive(destination_path, stream.getvalue())
-    return
+    return container.put_archive(destination_path, stream.getvalue())
 
 def copy_out_of(container, source_path, destination_path):
     (bits, _) = container.get_archive(source_path)
