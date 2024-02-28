@@ -163,7 +163,8 @@ def demo_mode():
     arg_parser = argparse.ArgumentParser()
     arg_parser.add_argument('demo')
     arg_parser.add_argument('output_path')
-    args = arg_parser.parse_args()
+    arg_parser.add_argument('--additional_input', default = '')
+    args = arg_parser.parse_args(sys.argv[1:])
     if os.path.exists(args.output_path):
         raise ValueError('Output Path exists.')
     if not os.path.isdir(os.path.split(args.output_path)[0]):
@@ -181,6 +182,11 @@ def demo_mode():
         to_generate = 'nuXmv'
         flags = ''
         command = 'ctl'
+        if args.additional_input != '':
+            serene_exec(behaverify, ' '.join([
+                '/home/behaverify/behaverify_venv/bin/python3',
+                '/home/behaverify/user_files/' + demo + '/' + demo + '.tree',
+                args.additional_input]), 'Modifying constants for ANSR_ONNX_2.', True)
     elif demo == 'ANSR_ONNX_2_counter':
         to_generate = 'nuXmv'
         flags = ''
@@ -210,7 +216,7 @@ def demo_mode():
     behaverify.stop()
 
 if __name__ == '__main__':
-    if len(sys.argv) == 3:
+    if sys.argv[1] == 'demo':
         demo_mode()
     else:
         non_demo_mode()
