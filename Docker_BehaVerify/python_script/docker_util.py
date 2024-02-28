@@ -3,6 +3,14 @@ import tarfile
 import io
 import docker
 
+def serene_exec(container, command, message, error_check):
+    print('Start: ' + message)
+    (_, exec_stream) = container.exec_run(command, stream = True)
+    for data in exec_stream:
+        print(data.decode())
+    print('End: ' + message + (' <::> Check if errors were printed!' if error_check else ''))
+    return
+
 def copy_into(container, source_path, destination_path):
     '''note! Destination path is the folder where it will be unzipped! Not a direct path!'''
     stream = io.BytesIO()

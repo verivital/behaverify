@@ -1,6 +1,6 @@
 import argparse
 import docker
-from docker_copy_util import copy_into
+from docker_util import copy_into, serene_exec
 
 def add_nuxmv(nuxmv_location):
     '''creates behaverify_img (Docker Image) and behaverify (Docker Container)'''
@@ -10,13 +10,11 @@ def add_nuxmv(nuxmv_location):
     # https://stackoverflow.com/questions/46390309/how-to-copy-a-file-from-host-to-container-using-docker-py-docker-sdk
     # https://docker-py.readthedocs.io/en/stable/containers.html
     #docker_copy_util.copy_into(behaverify, nuxmv_location, '/home/behaverify/nuXmv')
-    print('Copying nuXmv into the container.')
+    print('Start: Adding nuXmv to container.')
     if not copy_into(behaverify, nuxmv_location, '/home/behaverify/'):
         raise RuntimeError('Failed to copy nuXmv into the container.')
-    print('Copyied nuXmv into the container.')
-    print('Making nuXmv runnable.')
-    behaverify.exec_run('chmod +x /home/behaverify/nuXmv')
-    print('Made nuXmv runnable.')
+    print('End: Adding nuXmv to container.')
+    serene_exec(behaverify, 'sudo chmod +x /home/behaverify/nuXmv', 'Making nuXmv runnable (running chmod).', True)
     return
 
 if __name__ == '__main__':
