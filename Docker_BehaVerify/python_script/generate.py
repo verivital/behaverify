@@ -164,7 +164,7 @@ def demo_mode():
     arg_parser.add_argument('demo')
     arg_parser.add_argument('output_path')
     arg_parser.add_argument('--additional_input', default = '')
-    args = arg_parser.parse_args(sys.argv[1:])
+    args = arg_parser.parse_args(sys.argv[2:])
     if os.path.exists(args.output_path):
         raise ValueError('Output Path exists.')
     if not os.path.isdir(os.path.split(args.output_path)[0]):
@@ -186,7 +186,7 @@ def demo_mode():
             serene_exec(behaverify, ' '.join([
                 '/home/behaverify/behaverify_venv/bin/python3',
                 '/home/behaverify/user_files/' + demo + '/' + demo + '.tree',
-                args.additional_input]), 'Modifying constants for ANSR_ONNX_2.', True)
+                '\'' + args.additional_input + '\'']), 'Modifying constants for ANSR_ONNX_2.', True)
     elif demo == 'ANSR_ONNX_2_counter':
         to_generate = 'nuXmv'
         flags = ''

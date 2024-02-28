@@ -6,7 +6,7 @@ def edit_constants(input_path, new_constants):
     (preamble, postamble) = contents.split('constants {', 1)
     postamble = postamble.split('} end_constants', 1)[1]
     with open(input_path, 'w', encoding = 'utf-8') as output_file:
-        output_file.write(preamble + new_constants + postamble)
+        output_file.write(preamble + 'constants {' + new_constants + '} end_constants' + postamble)
     return
 
 

@@ -6,7 +6,7 @@ def reinstall(dockerfile_path):
     '''Stop behaverify (Docker Container), Remove behaverify (Docker Container), Remove behaverify_img (Docker Image)
     creates behaverify_img (Docker Image) and behaverify (Docker Container)'''
     client = docker.from_env()
-    print('Star: Removing old behaverify docker image and container.')
+    print('Start: Removing old behaverify docker image and container.')
     try:
         behaverify = client.containers.get('behaverify')
         behaverify.stop()
