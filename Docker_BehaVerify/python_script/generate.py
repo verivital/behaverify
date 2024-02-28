@@ -185,6 +185,7 @@ def demo_mode():
         if args.additional_input != '':
             serene_exec(behaverify, ' '.join([
                 '/home/behaverify/behaverify_venv/bin/python3',
+                '/home/behaverify/behaverify/demos/' + demo + '/edit_constants.py',
                 '/home/behaverify/user_files/' + demo + '/' + demo + '.tree',
                 '\'' + args.additional_input + '\'']), 'Modifying constants for ANSR_ONNX_2.', True)
     elif demo == 'ANSR_ONNX_2_counter':
