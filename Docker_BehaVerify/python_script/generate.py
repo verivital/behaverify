@@ -2,13 +2,13 @@ import os
 import sys
 import argparse
 import docker
-from docker_copy_util import copy_into, copy_out_of
+from docker_util import copy_into, copy_out_of, serene_exec
 
 def move_files(behaverify, input_path, networks_path):
     input_name = os.path.basename(input_path)
     (input_name_only, _) = os.path.splitext(input_name)
-    print('Starting to copy relevant files from source to container.')
-    behaverify.exec_run('/home/behaverify/behaverify/Docker_BehaVerify/util/setup_directory.sh ' + input_name_only)
+    serene_exec(behaverify, '/home/behaverify/behaverify/Docker_BehaVerify/util/setup_directory.sh ' + input_name_only, 'Setting up directories in container.', True)
+    print('Start: adding relevant files from source to container.')
     if not copy_into(behaverify, input_path, '/home/behaverify/user_files/' + input_name_only):
         raise RuntimeError('Failed to copy input!')
     if networks_path != '-':
@@ -18,40 +18,37 @@ def move_files(behaverify, input_path, networks_path):
             (networks_location, networks_name) = os.path.split(networks_path)
         if not copy_into(behaverify, networks_path, '/home/behaverify/user_files/' + input_name_only):
             raise RuntimeError('Failed to copy input!')
-    print('Finished copying relevant files from source to container.')
+    print('End: adding relevant files from source to container.')
     return (input_name, input_name_only)
 
-def move_files_demo(behaverify, input_name_only):
-    print('Starting preparations for ' + input_name_only + '.')
-    behaverify.exec_run('/home/behaverify/behaverify/Docker_BehaVerify/util/setup_directory.sh ' + input_name_only)
-    behaverify.exec_run('bash -c \'cp /home/behaverify/behaverify/demos/' + input_name_only + '/' + input_name_only + '.tree /home/behaverify/user_files/' + input_name_only + '\'')
-    behaverify.exec_run('bash -c \'cp -r /home/behaverify/behaverify/demos/' + input_name_only + '/networks /home/behaverify/user_files/' + input_name_only + '\'')
-    print('Finished preparations for ' + input_name_only + '.')
+def move_files_demo(behaverify, input_name_only, uses_networks):
+    serene_exec(behaverify, '/home/behaverify/behaverify/Docker_BehaVerify/util/setup_directory.sh ' + input_name_only, 'Setting up directories in container.', True)
+    serene_exec(behaverify, 'bash -c \'cp /home/behaverify/behaverify/demos/' + input_name_only + '/' + input_name_only + '.tree /home/behaverify/user_files/' + input_name_only + '\'', 'Moving .tree file into place.', True)
+    if uses_networks:
+        serene_exec(behaverify, 'bash -c \'cp -r /home/behaverify/behaverify/demos/' + input_name_only + '/networks /home/behaverify/user_files/' + input_name_only + '\'', 'Moving networks into place.', True)
     return
 
 def generate(behaverify, input_name, input_name_only, to_generate, flags):
-    command_string = ' '.join(
-        [
-            '/home/behaverify/behaverify_venv/bin/python3',
-            (
-                '/home/behaverify/behaverify/src/'
-                + ('dsl_to_nuxmv.py ' if to_generate == 'nuXmv' else ('dsl_to_python.py ' if to_generate == 'Python' else 'dsl_to_haskell.py '))
-            ),
-            '/home/behaverify/behaverify/metamodel/behaverify.tx',
-            '/home/behaverify/user_files/' + input_name_only + '/' + input_name
-        ]
-        + (
-            ['/home/behaverify/user_files/' + input_name_only + '/app/' + input_name_only + '.smv']
-            if to_generate == 'nuXmv' else
-            ['/home/behaverify/user_files/' + input_name_only + '/' + ('app/' if to_generate == 'Haskell' else ''), input_name_only]
-        )
-        + [flags]
-    )
-    print('Started generating requested code/model.')
-    (_, exec_stream) = behaverify.exec_run(command_string, stream = True)
-    for data in exec_stream:
-        print(data.decode())
-    print('Finished generating requested code/model.')
+    serene_exec(behaverify,
+                ' '.join(
+                    [
+                        '/home/behaverify/behaverify_venv/bin/python3',
+                        (
+                            '/home/behaverify/behaverify/src/'
+                            + ('dsl_to_nuxmv.py ' if to_generate == 'nuXmv' else ('dsl_to_python.py ' if to_generate == 'Python' else 'dsl_to_haskell.py '))
+                        ),
+                        '/home/behaverify/behaverify/metamodel/behaverify.tx',
+                        '/home/behaverify/user_files/' + input_name_only + '/' + input_name
+                    ]
+                    + (
+                        ['/home/behaverify/user_files/' + input_name_only + '/app/' + input_name_only + '.smv']
+                        if to_generate == 'nuXmv' else
+                        ['/home/behaverify/user_files/' + input_name_only + '/' + ('app/' if to_generate == 'Haskell' else ''), input_name_only]
+                    )
+                    + [flags]
+                ),
+                'Generation of requested code/model.',
+                True)
     return
 
 def evaluate(behaverify, input_name_only, to_generate, command):
@@ -59,7 +56,7 @@ def evaluate(behaverify, input_name_only, to_generate, command):
         print('SORRY! This script currently only allows you to generate Haskell files, not simulate them.')
         return
     if to_generate == 'Python':
-        print('Attempting to simulate using Python.')
+        message_string = 'Simulation using Python.'
         command_string = ' '.join(
             [
                 'bash -c',
@@ -72,7 +69,7 @@ def evaluate(behaverify, input_name_only, to_generate, command):
             ]
         )
     if to_generate == 'nuXmv':
-        print('Attempting to use nuXmv. Please make sure you added nuXmv to the container.')
+        message_string = ('Simulation' if command == 'simulate' else ('Verifying ' + command + ' specifications')) + ' using nuXmv.'
         command_string = ' '.join(
             [
                 'bash -c',
@@ -86,10 +83,7 @@ def evaluate(behaverify, input_name_only, to_generate, command):
                 ]) + '\''
             ]
         )
-    (_, exec_stream) = behaverify.exec_run(command_string, stream = True)
-    for data in exec_stream:
-        print(data.decode())
-    print('Finished.')
+    serene_exec(behaverify, command_string, message_string, True)
     return
 
 def verify_args(args):
@@ -160,9 +154,9 @@ def non_demo_mode():
     generate(behaverify, input_name, input_name_only, args.to_generate, flags)
     if args.command != 'generate':
         evaluate(behaverify, input_name_only, args.to_generate, args.command)
-    print('Started to copy output back to source.')
+    print('Start: Copy output to source.')
     copy_out_of(behaverify, '/home/behaverify/user_files/' + input_name_only, args.output_path + '.tar')
-    print('Finished copying output back to source.')
+    print('End: Copy output to source.')
     behaverify.stop()
 
 def demo_mode():
@@ -176,12 +170,13 @@ def demo_mode():
         raise ValueError('Output Path is in a directory that does not exist.')
     demo = args.demo
     current_demos = {'ANSR_ONNX_2', 'ANSR_ONNX_2_counter'}
+    uses_networks = {'ANSR_ONNX_2', 'ANSR_ONNX_2_counter'}
     if demo not in current_demos:
         raise ValueError('Unknown demo: ' + demo + '. Current demos are: ' + str(current_demos) + '.')
     client = docker.from_env()
     behaverify = client.containers.get('behaverify')
     behaverify.start()
-    move_files_demo(behaverify, demo)
+    move_files_demo(behaverify, demo, demo in uses_networks)
     if demo == 'ANSR_ONNX_2':
         to_generate = 'nuXmv'
         flags = ''
@@ -207,15 +202,11 @@ def demo_mode():
             '11'
         ])
     if special_command is not None:
-        print('Running special commands for demo.')
-        (_, exec_stream) = behaverify.exec_run(special_command, stream = True)
-        for data in exec_stream:
-            print(data.decode())
-        print('Finished running special commands for demo.')
+        serene_exec(behaverify, special_command, 'Execution of extra commands necessary for Demo.', True)
     ##### END SPECIAL ZONE
-    print('Started to copy output back to source.')
+    print('Start: Copy output to source.')
     copy_out_of(behaverify, '/home/behaverify/user_files/' + demo, args.output_path + '.tar')
-    print('Finished copying output back to source.')
+    print('End: Copy output to source.')
     behaverify.stop()
 
 if __name__ == '__main__':
