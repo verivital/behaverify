@@ -4,13 +4,13 @@ import docker
 def create_image_and_container(dockerfile_path):
     '''creates behaverify_img (Docker Image) and behaverify (Docker Container)'''
     client = docker.from_env()
-    print('Building new BehaVerify Image.')
+    print('Start: Building new BehaVerify Image.')
     (behaverify_img, logs) = client.images.build(path = dockerfile_path, tag = 'behaverify_img:latest')
-    print('Built new BehaVerify Image.')
+    print('End: Building new BehaVerify Image.')
     # behaverify = client.containers.create(client.images.get('behaverify_img'), command = '/bin/bash', name = 'behaverify', stdin_open = True, tty = True)
-    print('Creating new BehaVerify Container.')
+    print('Start: Creating new BehaVerify Container.')
     behaverify = client.containers.create(behaverify_img, command = '/bin/bash', name = 'behaverify', stdin_open = True, tty = True)
-    print('Created new BehaVerify Container.')
+    print('End: Creating new BehaVerify Container.')
     return
 
 if __name__ == '__main__':
