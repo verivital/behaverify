@@ -1,6 +1,6 @@
     //This is intended to be used with BehaVerify
     //Author: Serena Serafina Serbinowska
-    //last edit: 2023-10-03
+    //last edit: 2024-02-29
 BehaviorModel:
     'configuration' '{'
     (hypersafety ?= 'hypersafety')
@@ -164,7 +164,7 @@ node:
     (constant = constant_value) | (reference = ID)
 ;
     constant_declaration:
-    name = ID ':=' val = constant_value
+    name = ID ':=' ((val = constant_value) | ('[' val += constant_value[','])) 
 ;
 status:
     'success' | 'running' | 'failure'
