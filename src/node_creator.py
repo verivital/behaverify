@@ -75,7 +75,7 @@ def create_blackboard(nodes, variables, root_node_name):
                     indent(indent_level) + surround_start + stage_name + str(stage_num) + '_index_' + str(index) + surround_end + ' :='
                     + write_cases(None, None, condition_pairs, indent_level + 1)
                 )
-            for index in all_indices:
+            for index in all_indices: # default value only applies to indicies not covered by constant index.
                 return_string += (
                     indent(indent_level) + surround_start + stage_name + str(stage_num) + '_index_' + str(index) + surround_end + ' :='
                     + default_array_cases
