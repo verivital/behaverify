@@ -164,7 +164,7 @@ node:
     (constant = constant_value) | (reference = ID)
 ;
     constant_declaration:
-    name = ID ':=' ((val = constant_value) | ('[' val += constant_value[','])) 
+    name = ID ':=' val = constant_value
 ;
 status:
     'success' | 'running' | 'failure'
