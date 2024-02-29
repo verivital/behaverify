@@ -189,7 +189,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
             index = resolve_potential_reference_no_type(index_func((constants, new_misc_args['loop_references']))[0], declared_enumerations, nodes, variables, constants, new_misc_args['loop_references'])[1]
             return [formatted_variable + '_index_' + str(index)]
         index_expression = format_code(function_call.values[0], new_misc_args)[0]
-        return [case_index(formatted_variable, variable_array_size(variable, declared_enumerations, nodes, variables, constants, misc_args['loop_references']), index_expression)]
+        return [case_index(formatted_variable, array_size_override[variable.name] if variable in array_size_override else variable_array_size(variable, declared_enumerations, nodes, variables, constants, misc_args['loop_references']), index_expression)]
 
     def format_function(code, misc_args):
         '''this just calls the other format functions. moved here to make format_code less cluttered.'''
@@ -411,6 +411,21 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
             stage.extend(new_stage)
             non_determinism = non_determinism or new_non_determinism
         return (misc_args['node_name'], False, non_determinism, stage)
+
+    def handle_iterative_array_initialization(variable, misc_args):
+        new_misc_args = copy_misc_args(misc_args)
+        array_size = variable_array_size(variable, declared_enumerations, nodes, variables, constants, {})
+        index_var_name = variable.index_var_name
+        non_determinism = {}
+        stage = []
+        for index in range(array_size):
+            array_size_override[variable.name] = index
+            new_misc_args['loop_references'][index_var_name] = index
+            (cur_non_determinism, cur_stage) = handle_assign(variable.assign, new_misc_args)
+            stage.append((index, cur_stage))
+            non_determinism[index] = cur_non_determinism
+        array_size_override.pop(variable.name)
+        return (None, True, non_determinism, stage)
 
     def handle_variable_statement(variable_statement, condition, misc_args):
         '''should only be called if init_mode is true or from variable_assignment'''
@@ -1152,6 +1167,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
         'environment_check' : create_check,
         'action' : create_action
     }
+    array_size_override = {} # this is indexed by variable.name. Yes that is variable.name, not variable_name. It should be indexed by the name associated with the variable object.
     (model, variables, constants, declared_enumerations) = validate_model(metamodel_file, model_file, recursion_limit)
     hyper_mode = model.hypersafety
     use_reals = model.use_reals
