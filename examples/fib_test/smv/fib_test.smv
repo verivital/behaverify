@@ -1,0 +1,57 @@
+MODULE main
+    VAR
+        system : system_module;
+--------------SPECIFICATIONS
+
+
+
+--------------END OF SPECIFICATIONS
+
+MODULE system_module
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        resume_from_here_in_subtree__whatever := -3;
+        whatever.active := (TRUE);
+        --START OF BLACKBOARD DEFINITIONS
+        fib_val_stage_0_index_0 := 0;
+        fib_val_stage_0_index_1 := 1;
+        fib_val_stage_0_index_2 := (fib_val_stage_0_index_1 + fib_val_stage_0_index_0);
+        fib_val_stage_0_index_3 := (fib_val_stage_0_index_2 + fib_val_stage_0_index_1);
+        fib_val_stage_0_index_4 := (fib_val_stage_0_index_3 + fib_val_stage_0_index_2);
+        fib_val_stage_0_index_5 := (fib_val_stage_0_index_4 + fib_val_stage_0_index_3);
+        fib_val_stage_0_index_6 := (fib_val_stage_0_index_5 + fib_val_stage_0_index_4);
+        fib_val_stage_0_index_7 := (fib_val_stage_0_index_6 + fib_val_stage_0_index_5);
+        fib_val_stage_0_index_8 := (fib_val_stage_0_index_7 + fib_val_stage_0_index_6);
+        fib_val_stage_0_index_9 := (fib_val_stage_0_index_8 + fib_val_stage_0_index_7);
+        fib_val_stage_0_index_10 := (fib_val_stage_0_index_9 + fib_val_stage_0_index_8);
+        fib_val_stage_0_index_11 := (fib_val_stage_0_index_10 + fib_val_stage_0_index_9);
+        fib_val_stage_0_index_12 := (fib_val_stage_0_index_11 + fib_val_stage_0_index_10);
+        fib_val_stage_0_index_13 := (fib_val_stage_0_index_12 + fib_val_stage_0_index_11);
+        fib_val_stage_0_index_14 := (fib_val_stage_0_index_13 + fib_val_stage_0_index_12);
+        fib_val_stage_0_index_15 := (fib_val_stage_0_index_14 + fib_val_stage_0_index_13);
+        fib_val_stage_0_index_16 := (fib_val_stage_0_index_15 + fib_val_stage_0_index_14);
+        fib_val_stage_0_index_17 := (fib_val_stage_0_index_16 + fib_val_stage_0_index_15);
+        fib_val_stage_0_index_18 := (fib_val_stage_0_index_17 + fib_val_stage_0_index_16);
+        fib_val_stage_0_index_19 := (fib_val_stage_0_index_18 + fib_val_stage_0_index_17);
+        --END OF BLACKBOARD DEFINITIONS
+    VAR
+        node_names : define_nodes;
+        whatever : whatever_module(fib_val_stage_0_index_0, fib_val_stage_0_index_1, fib_val_stage_0_index_10, fib_val_stage_0_index_11, fib_val_stage_0_index_12, fib_val_stage_0_index_13, fib_val_stage_0_index_14, fib_val_stage_0_index_15, fib_val_stage_0_index_16, fib_val_stage_0_index_17, fib_val_stage_0_index_18, fib_val_stage_0_index_19, fib_val_stage_0_index_2, fib_val_stage_0_index_3, fib_val_stage_0_index_4, fib_val_stage_0_index_5, fib_val_stage_0_index_6, fib_val_stage_0_index_7, fib_val_stage_0_index_8, fib_val_stage_0_index_9);
+        --START OF BLACKBOARD VARIABLES DECLARATION
+        --END OF BLACKBOARD VARIABLES DECLARATION
+    ASSIGN
+        --START OF BLACKBOARD VARIABLES INITIALIZATION
+        --END OF BLACKBOARD VARIABLES INITIALIZATION
+        --START OF BLACKBOARD VARIABLES TRANSITION
+        --END OF BLACKBOARD VARIABLES TRANSITION
+
+MODULE define_nodes
+    DEFINE
+        whatever := 0;
+MODULE whatever_module(fib_val_stage_0_index_0, fib_val_stage_0_index_1, fib_val_stage_0_index_10, fib_val_stage_0_index_11, fib_val_stage_0_index_12, fib_val_stage_0_index_13, fib_val_stage_0_index_14, fib_val_stage_0_index_15, fib_val_stage_0_index_16, fib_val_stage_0_index_17, fib_val_stage_0_index_18, fib_val_stage_0_index_19, fib_val_stage_0_index_2, fib_val_stage_0_index_3, fib_val_stage_0_index_4, fib_val_stage_0_index_5, fib_val_stage_0_index_6, fib_val_stage_0_index_7, fib_val_stage_0_index_8, fib_val_stage_0_index_9)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := (((case 0 = 1 : fib_val_stage_0_index_0; 1 = 1 : fib_val_stage_0_index_1; 2 = 1 : fib_val_stage_0_index_2; 3 = 1 : fib_val_stage_0_index_3; 4 = 1 : fib_val_stage_0_index_4; 5 = 1 : fib_val_stage_0_index_5; 6 = 1 : fib_val_stage_0_index_6; 7 = 1 : fib_val_stage_0_index_7; 8 = 1 : fib_val_stage_0_index_8; 9 = 1 : fib_val_stage_0_index_9; 10 = 1 : fib_val_stage_0_index_10; 11 = 1 : fib_val_stage_0_index_11; 12 = 1 : fib_val_stage_0_index_12; 13 = 1 : fib_val_stage_0_index_13; 14 = 1 : fib_val_stage_0_index_14; 15 = 1 : fib_val_stage_0_index_15; 16 = 1 : fib_val_stage_0_index_16; 17 = 1 : fib_val_stage_0_index_17; 18 = 1 : fib_val_stage_0_index_18; 19 = 1 : fib_val_stage_0_index_19; esac) > (case 0 = 0 : fib_val_stage_0_index_0; 1 = 0 : fib_val_stage_0_index_1; 2 = 0 : fib_val_stage_0_index_2; 3 = 0 : fib_val_stage_0_index_3; 4 = 0 : fib_val_stage_0_index_4; 5 = 0 : fib_val_stage_0_index_5; 6 = 0 : fib_val_stage_0_index_6; 7 = 0 : fib_val_stage_0_index_7; 8 = 0 : fib_val_stage_0_index_8; 9 = 0 : fib_val_stage_0_index_9; 10 = 0 : fib_val_stage_0_index_10; 11 = 0 : fib_val_stage_0_index_11; 12 = 0 : fib_val_stage_0_index_12; 13 = 0 : fib_val_stage_0_index_13; 14 = 0 : fib_val_stage_0_index_14; 15 = 0 : fib_val_stage_0_index_15; 16 = 0 : fib_val_stage_0_index_16; 17 = 0 : fib_val_stage_0_index_17; 18 = 0 : fib_val_stage_0_index_18; 19 = 0 : fib_val_stage_0_index_19; esac))) ? success : failure;
