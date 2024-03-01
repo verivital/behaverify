@@ -11,6 +11,7 @@ import argparse
 import os
 import shutil
 import itertools
+import re
 import onnxruntime
 from behaverify_common import indent, create_node_name, is_local, is_env, is_blackboard, is_array, handle_constant_or_reference, resolve_potential_reference_no_type, variable_array_size, get_min_max, variable_type, BTreeException, constant_type
 from serene_functions import build_meta_func
@@ -78,6 +79,8 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
         else:
             (min_val, max_val) = get_min_max(function_call.min_val, function_call.max_val, declared_enumerations, {}, variables, constants, loop_references)
             all_domain_values = range(min_val, max_val + 1)
+        if function_call.reverse:
+            all_domain_values = reversed(all_domain_values)
         cond_func = build_meta_func(function_call.loop_condition)
         for domain_member in all_domain_values:
             loop_references[function_call.loop_variable] = domain_member
@@ -95,6 +98,31 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
 
     def format_function_loop(_, function_call, misc_args):
         return execute_loop(function_call, format_code, function_call.values[0], misc_args)
+
+    def format_case_loop_recursive(function_call, misc_args, cond_func, values, index):
+        if len(values) == index:
+            if function_call.loop_variable in loop_references:
+                loop_references.pop(function_call.loop_variable)
+            return format_code(function_call.default_value, misc_args)
+        loop_references[function_call.loop_variable] = values[index]
+        if not cond_func((constants, loop_references))[0]:
+            return format_case_loop_recursive(function_call, misc_args, cond_func, values, index + 1)
+        return ['(' + format_code(function_call.values[0], misc_args)[0] + ' if ' + format_code(function_call.cond_value, misc_args)[0] + ' else ' + format_case_loop_recursive(function_call, misc_args, cond_func, values, index + 1)[0] + ')']
+
+    def format_function_case_loop(_, function_call, misc_args):
+        all_domain_values = []
+        if function_call.min_val is None:
+            for domain_code in function_call.loop_variable_domain:
+                for domain_value in execute_code(domain_code):
+                    resolved = resolve_potential_reference_no_type(domain_value, declared_enumerations, {}, variables, constants, loop_references)
+                    all_domain_values.append(resolved[1])
+        else:
+            (min_val, max_val) = get_min_max(function_call.min_val, function_call.max_val, declared_enumerations, {}, variables, constants, loop_references)
+            all_domain_values = range(min_val, max_val + 1)
+        if function_call.reverse:
+            all_domain_values = list(reversed(all_domain_values))
+        cond_func = build_meta_func(function_call.loop_condition)
+        return format_case_loop_recursive(function_call, misc_args, cond_func, all_domain_values, 0)
 
     def format_function_before(function_name, function_call, misc_args):
         return [
@@ -389,6 +417,23 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
         variable = variable_statement.variable if hasattr(variable_statement, 'variable') else variable_statement
         new_misc_args = create_misc_args(misc_args['init'], misc_args['loc'], misc_args['indent_level'] + 2)
         if is_array(variable):
+            if variable_statement.iterative_assign == 'iterative_assign':
+                iterative_condition_assign_list = [(build_meta_func(iterative_assign_conditional.condition), iterative_assign_conditional.assign) for iterative_assign_conditional in variable_statement.iterative_assign_conditionals]
+                index_var_name = variable_statement.index_var_name
+                return_string = ''
+                for index in range(variable_array_size_map[variable.name]):
+                    loop_references[index_var_name] = index
+                    need_default = True
+                    for (condition_func, assign) in iterative_condition_assign_list:
+                        if condition_func((constants, loop_references))[0]:
+                            assign_string = handle_assign(assign, new_misc_args)
+                            need_default = False
+                            break
+                    if need_default:
+                        assign_string = handle_assign(variable_statement.assign, new_misc_args)
+                    return_string += (indent(misc_args['indent_level']) + format_variable_name_only(variable, misc_args) + '[' + str(index) + '] = ' + assign_string + os.linesep)
+                loop_references.pop(index_var_name)
+                return return_string
             meta_results = []
             for loop_array_index in variable_statement.assigns:
                 meta_results.extend(handle_loop_array_index((loop_array_index, variable_statement.constant_index), new_misc_args))
@@ -502,6 +547,47 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
         variable = variable_statement.variable if hasattr(variable_statement, 'variable') else variable_statement
         new_misc_args = create_misc_args(misc_args['init'], misc_args['loc'], misc_args['indent_level'] + 1)
         if is_array(variable):
+            if variable_statement.iterative_assign == 'iterative_assign':
+                iterative_condition_assign_list = [(build_meta_func(iterative_assign_conditional.condition), iterative_assign_conditional.assign) for iterative_assign_conditional in variable_statement.iterative_assign_conditionals]
+                index_var_name = variable_statement.index_var_name
+                return_string = ''
+                for index in range(variable_array_size_map[variable.name]):
+                    loop_references[index_var_name] = index
+                    need_default = True
+                    for (condition_func, assign) in iterative_condition_assign_list:
+                        if condition_func((constants, loop_references))[0]:
+                            assign_string = handle_assign(assign, new_misc_args)
+                            need_default = False
+                            break
+                    if need_default:
+                        assign_string = handle_assign(variable_statement.assign, new_misc_args)
+                    return_string += (
+                        indent(misc_args['indent_level'] + 1) + variable.name + '[' + str(index) + '] = ' + assign_string + os.linesep
+                        + indent(misc_args['indent_level'] + 1) + 'if ' + str(index) + ' == index:' + os.linesep
+                        + indent(misc_args['indent_level'] + 2) + 'return ' + variable.name + '[' + str(index) + ']' + os.linesep
+                    )
+                loop_references.pop(index_var_name)
+                old_name = re.escape(format_variable_name_only(variable, misc_args))
+                new_name = variable.name
+                return_string = re.sub(rf'{old_name}\((\d+)\)', rf'{new_name}[\1]', return_string)
+                return (
+                    os.linesep
+                    + os.linesep
+                    + indent(misc_args['indent_level']) + 'def ' + variable.name + '(index):' + os.linesep
+                    + (
+                        (
+                            indent(misc_args['indent_level'] + 1) + 'if type(index) is not int:' + os.linesep
+                            + indent(misc_args['indent_level'] + 2) + "raise TypeError('Index must be an int when accessing " + variable.name + ": ' + str(type(index)))" + os.linesep
+                            + indent(misc_args['indent_level'] + 1) + 'if index < 0 or index >= ' + str(variable_array_size_map[variable.name]) + ':' + os.linesep
+                            + indent(misc_args['indent_level'] + 2) + "raise ValueError('Index out of bounds when accessing " + variable.name + ": ' + str(index))" + os.linesep
+                        )
+                        if safe_assignment else ''
+                    )
+                    + indent(misc_args['indent_level'] + 1) + variable.name + ' = [None] * ' + str(variable_array_size_map[variable.name]) + os.linesep
+                    + return_string
+                    + os.linesep
+                    + indent(misc_args['indent_level']) + format_variable_name_only(variable, misc_args) + ' = ' + variable.name + os.linesep
+                )
             # todo: consider optimizing this for constant index. No reason to compute everything when we know the index.
             default_value = handle_assign(variable_statement.default_value, new_misc_args)
             new_values = handle_variable_statement(variable_statement, new_misc_args, assign_to_var = False)
@@ -1248,6 +1334,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
     function_format = {
         'if' : ('', format_function_if),
         'loop' : ('', format_function_loop),
+        'case_loop' : ('', format_function_case_loop),
         'abs' : ('abs', format_function_before),
         'max' : ('max', format_function_before),
         'min' : ('min', format_function_before),

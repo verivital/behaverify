@@ -111,13 +111,23 @@ variables {
 	index_of {39} assign {result{18}}
     }
     variable { bl waypoint_x VAR [x_min, x_max] assign {result{(loop, loop_var, [x_min, x_max] such_that True, loop_var)}}}
-    variable { bl waypoint_y VAR [y_min, y_max] assign {result{(loop, loop_var, [y_min, y_max] such_that
-		    (not, (or,
+    variable { bl waypoint_y VAR [y_min, y_max] assign {result{(loop, loop_var, [y_min, y_max] such_that True,
+		    (if,
+			(or,
 			    (loop, obs_index, [0, (sub, obs_count, 1)] such_that True,
 				(and,
 				    (eq, (index, obstacles_sort_x, constant_index (mult, obs_index, 2)), waypoint_x),
-				    (eq, (index, obstacles_sort_x, constant_index (add, (mult, obs_index, 2), 1)), loop_var)))))
-		    , loop_var)}}}
+				    (eq, (index, obstacles_sort_x, constant_index (add, (mult, obs_index, 2), 1)), loop_var)
+				)
+			    )
+			),
+			y_max,
+			loop_var
+		    )
+		)
+	    }
+	}
+    }
     variable { bl landmark array (mult, landmark_count, 2) DEFINE INT iterative_assign, index_var
 	condition {(eq, index_var, 0)} assign{result {0}}
 	condition {(eq, index_var, 1)} assign{result {0}}
