@@ -29,7 +29,7 @@
 Trace Description: CTL Counterexample 
 Trace Type: Counterexample 
   -> State: 1.1 <-
-    system.waypoint_x_stage_0 = 7
+    system.waypoint_x_stage_0 = 15
     system.waypoint_y_stage_0 = 7
     system.drone_x_stage_0 = 0
     system.drone_y_stage_0 = 0
@@ -38,42 +38,42 @@ Trace Type: Counterexample
     system.current_landmark_y_stage_0 = 0
     system.current_landmark_x_stage_1 = 6
     system.current_landmark_x_stage_0 = 0
-    system.landmark_stage_0_index_49 = 8
-    system.landmark_stage_0_index_48 = 7
+    system.landmark_stage_0_index_49 = 16
+    system.landmark_stage_0_index_48 = 15
     system.landmark_stage_0_index_47 = 19
-    system.landmark_stage_0_index_46 = 7
+    system.landmark_stage_0_index_46 = 15
     system.landmark_stage_0_index_45 = 19
-    system.landmark_stage_0_index_44 = 7
-    system.landmark_stage_0_index_43 = 8
-    system.landmark_stage_0_index_42 = 7
-    system.landmark_stage_0_index_41 = 8
-    system.landmark_stage_0_index_40 = 7
+    system.landmark_stage_0_index_44 = 15
+    system.landmark_stage_0_index_43 = 16
+    system.landmark_stage_0_index_42 = 15
+    system.landmark_stage_0_index_41 = 16
+    system.landmark_stage_0_index_40 = 15
     system.landmark_stage_0_index_39 = 19
-    system.landmark_stage_0_index_38 = 7
+    system.landmark_stage_0_index_38 = 15
     system.landmark_stage_0_index_37 = 19
-    system.landmark_stage_0_index_36 = 7
-    system.landmark_stage_0_index_35 = 8
-    system.landmark_stage_0_index_34 = 7
-    system.landmark_stage_0_index_33 = 8
-    system.landmark_stage_0_index_32 = 7
+    system.landmark_stage_0_index_36 = 15
+    system.landmark_stage_0_index_35 = 16
+    system.landmark_stage_0_index_34 = 15
+    system.landmark_stage_0_index_33 = 16
+    system.landmark_stage_0_index_32 = 15
     system.landmark_stage_0_index_31 = 19
-    system.landmark_stage_0_index_30 = 7
+    system.landmark_stage_0_index_30 = 15
     system.landmark_stage_0_index_29 = 19
-    system.landmark_stage_0_index_28 = 7
-    system.landmark_stage_0_index_27 = 8
-    system.landmark_stage_0_index_26 = 7
-    system.landmark_stage_0_index_25 = 8
-    system.landmark_stage_0_index_24 = 7
+    system.landmark_stage_0_index_28 = 15
+    system.landmark_stage_0_index_27 = 16
+    system.landmark_stage_0_index_26 = 15
+    system.landmark_stage_0_index_25 = 16
+    system.landmark_stage_0_index_24 = 15
     system.landmark_stage_0_index_23 = 19
-    system.landmark_stage_0_index_22 = 7
+    system.landmark_stage_0_index_22 = 15
     system.landmark_stage_0_index_21 = 19
-    system.landmark_stage_0_index_20 = 7
-    system.landmark_stage_0_index_19 = 8
-    system.landmark_stage_0_index_18 = 7
-    system.landmark_stage_0_index_17 = 8
-    system.landmark_stage_0_index_16 = 7
+    system.landmark_stage_0_index_20 = 15
+    system.landmark_stage_0_index_19 = 15
+    system.landmark_stage_0_index_18 = 15
+    system.landmark_stage_0_index_17 = 15
+    system.landmark_stage_0_index_16 = 15
     system.landmark_stage_0_index_15 = 19
-    system.landmark_stage_0_index_14 = 7
+    system.landmark_stage_0_index_14 = 15
     system.landmark_stage_0_index_13 = 19
     system.landmark_stage_0_index_12 = 6
     system.landmark_stage_0_index_11 = 0
@@ -445,7 +445,7 @@ Trace Type: Counterexample
     system.drone_y_stage_1 = 19
   -> State: 1.46 <-
     system.drone_y_stage_0 = 19
-    system.current_landmark_x_stage_1 = 7
+    system.current_landmark_x_stage_1 = 15
     system.landmark_index_stage_1 = 7
     system.is_close_to_landmark.internal_status = success
     system.is_close_to_landmark.status = success
@@ -461,7 +461,7 @@ Trace Type: Counterexample
     system.movement_sequence.active = FALSE
   -> State: 1.47 <-
     system.landmark_index_stage_0 = 7
-    system.current_landmark_x_stage_0 = 7
+    system.current_landmark_x_stage_0 = 15
     system.drone_x_stage_1 = 7
     system.is_close_to_landmark.internal_status = failure
     system.is_close_to_landmark.status = failure
@@ -477,7 +477,31 @@ Trace Type: Counterexample
     system.movement_sequence.active = TRUE
   -> State: 1.48 <-
     system.drone_x_stage_0 = 7
-    system.current_landmark_y_stage_1 = 8
+    system.drone_x_stage_1 = 8
+  -> State: 1.49 <-
+    system.drone_x_stage_0 = 8
+    system.drone_x_stage_1 = 9
+  -> State: 1.50 <-
+    system.drone_x_stage_0 = 9
+    system.drone_x_stage_1 = 10
+  -> State: 1.51 <-
+    system.drone_x_stage_0 = 10
+    system.drone_x_stage_1 = 11
+  -> State: 1.52 <-
+    system.drone_x_stage_0 = 11
+    system.drone_x_stage_1 = 12
+  -> State: 1.53 <-
+    system.drone_x_stage_0 = 12
+    system.drone_x_stage_1 = 13
+  -> State: 1.54 <-
+    system.drone_x_stage_0 = 13
+    system.drone_x_stage_1 = 14
+  -> State: 1.55 <-
+    system.drone_x_stage_0 = 14
+    system.drone_x_stage_1 = 15
+  -> State: 1.56 <-
+    system.drone_x_stage_0 = 15
+    system.current_landmark_y_stage_1 = 15
     system.landmark_index_stage_1 = 8
     system.is_close_to_landmark.internal_status = success
     system.is_close_to_landmark.status = success
@@ -491,9 +515,9 @@ Trace Type: Counterexample
     system.get_next_subgoal.active = FALSE
     system.movement_sequence.status = invalid
     system.movement_sequence.active = FALSE
-  -> State: 1.49 <-
+  -> State: 1.57 <-
     system.landmark_index_stage_0 = 8
-    system.current_landmark_y_stage_0 = 8
+    system.current_landmark_y_stage_0 = 15
     system.drone_y_stage_1 = 18
     system.is_close_to_landmark.internal_status = failure
     system.is_close_to_landmark.status = failure
@@ -507,38 +531,17 @@ Trace Type: Counterexample
     system.get_next_subgoal.active = TRUE
     system.movement_sequence.status = success
     system.movement_sequence.active = TRUE
-  -> State: 1.50 <-
+  -> State: 1.58 <-
     system.drone_y_stage_0 = 18
     system.drone_y_stage_1 = 17
-  -> State: 1.51 <-
+  -> State: 1.59 <-
     system.drone_y_stage_0 = 17
     system.drone_y_stage_1 = 16
-  -> State: 1.52 <-
+  -> State: 1.60 <-
     system.drone_y_stage_0 = 16
     system.drone_y_stage_1 = 15
-  -> State: 1.53 <-
+  -> State: 1.61 <-
     system.drone_y_stage_0 = 15
-    system.drone_y_stage_1 = 14
-  -> State: 1.54 <-
-    system.drone_y_stage_0 = 14
-    system.drone_y_stage_1 = 13
-  -> State: 1.55 <-
-    system.drone_y_stage_0 = 13
-    system.drone_y_stage_1 = 12
-  -> State: 1.56 <-
-    system.drone_y_stage_0 = 12
-    system.drone_y_stage_1 = 11
-  -> State: 1.57 <-
-    system.drone_y_stage_0 = 11
-    system.drone_y_stage_1 = 10
-  -> State: 1.58 <-
-    system.drone_y_stage_0 = 10
-    system.drone_y_stage_1 = 9
-  -> State: 1.59 <-
-    system.drone_y_stage_0 = 9
-    system.drone_y_stage_1 = 8
-  -> State: 1.60 <-
-    system.drone_y_stage_0 = 8
     system.landmark_index_stage_1 = 9
     system.is_close_to_landmark.internal_status = success
     system.is_close_to_landmark.status = success
@@ -552,14 +555,14 @@ Trace Type: Counterexample
     system.get_next_subgoal.active = FALSE
     system.movement_sequence.status = invalid
     system.movement_sequence.active = FALSE
-  -> State: 1.61 <-
+  -> State: 1.62 <-
     system.landmark_index_stage_0 = 9
     system.current_landmark_y_stage_1 = 19
     system.landmark_index_stage_1 = 10
-  -> State: 1.62 <-
+  -> State: 1.63 <-
     system.landmark_index_stage_0 = 10
     system.current_landmark_y_stage_0 = 19
-    system.drone_y_stage_1 = 9
+    system.drone_y_stage_1 = 16
     system.is_close_to_landmark.internal_status = failure
     system.is_close_to_landmark.status = failure
     system.get_next_landmark.status = invalid
@@ -572,37 +575,16 @@ Trace Type: Counterexample
     system.get_next_subgoal.active = TRUE
     system.movement_sequence.status = success
     system.movement_sequence.active = TRUE
-  -> State: 1.63 <-
-    system.drone_y_stage_0 = 9
-    system.drone_y_stage_1 = 10
   -> State: 1.64 <-
-    system.drone_y_stage_0 = 10
-    system.drone_y_stage_1 = 11
-  -> State: 1.65 <-
-    system.drone_y_stage_0 = 11
-    system.drone_y_stage_1 = 12
-  -> State: 1.66 <-
-    system.drone_y_stage_0 = 12
-    system.drone_y_stage_1 = 13
-  -> State: 1.67 <-
-    system.drone_y_stage_0 = 13
-    system.drone_y_stage_1 = 14
-  -> State: 1.68 <-
-    system.drone_y_stage_0 = 14
-    system.drone_y_stage_1 = 15
-  -> State: 1.69 <-
-    system.drone_y_stage_0 = 15
-    system.drone_y_stage_1 = 16
-  -> State: 1.70 <-
     system.drone_y_stage_0 = 16
     system.drone_y_stage_1 = 17
-  -> State: 1.71 <-
+  -> State: 1.65 <-
     system.drone_y_stage_0 = 17
     system.drone_y_stage_1 = 18
-  -> State: 1.72 <-
+  -> State: 1.66 <-
     system.drone_y_stage_0 = 18
     system.drone_y_stage_1 = 19
-  -> State: 1.73 <-
+  -> State: 1.67 <-
     system.drone_y_stage_0 = 19
     system.landmark_index_stage_1 = 11
     system.is_close_to_landmark.internal_status = success
@@ -617,13 +599,13 @@ Trace Type: Counterexample
     system.get_next_subgoal.active = FALSE
     system.movement_sequence.status = invalid
     system.movement_sequence.active = FALSE
-  -> State: 1.74 <-
+  -> State: 1.68 <-
     system.landmark_index_stage_0 = 11
-    system.current_landmark_y_stage_1 = 8
+    system.current_landmark_y_stage_1 = 16
     system.landmark_index_stage_1 = 12
-  -> State: 1.75 <-
+  -> State: 1.69 <-
     system.landmark_index_stage_0 = 12
-    system.current_landmark_y_stage_0 = 8
+    system.current_landmark_y_stage_0 = 16
     system.drone_y_stage_1 = 18
     system.is_close_to_landmark.internal_status = failure
     system.is_close_to_landmark.status = failure
@@ -637,38 +619,14 @@ Trace Type: Counterexample
     system.get_next_subgoal.active = TRUE
     system.movement_sequence.status = success
     system.movement_sequence.active = TRUE
-  -> State: 1.76 <-
+  -> State: 1.70 <-
     system.drone_y_stage_0 = 18
     system.drone_y_stage_1 = 17
-  -> State: 1.77 <-
+  -> State: 1.71 <-
     system.drone_y_stage_0 = 17
     system.drone_y_stage_1 = 16
-  -> State: 1.78 <-
+  -> State: 1.72 <-
     system.drone_y_stage_0 = 16
-    system.drone_y_stage_1 = 15
-  -> State: 1.79 <-
-    system.drone_y_stage_0 = 15
-    system.drone_y_stage_1 = 14
-  -> State: 1.80 <-
-    system.drone_y_stage_0 = 14
-    system.drone_y_stage_1 = 13
-  -> State: 1.81 <-
-    system.drone_y_stage_0 = 13
-    system.drone_y_stage_1 = 12
-  -> State: 1.82 <-
-    system.drone_y_stage_0 = 12
-    system.drone_y_stage_1 = 11
-  -> State: 1.83 <-
-    system.drone_y_stage_0 = 11
-    system.drone_y_stage_1 = 10
-  -> State: 1.84 <-
-    system.drone_y_stage_0 = 10
-    system.drone_y_stage_1 = 9
-  -> State: 1.85 <-
-    system.drone_y_stage_0 = 9
-    system.drone_y_stage_1 = 8
-  -> State: 1.86 <-
-    system.drone_y_stage_0 = 8
     system.landmark_index_stage_1 = 13
     system.is_close_to_landmark.internal_status = success
     system.is_close_to_landmark.status = success
@@ -682,14 +640,14 @@ Trace Type: Counterexample
     system.get_next_subgoal.active = FALSE
     system.movement_sequence.status = invalid
     system.movement_sequence.active = FALSE
-  -> State: 1.87 <-
+  -> State: 1.73 <-
     system.landmark_index_stage_0 = 13
     system.current_landmark_y_stage_1 = 19
     system.landmark_index_stage_1 = 14
-  -> State: 1.88 <-
+  -> State: 1.74 <-
     system.landmark_index_stage_0 = 14
     system.current_landmark_y_stage_0 = 19
-    system.drone_y_stage_1 = 9
+    system.drone_y_stage_1 = 17
     system.is_close_to_landmark.internal_status = failure
     system.is_close_to_landmark.status = failure
     system.get_next_landmark.status = invalid
@@ -702,37 +660,13 @@ Trace Type: Counterexample
     system.get_next_subgoal.active = TRUE
     system.movement_sequence.status = success
     system.movement_sequence.active = TRUE
-  -> State: 1.89 <-
-    system.drone_y_stage_0 = 9
-    system.drone_y_stage_1 = 10
-  -> State: 1.90 <-
-    system.drone_y_stage_0 = 10
-    system.drone_y_stage_1 = 11
-  -> State: 1.91 <-
-    system.drone_y_stage_0 = 11
-    system.drone_y_stage_1 = 12
-  -> State: 1.92 <-
-    system.drone_y_stage_0 = 12
-    system.drone_y_stage_1 = 13
-  -> State: 1.93 <-
-    system.drone_y_stage_0 = 13
-    system.drone_y_stage_1 = 14
-  -> State: 1.94 <-
-    system.drone_y_stage_0 = 14
-    system.drone_y_stage_1 = 15
-  -> State: 1.95 <-
-    system.drone_y_stage_0 = 15
-    system.drone_y_stage_1 = 16
-  -> State: 1.96 <-
-    system.drone_y_stage_0 = 16
-    system.drone_y_stage_1 = 17
-  -> State: 1.97 <-
+  -> State: 1.75 <-
     system.drone_y_stage_0 = 17
     system.drone_y_stage_1 = 18
-  -> State: 1.98 <-
+  -> State: 1.76 <-
     system.drone_y_stage_0 = 18
     system.drone_y_stage_1 = 19
-  -> State: 1.99 <-
+  -> State: 1.77 <-
     system.drone_y_stage_0 = 19
     system.landmark_index_stage_1 = 15
     system.is_close_to_landmark.internal_status = success
@@ -747,13 +681,13 @@ Trace Type: Counterexample
     system.get_next_subgoal.active = FALSE
     system.movement_sequence.status = invalid
     system.movement_sequence.active = FALSE
-  -> State: 1.100 <-
+  -> State: 1.78 <-
     system.landmark_index_stage_0 = 15
-    system.current_landmark_y_stage_1 = 8
+    system.current_landmark_y_stage_1 = 16
     system.landmark_index_stage_1 = 16
-  -> State: 1.101 <-
+  -> State: 1.79 <-
     system.landmark_index_stage_0 = 16
-    system.current_landmark_y_stage_0 = 8
+    system.current_landmark_y_stage_0 = 16
     system.drone_y_stage_1 = 18
     system.is_close_to_landmark.internal_status = failure
     system.is_close_to_landmark.status = failure
@@ -767,38 +701,14 @@ Trace Type: Counterexample
     system.get_next_subgoal.active = TRUE
     system.movement_sequence.status = success
     system.movement_sequence.active = TRUE
-  -> State: 1.102 <-
+  -> State: 1.80 <-
     system.drone_y_stage_0 = 18
     system.drone_y_stage_1 = 17
-  -> State: 1.103 <-
+  -> State: 1.81 <-
     system.drone_y_stage_0 = 17
     system.drone_y_stage_1 = 16
-  -> State: 1.104 <-
+  -> State: 1.82 <-
     system.drone_y_stage_0 = 16
-    system.drone_y_stage_1 = 15
-  -> State: 1.105 <-
-    system.drone_y_stage_0 = 15
-    system.drone_y_stage_1 = 14
-  -> State: 1.106 <-
-    system.drone_y_stage_0 = 14
-    system.drone_y_stage_1 = 13
-  -> State: 1.107 <-
-    system.drone_y_stage_0 = 13
-    system.drone_y_stage_1 = 12
-  -> State: 1.108 <-
-    system.drone_y_stage_0 = 12
-    system.drone_y_stage_1 = 11
-  -> State: 1.109 <-
-    system.drone_y_stage_0 = 11
-    system.drone_y_stage_1 = 10
-  -> State: 1.110 <-
-    system.drone_y_stage_0 = 10
-    system.drone_y_stage_1 = 9
-  -> State: 1.111 <-
-    system.drone_y_stage_0 = 9
-    system.drone_y_stage_1 = 8
-  -> State: 1.112 <-
-    system.drone_y_stage_0 = 8
     system.landmark_index_stage_1 = 17
     system.is_close_to_landmark.internal_status = success
     system.is_close_to_landmark.status = success
@@ -812,14 +722,14 @@ Trace Type: Counterexample
     system.get_next_subgoal.active = FALSE
     system.movement_sequence.status = invalid
     system.movement_sequence.active = FALSE
-  -> State: 1.113 <-
+  -> State: 1.83 <-
     system.landmark_index_stage_0 = 17
     system.current_landmark_y_stage_1 = 19
     system.landmark_index_stage_1 = 18
-  -> State: 1.114 <-
+  -> State: 1.84 <-
     system.landmark_index_stage_0 = 18
     system.current_landmark_y_stage_0 = 19
-    system.drone_y_stage_1 = 9
+    system.drone_y_stage_1 = 17
     system.is_close_to_landmark.internal_status = failure
     system.is_close_to_landmark.status = failure
     system.get_next_landmark.status = invalid
@@ -832,37 +742,13 @@ Trace Type: Counterexample
     system.get_next_subgoal.active = TRUE
     system.movement_sequence.status = success
     system.movement_sequence.active = TRUE
-  -> State: 1.115 <-
-    system.drone_y_stage_0 = 9
-    system.drone_y_stage_1 = 10
-  -> State: 1.116 <-
-    system.drone_y_stage_0 = 10
-    system.drone_y_stage_1 = 11
-  -> State: 1.117 <-
-    system.drone_y_stage_0 = 11
-    system.drone_y_stage_1 = 12
-  -> State: 1.118 <-
-    system.drone_y_stage_0 = 12
-    system.drone_y_stage_1 = 13
-  -> State: 1.119 <-
-    system.drone_y_stage_0 = 13
-    system.drone_y_stage_1 = 14
-  -> State: 1.120 <-
-    system.drone_y_stage_0 = 14
-    system.drone_y_stage_1 = 15
-  -> State: 1.121 <-
-    system.drone_y_stage_0 = 15
-    system.drone_y_stage_1 = 16
-  -> State: 1.122 <-
-    system.drone_y_stage_0 = 16
-    system.drone_y_stage_1 = 17
-  -> State: 1.123 <-
+  -> State: 1.85 <-
     system.drone_y_stage_0 = 17
     system.drone_y_stage_1 = 18
-  -> State: 1.124 <-
+  -> State: 1.86 <-
     system.drone_y_stage_0 = 18
     system.drone_y_stage_1 = 19
-  -> State: 1.125 <-
+  -> State: 1.87 <-
     system.drone_y_stage_0 = 19
     system.landmark_index_stage_1 = 19
     system.is_close_to_landmark.internal_status = success
@@ -877,13 +763,13 @@ Trace Type: Counterexample
     system.get_next_subgoal.active = FALSE
     system.movement_sequence.status = invalid
     system.movement_sequence.active = FALSE
-  -> State: 1.126 <-
+  -> State: 1.88 <-
     system.landmark_index_stage_0 = 19
-    system.current_landmark_y_stage_1 = 8
+    system.current_landmark_y_stage_1 = 16
     system.landmark_index_stage_1 = 20
-  -> State: 1.127 <-
+  -> State: 1.89 <-
     system.landmark_index_stage_0 = 20
-    system.current_landmark_y_stage_0 = 8
+    system.current_landmark_y_stage_0 = 16
     system.drone_y_stage_1 = 18
     system.is_close_to_landmark.internal_status = failure
     system.is_close_to_landmark.status = failure
@@ -897,38 +783,14 @@ Trace Type: Counterexample
     system.get_next_subgoal.active = TRUE
     system.movement_sequence.status = success
     system.movement_sequence.active = TRUE
-  -> State: 1.128 <-
+  -> State: 1.90 <-
     system.drone_y_stage_0 = 18
     system.drone_y_stage_1 = 17
-  -> State: 1.129 <-
+  -> State: 1.91 <-
     system.drone_y_stage_0 = 17
     system.drone_y_stage_1 = 16
-  -> State: 1.130 <-
+  -> State: 1.92 <-
     system.drone_y_stage_0 = 16
-    system.drone_y_stage_1 = 15
-  -> State: 1.131 <-
-    system.drone_y_stage_0 = 15
-    system.drone_y_stage_1 = 14
-  -> State: 1.132 <-
-    system.drone_y_stage_0 = 14
-    system.drone_y_stage_1 = 13
-  -> State: 1.133 <-
-    system.drone_y_stage_0 = 13
-    system.drone_y_stage_1 = 12
-  -> State: 1.134 <-
-    system.drone_y_stage_0 = 12
-    system.drone_y_stage_1 = 11
-  -> State: 1.135 <-
-    system.drone_y_stage_0 = 11
-    system.drone_y_stage_1 = 10
-  -> State: 1.136 <-
-    system.drone_y_stage_0 = 10
-    system.drone_y_stage_1 = 9
-  -> State: 1.137 <-
-    system.drone_y_stage_0 = 9
-    system.drone_y_stage_1 = 8
-  -> State: 1.138 <-
-    system.drone_y_stage_0 = 8
     system.landmark_index_stage_1 = 21
     system.is_close_to_landmark.internal_status = success
     system.is_close_to_landmark.status = success
@@ -942,14 +804,14 @@ Trace Type: Counterexample
     system.get_next_subgoal.active = FALSE
     system.movement_sequence.status = invalid
     system.movement_sequence.active = FALSE
-  -> State: 1.139 <-
+  -> State: 1.93 <-
     system.landmark_index_stage_0 = 21
     system.current_landmark_y_stage_1 = 19
     system.landmark_index_stage_1 = 22
-  -> State: 1.140 <-
+  -> State: 1.94 <-
     system.landmark_index_stage_0 = 22
     system.current_landmark_y_stage_0 = 19
-    system.drone_y_stage_1 = 9
+    system.drone_y_stage_1 = 17
     system.is_close_to_landmark.internal_status = failure
     system.is_close_to_landmark.status = failure
     system.get_next_landmark.status = invalid
@@ -962,37 +824,13 @@ Trace Type: Counterexample
     system.get_next_subgoal.active = TRUE
     system.movement_sequence.status = success
     system.movement_sequence.active = TRUE
-  -> State: 1.141 <-
-    system.drone_y_stage_0 = 9
-    system.drone_y_stage_1 = 10
-  -> State: 1.142 <-
-    system.drone_y_stage_0 = 10
-    system.drone_y_stage_1 = 11
-  -> State: 1.143 <-
-    system.drone_y_stage_0 = 11
-    system.drone_y_stage_1 = 12
-  -> State: 1.144 <-
-    system.drone_y_stage_0 = 12
-    system.drone_y_stage_1 = 13
-  -> State: 1.145 <-
-    system.drone_y_stage_0 = 13
-    system.drone_y_stage_1 = 14
-  -> State: 1.146 <-
-    system.drone_y_stage_0 = 14
-    system.drone_y_stage_1 = 15
-  -> State: 1.147 <-
-    system.drone_y_stage_0 = 15
-    system.drone_y_stage_1 = 16
-  -> State: 1.148 <-
-    system.drone_y_stage_0 = 16
-    system.drone_y_stage_1 = 17
-  -> State: 1.149 <-
+  -> State: 1.95 <-
     system.drone_y_stage_0 = 17
     system.drone_y_stage_1 = 18
-  -> State: 1.150 <-
+  -> State: 1.96 <-
     system.drone_y_stage_0 = 18
     system.drone_y_stage_1 = 19
-  -> State: 1.151 <-
+  -> State: 1.97 <-
     system.drone_y_stage_0 = 19
     system.landmark_index_stage_1 = 23
     system.is_close_to_landmark.internal_status = success
@@ -1007,13 +845,13 @@ Trace Type: Counterexample
     system.get_next_subgoal.active = FALSE
     system.movement_sequence.status = invalid
     system.movement_sequence.active = FALSE
-  -> State: 1.152 <-
+  -> State: 1.98 <-
     system.landmark_index_stage_0 = 23
-    system.current_landmark_y_stage_1 = 8
+    system.current_landmark_y_stage_1 = 16
     system.landmark_index_stage_1 = 24
-  -> State: 1.153 <-
+  -> State: 1.99 <-
     system.landmark_index_stage_0 = 24
-    system.current_landmark_y_stage_0 = 8
+    system.current_landmark_y_stage_0 = 16
     system.drone_y_stage_1 = 18
     system.is_close_to_landmark.internal_status = failure
     system.is_close_to_landmark.status = failure
@@ -1027,39 +865,15 @@ Trace Type: Counterexample
     system.get_next_subgoal.active = TRUE
     system.movement_sequence.status = success
     system.movement_sequence.active = TRUE
-  -> State: 1.154 <-
+  -> State: 1.100 <-
     system.drone_y_stage_0 = 18
     system.drone_y_stage_1 = 17
-  -> State: 1.155 <-
+  -> State: 1.101 <-
     system.drone_y_stage_0 = 17
     system.drone_y_stage_1 = 16
-  -> State: 1.156 <-
-    system.drone_y_stage_0 = 16
-    system.drone_y_stage_1 = 15
-  -> State: 1.157 <-
-    system.drone_y_stage_0 = 15
-    system.drone_y_stage_1 = 14
-  -> State: 1.158 <-
-    system.drone_y_stage_0 = 14
-    system.drone_y_stage_1 = 13
-  -> State: 1.159 <-
-    system.drone_y_stage_0 = 13
-    system.drone_y_stage_1 = 12
-  -> State: 1.160 <-
-    system.drone_y_stage_0 = 12
-    system.drone_y_stage_1 = 11
-  -> State: 1.161 <-
-    system.drone_y_stage_0 = 11
-    system.drone_y_stage_1 = 10
-  -> State: 1.162 <-
-    system.drone_y_stage_0 = 10
-    system.drone_y_stage_1 = 9
-  -> State: 1.163 <-
-    system.drone_y_stage_0 = 9
-    system.drone_y_stage_1 = 8
   -- Loop starts here
-  -> State: 1.164 <-
-    system.drone_y_stage_0 = 8
+  -> State: 1.102 <-
+    system.drone_y_stage_0 = 16
     system.is_close_to_landmark.internal_status = success
     system.is_close_to_landmark.status = success
     system.get_next_landmark.status = success
@@ -1072,4 +886,4 @@ Trace Type: Counterexample
     system.get_next_subgoal.active = FALSE
     system.movement_sequence.status = invalid
     system.movement_sequence.active = FALSE
-  -> State: 1.165 <-
+  -> State: 1.103 <-

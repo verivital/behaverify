@@ -140,6 +140,7 @@ node:
     (model_as = 'FROZENVAR' domain = variable_domain) |
     (model_as = 'DEFINE' ((domain = 'INT') | (domain = 'ENUM') | (domain = 'BOOLEAN') | (domain = 'REAL'))))
     ((iterative_assign = 'iterative_assign' ',' index_var_name = ID iterative_assign_conditionals *= iterative_assign_conditional assign = assign_value) |
+    // each of the conditionals must be metacode
     ('default' '{' default_value = assign_value '}' ('end_default')?
     ((constant_index = 'constant_index' assigns *= loop_array_index) | (constant_index = '' assigns *= loop_array_index)))))
     |

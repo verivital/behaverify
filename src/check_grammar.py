@@ -13,7 +13,7 @@ import sys
 from os.path import isfile
 import textx
 from serene_functions import build_meta_func
-from serene_functions import build_meta_func_neural
+from serene_functions_neural import build_meta_func as build_meta_func_neural
 from behaverify_common import (create_node_name,
                                BTreeException,
                                handle_constant_or_reference,
