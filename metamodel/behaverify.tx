@@ -135,12 +135,13 @@ node:
     'variable' '{'
     ((var_type = 'bl') | (var_type = 'local') | (var_type = 'env'))
     name = ID
-    (('array' '(' array_size += code_statement[','] ')'
+    (('array' array_size = code_statement
     ((model_as = 'VAR' domain = variable_domain) |
     (model_as = 'FROZENVAR' domain = variable_domain) |
     (model_as = 'DEFINE' ((domain = 'INT') | (domain = 'ENUM') | (domain = 'BOOLEAN') | (domain = 'REAL'))))
-    'default' '{' default_value = assign_value '}' ('end_default')?
-    ((constant_index = 'constant_index' assigns *= loop_array_index) | (constant_index = '' assigns *= loop_array_index)))
+    ((iterative_assign = 'iterative_assign' ',' index_var_name = ID iterative_assign_conditionals *= iterative_assign_conditional assign = assign_value) |
+    ('default' '{' default_value = assign_value '}' ('end_default')?
+    ((constant_index = 'constant_index' assigns *= loop_array_index) | (constant_index = '' assigns *= loop_array_index)))))
     |
     (((model_as = 'VAR' domain = variable_domain) |
     (model_as = 'FROZENVAR' domain = variable_domain) |
@@ -165,7 +166,6 @@ node:
 ;
     constant_declaration:
     name = ID ':=' val = constant_value
-    //if a constant is used without an index, return val[0]
 ;
 status:
     'success' | 'running' | 'failure'
@@ -201,7 +201,7 @@ statement:
     instant ?= 'instant'
     variable = [variable]
     (((constant_index = 'constant_index' assigns += loop_array_index) | (constant_index = '' assigns += loop_array_index))
-    | (assign = assign_value))
+    | ((iterative_assign = 'iterative_assign' ',' index_var_name = ID iterative_assign_conditionals *= iterative_assign_conditional)? assign = assign_value))
     '}' ('end_variable_statement')?
 ;
     variable_statement_initial:
@@ -224,6 +224,10 @@ statement:
 ;
     array_index:
     'index_of' '{' index_expr += code_statement[','] '}' ('end_index_of')?
+    assign = assign_value
+;
+    iterative_assign_conditional:
+    'condition' '{' condition = code_statement '}' ('end_condition')?
     assign = assign_value
 ;
     assign_value:

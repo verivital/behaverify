@@ -36,15 +36,17 @@ def handle_file(file_name, output_name, x_size, y_size):
             elif 'current_landmark' in line:
                 continue
             elif 'landmark' in line:
-                key = 'landmark_' + ('x' if '_x_' in line else 'y')
+                key = 'landmark'
                 if key not in list_of_states[-1]:
                     list_of_states[-1][key] = {}
-                list_of_states[-1][key][int(line.split('_')[1])] = int(line.split('=')[1].strip())
-            elif 'obstacles' in line:
-                key = 'obstacles_' + ('x' if '_x_' in line else 'y')
+                (left, right) = line.split('=')
+                list_of_states[-1][key][int(left.rsplit('_', 1)[1].strip())] = int(right.strip())
+            elif 'obstacles_sort_x' in line:
+                key = 'obstacles'
                 if key not in list_of_states[-1]:
                     list_of_states[-1][key] = {}
-                list_of_states[-1][key][int(line.split('_')[-1].split(' ')[0])] = int(line.split('=')[1].strip())
+                (left, right) = line.split('=')
+                list_of_states[-1][key][int(left.rsplit('_', 1)[1].strip())] = int(right.strip())
         draw_grid_line(list_of_states, output_name, x_size, y_size)
         previous_states = list_of_states[0]
         index = 0
@@ -59,35 +61,27 @@ def handle_file(file_name, output_name, x_size, y_size):
                 states['target_y'] = previous_states['target_y']
             if 'landmark_index' not in states:
                 states['landmark_index'] = previous_states['landmark_index']
-            if 'landmark_x' not in states:
-                states['landmark_x'] = {}
-            for internal_index in range(len(previous_states['landmark_x'])):
-                if internal_index + 1 not in states['landmark_x']:
-                    states['landmark_x'][internal_index + 1] = previous_states['landmark_x'][internal_index + 1]
-            if 'landmark_y' not in states:
-                states['landmark_y'] = {}
-            for internal_index in range(len(previous_states['landmark_y'])):
-                if internal_index + 1 not in states['landmark_y']:
-                    states['landmark_y'][internal_index + 1] = previous_states['landmark_y'][internal_index + 1]
-            if 'obstacles_x' not in states:
-                states['obstacles_x'] = {}
-            for internal_index in range(len(previous_states['obstacles_x'])):
-                if internal_index not in states['obstacles_x']:
-                    states['obstacles_x'][internal_index] = previous_states['obstacles_x'][internal_index]
-            if 'obstacles_y' not in states:
-                states['obstacles_y'] = {}
-            for internal_index in range(len(previous_states['obstacles_y'])):
-                if internal_index not in states['obstacles_y']:
-                    states['obstacles_y'][internal_index] = previous_states['obstacles_y'][internal_index]
-            draw_grid(create_grid_from_states(states, x_size, y_size), (states['landmark_x'][states['landmark_index']], states['landmark_y'][states['landmark_index']], states['landmark_index']), index, output_name, x_size, y_size)
+            if 'landmark' not in states:
+                states['landmark'] = previous_states['landmark']
+            else:
+                for internal_index in range(len(previous_states['landmark'])):
+                    if internal_index not in states['landmark']:
+                        states['landmark'][internal_index] = previous_states['landmark'][internal_index]
+            if 'obstacles' not in states:
+                states['obstacles'] = previous_states['obstacles']
+            else:
+                for internal_index in range(len(previous_states['obstacles'])):
+                    if internal_index not in states['obstacles']:
+                        states['obstacles'][internal_index] = previous_states['obstacles'][internal_index]
+            draw_grid(create_grid_from_states(states, x_size, y_size), (states['landmark'][states['landmark_index'] * 2], states['landmark'][(states['landmark_index'] * 2) + 1], states['landmark_index']), index, output_name, x_size, y_size)
             previous_states = states
         create_gif(index, output_name)
     return
 
 def create_grid_from_states(states, x_size, y_size):
     grid = [['-' for _ in range(y_size)] for _ in range(x_size)]
-    for index in range(min(len(states['obstacles_x']), len(states['obstacles_y']))):
-        grid[states['obstacles_x'][index]][states['obstacles_y'][index]] = 'O'
+    for index in range(len(states['obstacles']) // 2):
+        grid[states['obstacles'][2 * index]][states['obstacles'][(2 * index) + 1]] = 'O'
     grid[states['target_x']][states['target_y']] = 'T'
     grid[states['drone_x']][states['drone_y']] = 'D'
     return grid
@@ -120,8 +114,8 @@ def draw_grid_line(list_of_states, output_name, x_size, y_size):
                  (current_states['drone_y'] * tile_side + int(tile_side/2)) if 'drone_y' in current_states else drone_line[-1][1])
             )
     draw.line(drone_line, fill = COLORS['D'], width = line_size)
-    for index in range(min(len(list_of_states[0]['landmark_x']), len(list_of_states[0]['landmark_y']))):
-        landmark = (list_of_states[0]['landmark_x'][index+ 1], list_of_states[0]['landmark_y'][index + 1])
+    for index in range(len(list_of_states[0]['landmark']) // 2):
+        landmark = (list_of_states[0]['landmark'][index * 2], list_of_states[0]['landmark'][(2 * index) + 1])
         draw.text((landmark[0] * tile_side + int(tile_side/2), landmark[1] * tile_side), str(index + 1), fill = COLORS['L'], font_size = 18)
     image.save(output_name + '_line.png')
 

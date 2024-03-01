@@ -125,7 +125,7 @@ def handle_constant_or_reference_meta(constant_or_reference, constants, loop_ref
         constant_or_reference.constant
         if constant_or_reference.constant is not None else
         (
-            constants[constant_or_reference.reference][0]  # use first value of constant if it's not indexed!
+            constants[constant_or_reference.reference]
             if constant_or_reference.reference in constants else
             (
                 loop_references[constant_or_reference.reference]
@@ -151,6 +151,9 @@ def handle_constant_or_reference_meta(constant_or_reference, constants, loop_ref
 #         return to_index # It's a variable. Pass it back! We can't index a variable here, which meanse we better be doing network reachability right now.
 #     return to_index_dependant
 
+def handle_index(code):
+    raise TypeError('Index appeared in metacode. This is not allowed.')
+
 def build_meta_func(code):
     '''
     builds the meta func.
@@ -175,7 +178,7 @@ def build_meta_func(code):
                     serene_if(code.function_call)
                     if code.function_call.function_name == 'if' else
                     (
-                        build_meta_func(code.function_call.to_index)  # network analysis only! Cannot index constants, and indexing variables doesn't make sense in metacode
+                        handle_index(code.function_call.to_index)  # network analysis only! Cannot index constants, and indexing variables doesn't make sense in metacode
                         if code.function_call.function_name == 'index' else
                         create_lambda_to_apply_function(*FUNCTIONS[code.function_call.function_name], code.function_call.values)
                     )

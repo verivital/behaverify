@@ -12,6 +12,7 @@ import itertools
 import copy
 from behaverify_to_smv import write_smv
 from serene_functions import build_meta_func
+from serene_functions_neural import build_meta_func as build_meta_func_neural
 from check_grammar import validate_model
 
 from behaverify_common import create_node_name, create_node_template, create_variable_template, indent, is_local, is_array, handle_constant_or_reference, handle_constant_or_reference_no_type, resolve_potential_reference_no_type, variable_array_size, get_min_max
@@ -189,7 +190,9 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
             index = resolve_potential_reference_no_type(index_func((constants, new_misc_args['loop_references']))[0], declared_enumerations, nodes, variables, constants, new_misc_args['loop_references'])[1]
             return [formatted_variable + '_index_' + str(index)]
         index_expression = format_code(function_call.values[0], new_misc_args)[0]
-        return [case_index(formatted_variable, array_size_override[variable.name] if variable in array_size_override else variable_array_size(variable, declared_enumerations, nodes, variables, constants, misc_args['loop_references']), index_expression)]
+        if variable.name in array_size_override and array_size_override[variable.name] == 1:
+            return [formatted_variable + '_index_0']
+        return [case_index(formatted_variable, array_size_override[variable.name] if variable.name in array_size_override else variable_array_size(variable, declared_enumerations, nodes, variables, constants, misc_args['loop_references']), index_expression)]
 
     def format_function(code, misc_args):
         '''this just calls the other format functions. moved here to make format_code less cluttered.'''
@@ -283,7 +286,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
         if variable['mode'] == 'DEFINE':
             if overwrite_stage is not None and len(variable['next_value']) > 0:
                 return assemble_variable(variable['name'], compute_stage(variable_key, misc_args), trace_num, specification_writing)
-            used_vars = tuple(format_variable_non_object(behaverify_variables[dependant_variable_key], dependant_variable_key, misc_args) for dependant_variable_key in variable['depends_on'])
+            used_vars = tuple(format_variable_non_object(behaverify_variables[dependent_variable_key], dependent_variable_key, misc_args) for dependent_variable_key in variable['depends_on'])
             if used_vars not in variable['existing_definitions']:
                 variable['existing_definitions'][used_vars] = len(variable['existing_definitions'])
             stage = variable['existing_definitions'][used_vars]
@@ -412,29 +415,42 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
             non_determinism = non_determinism or new_non_determinism
         return (misc_args['node_name'], False, non_determinism, stage)
 
-    def handle_iterative_array_initialization(variable, misc_args):
+    def handle_iterative_array_assignment(variable_statement, assign_var, condition, misc_args):
         new_misc_args = copy_misc_args(misc_args)
-        array_size = variable_array_size(variable, declared_enumerations, nodes, variables, constants, {})
-        index_var_name = variable.index_var_name
+        array_size = variable_array_size(assign_var, declared_enumerations, nodes, variables, constants, {})
+        index_var_name = variable_statement.index_var_name
         non_determinism = {}
         stage = []
+        formatted_variable = format_variable(assign_var, misc_args)
+        iterative_condition_assign_list = [(build_meta_func(iterative_assign_conditional.condition), iterative_assign_conditional.assign) for iterative_assign_conditional in variable_statement.iterative_assign_conditionals]
         for index in range(array_size):
-            array_size_override[variable.name] = index
+            array_size_override[assign_var.name] = index
             new_misc_args['loop_references'][index_var_name] = index
-            (cur_non_determinism, cur_stage) = handle_assign(variable.assign, new_misc_args)
-            stage.append((index, cur_stage))
+            need_default = True
+            for (condition_func, assign) in iterative_condition_assign_list:
+                if condition_func((constants, new_misc_args['loop_references']))[0]:
+                    (cur_non_determinism, cur_stage) = handle_assign(assign, new_misc_args)
+                    need_default = False
+                    break
+            if need_default:
+                (cur_non_determinism, cur_stage) = handle_assign(variable_statement.assign, new_misc_args)
+            stage.append((index, ([] if condition is None else [(condition, formatted_variable + '_index_' + str(index))]) + cur_stage))
             non_determinism[index] = cur_non_determinism
-        array_size_override.pop(variable.name)
-        return (None, True, non_determinism, stage)
+        array_size_override.pop(assign_var.name)
+        return (misc_args['node_name'], True, non_determinism, stage)
 
     def handle_variable_statement(variable_statement, condition, misc_args):
         '''should only be called if init_mode is true or from variable_assignment'''
         assign_var = variable_statement.variable if hasattr(variable_statement, 'variable') else variable_statement
         if is_array(assign_var):
             return (
-                handle_array_constant_index(variable_statement, condition, misc_args)
-                if variable_statement.constant_index == 'constant_index' else
-                handle_array_unknown_index(variable_statement, condition, misc_args)
+                handle_iterative_array_assignment(variable_statement, assign_var, condition, misc_args)
+                if variable_statement.iterative_assign is not None else
+                (
+                    handle_array_constant_index(variable_statement, condition, misc_args)
+                    if variable_statement.constant_index == 'constant_index' else
+                    handle_array_unknown_index(variable_statement, condition, misc_args)
+                )
             )
         (non_determinism, stage) = handle_assign(variable_statement.assign, misc_args)
         return (misc_args['node_name'], non_determinism, ([] if condition is None else [(condition, format_variable(assign_var, misc_args))]) + stage)
@@ -698,7 +714,13 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
             return execute_loop(loop_array_index, find_used_variables_without_formatting_in_loop_array_index, (loop_array_index.loop_array_index, is_constant), misc_args)
 
         def find_used_variables_without_formatting_in_statement(statement, array_mode, node_name):
-            if array_mode:
+            if array_mode == 'iterative':
+                used_variables = []
+                for iterative_assign_conditional in statement.iterative_assign_conditionals:
+                    used_variables.extend(find_used_variables_without_formatting_in_assign(iterative_assign_conditional.assign, create_misc_args(loop_references = {}, node_name = node_name, use_stages = False, overwrite_stage = False, define_substitutions = None, specification_writing = False, specification_warning = False)))
+                used_variables.extend(find_used_variables_without_formatting_in_assign(statement.assign, create_misc_args(loop_references = {}, node_name = node_name, use_stages = False, overwrite_stage = False, define_substitutions = None, specification_writing = False, specification_warning = False)))
+                return used_variables
+            if array_mode == 'normal':
                 used_variables = []
                 is_constant = statement.constant_index == 'constant_index'
                 for loop_array_index in statement.assigns:
@@ -834,13 +856,14 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
                 domain_values = set()
                 input_order = []
                 for input_code in variable.inputs:
-                    input_func = build_meta_func(input_code)
+                    input_func = build_meta_func_neural(input_code)
                     variable_inputs = input_func((constants, {}))
                     for variable_input in variable_inputs:
                         (atom_class, atom) = resolve_potential_reference_no_type(variable_input, declared_enumerations, {}, variables, constants, {})
                         if atom_class == 'VARIABLE':
                             depends_on.add(variable_reference(atom.name, False, None))
                         input_order.append((atom_class, atom))
+                depends_on.discard(var_key)
                 behaverify_variables[var_key]['depends_on'] = tuple(sorted(list(depends_on)))
                 define_substitutions = {
                     sub_key : 'SUBSTITUTE_' + str(index) + '_ME'
@@ -885,13 +908,14 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
                 domain_values = set()
                 input_order = []
                 for input_code in variable.inputs:
-                    input_func = build_meta_func(input_code)
+                    input_func = build_meta_func_neural(input_code)
                     variable_inputs = input_func((constants, {}))
                     for variable_input in variable_inputs:
                         (atom_class, atom) = resolve_potential_reference_no_type(variable_input, declared_enumerations, {}, variables, constants, {})
                         if atom_class == 'VARIABLE':
                             depends_on.add(variable_reference(atom.name, False, None))
                         input_order.append((atom_class, atom))
+                depends_on.discard(var_key)
                 behaverify_variables[var_key]['depends_on'] = tuple(sorted(list(depends_on)))
                 define_substitutions = {
                     sub_key : 'SUBSTITUTE_' + str(index) + '_ME'
@@ -933,7 +957,9 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
             define_substitutions = None
             if variable.model_as == 'DEFINE':
                 behaverify_variables[variable.name]['existing_definitions'] = {}
-                behaverify_variables[var_key]['depends_on'] = tuple(sorted(list(set(find_used_variables_without_formatting_in_statement(variable, is_array(variable), None)))))
+                depends_on = set(find_used_variables_without_formatting_in_statement(variable, ('non_array' if not is_array(variable) else ('iterative' if variable.iterative_assign == 'iterative_assign' else 'normal')), None))
+                depends_on.discard(var_key)
+                behaverify_variables[var_key]['depends_on'] = tuple(sorted(list(depends_on)))
                 define_substitutions = {
                     sub_key : 'SUBSTITUTE_' + str(index) + '_ME'
                     for (index, sub_key) in enumerate(behaverify_variables[var_key]['depends_on'])
@@ -941,7 +967,11 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
                 define_substitutions[var_key] = 'SUBSTITUTE_SELF'
             behaverify_variables[var_key]['initial_value'] = handle_variable_statement(variable, None, create_misc_args(loop_references = {}, node_name = None, use_stages = True, overwrite_stage = None, define_substitutions = define_substitutions, specification_writing = False, specification_warning = False))
             if is_array(variable):
-                behaverify_variables[var_key]['default_array_val'] = handle_assign(variable.default_value, create_misc_args(loop_references = {}, node_name = None, use_stages = True, overwrite_stage = None, define_substitutions = define_substitutions, specification_writing = False, specification_warning = False))
+                behaverify_variables[var_key]['default_array_val'] = (
+                    handle_assign(variable.default_value, create_misc_args(loop_references = {}, node_name = None, use_stages = True, overwrite_stage = None, define_substitutions = define_substitutions, specification_writing = False, specification_warning = False))
+                    if variable.iterative_assign != 'iterative_assign' else
+                    (False, [('ITERATIVE ERROR1', 'FIND ME1')])
+                )
         # at this point we've finished everything that isn't a local variable.
         # create local variables.
         for (node_name, variable) in local_variables:
@@ -952,7 +982,9 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
             define_substitutions = None
             if variable.model_as == 'DEFINE':
                 behaverify_variables[var_key]['existing_definitions'] = {}
-                behaverify_variables[var_key]['depends_on'] = tuple(sorted(list(set(find_used_variables_without_formatting_in_statement(variable, is_array(variable), None)))))
+                depends_on = set(find_used_variables_without_formatting_in_statement(variable, ('non_array' if not is_array(variable) else ('iterative' if variable.iterative_assign == 'iterative_assign' else 'normal')), None))
+                depends_on.discard(var_key)
+                behaverify_variables[var_key]['depends_on'] = tuple(sorted(list(depends_on)))
                 define_substitutions = {
                     sub_key : 'SUBSTITUTE_' + str(index) + '_ME'
                     for (index, sub_key) in enumerate(behaverify_variables[var_key]['depends_on'])
@@ -960,7 +992,11 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
                 define_substitutions[var_key] = 'SUBSTITUTE_SELF'
             behaverify_variables[var_key]['initial_value'] = handle_variable_statement(variable, None, create_misc_args(loop_references = {}, node_name = node_name, use_stages = True, overwrite_stage = None, define_substitutions = define_substitutions, specification_writing = False, specification_warning = False))
             if is_array(variable):
-                behaverify_variables[var_key]['default_array_val'] = handle_assign(variable.default_value, create_misc_args(loop_references = {}, node_name = None, use_stages = True, overwrite_stage = None, define_substitutions = define_substitutions, specification_writing = False, specification_warning = False))
+                behaverify_variables[var_key]['default_array_val'] = (
+                    handle_assign(variable.default_value, create_misc_args(loop_references = {}, node_name = None, use_stages = True, overwrite_stage = None, define_substitutions = define_substitutions, specification_writing = False, specification_warning = False))
+                    if variable.iterative_assign != 'iterative_assign' else
+                    (False, [('ITERATIVE ERROR2', 'FIND ME2')])
+                )
         # handle initial statements FOR DEFINE ONLY.
         # we have to parse and update this first. only after that can we go through non-define macros.
         # this is so we populate the definitions and what not.
@@ -971,7 +1007,9 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
             if assign_var.model_as == 'DEFINE':
                 var_key = variable_reference(assign_var.name, is_local(assign_var), node_name)
                 behaverify_variables[var_key]['existing_definitions'] = {}
-                behaverify_variables[var_key]['depends_on'] = tuple(sorted(list(set(find_used_variables_without_formatting_in_statement(initial_statement, is_array(assign_var), node_name)))))
+                depends_on = set(find_used_variables_without_formatting_in_statement(initial_statement, is_array(assign_var) and variable.iterative_assign != 'iterative_assign', node_name))
+                depends_on.discard(var_key)
+                behaverify_variables[var_key]['depends_on'] = tuple(sorted(list(depends_on)))
                 define_substitutions = {
                     sub_key : 'SUBSTITUTE_' + str(index) + '_ME'
                     for (index, sub_key) in enumerate(behaverify_variables[var_key]['depends_on'])
@@ -979,7 +1017,11 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
                 define_substitutions[var_key] = 'SUBSTITUTE_SELF'
                 behaverify_variables[var_key]['initial_value'] = handle_variable_statement(initial_statement, None, create_misc_args(loop_references = {}, node_name = node_name, use_stages = True, overwrite_stage = None, define_substitutions = define_substitutions, specification_writing = False, specification_warning = False))
                 if is_array(assign_var):
-                    behaverify_variables[var_key]['default_array_val'] = handle_assign(initial_statement.default_value, create_misc_args(loop_references = {}, node_name = node_name, use_stages = True,  overwrite_stage = None, define_substitutions = define_substitutions, specification_writing = False, specification_warning = False))
+                    behaverify_variables[var_key]['default_array_val'] = (
+                        handle_assign(initial_statement.default_value, create_misc_args(loop_references = {}, node_name = node_name, use_stages = True,  overwrite_stage = None, define_substitutions = define_substitutions, specification_writing = False, specification_warning = False))
+                        if variable.iterative_assign != 'iterative_assign' else
+                        (False, [('ITERATIVE ERROR3', 'FIND ME3')])
+                    )
             for argument_name in argument_pairs:
                 constants.pop(argument_name)
         # now we go through all the not define.
@@ -991,7 +1033,11 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
                 var_key = variable_reference(assign_var.name, is_local(assign_var), node_name)
                 behaverify_variables[var_key]['initial_value'] = handle_variable_statement(initial_statement, None, create_misc_args(loop_references = {}, node_name = node_name, use_stages = True, overwrite_stage = None, define_substitutions = None, specification_writing = False, specification_warning = False))
                 if is_array(assign_var):
-                    behaverify_variables[var_key]['default_array_val'] = handle_assign(initial_statement.default_value, create_misc_args(loop_references = {}, node_name = node_name, use_stages = True, overwrite_stage = None, define_substitutions = None, specification_writing = False, specification_warning = False))
+                    behaverify_variables[var_key]['default_array_val'] = (
+                        handle_assign(initial_statement.default_value, create_misc_args(loop_references = {}, node_name = node_name, use_stages = True, overwrite_stage = None, define_substitutions = None, specification_writing = False, specification_warning = False))
+                        if variable.iterative_assign != 'iterative_assign' else
+                        (False, [('ITERATIVE ERROR4', 'FIND ME4')])
+                    )
             for argument_name in argument_pairs:
                 constants.pop(argument_name)
         return behaverify_variables

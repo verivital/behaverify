@@ -13,6 +13,7 @@ import sys
 from os.path import isfile
 import textx
 from serene_functions import build_meta_func
+from serene_functions import build_meta_func_neural
 from behaverify_common import (create_node_name,
                                BTreeException,
                                handle_constant_or_reference,
@@ -409,15 +410,35 @@ def validate_model(metamodel_file, model_file, recursion_limit):
         trace.append('In Array Assignment for: ' + assign_var.name)
         if not is_array(assign_var):
             raise BTreeException(trace, 'updated as array but is not an array')
-        if hasattr(statement, 'default_value'):
-            validate_variable_assignment(assign_var, statement.default_value, scopes, variable_names, deterministic, init_mode)
-        seen_constants = set()
-        for loop_array_index in statement.assigns:
-            new_constants = validate_loop_array_index(loop_array_index, assign_var, statement.constant_index, scopes, variable_names, deterministic, init_mode)
-            if statement.constant_index:
-                if not seen_constants.isdisjoint(new_constants):
-                    raise BTreeException(trace, 'array is being indexed with constants and a constant appears twice. New: ' + str(new_constants) + '. Already seen: ' + str(seen_constants))
-                seen_constants.update(new_constants)
+        if statement.iterative_assign == 'iterative_assign':
+            validate_name(statement.index_var_name)
+            loop_references[statement.index_var_name] = 0
+            for iterative_assign_conditional in statement.iterative_assign_conditionals:
+                try:
+                    cond_func = build_meta_func(iterative_assign_conditional.condition)
+                    conditions = cond_func((constants, loop_references))
+                except Exception as exception:
+                    raise BTreeException(trace, 'Iterative Assign Condition encountered an exception (make sure that the condition can be resolved at compile time!)') from exception
+                if len(conditions) != 1:
+                    raise BTreeException(trace, 'Iteratitive Assign Condition expects exactly one value but got ' + str(len(conditions)))
+                (cond_class, cond_type, _) = resolve_potential_reference(conditions[0], declared_enumerations, all_node_names, variables, constants, loop_references, trace = trace)
+                if cond_class != 'CONSTANT':
+                    raise BTreeException(trace, 'Iterative Assign Condition must resolve to a constant but got ' + cond_class)
+                if cond_type != 'BOOLEAN':
+                    raise BTreeException(trace, 'Iterative Assign Condition must resolve to a BOOLEAN but got ' + cond_type)
+                validate_variable_assignment(assign_var, iterative_assign_conditional.assign, scopes, variable_names, deterministic, init_mode)
+            validate_variable_assignment(assign_var, statement.assign, scopes, variable_names, deterministic, init_mode)
+            loop_references.pop(statement.index_var_name)
+        else:
+            if hasattr(statement, 'default_value'):
+                validate_variable_assignment(assign_var, statement.default_value, scopes, variable_names, deterministic, init_mode)
+            seen_constants = set()
+            for loop_array_index in statement.assigns:
+                new_constants = validate_loop_array_index(loop_array_index, assign_var, statement.constant_index, scopes, variable_names, deterministic, init_mode)
+                if statement.constant_index:
+                    if not seen_constants.isdisjoint(new_constants):
+                        raise BTreeException(trace, 'array is being indexed with constants and a constant appears twice. New: ' + str(new_constants) + '. Already seen: ' + str(seen_constants))
+                    seen_constants.update(new_constants)
         trace.pop()
         return
 
@@ -594,7 +615,7 @@ def validate_model(metamodel_file, model_file, recursion_limit):
                 raise BTreeException(trace, 'Model configuration did not include \'neural\' but uses neural networks')
             num_inputs = 0
             for input_code in variable.inputs:
-                variable_func = build_meta_func(input_code)
+                variable_func = build_meta_func_neural(input_code)
                 input_variables = variable_func((constants, {}))
                 for input_variable in input_variables:
                     (atom_class, atom_type, _) = resolve_potential_reference(input_variable, declared_enumerations, all_node_names, variables, constants, {}, trace = trace)
@@ -635,6 +656,9 @@ def validate_model(metamodel_file, model_file, recursion_limit):
                 raise BTreeException(trace, 'Encountered an error while running network from: ' + source) from error
             trace.pop()
             return
+        if variable.iterative_assign == 'iterative_assign':
+            variable_names.add(variable.name)
+            variables[variable.name] = variable
         if variable.model_as != 'DEFINE':
             if variable.domain.true_int is not None:
                 pass
