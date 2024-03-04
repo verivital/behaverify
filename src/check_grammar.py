@@ -714,7 +714,7 @@ def validate_model(metamodel_file, model_file, recursion_limit):
             if len(current_node.arguments) != len(all_current_args):
                 raise BTreeException(trace, 'Node ' + current_node.name + ' needs ' + str(len(current_node.arguments)) + ' arguments but was created with ' + str(len(all_current_args)))
             for (index, cur_arg) in enumerate(all_current_args):
-                cur_type = resolve_potential_reference(cur_arg, declared_enumerations, {}, {}, constants, {}, trace = trace)[1]
+                cur_type = resolve_potential_reference(cur_arg, declared_enumerations, {}, bl_var_unverified, constants, {}, trace = trace)[1]
                 if current_node.arguments[index].argument_type != cur_type:
                     raise BTreeException(trace, 'Node ' + current_node.name + ' argument ' + str(index) + ' named ' + current_node.arguments[index].argument_name + ' was declared to be of type ' + current_node.arguments[index].argument_type + ' but is being created with type ' + cur_type)
             nodes_to_check.add(current_node.name)
@@ -781,6 +781,8 @@ def validate_model(metamodel_file, model_file, recursion_limit):
     }
     loop_references = {}
     trace.pop()
+    bl_var_unverified = {variable.name : variable for variable in model.variables if is_blackboard(variable)}
+    # bl_var_unverified is for argument verification use only in walk_tree.
     (all_node_names, nodes_to_check) = walk_tree(model.root, set(), set())
 
     require_trace_identifier = False

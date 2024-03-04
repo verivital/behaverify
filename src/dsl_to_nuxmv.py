@@ -321,7 +321,14 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
         return new_misc_args
 
     def handle_atom(code, misc_args):
+        # print('#############################')
+        # print(code.atom.reference)
+        # print(code.atom.constant)
         (atom_class, atom_type, atom) = handle_constant_or_reference(code.atom, declared_enumerations, nodes, variables, constants, misc_args['loop_references'])
+        # print('--------------------')
+        # print(atom_class)
+        # print(atom_type)
+        # print(atom)
         return (str(atom).upper() if atom_type == 'BOOLEAN' else str(atom)) if atom_class == 'CONSTANT' else (format_variable(atom, adjust_args(code, misc_args)))
 
     def format_code(code, misc_args):
@@ -613,6 +620,9 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
         delayed_statements = []
         for (node_name, argument_pairs, statement_type, statement) in statements:
             for argument_name in argument_pairs:
+                if argument_pairs[argument_name] in variables:
+                    variables[argument_name] = variables[argument_pairs[argument_name]]
+                    continue
                 constants[argument_name] = argument_pairs[argument_name]
             if statement_type == 'check':
                 handle_condition(statement, nodes, create_misc_args(loop_references = {}, node_name = node_name, use_stages = True, overwrite_stage = None, define_substitutions = None, specification_writing = False, specification_warning = False))
@@ -626,12 +636,21 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
                 else:
                     delayed_statements += handle_write_statement(statement.write_statement, create_misc_args(loop_references = {}, node_name = node_name, use_stages = True, overwrite_stage = None, define_substitutions = None, specification_writing = False, specification_warning = False))
             for argument_name in argument_pairs:
+                if argument_pairs[argument_name] in variables:
+                    variables.pop(argument_name)
+                    continue
                 constants.pop(argument_name)
         for (node_name, argument_pairs, statement) in delayed_statements:
             for argument_name in argument_pairs:
+                if argument_pairs[argument_name] in variables:
+                    variables[argument_name] = variables[argument_pairs[argument_name]]
+                    continue
                 constants[argument_name] = argument_pairs[argument_name]
             handle_variable_assignment(statement, None, False, create_misc_args(loop_references = {}, node_name = node_name, use_stages = True, overwrite_stage = None, define_substitutions = None, specification_writing = False, specification_warning = False))
             for argument_name in argument_pairs:
+                if argument_pairs[argument_name] in variables:
+                    variables.pop(argument_name)
+                    continue
                 constants.pop(argument_name)
         return
 
