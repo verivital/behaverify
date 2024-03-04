@@ -1,0 +1,186 @@
+configuration {
+    #{ Here you specify various configuration options, such as Hypersafety }#
+}
+enumerations {
+    #{ here you specify the enumerations used in the model}#
+    'left', 'right', 'up', 'down'
+}
+constants {
+    min_val := 0, max_val := 39, obs_count := 10
+} end_constants
+
+variables {
+    variable {bl cur_x VAR [min_val, max_val] assign {result {min_val, max_val}}}
+    variable {bl cur_y VAR [min_val, max_val] assign {result {min_val, max_val}}}
+    variable {bl obstacles array (mult, obs_count, 2) FROZENVAR [min_val, max_val] iterative_assign, index_var
+	condition {(eq, (mod, index_var, 2), 1)} assign {result {(loop, loop_var, [min_val, max_val] such_that (eq, (mod, loop_var, 2), 1), loop_var)}}
+	assign {result {(loop, loop_var, [min_val, max_val] such_that True, loop_var)}}
+    }
+    variable {bl dest_x FROZENVAR [min_val, max_val] assign {result {(loop, loop_var, [min_val, max_val] such_that True, loop_var)}}}
+    variable {bl dest_y FROZENVAR [min_val, max_val] assign {result {(loop, loop_var, [(add, min_val, 1), max_val] such_that True,
+		    (if,
+			(or,
+			    (loop, loop_var2, [0, (sub, obs_count, 1)] such_that True,
+				(and,
+				    (eq, dest_x, (index, obstacles, constant_index (mult, loop_var2, 2))),
+				    (eq, loop_var, (index, obstacles, constant_index (add, (mult, loop_var2, 2), 1)))
+				)
+			    )
+			),
+			(sub, loop_var, 1),
+			loop_var)
+		)
+	    }}}
+    variable {bl y_modifier DEFINE ENUM assign{
+	    case {(lt, cur_y, dest_y)} result {'up'}
+	    result {'down'}
+	}
+    }
+    variable {bl x_modifier DEFINE ENUM assign{
+	    case {(lt, cur_x, dest_x)} result {'right'}
+	    result {'left'}
+	}
+    }
+    variable {bl avoid_modifier VAR {'left', 'right'} assign{result{'right'}}}
+} end_variables
+
+environment_update {
+} end_environment_update
+
+checks {
+    check {
+	y_not_right
+	arguments {}
+	read_variables {cur_y, dest_y, cur_x, dest_x, y_modifier}
+	condition {
+	    (if,
+		(eq, y_modifier, 'up'),
+		(if,
+		    (or, (eq, (mod, dest_y, 2), 0), (eq, cur_x, dest_x)),
+		    (lt, cur_y, dest_y),
+		    (lt, cur_y, (sub, dest_y, 1))
+		),
+		(if,
+		    (or, (eq, (mod, dest_y, 2), 0), (eq, cur_x, dest_x)),
+		    (gt, cur_y, dest_y),
+		    (gt, cur_y, (add, dest_y, 1))
+		)
+	    )
+	}
+    }
+    check {
+	obstacle_check
+	arguments {}
+	read_variables {cur_x, cur_y, obstacles, y_modifier}
+	condition {
+	    (not,
+		(or,
+		    (loop, loop_var, [0, (sub, obs_count, 1)] such_that True,
+			(and,
+			    (eq, cur_x, (index, obstacles, constant_index (mult, loop_var, 2))),
+			    (eq, (if, (eq, y_modifier, 'up'), (add, cur_y, 1), (sub, cur_y, 1)), (index, obstacles, constant_index (add, (mult, loop_var, 2), 1)))
+			)
+		    )
+		)
+	    )
+	}
+    }
+} end_checks
+
+environment_checks {
+} end_environment_checks
+
+actions {
+    #{ action nodes are defined here }#
+    action {
+	move
+	arguments{direction := ENUM}
+	local_variables { } end_local_variables
+	read_variables {} end_read_variables
+	write_variables {cur_x, cur_y} end_write_variables
+	initial_values {} end_initial_values
+	update {
+	    variable_statement {
+		cur_x assign {
+		    case {(eq, direction, 'left')} result {(max, min_val, (sub, cur_x, 1))}
+		    case {(eq, direction, 'right')} result {(min, max_val, (add, cur_x, 1))}
+		    result {cur_x}
+		}
+	    }
+	    variable_statement {
+		cur_y assign {
+		    case {(eq, direction, 'down')} result {(max, min_val, (sub, cur_y, 1))}
+		    case {(eq, direction, 'up')} result {(min, max_val, (add, cur_y, 1))}
+		    result {cur_y}
+		}
+	    }
+	    return_statement {
+		result {success} end_result
+	    } end_return_statement
+	} end_update
+    } end_action
+    action {
+	update_direction
+	arguments{}
+	local_variables { } end_local_variables
+	read_variables {cur_x} end_read_variables
+	write_variables {avoid_modifier} end_write_variables
+	initial_values {} end_initial_values
+	update {
+	    variable_statement {
+		avoid_modifier
+		assign {
+		    case {(eq, cur_x, min_val)} result {'right'}
+		    case {(eq, cur_x, max_val)} result {'left'}
+		    result {avoid_modifier}
+		}
+	    }
+	    return_statement {
+		result {success} end_result
+	    } end_return_statement
+	} end_update
+    }
+} end_actions
+
+sub_trees {
+} end_sub_trees
+
+tree {
+    composite {
+	drone_control sequence
+	children {
+	    update_direction {}
+	    composite {
+		movement_selector selector
+		children {
+		    composite {
+			vert_sequence sequence
+			children{
+			    y_not_right {}
+			    composite {
+				handle_vert selector
+				children {
+				    composite {try_vert sequence children {obstacle_check {} move_vert : move {y_modifier}}}
+				    move_avoid : move {avoid_modifier}
+				}
+			    }
+			}
+		    }
+		    move_side : move {x_modifier}
+		}
+	    }
+	}
+    }
+} end_tree
+
+
+
+
+tick_prerequisite { (or, (neq, cur_x, dest_x), (neq, cur_y, dest_y)) } end_tick_prerequisite
+#{tick_prerequisite { True } end_tick_prerequisite}#
+#{ if the condition is True, the tree ticks.
+    If it is false, everything is done }#
+
+specifications { #{ INVAR, LTL, and CTL specs go here }#
+    CTLSPEC {(always_finally, (and, (eq, cur_x, dest_x), (eq, cur_y, dest_y)))}
+} end_specifications
