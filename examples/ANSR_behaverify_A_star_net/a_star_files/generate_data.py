@@ -35,7 +35,7 @@ def generate_sets(min_val, max_val):
                             print(path[0])
                             print(path[1])
                             print('adding to no_action')
-                        no_action.add(((start_x, start_y), (end_x, end_y)))
+                            no_action.add(((start_x, start_y), (end_x, end_y)))
     return (left, right, up, down, no_action)
 
 
