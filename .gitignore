@@ -18,6 +18,7 @@ examples/**/images/**
 examples/**/haskell/**
 examples/**/python/**
 examples/**/smv/**
+examples/**/ignore/**
 REPRODUCIBILITY/**/processed_data/**
 REPRODUCIBILITY/**/results/**
 REPRODUCIBILITY/**/smv/**
