@@ -29,11 +29,11 @@ variables {
 	}
     }
     #{##########################################}#
-    variable { env obstacles array (mult, number_of_obstacles, 2) DEFINE INT iterative_assign, index_var
+    variable { env obstacles DEFINE INT static array (mult, number_of_obstacles, 2) iterative_assign, index_var
 	REPLACE_OBSTACLES
 	assign{result{0}}
     }
-    variable { env obstacle_sizes array number_of_obstacles DEFINE INT iterative_assign, index_var
+    variable { env obstacle_sizes DEFINE INT static array number_of_obstacles iterative_assign, index_var
 	REPLACE_OBSTACLE_SIZES
 	assign{result{0}}
     }
