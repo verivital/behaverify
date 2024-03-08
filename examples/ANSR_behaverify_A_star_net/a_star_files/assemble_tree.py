@@ -7,7 +7,9 @@ min_val = int(sys.argv[2])
 max_val = int(sys.argv[3])
 max_size = int(sys.argv[4])
 generate_obstacles(number_of_obstacles, min_val, max_val, max_size)
-generate_table(min_val, max_val)
+generate_table(min_val, max_val,
+               'ignore/obstacles_' + str(number_of_obstacles) + '_' + str(min_val) + '_' + str(max_val) + '_' + str(max_size) + '.txt',
+               'ignore/table_' + str(number_of_obstacles) + '_' + str(min_val) + '_' + str(max_val) + '_' + str(max_size) + '.txt')
 
 with open('ignore/ANSR_behaverify_A_star_table_' + str(number_of_obstacles) + '_' + str(min_val) + '_' + str(max_val) + '_' + str(max_size) + '.tree', 'w', encoding = 'utf-8') as output_file:
     constants = ', '.join(
@@ -18,9 +20,9 @@ with open('ignore/ANSR_behaverify_A_star_table_' + str(number_of_obstacles) + '_
             'max_obstacle_size := ' + str(max_size)
         ]
     )
-    with open('ignore/table.txt', 'r', encoding = 'utf-8') as input_file:
+    with open('ignore/table_' + str(number_of_obstacles) + '_' + str(min_val) + '_' + str(max_val) + '_' + str(max_size) + '.txt', 'r', encoding = 'utf-8') as input_file:
         fake_network = input_file.read()
-    with open('ignore/obstacles.txt', 'r', encoding = 'utf-8') as input_file:
+    with open('ignore/obstacles_' + str(number_of_obstacles) + '_' + str(min_val) + '_' + str(max_val) + '_' + str(max_size) + '.txt', 'r', encoding = 'utf-8') as input_file:
         data = input_file.read()
         (obstacles, obstacle_sizes) = data.split('#', 1)
         obstacles = obstacles.replace('#', '')
