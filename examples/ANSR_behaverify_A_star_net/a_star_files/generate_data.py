@@ -2,8 +2,8 @@ import os
 from create_grid import create_grid
 from basic_a_star import a_star
 
-def generate_sets(min_val, max_val):
-    grid = create_grid('ignore/obstacles.txt', min_val, max_val)
+def generate_sets(min_val, max_val, input_path):
+    grid = create_grid(input_path, min_val, max_val)
     left = set()
     right = set()
     up = set()
@@ -47,8 +47,8 @@ def generate_sets(min_val, max_val):
     return (left, right, up, down, no_action)
 
 
-def generate_table(min_val, max_val):
-    (left, right, up, down, no_action) = generate_sets(min_val, max_val)
+def generate_table(min_val, max_val, input_path, output_path):
+    (left, right, up, down, no_action) = generate_sets(min_val, max_val, input_path)
     lines = []
     #for (cur_set, direction) in ((left, 'left'), (right, 'right'), (up, 'up'), (down, 'down'), (no_action, 'no_action')):
     for (cur_set, direction) in ((left, 'left'), (right, 'right'), (up, 'up'), (down, 'down')):
@@ -65,7 +65,7 @@ def generate_table(min_val, max_val):
                 )
             )
     lines.append('result{\'no_action\'}' + os.linesep)
-    with open('ignore/table.txt', 'w', encoding = 'utf-8') as output_file:
+    with open(output_path, 'w', encoding = 'utf-8') as output_file:
         output_file.writelines(lines)
 
 
