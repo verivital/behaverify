@@ -9,13 +9,13 @@ max_size = int(sys.argv[4])
 generate_obstacles(number_of_obstacles, min_val, max_val, max_size)
 generate_table(min_val, max_val)
 
-with open('ANSR_behaverify_A_star_table_' + str(number_of_obstacles) + '_' + str(min_val) + '_' + str(max_val) + '_' + str(max_size) + '.tree', 'w', encoding = 'utf-8') as output_file:
+with open('ignore/ANSR_behaverify_A_star_table_' + str(number_of_obstacles) + '_' + str(min_val) + '_' + str(max_val) + '_' + str(max_size) + '.tree', 'w', encoding = 'utf-8') as output_file:
     constants = ', '.join(
         [
             'min_val := ' + str(min_val),
             'max_val := ' + str(max_val),
             'number_of_obstacles := ' + str(number_of_obstacles),
-            'max_obstacle_size := ' + str(number_of_obstacles)
+            'max_obstacle_size := ' + str(max_size)
         ]
     )
     with open('ignore/table.txt', 'r', encoding = 'utf-8') as input_file:

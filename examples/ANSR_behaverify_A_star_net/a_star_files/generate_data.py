@@ -9,6 +9,7 @@ def generate_sets(min_val, max_val):
     up = set()
     down = set()
     no_action = set()
+    seen_values = set()
 
     iteration = 0
     for start_x in range(min_val, max_val + 1):
@@ -18,24 +19,31 @@ def generate_sets(min_val, max_val):
                     if iteration % 100 == 0:
                         print('iteration: ' + str(iteration))
                     iteration = iteration + 1
+                    if ((start_x, start_y), (end_x, end_y)) in seen_values:
+                        continue
                     path = a_star(grid, min_val, max_val, (start_x, start_y), (end_x, end_y))
                     if len(path) < 2:
                         no_action.add(((start_x, start_y), (end_x, end_y)))
+                        seen_values.add(((start_x, start_y), (end_x, end_y)))
                     else:
-                        if path[0][0] < path[1][0] and path[0][1] == path[1][1]:
-                            right.add(((start_x, start_y), (end_x, end_y)))
-                        elif path[0][0] > path[1][0] and path[0][1] == path[1][1]:
-                            left.add(((start_x, start_y), (end_x, end_y)))
-                        elif path[0][0] == path[1][0] and path[0][1] < path[1][1]:
-                            up.add(((start_x, start_y), (end_x, end_y)))
-                        elif path[0][0] == path[1][0] and path[0][1] > path[1][1]:
-                            down.add(((start_x, start_y), (end_x, end_y)))
-                        else:
-                            print('unknown direction')
-                            print(path[0])
-                            print(path[1])
-                            print('adding to no_action')
-                            no_action.add(((start_x, start_y), (end_x, end_y)))
+                        for index in range(len(path) - 1):
+                            if (path[index], path[-1]) in seen_values:
+                                continue
+                            seen_values.add((path[index], path[-1]))
+                            if path[index][0] < path[index + 1][0] and path[index][1] == path[index + 1][1]:
+                                right.add(((path[index][0], path[index][1]), (end_x, end_y)))
+                            elif path[index][0] > path[index + 1][0] and path[index][1] == path[index + 1][1]:
+                                left.add(((path[index][0], path[index][1]), (end_x, end_y)))
+                            elif path[index][0] == path[index + 1][0] and path[index][1] < path[index + 1][1]:
+                                up.add(((path[index][0], path[index][1]), (end_x, end_y)))
+                            elif path[index][0] == path[index + 1][0] and path[index][1] > path[index + 1][1]:
+                                down.add(((path[index][0], path[index][1]), (end_x, end_y)))
+                            else:
+                                print('unknown direction')
+                                print('from: ' + path[index])
+                                print('to: ' + path[index + 1])
+                                print('adding to no_action')
+                                no_action.add(((path[index][0], path[index][1]), (end_x, end_y)))
     return (left, right, up, down, no_action)
 
 
