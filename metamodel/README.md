@@ -2,6 +2,10 @@
 
 This document is meant as a guide for creating .tree files for use with behaverify.tx. A .tree file is necessary if you wish to convert a .tree file to .smv or into pytree code using BehaVerify. The user is assumed to generally understand how Behavior Trees work. However, as there is some pytree specific terminology, we will first provide a brief vocabulary explanation. After the terminology, we will cover the .tree format, and then give an example.
 
+# Creating .tree Files
+
+Please see **/examples/light\_controller/light\_controller.tree** for an example (with comments) that explains what goes into a .tree file.
+
 # Terminology
 
 For brevity, we omit some mathematical terminology here. We require that a Behavior Tree have exactly 1 root node and all other nodes to have exactly 1 parent.
