@@ -87,17 +87,13 @@ The reinstall script removes any exsting images/containers that would cause conf
 ## BehaVerify Demos in Docker
 The following commands assume you are in behaverify/Docker\_BehaVerify/python\_scripts. The following instructions are formatted for Linux. Some commands may differ on other operating systems (e.g., you may need to replace 'python3' with 'python').
 
-`
+```
 python3 generate.py demo ANSR_ONNX_2 ./ANSR_ONNX_2
-python3 generate.py demo ANSR_ONNX_2_counter \
-  ./ANSR_ONNX_2_counter
-python3 generate.py demo ANSR_ONNX_2 \
-  ./ANSR_ONNX_2_with_changes \
-  --additional_input \
+python3 generate.py demo ANSR_ONNX_2_counter ./ANSR_ONNX_2_counter
+python3 generate.py demo ANSR_ONNX_2 ./ANSR_ONNX_2_with_changes --additional_input \
   "x_min := 0, y_min := 0, x_max := 6, y_max := 6, tree_count := 2,\
-  vision_range := 2, tree_range := 2,\
-  y_change := 1, movement_cooldown := 4"
-`
+  vision_range := 2, tree_range := 2, y_change := 1, movement_cooldown := 4"
+```
 
 The above commands will place ANSR\_ONNX\_2.tar, ANSR\_ONNX\_2\_counter.tar, and ANSR\_ONNX\_2\_with\_changes in Docker\_BehaVerify/python\_script. Inside, you should find something like
 
@@ -117,10 +113,9 @@ The images are a visualization of the counterexample produced by nuXmv. If you u
 ## Running BehaVerify through Docker
 The following commands assume you are in behaverify/Docker\_BehaVerify/python\_scripts. The following instructions are formatted for Linux. Some commands may differ on other operating systems (e.g., you may need to replace 'python3' with 'python').
 
-`
-  python3 generate.py /path/to/model /path/to/networks \
-    /path/to/output TO\_GENERATE COMMAND FLAGS
-`
+```
+  python3 generate.py /path/to/model /path/to/networks /path/to/output TO\_GENERATE COMMAND FLAGS
+```
 
 - **/path/to/model** should point to a file containing the specification for the desired Behavior Tree. See the .tree files in behaverify/examples.
 - **/path/to/networks** should point to a folder containing the networks used by the Behavior Tree. If there is no such folder, please replace this argument with "-".
