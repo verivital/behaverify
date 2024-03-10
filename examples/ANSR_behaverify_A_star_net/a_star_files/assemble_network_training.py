@@ -8,7 +8,7 @@ max_val = int(sys.argv[3])
 max_size = int(sys.argv[4])
 epochs = int(sys.argv[5])
 generate_obstacles(number_of_obstacles, min_val, max_val, max_size)
-(left, right, up, down, no_action) = generate_sets(min_val, max_val)
+(left, right, up, down, no_action) = generate_sets(min_val, max_val, 'ignore/obstacles_' + str(number_of_obstacles) + '_' + str(min_val) + '_' + str(max_val) + '_' + str(max_size) + '.txt')
 
 with open('ignore/train_' + str(number_of_obstacles) + '_' + str(min_val) + '_' + str(max_val) + '_' + str(max_size) + '.py', 'w', encoding = 'utf-8') as output_file:
     with open('template.py', 'r', encoding = 'utf-8') as input_file:
