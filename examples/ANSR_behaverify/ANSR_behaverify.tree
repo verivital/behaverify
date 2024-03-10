@@ -25,7 +25,7 @@ variables {
     variable { bl current_action VAR {'left', 'right', 'up', 'down', 'no_action'} assign{result{'no_action'}}}
     variable { bl path_length VAR [0, max_path_length] assign{result{0}}}
     #{##########################################}#
-    variable { env obstacles array (mult, number_of_obstacles, 2) FROZENVAR [min_val, max_val] iterative_assign, index_var
+    variable { env obstacles FROZENVAR [min_val, max_val] array (mult, number_of_obstacles, 2) iterative_assign, index_var
 	condition {(eq, (mod, index_var, 2), 1)}
 	assign {
 	    result {
@@ -43,7 +43,7 @@ variables {
 	}
 	assign{result{(loop, loop_var, [min_val, max_val] such_that True, loop_var)}}
     }
-    variable { env obstacle_sizes array number_of_obstacles FROZENVAR [0, max_obstacle_size] iterative_assign, index_var
+    variable { env obstacle_sizes FROZENVAR [0, max_obstacle_size] array number_of_obstacles iterative_assign, index_var
 	assign {
 	    result{
 		0,
