@@ -63,14 +63,14 @@ Please download nuXmv, as instructed above.
 The following instructions are formatted for Linux.
 Some commands may differ on other operating systems (e.g., you may need to replace 'python3' with 'python').
 
-`
+```
 git clone https://github.com/verivital/behaverify
 cd behaverify
 python3 -m pip install -r ./requirements/docker.txt
 cd Docker_BehaVerify/python_script
 python3 reinstall.py ../
 python3 add_nuxmv.py /YOUR/PATH/TO/nuXmv
-`
+```
 
 You may alternatively manually download the repository or individually download all of the files in behaverify/Docker\_BehaVerify and behaverify/requirements. Note that the commands will assume that the files are structured in the same way the repository is.
 

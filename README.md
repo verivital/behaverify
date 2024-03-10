@@ -50,57 +50,97 @@ This section is intentionally lengthy. If you are not interested in the details 
 1. (OPTIONAL) nuXmv<br />Please download nuXmv (see  https://nuxmv.fbk.eu/ ). You only need to download nuXmv. There should be no installation. Download the relevant version for your system. It should be version 2.0.0. The download will include many files. You only need the executable (no file extension). See above for more information. You only need to execute this step if you are interested in verifying the generated models with nuXmv.
 2. Updating<br /> We suggest running the following commands.
 
-		sudo apt update
-		sudo apt upgrade
+```
+sudo apt update
+sudo apt upgrade
+```
+
 3. Python3<br />Python3 is used to run BehaVerify. As such, it is necessary. If you already have python3 installed, skip the following step. If not, run
 
-		sudo apt install python3
+```
+sudo apt install python3
+```
+
 4. pip<br />pip is used to install other python packages. If you already have pip installed (for python3), skip the following step. If not, run
 
-		sudo apt install pip
-		
+```
+sudo apt install pip
+```
+
 5. Installing Python Packages.<br />You may install the packages manually, or utilize the requirements file. Subsequent steps will explain what each of the Python packages does. The command for using the requirements file is
 
-		python3 -m pip install -r behaverify/requirements/core.txt
-6. (OPTIONAL) PyTrees<br />PyTrees is used in the generated python code. If you do not wish to run generated python code, you may skip this step.
+```
+python3 -m pip install -r behaverify/requirements/core.txt
+```
 
-		python3 -m pip install py_trees
-7. textX<br />textX is used by BehaVerify for parsing. It is necessary for BehaVerify to run in any capacity
+5a. (OPTIONAL) PyTrees<br />PyTrees is used in the generated python code. If you do not wish to run generated python code, you may skip this step.
 
-		python3 -m pip install textX
-8. (OPTIONAL) onnxruntime<br />onnxruntime is used when handling neural networks in leaf nodes. If you do not plan to use neural networks in leaf nodes, you may skip this step.
+```
+python3 -m pip install py_trees
+```
 
-		python3 -m pip install onnxruntime
-9. (OPTIONAL) onnx<br />onnx is used when handling neural networks in leaf nodes. If you do not plan to use neural networks in leaf nodes, you may skip this step.
+5b. textX<br />textX is used by BehaVerify for parsing. It is necessary for BehaVerify to run in any capacity
 
-		python3 -m pip install onnx
-10. git<br />git is used to download our repository. If you would prefer to manually download our repository, you can skip this step.
+```
+python3 -m pip install textX
+```
 
-		sudo apt install git
-11. (OPTIONAL) Haskell prerequisites<br />These are prerequisites required by Haskell.
+5c. (OPTIONAL) onnxruntime<br />onnxruntime is used when handling neural networks in leaf nodes. If you do not plan to use neural networks in leaf nodes, you may skip this step.
 
-		sudo apt install build-essential curl libffi-dev libffi8ubuntu1 libgmp-dev libgmp10 libncurses-dev libncurses5 libtinfo5
-12. (OPTIONAL) Additional Haskell prerequisite<br />
+```
+python3 -m pip install onnxruntime
+```
 
-		sudo apt install libgmp3-dev
-13. (OPTIONAL) GHCUP<br />Please follow the instructions at https://www.haskell.org/ghcup/ to install GHCUP, Haskell, and cabal. These are used to run generated Haskell code. Please preappend (or append) your path when asked.
-14. (OPTIONAL) GHCUP upgrade<br />This will upgrade GHCUP.
+5d. (OPTIONAL) onnx<br />onnx is used when handling neural networks in leaf nodes. If you do not plan to use neural networks in leaf nodes, you may skip this step.
 
-		ghcup upgrade
-15. (OPTIONAL) Cabal<br />This will install and set the specific version of cabal we used. Most likely, everything will work with a different version.
+```
+python3 -m pip install onnx
+```
 
-		ghcup install cabal 3.6.2.0
-		ghcup set cabal 3.6.2.0
-16. (OPTIONAL) GHC<br />This will install and set the specific version of ghc we used. Most likely, everything will work with a different version.
+6. git<br />git is used to download our repository. If you would prefer to manually download our repository, you can skip this step.
 
-		ghcup install ghc 9.2.8
-		ghcup set ghc 9.2.8
-17. BehaVerify<br />Download our repository. If you did not install git, please download manually. If you installed git
+```
+sudo apt install git
+```
 
-		git clone https://github.com/verivital/behaverify
-18. (OPTIONAL) Enable nuXmv<br />If you plan to use nuXmv, please ensure you can run nuXmv as an executable
+7. (OPTIONAL) Haskell prerequisites<br />These are prerequisites required by Haskell.
 
-		sudo chmod +x /path/to/nuXmv
+```
+sudo apt install build-essential curl libffi-dev libffi8ubuntu1 libgmp-dev libgmp10 libncurses-dev libncurses5 libtinfo5 libgmp3-dev
+```
+
+8. (OPTIONAL) GHCUP<br />Please follow the instructions at https://www.haskell.org/ghcup/ to install GHCUP, Haskell, and cabal. These are used to run generated Haskell code. Please preappend (or append) your path when asked.
+9. (OPTIONAL) GHCUP upgrade<br />This will upgrade GHCUP.
+
+```
+ghcup upgrade
+```
+
+10. (OPTIONAL) Cabal<br />This will install and set the specific version of cabal we used. Most likely, everything will work with a different version.
+
+```
+ghcup install cabal 3.6.2.0
+ghcup set cabal 3.6.2.0
+```
+
+11. (OPTIONAL) GHC<br />This will install and set the specific version of ghc we used. Most likely, everything will work with a different version.
+
+```
+ghcup install ghc 9.2.8
+ghcup set ghc 9.2.8
+```
+
+12. BehaVerify<br />Download our repository. If you did not install git, please download manually. If you installed git
+
+```
+git clone https://github.com/verivital/behaverify
+```
+
+13. (OPTIONAL) Enable nuXmv<br />If you plan to use nuXmv, please ensure you can run nuXmv as an executable
+
+```
+sudo chmod +x /path/to/nuXmv
+```
 		
 ---
 
@@ -110,23 +150,28 @@ The instructions are for Linux (and more specifically Ubuntu). We have not teste
 
 Download nuXmv
 
-		sudo apt update
-		sudo apt upgrade
-		sudo apt install python3
-		sudo apt install pip
-		python3 -m pip install -r behaverify/requirements/core.txt
-		sudo apt install git
-		sudo apt install build-essential curl libffi-dev libffi8ubuntu1 libgmp-dev libgmp10 libncurses-dev libncurses5 libtinfo5
-		sudo apt install libgmp3-dev
+```
+sudo apt update
+sudo apt upgrade
+sudo apt install python3
+sudo apt install pip
+python3 -m pip install -r behaverify/requirements/core.txt
+sudo apt install git
+sudo apt install build-essential curl libffi-dev libffi8ubuntu1 libgmp-dev libgmp10 libncurses-dev libncurses5 libtinfo5
+sudo apt install libgmp3-dev
+```
+
 Please follow the instructions at https://www.haskell.org/ghcup/ to install GHCUP, Haskell, and cabal. These are used to run generated Haskell code. Please preappend (or append) your path when asked.
 
-		ghcup upgrade
-		ghcup install cabal 3.6.2.0
-		ghcup set cabal 3.6.2.0
-		ghcup install ghc 9.2.8
-		ghcup set ghc 9.2.8
-		git clone https://github.com/verivital/behaverify
-		sudo chmod +x /path/to/nuXmv
+```
+ghcup upgrade
+ghcup install cabal 3.6.2.0
+ghcup set cabal 3.6.2.0
+ghcup install ghc 9.2.8
+ghcup set ghc 9.2.8
+git clone https://github.com/verivital/behaverify
+sudo chmod +x /path/to/nuXmv
+```
 
 ---
 
@@ -163,7 +208,9 @@ The following files are relevant to the user. They assume they are in the in beh
 
 .smv files can be used with nuXmv for model verification. You can generate .smv using the following command:
 
-	python3 ./src/dsl_to_behaverify.py ./metamodel/behaverify.tx /path/to/tree.tree /path/to/smv.smv
+```
+python3 ./src/dsl_to_behaverify.py ./metamodel/behaverify.tx /path/to/tree.tree /path/to/smv.smv
+```
 
 We assume you are running this command from the top level of the repository. If not, please adjust paths as necessary.
 
@@ -185,15 +232,19 @@ Additional arguments are listed below. You must preface them with --
 
 Please run the following command
 
-	/path/to/nuXmv --int /path/to/smv.smv
+```
+/path/to/nuXmv --int /path/to/smv.smv
+```
 
 Here --int will turn this into interactive mode. Now, run the following commands
 
-	go
-	check_ctlspec
-	check_ltlspec
-	check_invar
-	quit
+```
+go
+check_ctlspec
+check_ltlspec
+check_invar
+quit
+```
 
 go is a command which runs several commands in preparation of model checking. The check commands check the relevant specifications. If a specification is False, a counterexample will be produced.
 
@@ -203,7 +254,9 @@ go is a command which runs several commands in preparation of model checking. Th
 
 Python files can be generated using the following command:
 
-	python3 ./src/dsl_to_pytree.py ./metamodel/behaverify.tx /path/to/tree.tree /path/to/output/folder/ fileName 
+```
+python3 ./src/dsl_to_pytree.py ./metamodel/behaverify.tx /path/to/tree.tree /path/to/output/folder/ fileName 
+```
 
 We assume you are running this command from the top level of the repository. If not, please adjust paths as necessary.
 
@@ -230,7 +283,9 @@ Additional arguments are listed below. You must preface them with --
 
 Run
 
-	python3 /path/to/folder/fileName_runner.py
+```
+python3 /path/to/folder/fileName_runner.py
+```
 	
 ---
 
@@ -238,12 +293,16 @@ Run
 
 Haskell Files are slightly more irritating to generate and use. First, create a folder where you wish to store your Haskell files. Then use the following command
 
-    mkdir /path/to/output/folder
-	mkdir /path/to/output/folder/app
+```
+mkdir /path/to/output/folder
+mkdir /path/to/output/folder/app
+```
 
 This will cause cabal to initiate a project in the current folder. Next, run  the following command:
 
-	python ./src/dsl_to_pytree.py ./metamodel/behaverify.tx /path/to/tree.tree /path/to/output/folder/ fileName 
+```
+python ./src/dsl_to_pytree.py ./metamodel/behaverify.tx /path/to/tree.tree /path/to/output/folder/ fileName 
+```
 
 We assume you are running this command from the top level of the repository. If not, please adjust paths as necessary.
 
@@ -268,10 +327,14 @@ Additional arguments are listed below. You must preface them with --
 
 In /path/to/output/folder/, run
 
-	cabal run
+```
+cabal run
+```
 
 If you wish to change the randomized starting seeds, use 
 
-	cabal run fileName -- seed1 seed2
+```
+cabal run fileName -- seed1 seed2
+```
 
 (seed1 controls the initial seed for the blackboard, while seed2 controls the initial seed for the environment).
