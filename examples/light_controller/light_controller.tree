@@ -4,38 +4,27 @@
     
     Some notes:
     Indentation is optional, but suggested (for clarity).
-    After any closing bracket (}), you can type end_X where X is how the bracket was opened. This is optional, but can help improve readability in some cases.
-Spacing is suggested, but frequently optional. thus result{0} and result { 0 } are both acceptable. Spacing between words is required.
-New lines are always optional, but suggested.
-
-Code:
-At various points, you will need to specify values. In these cases, we utilize code statements, which generally look as follows
-CONSTANT | VARIABLE | (func, val1, val2, ... valk)
-each val can be another code statement, so nesting is possible. You may always include more parantheses.
-
-Finally, each section with no indentation is required (except tick prequisite), but can be left empty.
-
-E.G., your file must have constants {} as the first section, but leaving it empty is fine.
-
+    After any closing bracket , you can type end_X where X is how the bracket was opened. This is optional, but can help improve readability in some cases.
+    Spacing is suggested, but frequently optional. thus result{0} and result { 0 } are both acceptable. Spacing between words is required.
+    New lines are always optional, but suggested.
+    
+    Code:
+    At various points, you will need to specify values. In these cases, we utilize code statements, which generally look as follows
+    CONSTANT | VARIABLE | (func, val1, val2, ... valk)
+    each val can be another code statement, so nesting is possible. You may always include more parantheses.
+    
+    Finally, each section with no indentation is required (except tick prequisite), but can be left empty.
+    
+    E.G., your file must have constants {} as the first section, but leaving it empty is fine.
+    
 }#
-configuration {}
-enumerations {
-    'empty', 'east_to_west', 'west_to_east'
-}
 
+configuration{}
+enumerations { 'empty', 'east_to_west', 'west_to_east', 'off'}
 
 constants {
     #{ constants are used to synchronize values in a .tree file. }#
-    
-    'max_counter' := 4
-    
-    #{ if you have more than one constant, we suggest putting them on separate lines.
-	example1 = 1
-	example2 = 2
-    }#
-    #{ however, the following is also acceptable
-	example1 = 1 example2 = 2
-    }#
+    max_counter := 4
 } end_constants
 
 variables {
@@ -62,7 +51,7 @@ variables {
     
     #{ variables are initialized in order. If var B depends on var A, then A must be declared first }#
     variable {
-	bl fairness_counter VAR [0, 'max_counter'] #{ max_counter is a constant equal to 4 }#
+	bl fairness_counter VAR [0, max_counter] #{ max_counter is a constant equal to 4 }#
 	assign {
 	    result {0}
 	}
@@ -70,7 +59,13 @@ variables {
     variable {
 	bl direction VAR {'east_to_west', 'west_to_east'}
 	assign {
-	    result {'east_to_west'}
+	    result {'west_to_east'}
+	}
+    }
+    variable {
+	bl signal VAR BOOLEAN
+	assign {
+	    result {False}
 	}
     }
     variable {
@@ -98,15 +93,9 @@ variables {
 	}
     }
     variable {
-	env west_light VAR BOOLEAN
+	env light VAR {'west_to_east', 'east_to_west', 'off'}
 	assign {
-	    result {False}
-	}
-    }
-    variable {
-	env east_light VAR BOOLEAN
-	assign {
-	    result {False}
+	    result {'off'}
 	}
     }
 } end_variables
@@ -132,17 +121,15 @@ environment_update {
     variable_statement {
 	tunnel_state
 	assign {
-	    case {west_light}
-	    result {'empty', 'west_to_east'}
-	    case {east_light}
-	    result {'empty', 'east_to_west'}
-	    result {'empty', tunnel_state}
+	    case {(eq, light, 'off')}
+	    result {tunnel_state, 'empty'}
+	    result {light, 'empty'}
 	}
     }
     variable_statement {
 	west_cars
 	assign {
-	    case {west_light}
+	    case {(eq, light, 'west_to_east')}
 	    result {True, False}
 	    result {True, west_cars}
 	}
@@ -150,7 +137,7 @@ environment_update {
     variable_statement {
 	east_cars
 	assign {
-	    case {east_light}
+	    case {(eq, light, 'east_to_west')}
 	    result {True, False}
 	    result {True, east_cars}
 	}
@@ -164,51 +151,86 @@ checks {
     #{ checks are used to check values of blackboard variables }#
     check {
 	check_fairness #{ the name of the check }#
-	arguments{}
+	arguments {}
 	read_variables {fairness_counter} #{ what variables are read by this node (used for python generation). if multiple, space seperate them (no comma) }#
-	condition { (less_than, fairness_counter, 'max_counter')} #{ a condition }#
+	condition { (lt, fairness_counter, max_counter)} #{ a condition }#
     }
 } end_checks
 
 environment_checks {
     #{ environment checks are used to check values of blackboard variables or environment variables }#
     environment_check {
+	check_tunnel_in_use
+	arguments {}
+	read_variables {}
+	condition {(neq, tunnel_state, 'empty')}
+    }
+    environment_check {
 	check_west_and_east_cars
-	arguments{}
+	arguments {}
 	read_variables {} #{ this still only specifies BLACKBOARD variables. }#
 	condition {west_and_east_cars}
     }
     environment_check {
 	check_west_cars
-	arguments{}
+	arguments {}
 	read_variables {}
 	condition {west_cars}
     }
     environment_check {
 	check_east_cars
-	arguments{}
+	arguments {}
 	read_variables {}
 	condition {east_cars}
-    }
-    environment_check {
-	check_safety
-	arguments{}
-	read_variables {direction}
-	condition {(or, (equal, tunnel_state, 'empty'), (equal, direction, tunnel_state))}
     }
 } end_environment_checks
 
 actions {
     #{ action nodes actually do stuff }#
     action {
-	swap_direction #{ name of the node }#
-	arguments{}
-	local_variables {} #{ the local variables the node uses }#
-	read_variables {} #{ the blackboard variables that are read by this node }#
-	write_variables {direction, fairness_counter} #{ the blackboard variables that are written to }#
-	initial_values {} #{ initial values for local variables }#
+	prepare_round #{name of the node}#
+	arguments {} #{no arguments}#
+	local_variables {} #{no local variables}#
+	read_variables {} #{no read variables}#
+	write_variables {signal} #{we write to direction}#
+	initial_values {} #{no local variables to initialize}#
+	update {#{Everything we update}#
+	    variable_statement {#{updating a variable}#
+		signal #{variable being updated}#
+		assign {result {True}}#{we're setting it to off}#
+	    }
+	    return_statement {
+		result {running}#{node always returns running}#
+	    }
+	}
+    }
+    action {
+	turn_light_off #{name of the node}#
+	arguments {} #{no arguments}#
+	local_variables {} #{no local variables}#
+	read_variables {} #{no read variables}#
+	write_variables {signal} #{we write to direction}#
+	initial_values {} #{no local variables to initialize}#
+	update {#{Everything we update}#
+	    variable_statement {#{updating a variable}#
+		signal #{variable being updated}#
+		assign {result {False}}#{we're setting it to off}#
+	    }
+	    return_statement {
+		result {running}#{node always returns running}#
+	    }
+	}
+    }
+    action {
+	swap_direction #{name of the node}#
+	arguments {} #{no arguments}#
+	local_variables {} #{the local variables the node uses}#
+	read_variables {} #{the blackboard variables that are read by this node}#
+	write_variables {direction, fairness_counter} #{the blackboard variables that are written to}#
+	initial_values {} #{initial values for local variables}#
 	update {
-	    #{ the update segments consists of variable statements and a return statement. The return statement doesn't need to be last.
+	    #{
+		the update segments consists of variable statements and a return statement. The return statement doesn't need to be last.
 		You must have a return statement, but that is the only requirement.
 		If you are reading/writing environment variables, you need special syntax, which you will see later.
 		Variable updates occur in order.
@@ -216,7 +238,7 @@ actions {
 	    variable_statement {
 		direction
 		assign {
-		    case {(equal, direction, 'west_to_east')}
+		    case {(eq, direction, 'west_to_east')}
 		    result {'east_to_west'}
 		    result {'west_to_east'}
 		}
@@ -234,8 +256,8 @@ actions {
 	}
     }
     action {
-	set_west
-	arguments{}
+	set_direction
+	arguments {new_direction := ENUM}
 	local_variables {}
 	read_variables {}
 	write_variables {direction, fairness_counter}
@@ -243,55 +265,31 @@ actions {
 	update {
 	    variable_statement {
 		direction
-		assign {
-		    result {'west_to_east'}
-		}
+		assign {result {new_direction}}
 	    }
 	    variable_statement {
 		fairness_counter
-		assign {
-		    result {0}
-		}
+		assign {result {0}}
 	    }
 	    return_statement {
-		result { success}
+		result {success}
 	    }
 	}
     }
     action {
-	set_east
-	arguments{}
-	local_variables {}
-	read_variables {}
-	write_variables {direction, fairness_counter}
-	initial_values {}
-	update {
-	    variable_statement {
-		direction
-		assign {
-		    result {'east_to_west'}
-		}
-	    }
-	    variable_statement {
-		fairness_counter
-		assign {
-		    result {0}
-		}
-	    }
-	    return_statement {
-		result { success}
-	    }
-	}
-    }
-    action {
-	#{ this action writes to the environment, therefore, we will need the write environment block in the update block }#
 	send_light_signal
-	arguments{}
+	arguments {}
 	local_variables {}
-	read_variables {direction}
+	read_variables {direction, signal}
 	write_variables {fairness_counter}
 	initial_values {}
 	update {
+	    variable_statement {
+		fairness_counter
+		assign {
+		    result {(min, max_counter, (add, fairness_counter, 1))}
+		}
+	    }
 	    write_environment {
 		light_signal_func #{ the name of this update }#
 		#{ each of these variable statements must update an environment variable.
@@ -302,30 +300,16 @@ actions {
 		variable_statement {
 		    #{instant}#
 		    #{ if we uncommented the above, this would take place instantly }#
-		    west_light
+		    light
 		    assign {
-			case {(equal, direction, 'west_to_east')}
-			result {True}
-			result {False}
+			case {signal}
+			result {direction}
+			result {'off'}
 		    }
-		}
-		variable_statement {
-		    east_light
-		    assign {
-			case {(equal, direction, 'east_to_west')}
-			result {True}
-			result {False}
-		    }
-		}
-	    }
-	    variable_statement {
-		fairness_counter
-		assign {
-		    result {(min, 'max_counter', (addition, fairness_counter, 1))}
 		}
 	    }
 	    return_statement {
-		result { success}
+		result {success}
 	    }
 	}
     }
@@ -335,6 +319,17 @@ actions {
 
 sub_trees {
     #{ subtrees are smaller trees which can be inserted. This helps with readability and reusability}#
+    sub_tree {
+	TUNNEL_OCCUPIED #{ the name of the subtree}#
+	composite {
+	    tunnel_in_use#{ the name of the composite node }#
+	    sequence #{ the type of the composite node }#
+	    children {
+		check_tunnel_in_use {} #{ no arguments }#
+		turn_light_off {}
+	    }
+	}
+    }	    
     sub_tree {
 	WEST_AND_EAST #{ the name of the subtree}#
 	composite {
@@ -348,7 +343,7 @@ sub_trees {
 		    selector
 		    children {
 			check_fairness {} #{ a check node we defined earlier }#
-			swap_direction {}#{ an action node we defined earlier }#
+			swap_direction {} #{ an action node we defined earlier }#
 		    }
 		}
 	    }
@@ -361,7 +356,7 @@ sub_trees {
 	    sequence
 	    children {
 		check_west_cars {}
-		set_west {}
+		set_w_e : set_direction {'west_to_east'}
 	    }
 	}
     }
@@ -372,7 +367,7 @@ sub_trees {
 	    sequence
 	    children {
 		check_east_cars {}
-		set_east {}
+		set_e_w : set_direction {'east_to_west'}
 	    }
 	}
     }
@@ -382,31 +377,10 @@ sub_trees {
 	    select_direction
 	    selector
 	    children {
+		insert {TUNNEL_OCCUPIED}
 		insert {WEST_AND_EAST}
 		insert {WEST_ONLY}
 		insert {EAST_ONLY}
-	    }
-	}
-    }
-    sub_tree {
-	LIGHT_SUBTREE
-	composite {
-	    activate_light
-	    sequence
-	    children {
-		check_safety {}
-		#{
-		    composite {
-			safety_check
-			selector
-			children {
-			    check_tunnel_empty
-			    check_west_east_safe
-			    check_east_west_safe
-			}
-		    }
-		}#
-		send_light_signal {}
 	    }
 	}
     }
@@ -416,53 +390,46 @@ tree {
     #{ this is our actual tree, and the actual root }#
     composite {
 	light_controller
-	sequence
+	parallel policy success_on_one
 	children {
+	    prepare_round {}
 	    insert {DIRECTION_SUBTREE} #{ here we are inserting a subtree of the name DIRECTION_SUBTREE }#
-	    insert {LIGHT_SUBTREE}
+	    send_light_signal {}
 	}
     }
 } end_tree
 
-#{ the tick_prerequisite is optional.
-    If provided, it MUST have a condition. If the condition is true, the tree ticks. if it is false, the simulation halts.
-}#
 tick_prerequisite {True} end_tick_prerequisite
+
 
 specifications {
     #{ Specifications are used to write specifications for our model }#
-    
-    INVARSPEC {(not, (and, west_light -1, east_light -1))}
-    #{ ^ only one light at a time }#
-    INVARSPEC {(not, (and, west_light -1, (equal, tunnel_state -1, 'east_to_west')))}
-    #{ ^ can't have west light while going east to west }# 
-    INVARSPEC {(not, (and, east_light -1, (equal, tunnel_state -1, 'west_to_east')))}
-    #{ ^ can't have east light while going west to east }#
+    INVARSPEC {(or, (eq, light at -1, 'off'), (eq, tunnel_state at -1, 'empty'), (eq, tunnel_state at -1, light at -1))}
     
     #{ The below attempt to ensure that each car eventually gets to use the tunnel.
 	They do this by stating that it is always the case that if there is a car waiting,
 	then the light will eventually let that car through.}#
     #{ These will fail, because cars are not guaranteed to ever leave the tunnel.}#
-    CTLSPEC {(always_globally, (implies, west_cars -1, (always_finally, west_light -1)))}
-    CTLSPEC {(always_globally, (implies, east_cars -1, (always_finally, east_light -1)))}
-    LTLSPEC {(globally, (implies, west_cars -1, (finally, west_light -1)))}
-    LTLSPEC {(globally, (implies, east_cars -1, (finally, east_light -1)))}
+    CTLSPEC {(always_globally, (implies, west_cars at -1, (always_finally, (eq, light at -1, 'west_to_east'))))}
+    CTLSPEC {(always_globally, (implies, east_cars at -1, (always_finally, (eq, light at -1, 'east_to_west'))))}
+    LTLSPEC {(globally, (implies, west_cars at -1, (finally, (eq, light at -1, 'west_to_east'))))}
+    LTLSPEC {(globally, (implies, east_cars at -1, (finally, (eq, light at -1, 'east_to_west'))))}
     
     #{ So we add a condition to force cars to leave. }#
     CTLSPEC {(implies,
-	(always_globally, (always_finally, (equal, tunnel_state -1, 'empty'))),
-	(always_globally, (implies, west_cars -1, (always_finally, west_light -1)))
+	(always_globally, (always_finally, (eq, tunnel_state at -1, 'empty'))),
+	(always_globally, (implies, west_cars at -1, (always_finally, (eq, light at -1, 'west_to_east'))))
 	)}
     CTLSPEC {(implies,
-	(always_globally, (always_finally, (equal, tunnel_state -1, 'empty'))),
-	(always_globally, (implies, east_cars -1, (always_finally, east_light -1)))
+	(always_globally, (always_finally, (eq, tunnel_state at -1, 'empty'))),
+	(always_globally, (implies, east_cars at -1, (always_finally, (eq, light at -1, 'east_to_west'))))
 	)}
     LTLSPEC {(implies,
-	(globally, (finally, (equal, tunnel_state -1, 'empty'))),
-	(globally, (implies, west_cars -1, (finally, west_light -1)))
+	(globally, (finally, (eq, tunnel_state at -1, 'empty'))),
+	(globally, (implies, west_cars at -1, (finally, (eq, light at -1, 'west_to_east'))))
 	)}
     LTLSPEC {(implies,
-	(globally, (finally, (equal, tunnel_state -1, 'empty'))),
-	(globally, (implies, east_cars -1, (finally, east_light -1)))
+	(globally, (finally, (eq, tunnel_state at -1, 'empty'))),
+	(globally, (implies, east_cars at -1, (finally, (eq, light at -1, 'east_to_west'))))
 	)}
 } end_specifications

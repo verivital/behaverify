@@ -890,7 +890,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
                 }
                 define_substitutions[var_key] = 'SUBSTITUTE_SELF'
                 list_of_list_of_inputs = create_possible_values(behaverify_variables[var_key]['depends_on'])
-                file_prefix = model_file.rsplit('/', 1)[0]
+                file_prefix = model_file.rsplit('/', 1)[0] if '/' in model_file else '.'
                 source_func = build_meta_func(variable.source)
                 source_vals = source_func((constants, {}))
                 source = source_vals[0]

@@ -634,7 +634,7 @@ def validate_model(metamodel_file, model_file, recursion_limit):
                 raise BTreeException(trace, 'Neural Network output size must be a constant')
             if atom_type != 'INT':
                 raise BTreeException(trace, 'Neural Network output size must be an INT')
-            file_prefix = model_file.rsplit('/', 1)[0]
+            file_prefix = model_file.rsplit('/', 1)[0] if '/' in model_file else '.'
             source_func = build_meta_func(variable.source)
             source_vals = source_func((constants, {}))
             if len(source_vals) != 1:
