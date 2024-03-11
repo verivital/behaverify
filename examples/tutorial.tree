@@ -1,0 +1,183 @@
+#{
+    Hello! This is a tutorial file for making Behavior Trees with BehaVerify.
+
+    We are currently inside a comment. Comments cannot be nested. A comment starts with a '# {' (no space) and ends with a '} #' (no space)
+    
+    Some notes:
+    Indentation is optional, but suggested (for clarity).
+    After any closing bracket , you can type end_X where X is how the bracket was opened. This is optional, but can help improve readability in some cases.
+    Spacing is suggested, but frequently optional. thus result{0} and result { 0 } are both acceptable. Spacing between words is required.
+    New lines are always optional, but suggested.
+    
+    code:
+    At various points, you will need to specify values. In these cases, we utilize code statements, which generally look as follows
+    CONSTANT | VARIABLE | (func, val1, val2, ... valk)
+    each val can be another code statement, so nesting is possible. You may always include more parantheses.
+
+    meta_code:
+    meta_code is structured identically to code, but must be capable of being evaluated during compilation. As such, meta_code cannot rely on variables, but can rely on constants.
+    meta_code is used in loops (which are unrolled by the compiler) and in other places that must be computed at compile time (e.g., the size of an array).
+    
+    Finally, each section with no indentation is required but can be left empty, except tick_prerequisite which cannot be empty.
+    
+    E.G., your file must have configuration {} as the first section, but leaving it empty is fine.
+    
+}#
+
+configuration {
+    #{
+	Configuration is used to specify various options.
+	At present, there are 3 configuration options.
+	--------------
+	hypersafety
+	use_reals
+	neural
+	--------------
+	To enable an option, just type it here (not inside a comment).
+	hypersafety -> allows you to create self composition of the system
+	use_reals -> allows the use of reals. nuXmv will have to use SMT.
+	neural -> allows the inclusion of neural networks
+    }#
+}
+enumerations {
+    #{
+	Here you declare enumerations used in the model.
+	Each enumeration is written as a string.
+	Enumerations must be comma seperated.
+	Thus, some examples might be
+	---
+	'up', 'down', 'left', 'right', 'potato'
+	---
+	Every enumeration that is used in the model MUST be included here.
+    }#
+}
+constants {
+    #{
+	Constants are used to create constant values to be used in the model.
+	Each constant consists of a name and a value.
+	Each constant can be an Integer, Boolean, Enumeration (must be declared in the enumerations section), or Real (requires use_reals to be enabled).
+	---
+	x_val := 0, y_val := 99, the_mode := 'potato', awesome := True
+	---
+    }#
+}
+
+variables {
+    #{
+	IMPORTANT: Variables are declared IN ORDER. That is to say, if variable B depends on variable A, then variable A MUST be declared above variable B.
+	Additionally, Blackboard variables CANNOT depend on Environment variables, but Environment variables CAN depend on Local variables.
+	Local Variables CAN depend on Blackboard variables, but not on Environment variables.
+	Neither Environment nor Blackboard variables can depend on Local variables.
+	As such, we generally encourage you to declare all your Blackboard variables, then all your Environment variables, then all your Local variables.
+	---
+	variable {
+	    VAR_TYPE
+	    NAME
+	    MODEL_AS
+	    DOMAIN
+	    ASSIGN_STATEMENT
+	}
+	---
+	VAR_TYPE -> bl, env, or local.
+	bl means blackboard (shared between all nodes).
+	env means environment (represents the environment).
+	local means local (specific to the nodes that use it). (TODO: These are missing from the tutorial currently).
+	---
+	NAME -> the name of the variable
+	MODEL_AS -> VAR, FROZENVAR, DEFINE, or NEURAL.
+	---
+	VAR is a stateful variable; it is assigned an initial value and can be changed.
+	FROZENVAR is a stateful variable that is assigned an initial value, but cannot change.
+	DEFINE is a 'macro' or 'function'. It effectively represents a calculation (e.g. (add, var1, var2), True, etc). These cannot be non-deterministic, though they can use variables that are nondeterministic (i.e., this can store the result of adding two non-deterministic variables, but it cannot nondeterministically store either variable itself). If you create a DEFINE variable that does not depend on any VAR or NEURAL vairables, we suggest marking it as static (will improve python performance).
+	---
+	DOMAIN -> domain depends on what the variable is modeling as.
+	---
+	DOMAIN if MODEL_AS is VAR or FROZENVAR -> BOOLEAN, INT, REAL, [min_val, max_val], {val1, val2, val3, ..., valn}
+	BOOLEAN -> variable is a boolean
+	INT -> variable is an unbounded int (nuXmv must use SMT)
+	REAL -> variable is a real (nuXmv must use SMT)
+	[min_val, max_val] -> variable is an integer between min_val and max_val, inclusive. min_val and max_val are metacode statements. That is, code statements that can be evaluated at compile time. metacode can use constants, but not variables. Thus, given the constants described at the top, [(sub, y_val, x_val), (add, y_val, x_val)] would declare the range to be between y_val - x_val and y_val + x_val, inclusive.
+	{val1, val2, val3, ..., valn} -> variable is an enumeration or integer. Each val must be the same type. Each val is a metacode statement.
+	---
+	DOMAIN if MODEL_AS is DEFINE -> BOOLEAN, INT, REAL, or ENUM
+	---
+	-----------------------------
+	Before we introduce examples, we need to explain what an assign statement is.
+	An assign statement is of the form
+	assign {
+	    case {some_condition_0} result{some_values_0}
+	    case {some_condition_1} result{some_values_1}
+	    ...
+	    case {some_condition_n} result{some_values_n}
+	    result {some_values_n+1}
+	}
+	It will assign the values for the first condition that is true. If more than one value is present in the result, it will assign nondeterministically.
+	Knowing this, we now present some example variables
+	------------------------------
+	variable { bl drone_x VAR [0, 9] assign{case{(or, awesome, (lt, x_val, y_val))} result {3} result {1, 4, 9}}}
+	^here we declared a variable called drone_x that is between 0 and 9. It's initial value is 3 if awesome OR x_val < y_val, and one of 1, 4, or 9 otherwise.
+	variable { bl drone_y FROZENVAR [0, 9]
+	    assign{
+		case{(lt, drone_x, 5)} result {9}
+		result {
+		    (loop, loop_var, [x_val, y_val] such_that (and, (gte, loop_var, 0), (lte, loop_var, 9)), loop_var)
+		}
+	    }
+	}
+	^here we declared a frozen variable called drone_y that is between 0 and 9. It's initial (and therefore only value) is 9 if drone_x, a variable declared earlier, is less than 5. Otherwise, it nondeterministically takes a value that the loop output. It is an error if the loop does not output any values (this should be caught by and raised by the grammar checker).
+	variable { env adversary DEFINE ENUM
+	    assign {
+		case {(eq, (mod, (mult, drone_x, drone_y), 3) 2)} result {'up'}
+		result {'down'}
+	    }
+	}
+	------------------------------ ARRAY VARIABLES
+	variable {
+	    VAR_TYPE
+	    NAME
+	    MODEL_AS
+	    DOMAIN
+	    array
+	    ASSIGN_STATEMENT
+	}
+	------------------------------ NEURAL VARIABLES
+    }#
+}
+
+environment_update {
+    #{
+	This section is used to describes how Environment Variables evolve over time.
+	Each of the statements here will be applied, in order, after the tree finishes updating.
+	the format is as follows
+	---
+	variable_statement {
+	    
+	}
+    }#
+    
+}
+
+checks {
+}
+
+environment_checks {
+}
+
+actions {
+}
+
+
+sub_trees {
+}
+
+tree {
+}
+
+tick_prerequisite {
+    #{
+	You must put a code statement that resolves to a boolean here.
+    }#
+}
+
+specifications {
+}
