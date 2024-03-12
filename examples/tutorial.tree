@@ -1,6 +1,6 @@
 #{
     Hello! This is a tutorial file for making Behavior Trees with BehaVerify.
-
+    
     We are currently inside a comment. Comments cannot be nested. A comment starts with a '# {' (no space) and ends with a '} #' (no space)
     
     Some notes:
@@ -14,7 +14,81 @@
     CONSTANT | VARIABLE | (func, val1, val2, ... valk)
     each val can be another code statement, so nesting is possible. You may always include more parantheses.
     below we provide a list of functions that can be used and the requirements.
-
+    ---
+    loop
+    (loop, LOOP_VAR, DOMAIN such_that DOMAIN_CONDITION, code)
+    LOOP_VAR -> name of the loop variable (this must not be a variable declared in the variables section). This variable will only be available inside the loop. The loop variable will go through each value in the DOMAIN that satisifies the DOMAIN_CONDITION
+    DOMAIN -> this can be either [min_val, max_val] or {val1, val2, ...}. Each of min_val, max_val, val1, val2, ... is meta_code (see below). The meta_code for min_val and max_val must resolve to integers, and min_val must be less than or equal to max_val. Each of val1, val2, ... must be of the same type. You may optionally use reverse DOMAIN to reverse the order.
+    DOMAIN_CONDITION -> meta_code condition that must resolve to a boolean. Can utilize the loop variable. If for a given value of loop variable the condition is true, that value is used. If the condition is false, the value is not used (e.g., [0, 10] such_that (eq, (mod, loop_var, 2), 0) will result in only even numbers being used).
+    code -> this is code.
+    ---
+    case_loop
+    ---
+    index
+    ---
+    not 
+    ---
+    and 
+    ---
+    or 
+    ---
+    xor 
+    ---
+    xnor 
+    ---
+    implies 
+    ---
+    equivalent 
+    ---
+    if 
+    ---
+    abs 
+    ---
+    max 
+    ---
+    min 
+    ---
+    sin 
+    ---
+    cos 
+    ---
+    exp 
+    ---
+    tan 
+    ---
+    ln 
+    ---
+    eq 
+    ---
+    neq 
+    ---
+    lte 
+    ---
+    gte 
+    ---
+    lt 
+    ---
+    gt 
+    ---
+    neg 
+    ---
+    add 
+    ---
+    sub 
+    ---
+    mult 
+    ---
+    idiv 
+    ---
+    mod 
+    ---
+    rdiv 
+    ---
+    floor 
+    ---
+    count
+    ---
+    
     meta_code:
     meta_code is structured identically to code, but must be capable of being evaluated during compilation. As such, meta_code cannot rely on variables, but can rely on constants.
     meta_code is used in loops (which are unrolled by the compiler) and in other places that must be computed at compile time (e.g., the size of an array).
