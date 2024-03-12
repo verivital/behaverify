@@ -3,6 +3,7 @@ import importlib.util
 import torch
 import torch.nn as nn
 import torch.optim as optim
+import random
 
 
 # Define the neural network architecture
@@ -29,22 +30,39 @@ target_path = sys.argv[3]
 output_path = sys.argv[4]
 hidden_size_arg = int(sys.argv[5])
 hidden_count_arg = int(sys.argv[6])
+batches = max(int(sys.argv[7]), 1)
+print_rate = int(sys.argv[8]) if len(sys.argv) > 8 else 50
+save_rate = int(sys.argv[9]) if len(sys.argv) > 9 else 50
 
 print('loading inputs')
-
-input_spec = importlib.util.spec_from_file_location("input_module", input_path)
-input_module = importlib.util.module_from_spec(input_spec)
-input_spec.loader.exec_module(input_module)
+inputs = [[] for _ in range(batches)]
+index = 0
+with open(input_path, 'r', encoding = 'utf-8') as input_file:
+    for line in input_file.readlines():
+        if ',' not in line:
+            continue
+        line = line.split(']', 1)[0].replace('[', '')
+        inputs[index % batches].append([float(line_part.strip()) for line_part in line.split(',')])
+        if index % 1000 == 0:
+            print('reading input: ' + str(index))
+        index = index + 1
 
 print('loading targets')
-
-target_spec = importlib.util.spec_from_file_location("target_module", target_path)
-target_module = importlib.util.module_from_spec(target_spec)
-target_spec.loader.exec_module(target_module)
+targets = [[] for _ in range(batches)]
+index = 0
+with open(target_path, 'r', encoding = 'utf-8') as target_file:
+    for line in target_file.readlines():
+        if ',' not in line:
+            continue
+        line = line.split(']', 1)[0].replace('[', '')
+        targets[index % batches].append([float(line_part.strip()) for line_part in line.split(',')])
+        if index % 1000 == 0:
+            print('reading target: ' + str(index))
+        index = index + 1
 
 print('converting')
-inputs = torch.tensor(input_module.inputs)
-targets = torch.tensor(target_module.targets)
+inputs = [torch.tensor(sub_input) for sub_input in inputs]
+targets = [torch.tensor(sub_target) for sub_target in targets]
 
 
 print('making network')
@@ -61,15 +79,17 @@ print('starting training')
 # Training loop
 for epoch in range(num_epochs):
     # Forward pass
-    outputs = model(inputs)
-    loss = criterion(outputs, targets)
+    batch = random.randrange(0, batches)
+    # batch = epoch % batches ## for the non-random version
+    outputs = model(inputs[batch])
+    loss = criterion(outputs, targets[batch])
 
     # Calculate accuracy
     predicted_labels = torch.argmax(outputs, dim=1)
-    true_labels = torch.argmax(targets, dim=1)
+    true_labels = torch.argmax(targets[batch], dim=1)
     accuracy = torch.sum(predicted_labels == true_labels).item() / true_labels.size(0)
     if accuracy > .999:
-        print(f'Epoch [{epoch+1}/{num_epochs}], Loss: {loss.item():.4f}, Accuracy: {accuracy:.4f}')
+        print(f'Epoch [{epoch}/{num_epochs}], Loss: {loss.item():.4f}, Accuracy: {accuracy:.4f}')
         break
 
     # Backward pass and optimization
@@ -77,8 +97,11 @@ for epoch in range(num_epochs):
     loss.backward()
     optimizer.step()
 
-    if (epoch+1) % 100 == 0:
-        print(f'Epoch [{epoch+1}/{num_epochs}], Loss: {loss.item():.4f}, Accuracy: {accuracy:.4f}')
+    if (epoch) % print_rate == 0:
+        print(f'Epoch [{epoch}/{num_epochs}], Loss: {loss.item():.4f}, Accuracy: {accuracy:.4f}')
+
+    if (epoch) % save_rate == 0:
+        torch.save(model.state_dict(), output_path)
 
 # Optionally, save the trained model
 torch.save(model.state_dict(), output_path)

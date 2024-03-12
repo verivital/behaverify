@@ -220,7 +220,10 @@ def validate_model(metamodel_file, model_file, recursion_limit):
                 all_domain_values = range(min_val, max_val + 1)
             if code.function_call.reverse == 'reverse':
                 all_domain_values = reversed(all_domain_values)
-            cond_func = build_meta_func(code.function_call.loop_condition)
+            try:
+                cond_func = build_meta_func(code.function_call.loop_condition)
+            except Exception as exception_enounctered:
+                raise BTreeException(trace, 'encountered exception:') from exception_enounctered
             for domain_member in all_domain_values:
                 loop_references[loop_variable] = domain_member
                 returned_vals = cond_func((constants, loop_references))
