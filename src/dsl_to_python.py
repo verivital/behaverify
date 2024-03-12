@@ -5,7 +5,7 @@ It contains a variety of utility functions.
 
 
 Author: Serena Serafina Serbinowska
-Last Edit: 2024-02-19
+Last Edit: 2024-03-11
 '''
 import argparse
 import os
@@ -338,7 +338,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
         if len(formatted_values) == 1:
             formatted_values = []
             for value in values:
-                formatted_values.extend(format_code(value, new_misc_args))
+                formatted_values.extend(format_code(value, misc_args))  # use original misc_args for the correct location. only want the new if we're using randomizer.
             return formatted_values[0]
         randomizer_name = add_new_randomizer(formatted_values)
         return (
@@ -774,7 +774,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                         if local_variable.model_as == 'DEFINE' and local_variable.static != 'static' else
                         (
                             (
-                                (indent(2) + format_variable_name_only(local_variable, misc_args = misc_args) + ' = [' + handle_assign(local_variable.default_value, misc_args) + ' for _ in range(' + str(variable_array_size_map[local_variable.name]) + ')]'  + os.linesep)
+                                (indent(2) + format_variable_name_only(local_variable, misc_args = misc_args) + ' = [' + (handle_assign(local_variable.default_value, misc_args) if local_variable.iterative_assign != 'iterative_assign' else 'None') + ' for _ in range(' + str(variable_array_size_map[local_variable.name]) + ')]'  + os.linesep)
                                 if is_array(local_variable) else
                                 ''
                             )
@@ -789,7 +789,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                         if statement.variable.model_as == 'DEFINE' and statement.variable.static != 'static' else
                         (
                             (
-                                (indent(2) + format_variable_name_only(statement.variable, misc_args = misc_args) + ' = [' + handle_assign(statement.default_value, misc_args) + ' for _ in range(' + str(variable_array_size_map[statement.variable.name]) + ')]'  + os.linesep)
+                                (indent(2) + format_variable_name_only(statement.variable, misc_args = misc_args) + ' = [' + (handle_assign(statement.default_value, misc_args) if statement.variable.iterative_assign != 'iterative_assign' else 'None') + ' for _ in range(' + str(variable_array_size_map[statement.variable.name]) + ')]'  + os.linesep)
                                 if is_array(statement.variable) else
                                 ''
                             )
@@ -1250,7 +1250,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                         if variable.model_as == 'DEFINE' and variable.static != 'static' else
                         (
                             (
-                                (indent(1) + format_variable_name_only(variable, initial_misc_args) + ' = [' + handle_assign((variable.default_value if variable.iterative_assign != 'iterative_assign' else variable.assign), initial_misc_args) + ' for _ in range(' + str(variable_array_size_map[variable.name]) + ')]' + os.linesep)  # this handles the default value of the array. Then, we overwrite values as necessary using handle_Variable_statement.
+                                (indent(1) + format_variable_name_only(variable, initial_misc_args) + ' = [' + (handle_assign(variable.default_value, initial_misc_args) if variable.iterative_assign != 'iterative_assign' else 'None') + ' for _ in range(' + str(variable_array_size_map[variable.name]) + ')]' + os.linesep)  # this handles the default value of the array. Then, we overwrite values as necessary using handle_Variable_statement.
                                 if is_array(variable) else
                                 ''
                             ) +  handle_variable_statement(variable, initial_misc_args, assign_to_var = True)
@@ -1396,7 +1396,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                         if variable.model_as == 'DEFINE' and variable.static != 'static' else
                         (
                             (
-                                (indent(2) + format_variable(variable, initial_misc_args) + ' = [' + handle_assign((variable.default_value if variable.iterative_assign != 'iterative_assign' else variable.assign), initial_misc_args) + ' for _ in range(' + str(variable_array_size_map[variable.name]) + ')]' + os.linesep)
+                                (indent(2) + format_variable(variable, initial_misc_args) + ' = [' + (handle_assign(variable.default_value, initial_misc_args) if variable.iterative_assign != 'iterative_assign' else 'None') + ' for _ in range(' + str(variable_array_size_map[variable.name]) + ')]' + os.linesep)
                                 if is_array(variable) else
                                 ''
                             ) + handle_variable_statement(variable, initial_misc_args, assign_to_var = True)

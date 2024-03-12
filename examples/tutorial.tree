@@ -13,6 +13,7 @@
     At various points, you will need to specify values. In these cases, we utilize code statements, which generally look as follows
     CONSTANT | VARIABLE | (func, val1, val2, ... valk)
     each val can be another code statement, so nesting is possible. You may always include more parantheses.
+    below we provide a list of functions that can be used and the requirements.
 
     meta_code:
     meta_code is structured identically to code, but must be capable of being evaluated during compilation. As such, meta_code cannot rely on variables, but can rely on constants.
@@ -151,19 +152,69 @@ environment_update {
 	the format is as follows
 	---
 	variable_statement {
-	    
+	    VARIABLE_NAME
+	    ASSIGN_STATEMENT
 	}
+	VARIABLE_NAME refers to the name of the variable being updated. It must be an Environment variable being modeled as VAR.
+	ASSIGNMENT_STATEMENT is as described in the variables section (note that array variables have different assign notations).
+	If you are updating an array variable, you do not need to include the 'default_value' as you did during initialization.
     }#
     
 }
 
 checks {
+    #{
+	checks return success if the condition being checked is true and failure otherwise.
+	checks can only utilize blackboard variables.
+	check {
+	    NAME
+	    arguments {ARG1 := TYPE1, ARG2 := TYPE2, ...}
+	    read_variables {VAR1, VAR2, ...}
+	    condition {code}
+	}
+	NAME is the identifier of this check node.
+	ARG1, ARG2, ..., are the names of the arguments passed to the node during creation. They can be used in the code. They can be variables (still have to be blackboard variables).
+	TYPE1, TYPE2, ..., are the types of the arguments. Each must be one of INT, BOOLEAN, ENUM, or REAL.
+	code is code (see top of this file for an explanation).
+    }#
 }
 
 environment_checks {
+    #{
+	Identical to checks, except can use environment variables.
+	Note that you *can* replace every check with an environment check.
+	environment_check {
+	    NAME
+	    arguments {ARG1 := TYPE1, ARG2 := TYPE2, ...}
+	    read_variables {VAR1, VAR2, ...}
+	    condition {code}
+	}
+    }#
 }
 
 actions {
+    #{
+	action nodes can update variables and interact with the environment.
+	Additionally, they can return running, unlike check and environment check nodes.
+	Note that you *can* replace every check and environment check with an action.
+	action {
+	    NAME
+	    arguments{ARG1 := TYPE1, ARG2 := TYPE2, ...}
+	    local_variables {LVAR1, LVAR2, ...}
+	    read_variables {RVAR1, RVAR2, ...}
+	    write_variables {WVAR1, WVAR2, ... } end_write_variables
+	    initial_values {
+		INITIAL_STATEMENTS
+	    }
+	    update {
+		PRE_STATEMENTS
+		RETURN_STATEMENT
+		POST_STATEMENT
+	    }
+	}
+	arguments are as defined for check and environment check
+	
+    }#
 }
 
 
