@@ -85,7 +85,7 @@ The reinstall script removes any exsting images/containers that would cause conf
 # Running BehaVerify Through Docker
 
 ## BehaVerify Demos in Docker
-The following commands assume you are in behaverify/Docker\_BehaVerify/python\_scripts. The following instructions are formatted for Linux. Some commands may differ on other operating systems (e.g., you may need to replace 'python3' with 'python').
+The following commands assume you are in **behaverify/Docker\_BehaVerify/python\_scripts**. The following instructions are formatted for Linux. Some commands may differ on other operating systems (e.g., you may need to replace 'python3' with 'python').
 
 ```
 python3 generate.py demo ANSR_ONNX_2 ./ANSR_ONNX_2
@@ -93,9 +93,14 @@ python3 generate.py demo ANSR_ONNX_2_counter ./ANSR_ONNX_2_counter
 python3 generate.py demo ANSR_ONNX_2 ./ANSR_ONNX_2_with_changes --additional_input \
   "x_min := 0, y_min := 0, x_max := 6, y_max := 6, tree_count := 2,\
   vision_range := 2, tree_range := 2, y_change := 1, movement_cooldown := 4"
+python3 generate.py demo ANSR_ONNX_2_counter ./ANSR_ONNX_2_counter_with_changes --additional_input \
+  "x_min := 0, y_min := 0, x_max := 6, y_max := 6, tree_count := 2,\
+  vision_range := 2, tree_range := 2, y_change := 1, movement_cooldown := 4"
 ```
 
-The above commands will place ANSR\_ONNX\_2.tar, ANSR\_ONNX\_2\_counter.tar, and ANSR\_ONNX\_2\_with\_changes in Docker\_BehaVerify/python\_script. Inside, you should find something like
+**Important**: at present, there is no way to edit the location or number of trees. Do not change tree\_count from 2. A future update will allow this to be edited using these scripts. For now, if you wish to change the tree locations, you must edit the demo file.
+
+The above commands will place ANSR\_ONNX\_2.tar, ANSR\_ONNX\_2\_counter.tar, ANSR\_ONNX\_2\_with\_changes, and ANSR\_ONNX\_2\_counter\_with\_changes in Docker\_BehaVerify/python\_script. Inside, you should find something like
 
 - ANSR\_ONNX\_2
   - app
@@ -110,6 +115,8 @@ The above commands will place ANSR\_ONNX\_2.tar, ANSR\_ONNX\_2\_counter.tar, and
   
 The images are a visualization of the counterexample produced by nuXmv. If you use the additional input flag, you may rearrange the arguments in any order, but all arguments must be present. These will control the parameters of the ANSR\_ONNX model.
 
+Note that the visualization will work only **if a counterexample is found**. Crucially, this means if you create a setup where there is no counterexample, an error will be produced by the visualization script and no counterexample will be provided.
+
 ## Running BehaVerify through Docker
 The following commands assume you are in behaverify/Docker\_BehaVerify/python\_scripts. The following instructions are formatted for Linux. Some commands may differ on other operating systems (e.g., you may need to replace 'python3' with 'python').
 
@@ -120,8 +127,8 @@ The following commands assume you are in behaverify/Docker\_BehaVerify/python\_s
 - **/path/to/model** should point to a file containing the specification for the desired Behavior Tree. See the .tree files in behaverify/examples.
 - **/path/to/networks** should point to a folder containing the networks used by the Behavior Tree. If there is no such folder, please replace this argument with "-".
 - **/path/to/output** should point to a folder where the output should be placed.
-- **TO\_GENERATE** should be one of 'nuXmv', 'Python', and 'Haskell'.  This determines what output should be generated.
-- **COMMAND** should be one of 'generate', 'simulate', 'ctl', 'ltl', or 'invar'.
+- **TO\_GENERATE** should be one of 'nuXmv', 'Python', and 'Haskell' (do not include quotes).  This determines what output should be generated.
+- **COMMAND** should be one of 'generate', 'simulate', 'ctl', 'ltl', or 'invar' (do not include quotes).
   - **generate** produces the model or code, but does nothing else.
   - **simulate** produces the model or code and records a simulation.
   - **ctl** (nuXmv only) produces the model and checks if the CTL specifications are satisfied.
