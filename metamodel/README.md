@@ -4,7 +4,16 @@ This document is meant as a guide for creating .tree files for use with behaveri
 
 # Creating .tree Files
 
-Please see **/examples/light\_controller/light\_controller.tree** for an example (with comments) that explains what goes into a .tree file.
+We have several well commented examples that can be used to get an understanding of what goes into a .tree file.
+
+- **behaverify/examples/tutorial.tree** -> This tree doesn't do anything, but it does contain copious detail about what is possible within a .tree file and what each element means.
+- **behaverify/examples/ANSR\_ONNX/ANSR\_ONNX.tree** -> This tree provides quite a bit of detail about variables and includes an example of how a neural network can be included.
+- **behaverify/examples/ANSR\_ONNX\_2/ANSR\_ONNX.tree** -> This tree provides quite a bit of detail about variables and includes an example of how a neural network can be included. (Mostly the same as the prior example).
+- **behaverify/examples/light\_controller/light\_controller.tree** -> This provides a detailed example that differs from the above, though some of the information is repeated.
+
+# WARNING
+
+The information below has not been udpated to the most recent version. This warning will be removed when that becomes the case. Most of it should be accurate however.
 
 # Terminology
 

@@ -14,10 +14,10 @@ Serbinowska, S.S., Johnson, T.T. (2022). BehaVerify: Verifying Temporal Logic Sp
 
 There are several README files placed throughout this repository, each serving a unique purpose. We suggest using BehaVerify through Docker.
 
-- behaverify/README.md -> This README provides information about how to install and run BehaVerify directly on your machine.
-- behaverify/Docker\_BehaVerify/README.md -> This README provides information about how to use BehaVerify through Docker.
-- behaverify/metamodel/README.md -> This README provides details about the BehaVerify language.
-- behaverify/REPRODUCIBILITY/*/README.md -> This README provides details about running the tests for the relevant paper (regardless of if the submission was accepted).
+- **behaverify/README.md** -> This README provides information about how to install and run BehaVerify directly on your machine.
+- **behaverify/Docker\_BehaVerify/README.md** -> This README provides information about how to use BehaVerify through Docker.
+- **behaverify/metamodel/README.md** -> This README provides details about the implementation of the BehaVerify Language. It is **not** a good source of information about how to use the BehaVerify Language. For that, see behaverify/examples/tutorial.tree.
+- **behaverify/REPRODUCIBILITY/*/README.md** -> This README provides details about running the tests for the relevant paper (regardless of if the submission was accepted).
 
 ---
 
