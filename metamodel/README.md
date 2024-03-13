@@ -2,6 +2,19 @@
 
 This document is meant as a guide for creating .tree files for use with behaverify.tx. A .tree file is necessary if you wish to convert a .tree file to .smv or into pytree code using BehaVerify. The user is assumed to generally understand how Behavior Trees work. However, as there is some pytree specific terminology, we will first provide a brief vocabulary explanation. After the terminology, we will cover the .tree format, and then give an example.
 
+# Creating .tree Files
+
+We have several well commented examples that can be used to get an understanding of what goes into a .tree file.
+
+- **behaverify/examples/tutorial.tree** -> This tree doesn't do anything, but it does contain copious detail about what is possible within a .tree file and what each element means.
+- **behaverify/examples/ANSR\_ONNX/ANSR\_ONNX.tree** -> This tree provides quite a bit of detail about variables and includes an example of how a neural network can be included.
+- **behaverify/examples/ANSR\_ONNX\_2/ANSR\_ONNX.tree** -> This tree provides quite a bit of detail about variables and includes an example of how a neural network can be included. (Mostly the same as the prior example).
+- **behaverify/examples/light\_controller/light\_controller.tree** -> This provides a detailed example that differs from the above, though some of the information is repeated.
+
+# WARNING
+
+The information below has not been udpated to the most recent version. This warning will be removed when that becomes the case. Most of it should be accurate however.
+
 # Terminology
 
 For brevity, we omit some mathematical terminology here. We require that a Behavior Tree have exactly 1 root node and all other nodes to have exactly 1 parent.

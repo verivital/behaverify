@@ -152,7 +152,7 @@ def handle_constant_or_reference_meta(constant_or_reference, constants, loop_ref
 #     return to_index_dependant
 
 def handle_index(code):
-    raise TypeError('Index appeared in metacode. This is not allowed.')
+    return build_meta_func(code)
 
 def build_meta_func(code):
     '''

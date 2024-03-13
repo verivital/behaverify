@@ -5,12 +5,13 @@ It contains a variety of utility functions.
 
 
 Author: Serena Serafina Serbinowska
-Last Edit: 2024-02-19
+Last Edit: 2024-03-11
 '''
 import argparse
 import os
 import shutil
 import itertools
+import re
 import onnxruntime
 from behaverify_common import indent, create_node_name, is_local, is_env, is_blackboard, is_array, handle_constant_or_reference, resolve_potential_reference_no_type, variable_array_size, get_min_max, variable_type, BTreeException, constant_type
 from serene_functions import build_meta_func
@@ -78,6 +79,8 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
         else:
             (min_val, max_val) = get_min_max(function_call.min_val, function_call.max_val, declared_enumerations, {}, variables, constants, loop_references)
             all_domain_values = range(min_val, max_val + 1)
+        if function_call.reverse:
+            all_domain_values = reversed(all_domain_values)
         cond_func = build_meta_func(function_call.loop_condition)
         for domain_member in all_domain_values:
             loop_references[function_call.loop_variable] = domain_member
@@ -95,6 +98,31 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
 
     def format_function_loop(_, function_call, misc_args):
         return execute_loop(function_call, format_code, function_call.values[0], misc_args)
+
+    def format_case_loop_recursive(function_call, misc_args, cond_func, values, index):
+        if len(values) == index:
+            if function_call.loop_variable in loop_references:
+                loop_references.pop(function_call.loop_variable)
+            return format_code(function_call.default_value, misc_args)
+        loop_references[function_call.loop_variable] = values[index]
+        if not cond_func((constants, loop_references))[0]:
+            return format_case_loop_recursive(function_call, misc_args, cond_func, values, index + 1)
+        return ['(' + format_code(function_call.values[0], misc_args)[0] + ' if ' + format_code(function_call.cond_value, misc_args)[0] + ' else ' + format_case_loop_recursive(function_call, misc_args, cond_func, values, index + 1)[0] + ')']
+
+    def format_function_case_loop(_, function_call, misc_args):
+        all_domain_values = []
+        if function_call.min_val is None:
+            for domain_code in function_call.loop_variable_domain:
+                for domain_value in execute_code(domain_code):
+                    resolved = resolve_potential_reference_no_type(domain_value, declared_enumerations, {}, variables, constants, loop_references)
+                    all_domain_values.append(resolved[1])
+        else:
+            (min_val, max_val) = get_min_max(function_call.min_val, function_call.max_val, declared_enumerations, {}, variables, constants, loop_references)
+            all_domain_values = range(min_val, max_val + 1)
+        if function_call.reverse:
+            all_domain_values = list(reversed(all_domain_values))
+        cond_func = build_meta_func(function_call.loop_condition)
+        return format_case_loop_recursive(function_call, misc_args, cond_func, all_domain_values, 0)
 
     def format_function_before(function_name, function_call, misc_args):
         return [
@@ -145,7 +173,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
             formatted_index = format_code(function_call.values[0], misc_args)[0]
         return [
             (formatted_variable + '(' + formatted_index + ')')
-            if variable.model_as in ('DEFINE', 'NEURAL') else
+            if variable.model_as in ('DEFINE', 'NEURAL') and variable.static != 'static' else
             (
                 formatted_variable + '['
                 + (
@@ -184,7 +212,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
         )
 
     def format_variable(variable, misc_args):
-        return format_variable_name_only(variable, misc_args) + ('()' if variable.model_as == 'DEFINE' else '')
+        return format_variable_name_only(variable, misc_args) + ('()' if variable.model_as == 'DEFINE' and variable.static != 'static' else '')
 
     def handle_atom(code, misc_args):
         try:
@@ -310,7 +338,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
         if len(formatted_values) == 1:
             formatted_values = []
             for value in values:
-                formatted_values.extend(format_code(value, misc_args))
+                formatted_values.extend(format_code(value, misc_args))  # use original misc_args for the correct location. only want the new if we're using randomizer.
             return formatted_values[0]
         randomizer_name = add_new_randomizer(formatted_values)
         return (
@@ -331,11 +359,29 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
             )
         )
 
+    long_if_count = 0
+    long_if_to_write = []
     def handle_assign(assign, misc_args):
         case_results = assign.case_results
         default_result = assign.default_result
         if len(case_results) == 0:
             return resolve_variable_nondeterminism(default_result.values, misc_args)  # NOTE: no linesep at the end!
+        if len(case_results) >= 10:
+            nonlocal long_if_count, long_if_to_write
+            new_misc_args_1 = create_misc_args(misc_args['init'], misc_args['loc'], 1)
+            new_misc_args_2 = create_misc_args(misc_args['init'], misc_args['loc'], 2)
+            new_misc_args_3 = create_misc_args(misc_args['init'], misc_args['loc'], 3)
+            long_if_name = 'long_if_' + str(long_if_count)
+            long_if_count = long_if_count + 1
+            long_if_string = indent(new_misc_args_1['indent_level']) + 'def ' + long_if_name + '(' + ('node' if misc_args['loc'] == 'environment' else '') + '):' + os.linesep
+            for case_result in case_results:
+                long_if_string += (
+                    indent(new_misc_args_2['indent_level']) + 'if ' + format_code(case_result.condition, new_misc_args_2)[0] + ':' + os.linesep
+                    + indent(new_misc_args_3['indent_level']) + 'return ' + resolve_variable_nondeterminism(case_result.values, new_misc_args_3) + os.linesep
+                )
+            long_if_string += indent(new_misc_args_2['indent_level']) + 'return ' + resolve_variable_nondeterminism(default_result.values, new_misc_args_2) + os.linesep
+            long_if_to_write.append(long_if_string)
+            return long_if_name + '(' + ('node' if misc_args['loc'] == 'environment' else '') + ')'
         return (
             '(' + os.linesep
             + ''.join(
@@ -372,8 +418,8 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
 
     def variable_assignment(variable, assign_value, misc_args, array_mode):
         # i don't think we should be able to have define variables here.
-        safety_1 = '' if (variable.model_as == 'DEFINE' or not safe_assignment) else ('serene_safe_assignment.' + variable.name + '(')
-        safety_2 = '' if (variable.model_as == 'DEFINE' or not safe_assignment) else ')'
+        safety_1 = '' if ((variable.model_as == 'DEFINE' and variable.static != 'static') or not safe_assignment) else ('serene_safe_assignment.' + variable.name + '(')
+        safety_2 = '' if ((variable.model_as == 'DEFINE' and variable.static != 'static') or not safe_assignment) else ')'
         return (
             (
                 indent(misc_args['indent_level']) + '__temp_var__ = ' + safety_1 + assign_value + safety_2 + os.linesep
@@ -389,6 +435,23 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
         variable = variable_statement.variable if hasattr(variable_statement, 'variable') else variable_statement
         new_misc_args = create_misc_args(misc_args['init'], misc_args['loc'], misc_args['indent_level'] + 2)
         if is_array(variable):
+            if variable_statement.iterative_assign == 'iterative_assign':
+                iterative_condition_assign_list = [(build_meta_func(iterative_assign_conditional.condition), iterative_assign_conditional.assign) for iterative_assign_conditional in variable_statement.iterative_assign_conditionals]
+                index_var_name = variable_statement.index_var_name
+                return_string = ''
+                for index in range(variable_array_size_map[variable.name]):
+                    loop_references[index_var_name] = index
+                    need_default = True
+                    for (condition_func, assign) in iterative_condition_assign_list:
+                        if condition_func((constants, loop_references))[0]:
+                            assign_string = handle_assign(assign, new_misc_args)
+                            need_default = False
+                            break
+                    if need_default:
+                        assign_string = handle_assign(variable_statement.assign, new_misc_args)
+                    return_string += (indent(misc_args['indent_level']) + format_variable_name_only(variable, misc_args) + '[' + str(index) + '] = ' + assign_string + os.linesep)
+                loop_references.pop(index_var_name)
+                return return_string
             meta_results = []
             for loop_array_index in variable_statement.assigns:
                 meta_results.extend(handle_loop_array_index((loop_array_index, variable_statement.constant_index), new_misc_args))
@@ -502,6 +565,47 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
         variable = variable_statement.variable if hasattr(variable_statement, 'variable') else variable_statement
         new_misc_args = create_misc_args(misc_args['init'], misc_args['loc'], misc_args['indent_level'] + 1)
         if is_array(variable):
+            if variable_statement.iterative_assign == 'iterative_assign':
+                iterative_condition_assign_list = [(build_meta_func(iterative_assign_conditional.condition), iterative_assign_conditional.assign) for iterative_assign_conditional in variable_statement.iterative_assign_conditionals]
+                index_var_name = variable_statement.index_var_name
+                return_string = ''
+                for index in range(variable_array_size_map[variable.name]):
+                    loop_references[index_var_name] = index
+                    need_default = True
+                    for (condition_func, assign) in iterative_condition_assign_list:
+                        if condition_func((constants, loop_references))[0]:
+                            assign_string = handle_assign(assign, new_misc_args)
+                            need_default = False
+                            break
+                    if need_default:
+                        assign_string = handle_assign(variable_statement.assign, new_misc_args)
+                    return_string += (
+                        indent(misc_args['indent_level'] + 1) + variable.name + '[' + str(index) + '] = ' + assign_string + os.linesep
+                        + indent(misc_args['indent_level'] + 1) + 'if ' + str(index) + ' == index:' + os.linesep
+                        + indent(misc_args['indent_level'] + 2) + 'return ' + variable.name + '[' + str(index) + ']' + os.linesep
+                    )
+                loop_references.pop(index_var_name)
+                old_name = re.escape(format_variable_name_only(variable, misc_args))
+                new_name = variable.name
+                return_string = re.sub(rf'{old_name}\((\d+)\)', rf'{new_name}[\1]', return_string)
+                return (
+                    os.linesep
+                    + os.linesep
+                    + indent(misc_args['indent_level']) + 'def ' + variable.name + '(index):' + os.linesep
+                    + (
+                        (
+                            indent(misc_args['indent_level'] + 1) + 'if type(index) is not int:' + os.linesep
+                            + indent(misc_args['indent_level'] + 2) + "raise TypeError('Index must be an int when accessing " + variable.name + ": ' + str(type(index)))" + os.linesep
+                            + indent(misc_args['indent_level'] + 1) + 'if index < 0 or index >= ' + str(variable_array_size_map[variable.name]) + ':' + os.linesep
+                            + indent(misc_args['indent_level'] + 2) + "raise ValueError('Index out of bounds when accessing " + variable.name + ": ' + str(index))" + os.linesep
+                        )
+                        if safe_assignment else ''
+                    )
+                    + indent(misc_args['indent_level'] + 1) + variable.name + ' = [None] * ' + str(variable_array_size_map[variable.name]) + os.linesep
+                    + return_string
+                    + os.linesep
+                    + indent(misc_args['indent_level']) + format_variable_name_only(variable, misc_args) + ' = ' + variable.name + os.linesep
+                )
             # todo: consider optimizing this for constant index. No reason to compute everything when we know the index.
             default_value = handle_assign(variable_statement.default_value, new_misc_args)
             new_values = handle_variable_statement(variable_statement, new_misc_args, assign_to_var = False)
@@ -667,10 +771,10 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                 + ''.join(
                     [
                         create_variable_macro(local_variable, misc_args = misc_args)
-                        if local_variable.model_as == 'DEFINE' else
+                        if local_variable.model_as == 'DEFINE' and local_variable.static != 'static' else
                         (
                             (
-                                (indent(2) + format_variable_name_only(local_variable, misc_args = misc_args) + ' = [' + handle_assign(local_variable.default_value, misc_args) + ' for _ in range(' + str(variable_array_size_map[local_variable.name]) + ')]'  + os.linesep)
+                                (indent(2) + format_variable_name_only(local_variable, misc_args = misc_args) + ' = [' + (handle_assign(local_variable.default_value, misc_args) if local_variable.iterative_assign != 'iterative_assign' else 'None') + ' for _ in range(' + str(variable_array_size_map[local_variable.name]) + ')]'  + os.linesep)
                                 if is_array(local_variable) else
                                 ''
                             )
@@ -682,10 +786,10 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                 + ''.join(
                     [
                         create_variable_macro(statement, misc_args = misc_args)
-                        if statement.variable.model_as == 'DEFINE' else
+                        if statement.variable.model_as == 'DEFINE' and statement.variable.static != 'static' else
                         (
                             (
-                                (indent(2) + format_variable_name_only(statement.variable, misc_args = misc_args) + ' = [' + handle_assign(statement.default_value, misc_args) + ' for _ in range(' + str(variable_array_size_map[statement.variable.name]) + ')]'  + os.linesep)
+                                (indent(2) + format_variable_name_only(statement.variable, misc_args = misc_args) + ' = [' + (handle_assign(statement.default_value, misc_args) if statement.variable.iterative_assign != 'iterative_assign' else 'None') + ' for _ in range(' + str(variable_array_size_map[statement.variable.name]) + ')]'  + os.linesep)
                                 if is_array(statement.variable) else
                                 ''
                             )
@@ -722,27 +826,39 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                 )
 
     def build_check_node(node):
+        nonlocal long_if_to_write
+        long_if_statements = (os.linesep).join(long_if_to_write)
+        long_if_to_write = []
         return (standard_imports
                 + os.linesep + os.linesep
                 + class_definition(node.name)
                 + init_method_check(node)
                 + update_method_check(node)
+                + long_if_statements
                 )
 
     def build_environment_check_node(node):
+        nonlocal long_if_to_write
+        long_if_statements = (os.linesep).join(long_if_to_write)
+        long_if_to_write = []
         return (standard_imports
                 + os.linesep + os.linesep
                 + class_definition(node.name)
                 + init_method_environment_check(node)
                 + update_method_environment_check(node)
+                + long_if_statements
                 )
 
     def build_action_node(node):
+        nonlocal long_if_to_write
+        long_if_statements = (os.linesep).join(long_if_to_write)
+        long_if_to_write = []
         return (standard_imports
                 + os.linesep + os.linesep
                 + class_definition(node.name)
                 + init_method_action(node)
                 + update_method_action(node)
+                + long_if_statements
                 )
 
     def walk_tree_recursive(current_node, node_names, running_string, variable_print_info):
@@ -894,7 +1010,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
             + os.linesep
         )
         for variable in model.variables:
-            if variable.model_as in ('DEFINE', 'NEURAL'):
+            if variable.model_as in ('DEFINE', 'NEURAL') and variable.static != 'static':
                 continue
             outter_return_string += os.linesep + os.linesep
             if is_array(variable):
@@ -923,7 +1039,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
         def map_local_to_info(local_var):
             return (
                 '{\'name\' : \'' + local_var.name + '\''
-                + ', \'is_func\' : ' + str(local_var.model_as == 'DEFINE')
+                + ', \'is_func\' : ' + str(local_var.model_as == 'DEFINE' and local_var.static != 'static')
                 + ', \'array_size\' : ' + str(variable_array_size_map[local_var.name] if local_var.name in variable_array_size_map else None) + '}'
             )
         return (
@@ -954,10 +1070,10 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                                     indent(1) + 'ret_string += indent(1) + \'' + variable.name + ': \' + str([blackboard_reader.' + variable.name
                                     + '(x) for x in range(' + str(variable_array_size_map[variable.name]) + ')]) + os.linesep' + os.linesep
                                 )
-                                if variable.model_as == 'DEFINE' and is_array(variable) else
+                                if variable.model_as == 'DEFINE' and is_array(variable) and variable.static != 'static' else
                                 (
                                     indent(1) + 'ret_string += indent(1) + \'' + variable.name + ': \' + str(blackboard_reader.' + variable.name
-                                    + ('()' if variable.model_as == 'DEFINE' else '')
+                                    + ('()' if variable.model_as == 'DEFINE' and variable.static != 'static' else '')
                                     + ') + os.linesep' + os.linesep
                                 )
                             )
@@ -976,10 +1092,10 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                                     indent(1) + 'ret_string += indent(1) + \'' + variable.name + ': \' + str([environment.' + variable.name
                                     + '(x) for x in range(' + str(variable_array_size_map[variable.name]) + ')]) + os.linesep' + os.linesep
                                 )
-                                if variable.model_as == 'DEFINE' and is_array(variable) else
+                                if variable.model_as == 'DEFINE' and is_array(variable) and variable.static != 'static' else
                                 (
                                     indent(1) + 'ret_string += indent(1) + \'' + variable.name + ': \' + str(environment.' + variable.name
-                                    + ('()' if variable.model_as == 'DEFINE' else '')
+                                    + ('()' if variable.model_as == 'DEFINE' and variable.static != 'static' else '')
                                     + ') + os.linesep' + os.linesep
                                 )
                             )
@@ -1101,6 +1217,64 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
             + indent(1) + 'run_tree()' + os.linesep
         )
 
+    def write_blackboard(model, running_string):
+        initial_misc_args = create_misc_args(True, 'blackboard', 1)
+        return_string = (
+            'from pathlib import Path' + os.linesep
+            + 'import py_trees' + os.linesep
+            + ''.join([('import ' + node.name + '_file' + os.linesep) for node in itertools.chain(model.check_nodes, model.action_nodes, model.environment_checks)])
+            + (('import serene_safe_assignment' + os.linesep) if safe_assignment else '')
+            + (('import onnxruntime' + os.linesep) if model.neural else '')
+            + os.linesep + os.linesep
+            + 'def create_blackboard(serene_randomizer):' + os.linesep
+            + indent(1) + 'blackboard_reader = py_trees.blackboard.Client()' + os.linesep
+            + indent(1) + 'blackboard_reader.register_key(key = ' + "'serene_randomizer'" + ', access = py_trees.common.Access.WRITE)' + os.linesep
+            + indent(1) + 'blackboard_reader.serene_randomizer = serene_randomizer' + os.linesep
+            + ''.join(
+                [
+                    (indent(1) + 'blackboard_reader.register_key(key = ' + "'" + blackboard_variable.name + "'" + ', access = py_trees.common.Access.WRITE)' + os.linesep
+                     + indent(1) + 'blackboard_reader.' + blackboard_variable.name + ' = None' + os.linesep)
+                    for blackboard_variable in model.variables if is_blackboard(blackboard_variable)
+                ]
+            )
+            + indent(1) + 'return blackboard_reader' + os.linesep + os.linesep
+            + 'def initialize_blackboard(blackboard_reader):' + os.linesep
+        )
+        sub_return_string = (
+            ''.join(
+                [
+                    create_neural_network(variable, initial_misc_args)
+                    if variable.model_as == 'NEURAL' else
+                    (
+                        create_variable_macro(variable, initial_misc_args)
+                        if variable.model_as == 'DEFINE' and variable.static != 'static' else
+                        (
+                            (
+                                (indent(1) + format_variable_name_only(variable, initial_misc_args) + ' = [' + (handle_assign(variable.default_value, initial_misc_args) if variable.iterative_assign != 'iterative_assign' else 'None') + ' for _ in range(' + str(variable_array_size_map[variable.name]) + ')]' + os.linesep)  # this handles the default value of the array. Then, we overwrite values as necessary using handle_Variable_statement.
+                                if is_array(variable) else
+                                ''
+                            ) +  handle_variable_statement(variable, initial_misc_args, assign_to_var = True)
+                        )
+                    )
+                    for variable in model.variables if is_blackboard(variable)
+                ]
+            )
+            + indent(1) + 'return' + os.linesep)
+        nonlocal long_if_to_write
+        long_if_statements = (os.linesep).join(long_if_to_write)
+        long_if_to_write = []
+        return_string += long_if_statements + sub_return_string
+        if serene_print:
+            with open(os.path.dirname(os.path.realpath(__file__)) + '/tick_overwrite/tick_overwrite.py', 'r', encoding = 'utf-8') as read_file:
+                return_string += read_file.read()
+        return_string += (
+            os.linesep + os.linesep
+            + 'def create_tree(environment):' + os.linesep
+            + running_string
+            + indent(1) + 'return ' + root_name + os.linesep
+        )
+        return return_string
+
     def write_environment(model):
         def env_handle_environment_check(node):
             misc_args = create_misc_args(False, 'environment', 2)
@@ -1219,10 +1393,10 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                     if variable.model_as == 'NEURAL' else
                     (
                         create_variable_macro(variable, initial_misc_args)
-                        if variable.model_as == 'DEFINE' else
+                        if variable.model_as == 'DEFINE' and variable.static != 'static' else
                         (
                             (
-                                (indent(2) + format_variable(variable, initial_misc_args) + ' = [' + handle_assign(variable.default_value, initial_misc_args) + ' for _ in range(' + str(variable_array_size_map[variable.name]) + ')]' + os.linesep)
+                                (indent(2) + format_variable(variable, initial_misc_args) + ' = [' + (handle_assign(variable.default_value, initial_misc_args) if variable.iterative_assign != 'iterative_assign' else 'None') + ' for _ in range(' + str(variable_array_size_map[variable.name]) + ')]' + os.linesep)
                                 if is_array(variable) else
                                 ''
                             ) + handle_variable_statement(variable, initial_misc_args, assign_to_var = True)
@@ -1243,11 +1417,16 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                     env_handle_read_statement(statement.read_statement)
                     if statement.read_statement is not None else
                     env_handle_write_statement(statement.write_statement))
+        nonlocal long_if_to_write
+        long_if_statements = (os.linesep).join(long_if_to_write)
+        long_if_to_write = []
+        to_write += long_if_statements
         return to_write
 
     function_format = {
         'if' : ('', format_function_if),
         'loop' : ('', format_function_loop),
+        'case_loop' : ('', format_function_case_loop),
         'abs' : ('abs', format_function_before),
         'max' : ('max', format_function_before),
         'min' : ('min', format_function_before),
@@ -1332,61 +1511,8 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
 
     (root_name, _, running_string, local_print_info) = walk_tree_recursive(model.root, set(), '', {})
 
-    if serene_print:
-        with open(os.path.dirname(os.path.realpath(__file__)) + '/tick_overwrite/tick_overwrite.py', 'r', encoding = 'utf-8') as write_file:
-            better_ticks = write_file.read()
-
-    initial_misc_args = create_misc_args(True, 'blackboard', 1)
     with open(write_location + project_name + '.py', 'w', encoding = 'utf-8') as write_file:
-        write_file.write(
-            'from pathlib import Path' + os.linesep
-            + 'import py_trees' + os.linesep
-            + ''.join([('import ' + node.name + '_file' + os.linesep) for node in itertools.chain(model.check_nodes, model.action_nodes, model.environment_checks)])
-            + (('import serene_safe_assignment' + os.linesep) if safe_assignment else '')
-            + (('import onnxruntime' + os.linesep) if model.neural else '')
-            + os.linesep + os.linesep
-            + 'def create_blackboard(serene_randomizer):' + os.linesep
-            + indent(1) + 'blackboard_reader = py_trees.blackboard.Client()' + os.linesep
-            + indent(1) + 'blackboard_reader.register_key(key = ' + "'serene_randomizer'" + ', access = py_trees.common.Access.WRITE)' + os.linesep
-            + indent(1) + 'blackboard_reader.serene_randomizer = serene_randomizer' + os.linesep
-            + ''.join(
-                [
-                    (indent(1) + 'blackboard_reader.register_key(key = ' + "'" + blackboard_variable.name + "'" + ', access = py_trees.common.Access.WRITE)' + os.linesep
-                     + indent(1) + 'blackboard_reader.' + blackboard_variable.name + ' = None' + os.linesep)
-                    for blackboard_variable in model.variables if is_blackboard(blackboard_variable)
-                ]
-            )
-            + indent(1) + 'return blackboard_reader' + os.linesep + os.linesep
-            + 'def initialize_blackboard(blackboard_reader):' + os.linesep
-            + ''.join(
-                [
-                    create_neural_network(variable, initial_misc_args)
-                    if variable.model_as == 'NEURAL' else
-                    (
-                        create_variable_macro(variable, initial_misc_args)
-                        if variable.model_as == 'DEFINE' else
-                        (
-                            (
-                                (indent(1) + format_variable_name_only(variable, initial_misc_args) + ' = [' + handle_assign(variable.default_value, initial_misc_args) + ' for _ in range(' + str(variable_array_size_map[variable.name]) + ')]' + os.linesep)  # this handles the default value of the array. Then, we overwrite values as necessary using handle_Variable_statement.
-                                if is_array(variable) else
-                                ''
-                            ) +  handle_variable_statement(variable, initial_misc_args, assign_to_var = True)
-                        )
-                    )
-                    for variable in model.variables if is_blackboard(variable)
-                ]
-            )
-            + indent(1) + 'return' + os.linesep
-            + (
-                better_ticks
-                if serene_print else
-                ''
-            )
-            + os.linesep + os.linesep
-            + 'def create_tree(environment):' + os.linesep
-            + running_string
-            + indent(1) + 'return ' + root_name + os.linesep
-        )
+        write_file.write(write_blackboard(model, running_string))
     with open(write_location + project_name + '_runner.py', 'w', encoding = 'utf-8') as write_file:
         write_file.write(create_runner(list(filter(is_blackboard, model.variables)), list(filter(is_env, model.variables)), local_print_info))
     with open(write_location + project_environment_name + '.py', 'w', encoding = 'utf-8') as write_file:

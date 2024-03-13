@@ -201,11 +201,11 @@ This section is intentionally lengthy. If you are not interested in the details 
 		git clone https://github.com/verivital/behaverify
 19. Enable scripts<br />This will allow all the necessary scripts to run. Please navigate to the top level of our repository and run the following
 
-		sudo chmod -R +x /behaverify/REPRODUCIBILITY/2024_NFM/*.sh
+		sudo chmod -R +x behaverify/REPRODUCIBILITY/2024_NFM/*.sh
 20. Move nuXmv<br />You downloaded nuXmv in step 1. Please place it in behaverify/REPRODUCIBILITY/2024\_NFM/
 21. Enable nuXmv<br />Please navigate to the top level of our repository and run the following
 
-		sudo chmod +x /behaverify/REPRODUCIBILITY/2024_NFM/nuXmv
+		sudo chmod +x behaverify/REPRODUCIBILITY/2024_NFM/nuXmv
 
 
 You are now ready to run the scripts locally. Scroll past the concise installation instructions to see the scripts explanation.

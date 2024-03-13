@@ -16,8 +16,8 @@ variables {
     variable {bl x_mode VAR BOOLEAN assign {result {False}}}
     variable {bl y_dir VAR {-1, 1} assign {result {1}}}
     variable {bl victory VAR BOOLEAN assign {result {False}}}
-    variable {env tree_x array tree_count DEFINE INT default {assign { result{2}}} constant_index index_of {1} assign {result{5}}}
-    variable {env tree_y array tree_count DEFINE INT default {assign { result{2}}} constant_index index_of {1} assign {result{5}}}
+    variable {env tree_x DEFINE INT array tree_count default {assign { result{2}}} constant_index index_of {1} assign {result{5}}}
+    variable {env tree_y DEFINE INT array tree_count default {assign { result{2}}} constant_index index_of {1} assign {result{5}}}
     variable {env tar_x VAR [x_min, x_max] assign {result {(loop, loop_var, [x_min, x_max] such_that True, loop_var)}}}
     variable {env tar_y VAR [y_min, y_max] assign {result {(loop, loop_var, [y_min, y_max] such_that True, loop_var)}}}
     variable {env timer VAR [0, movement_cooldown] assign {result{movement_cooldown}}}
@@ -230,28 +230,28 @@ sub_trees {
 			    try_up sequence
 			    children {
 				y_too_small {}
-				move {0, 1}
+				move_up : move {0, 1}
 			    }
 			}
 			composite {
 			    try_down sequence
 			    children {
 				y_too_big {}
-				move {0, -1}
+				move_down : move {0, -1}
 			    }
 			}
 			composite {
 			    try_left sequence
 			    children {
 				x_too_big {}
-				move {-1, 0}
+				move_left : move {-1, 0}
 			    }
 			}
 			composite {
 			    try_right sequence
 			    children {
 				x_too_small {}
-				move {1, 0}
+				move_right : move {1, 0}
 			    }
 			}
 		    }

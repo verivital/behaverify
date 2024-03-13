@@ -43,21 +43,21 @@ variables {
     }#
     variable { bl output VAR [0, 30] assign { result { 0 }}}
     variable { bl low_output DEFINE INT assign { result { (mod, output, 10) }}}
-    variable { bl high_output DEFINE INT assign { result { (division, output, 10) }}}
-    variable { env low_input VAR [-2, 2] assign { result { range, -2, 2, True }}}
-    variable { env high_input VAR [-1, 1] assign { result { range, -1, 1, True }}}
+    variable { bl high_output DEFINE INT assign { result { (idiv, output, 10) }}}
+    variable { env low_input VAR [-2, 2] assign { result { -2, -1, 0, 1, 2 }}}
+    variable { env high_input VAR [-1, 1] assign { result { -1, 0, 1 }}}
     
 } end_variables
 
 environment_update {
     variable_statement {
 	low_input
-	assign { result { range, -2, 2, True }}
+	assign { result { -2, -1, 0, 1, 2 }}
     }
     
     variable_statement {
 	high_input
-	assign { result { range, -1, 1, True }}
+	assign { result { -1, 0, 1 }}
     }
 } end_environment_update
 
@@ -98,11 +98,11 @@ actions {
 		variable_statement {
 		    output
 		    assign {
-			case { (greater_than, (addition, output, low_input), 30) }
-			result { (subtraction, (addition, output, low_input), 30) }
-			case { (less_than, (addition, output, low_input), 0) }
-			result { (addition, (addition, output, low_input), 30) }
-			result {(addition, output, low_input) }
+			case { (gt, (add, output, low_input), 30) }
+			result { (sub, (add, output, low_input), 30) }
+			case { (lt, (add, output, low_input), 0) }
+			result { (add, (add, output, low_input), 30) }
+			result {(add, output, low_input) }
 		    }
 		}
 	    }
@@ -123,11 +123,11 @@ actions {
 		variable_statement {
 		    output
 		    assign {
-			case { (greater_than, (addition, output, (multiplication, 10, high_input)), 30) }
-			result { (subtraction, (addition, output, (multiplication, 10, high_input)), 30) }
-			case { (less_than, (addition, output, (multiplication, 10, high_input)), 0) }
-			result { (addition, (addition, output, (multiplication, 10, high_input)), 30) }
-			result {(addition, output, (multiplication, 10, high_input)) }
+			case { (gt, (add, output, (mult, 10, high_input)), 30) }
+			result { (sub, (add, output, (mult, 10, high_input)), 30) }
+			case { (lt, (add, output, (mult, 10, high_input)), 0) }
+			result { (add, (add, output, (mult, 10, high_input)), 30) }
+			result {(add, output, (mult, 10, high_input)) }
 		    }
 		}
 	    }
@@ -145,7 +145,7 @@ actions {
 	    update {
 		variable_statement {
 		    x
-		    result { (max, 'example', (subtraction, x, 1)) } end_result
+		    result { (max, 'example', (sub, x, 1)) } end_result
 		} end_variable_statement
 		return_statement {
 		    result { success} end_result
@@ -169,5 +169,5 @@ tree {
 tick_prerequisite {True}
 
 specifications { #{ INVAR, LTL, and CTL specs go here }#
-    LTLSPEC {(globally, (implies, (historically, (equal, low_input 0 1, low_input 0 2)), (equal, low_output -1 1, low_output -1 2)))}
+    LTLSPEC {(globally, (implies, (historically, (eq, low_input at 0 trace 1, low_input at 0 trace 2)), (eq, low_output at -1 trace 1, low_output at -1 trace 2)))}
 } end_specifications

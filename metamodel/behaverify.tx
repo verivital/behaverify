@@ -1,11 +1,13 @@
     //This is intended to be used with BehaVerify
     //Author: Serena Serafina Serbinowska
-    //last edit: 2024-02-29
+    //last edit: 2024-03-10
 BehaviorModel:
     'configuration' '{'
+    (
     (hypersafety ?= 'hypersafety')
     (use_reals ?= 'use_reals')
     (neural ?= 'neural')
+    )#
     '}' ('end_configuration')?
     'enumerations' '{'
     enumerations *= STRING[',']
@@ -135,19 +137,24 @@ node:
     'variable' '{'
     ((var_type = 'bl') | (var_type = 'local') | (var_type = 'env'))
     name = ID
-    (('array' array_size = code_statement
-    ((model_as = 'VAR' domain = variable_domain) |
-    (model_as = 'FROZENVAR' domain = variable_domain) |
-    (model_as = 'DEFINE' ((domain = 'INT') | (domain = 'ENUM') | (domain = 'BOOLEAN') | (domain = 'REAL'))))
-    'default' '{' default_value = assign_value '}' ('end_default')?
-    ((constant_index = 'constant_index' assigns *= loop_array_index) | (constant_index = '' assigns *= loop_array_index)))
-    |
-    (((model_as = 'VAR' domain = variable_domain) |
-    (model_as = 'FROZENVAR' domain = variable_domain) |
-    (model_as = 'DEFINE' ((domain = 'INT') | (domain = 'ENUM') | (domain = 'BOOLEAN') | (domain = 'REAL'))))
-    assign = assign_value)
-    |
-    (model_as = 'NEURAL' ((domain = 'INT') | (domain = 'REAL')) 'inputs' '{' inputs += code_statement[','] '}' ('end_inputs')? 'num_outputs' '{' num_outputs = code_statement '}' ('end_num_outputs')? 'source' '{' source = code_statement '}' ('end_source')?))
+    (
+      (model_as = 'NEURAL' ((domain = 'INT') | (domain = 'REAL')) 'inputs' '{' inputs += code_statement[','] '}' ('end_inputs')? 'num_outputs' '{' num_outputs = code_statement '}' ('end_num_outputs')? 'source' '{' source = code_statement '}' ('end_source')?)
+      |
+      (
+        ((model_as = 'VAR' domain = variable_domain) |
+        (model_as = 'FROZENVAR' domain = variable_domain) |
+        (model_as = 'DEFINE' ((domain = 'INT') | (domain = 'ENUM') | (domain = 'BOOLEAN') | (domain = 'REAL')) (static = 'static' | static = '')))
+        (
+          ('array' array_size = code_statement
+          ((iterative_assign = 'iterative_assign' ',' index_var_name = ID iterative_assign_conditionals *= iterative_assign_conditional assign = assign_value) |
+          // each of the conditionals must be metacode
+          ('default' '{' default_value = assign_value '}' ('end_default')?
+          ((constant_index = 'constant_index' assigns *= loop_array_index) | (constant_index = '' assigns *= loop_array_index)))))
+          |
+          (assign = assign_value)
+        )
+      )
+    )
     '}' ('end_variable')?
 ;
     variable_domain:
@@ -200,7 +207,7 @@ statement:
     instant ?= 'instant'
     variable = [variable]
     (((constant_index = 'constant_index' assigns += loop_array_index) | (constant_index = '' assigns += loop_array_index))
-    | (assign = assign_value))
+    | ((iterative_assign = 'iterative_assign' ',' index_var_name = ID iterative_assign_conditionals *= iterative_assign_conditional)? assign = assign_value))
     '}' ('end_variable_statement')?
 ;
     variable_statement_initial:
@@ -223,6 +230,10 @@ statement:
 ;
     array_index:
     'index_of' '{' index_expr += code_statement[','] '}' ('end_index_of')?
+    assign = assign_value
+;
+    iterative_assign_conditional:
+    'condition' '{' condition = code_statement '}' ('end_condition')?
     assign = assign_value
 ;
     assign_value:
