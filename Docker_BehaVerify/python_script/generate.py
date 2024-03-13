@@ -178,20 +178,29 @@ def demo_mode():
     behaverify = client.containers.get('behaverify')
     behaverify.start()
     move_files_demo(behaverify, demo, demo in uses_networks)
-    if demo == 'ANSR_ONNX_2':
+    if demo in ('ANSR_ONNX_2', 'ANSR_ONNX_2_counter'):
         to_generate = 'nuXmv'
         flags = ''
         command = 'ctl'
+        ansr_x_size = 11
+        ansr_y_size = 11
         if args.additional_input != '':
             serene_exec(behaverify, ' '.join([
                 '/home/behaverify/behaverify_venv/bin/python3',
                 '/home/behaverify/behaverify/demos/' + demo + '/edit_constants.py',
                 '/home/behaverify/user_files/' + demo + '/' + demo + '.tree',
-                '\'' + args.additional_input + '\'']), 'Modifying constants for ANSR_ONNX_2.', True)
-    elif demo == 'ANSR_ONNX_2_counter':
-        to_generate = 'nuXmv'
-        flags = ''
-        command = 'ctl'
+                '\'' + args.additional_input + '\'']), 'Modifying constants for ' + demo + '.', True)
+            try:
+                ansr_vals = [0, 0, 0, 0]
+                for (index, ansr_code) in enumerate(('x_min', 'x_max', 'y_min', 'y_max')):
+                    val = args.additional_input.split(ansr_code)[1]
+                    val = val.split(',')[0]
+                    val = val.replace(':=', '')
+                    ansr_vals[index] = int(val.strip())
+                ansr_x_size = (ansr_vals[1] - ansr_vals[0]) + 1
+                ansr_y_size = (ansr_vals[3] - ansr_vals[2]) + 1
+            except:
+                pass
     generate(behaverify, demo + '.tree', demo, to_generate, flags)
     if command != 'generate':
         evaluate(behaverify, demo, to_generate, command)
@@ -205,8 +214,8 @@ def demo_mode():
             '/home/behaverify/behaverify/demos/ANSR_ONNX_2_counter/parse_nuxmv_output.py',
             '/home/behaverify/user_files/' + demo + '/output/nuxmv_ctl_results.txt',
             '/home/behaverify/user_files/' + demo + '/output/' + demo,
-            '11',
-            '11'
+            str(ansr_x_size),
+            str(ansr_y_size)
         ])
     if special_command is not None:
         serene_exec(behaverify, special_command, 'Execution of extra commands necessary for Demo.', True)
