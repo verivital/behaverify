@@ -24,15 +24,15 @@ variables {
 	path_computed_bool VAR BOOLEAN
 	assign { result { False }}
     }
-    variable { bl drone_location array 2 VAR REAL default {assign {result{0}}}}
-    variable { bl drone_velocity array 2 VAR REAL default {assign {result{0}}}}
-    variable { local drone_action array 2 VAR REAL default {assign {result{0}}}}
-    variable { bl waypoint_location array 2 VAR REAL default {assign {result {1}}}}
-    variable { bl path_storage_x array path_size VAR REAL default {assign {result {0}}}} #{ each entry is a landmark }#
-    variable { bl path_storage_y array path_size VAR REAL default {assign {result{0}}}}
+    variable { bl drone_location VAR REAL array 2 default {assign {result{0}}}}
+    variable { bl drone_velocity VAR REAL array 2 default {assign {result{0}}}}
+    variable { local drone_action VAR REAL array 2 default {assign {result{0}}}}
+    variable { bl waypoint_location VAR REAL array 2 default {assign {result {1}}}}
+    variable { bl path_storage_x VAR REAL array path_size default {assign {result {0}}}} #{ each entry is a landmark }#
+    variable { bl path_storage_y VAR REAL array path_size default {assign {result{0}}}}
     variable { bl landmark_index VAR [0, (sub, path_size, 1)] assign {result {0}}}
-    variable { bl current_landmark array 2 DEFINE REAL default {assign {result {0}}} constant_index index_of {0} assign {result{(index, path_storage_x, landmark_index)}} index_of {1} assign {result{(index, path_storage_y, landmark_index)}}}  
-    variable { bl subgoal array 2 VAR REAL default {assign {result{0}}}}
+    variable { bl current_landmark DEFINE REAL array 2 default {assign {result {0}}} constant_index index_of {0} assign {result{(index, path_storage_x, landmark_index)}} index_of {1} assign {result{(index, path_storage_y, landmark_index)}}}  
+    variable { bl subgoal VAR REAL array 2 default {assign {result{0}}}}
 } end_variables
 
 environment_update {

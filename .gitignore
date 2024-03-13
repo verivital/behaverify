@@ -14,3 +14,13 @@ dist-newstyle/
 gen_files/
 **/nuXmv
 moved/
+examples/**/images/**
+examples/**/haskell/**
+examples/**/python/**
+examples/**/smv/**
+examples/**/ignore/**
+REPRODUCIBILITY/**/processed_data/**
+REPRODUCIBILITY/**/results/**
+REPRODUCIBILITY/**/smv/**
+REPRODUCIBILITY/**/tree/**
+REPRODUCIBILITY/**/xml/**

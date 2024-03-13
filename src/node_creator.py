@@ -75,7 +75,7 @@ def create_blackboard(nodes, variables, root_node_name):
                     indent(indent_level) + surround_start + stage_name + str(stage_num) + '_index_' + str(index) + surround_end + ' :='
                     + write_cases(None, None, condition_pairs, indent_level + 1)
                 )
-            for index in all_indices:
+            for index in all_indices: # default value only applies to indicies not covered by constant index.
                 return_string += (
                     indent(indent_level) + surround_start + stage_name + str(stage_num) + '_index_' + str(index) + surround_end + ' :='
                     + default_array_cases
@@ -128,7 +128,7 @@ def create_blackboard(nodes, variables, root_node_name):
                         for (index, sub_var) in enumerate(existing_definition)
                     }
                     replacement_dictionary['SUBSTITUTE_SELF'] = stage_name + str(stage_num)
-                    define_string += re.sub(r'SUBSTITUTE_[0-9]+_ME', create_replace_define_placeholders_function(replacement_dictionary), temp_string)
+                    define_string += re.sub(r'(SUBSTITUTE_[0-9]+_ME)|(SUBSTITUTE_SELF)', create_replace_define_placeholders_function(replacement_dictionary), temp_string)
                 for stage_num, (_, constant_index, _, indexed_cond_pairs) in enumerate(variable['next_value']):
                     temp_string = handle_initial_value(constant_index, indexed_cond_pairs, variable['array_size'], None, stage_name, stage_num, default_array_cases[constant_index], 2)
                     define_string += temp_string
@@ -271,7 +271,7 @@ def create_blackboard(nodes, variables, root_node_name):
                         for (index, sub_var) in enumerate(existing_definition)
                     }
                     replacement_dictionary['SUBSTITUTE_SELF'] = stage_name + str(stage_num)
-                    define_string += re.sub(r'SUBSTITUTE_[0-9]+_ME', create_replace_define_placeholders_function(replacement_dictionary), temp_string)
+                    define_string += re.sub(r'(SUBSTITUTE_[0-9]+_ME)|(SUBSTITUTE_SELF)', create_replace_define_placeholders_function(replacement_dictionary), temp_string)
             elif variable['mode'] == 'FROZENVAR' or len(variable['next_value']) == 0:
                 frozenvar_string += indent(2) + '' + stage_name + '0 : ' + variable['custom_value_range'] + ';' + os.linesep
                 (_, _, condition_pairs) = variable['initial_value']
