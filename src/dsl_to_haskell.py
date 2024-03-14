@@ -4,7 +4,7 @@ It is used to create Haskell code from BehaVerify DSL for Behavior Trees.
 It contains a variety of utility functions.
 
 Author: Serena Serafina Serbinowska
-Last Edit: 2024-02-19
+Last Edit: 2024-03-14
 '''
 import argparse
 import os
@@ -15,7 +15,7 @@ from serene_functions import build_meta_func
 from check_grammar import validate_model
 
 
-def dsl_to_haskell(metamodel_file, model_file, location, output_file, max_iter, recursion_limit):
+def dsl_to_haskell(metamodel_file, model_file, location, output_name, max_iter, recursion_limit):
     '''
     this function is used to convert the dsl to haskell code
     '''
@@ -92,6 +92,31 @@ def dsl_to_haskell(metamodel_file, model_file, location, output_file, max_iter, 
 
     def format_function_loop(_, function_call, misc_args):
         return execute_loop(function_call, format_code, function_call.values[0], misc_args)
+
+    def format_case_loop_recursive(function_call, misc_args, cond_func, values, index):
+        if len(values) == index:
+            if function_call.loop_variable in loop_references:
+                loop_references.pop(function_call.loop_variable)
+            return format_code(function_call.default_value, misc_args)
+        loop_references[function_call.loop_variable] = values[index]
+        if not cond_func((constants, loop_references))[0]:
+            return format_case_loop_recursive(function_call, misc_args, cond_func, values, index + 1)
+        return ['(if ' + format_code(function_call.cond_value, misc_args)[0] + ' then ' + format_code(function_call.values[0], misc_args)[0] + ' else ' + format_case_loop_recursive(function_call, misc_args, cond_func, values, index + 1)[0] + ')']
+
+    def format_function_case_loop(_, function_call, misc_args):
+        all_domain_values = []
+        if function_call.min_val is None:
+            for domain_code in function_call.loop_variable_domain:
+                for domain_value in execute_code(domain_code):
+                    resolved = resolve_potential_reference_no_type(domain_value, declared_enumerations, {}, variables, constants, loop_references)
+                    all_domain_values.append(resolved[1])
+        else:
+            (min_val, max_val) = get_min_max(function_call.min_val, function_call.max_val, declared_enumerations, {}, variables, constants, loop_references)
+            all_domain_values = range(min_val, max_val + 1)
+        if function_call.reverse:
+            all_domain_values = list(reversed(all_domain_values))
+        cond_func = build_meta_func(function_call.loop_condition)
+        return format_case_loop_recursive(function_call, misc_args, cond_func, all_domain_values, 0)
 
     def format_function_before(function_name, function_call, misc_args):
         formatted_values = []
@@ -266,6 +291,24 @@ def dsl_to_haskell(metamodel_file, model_file, location, output_file, max_iter, 
         )
         new_misc_args = create_misc_args(misc_args['init_mode'], indent_level + 2)
         if is_array(assign_var):
+            if assign_var.iterative_assign == 'iterative_assign':
+                iterative_condition_assign_list = [(build_meta_func(iterative_assign_conditional.condition), iterative_assign_conditional.assign) for iterative_assign_conditional in variable_statement.iterative_assign_conditionals]
+                index_var_name = variable_statement.index_var_name
+                return_string = ''
+                for index in range(variable_array_size_map[assign_var.name]):
+                    loop_references[index_var_name] = index
+                    need_default = True
+                    for (condition_func, assign) in iterative_condition_assign_list:
+                        if condition_func((constants, loop_references))[0]:
+                            results = handle_assign(assign, variable_type_map[assign_var.name], new_misc_args)
+                            need_default = False
+                            break
+                    if need_default:
+                        results = handle_assign(variable_statement.assign, variable_type_map[assign_var.name], new_misc_args)
+                    return_string += handle_formatted_results('newValue' + str(index), results, indent_level + 2)
+                return_string += indent(indent_level + 2) + 'newValue = (' + ', '.join(['newValue' + str(index) for index in range(variable_array_size_map[assign_var.name])]) + ')' + os.linesep
+                loop_references.pop(index_var_name)
+                return return_string
             meta_results = []
             for loop_array_index in variable_statement.assigns:
                 meta_results.extend(handle_loop_array_index((loop_array_index, converted_variable_type, variable_statement.constant_index), new_misc_args))
@@ -1215,6 +1258,7 @@ def dsl_to_haskell(metamodel_file, model_file, location, output_file, max_iter, 
 
     function_format = {
         'loop' : ('', format_function_loop),
+        'case_loop' : ('', format_function_case_loop),
         'if' : ('', format_function_if),
         'abs' : ('abs', format_function_before),
         'max' : ('max', format_function_before),
@@ -1313,6 +1357,10 @@ def dsl_to_haskell(metamodel_file, model_file, location, output_file, max_iter, 
     loop_references = {}
     location = location + ('' if location[-1] == '/' else '/')
     my_location = location + 'app/'
+    if not os.path.isdir(my_location):
+        if os.path.exists(my_location):
+            raise FileExistsError('Specified Output Location cannot be used as app is a file in this location')
+        os.makedirs(my_location)
     shutil.copy(os.path.dirname(os.path.realpath(__file__)) + '/haskell_file/BehaviorTreeCore.hs', my_location + 'BehaviorTreeCore.hs')
     with open(my_location + 'SereneRandomizer.hs', 'w', encoding='utf-8') as write_file:
         write_file.write(randomizer)
@@ -1322,11 +1370,11 @@ def dsl_to_haskell(metamodel_file, model_file, location, output_file, max_iter, 
         write_file.write(create_environment())
     with open(my_location + 'BehaviorTreeBlackboard.hs', 'w', encoding='utf-8') as write_file:
         write_file.write(create_blackboard())
-    with open(my_location + pascal_case(output_file) + '.hs', 'w', encoding='utf-8') as write_file:
-        (seen_nodes, to_write) = create_tree(model, output_file)
+    with open(my_location + pascal_case(output_name) + '.hs', 'w', encoding='utf-8') as write_file:
+        (seen_nodes, to_write) = create_tree(model, output_name)
         write_file.write(to_write)
     with open(my_location + 'Main.hs', 'w', encoding='utf-8') as write_file:
-        write_file.write(create_runner(model, output_file, max_iter))
+        write_file.write(create_runner(model, output_name, max_iter))
 
     for action in model.action_nodes:
         if action.name in seen_nodes:
@@ -1346,6 +1394,22 @@ def dsl_to_haskell(metamodel_file, model_file, location, output_file, max_iter, 
             with open(my_location + 'BTree' + pascal_case(environment_check.name) + '.hs', 'w', encoding='utf-8') as write_file:
                 write_file.write(build_environment_check_node(environment_check))
             # arguments = set()
+    with open(location + output_name + '.cabal', 'w', encoding = 'utf-8') as write_file:
+        write_file.write(
+            'name: ' + output_name + os.linesep
+            + 'version: 0.1.0.0' + os.linesep
+            + 'author: Auto Generated by BehaVerify' + os.linesep
+            + 'maintainer: No Maintainer.' + os.linesep
+            + 'build-type: Simple' + os.linesep
+            + 'executable testing' + os.linesep
+            + indent(1) + 'main-is: Main.hs' + os.linesep
+            + indent(1) + 'ghc-options: -w' + os.linesep
+            + indent(1) + 'other-modules:' + os.linesep
+            + (', ' + os.linesep).join([(indent(2) + os.path.splitext(os.path.basename(file_name))[0]) for file_name in os.listdir(my_location) if os.path.splitext(os.path.basename(file_name))[1] == '.hs']) + os.linesep
+            + indent(1) + 'build-depends: base, random' + os.linesep
+            + indent(1) + 'hs-source-dirs: app' + os.linesep
+            + indent(1) + 'default-language: Haskell2010' + os.linesep
+        )
     return
 
 
@@ -1354,9 +1418,9 @@ if __name__ == '__main__':
     arg_parser.add_argument('metamodel_file')
     arg_parser.add_argument('model_file')
     arg_parser.add_argument('location', default = './')
-    arg_parser.add_argument('output_file')
+    arg_parser.add_argument('output_name')
     arg_parser.add_argument('--max_iter', default = 100)
     arg_parser.add_argument('--recursion_limit', type = int, default = 0)
     # arg_parser.add_argument('--keep_names', action = 'store_true')
     args = arg_parser.parse_args()
-    dsl_to_haskell(args.metamodel_file, args.model_file, args.location, args.output_file, args.max_iter, args.recursion_limit)
+    dsl_to_haskell(args.metamodel_file, args.model_file, args.location, args.output_name, args.max_iter, args.recursion_limit)
