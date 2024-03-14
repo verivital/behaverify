@@ -24,15 +24,16 @@ class NeuralNetwork(nn.Module):
         return x
 
 # Define training data
-num_epochs = int(sys.argv[1])
-input_path = sys.argv[2]
-target_path = sys.argv[3]
-output_path = sys.argv[4]
-hidden_size_arg = int(sys.argv[5])
-hidden_count_arg = int(sys.argv[6])
-batches = max(int(sys.argv[7]), 1)
-print_rate = int(sys.argv[8]) if len(sys.argv) > 8 else 50
-save_rate = int(sys.argv[9]) if len(sys.argv) > 9 else 50
+input_path = sys.argv[1]
+target_path = sys.argv[2]
+output_path = sys.argv[3]
+hidden_size_arg = int(sys.argv[4])
+hidden_count_arg = int(sys.argv[5])
+num_epochs = int(sys.argv[6])
+learning_rate = float(sys.argv[7])
+batches = max(int(sys.argv[8]), 1)
+print_rate = int(sys.argv[9]) if len(sys.argv) > 9 else 50
+save_rate = int(sys.argv[10]) if len(sys.argv) > 10 else 50
 
 print('loading inputs')
 inputs = [[] for _ in range(batches)]
@@ -73,10 +74,11 @@ model = NeuralNetwork(input_size=4, hidden_size = hidden_size_arg, hidden_count 
 # Define loss function and optimizer
 criterion = nn.MSELoss()
 #optimizer = optim.SGD(model.parameters(), lr=0.01)
-optimizer = optim.SGD(model.parameters(), lr=1)
+optimizer = optim.SGD(model.parameters(), lr = learning_rate)
 
 print('starting training')
 # Training loop
+top_accuracies = [0 for _ in range(batches)]
 for epoch in range(num_epochs):
     # Forward pass
     batch = random.randrange(0, batches)
@@ -90,17 +92,18 @@ for epoch in range(num_epochs):
     true_labels = torch.argmax(targets[batch], dim=1)
     accuracy = torch.sum(predicted_labels == true_labels).item() / true_labels.size(0)
     if accuracy > .999:
+        print('attempting to break loop because of batch: ' + str(batch))
         legit = True
         for index in range(batches):
             cur_output = model(inputs[index])
             cur_predicted_labels = torch.argmax(cur_output, dim = 1)
             cur_true_labels = torch.argmax(targets[index], dim = 1)
             cur_accuracy = torch.sum(cur_predicted_labels == cur_true_labels).item() / cur_true_labels.size(0)
+            print('accuracy for batch: ' + str(index) + ' ==> ' + str(cur_accuracy))
             if cur_accuracy < .999:
                 legit = False
                 break
         if legit:
-            print(f'Epoch [{epoch}/{num_epochs}], Loss: {loss.item():.4f}, Accuracy: {accuracy:.4f}')
             break
 
     # Backward pass and optimization
@@ -109,7 +112,8 @@ for epoch in range(num_epochs):
     optimizer.step()
 
     if (epoch) % print_rate == 0:
-        print(f'Epoch [{epoch}/{num_epochs}], Loss: {loss.item():.4f}, Accuracy: {accuracy:.4f}')
+        print(f'Epoch [{epoch}/{num_epochs}], Loss: {loss.item():.4f}, Accuracy: {accuracy:.4f}, Previous Top Accuracy: {top_accuracies[batch]:.4f}')
+    top_accuracies[batch] = max(top_accuracies[batch], accuracy)
 
     if (epoch) % save_rate == 0:
         torch.save(model.state_dict(), output_path)
