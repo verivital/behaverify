@@ -80,6 +80,7 @@ print('starting training')
 for epoch in range(num_epochs):
     # Forward pass
     batch = random.randrange(0, batches)
+    print('batch: ' + str(batch))
     # batch = epoch % batches ## for the non-random version
     outputs = model(inputs[batch])
     loss = criterion(outputs, targets[batch])
@@ -89,8 +90,18 @@ for epoch in range(num_epochs):
     true_labels = torch.argmax(targets[batch], dim=1)
     accuracy = torch.sum(predicted_labels == true_labels).item() / true_labels.size(0)
     if accuracy > .999:
-        print(f'Epoch [{epoch}/{num_epochs}], Loss: {loss.item():.4f}, Accuracy: {accuracy:.4f}')
-        break
+        legit = True
+        for index in range(batches):
+            cur_output = model(inputs[index])
+            cur_predicted_labels = torch.argmax(cur_output, dim = 1)
+            cur_true_labels = torch.argmax(targets[index], dim = 1)
+            cur_accuracy = torch.sum(cur_predicted_labels == cur_true_labels).item() / cur_true_labels.size(0)
+            if cur_accuracy < .999:
+                legit = False
+                break
+        if legit:
+            print(f'Epoch [{epoch}/{num_epochs}], Loss: {loss.item():.4f}, Accuracy: {accuracy:.4f}')
+            break
 
     # Backward pass and optimization
     optimizer.zero_grad()
