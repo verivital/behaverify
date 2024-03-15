@@ -1,6 +1,6 @@
 import os
 from create_grid import create_grid
-from mass_basic_a_star import mass_a_star
+from basic_a_star import a_star
 
 def generate_sets(min_val, max_val, input_path):
     grid = create_grid(input_path, min_val, max_val)
@@ -14,8 +14,6 @@ def generate_sets(min_val, max_val, input_path):
     iteration = 0
     for start_x in range(min_val, max_val + 1):
         for start_y in range(min_val, max_val + 1):
-            grid_cost = mass_a_star(grid, min_val, max_val, (start_x, start_y))
-            print('Computed grid from ' + str((start_x, start_y)))
             for end_x in range(min_val, max_val + 1):
                 for end_y in range(min_val, max_val + 1):
                     if iteration % 100 == 0:
@@ -23,19 +21,7 @@ def generate_sets(min_val, max_val, input_path):
                     iteration = iteration + 1
                     if ((start_x, start_y), (end_x, end_y)) in seen_values:
                         continue
-                    if grid_cost[end_x][end_y]['cost'] == -1:
-                        path = []
-                    else:
-                        path = [(end_x, end_y)]
-                        try:
-                            while path[-1][0] != start_x or path[-1][1] != start_y:
-                                path.append(grid_cost[path[-1][0]][path[-1][1]]['from'])
-                        except:
-                            print(str((start_x, start_y)))
-                            print(str((end_x, end_y)))
-                            print(path)
-                            raise Exception
-                        path = list(reversed(path))
+                    path = a_star(grid, min_val, max_val, (start_x, start_y), (end_x, end_y))
                     if len(path) < 2:
                         no_action.add(((start_x, start_y), (end_x, end_y)))
                         seen_values.add(((start_x, start_y), (end_x, end_y)))
@@ -135,14 +121,10 @@ def simplify_set(cur_set):
 
 def generate_table(min_val, max_val, input_path, output_path):
     (left, right, up, down, no_action) = generate_sets(min_val, max_val, input_path)
-    print('--------------------')
-    print('no_action')
-    print(len(no_action))
     lines = []
     #for (cur_set, direction) in ((left, 'left'), (right, 'right'), (up, 'up'), (down, 'down'), (no_action, 'no_action')):
     for (cur_set, direction) in ((left, 'left'), (right, 'right'), (up, 'up'), (down, 'down')):
-        print('--------------------')
-        print(direction)
+        print('direction')
         new_set = simplify_set(cur_set)
         for (((min_s_x, min_s_y), (min_e_x, min_e_y)), ((max_s_x, max_s_y), (max_e_x, max_e_y))) in new_set:
             lines.append(

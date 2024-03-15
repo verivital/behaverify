@@ -1,0 +1,20 @@
+MODULE main
+    DEFINE
+	bruh := 1.1 * 1.2;
+	--comp1 := test * 1.5;
+	comp1 := floor(1.5);
+	--comp2 := test + 1.5;
+	comp2 := floor(2.5);
+	comp3 := comp1 * comp2;
+	-- test_change :=
+	--     case
+	-- 	comp1 > comp2 : 1;
+	-- 	TRUE : -1;
+	--     esac;
+	test_change := 1;
+    VAR
+	test : 0..5;
+	test2 : boolean;
+    ASSIGN
+	next(test) := max(0, min(5, test + test_change));
+	next(test2) := comp2 > comp1;
