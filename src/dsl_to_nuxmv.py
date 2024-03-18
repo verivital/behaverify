@@ -869,7 +869,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
             var_key = variable_reference(variable.name, is_local(variable), '')
             if is_local(variable):
                 continue  # this is handled below
-            if variable.model_as == 'NEURAL' and variable.domain == 'INT':
+            if variable.model_as == 'NEURAL':
                 behaverify_variables[variable.name]['existing_definitions'] = {}
                 depends_on = set()
                 domain_values = set()
@@ -889,89 +889,41 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
                     for (index, sub_key) in enumerate(behaverify_variables[var_key]['depends_on'])
                 }
                 define_substitutions[var_key] = 'SUBSTITUTE_SELF'
-                list_of_list_of_inputs = create_possible_values(behaverify_variables[var_key]['depends_on'])
                 file_prefix = model_file.rsplit('/', 1)[0] if '/' in model_file else '.'
                 source_func = build_meta_func(variable.source)
                 source_vals = source_func((constants, {}))
                 source = source_vals[0]
                 source = resolve_potential_reference_no_type(source, declared_enumerations, {}, variables, constants, {})[1]
                 source = file_prefix + '/' + source
-                session = onnxruntime.InferenceSession(source)
-                input_name = session.get_inputs()[0].name
-                cur_stage = []
-                for index in range(behaverify_variables[var_key]['array_size']):
-                    cur_stage.append((index, []))
-                for list_of_inputs in list_of_list_of_inputs:
-                    cur_ref = dict(list_of_inputs)
-                    current_input = []
-                    for (atom_class, atom) in input_order:
-                        if atom_class == 'VARIABLE':
-                            current_input.append(cur_ref[atom.name])
-                        else:
-                            current_input.append(atom)
-                    current_outputs = session.run(None, {input_name : [current_input]})
-                    condition = ' & '.join(['(' + define_substitutions[variable_reference(var_name, False, None)] + ' = ' + str(var_val) + ')' for (var_name, var_val) in list_of_inputs])
-                    for index in range(len(current_outputs[0][0])):
-                        output = int(current_outputs[0][0][index])
-                        cur_stage[index][1].append((condition, str(output)))
-                        domain_values.add(output)
-                for index in range(behaverify_variables[var_key]['array_size']):
-                    cur_stage[index][1].append(('TRUE', '66'))
-                behaverify_variables[var_key]['initial_value'] = (None, True, {index : False for index in range(behaverify_variables[var_key]['array_size'])}, cur_stage)
-                behaverify_variables[var_key]['custom_value_range'] = domain_values
-                behaverify_variables[var_key]['default_array_val'] = (False, [('TRUE', '66')])
-                continue  # don't do the other stuff for neural networks
-            if variable.model_as == 'NEURAL' and variable.domain == 'REAL':
-                behaverify_variables[variable.name]['existing_definitions'] = {}
-                depends_on = set()
-                domain_values = set()
-                input_order = []
-                for input_code in variable.inputs:
-                    input_func = build_meta_func_neural(input_code)
-                    variable_inputs = input_func((constants, {}))
-                    for variable_input in variable_inputs:
-                        (atom_class, atom) = resolve_potential_reference_no_type(variable_input, declared_enumerations, {}, variables, constants, {})
-                        if atom_class == 'VARIABLE':
-                            depends_on.add(variable_reference(atom.name, False, None))
-                        input_order.append((atom_class, atom))
-                depends_on.discard(var_key)
-                behaverify_variables[var_key]['depends_on'] = tuple(sorted(list(depends_on)))
-                define_substitutions = {
-                    sub_key : 'SUBSTITUTE_' + str(index) + '_ME'
-                    for (index, sub_key) in enumerate(behaverify_variables[var_key]['depends_on'])
-                }
-                define_substitutions[var_key] = 'SUBSTITUTE_SELF'
-                list_of_list_of_inputs = create_possible_values(behaverify_variables[var_key]['depends_on'])
-                file_prefix = model_file.rsplit('/', 1)[0]
-                source_func = build_meta_func(variable.source)
-                source_vals = source_func((constants, {}))
-                source = source_vals[0]
-                source = resolve_potential_reference_no_type(source, declared_enumerations, {}, variables, constants, {})[1]
-                source = file_prefix + '/' + source
-                session = onnxruntime.InferenceSession(source)
-                input_name = session.get_inputs()[0].name
-                cur_stage = []
-                for index in range(behaverify_variables[var_key]['array_size']):
-                    cur_stage.append((index, []))
-                for list_of_inputs in list_of_list_of_inputs:
-                    cur_ref = dict(list_of_inputs)
-                    current_input = []
-                    for (atom_class, atom) in input_order:
-                        if atom_class == 'VARIABLE':
-                            current_input.append(cur_ref[atom.name])
-                        else:
-                            current_input.append(atom)
-                    current_outputs = session.run(None, {input_name : [current_input]})
-                    condition = ' & '.join(['(' + define_substitutions[variable_reference(var_name, False, None)] + ' = ' + str(var_val) + ')' for (var_name, var_val) in list_of_inputs])
-                    for index in range(len(current_outputs[0][0])):
-                        output = int(current_outputs[0][0][index])
-                        cur_stage[index][1].append((condition, str(output)))
-                        domain_values.add(output)
-                for index in range(behaverify_variables[var_key]['array_size']):
-                    cur_stage[index][1].append(('TRUE', '66'))
-                behaverify_variables[var_key]['initial_value'] = (None, True, {index : False for index in range(behaverify_variables[var_key]['array_size'])}, cur_stage)
-                behaverify_variables[var_key]['custom_value_range'] = domain_values
-                behaverify_variables[var_key]['default_array_val'] = (False, [('TRUE', '66')])
+                if variable.table_mode == 'table':
+                    session = onnxruntime.InferenceSession(source)
+                    input_name = session.get_inputs()[0].name
+                    list_of_list_of_inputs = create_possible_values(behaverify_variables[var_key]['depends_on'])
+                    cur_stage = []
+                    for index in range(behaverify_variables[var_key]['array_size']):
+                        cur_stage.append((index, []))
+                    for list_of_inputs in list_of_list_of_inputs:
+                        cur_ref = dict(list_of_inputs)
+                        current_input = []
+                        for (atom_class, atom) in input_order:
+                            if atom_class == 'VARIABLE':
+                                current_input.append(cur_ref[atom.name])
+                            else:
+                                current_input.append(atom)
+                        current_outputs = session.run(None, {input_name : [current_input]})
+                        condition = ' & '.join(['(' + define_substitutions[variable_reference(var_name, False, None)] + ' = ' + str(var_val) + ')' for (var_name, var_val) in list_of_inputs])
+                        for index in range(len(current_outputs[0][0])):
+                            output = int(current_outputs[0][0][index])
+                            cur_stage[index][1].append((condition, str(output)))
+                            domain_values.add(output)
+                    for index in range(behaverify_variables[var_key]['array_size']):
+                        cur_stage[index][1].append(('TRUE', '66'))
+                    behaverify_variables[var_key]['initial_value'] = (None, True, {index : False for index in range(behaverify_variables[var_key]['array_size'])}, cur_stage)
+                    behaverify_variables[var_key]['custom_value_range'] = domain_values
+                    behaverify_variables[var_key]['default_array_val'] = (False, [('TRUE', '66')])
+                else:
+                    network_model = onnx.load(source)
+                    # RESUME WORK HERE.
                 continue  # don't do the other stuff for neural networks
             define_substitutions = None
             if variable.model_as == 'DEFINE':

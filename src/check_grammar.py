@@ -616,6 +616,7 @@ def validate_model(metamodel_file, model_file, recursion_limit):
         if variable.model_as == 'NEURAL':
             if not model.neural:
                 raise BTreeException(trace, 'Model configuration did not include \'neural\' but uses neural networks')
+            # INPUTS
             num_inputs = 0
             for input_code in variable.inputs:
                 variable_func = build_meta_func_neural(input_code)
@@ -627,16 +628,7 @@ def validate_model(metamodel_file, model_file, recursion_limit):
                     if atom_type != 'INT':
                         raise BTreeException(trace, 'Neural Network inputs must be of type INT')
                 num_inputs += len(input_variables)
-            output_func = build_meta_func(variable.num_outputs)
-            output_vals = output_func((constants, {}))
-            if len(output_vals) != 1:
-                raise BTreeException(trace, 'Neural Network output size must resolve to a single integer value. Received: ' + str(len(output_vals)))
-            num_outputs = output_vals[0]
-            (atom_class, atom_type, num_outputs) = resolve_potential_reference(num_outputs, declared_enumerations, all_node_names, variables, constants, {}, trace = trace)
-            if atom_class != 'CONSTANT':
-                raise BTreeException(trace, 'Neural Network output size must be a constant')
-            if atom_type != 'INT':
-                raise BTreeException(trace, 'Neural Network output size must be an INT')
+            # SOURCE
             file_prefix = model_file.rsplit('/', 1)[0] if '/' in model_file else '.'
             source_func = build_meta_func(variable.source)
             source_vals = source_func((constants, {}))
@@ -649,6 +641,35 @@ def validate_model(metamodel_file, model_file, recursion_limit):
             source = file_prefix + '/' + source
             if not isfile(source):
                 raise BTreeException(trace, 'Neural Network source: ' + source + ' is not a file')
+            # END OF COMMON
+            if variable.neural_mode == 'classification':
+                values = []
+                for domain_code in variable.domain_codes:
+                    domain_func = build_meta_func(domain_code)
+                    values.extend(domain_func((constants, {})))
+                if len(values) == 0:
+                    raise BTreeException(trace, 'Variable ' + variable.name + ' has an empty domain')
+                value_type = constant_type(values[0], declared_enumerations, trace = trace)
+                # if value_type not in {'ENUM', 'INT'}:
+                #     raise BTreeException(trace, 'Variable ' + variable.name + ' must be ENUM or INT (loop domain)')
+                if value_type not in {'ENUM'}:
+                    raise BTreeException(trace, 'Variable ' + variable.name + ' must be ENUM')
+                for value in values:
+                    cur_type = constant_type(value, declared_enumerations, trace = trace)
+                    if cur_type != value_type:
+                        raise BTreeException(trace, 'Variable ' + variable.name + ' has multiple types (cannot use reals here): ' + value_type + ', ' + cur_type)
+                num_outputs = len(values)
+            else:
+                output_func = build_meta_func(variable.num_outputs)
+                output_vals = output_func((constants, {}))
+                if len(output_vals) != 1:
+                    raise BTreeException(trace, 'Neural Network output size must resolve to a single integer value. Received: ' + str(len(output_vals)))
+                num_outputs = output_vals[0]
+                (atom_class, atom_type, num_outputs) = resolve_potential_reference(num_outputs, declared_enumerations, all_node_names, variables, constants, {}, trace = trace)
+                if atom_class != 'CONSTANT':
+                    raise BTreeException(trace, 'Neural Network output size must be a constant')
+                if atom_type != 'INT':
+                    raise BTreeException(trace, 'Neural Network output size must be an INT')
             try:
                 session = onnxruntime.InferenceSession(source)
                 input_name = session.get_inputs()[0].name

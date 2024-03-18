@@ -1,0 +1,18 @@
+MODULE main
+    VAR
+	test : -15..15;
+	test2 : boolean;
+    FROZENVAR
+	const_2 : -15..15;
+	const_3 : -15..15;
+    DEFINE
+	bro := 0sd13_1000;
+	bro2 := 0sd13_1001;
+	bro3 := bro * bro2;
+	bro4 := bro2 << 1;
+	bro5 := bro2 >> 1;
+    ASSIGN
+	init(const_2) := 5;
+	init(const_3) := -13;
+	init(test) := const_3 mod const_2; --this fails with commands go_msat msat_pick_state, though it is explicitly called out as being non-existant.
+	init(test2) := toint(bro3) > test;

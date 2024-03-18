@@ -190,7 +190,7 @@ def dummy_value(arg_type, declared_enumerations, trace = None):
 def variable_type(variable, declared_enumerations, constants, trace = None):
     '''Used to determine the variable type'''
     if variable.model_as == 'NEURAL':
-        return 'INT'
+        return 'ENUM' if variable.neural_mode == 'classification' else 'INT'
     if variable.model_as == 'DEFINE':
         return variable.domain
     if variable.domain.boolean is not None:
