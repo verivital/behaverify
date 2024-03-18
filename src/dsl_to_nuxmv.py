@@ -3,8 +3,9 @@ This module is part of BehaVerify and used to convert .tree files to .smv files 
 
 
 Author: Serena Serafina Serbinowska
-Last Edit: 2024-02-27
+Last Edit: 2024-03-18
 '''
+import math
 import argparse
 import pprint
 import os
@@ -15,7 +16,7 @@ from serene_functions import build_meta_func
 from serene_functions_neural import build_meta_func as build_meta_func_neural
 from check_grammar import validate_model
 
-from behaverify_common import create_node_name, create_node_template, create_variable_template, indent, is_local, is_array, handle_constant_or_reference, handle_constant_or_reference_no_type, resolve_potential_reference_no_type, variable_array_size, get_min_max
+from behaverify_common import create_node_name, create_node_template, create_variable_template, indent, is_local, is_array, handle_constant_or_reference, handle_constant_or_reference_no_type, resolve_potential_reference_no_type, variable_array_size, get_min_max, BTreeException
 
 # a NEXT_VALUE is defined as a triple (node_name, non_determinism, STAGE)
 # node_name is a string representing the node where this update happens or none if it's environmental
@@ -799,6 +800,41 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
                 domain_values = possible_values_from_assign(var_obj.assign, list_of_list_of_inputs, {})
             variable['custom_value_range'] = domain_values
             return
+        def weird_float_binary(value):
+            negative = value < 0
+            value = value * -1 if negative else value
+            integer_value = int(value)
+            decimal_value = value % 1
+            x = int(math.log2(value))
+            binary_string = ''
+            while x >= 0:
+                cur_val = 2**x
+                if cur_val <= integer_value:
+                    binary_string = binary_string + '1'
+                    integer_value = integer_value - cur_val
+                else:
+                    binary_string = binary_string + '0'
+                x = x -1
+            x = -1
+            while decimal_value > 0 and len(binary_string) < 31:
+                cur_val = 2**x
+                if not (cur_val > 0):
+                    break
+                if cur_val <= decimal_value:
+                    binary_string = binary_string + '1'
+                    integer_value = integer_value - cur_val
+                else:
+                    binary_string = binary_string + '0'
+                x = x -1
+            x = x + 1 # compensate for the fact that the last value of x wasn't actually used.
+            # now we remove trailing zeros to shrink size, and adjust our modifier accordingly.
+            while len(binary_string) > 0 and binary_string[-1] == '0':
+                binary_string = binary_string[0:-1]
+                x = x + 1
+            if len(binary_string) == 0:# if our trimming trimmed everything, add a thing.
+                binary_string = '0'
+                x = 0
+            return (negative, binary_string, x)
 
         # create each variable type using the template.
         nonlocal behaverify_variables  # this is necessary right now because we need to be able to access already created variables during other variable initializations.
@@ -807,7 +843,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
         behaverify_variables = {
             variable_reference(variable.name, False, '') :
             (
-                create_variable_template(variable.name, 'DEFINE', variable_array_size(variable, {}, {}, {}, constants, {}), None, None, None, [], True, True)
+                create_variable_template(variable.name, 'DEFINE', variable_array_size(variable, {}, {}, {}, constants, {}) if variable.neural_mode == 'regresion' else None, None, None, None, [], True, True)
                 if variable.model_as == 'NEURAL' else
                 (
                     create_variable_template(variable.name, variable.model_as, variable_array_size(variable, {}, {}, {}, constants, {}) if is_array(variable) else None, None, None, None, [], True, True)
@@ -865,6 +901,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
             )
             for variable in model.variables if is_local(variable)
         }
+        default_bit_length = '128'
         for variable in model.variables:
             var_key = variable_reference(variable.name, is_local(variable), '')
             if is_local(variable):
@@ -884,18 +921,18 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
                         input_order.append((atom_class, atom))
                 depends_on.discard(var_key)
                 behaverify_variables[var_key]['depends_on'] = tuple(sorted(list(depends_on)))
-                define_substitutions = {
-                    sub_key : 'SUBSTITUTE_' + str(index) + '_ME'
-                    for (index, sub_key) in enumerate(behaverify_variables[var_key]['depends_on'])
-                }
-                define_substitutions[var_key] = 'SUBSTITUTE_SELF'
                 file_prefix = model_file.rsplit('/', 1)[0] if '/' in model_file else '.'
                 source_func = build_meta_func(variable.source)
                 source_vals = source_func((constants, {}))
                 source = source_vals[0]
                 source = resolve_potential_reference_no_type(source, declared_enumerations, {}, variables, constants, {})[1]
                 source = file_prefix + '/' + source
-                if variable.table_mode == 'table':
+                if variable.table_mode == 'table': # fix this! isn't doing classification ever.
+                    define_substitutions = {
+                        sub_key : 'SUBSTITUTE_' + str(index) + '_ME'
+                        for (index, sub_key) in enumerate(behaverify_variables[var_key]['depends_on'])
+                    }
+                    define_substitutions[var_key] = 'SUBSTITUTE_SELF'
                     session = onnxruntime.InferenceSession(source)
                     input_name = session.get_inputs()[0].name
                     list_of_list_of_inputs = create_possible_values(behaverify_variables[var_key]['depends_on'])
@@ -922,8 +959,237 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
                     behaverify_variables[var_key]['custom_value_range'] = domain_values
                     behaverify_variables[var_key]['default_array_val'] = (False, [('TRUE', '66')])
                 else:
+                    # signed owrd conversion doesn't work in nuXmv. Do it manually.
+                    input_layers = [input_layer.name for input_layer in model.graph.input]
+                    if len(input_layers) > 1:
+                        raise BTreeException([], 'Too many input layers!')
+                    input_layer_name = input_layers[0].lower().replace('.', '_')
+                    for (index, (atom_class, atom)) in enumerate(input_order):
+                        input_name = var_key + '___' + input_layer_name + '___value___' + str(index)
+                        behaverify_variables[input_name] = create_variable_template(input_name, 'DEFINE', None, None, None, None, [], True, True)
+                        if atom_class == 'VARIBALE':
+                            original_name = variable_reference(atom_class.name, False, None)
+                            fix_domain_of_variable(variable_reference(atom_class.name, False, None))
+                            behaverify_variables[input_name]['min_val'] = behaverify_variables[original_name]['min_val']
+                            behaverify_variables[input_name]['max_val'] = behaverify_variables[original_name]['max_val']
+                            behaverify_variables[input_name]['custom_value_range'] = behaverify_variables[original_name]['custom_value_range']
+                            behaverify_variables[input_name]['depends_on'] = (original_name, )
+                            behaverify_variables[input_name]['existing_definitions'] = {}
+                            original_domain = (
+                                range(behaverify_variables[original_name]['min_val'], behaverify_variables[original_name]['max_val'] + 1)
+                                if behaverify_variables[original_name]['min_val'] is not None else
+                                behaverify_variables[original_name]['custom_value_range'] # this is still a set right now
+                            )
+                            behaverify_variables[input_name]['initial_value'] = (None, False,
+                                                                                 [
+                                                                                     ('SUBSTITUTE_0_ME = ' + str(domain_value), 'swconst(' + str(domain_value) + ', ' + default_bit_length + ')')
+                                                                                     for domain_value in original_domain
+                                                                                 ]
+                                                                                 )
+                        else:
+                            behaverify_variables[input_name]['min_val'] = atom
+                            behaverify_variables[input_name]['max_val'] = atom
+                            behaverify_variables[input_name]['custom_value_range'] = set(atom)
+                            behaverify_variables[input_name]['depends_on'] = () #empty tuple
+                            behaverify_variables[input_name]['existing_definitions'] = {}
+                            behaverify_variables[input_name]['initial_value'] = (None, False, [('TRUE', 'swconst(' + str(atom) + ', ' + default_bit_length + ')')])
+                        input_name_float = var_key + '___' + input_layer_name + '___float___' + str(index)
+                        behaverify_variables[input_name_float] = create_variable_template(input_name, 'DEFINE', None, None, None, None, [], True, True)
+                        behaverify_variables[input_name_float]['min_val'] = 0
+                        behaverify_variables[input_name_float]['max_val'] = 0
+                        behaverify_variables[input_name_float]['custom_value_range'] = {0}
+                        behaverify_variables[input_name_float]['depends_on'] = () #empty tuple
+                        behaverify_variables[input_name_float]['existing_definitions'] = {}
+                        behaverify_variables[input_name_float]['initial_value'] = (None, False, [('TRUE', '0sd' + default_bit_length + '_0')])
+                    # we have now fixed the inputs because signed word conversion doesn't actually work in nuXmv.
                     network_model = onnx.load(source)
-                    # RESUME WORK HERE.
+                    value_info = {}
+                    known_sizes = {var_key + '___' + input_layer_name : len(input_order)}
+                    # store weight info. we will use it later.
+                    for initializer in model.graph.initializer:
+                        value_name = var_key + '___' + initializer.name.lower().replace('.', '_')
+                        value_info[value_name] = initializer
+                    # examine each layer, make relevant variables.
+                    for network_node in network_model.graph.node:
+                        if network_node.op_type not in {'Relu', 'Gemm'}:
+                            raise BTreeException([], 'Network is not being converted to table but has operation other than Relu or Gemm: ' + network_node.op_type)
+                        if len(network_node.output) != 1:
+                            raise BTreeException([], 'Expected 1 output from each layer (note: can have multiple outputs in the form of an array), got: ' + str(network_node.output))
+                        layer_name = var_key + '___' + network_node.output[0].lower().replace('.', '_')
+                        if network_node.op_type == 'Relu':
+                            input_name = var_key + '___' + network_node.input[0].lower().replace('.', '_')
+                            known_sizes[layer_name] = known_sizes[var_key + '___' + network_node.input[0].lower().replace('.', '_')]
+                            for index in range(known_sizes[layer_name]):
+                                cur_output_name = layer_name + '___value___' + str(index)
+                                cur_input_name = input_name + '___value___' + str(index)
+                                behaverify_variables[cur_output_name] = create_variable_template(input_name, 'DEFINE', None, None, None, None, [], True, True)
+                                behaverify_variables[cur_output_name]['depends_on'] = (cur_input_name, )
+                                behaverify_variables[cur_output_name]['existing_definitions'] = {}
+                                behaverify_variables[cur_output_name]['initial_value'] = (None, False, [('TRUE', 'max(0sd' + default_bit_length + '_0, SUBSTITUTE_0_ME)')])
+                                cur_output_name = layer_name + '___float___' + str(index)
+                                cur_input_name = input_name + '___float___' + str(index)
+                                behaverify_variables[cur_output_name] = create_variable_template(input_name, 'DEFINE', None, None, None, None, [], True, True)
+                                behaverify_variables[cur_output_name]['depends_on'] = (cur_input_name, )
+                                behaverify_variables[cur_output_name]['existing_definitions'] = {}
+                                behaverify_variables[cur_output_name]['initial_value'] = (None, False, [('TRUE', 'SUBSTITUTE_0_ME')])
+                        elif network_node.op_type == 'Gemm':
+                            input_name = var_key + '___' + network_node.input[0].lower().replace('.', '_')
+                            weight_name = var_key + '___' + network_node.input[1].lower().replace('.', '_')
+                            bias_name = var_key + '___' + network_node.input[2].lower().replace('.', '_')
+                            known_sizes[layer_name] = value_info[weight_name].dims[1] # Input * Weight + Biases, so can use either Weight or Biases for size of output.
+                            bias_values = onnx.numpy_helper.to_array(value_info[bias_name])
+                            weight_values = onnx.numpy_helper.to_array(value_info[weight_name])
+                            dep_float_tuple = tuple(sorted([input_name + '___value___' + str(index) for index in known_sizes[input_name]] + [input_name + '___float___' + str(index) for index in known_sizes[input_name]]))
+                            define_sub_float = {
+                                sub_key : 'SUBSTITUTE_' + str(index) + '_ME'
+                                for (index, sub_key) in enumerate(dep_float_tuple)
+                            }
+                            for index in range(known_sizes[layer_name]):
+                                cur_bias_value = weird_float_binary(bias_values[index])
+                                cur_weight_values = list(map(weird_float_binary, weight_values[index]))
+                                cur_output_float_name = layer_name + '___float___' + str(index)
+                                behaverify_variables[cur_output_float_name] = create_variable_template(input_name, 'DEFINE', None, None, None, None, [], True, True)
+                                behaverify_variables[cur_output_float_name]['depends_on'] = dep_float_tuple
+                                behaverify_variables[cur_output_float_name]['existing_definitions'] = {}
+                                dep_value_tuple = tuple(sorted(list(dep_float_tuple).append(cur_output_float_name)))
+                                cur_output_value_name = layer_name + '___value___' + str(index)
+                                behaverify_variables[cur_output_value_name] = create_variable_template(input_name, 'DEFINE', None, None, None, None, [], True, True)
+                                behaverify_variables[cur_output_value_name]['depends_on'] = dep_value_tuple
+                                behaverify_variables[cur_output_value_name]['existing_definitions'] = {}
+                                define_sub_value = {
+                                    sub_key : 'SUBSTITUTE_' + str(index) + '_ME'
+                                    for (index, sub_key) in enumerate(dep_value_tuple)
+                                }
+                                # now we have to calculate how much to slide all of this.
+                                float_start_string = ''
+                                float_end_string = ''
+                                value_string = ''
+                                for weight_index in range(len(cur_weight_values)):
+                                    float_substring = '(' + define_sub_float[input_name + '___float___' + str(weight_index)] + ' + (' + str(cur_weight_values[weight_index][2]) + ')'
+                                    float_start_string += 'min(' + define_sub_float[input_name + '___float___' + str(weight_index)] + ' + (' + str(cur_weight_values[weight_index][2]) + '), '
+                                    float_end_string += ')'
+                                    float_substring = '(' + define_sub_value[input_name + '___float___' + str(weight_index)] + ' + (' + str(cur_weight_values[weight_index][2]) + ')'
+                                    value_substring = '(' + define_sub_value[input_name + '___value___' + str(weight_index)] + ' * (' + (('swconst(-1, ' + default_bit_length + ') * ') if cur_weight_values[weight_index][0] else '') + '0sb' + default_bit_length + '_' + cur_weight_values[weight_index][1] + '))'
+                                    value_string += (
+                                        '('
+                                        + '(' + float_substring + ' > ' + define_sub_value[cur_output_float_name] + ')'
+                                        + ' ? '
+                                        + '(' + value_substring + ' << (' + float_substring + ' - ' + define_sub_value[cur_output_float_name] + '))'
+                                        + ' : '
+                                        + value_substring
+                                        + ') + '
+                                    )
+                                float_string = float_start_string + str(cur_bias_value[2]) + float_end_string
+                                value_substring = '(' + (('swconst(-1, ' + default_bit_length + ') * ') if cur_bias_value[0] else '') + '0sb' + default_bit_length + '_' + cur_bias_value[1] + ')'
+                                value_string += (
+                                    '('
+                                    + '(' + '(' + str(cur_bias_value[2]) + ')' + ' > ' + define_sub_value[cur_output_float_name] + ')'
+                                    + ' ? '
+                                    + '(' + value_substring + ' << (' + float_substring + ' - ' + define_sub_value[cur_output_float_name] + '))'
+                                    + ' : '
+                                    + value_substring
+                                    + ')'
+                                )
+                                behaverify_variables[cur_output_float_name]['initial_value'] = (None, False, [('TRUE', float_string)])
+                                behaverify_variables[cur_output_value_name]['initial_value'] = (None, False, [('TRUE', value_string)])
+                    # we have now created all of the variables in the network.
+                    if variable.neural_mode == 'classification':
+                        output_layers = [output_layer.name for output_layer in model.graph.output]
+                        if len(output_layers) > 1:
+                            raise BTreeException([], 'Too many output layers!')
+                        output_layer_name = output_layers[0].lower().replace('.', '_')
+                        output_name = var_key + '___' + output_layer_name
+                        cur_output_float_name = layer_name + '___FINAL_float'
+                        behaverify_variables[cur_output_float_name] = create_variable_template(input_name, 'DEFINE', None, None, None, None, [], True, True)
+                        behaverify_variables[cur_output_float_name]['depends_on'] = tuple(sorted([output_name + '___float___' + str(index) for index in known_sizes[output_name]]))
+                        behaverify_variables[cur_output_float_name]['existing_definitions'] = {}
+                        define_sub_float = {
+                            sub_key : 'SUBSTITUTE_' + str(index) + '_ME'
+                            for (index, sub_key) in enumerate(behaverify_variables[cur_output_float_name]['depends_on'])
+                        }
+                        cur_output_value_name = layer_name + '___FINAL_value'
+                        behaverify_variables[cur_output_value_name] = create_variable_template(input_name, 'DEFINE', None, None, None, None, [], True, True)
+                        behaverify_variables[cur_output_value_name]['depends_on'] = tuple(
+                            sorted(
+                                (
+                                    [output_name + '___float___' + str(index) for index in known_sizes[output_name]]
+                                    + [output_name + '___value___' + str(index) for index in known_sizes[output_name]]
+                                    + [cur_output_float_name]
+                                )
+                            )
+                        )
+                        behaverify_variables[cur_output_value_name]['existing_definitions'] = {}
+                        define_sub_value = {
+                            sub_key : 'SUBSTITUTE_' + str(index) + '_ME'
+                            for (index, sub_key) in enumerate(behaverify_variables[cur_output_value_name]['depends_on'])
+                        }
+                        float_start_string = ''
+                        float_end_string = ''
+                        value_start_string = ''
+                        value_end_string = ''
+                        for index in range(known_sizes[output_name] - 1):
+                            float_start_string += 'min(' + define_sub_float[output_name + '___float___' + str(index)] + ', '
+                            float_end_string += ')'
+                            value_start_string += (
+                                'max('
+                                + '(' + define_sub_value[output_name + '___float___' + str(index)] + ' > ' + define_sub_value[cur_output_float_name] + ')'
+                                + ' ? '
+                                + '(' + define_sub_value[output_name + '___value___' + str(index)] + ' << (' + define_sub_value[output_name + '___float___' + str(index)] + ' - ' + define_sub[cur_output_float_name] + '))'
+                                + ' : '
+                                + define_sub_value[output_name + '___value___' + str(index)]
+                                + '), '
+                            )
+                            value_end_string += ')'
+                        float_string = float_start_string + define_sub[output_name + '___float___' + str(known_sizes[output_name] - 1)] + float_end_string
+                        value_string = (
+                            value_start_string
+                            + (
+                                '('
+                                + '(' + define_sub_value[output_name + '___float___' + str(known_sizes[output_name] - 1)] + ' > ' + define_sub_value[cur_output_float_name] + ')'
+                                + ' ? '
+                                + '(' + define_sub_value[output_name + '___value___' + str(known_sizes[output_name] - 1)] + ' << (' + define_sub_value[output_name + '___float___' + str(known_sizes[output_name] - 1)] + ' - ' + define_sub[cur_output_float_name] + '))'
+                                + ' : '
+                                + define_sub_value[output_name + '___value___' + str(known_sizes[output_name] - 1)]
+                                + ')'
+                            )
+                            + value_end_string
+                        )
+                        behaverify_variables[cur_output_float_name]['initial_value'] = (None, False, [('TRUE', float_string)])
+                        behaverify_variables[cur_output_value_name]['initial_value'] = (None, False, [('TRUE', value_string)])
+                        behaverify_variables[var_key]['depends_on'] = tuple(
+                            sorted(
+                                (
+                                    [output_name + '___float___' + str(index) for index in known_sizes[output_name]]
+                                    + [output_name + '___value___' + str(index) for index in known_sizes[output_name]]
+                                    + [cur_output_float_name, cur_output_value_name]
+                                )
+                            )
+                        )
+                        define_sub = {
+                            sub_key : 'SUBSTITUTE_' + str(index) + '_ME'
+                            for (index, sub_key) in enumerate(behaverify_variables[var_key]['depends_on'])
+                        }
+                        values = []
+                        for domain_code in variable.domain_codes:
+                            domain_func = build_meta_func(domain_code)
+                            values.extend(domain_func((constants, {})))
+                        if len(values) != known_sizes[output_name]:
+                            raise BTreeException([], 'Output size and listed domains do not match')
+                        behaverify_variables[var_key]['existing_definitions'] = {}
+                        behaverify_variables[var_key]['initial_value'] = (None, False, [
+                            (
+                                define_sub[cur_output_value_name]
+                                + ' = ('
+                                + define_sub[output_name + '___value___' + str(index)]
+                                + ' << (' + define_sub[output_name + '___float___' + str(index)] + ' - ' + define_sub[cur_output_float_name] + ')'
+                                + ')'
+                                ,
+                                values[index]
+                            )
+                            for index in range(len(values))
+                            ])
+                    else:
+                        raise BTreeException([], 'Cannot have a regression network in nuXmv without using table')
                 continue  # don't do the other stuff for neural networks
             define_substitutions = None
             if variable.model_as == 'DEFINE':

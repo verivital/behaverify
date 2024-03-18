@@ -1,0 +1,11 @@
+MODULE main
+    DEFINE
+	nah := 2;
+	nah2 := signed word[5] (2);
+    VAR
+	hey : signed word[5];
+	--nah : 0..5;
+    ASSIGN
+	init(hey) := swconst(3, 5);
+	--next(hey) := signed word[5] (2);
+	next(hey) := nah2;
