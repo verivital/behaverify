@@ -1,0 +1,9 @@
+MODULE main
+    DEFINE
+	bruh := 100000;
+	bruh2 := 100000;
+	bruh3 := bruh * bruh2;
+    VAR
+	meh : boolean;
+    ASSIGN
+	meh := bruh3 > bruh2;

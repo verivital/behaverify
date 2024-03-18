@@ -1,0 +1,7 @@
+MODULE main
+    VAR
+	meh : signed word[4];
+	meh2 : signed word[5];
+    ASSIGN
+	init(meh) := swconst(2, 4);
+	init(meh2) := resize(meh, 5);

@@ -1,8 +1,10 @@
+import sys
 import onnx
 import numpy as np
 
 # Load the ONNX model
-model = onnx.load("32_001.onnx")
+#model = onnx.load("32_001.onnx")
+model = onnx.load(sys.argv[1])
 
 # Print the basic information about the model
 print(onnx.helper.printable_graph(model.graph))

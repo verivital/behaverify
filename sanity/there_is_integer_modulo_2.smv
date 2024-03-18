@@ -2,6 +2,9 @@ MODULE main
     VAR
 	test : -15..15;
 	test2 : boolean;
+	meh : boolean;
+	meh2 : boolean;
+	hey : signed word[13];
     FROZENVAR
 	const_2 : -15..15;
 	const_3 : -15..15;
@@ -11,8 +14,21 @@ MODULE main
 	bro3 := bro * bro2;
 	bro4 := bro2 << 1;
 	bro5 := bro2 >> 1;
+	bro6 := 1003;
+	--bro7 := signed word[13] (1003); --this failes
+	bro7 := swconst(bro6, 13);
+	-- bro8 := bro7 * swconst(2, 13) + bro;
+	--nbro1 := swconst(const_2, 13); -- illegal, can't use variable in this
+	--nbro2 := swconst(const_3, 13);
+	nbro3 := signed word[13] (const_2);
+	nbro4 := signed word[13] (const_3);
+	bruh := nbro3 > nbro4;
     ASSIGN
 	init(const_2) := 5;
 	init(const_3) := -13;
 	init(test) := const_3 mod const_2; --this fails with commands go_msat msat_pick_state, though it is explicitly called out as being non-existant.
 	init(test2) := toint(bro3) > test;
+	init(meh) := bro7 > bro;
+	--init(meh2) := nbro1 > nbro2;
+	--init(meh2) := bruh;
+	hey := nbro3;
