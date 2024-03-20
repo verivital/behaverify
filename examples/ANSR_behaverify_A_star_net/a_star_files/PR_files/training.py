@@ -1,7 +1,8 @@
 '''
 Created by Preston
 '''
-
+import sys
+import time
 from dataset_astar import AStarDataset
 from torch.utils.data import DataLoader
 import torch
@@ -17,7 +18,7 @@ class NeuralNetwork(nn.Module):
         super(NeuralNetwork, self).__init__()
         self.hidden_layers = nn.ModuleList()
         self.hidden_layers.append(nn.Linear(input_size, hidden_size))
-        for _ in range(hidden_count):  # 30 hidden layers
+        for _ in range(hidden_count - 1):
             self.hidden_layers.append(nn.Linear(hidden_size, hidden_size))
         self.output_layer = nn.Linear(hidden_size, output_size)
         self.relu = nn.ReLU()
@@ -51,8 +52,10 @@ def train(model, train_loader, criterion, optimizer, device):
     model.train()
     total_loss = 0
     for inputs, targets in train_loader:
+        if SLEEP_MODE:
+            time.sleep(.005)
         inputs, targets = inputs.to(device), targets.to(device)
-        optimizer.zero_grad() 
+        optimizer.zero_grad()
         outputs = model(inputs)
         loss = criterion(outputs, targets)
         loss.backward()
@@ -72,7 +75,7 @@ def main():
     os.makedirs(c.save_path, exist_ok=True)
     #
     # Load dataset
-    # 
+    #
     dataset = AStarDataset(c.input_path, c.target_path)
     dataloader = DataLoader(dataset, batch_size=c.batch_size, shuffle=True)
     #
@@ -92,7 +95,7 @@ def main():
         #
         # Test
         #
-        if epoch % c.log_freq == 0: 
+        if epoch % c.log_freq == 0:
             accuracy = test(model, dataloader, device)
             print(f"[{epoch}/{c.num_epochs}] Accuracy: {accuracy:.4f} \t Loss: {loss:.4f}")
             torch.save(model, os.path.join(c.save_path, c.save_name+".pth"))
@@ -120,5 +123,79 @@ def main():
 
     print("\n\n------------------------------------- Finished Training -------------------------------------------\n\n")
 
+
+def resume_training():
+    """
+    Main
+    """
+    #
+    # Check device
+    #
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    print(f"\n\nUsing device: {device}\n\n")
+    os.makedirs(c.save_path, exist_ok=True)
+    #
+    # Load dataset
+    #
+    dataset = AStarDataset(c.input_path, c.target_path)
+    dataloader = DataLoader(dataset, batch_size=c.batch_size, shuffle=True)
+    print(len(dataloader))
+    #
+    # Setup hyperparameters
+    #
+    model = torch.load(os.path.join(c.save_path, c.save_name+".pth"))
+    #model = NeuralNetwork(c.input_size, c.hidden_size, c.hidden_count, c.output_size).to(device)
+    #model.load_state_dict(torch.load(os.path.join(c.save_path, c.save_name+".pth")))
+    criterion = nn.CrossEntropyLoss()
+    optimizer = optim.Adam(model.parameters(), lr=c.lr)
+    #
+    # RUN
+    #
+    for epoch in range(c.num_epochs):
+        #
+        # Train
+        #
+        loss = train(model, dataloader, criterion, optimizer, device)
+        #
+        # Test
+        #
+        if epoch % c.log_freq == 0:
+            accuracy = test(model, dataloader, device)
+            print(f"[{epoch}/{c.num_epochs}] Accuracy: {accuracy:.4f} \t Loss: {loss:.4f}")
+            torch.save(model, os.path.join(c.save_path, c.save_name+".pth"))
+
+    #
+    # Save the model
+    #
+    print("\n\n Finished Training. Saving models ..................................................")
+    torch.save(model, os.path.join(c.save_path, c.save_name+".pth"))
+    #
+    # Convert to onnx and save --> need to fix
+    #
+    model.eval()
+    dummy_input = torch.randn(1, c.input_size).to(device)  # Adjust the dummy input as per your model's requirement
+    torch.onnx.export(model,
+                      dummy_input,
+                      os.path.join(c.save_path, c.save_name + ".onnx"),
+                      export_params=True,
+                      opset_version=11,
+                      do_constant_folding=True,
+                      input_names=['input'],
+                      output_names=['output'],
+                      dynamic_axes={'input': {0: 'batch_size'},
+                                    'output': {0: 'batch_size'}})
+
+    print("\n\n------------------------------------- Finished Training -------------------------------------------\n\n")
+SLEEP_MODE = False
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) == 2:
+        if sys.argv[1] == '0':
+            SLEEP_MODE = True
+            main()
+        elif sys.argv[1] == '1':
+            resume_training()
+        elif sys.argv[1] == '2':
+            SLEEP_MODE = True
+            resume_training()
+    else:
+        main()

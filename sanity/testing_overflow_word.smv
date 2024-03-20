@@ -1,0 +1,10 @@
+MODULE main
+    DEFINE
+	bruh := 0sd128_9223372036854775808;
+	bruh2 := -0sd128_9223372036854775808;
+	bruh3 := bruh * bruh2;
+	bruh4 := bruh3 >> 64;
+    VAR
+	meh : boolean;
+    ASSIGN
+	meh := bruh2 > bruh3;
