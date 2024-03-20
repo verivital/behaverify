@@ -140,11 +140,11 @@ node:
     (
       (model_as = 'NEURAL'
         (
-          (neural_mode = 'classification' '{' domain_codes += code_statement[','] '}' '{' inputs += code_statement[','] '}' ('end_inputs')?)
+          (neural_mode = 'classification' '{' domain_codes += code_statement[','] '}' 'inputs' '{' inputs += code_statement[','] '}' ('end_inputs')?)
 	  |
 	  (neural_mode = 'regression' ((domain = 'INT') | (domain = 'REAL')) 'inputs' '{' inputs += code_statement[','] '}' ('end_inputs')? 'num_outputs' '{' num_outputs = code_statement '}' ('end_num_outputs')?)
         )
-        table_mode = 'table'
+        (table_mode = 'table')?
 	'source' '{' source = code_statement '}' ('end_source')?
       )
       |
