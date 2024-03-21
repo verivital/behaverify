@@ -32,3 +32,9 @@ def create_grid(file_name, min_val, max_val):
             for y_mod in range(obs_size + 1):
                 grid[max(min_val, obs_x - x_mod)][max(min_val, obs_y - y_mod)] = 1
     return grid
+
+
+if __name__ == '__main__':
+    import sys
+    grid = create_grid(sys.argv[1], int(sys.argv[2]), int(sys.argv[3]))
+    print(grid[49][49])

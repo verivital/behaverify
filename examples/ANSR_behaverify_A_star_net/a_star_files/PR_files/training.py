@@ -99,6 +99,8 @@ def main():
             accuracy = test(model, dataloader, device)
             print(f"[{epoch}/{c.num_epochs}] Accuracy: {accuracy:.4f} \t Loss: {loss:.4f}")
             torch.save(model, os.path.join(c.save_path, c.save_name+".pth"))
+            if accuracy == 1.0:
+                break
 
     #
     # Save the model
@@ -163,6 +165,8 @@ def resume_training():
             accuracy = test(model, dataloader, device)
             print(f"[{epoch}/{c.num_epochs}] Accuracy: {accuracy:.4f} \t Loss: {loss:.4f}")
             torch.save(model, os.path.join(c.save_path, c.save_name+".pth"))
+            if accuracy == 1.0:
+                break
 
     #
     # Save the model

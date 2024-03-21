@@ -5,7 +5,7 @@ It contains a variety of utility functions.
 
 
 Author: Serena Serafina Serbinowska
-Last Edit: 2024-03-11
+Last Edit: 2024-03-21
 '''
 import argparse
 import os
@@ -212,7 +212,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
         )
 
     def format_variable(variable, misc_args):
-        return format_variable_name_only(variable, misc_args) + ('()' if variable.model_as == 'DEFINE' and variable.static != 'static' else '')
+        return format_variable_name_only(variable, misc_args) + ('()' if variable.model_as in ('DEFINE', 'NEURAL') and variable.static != 'static' else '')
 
     def handle_atom(code, misc_args):
         try:
@@ -470,15 +470,16 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
         return (variable_assignment(variable, handle_assign(variable_statement.assign, misc_args), misc_args, array_mode = False) if assign_to_var else handle_assign(variable_statement.assign, misc_args))
 
     def create_neural_network(variable, misc_args):
-        file_prefix = model_file.rsplit('/', 1)[0]  # this points to the folder where the model file is
+        file_prefix = os.path.split(model_file)[0]  # this points to the folder where the model file is
+        if file_prefix == '':
+            file_prefix = '.'
         source_func = build_meta_func(variable.source)
         source_vals = source_func((constants, {}))
         source = source_vals[0]
         source = resolve_potential_reference_no_type(source, declared_enumerations, {}, variables, constants, {})[1]  # this points to the neural network.
-        if '/' in source:
-            source_prefix = source.rsplit('/', 1)[0]  # this points to the folder the neural network is in, relative to the model file.
-            if not os.path.exists(write_location + source_prefix):
-                os.makedirs(write_location + source_prefix)  # we have now ensured that relative to where we are outputting, the appropriate file structure for the network exists
+        source_prefix = os.path.split(source)[0]  # source_prefix points to the folder the neural network is in, relative to the model file.
+        if not os.path.exists(write_location + source_prefix):
+            os.makedirs(write_location + source_prefix)  # we have now ensured that relative to where we are outputting, the appropriate file structure for the network exists
         shutil.copy(file_prefix + '/' + source, write_location + source)  # copy FROM model file + relative path from model file to network, TO write_location + relative path
         # NOT DONE. Need some way of storing the network
         # current idea: have some variable like variable.name + '__actual__network' which this call.
@@ -491,8 +492,13 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                 (atom_class, atom) = resolve_potential_reference_no_type(variable_input, declared_enumerations, {}, variables, constants, {})
                 input_order.append((atom_class, atom))
         session = onnxruntime.InferenceSession(file_prefix + '/' + source)
-        input_name = session.get_inputs()[0].name
+        # input_name = session.get_inputs()[0].name
         formatted_variable = format_variable_name_only(variable, misc_args)
+        if variable.neural_mode == 'classification':
+            domain_values = []
+            for domain_code in variable.domain_codes:
+                domain_func = build_meta_func(domain_code)
+                domain_values.extend(domain_func((constants, {})))
         # return (
         #     os.linesep + os.linesep
         #     + indent(misc_args['indent_level']) + variable.name + '__session__ = onnxruntime.InferenceSession(\'' + source + '\')' + os.linesep
@@ -528,9 +534,15 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
         return (
             os.linesep + os.linesep
             + indent(misc_args['indent_level']) + variable.name + '__session__ = onnxruntime.InferenceSession(str(Path(__file__).parent.resolve()) + \'/' + source + '\')' + os.linesep
+            + indent(misc_args['indent_level']) + variable.name + '__input_name__ = ' + variable.name + '__session__.get_inputs()[0].name' + os.linesep
             + indent(misc_args['indent_level']) + variable.name + '__previous_input__ = None' + os.linesep
             + indent(misc_args['indent_level']) + variable.name + '__previous_output__ = None' + os.linesep
-            + indent(misc_args['indent_level']) + 'def ' + variable.name + '(index):' + os.linesep
+            + (
+                (indent(misc_args['indent_level']) + variable.name + '__domain_values__ = ' + str(domain_values) + os.linesep)
+                if variable.neural_mode == 'classification' else
+                ''
+            )
+            + indent(misc_args['indent_level']) + 'def ' + variable.name + ('()' if variable.neural_mode == 'classification' else '(index)') + ':' + os.linesep
             + (
                 (
                     indent(misc_args['indent_level'] + 1) + 'if type(index) is not int:' + os.linesep
@@ -552,12 +564,24 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                 ]
             )
             + ']' + os.linesep
-            + indent(misc_args['indent_level'] + 1) + 'nonlocal ' + variable.name + '__session__, ' + variable.name + '__previous_input__, ' + variable.name + '__previous_output__' + os.linesep
+            + indent(misc_args['indent_level'] + 1) + 'nonlocal ' + variable.name + '__session__, ' + variable.name + '__input_name__, ' + variable.name + '__previous_input__, ' + variable.name + '__previous_output__' + ((', ' + variable.name + '__domain_values__') if variable.neural_mode == 'classification' else '') + os.linesep
             + indent(misc_args['indent_level'] + 1) + 'if input_values != ' + variable.name + '__previous_input__:' + os.linesep
-            + indent(misc_args['indent_level'] + 2) + 'temp = ' + variable.name + '__session__.run(None, {\'' + input_name + '\' : [input_values]})' + os.linesep
+            + indent(misc_args['indent_level'] + 2) + 'temp = ' + variable.name + '__session__.run(None, {\'' + variable.name + '__input_name__' + '\' : [input_values]})' + os.linesep
             + indent(misc_args['indent_level'] + 2) + variable.name + '__previous_input__ = input_values' + os.linesep
             + indent(misc_args['indent_level'] + 2) + variable.name + '__previous_output__ = temp[0][0]' + os.linesep
-            + indent(misc_args['indent_level'] + 1) + 'return ' + ('int(' if variable.domain == 'INT' else '') + variable.name + '__previous_output__[index]' + (')' if variable.domain == 'INT' else '') + os.linesep
+            + (
+                (
+                    indent(misc_args['indent_level'] + 1) + 'temp_cur_max = ' + variable.name + '__previous_output__[0]' + os.linesep
+                    + indent(misc_args['indent_level'] + 1) + 'temp_return_val = ' + variable.name + '__domain_values__[0]' + os.linesep
+                    + indent(misc_args['indent_level'] + 1) + 'for temp_index in range(len(' + variable.name + '__previous_output__)):' + os.linesep
+                    + indent(misc_args['indent_level'] + 2) + 'if ' + variable.name + '__previous_output__[temp_index] > temp_cur_max:' + os.linesep
+                    + indent(misc_args['indent_level'] + 3) + 'temp_cur_max = ' + variable.name + '__previous_output__[temp_index]' + os.linesep
+                    + indent(misc_args['indent_level'] + 3) + 'temp_return_val = ' + variable.name + '__domain_values__[temp_index]' + os.linesep
+                    + indent(misc_args['indent_level'] + 1) + 'return temp_return_val' + os.linesep
+                )
+                if variable.neural_mode == 'classification' else
+                (indent(misc_args['indent_level'] + 1) + 'return ' + ('int(' if variable.domain == 'INT' else '') + variable.name + '__previous_output__[index]' + (')' if variable.domain == 'INT' else '') + os.linesep)
+            )
             + indent(misc_args['indent_level']) + formatted_variable + ' = ' + variable.name + os.linesep
         )
 
@@ -1471,7 +1495,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
     }
     variable_array_size_map = {
         variable.name : variable_array_size(variable, declared_enumerations, {}, variables, constants, {})
-        for variable in model.variables if is_array(variable) or (variable.model_as == 'NEURAL')
+        for variable in model.variables if is_array(variable)
     }
     loop_references = {}
 
