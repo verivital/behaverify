@@ -917,9 +917,9 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
             )
             for variable in model.variables if is_local(variable)
         }
-        default_bit_length = '256' # also used by fix point.
-        fixed_point_int_bit_count = 32
-        fixed_point_dec_bit_count = 64
+        default_bit_length = '512' # also used by fix point.
+        fixed_point_int_bit_count = 64
+        fixed_point_dec_bit_count = 128
         floating_mode = False
         for variable in model.variables:
             var_key = variable_reference(variable.name, is_local(variable), '')
@@ -1304,27 +1304,26 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
                                 for (index, sub_key) in enumerate(dep_value_tuple)
                             }
                             for index in range(known_sizes[layer_name]):
-                                cur_bias_value = weird_float_binary(bias_values[index])
-                                cur_weight_values = list(map(weird_float_binary, weight_values[index]))
+                                cur_bias_value = weird_fixed_binary(bias_values[index])
+                                cur_weight_values = list(map(weird_fixed_binary, weight_values[index]))
                                 cur_output_value_name = layer_name + '___value___' + str(index)
                                 behaverify_variables[cur_output_value_name] = create_variable_template(cur_output_value_name, 'DEFINE', None, None, None, None, [], True, True)
                                 behaverify_variables[cur_output_value_name]['depends_on'] = dep_value_tuple
                                 behaverify_variables[cur_output_value_name]['existing_definitions'] = {}
                                 # now we have to calculate how much to slide all of this.
-                                value_string = '(('
+                                value_string = '((('
                                 for weight_index in range(len(cur_weight_values)):
                                     value_string += (
                                         '(' + define_sub_value[input_name + '___value___' + str(weight_index)] + ' * ('
-                                        #+ ((define_sub_value['serene_negative'] + ' * ') if cur_weight_values[weight_index][0] else '')
                                         + ('-' if cur_weight_values[weight_index][0] else '')
                                         + '0sb' + default_bit_length + '_' + cur_weight_values[weight_index][1] + ')) + '
                                     )
+                                value_string = value_string.rsplit('+', 1)[0]
                                 value_string += (
-                                    #'(' + ((define_sub_value['serene_negative'] + ' * ') if cur_bias_value[0] else '')
+                                    ') >> ' + str(fixed_point_dec_bit_count) + ') + '
                                     '(' + ('-' if cur_bias_value[0] else '')
-                                    + '0sb' + default_bit_length + '_' + cur_bias_value[1] + ')'
+                                    + '0sb' + default_bit_length + '_' + cur_bias_value[1] + '))'
                                 )
-                                value_string += ') >> ' + str(fixed_point_dec_bit_count) + ')'
                                 behaverify_variables[cur_output_value_name]['initial_value'] = (None, False, [('TRUE', value_string)])
                     # we have now created all of the variables in the network.
                     if variable.neural_mode == 'classification':
