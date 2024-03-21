@@ -227,7 +227,11 @@ def variable_scope(variable, trace = None):
 
 def is_array(variable):
     '''checks if the variable is an array'''
-    return variable.array_size is not None
+    return (
+        (variable.neural_mode != 'classification')
+        if variable.model_as == 'NEURAL' else
+        (variable.array_size is not None)
+    )
 
 def str_format(value):
     '''formats string'''

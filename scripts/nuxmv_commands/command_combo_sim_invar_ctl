@@ -1,6 +1,6 @@
 go
 pick_state
-simulate
+simulate -k 50
 show_traces -v
 check_invar
 check_ctlspec

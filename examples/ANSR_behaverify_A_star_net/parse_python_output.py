@@ -19,6 +19,10 @@ def handle_file(file_name, output_name, x_size, y_size):
                 list_of_states[-1]['drone_x'] = int(line.split(':')[1].strip())
             elif 'drone_y' in line:
                 list_of_states[-1]['drone_y'] = int(line.split(':')[1].strip())
+            elif 'destination_x' in line:
+                list_of_states[-1]['target_x'] = int(line.split(':')[1].strip())
+            elif 'destination_y' in line:
+                list_of_states[-1]['target_y'] = int(line.split(':')[1].strip())
             elif 'obstacles' in line:
                 key = 'obstacles'
                 if key not in list_of_states[-1]:
@@ -45,6 +49,10 @@ def handle_file(file_name, output_name, x_size, y_size):
                 states['drone_x'] = previous_states['drone_x']
             if 'drone_y' not in states:
                 states['drone_y'] = previous_states['drone_y']
+            if 'target_x' not in states:
+                states['target_x'] = previous_states['target_x']
+            if 'target_y' not in states:
+                states['target_y'] = previous_states['target_y']
             if 'obstacles' not in states:
                 states['obstacles'] = previous_states['obstacles']
             else:
@@ -65,13 +73,13 @@ def handle_file(file_name, output_name, x_size, y_size):
 def create_grid_from_states(states, x_size, y_size):
     grid = [['-' for _ in range(y_size)] for _ in range(x_size)]
     for index in range(len(states['obstacles']) // 2):
-        obstacle_size = states['obstacle_sizes'][index]
+        obstacle_size = states['obstacle_sizes'][index] + 1
         x_loc = states['obstacles'][2 * index]
         y_loc = states['obstacles'][(2 * index) + 1]
         for sub_index_x in range(obstacle_size):
             for sub_index_y in range(obstacle_size):
                 grid[max(0, x_loc - sub_index_x)][max(0, y_loc - sub_index_y)] = 'O'
-    # grid[states['target_x']][states['target_y']] = 'T'
+    grid[states['target_x']][states['target_y']] = 'T'
     grid[states['drone_x']][states['drone_y']] = 'D'
     return grid
 

@@ -18,7 +18,7 @@ def generate_sets(min_val, max_val, input_path):
             print('Computed grid from ' + str((start_x, start_y)))
             for end_x in range(min_val, max_val + 1):
                 for end_y in range(min_val, max_val + 1):
-                    if iteration % 100 == 0:
+                    if iteration % 5000 == 0:
                         print('iteration: ' + str(iteration))
                     iteration = iteration + 1
                     if ((start_x, start_y), (end_x, end_y)) in seen_values:
