@@ -917,10 +917,11 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
             )
             for variable in model.variables if is_local(variable)
         }
-        default_bit_length = '512' # also used by fix point.
-        fixed_point_int_bit_count = 64
-        fixed_point_dec_bit_count = 128
+        default_bit_length = '140' # also used by fix point.
+        fixed_point_int_bit_count = 16
+        fixed_point_dec_bit_count = 48
         floating_mode = False
+        use_network_defines = False
         for variable in model.variables:
             var_key = variable_reference(variable.name, is_local(variable), '')
             if is_local(variable):
@@ -1217,7 +1218,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
                             ])
                     else:
                         raise BTreeException([], 'Cannot have a regression network in nuXmv without using table')
-                else: # fixed point mode!
+                elif use_network_defines: # fixed point mode!
                     network_model = onnx.load(source)
                     # signed word conversion doesn't work in nuXmv. Do it manually.
                     input_layers = [input_layer.name for input_layer in network_model.graph.input]
@@ -1332,6 +1333,153 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
                             raise BTreeException([], 'Too many output layers!')
                         output_layer_name = fix_network_string(output_layers[0])
                         output_name = var_key + '___' + output_layer_name
+                        # ARGMAX CALCULATIONS
+                        cur_output_value_name = output_layer_name + '___ARGMAX_value'
+                        behaverify_variables[cur_output_value_name] = create_variable_template(cur_output_value_name, 'DEFINE', None, None, None, None, [], True, True)
+                        behaverify_variables[cur_output_value_name]['depends_on'] = tuple(sorted([output_name + '___value___' + str(index) for index in range(known_sizes[output_name])]))
+                        behaverify_variables[cur_output_value_name]['existing_definitions'] = {}
+                        define_sub_value = {
+                            sub_key : 'SUBSTITUTE_' + str(index) + '_ME'
+                            for (index, sub_key) in enumerate(behaverify_variables[cur_output_value_name]['depends_on'])
+                        }
+                        value_start_string = ''
+                        value_end_string = ''
+                        for index in range(known_sizes[output_name] - 1):
+                            value_start_string += 'max((' + define_sub_value[output_name + '___value___' + str(index)] + '), '
+                            value_end_string += ')'
+                        value_string = (
+                            value_start_string
+                            + define_sub_value[output_name + '___value___' + str(known_sizes[output_name] - 1)]
+                            + value_end_string
+                        )
+                        behaverify_variables[cur_output_value_name]['initial_value'] = (None, False, [('TRUE', value_string)])
+                        # DONE CREATING ARGMAX.
+                        behaverify_variables[var_key]['depends_on'] = tuple(sorted([output_name + '___value___' + str(index) for index in range(known_sizes[output_name])] + [cur_output_value_name]))
+                        define_sub = {
+                            sub_key : 'SUBSTITUTE_' + str(index) + '_ME'
+                            for (index, sub_key) in enumerate(behaverify_variables[var_key]['depends_on'])
+                        }
+                        values = []
+                        for domain_code in variable.domain_codes:
+                            domain_func = build_meta_func(domain_code)
+                            values.extend(domain_func((constants, {})))
+                        if len(values) != known_sizes[output_name]:
+                            raise BTreeException([], 'Output size and listed domains do not match')
+                        behaverify_variables[var_key]['existing_definitions'] = {}
+                        behaverify_variables[var_key]['initial_value'] = (None, False, [
+                            (
+                                define_sub[cur_output_value_name] + ' = ' + define_sub[output_name + '___value___' + str(index)]
+                                ,
+                                values[index]
+                            )
+                            for index in range(len(values))
+                            ])
+                    else:
+                        raise BTreeException([], 'Cannot have a regression network in nuXmv without using table')
+                else: # fixed point mode, no network_defines
+                    network_model = onnx.load(source)
+                    # signed word conversion doesn't work in nuXmv. Do it manually.
+                    input_layers = [input_layer.name for input_layer in network_model.graph.input]
+                    if len(input_layers) > 1:
+                        raise BTreeException([], 'Too many input layers!')
+                    input_layer_name = fix_network_string(input_layers[0])
+                    network_variables = {}
+                    for (index, (atom_class, atom)) in enumerate(input_order):
+                        input_name_value = var_key + '___' + input_layer_name + '___value___' + str(index)
+                        network_variables[input_name_value] = 'SUBSTITUTE_' + str(index) + '_ME'
+                        behaverify_variables[input_name_value] = create_variable_template(input_name_value, 'DEFINE', None, None, None, None, [], True, True)
+                        if atom_class == 'VARIABLE':
+                            original_name = variable_reference(atom.name, False, None)
+                            fix_domain_of_variable(variable_reference(atom.name, False, None))
+                            behaverify_variables[input_name_value]['min_value'] = behaverify_variables[original_name]['min_value']
+                            behaverify_variables[input_name_value]['max_value'] = behaverify_variables[original_name]['max_value']
+                            behaverify_variables[input_name_value]['custom_value_range'] = behaverify_variables[original_name]['custom_value_range']
+                            behaverify_variables[input_name_value]['depends_on'] = (original_name, )
+                            behaverify_variables[input_name_value]['existing_definitions'] = {}
+                            original_domain = (
+                                range(behaverify_variables[original_name]['min_value'], behaverify_variables[original_name]['max_value'] + 1)
+                                if behaverify_variables[original_name]['min_value'] is not None else
+                                behaverify_variables[original_name]['custom_value_range'] # this is still a set right now
+                            )
+                            behaverify_variables[input_name_value]['initial_value'] = (None, False,
+                                                                                 [
+                                                                                     ('SUBSTITUTE_0_ME = ' + str(domain_value), '(' + ('-' if domain_value < 0 else '') + '0sd' + default_bit_length + '_' + str(abs(domain_value)) + ' << ' + str(fixed_point_dec_bit_count) + ')')
+                                                                                     for domain_value in original_domain
+                                                                                 ]
+                                                                                 )
+                        else:
+                            behaverify_variables[input_name_value]['min_value'] = atom
+                            behaverify_variables[input_name_value]['max_value'] = atom
+                            behaverify_variables[input_name_value]['custom_value_range'] = {atom}
+                            behaverify_variables[input_name_value]['depends_on'] = () #empty tuple
+                            behaverify_variables[input_name_value]['existing_definitions'] = {}
+                            behaverify_variables[input_name_value]['initial_value'] = (None, False, [('TRUE', ('-' if atom < 0 else '') + '0sd' + default_bit_length + '_' + str(abs(atom)))])
+                    value_info = {}
+                    known_sizes = {var_key + '___' + input_layer_name : len(input_order)}
+                    # store weight info. we will use it later.
+                    for initializer in network_model.graph.initializer:
+                        value_name = var_key + '___' + fix_network_string(initializer.name)
+                        value_info[value_name] = initializer
+                    # examine each layer, make relevant variables.
+                    for network_node in network_model.graph.node:
+                        if network_node.op_type not in {'Relu', 'Gemm'}:
+                            raise BTreeException([], 'Network is not being converted to table but has operation other than Relu or Gemm: ' + network_node.op_type)
+                        if len(network_node.output) != 1:
+                            raise BTreeException([], 'Expected 1 output from each layer (note: can have multiple outputs in the form of an array), got: ' + str(network_node.output))
+                        layer_name = var_key + '___' + fix_network_string(network_node.output[0])
+                        print('---------------')
+                        print('layer: ', layer_name)
+                        if network_node.op_type == 'Relu':
+                            input_name = var_key + '___' + fix_network_string(network_node.input[0])
+                            print('input: ', input_name)
+                            known_sizes[layer_name] = known_sizes[var_key + '___' + fix_network_string(network_node.input[0])]
+                            for index in range(known_sizes[layer_name]):
+                                cur_output_name = layer_name + '___value___' + str(index)
+                                cur_input_name = input_name + '___value___' + str(index)
+                                network_variables[cur_output_name] = 'max(0sd' + default_bit_length + '_0, ' + network_variables[cur_input_name] + ')'
+                        elif network_node.op_type == 'Gemm':
+                            input_name = var_key + '___' + fix_network_string(network_node.input[0])
+                            weight_name = var_key + '___' + fix_network_string(network_node.input[1])
+                            bias_name = var_key + '___' + fix_network_string(network_node.input[2])
+                            print('input: ', input_name)
+                            print('weight: ', weight_name)
+                            print('bias: ', bias_name)
+                            known_sizes[layer_name] = value_info[bias_name].dims[0] # Input * Weight + Biases, so can use either Weight or Biases for size of output.
+                            bias_values = onnx.numpy_helper.to_array(value_info[bias_name])
+                            weight_values = onnx.numpy_helper.to_array(value_info[weight_name])
+                            for index in range(known_sizes[layer_name]):
+                                cur_bias_value = weird_fixed_binary(bias_values[index])
+                                cur_weight_values = list(map(weird_fixed_binary, weight_values[index]))
+                                cur_output_value_name = layer_name + '___value___' + str(index)
+                                value_string = '((('
+                                for weight_index in range(len(cur_weight_values)):
+                                    value_string += (
+                                        '(' + network_variables[input_name + '___value___' + str(weight_index)] + ' * ('
+                                        + ('-' if cur_weight_values[weight_index][0] else '')
+                                        + '0sb' + default_bit_length + '_' + cur_weight_values[weight_index][1] + ')) + '
+                                    )
+                                value_string = value_string.rsplit('+', 1)[0]
+                                value_string += (
+                                    ') >> ' + str(fixed_point_dec_bit_count) + ') + '
+                                    '(' + ('-' if cur_bias_value[0] else '')
+                                    + '0sb' + default_bit_length + '_' + cur_bias_value[1] + '))'
+                                )
+                                network_variables[cur_output_value_name] = value_string
+                    # we have now created all of the variables in the network.
+                    output_layers = [output_layer.name for output_layer in network_model.graph.output]
+                    if len(output_layers) > 1:
+                        raise BTreeException([], 'Too many output layers!')
+                    output_layer_name = fix_network_string(output_layers[0])
+                    output_name = var_key + '___' + output_layer_name
+                    index = 0
+                    while output_name + '___value___' + str(index) in network_variables:
+                        cur_output_value_name = output_name + '___value___' + str(index)
+                        behaverify_variables[cur_output_value_name] = create_variable_template(cur_output_value_name, 'DEFINE', None, None, None, None, [], True, True)
+                        behaverify_variables[cur_output_value_name]['depends_on'] = tuple(sorted([var_key + '___' + input_layer_name + '___value___' + str(index) for index in range(known_sizes[var_key + '___' + input_layer_name])]))
+                        behaverify_variables[cur_output_value_name]['existing_definitions'] = {}
+                        behaverify_variables[cur_output_value_name]['initial_value'] = (None, False, [('TRUE', network_variables[cur_output_value_name])])
+                        index = index + 1
+                    if variable.neural_mode == 'classification':
                         # ARGMAX CALCULATIONS
                         cur_output_value_name = output_layer_name + '___ARGMAX_value'
                         behaverify_variables[cur_output_value_name] = create_variable_template(cur_output_value_name, 'DEFINE', None, None, None, None, [], True, True)

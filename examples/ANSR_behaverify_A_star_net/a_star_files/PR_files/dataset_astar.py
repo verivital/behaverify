@@ -10,20 +10,48 @@ class AStarDataset(Dataset):
         """
         Dataset for Astar inputs and targets.
         """
-        #
-        # Read inputs
-        #
-        spec = importlib.util.spec_from_file_location("data_module", input_path)
-        data_module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(data_module)
-        self.inputs = data_module.inputs
-        #
-        # Read targets
-        #
-        spec = importlib.util.spec_from_file_location("data_module", target_path)
-        data_module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(data_module)
-        self.targets = data_module.targets
+        print('loading inputs')
+        inputs = []
+        index = 0
+        with open(input_path, 'r', encoding = 'utf-8') as input_file:
+            for line in input_file.readlines():
+                if ',' not in line:
+                    continue
+                line = line.split(']', 1)[0].replace('[', '')
+                inputs.append([float(line_part.strip()) for line_part in line.split(',')])
+                if index % 1000 == 0:
+                    print('reading input: ' + str(index))
+                index = index + 1
+
+        print('loading targets')
+        targets = []
+        index = 0
+        with open(target_path, 'r', encoding = 'utf-8') as target_file:
+            for line in target_file.readlines():
+                if ',' not in line:
+                    continue
+                line = line.split(']', 1)[0].replace('[', '')
+                targets.append([float(line_part.strip()) for line_part in line.split(',')])
+                if index % 1000 == 0:
+                    print('reading target: ' + str(index))
+                index = index + 1
+
+        self.inputs = inputs
+        self.targets = targets
+        # #
+        # # Read inputs
+        # #
+        # spec = importlib.util.spec_from_file_location("data_module", input_path)
+        # data_module = importlib.util.module_from_spec(spec)
+        # spec.loader.exec_module(data_module)
+        # self.inputs = data_module.inputs
+        # #
+        # # Read targets
+        # #
+        # spec = importlib.util.spec_from_file_location("data_module", target_path)
+        # data_module = importlib.util.module_from_spec(spec)
+        # spec.loader.exec_module(data_module)
+        # self.targets = data_module.targets
 
     def __len__(self):
         return len(self.inputs)

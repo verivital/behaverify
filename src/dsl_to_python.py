@@ -566,7 +566,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
             + ']' + os.linesep
             + indent(misc_args['indent_level'] + 1) + 'nonlocal ' + variable.name + '__session__, ' + variable.name + '__input_name__, ' + variable.name + '__previous_input__, ' + variable.name + '__previous_output__' + ((', ' + variable.name + '__domain_values__') if variable.neural_mode == 'classification' else '') + os.linesep
             + indent(misc_args['indent_level'] + 1) + 'if input_values != ' + variable.name + '__previous_input__:' + os.linesep
-            + indent(misc_args['indent_level'] + 2) + 'temp = ' + variable.name + '__session__.run(None, {\'' + variable.name + '__input_name__' + '\' : [input_values]})' + os.linesep
+            + indent(misc_args['indent_level'] + 2) + 'temp = ' + variable.name + '__session__.run(None, {' + variable.name + '__input_name__' + ' : [input_values]})' + os.linesep
             + indent(misc_args['indent_level'] + 2) + variable.name + '__previous_input__ = input_values' + os.linesep
             + indent(misc_args['indent_level'] + 2) + variable.name + '__previous_output__ = temp[0][0]' + os.linesep
             + (
