@@ -29,6 +29,22 @@ class NeuralNetwork(nn.Module):
         x = self.output_layer(x)
         return x
 
+class NeuralNetwork_diff(nn.Module):
+    def __init__(self, input_size, hidden_sizes, output_size):
+        super(NeuralNetwork_diff, self).__init__()
+        self.hidden_layers = nn.ModuleList()
+        hidden_sizes = [input_size] + hidden_sizes
+        for hidden_index in range(len(hidden_sizes) - 1):
+            self.hidden_layers.append(nn.Linear(hidden_sizes[hidden_index], hidden_sizes[hidden_index + 1]))
+        self.output_layer = nn.Linear(hidden_sizes[-1], output_size)
+        self.relu = nn.ReLU()
+
+    def forward(self, x):
+        for layer in self.hidden_layers:
+            x = self.relu(layer(x))
+        x = self.output_layer(x)
+        return x
+
 def test(trained_model, test_loader, device):
     """
     Test model. 
@@ -76,12 +92,18 @@ def main():
     #
     # Load dataset
     #
+    print('Starting Loading')
     dataset = AStarDataset(c.input_path, c.target_path)
-    dataloader = DataLoader(dataset, batch_size=c.batch_size, shuffle=True)
+    dataloader = DataLoader(dataset, batch_size=c.batch_size, shuffle = c.shuffle)
+    print('Finished Loading')
     #
     # Setup hyperparameters
     #
-    model = NeuralNetwork(c.input_size, c.hidden_size, c.hidden_count, c.output_size).to(device)
+    model = (
+        NeuralNetwork(c.input_size, c.hidden_size, c.hidden_count, c.output_size).to(device)
+        if c.all_same else
+        NeuralNetwork_diff(c.input_size, c.layer_sizes, c.output_size).to(device)
+    )
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=c.lr)
     #
@@ -97,7 +119,7 @@ def main():
         #
         if epoch % c.log_freq == 0:
             accuracy = test(model, dataloader, device)
-            print(f"[{epoch}/{c.num_epochs}] Accuracy: {accuracy:.4f} \t Loss: {loss:.4f}")
+            print(f"[{epoch}/{c.num_epochs}] Accuracy: {accuracy:.8f} \t Loss: {loss:.8f}")
             torch.save(model, os.path.join(c.save_path, c.save_name+".pth"))
             if accuracy == 1.0:
                 break
@@ -139,9 +161,10 @@ def resume_training():
     #
     # Load dataset
     #
+    print('Starting Loading')
     dataset = AStarDataset(c.input_path, c.target_path)
-    dataloader = DataLoader(dataset, batch_size=c.batch_size, shuffle=True)
-    print(len(dataloader))
+    dataloader = DataLoader(dataset, batch_size=c.batch_size, shuffle = c.shuffle)
+    print('Finished Loading')
     #
     # Setup hyperparameters
     #
@@ -149,6 +172,7 @@ def resume_training():
     #model = NeuralNetwork(c.input_size, c.hidden_size, c.hidden_count, c.output_size).to(device)
     #model.load_state_dict(torch.load(os.path.join(c.save_path, c.save_name+".pth")))
     criterion = nn.CrossEntropyLoss()
+    print(c.lr)
     optimizer = optim.Adam(model.parameters(), lr=c.lr)
     #
     # RUN
@@ -163,7 +187,7 @@ def resume_training():
         #
         if epoch % c.log_freq == 0:
             accuracy = test(model, dataloader, device)
-            print(f"[{epoch}/{c.num_epochs}] Accuracy: {accuracy:.4f} \t Loss: {loss:.4f}")
+            print(f"[{epoch}/{c.num_epochs}] Accuracy: {accuracy:.8f} \t Loss: {loss:.8f}")
             torch.save(model, os.path.join(c.save_path, c.save_name+".pth"))
             if accuracy == 1.0:
                 break
