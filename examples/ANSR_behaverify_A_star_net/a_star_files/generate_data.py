@@ -1,6 +1,6 @@
 import os
 from create_grid import create_grid
-from mass_basic_a_star import mass_a_star
+from mass_basic_a_star_2 import mass_a_star
 
 def generate_sets(min_val, max_val, input_path):
     grid = create_grid(input_path, min_val, max_val)
