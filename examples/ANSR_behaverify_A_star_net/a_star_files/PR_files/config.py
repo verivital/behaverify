@@ -4,16 +4,16 @@ Created by Preston
 #
 # Dataset
 #
-input_path = '../ignore/inputs_119_0_49_2.py'
-target_path = "../ignore/targets_119_0_49_2.py"
-batch_size = 2**5
+input_path = '../ignore/inputs_4_0_19_3_new.py'
+target_path = "../ignore/targets_4_0_19_3_new.py"
+batch_size = 2**10
 shuffle = False
 #
 # Model
 #
 input_size = 4
 all_same = True
-hidden_size = 8192
+hidden_size = 512
 hidden_count = 1
 layer_sizes = [40, 32, 24]
 output_size = 5
@@ -21,10 +21,10 @@ output_size = 5
 # training
 #
 lr = 0.001
-num_epochs = 10000
+num_epochs = 1000
 log_freq = 1
 #
 # saving
 #
 save_path = "../ignore"
-save_name = "119_0_49_2__8192_1"
+save_name = "4_0_19_3_new__512_1"

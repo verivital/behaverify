@@ -49,8 +49,8 @@ checks {
     check {
 	cell_changed
 	arguments {}
-	read_variables {cell_changed_var}
-	condition {cell_changed_var}
+	read_variables {cell_changed_var, current_action}
+	condition {(or, cell_changed_var, (eq, current_action, 'no_action'))}
     }
     check {
 	destination_reached
