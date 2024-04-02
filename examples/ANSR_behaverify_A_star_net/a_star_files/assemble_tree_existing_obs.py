@@ -1,12 +1,19 @@
 import sys
-from generate_obstacles import generate_obstacles
 from generate_data import generate_table
 
-number_of_obstacles = int(sys.argv[1])
-min_val = int(sys.argv[2])
-max_val = int(sys.argv[3])
-max_size = int(sys.argv[4])
-obstacles = sys.argv[5]
+if len(sys.argv) == 2:
+    obstacles = sys.argv[1]
+    (_, number_of_obstacles, min_val, max_val, max_size) = obstacles.split('/')[-1].split('.')[0].split('_')
+    number_of_obstacles = int(number_of_obstacles)
+    min_val = int(min_val)
+    max_val = int(max_val)
+    max_size = int(max_size)
+else:
+    number_of_obstacles = int(sys.argv[1])
+    min_val = int(sys.argv[2])
+    max_val = int(sys.argv[3])
+    max_size = int(sys.argv[4])
+    obstacles = sys.argv[5]
 generate_table(min_val, max_val, obstacles,
                'ignore/table_' + str(number_of_obstacles) + '_' + str(min_val) + '_' + str(max_val) + '_' + str(max_size) + '.txt')
 

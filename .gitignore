@@ -19,6 +19,7 @@ examples/**/haskell/**
 examples/**/python/**
 examples/**/smv/**
 examples/**/ignore/**
+examples/**/filled_obs/**
 REPRODUCIBILITY/**/processed_data/**
 REPRODUCIBILITY/**/results/**
 REPRODUCIBILITY/**/smv/**
