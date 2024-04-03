@@ -855,7 +855,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
         # create each variable type using the template.
         nonlocal behaverify_variables  # this is necessary right now because we need to be able to access already created variables during other variable initializations.
         # specifically, if we make var A, and then var B depends on var A, it will assume var A is in behaverify_variables
-        var_key_to_obj = {variable_reference(variable.name, False, None) : variable for variable in model.variables if not is_local(variable)} if model.neural else None
+        var_key_to_obj = {variable_reference(variable.name, False, None) : variable for variable in model.variables if not is_local(variable)} if model.neural is not None else None
         behaverify_variables = {
             variable_reference(variable.name, False, '') :
             (
@@ -917,11 +917,11 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
             )
             for variable in model.variables if is_local(variable)
         }
-        default_bit_length = '140' # also used by fix point.
-        fixed_point_int_bit_count = 16
-        fixed_point_dec_bit_count = 48
-        floating_mode = False
-        use_network_defines = False
+        default_bit_length = '140' if model.neural is None else ('140' if model.neural.total is None else str(model.neural.total))  # also used by fix point.
+        fixed_point_int_bit_count = 16 if model.neural is None else (16 if model.neural.int_part is None else model.neural.int_part)
+        fixed_point_dec_bit_count = 48 if model.neural is None else (48 if model.neural.float_part is None else model.neural.float_part)
+        floating_mode = False if model.neural is None else (False if model.neural.model_mode is None else (model.neural.model_mode == 'float'))
+        use_network_defines = True if model.neural is None else (True if model.neural.model_mode is None else (model.neural.model_mode != 'fixed_direct'))
         for variable in model.variables:
             var_key = variable_reference(variable.name, is_local(variable), '')
             if is_local(variable):
@@ -1787,7 +1787,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
     (model, variables, constants, declared_enumerations) = validate_model(metamodel_file, model_file, recursion_limit)
     hyper_mode = model.hypersafety
     use_reals = model.use_reals
-    if model.neural:
+    if model.neural is not None:
         import onnxruntime
         import onnx
     behaverify_variables = {}

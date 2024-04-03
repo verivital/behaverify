@@ -478,9 +478,16 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
         source = source_vals[0]
         source = resolve_potential_reference_no_type(source, declared_enumerations, {}, variables, constants, {})[1]  # this points to the neural network.
         source_prefix = os.path.split(source)[0]  # source_prefix points to the folder the neural network is in, relative to the model file.
+        # print(write_location)
+        # print(source_prefix)
+        # print(file_prefix)
         if not os.path.exists(write_location + source_prefix):
             os.makedirs(write_location + source_prefix)  # we have now ensured that relative to where we are outputting, the appropriate file structure for the network exists
-        shutil.copy(file_prefix + '/' + source, write_location + source)  # copy FROM model file + relative path from model file to network, TO write_location + relative path
+        try:
+            shutil.copy(file_prefix + '/' + source, write_location + source)  # copy FROM model file + relative path from model file to network, TO write_location + relative path
+        except shutil.SameFileError:
+            # I guess the network was already where it needed to be :)
+            pass
         # NOT DONE. Need some way of storing the network
         # current idea: have some variable like variable.name + '__actual__network' which this call.
         # ugh, what a pain.
@@ -1248,7 +1255,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
             + 'import py_trees' + os.linesep
             + ''.join([('import ' + node.name + '_file' + os.linesep) for node in itertools.chain(model.check_nodes, model.action_nodes, model.environment_checks)])
             + (('import serene_safe_assignment' + os.linesep) if safe_assignment else '')
-            + (('import onnxruntime' + os.linesep) if model.neural else '')
+            + (('import onnxruntime' + os.linesep) if model.neural is not None else '')
             + os.linesep + os.linesep
             + 'def create_blackboard(serene_randomizer):' + os.linesep
             + indent(1) + 'blackboard_reader = py_trees.blackboard.Client()' + os.linesep
@@ -1363,7 +1370,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
         to_write = (
             'from pathlib import Path' + os.linesep
             + 'import random' + os.linesep
-            + (('import onnxruntime' + os.linesep) if model.neural else '')
+            + (('import onnxruntime' + os.linesep) if model.neural is not None else '')
             + (('import serene_safe_assignment' + os.linesep) if safe_assignment else '')
             + os.linesep + os.linesep
             + 'class ' + project_environment_name + '():' + os.linesep

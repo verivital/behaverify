@@ -6,7 +6,7 @@ BehaviorModel:
     (
     (hypersafety ?= 'hypersafety')
     (use_reals ?= 'use_reals')
-    (neural ?= 'neural')
+    (neural = neural_configuration)?
     )#
     '}' ('end_configuration')?
     'enumerations' '{'
@@ -45,6 +45,18 @@ BehaviorModel:
 Comment:
     /#\{([^a]|a)*?\}#/
 ;//I can't get it to match newlines without doing something janky like this.
+
+    neural_configuration:
+    'neural'
+    (
+    '{'
+    ((model_mode = 'float') | (model_mode = 'fixed_direct') | (model_mode = 'fixed'))?
+    ('total' total = INT)?
+    ('int_part' int_part = INT)?
+    ('float_part' float_part = INT)?
+    '}' ('end_neural')?
+    )?
+    ;
     //--------------------SEC:NODES-------------------------------
     //nodes are either composite, decorator, or leaf. 
 node:

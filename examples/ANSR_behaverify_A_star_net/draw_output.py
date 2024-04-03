@@ -27,6 +27,8 @@ def draw_grid_line(list_of_states, output_name, x_size, y_size):
     for x in range(x_size):
         for y in range(y_size):
             cell_value = first_grid[x][y]
+            if cell_value == 'T':
+                cell_value = '-'
             draw.rectangle([(x * tile_side, y * tile_side), ((x + 1) * tile_side, (y + 1) * tile_side)], fill=COLORS[cell_value])
     for x in range(x_size + 1):
         draw.line([(tile_side * x, 0), (tile_side * x, size[1])], fill = 'black', width = line_size)
