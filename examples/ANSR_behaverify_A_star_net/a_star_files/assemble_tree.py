@@ -2,16 +2,17 @@ import sys
 from generate_obstacles import generate_obstacles
 from generate_data import generate_table
 
-number_of_obstacles = int(sys.argv[1])
-min_val = int(sys.argv[2])
-max_val = int(sys.argv[3])
-max_size = int(sys.argv[4])
+max_val = int(sys.argv[1])
+number_of_obstacles = int(sys.argv[2])
+max_size = int(sys.argv[3])
+min_val = 0
 generate_obstacles(number_of_obstacles, min_val, max_val, max_size)
+tail_end = '_' + str(max_val) + '_' + str(number_of_obstacles) + '_' + str(max_size)
 generate_table(min_val, max_val,
-               'ignore/obstacles_' + str(number_of_obstacles) + '_' + str(min_val) + '_' + str(max_val) + '_' + str(max_size) + '.txt',
-               'ignore/table_' + str(number_of_obstacles) + '_' + str(min_val) + '_' + str(max_val) + '_' + str(max_size) + '.txt')
+               'ignore/obstacles' + tail_end + '.txt',
+               'ignore/table' + tail_end + '.txt')
 
-with open('ignore/ANSR_behaverify_A_star_table_' + str(number_of_obstacles) + '_' + str(min_val) + '_' + str(max_val) + '_' + str(max_size) + '.tree', 'w', encoding = 'utf-8') as output_file:
+with open('ignore/ANSR_behaverify_A_star_table' + tail_end + '.tree', 'w', encoding = 'utf-8') as output_file:
     constants = ', '.join(
         [
             'min_val := ' + str(min_val),
@@ -20,9 +21,9 @@ with open('ignore/ANSR_behaverify_A_star_table_' + str(number_of_obstacles) + '_
             'max_obstacle_size := ' + str(max_size)
         ]
     )
-    with open('ignore/table_' + str(number_of_obstacles) + '_' + str(min_val) + '_' + str(max_val) + '_' + str(max_size) + '.txt', 'r', encoding = 'utf-8') as input_file:
+    with open('ignore/table' + tail_end + '.txt', 'r', encoding = 'utf-8') as input_file:
         fake_network = input_file.read()
-    with open('ignore/obstacles_' + str(number_of_obstacles) + '_' + str(min_val) + '_' + str(max_val) + '_' + str(max_size) + '.txt', 'r', encoding = 'utf-8') as input_file:
+    with open('ignore/obstacles' + tail_end + '.txt', 'r', encoding = 'utf-8') as input_file:
         data = input_file.read()
         (obstacles, obstacle_sizes) = data.split('#', 1)
         obstacles = obstacles.replace('#', '')

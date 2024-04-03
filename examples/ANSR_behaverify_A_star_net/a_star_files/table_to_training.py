@@ -81,4 +81,12 @@ def convert_table_to_training_data(input_path, output_path_input, output_path_ta
         output_file.writelines(target_lines)
 
 if __name__ == '__main__':
-    convert_table_to_training_data(sys.argv[1], sys.argv[2], sys.argv[3], int(sys.argv[4]), int(sys.argv[5]), int(sys.argv[6]), int(sys.argv[7]))
+    if len(sys.argv) == 2:
+        input_path_ = sys.argv[1]
+        output_path_inputs_ = input_path_.replace('table', 'inputs').replace('.txt', '.py')
+        output_path_targets_ = input_path_.replace('table', 'targets').replace('.txt', '.py')
+        min_val_ = 0
+        max_val_ = int(input_path_.split('/')[-1].split('_')[1])
+        convert_table_to_training_data(input_path_, output_path_inputs_, output_path_targets_, min_val_, min_val_, max_val_, max_val_)
+    else:
+        convert_table_to_training_data(sys.argv[1], sys.argv[2], sys.argv[3], int(sys.argv[4]), int(sys.argv[5]), int(sys.argv[6]), int(sys.argv[7]))

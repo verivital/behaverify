@@ -614,7 +614,7 @@ def validate_model(metamodel_file, model_file, recursion_limit):
     def validate_variable(variable, scopes, variable_names):
         trace.append('In Variable: ' + variable.name)
         if variable.model_as == 'NEURAL':
-            if not model.neural:
+            if model.neural is None:
                 raise BTreeException(trace, 'Model configuration did not include \'neural\' but uses neural networks')
             # INPUTS
             num_inputs = 0
@@ -792,7 +792,7 @@ def validate_model(metamodel_file, model_file, recursion_limit):
         sys.setrecursionlimit(recursion_limit)
     metamodel = textx.metamodel_from_file(metamodel_file, auto_init_attributes = False)
     model = metamodel.model_from_file(model_file)
-    if model.neural:
+    if model.neural is not None:
         import onnxruntime
 
     trace.append('In Enumeration Validation')

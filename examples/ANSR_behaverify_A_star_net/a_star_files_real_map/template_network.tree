@@ -55,8 +55,8 @@ checks {
     check {
 	destination_reached
 	arguments {}
-	read_variables {destination_x, destination_y, drone_x, drone_y}
-	condition {(and, (eq, destination_x, drone_x), (eq, destination_y, drone_y))}
+	read_variables {destination_x, destination_y, drone_x, drone_y, current_action}
+	condition {(or, (and, (eq, destination_x, drone_x), (eq, destination_y, drone_y)), (eq, current_action, 'no_action'))}
     }
 } end_checks
 
