@@ -24,10 +24,10 @@ variables {
 	Blackboard, Local, Environment.
 	If variable B depends on variable A, then variable A MUST be declared before B.
     }#
-    variable { bl drone_x VAR [min_val, max_val] assign{result{max_val}}}
-    variable { bl drone_y VAR [min_val, max_val] assign{result{max_val}}}
-    variable { bl destination_x VAR [min_val, max_val] assign{result{max_val}}}
-    variable { bl destination_y VAR [min_val, max_val] assign{result{max_val}}}
+    variable { bl drone_x VAR [min_val, max_val] assign{result{(idiv, (add, min_val, max_val), 2)}}}
+    variable { bl drone_y VAR [min_val, max_val] assign{result{(idiv, (add, min_val, max_val), 2)}}}
+    variable { bl destination_x VAR [min_val, max_val] assign{result{drone_x}}}
+    variable { bl destination_y VAR [min_val, max_val] assign{result{drone_y}}}
     variable { bl cell_changed_var VAR BOOLEAN assign{result{False}}}
     variable { bl current_action VAR {'left', 'right', 'up', 'down', 'no_action'} assign{result{'no_action'}}}
     variable { bl network NEURAL classification {'left', 'right', 'up', 'down', 'no_action'} inputs {drone_x, drone_y, destination_x, destination_y}
@@ -83,8 +83,8 @@ checks {
     check {
 	destination_reached
 	arguments {}
-	read_variables {destination_x, destination_y, drone_x, drone_y}
-	condition {(and, (eq, destination_x, drone_x), (eq, destination_y, drone_y))}
+	read_variables {destination_x, destination_y, drone_x, drone_y, current_action}
+	condition {(or, (and, (eq, destination_x, drone_x), (eq, destination_y, drone_y)), (eq, current_action, 'no_action'))}
     }
 } end_checks
 

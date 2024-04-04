@@ -1,18 +1,19 @@
 import sys
 from generate_obstacles import generate_obstacles
 from generate_data import generate_table
+from misc_util import create_tail_end
 
 max_val = int(sys.argv[1])
 number_of_obstacles = int(sys.argv[2])
 max_size = int(sys.argv[3])
 min_val = 0
 generate_obstacles(number_of_obstacles, min_val, max_val, max_size)
-tail_end = '_' + str(max_val) + '_' + str(number_of_obstacles) + '_' + str(max_size)
+tail_end = create_tail_end(max_val, None, number_of_obstacles, max_size)
 generate_table(min_val, max_val,
                'ignore/obstacles' + tail_end + '.txt',
                'ignore/table' + tail_end + '.txt')
 
-with open('ignore/ANSR_behaverify_A_star_table' + tail_end + '.tree', 'w', encoding = 'utf-8') as output_file:
+with open('ignore/ANSRt' + tail_end + '.tree', 'w', encoding = 'utf-8') as output_file:
     constants = ', '.join(
         [
             'min_val := ' + str(min_val),

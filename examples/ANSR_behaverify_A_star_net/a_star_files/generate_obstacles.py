@@ -1,6 +1,7 @@
 import sys
 import random
 import os
+from misc_util import create_tail_end
 
 def generate_obstacles(number_of_obstacles, min_val, max_val, max_size):
     lines = []
@@ -15,7 +16,7 @@ def generate_obstacles(number_of_obstacles, min_val, max_val, max_size):
     lines.append('##################################################################' + os.linesep)
     for index in range(number_of_obstacles):
         lines.append('condition {(eq, index_var, ' + str(index) + ')} assign{result{' + str(random.randint(0, max_size)) + '}}' + os.linesep)
-    tail_end = '_' + str(max_val) + '_' + str(number_of_obstacles) + '_' + str(max_size)
+    tail_end = create_tail_end(max_val, None, number_of_obstacles, max_size)
     with open('ignore/obstacles' + tail_end + '.txt', 'w', encoding = 'utf-8') as output_file:
         output_file.writelines(lines)
 

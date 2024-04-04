@@ -1,24 +1,12 @@
 import sys
 from generate_data import generate_table
+from misc_util import extract_info
 
-if len(sys.argv) == 2:
-    obstacles = sys.argv[1]
-    (_, max_val, number_of_obstacles, max_size) = obstacles.split('/')[-1].split('.')[0].split('_')
-    number_of_obstacles = int(number_of_obstacles)
-    min_val = 0
-    max_val = int(max_val)
-    max_size = int(max_size)
-else:
-    max_val = int(sys.argv[1])
-    number_of_obstacles = int(sys.argv[2])
-    max_size = int(sys.argv[3])
-    min_val = 0
-    obstacles = sys.argv[5]
-tail_end = '_' + str(max_val) + '_' + str(number_of_obstacles) + '_' + str(max_size)
-generate_table(min_val, max_val, obstacles,
-               'ignore/table_' + tail_end + '.txt')
+obstacle_path = sys.argv[1]
+(min_val, max_val, fly_at, number_of_obstacles, max_size) = extract_info(obstacle_path)
+generate_table(min_val, max_val, obstacle_path, obstacle_path.replace('obstacles', 'table'))
 
-with open('ignore/ANSR_behaverify_A_star_table' + tail_end + '.tree', 'w', encoding = 'utf-8') as output_file:
+with open(obstacle_path.replace('obstacles', 'ANSRt').replace('.txt', '.tree'), 'w', encoding = 'utf-8') as output_file:
     constants = ', '.join(
         [
             'min_val := ' + str(min_val),
@@ -27,9 +15,9 @@ with open('ignore/ANSR_behaverify_A_star_table' + tail_end + '.tree', 'w', encod
             'max_obstacle_size := ' + str(max_size)
         ]
     )
-    with open('ignore/table' + tail_end + '.txt', 'r', encoding = 'utf-8') as input_file:
+    with open(obstacle_path.replace('obstacles', 'table'), 'r', encoding = 'utf-8') as input_file:
         fake_network = input_file.read()
-    with open('ignore/obstacles' + tail_end + '.txt', 'r', encoding = 'utf-8') as input_file:
+    with open(obstacle_path, 'r', encoding = 'utf-8') as input_file:
         data = input_file.read()
         (obstacles, obstacle_sizes) = data.split('#', 1)
         obstacles = obstacles.replace('#', '')

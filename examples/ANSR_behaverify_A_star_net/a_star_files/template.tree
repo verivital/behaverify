@@ -18,10 +18,10 @@ variables {
 	Blackboard, Local, Environment.
 	If variable B depends on variable A, then variable A MUST be declared before B.
     }#
-    variable { bl drone_x VAR [min_val, max_val] assign{result{max_val}}}
-    variable { bl drone_y VAR [min_val, max_val] assign{result{max_val}}}
-    variable { bl destination_x VAR [min_val, max_val] assign{result{max_val}}}
-    variable { bl destination_y VAR [min_val, max_val] assign{result{max_val}}}
+    variable { bl drone_x VAR [min_val, max_val] assign{result{(idiv, (add, min_val, max_val), 2)}}}
+    variable { bl drone_y VAR [min_val, max_val] assign{result{(idiv, (add, min_val, max_val), 2)}}}
+    variable { bl destination_x VAR [min_val, max_val] assign{result{drone_x}}}
+    variable { bl destination_y VAR [min_val, max_val] assign{result{drone_y}}}
     variable { bl cell_changed_var VAR BOOLEAN assign{result{False}}}
     variable { bl current_action VAR {'left', 'right', 'up', 'down', 'no_action'} assign{result{'no_action'}}}
     variable { bl fake_network DEFINE ENUM assign{
