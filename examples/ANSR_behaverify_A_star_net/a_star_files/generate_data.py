@@ -2,7 +2,7 @@ import os
 from create_grid import create_grid
 from mass_basic_a_star_2 import mass_a_star
 
-def generate_sets(min_val, max_val, input_path):
+def generate_sets(min_val, max_val, input_path, return_grid = False):
     grid = create_grid(input_path, min_val, max_val)
     left = set()
     right = set()
@@ -58,7 +58,7 @@ def generate_sets(min_val, max_val, input_path):
                                 print('to: ' + path[index + 1])
                                 print('adding to no_action')
                                 no_action.add(((path[index][0], path[index][1]), (end_x, end_y)))
-    return (left, right, up, down, no_action)
+    return (left, right, up, down, no_action, grid) if return_grid else (left, right, up, down, no_action)
 
 def check_all_points_in_region(cur_set, min_s_x, max_s_x, min_s_y, max_s_y, min_e_x, max_e_x, min_e_y, max_e_y):
     for s_x in range(min_s_x, max_s_x + 1):
