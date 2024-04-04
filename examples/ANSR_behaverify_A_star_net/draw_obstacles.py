@@ -1,6 +1,7 @@
 import sys
 from create_grid import create_grid
 from PIL import Image, ImageDraw
+from misc_util import extract_info
 
 
 COLORS = {1: 'black', 0: 'white'}
@@ -27,5 +28,10 @@ def draw_grid(file_name, x_size, y_size):
         draw.line([(0, tile_side * y + line_size), (size[0], tile_side * y + line_size)], fill = 'black', width = line_size)
     image.save(file_name.replace('.txt', '.png').replace('obstacles', 'map'))
 
-#file_name, x_size, y_size
-draw_grid(sys.argv[1], int(sys.argv[2]), int(sys.argv[3]))
+if __name__ == '__main__':
+    if len(sys.argv) == 2:
+        max_val = extract_info(sys.argv[1])[1]
+        draw_grid(sys.argv[1], max_val + 1, max_val + 1)
+    else:
+        #file_name, x_size, y_size
+        draw_grid(sys.argv[1], int(sys.argv[2]), int(sys.argv[3]))

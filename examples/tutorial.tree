@@ -101,10 +101,12 @@
     Boolean exclusive or. Code must resolve to boolean. You can provide as many code statements as you like (minimum of 1), but they must resolve to exactly 2 booleans.
     ---
     xnor
-    (xor, code1, ...)
+    (xnor, code1, ...)
     Boolean exclusive nor. Code must resolve to boolean. You can provide as many code statements as you like (minimum of 1), but they must resolve to exactly 2 booleans.
     ---
-    implies 
+    implies
+    (implies, code1, ...)
+    Boolean implication. Code must resolve to boolean, but can be 
     ---
     equivalent 
     ---
