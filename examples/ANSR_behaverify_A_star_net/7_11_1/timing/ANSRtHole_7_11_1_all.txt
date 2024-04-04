@@ -1,0 +1,62 @@
+*** This is nuXmv 2.0.0 (compiled on Mon Oct 14 17:48:12 2019)
+*** Copyright (c) 2014-2019, Fondazione Bruno Kessler
+*** For more information on nuXmv see https://nuxmv.fbk.eu
+*** or email to <nuxmv@list.fbk.eu>.
+*** Please report bugs at https://nuxmv.fbk.eu/bugs
+*** (click on "Login Anonymously" to access)
+*** Alternatively write to <nuxmv@list.fbk.eu>.
+
+*** This version of nuXmv is linked to NuSMV 2.6.0.
+*** For more information on NuSMV see <http://nusmv.fbk.eu>
+*** or email to <nusmv-users@list.fbk.eu>.
+*** Copyright (C) 2010-2019, Fondazione Bruno Kessler
+
+*** This version of nuXmv is linked to the CUDD library version 2.4.1
+*** Copyright (c) 1995-2004, Regents of the University of Colorado
+
+*** This version of nuXmv is linked to the MiniSat SAT solver. 
+*** See http://minisat.se/MiniSat.html
+*** Copyright (c) 2003-2006, Niklas Een, Niklas Sorensson
+*** Copyright (c) 2007-2010, Niklas Sorensson
+
+*** This version of nuXmv is linked to MathSAT
+*** Copyright (C) 2009-2019 by Fondazione Bruno Kessler
+*** Copyright (C) 2009-2019 by University of Trento and others
+*** See http://mathsat.fbk.eu
+
+elapse: 0.00 seconds, total: 0.00 seconds
+elapse: 0.01 seconds, total: 0.01 seconds
+Output to file: /dev/null
+elapse: 0.01 seconds, total: 0.02 seconds
+Output to file: /dev/null
+elapse: 7.27 seconds, total: 7.29 seconds
+Runtime Statistics
+------------------
+Machine name: serenenixos
+User time    7.289 seconds
+System time  0.017 seconds
+
+Average resident text size       =     0K
+Average resident data+stack size =     0K
+Maximum resident size            = 45234K
+
+Virtual text size                = 17832K
+Virtual data size                = 116959K
+    data size initialized        = 32226K
+    data size uninitialized      =  8317K
+    data size sbrk               = 76416K
+Virtual memory limit             = -2147483648K (-2147483648K)
+
+Major page faults = 0
+Minor page faults = 22630
+Swaps = 0
+Input blocks = 0
+Output blocks = 8
+Context switch (voluntary) = 0
+Context switch (involuntary) = 21
+**** PROPERTY LIST [ Type, Status, Counter-example Number, Name ] ****
+--------------------------  PROPERTY LIST  -------------------------
+000 :AG (((((((((((AF (system.drone_x_stage_1 = system.destination_x_stage_0 & system.drone_y_stage_1 = system.destination_y_stage_0) | (((system.destination_x_stage_0 <= system.obstacles_stage_0_index_0 & system.destination_x_stage_0 >= system.obstacles_stage_0_index_0 - system.obstacle_sizes_stage_0_index_0) & system.destination_y_stage_0 <= system.obstacles_stage_0_index_1) & system.destination_y_stage_0 >= system.obstacles_stage_0_index_1 - system.obstacle_sizes_stage_0_index_0)) | (((system.destination_x_stage_0 <= system.obstacles_stage_0_index_2 & system.destination_x_stage_0 >= system.obstacles_stage_0_index_2 - system.obstacle_sizes_stage_0_index_1) & system.destination_y_stage_0 <= system.obstacles_stage_0_index_3) & system.destination_y_stage_0 >= system.obstacles_stage_0_index_3 - system.obstacle_sizes_stage_0_index_1)) | (((system.destination_x_stage_0 <= system.obstacles_stage_0_index_4 & system.destination_x_stage_0 >= system.obstacles_stage_0_index_4 - system.obstacle_sizes_stage_0_index_2) & system.destination_y_stage_0 <= system.obstacles_stage_0_index_5) & system.destination_y_stage_0 >= system.obstacles_stage_0_index_5 - system.obstacle_sizes_stage_0_index_2)) | (((system.destination_x_stage_0 <= system.obstacles_stage_0_index_6 & system.destination_x_stage_0 >= system.obstacles_stage_0_index_6 - system.obstacle_sizes_stage_0_index_3) & system.destination_y_stage_0 <= system.obstacles_stage_0_index_7) & system.destination_y_stage_0 >= system.obstacles_stage_0_index_7 - system.obstacle_sizes_stage_0_index_3)) | (((system.destination_x_stage_0 <= system.obstacles_stage_0_index_8 & system.destination_x_stage_0 >= system.obstacles_stage_0_index_8 - system.obstacle_sizes_stage_0_index_4) & system.destination_y_stage_0 <= system.obstacles_stage_0_index_9) & system.destination_y_stage_0 >= system.obstacles_stage_0_index_9 - system.obstacle_sizes_stage_0_index_4)) | (((system.destination_x_stage_0 <= system.obstacles_stage_0_index_10 & system.destination_x_stage_0 >= system.obstacles_stage_0_index_10 - system.obstacle_sizes_stage_0_index_5) & system.destination_y_stage_0 <= system.obstacles_stage_0_index_11) & system.destination_y_stage_0 >= system.obstacles_stage_0_index_11 - system.obstacle_sizes_stage_0_index_5)) | (((system.destination_x_stage_0 <= system.obstacles_stage_0_index_12 & system.destination_x_stage_0 >= system.obstacles_stage_0_index_12 - system.obstacle_sizes_stage_0_index_6) & system.destination_y_stage_0 <= system.obstacles_stage_0_index_13) & system.destination_y_stage_0 >= system.obstacles_stage_0_index_13 - system.obstacle_sizes_stage_0_index_6)) | (((system.destination_x_stage_0 <= system.obstacles_stage_0_index_14 & system.destination_x_stage_0 >= system.obstacles_stage_0_index_14 - system.obstacle_sizes_stage_0_index_7) & system.destination_y_stage_0 <= system.obstacles_stage_0_index_15) & system.destination_y_stage_0 >= system.obstacles_stage_0_index_15 - system.obstacle_sizes_stage_0_index_7)) | (((system.destination_x_stage_0 <= system.obstacles_stage_0_index_16 & system.destination_x_stage_0 >= system.obstacles_stage_0_index_16 - system.obstacle_sizes_stage_0_index_8) & system.destination_y_stage_0 <= system.obstacles_stage_0_index_17) & system.destination_y_stage_0 >= system.obstacles_stage_0_index_17 - system.obstacle_sizes_stage_0_index_8)) | (((system.destination_x_stage_0 <= system.obstacles_stage_0_index_18 & system.destination_x_stage_0 >= system.obstacles_stage_0_index_18 - system.obstacle_sizes_stage_0_index_9) & system.destination_y_stage_0 <= system.obstacles_stage_0_index_19) & system.destination_y_stage_0 >= system.obstacles_stage_0_index_19 - system.obstacle_sizes_stage_0_index_9)) | (((system.destination_x_stage_0 <= system.obstacles_stage_0_index_20 & system.destination_x_stage_0 >= system.obstacles_stage_0_index_20 - system.obstacle_sizes_stage_0_index_10) & system.destination_y_stage_0 <= system.obstacles_stage_0_index_21) & system.destination_y_stage_0 >= system.obstacles_stage_0_index_21 - system.obstacle_sizes_stage_0_index_10)) 
+  [CTL            False          1      N/A]
+001 :!(((((((((((((system.drone_x_stage_1 <= system.obstacles_stage_0_index_0 & system.drone_x_stage_1 >= system.obstacles_stage_0_index_0 - system.obstacle_sizes_stage_0_index_0) & system.drone_y_stage_1 <= system.obstacles_stage_0_index_1) & system.drone_y_stage_1 >= system.obstacles_stage_0_index_1 - system.obstacle_sizes_stage_0_index_0) | (((system.drone_x_stage_1 <= system.obstacles_stage_0_index_2 & system.drone_x_stage_1 >= system.obstacles_stage_0_index_2 - system.obstacle_sizes_stage_0_index_1) & system.drone_y_stage_1 <= system.obstacles_stage_0_index_3) & system.drone_y_stage_1 >= system.obstacles_stage_0_index_3 - system.obstacle_sizes_stage_0_index_1)) | (((system.drone_x_stage_1 <= system.obstacles_stage_0_index_4 & system.drone_x_stage_1 >= system.obstacles_stage_0_index_4 - system.obstacle_sizes_stage_0_index_2) & system.drone_y_stage_1 <= system.obstacles_stage_0_index_5) & system.drone_y_stage_1 >= system.obstacles_stage_0_index_5 - system.obstacle_sizes_stage_0_index_2)) | (((system.drone_x_stage_1 <= system.obstacles_stage_0_index_6 & system.drone_x_stage_1 >= system.obstacles_stage_0_index_6 - system.obstacle_sizes_stage_0_index_3) & system.drone_y_stage_1 <= system.obstacles_stage_0_index_7) & system.drone_y_stage_1 >= system.obstacles_stage_0_index_7 - system.obstacle_sizes_stage_0_index_3)) | (((system.drone_x_stage_1 <= system.obstacles_stage_0_index_8 & system.drone_x_stage_1 >= system.obstacles_stage_0_index_8 - system.obstacle_sizes_stage_0_index_4) & system.drone_y_stage_1 <= system.obstacles_stage_0_index_9) & system.drone_y_stage_1 >= system.obstacles_stage_0_index_9 - system.obstacle_sizes_stage_0_index_4)) | (((system.drone_x_stage_1 <= system.obstacles_stage_0_index_10 & system.drone_x_stage_1 >= system.obstacles_stage_0_index_10 - system.obstacle_sizes_stage_0_index_5) & system.drone_y_stage_1 <= system.obstacles_stage_0_index_11) & system.drone_y_stage_1 >= system.obstacles_stage_0_index_11 - system.obstacle_sizes_stage_0_index_5)) | (((system.drone_x_stage_1 <= system.obstacles_stage_0_index_12 & system.drone_x_stage_1 >= system.obstacles_stage_0_index_12 - system.obstacle_sizes_stage_0_index_6) & system.drone_y_stage_1 <= system.obstacles_stage_0_index_13) & system.drone_y_stage_1 >= system.obstacles_stage_0_index_13 - system.obstacle_sizes_stage_0_index_6)) | (((system.drone_x_stage_1 <= system.obstacles_stage_0_index_14 & system.drone_x_stage_1 >= system.obstacles_stage_0_index_14 - system.obstacle_sizes_stage_0_index_7) & system.drone_y_stage_1 <= system.obstacles_stage_0_index_15) & system.drone_y_stage_1 >= system.obstacles_stage_0_index_15 - system.obstacle_sizes_stage_0_index_7)) | (((system.drone_x_stage_1 <= system.obstacles_stage_0_index_16 & system.drone_x_stage_1 >= system.obstacles_stage_0_index_16 - system.obstacle_sizes_stage_0_index_8) & system.drone_y_stage_1 <= system.obstacles_stage_0_index_17) & system.drone_y_stage_1 >= system.obstacles_stage_0_index_17 - system.obstacle_sizes_stage_0_index_8)) | (((system.drone_x_stage_1 <= system.obstacles_stage_0_index_18 & system.drone_x_stage_1 >= system.obstacles_stage_0_index_18 - system.obstacle_sizes_stage_0_index_9) & system.drone_y_stage_1 <= system.obstacles_stage_0_index_19) & system.drone_y_stage_1 >= system.obstacles_stage_0_index_19 - system.obstacle_sizes_stage_0_index_9)) | (((system.drone_x_stage_1 <= system.obstacles_stage_0_index_20 & system.drone_x_stage_1 >= system.obstacles_stage_0_index_20 - system.obstacle_sizes_stage_0_index_10) & system.drone_y_stage_1 <= system.obstacles_stage_0_index_21) & system.drone_y_stage_1 >= system.obstacles_stage_0_index_21 - system.obstacle_sizes_stage_0_index_10)) 
+  [Invar          True           N/A    N/A]

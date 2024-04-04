@@ -83,6 +83,8 @@ def main():
     """
     Main
     """
+    if os.path.exists(os.path.join(c.save_path, c.save_name+".pth")):
+        raise RuntimeError('file exists and not resuming training!')
     #
     # Check device
     #

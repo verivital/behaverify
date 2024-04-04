@@ -1,8 +1,17 @@
 import re
 import os
 import sys
+from misc_util import extract_info
 
-def convert_table_to_training_data(input_path, output_path_input, output_path_target, min_x, min_y, max_x, max_y):
+def convert_table_to_training_data(input_path):
+    (min_val, max_val, _, _, _) = extract_info(input_path)
+    min_x = min_val
+    min_y = min_val
+    max_x = max_val
+    max_y = max_val
+    output_path_input = input_path.replace('table', 'inputs').replace('.txt', '.py')
+    output_path_target = input_path.replace('table', 'targets').replace('.txt', '.py')
+    
     input_lines = ['inputs = [' + os.linesep]
     target_lines = ['targets = [' + os.linesep]
     target_code = {
@@ -56,8 +65,8 @@ def convert_table_to_training_data(input_path, output_path_input, output_path_ta
                             seen_values.add((s_x, s_y, e_x, e_y))
                             input_lines.append('    ['+ str(float(s_x)) + ', ' + str(float(s_y)) + ', ' + str(float(e_x)) + ', ' + str(float(e_y)) + '],' + os.linesep)
                             target_lines.append('    ' + result + ',' + os.linesep)
-                            if len(seen_values) % 1000 == 0:
-                                print('iteration: ' + str(len(seen_values)))
+                            # if len(seen_values) % 1000 == 0:
+                            #     print('iteration: ' + str(len(seen_values)))
     print(len(seen_values))
     result = target_code['no_action']
     # for s_x in range(all_min_vals[0], all_max_vals[0] + 1):
@@ -81,12 +90,4 @@ def convert_table_to_training_data(input_path, output_path_input, output_path_ta
         output_file.writelines(target_lines)
 
 if __name__ == '__main__':
-    if len(sys.argv) == 2:
-        input_path_ = sys.argv[1]
-        output_path_inputs_ = input_path_.replace('table', 'inputs').replace('.txt', '.py')
-        output_path_targets_ = input_path_.replace('table', 'targets').replace('.txt', '.py')
-        min_val_ = 0
-        max_val_ = int(input_path_.split('/')[-1].split('_')[1])
-        convert_table_to_training_data(input_path_, output_path_inputs_, output_path_targets_, min_val_, min_val_, max_val_, max_val_)
-    else:
-        convert_table_to_training_data(sys.argv[1], sys.argv[2], sys.argv[3], int(sys.argv[4]), int(sys.argv[5]), int(sys.argv[6]), int(sys.argv[7]))
+    convert_table_to_training_data(sys.argv[1])

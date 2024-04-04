@@ -1,6 +1,11 @@
 configuration {
     #{ Here you specify various configuration options, such as Hypersafety }#
-    neural
+    neural {
+	REPLACE_MODE
+	total REPLACE_TOTAL
+	int_part REPLACE_INT
+	float_part REPLACE_FLOAT
+    }
 }
 enumerations {
     #{ here you specify the enumerations used in the model}#
@@ -10,7 +15,7 @@ constants {
     #{ constants are used to synchronize values in a .tree file. }#
     #{ example := 0 }#
     #{ to use example elsewhere, simply type 'example' in place of any integer (quotes included) }#
-    REPLACE_CONSTANTS
+    min_val := 0, max_val := 7, number_of_obstacles := 11, max_obstacle_size := 1
 } end_constants
 
 variables {
@@ -32,11 +37,34 @@ variables {
     }
     #{##########################################}#
     variable { env obstacles DEFINE INT static array (mult, number_of_obstacles, 2) iterative_assign, index_var
-	REPLACE_OBSTACLES
+		condition {(eq, index_var, 0)} assign{result{0}}condition {(eq, index_var, 1)} assign{result{0}}
+	condition {(eq, index_var, 2)} assign{result{6}}condition {(eq, index_var, 3)} assign{result{4}}
+	condition {(eq, index_var, 4)} assign{result{7}}condition {(eq, index_var, 5)} assign{result{4}}
+	condition {(eq, index_var, 6)} assign{result{6}}condition {(eq, index_var, 7)} assign{result{6}}
+	condition {(eq, index_var, 8)} assign{result{2}}condition {(eq, index_var, 9)} assign{result{0}}
+	condition {(eq, index_var, 10)} assign{result{4}}condition {(eq, index_var, 11)} assign{result{1}}
+	condition {(eq, index_var, 12)} assign{result{2}}condition {(eq, index_var, 13)} assign{result{0}}
+	condition {(eq, index_var, 14)} assign{result{1}}condition {(eq, index_var, 15)} assign{result{4}}
+	condition {(eq, index_var, 16)} assign{result{6}}condition {(eq, index_var, 17)} assign{result{1}}
+	condition {(eq, index_var, 18)} assign{result{6}}condition {(eq, index_var, 19)} assign{result{5}}
+	condition {(eq, index_var, 20)} assign{result{7}}condition {(eq, index_var, 21)} assign{result{6}}
+
 	assign{result{0}}
     }
     variable { env obstacle_sizes DEFINE INT static array number_of_obstacles iterative_assign, index_var
-	REPLACE_OBSTACLE_SIZES
+	
+	condition {(eq, index_var, 0)} assign{result{1}}
+	condition {(eq, index_var, 1)} assign{result{1}}
+	condition {(eq, index_var, 2)} assign{result{0}}
+	condition {(eq, index_var, 3)} assign{result{0}}
+	condition {(eq, index_var, 4)} assign{result{1}}
+	condition {(eq, index_var, 5)} assign{result{0}}
+	condition {(eq, index_var, 6)} assign{result{1}}
+	condition {(eq, index_var, 7)} assign{result{1}}
+	condition {(eq, index_var, 8)} assign{result{1}}
+	condition {(eq, index_var, 9)} assign{result{0}}
+	condition {(eq, index_var, 10)} assign{result{0}}
+
 	assign{result{0}}
     }
     variable { env executing_action VAR {'left', 'right', 'up', 'down', 'no_action'} assign{result{'no_action'}}}
