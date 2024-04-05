@@ -6,7 +6,7 @@ Created by Preston
 #
 input_path = '../ignore/inputsSmallsFilled_15_15_61_0.py'
 target_path = '../ignore/targetsSmallsFilled_15_15_61_0.py'
-batch_size = 2**8
+batch_size = 2**10
 shuffle = True
 #
 # Model
@@ -20,8 +20,8 @@ output_size = 5
 #
 # training
 #
-lr = 0.005
-num_epochs = 2000
+lr = 0.0001
+num_epochs = 20000
 log_freq = 1
 #
 # saving
