@@ -32,7 +32,7 @@ def convert_table_to_training_data(input_path):
                 for e_y in range(min_val, max_val + 1):
                     found_set = False
                     for (cur_set, result) in set_associations:
-                        if ((s_x, s_y), (e_x, e_y)) in cur_set:
+                        if (s_x, s_y, e_x, e_y) in cur_set:
                             input_lines.append('    ['+ str(float(s_x)) + ', ' + str(float(s_y)) + ', ' + str(float(e_x)) + ', ' + str(float(e_y)) + '],' + os.linesep)
                             target_lines.append('    ' + result + ',' + os.linesep)
                             found_set = True
