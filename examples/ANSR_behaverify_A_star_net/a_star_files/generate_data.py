@@ -4,8 +4,9 @@ import itertools
 from create_grid import create_grid
 from mass_basic_a_star_2 import mass_a_star
 
-def generate_sets(min_val, max_val, input_path, return_grid = False):
-    grid = create_grid(input_path, min_val, max_val)
+def generate_sets(min_val, max_val, input_path, return_grid = False, grid = None):
+    if grid is None:
+        grid = create_grid(input_path, min_val, max_val)
     left = set()
     right = set()
     up = set()

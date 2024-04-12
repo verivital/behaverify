@@ -10,8 +10,8 @@ def mass_a_star(grid, min_val, max_val, start_location):
             (a_x, a_y) for a_x in (c_x - 1, c_x, c_x + 1) for a_y in (c_y - 1, c_y, c_y + 1)
             if (
                     ((abs(a_x - c_x) + abs(a_y - c_y)) == 1) and
-                    (min_val <= a_x and a_x <= max_val) and
-                    (min_val <= a_y and a_y <= max_val) and
+                    (min_val <= a_x <= max_val) and
+                    (min_val <= a_y <= max_val) and
                     (grid[a_x][a_y] != 1)
             )
         ]
