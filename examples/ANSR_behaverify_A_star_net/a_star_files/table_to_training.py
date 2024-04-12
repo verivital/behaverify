@@ -11,7 +11,7 @@ def convert_table_to_training_data(input_path):
     max_y = max_val
     output_path_input = input_path.replace('table', 'inputs').replace('.txt', '.py')
     output_path_target = input_path.replace('table', 'targets').replace('.txt', '.py')
-    
+
     input_lines = ['inputs = [' + os.linesep]
     target_lines = ['targets = [' + os.linesep]
     target_code = {

@@ -168,6 +168,7 @@ actions {
 	    write_environment {
 		function_send_action
 		variable_statement {
+		    instant
 		    executing_action
 		    assign {
 			result {current_action}
