@@ -4,7 +4,7 @@ import sys
 from misc_util import extract_info
 from generate_data import generate_sets
 
-def convert_table_to_training_data(input_path, small_mode = True):
+def convert_obstacles_to_training_data(input_path, small_mode = True):
     (min_val, max_val, _, _, _) = extract_info(input_path)
     min_x = min_val
     min_y = min_val
@@ -51,4 +51,4 @@ def convert_table_to_training_data(input_path, small_mode = True):
         output_file.writelines(target_lines)
 
 if __name__ == '__main__':
-    convert_table_to_training_data(sys.argv[1])
+    convert_obstacles_to_training_data(sys.argv[1])

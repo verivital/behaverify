@@ -24,51 +24,16 @@ variables {
     variable { bl destination_y VAR [min_val, max_val] assign{result{drone_y}}}
     variable { bl cell_changed_var VAR BOOLEAN assign{result{False}}}
     variable { bl current_action VAR {'left', 'right', 'up', 'down', 'no_action'} assign{result{'no_action'}}}
-    variable { bl macro_action VAR {'left', 'right', 'up', 'down', 'no_action'} assign{result{'no_action'}}}
-    variable { bl keep_out_ll_x DEFINE INT static assign{result{(add, (idiv, (add, min_val, max_val), 2), 1)}}}
-    variable { bl keep_out_ll_y DEFINE INT static assign{result{(add, (idiv, (add, min_val, max_val), 2), 1)}}}
-    variable { bl keep_out_ur_x DEFINE INT static assign{result{(add, (idiv, (add, min_val, max_val), 2), 4)}}}
-    variable { bl keep_out_ur_y DEFINE INT static assign{result{(add, (idiv, (add, min_val, max_val), 2), 4)}}}
-    variable { bl keep_out_scale_drone_x DEFINE INT assign{result{(idiv, (mult, drone_x, keep_out_scale), (add, min_val, max_val, 1))}}}
-    variable { bl keep_out_scale_drone_y DEFINE INT assign{result{(idiv, (mult, drone_y, keep_out_scale), (add, min_val, max_val, 1))}}}
-    variable { bl keep_out_scale_destination_x DEFINE INT assign{result{(idiv, (mult, destination_x, keep_out_scale), (add, min_val, max_val, 1))}}}
-    variable { bl keep_out_scale_destination_y DEFINE INT assign{result{(idiv, (mult, destination_y, keep_out_scale), (add, min_val, max_val, 1))}}}
-    variable { bl keep_out_scale_ll_x DEFINE INT assign{result{(idiv, (mult, keep_out_ll_x, keep_out_scale), (add, min_val, max_val, 1))}}}
-    variable { bl keep_out_scale_ll_y DEFINE INT assign{result{(idiv, (mult, keep_out_ur_y, keep_out_scale), (add, min_val, max_val, 1))}}}
-    variable { bl keep_out_scale_ur_x DEFINE INT assign{result{(idiv, (mult, keep_out_ll_x, keep_out_scale), (add, min_val, max_val, 1))}}}
-    variable { bl keep_out_scale_ur_y DEFINE INT assign{result{(idiv, (mult, keep_out_ur_y, keep_out_scale), (add, min_val, max_val, 1))}}}
-    variable { bl keep_out_modified_destination_x DEFINE INT assign{result{
-		case {(eq, macro_action, 'left')} result {(sub, drone_x, 1)}
-		case {(eq, macro_action, 'right')} result {(add, drone_x, 1)}
-		case {(eq, macro_action, 'up')} result {drone_x}
-		case {(eq, macro_action, 'down')} result {drone_x}
-		result {destination_x}
-	    }
-	}
-    }
-    variable { bl keep_out_modified_destination_y DEFINE INT assign{result{
-		case {(eq, macro_action, 'left')} result {drone_y}
-		case {(eq, macro_action, 'right')} result {drone_y}
-		case {(eq, macro_action, 'up')} result {(add, drone_y, 1)}
-		case {(eq, macro_action, 'down')} result {(sub, drone_y, 1)}
-		result {destination_y}
-	    }
-	}
-    }
-    variable { bl fake_keep_out DEFINE ENUM assign{
-	    REPLACE_FAKE_KEEP_OUT
-	}
-    }
     variable { bl fake_network DEFINE ENUM assign{
 	    REPLACE_FAKE_NETWORK
 	}
     }
     #{##########################################}#
-    variable {env obstacles DEFINE INT static array (mult, number_of_obstacles, 2) iterative_assign, index_var
+    variable { env obstacles DEFINE INT static array (mult, number_of_obstacles, 2) iterative_assign, index_var
 	REPLACE_OBSTACLES
 	assign{result{0}}
     }
-    variable {env obstacle_sizes DEFINE INT static array number_of_obstacles iterative_assign, index_var
+    variable { env obstacle_sizes DEFINE INT static array number_of_obstacles iterative_assign, index_var
 	REPLACE_OBSTACLE_SIZES
 	assign{result{0}}
     }
@@ -98,12 +63,6 @@ checks {
 	    )
 	}
     }
-    check {
-	valid_destination
-	arguments {}
-	read_variables {fake_network, drone_x, drone_y, destination_x, destination_y}
-	condition {(neq, fake_network, 'no_action')}
-    }	
 } end_checks
 
 environment_checks {
@@ -133,6 +92,29 @@ actions {
 			result {(loop, loop_var, [min_val, max_val] such_that True, loop_var)}
 		    }
 		}
+	    }
+	    return_statement {
+		result { success} end_result
+	    } end_return_statement
+	} end_update
+    } end_action
+    action {
+	next_action
+	arguments{}
+	local_variables {} end_local_variables
+	read_variables {fake_network, drone_x, drone_y, destination_x, destination_y} end_read_variables
+	write_variables {cell_changed_var, current_action} end_write_variables
+	initial_values {} end_initial_values
+	update {
+	    variable_statement {
+		cell_changed_var
+		assign {
+		    result {False}
+		}
+	    }
+	    variable_statement {
+		current_action
+		assign {result{fake_network}}
 	    }
 	    return_statement {
 		result { success} end_result
@@ -181,63 +163,13 @@ actions {
 	} end_update
     } end_action
     action {
-	#{TODO: NOT DONE }#
-	set_action
-	arguments{}
-	local_variables {} end_local_variables
-	read_variables {
-	    fake_network, drone_x, drone_y, destination_x, destination_y,
-	    fake_keep_out, keep_out_ll_x, keep_out_ll_y, keep_out_ur_x, keep_out_ur_y,
-	    keep_out_scale_drone_x, keep_out_scale_drone_y, keep_out_scale_destination_x, keep_out_scale_destination_y,
-	    keep_out_scale_ll_x, keep_out_scale_ll_y, keep_out_scale_ur_x, keep_out_scale_ur_y
-	} end_read_variables
-	write_variables {current_action} end_write_variables
-	initial_values {} end_initial_values
-	update {
-	    variable_statement {
-		macro_action
-		assign {result{fake_keep_out}}
-	    }
-	    variable_statement {
-		current_action
-		assign {result{fake_network}}
-	    }
-	    return_statement {
-		result { success} end_result
-	    } end_return_statement
-	} end_update
-    } end_action
-    action {
-	set_no_action
-	arguments{}
-	local_variables {} end_local_variables
-	read_variables {} end_read_variables
-	write_variables {current_action} end_write_variables
-	initial_values {} end_initial_values
-	update {
-	    variable_statement {
-		current_action
-		assign {result{'no_action'}}
-	    }
-	    return_statement {
-		result {success} end_result
-	    } end_return_statement
-	} end_update
-    } end_action
-    action {
 	send_action
 	arguments{}
 	local_variables {} end_local_variables
 	read_variables {current_action} end_read_variables
-	write_variables {cell_changed_var} end_write_variables
+	write_variables {} end_write_variables
 	initial_values {} end_initial_values
 	update {
-	    variable_statement {
-		cell_changed_var
-		assign {
-		    result {False}
-		}
-	    }
 	    write_environment {
 		function_send_action
 		variable_statement {
@@ -270,19 +202,7 @@ tree {
 		    new_destination {}
 		}
 	    }
-	    composite {
-		action_selector selector
-		children {
-		    composite {
-			action_sequence sequence
-			children {
-			    destination_valid {}
-			    set_action {}
-			}
-		    }
-		    set_no_action {}
-		}
-	    }
+	    next_action {}
 	    send_action {}
 	}
     }
