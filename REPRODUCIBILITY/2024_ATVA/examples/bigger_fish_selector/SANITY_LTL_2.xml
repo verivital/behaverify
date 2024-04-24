@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<root _reach_goal="" env="True" expected_execution_time="" global_vars="var bf=0;" main_tree_to_execute="BehaviorTree" specification="#assert BehaviorTree |= F(MoVe4BTCheck_s);">
+<root _reach_goal="" env="True" expected_execution_time="" global_vars="var bf=0;" main_tree_to_execute="BehaviorTree" specification="#assert BehaviorTree |= F(BiggerFishSequence_s);">
     <!-- ////////// -->
     <BehaviorTree ID="BehaviorTree">
         <Fallback name="MoVe4BTSelector">

@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<root _reach_goal="" env="True" expected_execution_time="" global_vars="var bf=0;" main_tree_to_execute="BehaviorTree" specification="#define goal bf==1;&#xA;#assert DealineProcess reaches goal;">
+    <!-- ////////// -->
+    <BehaviorTree ID="BehaviorTree">
+      <Sequence name="Test">
+        <Condition ID="ND" failure_guard="0==0" name="ND" success_guard="0==1"/>
+        <Action ID="BiggerFish" success_guard="0==0" name="BiggerFish" success_program="bf=bf+1"/>
+      </Sequence>
+    </BehaviorTree>
+    <!-- ////////// -->
+    <TreeNodesModel>
+        <Action ID="BiggerFish">
+            <inout_port name="success_guard"/>
+            <inout_port name="success_program"/>
+        </Action>
+        <Condition ID="ND">
+            <inout_port name="failure_guard"/>
+            <inout_port name="success_guard"/>
+        </Condition>
+    </TreeNodesModel>
+    <!-- ////////// -->
+</root>
