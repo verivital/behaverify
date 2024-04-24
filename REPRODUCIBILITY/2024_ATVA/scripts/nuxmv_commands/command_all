@@ -1,0 +1,10 @@
+time
+go
+time
+check_invar -o /dev/null
+time
+check_ctlspec -o /dev/null
+time
+usage
+show_property
+quit

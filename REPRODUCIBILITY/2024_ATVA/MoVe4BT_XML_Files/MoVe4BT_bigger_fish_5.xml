@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<root _reach_goal="" env="True" expected_execution_time="" global_vars="var bf=0;" main_tree_to_execute="BehaviorTree" specification="#assert BehaviorTree |= F(MoVe4BTCheck_s);">
+    <!-- ////////// -->
+    <BehaviorTree ID="BehaviorTree">
+        <Fallback name="MoVe4BTSelector">
+            <Sequence name="BiggerFishSequence">
+                <Fallback name="Selector5">
+                    <Condition ID="Is2" failure_guard="bf&lt;2 || bf&gt;2" name="Is2" success_guard="bf==2"/>
+                    <Condition ID="Is3" failure_guard="bf&lt;3 || bf&gt;3" name="Is3" success_guard="bf==3"/>
+                    <Condition ID="Is4" failure_guard="bf&lt;4 || bf&gt;4" name="Is4" success_guard="bf==4"/>
+                    <Condition ID="Is5" failure_guard="bf&lt;5 || bf&gt;5" name="Is5" success_guard="bf==5"/>
+                    <Fallback name="Selector1">
+                        <Condition ID="Is0" failure_guard="bf&lt;0 || bf&gt;0" name="Is0" success_guard="bf==0"/>
+                        <Condition ID="Is1" failure_guard="bf&lt;1 || bf&gt;1" name="Is1" success_guard="bf==1"/>
+                    </Fallback>
+                </Fallback>
+                <Action ID="BiggerFish" success_guard="bf &gt;= 0" name="BiggerFish" success_program="bf=bf+1"/>
+            </Sequence>
+            <Condition ID="MoVe4BTCheck" failure_guard="bf&lt;6 || bf&gt;6" name="MoVe4BTCheck" success_guard="bf==6"/>
+        </Fallback>
+    </BehaviorTree>
+    <!-- ////////// -->
+    <TreeNodesModel>
+        <Action ID="BiggerFish">
+            <inout_port name="success_guard"/>
+            <inout_port name="success_program"/>
+        </Action>
+        <Condition ID="MoVe4BTCheck">
+            <inout_port name="failure_guard"/>
+            <inout_port name="success_guard"/>
+        </Condition>
+        <Condition ID="Is0">
+            <inout_port name="failure_guard"/>
+            <inout_port name="success_guard"/>
+        </Condition>
+        <Condition ID="Is1">
+            <inout_port name="failure_guard"/>
+            <inout_port name="success_guard"/>
+        </Condition>
+        <Condition ID="Is2">
+            <inout_port name="failure_guard"/>
+            <inout_port name="success_guard"/>
+        </Condition>
+        <Condition ID="Is3">
+            <inout_port name="failure_guard"/>
+            <inout_port name="success_guard"/>
+        </Condition>
+        <Condition ID="Is4">
+            <inout_port name="failure_guard"/>
+            <inout_port name="success_guard"/>
+        </Condition>
+        <Condition ID="Is5">
+            <inout_port name="failure_guard"/>
+            <inout_port name="success_guard"/>
+        </Condition>
+    </TreeNodesModel>
+    <!-- ////////// -->
+</root>
