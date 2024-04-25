@@ -297,7 +297,7 @@ def validate_model(metamodel_file, model_file, recursion_limit):
         return_type = func_info['return_type']
         arg_type = func_info['arg_type']
         if arg_type == 'node_name':
-            node_func = build_meta_func(code.node_name)
+            node_func = build_meta_func(code.function_call.node_name)
             node_name_vals = node_func((constants, loop_references))
             if len(node_name_vals) != 1:
                 raise BTreeException(trace, 'Expected exactly one node reference')

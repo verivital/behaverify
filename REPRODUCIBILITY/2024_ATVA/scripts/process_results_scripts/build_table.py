@@ -28,7 +28,8 @@ encoding_combo = {
     'func' : ['func', 'norm', 'no_internal', 's_var'],
     'invar' : ['aut', 'func', 'norm', 'no_internal', 's_var'],
     'opt' : ['no_opt', 'last_opt', 'first_opt', 'full_opt'],
-    'full_opt' : ['full_opt']
+    'full_opt' : ['full_opt'],
+    'simple_robot' : ['full_opt', 'full_opt_CHANGED']
 }
 encoding_name_to_result_name = {
     'aut' : 'aut_',
@@ -41,7 +42,8 @@ encoding_name_to_result_name = {
     'no_opt' : 'no_opt_',
     'last_opt' : 'last_opt_',
     'first_opt' : 'first_opt_',
-    'full_opt' : 'full_opt_'
+    'full_opt' : 'full_opt_',
+    'full_opt_CHANGED' : 'full_opt_CHANGED_'
 }
 
 encoding_mark = {
@@ -57,6 +59,7 @@ encoding_mark = {
     'last_opt' : ('blue', 'v'),
     'first_opt' : ('green', '^'),
     'full_opt' : ('black', '*'),
+    'full_opt_CHANGED' : ('blue', '^'),
 }
 
 #reach = re.compile('reachable states: (?P<val1>\d+(\.\d+e\+\d+|)) \(2\^(?P<val2>\d+(\.\d+|))\) out of (?P<val3>\d+(\.\d+e\+\d+|)) \(2\^(?P<val4>\d+(\.\d+|))\)')
