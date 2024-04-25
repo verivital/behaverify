@@ -131,10 +131,12 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
 
     def format_function_after(function_name, function_call, misc_args):
         '''(node_name.function_name)'''
+        node_func = build_meta_func(function_call.node_name)
+        node_name_vals = node_func((constants, misc_args['loop_references']))
         return [
             '('
             + (('system' + (('_' + str(misc_args['trace_num'])) if hyper_mode else '') + '.') if misc_args['specification_writing'] else '')
-            + function_call.node_name
+            + node_name_vals[0]
             + function_name
             + ')'
         ]

@@ -1,0 +1,4 @@
+pillow
+pandas
+jinja2
+matplotlib

@@ -108,7 +108,7 @@ tree{
 		sequence
 		children {
 		    x_too_small {}
-		    move {1, 0}
+		    go_right : move {1, 0}
 		} end_children
 	    } end_composite
 	    composite {
@@ -116,7 +116,7 @@ tree{
 		sequence
 		children {
 		    x_too_big {}
-		    move {-1, 0}
+		    go_left : move {-1, 0}
 		} end_children
 	    } end_composite
 	    composite {
@@ -124,7 +124,7 @@ tree{
 		sequence
 		children {
 		    y_too_small {}
-		    move {0, 1}
+		    go_up : move {0, 1}
 		} end_children
 	    } end_composite
 	    composite {
@@ -132,7 +132,7 @@ tree{
 		sequence
 		children {
 		    y_too_big {}
-		    move {0, -1}
+		    go_down : move {0, -1}
 		} end_children
 	    } end_composite
 	} end_children
