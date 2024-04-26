@@ -5,12 +5,12 @@ import sys
 def indent(n):
     return ' '*(4*n)
 
-
+FISH_CAP = '1000'
 def create_constants():
     return (
         'configuration {}' + os.linesep
         + 'enumerations {}' + os.linesep
-        + 'constants { fish_cap := 1001 } end_constants' + os.linesep
+        + 'constants { fish_cap := ' + FISH_CAP + ' } end_constants' + os.linesep
     )
 
 
@@ -319,5 +319,8 @@ def write_files(location, mode, min_val, max_val, step_size):
         with open(file_name + str(x) + '.tree', 'w', encoding = 'utf-8') as output_file:
             output_file.write(create_fish(x, tree_func, spec_func))
 
-
-write_files(sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4]), int(sys.argv[5]))
+if len(sys.argv) == 6:
+    write_files(sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4]), int(sys.argv[5]))
+elif len(sys.argv) == 4:
+    FISH_CAP = sys.argv[3]
+    write_files(sys.argv[1], sys.argv[2], int(FISH_CAP), int(FISH_CAP), 2)
