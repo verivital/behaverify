@@ -20,4 +20,4 @@ if ! test -e "${path_name}/processed_data/pictures"; then
     mkdir "${path_name}/processed_data/pictures"
 fi
 
-$python_command vs_MoVe4BT.py --folder_name bigger_fish --file_name bigger_fish_MoVe4BT --minV $min_val --maxV $max_val --step $step_size --xLabel "Number of Nodes" --encodings "vs"
+$python_command vs_MoVe4BT.py --folder_name bigger_fish --file_name bigger_fish --minV $min_val --maxV $max_val --step $step_size --xLabel "Number of Nodes" --encodings "vs_bigger_fish"

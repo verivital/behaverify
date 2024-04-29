@@ -7,9 +7,13 @@ import argparse
 
 PATH_DIRECTION = '../../examples/'
 
+TOOLNAME = 'TOOLNAME on Original Tree'
+TOOLNAME_changed = 'TOOLNAME on MoVe4BT Tree'
+COMP1 = 'MoVe4BT'
 encoding_combo = {
-    'vs' : ['TOOLNAME', 'MoVe4BT'],
-    'vs_robot' : ['TOOLNAME', 'TOOLNAME_changed', 'MoVe4BT']
+    'vs' : [TOOLNAME, COMP1],
+    'vs_robot' : [TOOLNAME, TOOLNAME_changed, COMP1],
+    'vs_bigger_fish' : [TOOLNAME, TOOLNAME_changed, COMP1]
 }
 encoding_name_to_result_name = {
     'aut' : 'aut_',
@@ -23,9 +27,9 @@ encoding_name_to_result_name = {
     'last_opt' : 'last_opt_',
     'first_opt' : 'first_opt_',
     'full_opt' : 'full_opt_',
-    'TOOLNAME' : 'full_opt_',
-    'TOOLNAME_changed' : 'full_opt_CHANGED_',
-    'MoVe4BT' : 'MoVe4BT_'
+    TOOLNAME : 'full_opt_',
+    TOOLNAME_changed : 'full_opt_CHANGED_',
+    COMP1 : 'MoVe4BT_'
 }
 
 encoding_mark = {
@@ -41,9 +45,9 @@ encoding_mark = {
     'last_opt' : ('blue', 'v'),
     'first_opt' : ('green', '^'),
     'full_opt' : ('black', '*'),
-    'TOOLNAME' : ('black', '*'),
-    'TOOLNAME_changed' : ('blue', '^'),
-    'MoVe4BT' : ('green', 'v'),
+    TOOLNAME : ('black', '*', '-'),
+    TOOLNAME_changed : ('blue', '^', ':'),
+    COMP1 : ('green', 'v'),
 }
 
 #reach = re.compile('reachable states: (?P<val1>\d+(\.\d+e\+\d+|)) \(2\^(?P<val2>\d+(\.\d+|))\) out of (?P<val3>\d+(\.\d+e\+\d+|)) \(2\^(?P<val4>\d+(\.\d+|))\)')
@@ -127,10 +131,10 @@ for encoding_code in encoding_codes:
                     else:
                         x_range.append(experiments[x])
                         y_range.append(float(val))
-                plt.plot(x_range, y_range, color = encoding_mark[encodings[i]][0], marker = encoding_mark[encodings[i]][1])
+                plt.plot(x_range, y_range, color = encoding_mark[encodings[i]][0], marker = encoding_mark[encodings[i]][1], linestyle = ('solid' if len(encoding_mark[encodings[i]]) < 3 else encoding_mark[encodings[i]][2]))
             plt.ylabel(y_label)
             plt.xlabel(x_label)
-            plt.title(title)
+            #plt.title(title)
             plt.legend(encodings)
             plt.tight_layout()
             plt.savefig(PATH_DIRECTION + group_name + '/processed_data/pictures/' + file_name + '_' + file_end + '.png', bbox_inches = 'tight')

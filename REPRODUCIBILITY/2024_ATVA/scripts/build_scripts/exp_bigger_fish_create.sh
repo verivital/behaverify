@@ -17,6 +17,7 @@ fi
 path_name="../../examples/bigger_fish"
 
 $python_command "${path_name}/create_bigger_fish.py" "${path_name}/tree" MoVe4BT $min_val $max_val $step_size
+$python_command "${path_name}/create_bigger_fish.py" "${path_name}/tree" bigger_fish $min_val $max_val $step_size
 $python_command "${path_name}/create_bigger_fish_MoVe4BT_xml.py" "${path_name}/xml" $min_val $max_val $step_size
 
 #encodings=("aut" "aut_s" "depth" "norm" "func" "no_internal" "s_var")
@@ -24,5 +25,6 @@ $python_command "${path_name}/create_bigger_fish_MoVe4BT_xml.py" "${path_name}/x
 for (( num=min_val; num<=max_val; num=(num + step_size) )); do
     echo "now on iteration: "
     echo $num
-    ./make_full_opt_smv.sh $python_command "${path_name}" bigger_fish_MoVe4BT_$num
+    ./make_full_opt_smv.sh $python_command "${path_name}" CHANGED_bigger_fish_$num
+    ./make_full_opt_smv.sh $python_command "${path_name}" bigger_fish_$num
 done

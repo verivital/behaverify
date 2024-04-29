@@ -22,7 +22,8 @@ def create_variables():
         + 'variable { bl x_goal VAR [0, x_max] assign {result {0} } }' + os.linesep
         + 'variable { bl y_goal VAR [0, y_max] assign {result {0} } }' + os.linesep
         + 'variable { bl remaining_goals VAR [0, 4] assign {result {4} } }' + os.linesep
-        + 'variable { bl change_val VAR BOOLEAN assign {result {False}}}' + os.linesep
+        + 'variable { bl change_val_x VAR [0, x_max] assign {result {0}}}' + os.linesep
+        + 'variable { bl change_val_y VAR [0, y_max] assign {result {0}}}' + os.linesep
         + '}' + os.linesep
     )
 
@@ -86,13 +87,12 @@ def create_actions():
         + indent(2) + 'set_x_goal' + os.linesep
         + indent(2) + 'arguments {new_val := INT}' + os.linesep
         + indent(2) + 'local_variables {} end_local_variables' + os.linesep
-        + indent(2) + 'read_variables {} end_read_variables' + os.linesep
-        + indent(2) + 'write_variables { change_val, x_goal } end_write_variables' + os.linesep
+        + indent(2) + 'read_variables {change_val_x} end_read_variables' + os.linesep
+        + indent(2) + 'write_variables {x_goal } end_write_variables' + os.linesep
         + indent(2) + 'initial_values {} end_initial_values' + os.linesep
         + indent(2) + 'update {' + os.linesep
-        + indent(3) + 'variable_statement { change_val assign {result {True, False} } } end_variable_statement' + os.linesep
-        + indent(3) + 'variable_statement { x_goal assign {case{change_val} result{new_val} result{x_goal} } } end_variable_statement' + os.linesep
-        + indent(3) + 'return_statement { case{change_val}result { success } result{failure} } end_return_statement' + os.linesep
+        + indent(3) + 'variable_statement { x_goal assign {case{(eq, change_val_x, new_val)} result{new_val} result{x_goal} } } end_variable_statement' + os.linesep
+        + indent(3) + 'return_statement { case{(eq, change_val_x, new_val)}result { success } result{failure} } end_return_statement' + os.linesep
         + indent(2) + '} end_update' + os.linesep
         + indent(1) + '} end_action' + os.linesep
         #
@@ -100,13 +100,12 @@ def create_actions():
         + indent(2) + 'set_y_goal' + os.linesep
         + indent(2) + 'arguments {new_val := INT}' + os.linesep
         + indent(2) + 'local_variables {} end_local_variables' + os.linesep
-        + indent(2) + 'read_variables {} end_read_variables' + os.linesep
-        + indent(2) + 'write_variables { change_val, y_goal } end_write_variables' + os.linesep
+        + indent(2) + 'read_variables {change_val_y} end_read_variables' + os.linesep
+        + indent(2) + 'write_variables { y_goal } end_write_variables' + os.linesep
         + indent(2) + 'initial_values {} end_initial_values' + os.linesep
         + indent(2) + 'update {' + os.linesep
-        + indent(3) + 'variable_statement { change_val assign {result {True, False} } } end_variable_statement' + os.linesep
-        + indent(3) + 'variable_statement { y_goal assign {case{change_val} result{new_val} result{y_goal} } } end_variable_statement' + os.linesep
-        + indent(3) + 'return_statement { case{change_val}result { success } result{failure} } end_return_statement' + os.linesep
+        + indent(3) + 'variable_statement { y_goal assign {case{(eq, change_val_y, new_val)} result{new_val} result{y_goal} } } end_variable_statement' + os.linesep
+        + indent(3) + 'return_statement { case{(eq, change_val_y, new_val)}result { success } result{failure} } end_return_statement' + os.linesep
         + indent(2) + '} end_update' + os.linesep
         + indent(1) + '} end_action' + os.linesep
         #
@@ -141,10 +140,12 @@ def create_actions():
         + indent(2) + 'arguments {}' + os.linesep
         + indent(2) + 'local_variables {} end_local_variables' + os.linesep
         + indent(2) + 'read_variables {} end_read_variables' + os.linesep
-        + indent(2) + 'write_variables { remaining_goals } end_write_variables' + os.linesep
+        + indent(2) + 'write_variables {change_val_x, change_val_y, remaining_goals } end_write_variables' + os.linesep
         + indent(2) + 'initial_values {} end_initial_values' + os.linesep
         + indent(2) + 'update {' + os.linesep
         + indent(3) + 'variable_statement { remaining_goals  assign{result{(max, 0, (sub, remaining_goals, 1))}} } end_variable_statement' + os.linesep
+        + indent(3) + 'variable_statement { change_val_x  assign{result{(loop, loop_var, [0, x_max] such_that True, loop_var)}} } end_variable_statement' + os.linesep
+        + indent(3) + 'variable_statement { change_val_y  assign{result{(loop, loop_var, [0, y_max] such_that True, loop_var)}} } end_variable_statement' + os.linesep
         + indent(3) + 'return_statement { result { success } } end_return_statement' + os.linesep
         + indent(2) + '} end_update' + os.linesep
         + indent(1) + '} end_action' + os.linesep
@@ -235,7 +236,7 @@ def create_simple_robot(grid_size):
 def write_files(location, min_val, max_val, step_size):
     if location[-1] != '/':
         location = location + '/'
-    file_name = location + 'CHANGED_simple_robot_'
+    file_name = location + 'CHANGED2_simple_robot_'
     for x in range(min_val, max_val + 1, step_size):
         with open(file_name + str(x) + '.tree', 'w', encoding = 'utf-8') as output_file:
             output_file.write(create_simple_robot(x))

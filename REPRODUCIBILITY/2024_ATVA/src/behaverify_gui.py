@@ -512,7 +512,7 @@ def main():
             status_text.config(text = 'Not a file: "' + from_file_entry.get() + '"')
             return
         try:
-            (nodes, variables) = dsl_to_nuxmv('../metamodel/behaverify.tx', from_file_entry.get(), None, False, False, False, None, 0, True)
+            (nodes, variables) = dsl_to_nuxmv('../metamodel/behaverify.tx', from_file_entry.get(), None, False, False, False, None, 0, True, True)
             root_node_name = get_root_from_BehaVerify_json(nodes)
             status_text.config(text = 'Imported DSL, root node name: ' + root_node_name)
         except Exception as error:
@@ -521,11 +521,17 @@ def main():
             status_text.config(text = 'An exception occurred during Import: ' + str(error))
     def visualize_trace():
         smv_run = handle_smv(from_file_entry.get())
+        previous_value = {}
+        previous_status = {}
+        previous_misc = {}
+        # ../examples/simple_robot/tree/CHANGED_simple_robot_2.tree
+        # ../examples/simple_robot/results/LTL_full_opt_CHANGED_simple_robot_2.txt
         for (tick_number, state) in enumerate(smv_run):
             dot = create_dot_from_BehaVerify_json(nodes, root_node_name, output_file = to_file_entry.get() + '/' + str(tick_number), detailed_nodes = (True if var_detailed_nodes.get() == 1 else 0))
             nodes_to_status = {}
             nodes_to_var_values = {}
             misc_var_values = []
+            seen_variables = set()
             for node_or_var_name in state:
                 if node_or_var_name in nodes:
                     nodes_to_status[node_or_var_name] = state[node_or_var_name]
@@ -534,6 +540,8 @@ def main():
                         string_to_add = node_or_var_name + '_stage_' + str(stage) + ' := ' + state[node_or_var_name][stage]
                         if node_or_var_name not in variables or stage == 0:
                             misc_var_values.append(string_to_add)
+                            seen_variables.add(node_or_var_name + '_stage_' + str(stage))
+                            previous_misc[node_or_var_name + '_stage_' + str(stage)] = string_to_add
                         elif len(variables[node_or_var_name]['next_value']) >= stage:
                             node_name = variables[node_or_var_name]['next_value'][stage - 1][0]
                             if node_name not in nodes_to_var_values:
@@ -541,16 +549,27 @@ def main():
                             nodes_to_var_values[node_name].append(string_to_add)
                         else:
                             misc_var_values.append(string_to_add)
+                            seen_variables.add(node_or_var_name + '_stage_' + str(stage))
+                            previous_misc[node_or_var_name + '_stage_' + str(stage)] = string_to_add
+            for var_name in previous_misc:
+                if var_name in seen_variables:
+                    continue
+                misc_var_values.append(previous_misc[var_name])
             for node_name in nodes:
-                node_info = (nodes_to_status[node_name] + os.linesep + (os.linesep).join(sorted(nodes_to_var_values[node_name]))) if node_name in nodes_to_var_values else nodes_to_status[node_name]
-                dot.node(node_name + '_INFO', label = node_info, shape = 'plaintext', fontcolor = STATUS_COLORS[nodes_to_status[node_name]])
+                node_status = nodes_to_status[node_name] if node_name in nodes_to_status else previous_status[node_name]
+                node_info = (
+                    (node_status + os.linesep + (os.linesep).join(sorted(nodes_to_var_values[node_name])))
+                    if node_name in nodes_to_var_values else
+                    node_status
+                )
+                dot.node(node_name + '_INFO', label = node_info, shape = 'plaintext', fontcolor = STATUS_COLORS[node_status])
                 dot.edge(node_name, node_name + '_INFO')
+                previous_value[node_name] = node_info
+                previous_status[node_name] = node_status
             dot.node('MISC_INFO', label = (os.linesep).join(sorted(misc_var_values)), shape = 'note', fontcolor = '#000000')
             dot.render()
         return
 
-    #../examples/ANSR_ONNX/ANSR_ONNX.tree
-    #../examples/ANSR_ONNX/smv/trace.txt
     nodes = {'root' : {'parent' : None, 'type' : 'selector', 'custom_type' : None, 'children' : []}}
     root_node_name = 'root'
     variables = {}
