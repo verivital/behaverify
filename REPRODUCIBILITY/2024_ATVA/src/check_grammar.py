@@ -38,7 +38,7 @@ from behaverify_common import (create_node_name,
 # todo : make sure loop variables don't conflict
 # todo : make sure define variables are deterministicly updated.
 
-def validate_model(metamodel_file, model_file, recursion_limit):
+def validate_model(metamodel_file, model_file, recursion_limit, disable = False):
     '''used to validate the model'''
     trace = []
     function_type_info = {
@@ -792,6 +792,14 @@ def validate_model(metamodel_file, model_file, recursion_limit):
         sys.setrecursionlimit(recursion_limit)
     metamodel = textx.metamodel_from_file(metamodel_file, auto_init_attributes = False)
     model = metamodel.model_from_file(model_file)
+    print('textx finished parsing')
+
+    if disable:
+        declared_enumerations = set(model.enumerations)
+        constants = {constant.name : constant.val for constant in model.constants}
+        variables = {variable.name : variable for variable in model.variables}
+        return (model, variables, constants, declared_enumerations)
+
     if model.neural is not None:
         import onnxruntime
 

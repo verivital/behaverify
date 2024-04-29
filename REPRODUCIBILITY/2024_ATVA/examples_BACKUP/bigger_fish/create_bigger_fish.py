@@ -262,34 +262,6 @@ def create_tree_move4bt(x):
         + '} end_tree' + os.linesep
     )
 
-def create_tree_bigger_fish(x):
-    # number_of_nodes = x
-    # number_of_nodes = number_of_checks + move4bt_selector + move4bt_check + biggest_fish_sequence + bigger_fish + find_biggest_fish
-    # number_of_nodes = number_of_checks + 5
-    # qed
-    # number_of_checks = x - 5
-    number_of_checks = x - 5
-    return (
-        'sub_trees {#{ subtrees go here. }#} end_sub_trees' + os.linesep
-        + 'tree {' + os.linesep
-        + indent(3) + 'composite {' + os.linesep
-        + indent(4) + 'biggest_fish_sequence sequence' + os.linesep
-        + indent(4) + 'children {' + os.linesep
-        + indent(5) + 'composite {' + os.linesep
-        + indent(6) + 'find_biggest_fish selector' + os.linesep
-        + indent(6) + 'children {' + os.linesep
-        + ''.join([
-            (indent(7) + 'biggest_fish_is_' + str(y) + ' : biggest_fish_is_X {' + str(y) + '}' + os.linesep)
-            for y in range(number_of_checks)
-        ])
-        + indent(6) + '} end_children' + os.linesep
-        + indent(5) + '} end_composite' + os.linesep
-        + indent(5) + 'bigger_fish {}' + os.linesep
-        + indent(4) + '} end_children' + os.linesep
-        + indent(3) + '} end_composite' + os.linesep
-        + '} end_tree' + os.linesep
-    )
-
 
 def create_specifications(x):
     return (
@@ -297,14 +269,6 @@ def create_specifications(x):
         + 'specifications {' + os.linesep
         + indent(1) + 'LTLSPEC { (finally, (globally, (eq, biggest_fish at 0, ' + str(x + 1) + '))) } end_LTLSPEC' + os.linesep
         + indent(1) + 'CTLSPEC { (always_finally, (always_globally, (eq, biggest_fish at 0, ' + str(x + 1) + '))) } end_CTLSPEC' + os.linesep
-        + '} end_specifications'
-    )
-def create_specifications_bigger_fish(x):
-    return (
-        'tick_prerequisite { True }' + os.linesep
-        + 'specifications {' + os.linesep
-        + indent(1) + 'LTLSPEC { (finally, (globally, (eq, biggest_fish at 0, ' + str(x - 5) + '))) } end_LTLSPEC' + os.linesep
-        + indent(1) + 'CTLSPEC { (always_finally, (always_globally, (eq, biggest_fish at 0, ' + str(x - 5) + '))) } end_CTLSPEC' + os.linesep
         + '} end_specifications'
     )
 def create_specifications_move4bt(_):
@@ -343,12 +307,8 @@ def write_files(location, mode, min_val, max_val, step_size):
         file_name = location + 'bigger_fish_selector_'
         tree_func = create_tree_selector
         spec_func = create_specifications
-    elif 'bigger_fish' in mode:
-        file_name = location + 'bigger_fish_'
-        tree_func = create_tree_bigger_fish
-        spec_func = create_specifications_bigger_fish
     elif 'MoVe4BT' in mode:
-        file_name = location + 'CHANGED_bigger_fish_'
+        file_name = location + 'bigger_fish_MoVe4BT_'
         tree_func = create_tree_move4bt
         spec_func = create_specifications_move4bt
     else:
