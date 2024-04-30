@@ -25,7 +25,7 @@ from behaverify_common import create_node_name, create_node_template, create_var
 # if the condition is true, then the result is used.
 # the last condition should always be TRUE
 
-def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_last_stage, do_not_trim, behave_only, recursion_limit, return_values):
+def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_last_stage, do_not_trim, behave_only, recursion_limit, return_values, skip_grammar_check):
     '''
     This method is used to convert the dsl to behaverify.
     '''
@@ -1786,7 +1786,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
         'action' : create_action
     }
     array_size_override = {} # this is indexed by variable.name. Yes that is variable.name, not variable_name. It should be indexed by the name associated with the variable object.
-    (model, variables, constants, declared_enumerations) = validate_model(metamodel_file, model_file, recursion_limit)
+    (model, variables, constants, declared_enumerations) = validate_model(metamodel_file, model_file, recursion_limit, skip_grammar_check)
     hyper_mode = model.hypersafety
     use_reals = model.use_reals
     if model.neural is not None:
@@ -1847,5 +1847,6 @@ if __name__ == '__main__':
     arg_parser.add_argument('--do_not_trim', action = 'store_true')
     arg_parser.add_argument('--behave_only', action = 'store_true')
     arg_parser.add_argument('--recursion_limit', type = int, default = 0)
+    arg_parser.add_argument('--no_checks', action = 'store_true')
     args = arg_parser.parse_args()
-    dsl_to_nuxmv(args.metamodel_file, args.model_file, args.output_file, args.keep_stage_0, args.keep_last_stage, args.do_not_trim, args.behave_only, args.recursion_limit, False)
+    dsl_to_nuxmv(args.metamodel_file, args.model_file, args.output_file, args.keep_stage_0, args.keep_last_stage, args.do_not_trim, args.behave_only, args.recursion_limit, False, args.no_checks)
