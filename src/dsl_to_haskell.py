@@ -15,7 +15,7 @@ from serene_functions import build_meta_func
 from check_grammar import validate_model
 
 
-def dsl_to_haskell(metamodel_file, model_file, location, output_name, max_iter, recursion_limit):
+def dsl_to_haskell(metamodel_file, model_file, location, output_name, max_iter, recursion_limit, no_checks):
     '''
     this function is used to convert the dsl to haskell code
     '''
@@ -1341,7 +1341,7 @@ def dsl_to_haskell(metamodel_file, model_file, location, output_name, max_iter, 
         + os.linesep
     )
 
-    (model, variables, constants, declared_enumerations) = validate_model(metamodel_file, model_file, recursion_limit)
+    (model, variables, constants, declared_enumerations) = validate_model(metamodel_file, model_file, recursion_limit, no_checks)
     variable_type_map = {
         variable.name : to_haskell_type(variable_type(variable, declared_enumerations, constants))
         for variable in model.variables
@@ -1421,6 +1421,7 @@ if __name__ == '__main__':
     arg_parser.add_argument('output_name')
     arg_parser.add_argument('--max_iter', default = 100)
     arg_parser.add_argument('--recursion_limit', type = int, default = 0)
+    arg_parser.add_argument('--no_checks', action = 'store_true')
     # arg_parser.add_argument('--keep_names', action = 'store_true')
     args = arg_parser.parse_args()
-    dsl_to_haskell(args.metamodel_file, args.model_file, args.location, args.output_name, args.max_iter, args.recursion_limit)
+    dsl_to_haskell(args.metamodel_file, args.model_file, args.location, args.output_name, args.max_iter, args.recursion_limit, args.no_checks)
