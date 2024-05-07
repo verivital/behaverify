@@ -1,11 +1,6 @@
 configuration {
     #{ Here you specify various configuration options, such as Hypersafety }#
-    neural {
-	REPLACE_MODE
-	total REPLACE_TOTAL
-	int_part REPLACE_INT
-	float_part REPLACE_FLOAT
-    }
+    neural
 }
 enumerations {
     #{ here you specify the enumerations used in the model}#
@@ -79,10 +74,17 @@ checks {
 	condition {(or, cell_changed_var, (eq, current_action, 'no_action'))}
     }
     check {
-	destination_reached
+	not_at_destination
 	arguments {}
 	read_variables {destination_x, destination_y, drone_x, drone_y, current_action}
-	condition {(or, (and, (eq, destination_x, drone_x), (eq, destination_y, drone_y)), (eq, current_action, 'no_action'))}
+	condition {
+	    (not,
+		(or,
+		    (and, (eq, destination_x, drone_x), (eq, destination_y, drone_y)),
+		    (eq, current_action, 'no_action')
+		)
+	    )
+	}
     }
 } end_checks
 
@@ -194,6 +196,7 @@ actions {
 	    write_environment {
 		function_send_action
 		variable_statement {
+		    instant
 		    executing_action
 		    assign {
 			result {current_action}
@@ -211,23 +214,18 @@ sub_trees {#{ subtrees go here. }#} end_sub_trees
 
 tree {
     composite {
-	drone_control parallel policy success_on_all
+	drone_control sequence
 	children {
 	    read_position {}
+	    cell_changed {}
 	    composite {
-		destination_sequence sequence
+		destination_selector selector
 		children {
-		    destination_reached {}
+		    not_at_destination {}
 		    new_destination {}
 		}
 	    }
-	    composite {
-		action_sequence sequence
-		children {
-		    cell_changed {}
-		    next_action {}
-		}
-	    }
+	    next_action {}
 	    send_action {}
 	}
     }

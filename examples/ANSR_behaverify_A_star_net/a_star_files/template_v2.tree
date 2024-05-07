@@ -193,17 +193,17 @@ tree {
     composite {
 	drone_control sequence
 	children {
-	    read_position {}
-	    cell_changed {}
+	    read_position {} #{this just gets our position}#
+	    cell_changed {} #{this checks if the cell changed OR we took no_action}#
 	    composite {
 		destination_selector selector
 		children {
-		    not_at_destination {}
-		    new_destination {}
+		    not_at_destination {} #{success if we are not at the destination AND we took no action.}#
+		    new_destination {} #{if we reached the destination OR we took no action, find a new destination}#
 		}
 	    }
-	    next_action {}
-	    send_action {}
+	    next_action {} #{pick an action}#
+	    send_action {} #{send the action}#
 	}
     }
 } end_tree
