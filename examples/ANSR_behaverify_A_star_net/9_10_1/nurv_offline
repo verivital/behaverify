@@ -1,0 +1,5 @@
+go
+build_monitor -n 0
+read_trace 100.xml
+verify_property -n 0 1
+quit

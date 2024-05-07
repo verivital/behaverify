@@ -1,0 +1,56 @@
+configuration {
+}
+enumerations {
+}
+
+constants {
+}
+
+variables {
+    variable { bl counter VAR [0, 10] assign {result {0}}}
+}
+
+environment_update {
+}
+
+checks {
+}
+
+environment_checks {
+}
+
+actions {
+    action {
+	inc
+	arguments{}
+	local_variables{}
+	read_variables{}
+	write_variables{counter}
+	initial_values{}
+	update{
+	    variable_statement {
+		counter
+		assign {
+		    result {(min, 10, (add, counter, 1)), counter}
+		}
+	    }
+	    return_statement{result{success}}
+	}
+    }
+}
+
+
+sub_trees {
+}
+
+tree {
+    inc {}
+}
+
+tick_prerequisite {
+    True
+}
+
+specifications {
+    LTLSPEC { (globally, (finally, (gt, counter, 5)))}
+}

@@ -1,0 +1,1114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<counter-example type="0" id="1" desc="LTL Counterexample">
+  <node>
+    <state id="1">
+      <value variable="system.counter_stage_0">5</value>
+      <value variable="system.counter_stage_1">6</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="2">
+      <value variable="system.counter_stage_0">6</value>
+      <value variable="system.counter_stage_1">7</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="3">
+      <value variable="system.counter_stage_0">7</value>
+      <value variable="system.counter_stage_1">8</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="4">
+      <value variable="system.counter_stage_0">8</value>
+      <value variable="system.counter_stage_1">9</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="5">
+      <value variable="system.counter_stage_0">9</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="6">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="7">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="8">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="9">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="10">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="11">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="12">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="13">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="14">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="15">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="16">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="17">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="18">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="19">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="20">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="21">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="22">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="23">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="24">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="25">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="26">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="27">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="28">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="29">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="30">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="31">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="32">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="33">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="34">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="35">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="36">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="37">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="38">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="39">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="40">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="41">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="42">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="43">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="44">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="45">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="46">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="47">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="48">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="49">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="50">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="51">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="52">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="53">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="54">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="55">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="56">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="57">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="58">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="59">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="60">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="61">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="62">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="63">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="64">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="65">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="66">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="67">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="68">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="69">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="70">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="71">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="72">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="73">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="74">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="75">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="76">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="77">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="78">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="79">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="80">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="81">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="82">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="83">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="84">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="85">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="86">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="87">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="88">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="89">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="90">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="91">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="92">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="93">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="94">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="95">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="96">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="97">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="98">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="99">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="100">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+  <node>
+    <state id="101">
+      <value variable="system.counter_stage_0">10</value>
+      <value variable="system.counter_stage_1">10</value>
+      <value variable="system.inc.active">TRUE</value>
+      <value variable="system.resume_from_here_in_subtree__inc">-3</value>
+      <value variable="system.node_names.inc">0</value>
+      <value variable="system.inc.internal_status">success</value>
+      <value variable="system.inc.status">success</value>
+    </state>
+  </node>
+</counter-example>

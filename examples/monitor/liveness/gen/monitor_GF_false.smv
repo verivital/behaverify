@@ -1,0 +1,46 @@
+MODULE main
+    VAR
+        system : system_module;
+--------------SPECIFICATIONS
+
+LTLSPEC G(F((system.counter_stage_1 > 3)));
+
+--------------END OF SPECIFICATIONS
+
+MODULE system_module
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        resume_from_here_in_subtree__inc := -3;
+        inc.active := TRUE;
+        --START OF BLACKBOARD DEFINITIONS
+        counter_stage_0 := counter_stage_1;
+        LINK_TO_PREVIOUS_FINAL_counter := counter_stage_1;
+        --END OF BLACKBOARD DEFINITIONS
+    VAR
+        node_names : define_nodes;
+        inc : success_DEFAULT_module();
+        --START OF BLACKBOARD VARIABLES DECLARATION
+        counter_stage_1 : 0..10;
+        --END OF BLACKBOARD VARIABLES DECLARATION
+    ASSIGN
+        --START OF BLACKBOARD VARIABLES INITIALIZATION
+        init(counter_stage_1) := 0;
+        --END OF BLACKBOARD VARIABLES INITIALIZATION
+        --START OF BLACKBOARD VARIABLES TRANSITION
+        next(counter_stage_1) :=
+            case
+                !(inc.active) : LINK_TO_PREVIOUS_FINAL_counter;
+                TRUE : {min(10, (counter_stage_0 + 1)), 0};
+            esac;
+        --END OF BLACKBOARD VARIABLES TRANSITION
+
+MODULE define_nodes
+    DEFINE
+        inc := 0;
+MODULE success_DEFAULT_module
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := success;
