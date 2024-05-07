@@ -3,12 +3,11 @@ import tarfile
 import io
 import docker
 
-USER = 'BehaVerify'
+USER = 'NuRV'
 HOME_DIR = '/home/' + USER
 USER_DIR = HOME_DIR + '/user_files'
-BEHAVERIFY_VENV = HOME_DIR + '/behaverify_venv/bin/python3'
-DRAW_VENV = HOME_DIR + '/draw_venv/bin/python3'
-CONTAINER_NAME = 'behaverify'
+NURV_LOC = '/home/' + USER + '/NuRV/NuRV-2.0.0-linuxx64/NuRV'
+CONTAINER_NAME = 'nurv'
 IMAGE_NAME = CONTAINER_NAME + '_img'
 
 def serene_exec(container, command, message, error_check):
@@ -27,6 +26,7 @@ def copy_into(container, source_path, destination_path):
             (path_head, path_tail) = os.path.split(source_path)
             if path_tail == '':
                 (path_head, path_tail) = os.path.split(path_head)
+            print(os.path.abspath(source_path))
             tar_object.add(os.path.abspath(source_path), arcname = path_tail)
             stream.seek(0)
         else:

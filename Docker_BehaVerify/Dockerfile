@@ -3,7 +3,7 @@ RUN apt-get update -y \
     && apt-get upgrade -y
 
 # Set the non-root user information
-ARG USER=behaverify
+ARG USER=BehaVerify
 ARG UID=16228
 ARG GID=16228
 

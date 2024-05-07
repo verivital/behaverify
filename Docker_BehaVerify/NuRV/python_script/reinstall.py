@@ -4,22 +4,22 @@ from install import create_image_and_container
 from docker_util import CONTAINER_NAME, IMAGE_NAME
 
 def reinstall(dockerfile_path):
-    '''Stop behaverify (Docker Container), Remove behaverify (Docker Container), Remove behaverify_img (Docker Image)
-    creates behaverify_img (Docker Image) and behaverify (Docker Container)'''
+    '''Stop nurv (Docker Container), Remove nurv (Docker Container), Remove nurv_img (Docker Image)
+    creates nurv_img (Docker Image) and nurv (Docker Container)'''
     client = docker.from_env()
-    print('Start: Removing old behaverify docker image and container.')
+    print('Start: Removing old NuRV docker image and container.')
     try:
-        behaverify = client.containers.get(CONTAINER_NAME)
-        behaverify.stop()
-        behaverify.remove()
+        container = client.containers.get(CONTAINER_NAME)
+        container.stop()
+        container.remove()
     except docker.errors.NotFound:
         pass
     try:
-        behaverify_img = client.images.get(IMAGE_NAME)
-        behaverify_img.remove()
+        image = client.images.get(IMAGE_NAME)
+        image.remove()
     except docker.errors.ImageNotFound:
         pass
-    print('End: Removing old behaverify docker image and container.')
+    print('End: Removing old NuRV docker image and container.')
     create_image_and_container(dockerfile_path)
     return
 
