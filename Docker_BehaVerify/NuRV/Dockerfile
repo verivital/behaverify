@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y sudo \
     && echo "$USER ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/$USER \
     && chmod 0440 /etc/sudoers.d/$USER
 
-RUN apt-get install libxml2 -y
+RUN apt-get install libxml2 bzip2 -y
 
 # Set the working directory
 WORKDIR /home/$USER

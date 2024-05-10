@@ -1,0 +1,9 @@
+condition {(eq, index_var, 0)} assign{result{7}}condition {(eq, index_var, 1)} assign{result{7}}
+condition {(eq, index_var, 2)} assign{result{1}}condition {(eq, index_var, 3)} assign{result{3}}
+condition {(eq, index_var, 4)} assign{result{2}}condition {(eq, index_var, 5)} assign{result{0}}
+condition {(eq, index_var, 6)} assign{result{8}}condition {(eq, index_var, 7)} assign{result{3}}
+##################################################################
+condition {(eq, index_var, 0)} assign{result{0}}
+condition {(eq, index_var, 1)} assign{result{1}}
+condition {(eq, index_var, 2)} assign{result{0}}
+condition {(eq, index_var, 3)} assign{result{0}}

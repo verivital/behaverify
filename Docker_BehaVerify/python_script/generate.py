@@ -34,7 +34,7 @@ def generate(behaverify, input_name, input_name_only, to_generate, flags):
                     [
                         BEHAVERIFY_VENV,
                         (
-                            '/home/behaverify/behaverify/src/'
+                            HOME_DIR + '/behaverify/src/'
                             + ('dsl_to_nuxmv.py ' if to_generate == 'nuXmv' else ('dsl_to_python.py ' if to_generate == 'Python' else 'dsl_to_haskell.py '))
                         ),
                         HOME_DIR + '/behaverify/metamodel/behaverify.tx',
