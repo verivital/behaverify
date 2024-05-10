@@ -6,7 +6,7 @@ import docker
 USER = 'NuRV'
 HOME_DIR = '/home/' + USER
 USER_DIR = HOME_DIR + '/user_files'
-NURV_LOC = '/home/' + USER + '/NuRV/NuRV-2.0.0-linuxx64/NuRV'
+NURV_LOC = '/home/' + USER + '/NuRV-2.0.0-linuxx64/NuRV'
 CONTAINER_NAME = 'nurv'
 IMAGE_NAME = CONTAINER_NAME + '_img'
 
