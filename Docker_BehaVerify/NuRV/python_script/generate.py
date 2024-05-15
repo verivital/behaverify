@@ -117,15 +117,15 @@ def non_demo_mode():
     arg_parser.add_argument('output')
     arg_parser.add_argument('--trace', type = str, default = None)
     arg_parser.add_argument('--generate_monitor', action = 'store_true')
-    arg_parser.add_argument('--n', type = int, default = 0)
-    arg_parser.add_argument('--P', type = str, default = None)
-    arg_parser.add_argument('--l', type = int, default = 3)
-    arg_parser.add_argument('--L', type = str, default = 'c')
-    arg_parser.add_argument('--p', action = 'store_true')
-    arg_parser.add_argument('--x', action = 'store_true')
-    arg_parser.add_argument('--S', action = 'store_true')
-    arg_parser.add_argument('--m', type = str, default = None)
-    arg_parser.add_argument('--o', type = str, default = None)
+    arg_parser.add_argument('--n', type = int, default = 0) # property number to monitor
+    arg_parser.add_argument('--P', type = str, default = None) # property Name
+    arg_parser.add_argument('--l', type = int, default = 3) # level of monitoring
+    arg_parser.add_argument('--L', type = str, default = 'c') # language of monitor
+    arg_parser.add_argument('--p', action = 'store_true') # powerset for partial observability
+    arg_parser.add_argument('--x', action = 'store_true') # true integers and the like
+    arg_parser.add_argument('--S', action = 'store_true') # use NuRV as symbolic library
+    arg_parser.add_argument('--m', type = str, default = None) # module name
+    arg_parser.add_argument('--o', type = str, default = None) # file name
     args = arg_parser.parse_args()
     verify_args(args)
     client = docker.from_env()

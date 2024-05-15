@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<counter-example type="0" id="1" desc="LTL Counterexample">
+  <node>
+    <state id="1">
+      <value variable="system.drone_x">3</value>
+      <value variable="system.drone_y">3</value>
+      <value variable="system.drone_speed">1</value>
+      <value variable="system.current_action">up</value>
+      <value variable="system.obstacle_sizes_index_1">0</value>
+      <value variable="system.obstacle_sizes_index_0">1</value>
+      <value variable="system.obstacles_index_3">4</value>
+      <value variable="system.obstacles_index_2">0</value>
+      <value variable="system.obstacles_index_1">3</value>
+      <value variable="system.obstacles_index_0">3</value>
+    </state>
+  </node>
+  <node>
+    <state id="2">
+      <value variable="system.drone_x">3</value>
+      <value variable="system.drone_y">4</value>
+      <value variable="system.drone_speed">1</value>
+      <value variable="system.current_action">right</value>
+      <value variable="system.obstacle_sizes_index_1">0</value>
+      <value variable="system.obstacle_sizes_index_0">1</value>
+      <value variable="system.obstacles_index_3">4</value>
+      <value variable="system.obstacles_index_2">0</value>
+      <value variable="system.obstacles_index_1">3</value>
+      <value variable="system.obstacles_index_0">3</value>
+    </state>
+  </node>
+  <node>
+    <state id="3">
+      <value variable="system.drone_x">4</value>
+      <value variable="system.drone_y">4</value>
+      <value variable="system.drone_speed">2</value>
+      <value variable="system.current_action">no_action</value>
+      <value variable="system.obstacle_sizes_index_1">0</value>
+      <value variable="system.obstacle_sizes_index_0">1</value>
+      <value variable="system.obstacles_index_3">4</value>
+      <value variable="system.obstacles_index_2">0</value>
+      <value variable="system.obstacles_index_1">3</value>
+      <value variable="system.obstacles_index_0">3</value>
+    </state>
+  </node>
+  <node>
+    <state id="4">
+      <value variable="system.drone_x">4</value>
+      <value variable="system.drone_y">4</value>
+      <value variable="system.drone_speed">1</value>
+      <value variable="system.current_action">up</value>
+      <value variable="system.obstacle_sizes_index_1">0</value>
+      <value variable="system.obstacle_sizes_index_0">1</value>
+      <value variable="system.obstacles_index_3">4</value>
+      <value variable="system.obstacles_index_2">0</value>
+      <value variable="system.obstacles_index_1">3</value>
+      <value variable="system.obstacles_index_0">3</value>
+    </state>
+  </node>
+  <node>
+    <state id="5">
+      <value variable="system.drone_x">4</value>
+      <value variable="system.drone_y">5</value>
+      <value variable="system.drone_speed">1</value>
+      <value variable="system.current_action">left</value>
+      <value variable="system.obstacle_sizes_index_1">0</value>
+      <value variable="system.obstacle_sizes_index_0">1</value>
+      <value variable="system.obstacles_index_3">4</value>
+      <value variable="system.obstacles_index_2">0</value>
+      <value variable="system.obstacles_index_1">3</value>
+      <value variable="system.obstacles_index_0">3</value>
+    </state>
+  </node>
+  <node>
+    <state id="6">
+      <value variable="system.drone_x">3</value>
+      <value variable="system.drone_y">5</value>
+      <value variable="system.drone_speed">1</value>
+      <value variable="system.current_action">right</value>
+      <value variable="system.obstacle_sizes_index_1">0</value>
+      <value variable="system.obstacle_sizes_index_0">1</value>
+      <value variable="system.obstacles_index_3">4</value>
+      <value variable="system.obstacles_index_2">0</value>
+      <value variable="system.obstacles_index_1">3</value>
+      <value variable="system.obstacles_index_0">3</value>
+    </state>
+  </node>
+  <node>
+    <state id="7">
+      <value variable="system.drone_x">4</value>
+      <value variable="system.drone_y">5</value>
+      <value variable="system.drone_speed">1</value>
+      <value variable="system.current_action">no_action</value>
+      <value variable="system.obstacle_sizes_index_1">0</value>
+      <value variable="system.obstacle_sizes_index_0">1</value>
+      <value variable="system.obstacles_index_3">4</value>
+      <value variable="system.obstacles_index_2">0</value>
+      <value variable="system.obstacles_index_1">3</value>
+      <value variable="system.obstacles_index_0">3</value>
+    </state>
+  </node>
+  <node>
+    <state id="8">
+      <value variable="system.drone_x">4</value>
+      <value variable="system.drone_y">5</value>
+      <value variable="system.drone_speed">1</value>
+      <value variable="system.current_action">left</value>
+      <value variable="system.obstacle_sizes_index_1">0</value>
+      <value variable="system.obstacle_sizes_index_0">1</value>
+      <value variable="system.obstacles_index_3">4</value>
+      <value variable="system.obstacles_index_2">0</value>
+      <value variable="system.obstacles_index_1">3</value>
+      <value variable="system.obstacles_index_0">3</value>
+    </state>
+  </node>
+  <node>
+    <state id="9">
+      <value variable="system.drone_x">3</value>
+      <value variable="system.drone_y">5</value>
+      <value variable="system.drone_speed">2</value>
+      <value variable="system.current_action">left</value>
+      <value variable="system.obstacle_sizes_index_1">0</value>
+      <value variable="system.obstacle_sizes_index_0">1</value>
+      <value variable="system.obstacles_index_3">4</value>
+      <value variable="system.obstacles_index_2">0</value>
+      <value variable="system.obstacles_index_1">3</value>
+      <value variable="system.obstacles_index_0">3</value>
+    </state>
+  </node>
+  <node>
+    <state id="10">
+      <value variable="system.drone_x">1</value>
+      <value variable="system.drone_y">5</value>
+      <value variable="system.drone_speed">2</value>
+      <value variable="system.current_action">up</value>
+      <value variable="system.obstacle_sizes_index_1">0</value>
+      <value variable="system.obstacle_sizes_index_0">1</value>
+      <value variable="system.obstacles_index_3">4</value>
+      <value variable="system.obstacles_index_2">0</value>
+      <value variable="system.obstacles_index_1">3</value>
+      <value variable="system.obstacles_index_0">3</value>
+    </state>
+  </node>
+  <node>
+    <state id="11">
+      <value variable="system.drone_x">1</value>
+      <value variable="system.drone_y">6</value>
+      <value variable="system.drone_speed">2</value>
+      <value variable="system.current_action">right</value>
+      <value variable="system.obstacle_sizes_index_1">0</value>
+      <value variable="system.obstacle_sizes_index_0">1</value>
+      <value variable="system.obstacles_index_3">4</value>
+      <value variable="system.obstacles_index_2">0</value>
+      <value variable="system.obstacles_index_1">3</value>
+      <value variable="system.obstacles_index_0">3</value>
+    </state>
+  </node>
+  <node>
+    <state id="12">
+      <value variable="system.drone_x">3</value>
+      <value variable="system.drone_y">6</value>
+      <value variable="system.drone_speed">1</value>
+      <value variable="system.current_action">no_action</value>
+      <value variable="system.obstacle_sizes_index_1">0</value>
+      <value variable="system.obstacle_sizes_index_0">1</value>
+      <value variable="system.obstacles_index_3">4</value>
+      <value variable="system.obstacles_index_2">0</value>
+      <value variable="system.obstacles_index_1">3</value>
+      <value variable="system.obstacles_index_0">3</value>
+    </state>
+  </node>
+  <node>
+    <state id="13">
+      <value variable="system.drone_x">3</value>
+      <value variable="system.drone_y">6</value>
+      <value variable="system.drone_speed">1</value>
+      <value variable="system.current_action">left</value>
+      <value variable="system.obstacle_sizes_index_1">0</value>
+      <value variable="system.obstacle_sizes_index_0">1</value>
+      <value variable="system.obstacles_index_3">4</value>
+      <value variable="system.obstacles_index_2">0</value>
+      <value variable="system.obstacles_index_1">3</value>
+      <value variable="system.obstacles_index_0">3</value>
+    </state>
+  </node>
+  <node>
+    <state id="14">
+      <value variable="system.drone_x">2</value>
+      <value variable="system.drone_y">6</value>
+      <value variable="system.drone_speed">1</value>
+      <value variable="system.current_action">no_action</value>
+      <value variable="system.obstacle_sizes_index_1">0</value>
+      <value variable="system.obstacle_sizes_index_0">1</value>
+      <value variable="system.obstacles_index_3">4</value>
+      <value variable="system.obstacles_index_2">0</value>
+      <value variable="system.obstacles_index_1">3</value>
+      <value variable="system.obstacles_index_0">3</value>
+    </state>
+  </node>
+  <node>
+    <state id="15">
+      <value variable="system.drone_x">2</value>
+      <value variable="system.drone_y">6</value>
+      <value variable="system.drone_speed">1</value>
+      <value variable="system.current_action">no_action</value>
+      <value variable="system.obstacle_sizes_index_1">0</value>
+      <value variable="system.obstacle_sizes_index_0">1</value>
+      <value variable="system.obstacles_index_3">4</value>
+      <value variable="system.obstacles_index_2">0</value>
+      <value variable="system.obstacles_index_1">3</value>
+      <value variable="system.obstacles_index_0">3</value>
+    </state>
+  </node>
+  <node>
+    <state id="16">
+      <value variable="system.drone_x">2</value>
+      <value variable="system.drone_y">6</value>
+      <value variable="system.drone_speed">1</value>
+      <value variable="system.current_action">right</value>
+      <value variable="system.obstacle_sizes_index_1">0</value>
+      <value variable="system.obstacle_sizes_index_0">1</value>
+      <value variable="system.obstacles_index_3">4</value>
+      <value variable="system.obstacles_index_2">0</value>
+      <value variable="system.obstacles_index_1">3</value>
+      <value variable="system.obstacles_index_0">3</value>
+    </state>
+  </node>
+  <node>
+    <state id="17">
+      <value variable="system.drone_x">3</value>
+      <value variable="system.drone_y">6</value>
+      <value variable="system.drone_speed">2</value>
+      <value variable="system.current_action">up</value>
+      <value variable="system.obstacle_sizes_index_1">0</value>
+      <value variable="system.obstacle_sizes_index_0">1</value>
+      <value variable="system.obstacles_index_3">4</value>
+      <value variable="system.obstacles_index_2">0</value>
+      <value variable="system.obstacles_index_1">3</value>
+      <value variable="system.obstacles_index_0">3</value>
+    </state>
+  </node>
+  <node>
+    <state id="18">
+      <value variable="system.drone_x">3</value>
+      <value variable="system.drone_y">6</value>
+      <value variable="system.drone_speed">1</value>
+      <value variable="system.current_action">left</value>
+      <value variable="system.obstacle_sizes_index_1">0</value>
+      <value variable="system.obstacle_sizes_index_0">1</value>
+      <value variable="system.obstacles_index_3">4</value>
+      <value variable="system.obstacles_index_2">0</value>
+      <value variable="system.obstacles_index_1">3</value>
+      <value variable="system.obstacles_index_0">3</value>
+    </state>
+  </node>
+  <node>
+    <state id="19">
+      <value variable="system.drone_x">2</value>
+      <value variable="system.drone_y">6</value>
+      <value variable="system.drone_speed">1</value>
+      <value variable="system.current_action">no_action</value>
+      <value variable="system.obstacle_sizes_index_1">0</value>
+      <value variable="system.obstacle_sizes_index_0">1</value>
+      <value variable="system.obstacles_index_3">4</value>
+      <value variable="system.obstacles_index_2">0</value>
+      <value variable="system.obstacles_index_1">3</value>
+      <value variable="system.obstacles_index_0">3</value>
+    </state>
+  </node>
+  <node>
+    <state id="20">
+      <value variable="system.drone_x">2</value>
+      <value variable="system.drone_y">6</value>
+      <value variable="system.drone_speed">1</value>
+      <value variable="system.current_action">right</value>
+      <value variable="system.obstacle_sizes_index_1">0</value>
+      <value variable="system.obstacle_sizes_index_0">1</value>
+      <value variable="system.obstacles_index_3">4</value>
+      <value variable="system.obstacles_index_2">0</value>
+      <value variable="system.obstacles_index_1">3</value>
+      <value variable="system.obstacles_index_0">3</value>
+    </state>
+  </node>
+  <node>
+    <state id="21">
+      <value variable="system.drone_x">3</value>
+      <value variable="system.drone_y">6</value>
+      <value variable="system.drone_speed">2</value>
+      <value variable="system.current_action">right</value>
+      <value variable="system.obstacle_sizes_index_1">0</value>
+      <value variable="system.obstacle_sizes_index_0">1</value>
+      <value variable="system.obstacles_index_3">4</value>
+      <value variable="system.obstacles_index_2">0</value>
+      <value variable="system.obstacles_index_1">3</value>
+      <value variable="system.obstacles_index_0">3</value>
+    </state>
+  </node>
+</counter-example>

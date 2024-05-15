@@ -1,0 +1,43 @@
+MODULE main
+    VAR
+        system : system_module;
+--------------SPECIFICATIONS
+
+LTLSPEC G(!((((system.drone_x <= system.obstacles_index_0) & (system.drone_x >= (system.obstacles_index_0 - system.obstacle_sizes_index_0)) & (system.drone_y <= system.obstacles_index_1) & (system.drone_y >= (system.obstacles_index_1 - system.obstacle_sizes_index_0))) | ((system.drone_x <= system.obstacles_index_2) & (system.drone_x >= (system.obstacles_index_2 - system.obstacle_sizes_index_1)) & (system.drone_y <= system.obstacles_index_3) & (system.drone_y >= (system.obstacles_index_3 - system.obstacle_sizes_index_1))))));
+
+
+--------------END OF SPECIFICATIONS
+
+MODULE system_module
+    CONSTANTS
+        success, failure, running, invalid, left, no_action, right, up, down;
+    DEFINE
+        obstacles_index_0 := 3;
+        obstacles_index_1 := 3;
+        obstacles_index_2 := 0;
+        obstacles_index_3 := 4;
+        obstacle_sizes_index_0 := 1;
+        obstacle_sizes_index_1 := 0;
+        --END OF BLACKBOARD DEFINITIONS
+    VAR
+        --START OF BLACKBOARD VARIABLES DECLARATION
+        drone_x : 0..4;
+        drone_y : 0..4;
+        current_action : {left, no_action, right, up, down};
+        --END OF BLACKBOARD VARIABLES DECLARATION
+    ASSIGN
+        --START OF BLACKBOARD VARIABLES INITIALIZATION
+        --END OF BLACKBOARD VARIABLES INITIALIZATION
+        --START OF BLACKBOARD VARIABLES TRANSITION
+        next(drone_x) :=
+	    case
+		current_action = left : max(0, drone_x - 1);
+		current_action = right : min(4, drone_x + 1);
+		TRUE : drone_x;
+	    esac;
+        next(drone_y) :=
+	    case
+		current_action = down : max(0, drone_y - 1);
+		current_action = up : min(4, drone_y + 1);
+		TRUE : drone_y;
+	    esac;
