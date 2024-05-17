@@ -3,7 +3,7 @@ RUN apt-get update -y \
     && apt-get upgrade -y
 
 # Set the non-root user information
-ARG USER=haskell_BehaVerify
+ARG USER=copilot
 ARG UID=45183
 ARG GID=45183
 
@@ -21,8 +21,6 @@ WORKDIR /home/$USER
 
 # Switch to the non-root user
 USER $USER
-
-RUN sudo apt-get install python3 pip git python3-venv -y
 
 RUN sudo apt-get install g++ cmake -y
 RUN sudo apt-get install libghc-copilot-dev -y
