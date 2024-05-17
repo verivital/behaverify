@@ -325,7 +325,7 @@ actions {
 	read_position
 	arguments{}
 	local_variables {} end_local_variables
-	read_variables {current_action} end_read_variables
+	read_variables {current_action, drone_speed} end_read_variables
 	write_variables { drone_x, drone_y, cell_changed_var } end_write_variables
 	initial_values {} end_initial_values
 	update {
@@ -343,16 +343,16 @@ actions {
 		variable_statement {
 		    drone_x
 		    assign {
-			case {(eq, current_action, 'left')} result { (max, min_val, (sub, drone_x, 1))}
-			case {(eq, current_action, 'right')} result { (min, max_val, (add, drone_x, 1))}
+			case {(eq, current_action, 'left')} result { (max, min_val, (sub, drone_x, drone_speed))}
+			case {(eq, current_action, 'right')} result { (min, max_val, (add, drone_x, drone_speed))}
 			result { drone_x}
 		    }
 		}
 		variable_statement {
 		    drone_y
 		    assign {
-			case {(eq, current_action, 'down')} result { (max, min_val, (sub, drone_y, 1))}
-			case {(eq, current_action, 'up')} result { (min, max_val, (add, drone_y, 1))}
+			case {(eq, current_action, 'down')} result { (max, min_val, (sub, drone_y, drone_speed))}
+			case {(eq, current_action, 'up')} result { (min, max_val, (add, drone_y, drone_speed))}
 			result { drone_y}
 		    }
 		}

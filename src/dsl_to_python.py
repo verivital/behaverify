@@ -1566,4 +1566,4 @@ if __name__ == '__main__':
     arg_parser.add_argument('--safe_assignment', action = 'store_true')
     arg_parser.add_argument('--no_checks', action = 'store_true')
     args = arg_parser.parse_args()
-    write_files(args.metamodel_file, args.model_file, args.name, args.location, args.serene_print, args.max_iter, args.no_var_print, args.py_tree_print, args.recursion_limit, args.safe_assignment, no_checks)
+    write_files(args.metamodel_file, args.model_file, args.name, args.location, args.serene_print, args.max_iter, args.no_var_print, args.py_tree_print, args.recursion_limit, args.safe_assignment, args.no_checks)
