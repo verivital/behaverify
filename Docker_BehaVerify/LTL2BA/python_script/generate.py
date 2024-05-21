@@ -9,9 +9,12 @@ def generate_monitor(container, args):
     serene_exec(container,
                 ' '.join(
                     [
-                        'bash -c \'cd ' + USER_DIR + ';',
-                        '',
-                        USER_DIR + '/' + os.path.basename(args.model),
+                        'bash -c \'',
+                        HOME_DIR + '/ltl2ba/ltl2ba',
+                        '-f',
+                        '"' + args.formula + '"',
+                        '>',
+                        USER_DIR + '/' + os.path.basename(args.output),
                         '\''
                     ]
                 ),
@@ -23,8 +26,6 @@ def generate_monitor(container, args):
     return
 
 def verify_args(args):
-    if not os.path.exists(args.model):
-        raise ValueError('Model Path does not exist.')
     if os.path.exists(args.output):
         raise ValueError('Output Path exists.')
     if not os.path.isdir(os.path.dirname(args.output)):
@@ -34,7 +35,7 @@ def verify_args(args):
 
 def non_demo_mode():
     arg_parser = argparse.ArgumentParser()
-    arg_parser.add_argument('model')
+    arg_parser.add_argument('formula')
     arg_parser.add_argument('output')
     args = arg_parser.parse_args()
     verify_args(args)
@@ -44,7 +45,6 @@ def non_demo_mode():
     serene_exec(container, 'bash -c \'rm -rf ' + USER_DIR + '\'', 'Deleting User Dir in Container.', False)
     serene_exec(container, 'bash -c \'rm -rf ' + HOME_DIR + '/command' + '\'', 'Deleting User Command in Container.', False)
     serene_exec(container, 'bash -c \'mkdir ' + USER_DIR + '\'', 'Creating User Dir in Container.', False)
-    copy_into(container, args.model, USER_DIR)
     generate_monitor(container, args)
     container.stop()
 
