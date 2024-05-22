@@ -5,7 +5,7 @@ It contains a variety of utility functions.
 
 
 Author: Serena Serafina Serbinowska
-Last Edit: 2024-03-21
+Last Edit: 2024-05-21
 '''
 import argparse
 import os
@@ -16,6 +16,7 @@ import onnxruntime
 from behaverify_common import indent, create_node_name, is_local, is_env, is_blackboard, is_array, handle_constant_or_reference, resolve_potential_reference_no_type, variable_array_size, get_min_max, variable_type, BTreeException, constant_type
 from serene_functions import build_meta_func
 from check_grammar import validate_model
+from create_monitor import create_ltl2ba_command
 
 
 def write_files(metamodel_file, model_file, main_name, write_location, serene_print, max_iter, no_var_print, py_tree_print, recursion_limit, safe_assignment, no_checks):
@@ -1505,6 +1506,20 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
         for variable in model.variables if is_array(variable)
     }
     loop_references = {}
+    # monitor_test = True
+    # if monitor_test:
+    #     with open ('./idk', 'w', encoding = 'utf-8') as output_file:
+    #         for monitor in model.monitors:
+    #             (function_string, command_string, p_count) = create_ltl2ba_command(monitor.specification.code_statement, declared_enumerations, variables, constants)
+    #             output_file.write(function_string)
+    #             output_file.write(os.linesep)
+    #             output_file.write(command_string)
+    #             output_file.write(os.linesep)
+    #             output_file.write(str(p_count))
+    #             output_file.write(os.linesep)
+    #             output_file.write('----------------')
+    #             output_file.write(os.linesep)
+    #     return
 
     project_name = main_name
     project_environment_name = main_name + '_environment'
@@ -1552,7 +1567,6 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
 
 
 if __name__ == '__main__':
-
     arg_parser = argparse.ArgumentParser()
     arg_parser.add_argument('metamodel_file')
     arg_parser.add_argument('model_file')

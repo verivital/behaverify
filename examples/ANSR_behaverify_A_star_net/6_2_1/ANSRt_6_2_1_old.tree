@@ -3,7 +3,7 @@ configuration {
 }
 enumerations {
     #{ here you specify the enumerations used in the model}#
-    'left', 'right', 'up', 'down', 'no_action', 'safe', 'unsafe', 'unknown'
+    'left', 'right', 'up', 'down', 'no_action'
 }
 constants {
     #{ constants are used to synchronize values in a .tree file. }#
@@ -25,19 +25,6 @@ variables {
     variable { bl destination_y VAR [min_val, max_val] assign{result{drone_y}}}
     variable { bl cell_changed_var VAR BOOLEAN assign{result{False}}}
     variable { bl current_action VAR {'left', 'right', 'up', 'down', 'no_action'} assign{result{'no_action'}}}
-    variable { bl delta_x DEFINE INT assign{
-	    case{(eq, current_action, 'left')} result{-1}
-	    case{(eq, current_action, 'right')} result{1}
-	    result{0}
-	}
-    }
-    variable { bl delta_y DEFINE INT assign{
-	    case{(eq, current_action, 'down')} result{-1}
-	    case{(eq, current_action, 'up')} result{1}
-	    result{0}
-	}
-    }
-    variable { bl monitor_var VAR {'safe', 'unsafe', 'unknown'} assign{result{'unknown'}}}
     variable { bl fake_network DEFINE ENUM assign{
 	    case{(and, (lte,2, drone_x), (lte, drone_x, 3), (eq, drone_y, 4), (lte,0, destination_x), (lte, destination_x, 1), (lte,0, destination_y), (lte, destination_y, 3))} result{'left'}
 case{(and, (lte,2, drone_x), (lte, drone_x, 3), (eq, drone_y, 4), (eq, destination_x, 1), (eq, destination_y, 4))} result{'left'}
@@ -200,47 +187,6 @@ condition {(eq, index_var, 1)} assign{result{0}}
 environment_update {
 } end_environment_update
 
-monitors {
-    monitor {
-	collision_monitor
-	(safe : 'safe')
-	(unsafe : 'unsafe')
-	(unknown : 'unknown')
-	LTLSPEC {	    
-	    (globally,
-		(not,
-		    (or,
-			(loop, loop_var, [0, (sub, number_of_obstacles, 1)] such_that True,
-			    (and,
-				(lte, (max, min_val, (min, max_val, (add, drone_x, (mult, delta_x, 2)))), (index, obstacles, constant_index (mult, loop_var, 2))),
-				(gte, (max, min_val, (min, max_val, (add, drone_x, (mult, delta_x, 2)))), (sub, (index, obstacles, constant_index (mult, loop_var, 2)), (index, obstacle_sizes, constant_index loop_var))),
-				(lte, (max, min_val, (min, max_val, (add, drone_y, (mult, delta_y, 2)))), (index, obstacles, constant_index (add, (mult, loop_var, 2), 1))),
-				(gte, (max, min_val, (min, max_val, (add, drone_y, (mult, delta_y, 2)))), (sub, (index, obstacles, constant_index (add, (mult, loop_var, 2), 1)), (index, obstacle_sizes, constant_index loop_var)))
-			    )
-			)
-		    )
-		)
-	    )
-	}
-    }
-    monitor {
-	loop_monitor
-	(safe : 'safe')
-	(unsafe : 'unsafe')
-	(unknown : 'unknown')
-	LTLSPEC {
-	    (globally,
-		(and,
-		    (implies, (eq, current_action, 'left'), (next, (neq, current_action, 'right'))),
-		    (implies, (eq, current_action, 'right'), (next, (neq, current_action, 'left'))),
-		    (implies, (eq, current_action, 'up'), (next, (neq, current_action, 'down'))),
-		    (implies, (eq, current_action, 'down'), (next, (neq, current_action, 'up')))
-		)
-	    )
-	}
-    }
-}
-
 checks {
     check {
 	cell_changed
@@ -324,32 +270,52 @@ actions {
 	arguments{}
 	local_variables {} end_local_variables
 	read_variables {drone_x, drone_y, current_action} end_read_variables
-	write_variables { drone_speed, monitor_var } end_write_variables
+	write_variables { drone_speed } end_write_variables
 	initial_values {} end_initial_values
 	update {
-	    variable_statement {
-		drone_speed
-		assign {result{2}}
-	    }
-	    monitor_statement {
-		collision_monitor
-		monitor_variable {monitor_var}
-		test
-		reset
-	    }
-	    variable_statement {
-		drone_speed
-		assign{case{(eq, monitor_var, 'unsafe')}result{1}result{drone_speed}}
-	    }
-	    monitor_statement {
-		loop_monitor
-		monitor_variable {monitor_var}
-		commit
-		reset_on_failure
-	    }
-	    variable_statement {
-		drone_speed
-		assign{case{(eq, monitor_var, 'unsafe')}result{1}result{drone_speed}}
+		
+	    read_environment {
+		function_get_velocity
+		condition {True}
+		variable_statement {
+		    drone_speed
+		    assign {
+			case {
+			    (or,
+				(loop, loop_var, [0, (sub, number_of_obstacles, 1)] such_that True,
+				    (or,
+					(and, 
+					    (lte, drone_x, (index, obstacles, constant_index (mult, loop_var, 2))),
+					    (gte, drone_x, (sub, (index, obstacles, constant_index (mult, loop_var, 2)), (index, obstacle_sizes, constant_index loop_var))),
+					    (lte, (add, drone_y, 2), (index, obstacles, constant_index (add, (mult, loop_var, 2), 1))),
+					    (gte, (add, drone_y, 2), (sub, (index, obstacles, constant_index (add, (mult, loop_var, 2), 1)), (index, obstacle_sizes, constant_index loop_var)))
+					),
+					(and, 
+					    (lte, drone_x, (index, obstacles, constant_index (mult, loop_var, 2))),
+					    (gte, drone_x, (sub, (index, obstacles, constant_index (mult, loop_var, 2)), (index, obstacle_sizes, constant_index loop_var))),
+					    (lte, (sub, drone_y, 2), (index, obstacles, constant_index (add, (mult, loop_var, 2), 1))),
+					    (gte, (sub, drone_y, 2), (sub, (index, obstacles, constant_index (add, (mult, loop_var, 2), 1)), (index, obstacle_sizes, constant_index loop_var)))
+					),
+					(and, 
+					    (lte, (add, drone_x, 2), (index, obstacles, constant_index (mult, loop_var, 2))),
+					    (gte, (add, drone_x, 2), (sub, (index, obstacles, constant_index (mult, loop_var, 2)), (index, obstacle_sizes, constant_index loop_var))),
+					    (lte, drone_y, (index, obstacles, constant_index (add, (mult, loop_var, 2), 1))),
+					    (gte, drone_y, (sub, (index, obstacles, constant_index (add, (mult, loop_var, 2), 1)), (index, obstacle_sizes, constant_index loop_var)))
+					),
+					(and, 
+					    (lte, (sub, drone_x, 2), (index, obstacles, constant_index (mult, loop_var, 2))),
+					    (gte, (sub, drone_x, 2), (sub, (index, obstacles, constant_index (mult, loop_var, 2)), (index, obstacle_sizes, constant_index loop_var))),
+					    (lte, drone_y, (index, obstacles, constant_index (add, (mult, loop_var, 2), 1))),
+					    (gte, drone_y, (sub, (index, obstacles, constant_index (add, (mult, loop_var, 2), 1)), (index, obstacle_sizes, constant_index loop_var)))
+					)
+				    )
+				)
+			    )
+			}
+			result {1}
+			result {2}
+		    }
+		}
 	    }
 	    return_statement {
 		result { success} end_result
@@ -360,7 +326,7 @@ actions {
 	read_position
 	arguments{}
 	local_variables {} end_local_variables
-	read_variables {current_action, delta_x, delta_y, drone_speed} end_read_variables
+	read_variables {current_action, drone_speed} end_read_variables
 	write_variables { drone_x, drone_y, cell_changed_var } end_write_variables
 	initial_values {} end_initial_values
 	update {
@@ -378,13 +344,17 @@ actions {
 		variable_statement {
 		    drone_x
 		    assign {
-			result { (max, min_val, (min, max_val, (add, drone_x, (mult, delta_x, drone_speed))))}
+			case {(eq, current_action, 'left')} result { (max, min_val, (sub, drone_x, drone_speed))}
+			case {(eq, current_action, 'right')} result { (min, max_val, (add, drone_x, drone_speed))}
+			result { drone_x}
 		    }
 		}
 		variable_statement {
 		    drone_y
 		    assign {
-			result { (max, min_val, (min, max_val, (add, drone_y, (mult, delta_y, drone_speed))))}
+			case {(eq, current_action, 'down')} result { (max, min_val, (sub, drone_y, drone_speed))}
+			case {(eq, current_action, 'up')} result { (min, max_val, (add, drone_y, drone_speed))}
+			result { drone_y}
 		    }
 		}
 	    }

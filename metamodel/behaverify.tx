@@ -21,6 +21,9 @@ BehaviorModel:
     'environment_update' '{'
     update *= variable_statement
     '}' ('end_environment_update')?
+    ('monitors' '{'
+    monitors *= monitor
+    '}' ('end_monitors')?)?
     'checks' '{'
     check_nodes *= check_node
     '}' ('end_checks')?
@@ -177,6 +180,15 @@ node:
     )
     '}' ('end_variable')?
 ;
+monitor:
+    'monitor' '{'
+    name = ID
+    ('(' 'safe' ':' safe_val = constant_value ')')
+    ('(' 'unsafe' ':' unsafe_val = constant_value ')')
+    ('(' 'unknown' ':' unknown_val = constant_value ')')
+    specification = specification
+    '}' ('end_monitor')?
+;
     variable_domain:
     (boolean = 'BOOLEAN') |
     (true_int = 'INT') |
@@ -200,8 +212,23 @@ status:
 statement:
     (variable_statement = variable_statement) |
     (read_statement = read_statement) |
-    (write_statement = write_statement)
-;   
+    (write_statement = write_statement) |
+    (monitor_statement = monitor_statement)
+;
+    monitor_mode:
+    'commit' | 'test'
+;
+    monitor_reset:
+    'no_reset' | 'reset_on_failure' | 'reset'
+;
+    monitor_statement:
+    'monitor_statement' '{'
+    monitor = [monitor]
+    ('monitor_variable' '{' monitor_vairable = [variable] '}' ('end_monitor_variable')?)?
+    monitor_mode = monitor_mode
+    monitor_reset = monitor_reset
+    '}' ('end_monitor_statement')?
+;
     read_statement:
     'read_environment' '{'
     name = ID
@@ -306,7 +333,7 @@ statement:
     //if is 3 args, COND, TRUE, FALSE
     function_names://these need to be ordered so that something like eq is AFTER equiv, otherwise equiv will match eq and cause problems.
     //start of ctl specific
-    'exists_globally' | 'exists_next' | 'exists_finally' | 'exists_until' | 'always_globally' | 'always_next' | 'always_finally' | 'always_until'
+    'exists_globally' | 'exists_next' | 'exists_finally' | 'exists_until' | 'always_globally' | 'always_next' | 'always_finally' | 'always_until' |
     //start of ltl specific
     'next' | 'globally' | 'finally' | 'until' | 'release' | 'previous' | 'not_previous_not' | 'historically' | 'once' | 'since' | 'triggered' | 
     //these functions permit the continuation of ltl/ctl specific functions
