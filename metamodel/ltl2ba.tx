@@ -1,0 +1,77 @@
+    //This is intended to be used with BehaVerify
+    //Author: Serena Serafina Serbinowska
+    //last edit: 2024-03-10
+ltl2ba:
+    'never' '{'
+    state_transitions += state_transition
+    '}'
+;
+//comments so that we can explain what is happening in a .tree file
+Comment:
+    /\*\{([^a]|a)*?\}\*/
+    ;//I can't get it to match newlines without doing something janky like this.
+
+    state_transition:
+    name = ID
+    ':'
+    (
+    (skip = 'skip')
+    |
+    (
+    'if'
+    guard_states += guard_state 
+    'fi' ';'
+    )
+    )
+;
+    guard_state:
+    '::'
+    guard = guard
+    '->'
+    'goto'
+    state = ID
+;
+guard:
+    ('('
+
+
+    code_statement:
+    ('(' function_call = function ')') |
+    ('(' code_statement = code_statement ')') |
+    (atom = constant_or_reference ('node' node_name = code_statement)? ('at' read_at = code_statement)? ('trace' trace_num = code_statement)?)
+;
+    //--------------------SEC:FUNCTION_BL_LOCALS--------------------------------  
+    function:
+    (function_name = 'loop' ',' loop_variable = ID ',' (reverse = 'reverse')? (('{' loop_variable_domain += code_statement[','] '}') | ('[' min_val = code_statement ',' max_val = code_statement ']')) 'such_that' loop_condition = code_statement ',' values = code_statement) |
+    (function_name = 'case_loop' ',' loop_variable = ID ',' (reverse = 'reverse')? (('{' loop_variable_domain += code_statement[','] '}') | ('[' min_val = code_statement ',' max_val = code_statement ']')) 'such_that' loop_condition = code_statement ',' cond_value = code_statement ',' values = code_statement ',' default_value = code_statement) | //if each cond is false, use the last values. default_value cannot use loop_variable.
+    (function_name = 'index' ',' to_index = code_statement (node_name = code_statement)? (read_at = code_statement)? (trace_num = code_statement)? ',' ((constant_index = 'constant_index' values = code_statement) | (constant_index = '' values = code_statement))) |
+    (function_name = bounded_function_names ',' bound = bound_statement ',' values = code_statement) |
+    (function_name = function_names ',' values += code_statement[',']) |
+    (function_name = status_function_names ',' node_name = code_statement)
+;
+    bound_statement:
+    '[' lower_bound = code_statement ',' upper_bound = code_statement ']'
+;
+    //if is 3 args, COND, TRUE, FALSE
+    function_names://these need to be ordered so that something like eq is AFTER equiv, otherwise equiv will match eq and cause problems.
+    //start of ctl specific
+    'exists_globally' | 'exists_next' | 'exists_finally' | 'exists_until' | 'always_globally' | 'always_next' | 'always_finally' | 'always_until' |
+    //start of ltl specific
+    'next' | 'globally' | 'finally' | 'until' | 'release' | 'previous' | 'not_previous_not' | 'historically' | 'once' | 'since' | 'triggered' | 
+    //these functions permit the continuation of ltl/ctl specific functions
+    'not' | 'and' | 'or' | 'xor' | 'xnor' | 'implies' | 'equivalent' |
+    //the rest.
+    'if' | 'abs' | 'max' | 'min' | 'sin' | 'cos' | 'exp' | 'tan' | 'ln' | 'eq' | 'neq' | 'lte' | 'gte' | 'lt' | 'gt' | 'neg' | 'add' | 'sub' | 'mult' | 'idiv' | 'mod' | 'rdiv' | 'floor' | 'count'
+;
+    bounded_function_names:
+    'globally_bounded' | 'finally_bounded' | 'until_bounded' | 'release_bounded' | 'historically_bounded' | 'once_bounded' | 'since_bounded' | 'triggered_bounded'
+;
+    status_function_names:
+    //these functions permitted only in specifications
+    'active' | 'success' | 'running' | 'failure'
+;
+specification:
+    (spec_type = 'LTLSPEC' '{' code_statement = code_statement '}' ('end_LTLSPEC')?) |
+    (spec_type = 'CTLSPEC' '{' code_statement = code_statement '}' ('end_CTLSPEC')?) |
+    (spec_type = 'INVARSPEC' '{' code_statement = code_statement '}' ('end_INVARSPEC')?)
+;
