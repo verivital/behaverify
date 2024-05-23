@@ -37,6 +37,7 @@ def non_demo_mode():
     arg_parser = argparse.ArgumentParser()
     arg_parser.add_argument('formula')
     arg_parser.add_argument('output')
+    arg_parser.add_argument('--file', action = 'store_true')
     args = arg_parser.parse_args()
     verify_args(args)
     client = docker.from_env()

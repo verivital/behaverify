@@ -323,7 +323,7 @@ actions {
 	read_monitor
 	arguments{}
 	local_variables {} end_local_variables
-	read_variables {drone_x, drone_y, current_action} end_read_variables
+	read_variables {drone_x, drone_y, current_action, delta_x, delta_y} end_read_variables
 	write_variables { drone_speed, monitor_var } end_write_variables
 	initial_values {} end_initial_values
 	update {

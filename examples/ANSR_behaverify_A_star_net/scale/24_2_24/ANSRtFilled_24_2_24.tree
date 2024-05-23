@@ -9,7 +9,7 @@ constants {
     #{ constants are used to synchronize values in a .tree file. }#
     #{ example := 0 }#
     #{ to use example elsewhere, simply type 'example' in place of any integer (quotes included) }#
-    REPLACE_CONSTANTS
+    min_val := 0, max_val := 24, number_of_obstacles := 2, max_obstacle_size := 24
 } end_constants
 
 variables {
@@ -39,16 +39,22 @@ variables {
     }
     variable { bl monitor_var VAR {'safe', 'unsafe', 'unknown'} assign{result{'unknown'}}}
     variable { bl fake_network DEFINE ENUM assign{
-	    REPLACE_FAKE_NETWORK
+	    result{'no_action'}
+
 	}
     }
     #{##########################################}#
     variable { env obstacles DEFINE INT static array (mult, number_of_obstacles, 2) iterative_assign, index_var
-	REPLACE_OBSTACLES
+	condition {(eq, index_var, 0)} assign{result{24}}condition {(eq, index_var, 1)} assign{result{24}}
+condition {(eq, index_var, 0)} assign{result{24}}condition {(eq, index_var, 1)} assign{result{24}}
+
 	assign{result{0}}
     }
     variable { env obstacle_sizes DEFINE INT static array number_of_obstacles iterative_assign, index_var
-	REPLACE_OBSTACLE_SIZES
+	
+condition {(eq, index_var, 0)} assign{result{24}}
+condition {(eq, index_var, 0)} assign{result{24}}
+
 	assign{result{0}}
     }
     variable { env executing_action VAR {'left', 'right', 'up', 'down', 'no_action'} assign{result{'no_action'}}}

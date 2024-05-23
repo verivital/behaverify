@@ -315,6 +315,9 @@ def create_ltl2ba_command(metamodel_file, model_file, location, recursion_limit,
                 + indent(1) + 'if len(new_automaton_states) == 0:' + os.linesep
                 + indent(2) + 'return (set(), UNSAFE)' + os.linesep
                 + indent(1) + 'return (new_automaton_states, UNKNOWN)' + os.linesep
+                + os.linesep
+                + 'def reset():' + os.linesep
+                + indent(1) + 'return {INITIAL_STATE}' + os.linesep
             )
     return
 
