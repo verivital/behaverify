@@ -839,7 +839,11 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
             (
                 handle_read_statement(statement.read_statement, misc_args)
                 if statement.read_statement is not None else
-                handle_write_statement(statement.write_statement, misc_args)
+                (
+                    handle_write_statement(statement.write_statement, misc_args)
+                    if statement.write_statement is not None else
+                    ('REPLACE WITH MONITOR CODE HERE' + os.linesep)
+                )
             )
         )
 
@@ -1443,12 +1447,13 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
             to_write += env_handle_environment_check(environment_check)
         for action in model.action_nodes:
             for statement in itertools.chain(action.pre_update_statements, action.post_update_statements):
-                if statement.variable_statement is not None:
+                if statement.variable_statement is not None or statement.monitor_statement is not None:
                     continue
                 to_write += (
                     env_handle_read_statement(statement.read_statement)
                     if statement.read_statement is not None else
-                    env_handle_write_statement(statement.write_statement))
+                    env_handle_write_statement(statement.write_statement)
+                )
         nonlocal long_if_to_write
         long_if_statements = (os.linesep).join(long_if_to_write)
         long_if_to_write = []

@@ -59,10 +59,9 @@ def fill_holes(input_path):
         lines_sizes.append(lines_sizes[0])
         number_of_obstacles += 1
     new_tail_end = create_tail_end(max_val, fly_at, number_of_obstacles, max_size)
-    if new_tail_end != tail_end:
-        new_tail_end = 'Filled' + new_tail_end
-        with open(input_path.replace(tail_end, new_tail_end), 'w', encoding = 'utf-8') as output_file:
-            output_file.writelines(lines_obstacles + ['##################################################################' + os.linesep] + lines_sizes)
+    new_tail_end = 'Filled' + new_tail_end
+    with open(input_path.replace(tail_end, new_tail_end), 'w', encoding = 'utf-8') as output_file:
+        output_file.writelines(lines_obstacles + ['##################################################################' + os.linesep] + lines_sizes)
     return
 
 if __name__ == '__main__':

@@ -2,15 +2,22 @@ import sys
 import random
 import os
 from misc_util import create_tail_end
+START_LOC = 'mid'
 
 def generate_obstacles(number_of_obstacles, min_val, max_val, max_size):
     lines = []
     for index in range(number_of_obstacles):
         x_val = random.randint(min_val, max_val)
         y_val = random.randint(min_val, max_val)
-        while x_val == max_val and y_val == max_val:
-            x_val = random.randint(min_val, max_val)
-            y_val = random.randint(min_val, max_val)
+        if START_LOC == 'top':
+            while x_val == max_val and y_val == max_val:
+                x_val = random.randint(min_val, max_val)
+                y_val = random.randint(min_val, max_val)
+        if START_LOC == 'mid':
+            mid_val = (max_val + min_val) // 2
+            while ((x_val - max_size) <= mid_val <= x_val) and ((y_val - max_size) <= mid_val <= y_val):
+                x_val = random.randint(min_val, max_val)
+                y_val = random.randint(min_val, max_val)
         lines.append('condition {(eq, index_var, ' + str(2 * index) + ')} assign{result{' + str(random.randint(min_val, max_val)) + '}}'
                      + 'condition {(eq, index_var, ' + str((2 * index) + 1) + ')} assign{result{' + str(random.randint(min_val, max_val)) + '}}' + os.linesep)
     lines.append('##################################################################' + os.linesep)
