@@ -395,7 +395,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                      ) for index, case_result in enumerate(case_results)
                 ]
             )
-            + indent(misc_args['indent_level'] + len(case_results))
+            + indent(misc_args['indent_level'] + len(case_results) + 1)
             + resolve_variable_nondeterminism(default_result.values, misc_args) + os.linesep
             + indent(misc_args['indent_level']) + (')' * (1 + len(case_results)))  # NOTE: no linesep at the end!
         )

@@ -220,7 +220,8 @@ actions {
 	read_variables {current_action, delta_x, delta_y, drone_speed} end_read_variables
 	write_variables { drone_x, drone_y, cell_changed_var } end_write_variables
 	initial_values {} end_initial_values
-	update {	    read_environment {
+	update {
+	    read_environment {
 		function_get_position
 		#{
 		    condition_variable {cell_changed_var}
