@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<counter-example type="0" id="1" desc="LTL Counterexample">
+  <node>
+    <state id="1">
+      <value variable="system.drone_x">0</value>
+      <value variable="system.drone_y">8</value>
+      <value variable="system.drone_speed">2</value>
+      <value variable="system.delta_x">1</value>
+      <value variable="system.delta_y">0</value>
+      <value variable="system.obstacle_sizes_index_1">0</value>
+      <value variable="system.obstacle_sizes_index_0">1</value>
+      <value variable="system.obstacles_index_3">2</value>
+      <value variable="system.obstacles_index_2">5</value>
+      <value variable="system.obstacles_index_1">2</value>
+      <value variable="system.obstacles_index_0">7</value>
+    </state>
+  </node>
+  <node>
+    <state id="2">
+      <value variable="system.drone_x">1</value>
+      <value variable="system.drone_y">8</value>
+      <value variable="system.drone_speed">2</value>
+      <value variable="system.delta_x">1</value>
+      <value variable="system.delta_y">0</value>
+      <value variable="system.obstacle_sizes_index_1">0</value>
+      <value variable="system.obstacle_sizes_index_0">1</value>
+      <value variable="system.obstacles_index_3">2</value>
+      <value variable="system.obstacles_index_2">5</value>
+      <value variable="system.obstacles_index_1">2</value>
+      <value variable="system.obstacles_index_0">7</value>
+    </state>
+  </node>
+</counter-example>

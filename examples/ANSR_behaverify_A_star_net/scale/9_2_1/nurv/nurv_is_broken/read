@@ -1,0 +1,3 @@
+the trace represents the same thing that main does.
+the generated c code says this is fine (it's not).
+actual use of the nurv tool confirms it is wrong.
