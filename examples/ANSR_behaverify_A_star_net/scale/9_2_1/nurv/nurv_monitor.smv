@@ -1,0 +1,39 @@
+MODULE main
+    VAR
+        system : system_module;
+--------------SPECIFICATIONS
+
+LTLSPEC G(!((((system.drone_x <= system.obstacles_index_0) & (system.drone_x >= (system.obstacles_index_0 - system.obstacle_sizes_index_0)) & (system.drone_y <= system.obstacles_index_1) & (system.drone_y >= (system.obstacles_index_1 - system.obstacle_sizes_index_0))) | ((system.drone_x <= system.obstacles_index_2) & (system.drone_x >= (system.obstacles_index_2 - system.obstacle_sizes_index_1)) & (system.drone_y <= system.obstacles_index_3) & (system.drone_y >= (system.obstacles_index_3 - system.obstacle_sizes_index_1))))));
+
+
+--------------END OF SPECIFICATIONS
+
+MODULE system_module
+    DEFINE
+        obstacles_index_0 := 7;
+        obstacles_index_1 := 2;
+        obstacles_index_2 := 5;
+        obstacles_index_3 := 2;
+        obstacle_sizes_index_0 := 1;
+        obstacle_sizes_index_1 := 0;
+        --END OF BLACKBOARD DEFINITIONS
+    VAR
+        --START OF BLACKBOARD VARIABLES DECLARATION
+        drone_x : 0..9;
+        drone_y : 0..9;
+        drone_speed : 1..2;
+	delta_x : -1..1;
+	delta_y : -1..1;
+        --END OF BLACKBOARD VARIABLES DECLARATION
+    ASSIGN
+        --START OF BLACKBOARD VARIABLES INITIALIZATION
+        --END OF BLACKBOARD VARIABLES INITIALIZATION
+        --START OF BLACKBOARD VARIABLES TRANSITION
+	init(drone_x) := {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+	init(drone_y) := {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+	init(delta_x) := {-1, 0, 1};
+	init(delta_y) := {-1, 0, 1};
+	next(delta_x) := {-1, 0, 1};
+	next(delta_y) := {-1, 0, 1};
+        next(drone_x) := min(9, max(0, drone_x + (drone_speed * delta_x)));
+        next(drone_y) := min(9, max(0, drone_y + (drone_speed * delta_y)));

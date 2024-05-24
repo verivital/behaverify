@@ -1,0 +1,24 @@
+  -> State: 1.1 <-
+    system.drone_x = 0
+    system.drone_y = 8
+    system.drone_speed = 2
+    system.delta_x = 1
+    system.delta_y = 0
+    system.obstacle_sizes_index_1 = 0
+    system.obstacle_sizes_index_0 = 1
+    system.obstacles_index_3 = 2
+    system.obstacles_index_2 = 5
+    system.obstacles_index_1 = 2
+    system.obstacles_index_0 = 7
+  -> State: 1.2 <-
+    system.drone_x = 1
+    system.drone_y = 8
+    system.drone_speed = 2
+    system.delta_x = 1
+    system.delta_y = 0
+    system.obstacle_sizes_index_1 = 0
+    system.obstacle_sizes_index_0 = 1
+    system.obstacles_index_3 = 2
+    system.obstacles_index_2 = 5
+    system.obstacles_index_1 = 2
+    system.obstacles_index_0 = 7
