@@ -384,7 +384,7 @@ def parse_ba(ba_file, python_file):
     return
 
 if __name__ == '__main__':
-    if sys.argv[1] == 'command':
+    if sys.argv[1] == 'make_ltl2ba':
         arg_parser = argparse.ArgumentParser()
         arg_parser.add_argument('metamodel_file')
         arg_parser.add_argument('model_file')
@@ -393,7 +393,7 @@ if __name__ == '__main__':
         arg_parser.add_argument('--no_checks', action = 'store_true')
         args = arg_parser.parse_args(sys.argv[2:])
         create_ltl2ba_command(args.metamodel_file, args.model_file, args.location, args.recursion_limit, args.no_checks)
-    elif sys.argv[1] == 'mode':
+    elif sys.argv[1] == 'ba_to_monitor':
         arg_parser = argparse.ArgumentParser()
         arg_parser.add_argument('ba_file')
         arg_parser.add_argument('python_file')

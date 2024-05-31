@@ -23,7 +23,7 @@ for category in "${categories[@]}"; do
 	echo "moving read_monitor"
 	cp "./behaverify/read_monitor_file.py" "${category}/${tail_end}/behaverify/python/read_monitor_file.py"
 	echo "generating ltl commands"
-	python3 ../../../src/create_monitor.py command ../../../metamodel/behaverify.tx "${category}/${tail_end}/ANSRtFilled_${tail_end}.tree" "${category}/${tail_end}/behaverify/python/" --recursion_limit 10000 --no_checks
+	python3 ../../../src/create_monitor.py make_ltl2ba ../../../metamodel/behaverify.tx "${category}/${tail_end}/ANSRtFilled_${tail_end}.tree" "${category}/${tail_end}/behaverify/python/" --recursion_limit 10000 --no_checks
 	echo "reading ltl commands"
 	collision_command=$(cat "${category}/${tail_end}/behaverify/python/collision_monitor.txt")
 	loop_command=$(cat "${category}/${tail_end}/behaverify/python/loop_monitor.txt")
@@ -38,8 +38,8 @@ for category in "${categories[@]}"; do
 	mv "${category}/${tail_end}/behaverify/python/user_files/loop" "${category}/${tail_end}/behaverify/python/loop.ba"
 	rm -rf "${category}/${tail_end}/behaverify/python/user_files"
 	echo "generating monitors"
-	python3 ../../../src/create_monitor.py mode "${category}/${tail_end}/behaverify/python/collision.ba" "${category}/${tail_end}/behaverify/python/collision_monitor.py"
-	python3 ../../../src/create_monitor.py mode "${category}/${tail_end}/behaverify/python/loop.ba" "${category}/${tail_end}/behaverify/python/loop_monitor.py"
+	python3 ../../../src/create_python_monitor.py ba_to_monitor "${category}/${tail_end}/behaverify/python/collision.ba" "${category}/${tail_end}/behaverify/python/collision_monitor.py"
+	python3 ../../../src/create_python_monitor.py ba_to_monitor "${category}/${tail_end}/behaverify/python/loop.ba" "${category}/${tail_end}/behaverify/python/loop_monitor.py"
 	echo "running python code"
 	python3 "${category}/${tail_end}/behaverify/python/ANSR_runner.py" > "${category}/${tail_end}/behaverify/python/trace.txt"
 	echo "creating images"
