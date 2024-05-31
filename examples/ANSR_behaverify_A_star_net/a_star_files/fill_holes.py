@@ -60,8 +60,13 @@ def fill_holes(input_path):
         number_of_obstacles += 1
     new_tail_end = create_tail_end(max_val, fly_at, number_of_obstacles, max_size)
     new_tail_end = 'Filled' + new_tail_end
-    with open(input_path.replace(tail_end, new_tail_end), 'w', encoding = 'utf-8') as output_file:
-        output_file.writelines(lines_obstacles + ['##################################################################' + os.linesep] + lines_sizes)
+    if tail_end in input_path:
+        (left, right) = input_path.rsplit(tail_end, 1)
+        output_path = left + new_tail_end + right
+        with open(output_path, 'w', encoding = 'utf-8') as output_file:
+            output_file.writelines(lines_obstacles + ['##################################################################' + os.linesep] + lines_sizes)
+        return
+    print('Check input file name: could not replace tail end. Not writing.')
     return
 
 if __name__ == '__main__':

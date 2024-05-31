@@ -3,7 +3,7 @@ import docker
 from docker_util import CONTAINER_NAME, IMAGE_NAME
 
 def create_image_and_container(dockerfile_path):
-    '''creates nurv_img (Docker Image) and nurv (Docker Container)'''
+    '''creates Docker Image and Docker Container'''
     client = docker.from_env()
     print('Start: Building image: ' + IMAGE_NAME)
     (image, logs) = client.images.build(path = dockerfile_path, tag = IMAGE_NAME + ':latest')

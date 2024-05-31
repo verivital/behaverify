@@ -1,0 +1,5 @@
+condition {(eq, index_var, 0)} assign{result{7}}condition {(eq, index_var, 1)} assign{result{2}}
+condition {(eq, index_var, 2)} assign{result{5}}condition {(eq, index_var, 3)} assign{result{2}}
+##################################################################
+condition {(eq, index_var, 0)} assign{result{1}}
+condition {(eq, index_var, 1)} assign{result{0}}

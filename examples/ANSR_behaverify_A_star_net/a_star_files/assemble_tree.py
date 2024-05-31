@@ -1,7 +1,7 @@
 import sys
 from generate_obstacles import generate_obstacles
 from generate_data import generate_table
-from misc_util import create_tail_end
+from misc_util import create_tail_end, handle_path
 
 max_val = int(sys.argv[1])
 number_of_obstacles = int(sys.argv[2])
@@ -10,10 +10,10 @@ min_val = 0
 generate_obstacles(number_of_obstacles, min_val, max_val, max_size)
 tail_end = create_tail_end(max_val, None, number_of_obstacles, max_size)
 generate_table(min_val, max_val,
-               'ignore/obstacles' + tail_end + '.txt',
-               'ignore/table' + tail_end + '.txt')
+               handle_path('ignore/obstacles' + tail_end + '.txt'),
+               handle_path('ignore/table' + tail_end + '.txt'))
 
-with open('ignore/ANSRt' + tail_end + '.tree', 'w', encoding = 'utf-8') as output_file:
+with open(handle_path('ignore/ANSRt' + tail_end + '.tree'), 'w', encoding = 'utf-8') as output_file:
     constants = ', '.join(
         [
             'min_val := ' + str(min_val),
@@ -22,14 +22,14 @@ with open('ignore/ANSRt' + tail_end + '.tree', 'w', encoding = 'utf-8') as outpu
             'max_obstacle_size := ' + str(max_size)
         ]
     )
-    with open('ignore/table' + tail_end + '.txt', 'r', encoding = 'utf-8') as input_file:
+    with open(handle_path('ignore/table' + tail_end + '.txt'), 'r', encoding = 'utf-8') as input_file:
         fake_network = input_file.read()
-    with open('ignore/obstacles' + tail_end + '.txt', 'r', encoding = 'utf-8') as input_file:
+    with open(handle_path('ignore/obstacles' + tail_end + '.txt'), 'r', encoding = 'utf-8') as input_file:
         data = input_file.read()
         (obstacles, obstacle_sizes) = data.split('#', 1)
         obstacles = obstacles.replace('#', '')
         obstacle_sizes = obstacle_sizes.replace('#', '')
-    with open('template_monitor.tree', 'r', encoding = 'utf-8') as input_file:
+    with open(handle_path('template_monitor.tree'), 'r', encoding = 'utf-8') as input_file:
         template = input_file.read()
     template = template.replace('REPLACE_CONSTANTS', constants)
     template = template.replace('REPLACE_OBSTACLE_SIZES', obstacle_sizes)

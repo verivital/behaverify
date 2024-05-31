@@ -1,0 +1,676 @@
+case{(and, (eq, drone_x, 2), (eq, drone_y, 8), (eq, destination_x, 1), (eq, destination_y, 8))} result{'left'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 3), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 6))} result{'left'}
+case{(and, (eq, drone_x, 8), (eq, drone_y, 6), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 3))} result{'left'}
+case{(and, (lte,8, drone_x), (lte, drone_x, 9), (eq, drone_y, 2), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 9))} result{'left'}
+case{(and, (eq, drone_x, 9), (eq, drone_y, 7), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 1))} result{'left'}
+case{(and, (lte,3, drone_x), (lte, drone_x, 9), (eq, drone_y, 7), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 9))} result{'left'}
+case{(and, (eq, drone_x, 9), (eq, drone_y, 7), (eq, destination_x, 8), (eq, destination_y, 7))} result{'left'}
+case{(and, (eq, drone_x, 9), (eq, drone_y, 2), (lte,7, destination_x), (lte, destination_x, 8), (lte,1, destination_y), (lte, destination_y, 2))} result{'left'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 5), (lte,0, destination_x), (lte, destination_x, 9), (eq, destination_y, 2))} result{'left'}
+case{(and, (lte,8, drone_x), (lte, drone_x, 9), (eq, drone_y, 2), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 8))} result{'left'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 5), (lte,0, destination_x), (lte, destination_x, 1), (lte,4, destination_y), (lte, destination_y, 5))} result{'left'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 5), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 4))} result{'left'}
+case{(and, (eq, drone_x, 8), (eq, drone_y, 6), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 5))} result{'left'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 5), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 1))} result{'left'}
+case{(and, (eq, drone_x, 6), (eq, drone_y, 2), (eq, destination_x, 5), (eq, destination_y, 2))} result{'left'}
+case{(and, (eq, drone_x, 3), (eq, drone_y, 6), (lte,0, destination_x), (lte, destination_x, 1), (lte,4, destination_y), (lte, destination_y, 5))} result{'left'}
+case{(and, (eq, drone_x, 9), (eq, drone_y, 7), (lte,0, destination_x), (lte, destination_x, 9), (eq, destination_y, 2))} result{'left'}
+case{(and, (eq, drone_x, 8), (eq, drone_y, 1), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 0))} result{'left'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 9), (eq, drone_y, 2), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 0))} result{'left'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 3), (lte,0, destination_x), (lte, destination_x, 9), (eq, destination_y, 7))} result{'left'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 3), (eq, destination_x, 1), (eq, destination_y, 3))} result{'left'}
+case{(and, (eq, drone_x, 3), (eq, drone_y, 1), (eq, destination_x, 2), (eq, destination_y, 1))} result{'left'}
+case{(and, (lte,3, drone_x), (lte, drone_x, 5), (eq, drone_y, 2), (lte,1, destination_x), (lte, destination_x, 2), (lte,7, destination_y), (lte, destination_y, 8))} result{'left'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 5), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 1))} result{'left'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 7), (eq, destination_x, 1), (eq, destination_y, 7))} result{'left'}
+case{(and, (lte,3, drone_x), (lte, drone_x, 9), (eq, drone_y, 7), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 8))} result{'left'}
+case{(and, (eq, drone_x, 6), (eq, drone_y, 9), (eq, destination_x, 5), (eq, destination_y, 9))} result{'left'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 5), (lte,0, destination_x), (lte, destination_x, 9), (eq, destination_y, 2))} result{'left'}
+case{(and, (lte,8, drone_x), (lte, drone_x, 9), (eq, drone_y, 7), (lte,6, destination_x), (lte, destination_x, 7), (lte,7, destination_y), (lte, destination_y, 8))} result{'left'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 3), (lte,0, destination_x), (lte, destination_x, 9), (eq, destination_y, 7))} result{'left'}
+case{(and, (lte,3, drone_x), (lte, drone_x, 9), (eq, drone_y, 2), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 3))} result{'left'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 3), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 9))} result{'left'}
+case{(and, (eq, drone_x, 8), (eq, drone_y, 6), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 1))} result{'left'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 9), (eq, drone_y, 2), (lte,0, destination_x), (lte, destination_x, 3), (eq, destination_y, 2))} result{'left'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 5), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 1))} result{'left'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 3), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 8))} result{'left'}
+case{(and, (eq, drone_x, 9), (eq, drone_y, 7), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 3))} result{'left'}
+case{(and, (lte,8, drone_x), (lte, drone_x, 9), (eq, drone_y, 7), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 9))} result{'left'}
+case{(and, (eq, drone_x, 4), (eq, drone_y, 2), (eq, destination_x, 3), (eq, destination_y, 7))} result{'left'}
+case{(and, (eq, drone_x, 3), (eq, drone_y, 6), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 1))} result{'left'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 3), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 9))} result{'left'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 3), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 6))} result{'left'}
+case{(and, (lte,3, drone_x), (lte, drone_x, 9), (eq, drone_y, 2), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 6))} result{'left'}
+case{(and, (eq, drone_x, 9), (eq, drone_y, 7), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 1))} result{'left'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 0), (eq, destination_x, 1), (eq, destination_y, 0))} result{'left'}
+case{(and, (eq, drone_x, 8), (eq, drone_y, 6), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 4))} result{'left'}
+case{(and, (lte,8, drone_x), (lte, drone_x, 9), (eq, drone_y, 2), (lte,0, destination_x), (lte, destination_x, 6), (eq, destination_y, 7))} result{'left'}
+case{(and, (lte,5, drone_x), (lte, drone_x, 6), (eq, drone_y, 9), (lte,3, destination_x), (lte, destination_x, 4), (eq, destination_y, 9))} result{'left'}
+case{(and, (eq, drone_x, 3), (eq, drone_y, 2), (lte,3, destination_x), (lte, destination_x, 4), (eq, destination_y, 7))} result{'left'}
+case{(and, (lte,1, drone_x), (lte, drone_x, 2), (eq, drone_y, 7), (eq, destination_x, 0), (eq, destination_y, 7))} result{'left'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 3), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 6))} result{'left'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 3), (eq, destination_x, 6), (eq, destination_y, 3))} result{'left'}
+case{(and, (lte,6, drone_x), (lte, drone_x, 7), (eq, drone_y, 5), (eq, destination_x, 5), (eq, destination_y, 5))} result{'left'}
+case{(and, (eq, drone_x, 6), (eq, drone_y, 4), (eq, destination_x, 5), (eq, destination_y, 4))} result{'left'}
+case{(and, (eq, drone_x, 8), (eq, drone_y, 6), (eq, destination_x, 9), (eq, destination_y, 2))} result{'left'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 5), (eq, drone_y, 7), (eq, destination_x, 3), (eq, destination_y, 7))} result{'left'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 5), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 0))} result{'left'}
+case{(and, (eq, drone_x, 9), (eq, drone_y, 7), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 0))} result{'left'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 5), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 0))} result{'left'}
+case{(and, (lte,2, drone_x), (lte, drone_x, 3), (eq, drone_y, 2), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 2))} result{'left'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 5), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 4))} result{'left'}
+case{(and, (lte,7, drone_x), (lte, drone_x, 9), (eq, drone_y, 2), (lte,5, destination_x), (lte, destination_x, 6), (eq, destination_y, 2))} result{'left'}
+case{(and, (eq, drone_x, 8), (eq, drone_y, 6), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 3))} result{'left'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 9), (eq, drone_y, 7), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 4))} result{'left'}
+case{(and, (eq, drone_x, 8), (eq, drone_y, 1), (eq, destination_x, 7), (eq, destination_y, 1))} result{'left'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 5), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 3))} result{'left'}
+case{(and, (eq, drone_x, 9), (eq, drone_y, 7), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 0))} result{'left'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 5), (eq, destination_x, 6), (eq, destination_y, 5))} result{'left'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 5), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 3))} result{'left'}
+case{(and, (eq, drone_x, 8), (eq, drone_y, 6), (lte,0, destination_x), (lte, destination_x, 6), (eq, destination_y, 2))} result{'left'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 5), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 3))} result{'left'}
+case{(and, (eq, drone_x, 8), (eq, drone_y, 6), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 0))} result{'left'}
+case{(and, (eq, drone_x, 9), (eq, drone_y, 7), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 6))} result{'left'}
+case{(and, (lte,3, drone_x), (lte, drone_x, 9), (eq, drone_y, 2), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 4))} result{'left'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 8), (eq, destination_x, 6), (eq, destination_y, 8))} result{'left'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 3), (lte,0, destination_x), (lte, destination_x, 1), (lte,4, destination_y), (lte, destination_y, 5))} result{'left'}
+case{(and, (eq, drone_x, 6), (eq, drone_y, 0), (lte,4, destination_x), (lte, destination_x, 5), (eq, destination_y, 0))} result{'left'}
+case{(and, (eq, drone_x, 3), (eq, drone_y, 6), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 1))} result{'left'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 3), (eq, destination_x, 2), (eq, destination_y, 5))} result{'left'}
+case{(and, (eq, drone_x, 1), (eq, drone_y, 5), (eq, destination_x, 0), (eq, destination_y, 5))} result{'left'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 3), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 9))} result{'left'}
+case{(and, (lte,5, drone_x), (lte, drone_x, 6), (eq, drone_y, 4), (eq, destination_x, 4), (eq, destination_y, 4))} result{'left'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 3), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 8))} result{'left'}
+case{(and, (eq, drone_x, 3), (eq, drone_y, 6), (eq, destination_x, 2), (lte,5, destination_y), (lte, destination_y, 6))} result{'left'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 3), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 8))} result{'left'}
+case{(and, (eq, drone_x, 9), (eq, drone_y, 7), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 5))} result{'left'}
+case{(and, (lte,8, drone_x), (lte, drone_x, 9), (eq, drone_y, 2), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 3))} result{'left'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 6), (eq, drone_y, 4), (eq, destination_x, 3), (eq, destination_y, 4))} result{'left'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 9), (eq, drone_y, 7), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 6))} result{'left'}
+case{(and, (lte,3, drone_x), (lte, drone_x, 5), (eq, drone_y, 2), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 9))} result{'left'}
+case{(and, (eq, drone_x, 9), (eq, drone_y, 7), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 4))} result{'left'}
+case{(and, (lte,8, drone_x), (lte, drone_x, 9), (eq, drone_y, 2), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 8))} result{'left'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 3), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 8))} result{'left'}
+case{(and, (lte,1, drone_x), (lte, drone_x, 2), (eq, drone_y, 0), (eq, destination_x, 0), (eq, destination_y, 0))} result{'left'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 5), (eq, drone_y, 7), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 0))} result{'left'}
+case{(and, (lte,8, drone_x), (lte, drone_x, 9), (eq, drone_y, 2), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 5))} result{'left'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 8), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 9))} result{'left'}
+case{(and, (eq, drone_x, 4), (eq, drone_y, 9), (eq, destination_x, 3), (eq, destination_y, 9))} result{'left'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 5), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 0))} result{'left'}
+case{(and, (eq, drone_x, 3), (eq, drone_y, 6), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 0))} result{'left'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 7), (eq, destination_x, 6), (eq, destination_y, 7))} result{'left'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 5), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 3))} result{'left'}
+case{(and, (lte,5, drone_x), (lte, drone_x, 9), (eq, drone_y, 2), (eq, destination_x, 4), (eq, destination_y, 2))} result{'left'}
+case{(and, (eq, drone_x, 3), (eq, drone_y, 6), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 0))} result{'left'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 3), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 4))} result{'left'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 5), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 4))} result{'left'}
+case{(and, (eq, drone_x, 4), (eq, drone_y, 7), (eq, destination_x, 3), (eq, destination_y, 2))} result{'left'}
+case{(and, (lte,8, drone_x), (lte, drone_x, 9), (eq, drone_y, 2), (lte,7, destination_x), (lte, destination_x, 8), (lte,6, destination_y), (lte, destination_y, 7))} result{'left'}
+case{(and, (eq, drone_x, 5), (eq, drone_y, 7), (eq, destination_x, 4), (eq, destination_y, 7))} result{'left'}
+case{(and, (lte,3, drone_x), (lte, drone_x, 5), (eq, drone_y, 2), (eq, destination_x, 0), (eq, destination_y, 7))} result{'left'}
+case{(and, (eq, drone_x, 8), (eq, drone_y, 6), (lte,7, destination_x), (lte, destination_x, 8), (lte,1, destination_y), (lte, destination_y, 2))} result{'left'}
+case{(and, (eq, drone_x, 3), (eq, drone_y, 2), (eq, destination_x, 2), (eq, destination_y, 2))} result{'left'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 5), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 0))} result{'left'}
+case{(and, (eq, drone_x, 5), (eq, drone_y, 0), (eq, destination_x, 4), (eq, destination_y, 0))} result{'left'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 9), (eq, drone_y, 7), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 3))} result{'left'}
+case{(and, (lte,8, drone_x), (lte, drone_x, 9), (eq, drone_y, 2), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 9))} result{'left'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 5), (eq, drone_y, 7), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 2))} result{'left'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 5), (eq, drone_y, 7), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 1))} result{'left'}
+case{(and, (lte,8, drone_x), (lte, drone_x, 9), (eq, drone_y, 2), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 4))} result{'left'}
+case{(and, (eq, drone_x, 9), (eq, drone_y, 2), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 0))} result{'left'}
+case{(and, (eq, drone_x, 8), (eq, drone_y, 6), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 0))} result{'left'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 3), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 9))} result{'left'}
+case{(and, (lte,3, drone_x), (lte, drone_x, 9), (eq, drone_y, 2), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 5))} result{'left'}
+case{(and, (eq, drone_x, 3), (eq, drone_y, 1), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 0))} result{'left'}
+case{(and, (eq, drone_x, 1), (eq, drone_y, 4), (eq, destination_x, 0), (eq, destination_y, 4))} result{'left'}
+case{(and, (eq, drone_x, 8), (eq, drone_y, 6), (eq, destination_x, 7), (eq, destination_y, 6))} result{'left'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 0), (lte,4, destination_x), (lte, destination_x, 6), (eq, destination_y, 0))} result{'left'}
+case{(and, (eq, drone_x, 1), (eq, drone_y, 2), (eq, destination_x, 0), (eq, destination_y, 2))} result{'left'}
+case{(and, (eq, drone_x, 3), (eq, drone_y, 6), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 3))} result{'left'}
+case{(and, (eq, drone_x, 6), (eq, drone_y, 7), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 2))} result{'left'}
+case{(and, (lte,5, drone_x), (lte, drone_x, 7), (eq, drone_y, 5), (eq, destination_x, 4), (eq, destination_y, 5))} result{'left'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 8), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 9))} result{'left'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 9), (eq, drone_y, 7), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 5))} result{'left'}
+case{(and, (eq, drone_x, 8), (eq, drone_y, 2), (eq, destination_x, 7), (eq, destination_y, 2))} result{'left'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 9), (eq, drone_y, 2), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 1))} result{'left'}
+case{(and, (lte,8, drone_x), (lte, drone_x, 9), (eq, drone_y, 2), (eq, destination_x, 9), (eq, destination_y, 7))} result{'left'}
+case{(and, (lte,6, drone_x), (lte, drone_x, 9), (eq, drone_y, 7), (lte,3, destination_x), (lte, destination_x, 5), (eq, destination_y, 7))} result{'left'}
+case{(and, (eq, drone_x, 1), (eq, drone_y, 9), (eq, destination_x, 0), (eq, destination_y, 9))} result{'left'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 5), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 1))} result{'left'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 3), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 5))} result{'left'}
+case{(and, (eq, drone_x, 3), (eq, drone_y, 6), (lte,0, destination_x), (lte, destination_x, 9), (eq, destination_y, 2))} result{'left'}
+case{(and, (lte,3, drone_x), (lte, drone_x, 9), (eq, drone_y, 7), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 7))} result{'left'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 9), (eq, destination_x, 9), (eq, destination_y, 2))} result{'right'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 6), (eq, destination_x, 3), (eq, destination_y, 6))} result{'right'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 6), (eq, drone_y, 5), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 6))} result{'right'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 6), (eq, drone_y, 0), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 0))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 0), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 3))} result{'right'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 6), (eq, drone_y, 0), (lte,0, destination_x), (lte, destination_x, 9), (eq, destination_y, 7))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 4), (lte,6, destination_x), (lte, destination_x, 7), (lte,2, destination_y), (lte, destination_y, 3))} result{'right'}
+case{(and, (eq, drone_x, 3), (eq, drone_y, 4), (lte,0, destination_x), (lte, destination_x, 9), (eq, destination_y, 7))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 2), (lte,3, destination_x), (lte, destination_x, 5), (eq, destination_y, 7))} result{'right'}
+case{(and, (eq, drone_x, 6), (eq, drone_y, 8), (eq, destination_x, 7), (eq, destination_y, 8))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 5), (eq, drone_y, 7), (eq, destination_x, 7), (eq, destination_y, 8))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 0), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 6))} result{'right'}
+case{(and, (lte,3, drone_x), (lte, drone_x, 5), (eq, drone_y, 2), (eq, destination_x, 5), (eq, destination_y, 7))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 2), (eq, destination_x, 1), (eq, destination_y, 2))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 2), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 9))} result{'right'}
+case{(and, (eq, drone_x, 4), (eq, drone_y, 9), (eq, destination_x, 5), (eq, destination_y, 9))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 6), (eq, drone_y, 2), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 0))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 5), (eq, destination_x, 2), (lte,5, destination_y), (lte, destination_y, 6))} result{'right'}
+case{(and, (lte,6, drone_x), (lte, drone_x, 7), (eq, drone_y, 2), (eq, destination_x, 8), (eq, destination_y, 2))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 9), (eq, destination_x, 9), (eq, destination_y, 7))} result{'right'}
+case{(and, (lte,3, drone_x), (lte, drone_x, 5), (eq, drone_y, 9), (lte,6, destination_x), (lte, destination_x, 7), (lte,7, destination_y), (lte, destination_y, 8))} result{'right'}
+case{(and, (lte,3, drone_x), (lte, drone_x, 5), (eq, drone_y, 9), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 3))} result{'right'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 6), (eq, drone_y, 0), (eq, destination_x, 7), (lte,0, destination_y), (lte, destination_y, 3))} result{'right'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 6), (eq, drone_y, 0), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 8))} result{'right'}
+case{(and, (eq, drone_x, 3), (eq, drone_y, 4), (lte,4, destination_x), (lte, destination_x, 6), (eq, destination_y, 4))} result{'right'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 5), (eq, drone_y, 2), (eq, destination_x, 4), (eq, destination_y, 7))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 2), (eq, destination_x, 3), (eq, destination_y, 6))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 5), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 5))} result{'right'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 6), (eq, drone_y, 7), (lte,4, destination_x), (lte, destination_x, 6), (eq, destination_y, 2))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 2), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 0))} result{'right'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 6), (eq, drone_y, 0), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 6))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 7), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 8))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 5), (eq, destination_x, 3), (eq, destination_y, 6))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 0), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 8))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 5), (lte,7, destination_x), (lte, destination_x, 8), (lte,6, destination_y), (lte, destination_y, 7))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 5), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 9))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 2), (lte,2, destination_x), (lte, destination_x, 3), (lte,1, destination_y), (lte, destination_y, 2))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 0), (lte,0, destination_x), (lte, destination_x, 9), (eq, destination_y, 2))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 7), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 0))} result{'right'}
+case{(and, (lte,3, drone_x), (lte, drone_x, 5), (eq, drone_y, 9), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 8))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 2), (eq, destination_x, 2), (lte,5, destination_y), (lte, destination_y, 8))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 7), (eq, destination_x, 2), (lte,5, destination_y), (lte, destination_y, 7))} result{'right'}
+case{(and, (eq, drone_x, 3), (eq, drone_y, 4), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 6))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 9), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 5))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 4), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 3))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 0), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 0))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 6), (eq, drone_y, 7), (lte,7, destination_x), (lte, destination_x, 8), (lte,6, destination_y), (lte, destination_y, 7))} result{'right'}
+case{(and, (lte,6, drone_x), (lte, drone_x, 8), (eq, drone_y, 2), (eq, destination_x, 9), (eq, destination_y, 2))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 0), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 9))} result{'right'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 6), (eq, drone_y, 0), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 9))} result{'right'}
+case{(and, (eq, drone_x, 4), (eq, drone_y, 5), (lte,5, destination_x), (lte, destination_x, 7), (eq, destination_y, 5))} result{'right'}
+case{(and, (eq, drone_x, 6), (eq, drone_y, 7), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 0))} result{'right'}
+case{(and, (lte,3, drone_x), (lte, drone_x, 5), (eq, drone_y, 4), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 3))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 5), (eq, drone_y, 2), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 3))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 6), (eq, drone_y, 7), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 3))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 9), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 9))} result{'right'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 6), (eq, drone_y, 5), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 8))} result{'right'}
+case{(and, (lte,3, drone_x), (lte, drone_x, 5), (eq, drone_y, 9), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 4))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 9), (lte,0, destination_x), (lte, destination_x, 6), (eq, destination_y, 2))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 5), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 8))} result{'right'}
+case{(and, (eq, drone_x, 3), (eq, drone_y, 4), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 6))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 5), (eq, drone_y, 2), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 6))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 4), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 1))} result{'right'}
+case{(and, (lte,3, drone_x), (lte, drone_x, 5), (eq, drone_y, 9), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 1))} result{'right'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 7), (lte,8, destination_x), (lte, destination_x, 9), (eq, destination_y, 7))} result{'right'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 6), (eq, drone_y, 5), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 8))} result{'right'}
+case{(and, (lte,3, drone_x), (lte, drone_x, 6), (eq, drone_y, 7), (lte,7, destination_x), (lte, destination_x, 8), (lte,1, destination_y), (lte, destination_y, 2))} result{'right'}
+case{(and, (lte,3, drone_x), (lte, drone_x, 5), (eq, drone_y, 9), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 5))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 6), (eq, drone_y, 7), (eq, destination_x, 9), (eq, destination_y, 7))} result{'right'}
+case{(and, (lte,3, drone_x), (lte, drone_x, 5), (eq, drone_y, 9), (lte,0, destination_x), (lte, destination_x, 5), (eq, destination_y, 7))} result{'right'}
+case{(and, (lte,2, drone_x), (lte, drone_x, 5), (eq, drone_y, 2), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 9))} result{'right'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 6), (eq, drone_y, 0), (eq, destination_x, 7), (eq, destination_y, 5))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 9), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 7))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 9), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 3))} result{'right'}
+case{(and, (lte,3, drone_x), (lte, drone_x, 5), (eq, drone_y, 9), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 6))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 0), (eq, destination_x, 1), (eq, destination_y, 0))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 3), (eq, drone_y, 7), (lte,4, destination_x), (lte, destination_x, 5), (eq, destination_y, 7))} result{'right'}
+case{(and, (eq, drone_x, 1), (eq, drone_y, 3), (eq, destination_x, 2), (eq, destination_y, 3))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 0), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 3))} result{'right'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 6), (eq, drone_y, 5), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 6))} result{'right'}
+case{(and, (lte,3, drone_x), (lte, drone_x, 5), (eq, drone_y, 9), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 1))} result{'right'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 6), (eq, drone_y, 0), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 1))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 9), (lte,7, destination_x), (lte, destination_x, 8), (lte,6, destination_y), (lte, destination_y, 7))} result{'right'}
+case{(and, (lte,2, drone_x), (lte, drone_x, 5), (eq, drone_y, 2), (lte,6, destination_x), (lte, destination_x, 7), (lte,7, destination_y), (lte, destination_y, 8))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 5), (eq, drone_y, 2), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 5))} result{'right'}
+case{(and, (lte,3, drone_x), (lte, drone_x, 6), (eq, drone_y, 7), (eq, destination_x, 9), (eq, destination_y, 2))} result{'right'}
+case{(and, (lte,3, drone_x), (lte, drone_x, 5), (eq, drone_y, 4), (eq, destination_x, 2), (eq, destination_y, 5))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 4), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 5))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 9), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 8))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 2), (lte,8, destination_x), (lte, destination_x, 9), (eq, destination_y, 7))} result{'right'}
+case{(and, (eq, drone_x, 8), (eq, drone_y, 7), (eq, destination_x, 9), (eq, destination_y, 7))} result{'right'}
+case{(and, (eq, drone_x, 4), (eq, drone_y, 7), (eq, destination_x, 5), (eq, destination_y, 7))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 9), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 3))} result{'right'}
+case{(and, (eq, drone_x, 6), (eq, drone_y, 3), (eq, destination_x, 7), (eq, destination_y, 3))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 7), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 1))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 0), (lte,0, destination_x), (lte, destination_x, 9), (eq, destination_y, 7))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 7), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 9))} result{'right'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 6), (eq, drone_y, 0), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 9))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 0), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 1))} result{'right'}
+case{(and, (lte,3, drone_x), (lte, drone_x, 5), (eq, drone_y, 4), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 1))} result{'right'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 6), (eq, drone_y, 0), (eq, destination_x, 6), (lte,2, destination_y), (lte, destination_y, 5))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 0), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 4))} result{'right'}
+case{(and, (eq, drone_x, 5), (eq, drone_y, 7), (eq, destination_x, 3), (eq, destination_y, 2))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 5), (eq, destination_x, 1), (eq, destination_y, 5))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 0), (eq, destination_x, 2), (lte,0, destination_y), (lte, destination_y, 1))} result{'right'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 1), (eq, destination_x, 8), (eq, destination_y, 1))} result{'right'}
+case{(and, (lte,3, drone_x), (lte, drone_x, 5), (eq, drone_y, 4), (lte,0, destination_x), (lte, destination_x, 9), (eq, destination_y, 2))} result{'right'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 6), (eq, drone_y, 0), (eq, destination_x, 3), (eq, destination_y, 4))} result{'right'}
+case{(and, (lte,3, drone_x), (lte, drone_x, 5), (eq, drone_y, 4), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 3))} result{'right'}
+case{(and, (eq, drone_x, 4), (eq, drone_y, 4), (eq, destination_x, 5), (eq, destination_y, 4))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 4), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 4))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 9), (lte,4, destination_x), (lte, destination_x, 6), (eq, destination_y, 7))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 9), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 5))} result{'right'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 6), (eq, drone_y, 0), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 3))} result{'right'}
+case{(and, (lte,3, drone_x), (lte, drone_x, 5), (eq, drone_y, 4), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 0))} result{'right'}
+case{(and, (lte,3, drone_x), (lte, drone_x, 5), (eq, drone_y, 4), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 0))} result{'right'}
+case{(and, (eq, drone_x, 3), (eq, drone_y, 4), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 5))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 0), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 4))} result{'right'}
+case{(and, (eq, drone_x, 5), (eq, drone_y, 5), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 5))} result{'right'}
+case{(and, (lte,3, drone_x), (lte, drone_x, 5), (eq, drone_y, 9), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 0))} result{'right'}
+case{(and, (eq, drone_x, 3), (eq, drone_y, 4), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 8))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 5), (eq, drone_y, 7), (eq, destination_x, 6), (lte,7, destination_y), (lte, destination_y, 9))} result{'right'}
+case{(and, (eq, drone_x, 3), (eq, drone_y, 4), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 9))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 2), (lte,6, destination_x), (lte, destination_x, 7), (lte,7, destination_y), (lte, destination_y, 8))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 6), (eq, drone_y, 7), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 4))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 7), (lte,0, destination_x), (lte, destination_x, 1), (lte,4, destination_y), (lte, destination_y, 5))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 5), (lte,0, destination_x), (lte, destination_x, 6), (eq, destination_y, 7))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 9), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 4))} result{'right'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 6), (eq, drone_y, 0), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 8))} result{'right'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 6), (eq, destination_x, 8), (eq, destination_y, 6))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 9), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 0))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 0), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 5))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 2), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 3))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 7), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 1))} result{'right'}
+case{(and, (lte,3, drone_x), (lte, drone_x, 5), (eq, drone_y, 9), (lte,8, destination_x), (lte, destination_x, 9), (eq, destination_y, 7))} result{'right'}
+case{(and, (eq, drone_x, 6), (eq, drone_y, 7), (lte,2, destination_x), (lte, destination_x, 3), (lte,1, destination_y), (lte, destination_y, 2))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 9), (lte,2, destination_x), (lte, destination_x, 3), (lte,6, destination_y), (lte, destination_y, 7))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 9), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 1))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 5), (eq, drone_y, 7), (lte,3, destination_x), (lte, destination_x, 5), (eq, destination_y, 9))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 5), (eq, destination_x, 9), (eq, destination_y, 7))} result{'right'}
+case{(and, (eq, drone_x, 6), (eq, drone_y, 5), (eq, destination_x, 7), (eq, destination_y, 5))} result{'right'}
+case{(and, (eq, drone_x, 3), (eq, drone_y, 7), (lte,5, destination_x), (lte, destination_x, 6), (eq, destination_y, 2))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 4), (lte,0, destination_x), (lte, destination_x, 5), (eq, destination_y, 2))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 0), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 5))} result{'right'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 6), (eq, drone_y, 0), (eq, destination_x, 9), (eq, destination_y, 2))} result{'right'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 5), (eq, drone_y, 4), (eq, destination_x, 6), (eq, destination_y, 4))} result{'right'}
+case{(and, (lte,3, drone_x), (lte, drone_x, 5), (eq, drone_y, 9), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 6))} result{'right'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 6), (eq, drone_y, 0), (lte,4, destination_x), (lte, destination_x, 5), (lte,4, destination_y), (lte, destination_y, 5))} result{'right'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 2), (eq, destination_x, 3), (eq, destination_y, 2))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 0), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 9))} result{'right'}
+case{(and, (lte,3, drone_x), (lte, drone_x, 5), (eq, drone_y, 9), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 5))} result{'right'}
+case{(and, (lte,3, drone_x), (lte, drone_x, 5), (eq, drone_y, 4), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 1))} result{'right'}
+case{(and, (lte,2, drone_x), (lte, drone_x, 5), (eq, drone_y, 2), (lte,8, destination_x), (lte, destination_x, 9), (eq, destination_y, 7))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 7), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 0))} result{'right'}
+case{(and, (eq, drone_x, 1), (eq, drone_y, 8), (eq, destination_x, 2), (eq, destination_y, 8))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 5), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 8))} result{'right'}
+case{(and, (eq, drone_x, 5), (eq, drone_y, 2), (eq, destination_x, 3), (eq, destination_y, 7))} result{'right'}
+case{(and, (lte,3, drone_x), (lte, drone_x, 5), (eq, drone_y, 9), (lte,0, destination_x), (lte, destination_x, 9), (eq, destination_y, 2))} result{'right'}
+case{(and, (eq, drone_x, 3), (eq, drone_y, 9), (lte,4, destination_x), (lte, destination_x, 5), (eq, destination_y, 9))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 3), (eq, drone_y, 2), (lte,4, destination_x), (lte, destination_x, 5), (eq, destination_y, 2))} result{'right'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 6), (eq, drone_y, 0), (eq, destination_x, 8), (lte,1, destination_y), (lte, destination_y, 2))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 7), (eq, destination_x, 1), (eq, destination_y, 7))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 6), (eq, drone_y, 7), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 5))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 0), (eq, destination_x, 3), (eq, destination_y, 1))} result{'right'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 6), (eq, drone_y, 5), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 9))} result{'right'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 6), (eq, drone_y, 0), (lte,0, destination_x), (lte, destination_x, 5), (eq, destination_y, 2))} result{'right'}
+case{(and, (lte,3, drone_x), (lte, drone_x, 6), (eq, drone_y, 7), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 0))} result{'right'}
+case{(and, (lte,3, drone_x), (lte, drone_x, 5), (eq, drone_y, 4), (lte,0, destination_x), (lte, destination_x, 1), (lte,4, destination_y), (lte, destination_y, 5))} result{'right'}
+case{(and, (lte,3, drone_x), (lte, drone_x, 5), (eq, drone_y, 9), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 0))} result{'right'}
+case{(and, (lte,3, drone_x), (lte, drone_x, 5), (eq, drone_y, 9), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 4))} result{'right'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 6), (eq, drone_y, 0), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 6))} result{'right'}
+case{(and, (eq, drone_x, 4), (eq, drone_y, 2), (eq, destination_x, 5), (eq, destination_y, 2))} result{'right'}
+case{(and, (eq, drone_x, 3), (eq, drone_y, 4), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 8))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 6), (eq, drone_y, 2), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 1))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 9), (lte,7, destination_x), (lte, destination_x, 8), (lte,1, destination_y), (lte, destination_y, 2))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 9), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 0))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 9), (eq, destination_x, 1), (eq, destination_y, 9))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 4), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 1))} result{'right'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 7), (eq, destination_x, 3), (eq, destination_y, 7))} result{'right'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 1), (eq, destination_x, 3), (eq, destination_y, 1))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 9), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 8))} result{'right'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 6), (eq, drone_y, 5), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 9))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 5), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 9))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 2), (eq, destination_x, 1), (eq, destination_y, 8))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 5), (eq, drone_y, 2), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 4))} result{'right'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 6), (eq, drone_y, 5), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 5))} result{'right'}
+case{(and, (eq, drone_x, 3), (eq, drone_y, 4), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 9))} result{'right'}
+case{(and, (eq, drone_x, 4), (eq, drone_y, 0), (lte,5, destination_x), (lte, destination_x, 6), (eq, destination_y, 0))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 4), (eq, destination_x, 1), (eq, destination_y, 4))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 0), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 6))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 4), (lte,8, destination_x), (lte, destination_x, 9), (eq, destination_y, 2))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 7), (lte,0, destination_x), (lte, destination_x, 9), (eq, destination_y, 2))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 4), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 0))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 2), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 7))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 2), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 9))} result{'right'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 6), (eq, drone_y, 0), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 4))} result{'right'}
+case{(and, (lte,3, drone_x), (lte, drone_x, 5), (eq, drone_y, 9), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 3))} result{'right'}
+case{(and, (eq, drone_x, 5), (eq, drone_y, 0), (eq, destination_x, 6), (eq, destination_y, 0))} result{'right'}
+case{(and, (lte,3, drone_x), (lte, drone_x, 5), (eq, drone_y, 9), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 9))} result{'right'}
+case{(and, (lte,3, drone_x), (lte, drone_x, 5), (eq, drone_y, 9), (eq, destination_x, 6), (eq, destination_y, 9))} result{'right'}
+case{(and, (eq, drone_x, 6), (eq, drone_y, 2), (eq, destination_x, 7), (eq, destination_y, 2))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 5), (eq, drone_y, 2), (lte,6, destination_x), (lte, destination_x, 9), (eq, destination_y, 2))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 4), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 0))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 7), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 3))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 7), (eq, destination_x, 3), (lte,6, destination_y), (lte, destination_y, 7))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 9), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 4))} result{'right'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 6), (eq, drone_y, 0), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 5))} result{'right'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 6), (eq, drone_y, 5), (lte,0, destination_x), (lte, destination_x, 9), (eq, destination_y, 7))} result{'right'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 0), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 8))} result{'right'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 2), (lte,0, destination_x), (lte, destination_x, 1), (lte,4, destination_y), (lte, destination_y, 5))} result{'right'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 0), (lte,0, destination_x), (lte, destination_x, 9), (eq, destination_y, 7))} result{'up'}
+case{(and, (lte,6, drone_x), (lte, drone_x, 7), (eq, drone_y, 2), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 3))} result{'up'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 4), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 8))} result{'up'}
+case{(and, (eq, drone_x, 6), (eq, drone_y, 7), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 8))} result{'up'}
+case{(and, (lte,7, drone_x), (lte, drone_x, 8), (eq, drone_y, 1), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 0))} result{'up'}
+case{(and, (eq, drone_x, 2), (lte,5, drone_y), (lte, drone_y, 6), (lte,8, destination_x), (lte, destination_x, 9), (eq, destination_y, 7))} result{'up'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 5), (lte,0, destination_x), (lte, destination_x, 9), (eq, destination_y, 7))} result{'up'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 6), (eq, drone_y, 4), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 6))} result{'up'}
+case{(and, (eq, drone_x, 2), (lte,0, drone_y), (lte, drone_y, 1), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 3))} result{'up'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 0), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 9))} result{'up'}
+case{(and, (lte,2, drone_x), (lte, drone_x, 3), (eq, drone_y, 1), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 6))} result{'up'}
+case{(and, (lte,2, drone_x), (lte, drone_x, 3), (eq, drone_y, 1), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 9))} result{'up'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 6), (eq, drone_y, 4), (lte,0, destination_x), (lte, destination_x, 9), (eq, destination_y, 7))} result{'up'}
+case{(and, (eq, drone_x, 8), (eq, drone_y, 1), (lte,0, destination_x), (lte, destination_x, 6), (eq, destination_y, 7))} result{'up'}
+case{(and, (eq, drone_x, 6), (eq, drone_y, 3), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 4))} result{'up'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 5), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 8))} result{'up'}
+case{(and, (eq, drone_x, 8), (eq, drone_y, 1), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 9))} result{'up'}
+case{(and, (lte,7, drone_x), (lte, drone_x, 8), (eq, drone_y, 1), (lte,7, destination_x), (lte, destination_x, 8), (lte,6, destination_y), (lte, destination_y, 7))} result{'up'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 0), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 6))} result{'up'}
+case{(and, (eq, drone_x, 7), (lte,5, drone_y), (lte, drone_y, 7), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 8))} result{'up'}
+case{(and, (lte,7, drone_x), (lte, drone_x, 8), (eq, drone_y, 6), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 4))} result{'up'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 0), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 5))} result{'up'}
+case{(and, (eq, drone_x, 3), (eq, drone_y, 6), (lte,8, destination_x), (lte, destination_x, 9), (eq, destination_y, 7))} result{'up'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 0), (lte,7, destination_x), (lte, destination_x, 8), (lte,6, destination_y), (lte, destination_y, 7))} result{'up'}
+case{(and, (lte,7, drone_x), (lte, drone_x, 8), (eq, drone_y, 1), (lte,1, destination_x), (lte, destination_x, 2), (lte,2, destination_y), (lte, destination_y, 3))} result{'up'}
+case{(and, (eq, drone_x, 2), (lte,5, drone_y), (lte, drone_y, 6), (lte,6, destination_x), (lte, destination_x, 7), (lte,7, destination_y), (lte, destination_y, 8))} result{'up'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 0), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 8))} result{'up'}
+case{(and, (lte,7, drone_x), (lte, drone_x, 8), (eq, drone_y, 1), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 9))} result{'up'}
+case{(and, (eq, drone_x, 1), (lte,2, drone_y), (lte, drone_y, 4), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 9))} result{'up'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 2), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 5))} result{'up'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 0), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 1))} result{'up'}
+case{(and, (lte,2, drone_x), (lte, drone_x, 3), (eq, drone_y, 6), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 4))} result{'up'}
+case{(and, (lte,7, drone_x), (lte, drone_x, 8), (eq, drone_y, 1), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 1))} result{'up'}
+case{(and, (eq, drone_x, 1), (lte,2, drone_y), (lte, drone_y, 3), (lte,3, destination_x), (lte, destination_x, 9), (eq, destination_y, 7))} result{'up'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 0), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 9))} result{'up'}
+case{(and, (eq, drone_x, 2), (lte,5, drone_y), (lte, drone_y, 6), (lte,0, destination_x), (lte, destination_x, 5), (eq, destination_y, 7))} result{'up'}
+case{(and, (lte,2, drone_x), (lte, drone_x, 3), (eq, drone_y, 6), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 5))} result{'up'}
+case{(and, (lte,7, drone_x), (lte, drone_x, 8), (eq, drone_y, 1), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 5))} result{'up'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 0), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 1))} result{'up'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 2), (lte,3, destination_x), (lte, destination_x, 5), (eq, destination_y, 7))} result{'up'}
+case{(and, (lte,1, drone_x), (lte, drone_x, 2), (eq, drone_y, 2), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 5))} result{'up'}
+case{(and, (eq, drone_x, 7), (lte,0, drone_y), (lte, drone_y, 2), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 9))} result{'up'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 6), (eq, drone_y, 4), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 8))} result{'up'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 5), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 6))} result{'up'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 5), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 6))} result{'up'}
+case{(and, (eq, drone_x, 8), (eq, drone_y, 1), (eq, destination_x, 0), (eq, destination_y, 2))} result{'up'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 0), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 5))} result{'up'}
+case{(and, (eq, drone_x, 3), (eq, drone_y, 6), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 3))} result{'up'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 0), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 4))} result{'up'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 2), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 9))} result{'up'}
+case{(and, (eq, drone_x, 8), (eq, drone_y, 6), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 9))} result{'up'}
+case{(and, (lte,1, drone_x), (lte, drone_x, 2), (eq, drone_y, 2), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 3))} result{'up'}
+case{(and, (lte,2, drone_x), (lte, drone_x, 3), (eq, drone_y, 1), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 4))} result{'up'}
+case{(and, (eq, drone_x, 3), (eq, drone_y, 6), (lte,6, destination_x), (lte, destination_x, 7), (lte,7, destination_y), (lte, destination_y, 8))} result{'up'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 0), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 8))} result{'up'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 0), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 0))} result{'up'}
+case{(and, (eq, drone_x, 2), (lte,0, drone_y), (lte, drone_y, 1), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 8))} result{'up'}
+case{(and, (eq, drone_x, 6), (lte,2, drone_y), (lte, drone_y, 3), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 8))} result{'up'}
+case{(and, (eq, drone_x, 7), (lte,0, drone_y), (lte, drone_y, 1), (eq, destination_x, 0), (eq, destination_y, 2))} result{'up'}
+case{(and, (lte,7, drone_x), (lte, drone_x, 8), (eq, drone_y, 1), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 8))} result{'up'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 0), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 6))} result{'up'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 4), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 5))} result{'up'}
+case{(and, (eq, drone_x, 3), (eq, drone_y, 1), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 3))} result{'up'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 0), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 6))} result{'up'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 0), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 4))} result{'up'}
+case{(and, (lte,2, drone_x), (lte, drone_x, 3), (eq, drone_y, 1), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 0))} result{'up'}
+case{(and, (eq, drone_x, 7), (lte,0, drone_y), (lte, drone_y, 2), (lte,0, destination_x), (lte, destination_x, 6), (eq, destination_y, 7))} result{'up'}
+case{(and, (lte,2, drone_x), (lte, drone_x, 3), (eq, drone_y, 1), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 5))} result{'up'}
+case{(and, (eq, drone_x, 6), (lte,2, drone_y), (lte, drone_y, 3), (lte,0, destination_x), (lte, destination_x, 9), (eq, destination_y, 7))} result{'up'}
+case{(and, (lte,2, drone_x), (lte, drone_x, 3), (eq, drone_y, 6), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 9))} result{'up'}
+case{(and, (eq, drone_x, 6), (lte,2, drone_y), (lte, drone_y, 3), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 9))} result{'up'}
+case{(and, (lte,6, drone_x), (lte, drone_x, 7), (eq, drone_y, 2), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 6))} result{'up'}
+case{(and, (eq, drone_x, 1), (eq, drone_y, 3), (lte,1, destination_x), (lte, destination_x, 2), (lte,7, destination_y), (lte, destination_y, 8))} result{'up'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 2), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 9))} result{'up'}
+case{(and, (eq, drone_x, 8), (eq, drone_y, 6), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 6))} result{'up'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 0), (lte,3, destination_x), (lte, destination_x, 9), (eq, destination_y, 2))} result{'up'}
+case{(and, (lte,1, drone_x), (lte, drone_x, 2), (eq, drone_y, 2), (lte,1, destination_x), (lte, destination_x, 2), (lte,7, destination_y), (lte, destination_y, 8))} result{'up'}
+case{(and, (lte,2, drone_x), (lte, drone_x, 3), (eq, drone_y, 1), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 6))} result{'up'}
+case{(and, (eq, drone_x, 8), (eq, drone_y, 6), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 8))} result{'up'}
+case{(and, (lte,2, drone_x), (lte, drone_x, 3), (eq, drone_y, 1), (lte,0, destination_x), (lte, destination_x, 9), (eq, destination_y, 7))} result{'up'}
+case{(and, (eq, drone_x, 1), (lte,2, drone_y), (lte, drone_y, 4), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 9))} result{'up'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 5), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 9))} result{'up'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 0), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 5))} result{'up'}
+case{(and, (eq, drone_x, 7), (lte,5, drone_y), (lte, drone_y, 6), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 6))} result{'up'}
+case{(and, (lte,7, drone_x), (lte, drone_x, 8), (eq, drone_y, 1), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 4))} result{'up'}
+case{(and, (eq, drone_x, 3), (eq, drone_y, 1), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 3))} result{'up'}
+case{(and, (lte,7, drone_x), (lte, drone_x, 8), (eq, drone_y, 1), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 5))} result{'up'}
+case{(and, (eq, drone_x, 6), (eq, drone_y, 3), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 8))} result{'up'}
+case{(and, (eq, drone_x, 1), (lte,2, drone_y), (lte, drone_y, 4), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 8))} result{'up'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 7), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 9))} result{'up'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 5), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 6))} result{'up'}
+case{(and, (lte,6, drone_x), (lte, drone_x, 7), (eq, drone_y, 2), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 8))} result{'up'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 4), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 6))} result{'up'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 5), (eq, drone_y, 4), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 5))} result{'up'}
+case{(and, (lte,7, drone_x), (lte, drone_x, 8), (eq, drone_y, 6), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 8))} result{'up'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 6), (eq, drone_y, 4), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 9))} result{'up'}
+case{(and, (lte,7, drone_x), (lte, drone_x, 8), (eq, drone_y, 1), (lte,3, destination_x), (lte, destination_x, 9), (eq, destination_y, 2))} result{'up'}
+case{(and, (eq, drone_x, 6), (lte,2, drone_y), (lte, drone_y, 4), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 9))} result{'up'}
+case{(and, (lte,7, drone_x), (lte, drone_x, 8), (eq, drone_y, 6), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 9))} result{'up'}
+case{(and, (eq, drone_x, 6), (eq, drone_y, 3), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 6))} result{'up'}
+case{(and, (eq, drone_x, 6), (lte,7, drone_y), (lte, drone_y, 8), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 9))} result{'up'}
+case{(and, (lte,2, drone_x), (lte, drone_x, 3), (eq, drone_y, 1), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 5))} result{'up'}
+case{(and, (eq, drone_x, 7), (lte,5, drone_y), (lte, drone_y, 6), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 5))} result{'up'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 0), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 4))} result{'up'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 5), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 9))} result{'up'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 4), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 6))} result{'up'}
+case{(and, (lte,1, drone_x), (lte, drone_x, 2), (eq, drone_y, 7), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 8))} result{'up'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 5), (eq, drone_y, 4), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 9))} result{'up'}
+case{(and, (lte,7, drone_x), (lte, drone_x, 8), (eq, drone_y, 1), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 6))} result{'up'}
+case{(and, (eq, drone_x, 1), (lte,2, drone_y), (lte, drone_y, 3), (eq, destination_x, 0), (eq, destination_y, 7))} result{'up'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 0), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 1))} result{'up'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 5), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 9))} result{'up'}
+case{(and, (eq, drone_x, 1), (lte,2, drone_y), (lte, drone_y, 3), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 4))} result{'up'}
+case{(and, (eq, drone_x, 8), (eq, drone_y, 1), (eq, destination_x, 9), (eq, destination_y, 7))} result{'up'}
+case{(and, (eq, drone_x, 1), (eq, drone_y, 3), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 5))} result{'up'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 2), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 8))} result{'up'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 2), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 7))} result{'up'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 4), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 9))} result{'up'}
+case{(and, (eq, drone_x, 3), (eq, drone_y, 1), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 8))} result{'up'}
+case{(and, (lte,7, drone_x), (lte, drone_x, 8), (eq, drone_y, 6), (lte,0, destination_x), (lte, destination_x, 9), (eq, destination_y, 7))} result{'up'}
+case{(and, (eq, drone_x, 3), (eq, drone_y, 1), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 8))} result{'up'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 0), (lte,0, destination_x), (lte, destination_x, 9), (eq, destination_y, 2))} result{'up'}
+case{(and, (lte,2, drone_x), (lte, drone_x, 3), (eq, drone_y, 1), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 1))} result{'up'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 6), (eq, drone_y, 4), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 8))} result{'up'}
+case{(and, (lte,7, drone_x), (lte, drone_x, 8), (eq, drone_y, 1), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 4))} result{'up'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 4), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 9))} result{'up'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 0), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 5))} result{'up'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 0), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 0))} result{'up'}
+case{(and, (eq, drone_x, 2), (lte,0, drone_y), (lte, drone_y, 1), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 8))} result{'up'}
+case{(and, (eq, drone_x, 7), (lte,5, drone_y), (lte, drone_y, 7), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 9))} result{'up'}
+case{(and, (lte,2, drone_x), (lte, drone_x, 3), (eq, drone_y, 1), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 9))} result{'up'}
+case{(and, (lte,2, drone_x), (lte, drone_x, 3), (eq, drone_y, 6), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 9))} result{'up'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 5), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 8))} result{'up'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 0), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 1))} result{'up'}
+case{(and, (lte,2, drone_x), (lte, drone_x, 3), (eq, drone_y, 1), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 4))} result{'up'}
+case{(and, (eq, drone_x, 6), (eq, drone_y, 3), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 6))} result{'up'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 2), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 6))} result{'up'}
+case{(and, (eq, drone_x, 7), (lte,0, drone_y), (lte, drone_y, 2), (eq, destination_x, 9), (eq, destination_y, 7))} result{'up'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 0), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 9))} result{'up'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 4), (lte,0, destination_x), (lte, destination_x, 9), (eq, destination_y, 7))} result{'up'}
+case{(and, (eq, drone_x, 1), (lte,2, drone_y), (lte, drone_y, 4), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 6))} result{'up'}
+case{(and, (eq, drone_x, 1), (lte,7, drone_y), (lte, drone_y, 8), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 9))} result{'up'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 0), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 3))} result{'up'}
+case{(and, (eq, drone_x, 6), (lte,2, drone_y), (lte, drone_y, 4), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 5))} result{'up'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 2), (eq, destination_x, 0), (eq, destination_y, 7))} result{'up'}
+case{(and, (lte,2, drone_x), (lte, drone_x, 3), (eq, drone_y, 6), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 6))} result{'up'}
+case{(and, (eq, drone_x, 8), (eq, drone_y, 6), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 5))} result{'up'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 5), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 5))} result{'up'}
+case{(and, (lte,2, drone_x), (lte, drone_x, 3), (eq, drone_y, 1), (lte,0, destination_x), (lte, destination_x, 9), (eq, destination_y, 2))} result{'up'}
+case{(and, (eq, drone_x, 2), (lte,0, drone_y), (lte, drone_y, 1), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 3))} result{'up'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 6), (eq, drone_y, 4), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 6))} result{'up'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 0), (lte,1, destination_x), (lte, destination_x, 2), (lte,2, destination_y), (lte, destination_y, 3))} result{'up'}
+case{(and, (lte,7, drone_x), (lte, drone_x, 8), (eq, drone_y, 1), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 3))} result{'up'}
+case{(and, (eq, drone_x, 3), (eq, drone_y, 6), (lte,0, destination_x), (lte, destination_x, 5), (eq, destination_y, 7))} result{'up'}
+case{(and, (lte,7, drone_x), (lte, drone_x, 8), (eq, drone_y, 1), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 8))} result{'up'}
+case{(and, (lte,6, drone_x), (lte, drone_x, 7), (eq, drone_y, 2), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 4))} result{'up'}
+case{(and, (lte,2, drone_x), (lte, drone_x, 3), (eq, drone_y, 6), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 8))} result{'up'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 4), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 8))} result{'up'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 0), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 4))} result{'up'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 2), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 4))} result{'up'}
+case{(and, (eq, drone_x, 6), (eq, drone_y, 9), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 6))} result{'down'}
+case{(and, (eq, drone_x, 8), (eq, drone_y, 7), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 3))} result{'down'}
+case{(and, (eq, drone_x, 6), (lte,8, drone_y), (lte, drone_y, 9), (lte,0, destination_x), (lte, destination_x, 9), (eq, destination_y, 7))} result{'down'}
+case{(and, (eq, drone_x, 1), (lte,8, drone_y), (lte, drone_y, 9), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 1))} result{'down'}
+case{(and, (lte,7, drone_x), (lte, drone_x, 8), (eq, drone_y, 7), (lte,4, destination_x), (lte, destination_x, 6), (eq, destination_y, 2))} result{'down'}
+case{(and, (eq, drone_x, 7), (lte,6, drone_y), (lte, drone_y, 8), (eq, destination_x, 9), (eq, destination_y, 2))} result{'down'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 6), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 2))} result{'down'}
+case{(and, (eq, drone_x, 6), (lte,3, drone_y), (lte, drone_y, 4), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 5))} result{'down'}
+case{(and, (eq, drone_x, 1), (eq, drone_y, 9), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 6))} result{'down'}
+case{(and, (eq, drone_x, 2), (lte,6, drone_y), (lte, drone_y, 7), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 4))} result{'down'}
+case{(and, (eq, drone_x, 3), (eq, drone_y, 2), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 0))} result{'down'}
+case{(and, (lte,7, drone_x), (lte, drone_x, 8), (eq, drone_y, 7), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 2))} result{'down'}
+case{(and, (eq, drone_x, 1), (lte,3, drone_y), (lte, drone_y, 5), (lte,2, destination_x), (lte, destination_x, 3), (lte,1, destination_y), (lte, destination_y, 2))} result{'down'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 3), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 1))} result{'down'}
+case{(and, (eq, drone_x, 7), (lte,6, drone_y), (lte, drone_y, 7), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 0))} result{'down'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 5), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 1))} result{'down'}
+case{(and, (lte,7, drone_x), (lte, drone_x, 8), (eq, drone_y, 7), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 0))} result{'down'}
+case{(and, (eq, drone_x, 2), (lte,6, drone_y), (lte, drone_y, 7), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 3))} result{'down'}
+case{(and, (eq, drone_x, 1), (lte,8, drone_y), (lte, drone_y, 9), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 9))} result{'down'}
+case{(and, (eq, drone_x, 6), (eq, drone_y, 9), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 6))} result{'down'}
+case{(and, (lte,1, drone_x), (lte, drone_x, 2), (eq, drone_y, 3), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 5))} result{'down'}
+case{(and, (lte,1, drone_x), (lte, drone_x, 2), (eq, drone_y, 3), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 1))} result{'down'}
+case{(and, (eq, drone_x, 3), (eq, drone_y, 7), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 5))} result{'down'}
+case{(and, (lte,6, drone_x), (lte, drone_x, 7), (eq, drone_y, 8), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 6))} result{'down'}
+case{(and, (eq, drone_x, 2), (lte,6, drone_y), (lte, drone_y, 7), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 5))} result{'down'}
+case{(and, (eq, drone_x, 7), (lte,6, drone_y), (lte, drone_y, 7), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 3))} result{'down'}
+case{(and, (eq, drone_x, 7), (lte,6, drone_y), (lte, drone_y, 8), (lte,7, destination_x), (lte, destination_x, 8), (lte,1, destination_y), (lte, destination_y, 2))} result{'down'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 8), (lte,0, destination_x), (lte, destination_x, 1), (lte,4, destination_y), (lte, destination_y, 5))} result{'down'}
+case{(and, (eq, drone_x, 6), (eq, drone_y, 9), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 0))} result{'down'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 5), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 4))} result{'down'}
+case{(and, (eq, drone_x, 2), (lte,6, drone_y), (lte, drone_y, 8), (lte,8, destination_x), (lte, destination_x, 9), (eq, destination_y, 2))} result{'down'}
+case{(and, (lte,1, drone_x), (lte, drone_x, 2), (eq, drone_y, 8), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 4))} result{'down'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 6), (eq, drone_y, 5), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 3))} result{'down'}
+case{(and, (eq, drone_x, 1), (eq, drone_y, 4), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 4))} result{'down'}
+case{(and, (eq, drone_x, 1), (lte,3, drone_y), (lte, drone_y, 4), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 0))} result{'down'}
+case{(and, (lte,1, drone_x), (lte, drone_x, 2), (eq, drone_y, 8), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 0))} result{'down'}
+case{(and, (lte,2, drone_x), (lte, drone_x, 3), (eq, drone_y, 7), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 2))} result{'down'}
+case{(and, (eq, drone_x, 1), (lte,3, drone_y), (lte, drone_y, 5), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 2))} result{'down'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 3), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 2))} result{'down'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 8), (lte,0, destination_x), (lte, destination_x, 9), (eq, destination_y, 7))} result{'down'}
+case{(and, (eq, drone_x, 1), (eq, drone_y, 9), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 3))} result{'down'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 8), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 9))} result{'down'}
+case{(and, (eq, drone_x, 6), (lte,3, drone_y), (lte, drone_y, 4), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 4))} result{'down'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 6), (lte,6, destination_x), (lte, destination_x, 7), (lte,2, destination_y), (lte, destination_y, 3))} result{'down'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 6), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 1))} result{'down'}
+case{(and, (lte,6, drone_x), (lte, drone_x, 7), (eq, drone_y, 8), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 3))} result{'down'}
+case{(and, (eq, drone_x, 6), (lte,8, drone_y), (lte, drone_y, 9), (lte,0, destination_x), (lte, destination_x, 9), (eq, destination_y, 2))} result{'down'}
+case{(and, (lte,1, drone_x), (lte, drone_x, 2), (eq, drone_y, 8), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 3))} result{'down'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 5), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 0))} result{'down'}
+case{(and, (eq, drone_x, 2), (lte,6, drone_y), (lte, drone_y, 8), (lte,4, destination_x), (lte, destination_x, 5), (eq, destination_y, 2))} result{'down'}
+case{(and, (eq, drone_x, 7), (lte,6, drone_y), (lte, drone_y, 7), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 4))} result{'down'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 6), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 0))} result{'down'}
+case{(and, (lte,1, drone_x), (lte, drone_x, 2), (eq, drone_y, 3), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 3))} result{'down'}
+case{(and, (eq, drone_x, 6), (eq, drone_y, 9), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 3))} result{'down'}
+case{(and, (lte,6, drone_x), (lte, drone_x, 7), (eq, drone_y, 8), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 3))} result{'down'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 8), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 9))} result{'down'}
+case{(and, (eq, drone_x, 6), (eq, drone_y, 9), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 0))} result{'down'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 6), (eq, drone_y, 5), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 0))} result{'down'}
+case{(and, (eq, drone_x, 1), (eq, drone_y, 9), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 0))} result{'down'}
+case{(and, (lte,2, drone_x), (lte, drone_x, 3), (eq, drone_y, 7), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 0))} result{'down'}
+case{(and, (eq, drone_x, 1), (lte,8, drone_y), (lte, drone_y, 9), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 1))} result{'down'}
+case{(and, (lte,6, drone_x), (lte, drone_x, 7), (eq, drone_y, 8), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 8))} result{'down'}
+case{(and, (eq, drone_x, 1), (eq, drone_y, 9), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 3))} result{'down'}
+case{(and, (eq, drone_x, 6), (lte,3, drone_y), (lte, drone_y, 4), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 0))} result{'down'}
+case{(and, (eq, drone_x, 1), (eq, drone_y, 9), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 5))} result{'down'}
+case{(and, (eq, drone_x, 1), (eq, drone_y, 9), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 8))} result{'down'}
+case{(and, (eq, drone_x, 1), (eq, drone_y, 9), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 0))} result{'down'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 5), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 4))} result{'down'}
+case{(and, (eq, drone_x, 1), (eq, drone_y, 9), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 4))} result{'down'}
+case{(and, (eq, drone_x, 2), (lte,6, drone_y), (lte, drone_y, 7), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 0))} result{'down'}
+case{(and, (eq, drone_x, 6), (lte,8, drone_y), (lte, drone_y, 9), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 1))} result{'down'}
+case{(and, (lte,1, drone_x), (lte, drone_x, 2), (eq, drone_y, 8), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 6))} result{'down'}
+case{(and, (eq, drone_x, 1), (eq, drone_y, 4), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 1))} result{'down'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 8), (lte,0, destination_x), (lte, destination_x, 6), (eq, destination_y, 2))} result{'down'}
+case{(and, (eq, drone_x, 6), (lte,8, drone_y), (lte, drone_y, 9), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 5))} result{'down'}
+case{(and, (eq, drone_x, 1), (eq, drone_y, 9), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 4))} result{'down'}
+case{(and, (eq, drone_x, 2), (lte,1, drone_y), (lte, drone_y, 3), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 0))} result{'down'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 3), (lte,0, destination_x), (lte, destination_x, 1), (lte,4, destination_y), (lte, destination_y, 5))} result{'down'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 3), (eq, destination_x, 2), (eq, destination_y, 5))} result{'down'}
+case{(and, (eq, drone_x, 6), (eq, drone_y, 9), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 3))} result{'down'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 6), (eq, drone_y, 5), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 4))} result{'down'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 5), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 3))} result{'down'}
+case{(and, (lte,1, drone_x), (lte, drone_x, 2), (eq, drone_y, 8), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 0))} result{'down'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 6), (eq, drone_y, 5), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 4))} result{'down'}
+case{(and, (eq, drone_x, 1), (eq, drone_y, 4), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 3))} result{'down'}
+case{(and, (lte,6, drone_x), (lte, drone_x, 7), (eq, drone_y, 8), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 6))} result{'down'}
+case{(and, (lte,6, drone_x), (lte, drone_x, 7), (eq, drone_y, 3), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 0))} result{'down'}
+case{(and, (lte,7, drone_x), (lte, drone_x, 8), (eq, drone_y, 2), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 1))} result{'down'}
+case{(and, (lte,1, drone_x), (lte, drone_x, 2), (eq, drone_y, 8), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 5))} result{'down'}
+case{(and, (eq, drone_x, 3), (eq, drone_y, 7), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 3))} result{'down'}
+case{(and, (lte,7, drone_x), (lte, drone_x, 8), (eq, drone_y, 7), (lte,2, destination_x), (lte, destination_x, 3), (lte,1, destination_y), (lte, destination_y, 2))} result{'down'}
+case{(and, (eq, drone_x, 6), (eq, drone_y, 9), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 8))} result{'down'}
+case{(and, (eq, drone_x, 1), (eq, drone_y, 9), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 5))} result{'down'}
+case{(and, (eq, drone_x, 8), (eq, drone_y, 7), (lte,7, destination_x), (lte, destination_x, 9), (eq, destination_y, 2))} result{'down'}
+case{(and, (eq, drone_x, 8), (eq, drone_y, 7), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 1))} result{'down'}
+case{(and, (eq, drone_x, 1), (eq, drone_y, 9), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 8))} result{'down'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 6), (eq, drone_y, 5), (lte,0, destination_x), (lte, destination_x, 9), (eq, destination_y, 2))} result{'down'}
+case{(and, (lte,6, drone_x), (lte, drone_x, 7), (eq, drone_y, 8), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 0))} result{'down'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 6), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 0))} result{'down'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 8), (lte,0, destination_x), (lte, destination_x, 9), (eq, destination_y, 7))} result{'down'}
+case{(and, (lte,7, drone_x), (lte, drone_x, 8), (eq, drone_y, 7), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 6))} result{'down'}
+case{(and, (lte,1, drone_x), (lte, drone_x, 2), (eq, drone_y, 8), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 5))} result{'down'}
+case{(and, (lte,6, drone_x), (lte, drone_x, 7), (eq, drone_y, 8), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 0))} result{'down'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 8), (eq, destination_x, 2), (eq, destination_y, 5))} result{'down'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 6), (eq, drone_y, 5), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 0))} result{'down'}
+case{(and, (lte,1, drone_x), (lte, drone_x, 2), (eq, drone_y, 8), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 8))} result{'down'}
+case{(and, (lte,1, drone_x), (lte, drone_x, 2), (eq, drone_y, 3), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 6))} result{'down'}
+case{(and, (lte,6, drone_x), (lte, drone_x, 7), (eq, drone_y, 8), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 1))} result{'down'}
+case{(and, (eq, drone_x, 7), (lte,6, drone_y), (lte, drone_y, 8), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 5))} result{'down'}
+case{(and, (lte,2, drone_x), (lte, drone_x, 3), (eq, drone_y, 2), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 1))} result{'down'}
+case{(and, (eq, drone_x, 6), (lte,3, drone_y), (lte, drone_y, 4), (lte,4, destination_x), (lte, destination_x, 9), (eq, destination_y, 2))} result{'down'}
+case{(and, (eq, drone_x, 1), (eq, drone_y, 4), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 3))} result{'down'}
+case{(and, (eq, drone_x, 1), (eq, drone_y, 4), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 5))} result{'down'}
+case{(and, (eq, drone_x, 6), (eq, drone_y, 9), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 1))} result{'down'}
+case{(and, (eq, drone_x, 8), (eq, drone_y, 7), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 0))} result{'down'}
+case{(and, (lte,2, drone_x), (lte, drone_x, 3), (eq, drone_y, 7), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 6))} result{'down'}
+case{(and, (lte,1, drone_x), (lte, drone_x, 2), (eq, drone_y, 3), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 0))} result{'down'}
+case{(and, (lte,1, drone_x), (lte, drone_x, 2), (eq, drone_y, 3), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 4))} result{'down'}
+case{(and, (eq, drone_x, 1), (lte,3, drone_y), (lte, drone_y, 5), (lte,4, destination_x), (lte, destination_x, 9), (eq, destination_y, 2))} result{'down'}
+case{(and, (eq, drone_x, 8), (eq, drone_y, 2), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 0))} result{'down'}
+case{(and, (lte,1, drone_x), (lte, drone_x, 2), (eq, drone_y, 8), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 3))} result{'down'}
+case{(and, (lte,6, drone_x), (lte, drone_x, 7), (eq, drone_y, 3), (lte,2, destination_x), (lte, destination_x, 3), (lte,1, destination_y), (lte, destination_y, 2))} result{'down'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 6), (eq, drone_y, 5), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 1))} result{'down'}
+case{(and, (eq, drone_x, 3), (eq, drone_y, 7), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 1))} result{'down'}
+case{(and, (eq, drone_x, 6), (eq, drone_y, 9), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 8))} result{'down'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 3), (lte,0, destination_x), (lte, destination_x, 9), (eq, destination_y, 2))} result{'down'}
+case{(and, (eq, drone_x, 6), (eq, drone_y, 9), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 4))} result{'down'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 6), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 3))} result{'down'}
+case{(and, (eq, drone_x, 2), (lte,6, drone_y), (lte, drone_y, 8), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 1))} result{'down'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 3), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 1))} result{'down'}
+case{(and, (eq, drone_x, 2), (lte,6, drone_y), (lte, drone_y, 8), (lte,2, destination_x), (lte, destination_x, 3), (lte,1, destination_y), (lte, destination_y, 2))} result{'down'}
+case{(and, (eq, drone_x, 3), (eq, drone_y, 7), (lte,2, destination_x), (lte, destination_x, 4), (eq, destination_y, 2))} result{'down'}
+case{(and, (eq, drone_x, 6), (eq, drone_y, 4), (lte,2, destination_x), (lte, destination_x, 3), (lte,1, destination_y), (lte, destination_y, 2))} result{'down'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 8), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 2))} result{'down'}
+case{(and, (eq, drone_x, 2), (eq, drone_y, 8), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 6))} result{'down'}
+case{(and, (eq, drone_x, 1), (lte,8, drone_y), (lte, drone_y, 9), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 6))} result{'down'}
+case{(and, (lte,6, drone_x), (lte, drone_x, 7), (eq, drone_y, 8), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 4))} result{'down'}
+case{(and, (lte,6, drone_x), (lte, drone_x, 7), (eq, drone_y, 3), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 3))} result{'down'}
+case{(and, (eq, drone_x, 3), (eq, drone_y, 7), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 4))} result{'down'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 6), (eq, drone_y, 5), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 1))} result{'down'}
+case{(and, (eq, drone_x, 6), (lte,3, drone_y), (lte, drone_y, 4), (lte,7, destination_x), (lte, destination_x, 8), (eq, destination_y, 1))} result{'down'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 5), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 0))} result{'down'}
+case{(and, (eq, drone_x, 1), (lte,8, drone_y), (lte, drone_y, 9), (lte,0, destination_x), (lte, destination_x, 9), (eq, destination_y, 2))} result{'down'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 6), (lte,0, destination_x), (lte, destination_x, 6), (eq, destination_y, 2))} result{'down'}
+case{(and, (eq, drone_x, 8), (eq, drone_y, 7), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 5))} result{'down'}
+case{(and, (eq, drone_x, 2), (lte,7, drone_y), (lte, drone_y, 8), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 2))} result{'down'}
+case{(and, (lte,1, drone_x), (lte, drone_x, 2), (eq, drone_y, 8), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 4))} result{'down'}
+case{(and, (eq, drone_x, 6), (eq, drone_y, 4), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 3))} result{'down'}
+case{(and, (eq, drone_x, 1), (lte,8, drone_y), (lte, drone_y, 9), (lte,0, destination_x), (lte, destination_x, 9), (eq, destination_y, 7))} result{'down'}
+case{(and, (eq, drone_x, 6), (lte,8, drone_y), (lte, drone_y, 9), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 5))} result{'down'}
+case{(and, (eq, drone_x, 6), (lte,3, drone_y), (lte, drone_y, 4), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 2))} result{'down'}
+case{(and, (eq, drone_x, 6), (eq, drone_y, 4), (lte,6, destination_x), (lte, destination_x, 7), (eq, destination_y, 3))} result{'down'}
+case{(and, (eq, drone_x, 7), (lte,1, drone_y), (lte, drone_y, 3), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 0))} result{'down'}
+case{(and, (eq, drone_x, 8), (eq, drone_y, 7), (lte,3, destination_x), (lte, destination_x, 6), (eq, destination_y, 4))} result{'down'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 5), (lte,0, destination_x), (lte, destination_x, 9), (eq, destination_y, 2))} result{'down'}
+case{(and, (eq, drone_x, 0), (eq, drone_y, 5), (lte,2, destination_x), (lte, destination_x, 3), (eq, destination_y, 1))} result{'down'}
+case{(and, (eq, drone_x, 6), (lte,8, drone_y), (lte, drone_y, 9), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 4))} result{'down'}
+case{(and, (eq, drone_x, 1), (eq, drone_y, 4), (lte,4, destination_x), (lte, destination_x, 7), (eq, destination_y, 0))} result{'down'}
+case{(and, (lte,4, drone_x), (lte, drone_x, 6), (eq, drone_y, 5), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 3))} result{'down'}
+case{(and, (eq, drone_x, 6), (lte,8, drone_y), (lte, drone_y, 9), (lte,0, destination_x), (lte, destination_x, 1), (eq, destination_y, 9))} result{'down'}
+case{(and, (lte,0, drone_x), (lte, drone_x, 1), (eq, drone_y, 5), (lte,1, destination_x), (lte, destination_x, 2), (eq, destination_y, 3))} result{'down'}
+case{(and, (eq, drone_x, 6), (eq, drone_y, 4), (lte,0, destination_x), (lte, destination_x, 2), (eq, destination_y, 0))} result{'down'}
+case{(and, (eq, drone_x, 7), (eq, drone_y, 3), (lte,4, destination_x), (lte, destination_x, 9), (eq, destination_y, 2))} result{'down'}
+result{'no_action'}

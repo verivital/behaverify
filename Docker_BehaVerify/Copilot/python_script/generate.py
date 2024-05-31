@@ -10,7 +10,7 @@ def generate_monitor(container, args):
                 ' '.join(
                     [
                         'bash -c \'cd ' + USER_DIR + ';',
-                        '',
+                        'runhaskell',
                         USER_DIR + '/' + os.path.basename(args.model),
                         '\''
                     ]

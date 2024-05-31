@@ -1,0 +1,28 @@
+# started on Sun May 26 18:41:36 2024
+
+
+ Performance counter stats for 'python3 main.py':
+
+              8.51 msec task-clock:u                     #    0.975 CPUs utilized             
+                 0      context-switches:u               #    0.000 /sec                      
+                 0      cpu-migrations:u                 #    0.000 /sec                      
+             1,058      page-faults:u                    #  124.371 K/sec                     
+     <not counted>      cpu_atom/cycles/u                                                       (0.00%)
+        36,676,397      cpu_core/cycles/u                #    4.311 GHz                       
+     <not counted>      cpu_atom/instructions/u                                                 (0.00%)
+        63,578,748      cpu_core/instructions/u                                               
+     <not counted>      cpu_atom/branches/u                                                     (0.00%)
+        13,681,640      cpu_core/branches/u              #    1.608 G/sec                     
+     <not counted>      cpu_atom/branch-misses/u                                                (0.00%)
+           434,370      cpu_core/branch-misses/u                                              
+             TopdownL1 (cpu_core)                 #     12.2 %  tma_backend_bound      
+                                                  #     23.9 %  tma_bad_speculation    
+                                                  #     37.3 %  tma_frontend_bound     
+                                                  #     26.7 %  tma_retiring           
+
+       0.008726651 seconds time elapsed
+
+       0.006554000 seconds user
+       0.002184000 seconds sys
+
+
