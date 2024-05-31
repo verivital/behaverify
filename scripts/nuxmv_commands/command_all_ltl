@@ -1,0 +1,8 @@
+time
+go
+time
+check_ltlspec -o /dev/null
+time
+usage
+show_property
+quit

@@ -19,7 +19,7 @@ with open(obstacle_path.replace('obstacles', 'ANSRn').replace('.txt', '.tree'), 
         (obstacles, obstacle_sizes) = data.split('#', 1)
         obstacles = obstacles.replace('#', '')
         obstacle_sizes = obstacle_sizes.replace('#', '')
-    with open('template_network_v2.tree', 'r', encoding = 'utf-8') as input_file:
+    with open(handle_path('template_network_v2.tree'), 'r', encoding = 'utf-8') as input_file:
         template = input_file.read()
     template = template.replace('REPLACE_CONSTANTS', constants)
     template = template.replace('REPLACE_OBSTACLE_SIZES', obstacle_sizes)

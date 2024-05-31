@@ -4,8 +4,8 @@ from install import create_image_and_container
 from docker_util import CONTAINER_NAME, IMAGE_NAME
 
 def reinstall(dockerfile_path):
-    '''Stop (Docker Container), Remove (Docker Container), Remove (Docker Image)
-    creates (Docker Image) and (Docker Container)'''
+    '''Stop Docker Container, Remove Docker Container, Remove Docker Image
+    create Docker Image and Docker Container'''
     client = docker.from_env()
     print('Start: Removing old docker image and container.')
     try:

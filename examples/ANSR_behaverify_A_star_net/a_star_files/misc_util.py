@@ -1,3 +1,4 @@
+import os
 def create_tail_end(max_val, fly_at, number_of_obstacles, max_size):
     return (
         '_' + str(max_val)
@@ -36,3 +37,7 @@ def extract_info(the_path):
         print(obstacle_path_split)
         raise ValueError('file is named in a weird way')
     return (min_val, max_val, fly_at, number_of_obstacles, max_size)
+
+def handle_path(file_name_with_ext):
+    here = os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(here, file_name_with_ext)
