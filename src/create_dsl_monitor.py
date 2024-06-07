@@ -2,9 +2,106 @@ import os
 import argparse
 import re
 import sys
+from collections import namedtuple
 from check_grammar import validate_model
 from serene_functions import build_meta_func
 from behaverify_common import indent, create_node_name, is_local, is_env, is_blackboard, is_array, handle_constant_or_reference, resolve_potential_reference_no_type, variable_array_size, get_min_max, variable_type, BTreeException, constant_type
+from model_to_dsl import model_to_dsl
+
+def create_blank_variable_obj():
+    return namedtuple(
+        'variable',
+        [
+            'var_type',
+            'name',
+            'model_as',
+            'domain',
+            'static',
+            'array_size',
+            'default_value',
+            'constant_index',
+            'assigns',
+            'assign'
+        ]
+    )
+
+def create_constant(name, value):
+    con = namedtuple('constant', ['name', 'val'])
+    con.name = name
+    con.val = value
+    return con
+
+def create_result(condition, values):
+    res = namedtuple(
+        'result',
+        [
+            'condition',
+            'values'
+        ]
+    )
+    res.condition = condition
+    res.values = values
+    return res
+
+def create_assign_value(cond_vals_pairs):
+    mapped = [create_result(cond, vals) for (cond, vals) in cond_vals_pairs]
+    assign_value = namedtuple(
+        'assign_value',
+        [
+            'case_results',
+            'default_results'
+        ]
+    )
+    assign_value.case_results = mapped[0:-1]
+    assign_value.default_results = mapped[-1]
+    return assign_value
+
+def create_array_index(index, cond_vals_pairs):
+    ind = namedtuple('array_index', ['index_expr', 'assign'])
+    ind.index_expr = index
+    ind.assign = create_assign_value(cond_vals_pairs)
+    return ind
+
+def create_loop_array(index, cond_vals_pairs):
+    ind = namedtuple('looparray', ['array_index'])
+    ind.array_index = create_array_index(index, cond_vals_pairs)
+    return ind
+
+def create_variable_obj_p(monitor_name, default_assign, assigns):
+    var = create_blank_variable_obj()
+    var.var_type = 'bl'
+    var.name = monitor_name + '_p'
+    var.model_as = 'DEFINE'
+    var.domain = 'BOOLEAN'
+    var.static = ''
+    var.array_size = '\'' + monitor_name + '_p_COUNT' + '\''
+    var.default_value = default_assign
+    var.constant_index = 'constant_index'
+    var.assigns = assigns
+    return var
+
+def create_variable_obj_states(monitor_name, default_assign_states, assigns_states, default_assign_def, assigns_def):
+    var_states = create_blank_variable_obj()
+    var_states.var_type = 'bl'
+    var_states.name = monitor_name + '_states'
+    var_states.model_as = 'VAR'
+    var_states.domain = 'BOOLEAN'
+    var_states.static = ''
+    var_states.array_size = '\'' + monitor_name + '_states_COUNT' + '\''
+    var_states.default_value = default_assign_states
+    var_states.constant_index = 'constant_index'
+    var_states.assigns = assigns_states
+    var_states_def = create_blank_variable_obj()
+    var_states_def.var_type = 'bl'
+    var_states_def.name = monitor_name + '_states_def'
+    var_states_def.model_as = 'DEFINE'
+    var_states_def.domain = 'BOOLEAN'
+    var_states_def.static = ''
+    var_states_def.array_size = '\'' + monitor_name + '_states_COUNT' + '\''
+    var_states_def.default_value = default_assign_def
+    var_states_def.constant_index = 'constant_index'
+    var_states_def.assigns = assigns_def
+    return var_states
 
 def create_ltl2ba_command(metamodel_file, model_file, location, recursion_limit, no_checks):
     def execute_loop(function_call, to_call, packaged_args):
@@ -189,35 +286,28 @@ def create_ltl2ba_command(metamodel_file, model_file, location, recursion_limit,
         # then I just need to feed the ltl command to ltl2ba, and then parse that ouput using another method.
         if not has_ltl(code):
             # there is no ltl within this code. We can turn it into a single thing.
-            return (
-                (
-                    'def p' + str(p_count) + '_func(model_state):' + os.linesep
-                    + indent(1) + 'return ' + format_code(code)[0] + os.linesep
-                ),
-                'p' + str(p_count),
-                p_count + 1
-            )
+            return ([(str(p_count), code)], 'p' + str(p_count), p_count + 1)
         if code.code_statement is not None:
             return create_ltl2ba_command_internal(code.code_statement, p_count)
         if code.function_call.function_name not in function_format_ltl:
             raise NotImplementedError('The ltl function ' + str(code.function_call.function_name) + ' is not yet implemented for monitoring.')
         (symbol, mode) = function_format_ltl[code.function_call.function_name]
         if mode == 'before':
-            (function_string, specification_string, p_count) = create_ltl2ba_command_internal(code.function_call.values[0], p_count)
+            (var_info, specification_string, p_count) = create_ltl2ba_command_internal(code.function_call.values[0], p_count)
             return (
-                function_string,
+                var_info,
                 symbol + '(' + specification_string + ')',
                 p_count
             )
-        function_strings = []
-        specification_strings = []
+        all_var_info = []
+        command_strings = []
         for value in code.function_call.values:
-            (function_string, specification_string, p_count) = create_ltl2ba_command_internal(value, p_count)
-            function_strings.append(function_string)
-            specification_strings.append('(' + specification_string + ')')
+            (var_info, command_string, p_count) = create_ltl2ba_command_internal(value, p_count)
+            all_var_info.extend(var_info)
+            command_strings.append('(' + command_string + ')')
         return (
-            ''.join(function_strings),
-            symbol.join(specification_strings),
+            all_var_info,
+            symbol.join(command_strings),
             p_count
         )
     function_format = {
@@ -273,55 +363,23 @@ def create_ltl2ba_command(metamodel_file, model_file, location, recursion_limit,
     if location[-1] != '/':
         location = location + '/'
     for monitor in model.monitors:
-        (function_string, command_string, p_count) = create_ltl2ba_command_internal(monitor.specification.code_statement, 0)
+        (all_var_info_, command_string_, p_count) = create_ltl2ba_command_internal(monitor.specification.code_statement, 0)
         with open (location + monitor.name + '.txt', 'w', encoding = 'utf-8') as output_file:
-            output_file.write(command_string)
-        with open (location + monitor.name + '.py', 'w', encoding = 'utf-8') as output_file:
-            output_file.write(
-                'SAFE = ' + (('\'' + monitor.safe_val + '\'') if isinstance(monitor.safe_val, str) else str(monitor.safe_val)) + os.linesep
-                + 'UNSAFE = ' + (('\'' + monitor.unsafe_val + '\'') if isinstance(monitor.unsafe_val, str) else str(monitor.unsafe_val)) + os.linesep
-                + 'UNKNOWN = ' + (('\'' + monitor.unknown_val + '\'') if isinstance(monitor.unknown_val, str) else str(monitor.unknown_val)) + os.linesep
-            )
-            output_file.write(function_string)
-            output_file.write(
-                'MODEL_INFO_FUNCTIONS = {' + os.linesep
-                + ''.join(
-                    (indent(1) + '\'p' + str(i) + '\' : p' + str(i) + '_func,' + os.linesep)
-                    for i in range(p_count)
-                )
-                + '}' + os.linesep
-            )
-            output_file.write(
-                'def model_state_to_model_info(model_state):' + os.linesep
-                + indent(1) + 'return {' + os.linesep
-                + indent(2) + 'key : item(model_state)' + os.linesep
-                + indent(2) + 'for (key, item) in MODEL_INFO_FUNCTIONS.items()' + os.linesep
-                + indent(1) + '}' + os.linesep
-                + os.linesep
-                + 'def transition(automaton_states, model_state):' + os.linesep
-                + indent(1) + 'if ACCEPTING_STATE is not None and ACCEPTING_STATE in automaton_states:' + os.linesep
-                + indent(2) + 'return ({ACCEPTING_STATE}, SAFE)' + os.linesep
-                + indent(1) + 'if len(automaton_states) == 0:' + os.linesep
-                + indent(2) + 'return (set(), UNSAFE)' + os.linesep
-                + indent(1) + 'model_info = model_state_to_model_info(model_state)' + os.linesep
-                + indent(1) + 'new_automaton_states = {' + os.linesep
-                + indent(2) + 'new_automaton_state' + os.linesep
-                + indent(2) + 'for automaton_state in automaton_states' + os.linesep
-                + indent(2) + 'for (guard, new_automaton_state) in STATE_TRANS[automaton_state]' + os.linesep
-                + indent(2) + 'if guard(model_info)' + os.linesep
-                + indent(1) + '}' + os.linesep
-                + indent(1) + 'if ACCEPTING_STATE is not None and ACCEPTING_STATE in new_automaton_states:' + os.linesep
-                + indent(2) + 'return ({ACCEPTING_STATE}, SAFE)' + os.linesep
-                + indent(1) + 'if len(new_automaton_states) == 0:' + os.linesep
-                + indent(2) + 'return (set(), UNSAFE)' + os.linesep
-                + indent(1) + 'return (new_automaton_states, UNKNOWN)' + os.linesep
-                + os.linesep
-                + 'def reset():' + os.linesep
-                + indent(1) + 'return {INITIAL_STATE}' + os.linesep
-            )
+            output_file.write(command_string_)
+        model.constants.append(create_constant(monitor.name + '_p_COUNT', p_count))
+        model.constants.append(create_constant(monitor.name + '_SAFE', monitor.safe_val))
+        model.constants.append(create_constant(monitor.name + '_UNSAFE', monitor.unsafe_val))
+        model.constants.append(create_constant(monitor.name + '_UNKNOWN', monitor.unknown_val))
+        default_val = create_assign_value([(None, False)])
+        assigns = [None for _ in range(p_count)]
+        for (index_, code_) in all_var_info_:
+            assigns[int(index_)] = create_loop_array(index_, [(None, code_)])
+        model.variables.append(create_variable_obj_p(monitor.name, default_val, assigns))
+    model_to_dsl(model, os.path.join(location, os.path.basename(model_file)))
     return
 
-def parse_ba(ba_file, monitor_name, p_count):
+def parse_ba(ba_file):
+    monitor_name = os.path.basename(ba_file)
     def find_closest_unit(cur_seg, start, delta):
         can_return = False
         paran_count = 0
@@ -427,15 +485,6 @@ def parse_ba(ba_file, monitor_name, p_count):
                 guard = guard.strip()
                 state_trans[next_state].append((parse_guard(guard), cur_state))
                 continue
-    predicate_variable = {
-        'var_type' : 'bl',
-        'name' : monitor_name + '_p',
-        'model_as' : 'DEFINE',
-        'domain' : 'BOOLEAN',
-        'static' : '',
-        'array_size' : p_count,
-        
-    }
     existing_info = ''
     with open(python_file, 'r', encoding = 'utf-8') as input_file:
         existing_info = input_file.read()
