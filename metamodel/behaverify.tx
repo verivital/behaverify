@@ -224,7 +224,7 @@ statement:
     monitor_statement:
     'monitor_statement' '{'
     monitor = [monitor]
-    ('monitor_variable' '{' monitor_vairable = [variable] '}' ('end_monitor_variable')?)?
+    ('monitor_variable' '{' monitor_variable = [variable] '}' ('end_monitor_variable')?)?
     monitor_mode = monitor_mode
     monitor_reset = monitor_reset
     '}' ('end_monitor_statement')?

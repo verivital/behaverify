@@ -217,7 +217,7 @@ def create_ltl2ba_command(metamodel_file, model_file, location, recursion_limit,
             # there is no ltl within this code. We can turn it into a single thing.
             return (
                 (
-                    '_Bool p' + str(p_count) + '_func(' + current_arguments + '){return ' + format_code(code)[0] + ';}' + os.linesep
+                    'static _Bool p' + str(p_count) + '_func(' + current_arguments + '){return ' + format_code(code)[0] + ';}' + os.linesep
                 ),
                 (
                     '_Bool p' + str(p_count) + '_func(' + current_arguments + ');' + os.linesep
@@ -337,32 +337,37 @@ def create_ltl2ba_command(metamodel_file, model_file, location, recursion_limit,
         current_variables = sorted(list(set(map(format_variable_with_type, current_variables))))
         current_arguments = ', '.join(map(lambda x: x[1], current_variables))
         current_arguments_without_type = ', '.join(map(lambda x: x[0], current_variables))
-        (function_string_, declaration_string_, command_string, p_count) = create_ltl2ba_command_internal(monitor.specification.code_statement, 0)
+        (function_string_, _, command_string, p_count) = create_ltl2ba_command_internal(monitor.specification.code_statement, 0)
         with open (location + monitor.name + '.txt', 'w', encoding = 'utf-8') as output_file:
             output_file.write(command_string)
         with open (location + monitor.name + '.h', 'w', encoding = 'utf-8') as output_file:
+            # output_file.write(
+            #     'extern int SAFE;' + os.linesep
+            #     + 'extern int UNKNOWN;' + os.linesep
+            #     + 'extern int UNSAFE;' + os.linesep
+            #     + ''.join([('extern _Bool p' + str(index) + ';' + os.linesep) for index in range(p_count)])
+            # )
+            # output_file.write(declaration_string_)
+            # output_file.write(
+            #     'void set_p_values(' + current_arguments + ');' + os.linesep
+            #     + 'int transition(_Bool *current_states, _Bool *next_states, ' + current_arguments + ');' + os.linesep
+            #     + 'void reset(_Bool *states);' + os.linesep
+            # )
             output_file.write(
-                'extern int SAFE;' + os.linesep
-                + 'extern int UNKNOWN;' + os.linesep
-                + 'extern int UNSAFE;' + os.linesep
-                + ''.join([('extern _Bool p' + str(index) + ';' + os.linesep) for index in range(p_count)])
-            )
-            output_file.write(declaration_string_)
-            output_file.write(
-                'void set_p_values(' + current_arguments + ');' + os.linesep
-                + 'int transition(_Bool *current_states, _Bool *next_states, ' + current_arguments + ');' + os.linesep
-                + 'void reset(_Bool *states);' + os.linesep
+                'int ' + monitor.name + '_transition(_Bool *current_states, _Bool *next_states, ' + current_arguments + ');' + os.linesep
+                + 'void ' + monitor.name + '_reset(_Bool *states);' + os.linesep
             )
         with open (location + monitor.name + '.c', 'w', encoding = 'utf-8') as output_file:
             output_file.write(
-                'int SAFE = 0;' + os.linesep
-                + 'int UNKNOWN = 1;' + os.linesep
-                + 'int UNSAFE = 2;' + os.linesep
-                + ''.join([('_Bool p' + str(index) + ';' + os.linesep) for index in range(p_count)])
+                'static int SAFE = 0;' + os.linesep
+                + 'static int UNKNOWN = 1;' + os.linesep
+                + 'static int UNSAFE = 2;' + os.linesep
+                + ''.join([('static _Bool p' + str(index) + ';' + os.linesep) for index in range(p_count)])
+                + '/*SPLIT ON ME*/' + os.linesep
             )
             output_file.write(function_string_)
             output_file.write(
-                'void set_p_values(' + current_arguments + '){' + os.linesep
+                'static void set_p_values(' + current_arguments + '){' + os.linesep
                 + ''.join(
                     [
                         (
@@ -372,14 +377,14 @@ def create_ltl2ba_command(metamodel_file, model_file, location, recursion_limit,
                     ]
                 )
                 + '}' + os.linesep
-                + 'int transition(_Bool *current_states, _Bool *next_states, ' + current_arguments + '){' + os.linesep
+                + 'int ' + monitor.name + '_transition(_Bool *current_states, _Bool *next_states, ' + current_arguments + '){' + os.linesep
                 + indent(1) + 'if (ACCEPTING_STATE_EXISTS && current_states[NUM_STATES - 1]){*next_states = *ACCEPTING_STATE; return SAFE;}' + os.linesep
                 + indent(1) + 'if (evaluate_safety_of_states(current_states) == UNSAFE){*next_states = *REJECTING_STATE; return UNSAFE;}' + os.linesep
                 + indent(1) + 'set_p_values(' + current_arguments_without_type + ');' + os.linesep
                 + indent(1) + 'state_trans(current_states, next_states);' + os.linesep
                 + indent(1) + 'return evaluate_safety_of_states(next_states);' + os.linesep
                 + '}' + os.linesep
-                + 'void reset(_Bool *state){*state = *INITIAL_STATE;}' + os.linesep
+                + 'void ' + monitor.name + '_reset(_Bool *state){*state = *INITIAL_STATE;}' + os.linesep
             )
     return
 
@@ -400,7 +405,7 @@ def parse_ba(ba_file, c_file, h_file):
                     if cur_state not in state_trans:
                         state_trans[cur_state] = []
                     state_trans[cur_state].append(('guard__' + cur_state + '__TO__' + cur_state, cur_state))
-                    guards.append('_Bool guard__' + cur_state + '__TO__' + cur_state + '(void){return true;}' + os.linesep)
+                    guards.append('static _Bool guard__' + cur_state + '__TO__' + cur_state + '(void){return true;}' + os.linesep)
                     header_functions.append('_Bool guard__' + cur_state + '__TO__' + cur_state + '(void);' + os.linesep)
                     accepting_state = cur_state
                 continue
@@ -417,7 +422,7 @@ def parse_ba(ba_file, c_file, h_file):
                 if next_state not in state_trans:
                     state_trans[next_state] = []
                 state_trans[next_state].append(('guard__' + cur_state + '__TO__' + next_state, cur_state))
-                guards.append('_Bool guard__' + cur_state + '__TO__' + next_state + '(void){return ' + guard + ';}' + os.linesep)
+                guards.append('static _Bool guard__' + cur_state + '__TO__' + next_state + '(void){return ' + guard + ';}' + os.linesep)
                 header_functions.append('_Bool guard__' + cur_state + '__TO__' + cur_state + '(void);' + os.linesep)
                 continue
     state_index = {}
@@ -441,30 +446,32 @@ def parse_ba(ba_file, c_file, h_file):
     existing_c_info = ''
     with open(c_file, 'r', encoding = 'utf-8') as input_file:
         existing_c_info = input_file.read()
-    existing_h_info = ''
-    with open(h_file, 'r', encoding = 'utf-8') as input_file:
-        existing_h_info = input_file.read()
-    with open(h_file, 'w', encoding = 'utf-8') as output_file:
-        output_file.write(''.join(header_functions))
-        output_file.write(os.linesep)
-        output_file.write('void state_trans(_Bool *current_states, _Bool *next_states);' + os.linesep)
-        output_file.write('extern _Bool INITIAL_STATE[];' + os.linesep)
-        output_file.write('extern _Bool ACCEPTING_STATE[];' + os.linesep)
-        output_file.write('extern _Bool REJECTING_STATE[];' + os.linesep)
-        output_file.write('extern _Bool ACCEPTING_STATE_EXISTS;' + os.linesep)
-        output_file.write('extern int NUM_STATES;' + os.linesep)
-        output_file.write('int evaluate_safety_of_states(_Bool *states);' + os.linesep)
-        output_file.write(existing_h_info)
+    (pre_info, post_info) = existing_c_info.split('/*SPLIT ON ME*/', 1)
     with open(c_file, 'w', encoding = 'utf-8') as output_file:
         output_file.write(
             '#include <stdint.h>' + os.linesep
             + '#include <string.h>' + os.linesep
             + '#include "' + os.path.basename(h_file) + '"' + os.linesep
         )
+        output_file.write(pre_info)
+        if initial_state is None:
+            raise ValueError('no initial state?')
+        output_file.write('static _Bool INITIAL_STATE[' + str(len(state_trans)) + '] = {' + ', '.join(['1'] + (['0'] * (len(state_trans) - 1))) + '};' + os.linesep)
+        output_file.write('static _Bool ACCEPTING_STATE[' + str(len(state_trans)) + '] = {' + ', '.join((['0'] * (len(state_trans) - 1)) + (['1'] if accepting_state is not None else ['0'])) + '};' + os.linesep)
+        output_file.write('static _Bool REJECTING_STATE[' + str(len(state_trans)) + '] = {' + ', '.join((['0'] * (len(state_trans)))) + '};' + os.linesep)
+        output_file.write('static _Bool ACCEPTING_STATE_EXISTS = ' + ('1' if accepting_state is not None else '0') + ';' + os.linesep)
+        output_file.write('static int NUM_STATES = ' + str(len(state_trans)) + ';' + os.linesep)
+        output_file.write(
+            'static int evaluate_safety_of_states(_Bool *states){' + os.linesep
+            + indent(1) + 'if (ACCEPTING_STATE_EXISTS && states[NUM_STATES - 1]){return SAFE;}' + os.linesep
+            + indent(1) + 'if (' + ' || '.join([('states[' + str(index) + ']') for index in range(len(state_trans))]) + '){return UNKNOWN;}' + os.linesep
+            + indent(1) + 'return UNSAFE;' + os.linesep
+            + '}' + os.linesep
+        )
         output_file.write(''.join(guards))
         output_file.write(os.linesep)
         output_file.write(
-            'void state_trans(_Bool *current_states, _Bool *next_states){' + os.linesep
+            'static void state_trans(_Bool *current_states, _Bool *next_states){' + os.linesep
             + ''.join(
                 [
                     (
@@ -484,21 +491,7 @@ def parse_ba(ba_file, c_file, h_file):
             )
             + '}' + os.linesep
         )
-        if initial_state is None:
-            raise ValueError('no initial state?')
-        output_file.write('_Bool INITIAL_STATE[' + str(len(state_trans)) + '] = {' + ', '.join(['1'] + (['0'] * (len(state_trans) - 1))) + '};' + os.linesep)
-        output_file.write('_Bool ACCEPTING_STATE[' + str(len(state_trans)) + '] = {' + ', '.join((['0'] * (len(state_trans) - 1)) + (['1'] if accepting_state is not None else ['0'])) + '};' + os.linesep)
-        output_file.write('_Bool REJECTING_STATE[' + str(len(state_trans)) + '] = {' + ', '.join((['0'] * (len(state_trans)))) + '};' + os.linesep)
-        output_file.write('_Bool ACCEPTING_STATE_EXISTS = ' + ('1' if accepting_state is not None else '0') + ';' + os.linesep)
-        output_file.write('int NUM_STATES = ' + str(len(state_trans)) + ';' + os.linesep)
-        output_file.write(
-            'int evaluate_safety_of_states(_Bool *states){' + os.linesep
-            + indent(1) + 'if (ACCEPTING_STATE_EXISTS && states[NUM_STATES - 1]){return SAFE;}' + os.linesep
-            + indent(1) + 'if (' + ' || '.join([('states[' + str(index) + ']') for index in range(len(state_trans))]) + '){return UNKNOWN;}' + os.linesep
-            + indent(1) + 'return UNSAFE;' + os.linesep
-            + '}' + os.linesep
-        )
-        output_file.write(existing_c_info)
+        output_file.write(post_info)
     return
 
 if __name__ == '__main__':

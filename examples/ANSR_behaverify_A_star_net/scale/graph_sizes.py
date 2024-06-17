@@ -31,7 +31,7 @@ for (cur_data, cur_encoding) in ((data_1, ('black', '*')), (data_2, ('green', 'v
     plt.plot(x_range, y_range, color = cur_encoding[0], marker = cur_encoding[1])
 plt.ylabel('File Size in Bytes')
 plt.xlabel('Grid size (n by n)')
-plt.legend(['TOOLNAME', 'Copilot'])
+plt.legend(['BehaVerify', 'Copilot'])
 plt.tight_layout()
 plt.savefig(OUTPUT + '.png', bbox_inches = 'tight')
 

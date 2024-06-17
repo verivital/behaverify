@@ -16,7 +16,7 @@ import onnxruntime
 from behaverify_common import indent, create_node_name, is_local, is_env, is_blackboard, is_array, handle_constant_or_reference, resolve_potential_reference_no_type, variable_array_size, get_min_max, variable_type, BTreeException, constant_type
 from serene_functions import build_meta_func
 from check_grammar import validate_model
-from create_monitor import create_ltl2ba_command
+#from create_monitor import create_ltl2ba_command
 
 
 def write_files(metamodel_file, model_file, main_name, write_location, serene_print, max_iter, no_var_print, py_tree_print, recursion_limit, safe_assignment, no_checks):

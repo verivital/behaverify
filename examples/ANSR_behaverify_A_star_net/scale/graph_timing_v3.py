@@ -14,7 +14,7 @@ data_1 = {}
 data_2 = {}
 data_baseline = {}
 for (cur_file, cur_data) in ((FILE_1, data_1), (FILE_2, data_2), (BASELINE, data_baseline)):
-    # print(cur_file)
+    print(cur_file)
     with open(cur_file, 'r', encoding = 'utf-8') as input_file:
         for line in input_file.readlines():
             if line == '':
@@ -23,7 +23,7 @@ for (cur_file, cur_data) in ((FILE_1, data_1), (FILE_2, data_2), (BASELINE, data
             grid_size = grid_size.strip()
             file_size = file_size.strip()
             cur_data[int(grid_size) + 1] = float(file_size)
-            # print(file_size)
+            print(file_size)
 for (cur_data, cur_encoding) in ((data_1, ('black', '*')), (data_2, ('green', 'v'))):
     x_range = []
     y_range = []

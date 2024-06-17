@@ -1,0 +1,6 @@
+never { /* [](p0) */
+accept_init:
+	if
+	:: (p0) -> goto accept_init
+	fi;
+}

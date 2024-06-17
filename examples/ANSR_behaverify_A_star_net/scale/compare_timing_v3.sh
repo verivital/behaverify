@@ -27,7 +27,7 @@ for category in "${categories[@]}"; do
 	    fi
 	    cp "./${mon_type}/${main_file}" "${category}/${tail_end}/${mon_type}/python/main.py"
 	    rm -rf "${category}/${tail_end}/${mon_type}/python/TIMING_RESULT.json"
-	    hyperfine --warmup 10 --runs 50 --export-json="${category}/${tail_end}/${mon_type}/python/TIMING_RESULT_v3.json" "python3 ${category}/${tail_end}/${mon_type}/python/main.py 1000 ${max_val}"
+	    hyperfine --warmup 100 --runs 1000 --export-json="${category}/${tail_end}/${mon_type}/python/TIMING_RESULT_v3.json" "python3 ${category}/${tail_end}/${mon_type}/python/main.py 1000 ${max_val}"
 	    median=$(jq -r '.results[0].median' "${category}/${tail_end}/${mon_type}/python/TIMING_RESULT_v3.json")
 	    echo "${max_val} ::> ${median}" >> "${category}/timing_v3_${mon_type}.txt"
 	    sleep 1
