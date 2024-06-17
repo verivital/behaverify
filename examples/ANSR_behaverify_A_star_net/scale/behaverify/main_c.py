@@ -5,11 +5,11 @@ import ctypes
 import os
 THIS_LOCATION = os.path.dirname(os.path.abspath(__file__))
 collision_monitor_lib = ctypes.CDLL(os.path.join(THIS_LOCATION, 'collision_monitor.so'))
-collision_monitor_lib.transition.argtypes = [ctypes.POINTER(ctypes.c_bool), ctypes.POINTER(ctypes.c_bool), ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.POINTER(ctypes.c_int), ctypes.POINTER(ctypes.c_int)]
-collision_monitor_lib.transition.restype = ctypes.c_int
+collision_monitor_lib.collision_monitor_transition.argtypes = [ctypes.POINTER(ctypes.c_bool), ctypes.POINTER(ctypes.c_bool), ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.POINTER(ctypes.c_int), ctypes.POINTER(ctypes.c_int)]
+collision_monitor_lib.collision_monitor_transition.restype = ctypes.c_int
 loop_monitor_lib = ctypes.CDLL(os.path.join(THIS_LOCATION, 'loop_monitor.so'))
-loop_monitor_lib.transition.argtypes = [ctypes.POINTER(ctypes.c_bool), ctypes.POINTER(ctypes.c_bool), ctypes.c_char_p]
-loop_monitor_lib.transition.restype = ctypes.c_int
+loop_monitor_lib.loop_monitor_transition.argtypes = [ctypes.POINTER(ctypes.c_bool), ctypes.POINTER(ctypes.c_bool), ctypes.c_char_p]
+loop_monitor_lib.loop_monitor_transition.restype = ctypes.c_int
 
 COLLISION_MONITOR = (ctypes.c_bool * 1)(True)
 LOOP_MONITOR = (ctypes.c_bool * 16)(True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False)
@@ -29,7 +29,7 @@ for _ in range(int(sys.argv[1])):
         delta_x = 0
         delta_y = 0
         action = 'no_action'
-    monitor_var = collision_monitor_lib.transition(
+    monitor_var = collision_monitor_lib.collision_monitor_transition(
         COLLISION_MONITOR,
         (ctypes.c_bool * 1)(),
         delta_x,
@@ -42,7 +42,7 @@ for _ in range(int(sys.argv[1])):
     if monitor_var == 2:
         speed = 1
     loop_output = (ctypes.c_bool * 16)()
-    monitor_var = loop_monitor_lib.transition(
+    monitor_var = loop_monitor_lib.loop_monitor_transition(
         LOOP_MONITOR,
         loop_output,
         action.encode('utf-8')

@@ -1,0 +1,306 @@
+never { /* [](((p0)->(X(p1)))&&((p2)->(X(p3)))&&((p4)->(X(p5)))&&((p6)->(X(p7)))) */
+accept_init:
+	if
+	:: (!p4) -> goto accept_S2
+	:: (!p4 && !p6) -> goto accept_S3
+	:: (1) -> goto accept_S4
+	:: (!p6) -> goto accept_S5
+	:: (!p2 && !p4) -> goto accept_S6
+	:: (!p2 && !p4 && !p6) -> goto accept_S7
+	:: (!p2) -> goto accept_S8
+	:: (!p2 && !p6) -> goto accept_S9
+	:: (!p0 && !p4) -> goto accept_S10
+	:: (!p0 && !p4 && !p6) -> goto accept_S11
+	:: (!p0) -> goto accept_S12
+	:: (!p0 && !p6) -> goto accept_S13
+	:: (!p0 && !p2 && !p4) -> goto accept_S14
+	:: (!p0 && !p2 && !p4 && !p6) -> goto accept_init
+	:: (!p0 && !p2) -> goto accept_S15
+	:: (!p0 && !p2 && !p6) -> goto accept_S16
+	fi;
+accept_S2:
+	if
+	:: (p1 && p3 && !p4 && p7) -> goto accept_S2
+	:: (p1 && p3 && !p4 && !p6 && p7) -> goto accept_S3
+	:: (p1 && p3 && p7) -> goto accept_S4
+	:: (p1 && p3 && !p6 && p7) -> goto accept_S5
+	:: (p1 && !p2 && p3 && !p4 && p7) -> goto accept_S6
+	:: (p1 && !p2 && p3 && !p4 && !p6 && p7) -> goto accept_S7
+	:: (p1 && !p2 && p3 && p7) -> goto accept_S8
+	:: (p1 && !p2 && p3 && !p6 && p7) -> goto accept_S9
+	:: (!p0 && p1 && p3 && !p4 && p7) -> goto accept_S10
+	:: (!p0 && p1 && p3 && !p4 && !p6 && p7) -> goto accept_S11
+	:: (!p0 && p1 && p3 && p7) -> goto accept_S12
+	:: (!p0 && p1 && p3 && !p6 && p7) -> goto accept_S13
+	:: (!p0 && p1 && !p2 && p3 && !p4 && p7) -> goto accept_S14
+	:: (!p0 && p1 && !p2 && p3 && !p4 && !p6 && p7) -> goto accept_init
+	:: (!p0 && p1 && !p2 && p3 && p7) -> goto accept_S15
+	:: (!p0 && p1 && !p2 && p3 && !p6 && p7) -> goto accept_S16
+	fi;
+accept_S3:
+	if
+	:: (p1 && p3 && !p4) -> goto accept_S2
+	:: (p1 && p3 && !p4 && !p6) -> goto accept_S3
+	:: (p1 && p3) -> goto accept_S4
+	:: (p1 && p3 && !p6) -> goto accept_S5
+	:: (p1 && !p2 && p3 && !p4) -> goto accept_S6
+	:: (p1 && !p2 && p3 && !p4 && !p6) -> goto accept_S7
+	:: (p1 && !p2 && p3) -> goto accept_S8
+	:: (p1 && !p2 && p3 && !p6) -> goto accept_S9
+	:: (!p0 && p1 && p3 && !p4) -> goto accept_S10
+	:: (!p0 && p1 && p3 && !p4 && !p6) -> goto accept_S11
+	:: (!p0 && p1 && p3) -> goto accept_S12
+	:: (!p0 && p1 && p3 && !p6) -> goto accept_S13
+	:: (!p0 && p1 && !p2 && p3 && !p4) -> goto accept_S14
+	:: (!p0 && p1 && !p2 && p3 && !p4 && !p6) -> goto accept_init
+	:: (!p0 && p1 && !p2 && p3) -> goto accept_S15
+	:: (!p0 && p1 && !p2 && p3 && !p6) -> goto accept_S16
+	fi;
+accept_S4:
+	if
+	:: (p1 && p3 && !p4 && p5 && p7) -> goto accept_S2
+	:: (p1 && p3 && !p4 && p5 && !p6 && p7) -> goto accept_S3
+	:: (p1 && p3 && p5 && p7) -> goto accept_S4
+	:: (p1 && p3 && p5 && !p6 && p7) -> goto accept_S5
+	:: (p1 && !p2 && p3 && !p4 && p5 && p7) -> goto accept_S6
+	:: (p1 && !p2 && p3 && !p4 && p5 && !p6 && p7) -> goto accept_S7
+	:: (p1 && !p2 && p3 && p5 && p7) -> goto accept_S8
+	:: (p1 && !p2 && p3 && p5 && !p6 && p7) -> goto accept_S9
+	:: (!p0 && p1 && p3 && !p4 && p5 && p7) -> goto accept_S10
+	:: (!p0 && p1 && p3 && !p4 && p5 && !p6 && p7) -> goto accept_S11
+	:: (!p0 && p1 && p3 && p5 && p7) -> goto accept_S12
+	:: (!p0 && p1 && p3 && p5 && !p6 && p7) -> goto accept_S13
+	:: (!p0 && p1 && !p2 && p3 && !p4 && p5 && p7) -> goto accept_S14
+	:: (!p0 && p1 && !p2 && p3 && !p4 && p5 && !p6 && p7) -> goto accept_init
+	:: (!p0 && p1 && !p2 && p3 && p5 && p7) -> goto accept_S15
+	:: (!p0 && p1 && !p2 && p3 && p5 && !p6 && p7) -> goto accept_S16
+	fi;
+accept_S5:
+	if
+	:: (p1 && p3 && !p4 && p5) -> goto accept_S2
+	:: (p1 && p3 && !p4 && p5 && !p6) -> goto accept_S3
+	:: (p1 && p3 && p5) -> goto accept_S4
+	:: (p1 && p3 && p5 && !p6) -> goto accept_S5
+	:: (p1 && !p2 && p3 && !p4 && p5) -> goto accept_S6
+	:: (p1 && !p2 && p3 && !p4 && p5 && !p6) -> goto accept_S7
+	:: (p1 && !p2 && p3 && p5) -> goto accept_S8
+	:: (p1 && !p2 && p3 && p5 && !p6) -> goto accept_S9
+	:: (!p0 && p1 && p3 && !p4 && p5) -> goto accept_S10
+	:: (!p0 && p1 && p3 && !p4 && p5 && !p6) -> goto accept_S11
+	:: (!p0 && p1 && p3 && p5) -> goto accept_S12
+	:: (!p0 && p1 && p3 && p5 && !p6) -> goto accept_S13
+	:: (!p0 && p1 && !p2 && p3 && !p4 && p5) -> goto accept_S14
+	:: (!p0 && p1 && !p2 && p3 && !p4 && p5 && !p6) -> goto accept_init
+	:: (!p0 && p1 && !p2 && p3 && p5) -> goto accept_S15
+	:: (!p0 && p1 && !p2 && p3 && p5 && !p6) -> goto accept_S16
+	fi;
+accept_S6:
+	if
+	:: (p1 && !p4 && p7) -> goto accept_S2
+	:: (p1 && !p4 && !p6 && p7) -> goto accept_S3
+	:: (p1 && p7) -> goto accept_S4
+	:: (p1 && !p6 && p7) -> goto accept_S5
+	:: (p1 && !p2 && !p4 && p7) -> goto accept_S6
+	:: (p1 && !p2 && !p4 && !p6 && p7) -> goto accept_S7
+	:: (p1 && !p2 && p7) -> goto accept_S8
+	:: (p1 && !p2 && !p6 && p7) -> goto accept_S9
+	:: (!p0 && p1 && !p4 && p7) -> goto accept_S10
+	:: (!p0 && p1 && !p4 && !p6 && p7) -> goto accept_S11
+	:: (!p0 && p1 && p7) -> goto accept_S12
+	:: (!p0 && p1 && !p6 && p7) -> goto accept_S13
+	:: (!p0 && p1 && !p2 && !p4 && p7) -> goto accept_S14
+	:: (!p0 && p1 && !p2 && !p4 && !p6 && p7) -> goto accept_init
+	:: (!p0 && p1 && !p2 && p7) -> goto accept_S15
+	:: (!p0 && p1 && !p2 && !p6 && p7) -> goto accept_S16
+	fi;
+accept_S7:
+	if
+	:: (p1 && !p4) -> goto accept_S2
+	:: (p1 && !p4 && !p6) -> goto accept_S3
+	:: (p1) -> goto accept_S4
+	:: (p1 && !p6) -> goto accept_S5
+	:: (p1 && !p2 && !p4) -> goto accept_S6
+	:: (p1 && !p2 && !p4 && !p6) -> goto accept_S7
+	:: (p1 && !p2) -> goto accept_S8
+	:: (p1 && !p2 && !p6) -> goto accept_S9
+	:: (!p0 && p1 && !p4) -> goto accept_S10
+	:: (!p0 && p1 && !p4 && !p6) -> goto accept_S11
+	:: (!p0 && p1) -> goto accept_S12
+	:: (!p0 && p1 && !p6) -> goto accept_S13
+	:: (!p0 && p1 && !p2 && !p4) -> goto accept_S14
+	:: (!p0 && p1 && !p2 && !p4 && !p6) -> goto accept_init
+	:: (!p0 && p1 && !p2) -> goto accept_S15
+	:: (!p0 && p1 && !p2 && !p6) -> goto accept_S16
+	fi;
+accept_S8:
+	if
+	:: (p1 && !p4 && p5 && p7) -> goto accept_S2
+	:: (p1 && !p4 && p5 && !p6 && p7) -> goto accept_S3
+	:: (p1 && p5 && p7) -> goto accept_S4
+	:: (p1 && p5 && !p6 && p7) -> goto accept_S5
+	:: (p1 && !p2 && !p4 && p5 && p7) -> goto accept_S6
+	:: (p1 && !p2 && !p4 && p5 && !p6 && p7) -> goto accept_S7
+	:: (p1 && !p2 && p5 && p7) -> goto accept_S8
+	:: (p1 && !p2 && p5 && !p6 && p7) -> goto accept_S9
+	:: (!p0 && p1 && !p4 && p5 && p7) -> goto accept_S10
+	:: (!p0 && p1 && !p4 && p5 && !p6 && p7) -> goto accept_S11
+	:: (!p0 && p1 && p5 && p7) -> goto accept_S12
+	:: (!p0 && p1 && p5 && !p6 && p7) -> goto accept_S13
+	:: (!p0 && p1 && !p2 && !p4 && p5 && p7) -> goto accept_S14
+	:: (!p0 && p1 && !p2 && !p4 && p5 && !p6 && p7) -> goto accept_init
+	:: (!p0 && p1 && !p2 && p5 && p7) -> goto accept_S15
+	:: (!p0 && p1 && !p2 && p5 && !p6 && p7) -> goto accept_S16
+	fi;
+accept_S9:
+	if
+	:: (p1 && !p4 && p5) -> goto accept_S2
+	:: (p1 && !p4 && p5 && !p6) -> goto accept_S3
+	:: (p1 && p5) -> goto accept_S4
+	:: (p1 && p5 && !p6) -> goto accept_S5
+	:: (p1 && !p2 && !p4 && p5) -> goto accept_S6
+	:: (p1 && !p2 && !p4 && p5 && !p6) -> goto accept_S7
+	:: (p1 && !p2 && p5) -> goto accept_S8
+	:: (p1 && !p2 && p5 && !p6) -> goto accept_S9
+	:: (!p0 && p1 && !p4 && p5) -> goto accept_S10
+	:: (!p0 && p1 && !p4 && p5 && !p6) -> goto accept_S11
+	:: (!p0 && p1 && p5) -> goto accept_S12
+	:: (!p0 && p1 && p5 && !p6) -> goto accept_S13
+	:: (!p0 && p1 && !p2 && !p4 && p5) -> goto accept_S14
+	:: (!p0 && p1 && !p2 && !p4 && p5 && !p6) -> goto accept_init
+	:: (!p0 && p1 && !p2 && p5) -> goto accept_S15
+	:: (!p0 && p1 && !p2 && p5 && !p6) -> goto accept_S16
+	fi;
+accept_S10:
+	if
+	:: (p3 && !p4 && p7) -> goto accept_S2
+	:: (p3 && !p4 && !p6 && p7) -> goto accept_S3
+	:: (p3 && p7) -> goto accept_S4
+	:: (p3 && !p6 && p7) -> goto accept_S5
+	:: (!p2 && p3 && !p4 && p7) -> goto accept_S6
+	:: (!p2 && p3 && !p4 && !p6 && p7) -> goto accept_S7
+	:: (!p2 && p3 && p7) -> goto accept_S8
+	:: (!p2 && p3 && !p6 && p7) -> goto accept_S9
+	:: (!p0 && p3 && !p4 && p7) -> goto accept_S10
+	:: (!p0 && p3 && !p4 && !p6 && p7) -> goto accept_S11
+	:: (!p0 && p3 && p7) -> goto accept_S12
+	:: (!p0 && p3 && !p6 && p7) -> goto accept_S13
+	:: (!p0 && !p2 && p3 && !p4 && p7) -> goto accept_S14
+	:: (!p0 && !p2 && p3 && !p4 && !p6 && p7) -> goto accept_init
+	:: (!p0 && !p2 && p3 && p7) -> goto accept_S15
+	:: (!p0 && !p2 && p3 && !p6 && p7) -> goto accept_S16
+	fi;
+accept_S11:
+	if
+	:: (p3 && !p4) -> goto accept_S2
+	:: (p3 && !p4 && !p6) -> goto accept_S3
+	:: (p3) -> goto accept_S4
+	:: (p3 && !p6) -> goto accept_S5
+	:: (!p2 && p3 && !p4) -> goto accept_S6
+	:: (!p2 && p3 && !p4 && !p6) -> goto accept_S7
+	:: (!p2 && p3) -> goto accept_S8
+	:: (!p2 && p3 && !p6) -> goto accept_S9
+	:: (!p0 && p3 && !p4) -> goto accept_S10
+	:: (!p0 && p3 && !p4 && !p6) -> goto accept_S11
+	:: (!p0 && p3) -> goto accept_S12
+	:: (!p0 && p3 && !p6) -> goto accept_S13
+	:: (!p0 && !p2 && p3 && !p4) -> goto accept_S14
+	:: (!p0 && !p2 && p3 && !p4 && !p6) -> goto accept_init
+	:: (!p0 && !p2 && p3) -> goto accept_S15
+	:: (!p0 && !p2 && p3 && !p6) -> goto accept_S16
+	fi;
+accept_S12:
+	if
+	:: (p3 && !p4 && p5 && p7) -> goto accept_S2
+	:: (p3 && !p4 && p5 && !p6 && p7) -> goto accept_S3
+	:: (p3 && p5 && p7) -> goto accept_S4
+	:: (p3 && p5 && !p6 && p7) -> goto accept_S5
+	:: (!p2 && p3 && !p4 && p5 && p7) -> goto accept_S6
+	:: (!p2 && p3 && !p4 && p5 && !p6 && p7) -> goto accept_S7
+	:: (!p2 && p3 && p5 && p7) -> goto accept_S8
+	:: (!p2 && p3 && p5 && !p6 && p7) -> goto accept_S9
+	:: (!p0 && p3 && !p4 && p5 && p7) -> goto accept_S10
+	:: (!p0 && p3 && !p4 && p5 && !p6 && p7) -> goto accept_S11
+	:: (!p0 && p3 && p5 && p7) -> goto accept_S12
+	:: (!p0 && p3 && p5 && !p6 && p7) -> goto accept_S13
+	:: (!p0 && !p2 && p3 && !p4 && p5 && p7) -> goto accept_S14
+	:: (!p0 && !p2 && p3 && !p4 && p5 && !p6 && p7) -> goto accept_init
+	:: (!p0 && !p2 && p3 && p5 && p7) -> goto accept_S15
+	:: (!p0 && !p2 && p3 && p5 && !p6 && p7) -> goto accept_S16
+	fi;
+accept_S13:
+	if
+	:: (p3 && !p4 && p5) -> goto accept_S2
+	:: (p3 && !p4 && p5 && !p6) -> goto accept_S3
+	:: (p3 && p5) -> goto accept_S4
+	:: (p3 && p5 && !p6) -> goto accept_S5
+	:: (!p2 && p3 && !p4 && p5) -> goto accept_S6
+	:: (!p2 && p3 && !p4 && p5 && !p6) -> goto accept_S7
+	:: (!p2 && p3 && p5) -> goto accept_S8
+	:: (!p2 && p3 && p5 && !p6) -> goto accept_S9
+	:: (!p0 && p3 && !p4 && p5) -> goto accept_S10
+	:: (!p0 && p3 && !p4 && p5 && !p6) -> goto accept_S11
+	:: (!p0 && p3 && p5) -> goto accept_S12
+	:: (!p0 && p3 && p5 && !p6) -> goto accept_S13
+	:: (!p0 && !p2 && p3 && !p4 && p5) -> goto accept_S14
+	:: (!p0 && !p2 && p3 && !p4 && p5 && !p6) -> goto accept_init
+	:: (!p0 && !p2 && p3 && p5) -> goto accept_S15
+	:: (!p0 && !p2 && p3 && p5 && !p6) -> goto accept_S16
+	fi;
+accept_S14:
+	if
+	:: (!p4 && p7) -> goto accept_S2
+	:: (!p4 && !p6 && p7) -> goto accept_S3
+	:: (p7) -> goto accept_S4
+	:: (!p6 && p7) -> goto accept_S5
+	:: (!p2 && !p4 && p7) -> goto accept_S6
+	:: (!p2 && !p4 && !p6 && p7) -> goto accept_S7
+	:: (!p2 && p7) -> goto accept_S8
+	:: (!p2 && !p6 && p7) -> goto accept_S9
+	:: (!p0 && !p4 && p7) -> goto accept_S10
+	:: (!p0 && !p4 && !p6 && p7) -> goto accept_S11
+	:: (!p0 && p7) -> goto accept_S12
+	:: (!p0 && !p6 && p7) -> goto accept_S13
+	:: (!p0 && !p2 && !p4 && p7) -> goto accept_S14
+	:: (!p0 && !p2 && !p4 && !p6 && p7) -> goto accept_init
+	:: (!p0 && !p2 && p7) -> goto accept_S15
+	:: (!p0 && !p2 && !p6 && p7) -> goto accept_S16
+	fi;
+accept_S15:
+	if
+	:: (!p4 && p5 && p7) -> goto accept_S2
+	:: (!p4 && p5 && !p6 && p7) -> goto accept_S3
+	:: (p5 && p7) -> goto accept_S4
+	:: (p5 && !p6 && p7) -> goto accept_S5
+	:: (!p2 && !p4 && p5 && p7) -> goto accept_S6
+	:: (!p2 && !p4 && p5 && !p6 && p7) -> goto accept_S7
+	:: (!p2 && p5 && p7) -> goto accept_S8
+	:: (!p2 && p5 && !p6 && p7) -> goto accept_S9
+	:: (!p0 && !p4 && p5 && p7) -> goto accept_S10
+	:: (!p0 && !p4 && p5 && !p6 && p7) -> goto accept_S11
+	:: (!p0 && p5 && p7) -> goto accept_S12
+	:: (!p0 && p5 && !p6 && p7) -> goto accept_S13
+	:: (!p0 && !p2 && !p4 && p5 && p7) -> goto accept_S14
+	:: (!p0 && !p2 && !p4 && p5 && !p6 && p7) -> goto accept_init
+	:: (!p0 && !p2 && p5 && p7) -> goto accept_S15
+	:: (!p0 && !p2 && p5 && !p6 && p7) -> goto accept_S16
+	fi;
+accept_S16:
+	if
+	:: (!p4 && p5) -> goto accept_S2
+	:: (!p4 && p5 && !p6) -> goto accept_S3
+	:: (p5) -> goto accept_S4
+	:: (p5 && !p6) -> goto accept_S5
+	:: (!p2 && !p4 && p5) -> goto accept_S6
+	:: (!p2 && !p4 && p5 && !p6) -> goto accept_S7
+	:: (!p2 && p5) -> goto accept_S8
+	:: (!p2 && p5 && !p6) -> goto accept_S9
+	:: (!p0 && !p4 && p5) -> goto accept_S10
+	:: (!p0 && !p4 && p5 && !p6) -> goto accept_S11
+	:: (!p0 && p5) -> goto accept_S12
+	:: (!p0 && p5 && !p6) -> goto accept_S13
+	:: (!p0 && !p2 && !p4 && p5) -> goto accept_S14
+	:: (!p0 && !p2 && !p4 && p5 && !p6) -> goto accept_init
+	:: (!p0 && !p2 && p5) -> goto accept_S15
+	:: (!p0 && !p2 && p5 && !p6) -> goto accept_S16
+	fi;
+}

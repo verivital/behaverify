@@ -17,7 +17,7 @@ def model_to_dsl(model, output_file):
                 if function_call.min_val is None else
                 ('[' + format_code(function_call.min_val) + ', ' + format_code(function_call.max_val) + ']')
             )
-            + 'such_that ' + format_code(function_call.loop_condition)
+            + ' such_that ' + format_code(function_call.loop_condition)
             + ', '
             + format_code(function_call.values[0])
             + ')'
@@ -35,7 +35,7 @@ def model_to_dsl(model, output_file):
                 if function_call.min_val is None else
                 ('[' + format_code(function_call.min_val) + ', ' + format_code(function_call.max_val) + ']')
             )
-            + 'such_that ' + format_code(function_call.loop_condition)
+            + ' such_that ' + format_code(function_call.loop_condition)
             + ', '
             + format_code(function_call.values[0])
             + ', '
@@ -51,7 +51,7 @@ def model_to_dsl(model, output_file):
             + ' ' + (format_code(function_call.trace_num) if function_call.trace_num is not None else '')
             + ', '
             + ('constant_index ' if function_call.constant_index == 'constant_index' else '')
-            + format_code(function_call.value[0])
+            + format_code(function_call.values[0])
             + ')'
         )
 
@@ -68,34 +68,39 @@ def model_to_dsl(model, output_file):
                 if function_call.node_name is None else
                 format_code(function_call.node_name)
             )
+            + ')'
         )
     def format_function(function_call):
-        if function_call.name == 'loop':
+        if function_call.function_name == 'loop':
             return format_function_loop(function_call)
-        if function_call.name == 'case_loop':
+        if function_call.function_name == 'case_loop':
             return format_function_case_loop(function_call)
-        if function_call.name == 'index':
+        if function_call.function_name == 'index':
             return format_function_index(function_call)
         return format_function_default(function_call)
 
     def handle_atom(code):
+        atom_val = code.atom.constant if code.atom.constant is not None else code.atom.reference
         return (
-            (('\'' + code.atom + '\'') if code.atom in enumerations else code.atom)
+            (('\'' + str(atom_val) + '\'') if atom_val in enumerations else str(atom_val))
             + ((' node ' + format_code(code.node_name)) if code.node_name is not None else '')
-            + ((' at ' + format_code(code.read_ad)) if code.read_at is not None else '')
+            + ((' at ' + format_code(code.read_at)) if code.read_at is not None else '')
             + ((' trace ' + format_code(code.trace_num)) if code.trace_num is not None else '')
         )
 
     def format_code(code):
-        return (
-            handle_atom(code)
-            if code.atom is not None else
-            (
-                ('(' + format_code(code.code_statement) + ')')
-                if code.code_statement is not None else
-                format_function(code.function_call)
+        try:
+            return (
+                handle_atom(code)
+                if code.atom is not None else
+                (
+                    ('(' + format_code(code.code_statement) + ')')
+                    if code.code_statement is not None else
+                    format_function(code.function_call)
+                )
             )
-        )
+        except AttributeError as e:
+            return str(code)
 
     def handle_assign(assign):
         return (
@@ -126,7 +131,7 @@ def model_to_dsl(model, output_file):
                     if loop_array_index.min_val is None else
                     ('[' + format_code(loop_array_index.min_val) + ', ' + format_code(loop_array_index.max_val) + ']')
                 )
-                + 'such_that ' + format_code(loop_array_index.loop_condition)
+                + ' such_that ' + format_code(loop_array_index.loop_condition)
                 + ', '
                 + handle_loop_array_index(loop_array_index.loop_array_index)
                 + ')'
@@ -139,17 +144,18 @@ def model_to_dsl(model, output_file):
         return (
             'variable_statement{'
             + ('instant ' if statement.instant else '')
-            + statement.variable.name
+            + (statement.variable.name if hasattr(statement.variable, 'name') else statement.variable)
+            + ' '
             + (
                 (
                     (
                         ('default{' + format_code(statement.default_value) + '}')
-                        if statement.default_value is not None else
+                        if hasattr(statement, 'default_value') and statement.default_value is not None else
                         ''
                     )
                     + statement.constant_index + ' ' + ' '.join(map(handle_loop_array_index, statement.assigns))
                 )
-                if statement.constant_index is not None else
+                if statement.constant_index is not None and statement.constant_index == 'constant_index' else
                 (
                     (
                         (
@@ -173,7 +179,7 @@ def model_to_dsl(model, output_file):
 
     def handle_read_statement(statement):
         return (
-            'read_environemnt{' + statement.name + ' '
+            'read_environment{' + statement.name + ' '
             + (
                 (
                     'condition_variable{'
@@ -189,8 +195,8 @@ def model_to_dsl(model, output_file):
                 if statement.condition_variable is not None else
                 ''
             )
-            + 'condition{' + statement.nondeterminism + (', ' if statement.nondeterminism == 'nondeterminism' else '') + format_code(statement.condition) + '}'
-            + (os.linesep).join(map(handle_statement, statement.variable_statements))
+            + 'condition{' + statement.non_determinism + (', ' if statement.non_determinism == 'non_determinism' else '') + format_code(statement.condition) + '}'
+            + (os.linesep).join(map(handle_variable_statement, statement.variable_statements))
             + os.linesep
             + '}' + os.linesep
         )
@@ -198,7 +204,7 @@ def model_to_dsl(model, output_file):
     def handle_write_statement(statement):
         return (
             'write_environment{' + statement.name + ' '
-            + (os.linesep).join(map(handle_statement, statement.update))
+            + (os.linesep).join(map(handle_variable_statement, statement.update))
             + os.linesep
             + '}' + os.linesep
         )
@@ -275,8 +281,9 @@ def model_to_dsl(model, output_file):
         )
         + '}' + os.linesep
         + 'enumerations{' + ', '.join(map(lambda x: '\'' + x + '\'', model.enumerations)) + '}' + os.linesep
+        + 'constants{' + ', '.join(map(lambda x: x.name + ' := ' + (('\'' + x.val + '\'') if x.val in enumerations else str(x.val)), model.constants)) + '}' + os.linesep
         + 'variables{'
-        ''.join(
+        + ''.join(
             [
                 (
                     'variable{' + variable.var_type + ' ' + variable.name + ' '
@@ -298,23 +305,28 @@ def model_to_dsl(model, output_file):
                                 (variable.domain + ' ' + variable.static)
                                 if variable.model_as == 'DEFINE' else
                                 (
-                                    'BOOLEAN'
-                                    if variable.domain.boolean is not None else
+                                    variable.domain
+                                    if isinstance(variable.domain, str) else
                                     (
-                                        'INT'
-                                        if variable.domain.true_int is not None else
+                                        'BOOLEAN'
+                                        if variable.domain.boolean is not None else
                                         (
-                                            'REAL'
-                                            if variable.domain.true_real is not None else
+                                            'INT'
+                                            if variable.domain.true_int is not None else
                                             (
-                                                ('[' + format_code(variable.domain.min_val) + ', ' + format_code(variable.domain.max_val) + ']')
-                                                if variable.domain.min_val is not None else
-                                                ('{' + ', '.join(map(format_code, variable.domain.domain_codes)) + '}')
+                                                'REAL'
+                                                if variable.domain.true_real is not None else
+                                                (
+                                                    ('[' + format_code(variable.domain.min_val) + ', ' + format_code(variable.domain.max_val) + ']')
+                                                    if variable.domain.min_val is not None else
+                                                    ('{' + ', '.join(map(format_code, variable.domain.domain_codes)) + '}')
+                                                )
                                             )
                                         )
                                     )
                                 )
                             )
+                            + ' '
                             + (
                                 (
                                     'array ' + format_code(variable.array_size) + ' '
@@ -342,7 +354,7 @@ def model_to_dsl(model, output_file):
                             )
                         )
                     )
-                    + '}'
+                    + '}' + os.linesep
                 )
                 for variable in model.variables
             ]
@@ -359,7 +371,7 @@ def model_to_dsl(model, output_file):
                 (
                     'check{' + node.name + ' arguments{' + ', '.join(map(handle_argument, node.arguments)) + '}' + os.linesep
                     + 'read_variables{' + ', '.join(map(lambda x: x.name, node.read_variables)) + '}' + os.linesep
-                    + 'condidition{' + format_code(node.condition) + '}'
+                    + 'condition{' + format_code(node.condition) + '}'
                     + '}' + os.linesep
                 )
                 for node in model.check_nodes
@@ -373,7 +385,7 @@ def model_to_dsl(model, output_file):
                 (
                     'environment_check{' + node.name + ' arguments{' + ', '.join(map(handle_argument, node.arguments)) + '}' + os.linesep
                     + 'read_variables{' + ', '.join(map(lambda x: x.name, node.read_variables)) + '}' + os.linesep
-                    + 'condidition{' + format_code(node.condition) + '}'
+                    + 'condition{' + format_code(node.condition) + '}'
                     + '}' + os.linesep
                 )
                 for node in model.environment_checks
@@ -386,9 +398,9 @@ def model_to_dsl(model, output_file):
             [
                 (
                     'action{' + node.name + ' arguments{' + ', '.join(map(handle_argument, node.arguments)) + '}' + os.linesep
-                    + 'local_variables{' + ', '.join(map(lambda x: x.name, node.local_variables)) + '}' + os.linesep
-                    + 'read_variables{' + ', '.join(map(lambda x: x.name, node.read_variables)) + '}' + os.linesep
-                    + 'local_variables{' + ', '.join(map(lambda x: x.name, node.write_variables)) + '}' + os.linesep
+                    + 'local_variables{' + ', '.join(map(lambda x: (x.name if hasattr(x, 'name') else x), node.local_variables)) + '}' + os.linesep
+                    + 'read_variables{' + ', '.join(map(lambda x: (x.name if hasattr(x, 'name') else x), node.read_variables)) + '}' + os.linesep
+                    + 'write_variables{' + ', '.join(map(lambda x: (x.name if hasattr(x, 'name') else x), node.write_variables)) + '}' + os.linesep
                     + 'initial_values{'
                     + (os.linesep).join(map(handle_variable_statement, node.init_statements))
                     + os.linesep

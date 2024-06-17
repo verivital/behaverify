@@ -14,7 +14,7 @@ def generate_monitor(container, args):
                         '-f',
                         '"' + args.formula + '"',
                         '>',
-                        USER_DIR + '/' + os.path.basename(args.output),
+                        USER_DIR + '/' + os.path.basename(args.output) + '.ba',
                         '\''
                     ]
                 ),

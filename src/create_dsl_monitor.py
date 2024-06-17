@@ -2,70 +2,59 @@ import os
 import argparse
 import re
 import sys
-from collections import namedtuple
 from check_grammar import validate_model
 from serene_functions import build_meta_func
 from behaverify_common import indent, create_node_name, is_local, is_env, is_blackboard, is_array, handle_constant_or_reference, resolve_potential_reference_no_type, variable_array_size, get_min_max, variable_type, BTreeException, constant_type
 from model_to_dsl import model_to_dsl
 
+class Silly_Dictionary:
+    def __init__(self, attributes):
+        for attribute in attributes:
+            setattr(self, attribute, None)
+
 def create_blank_variable_obj():
-    return namedtuple(
-        'variable',
-        [
-            'var_type',
-            'name',
-            'model_as',
-            'domain',
-            'static',
-            'array_size',
-            'default_value',
-            'constant_index',
-            'assigns',
-            'assign'
-        ]
-    )
+    return Silly_Dictionary([ 'var_type', 'name', 'model_as', 'domain', 'static', 'array_size', 'default_value', 'constant_index', 'iterative_assign', 'index_var_name', 'assigns', 'assign'])
+    # return Variable_Tuple()
 
 def create_constant(name, value):
-    con = namedtuple('constant', ['name', 'val'])
+    con = Silly_Dictionary(['name', 'val'])
     con.name = name
     con.val = value
     return con
 
 def create_result(condition, values):
-    res = namedtuple(
-        'result',
-        [
-            'condition',
-            'values'
-        ]
-    )
+    res = Silly_Dictionary(['condition', 'values'])
     res.condition = condition
     res.values = values
     return res
 
 def create_assign_value(cond_vals_pairs):
     mapped = [create_result(cond, vals) for (cond, vals) in cond_vals_pairs]
-    assign_value = namedtuple(
-        'assign_value',
-        [
-            'case_results',
-            'default_results'
-        ]
-    )
+    assign_value = Silly_Dictionary(['case_results', 'default_result'])
     assign_value.case_results = mapped[0:-1]
-    assign_value.default_results = mapped[-1]
+    assign_value.default_result = mapped[-1]
     return assign_value
 
 def create_array_index(index, cond_vals_pairs):
-    ind = namedtuple('array_index', ['index_expr', 'assign'])
-    ind.index_expr = index
+    ind = Silly_Dictionary(['index_expr', 'assign'])
+    ind.index_expr = [index]
     ind.assign = create_assign_value(cond_vals_pairs)
     return ind
 
 def create_loop_array(index, cond_vals_pairs):
-    ind = namedtuple('looparray', ['array_index'])
+    ind = Silly_Dictionary(['loop_array_index', 'array_index'])
     ind.array_index = create_array_index(index, cond_vals_pairs)
     return ind
+
+# # TODO FINISH THIS
+# def create_loop_array_with_loop(index, cond_vals_pairs, monitor_name):
+#     ind = namedtuple('looparray', ['loop_variable', 'reverse', 'loop_variable_domain', 'min_val', 'max_val', 'loop_condition', 'loop_array_index', 'array_index'])
+#     ind.loop_variable = 'loop_var'
+#     ind.min_val = '0'
+#     ind.max_val = monitor_name + '_states_COUNT'
+#     ind.loop_condition = 'True'
+#     ind.loop_array_index = create_loop_array('loop_var', cond_vals_pairs)
+#     return ind
 
 def create_variable_obj_p(monitor_name, default_assign, assigns):
     var = create_blank_variable_obj()
@@ -74,7 +63,7 @@ def create_variable_obj_p(monitor_name, default_assign, assigns):
     var.model_as = 'DEFINE'
     var.domain = 'BOOLEAN'
     var.static = ''
-    var.array_size = '\'' + monitor_name + '_p_COUNT' + '\''
+    var.array_size = monitor_name + '_p_COUNT'
     var.default_value = default_assign
     var.constant_index = 'constant_index'
     var.assigns = assigns
@@ -87,7 +76,7 @@ def create_variable_obj_states(monitor_name, default_assign_states, assigns_stat
     var_states.model_as = 'VAR'
     var_states.domain = 'BOOLEAN'
     var_states.static = ''
-    var_states.array_size = '\'' + monitor_name + '_states_COUNT' + '\''
+    var_states.array_size = monitor_name + '_states_COUNT'
     var_states.default_value = default_assign_states
     var_states.constant_index = 'constant_index'
     var_states.assigns = assigns_states
@@ -97,11 +86,33 @@ def create_variable_obj_states(monitor_name, default_assign_states, assigns_stat
     var_states_def.model_as = 'DEFINE'
     var_states_def.domain = 'BOOLEAN'
     var_states_def.static = ''
-    var_states_def.array_size = '\'' + monitor_name + '_states_COUNT' + '\''
+    var_states_def.array_size = monitor_name + '_states_COUNT'
     var_states_def.default_value = default_assign_def
     var_states_def.constant_index = 'constant_index'
     var_states_def.assigns = assigns_def
-    return var_states
+    return (var_states, var_states_def)
+
+def create_variable_statement(variable, assign):
+    statement = Silly_Dictionary(['variable', 'constant_index', 'iterative_assign', 'assigns', 'assign', 'instant'])
+    statement.variable = variable
+    statement.constant_index = ''
+    statement.assign = assign
+    return statement
+
+def create_iterative_assign(condition, assign):
+    iter_assign = Silly_Dictionary(['condition', 'assign'])
+    iter_assign.condition = condition
+    iter_assign.assign = assign
+    return iter_assign
+
+def create_variable_statement_iterative(variable, iterative_assigns, assign):
+    statement = Silly_Dictionary(['variable', 'constant_index', 'iterative_assign', 'index_var_name', 'iterative_assign_conditionals', 'assigns', 'assign', 'instant'])
+    statement.variable = variable
+    statement.iterative_assign = 'iterative_assign'
+    statement.index_var_name = 'loop_var'
+    statement.iterative_assign_conditionals = iterative_assigns
+    statement.assign = assign
+    return statement
 
 def create_ltl2ba_command(metamodel_file, model_file, location, recursion_limit, no_checks):
     def execute_loop(function_call, to_call, packaged_args):
@@ -367,19 +378,121 @@ def create_ltl2ba_command(metamodel_file, model_file, location, recursion_limit,
         with open (location + monitor.name + '.txt', 'w', encoding = 'utf-8') as output_file:
             output_file.write(command_string_)
         model.constants.append(create_constant(monitor.name + '_p_COUNT', p_count))
+        model.constants.append(create_constant(monitor.name + '_states_COUNT', 3))
+        model.constants.append(create_constant(monitor.name + '_ACCEPTING', monitor.safe_val))
         model.constants.append(create_constant(monitor.name + '_SAFE', monitor.safe_val))
         model.constants.append(create_constant(monitor.name + '_UNSAFE', monitor.unsafe_val))
         model.constants.append(create_constant(monitor.name + '_UNKNOWN', monitor.unknown_val))
-        default_val = create_assign_value([(None, False)])
+        default_val = create_assign_value([(None, [False])])
         assigns = [None for _ in range(p_count)]
         for (index_, code_) in all_var_info_:
-            assigns[int(index_)] = create_loop_array(index_, [(None, code_)])
+            assigns[int(index_)] = create_loop_array(index_, [(None, [code_])])
         model.variables.append(create_variable_obj_p(monitor.name, default_val, assigns))
+        model.variables.extend(create_variable_obj_states(monitor.name, default_val, [create_loop_array(0, [(None, ['True'])])], default_val, assigns))
+    for node in model.action_nodes:
+        for statements in (node.pre_update_statements, node.post_update_statements):
+            for index in reversed(range(len(statements))):
+                statement = statements[index]
+                if statement.monitor_statement is not None:
+                    monitor_statement = statement.monitor_statement
+                    mon_name = monitor_statement.monitor.name
+                    var_name = monitor_statement.monitor_variable.name
+                    if mon_name + '_states' not in node.write_variables:
+                        node.write_variables.append(mon_name + '_states')
+                    if mon_name + '_states_def' not in node.read_variables:
+                        node.read_variables.append(mon_name + '_states_def')
+                    if mon_name + '_p' not in node.read_variables:
+                        node.read_variables.append(mon_name + '_p')
+                    new_statement = Silly_Dictionary(['variable_statement', 'read_statement', 'write_statement', 'monitor_statement'])
+                    if monitor_statement.monitor_reset == 'reset':
+                        new_statement.variable_statement = create_variable_statement_iterative(
+                            mon_name + '_states',
+                            [create_iterative_assign('(eq, loop_var, 0)', create_assign_value([(None, ['True'])]))],
+                            create_assign_value([(None, ['False'])])
+                        )
+                        statements.insert(index + 1, new_statement)
+                    elif monitor_statement.monitor_mode == 'commit' and monitor_statement.monitor_reset == 'reset_on_failure':
+                        new_statement.variable_statement = create_variable_statement_iterative(
+                            mon_name + '_states',
+                            [
+                                create_iterative_assign(
+                                    '(eq, loop_var, 0)',
+                                    create_assign_value(
+                                        [
+                                            ('(eq, ' + var_name + ', ' + mon_name + '_UNSAFE)', ['True']),
+                                            (None, ['(index, ' + mon_name + '_states_def, constant_index 0)'])
+                                        ]
+                                    )
+                                )
+                            ],
+                            create_assign_value(
+                                [
+                                    ('(eq, ' + var_name + ', ' + mon_name + '_UNSAFE)', ['False']),
+                                    (None, ['(index, ' + mon_name + '_states_def, constant_index loop_var)'])
+                                ]
+                            )
+                        )
+                        statements.insert(index + 1, new_statement)
+                    # commit + reset is just reset.
+                    # elif monitor_statement.monitor_mode == 'commit' and  monitor_statement.monitor_reset == 'reset':
+                    #     pass
+                    elif monitor_statement.monitor_mode == 'commit':
+                        new_statement.variable_statement = create_variable_statement_iterative(
+                            mon_name + '_states',
+                            [],
+                            create_assign_value([(None, ['(index, ' + mon_name + '_states_def, constant_index loop_var)'])])
+                        )
+                        statements.insert(index + 1, new_statement)
+                    elif monitor_statement.monitor_reset == 'reset_on_failure':
+                        new_statement.variable_statement = create_variable_statement_iterative(
+                            mon_name + '_states',
+                            [
+                                create_iterative_assign(
+                                    '(eq, loop_var, 0)',
+                                    create_assign_value(
+                                        [
+                                            ('(eq, ' + var_name + ', ' + mon_name + '_UNSAFE)', ['True']),
+                                            (None, ['(index, ' + mon_name + '_states, constant_index 0)'])
+                                        ]
+                                    )
+                                )
+                            ],
+                            create_assign_value(
+                                [
+                                    ('(eq, ' + var_name + ', ' + mon_name + '_UNSAFE)', ['False']),
+                                    (None, ['(index, ' + mon_name + '_states, constant_index loop_var)'])
+                                ]
+                            )
+                        )
+                        statements.insert(index + 1, new_statement)
+                    statement.variable_statement = create_variable_statement(
+                        var_name,
+                        create_assign_value(
+                            [
+                                (
+                                    '(and, ' + mon_name + '_ACCEPTING, (index, ' + mon_name + '_states_def, constant_index (sub, ' + mon_name + '_states_COUNT, 1)))',
+                                    [mon_name + '_SAFE']
+                                ),
+                                (
+                                    '(or, False, (loop, loop_var, [0, (sub, ' + mon_name + '_states_COUNT, 1)] such_that True, (index, ' + mon_name + '_states_def, constant_index loop_var)))',
+                                    [mon_name + '_UNKNOWN']
+                                ),
+                                (
+                                    None,
+                                    [mon_name + '_UNSAFE']
+                                )
+                            ]
+                        )
+                    )
+                    statement.monitor_statement = None
     model_to_dsl(model, os.path.join(location, os.path.basename(model_file)))
     return
 
 def parse_ba(ba_file):
     monitor_name = os.path.basename(ba_file)
+    if '.ba' not in monitor_name:
+        return None
+    monitor_name = monitor_name.split('.')[0]
     def find_closest_unit(cur_seg, start, delta):
         can_return = False
         paran_count = 0
@@ -426,7 +539,7 @@ def parse_ba(ba_file):
         guard_statement = replace_infix_symbol(guard_statement, '->', 'im_lies')
         guard_statement = guard_statement.replace('(1)', 'True')
         guard_statement = re.sub(r'p([0-9]+)', lambda x: '(index, ' + monitor_name + '_p, constant_index ' + x.group(1) + ')', guard_statement)
-        guard_statement = guard_statement.replce('im_lies',  'implies')
+        guard_statement = guard_statement.replace('im_lies',  'implies')
         return guard_statement
 
     state_to_index = {}
@@ -460,7 +573,6 @@ def parse_ba(ba_file):
         accepting_loc = state_to_index[accepting_state]
         state_to_index[accepting_state] = len(state_to_index) - 1
         state_to_index[listed_accepting] = accepting_loc
-    reset_value = 'default{False} constant_index index_of {0} assign{result{True}}'
     state_trans = {}
     with open(ba_file, 'r', encoding = 'utf-8') as input_file:
         for line in input_file.readlines():
@@ -485,32 +597,48 @@ def parse_ba(ba_file):
                 guard = guard.strip()
                 state_trans[next_state].append((parse_guard(guard), cur_state))
                 continue
-    existing_info = ''
-    with open(python_file, 'r', encoding = 'utf-8') as input_file:
-        existing_info = input_file.read()
-    with open(python_file, 'w', encoding = 'utf-8') as output_file:
-        output_file.write(''.join(guards))
-        output_file.write(os.linesep)
-        output_file.write(
-            'STATE_TRANS = {' + os.linesep
-            + ''.join(
-                (
-                    indent(1) + '\'' + state + '\' : {' + os.linesep
-                    + ''.join(
-                        indent(2) + '(' + guard_state[0] + ', \'' + guard_state[1] + '\'),' + os.linesep
-                        for guard_state in guard_states
+    assigns = []
+    for next_state in state_trans:
+        index = state_to_index[next_state]
+        assigns.append(
+            create_loop_array(
+                index,
+                [
+                    (
+                        None,
+                        [(
+                            ('(or, ' if len(state_trans) > 1 else '')
+                            + ', '.join(
+                                [
+                                    ('(and, (index, ' + monitor_name + '_states, constant_index ' + str(state_to_index[cur_state]) + '), ' + guard + ')')
+                                    for (guard, cur_state) in state_trans[next_state]
+                                ]
+                            )
+                            + (')' if len(state_trans) > 1 else '')
+                        )]
                     )
-                    + indent(1) + '},' + os.linesep
-                )
-                for (state, guard_states) in state_trans.items()
+                ]
             )
-            + '}' + os.linesep
         )
-        if initial_state is None:
-            raise ValueError('no initial state?')
-        output_file.write('INITIAL_STATE = ' + '\'' + initial_state + '\'' + os.linesep)
-        output_file.write('ACCEPTING_STATE = ' + (('\'' + accepting_state + '\'') if accepting_state is not None else str(accepting_state)) + os.linesep)
-        output_file.write(existing_info)
+    return (monitor_name, assigns, accepting_state, len(state_trans))
+
+def handle_files_at_location(metamodel_file, model_file, location, recursion_limit):
+    (model, _, _, _) = validate_model(metamodel_file, model_file, recursion_limit, True)
+    for possible_file in os.listdir(location):
+        result = parse_ba(os.path.join(location, possible_file))
+        if result is None:
+            continue
+        (monitor_name, assigns, accepting_state, state_count) = result
+        for variable in model.variables:
+            if variable.name == monitor_name + '_states_def':
+                variable.assigns = assigns
+                break
+        for constant in model.constants:
+            if constant.name == (monitor_name + '_states_COUNT'):
+                constant.val = state_count
+            if constant.name == (monitor_name + '_ACCEPTING'):
+                constant.val = accepting_state is not None
+    model_to_dsl(model, os.path.join(location, os.path.basename(model_file)))
     return
 
 if __name__ == '__main__':
@@ -525,7 +653,9 @@ if __name__ == '__main__':
         create_ltl2ba_command(args.metamodel_file, args.model_file, args.location, args.recursion_limit, args.no_checks)
     elif sys.argv[1] == 'ba_to_monitor':
         arg_parser = argparse.ArgumentParser()
-        arg_parser.add_argument('ba_file')
-        arg_parser.add_argument('python_file')
+        arg_parser.add_argument('metamodel_file')
+        arg_parser.add_argument('model_file')
+        arg_parser.add_argument('location')
+        arg_parser.add_argument('--recursion_limit', type = int, default = 0)
         args = arg_parser.parse_args(sys.argv[2:])
-        parse_ba(args.ba_file, args.python_file)
+        handle_files_at_location(args.metamodel_file, args.model_file, args.location, args.recursion_limit)

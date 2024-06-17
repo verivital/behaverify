@@ -5,11 +5,11 @@ import ctypes
 import os
 THIS_LOCATION = os.path.dirname(os.path.abspath(__file__))
 collision_monitor_lib = ctypes.CDLL(os.path.join(THIS_LOCATION, 'collision_monitor.so'))
-collision_monitor_lib.transition.argtypes = [ctypes.POINTER(ctypes.c_bool), ctypes.POINTER(ctypes.c_bool), ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.POINTER(ctypes.c_int), ctypes.POINTER(ctypes.c_int)]
-collision_monitor_lib.transition.restype = ctypes.c_int
+collision_monitor_lib.collision_monitor_transition.argtypes = [ctypes.POINTER(ctypes.c_bool), ctypes.POINTER(ctypes.c_bool), ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.POINTER(ctypes.c_int), ctypes.POINTER(ctypes.c_int)]
+collision_monitor_lib.collision_monitor_transition.restype = ctypes.c_int
 loop_monitor_lib = ctypes.CDLL(os.path.join(THIS_LOCATION, 'loop_monitor.so'))
-loop_monitor_lib.transition.argtypes = [ctypes.POINTER(ctypes.c_bool), ctypes.POINTER(ctypes.c_bool), ctypes.c_char_p]
-loop_monitor_lib.transition.restype = ctypes.c_int
+loop_monitor_lib.loop_monitor_transition.argtypes = [ctypes.POINTER(ctypes.c_bool), ctypes.POINTER(ctypes.c_bool), ctypes.c_char_p]
+loop_monitor_lib.loop_monitor_transition.restype = ctypes.c_int
 
 COLLISION_MONITOR = (ctypes.c_bool * 1)(True)
 LOOP_MONITOR = (ctypes.c_bool * 16)(True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False)
@@ -37,7 +37,7 @@ class read_monitor(py_trees.behaviour.Behaviour):
             obs_array = (ctypes.c_int * len(self.environment.obstacles))(*self.environment.obstacles)
             obs_size_array = (ctypes.c_int * len(self.environment.obstacle_sizes))(*self.environment.obstacle_sizes)
         self.blackboard.drone_speed = 2
-        temp_var = collision_monitor_lib.transition(
+        temp_var = collision_monitor_lib.collision_monitor_transition(
             COLLISION_MONITOR,
             (ctypes.c_bool * 1)(),
             self.blackboard.delta_x(),
@@ -55,7 +55,7 @@ class read_monitor(py_trees.behaviour.Behaviour):
             self.blackboard.drone_speed
         ))
         loop_output = (ctypes.c_bool * 16)()
-        temp_var = loop_monitor_lib.transition(
+        temp_var = loop_monitor_lib.loop_monitor_transition(
             LOOP_MONITOR,
             loop_output,
             self.blackboard.current_action.encode('utf-8')

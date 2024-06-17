@@ -1,7 +1,8 @@
 #!/bin/bash
 
-#categories=("./sparse_random" "./dense_fixed")
-categories=("./dense_fixed" "./sparse_random")
+categories=("./sparse_random" "./dense_fixed")
+#categories=("./dense_fixed" "./sparse_random")
+#categories=("./sparse_random")
 
 for category in "${categories[@]}"; do
     echo $category
@@ -15,6 +16,9 @@ for category in "${categories[@]}"; do
 	echo $tail_end
 	max_val=$(echo $tail_end | cut -d'_' -f1)
 	echo $max_val
+	# if [ "${max_val}" -ne 9 ]; then
+	#     continue
+	# fi
 	echo "setting up directory"
 	rm -rf "${category}/${tail_end}/behaverify/"
 	mkdir "${category}/${tail_end}/behaverify/"
@@ -29,18 +33,18 @@ for category in "${categories[@]}"; do
 	collision_command=$(cat "${category}/${tail_end}/behaverify/python/collision_monitor.txt")
 	loop_command=$(cat "${category}/${tail_end}/behaverify/python/loop_monitor.txt")
 	echo "generating ba"
-	python3 ../../../Docker_BehaVerify/LTL2BA/python_script/generate.py "$collision_command" "${category}/${tail_end}/behaverify/python/collision"
-	python3 ../../../Docker_BehaVerify/LTL2BA/python_script/generate.py "$loop_command" "${category}/${tail_end}/behaverify/python/loop"
+	python3 ../../../Docker_BehaVerify/LTL2BA/python_script/generate.py "$collision_command" "${category}/${tail_end}/behaverify/python/collision_monitor"
+	python3 ../../../Docker_BehaVerify/LTL2BA/python_script/generate.py "$loop_command" "${category}/${tail_end}/behaverify/python/loop_monitor"
 	echo "extracting and moving ba"
-	tar -xf "${category}/${tail_end}/behaverify/python/collision.tar" -C "${category}/${tail_end}/behaverify/python/"
-	mv "${category}/${tail_end}/behaverify/python/user_files/collision" "${category}/${tail_end}/behaverify/python/collision.ba"
+	tar -xf "${category}/${tail_end}/behaverify/python/collision_monitor.tar" -C "${category}/${tail_end}/behaverify/python/"
+	mv "${category}/${tail_end}/behaverify/python/user_files/collision_monitor.ba" "${category}/${tail_end}/behaverify/python/collision_monitor.ba"
 	rm -rf "${category}/${tail_end}/behaverify/python/user_files"
-	tar -xf "${category}/${tail_end}/behaverify/python/loop.tar" -C "${category}/${tail_end}/behaverify/python/"
-	mv "${category}/${tail_end}/behaverify/python/user_files/loop" "${category}/${tail_end}/behaverify/python/loop.ba"
+	tar -xf "${category}/${tail_end}/behaverify/python/loop_monitor.tar" -C "${category}/${tail_end}/behaverify/python/"
+	mv "${category}/${tail_end}/behaverify/python/user_files/loop_monitor.ba" "${category}/${tail_end}/behaverify/python/loop_monitor.ba"
 	rm -rf "${category}/${tail_end}/behaverify/python/user_files"
 	echo "generating monitors"
-	python3 ../../../src/create_c_monitor.py ba_to_monitor "${category}/${tail_end}/behaverify/python/collision.ba" "${category}/${tail_end}/behaverify/python/collision_monitor.c" "${category}/${tail_end}/behaverify/python/collision_monitor.h"
-	python3 ../../../src/create_c_monitor.py ba_to_monitor "${category}/${tail_end}/behaverify/python/loop.ba" "${category}/${tail_end}/behaverify/python/loop_monitor.c" "${category}/${tail_end}/behaverify/python/loop_monitor.h"
+	python3 ../../../src/create_c_monitor.py ba_to_monitor "${category}/${tail_end}/behaverify/python/collision_monitor.ba" "${category}/${tail_end}/behaverify/python/collision_monitor.c" "${category}/${tail_end}/behaverify/python/collision_monitor.h"
+	python3 ../../../src/create_c_monitor.py ba_to_monitor "${category}/${tail_end}/behaverify/python/loop_monitor.ba" "${category}/${tail_end}/behaverify/python/loop_monitor.c" "${category}/${tail_end}/behaverify/python/loop_monitor.h"
 	echo "compiling to shared library"
 	gcc -shared -fPIC -o "${category}/${tail_end}/behaverify/python/collision_monitor.so" "${category}/${tail_end}/behaverify/python/collision_monitor.c"
 	gcc -shared -fPIC -o "${category}/${tail_end}/behaverify/python/loop_monitor.so" "${category}/${tail_end}/behaverify/python/loop_monitor.c"
