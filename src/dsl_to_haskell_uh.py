@@ -32,7 +32,7 @@ def dsl_to_haskell(metamodel_file, model_file, location, output_name, max_iter, 
         the_type = variable_type_map[variable.name]
         value = ('0' if the_type == 'Integer' else ('True' if the_type == 'Bool' else '" "'))
         if is_array(variable):
-            return '(Array.listArray (0, ' + str(variable_array_size_map[variable.name] - 1) + ') [' + ', '.join([value] * variable_array_size_map[variable.name]) + '])'
+            return '(' + ', '.join([value] * variable_array_size_map[variable.name]) + ')'
         return value
 
     def str_conversion(atom_type, atom):
@@ -163,7 +163,14 @@ def dsl_to_haskell(metamodel_file, model_file, location, output_name, max_iter, 
             index = str(resolve_potential_reference_no_type(execute_code(function_call.values[0])[0], declared_enumerations, {}, variables, constants, loop_references)[1])
         else:
             index = format_code(function_call.values[0], misc_args)[0]
-        return ['((Array.!) ' + format_variable(variable) + index + ')']
+        if variable.model_as == 'DEFINE' and not variable.static == 'static':
+            return (
+                ('(env' + pascal_case(variable.name) + ' blackboard environment ' + index + ')')
+                if is_env(variable) else
+                ('(board' + pascal_case(variable.name) + ' blackboard ' + index + ')')
+            )
+        arguments = 'environment' if is_env(variable) else ('nodeLocation blackboard' if is_local(variable) else 'blackboard')
+        return ['(indexInto' + pascal_case(variable.name) + ' ' + index + ' ' + arguments + ')']
 
     def format_function(code, misc_args):
         '''this just calls the other format functions. moved here to make format_code less cluttered.'''
@@ -304,7 +311,7 @@ def dsl_to_haskell(metamodel_file, model_file, location, output_name, max_iter, 
                     if need_default:
                         results = handle_assign(variable_statement.assign, variable_type_map[assign_var.name], new_misc_args)
                     return_string += handle_formatted_results('newValue' + str(index), results, indent_level + 2)
-                return_string += indent(indent_level + 2) + 'newValue = (Array.listArray (0, ' + str(variable_array_size_map[assign_var.name] - 1) + ') [' + ', '.join(['newValue' + str(index) for index in range(variable_array_size_map[assign_var.name])]) + '])' + os.linesep
+                return_string += indent(indent_level + 2) + 'newValue = (' + ', '.join(['newValue' + str(index) for index in range(variable_array_size_map[assign_var.name])]) + ')' + os.linesep
                 loop_references.pop(index_var_name)
                 return return_string
             meta_results = []
@@ -319,13 +326,13 @@ def dsl_to_haskell(metamodel_file, model_file, location, output_name, max_iter, 
                 for index in range(variable_array_size_map[assign_var.name]):
                     results = handle_assign(variable_statement.default_value, variable_type_map[assign_var.name], new_misc_args)
                     return_string += handle_formatted_results('defaultValue' + str(index), results, indent_level + 2)
-                return_string += indent(indent_level + 2) + 'defaultValue = (Array.listArray (0, ' + str(variable_array_size_map[assign_var.name] - 1) + ') [' + ', '.join(['defaultValue' + str(index) for index in range(variable_array_size_map[assign_var.name])]) + '])' + os.linesep
+                return_string += indent(indent_level + 2) + 'defaultValue = (' + ', '.join(['defaultValue' + str(index) for index in range(variable_array_size_map[assign_var.name])]) + ')' + os.linesep
             else:
                 return_string += indent(indent_level + 2) + 'defaultValue = ' + format_variable(assign_var) + os.linesep
             return (
                 return_string
                 + indent(indent_level + 2) + 'newGenerator = snd randomPair' + str(counters['random']) + os.linesep
-                + indent(indent_level + 2) + 'newVal = ((Array.//) defaultValue (sereneNub [' + ', '.join(update_pair_strings) + ']))'
+                + indent(indent_level + 2) + 'newVal = newArray' + pascal_case(assign_var.name) + ' defaultValue [' + ', '.join(update_pair_strings) + ']'
                 + os.linesep
             )
         results = handle_assign(variable_statement.assign, converted_variable_type, new_misc_args)
@@ -414,9 +421,6 @@ def dsl_to_haskell(metamodel_file, model_file, location, output_name, max_iter, 
                 handle_write_statement(statement.write_statement, statement_number, misc_args)
             )
         )
-
-    def create_array_signature(variable):
-        return '(Array.Array Integer ' + variable_type_map[variable.name] + ')'
 
     def module_declaration(node_name):
         return 'module BTree' + pascal_case(node_name) + ' where' + os.linesep
@@ -543,7 +547,6 @@ def dsl_to_haskell(metamodel_file, model_file, location, output_name, max_iter, 
             + 'import BehaviorTreeEnvironment' + os.linesep
             + 'import BehaviorTreeBlackboard' + os.linesep
             + 'import System.Environment (getArgs)' + os.linesep
-            + 'import qualified Data.Array as Array' + os.linesep
             + os.linesep + os.linesep
             + 'executeFromSeeds :: Integer -> Integer -> Integer -> [(BTreeBlackboard, BTreeEnvironment)]' + os.linesep
             + 'executeFromSeeds seed1 seed2 maxIteration = eachBoardEnv' + os.linesep
@@ -687,14 +690,14 @@ def dsl_to_haskell(metamodel_file, model_file, location, output_name, max_iter, 
         assign_var = variable_statement.variable if hasattr(variable_statement, 'variable') else variable_statement
         indent_level = misc_args['indent_level']
         if is_array(assign_var):
-            type_signature = create_array_signature(assign_var)
+            type_signature = '(' + ', '.join([variable_type_map[assign_var.name]] * variable_array_size(assign_var, declared_enumerations, {}, variables, constants, loop_references)) + ')'
         else:
             type_signature = variable_type_map[assign_var.name]
         return_string = (
             indent(indent_level) + ('env' if is_env(assign_var) else 'board') + pascal_case(assign_var.name) + (('Location' + str(node_location)) if node_location is not None else '')
             + ' :: BTreeBlackboard ' + ('-> BTreeEnvironment' if is_env(assign_var) else '') + ' -> ' + type_signature + os.linesep
             + indent(indent_level) + ('env' if is_env(assign_var) else 'board') + pascal_case(assign_var.name) + (('Location' + str(node_location)) if node_location is not None else '')
-            + (' blackboard environment' if is_env(assign_var) else ' blackboard') + ' = newValue' + os.linesep
+            + (' blackboard environment' if is_env(assign_var) else ' blackboard') + ' = newVal' + os.linesep
             + indent(indent_level + 1) + 'where' + os.linesep
         )
         new_misc_args = create_misc_args(misc_args['init_mode'], indent_level + 2)
@@ -702,6 +705,7 @@ def dsl_to_haskell(metamodel_file, model_file, location, output_name, max_iter, 
             if assign_var.iterative_assign == 'iterative_assign':
                 iterative_condition_assign_list = [(build_meta_func(iterative_assign_conditional.condition), iterative_assign_conditional.assign) for iterative_assign_conditional in variable_statement.iterative_assign_conditionals]
                 index_var_name = variable_statement.index_var_name
+                # return_string = ''
                 for index in range(variable_array_size_map[assign_var.name]):
                     loop_references[index_var_name] = index
                     need_default = True
@@ -713,7 +717,7 @@ def dsl_to_haskell(metamodel_file, model_file, location, output_name, max_iter, 
                     if need_default:
                         results = handle_assign(variable_statement.assign, variable_type_map[assign_var.name], new_misc_args)
                     return_string += handle_formatted_results('newValue' + str(index), results, indent_level + 2)
-                return_string += indent(indent_level + 2) + 'newValue = (Array.listArray (0, ' + str(variable_array_size_map[assign_var.name] - 1) + ') [' + ', '.join(['newValue' + str(index) for index in range(variable_array_size_map[assign_var.name])]) + '])' + os.linesep
+                return_string += indent(indent_level + 2) + 'newVal = (' + ', '.join(['newValue' + str(index) for index in range(variable_array_size_map[assign_var.name])]) + ')' + os.linesep
                 loop_references.pop(index_var_name)
                 return return_string
             meta_results = []
@@ -727,202 +731,17 @@ def dsl_to_haskell(metamodel_file, model_file, location, output_name, max_iter, 
             for index in range(variable_array_size_map[assign_var.name]):
                 results = handle_assign(variable_statement.default_value, variable_type_map[assign_var.name], new_misc_args)
                 return_string += handle_formatted_results('defaultValue' + str(index), results, indent_level + 2)
-            return_string += indent(indent_level + 2) + 'defaultValue = (Array.listArray (0, ' + str(variable_array_size_map[assign_var.name] - 1) + ') [' + ', '.join(['defaultValue' + str(index) for index in range(variable_array_size_map[assign_var.name])]) + '])' + os.linesep
+            return_string += indent(indent_level + 2) + 'defaultValue = (' + ', '.join(['defaultValue' + str(index) for index in range(variable_array_size_map[assign_var.name])]) + ')' + os.linesep
             return (
                 return_string
-                + indent(indent_level + 2) + 'newValue = ((Array.//) defaultValue (sereneNub [' + ', '.join(update_pair_strings) + ']))'
+                + indent(indent_level + 2) + 'newVal = newArray' + pascal_case(assign_var.name) + ' defaultValue [' + ', '.join(update_pair_strings) + ']'
                 + os.linesep
             )
         results = handle_assign(variable_statement.assign, variable_type_map[assign_var.name], new_misc_args)
         return (
             return_string
-            + handle_formatted_results('newValue', results, indent_level + 2)
+            + handle_formatted_results('newVal', results, indent_level + 2)
         )
-
-    # def safe_update(variable, env_mode, local_mode, local_numbers = None):
-    #     local_numbers = ([] if local_numbers is None else local_numbers)
-    #     function_name = (
-    #         (
-    #             'updateEnv'
-    #             if env_mode
-    #             else
-    #             (
-    #                 'localUpdateBoard'
-    #                 if local_mode
-    #                 else
-    #                 'updateBoard'
-    #             )
-    #         )
-    #         + pascal_case(variable.name)
-    #     )
-    #     arg_type = (
-    #         'BTreeEnvironment'
-    #         if env_mode
-    #         else
-    #         (
-    #             'Integer -> BTreeBlackboard'
-    #             if local_mode
-    #             else
-    #             'BTreeBlackboard'
-    #         )
-    #     )
-    #     return_type = (
-    #         'BTreeEnvironment'
-    #         if env_mode
-    #         else
-    #         'BTreeBlackboard'
-    #     )
-    #     board_type = (
-    #         'environment'
-    #         if env_mode
-    #         else
-    #         'blackboard'
-    #     )
-    #     field_name = (
-    #         (
-    #             'env'
-    #             if env_mode
-    #             else
-    #             (
-    #                 'localBoard'
-    #                 if local_mode
-    #                 else
-    #                 'board'
-    #             )
-    #         )
-    #         + pascal_case(variable.name)
-    #     )
-    #     return (
-    #         function_name + ' :: ' + arg_type + ' -> ' + variable_type(variable) + ' -> ' + return_type + os.linesep
-    #         + (
-    #             (
-    #                 function_name + (' _ ' if local_mode else ' ') + board_type + ' _ = ' + board_type + os.linesep
-    #             )
-    #             if variable.model_as == 'FROZENVAR'
-    #             else
-    #             (
-    #                 (
-    #                     ''.join(
-    #                         [
-    #                             (function_name + ' ' + str(number) + ' ' + board_type + ' value = ' + board_type + ' { ' + field_name + str(number) + ' = value }' + os.linesep)
-    #                             if variable.domain.boolean is not None or variable.domain.min_val is None
-    #                             else
-    #                             (
-    #                                 (
-    #                                     ''.join(
-    #                                         map(
-    #                                             lambda value :
-    #                                             (function_name + ' ' + str(number) + ' ' + board_type + ' ' + handle_constant(value, True) + ' = ' + board_type + ' { ' + field_name + str(number) + ' = ' + handle_constant(value, True) + ' }' + os.linesep)
-    #                                             ,
-    #                                             variable.domain.enums
-    #                                         )
-    #                                     )
-    #                                     + (function_name + ' ' + str(number) + ' _ _ = error "' + variable.name + ' illegal value"' + os.linesep)
-    #                                 )
-    #                                 if variable.domain.min_val is None
-    #                                 else
-    #                                 (
-    #                                     function_name + ' ' + str(number) + ' ' + board_type + ' value' + os.linesep
-    #                                     + indent(1) + '| ' + handle_constant(variable.domain.min_val, True) + ' > value || value > ' + handle_constant(variable.domain.max_val, True) + ' = error "local ' + variable.name + ' illegal value"' + os.linesep
-    #                                     + indent(1) + '| otherwise = ' + board_type + ' { ' + field_name + str(number) + ' = value }' + os.linesep
-    #                                 )
-    #                             )
-    #                             for number in local_numbers
-    #                         ]
-    #                     )
-    #                     + (function_name + ' _ _ _ = error "' + variable.name + ' illegal local reference"' + os.linesep)
-    #                 )
-    #                 if local_mode
-    #                 else
-    #                 (
-    #                     (function_name + ' ' + board_type + ' value = ' + board_type + ' { ' + field_name + ' = value }' + os.linesep)
-    #                     if variable.domain.boolean is not None
-    #                     else
-    #                     (
-    #                         (
-    #                             ''.join(
-    #                                 map(
-    #                                     lambda value :
-    #                                     (function_name + ' ' + board_type + ' ' + handle_constant(value, True) + ' = ' + board_type + ' { ' + field_name + ' = ' + handle_constant(value, True) + ' }' + os.linesep)
-    #                                     ,
-    #                                     variable.domain.enums
-    #                                 )
-    #                             )
-    #                             + (function_name + ' _ _ = error "' + variable.name + ' illegal value"' + os.linesep)
-    #                         )
-    #                         if variable.domain.min_val is None
-    #                         else
-    #                         (
-    #                             function_name + ' ' + board_type + ' value' + os.linesep
-    #                             + indent(1) + '| ' + handle_constant(variable.domain.min_val, True) + ' > value || value > ' + handle_constant(variable.domain.max_val, True) + ' = error "' + variable.name + ' illegal value"' + os.linesep
-    #                             + indent(1) + '| otherwise = ' + board_type + ' { ' + field_name + ' = value }' + os.linesep
-    #                         )
-    #                     )
-    #                 )
-    #             )
-    #         )
-    #         + os.linesep
-    #     )
-
-    # def create_check_value(variable):
-    #     function_name = (
-    #         (
-    #             'checkValueEnv'
-    #             if is_env(variable)
-    #             else
-    #             (
-    #                 'checkValueLocalBoard'
-    #                 if is_local(variable)
-    #                 else
-    #                 'checkValueBoard'
-    #             )
-    #         )
-    #         + pascal_case(variable.name)
-    #     )
-    #     board_type = 'environment' if is_env(variable) else 'blackboard'
-    #     field_name = (
-    #         (
-    #             'env'
-    #             if is_env(variable)
-    #             else
-    #             (
-    #                 'localBoard'
-    #                 if is_local(variable)
-    #                 else
-    #                 'board'
-    #             )
-    #         )
-    #         + pascal_case(variable.name)
-    #     )
-    #     return (
-    #         function_name + ' :: ' + variable_type_map[variable.name] + ' -> ' + variable_type_map[variable.name] + os.linesep
-    #         + (
-    #             (function_name + ' value = value' + os.linesep)
-    #             if variable.domain.boolean is not None or variable.domain.true_int is not None
-    #             else
-    #             (
-    #                 (
-    #                     ''.join(
-    #                         map(
-    #                             lambda value :
-    #                             (function_name + ' ' + handle_constant(value, True) + ' = ' + handle_constant(value, True) + os.linesep)
-    #                             ,
-    #                             variable.domain.enums
-    #                         )
-    #                     )
-    #                     + (function_name + ' _ = error "' + field_name + ' illegal value"' + os.linesep)
-    #                 )
-    #                 if variable.domain.min_val is None
-    #                 else
-    #                 (
-    #                     function_name + ' value' + os.linesep
-    #                     + indent(1) + '| ' + handle_constant(variable.domain.min_val, True) + ' > value || value > ' + handle_constant(variable.domain.max_val, True) + ' = error "' + field_name + ' illegal value"' + os.linesep
-    #                     + indent(1) + '| otherwise = value' + os.linesep
-    #                 )
-    #             )
-    #         )
-    #         + os.linesep
-    #     )
 
     def create_initial_statements(blackboard_mode, local_initial_statements):
         initial_statements = []
@@ -955,7 +774,6 @@ def dsl_to_haskell(metamodel_file, model_file, location, output_name, max_iter, 
             + 'import SereneRandomizer' + os.linesep
             + 'import System.Random' + os.linesep
             + 'import SereneOperations' + os.linesep
-            + 'import qualified Data.Array as Array' + os.linesep
             + ('' if blackboard_mode else ('import BehaviorTreeBlackboard' + os.linesep))
             + os.linesep
             # end of imports.
@@ -969,7 +787,7 @@ def dsl_to_haskell(metamodel_file, model_file, location, output_name, max_iter, 
                     (
                         (os.linesep + indent(1) + ', ').join(
                             [
-                                ('board' + pascal_case(variable.name) + 'Location' + str(node_location) + ' :: ' + (create_array_signature(variable) if is_array(variable) else variable_type_map[variable.name]))
+                                ('board' + pascal_case(variable.name) + 'Location' + str(node_location) + ' :: ' + (('(' + ', '.join([variable_type_map[variable.name]] * variable_array_size_map[variable.name]) + ')') if is_array(variable) else variable_type_map[variable.name]))
                                 for node_location in local_var_to_nodes[variable.name]
                             ]
                         )
@@ -977,7 +795,7 @@ def dsl_to_haskell(metamodel_file, model_file, location, output_name, max_iter, 
                         ''
                     )
                     if is_local(variable) else
-                    (board_env + pascal_case(variable.name) + ' :: ' + (create_array_signature(variable) if is_array(variable) else variable_type_map[variable.name]))
+                    (board_env + pascal_case(variable.name) + ' :: ' + (('(' + ', '.join([variable_type_map[variable.name]] * variable_array_size_map[variable.name]) + ')') if is_array(variable) else variable_type_map[variable.name]))
                     for variable in model.variables if variable.model_as != 'DEFINE' and deal_with_variable(variable)
                 ]
             )
@@ -1010,7 +828,7 @@ def dsl_to_haskell(metamodel_file, model_file, location, output_name, max_iter, 
                     os.linesep + '-- START OF GET FUNCTIONS FOR LOCAL VARIABLES' + os.linesep + os.linesep
                     + ''.join(
                         [
-                            'board' + pascal_case(variable.name) + ' :: Integer -> BTreeBlackboard -> ' + (create_array_signature(variable) if is_array(variable) else variable_type_map[variable.name]) + os.linesep
+                            'board' + pascal_case(variable.name) + ' :: Integer -> BTreeBlackboard -> ' + (('(' + ', '.join([variable_type_map[variable.name]] * variable_array_size_map[variable.name]) + ')') if is_array(variable) else variable_type_map[variable.name]) + os.linesep
                             + ''.join(
                                 [
                                     'board' + pascal_case(variable.name) + ' ' + str(node_location) + ' = board' + pascal_case(variable.name) + 'Location' + str(node_location) + os.linesep
@@ -1051,70 +869,42 @@ def dsl_to_haskell(metamodel_file, model_file, location, output_name, max_iter, 
                 else
                 ''
             )
-            # + os.linesep + '-- START OF INDEX FUNCTIONS FOR ARRAYS' + os.linesep + os.linesep
-            # # we don't need a special case for indexing local variables
-            # # each node location is indexed the same way.
-            # + ''.join(
-            #     [
-            #         'indexInto' + pascal_case(variable.name) + ' :: Integer -> (' + ', '.join([variable_type_map[variable.name]] * variable_array_size(variable, declared_enumerations, {}, variables, constants, loop_references))  + ') -> ' + variable_type_map[variable.name] + os.linesep
-            #         + ''.join(
-            #             [
-            #                 ('indexInto' + pascal_case(variable.name) + ' ' + str(index) + ' (' + ', '.join(['_'] * index + ['value'] + ['_'] * (variable_array_size_map[variable.name] - index - 1)) + ') = value' + os.linesep)
-            #                 for index in range(variable_array_size_map[variable.name])
-            #             ]
-            #         )
-            #         + 'indexInto' + pascal_case(variable.name) + ' _ _ = error "indexInto' + pascal_case(variable.name) + ' illegal index value"' + os.linesep
-            #         for variable in model.variables if is_array(variable) and deal_with_variable(variable)# and (not is_local(variable))
-            #     ]
-            # )
-            # + ''.join(
-            #     [
-            #         'indexInto' + pascal_case(variable.name) + ' :: Integer -> Integer -> (' + ', '.join([variable_type_map[variable.name]] * variable_array_size(variable, declared_enumerations, {}, variables, constants, loop_references))  + ') -> ' + variable_type_map[variable.name] + os.linesep
-            #         + ''.join(
-            #             [
-            #                 'indexInto' + pascal_case(variable.name) + ' ' + str(node_location) + ' = indexInto' + pascal_case(variable.name) + 'Location' + str(node_location) + os.linesep
-            #                 for node_location in local_var_to_nodes[variable.name]
-            #             ]
-            #         )
-            #         + 'indexInto' + pascal_case(variable.name) + ' _ = error "indexInto' + pascal_case(variable.name) + ' illegal local value"' + os.linesep
-            #         + ''.join(
-            #             [
-            #                 'indexInto' + pascal_case(variable.name) + 'Location' + str(node_location) + ' :: Integer -> (' + ', '.join([variable_type_map[variable.name]] * variable_array_size(variable, declared_enumerations, {}, variables, constants, loop_references))  + ') -> ' + variable_type_map[variable.name] + os.linesep
-            #                 + ''.join(
-            #                     [
-            #                         ('indexInto' + pascal_case(variable.name) + 'Location' + str(node_location) + ' ' + str(index) + ' (' + ', '.join(['_'] * index + ['value'] + ['_'] * (variable_array_size_map[variable.name] - index - 1)) + ') = value' + os.linesep)
-            #                         for index in range(variable_array_size_map[variable.name])
-            #                     ]
-            #                 )
-            #                 + 'indexInto' + pascal_case(variable.name) + 'Location' + str(node_location) + ' _ _ = error "indexInto' + pascal_case(variable.name) + 'Location' + str(node_location) + ' illegal index value"' + os.linesep
-            #                 for node_location in local_var_to_nodes[variable.name]
-            #             ]
-            #         )
-            #         for variable in model.variables if is_array(variable) and deal_with_variable(variable) and is_local(variable)
-            #     ]
-            # )
-            # end of array variable indexing for non-define variables
-            # ---------------------------------------------------------------------------------------
-            # + os.linesep + '-- START OF TYPE CHECKING FUNCTIONS' + os.linesep + os.linesep
-            # + ''.join(map(create_check_value, filter(lambda var : var.model_as == 'VAR' and (blackboard_mode != is_env(var)), model.variables)))
-            # created checkValue for each variable that can be updated.
-            # ---------------------------------------------------------------------------------------
-            # + os.linesep + '-- START OF NEW ARRAY FUNCTIONS' + os.linesep + os.linesep
-            # + ''.join(
-            #     [
-            #         array_set_creator(variable)
-            #         for variable in model.variables
-            #         if is_array(variable) and deal_with_variable(variable)
-            #     ]
-            # )
-            # end of array update functions for variables.
+            + os.linesep + '-- START OF INDEX FUNCTIONS FOR ARRAYS' + os.linesep + os.linesep
+            # we don't need a special case for indexing local variables
+            # each node location is indexed the same way.
+            + ''.join(
+                [
+                    (
+                        'indexInto' + pascal_case(variable.name) + ' :: Integer ' + ('BTreeEnvironment' if is_env(variable) else ('TreeLocation BTreeBlackboard' if is_local(variable) else 'BTreeBlackboard'))  + ' -> ' + variable_type_map[variable.name] + os.linesep
+                        + (
+                            ''.join(
+                                [
+                                    ('indexInto' + pascal_case(variable.name) + ' ' + str(index) + ' ' + str(node_location) + ' = board' + pascal_case(variable.name) + 'Location' + str(node_location) + 'Index' + str(index) + os.linesep)
+                                    for index in range(variable_array_size_map[variable.name])
+                                    for node_location in local_var_to_nodes[variable.name]
+                                ]
+                            )
+                            if is_local(variable) else
+                            ''.join(
+                                [
+                                    ('indexInto' + pascal_case(variable.name) + ' ' + str(index) + ' = ' + ('env' if is_env(variable) else 'board') + pascal_case(variable.name) + 'Index' + str(index) + os.linesep)
+                                    for index in range(variable_array_size_map[variable.name])
+                                ]
+                            )
+                        )
+                        + 'indexInto' + pascal_case(variable.name) + ' _ ' + ('_ _' if is_local(variable) else '_')  + ' = error "indexInto' + pascal_case(variable.name) + ' illegal index value"' + os.linesep
+                    )
+                    for variable in model.variables if is_array(variable) and deal_with_variable(variable) and (variable.model_as != 'DEFINE' or variable.static == 'static')# and (not is_local(variable))
+                    # DEFINE variables are indexed directly, not through a special function
+                ]
+            )
             # ---------------------------------------------------------------------------------------
             + os.linesep + '-- START OF UPDATES' + os.linesep + os.linesep
             + board_env + 'Update :: ' + data_type_name + ' -> StdGen -> ' + data_type_name + os.linesep
             + board_env + 'Update ' + var_name + ' newGen = ' + var_name + ' { ' + board_env + 'Generator = newGen }' + os.linesep
             + ''.join(
                 [
-                    board_env + 'Update' + pascal_case(variable.name) + ' :: ' + data_type_name + ' -> StdGen -> ' + (create_array_signature(variable) if is_array(variable) else variable_type_map[variable.name]) + ' -> ' + data_type_name + os.linesep
+                    board_env + 'Update' + pascal_case(variable.name) + ' :: ' + data_type_name + ' -> StdGen -> ' + (('(' + ', '.join([variable_type_map[variable.name]] * variable_array_size_map[variable.name])  + ')') if is_array(variable) else variable_type_map[variable.name]) + ' -> ' + data_type_name + os.linesep
                     + board_env + 'Update' + pascal_case(variable.name) + ' ' + var_name + ' newGen newVal = ' + var_name + ' { ' + board_env + 'Generator = newGen, ' + board_env + pascal_case(variable.name) + ' = newVal' + ' }' + os.linesep
                     for variable in model.variables if variable.model_as == 'VAR' and (not is_local(variable)) and deal_with_variable(variable)
                 ]
@@ -1122,7 +912,7 @@ def dsl_to_haskell(metamodel_file, model_file, location, output_name, max_iter, 
             + (
                 ''.join(
                     [
-                        board_env + 'Update' + pascal_case(variable.name) + ' :: Integer ->' + data_type_name + ' -> StdGen -> ' + (create_array_signature(variable) if is_array(variable) else variable_type_map[variable.name]) + ' -> ' + data_type_name + os.linesep
+                        board_env + 'Update' + pascal_case(variable.name) + ' :: Integer ->' + data_type_name + ' -> StdGen -> ' + (('(' + ', '.join([variable_type_map[variable.name]] * variable_array_size_map[variable.name])  + ')') if is_array(variable) else variable_type_map[variable.name]) + ' -> ' + data_type_name + os.linesep
                         + ''.join(
                             [
                                 (board_env + 'Update' + pascal_case(variable.name) + ' ' + str(node_location) + ' ' + var_name + ' newGen newVal = ' + var_name + ' { ' + board_env + 'Generator = newGen, ' + board_env + pascal_case(variable.name) + 'Location' + str(node_location) + ' = newVal' + ' }' + os.linesep)
@@ -1166,7 +956,7 @@ def dsl_to_haskell(metamodel_file, model_file, location, output_name, max_iter, 
             + indent(2) + '-- START OF UDPATE FROZENVAR (for internal use only)' + os.linesep
             + ''.join(
                 [
-                    indent(2) + board_env + 'Update' + pascal_case(variable.name) + ' :: ' + data_type_name + ' -> StdGen -> ' + (create_array_signature(variable) if is_array(variable) else variable_type_map[variable.name]) + ' -> ' + data_type_name + os.linesep
+                    indent(2) + board_env + 'Update' + pascal_case(variable.name) + ' :: ' + data_type_name + ' -> StdGen -> ' + (('(' + ', '.join([variable_type_map[variable.name]] * variable_array_size_map[variable.name])  + ')') if is_array(variable) else variable_type_map[variable.name]) + ' -> ' + data_type_name + os.linesep
                     + indent(2) + board_env + 'Update' + pascal_case(variable.name) + ' ' + var_name + ' newGen newVal = ' + var_name + ' { ' + board_env + 'Generator = newGen, ' + board_env + pascal_case(variable.name) + ' = newVal' + ' }' + os.linesep
                     for variable in model.variables if variable.model_as == 'FROZENVAR' and (not is_local(variable)) and deal_with_variable(variable)
                 ]
@@ -1174,7 +964,7 @@ def dsl_to_haskell(metamodel_file, model_file, location, output_name, max_iter, 
             + (
                 ''.join(
                     [
-                        indent(2) + board_env + 'Update' + pascal_case(variable.name) + ' :: Integer ->' + data_type_name + ' -> StdGen -> ' + (create_array_signature(variable) if is_array(variable) else variable_type_map[variable.name]) + ' -> ' + data_type_name + os.linesep
+                        indent(2) + board_env + 'Update' + pascal_case(variable.name) + ' :: Integer ->' + data_type_name + ' -> StdGen -> ' + (('(' + ', '.join([variable_type_map[variable.name]] * variable_array_size_map[variable.name])  + ')') if is_array(variable) else variable_type_map[variable.name]) + ' -> ' + data_type_name + os.linesep
                         + ''.join(
                             [
                                 (indent(2) + board_env + 'Update' + pascal_case(variable.name) + ' ' + str(node_location) + ' ' + var_name + ' newGen newVal = ' + var_name + ' { ' + board_env + 'Generator = newGen, ' + board_env + pascal_case(variable.name) + 'Location' + str(node_location) + ' = newVal' + ' }' + os.linesep)
@@ -1301,20 +1091,10 @@ def dsl_to_haskell(metamodel_file, model_file, location, output_name, max_iter, 
         + 'import BehaviorTreeEnvironment' + os.linesep
         + 'import SereneRandomizer' + os.linesep
         + 'import SereneOperations' + os.linesep
-        + 'import qualified Data.Array as Array' + os.linesep
         + os.linesep
     )
     serene_operations = (
         'module SereneOperations where' + os.linesep
-        + 'import qualified Data.Set as Set' + os.linesep
-        + 'sereneNubInternal :: (Set.Set Integer) -> [(Integer, a)] -> [(Integer, a)]' + os.linesep
-        + 'sereneNubInternal _ [] = []' + os.linesep
-        + 'sereneNubInternal seen ((index, val) : rest)' + os.linesep
-        + '  | (Set.member index seen) = sereneNubInternal seen rest' + os.linesep
-        + '  | otherwise = (index, val) : (sereneNubInternal (Set.insert index seen) rest)' + os.linesep
-        + os.linesep
-        + 'sereneNub :: [(Integer, a)] -> [(Integer, a)]' + os.linesep
-        + 'sereneNub = sereneNubInternal Set.empty' + os.linesep
         + os.linesep
         + 'sereneXOR :: Bool -> Bool -> Bool' + os.linesep
         + 'sereneXOR True True = False' + os.linesep
@@ -1407,7 +1187,7 @@ def dsl_to_haskell(metamodel_file, model_file, location, output_name, max_iter, 
             + indent(1) + 'ghc-options: -w' + os.linesep
             + indent(1) + 'other-modules:' + os.linesep
             + (', ' + os.linesep).join([(indent(2) + os.path.splitext(os.path.basename(file_name))[0]) for file_name in os.listdir(my_location) if os.path.splitext(os.path.basename(file_name))[1] == '.hs']) + os.linesep
-            + indent(1) + 'build-depends: base, random, array, containers' + os.linesep
+            + indent(1) + 'build-depends: base, random' + os.linesep
             + indent(1) + 'hs-source-dirs: app' + os.linesep
             + indent(1) + 'default-language: Haskell2010' + os.linesep
         )
