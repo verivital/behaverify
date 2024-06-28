@@ -5,8 +5,8 @@ import docker
 
 USER = '2024_SEFM_BehaVerify'
 HOME_DIR = '/home/' + USER
-TEST_DIR = HOME_DIR + '/REPRODUCIBILITY/2024_SEFM'
-CONTAINER_NAME = 'behaverify_2024_SEFM'
+TEST_DIR = HOME_DIR + '/behaverify/REPRODUCIBILITY/2024_SEFM'
+CONTAINER_NAME = 'behaverify_2024_sefm'
 IMAGE_NAME = CONTAINER_NAME + '_img'
 
 def serene_exec(container, command, message, error_check):
