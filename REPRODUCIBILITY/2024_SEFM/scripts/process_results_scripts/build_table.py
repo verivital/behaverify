@@ -29,7 +29,8 @@ encoding_combo = {
     'invar' : ['aut', 'func', 'norm', 'no_internal', 's_var'],
     'opt' : ['no_opt', 'last_opt', 'first_opt', 'full_opt'],
     'full_opt' : ['full_opt'],
-    'simple_robot' : ['full_opt', 'full_opt_CHANGED']
+    'simple_robot' : ['full_opt', 'full_opt_CHANGED'],
+    'bigger_fish' : ['full_opt', 'full_opt_CHANGED']
 }
 encoding_name_to_result_name = {
     'aut' : 'aut_',
