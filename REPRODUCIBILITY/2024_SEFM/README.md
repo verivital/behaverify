@@ -49,7 +49,7 @@ The tests can be run using docker. We provide several methods for doing this. So
 We provide 3 scripts of each type (1 for each test from Test Information). Each of these scripts takes four command line arguments, three of which are the same.
 	
 - **/path/to/Dockerfile/Folder/** -> This should point to the folder containing the Dockerfile.
-- **/path/to/DockerImage/Folder/** -> This should point to the folder containing the Dockerimage.
+- **/path/to/DockerImage** -> This should point to  the Dockerimage.
 - **/path/to/nuXmv** -> This should point to the executable you downloaded as a prerequisite. There should be no file extension.
 - **mode** -> Required, sort of. This should be **install**, **partial**, or **full**. 
 - **/path/to/output** -> The output will be copied to /path/to/output.tar. This will not override existing files, so make sure there is no existing file.
@@ -62,7 +62,7 @@ Build Script:
 
 Load Script:
 
-	python3 load_and_run.py /path/to/DockerImage/Folder/ /path/to/nuXmv install /path/to/output
+	python3 load_and_run.py /path/to/DockerImage /path/to/nuXmv install /path/to/output
 	
 The results will be written in **/path/to/output.tar**. Extract the archive and see the Interpreting and Comparing Results section for more information.
 
@@ -74,19 +74,19 @@ Build Script:
 
 Load Script:
 
-	python3 load_and_run.py /path/to/DockerImage/Folder/ /path/to/nuXmv partial /path/to/output
+	python3 load_and_run.py /path/to/DockerImage /path/to/nuXmv partial /path/to/output
 	
 The results will be written in **/path/to/output.tar**. Extract the archive and see the Interpreting and Comparing Results section for more information.
 
-### Single Script: Full (estimated time: 13 minutes. 1 hour on Chromebook)
+### Single Script: Full (estimated time: 16 minutes. 1 hour on Chromebook)
 
 Build Script:
 
-	python3 build_and_run.py /path/to/Dockerfile/Folder/ /path/to/nuXmv partial /path/to/output
+	python3 build_and_run.py /path/to/Dockerfile/Folder/ /path/to/nuXmv full /path/to/output
 
 Load Script:
 
-	python3 load_and_run.py /path/to/DockerImage/Folder/ /path/to/nuXmv partial /path/to/output
+	python3 load_and_run.py /path/to/DockerImage /path/to/nuXmv full /path/to/output
 	
 The results will be written in **/path/to/output.tar**. Extract the archive and see the Interpreting and Comparing Results section for more information.
 
@@ -96,11 +96,11 @@ The results will be written in **/path/to/output.tar**. Extract the archive and 
 
 This section will explain how to utilize either the provided docker image or Dockerfile to recreate the tests using docker.
 
-### 1a. Creation of the Docker Image and Container (estimated time: 3 minutes. 5 minutes on Chromebook )
+### 1a. Creation of the Docker Image and Container (estimated time: 1 minutes. 5 minutes on Chromebook )
 
 You only need to execute 1a or 1b. See 1b for steps using the image. However, should you wish to build the docker image yourself, please run
 
-	./docker_build_script.sh
+	python3 reinstall.py /path/to/Dockerfile/folder
 
 This will create a docker image named behaverify\_img with the tag latest. It will then also create a container named behaverify from that image.
 
@@ -108,7 +108,7 @@ This will create a docker image named behaverify\_img with the tag latest. It wi
 
 You only need to execute 1a or 1b. See 1a for steps using the Dockerfile. However, should you wish to load a prebuilt image yourself, please run
 
-	./docker_load_script.sh
+	python3 load_image.py /path/to/Dockerimage
 
 This will create a docker image named behaverify\_img with the tag latest. It will then also create a container named behaverify from that image.
 
@@ -119,25 +119,25 @@ The scripts below assume that the docker container is named behaverify. If you r
 
 Next, please run
 
-	./docker_add_nuxmv.sh /path/to/nuXmv
+	python3 add_nuxmv.py /path/to/nuXmv
 
 This will copy nuXmv from the path you provided to the correct location in the docker and ensure it is runable and an executable. Note that you should not point to the folder containing nuXmv, but to nuXmv itself, and that the nuXmv version should be the Linux version.
 
-### 3. Minimal Test (estimated time: 30 seconds. 1 minute on Chromebook)
+### 3. Install Test (estimated time: 30 seconds. 1 minute on Chromebook)
 
 The full test takes quite a while to run. To ensure everything works right, please run
 
-	./docker_replicate_results.sh /path/to/writable/location/ behaverify_nfm_install_test
+	python3 generate.py install /path/to/output
 
-### 4. Partial Test (estimated time: 10 minutes. 35 minutes on Chromebook)
+### 4. Partial Test (estimated time: 1 minute. 35 minutes on Chromebook)
 
 The full test takes quite a while to run. To ensure everything works right, please run
 
-	./docker_replicate_results.sh /path/to/writable/location/ behaverify_nfm_partial_results
+	python3 generate.py partial /path/to/output
 
-### 5. Full Results (estimated time: 17 minutes. 1 hour on Chromebook)
+### 5. Full Results (estimated time: 15 minutes. 1 hour on Chromebook)
 
-	./docker_replicate_results.sh /path/to/writable/location/ behaverify_nfm_full_results
+	python3 generate.py full /path/to/output
 
 ---
 
@@ -313,7 +313,7 @@ Our SEFM paper compared to MoVe4BT. See https://move4bt.github.io/ . We found th
 5. Click verifications.
 6. The GUI may freeze. Feel free to ignore the wait/force quit option, or repeatedly click wait. Eventually, it will print results, or produce a blank screen.
 
-The code for generating the files is in **/behaverify/REPRODUCIBILITY/2024\_SEFM/MoVe4BT\_XML\_Files/create\_bigger\_fish\_MoVe4BT\_xml.py**. Run using the following command
+The code for generating the files is in **/behaverify/REPRODUCIBILITY/2024\_SEFM/examples/bigger\_fish/create\_bigger\_fish\_MoVe4BT\_xml.py**. Run using the following command
 
 ```
 python3 create_bigger_fish_MoVe4BT_xml.py /path/to/output/location min max step
@@ -325,65 +325,55 @@ Where the path is where the files will be outputted (must be a folder, do not in
 python3 create_bigger_fish_MoVe4BT_xml.py /path/to/output/location 50 1000 50
 ```
 
+There is a similar simple robot file.
+
+**ADDITIONALLY**, we provide a .sh script in **/behaverify/REPRODUCIBILTY/2024\_SEFM/MoVe4BT/install\_MoVe4BT.sh** for instlal MoVe4BT. It is possible to run MoVe4BT through docker webtop, but this is not something we were able to automate.
+
 ---
 
 # Interpreting and Comparing Results
 
 Upon completing any of the test scripts, you should find that /path/to/writable/location/ has a folder containing the results. The name of this folder depends on which test was run. See the specific tests for details. Within this folder, you should find the following folders, each of which corresponds to an experiment:
 
-- ANSR\_no\_net -> This is the ISR experiment. See **Section 4.4** and **Section 7.1**.
-- bigger\_fish\_selector -> This is the Bigger Fish experiment. See **Section 7.2**.
-- simple\_robot -> This experiment is the Simple Robot experiment. See **Section 7.3**.
+- bigger\_fish -> This is the Bigger Fish experiment. See **Section 7.1**.
+- ISR -> This is the ISR experiment. See **Section 4.4** and **Section 7.3**.
+- simple\_robot -> This experiment is the Simple Robot experiment. See **Section 7.2**.
 - clean_all.sh -> This is a script for removing results. Ignore it.
 
-## Minimal Test
+## Install Test
 
-The minimal test can only be used to confirm the installation worked.
-
-The results should be in **/path/to/writable/location/behaverify\_\nfm\_install\_test/**.
+The install test can only be used to confirm the installation worked.
 
 ### What to look for
 
 As mentioned, you will not be able to find anything to compare. However, please confirm that the following files exist:
 
-- **bigger\_fish\_selector/processed\_data/pictures/opt/bigger\_fish\_selector\_ctl.png** -> This will have 4 lines with 2 data points, representing the performance of the various optimizations.
-- **simple\_robot/processed\_data/pictures/opt/**
-	- **simple\_robot\_ctl.png** -> This will have 4 lines with 2 data points, representing the performance of the various optimizations.
-	- **simple\_robot\_reachable.png** -> This will have 4 lines with 2 data points, representing the performance of the various optimizations. However, 2 of the lines will overlap, so it may look like 2 lines.
-	- **simple\_robot\_total.png** -> This will have 4 lines with 2 data points, representing the performance of the various optimizations. However, 2 of the lines will overlap, so it may look like 2 lines.
+- **bigger\_fish/processed\_data/pictures/bigger\_fish/bigger\_fish_ltl.png** -> This will have 4 lines with 2 data points, representing the performance of the various optimizations.
+- **simple\_robot/processed\_data/pictures/simple\_robot\_ltl.png**
 
 ## Partial Test
 
-The partial test is between the minimal and full test. Some, but not all, of the results in the paper are generated through this test.
+The partial test is between the install and full test. Some, but not all, of the results in the paper are generated through this test.
 
-The results should be in **/path/to/writable/location/behaverify\_nfm\_partial\_results/**.
+The results should be in **/path/to/output/extracted/examples/**.
 
 ### What to look for
 
-- **bigger\_fish\_selector/processed\_data/pictures/opt/bigger\_fish\_selector\_ctl.png** -> This will have all of the timing results for BehaVerify used for the Bigger Fish experiment. See **Section 7.2**, **Figure 7**. Note that this does **not** include the timing results for MoVe4BT. As such, the scale may look different. Please try to compare actual numbers rather than the shape of the graph. All of the optimizations should be nearly overlapping. This is a timing experiment, so the results may differ somewhat.
-- **bigger\_fish\_selector/smv/first\_opt\_bigger\_selector\_1000.smv** -> This will have the model used as input to nuXmv for the Bigger Fish experiment when there are 1001 checks. Please open the file. Then search for **MODULE define\_nodes**. Here each of the nodes will be listed and assigned a number, starting from 0. Scrolling down will reveal the last node to be **bigger_fish := 1252**. Since we started at 0, there are 1253 nodes total. This confirms the claim in the caption of **Section 7.2**, **Figure 7**.
-- **simple\_robot/processed\_data/pictures/opt/**
-	- **simple\_robot\_ctl.png** -> This will have all of the timing results for the Simple Robot experiment. See **Section 7.3**, **Figure 9**, left graph. This is a timing experiment, so results may differ somewhat.
-	- **simple\_robot\_reachable.png** -> This will have all of the reachability results for the Simple Robot experiment. See **Section 7.3**, **Figure 9**, center graph. The results should match exactly.
-	- **simple\_robot\_total.png** -> This will have all of the total state results for the Simple Robot experiment. See **Section 7.3**, **Figure 9**, right graph. The results should match exactly.
+- **bigger\_fish/processed\_data/pictures/full\_opt/bigger\_fish\_ltl.png** -> This will have some of the timing results for BehaVerify used for the Bigger Fish experiment. See **Section 7.1**, **Figure 5**. Note that this does **not** include the timing results for MoVe4BT. As such, the scale may look different. Please try to compare actual numbers rather than the shape of the graph. This is a timing experiment, so the results may differ somewhat.
+- **simple\_robot/processed\_data/pictures/simple\_robot\_ltl.png** -> This will have some of the timing results for BehaVerivy used for Simple Robot experiment. See **Section 7.2**, **Figure 7**. Note that this graph does **not** include the timing results for MoVe4BT. As such, the scale may look different. Please try to compare actual numbers rather than the shape of the graph. This is a timing experiment, so the results may differ somewhat.
 
 ## Full Test
 
 The Full test generates all the results used in the paper.
 
-The results should be in **/path/to/writable/location/behaverify\_sefm\_full\_results/**.
+The results should be in **/path/to/output/extracted/examples/**.
 
 ### What to look for
 
-- **ANSR\_no\_net/processed\_data/pictures/ANSR\_no\_net\_5\_counterexample\_line.png** -> This will be the visualization of the counterexample generated by nuXmv for the ISR Experiment. See **Section 7.1**, **Figure 5**. As we do not have access to the nuXmv code, we cannot guarantee that the counterexample will be identical. However, there **will** be a counterexample. If there is not, something has gone wrong. Additionally, please consider opening **ANSR\_no\_net\_5\_counterexample\_animate.gif** for an animated version that might be easier to understand.
-- **ANSR\_no\_net/results/CTL\_full\_opt\_ANSR\_no\_net\_5.txt** -> This is the output generated by nuXmv for the ISR Experiment when the target can move every 5 turns. This will contain the trace that demonstrates the counterexample. This counterexample was visualized in the above file.
-- **ANSR\_no\_net/results/CTL\_full\_opt\_ANSR\_no\_net\_10.txt** -> This is the output generated by nuXmv for the ISR Experiment when the target can move every 10 turns. This will contain the claim that the specification that victory is Always Finally (AF) achieved.
-- **bigger\_fish\_selector/processed\_data/pictures/opt/bigger\_fish\_selector\_ctl.png** -> This will have all of the timing results for BehaVerify used for the Bigger Fish experiment. See **Section 7.2**, **Figure 7**. Note that this does **not** include the timing results for MoVe4BT. As such, the scale may look different. Please try to compare actual numbers rather than the shape of the graph. All of the optimizations should be nearly overlapping. This is a timing experiment, so the results may differ somewhat.
-- **bigger\_fish\_selector/smv/first\_opt\_bigger\_selector\_1000.smv** -> This will have the model used as input to nuXmv for the Bigger Fish experiment when there are 1001 checks. Please open the file. Then search for **MODULE define\_nodes**. Here each of the nodes will be listed and assigned a number, starting from 0. Scrolling down will reveal the last node to be **bigger_fish := 1252**. Since we started at 0, there are 1253 nodes total. This confirms the claim in the caption of **Section 7.2**, **Figure 7**.
-- **simple\_robot/processed\_data/pictures/opt/**
-	- **simple\_robot\_ctl.png** -> This will have all of the timing results for the Simple Robot experiment. See **Section 7.3**, **Figure 9**, left graph. This is a timing experiment, so results may differ somewhat.
-	- **simple\_robot\_reachable.png** -> This will have all of the reachability results for the Simple Robot experiment. See **Section 7.3**, **Figure 9**, center graph. The results should match exactly.
-	- **simple\_robot\_total.png** -> This will have all of the total state results for the Simple Robot experiment. See **Section 7.3**, **Figure 9**, right graph. The results should match exactly.
+
+- **bigger\_fish/processed\_data/pictures/full\_opt/bigger\_fish\_ltl.png** -> This will have all of the timing results for BehaVerify used for the Bigger Fish experiment. See **Section 7.1**, **Figure 5**. Note that this does **not** include the timing results for MoVe4BT. As such, the scale may look different. Please try to compare actual numbers rather than the shape of the graph. This is a timing experiment, so the results may differ somewhat.
+- **ISR/processed\_data/pictures/counterexample\_for\_5/11x11\_line.png** -> This should correspond to **Section 7.3**, **Figure 8**.
+- **simple\_robot/processed\_data/pictures/simple\_robot\_ltl.png** -> This will have all of the timing results for BehaVerivy used for Simple Robot experiment. See **Section 7.2**, **Figure 7**. Note that this graph does **not** include the timing results for MoVe4BT. As such, the scale may look different. Please try to compare actual numbers rather than the shape of the graph. This is a timing experiment, so the results may differ somewhat.
 
 ---
 
@@ -402,16 +392,9 @@ The results should be in **/path/to/writable/location/behaverify\_sefm\_full\_re
 
 # Directory Explained
 
-- **behaverify\_nfm\_full\_results.sh** -> This is the script to locally run everything for the SEFM results. It is also used by the docker scripts.
-- **behaverify\_nfm\_partial\_results.sh** -> This is the script to locally run almost everything for the SEFM results. It is also used by the docker scripts.
-- **behaverify\_nfm\_partial\_results.sh** -> This is the script to locally test the install. It is also used by the docker scripts.
-- **build\_and\_run.sh** -> This is used to build the docker container and image from the Dockerfile, add nuXmv, and then run a test.
-- **clean\_docker.sh** -> This is a script used to remove all existing docker containers and images. It is not executed by any of the scripts. It is provided for convenience.
-- **docker\_add\_nuxmv.sh** -> This is used to add nuXmv to a docker container.
-- **docker\_build\_script.sh** ->  This is used to build the docker container and image from the Dockerfile.
-- **docker\_load\_script.sh** ->  This is used to build the docker container and image from the Docker Image.
-- **docker\_replicate\_results.sh** -> This is used to run a test.
-- **docker\_save\_image.sh** -> This is used to save a Docker image. It is not executed by any of the scripts. It is provided for convenience.
+- **behaverify\_sefm\_full\_results.sh** -> This is the script to locally run everything for the SEFM results. It is also used by the docker scripts.
+- **behaverify\_sefm\_install\_results.sh** -> This is the script to locally test the install. It is also used by the docker scripts.
+- **behaverify\_sefm\_partial\_results.sh** -> This is the script to locally run almost everything for the SEFM results. It is also used by the docker scripts.
 - **Dockerfile** -> This is a Dockerfile for BehaVerify SEFM edition.
 - **load\_and\_run.sh** -> This is used to load the docker container and image from the Docker image, add nuXmv, and then run a test.
 - **nuXmv** -> This doesn't exist but you should make it exist if you plan to run tests locally.
@@ -419,18 +402,18 @@ The results should be in **/path/to/writable/location/behaverify\_sefm\_full\_re
 - **version\_info.txt** -> Information about what versions of stuff was used.
 - **examples** -> This contains the Experiments to be run
 	- **clean\_all.sh** -> This is used to remove all existing experiment results.
-	- **ANSR\_no\_net** -> This contains the ISR experiment
-		- **ANSR\_no\_net\_5.tree** -> This is the DSL specification for when the target can move every 5 turns.
-		- **ANSR\_no\_net\_10.tree** -> This is the DSL specification for when the target can move every 10 turns.
-		- **parse\_nuxmv\_output.py** -> This is used to visualize the counterexample.
-		- **parse\_python\_output.py** -> This is used to visualize a random trace. This was used to generate **Section 4.4**, **Figure 3**. It is not used in the tests.
-		- **processed\_data/pictures** -> This will contain the counterexample visualization.
-		- **results** -> This will contain the outputs of nuXmv.
-		- **smv** -> This will contain the nuXmv models generated by BehaVerify.
 	- **bigger\_fish\_selector** -> This contains the Bigger Fish experiment.
 		- **create\_bigger\_fish.py** -> This is used to generate the DSL files for the bigger fish experiment.
 		- **processed\_data/pictures/opt** -> This will contain the graphs with timing and state results.
 		- **processed\_data/tables/opt** -> This will contain the tables with timing and state results.
+		- **results** -> This will contain the outputs of nuXmv.
+		- **smv** -> This will contain the nuXmv models generated by BehaVerify.
+	- **ISR** -> This contains the ISR experiment
+		- **ISR\_5.tree** -> This is the DSL specification for when the target can move every 5 turns.
+		- **ISR\_10.tree** -> This is the DSL specification for when the target can move every 10 turns.
+		- **parse\_nuxmv\_output.py** -> This is used to visualize the counterexample.
+		- **parse\_python\_output.py** -> This is used to visualize a random trace. This was used to generate **Section 4.4**, **Figure 3**. It is not used in the tests.
+		- **processed\_data/pictures** -> This will contain the counterexample visualization.
 		- **results** -> This will contain the outputs of nuXmv.
 		- **smv** -> This will contain the nuXmv models generated by BehaVerify.
 		- **tree** This will contain the DSL specifications for the Bigger Fish models.
@@ -444,6 +427,7 @@ The results should be in **/path/to/writable/location/behaverify\_sefm\_full\_re
 		- **smv** -> This will contain the nuXmv models generated by BehaVerify.
 		- **tree** This will contain the DSL specifications for the Bigger Fish models.
 - **metamodel/behaverify.tx** -> This is the file containing the structure of the DSL. TextX uses it to parse .tree files.
+- **python\_scripts** -> These are used to control docker.
 - **scripts** -> This folder contains various scripts for building and running experiments. We will not describe all of them.
 - **src** -> This contains the source code for BehaVerify.
   - **behaverify\_common.py** -> This contains methods used by multiple parts of BehaVerify.
