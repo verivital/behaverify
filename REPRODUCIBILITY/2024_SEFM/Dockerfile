@@ -42,10 +42,10 @@ RUN chmod -R +x /home/$USER/behaverify/REPRODUCIBILITY/2024_SEFM/scripts/process
 RUN chmod -R +x /home/$USER/behaverify/REPRODUCIBILITY/2024_SEFM/scripts/test_scripts/*.sh
 
 RUN python3 -m venv /home/$USER/python_venvs/behaverify
-RUN /home/$USER/python_venvs/behaverify/bin/python3 -m pip install -- upgrade pip
+RUN /home/$USER/python_venvs/behaverify/bin/python3 -m pip install --upgrade pip
 RUN /home/$USER/python_venvs/behaverify/bin/python3 -m pip install -r /home/$USER/behaverify/REPRODUCIBILITY/2024_SEFM/requirements/core.txt
 RUN python3 -m venv /home/$USER/python_venvs/results
-RUN /home/$USER/python_venvs/results/bin/python3 -m pip install -- upgrade pip
+RUN /home/$USER/python_venvs/results/bin/python3 -m pip install --upgrade pip
 RUN /home/$USER/python_venvs/results/bin/python3 -m pip install -r /home/$USER/behaverify/REPRODUCIBILITY/2024_SEFM/requirements/results.txt
 
 WORKDIR /home/$USER

@@ -20,7 +20,7 @@ Finally, note that this is a .md file, and as such, we escape various characters
 
 1. docker with the ability to run commands as a regular user (see https://docs.docker.com/engine/install/linux-postinstall/ ). Additionally, we will be using Ubuntu 22.04 inside docker. Some users appear to have issues with running commands like update or upgrade in docker when using Ubuntu 22.04; we do not have a workaround for this.
 2. nuXmv (see  https://nuxmv.fbk.eu/download.html or https://nuxmv.fbk.eu/theme/download.php?file=nuXmv-2.0.0-linux64.tar.gz ). You only need to download nuXmv. There should be no installation. Please ensure you download the Linux 64-bit x86 version 2.0.0 (October 14, 2019). The executable will be located in **nuXmv-2.0.0-linux64/nuXmv-2.0.0-Linux/bin/nuXmv**. There should be **NO FILE EXTENSION**.
-3. The scripts assume you are able to run bash scripts. These have **only been tested on Ubuntu**. If you cannot run the scripts, please run the commands present in the bash scripts manually. Note that this will require arguments to replaced. Specifically, $1 means the first argument provided to the bash script, $2 means the second argument provided to the bash script, etc.
+3. If you choose to use Docker, we assume you have access to Python3. If you choose to run locally, we assume you are able to run bash scripts. These have **only been tested on Ubuntu**. If you cannot run the scripts, please run the commands present in the bash scripts manually. Note that this will require arguments to replaced. Specifically, $1 means the first argument provided to the bash script, $2 means the second argument provided to the bash script, etc.
 
 ## nuXmv
 
@@ -29,11 +29,11 @@ Per the licensing agreement of nuXmv (see https://nuxmv.fbk.eu/downloads/LICENSE
 
 # Test Information
 
-1. The Minimal Test is mostly to test installation. It is very fast.
+1. The Install Test is mostly to test installation. It is very fast.
 2. The Partial Test is very fast. It produces all the BehaVerify results for Bigger Fish and Simple Robot. It does not run the ISR example. The comparison to MoVe4BT requires manually installing MoVe4BT and running the files individually. However, we do provide the XML files used to load the experiments we used.
 3. The Full test replicates all results for BehaVerify. The comparison to MoVe4BT requires manually installing MoVe4BT and running the files individually. However, we do provide the XML files used to load the experiments we used.
 4. The results in the paper were generated using a Dell Inc. OptiPlex 7040 with 64 GiB of Memory with an Intel i7–6700 CPU @ 3.40GHz with 8 cores.
-5. We have confirmed that an old Chromebook using the Linux development environment is capable of running all the tests. The minimal and partial tests complete fairly quickly, but the full test is rather slow. Obviously, your machines capabilities will change the exact numbers. The point, however, is that you do not need a powerful machine to run these tests.
+5. We have confirmed that an old Chromebook using the Linux development environment is capable of running all the tests. The install and partial tests complete fairly quickly, but the full test is rather slow. Obviously, your machines capabilities will change the exact numbers. The point, however, is that you do not need a powerful machine to run these tests.
 
 ---
 
@@ -43,50 +43,52 @@ The tests can be run using docker. We provide several methods for doing this. So
 
 ## Single Script Options
 
-- Build Scripts -> These scripts use the Dockerfile to build a new image and then create a container. These scripts must be run in the same folder as the Dockerfile.
-- Load Scripts -> These scripts load the provided image and then create a container. These scripts must be run in the same folder as behaverify_image.tar.
+- Build Scripts -> These scripts use the Dockerfile to build a new image and then create a container.
+- Load Scripts -> These scripts load the provided image and then create a container.
 
-We provide 3 scripts of each type (1 for each test from Test Information). Each of these scripts takes three command line arguments.
+We provide 3 scripts of each type (1 for each test from Test Information). Each of these scripts takes four command line arguments, three of which are the same.
 	
-- **/path/to/nuXmv** -> Required. This should point to the executable you downloaded as a prerequisite. There should be no file extension.
-- **/path/to/writable/location/** -> Required. This should point to a folder where the results will be written. The final **/** is optional.
-- **mode** -> Required, sort of. This should be **test**, **partial**, or **full**. It is used to select the tests to run. It will default to **test** if it doesn't match any of the options.
+- **/path/to/Dockerfile/Folder/** -> This should point to the folder containing the Dockerfile.
+- **/path/to/DockerImage/Folder/** -> This should point to the folder containing the Dockerimage.
+- **/path/to/nuXmv** -> This should point to the executable you downloaded as a prerequisite. There should be no file extension.
+- **mode** -> Required, sort of. This should be **install**, **partial**, or **full**. 
+- **/path/to/output** -> The output will be copied to /path/to/output.tar. This will not override existing files, so make sure there is no existing file.
 
-### Single Script: Minimal (estimated time: 4 minutes. 6 minutes on Chromebook)
+### Single Script: Minimal (estimated time: 3 minutes. 6 minutes on Chromebook)
 
 Build Script:
 
-	./build_and_run.sh /path/to/nuXmv /path/to/writable/location/ test
+	python3 build_and_run.py /path/to/Dockerfile/Folder/ /path/to/nuXmv install /path/to/output
 
 Load Script:
 
-	./load_and_run.sh /path/to/nuXmv /path/to/writable/location/ test
+	python3 load_and_run.py /path/to/DockerImage/Folder/ /path/to/nuXmv install /path/to/output
 	
-The results will be written in **/path/to/writable/location/behaverify\_nfm\_install\_test**. See the Interpreting and Comparing Results section for more information.
+The results will be written in **/path/to/output.tar**. Extract the archive and see the Interpreting and Comparing Results section for more information.
 
-### Single Script: Partial (estimated time: 13 minutes. 40 minutes on Chromebook)
+### Single Script: Partial (estimated time: 8 minutes. 40 minutes on Chromebook)
 
 Build Script:
 
-	./build_and_run.sh /path/to/nuXmv /path/to/writable/location/ partial
+	python3 build_and_run.py /path/to/Dockerfile/Folder/ /path/to/nuXmv partial /path/to/output
 
 Load Script:
 
-	./load_and_run.sh /path/to/nuXmv /path/to/writable/location/ partial
+	python3 load_and_run.py /path/to/DockerImage/Folder/ /path/to/nuXmv partial /path/to/output
 	
-The results will be written in **/path/to/writable/location/behaverify\_nfm\_partial\_results**. See the Interpreting and Comparing Results section for more information.
+The results will be written in **/path/to/output.tar**. Extract the archive and see the Interpreting and Comparing Results section for more information.
 
-### Single Script: Full (estimated time: 20 minutes. 1 hour on Chromebook)
+### Single Script: Full (estimated time: 13 minutes. 1 hour on Chromebook)
 
 Build Script:
 
-	./build_and_run.sh /path/to/nuXmv /path/to/writable/location/ full
-	
+	python3 build_and_run.py /path/to/Dockerfile/Folder/ /path/to/nuXmv partial /path/to/output
+
 Load Script:
 
-	./load_and_run.sh /path/to/nuXmv /path/to/writable/location/ full
+	python3 load_and_run.py /path/to/DockerImage/Folder/ /path/to/nuXmv partial /path/to/output
 	
-The results will be written in **/path/to/writable/location/behaverify\_nfm\_full\_results**. See the Interpreting and Comparing Results section for more information.
+The results will be written in **/path/to/output.tar**. Extract the archive and see the Interpreting and Comparing Results section for more information.
 
 ---
 
