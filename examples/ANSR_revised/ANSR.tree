@@ -1,0 +1,209 @@
+configuration {
+}
+enumerations {
+}
+
+constants {
+    path_max := 20
+}
+
+variables {
+    variable { bl drone_x VAR [0, 399] assign{result{0}}}
+    variable { bl drone_y VAR [0, 399] assign{result{0}}}
+    variable { bl drone_z VAR [0, 25] assign{result{0}}}
+    variable { bl drone_x_delta VAR {-1, 0, 1} assign{result{0}}}
+    variable { bl drone_y_delta VAR {-1, 0, 1} assign{result{0}}}
+    variable { bl destination_x VAR [0, 399] assign{result{0}}}
+    variable { bl destination_y VAR [0, 399] assign{result{0}}}
+    variable { bl destination_z VAR [0, 25] assign{result{0}}}
+    variable { bl next_x VAR [0, 399] assign{result{0}}}
+    variable { bl next_y VAR [0, 399] assign{result{0}}}
+    variable { bl next_z VAR [0, 25] assign{result{0}}}
+    variable { bl next_x_delta VAR {-1, 0, 1} assign{result{0}}}
+    variable { bl next_y_delta VAR {-1, 0, 1} assign{result{0}}}
+    variable { local success_read VAR BOOLEAN assign{result{False}}}
+    variable { bl stuck_counter VAR [0, 10] assign{result{0}}}
+    variable { env fake VAR INT [0, 1] assign{result{0}}}
+}
+
+environment_update {
+}
+
+checks {
+    check {
+	not_at_destination
+	arguments{}
+	read_variables {drone_x, drone_y, drone_z, destination_x, destination_y, destination_z}
+	condition {
+	    (and,
+		(eq, drone_x, destination_x),
+		(eq, drone_y, destination_y),
+		(eq, drone_z, destination_z)
+	    )
+	}
+    }
+}
+
+environment_checks {
+}
+
+actions {
+    action {
+	read_position
+	arguments{}
+	local_variables{success_read}
+	read_variables{}
+	write_variables{drone_x, drone_y, drone_z}
+	initial_values{}
+	update{
+	    read_environment {
+		read_position_function
+		condition {success_read}
+		variable_statement{
+		    drone_x
+		    assign{result{drone_x, (max, 0, (sub, drone_x, 1)), (min, 399, (add, drone_x, 1))}}
+		}
+		variable_statement{
+		    drone_y
+		    assign{result{drone_y, (max, 0, (sub, drone_y, 1)), (min, 399, (add, drone_y, 1))}}
+		}
+		variable_statement{
+		    drone_z
+		    assign{result{drone_z, (max, 0, (sub, drone_z, 1)), (min, 399, (add, drone_z, 1))}}
+		}
+	    }
+	    return_statement{
+		case{success_read}result{success}result{running}
+	    }
+	}
+    }
+    action {
+	read_destination
+	arguments{}
+	local_variables{success_read}
+	read_variables{}
+	write_variables{destination_x, destination_y, destination_z}
+	initial_values{}
+	update{
+	    read_environment {
+		read_destination_function
+		condition {success_read}
+		variable_statement{
+		    destination_x
+		    assign{result{destination_x, (max, 0, (sub, destination_x, 1)), (min, 399, (add, destination_x, 1))}}
+		}
+		variable_statement{
+		    destination_y
+		    assign{result{destination_y, (max, 0, (sub, destination_y, 1)), (min, 399, (add, destination_y, 1))}}
+		}
+		variable_statement{
+		    destination_z
+		    assign{result{destination_z, (max, 0, (sub, destination_z, 1)), (min, 399, (add, destination_z, 1))}}
+		}
+	    }
+	    return_statement{
+		case{success_read}result{success}result{running}
+	    }
+	}
+    }
+    action {
+	compute_next
+	arguments{}
+	local_variables{}
+	read_variables{drone_x, drone_y, drone_z, drone_x_delta, drone_y_delta}
+	write_variables{path_index, stuck_counter, path}
+	initial_values{}
+	update{
+	    variable_statement {
+		path_index
+		assign{result{0}}
+	    }
+	    variable_statement {
+		stuck_counter
+		assign{result{0}}
+	    }
+	    read_environment{
+		compute_path_function
+		variable_statement {
+		    path
+		    iterative_assign, index_var
+		    condition {(eq, index_var, 0)} assign{result{drone_x}}
+		    condition {(eq, index_var, 1)} assign{result{drone_y}}
+		    condition {(eq, index_var, 2)} assign{result{drone_z}}
+		    condition {(eq, (mod, index_var, 3), 0)} assign{result{
+			    (min, 399, (add, 1, (index, path, constant_index (mult, 3, (sub, index_var, 1))))),
+			    (index, path, constant_index (mult, 3, (sub, index_var, 1))),
+			    (max, 0, (sub, 1, (index, path, constant_index (mult, 3, (sub, index_var, 1)))))
+			}
+		    }
+		    condition {(eq, (mod, index_var, 3), 1)} assign{result{
+			    (min, 399, (add, 1, (index, path, constant_index (add, 1, (mult, 3, (sub, index_var, 1)))))),
+			    (index, path, constant_index (add, 1, (mult, 3, (sub, index_var, 1)))),
+			    (max, 0, (sub, 1, (index, path, constant_index (add, 1, (mult, 3, (sub, index_var, 1))))))
+			}
+		    }
+		    condition {(eq, (mod, index_var, 3), 2)} assign{result{
+			    (min, 399, (add, 1, (index, path, constant_index (add, 2, (mult, 3, (sub, index_var, 1)))))),
+			    (index, path, constant_index (add, 2, (mult, 3, (sub, index_var, 1)))),
+			    (max, 0, (sub, 1, (index, path, constant_index (add, 2, (mult, 3, (sub, index_var, 1))))))
+			}
+		    }
+		    assign{result{0}}
+		}
+	    }
+	    return_statement{result{success}}
+	}
+    }
+    action {
+	send_path
+	local_variables{}
+	read_variables{path}
+	write_variables{}
+	initial_values{}
+	update{
+	    write_environment{
+		send_path_function
+		variable_statement{
+		    fake
+		    assign{result{0}}
+		}
+	    }
+	    return_statement{result{success}}
+	}
+    }
+}
+sub_trees {
+}
+
+tree {
+    composite{ drone_control sequence children{
+	    read_position {}
+	    composite{ new_path_reason selector children{
+		    composite{ at_destination_sequence sequence children{
+			    at_destination {}
+			    read_destination {} #{This needs to return running if it fails}#
+			}
+		    }
+		    composite{ stuck_sequence sequence children{
+			    same_cell : in_cell{}
+			    increment_counter {}
+			    stuck_in_cell {}
+			}
+		    }
+		    composite{ left_path_sequence sequence children{
+			    cell_changed_update {}
+			    decorator { cell_swap inverter child {next_cell : in_cell{}}}
+			}
+		    }
+		}
+	    }
+	    compute_path {}
+	    send_path {}
+}
+
+tick_prerequisite {
+    True
+}
+
+specifications {
+}
