@@ -8,6 +8,7 @@ constants {
 }
 
 variables {
+    variable { bl map_exists VAR BOOLEAN assign{result{False}}}
     variable { bl drone_x VAR [0, x_max] assign{result{0}}}
     variable { bl drone_y VAR [0, y_max] assign{result{0}}}
     variable { bl drone_z VAR [0, z_max] assign{result{0}}}
@@ -19,13 +20,14 @@ variables {
     variable { bl destination_x VAR [0, x_max] assign{result{0}}}
     variable { bl destination_y VAR [0, y_max] assign{result{0}}}
     variable { bl destination_z VAR [0, z_max] assign{result{0}}}
+    variable { bl valid_destination VAR BOOLEAN assign{result{False}}}
     variable { bl next_x VAR [0, x_max] assign{result{0}}}
     variable { bl next_y VAR [0, y_max] assign{result{0}}}
     variable { bl next_z VAR [0, z_max] assign{result{0}}}
     variable { bl next_x_delta VAR {-1, 0, 1} assign{result{0}}}
     variable { bl next_y_delta VAR {-1, 0, 1} assign{result{0}}}
     variable { local success_read VAR BOOLEAN assign{result{False}}}
-    variable { env fake VAR INT [0, 1] assign{result{0}}}
+    variable { env fake VAR [0, 1] assign{result{0}}}
 }
 
 environment_update {
@@ -43,6 +45,12 @@ checks {
 		(eq, drone_z, destination_z)
 	    )
 	}
+    }
+    check {
+	valid_destination_check
+	arguments {}
+	read_variables{valid_destination}
+	condition{valid_destination}
     }
 }
 
@@ -72,7 +80,8 @@ actions {
 	    }
 	    read_environment {
 		read_position_function
-		condition {success_read}
+		condition_variable {success_read}
+		condition {True}
 		variable_statement{
 		    drone_x
 		    assign{result{drone_x, (max, 0, (sub, drone_x, 1)), (min, x_max, (add, drone_x, 1))}}
@@ -115,9 +124,7 @@ actions {
 		}
 				
 	    }
-	    return_statement{
-		case{success_read}result{success}result{running}
-	    }
+	    return_statement{result{success}}
 	}
     }
     action {
@@ -130,7 +137,8 @@ actions {
 	update{
 	    read_environment {
 		read_destination_function
-		condition {success_read}
+		condition_variable {success_read}
+		condition{True}
 		variable_statement{
 		    destination_x
 		    assign{result{destination_x, (max, 0, (sub, destination_x, 1)), (min, x_max, (add, destination_x, 1))}}
@@ -150,15 +158,58 @@ actions {
 	}
     }
     action {
+	request_new_destination
+	arguments{}
+	local_variables{}
+	read_variables{}
+	write_variables{}
+	initial_values{}
+	update{
+	    write_environment {
+		request_new_destination_function
+		variable_statement {
+		    fake
+		    assign{result{0}}
+		}
+	    }
+	    return_statement{
+		result{failure}
+	    }
+	}
+    }
+    action {
+	read_map
+	arguments{}
+	local_variables{success_read}
+	read_variables{}
+	write_variables{map_exists}
+	initial_values{}
+	update{
+	    read_environment {
+		read_map_function
+		condition {True}
+		variable_statement{
+		    map_exists
+		    assign{result{True}}
+		}
+	    }
+	    return_statement{
+		case{map_exists}result{success}result{failure}
+	    }
+	}
+    }
+    action {
 	compute_next
 	arguments{}
 	local_variables{}
 	read_variables{drone_x, drone_y, drone_z, drone_x_delta, drone_y_delta}
-	write_variables{next_x, next_y, next_z}
+	write_variables{next_x, next_y, next_z, valid_destination}
 	initial_values{}
 	update{
 	    read_environment{
 		compute_path_function
+		condition_variable {valid_destination}
+		condition {True}
 		variable_statement {
 		    next_x
 		    assign{result{0}}
@@ -172,11 +223,12 @@ actions {
 		    assign{result{0}}
 		}
 	    }
-	    return_statement{result{success}}
+	    return_statement{case{valid_destination}result{success}result{failure}}
 	}
     }
     action {
 	send_next
+	arguments{}
 	local_variables{}
 	read_variables{next_x, next_y, next_z}
 	write_variables{}
@@ -198,14 +250,24 @@ sub_trees {
 
 tree {
     composite{ drone_control sequence children{
-	    read_position {}
-	    composite{ at_destination_selector selector children{
-		    not_at_destination {}
-		    read_destination {} #{This needs to not return success if it fails}#
+	    #{}#read_map {} #{success if map exists, failure otherwise}#
+	    #{}#read_position {} #{success, always}#
+	    composite{ destination_selector selector children{
+		    #{decide if we need a new destination. our current destination is fine if it both 1. is not where we are, and 2. is reachable}#
+		    composite{ current_destination sequence children {
+			    #{}#not_at_destination {}
+			    #{}#valid_destination_check {}
+			}
+		    }
+		    #{}#read_destination {} #{success if destination received, running otherwise. validity checked below}#
 		}
 	    }
-	    compute_next {}
-	    sent_next {}
+	    composite{ plot_course selector children{
+		    compute_next {} #{success if course plotted, failure otherwise}#
+		    #{}#request_new_destination {} #{returns failure, always}#
+		}
+	    }   
+	    #{}#send_next {}
 	}
     }
 }
