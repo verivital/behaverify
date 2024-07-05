@@ -4,7 +4,7 @@ enumerations {
 }
 
 constants {
-    path_max := 20, x_max := 399, y_max := 399, z_max := 25
+    x_max := 399, y_max := 399, z_max := 25
 }
 
 variables {
