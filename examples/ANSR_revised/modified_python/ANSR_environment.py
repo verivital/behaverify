@@ -8,6 +8,14 @@ import geometry_msgs # for creating the path that is published (it's a single po
 import nav_msgs # for odometry
 #import map??? missing
 
+from vanderbilt_utils.binvox_tools import convert_binvox # for handling the map
+from vanderbilt_interfaces.msg import ObstacleMap
+
+# for info about subscribing to topics: https://git.isis.vanderbilt.edu/ansr/ebt/-/blob/main/ebt/bt/composite_construction/topics_processing.py?ref_type=heads
+# for info about converting the map: https://git.isis.vanderbilt.edu/ansr/ebt/-/blob/main/ebt/bt/behaviors/task_transform_obstacles.py?ref_type=heads
+# for info about vanderbilt messages: https://git.isis.vanderbilt.edu/ansr/vanderbilt_utils/-/blob/master/vanderbilt_utils/interface_definitions/message_settings.py?ref_type=heads
+# for more info about vanderbilt messages: https://git.isis.vanderbilt.edu/ansr/vanderbilt_interface/-/blob/master/msg/Camera.msg?ref_type=heads
+
 class ANSR_environment():
     def delay_this_action(self, action, node):
         self.delayed_action_queue.append((action, node))
@@ -36,11 +44,15 @@ class ANSR_environment():
         # self.fake = None
         # Above BehaVerify generated. Modified to remove unused components
 
+        self.map_height = None
+        self.map_width = None
+        self.binvox_converter = None
+        self.obstacle_map = None
+
         self.ros_node = None
         self.odometry_subscriber = None # for figuring out where the drone is
         self.odometry_position = None
         self.map_subscriber = None # for figuring out where obstacles are
-        self.map_vals = None
         self.planner_subscriber = None # for figuring out where the drone needs to go
         self.planner_position = None
         self.planner_publisher = None # for responding to invalid locations
@@ -59,10 +71,13 @@ class ANSR_environment():
         if msg is not None:
             self.planner_position = msg.pose.position
 
-    def initialize_environment(self):
+    def initialize_environment(self, map_height, map_width):
         node = None
         # self.fake = 0
         # Above BehaVerify generated. Modified to remove unused components
+        self.map_height = map_height
+        self.map_width = map_width
+        self.binvox_converter = convert_binvox.ConvertBinvox()
         return
 
 
