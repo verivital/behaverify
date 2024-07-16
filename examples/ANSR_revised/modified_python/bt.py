@@ -92,40 +92,42 @@ class BT(rclpy.node.Node):
         self.get_logger().info('---------------------------------------------------------------------------------------#################################################################################################################################################################-------------------------------')
         self.get_logger().info('---------------------------------------------------------------------------------------#################################################################################################################################################################-------------------------------')
         # note! I made a change at the top of this method also!!!
+        # with open('/output/serene.log', 'w', encoding = 'utf-8') as serene_log:
+        #     serene_log.write('starting!\n')
+        # with open('/output/serene_parse.log', 'w', encoding = 'utf-8') as serene_log:
+        #     serene_log.write('\n')
+
         with open('/output/serene.log', 'w', encoding = 'utf-8') as serene_log:
             serene_log.write('starting!\n')
-        with open('/output/serene_parse.log', 'w', encoding = 'utf-8') as serene_log:
-            serene_log.write('\n')
+            serene_randomizer = serene_randomizer_module.serene_randomizer()
+            serene_log.write('randomizer created\n')
+            blackboard_reader = ANSR.create_blackboard(serene_randomizer)
+            serene_log.write('blackboard reader created\n')
+            environment = ANSR_environment.ANSR_environment(blackboard_reader)
+            serene_log.write('environment created\n')
+            serene_randomizer.set_blackboard_and_environment(blackboard_reader, environment)
+            serene_log.write('randomizer initialized\n')
+            ANSR.initialize_blackboard(blackboard_reader)
+            serene_log.write('blackboard initialized\n')
+            environment.initialize_environment(400, 400, [5, 25], 10, True)
+            serene_log.write('environment initialized\n')
+            root = ANSR.create_tree(environment)
+            serene_log.write('root created.\nDone with serene startup code!\n')
 
-        serene_height = 7 # must be either 5, 7, 8, or 10
-        serene_randomizer = serene_randomizer_module.serene_randomizer()
-        blackboard_reader = ANSR.create_blackboard(serene_randomizer)
-        environment = ANSR_environment.ANSR_environment(blackboard_reader, serene_height)
-        serene_randomizer.set_blackboard_and_environment(blackboard_reader, environment)
-        ANSR.initialize_blackboard(blackboard_reader, serene_height)
-        environment.initialize_environment()
-        root = ANSR.create_tree(environment)
+        self.get_logger().info(';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;#################################################################################################################################################################;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;')
+        self.get_logger().info(';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;#################################################################################################################################################################;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;')
+        self.get_logger().info(';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;#################################################################################################################################################################;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;')
+        self.get_logger().info(';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;#################################################################################################################################################################;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;')
+        self.get_logger().info(';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;#################################################################################################################################################################;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;')
+        self.get_logger().info(';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;#################################################################################################################################################################;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;')
 
-        self.get_logger().info(';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;#################################################################################################################################################################;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;')
-        self.get_logger().info(';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;#################################################################################################################################################################;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;')
-        self.get_logger().info(';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;#################################################################################################################################################################;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;')
-        self.get_logger().info(';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;#################################################################################################################################################################;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;')
-        self.get_logger().info(';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;#################################################################################################################################################################;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;')
-        self.get_logger().info(';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;#################################################################################################################################################################;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;')
-        with open('/output/serene.log', 'a', encoding = 'utf-8') as serene_log:
-            serene_log.write(
-                'finished serene code!\n'
-                + str(self.obstacle_offset) + '\n'
-            )
-
-        # root = self.create_root()
         tree = py_trees_ros.trees.BehaviourTree(
             root=root,
             unicode_tree_debug=self.debug
         )
 
         with open('/output/serene.log', 'a', encoding = 'utf-8') as serene_log:
-            serene_log.write('finished additional setup!\n')
+            serene_log.write('tree created\n')
         try:
             tree.setup(timeout=15.0)
         except py_trees_ros.exceptions.TimedOutError as e:
@@ -139,9 +141,12 @@ class BT(rclpy.node.Node):
             tree.shutdown()
             rclpy.shutdown()
             sys.exit(1)
-        # this was moved to after to check if the node is created during setup.
-        # environment.setup_planner_info(self.scale, (-195.5, -195.5))
-        environment.setup_pub_sub(tree.node, self.messages.goal.msg_type, self.messages.goal.topic, self.messages.goal.qos_profile)
+
+        with open('/output/serene.log', 'a', encoding = 'utf-8') as serene_log:
+            serene_log.write('tree initialized\n')
+            environment.setup_pub_sub(tree.node)
+            serene_log.write('environment pub-sub created\n')
+            serene_log.write('starting ticks!\n')
 
         tree.tick_tock(period_ms=100.0)
 
