@@ -14,24 +14,13 @@ def full_tick(tree, environment):
 
 def print_blackboard(blackboard_reader):
     ret_string = 'blackboard' + os.linesep
+    ret_string += indent(1) + 'goal: ' + str(blackboard_reader.goal) + os.linesep
+    ret_string += indent(1) + 'goal_requested: ' + str(blackboard_reader.goal_requested) + os.linesep
     ret_string += indent(1) + 'map_exists: ' + str(blackboard_reader.map_exists) + os.linesep
-    ret_string += indent(1) + 'drone_x: ' + str(blackboard_reader.drone_x) + os.linesep
-    ret_string += indent(1) + 'drone_y: ' + str(blackboard_reader.drone_y) + os.linesep
-    ret_string += indent(1) + 'drone_z: ' + str(blackboard_reader.drone_z) + os.linesep
-    ret_string += indent(1) + 'previous_x: ' + str(blackboard_reader.previous_x) + os.linesep
-    ret_string += indent(1) + 'previous_y: ' + str(blackboard_reader.previous_y) + os.linesep
-    ret_string += indent(1) + 'previous_z: ' + str(blackboard_reader.previous_z) + os.linesep
-    ret_string += indent(1) + 'drone_x_delta: ' + str(blackboard_reader.drone_x_delta) + os.linesep
-    ret_string += indent(1) + 'drone_y_delta: ' + str(blackboard_reader.drone_y_delta) + os.linesep
-    ret_string += indent(1) + 'destination_x: ' + str(blackboard_reader.destination_x) + os.linesep
-    ret_string += indent(1) + 'destination_y: ' + str(blackboard_reader.destination_y) + os.linesep
-    ret_string += indent(1) + 'destination_z: ' + str(blackboard_reader.destination_z) + os.linesep
-    ret_string += indent(1) + 'valid_destination: ' + str(blackboard_reader.valid_destination) + os.linesep
-    ret_string += indent(1) + 'next_x: ' + str(blackboard_reader.next_x) + os.linesep
-    ret_string += indent(1) + 'next_y: ' + str(blackboard_reader.next_y) + os.linesep
-    ret_string += indent(1) + 'next_z: ' + str(blackboard_reader.next_z) + os.linesep
-    ret_string += indent(1) + 'next_x_delta: ' + str(blackboard_reader.next_x_delta) + os.linesep
-    ret_string += indent(1) + 'next_y_delta: ' + str(blackboard_reader.next_y_delta) + os.linesep
+    ret_string += indent(1) + 'position: ' + str(blackboard_reader.position) + os.linesep
+    ret_string += indent(1) + 'valid_goal: ' + str(blackboard_reader.valid_goal) + os.linesep
+    ret_string += indent(1) + 'valid_position: ' + str(blackboard_reader.valid_position) + os.linesep
+    ret_string += indent(1) + 'waypoint: ' + str(blackboard_reader.waypoint) + os.linesep
     return ret_string
 
 
@@ -42,12 +31,13 @@ def print_environment(environment):
 
 
 node_to_locals = {
+    'read_position' : [],
+    'read_goal' : [],
+    'send_next_goal_request' : [],
     'read_map' : [{'name' : 'success_read', 'is_func' : False, 'array_size' : None}],
-    'read_position' : [{'name' : 'success_read', 'is_func' : False, 'array_size' : None}],
-    'read_destination' : [{'name' : 'success_read', 'is_func' : False, 'array_size' : None}],
-    'compute_next' : [],
-    'request_new_destination' : [],
-    'send_next' : [],
+    'compute_waypoint' : [],
+    'send_invalid_goal_request' : [],
+    'send_waypoint' : [],
 }
 
 

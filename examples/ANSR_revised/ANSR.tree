@@ -8,25 +8,16 @@ constants {
 }
 
 variables {
+    variable { bl goal VAR [0, x_max] array 3 default{assign{result{0}}}}
+    variable { bl goal_requested VAR BOOLEAN assign{result{False}}}
     variable { bl map_exists VAR BOOLEAN assign{result{False}}}
-    variable { bl drone_x VAR [0, x_max] assign{result{0}}}
-    variable { bl drone_y VAR [0, y_max] assign{result{0}}}
-    variable { bl drone_z VAR [0, z_max] assign{result{0}}}
-    variable { bl previous_x VAR [0, x_max] assign{result{0}}}
-    variable { bl previous_y VAR [0, y_max] assign{result{0}}}
-    variable { bl previous_z VAR [0, z_max] assign{result{0}}}
-    variable { bl drone_x_delta VAR {-1, 0, 1} assign{result{0}}}
-    variable { bl drone_y_delta VAR {-1, 0, 1} assign{result{0}}}
-    variable { bl destination_x VAR [0, x_max] assign{result{0}}}
-    variable { bl destination_y VAR [0, y_max] assign{result{0}}}
-    variable { bl destination_z VAR [0, z_max] assign{result{0}}}
-    variable { bl valid_destination VAR BOOLEAN assign{result{False}}}
-    variable { bl next_x VAR [0, x_max] assign{result{0}}}
-    variable { bl next_y VAR [0, y_max] assign{result{0}}}
-    variable { bl next_z VAR [0, z_max] assign{result{0}}}
-    variable { bl next_x_delta VAR {-1, 0, 1} assign{result{0}}}
-    variable { bl next_y_delta VAR {-1, 0, 1} assign{result{0}}}
+    variable { bl position VAR [0, x_max] array 3 default{assign{result{0}}}}
+    variable { bl valid_goal VAR BOOLEAN assign{result{False}}}
+    variable { bl valid_position VAR BOOLEAN assign{result{False}}}
+    variable { bl waypoint VAR [0, x_max] array 3 default{assign{result{0}}}}
+
     variable { local success_read VAR BOOLEAN assign{result{False}}}
+    
     variable { env fake VAR [0, 1] assign{result{0}}}
 }
 
@@ -35,23 +26,38 @@ environment_update {
 
 checks {
     check {
-	not_at_destination
+	goal_requested_check
+	arguments {}
+	read_variables{goal_requested}
+	condition{goal_requested}
+    }
+    check {
+	not_at_goal
 	arguments{}
-	read_variables {drone_x, drone_y, drone_z, destination_x, destination_y, destination_z}
+	read_variables {position, goal}
 	condition {
-	    (and,
-		(eq, drone_x, destination_x),
-		(eq, drone_y, destination_y),
-		(eq, drone_z, destination_z)
+	    (not, 
+		(and,
+		    (loop, loop_var, [0, 2] such_that True, 
+			(eq, (index, position, constant_index loop_var), (index, goal, constant_index loop_var))
+		    )
+		)
 	    )
 	}
     }
     check {
-	valid_destination_check
+	valid_goal_check
 	arguments {}
-	read_variables{valid_destination}
-	condition{valid_destination}
+	read_variables{valid_goal}
+	condition{valid_goal}
     }
+    check {
+	valid_position_check
+	arguments {}
+	read_variables{valid_position}
+	condition{valid_position}
+    }
+    
 }
 
 environment_checks {
@@ -59,121 +65,53 @@ environment_checks {
 
 actions {
     action {
-	read_position
+	compute_waypoint
 	arguments{}
-	local_variables{success_read}
-	read_variables{}
-	write_variables{previous_x, previous_y, previous_z, drone_x, drone_y, drone_z, drone_x_delta, drone_y_delta}
+	local_variables{}
+	read_variables{position}
+	write_variables{waypoint, valid_goal}
 	initial_values{}
 	update{
-	    variable_statement {
-		previous_x
-		assign{result{drone_x}}
-	    }
-	    variable_statement {
-		previous_y
-		assign{result{drone_y}}
-	    }
-	    variable_statement {
-		previous_z
-		assign{result{drone_z}}
-	    }
-	    read_environment {
-		read_position_function
-		condition_variable {success_read}
+	    read_environment{
+		compute_waypoint_function
+		condition_variable {valid_goal}
 		condition {True}
-		variable_statement{
-		    drone_x
-		    assign{result{drone_x, (max, 0, (sub, drone_x, 1)), (min, x_max, (add, drone_x, 1))}}
+		variable_statement {
+		    waypoint
+		    constant_index
+		    index_of{0}assign{result{0}}
 		}
-		variable_statement{
-		    drone_y
-		    assign{result{drone_y, (max, 0, (sub, drone_y, 1)), (min, y_max, (add, drone_y, 1))}}
-		}
-		variable_statement{
-		    drone_z
-		    assign{result{drone_z, (max, 0, (sub, drone_z, 1)), (min, z_max, (add, drone_z, 1))}}
-		}
-		variable_statement{
-		    drone_x_delta
-		    assign{
-			case{
-			    (or,
-				(neq, drone_x, previous_x),
-				(neq, drone_y, previous_y),
-				(neq, drone_z, previous_z)
-			    )
-			}
-			result{(min, 1, (max, -1, (sub, drone_x, previous_x)))}
-			result{drone_x_delta}
-		    }
-		}
-		variable_statement{
-		    drone_y_delta
-		    assign{
-			case{
-			    (or,
-				(neq, drone_x, previous_x),
-				(neq, drone_y, previous_y),
-				(neq, drone_z, previous_z)
-			    )
-			}
-			result{(min, 1, (max, -1, (sub, drone_y, previous_y)))}
-			result{drone_y_delta}
-		    }
-		}
-				
 	    }
-	    return_statement{result{success}}
+	    return_statement{case{valid_goal}result{success}result{failure}}
 	}
     }
     action {
-	read_destination
-	arguments{}
-	local_variables{success_read}
-	read_variables{}
-	write_variables{destination_x, destination_y, destination_z}
-	initial_values{}
-	update{
-	    read_environment {
-		read_destination_function
-		condition_variable {success_read}
-		condition{True}
-		variable_statement{
-		    destination_x
-		    assign{result{destination_x, (max, 0, (sub, destination_x, 1)), (min, x_max, (add, destination_x, 1))}}
-		}
-		variable_statement{
-		    destination_y
-		    assign{result{destination_y, (max, 0, (sub, destination_y, 1)), (min, y_max, (add, destination_y, 1))}}
-		}
-		variable_statement{
-		    destination_z
-		    assign{result{destination_z, (max, 0, (sub, destination_z, 1)), (min, z_max, (add, destination_z, 1))}}
-		}
-	    }
-	    return_statement{
-		case{success_read}result{success}result{running}
-	    }
-	}
-    }
-    action {
-	request_new_destination
+	read_goal
 	arguments{}
 	local_variables{}
 	read_variables{}
-	write_variables{}
+	write_variables{goal, goal_requested, valid_goal}
 	initial_values{}
 	update{
-	    write_environment {
-		request_new_destination_function
-		variable_statement {
-		    fake
-		    assign{result{0}}
+	    read_environment {
+		read_goal_function
+		condition{True}
+		variable_statement{
+		    goal
+		    constant_index
+		    index_of{0}assign{result{0}}
+		}
+		variable_statement{
+		    goal_requested
+		    assign{result{False}}
+		}
+		variable_statement{
+		    valid_goal
+		    assign{result{True}}
 		}
 	    }
 	    return_statement{
-		result{failure}
+		case{valid_goal}result{success}result{failure}
 	    }
 	}
     }
@@ -181,7 +119,7 @@ actions {
 	read_map
 	arguments{}
 	local_variables{success_read}
-	read_variables{}
+	read_variables{valid_position}
 	write_variables{map_exists}
 	initial_values{}
 	update{
@@ -199,44 +137,88 @@ actions {
 	}
     }
     action {
-	compute_next
+	read_position
 	arguments{}
 	local_variables{}
-	read_variables{drone_x, drone_y, drone_z, drone_x_delta, drone_y_delta}
-	write_variables{next_x, next_y, next_z, valid_destination}
+	read_variables{}
+	write_variables{position, valid_position}
 	initial_values{}
 	update{
-	    read_environment{
-		compute_path_function
-		condition_variable {valid_destination}
+	    read_environment {
+		read_position_function
+		condition_variable {valid_position}
 		condition {True}
-		variable_statement {
-		    next_x
-		    assign{result{0}}
-		}
-		variable_statement {
-		    next_y
-		    assign{result{0}}
-		}
-		variable_statement {
-		    next_z
-		    assign{result{0}}
+		variable_statement{
+		    position
+		    constant_index
+		    index_of{0}assign{result{0}}
 		}
 	    }
-	    return_statement{case{valid_destination}result{success}result{failure}}
+	    return_statement{result{success}}
 	}
     }
     action {
-	send_next
+	send_invalid_goal_request
 	arguments{}
 	local_variables{}
-	read_variables{next_x, next_y, next_z}
+	read_variables{}
+	write_variables{goal_requested}
+	initial_values{}
+	update{
+	    write_environment {
+		send_invalid_goal_request_function
+		variable_statement {
+		    instant
+		    fake
+		    assign{result{0}}
+		}
+	    }
+	    variable_statement {
+		goal_requested
+		assign{result{False}} #{Have to actually request a goal as usual.}#
+	    }
+	    return_statement{
+		result{failure}
+	    }
+	}
+    }
+    action {
+	send_next_goal_request
+	arguments{}
+	local_variables{}
+	read_variables{}
+	write_variables{goal_requested}
+	initial_values{}
+	update{
+	    variable_statement {
+		goal_requested
+		assign{result{True}}
+	    }
+	    write_environment {
+		send_next_goal_request_function
+		variable_statement {
+		    instant
+		    fake
+		    assign{result{0}}
+		}
+	    }
+	    return_statement{
+		result{failure}
+	    }
+	}
+    }
+    action {
+	send_waypoint
+	arguments{}
+	local_variables{}
+	read_variables{waypoint}
 	write_variables{}
 	initial_values{}
 	update{
 	    write_environment{
-		send_path_function
+		send_waypoint_function
 		variable_statement{
+		    instant
 		    fake
 		    assign{result{0}}
 		}
@@ -250,24 +232,46 @@ sub_trees {
 
 tree {
     composite{ drone_control sequence children{
-	    #{}#read_map {} #{success if map exists, failure otherwise}#
-	    #{}#read_position {} #{success, always}#
-	    composite{ destination_selector selector children{
-		    #{decide if we need a new destination. our current destination is fine if it both 1. is not where we are, and 2. is reachable}#
-		    composite{ current_destination sequence children {
-			    #{}#not_at_destination {}
-			    #{}#valid_destination_check {}
+	    #{}#read_position {} #{success, always.}#
+	    composite{ map_and_goal parallel policy success_on_all children{
+		    composite{ validate_goal selector children{
+			    #{
+				four options
+				1. current goal is fine (we are not at the goal, and it is a valid goal)
+				2. we received a new goal (might be unreachable, but we'll check that later)
+				3. we've asked for a new goal
+				4. we ask for a new goal
+			    }#
+			    composite{ current_goal sequence children {
+				    #{}#not_at_goal {}
+				    #{}#valid_goal_check {}
+				}
+			    }
+			    #{}#read_goal {} #{
+				if goal received -> valid_goal -> true (might be invalidated later), waypoints_plotted -> false, goal_requested -> false
+				if valid_goal -> success
+				failure otherwise
+			    }#
+			    decorator { cannot_continue X_is_Y X success Y failure child {
+				    composite{ new_goal selector children{
+					    #{}#goal_requested_check {}
+					    #{}#send_next_goal_request {} #{returns failure, always}#
+					}
+				    }
+				}
+			    }
 			}
 		    }
-		    #{}#read_destination {} #{success if destination received, running otherwise. validity checked below}#
+		    #{}#read_map {} #{success if map exists, failure otherwise}#
 		}
 	    }
-	    composite{ plot_course selector children{
-		    compute_next {} #{success if course plotted, failure otherwise}#
-		    #{}#request_new_destination {} #{returns failure, always}#
+	    #{}#valid_position_check{}
+	    composite{ plot_waypoint selector children{
+		    #{}#compute_waypoint {} #{success if course plotted, failure otherwise}#
+		    #{}#send_invalid_goal_request {} #{returns failure, always}#
 		}
 	    }   
-	    #{}#send_next {}
+	    #{}#send_waypoint {}
 	}
     }
 }
