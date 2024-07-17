@@ -64,9 +64,9 @@ encoding_mark = {
 }
 
 #reach = re.compile('reachable states: (?P<val1>\d+(\.\d+e\+\d+|)) \(2\^(?P<val2>\d+(\.\d+|))\) out of (?P<val3>\d+(\.\d+e\+\d+|)) \(2\^(?P<val4>\d+(\.\d+|))\)')
-reach = re.compile('reachable states: (?P<val1>((\d+)|(\d+(\.\d+)?e\+\d+))) \(2\^((\d+)|(\d+\.\d+))\) out of (?P<val3>((\d+)|(\d+(\.\d+)?e\+\d+))) \(2\^((\d+)|(\d+\.\d+))\)')
-elapsed = re.compile('elapse: -?(?P<val1>[\.\d]+) seconds,')
-resident = re.compile('Maximum resident size\s*= (?P<val1>[\.\d]+)K')
+reach = re.compile(r'reachable states: (?P<val1>((\d+)|(\d+(\.\d+)?e\+\d+))) \(2\^((\d+)|(\d+\.\d+))\) out of (?P<val3>((\d+)|(\d+(\.\d+)?e\+\d+))) \(2\^((\d+)|(\d+\.\d+))\)')
+elapsed = re.compile(r'elapse: -?(?P<val1>[\.\d]+) seconds,')
+resident = re.compile(r'Maximum resident size\s*= (?P<val1>[\.\d]+)K')
 
 arg_parser = argparse.ArgumentParser()
 arg_parser.add_argument('--folder_name', nargs = '+')

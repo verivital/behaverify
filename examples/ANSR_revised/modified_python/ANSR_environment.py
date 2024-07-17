@@ -60,7 +60,11 @@ class ANSR_environment():
         self.delayed_action_queue = []
 
         self.map_x_size = None
+        self.map_x_min = None
+        self.map_x_max = None
         self.map_y_size = None
+        self.map_y_min = None
+        self.map_y_max = None
         self.map_z_vals = [] # slices at which we can fly.
         self.z_costs = {} # costs
         self.binvox_converter = None
@@ -162,7 +166,11 @@ class ANSR_environment():
         # DONE!
         node = None
         self.map_x_size = map_x_size
+        self.map_x_min = -1 * self.map_x_size // 2
+        self.map_x_max = self.map_x_size // 2
         self.map_y_size = map_y_size
+        self.map_y_min = -1 * self.map_y_size // 2
+        self.map_y_max = self.map_y_size // 2
         self.map_z_vals = map_z_vals
         self.z_costs = {z : (index + 1) for (index, z) in enumerate(self.map_z_vals)}
         self.binvox_converter = convert_binvox.ConvertBinvox()
@@ -211,7 +219,7 @@ class ANSR_environment():
         if self.fake_goals and self.goal_position is None and self.blackboard.goal_requested:
             with open('/output/serene.log', 'a', encoding = 'utf-8') as serene_log:
                 serene_log.write('CREATED A FAKE GOAL\n')
-            self.goal_position = FAKE_POINT(random.randint(-1 * self.map_x_size // 2, self.map_x_size // 2), random.randint(-1 * self.map_y_size // 2, self.map_y_size // 2), random.choice(self.map_z_vals))
+            self.goal_position = FAKE_POINT(random.randint(self.map_x_min, self.map_x_max), random.randint(self.map_y_min, self.map_y_max), random.choice(self.map_z_vals))
         with open('/output/serene.log', 'a', encoding = 'utf-8') as serene_log:
             serene_log.write(
                 'read: goal\n'
@@ -249,22 +257,30 @@ class ANSR_environment():
         # udpates valid goal
         return True
 
-    def check_safety(self, x, y, z):
+    def check_safety(self, x, y, z, check_cell_only = False):
         '''
         return True if safe, False if unsafe
         '''
-        # return not(any(
-        #     self.obstacle_maps[z][x1][y1]
-        #     for x1 in range(max(0, x - 1), min(self.map_x_size, x + 1))
-        #     for y1 in range(max(0, y - 1), min(self.map_y_size, y + 1))
-        # ))
-        return not(
-            self.obstacle_maps[z][x][y] or
-            self.obstacle_maps[z][max(-1 * self.map_x_size // 2, x - 1)][y] or
-            self.obstacle_maps[z][min(self.map_x_size // 2, x + 1)][y] or
-            self.obstacle_maps[z][x][max(-1 * self.map_y_size // 2, y - 1)] or
-            self.obstacle_maps[z][x][min(self.map_y_size // 2, y + 1)]
+        return (
+            not (
+                self.obstacle_maps[z][x + self.map_x_min][y + self.map_y_min]
+                if check_cell_only else
+                (
+                    any(
+                        self.obstacle_maps[z][x1 + self.map_x_min][y1 + self.map_y_min]
+                        for x1 in range(max(self.map_x_min, x - 1), min(self.map_x_max + 1, x + 1))
+                        for y1 in range(max(self.map_y_min, y - 1), min(self.map_y_max + 1, y + 1))
+                    )
+                )
+            )
         )
+        # return not(
+        #     self.obstacle_maps[z][x][y] or
+        #     self.obstacle_maps[z][max(-1 * self.map_x_size // 2, x - 1)][y] or
+        #     self.obstacle_maps[z][min(self.map_x_size // 2, x + 1)][y] or
+        #     self.obstacle_maps[z][x][max(-1 * self.map_y_size // 2, y - 1)] or
+        #     self.obstacle_maps[z][x][min(self.map_y_size // 2, y + 1)]
+        # )
         # return not self.obstacle_maps[z][x][y]
 
     def read_map_function__condition(self, node):
@@ -301,21 +317,21 @@ class ANSR_environment():
                                     (zo == z and (dxo != 0 or dyo != 0))
                                 ) and
                                 # (dxo != 0 or dyo != 0) and
-                                (-1 * self.map_x_size // 2) <= x + dxo < self.map_x_size // 2 and
-                                (-1 * self.map_y_size // 2) <= y + dyo < self.map_y_size // 2 and
+                                self.map_x_min <= x + dxo <= self.map_x_max and
+                                self.map_y_min <= y + dyo <= self.map_y_max and
                                 self.check_safety(x + dxo, y + dyo, zo)
                         )
                     ]
-                    for x in range(-1 * self.map_x_size // 2, self.map_x_size // 2)
-                    for y in range(-1 * self.map_y_size // 2, self.map_y_size // 2)
+                    for x in range(self.map_x_min, self.map_x_max + 1)
+                    for y in range(self.map_y_min, self.map_y_max + 1)
                     for z in self.map_z_vals
                 }
                 with open('/output/serene.log', 'a', encoding = 'utf-8') as serene_log:
                     serene_log.write('created map!\n')
             elif self.blackboard.valid_position:
                 # map update goes here.
-                for x in range(max(-1 * self.map_x_size // 2, self.blackboard.position[0] - self.update_radius), min(self.map_x_size // 2, self.blackboard.position[0] + self.update_radius)):
-                    for y in range(max(-1 * self.map_y_size // 2, self.blackboard.position[1] - self.update_radius), min(self.map_y_size // 2, self.blackboard.position[1] + self.update_radius)):
+                for x in range(max(self.map_x_min, self.blackboard.position[0] - self.update_radius), min(self.map_x_max + 1, self.blackboard.position[0] + self.update_radius)):
+                    for y in range(max(self.map_y_min, self.blackboard.position[1] - self.update_radius), min(self.map_y_max + 1, self.blackboard.position[1] + self.update_radius)):
                         for z in self.map_z_vals:
                             if self.check_safety(x, y, z):
                                 self.cost_graph[(x, y, z)] = [
@@ -329,8 +345,8 @@ class ANSR_environment():
                                                 (zo == z and (dxo != 0 or dyo != 0))
                                             ) and
                                             # (dxo != 0 or dyo != 0) and
-                                            (-1 * self.map_x_size // 2) <= x + dxo < self.map_x_size // 2 and
-                                            (-1 * self.map_y_size // 2) <= y + dyo < self.map_y_size // 2 and
+                                            self.map_x_min <= x + dxo <= self.map_x_max and
+                                            self.map_y_max <= y + dyo <= self.map_y_max and
                                             self.check_safety(x + dxo, y + dyo, zo)
                                     )
                                 ]
@@ -366,10 +382,6 @@ class ANSR_environment():
             if any((not self.check_safety(x, y, z)) for (x, y, z) in self.path):
                 # there's an unsafe point. force recalc.
                 self.path = []
-        elif len(self.cost_graph[tuple(self.blackboard.position)]) == 0:
-            with open('/output/serene.log', 'a', encoding = 'utf-8') as serene_log:
-                serene_log.write('In obstacle? Elevating!\n')
-            self.path = [(self.blackboard.position[0], self.blackboard.position[1], self.map_z_vals[-1])]
         if len(self.path) == 0: # need a new path.
             with open('/output/serene.log', 'a', encoding = 'utf-8') as serene_log:
                 serene_log.write('Calling A*\n')
@@ -380,9 +392,34 @@ class ANSR_environment():
                         serene_log.write('path impossible\n')
                         if len(self.cost_graph[tuple(self.blackboard.position)]) == 0:
                             serene_log.write('start is obstacle\n')
+                            if self.blackboard.position[2] < self.map_z_vals[-1]:
+                                self.cost_graph[tuple(self.blackboard.position)] = [
+                                    ((self.blackboard.position[0], self.blackboard.position[1], self.map_z_vals[-1]), 1)
+                                ]
+                            if len(self.cost_graph[(self.blackboard.position[0], self.blackboard.position[1], self.map_z_vals[-1])]) == 0:
+                                (x, y, z) = (self.blackboard.position[0], self.blackboard.position[1], self.map_z_vals[-1])
+                                self.cost_graph[(x, y, z)] = [
+                                    ((x + dxo, y + dyo, zo), self.calculate_cost(x, y, z, x + dxo, y + dyo, zo))
+                                    for dxo in (-1, 0, 1)
+                                    for dyo in (-1, 0, 1)
+                                    for zo in self.map_z_vals
+                                    if (
+                                            (
+                                                (zo != z and dxo == 0 and dyo == 0) or
+                                                (zo == z and (dxo != 0 or dyo != 0))
+                                            ) and
+                                            # (dxo != 0 or dyo != 0) and
+                                            self.map_x_min <= x + dxo <= self.map_x_max and
+                                            self.map_y_max <= y + dyo <= self.map_y_max and
+                                            self.check_safety(x + dxo, y + dyo, zo, True)
+                                    )
+                                ]
+                            continue
                         if len(self.cost_graph[tuple(self.blackboard.goal)]) == 0:
                             serene_log.write('goal is obstacle\n')
                     return False # there's no possible path
+                self.path.pop(0) # remove the first point, because we're already at the first point.
+                # remove the point before we checke for validity; if we're in an obstacle than things are bad already.
                 # path found, confirm it's valid.
                 if any((not self.check_safety(x, y, z)) for (x, y, z) in self.path):
                     # there's an unsafe point. force recalc, but first, update the map
@@ -391,7 +428,6 @@ class ANSR_environment():
                             self.cost_graph[(x, y, z)] = []
                     self.path = []
                 else:
-                    self.path.pop(0) # remove the first point, because we're already at the first point.
                     break # found a reasonable path, time to exit
         if len(self.path) == 0:
             with open('/output/serene.log', 'a', encoding = 'utf-8') as serene_log:

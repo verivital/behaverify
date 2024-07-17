@@ -19,12 +19,13 @@ Finally, note that this is a .md file, and as such, we escape various characters
 # Prerequisites and Information
 
 1. docker with the ability to run commands as a regular user (see https://docs.docker.com/engine/install/linux-postinstall/ ). Additionally, we will be using Ubuntu 22.04 inside docker. Some users appear to have issues with running commands like update or upgrade in docker when using Ubuntu 22.04; we do not have a workaround for this.
-2. nuXmv (see  https://nuxmv.fbk.eu/download.html or https://nuxmv.fbk.eu/theme/download.php?file=nuXmv-2.0.0-linux64.tar.gz ). You only need to download nuXmv. There should be no installation. Please ensure you download the Linux 64-bit x86 version 2.0.0 (October 14, 2019). The executable will be located in **nuXmv-2.0.0-linux64/nuXmv-2.0.0-Linux/bin/nuXmv**. There should be **NO FILE EXTENSION**.
+2. nuXmv (see  https://nuxmv.fbk.eu/download.html or https://nuxmv.fbk.eu/theme/download.php?file=nuXmv-2.0.0-linux64.tar.gz ). You only need to download nuXmv. There should be no installation. Please ensure you download the Linux 64-bit x86 version 2.0.0 (October 14, 2019). The executable will be located in **nuXmv-2.0.0-linux64/nuXmv-2.0.0-Linux/bin/nuXmv**. There should be **NO FILE EXTENSION**. Note that we are **ONLY** interested in the binary; you do not need the other files or the folder structure, so long as you have the binary.
 3. If you choose to use Docker, we assume you have access to Python3. If you choose to run locally, we assume you are able to run bash scripts. These have **only been tested on Ubuntu**. If you cannot run the scripts, please run the commands present in the bash scripts manually. Note that this will require arguments to replaced. Specifically, $1 means the first argument provided to the bash script, $2 means the second argument provided to the bash script, etc.
 
 Note, we require docker py for use with python3 if using docker. It can be installed using
-
-	pip install docker
+```
+python3 -m pip install docker
+```
 
 ## nuXmv
 
@@ -53,44 +54,82 @@ The tests can be run using docker. We provide several methods for doing this. So
 We provide 3 scripts of each type (1 for each test from Test Information). Each of these scripts takes four command line arguments, three of which are the same.
 	
 - **/path/to/Dockerfile/Folder/** -> This should point to the folder containing the Dockerfile.
-- **/path/to/DockerImage** -> This should point to  the Dockerimage.
+- **/path/to/DockerImage** -> This should point to the Dockerimage.
 - **/path/to/nuXmv** -> This should point to the executable you downloaded as a prerequisite. There should be no file extension.
 - **mode** -> Required, sort of. This should be **install**, **partial**, or **full**. 
 - **/path/to/output** -> The output will be copied to /path/to/output.tar. This will not override existing files, so make sure there is no existing file.
 
+After each command, we provide an example command that assumes you placed the nuXmv binary in the top level of the reproducibility directory (the directory containing the Dockerfile). **THE EXAMPLES ASSUME YOU ARE IN THE DIRECTORY NAMED 2024_SEFM.**
+
 ### Single Script: Minimal (estimated time: 3 minutes. 6 minutes on Chromebook)
 
 Build Script:
-
-	python3 build_and_run.py /path/to/Dockerfile/Folder/ /path/to/nuXmv install /path/to/output
+```
+python3 build_and_run.py /path/to/Dockerfile/Folder/ /path/to/nuXmv install /path/to/output
+```
+	
+Build Example:
+```
+python3 ./python_script/build_and_run.py ./ ./nuXmv install ./install
+```
 
 Load Script:
+```
+python3 load_and_run.py /path/to/DockerImage /path/to/nuXmv install /path/to/output
+```
 
-	python3 load_and_run.py /path/to/DockerImage /path/to/nuXmv install /path/to/output
+Load Example:
+```
+python3 ./python_script/load_and_run.py ./DockerImage.tar ./nuXmv install ./install
+```
 	
 The results will be written in **/path/to/output.tar**. Extract the archive and see the Interpreting and Comparing Results section for more information.
 
 ### Single Script: Partial (estimated time: 8 minutes. 40 minutes on Chromebook)
 
 Build Script:
-
-	python3 build_and_run.py /path/to/Dockerfile/Folder/ /path/to/nuXmv partial /path/to/output
+```
+python3 build_and_run.py /path/to/Dockerfile/Folder/ /path/to/nuXmv partial /path/to/output
+```
+	
+Build Example:
+```
+python3 ./python_script/build_and_run.py ./ ./nuXmv partial ./partial
+```
 
 Load Script:
+```
+python3 load_and_run.py /path/to/DockerImage /path/to/nuXmv partial /path/to/output
+```
 
-	python3 load_and_run.py /path/to/DockerImage /path/to/nuXmv partial /path/to/output
+Load Example:
+```
+python3 ./python_script/load_and_run.py ./DockerImage.tar ./nuXmv partial ./partial
+```
 	
 The results will be written in **/path/to/output.tar**. Extract the archive and see the Interpreting and Comparing Results section for more information.
 
 ### Single Script: Full (estimated time: 16 minutes. 1 hour on Chromebook)
 
 Build Script:
-
-	python3 build_and_run.py /path/to/Dockerfile/Folder/ /path/to/nuXmv full /path/to/output
+```
+python3 build_and_run.py /path/to/Dockerfile/Folder/ /path/to/nuXmv full /path/to/output
+```
+	
+Build Example:
+```
+python3 ./python_script/build_and_run.py ./ ./nuXmv full ./full
+```
 
 Load Script:
+```
+python3 load_and_run.py /path/to/DockerImage /path/to/nuXmv full /path/to/output
+```
 
-	python3 load_and_run.py /path/to/DockerImage /path/to/nuXmv full /path/to/output
+Load Example:
+```
+python3 ./python_script/load_and_run.py ./DockerImage.tar ./nuXmv full ./full
+```
 	
 The results will be written in **/path/to/output.tar**. Extract the archive and see the Interpreting and Comparing Results section for more information.
 
@@ -98,21 +137,33 @@ The results will be written in **/path/to/output.tar**. Extract the archive and 
 
 ## Step by Step Docker instructions
 
-This section will explain how to utilize either the provided docker image or Dockerfile to recreate the tests using docker.
+This section will explain how to utilize either the provided docker image or Dockerfile to recreate the tests using docker. After each command, we provide an example command that assumes you placed the nuXmv binary in the top level of the reproducibility directory (the directory containing the Dockerfile). **THE EXAMPLES ASSUME YOU ARE IN THE DIRECTORY NAMED 2024_SEFM.**
 
-### 1a. Creation of the Docker Image and Container (estimated time: 1 minutes. 5 minutes on Chromebook )
+### 1a. Creation of the Docker Image and Container (estimated time: 1 minutes. 5 minutes on Chromebook)
 
 You only need to execute 1a or 1b. See 1b for steps using the image. However, should you wish to build the docker image yourself, please run
+```
+python3 reinstall.py /path/to/Dockerfile/folder
+```
 
-	python3 reinstall.py /path/to/Dockerfile/folder
+Example:
+```
+python3 python_script/reinstall.py ./
+```
 
 This will create a docker image named behaverify\_img with the tag latest. It will then also create a container named behaverify from that image.
 
 ### 1b. Using the provided Docker Image to create a Container (estimated time: ??)
 
 You only need to execute 1a or 1b. See 1a for steps using the Dockerfile. However, should you wish to load a prebuilt image yourself, please run
-
-	python3 load_image.py /path/to/Dockerimage
+```
+python3 load_image.py /path/to/Dockerimage
+```
+	
+Example:
+```
+python3 python_script/load_image.py ./DockerImage.tar
+```
 
 This will create a docker image named behaverify\_img with the tag latest. It will then also create a container named behaverify from that image.
 
@@ -122,26 +173,51 @@ The scripts below assume that the docker container is named behaverify. If you r
 ### 2. Addition of nuXmv (estimated time: 30 seconds)
 
 Next, please run
+```
+python3 add_nuxmv.py /path/to/nuXmv
+```
 
-	python3 add_nuxmv.py /path/to/nuXmv
+Example:
+```
+python3 python_script/add_nuxmv.py ./nuXmv
+```
 
 This will copy nuXmv from the path you provided to the correct location in the docker and ensure it is runable and an executable. Note that you should not point to the folder containing nuXmv, but to nuXmv itself, and that the nuXmv version should be the Linux version.
 
 ### 3. Install Test (estimated time: 30 seconds. 1 minute on Chromebook)
 
 The full test takes quite a while to run. To ensure everything works right, please run
+```
+python3 generate.py install /path/to/output
+```
 
-	python3 generate.py install /path/to/output
+Example:
+```
+python3 ./python_script/generate.py install ./install
+```
 
 ### 4. Partial Test (estimated time: 1 minute. 35 minutes on Chromebook)
 
 The full test takes quite a while to run. To ensure everything works right, please run
+```
+python3 generate.py partial /path/to/output
+```
 
-	python3 generate.py partial /path/to/output
+Example:
+```
+python3 ./python_script/generate.py partial ./partial
+```
+
 
 ### 5. Full Results (estimated time: 15 minutes. 1 hour on Chromebook)
+```
+python3 generate.py full /path/to/output
+```
 
-	python3 generate.py full /path/to/output
+Example:
+```
+python3 ./python_script/generate.py full ./full
+```
 
 ---
 
@@ -207,11 +283,11 @@ This section is intentionally lengthy. If you are not interested in the details 
 		git clone https://github.com/verivital/behaverify
 19. Enable scripts<br />This will allow all the necessary scripts to run. Please navigate to the top level of our repository and run the following
 
-		sudo chmod -R +x behaverify/REPRODUCIBILITY/2024_SEFM/*.sh
+		sudo chmod -R +x ./REPRODUCIBILITY/2024_SEFM/*.sh
 20. Move nuXmv<br />You downloaded nuXmv in step 1. Please place it in behaverify/REPRODUCIBILITY/2024\_SEFM/
 21. Enable nuXmv<br />Please navigate to the top level of our repository and run the following
 
-		sudo chmod +x behaverify/REPRODUCIBILITY/2024_SEFM/nuXmv
+		sudo chmod +x ./REPRODUCIBILITY/2024_SEFM/nuXmv
 
 
 You are now ready to run the scripts locally. Scroll past the concise installation instructions to see the scripts explanation.
@@ -224,51 +300,59 @@ The instructions are for Linux (and more specifically Ubuntu). We have not teste
 
 
 Please download nuXmv (see  https://nuxmv.fbk.eu/ ). You only need to download nuXmv. There should be no installation. Download the relevant version for your system. It should be version 2.0.0.
-
-	sudo apt update
-	sudo apt upgrade
-	sudo apt install python3
-	sudo apt install pip
+```
+sudo apt update
+sudo apt upgrade
+sudo apt install python3
+sudo apt install pip
+```
 	
 (OPTIONAL) PyTrees is required to use the python code generated by BehaVerify. However, this is not used in the SEFM tests
-
-	python3 -m pip install py_trees
+```
+python3 -m pip install py_trees
+```
 	
 Below we have more mandatory requirements
-
+```
 	python3 -m pip install pandas
 	python3 -m pip install jinja2
 	python3 -m pip install textX
 	python3 -m pip install matplotlib
 	sudo apt install graphviz
 	sudo apt install git
+```
 	
 (OPTIONAL) These are prerequisites for Haskell, which is not used in the SEFM tests.
-
-	sudo apt install build-essential curl libffi-dev libffi8ubuntu1 libgmp-dev libgmp10 libncurses-dev libncurses5 libtinfo5
-	sudo apt install libgmp3-dev
+```
+sudo apt install build-essential curl libffi-dev libffi8ubuntu1 libgmp-dev libgmp10 libncurses-dev libncurses5 libtinfo5
+sudo apt install libgmp3-dev
+```
 
 (OPTIONAL) Please follow the instructions at https://www.haskell.org/ghcup/ to install ghcup, Haskell, and cabal. These are used to run generated Haskell code. Please preappend (or append) your path when asked.
-
-	ghcup upgrade
-	ghcup install cabal 3.6.2.0
-	ghcup set cabal 3.6.2.0
-	ghcup install ghc 9.2.8
-	ghcup set ghc 9.2.8
+```
+ghcup upgrade
+ghcup install cabal 3.6.2.0
+ghcup set cabal 3.6.2.0
+ghcup install ghc 9.2.8
+ghcup set ghc 9.2.8
+```
 	
 You may clone or download the repository
-
-	git clone https://github.com/verivital/behaverify
+```
+git clone https://github.com/verivital/behaverify
+```
 
 Please navigate to the top level of our repository and run the following
-
-	sudo chmod -R +x /behaverify/REPRODUCIBILITY/2024_SEFM/*.sh
+```
+sudo chmod -R +x ./REPRODUCIBILITY/2024_SEFM/*.sh
+```
 
 You downloaded nuXmv earlier. Please place it in behaverify/REPRODUCIBILITY/2024\_SEFM/
 
 Please navigate to the top level of our repository and run the following
-
-	sudo chmod +x /behaverify/REPRODUCIBILITY/2024_SEFM/nuXmv
+```
+sudo chmod +x ./REPRODUCIBILITY/2024_SEFM/nuXmv
+```
 
 You are now ready to run the scripts locally. 
 
@@ -282,24 +366,27 @@ Note that each script will erase all the relevant results before running, to ens
 ## Minimal Script
 
 To test everything is working, please navigate to behaverify/REPRODUCIBILITY/2024\_SEFM/ and run the following
-
-	./behaverify_nfm_install_test.sh ./
+```
+./behaverify_sefm_install_test.sh ./
+```
 
 This will run a fairly small script. The results will be in behaverify/REPRODUCIBILITY/2024\_SEFM/examples/. Please see the Interpreting and Comparing Results section for an explanation of what results to look for.
 
 ## Partial Script
 
 To create a subset of the results, please navigate to behaverify/REPRODUCIBILITY/2024\_SEFM/ and run the following
-
-	./behaverify_nfm_partial_results.sh ./
+```
+./behaverify_sefm_partial_results.sh ./
+```
 
 This will run a larger, but still fairly small script. The results will be in behaverify/REPRODUCIBILITY/2024\_SEFM/examples/. Please see the Interpreting and Comparing Results section for an explanation of what results to look for.
 
 ## Full Script
 
 To create all results, please navigate to behaverify/REPRODUCIBILITY/2024\_SEFM/ and run the following
-
-	./behaverify_nfm_full_results.sh ./
+```
+./behaverify_sefm_full_results.sh ./
+```
 
 This will run a large script. The results will be in **behaverify/REPRODUCIBILITY/2024\_SEFM/examples/**. Please see the Interpreting and Comparing Results section for an explanation of what results to look for.
 
@@ -317,7 +404,7 @@ Our SEFM paper compared to MoVe4BT. See https://move4bt.github.io/ . We found th
 5. Click verifications.
 6. The GUI may freeze. Feel free to ignore the wait/force quit option, or repeatedly click wait. Eventually, it will print results, or produce a blank screen.
 
-The code for generating the files is in **/behaverify/REPRODUCIBILITY/2024\_SEFM/examples/bigger\_fish/create\_bigger\_fish\_MoVe4BT\_xml.py**. Run using the following command
+As mentioned above, MoVe4BT loads models stored in xml files. The code for generating the files is in **/behaverify/REPRODUCIBILITY/2024\_SEFM/examples/bigger\_fish/create\_bigger\_fish\_MoVe4BT\_xml.py**. Run using the following command
 
 ```
 python3 create_bigger_fish_MoVe4BT_xml.py /path/to/output/location min max step
@@ -331,7 +418,7 @@ python3 create_bigger_fish_MoVe4BT_xml.py /path/to/output/location 50 1000 50
 
 There is a similar simple robot file.
 
-**ADDITIONALLY**, we provide a .sh script in **/behaverify/REPRODUCIBILTY/2024\_SEFM/MoVe4BT/install\_MoVe4BT.sh** for instlal MoVe4BT. It is possible to run MoVe4BT through docker webtop, but this is not something we were able to automate.
+**ADDITIONALLY**, we provide a .sh script in **/behaverify/REPRODUCIBILTY/2024\_SEFM/MoVe4BT/install\_MoVe4BT.sh** to install MoVe4BT. It is possible to run MoVe4BT through docker webtop, but this is not something we were able to automate.
 
 ---
 
@@ -346,14 +433,14 @@ Upon completing any of the test scripts, you should find that /path/to/writable/
 
 ## Install Test
 
-The install test can only be used to confirm the installation worked.
+The install test can only be used to confirm the installation worked. **THE IMAGES WILL ONLY HAVE A SINGLE DATA POINT EACH.**
 
 ### What to look for
 
 As mentioned, you will not be able to find anything to compare. However, please confirm that the following files exist:
 
-- **bigger\_fish/processed\_data/pictures/bigger\_fish/bigger\_fish_ltl.png** -> This will have 4 lines with 2 data points, representing the performance of the various optimizations.
-- **simple\_robot/processed\_data/pictures/simple\_robot\_ltl.png**
+- **bigger\_fish/processed\_data/pictures/bigger\_fish/bigger\_fish_ltl.png** -> The key will include full\_opt and full\_opt\_CHANGED; each will have a single data point.
+- **simple\_robot/processed\_data/pictures/simple\_robot\_ltl.png** -> The key will include full\_opt and full\_opt\_CHANGED; each will have a single data point.
 
 ## Partial Test
 
@@ -363,21 +450,21 @@ The results should be in **/path/to/output/extracted/examples/**.
 
 ### What to look for
 
-- **bigger\_fish/processed\_data/pictures/full\_opt/bigger\_fish\_ltl.png** -> This will have some of the timing results for BehaVerify used for the Bigger Fish experiment. See **Section 7.1**, **Figure 5**. Note that this does **not** include the timing results for MoVe4BT. As such, the scale may look different. Please try to compare actual numbers rather than the shape of the graph. This is a timing experiment, so the results may differ somewhat.
-- **simple\_robot/processed\_data/pictures/simple\_robot\_ltl.png** -> This will have some of the timing results for BehaVerivy used for Simple Robot experiment. See **Section 7.2**, **Figure 7**. Note that this graph does **not** include the timing results for MoVe4BT. As such, the scale may look different. Please try to compare actual numbers rather than the shape of the graph. This is a timing experiment, so the results may differ somewhat.
+- **bigger\_fish/processed\_data/pictures/full\_opt/bigger\_fish\_ltl.png** -> This will have some of the timing results for BehaVerify used for the Bigger Fish experiment. See **Section 7.1**, **Figure 5**. The key will include full\_opt and full\_opt\_CHANGED; note that this does **not** include the timing results for MoVe4BT. As such, the scale may look different. This is a timing experiment, so the results may differ somewhat.
+- **simple\_robot/processed\_data/pictures/simple\_robot\_ltl.png** -> This will have some of the timing results for BehaVerivy used for Simple Robot experiment. See **Section 7.2**, **Figure 7**. The key will include full\_opt and full\_opt\_CHANGED; note that this graph does **not** include the timing results for MoVe4BT. As such, the scale may look different. This is a timing experiment, so the results may differ somewhat.
 
 ## Full Test
 
-The Full test generates all the results used in the paper.
+The Full test generates all the results used in the paper, but does not include MoVe4BT.
 
 The results should be in **/path/to/output/extracted/examples/**.
 
 ### What to look for
 
 
-- **bigger\_fish/processed\_data/pictures/full\_opt/bigger\_fish\_ltl.png** -> This will have all of the timing results for BehaVerify used for the Bigger Fish experiment. See **Section 7.1**, **Figure 5**. Note that this does **not** include the timing results for MoVe4BT. As such, the scale may look different. Please try to compare actual numbers rather than the shape of the graph. This is a timing experiment, so the results may differ somewhat.
+- **bigger\_fish/processed\_data/pictures/full\_opt/bigger\_fish\_ltl.png** -> This will have all of the timing results for BehaVerify used for the Bigger Fish experiment. See **Section 7.1**, **Figure 5**. The key will include full\_opt and full\_opt\_CHANGED; note that this does **not** include the timing results for MoVe4BT. As such, the scale may look different. This is a timing experiment, so the results may differ somewhat.
 - **ISR/processed\_data/pictures/counterexample\_for\_5/11x11\_line.png** -> This should correspond to **Section 7.3**, **Figure 8**.
-- **simple\_robot/processed\_data/pictures/simple\_robot\_ltl.png** -> This will have all of the timing results for BehaVerivy used for Simple Robot experiment. See **Section 7.2**, **Figure 7**. Note that this graph does **not** include the timing results for MoVe4BT. As such, the scale may look different. Please try to compare actual numbers rather than the shape of the graph. This is a timing experiment, so the results may differ somewhat.
+- **simple\_robot/processed\_data/pictures/simple\_robot\_ltl.png** -> This will have all of the timing results for BehaVerivy used for Simple Robot experiment. See **Section 7.2**, **Figure 7**. The key will include full\_opt and full\_opt\_CHANGED; note that this graph does **not** include the timing results for MoVe4BT. As such, the scale may look different. This is a timing experiment, so the results may differ somewhat.
 
 ---
 
@@ -385,12 +472,12 @@ The results should be in **/path/to/output/extracted/examples/**.
 
 1. If a script fails because permission has been denied, please run the script without sudo (running docker without sudo requires some configuration). If the problem persists, please try a different location, as occasionally docker cannot write to secondary disks.
 2. If building from the Dockerfile fails, please try and use the load option instead.
-3. If building from the Dockerfile fails and the load option is not available, please consider running **clean\_docker.sh**. THIS WILL REMOVE ALL EXISTING DOCKER CONTAINERS AND IMAGES. For some reason, this sometimes seems to help.
+3. If building from the Dockerfile fails and the load option is not available, please consider running **clean\_docker.sh**. THIS WILL REMOVE ALL EXISTING DOCKER CONTAINERS AND IMAGES. This sometimes seems to help.
 4. If everything runs to completion, but there are no images in the copied directory, please confirm if there are files in the results folders (e.g., **bigger\_fish\_selector/results/**). If there are, then most likely you encountered errors similar to the following during execution:
    ```
    OpenBLAS blas_thread_init: pthread_create failed for thread 1 of 16: Operation not permitted
    ```
-   Note that this error would not prevent the scripts from completing; it would only prevent the generation of graphs and tables. The internet suggests upgrading your docker version (we tested using docker version 20.10.24, build 297e128). Alternatively, you may by manually compile the results into graphs by calling the scripts at https://github.com/verivital/behaverify/tree/main/REPRODUCIBILITY/2024_SEFM/scripts/process_results_scripts . These scripts assume they are being run in the repository folder structure.
+   Note that this error would not prevent the scripts from completing; it would only prevent the generation of graphs and tables. The internet suggests upgrading your docker version (we tested using docker version 20.10.24, build 297e128). Alternatively, you may by manually compile the results into graphs by calling the scripts at https://github.com/verivital/behaverify/tree/main/REPRODUCIBILITY/2024_SEFM/scripts/process_results_scripts . These scripts must be run from the directory they are in and assume the repository structure exists.
 
 ---
 
