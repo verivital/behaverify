@@ -1,0 +1,5635 @@
+starting!
+randomizer created
+blackboard reader created
+environment created
+randomizer initialized
+blackboard initialized
+environment initialized
+root created.
+Done with serene startup code!
+tree created
+tree initialized
+environment pub-sub created
+starting ticks!
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.26112365722656, 92.99130249023438, -10.767157554626465)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_initial_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.23336791992188, 92.99104309082031, -10.210664749145508)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.20642852783203, 92.99079132080078, -9.62667465209961)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-155, -134, 25)
+goal : (-155, -134, 25)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.18765258789062, 92.99061584472656, -9.197460174560547)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.1517333984375, 92.99028015136719, -8.333330154418945)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.12479400634766, 92.99002838134766, -7.654080867767334)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.09785461425781, 92.98977661132812, -6.953010559082031)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.07826232910156, 92.98959350585938, -6.431583881378174)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.04315948486328, 92.98926544189453, -5.477300643920898)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.01622009277344, 92.989013671875, -4.730605125427246)
+position : (93, -119, 0)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.99417877197266, 92.98880767822266, -4.112160682678223)
+position : (93, -119, 0)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: map
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.9615249633789, 92.9885025024414, -3.1858155727386475)
+position : (93, -119, 0)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.SUCCESS
+read: map
+created map!
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Elevating!
+next point is: (93, -119, 5)
+STATUS of compute_waypoint: Status.SUCCESS
+sent: waypoint
+STATUS of send_waypoint: Status.SUCCESS
+read: position
+FAILED: position!
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.FAILURE
+got: odometry
+got: map
+read: position
+drone_true: (-116.49927520751953, 92.9652099609375, 70.53624725341797)
+position : (93, -116, 0)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.SUCCESS
+read: map
+updated map!
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Elevating!
+next point is: (93, -116, 5)
+STATUS of compute_waypoint: Status.SUCCESS
+sent: waypoint
+STATUS of send_waypoint: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.89479064941406, 92.98786926269531, -1.2661393880844116)
+position : (93, -119, 0)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Elevating!
+next point is: (93, -119, 5)
+STATUS of compute_waypoint: Status.SUCCESS
+sent: waypoint
+STATUS of send_waypoint: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.89517974853516, 92.98793029785156, -1.2804443836212158)
+position : (93, -119, 0)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Elevating!
+next point is: (93, -119, 5)
+STATUS of compute_waypoint: Status.SUCCESS
+sent: waypoint
+STATUS of send_waypoint: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.89607238769531, 92.9881820678711, -1.3153903484344482)
+position : (93, -119, 0)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Elevating!
+next point is: (93, -119, 5)
+STATUS of compute_waypoint: Status.SUCCESS
+sent: waypoint
+STATUS of send_waypoint: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.89750671386719, 92.98855590820312, -1.379839301109314)
+position : (93, -119, 0)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Elevating!
+next point is: (93, -119, 5)
+STATUS of compute_waypoint: Status.SUCCESS
+sent: waypoint
+STATUS of send_waypoint: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.8995590209961, 92.98907470703125, -1.4850062131881714)
+position : (93, -119, 0)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Elevating!
+next point is: (93, -119, 5)
+STATUS of compute_waypoint: Status.SUCCESS
+sent: waypoint
+STATUS of send_waypoint: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.90210723876953, 92.9897689819336, -1.63068425655365)
+position : (93, -119, 0)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Elevating!
+next point is: (93, -119, 5)
+STATUS of compute_waypoint: Status.SUCCESS
+sent: waypoint
+STATUS of send_waypoint: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.90520477294922, 92.99052429199219, -1.8232547044754028)
+position : (93, -119, 0)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Elevating!
+next point is: (93, -119, 5)
+STATUS of compute_waypoint: Status.SUCCESS
+sent: waypoint
+STATUS of send_waypoint: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: map
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.90898895263672, 92.99147033691406, -2.0727264881134033)
+position : (93, -119, 0)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.SUCCESS
+read: map
+updated map!
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Elevating!
+next point is: (93, -119, 5)
+STATUS of compute_waypoint: Status.SUCCESS
+sent: waypoint
+STATUS of send_waypoint: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.9132308959961, 92.99247741699219, -2.3645312786102295)
+position : (93, -119, 0)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Elevating!
+next point is: (93, -119, 5)
+STATUS of compute_waypoint: Status.SUCCESS
+sent: waypoint
+STATUS of send_waypoint: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.91805267333984, 92.99348449707031, -2.7038581371307373)
+position : (93, -119, 0)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Elevating!
+next point is: (93, -119, 5)
+STATUS of compute_waypoint: Status.SUCCESS
+sent: waypoint
+STATUS of send_waypoint: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.92369842529297, 92.99452209472656, -3.1005027294158936)
+position : (93, -119, 0)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Elevating!
+next point is: (93, -119, 5)
+STATUS of compute_waypoint: Status.SUCCESS
+sent: waypoint
+STATUS of send_waypoint: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.92986297607422, 92.99552917480469, -3.5277557373046875)
+position : (93, -119, 0)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Elevating!
+next point is: (93, -119, 5)
+STATUS of compute_waypoint: Status.SUCCESS
+sent: waypoint
+STATUS of send_waypoint: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.93677520751953, 92.99653625488281, -3.9928877353668213)
+position : (93, -119, 0)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Elevating!
+next point is: (93, -119, 5)
+STATUS of compute_waypoint: Status.SUCCESS
+sent: waypoint
+STATUS of send_waypoint: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.9447250366211, 92.99757385253906, -4.506405830383301)
+position : (93, -119, 0)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Elevating!
+next point is: (93, -119, 5)
+STATUS of compute_waypoint: Status.SUCCESS
+sent: waypoint
+STATUS of send_waypoint: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.95317840576172, 92.99858093261719, -5.017776966094971)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Checking existing path
+Calling A*
+path impossible
+start is obstacle
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.96233367919922, 92.99958801269531, -5.523251533508301)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.97257995605469, 93.00057220458984, -6.024188041687012)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-7, 34, 5)
+goal : (-7, 34, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98308563232422, 93.00132751464844, -6.4598259925842285)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.99365997314453, 93.00208282470703, -6.826956748962402)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (2, -1, 25)
+goal : (2, -1, 25)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+goal is obstacle
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.0043716430664, 93.00286102294922, -7.139766216278076)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.01046752929688, 93.0033187866211, -7.294937610626221)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-91, 16, 5)
+goal : (-91, 16, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.02368927001953, 93.0043716430664, -7.576093673706055)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.0325698852539, 93.0051498413086, -7.719557285308838)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-103, 177, 25)
+goal : (-103, 177, 25)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.04035186767578, 93.00590515136719, -7.808760643005371)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.04728698730469, 93.0067138671875, -7.849856376647949)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-108, -125, 5)
+goal : (-108, -125, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.05355072021484, 93.00775146484375, -7.842449188232422)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.05879974365234, 93.00875854492188, -7.787235736846924)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-71, -3, 25)
+goal : (-71, -3, 25)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+goal is obstacle
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: map
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.06327056884766, 93.00997161865234, -7.68540096282959)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+updated map!
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.06709289550781, 93.01126861572266, -7.533030986785889)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (138, 30, 5)
+goal : (138, 30, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+start is obstacle
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.06916046142578, 93.01227569580078, -7.40885591506958)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.07113647460938, 93.01444244384766, -7.195335388183594)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-30, 192, 5)
+goal : (-30, 192, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.07088470458984, 93.01647186279297, -7.059549331665039)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.07005310058594, 93.01779174804688, -6.992373943328857)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-8, 145, 5)
+goal : (-8, 145, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.06643676757812, 93.02101135253906, -6.867766857147217)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.06244659423828, 93.02360534667969, -6.797719955444336)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-127, -31, 5)
+goal : (-127, -31, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.05860137939453, 93.02566528320312, -6.752832412719727)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.052001953125, 93.02871704101562, -6.700528621673584)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-177, 46, 25)
+goal : (-177, 46, 25)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.04590606689453, 93.03111267089844, -6.667726516723633)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.03997039794922, 93.03317260742188, -6.644411087036133)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (78, -146, 5)
+goal : (78, -146, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.03246307373047, 93.03539276123047, -6.623025894165039)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.02519989013672, 93.03719329833984, -6.608119010925293)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (200, 120, 25)
+goal : (200, 120, 25)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.01991271972656, 93.03827667236328, -6.600093364715576)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.01065826416016, 93.03971862792969, -6.589989185333252)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-52, 92, 25)
+goal : (-52, 92, 25)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.0033950805664, 93.0404052734375, -6.584712505340576)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.99916076660156, 93.04061126708984, -6.582566261291504)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (155, -139, 5)
+goal : (155, -139, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.99042510986328, 93.04053497314453, -6.579828262329102)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98331451416016, 93.03986358642578, -6.579049587249756)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (140, -168, 5)
+goal : (140, -168, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: map
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.9791488647461, 93.0391616821289, -6.579115867614746)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+updated map!
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.97191619873047, 93.03728485107422, -6.580077171325684)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (141, 20, 5)
+goal : (141, 20, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+start is obstacle
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.96676635742188, 93.03531646728516, -6.58139705657959)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.96359252929688, 93.03374481201172, -6.582486152648926)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-195, -27, 25)
+goal : (-195, -27, 25)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.95835876464844, 93.03031921386719, -6.584807872772217)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.95491790771484, 93.02725219726562, -6.58680534362793)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-110, -71, 5)
+goal : (-110, -71, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.95317077636719, 93.0252685546875, -6.588015079498291)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.94995880126953, 93.02045440673828, -6.590822696685791)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-113, -133, 5)
+goal : (-113, -133, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.94832611083984, 93.0166244506836, -6.592881679534912)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.94731140136719, 93.01284790039062, -6.594831943511963)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-155, -12, 25)
+goal : (-155, -12, 25)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.94685363769531, 93.00895690917969, -6.596715927124023)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.94692993164062, 93.00480651855469, -6.598573684692383)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (65, 92, 25)
+goal : (65, 92, 25)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.9475326538086, 93.0009536743164, -6.600287437438965)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.94862365722656, 92.99717712402344, -6.601908206939697)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (58, 144, 5)
+goal : (58, 144, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.95021057128906, 92.99337768554688, -6.603479385375977)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.95214080810547, 92.9898681640625, -6.604908466339111)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-57, 119, 25)
+goal : (-57, 119, 25)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.95448303222656, 92.9865951538086, -6.60624361038208)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.95637512207031, 92.9843978881836, -6.607157230377197)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (42, 174, 25)
+goal : (42, 174, 25)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.96015167236328, 92.98081970214844, -6.608676433563232)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.96332550048828, 92.97843170166016, -6.609745979309082)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-61, 145, 25)
+goal : (-61, 145, 25)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: map
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.96676635742188, 92.97633361816406, -6.610764503479004)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+updated map!
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.97029113769531, 92.97468566894531, -6.611677169799805)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (101, 159, 25)
+goal : (101, 159, 25)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+start is obstacle
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.97381591796875, 92.97340393066406, -6.612518787384033)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.97744750976562, 92.97248840332031, -6.613315582275391)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (133, -131, 5)
+goal : (133, -131, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98097229003906, 92.97200012207031, -6.6140265464782715)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98417663574219, 92.97188568115234, -6.614622116088867)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-131, 35, 25)
+goal : (-131, 35, 25)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98802185058594, 92.97215270996094, -6.615278720855713)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.99147033691406, 92.9728012084961, -6.615843772888184)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-155, -46, 5)
+goal : (-155, -46, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.99442291259766, 92.97366333007812, -6.616301536560059)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.99771881103516, 92.9750747680664, -6.616805076599121)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-158, -104, 5)
+goal : (-158, -104, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.00057220458984, 92.97673034667969, -6.617238521575928)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.00308990478516, 92.97859954833984, -6.617621421813965)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (14, 86, 25)
+goal : (14, 86, 25)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.00531768798828, 92.98069763183594, -6.617971897125244)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.00730895996094, 92.98304748535156, -6.618301868438721)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-158, -108, 25)
+goal : (-158, -108, 25)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.00894165039062, 92.98556518554688, -6.618593215942383)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.01026916503906, 92.98812866210938, -6.618858814239502)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-90, 31, 5)
+goal : (-90, 31, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.01126861572266, 92.99098205566406, -6.619109153747559)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.01191711425781, 92.9937515258789, -6.619330883026123)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (148, -84, 5)
+goal : (148, -84, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.01226043701172, 92.99652099609375, -6.619532108306885)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.01229858398438, 92.99853515625, -6.619668960571289)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-189, -5, 5)
+goal : (-189, -5, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: map
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.011962890625, 93.00214385986328, -6.619888782501221)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+updated map!
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: map
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.01136016845703, 93.0047378540039, -6.620041847229004)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (3, -78, 5)
+goal : (3, -78, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+updated map!
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+start is obstacle
+path impossible
+goal is obstacle
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.01057434082031, 93.00702667236328, -6.620170593261719)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.00931549072266, 93.00967407226562, -6.620312213897705)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (63, 128, 5)
+goal : (63, 128, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.00794219970703, 93.01187896728516, -6.620426654815674)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.00631713867188, 93.01395416259766, -6.620536804199219)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-135, 54, 5)
+goal : (-135, 54, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.00455474853516, 93.01571655273438, -6.620631217956543)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.00320434570312, 93.01679992675781, -6.6206955909729)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-193, -72, 5)
+goal : (-193, -72, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-119.00051879882812, 93.01860046386719, -6.620800495147705)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.99832916259766, 93.0196533203125, -6.620874881744385)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-95, -14, 25)
+goal : (-95, -14, 25)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.99606323242188, 93.02044677734375, -6.620937824249268)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.99372863769531, 93.02100372314453, -6.621002674102783)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (97, 53, 5)
+goal : (97, 53, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.99146270751953, 93.02127838134766, -6.621056079864502)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98919677734375, 93.02129364013672, -6.621103286743164)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-58, -95, 25)
+goal : (-58, -95, 25)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98686218261719, 93.02105712890625, -6.621151924133301)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98539733886719, 93.0207290649414, -6.621184825897217)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-83, -43, 5)
+goal : (-83, -43, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98277282714844, 93.0198745727539, -6.62122917175293)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98081970214844, 93.01893615722656, -6.6212615966796875)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (169, 128, 5)
+goal : (169, 128, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.97943115234375, 93.01811981201172, -6.621286392211914)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.97749328613281, 93.01659393310547, -6.62132453918457)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-148, -8, 25)
+goal : (-148, -8, 25)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: map
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.97618103027344, 93.01529693603516, -6.6213531494140625)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+updated map!
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.97477722167969, 93.01360321044922, -6.62137508392334)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (38, -5, 25)
+goal : (38, -5, 25)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+start is obstacle
+path impossible
+goal is obstacle
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.97377014160156, 93.0119400024414, -6.6213908195495605)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.97300720214844, 93.01028442382812, -6.621405601501465)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (199, -169, 5)
+goal : (199, -169, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.97232818603516, 93.00836181640625, -6.62142276763916)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.971923828125, 93.00659942626953, -6.621438503265381)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (94, 40, 25)
+goal : (94, 40, 25)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.97174072265625, 93.00531768798828, -6.621449947357178)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.97171020507812, 93.00302124023438, -6.6214704513549805)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (23, 72, 5)
+goal : (23, 72, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.9719467163086, 93.00125885009766, -6.621486186981201)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.97236633300781, 92.99944305419922, -6.62150239944458)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (10, 64, 5)
+goal : (10, 64, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.9729232788086, 92.99784851074219, -6.621518135070801)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.97354125976562, 92.99661254882812, -6.621525764465332)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-117, -165, 25)
+goal : (-117, -165, 25)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.974609375, 92.99485778808594, -6.621525764465332)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.97561645507812, 92.99359893798828, -6.621525764465332)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (118, -96, 5)
+goal : (118, -96, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.9767074584961, 92.99251556396484, -6.621533393859863)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.97808074951172, 92.99141693115234, -6.621533393859863)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-94, -112, 5)
+goal : (-94, -112, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.97933959960938, 92.99061584472656, -6.621537685394287)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98074340820312, 92.98992919921875, -6.621540069580078)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-162, -1, 5)
+goal : (-162, -1, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.9822998046875, 92.98941040039062, -6.621540069580078)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98381042480469, 92.9891128540039, -6.621541976928711)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-112, 148, 25)
+goal : (-112, 148, 25)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: map
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98532104492188, 92.98893737792969, -6.621545314788818)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+updated map!
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98687744140625, 92.98893737792969, -6.621545314788818)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (96, -3, 5)
+goal : (96, -3, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+start is obstacle
+path impossible
+goal is obstacle
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98825073242188, 92.9891128540039, -6.621545314788818)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98963928222656, 92.98941802978516, -6.6215500831604)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (81, 31, 25)
+goal : (81, 31, 25)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.99093627929688, 92.98993682861328, -6.6215500831604)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.99219512939453, 92.99051666259766, -6.6215500831604)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-167, 138, 25)
+goal : (-167, 138, 25)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.99327087402344, 92.99127197265625, -6.6215500831604)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.99430847167969, 92.9920654296875, -6.6215500831604)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-107, 11, 5)
+goal : (-107, 11, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.99520874023438, 92.99307250976562, -6.621553897857666)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.99596405029297, 92.99407958984375, -6.621553897857666)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-187, -47, 25)
+goal : (-187, -47, 25)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.99656677246094, 92.9949951171875, -6.621553897857666)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.99713134765625, 92.99620056152344, -6.621553897857666)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (115, -138, 25)
+goal : (115, -138, 25)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.99749755859375, 92.9974594116211, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.99775695800781, 92.9987564086914, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-75, 146, 25)
+goal : (-75, 146, 25)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.99783325195312, 93.00001525878906, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.99783325195312, 93.00127410888672, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (7, 42, 25)
+goal : (7, 42, 25)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.99763488769531, 93.00244903564453, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.99738311767578, 93.00345611572266, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (32, 7, 5)
+goal : (32, 7, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.99695587158203, 93.00446319580078, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.9964370727539, 93.00550079345703, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (96, -11, 5)
+goal : (96, -11, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: map
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.99588012695312, 93.00640106201172, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+updated map!
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.99519348144531, 93.00708770751953, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (122, -76, 5)
+goal : (122, -76, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+start is obstacle
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.99436950683594, 93.0079116821289, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.99359130859375, 93.00850677490234, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (151, 165, 5)
+goal : (151, 165, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.99304962158203, 93.00885772705078, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.99173736572266, 93.00942993164062, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-181, 42, 25)
+goal : (-181, 42, 25)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.9906997680664, 93.00968933105469, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98969268798828, 93.00992584228516, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-95, 114, 5)
+goal : (-95, 114, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98865509033203, 93.00992584228516, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.9876480102539, 93.00992584228516, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (195, -184, 5)
+goal : (195, -184, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98664093017578, 93.00975036621094, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98582458496094, 93.0094985961914, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (135, -22, 25)
+goal : (135, -22, 25)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98513793945312, 93.00926971435547, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98435974121094, 93.00877380371094, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (35, 87, 25)
+goal : (35, 87, 25)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98353576660156, 93.00822448730469, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.983154296875, 93.00796508789062, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-14, 15, 5)
+goal : (-14, 15, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98239135742188, 93.007080078125, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98188781738281, 93.0063247680664, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-68, -149, 5)
+goal : (-68, -149, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98167419433594, 93.0060043334961, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98123168945312, 93.00479125976562, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-134, -6, 5)
+goal : (-134, -6, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: map
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.9809799194336, 93.00403594970703, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+updated map!
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98087310791016, 93.00325775146484, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-15, 1, 5)
+goal : (-15, 1, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+start is obstacle
+path impossible
+goal is obstacle
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98087310791016, 93.00250244140625, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98087310791016, 93.00174713134766, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-91, -95, 25)
+goal : (-91, -95, 25)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98104095458984, 93.00096893310547, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98129272460938, 93.00021362304688, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (76, 35, 5)
+goal : (76, 35, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98149871826172, 92.99959564208984, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98184204101562, 92.99888610839844, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-195, 104, 25)
+goal : (-195, 104, 25)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98234558105469, 92.99838256835938, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98275756835938, 92.99797058105469, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (177, 79, 5)
+goal : (177, 79, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98336791992188, 92.99736022949219, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98387145996094, 92.99700164794922, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (149, -87, 5)
+goal : (149, -87, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98423767089844, 92.99681854248047, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98489379882812, 92.99649047851562, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (82, 10, 5)
+goal : (82, 10, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98539733886719, 92.99624633789062, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98590087890625, 92.99624633789062, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-60, -170, 5)
+goal : (-60, -170, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98641967773438, 92.99624633789062, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.9869384765625, 92.99624633789062, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (125, -79, 25)
+goal : (125, -79, 25)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98738098144531, 92.99628448486328, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98794555664062, 92.99656677246094, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-88, 153, 5)
+goal : (-88, 153, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: map
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98834228515625, 92.99676513671875, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+updated map!
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98895263671875, 92.9970703125, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (66, -52, 5)
+goal : (66, -52, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+start is obstacle
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98947143554688, 92.99732971191406, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.98997497558594, 92.9975814819336, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-60, 21, 5)
+goal : (-60, 21, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.990478515625, 92.9980697631836, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.99073791503906, 92.99852752685547, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (-74, -149, 5)
+goal : (-74, -149, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.99102020263672, 92.99909210205078, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.99127197265625, 92.99959564208984, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (123, -3, 25)
+goal : (123, -3, 25)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+goal is obstacle
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.99153137207031, 93.00011444091797, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.99169158935547, 93.00061798095703, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+CREATED A FAKE GOAL
+read: goal
+goal true: (90, 160, 5)
+goal : (90, 160, 5)
+STATUS of read_goal: Status.SUCCESS
+read: map
+STATUS of read_map: Status.SUCCESS
+STATUS of valid_positition_check: Status.SUCCESS
+Computing waypoint
+Calling A*
+path impossible
+STATUS of compute_waypoint: Status.FAILURE
+sent: invalid goal request
+STATUS of send_invalid_goal_request: Status.FAILURE
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+read: position
+drone_true: (-118.99169158935547, 93.0011215209961, -6.621556758880615)
+position : (93, -119, 5)
+STATUS of read_position: Status.SUCCESS
+STATUS of not_at_goal: Status.SUCCESS
+STATUS of valid_goal: Status.FAILURE
+read: goal
+FAILED: goal
+STATUS of read_goal: Status.FAILURE
+STATUS of goal_requested_check: Status.FAILURE
+sent: request_new_goal
+STATUS of send_next_goal_request: Status.FAILURE
+read: map
+STATUS of read_map: Status.SUCCESS
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
+got: odometry
