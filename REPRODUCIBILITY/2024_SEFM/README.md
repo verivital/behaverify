@@ -148,10 +148,10 @@ python3 reinstall.py /path/to/Dockerfile/folder
 
 Example:
 ```
-python3 python_script/reinstall.py ./
+python3 ./python_script/reinstall.py ./
 ```
 
-This will create a docker image named behaverify\_img with the tag latest. It will then also create a container named behaverify from that image.
+This will create a docker image named behaverify\_img with the tag latest. It will then also create a container named behaverify\_2024\_sefm from that image.
 
 ### 1b. Using the provided Docker Image to create a Container (estimated time: ??)
 
@@ -162,13 +162,13 @@ python3 load_image.py /path/to/Dockerimage
 	
 Example:
 ```
-python3 python_script/load_image.py ./DockerImage.tar
+python3 ./python_script/load_image.py ./DockerImage.tar
 ```
 
-This will create a docker image named behaverify\_img with the tag latest. It will then also create a container named behaverify from that image.
+This will create a docker image named behaverify\_img with the tag latest. It will then also create a container named behaverify\_2024\_sefm from that image.
 
 ### IMPORTANT:
-The scripts below assume that the docker container is named behaverify. If you run 1a or 1b, this will be handled for you, and you need not worry.
+The scripts below assume that the docker container is named behaverify\_2024\_sefm. If you run 1a or 1b, this will be handled for you, and you need not worry.
 
 ### 2. Addition of nuXmv (estimated time: 30 seconds)
 
@@ -179,7 +179,7 @@ python3 add_nuxmv.py /path/to/nuXmv
 
 Example:
 ```
-python3 python_script/add_nuxmv.py ./nuXmv
+python3 ./python_script/add_nuxmv.py ./nuXmv
 ```
 
 This will copy nuXmv from the path you provided to the correct location in the docker and ensure it is runable and an executable. Note that you should not point to the folder containing nuXmv, but to nuXmv itself, and that the nuXmv version should be the Linux version.
@@ -234,7 +234,7 @@ This section is intentionally lengthy. If you are not interested in the details 
 		sudo apt update
 		sudo apt upgrade
 3. Python3<br />Python3 is used to run BehaVerify. As such, it is necessary. If you already have python3 installed, skip the following step. If not, run
-
+	
 		sudo apt install python3
 4. pip<br />pip is used to install other python packages. If you already have pip installed (for python3), skip the following step. If not, run
 
@@ -314,12 +314,12 @@ python3 -m pip install py_trees
 	
 Below we have more mandatory requirements
 ```
-	python3 -m pip install pandas
-	python3 -m pip install jinja2
-	python3 -m pip install textX
-	python3 -m pip install matplotlib
-	sudo apt install graphviz
-	sudo apt install git
+python3 -m pip install pandas
+python3 -m pip install jinja2
+python3 -m pip install textX
+python3 -m pip install matplotlib
+sudo apt install graphviz
+sudo apt install git
 ```
 	
 (OPTIONAL) These are prerequisites for Haskell, which is not used in the SEFM tests.
