@@ -1,11 +1,26 @@
 import argparse
 import tarfile
 import docker
-from docker_util import IMAGE_NAME
+from docker_util import IMAGE_NAME, CONTAINER_NAME
 
 def create_image_and_container(dockerfile_path):
     '''creates behaverify_img (Docker Image) and behaverify (Docker Container)'''
     client = docker.from_env()
+    print('Start: Removing container: ' + CONTAINER_NAME)
+    try:
+        behaverify = client.containers.get(CONTAINER_NAME)
+        behaverify.stop()
+        behaverify.remove()
+    except docker.errors.NotFound:
+        pass
+    print('End: Removing container: ' + CONTAINER_NAME)
+    print('Start: Removing image: ' + IMAGE_NAME)
+    try:
+        behaverify_img = client.images.get(IMAGE_NAME)
+        behaverify_img.remove()
+    except docker.errors.ImageNotFound:
+        pass
+    print('End: Removing image: ' + IMAGE_NAME)
     print('Start: Building image: ' + IMAGE_NAME)
     (behaverify_img, logs) = client.images.build(path = dockerfile_path, tag = IMAGE_NAME + ':latest')
     print('End: Building image: ' + IMAGE_NAME)
