@@ -1,277 +1,266 @@
-configuration {
-}
-enumerations {
-}
-
-constants {
-    x_max := 399, y_max := 399, z_max := 25
-}
+configuration {}
+enumerations {}
+constants {}
 
 variables {
-    variable { bl goal VAR [0, x_max] array 3 default{assign{result{0}}}}
-    variable { bl goal_requested VAR BOOLEAN assign{result{False}}}
-    variable { bl map_exists VAR BOOLEAN assign{result{False}}}
-    variable { bl position VAR [0, x_max] array 3 default{assign{result{0}}}}
-    variable { bl valid_goal VAR BOOLEAN assign{result{False}}}
-    variable { bl valid_position VAR BOOLEAN assign{result{False}}}
-    variable { bl waypoint VAR [0, x_max] array 3 default{assign{result{0}}}}
+    variable { bl goals VAR BOOLEAN assign{result{False}}} #{An array of tuples marking where we want to go}#
+    variable { bl goal_index VAR [0, 1] assign{result{0}}} #{This stores where we are in the goal array}#
+    variable { bl obstacle_map VAR BOOLEAN assign{result{False}}} #{a dictionary of obstacle presence as x, y}#
+    variable { bl cost_graph VAR BOOLEAN assign{result{False}}} #{}#
+    variable { bl path VAR BOOLEAN assign{result{False}}} #{list of cells to reach that lead to the current goal index}#
+    variable { bl path_segment VAR BOOLEAN assign{result{False}}} #{current segment of the path (all same height)}#
+    variable { bl path_segment_sent VAR BOOLEAN assign{result{False}}} #{have we sent this segment?}#
+    variable { bl position VAR BOOLEAN assign{result{False}}} #{An array of tuples marking where we want to go}#
 
-    variable { local success_read VAR BOOLEAN assign{result{False}}}
+    variable { local read_success VAR BOOLEAN assign{result{False}}}
     
     variable { env fake VAR [0, 1] assign{result{0}}}
 }
 
-environment_update {
-}
+environment_update {}
 
 checks {
     check {
-	goal_requested_check
-	arguments {}
-	read_variables{goal_requested}
-	condition{goal_requested}
-    }
-    check {
-	not_at_goal
+	not_near_goal_index
 	arguments{}
-	read_variables {position, goal}
-	condition {
-	    (not, 
-		(and,
-		    (loop, loop_var, [0, 2] such_that True, 
-			(eq, (index, position, constant_index loop_var), (index, goal, constant_index loop_var))
-		    )
-		)
-	    )
-	}
+	read_variables{goals, goal_index, position}
+	condition{position}
     }
     check {
-	valid_goal_check
-	arguments {}
-	read_variables{valid_goal}
-	condition{valid_goal}
+	not_near_path_segment_end
+	arguments{}
+	read_variables{path_segment, position}
+	condition{position}
     }
     check {
-	valid_position_check
+	obstacle_map_exists_check
 	arguments {}
-	read_variables{valid_position}
-	condition{valid_position}
+	read_variables{obstacle_map}
+	condition{obstacle_map}
     }
-    
+    check {
+	path_exists_check
+	arguments{}
+	read_variables{path}
+	condition{path}
+    }
+    check {
+	path_segment_exists_check
+	arguments{}
+	read_variables{path_segment}
+	condition{path_segment}
+    }
+    check {
+	path_valid_check
+	arguments{}
+	read_variables{path, obstacle_map}
+	condition{path}
+    }
+    check {
+	sent_path_segment_check
+	arguments{}
+	read_variables{path_segment_sent}
+	condition{path_segment_sent}
+    }
 }
 
-environment_checks {
-}
+environment_checks {}
 
 actions {
     action {
-	compute_waypoint
+	compute_path
 	arguments{}
 	local_variables{}
-	read_variables{position}
-	write_variables{waypoint, valid_goal}
+	read_variables{position, goals, goal_index}
+	write_variables{cost_graph, path, path_segment, path_segment_sent}
 	initial_values{}
 	update{
-	    read_environment{
-		compute_waypoint_function
-		condition_variable {valid_goal}
-		condition {True}
-		variable_statement {
-		    waypoint
-		    constant_index
-		    index_of{0}assign{result{0}}
-		}
-	    }
-	    return_statement{case{valid_goal}result{success}result{failure}}
+	    return_statement{result{success}}
 	}
     }
     action {
-	read_goal
+	compute_path_segment
+	arguments{}
+	local_variables{}
+	read_variables{path}
+	write_variables{path_segment, path_segment_sent}
+	initial_values{}
+	update{
+	    return_statement{result{success}}
+	}
+    }
+    action {
+	handle_error
+	arguments {}
+	local_variables {}
+	read_variables {}
+	write_variables {goal_index, path, path_segment, path_segment_sent}
+	initial_values {}
+	update {
+	    return_statement{result{failure}}
+	}
+    }
+    action {
+	read_goals
 	arguments{}
 	local_variables{}
 	read_variables{}
-	write_variables{goal, goal_requested, valid_goal}
+	write_variables{goals}
 	initial_values{}
 	update{
-	    read_environment {
-		read_goal_function
-		condition{True}
-		variable_statement{
-		    goal
-		    constant_index
-		    index_of{0}assign{result{0}}
-		}
-		variable_statement{
-		    goal_requested
-		    assign{result{False}}
-		}
-		variable_statement{
-		    valid_goal
-		    assign{result{True}}
-		}
-	    }
 	    return_statement{
-		case{valid_goal}result{success}result{failure}
+		result{success}
 	    }
 	}
     }
     action {
-	read_map
+	read_initial_obstacle_map
 	arguments{}
-	local_variables{success_read}
-	read_variables{valid_position}
-	write_variables{map_exists}
+	local_variables{}
+	read_variables{}
+	write_variables{obstacle_map, cost_graph}
 	initial_values{}
 	update{
-	    read_environment {
-		read_map_function
-		condition {True}
-		variable_statement{
-		    map_exists
-		    assign{result{True}}
-		}
-	    }
 	    return_statement{
-		case{map_exists}result{success}result{failure}
+		case{obstacle_map}result{success}result{failure}
+	    }
+	}
+    }
+    action {
+	read_obstacle_map
+	arguments{}
+	local_variables{}
+	read_variables{position}
+	write_variables{obstacle_map, cost_graph}
+	initial_values{}
+	update{
+	    return_statement{
+		result{success}
 	    }
 	}
     }
     action {
 	read_position
 	arguments{}
-	local_variables{}
+	local_variables{read_success}
 	read_variables{}
-	write_variables{position, valid_position}
+	write_variables{position}
 	initial_values{}
 	update{
-	    read_environment {
-		read_position_function
-		condition_variable {valid_position}
-		condition {True}
-		variable_statement{
-		    position
-		    constant_index
-		    index_of{0}assign{result{0}}
-		}
+	    return_statement{
+		case{read_success}result{success}result{failure}
 	    }
+	}
+    }
+    action {
+	send_path_segment
+	arguments {}
+	local_variables {}
+	read_variables {path_segment}
+	write_variables {path_segment_sent}
+	initial_values{}
+	update{
 	    return_statement{result{success}}
 	}
     }
     action {
-	send_invalid_goal_request
+	update_cost_graph
 	arguments{}
 	local_variables{}
-	read_variables{}
-	write_variables{goal_requested}
+	read_variables{obstacle_map}
+	write_variables{cost_graph}
 	initial_values{}
 	update{
-	    write_environment {
-		send_invalid_goal_request_function
-		variable_statement {
-		    instant
-		    fake
-		    assign{result{0}}
-		}
-	    }
-	    variable_statement {
-		goal_requested
-		assign{result{False}} #{Have to actually request a goal as usual.}#
-	    }
-	    return_statement{
-		result{failure}
-	    }
+	    return_statement{result{success}}
 	}
     }
     action {
-	send_next_goal_request
+	update_goal_index
 	arguments{}
 	local_variables{}
 	read_variables{}
-	write_variables{goal_requested}
+	write_variables{goal_index, path, path_segment, path_segment_sent}
 	initial_values{}
 	update{
-	    variable_statement {
-		goal_requested
-		assign{result{True}}
+	    variable_statement{
+		goal_index
+		assign{result{(add, 1, goal_index)}}
 	    }
-	    write_environment {
-		send_next_goal_request_function
-		variable_statement {
-		    instant
-		    fake
-		    assign{result{0}}
-		}
-	    }
-	    return_statement{
-		result{failure}
-	    }
-	}
-    }
-    action {
-	send_waypoint
-	arguments{}
-	local_variables{}
-	read_variables{waypoint}
-	write_variables{}
-	initial_values{}
-	update{
-	    write_environment{
-		send_waypoint_function
-		variable_statement{
-		    instant
-		    fake
-		    assign{result{0}}
-		}
+	    variable_statement{
+		path_segment_sent
+		assign{result{False}}
 	    }
 	    return_statement{result{success}}
 	}
     }
 }
 sub_trees {
+        sub_tree {
+	compute_path_sub_tree
+	composite {
+	    compute_path_selector selector children {
+		path_exists_check {}
+		composite {
+		    compute_path_sequence sequence children {
+			compute_path_0 : compute_path {}
+			path_valid_check_0 : path_valid_check {}
+		    }
+		}
+		composite {
+		    compute_path_with_map_update_sequence sequence children {
+			update_cost_graph {}
+			compute_path_1 : compute_path {}
+			path_valid_check_1 : path_valid_check {}
+		    }
+		}
+		handle_error {}
+	    }
+	}
+    }
+    sub_tree {
+	compute_path_segment_sub_tree
+	composite {
+	    compute_path_segment_selector selector children {
+		composite {
+		    compute_path_segment_sequence sequence children {
+			path_segment_exists_check {}
+			not_near_path_segment_end {}
+		    }
+		}
+		compute_path_segment {}
+	    }
+	}
+    }
+    sub_tree {
+	send_path_segment_sub_tree
+	composite {
+	    send_path_segment_selector selector children {
+		sent_path_segment_check {}
+		send_path_segment {}
+	    }
+	}
+    }	
+    sub_tree {
+	update_goal_index_sub_tree
+	composite { update_goal_index_selector selector children { not_near_goal_index {} update_goal_index {}}}
+    }
 }
 
 tree {
     composite{ drone_control sequence children{
-	    #{}#read_position {} #{success, always.}#
-	    composite{ map_and_goal parallel policy success_on_all children{
-		    composite{ validate_goal selector children{
-			    #{
-				four options
-				1. current goal is fine (we are not at the goal, and it is a valid goal)
-				2. we received a new goal (might be unreachable, but we'll check that later)
-				3. we've asked for a new goal
-				4. we ask for a new goal
-			    }#
-			    composite{ current_goal sequence children {
-				    #{}#not_at_goal {}
-				    #{}#valid_goal_check {}
-				}
-			    }
-			    #{}#read_goal {} #{
-				if goal received -> valid_goal -> true (might be invalidated later), waypoints_plotted -> false, goal_requested -> false
-				if valid_goal -> success
-				failure otherwise
-			    }#
-			    decorator { cannot_continue X_is_Y X success Y failure child {
-				    composite{ new_goal selector children{
-					    #{}#goal_requested_check {}
-					    #{}#send_next_goal_request {} #{returns failure, always}#
-					}
-				    }
-				}
-			    }
-			}
-		    }
-		    #{}#read_map {} #{success if map exists, failure otherwise}#
+	    composite {
+		initial_map_selector selector children {
+		    obstacle_map_exists_check {}
+		    read_initial_obstacle_map {}
 		}
 	    }
-	    #{}#valid_position_check{}
-	    composite{ plot_waypoint selector children{
-		    #{}#compute_waypoint {} #{success if course plotted, failure otherwise}#
-		    #{}#send_invalid_goal_request {} #{returns failure, always}#
-		}
-	    }   
-	    #{}#send_waypoint {}
+	    read_goals {}
+	    read_position {}
+	    read_obstacle_map {}
+	    insert {update_goal_index_sub_tree}
+	    insert {compute_path_sub_tree}
+	    insert {compute_path_segment_sub_tree}
+	    insert {send_path_segment_sub_tree}
 	}
     }
 }
