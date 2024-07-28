@@ -18,7 +18,7 @@ from ebt.bt.action_send_path_segment_file import action_send_path_segment
 from ebt.bt.action_update_goal_index_file import action_update_goal_index
 
 
-def create_blackboard():
+def create_blackboard(old_planner = False):
     blackboard_reader = py_trees.blackboard.Client()
     blackboard_reader.register_key(key = 'flight_heights', access = py_trees.common.Access.WRITE)
     blackboard_reader.flight_heights = []
@@ -38,6 +38,8 @@ def create_blackboard():
     blackboard_reader.path_segment_sent = None
     blackboard_reader.register_key(key = 'position', access = py_trees.common.Access.WRITE)
     blackboard_reader.position = None
+    if old_planner:
+        blackboard_reader.
     return blackboard_reader
 
 def initialize_blackboard(blackboard_reader, flight_heights):
