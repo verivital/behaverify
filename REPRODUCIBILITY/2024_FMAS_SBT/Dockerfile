@@ -3,7 +3,8 @@ RUN apt-get update -y
 RUN apt-get upgrade -y
 
 # Set the non-root user information
-ARG USER=2024_SEFM_BehaVerify
+ARG VENUE=2024_FMAS_SBT
+ARG USER=BehaVerify_$VENUE
 ARG UID=43720
 ARG GID=43720
 
@@ -32,20 +33,20 @@ RUN git clone --filter=blob:none --no-checkout --depth 1 --sparse https://github
 WORKDIR /home/$USER/behaverify
 RUN git sparse-checkout set --no-cone
 RUN echo !/* > /home/$USER/behaverify/.git/info/sparse-checkout
-RUN echo /REPRODUCIBILITY/2024_SEFM >> /home/$USER/behaverify/.git/info/sparse-checkout
+RUN echo /REPRODUCIBILITY/$VENUE >> /home/$USER/behaverify/.git/info/sparse-checkout
 RUN git checkout
 
-RUN chmod -R +x /home/$USER/behaverify/REPRODUCIBILITY/2024_SEFM/*.sh
-RUN chmod -R +x /home/$USER/behaverify/REPRODUCIBILITY/2024_SEFM/scripts/build_scripts/*.sh
-RUN chmod -R +x /home/$USER/behaverify/REPRODUCIBILITY/2024_SEFM/scripts/encoding_timing_scripts/*.sh
-RUN chmod -R +x /home/$USER/behaverify/REPRODUCIBILITY/2024_SEFM/scripts/process_results_scripts/*.sh
-RUN chmod -R +x /home/$USER/behaverify/REPRODUCIBILITY/2024_SEFM/scripts/test_scripts/*.sh
+RUN chmod -R +x /home/$USER/behaverify/REPRODUCIBILITY/$VENUE/*.sh
+RUN chmod -R +x /home/$USER/behaverify/REPRODUCIBILITY/$VENUE/scripts/build_scripts/*.sh
+RUN chmod -R +x /home/$USER/behaverify/REPRODUCIBILITY/$VENUE/scripts/encoding_timing_scripts/*.sh
+RUN chmod -R +x /home/$USER/behaverify/REPRODUCIBILITY/$VENUE/scripts/process_results_scripts/*.sh
+RUN chmod -R +x /home/$USER/behaverify/REPRODUCIBILITY/$VENUE/scripts/test_scripts/*.sh
 
 RUN python3 -m venv /home/$USER/python_venvs/behaverify
 RUN /home/$USER/python_venvs/behaverify/bin/python3 -m pip install --upgrade pip
-RUN /home/$USER/python_venvs/behaverify/bin/python3 -m pip install -r /home/$USER/behaverify/REPRODUCIBILITY/2024_SEFM/requirements/core.txt
+RUN /home/$USER/python_venvs/behaverify/bin/python3 -m pip install -r /home/$USER/behaverify/REPRODUCIBILITY/$VENUE/requirements/core.txt
 RUN python3 -m venv /home/$USER/python_venvs/results
 RUN /home/$USER/python_venvs/results/bin/python3 -m pip install --upgrade pip
-RUN /home/$USER/python_venvs/results/bin/python3 -m pip install -r /home/$USER/behaverify/REPRODUCIBILITY/2024_SEFM/requirements/results.txt
+RUN /home/$USER/python_venvs/results/bin/python3 -m pip install -r /home/$USER/behaverify/REPRODUCIBILITY/$VENUE/requirements/results.txt
 
 WORKDIR /home/$USER
