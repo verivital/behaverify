@@ -483,11 +483,10 @@ The results should be in **/path/to/output/extracted/examples/**.
 
 # Directory Explained
 
-- **behaverify\_FMAS\_full\_results.sh** -> This is the script to locally run everything for the FMAS results. It is also used by the docker scripts.
-- **behaverify\_FMAS\_install\_results.sh** -> This is the script to locally test the install. It is also used by the docker scripts.
-- **behaverify\_FMAS\_partial\_results.sh** -> This is the script to locally run almost everything for the FMAS results. It is also used by the docker scripts.
+- **BehaVerify\_2024\_FMAS\_SBT\_full\_results.sh** -> This is the script to locally run everything for the FMAS results. It is also used by the docker scripts.
+- **BehaVerify\_2024\_FMAS\_test\_installation.sh** -> This is the script to locally test the install. It is also used by the docker scripts.
+- **BehaVerify\_2024\_FMAS\_partial\_results.sh** -> This is the script to locally run almost everything for the FMAS results. It is also used by the docker scripts.
 - **Dockerfile** -> This is a Dockerfile for BehaVerify 2024 FMAS edition.
-- **load\_and\_run.sh** -> This is used to load the docker container and image from the Docker image, add nuXmv, and then run a test.
 - **nuXmv** -> This doesn't exist but you should make it exist if you plan to run tests locally.
 - **README.md** -> Hello there!
 - **version\_info.txt** -> Information about what versions of stuff was used.
