@@ -7,7 +7,7 @@ VENUE = '2024_FMAS_SBT'
 USER = 'BehaVerify_' + VENUE
 HOME_DIR = '/home/' + USER
 TEST_DIR = HOME_DIR + '/behaverify/REPRODUCIBILITY/' + VENUE
-CONTAINER_NAME = user.lower()
+CONTAINER_NAME = USER.lower()
 IMAGE_NAME = CONTAINER_NAME + '_img'
 
 def serene_exec(container, command, message, error_check):
