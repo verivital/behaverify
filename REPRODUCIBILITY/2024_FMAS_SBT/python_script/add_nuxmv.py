@@ -9,7 +9,7 @@ def add_nuxmv(nuxmv_location):
     behaverify.start()
     # https://stackoverflow.com/questions/46390309/how-to-copy-a-file-from-host-to-container-using-docker-py-docker-sdk
     # https://docker-py.readthedocs.io/en/stable/containers.html
-    #docker_copy_util.copy_into(behaverify, nuxmv_location, '/home/behaverify/nuXmv')
+    # docker_copy_util.copy_into(behaverify, nuxmv_location, '/home/behaverify/nuXmv')
     print('Start: Adding nuXmv to container: ' + CONTAINER_NAME)
     if not copy_into(behaverify, nuxmv_location, TEST_DIR + '/'):
         raise RuntimeError('Failed to copy nuXmv into the container.')

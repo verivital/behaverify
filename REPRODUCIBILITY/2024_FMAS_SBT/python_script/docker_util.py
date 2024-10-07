@@ -3,10 +3,11 @@ import tarfile
 import io
 import docker
 
-USER = '2024_SEFM_BehaVerify'
+VENUE = '2024_FMAS_SBT'
+USER = 'BehaVerify_' + VENUE
 HOME_DIR = '/home/' + USER
-TEST_DIR = HOME_DIR + '/behaverify/REPRODUCIBILITY/2024_SEFM'
-CONTAINER_NAME = 'behaverify_2024_sefm'
+TEST_DIR = HOME_DIR + '/behaverify/REPRODUCIBILITY/' + VENUE
+CONTAINER_NAME = user.lower()
 IMAGE_NAME = CONTAINER_NAME + '_img'
 
 def serene_exec(container, command, message, error_check):

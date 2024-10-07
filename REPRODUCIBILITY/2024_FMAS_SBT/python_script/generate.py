@@ -2,7 +2,7 @@ import os
 import sys
 import argparse
 import docker
-from docker_util import copy_out_of, serene_exec, TEST_DIR, CONTAINER_NAME, HOME_DIR
+from docker_util import copy_out_of, serene_exec, CONTAINER_NAME, HOME_DIR, TEST_DIR, USER
 
 def generate(mode, write_location):
     if mode not in ('install', 'partial', 'full'):
@@ -11,11 +11,11 @@ def generate(mode, write_location):
     client = docker.from_env()
     behaverify = client.containers.get(CONTAINER_NAME)
     behaverify.start()
-    command_start = TEST_DIR + '/behaverify_sefm_'
+    command_start = TEST_DIR + '/' + USER + '_'
     command_end = '.sh ' + TEST_DIR + ' ' + HOME_DIR + '/python_venvs/behaverify/bin/python3 ' + HOME_DIR + '/python_venvs/results/bin/python3'
     command = ''
     if mode == 'install':
-        command = 'install_test'
+        command = 'test_installation'
     elif mode == 'partial':
         command = 'partial_results'
     elif mode == 'full':
