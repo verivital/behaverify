@@ -3,8 +3,8 @@
 
 python_results=python3
 
-if [[ $# -ge 2 ]]; then
-    python_results=$2
+if [[ $# -ge 1 ]]; then
+    python_results=$1
 fi
 
 $python_results graph_sizes.py ./dense_fixed/collision_behaverify_sizes.txt ./dense_fixed/collision_copilot_sizes.txt ./collision_sizes_dense_fixed
