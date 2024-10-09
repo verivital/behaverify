@@ -24,12 +24,12 @@ WORKDIR /home/$USER
 USER $USER
 
 # Hyperfine installation!
-sudo apt-get isntall wget -y
-wget https://github.com/sharkdp/hyperfine/releases/download/v1.16.1/hyperfine_1.16.1_amd64.deb
-sudo dpkg -i hyperfine_1.16.1_amd64.deb
+RUN sudo apt-get isntall wget -y
+RUN wget https://github.com/sharkdp/hyperfine/releases/download/v1.16.1/hyperfine_1.16.1_amd64.deb
+RUN sudo dpkg -i hyperfine_1.16.1_amd64.deb
 
 # jq installation!
-sudo apt-get install jq -y
+RUN sudo apt-get install jq -y
 
 # Copilot installation!
 RUN sudo apt-get install g++ cmake -y
