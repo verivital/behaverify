@@ -1,0 +1,356 @@
+variable_statement {
+liveness_states
+constant_index
+index_of{0}
+assign{
+result{
+(or,
+(and, (index, liveness_states, 0), (not, liveness_p0), (not, liveness_p2), (not, liveness_p4), (not, liveness_p6)),
+(and, (index, liveness_states, 1), (not, liveness_p0), liveness_p1, (not, liveness_p2), liveness_p3, (not, liveness_p4), (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 2), (not, liveness_p0), liveness_p1, (not, liveness_p2), liveness_p3, (not, liveness_p4), (not, liveness_p6)),
+(and, (index, liveness_states, 3), (not, liveness_p0), liveness_p1, (not, liveness_p2), liveness_p3, (not, liveness_p4), liveness_p5, (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 4), (not, liveness_p0), liveness_p1, (not, liveness_p2), liveness_p3, (not, liveness_p4), liveness_p5, (not, liveness_p6)),
+(and, (index, liveness_states, 5), (not, liveness_p0), liveness_p1, (not, liveness_p2), (not, liveness_p4), (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 6), (not, liveness_p0), liveness_p1, (not, liveness_p2), (not, liveness_p4), (not, liveness_p6)),
+(and, (index, liveness_states, 7), (not, liveness_p0), liveness_p1, (not, liveness_p2), (not, liveness_p4), liveness_p5, (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 8), (not, liveness_p0), liveness_p1, (not, liveness_p2), (not, liveness_p4), liveness_p5, (not, liveness_p6)),
+(and, (index, liveness_states, 9), (not, liveness_p0), (not, liveness_p2), liveness_p3, (not, liveness_p4), (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 10), (not, liveness_p0), (not, liveness_p2), liveness_p3, (not, liveness_p4), (not, liveness_p6)),
+(and, (index, liveness_states, 11), (not, liveness_p0), (not, liveness_p2), liveness_p3, (not, liveness_p4), liveness_p5, (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 12), (not, liveness_p0), (not, liveness_p2), liveness_p3, (not, liveness_p4), liveness_p5, (not, liveness_p6)),
+(and, (index, liveness_states, 13), (not, liveness_p0), (not, liveness_p2), (not, liveness_p4), (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 14), (not, liveness_p0), (not, liveness_p2), (not, liveness_p4), liveness_p5, (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 15), (not, liveness_p0), (not, liveness_p2), (not, liveness_p4), liveness_p5, (not, liveness_p6)))
+}
+}
+index_of{1}
+assign{
+result{
+(or,
+(and, (index, liveness_states, 0), (not, liveness_p4)),
+(and, (index, liveness_states, 1), liveness_p1, liveness_p3, (not, liveness_p4), liveness_p7),
+(and, (index, liveness_states, 2), liveness_p1, liveness_p3, (not, liveness_p4)),
+(and, (index, liveness_states, 3), liveness_p1, liveness_p3, (not, liveness_p4), liveness_p5, liveness_p7),
+(and, (index, liveness_states, 4), liveness_p1, liveness_p3, (not, liveness_p4), liveness_p5),
+(and, (index, liveness_states, 5), liveness_p1, (not, liveness_p4), liveness_p7),
+(and, (index, liveness_states, 6), liveness_p1, (not, liveness_p4)),
+(and, (index, liveness_states, 7), liveness_p1, (not, liveness_p4), liveness_p5, liveness_p7),
+(and, (index, liveness_states, 8), liveness_p1, (not, liveness_p4), liveness_p5),
+(and, (index, liveness_states, 9), liveness_p3, (not, liveness_p4), liveness_p7),
+(and, (index, liveness_states, 10), liveness_p3, (not, liveness_p4)),
+(and, (index, liveness_states, 11), liveness_p3, (not, liveness_p4), liveness_p5, liveness_p7),
+(and, (index, liveness_states, 12), liveness_p3, (not, liveness_p4), liveness_p5),
+(and, (index, liveness_states, 13), (not, liveness_p4), liveness_p7),
+(and, (index, liveness_states, 14), (not, liveness_p4), liveness_p5, liveness_p7),
+(and, (index, liveness_states, 15), (not, liveness_p4), liveness_p5))
+}
+}
+index_of{2}
+assign{
+result{
+(or,
+(and, (index, liveness_states, 0), (not, liveness_p4), (not, liveness_p6)),
+(and, (index, liveness_states, 1), liveness_p1, liveness_p3, (not, liveness_p4), (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 2), liveness_p1, liveness_p3, (not, liveness_p4), (not, liveness_p6)),
+(and, (index, liveness_states, 3), liveness_p1, liveness_p3, (not, liveness_p4), liveness_p5, (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 4), liveness_p1, liveness_p3, (not, liveness_p4), liveness_p5, (not, liveness_p6)),
+(and, (index, liveness_states, 5), liveness_p1, (not, liveness_p4), (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 6), liveness_p1, (not, liveness_p4), (not, liveness_p6)),
+(and, (index, liveness_states, 7), liveness_p1, (not, liveness_p4), liveness_p5, (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 8), liveness_p1, (not, liveness_p4), liveness_p5, (not, liveness_p6)),
+(and, (index, liveness_states, 9), liveness_p3, (not, liveness_p4), (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 10), liveness_p3, (not, liveness_p4), (not, liveness_p6)),
+(and, (index, liveness_states, 11), liveness_p3, (not, liveness_p4), liveness_p5, (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 12), liveness_p3, (not, liveness_p4), liveness_p5, (not, liveness_p6)),
+(and, (index, liveness_states, 13), (not, liveness_p4), (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 14), (not, liveness_p4), liveness_p5, (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 15), (not, liveness_p4), liveness_p5, (not, liveness_p6)))
+}
+}
+index_of{3}
+assign{
+result{
+(or,
+(and, (index, liveness_states, 0), True),
+(and, (index, liveness_states, 1), liveness_p1, liveness_p3, liveness_p7),
+(and, (index, liveness_states, 2), liveness_p1, liveness_p3),
+(and, (index, liveness_states, 3), liveness_p1, liveness_p3, liveness_p5, liveness_p7),
+(and, (index, liveness_states, 4), liveness_p1, liveness_p3, liveness_p5),
+(and, (index, liveness_states, 5), liveness_p1, liveness_p7),
+(and, (index, liveness_states, 6), liveness_p1),
+(and, (index, liveness_states, 7), liveness_p1, liveness_p5, liveness_p7),
+(and, (index, liveness_states, 8), liveness_p1, liveness_p5),
+(and, (index, liveness_states, 9), liveness_p3, liveness_p7),
+(and, (index, liveness_states, 10), liveness_p3),
+(and, (index, liveness_states, 11), liveness_p3, liveness_p5, liveness_p7),
+(and, (index, liveness_states, 12), liveness_p3, liveness_p5),
+(and, (index, liveness_states, 13), liveness_p7),
+(and, (index, liveness_states, 14), liveness_p5, liveness_p7),
+(and, (index, liveness_states, 15), liveness_p5))
+}
+}
+index_of{4}
+assign{
+result{
+(or,
+(and, (index, liveness_states, 0), (not, liveness_p6)),
+(and, (index, liveness_states, 1), liveness_p1, liveness_p3, (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 2), liveness_p1, liveness_p3, (not, liveness_p6)),
+(and, (index, liveness_states, 3), liveness_p1, liveness_p3, liveness_p5, (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 4), liveness_p1, liveness_p3, liveness_p5, (not, liveness_p6)),
+(and, (index, liveness_states, 5), liveness_p1, (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 6), liveness_p1, (not, liveness_p6)),
+(and, (index, liveness_states, 7), liveness_p1, liveness_p5, (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 8), liveness_p1, liveness_p5, (not, liveness_p6)),
+(and, (index, liveness_states, 9), liveness_p3, (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 10), liveness_p3, (not, liveness_p6)),
+(and, (index, liveness_states, 11), liveness_p3, liveness_p5, (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 12), liveness_p3, liveness_p5, (not, liveness_p6)),
+(and, (index, liveness_states, 13), (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 14), liveness_p5, (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 15), liveness_p5, (not, liveness_p6)))
+}
+}
+index_of{5}
+assign{
+result{
+(or,
+(and, (index, liveness_states, 0), (not, liveness_p2), (not, liveness_p4)),
+(and, (index, liveness_states, 1), liveness_p1, (not, liveness_p2), liveness_p3, (not, liveness_p4), liveness_p7),
+(and, (index, liveness_states, 2), liveness_p1, (not, liveness_p2), liveness_p3, (not, liveness_p4)),
+(and, (index, liveness_states, 3), liveness_p1, (not, liveness_p2), liveness_p3, (not, liveness_p4), liveness_p5, liveness_p7),
+(and, (index, liveness_states, 4), liveness_p1, (not, liveness_p2), liveness_p3, (not, liveness_p4), liveness_p5),
+(and, (index, liveness_states, 5), liveness_p1, (not, liveness_p2), (not, liveness_p4), liveness_p7),
+(and, (index, liveness_states, 6), liveness_p1, (not, liveness_p2), (not, liveness_p4)),
+(and, (index, liveness_states, 7), liveness_p1, (not, liveness_p2), (not, liveness_p4), liveness_p5, liveness_p7),
+(and, (index, liveness_states, 8), liveness_p1, (not, liveness_p2), (not, liveness_p4), liveness_p5),
+(and, (index, liveness_states, 9), (not, liveness_p2), liveness_p3, (not, liveness_p4), liveness_p7),
+(and, (index, liveness_states, 10), (not, liveness_p2), liveness_p3, (not, liveness_p4)),
+(and, (index, liveness_states, 11), (not, liveness_p2), liveness_p3, (not, liveness_p4), liveness_p5, liveness_p7),
+(and, (index, liveness_states, 12), (not, liveness_p2), liveness_p3, (not, liveness_p4), liveness_p5),
+(and, (index, liveness_states, 13), (not, liveness_p2), (not, liveness_p4), liveness_p7),
+(and, (index, liveness_states, 14), (not, liveness_p2), (not, liveness_p4), liveness_p5, liveness_p7),
+(and, (index, liveness_states, 15), (not, liveness_p2), (not, liveness_p4), liveness_p5))
+}
+}
+index_of{6}
+assign{
+result{
+(or,
+(and, (index, liveness_states, 0), (not, liveness_p2), (not, liveness_p4), (not, liveness_p6)),
+(and, (index, liveness_states, 1), liveness_p1, (not, liveness_p2), liveness_p3, (not, liveness_p4), (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 2), liveness_p1, (not, liveness_p2), liveness_p3, (not, liveness_p4), (not, liveness_p6)),
+(and, (index, liveness_states, 3), liveness_p1, (not, liveness_p2), liveness_p3, (not, liveness_p4), liveness_p5, (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 4), liveness_p1, (not, liveness_p2), liveness_p3, (not, liveness_p4), liveness_p5, (not, liveness_p6)),
+(and, (index, liveness_states, 5), liveness_p1, (not, liveness_p2), (not, liveness_p4), (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 6), liveness_p1, (not, liveness_p2), (not, liveness_p4), (not, liveness_p6)),
+(and, (index, liveness_states, 7), liveness_p1, (not, liveness_p2), (not, liveness_p4), liveness_p5, (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 8), liveness_p1, (not, liveness_p2), (not, liveness_p4), liveness_p5, (not, liveness_p6)),
+(and, (index, liveness_states, 9), (not, liveness_p2), liveness_p3, (not, liveness_p4), (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 10), (not, liveness_p2), liveness_p3, (not, liveness_p4), (not, liveness_p6)),
+(and, (index, liveness_states, 11), (not, liveness_p2), liveness_p3, (not, liveness_p4), liveness_p5, (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 12), (not, liveness_p2), liveness_p3, (not, liveness_p4), liveness_p5, (not, liveness_p6)),
+(and, (index, liveness_states, 13), (not, liveness_p2), (not, liveness_p4), (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 14), (not, liveness_p2), (not, liveness_p4), liveness_p5, (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 15), (not, liveness_p2), (not, liveness_p4), liveness_p5, (not, liveness_p6)))
+}
+}
+index_of{7}
+assign{
+result{
+(or,
+(and, (index, liveness_states, 0), (not, liveness_p2)),
+(and, (index, liveness_states, 1), liveness_p1, (not, liveness_p2), liveness_p3, liveness_p7),
+(and, (index, liveness_states, 2), liveness_p1, (not, liveness_p2), liveness_p3),
+(and, (index, liveness_states, 3), liveness_p1, (not, liveness_p2), liveness_p3, liveness_p5, liveness_p7),
+(and, (index, liveness_states, 4), liveness_p1, (not, liveness_p2), liveness_p3, liveness_p5),
+(and, (index, liveness_states, 5), liveness_p1, (not, liveness_p2), liveness_p7),
+(and, (index, liveness_states, 6), liveness_p1, (not, liveness_p2)),
+(and, (index, liveness_states, 7), liveness_p1, (not, liveness_p2), liveness_p5, liveness_p7),
+(and, (index, liveness_states, 8), liveness_p1, (not, liveness_p2), liveness_p5),
+(and, (index, liveness_states, 9), (not, liveness_p2), liveness_p3, liveness_p7),
+(and, (index, liveness_states, 10), (not, liveness_p2), liveness_p3),
+(and, (index, liveness_states, 11), (not, liveness_p2), liveness_p3, liveness_p5, liveness_p7),
+(and, (index, liveness_states, 12), (not, liveness_p2), liveness_p3, liveness_p5),
+(and, (index, liveness_states, 13), (not, liveness_p2), liveness_p7),
+(and, (index, liveness_states, 14), (not, liveness_p2), liveness_p5, liveness_p7),
+(and, (index, liveness_states, 15), (not, liveness_p2), liveness_p5))
+}
+}
+index_of{8}
+assign{
+result{
+(or,
+(and, (index, liveness_states, 0), (not, liveness_p2), (not, liveness_p6)),
+(and, (index, liveness_states, 1), liveness_p1, (not, liveness_p2), liveness_p3, (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 2), liveness_p1, (not, liveness_p2), liveness_p3, (not, liveness_p6)),
+(and, (index, liveness_states, 3), liveness_p1, (not, liveness_p2), liveness_p3, liveness_p5, (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 4), liveness_p1, (not, liveness_p2), liveness_p3, liveness_p5, (not, liveness_p6)),
+(and, (index, liveness_states, 5), liveness_p1, (not, liveness_p2), (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 6), liveness_p1, (not, liveness_p2), (not, liveness_p6)),
+(and, (index, liveness_states, 7), liveness_p1, (not, liveness_p2), liveness_p5, (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 8), liveness_p1, (not, liveness_p2), liveness_p5, (not, liveness_p6)),
+(and, (index, liveness_states, 9), (not, liveness_p2), liveness_p3, (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 10), (not, liveness_p2), liveness_p3, (not, liveness_p6)),
+(and, (index, liveness_states, 11), (not, liveness_p2), liveness_p3, liveness_p5, (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 12), (not, liveness_p2), liveness_p3, liveness_p5, (not, liveness_p6)),
+(and, (index, liveness_states, 13), (not, liveness_p2), (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 14), (not, liveness_p2), liveness_p5, (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 15), (not, liveness_p2), liveness_p5, (not, liveness_p6)))
+}
+}
+index_of{9}
+assign{
+result{
+(or,
+(and, (index, liveness_states, 0), (not, liveness_p0), (not, liveness_p4)),
+(and, (index, liveness_states, 1), (not, liveness_p0), liveness_p1, liveness_p3, (not, liveness_p4), liveness_p7),
+(and, (index, liveness_states, 2), (not, liveness_p0), liveness_p1, liveness_p3, (not, liveness_p4)),
+(and, (index, liveness_states, 3), (not, liveness_p0), liveness_p1, liveness_p3, (not, liveness_p4), liveness_p5, liveness_p7),
+(and, (index, liveness_states, 4), (not, liveness_p0), liveness_p1, liveness_p3, (not, liveness_p4), liveness_p5),
+(and, (index, liveness_states, 5), (not, liveness_p0), liveness_p1, (not, liveness_p4), liveness_p7),
+(and, (index, liveness_states, 6), (not, liveness_p0), liveness_p1, (not, liveness_p4)),
+(and, (index, liveness_states, 7), (not, liveness_p0), liveness_p1, (not, liveness_p4), liveness_p5, liveness_p7),
+(and, (index, liveness_states, 8), (not, liveness_p0), liveness_p1, (not, liveness_p4), liveness_p5),
+(and, (index, liveness_states, 9), (not, liveness_p0), liveness_p3, (not, liveness_p4), liveness_p7),
+(and, (index, liveness_states, 10), (not, liveness_p0), liveness_p3, (not, liveness_p4)),
+(and, (index, liveness_states, 11), (not, liveness_p0), liveness_p3, (not, liveness_p4), liveness_p5, liveness_p7),
+(and, (index, liveness_states, 12), (not, liveness_p0), liveness_p3, (not, liveness_p4), liveness_p5),
+(and, (index, liveness_states, 13), (not, liveness_p0), (not, liveness_p4), liveness_p7),
+(and, (index, liveness_states, 14), (not, liveness_p0), (not, liveness_p4), liveness_p5, liveness_p7),
+(and, (index, liveness_states, 15), (not, liveness_p0), (not, liveness_p4), liveness_p5))
+}
+}
+index_of{10}
+assign{
+result{
+(or,
+(and, (index, liveness_states, 0), (not, liveness_p0), (not, liveness_p4), (not, liveness_p6)),
+(and, (index, liveness_states, 1), (not, liveness_p0), liveness_p1, liveness_p3, (not, liveness_p4), (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 2), (not, liveness_p0), liveness_p1, liveness_p3, (not, liveness_p4), (not, liveness_p6)),
+(and, (index, liveness_states, 3), (not, liveness_p0), liveness_p1, liveness_p3, (not, liveness_p4), liveness_p5, (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 4), (not, liveness_p0), liveness_p1, liveness_p3, (not, liveness_p4), liveness_p5, (not, liveness_p6)),
+(and, (index, liveness_states, 5), (not, liveness_p0), liveness_p1, (not, liveness_p4), (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 6), (not, liveness_p0), liveness_p1, (not, liveness_p4), (not, liveness_p6)),
+(and, (index, liveness_states, 7), (not, liveness_p0), liveness_p1, (not, liveness_p4), liveness_p5, (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 8), (not, liveness_p0), liveness_p1, (not, liveness_p4), liveness_p5, (not, liveness_p6)),
+(and, (index, liveness_states, 9), (not, liveness_p0), liveness_p3, (not, liveness_p4), (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 10), (not, liveness_p0), liveness_p3, (not, liveness_p4), (not, liveness_p6)),
+(and, (index, liveness_states, 11), (not, liveness_p0), liveness_p3, (not, liveness_p4), liveness_p5, (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 12), (not, liveness_p0), liveness_p3, (not, liveness_p4), liveness_p5, (not, liveness_p6)),
+(and, (index, liveness_states, 13), (not, liveness_p0), (not, liveness_p4), (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 14), (not, liveness_p0), (not, liveness_p4), liveness_p5, (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 15), (not, liveness_p0), (not, liveness_p4), liveness_p5, (not, liveness_p6)))
+}
+}
+index_of{11}
+assign{
+result{
+(or,
+(and, (index, liveness_states, 0), (not, liveness_p0)),
+(and, (index, liveness_states, 1), (not, liveness_p0), liveness_p1, liveness_p3, liveness_p7),
+(and, (index, liveness_states, 2), (not, liveness_p0), liveness_p1, liveness_p3),
+(and, (index, liveness_states, 3), (not, liveness_p0), liveness_p1, liveness_p3, liveness_p5, liveness_p7),
+(and, (index, liveness_states, 4), (not, liveness_p0), liveness_p1, liveness_p3, liveness_p5),
+(and, (index, liveness_states, 5), (not, liveness_p0), liveness_p1, liveness_p7),
+(and, (index, liveness_states, 6), (not, liveness_p0), liveness_p1),
+(and, (index, liveness_states, 7), (not, liveness_p0), liveness_p1, liveness_p5, liveness_p7),
+(and, (index, liveness_states, 8), (not, liveness_p0), liveness_p1, liveness_p5),
+(and, (index, liveness_states, 9), (not, liveness_p0), liveness_p3, liveness_p7),
+(and, (index, liveness_states, 10), (not, liveness_p0), liveness_p3),
+(and, (index, liveness_states, 11), (not, liveness_p0), liveness_p3, liveness_p5, liveness_p7),
+(and, (index, liveness_states, 12), (not, liveness_p0), liveness_p3, liveness_p5),
+(and, (index, liveness_states, 13), (not, liveness_p0), liveness_p7),
+(and, (index, liveness_states, 14), (not, liveness_p0), liveness_p5, liveness_p7),
+(and, (index, liveness_states, 15), (not, liveness_p0), liveness_p5))
+}
+}
+index_of{12}
+assign{
+result{
+(or,
+(and, (index, liveness_states, 0), (not, liveness_p0), (not, liveness_p6)),
+(and, (index, liveness_states, 1), (not, liveness_p0), liveness_p1, liveness_p3, (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 2), (not, liveness_p0), liveness_p1, liveness_p3, (not, liveness_p6)),
+(and, (index, liveness_states, 3), (not, liveness_p0), liveness_p1, liveness_p3, liveness_p5, (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 4), (not, liveness_p0), liveness_p1, liveness_p3, liveness_p5, (not, liveness_p6)),
+(and, (index, liveness_states, 5), (not, liveness_p0), liveness_p1, (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 6), (not, liveness_p0), liveness_p1, (not, liveness_p6)),
+(and, (index, liveness_states, 7), (not, liveness_p0), liveness_p1, liveness_p5, (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 8), (not, liveness_p0), liveness_p1, liveness_p5, (not, liveness_p6)),
+(and, (index, liveness_states, 9), (not, liveness_p0), liveness_p3, (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 10), (not, liveness_p0), liveness_p3, (not, liveness_p6)),
+(and, (index, liveness_states, 11), (not, liveness_p0), liveness_p3, liveness_p5, (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 12), (not, liveness_p0), liveness_p3, liveness_p5, (not, liveness_p6)),
+(and, (index, liveness_states, 13), (not, liveness_p0), (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 14), (not, liveness_p0), liveness_p5, (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 15), (not, liveness_p0), liveness_p5, (not, liveness_p6)))
+}
+}
+index_of{13}
+assign{
+result{
+(or,
+(and, (index, liveness_states, 0), (not, liveness_p0), (not, liveness_p2), (not, liveness_p4)),
+(and, (index, liveness_states, 1), (not, liveness_p0), liveness_p1, (not, liveness_p2), liveness_p3, (not, liveness_p4), liveness_p7),
+(and, (index, liveness_states, 2), (not, liveness_p0), liveness_p1, (not, liveness_p2), liveness_p3, (not, liveness_p4)),
+(and, (index, liveness_states, 3), (not, liveness_p0), liveness_p1, (not, liveness_p2), liveness_p3, (not, liveness_p4), liveness_p5, liveness_p7),
+(and, (index, liveness_states, 4), (not, liveness_p0), liveness_p1, (not, liveness_p2), liveness_p3, (not, liveness_p4), liveness_p5),
+(and, (index, liveness_states, 5), (not, liveness_p0), liveness_p1, (not, liveness_p2), (not, liveness_p4), liveness_p7),
+(and, (index, liveness_states, 6), (not, liveness_p0), liveness_p1, (not, liveness_p2), (not, liveness_p4)),
+(and, (index, liveness_states, 7), (not, liveness_p0), liveness_p1, (not, liveness_p2), (not, liveness_p4), liveness_p5, liveness_p7),
+(and, (index, liveness_states, 8), (not, liveness_p0), liveness_p1, (not, liveness_p2), (not, liveness_p4), liveness_p5),
+(and, (index, liveness_states, 9), (not, liveness_p0), (not, liveness_p2), liveness_p3, (not, liveness_p4), liveness_p7),
+(and, (index, liveness_states, 10), (not, liveness_p0), (not, liveness_p2), liveness_p3, (not, liveness_p4)),
+(and, (index, liveness_states, 11), (not, liveness_p0), (not, liveness_p2), liveness_p3, (not, liveness_p4), liveness_p5, liveness_p7),
+(and, (index, liveness_states, 12), (not, liveness_p0), (not, liveness_p2), liveness_p3, (not, liveness_p4), liveness_p5),
+(and, (index, liveness_states, 13), (not, liveness_p0), (not, liveness_p2), (not, liveness_p4), liveness_p7),
+(and, (index, liveness_states, 14), (not, liveness_p0), (not, liveness_p2), (not, liveness_p4), liveness_p5, liveness_p7),
+(and, (index, liveness_states, 15), (not, liveness_p0), (not, liveness_p2), (not, liveness_p4), liveness_p5))
+}
+}
+index_of{14}
+assign{
+result{
+(or,
+(and, (index, liveness_states, 0), (not, liveness_p0), (not, liveness_p2)),
+(and, (index, liveness_states, 1), (not, liveness_p0), liveness_p1, (not, liveness_p2), liveness_p3, liveness_p7),
+(and, (index, liveness_states, 2), (not, liveness_p0), liveness_p1, (not, liveness_p2), liveness_p3),
+(and, (index, liveness_states, 3), (not, liveness_p0), liveness_p1, (not, liveness_p2), liveness_p3, liveness_p5, liveness_p7),
+(and, (index, liveness_states, 4), (not, liveness_p0), liveness_p1, (not, liveness_p2), liveness_p3, liveness_p5),
+(and, (index, liveness_states, 5), (not, liveness_p0), liveness_p1, (not, liveness_p2), liveness_p7),
+(and, (index, liveness_states, 6), (not, liveness_p0), liveness_p1, (not, liveness_p2)),
+(and, (index, liveness_states, 7), (not, liveness_p0), liveness_p1, (not, liveness_p2), liveness_p5, liveness_p7),
+(and, (index, liveness_states, 8), (not, liveness_p0), liveness_p1, (not, liveness_p2), liveness_p5),
+(and, (index, liveness_states, 9), (not, liveness_p0), (not, liveness_p2), liveness_p3, liveness_p7),
+(and, (index, liveness_states, 10), (not, liveness_p0), (not, liveness_p2), liveness_p3),
+(and, (index, liveness_states, 11), (not, liveness_p0), (not, liveness_p2), liveness_p3, liveness_p5, liveness_p7),
+(and, (index, liveness_states, 12), (not, liveness_p0), (not, liveness_p2), liveness_p3, liveness_p5),
+(and, (index, liveness_states, 13), (not, liveness_p0), (not, liveness_p2), liveness_p7),
+(and, (index, liveness_states, 14), (not, liveness_p0), (not, liveness_p2), liveness_p5, liveness_p7),
+(and, (index, liveness_states, 15), (not, liveness_p0), (not, liveness_p2), liveness_p5))
+}
+}
+index_of{15}
+assign{
+result{
+(or,
+(and, (index, liveness_states, 0), (not, liveness_p0), (not, liveness_p2), (not, liveness_p6)),
+(and, (index, liveness_states, 1), (not, liveness_p0), liveness_p1, (not, liveness_p2), liveness_p3, (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 2), (not, liveness_p0), liveness_p1, (not, liveness_p2), liveness_p3, (not, liveness_p6)),
+(and, (index, liveness_states, 3), (not, liveness_p0), liveness_p1, (not, liveness_p2), liveness_p3, liveness_p5, (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 4), (not, liveness_p0), liveness_p1, (not, liveness_p2), liveness_p3, liveness_p5, (not, liveness_p6)),
+(and, (index, liveness_states, 5), (not, liveness_p0), liveness_p1, (not, liveness_p2), (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 6), (not, liveness_p0), liveness_p1, (not, liveness_p2), (not, liveness_p6)),
+(and, (index, liveness_states, 7), (not, liveness_p0), liveness_p1, (not, liveness_p2), liveness_p5, (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 8), (not, liveness_p0), liveness_p1, (not, liveness_p2), liveness_p5, (not, liveness_p6)),
+(and, (index, liveness_states, 9), (not, liveness_p0), (not, liveness_p2), liveness_p3, (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 10), (not, liveness_p0), (not, liveness_p2), liveness_p3, (not, liveness_p6)),
+(and, (index, liveness_states, 11), (not, liveness_p0), (not, liveness_p2), liveness_p3, liveness_p5, (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 12), (not, liveness_p0), (not, liveness_p2), liveness_p3, liveness_p5, (not, liveness_p6)),
+(and, (index, liveness_states, 13), (not, liveness_p0), (not, liveness_p2), (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 14), (not, liveness_p0), (not, liveness_p2), liveness_p5, (not, liveness_p6), liveness_p7),
+(and, (index, liveness_states, 15), (not, liveness_p0), (not, liveness_p2), liveness_p5, (not, liveness_p6)))
+}
+}
+}

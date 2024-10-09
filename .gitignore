@@ -26,3 +26,5 @@ REPRODUCIBILITY/**/results/**
 REPRODUCIBILITY/**/smv/**
 REPRODUCIBILITY/**/tree/**
 REPRODUCIBILITY/**/xml/**
+REPRODUCIBILITY/**/dense_fixed/**
+REPRODUCIBILITY/**/sparse_random/**
