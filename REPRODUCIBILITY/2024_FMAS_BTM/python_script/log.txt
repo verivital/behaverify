@@ -1,0 +1,17 @@
+Start: Removing container: behaverify_2024_fmas_btm
+End: Removing container: behaverify_2024_fmas_btm
+Start: Removing image: behaverify_2024_fmas_btm_img
+End: Removing image: behaverify_2024_fmas_btm_img
+Start: Building image: behaverify_2024_fmas_btm_img
+End: Building image: behaverify_2024_fmas_btm_img
+Start: Creating container: behaverify_2024_fmas_btm
+End: Creating container: behaverify_2024_fmas_btm
+Start: Adding nuXmv to container: behaverify_2024_fmas_btm
+End: Adding nuXmv to container: behaverify_2024_fmas_btm
+Start: Making nuXmv runnable (running chmod).
+End: Making nuXmv runnable (running chmod). <::> Check if errors were printed!
+Start: install
+using /home/BehaVerify_2024_FMAS_BTM/python_venvs/behaverify/bin/python3 for behaverify
+using /home/BehaVerify_2024_FMAS_BTM/python_venvs/results/bin/python3 for results
+
+End: install <::> Check if errors were printed!
