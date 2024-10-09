@@ -1,0 +1,2801 @@
+Start: Removing container: behaverify_2024_fmas_btm
+End: Removing container: behaverify_2024_fmas_btm
+Start: Removing image: behaverify_2024_fmas_btm_img
+End: Removing image: behaverify_2024_fmas_btm_img
+Start: Building image: behaverify_2024_fmas_btm_img
+End: Building image: behaverify_2024_fmas_btm_img
+Start: Creating container: behaverify_2024_fmas_btm
+End: Creating container: behaverify_2024_fmas_btm
+Start: Adding nuXmv to container: behaverify_2024_fmas_btm
+End: Adding nuXmv to container: behaverify_2024_fmas_btm
+Start: Making nuXmv runnable (running chmod).
+End: Making nuXmv runnable (running chmod). <::> Check if errors were printed!
+Start: install
+using /home/BehaVerify_2024_FMAS_BTM/python_venvs/behaverify/bin/python3 for behaverify
+using /home/BehaVerify_2024_FMAS_BTM/python_venvs/results/bin/python3 for results
+
+generating obstacles
+2
+
+filling holes
+
+Computed grid from (4, 4)
+
+computing new sizes
+
+----------------------------
+obstaclesFilled_9_32_1.txt
+
+obstaclesFilled_9_32_1.txt
+
+9_32_1.txt
+
+9_32_1
+assembling tree
+
+Computed grid from (0, 0)
+Computed grid from (0, 1)
+Computed grid from (0, 2)
+Computed grid from (0, 3)
+Computed grid from (0, 4)
+Computed grid from (0, 5)
+Computed grid from (0, 6)
+Computed grid from (0, 7)
+Computed grid from (0, 8)
+Computed grid from (0, 9)
+Computed grid from (1, 0)
+Computed grid from (1, 1)
+Computed grid from (1, 2)
+Computed grid from (1, 3)
+Computed grid from (1, 4)
+Computed grid from (1, 5)
+Computed grid from (1, 6)
+Computed grid from (1, 7)
+Computed grid from (1, 8)
+Computed grid from (1, 9)
+Computed grid from (2, 0)
+Computed grid from (2, 1)
+Computed grid from (2, 2)
+Computed grid from (2, 3)
+Computed grid from (2, 4)
+Computed grid from (2, 5)
+Computed grid from (2, 6)
+Computed grid from (2, 7)
+Computed grid from (2, 8)
+Computed grid from (2, 9)
+Computed grid from (3, 0)
+Computed grid from (3, 1)
+Computed grid from (3, 2)
+Computed grid from (3, 3)
+Computed grid from (3, 4)
+Computed grid from (3, 5)
+Computed grid from (3, 6)
+Computed grid from (3, 7)
+Computed grid from (3, 8)
+Computed grid from (3, 9)
+Computed grid from (4, 0)
+Computed grid from (4, 1)
+Computed grid from (4, 2)
+Computed grid from (4, 3)
+Computed grid from (4, 4)
+Computed grid from (4, 5)
+Computed grid from (4, 6)
+Computed grid from (4, 7)
+Computed grid from (4, 8)
+Computed grid from (4, 9)
+Computed grid from (5, 0)
+Computed grid from (5, 1)
+Computed grid from (5, 2)
+Computed grid from (5, 3)
+Computed grid from (5, 4)
+Computed grid from (5, 5)
+Computed grid from (5, 6)
+Computed grid from (5, 7)
+Computed grid from (5, 8)
+Computed grid from (5, 9)
+Computed grid from (6, 0)
+Computed grid from (6, 1)
+Computed grid from (6, 2)
+Computed grid from (6, 3)
+Computed grid from (6, 4)
+Computed grid from (6, 5)
+Computed grid from (6, 6)
+Computed grid from (6, 7)
+Computed grid from (6, 8)
+Computed grid from (6, 9)
+Computed grid from (7, 0)
+Computed grid from (7, 1)
+Computed grid from (7, 2)
+Computed grid from (7, 3)
+Computed grid from (7, 4)
+Computed grid from (7, 5)
+Computed grid from (7, 6)
+Computed grid from (7, 7)
+Computed grid from (7, 8)
+Computed grid from (7, 9)
+Computed grid from (8, 0)
+Computed grid from (8, 1)
+Computed grid from (8, 2)
+Computed grid from (8, 3)
+Computed grid from (8, 4)
+Computed grid from (8, 5)
+Computed grid from (8, 6)
+Computed grid from (8, 7)
+Computed grid from (8, 8)
+Computed grid from (8, 9)
+Computed grid from (9, 0)
+Computed grid from (9, 1)
+Computed grid from (9, 2)
+Computed grid from (9, 3)
+Computed grid from (9, 4)
+Computed grid from (9, 5)
+Computed grid from (9, 6)
+Computed grid from (9, 7)
+Computed grid from (9, 8)
+Computed grid from (9, 9)
+--------------------
+no_action
+6218
+--------------------
+left
+original: 658
+new: 142
+--------------------
+right
+original: 1382
+new: 210
+--------------------
+up
+original: 849
+new: 160
+--------------------
+down
+original: 893
+new: 163
+
+setting up directory
+
+moving .tree
+
+generating obstacles
+3
+
+filling holes
+
+Computed grid from (7, 7)
+
+computing new sizes
+
+----------------------------
+obstaclesFilled_14_72_1.txt
+obstaclesFilled_14_72_1.txt
+
+14_72_1.txt
+14_72_1
+
+assembling tree
+
+Computed grid from (0, 0)
+Computed grid from (0, 1)
+Computed grid from (0, 2)
+Computed grid from (0, 3)
+Computed grid from (0, 4)
+Computed grid from (0, 5)
+Computed grid from (0, 6)
+Computed grid from (0, 7)
+Computed grid from (0, 8)
+Computed grid from (0, 9)
+Computed grid from (0, 10)
+Computed grid from (0, 11)
+Computed grid from (0, 12)
+Computed grid from (0, 13)
+Computed grid from (0, 14)
+Computed grid from (1, 0)
+Computed grid from (1, 1)
+Computed grid from (1, 2)
+Computed grid from (1, 3)
+Computed grid from (1, 4)
+Computed grid from (1, 5)
+Computed grid from (1, 6)
+Computed grid from (1, 7)
+Computed grid from (1, 8)
+Computed grid from (1, 9)
+Computed grid from (1, 10)
+Computed grid from (1, 11)
+Computed grid from (1, 12)
+Computed grid from (1, 13)
+Computed grid from (1, 14)
+Computed grid from (2, 0)
+Computed grid from (2, 1)
+Computed grid from (2, 2)
+Computed grid from (2, 3)
+Computed grid from (2, 4)
+Computed grid from (2, 5)
+Computed grid from (2, 6)
+Computed grid from (2, 7)
+Computed grid from (2, 8)
+Computed grid from (2, 9)
+Computed grid from (2, 10)
+Computed grid from (2, 11)
+Computed grid from (2, 12)
+Computed grid from (2, 13)
+Computed grid from (2, 14)
+Computed grid from (3, 0)
+Computed grid from (3, 1)
+Computed grid from (3, 2)
+Computed grid from (3, 3)
+Computed grid from (3, 4)
+Computed grid from (3, 5)
+Computed grid from (3, 6)
+Computed grid from (3, 7)
+Computed grid from (3, 8)
+Computed grid from (3, 9)
+Computed grid from (3, 10)
+Computed grid from (3, 11)
+Computed grid from (3, 12)
+Computed grid from (3, 13)
+Computed grid from (3, 14)
+Computed grid from (4, 0)
+Computed grid from (4, 1)
+Computed grid from (4, 2)
+Computed grid from (4, 3)
+Computed grid from (4, 4)
+Computed grid from (4, 5)
+Computed grid from (4, 6)
+Computed grid from (4, 7)
+Computed grid from (4, 8)
+Computed grid from (4, 9)
+Computed grid from (4, 10)
+Computed grid from (4, 11)
+Computed grid from (4, 12)
+Computed grid from (4, 13)
+Computed grid from (4, 14)
+Computed grid from (5, 0)
+Computed grid from (5, 1)
+Computed grid from (5, 2)
+Computed grid from (5, 3)
+Computed grid from (5, 4)
+Computed grid from (5, 5)
+Computed grid from (5, 6)
+Computed grid from (5, 7)
+Computed grid from (5, 8)
+Computed grid from (5, 9)
+Computed grid from (5, 10)
+Computed grid from (5, 11)
+Computed grid from (5, 12)
+Computed grid from (5, 13)
+Computed grid from (5, 14)
+Computed grid from (6, 0)
+Computed grid from (6, 1)
+Computed grid from (6, 2)
+Computed grid from (6, 3)
+Computed grid from (6, 4)
+Computed grid from (6, 5)
+Computed grid from (6, 6)
+Computed grid from (6, 7)
+Computed grid from (6, 8)
+Computed grid from (6, 9)
+Computed grid from (6, 10)
+Computed grid from (6, 11)
+Computed grid from (6, 12)
+Computed grid from (6, 13)
+Computed grid from (6, 14)
+Computed grid from (7, 0)
+Computed grid from (7, 1)
+Computed grid from (7, 2)
+Computed grid from (7, 3)
+Computed grid from (7, 4)
+Computed grid from (7, 5)
+Computed grid from (7, 6)
+Computed grid from (7, 7)
+Computed grid from (7, 8)
+Computed grid from (7, 9)
+Computed grid from (7, 10)
+Computed grid from (7, 11)
+Computed grid from (7, 12)
+Computed grid from (7, 13)
+Computed grid from (7, 14)
+Computed grid from (8, 0)
+Computed grid from (8, 1)
+Computed grid from (8, 2)
+Computed grid from (8, 3)
+Computed grid from (8, 4)
+Computed grid from (8, 5)
+Computed grid from (8, 6)
+Computed grid from (8, 7)
+Computed grid from (8, 8)
+Computed grid from (8, 9)
+Computed grid from (8, 10)
+Computed grid from (8, 11)
+Computed grid from (8, 12)
+Computed grid from (8, 13)
+Computed grid from (8, 14)
+Computed grid from (9, 0)
+Computed grid from (9, 1)
+Computed grid from (9, 2)
+Computed grid from (9, 3)
+Computed grid from (9, 4)
+Computed grid from (9, 5)
+Computed grid from (9, 6)
+Computed grid from (9, 7)
+Computed grid from (9, 8)
+Computed grid from (9, 9)
+Computed grid from (9, 10)
+Computed grid from (9, 11)
+Computed grid from (9, 12)
+Computed grid from (9, 13)
+Computed grid from (9, 14)
+Computed grid from (10, 0)
+Computed grid from (10, 1)
+Computed grid from (10, 2)
+Computed grid from (10, 3)
+Computed grid from (10, 4)
+Computed grid from (10, 5)
+Computed grid from (10, 6)
+Computed grid from (10, 7)
+Computed grid from (10, 8)
+Computed grid from (10, 9)
+Computed grid from (10, 10)
+Computed grid from (10, 11)
+Computed grid from (10, 12)
+Computed grid from (10, 13)
+Computed grid from (10, 14)
+Computed grid from (11, 0)
+Computed grid from (11, 1)
+Computed grid from (11, 2)
+Computed grid from (11, 3)
+Computed grid from (11, 4)
+Computed grid from (11, 5)
+Computed grid from (11, 6)
+Computed grid from (11, 7)
+Computed grid from (11, 8)
+Computed grid from (11, 9)
+Computed grid from (11, 10)
+Computed grid from (11, 11)
+Computed grid from (11, 12)
+Computed grid from (11, 13)
+Computed grid from (11, 14)
+Computed grid from (12, 0)
+Computed grid from (12, 1)
+Computed grid from (12, 2)
+Computed grid from (12, 3)
+Computed grid from (12, 4)
+Computed grid from (12, 5)
+Computed grid from (12, 6)
+Computed grid from (12, 7)
+Computed grid from (12, 8)
+Computed grid from (12, 9)
+Computed grid from (12, 10)
+Computed grid from (12, 11)
+Computed grid from (12, 12)
+Computed grid from (12, 13)
+Computed grid from (12, 14)
+Computed grid from (13, 0)
+Computed grid from (13, 1)
+Computed grid from (13, 2)
+Computed grid from (13, 3)
+Computed grid from (13, 4)
+Computed grid from (13, 5)
+Computed grid from (13, 6)
+Computed grid from (13, 7)
+Computed grid from (13, 8)
+Computed grid from (13, 9)
+Computed grid from (13, 10)
+Computed grid from (13, 11)
+Computed grid from (13, 12)
+Computed grid from (13, 13)
+Computed grid from (13, 14)
+Computed grid from (14, 0)
+Computed grid from (14, 1)
+Computed grid from (14, 2)
+Computed grid from (14, 3)
+Computed grid from (14, 4)
+Computed grid from (14, 5)
+Computed grid from (14, 6)
+Computed grid from (14, 7)
+Computed grid from (14, 8)
+Computed grid from (14, 9)
+Computed grid from (14, 10)
+Computed grid from (14, 11)
+Computed grid from (14, 12)
+Computed grid from (14, 13)
+Computed grid from (14, 14)
+--------------------
+no_action
+30033
+--------------------
+left
+original: 3518
+new: 658
+--------------------
+right
+original: 7450
+new: 900
+--------------------
+up
+original: 4704
+new: 788
+--------------------
+down
+original: 4920
+new: 795
+
+setting up directory
+
+moving .tree
+
+generating obstacles
+
+filling holes
+
+Computed grid from (4, 4)
+
+computing new sizes
+
+----------------------------
+obstaclesFilled_9_2_1.txt
+obstaclesFilled_9_2_1.txt
+9_2_1.txt
+9_2_1
+assembling tree
+
+Computed grid from (0, 0)
+Computed grid from (0, 1)
+Computed grid from (0, 2)
+Computed grid from (0, 3)
+Computed grid from (0, 4)
+Computed grid from (0, 5)
+Computed grid from (0, 6)
+Computed grid from (0, 7)
+Computed grid from (0, 8)
+Computed grid from (0, 9)
+Computed grid from (1, 0)
+Computed grid from (1, 1)
+Computed grid from (1, 2)
+Computed grid from (1, 3)
+Computed grid from (1, 4)
+Computed grid from (1, 5)
+Computed grid from (1, 6)
+Computed grid from (1, 7)
+Computed grid from (1, 8)
+Computed grid from (1, 9)
+Computed grid from (2, 0)
+Computed grid from (2, 1)
+Computed grid from (2, 2)
+Computed grid from (2, 3)
+Computed grid from (2, 4)
+Computed grid from (2, 5)
+Computed grid from (2, 6)
+Computed grid from (2, 7)
+Computed grid from (2, 8)
+Computed grid from (2, 9)
+Computed grid from (3, 0)
+Computed grid from (3, 1)
+Computed grid from (3, 2)
+Computed grid from (3, 3)
+Computed grid from (3, 4)
+Computed grid from (3, 5)
+Computed grid from (3, 6)
+Computed grid from (3, 7)
+Computed grid from (3, 8)
+Computed grid from (3, 9)
+Computed grid from (4, 0)
+Computed grid from (4, 1)
+Computed grid from (4, 2)
+Computed grid from (4, 3)
+Computed grid from (4, 4)
+Computed grid from (4, 5)
+Computed grid from (4, 6)
+Computed grid from (4, 7)
+Computed grid from (4, 8)
+Computed grid from (4, 9)
+Computed grid from (5, 0)
+Computed grid from (5, 1)
+Computed grid from (5, 2)
+Computed grid from (5, 3)
+Computed grid from (5, 4)
+Computed grid from (5, 5)
+Computed grid from (5, 6)
+Computed grid from (5, 7)
+Computed grid from (5, 8)
+Computed grid from (5, 9)
+Computed grid from (6, 0)
+Computed grid from (6, 1)
+Computed grid from (6, 2)
+Computed grid from (6, 3)
+Computed grid from (6, 4)
+Computed grid from (6, 5)
+Computed grid from (6, 6)
+Computed grid from (6, 7)
+Computed grid from (6, 8)
+Computed grid from (6, 9)
+Computed grid from (7, 0)
+Computed grid from (7, 1)
+Computed grid from (7, 2)
+Computed grid from (7, 3)
+Computed grid from (7, 4)
+Computed grid from (7, 5)
+Computed grid from (7, 6)
+Computed grid from (7, 7)
+Computed grid from (7, 8)
+Computed grid from (7, 9)
+Computed grid from (8, 0)
+Computed grid from (8, 1)
+Computed grid from (8, 2)
+Computed grid from (8, 3)
+Computed grid from (8, 4)
+Computed grid from (8, 5)
+Computed grid from (8, 6)
+Computed grid from (8, 7)
+Computed grid from (8, 8)
+Computed grid from (8, 9)
+Computed grid from (9, 0)
+Computed grid from (9, 1)
+Computed grid from (9, 2)
+Computed grid from (9, 3)
+Computed grid from (9, 4)
+Computed grid from (9, 5)
+Computed grid from (9, 6)
+Computed grid from (9, 7)
+Computed grid from (9, 8)
+Computed grid from (9, 9)
+--------------------
+no_action
+1070
+--------------------
+left
+original: 733
+new: 96
+--------------------
+right
+original: 407
+new: 85
+--------------------
+up
+original: 3881
+new: 15
+--------------------
+down
+original: 3909
+new: 19
+
+setting up directory
+
+moving .tree
+
+generating obstacles
+
+filling holes
+
+Computed grid from (7, 7)
+
+computing new sizes
+
+----------------------------
+obstaclesFilled_14_3_1.txt
+obstaclesFilled_14_3_1.txt
+14_3_1.txt
+14_3_1
+assembling tree
+
+Computed grid from (0, 0)
+Computed grid from (0, 1)
+Computed grid from (0, 2)
+Computed grid from (0, 3)
+Computed grid from (0, 4)
+Computed grid from (0, 5)
+Computed grid from (0, 6)
+Computed grid from (0, 7)
+Computed grid from (0, 8)
+Computed grid from (0, 9)
+Computed grid from (0, 10)
+Computed grid from (0, 11)
+Computed grid from (0, 12)
+Computed grid from (0, 13)
+Computed grid from (0, 14)
+Computed grid from (1, 0)
+Computed grid from (1, 1)
+Computed grid from (1, 2)
+Computed grid from (1, 3)
+Computed grid from (1, 4)
+Computed grid from (1, 5)
+Computed grid from (1, 6)
+Computed grid from (1, 7)
+Computed grid from (1, 8)
+Computed grid from (1, 9)
+Computed grid from (1, 10)
+Computed grid from (1, 11)
+Computed grid from (1, 12)
+Computed grid from (1, 13)
+Computed grid from (1, 14)
+Computed grid from (2, 0)
+Computed grid from (2, 1)
+Computed grid from (2, 2)
+Computed grid from (2, 3)
+Computed grid from (2, 4)
+Computed grid from (2, 5)
+Computed grid from (2, 6)
+Computed grid from (2, 7)
+Computed grid from (2, 8)
+Computed grid from (2, 9)
+Computed grid from (2, 10)
+Computed grid from (2, 11)
+Computed grid from (2, 12)
+Computed grid from (2, 13)
+Computed grid from (2, 14)
+Computed grid from (3, 0)
+Computed grid from (3, 1)
+Computed grid from (3, 2)
+Computed grid from (3, 3)
+Computed grid from (3, 4)
+Computed grid from (3, 5)
+Computed grid from (3, 6)
+Computed grid from (3, 7)
+Computed grid from (3, 8)
+Computed grid from (3, 9)
+Computed grid from (3, 10)
+Computed grid from (3, 11)
+Computed grid from (3, 12)
+Computed grid from (3, 13)
+Computed grid from (3, 14)
+Computed grid from (4, 0)
+Computed grid from (4, 1)
+Computed grid from (4, 2)
+Computed grid from (4, 3)
+Computed grid from (4, 4)
+Computed grid from (4, 5)
+Computed grid from (4, 6)
+Computed grid from (4, 7)
+Computed grid from (4, 8)
+Computed grid from (4, 9)
+Computed grid from (4, 10)
+Computed grid from (4, 11)
+Computed grid from (4, 12)
+Computed grid from (4, 13)
+Computed grid from (4, 14)
+Computed grid from (5, 0)
+Computed grid from (5, 1)
+Computed grid from (5, 2)
+Computed grid from (5, 3)
+Computed grid from (5, 4)
+Computed grid from (5, 5)
+Computed grid from (5, 6)
+Computed grid from (5, 7)
+Computed grid from (5, 8)
+Computed grid from (5, 9)
+Computed grid from (5, 10)
+Computed grid from (5, 11)
+Computed grid from (5, 12)
+Computed grid from (5, 13)
+Computed grid from (5, 14)
+Computed grid from (6, 0)
+Computed grid from (6, 1)
+Computed grid from (6, 2)
+Computed grid from (6, 3)
+Computed grid from (6, 4)
+Computed grid from (6, 5)
+Computed grid from (6, 6)
+Computed grid from (6, 7)
+Computed grid from (6, 8)
+Computed grid from (6, 9)
+Computed grid from (6, 10)
+Computed grid from (6, 11)
+Computed grid from (6, 12)
+Computed grid from (6, 13)
+Computed grid from (6, 14)
+Computed grid from (7, 0)
+Computed grid from (7, 1)
+Computed grid from (7, 2)
+Computed grid from (7, 3)
+Computed grid from (7, 4)
+Computed grid from (7, 5)
+Computed grid from (7, 6)
+Computed grid from (7, 7)
+Computed grid from (7, 8)
+Computed grid from (7, 9)
+Computed grid from (7, 10)
+Computed grid from (7, 11)
+Computed grid from (7, 12)
+Computed grid from (7, 13)
+Computed grid from (7, 14)
+Computed grid from (8, 0)
+Computed grid from (8, 1)
+Computed grid from (8, 2)
+Computed grid from (8, 3)
+Computed grid from (8, 4)
+Computed grid from (8, 5)
+Computed grid from (8, 6)
+Computed grid from (8, 7)
+Computed grid from (8, 8)
+Computed grid from (8, 9)
+Computed grid from (8, 10)
+Computed grid from (8, 11)
+Computed grid from (8, 12)
+Computed grid from (8, 13)
+Computed grid from (8, 14)
+Computed grid from (9, 0)
+Computed grid from (9, 1)
+Computed grid from (9, 2)
+Computed grid from (9, 3)
+Computed grid from (9, 4)
+Computed grid from (9, 5)
+Computed grid from (9, 6)
+Computed grid from (9, 7)
+Computed grid from (9, 8)
+Computed grid from (9, 9)
+Computed grid from (9, 10)
+Computed grid from (9, 11)
+Computed grid from (9, 12)
+Computed grid from (9, 13)
+Computed grid from (9, 14)
+Computed grid from (10, 0)
+Computed grid from (10, 1)
+Computed grid from (10, 2)
+Computed grid from (10, 3)
+Computed grid from (10, 4)
+Computed grid from (10, 5)
+Computed grid from (10, 6)
+Computed grid from (10, 7)
+Computed grid from (10, 8)
+Computed grid from (10, 9)
+Computed grid from (10, 10)
+Computed grid from (10, 11)
+Computed grid from (10, 12)
+Computed grid from (10, 13)
+Computed grid from (10, 14)
+Computed grid from (11, 0)
+Computed grid from (11, 1)
+Computed grid from (11, 2)
+Computed grid from (11, 3)
+Computed grid from (11, 4)
+Computed grid from (11, 5)
+Computed grid from (11, 6)
+Computed grid from (11, 7)
+Computed grid from (11, 8)
+Computed grid from (11, 9)
+Computed grid from (11, 10)
+Computed grid from (11, 11)
+Computed grid from (11, 12)
+Computed grid from (11, 13)
+Computed grid from (11, 14)
+Computed grid from (12, 0)
+Computed grid from (12, 1)
+Computed grid from (12, 2)
+Computed grid from (12, 3)
+Computed grid from (12, 4)
+Computed grid from (12, 5)
+Computed grid from (12, 6)
+Computed grid from (12, 7)
+Computed grid from (12, 8)
+Computed grid from (12, 9)
+Computed grid from (12, 10)
+Computed grid from (12, 11)
+Computed grid from (12, 12)
+Computed grid from (12, 13)
+Computed grid from (12, 14)
+Computed grid from (13, 0)
+Computed grid from (13, 1)
+Computed grid from (13, 2)
+Computed grid from (13, 3)
+Computed grid from (13, 4)
+Computed grid from (13, 5)
+Computed grid from (13, 6)
+Computed grid from (13, 7)
+Computed grid from (13, 8)
+Computed grid from (13, 9)
+Computed grid from (13, 10)
+Computed grid from (13, 11)
+Computed grid from (13, 12)
+Computed grid from (13, 13)
+Computed grid from (13, 14)
+Computed grid from (14, 0)
+Computed grid from (14, 1)
+Computed grid from (14, 2)
+Computed grid from (14, 3)
+Computed grid from (14, 4)
+Computed grid from (14, 5)
+Computed grid from (14, 6)
+Computed grid from (14, 7)
+Computed grid from (14, 8)
+Computed grid from (14, 9)
+Computed grid from (14, 10)
+Computed grid from (14, 11)
+Computed grid from (14, 12)
+Computed grid from (14, 13)
+Computed grid from (14, 14)
+--------------------
+no_action
+2883
+--------------------
+left
+original: 1739
+new: 211
+--------------------
+right
+original: 1984
+new: 211
+--------------------
+up
+original: 22087
+new: 33
+--------------------
+down
+original: 21932
+new: 35
+
+setting up directory
+
+moving .tree
+
+./dense_fixed
+----------------------------
+./dense_fixed/14_72_1
+
+14_72_1
+
+14
+assembling tree
+
+Computed grid from (0, 0)
+Computed grid from (0, 1)
+Computed grid from (0, 2)
+Computed grid from (0, 3)
+Computed grid from (0, 4)
+Computed grid from (0, 5)
+Computed grid from (0, 6)
+Computed grid from (0, 7)
+Computed grid from (0, 8)
+Computed grid from (0, 9)
+Computed grid from (0, 10)
+Computed grid from (0, 11)
+Computed grid from (0, 12)
+Computed grid from (0, 13)
+Computed grid from (0, 14)
+Computed grid from (1, 0)
+Computed grid from (1, 1)
+Computed grid from (1, 2)
+Computed grid from (1, 3)
+Computed grid from (1, 4)
+Computed grid from (1, 5)
+Computed grid from (1, 6)
+Computed grid from (1, 7)
+Computed grid from (1, 8)
+Computed grid from (1, 9)
+Computed grid from (1, 10)
+Computed grid from (1, 11)
+Computed grid from (1, 12)
+Computed grid from (1, 13)
+Computed grid from (1, 14)
+Computed grid from (2, 0)
+Computed grid from (2, 1)
+Computed grid from (2, 2)
+Computed grid from (2, 3)
+Computed grid from (2, 4)
+Computed grid from (2, 5)
+Computed grid from (2, 6)
+Computed grid from (2, 7)
+Computed grid from (2, 8)
+Computed grid from (2, 9)
+Computed grid from (2, 10)
+Computed grid from (2, 11)
+Computed grid from (2, 12)
+Computed grid from (2, 13)
+Computed grid from (2, 14)
+Computed grid from (3, 0)
+Computed grid from (3, 1)
+Computed grid from (3, 2)
+Computed grid from (3, 3)
+Computed grid from (3, 4)
+Computed grid from (3, 5)
+Computed grid from (3, 6)
+Computed grid from (3, 7)
+Computed grid from (3, 8)
+Computed grid from (3, 9)
+Computed grid from (3, 10)
+Computed grid from (3, 11)
+Computed grid from (3, 12)
+Computed grid from (3, 13)
+Computed grid from (3, 14)
+Computed grid from (4, 0)
+Computed grid from (4, 1)
+Computed grid from (4, 2)
+Computed grid from (4, 3)
+Computed grid from (4, 4)
+Computed grid from (4, 5)
+Computed grid from (4, 6)
+Computed grid from (4, 7)
+Computed grid from (4, 8)
+Computed grid from (4, 9)
+Computed grid from (4, 10)
+Computed grid from (4, 11)
+Computed grid from (4, 12)
+Computed grid from (4, 13)
+Computed grid from (4, 14)
+Computed grid from (5, 0)
+Computed grid from (5, 1)
+Computed grid from (5, 2)
+Computed grid from (5, 3)
+Computed grid from (5, 4)
+Computed grid from (5, 5)
+Computed grid from (5, 6)
+Computed grid from (5, 7)
+Computed grid from (5, 8)
+Computed grid from (5, 9)
+Computed grid from (5, 10)
+Computed grid from (5, 11)
+Computed grid from (5, 12)
+Computed grid from (5, 13)
+Computed grid from (5, 14)
+Computed grid from (6, 0)
+Computed grid from (6, 1)
+Computed grid from (6, 2)
+Computed grid from (6, 3)
+Computed grid from (6, 4)
+Computed grid from (6, 5)
+Computed grid from (6, 6)
+Computed grid from (6, 7)
+Computed grid from (6, 8)
+Computed grid from (6, 9)
+Computed grid from (6, 10)
+Computed grid from (6, 11)
+Computed grid from (6, 12)
+Computed grid from (6, 13)
+Computed grid from (6, 14)
+Computed grid from (7, 0)
+Computed grid from (7, 1)
+Computed grid from (7, 2)
+Computed grid from (7, 3)
+Computed grid from (7, 4)
+Computed grid from (7, 5)
+Computed grid from (7, 6)
+Computed grid from (7, 7)
+Computed grid from (7, 8)
+Computed grid from (7, 9)
+Computed grid from (7, 10)
+Computed grid from (7, 11)
+Computed grid from (7, 12)
+Computed grid from (7, 13)
+Computed grid from (7, 14)
+Computed grid from (8, 0)
+Computed grid from (8, 1)
+Computed grid from (8, 2)
+Computed grid from (8, 3)
+Computed grid from (8, 4)
+Computed grid from (8, 5)
+Computed grid from (8, 6)
+Computed grid from (8, 7)
+Computed grid from (8, 8)
+Computed grid from (8, 9)
+Computed grid from (8, 10)
+Computed grid from (8, 11)
+Computed grid from (8, 12)
+Computed grid from (8, 13)
+Computed grid from (8, 14)
+Computed grid from (9, 0)
+Computed grid from (9, 1)
+Computed grid from (9, 2)
+Computed grid from (9, 3)
+Computed grid from (9, 4)
+Computed grid from (9, 5)
+Computed grid from (9, 6)
+Computed grid from (9, 7)
+Computed grid from (9, 8)
+Computed grid from (9, 9)
+Computed grid from (9, 10)
+Computed grid from (9, 11)
+Computed grid from (9, 12)
+Computed grid from (9, 13)
+Computed grid from (9, 14)
+Computed grid from (10, 0)
+Computed grid from (10, 1)
+Computed grid from (10, 2)
+Computed grid from (10, 3)
+Computed grid from (10, 4)
+Computed grid from (10, 5)
+Computed grid from (10, 6)
+Computed grid from (10, 7)
+Computed grid from (10, 8)
+Computed grid from (10, 9)
+Computed grid from (10, 10)
+Computed grid from (10, 11)
+Computed grid from (10, 12)
+Computed grid from (10, 13)
+Computed grid from (10, 14)
+Computed grid from (11, 0)
+Computed grid from (11, 1)
+Computed grid from (11, 2)
+Computed grid from (11, 3)
+Computed grid from (11, 4)
+Computed grid from (11, 5)
+Computed grid from (11, 6)
+Computed grid from (11, 7)
+Computed grid from (11, 8)
+Computed grid from (11, 9)
+Computed grid from (11, 10)
+Computed grid from (11, 11)
+Computed grid from (11, 12)
+Computed grid from (11, 13)
+Computed grid from (11, 14)
+Computed grid from (12, 0)
+Computed grid from (12, 1)
+Computed grid from (12, 2)
+Computed grid from (12, 3)
+Computed grid from (12, 4)
+Computed grid from (12, 5)
+Computed grid from (12, 6)
+Computed grid from (12, 7)
+Computed grid from (12, 8)
+Computed grid from (12, 9)
+Computed grid from (12, 10)
+Computed grid from (12, 11)
+Computed grid from (12, 12)
+Computed grid from (12, 13)
+Computed grid from (12, 14)
+Computed grid from (13, 0)
+Computed grid from (13, 1)
+Computed grid from (13, 2)
+Computed grid from (13, 3)
+Computed grid from (13, 4)
+Computed grid from (13, 5)
+Computed grid from (13, 6)
+Computed grid from (13, 7)
+Computed grid from (13, 8)
+Computed grid from (13, 9)
+Computed grid from (13, 10)
+Computed grid from (13, 11)
+Computed grid from (13, 12)
+Computed grid from (13, 13)
+Computed grid from (13, 14)
+Computed grid from (14, 0)
+Computed grid from (14, 1)
+Computed grid from (14, 2)
+Computed grid from (14, 3)
+Computed grid from (14, 4)
+Computed grid from (14, 5)
+Computed grid from (14, 6)
+Computed grid from (14, 7)
+Computed grid from (14, 8)
+Computed grid from (14, 9)
+Computed grid from (14, 10)
+Computed grid from (14, 11)
+Computed grid from (14, 12)
+Computed grid from (14, 13)
+Computed grid from (14, 14)
+--------------------
+no_action
+30033
+--------------------
+left
+original: 3518
+new: 658
+--------------------
+right
+original: 7450
+new: 900
+--------------------
+up
+original: 4704
+new: 788
+--------------------
+down
+original: 4920
+new: 795
+
+----------------------------
+./dense_fixed/9_32_1
+
+9_32_1
+
+9
+assembling tree
+
+Computed grid from (0, 0)
+Computed grid from (0, 1)
+Computed grid from (0, 2)
+Computed grid from (0, 3)
+Computed grid from (0, 4)
+Computed grid from (0, 5)
+Computed grid from (0, 6)
+Computed grid from (0, 7)
+Computed grid from (0, 8)
+Computed grid from (0, 9)
+Computed grid from (1, 0)
+Computed grid from (1, 1)
+Computed grid from (1, 2)
+Computed grid from (1, 3)
+Computed grid from (1, 4)
+Computed grid from (1, 5)
+Computed grid from (1, 6)
+Computed grid from (1, 7)
+Computed grid from (1, 8)
+Computed grid from (1, 9)
+Computed grid from (2, 0)
+Computed grid from (2, 1)
+Computed grid from (2, 2)
+Computed grid from (2, 3)
+Computed grid from (2, 4)
+Computed grid from (2, 5)
+Computed grid from (2, 6)
+Computed grid from (2, 7)
+Computed grid from (2, 8)
+Computed grid from (2, 9)
+Computed grid from (3, 0)
+Computed grid from (3, 1)
+Computed grid from (3, 2)
+Computed grid from (3, 3)
+Computed grid from (3, 4)
+Computed grid from (3, 5)
+Computed grid from (3, 6)
+Computed grid from (3, 7)
+Computed grid from (3, 8)
+Computed grid from (3, 9)
+Computed grid from (4, 0)
+Computed grid from (4, 1)
+Computed grid from (4, 2)
+Computed grid from (4, 3)
+Computed grid from (4, 4)
+Computed grid from (4, 5)
+Computed grid from (4, 6)
+Computed grid from (4, 7)
+Computed grid from (4, 8)
+Computed grid from (4, 9)
+Computed grid from (5, 0)
+Computed grid from (5, 1)
+Computed grid from (5, 2)
+Computed grid from (5, 3)
+Computed grid from (5, 4)
+Computed grid from (5, 5)
+Computed grid from (5, 6)
+Computed grid from (5, 7)
+Computed grid from (5, 8)
+Computed grid from (5, 9)
+Computed grid from (6, 0)
+Computed grid from (6, 1)
+Computed grid from (6, 2)
+Computed grid from (6, 3)
+Computed grid from (6, 4)
+Computed grid from (6, 5)
+Computed grid from (6, 6)
+Computed grid from (6, 7)
+Computed grid from (6, 8)
+Computed grid from (6, 9)
+Computed grid from (7, 0)
+Computed grid from (7, 1)
+Computed grid from (7, 2)
+Computed grid from (7, 3)
+Computed grid from (7, 4)
+Computed grid from (7, 5)
+Computed grid from (7, 6)
+Computed grid from (7, 7)
+Computed grid from (7, 8)
+Computed grid from (7, 9)
+Computed grid from (8, 0)
+Computed grid from (8, 1)
+Computed grid from (8, 2)
+Computed grid from (8, 3)
+Computed grid from (8, 4)
+Computed grid from (8, 5)
+Computed grid from (8, 6)
+Computed grid from (8, 7)
+Computed grid from (8, 8)
+Computed grid from (8, 9)
+Computed grid from (9, 0)
+Computed grid from (9, 1)
+Computed grid from (9, 2)
+Computed grid from (9, 3)
+Computed grid from (9, 4)
+Computed grid from (9, 5)
+Computed grid from (9, 6)
+Computed grid from (9, 7)
+Computed grid from (9, 8)
+Computed grid from (9, 9)
+--------------------
+no_action
+6218
+--------------------
+left
+original: 658
+new: 142
+--------------------
+right
+original: 1382
+new: 210
+--------------------
+up
+original: 849
+new: 160
+--------------------
+down
+original: 893
+new: 163
+
+./sparse_random
+
+----------------------------
+./sparse_random/14_3_1
+
+14_3_1
+
+14
+assembling tree
+
+Computed grid from (0, 0)
+Computed grid from (0, 1)
+Computed grid from (0, 2)
+Computed grid from (0, 3)
+Computed grid from (0, 4)
+Computed grid from (0, 5)
+Computed grid from (0, 6)
+Computed grid from (0, 7)
+Computed grid from (0, 8)
+Computed grid from (0, 9)
+Computed grid from (0, 10)
+Computed grid from (0, 11)
+Computed grid from (0, 12)
+Computed grid from (0, 13)
+Computed grid from (0, 14)
+Computed grid from (1, 0)
+Computed grid from (1, 1)
+Computed grid from (1, 2)
+Computed grid from (1, 3)
+Computed grid from (1, 4)
+Computed grid from (1, 5)
+Computed grid from (1, 6)
+Computed grid from (1, 7)
+Computed grid from (1, 8)
+Computed grid from (1, 9)
+Computed grid from (1, 10)
+Computed grid from (1, 11)
+Computed grid from (1, 12)
+Computed grid from (1, 13)
+Computed grid from (1, 14)
+Computed grid from (2, 0)
+Computed grid from (2, 1)
+Computed grid from (2, 2)
+Computed grid from (2, 3)
+Computed grid from (2, 4)
+Computed grid from (2, 5)
+Computed grid from (2, 6)
+Computed grid from (2, 7)
+Computed grid from (2, 8)
+Computed grid from (2, 9)
+Computed grid from (2, 10)
+Computed grid from (2, 11)
+Computed grid from (2, 12)
+Computed grid from (2, 13)
+Computed grid from (2, 14)
+Computed grid from (3, 0)
+Computed grid from (3, 1)
+Computed grid from (3, 2)
+Computed grid from (3, 3)
+Computed grid from (3, 4)
+Computed grid from (3, 5)
+Computed grid from (3, 6)
+Computed grid from (3, 7)
+Computed grid from (3, 8)
+Computed grid from (3, 9)
+Computed grid from (3, 10)
+Computed grid from (3, 11)
+Computed grid from (3, 12)
+Computed grid from (3, 13)
+Computed grid from (3, 14)
+Computed grid from (4, 0)
+Computed grid from (4, 1)
+Computed grid from (4, 2)
+Computed grid from (4, 3)
+Computed grid from (4, 4)
+Computed grid from (4, 5)
+Computed grid from (4, 6)
+Computed grid from (4, 7)
+Computed grid from (4, 8)
+Computed grid from (4, 9)
+Computed grid from (4, 10)
+Computed grid from (4, 11)
+Computed grid from (4, 12)
+Computed grid from (4, 13)
+Computed grid from (4, 14)
+Computed grid from (5, 0)
+Computed grid from (5, 1)
+Computed grid from (5, 2)
+Computed grid from (5, 3)
+Computed grid from (5, 4)
+Computed grid from (5, 5)
+Computed grid from (5, 6)
+Computed grid from (5, 7)
+Computed grid from (5, 8)
+Computed grid from (5, 9)
+Computed grid from (5, 10)
+Computed grid from (5, 11)
+Computed grid from (5, 12)
+Computed grid from (5, 13)
+Computed grid from (5, 14)
+Computed grid from (6, 0)
+Computed grid from (6, 1)
+Computed grid from (6, 2)
+Computed grid from (6, 3)
+Computed grid from (6, 4)
+Computed grid from (6, 5)
+Computed grid from (6, 6)
+Computed grid from (6, 7)
+Computed grid from (6, 8)
+Computed grid from (6, 9)
+Computed grid from (6, 10)
+Computed grid from (6, 11)
+Computed grid from (6, 12)
+Computed grid from (6, 13)
+Computed grid from (6, 14)
+Computed grid from (7, 0)
+Computed grid from (7, 1)
+Computed grid from (7, 2)
+Computed grid from (7, 3)
+Computed grid from (7, 4)
+Computed grid from (7, 5)
+Computed grid from (7, 6)
+Computed grid from (7, 7)
+Computed grid from (7, 8)
+Computed grid from (7, 9)
+Computed grid from (7, 10)
+Computed grid from (7, 11)
+Computed grid from (7, 12)
+Computed grid from (7, 13)
+Computed grid from (7, 14)
+Computed grid from (8, 0)
+Computed grid from (8, 1)
+Computed grid from (8, 2)
+Computed grid from (8, 3)
+Computed grid from (8, 4)
+Computed grid from (8, 5)
+Computed grid from (8, 6)
+Computed grid from (8, 7)
+Computed grid from (8, 8)
+Computed grid from (8, 9)
+Computed grid from (8, 10)
+Computed grid from (8, 11)
+Computed grid from (8, 12)
+Computed grid from (8, 13)
+Computed grid from (8, 14)
+Computed grid from (9, 0)
+Computed grid from (9, 1)
+Computed grid from (9, 2)
+Computed grid from (9, 3)
+Computed grid from (9, 4)
+Computed grid from (9, 5)
+Computed grid from (9, 6)
+Computed grid from (9, 7)
+Computed grid from (9, 8)
+Computed grid from (9, 9)
+Computed grid from (9, 10)
+Computed grid from (9, 11)
+Computed grid from (9, 12)
+Computed grid from (9, 13)
+Computed grid from (9, 14)
+Computed grid from (10, 0)
+Computed grid from (10, 1)
+Computed grid from (10, 2)
+Computed grid from (10, 3)
+Computed grid from (10, 4)
+Computed grid from (10, 5)
+Computed grid from (10, 6)
+Computed grid from (10, 7)
+Computed grid from (10, 8)
+Computed grid from (10, 9)
+Computed grid from (10, 10)
+Computed grid from (10, 11)
+Computed grid from (10, 12)
+Computed grid from (10, 13)
+Computed grid from (10, 14)
+Computed grid from (11, 0)
+Computed grid from (11, 1)
+Computed grid from (11, 2)
+Computed grid from (11, 3)
+Computed grid from (11, 4)
+Computed grid from (11, 5)
+Computed grid from (11, 6)
+Computed grid from (11, 7)
+Computed grid from (11, 8)
+Computed grid from (11, 9)
+Computed grid from (11, 10)
+Computed grid from (11, 11)
+Computed grid from (11, 12)
+Computed grid from (11, 13)
+Computed grid from (11, 14)
+Computed grid from (12, 0)
+Computed grid from (12, 1)
+Computed grid from (12, 2)
+Computed grid from (12, 3)
+Computed grid from (12, 4)
+Computed grid from (12, 5)
+Computed grid from (12, 6)
+Computed grid from (12, 7)
+Computed grid from (12, 8)
+Computed grid from (12, 9)
+Computed grid from (12, 10)
+Computed grid from (12, 11)
+Computed grid from (12, 12)
+Computed grid from (12, 13)
+Computed grid from (12, 14)
+Computed grid from (13, 0)
+Computed grid from (13, 1)
+Computed grid from (13, 2)
+Computed grid from (13, 3)
+Computed grid from (13, 4)
+Computed grid from (13, 5)
+Computed grid from (13, 6)
+Computed grid from (13, 7)
+Computed grid from (13, 8)
+Computed grid from (13, 9)
+Computed grid from (13, 10)
+Computed grid from (13, 11)
+Computed grid from (13, 12)
+Computed grid from (13, 13)
+Computed grid from (13, 14)
+Computed grid from (14, 0)
+Computed grid from (14, 1)
+Computed grid from (14, 2)
+Computed grid from (14, 3)
+Computed grid from (14, 4)
+Computed grid from (14, 5)
+Computed grid from (14, 6)
+Computed grid from (14, 7)
+Computed grid from (14, 8)
+Computed grid from (14, 9)
+Computed grid from (14, 10)
+Computed grid from (14, 11)
+Computed grid from (14, 12)
+Computed grid from (14, 13)
+Computed grid from (14, 14)
+--------------------
+no_action
+2883
+--------------------
+left
+original: 1739
+new: 211
+--------------------
+right
+original: 1984
+new: 211
+--------------------
+up
+original: 22087
+new: 33
+--------------------
+down
+original: 21932
+new: 35
+
+----------------------------
+./sparse_random/9_2_1
+
+9_2_1
+
+9
+assembling tree
+
+Computed grid from (0, 0)
+Computed grid from (0, 1)
+Computed grid from (0, 2)
+Computed grid from (0, 3)
+Computed grid from (0, 4)
+Computed grid from (0, 5)
+Computed grid from (0, 6)
+Computed grid from (0, 7)
+Computed grid from (0, 8)
+Computed grid from (0, 9)
+Computed grid from (1, 0)
+Computed grid from (1, 1)
+Computed grid from (1, 2)
+Computed grid from (1, 3)
+Computed grid from (1, 4)
+Computed grid from (1, 5)
+Computed grid from (1, 6)
+Computed grid from (1, 7)
+Computed grid from (1, 8)
+Computed grid from (1, 9)
+Computed grid from (2, 0)
+Computed grid from (2, 1)
+Computed grid from (2, 2)
+Computed grid from (2, 3)
+Computed grid from (2, 4)
+Computed grid from (2, 5)
+Computed grid from (2, 6)
+Computed grid from (2, 7)
+Computed grid from (2, 8)
+Computed grid from (2, 9)
+Computed grid from (3, 0)
+Computed grid from (3, 1)
+Computed grid from (3, 2)
+Computed grid from (3, 3)
+Computed grid from (3, 4)
+Computed grid from (3, 5)
+Computed grid from (3, 6)
+Computed grid from (3, 7)
+Computed grid from (3, 8)
+Computed grid from (3, 9)
+Computed grid from (4, 0)
+Computed grid from (4, 1)
+Computed grid from (4, 2)
+Computed grid from (4, 3)
+Computed grid from (4, 4)
+Computed grid from (4, 5)
+Computed grid from (4, 6)
+Computed grid from (4, 7)
+Computed grid from (4, 8)
+Computed grid from (4, 9)
+Computed grid from (5, 0)
+Computed grid from (5, 1)
+Computed grid from (5, 2)
+Computed grid from (5, 3)
+Computed grid from (5, 4)
+Computed grid from (5, 5)
+Computed grid from (5, 6)
+Computed grid from (5, 7)
+Computed grid from (5, 8)
+Computed grid from (5, 9)
+Computed grid from (6, 0)
+Computed grid from (6, 1)
+Computed grid from (6, 2)
+Computed grid from (6, 3)
+Computed grid from (6, 4)
+Computed grid from (6, 5)
+Computed grid from (6, 6)
+Computed grid from (6, 7)
+Computed grid from (6, 8)
+Computed grid from (6, 9)
+Computed grid from (7, 0)
+Computed grid from (7, 1)
+Computed grid from (7, 2)
+Computed grid from (7, 3)
+Computed grid from (7, 4)
+Computed grid from (7, 5)
+Computed grid from (7, 6)
+Computed grid from (7, 7)
+Computed grid from (7, 8)
+Computed grid from (7, 9)
+Computed grid from (8, 0)
+Computed grid from (8, 1)
+Computed grid from (8, 2)
+Computed grid from (8, 3)
+Computed grid from (8, 4)
+Computed grid from (8, 5)
+Computed grid from (8, 6)
+Computed grid from (8, 7)
+Computed grid from (8, 8)
+Computed grid from (8, 9)
+Computed grid from (9, 0)
+Computed grid from (9, 1)
+Computed grid from (9, 2)
+Computed grid from (9, 3)
+Computed grid from (9, 4)
+Computed grid from (9, 5)
+Computed grid from (9, 6)
+Computed grid from (9, 7)
+Computed grid from (9, 8)
+Computed grid from (9, 9)
+--------------------
+no_action
+1070
+--------------------
+left
+original: 733
+new: 96
+--------------------
+right
+original: 407
+new: 85
+--------------------
+up
+original: 3881
+new: 15
+--------------------
+down
+original: 3909
+new: 19
+
+using /home/BehaVerify_2024_FMAS_BTM/python_venvs/behaverify/bin/python3 for behaverify
+using /home/BehaVerify_2024_FMAS_BTM/python_venvs/results/bin/python3 for results
+
+./sparse_random
+
+----------------------------creating c monitor for behaverify
+./sparse_random/14_3_1
+
+14_3_1
+
+14
+setting up directory
+
+generating python code
+
+textx finished parsing
+
+moving read_monitor
+
+generating ltl commands
+
+textx finished parsing
+
+reading ltl commands
+
+generating ba
+
+generating monitors
+
+compiling to shared library
+
+running python code
+
+creating images
+
+Traceback (most recent call last):
+  File "/home/BehaVerify_2024_FMAS_BTM/behaverify/REPRODUCIBILITY/2024_FMAS_BTM/example/./extra_files/parse_python_output.py", line 2, in <module>
+    from draw_output import create_grid_from_states, draw_grid, draw_grid_line, create_gif
+ModuleNotFoundError: No module named 'draw_output'
+
+----------------------------creating c monitor for behaverify
+./sparse_random/9_2_1
+
+9_2_1
+
+9
+setting up directory
+
+generating python code
+
+textx finished parsing
+
+moving read_monitor
+
+generating ltl commands
+
+textx finished parsing
+
+reading ltl commands
+
+generating ba
+
+generating monitors
+
+compiling to shared library
+
+running python code
+
+creating images
+
+Traceback (most recent call last):
+  File "/home/BehaVerify_2024_FMAS_BTM/behaverify/REPRODUCIBILITY/2024_FMAS_BTM/example/./extra_files/parse_python_output.py", line 2, in <module>
+    from draw_output import create_grid_from_states, draw_grid, draw_grid_line, create_gif
+ModuleNotFoundError: No module named 'draw_output'
+
+./dense_fixed
+
+----------------------------creating c monitor for behaverify
+./dense_fixed/14_72_1
+
+14_72_1
+
+14
+setting up directory
+
+generating python code
+
+textx finished parsing
+
+moving read_monitor
+
+generating ltl commands
+
+textx finished parsing
+
+reading ltl commands
+
+generating ba
+
+generating monitors
+
+compiling to shared library
+
+running python code
+
+creating images
+
+Traceback (most recent call last):
+  File "/home/BehaVerify_2024_FMAS_BTM/behaverify/REPRODUCIBILITY/2024_FMAS_BTM/example/./extra_files/parse_python_output.py", line 2, in <module>
+
+    from draw_output import create_grid_from_states, draw_grid, draw_grid_line, create_gif
+
+ModuleNotFoundError: No module named 'draw_output'
+
+----------------------------creating c monitor for behaverify
+./dense_fixed/9_32_1
+
+9_32_1
+
+9
+setting up directory
+
+generating python code
+
+textx finished parsing
+
+moving read_monitor
+
+generating ltl commands
+
+textx finished parsing
+
+reading ltl commands
+
+generating ba
+
+generating monitors
+
+compiling to shared library
+
+running python code
+
+creating images
+
+Traceback (most recent call last):
+  File "/home/BehaVerify_2024_FMAS_BTM/behaverify/REPRODUCIBILITY/2024_FMAS_BTM/example/./extra_files/parse_python_output.py", line 2, in <module>
+
+    from draw_output import create_grid_from_states, draw_grid, draw_grid_line, create_gif
+
+ModuleNotFoundError: No module named 'draw_output'
+
+./dense_fixed
+
+----------------------------
+./dense_fixed/14_72_1
+
+14_72_1
+
+14
+
+72
+
+setting up directory
+
+copying python code
+
+ensuring clean extract location
+
+moving read_monitor
+
+generating .hs files
+
+generating copilot monitors
+
+extracting and moving monitors
+adding user interface to monitors
+
+compiling to shared library
+
+./dense_fixed/14_72_1/copilot/python/collision_monitor.c: In function 'go_slow_collision':
+
+./dense_fixed/14_72_1/copilot/python/collision_monitor.c:44:15: error: 'true' undeclared (first use in this function)
+   44 |   slow_down = true;
+      |               ^~~~
+
+./dense_fixed/14_72_1/copilot/python/collision_monitor.c:37:1: note: 'true' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+   36 | #include <stdio.h>
+  +++ |+#include <stdbool.h>
+   37 | int32_t drone_x;
+
+./dense_fixed/14_72_1/copilot/python/collision_monitor.c:44:15: note: each undeclared identifier is reported only once for each function it appears in
+   44 |   slow_down = true;
+      |               ^~~~
+
+./dense_fixed/14_72_1/copilot/python/collision_monitor.c: In function 'collision_interface':
+
+./dense_fixed/14_72_1/copilot/python/collision_monitor.c:47:15: error: 'false' undeclared (first use in this function)
+   47 |   slow_down = false;
+      |               ^~~~~
+./dense_fixed/14_72_1/copilot/python/collision_monitor.c:47:15: note: 'false' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+
+./dense_fixed/14_72_1/copilot/python/collision_monitor.c:53:3: warning: implicit declaration of function 'collision_step'; did you mean 'collision_interface'? [-Wimplicit-function-declaration]
+   53 |   collision_step();
+      |   ^~~~~~~~~~~~~~
+      |   collision_interface
+
+./dense_fixed/14_72_1/copilot/python/loop_monitor.c: In function 'go_slow_loop':
+
+./dense_fixed/14_72_1/copilot/python/loop_monitor.c:331:15: error: 'true' undeclared (first use in this function)
+  331 |   slow_down = true;
+      |               ^~~~
+
+./dense_fixed/14_72_1/copilot/python/loop_monitor.c:328:1: note: 'true' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+  327 | #include <stdio.h>
+  +++ |+#include <stdbool.h>
+  328 | int32_t current_action;
+
+./dense_fixed/14_72_1/copilot/python/loop_monitor.c:331:15: note: each undeclared identifier is reported only once for each function it appears in
+  331 |   slow_down = true;
+      |               ^~~~
+
+./dense_fixed/14_72_1/copilot/python/loop_monitor.c: In function 'loop_interface':
+./dense_fixed/14_72_1/copilot/python/loop_monitor.c:334:15: error: 'false' undeclared (first use in this function)
+  334 |   slow_down = false;
+      |               ^~~~~
+./dense_fixed/14_72_1/copilot/python/loop_monitor.c:334:15: note: 'false' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+
+./dense_fixed/14_72_1/copilot/python/loop_monitor.c:336:3: warning: implicit declaration of function 'loop_step' [-Wimplicit-function-declaration]
+  336 |   loop_step();
+      |   ^~~~~~~~~
+
+running python code
+
+Traceback (most recent call last):
+  File "/home/BehaVerify_2024_FMAS_BTM/behaverify/REPRODUCIBILITY/2024_FMAS_BTM/example/./dense_fixed/14_72_1/copilot/python/ANSR_runner.py", line 3, in <module>
+    import ANSR
+  File "/home/BehaVerify_2024_FMAS_BTM/behaverify/REPRODUCIBILITY/2024_FMAS_BTM/example/dense_fixed/14_72_1/copilot/python/ANSR.py", line 7, in <module>
+    import read_monitor_file
+  File "/home/BehaVerify_2024_FMAS_BTM/behaverify/REPRODUCIBILITY/2024_FMAS_BTM/example/dense_fixed/14_72_1/copilot/python/read_monitor_file.py", line 8, in <module>
+    collision_monitor_lib.collision_interface.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/ctypes/__init__.py", line 389, in __getattr__
+
+    func = self.__getitem__(name)
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/ctypes/__init__.py", line 394, in __getitem__
+    func = self._FuncPtr((name_or_ordinal, self))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: /home/BehaVerify_2024_FMAS_BTM/behaverify/REPRODUCIBILITY/2024_FMAS_BTM/example/dense_fixed/14_72_1/copilot/python/collision_monitor.so: undefined symbol: collision_interface
+
+creating images
+
+Traceback (most recent call last):
+  File "/home/BehaVerify_2024_FMAS_BTM/behaverify/REPRODUCIBILITY/2024_FMAS_BTM/example/./extra_files/parse_python_output.py", line 2, in <module>
+
+    from draw_output import create_grid_from_states, draw_grid, draw_grid_line, create_gif
+
+ModuleNotFoundError: No module named 'draw_output'
+
+----------------------------
+./dense_fixed/9_32_1
+
+9_32_1
+
+9
+
+32
+setting up directory
+
+copying python code
+
+ensuring clean extract location
+
+moving read_monitor
+
+generating .hs files
+
+generating copilot monitors
+
+extracting and moving monitors
+adding user interface to monitors
+
+compiling to shared library
+
+./dense_fixed/9_32_1/copilot/python/collision_monitor.c: In function 'go_slow_collision':
+
+./dense_fixed/9_32_1/copilot/python/collision_monitor.c:44:15: error: 'true' undeclared (first use in this function)
+   44 |   slow_down = true;
+      |               ^~~~
+
+./dense_fixed/9_32_1/copilot/python/collision_monitor.c:37:1: note: 'true' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+   36 | #include <stdio.h>
+  +++ |+#include <stdbool.h>
+   37 | int32_t drone_x;
+
+./dense_fixed/9_32_1/copilot/python/collision_monitor.c:44:15: note: each undeclared identifier is reported only once for each function it appears in
+   44 |   slow_down = true;
+      |               ^~~~
+
+./dense_fixed/9_32_1/copilot/python/collision_monitor.c: In function 'collision_interface':
+./dense_fixed/9_32_1/copilot/python/collision_monitor.c:47:15: error: 'false' undeclared (first use in this function)
+   47 |   slow_down = false;
+      |               ^~~~~
+./dense_fixed/9_32_1/copilot/python/collision_monitor.c:47:15: note: 'false' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+
+./dense_fixed/9_32_1/copilot/python/collision_monitor.c:53:3: warning: implicit declaration of function 'collision_step'; did you mean 'collision_interface'? [-Wimplicit-function-declaration]
+   53 |   collision_step();
+      |   ^~~~~~~~~~~~~~
+      |   collision_interface
+
+./dense_fixed/9_32_1/copilot/python/loop_monitor.c: In function 'go_slow_loop':
+
+./dense_fixed/9_32_1/copilot/python/loop_monitor.c:331:15: error: 'true' undeclared (first use in this function)
+  331 |   slow_down = true;
+      |               ^~~~
+
+./dense_fixed/9_32_1/copilot/python/loop_monitor.c:328:1: note: 'true' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+  327 | #include <stdio.h>
+  +++ |+#include <stdbool.h>
+  328 | int32_t current_action;
+
+./dense_fixed/9_32_1/copilot/python/loop_monitor.c:331:15: note: each undeclared identifier is reported only once for each function it appears in
+  331 |   slow_down = true;
+      |               ^~~~
+./dense_fixed/9_32_1/copilot/python/loop_monitor.c: In function 'loop_interface':
+
+./dense_fixed/9_32_1/copilot/python/loop_monitor.c:334:15: error: 'false' undeclared (first use in this function)
+  334 |   slow_down = false;
+      |               ^~~~~
+./dense_fixed/9_32_1/copilot/python/loop_monitor.c:334:15: note: 'false' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+
+./dense_fixed/9_32_1/copilot/python/loop_monitor.c:336:3: warning: implicit declaration of function 'loop_step' [-Wimplicit-function-declaration]
+  336 |   loop_step();
+      |   ^~~~~~~~~
+
+running python code
+
+Traceback (most recent call last):
+  File "/home/BehaVerify_2024_FMAS_BTM/behaverify/REPRODUCIBILITY/2024_FMAS_BTM/example/./dense_fixed/9_32_1/copilot/python/ANSR_runner.py", line 3, in <module>
+    import ANSR
+  File "/home/BehaVerify_2024_FMAS_BTM/behaverify/REPRODUCIBILITY/2024_FMAS_BTM/example/dense_fixed/9_32_1/copilot/python/ANSR.py", line 7, in <module>
+
+    import read_monitor_file
+  File "/home/BehaVerify_2024_FMAS_BTM/behaverify/REPRODUCIBILITY/2024_FMAS_BTM/example/dense_fixed/9_32_1/copilot/python/read_monitor_file.py", line 8, in <module>
+
+    collision_monitor_lib.collision_interface.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/ctypes/__init__.py", line 389, in __getattr__
+
+    func = self.__getitem__(name)
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/ctypes/__init__.py", line 394, in __getitem__
+
+    func = self._FuncPtr((name_or_ordinal, self))
+
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+AttributeError: /home/BehaVerify_2024_FMAS_BTM/behaverify/REPRODUCIBILITY/2024_FMAS_BTM/example/dense_fixed/9_32_1/copilot/python/collision_monitor.so: undefined symbol: collision_interface
+
+creating images
+
+Traceback (most recent call last):
+  File "/home/BehaVerify_2024_FMAS_BTM/behaverify/REPRODUCIBILITY/2024_FMAS_BTM/example/./extra_files/parse_python_output.py", line 2, in <module>
+    from draw_output import create_grid_from_states, draw_grid, draw_grid_line, create_gif
+ModuleNotFoundError: No module named 'draw_output'
+
+./sparse_random
+----------------------------
+./sparse_random/14_3_1
+
+14_3_1
+
+14
+
+3
+
+setting up directory
+
+copying python code
+
+ensuring clean extract location
+
+moving read_monitor
+
+generating .hs files
+
+generating copilot monitors
+
+extracting and moving monitors
+adding user interface to monitors
+
+compiling to shared library
+
+./sparse_random/14_3_1/copilot/python/collision_monitor.c: In function 'go_slow_collision':
+
+./sparse_random/14_3_1/copilot/python/collision_monitor.c:44:15: error: 'true' undeclared (first use in this function)
+   44 |   slow_down = true;
+      |               ^~~~
+
+./sparse_random/14_3_1/copilot/python/collision_monitor.c:37:1: note: 'true' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+   36 | #include <stdio.h>
+  +++ |+#include <stdbool.h>
+   37 | int32_t drone_x;
+
+./sparse_random/14_3_1/copilot/python/collision_monitor.c:44:15: note: each undeclared identifier is reported only once for each function it appears in
+   44 |   slow_down = true;
+      |               ^~~~
+
+./sparse_random/14_3_1/copilot/python/collision_monitor.c: In function 'collision_interface':
+./sparse_random/14_3_1/copilot/python/collision_monitor.c:47:15: error: 'false' undeclared (first use in this function)
+   47 |   slow_down = false;
+      |               ^~~~~
+./sparse_random/14_3_1/copilot/python/collision_monitor.c:47:15: note: 'false' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+
+./sparse_random/14_3_1/copilot/python/collision_monitor.c:53:3: warning: implicit declaration of function 'collision_step'; did you mean 'collision_interface'? [-Wimplicit-function-declaration]
+   53 |   collision_step();
+      |   ^~~~~~~~~~~~~~
+      |   collision_interface
+
+./sparse_random/14_3_1/copilot/python/loop_monitor.c: In function 'go_slow_loop':
+
+./sparse_random/14_3_1/copilot/python/loop_monitor.c:331:15: error: 'true' undeclared (first use in this function)
+  331 |   slow_down = true;
+      |               ^~~~
+
+./sparse_random/14_3_1/copilot/python/loop_monitor.c:328:1: note: 'true' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+  327 | #include <stdio.h>
+  +++ |+#include <stdbool.h>
+  328 | int32_t current_action;
+
+./sparse_random/14_3_1/copilot/python/loop_monitor.c:331:15: note: each undeclared identifier is reported only once for each function it appears in
+  331 |   slow_down = true;
+      |               ^~~~
+
+./sparse_random/14_3_1/copilot/python/loop_monitor.c: In function 'loop_interface':
+
+./sparse_random/14_3_1/copilot/python/loop_monitor.c:334:15: error: 'false' undeclared (first use in this function)
+  334 |   slow_down = false;
+      |               ^~~~~
+./sparse_random/14_3_1/copilot/python/loop_monitor.c:334:15: note: 'false' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+
+./sparse_random/14_3_1/copilot/python/loop_monitor.c:336:3: warning: implicit declaration of function 'loop_step' [-Wimplicit-function-declaration]
+  336 |   loop_step();
+      |   ^~~~~~~~~
+
+running python code
+
+Traceback (most recent call last):
+  File "/home/BehaVerify_2024_FMAS_BTM/behaverify/REPRODUCIBILITY/2024_FMAS_BTM/example/./sparse_random/14_3_1/copilot/python/ANSR_runner.py", line 3, in <module>
+    import ANSR
+  File "/home/BehaVerify_2024_FMAS_BTM/behaverify/REPRODUCIBILITY/2024_FMAS_BTM/example/sparse_random/14_3_1/copilot/python/ANSR.py", line 7, in <module>
+    import read_monitor_file
+  File "/home/BehaVerify_2024_FMAS_BTM/behaverify/REPRODUCIBILITY/2024_FMAS_BTM/example/sparse_random/14_3_1/copilot/python/read_monitor_file.py", line 8, in <module>
+    collision_monitor_lib.collision_interface.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/ctypes/__init__.py", line 389, in __getattr__
+
+    func = self.__getitem__(name)
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/ctypes/__init__.py", line 394, in __getitem__
+    func = self._FuncPtr((name_or_ordinal, self))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: /home/BehaVerify_2024_FMAS_BTM/behaverify/REPRODUCIBILITY/2024_FMAS_BTM/example/sparse_random/14_3_1/copilot/python/collision_monitor.so: undefined symbol: collision_interface
+
+creating images
+
+Traceback (most recent call last):
+  File "/home/BehaVerify_2024_FMAS_BTM/behaverify/REPRODUCIBILITY/2024_FMAS_BTM/example/./extra_files/parse_python_output.py", line 2, in <module>
+    from draw_output import create_grid_from_states, draw_grid, draw_grid_line, create_gif
+ModuleNotFoundError: No module named 'draw_output'
+
+----------------------------
+./sparse_random/9_2_1
+
+9_2_1
+
+9
+
+2
+setting up directory
+
+copying python code
+
+ensuring clean extract location
+
+moving read_monitor
+
+generating .hs files
+
+generating copilot monitors
+
+extracting and moving monitors
+adding user interface to monitors
+
+compiling to shared library
+
+./sparse_random/9_2_1/copilot/python/collision_monitor.c: In function 'go_slow_collision':
+./sparse_random/9_2_1/copilot/python/collision_monitor.c:44:15: error: 'true' undeclared (first use in this function)
+   44 |   slow_down = true;
+      |               ^~~~
+
+./sparse_random/9_2_1/copilot/python/collision_monitor.c:37:1: note: 'true' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+   36 | #include <stdio.h>
+  +++ |+#include <stdbool.h>
+   37 | int32_t drone_x;
+./sparse_random/9_2_1/copilot/python/collision_monitor.c:44:15: note: each undeclared identifier is reported only once for each function it appears in
+   44 |   slow_down = true;
+      |               ^~~~
+
+./sparse_random/9_2_1/copilot/python/collision_monitor.c: In function 'collision_interface':
+./sparse_random/9_2_1/copilot/python/collision_monitor.c:47:15: error: 'false' undeclared (first use in this function)
+   47 |   slow_down = false;
+      |               ^~~~~
+./sparse_random/9_2_1/copilot/python/collision_monitor.c:47:15: note: 'false' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+
+./sparse_random/9_2_1/copilot/python/collision_monitor.c:53:3: warning: implicit declaration of function 'collision_step'; did you mean 'collision_interface'? [-Wimplicit-function-declaration]
+   53 |   collision_step();
+      |   ^~~~~~~~~~~~~~
+      |   collision_interface
+
+./sparse_random/9_2_1/copilot/python/loop_monitor.c: In function 'go_slow_loop':
+
+./sparse_random/9_2_1/copilot/python/loop_monitor.c:331:15: error: 'true' undeclared (first use in this function)
+  331 |   slow_down = true;
+      |               ^~~~
+
+./sparse_random/9_2_1/copilot/python/loop_monitor.c:328:1: note: 'true' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+  327 | #include <stdio.h>
+  +++ |+#include <stdbool.h>
+  328 | int32_t current_action;
+
+./sparse_random/9_2_1/copilot/python/loop_monitor.c:331:15: note: each undeclared identifier is reported only once for each function it appears in
+  331 |   slow_down = true;
+      |               ^~~~
+./sparse_random/9_2_1/copilot/python/loop_monitor.c: In function 'loop_interface':
+
+./sparse_random/9_2_1/copilot/python/loop_monitor.c:334:15: error: 'false' undeclared (first use in this function)
+  334 |   slow_down = false;
+      |               ^~~~~
+./sparse_random/9_2_1/copilot/python/loop_monitor.c:334:15: note: 'false' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+
+./sparse_random/9_2_1/copilot/python/loop_monitor.c:336:3: warning: implicit declaration of function 'loop_step' [-Wimplicit-function-declaration]
+  336 |   loop_step();
+      |   ^~~~~~~~~
+
+running python code
+
+Traceback (most recent call last):
+  File "/home/BehaVerify_2024_FMAS_BTM/behaverify/REPRODUCIBILITY/2024_FMAS_BTM/example/./sparse_random/9_2_1/copilot/python/ANSR_runner.py", line 3, in <module>
+    import ANSR
+  File "/home/BehaVerify_2024_FMAS_BTM/behaverify/REPRODUCIBILITY/2024_FMAS_BTM/example/sparse_random/9_2_1/copilot/python/ANSR.py", line 7, in <module>
+
+    import read_monitor_file
+  File "/home/BehaVerify_2024_FMAS_BTM/behaverify/REPRODUCIBILITY/2024_FMAS_BTM/example/sparse_random/9_2_1/copilot/python/read_monitor_file.py", line 8, in <module>
+
+    collision_monitor_lib.collision_interface.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/ctypes/__init__.py", line 389, in __getattr__
+
+    func = self.__getitem__(name)
+
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/ctypes/__init__.py", line 394, in __getitem__
+
+    func = self._FuncPtr((name_or_ordinal, self))
+
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+AttributeError: /home/BehaVerify_2024_FMAS_BTM/behaverify/REPRODUCIBILITY/2024_FMAS_BTM/example/sparse_random/9_2_1/copilot/python/collision_monitor.so: undefined symbol: collision_interface
+
+creating images
+
+Traceback (most recent call last):
+  File "/home/BehaVerify_2024_FMAS_BTM/behaverify/REPRODUCIBILITY/2024_FMAS_BTM/example/./extra_files/parse_python_output.py", line 2, in <module>
+
+    from draw_output import create_grid_from_states, draw_grid, draw_grid_line, create_gif
+
+ModuleNotFoundError: No module named 'draw_output'
+
+./sparse_random
+
+----------------------------
+./sparse_random/14_3_1
+
+14_3_1
+
+14
+setting up directory
+
+generating smv model
+
+textx finished parsing
+Number of nodes before pruning: 9
+Number of nodes after pruning: 9
+removal of last stage for array variables not yet implemented.
+
+----------------------------
+./sparse_random/9_2_1
+
+9_2_1
+
+9
+setting up directory
+
+generating smv model
+
+textx finished parsing
+Number of nodes before pruning: 9
+Number of nodes after pruning: 9
+removal of last stage for array variables not yet implemented.
+
+./dense_fixed
+
+----------------------------
+./dense_fixed/14_72_1
+
+14_72_1
+
+14
+setting up directory
+
+generating smv model
+
+textx finished parsing
+Number of nodes before pruning: 9
+Number of nodes after pruning: 9
+removal of last stage for array variables not yet implemented.
+
+----------------------------
+./dense_fixed/9_32_1
+
+9_32_1
+
+9
+setting up directory
+
+generating smv model
+
+textx finished parsing
+Number of nodes before pruning: 9
+Number of nodes after pruning: 9
+removal of last stage for array variables not yet implemented.
+
+./sparse_random
+
+----------------------------
+./sparse_random/14_3_1
+
+14_3_1
+
+14
+running safety
+
+./pipeline_existing_design_time.sh: line 47: /home/BehaVerify_2024_FMAS_BTM/nuXmv: No such file or directory
+
+----------------------------
+./sparse_random/9_2_1
+
+9_2_1
+
+9
+running safety
+
+./pipeline_existing_design_time.sh: line 47: /home/BehaVerify_2024_FMAS_BTM/nuXmv: No such file or directory
+
+./dense_fixed
+----------------------------
+./dense_fixed/14_72_1
+
+14_72_1
+
+14
+running safety
+
+./pipeline_existing_design_time.sh: line 47: /home/BehaVerify_2024_FMAS_BTM/nuXmv: No such file or directory
+
+----------------------------
+./dense_fixed/9_32_1
+
+9_32_1
+
+9
+running safety
+
+./pipeline_existing_design_time.sh: line 47: /home/BehaVerify_2024_FMAS_BTM/nuXmv: No such file or directory
+
+./sparse_random
+
+----------------------------
+./sparse_random/14_3_1
+
+14_3_1
+
+14
+running ltl
+
+./pipeline_existing_design_time.sh: line 65: /home/BehaVerify_2024_FMAS_BTM/nuXmv: No such file or directory
+
+----------------------------
+./sparse_random/9_2_1
+
+9_2_1
+
+9
+running ltl
+
+./pipeline_existing_design_time.sh: line 65: /home/BehaVerify_2024_FMAS_BTM/nuXmv: No such file or directory
+
+./dense_fixed
+
+----------------------------
+./dense_fixed/14_72_1
+
+14_72_1
+
+14
+running ltl
+
+./pipeline_existing_design_time.sh: line 65: /home/BehaVerify_2024_FMAS_BTM/nuXmv: No such file or directory
+
+----------------------------
+./dense_fixed/9_32_1
+
+9_32_1
+
+9
+running ltl
+
+./pipeline_existing_design_time.sh: line 65: /home/BehaVerify_2024_FMAS_BTM/nuXmv: No such file or directory
+
+./dense_fixed
+----------------------------
+./dense_fixed/14_72_1
+
+14_72_1
+
+14
+creating new obstacle file
+
+creating new obstacle file
+
+creating new obstacle file
+
+Traceback (most recent call last):
+  File "/home/BehaVerify_2024_FMAS_BTM/behaverify/REPRODUCIBILITY/2024_FMAS_BTM/example/create_new_obstacle_file_c.py", line 56, in <module>
+    create_file()
+  File "/home/BehaVerify_2024_FMAS_BTM/behaverify/REPRODUCIBILITY/2024_FMAS_BTM/example/create_new_obstacle_file_c.py", line 10, in create_file
+    with open(INPUT_FILE, 'r', encoding = 'utf-8') as in_file:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: './dense_fixed/14_72_1/monitorless/python/ANSR_environment.py'
+
+----------------------------
+./dense_fixed/9_32_1
+
+9_32_1
+
+9
+creating new obstacle file
+
+creating new obstacle file
+
+creating new obstacle file
+
+Traceback (most recent call last):
+  File "/home/BehaVerify_2024_FMAS_BTM/behaverify/REPRODUCIBILITY/2024_FMAS_BTM/example/create_new_obstacle_file_c.py", line 56, in <module>
+    create_file()
+  File "/home/BehaVerify_2024_FMAS_BTM/behaverify/REPRODUCIBILITY/2024_FMAS_BTM/example/create_new_obstacle_file_c.py", line 10, in create_file
+    with open(INPUT_FILE, 'r', encoding = 'utf-8') as in_file:
+
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: './dense_fixed/9_32_1/monitorless/python/ANSR_environment.py'
+
+./sparse_random
+----------------------------
+./sparse_random/14_3_1
+
+14_3_1
+
+14
+creating new obstacle file
+
+creating new obstacle file
+
+creating new obstacle file
+
+Traceback (most recent call last):
+  File "/home/BehaVerify_2024_FMAS_BTM/behaverify/REPRODUCIBILITY/2024_FMAS_BTM/example/create_new_obstacle_file_c.py", line 56, in <module>
+    create_file()
+  File "/home/BehaVerify_2024_FMAS_BTM/behaverify/REPRODUCIBILITY/2024_FMAS_BTM/example/create_new_obstacle_file_c.py", line 10, in create_file
+    with open(INPUT_FILE, 'r', encoding = 'utf-8') as in_file:
+
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: './sparse_random/14_3_1/monitorless/python/ANSR_environment.py'
+
+----------------------------
+./sparse_random/9_2_1
+
+9_2_1
+
+9
+creating new obstacle file
+
+creating new obstacle file
+
+creating new obstacle file
+
+Traceback (most recent call last):
+  File "/home/BehaVerify_2024_FMAS_BTM/behaverify/REPRODUCIBILITY/2024_FMAS_BTM/example/create_new_obstacle_file_c.py", line 56, in <module>
+    create_file()
+  File "/home/BehaVerify_2024_FMAS_BTM/behaverify/REPRODUCIBILITY/2024_FMAS_BTM/example/create_new_obstacle_file_c.py", line 10, in create_file
+    with open(INPUT_FILE, 'r', encoding = 'utf-8') as in_file:
+
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: './sparse_random/9_2_1/monitorless/python/ANSR_environment.py'
+
+./dense_fixed
+
+----------------------------
+./dense_fixed/14_72_1
+
+14_72_1
+
+14
+moving new timing c file
+
+./compare_timing_v4.sh: line 32: hyperfine: command not found
+
+./compare_timing_v4.sh: line 34: jq: command not found
+
+moving new timing c file
+
+./dense_fixed/14_72_1/copilot/python/loop_monitor.c: In function 'go_slow_loop':
+
+./dense_fixed/14_72_1/copilot/python/loop_monitor.c:331:15: error: 'true' undeclared (first use in this function)
+  331 |   slow_down = true;
+      |               ^~~~
+./dense_fixed/14_72_1/copilot/python/loop_monitor.c:328:1: note: 'true' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+  327 | #include <stdio.h>
+  +++ |+#include <stdbool.h>
+  328 | int32_t current_action;
+
+./dense_fixed/14_72_1/copilot/python/loop_monitor.c:331:15: note: each undeclared identifier is reported only once for each function it appears in
+  331 |   slow_down = true;
+      |               ^~~~
+./dense_fixed/14_72_1/copilot/python/loop_monitor.c: In function 'loop_interface':
+./dense_fixed/14_72_1/copilot/python/loop_monitor.c:334:15: error: 'false' undeclared (first use in this function)
+  334 |   slow_down = false;
+      |               ^~~~~
+./dense_fixed/14_72_1/copilot/python/loop_monitor.c:334:15: note: 'false' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+
+./dense_fixed/14_72_1/copilot/python/loop_monitor.c:336:3: warning: implicit declaration of function 'loop_step' [-Wimplicit-function-declaration]
+  336 |   loop_step();
+      |   ^~~~~~~~~
+
+./dense_fixed/14_72_1/copilot/python/collision_monitor.c: In function 'go_slow_collision':
+./dense_fixed/14_72_1/copilot/python/collision_monitor.c:44:15: error: 'true' undeclared (first use in this function)
+   44 |   slow_down = true;
+      |               ^~~~
+
+./dense_fixed/14_72_1/copilot/python/collision_monitor.c:37:1: note: 'true' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+   36 | #include <stdio.h>
+  +++ |+#include <stdbool.h>
+   37 | int32_t drone_x;
+./dense_fixed/14_72_1/copilot/python/collision_monitor.c:44:15: note: each undeclared identifier is reported only once for each function it appears in
+   44 |   slow_down = true;
+      |               ^~~~
+
+./dense_fixed/14_72_1/copilot/python/collision_monitor.c: In function 'collision_interface':
+./dense_fixed/14_72_1/copilot/python/collision_monitor.c:47:15: error: 'false' undeclared (first use in this function)
+   47 |   slow_down = false;
+      |               ^~~~~
+./dense_fixed/14_72_1/copilot/python/collision_monitor.c:47:15: note: 'false' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+
+./dense_fixed/14_72_1/copilot/python/collision_monitor.c:53:3: warning: implicit declaration of function 'collision_step'; did you mean 'collision_interface'? [-Wimplicit-function-declaration]
+   53 |   collision_step();
+      |   ^~~~~~~~~~~~~~
+      |   collision_interface
+
+./compare_timing_v4.sh: line 32: hyperfine: command not found
+
+./compare_timing_v4.sh: line 34: jq: command not found
+
+moving new timing c file
+
+cp: cannot create regular file './dense_fixed/14_72_1/monitorless/python/main.c': No such file or directory
+
+cc1: fatal error: ./dense_fixed/14_72_1/monitorless/python/main.c: No such file or directory
+compilation terminated.
+
+cc1: fatal error: ./dense_fixed/14_72_1/monitorless/python/obstacle_file.c: No such file or directory
+compilation terminated.
+
+./compare_timing_v4.sh: line 29: hyperfine: command not found
+
+./compare_timing_v4.sh: line 34: jq: command not found
+
+----------------------------
+./dense_fixed/9_32_1
+
+9_32_1
+
+9
+
+moving new timing c file
+
+./compare_timing_v4.sh: line 32: hyperfine: command not found
+
+./compare_timing_v4.sh: line 34: jq: command not found
+
+moving new timing c file
+
+./dense_fixed/9_32_1/copilot/python/loop_monitor.c: In function 'go_slow_loop':
+
+./dense_fixed/9_32_1/copilot/python/loop_monitor.c:331:15: error: 'true' undeclared (first use in this function)
+  331 |   slow_down = true;
+      |               ^~~~
+./dense_fixed/9_32_1/copilot/python/loop_monitor.c:328:1: note: 'true' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+  327 | #include <stdio.h>
+  +++ |+#include <stdbool.h>
+  328 | int32_t current_action;
+
+./dense_fixed/9_32_1/copilot/python/loop_monitor.c:331:15: note: each undeclared identifier is reported only once for each function it appears in
+  331 |   slow_down = true;
+      |               ^~~~
+./dense_fixed/9_32_1/copilot/python/loop_monitor.c: In function 'loop_interface':
+./dense_fixed/9_32_1/copilot/python/loop_monitor.c:334:15: error: 'false' undeclared (first use in this function)
+  334 |   slow_down = false;
+      |               ^~~~~
+./dense_fixed/9_32_1/copilot/python/loop_monitor.c:334:15: note: 'false' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+
+./dense_fixed/9_32_1/copilot/python/loop_monitor.c:336:3: warning: implicit declaration of function 'loop_step' [-Wimplicit-function-declaration]
+  336 |   loop_step();
+      |   ^~~~~~~~~
+
+./dense_fixed/9_32_1/copilot/python/collision_monitor.c: In function 'go_slow_collision':
+./dense_fixed/9_32_1/copilot/python/collision_monitor.c:44:15: error: 'true' undeclared (first use in this function)
+   44 |   slow_down = true;
+      |               ^~~~
+
+./dense_fixed/9_32_1/copilot/python/collision_monitor.c:37:1: note: 'true' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+   36 | #include <stdio.h>
+  +++ |+#include <stdbool.h>
+   37 | int32_t drone_x;
+
+./dense_fixed/9_32_1/copilot/python/collision_monitor.c:44:15: note: each undeclared identifier is reported only once for each function it appears in
+   44 |   slow_down = true;
+      |               ^~~~
+
+./dense_fixed/9_32_1/copilot/python/collision_monitor.c: In function 'collision_interface':
+./dense_fixed/9_32_1/copilot/python/collision_monitor.c:47:15: error: 'false' undeclared (first use in this function)
+   47 |   slow_down = false;
+      |               ^~~~~
+./dense_fixed/9_32_1/copilot/python/collision_monitor.c:47:15: note: 'false' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+
+./dense_fixed/9_32_1/copilot/python/collision_monitor.c:53:3: warning: implicit declaration of function 'collision_step'; did you mean 'collision_interface'? [-Wimplicit-function-declaration]
+   53 |   collision_step();
+      |   ^~~~~~~~~~~~~~
+      |   collision_interface
+
+./compare_timing_v4.sh: line 32: hyperfine: command not found
+
+./compare_timing_v4.sh: line 34: jq: command not found
+
+moving new timing c file
+
+cp: cannot create regular file './dense_fixed/9_32_1/monitorless/python/main.c': No such file or directory
+
+cc1: fatal error: ./dense_fixed/9_32_1/monitorless/python/main.c: No such file or directory
+compilation terminated.
+
+cc1: fatal error: ./dense_fixed/9_32_1/monitorless/python/obstacle_file.c: No such file or directory
+compilation terminated.
+
+./compare_timing_v4.sh: line 29: hyperfine: command not found
+
+./compare_timing_v4.sh: line 34: jq: command not found
+
+./sparse_random
+
+----------------------------
+./sparse_random/14_3_1
+
+14_3_1
+
+14
+moving new timing c file
+
+./compare_timing_v4.sh: line 32: hyperfine: command not found
+
+./compare_timing_v4.sh: line 34: jq: command not found
+
+moving new timing c file
+
+./sparse_random/14_3_1/copilot/python/loop_monitor.c: In function 'go_slow_loop':
+
+./sparse_random/14_3_1/copilot/python/loop_monitor.c:331:15: error: 'true' undeclared (first use in this function)
+  331 |   slow_down = true;
+      |               ^~~~
+
+./sparse_random/14_3_1/copilot/python/loop_monitor.c:328:1: note: 'true' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+  327 | #include <stdio.h>
+  +++ |+#include <stdbool.h>
+  328 | int32_t current_action;
+
+./sparse_random/14_3_1/copilot/python/loop_monitor.c:331:15: note: each undeclared identifier is reported only once for each function it appears in
+  331 |   slow_down = true;
+      |               ^~~~
+
+./sparse_random/14_3_1/copilot/python/loop_monitor.c: In function 'loop_interface':
+./sparse_random/14_3_1/copilot/python/loop_monitor.c:334:15: error: 'false' undeclared (first use in this function)
+  334 |   slow_down = false;
+      |               ^~~~~
+./sparse_random/14_3_1/copilot/python/loop_monitor.c:334:15: note: 'false' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+
+./sparse_random/14_3_1/copilot/python/loop_monitor.c:336:3: warning: implicit declaration of function 'loop_step' [-Wimplicit-function-declaration]
+  336 |   loop_step();
+      |   ^~~~~~~~~
+
+./sparse_random/14_3_1/copilot/python/collision_monitor.c: In function 'go_slow_collision':
+
+./sparse_random/14_3_1/copilot/python/collision_monitor.c:44:15: error: 'true' undeclared (first use in this function)
+   44 |   slow_down = true;
+      |               ^~~~
+
+./sparse_random/14_3_1/copilot/python/collision_monitor.c:37:1: note: 'true' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+   36 | #include <stdio.h>
+  +++ |+#include <stdbool.h>
+   37 | int32_t drone_x;
+./sparse_random/14_3_1/copilot/python/collision_monitor.c:44:15: note: each undeclared identifier is reported only once for each function it appears in
+   44 |   slow_down = true;
+      |               ^~~~
+
+./sparse_random/14_3_1/copilot/python/collision_monitor.c: In function 'collision_interface':
+./sparse_random/14_3_1/copilot/python/collision_monitor.c:47:15: error: 'false' undeclared (first use in this function)
+   47 |   slow_down = false;
+      |               ^~~~~
+
+./sparse_random/14_3_1/copilot/python/collision_monitor.c:47:15: note: 'false' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+
+./sparse_random/14_3_1/copilot/python/collision_monitor.c:53:3: warning: implicit declaration of function 'collision_step'; did you mean 'collision_interface'? [-Wimplicit-function-declaration]
+   53 |   collision_step();
+      |   ^~~~~~~~~~~~~~
+      |   collision_interface
+
+./compare_timing_v4.sh: line 32: hyperfine: command not found
+
+./compare_timing_v4.sh: line 34: jq: command not found
+
+moving new timing c file
+
+cp: cannot create regular file './sparse_random/14_3_1/monitorless/python/main.c': No such file or directory
+
+cc1: fatal error: ./sparse_random/14_3_1/monitorless/python/main.c: No such file or directory
+compilation terminated.
+
+cc1: fatal error: ./sparse_random/14_3_1/monitorless/python/obstacle_file.c: No such file or directory
+compilation terminated.
+
+./compare_timing_v4.sh: line 29: hyperfine: command not found
+
+./compare_timing_v4.sh: line 34: jq: command not found
+
+----------------------------
+./sparse_random/9_2_1
+
+9_2_1
+
+9
+moving new timing c file
+
+./compare_timing_v4.sh: line 32: hyperfine: command not found
+
+./compare_timing_v4.sh: line 34: jq: command not found
+
+moving new timing c file
+
+./sparse_random/9_2_1/copilot/python/loop_monitor.c: In function 'go_slow_loop':
+
+./sparse_random/9_2_1/copilot/python/loop_monitor.c:331:15: error: 'true' undeclared (first use in this function)
+  331 |   slow_down = true;
+      |               ^~~~
+./sparse_random/9_2_1/copilot/python/loop_monitor.c:328:1: note: 'true' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+  327 | #include <stdio.h>
+  +++ |+#include <stdbool.h>
+  328 | int32_t current_action;
+
+./sparse_random/9_2_1/copilot/python/loop_monitor.c:331:15: note: each undeclared identifier is reported only once for each function it appears in
+  331 |   slow_down = true;
+      |               ^~~~
+./sparse_random/9_2_1/copilot/python/loop_monitor.c: In function 'loop_interface':
+./sparse_random/9_2_1/copilot/python/loop_monitor.c:334:15: error: 'false' undeclared (first use in this function)
+  334 |   slow_down = false;
+      |               ^~~~~
+./sparse_random/9_2_1/copilot/python/loop_monitor.c:334:15: note: 'false' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+
+./sparse_random/9_2_1/copilot/python/loop_monitor.c:336:3: warning: implicit declaration of function 'loop_step' [-Wimplicit-function-declaration]
+  336 |   loop_step();
+      |   ^~~~~~~~~
+
+./sparse_random/9_2_1/copilot/python/collision_monitor.c: In function 'go_slow_collision':
+./sparse_random/9_2_1/copilot/python/collision_monitor.c:44:15: error: 'true' undeclared (first use in this function)
+   44 |   slow_down = true;
+      |               ^~~~
+./sparse_random/9_2_1/copilot/python/collision_monitor.c:37:1: note: 'true' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+   36 | #include <stdio.h>
+  +++ |+#include <stdbool.h>
+   37 | int32_t drone_x;
+./sparse_random/9_2_1/copilot/python/collision_monitor.c:44:15: note: each undeclared identifier is reported only once for each function it appears in
+   44 |   slow_down = true;
+      |               ^~~~
+./sparse_random/9_2_1/copilot/python/collision_monitor.c: In function 'collision_interface':
+./sparse_random/9_2_1/copilot/python/collision_monitor.c:47:15: error: 'false' undeclared (first use in this function)
+   47 |   slow_down = false;
+      |               ^~~~~
+./sparse_random/9_2_1/copilot/python/collision_monitor.c:47:15: note: 'false' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+
+./sparse_random/9_2_1/copilot/python/collision_monitor.c:53:3: warning: implicit declaration of function 'collision_step'; did you mean 'collision_interface'? [-Wimplicit-function-declaration]
+   53 |   collision_step();
+      |   ^~~~~~~~~~~~~~
+      |   collision_interface
+
+./compare_timing_v4.sh: line 32: hyperfine: command not found
+
+./compare_timing_v4.sh: line 34: jq: command not found
+
+moving new timing c file
+
+cp: cannot create regular file './sparse_random/9_2_1/monitorless/python/main.c': No such file or directory
+
+cc1: fatal error: ./sparse_random/9_2_1/monitorless/python/main.c: No such file or directory
+compilation terminated.
+
+cc1: fatal error: ./sparse_random/9_2_1/monitorless/python/obstacle_file.c: No such file or directory
+compilation terminated.
+
+./compare_timing_v4.sh: line 29: hyperfine: command not found
+
+./compare_timing_v4.sh: line 34: jq: command not found
+
+./dense_fixed
+
+----------------------------
+./dense_fixed/14_72_1
+
+14_72_1
+
+14
+
+There are not enough 'elapse' instances in the file.
+
+----------------------------
+./dense_fixed/9_32_1
+
+9_32_1
+
+9
+
+There are not enough 'elapse' instances in the file.
+
+./sparse_random
+
+----------------------------
+./sparse_random/14_3_1
+
+14_3_1
+
+14
+
+There are not enough 'elapse' instances in the file.
+
+----------------------------
+./sparse_random/9_2_1
+
+9_2_1
+
+9
+
+There are not enough 'elapse' instances in the file.
+
+Traceback (most recent call last):
+  File "/home/BehaVerify_2024_FMAS_BTM/behaverify/REPRODUCIBILITY/2024_FMAS_BTM/example/graph_sizes.py", line 2, in <module>
+    import pandas as pd
+ModuleNotFoundError: No module named 'pandas'
+
+Traceback (most recent call last):
+  File "/home/BehaVerify_2024_FMAS_BTM/behaverify/REPRODUCIBILITY/2024_FMAS_BTM/example/graph_sizes.py", line 2, in <module>
+    import pandas as pd
+ModuleNotFoundError: No module named 'pandas'
+
+Traceback (most recent call last):
+  File "/home/BehaVerify_2024_FMAS_BTM/behaverify/REPRODUCIBILITY/2024_FMAS_BTM/example/graph_timing.py", line 2, in <module>
+    import pandas as pd
+ModuleNotFoundError: No module named 'pandas'
+
+Traceback (most recent call last):
+  File "/home/BehaVerify_2024_FMAS_BTM/behaverify/REPRODUCIBILITY/2024_FMAS_BTM/example/graph_timing.py", line 2, in <module>
+    import pandas as pd
+
+ModuleNotFoundError: No module named 'pandas'
+
+Traceback (most recent call last):
+  File "/home/BehaVerify_2024_FMAS_BTM/behaverify/REPRODUCIBILITY/2024_FMAS_BTM/example/graph_timing_design_time.py", line 2, in <module>
+    import pandas as pd
+
+ModuleNotFoundError: No module named 'pandas'
+
+End: install <::> Check if errors were printed!
