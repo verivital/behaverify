@@ -6,8 +6,8 @@ mon_types=("behaverify" "copilot" "nurv")
 for category in "${categories[@]}"; do
     echo $category
     for mon_type in "${mon_types[@]}"; do
-	rm -rf "${category}/collision_${mon_type}_sizes.txt"
-	touch "${category}/collision_${mon_type}_sizes.txt"
+	rm -rf "${category}/collision_v4_${mon_type}_sizes.txt"
+	touch "${category}/collision_v4_${mon_type}_sizes.txt"
     done
     for folder in "${category}"/*; do
 	if [ -f "${folder}" ]; then
@@ -23,7 +23,7 @@ for category in "${categories[@]}"; do
 	    file_ext=".c"
 	    file_name="${category}/${tail_end}/${mon_type}/python/collision_monitor${file_ext}"
 	    file_size=$(stat -c %s $file_name)
-	    echo "${max_val} ::> ${file_size}" >> "${category}/collision_${mon_type}_sizes.txt"
+	    echo "${max_val} ::> ${file_size}" >> "${category}/collision_v4_${mon_type}_sizes.txt"
 	done
     done
 done
