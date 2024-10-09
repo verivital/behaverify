@@ -6,9 +6,9 @@ ulimit -s unlimited
 python_behaverify=python3
 python_results=python3
 
-if [[ $# -ge 3 ]]; then
-    python_behaverify=$2
-    python_results=$3
+if [[ $# -ge 2 ]]; then
+    python_behaverify=$1
+    python_results=$2
 fi
 
 for category in "${categories[@]}"; do

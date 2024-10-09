@@ -7,9 +7,9 @@ categories=("./sparse_random" "./dense_fixed")
 python_behaverify=python3
 python_results=python3
 
-if [[ $# -ge 3 ]]; then
-    python_behaverify=$2
-    python_results=$3
+if [[ $# -ge 2 ]]; then
+    python_behaverify=$1
+    python_results=$2
 fi
 
 echo "using ${python_behaverify} for behaverify"
