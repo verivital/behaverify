@@ -24,8 +24,6 @@ fi
 echo "using ${python_behaverify} for behaverify"
 echo "using ${python_results} for results"
 
-exit 1
-
 start_location=$(pwd)
 
 cd "${this_script_location_arg}"
