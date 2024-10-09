@@ -35,6 +35,7 @@ cd "${this_script_location}/example"
 ./pipeline_create_sparse_random.sh $iterations
 ./pipeline_create_design_time.sh
 ./pipeline_existing_behaverify_c.sh $python_behaverify $python_results
+./pipeline_existing_monitorless.sh
 ./pipeline_existing_copilot.sh $python_behaverify $python_results
 ./pipeline_existing_design_time.sh $python_behaverify $python_results
 ./compare_timing_v4_setup.sh
