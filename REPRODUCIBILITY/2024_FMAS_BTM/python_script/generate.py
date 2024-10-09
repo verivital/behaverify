@@ -8,7 +8,7 @@ def generate(mode, write_location):
     if mode not in ('install', 'partial', 'full'):
         print('unknown argument. Must be one of install, partial, or full. Got: ' + str(mode))
         sys.exit()
-    iterations = '2' if mode == 'install' else ('5' if mode == 'partial' else 9))
+    iterations = '2' if mode == 'install' else ('5' if mode == 'partial' else 9)
     client = docker.from_env()
     behaverify = client.containers.get(CONTAINER_NAME)
     behaverify.start()
