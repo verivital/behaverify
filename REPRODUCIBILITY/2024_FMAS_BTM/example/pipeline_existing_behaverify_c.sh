@@ -12,6 +12,9 @@ if [[ $# -ge 3 ]]; then
     python_results=$3
 fi
 
+echo "using ${python_behaverify} for behaverify"
+echo "using ${python_results} for results"
+
 for category in "${categories[@]}"; do
     echo $category
     for folder in "${category}"/*; do
