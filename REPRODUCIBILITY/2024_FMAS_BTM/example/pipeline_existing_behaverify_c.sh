@@ -53,6 +53,6 @@ for category in "${categories[@]}"; do
 	$python_behaverify "${category}/${tail_end}/behaverify/python/ANSR_runner.py" > "${category}/${tail_end}/behaverify/python/trace.txt"
 	echo "creating images"
 	mkdir "${category}/${tail_end}/behaverify/images"
-	$python_results "../parse_python_output.py" "${category}/${tail_end}/behaverify/python/trace.txt" "${category}/${tail_end}/behaverify/images/monitor" $((max_val + 1)) $((max_val + 1))
+	$python_results "./extra_files/parse_python_output.py" "${category}/${tail_end}/behaverify/python/trace.txt" "${category}/${tail_end}/behaverify/images/monitor" $((max_val + 1)) $((max_val + 1))
     done
 done
