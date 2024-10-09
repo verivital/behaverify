@@ -1,8 +1,6 @@
 #!/bin/bash
 
 
-
-
 python_results=python3
 
 if [[ $# -ge 2 ]]; then
