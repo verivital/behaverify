@@ -17,7 +17,7 @@ for category in "${categories[@]}"; do
 	if [ -f "${folder}" ]; then
 	    continue
 	fi
-	echo "----------------------------"
+	echo "----------------------------creating copilot monitor"
 	echo $folder
 	tail_end=$(basename "${folder}")
 	echo $tail_end
