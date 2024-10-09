@@ -12,7 +12,11 @@ import os
 import shutil
 import itertools
 import re
-import onnxruntime
+ONNX_IMPORTED = True
+try:
+    import onnxruntime
+except:
+    ONNX_IMPORTED = False
 from behaverify_common import indent, create_node_name, is_local, is_env, is_blackboard, is_array, handle_constant_or_reference, resolve_potential_reference_no_type, variable_array_size, get_min_max, variable_type, BTreeException, constant_type
 from serene_functions import build_meta_func
 from check_grammar import validate_model
@@ -471,6 +475,8 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
         return (variable_assignment(variable, handle_assign(variable_statement.assign, misc_args), misc_args, array_mode = False) if assign_to_var else handle_assign(variable_statement.assign, misc_args))
 
     def create_neural_network(variable, misc_args):
+        if not ONNX_IMPORTED:
+            raise RuntimeError('onnxruntime was not successfully imported, but you are using a neural network. Exiting')
         file_prefix = os.path.split(model_file)[0]  # this points to the folder where the model file is
         if file_prefix == '':
             file_prefix = '.'

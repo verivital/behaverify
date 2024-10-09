@@ -8,20 +8,13 @@ def generate(mode, write_location):
     if mode not in ('install', 'partial', 'full'):
         print('unknown argument. Must be one of install, partial, or full. Got: ' + str(mode))
         sys.exit()
+    iterations = '2' if mode == 'install' else ('5' if mode == 'partial' else 9))
     client = docker.from_env()
     behaverify = client.containers.get(CONTAINER_NAME)
     behaverify.start()
-    command_start = TEST_DIR + '/' + USER + '_'
-    command_end = '.sh ' + TEST_DIR + ' ' + HOME_DIR + '/python_venvs/behaverify/bin/python3 ' + HOME_DIR + '/python_venvs/results/bin/python3'
-    command = ''
-    if mode == 'install':
-        command = 'test_installation'
-    elif mode == 'partial':
-        command = 'partial_results'
-    elif mode == 'full':
-        command = 'full_results'
-    serene_exec(behaverify, command_start + command + command_end, command, True)
-    copy_out_of(behaverify, TEST_DIR + '/examples', write_location + '.tar')
+    command = TEST_DIR + '/' + USER + '.sh ' + TEST_DIR + ' ' + iterations + ' ' + HOME_DIR + '/python_venvs/behaverify/bin/python3 ' + HOME_DIR + '/python_venvs/results/bin/python3'
+    serene_exec(behaverify, command, mode, True)
+    copy_out_of(behaverify, TEST_DIR + '/example', write_location + '.tar')
 
 
 if __name__ == '__main__':

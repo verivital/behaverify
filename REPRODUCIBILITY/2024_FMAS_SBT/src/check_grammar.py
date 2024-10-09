@@ -715,7 +715,7 @@ def validate_model(metamodel_file, model_file, recursion_limit, disable = False)
             array_size_type = constant_type(array_size, declared_enumerations, trace = trace)
             if array_size_type != 'INT':
                 raise BTreeException(trace, 'Array size must be an INT')
-            if array_size < 2:
+            if array_size < 1:
                 raise BTreeException(trace, 'Variable ' + variable.name + ' is an array of size ' + str(array_size))
             validate_array_assign(variable, scopes, variable_names, deterministic = not is_env(variable), init_mode = 'default')
         else:

@@ -5,20 +5,25 @@ It contains a variety of utility functions.
 
 
 Author: Serena Serafina Serbinowska
-Last Edit: 2024-03-21
+Last Edit: 2024-05-21
 '''
 import argparse
 import os
 import shutil
 import itertools
 import re
-import onnxruntime
+ONNX_IMPORTED = True
+try:
+    import onnxruntime
+except:
+    ONNX_IMPORTED = False
 from behaverify_common import indent, create_node_name, is_local, is_env, is_blackboard, is_array, handle_constant_or_reference, resolve_potential_reference_no_type, variable_array_size, get_min_max, variable_type, BTreeException, constant_type
 from serene_functions import build_meta_func
 from check_grammar import validate_model
+#from create_monitor import create_ltl2ba_command
 
 
-def write_files(metamodel_file, model_file, main_name, write_location, serene_print, max_iter, no_var_print, py_tree_print, recursion_limit, safe_assignment):
+def write_files(metamodel_file, model_file, main_name, write_location, serene_print, max_iter, no_var_print, py_tree_print, recursion_limit, safe_assignment, no_checks):
     '''
     Used to write all the files.
     @metamodel_file ::> points to the file with the metamodel
@@ -394,7 +399,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                      ) for index, case_result in enumerate(case_results)
                 ]
             )
-            + indent(misc_args['indent_level'] + len(case_results))
+            + indent(misc_args['indent_level'] + len(case_results) + 1)
             + resolve_variable_nondeterminism(default_result.values, misc_args) + os.linesep
             + indent(misc_args['indent_level']) + (')' * (1 + len(case_results)))  # NOTE: no linesep at the end!
         )
@@ -470,6 +475,8 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
         return (variable_assignment(variable, handle_assign(variable_statement.assign, misc_args), misc_args, array_mode = False) if assign_to_var else handle_assign(variable_statement.assign, misc_args))
 
     def create_neural_network(variable, misc_args):
+        if not ONNX_IMPORTED:
+            raise RuntimeError('onnxruntime was not successfully imported, but you are using a neural network. Exiting')
         file_prefix = os.path.split(model_file)[0]  # this points to the folder where the model file is
         if file_prefix == '':
             file_prefix = '.'
@@ -838,7 +845,11 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
             (
                 handle_read_statement(statement.read_statement, misc_args)
                 if statement.read_statement is not None else
-                handle_write_statement(statement.write_statement, misc_args)
+                (
+                    handle_write_statement(statement.write_statement, misc_args)
+                    if statement.write_statement is not None else
+                    ('REPLACE WITH MONITOR CODE HERE' + os.linesep)
+                )
             )
         )
 
@@ -1442,12 +1453,13 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
             to_write += env_handle_environment_check(environment_check)
         for action in model.action_nodes:
             for statement in itertools.chain(action.pre_update_statements, action.post_update_statements):
-                if statement.variable_statement is not None:
+                if statement.variable_statement is not None or statement.monitor_statement is not None:
                     continue
                 to_write += (
                     env_handle_read_statement(statement.read_statement)
                     if statement.read_statement is not None else
-                    env_handle_write_statement(statement.write_statement))
+                    env_handle_write_statement(statement.write_statement)
+                )
         nonlocal long_if_to_write
         long_if_statements = (os.linesep).join(long_if_to_write)
         long_if_to_write = []
@@ -1495,7 +1507,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                         + 'import operator' + os.linesep
                         + (('import serene_safe_assignment' + os.linesep) if safe_assignment else ''))
 
-    (model, variables, constants, declared_enumerations) = validate_model(metamodel_file, model_file, recursion_limit)
+    (model, variables, constants, declared_enumerations) = validate_model(metamodel_file, model_file, recursion_limit, no_checks)
     variable_type_map = {
         variable.name : to_python_type(variable_type(variable, declared_enumerations, constants))
         for variable in model.variables
@@ -1505,6 +1517,20 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
         for variable in model.variables if is_array(variable)
     }
     loop_references = {}
+    # monitor_test = True
+    # if monitor_test:
+    #     with open ('./idk', 'w', encoding = 'utf-8') as output_file:
+    #         for monitor in model.monitors:
+    #             (function_string, command_string, p_count) = create_ltl2ba_command(monitor.specification.code_statement, declared_enumerations, variables, constants)
+    #             output_file.write(function_string)
+    #             output_file.write(os.linesep)
+    #             output_file.write(command_string)
+    #             output_file.write(os.linesep)
+    #             output_file.write(str(p_count))
+    #             output_file.write(os.linesep)
+    #             output_file.write('----------------')
+    #             output_file.write(os.linesep)
+    #     return
 
     project_name = main_name
     project_environment_name = main_name + '_environment'
@@ -1552,7 +1578,6 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
 
 
 if __name__ == '__main__':
-
     arg_parser = argparse.ArgumentParser()
     arg_parser.add_argument('metamodel_file')
     arg_parser.add_argument('model_file')
@@ -1564,5 +1589,6 @@ if __name__ == '__main__':
     arg_parser.add_argument('--py_tree_print', action = 'store_true')
     arg_parser.add_argument('--recursion_limit', type = int, default = 0)
     arg_parser.add_argument('--safe_assignment', action = 'store_true')
+    arg_parser.add_argument('--no_checks', action = 'store_true')
     args = arg_parser.parse_args()
-    write_files(args.metamodel_file, args.model_file, args.name, args.location, args.serene_print, args.max_iter, args.no_var_print, args.py_tree_print, args.recursion_limit, args.safe_assignment)
+    write_files(args.metamodel_file, args.model_file, args.name, args.location, args.serene_print, args.max_iter, args.no_var_print, args.py_tree_print, args.recursion_limit, args.safe_assignment, args.no_checks)
