@@ -41,6 +41,7 @@ cd "${this_script_location}/example"
 ./compare_timing_v4_setup.sh
 ./compare_timing_v4.sh
 ./collect_timing_design_time.sh
+./read_sizes_v4.sh
 ./make_graphs.sh $python_results
 
 
