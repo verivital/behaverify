@@ -1,0 +1,15 @@
+possible work flow:
+0. prepare.sh
+1. pipeline_create_dense_fixed.sh ;; creates the obstacles for dense fixed.
+2. pipeline_create_sparse_random.sh ;; creates the obstacles for sparse random
+3. pipeline_create_design_time.sh ;; creates the obstacles for design time (in both sparse random and dense fixed)
+4.a. pipeline_existing_behaverify_c.sh
+4.b. (INCOMPATIBLE WITH 4.a) pipeline_existing_behaverify_python.sh
+5. pipeline_existing_copilot.sh
+~6. pipeline_existing_nurv.sh ;; IGNORED. we don't use nurv
+7. pipeline_existing_design_time.sh
+NOTE: pipeline_existing_design_time_run.sh is just runs the generated models, which the above already does as well.
+8. compare_timing_v4_setup.sh
+9. compare_timing_v4.sh
+10. collect_timing_design_time.sh
+11. make_graphs.sh

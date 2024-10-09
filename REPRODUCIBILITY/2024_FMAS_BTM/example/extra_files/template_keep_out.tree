@@ -1,0 +1,341 @@
+configuration {
+    #{ Here you specify various configuration options, such as Hypersafety }#
+}
+enumerations {
+    #{ here you specify the enumerations used in the model}#
+    'left', 'right', 'up', 'down', 'no_action'
+}
+constants {
+    #{ constants are used to synchronize values in a .tree file. }#
+    #{ example := 0 }#
+    #{ to use example elsewhere, simply type 'example' in place of any integer (quotes included) }#
+    REPLACE_CONSTANTS
+} end_constants
+
+variables {
+    #{ Variable declarations go here.
+	it is suggested, but not required, that the order of declaration be
+	Blackboard, Local, Environment.
+	If variable B depends on variable A, then variable A MUST be declared before B.
+    }#
+    variable { bl drone_x VAR [min_val, max_val] assign{result{(idiv, (add, min_val, max_val), 2)}}}
+    variable { bl drone_y VAR [min_val, max_val] assign{result{(idiv, (add, min_val, max_val), 2)}}}
+    variable { bl destination_x VAR [min_val, max_val] assign{result{drone_x}}}
+    variable { bl destination_y VAR [min_val, max_val] assign{result{drone_y}}}
+    variable { bl cell_changed_var VAR BOOLEAN assign{result{False}}}
+    variable { bl current_action VAR {'left', 'right', 'up', 'down', 'no_action'} assign{result{'no_action'}}}
+    variable { bl macro_action VAR {'left', 'right', 'up', 'down', 'no_action'} assign{result{'no_action'}}}
+    variable { bl keep_out_ll_x DEFINE INT static assign{result{(add, (idiv, (add, min_val, max_val), 2), 1)}}}
+    variable { bl keep_out_ll_y DEFINE INT static assign{result{(add, (idiv, (add, min_val, max_val), 2), 1)}}}
+    variable { bl keep_out_ur_x DEFINE INT static assign{result{(add, (idiv, (add, min_val, max_val), 2), 4)}}}
+    variable { bl keep_out_ur_y DEFINE INT static assign{result{(add, (idiv, (add, min_val, max_val), 2), 4)}}}
+    variable { bl keep_out_scale_drone_x DEFINE INT assign{result{(idiv, (mult, drone_x, keep_out_scale), (add, min_val, max_val, 1))}}}
+    variable { bl keep_out_scale_drone_y DEFINE INT assign{result{(idiv, (mult, drone_y, keep_out_scale), (add, min_val, max_val, 1))}}}
+    variable { bl keep_out_scale_destination_x DEFINE INT assign{result{(idiv, (mult, destination_x, keep_out_scale), (add, min_val, max_val, 1))}}}
+    variable { bl keep_out_scale_destination_y DEFINE INT assign{result{(idiv, (mult, destination_y, keep_out_scale), (add, min_val, max_val, 1))}}}
+    variable { bl keep_out_scale_ll_x DEFINE INT assign{result{(idiv, (mult, keep_out_ll_x, keep_out_scale), (add, min_val, max_val, 1))}}}
+    variable { bl keep_out_scale_ll_y DEFINE INT assign{result{(idiv, (mult, keep_out_ur_y, keep_out_scale), (add, min_val, max_val, 1))}}}
+    variable { bl keep_out_scale_ur_x DEFINE INT assign{result{(idiv, (mult, keep_out_ll_x, keep_out_scale), (add, min_val, max_val, 1))}}}
+    variable { bl keep_out_scale_ur_y DEFINE INT assign{result{(idiv, (mult, keep_out_ur_y, keep_out_scale), (add, min_val, max_val, 1))}}}
+    variable { bl keep_out_modified_destination_x DEFINE INT assign{result{
+		case {(eq, macro_action, 'left')} result {(sub, drone_x, 1)}
+		case {(eq, macro_action, 'right')} result {(add, drone_x, 1)}
+		case {(eq, macro_action, 'up')} result {drone_x}
+		case {(eq, macro_action, 'down')} result {drone_x}
+		result {destination_x}
+	    }
+	}
+    }
+    variable { bl keep_out_modified_destination_y DEFINE INT assign{result{
+		case {(eq, macro_action, 'left')} result {drone_y}
+		case {(eq, macro_action, 'right')} result {drone_y}
+		case {(eq, macro_action, 'up')} result {(add, drone_y, 1)}
+		case {(eq, macro_action, 'down')} result {(sub, drone_y, 1)}
+		result {destination_y}
+	    }
+	}
+    }
+    variable { bl fake_keep_out DEFINE ENUM assign{
+	    REPLACE_FAKE_KEEP_OUT
+	}
+    }
+    variable { bl fake_network DEFINE ENUM assign{
+	    REPLACE_FAKE_NETWORK
+	}
+    }
+    #{##########################################}#
+    variable {env obstacles DEFINE INT static array (mult, number_of_obstacles, 2) iterative_assign, index_var
+	REPLACE_OBSTACLES
+	assign{result{0}}
+    }
+    variable {env obstacle_sizes DEFINE INT static array number_of_obstacles iterative_assign, index_var
+	REPLACE_OBSTACLE_SIZES
+	assign{result{0}}
+    }
+    variable { env executing_action VAR {'left', 'right', 'up', 'down', 'no_action'} assign{result{'no_action'}}}
+} end_variables
+
+environment_update {
+} end_environment_update
+
+checks {
+    check {
+	cell_changed
+	arguments {}
+	read_variables {cell_changed_var, current_action}
+	condition {(or, cell_changed_var, (eq, current_action, 'no_action'))}
+    }
+    check {
+	not_at_destination
+	arguments {}
+	read_variables {destination_x, destination_y, drone_x, drone_y, current_action}
+	condition {
+	    (not,
+		(or,
+		    (and, (eq, destination_x, drone_x), (eq, destination_y, drone_y)),
+		    (eq, current_action, 'no_action')
+		)
+	    )
+	}
+    }
+    check {
+	valid_destination
+	arguments {}
+	read_variables {fake_network, drone_x, drone_y, destination_x, destination_y}
+	condition {(neq, fake_network, 'no_action')}
+    }	
+} end_checks
+
+environment_checks {
+} end_environment_checks
+
+actions {
+    action {
+	new_destination
+	arguments{}
+	local_variables {} end_local_variables
+	read_variables {} end_read_variables
+	write_variables {destination_x, destination_y } end_write_variables
+	initial_values {} end_initial_values
+	update {
+	    read_environment {
+		function_get_new_destination
+		condition {True}
+		variable_statement {
+		    destination_x
+		    assign {
+			result {(loop, loop_var, [min_val, max_val] such_that True, loop_var)}
+		    }
+		}
+		variable_statement {
+		    destination_y
+		    assign {
+			result {(loop, loop_var, [min_val, max_val] such_that True, loop_var)}
+		    }
+		}
+	    }
+	    return_statement {
+		result { success} end_result
+	    } end_return_statement
+	} end_update
+    } end_action
+    action {
+	read_position
+	arguments{}
+	local_variables {} end_local_variables
+	read_variables {current_action} end_read_variables
+	write_variables { drone_x, drone_y, cell_changed_var } end_write_variables
+	initial_values {} end_initial_values
+	update {
+	    read_environment {
+		function_get_position
+		#{
+		    condition_variable {cell_changed_var}
+		    condition {non_determinism, True}
+		}#
+		condition {True}
+		variable_statement {
+		    cell_changed_var
+		    assign {result{True}}
+		}
+		variable_statement {
+		    drone_x
+		    assign {
+			case {(eq, current_action, 'left')} result { (max, min_val, (sub, drone_x, 1))}
+			case {(eq, current_action, 'right')} result { (min, max_val, (add, drone_x, 1))}
+			result { drone_x}
+		    }
+		}
+		variable_statement {
+		    drone_y
+		    assign {
+			case {(eq, current_action, 'down')} result { (max, min_val, (sub, drone_y, 1))}
+			case {(eq, current_action, 'up')} result { (min, max_val, (add, drone_y, 1))}
+			result { drone_y}
+		    }
+		}
+	    }
+	    return_statement {
+		result { success} end_result
+	    } end_return_statement
+	} end_update
+    } end_action
+    action {
+	#{TODO: NOT DONE }#
+	set_action
+	arguments{}
+	local_variables {} end_local_variables
+	read_variables {
+	    fake_network, drone_x, drone_y, destination_x, destination_y,
+	    fake_keep_out, keep_out_ll_x, keep_out_ll_y, keep_out_ur_x, keep_out_ur_y,
+	    keep_out_scale_drone_x, keep_out_scale_drone_y, keep_out_scale_destination_x, keep_out_scale_destination_y,
+	    keep_out_scale_ll_x, keep_out_scale_ll_y, keep_out_scale_ur_x, keep_out_scale_ur_y
+	} end_read_variables
+	write_variables {current_action} end_write_variables
+	initial_values {} end_initial_values
+	update {
+	    variable_statement {
+		macro_action
+		assign {result{fake_keep_out}}
+	    }
+	    variable_statement {
+		current_action
+		assign {result{fake_network}}
+	    }
+	    return_statement {
+		result { success} end_result
+	    } end_return_statement
+	} end_update
+    } end_action
+    action {
+	set_no_action
+	arguments{}
+	local_variables {} end_local_variables
+	read_variables {} end_read_variables
+	write_variables {current_action} end_write_variables
+	initial_values {} end_initial_values
+	update {
+	    variable_statement {
+		current_action
+		assign {result{'no_action'}}
+	    }
+	    return_statement {
+		result {success} end_result
+	    } end_return_statement
+	} end_update
+    } end_action
+    action {
+	send_action
+	arguments{}
+	local_variables {} end_local_variables
+	read_variables {current_action} end_read_variables
+	write_variables {cell_changed_var} end_write_variables
+	initial_values {} end_initial_values
+	update {
+	    variable_statement {
+		cell_changed_var
+		assign {
+		    result {False}
+		}
+	    }
+	    write_environment {
+		function_send_action
+		variable_statement {
+		    instant
+		    executing_action
+		    assign {
+			result {current_action}
+		    }
+		}
+	    }
+	    return_statement {
+		result { success} end_result
+	    } end_return_statement
+	} end_update
+    } end_action
+} end_actions
+
+sub_trees {#{ subtrees go here. }#} end_sub_trees
+
+tree {
+    composite {
+	drone_control sequence
+	children {
+	    read_position {}
+	    cell_changed {}
+	    composite {
+		destination_selector selector
+		children {
+		    not_at_destination {}
+		    new_destination {}
+		}
+	    }
+	    composite {
+		action_selector selector
+		children {
+		    composite {
+			action_sequence sequence
+			children {
+			    destination_valid {}
+			    set_action {}
+			}
+		    }
+		    set_no_action {}
+		}
+	    }
+	    send_action {}
+	}
+    }
+} end_tree
+
+tick_prerequisite { (True) } end_tick_prerequisite
+
+specifications {
+    INVARSPEC {
+	(not,
+	    (or,
+		(loop, loop_var, [0, (sub, number_of_obstacles, 1)] such_that True,
+		    (and,
+			(lte, drone_x, (index, obstacles, constant_index (mult, loop_var, 2))),
+			(gte, drone_x, (sub, (index, obstacles, constant_index (mult, loop_var, 2)), (index, obstacle_sizes, constant_index loop_var))),
+			(lte, drone_y, (index, obstacles, constant_index (add, (mult, loop_var, 2), 1))),
+			(gte, drone_y, (sub, (index, obstacles, constant_index (add, (mult, loop_var, 2), 1)), (index, obstacle_sizes, constant_index loop_var)))
+		    )
+		)
+	    )
+	)
+    }
+    #{
+	CTLSPEC {
+	    (implies,
+		(always_globally, (always_finally, cell_changed_var at 1)),
+		(always_globally, (always_finally, (and,
+			    (eq, drone_x at 1, destination_x at 0),
+			    (eq, drone_y at 1, destination_y at 0)
+			)))
+	    )
+	}
+    }#
+    CTLSPEC {
+	(always_globally,
+	    (
+		(or,
+		    (always_finally,
+			(and,
+			    (eq, drone_x at 1, destination_x at 0),
+			    (eq, drone_y at 1, destination_y at 0)
+			)
+		    ),
+		    (loop, loop_var, [0, (sub, number_of_obstacles, 1)] such_that True,
+			(and,
+			    (lte, destination_x at 0, (index, obstacles, constant_index (mult, loop_var, 2))),
+			    (gte, destination_x at 0, (sub, (index, obstacles, constant_index (mult, loop_var, 2)), (index, obstacle_sizes, constant_index loop_var))),
+			    (lte, destination_y at 0, (index, obstacles, constant_index (add, (mult, loop_var, 2), 1))),
+			    (gte, destination_y at 0, (sub, (index, obstacles, constant_index (add, (mult, loop_var, 2), 1)), (index, obstacle_sizes, constant_index loop_var)))
+			)
+		    )
+		)
+	    )
+	)
+    }
+} end_specifications
