@@ -354,8 +354,14 @@ def create_ltl2ba_command(metamodel_file, model_file, location, recursion_limit,
             #     + 'void reset(_Bool *states);' + os.linesep
             # )
             output_file.write(
-                'int ' + monitor.name + '_transition(_Bool *current_states, _Bool *next_states, ' + current_arguments + ');' + os.linesep
+                '#ifndef ' + monitor.name.upper() + '_INCLUDED' + os.linesep
+                + '#define ' + monitor.name.upper() + '_INCLUDED' + os.linesep
+                + '#include <stdint.h>' + os.linesep
+                + '#include <string.h>' + os.linesep
+                + '#include <stdbool.h>' + os.linesep
+                + 'int ' + monitor.name + '_transition(_Bool *current_states, _Bool *next_states, ' + current_arguments + ');' + os.linesep
                 + 'void ' + monitor.name + '_reset(_Bool *states);' + os.linesep
+                + '#endif' + os.linesep
             )
         with open (location + monitor.name + '.c', 'w', encoding = 'utf-8') as output_file:
             output_file.write(
@@ -449,9 +455,7 @@ def parse_ba(ba_file, c_file, h_file):
     (pre_info, post_info) = existing_c_info.split('/*SPLIT ON ME*/', 1)
     with open(c_file, 'w', encoding = 'utf-8') as output_file:
         output_file.write(
-            '#include <stdint.h>' + os.linesep
-            + '#include <string.h>' + os.linesep
-            + '#include "' + os.path.basename(h_file) + '"' + os.linesep
+            '#include "' + os.path.basename(h_file) + '"' + os.linesep
         )
         output_file.write(pre_info)
         if initial_state is None:
