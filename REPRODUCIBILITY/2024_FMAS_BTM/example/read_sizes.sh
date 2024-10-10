@@ -1,7 +1,7 @@
 #!/bin/bash
 
 categories=("./dense_fixed" "./sparse_random")
-mon_types=("behaverify" "copilot" "nurv")
+mon_types=("behaverify" "copilot")
 
 for category in "${categories[@]}"; do
     echo $category
