@@ -38,10 +38,10 @@ cd "${this_script_location}/example"
 ./pipeline_existing_monitorless.sh
 ./pipeline_existing_copilot.sh $python_behaverify $python_results
 ./pipeline_existing_design_time.sh $python_behaverify $python_results
-./compare_timing_v4_setup.sh
-./compare_timing_v4.sh
+./compare_timing_setup.sh
+./compare_timing.sh
 ./collect_timing_design_time.sh
-./read_sizes_v4.sh
+./read_sizes.sh
 ./make_graphs.sh $python_results
 
 

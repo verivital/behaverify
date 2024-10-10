@@ -21,9 +21,6 @@ for category in "${categories[@]}"; do
 	echo $max_val
 	for mon_type in "${mon_types[@]}"; do
 	    file_ext=".c"
-	    if [ "${mon_type}" = "behaverify" ]; then
-		file_ext=".py"
-	    fi
 	    file_name="${category}/${tail_end}/${mon_type}/python/collision_monitor${file_ext}"
 	    file_size=$(stat -c %s $file_name)
 	    echo "${max_val} ::> ${file_size}" >> "${category}/collision_${mon_type}_sizes.txt"
