@@ -17,7 +17,7 @@ for category in "${categories[@]}"; do
 	echo $max_val
 	for mon_type in "${mon_types[@]}"; do
 	    echo "creating new obstacle file"
-	    python3 create_new_obstacle_file_c.py "${max_val}" "${category}/${tail_end}/${mon_type}/python/ANSR_environment.py" "${category}/${tail_end}/${mon_type}/python/obstacle_file.c" "${category}/${tail_end}/${mon_type}/python/obstacle_file.h"
+	    python3 ./extra_files/create_new_obstacle_file_c.py "${max_val}" "${category}/${tail_end}/${mon_type}/python/ANSR_environment.py" "${category}/${tail_end}/${mon_type}/python/obstacle_file.c" "${category}/${tail_end}/${mon_type}/python/obstacle_file.h"
 	done
     done
 done
