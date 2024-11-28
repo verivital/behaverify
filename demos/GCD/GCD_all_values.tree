@@ -1,0 +1,225 @@
+#{Comments are placed within matching brackets like this. You *CANNOT* nest comments}#
+#{
+    This is the second version of the GCD example.
+    In all three examples, we use the Euclidean Algorithm to find the greatest common demonitator of two positive integers (a, b).
+    In the initial example, a and b are very restricted in their possible values, and we only check that we found a common denominator.
+    In this example, a and b are allowed to take any value in the range [1, max_val] (inclusive), but we still only check that we found a common denominator.
+    In the final example, a and b are allowed to take any value in the range [1, max_val] (inclusive), we also check that the answer is the greatest common denominator. 
+}#
+configuration {
+    #{We'll ignore this for now}#
+}
+enumerations {
+    #{We'll also ignore this for now}#
+}
+
+constants {
+    max_val := 100 #{We set up a constant here.}#
+}
+
+variables {
+    #{
+	We need several variables.
+	a and b (our initial values)
+	x and y (the values we will use for the algorithm)
+	temp (used for swap storage)
+    }#
+    #{
+	For each variable, we will need to determine the following
+	- type: bl (Blackboard), env (Environment), local (Local)
+	- name: the name of the variable
+	- model: VAR (a stateful variable; the value can change), FROZENVAR (set to some initial value, then unchanging), DEFINE (a 'macro' or deterministic function; the definition cannot change, but the 'value' can. E.G, if defined as x+y, the value will change whenever x and y change)
+	- domain: the values the variable can take. BOOLEAN (a boolean), [m, n] (integers between m and n inclusive), {a, b, c, ...} where a, b, c... are integers, {a, b, c,...} where a, b, c... are enumerations declared above.
+	- array: we'll ignore this for now
+	- initial value: what value the variable should take. Can be non-determinsitic.
+    }#
+    #{
+	a and b will be frozenvars, the rest will be vars
+	temp will be a local, because it doesn't need to be shared. The rest will be blackboard variables
+    }#
+    variable {
+	bl #{type}#
+	a #{name}#
+	FROZENVAR #{Modeled as}#
+	[1, max_val] #{Domain}#
+	assign {
+	    result{
+		#{If more than one option is presented in a result, it will be chosen from non-deterministically}#
+		#{In this case, we will use a loop rather than writing out each possible value by hand}#
+		#{For more details, see the tutorial}#
+		(loop, loop_var, [1, max_val] such_that True, loop_var)
+		#{pick an option nondeterministically}#
+	    }
+	}
+    }
+    variable {
+	bl #{type}#
+	b #{name}#
+	FROZENVAR #{Modeled as}#
+	[1, max_val] #{Domain}#
+	assign {
+	    result{
+		(loop, loop_var, [1, max_val] such_that True, loop_var)
+		#{pick an option nondeterministically}#
+	    }
+	}
+    }
+    variable {
+	bl #{type}#
+	x #{name}#
+	VAR #{Modeled as}#
+	[1, max_val] #{Domain}#
+	assign {
+	    result{
+		a #{Because x depends on a, x must be declared AFTER a}#
+	    }
+	}
+    }
+    variable {
+	bl #{type}#
+	y #{name}#
+	VAR #{Modeled as}#
+	[1, max_val] #{Domain}#
+	assign {
+	    result{
+		b
+	    }
+	}
+    }
+    
+    variable {
+	local
+	temp
+	VAR
+	[1, max_val]
+	assign {
+	    result {
+		1
+	    }
+	}
+    }
+}
+
+environment_update {
+    #{we don't have an environment in this example}#
+}
+
+checks {
+    check {
+	no_swap #{name of the check}#
+	arguments {} #{no arguments}#
+	read_variables {x, y} #{variables that will be read. Can only read blackboard variables}#
+	condition{ (gte, x, y) } #{if true, success, else false}#
+    }
+    check {
+	done
+	arguments {}
+	read_variables {x, y}
+	condition { (eq, (mod, x, y), 0) }
+    }
+}
+
+environment_checks {
+    #{Like checks, but can read environment variables and blackboard variables}#
+}
+
+actions {
+    action {
+	swap #{name of the action}#
+	arguments {} #{no arguments for this}#
+	local_variables {temp} #{we have one local variable}#
+	read_variables {} #{a write variable can also be read from, so we don't have any read variables}#
+	write_variables {x, y} #{if you set a variable value, must be in the write variables}#
+	initial_values {} #{Each node can set a new initial value for local variables it uses. We don't need to though}#
+	update {
+	    #{List of updates to do, in order. Must have exactly one return statement}#
+	    variable_statement{
+		temp #{variable to update}#
+		assign{result{x}} #{value to update to}#
+	    }
+	    variable_statement{
+		x
+		assign{result{y}}
+	    }
+	    variable_statement{
+		y
+		assign{result{temp}}
+	    }
+	    return_statement{result{success}}
+	    #{unlike most statements, return_statement must be deterministic}#
+	}
+    }
+    action {
+	next_value
+	arguments {}
+	local_variables {}
+	read_variables {y}
+	write_variables {x}
+	initial_values {}
+	update {
+	    variable_statement{
+		x
+		assign{result{(max, 1, (mod, x, y))}}
+	    }
+	    return_statement{result{running}}
+	}
+    }
+}
+
+sub_trees {
+    #{subtrees can be inserted to either make it easier to parse the tree or reuse portions of the tree. not useful to us now}#
+}
+
+tree {
+    #{
+	Overview of our tree structure
+	gcd will cause swap_sel to go first.
+	swap_sel first tries no_swap, and if that fails, executes the swap
+	Either way, swap_sel will return success.
+	This makes iterate_sel to become active
+	iterate_sel will check if we are done -> success returned
+	If we are not done, we iterate to the next value and return running
+	Thus, gcd will return running until we are done, at which point it will return success.
+    }#
+    composite {
+	gcd #{our root node}#
+	sequence #{a sequence node}#
+	#{not using memory}#
+	children {
+	    composite {
+		swap_sel
+		selector
+		children {
+		    no_swap {}
+		    swap {}
+		}
+	    }
+	    composite {
+		iterate_sel
+		selector
+		children {
+		    done {}
+		    next_value {}
+		}
+	    }
+	}
+    }	
+}
+
+tick_prerequisite {
+    True #{we can use this to "end" the simulation at some point. In this case, we won't bother}#
+}
+
+specifications {
+    #{For now, we will just confirm this is a common denominator when the process terminates.}#
+    LTLSPEC {
+	(finally,
+	    (globally,
+		(and,
+		    (success, gcd),
+		    (eq, (mod, a, y), 0),
+		    (eq, (mod, b, y), 0))
+	    )
+	)
+    }
+}

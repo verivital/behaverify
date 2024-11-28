@@ -2,31 +2,33 @@ import os
 import sys
 import argparse
 import docker
-from docker_util import copy_into, copy_out_of, serene_exec, CONTAINER_NAME, HOME_DIR, USER_DIR, BEHAVERIFY_VENV, DRAW_VENV
+from docker_util import copy_into, copy_out_of, serene_exec, CONTAINER_NAME, HOME_DIR, USER_DIR, BEHAVERIFY_VENV, RESULTS_VENV
 
-def move_files(behaverify, input_path, networks_path):
+def move_files(behaverify, input_path, networks_path, demo_copy = False):
     input_name = os.path.basename(input_path)
     (input_name_only, _) = os.path.splitext(input_name)
-    serene_exec(behaverify, HOME_DIR + '/behaverify/Docker_BehaVerify/util/setup_directory.sh ' + input_name_only, 'Setting up directories in container.', True)
-    print('Start: adding relevant files from source to container.')
-    if not copy_into(behaverify, input_path, USER_DIR + '/' + input_name_only):
-        raise RuntimeError('Failed to copy input!')
-    if networks_path != '-':
-        (networks_location, networks_name) = os.path.split(networks_path)
-        if networks_name == '':
-            networks_path = networks_location
-            (networks_location, networks_name) = os.path.split(networks_path)
-        if not copy_into(behaverify, networks_path, USER_DIR + '/' + input_name_only):
+    serene_exec(behaverify, 'bash -c \'[ -d ' + USER_DIR + ' ] && rm -rf ' + USER_DIR + '\'', 'Removing old user directory.', True)
+    serene_exec(behaverify, 'bash -c \'mkdir ' + USER_DIR + '\'', 'Creating new user directory.', True)
+    # serene_exec(behaverify, 'bash -c \'mkdir ' + USER_DIR + '/' + input_name_only + '\'', 'Creating new user directory.', True)
+    serene_exec(behaverify, 'bash -c \'mkdir ' + USER_DIR + '/output\'', 'Creating new user directory subfolder 1.', True)
+    serene_exec(behaverify, 'bash -c \'mkdir ' + USER_DIR + '/app\'', 'Creating new user directory subfolder 2.', True)
+    if demo_copy:
+        serene_exec(behaverify, 'bash -c \'cp ' + HOME_DIR + '/behaverify/demos/' + input_name_only + '/' + input_name_only + '.tree ' + USER_DIR + '/' + input_name_only + '\'', 'Moving .tree file into place.', True)
+        if networks_path != '-':
+            serene_exec(behaverify, 'bash -c \'cp -r ' + HOME_DIR + '/behaverify/demos/' + input_name_only + '/networks ' + USER_DIR + '/' + input_name_only + '\'', 'Moving networks into place.', True)
+    else:
+        print('Start: adding relevant files from source to container.')
+        if not copy_into(behaverify, input_path, USER_DIR):
             raise RuntimeError('Failed to copy input!')
-    print('End: adding relevant files from source to container.')
+        if networks_path != '-':
+            (networks_location, networks_name) = os.path.split(networks_path)
+            if networks_name == '':
+                networks_path = networks_location
+                (networks_location, networks_name) = os.path.split(networks_path)
+            if not copy_into(behaverify, networks_path, USER_DIR):
+                raise RuntimeError('Failed to copy input!')
+        print('End: adding relevant files from source to container.')
     return (input_name, input_name_only)
-
-def move_files_demo(behaverify, input_name_only, uses_networks):
-    serene_exec(behaverify, HOME_DIR + '/behaverify/Docker_BehaVerify/util/setup_directory.sh ' + input_name_only, 'Setting up directories in container.', True)
-    serene_exec(behaverify, 'bash -c \'cp ' + HOME_DIR + '/behaverify/demos/' + input_name_only + '/' + input_name_only + '.tree ' + USER_DIR + '/' + input_name_only + '\'', 'Moving .tree file into place.', True)
-    if uses_networks:
-        serene_exec(behaverify, 'bash -c \'cp -r ' + HOME_DIR + '/behaverify/demos/' + input_name_only + '/networks ' + USER_DIR + '/' + input_name_only + '\'', 'Moving networks into place.', True)
-    return
 
 def generate(behaverify, input_name, input_name_only, to_generate, flags):
     serene_exec(behaverify,
@@ -38,13 +40,9 @@ def generate(behaverify, input_name, input_name_only, to_generate, flags):
                             + ('dsl_to_nuxmv.py ' if to_generate == 'nuXmv' else ('dsl_to_python.py ' if to_generate == 'Python' else 'dsl_to_haskell.py '))
                         ),
                         HOME_DIR + '/behaverify/metamodel/behaverify.tx',
-                        USER_DIR + '/' + input_name_only + '/' + input_name
+                        USER_DIR + '/' + input_name
                     ]
-                    + (
-                        [USER_DIR + '/' + input_name_only + '/app/' + input_name_only + '.smv']
-                        if to_generate == 'nuXmv' else
-                        [USER_DIR + '/' + input_name_only + '/' + ('app/' if to_generate == 'Haskell' else ''), input_name_only]
-                    )
+                    + [USER_DIR + '/app/' + ((input_name_only + '.smv') if to_generate == 'nuXmv' else '')]
                     + [flags]
                 ),
                 'Generation of requested code/model.',
@@ -62,9 +60,9 @@ def evaluate(behaverify, input_name_only, to_generate, command):
                 'bash -c',
                 '\'' + ' '.join([
                     BEHAVERIFY_VENV,
-                    USER_DIR + '/' + input_name_only + '/app/' + input_name_only + '_runner.py',
+                    USER_DIR + '/app/' + input_name_only + '_runner.py',
                     '>',
-                    USER_DIR + '/' + input_name_only + '/output/python_simulation.txt'
+                    USER_DIR + '/output/python_simulation.txt'
                 ]) + '\''
             ]
         )
@@ -77,9 +75,9 @@ def evaluate(behaverify, input_name_only, to_generate, command):
                     HOME_DIR + '/nuXmv',
                     '-source',
                     HOME_DIR + '/behaverify/scripts/nuxmv_commands/command_' + command,
-                    USER_DIR + '/' + input_name_only + '/app/' + input_name_only + '.smv',
+                    USER_DIR + '/app/' + input_name_only + '.smv',
                     '>',
-                    USER_DIR + '/' + input_name_only + '/output/nuxmv_' + command + '_results.txt'
+                    USER_DIR + '/output/nuxmv_' + command + '_results.txt'
                 ]) + '\''
             ]
         )
@@ -155,7 +153,7 @@ def non_demo_mode():
     if args.command != 'generate':
         evaluate(behaverify, input_name_only, args.to_generate, args.command)
     print('Start: Copy output to source.')
-    copy_out_of(behaverify, USER_DIR + '/' + input_name_only, args.output_path + '.tar')
+    copy_out_of(behaverify, USER_DIR, args.output_path + '.tar')
     print('End: Copy output to source.')
     behaverify.stop()
 
@@ -177,7 +175,7 @@ def demo_mode():
     client = docker.from_env()
     behaverify = client.containers.get(CONTAINER_NAME)
     behaverify.start()
-    move_files_demo(behaverify, demo, demo in uses_networks)
+    move_files(behaverify, demo, 'yes' if demo in uses_networks else '-', True)
     if demo in ('ANSR_ONNX_2', 'ANSR_ONNX_2_counter'):
         to_generate = 'nuXmv'
         flags = ''
@@ -210,7 +208,7 @@ def demo_mode():
         pass
     elif demo == 'ANSR_ONNX_2_counter':
         special_command = ' '.join([
-            DRAW_VENV,
+            RESULTS_VENV,
             HOME_DIR + '/behaverify/demos/ANSR_ONNX_2_counter/parse_nuxmv_output.py',
             USER_DIR + '/' + demo + '/output/nuxmv_ctl_results.txt',
             USER_DIR + '/' + demo + '/output/' + demo,
