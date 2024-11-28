@@ -3,13 +3,17 @@ import tarfile
 import io
 import docker
 
-USER = 'BehaVerify'
+VENUE = 'Docker'
+USER = 'BehaVerify_' + VENUE
 HOME_DIR = '/home/' + USER
-USER_DIR = HOME_DIR + '/user_files'
-BEHAVERIFY_VENV = HOME_DIR + '/behaverify_venv/bin/python3'
-DRAW_VENV = HOME_DIR + '/draw_venv/bin/python3'
-CONTAINER_NAME = 'behaverify'
+# TEST_DIR = HOME_DIR + '/behaverify/REPRODUCIBILITY/' + VENUE
+TEST_DIR = HOME_DIR
+USER_DIR = HOME_DIR + '/output'
+CONTAINER_NAME = USER.lower()
 IMAGE_NAME = CONTAINER_NAME + '_img'
+BEHAVERIFY_VENV = HOME_DIR + '/python_venvs/behaverify/bin/python3'
+RESULTS_VENV = HOME_DIR + '/python_venvs/results/bin/python3'
+
 
 def serene_exec(container, command, message, error_check):
     print('Start: ' + message)

@@ -1,25 +1,27 @@
 import argparse
 import docker
 from install import create_image_and_container
-from docker_util import CONTAINER_NAME, IMAGE_NAME
+from docker_util import IMAGE_NAME, CONTAINER_NAME
 
 def reinstall(dockerfile_path):
     '''Stop behaverify (Docker Container), Remove behaverify (Docker Container), Remove behaverify_img (Docker Image)
     creates behaverify_img (Docker Image) and behaverify (Docker Container)'''
     client = docker.from_env()
-    print('Start: Removing old behaverify docker image and container.')
+    print('Start: Removing container: ' + CONTAINER_NAME)
     try:
         behaverify = client.containers.get(CONTAINER_NAME)
         behaverify.stop()
         behaverify.remove()
     except docker.errors.NotFound:
         pass
+    print('End: Removing container: ' + CONTAINER_NAME)
+    print('Start: Removing image: ' + IMAGE_NAME)
     try:
         behaverify_img = client.images.get(IMAGE_NAME)
         behaverify_img.remove()
     except docker.errors.ImageNotFound:
         pass
-    print('End: Removing old behaverify docker image and container.')
+    print('End: Removing image: ' + IMAGE_NAME)
     create_image_and_container(dockerfile_path)
     return
 
