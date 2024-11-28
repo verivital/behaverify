@@ -1,4 +1,5 @@
 *~
+*.tar
 *.svg
 *.dot
 *.fuse
