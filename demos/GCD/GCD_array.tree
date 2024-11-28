@@ -1,0 +1,311 @@
+#{Comments are placed within matching brackets like this. You *CANNOT* nest comments}#
+#{
+    This example is probably not going to make much sense in terms of practice.
+    It's more just to use our current example to introduce how we handle arrays.
+    Importantly, there is a more efficient way to do this, which will be in the example GCD_array_fast.tree
+    This version will be SLOW.
+    Not because of arrays; the problem is arrays get very slow unless you use contant index everywhere (index into the array with a value that can be computed at design time).
+    This is *especially* bad if you assign a value to a non-constant index.
+    Thus, we will now find the GCD of n different numbers.
+    To do this, we will find the gcd of our first two numbers.
+    Call this number g2.
+    We will then find the gcd of g2 and the third number.
+    Call this number g3.
+    Etc.
+    In the end, we will have the gcd.
+}#
+configuration {
+    #{We'll ignore this for now}#
+}
+enumerations {
+    #{We'll also ignore this for now}#
+}
+
+constants {
+    max_val := 15 #{We set up a constant here.}#
+    , #{COMMA seperated. Comma could have been wherever}#
+    n := 3 #{the number of numbers we will find the gcd of}#
+}
+
+variables {
+    #{
+	We need several variables.
+	a (our initial values)
+	x (the values we will use for the algorithm)
+	i (where we are in the list)
+	temp (used for swap storage)
+    }#
+    #{
+	For each variable, we will need to determine the following
+	- type: bl (Blackboard), env (Environment), local (Local)
+	- name: the name of the variable
+	- model: VAR (a stateful variable; the value can change), FROZENVAR (set to some initial value, then unchanging), DEFINE (a 'macro' or deterministic function; the definition cannot change, but the 'value' can. E.G, if defined as x+y, the value will change whenever x and y change)
+	- domain: the values the variable can take. BOOLEAN (a boolean), [m, n] (integers between m and n inclusive), {a, b, c, ...} where a, b, c... are integers, {a, b, c,...} where a, b, c... are enumerations declared above.
+	- array: we'll ignore this for now
+	- initial value: what value the variable should take. Can be non-determinsitic.
+    }#
+    #{
+	a and b will be frozenvars, the rest will be vars
+	temp will be a local, because it doesn't need to be shared. The rest will be blackboard variables
+    }#
+    variable {
+	bl #{type}#
+	a #{name}#
+	FROZENVAR #{Modeled as}#
+	[1, max_val] #{Domain}#
+	array #{This means it's an array}#
+	n #{Size of the array}#
+	#{
+	    There are two ways to initialize an array
+	    iterative
+	    direct
+	    We will use iterative here.
+	    Iterative assign creates a "variable" which will start at 0 and end at array size - 1
+	    When that variable is value "p", we will assign a[p] to the appropriate value based on conditions.
+	    CRUCIALLY, this means the current value can be "see" the values that were assigned before it.
+	}#
+	iterative_assign #{declare we are using iterative assign}#
+	, #{we need a comma here! don't need whitespace between these things, let alone a new line}#
+	index_name #{name of the the index variable we will use for iterative assign}#
+	condition { (eq, index_name, 0) }
+	assign {
+	    result {
+		(loop, loop_var, [1, max_val] such_that True, loop_var)
+	    }
+	}
+	#{
+	    we can have any number of condition assign pairs
+	    finally, we must end with an assign. This will be used if none of the conditions are met
+	}#
+	assign {
+	    result{
+		(loop, loop_var, [0, 20] such_that True,
+		    (min,
+			max_val,
+			(index, #{we will index into the array}#
+			    a, #{what we will index}#
+			    constant_index #{we can determine this value at design time (this is an optimization to speed up the model)}#
+			    (sub, index_name, 1) #{look at previous value}#
+			)
+		    )
+		)
+	    }
+	}
+	#{
+	    So what we are doing here is this
+	    The 0th element is initialized at random
+	    Each subsequent element is set to a random number between the previous element and up to 20 more, with a cap of max_val.
+	}#
+    }
+    variable {
+	bl #{type}#
+	x #{name}#
+	VAR #{Modeled as}#
+	[1, max_val] #{Domain}#
+	array
+	n
+	#{
+	    Here we will use the non-iterative assign method.
+	    This method functions by
+	    1. defining a default value for every element in the array
+	    2. allowing the user to specify values for any number of indices
+	    Thus, for instance, a user could say the default value is 0, and indices 4, 15, and 33 are 1.
+	    Additionally, it is possible to use a "loop" syntax here. I.e., the default value is 0 and for each index in [10,30], value is 1.
+	    Finally, these indices do NOT need to be "constant".
+	    However, this will substantially complicate the model.
+	    Note that 1+2 or max_val*3 are all constants, in that they can be computed as design time, anda re thus "constant".
+	    If the value truly depends on runtime, it is not constant.
+	    Note that it is ALL or NOTHING
+	    Either ALL indices are constant, or it doesn't matter.
+	}#
+	default {
+	    assign {
+		result {
+		    1
+		}
+	    }
+	}
+	#{we will set the default value to 1}#
+	constant_index #{our indices are constant}#
+	index_of {1} #{assign the following values to index 1. We could list multiple values here, in which case each listed index would be assigned}#
+	assign {
+	    result {
+		(index, a, constant_index 1)
+	    }
+	}
+	(loop, loop_index, [0, (sub, n, 1)] such_that (neq, loop_index, 1),
+	    #{we could nest a second loop here actually. we won't though}#
+	    index_of {loop_index}
+	    assign{
+		result{
+		    (index, a, constant_index loop_index)
+		    #{This is still constant, because we can unravel this at design time}#
+		}
+	    }
+	)
+    }
+    variable {
+	bl #{type}#
+	the_index #{name}#
+	VAR #{Modeled as}#
+	[1, (sub, n, 1)] #{Domain}#
+	assign {
+	    result{
+		1
+	    }
+	}
+    }
+}
+
+environment_update {
+    #{we don't have an environment in this example}#
+}
+
+checks {
+    check {
+	no_swap #{name of the check}#
+	arguments {} #{no arguments}#
+	read_variables {x, the_index} #{variables that will be read. Can only read blackboard variables}#
+	condition{
+	    (gte,
+		(index, x, (sub, the_index, 1)),
+		(index, x, the_index)
+		#{Note that we do not use constant_index here, because we cannot determine these values at design time}#
+	    )
+	} #{if true, success, else false}#
+    }
+    check {
+	done
+	arguments {}
+	read_variables {x, the_index}
+	condition {
+	    (eq,
+		(mod,
+		    (index, x, (sub, the_index, 1)),
+		    (index, x, the_index)
+		),
+		0
+	    )
+	}
+    }
+}
+
+environment_checks {
+    #{Like checks, but can read environment variables and blackboard variables}#
+}
+
+actions {
+    action {
+	swap #{name of the action}#
+	arguments {} #{no arguments for this}#
+	local_variables {}
+	read_variables {the_index} 
+	write_variables {x} #{if you set a variable value, must be in the write variables}#
+	initial_values {} #{Each node can set a new initial value for local variables it uses. We don't need to though}#
+	update {
+	    #{List of updates to do, in order. Must have exactly one return statement}#
+	    #{we actually don't need temp for this, because the array update happens all at once. We could do it in multiple steps....but why?}#
+	    variable_statement{
+		x
+		index_of {(sub, the_index, 1)}
+		assign{result{(index, x, the_index)}}
+		index_of {the_index}
+		assign{result{(index, x, (sub, the_index, 1))}}
+	    }
+	    return_statement{result{success}}
+	    #{unlike most statements, return_statement must be deterministic}#
+	}
+    }
+    action {
+	next_value
+	arguments {}
+	local_variables {}
+	read_variables {the_index}
+	write_variables {x}
+	initial_values {}
+	update {
+	    variable_statement{
+		x
+		index_of {(sub, the_index, 1)}
+		assign{result{(max, 1, (mod, (index, x, (sub, the_index, 1)), (index, x, the_index)))}}
+	    }
+	    return_statement{result{running}}
+	}
+    }
+    action {
+	update_index
+	arguments {}
+	local_variables {}
+	read_variables {}
+	write_variables {the_index}
+	initial_values {}
+	update {
+	    return_statement {
+		#{Return statement doesn't need to be last! Here, it's important we check this before we update.}#
+		case {(eq, the_index, (sub, n, 1))} result {success}
+		result {failure}
+	    }
+	    variable_statement {
+		the_index
+		assign{result{(max, (sub, n, 1), (add, the_index, 1))}}
+	    }
+	}
+    }
+}
+
+sub_trees {
+    #{subtrees can be inserted to either make it easier to parse the tree or reuse portions of the tree. not useful to us now}#
+}
+
+tree {
+    composite {
+	gcd #{our root node}#
+	sequence #{a sequence node}#
+	#{not using memory}#
+	children {
+	    composite {
+		swap_sel
+		selector
+		children {
+		    no_swap {}
+		    swap {}
+		}
+	    }
+	    composite {
+		iterate_sel
+		selector
+		children {
+		    composite {
+			index_seq
+			sequence
+			children {
+			    done {} #{if the current pair is at GCD, success, otherwise, failure}#
+			    update_index {} #{return success if the_index = n, else increment by 1 and return failure}#
+			}
+		    }
+		    next_value {}
+		}
+	    }
+	}
+    }	
+}
+
+tick_prerequisite {
+    True #{we can use this to "end" the simulation at some point. In this case, we won't bother}#
+}
+
+specifications {
+    #{For now, we will just confirm this is a common denominator when the process terminates.}#
+    LTLSPEC {
+	(finally,
+	    (globally,
+		(and,
+		    (success, gcd),
+		    (loop, loop_var, [0, (sub, n, 1)] such_that True,
+			(eq, (mod, (index, a, constant_index loop_var), (index, x, constant_index (sub, n, 1))), 0)
+		    )
+		)
+	    )
+	)
+    }
+}

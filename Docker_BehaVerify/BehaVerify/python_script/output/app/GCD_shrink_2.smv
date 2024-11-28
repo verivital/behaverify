@@ -16,18 +16,32 @@ MODULE system_module
         --START OF BLACKBOARD DEFINITIONS
         x_stage_1 :=
             case
-                !(swap.active) : x_stage_0;
-                TRUE : y_stage_0;
+                !(gcd.active) : x_stage_0;
+                gcd_DOT_need_swap_stage_1 : y_stage_0;
+                TRUE : x_stage_0;
+            esac;
+        x_stage_2 :=
+            case
+                !(gcd.active) : x_stage_1;
+                (0 = (x_stage_1 mod y_stage_1)) : x_stage_1;
+                TRUE : max(1, (x_stage_1 mod y_stage_1));
             esac;
         y_stage_1 :=
             case
-                !(swap.active) : y_stage_0;
-                TRUE : swap_DOT_temp_stage_1;
+                !(gcd.active) : y_stage_0;
+                gcd_DOT_need_swap_stage_1 : gcd_DOT_temp_stage_1;
+                TRUE : y_stage_0;
             esac;
-        swap_DOT_temp_stage_1 :=
+        gcd_DOT_temp_stage_1 :=
             case
-                !(swap.active) : swap_DOT_temp_stage_0;
-                TRUE : x_stage_0;
+                !(gcd.active) : gcd_DOT_temp_stage_0;
+                gcd_DOT_need_swap_stage_1 : x_stage_0;
+                TRUE : gcd_DOT_temp_stage_0;
+            esac;
+        gcd_DOT_need_swap_stage_1 :=
+            case
+                !(gcd.active) : gcd_DOT_need_swap_stage_0;
+                TRUE : (x_stage_0 < y_stage_0);
             esac;
         --END OF BLACKBOARD DEFINITIONS
     FROZENVAR
@@ -37,17 +51,12 @@ MODULE system_module
         --END OF BLACKBOARD FROZENVAR
     VAR
         node_names : define_nodes;
-        no_swap : no_swap_module(x_stage_0, y_stage_0);
-        swap : success_DEFAULT_module();
-        swap_sel : composite_selector_without_memory_2(no_swap, swap);
-        done : done_module(x_stage_1, y_stage_1);
-        next_value : running_DEFAULT_module();
-        iterate_sel : composite_selector_without_memory_2(done, next_value);
-        gcd : composite_sequence_without_memory_2(swap_sel, iterate_sel);
+        gcd : gcd_module(x_stage_2, y_stage_1);
         --START OF BLACKBOARD VARIABLES DECLARATION
         x_stage_0 : 1..100;
         y_stage_0 : 1..100;
-        swap_DOT_temp_stage_0 : 1..100;
+        gcd_DOT_temp_stage_0 : 1..100;
+        gcd_DOT_need_swap_stage_0 : boolean;
         --END OF BLACKBOARD VARIABLES DECLARATION
     ASSIGN
         --START OF BLACKBOARD VARIABLES INITIALIZATION
@@ -55,74 +64,26 @@ MODULE system_module
         init(b_stage_0) := {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100};
         init(x_stage_0) := a_stage_0;
         init(y_stage_0) := b_stage_0;
-        init(swap_DOT_temp_stage_0) := 1;
+        init(gcd_DOT_temp_stage_0) := 1;
+        init(gcd_DOT_need_swap_stage_0) := FALSE;
         --END OF BLACKBOARD VARIABLES INITIALIZATION
         --START OF BLACKBOARD VARIABLES TRANSITION
-        next(x_stage_0) :=
-            case
-                !(next_value.active) : x_stage_1;
-                TRUE : max(1, (x_stage_1 mod y_stage_1));
-            esac;
+        next(x_stage_0) := x_stage_2;
         next(y_stage_0) := y_stage_1;
-        next(swap_DOT_temp_stage_0) := swap_DOT_temp_stage_1;
+        next(gcd_DOT_temp_stage_0) := gcd_DOT_temp_stage_1;
+        next(gcd_DOT_need_swap_stage_0) := gcd_DOT_need_swap_stage_1;
         --END OF BLACKBOARD VARIABLES TRANSITION
 
 MODULE define_nodes
     DEFINE
         gcd := 0;
-        swap_sel := 1;
-        no_swap := 2;
-        swap := 3;
-        iterate_sel := 4;
-        done := 5;
-        next_value := 6;
-MODULE composite_sequence_without_memory_2(child_0, child_1)
+MODULE gcd_module(x_stage_2, y_stage_1)
     CONSTANTS
         success, failure, running, invalid;
     DEFINE
         status := active ? internal_status : invalid;
-        internal_status :=
+        internal_status := 
             case
-                !(child_0.internal_status = success) : child_0.internal_status;
-                !(child_1.internal_status = success) : child_1.internal_status;
-                TRUE : success;
+                (0 = (x_stage_2 mod y_stage_1)) : success;
+                TRUE : running;
             esac;
-        child_0.active := active;
-        child_1.active := child_0.status = success;
-MODULE composite_selector_without_memory_2(child_0, child_1)
-    CONSTANTS
-        success, failure, running, invalid;
-    DEFINE
-        status := active ? internal_status : invalid;
-        internal_status :=
-            case
-                !(child_0.internal_status = failure) : child_0.internal_status;
-                !(child_1.internal_status = failure) : child_1.internal_status;
-                TRUE : failure;
-            esac;
-        child_0.active := active;
-        child_1.active := child_0.status = failure;
-MODULE no_swap_module(x_stage_0, y_stage_0)
-    CONSTANTS
-        success, failure, running, invalid;
-    DEFINE
-        status := active ? internal_status : invalid;
-        internal_status := ((x_stage_0 >= y_stage_0)) ? success : failure;
-MODULE done_module(x_stage_1, y_stage_1)
-    CONSTANTS
-        success, failure, running, invalid;
-    DEFINE
-        status := active ? internal_status : invalid;
-        internal_status := (((x_stage_1 mod y_stage_1) = 0)) ? success : failure;
-MODULE running_DEFAULT_module
-    CONSTANTS
-        success, failure, running, invalid;
-    DEFINE
-        status := active ? internal_status : invalid;
-        internal_status := running;
-MODULE success_DEFAULT_module
-    CONSTANTS
-        success, failure, running, invalid;
-    DEFINE
-        status := active ? internal_status : invalid;
-        internal_status := success;

@@ -1,0 +1,229 @@
+#{Comments are placed within matching brackets like this. You *CANNOT* nest comments}#
+#{
+    Mechanically, this will continue to function like the final version of the GCD example.
+    As a reminder, we are using the Euclidean Algorithm to find the greatest common demonitator of two positive integers (a, b).
+    In this example, a and b are allowed to take any value in the range [1, max_val] (inclusive), we also check that the answer is the greatest common denominator.
+    The difference is we will now shrink the tree size by making our action nodes more complicated.
+    In this case, we will go to an extreme extent and just make it a single node.
+    The point here is this: it is entirely up to you how complicated nodes should be.
+}#
+configuration {
+    #{We'll ignore this for now}#
+}
+enumerations {
+    #{We'll also ignore this for now}#
+}
+
+constants {
+    max_val := 100 #{We set up a constant here.}#
+}
+
+variables {
+    #{
+	We need several variables.
+	a and b (our initial values)
+	x and y (the values we will use for the algorithm)
+	temp (used for swap storage)
+    }#
+    #{
+	For each variable, we will need to determine the following
+	- type: bl (Blackboard), env (Environment), local (Local)
+	- name: the name of the variable
+	- model: VAR (a stateful variable; the value can change), FROZENVAR (set to some initial value, then unchanging), DEFINE (a 'macro' or deterministic function; the definition cannot change, but the 'value' can. E.G, if defined as x+y, the value will change whenever x and y change)
+	- domain: the values the variable can take. BOOLEAN (a boolean), [m, n] (integers between m and n inclusive), {a, b, c, ...} where a, b, c... are integers, {a, b, c,...} where a, b, c... are enumerations declared above.
+	- array: we'll ignore this for now
+	- initial value: what value the variable should take. Can be non-determinsitic.
+    }#
+    #{
+	a and b will be frozenvars, the rest will be vars
+	temp will be a local, because it doesn't need to be shared. The rest will be blackboard variables
+    }#
+    variable {
+	bl #{type}#
+	a #{name}#
+	FROZENVAR #{Modeled as}#
+	[1, max_val] #{Domain}#
+	assign {
+	    result{
+		#{If more than one option is presented in a result, it will be chosen from non-deterministically}#
+		#{In this case, we will use a loop rather than writing out each possible value by hand}#
+		#{For more details, see the tutorial}#
+		(loop, loop_var, [1, max_val] such_that True, loop_var)
+	    }
+	}
+    }
+    variable {
+	bl #{type}#
+	b #{name}#
+	FROZENVAR #{Modeled as}#
+	[1, max_val] #{Domain}#
+	assign {
+	    result{
+		(loop, loop_var, [1, max_val] such_that True, loop_var)
+		#{pick an option nondeterministically}#
+	    }
+	}
+    }
+    variable {
+	bl #{type}#
+	x #{name}#
+	VAR #{Modeled as}#
+	[1, max_val] #{Domain}#
+	assign {
+	    result{
+		a #{Because x depends on a, x must be declared AFTER a}#
+	    }
+	}
+    }
+    variable {
+	bl #{type}#
+	y #{name}#
+	VAR #{Modeled as}#
+	[1, max_val] #{Domain}#
+	assign {
+	    result{
+		b
+	    }
+	}
+    }
+    variable {
+	local
+	temp
+	VAR
+	[1, max_val]
+	assign {
+	    result {
+		1
+	    }
+	}
+    }
+    variable {
+	local
+	need_swap
+	VAR
+	BOOLEAN
+	assign{result{False}}
+    }
+}
+
+environment_update {
+    #{we don't have an environment in this example}#
+}
+
+checks {
+    #{We will put the check logic within the actions.}#
+}
+
+environment_checks {
+    #{Like checks, but can read environment variables and blackboard variables}#
+}
+
+actions {
+    action {
+	the_one_node #{name of the action}#
+	arguments {} #{no arguments for this}#
+	local_variables {temp, need_swap} #{more complex logic dictates that we need a new variable}#
+	read_variables {} #{a write variable can also be read from, so we don't have any read variables}#
+	write_variables {x, y} #{if you set a variable value, must be in the write variables}#
+	initial_values {} #{Each node can set a new initial value for local variables it uses. We don't need to though}#
+	update {
+	    #{List of updates to do, in order. Must have exactly one return statement}#
+	    #{Because these updates are in order, we need to 'save' that we are doing the swap. This means our model will need another variable unfortunately}#
+	    variable_statement{
+		need_swap
+		assign { result { (lt, x, y)}}
+	    }
+	    variable_statement{
+		temp #{variable to update}#
+		assign{
+		    #{
+			Until now, we've only been using result.
+			The general form here is
+			case {CONDITION} result {VALUES}
+			case {CONDITION} result {VALUES}
+			...
+			result{VALUES}
+			where the first CONDITION that is met determines which VALUES are used. If more than one value is present, it will be chosen nondetermistically.
+			To include the swap logic in this node, we must now use case to make the logic more complex
+		    }#
+		    case {need_swap}
+		    result {x}
+		    #{Observe that new lines and spacing are not mandatory. It is often more clear to write case result in the same line.}#
+		    result{temp} #{don't swap}#
+		} #{value to update to}#
+	    }
+	    variable_statement{
+		x
+		assign{
+		    case {need_swap} result{y}
+		    result{x}
+		}
+	    }
+	    variable_statement{
+		y
+		assign{case{need_swap}result{temp}result{y}}
+		#{
+		    As you can see, if didn't have "need_swap", we would run into a problem here. we would be comparting y against the current value of y, which we might have just set to x.
+		    There are ways around this, but this is not the point right now.
+		}#
+	    }
+	    #{
+		There is no rule saying we can't update the same variable twice!
+		So, we just copy what was the logic in our old other node, and drop it in here.
+	    }#
+	    variable_statement{
+		x
+		assign{
+		    case {(eq, 0, (mod, x, y))} result {x}
+		    result{(max, 1, (mod, x, y))}}
+	    }
+	    return_statement{
+		case {(eq, 0, (mod, x, y))} result {success}
+		result{running}
+	    }
+	    #{unlike most statements, return_statement must be deterministic}#
+	}
+    }
+}
+
+
+sub_trees {
+    #{subtrees can be inserted to either make it easier to parse the tree or reuse portions of the tree. not useful to us now}#
+}
+
+tree {
+    gcd : the_one_node {}
+    #{
+	here we have chosen to name our node gcd.
+	The specification will now look for gcd, but the logic will still be using what we defined in the_one_node.
+	This is mostly useful if we want to reuse a node.
+	If we reuse a node, we *must* assign unique names.
+    }#
+}
+
+tick_prerequisite {
+    True #{we can use this to "end" the simulation at some point. In this case, we won't bother}#
+}
+
+specifications {
+    #{We can't use "forall" in the mathematical sense. Instead, we will brute force write every possible value and compare against it, thereby proving we have the Greatest common denonminator, not just a common denominator. We will unravel a loop to time save on this.}#
+    LTLSPEC {
+	(finally,
+	    (globally,
+		(and,
+		    (success, gcd), #{root returns success}#
+		    (eq, (mod, a, y), 0),
+		    (eq, (mod, b, y), 0),
+		    #{the loop is unrolled and each value is plugged into the and}#
+		    (loop, loop_var, [1, max_val] such_that True,
+			(or,
+			    (lte, loop_var, y),
+			    (neq, (mod, a, loop_var), 0),
+			    (neq, (mod, b, loop_var), 0)
+			)
+		    )
+		)
+	    )
+	)
+    }
+}
