@@ -247,7 +247,7 @@ actions {
 	    }
 	    variable_statement {
 		the_index
-		assign{result{(max, (sub, n, 1), (add, the_index, 1))}}
+		assign{result{(min, (sub, n, 1), (add, the_index, 1))}}
 	    }
 	}
     }
