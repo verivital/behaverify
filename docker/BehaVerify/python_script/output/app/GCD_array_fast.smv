@@ -1,0 +1,167 @@
+MODULE main
+    VAR
+        system : system_module;
+--------------SPECIFICATIONS
+
+LTLSPEC F(G(((system.gcd.status = success) & ((system.a_stage_0_index_0 mod system.y_stage_1) = 0) & ((system.a_stage_0_index_1 mod system.y_stage_1) = 0) & ((system.a_stage_0_index_2 mod system.y_stage_1) = 0) & ((1 <= system.y_stage_1) | ((system.a_stage_0_index_0 mod 1) != 0) | ((system.a_stage_0_index_1 mod 1) != 0) | ((system.a_stage_0_index_2 mod 1) != 0)) & ((2 <= system.y_stage_1) | ((system.a_stage_0_index_0 mod 2) != 0) | ((system.a_stage_0_index_1 mod 2) != 0) | ((system.a_stage_0_index_2 mod 2) != 0)) & ((3 <= system.y_stage_1) | ((system.a_stage_0_index_0 mod 3) != 0) | ((system.a_stage_0_index_1 mod 3) != 0) | ((system.a_stage_0_index_2 mod 3) != 0)) & ((4 <= system.y_stage_1) | ((system.a_stage_0_index_0 mod 4) != 0) | ((system.a_stage_0_index_1 mod 4) != 0) | ((system.a_stage_0_index_2 mod 4) != 0)) & ((5 <= system.y_stage_1) | ((system.a_stage_0_index_0 mod 5) != 0) | ((system.a_stage_0_index_1 mod 5) != 0) | ((system.a_stage_0_index_2 mod 5) != 0)) & ((6 <= system.y_stage_1) | ((system.a_stage_0_index_0 mod 6) != 0) | ((system.a_stage_0_index_1 mod 6) != 0) | ((system.a_stage_0_index_2 mod 6) != 0)) & ((7 <= system.y_stage_1) | ((system.a_stage_0_index_0 mod 7) != 0) | ((system.a_stage_0_index_1 mod 7) != 0) | ((system.a_stage_0_index_2 mod 7) != 0)) & ((8 <= system.y_stage_1) | ((system.a_stage_0_index_0 mod 8) != 0) | ((system.a_stage_0_index_1 mod 8) != 0) | ((system.a_stage_0_index_2 mod 8) != 0)) & ((9 <= system.y_stage_1) | ((system.a_stage_0_index_0 mod 9) != 0) | ((system.a_stage_0_index_1 mod 9) != 0) | ((system.a_stage_0_index_2 mod 9) != 0)) & ((10 <= system.y_stage_1) | ((system.a_stage_0_index_0 mod 10) != 0) | ((system.a_stage_0_index_1 mod 10) != 0) | ((system.a_stage_0_index_2 mod 10) != 0)) & ((11 <= system.y_stage_1) | ((system.a_stage_0_index_0 mod 11) != 0) | ((system.a_stage_0_index_1 mod 11) != 0) | ((system.a_stage_0_index_2 mod 11) != 0)) & ((12 <= system.y_stage_1) | ((system.a_stage_0_index_0 mod 12) != 0) | ((system.a_stage_0_index_1 mod 12) != 0) | ((system.a_stage_0_index_2 mod 12) != 0)) & ((13 <= system.y_stage_1) | ((system.a_stage_0_index_0 mod 13) != 0) | ((system.a_stage_0_index_1 mod 13) != 0) | ((system.a_stage_0_index_2 mod 13) != 0)) & ((14 <= system.y_stage_1) | ((system.a_stage_0_index_0 mod 14) != 0) | ((system.a_stage_0_index_1 mod 14) != 0) | ((system.a_stage_0_index_2 mod 14) != 0)) & ((15 <= system.y_stage_1) | ((system.a_stage_0_index_0 mod 15) != 0) | ((system.a_stage_0_index_1 mod 15) != 0) | ((system.a_stage_0_index_2 mod 15) != 0)))));
+
+--------------END OF SPECIFICATIONS
+
+MODULE system_module
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        resume_from_here_in_subtree__gcd := -3;
+        gcd.active := TRUE;
+        --START OF BLACKBOARD DEFINITIONS
+        x_stage_1 :=
+            case
+                !(swap.active) : x_stage_0;
+                TRUE : y_stage_0;
+            esac;
+        x_stage_2 :=
+            case
+                !(next_index.active) : x_stage_1;
+                (the_index_stage_1 = 3) : x_stage_1;
+                TRUE : (case 0 = the_index_stage_1 : a_stage_0_index_0; 1 = the_index_stage_1 : a_stage_0_index_1; 2 = the_index_stage_1 : a_stage_0_index_2; esac);
+            esac;
+        y_stage_1 :=
+            case
+                !(swap.active) : y_stage_0;
+                TRUE : swap_DOT_temp_stage_1;
+            esac;
+        the_index_stage_1 :=
+            case
+                !(next_index.active) : the_index_stage_0;
+                TRUE : min(3, (the_index_stage_0 + 1));
+            esac;
+        swap_DOT_temp_stage_1 :=
+            case
+                !(swap.active) : swap_DOT_temp_stage_0;
+                TRUE : x_stage_0;
+            esac;
+        --END OF BLACKBOARD DEFINITIONS
+    FROZENVAR
+        --START OF BLACKBOARD FROZENVAR
+        a_stage_0_index_0 : 1..15;
+        a_stage_0_index_1 : 1..15;
+        a_stage_0_index_2 : 1..15;
+        --END OF BLACKBOARD FROZENVAR
+    VAR
+        node_names : define_nodes;
+        no_swap : no_swap_module(x_stage_0, y_stage_0);
+        swap : success_DEFAULT_module();
+        swap_sel : composite_selector_without_memory_2(no_swap, swap);
+        done : done_module(x_stage_1, y_stage_1);
+        next_index : next_index_module(the_index_stage_1);
+        index_seq : composite_sequence_without_memory_2(done, next_index);
+        next_value : running_DEFAULT_module();
+        iterate_sel : composite_selector_without_memory_2(index_seq, next_value);
+        gcd : composite_sequence_without_memory_2(swap_sel, iterate_sel);
+        --START OF BLACKBOARD VARIABLES DECLARATION
+        x_stage_0 : 1..15;
+        y_stage_0 : 1..15;
+        the_index_stage_0 : 1..3;
+        swap_DOT_temp_stage_0 : 1..15;
+        --END OF BLACKBOARD VARIABLES DECLARATION
+    ASSIGN
+        --START OF BLACKBOARD VARIABLES INITIALIZATION
+        init(a_stage_0_index_0) := 
+            case
+                TRUE : {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+            esac;
+        init(a_stage_0_index_1) := 
+            case
+                TRUE : {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+            esac;
+        init(a_stage_0_index_2) := 
+            case
+                TRUE : {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+            esac;
+        init(x_stage_0) := a_stage_0_index_0;
+        init(y_stage_0) := a_stage_0_index_1;
+        init(the_index_stage_0) := 1;
+        init(swap_DOT_temp_stage_0) := 1;
+        --END OF BLACKBOARD VARIABLES INITIALIZATION
+        --START OF BLACKBOARD VARIABLES TRANSITION
+        next(x_stage_0) :=
+            case
+                !(next_value.active) : x_stage_2;
+                TRUE : max(1, (x_stage_2 mod y_stage_1));
+            esac;
+        next(y_stage_0) := y_stage_1;
+        next(the_index_stage_0) := the_index_stage_1;
+        next(swap_DOT_temp_stage_0) := swap_DOT_temp_stage_1;
+        --END OF BLACKBOARD VARIABLES TRANSITION
+
+MODULE define_nodes
+    DEFINE
+        gcd := 0;
+        swap_sel := 1;
+        no_swap := 2;
+        swap := 3;
+        iterate_sel := 4;
+        index_seq := 5;
+        done := 6;
+        next_index := 7;
+        next_value := 8;
+MODULE composite_sequence_without_memory_2(child_0, child_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                !(child_0.internal_status = success) : child_0.internal_status;
+                !(child_1.internal_status = success) : child_1.internal_status;
+                TRUE : success;
+            esac;
+        child_0.active := active;
+        child_1.active := child_0.status = success;
+MODULE composite_selector_without_memory_2(child_0, child_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                !(child_0.internal_status = failure) : child_0.internal_status;
+                !(child_1.internal_status = failure) : child_1.internal_status;
+                TRUE : failure;
+            esac;
+        child_0.active := active;
+        child_1.active := child_0.status = failure;
+MODULE no_swap_module(x_stage_0, y_stage_0)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := ((x_stage_0 >= y_stage_0)) ? success : failure;
+MODULE done_module(x_stage_1, y_stage_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := (((x_stage_1 mod y_stage_1) = 0)) ? success : failure;
+MODULE next_index_module(the_index_stage_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := 
+            case
+                (the_index_stage_1 = 3) : success;
+                TRUE : running;
+            esac;
+MODULE success_DEFAULT_module
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := success;
+MODULE running_DEFAULT_module
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := running;
