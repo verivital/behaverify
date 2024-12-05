@@ -43,6 +43,7 @@ def generate(behaverify, input_name, input_name_only, to_generate, flags):
                         USER_DIR + '/' + input_name
                     ]
                     + [USER_DIR + '/app/' + ((input_name_only + '.smv') if to_generate == 'nuXmv' else '')]
+                    + ([input_name_only] if to_generate != 'nuXmv' else [])
                     + [flags]
                 ),
                 'Generation of requested code/model.',
@@ -115,7 +116,7 @@ def verify_args(args):
             ('--no_var_print' if args.no_var_print else ''),
             ('--serene_print' if args.serene_print else ''),
             ('--py_tree_print' if args.py_tree_print else ''),
-            ('--safe_assignment' if args.safe_assignment_print else ''),
+            ('--safe_assignment' if args.safe_assignment else ''),
             ]))
     return ' '.join(filter(lambda x: x != '', [
         '--recursion_limit', str(args.recursion_limit),
