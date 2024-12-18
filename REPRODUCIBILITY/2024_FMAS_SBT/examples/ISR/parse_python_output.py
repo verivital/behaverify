@@ -105,3 +105,4 @@ def create_gif(index, output_name):
     frame_one.save(output_name + '_drone.gif', format = 'GIF', append_images = frames, save_all = True, duration = 300, loop = 0)
 
 handle_file(sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4]))
+#create_gif(122, './processed_data/pictures/counterexample_for_5/11x11')

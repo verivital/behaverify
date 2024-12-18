@@ -1,0 +1,13 @@
+condition {(eq, index_var, 0)} assign{result{15}}condition {(eq, index_var, 1)} assign{result{15}}
+condition {(eq, index_var, 2)} assign{result{15}}condition {(eq, index_var, 3)} assign{result{8}}
+condition {(eq, index_var, 4)} assign{result{12}}condition {(eq, index_var, 5)} assign{result{9}}
+condition {(eq, index_var, 6)} assign{result{9}}condition {(eq, index_var, 7)} assign{result{15}}
+condition {(eq, index_var, 8)} assign{result{2}}condition {(eq, index_var, 9)} assign{result{5}}
+condition {(eq, index_var, 10)} assign{result{2}}condition {(eq, index_var, 11)} assign{result{2}}
+##################################################################
+condition {(eq, index_var, 0)} assign{result{5}}
+condition {(eq, index_var, 1)} assign{result{8}}
+condition {(eq, index_var, 2)} assign{result{9}}
+condition {(eq, index_var, 3)} assign{result{9}}
+condition {(eq, index_var, 4)} assign{result{2}}
+condition {(eq, index_var, 5)} assign{result{2}}

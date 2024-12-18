@@ -1,7 +1,5 @@
 configuration {
     #{ Here you specify various configuration options, such as Hypersafety }#
-    use_reals
-    neural
 }
 enumerations {
     #{ here you specify the enumerations used in the model}#
@@ -161,40 +159,104 @@ actions {
 } end_actions
 
 sub_trees {#{ subtrees go here. }#
-    sub_tree {
-	INITIAL_SETUP_SUBTREE
-	composite {
-	    path_selector selector
-	    children {
-		is_path_computed {}
-		compute_path {}
-	    }
-	}
-    }
-    sub_tree {
-	MAIN_SUBTREE
-	composite {
-	    main_selector selector
-	    children {
-		is_waypoint_reached {}
-		composite {
-		    landmark_sequence sequence children{ is_close_to_landmark {} get_next_landmark {} }
-		}
-		composite {
-		    movement_sequence sequence children{ get_next_subgoal {} move_action {} }
-		}
-	    }
-	}
-    }
 } end_sub_trees
 
 tree {
     #{ the tree is defined here}#
     composite {
-	ebt_root sequence
+	Airsim_BT parallel
 	children {
-	    insert {INITIAL_SETUP_SUBTREE}
-	    insert {MAIN_SUBTREE}
+	    composite {
+		InitGoalSeq sequence
+		children {
+		    IsPathReady
+		    InitGoalEventOneShot
+		}
+	    }
+	    composite {
+		Topics2BB parallel
+		children {
+		    goal2bb
+		    odom2bb
+		    mission2bb
+		    composite {
+			ControlSequence sequence
+			children {
+			    scenario_ending2BB
+			    WaitForScenarioEnding
+			    Teminate
+			}
+		    }
+		    scenario_starting2BB
+		    composite {
+			UpdateGoal sequence
+			children {
+			    World2BB
+			    WaitForObstacleMap_0
+			    TransformObstacles
+			    task_publish_slice_rviz
+			}
+		    }
+		    collision2BB
+		}
+	    }
+	    composite {
+		Tasks parallel
+		children {
+		    composite {
+			ControlSequence sequence
+			children {
+			    WaitForObstacleMap_1
+			    WaitForinitGoal
+			    composite {
+				PathSetupSel selector
+				children {
+				    SetupLandmarkTrigger
+				    SetupLandmarkPath
+				}
+			    }
+			    IsPathReady_0
+			    IsPathReady_1
+			    composite {
+				UpdateControlSelector selector
+				children {
+				    composite {
+					UpdateLandmarkSequence sequence
+					children {
+					    CloseToLandmark
+					    UpdateLandmark
+					}
+				    }
+				    composite {
+					UpdateMoveActionSequence sequence
+					children {
+					    UpdateSubgoal
+					    CalculatePath
+					}
+				    }
+				}
+			    }
+			    composite {
+				GoalEventSequence sequence
+				children {
+				    WaitForGoalEvent
+				    task_publish_goal_event
+				    Unset_goal_event
+				}
+			    }
+			    composite {
+				PublishingSequence sequence
+				children {
+				    task_publish_waypointlist
+				    WaitForSGData
+				    task_publish_subgoal_vis_data
+				    task_publish_astar_path
+				}
+			    }
+			}
+		    }
+		}
+	    }
 	}
     }
 } end_tree

@@ -1,0 +1,5 @@
+go
+pick_state
+simulate -k 100 -S 2 -r
+show_traces -v
+quit

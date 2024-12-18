@@ -22,7 +22,7 @@ with open(obstacle_path.replace('obstacles', 'ANSRt').replace('.txt', '.tree'), 
         (obstacles, obstacle_sizes) = data.split('#', 1)
         obstacles = obstacles.replace('#', '')
         obstacle_sizes = obstacle_sizes.replace('#', '')
-    with open((handle_path('template_monitor.tree') if len(sys.argv) == 2 else sys.argv[2]), 'r', encoding = 'utf-8') as input_file:
+    with open((handle_path('template_v2.tree') if len(sys.argv) == 2 else sys.argv[2]), 'r', encoding = 'utf-8') as input_file:
         template = input_file.read()
     template = template.replace('REPLACE_CONSTANTS', constants)
     template = template.replace('REPLACE_OBSTACLE_SIZES', obstacle_sizes)

@@ -9,16 +9,15 @@ See version\_info.txt for information about dependency requirements.
 3. Running Tests using Docker -> this section will explain how to run the tests using Docker.
 4. Running Tests Locally (verbose) -> this section will explain how to run tests locally. It also explains why each step of the installation is necessary.
 5. Running Tests Locally (concise) -> this section will explain how to run tests locally. It does not provide explanations.
-6. MoVe4BT Information -> this section will provide information about MoVe4BT. Unfortunately, we were not able to find a way to use it from the command-line.
-7. Interpreting and Comparing Results -> this section will explain how to interpret the generated results and what they correspond to in the paper.
-8. Potential Errors and Workarounds -> this section will explain how to deal with some of the potential errors encountered.
-9. Directory Explained -> this section will provide detailed information about everything in this directory.
+6. Interpreting and Comparing Results -> this section will explain how to interpret the generated results and what they correspond to in the paper.
+7. Potential Errors and Workarounds -> this section will explain how to deal with some of the potential errors encountered.
+8. Directory Explained -> this section will provide detailed information about everything in this directory.
 
 Finally, note that this is a .md file, and as such, we escape various characters. If you are reading this using a text editor, please make sure to keep this in mind.
 
 # Prerequisites and Information
 
-1. docker with the ability to run commands as a regular user (see https://docs.docker.com/engine/install/linux-postinstall/ ). Additionally, we will be using Ubuntu 22.04 inside docker. Some users appear to have issues with running commands like update or upgrade in docker when using Ubuntu 22.04; we do not have a workaround for this.
+1. docker with the ability to run commands as a regular user (see https://docs.docker.com/engine/install/linux-postinstall/ ). Additionally, we will be using Ubuntu 23.10 inside docker. Some users appear to have issues with running commands like update or upgrade in docker when using Ubuntu; we do not have a workaround for this.
 2. nuXmv (see  https://nuxmv.fbk.eu/download.html or https://nuxmv.fbk.eu/theme/download.php?file=nuXmv-2.0.0-linux64.tar.gz ). You only need to download nuXmv. There should be no installation. Please ensure you download the Linux 64-bit x86 version 2.0.0 (October 14, 2019). The executable will be located in **nuXmv-2.0.0-linux64/nuXmv-2.0.0-Linux/bin/nuXmv**. There should be **NO FILE EXTENSION**. Note that we are **ONLY** interested in the binary; you do not need the other files or the folder structure, so long as you have the binary.
 3. If you choose to use Docker, we assume you have access to Python3. If you choose to run locally, we assume you are able to run bash scripts. These have **only been tested on Ubuntu**. If you cannot run the scripts, please run the commands present in the bash scripts manually. Note that this will require arguments to replaced. Specifically, $1 means the first argument provided to the bash script, $2 means the second argument provided to the bash script, etc.
 
@@ -35,8 +34,8 @@ Per the licensing agreement of nuXmv (see https://nuxmv.fbk.eu/downloads/LICENSE
 # Test Information
 
 1. Installation Test is mostly to test installation. It is very fast.
-2. Partial Results is very fast. It produces all the BehaVerify results for Bigger Fish and Simple Robot. It does not run the ISR example. The comparison to MoVe4BT requires manually installing MoVe4BT and running the files individually. However, we do provide the XML files used to load the experiments we used.
-3. Full Results replicates all results for BehaVerify. The comparison to MoVe4BT requires manually installing MoVe4BT and running the files individually. However, we do provide the XML files used to load the experiments we used.
+2. Partial Results is very fast. It runs some, but not all of the tests.
+3. Full Results replicates all results for BehaVerify.
 4. The results in the paper were generated using a Dell Inc. OptiPlex 7040 with 64 GiB of Memory with an Intel i7–6700 CPU @ 3.40GHz with 8 cores.
 5. We have confirmed that an old Chromebook using the Linux development environment is capable of running all the tests. The install and partial tests complete fairly quickly, but the full test is rather slow. Obviously, your machines capabilities will change the exact numbers. The point, however, is that you do not need a powerful machine to run these tests.
 
@@ -51,7 +50,7 @@ The tests can be run using docker. We provide several methods for doing this. So
 - Build Scripts -> These scripts use the Dockerfile to build a new image and then create a container.
 - Load Scripts -> These scripts load the provided image and then create a container.
 
-We provide 3 scripts of each type (1 for each test from Test Information). Each of these scripts takes four command line arguments, three of which are the same.
+Script arguments are of the following form
 	
 - **/path/to/Dockerfile/Folder/** -> This should point to the folder containing the Dockerfile.
 - **/path/to/DockerImage** -> This should point to the Dockerimage.
@@ -137,7 +136,7 @@ The results will be written in **/path/to/output.tar**. Extract the archive and 
 
 ## Step by Step Docker instructions
 
-This section will explain how to utilize either the provided docker image or Dockerfile to recreate the tests using docker. After each command, we provide an example command that assumes you placed the nuXmv binary in the top level of the reproducibility directory (the directory containing the Dockerfile). **THE EXAMPLES ASSUME YOU ARE IN THE DIRECTORY NAMED 2024\_FMAS_SBT.**
+This section will explain how to utilize either the provided docker image or Dockerfile to recreate the tests using docker. After each command, we provide an example command that assumes you placed the nuXmv binary in the top level of the reproducibility directory (the directory containing the Dockerfile). **THE EXAMPLES ASSUME YOU ARE IN THE DIRECTORY NAMED 2024\_FMAS\_BTM.**
 
 ### 1a. Creation of the Docker Image and Container (estimated time: 1 minutes. 5 minutes on Chromebook)
 
@@ -151,7 +150,7 @@ Example:
 python3 ./python_script/reinstall.py ./
 ```
 
-This will create a docker image named behaverify\_img with the tag latest. It will then also create a container named behaverify\_2024\_FMAS from that image.
+This will create a docker image named behaverify\_2024\_fmas\_btm\_img with the tag latest. It will then also create a container named behaverify\_2024\_fmas\_btm from that image.
 
 ### 1b. Using the provided Docker Image to create a Container (estimated time: ??)
 
@@ -168,7 +167,7 @@ python3 ./python_script/load_image.py ./DockerImage.tar
 This will create a docker image named behaverify\_img with the tag latest. It will then also create a container named behaverify\_2024\_FMAS from that image.
 
 ### IMPORTANT:
-The scripts below assume that the docker container is named behaverify\_2024\_FMAS. If you run 1a or 1b, this will be handled for you, and you need not worry.
+The scripts below assume that the docker container is named behaverify\_2024\_fmas\_btm. If you run 1a or 1b, this will be handled for you, and you need not worry.
 
 ### 2. Addition of nuXmv (estimated time: 30 seconds)
 
@@ -365,60 +364,30 @@ Note that each script will erase all the relevant results before running, to ens
 
 ## Minimal Script
 
-To test everything is working, please navigate to behaverify/REPRODUCIBILITY/2024\_FMAS\_SBT/ and run the following
+To test everything is working, please navigate to behaverify/REPRODUCIBILITY/2024\_FMAS\_BTM/ and run the following
 ```
-./behaverify_FMAS_test_installation.sh ./
+./behaverify_2024_FMAS_BTM.sh ./ 2
 ```
 
-This will run a fairly small script. The results will be in behaverify/REPRODUCIBILITY/2024\_FMAS\_SBT/examples/. Please see the Interpreting and Comparing Results section for an explanation of what results to look for.
+This will run a fairly small script. The results will be in behaverify/REPRODUCIBILITY/2024\_FMAS\_BTM/examples/. Please see the Interpreting and Comparing Results section for an explanation of what results to look for.
 
 ## Partial Script
 
-To create a subset of the results, please navigate to behaverify/REPRODUCIBILITY/2024\_FMAS\_SBT/ and run the following
+To create a subset of the results, please navigate to behaverify/REPRODUCIBILITY/2024\_FMAS\_BTM/ and run the following
 ```
-./behaverify_FMAS_partial_results.sh ./
+./behaverify_2024_FMAS_BTM.sh ./ 5
 ```
 
-This will run a larger, but still fairly small script. The results will be in behaverify/REPRODUCIBILITY/2024\_FMAS\_SBT/examples/. Please see the Interpreting and Comparing Results section for an explanation of what results to look for.
+This will run a larger, but still fairly small script. The results will be in behaverify/REPRODUCIBILITY/2024\_FMAS\_BTM/examples/. Please see the Interpreting and Comparing Results section for an explanation of what results to look for.
 
 ## Full Script
 
-To create all results, please navigate to behaverify/REPRODUCIBILITY/2024\_FMAS\_SBT/ and run the following
+To create all results, please navigate to behaverify/REPRODUCIBILITY/2024\_FMAS\_BTM/ and run the following
 ```
-./behaverify_FMAS_full_results.sh ./
-```
-
-This will run a large script. The results will be in **behaverify/REPRODUCIBILITY/2024\_FMAS\_SBT/examples/**. Please see the Interpreting and Comparing Results section for an explanation of what results to look for.
-
-
----
-
-# MoVe4BT Information
-
-Our FMAS paper compared to MoVe4BT. See https://move4bt.github.io/ . We found that installing the tool using the instruction at https://move4bt.github.io/manual was fairly painless, but your experience may vary. Unfortunately, we did not find a way to run the tool from the command-line, so we cannot automate the process in Docker.
-
-1. After following those instructions and launching MoVe4BT, please press the editor button.
-2. Then click Load Tree on the left side of the GUI.
-3. Please Load an xml file from **/behaverify/REPRODUCIBILITY/2024\_FMAS\_SBT/MoVe4BT\_XML\_Files/xml/**.
-4. The file may take a while to load, especially for the bigger examples.
-5. Click verifications.
-6. The GUI may freeze. Feel free to ignore the wait/force quit option, or repeatedly click wait. Eventually, it will print results, or produce a blank screen.
-
-As mentioned above, MoVe4BT loads models stored in xml files. The code for generating the files is in **/behaverify/REPRODUCIBILITY/2024\_FMAS\_SBT/examples/bigger\_fish/create\_bigger\_fish\_MoVe4BT\_xml.py**. Run using the following command
-
-```
-python3 create_bigger_fish_MoVe4BT_xml.py /path/to/output/location min max step
+./behaverify_2024_FMAS_BTM.sh ./ 9
 ```
 
-Where the path is where the files will be outputted (must be a folder, do not include final slash), min is the smallest size file to generate, max is the largest (inclusive) and step is the step size. Therefore, the command used to generate the used xml files is
-
-```
-python3 create_bigger_fish_MoVe4BT_xml.py /path/to/output/location 50 1000 50
-```
-
-There is a similar simple robot file.
-
-**ADDITIONALLY**, we provide a .sh script in **/behaverify/REPRODUCIBILTY/2024\_FMAS\_SBT/MoVe4BT/install\_MoVe4BT.sh** to install MoVe4BT. It is possible to run MoVe4BT through docker webtop, but this is not something we were able to automate.
+This will run a large script. The results will be in **behaverify/REPRODUCIBILITY/2024\_FMAS\_BTM/examples/**. Please see the Interpreting and Comparing Results section for an explanation of what results to look for.
 
 ---
 
