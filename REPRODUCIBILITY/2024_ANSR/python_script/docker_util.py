@@ -3,7 +3,7 @@ import tarfile
 import io
 import docker
 
-VENUE = '2024_FMAS_SBT'
+VENUE = '2024_ANSR'
 USER = 'BehaVerify_' + VENUE
 HOME_DIR = '/home/' + USER
 TEST_DIR = HOME_DIR + '/behaverify/REPRODUCIBILITY/' + VENUE

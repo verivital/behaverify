@@ -5,8 +5,8 @@ import docker
 from docker_util import copy_out_of, serene_exec, CONTAINER_NAME, HOME_DIR, TEST_DIR, USER
 
 def generate(mode, write_location):
-    if mode not in ('install', 'partial', 'full'):
-        print('unknown argument. Must be one of install, partial, or full. Got: ' + str(mode))
+    if mode not in ('install', 'full', 'timeout'):
+        print('unknown argument. Must be one of install, full, or timeout. Got: ' + str(mode))
         sys.exit()
     client = docker.from_env()
     behaverify = client.containers.get(CONTAINER_NAME)
@@ -16,8 +16,8 @@ def generate(mode, write_location):
     command = ''
     if mode == 'install':
         command = 'test_installation'
-    elif mode == 'partial':
-        command = 'partial_results'
+    elif mode == 'timeout':
+        command = 'timeout_results'
     elif mode == 'full':
         command = 'full_results'
     serene_exec(behaverify, command_start + command + command_end, command, True)

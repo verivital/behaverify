@@ -14,8 +14,8 @@ if not os.path.isdir(dockerfile_path):
 if not os.path.exists(nuxmv_location):
     print('you did not point to nuXmv, exiting')
     sys.exit()
-if mode not in ('install', 'partial', 'full'):
-    print(mode + ' must be one of install, partial, full. Exiting')
+if mode not in ('install', 'full', 'timeout'):
+    print(mode + ' must be one of install, full, timeout. Exiting')
     sys.exit()
 if os.path.exists(write_location):
     print('write location exists, exiting')

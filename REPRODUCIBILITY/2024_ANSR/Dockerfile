@@ -3,7 +3,7 @@ RUN apt-get update -y
 RUN apt-get upgrade -y
 
 # Set the non-root user information
-ARG VENUE=2024_FMAS_SBT
+ARG VENUE=2024_ANSR
 ARG USER=BehaVerify_$VENUE
 ARG UID=43720
 ARG GID=43720
