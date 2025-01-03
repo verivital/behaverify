@@ -13,6 +13,11 @@ if [[ $# -ge 2 ]]; then
     python_loc=$2
 fi
 
+result_loc=$python_loc
+
+if [[ $# -ge 3 ]]; then
+    result_loc=$3
+fi
 
 cd "${this_script_location_arg}"
 this_script_location=$(pwd)
@@ -75,10 +80,10 @@ echo "------------------------------------"
 echo "finished timing ctl"
 echo "------------------------------------"
 
-"${python_loc}" ./examples/parse_nuxmv_output_stage_1.py ./examples/small/results/table_simulate.txt ./examples/small/images/table 10 10
-"${python_loc}" ./examples/parse_nuxmv_output_stage_1.py ./examples/small/results/fixed_simulate.txt ./examples/small/images/fixed 10 10
-# "${python_loc}" ./examples/parse_nuxmv_output_stage_1.py ./examples/small/results/float_simulate.txt ./examples/small/images/float 10 10
-"${python_loc}" ./examples/parse_nuxmv_output_stage_1.py ./examples/big/results/pre_table_simulate.txt ./examples/big/images/pre_table 50 50
+"${result_loc}" ./examples/parse_nuxmv_output_stage_1.py ./examples/small/results/table_simulate.txt ./examples/small/images/table 10 10
+"${result_loc}" ./examples/parse_nuxmv_output_stage_1.py ./examples/small/results/fixed_simulate.txt ./examples/small/images/fixed 10 10
+# "${result_loc}" ./examples/parse_nuxmv_output_stage_1.py ./examples/small/results/float_simulate.txt ./examples/small/images/float 10 10
+"${result_loc}" ./examples/parse_nuxmv_output_stage_1.py ./examples/big/results/pre_table_simulate.txt ./examples/big/images/pre_table 50 50
 
 echo "------------------------------------"
 echo "finished making images"
