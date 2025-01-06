@@ -1,6 +1,4 @@
-This README is meant to provide information about reproducing results used in FMAS 2024. However, it can also be used as a more general installation guide for BehaVerify, though eventually it may be inadequate for this purpose as it will not be updated along with BehaVerify, in order to ensure it remains useful for its primary purpose, reproduction of results for FMAS 2024.
-
-See version\_info.txt for information about dependency requirements.
+This README is meant to provide information about reproducing results used in the 2024 ANSR project. However, it can also be used as a more general installation guide for BehaVerify, though eventually it may be inadequate for this purpose as it will not be updated along with BehaVerify, in order to ensure it remains useful for its primary purpose, reproduction of results for 2024 ANSR.
 
 # About this File and its Layout
 
@@ -9,17 +7,16 @@ See version\_info.txt for information about dependency requirements.
 3. Running Tests using Docker -> this section will explain how to run the tests using Docker.
 4. Running Tests Locally (verbose) -> this section will explain how to run tests locally. It also explains why each step of the installation is necessary.
 5. Running Tests Locally (concise) -> this section will explain how to run tests locally. It does not provide explanations.
-6. MoVe4BT Information -> this section will provide information about MoVe4BT. Unfortunately, we were not able to find a way to use it from the command-line.
-7. Interpreting and Comparing Results -> this section will explain how to interpret the generated results and what they correspond to in the paper.
-8. Potential Errors and Workarounds -> this section will explain how to deal with some of the potential errors encountered.
-9. Directory Explained -> this section will provide detailed information about everything in this directory.
+6. Interpreting and Comparing Results -> this section will explain how to interpret the generated results and what they correspond to in the paper.
+7. Potential Errors and Workarounds -> this section will explain how to deal with some of the potential errors encountered.
+8. Directory Explained -> this section will provide detailed information about everything in this directory.
 
 Finally, note that this is a .md file, and as such, we escape various characters. If you are reading this using a text editor, please make sure to keep this in mind.
 
 # Prerequisites and Information
 
 1. docker with the ability to run commands as a regular user (see https://docs.docker.com/engine/install/linux-postinstall/ ). Additionally, we will be using Ubuntu 23.10 inside docker. Some users appear to have issues with running commands like update or upgrade in docker when using Ubuntu; we do not have a workaround for this.
-2. nuXmv (see  https://nuxmv.fbk.eu/download.html or https://nuxmv.fbk.eu/theme/download.php?file=nuXmv-2.0.0-linux64.tar.gz ). You only need to download nuXmv. There should be no installation. Please ensure you download the Linux 64-bit x86 version 2.0.0 (October 14, 2019). The executable will be located in **nuXmv-2.0.0-linux64/nuXmv-2.0.0-Linux/bin/nuXmv**. There should be **NO FILE EXTENSION**. Note that we are **ONLY** interested in the binary; you do not need the other files or the folder structure, so long as you have the binary.
+2. nuXmv (see  https://nuxmv.fbk.eu/download.html or https://nuxmv.fbk.eu/theme/download.php?file=nuXmv-2.1.0-linux64.tar.xz ). You only need to download nuXmv. There should be no installation. Please ensure you download the Linux 64-bit x86 version 2.1.0. The executable will be located in **nuXmv-2.1.0-linux64/nuXmv-2.1.0-Linux/bin/nuXmv**. There should be **NO FILE EXTENSION**. Note that we are **ONLY** interested in the binary; you do not need the other files or the folder structure, so long as you have the binary.
 3. If you choose to use Docker, we assume you have access to Python3. If you choose to run locally, we assume you are able to run bash scripts. These have **only been tested on Ubuntu**. If you cannot run the scripts, please run the commands present in the bash scripts manually. Note that this will require arguments to replaced. Specifically, $1 means the first argument provided to the bash script, $2 means the second argument provided to the bash script, etc.
 
 Note, we require docker py for use with python3 if using docker. It can be installed using
@@ -35,10 +32,8 @@ Per the licensing agreement of nuXmv (see https://nuxmv.fbk.eu/downloads/LICENSE
 # Test Information
 
 1. Installation Test is mostly to test installation. It is very fast.
-2. Partial Results is very fast. It produces all the BehaVerify results for Bigger Fish and Simple Robot. It does not run the ISR example. The comparison to MoVe4BT requires manually installing MoVe4BT and running the files individually. However, we do provide the XML files used to load the experiments we used.
-3. Full Results replicates all results for BehaVerify. The comparison to MoVe4BT requires manually installing MoVe4BT and running the files individually. However, we do provide the XML files used to load the experiments we used.
-4. The results in the paper were generated using a Dell Inc. OptiPlex 7040 with 64 GiB of Memory with an Intel i7–6700 CPU @ 3.40GHz with 8 cores.
-5. We have confirmed that an old Chromebook using the Linux development environment is capable of running all the tests. The install and partial tests complete fairly quickly, but the full test is rather slow. Obviously, your machines capabilities will change the exact numbers. The point, however, is that you do not need a powerful machine to run these tests.
+2. Full Results replicates all results that do not timeout.
+3. Timeout Results replicates all results, including those that timeout.
 
 ---
 
@@ -49,7 +44,6 @@ The tests can be run using docker. We provide several methods for doing this. So
 ## Single Script Options
 
 - Build Scripts -> These scripts use the Dockerfile to build a new image and then create a container.
-- Load Scripts -> These scripts load the provided image and then create a container.
 
 We provide 3 scripts of each type (1 for each test from Test Information). Each of these scripts takes four command line arguments, three of which are the same.
 	
@@ -59,9 +53,9 @@ We provide 3 scripts of each type (1 for each test from Test Information). Each 
 - **mode** -> Required, sort of. This should be **install**, **partial**, or **full**. 
 - **/path/to/output** -> The output will be copied to /path/to/output.tar. This will not override existing files, so make sure there is no existing file.
 
-After each command, we provide an example command that assumes you placed the nuXmv binary in the top level of the reproducibility directory (the directory containing the Dockerfile). **THE EXAMPLES ASSUME YOU ARE IN THE DIRECTORY NAMED 2024\_FMAS\_SBT.**
+After each command, we provide an example command that assumes you placed the nuXmv binary in the top level of the reproducibility directory (the directory containing the Dockerfile). **THE EXAMPLES ASSUME YOU ARE IN THE DIRECTORY NAMED 2024\_ANSR**
 
-### Single Script: Minimal (estimated time: 3 minutes. 6 minutes on Chromebook)
+### Single Script: Minimal 
 
 Build Script:
 ```
@@ -72,44 +66,10 @@ Build Example:
 ```
 python3 ./python_script/build_and_run.py ./ ./nuXmv install ./install
 ```
-
-Load Script:
-```
-python3 load_and_run.py /path/to/DockerImage /path/to/nuXmv install /path/to/output
-```
-
-Load Example:
-```
-python3 ./python_script/load_and_run.py ./DockerImage.tar ./nuXmv install ./install
-```
 	
 The results will be written in **/path/to/output.tar**. Extract the archive and see the Interpreting and Comparing Results section for more information.
 
-### Single Script: Partial (estimated time: 8 minutes. 40 minutes on Chromebook)
-
-Build Script:
-```
-python3 build_and_run.py /path/to/Dockerfile/Folder/ /path/to/nuXmv partial /path/to/output
-```
-	
-Build Example:
-```
-python3 ./python_script/build_and_run.py ./ ./nuXmv partial ./partial
-```
-
-Load Script:
-```
-python3 load_and_run.py /path/to/DockerImage /path/to/nuXmv partial /path/to/output
-```
-
-Load Example:
-```
-python3 ./python_script/load_and_run.py ./DockerImage.tar ./nuXmv partial ./partial
-```
-	
-The results will be written in **/path/to/output.tar**. Extract the archive and see the Interpreting and Comparing Results section for more information.
-
-### Single Script: Full (estimated time: 16 minutes. 1 hour on Chromebook)
+### Single Script: Full
 
 Build Script:
 ```
@@ -120,15 +80,19 @@ Build Example:
 ```
 python3 ./python_script/build_and_run.py ./ ./nuXmv full ./full
 ```
+	
+The results will be written in **/path/to/output.tar**. Extract the archive and see the Interpreting and Comparing Results section for more information.
 
-Load Script:
-```
-python3 load_and_run.py /path/to/DockerImage /path/to/nuXmv full /path/to/output
-```
+### Single Script: Timeout
 
-Load Example:
+Build Script:
 ```
-python3 ./python_script/load_and_run.py ./DockerImage.tar ./nuXmv full ./full
+python3 build_and_run.py /path/to/Dockerfile/Folder/ /path/to/nuXmv timeout /path/to/output
+```
+	
+Build Example:
+```
+python3 ./python_script/build_and_run.py ./ ./nuXmv timeout ./timeout
 ```
 	
 The results will be written in **/path/to/output.tar**. Extract the archive and see the Interpreting and Comparing Results section for more information.
@@ -137,9 +101,9 @@ The results will be written in **/path/to/output.tar**. Extract the archive and 
 
 ## Step by Step Docker instructions
 
-This section will explain how to utilize either the provided docker image or Dockerfile to recreate the tests using docker. After each command, we provide an example command that assumes you placed the nuXmv binary in the top level of the reproducibility directory (the directory containing the Dockerfile). **THE EXAMPLES ASSUME YOU ARE IN THE DIRECTORY NAMED 2024\_FMAS_SBT.**
+This section will explain how to utilize either the provided docker image or Dockerfile to recreate the tests using docker. After each command, we provide an example command that assumes you placed the nuXmv binary in the top level of the reproducibility directory (the directory containing the Dockerfile). **THE EXAMPLES ASSUME YOU ARE IN THE DIRECTORY NAMED 2024\_ANSR.**
 
-### 1a. Creation of the Docker Image and Container (estimated time: 1 minutes. 5 minutes on Chromebook)
+### 1. Creation of the Docker Image and Container
 
 You only need to execute 1a or 1b. See 1b for steps using the image. However, should you wish to build the docker image yourself, please run
 ```
@@ -151,24 +115,10 @@ Example:
 python3 ./python_script/reinstall.py ./
 ```
 
-This will create a docker image named behaverify\_img with the tag latest. It will then also create a container named behaverify\_2024\_FMAS from that image.
-
-### 1b. Using the provided Docker Image to create a Container (estimated time: ??)
-
-You only need to execute 1a or 1b. See 1a for steps using the Dockerfile. However, should you wish to load a prebuilt image yourself, please run
-```
-python3 load_image.py /path/to/Dockerimage
-```
-	
-Example:
-```
-python3 ./python_script/load_image.py ./DockerImage.tar
-```
-
-This will create a docker image named behaverify\_img with the tag latest. It will then also create a container named behaverify\_2024\_FMAS from that image.
+This will create a docker image named behaverify\_img with the tag latest. It will then also create a container named behaverify\_2024\_ansr from that image.
 
 ### IMPORTANT:
-The scripts below assume that the docker container is named behaverify\_2024\_FMAS. If you run 1a or 1b, this will be handled for you, and you need not worry.
+The scripts below assume that the docker container is named behaverify\_2024\_ansr. If you run step 1, this will be handled.
 
 ### 2. Addition of nuXmv (estimated time: 30 seconds)
 
@@ -184,7 +134,7 @@ python3 ./python_script/add_nuxmv.py ./nuXmv
 
 This will copy nuXmv from the path you provided to the correct location in the docker and ensure it is runable and an executable. Note that you should not point to the folder containing nuXmv, but to nuXmv itself, and that the nuXmv version should be the Linux version.
 
-### 3. Install Test (estimated time: 30 seconds. 1 minute on Chromebook)
+### 3. Install Test
 
 The full test takes quite a while to run. To ensure everything works right, please run
 ```
@@ -196,27 +146,29 @@ Example:
 python3 ./python_script/generate.py install ./install
 ```
 
-### 4. Partial Test (estimated time: 1 minute. 35 minutes on Chromebook)
+### 4. Full Test 
 
-The full test takes quite a while to run. To ensure everything works right, please run
-```
-python3 generate.py partial /path/to/output
-```
-
-Example:
-```
-python3 ./python_script/generate.py partial ./partial
-```
-
-
-### 5. Full Results (estimated time: 15 minutes. 1 hour on Chromebook)
+It doesn't take terribly long to generate all the results that do not timeout, but it will probably be at least a half hour.
 ```
 python3 generate.py full /path/to/output
 ```
 
 Example:
 ```
-python3 ./python_script/generate.py full ./full
+python3 ./python_script/generate.py full ./partial
+```
+
+
+### 5. Timeout Results
+
+Warning, these tests take a **very** long time to complete (many hours).
+```
+python3 generate.py timeout /path/to/output
+```
+
+Example:
+```
+python3 ./python_script/generate.py timeout ./timeout
 ```
 
 ---
@@ -228,7 +180,7 @@ The instructions are for Linux (and more specifically Ubuntu). We have not teste
 This section is intentionally lengthy. If you are not interested in the details and just want the commands, please scroll down further
 
 
-1. nuXmv<br />Please download nuXmv (see  https://nuxmv.fbk.eu/ ). You only need to download nuXmv. There should be no installation. Download the relevant version for your system. It should be version 2.0.0. The download will include many files. You only need the executable (no file extension). See above for more information.
+1. nuXmv<br />Please download nuXmv (see  https://nuxmv.fbk.eu/ ). You only need to download nuXmv. There should be no installation. Download the relevant version for your system. It should be version 2.1.0. The download will include many files. You only need the executable (no file extension). See above for more information.
 2. Updating<br /> We suggest running the following commands.
 
 		sudo apt update
@@ -283,11 +235,11 @@ This section is intentionally lengthy. If you are not interested in the details 
 		git clone https://github.com/verivital/behaverify
 19. Enable scripts<br />This will allow all the necessary scripts to run. Please navigate to the top level of our repository and run the following
 
-		sudo chmod -R +x ./REPRODUCIBILITY/2024_FMAS/*.sh
-20. Move nuXmv<br />You downloaded nuXmv in step 1. Please place it in behaverify/REPRODUCIBILITY/2024\_FMAS/
+		sudo chmod -R +x ./REPRODUCIBILITY/2024_ANSR/*.sh
+20. Move nuXmv<br />You downloaded nuXmv in step 1. Please place it in behaverify/REPRODUCIBILITY/2024\_ANSR/
 21. Enable nuXmv<br />Please navigate to the top level of our repository and run the following
 
-		sudo chmod +x ./REPRODUCIBILITY/2024_FMAS/nuXmv
+		sudo chmod +x ./REPRODUCIBILITY/2024_ANSR/nuXmv
 
 
 You are now ready to run the scripts locally. Scroll past the concise installation instructions to see the scripts explanation.
@@ -299,7 +251,7 @@ You are now ready to run the scripts locally. Scroll past the concise installati
 The instructions are for Linux (and more specifically Ubuntu). We have not tested this on any other systems. Some of the scripts are likely to break on other systems. For instance, the scripts assume that nuXmv will be named nuXmv, and not nuXmv.exe. However, our code itself should still work (though we have not tested this).
 
 
-Please download nuXmv (see  https://nuxmv.fbk.eu/ ). You only need to download nuXmv. There should be no installation. Download the relevant version for your system. It should be version 2.0.0.
+Please download nuXmv (see  https://nuxmv.fbk.eu/ ). You only need to download nuXmv. There should be no installation. Download the relevant version for your system. It should be version 2.1.0.
 ```
 sudo apt update
 sudo apt upgrade
@@ -344,14 +296,14 @@ git clone https://github.com/verivital/behaverify
 
 Please navigate to the top level of our repository and run the following
 ```
-sudo chmod -R +x ./REPRODUCIBILITY/2024_FMAS/*.sh
+sudo chmod -R +x ./REPRODUCIBILITY/2024_ANSR/*.sh
 ```
 
 You downloaded nuXmv earlier. Please place it in behaverify/REPRODUCIBILITY/2024\_FMAS/
 
 Please navigate to the top level of our repository and run the following
 ```
-sudo chmod +x ./REPRODUCIBILITY/2024_FMAS/nuXmv
+sudo chmod +x ./REPRODUCIBILITY/2024_ANSR/nuXmv
 ```
 
 You are now ready to run the scripts locally. 
@@ -365,60 +317,31 @@ Note that each script will erase all the relevant results before running, to ens
 
 ## Minimal Script
 
-To test everything is working, please navigate to behaverify/REPRODUCIBILITY/2024\_FMAS\_SBT/ and run the following
+To test everything is working, please navigate to behaverify/REPRODUCIBILITY/2024\_ANSR/ and run the following
 ```
-./behaverify_FMAS_test_installation.sh ./
-```
-
-This will run a fairly small script. The results will be in behaverify/REPRODUCIBILITY/2024\_FMAS\_SBT/examples/. Please see the Interpreting and Comparing Results section for an explanation of what results to look for.
-
-## Partial Script
-
-To create a subset of the results, please navigate to behaverify/REPRODUCIBILITY/2024\_FMAS\_SBT/ and run the following
-```
-./behaverify_FMAS_partial_results.sh ./
+./behaverify_2024_ANSR_test_installation.sh ./
 ```
 
-This will run a larger, but still fairly small script. The results will be in behaverify/REPRODUCIBILITY/2024\_FMAS\_SBT/examples/. Please see the Interpreting and Comparing Results section for an explanation of what results to look for.
+This will run a fairly small script. The results will be in behaverify/REPRODUCIBILITY/2024\_ANSR/examples/. Please see the Interpreting and Comparing Results section for an explanation of what results to look for.
 
 ## Full Script
 
-To create all results, please navigate to behaverify/REPRODUCIBILITY/2024\_FMAS\_SBT/ and run the following
+To create a subset of the results, please navigate to behaverify/REPRODUCIBILITY/2024\_ANSR/ and run the following
 ```
-./behaverify_FMAS_full_results.sh ./
-```
-
-This will run a large script. The results will be in **behaverify/REPRODUCIBILITY/2024\_FMAS\_SBT/examples/**. Please see the Interpreting and Comparing Results section for an explanation of what results to look for.
-
-
----
-
-# MoVe4BT Information
-
-Our FMAS paper compared to MoVe4BT. See https://move4bt.github.io/ . We found that installing the tool using the instruction at https://move4bt.github.io/manual was fairly painless, but your experience may vary. Unfortunately, we did not find a way to run the tool from the command-line, so we cannot automate the process in Docker.
-
-1. After following those instructions and launching MoVe4BT, please press the editor button.
-2. Then click Load Tree on the left side of the GUI.
-3. Please Load an xml file from **/behaverify/REPRODUCIBILITY/2024\_FMAS\_SBT/MoVe4BT\_XML\_Files/xml/**.
-4. The file may take a while to load, especially for the bigger examples.
-5. Click verifications.
-6. The GUI may freeze. Feel free to ignore the wait/force quit option, or repeatedly click wait. Eventually, it will print results, or produce a blank screen.
-
-As mentioned above, MoVe4BT loads models stored in xml files. The code for generating the files is in **/behaverify/REPRODUCIBILITY/2024\_FMAS\_SBT/examples/bigger\_fish/create\_bigger\_fish\_MoVe4BT\_xml.py**. Run using the following command
-
-```
-python3 create_bigger_fish_MoVe4BT_xml.py /path/to/output/location min max step
+./behaverify_2024_ANSR_full_results.sh ./
 ```
 
-Where the path is where the files will be outputted (must be a folder, do not include final slash), min is the smallest size file to generate, max is the largest (inclusive) and step is the step size. Therefore, the command used to generate the used xml files is
+This will run a larger, but still fairly small script. The results will be in **behaverify/REPRODUCIBILITY/2024\_ANSR/examples/**. Please see the Interpreting and Comparing Results section for an explanation of what results to look for.
 
+## Timeout Script
+
+To create all results, please navigate to behaverify/REPRODUCIBILITY/2024\_ANSR/ and run the following
 ```
-python3 create_bigger_fish_MoVe4BT_xml.py /path/to/output/location 50 1000 50
+./behaverify_2024_ANSR_timeout_results.sh ./
 ```
 
-There is a similar simple robot file.
+This will run a large script. The results will be in **behaverify/REPRODUCIBILITY/2024\_ANSR/examples/**. Please see the Interpreting and Comparing Results section for an explanation of what results to look for.
 
-**ADDITIONALLY**, we provide a .sh script in **/behaverify/REPRODUCIBILTY/2024\_FMAS\_SBT/MoVe4BT/install\_MoVe4BT.sh** to install MoVe4BT. It is possible to run MoVe4BT through docker webtop, but this is not something we were able to automate.
 
 ---
 

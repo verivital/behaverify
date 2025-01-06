@@ -46,9 +46,18 @@ variables {
 	    result{
 		#{If more than one option is presented in a result, it will be chosen from non-deterministically}#
 		#{In this case, we will use a loop rather than writing out each possible value by hand}#
-		#{For more details, see the tutorial}#
 		(loop, loop_var, [1, max_val] such_that True, loop_var)
-		#{pick an option nondeterministically}#
+		#{
+		    The format here is as follows
+		    (loop, <- the name of the function
+			loop_var, <- the name of the variable we are looping over
+			[1, max_val] <- the domain of the variable we are looping over (could be something like {'a', 'b', 'c'} or {1, 2, 4, 6})
+			such_that True <- allows us to filter values based on the condition (e.g. such_that (eq, 0, (mod, loop_var, 2)) would make it so we only iterate over the even numbers in the domain)
+			loop_var <- code representing the value. e.g., (mult, loop_var, 3)
+		    )
+		    note that the `compiler' will unroll this loop at compile time, compute each possible value, and construct a list based on that.
+		    Thus this is the equivalent of writing down 1, 2, 3, 4, 5, 6, ... max_val, but presumably much easier and also allows us to synch up with the max_val constant more easily.
+		}#
 	    }
 	}
     }

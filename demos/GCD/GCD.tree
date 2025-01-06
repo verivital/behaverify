@@ -6,6 +6,25 @@
     In the second, a and b are allowed to take any value in the range [1, max_val] (inclusive), but we still only check that we found a common denominator.
     In the final example, a and b are allowed to take any value in the range [1, max_val] (inclusive), we also check that the answer is the greatest common denominator. 
 }#
+#{
+    The order of sections cannot be changed nor can they be skipped
+    I.E., we must always start with configuration, then enumerations, then constants, etc
+}#
+#{
+    Whitespace is important but only to the extent that any is present
+    that is
+    a     b
+    is the same as
+    a
+
+
+    b
+    and
+    a b
+    but
+    ab
+    is something else
+}#
 configuration {
     #{We'll ignore this for now}#
 }
@@ -14,7 +33,7 @@ enumerations {
 }
 
 constants {
-    max_val := 100 #{We set up a constant here.}#
+    max_val := 100 #{We set up a constant here. Constants are comma seperated. Constants can take the value of an Integer, an Enumeration (must be declared above), or a Boolean}#
 }
 
 variables {
@@ -27,14 +46,21 @@ variables {
     #{
 	For each variable, we will need to determine the following
 	- type: bl (Blackboard), env (Environment), local (Local)
+	--- Blackboard: shared. each node in the tree can access
+	--- Local: private. If multiple nodes use the same local variable, they are each making a private copy.
+	--- Environment: Describes the state of the `world' that the BT operates within. not really relevant to this example.
 	- name: the name of the variable
-	- model: VAR (a stateful variable; the value can change), FROZENVAR (set to some initial value, then unchanging), DEFINE (a 'macro' or deterministic function; the definition cannot change, but the 'value' can. E.G, if defined as x+y, the value will change whenever x and y change)
+	- model: VAR, FROZENVAR, DEFINE. This comes from nuXmv, but it also effects what is generated in python/haskell.
+	--- VAR: a stateful variable; the value can change
+	--- FROZENVAR: set to some initial value, then unchanging
+	--- DEFINE: a 'macro' or deterministic function; the definition cannot change, but the 'value' can. E.G, if defined as x+y, the value will change whenever x and y change
 	- domain: the values the variable can take. BOOLEAN (a boolean), [m, n] (integers between m and n inclusive), {a, b, c, ...} where a, b, c... are integers, {a, b, c,...} where a, b, c... are enumerations declared above.
 	- array: we'll ignore this for now
 	- initial value: what value the variable should take. Can be non-determinsitic.
     }#
     #{
-	a and b will be frozenvars, the rest will be vars
+	a and b will be frozenvars, the rest will be vars. This is because a and b are `constant' after being selected (hence, frozen) while we need to assign values to the rest of them.
+	We don't have a reason to use and define variable right now.
 	temp will be a local, because it doesn't need to be shared. The rest will be blackboard variables
     }#
     variable {
@@ -45,7 +71,7 @@ variables {
 	assign {
 	    result{
 		5, 10, 17, 54, 99, 42, 56
-		#{pick an option nondeterministically}#
+		#{pick an option nondeterministically (comma seperate options)}#
 	    }
 	}
     }
@@ -65,7 +91,7 @@ variables {
 	bl #{type}#
 	x #{name}#
 	VAR #{Modeled as}#
-	[1, max_val] #{Domain}#
+	[1, max_val] #{Domain. Note that we are using the constant max_val within the domain.}#
 	assign {
 	    result{
 		a #{Because x depends on a, x must be declared AFTER a}#
@@ -106,7 +132,9 @@ checks {
 	no_swap #{name of the check}#
 	arguments {} #{no arguments}#
 	read_variables {x, y} #{variables that will be read. Can only read blackboard variables}#
-	condition{ (gte, x, y) } #{if true, success, else false}#
+	condition{ (gte, x, y) } #{if true, success, else failure}#
+	#{All `code' is done in a `lisp' format, namely (function, arg1, arg2, arg3, etc). Functions can be nested}#
+	#{gte stands for greater than or equal}#
     }
     check {
 	done
@@ -181,13 +209,12 @@ tree {
     composite {
 	gcd #{our root node}#
 	sequence #{a sequence node}#
-	#{not using memory}#
 	children {
 	    composite {
 		swap_sel
 		selector
 		children {
-		    no_swap {}
+		    no_swap {} #{these brackets are where you would pass arguments in to the node. This allows you to reuse nodes instead of coding extremely similar but slightly differenty copies, but isn't relevant to this example.}#
 		    swap {}
 		}
 	    }
@@ -210,12 +237,12 @@ tick_prerequisite {
 specifications {
     #{For now, we will just confirm this is a common denominator when the process terminates.}#
     LTLSPEC {
-	(finally,
-	    (globally,
-		(and,
-		    (success, gcd),
-		    (eq, (mod, a, y), 0),
-		    (eq, (mod, b, y), 0))
+	(finally, #{At some point}#
+	    (globally, #{for all time}#
+		(and, #{all of these things happen}#
+		    (success, gcd), #{the root's status is success}#
+		    (eq, (mod, a, y), 0), #{y divides a}#
+		    (eq, (mod, b, y), 0)) #{y divides b}#
 	    )
 	)
     }
