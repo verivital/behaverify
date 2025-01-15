@@ -3,7 +3,7 @@ import docker
 from install import create_image_and_container
 from docker_util import IMAGE_NAME, CONTAINER_NAME
 
-def reinstall(dockerfile_path):
+def reinstall(dockerfile_path, nuxmv_url, local):
     '''Stop behaverify (Docker Container), Remove behaverify (Docker Container), Remove behaverify_img (Docker Image)
     creates behaverify_img (Docker Image) and behaverify (Docker Container)'''
     client = docker.from_env()
@@ -22,11 +22,13 @@ def reinstall(dockerfile_path):
     except docker.errors.ImageNotFound:
         pass
     print('End: Removing image: ' + IMAGE_NAME)
-    create_image_and_container(dockerfile_path)
+    create_image_and_container(dockerfile_path, nuxmv_url, local)
     return
 
 if __name__ == '__main__':
     arg_parser = argparse.ArgumentParser()
     arg_parser.add_argument('input_path')
+    arg_parser.add_argument('nuxmv_url')
+    arg_parser.add_argument('--local', action = 'store_true')
     args = arg_parser.parse_args()
-    reinstall(args.input_path)
+    reinstall(args.input_path, args.nuxmv_url, args.local)

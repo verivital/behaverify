@@ -388,12 +388,9 @@ tree {
 
 
 tick_prerequisite { (not, victory) } end_tick_prerequisite
-#{tick_prerequisite { True } end_tick_prerequisite}#
-#{ if the condition is True, the tree ticks.
-    If it is false, everything is done }#
+#{We end if victory is achieved.}#
 
 specifications { #{ INVAR, LTL, and CTL specs go here }#
     CTLSPEC {(always_finally, victory at -1)}
     LTLSPEC {(finally_bounded, [0, 200], victory at -1)}
-    #{CTLSPEC {(imply, (and, (eq, (index, tree_x 0, 0), 2), (eq, (index, tree_x 0, 1), 5), (eq, (index, tree_y 0, 0), 2), (eq, (index, tree_y 0, 1), 5)), (always_finally, victory -1))}}#
 } end_specifications

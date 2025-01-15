@@ -23,11 +23,12 @@ WORKDIR /home/$USER
 # Switch to the non-root user
 USER $USER
 
+RUN sudo apt-get install wget -y
 RUN sudo apt-get install git -y
 RUN sudo apt-get install python3 pip python3-venv -y
 
-# ADD https://api.github.com/repos/$USER/$REPO/git/refs/heads/$BRANCH version.json
 ADD https://api.github.com/repos/verivital/behaverify/git/refs/heads/main version.json
+# this makes sure we grab the newest version of the repo instead of reusing an older one
 
 RUN git clone --filter=blob:none --no-checkout --depth 1 --sparse https://github.com/verivital/behaverify
 WORKDIR /home/$USER/behaverify
@@ -39,6 +40,9 @@ RUN echo /metamodel >> /home/$USER/behaverify/.git/info/sparse-checkout
 RUN echo /scripts/nuxmv_commands >> /home/$USER/behaverify/.git/info/sparse-checkout
 RUN echo /requirements >> /home/$USER/behaverify/.git/info/sparse-checkout
 RUN git checkout
+
+RUN echo $USER > /home/$USER/user.txt
+# this hopefully makes sure that we don't get weird conflicts between images depending on each other.
 
 RUN python3 -m venv /home/$USER/python_venvs/behaverify
 RUN /home/$USER/python_venvs/behaverify/bin/python3 -m pip install --upgrade pip

@@ -169,15 +169,15 @@ def demo_mode():
     if not os.path.isdir(os.path.split(args.output_path)[0]):
         raise ValueError('Output Path is in a directory that does not exist.')
     demo = args.demo
-    current_demos = {'ANSR_ONNX_2', 'ANSR_ONNX_2_counter'}
-    uses_networks = {'ANSR_ONNX_2', 'ANSR_ONNX_2_counter'}
+    current_demos = {'ISR'}
+    uses_networks = {'ISR'}
     if demo not in current_demos:
         raise ValueError('Unknown demo: ' + demo + '. Current demos are: ' + str(current_demos) + '.')
     client = docker.from_env()
     behaverify = client.containers.get(CONTAINER_NAME)
     behaverify.start()
     move_files(behaverify, demo, 'yes' if demo in uses_networks else '-', True)
-    if demo in ('ANSR_ONNX_2', 'ANSR_ONNX_2_counter'):
+    if demo in ('ISR',):
         to_generate = 'nuXmv'
         flags = ''
         command = 'ctl'
@@ -205,12 +205,10 @@ def demo_mode():
         evaluate(behaverify, demo, to_generate, command)
     ##### SPECIAL ZONE
     special_command = None
-    if demo == 'ANSR_ONNX_2':
-        pass
-    elif demo == 'ANSR_ONNX_2_counter':
+    if demo == 'ISR':
         special_command = ' '.join([
             RESULTS_VENV,
-            HOME_DIR + '/behaverify/demos/ANSR_ONNX_2_counter/parse_nuxmv_output.py',
+            HOME_DIR + '/behaverify/demos/ISR/parse_nuxmv_output.py',
             USER_DIR + '/' + demo + '/output/nuxmv_ctl_results.txt',
             USER_DIR + '/' + demo + '/output/' + demo,
             str(ansr_x_size),
