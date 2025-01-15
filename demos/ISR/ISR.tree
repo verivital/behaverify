@@ -84,8 +84,8 @@ variables {
     variable {bl dir VAR {'Up', 'Down'} assign {result {'Up'}}}
     variable {bl dir_int DEFINE INT assign {case {(eq, dir, 'Up')} result {1} result{-1}}} #{Here we see a DEFINE variable which is 1 when dir is 'Up' and -1 otherwise.}#
     variable {bl victory VAR BOOLEAN assign {result {False}}}
-    variable {bl x_net NEURAL INT inputs {prev_dest_x} num_outputs {1} source {'./networks/x_net.onnx'}} #{Load a network from the specified source. Treat the outputs as integers.}#
-    variable {bl y_net NEURAL INT inputs {cur_x_bool, prev_dest_x} num_outputs {1} source {'./networks/y_net.onnx'}} #{Load a network from the specified source. Treat the outputs as integers.}#
+    variable {bl x_net NEURAL regression INT inputs {prev_dest_x} num_outputs {1} source {'./networks/x_net.onnx'}} #{Load a network from the specified source. Treat the outputs as integers.}#
+    variable {bl y_net NEURAL regression INT inputs {cur_x_bool, prev_dest_x} num_outputs {1} source {'./networks/y_net.onnx'}} #{Load a network from the specified source. Treat the outputs as integers.}#
     variable {env tree_x DEFINE INT array tree_count default { assign{result{2}}} constant_index index_of{1} assign {result{5}}}
     variable {env tree_y DEFINE INT array tree_count default { assign{result{2}}} constant_index index_of{1} assign {result{5}}}
     variable {env tar_x VAR [x_min, x_max] assign {result {(loop, loop_var, [x_min, x_max] such_that True, loop_var)}}} #{Non-deterministically set tar_x to a value between x_min and x_max}#

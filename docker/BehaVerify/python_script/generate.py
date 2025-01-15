@@ -13,9 +13,9 @@ def move_files(behaverify, input_path, networks_path, demo_copy = False):
     serene_exec(behaverify, 'bash -c \'mkdir ' + USER_DIR + '/output\'', 'Creating new user directory subfolder 1.', True)
     serene_exec(behaverify, 'bash -c \'mkdir ' + USER_DIR + '/app\'', 'Creating new user directory subfolder 2.', True)
     if demo_copy:
-        serene_exec(behaverify, 'bash -c \'cp ' + HOME_DIR + '/behaverify/demos/' + input_name_only + '/' + input_name_only + '.tree ' + USER_DIR + '/' + input_name_only + '\'', 'Moving .tree file into place.', True)
+        serene_exec(behaverify, 'bash -c \'cp ' + HOME_DIR + '/behaverify/demos/' + input_name_only + '/' + input_name_only + '.tree ' + USER_DIR + '/' + input_name_only + '.tree\'', 'Moving .tree file into place.', True)
         if networks_path != '-':
-            serene_exec(behaverify, 'bash -c \'cp -r ' + HOME_DIR + '/behaverify/demos/' + input_name_only + '/networks ' + USER_DIR + '/' + input_name_only + '\'', 'Moving networks into place.', True)
+            serene_exec(behaverify, 'bash -c \'cp -r ' + HOME_DIR + '/behaverify/demos/' + input_name_only + '/networks ' + USER_DIR + '/' + '\'', 'Moving networks into place.', True)
     else:
         print('Start: adding relevant files from source to container.')
         if not copy_into(behaverify, input_path, USER_DIR):
