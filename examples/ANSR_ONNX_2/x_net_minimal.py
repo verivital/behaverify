@@ -17,14 +17,15 @@ weights_out = numpy_helper.from_array(numpy.array([[-1]], dtype = numpy.float32)
 my_outputs = helper.make_tensor_value_info("my_outputs", AttributeProto.FLOAT, [1, 1])
 
 
-mat_mul_out = helper.make_node('MatMul', ['my_inputs', 'weights_out'], ['my_outputs_a'])
-add_out = helper.make_node('Add', ['my_outputs_a', 'biases_out'], ['my_outputs_b'])
-relu_out = helper.make_node('Relu', ['my_outputs_b'], ['my_outputs'])
+# mat_mul_out = helper.make_node('MatMul', ['my_inputs', 'weights_out'], ['my_outputs_a'])
+# add_out = helper.make_node('Add', ['my_outputs_a', 'biases_out'], ['my_outputs_b'])
+gemm_out = helper.make_node('Gemm', inputs = ['my_inputs', 'weights_out', 'biases_out'], outputs = ['gemm_result_01'])
+relu_out = helper.make_node('Relu', ['gemm_result_01'], ['my_outputs'])
 ###########
 
 # Create the graph (GraphProto)
 graph_def = helper.make_graph(
-    [mat_mul_out, add_out, relu_out],        # nodes
+    [gemm_out, relu_out],        # nodes
     "test-model",      # name
     [my_inputs],  # inputs
     [my_outputs],               # outputs

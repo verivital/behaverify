@@ -20,16 +20,21 @@ weights_out = numpy_helper.from_array(numpy.array([[1], [1]], dtype = numpy.floa
 my_outputs = helper.make_tensor_value_info("my_outputs", AttributeProto.FLOAT, [1, 1])
 
 
-mat_mul_0 = helper.make_node(
-    "MatMul",                  # name
-    ["my_inputs", "weights_0"], # inputs
-    ["my_inputs_1a"]                  # outputs
-)
+# mat_mul_0 = helper.make_node(
+#     "MatMul",                  # name
+#     ["my_inputs", "weights_0"], # inputs
+#     ["my_inputs_1a"]                  # outputs
+# )
 
-add_0 = helper.make_node(
-    "Add",                  # name
-    ["my_inputs_1a", "biases_0"], # inputs
-    ["my_inputs_1b"]                  # outputs
+# add_0 = helper.make_node(
+#     "Add",                  # name
+#     ["my_inputs_1a", "biases_0"], # inputs
+#     ["my_inputs_1b"]                  # outputs
+# )
+gemm_0 = helper.make_node(
+    'Gemm',
+    ['my_inputs', 'weights_0', 'biases_0'],
+    ['my_inputs_1b']
 )
 
 relu_0 = helper.make_node(
@@ -38,14 +43,15 @@ relu_0 = helper.make_node(
     ['my_inputs_1']
 )
 ###########
-mat_mul_out = helper.make_node('MatMul', ['my_inputs_1', 'weights_out'], ['my_outputs_a'])
-add_out = helper.make_node('Add', ['my_outputs_a', 'biases_out'], ['my_outputs_b'])
+# mat_mul_out = helper.make_node('MatMul', ['my_inputs_1', 'weights_out'], ['my_outputs_a'])
+# add_out = helper.make_node('Add', ['my_outputs_a', 'biases_out'], ['my_outputs_b'])
+gemm_out = helper.make_node('Gemm', ['my_inputs_1', 'weights_out', 'biases_out'], ['my_outputs_b'])
 relu_out = helper.make_node('Relu', ['my_outputs_b'], ['my_outputs'])
 ###########
 
 # Create the graph (GraphProto)
 graph_def = helper.make_graph(
-    [mat_mul_0, add_0, relu_0, mat_mul_out, add_out, relu_out],        # nodes
+    [gemm_0, relu_0, gemm_out, relu_out],        # nodes
     "test-model",      # name
     [my_inputs],  # inputs
     [my_outputs],               # outputs
