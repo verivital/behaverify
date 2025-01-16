@@ -7,7 +7,7 @@ from docker_util import copy_into, copy_out_of, serene_exec, CONTAINER_NAME, HOM
 def move_files(behaverify, input_path, networks_path, demo_copy = False):
     input_name = os.path.basename(input_path)
     (input_name_only, _) = os.path.splitext(input_name)
-    serene_exec(behaverify, 'bash -c \'[ -d ' + USER_DIR + ' ] && rm -rf ' + USER_DIR + '\'', 'Removing old user directory.', True)
+    serene_exec(behaverify, 'bash -c \'[ -d ' + USER_DIR + ' ] && sudo rm -rf ' + USER_DIR + '\'', 'Removing old user directory.', True)
     serene_exec(behaverify, 'bash -c \'mkdir ' + USER_DIR + '\'', 'Creating new user directory.', True)
     # serene_exec(behaverify, 'bash -c \'mkdir ' + USER_DIR + '/' + input_name_only + '\'', 'Creating new user directory.', True)
     serene_exec(behaverify, 'bash -c \'mkdir ' + USER_DIR + '/output\'', 'Creating new user directory subfolder 1.', True)
@@ -21,10 +21,12 @@ def move_files(behaverify, input_path, networks_path, demo_copy = False):
         if not copy_into(behaverify, input_path, USER_DIR):
             raise RuntimeError('Failed to copy input!')
         if networks_path != '-':
-            (networks_location, networks_name) = os.path.split(networks_path)
-            if networks_name == '':
-                networks_path = networks_location
-                (networks_location, networks_name) = os.path.split(networks_path)
+            print('network copy start')
+            # (networks_location, networks_name) = os.path.split(networks_path)
+            # if networks_name == '':
+            #     networks_path = networks_location
+            #     (networks_location, networks_name) = os.path.split(networks_path)
+            # print(str((networks_location, networks_name)))
             if not copy_into(behaverify, networks_path, USER_DIR):
                 raise RuntimeError('Failed to copy input!')
         print('End: adding relevant files from source to container.')
@@ -169,15 +171,18 @@ def demo_mode():
     if not os.path.isdir(os.path.split(args.output_path)[0]):
         raise ValueError('Output Path is in a directory that does not exist.')
     demo = args.demo
-    current_demos = {'ISR'}
-    uses_networks = {'ISR'}
+    current_demos = {'grid_net', 'moving_target'}
+    uses_networks = {'grid_net', 'moving_target'}
     if demo not in current_demos:
         raise ValueError('Unknown demo: ' + demo + '. Current demos are: ' + str(current_demos) + '.')
     client = docker.from_env()
     behaverify = client.containers.get(CONTAINER_NAME)
     behaverify.start()
-    move_files(behaverify, demo, 'yes' if demo in uses_networks else '-', True)
-    if demo in ('ISR',):
+    if demo in ('grid_net',):
+        to_generate = 'nuXmv'
+        flags = ''
+        command = 'ctl'
+    elif demo in ('moving_target'):
         to_generate = 'nuXmv'
         flags = ''
         command = 'ctl'
@@ -200,15 +205,16 @@ def demo_mode():
                 ansr_y_size = (ansr_vals[3] - ansr_vals[2]) + 1
             except:
                 pass
+    move_files(behaverify, demo, 'yes' if demo in uses_networks else '-', True)
     generate(behaverify, demo + '.tree', demo, to_generate, flags)
     if command != 'generate':
         evaluate(behaverify, demo, to_generate, command)
     ##### SPECIAL ZONE
     special_command = None
-    if demo == 'ISR':
+    if demo == 'moving_target':
         special_command = ' '.join([
             RESULTS_VENV,
-            HOME_DIR + '/behaverify/demos/ISR/parse_nuxmv_output.py',
+            HOME_DIR + '/behaverify/demos/moving_target/parse_nuxmv_output.py',
             USER_DIR + '/' + demo + '/output/nuxmv_ctl_results.txt',
             USER_DIR + '/' + demo + '/output/' + demo,
             str(ansr_x_size),
