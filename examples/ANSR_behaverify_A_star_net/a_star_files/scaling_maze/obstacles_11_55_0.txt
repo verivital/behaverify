@@ -1,0 +1,111 @@
+condition {(eq, index_var, 0)} assign{result{5}}condition {(eq, index_var, 1)} assign{result{6}}
+condition {(eq, index_var, 2)} assign{result{6}}condition {(eq, index_var, 3)} assign{result{6}}
+condition {(eq, index_var, 4)} assign{result{6}}condition {(eq, index_var, 5)} assign{result{5}}
+condition {(eq, index_var, 6)} assign{result{6}}condition {(eq, index_var, 7)} assign{result{4}}
+condition {(eq, index_var, 8)} assign{result{5}}condition {(eq, index_var, 9)} assign{result{4}}
+condition {(eq, index_var, 10)} assign{result{4}}condition {(eq, index_var, 11)} assign{result{4}}
+condition {(eq, index_var, 12)} assign{result{3}}condition {(eq, index_var, 13)} assign{result{4}}
+condition {(eq, index_var, 14)} assign{result{3}}condition {(eq, index_var, 15)} assign{result{5}}
+condition {(eq, index_var, 16)} assign{result{3}}condition {(eq, index_var, 17)} assign{result{6}}
+condition {(eq, index_var, 18)} assign{result{3}}condition {(eq, index_var, 19)} assign{result{7}}
+condition {(eq, index_var, 20)} assign{result{3}}condition {(eq, index_var, 21)} assign{result{8}}
+condition {(eq, index_var, 22)} assign{result{4}}condition {(eq, index_var, 23)} assign{result{8}}
+condition {(eq, index_var, 24)} assign{result{5}}condition {(eq, index_var, 25)} assign{result{8}}
+condition {(eq, index_var, 26)} assign{result{6}}condition {(eq, index_var, 27)} assign{result{8}}
+condition {(eq, index_var, 28)} assign{result{7}}condition {(eq, index_var, 29)} assign{result{8}}
+condition {(eq, index_var, 30)} assign{result{8}}condition {(eq, index_var, 31)} assign{result{8}}
+condition {(eq, index_var, 32)} assign{result{8}}condition {(eq, index_var, 33)} assign{result{7}}
+condition {(eq, index_var, 34)} assign{result{8}}condition {(eq, index_var, 35)} assign{result{6}}
+condition {(eq, index_var, 36)} assign{result{8}}condition {(eq, index_var, 37)} assign{result{5}}
+condition {(eq, index_var, 38)} assign{result{8}}condition {(eq, index_var, 39)} assign{result{4}}
+condition {(eq, index_var, 40)} assign{result{8}}condition {(eq, index_var, 41)} assign{result{3}}
+condition {(eq, index_var, 42)} assign{result{8}}condition {(eq, index_var, 43)} assign{result{2}}
+condition {(eq, index_var, 44)} assign{result{7}}condition {(eq, index_var, 45)} assign{result{2}}
+condition {(eq, index_var, 46)} assign{result{6}}condition {(eq, index_var, 47)} assign{result{2}}
+condition {(eq, index_var, 48)} assign{result{5}}condition {(eq, index_var, 49)} assign{result{2}}
+condition {(eq, index_var, 50)} assign{result{4}}condition {(eq, index_var, 51)} assign{result{2}}
+condition {(eq, index_var, 52)} assign{result{3}}condition {(eq, index_var, 53)} assign{result{2}}
+condition {(eq, index_var, 54)} assign{result{2}}condition {(eq, index_var, 55)} assign{result{2}}
+condition {(eq, index_var, 56)} assign{result{1}}condition {(eq, index_var, 57)} assign{result{2}}
+condition {(eq, index_var, 58)} assign{result{1}}condition {(eq, index_var, 59)} assign{result{3}}
+condition {(eq, index_var, 60)} assign{result{1}}condition {(eq, index_var, 61)} assign{result{4}}
+condition {(eq, index_var, 62)} assign{result{1}}condition {(eq, index_var, 63)} assign{result{5}}
+condition {(eq, index_var, 64)} assign{result{1}}condition {(eq, index_var, 65)} assign{result{6}}
+condition {(eq, index_var, 66)} assign{result{1}}condition {(eq, index_var, 67)} assign{result{7}}
+condition {(eq, index_var, 68)} assign{result{1}}condition {(eq, index_var, 69)} assign{result{8}}
+condition {(eq, index_var, 70)} assign{result{1}}condition {(eq, index_var, 71)} assign{result{9}}
+condition {(eq, index_var, 72)} assign{result{1}}condition {(eq, index_var, 73)} assign{result{10}}
+condition {(eq, index_var, 74)} assign{result{2}}condition {(eq, index_var, 75)} assign{result{10}}
+condition {(eq, index_var, 76)} assign{result{3}}condition {(eq, index_var, 77)} assign{result{10}}
+condition {(eq, index_var, 78)} assign{result{4}}condition {(eq, index_var, 79)} assign{result{10}}
+condition {(eq, index_var, 80)} assign{result{5}}condition {(eq, index_var, 81)} assign{result{10}}
+condition {(eq, index_var, 82)} assign{result{6}}condition {(eq, index_var, 83)} assign{result{10}}
+condition {(eq, index_var, 84)} assign{result{7}}condition {(eq, index_var, 85)} assign{result{10}}
+condition {(eq, index_var, 86)} assign{result{8}}condition {(eq, index_var, 87)} assign{result{10}}
+condition {(eq, index_var, 88)} assign{result{9}}condition {(eq, index_var, 89)} assign{result{10}}
+condition {(eq, index_var, 90)} assign{result{10}}condition {(eq, index_var, 91)} assign{result{10}}
+condition {(eq, index_var, 92)} assign{result{10}}condition {(eq, index_var, 93)} assign{result{9}}
+condition {(eq, index_var, 94)} assign{result{10}}condition {(eq, index_var, 95)} assign{result{8}}
+condition {(eq, index_var, 96)} assign{result{10}}condition {(eq, index_var, 97)} assign{result{7}}
+condition {(eq, index_var, 98)} assign{result{10}}condition {(eq, index_var, 99)} assign{result{6}}
+condition {(eq, index_var, 100)} assign{result{10}}condition {(eq, index_var, 101)} assign{result{5}}
+condition {(eq, index_var, 102)} assign{result{10}}condition {(eq, index_var, 103)} assign{result{4}}
+condition {(eq, index_var, 104)} assign{result{10}}condition {(eq, index_var, 105)} assign{result{3}}
+condition {(eq, index_var, 106)} assign{result{10}}condition {(eq, index_var, 107)} assign{result{2}}
+condition {(eq, index_var, 108)} assign{result{10}}condition {(eq, index_var, 109)} assign{result{1}}
+##################################################################
+condition {(eq, index_var, 0)} assign{result{0}}
+condition {(eq, index_var, 1)} assign{result{0}}
+condition {(eq, index_var, 2)} assign{result{0}}
+condition {(eq, index_var, 3)} assign{result{0}}
+condition {(eq, index_var, 4)} assign{result{0}}
+condition {(eq, index_var, 5)} assign{result{0}}
+condition {(eq, index_var, 6)} assign{result{0}}
+condition {(eq, index_var, 7)} assign{result{0}}
+condition {(eq, index_var, 8)} assign{result{0}}
+condition {(eq, index_var, 9)} assign{result{0}}
+condition {(eq, index_var, 10)} assign{result{0}}
+condition {(eq, index_var, 11)} assign{result{0}}
+condition {(eq, index_var, 12)} assign{result{0}}
+condition {(eq, index_var, 13)} assign{result{0}}
+condition {(eq, index_var, 14)} assign{result{0}}
+condition {(eq, index_var, 15)} assign{result{0}}
+condition {(eq, index_var, 16)} assign{result{0}}
+condition {(eq, index_var, 17)} assign{result{0}}
+condition {(eq, index_var, 18)} assign{result{0}}
+condition {(eq, index_var, 19)} assign{result{0}}
+condition {(eq, index_var, 20)} assign{result{0}}
+condition {(eq, index_var, 21)} assign{result{0}}
+condition {(eq, index_var, 22)} assign{result{0}}
+condition {(eq, index_var, 23)} assign{result{0}}
+condition {(eq, index_var, 24)} assign{result{0}}
+condition {(eq, index_var, 25)} assign{result{0}}
+condition {(eq, index_var, 26)} assign{result{0}}
+condition {(eq, index_var, 27)} assign{result{0}}
+condition {(eq, index_var, 28)} assign{result{0}}
+condition {(eq, index_var, 29)} assign{result{0}}
+condition {(eq, index_var, 30)} assign{result{0}}
+condition {(eq, index_var, 31)} assign{result{0}}
+condition {(eq, index_var, 32)} assign{result{0}}
+condition {(eq, index_var, 33)} assign{result{0}}
+condition {(eq, index_var, 34)} assign{result{0}}
+condition {(eq, index_var, 35)} assign{result{0}}
+condition {(eq, index_var, 36)} assign{result{0}}
+condition {(eq, index_var, 37)} assign{result{0}}
+condition {(eq, index_var, 38)} assign{result{0}}
+condition {(eq, index_var, 39)} assign{result{0}}
+condition {(eq, index_var, 40)} assign{result{0}}
+condition {(eq, index_var, 41)} assign{result{0}}
+condition {(eq, index_var, 42)} assign{result{0}}
+condition {(eq, index_var, 43)} assign{result{0}}
+condition {(eq, index_var, 44)} assign{result{0}}
+condition {(eq, index_var, 45)} assign{result{0}}
+condition {(eq, index_var, 46)} assign{result{0}}
+condition {(eq, index_var, 47)} assign{result{0}}
+condition {(eq, index_var, 48)} assign{result{0}}
+condition {(eq, index_var, 49)} assign{result{0}}
+condition {(eq, index_var, 50)} assign{result{0}}
+condition {(eq, index_var, 51)} assign{result{0}}
+condition {(eq, index_var, 52)} assign{result{0}}
+condition {(eq, index_var, 53)} assign{result{0}}
+condition {(eq, index_var, 54)} assign{result{0}}

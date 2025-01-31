@@ -1,0 +1,26 @@
+\begin{tikzpicture}
+\tikzset{level distance=22pt}
+\tikzset{sibling distance=0.5pt}
+\Tree[.\node[Parallel](parallel7){$parallel7$};
+[.\node[Parallel](parallel3){$parallel3$};
+[.\node[Selector](selector1){$selector1$};
+[.\node[Action](volatile1){$volatile1$};]
+[.\node[Action](token1){$token1$};]
+]
+[.\node[Selector](selector2){$selector2$};
+[.\node[Action](volatile2){$volatile2$};]
+[.\node[Action](token2){$token2$};]
+]
+]
+[.\node[Parallel](parallel6){$parallel6$};
+[.\node[Selector](selector4){$selector4$};
+[.\node[Action](volatile4){$volatile4$};]
+[.\node[Action](token4){$token4$};]
+]
+[.\node[Selector](selector5){$selector5$};
+[.\node[Action](volatile5){$volatile5$};]
+[.\node[Action](token5){$token5$};]
+]
+]
+]
+\end{tikzpicture}

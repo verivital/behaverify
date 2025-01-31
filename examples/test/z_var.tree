@@ -1,0 +1,70 @@
+configuration {
+}
+enumerations {
+}
+
+constants {
+    y_min := -10, x_min := -5, x_max := 10, y_max := 3
+}
+
+variables {
+    variable {
+	bl x VAR [x_min, x_max] assign{result{x_min}}
+    }
+    variable {
+	bl y VAR [y_min, y_max] assign{result{y_min}}
+    }
+    variable {
+	bl z VAR [0, 5] assign{result{3}}
+    }
+}
+
+environment_update {
+}
+
+checks {
+}
+
+environment_checks {
+}
+
+actions {
+    action {
+	test
+	arguments{}
+	local_variables{}
+	read_variables{}
+	write_variables{x, y, z}
+	initial_values{}
+	update{
+	    variable_statement {
+		x assign{
+		    case {(eq, y, 0)} result {0}
+		    result{
+			(loop, i, [1, x_max] such_that (eq, (mod, i, 2), 1),
+			    (loop, j, [(sub, y_min, x_min), (min, (mult, 3, y_max), x_max)] such_that True,
+				(min, x_max, (max, x_min, (sub, (mult, i, j), z)))
+			    )
+			)
+		    }
+		}
+	    }
+	    return_statement{result{success}}
+	}
+    }
+}
+
+
+sub_trees {
+}
+
+tree {
+    test {}
+}
+
+tick_prerequisite {
+    True
+}
+
+specifications {
+}

@@ -1,0 +1,18 @@
+\begin{tikzpicture}
+\tikzset{level distance=22pt}
+\tikzset{sibling distance=0.5pt}
+\Tree[.\node[Sequence](overall){$overall$};
+[.\node[Action](inc){$inc$};]
+[.\node[Parallel](parallel7){$parallel7$};
+[.\node[Parallel](parallel3){$parallel3$};
+[.\node[Action](leaf1){$leaf\_1$};]
+[.\node[Action](leaf2){$leaf\_2$};]
+]
+[.\node[Parallel](parallel6){$parallel6$};
+[.\node[Action](leaf4){$leaf\_4$};]
+[.\node[Action](leaf5){$leaf\_5$};]
+]
+]
+[.\node[Action](dec){$dec$};]
+]
+\end{tikzpicture}

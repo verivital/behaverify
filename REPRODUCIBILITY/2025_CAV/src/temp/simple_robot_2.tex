@@ -1,0 +1,22 @@
+\begin{tikzpicture}
+\tikzset{level distance=22pt}
+\tikzset{sibling distance=0.5pt}
+\Tree[.\node[Selector](moverobot){$move\_robot$};
+[.\node[Sequence](tryright){$try\_right$};
+[.\node[Check](xtoosmall){$x\_too\_small$};]
+[.\node[Action](goright){$go\_right$};]
+]
+[.\node[Sequence](tryleft){$try\_left$};
+[.\node[Check](xtoobig){$x\_too\_big$};]
+[.\node[Action](goleft){$go\_left$};]
+]
+[.\node[Sequence](tryup){$try\_up$};
+[.\node[Check](ytoosmall){$y\_too\_small$};]
+[.\node[Action](goup){$go\_up$};]
+]
+[.\node[Sequence](trydown){$try\_down$};
+[.\node[Check](ytoobig){$y\_too\_big$};]
+[.\node[Action](godown){$go\_down$};]
+]
+]
+\end{tikzpicture}

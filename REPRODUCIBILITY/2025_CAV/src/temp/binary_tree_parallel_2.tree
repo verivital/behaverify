@@ -1,0 +1,73 @@
+configuration {}
+enumerations {}
+constants { turn_limit := 10 } end_constants
+variables {
+    variable { bl yes_no VAR BOOLEAN assign { result {True} end_result} }
+    variable { bl counter VAR [0, turn_limit] assign { result {0} end_result} }
+}
+environment_update {}
+checks {
+} end_checks
+environment_checks {} end_environment_checks
+actions {
+    action {
+        change
+        arguments {val := INT}
+        local_variables {} end_local_variables
+        read_variables {} end_read_variables
+        write_variables { counter } end_write_variables
+        initial_values {} end_initial_values
+        update {
+            variable_statement { counter assign {result { (min, turn_limit, (max, 0, (add, counter, val))) } } } end_variable_statement
+            return_statement {result { success } } end_return_statement
+        } end_update
+    } end_action
+    action {
+        volatile
+        arguments {}
+        local_variables {} end_local_variables
+        read_variables {} end_read_variables
+        write_variables { yes_no } end_write_variables
+        initial_values {} end_initial_values
+        update {
+            variable_statement { yes_no assign {result { True, False } } } end_variable_statement
+            return_statement {case{yes_no}result { success } result{failure} } end_return_statement
+        } end_update
+    } end_action
+} end_actions
+sub_trees {#{ subtrees go here. }#} end_sub_trees
+tree {
+    composite {
+        overall sequence children{
+            inc : change {1}
+            composite {
+                parallel7
+                parallel policy success_on_one
+                children {
+                    composite {
+                        parallel3
+                        parallel policy success_on_one
+                        children {
+                            leaf_1 : volatile {}
+                            leaf_2 : volatile {}
+                        } end_children
+                    } end_composite
+                    composite {
+                        parallel6
+                        parallel policy success_on_one
+                        children {
+                            leaf_4 : volatile {}
+                            leaf_5 : volatile {}
+                        } end_children
+                    } end_composite
+                } end_children
+            } end_composite
+            dec : change {-1}
+        }
+    }
+} end_tree
+tick_prerequisite { True }
+specifications {
+    LTLSPEC { (finally, (globally, (eq, counter at 0, turn_limit))) } end_LTLSPEC
+    CTLSPEC { (always_finally, (always_globally, (eq, counter at 0, turn_limit))) } end_CTLSPEC
+} end_specifications

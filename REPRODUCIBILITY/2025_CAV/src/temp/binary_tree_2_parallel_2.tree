@@ -1,0 +1,83 @@
+configuration {}
+enumerations {}
+constants {} end_constants
+variables {
+    variable { bl yes_no VAR BOOLEAN assign { result {True} end_result} }
+}
+environment_update {}
+checks {
+} end_checks
+environment_checks {} end_environment_checks
+actions {
+    action {
+        token
+        arguments {}
+        local_variables {} end_local_variables
+        read_variables {} end_read_variables
+        write_variables {} end_write_variables
+        initial_values {} end_initial_values
+        update {
+            return_statement {result { success } } end_return_statement
+        } end_update
+    } end_action
+    action {
+        volatile
+        arguments {}
+        local_variables {} end_local_variables
+        read_variables {} end_read_variables
+        write_variables { yes_no } end_write_variables
+        initial_values {} end_initial_values
+        update {
+            variable_statement { yes_no assign {result { True, False } } } end_variable_statement
+            return_statement {case{yes_no}result { success } result{failure} } end_return_statement
+        } end_update
+    } end_action
+} end_actions
+sub_trees {#{ subtrees go here. }#} end_sub_trees
+tree {
+    composite {
+        parallel7
+        parallel policy success_on_one
+        children {
+            composite {
+                parallel3
+                parallel policy success_on_one
+                children {
+                    composite {
+                        selector1 selector children{ volatile1 : volatile {} token1 : token {}}
+                    }
+                    composite {
+                        selector2 selector children{ volatile2 : volatile {} token2 : token {}}
+                    }
+                } end_children
+            } end_composite
+            composite {
+                parallel6
+                parallel policy success_on_one
+                children {
+                    composite {
+                        selector4 selector children{ volatile4 : volatile {} token4 : token {}}
+                    }
+                    composite {
+                        selector5 selector children{ volatile5 : volatile {} token5 : token {}}
+                    }
+                } end_children
+            } end_composite
+        } end_children
+    } end_composite
+} end_tree
+tick_prerequisite { True }
+specifications {
+    INVARSPEC {(implies, (failure, volatile1 at -1), (success, token1 at -1))}
+    LTLSPEC { (globally, (implies, (failure, volatile1 at -1), (success, token1 at -1))) }
+    CTLSPEC { (always_globally, (implies, (failure, volatile1 at -1), (success, token1 at -1))) }
+    INVARSPEC {(implies, (failure, volatile2 at -1), (success, token2 at -1))}
+    LTLSPEC { (globally, (implies, (failure, volatile2 at -1), (success, token2 at -1))) }
+    CTLSPEC { (always_globally, (implies, (failure, volatile2 at -1), (success, token2 at -1))) }
+    INVARSPEC {(implies, (failure, volatile4 at -1), (success, token4 at -1))}
+    LTLSPEC { (globally, (implies, (failure, volatile4 at -1), (success, token4 at -1))) }
+    CTLSPEC { (always_globally, (implies, (failure, volatile4 at -1), (success, token4 at -1))) }
+    INVARSPEC {(implies, (failure, volatile5 at -1), (success, token5 at -1))}
+    LTLSPEC { (globally, (implies, (failure, volatile5 at -1), (success, token5 at -1))) }
+    CTLSPEC { (always_globally, (implies, (failure, volatile5 at -1), (success, token5 at -1))) }
+} end_specifications

@@ -1,6 +1,6 @@
 import sys
 from generate_data import generate_table
-from misc_util import extract_info
+from misc_util import extract_info, handle_path
 
 obstacle_path = sys.argv[1]
 (min_val, max_val, fly_at, number_of_obstacles, max_size) = extract_info(obstacle_path)

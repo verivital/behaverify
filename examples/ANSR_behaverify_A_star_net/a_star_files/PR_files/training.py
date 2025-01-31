@@ -69,7 +69,7 @@ def train(model, train_loader, criterion, optimizer, device):
     total_loss = 0
     for inputs, targets in train_loader:
         if SLEEP_MODE:
-            time.sleep(.005)
+            time.sleep(.001)
         inputs, targets = inputs.to(device), targets.to(device)
         optimizer.zero_grad()
         outputs = model(inputs)
