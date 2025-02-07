@@ -163,6 +163,8 @@ node:
         (
           (store_as = 'table')
           |
+          (store_as = 'real')
+	  |
 	  (store_as = 'float' total_size = code_statement)
 	  |
 	  (store_as = 'fixed_direct' total_size = code_statement decimal_size = code_statement)

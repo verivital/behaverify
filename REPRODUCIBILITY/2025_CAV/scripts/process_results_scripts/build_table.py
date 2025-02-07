@@ -31,7 +31,8 @@ encoding_combo = {
     'full_opt' : ['full_opt'],
     'simple_robot' : ['full_opt', 'full_opt_CHANGED'],
     'bigger_fish' : ['full_opt', 'full_opt_CHANGED'],
-    '2025_CAV_fish' : ['internal', 'no_internal']
+    '2025_CAV_fish' : ['internal', 'no_internal'],
+    'fake_opt' : ['',]
 }
 encoding_name_to_result_name = {
     'aut' : 'aut_',
@@ -46,7 +47,8 @@ encoding_name_to_result_name = {
     'first_opt' : 'first_opt_',
     'full_opt' : 'full_opt_',
     'full_opt_CHANGED' : 'full_opt_CHANGED_',
-    'internal' : 'internal_'
+    'internal' : 'internal_',
+    '' : 'full_opt_'
 }
 
 encoding_mark = {
@@ -64,6 +66,7 @@ encoding_mark = {
     'first_opt' : ('gray', '^'),
     'full_opt' : ('black', '*'),
     'full_opt_CHANGED' : ('blue', '^'),
+    '' : ('black', '*')
 }
 
 #reach = re.compile('reachable states: (?P<val1>\d+(\.\d+e\+\d+|)) \(2\^(?P<val2>\d+(\.\d+|))\) out of (?P<val3>\d+(\.\d+e\+\d+|)) \(2\^(?P<val4>\d+(\.\d+|))\)')
@@ -486,7 +489,10 @@ for encoding_code in encoding_codes:
             plt.ylabel(y_label)
             plt.xlabel(x_label)
             plt.title(title)
-            plt.legend(encodings)
+            if encodings[0] == '':
+                plt.legend(['BehaVerify',])
+            else:
+                plt.legend(encodings)
             plt.tight_layout()
             plt.savefig(PATH_DIRECTION + group_name + '/processed_data/pictures/' + encoding_code + '/' + file_name + '_' + file_end + '.png', bbox_inches = 'tight')
             print(PATH_DIRECTION + group_name + '/processed_data/pictures/' + encoding_code + '/' + file_name + '_' + file_end + '.png')

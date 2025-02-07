@@ -1,0 +1,121 @@
+configuration {
+}
+enumerations {
+}
+
+constants {
+    max_start := REPLACE_ME, max_val := 10000
+}
+
+variables {
+    variable {
+	bl x VAR [0, max_val]
+	assign{ result{
+		(loop, i, [1, max_start] such_that True, i)
+	    }
+	}
+    }
+}
+
+environment_update {
+}
+
+checks {
+    check {
+	a arguments {} read_variables {x}
+	condition{(eq, (mod, x, 2), 0)}
+    }
+}
+
+environment_checks {
+}
+
+actions {
+    action {
+	b arguments {} local_variables{}
+	read_variables{} write_variables{x}
+	initial_values{}
+	update{
+	    variable_statement {
+		x assign{result{(idiv, x, 2)}}
+	    }
+	    return_statement{
+		result{success}
+	    }
+	}
+    }
+    action {
+	c arguments {} local_variables{}
+	read_variables{} write_variables{x}
+	initial_values{}
+	update{
+	    variable_statement {
+		x
+		assign{
+		    case {(eq, x, 1)}
+		    result{
+			(loop, i, [1, max_start] such_that True, i)
+		    }
+		    result {x}
+		}
+	    }
+	    return_statement{
+		result{success}
+	    }
+	}
+    }
+    action {
+	d
+	arguments {}
+	local_variables{}
+	read_variables{}
+	write_variables{x}
+	initial_values{}
+	update{
+	    variable_statement {
+		x
+		assign{result{(min, max_val, (add, (mult, 3, x), 1))}}
+	    }
+	    return_statement{
+		result{success}
+	    }
+	}
+    }
+    
+}
+
+
+sub_trees {
+}
+
+tree {
+    composite {
+	sel
+	selector
+	children {
+	    composite {
+		seq
+		sequence
+		children {
+		    a {}
+		    b {}
+		    c {}
+		}
+	    }
+	    d {}
+	}
+    }	    
+}
+
+tick_prerequisite {
+    True
+}
+
+specifications {
+    #{    LTLSPEC{(globally, (finally, (eq, x at 1, 1)))}
+    LTLSPEC{(finally, (globally, (eq, x at 1, 1)))}}#
+    CTLSPEC{(always_globally, (always_finally, (eq, x at 1, 1)))}
+    #{CTLSPEC{(always_finally, (always_globally, (eq, x at 1, 1)))}
+    INVARSPEC{(gt, x at 3, 1)}
+    INVARSPEC{(gt, x at 1, 1)}}#
+}

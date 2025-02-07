@@ -1,0 +1,55 @@
+configuration {}
+enumerations {}
+constants {min_val := 0, max_val := 25} end_constants
+variables {
+    variable { bl v VAR [min_val, max_val] assign { result {0} end_result} }
+    variable { bl yes_no VAR BOOLEAN assign { result {False} end_result} }
+}
+environment_update {}
+checks {
+} end_checks
+environment_checks {} end_environment_checks
+actions {
+    action {
+        volatile
+        arguments {}
+        local_variables {} end_local_variables
+        read_variables {} end_read_variables
+        write_variables {v, yes_no } end_write_variables
+        initial_values {} end_initial_values
+        update {
+            variable_statement { yes_no assign {result { True, False } } } end_variable_statement
+            variable_statement { v assign {case{yes_no} result{(min, max_val, (add, v, 1))} result { v} } } end_variable_statement
+            return_statement {case{yes_no}result { success } result{failure} } end_return_statement
+        } end_update
+    } end_action
+} end_actions
+sub_trees {#{ subtrees go here. }#} end_sub_trees
+tree {
+    composite {
+        parallel7
+        parallel policy success_on_one
+        children {
+            composite {
+                parallel3
+                parallel policy success_on_one
+                children {
+                    leaf1 : volatile {}
+                    leaf2 : volatile {}
+                } end_children
+            } end_composite
+            composite {
+                parallel6
+                parallel policy success_on_one
+                children {
+                    leaf4 : volatile {}
+                    leaf5 : volatile {}
+                } end_children
+            } end_composite
+        } end_children
+    } end_composite
+} end_tree
+tick_prerequisite { True }
+specifications {
+    CTLSPEC {(exists_finally, (eq, v, max_val))}
+} end_specifications

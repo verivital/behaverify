@@ -1,7 +1,7 @@
 ;;; behaverify-mode-el -- Major mode for editing BehaVerify files
 
 ;; Author: Serena Aura Serbinowska
-;; Last Edit: 2023-09-19
+;; Last Edit: 2025-02-06
 ;; Keywords: BehaVerify major-mode
 
 ;;; Commentary:
@@ -32,13 +32,13 @@
 (defconst behaverify-font-lock-keywords-3
   (append behaverify-font-lock-keywords-2
 		  (list
-		   '("\\<\\(X_is_Y\\|arguments\\|c\\(?:hild\\(?:ren\\)?\\|onstant_index\\)\\|end_\\(?:arguments\\|child\\(?:ren\\)?\\|\\(?:local\\|read\\|write\\)_variables\\)\\|in\\(?:stant\\|verter\\)\\|local_variables\\|p\\(?:arallel\\|er_index\\|olicy\\)\\|r\\(?:ange\\|ead_variables\\)\\|s\\(?:e\\(?:lector\\|quence\\)\\|uccess_on_\\(?:all\\|one\\)\\)\\|w\\(?:ith_\\(?:\\(?:partial\\|true\\)_memory\\)\\|rite_variables\\)\\|[XY]\\)\\>" . font-lock-type-face)))
+		   '("\\<\\(X_is_Y\\|arguments\\|c\\(?:hild\\(?:ren\\)?\\|on\\(?:fig\\|stant_index\\)\\)\\|end_\\(?:arguments\\|c\\(?:hild\\(?:ren\\)?\\|onfig\\)\\|inputs\\|local_variables\\|read_variables\\|source\\|write_variables\\)\\|in\\(?:puts\\|stant\\|verter\\)\\|local_variables\\|p\\(?:arallel\\|er_index\\|olicy\\)\\|r\\(?:ange\\|ead_variables\\)\\|s\\(?:e\\(?:lector\\|quence\\)\\|ource\\|uccess_on_\\(?:all\\|one\\)\\)\\|w\\(?:ith_\\(?:\\(?:partial\\|true\\)_memory\\)\\|rite_variables\\)\\|[XY]\\)\\>" . font-lock-type-face)))
   "Additional Keywords to highlight in BehaVerify mode.")
 
 (defconst behaverify-font-lock-keywords-4
   (append behaverify-font-lock-keywords-3
 		  (list
-		   '("\\<\\(BOOLEAN\\|DEFINE\\|ENUM\\|FROZENVAR\\|INT\\|VAR\\|array\\|bl\\|en\\(?:d_\\(?:initial_values\\|re\\(?:\\(?:ad_environ\\|turn_state\\)ment\\)\\|update\\|variable\\(?:_statement\\)?\\|write_environment\\)\\|v\\)\\|initial_values\\|local\\|re\\(?:\\(?:ad_environ\\|turn_state\\)ment\\)\\|update\\|variable\\(?:_statement\\)?\\|write_environment\\)\\>" . font-lock-function-name-face)))
+		   '("\\<\\(BOOLEAN\\|DEFINE\\|ENUM\\|FROZENVAR\\|INT\\|NEURAL\\|REAL\\|VAR\\|array\\|bl\\|classification\\|en\\(?:d_\\(?:initial_values\\|re\\(?:\\(?:ad_environ\\|turn_state\\)ment\\)\\|update\\|variable\\(?:_statement\\)?\\|write_environment\\)\\|v\\)\\|initial_values\\|local\\|re\\(?:ad_environment\\|gression\\|turn_statement\\)\\|update\\|variable\\(?:_statement\\)?\\|write_environment\\)\\>" . font-lock-function-name-face)))
   "Additional Keywords to highlight in BehaVerify mode.")
 
 (defconst behaverify-font-lock-keywords-5
@@ -50,13 +50,13 @@
 (defconst behaverify-font-lock-keywords-6
   (append behaverify-font-lock-keywords-5
 		  (list
-		   '("\\<\\(a\\(?:bs\\|ctive\\|dd\\|lways_\\(?:finally\\|globally\\|next\\|until\\)\\|nd\\)\\|co\\(?:s\\|unt\\)\\|e\\(?:q\\(?:uivalent\\)?\\|x\\(?:ists_\\(?:finally\\|globally\\|next\\|until\\)\\|p\\)\\)\\|f\\(?:ailure\\|inally\\(?:_bounded\\)?\\|loor\\)\\|g\\(?:lobally\\(?:_bounded\\)?\\|te?\\)\\|historically\\(?:_bounded\\)?\\|i\\(?:div\\|mplies\\|ndex\\)\\|l\\(?:te\\|[nt]\\)\\|m\\(?:ax\\|in\\|od\\|ult\\)\\|n\\(?:e\\(?:xt\\|[gq]\\)\\|ot\\(?:_previous_not\\)?\\)\\|o\\(?:nce\\(?:_bounded\\)?\\|r\\)\\|previous\\|r\\(?:div\\|elease\\(?:_bounded\\)?\\|unning\\)\\|s\\(?:in\\(?:ce\\(?:_bounded\\)?\\)?\\|u\\(?:b\\|ccess\\)\\)\\|t\\(?:an\\|riggered\\(?:_bounded\\)?\\)\\|until\\(?:_bounded\\)?\\|x\\(?:n?or\\)\\)\\>" . font-lock-builtin-face)))
+		   '("\\<\\(a\\(?:bs\\|ctive\\|dd\\|lways_\\(?:finally\\|globally\\|next\\|until\\)\\|nd\\|t\\)\\|co\\(?:s\\|unt\\)\\|e\\(?:q\\(?:uivalent\\)?\\|x\\(?:ists_\\(?:finally\\|globally\\|next\\|until\\)\\|p\\)\\)\\|f\\(?:ailure\\|inally\\(?:_bounded\\)?\\|loor\\)\\|g\\(?:lobally\\(?:_bounded\\)?\\|te?\\)\\|historically\\(?:_bounded\\)?\\|i\\(?:div\\|mplies\\|ndex\\)\\|l\\(?:oop\\|te\\|[nt]\\)\\|m\\(?:ax\\|in\\|od\\|ult\\)\\|n\\(?:e\\(?:xt\\|[gq]\\)\\|ot\\(?:_previous_not\\)?\\)\\|o\\(?:nce\\(?:_bounded\\)?\\|r\\)\\|previous\\|r\\(?:div\\|elease\\(?:_bounded\\)?\\|unning\\)\\|s\\(?:in\\(?:ce\\(?:_bounded\\)?\\)?\\|u\\(?:b\\|c\\(?:cess\\|h_that\\)\\)\\)\\|t\\(?:an\\|riggered\\(?:_bounded\\)?\\)\\|until\\(?:_bounded\\)?\\|x\\(?:n?or\\)\\)\\>" . font-lock-builtin-face)))
   "Additional Keywords to highlight in BehaVerify mode.")
 
 (defconst behaverify-font-lock-keywords-7
   (append behaverify-font-lock-keywords-6
 		  (list
-		   '("\\<\\(False\\|True\\|failure\\|hypersafety\\|runnning\\|\\(?:succes\\|use_real\\)s\\)\\>" . font-lock-constant-face)))
+		   '("\\<\\(False\\|True\\|failure\\|hypersafety\\|neural\\|runnning\\|\\(?:succes\\|use_real\\)s\\)\\>" . font-lock-constant-face)))
   "Additional Keywords to highlight in BehaVerify mode.")
 
 (defvar behaverify-font-lock-keywords behaverify-font-lock-keywords-7

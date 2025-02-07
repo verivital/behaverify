@@ -4,12 +4,16 @@ enumerations {
 }
 
 constants {
+    max_start := 254, max_val := 10000
 }
 
 variables {
     variable {
-	bl x VAR [0, 50]
-	assign{ result{5}}
+	bl x VAR [0, max_val]
+	assign{ result{
+		(loop, i, [1, max_start] such_that True, i)
+	    }
+	}
     }
 }
 
@@ -50,7 +54,7 @@ actions {
 		assign{
 		    case {(eq, x, 1)}
 		    result{
-			3, 13
+			(loop, i, [1, max_start] such_that True, i)
 		    }
 		    result {x}
 		}
@@ -70,7 +74,7 @@ actions {
 	update{
 	    variable_statement {
 		x
-		assign{result{(min, 50, (add, (mult, 3, x), 1))}}
+		assign{result{(min, max_val, (add, (mult, 3, x), 1))}}
 	    }
 	    return_statement{
 		result{success}
@@ -108,4 +112,10 @@ tick_prerequisite {
 }
 
 specifications {
+    #{    LTLSPEC{(globally, (finally, (eq, x at 1, 1)))}
+    LTLSPEC{(finally, (globally, (eq, x at 1, 1)))}}#
+    CTLSPEC{(always_globally, (always_finally, (eq, x at 1, 1)))}
+    #{CTLSPEC{(always_finally, (always_globally, (eq, x at 1, 1)))}
+    INVARSPEC{(gt, x at 3, 1)}
+    INVARSPEC{(gt, x at 1, 1)}}#
 }
