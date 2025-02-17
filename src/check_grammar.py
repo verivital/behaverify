@@ -612,6 +612,7 @@ def validate_model(metamodel_file, model_file, recursion_limit, disable = False)
         return
 
     def validate_variable(variable, scopes, variable_names):
+        print(variable.name)
         trace.append('In Variable: ' + variable.name)
         if variable.model_as == 'NEURAL':
             if model.neural is None:
@@ -620,14 +621,22 @@ def validate_model(metamodel_file, model_file, recursion_limit, disable = False)
             num_inputs = 0
             for input_code in variable.inputs:
                 variable_func = build_meta_func_neural(input_code)
-                input_variables = variable_func((constants, {}))
-                for input_variable in input_variables:
-                    (atom_class, atom_type, _) = resolve_potential_reference(input_variable, declared_enumerations, all_node_names, variables, constants, {}, trace = trace)
-                    if atom_class not in ('VARIABLE', 'CONSTANT'):
-                        raise BTreeException(trace, 'Neural Network has an input of class: ' + str(atom_class) + '. Neural network inputs must be of class VARIABLE or CONSTANT')
-                    if atom_type != 'INT':
-                        raise BTreeException(trace, 'Neural Network inputs must be of type INT')
-                num_inputs += len(input_variables)
+                can_resolve = False
+                try:
+                    input_variables = variable_func((constants, {}))
+                    can_resolve = True
+                except:
+                    pass
+                if can_resolve:
+                    for input_variable in input_variables:
+                        (atom_class, atom_type, _) = resolve_potential_reference(input_variable, declared_enumerations, all_node_names, variables, constants, {}, trace = trace)
+                        if atom_class not in ('VARIABLE', 'CONSTANT'):
+                            raise BTreeException(trace, 'Neural Network has an input of class: ' + str(atom_class) + '. Neural network inputs must be of class VARIABLE or CONSTANT')
+                        if atom_type != 'INT':
+                            raise BTreeException(trace, 'Neural Network inputs must be of type INT')
+                    num_inputs += len(input_variables)
+                else:
+                    num_inputs += 1
             # SOURCE
             file_prefix = model_file.rsplit('/', 1)[0] if '/' in model_file else '.'
             source_func = build_meta_func(variable.source)
@@ -671,6 +680,7 @@ def validate_model(metamodel_file, model_file, recursion_limit, disable = False)
                 if atom_type != 'INT':
                     raise BTreeException(trace, 'Neural Network output size must be an INT')
             try:
+                print(num_inputs)
                 session = onnxruntime.InferenceSession(source)
                 input_name = session.get_inputs()[0].name
                 results = session.run(None, {input_name : [[0] * num_inputs]})

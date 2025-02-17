@@ -993,14 +993,26 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
                 depends_on = set()
                 domain_values = set()
                 input_order = []
+                has_a_function = False
                 for input_code in variable.inputs:
                     input_func = build_meta_func_neural(input_code)
-                    variable_inputs = input_func((constants, {}))
-                    for variable_input in variable_inputs:
-                        (atom_class, atom) = resolve_potential_reference_no_type(variable_input, declared_enumerations, {}, variables, constants, {})
-                        if atom_class == 'VARIABLE':
-                            depends_on.add(variable_reference(atom.name, False, None))
-                        input_order.append((atom_class, atom))
+                    can_resolve = False
+                    try:
+                        variable_inputs = input_func((constants, {}))
+                        can_resolve = True
+                    except:
+                        pass
+                    if can_resolve:
+                        for variable_input in variable_inputs:
+                            (atom_class, atom) = resolve_potential_reference_no_type(variable_input, declared_enumerations, {}, variables, constants, {})
+                            if atom_class == 'VARIABLE':
+                                depends_on.add(variable_reference(atom.name, False, None))
+                            input_order.append((atom_class, atom))
+                    else:
+                        temp_misc = create_misc_args({}, None, True, None, {}, False, False)
+                        depends_on.add(set(find_used_variables_without_formatting_in_code(input_code, temp_misc)))
+                        input_order.append(('FUNCTION', input_code))
+                        has_a_function = True
                 depends_on.discard(var_key)
                 behaverify_variables[var_key]['depends_on'] = tuple(sorted(list(depends_on)))
                 file_prefix = model_file.rsplit('/', 1)[0] if '/' in model_file else '.'
@@ -1018,6 +1030,11 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
                     session = onnxruntime.InferenceSession(source)
                     input_name = session.get_inputs()[0].name
                     list_of_list_of_inputs = create_possible_values(behaverify_variables[var_key]['depends_on'])
+                    if has_a_function:
+                        for list_of_inputs in list_of_list_of_inputs:
+                            for input_val in list_of_inputs:
+                                # FIND ME
+                                pass
                     if variable.neural_mode == 'regression':
                         cur_stage = []
                         for index in range(behaverify_variables[var_key]['array_size']):

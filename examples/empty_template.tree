@@ -1,0 +1,35 @@
+configuration {
+}
+enumerations {
+}
+
+constants {
+}
+
+variables {
+}
+
+environment_update {
+}
+
+checks {
+}
+
+environment_checks {
+}
+
+actions {
+}
+
+
+sub_trees {
+}
+
+tree {
+}
+
+tick_prerequisite {
+}
+
+specifications {
+}
