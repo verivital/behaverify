@@ -3,7 +3,7 @@ This module is part of BehaVerify and used to convert .tree files to .smv files 
 
 
 Author: Serena Serafina Serbinowska
-Last Edit: 2024-03-18
+Last Edit: 2025-02-24
 '''
 import math
 import argparse
@@ -289,7 +289,12 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
         if variable['mode'] == 'DEFINE':
             if overwrite_stage is not None and len(variable['next_value']) > 0:
                 return assemble_variable(variable['name'], compute_stage(variable_key, misc_args), trace_num, specification_writing)
-            used_vars = tuple(format_variable_non_object(behaverify_variables[dependent_variable_key], dependent_variable_key, misc_args) for dependent_variable_key in variable['depends_on'])
+            copied_args = copy_misc_args(misc_args)
+            copied_args['specification_writing'] = False # suppose we have a specification that created a new stage of a define variable
+            # that variable might then create a new stage for another variable.
+            # but, within that definition, we don't want to be including 'system.' as part of the name
+            # specification writing should only be true when we're formatting this variable.
+            used_vars = tuple(format_variable_non_object(behaverify_variables[dependent_variable_key], dependent_variable_key, copied_args) for dependent_variable_key in variable['depends_on'])
             if used_vars not in variable['existing_definitions']:
                 variable['existing_definitions'][used_vars] = len(variable['existing_definitions'])
             stage = variable['existing_definitions'][used_vars]
@@ -510,6 +515,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
 
     def handle_specifications(specifications):
         '''this handles specifications'''
+        print('Number of specifications: ' + str(len(specifications)))
         return [
             (
                 specification.spec_type
@@ -752,17 +758,35 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
             return find_used_variables_without_formatting_in_assign(statement.assign, create_misc_args(loop_references = {}, node_name = node_name, use_stages = False, overwrite_stage = False, define_substitutions = None, specification_writing = False, specification_warning = False))
 
         def create_possible_values(var_keys):
+            '''
+            Returns a list of list of values.
+            Each value is of the form (name, val).
+            Thus a whole thing would be like [[('a', 1), ('b', T)], [('a', 0), ('b', F)]]
+            '''
             # does not work with local variables. Doesn't need to; neural networks cannot be local, and therefore cannot depends on local variables.
             possible_values = []
+            # print('starting combinations for: ' + str(var_keys))
             for var_key in var_keys:
                 fix_domain_of_variable(var_key)
                 variable = behaverify_variables[var_key]
                 domain =  variable['custom_value_range'] if variable['custom_value_range'] is not None else set(range(variable['min_value'], variable['max_value'] + 1))
                 var_name = (var_key_to_obj[var_key]).name
+                # print(':::::::::::::::')
+                # print('Now generating combinations with: ' + var_key)
+                # print('current domain size: ' + str(len(domain)))
+                # print('prior combinations: ' + str(len(possible_values)))
                 if len(possible_values) == 0:
                     possible_values = [[(var_name, val)] for val in domain]
                 else:
                     possible_values = [[*old_val, (var_name, val)] for val in domain for old_val in possible_values]
+                # print('Finished generating combinations with: ' + var_key + '; there are now ' + str(len(possible_values)) + ' combinations')
+            # print('finished combinations for: ' + str(var_keys) + '; generated ' + str(len(possible_values)) + ' combinations')
+            # print('__FOR: ' + str(var_keys))
+            # for var_key in var_keys:
+            #     variable = behaverify_variables[var_key]
+            #     domain =  variable['custom_value_range'] if variable['custom_value_range'] is not None else set(range(variable['min_value'], variable['max_value'] + 1))
+            #     print(var_key + ': ' + str(len(domain)))
+            # print('__TOTAL: ' + str(len(possible_values)))
             return possible_values
         def possible_values_from_loop_array_index(loop_array_index, packaged_args, misc_args):
             loop_references = misc_args['loop_references']
@@ -784,16 +808,21 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
             for list_of_inputs in list_of_list_of_inputs:
                 new_loop_references = dict(list_of_inputs)
                 new_loop_references.update(loop_references)
+                # print(new_loop_references)
                 for value_func in value_funcs:
-                    domain_values.add(resolve_potential_reference_no_type(value_func((constants, loop_references))[0], declared_enumerations, {}, {}, constants, new_loop_references)[1])
+                    domain_values.add(resolve_potential_reference_no_type(value_func((constants, new_loop_references))[0], declared_enumerations, {}, {}, constants, new_loop_references)[1])
             return domain_values
         def fix_domain_of_variable(var_key):
             # does not work with local variables. Doesn't need to; neural networks cannot be local, and therefore cannot depends on local variables.
+            # print('Now fixing domain for: ' + var_key)
             variable = behaverify_variables[var_key]
             if variable['mode'] != 'DEFINE' or variable['custom_value_range'] is not None or variable['min_value'] is not None:
+                # print('DOMAIN ALREADY CORRECT')
                 return
             var_obj = var_key_to_obj[var_key]
             list_of_list_of_inputs = create_possible_values(variable['depends_on'])
+            # if var_key == 'distance':
+            #     print(list_of_list_of_inputs)
             if variable['array_size'] is not None:
                 domain_values = possible_values_from_assign(var_obj.default_value, list_of_list_of_inputs, {})
                 for loop_array_index in var_obj.assigns:
@@ -801,6 +830,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
             else:
                 domain_values = possible_values_from_assign(var_obj.assign, list_of_list_of_inputs, {})
             variable['custom_value_range'] = domain_values
+            # print('length of domain for ' + var_key + ': ' + str(len(domain_values)))
             return
         def fix_network_string(some_string):
             return some_string.replace('.', '_').replace('/', '_').replace('\\', '_').lower()
@@ -895,7 +925,13 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
             # binary_string = int_string + binary_string
             # # binary_string = ('0' * (int(network_total_bits) - len(binary_string))) + binary_string
             # return (negative, binary_string)
-
+        def shape_input(nn_input, input_shape):
+            '''
+            onnx requires input to be nested. Sometimes. For some reason.
+            '''
+            for _ in range(len(input_shape) - 1):
+                nn_input = [nn_input]
+            return nn_input
         # create each variable type using the template.
         nonlocal behaverify_variables  # this is necessary right now because we need to be able to access already created variables during other variable initializations.
         # specifically, if we make var A, and then var B depends on var A, it will assume var A is in behaverify_variables
@@ -993,7 +1029,6 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
                 depends_on = set()
                 domain_values = set()
                 input_order = []
-                has_a_function = False
                 for input_code in variable.inputs:
                     input_func = build_meta_func_neural(input_code)
                     can_resolve = False
@@ -1010,9 +1045,8 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
                             input_order.append((atom_class, atom))
                     else:
                         temp_misc = create_misc_args({}, None, True, None, {}, False, False)
-                        depends_on.add(set(find_used_variables_without_formatting_in_code(input_code, temp_misc)))
-                        input_order.append(('FUNCTION', input_code))
-                        has_a_function = True
+                        depends_on.update(set(find_used_variables_without_formatting_in_code(input_code, temp_misc)))
+                        input_order.append(('FUNCTION', input_func))
                 depends_on.discard(var_key)
                 behaverify_variables[var_key]['depends_on'] = tuple(sorted(list(depends_on)))
                 file_prefix = model_file.rsplit('/', 1)[0] if '/' in model_file else '.'
@@ -1029,12 +1063,11 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
                     define_substitutions[var_key] = 'SUBSTITUTE_SELF'
                     session = onnxruntime.InferenceSession(source)
                     input_name = session.get_inputs()[0].name
+                    input_shape = session.get_inputs()[0].shape
+                    print('attempting to create possible inputs to network: ' + var_key)
                     list_of_list_of_inputs = create_possible_values(behaverify_variables[var_key]['depends_on'])
-                    if has_a_function:
-                        for list_of_inputs in list_of_list_of_inputs:
-                            for input_val in list_of_inputs:
-                                # FIND ME
-                                pass
+                    # print(behaverify_variables['distance']['custom_value_range'])
+                    print('--finished')
                     if variable.neural_mode == 'regression':
                         cur_stage = []
                         for index in range(behaverify_variables[var_key]['array_size']):
@@ -1045,9 +1078,11 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
                             for (atom_class, atom) in input_order:
                                 if atom_class == 'VARIABLE':
                                     current_input.append(cur_ref[atom.name])
+                                elif atom_class == 'FUNCTION':
+                                    current_input.append(atom((constants, cur_ref)))
                                 else:
                                     current_input.append(atom)
-                            current_outputs = session.run(None, {input_name : [current_input]})
+                            current_outputs = session.run(None, {input_name : shape_input(current_input, input_shape)})
                             condition = ' & '.join(['(' + define_substitutions[variable_reference(var_name, False, None)] + ' = ' + str(var_val) + ')' for (var_name, var_val) in list_of_inputs])
                             for index in range(len(current_outputs[0][0])):
                                 output = int(current_outputs[0][0][index])
@@ -1064,18 +1099,22 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
                         for domain_code in variable.domain_codes:
                             domain_func = build_meta_func(domain_code)
                             values.extend(domain_func((constants, {})))
+                        print('running inputs to create table for network: ' + var_key + '; there are ' + str(len(list_of_list_of_inputs)) + ' combinations to try')
                         for list_of_inputs in list_of_list_of_inputs:
                             cur_ref = dict(list_of_inputs)
                             current_input = []
                             for (atom_class, atom) in input_order:
                                 if atom_class == 'VARIABLE':
                                     current_input.append(cur_ref[atom.name])
+                                elif atom_class == 'FUNCTION':
+                                    current_input += atom((constants, cur_ref))
                                 else:
                                     current_input.append(atom)
-                            current_outputs = session.run(None, {input_name : [current_input]})
+                            current_outputs = session.run(None, {input_name : shape_input(current_input, input_shape)})
                             condition = ' & '.join(['(' + define_substitutions[variable_reference(var_name, False, None)] + ' = ' + str(var_val) + ')' for (var_name, var_val) in list_of_inputs])
                             index = argmax(current_outputs[0][0])
                             cur_stage.append((condition, values[index]))
+                        print('--finished')
                         cur_stage.append(('TRUE', values[0])) # default value
                         behaverify_variables[var_key]['initial_value'] = (None, False, cur_stage)
                     else:
@@ -1138,11 +1177,11 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
                         if len(network_node.output) != 1:
                             raise BTreeException([], 'Expected 1 output from each layer (note: can have multiple outputs in the form of an array), got: ' + str(network_node.output))
                         layer_name = var_key + '___' + fix_network_string(network_node.output[0])
-                        print('---------------')
-                        print('layer: ', layer_name)
+                        # print('---------------')
+                        # print('layer: ', layer_name)
                         if network_node.op_type == 'Relu':
                             input_name = var_key + '___' + fix_network_string(network_node.input[0])
-                            print('input: ', input_name)
+                            # print('input: ', input_name)
                             known_sizes[layer_name] = known_sizes[var_key + '___' + fix_network_string(network_node.input[0])]
                             for index in range(known_sizes[layer_name]):
                                 cur_output_name = layer_name + '___value___' + str(index)
@@ -1161,9 +1200,9 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
                             input_name = var_key + '___' + fix_network_string(network_node.input[0])
                             weight_name = var_key + '___' + fix_network_string(network_node.input[1])
                             bias_name = var_key + '___' + fix_network_string(network_node.input[2])
-                            print('input: ', input_name)
-                            print('weight: ', weight_name)
-                            print('bias: ', bias_name)
+                            # print('input: ', input_name)
+                            # print('weight: ', weight_name)
+                            # print('bias: ', bias_name)
                             known_sizes[layer_name] = value_info[bias_name].dims[0] # Input * Weight + Biases, so can use either Weight or Biases for size of output.
                             bias_values = onnx.numpy_helper.to_array(value_info[bias_name])
                             weight_values = onnx.numpy_helper.to_array(value_info[weight_name])
@@ -1377,11 +1416,11 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
                         if len(network_node.output) != 1:
                             raise BTreeException([], 'Expected 1 output from each layer (note: can have multiple outputs in the form of an array), got: ' + str(network_node.output))
                         layer_name = var_key + '___' + fix_network_string(network_node.output[0])
-                        print('---------------')
-                        print('layer: ', layer_name)
+                        # print('---------------')
+                        # print('layer: ', layer_name)
                         if network_node.op_type == 'Relu':
                             input_name = var_key + '___' + fix_network_string(network_node.input[0])
-                            print('input: ', input_name)
+                            # print('input: ', input_name)
                             known_sizes[layer_name] = known_sizes[var_key + '___' + fix_network_string(network_node.input[0])]
                             for index in range(known_sizes[layer_name]):
                                 cur_output_name = layer_name + '___value___' + str(index)
@@ -1394,9 +1433,9 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
                             input_name = var_key + '___' + fix_network_string(network_node.input[0])
                             weight_name = var_key + '___' + fix_network_string(network_node.input[1])
                             bias_name = var_key + '___' + fix_network_string(network_node.input[2])
-                            print('input: ', input_name)
-                            print('weight: ', weight_name)
-                            print('bias: ', bias_name)
+                            # print('input: ', input_name)
+                            # print('weight: ', weight_name)
+                            # print('bias: ', bias_name)
                             known_sizes[layer_name] = value_info[bias_name].dims[0] # Input * Weight + Biases, so can use either Weight or Biases for size of output.
                             bias_values = onnx.numpy_helper.to_array(value_info[bias_name])
                             weight_values = onnx.numpy_helper.to_array(value_info[weight_name])
@@ -1529,11 +1568,11 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
                         if len(network_node.output) != 1:
                             raise BTreeException([], 'Expected 1 output from each layer (note: can have multiple outputs in the form of an array), got: ' + str(network_node.output))
                         layer_name = var_key + '___' + fix_network_string(network_node.output[0])
-                        print('---------------')
-                        print('layer: ', layer_name)
+                        # print('---------------')
+                        # print('layer: ', layer_name)
                         if network_node.op_type == 'Relu':
                             input_name = var_key + '___' + fix_network_string(network_node.input[0])
-                            print('input: ', input_name)
+                            # print('input: ', input_name)
                             known_sizes[layer_name] = known_sizes[var_key + '___' + fix_network_string(network_node.input[0])]
                             for index in range(known_sizes[layer_name]):
                                 cur_output_name = layer_name + '___value___' + str(index)
@@ -1543,9 +1582,9 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
                             input_name = var_key + '___' + fix_network_string(network_node.input[0])
                             weight_name = var_key + '___' + fix_network_string(network_node.input[1])
                             bias_name = var_key + '___' + fix_network_string(network_node.input[2])
-                            print('input: ', input_name)
-                            print('weight: ', weight_name)
-                            print('bias: ', bias_name)
+                            # print('input: ', input_name)
+                            # print('weight: ', weight_name)
+                            # print('bias: ', bias_name)
                             known_sizes[layer_name] = value_info[bias_name].dims[0] # Input * Weight + Biases, so can use either Weight or Biases for size of output.
                             bias_values = onnx.numpy_helper.to_array(value_info[bias_name])
                             weight_values = onnx.numpy_helper.to_array(value_info[weight_name])
@@ -1665,11 +1704,11 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
                         if len(network_node.output) != 1:
                             raise BTreeException([], 'Expected 1 output from each layer (note: can have multiple outputs in the form of an array), got: ' + str(network_node.output))
                         layer_name = var_key + '___' + fix_network_string(network_node.output[0])
-                        print('---------------')
-                        print('layer: ', layer_name)
+                        # print('---------------')
+                        # print('layer: ', layer_name)
                         if network_node.op_type == 'Relu':
                             input_name = var_key + '___' + fix_network_string(network_node.input[0])
-                            print('input: ', input_name)
+                            # print('input: ', input_name)
                             known_sizes[layer_name] = known_sizes[var_key + '___' + fix_network_string(network_node.input[0])]
                             for index in range(known_sizes[layer_name]):
                                 cur_output_name = layer_name + '___value___' + str(index)
@@ -1682,9 +1721,9 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
                             input_name = var_key + '___' + fix_network_string(network_node.input[0])
                             weight_name = var_key + '___' + fix_network_string(network_node.input[1])
                             bias_name = var_key + '___' + fix_network_string(network_node.input[2])
-                            print('input: ', input_name)
-                            print('weight: ', weight_name)
-                            print('bias: ', bias_name)
+                            # print('input: ', input_name)
+                            # print('weight: ', weight_name)
+                            # print('bias: ', bias_name)
                             known_sizes[layer_name] = value_info[bias_name].dims[0] # Input * Weight + Biases, so can use either Weight or Biases for size of output.
                             bias_values = onnx.numpy_helper.to_array(value_info[bias_name])
                             weight_values = onnx.numpy_helper.to_array(value_info[weight_name])
@@ -2048,6 +2087,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
     complete_environment_variables(model, True)
     resolve_statements(statements, nodes)
     complete_environment_variables(model, False)
+    # print(behaverify_variables['distance'])
     specifications = handle_specifications(model.specifications)
 
     for var_key in behaverify_variables:

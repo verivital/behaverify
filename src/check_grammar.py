@@ -683,7 +683,10 @@ def validate_model(metamodel_file, model_file, recursion_limit, disable = False)
                 print(num_inputs)
                 session = onnxruntime.InferenceSession(source)
                 input_name = session.get_inputs()[0].name
-                results = session.run(None, {input_name : [[0] * num_inputs]})
+                temp_inputs = [0] * num_inputs
+                for _ in range(len(session.get_inputs()[0].shape) - 1):
+                    temp_inputs = [temp_inputs]
+                results = session.run(None, {input_name : temp_inputs})
                 if len(results[0][0]) != num_outputs:
                     raise ValueError('Expected output to be of size ' + str(num_outputs))
             except Exception as error:

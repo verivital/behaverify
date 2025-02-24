@@ -117,6 +117,9 @@ def create_blackboard(nodes, variables, root_node_name):
                 False : write_cases(None, None, variable['default_array_val'][1], 5)
             }
             if variable['mode'] == 'DEFINE':
+                # print('------------------')
+                # print(variable['name'])
+                # print(variable['existing_definitions'])
                 if len(variable['existing_definitions']) == 0: # nothing to do.
                     continue
                 (_, constant_index, _, indexed_cond_pairs) = variable['initial_value']
@@ -257,6 +260,9 @@ def create_blackboard(nodes, variables, root_node_name):
             # NOT AN ARRAY
             # define are static.
             if variable['mode'] == 'DEFINE':
+                # print('------------------')
+                # print(variable['name'])
+                # print(variable['existing_definitions'])
                 if len(variable['existing_definitions']) == 0: # nothing to do.
                     continue
                 (_, _, condition_pairs) = variable['initial_value']

@@ -23,8 +23,8 @@ constants {
 variables {
     variable{bl command VAR {'clear', 'weak_left', 'weak_right', 'strong_left', 'strong_right'} assign{result{'clear'}}}
     #{}#
-    variable{env x VAR [(mult, max_dist, -1), max_dist] assign{result{4000}}}
-    variable{env y VAR [(mult, max_dist, -1), max_dist] assign{result{2000}}}
+    variable{env x VAR [-max_dist, max_dist] assign{result{4000}}}
+    variable{env y VAR [-max_dist, max_dist] assign{result{2000}}}
     variable{env heading_own VAR [0, 719] assign{result{0}}}
     variable{env heading_int VAR [0, 719] assign{result{40}}}
     variable{env speed_own DEFINE INT assign{result{25}}}
@@ -33,54 +33,54 @@ variables {
     variable{env speed_int VAR [min_velocity, max_velocity] assign{result{min_velocity}}}}#
     #{}#
     variable{env velocity_x_own DEFINE INT assign{
-	    result{1}
+	    REPLACE_VELOCITY_X_OWN
 	}
     }
     variable{env velocity_y_own DEFINE INT assign{
-	    result{1}
+	    REPLACE_VELOCITY_Y_OWN
 	}
     }
     variable{env velocity_x_int DEFINE INT assign{
-	    result{1}
+	    REPLACE_VELOCITY_X_INT
 	}
     }
     variable{env velocity_y_int DEFINE INT assign{
-	    result{1}
+	    REPLACE_VELOCITY_Y_INT
 	}
     }
     #{}#
     variable{env x_pos DEFINE INT assign{case{(gte, x, 0)}result{x} result{(mult, -1, x)}}}
     variable{env y_pos DEFINE INT assign{case{(gte, y, 0)}result{y} result{(mult, -1, y)}}}
-    variable{env distance DEFINE INT assign{
-	    result{1}
+    variable{env distance DEFINE INT assign {
+	    REPLACE_DISTANCE
 	}
     }
     variable{env zone DEFINE ENUM assign{
-	    case{(and, (gt, x, 0), (eq, y, 0))} result{'xpyz'}
-	    case{(and, (lt, x, 0), (eq, y, 0))} result{'xnyz'}
-	    case{(and, (eq, x, 0), (gt, y, 0))} result{'xzyp'}
-	    case{(and, (eq, x, 0), (lt, y, 0))} result{'xzyn'}
-	    case{(and, (gt, x, 0), (gt, y, 0))} result{'xpyp'}
-	    case{(and, (gt, x, 0), (lt, y, 0))} result{'xpyn'}
-	    case{(and, (lt, x, 0), (gt, y, 0))} result{'xnyp'}
-	    case{(and, (lt, x, 0), (lt, y, 0))} result{'xnyn'}
+	    case{(and, (gt, x, 0) (eq, y, 0))} result{'xpyz'}
+	    case{(and, (lt, x, 0) (eq, y, 0))} result{'xnyz'}
+	    case{(and, (eq, x, 0) (gt, y, 0))} result{'xzyp'}
+	    case{(and, (eq, x, 0) (lt, y, 0))} result{'xzyn'}
+	    case{(and, (gt, x, 0) (gt, y, 0))} result{'xpyp'}
+	    case{(and, (gt, x, 0) (lt, y, 0))} result{'xpyn'}
+	    case{(and, (lt, x, 0) (gt, y, 0))} result{'xnyp'}
+	    case{(and, (lt, x, 0) (lt, y, 0))} result{'xnyn'}
 	    result {'xpyp'}
 	}
     }
     variable{env arctan_val_xpyp DEFINE INT assign{
-	    result{1}
+	    REPLACE_XPYP
 	}
     }
     variable{env arctan_val_xpyn DEFINE INT assign{
-	    result{1}
+	    REPLACE_XPYN
 	}
     }
     variable{env arctan_val_xnyp DEFINE INT assign{
-	    result{1}
+	    REPLACE_XNYP
 	}
     }
     variable{env arctan_val_xnyn DEFINE INT assign{
-	    result{1}
+	    REPLACE_XNYN
 	}
     }
     variable{env arctan_val DEFINE INT assign{
@@ -221,7 +221,7 @@ actions {
 	call_1_1
 	arguments {}
 	local_variables {}
-	read_variables {}
+	read_variables {network_1_1}
 	write_variables {command}
 	initial_values{}
 	update {
@@ -236,7 +236,7 @@ actions {
 	call_2_1
 	arguments {}
 	local_variables {}
-	read_variables {}
+	read_variables {network_2_1}
 	write_variables {command}
 	initial_values{}
 	update {
@@ -251,7 +251,7 @@ actions {
 	call_3_1
 	arguments {}
 	local_variables {}
-	read_variables {}
+	read_variables {network_3_1}
 	write_variables {command}
 	initial_values{}
 	update {
@@ -265,7 +265,7 @@ actions {
     action {
 	call_4_1
 	arguments {}
-	local_variables {}
+	local_variables {network_4_1}
 	read_variables {}
 	write_variables {command}
 	initial_values{}
@@ -281,7 +281,7 @@ actions {
 	call_5_1
 	arguments {}
 	local_variables {}
-	read_variables {}
+	read_variables {network_5_1}
 	write_variables {command}
 	initial_values{}
 	update {
@@ -343,8 +343,7 @@ tree {
 		    call_5_1 {}
 		}
 	    }
-	}
-    }
+	    
 }
 
 tick_prerequisite {

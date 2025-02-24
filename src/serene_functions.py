@@ -71,7 +71,7 @@ def serene_if(function_call):
     true_func = build_meta_func(function_call.values[1])
     false_func = build_meta_func(function_call.values[2])
     def evaluate_if(references):
-        return (true_func(references) if cond_func(references) else false_func(references))
+        return (true_func(references) if cond_func(references)[0] else false_func(references))
     return evaluate_if
 
 def create_lambda_to_apply_function(function, unpack, values):
