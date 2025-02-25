@@ -1,8 +1,8 @@
 import math
 import os
 
-SPEED_OWN = 100
-SPEED_INT = 100
+SPEED_OWN = 20
+SPEED_INT = 30
 MAX_DIST = 1000
 DISTANCE_MODIFIER = 100
 
@@ -141,7 +141,7 @@ def handle_velocity(own, x_mode):
     velocities = [
         (
             (a, (SPEED_OWN if own else SPEED_INT)),
-            round((math.cos(math.radians(a)) if x_mode else math.sin(math.radians(a))) * SPEED_OWN)
+            round((math.cos(math.radians(a)) if x_mode else math.sin(math.radians(a))) * (SPEED_OWN if own else SPEED_INT))
         )
         for a in range(360)
     ]
