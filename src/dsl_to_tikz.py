@@ -430,10 +430,10 @@ def write_files(metamodel_file, model_file, output_file, recursion_limit):
         'index' : ('index', format_function_index)
     }
 
-    (model, variables, constants, declared_enumerations) = validate_model(metamodel_file, model_file, recursion_limit)
+    (model, variables, constants, declared_enumerations) = validate_model(metamodel_file, model_file, recursion_limit, True)
     variable_array_size_map = {
         variable.name : variable_array_size(variable, declared_enumerations, {}, variables, constants, {})
-        for variable in model.variables if is_array(variable) or (variable.model_as == 'NEURAL')
+        for variable in model.variables if is_array(variable)# or (variable.model_as == 'NEURAL')
     }
     loop_references = {}
 

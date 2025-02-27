@@ -1,0 +1,186 @@
+MODULE main
+    VAR
+        system : system_module;
+--------------SPECIFICATIONS
+
+INVARSPEC (system.distance_stage_0 >= 200);
+
+--------------END OF SPECIFICATIONS
+
+MODULE system_module
+    CONSTANTS
+        success, failure, running, invalid, xpyz, xpyp, weak_left, clear, xzyn, xpyn, xnyp, weak_right, xnyn, strong_left, xzyp, strong_right, xnyz;
+    DEFINE
+        resume_from_here_in_subtree__acasxu := -3;
+        acasxu.active := TRUE;
+        --START OF BLACKBOARD DEFINITIONS
+        command_stage_1 :=
+            case
+                !(call_1_1.active) : command_stage_0;
+                TRUE : network_1_1_stage_0;
+            esac;
+        command_stage_2 :=
+            case
+                !(call_2_1.active) : command_stage_1;
+                TRUE : network_2_1_stage_0;
+            esac;
+        command_stage_3 :=
+            case
+                !(call_3_1.active) : command_stage_2;
+                TRUE : network_3_1_stage_0;
+            esac;
+        command_stage_4 :=
+            case
+                !(call_4_1.active) : command_stage_3;
+                TRUE : network_4_1_stage_0;
+            esac;
+        distance_stage_0 := 10000;
+        relative_angle_stage_0 := 0;
+        intersect_angle_stage_0 := 90;
+        speed_own_stage_0 := 500;
+        speed_int_stage_0 := 700;
+        network_1_1_stage_0 :=
+            case
+                (distance_stage_0 = 10000) & (intersect_angle_stage_0 = 90) & (relative_angle_stage_0 = 0) & (speed_int_stage_0 = 700) & (speed_own_stage_0 = 500) : weak_left;
+                TRUE : clear;
+            esac;
+        network_2_1_stage_0 :=
+            case
+                (distance_stage_0 = 10000) & (intersect_angle_stage_0 = 90) & (relative_angle_stage_0 = 0) & (speed_int_stage_0 = 700) & (speed_own_stage_0 = 500) : weak_right;
+                TRUE : clear;
+            esac;
+        network_3_1_stage_0 :=
+            case
+                (distance_stage_0 = 10000) & (intersect_angle_stage_0 = 90) & (relative_angle_stage_0 = 0) & (speed_int_stage_0 = 700) & (speed_own_stage_0 = 500) : weak_left;
+                TRUE : clear;
+            esac;
+        network_4_1_stage_0 :=
+            case
+                (distance_stage_0 = 10000) & (intersect_angle_stage_0 = 90) & (relative_angle_stage_0 = 0) & (speed_int_stage_0 = 700) & (speed_own_stage_0 = 500) : weak_right;
+                TRUE : clear;
+            esac;
+        network_5_1_stage_0 :=
+            case
+                (distance_stage_0 = 10000) & (intersect_angle_stage_0 = 90) & (relative_angle_stage_0 = 0) & (speed_int_stage_0 = 700) & (speed_own_stage_0 = 500) : weak_left;
+                TRUE : clear;
+            esac;
+        --END OF BLACKBOARD DEFINITIONS
+    VAR
+        node_names : define_nodes;
+        if_was_clear : if_was_clear_module(command_stage_0);
+        call_1_1 : success_DEFAULT_module();
+        seq_1_1 : composite_sequence_without_memory_2(if_was_clear, call_1_1);
+        if_was_weak_right : if_was_weak_right_module(command_stage_1);
+        call_2_1 : success_DEFAULT_module();
+        seq_2_1 : composite_sequence_without_memory_2(if_was_weak_right, call_2_1);
+        if_was_weak_left : if_was_weak_left_module(command_stage_2);
+        call_3_1 : success_DEFAULT_module();
+        seq_3_1 : composite_sequence_without_memory_2(if_was_weak_left, call_3_1);
+        if_was_strong_right : if_was_strong_right_module(command_stage_3);
+        call_4_1 : success_DEFAULT_module();
+        seq_4_1 : composite_sequence_without_memory_2(if_was_strong_right, call_4_1);
+        if_was_strong_left : if_was_strong_left_module(command_stage_4);
+        call_5_1 : success_DEFAULT_module();
+        seq_5_1 : composite_sequence_without_memory_2(if_was_strong_left, call_5_1);
+        acasxu : composite_selector_without_memory_5(seq_1_1, seq_2_1, seq_3_1, seq_4_1, seq_5_1);
+        --START OF BLACKBOARD VARIABLES DECLARATION
+        command_stage_0 : {weak_left, clear, weak_right, strong_left, strong_right};
+        --END OF BLACKBOARD VARIABLES DECLARATION
+    ASSIGN
+        --START OF BLACKBOARD VARIABLES INITIALIZATION
+        init(command_stage_0) := {clear, weak_left, weak_right, strong_left, strong_right};
+        --END OF BLACKBOARD VARIABLES INITIALIZATION
+        --START OF BLACKBOARD VARIABLES TRANSITION
+        next(command_stage_0) :=
+            case
+                !(call_5_1.active) : command_stage_4;
+                TRUE : network_5_1_stage_0;
+            esac;
+        --END OF BLACKBOARD VARIABLES TRANSITION
+
+MODULE define_nodes
+    DEFINE
+        acasxu := 0;
+        seq_1_1 := 1;
+        if_was_clear := 2;
+        call_1_1 := 3;
+        seq_2_1 := 4;
+        if_was_weak_right := 5;
+        call_2_1 := 6;
+        seq_3_1 := 7;
+        if_was_weak_left := 8;
+        call_3_1 := 9;
+        seq_4_1 := 10;
+        if_was_strong_right := 11;
+        call_4_1 := 12;
+        seq_5_1 := 13;
+        if_was_strong_left := 14;
+        call_5_1 := 15;
+MODULE composite_selector_without_memory_5(child_0, child_1, child_2, child_3, child_4)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                !(child_0.internal_status = failure) : child_0.internal_status;
+                !(child_1.internal_status = failure) : child_1.internal_status;
+                !(child_2.internal_status = failure) : child_2.internal_status;
+                !(child_3.internal_status = failure) : child_3.internal_status;
+                !(child_4.internal_status = failure) : child_4.internal_status;
+                TRUE : failure;
+            esac;
+        child_0.active := active;
+        child_1.active := child_0.status = failure;
+        child_2.active := child_1.status = failure;
+        child_3.active := child_2.status = failure;
+        child_4.active := child_3.status = failure;
+MODULE composite_sequence_without_memory_2(child_0, child_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                !(child_0.internal_status = success) : child_0.internal_status;
+                !(child_1.internal_status = success) : child_1.internal_status;
+                TRUE : success;
+            esac;
+        child_0.active := active;
+        child_1.active := child_0.status = success;
+MODULE if_was_clear_module(command_stage_0)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := ((clear = command_stage_0)) ? success : failure;
+MODULE if_was_weak_right_module(command_stage_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := ((weak_right = command_stage_1)) ? success : failure;
+MODULE if_was_weak_left_module(command_stage_2)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := ((weak_left = command_stage_2)) ? success : failure;
+MODULE if_was_strong_right_module(command_stage_3)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := ((strong_right = command_stage_3)) ? success : failure;
+MODULE if_was_strong_left_module(command_stage_4)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := ((strong_left = command_stage_4)) ? success : failure;
+MODULE success_DEFAULT_module
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := success;

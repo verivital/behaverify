@@ -798,8 +798,8 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
             domain_values = set()
             value_funcs = []
             for case_result in assign.case_results:
-                value_funcs.append(build_meta_func(case_result.values[0]))
-            value_funcs.append(build_meta_func(assign.default_result.values[0]))
+                value_funcs.append(build_meta_func_neural(case_result.values[0]))
+            value_funcs.append(build_meta_func_neural(assign.default_result.values[0]))
             if len(list_of_list_of_inputs) == 0:
                 # the value would appear to be a constant
                 # we can compute this directly then.
@@ -814,15 +814,18 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
             return domain_values
         def fix_domain_of_variable(var_key):
             # does not work with local variables. Doesn't need to; neural networks cannot be local, and therefore cannot depends on local variables.
-            # print('Now fixing domain for: ' + var_key)
+            print('Now fixing domain for: ' + var_key)
             variable = behaverify_variables[var_key]
             if variable['mode'] != 'DEFINE' or variable['custom_value_range'] is not None or variable['min_value'] is not None:
-                # print('DOMAIN ALREADY CORRECT')
+                print('DOMAIN ALREADY CORRECT')
                 return
             var_obj = var_key_to_obj[var_key]
             list_of_list_of_inputs = create_possible_values(variable['depends_on'])
+            # print('???')
+            # print(list_of_list_of_inputs)
             # if var_key == 'distance':
             #     print(list_of_list_of_inputs)
+            # print('hi' + var_key)
             if variable['array_size'] is not None:
                 domain_values = possible_values_from_assign(var_obj.default_value, list_of_list_of_inputs, {})
                 for loop_array_index in var_obj.assigns:
@@ -1066,6 +1069,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
                     input_shape = session.get_inputs()[0].shape
                     print('attempting to create possible inputs to network: ' + var_key)
                     list_of_list_of_inputs = create_possible_values(behaverify_variables[var_key]['depends_on'])
+                    # print(behaverify_variables[var_key]['depends_on'])
                     # print(behaverify_variables['distance']['custom_value_range'])
                     print('--finished')
                     if variable.neural_mode == 'regression':

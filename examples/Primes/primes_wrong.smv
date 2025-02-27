@@ -1,0 +1,154 @@
+MODULE main
+    VAR
+        system : system_module;
+--------------SPECIFICATIONS
+
+INVARSPEC ((system.prime_checker.status = success) -> ((((0 = 2) | (0 = 3) | (0 = 5) | (0 = 7)) = ((system.prime_array_stage_0_index_0 = 2) | (system.prime_array_stage_0_index_0 = 3) | (system.prime_array_stage_0_index_0 = 5) | (system.prime_array_stage_0_index_0 = 7))) & (((1 = 2) | (1 = 3) | (1 = 5) | (1 = 7)) = ((system.prime_array_stage_0_index_1 = 2) | (system.prime_array_stage_0_index_1 = 3) | (system.prime_array_stage_0_index_1 = 5) | (system.prime_array_stage_0_index_1 = 7))) & (((2 = 2) | (2 = 3) | (2 = 5) | (2 = 7)) = ((system.prime_array_stage_0_index_2 = 2) | (system.prime_array_stage_0_index_2 = 3) | (system.prime_array_stage_0_index_2 = 5) | (system.prime_array_stage_0_index_2 = 7))) & (((3 = 2) | (3 = 3) | (3 = 5) | (3 = 7)) = ((system.prime_array_stage_0_index_3 = 2) | (system.prime_array_stage_0_index_3 = 3) | (system.prime_array_stage_0_index_3 = 5) | (system.prime_array_stage_0_index_3 = 7))) & (((4 = 2) | (4 = 3) | (4 = 5) | (4 = 7)) = ((system.prime_array_stage_0_index_4 = 2) | (system.prime_array_stage_0_index_4 = 3) | (system.prime_array_stage_0_index_4 = 5) | (system.prime_array_stage_0_index_4 = 7)))));
+CTLSPEC (((((0 = 2) | (0 = 3) | (0 = 5) | (0 = 7)) = ((system.prime_array_stage_0_index_0 = 2) | (system.prime_array_stage_0_index_0 = 3) | (system.prime_array_stage_0_index_0 = 5) | (system.prime_array_stage_0_index_0 = 7))) & (((1 = 2) | (1 = 3) | (1 = 5) | (1 = 7)) = ((system.prime_array_stage_0_index_1 = 2) | (system.prime_array_stage_0_index_1 = 3) | (system.prime_array_stage_0_index_1 = 5) | (system.prime_array_stage_0_index_1 = 7))) & (((2 = 2) | (2 = 3) | (2 = 5) | (2 = 7)) = ((system.prime_array_stage_0_index_2 = 2) | (system.prime_array_stage_0_index_2 = 3) | (system.prime_array_stage_0_index_2 = 5) | (system.prime_array_stage_0_index_2 = 7))) & (((3 = 2) | (3 = 3) | (3 = 5) | (3 = 7)) = ((system.prime_array_stage_0_index_3 = 2) | (system.prime_array_stage_0_index_3 = 3) | (system.prime_array_stage_0_index_3 = 5) | (system.prime_array_stage_0_index_3 = 7))) & (((4 = 2) | (4 = 3) | (4 = 5) | (4 = 7)) = ((system.prime_array_stage_0_index_4 = 2) | (system.prime_array_stage_0_index_4 = 3) | (system.prime_array_stage_0_index_4 = 5) | (system.prime_array_stage_0_index_4 = 7)))) <-> AF((system.prime_checker.status = success)));
+
+--------------END OF SPECIFICATIONS
+
+MODULE system_module
+    CONSTANTS
+        success, failure, running, invalid, prime, use_array, not_prime, use_index;
+    DEFINE
+        resume_from_here_in_subtree__prime_checker := -3;
+        prime_checker.active := TRUE;
+        --START OF BLACKBOARD DEFINITIONS
+        network_input_source_stage_1 :=
+            case
+                !(run_network_index.active) : network_input_source_stage_0;
+                TRUE : use_index;
+            esac;
+        network_input_source_stage_2 :=
+            case
+                !(run_network_index.active) : network_input_source_stage_1;
+                TRUE : use_array;
+            esac;
+        network_input_stage_0 :=
+            case
+                (network_input_source_stage_1 = use_index) : index_var_stage_0;
+                TRUE : (case 0 = index_var_stage_0 : prime_array_stage_0_index_0; 1 = index_var_stage_0 : prime_array_stage_0_index_1; 2 = index_var_stage_0 : prime_array_stage_0_index_2; 3 = index_var_stage_0 : prime_array_stage_0_index_3; 4 = index_var_stage_0 : prime_array_stage_0_index_4; esac);
+            esac;
+        network_input_stage_1 :=
+            case
+                (network_input_source_stage_2 = use_index) : index_var_stage_0;
+                TRUE : (case 0 = index_var_stage_0 : prime_array_stage_0_index_0; 1 = index_var_stage_0 : prime_array_stage_0_index_1; 2 = index_var_stage_0 : prime_array_stage_0_index_2; 3 = index_var_stage_0 : prime_array_stage_0_index_3; 4 = index_var_stage_0 : prime_array_stage_0_index_4; esac);
+            esac;
+        network_stage_0 :=
+            case
+                (network_input_stage_0 = 0) : not_prime;
+                (network_input_stage_0 = 1) : not_prime;
+                (network_input_stage_0 = 2) : prime;
+                (network_input_stage_0 = 3) : prime;
+                (network_input_stage_0 = 4) : prime;
+                (network_input_stage_0 = 5) : prime;
+                (network_input_stage_0 = 6) : not_prime;
+                (network_input_stage_0 = 7) : not_prime;
+                (network_input_stage_0 = 8) : not_prime;
+                (network_input_stage_0 = 9) : not_prime;
+                TRUE : not_prime;
+            esac;
+        network_stage_1 :=
+            case
+                (network_input_stage_1 = 0) : not_prime;
+                (network_input_stage_1 = 1) : not_prime;
+                (network_input_stage_1 = 2) : prime;
+                (network_input_stage_1 = 3) : prime;
+                (network_input_stage_1 = 4) : prime;
+                (network_input_stage_1 = 5) : prime;
+                (network_input_stage_1 = 6) : not_prime;
+                (network_input_stage_1 = 7) : not_prime;
+                (network_input_stage_1 = 8) : not_prime;
+                (network_input_stage_1 = 9) : not_prime;
+                TRUE : not_prime;
+            esac;
+        output_stage_1 :=
+            case
+                !(run_network_index.active) : output_stage_0;
+                TRUE : network_stage_0;
+            esac;
+        --END OF BLACKBOARD DEFINITIONS
+    FROZENVAR
+        --START OF BLACKBOARD FROZENVAR
+        prime_array_stage_0_index_0 : 0..9;
+        prime_array_stage_0_index_1 : 0..9;
+        prime_array_stage_0_index_2 : 0..9;
+        prime_array_stage_0_index_3 : 0..9;
+        prime_array_stage_0_index_4 : 0..9;
+        --END OF BLACKBOARD FROZENVAR
+    VAR
+        node_names : define_nodes;
+        run_network_index : success_DEFAULT_module();
+        same_output : same_output_module(network_stage_1, output_stage_1);
+        update_index : update_index_module(index_var_stage_0);
+        prime_checker : composite_sequence_without_memory_3(run_network_index, same_output, update_index);
+        --START OF BLACKBOARD VARIABLES DECLARATION
+        index_var_stage_0 : 0..4;
+        network_input_source_stage_0 : {use_array, use_index};
+        output_stage_0 : {not_prime, prime};
+        --END OF BLACKBOARD VARIABLES DECLARATION
+    ASSIGN
+        --START OF BLACKBOARD VARIABLES INITIALIZATION
+        init(index_var_stage_0) := 0;
+        init(prime_array_stage_0_index_0) := {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+        init(prime_array_stage_0_index_1) := {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+        init(prime_array_stage_0_index_2) := {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+        init(prime_array_stage_0_index_3) := {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+        init(prime_array_stage_0_index_4) := {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+        init(network_input_source_stage_0) := use_index;
+        init(output_stage_0) := prime;
+        --END OF BLACKBOARD VARIABLES INITIALIZATION
+        --START OF BLACKBOARD VARIABLES TRANSITION
+        next(index_var_stage_0) :=
+            case
+                !(update_index.active) : index_var_stage_0;
+                TRUE : min((5 - 1), (index_var_stage_0 + 1));
+            esac;
+        next(network_input_source_stage_0) := network_input_source_stage_2;
+        next(output_stage_0) := output_stage_1;
+        --END OF BLACKBOARD VARIABLES TRANSITION
+
+MODULE define_nodes
+    DEFINE
+        prime_checker := 0;
+        run_network_index := 1;
+        same_output := 2;
+        update_index := 3;
+MODULE composite_sequence_without_memory_3(child_0, child_1, child_2)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                !(child_0.internal_status = success) : child_0.internal_status;
+                !(child_1.internal_status = success) : child_1.internal_status;
+                !(child_2.internal_status = success) : child_2.internal_status;
+                TRUE : success;
+            esac;
+        child_0.active := active;
+        child_1.active := child_0.status = success;
+        child_2.active := child_1.status = success;
+MODULE same_output_module(network_stage_1, output_stage_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := ((network_stage_1 = output_stage_1)) ? success : failure;
+MODULE update_index_module(index_var_stage_0)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := 
+            case
+                (index_var_stage_0 = (5 - 1)) : success;
+                TRUE : running;
+            esac;
+MODULE success_DEFAULT_module
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := success;

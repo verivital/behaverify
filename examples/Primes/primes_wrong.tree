@@ -1,0 +1,166 @@
+configuration {
+    neural
+}
+enumerations {
+    'use_index', 'use_array', 'not_prime', 'prime'
+}
+
+constants {
+    prime_cap := 9,
+    array_size := 5
+}
+
+variables {
+    variable{
+	bl index_var VAR [0, (sub, array_size, 1)] assign{result{0}}
+    }
+    variable{
+	bl prime_array FROZENVAR [0, prime_cap] array array_size default {assign{result{(loop, i, [0, prime_cap] such_that True, i)}}} constant_index
+    }
+    variable{
+	bl network_input_source VAR {'use_index', 'use_array'} assign{result{use_index}}
+    }
+    variable{
+	bl network_input DEFINE INT assign{
+	    case{(eq, network_input_source, 'use_index')}result{index_var}
+	    result{(index, prime_array, index_var)}
+	}
+    }
+    variable {
+	bl network NEURAL classification {'not_prime', 'prime'}
+	inputs {network_input}
+	#{config {fixed 120 48}}#
+	config {table}
+	source {'./networks/0800_acc__10prime__20_1.onnx'}
+    }
+    variable {
+	bl output VAR {'not_prime', 'prime'} assign{result{'prime'}}
+    }
+}
+
+environment_update {
+}
+
+checks {
+    check {
+	same_output
+	arguments {}
+	read_variables {network, output}
+	condition{(eq, network, output)}
+    }
+}
+
+environment_checks {
+}
+
+actions {
+    action {
+	run_network_index
+	arguments {}
+	local_variables {}
+	read_variables {network}
+	write_variables {network_input_source, output}
+	initial_values {}
+	update {
+	    variable_statement{
+		network_input_source
+		assign{result{'use_index'}}
+	    }
+	    variable_statement{
+		output
+		assign{result{network}}
+	    }
+	    variable_statement{
+		network_input_source
+		assign{result{'use_array'}}
+	    }
+	    return_statement{
+		result{success}
+	    }
+	}
+    }
+    action {
+	update_index
+	arguments {}
+	local_variables {}
+	read_variables {}
+	write_variables {index_var}
+	initial_values{}
+	update {
+	    return_statement{
+		case{(eq, index_var, (sub, array_size, 1))}result{success}
+		result{running}
+	    }
+	    variable_statement{
+		index_var
+		assign{result{(min, (sub, array_size, 1), (add, index_var, 1))}}
+	    }
+	}
+    }
+    
+}
+
+
+sub_trees {
+}
+
+tree {
+    composite{
+	prime_checker
+	sequence
+	children{
+	    run_network_index {}
+	    same_output {}
+	    update_index {}
+	}
+    }
+}
+
+tick_prerequisite {
+    True
+}
+
+specifications {
+    INVARSPEC {
+	(implies,
+	    (success, prime_checker),
+	    (and,
+		(loop, i, [0, (sub, array_size, 1)] such_that True,
+		    (eq,
+			(or,
+			    (loop, j, {2, 3, 5, 7} such_that True,
+				(eq, i, j)
+			    )
+			),
+			(or,
+			    (loop, j, {2, 3, 5, 7} such_that True,
+				(eq, (index, prime_array, constant_index i), j)
+			    )
+			)
+		    )
+		)
+	    )
+	)
+    }
+    CTLSPEC {
+	(equivalent,
+	    (and,
+		(loop, i, [0, (sub, array_size, 1)] such_that True,
+		    (eq,
+			(or,
+			    (loop, j, {2, 3, 5, 7} such_that True,
+				(eq, i, j)
+			    )
+			),
+			(or,
+			    (loop, j, {2, 3, 5, 7} such_that True,
+				(eq, (index, prime_array, constant_index i), j)
+			    )
+			)
+		    )
+		)
+	    ),
+	    (always_finally, (success, prime_checker))
+	)
+    }
+}
