@@ -882,13 +882,19 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
             value = value * -1 if negative else value
             x = int(network_total_bits) - network_decimal_bits
             binary_string = ''
+            started = False
+            start_at = math.log2(value)
             while x >= (-1 * network_decimal_bits):
-                cur_val = 2**x
-                if cur_val <= value:
-                    binary_string = binary_string + '1'
-                    value = value - cur_val
-                else:
+                started = x < start_at
+                if not started:
                     binary_string = binary_string + '0'
+                else:
+                    cur_val = 2**x
+                    if cur_val <= value:
+                        binary_string = binary_string + '1'
+                        value = value - cur_val
+                    else:
+                        binary_string = binary_string + '0'
                 x = x -1
             return (negative, binary_string)
             # negative = value < 0
@@ -2074,10 +2080,13 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
         'action' : create_action
     }
     array_size_override = {} # this is indexed by variable.name. Yes that is variable.name, not variable_name. It should be indexed by the name associated with the variable object.
+    import time
+    time_0 = time.time()
     (model, variables, constants, declared_enumerations) = validate_model(metamodel_file, model_file, recursion_limit, skip_grammar_check)
+    time_1 = time.time()
     hyper_mode = model.hypersafety
     use_reals = model.use_reals
-    if model.neural is not None:
+    if model.neural:
         import onnxruntime
         import onnx
         # import numpy
@@ -2124,6 +2133,9 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
                                 , 'specifications' : specifications})
     else:
         write_smv(nodes, behaverify_variables, declared_enumerations, tick_condition, specifications, hyper_mode, output_file, do_not_trim)
+    time_2 = time.time()
+    print('part 1: ' + str(time_1 - time_0))
+    print('part 2: ' + str(time_2 - time_1))
     return
 
 

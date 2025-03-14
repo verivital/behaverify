@@ -1,0 +1,202 @@
+*** This is nuXmv 2.1.0 (compiled on Fri Nov 29 13:41:31 2024)
+*** Copyright (c) 2014-2024, Fondazione Bruno Kessler
+*** For more information on nuXmv see https://nuxmv.fbk.eu
+*** or email to <nuxmv@fbk.eu>.
+*** Please report bugs at Please report bugs to <nusmv-users@fbk.eu>
+*** (click on "Login Anonymously" to access)
+*** Alternatively write to <nuxmv@fbk.eu>.
+
+*** This version of nuXmv is linked to NuSMV 2.7.0.
+*** For more information on NuSMV see <http://nusmv.fbk.eu>
+*** or email to <nusmv-users@fbk.eu>.
+*** Copyright (C) 2010-2024, Fondazione Bruno Kessler
+
+*** This version of nuXmv is linked to the CUDD library version 2.4.1
+*** Copyright (c) 1995-2004, Regents of the University of Colorado
+
+*** This version of nuXmv is linked to the MiniSat SAT solver. 
+*** See http://minisat.se/MiniSat.html
+*** Copyright (c) 2003-2006, Niklas Een, Niklas Sorensson
+*** Copyright (c) 2007-2010, Niklas Sorensson
+
+*** This version of nuXmv is linked to MathSAT
+*** Copyright (C) 2009-2019 by Fondazione Bruno Kessler
+*** Copyright (C) 2009-2019 by University of Trento and others
+*** See http://mathsat.fbk.eu
+
+nuXmv > go
+nuXmv > check_invar
+-- invariant system.x_stage_3 < 4000  is false
+-- as demonstrated by the following execution sequence
+Trace Description: AG alpha Counterexample 
+Trace Type: Counterexample 
+  -> State: 1.1 <-
+    system.x_stage_0 = 191
+    system.x_stage_2 = 191
+    system.x_stage_3 = 574
+    system.x_stage_1 = 191
+    system.sel.active = TRUE
+    system.resume_from_here_in_subtree__sel = -3
+    system.node_names.d = 5
+    system.node_names.c = 4
+    system.node_names.b = 3
+    system.node_names.a = 2
+    system.node_names.seq = 1
+    system.node_names.sel = 0
+    system.a.internal_status = failure
+    system.a.status = failure
+    system.b.internal_status = success
+    system.b.status = invalid
+    system.c.internal_status = success
+    system.c.status = invalid
+    system.c.active = FALSE
+    system.b.active = FALSE
+    system.a.active = TRUE
+    system.seq.internal_status = failure
+    system.seq.status = failure
+    system.d.internal_status = success
+    system.d.status = success
+    system.d.active = TRUE
+    system.seq.active = TRUE
+    system.sel.internal_status = success
+    system.sel.status = success
+  -> State: 1.2 <-
+    system.x_stage_0 = 574
+    system.x_stage_2 = 287
+    system.x_stage_3 = 287
+    system.x_stage_1 = 287
+    system.a.internal_status = success
+    system.a.status = success
+    system.b.status = success
+    system.c.status = success
+    system.c.active = TRUE
+    system.b.active = TRUE
+    system.seq.internal_status = success
+    system.seq.status = success
+    system.d.status = invalid
+    system.d.active = FALSE
+  -> State: 1.3 <-
+    system.x_stage_0 = 287
+    system.x_stage_3 = 862
+    system.a.internal_status = failure
+    system.a.status = failure
+    system.b.status = invalid
+    system.c.status = invalid
+    system.c.active = FALSE
+    system.b.active = FALSE
+    system.seq.internal_status = failure
+    system.seq.status = failure
+    system.d.status = success
+    system.d.active = TRUE
+  -> State: 1.4 <-
+    system.x_stage_0 = 862
+    system.x_stage_2 = 431
+    system.x_stage_3 = 431
+    system.x_stage_1 = 431
+    system.a.internal_status = success
+    system.a.status = success
+    system.b.status = success
+    system.c.status = success
+    system.c.active = TRUE
+    system.b.active = TRUE
+    system.seq.internal_status = success
+    system.seq.status = success
+    system.d.status = invalid
+    system.d.active = FALSE
+  -> State: 1.5 <-
+    system.x_stage_0 = 431
+    system.x_stage_3 = 1294
+    system.a.internal_status = failure
+    system.a.status = failure
+    system.b.status = invalid
+    system.c.status = invalid
+    system.c.active = FALSE
+    system.b.active = FALSE
+    system.seq.internal_status = failure
+    system.seq.status = failure
+    system.d.status = success
+    system.d.active = TRUE
+  -> State: 1.6 <-
+    system.x_stage_0 = 1294
+    system.x_stage_2 = 647
+    system.x_stage_3 = 647
+    system.x_stage_1 = 647
+    system.a.internal_status = success
+    system.a.status = success
+    system.b.status = success
+    system.c.status = success
+    system.c.active = TRUE
+    system.b.active = TRUE
+    system.seq.internal_status = success
+    system.seq.status = success
+    system.d.status = invalid
+    system.d.active = FALSE
+  -> State: 1.7 <-
+    system.x_stage_0 = 647
+    system.x_stage_3 = 1942
+    system.a.internal_status = failure
+    system.a.status = failure
+    system.b.status = invalid
+    system.c.status = invalid
+    system.c.active = FALSE
+    system.b.active = FALSE
+    system.seq.internal_status = failure
+    system.seq.status = failure
+    system.d.status = success
+    system.d.active = TRUE
+  -> State: 1.8 <-
+    system.x_stage_0 = 1942
+    system.x_stage_2 = 971
+    system.x_stage_3 = 971
+    system.x_stage_1 = 971
+    system.a.internal_status = success
+    system.a.status = success
+    system.b.status = success
+    system.c.status = success
+    system.c.active = TRUE
+    system.b.active = TRUE
+    system.seq.internal_status = success
+    system.seq.status = success
+    system.d.status = invalid
+    system.d.active = FALSE
+  -> State: 1.9 <-
+    system.x_stage_0 = 971
+    system.x_stage_3 = 2914
+    system.a.internal_status = failure
+    system.a.status = failure
+    system.b.status = invalid
+    system.c.status = invalid
+    system.c.active = FALSE
+    system.b.active = FALSE
+    system.seq.internal_status = failure
+    system.seq.status = failure
+    system.d.status = success
+    system.d.active = TRUE
+  -> State: 1.10 <-
+    system.x_stage_0 = 2914
+    system.x_stage_2 = 1457
+    system.x_stage_3 = 1457
+    system.x_stage_1 = 1457
+    system.a.internal_status = success
+    system.a.status = success
+    system.b.status = success
+    system.c.status = success
+    system.c.active = TRUE
+    system.b.active = TRUE
+    system.seq.internal_status = success
+    system.seq.status = success
+    system.d.status = invalid
+    system.d.active = FALSE
+  -> State: 1.11 <-
+    system.x_stage_0 = 1457
+    system.x_stage_3 = 4372
+    system.a.internal_status = failure
+    system.a.status = failure
+    system.b.status = invalid
+    system.c.status = invalid
+    system.c.active = FALSE
+    system.b.active = FALSE
+    system.seq.internal_status = failure
+    system.seq.status = failure
+    system.d.status = success
+    system.d.active = TRUE
