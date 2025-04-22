@@ -147,6 +147,6 @@ tree{
 
 tick_prerequisite { (gt, remaining_goals, 0) } end_tick_prerequisite
 specifications {
-    #{LTLSPEC { (finally, (eq, remaining_goals at -1, 0)) } end_LTLSPEC}#
+    LTLSPEC { (finally, (eq, remaining_goals, 0)) } end_LTLSPEC
     CTLSPEC { (always_finally, (eq, remaining_goals at -1, 0)) } end_CTLSPEC
 } end_specifications

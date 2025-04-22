@@ -5,6 +5,7 @@ This module is part of BehaVerify and used to convert .tree files to .smv files 
 Author: Serena Serafina Serbinowska
 Last Edit: 2025-02-24
 '''
+import time
 import math
 import argparse
 import pprint
@@ -1949,6 +1950,13 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
     def create_X_is_Y(current_node, node_name, node_names, parent_name):
         return create_decorator(current_node, node_name, node_names, parent_name, [current_node.x, current_node.y])
 
+    def create_repeat(current_node, node_name, node_names, parent_name):
+        return create_decorator(current_node, node_name, node_names, parent_name, [str(current_node.repeat)])
+    # todo: fix this so we can include meta functions as the value of repeat.
+
+    def create_one_shot(current_node, node_name, node_names, parent_name):
+        return create_decorator(current_node, node_name, node_names, parent_name, ['0' if current_node.one_shot == 'success_only' else '-1', '0' if current_node.one_shot == 'failure_only' else '1'])
+
     def create_check(current_node, argument_pairs, node_name, node_names, parent_name):
         return (
             node_name, node_names,
@@ -2075,12 +2083,13 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
         'parallel' : create_composite,
         'X_is_Y' : create_X_is_Y,
         'inverter' : create_decorator,
+        'repeat' : create_repeat,
+        'one_shot' : create_one_shot,
         'check' : create_check,
         'environment_check' : create_check,
         'action' : create_action
     }
     array_size_override = {} # this is indexed by variable.name. Yes that is variable.name, not variable_name. It should be indexed by the name associated with the variable object.
-    import time
     time_0 = time.time()
     (model, variables, constants, declared_enumerations) = validate_model(metamodel_file, model_file, recursion_limit, skip_grammar_check)
     time_1 = time.time()
@@ -2136,6 +2145,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
     time_2 = time.time()
     print('part 1: ' + str(time_1 - time_0))
     print('part 2: ' + str(time_2 - time_1))
+    print('total: ' + str(time_2 - time_0))
     return
 
 
@@ -2144,11 +2154,12 @@ if __name__ == '__main__':
     arg_parser.add_argument('metamodel_file')
     arg_parser.add_argument('model_file')
     arg_parser.add_argument('output_file')
-    arg_parser.add_argument('--keep_stage_0', action = 'store_true')
+    # arg_parser.add_argument('--keep_stage_0', action = 'store_true') # removed due to a bug.
     arg_parser.add_argument('--keep_last_stage', action = 'store_true')
     arg_parser.add_argument('--do_not_trim', action = 'store_true')
     arg_parser.add_argument('--behave_only', action = 'store_true')
     arg_parser.add_argument('--recursion_limit', type = int, default = 0)
     arg_parser.add_argument('--no_checks', action = 'store_true')
     args = arg_parser.parse_args()
-    dsl_to_nuxmv(args.metamodel_file, args.model_file, args.output_file, args.keep_stage_0, args.keep_last_stage, args.do_not_trim, args.behave_only, args.recursion_limit, False, args.no_checks)
+    # dsl_to_nuxmv(args.metamodel_file, args.model_file, args.output_file, args.keep_stage_0, args.keep_last_stage, args.do_not_trim, args.behave_only, args.recursion_limit, False, args.no_checks)
+    dsl_to_nuxmv(args.metamodel_file, args.model_file, args.output_file, True, args.keep_last_stage, args.do_not_trim, args.behave_only, args.recursion_limit, False, args.no_checks)

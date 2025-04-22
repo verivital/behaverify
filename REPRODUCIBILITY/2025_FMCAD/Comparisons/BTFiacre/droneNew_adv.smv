@@ -1,0 +1,1196 @@
+MODULE main
+    VAR
+        system : system_module;
+--------------SPECIFICATIONS
+
+INVARSPEC (system.z_a_stage_1 <= 60);
+INVARSPEC ((system.Drone.status = success) = (system.Report.status = success));
+INVARSPEC (!((system.Start.status = failure)) -> ((system.Drone.status = failure) = (system.Report.status = failure)));
+CTLSPEC ((system.startedDC_stage_1) -> AF((system.startedDC_stage_2 | (system.Report.active))));
+CTLSPEC ((AG((system.battery_stage_0 = good)) & AF((system.Start.status = success)) & AG(!((system.CameraTrack.status = success)))) -> (AF(((system.x_a_stage_1 = system.xyz_stage_0_index_3) & (system.y_a_stage_1 = system.xyz_stage_0_index_4) & (system.z_a_stage_1 = system.xyz_stage_0_index_5))) & AF(((system.x_a_stage_1 = system.xyz_stage_0_index_6) & (system.y_a_stage_1 = system.xyz_stage_0_index_7) & (system.z_a_stage_1 = system.xyz_stage_0_index_8))) & AF(((system.x_a_stage_1 = system.xyz_stage_0_index_9) & (system.y_a_stage_1 = system.xyz_stage_0_index_10) & (system.z_a_stage_1 = system.xyz_stage_0_index_11))) & AF(((system.x_a_stage_1 = system.xyz_stage_0_index_12) & (system.y_a_stage_1 = system.xyz_stage_0_index_13) & (system.z_a_stage_1 = system.xyz_stage_0_index_14))) & AF(((system.x_a_stage_1 = system.xyz_stage_0_index_15) & (system.y_a_stage_1 = system.xyz_stage_0_index_16) & (system.z_a_stage_1 = system.xyz_stage_0_index_17))) & AF(((system.x_a_stage_1 = system.xyz_stage_0_index_18) & (system.y_a_stage_1 = system.xyz_stage_0_index_19) & (system.z_a_stage_1 = system.xyz_stage_0_index_20))) & AF(((system.x_a_stage_1 = system.xyz_stage_0_index_21) & (system.y_a_stage_1 = system.xyz_stage_0_index_22) & (system.z_a_stage_1 = system.xyz_stage_0_index_23))) & AF(((system.x_a_stage_1 = system.xyz_stage_0_index_24) & (system.y_a_stage_1 = system.xyz_stage_0_index_25) & (system.z_a_stage_1 = system.xyz_stage_0_index_26))) & AF(((system.x_a_stage_1 = system.xyz_stage_0_index_27) & (system.y_a_stage_1 = system.xyz_stage_0_index_28) & (system.z_a_stage_1 = system.xyz_stage_0_index_29))) & AF(((system.x_a_stage_1 = system.xyz_stage_0_index_30) & (system.y_a_stage_1 = system.xyz_stage_0_index_31) & (system.z_a_stage_1 = system.xyz_stage_0_index_32))) & AF(((system.x_a_stage_1 = system.xyz_stage_0_index_33) & (system.y_a_stage_1 = system.xyz_stage_0_index_34) & (system.z_a_stage_1 = system.xyz_stage_0_index_35))) & AF(((system.x_a_stage_1 = system.xyz_stage_0_index_36) & (system.y_a_stage_1 = system.xyz_stage_0_index_37) & (system.z_a_stage_1 = system.xyz_stage_0_index_38))) & AF(((system.x_a_stage_1 = system.xyz_stage_0_index_39) & (system.y_a_stage_1 = system.xyz_stage_0_index_40) & (system.z_a_stage_1 = system.xyz_stage_0_index_41))) & AF(((system.x_a_stage_1 = system.xyz_stage_0_index_42) & (system.y_a_stage_1 = system.xyz_stage_0_index_43) & (system.z_a_stage_1 = system.xyz_stage_0_index_44))) & AF(((system.x_a_stage_1 = system.xyz_stage_0_index_45) & (system.y_a_stage_1 = system.xyz_stage_0_index_46) & (system.z_a_stage_1 = system.xyz_stage_0_index_47))) & AF((system.Report.status = failure))));
+
+--------------END OF SPECIFICATIONS
+
+MODULE system_module
+    CONSTANTS
+        success, failure, running, invalid, off, land, failed, critical, fly, none, low, takeoff, on, good, trying;
+    DEFINE
+        resume_from_here_in_subtree__Drone := -3;
+        Drone.active := TRUE;
+        --START OF BLACKBOARD DEFINITIONS
+        startedDC_stage_1 :=
+            case
+                !(Start.active) : startedDC_stage_0;
+                TRUE : ((droneStatus_stage_1 = on) & (camStatus_stage_1 = on));
+            esac;
+        startedDC_stage_2 :=
+            case
+                !(Shutdown.active) : startedDC_stage_1;
+                TRUE : ((droneStatus_stage_2 = off) & (camStatus_stage_2 = off));
+            esac;
+        camT_stage_1 :=
+            case
+                !(Start.active) : camT_stage_0;
+                TRUE : FALSE;
+            esac;
+        move_stage_1 :=
+            case
+                !(Start.active) : move_stage_0;
+                TRUE : none;
+            esac;
+        move_stage_2 :=
+            case
+                !(Land.active) : move_stage_1;
+                TRUE : land;
+            esac;
+        move_stage_3 :=
+            case
+                !(ELand.active) : move_stage_2;
+                TRUE : land;
+            esac;
+        move_stage_4 :=
+            case
+                !(Takeoff.active) : move_stage_3;
+                TRUE : takeoff;
+            esac;
+        move_stage_5 :=
+            case
+                !(GoTo0.active) : move_stage_4;
+                TRUE : fly;
+            esac;
+        move_stage_6 :=
+            case
+                !(LLand.active) : move_stage_5;
+                TRUE : land;
+            esac;
+        move_stage_7 :=
+            case
+                !(GoToP.active) : move_stage_6;
+                TRUE : fly;
+            esac;
+        move_stage_8 :=
+            case
+                !(GoToMax.active) : move_stage_7;
+                TRUE : fly;
+            esac;
+        move_stage_9 :=
+            case
+                !(GLand.active) : move_stage_8;
+                TRUE : land;
+            esac;
+        move_stage_10 :=
+            case
+                !(Shutdown.active) : move_stage_9;
+                ((droneStatus_stage_2 = off) & (camStatus_stage_2 = off)) : none;
+                TRUE : move_stage_9;
+            esac;
+        xyz_stage_0_index_0 := -10;
+        xyz_stage_0_index_1 := -10;
+        xyz_stage_0_index_2 := 5;
+        xyz_stage_0_index_3 :=
+            case
+                (0 = 2) : ((0 + 1) * 20);
+                ((0 = 0) & (0 = 0)) : -30;
+                ((0 = 0) & (0 = 1)) : -30;
+                ((0 = 1) & (0 = 0)) : -15;
+                ((0 = 1) & (0 = 1)) : 30;
+                ((0 = 2) & (0 = 0)) : 0;
+                ((0 = 2) & (0 = 1)) : -30;
+                ((0 = 3) & (0 = 0)) : 15;
+                ((0 = 3) & (0 = 1)) : 30;
+                ((0 = 4) & (0 = 0)) : 30;
+                ((0 = 4) & (0 = 1)) : -30;
+                TRUE : 0;
+            esac;
+        xyz_stage_0_index_4 :=
+            case
+                (1 = 2) : ((0 + 1) * 20);
+                ((0 = 0) & (1 = 0)) : -30;
+                ((0 = 0) & (1 = 1)) : -30;
+                ((0 = 1) & (1 = 0)) : -15;
+                ((0 = 1) & (1 = 1)) : 30;
+                ((0 = 2) & (1 = 0)) : 0;
+                ((0 = 2) & (1 = 1)) : -30;
+                ((0 = 3) & (1 = 0)) : 15;
+                ((0 = 3) & (1 = 1)) : 30;
+                ((0 = 4) & (1 = 0)) : 30;
+                ((0 = 4) & (1 = 1)) : -30;
+                TRUE : 0;
+            esac;
+        xyz_stage_0_index_5 :=
+            case
+                (2 = 2) : ((0 + 1) * 20);
+                ((0 = 0) & (2 = 0)) : -30;
+                ((0 = 0) & (2 = 1)) : -30;
+                ((0 = 1) & (2 = 0)) : -15;
+                ((0 = 1) & (2 = 1)) : 30;
+                ((0 = 2) & (2 = 0)) : 0;
+                ((0 = 2) & (2 = 1)) : -30;
+                ((0 = 3) & (2 = 0)) : 15;
+                ((0 = 3) & (2 = 1)) : 30;
+                ((0 = 4) & (2 = 0)) : 30;
+                ((0 = 4) & (2 = 1)) : -30;
+                TRUE : 0;
+            esac;
+        xyz_stage_0_index_6 :=
+            case
+                (0 = 2) : ((0 + 1) * 20);
+                ((1 = 0) & (0 = 0)) : -30;
+                ((1 = 0) & (0 = 1)) : -30;
+                ((1 = 1) & (0 = 0)) : -15;
+                ((1 = 1) & (0 = 1)) : 30;
+                ((1 = 2) & (0 = 0)) : 0;
+                ((1 = 2) & (0 = 1)) : -30;
+                ((1 = 3) & (0 = 0)) : 15;
+                ((1 = 3) & (0 = 1)) : 30;
+                ((1 = 4) & (0 = 0)) : 30;
+                ((1 = 4) & (0 = 1)) : -30;
+                TRUE : 0;
+            esac;
+        xyz_stage_0_index_7 :=
+            case
+                (1 = 2) : ((0 + 1) * 20);
+                ((1 = 0) & (1 = 0)) : -30;
+                ((1 = 0) & (1 = 1)) : -30;
+                ((1 = 1) & (1 = 0)) : -15;
+                ((1 = 1) & (1 = 1)) : 30;
+                ((1 = 2) & (1 = 0)) : 0;
+                ((1 = 2) & (1 = 1)) : -30;
+                ((1 = 3) & (1 = 0)) : 15;
+                ((1 = 3) & (1 = 1)) : 30;
+                ((1 = 4) & (1 = 0)) : 30;
+                ((1 = 4) & (1 = 1)) : -30;
+                TRUE : 0;
+            esac;
+        xyz_stage_0_index_8 :=
+            case
+                (2 = 2) : ((0 + 1) * 20);
+                ((1 = 0) & (2 = 0)) : -30;
+                ((1 = 0) & (2 = 1)) : -30;
+                ((1 = 1) & (2 = 0)) : -15;
+                ((1 = 1) & (2 = 1)) : 30;
+                ((1 = 2) & (2 = 0)) : 0;
+                ((1 = 2) & (2 = 1)) : -30;
+                ((1 = 3) & (2 = 0)) : 15;
+                ((1 = 3) & (2 = 1)) : 30;
+                ((1 = 4) & (2 = 0)) : 30;
+                ((1 = 4) & (2 = 1)) : -30;
+                TRUE : 0;
+            esac;
+        xyz_stage_0_index_9 :=
+            case
+                (0 = 2) : ((0 + 1) * 20);
+                ((2 = 0) & (0 = 0)) : -30;
+                ((2 = 0) & (0 = 1)) : -30;
+                ((2 = 1) & (0 = 0)) : -15;
+                ((2 = 1) & (0 = 1)) : 30;
+                ((2 = 2) & (0 = 0)) : 0;
+                ((2 = 2) & (0 = 1)) : -30;
+                ((2 = 3) & (0 = 0)) : 15;
+                ((2 = 3) & (0 = 1)) : 30;
+                ((2 = 4) & (0 = 0)) : 30;
+                ((2 = 4) & (0 = 1)) : -30;
+                TRUE : 0;
+            esac;
+        xyz_stage_0_index_10 :=
+            case
+                (1 = 2) : ((0 + 1) * 20);
+                ((2 = 0) & (1 = 0)) : -30;
+                ((2 = 0) & (1 = 1)) : -30;
+                ((2 = 1) & (1 = 0)) : -15;
+                ((2 = 1) & (1 = 1)) : 30;
+                ((2 = 2) & (1 = 0)) : 0;
+                ((2 = 2) & (1 = 1)) : -30;
+                ((2 = 3) & (1 = 0)) : 15;
+                ((2 = 3) & (1 = 1)) : 30;
+                ((2 = 4) & (1 = 0)) : 30;
+                ((2 = 4) & (1 = 1)) : -30;
+                TRUE : 0;
+            esac;
+        xyz_stage_0_index_11 :=
+            case
+                (2 = 2) : ((0 + 1) * 20);
+                ((2 = 0) & (2 = 0)) : -30;
+                ((2 = 0) & (2 = 1)) : -30;
+                ((2 = 1) & (2 = 0)) : -15;
+                ((2 = 1) & (2 = 1)) : 30;
+                ((2 = 2) & (2 = 0)) : 0;
+                ((2 = 2) & (2 = 1)) : -30;
+                ((2 = 3) & (2 = 0)) : 15;
+                ((2 = 3) & (2 = 1)) : 30;
+                ((2 = 4) & (2 = 0)) : 30;
+                ((2 = 4) & (2 = 1)) : -30;
+                TRUE : 0;
+            esac;
+        xyz_stage_0_index_12 :=
+            case
+                (0 = 2) : ((0 + 1) * 20);
+                ((3 = 0) & (0 = 0)) : -30;
+                ((3 = 0) & (0 = 1)) : -30;
+                ((3 = 1) & (0 = 0)) : -15;
+                ((3 = 1) & (0 = 1)) : 30;
+                ((3 = 2) & (0 = 0)) : 0;
+                ((3 = 2) & (0 = 1)) : -30;
+                ((3 = 3) & (0 = 0)) : 15;
+                ((3 = 3) & (0 = 1)) : 30;
+                ((3 = 4) & (0 = 0)) : 30;
+                ((3 = 4) & (0 = 1)) : -30;
+                TRUE : 0;
+            esac;
+        xyz_stage_0_index_13 :=
+            case
+                (1 = 2) : ((0 + 1) * 20);
+                ((3 = 0) & (1 = 0)) : -30;
+                ((3 = 0) & (1 = 1)) : -30;
+                ((3 = 1) & (1 = 0)) : -15;
+                ((3 = 1) & (1 = 1)) : 30;
+                ((3 = 2) & (1 = 0)) : 0;
+                ((3 = 2) & (1 = 1)) : -30;
+                ((3 = 3) & (1 = 0)) : 15;
+                ((3 = 3) & (1 = 1)) : 30;
+                ((3 = 4) & (1 = 0)) : 30;
+                ((3 = 4) & (1 = 1)) : -30;
+                TRUE : 0;
+            esac;
+        xyz_stage_0_index_14 :=
+            case
+                (2 = 2) : ((0 + 1) * 20);
+                ((3 = 0) & (2 = 0)) : -30;
+                ((3 = 0) & (2 = 1)) : -30;
+                ((3 = 1) & (2 = 0)) : -15;
+                ((3 = 1) & (2 = 1)) : 30;
+                ((3 = 2) & (2 = 0)) : 0;
+                ((3 = 2) & (2 = 1)) : -30;
+                ((3 = 3) & (2 = 0)) : 15;
+                ((3 = 3) & (2 = 1)) : 30;
+                ((3 = 4) & (2 = 0)) : 30;
+                ((3 = 4) & (2 = 1)) : -30;
+                TRUE : 0;
+            esac;
+        xyz_stage_0_index_15 :=
+            case
+                (0 = 2) : ((0 + 1) * 20);
+                ((4 = 0) & (0 = 0)) : -30;
+                ((4 = 0) & (0 = 1)) : -30;
+                ((4 = 1) & (0 = 0)) : -15;
+                ((4 = 1) & (0 = 1)) : 30;
+                ((4 = 2) & (0 = 0)) : 0;
+                ((4 = 2) & (0 = 1)) : -30;
+                ((4 = 3) & (0 = 0)) : 15;
+                ((4 = 3) & (0 = 1)) : 30;
+                ((4 = 4) & (0 = 0)) : 30;
+                ((4 = 4) & (0 = 1)) : -30;
+                TRUE : 0;
+            esac;
+        xyz_stage_0_index_16 :=
+            case
+                (1 = 2) : ((0 + 1) * 20);
+                ((4 = 0) & (1 = 0)) : -30;
+                ((4 = 0) & (1 = 1)) : -30;
+                ((4 = 1) & (1 = 0)) : -15;
+                ((4 = 1) & (1 = 1)) : 30;
+                ((4 = 2) & (1 = 0)) : 0;
+                ((4 = 2) & (1 = 1)) : -30;
+                ((4 = 3) & (1 = 0)) : 15;
+                ((4 = 3) & (1 = 1)) : 30;
+                ((4 = 4) & (1 = 0)) : 30;
+                ((4 = 4) & (1 = 1)) : -30;
+                TRUE : 0;
+            esac;
+        xyz_stage_0_index_17 :=
+            case
+                (2 = 2) : ((0 + 1) * 20);
+                ((4 = 0) & (2 = 0)) : -30;
+                ((4 = 0) & (2 = 1)) : -30;
+                ((4 = 1) & (2 = 0)) : -15;
+                ((4 = 1) & (2 = 1)) : 30;
+                ((4 = 2) & (2 = 0)) : 0;
+                ((4 = 2) & (2 = 1)) : -30;
+                ((4 = 3) & (2 = 0)) : 15;
+                ((4 = 3) & (2 = 1)) : 30;
+                ((4 = 4) & (2 = 0)) : 30;
+                ((4 = 4) & (2 = 1)) : -30;
+                TRUE : 0;
+            esac;
+        xyz_stage_0_index_18 :=
+            case
+                (0 = 2) : ((1 + 1) * 20);
+                ((0 = 0) & (0 = 0)) : -30;
+                ((0 = 0) & (0 = 1)) : -30;
+                ((0 = 1) & (0 = 0)) : -15;
+                ((0 = 1) & (0 = 1)) : 30;
+                ((0 = 2) & (0 = 0)) : 0;
+                ((0 = 2) & (0 = 1)) : -30;
+                ((0 = 3) & (0 = 0)) : 15;
+                ((0 = 3) & (0 = 1)) : 30;
+                ((0 = 4) & (0 = 0)) : 30;
+                ((0 = 4) & (0 = 1)) : -30;
+                TRUE : 0;
+            esac;
+        xyz_stage_0_index_19 :=
+            case
+                (1 = 2) : ((1 + 1) * 20);
+                ((0 = 0) & (1 = 0)) : -30;
+                ((0 = 0) & (1 = 1)) : -30;
+                ((0 = 1) & (1 = 0)) : -15;
+                ((0 = 1) & (1 = 1)) : 30;
+                ((0 = 2) & (1 = 0)) : 0;
+                ((0 = 2) & (1 = 1)) : -30;
+                ((0 = 3) & (1 = 0)) : 15;
+                ((0 = 3) & (1 = 1)) : 30;
+                ((0 = 4) & (1 = 0)) : 30;
+                ((0 = 4) & (1 = 1)) : -30;
+                TRUE : 0;
+            esac;
+        xyz_stage_0_index_20 :=
+            case
+                (2 = 2) : ((1 + 1) * 20);
+                ((0 = 0) & (2 = 0)) : -30;
+                ((0 = 0) & (2 = 1)) : -30;
+                ((0 = 1) & (2 = 0)) : -15;
+                ((0 = 1) & (2 = 1)) : 30;
+                ((0 = 2) & (2 = 0)) : 0;
+                ((0 = 2) & (2 = 1)) : -30;
+                ((0 = 3) & (2 = 0)) : 15;
+                ((0 = 3) & (2 = 1)) : 30;
+                ((0 = 4) & (2 = 0)) : 30;
+                ((0 = 4) & (2 = 1)) : -30;
+                TRUE : 0;
+            esac;
+        xyz_stage_0_index_21 :=
+            case
+                (0 = 2) : ((1 + 1) * 20);
+                ((1 = 0) & (0 = 0)) : -30;
+                ((1 = 0) & (0 = 1)) : -30;
+                ((1 = 1) & (0 = 0)) : -15;
+                ((1 = 1) & (0 = 1)) : 30;
+                ((1 = 2) & (0 = 0)) : 0;
+                ((1 = 2) & (0 = 1)) : -30;
+                ((1 = 3) & (0 = 0)) : 15;
+                ((1 = 3) & (0 = 1)) : 30;
+                ((1 = 4) & (0 = 0)) : 30;
+                ((1 = 4) & (0 = 1)) : -30;
+                TRUE : 0;
+            esac;
+        xyz_stage_0_index_22 :=
+            case
+                (1 = 2) : ((1 + 1) * 20);
+                ((1 = 0) & (1 = 0)) : -30;
+                ((1 = 0) & (1 = 1)) : -30;
+                ((1 = 1) & (1 = 0)) : -15;
+                ((1 = 1) & (1 = 1)) : 30;
+                ((1 = 2) & (1 = 0)) : 0;
+                ((1 = 2) & (1 = 1)) : -30;
+                ((1 = 3) & (1 = 0)) : 15;
+                ((1 = 3) & (1 = 1)) : 30;
+                ((1 = 4) & (1 = 0)) : 30;
+                ((1 = 4) & (1 = 1)) : -30;
+                TRUE : 0;
+            esac;
+        xyz_stage_0_index_23 :=
+            case
+                (2 = 2) : ((1 + 1) * 20);
+                ((1 = 0) & (2 = 0)) : -30;
+                ((1 = 0) & (2 = 1)) : -30;
+                ((1 = 1) & (2 = 0)) : -15;
+                ((1 = 1) & (2 = 1)) : 30;
+                ((1 = 2) & (2 = 0)) : 0;
+                ((1 = 2) & (2 = 1)) : -30;
+                ((1 = 3) & (2 = 0)) : 15;
+                ((1 = 3) & (2 = 1)) : 30;
+                ((1 = 4) & (2 = 0)) : 30;
+                ((1 = 4) & (2 = 1)) : -30;
+                TRUE : 0;
+            esac;
+        xyz_stage_0_index_24 :=
+            case
+                (0 = 2) : ((1 + 1) * 20);
+                ((2 = 0) & (0 = 0)) : -30;
+                ((2 = 0) & (0 = 1)) : -30;
+                ((2 = 1) & (0 = 0)) : -15;
+                ((2 = 1) & (0 = 1)) : 30;
+                ((2 = 2) & (0 = 0)) : 0;
+                ((2 = 2) & (0 = 1)) : -30;
+                ((2 = 3) & (0 = 0)) : 15;
+                ((2 = 3) & (0 = 1)) : 30;
+                ((2 = 4) & (0 = 0)) : 30;
+                ((2 = 4) & (0 = 1)) : -30;
+                TRUE : 0;
+            esac;
+        xyz_stage_0_index_25 :=
+            case
+                (1 = 2) : ((1 + 1) * 20);
+                ((2 = 0) & (1 = 0)) : -30;
+                ((2 = 0) & (1 = 1)) : -30;
+                ((2 = 1) & (1 = 0)) : -15;
+                ((2 = 1) & (1 = 1)) : 30;
+                ((2 = 2) & (1 = 0)) : 0;
+                ((2 = 2) & (1 = 1)) : -30;
+                ((2 = 3) & (1 = 0)) : 15;
+                ((2 = 3) & (1 = 1)) : 30;
+                ((2 = 4) & (1 = 0)) : 30;
+                ((2 = 4) & (1 = 1)) : -30;
+                TRUE : 0;
+            esac;
+        xyz_stage_0_index_26 :=
+            case
+                (2 = 2) : ((1 + 1) * 20);
+                ((2 = 0) & (2 = 0)) : -30;
+                ((2 = 0) & (2 = 1)) : -30;
+                ((2 = 1) & (2 = 0)) : -15;
+                ((2 = 1) & (2 = 1)) : 30;
+                ((2 = 2) & (2 = 0)) : 0;
+                ((2 = 2) & (2 = 1)) : -30;
+                ((2 = 3) & (2 = 0)) : 15;
+                ((2 = 3) & (2 = 1)) : 30;
+                ((2 = 4) & (2 = 0)) : 30;
+                ((2 = 4) & (2 = 1)) : -30;
+                TRUE : 0;
+            esac;
+        xyz_stage_0_index_27 :=
+            case
+                (0 = 2) : ((1 + 1) * 20);
+                ((3 = 0) & (0 = 0)) : -30;
+                ((3 = 0) & (0 = 1)) : -30;
+                ((3 = 1) & (0 = 0)) : -15;
+                ((3 = 1) & (0 = 1)) : 30;
+                ((3 = 2) & (0 = 0)) : 0;
+                ((3 = 2) & (0 = 1)) : -30;
+                ((3 = 3) & (0 = 0)) : 15;
+                ((3 = 3) & (0 = 1)) : 30;
+                ((3 = 4) & (0 = 0)) : 30;
+                ((3 = 4) & (0 = 1)) : -30;
+                TRUE : 0;
+            esac;
+        xyz_stage_0_index_28 :=
+            case
+                (1 = 2) : ((1 + 1) * 20);
+                ((3 = 0) & (1 = 0)) : -30;
+                ((3 = 0) & (1 = 1)) : -30;
+                ((3 = 1) & (1 = 0)) : -15;
+                ((3 = 1) & (1 = 1)) : 30;
+                ((3 = 2) & (1 = 0)) : 0;
+                ((3 = 2) & (1 = 1)) : -30;
+                ((3 = 3) & (1 = 0)) : 15;
+                ((3 = 3) & (1 = 1)) : 30;
+                ((3 = 4) & (1 = 0)) : 30;
+                ((3 = 4) & (1 = 1)) : -30;
+                TRUE : 0;
+            esac;
+        xyz_stage_0_index_29 :=
+            case
+                (2 = 2) : ((1 + 1) * 20);
+                ((3 = 0) & (2 = 0)) : -30;
+                ((3 = 0) & (2 = 1)) : -30;
+                ((3 = 1) & (2 = 0)) : -15;
+                ((3 = 1) & (2 = 1)) : 30;
+                ((3 = 2) & (2 = 0)) : 0;
+                ((3 = 2) & (2 = 1)) : -30;
+                ((3 = 3) & (2 = 0)) : 15;
+                ((3 = 3) & (2 = 1)) : 30;
+                ((3 = 4) & (2 = 0)) : 30;
+                ((3 = 4) & (2 = 1)) : -30;
+                TRUE : 0;
+            esac;
+        xyz_stage_0_index_30 :=
+            case
+                (0 = 2) : ((1 + 1) * 20);
+                ((4 = 0) & (0 = 0)) : -30;
+                ((4 = 0) & (0 = 1)) : -30;
+                ((4 = 1) & (0 = 0)) : -15;
+                ((4 = 1) & (0 = 1)) : 30;
+                ((4 = 2) & (0 = 0)) : 0;
+                ((4 = 2) & (0 = 1)) : -30;
+                ((4 = 3) & (0 = 0)) : 15;
+                ((4 = 3) & (0 = 1)) : 30;
+                ((4 = 4) & (0 = 0)) : 30;
+                ((4 = 4) & (0 = 1)) : -30;
+                TRUE : 0;
+            esac;
+        xyz_stage_0_index_31 :=
+            case
+                (1 = 2) : ((1 + 1) * 20);
+                ((4 = 0) & (1 = 0)) : -30;
+                ((4 = 0) & (1 = 1)) : -30;
+                ((4 = 1) & (1 = 0)) : -15;
+                ((4 = 1) & (1 = 1)) : 30;
+                ((4 = 2) & (1 = 0)) : 0;
+                ((4 = 2) & (1 = 1)) : -30;
+                ((4 = 3) & (1 = 0)) : 15;
+                ((4 = 3) & (1 = 1)) : 30;
+                ((4 = 4) & (1 = 0)) : 30;
+                ((4 = 4) & (1 = 1)) : -30;
+                TRUE : 0;
+            esac;
+        xyz_stage_0_index_32 :=
+            case
+                (2 = 2) : ((1 + 1) * 20);
+                ((4 = 0) & (2 = 0)) : -30;
+                ((4 = 0) & (2 = 1)) : -30;
+                ((4 = 1) & (2 = 0)) : -15;
+                ((4 = 1) & (2 = 1)) : 30;
+                ((4 = 2) & (2 = 0)) : 0;
+                ((4 = 2) & (2 = 1)) : -30;
+                ((4 = 3) & (2 = 0)) : 15;
+                ((4 = 3) & (2 = 1)) : 30;
+                ((4 = 4) & (2 = 0)) : 30;
+                ((4 = 4) & (2 = 1)) : -30;
+                TRUE : 0;
+            esac;
+        xyz_stage_0_index_33 :=
+            case
+                (0 = 2) : ((2 + 1) * 20);
+                ((0 = 0) & (0 = 0)) : -30;
+                ((0 = 0) & (0 = 1)) : -30;
+                ((0 = 1) & (0 = 0)) : -15;
+                ((0 = 1) & (0 = 1)) : 30;
+                ((0 = 2) & (0 = 0)) : 0;
+                ((0 = 2) & (0 = 1)) : -30;
+                ((0 = 3) & (0 = 0)) : 15;
+                ((0 = 3) & (0 = 1)) : 30;
+                ((0 = 4) & (0 = 0)) : 30;
+                ((0 = 4) & (0 = 1)) : -30;
+                TRUE : 0;
+            esac;
+        xyz_stage_0_index_34 :=
+            case
+                (1 = 2) : ((2 + 1) * 20);
+                ((0 = 0) & (1 = 0)) : -30;
+                ((0 = 0) & (1 = 1)) : -30;
+                ((0 = 1) & (1 = 0)) : -15;
+                ((0 = 1) & (1 = 1)) : 30;
+                ((0 = 2) & (1 = 0)) : 0;
+                ((0 = 2) & (1 = 1)) : -30;
+                ((0 = 3) & (1 = 0)) : 15;
+                ((0 = 3) & (1 = 1)) : 30;
+                ((0 = 4) & (1 = 0)) : 30;
+                ((0 = 4) & (1 = 1)) : -30;
+                TRUE : 0;
+            esac;
+        xyz_stage_0_index_35 :=
+            case
+                (2 = 2) : ((2 + 1) * 20);
+                ((0 = 0) & (2 = 0)) : -30;
+                ((0 = 0) & (2 = 1)) : -30;
+                ((0 = 1) & (2 = 0)) : -15;
+                ((0 = 1) & (2 = 1)) : 30;
+                ((0 = 2) & (2 = 0)) : 0;
+                ((0 = 2) & (2 = 1)) : -30;
+                ((0 = 3) & (2 = 0)) : 15;
+                ((0 = 3) & (2 = 1)) : 30;
+                ((0 = 4) & (2 = 0)) : 30;
+                ((0 = 4) & (2 = 1)) : -30;
+                TRUE : 0;
+            esac;
+        xyz_stage_0_index_36 :=
+            case
+                (0 = 2) : ((2 + 1) * 20);
+                ((1 = 0) & (0 = 0)) : -30;
+                ((1 = 0) & (0 = 1)) : -30;
+                ((1 = 1) & (0 = 0)) : -15;
+                ((1 = 1) & (0 = 1)) : 30;
+                ((1 = 2) & (0 = 0)) : 0;
+                ((1 = 2) & (0 = 1)) : -30;
+                ((1 = 3) & (0 = 0)) : 15;
+                ((1 = 3) & (0 = 1)) : 30;
+                ((1 = 4) & (0 = 0)) : 30;
+                ((1 = 4) & (0 = 1)) : -30;
+                TRUE : 0;
+            esac;
+        xyz_stage_0_index_37 :=
+            case
+                (1 = 2) : ((2 + 1) * 20);
+                ((1 = 0) & (1 = 0)) : -30;
+                ((1 = 0) & (1 = 1)) : -30;
+                ((1 = 1) & (1 = 0)) : -15;
+                ((1 = 1) & (1 = 1)) : 30;
+                ((1 = 2) & (1 = 0)) : 0;
+                ((1 = 2) & (1 = 1)) : -30;
+                ((1 = 3) & (1 = 0)) : 15;
+                ((1 = 3) & (1 = 1)) : 30;
+                ((1 = 4) & (1 = 0)) : 30;
+                ((1 = 4) & (1 = 1)) : -30;
+                TRUE : 0;
+            esac;
+        xyz_stage_0_index_38 :=
+            case
+                (2 = 2) : ((2 + 1) * 20);
+                ((1 = 0) & (2 = 0)) : -30;
+                ((1 = 0) & (2 = 1)) : -30;
+                ((1 = 1) & (2 = 0)) : -15;
+                ((1 = 1) & (2 = 1)) : 30;
+                ((1 = 2) & (2 = 0)) : 0;
+                ((1 = 2) & (2 = 1)) : -30;
+                ((1 = 3) & (2 = 0)) : 15;
+                ((1 = 3) & (2 = 1)) : 30;
+                ((1 = 4) & (2 = 0)) : 30;
+                ((1 = 4) & (2 = 1)) : -30;
+                TRUE : 0;
+            esac;
+        xyz_stage_0_index_39 :=
+            case
+                (0 = 2) : ((2 + 1) * 20);
+                ((2 = 0) & (0 = 0)) : -30;
+                ((2 = 0) & (0 = 1)) : -30;
+                ((2 = 1) & (0 = 0)) : -15;
+                ((2 = 1) & (0 = 1)) : 30;
+                ((2 = 2) & (0 = 0)) : 0;
+                ((2 = 2) & (0 = 1)) : -30;
+                ((2 = 3) & (0 = 0)) : 15;
+                ((2 = 3) & (0 = 1)) : 30;
+                ((2 = 4) & (0 = 0)) : 30;
+                ((2 = 4) & (0 = 1)) : -30;
+                TRUE : 0;
+            esac;
+        xyz_stage_0_index_40 :=
+            case
+                (1 = 2) : ((2 + 1) * 20);
+                ((2 = 0) & (1 = 0)) : -30;
+                ((2 = 0) & (1 = 1)) : -30;
+                ((2 = 1) & (1 = 0)) : -15;
+                ((2 = 1) & (1 = 1)) : 30;
+                ((2 = 2) & (1 = 0)) : 0;
+                ((2 = 2) & (1 = 1)) : -30;
+                ((2 = 3) & (1 = 0)) : 15;
+                ((2 = 3) & (1 = 1)) : 30;
+                ((2 = 4) & (1 = 0)) : 30;
+                ((2 = 4) & (1 = 1)) : -30;
+                TRUE : 0;
+            esac;
+        xyz_stage_0_index_41 :=
+            case
+                (2 = 2) : ((2 + 1) * 20);
+                ((2 = 0) & (2 = 0)) : -30;
+                ((2 = 0) & (2 = 1)) : -30;
+                ((2 = 1) & (2 = 0)) : -15;
+                ((2 = 1) & (2 = 1)) : 30;
+                ((2 = 2) & (2 = 0)) : 0;
+                ((2 = 2) & (2 = 1)) : -30;
+                ((2 = 3) & (2 = 0)) : 15;
+                ((2 = 3) & (2 = 1)) : 30;
+                ((2 = 4) & (2 = 0)) : 30;
+                ((2 = 4) & (2 = 1)) : -30;
+                TRUE : 0;
+            esac;
+        xyz_stage_0_index_42 :=
+            case
+                (0 = 2) : ((2 + 1) * 20);
+                ((3 = 0) & (0 = 0)) : -30;
+                ((3 = 0) & (0 = 1)) : -30;
+                ((3 = 1) & (0 = 0)) : -15;
+                ((3 = 1) & (0 = 1)) : 30;
+                ((3 = 2) & (0 = 0)) : 0;
+                ((3 = 2) & (0 = 1)) : -30;
+                ((3 = 3) & (0 = 0)) : 15;
+                ((3 = 3) & (0 = 1)) : 30;
+                ((3 = 4) & (0 = 0)) : 30;
+                ((3 = 4) & (0 = 1)) : -30;
+                TRUE : 0;
+            esac;
+        xyz_stage_0_index_43 :=
+            case
+                (1 = 2) : ((2 + 1) * 20);
+                ((3 = 0) & (1 = 0)) : -30;
+                ((3 = 0) & (1 = 1)) : -30;
+                ((3 = 1) & (1 = 0)) : -15;
+                ((3 = 1) & (1 = 1)) : 30;
+                ((3 = 2) & (1 = 0)) : 0;
+                ((3 = 2) & (1 = 1)) : -30;
+                ((3 = 3) & (1 = 0)) : 15;
+                ((3 = 3) & (1 = 1)) : 30;
+                ((3 = 4) & (1 = 0)) : 30;
+                ((3 = 4) & (1 = 1)) : -30;
+                TRUE : 0;
+            esac;
+        xyz_stage_0_index_44 :=
+            case
+                (2 = 2) : ((2 + 1) * 20);
+                ((3 = 0) & (2 = 0)) : -30;
+                ((3 = 0) & (2 = 1)) : -30;
+                ((3 = 1) & (2 = 0)) : -15;
+                ((3 = 1) & (2 = 1)) : 30;
+                ((3 = 2) & (2 = 0)) : 0;
+                ((3 = 2) & (2 = 1)) : -30;
+                ((3 = 3) & (2 = 0)) : 15;
+                ((3 = 3) & (2 = 1)) : 30;
+                ((3 = 4) & (2 = 0)) : 30;
+                ((3 = 4) & (2 = 1)) : -30;
+                TRUE : 0;
+            esac;
+        xyz_stage_0_index_45 :=
+            case
+                (0 = 2) : ((2 + 1) * 20);
+                ((4 = 0) & (0 = 0)) : -30;
+                ((4 = 0) & (0 = 1)) : -30;
+                ((4 = 1) & (0 = 0)) : -15;
+                ((4 = 1) & (0 = 1)) : 30;
+                ((4 = 2) & (0 = 0)) : 0;
+                ((4 = 2) & (0 = 1)) : -30;
+                ((4 = 3) & (0 = 0)) : 15;
+                ((4 = 3) & (0 = 1)) : 30;
+                ((4 = 4) & (0 = 0)) : 30;
+                ((4 = 4) & (0 = 1)) : -30;
+                TRUE : 0;
+            esac;
+        xyz_stage_0_index_46 :=
+            case
+                (1 = 2) : ((2 + 1) * 20);
+                ((4 = 0) & (1 = 0)) : -30;
+                ((4 = 0) & (1 = 1)) : -30;
+                ((4 = 1) & (1 = 0)) : -15;
+                ((4 = 1) & (1 = 1)) : 30;
+                ((4 = 2) & (1 = 0)) : 0;
+                ((4 = 2) & (1 = 1)) : -30;
+                ((4 = 3) & (1 = 0)) : 15;
+                ((4 = 3) & (1 = 1)) : 30;
+                ((4 = 4) & (1 = 0)) : 30;
+                ((4 = 4) & (1 = 1)) : -30;
+                TRUE : 0;
+            esac;
+        xyz_stage_0_index_47 :=
+            case
+                (2 = 2) : ((2 + 1) * 20);
+                ((4 = 0) & (2 = 0)) : -30;
+                ((4 = 0) & (2 = 1)) : -30;
+                ((4 = 1) & (2 = 0)) : -15;
+                ((4 = 1) & (2 = 1)) : 30;
+                ((4 = 2) & (2 = 0)) : 0;
+                ((4 = 2) & (2 = 1)) : -30;
+                ((4 = 3) & (2 = 0)) : 15;
+                ((4 = 3) & (2 = 1)) : 30;
+                ((4 = 4) & (2 = 0)) : 30;
+                ((4 = 4) & (2 = 1)) : -30;
+                TRUE : 0;
+            esac;
+        xyz_stage_0_index_48 := 0;
+        xyz_stage_0_index_49 := 0;
+        xyz_stage_0_index_50 := 60;
+        ind_stage_1 :=
+            case
+                !(SetP0.active) : ind_stage_0;
+                TRUE : 0;
+            esac;
+        ind_stage_2 :=
+            case
+                !(SetMinP.active) : ind_stage_1;
+                (ind_stage_1 = 0) : 1;
+                TRUE : ind_stage_1;
+            esac;
+        ind_stage_3 :=
+            case
+                !(IncP.active) : ind_stage_2;
+                TRUE : min((15 + 1), (ind_stage_2 + 1));
+            esac;
+        ind_stage_4 :=
+            case
+                !(SetPMax.active) : ind_stage_3;
+                TRUE : 16;
+            esac;
+        x_g_stage_0 := (case 0 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_0; 1 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_1; 2 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_2; 3 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_3; 4 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_4; 5 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_5; 6 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_6; 7 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_7; 8 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_8; 9 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_9; 10 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_10; 11 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_11; 12 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_12; 13 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_13; 14 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_14; 15 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_15; 16 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_16; 17 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_17; 18 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_18; 19 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_19; 20 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_20; 21 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_21; 22 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_22; 23 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_23; 24 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_24; 25 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_25; 26 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_26; 27 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_27; 28 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_28; 29 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_29; 30 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_30; 31 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_31; 32 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_32; 33 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_33; 34 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_34; 35 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_35; 36 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_36; 37 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_37; 38 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_38; 39 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_39; 40 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_40; 41 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_41; 42 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_42; 43 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_43; 44 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_44; 45 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_45; 46 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_46; 47 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_47; 48 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_48; 49 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_49; 50 = (0 + (3 * ind_stage_1)) : xyz_stage_0_index_50; esac);
+        x_g_stage_1 := (case 0 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_0; 1 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_1; 2 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_2; 3 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_3; 4 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_4; 5 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_5; 6 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_6; 7 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_7; 8 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_8; 9 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_9; 10 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_10; 11 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_11; 12 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_12; 13 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_13; 14 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_14; 15 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_15; 16 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_16; 17 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_17; 18 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_18; 19 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_19; 20 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_20; 21 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_21; 22 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_22; 23 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_23; 24 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_24; 25 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_25; 26 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_26; 27 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_27; 28 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_28; 29 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_29; 30 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_30; 31 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_31; 32 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_32; 33 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_33; 34 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_34; 35 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_35; 36 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_36; 37 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_37; 38 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_38; 39 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_39; 40 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_40; 41 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_41; 42 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_42; 43 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_43; 44 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_44; 45 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_45; 46 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_46; 47 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_47; 48 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_48; 49 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_49; 50 = (0 + (3 * ind_stage_2)) : xyz_stage_0_index_50; esac);
+        x_g_stage_2 := (case 0 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_0; 1 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_1; 2 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_2; 3 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_3; 4 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_4; 5 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_5; 6 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_6; 7 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_7; 8 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_8; 9 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_9; 10 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_10; 11 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_11; 12 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_12; 13 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_13; 14 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_14; 15 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_15; 16 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_16; 17 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_17; 18 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_18; 19 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_19; 20 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_20; 21 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_21; 22 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_22; 23 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_23; 24 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_24; 25 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_25; 26 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_26; 27 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_27; 28 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_28; 29 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_29; 30 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_30; 31 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_31; 32 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_32; 33 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_33; 34 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_34; 35 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_35; 36 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_36; 37 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_37; 38 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_38; 39 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_39; 40 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_40; 41 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_41; 42 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_42; 43 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_43; 44 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_44; 45 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_45; 46 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_46; 47 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_47; 48 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_48; 49 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_49; 50 = (0 + (3 * ind_stage_4)) : xyz_stage_0_index_50; esac);
+        y_g_stage_0 := (case 0 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_0; 1 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_1; 2 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_2; 3 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_3; 4 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_4; 5 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_5; 6 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_6; 7 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_7; 8 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_8; 9 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_9; 10 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_10; 11 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_11; 12 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_12; 13 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_13; 14 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_14; 15 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_15; 16 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_16; 17 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_17; 18 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_18; 19 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_19; 20 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_20; 21 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_21; 22 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_22; 23 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_23; 24 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_24; 25 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_25; 26 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_26; 27 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_27; 28 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_28; 29 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_29; 30 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_30; 31 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_31; 32 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_32; 33 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_33; 34 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_34; 35 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_35; 36 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_36; 37 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_37; 38 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_38; 39 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_39; 40 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_40; 41 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_41; 42 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_42; 43 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_43; 44 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_44; 45 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_45; 46 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_46; 47 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_47; 48 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_48; 49 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_49; 50 = (1 + (3 * ind_stage_1)) : xyz_stage_0_index_50; esac);
+        y_g_stage_1 := (case 0 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_0; 1 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_1; 2 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_2; 3 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_3; 4 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_4; 5 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_5; 6 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_6; 7 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_7; 8 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_8; 9 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_9; 10 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_10; 11 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_11; 12 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_12; 13 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_13; 14 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_14; 15 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_15; 16 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_16; 17 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_17; 18 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_18; 19 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_19; 20 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_20; 21 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_21; 22 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_22; 23 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_23; 24 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_24; 25 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_25; 26 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_26; 27 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_27; 28 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_28; 29 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_29; 30 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_30; 31 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_31; 32 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_32; 33 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_33; 34 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_34; 35 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_35; 36 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_36; 37 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_37; 38 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_38; 39 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_39; 40 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_40; 41 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_41; 42 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_42; 43 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_43; 44 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_44; 45 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_45; 46 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_46; 47 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_47; 48 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_48; 49 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_49; 50 = (1 + (3 * ind_stage_2)) : xyz_stage_0_index_50; esac);
+        y_g_stage_2 := (case 0 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_0; 1 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_1; 2 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_2; 3 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_3; 4 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_4; 5 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_5; 6 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_6; 7 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_7; 8 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_8; 9 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_9; 10 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_10; 11 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_11; 12 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_12; 13 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_13; 14 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_14; 15 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_15; 16 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_16; 17 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_17; 18 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_18; 19 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_19; 20 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_20; 21 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_21; 22 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_22; 23 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_23; 24 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_24; 25 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_25; 26 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_26; 27 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_27; 28 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_28; 29 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_29; 30 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_30; 31 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_31; 32 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_32; 33 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_33; 34 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_34; 35 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_35; 36 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_36; 37 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_37; 38 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_38; 39 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_39; 40 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_40; 41 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_41; 42 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_42; 43 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_43; 44 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_44; 45 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_45; 46 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_46; 47 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_47; 48 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_48; 49 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_49; 50 = (1 + (3 * ind_stage_4)) : xyz_stage_0_index_50; esac);
+        z_g_stage_0 := (case 0 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_0; 1 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_1; 2 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_2; 3 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_3; 4 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_4; 5 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_5; 6 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_6; 7 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_7; 8 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_8; 9 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_9; 10 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_10; 11 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_11; 12 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_12; 13 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_13; 14 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_14; 15 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_15; 16 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_16; 17 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_17; 18 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_18; 19 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_19; 20 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_20; 21 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_21; 22 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_22; 23 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_23; 24 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_24; 25 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_25; 26 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_26; 27 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_27; 28 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_28; 29 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_29; 30 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_30; 31 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_31; 32 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_32; 33 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_33; 34 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_34; 35 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_35; 36 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_36; 37 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_37; 38 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_38; 39 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_39; 40 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_40; 41 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_41; 42 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_42; 43 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_43; 44 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_44; 45 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_45; 46 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_46; 47 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_47; 48 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_48; 49 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_49; 50 = (2 + (3 * ind_stage_1)) : xyz_stage_0_index_50; esac);
+        z_g_stage_1 := (case 0 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_0; 1 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_1; 2 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_2; 3 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_3; 4 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_4; 5 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_5; 6 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_6; 7 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_7; 8 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_8; 9 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_9; 10 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_10; 11 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_11; 12 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_12; 13 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_13; 14 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_14; 15 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_15; 16 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_16; 17 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_17; 18 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_18; 19 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_19; 20 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_20; 21 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_21; 22 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_22; 23 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_23; 24 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_24; 25 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_25; 26 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_26; 27 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_27; 28 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_28; 29 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_29; 30 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_30; 31 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_31; 32 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_32; 33 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_33; 34 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_34; 35 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_35; 36 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_36; 37 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_37; 38 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_38; 39 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_39; 40 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_40; 41 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_41; 42 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_42; 43 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_43; 44 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_44; 45 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_45; 46 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_46; 47 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_47; 48 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_48; 49 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_49; 50 = (2 + (3 * ind_stage_2)) : xyz_stage_0_index_50; esac);
+        z_g_stage_2 := (case 0 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_0; 1 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_1; 2 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_2; 3 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_3; 4 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_4; 5 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_5; 6 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_6; 7 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_7; 8 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_8; 9 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_9; 10 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_10; 11 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_11; 12 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_12; 13 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_13; 14 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_14; 15 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_15; 16 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_16; 17 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_17; 18 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_18; 19 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_19; 20 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_20; 21 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_21; 22 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_22; 23 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_23; 24 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_24; 25 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_25; 26 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_26; 27 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_27; 28 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_28; 29 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_29; 30 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_30; 31 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_31; 32 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_32; 33 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_33; 34 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_34; 35 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_35; 36 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_36; 37 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_37; 38 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_38; 39 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_39; 40 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_40; 41 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_41; 42 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_42; 43 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_43; 44 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_44; 45 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_45; 46 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_46; 47 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_47; 48 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_48; 49 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_49; 50 = (2 + (3 * ind_stage_4)) : xyz_stage_0_index_50; esac);
+        x_a_stage_1 :=
+            case
+                !(Drone.active) : x_a_stage_0;
+                ((move_stage_10 = fly) & (x_a_stage_0 < x_g_stage_2)) : (x_a_stage_0 + 1);
+                ((move_stage_10 = fly) & (x_a_stage_0 > x_g_stage_2)) : (x_a_stage_0 - 1);
+                TRUE : x_a_stage_0;
+            esac;
+        y_a_stage_1 :=
+            case
+                !(Drone.active) : y_a_stage_0;
+                ((move_stage_10 = fly) & (y_a_stage_0 < y_g_stage_2)) : (y_a_stage_0 + 1);
+                ((move_stage_10 = fly) & (y_a_stage_0 > y_g_stage_2)) : (y_a_stage_0 - 1);
+                TRUE : y_a_stage_0;
+            esac;
+        z_a_stage_1 :=
+            case
+                !(Drone.active) : z_a_stage_0;
+                ((move_stage_10 = fly) & (z_a_stage_0 < z_g_stage_2)) : (z_a_stage_0 + 1);
+                ((move_stage_10 = fly) & (z_a_stage_0 > z_g_stage_2)) : (z_a_stage_0 - 1);
+                ((move_stage_10 = takeoff) & (z_a_stage_0 < 5)) : (z_a_stage_0 + 1);
+                ((move_stage_10 = land) & (z_a_stage_0 > 0)) : (z_a_stage_0 - 1);
+                TRUE : z_a_stage_0;
+            esac;
+        --END OF BLACKBOARD DEFINITIONS
+    VAR
+        node_names : define_nodes;
+        Started : Started_module(startedDC_stage_0);
+        Start : Start_module(camStatus_stage_1, droneStatus_stage_1);
+        StartSel : composite_selector_without_memory_2(Started, Start);
+        Landing : Landing_module(move_stage_1);
+        Landed : Landed_module(z_a_stage_0);
+        Land : running_DEFAULT_module();
+        LandSel : composite_selector_without_memory_2(Landed, Land);
+        LandingSeq : composite_sequence_without_memory_2(Landing, LandSel);
+        BCritical : BCritical_module(battery_stage_0);
+        LBad : LBad_module(loc_stage_0);
+        ESel : composite_selector_without_memory_2(BCritical, LBad);
+        ELand : running_DEFAULT_module();
+        ESeq : composite_sequence_without_memory_2(ESel, ELand);
+        Tookoff : Tookoff_module(z_a_stage_0);
+        Takeoff : running_DEFAULT_module();
+        TakeoffSel : composite_selector_without_memory_2(Tookoff, Takeoff);
+        BLow : BLow_module(battery_stage_0);
+        SetP0 : success_DEFAULT_module();
+        AtP0 : AtP0_module(x_a_stage_0, x_g_stage_0, y_a_stage_0, y_g_stage_0, z_a_stage_0, z_g_stage_0);
+        GoTo0 : running_DEFAULT_module();
+        LSel : composite_selector_without_memory_2(AtP0, GoTo0);
+        LLand : running_DEFAULT_module();
+        LSeq : composite_sequence_without_memory_4(BLow, SetP0, LSel, LLand);
+        CameraTrack : CameraTrack_module(camT_stage_2);
+        SetMinP : success_DEFAULT_module();
+        AtP : AtP_module(x_a_stage_0, x_g_stage_1, y_a_stage_0, y_g_stage_1, z_a_stage_0, z_g_stage_1);
+        IncP : success_DEFAULT_module();
+        PointSel : composite_selector_without_memory_2(AtP, IncP);
+        MaxP : MaxP_module(ind_stage_3);
+        GoToP : running_DEFAULT_module();
+        FinalSel : composite_selector_without_memory_2(MaxP, GoToP);
+        PointSeq : composite_sequence_without_memory_3(SetMinP, PointSel, FinalSel);
+        ObjSel : composite_selector_without_memory_2(CameraTrack, PointSeq);
+        SetPMax : success_DEFAULT_module();
+        AtPMax : AtPMax_module(x_a_stage_0, x_g_stage_2, y_a_stage_0, y_g_stage_2, z_a_stage_0, z_g_stage_2);
+        GoToMax : running_DEFAULT_module();
+        MaxSel : composite_selector_without_memory_2(AtPMax, GoToMax);
+        GLand : running_DEFAULT_module();
+        MoveSeq : composite_sequence_without_memory_4(ObjSel, SetPMax, MaxSel, GLand);
+        MoveSel : composite_selector_without_memory_2(LSeq, MoveSeq);
+        TakeoffSeq : composite_sequence_without_memory_2(TakeoffSel, MoveSel);
+        Main : composite_selector_without_memory_3(LandingSeq, ESeq, TakeoffSeq);
+        Shutdown : Shutdown_module(camStatus_stage_2, droneStatus_stage_2);
+        Report : Report_module(camT_stage_2);
+        Drone : composite_sequence_without_memory_4(StartSel, Main, Shutdown, Report);
+        --START OF BLACKBOARD VARIABLES DECLARATION
+        droneStatus_stage_0 : {off, failed, on, trying};
+        droneStatus_stage_1 : {off, failed, on, trying};
+        droneStatus_stage_2 : {off, failed, on, trying};
+        camStatus_stage_0 : {off, failed, on, trying};
+        camStatus_stage_1 : {off, failed, on, trying};
+        camStatus_stage_2 : {off, failed, on, trying};
+        startedDC_stage_0 : boolean;
+        camT_stage_0 : boolean;
+        camT_stage_2 : boolean;
+        move_stage_0 : {takeoff, none, land, fly};
+        ind_stage_0 : 0..16;
+        x_a_stage_0 : -30..30;
+        y_a_stage_0 : -30..30;
+        z_a_stage_0 : 0..80;
+        battery_stage_0 : {critical, low, good};
+        loc_stage_0 : boolean;
+        --END OF BLACKBOARD VARIABLES DECLARATION
+    ASSIGN
+        --START OF BLACKBOARD VARIABLES INITIALIZATION
+        init(droneStatus_stage_0) := off;
+        init(camStatus_stage_0) := off;
+        init(startedDC_stage_0) := FALSE;
+        init(camT_stage_0) := FALSE;
+        init(move_stage_0) := none;
+        init(ind_stage_0) := 0;
+        init(x_a_stage_0) := 0;
+        init(y_a_stage_0) := 0;
+        init(z_a_stage_0) := 0;
+        init(battery_stage_0) := good;
+        init(loc_stage_0) := {TRUE, FALSE};
+        --END OF BLACKBOARD VARIABLES INITIALIZATION
+        --START OF BLACKBOARD VARIABLES TRANSITION
+        next(droneStatus_stage_0) := droneStatus_stage_2;
+        droneStatus_stage_1 :=
+            case
+                !(Start.active) : droneStatus_stage_0;
+                (droneStatus_stage_0 = failed) : failed;
+                (droneStatus_stage_0 = on) : on;
+                TRUE : {on, failed, trying};
+            esac;
+        droneStatus_stage_2 :=
+            case
+                !(Shutdown.active) : droneStatus_stage_1;
+                TRUE : {droneStatus_stage_1, off};
+            esac;
+        next(camStatus_stage_0) := camStatus_stage_2;
+        camStatus_stage_1 :=
+            case
+                !(Start.active) : camStatus_stage_0;
+                (camStatus_stage_0 = failed) : failed;
+                (camStatus_stage_0 = on) : on;
+                TRUE : {on, failed, trying};
+            esac;
+        camStatus_stage_2 :=
+            case
+                !(Shutdown.active) : camStatus_stage_1;
+                TRUE : {camStatus_stage_1, off};
+            esac;
+        next(startedDC_stage_0) := startedDC_stage_2;
+        next(camT_stage_0) :=
+            case
+                !(Report.active) : camT_stage_2;
+                TRUE : FALSE;
+            esac;
+        camT_stage_2 :=
+            case
+                !(CameraTrack.active) : camT_stage_1;
+                TRUE : {TRUE, FALSE};
+            esac;
+        next(move_stage_0) := move_stage_10;
+        next(ind_stage_0) := ind_stage_4;
+        next(x_a_stage_0) := x_a_stage_1;
+        next(y_a_stage_0) := y_a_stage_1;
+        next(z_a_stage_0) := z_a_stage_1;
+        next(battery_stage_0) :=
+            case
+                !(Drone.active) : battery_stage_0;
+                ((droneStatus_stage_2 = on) & (battery_stage_0 = good)) : {good, low};
+                ((droneStatus_stage_2 = on) & (battery_stage_0 = low)) : {low, critical};
+                TRUE : battery_stage_0;
+            esac;
+        next(loc_stage_0) :=
+            case
+                !(Drone.active) : loc_stage_0;
+                TRUE : {TRUE, FALSE};
+            esac;
+        --END OF BLACKBOARD VARIABLES TRANSITION
+
+MODULE define_nodes
+    DEFINE
+        Drone := 0;
+        StartSel := 1;
+        Started := 2;
+        Start := 3;
+        Main := 4;
+        LandingSeq := 5;
+        Landing := 6;
+        LandSel := 7;
+        Landed := 8;
+        Land := 9;
+        ESeq := 10;
+        ESel := 11;
+        BCritical := 12;
+        LBad := 13;
+        ELand := 14;
+        TakeoffSeq := 15;
+        TakeoffSel := 16;
+        Tookoff := 17;
+        Takeoff := 18;
+        MoveSel := 19;
+        LSeq := 20;
+        BLow := 21;
+        SetP0 := 22;
+        LSel := 23;
+        AtP0 := 24;
+        GoTo0 := 25;
+        LLand := 26;
+        MoveSeq := 27;
+        ObjSel := 28;
+        CameraTrack := 29;
+        PointSeq := 30;
+        SetMinP := 31;
+        PointSel := 32;
+        AtP := 33;
+        IncP := 34;
+        FinalSel := 35;
+        MaxP := 36;
+        GoToP := 37;
+        SetPMax := 38;
+        MaxSel := 39;
+        AtPMax := 40;
+        GoToMax := 41;
+        GLand := 42;
+        Shutdown := 43;
+        Report := 44;
+MODULE composite_sequence_without_memory_4(child_0, child_1, child_2, child_3)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                !(child_0.internal_status = success) : child_0.internal_status;
+                !(child_1.internal_status = success) : child_1.internal_status;
+                !(child_2.internal_status = success) : child_2.internal_status;
+                !(child_3.internal_status = success) : child_3.internal_status;
+                TRUE : success;
+            esac;
+        child_0.active := active;
+        child_1.active := child_0.status = success;
+        child_2.active := child_1.status = success;
+        child_3.active := child_2.status = success;
+MODULE composite_selector_without_memory_2(child_0, child_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                !(child_0.internal_status = failure) : child_0.internal_status;
+                !(child_1.internal_status = failure) : child_1.internal_status;
+                TRUE : failure;
+            esac;
+        child_0.active := active;
+        child_1.active := child_0.status = failure;
+MODULE composite_sequence_without_memory_3(child_0, child_1, child_2)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                !(child_0.internal_status = success) : child_0.internal_status;
+                !(child_1.internal_status = success) : child_1.internal_status;
+                !(child_2.internal_status = success) : child_2.internal_status;
+                TRUE : success;
+            esac;
+        child_0.active := active;
+        child_1.active := child_0.status = success;
+        child_2.active := child_1.status = success;
+MODULE composite_sequence_without_memory_2(child_0, child_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                !(child_0.internal_status = success) : child_0.internal_status;
+                !(child_1.internal_status = success) : child_1.internal_status;
+                TRUE : success;
+            esac;
+        child_0.active := active;
+        child_1.active := child_0.status = success;
+MODULE composite_selector_without_memory_3(child_0, child_1, child_2)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                !(child_0.internal_status = failure) : child_0.internal_status;
+                !(child_1.internal_status = failure) : child_1.internal_status;
+                !(child_2.internal_status = failure) : child_2.internal_status;
+                TRUE : failure;
+            esac;
+        child_0.active := active;
+        child_1.active := child_0.status = failure;
+        child_2.active := child_1.status = failure;
+MODULE Started_module(startedDC_stage_0)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := (startedDC_stage_0) ? success : failure;
+MODULE Start_module(camStatus_stage_1, droneStatus_stage_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := 
+            case
+                ((droneStatus_stage_1 = on) & (camStatus_stage_1 = on)) : success;
+                ((droneStatus_stage_1 = failed) | (camStatus_stage_1 = failed)) : failure;
+                TRUE : running;
+            esac;
+MODULE Landing_module(move_stage_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := (((move_stage_1) = land)) ? success : failure;
+MODULE Landed_module(z_a_stage_0)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := ((z_a_stage_0 = 0)) ? success : failure;
+MODULE BCritical_module(battery_stage_0)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := ((battery_stage_0 = critical)) ? success : failure;
+MODULE LBad_module(loc_stage_0)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := (!(loc_stage_0)) ? success : failure;
+MODULE Tookoff_module(z_a_stage_0)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := ((z_a_stage_0 >= 5)) ? success : failure;
+MODULE BLow_module(battery_stage_0)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := ((battery_stage_0 = low)) ? success : failure;
+MODULE AtP0_module(x_a_stage_0, x_g_stage_0, y_a_stage_0, y_g_stage_0, z_a_stage_0, z_g_stage_0)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := (((x_a_stage_0 = x_g_stage_0) & (y_a_stage_0 = y_g_stage_0) & (z_a_stage_0 = z_g_stage_0))) ? success : failure;
+MODULE CameraTrack_module(camT_stage_2)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := 
+            case
+                camT_stage_2 : success;
+                TRUE : failure;
+            esac;
+MODULE AtP_module(x_a_stage_0, x_g_stage_1, y_a_stage_0, y_g_stage_1, z_a_stage_0, z_g_stage_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := (((x_a_stage_0 = x_g_stage_1) & (y_a_stage_0 = y_g_stage_1) & (z_a_stage_0 = z_g_stage_1))) ? success : failure;
+MODULE MaxP_module(ind_stage_3)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := (((1 + 15) = ind_stage_3)) ? success : failure;
+MODULE AtPMax_module(x_a_stage_0, x_g_stage_2, y_a_stage_0, y_g_stage_2, z_a_stage_0, z_g_stage_2)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := (((x_a_stage_0 = x_g_stage_2) & (y_a_stage_0 = y_g_stage_2) & (z_a_stage_0 = z_g_stage_2))) ? success : failure;
+MODULE Shutdown_module(camStatus_stage_2, droneStatus_stage_2)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := 
+            case
+                ((droneStatus_stage_2 = off) & (camStatus_stage_2 = off)) : success;
+                TRUE : running;
+            esac;
+MODULE Report_module(camT_stage_2)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := 
+            case
+                camT_stage_2 : success;
+                TRUE : failure;
+            esac;
+MODULE running_DEFAULT_module
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := running;
+MODULE success_DEFAULT_module
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := success;

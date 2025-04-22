@@ -1,0 +1,364 @@
+configuration{}
+enumerations { 'empty', 'EToW', 'WToE', 'off'}
+constants {
+    f_max := 4
+} end_constants
+variables {
+    variable {
+	bl f VAR [0, f_max]
+	assign {
+	    result {0}
+	}
+    }
+    variable {
+	bl dir VAR {'EToW', 'WToE'}
+	assign {
+	    result {'WToE'}
+	}
+    }
+    variable {
+	bl on VAR BOOLEAN
+	assign {
+	    result {False}
+	}
+    }
+    variable {
+	env l VAR {'EToW', 'WToE', 'off'}
+	assign {
+	    result{'off'}
+	}
+    }
+    variable {
+	env t VAR {'empty', 'EToW', 'WToE'}
+	assign {
+	    result {'empty'}
+	}
+    }
+    variable {
+	env c_e VAR BOOLEAN
+	assign {
+	    result {True, False}
+	}
+    }
+    variable {
+	env c_w VAR BOOLEAN
+	assign {
+	    result {True, False}
+	}
+    }
+} end_variables
+
+environment_update {
+    variable_statement {
+	t
+	assign {
+	    case {(eq, l, 'off')}
+	    result {t, 'empty'}
+	    result {l, 'empty'}
+	}
+    }
+    variable_statement {
+	c_w
+	assign {
+	    case {(eq, l, 'WToE')}
+	    result {True, False}
+	    result {True, c_w}
+	}
+    }
+    variable_statement {
+	c_e
+	assign {
+	    case {(eq, l, 'EToW')}
+	    result {True, False}
+	    result {True, c_e}
+	}
+    }
+} end_environment_update
+
+checks {
+    check {
+	Fair
+	arguments {}
+	read_variables {f}
+	condition { (lt, f, f_max)}
+    }
+} end_checks
+
+environment_checks {
+    environment_check {
+	InUse
+	arguments {}
+	read_variables {}
+	condition {(neq, t, 'empty')}
+    }
+    environment_check {
+	WE
+	arguments {}
+	read_variables {}
+	condition {(and, c_w, c_e)}
+    }
+    environment_check {
+	W
+	arguments {}
+	read_variables {}
+	condition {c_w}
+    }
+    environment_check {
+	E
+	arguments {}
+	read_variables {}
+	condition {c_e}
+    }
+} end_environment_checks
+
+actions {
+    action {
+	Prep
+	arguments {}
+	local_variables {}
+	read_variables {}
+	write_variables {on}
+	initial_values {}
+	update {
+	    variable_statement {
+		on
+		assign {result {True}}
+	    }
+	    return_statement {
+		result {running}
+	    }
+	}
+    }
+    action {
+	Off
+	arguments {}
+	local_variables {}
+	read_variables {}
+	write_variables {on}
+	initial_values {}
+	update {
+	    variable_statement {
+		on
+		assign {result {False}}
+	    }
+	    return_statement {
+		result {success}
+	    }
+	}
+    }
+    action {
+	Swap
+	arguments {}
+	local_variables {}
+	read_variables {}
+	write_variables {dir, f}
+	initial_values {}
+	update {
+	    variable_statement {
+		dir
+		assign {
+		    case {(eq, dir, 'WToE')}
+		    result {'EToW'}
+		    result {'WToE'}
+		}
+	    }
+	    variable_statement {
+		f
+		assign {
+		    result {0}
+		}
+	    }
+	    return_statement {
+		result { success}
+	    }
+	}
+    }
+    action {
+	SetDir
+	arguments {new_dir := ENUM}
+	local_variables {}
+	read_variables {}
+	write_variables {dir, f}
+	initial_values {}
+	update {
+	    variable_statement {
+		dir
+		assign {result {new_dir}}
+	    }
+	    variable_statement {
+		f
+		assign {result {0}}
+	    }
+	    return_statement {
+		result {success}
+	    }
+	}
+    }
+    action {
+	Inc
+	arguments {}
+	local_variables {}
+	read_variables {}
+	write_variables {f}
+	initial_values {}
+	update {
+	    variable_statement {
+		f
+		assign {
+		    result {(min, f_max, (add, f, 1))}
+		}
+	    }
+	    return_statement {
+		result {success}
+	    }
+	}
+    }    
+    action {
+	Send
+	arguments {}
+	local_variables {}
+	read_variables {dir, on}
+	write_variables {f}
+	initial_values {}
+	update {
+	    #{
+	    variable_statement {
+		f
+		assign {
+		    result {(min, f_max, (add, f, 1))}
+		}
+	    }
+	    }#
+	    write_environment {
+		l_signal_func
+		variable_statement {
+		    l
+		    assign {
+			case {on}
+			result {dir}
+			result {'off'}
+		    }
+		}
+	    }
+	    return_statement {
+		result {success}
+	    }
+	}
+    }
+} end_actions
+
+sub_trees {
+    sub_tree {
+	TUNNEL_OCCUPIED
+	composite {
+	    InUseSeq
+	    sequence
+	    children {
+		InUse {}
+		Off {}
+	    }
+	}
+    }	    
+    sub_tree {
+	WEST_AND_EAST
+	composite {
+	    WESeq
+	    sequence
+	    children {
+		WE {}
+		Inc {}
+		composite {
+		    FairSel
+		    selector
+		    children {
+			Fair {} #{ a check node we defined earlier }#
+			Swap {} #{ an action node we defined earlier }#
+		    }
+		}
+	    }
+	}
+    }
+    sub_tree {
+	WEST_ONLY
+	composite {
+	    WSeq
+	    sequence
+	    children {
+		W {}
+		WDir : SetDir {'WToE'}
+	    }
+	}
+    }
+    sub_tree {
+	EAST_ONLY
+	composite {
+	    ESeq
+	    sequence
+	    children {
+		E_renamed : E {}
+		EDir : SetDir {'EToW'}
+	    }
+	}
+    }
+    sub_tree {
+	DIR_SUBTREE
+	composite {
+	    DirSel
+	    selector
+	    children {
+		insert {TUNNEL_OCCUPIED}
+		insert {WEST_AND_EAST}
+		insert {WEST_ONLY}
+		insert {EAST_ONLY}
+	    }
+	}
+    }
+} end_sub_trees
+
+tree {
+    #{ this is our actual tree, and the actual root }#
+    composite {
+	LightCtrl
+	parallel policy success_on_one
+	children {
+	    Prep {}
+	    insert {DIR_SUBTREE} #{ here we are inserting a subtree of the name DIR_SUBTREE }#
+	    Send {}
+	}
+    }
+} end_tree
+
+tick_prerequisite {True} end_tick_prerequisite
+
+
+specifications {
+    #{ Specifications are used to write specifications for our model }#
+    INVARSPEC {(or, (eq, l, 'off'), (eq, t, 'empty'), (eq, t, l))}
+    
+    #{ The below attempt to ensure that each car eventually gets to use the tunnel.
+	They do this by stating that it is always the case that if there is a car waiting,
+	then the light will eventually let that car through.}#
+    #{ These will fail, because cars are not guaranteed to ever leave the tunnel.}#
+    CTLSPEC {(always_globally, (implies, c_w, (always_finally, (eq, l, 'WToE'))))}
+    CTLSPEC {(always_globally, (implies, c_e, (always_finally, (eq, l, 'EToW'))))}
+    LTLSPEC {(globally, (implies, c_w, (finally, (eq, l, 'WToE'))))}
+    LTLSPEC {(globally, (implies, c_e, (finally, (eq, l, 'EToW'))))}
+    
+    #{ So we add a condition to force cars to leave. }#
+    CTLSPEC {(implies,
+	(always_globally, (always_finally, (eq, t, 'empty'))),
+	(always_globally, (implies, c_w, (always_finally, (eq, l, 'WToE'))))
+	)}
+    CTLSPEC {(implies,
+	(always_globally, (always_finally, (eq, t, 'empty'))),
+	(always_globally, (implies, c_e, (always_finally, (eq, l, 'EToW'))))
+	)}
+    LTLSPEC {(implies,
+	(globally, (finally, (eq, t, 'empty'))),
+	(globally, (implies, c_w, (finally, (eq, l, 'WToE'))))
+	)}
+    LTLSPEC {(implies,
+	(globally, (finally, (eq, t, 'empty'))),
+	(globally, (implies, c_e, (finally, (eq, l, 'EToW'))))
+	)}
+} end_specifications

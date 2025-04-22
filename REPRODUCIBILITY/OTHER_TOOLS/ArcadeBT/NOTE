@@ -1,0 +1,19 @@
+PAPER
+Verification of Behavior Trees using Linear Constrained Horn Clauses
+
+REPO
+https://github.com/embedded-software-laboratory/ArcadeBT
+
+STATUS
+Does not work. See below
+
+
+./bench: error while loading shared libraries: libglog.so.0: cannot open shared object file: No such file or directory
+
+sudo find / -iname *libglog*.so*
+this finds 3 files
+/usr/lib/x86_64-linux-gnu/libglog.so.1
+/usr/lib/x86_64-linux-gnu/libglog.so
+/usr/lib/x86_64-linux-gnu/libglog.so.0.6.0
+
+none of which are libglog.so.0

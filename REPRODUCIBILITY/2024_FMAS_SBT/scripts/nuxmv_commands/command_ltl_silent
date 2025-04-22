@@ -1,0 +1,6 @@
+time
+go
+check_ltlspec -o /dev/null
+time
+usage
+quit

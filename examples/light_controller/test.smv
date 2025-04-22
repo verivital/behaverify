@@ -1,0 +1,289 @@
+MODULE main
+    VAR
+        system : system_module;
+--------------SPECIFICATIONS
+
+INVARSPEC ((system.light_stage_1 = off) | (system.tunnel_stage_1 = empty) | (system.tunnel_stage_1 = system.light_stage_1));
+CTLSPEC AG((system.c_w_stage_1 -> AF((system.light_stage_1 = WToE))));
+CTLSPEC AG((system.c_e_stage_1 -> AF((system.light_stage_1 = EToW))));
+LTLSPEC G((system.c_w_stage_1 -> F((system.light_stage_1 = WToE))));
+LTLSPEC G((system.c_e_stage_1 -> F((system.light_stage_1 = EToW))));
+CTLSPEC (AG(AF((system.tunnel_stage_1 = empty))) -> AG((system.c_w_stage_1 -> AF((system.light_stage_1 = WToE)))));
+CTLSPEC (AG(AF((system.tunnel_stage_1 = empty))) -> AG((system.c_e_stage_1 -> AF((system.light_stage_1 = EToW)))));
+LTLSPEC (G(F((system.tunnel_stage_1 = empty))) -> G((system.c_w_stage_1 -> F((system.light_stage_1 = WToE)))));
+LTLSPEC (G(F((system.tunnel_stage_1 = empty))) -> G((system.c_e_stage_1 -> F((system.light_stage_1 = EToW)))));
+
+--------------END OF SPECIFICATIONS
+
+MODULE system_module
+    CONSTANTS
+        success, failure, running, invalid, empty, off, EToW, WToE;
+    DEFINE
+        resume_from_here_in_subtree__LightCtrl := -3;
+        resume_from_here_in_subtree__Prep := -3;
+        resume_from_here_in_subtree__DirSel := -3;
+        resume_from_here_in_subtree__Send := -3;
+        LightCtrl.active := TRUE;
+        --START OF BLACKBOARD DEFINITIONS
+        f_stage_1 :=
+            case
+                !(Inc.active) : f_stage_0;
+                TRUE : min(4, (f_stage_0 + 1));
+            esac;
+        f_stage_2 :=
+            case
+                !(Swap.active) : f_stage_1;
+                TRUE : 0;
+            esac;
+        f_stage_3 :=
+            case
+                !(WDir.active) : f_stage_2;
+                TRUE : 0;
+            esac;
+        dir_stage_1 :=
+            case
+                !(Swap.active) : dir_stage_0;
+                (dir_stage_0 = WToE) : EToW;
+                TRUE : WToE;
+            esac;
+        dir_stage_2 :=
+            case
+                !(WDir.active) : dir_stage_1;
+                TRUE : WToE;
+            esac;
+        dir_stage_3 :=
+            case
+                !(EDir.active) : dir_stage_2;
+                TRUE : EToW;
+            esac;
+        on_stage_1 :=
+            case
+                !(Prep.active) : on_stage_0;
+                TRUE : TRUE;
+            esac;
+        on_stage_2 :=
+            case
+                !(TurnOff.active) : on_stage_1;
+                TRUE : FALSE;
+            esac;
+        light_stage_1 :=
+            case
+                !(Send.active) : light_stage_0;
+                on_stage_2 : dir_stage_3;
+                TRUE : off;
+            esac;
+        --END OF BLACKBOARD DEFINITIONS
+    VAR
+        node_names : define_nodes;
+        Prep : running_DEFAULT_module();
+        InUse : InUse_module(tunnel_stage_0);
+        TurnOff : success_DEFAULT_module();
+        InUseSeq : composite_sequence_without_memory_2(InUse, TurnOff);
+        WE : WE_module(c_e_stage_0, c_w_stage_0);
+        Inc : success_DEFAULT_module();
+        Fair : Fair_module(f_stage_1);
+        Swap : success_DEFAULT_module();
+        FairSel : composite_selector_without_memory_2(Fair, Swap);
+        WESeq : composite_sequence_without_memory_3(WE, Inc, FairSel);
+        W : W_module(c_w_stage_0);
+        WDir : success_DEFAULT_module();
+        WSeq : composite_sequence_without_memory_2(W, WDir);
+        E_renamed : E_renamed_module(c_e_stage_0);
+        EDir : success_DEFAULT_module();
+        ESeq : composite_sequence_without_memory_2(E_renamed, EDir);
+        DirSel : composite_selector_without_memory_4(InUseSeq, WESeq, WSeq, ESeq);
+        Send : success_DEFAULT_module();
+        LightCtrl : composite_parallel_success_on_one_without_memory_3(Prep, DirSel, Send);
+        --START OF BLACKBOARD VARIABLES DECLARATION
+        f_stage_0 : 0..4;
+        dir_stage_0 : {EToW, WToE};
+        on_stage_0 : boolean;
+        light_stage_0 : {off, EToW, WToE};
+        tunnel_stage_0 : {empty, EToW, WToE};
+        tunnel_stage_1 : {empty, EToW, WToE};
+        c_e_stage_0 : boolean;
+        c_e_stage_1 : boolean;
+        c_w_stage_0 : boolean;
+        c_w_stage_1 : boolean;
+        --END OF BLACKBOARD VARIABLES DECLARATION
+    ASSIGN
+        --START OF BLACKBOARD VARIABLES INITIALIZATION
+        init(f_stage_0) := 0;
+        init(dir_stage_0) := WToE;
+        init(on_stage_0) := FALSE;
+        init(light_stage_0) := off;
+        init(tunnel_stage_0) := empty;
+        init(c_e_stage_0) := {TRUE, FALSE};
+        init(c_w_stage_0) := {TRUE, FALSE};
+        --END OF BLACKBOARD VARIABLES INITIALIZATION
+        --START OF BLACKBOARD VARIABLES TRANSITION
+        next(f_stage_0) :=
+            case
+                !(EDir.active) : f_stage_3;
+                TRUE : 0;
+            esac;
+        next(dir_stage_0) := dir_stage_3;
+        next(on_stage_0) := on_stage_2;
+        next(light_stage_0) := light_stage_1;
+        next(tunnel_stage_0) := tunnel_stage_1;
+        tunnel_stage_1 :=
+            case
+                !(LightCtrl.active) : tunnel_stage_0;
+                (light_stage_1 = off) : {tunnel_stage_0, empty};
+                TRUE : {light_stage_1, empty};
+            esac;
+        next(c_e_stage_0) := c_e_stage_1;
+        c_e_stage_1 :=
+            case
+                !(LightCtrl.active) : c_e_stage_0;
+                (light_stage_1 = EToW) : {TRUE, FALSE};
+                TRUE : {TRUE, c_e_stage_0};
+            esac;
+        next(c_w_stage_0) := c_w_stage_1;
+        c_w_stage_1 :=
+            case
+                !(LightCtrl.active) : c_w_stage_0;
+                (light_stage_1 = WToE) : {TRUE, FALSE};
+                TRUE : {TRUE, c_w_stage_0};
+            esac;
+        --END OF BLACKBOARD VARIABLES TRANSITION
+
+MODULE define_nodes
+    DEFINE
+        LightCtrl := 0;
+        Prep := 1;
+        DirSel := 2;
+        InUseSeq := 3;
+        InUse := 4;
+        TurnOff := 5;
+        WESeq := 6;
+        WE := 7;
+        Inc := 8;
+        FairSel := 9;
+        Fair := 10;
+        Swap := 11;
+        WSeq := 12;
+        W := 13;
+        WDir := 14;
+        ESeq := 15;
+        E_renamed := 16;
+        EDir := 17;
+        Send := 18;
+MODULE composite_sequence_without_memory_3(child_0, child_1, child_2)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                !(child_0.internal_status = success) : child_0.internal_status;
+                !(child_1.internal_status = success) : child_1.internal_status;
+                !(child_2.internal_status = success) : child_2.internal_status;
+                TRUE : success;
+            esac;
+        child_0.active := active;
+        child_1.active := child_0.status = success;
+        child_2.active := child_1.status = success;
+MODULE composite_selector_without_memory_2(child_0, child_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                !(child_0.internal_status = failure) : child_0.internal_status;
+                !(child_1.internal_status = failure) : child_1.internal_status;
+                TRUE : failure;
+            esac;
+        child_0.active := active;
+        child_1.active := child_0.status = failure;
+MODULE composite_selector_without_memory_4(child_0, child_1, child_2, child_3)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                !(child_0.internal_status = failure) : child_0.internal_status;
+                !(child_1.internal_status = failure) : child_1.internal_status;
+                !(child_2.internal_status = failure) : child_2.internal_status;
+                !(child_3.internal_status = failure) : child_3.internal_status;
+                TRUE : failure;
+            esac;
+        child_0.active := active;
+        child_1.active := child_0.status = failure;
+        child_2.active := child_1.status = failure;
+        child_3.active := child_2.status = failure;
+MODULE composite_parallel_success_on_one_without_memory_3(child_0, child_1, child_2)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                (child_0.internal_status = failure) : failure;
+                (child_1.internal_status = failure) : failure;
+                (child_2.internal_status = failure) : failure;
+                !(child_0.internal_status = running) : child_0.internal_status;
+                !(child_1.internal_status = running) : child_1.internal_status;
+                !(child_2.internal_status = running) : child_2.internal_status;
+                TRUE : running;
+            esac;
+        child_0.active := active;
+        child_1.active := active;
+        child_2.active := active;
+MODULE composite_sequence_without_memory_2(child_0, child_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                !(child_0.internal_status = success) : child_0.internal_status;
+                !(child_1.internal_status = success) : child_1.internal_status;
+                TRUE : success;
+            esac;
+        child_0.active := active;
+        child_1.active := child_0.status = success;
+MODULE InUse_module(tunnel_stage_0)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := ((tunnel_stage_0 != empty)) ? success : failure;
+MODULE WE_module(c_e_stage_0, c_w_stage_0)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := ((c_w_stage_0 & c_e_stage_0)) ? success : failure;
+MODULE Fair_module(f_stage_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := ((f_stage_1 < 4)) ? success : failure;
+MODULE W_module(c_w_stage_0)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := (c_w_stage_0) ? success : failure;
+MODULE E_renamed_module(c_e_stage_0)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := (c_e_stage_0) ? success : failure;
+MODULE running_DEFAULT_module
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := running;
+MODULE success_DEFAULT_module
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := success;

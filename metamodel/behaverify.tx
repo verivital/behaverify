@@ -94,7 +94,9 @@ node:
     name = ID
     (
     (node_type = 'X_is_Y' 'X' x = status 'Y' y = status) |
-    (node_type = 'inverter')
+    (node_type = 'inverter') |
+    (node_type = 'repeat' repeat = INT) |
+    (node_type = 'one_shot' ((one_shot = 'success_only') | (one_shot = 'success_failure') | (one_shot = 'failure_only'))) 
     )
     'child' '{' child = node '}' ('end_child')?
     '}' ('end_decorator')?

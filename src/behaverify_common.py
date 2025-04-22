@@ -218,6 +218,9 @@ def is_blackboard(variable):
     '''checks if the variable is blackboard'''
     return variable.var_type == 'bl'
 
+def is_neural(variable):
+    return variable.model_as == 'NEURAL'
+
 def variable_scope(variable, trace = None):
     '''used to return the scope of the environment'''
     if is_local(variable):

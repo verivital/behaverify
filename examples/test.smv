@@ -1,0 +1,7 @@
+MODULE main
+    VAR
+	t : test(5);
+MODULE test(x)
+    VAR
+	y : 0..x;
+	

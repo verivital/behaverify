@@ -1,0 +1,1175 @@
+MODULE main
+    VAR
+        system : system_module;
+--------------SPECIFICATIONS
+
+INVARSPEC (system.Drone.active);
+INVARSPEC !((system.Drone.active));
+INVARSPEC !((system.Drone.status = success));
+INVARSPEC !((system.Drone.status = failure));
+INVARSPEC !((system.Drone.status = running));
+INVARSPEC (system.Start.active);
+INVARSPEC !((system.Start.active));
+INVARSPEC !((system.Start.status = success));
+INVARSPEC !((system.Start.status = failure));
+INVARSPEC !((system.Start.status = running));
+INVARSPEC (system.StartD.active);
+INVARSPEC !((system.StartD.active));
+INVARSPEC !((system.StartD.status = success));
+INVARSPEC !((system.StartD.status = failure));
+INVARSPEC !((system.StartD.status = running));
+INVARSPEC (system.StartC.active);
+INVARSPEC !((system.StartC.active));
+INVARSPEC !((system.StartC.status = success));
+INVARSPEC !((system.StartC.status = failure));
+INVARSPEC !((system.StartC.status = running));
+INVARSPEC (system.Main.active);
+INVARSPEC !((system.Main.active));
+INVARSPEC !((system.Main.status = success));
+INVARSPEC !((system.Main.status = failure));
+INVARSPEC !((system.Main.status = running));
+INVARSPEC (system.Seq1.active);
+INVARSPEC !((system.Seq1.active));
+INVARSPEC !((system.Seq1.status = success));
+INVARSPEC !((system.Seq1.status = failure));
+INVARSPEC !((system.Seq1.status = running));
+INVARSPEC (system.Sel1.active);
+INVARSPEC !((system.Sel1.active));
+INVARSPEC !((system.Sel1.status = success));
+INVARSPEC !((system.Sel1.status = failure));
+INVARSPEC !((system.Sel1.status = running));
+INVARSPEC (system.SIsF1.active);
+INVARSPEC !((system.SIsF1.active));
+INVARSPEC !((system.SIsF1.status = success));
+INVARSPEC !((system.SIsF1.status = failure));
+INVARSPEC !((system.SIsF1.status = running));
+INVARSPEC (system.MeasureB.active);
+INVARSPEC !((system.MeasureB.active));
+INVARSPEC !((system.MeasureB.status = success));
+INVARSPEC !((system.MeasureB.status = failure));
+INVARSPEC !((system.MeasureB.status = running));
+INVARSPEC (system.BNotCritical1.active);
+INVARSPEC !((system.BNotCritical1.active));
+INVARSPEC !((system.BNotCritical1.status = success));
+INVARSPEC !((system.BNotCritical1.status = failure));
+INVARSPEC !((system.BNotCritical1.status = running));
+INVARSPEC (system.Land1.active);
+INVARSPEC !((system.Land1.active));
+INVARSPEC !((system.Land1.status = success));
+INVARSPEC !((system.Land1.status = failure));
+INVARSPEC !((system.Land1.status = running));
+INVARSPEC (system.BNotCritical2.active);
+INVARSPEC !((system.BNotCritical2.active));
+INVARSPEC !((system.BNotCritical2.status = success));
+INVARSPEC !((system.BNotCritical2.status = failure));
+INVARSPEC !((system.BNotCritical2.status = running));
+INVARSPEC (system.Sel2.active);
+INVARSPEC !((system.Sel2.active));
+INVARSPEC !((system.Sel2.status = success));
+INVARSPEC !((system.Sel2.status = failure));
+INVARSPEC !((system.Sel2.status = running));
+INVARSPEC (system.BGood.active);
+INVARSPEC !((system.BGood.active));
+INVARSPEC !((system.BGood.status = success));
+INVARSPEC !((system.BGood.status = failure));
+INVARSPEC !((system.BGood.status = running));
+INVARSPEC (system.GoTo0.active);
+INVARSPEC !((system.GoTo0.active));
+INVARSPEC !((system.GoTo0.status = success));
+INVARSPEC !((system.GoTo0.status = failure));
+INVARSPEC !((system.GoTo0.status = running));
+INVARSPEC (system.Sel3.active);
+INVARSPEC !((system.Sel3.active));
+INVARSPEC !((system.Sel3.status = success));
+INVARSPEC !((system.Sel3.status = failure));
+INVARSPEC !((system.Sel3.status = running));
+INVARSPEC (system.LOk.active);
+INVARSPEC !((system.LOk.active));
+INVARSPEC !((system.LOk.status = success));
+INVARSPEC !((system.LOk.status = failure));
+INVARSPEC !((system.LOk.status = running));
+INVARSPEC (system.SIsF2.active);
+INVARSPEC !((system.SIsF2.active));
+INVARSPEC !((system.SIsF2.status = success));
+INVARSPEC !((system.SIsF2.status = failure));
+INVARSPEC !((system.SIsF2.status = running));
+INVARSPEC (system.RIsF1.active);
+INVARSPEC !((system.RIsF1.active));
+INVARSPEC !((system.RIsF1.status = success));
+INVARSPEC !((system.RIsF1.status = failure));
+INVARSPEC !((system.RIsF1.status = running));
+INVARSPEC (system.Land2.active);
+INVARSPEC !((system.Land2.active));
+INVARSPEC !((system.Land2.status = success));
+INVARSPEC !((system.Land2.status = failure));
+INVARSPEC !((system.Land2.status = running));
+INVARSPEC (system.Seq2.active);
+INVARSPEC !((system.Seq2.active));
+INVARSPEC !((system.Seq2.status = success));
+INVARSPEC !((system.Seq2.status = failure));
+INVARSPEC !((system.Seq2.status = running));
+INVARSPEC (system.Takeoff.active);
+INVARSPEC !((system.Takeoff.active));
+INVARSPEC !((system.Takeoff.status = success));
+INVARSPEC !((system.Takeoff.status = failure));
+INVARSPEC !((system.Takeoff.status = running));
+INVARSPEC (system.Par1.active);
+INVARSPEC !((system.Par1.active));
+INVARSPEC !((system.Par1.status = success));
+INVARSPEC !((system.Par1.status = failure));
+INVARSPEC !((system.Par1.status = running));
+INVARSPEC (system.CameraTrack.active);
+INVARSPEC !((system.CameraTrack.active));
+INVARSPEC !((system.CameraTrack.status = success));
+INVARSPEC !((system.CameraTrack.status = failure));
+INVARSPEC !((system.CameraTrack.status = running));
+INVARSPEC (system.Rep.active);
+INVARSPEC !((system.Rep.active));
+INVARSPEC !((system.Rep.status = success));
+INVARSPEC !((system.Rep.status = failure));
+INVARSPEC !((system.Rep.status = running));
+INVARSPEC (system.Seq3.active);
+INVARSPEC !((system.Seq3.active));
+INVARSPEC !((system.Seq3.status = success));
+INVARSPEC !((system.Seq3.status = failure));
+INVARSPEC !((system.Seq3.status = running));
+INVARSPEC (system.SetFLS.active);
+INVARSPEC !((system.SetFLS.active));
+INVARSPEC !((system.SetFLS.status = success));
+INVARSPEC !((system.SetFLS.status = failure));
+INVARSPEC !((system.SetFLS.status = running));
+INVARSPEC (system.GoTo1.active);
+INVARSPEC !((system.GoTo1.active));
+INVARSPEC !((system.GoTo1.status = success));
+INVARSPEC !((system.GoTo1.status = failure));
+INVARSPEC !((system.GoTo1.status = running));
+INVARSPEC (system.GoTo2.active);
+INVARSPEC !((system.GoTo2.active));
+INVARSPEC !((system.GoTo2.status = success));
+INVARSPEC !((system.GoTo2.status = failure));
+INVARSPEC !((system.GoTo2.status = running));
+INVARSPEC (system.GoTo3.active);
+INVARSPEC !((system.GoTo3.active));
+INVARSPEC !((system.GoTo3.status = success));
+INVARSPEC !((system.GoTo3.status = failure));
+INVARSPEC !((system.GoTo3.status = running));
+INVARSPEC (system.GoTo4.active);
+INVARSPEC !((system.GoTo4.active));
+INVARSPEC !((system.GoTo4.status = success));
+INVARSPEC !((system.GoTo4.status = failure));
+INVARSPEC !((system.GoTo4.status = running));
+INVARSPEC (system.GoTo5.active);
+INVARSPEC !((system.GoTo5.active));
+INVARSPEC !((system.GoTo5.status = success));
+INVARSPEC !((system.GoTo5.status = failure));
+INVARSPEC !((system.GoTo5.status = running));
+INVARSPEC (system.GoTo6.active);
+INVARSPEC !((system.GoTo6.active));
+INVARSPEC !((system.GoTo6.status = success));
+INVARSPEC !((system.GoTo6.status = failure));
+INVARSPEC !((system.GoTo6.status = running));
+INVARSPEC (system.GoTo7.active);
+INVARSPEC !((system.GoTo7.active));
+INVARSPEC !((system.GoTo7.status = success));
+INVARSPEC !((system.GoTo7.status = failure));
+INVARSPEC !((system.GoTo7.status = running));
+INVARSPEC (system.Land3.active);
+INVARSPEC !((system.Land3.active));
+INVARSPEC !((system.Land3.status = success));
+INVARSPEC !((system.Land3.status = failure));
+INVARSPEC !((system.Land3.status = running));
+INVARSPEC (system.Shutdown.active);
+INVARSPEC !((system.Shutdown.active));
+INVARSPEC !((system.Shutdown.status = success));
+INVARSPEC !((system.Shutdown.status = failure));
+INVARSPEC !((system.Shutdown.status = running));
+INVARSPEC (system.CheckCam.active);
+INVARSPEC !((system.CheckCam.active));
+INVARSPEC !((system.CheckCam.status = success));
+INVARSPEC !((system.CheckCam.status = failure));
+INVARSPEC !((system.CheckCam.status = running));
+
+--------------END OF SPECIFICATIONS
+
+MODULE system_module
+    CONSTANTS
+        success, failure, running, invalid, on, off, critical, full, none, low, failed, good, vert, trying;
+    DEFINE
+        resume_from_here_in_subtree__CameraTrack := -3;
+        trace_running_source_GoTo0 := (GoTo0.status = running) ? node_names.GoTo0 : -2;
+        trace_running_source_Sel2 := 
+            case
+                !(trace_running_source_GoTo0 = -2) : trace_running_source_GoTo0;
+                TRUE : -2;
+            esac;
+        trace_running_source_Seq1 := 
+            case
+                !(trace_running_source_Sel2 = -2) : trace_running_source_Sel2;
+                TRUE : -2;
+            esac;
+        trace_running_source_Par1 := (Par1.status = running) ? node_names.Par1 : -2;
+        trace_running_source_GoTo7 := (GoTo7.status = running) ? node_names.GoTo7 : -2;
+        trace_running_source_Land3 := (Land3.status = running) ? node_names.Land3 : -2;
+        trace_running_source_Shutdown := (Shutdown.status = running) ? node_names.Shutdown : -2;
+        trace_running_source_Seq2 := 
+            case
+                !(trace_running_source_Par1 = -2) : trace_running_source_Par1;
+                !(trace_running_source_GoTo7 = -2) : trace_running_source_GoTo7;
+                !(trace_running_source_Land3 = -2) : trace_running_source_Land3;
+                !(trace_running_source_Shutdown = -2) : trace_running_source_Shutdown;
+                TRUE : -2;
+            esac;
+        trace_running_source_Main := 
+            case
+                !(trace_running_source_Seq1 = -2) : trace_running_source_Seq1;
+                !(trace_running_source_Seq2 = -2) : trace_running_source_Seq2;
+                (Main.status = running) : node_names.Main;
+                TRUE : -2;
+            esac;
+        trace_running_source_Drone := 
+            case
+                !(trace_running_source_Main = -2) : trace_running_source_Main;
+                TRUE : -2;
+            esac;
+        trace_running_source_GoTo1 := (GoTo1.status = running) ? node_names.GoTo1 : -2;
+        trace_running_source_GoTo2 := (GoTo2.status = running) ? node_names.GoTo2 : -2;
+        trace_running_source_GoTo3 := (GoTo3.status = running) ? node_names.GoTo3 : -2;
+        trace_running_source_GoTo4 := (GoTo4.status = running) ? node_names.GoTo4 : -2;
+        trace_running_source_GoTo5 := (GoTo5.status = running) ? node_names.GoTo5 : -2;
+        trace_running_source_GoTo6 := (GoTo6.status = running) ? node_names.GoTo6 : -2;
+        trace_running_source_Seq3 := 
+            case
+                !(trace_running_source_GoTo1 = -2) : trace_running_source_GoTo1;
+                !(trace_running_source_GoTo2 = -2) : trace_running_source_GoTo2;
+                !(trace_running_source_GoTo3 = -2) : trace_running_source_GoTo3;
+                !(trace_running_source_GoTo4 = -2) : trace_running_source_GoTo4;
+                !(trace_running_source_GoTo5 = -2) : trace_running_source_GoTo5;
+                !(trace_running_source_GoTo6 = -2) : trace_running_source_GoTo6;
+                TRUE : -2;
+            esac;
+        trace_running_source_Rep := 
+            case
+                !(trace_running_source_Seq3 = -2) : trace_running_source_Seq3;
+                TRUE : -2;
+            esac;
+        child_index_to_resume_from__Sel2 := 
+            case
+                (resume_from_here_in_subtree__Drone in {14}) : 1;
+                TRUE : -2;
+            esac;
+        child_index_to_resume_from__Seq1 := 
+            case
+                (resume_from_here_in_subtree__Drone in {14}) : 2;
+                TRUE : -2;
+            esac;
+        child_index_to_resume_from__Sel3 := 
+            case
+                TRUE : -2;
+            esac;
+        child_index_to_resume_from__Seq3 := 
+            case
+                (resume_from_here_in_subtree__Rep in {27}) : 1;
+                (resume_from_here_in_subtree__Rep in {28}) : 2;
+                (resume_from_here_in_subtree__Rep in {29}) : 3;
+                (resume_from_here_in_subtree__Rep in {30}) : 4;
+                (resume_from_here_in_subtree__Rep in {31}) : 5;
+                (resume_from_here_in_subtree__Rep in {32}) : 6;
+                TRUE : -2;
+            esac;
+        child_index_to_resume_from__Seq2 := 
+            case
+                (resume_from_here_in_subtree__Drone in {22}) : 1;
+                (resume_from_here_in_subtree__Drone in {33}) : 2;
+                (resume_from_here_in_subtree__Drone in {34}) : 3;
+                (resume_from_here_in_subtree__Drone in {35}) : 4;
+                TRUE : -2;
+            esac;
+        child_index_to_resume_from__Drone := 
+            case
+                (resume_from_here_in_subtree__Drone in {33, 34, 35, 4, 14, 22}) : 1;
+                TRUE : -2;
+            esac;
+        Drone.active := TRUE;
+        parallel_skip__Start := [resume_from_here_in_subtree__StartD, resume_from_here_in_subtree__StartC];
+        --START OF BLACKBOARD DEFINITIONS
+        camT_stage_1 :=
+            case
+                !(StartC.active) : camT_stage_0;
+                TRUE : FALSE;
+            esac;
+        move_stage_1 :=
+            case
+                !(Land1.active) : move_stage_0;
+                TRUE : vert;
+            esac;
+        move_stage_2 :=
+            case
+                !(GoTo0.active) : move_stage_1;
+                TRUE : full;
+            esac;
+        move_stage_3 :=
+            case
+                !(Land2.active) : move_stage_2;
+                TRUE : vert;
+            esac;
+        move_stage_4 :=
+            case
+                !(Takeoff.active) : move_stage_3;
+                TRUE : vert;
+            esac;
+        move_stage_5 :=
+            case
+                !(GoTo1.active) : move_stage_4;
+                TRUE : full;
+            esac;
+        move_stage_6 :=
+            case
+                !(GoTo2.active) : move_stage_5;
+                TRUE : full;
+            esac;
+        move_stage_7 :=
+            case
+                !(GoTo3.active) : move_stage_6;
+                TRUE : full;
+            esac;
+        move_stage_8 :=
+            case
+                !(GoTo4.active) : move_stage_7;
+                TRUE : full;
+            esac;
+        move_stage_9 :=
+            case
+                !(GoTo5.active) : move_stage_8;
+                TRUE : full;
+            esac;
+        move_stage_10 :=
+            case
+                !(GoTo6.active) : move_stage_9;
+                TRUE : full;
+            esac;
+        move_stage_11 :=
+            case
+                !(GoTo7.active) : move_stage_10;
+                TRUE : full;
+            esac;
+        move_stage_12 :=
+            case
+                !(Land3.active) : move_stage_11;
+                TRUE : vert;
+            esac;
+        z_i_stage_1 :=
+            case
+                !(Land1.active) : z_i_stage_0;
+                TRUE : 0;
+            esac;
+        z_i_stage_2 :=
+            case
+                !(GoTo0.active) : z_i_stage_1;
+                (z_i_stage_1 = 0) : 5;
+                TRUE : z_i_stage_1;
+            esac;
+        z_i_stage_3 :=
+            case
+                !(Land2.active) : z_i_stage_2;
+                TRUE : 0;
+            esac;
+        z_i_stage_4 :=
+            case
+                !(Takeoff.active) : z_i_stage_3;
+                TRUE : 5;
+            esac;
+        z_i_stage_5 :=
+            case
+                !(SetFLS.active) : z_i_stage_4;
+                (z_i_stage_4 = 5) : 10;
+                TRUE : min(40, (10 + z_i_stage_4));
+            esac;
+        z_i_stage_6 :=
+            case
+                !(GoTo1.active) : z_i_stage_5;
+                (z_i_stage_5 = 0) : 5;
+                TRUE : z_i_stage_5;
+            esac;
+        z_i_stage_7 :=
+            case
+                !(GoTo2.active) : z_i_stage_6;
+                (z_i_stage_6 = 0) : 5;
+                TRUE : z_i_stage_6;
+            esac;
+        z_i_stage_8 :=
+            case
+                !(GoTo3.active) : z_i_stage_7;
+                (z_i_stage_7 = 0) : 5;
+                TRUE : z_i_stage_7;
+            esac;
+        z_i_stage_9 :=
+            case
+                !(GoTo4.active) : z_i_stage_8;
+                (z_i_stage_8 = 0) : 5;
+                TRUE : z_i_stage_8;
+            esac;
+        z_i_stage_10 :=
+            case
+                !(GoTo5.active) : z_i_stage_9;
+                (z_i_stage_9 = 0) : 5;
+                TRUE : z_i_stage_9;
+            esac;
+        z_i_stage_11 :=
+            case
+                !(GoTo6.active) : z_i_stage_10;
+                (z_i_stage_10 = 0) : 5;
+                TRUE : z_i_stage_10;
+            esac;
+        z_i_stage_12 :=
+            case
+                !(GoTo7.active) : z_i_stage_11;
+                (z_i_stage_11 = 0) : 5;
+                TRUE : z_i_stage_11;
+            esac;
+        z_i_stage_13 :=
+            case
+                !(Land3.active) : z_i_stage_12;
+                TRUE : 0;
+            esac;
+        x_g_stage_1 :=
+            case
+                !(GoTo0.active) : x_g_stage_0;
+                TRUE : -10;
+            esac;
+        x_g_stage_2 :=
+            case
+                !(GoTo1.active) : x_g_stage_1;
+                TRUE : -30;
+            esac;
+        x_g_stage_3 :=
+            case
+                !(GoTo2.active) : x_g_stage_2;
+                TRUE : -15;
+            esac;
+        x_g_stage_4 :=
+            case
+                !(GoTo3.active) : x_g_stage_3;
+                TRUE : 0;
+            esac;
+        x_g_stage_5 :=
+            case
+                !(GoTo4.active) : x_g_stage_4;
+                TRUE : 15;
+            esac;
+        x_g_stage_6 :=
+            case
+                !(GoTo5.active) : x_g_stage_5;
+                TRUE : 30;
+            esac;
+        x_g_stage_7 :=
+            case
+                !(GoTo6.active) : x_g_stage_6;
+                TRUE : 30;
+            esac;
+        x_g_stage_8 :=
+            case
+                !(GoTo7.active) : x_g_stage_7;
+                TRUE : 0;
+            esac;
+        y_g_stage_1 :=
+            case
+                !(GoTo0.active) : y_g_stage_0;
+                TRUE : -10;
+            esac;
+        y_g_stage_2 :=
+            case
+                !(GoTo1.active) : y_g_stage_1;
+                TRUE : -30;
+            esac;
+        y_g_stage_3 :=
+            case
+                !(GoTo2.active) : y_g_stage_2;
+                TRUE : 30;
+            esac;
+        y_g_stage_4 :=
+            case
+                !(GoTo3.active) : y_g_stage_3;
+                TRUE : -30;
+            esac;
+        y_g_stage_5 :=
+            case
+                !(GoTo4.active) : y_g_stage_4;
+                TRUE : 30;
+            esac;
+        y_g_stage_6 :=
+            case
+                !(GoTo5.active) : y_g_stage_5;
+                TRUE : -30;
+            esac;
+        y_g_stage_7 :=
+            case
+                !(GoTo6.active) : y_g_stage_6;
+                TRUE : -30;
+            esac;
+        y_g_stage_8 :=
+            case
+                !(GoTo7.active) : y_g_stage_7;
+                TRUE : 0;
+            esac;
+        z_g_stage_0 :=
+            case
+                (z_i_stage_2 = 5) : 5;
+                TRUE : (2 * z_i_stage_2);
+            esac;
+        z_g_stage_1 :=
+            case
+                (z_i_stage_4 = 5) : 5;
+                TRUE : (2 * z_i_stage_4);
+            esac;
+        z_g_stage_2 :=
+            case
+                (z_i_stage_6 = 5) : 5;
+                TRUE : (2 * z_i_stage_6);
+            esac;
+        z_g_stage_3 :=
+            case
+                (z_i_stage_7 = 5) : 5;
+                TRUE : (2 * z_i_stage_7);
+            esac;
+        z_g_stage_4 :=
+            case
+                (z_i_stage_8 = 5) : 5;
+                TRUE : (2 * z_i_stage_8);
+            esac;
+        z_g_stage_5 :=
+            case
+                (z_i_stage_9 = 5) : 5;
+                TRUE : (2 * z_i_stage_9);
+            esac;
+        z_g_stage_6 :=
+            case
+                (z_i_stage_10 = 5) : 5;
+                TRUE : (2 * z_i_stage_10);
+            esac;
+        z_g_stage_7 :=
+            case
+                (z_i_stage_11 = 5) : 5;
+                TRUE : (2 * z_i_stage_11);
+            esac;
+        z_g_stage_8 :=
+            case
+                (z_i_stage_12 = 5) : 5;
+                TRUE : (2 * z_i_stage_12);
+            esac;
+        z_g_stage_9 :=
+            case
+                (z_i_stage_13 = 5) : 5;
+                TRUE : (2 * z_i_stage_13);
+            esac;
+        --END OF BLACKBOARD DEFINITIONS
+    VAR
+        node_names : define_nodes;
+        resume_from_here_in_subtree__Drone : {0, 4, 14, 22, 33, 34, 35};
+        resume_from_here_in_subtree__StartD : {2, -2};
+        resume_from_here_in_subtree__StartC : {3, -2};
+        resume_from_here_in_subtree__Rep : {24, 27, 28, 29, 30, 31, 32};
+        StartD : StartD_module(droneStatus_stage_1);
+        StartC : StartC_module(camStatus_stage_1);
+        Start : composite_parallel_success_on_all_with_partial_memory_2(StartD, StartC, parallel_skip__Start);
+        MeasureB : failure_DEFAULT_module();
+        SIsF1 : decorator_X_is_Y(MeasureB, success, failure);
+        BNotCritical1 : BNotCritical1_module(battery_stage_0);
+        Land1 : Land1_module(z_a_stage_0);
+        Sel1 : composite_selector_without_memory_3(SIsF1, BNotCritical1, Land1);
+        BNotCritical2 : BNotCritical2_module(battery_stage_0);
+        BGood : BGood_module(battery_stage_0);
+        GoTo0 : GoTo0_module(x_a_stage_0, x_g_stage_1, y_a_stage_0, y_g_stage_1, z_a_stage_0, z_g_stage_0);
+        Sel2 : composite_selector_with_partial_memory_2(BGood, GoTo0, child_index_to_resume_from__Sel2);
+        Seq1 : composite_sequence_with_partial_memory_3(Sel1, BNotCritical2, Sel2, child_index_to_resume_from__Seq1);
+        LOk : LOk_module(loc_stage_0);
+        Land2 : Land2_module(z_a_stage_0);
+        RIsF1 : decorator_X_is_Y(Land2, running, failure);
+        SIsF2 : decorator_X_is_Y(RIsF1, success, failure);
+        Sel3 : composite_selector_with_partial_memory_2(LOk, SIsF2, child_index_to_resume_from__Sel3);
+        Takeoff : Takeoff_module(z_a_stage_0, z_g_stage_1);
+        CameraTrack : CameraTrack_module(camT_stage_2);
+        SetFLS : success_DEFAULT_module();
+        GoTo1 : GoTo1_module(x_a_stage_0, x_g_stage_2, y_a_stage_0, y_g_stage_2, z_a_stage_0, z_g_stage_2);
+        GoTo2 : GoTo2_module(x_a_stage_0, x_g_stage_3, y_a_stage_0, y_g_stage_3, z_a_stage_0, z_g_stage_3);
+        GoTo3 : GoTo3_module(x_a_stage_0, x_g_stage_4, y_a_stage_0, y_g_stage_4, z_a_stage_0, z_g_stage_4);
+        GoTo4 : GoTo4_module(x_a_stage_0, x_g_stage_5, y_a_stage_0, y_g_stage_5, z_a_stage_0, z_g_stage_5);
+        GoTo5 : GoTo5_module(x_a_stage_0, x_g_stage_6, y_a_stage_0, y_g_stage_6, z_a_stage_0, z_g_stage_6);
+        GoTo6 : GoTo6_module(x_a_stage_0, x_g_stage_7, y_a_stage_0, y_g_stage_7, z_a_stage_0, z_g_stage_7);
+        Seq3 : composite_sequence_with_partial_memory_7(SetFLS, GoTo1, GoTo2, GoTo3, GoTo4, GoTo5, GoTo6, child_index_to_resume_from__Seq3);
+        Rep : decorator_repeat(Seq3, 3);
+        Par1 : composite_parallel_success_on_one_without_memory_2(CameraTrack, Rep);
+        GoTo7 : GoTo7_module(x_a_stage_0, x_g_stage_8, y_a_stage_0, y_g_stage_8, z_a_stage_0, z_g_stage_8);
+        Land3 : Land3_module(z_a_stage_0);
+        Shutdown : Shutdown_module(droneStatus_stage_2);
+        CheckCam : CheckCam_module(camT_stage_2);
+        Seq2 : composite_sequence_with_partial_memory_6(Takeoff, Par1, GoTo7, Land3, Shutdown, CheckCam, child_index_to_resume_from__Seq2);
+        Main : composite_sequence_without_memory_3(Seq1, Sel3, Seq2);
+        Drone : composite_sequence_with_partial_memory_2(Start, Main, child_index_to_resume_from__Drone);
+        --START OF BLACKBOARD VARIABLES DECLARATION
+        droneStatus_stage_0 : {on, trying, off, failed};
+        droneStatus_stage_1 : {on, trying, off, failed};
+        droneStatus_stage_2 : {on, trying, off, failed};
+        camStatus_stage_0 : {on, trying, off, failed};
+        camStatus_stage_1 : {on, trying, off, failed};
+        camT_stage_0 : boolean;
+        camT_stage_2 : boolean;
+        move_stage_0 : {full, vert, none};
+        z_i_stage_0 : {0, 5, 40, 10, 20, 30};
+        x_g_stage_0 : {0, -30, 15, -15, -10, 30};
+        y_g_stage_0 : {0, -30, 15, -15, -10, 30};
+        x_a_stage_0 : -30..30;
+        y_a_stage_0 : -30..30;
+        z_a_stage_0 : 0..80;
+        battery_stage_0 : {good, critical, low};
+        loc_stage_0 : boolean;
+        --END OF BLACKBOARD VARIABLES DECLARATION
+    ASSIGN
+        init(resume_from_here_in_subtree__Drone) := 0;
+        init(resume_from_here_in_subtree__StartD) := 2;
+        init(resume_from_here_in_subtree__StartC) := 3;
+        init(resume_from_here_in_subtree__Rep) := 24;
+        --START OF BLACKBOARD VARIABLES INITIALIZATION
+        init(droneStatus_stage_0) := off;
+        init(camStatus_stage_0) := off;
+        init(camT_stage_0) := FALSE;
+        init(move_stage_0) := none;
+        init(z_i_stage_0) := 0;
+        init(x_g_stage_0) := 0;
+        init(y_g_stage_0) := 0;
+        init(x_a_stage_0) := 0;
+        init(y_a_stage_0) := 0;
+        init(z_a_stage_0) := 0;
+        init(battery_stage_0) := good;
+        init(loc_stage_0) := {TRUE, FALSE};
+        --END OF BLACKBOARD VARIABLES INITIALIZATION
+        next(resume_from_here_in_subtree__Drone) := 
+            case
+                (Drone.status in {success, failure}) : node_names.Drone;
+                Drone.status = invalid : resume_from_here_in_subtree__Drone;
+                TRUE : max(trace_running_source_Drone, node_names.Drone);
+            esac;
+        next(resume_from_here_in_subtree__StartD) := 
+            case
+                (Start.status in {success, failure}) : node_names.StartD;
+                (Drone.status in {success, failure}) : node_names.StartD;
+                (StartD.status = success) : -2;
+                (StartD.status = failure) : node_names.StartD;
+                StartD.status = invalid : resume_from_here_in_subtree__StartD;
+                TRUE : 2;
+            esac;
+        next(resume_from_here_in_subtree__StartC) := 
+            case
+                (Start.status in {success, failure}) : node_names.StartC;
+                (Drone.status in {success, failure}) : node_names.StartC;
+                (StartC.status = success) : -2;
+                (StartC.status = failure) : node_names.StartC;
+                StartC.status = invalid : resume_from_here_in_subtree__StartC;
+                TRUE : 3;
+            esac;
+        next(resume_from_here_in_subtree__Rep) := 
+            case
+                (Par1.status in {success, failure}) : node_names.Rep;
+                (Seq2.status in {success, failure}) : node_names.Rep;
+                (Main.status in {success, failure}) : node_names.Rep;
+                (Drone.status in {success, failure}) : node_names.Rep;
+                (Rep.status in {success, failure}) : node_names.Rep;
+                Rep.status = invalid : resume_from_here_in_subtree__Rep;
+                TRUE : max(trace_running_source_Rep, node_names.Rep);
+            esac;
+        --START OF BLACKBOARD VARIABLES TRANSITION
+        next(droneStatus_stage_0) := droneStatus_stage_2;
+        droneStatus_stage_1 :=
+            case
+                !(StartD.active) : droneStatus_stage_0;
+                (droneStatus_stage_0 = failed) : failed;
+                (droneStatus_stage_0 = on) : on;
+                TRUE : {on, failed, trying};
+            esac;
+        droneStatus_stage_2 :=
+            case
+                !(Shutdown.active) : droneStatus_stage_1;
+                TRUE : {on, off};
+            esac;
+        next(camStatus_stage_0) := camStatus_stage_1;
+        camStatus_stage_1 :=
+            case
+                !(StartC.active) : camStatus_stage_0;
+                (camStatus_stage_0 = failed) : failed;
+                (camStatus_stage_0 = on) : on;
+                TRUE : {on, failed, trying};
+            esac;
+        next(camT_stage_0) := camT_stage_2;
+        camT_stage_2 :=
+            case
+                !(CameraTrack.active) : camT_stage_1;
+                TRUE : {TRUE, FALSE};
+            esac;
+        next(move_stage_0) := move_stage_12;
+        next(z_i_stage_0) := z_i_stage_13;
+        next(x_g_stage_0) := x_g_stage_8;
+        next(y_g_stage_0) := y_g_stage_8;
+        next(x_a_stage_0) :=
+            case
+                !(Drone.active) : x_a_stage_0;
+                ((move_stage_12 = full) & (x_a_stage_0 < x_g_stage_8)) : (x_a_stage_0 + 1);
+                ((move_stage_12 = full) & (x_a_stage_0 > x_g_stage_8)) : (x_a_stage_0 - 1);
+                TRUE : x_a_stage_0;
+            esac;
+        next(y_a_stage_0) :=
+            case
+                !(Drone.active) : y_a_stage_0;
+                ((move_stage_12 = full) & (y_a_stage_0 < y_g_stage_8)) : (y_a_stage_0 + 1);
+                ((move_stage_12 = full) & (y_a_stage_0 > y_g_stage_8)) : (y_a_stage_0 - 1);
+                TRUE : y_a_stage_0;
+            esac;
+        next(z_a_stage_0) :=
+            case
+                !(Drone.active) : z_a_stage_0;
+                (((move_stage_12 = full) | (move_stage_12 = vert)) & (z_a_stage_0 < z_g_stage_9)) : (z_a_stage_0 + 1);
+                (((move_stage_12 = full) | (move_stage_12 = vert)) & (z_a_stage_0 > z_g_stage_9)) : (z_a_stage_0 - 1);
+                TRUE : z_a_stage_0;
+            esac;
+        next(battery_stage_0) :=
+            case
+                !(Drone.active) : battery_stage_0;
+                ((droneStatus_stage_2 = on) & (battery_stage_0 = good)) : {good, low};
+                ((droneStatus_stage_2 = on) & (battery_stage_0 = low)) : {low, critical};
+                TRUE : battery_stage_0;
+            esac;
+        next(loc_stage_0) :=
+            case
+                !(Drone.active) : loc_stage_0;
+                TRUE : {TRUE, FALSE};
+            esac;
+        --END OF BLACKBOARD VARIABLES TRANSITION
+
+MODULE define_nodes
+    DEFINE
+        Drone := 0;
+        Start := 1;
+        StartD := 2;
+        StartC := 3;
+        Main := 4;
+        Seq1 := 5;
+        Sel1 := 6;
+        SIsF1 := 7;
+        MeasureB := 8;
+        BNotCritical1 := 9;
+        Land1 := 10;
+        BNotCritical2 := 11;
+        Sel2 := 12;
+        BGood := 13;
+        GoTo0 := 14;
+        Sel3 := 15;
+        LOk := 16;
+        SIsF2 := 17;
+        RIsF1 := 18;
+        Land2 := 19;
+        Seq2 := 20;
+        Takeoff := 21;
+        Par1 := 22;
+        CameraTrack := 23;
+        Rep := 24;
+        Seq3 := 25;
+        SetFLS := 26;
+        GoTo1 := 27;
+        GoTo2 := 28;
+        GoTo3 := 29;
+        GoTo4 := 30;
+        GoTo5 := 31;
+        GoTo6 := 32;
+        GoTo7 := 33;
+        Land3 := 34;
+        Shutdown := 35;
+        CheckCam := 36;
+MODULE decorator_X_is_Y(child_0, incoming_status, outgoing_status)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                child_0.internal_status = incoming_status : outgoing_status;
+                TRUE : child_0.internal_status;
+            esac;
+        child_0.active :=
+            case
+                !(active) : FALSE;
+                TRUE : TRUE;
+            esac;
+MODULE decorator_repeat(child_0, max_repeat)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                (repeat_count_stage_1 = 0) : success;
+                (child_0.internal_status = success) : running;
+                TRUE : child_0.internal_status;
+            esac;
+        repeat_count_stage_1 := 
+            case
+                (child_0.status = success) : repeat_count_stage_0 - 1;
+                (child_0.status = failure) : max_repeat;
+                TRUE : repeat_count_stage_0;
+            esac;
+        child_0.active :=
+            case
+                !(active) : FALSE;
+                TRUE : TRUE;
+            esac;
+    VAR
+        repeat_count_stage_0 : 1..max_repeat;
+    ASSIGN
+        init(repeat_count_stage_0) := max_repeat;
+        next(repeat_count_stage_0) := (repeat_count_stage_1 = 0) ? max_repeat : repeat_count_stage_1;
+MODULE composite_sequence_with_partial_memory_2(child_0, child_1, resume_point)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                (0 >= resume_point) & !(child_0.internal_status = success) : child_0.internal_status;
+                (1 >= resume_point) & !(child_1.internal_status = success) : child_1.internal_status;
+                TRUE : success;
+            esac;
+        child_0.active := active & (0 >= resume_point);
+        child_1.active := active & ((1 >= resume_point) & ((1 = resume_point) | (child_0.status = success)));
+MODULE composite_sequence_with_partial_memory_3(child_0, child_1, child_2, resume_point)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                (0 >= resume_point) & !(child_0.internal_status = success) : child_0.internal_status;
+                (1 >= resume_point) & !(child_1.internal_status = success) : child_1.internal_status;
+                (2 >= resume_point) & !(child_2.internal_status = success) : child_2.internal_status;
+                TRUE : success;
+            esac;
+        child_0.active := active & (0 >= resume_point);
+        child_1.active := active & ((1 >= resume_point) & ((1 = resume_point) | (child_0.status = success)));
+        child_2.active := active & ((2 >= resume_point) & ((2 = resume_point) | (child_1.status = success)));
+MODULE composite_parallel_success_on_all_with_partial_memory_2(child_0, child_1, skip_child)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                (child_0.internal_status = failure) & !(skip_child[0] = -2) : failure;
+                (child_1.internal_status = failure) & !(skip_child[1] = -2) : failure;
+                !(child_0.internal_status = success) & !(skip_child[0] = -2) : child_0.internal_status;
+                !(child_1.internal_status = success) & !(skip_child[1] = -2) : child_1.internal_status;
+                TRUE : success;
+            esac;
+        child_0.active := active & !(skip_child[0] = -2);
+        child_1.active := active & !(skip_child[1] = -2);
+MODULE composite_sequence_without_memory_3(child_0, child_1, child_2)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                !(child_0.internal_status = success) : child_0.internal_status;
+                !(child_1.internal_status = success) : child_1.internal_status;
+                !(child_2.internal_status = success) : child_2.internal_status;
+                TRUE : success;
+            esac;
+        child_0.active := active;
+        child_1.active := child_0.status = success;
+        child_2.active := child_1.status = success;
+MODULE composite_sequence_with_partial_memory_6(child_0, child_1, child_2, child_3, child_4, child_5, resume_point)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                (0 >= resume_point) & !(child_0.internal_status = success) : child_0.internal_status;
+                (1 >= resume_point) & !(child_1.internal_status = success) : child_1.internal_status;
+                (2 >= resume_point) & !(child_2.internal_status = success) : child_2.internal_status;
+                (3 >= resume_point) & !(child_3.internal_status = success) : child_3.internal_status;
+                (4 >= resume_point) & !(child_4.internal_status = success) : child_4.internal_status;
+                (5 >= resume_point) & !(child_5.internal_status = success) : child_5.internal_status;
+                TRUE : success;
+            esac;
+        child_0.active := active & (0 >= resume_point);
+        child_1.active := active & ((1 >= resume_point) & ((1 = resume_point) | (child_0.status = success)));
+        child_2.active := active & ((2 >= resume_point) & ((2 = resume_point) | (child_1.status = success)));
+        child_3.active := active & ((3 >= resume_point) & ((3 = resume_point) | (child_2.status = success)));
+        child_4.active := active & ((4 >= resume_point) & ((4 = resume_point) | (child_3.status = success)));
+        child_5.active := active & ((5 >= resume_point) & ((5 = resume_point) | (child_4.status = success)));
+MODULE composite_sequence_with_partial_memory_7(child_0, child_1, child_2, child_3, child_4, child_5, child_6, resume_point)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                (0 >= resume_point) & !(child_0.internal_status = success) : child_0.internal_status;
+                (1 >= resume_point) & !(child_1.internal_status = success) : child_1.internal_status;
+                (2 >= resume_point) & !(child_2.internal_status = success) : child_2.internal_status;
+                (3 >= resume_point) & !(child_3.internal_status = success) : child_3.internal_status;
+                (4 >= resume_point) & !(child_4.internal_status = success) : child_4.internal_status;
+                (5 >= resume_point) & !(child_5.internal_status = success) : child_5.internal_status;
+                (6 >= resume_point) & !(child_6.internal_status = success) : child_6.internal_status;
+                TRUE : success;
+            esac;
+        child_0.active := active & (0 >= resume_point);
+        child_1.active := active & ((1 >= resume_point) & ((1 = resume_point) | (child_0.status = success)));
+        child_2.active := active & ((2 >= resume_point) & ((2 = resume_point) | (child_1.status = success)));
+        child_3.active := active & ((3 >= resume_point) & ((3 = resume_point) | (child_2.status = success)));
+        child_4.active := active & ((4 >= resume_point) & ((4 = resume_point) | (child_3.status = success)));
+        child_5.active := active & ((5 >= resume_point) & ((5 = resume_point) | (child_4.status = success)));
+        child_6.active := active & ((6 >= resume_point) & ((6 = resume_point) | (child_5.status = success)));
+MODULE composite_selector_with_partial_memory_2(child_0, child_1, resume_point)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                (0 >= resume_point) & !(child_0.internal_status = failure) : child_0.internal_status;
+                (1 >= resume_point) & !(child_1.internal_status = failure) : child_1.internal_status;
+                TRUE : failure;
+            esac;
+        child_0.active := active & (0 >= resume_point);
+        child_1.active := active & ((1 >= resume_point) & ((1 = resume_point) | (child_0.status = failure)));
+MODULE composite_selector_without_memory_3(child_0, child_1, child_2)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                !(child_0.internal_status = failure) : child_0.internal_status;
+                !(child_1.internal_status = failure) : child_1.internal_status;
+                !(child_2.internal_status = failure) : child_2.internal_status;
+                TRUE : failure;
+            esac;
+        child_0.active := active;
+        child_1.active := child_0.status = failure;
+        child_2.active := child_1.status = failure;
+MODULE composite_parallel_success_on_one_without_memory_2(child_0, child_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                (child_0.internal_status = failure) : failure;
+                (child_1.internal_status = failure) : failure;
+                !(child_0.internal_status = running) : child_0.internal_status;
+                !(child_1.internal_status = running) : child_1.internal_status;
+                TRUE : running;
+            esac;
+        child_0.active := active;
+        child_1.active := active;
+MODULE StartD_module(droneStatus_stage_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := 
+            case
+                (droneStatus_stage_1 = on) : success;
+                (droneStatus_stage_1 = trying) : running;
+                TRUE : failure;
+            esac;
+MODULE StartC_module(camStatus_stage_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := 
+            case
+                (camStatus_stage_1 = on) : success;
+                (camStatus_stage_1 = trying) : running;
+                TRUE : failure;
+            esac;
+MODULE BNotCritical1_module(battery_stage_0)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := (!((battery_stage_0 = critical))) ? success : failure;
+MODULE Land1_module(z_a_stage_0)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := 
+            case
+                (z_a_stage_0 = 0) : success;
+                TRUE : running;
+            esac;
+MODULE BNotCritical2_module(battery_stage_0)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := (!((battery_stage_0 = critical))) ? success : failure;
+MODULE BGood_module(battery_stage_0)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := ((battery_stage_0 = good)) ? success : failure;
+MODULE GoTo0_module(x_a_stage_0, x_g_stage_1, y_a_stage_0, y_g_stage_1, z_a_stage_0, z_g_stage_0)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := 
+            case
+                ((x_a_stage_0 = x_g_stage_1) & (y_a_stage_0 = y_g_stage_1) & (z_a_stage_0 = z_g_stage_0)) : success;
+                TRUE : running;
+            esac;
+MODULE LOk_module(loc_stage_0)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := (loc_stage_0) ? success : failure;
+MODULE Land2_module(z_a_stage_0)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := 
+            case
+                (z_a_stage_0 = 0) : success;
+                TRUE : running;
+            esac;
+MODULE Takeoff_module(z_a_stage_0, z_g_stage_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := 
+            case
+                (z_a_stage_0 = z_g_stage_1) : success;
+                TRUE : failure;
+            esac;
+MODULE CameraTrack_module(camT_stage_2)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := 
+            case
+                camT_stage_2 : success;
+                TRUE : running;
+            esac;
+MODULE GoTo1_module(x_a_stage_0, x_g_stage_2, y_a_stage_0, y_g_stage_2, z_a_stage_0, z_g_stage_2)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := 
+            case
+                ((x_a_stage_0 = x_g_stage_2) & (y_a_stage_0 = y_g_stage_2) & (z_a_stage_0 = z_g_stage_2)) : success;
+                TRUE : running;
+            esac;
+MODULE GoTo2_module(x_a_stage_0, x_g_stage_3, y_a_stage_0, y_g_stage_3, z_a_stage_0, z_g_stage_3)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := 
+            case
+                ((x_a_stage_0 = x_g_stage_3) & (y_a_stage_0 = y_g_stage_3) & (z_a_stage_0 = z_g_stage_3)) : success;
+                TRUE : running;
+            esac;
+MODULE GoTo3_module(x_a_stage_0, x_g_stage_4, y_a_stage_0, y_g_stage_4, z_a_stage_0, z_g_stage_4)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := 
+            case
+                ((x_a_stage_0 = x_g_stage_4) & (y_a_stage_0 = y_g_stage_4) & (z_a_stage_0 = z_g_stage_4)) : success;
+                TRUE : running;
+            esac;
+MODULE GoTo4_module(x_a_stage_0, x_g_stage_5, y_a_stage_0, y_g_stage_5, z_a_stage_0, z_g_stage_5)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := 
+            case
+                ((x_a_stage_0 = x_g_stage_5) & (y_a_stage_0 = y_g_stage_5) & (z_a_stage_0 = z_g_stage_5)) : success;
+                TRUE : running;
+            esac;
+MODULE GoTo5_module(x_a_stage_0, x_g_stage_6, y_a_stage_0, y_g_stage_6, z_a_stage_0, z_g_stage_6)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := 
+            case
+                ((x_a_stage_0 = x_g_stage_6) & (y_a_stage_0 = y_g_stage_6) & (z_a_stage_0 = z_g_stage_6)) : success;
+                TRUE : running;
+            esac;
+MODULE GoTo6_module(x_a_stage_0, x_g_stage_7, y_a_stage_0, y_g_stage_7, z_a_stage_0, z_g_stage_7)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := 
+            case
+                ((x_a_stage_0 = x_g_stage_7) & (y_a_stage_0 = y_g_stage_7) & (z_a_stage_0 = z_g_stage_7)) : success;
+                TRUE : running;
+            esac;
+MODULE GoTo7_module(x_a_stage_0, x_g_stage_8, y_a_stage_0, y_g_stage_8, z_a_stage_0, z_g_stage_8)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := 
+            case
+                ((x_a_stage_0 = x_g_stage_8) & (y_a_stage_0 = y_g_stage_8) & (z_a_stage_0 = z_g_stage_8)) : success;
+                TRUE : running;
+            esac;
+MODULE Land3_module(z_a_stage_0)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := 
+            case
+                (z_a_stage_0 = 0) : success;
+                TRUE : running;
+            esac;
+MODULE Shutdown_module(droneStatus_stage_2)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := 
+            case
+                (droneStatus_stage_2 = on) : running;
+                TRUE : success;
+            esac;
+MODULE CheckCam_module(camT_stage_2)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := (camT_stage_2) ? success : failure;
+MODULE failure_DEFAULT_module
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := failure;
+MODULE success_DEFAULT_module
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := success;

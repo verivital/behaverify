@@ -1,0 +1,10 @@
+PAPER
+???
+
+REPO
+https://github.com/CARVE-ROBMOSYS/BTCompiler
+
+STATUS
+Does not work. See below.
+
+COQ is now ROCQ, and this seems to break the makefile. I don't know how to fix it.

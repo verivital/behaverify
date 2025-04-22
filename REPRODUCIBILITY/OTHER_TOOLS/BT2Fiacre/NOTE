@@ -1,0 +1,14 @@
+PAPER??
+https://redmine.laas.fr/projects/bt2fiacre/pages/bt2fcr
+A formal implementation of Behavior Trees to act in robotics
+
+REPO
+https://redmine.laas.fr/laas/users/felix/bt2fiacre.git
+
+
+
+Notes
+
+pocolib doesn't seem to install correctly.
+rpc/rpc.h doesn't work?
+Also have to change one of the configure files.

@@ -1,0 +1,151 @@
+\documentclass[preview]{standalone}
+\usepackage[utf8]{inputenc}
+\usepackage{preview}
+\PreviewEnvironment{tikzpicture}
+
+\usepackage{color}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{algorithmic}
+\usepackage{xcolor}
+\usepackage{mathtools}
+\usepackage{tikz}
+\usepackage{tikz-qtree}
+\usepackage[export]{adjustbox}
+
+
+\usetikzlibrary{shapes.geometric, shapes.misc, shapes.arrows, shapes.callouts, shapes.multipart, fit, positioning, calc, matrix, automata, arrows.meta}
+
+\definecolor{BehaviorTreeSelectorColor}{HTML}{00FFFF}
+\definecolor{BehaviorTreeSequenceColor}{HTML}{FFA500}
+\definecolor{BehaviorTreeParallelColor}{HTML}{FFD700}
+\definecolor{BehaviorTreeLeafColor}{HTML}{C0C0C0}
+
+\tikzset{
+    Selector/.style={
+        draw=black,
+        fill=BehaviorTreeSelectorColor,
+        text=black,
+        shape=chamfered rectangle,
+        minimum size=15pt,
+        inner sep=0pt,
+        font=\tiny
+    },
+    Sequence/.style={
+        draw=black,
+        fill=BehaviorTreeSequenceColor,
+        text=black,
+        shape=rectangle,
+        minimum size=15pt,
+        inner sep=0pt,
+        font=\tiny
+    },
+    Parallel/.style={
+        draw=black,
+        fill=BehaviorTreeParallelColor,
+        text=black,
+        shape=trapezium,
+        trapezium left angle=60,
+        trapezium right angle=120,
+        minimum size=15pt,
+        inner sep=0pt,
+        trapezium stretches body,
+        font=\tiny,
+        align=center
+    },
+    Decorator/.style={
+        draw=black,
+        fill=white,
+        text=black,
+        shape=trapezium,
+        trapezium left angle=67,
+        trapezium right angle=67,
+        minimum size=15pt,
+        inner sep=0pt,
+        trapezium stretches body,
+        font=\tiny,
+        align=center
+    },
+    Action/.style={
+        draw=black,
+        fill=BehaviorTreeLeafColor,
+        text=black,
+        shape=ellipse,
+        minimum size=15pt,
+        inner sep=0pt,
+        font=\tiny
+    },
+    Check/.style={
+        draw=black,
+        fill=BehaviorTreeLeafColor,
+        text=red,
+        shape=ellipse,
+        minimum size=15pt,
+        inner sep=0pt,
+        font=\tiny
+    },
+    Blackboard/.style={
+        draw=blue,
+        fill=white,
+        text=black,
+        shape=rectangle,
+        font=\tiny,
+        inner sep = .5pt,
+        inner xsep = -3pt,
+        anchor = north
+    }
+}
+
+\newcommand{\Invalid}{\texttt{\itshape{I}}}
+\newcommand{\Failure}{\texttt{\itshape{F}}}
+\newcommand{\Running}{\texttt{\itshape{R}}}
+\newcommand{\Success}{\texttt{\itshape{S}}}
+
+\definecolor{BehaviorTreeBlackboardColor}{HTML}{0000FF} %blue
+\definecolor{BehaviorTreeEnvironmentColor}{HTML}{FF8C00} %dark orange
+\definecolor{NeuralVarColor}{HTML}{A0522D}
+\newcommand{\NeuralVar}[1]{\texttt{\itshape{\textcolor{NeuralVarColor}{#1}}}}
+\newcommand{\EnvVar}[1]{\texttt{\itshape{\textcolor{BehaviorTreeEnvironmentColor}{#1}}}}
+\newcommand{\BlVar}[1]{\texttt{\itshape{\textcolor{BehaviorTreeBlackboardColor}{#1}}}}
+
+\newcommand{\SwapArrow}{\rightleftharpoons{}}
+\newcommand{\NodeStatus}{\texttt{\itshape{N}}}
+\newcommand{\True}{\top}
+\newcommand{\False}{\bot}
+
+
+\begin{document}
+\begin{adjustbox}{max width = \linewidth}
+
+\begin{tikzpicture}
+\tikzset{level distance=20pt}
+\tikzset{sibling distance=0.5pt}
+\Tree[.\node[Selector](acasxu){$acasxu$};
+[.\node[Sequence](seq11){$seq\_1\_1$};
+[.\node[Check](ifwasclear){$if\_was\_clear$\begin{math}\{\texttt{value}\coloneqq{}\texttt{clear}\}\end{math}};\node[Blackboard]{\begin{tabular}{l}\texttt{if }\begin{math}(\texttt{value} = \BlVar{command})\end{math}\texttt{:}\\{}\begin{math}\quad{}\NodeStatus{}\coloneqq{} \Success{}\end{math}\\{}\texttt{else:}\\{}\begin{math}\quad{}\NodeStatus{}\coloneqq{}\Failure{}\end{math}\end{tabular}};]
+[.\node[Action](call11){$call\_1\_1$};\node[Blackboard]{\begin{tabular}{l}\begin{math}\end{math}\BlVar{command}\begin{math} \in \end{math}\begin{math}\{\NeuralVar{network\_1\_1}\}\end{math}\\\\\begin{math}\end{math}\begin{math}\NodeStatus{} \coloneqq{} \Success\end{math}\end{tabular}};]
+]
+[.\node[Sequence](seq21){$seq\_2\_1$};
+[.\node[Check](ifwasweakright){$if\_was\_weak\_right$\begin{math}\{\texttt{value}\coloneqq{}\texttt{weak\_right}\}\end{math}};\node[Blackboard]{\begin{tabular}{l}\texttt{if }\begin{math}(\texttt{value} = \BlVar{command})\end{math}\texttt{:}\\{}\begin{math}\quad{}\NodeStatus{}\coloneqq{} \Success{}\end{math}\\{}\texttt{else:}\\{}\begin{math}\quad{}\NodeStatus{}\coloneqq{}\Failure{}\end{math}\end{tabular}};]
+[.\node[Action](call21){$call\_2\_1$};\node[Blackboard]{\begin{tabular}{l}\begin{math}\end{math}\BlVar{command}\begin{math} \in \end{math}\begin{math}\{\NeuralVar{network\_2\_1}\}\end{math}\\\\\begin{math}\end{math}\begin{math}\NodeStatus{} \coloneqq{} \Success\end{math}\end{tabular}};]
+]
+[.\node[Sequence](seq31){$seq\_3\_1$};
+[.\node[Check](ifwasweakleft){$if\_was\_weak\_left$\begin{math}\{\texttt{value}\coloneqq{}\texttt{weak\_left}\}\end{math}};\node[Blackboard]{\begin{tabular}{l}\texttt{if }\begin{math}(\texttt{value} = \BlVar{command})\end{math}\texttt{:}\\{}\begin{math}\quad{}\NodeStatus{}\coloneqq{} \Success{}\end{math}\\{}\texttt{else:}\\{}\begin{math}\quad{}\NodeStatus{}\coloneqq{}\Failure{}\end{math}\end{tabular}};]
+[.\node[Action](call31){$call\_3\_1$};\node[Blackboard]{\begin{tabular}{l}\begin{math}\end{math}\BlVar{command}\begin{math} \in \end{math}\begin{math}\{\NeuralVar{network\_3\_1}\}\end{math}\\\\\begin{math}\end{math}\begin{math}\NodeStatus{} \coloneqq{} \Success\end{math}\end{tabular}};]
+]
+[.\node[Sequence](seq41){$seq\_4\_1$};
+[.\node[Check](ifwasstrongright){$if\_was\_strong\_right$\begin{math}\{\texttt{value}\coloneqq{}\texttt{strong\_right}\}\end{math}};\node[Blackboard]{\begin{tabular}{l}\texttt{if }\begin{math}(\texttt{value} = \BlVar{command})\end{math}\texttt{:}\\{}\begin{math}\quad{}\NodeStatus{}\coloneqq{} \Success{}\end{math}\\{}\texttt{else:}\\{}\begin{math}\quad{}\NodeStatus{}\coloneqq{}\Failure{}\end{math}\end{tabular}};]
+[.\node[Action](call41){$call\_4\_1$};\node[Blackboard]{\begin{tabular}{l}\begin{math}\end{math}\BlVar{command}\begin{math} \in \end{math}\begin{math}\{\NeuralVar{network\_4\_1}\}\end{math}\\\\\begin{math}\end{math}\begin{math}\NodeStatus{} \coloneqq{} \Success\end{math}\end{tabular}};]
+]
+[.\node[Sequence](seq51){$seq\_5\_1$};
+[.\node[Check](ifwasstrongleft){$if\_was\_strong\_left$\begin{math}\{\texttt{value}\coloneqq{}\texttt{strong\_left}\}\end{math}};\node[Blackboard]{\begin{tabular}{l}\texttt{if }\begin{math}(\texttt{value} = \BlVar{command})\end{math}\texttt{:}\\{}\begin{math}\quad{}\NodeStatus{}\coloneqq{} \Success{}\end{math}\\{}\texttt{else:}\\{}\begin{math}\quad{}\NodeStatus{}\coloneqq{}\Failure{}\end{math}\end{tabular}};]
+[.\node[Action](call51){$call\_5\_1$};\node[Blackboard]{\begin{tabular}{l}\begin{math}\end{math}\BlVar{command}\begin{math} \in \end{math}\begin{math}\{\NeuralVar{network\_5\_1}\}\end{math}\\\\\begin{math}\end{math}\begin{math}\NodeStatus{} \coloneqq{} \Success\end{math}\end{tabular}};]
+]
+]
+\node[Blackboard, anchor=south east] (initialValues) at ([xshift=-20pt, yshift=10pt]acasxu.north west){\begin{tabular}{l}\texttt{-INITIAL VALUES-}\\{}\begin{math}\end{math}\BlVar{command}\begin{math} \in \end{math}\begin{math}\{\texttt{clear}, \texttt{weak\_left}, \texttt{weak\_right}, \texttt{strong\_left}, \texttt{strong\_right}\}\end{math}\\\begin{math}\end{math}\EnvVar{distance}\begin{math} \coloneqq{} \end{math}\begin{math}10000\end{math}\\\begin{math}\end{math}\EnvVar{relative\_angle}\begin{math} \coloneqq{} \end{math}\begin{math}0\end{math}\\\begin{math}\end{math}\EnvVar{intersect\_angle}\begin{math} \coloneqq{} \end{math}\begin{math}90\end{math}\\\begin{math}\end{math}\EnvVar{speed\_own}\begin{math} \coloneqq{} \end{math}\begin{math}500\end{math}\\\begin{math}\end{math}\EnvVar{speed\_int}\begin{math} \coloneqq{} \end{math}\begin{math}700\end{math}\\\texttt{NN(}\begin{math}((\EnvVar{distance} - 19791.091) / 60261), (((3.141592653589793 \cdot (\EnvVar{relative\_angle} / 180)) - 0) / 6.28318530718), (((3.141592653589793 \cdot (\EnvVar{intersect\_angle} / 180)) - 0) / 6.28318530718), ((\EnvVar{speed\_own} - 650) / 1100), ((\EnvVar{speed\_int} - 600) / 1200)\end{math}\texttt{)}\\{}\texttt{NN(}\begin{math}((\EnvVar{distance} - 19791.091) / 60261), (((3.141592653589793 \cdot (\EnvVar{relative\_angle} / 180)) - 0) / 6.28318530718), (((3.141592653589793 \cdot (\EnvVar{intersect\_angle} / 180)) - 0) / 6.28318530718), ((\EnvVar{speed\_own} - 650) / 1100), ((\EnvVar{speed\_int} - 600) / 1200)\end{math}\texttt{)}\\{}\texttt{NN(}\begin{math}((\EnvVar{distance} - 19791.091) / 60261), (((3.141592653589793 \cdot (\EnvVar{relative\_angle} / 180)) - 0) / 6.28318530718), (((3.141592653589793 \cdot (\EnvVar{intersect\_angle} / 180)) - 0) / 6.28318530718), ((\EnvVar{speed\_own} - 650) / 1100), ((\EnvVar{speed\_int} - 600) / 1200)\end{math}\texttt{)}\\{}\texttt{NN(}\begin{math}((\EnvVar{distance} - 19791.091) / 60261), (((3.141592653589793 \cdot (\EnvVar{relative\_angle} / 180)) - 0) / 6.28318530718), (((3.141592653589793 \cdot (\EnvVar{intersect\_angle} / 180)) - 0) / 6.28318530718), ((\EnvVar{speed\_own} - 650) / 1100), ((\EnvVar{speed\_int} - 600) / 1200)\end{math}\texttt{)}\\{}\texttt{NN(}\begin{math}((\EnvVar{distance} - 19791.091) / 60261), (((3.141592653589793 \cdot (\EnvVar{relative\_angle} / 180)) - 0) / 6.28318530718), (((3.141592653589793 \cdot (\EnvVar{intersect\_angle} / 180)) - 0) / 6.28318530718), ((\EnvVar{speed\_own} - 650) / 1100), ((\EnvVar{speed\_int} - 600) / 1200)\end{math}\texttt{)}\\{}\end{tabular}};
+\node[Blackboard, anchor=south east] (varInfo) at ([xshift=-20pt]initialValues.south west){\begin{tabular}{l}\texttt{-VARIABLE INFO-}\\{}\begin{math}\texttt{pi} \coloneqq{} 3.141592653589793\end{math}\\{}\begin{math}\texttt{distance\_modifier} \coloneqq{} 100\end{math}\\{}\begin{math}\texttt{max\_dist} \coloneqq{} 1000\end{math}\\{}\begin{math}\texttt{distance\_mean} \coloneqq{} 19791.091\end{math}\\{}\begin{math}\texttt{relative\_angle\_mean} \coloneqq{} 0\end{math}\\{}\begin{math}\texttt{intersect\_angle\_mean} \coloneqq{} 0\end{math}\\{}\begin{math}\texttt{speed\_own\_mean} \coloneqq{} 650\end{math}\\{}\begin{math}\texttt{speed\_int\_mean} \coloneqq{} 600\end{math}\\{}\begin{math}\texttt{distance\_range} \coloneqq{} 60261\end{math}\\{}\begin{math}\texttt{relative\_angle\_range} \coloneqq{} 6.28318530718\end{math}\\{}\begin{math}\texttt{intersect\_angle\_range} \coloneqq{} 6.28318530718\end{math}\\{}\begin{math}\texttt{speed\_own\_range} \coloneqq{} 1100\end{math}\\{}\begin{math}\texttt{speed\_int\_range} \coloneqq{} 1200\end{math}\\{}\BlVar{command} - VAR - \texttt{\{}clear, weak\_left, weak\_right, strong\_left, strong\_right\texttt{\}}\\{}\EnvVar{distance} - DEFINE - INT\\{}\EnvVar{relative\_angle} - DEFINE - INT\\{}\EnvVar{intersect\_angle} - DEFINE - INT\\{}\EnvVar{speed\_own} - DEFINE - INT\\{}\EnvVar{speed\_int} - DEFINE - INT\\{}\NeuralVar{network\_1\_1} - NEURAL - \texttt{\{}clear, weak\_left, weak\_right, strong\_left, strong\_right\texttt{\}}\\{}\NeuralVar{network\_2\_1} - NEURAL - \texttt{\{}clear, weak\_left, weak\_right, strong\_left, strong\_right\texttt{\}}\\{}\NeuralVar{network\_3\_1} - NEURAL - \texttt{\{}clear, weak\_left, weak\_right, strong\_left, strong\_right\texttt{\}}\\{}\NeuralVar{network\_4\_1} - NEURAL - \texttt{\{}clear, weak\_left, weak\_right, strong\_left, strong\_right\texttt{\}}\\{}\NeuralVar{network\_5\_1} - NEURAL - \texttt{\{}clear, weak\_left, weak\_right, strong\_left, strong\_right\texttt{\}}\end{tabular}};
+\node[Blackboard, anchor=south west] (environmentUpdates) at ([xshift=20pt, yshift=10pt]acasxu.north east){\begin{tabular}{l}\texttt{-ENVIRONMENT UPDATES-}\\{}\end{tabular}};
+\end{tikzpicture}
+\end{adjustbox}
+\end{document}

@@ -1,0 +1,40 @@
+configuration{}enumerations{}constants {xMin := 0, xMax := 10}
+variables{
+    variable{bl x VAR [xMin, xMax] assign{result{(idiv, (add, xMin, xMax), 2)}}}
+    variable{env y VAR BOOLEAN assign{result{True, False}}}
+}
+environment_update {
+    variable_statement{ y assign{
+	    case{(eq, xMax, x)}result{False}
+	    case{(eq, xMin, x)}result{True}
+	    result{True, False}
+	}
+    }
+}
+checks {}
+environment_checks {
+    environment_check { MyCheck arguments{} read_variables{} condition{y}}
+}
+actions {
+    action { MyAct
+	arguments {delta := INT} local_variables{} read_variables {} write_variables {x} initial_values{}
+	update {
+	    variable_statement{ x assign{result{(min, xMax, (max, xMin, (add, x, delta)))}}}
+	    return_statement{result{success}}
+	}
+    }
+}
+sub_trees {}
+tree {
+    composite { root selector children{
+	    composite{ IncSeq sequence children{
+		    MyCheck {}
+		    Inc : MyAct{1}
+		}
+	    }
+	    Dec : MyAct{-1}
+	}
+    }
+}
+tick_prerequisite {True}
+specifications {INVARSPEC{(lt, x, xMax)}}

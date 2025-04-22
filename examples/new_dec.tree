@@ -1,0 +1,59 @@
+configuration {
+}
+enumerations {
+}
+
+constants {
+}
+
+variables {
+    variable{ local x VAR [-1, 1] assign{result{0}}}
+}
+
+environment_update {
+}
+
+checks {
+}
+
+environment_checks {
+}
+
+actions {
+    action {
+	any
+	arguments {} local_variables {x} read_variables {} write_variables {} initial_values {}
+	update {
+	    variable_statement {
+		x
+		assign{result{-1, 0, 1}}
+	    }
+	    return_statement{
+		case{(eq, x, -1)}result{failure}
+		case{(eq, x, 0)}result{running}
+		result{success}
+	    }
+	}
+    }
+}
+
+
+sub_trees {
+}
+
+tree {
+    composite {
+	IDK sequence children {
+	    decorator {repeater repeat 2 child{any1 : any{}}}
+	    decorator {OSS one_shot success_only child{any2 : any{}}}
+	    decorator {OSSF one_shot success_failure child{any3 : any{}}}
+	}
+    }
+}
+
+tick_prerequisite {
+    True
+}
+
+specifications {
+}

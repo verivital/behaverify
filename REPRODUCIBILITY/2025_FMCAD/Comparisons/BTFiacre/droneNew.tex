@@ -1,0 +1,67 @@
+\begin{tikzpicture}
+\tikzset{level distance=20pt}
+\tikzset{sibling distance=0.5pt}
+\Tree[.\node[Sequence](Drone){$Drone$};
+[.\node[Selector](StartSel){$StartSel$};
+[.\node[Check](Started){$Started$};\node[Blackboard]{\begin{tabular}{l}$\texttt{if }\BlVar{startedDC}\texttt{:}$\\{}$\quad{}\NodeStatus{}\coloneqq{} \Success{}$\\{}$\texttt{else:}$\\{}$\quad{}\NodeStatus{}\coloneqq{}\Failure{}$\end{tabular}};]
+[.\node[Action](Start){$Start$};\node[Blackboard]{\begin{tabular}{l}$\BlVar{camT} \in \{\False{}\}$\\$\BlVar{move} \in \{\texttt{none}\}$\\$\BlVar{camStatus} \in \texttt{(}\{\texttt{failed}\}$\\$\quad{}\texttt{if }(\BlVar{camStatus} = \texttt{failed})\texttt{ else}$\\$\quad{}\texttt{(}\{\texttt{on}\}$\\$\quad{}\quad{}\texttt{if }(\BlVar{camStatus} = \texttt{on})\texttt{ else}$\\$\quad{}\quad{}\texttt{(}\{\texttt{on}, \texttt{failed}, \texttt{trying}\}\texttt{)))}$\\$\BlVar{droneStatus} \in \texttt{(}\{\texttt{failed}\}$\\$\quad{}\texttt{if }(\BlVar{droneStatus} = \texttt{failed})\texttt{ else}$\\$\quad{}\texttt{(}\{\texttt{on}\}$\\$\quad{}\quad{}\texttt{if }(\BlVar{droneStatus} = \texttt{on})\texttt{ else}$\\$\quad{}\quad{}\texttt{(}\{\texttt{on}, \texttt{failed}, \texttt{trying}\}\texttt{)))}$\\$\BlVar{startedDC} \in \{((\BlVar{droneStatus} = \texttt{on}) \land (\BlVar{camStatus} = \texttt{on}))\}$\\$\texttt{if }((\BlVar{droneStatus} = \texttt{on}) \land (\BlVar{camStatus} = \texttt{on}))\texttt{:}$\\$\quad{}\NodeStatus{} \coloneqq \Success$\\$\texttt{elif }((\BlVar{droneStatus} = \texttt{failed}) \lor (\BlVar{camStatus} = \texttt{failed}))\texttt{:}$\\$\quad{}\NodeStatus{} \coloneqq \Failure$\\$\texttt{else:}$\\$\quad{}\NodeStatus{} \coloneqq \Running$\end{tabular}};]
+]
+[.\node[Selector](Main){$Main$};
+[.\node[Sequence](LandingSeq){$LandingSeq$};
+[.\node[Check](Landing){$Landing$};\node[Blackboard]{\begin{tabular}{l}$\texttt{if }((\BlVar{move}) = \texttt{land})\texttt{:}$\\{}$\quad{}\NodeStatus{}\coloneqq{} \Success{}$\\{}$\texttt{else:}$\\{}$\quad{}\NodeStatus{}\coloneqq{}\Failure{}$\end{tabular}};]
+[.\node[Selector](LandSel){$LandSel$};
+[.\node[Check](Landed){$Landed$};\node[Blackboard]{\begin{tabular}{l}$\texttt{if }(\EnvVar{z\_a} = 0)\texttt{:}$\\{}$\quad{}\NodeStatus{}\coloneqq{} \Success{}$\\{}$\texttt{else:}$\\{}$\quad{}\NodeStatus{}\coloneqq{}\Failure{}$\end{tabular}};]
+[.\node[Action](Land){$Land$};\node[Blackboard]{\begin{tabular}{l}$\BlVar{move} \in \{\texttt{land}\}$\\$\NodeStatus{} \coloneqq \Running$\end{tabular}};]
+]
+]
+[.\node[Sequence](ESeq){$ESeq$};
+[.\node[Selector](ESel){$ESel$};
+[.\node[Check](BCritical){$BCritical$};\node[Blackboard]{\begin{tabular}{l}$\texttt{if }(\EnvVar{battery} = \texttt{critical})\texttt{:}$\\{}$\quad{}\NodeStatus{}\coloneqq{} \Success{}$\\{}$\texttt{else:}$\\{}$\quad{}\NodeStatus{}\coloneqq{}\Failure{}$\end{tabular}};]
+[.\node[Check](LBad){$LBad$};\node[Blackboard]{\begin{tabular}{l}$\texttt{if }\neg (\EnvVar{loc})\texttt{:}$\\{}$\quad{}\NodeStatus{}\coloneqq{} \Success{}$\\{}$\texttt{else:}$\\{}$\quad{}\NodeStatus{}\coloneqq{}\Failure{}$\end{tabular}};]
+]
+[.\node[Action](ELand){$ELand$};\node[Blackboard]{\begin{tabular}{l}$\BlVar{move} \in \{\texttt{land}\}$\\$\NodeStatus{} \coloneqq \Running$\end{tabular}};]
+]
+[.\node[Sequence](TakeoffSeq){$TakeoffSeq$};
+[.\node[Selector](TakeoffSel){$TakeoffSel$};
+[.\node[Check](Tookoff){$Tookoff$};\node[Blackboard]{\begin{tabular}{l}$\texttt{if }(\EnvVar{z\_a} \geq 5)\texttt{:}$\\{}$\quad{}\NodeStatus{}\coloneqq{} \Success{}$\\{}$\texttt{else:}$\\{}$\quad{}\NodeStatus{}\coloneqq{}\Failure{}$\end{tabular}};]
+[.\node[Action](Takeoff){$Takeoff$};\node[Blackboard]{\begin{tabular}{l}$\BlVar{move} \in \{\texttt{takeoff}\}$\\$\NodeStatus{} \coloneqq \Running$\end{tabular}};]
+]
+[.\node[Selector](MoveSel){$MoveSel$};
+[.\node[Sequence](LSeq){$LSeq$};
+[.\node[Check](BLow){$BLow$};\node[Blackboard]{\begin{tabular}{l}$\texttt{if }(\EnvVar{battery} = \texttt{low})\texttt{:}$\\{}$\quad{}\NodeStatus{}\coloneqq{} \Success{}$\\{}$\texttt{else:}$\\{}$\quad{}\NodeStatus{}\coloneqq{}\Failure{}$\end{tabular}};]
+[.\node[Action](SetP0){$SetP0$};\node[Blackboard]{\begin{tabular}{l}$\BlVar{ind} \in \{\texttt{p}\}$\\$\NodeStatus{} \coloneqq \Success$\end{tabular}};]
+[.\node[Selector](LSel){$LSel$};
+[.\node[Check](AtP0){$AtP0$};\node[Blackboard]{\begin{tabular}{l}$\texttt{if }((\EnvVar{x\_a} = \BlVar{x\_g}) \land (\EnvVar{y\_a} = \BlVar{y\_g}) \land (\EnvVar{z\_a} = \BlVar{z\_g}))\texttt{:}$\\{}$\quad{}\NodeStatus{}\coloneqq{} \Success{}$\\{}$\texttt{else:}$\\{}$\quad{}\NodeStatus{}\coloneqq{}\Failure{}$\end{tabular}};]
+[.\node[Action](GoTo0){$GoTo0$};\node[Blackboard]{\begin{tabular}{l}$\BlVar{move} \in \{\texttt{fly}\}$\\$\NodeStatus{} \coloneqq \Running$\end{tabular}};]
+]
+[.\node[Action](LLand){$LLand$};\node[Blackboard]{\begin{tabular}{l}$\BlVar{move} \in \{\texttt{land}\}$\\$\NodeStatus{} \coloneqq \Running$\end{tabular}};]
+]
+[.\node[Sequence](MoveSeq){$MoveSeq$};
+[.\node[Selector](ObjSel){$ObjSel$};
+[.\node[Action](CameraTrack){$CameraTrack$};\node[Blackboard]{\begin{tabular}{l}$\BlVar{camT} \in \{\True{}, \False{}\}$\\$\texttt{if }\BlVar{camT}\texttt{:}$\\$\quad{}\NodeStatus{} \coloneqq \Success$\\$\texttt{else:}$\\$\quad{}\NodeStatus{} \coloneqq \Failure$\end{tabular}};]
+[.\node[Sequence](PointSeq){$PointSeq$};
+[.\node[Action](SetMinP){$SetMinP$};\node[Blackboard]{\begin{tabular}{l}$\BlVar{ind} \in \texttt{(}\{1\}$\\$\quad{}\texttt{if }(\BlVar{ind} = 0)\texttt{ else}$\\$\quad{}\texttt{(}\{\BlVar{ind}\}\texttt{))}$\\$\NodeStatus{} \coloneqq \Success$\end{tabular}};]
+[.\node[Selector](PointSel){$PointSel$};
+[.\node[Check](AtP){$AtP$};\node[Blackboard]{\begin{tabular}{l}$\texttt{if }((\EnvVar{x\_a} = \BlVar{x\_g}) \land (\EnvVar{y\_a} = \BlVar{y\_g}) \land (\EnvVar{z\_a} = \BlVar{z\_g}))\texttt{:}$\\{}$\quad{}\NodeStatus{}\coloneqq{} \Success{}$\\{}$\texttt{else:}$\\{}$\quad{}\NodeStatus{}\coloneqq{}\Failure{}$\end{tabular}};]
+[.\node[Action](IncP){$IncP$};\node[Blackboard]{\begin{tabular}{l}$\BlVar{ind} \in \{min((15 + 1), (\BlVar{ind} + 1))\}$\\$\NodeStatus{} \coloneqq \Success$\end{tabular}};]
+]
+[.\node[Selector](FinalSel){$FinalSel$};
+[.\node[Check](MaxP){$MaxP$};\node[Blackboard]{\begin{tabular}{l}$\texttt{if }((1 + 15) = \BlVar{ind})\texttt{:}$\\{}$\quad{}\NodeStatus{}\coloneqq{} \Success{}$\\{}$\texttt{else:}$\\{}$\quad{}\NodeStatus{}\coloneqq{}\Failure{}$\end{tabular}};]
+[.\node[Action](GoToP){$GoToP$};\node[Blackboard]{\begin{tabular}{l}$\BlVar{move} \in \{\texttt{fly}\}$\\$\NodeStatus{} \coloneqq \Running$\end{tabular}};]
+]
+]
+]
+[.\node[Action](SetPMax){$SetPMax$};\node[Blackboard]{\begin{tabular}{l}$\BlVar{ind} \in \{\texttt{p}\}$\\$\NodeStatus{} \coloneqq \Success$\end{tabular}};]
+[.\node[Selector](MaxSel){$MaxSel$};
+[.\node[Check](AtPMax){$AtPMax$};\node[Blackboard]{\begin{tabular}{l}$\texttt{if }((\EnvVar{x\_a} = \BlVar{x\_g}) \land (\EnvVar{y\_a} = \BlVar{y\_g}) \land (\EnvVar{z\_a} = \BlVar{z\_g}))\texttt{:}$\\{}$\quad{}\NodeStatus{}\coloneqq{} \Success{}$\\{}$\texttt{else:}$\\{}$\quad{}\NodeStatus{}\coloneqq{}\Failure{}$\end{tabular}};]
+[.\node[Action](GoToMax){$GoToMax$};\node[Blackboard]{\begin{tabular}{l}$\BlVar{move} \in \{\texttt{fly}\}$\\$\NodeStatus{} \coloneqq \Running$\end{tabular}};]
+]
+[.\node[Action](GLand){$GLand$};\node[Blackboard]{\begin{tabular}{l}$\BlVar{move} \in \{\texttt{land}\}$\\$\NodeStatus{} \coloneqq \Running$\end{tabular}};]
+]
+]
+]
+]
+[.\node[Action](Shutdown){$Shutdown$};\node[Blackboard]{\begin{tabular}{l}$\BlVar{droneStatus} \in \{\BlVar{droneStatus}, \texttt{off}\}$\\$\BlVar{camStatus} \in \{\BlVar{camStatus}, \texttt{off}\}$\\$\BlVar{move} \in \texttt{(}\{\texttt{none}\}$\\$\quad{}\texttt{if }((\BlVar{droneStatus} = \texttt{off}) \land (\BlVar{camStatus} = \texttt{off}))\texttt{ else}$\\$\quad{}\texttt{(}\{\BlVar{move}\}\texttt{))}$\\$\BlVar{startedDC} \in \{((\BlVar{droneStatus} = \texttt{off}) \land (\BlVar{camStatus} = \texttt{off}))\}$\\$\texttt{if }((\BlVar{droneStatus} = \texttt{off}) \land (\BlVar{camStatus} = \texttt{off}))\texttt{:}$\\$\quad{}\NodeStatus{} \coloneqq \Success$\\$\texttt{else:}$\\$\quad{}\NodeStatus{} \coloneqq \Running$\end{tabular}};]
+[.\node[Action](Report){$Report$};\node[Blackboard]{\begin{tabular}{l}$\texttt{if }\BlVar{camT}\texttt{:}$\\$\quad{}\NodeStatus{} \coloneqq \Success$\\$\texttt{else:}$\\$\quad{}\NodeStatus{} \coloneqq \Failure$\\$\BlVar{camT} \in \{\False{}\}$\end{tabular}};]
+]
+\end{tikzpicture}

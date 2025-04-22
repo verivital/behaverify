@@ -1,0 +1,122 @@
+configuration {
+}
+enumerations {
+}
+
+constants {
+}
+
+variables {
+    variable { bl v VAR [0, 10] assign{result{0}}}
+    variable { bl d VAR BOOLEAN assign{result{False}}}
+    variable { bl s VAR BOOLEAN assign{result{True}}}
+}
+
+environment_update {
+}
+
+checks {
+    check {
+	IsSpeedZero
+	arguments {}
+	read_variables {v}
+	condition{(eq, v, 0)}
+    }
+    check {
+	IsStopped
+	arguments {}
+	read_variables {s}
+	condition {s}
+    }
+    check {
+	IsDoorClosed
+	arguments {}
+	read_variables {d}
+	condition {(not, d)}
+    }
+}
+
+environment_checks {
+}
+
+actions {
+    action {
+	Stop
+	arguments {} local_variables {} read_variables {} write_variables {s} initial_values {}
+	update {
+	    variable_statement {
+		s
+		assign{result{True}}
+	    }
+	    return_statement {result{success}}
+	}
+    }
+    action {
+	Open
+	arguments {} local_variables {} read_variables {} write_variables {d} initial_values {}
+	update {
+	    variable_statement {
+		d
+		assign{result{True}}
+	    }
+	    return_statement {result{success}}
+	}
+    }
+    action {
+	Move
+	arguments {} local_variables {} read_variables {} write_variables {v} initial_values {}
+	update {
+	    variable_statement {
+		v
+		assign{result{(loop, i, [0, 10] such_that True, i)}}
+	    }
+	    return_statement {result{running}}
+	}
+    }
+}
+
+
+sub_trees {
+}
+
+tree {
+    composite {
+	Root sequence children {
+	    composite {
+		Sel selector children {
+		    composite {
+			Seq1 sequence children {
+			    IsSpeedZero {}
+			    Stop {}
+			}
+		    }
+		    composite {
+			Seq2 sequence children {
+			    IsStopped {}
+			    Open {}
+			}
+		    }
+		}
+	    }
+	    composite {
+		Seq3 sequence children {
+		    IsDoorClosed {}
+		    Move {}
+		}
+	    }
+	}
+    }
+}
+
+tick_prerequisite {
+    True
+}
+
+specifications {
+    INVARSPEC {
+	(and,
+	    (implies, s at 0, (eq, v at 0, 0)),
+	    (implies, d at 0, (eq, v at 0, 0))
+	)
+    }
+}

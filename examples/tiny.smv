@@ -1,0 +1,99 @@
+MODULE main
+    VAR
+        system : system_module;
+--------------SPECIFICATIONS
+
+INVARSPEC (system.x_stage_2 < 10);
+
+--------------END OF SPECIFICATIONS
+
+MODULE system_module
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        resume_from_here_in_subtree__root := -3;
+        root.active := TRUE;
+        --START OF BLACKBOARD DEFINITIONS
+        x_stage_1 :=
+            case
+                !(Inc.active) : x_stage_0;
+                TRUE : min(10, max(0, (x_stage_0 + 1)));
+            esac;
+        x_stage_2 :=
+            case
+                !(Dec.active) : x_stage_1;
+                TRUE : min(10, max(0, (x_stage_1 + -1)));
+            esac;
+        --END OF BLACKBOARD DEFINITIONS
+    VAR
+        node_names : define_nodes;
+        MyCheck : MyCheck_module(y_stage_0);
+        Inc : success_DEFAULT_module();
+        IncSeq : composite_sequence_without_memory_2(MyCheck, Inc);
+        Dec : success_DEFAULT_module();
+        root : composite_selector_without_memory_2(IncSeq, Dec);
+        --START OF BLACKBOARD VARIABLES DECLARATION
+        x_stage_0 : 0..10;
+        y_stage_0 : boolean;
+        --END OF BLACKBOARD VARIABLES DECLARATION
+    ASSIGN
+        --START OF BLACKBOARD VARIABLES INITIALIZATION
+        init(x_stage_0) := ((0 + 10) / 2);
+        init(y_stage_0) := {TRUE, FALSE};
+        --END OF BLACKBOARD VARIABLES INITIALIZATION
+        --START OF BLACKBOARD VARIABLES TRANSITION
+        next(x_stage_0) := x_stage_2;
+        next(y_stage_0) :=
+            case
+                !(root.active) : y_stage_0;
+                (10 = x_stage_2) : FALSE;
+                (0 = x_stage_2) : TRUE;
+                TRUE : {TRUE, FALSE};
+            esac;
+        --END OF BLACKBOARD VARIABLES TRANSITION
+
+MODULE define_nodes
+    DEFINE
+        root := 0;
+        IncSeq := 1;
+        MyCheck := 2;
+        Inc := 3;
+        Dec := 4;
+MODULE composite_selector_without_memory_2(child_0, child_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                !(child_0.internal_status = failure) : child_0.internal_status;
+                !(child_1.internal_status = failure) : child_1.internal_status;
+                TRUE : failure;
+            esac;
+        child_0.active := active;
+        child_1.active := child_0.status = failure;
+MODULE composite_sequence_without_memory_2(child_0, child_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                !(child_0.internal_status = success) : child_0.internal_status;
+                !(child_1.internal_status = success) : child_1.internal_status;
+                TRUE : success;
+            esac;
+        child_0.active := active;
+        child_1.active := child_0.status = success;
+MODULE MyCheck_module(y_stage_0)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := (y_stage_0) ? success : failure;
+MODULE success_DEFAULT_module
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := success;

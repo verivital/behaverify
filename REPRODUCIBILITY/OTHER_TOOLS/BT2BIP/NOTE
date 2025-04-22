@@ -1,0 +1,33 @@
+PAPER
+Enabling Behaviour Tree Verification via a Translation to BIP
+
+REPO
+https://github.com/789wpw/xml2bip
+
+
+STATUS
+Does not work. See below.
+
+
+./gene_models.bash: line 12: ./BIP2NuSMV.jar: cannot execute binary file: Exec format error
+
+
+MISC NOTES:
+Installation instructions are wrong. Fixed instructions:
+
+git clone https://github.com/leethomason/tinyxml2.git
+cd tinyxml2
+mkdir build
+cd build
+cmake ..
+make -j
+sudo make install -j
+
+-----
+
+git clone https://github.com/789wpw/xml2bip.git
+cd xml2bip
+mkdir build
+cd build
+cmake ..
+make -j
