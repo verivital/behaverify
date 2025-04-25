@@ -43,7 +43,7 @@ def write_files(metamodel_file, model_file, output_file, insert_only, recursion_
         if atom_type == 'CONSTANT':
             atom_type = constant_type(atom, declared_enumerations)
         return (
-            ('\\texttt{' + atom + '}')
+            ('\\texttt{\\textquotesingle{}' + atom + '\\textquotesingle{}}')
             if atom_type == 'ENUM' else
             (
                 ('\\' + str(atom) + '{}')
@@ -122,12 +122,12 @@ def write_files(metamodel_file, model_file, output_file, insert_only, recursion_
     def format_variable_name_only(variable, misc_args):
         return (
             (
-                ('\\EnvVar{')
+                ('\\EnvVarTikz{')
                 if is_env(variable) else
                 (
-                    ('\\NeuralVar{')
+                    ('\\NeuralVarTikz{')
                     if is_neural(variable) else
-                    ('\\BlVar{' + ('node.' if is_local(variable) else ''))
+                    ('\\BlVarTikz{' + ('node.' if is_local(variable) else ''))
                 )
             ) + variable.name + '}'
         )
@@ -161,7 +161,7 @@ def write_files(metamodel_file, model_file, output_file, insert_only, recursion_
     def update_method_check(node):
         return (
             '\\node[Blackboard]{\\begin{tabular}{l}'
-            + ('\\texttt{if }\\begin{math}' + format_code(node.condition, create_misc_args(False, 'node', 2))[0] + '\\end{math}\\texttt{:}\\\\{}\\begin{math}\\quad{}\\NodeStatus{}\\coloneqq{} \\Success{}\\end{math}\\\\{}\\texttt{else:}\\\\{}\\begin{math}\\quad{}\\NodeStatus{}\\coloneqq{}\\Failure{}\\end{math}')
+            + ('\\texttt{if }\\begin{math}' + format_code(node.condition, create_misc_args(False, 'node', 2))[0] + '\\end{math}\\texttt{:}\\\\{}\\begin{math}\\quad{}\\NodeStatusTikz{}\\coloneqq{} \\SuccessTikz{}\\end{math}\\\\{}\\texttt{else:}\\\\{}\\begin{math}\\quad{}\\NodeStatusTikz{}\\coloneqq{}\\FailureTikz{}\\end{math}')
             + '\\end{tabular}};'
         )
 
@@ -170,29 +170,39 @@ def write_files(metamodel_file, model_file, output_file, insert_only, recursion_
 
     def resolve_variable_nondeterminism(values, misc_args):
         formatted_values = []
+        no_bracket = misc_args['loc'] == 'DEFINE'
         for value in values:
             formatted_values.extend(format_code(value, misc_args))
-        return '\\begin{math}' + ('' if misc_args['loc'] == 'DEFINE' else '\\{') + ', '.join(formatted_values) + ('' if misc_args['loc'] == 'DEFINE' else '\\}') + '\\end{math}'
+        try:
+            if len(formatted_values) > 1:
+                int_vals = list(map(int, formatted_values))
+                int_vals.sort()
+                if all(((i + int_vals[0]) == int_vals[i]) for i in range(len(int_vals))):
+                    formatted_values = ['[' + str(int_vals[0]) + ', ' + str(int_vals[-1]) + ']']
+                    no_bracket = True
+        except:
+            pass
+        return ('' if no_bracket else '\\{') + ', '.join(formatted_values) + ('' if no_bracket else '\\}')
 
     def handle_assign(assign, misc_args):
         case_results = assign.case_results
         default_result = assign.default_result
         if len(case_results) == 0:
-            return resolve_variable_nondeterminism(default_result.values, misc_args)  # NOTE: no linesep at the end!
+            return '\\begin{math}' + resolve_variable_nondeterminism(default_result.values, misc_args) + '\\end{math}' # NOTE: no linesep at the end!
         return (
             '\\texttt{(}'
             + ''.join(
                 [
                     (
                         # indent(misc_args['indent_level'] + 1 + index) +
-                        resolve_variable_nondeterminism(case_result.values, misc_args) + '\\\\'
+                        '\\begin{math}' + resolve_variable_nondeterminism(case_result.values, misc_args) + '\\end{math}\\\\'
                         + indent(misc_args['indent_level'] + 1 + index) + '\\texttt{if }\\begin{math}' + format_code(case_result.condition, misc_args)[0] + '\\end{math}\\texttt{ else}' + '\\\\'
                         + indent(misc_args['indent_level'] + 1 + index) + '\\texttt{(}'
                      ) for index, case_result in enumerate(case_results)
                 ]
             )
             # + indent(misc_args['indent_level'] + len(case_results))
-            + resolve_variable_nondeterminism(default_result.values, misc_args)# + '$\\\\$'
+            + '\\begin{math}' + resolve_variable_nondeterminism(default_result.values, misc_args) + '\\end{math}'# + '$\\\\$'
             # + indent(misc_args['indent_level'])
             + '\\texttt{' + (')' * (1 + len(case_results))) + '}'  # NOTE: no linesep at the end!
         )
@@ -218,12 +228,12 @@ def write_files(metamodel_file, model_file, output_file, insert_only, recursion_
         # i don't think we should be able to have define variables here.
         return (
             (
-                indent(misc_args['indent_level']) + '\\begin{math}\\texttt{temp} \\coloneqq{} ' + assign_value + '\\end{math}\\\\'
+                indent(misc_args['indent_level']) + '\\begin{math}\\texttt{temp} \\coloneqq{}\\end{math}' + assign_value + '\\\\'
                 + indent(misc_args['indent_level']) + '\\texttt{for (index, val) in temp:}\\\\'
-                + indent(misc_args['indent_level'] + 1) + format_variable_name_only(variable, misc_args) + '\\begin{math}[\\texttt{index}] \\in{} \\texttt{val}' + '\\end{math}\\\\'
+                + indent(misc_args['indent_level'] + 1) + '\\begin{math}' + format_variable_name_only(variable, misc_args) + '[\\texttt{index}] \\in{} \\texttt{val}' + '\\end{math}\\\\'
             )
             if array_mode else
-            (indent(misc_args['indent_level']) + format_variable_name_only(variable, misc_args) + '\\begin{math}' + (' \\in ' if variable.model_as in ('VAR', 'FROZENVAR') else ' \\coloneqq{} ') + '\\end{math}' + assign_value + '\\\\')
+            (indent(misc_args['indent_level']) + '\\begin{math}' + format_variable_name_only(variable, misc_args) + (' \\in ' if variable.model_as in ('VAR', 'FROZENVAR') else ' \\coloneqq{} ') + '\\end{math}' + assign_value + '\\\\')
         )
 
     def handle_variable_statement(variable_statement, misc_args, assign_to_var):
@@ -315,10 +325,10 @@ def write_files(metamodel_file, model_file, output_file, insert_only, recursion_
         )
 
     def format_returns(status_result):
-        return '\\' + status_result.status.lower().capitalize()
+        return '\\' + status_result.status.lower().capitalize() + 'Tikz{}'
 
     def handle_return_statement(statement, misc_args):
-        variable_name = '\\NodeStatus{}'
+        variable_name = '\\NodeStatusTikz{}'
         if len(statement.case_results) == 0:
             return indent(misc_args['indent_level']) + '\\begin{math}' + variable_name + ' \\coloneqq{} ' + format_returns(statement.default_result) + '\\end{math}\\\\'
         return (
@@ -415,7 +425,7 @@ def write_files(metamodel_file, model_file, output_file, insert_only, recursion_
                 '[.\\node[Decorator](' + node_name.replace('_', '') + '){$' + node_name
                 + '$\\{'
                 + (
-                    ('\\begin{math}\\' + current_node.x.capitalize() + '{}\\mapsto{}\\' + current_node.y.capitalize() + '{}\\end{math}')
+                    ('\\begin{math}\\' + current_node.x.capitalize() + 'Tikz{}\\mapsto{}\\' + current_node.y.capitalize() + 'Tikz{}\\end{math}')
                     if current_node.x is not None else
                     (
                         ('x' + str(current_node.repeat))
@@ -425,13 +435,13 @@ def write_files(metamodel_file, model_file, output_file, insert_only, recursion_
                                 ('\\begin{math}\\Success{}\\end{math}')
                                 if current_node.one_shot == 'success_only' else
                                 (
-                                    ('$\\Failure{}$')
+                                    ('$\\FailureTikz{}$')
                                     if current_node.one_shot == 'failure_only' else
-                                    ('$\\Success{}\\lor{}\\Failure{}$')
+                                    ('$\\SuccessTikz{}\\lor{}\\FailureTikz{}$')
                                 )
                             )
                             if current_node.one_shot is not None else
-                            ('$\\Success{}\\SwapArrow{}\\Failure{}$')
+                            ('$\\SuccessTikz{}\\SwapArrow{}\\FailureTikz{}$')
                         )
                     )
                 )
@@ -585,22 +595,22 @@ def write_files(metamodel_file, model_file, output_file, insert_only, recursion_
         + '\\Tree'
         +  walk_tree_recursive(model.root, set()).replace('$$\\\\', '').replace('\\\\\\end{tabular}', '\\end{tabular}')
         # +  walk_tree_recursive(model.root, set(), {}, tikz_nodes)
-        + '\\node[Blackboard, anchor=south east] (initialValues) at ([xshift=-20pt, yshift=10pt]' + root_id + '.north west){\\begin{tabular}{l}'
+        + '\\node[Blackboard, anchor=south east] (initialValues) at ([xshift=-5pt, yshift=5pt]' + root_id + '.north west){\\begin{tabular}{l}'
         + '\\texttt{-INITIAL VALUES-}\\\\{}'
         + ''.join(
             initial_variable_values[variable.name]
             for variable in model.variables # if (variable.model_as != 'NEURAL')
         )
         + '\\end{tabular}};' + os.linesep
-        + '\\node[Blackboard, anchor=south east] (varInfo) at ([xshift=-20pt]initialValues.south west){\\begin{tabular}{l}'
+        + '\\node[Blackboard, anchor=south east] (varInfo) at ([xshift=-5pt]initialValues.south west){\\begin{tabular}{l}'
         + '\\texttt{-VARIABLE INFO-}\\\\{}'
         + '\\\\{}'.join(
-            list(('\\begin{math}\\texttt{' + constant_decl.name+ '} \\coloneqq{} ' + str(constant_decl.val)+ '\\end{math}') for constant_decl in model.constants)
-            +
+            # list(('\\begin{math}\\texttt{' + constant_decl.name+ '} \\coloneqq{} ' + str(constant_decl.val)+ '\\end{math}') for constant_decl in model.constants)
+            # +
             list(var_info for var_info in variable_infos)
         )
         + '\\end{tabular}};' + os.linesep
-        + '\\node[Blackboard, anchor=south west] (environmentUpdates) at ([xshift=20pt, yshift=10pt]' + root_id + '.north east){\\begin{tabular}{l}'
+        + '\\node[Blackboard, anchor=south west] (environmentUpdates) at ([xshift=5pt, yshift=5pt]' + root_id + '.north east){\\begin{tabular}{l}'
         + '\\texttt{-ENVIRONMENT UPDATES-}\\\\{}'
         + ''.join(
             environment_update

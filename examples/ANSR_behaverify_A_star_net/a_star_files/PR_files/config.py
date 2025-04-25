@@ -4,10 +4,12 @@ Created by Preston
 # #
 # # Dataset
 # #
-numbers = '6_18_0'
+numbers = '14_67_1'
 
-input_path = '../scaling_scatter/inputsSmalls_' + numbers + '.py'
-target_path = '../scaling_scatter/targetsSmalls_' + numbers + '.py'
+# input_path = '../scaling_scatter/inputsSmalls_' + numbers + '.py'
+# target_path = '../scaling_scatter/targetsSmalls_' + numbers + '.py'
+input_path = '../ignore/inputsSmallsFilled_' + numbers + '.py'
+target_path = '../ignore/targetsSmallsFilled_' + numbers + '.py'
 batch_size = 2**20
 shuffle = True
 #
@@ -15,7 +17,7 @@ shuffle = True
 #
 input_size = 4
 all_same = True
-hidden_size = 200
+hidden_size = 2000
 hidden_count = 1
 layer_sizes = [32, 8, 4]
 output_size = 5
@@ -23,12 +25,12 @@ output_size = 5
 # training
 #
 lr = 0.001
-num_epochs = 10000
+num_epochs = 100000
 log_freq = 1
 #
 # saving
 #
-save_path = '../scaling_scatter'
+save_path = '../ignore'
 save_name = numbers + '__' + ((str(hidden_size) + '_' + str(hidden_count)) if all_same else '_'.join([str(x) for x in layer_sizes]))
 
 

@@ -1,4 +1,6 @@
 *~
+*.aux
+*.log
 *.tar
 *.svg
 *.dot

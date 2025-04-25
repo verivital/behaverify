@@ -170,7 +170,7 @@ def resume_training():
     #
     # Setup hyperparameters
     #
-    model = torch.load(os.path.join(c.save_path, c.save_name+".pth"))
+    model = torch.load(os.path.join(c.save_path, c.save_name+".pth"), weights_only = False)
     #model = NeuralNetwork(c.input_size, c.hidden_size, c.hidden_count, c.output_size).to(device)
     #model.load_state_dict(torch.load(os.path.join(c.save_path, c.save_name+".pth")))
     criterion = nn.CrossEntropyLoss()
