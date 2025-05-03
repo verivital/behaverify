@@ -26,6 +26,9 @@ examples/**/smv/**
 examples/**/ignore/**
 examples/**/filled_obs/**
 examples/**/tree/**
+examples/**/processed_data/**
+examples/**/results/**
+examples/**/xml/**
 REPRODUCIBILITY/**/processed_data/**
 REPRODUCIBILITY/**/results/**
 REPRODUCIBILITY/**/smv/**

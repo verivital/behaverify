@@ -9,7 +9,7 @@ Last Edit: 2025-04-22
 '''
 import argparse
 import os
-from behaverify_common import create_node_name, is_local, is_env, is_neural, is_array, handle_constant_or_reference, resolve_potential_reference_no_type, variable_array_size, get_min_max, BTreeException, constant_type
+from behaverify_common import create_node_name, is_local, is_env, is_neural, is_array, handle_constant_or_reference, handle_constant_or_reference_no_type, resolve_potential_reference_no_type, variable_array_size, get_min_max, BTreeException, constant_type
 from serene_functions import build_meta_func
 from check_grammar import validate_model
 
@@ -17,7 +17,7 @@ def indent(indent_level):
     return '\\begin{math}' + ('\\quad{}' * (indent_level)) + '\\end{math}'
 
 
-def write_files(metamodel_file, model_file, output_file, insert_only, recursion_limit):
+def write_files(metamodel_file, model_file, output_file, insert_only, recursion_limit, on_sides):
     '''
     Used to write all the files.
     @metamodel_file ::> points to the file with the metamodel
@@ -55,6 +55,14 @@ def write_files(metamodel_file, model_file, output_file, insert_only, recursion_
                 )
             )
         )
+
+    def str_conversion_executed(executed):
+        cur_type = type(executed)
+        if cur_type == str:
+            return str_conversion('ENUM', executed)
+        if cur_type == bool:
+            return str_conversion('BOOLEAN', executed)
+        return str_conversion('NUMBER', executed)
 
     def execute_loop(function_call, to_call, packaged_args, misc_args):
         return_vals = []
@@ -147,7 +155,42 @@ def write_files(metamodel_file, model_file, output_file, insert_only, recursion_
             # raise BTreeException([], 'Encountered unknown reference: ' + str(code.atom.reference)) from bt_e
         return str_conversion(atom_type, atom) if atom_class == 'CONSTANT' else format_variable(atom, misc_args)
 
+    def code_is_constant(code, misc_args):
+        if code.atom is not None:
+            try:
+                (atom_class, _, _) = handle_constant_or_reference(code.atom, declared_enumerations, {}, variables, constants, loop_references)
+            except BTreeException as bt_e:  # this should be an argument.
+                # print('hello!')
+                return [False] # arguments are functionally variables for our purpose.
+            # print(str(atom_class) + ':---:' + str(atom))
+            return [atom_class == 'CONSTANT']
+        if code.code_statement is not None:
+            return code_is_constant(code.code_statement, misc_args)
+        function_call = code.function_call
+        if function_call.function_name == 'loop':
+            return [all(execute_loop(function_call, code_is_constant, function_call.values[0], misc_args))]
+        if function_call.function_name == 'case_loop':
+            return [all(
+                execute_loop(function_call, code_is_constant, function_call.cond_value, misc_args)
+                + execute_loop(function_call, code_is_constant, function_call.values[0], misc_args)
+                + code_is_constant(function_call.default_value, misc_args)
+            )]
+        for value in function_call.values:
+            if not (code_is_constant(value, misc_args))[0]:
+                return [False]
+        if function_call.function_name == 'index':
+            return [False]
+        return [True]
+
     def format_code(code, misc_args):
+        try:
+            if code_is_constant(code, misc_args)[0]:
+                # print(list(map(str_conversion_executed, execute_code(code))))
+                return list(map(str_conversion_executed, execute_code(code)))
+        except Exception as e:
+            print('FAILED:' + str(e))
+            # print('FAILED')
+            pass
         return (
             [handle_atom(code, misc_args)]
             if code.atom is not None else
@@ -160,7 +203,7 @@ def write_files(metamodel_file, model_file, output_file, insert_only, recursion_
 
     def update_method_check(node):
         return (
-            '\\node[Blackboard]{\\begin{tabular}{l}'
+            '\\node[Blackboard](..--REPLACE--..){\\begin{tabular}{l}'
             + ('\\texttt{if }\\begin{math}' + format_code(node.condition, create_misc_args(False, 'node', 2))[0] + '\\end{math}\\texttt{:}\\\\{}\\begin{math}\\quad{}\\NodeStatusTikz{}\\coloneqq{} \\SuccessTikz{}\\end{math}\\\\{}\\texttt{else:}\\\\{}\\begin{math}\\quad{}\\NodeStatusTikz{}\\coloneqq{}\\FailureTikz{}\\end{math}')
             + '\\end{tabular}};'
         )
@@ -189,23 +232,44 @@ def write_files(metamodel_file, model_file, output_file, insert_only, recursion_
         default_result = assign.default_result
         if len(case_results) == 0:
             return '\\begin{math}' + resolve_variable_nondeterminism(default_result.values, misc_args) + '\\end{math}' # NOTE: no linesep at the end!
-        return (
-            '\\texttt{(}'
-            + ''.join(
-                [
-                    (
-                        # indent(misc_args['indent_level'] + 1 + index) +
-                        '\\begin{math}' + resolve_variable_nondeterminism(case_result.values, misc_args) + '\\end{math}\\\\'
-                        + indent(misc_args['indent_level'] + 1 + index) + '\\texttt{if }\\begin{math}' + format_code(case_result.condition, misc_args)[0] + '\\end{math}\\texttt{ else}' + '\\\\'
-                        + indent(misc_args['indent_level'] + 1 + index) + '\\texttt{(}'
-                     ) for index, case_result in enumerate(case_results)
-                ]
+        return_string = ''
+        branch_count = 0
+        truth_terminated = False
+        for case_result in case_results:
+            cond = format_code(case_result.condition, misc_args)[0]
+            if cond == '\\True{}':
+                return_string += ('' if branch_count == 0 else indent(misc_args['indent_level'] + branch_count)) + '\\begin{math}' + resolve_variable_nondeterminism(case_result.values, misc_args) + '\\end{math}'
+                truth_terminated = True
+                break
+            if cond == '\\False{}':
+                continue
+            return_string += (
+                ('' if branch_count == 0 else indent(misc_args['indent_level'] + 1 + branch_count)) + '\\texttt{(}'
+                + '\\begin{math}' + resolve_variable_nondeterminism(case_result.values, misc_args) + '\\end{math}\\\\'
+                + indent(misc_args['indent_level'] + 1 + branch_count) + '\\texttt{if }\\begin{math}' + format_code(case_result.condition, misc_args)[0] + '\\end{math}\\texttt{ else}' + '\\\\'
             )
-            # + indent(misc_args['indent_level'] + len(case_results))
-            + '\\begin{math}' + resolve_variable_nondeterminism(default_result.values, misc_args) + '\\end{math}'# + '$\\\\$'
-            # + indent(misc_args['indent_level'])
-            + '\\texttt{' + (')' * (1 + len(case_results))) + '}'  # NOTE: no linesep at the end!
-        )
+            branch_count = branch_count + 1
+        if not truth_terminated:
+            return_string += ('' if branch_count == 0 else indent(misc_args['indent_level'] + branch_count)) + '\\begin{math}' + resolve_variable_nondeterminism(default_result.values, misc_args) + '\\end{math}'
+        return_string += '\\texttt{' + (')' * (branch_count)) + '}'
+        return return_string
+        # return (
+        #     '\\texttt{(}'
+        #     + ''.join(
+        #         [
+        #             (
+        #                 # indent(misc_args['indent_level'] + 1 + index) +
+        #                 '\\begin{math}' + resolve_variable_nondeterminism(case_result.values, misc_args) + '\\end{math}\\\\'
+        #                 + indent(misc_args['indent_level'] + 1 + index) + '\\texttt{if }\\begin{math}' + format_code(case_result.condition, misc_args)[0] + '\\end{math}\\texttt{ else}' + '\\\\'
+        #                 + indent(misc_args['indent_level'] + 1 + index) + '\\texttt{(}'
+        #              ) for index, case_result in enumerate(case_results)
+        #         ]
+        #     )
+        #     # + indent(misc_args['indent_level'] + len(case_results))
+        #     + '\\begin{math}' + resolve_variable_nondeterminism(default_result.values, misc_args) + '\\end{math}'# + '$\\\\$'
+        #     # + indent(misc_args['indent_level'])
+        #     + '\\texttt{' + (')' * (1 + len(case_results))) + '}'  # NOTE: no linesep at the end!
+        # )
 
     def handle_loop_array_index(packed_args, misc_args):
         (loop_array_index, constant_index) = packed_args
@@ -225,15 +289,28 @@ def write_files(metamodel_file, model_file, output_file, insert_only, recursion_
         return execute_loop(loop_array_index, handle_loop_array_index, (loop_array_index.loop_array_index, constant_index), misc_args)
 
     def variable_assignment(variable, assign_value, misc_args, array_mode):
+        '''
+        array_mode in {0, 1, 2} -> 0 means no, 1 means yes, 2 means iterative assign
+        '''
         # i don't think we should be able to have define variables here.
+        assign_token = (' \\in ' if variable.model_as in ('VAR', 'FROZENVAR') else ' \\coloneqq{} ')
         return (
             (
                 indent(misc_args['indent_level']) + '\\begin{math}\\texttt{temp} \\coloneqq{}\\end{math}' + assign_value + '\\\\'
-                + indent(misc_args['indent_level']) + '\\texttt{for (index, val) in temp:}\\\\'
-                + indent(misc_args['indent_level'] + 1) + '\\begin{math}' + format_variable_name_only(variable, misc_args) + '[\\texttt{index}] \\in{} \\texttt{val}' + '\\end{math}\\\\'
+                + (
+                    (
+                        indent(misc_args['indent_level']) + '\\texttt{for (index, val) in temp:}\\\\'
+                        + indent(misc_args['indent_level'] + 1) + '\\begin{math}' + format_variable_name_only(variable, misc_args) + '[\\texttt{index}]' + assign_token + '\\texttt{val}' + '\\end{math}\\\\'
+                    )
+                    if array_mode == 1 else
+                    (
+                        indent(misc_args['indent_level']) + '\\texttt{for index in len(temp):}\\\\'
+                        + indent(misc_args['indent_level'] + 1) + '\\begin{math}' + format_variable_name_only(variable, misc_args) + '[\\texttt{index}]' + assign_token + '\\texttt{temp[index]}' + '\\end{math}\\\\'
+                    )
+                )
             )
-            if array_mode else
-            (indent(misc_args['indent_level']) + '\\begin{math}' + format_variable_name_only(variable, misc_args) + (' \\in ' if variable.model_as in ('VAR', 'FROZENVAR') else ' \\coloneqq{} ') + '\\end{math}' + assign_value + '\\\\')
+            if array_mode > 0 else
+            (indent(misc_args['indent_level']) + '\\begin{math}' + format_variable_name_only(variable, misc_args) + assign_token + '\\end{math}' + assign_value + '\\\\')
         )
 
     def handle_variable_statement(variable_statement, misc_args, assign_to_var):
@@ -241,6 +318,29 @@ def write_files(metamodel_file, model_file, output_file, insert_only, recursion_
         variable = variable_statement.variable if hasattr(variable_statement, 'variable') else variable_statement
         new_misc_args = create_misc_args(misc_args['init'], misc_args['loc'], misc_args['indent_level'] + 2)
         if is_array(variable):
+            if variable_statement.iterative_assign == 'iterative_assign':
+                iterative_condition_assign_list = [(build_meta_func(iterative_assign_conditional.condition), iterative_assign_conditional.assign) for iterative_assign_conditional in variable_statement.iterative_assign_conditionals]
+                index_var_name = variable_statement.index_var_name
+                return_string = ''
+                all_values = []
+                for index in range(variable_array_size_map[variable.name]):
+                    loop_references[index_var_name] = index
+                    need_default = True
+                    for (condition_func, assign) in iterative_condition_assign_list:
+                        if condition_func((constants, loop_references))[0]:
+                            assign_string = handle_assign(assign, new_misc_args)
+                            need_default = False
+                            break
+                    if need_default:
+                        assign_string = handle_assign(variable_statement.assign, new_misc_args)
+                    # return_string += (indent(misc_args['indent_level']) + format_variable_name_only(variable, misc_args) + '[' + str(index) + '] = ' + assign_string + os.linesep)
+                    if len(all_values) % 11 == 8:
+                        all_values.append('\\\\')
+                    all_values.append(assign_string)
+                loop_references.pop(index_var_name)
+                assign_string = '[' + (', '.join(all_values)).replace('\\\\, ', '\\\\' + indent(1)) + ']'
+                return_string = variable_assignment(variable, assign_string, misc_args, array_mode = 2)
+                return return_string
             meta_results = []
             for loop_array_index in variable_statement.assigns:
                 meta_results.extend(handle_loop_array_index((loop_array_index, variable_statement.constant_index), new_misc_args))
@@ -255,8 +355,8 @@ def write_files(metamodel_file, model_file, output_file, insert_only, recursion_
                 )
                 + ']'
             )
-            return (variable_assignment(variable, assign_string, misc_args, array_mode = True) if assign_to_var else assign_string)
-        return (variable_assignment(variable, handle_assign(variable_statement.assign, misc_args), misc_args, array_mode = False) if assign_to_var else handle_assign(variable_statement.assign, misc_args))
+            return (variable_assignment(variable, assign_string, misc_args, array_mode = 1) if assign_to_var else assign_string)
+        return (variable_assignment(variable, handle_assign(variable_statement.assign, misc_args), misc_args, array_mode = 0) if assign_to_var else handle_assign(variable_statement.assign, misc_args))
 
     def handle_read_statement(read_statement, misc_args):
         new_misc_args = create_misc_args(misc_args['init'], misc_args['loc'], misc_args['indent_level'] + 1)
@@ -276,7 +376,7 @@ def write_files(metamodel_file, model_file, output_file, insert_only, recursion_
                                     if is_array(read_statement.condition_variable) else
                                     'True',
                                     new_misc_args,
-                                    array_mode = is_array(read_statement.condition_variable))
+                                    array_mode = (1 if is_array(read_statement.condition_variable) else 0))
                 if read_statement.condition_variable is not None else
                 ''
             )
@@ -286,7 +386,7 @@ def write_files(metamodel_file, model_file, output_file, insert_only, recursion_
                         variable_assignment(read_var_state.variable,
                                             ('self.environment.' + read_statement.name + '__' + str(index) + '(self)'),
                                             misc_args = new_misc_args,
-                                            array_mode = is_array(read_var_state.variable))
+                                            array_mode = (1 if is_array(read_var_state.variable) else 0))
                     )
                     for index, read_var_state in enumerate(read_statement.variable_statements)
                 ]
@@ -307,7 +407,7 @@ def write_files(metamodel_file, model_file, output_file, insert_only, recursion_
                                           if is_array(read_statement.condition_variable) else
                                           'False',
                                           misc_args = new_misc_args,
-                                          array_mode = is_array(read_statement.condition_variable))
+                                          array_mode = (1 if is_array(read_statement.condition_variable) else 0))
                 )
                 if read_statement.condition_variable is not None else
                 ''
@@ -357,7 +457,7 @@ def write_files(metamodel_file, model_file, output_file, insert_only, recursion_
     def update_method_action(node):
         misc_args = create_misc_args(False, 'node', 0)
         return (
-            '\\node[Blackboard]{\\begin{tabular}{l}'
+            '\\node[Blackboard](..--REPLACE--..){\\begin{tabular}{l}'
             # + ''.join([('$' + handle_statement(statement, misc_args).replace('_', '\\_') + '$\\\\') for statement in node.pre_update_statements])
             # + ('$' + handle_return_statement(node.return_statement, misc_args).replace('_', '\\_') + '$\\\\')
             # + ''.join([('$' + handle_statement(statement, misc_args).replace('_', '\\_') + '$\\\\') for statement in node.post_update_statements])
@@ -414,11 +514,12 @@ def write_files(metamodel_file, model_file, output_file, insert_only, recursion_
                     arg_vals.append(str_conversion(*resolve_potential_reference_no_type(argument, declared_enumerations, {}, variables, constants, loop_references)))
             if len(arg_vals) != len(arg_names):
                 raise ValueError('Number of arguments mismatched in node: ' + node_name)
-            arg_string = ('\\begin{math}\\{' + ', '.join([(arg_names[i] + '\\coloneqq{}' + arg_vals[i]) for i in range(len(arg_vals))]) + '\\}\\end{math}') if len(arguments) > 0 else ''
+            arg_string = ('\\\\\\begin{math}\\{' + ', '.join([(arg_names[i] + '\\coloneqq{}' + arg_vals[i]) for i in range(len(arg_vals))]) + '\\}\\end{math}') if len(arguments) > 0 else ''
+            node_ids.append('(' + node_name.replace('_', '') + 'UPDATEBLACKBOARD)')
             if current_node.node_type == 'action':
-                return '[.\\node[Action](' + node_name.replace('_', '') + '){$' + node_name + '$' + arg_string + '};' + tikz_nodes[current_node.name] + ']' + os.linesep
+                return '[.\\node[Action](' + node_name.replace('_', '') + '){\\begin{tabular}{c}$' + node_name + '$' + arg_string + '\\end{tabular}};' + tikz_nodes[current_node.name].replace('(..--REPLACE--..)', '(' + node_name.replace('_', '') + 'UPDATEBLACKBOARD)') + ']' + os.linesep
                 # return '[.\\node[Action](' + node_name.replace('_', '') + '){$' + node_name.replace('_', '\\_') + '$};' + ']' + os.linesep
-            return '[.\\node[Check](' + node_name.replace('_', '') + '){$' + node_name + '$' + arg_string + '};' + tikz_nodes[current_node.name] + ']' + os.linesep
+            return '[.\\node[Check](' + node_name.replace('_', '') + '){\\begin{tabular}{c}$' + node_name + '$' + arg_string + '\\end{tabular}};' + tikz_nodes[current_node.name].replace('(..--REPLACE--..)', '(' + node_name.replace('_', '') + 'UPDATEBLACKBOARD)') + ']' + os.linesep
             # return '[.\\node[Check](' + node_name.replace('_', '') + '){$' + node_name.replace('_', '\\_') + '$};' + ']' + os.linesep
         if current_node.node_type in ('X_is_Y', 'inverter', 'repeat', 'one_shot'):
             return (
@@ -538,6 +639,7 @@ def write_files(metamodel_file, model_file, output_file, insert_only, recursion_
     variable_infos = [
         (
             format_variable(variable, create_misc_args(False, 'blackboard', 0))
+            + ((' - \\texttt{array ' + str(variable_array_size_map[variable.name]) + '}') if variable.name in variable_array_size_map else '')
             + ' - \\texttt{' + variable.model_as + '}'
             + ' - ' + (
                 ('\\texttt{' + variable.domain + '}')
@@ -584,18 +686,28 @@ def write_files(metamodel_file, model_file, output_file, insert_only, recursion_
         tikz_nodes[environment_check.name] = update_method_environment_check(environment_check)
         node_arguments[environment_check.name] = arg_method(environment_check)
     root_id = get_root_id(model.root)
-    for var in initial_variable_values:
-        print('-----')
-        print(var)
-        print(initial_variable_values[var])
+    # for var in initial_variable_values:
+    #     print('-----')
+    #     print(var)
+    #     print(initial_variable_values[var])
+    node_ids = []
     tikz_picture = (
         '\\begin{tikzpicture}' + os.linesep
         + '\\tikzset{level distance=20pt}' + os.linesep
         + '\\tikzset{sibling distance=0.5pt}' + os.linesep
         + '\\Tree'
         +  walk_tree_recursive(model.root, set()).replace('$$\\\\', '').replace('\\\\\\end{tabular}', '\\end{tabular}')
+        + (
+            ('\\node[draw=none,inner sep=0pt, fit=' + ''.join(node_ids) + '] (sereneblackboardfitbox) {};' + os.linesep)
+            if on_sides else
+            ''
+        )
         # +  walk_tree_recursive(model.root, set(), {}, tikz_nodes)
-        + '\\node[Blackboard, anchor=south east] (initialValues) at ([xshift=-5pt, yshift=5pt]' + root_id + '.north west){\\begin{tabular}{l}'
+        + (
+            ('\\node[Blackboard, anchor=south east] (initialValues) at ([xshift=-5pt]sereneblackboardfitbox.south west){\\begin{tabular}{l}')
+            if on_sides else
+            ('\\node[Blackboard, anchor=south east] (initialValues) at ([xshift=-5pt, yshift=5pt]' + root_id + '.north west){\\begin{tabular}{l}')
+        )
         + '\\texttt{-INITIAL VALUES-}\\\\{}'
         + ''.join(
             initial_variable_values[variable.name]
@@ -610,7 +722,11 @@ def write_files(metamodel_file, model_file, output_file, insert_only, recursion_
             list(var_info for var_info in variable_infos)
         )
         + '\\end{tabular}};' + os.linesep
-        + '\\node[Blackboard, anchor=south west] (environmentUpdates) at ([xshift=5pt, yshift=5pt]' + root_id + '.north east){\\begin{tabular}{l}'
+        + (
+            ('\\node[Blackboard, anchor=south west] (environmentUpdates) at ([xshift=5pt]sereneblackboardfitbox.south east){\\begin{tabular}{l}')
+            if on_sides else
+            ('\\node[Blackboard, anchor=south west] (environmentUpdates) at ([xshift=5pt, yshift=5pt]' + root_id + '.north east){\\begin{tabular}{l}')
+        )
         + '\\texttt{-ENVIRONMENT UPDATES-}\\\\{}'
         + ''.join(
             environment_update
@@ -644,5 +760,6 @@ if __name__ == '__main__':
     arg_parser.add_argument('output_file')
     arg_parser.add_argument('--insert_only', action = 'store_true')
     arg_parser.add_argument('--recursion_limit', type = int, default = 0)
+    arg_parser.add_argument('--on_sides', action = 'store_true')
     args = arg_parser.parse_args()
-    write_files(args.metamodel_file, args.model_file, args.output_file, args.insert_only, args.recursion_limit)
+    write_files(args.metamodel_file, args.model_file, args.output_file, args.insert_only, args.recursion_limit, args.on_sides)

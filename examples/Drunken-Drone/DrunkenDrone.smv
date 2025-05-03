@@ -3,112 +3,104 @@ MODULE main
         system : system_module;
 --------------SPECIFICATIONS
 
-CTLSPEC AG(AF(((system.drone_x_stage_1 = system.destination_x_stage_0) & (system.drone_y_stage_1 = system.destination_y_stage_0))));
-CTLSPEC AG(EF(((system.drone_x_stage_1 = system.destination_x_stage_0) & (system.drone_y_stage_1 = system.destination_y_stage_0))));
+CTLSPEC AG(AF(((system.x_d_stage_1 = system.x_g_stage_0) & (system.y_d_stage_1 = system.y_g_stage_0))));
+CTLSPEC AG(EF(((system.x_d_stage_1 = system.x_g_stage_0) & (system.y_d_stage_1 = system.y_g_stage_0))));
 
 --------------END OF SPECIFICATIONS
 
 MODULE system_module
     CONSTANTS
-        success, failure, running, invalid, up, down, left, right;
+        success, failure, running, invalid, XX, Ea, No, So, We;
     DEFINE
-        resume_from_here_in_subtree__drone_control := -3;
-        drone_control.active := (TRUE);
+        resume_from_here_in_subtree__Drone := -3;
+        Drone.active := (TRUE);
         --START OF BLACKBOARD DEFINITIONS
-        request_new_stage_1 :=
+        act_stage_1 :=
             case
-                !(new_destination.active) : request_new_stage_0;
+                !(NewGoal.active) : act_stage_0;
+                TRUE : XX;
+            esac;
+        new_stage_1 :=
+            case
+                !(NewGoal.active) : new_stage_0;
                 TRUE : TRUE;
             esac;
-        request_new_stage_2 :=
+        new_stage_2 :=
             case
-                !(next_action.active) : request_new_stage_1;
+                !(NextAct.active) : new_stage_1;
                 TRUE : FALSE;
             esac;
-        drone_x_stage_1 :=
+        x_d_stage_1 :=
             case
-                !(drone_control.active) : drone_x_stage_0;
-                (current_action_stage_1 = left) : max(0, (drone_x_stage_0 - 1));
-                (current_action_stage_1 = right) : min(19, (drone_x_stage_0 + 1));
-                TRUE : drone_x_stage_0;
+                !(Drone.active) : x_d_stage_0;
+                (act_stage_2 = We) : max(0, (x_d_stage_0 - 1));
+                (act_stage_2 = Ea) : min(19, (x_d_stage_0 + 1));
+                TRUE : x_d_stage_0;
             esac;
-        drone_y_stage_1 :=
+        y_d_stage_1 :=
             case
-                !(drone_control.active) : drone_y_stage_0;
-                (current_action_stage_1 = down) : max(0, (drone_y_stage_0 - 1));
-                (current_action_stage_1 = up) : min(19, (drone_y_stage_0 + 1));
-                TRUE : drone_y_stage_0;
+                !(Drone.active) : y_d_stage_0;
+                (act_stage_2 = So) : max(0, (y_d_stage_0 - 1));
+                (act_stage_2 = No) : min(19, (y_d_stage_0 + 1));
+                TRUE : y_d_stage_0;
             esac;
         --END OF BLACKBOARD DEFINITIONS
     VAR
         node_names : define_nodes;
-        need_destination : need_destination_module(destination_x_stage_0, destination_y_stage_0, drone_x_stage_0, drone_y_stage_0);
-        new_destination : running_DEFAULT_module();
-        destination_sequence : composite_sequence_without_memory_2(need_destination, new_destination);
-        next_action : success_DEFAULT_module();
-        drone_control : composite_selector_without_memory_2(destination_sequence, next_action);
+        NeedNew : NeedNew_module(x_d_stage_0, x_g_stage_0, y_d_stage_0, y_g_stage_0);
+        NewGoal : running_DEFAULT_module();
+        GoalSeq : composite_sequence_without_memory_2(NeedNew, NewGoal);
+        NextAct : success_DEFAULT_module();
+        Drone : composite_selector_without_memory_2(GoalSeq, NextAct);
         --START OF BLACKBOARD VARIABLES DECLARATION
-        current_action_stage_0 : {up, down, left, right};
-        current_action_stage_1 : {up, down, left, right};
-        request_new_stage_0 : boolean;
-        drone_x_stage_0 : 0..19;
-        drone_y_stage_0 : 0..19;
-        destination_x_stage_0 : 0..19;
-        destination_y_stage_0 : 0..19;
+        act_stage_0 : {XX, Ea, No, So, We};
+        act_stage_2 : {XX, Ea, No, So, We};
+        new_stage_0 : boolean;
+        x_d_stage_0 : 0..19;
+        y_d_stage_0 : 0..19;
+        x_g_stage_0 : 0..19;
+        y_g_stage_0 : 0..19;
         --END OF BLACKBOARD VARIABLES DECLARATION
     ASSIGN
         --START OF BLACKBOARD VARIABLES INITIALIZATION
-        init(current_action_stage_0) := left;
-        init(request_new_stage_0) := FALSE;
-        init(drone_x_stage_0) := 0;
-        init(drone_y_stage_0) := 0;
-        init(destination_x_stage_0) := drone_x_stage_0;
-        init(destination_y_stage_0) := drone_y_stage_0;
+        init(act_stage_0) := XX;
+        init(new_stage_0) := FALSE;
+        init(x_d_stage_0) := 0;
+        init(y_d_stage_0) := 0;
+        init(x_g_stage_0) := x_d_stage_0;
+        init(y_g_stage_0) := y_d_stage_0;
         --END OF BLACKBOARD VARIABLES INITIALIZATION
         --START OF BLACKBOARD VARIABLES TRANSITION
-        next(current_action_stage_0) := current_action_stage_1;
-        current_action_stage_1 :=
+        next(act_stage_0) := act_stage_2;
+        act_stage_2 :=
             case
-                !(next_action.active) : current_action_stage_0;
-                TRUE : {up, down, left, right};
+                !(NextAct.active) : act_stage_1;
+                TRUE : {No, So, We, Ea};
             esac;
-        next(request_new_stage_0) := request_new_stage_2;
-        next(drone_x_stage_0) := drone_x_stage_1;
-        next(drone_y_stage_0) := drone_y_stage_1;
-        next(destination_x_stage_0) :=
+        next(new_stage_0) := new_stage_2;
+        next(x_d_stage_0) := x_d_stage_1;
+        next(y_d_stage_0) := y_d_stage_1;
+        next(x_g_stage_0) :=
             case
-                !(drone_control.active) : destination_x_stage_0;
-                request_new_stage_2 : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19};
-                TRUE : destination_x_stage_0;
+                !(Drone.active) : x_g_stage_0;
+                new_stage_2 : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19};
+                TRUE : x_g_stage_0;
             esac;
-        next(destination_y_stage_0) :=
+        next(y_g_stage_0) :=
             case
-                !(drone_control.active) : destination_y_stage_0;
-                request_new_stage_2 : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19};
-                TRUE : destination_y_stage_0;
+                !(Drone.active) : y_g_stage_0;
+                new_stage_2 : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19};
+                TRUE : y_g_stage_0;
             esac;
         --END OF BLACKBOARD VARIABLES TRANSITION
 
 MODULE define_nodes
     DEFINE
-        drone_control := 0;
-        destination_sequence := 1;
-        need_destination := 2;
-        new_destination := 3;
-        next_action := 4;
-MODULE composite_sequence_without_memory_2(child_0, child_1)
-    CONSTANTS
-        success, failure, running, invalid;
-    DEFINE
-        status := active ? internal_status : invalid;
-        internal_status :=
-            case
-                !(child_0.internal_status = success) : child_0.internal_status;
-                !(child_1.internal_status = success) : child_1.internal_status;
-                TRUE : success;
-            esac;
-        child_0.active := active;
-        child_1.active := child_0.status = success;
+        Drone := 0;
+        GoalSeq := 1;
+        NeedNew := 2;
+        NewGoal := 3;
+        NextAct := 4;
 MODULE composite_selector_without_memory_2(child_0, child_1)
     CONSTANTS
         success, failure, running, invalid;
@@ -122,12 +114,25 @@ MODULE composite_selector_without_memory_2(child_0, child_1)
             esac;
         child_0.active := active;
         child_1.active := child_0.status = failure;
-MODULE need_destination_module(destination_x_stage_0, destination_y_stage_0, drone_x_stage_0, drone_y_stage_0)
+MODULE composite_sequence_without_memory_2(child_0, child_1)
     CONSTANTS
         success, failure, running, invalid;
     DEFINE
         status := active ? internal_status : invalid;
-        internal_status := (((destination_x_stage_0 = drone_x_stage_0) & (destination_y_stage_0 = drone_y_stage_0))) ? success : failure;
+        internal_status :=
+            case
+                !(child_0.internal_status = success) : child_0.internal_status;
+                !(child_1.internal_status = success) : child_1.internal_status;
+                TRUE : success;
+            esac;
+        child_0.active := active;
+        child_1.active := child_0.status = success;
+MODULE NeedNew_module(x_d_stage_0, x_g_stage_0, y_d_stage_0, y_g_stage_0)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := (((x_g_stage_0 = x_d_stage_0) & (y_g_stage_0 = y_d_stage_0))) ? success : failure;
 MODULE running_DEFAULT_module
     CONSTANTS
         success, failure, running, invalid;

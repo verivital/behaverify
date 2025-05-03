@@ -5,7 +5,7 @@ from misc_util import extract_info, handle_path
 obstacle_path = sys.argv[1]
 (min_val, max_val, fly_at, number_of_obstacles, max_size) = extract_info(obstacle_path)
 
-with open(obstacle_path.replace('obstacles', 'ANSRn').replace('.txt', '.tree'), 'w', encoding = 'utf-8') as output_file:
+with open(obstacle_path.replace('obstacles', 'network').replace('.txt', '.tree'), 'w', encoding = 'utf-8') as output_file:
     constants = ', '.join(
         [
             'min_val := ' + str(min_val),
@@ -19,7 +19,7 @@ with open(obstacle_path.replace('obstacles', 'ANSRn').replace('.txt', '.tree'), 
         (obstacles, obstacle_sizes) = data.split('#', 1)
         obstacles = obstacles.replace('#', '')
         obstacle_sizes = obstacle_sizes.replace('#', '')
-    with open(handle_path('template_network_v2.tree'), 'r', encoding = 'utf-8') as input_file:
+    with open(handle_path('template_SIMPLE_network.tree'), 'r', encoding = 'utf-8') as input_file:
         template = input_file.read()
     template = template.replace('REPLACE_CONSTANTS', constants)
     template = template.replace('REPLACE_OBSTACLE_SIZES', obstacle_sizes)

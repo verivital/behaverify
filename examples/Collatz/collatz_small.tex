@@ -1,0 +1,137 @@
+\documentclass[preview]{standalone}
+\usepackage[utf8]{inputenc}
+\usepackage{preview}
+\PreviewEnvironment{tikzpicture}
+
+\usepackage{color}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{algorithmic}
+\usepackage{xcolor}
+\usepackage{mathtools}
+\usepackage{tikz}
+\usepackage{tikz-qtree}
+\usepackage[export]{adjustbox}
+
+
+\usetikzlibrary{shapes.geometric, shapes.misc, shapes.arrows, shapes.callouts, shapes.multipart, fit, positioning, calc, matrix, automata, arrows.meta}
+
+\definecolor{BehaviorTreeSelectorColor}{HTML}{00FFFF}
+\definecolor{BehaviorTreeSequenceColor}{HTML}{FFA500}
+\definecolor{BehaviorTreeParallelColor}{HTML}{FFD700}
+\definecolor{BehaviorTreeLeafColor}{HTML}{C0C0C0}
+
+\tikzset{
+    Selector/.style={
+        draw=black,
+        fill=BehaviorTreeSelectorColor,
+        text=black,
+        shape=chamfered rectangle,
+        minimum size=15pt,
+        inner sep=0pt,
+        font=\tiny
+    },
+    Sequence/.style={
+        draw=black,
+        fill=BehaviorTreeSequenceColor,
+        text=black,
+        shape=rectangle,
+        minimum size=15pt,
+        inner sep=0pt,
+        font=\tiny
+    },
+    Parallel/.style={
+        draw=black,
+        fill=BehaviorTreeParallelColor,
+        text=black,
+        shape=trapezium,
+        trapezium left angle=60,
+        trapezium right angle=120,
+        minimum size=15pt,
+        inner sep=0pt,
+        trapezium stretches body,
+        font=\tiny,
+        align=center
+    },
+    Decorator/.style={
+        draw=black,
+        fill=white,
+        text=black,
+        shape=trapezium,
+        trapezium left angle=67,
+        trapezium right angle=67,
+        minimum size=15pt,
+        inner sep=0pt,
+        trapezium stretches body,
+        font=\tiny,
+        align=center
+    },
+    Action/.style={
+        draw=black,
+        fill=BehaviorTreeLeafColor,
+        text=black,
+        shape=ellipse,
+        minimum size=15pt,
+        inner sep=0pt,
+        font=\tiny
+    },
+    Check/.style={
+        draw=black,
+        fill=BehaviorTreeLeafColor,
+        text=red,
+        shape=ellipse,
+        minimum size=15pt,
+        inner sep=0pt,
+        font=\tiny
+    },
+    Blackboard/.style={
+        draw=blue,
+        fill=white,
+        text=black,
+        shape=rectangle,
+        font=\tiny,
+        inner sep = .5pt,
+        inner xsep = -3pt,
+        anchor = north
+    }
+}
+
+\newcommand{\InvalidTikz}{\texttt{\itshape{I}}}
+\newcommand{\FailureTikz}{\texttt{\itshape{F}}}
+\newcommand{\RunningTikz}{\texttt{\itshape{R}}}
+\newcommand{\SuccessTikz}{\texttt{\itshape{S}}}
+
+\definecolor{BehaviorTreeBlackboardColor}{HTML}{0000FF} %blue
+\definecolor{BehaviorTreeEnvironmentColor}{HTML}{FF8C00} %dark orange
+\definecolor{NeuralVarColor}{HTML}{A0522D}
+\newcommand{\NeuralVarTikz}[1]{\texttt{\itshape{\textcolor{NeuralVarColor}{#1}}}}
+\newcommand{\EnvVarTikz}[1]{\texttt{\itshape{\textcolor{BehaviorTreeEnvironmentColor}{#1}}}}
+\newcommand{\BlVarTikz}[1]{\texttt{\itshape{\textcolor{BehaviorTreeBlackboardColor}{#1}}}}
+
+\newcommand{\SwapArrow}{\rightleftharpoons{}}
+\newcommand{\NodeStatusTikz}{\texttt{\itshape{Status}}}
+\newcommand{\True}{\top}
+\newcommand{\False}{\bot}
+
+
+\begin{document}
+\begin{adjustbox}{max width = \linewidth}
+
+\begin{tikzpicture}
+\tikzset{level distance=20pt}
+\tikzset{sibling distance=0.5pt}
+\Tree[.\node[Selector](sel){$sel$};
+[.\node[Sequence](seq){$seq$};
+[.\node[Check](a){$a$};\node[Blackboard]{\begin{tabular}{l}\texttt{if }\begin{math}((\BlVarTikz{x} mod 2) = 0)\end{math}\texttt{:}\\{}\begin{math}\quad{}\NodeStatusTikz{}\coloneqq{} \SuccessTikz{}\end{math}\\{}\texttt{else:}\\{}\begin{math}\quad{}\NodeStatusTikz{}\coloneqq{}\FailureTikz{}\end{math}\end{tabular}};]
+[.\node[Action](b){$b$};\node[Blackboard]{\begin{tabular}{l}\begin{math}\end{math}\begin{math}\BlVarTikz{x} \in \end{math}\begin{math}\{(\BlVarTikz{x} // 2)\}\end{math}\\\begin{math}\end{math}\begin{math}\NodeStatusTikz{} \coloneqq{} \SuccessTikz{}\end{math}\end{tabular}};]
+[.\node[Action](c){$c$};\node[Blackboard]{\begin{tabular}{l}\begin{math}\end{math}\begin{math}\BlVarTikz{x} \in \end{math}\texttt{(}\begin{math}[1, 5]\end{math}\\\begin{math}\quad{}\end{math}\texttt{if }\begin{math}(\BlVarTikz{x} = 1)\end{math}\texttt{ else}\\\begin{math}\quad{}\end{math}\texttt{(}\begin{math}\{\BlVarTikz{x}\}\end{math}\texttt{))}\\\begin{math}\end{math}\begin{math}\NodeStatusTikz{} \coloneqq{} \SuccessTikz{}\end{math}\end{tabular}};]
+]
+[.\node[Action](d){$d$};\node[Blackboard]{\begin{tabular}{l}\begin{math}\end{math}\begin{math}\BlVarTikz{x} \in \end{math}\begin{math}\{min(100, ((3 \cdot \BlVarTikz{x}) + 1))\}\end{math}\\\begin{math}\end{math}\begin{math}\NodeStatusTikz{} \coloneqq{} \SuccessTikz{}\end{math}\end{tabular}};]
+]
+\node[Blackboard, anchor=south east] (initialValues) at ([xshift=-5pt, yshift=5pt]sel.north west){\begin{tabular}{l}\texttt{-INITIAL VALUES-}\\{}\begin{math}\end{math}\begin{math}\BlVarTikz{x} \in \end{math}\begin{math}[1, 5]\end{math}\\\end{tabular}};
+\node[Blackboard, anchor=south east] (varInfo) at ([xshift=-5pt]initialValues.south west){\begin{tabular}{l}\texttt{-VARIABLE INFO-}\\{}\BlVarTikz{x} - \texttt{VAR} - [0, 100]\end{tabular}};
+\node[Blackboard, anchor=south west] (environmentUpdates) at ([xshift=5pt, yshift=5pt]sel.north east){\begin{tabular}{l}\texttt{-ENVIRONMENT UPDATES-}\\{}\end{tabular}};
+\end{tikzpicture}
+\end{adjustbox}
+\end{document}

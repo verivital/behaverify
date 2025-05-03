@@ -522,7 +522,9 @@ def main():
                 behave_only = False,
                 recursion_limit = 0,
                 return_values = True,
-                skip_grammar_check = True)
+                skip_grammar_check = True,
+                record_times = None
+            )
             root_node_name = get_root_from_BehaVerify_json(nodes)
             status_text.config(text = 'Imported DSL, root node name: ' + root_node_name)
         except Exception as error:

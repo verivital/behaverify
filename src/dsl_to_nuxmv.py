@@ -12,6 +12,14 @@ import pprint
 import os
 import itertools
 import copy
+ONNX_IMPORTED = False
+try:
+    import onnxruntime
+    import onnx
+    ONNX_IMPORTED = True
+except:
+    ONNX_IMPORTED = False
+    
 from behaverify_to_smv import write_smv
 from serene_functions import build_meta_func
 from serene_functions_neural import build_meta_func as build_meta_func_neural
@@ -26,7 +34,7 @@ from behaverify_common import create_node_name, create_node_template, create_var
 # if the condition is true, then the result is used.
 # the last condition should always be TRUE
 
-def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_last_stage, do_not_trim, behave_only, recursion_limit, return_values, skip_grammar_check):
+def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_last_stage, do_not_trim, behave_only, recursion_limit, return_values, skip_grammar_check, record_times):
     '''
     This method is used to convert the dsl to behaverify.
     '''
@@ -516,7 +524,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
 
     def handle_specifications(specifications):
         '''this handles specifications'''
-        print('Number of specifications: ' + str(len(specifications)))
+        # print('Number of specifications: ' + str(len(specifications)))
         return [
             (
                 specification.spec_type
@@ -815,10 +823,10 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
             return domain_values
         def fix_domain_of_variable(var_key):
             # does not work with local variables. Doesn't need to; neural networks cannot be local, and therefore cannot depends on local variables.
-            print('Now fixing domain for: ' + var_key)
+            # print('Now fixing domain for: ' + var_key)
             variable = behaverify_variables[var_key]
             if variable['mode'] != 'DEFINE' or variable['custom_value_range'] is not None or variable['min_value'] is not None:
-                print('DOMAIN ALREADY CORRECT')
+                # print('DOMAIN ALREADY CORRECT')
                 return
             var_obj = var_key_to_obj[var_key]
             list_of_list_of_inputs = create_possible_values(variable['depends_on'])
@@ -2096,9 +2104,8 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
     hyper_mode = model.hypersafety
     use_reals = model.use_reals
     if model.neural:
-        import onnxruntime
-        import onnx
-        # import numpy
+        if not ONNX_IMPORTED:
+            raise RuntimeError('Could not import onnx or onnxruntime, but both are required for this model')
     behaverify_variables = {}
 
     (_, _, nodes, local_variables, initial_statements, statements) = walk_tree(model.root)
@@ -2143,9 +2150,16 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
     else:
         write_smv(nodes, behaverify_variables, declared_enumerations, tick_condition, specifications, hyper_mode, output_file, do_not_trim)
     time_2 = time.time()
-    print('part 1: ' + str(time_1 - time_0))
-    print('part 2: ' + str(time_2 - time_1))
-    print('total: ' + str(time_2 - time_0))
+    time_str = (
+        'part 1: ' + str(time_1 - time_0) + os.linesep
+        + 'part 2: ' + str(time_2 - time_1) + os.linesep
+        + 'total: ' + str(time_2 - time_0)
+    )
+    if record_times is not None:
+        with open(record_times, 'w', encoding = 'utf-8') as time_file:
+            time_file.write(time_str)
+    else:
+        print(time_str)
     return
 
 
@@ -2160,6 +2174,7 @@ if __name__ == '__main__':
     arg_parser.add_argument('--behave_only', action = 'store_true')
     arg_parser.add_argument('--recursion_limit', type = int, default = 0)
     arg_parser.add_argument('--no_checks', action = 'store_true')
+    arg_parser.add_argument('--record_times', type = str, default = None)
     args = arg_parser.parse_args()
     # dsl_to_nuxmv(args.metamodel_file, args.model_file, args.output_file, args.keep_stage_0, args.keep_last_stage, args.do_not_trim, args.behave_only, args.recursion_limit, False, args.no_checks)
-    dsl_to_nuxmv(args.metamodel_file, args.model_file, args.output_file, True, args.keep_last_stage, args.do_not_trim, args.behave_only, args.recursion_limit, False, args.no_checks)
+    dsl_to_nuxmv(args.metamodel_file, args.model_file, args.output_file, True, args.keep_last_stage, args.do_not_trim, args.behave_only, args.recursion_limit, False, args.no_checks, args.record_times)

@@ -1,0 +1,329 @@
+Trace Type: Counterexample 
+  -> State: 1.1 <-
+    system.act_stage_0 = XX
+    system.new_stage_0 = FALSE
+    system.x_d_stage_0 = 0
+    system.y_d_stage_0 = 0
+    system.x_g_stage_0 = 0
+    system.x_g_stage_1 = 7
+    system.y_g_stage_0 = 0
+    system.y_g_stage_1 = 1
+    system.obstacle_sizes_stage_0_index_21 = 0
+    system.obstacle_sizes_stage_0_index_20 = 0
+    system.obstacle_sizes_stage_0_index_19 = 0
+    system.obstacle_sizes_stage_0_index_18 = 0
+    system.obstacle_sizes_stage_0_index_17 = 0
+    system.obstacle_sizes_stage_0_index_16 = 0
+    system.obstacle_sizes_stage_0_index_15 = 0
+    system.obstacle_sizes_stage_0_index_14 = 0
+    system.obstacle_sizes_stage_0_index_13 = 0
+    system.obstacle_sizes_stage_0_index_12 = 0
+    system.obstacle_sizes_stage_0_index_11 = 0
+    system.obstacle_sizes_stage_0_index_10 = 1
+    system.obstacle_sizes_stage_0_index_9 = 0
+    system.obstacle_sizes_stage_0_index_8 = 1
+    system.obstacle_sizes_stage_0_index_7 = 0
+    system.obstacle_sizes_stage_0_index_6 = 0
+    system.obstacle_sizes_stage_0_index_5 = 0
+    system.obstacle_sizes_stage_0_index_4 = 0
+    system.obstacle_sizes_stage_0_index_3 = 0
+    system.obstacle_sizes_stage_0_index_2 = 0
+    system.obstacle_sizes_stage_0_index_1 = 0
+    system.obstacle_sizes_stage_0_index_0 = 0
+    system.obstacles_stage_0_index_43 = 2
+    system.obstacles_stage_0_index_42 = 0
+    system.obstacles_stage_0_index_41 = 4
+    system.obstacles_stage_0_index_40 = 0
+    system.obstacles_stage_0_index_39 = 8
+    system.obstacles_stage_0_index_38 = 0
+    system.obstacles_stage_0_index_37 = 5
+    system.obstacles_stage_0_index_36 = 2
+    system.obstacles_stage_0_index_35 = 2
+    system.obstacles_stage_0_index_34 = 3
+    system.obstacles_stage_0_index_33 = 3
+    system.obstacles_stage_0_index_32 = 3
+    system.obstacles_stage_0_index_31 = 8
+    system.obstacles_stage_0_index_30 = 3
+    system.obstacles_stage_0_index_29 = 9
+    system.obstacles_stage_0_index_28 = 3
+    system.obstacles_stage_0_index_27 = 5
+    system.obstacles_stage_0_index_26 = 4
+    system.obstacles_stage_0_index_25 = 9
+    system.obstacles_stage_0_index_24 = 4
+    system.obstacles_stage_0_index_23 = 5
+    system.obstacles_stage_0_index_22 = 5
+    system.obstacles_stage_0_index_21 = 1
+    system.obstacles_stage_0_index_20 = 6
+    system.obstacles_stage_0_index_19 = 2
+    system.obstacles_stage_0_index_18 = 6
+    system.obstacles_stage_0_index_17 = 4
+    system.obstacles_stage_0_index_16 = 6
+    system.obstacles_stage_0_index_15 = 7
+    system.obstacles_stage_0_index_14 = 6
+    system.obstacles_stage_0_index_13 = 8
+    system.obstacles_stage_0_index_12 = 6
+    system.obstacles_stage_0_index_11 = 9
+    system.obstacles_stage_0_index_10 = 6
+    system.obstacles_stage_0_index_9 = 6
+    system.obstacles_stage_0_index_8 = 7
+    system.obstacles_stage_0_index_7 = 0
+    system.obstacles_stage_0_index_6 = 8
+    system.obstacles_stage_0_index_5 = 9
+    system.obstacles_stage_0_index_4 = 8
+    system.obstacles_stage_0_index_3 = 0
+    system.obstacles_stage_0_index_2 = 9
+    system.obstacles_stage_0_index_1 = 2
+    system.obstacles_stage_0_index_0 = 9
+    system.net_stage_0 = XX
+    system.y_d_stage_1 = 0
+    system.x_d_stage_1 = 0
+    system.new_stage_2 = TRUE
+    system.new_stage_1 = TRUE
+    system.act_stage_2 = XX
+    system.act_stage_1 = XX
+    system.Drone.active = TRUE
+    system.resume_from_here_in_subtree__Drone = -3
+    system.node_names.NextAct = 4
+    system.node_names.NewGoal = 3
+    system.node_names.NeedNew = 2
+    system.node_names.GoalSeq = 1
+    system.node_names.Drone = 0
+    system.NeedNew.internal_status = success
+    system.NeedNew.status = success
+    system.NewGoal.internal_status = running
+    system.NewGoal.status = running
+    system.NewGoal.active = TRUE
+    system.NeedNew.active = TRUE
+    system.GoalSeq.internal_status = running
+    system.GoalSeq.status = running
+    system.NextAct.internal_status = success
+    system.NextAct.status = invalid
+    system.NextAct.active = FALSE
+    system.GoalSeq.active = TRUE
+    system.Drone.internal_status = running
+    system.Drone.status = running
+  -> State: 1.2 <-
+    system.new_stage_0 = TRUE
+    system.x_g_stage_0 = 7
+    system.y_g_stage_0 = 1
+    system.net_stage_0 = No
+    system.y_d_stage_1 = 1
+    system.new_stage_2 = FALSE
+    system.act_stage_2 = No
+    system.NeedNew.internal_status = failure
+    system.NeedNew.status = failure
+    system.NewGoal.status = invalid
+    system.NewGoal.active = FALSE
+    system.GoalSeq.internal_status = failure
+    system.GoalSeq.status = failure
+    system.NextAct.status = success
+    system.NextAct.active = TRUE
+    system.Drone.internal_status = success
+    system.Drone.status = success
+  -> State: 1.3 <-
+    system.act_stage_0 = No
+    system.new_stage_0 = FALSE
+    system.y_d_stage_0 = 1
+    system.net_stage_0 = Ea
+    system.x_d_stage_1 = 1
+    system.new_stage_1 = FALSE
+    system.act_stage_2 = Ea
+    system.act_stage_1 = No
+  -> State: 1.4 <-
+    system.act_stage_0 = Ea
+    system.x_d_stage_0 = 1
+    system.net_stage_0 = No
+    system.y_d_stage_1 = 2
+    system.act_stage_2 = No
+    system.act_stage_1 = Ea
+  -> State: 1.5 <-
+    system.act_stage_0 = No
+    system.y_d_stage_0 = 2
+    system.y_d_stage_1 = 3
+    system.act_stage_1 = No
+  -> State: 1.6 <-
+    system.y_d_stage_0 = 3
+    system.y_d_stage_1 = 4
+  -> State: 1.7 <-
+    system.y_d_stage_0 = 4
+    system.y_d_stage_1 = 5
+  -> State: 1.8 <-
+    system.y_d_stage_0 = 5
+    system.y_d_stage_1 = 6
+  -> State: 1.9 <-
+    system.y_d_stage_0 = 6
+    system.net_stage_0 = Ea
+    system.x_d_stage_1 = 2
+    system.act_stage_2 = Ea
+  -> State: 1.10 <-
+    system.act_stage_0 = Ea
+    system.x_d_stage_0 = 2
+    system.x_d_stage_1 = 3
+    system.act_stage_1 = Ea
+  -> State: 1.11 <-
+    system.x_d_stage_0 = 3
+    system.x_d_stage_1 = 4
+  -> State: 1.12 <-
+    system.x_d_stage_0 = 4
+    system.x_d_stage_1 = 5
+  -> State: 1.13 <-
+    system.x_d_stage_0 = 5
+    system.x_d_stage_1 = 6
+  -> State: 1.14 <-
+    system.x_d_stage_0 = 6
+    system.net_stage_0 = So
+    system.y_d_stage_1 = 5
+    system.act_stage_2 = So
+  -> State: 1.15 <-
+    system.act_stage_0 = So
+    system.y_d_stage_0 = 5
+    system.net_stage_0 = Ea
+    system.x_d_stage_1 = 7
+    system.act_stage_2 = Ea
+    system.act_stage_1 = So
+  -> State: 1.16 <-
+    system.act_stage_0 = Ea
+    system.x_d_stage_0 = 7
+    system.net_stage_0 = So
+    system.y_d_stage_1 = 4
+    system.act_stage_2 = So
+    system.act_stage_1 = Ea
+  -> State: 1.17 <-
+    system.act_stage_0 = So
+    system.y_d_stage_0 = 4
+    system.y_d_stage_1 = 3
+    system.act_stage_1 = So
+  -> State: 1.18 <-
+    system.y_d_stage_0 = 3
+    system.y_d_stage_1 = 2
+  -> State: 1.19 <-
+    system.y_d_stage_0 = 2
+    system.y_d_stage_1 = 1
+  -> State: 1.20 <-
+    system.y_d_stage_0 = 1
+    system.x_g_stage_1 = 3
+    system.y_g_stage_1 = 4
+    system.net_stage_0 = XX
+    system.new_stage_2 = TRUE
+    system.new_stage_1 = TRUE
+    system.act_stage_2 = XX
+    system.act_stage_1 = XX
+    system.NeedNew.internal_status = success
+    system.NeedNew.status = success
+    system.NewGoal.status = running
+    system.NewGoal.active = TRUE
+    system.GoalSeq.internal_status = running
+    system.GoalSeq.status = running
+    system.NextAct.status = invalid
+    system.NextAct.active = FALSE
+    system.Drone.internal_status = running
+    system.Drone.status = running
+  -> State: 1.21 <-
+    system.act_stage_0 = XX
+    system.new_stage_0 = TRUE
+    system.x_g_stage_0 = 3
+    system.y_g_stage_0 = 4
+    system.net_stage_0 = No
+    system.y_d_stage_1 = 2
+    system.new_stage_2 = FALSE
+    system.act_stage_2 = No
+    system.NeedNew.internal_status = failure
+    system.NeedNew.status = failure
+    system.NewGoal.status = invalid
+    system.NewGoal.active = FALSE
+    system.GoalSeq.internal_status = failure
+    system.GoalSeq.status = failure
+    system.NextAct.status = success
+    system.NextAct.active = TRUE
+    system.Drone.internal_status = success
+    system.Drone.status = success
+  -> State: 1.22 <-
+    system.act_stage_0 = No
+    system.new_stage_0 = FALSE
+    system.y_d_stage_0 = 2
+    system.y_d_stage_1 = 3
+    system.new_stage_1 = FALSE
+    system.act_stage_1 = No
+  -> State: 1.23 <-
+    system.y_d_stage_0 = 3
+    system.y_d_stage_1 = 4
+  -> State: 1.24 <-
+    system.y_d_stage_0 = 4
+    system.y_d_stage_1 = 5
+  -> State: 1.25 <-
+    system.y_d_stage_0 = 5
+    system.net_stage_0 = We
+    system.x_d_stage_1 = 6
+    system.act_stage_2 = We
+  -> State: 1.26 <-
+    system.act_stage_0 = We
+    system.x_d_stage_0 = 6
+    system.net_stage_0 = No
+    system.y_d_stage_1 = 6
+    system.act_stage_2 = No
+    system.act_stage_1 = We
+  -> State: 1.27 <-
+    system.act_stage_0 = No
+    system.y_d_stage_0 = 6
+    system.net_stage_0 = We
+    system.x_d_stage_1 = 5
+    system.act_stage_2 = We
+    system.act_stage_1 = No
+  -> State: 1.28 <-
+    system.act_stage_0 = We
+    system.x_d_stage_0 = 5
+    system.x_d_stage_1 = 4
+    system.act_stage_1 = We
+  -> State: 1.29 <-
+    system.x_d_stage_0 = 4
+    system.x_d_stage_1 = 3
+  -> State: 1.30 <-
+    system.x_d_stage_0 = 3
+    system.net_stage_0 = So
+    system.y_d_stage_1 = 5
+    system.act_stage_2 = So
+  -> State: 1.31 <-
+    system.act_stage_0 = So
+    system.y_d_stage_0 = 5
+    system.y_d_stage_1 = 4
+    system.act_stage_1 = So
+  -> State: 1.32 <-
+    system.y_d_stage_0 = 4
+    system.x_g_stage_1 = 5
+    system.y_g_stage_1 = 6
+    system.net_stage_0 = XX
+    system.new_stage_2 = TRUE
+    system.new_stage_1 = TRUE
+    system.act_stage_2 = XX
+    system.act_stage_1 = XX
+    system.NeedNew.internal_status = success
+    system.NeedNew.status = success
+    system.NewGoal.status = running
+    system.NewGoal.active = TRUE
+    system.GoalSeq.internal_status = running
+    system.GoalSeq.status = running
+    system.NextAct.status = invalid
+    system.NextAct.active = FALSE
+    system.Drone.internal_status = running
+    system.Drone.status = running
+  -> State: 1.33 <-
+    system.act_stage_0 = XX
+    system.new_stage_0 = TRUE
+    system.x_g_stage_0 = 5
+    system.y_g_stage_0 = 6
+    system.new_stage_2 = FALSE
+    system.NeedNew.internal_status = failure
+    system.NeedNew.status = failure
+    system.NewGoal.status = invalid
+    system.NewGoal.active = FALSE
+    system.GoalSeq.internal_status = failure
+    system.GoalSeq.status = failure
+    system.NextAct.status = success
+    system.NextAct.active = TRUE
+    system.Drone.internal_status = success
+    system.Drone.status = success
+  -- Loop starts here
+  -> State: 1.34 <-
+    system.new_stage_0 = FALSE
+    system.new_stage_1 = FALSE
+  -> State: 1.35 <-

@@ -1,16 +1,9 @@
 #!/bin/bash
-
-rm -r ../../examples/$1/smv
-rm -r ../../examples/$1/results
-rm -r ../../examples/$1/tree
-rm -r ../../examples/$1/processed_data
-
-mkdir ../../examples/$1/smv
-mkdir ../../examples/$1/results
-mkdir ../../examples/$1/tree
-mkdir ../../examples/$1/processed_data
-# mkdir ../../examples/$1/processed_data/all
-# mkdir ../../examples/$1/processed_data/aut
-# mkdir ../../examples/$1/processed_data/core
-# mkdir ../../examples/$1/processed_data/func
-# mkdir ../../examples/$1/processed_data/internal
+folders=("smv" "results" "tree" "processed_data")
+for folder in "${folders[@]}"; do
+    cur_folder=../../examples/$1/$folder
+    if test -e $cur_folder; then
+	rm -r $cur_folder
+    fi
+    mkdir $cur_folder
+done
