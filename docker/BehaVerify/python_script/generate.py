@@ -108,6 +108,8 @@ def verify_args(input_path, networks_path, output_path, to_generate, command, re
         raise ValueError('Unrecognized command option: ' + command + '. Options are generate, evaluate, ctl, ltl, and invar.')
     if command in {'ctl', 'ltl', 'invar'} and to_generate != 'nuxmv':
         raise ValueError('Invalid generate + command combination. Python, Haskell, and LaTeX only support generate and evaluate.')
+    if to_generate == 'nuxmv' and command != 'generate':
+        print('You have chosen to run nuXmv. This will crash if nuXmv was not provided during installation. In that case, please re-install.')
     if to_generate == 'haskell':
         return ' '.join([
             '--recursion_limit', str(recursion_limit),
