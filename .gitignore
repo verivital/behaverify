@@ -29,9 +29,11 @@ examples/**/tree/**
 examples/**/processed_data/**
 examples/**/results/**
 examples/**/xml/**
+examples/**/LaTeX/**
 REPRODUCIBILITY/**/processed_data/**
 REPRODUCIBILITY/**/results/**
 REPRODUCIBILITY/**/smv/**
+REPRODUCIBILITY/**/LaTeX/**
 REPRODUCIBILITY/**/tree/**
 REPRODUCIBILITY/**/xml/**
 REPRODUCIBILITY/**/dense_fixed/**

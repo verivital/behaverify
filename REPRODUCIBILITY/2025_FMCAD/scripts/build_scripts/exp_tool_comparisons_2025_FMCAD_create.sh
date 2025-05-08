@@ -12,13 +12,14 @@ if [[ $# -ge 4 ]]; then
     step_size=$4
 fi
 
-./make_folder_structure.sh BT2BIP
-./make_folder_structure.sh BT2Fiacre
-./make_folder_structure.sh MoVe4BT
+./make_folder_structure.sh 2025_FMCAD_BT2BIP
+./make_folder_structure.sh 2025_FMCAD_BT2Fiacre
+./make_folder_structure.sh 2025_FMCAD_MoVe4BT
 
-path_name="../../examples/MoVe4BT"
+path_name="../../examples/2025_FMCAD_MoVe4BT"
 
 $python_command "${path_name}/create_binary_tree.py" "${path_name}/tree" $min_val $max_val $step_size
+$python_command "${path_name}/create_binary_tree_MoVe4BT_xml.py" "${path_name}/xml" $min_val $max_val $step_size
 
 for (( num=min_val; num<=max_val; num=(num + step_size) )); do
     echo "now on iteration: "
@@ -26,13 +27,13 @@ for (( num=min_val; num<=max_val; num=(num + step_size) )); do
     ./make_full_opt_smv.sh $python_command "${path_name}" binary_tree_$num
 done
 
-path_name="../../examples/BT2BIP"
+path_name="../../examples/2025_FMCAD_BT2BIP"
 cp "${path_name}/MarsRover.tree" "${path_name}/tree/MarsRover_0.tree" 
 cp "${path_name}/TrainControl.tree" "${path_name}/tree/TrainControl_0.tree" 
 ./make_full_opt_smv.sh $python_command "${path_name}" MarsRover_0 
 ./make_full_opt_smv.sh $python_command "${path_name}" TrainControl_0
 
-path_name="../../examples/BT2Fiacre"
+path_name="../../examples/2025_FMCAD_BT2Fiacre"
 cp "${path_name}/drone3_height.tree" "${path_name}/tree/drone3_0.tree" 
 cp "${path_name}/drone3_nodes.tree" "${path_name}/tree/drone3_1.tree" 
 cp "${path_name}/drone3.tree" "${path_name}/tree/drone3_2.tree" 

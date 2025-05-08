@@ -1,0 +1,294 @@
+------------------------
+Initial State
+blackboard
+  act: XX
+  new: False
+
+local
+
+environment
+  x_d: 0
+  y_d: 0
+  x_g: 0
+  y_g: 0
+
+------------------------
+State after tick: 1
+blackboard
+  act: XX
+  new: True
+
+local
+
+environment
+  x_d: 0
+  y_d: 0
+  x_g: 19
+  y_g: 16
+
+------------------------
+State after tick: 2
+blackboard
+  act: We
+  new: False
+
+local
+
+environment
+  x_d: 0
+  y_d: 0
+  x_g: 19
+  y_g: 16
+
+------------------------
+State after tick: 3
+blackboard
+  act: So
+  new: False
+
+local
+
+environment
+  x_d: 0
+  y_d: 0
+  x_g: 19
+  y_g: 16
+
+------------------------
+State after tick: 4
+blackboard
+  act: No
+  new: False
+
+local
+
+environment
+  x_d: 0
+  y_d: 1
+  x_g: 19
+  y_g: 16
+
+------------------------
+State after tick: 5
+blackboard
+  act: Ea
+  new: False
+
+local
+
+environment
+  x_d: 1
+  y_d: 1
+  x_g: 19
+  y_g: 16
+
+------------------------
+State after tick: 6
+blackboard
+  act: No
+  new: False
+
+local
+
+environment
+  x_d: 1
+  y_d: 2
+  x_g: 19
+  y_g: 16
+
+------------------------
+State after tick: 7
+blackboard
+  act: So
+  new: False
+
+local
+
+environment
+  x_d: 1
+  y_d: 1
+  x_g: 19
+  y_g: 16
+
+------------------------
+State after tick: 8
+blackboard
+  act: Ea
+  new: False
+
+local
+
+environment
+  x_d: 2
+  y_d: 1
+  x_g: 19
+  y_g: 16
+
+------------------------
+State after tick: 9
+blackboard
+  act: We
+  new: False
+
+local
+
+environment
+  x_d: 1
+  y_d: 1
+  x_g: 19
+  y_g: 16
+
+------------------------
+State after tick: 10
+blackboard
+  act: We
+  new: False
+
+local
+
+environment
+  x_d: 0
+  y_d: 1
+  x_g: 19
+  y_g: 16
+
+------------------------
+State after tick: 11
+blackboard
+  act: No
+  new: False
+
+local
+
+environment
+  x_d: 0
+  y_d: 2
+  x_g: 19
+  y_g: 16
+
+------------------------
+State after tick: 12
+blackboard
+  act: We
+  new: False
+
+local
+
+environment
+  x_d: 0
+  y_d: 2
+  x_g: 19
+  y_g: 16
+
+------------------------
+State after tick: 13
+blackboard
+  act: Ea
+  new: False
+
+local
+
+environment
+  x_d: 1
+  y_d: 2
+  x_g: 19
+  y_g: 16
+
+------------------------
+State after tick: 14
+blackboard
+  act: No
+  new: False
+
+local
+
+environment
+  x_d: 1
+  y_d: 3
+  x_g: 19
+  y_g: 16
+
+------------------------
+State after tick: 15
+blackboard
+  act: So
+  new: False
+
+local
+
+environment
+  x_d: 1
+  y_d: 2
+  x_g: 19
+  y_g: 16
+
+------------------------
+State after tick: 16
+blackboard
+  act: Ea
+  new: False
+
+local
+
+environment
+  x_d: 2
+  y_d: 2
+  x_g: 19
+  y_g: 16
+
+------------------------
+State after tick: 17
+blackboard
+  act: No
+  new: False
+
+local
+
+environment
+  x_d: 2
+  y_d: 3
+  x_g: 19
+  y_g: 16
+
+------------------------
+State after tick: 18
+blackboard
+  act: So
+  new: False
+
+local
+
+environment
+  x_d: 2
+  y_d: 2
+  x_g: 19
+  y_g: 16
+
+------------------------
+State after tick: 19
+blackboard
+  act: No
+  new: False
+
+local
+
+environment
+  x_d: 2
+  y_d: 3
+  x_g: 19
+  y_g: 16
+
+------------------------
+State after tick: 20
+blackboard
+  act: So
+  new: False
+
+local
+
+environment
+  x_d: 2
+  y_d: 2
+  x_g: 19
+  y_g: 16
+

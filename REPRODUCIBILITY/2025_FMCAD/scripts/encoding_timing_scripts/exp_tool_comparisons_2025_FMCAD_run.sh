@@ -11,7 +11,7 @@ if [[ $# -eq 3 ]]; then
     step_size=$3
 fi
 
-path_name="../../examples/MoVe4BT"
+path_name="../../examples/2025_FMCAD_MoVe4BT"
 exp_name="binary_tree"
 echo "${path_name} ${exp_name}" > ./exp_info
 
@@ -34,7 +34,7 @@ echo "${tests}" > ./test_info
 
 
 
-path_name="../../examples/BT2BIP"
+path_name="../../examples/2025_FMCAD_BT2BIP"
 exp_name="MarsRover"
 echo "${path_name} ${exp_name}" > ./exp_info
 
@@ -51,7 +51,7 @@ echo "${tests}" > ./test_info
 
 ./run_encoding.sh ./exp_info ./range_info ./encoding_info ./test_info
 ./clean_temp.sh
-path_name="../../examples/BT2BIP"
+path_name="../../examples/2025_FMCAD_BT2BIP"
 exp_name="TrainControl"
 echo "${path_name} ${exp_name}" > ./exp_info
 
@@ -70,7 +70,7 @@ echo "${tests}" > ./test_info
 ./clean_temp.sh
 
 
-path_name="../../examples/BT2Fiacre"
+path_name="../../examples/2025_FMCAD_BT2Fiacre"
 exp_name="drone3"
 echo "${path_name} ${exp_name}" > ./exp_info
 
