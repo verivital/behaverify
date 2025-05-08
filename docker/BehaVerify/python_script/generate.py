@@ -158,7 +158,7 @@ def non_demo_mode(input_path, networks_path, output_path, to_generate, command, 
                         'bash -c',
                         '\'' + ' '.join([
                             BEHAVERIFY_VENV,
-                            HOME_DIR + '/behaverify/src/' + ('dsl_to_' + to_generate + '.py'),
+                            HOME_DIR + '/behaverify/src/' + 'counter_trace.py',
                             HOME_DIR + '/behaverify/metamodel/behaverify.tx',
                             USER_DIR + '/' + input_name,
                             USER_DIR + '/output/nuxmv_' + command + '_results.txt',

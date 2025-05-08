@@ -6,11 +6,11 @@ Last Edit: 2025-05-06
 '''
 import argparse
 import os
-import json
+# import json
+import traceback
 import graphviz
 from dsl_to_nuxmv import dsl_to_nuxmv
-from behaverify_common import BTreeException, indent
-import traceback
+# from behaverify_common import BTreeException, indent
 
 
 def split_file(trace_file_string):
