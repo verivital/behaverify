@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM ubuntu:24.10
 RUN apt-get update -y
 RUN apt-get upgrade -y
 
@@ -45,6 +45,7 @@ RUN /home/$USER/python_venvs/behaverify/bin/python3 -m pip install -r /home/$USE
 RUN python3 -m venv /home/$USER/python_venvs/results
 RUN /home/$USER/python_venvs/results/bin/python3 -m pip install --upgrade pip
 RUN /home/$USER/python_venvs/results/bin/python3 -m pip install -r /home/$USER/behaverify/REPRODUCIBILITY/$VENUE/requirements/drawing.txt
+RUN /home/$USER/python_venvs/results/bin/python3 -m pip install -r /home/$USER/behaverify/REPRODUCIBILITY/$VENUE/requirements/graphing.txt
 
 WORKDIR /home/$USER
 
