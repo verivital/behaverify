@@ -1,0 +1,5 @@
+go_msat
+msat_pick_state
+msat_simulate
+show_traces -v
+quit

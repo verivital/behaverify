@@ -41,8 +41,8 @@ def generate(behaverify, input_name, input_name_only, to_generate, flags):
                         HOME_DIR + '/behaverify/metamodel/behaverify.tx',
                         USER_DIR + '/' + input_name
                     ]
-                    + [USER_DIR + '/app/' + ((input_name_only + '.smv') if to_generate == 'nuXmv' else '')]
-                    + ([input_name_only] if to_generate != 'nuXmv' else [])
+                    + [USER_DIR + '/app/' + ((input_name_only + ('.smv' if to_generate == 'nuxmv' else '.tex')) if to_generate in ('nuxmv', 'latex') else '')]
+                    + ([input_name_only] if to_generate in ('python', 'haskell') else [])
                     + [flags]
                 ),
                 'Generation of requested code/model.',
@@ -150,6 +150,25 @@ def non_demo_mode(input_path, networks_path, output_path, to_generate, command, 
     generate(behaverify, input_name, input_name_only, to_generate, flags)
     if command != 'generate':
         evaluate(behaverify, input_name_only, to_generate, command)
+        if to_generate == 'nuxmv':
+            serene_exec(
+                behaverify,
+                ' '.join(
+                    [
+                        'bash -c',
+                        '\'' + ' '.join([
+                            BEHAVERIFY_VENV,
+                            HOME_DIR + '/behaverify/src/' + ('dsl_to_' + to_generate + '.py'),
+                            HOME_DIR + '/behaverify/metamodel/behaverify.tx',
+                            USER_DIR + '/' + input_name,
+                            USER_DIR + '/output/nuxmv_' + command + '_results.txt',
+                            USER_DIR + '/output'
+                        ]) + '\''
+                    ]
+                ),
+                'Visualizing Traces',
+                True
+            )
     print('Start: Copy output to source.')
     copy_out_of(behaverify, USER_DIR, output_path + '.tar')
     print('End: Copy output to source.')

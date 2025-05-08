@@ -27,7 +27,9 @@ def create_image_and_container(dockerfile_path, nuxmv_loc, local):
                 True
             )
             serene_exec(behaverify, 'mv ' + TEST_DIR + '/nuXmv_DL/bin/nuXmv' + ' ' + TEST_DIR + '/nuXmv', 'Moving nuXmv from extracted location.', True)
-    serene_exec(behaverify, 'sudo chmod +x ' + TEST_DIR + '/nuXmv', 'Making nuXmv runnable (running chmod).', True)
+        serene_exec(behaverify, 'sudo chmod +x ' + TEST_DIR + '/nuXmv', 'Making nuXmv runnable (running chmod).', True)
+    else:
+        print('nuXmv was not included! This container will not be able to execute nuXmv, but it will still be able to generate nuXmv files for you to use elsewhere.')
     return
 
 if __name__ == '__main__':
