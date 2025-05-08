@@ -110,6 +110,8 @@ Then the results will be in **./MyOutput.tar.xz**. There should be 5 folders wit
 		- **translation\_drone3\_3.txt** -> Timing result for Table 2, Prep., B-DroneNew.
 	    - **INVAR\_full\_opt\_drone3_2.txt** -> Counterexample trace used to generate the images in processed\_data.
 - **2025\_FMCAD\_MoVe4BT**
+    - **smv/full\_opt\_binary\_tree\_1.smv** -> This has the .smv file for use for the binary tree example. Search this file for MODULE define\_nodes. This will have a list of nodes numbered from 0 to 10, showing there are 11 nodes total.
+    - **smv/full\_opt\_binary\_tree\_10.smv** -> This has the .smv file for use for the binary tree example. Search this file for MODULE define\_nodes. This will have a list of nodes numbered from 0 to 2054, showing there are 2055 nodes total.
     - **CTL-BehaVerify-Concise**, **LTL-BehaVerify-Concise**, **LTL-MoVe4BT-Concise** -> These files contain manually copied timing results that are then used by graph\_result.py to create the image in **processed\_data**. See below for how to check each of them against your current run.
 	- **results**
 	    - **SILENT\_LTL\_full\_opt\_binary\_tree\_*.txt** -> Timing result for BehaVerify LTL; goes from 1 to 10.
