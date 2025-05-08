@@ -36,5 +36,7 @@ REPRODUCIBILITY/**/smv/**
 REPRODUCIBILITY/**/LaTeX/**
 REPRODUCIBILITY/**/tree/**
 REPRODUCIBILITY/**/xml/**
+REPRODUCIBILITY/**/python/**
+REPRODUCIBILITY/**/haskell/**
 REPRODUCIBILITY/**/dense_fixed/**
 REPRODUCIBILITY/**/sparse_random/**

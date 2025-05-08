@@ -57,5 +57,8 @@ $python_behaverify ./src/dsl_to_latex.py ./metamodel/behaverify.tx ./examples/Ne
 
 $python_behaverify ./src/counter_trace.py ./metamodel/behaverify.tx ./examples/2025_FMCAD_BT2Fiacre/drone3.tree ./examples/2025_FMCAD_BT2Fiacre/results/INVAR_full_opt_drone3_2.txt ./examples/2025_FMCAD_BT2Fiacre/processed_data
 
+cd "${this_script_location}/examples/2025_FMCAD_MoVe4BT"
+
+$python_results graph_results.py
 
 cd $start_location

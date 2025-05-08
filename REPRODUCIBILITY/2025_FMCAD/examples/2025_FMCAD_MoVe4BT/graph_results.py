@@ -36,6 +36,6 @@ plt.xlabel('Number of Nodes in Tree')
 plt.title('BehaVerify vs MoVe4BT Verification Times')
 plt.legend(['BehaVerify-CTL', 'BehaVerify-LTL', 'MoVe4BT-LTL'])
 plt.tight_layout()
-plt.savefig('2025-FMCAD-MoVe4BT-Timing.png', bbox_inches = 'tight')
+plt.savefig('processed_data/2025-FMCAD-MoVe4BT-Timing.png', bbox_inches = 'tight')
 
 plt.clf()
