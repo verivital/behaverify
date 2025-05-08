@@ -28,6 +28,8 @@ def split_file(trace_file_string):
                         traces.append(lines)
                     lines = []
             lines.append(line)
+    if len(lines) > 0:
+        traces.append(lines)
     return traces
 
 def handle_smv(trace):
