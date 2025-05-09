@@ -1,6 +1,8 @@
 This README is meant to provide information about reproducing results used in FMCAD 2025. However, it can also be used as a more general installation guide for BehaVerify, though eventually it may be inadequate for this purpose as it will not be updated along with BehaVerify, in order to ensure it remains useful for its primary purpose, reproduction of results for FMCAD 2025.
 
-See version\_info.txt for information about dependency requirements.
+version\_info\_pip.txt contains all python package information for BehaVerify. verion\_info\_pip\_graphs\_only.txt contains all python package information for amking necessary graphs and the like. version\_info\_apt.txt contains all other version information.
+
+In case you are reading this somewhere outside of the repository, our repository is at https://github.com/verivital/behaverify .
 
 # About this File and its Layout
 
@@ -18,7 +20,7 @@ Finally, note that this is a .md file, and as such, we escape various characters
 # Prerequisites and Information
 
 1. docker with the ability to run commands as a regular user (see https://docs.docker.com/engine/install/linux-postinstall/ ). Additionally, we will be using Ubuntu 24.10 inside docker. Some users appear to have issues with running commands like update or upgrade in docker when using Ubuntu; we do not have a workaround for this.
-2. nuXmv (see  https://nuxmv.fbk.eu/download.html or https://nuxmv.fbk.eu/theme/download.php?file=nuXmv-2.1.0-linux64.tar.xz ). Our script can automatically download nuXmv for you from an appropriate URL. Should an error arrise, you will need to download nuXmv. There should be no installation. Please ensure you download the Linux 64-bit x86 version 2.1.0 (November 29, 2024). The executable will be located in **nuXmv-2.1.0-linux64/nuXmv-2.1.0-Linux/bin/nuXmv**. There should be **NO FILE EXTENSION**. Note that we are **ONLY** interested in the binary; you do not need the other files or the folder structure, so long as you have the binary.
+2. nuXmv (see  https://nuxmv.fbk.eu/download.html or https://nuxmv.fbk.eu/theme/download.php?file=nuXmv-2.1.0-linux64.tar.xz ). Our script can automatically download nuXmv for you from an appropriate URL. Should an error arise, you will need to download nuXmv. There should be no installation. Please ensure you download the Linux 64-bit x86 version 2.1.0 (November 29, 2024). The executable will be located in **nuXmv-2.1.0-linux64/nuXmv-2.1.0-Linux/bin/nuXmv**. There should be **NO FILE EXTENSION**. Note that we are **ONLY** interested in the binary; you do not need the other files or the folder structure, so long as you have the binary.
 3. If you choose to use Docker, we assume you have access to Python3 and docker-py (see below).
 4. If you choose to run locally, we assume you are able to run bash scripts. These have **only been tested on Linux**. If you cannot run the scripts, please run the commands present in the bash scripts manually. Note that this will require arguments to replaced. Specifically, $1 means the first argument provided to the bash script, $2 means the second argument provided to the bash script, etc.
 
@@ -64,8 +66,8 @@ Our FMCAD paper compared to MoVe4BT. See https://move4bt.github.io/ . We found t
 2. Then click Load Tree on the left side of the GUI.
 3. Please Load an xml file from **/examples/2025\_FMCAD\_MoVe4BT/xml**.
 4. The file may take a while to load, especially for the bigger examples.
-5. Click verifications.
-6. The GUI may freeze. Feel free to ignore the wait/force quit option, or repeatedly click wait. Eventually, it will print results, or produce a blank screen. Should ir produce a blank screen, check the command-line to see if it printed a message.
+5. Click verification.
+6. The GUI may freeze. Feel free to ignore the wait/force quit option, or repeatedly click wait. Eventually, it will print results, or produce a blank screen. Should it produce a blank screen, check the command-line to see if it printed a message.
 
 As mentioned above, MoVe4BT loads models stored in xml files. The code for generating the files is in **examples/2025\_FMCAD\_MoVe4BT/create\_binary\_tree\_MoVe4BT\_xml.py**. Run using the following command
 
@@ -116,7 +118,7 @@ Then the results will be in **./MyOutput.tar.xz**. There should be 5 folders wit
 	- **results**
 	    - **SILENT\_LTL\_full\_opt\_binary\_tree\_*.txt** -> Timing result for BehaVerify LTL; goes from 1 to 10.
 	    - **SILENT\_CTL\_full\_opt\_binary\_tree\_*.txt** -> Timing result for BehaVerify LTL; goes from 1 to 10.
-		- The MoVe4BT results must be run seperately, because it doesn't have a CLI. See earlier for how to run MoVe4BT.
+		- The MoVe4BT results must be run separately, because it doesn't have a CLI. See earlier for how to run MoVe4BT.
 - **NetworkExample**
     - **results**
 	    - **translation\_network\_0.txt** -> Timing result for Table 3, Trans., 1.0000 Acc.
@@ -128,7 +130,7 @@ Then the results will be in **./MyOutput.tar.xz**. There should be 5 folders wit
 		- **INVAR\_full\_opt\_network\_0.txt** -> Proof the 1.0000 Acc satisfies the Invar Specification.
 		- **INVAR\_full\_opt\_network\_1.txt** -> Proof the 0.9995 Acc satisfies the Invar Specification.
 		- **CTL\_full\_opt\_network\_0.txt** -> Proof the 1.0000 Acc satisfies the CTL Specification.
-		- **CTK\_full\_opt\_network\_1.txt** -> Proof the 0.9995 Acc does not satisfy the CTL Specification.
+		- **CTL\_full\_opt\_network\_1.txt** -> Proof the 0.9995 Acc does not satisfy the CTL Specification.
 
 ---
 
@@ -241,7 +243,7 @@ This section is intentionally lengthy. If you are not interested in the details 
 19. Enable scripts<br />This will allow all the necessary scripts to run. Please navigate to the top level of our repository and run the following
 
 		sudo chmod -R +x ./REPRODUCIBILITY/2025_FMCAD/*.sh
-20. Move nuXmv<br />You downloaded nuXmv in step 1. Please place it in behaverify/REPRODUCIBILITY/2024\_FMAS/
+20. Move nuXmv<br />You downloaded nuXmv in step 1. Please place it in behaverify/REPRODUCIBILITY/2025\_FMCAD/
 21. Enable nuXmv<br />Please navigate to the top level of our repository and run the following
 
 		sudo chmod +x ./REPRODUCIBILITY/2025_FMCAD/nuXmv
