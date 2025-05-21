@@ -12,6 +12,12 @@ import re
 import sys
 from os.path import isfile
 import textx
+ONNX_IMPORTED = False
+try:
+    import onnxruntime
+    ONNX_IMPORTED = True
+except:
+    ONNX_IMPORTED = False
 from serene_functions import build_meta_func
 from serene_functions_neural import build_meta_func as build_meta_func_neural
 from behaverify_common import (create_node_name,
@@ -612,7 +618,7 @@ def validate_model(metamodel_file, model_file, recursion_limit, disable = False)
         return
 
     def validate_variable(variable, scopes, variable_names):
-        print(variable.name)
+        # print(variable.name)
         trace.append('In Variable: ' + variable.name)
         if variable.model_as == 'NEURAL':
             if model.neural is None:
@@ -680,7 +686,7 @@ def validate_model(metamodel_file, model_file, recursion_limit, disable = False)
                 if atom_type != 'INT':
                     raise BTreeException(trace, 'Neural Network output size must be an INT')
             try:
-                print(num_inputs)
+                # print(num_inputs)
                 session = onnxruntime.InferenceSession(source)
                 input_name = session.get_inputs()[0].name
                 temp_inputs = [0] * num_inputs
@@ -813,8 +819,10 @@ def validate_model(metamodel_file, model_file, recursion_limit, disable = False)
         variables = {variable.name : variable for variable in model.variables}
         return (model, variables, constants, declared_enumerations)
 
-    if model.neural is not None:
-        import onnxruntime
+    
+    if model.neural:
+        if not ONNX_IMPORTED:
+            raise RuntimeError('Could not import onnx or onnxruntime, but both are required for this model')
 
     trace.append('In Enumeration Validation')
     declared_enumerations = set(map(valid_enumeration, model.enumerations))

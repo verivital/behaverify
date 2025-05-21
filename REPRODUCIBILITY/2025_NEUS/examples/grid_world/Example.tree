@@ -28,10 +28,10 @@ variables {
     variable { bl net NEURAL classification {'We', 'Ea', 'No', 'So', 'XX'}
 	inputs {x_d, y_d, x_g, y_g}
 	config {
-	    REPLACE_CONFIG
+	    table
 	}
 	source {
-	    '.REPLACE_SOURCE'
+	    '../networks/1000__6_18_0__0100_1.onnx'
 	}
     }
     #{##########################################}#

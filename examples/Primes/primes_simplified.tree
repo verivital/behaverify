@@ -1,0 +1,137 @@
+configuration {
+    neural
+}
+enumerations {
+    'UseIndex', 'UseArray', 'NotPrime', 'Prime'
+}
+
+constants {
+    cap := 9,
+    size := 5
+}
+
+variables {
+    variable{
+	bl ind VAR [0, (sub, size, 1)] assign{result{0}}
+    }
+    variable{
+	bl arr FROZENVAR [0, cap] array size default {assign{result{(loop, i, [0, cap] such_that True, i)}}} constant_index
+    }
+    variable{
+	bl inVar VAR {'UseIndex', 'UseArray'} assign{result{'UseIndex'}}
+    }
+    variable{
+	bl inVal DEFINE INT assign{
+	    case{(eq, inVar, 'UseIndex')}result{ind}
+	    result{(index, arr, ind)}
+	}
+    }
+    variable {
+	bl net NEURAL classification {'NotPrime', 'Prime'}
+	inputs {inVal}
+	#{config {fixed 120 48}}#
+	config {table}
+	source {'./networks/1000_acc__10prime__1000_1.onnx'}
+    }
+    variable {
+	bl out VAR {'NotPrime', 'Prime'} assign{result{'Prime'}}
+    }
+}
+environment_update {}
+checks {}
+environment_checks {}
+actions {
+    action {
+	RunInd
+	arguments {}
+	local_variables {}
+	read_variables {net}
+	write_variables {inVar, out}
+	initial_values {}
+	update {
+	    variable_statement{
+		inVar
+		assign{result{'UseIndex'}}
+	    }
+	    variable_statement{
+		out
+		assign{result{net}}
+	    }
+	    variable_statement{
+		inVar
+		assign{result{'UseArray'}}
+	    }
+	    return_statement{
+		case{(eq, out, net)}
+		result{success}
+		result{failure}
+	    }
+	}
+    }
+    action {
+	SetInd
+	arguments {}
+	local_variables {}
+	read_variables {}
+	write_variables {ind}
+	initial_values{}
+	update {
+	    return_statement{
+		case{(eq, ind, (sub, size, 1))}result{success}
+		result{running}
+	    }
+	    variable_statement{
+		ind
+		assign{result{(min, (sub, size, 1), (add, ind, 1))}}
+	    }
+	}
+    }
+    
+}
+sub_trees {}
+tree {composite{Primes sequence children{ RunInd {} SetInd {}}}}
+tick_prerequisite {True}
+specifications {
+    INVARSPEC {
+	(implies,
+	    (success, Primes),
+	    (and,
+		(loop, i, [0, (sub, size, 1)] such_that True,
+		    (eq,
+			(or,
+			    (loop, j, {2, 3, 5, 7} such_that True,
+				(eq, i, j)
+			    )
+			),
+			(or,
+			    (loop, j, {2, 3, 5, 7} such_that True,
+				(eq, (index, arr, constant_index i), j)
+			    )
+			)
+		    )
+		)
+	    )
+	)
+    }
+    CTLSPEC {
+	(equivalent,
+	    (and,
+		(loop, i, [0, (sub, size, 1)] such_that True,
+		    (eq,
+			(or,
+			    (loop, j, {2, 3, 5, 7} such_that True,
+				(eq, i, j)
+			    )
+			),
+			(or,
+			    (loop, j, {2, 3, 5, 7} such_that True,
+				(eq, (index, arr, constant_index i), j)
+			    )
+			)
+		    )
+		)
+	    ),
+	    (always_finally, (success, Primes))
+	)
+    }
+}

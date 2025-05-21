@@ -1,0 +1,148 @@
+MODULE main
+    VAR
+        system : system_module;
+--------------SPECIFICATIONS
+
+INVARSPEC ((system.Primes.status = success) -> ((((0 = 2) | (0 = 3) | (0 = 5) | (0 = 7)) = ((system.arr_stage_0_index_0 = 2) | (system.arr_stage_0_index_0 = 3) | (system.arr_stage_0_index_0 = 5) | (system.arr_stage_0_index_0 = 7))) & (((1 = 2) | (1 = 3) | (1 = 5) | (1 = 7)) = ((system.arr_stage_0_index_1 = 2) | (system.arr_stage_0_index_1 = 3) | (system.arr_stage_0_index_1 = 5) | (system.arr_stage_0_index_1 = 7))) & (((2 = 2) | (2 = 3) | (2 = 5) | (2 = 7)) = ((system.arr_stage_0_index_2 = 2) | (system.arr_stage_0_index_2 = 3) | (system.arr_stage_0_index_2 = 5) | (system.arr_stage_0_index_2 = 7))) & (((3 = 2) | (3 = 3) | (3 = 5) | (3 = 7)) = ((system.arr_stage_0_index_3 = 2) | (system.arr_stage_0_index_3 = 3) | (system.arr_stage_0_index_3 = 5) | (system.arr_stage_0_index_3 = 7))) & (((4 = 2) | (4 = 3) | (4 = 5) | (4 = 7)) = ((system.arr_stage_0_index_4 = 2) | (system.arr_stage_0_index_4 = 3) | (system.arr_stage_0_index_4 = 5) | (system.arr_stage_0_index_4 = 7)))));
+CTLSPEC (((((0 = 2) | (0 = 3) | (0 = 5) | (0 = 7)) = ((system.arr_stage_0_index_0 = 2) | (system.arr_stage_0_index_0 = 3) | (system.arr_stage_0_index_0 = 5) | (system.arr_stage_0_index_0 = 7))) & (((1 = 2) | (1 = 3) | (1 = 5) | (1 = 7)) = ((system.arr_stage_0_index_1 = 2) | (system.arr_stage_0_index_1 = 3) | (system.arr_stage_0_index_1 = 5) | (system.arr_stage_0_index_1 = 7))) & (((2 = 2) | (2 = 3) | (2 = 5) | (2 = 7)) = ((system.arr_stage_0_index_2 = 2) | (system.arr_stage_0_index_2 = 3) | (system.arr_stage_0_index_2 = 5) | (system.arr_stage_0_index_2 = 7))) & (((3 = 2) | (3 = 3) | (3 = 5) | (3 = 7)) = ((system.arr_stage_0_index_3 = 2) | (system.arr_stage_0_index_3 = 3) | (system.arr_stage_0_index_3 = 5) | (system.arr_stage_0_index_3 = 7))) & (((4 = 2) | (4 = 3) | (4 = 5) | (4 = 7)) = ((system.arr_stage_0_index_4 = 2) | (system.arr_stage_0_index_4 = 3) | (system.arr_stage_0_index_4 = 5) | (system.arr_stage_0_index_4 = 7)))) <-> AF((system.Primes.status = success)));
+
+--------------END OF SPECIFICATIONS
+
+MODULE system_module
+    CONSTANTS
+        success, failure, running, invalid, UseIndex, UseArray, NotPrime, Prime;
+    DEFINE
+        resume_from_here_in_subtree__Primes := -3;
+        Primes.active := TRUE;
+        --START OF BLACKBOARD DEFINITIONS
+        inVar_stage_1 :=
+            case
+                !(RunInd.active) : inVar_stage_0;
+                TRUE : UseIndex;
+            esac;
+        inVar_stage_2 :=
+            case
+                !(RunInd.active) : inVar_stage_1;
+                TRUE : UseArray;
+            esac;
+        inVal_stage_0 :=
+            case
+                (inVar_stage_1 = UseIndex) : ind_stage_0;
+                TRUE : (case 0 = ind_stage_0 : arr_stage_0_index_0; 1 = ind_stage_0 : arr_stage_0_index_1; 2 = ind_stage_0 : arr_stage_0_index_2; 3 = ind_stage_0 : arr_stage_0_index_3; 4 = ind_stage_0 : arr_stage_0_index_4; esac);
+            esac;
+        inVal_stage_1 :=
+            case
+                (inVar_stage_2 = UseIndex) : ind_stage_0;
+                TRUE : (case 0 = ind_stage_0 : arr_stage_0_index_0; 1 = ind_stage_0 : arr_stage_0_index_1; 2 = ind_stage_0 : arr_stage_0_index_2; 3 = ind_stage_0 : arr_stage_0_index_3; 4 = ind_stage_0 : arr_stage_0_index_4; esac);
+            esac;
+        net_stage_0 :=
+            case
+                (inVal_stage_0 = 0) : NotPrime;
+                (inVal_stage_0 = 1) : NotPrime;
+                (inVal_stage_0 = 2) : Prime;
+                (inVal_stage_0 = 3) : Prime;
+                (inVal_stage_0 = 4) : NotPrime;
+                (inVal_stage_0 = 5) : Prime;
+                (inVal_stage_0 = 6) : NotPrime;
+                (inVal_stage_0 = 7) : Prime;
+                (inVal_stage_0 = 8) : NotPrime;
+                (inVal_stage_0 = 9) : NotPrime;
+                TRUE : NotPrime;
+            esac;
+        net_stage_1 :=
+            case
+                (inVal_stage_1 = 0) : NotPrime;
+                (inVal_stage_1 = 1) : NotPrime;
+                (inVal_stage_1 = 2) : Prime;
+                (inVal_stage_1 = 3) : Prime;
+                (inVal_stage_1 = 4) : NotPrime;
+                (inVal_stage_1 = 5) : Prime;
+                (inVal_stage_1 = 6) : NotPrime;
+                (inVal_stage_1 = 7) : Prime;
+                (inVal_stage_1 = 8) : NotPrime;
+                (inVal_stage_1 = 9) : NotPrime;
+                TRUE : NotPrime;
+            esac;
+        out_stage_1 :=
+            case
+                !(RunInd.active) : out_stage_0;
+                TRUE : net_stage_0;
+            esac;
+        --END OF BLACKBOARD DEFINITIONS
+    FROZENVAR
+        --START OF BLACKBOARD FROZENVAR
+        arr_stage_0_index_0 : 0..9;
+        arr_stage_0_index_1 : 0..9;
+        arr_stage_0_index_2 : 0..9;
+        arr_stage_0_index_3 : 0..9;
+        arr_stage_0_index_4 : 0..9;
+        --END OF BLACKBOARD FROZENVAR
+    VAR
+        node_names : define_nodes;
+        RunInd : RunInd_module(net_stage_1, out_stage_1);
+        SetInd : SetInd_module(ind_stage_0);
+        Primes : composite_sequence_without_memory_2(RunInd, SetInd);
+        --START OF BLACKBOARD VARIABLES DECLARATION
+        ind_stage_0 : 0..4;
+        inVar_stage_0 : {UseIndex, UseArray};
+        out_stage_0 : {NotPrime, Prime};
+        --END OF BLACKBOARD VARIABLES DECLARATION
+    ASSIGN
+        --START OF BLACKBOARD VARIABLES INITIALIZATION
+        init(ind_stage_0) := 0;
+        init(arr_stage_0_index_0) := {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+        init(arr_stage_0_index_1) := {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+        init(arr_stage_0_index_2) := {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+        init(arr_stage_0_index_3) := {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+        init(arr_stage_0_index_4) := {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+        init(inVar_stage_0) := UseIndex;
+        init(out_stage_0) := Prime;
+        --END OF BLACKBOARD VARIABLES INITIALIZATION
+        --START OF BLACKBOARD VARIABLES TRANSITION
+        next(ind_stage_0) :=
+            case
+                !(SetInd.active) : ind_stage_0;
+                TRUE : min((5 - 1), (ind_stage_0 + 1));
+            esac;
+        next(inVar_stage_0) := inVar_stage_2;
+        next(out_stage_0) := out_stage_1;
+        --END OF BLACKBOARD VARIABLES TRANSITION
+
+MODULE define_nodes
+    DEFINE
+        Primes := 0;
+        RunInd := 1;
+        SetInd := 2;
+MODULE composite_sequence_without_memory_2(child_0, child_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                !(child_0.internal_status = success) : child_0.internal_status;
+                !(child_1.internal_status = success) : child_1.internal_status;
+                TRUE : success;
+            esac;
+        child_0.active := active;
+        child_1.active := child_0.status = success;
+MODULE RunInd_module(net_stage_1, out_stage_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := 
+            case
+                (out_stage_1 = net_stage_1) : success;
+                TRUE : failure;
+            esac;
+MODULE SetInd_module(ind_stage_0)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := 
+            case
+                (ind_stage_0 = (5 - 1)) : success;
+                TRUE : running;
+            esac;

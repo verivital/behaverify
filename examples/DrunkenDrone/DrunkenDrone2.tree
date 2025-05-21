@@ -1,0 +1,62 @@
+configuration {} enumerations {'We', 'Ea', 'No', 'So', 'XX'}
+constants {min_val := 0, max_val := 19}
+variables {
+    variable { bl act VAR {'We', 'Ea', 'No', 'So', 'XX'} assign{result{'XX'}}}
+    variable { bl new VAR BOOLEAN assign{result{False}}}
+    variable { env x_d VAR [min_val, max_val] assign{result{min_val}}}
+    variable { env y_d VAR [min_val, max_val] assign{result{min_val}}}
+    variable { env x_g VAR [min_val, max_val] assign{result{x_d}}}
+    variable { env y_g VAR [min_val, max_val] assign{result{y_d}}}
+} environment_update {
+    variable_statement { x_g #{if new, assign value nondeterministcally, else leave unchanged}#
+	assign { case {new} result {(loop, loop_var, [min_val, max_val] such_that True, loop_var)}
+	    result {x_g}}}
+    variable_statement {y_g
+	assign {case{new} result {(loop, loop_var, [min_val, max_val] such_that True, loop_var)}
+	    result {y_g}}}
+    variable_statement {x_d
+	assign {
+	    case {(eq, act, 'We')} result { (max, min_val, (sub, x_d, 1))}
+	    case {(eq, act, 'Ea')} result { (min, max_val, (add, x_d, 1))}
+	    result {x_d}}}
+    variable_statement {y_d
+	assign {
+	    case {(eq, act, 'So')} result { (max, min_val, (sub, y_d, 1))}
+	    case {(eq, act, 'No')} result { (min, max_val, (add, y_d, 1))}
+	    result {y_d}}}	    
+} checks {}
+environment_checks {
+    environment_check { NeedGoal
+	arguments {} read_variables { x_d, y_d, act}
+	condition {(and, (eq, x_g, x_d), (eq, y_g, y_d))}}
+} actions {
+    action { NewGoal
+	arguments{} local_variables {}read_variables {} write_variables {new, act}
+	initial_values {}
+	update {
+	    variable_statement { new assign{result{True}}}
+	    variable_statement { act assign{result{'XX'}}}
+	    return_statement {result {running}}
+	}
+    } action {Act
+	arguments{} local_variables {}read_variables {} write_variables {new, act}
+	initial_values {}
+	update {
+	    variable_statement {new assign{result{False}}}
+	    variable_statement {act assign {result{'No', 'So', 'We', 'Ea'}}}
+	    return_statement {result { success}}
+	}
+    }
+} sub_trees {}
+tree {
+    composite {Root selector children {
+	    composite { Seq sequence children { NeedGoal {} NewGoal {}}}
+	    Act {}
+	}
+    }
+}
+tick_prerequisite {(True)}
+specifications {
+    CTLSPEC {(always_globally, (always_finally, (and, (eq, x_d at -1, x_g at 0), (eq, y_d at 1, y_g at 0))))}
+    CTLSPEC {(always_globally, (exists_finally, (and, (eq, x_d at -1, x_g at 0), (eq, y_d at 1, y_g at 0))))}
+}

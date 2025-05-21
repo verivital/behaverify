@@ -512,7 +512,19 @@ def main():
             status_text.config(text = 'Not a file: "' + from_file_entry.get() + '"')
             return
         try:
-            (nodes, variables) = dsl_to_nuxmv('../metamodel/behaverify.tx', from_file_entry.get(), None, False, False, False, None, 0, True, True)
+            (nodes, variables) = dsl_to_nuxmv(
+                metamodel_file = '../metamodel/behaverify.tx',
+                model_file = from_file_entry.get(),
+                output_file = None,
+                keep_stage_0 = True,
+                keep_last_stage = True,
+                do_not_trim = True,
+                behave_only = False,
+                recursion_limit = 0,
+                return_values = True,
+                skip_grammar_check = True,
+                record_times = None
+            )
             root_node_name = get_root_from_BehaVerify_json(nodes)
             status_text.config(text = 'Imported DSL, root node name: ' + root_node_name)
         except Exception as error:

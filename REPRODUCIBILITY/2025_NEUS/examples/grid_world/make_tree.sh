@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Modes to iterate over
-#modes=("table" "fixed 140 48" "fixed 100 35" "float 140")
-modes=("fixed 100 35")
+modes=("table" "fixed 140 48" "fixed 100 35" "float 140")
+#modes=("fixed 100 35")
 
 # Directory containing network files
 network_dir="./networks"

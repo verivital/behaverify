@@ -470,12 +470,108 @@ def create_decorator_inverter(ignored_value = 0):
                      + status_start
                      + indent(4) + 'child_0.internal_status = success : failure;' + os.linesep  # if we detect the incoming status, use outgoing_status
                      + indent(4) + 'child_0.internal_status = failure : success;' + os.linesep  # if we detect the incoming status, use outgoing_status
-                     + indent(4) + 'TRUE : child_0.status;' + os.linesep  # otherwise matcch the child
+                     + indent(4) + 'TRUE : child_0.internal_status;' + os.linesep  # otherwise matcch the child
                      + status_end
                      + active[0]  # handles (if this node not active, child_0 not active)
                      + active_end  # handle (otherwise, child_0 active)
                      )
     return return_string
+
+# def create_decorator_one_shot_s(ignored_value = 0):
+#     (status_start, status_end, active, active_end, children) = common_string_decorator(1)
+#     return_string = ('MODULE decorator_one_shot_s(child_0)' + os.linesep
+#                      + status_start
+#                      + indent(4) + 'one_shot_val = 1 : success;' + os.linesep
+#                      + indent(4) + 'TRUE : child_0.internal_status;' + os.linesep  # otherwise matcch the child
+#                      + status_end
+#                      + active[0]  # handles (if this node not active, child_0 not active)
+#                      + indent(4) + '!(one_shot_val = 0) : FALSE;' + os.linesep # do not run the child if we met the one shot condition
+#                      + active_end  # handle (otherwise, child_0 active)
+#                      + indent(1) + 'VAR' + os.linesep
+#                      + indent(2) + 'one_shot_val : 0..1;' + os.linesep # 0 means one shot not satisfied, 1 means return success without running child.
+#                      + indent(1) + 'ASSIGN' + os.linesep
+#                      + indent(2) + 'init(one_shot_val) := 0;' + os.linesep
+#                      + indent(2) + 'next(one_shot_val) := ' + os.linesep
+#                      + indent(3) + 'case' + os.linesep
+#                      + indent(4) + '(one_shot_val = 0) & (child_0.status = success) : 1;' + os.linesep
+#                      + indent(4) + 'TRUE : one_shot_val;' + os.linesep
+#                      + indent(3) + 'esac;' + os.linesep
+#                      )
+#     return return_string
+
+# def create_decorator_one_shot_sf(ignored_value = 0):
+#     (status_start, status_end, active, active_end, children) = common_string_decorator(1)
+#     return_string = ('MODULE decorator_one_shot_sf(child_0)' + os.linesep
+#                      + status_start
+#                      + indent(4) + 'one_shot_val = 1 : success;' + os.linesep
+#                      + indent(4) + 'one_shot_val = -1 : failure;' + os.linesep
+#                      + indent(4) + 'TRUE : child_0.internal_status;' + os.linesep  # otherwise matcch the child
+#                      + status_end
+#                      + active[0]  # handles (if this node not active, child_0 not active)
+#                      + indent(4) + '!(one_shot_val = 0) : FALSE;' + os.linesep # do not run the child if we met the one shot condition
+#                      + active_end  # handle (otherwise, child_0 active)
+#                      + indent(1) + 'VAR' + os.linesep
+#                      + indent(2) + 'one_shot_val : -1..1;' + os.linesep # 0 means one shot not satisfied, 1 means return success without running child. -1 means return failure without running the child.
+#                      + indent(1) + 'ASSIGN' + os.linesep
+#                      + indent(2) + 'init(one_shot_val) := 0;' + os.linesep
+#                      + indent(2) + 'next(one_shot_val) := ' + os.linesep
+#                      + indent(3) + 'case' + os.linesep
+#                      + indent(4) + '(one_shot_val = 0) & (child_0.status = success) : 1;' + os.linesep
+#                      + indent(4) + '(one_shot_val = 0) & (child_0.status = failure) : -1;' + os.linesep
+#                      + indent(4) + 'TRUE : one_shot_val;' + os.linesep
+#                      + indent(3) + 'esac;' + os.linesep
+#                      )
+#     return return_string
+
+def create_decorator_one_shot(ignored_value = 0):
+    (status_start, status_end, active, active_end, children) = common_string_decorator(1)
+    return_string = ('MODULE decorator_one_shot(child_0, min_val, max_val)' + os.linesep #min_val can be 0 or -1. 0 means only success will count.
+                     + status_start
+                     + indent(4) + 'one_shot_val = 1 : success;' + os.linesep
+                     + indent(4) + 'one_shot_val = -1 : failure;' + os.linesep
+                     + indent(4) + 'TRUE : child_0.internal_status;' + os.linesep  # otherwise matcch the child
+                     + status_end
+                     + active[0]  # handles (if this node not active, child_0 not active)
+                     + indent(4) + '!(one_shot_val = 0) : FALSE;' + os.linesep # do not run the child if we met the one shot condition
+                     + active_end  # handle (otherwise, child_0 active)
+                     + indent(1) + 'VAR' + os.linesep
+                     + indent(2) + 'one_shot_val : min_val..max_val;' + os.linesep # 0 means one shot not satisfied, 1 means return success without running child. -1 means return failure without running the child.
+                     + indent(1) + 'ASSIGN' + os.linesep
+                     + indent(2) + 'init(one_shot_val) := 0;' + os.linesep
+                     + indent(2) + 'next(one_shot_val) := ' + os.linesep
+                     + indent(3) + 'case' + os.linesep
+                     + indent(4) + '!(one_shot_val = 0) : one_shot_val;' + os.linesep
+                     + indent(4) + '(child_0.status = success) : min(max_val, 1);' + os.linesep
+                     + indent(4) + '(child_0.status = failure) : max(min_val, -1);' + os.linesep
+                     + indent(4) + 'TRUE : one_shot_val;' + os.linesep
+                     + indent(3) + 'esac;' + os.linesep
+                     )
+    return return_string
+
+def create_decorator_repeat(ignored_value = 0):
+    (status_start, status_end, active, active_end, children) = common_string_decorator(1)
+    return_string = ('MODULE decorator_repeat(child_0, max_repeat)' + os.linesep
+                     + status_start
+                     + indent(4) + '(repeat_count_stage_1 = 0) : success;' + os.linesep
+                     + indent(4) + '(child_0.internal_status = success) : running;' + os.linesep
+                     + indent(4) + 'TRUE : child_0.internal_status;' + os.linesep  # otherwise matcch the child
+                     + status_end
+                     + indent(2) + 'repeat_count_stage_1 := ' + os.linesep
+                     + indent(3) + 'case' + os.linesep
+                     + indent(4) + '(child_0.status = success) : repeat_count_stage_0 - 1;' + os.linesep
+                     + indent(4) + '(child_0.status = failure) : max_repeat;' + os.linesep
+                     + indent(4) + 'TRUE : repeat_count_stage_0;' + os.linesep
+                     + indent(3) + 'esac;' + os.linesep
+                     + active[0]  # handles (if this node not active, child_0 not active)
+                     + active_end  # handle (otherwise, child_0 active)
+                     + indent(1) + 'VAR' + os.linesep
+                     + indent(2) + 'repeat_count_stage_0 : 1..max_repeat;' + os.linesep # 0 means one shot not satisfied, 1 means return success without running child.
+                     + indent(1) + 'ASSIGN' + os.linesep
+                     + indent(2) + 'init(repeat_count_stage_0) := max_repeat;' + os.linesep
+                     + indent(2) + 'next(repeat_count_stage_0) := (repeat_count_stage_1 = 0) ? max_repeat : repeat_count_stage_1;' + os.linesep
+                     )
+    return return_string
+
 
 
 # def create_leaf():
