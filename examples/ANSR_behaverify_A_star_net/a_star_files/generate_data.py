@@ -533,6 +533,50 @@ def generate_table(min_val, max_val, input_path, output_path):
     with open(output_path, 'w', encoding = 'utf-8') as output_file:
         output_file.writelines(lines)
 
+def generate_table_simple(min_val, max_val, input_path, output_path):
+    (left, right, up, down, no_action) = generate_sets(min_val, max_val, input_path)
+    print('--------------------')
+    print('no_action')
+    print(len(no_action))
+    lines = []
+    #for (cur_set, direction) in ((left, 'left'), (right, 'right'), (up, 'up'), (down, 'down'), (no_action, 'no_action')):
+    for (cur_set, direction) in ((left, 'We'), (right, 'Ea'), (up, 'No'), (down, 'So')):
+        print('--------------------')
+        print(direction)
+        new_set = simplify_set(cur_set)
+        for ((min_s_x, min_s_y, min_e_x, min_e_y), (max_s_x, max_s_y, max_e_x, max_e_y)) in new_set:
+            lines.append(
+                (
+                    'case{(and, '
+                    + (
+                        ('(eq, x_d, ' + str(min_s_x) + '), ')
+                        if min_s_x == max_s_x else
+                        ('(lte,' + str(min_s_x) + ', x_d), (lte, x_d, ' + str(max_s_x) + '), ')
+                    )
+                    + (
+                        ('(eq, y_d, ' + str(min_s_y) + '), ')
+                        if min_s_y == max_s_y else
+                        ('(lte,' + str(min_s_y) + ', y_d), (lte, y_d, ' + str(max_s_y) + '), ')
+                    )
+                    + (
+                        ('(eq, x_g, ' + str(min_e_x) + '), ')
+                        if min_e_x == max_e_x else
+                        ('(lte,' + str(min_e_x) + ', x_g), (lte, x_g, ' + str(max_e_x) + '), ')
+                    )
+                    + (
+                        ('(eq, y_g, ' + str(min_e_y) + ')')
+                        if min_e_y == max_e_y else
+                        ('(lte,' + str(min_e_y) + ', y_g), (lte, y_g, ' + str(max_e_y) + ')')
+                    )
+                    + ')} '
+                    + 'result{\'' + direction + '\'}'
+                    + os.linesep
+                )
+            )
+    lines.append('result{\'XX\'}' + os.linesep)
+    with open(output_path, 'w', encoding = 'utf-8') as output_file:
+        output_file.writelines(lines)
+
 def generate_table_original(min_val, max_val, input_path, output_path):
     (left, right, up, down, no_action) = generate_sets(min_val, max_val, input_path)
     lines = []

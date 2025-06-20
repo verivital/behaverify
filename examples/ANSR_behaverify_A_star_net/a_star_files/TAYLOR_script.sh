@@ -26,8 +26,9 @@ new_obs="./ignore/${new_obs}"
 filled_map="${new_obs//obstacles/mapFilled}"
 filled_obs=$(cat "${filled_map}")
 
-"${my_python}" generate_data.py "${filled_obs}"
-table="${new_obs//obstacles/table}"
-"${my_python}" table_to_training.py "${table}"
+"${my_python}" assemble_tree_SIMPLE_existing_obs.py "${filled_obs}"
+#"${my_python}" generate_data.py "${filled_obs}"
+table="${filled_obs//obstacles/table}"
+"${my_python}" SIMPLE_table_to_training.py "${table}"
 
 "${my_python}" ../draw_obstacles.py "${filled_obs}"

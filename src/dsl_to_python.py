@@ -378,7 +378,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
             new_misc_args_3 = create_misc_args(misc_args['init'], misc_args['loc'], 3)
             long_if_name = 'long_if_' + str(long_if_count)
             long_if_count = long_if_count + 1
-            long_if_string = indent(new_misc_args_1['indent_level']) + 'def ' + long_if_name + '(' + ('node' if misc_args['loc'] == 'environment' else '') + '):' + os.linesep
+            long_if_string = indent(new_misc_args_1['indent_level']) + 'def ' + long_if_name + '(' + ('self, node' if misc_args['loc'] == 'environment' else '') + '):' + os.linesep
             for case_result in case_results:
                 long_if_string += (
                     indent(new_misc_args_2['indent_level']) + 'if ' + format_code(case_result.condition, new_misc_args_2)[0] + ':' + os.linesep
@@ -386,7 +386,7 @@ def write_files(metamodel_file, model_file, main_name, write_location, serene_pr
                 )
             long_if_string += indent(new_misc_args_2['indent_level']) + 'return ' + resolve_variable_nondeterminism(default_result.values, new_misc_args_2) + os.linesep
             long_if_to_write.append(long_if_string)
-            return long_if_name + '(' + ('node' if misc_args['loc'] == 'environment' else '') + ')'
+            return ('self.' if misc_args['loc'] == 'environment' else '') + long_if_name + '(' + ('node' if misc_args['loc'] == 'environment' else '') + ')'
         return (
             '(' + os.linesep
             + ''.join(

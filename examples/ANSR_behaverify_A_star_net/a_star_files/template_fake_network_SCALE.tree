@@ -25,7 +25,7 @@ variables {
     variable { env drone_y VAR [min_val, max_val] assign{result{(idiv, (add, min_val, max_val), 2)}}}
     variable { env destination_x VAR [min_val, max_val] assign{result{drone_x}}}
     variable { env destination_y VAR [min_val, max_val] assign{result{drone_y}}}
-    variable { bl network DEFINE ENUM assign {
+    variable { env network DEFINE ENUM assign {
 	    REPLACE_FAKE_NETWORK
 	}
     }
