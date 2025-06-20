@@ -1,0 +1,24 @@
+configuration{} enumerations{} constants{}
+variables{
+    variable {bl x VAR [0, 3] assign{result{0}}}
+    variable {env y VAR BOOLEAN assign{result{False}}}
+}
+environment_update{
+    variable_statement{y assign{result{True, False}}}
+}
+checks{}
+environment_checks{
+    environment_check{Chk arguments{} read_variables{x} condition{(or, y, (gt, 0, x))}}
+}
+actions{
+    action{Act arguments{} local_variables{} read_variables{} write_variables{x} initial_values{}
+	update{
+	    variable_statement{x assign{case{y} result{(max, 0, (sub, x, 1)), 3} result{0}}}
+	    return_statement{case{(eq, 1, x)} result{failure} result{success}}
+	}
+    }
+}
+sub_trees {}
+tree {composite { Rt sequence children{Chk{} Act{}}}}
+tick_prerequisite {True}
+specifications {}

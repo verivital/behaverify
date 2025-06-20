@@ -63,6 +63,8 @@ def fill_holes(input_path):
     if tail_end in input_path:
         (left, right) = input_path.rsplit(tail_end, 1)
         output_path = left + new_tail_end + right
+        with open('./ignore/mapFilled' + tail_end + '.txt', 'w', encoding = 'utf-8') as output_file:
+            output_file.write(output_path)
         with open(output_path, 'w', encoding = 'utf-8') as output_file:
             output_file.writelines(lines_obstacles + ['##################################################################' + os.linesep] + lines_sizes)
         return

@@ -3,6 +3,7 @@ import sys
 import itertools
 from create_grid import create_grid
 from mass_basic_a_star_2 import mass_a_star
+from misc_util import create_tail_end, extract_info
 
 def generate_sets(min_val, max_val, input_path, return_grid = False, grid = None):
     if grid is None:
@@ -556,5 +557,8 @@ def generate_table_original(min_val, max_val, input_path, output_path):
 
 if __name__ == '__main__':
     # sys.setrecursionlimit(100000)
-    generate_table(0, 29, 'ignore/obstacles_29_30_2.txt', 'ignore/curTable_29_30_2.txt')
+    # generate_table(0, 29, 'ignore/obstacles_29_30_2.txt', 'ignore/curTable_29_30_2.txt')
     # generate_table_new(0, 29, 'ignore/obstacles_29_30_2.txt', 'ignore/newTable_29_30_2.txt')
+    (_my_min, _my_max, _my_fly, _my_num, _my_size) = extract_info(sys.argv[1])
+    _my_output_file = 'ignore/table' + create_tail_end(_my_max, _my_fly, _my_num, _my_size)
+    generate_table(_my_min, _my_max, sys.argv[1], _my_output_file)
