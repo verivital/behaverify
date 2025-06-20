@@ -28,6 +28,6 @@ filled_obs=$(cat "${filled_map}")
 
 "${my_python}" generate_data.py "${filled_obs}"
 table="${new_obs//obstacles/table}"
-"${my_python}" table_to_training.py "${filled_obs}"
+"${my_python}" table_to_training.py "${table}"
 
 "${my_python}" ../draw_obstacles.py "${filled_obs}"

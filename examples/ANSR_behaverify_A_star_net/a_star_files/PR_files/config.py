@@ -4,12 +4,12 @@ Created by Preston
 # #
 # # Dataset
 # #
-numbers = '14_67_1'
+numbers = '24_80_61_2'
 
 # input_path = '../scaling_scatter/inputsSmalls_' + numbers + '.py'
 # target_path = '../scaling_scatter/targetsSmalls_' + numbers + '.py'
-input_path = '../ignore/inputsSmallsFilled_' + numbers + '.py'
-target_path = '../ignore/targetsSmallsFilled_' + numbers + '.py'
+input_path = '../ignore/inputs_' + numbers + '.py'
+target_path = '../ignore/targets_' + numbers + '.py'
 batch_size = 2**20
 shuffle = True
 #
@@ -17,8 +17,8 @@ shuffle = True
 #
 input_size = 4
 all_same = True
-hidden_size = 2000
-hidden_count = 1
+hidden_size = 200
+hidden_count = 2
 layer_sizes = [32, 8, 4]
 output_size = 5
 #

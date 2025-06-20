@@ -560,5 +560,5 @@ if __name__ == '__main__':
     # generate_table(0, 29, 'ignore/obstacles_29_30_2.txt', 'ignore/curTable_29_30_2.txt')
     # generate_table_new(0, 29, 'ignore/obstacles_29_30_2.txt', 'ignore/newTable_29_30_2.txt')
     (_my_min, _my_max, _my_fly, _my_num, _my_size) = extract_info(sys.argv[1])
-    _my_output_file = 'ignore/table' + create_tail_end(_my_max, _my_fly, _my_num, _my_size)
+    _my_output_file = 'ignore/table' + create_tail_end(_my_max, _my_fly, _my_num, _my_size) + '.txt'
     generate_table(_my_min, _my_max, sys.argv[1], _my_output_file)
