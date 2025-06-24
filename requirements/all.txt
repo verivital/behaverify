@@ -1,0 +1,10 @@
+py_trees
+textx
+onnxruntime
+onnx
+graphviz
+docker
+pillow
+pandas
+jinja2
+matplotlib
