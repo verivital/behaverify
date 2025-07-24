@@ -31,6 +31,7 @@ examples/**/results/**
 examples/**/xml/**
 examples/**/LaTeX/**
 REPRODUCIBILITY/**/processed_data/**
+REPRODUCIBILITY/**/images/**
 REPRODUCIBILITY/**/results/**
 REPRODUCIBILITY/**/smv/**
 REPRODUCIBILITY/**/LaTeX/**
