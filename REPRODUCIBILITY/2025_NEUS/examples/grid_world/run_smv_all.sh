@@ -6,6 +6,6 @@ commands=( 'command_all_invar' 'command_all_ctl' )
 
 for network in "${networks[@]}"; do
     for command in "${commands[@]}"; do
-	./run_smv.sh $network "/home/serena/Tools/nuXmv -source ../../scripts/nuxmv_commands/${command}" "${command}"
+	./run_smv.sh $network "../../nuXmv -source ../../scripts/nuxmv_commands/${command}" "${command}"
     done
 done
