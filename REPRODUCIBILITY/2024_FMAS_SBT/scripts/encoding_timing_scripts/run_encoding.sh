@@ -18,7 +18,7 @@ encodings=($temp)
 
 temp=$(cat "$file_with_tests")
 tests=($temp)
-    
+
 num_encodings="${#encodings[@]}"
 num_tests="${#tests[@]}"
 

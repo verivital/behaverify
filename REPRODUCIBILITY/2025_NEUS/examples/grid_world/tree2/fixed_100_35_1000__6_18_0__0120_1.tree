@@ -1,0 +1,229 @@
+configuration {
+    #{ Here you specify various configuration options, such as Hypersafety }#
+    neural
+}
+enumerations {
+    #{ here you specify the enumerations used in the model}#
+    'We', 'Ea', 'No', 'So', 'XX'
+}
+constants {
+    #{ constants are used to synchronize values in a .tree file. }#
+    #{ example := 0 }#
+    #{ to use example elsewhere, simply type 'example' in place of any integer (quotes included) }#
+    min_val := 0, max_val := 6, number_of_obstacles := 18, max_obstacle_size := 0
+} end_constants
+
+variables {
+    #{ Variable declarations go here.
+	it is suggested, but not required, that the order of declaration be
+	Blackboard, Local, Environment.
+	If variable B depends on variable A, then variable A MUST be declared before B.
+    }#
+    variable { bl act VAR {'We', 'Ea', 'No', 'So', 'XX'} assign{result{'XX'}}}
+    variable { bl new VAR BOOLEAN assign{result{False}}}
+    variable { env x_d VAR [min_val, max_val] assign{result{3}}}
+    variable { env y_d VAR [min_val, max_val] assign{result{0}}}
+    variable { env x_g VAR [min_val, max_val] assign{result{x_d}}}
+    variable { env y_g VAR [min_val, max_val] assign{result{y_d}}}
+    variable { bl net NEURAL classification {'We', 'Ea', 'No', 'So', 'XX'}
+	inputs {x_d, y_d, x_g, y_g}
+	config {
+	    fixed 100 35
+	}
+	source {
+	    '../networks/1000__6_18_0__0120_1.onnx'
+	}
+    }
+    #{##########################################}#
+    variable { env obstacles DEFINE INT static array (mult, number_of_obstacles, 2) iterative_assign, index_var
+	condition {(eq, index_var, 0)} assign{result{0}}condition {(eq, index_var, 1)} assign{result{0}}
+condition {(eq, index_var, 2)} assign{result{0}}condition {(eq, index_var, 3)} assign{result{1}}
+condition {(eq, index_var, 4)} assign{result{1}}condition {(eq, index_var, 5)} assign{result{0}}
+condition {(eq, index_var, 6)} assign{result{1}}condition {(eq, index_var, 7)} assign{result{1}}
+condition {(eq, index_var, 8)} assign{result{1}}condition {(eq, index_var, 9)} assign{result{2}}
+condition {(eq, index_var, 10)} assign{result{1}}condition {(eq, index_var, 11)} assign{result{4}}
+condition {(eq, index_var, 12)} assign{result{1}}condition {(eq, index_var, 13)} assign{result{6}}
+condition {(eq, index_var, 14)} assign{result{2}}condition {(eq, index_var, 15)} assign{result{1}}
+condition {(eq, index_var, 16)} assign{result{2}}condition {(eq, index_var, 17)} assign{result{4}}
+condition {(eq, index_var, 18)} assign{result{2}}condition {(eq, index_var, 19)} assign{result{6}}
+condition {(eq, index_var, 20)} assign{result{3}}condition {(eq, index_var, 21)} assign{result{3}}
+condition {(eq, index_var, 22)} assign{result{3}}condition {(eq, index_var, 23)} assign{result{6}}
+condition {(eq, index_var, 24)} assign{result{4}}condition {(eq, index_var, 25)} assign{result{1}}
+condition {(eq, index_var, 26)} assign{result{4}}condition {(eq, index_var, 27)} assign{result{2}}
+condition {(eq, index_var, 28)} assign{result{5}}condition {(eq, index_var, 29)} assign{result{5}}
+condition {(eq, index_var, 30)} assign{result{6}}condition {(eq, index_var, 31)} assign{result{1}}
+condition {(eq, index_var, 32)} assign{result{6}}condition {(eq, index_var, 33)} assign{result{2}}
+condition {(eq, index_var, 34)} assign{result{6}}condition {(eq, index_var, 35)} assign{result{3}}
+	assign{result{0}}
+    }
+    variable { env obstacle_sizes DEFINE INT static array number_of_obstacles iterative_assign, index_var
+condition {(eq, index_var, 0)} assign{result{0}}
+condition {(eq, index_var, 1)} assign{result{0}}
+condition {(eq, index_var, 2)} assign{result{0}}
+condition {(eq, index_var, 3)} assign{result{0}}
+condition {(eq, index_var, 4)} assign{result{0}}
+condition {(eq, index_var, 5)} assign{result{0}}
+condition {(eq, index_var, 6)} assign{result{0}}
+condition {(eq, index_var, 7)} assign{result{0}}
+condition {(eq, index_var, 8)} assign{result{0}}
+condition {(eq, index_var, 9)} assign{result{0}}
+condition {(eq, index_var, 10)} assign{result{0}}
+condition {(eq, index_var, 11)} assign{result{0}}
+condition {(eq, index_var, 12)} assign{result{0}}
+condition {(eq, index_var, 13)} assign{result{0}}
+condition {(eq, index_var, 14)} assign{result{0}}
+condition {(eq, index_var, 15)} assign{result{0}}
+condition {(eq, index_var, 16)} assign{result{0}}
+condition {(eq, index_var, 17)} assign{result{0}}
+	assign{result{0}}
+    }
+} end_variables
+
+environment_update {
+    variable_statement {
+	x_g
+	assign {
+	    case {new} result {(loop, loop_var, [min_val, max_val] such_that True, loop_var)}
+	    result {x_g}
+	}
+    }
+    variable_statement {
+	y_g
+	assign {
+	    case{new} result {(loop, loop_var, [min_val, max_val] such_that True, loop_var)}
+	    result {y_g}
+	}
+    }
+    variable_statement {
+	x_d
+	assign {
+	    case {(eq, act, 'We')} result { (max, min_val, (sub, x_d, 1))}
+	    case {(eq, act, 'Ea')} result { (min, max_val, (add, x_d, 1))}
+	    result { x_d}
+	}
+    }
+    variable_statement {
+	y_d
+	assign {
+	    case {(eq, act, 'So')} result { (max, min_val, (sub, y_d, 1))}
+	    case {(eq, act, 'No')} result { (min, max_val, (add, y_d, 1))}
+	    result { y_d}
+	}
+    }	    
+} end_environment_update
+
+checks {
+} end_checks
+
+environment_checks {
+    environment_check {
+	NeedGoal
+	arguments {}
+	read_variables {}
+	condition {(and, (eq, x_g, x_d), (eq, y_g, y_d))}
+    }
+} end_environment_checks
+
+actions {
+    action {
+	NewGoal
+	arguments{}
+	local_variables {} end_local_variables
+	read_variables {} end_read_variables
+	write_variables {new, act} end_write_variables
+	initial_values {} end_initial_values
+	update {
+	    variable_statement {
+		new
+		assign{result{True}}
+	    }
+	    variable_statement {
+		act
+		assign {result{'XX'}}
+	    }
+	    return_statement {
+		result { running} end_result
+	    } end_return_statement
+	} end_update
+    } end_action
+    action {
+	Act
+	arguments{}
+	local_variables {} end_local_variables
+	read_variables {net} end_read_variables
+	write_variables {new, act} end_write_variables
+	initial_values {} end_initial_values
+	update {
+	    variable_statement {
+		new
+		assign{result{False}}
+	    }
+	    variable_statement {
+		act
+		assign {result{net}}
+	    }
+	    return_statement {
+		result { success} end_result
+	    } end_return_statement
+	} end_update
+    } end_action
+} end_actions
+
+sub_trees {#{ subtrees go here. }#} end_sub_trees
+
+tree {
+    composite {
+	Root selector
+	children {
+	    composite {
+		Seq sequence
+		children {
+		    NeedGoal {}
+		    NewGoal {}
+		}
+	    }
+	    Act {}
+	}
+    }
+} end_tree
+
+tick_prerequisite { (True) } end_tick_prerequisite
+
+specifications {
+    INVARSPEC {
+	(not,
+	    (or,
+		(loop, loop_var, [0, (sub, number_of_obstacles, 1)] such_that True,
+		    (and,
+			(lte, x_d, (index, obstacles, constant_index (mult, loop_var, 2))),
+			(gte, x_d, (sub, (index, obstacles, constant_index (mult, loop_var, 2)), (index, obstacle_sizes, constant_index loop_var))),
+			(lte, y_d, (index, obstacles, constant_index (add, (mult, loop_var, 2), 1))),
+			(gte, y_d, (sub, (index, obstacles, constant_index (add, (mult, loop_var, 2), 1)), (index, obstacle_sizes, constant_index loop_var)))
+		    )
+		)
+	    )
+	)
+    }
+    CTLSPEC {
+	(always_globally,
+	    (
+		(or,
+		    (always_finally,
+			(and,
+			    (eq, x_d at 1, x_g at 0),
+			    (eq, y_d at 1, y_g at 0)
+			)
+		    ),
+		    (loop, loop_var, [0, (sub, number_of_obstacles, 1)] such_that True,
+			(and,
+			    (lte, x_g at 0, (index, obstacles, constant_index (mult, loop_var, 2))),
+			    (gte, x_g at 0, (sub, (index, obstacles, constant_index (mult, loop_var, 2)), (index, obstacle_sizes, constant_index loop_var))),
+			    (lte, y_g at 0, (index, obstacles, constant_index (add, (mult, loop_var, 2), 1))),
+			    (gte, y_g at 0, (sub, (index, obstacles, constant_index (add, (mult, loop_var, 2), 1)), (index, obstacle_sizes, constant_index loop_var)))
+			)
+		    )
+		)
+	    )
+	)
+    }
+} end_specifications

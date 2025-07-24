@@ -88,7 +88,7 @@ def write_files(metamodel_file, model_file, output_file, insert_only, recursion_
         return cur_func((constants, loop_references))
 
     def format_function_if(_, function_call, misc_args):
-        return ['(' + format_code(function_call.values[1], misc_args)[0] + ' if ' + format_code(function_call.values[0], misc_args)[0] + ' else ' + format_code(function_call.values[2], misc_args)[0] + ')']
+        return ['\\IfThenElse{' + format_code(function_call.values[1], misc_args)[0] + '}{' + format_code(function_call.values[0], misc_args)[0] + '}{' + format_code(function_call.values[2], misc_args)[0] + '}']
 
     def format_function_loop(_, function_call, misc_args):
         return execute_loop(function_call, format_code, function_call.values[0], misc_args)
@@ -216,6 +216,11 @@ def write_files(metamodel_file, model_file, output_file, insert_only, recursion_
         no_bracket = misc_args['loc'] == 'DEFINE'
         for value in values:
             formatted_values.extend(format_code(value, misc_args))
+        formatted_values = list(set(formatted_values)) # remove duplicates
+        if len(formatted_values) == 0:
+            raise BTreeException(None, 'Encountered variable nondeterminism with 0 options')
+        if len(formatted_values) == 1:
+            return (formatted_values[0], False)
         try:
             if len(formatted_values) > 1:
                 int_vals = list(map(int, formatted_values))
@@ -225,33 +230,68 @@ def write_files(metamodel_file, model_file, output_file, insert_only, recursion_
                     no_bracket = True
         except:
             pass
-        return ('' if no_bracket else '\\{') + ', '.join(formatted_values) + ('' if no_bracket else '\\}')
+        return (('' if no_bracket else '\\{') + ', '.join(formatted_values) + ('' if no_bracket else '\\}'), True)
 
-    def handle_assign(assign, misc_args):
+    def handle_assign(assign, misc_args, assign_to = None):
         case_results = assign.case_results
         default_result = assign.default_result
         if len(case_results) == 0:
-            return '\\begin{math}' + resolve_variable_nondeterminism(default_result.values, misc_args) + '\\end{math}' # NOTE: no linesep at the end!
+            (value, nondeterminism) = resolve_variable_nondeterminism(default_result.values, misc_args)
+            token = '{ }\\begin{math}' + ('\\in{}' if nondeterminism else '\\coloneqq{}') + '\\end{math}{ }'
+            return ((assign_to + token) if assign_to is not None else '') + '\\begin{math}' + value + '\\end{math}' # NOTE: no linesep at the end!
         return_string = ''
-        branch_count = 0
+        # branch_count = 0
         truth_terminated = False
+        cond_res_pairs = []
         for case_result in case_results:
             cond = format_code(case_result.condition, misc_args)[0]
+            (value, nondeterminism) = resolve_variable_nondeterminism(case_result.values, misc_args)
+            token = '{ }\\begin{math}' + ('\\in{}' if nondeterminism else '\\coloneqq{}') + '\\end{math}{ }'
+            res = ((assign_to + token) if assign_to is not None else '') + '\\begin{math}' + value + '\\end{math}'
             if cond == '\\True{}':
-                return_string += ('' if branch_count == 0 else indent(misc_args['indent_level'] + branch_count)) + '\\begin{math}' + resolve_variable_nondeterminism(case_result.values, misc_args) + '\\end{math}'
+                # return_string += ('' if branch_count == 0 else indent(misc_args['indent_level'] + branch_count)) + '\\begin{math}' + resolve_variable_nondeterminism(case_result.values, misc_args) + '\\end{math}'
+                cond_res_pairs.append((None, res))
                 truth_terminated = True
                 break
             if cond == '\\False{}':
                 continue
-            return_string += (
-                ('' if branch_count == 0 else indent(misc_args['indent_level'] + 1 + branch_count)) + '\\texttt{(}'
-                + '\\begin{math}' + resolve_variable_nondeterminism(case_result.values, misc_args) + '\\end{math}\\\\'
-                + indent(misc_args['indent_level'] + 1 + branch_count) + '\\texttt{if }\\begin{math}' + format_code(case_result.condition, misc_args)[0] + '\\end{math}\\texttt{ else}' + '\\\\'
-            )
-            branch_count = branch_count + 1
+            cond_res_pairs.append((cond, res))
+            # return_string += (
+            #     ('' if branch_count == 0 else indent(misc_args['indent_level'] + 1 + branch_count)) + '\\texttt{(}'
+            #     + '\\begin{math}' + resolve_variable_nondeterminism(case_result.values, misc_args) + '\\end{math}\\\\'
+            #     + indent(misc_args['indent_level'] + 1 + branch_count) + '\\texttt{if }\\begin{math}' + format_code(case_result.condition, misc_args)[0] + '\\end{math}\\texttt{ else}' + '\\\\'
+            # )
+            # branch_count = branch_count + 1
         if not truth_terminated:
-            return_string += ('' if branch_count == 0 else indent(misc_args['indent_level'] + branch_count)) + '\\begin{math}' + resolve_variable_nondeterminism(default_result.values, misc_args) + '\\end{math}'
-        return_string += '\\texttt{' + (')' * (branch_count)) + '}'
+            (value, nondeterminism) = resolve_variable_nondeterminism(default_result.values, misc_args)
+            token = '{ }\\begin{math}' + ('\\in{}' if nondeterminism else '\\coloneqq{}') + '\\end{math}{ }'
+            res = ((assign_to + token) if assign_to is not None else '') + '\\begin{math}' + value + '\\end{math}'
+            cond_res_pairs.append((None, res))
+            # return_string += ('' if branch_count == 0 else indent(misc_args['indent_level'] + branch_count)) + '\\begin{math}' + resolve_variable_nondeterminism(default_result.values, misc_args) + '\\end{math}'
+        if len(cond_res_pairs) == 0:
+            raise BTreeException(None, 'Encountered if else with 0 statements?')
+        if len(cond_res_pairs) == 1:
+            # there is exactly one option, so there's no if-else about it.
+            return cond_res_pairs[0][1]
+        if assign_to is None:
+            return_string = '\\texttt{(}\\\\'
+            is_first = True
+            for (cond, res) in cond_res_pairs:
+                return_string += (
+                    indent(misc_args['indent_level'] + 1) + '\\texttt{' + ('if ' if is_first else ('else' if cond is None else 'elif ')) + '}' + (cond if cond is not None else '') + '\\texttt{:}\\\\'
+                    + indent(misc_args['indent_level'] + 2) + res + '\\\\' #('\\texttt{)}' if cond is None else '\\\\')
+                )
+                is_first = False
+            return_string += indent(misc_args['indent_level']) + '\\texttt{)}'
+        else:
+            return_string = ''
+            is_first = True
+            for (cond, res) in cond_res_pairs:
+                return_string += (
+                    indent(misc_args['indent_level']) + '\\texttt{' + ('if ' if is_first else ('else' if cond is None else 'elif ')) + '}' + (cond if cond is not None else '') + '\\texttt{:}\\\\'
+                    + indent(misc_args['indent_level'] + 1) + res + '\\\\' #('\\texttt{)}' if cond is None else '\\\\')
+                )
+                is_first = False
         return return_string
         # return (
         #     '\\texttt{(}'
@@ -356,7 +396,8 @@ def write_files(metamodel_file, model_file, output_file, insert_only, recursion_
                 + ']'
             )
             return (variable_assignment(variable, assign_string, misc_args, array_mode = 1) if assign_to_var else assign_string)
-        return (variable_assignment(variable, handle_assign(variable_statement.assign, misc_args), misc_args, array_mode = 0) if assign_to_var else handle_assign(variable_statement.assign, misc_args))
+        # return (variable_assignment(variable, handle_assign(variable_statement.assign, misc_args), misc_args, array_mode = 0) if assign_to_var else handle_assign(variable_statement.assign, misc_args))
+        return (handle_assign(variable_statement.assign, misc_args, assign_to = format_variable_name_only(variable, misc_args)) + '\\\\') if assign_to_var else handle_assign(variable_statement.assign, misc_args)
 
     def handle_read_statement(read_statement, misc_args):
         new_misc_args = create_misc_args(misc_args['init'], misc_args['loc'], misc_args['indent_level'] + 1)
@@ -618,7 +659,7 @@ def write_files(metamodel_file, model_file, output_file, insert_only, recursion_
         'mult' : ('\\cdot', format_function_between),
         # 'division' : ('//', format_function_between),  # this rounds to negative infinity, we want rounds to 0.
         'idiv' : ('//', format_function_between),
-        'mod' : ('mod', format_function_between),
+        'mod' : ('mod', format_function_before),
         'rdiv' : ('/', format_function_between),
         'floor' : ('\\floor', format_function_one_arg),
         'count' : ('count', format_function_before),

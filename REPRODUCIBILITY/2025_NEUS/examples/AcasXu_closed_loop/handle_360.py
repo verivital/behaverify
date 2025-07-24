@@ -233,5 +233,5 @@ content = content.replace('REPLACE_DISTANCE', handle_distance_v2())
 content = content.replace('REPLACE_ARCTAN_XY', handle_arctan_v2(True))
 content = content.replace('REPLACE_ARCTAN_YX', handle_arctan_v2(False))
 
-with open('acasxu_replaced_360.tree', 'w', encoding = 'utf-8') as output_file:
+with open('./tree/acasxu_360.tree', 'w', encoding = 'utf-8') as output_file:
     output_file.write(content)

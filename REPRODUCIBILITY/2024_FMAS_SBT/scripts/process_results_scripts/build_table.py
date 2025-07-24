@@ -30,9 +30,7 @@ encoding_combo = {
     'opt' : ['no_opt', 'last_opt', 'first_opt', 'full_opt'],
     'full_opt' : ['full_opt'],
     'simple_robot' : ['full_opt', 'full_opt_CHANGED'],
-    'bigger_fish' : ['full_opt', 'full_opt_CHANGED'],
-    '2025_CAV_fish' : ['internal', 'no_internal'],
-    'fake_opt' : ['',]
+    'bigger_fish' : ['full_opt', 'full_opt_CHANGED']
 }
 encoding_name_to_result_name = {
     'aut' : 'aut_',
@@ -46,27 +44,23 @@ encoding_name_to_result_name = {
     'last_opt' : 'last_opt_',
     'first_opt' : 'first_opt_',
     'full_opt' : 'full_opt_',
-    'full_opt_CHANGED' : 'full_opt_CHANGED_',
-    'internal' : 'internal_',
-    '' : 'full_opt_'
+    'full_opt_CHANGED' : 'full_opt_CHANGED_'
 }
 
 encoding_mark = {
     'aut' : ('red', 'o'),
     'func' : ('blue', 'v'),
-    'norm' : ('gray', '^'),
-    'no_internal' : ('gray', '*'),
-    'internal' : ('blue', 'o'),
+    'norm' : ('green', '^'),
+    'no_internal' : ('yellow', '*'),
     'depth' : ('magenta', 'x'),
     'aut_s' : ('black', '.'),
     's_var' : ('tan', '.'),
     # the below and above will never run at the same time. no conflict
     'no_opt' : ('red', 'o'),
     'last_opt' : ('blue', 'v'),
-    'first_opt' : ('gray', '^'),
+    'first_opt' : ('green', '^'),
     'full_opt' : ('black', '*'),
     'full_opt_CHANGED' : ('blue', '^'),
-    '' : ('black', '*')
 }
 
 #reach = re.compile('reachable states: (?P<val1>\d+(\.\d+e\+\d+|)) \(2\^(?P<val2>\d+(\.\d+|))\) out of (?P<val3>\d+(\.\d+e\+\d+|)) \(2\^(?P<val4>\d+(\.\d+|))\)')
@@ -93,7 +87,7 @@ steps = args.step
 encoding_codes = args.encodings
 
 for encoding_code in encoding_codes:
-    print(encoding_code)
+    #print(encoding_code)
     encodings = encoding_combo[encoding_code]
     for i in range(max(len(folder_names), len(file_names), len(mins), len(maxs), len(steps), len(encoding_codes))):
         group_name = folder_names[i if i < len(folder_names) else -1]
@@ -127,7 +121,6 @@ for encoding_code in encoding_codes:
 
         for encoding_name in encodings:
             encoding_result_name = encoding_name_to_result_name[encoding_name]
-            print(encoding_result_name)
 
             diameters.append([])
             total_v1_states.append([])
@@ -321,9 +314,9 @@ for encoding_code in encoding_codes:
                     skip_invar_resident = False
 
         # print(diameters)
-        print(found_ctl_silent)
-        escaped_encodings = list(map(lambda x: x.replace('_', '\\_'), encodings))
-        escaped_file_name = file_name.replace('_', '\\_')
+
+        escaped_encodings = list(map(lambda x: x.replace('_', '\_'), encodings))
+        escaped_file_name = file_name.replace('_', '\_')
 
         if not skip_diamater:
             df = pd.DataFrame(diameters, columns=experiments, index=escaped_encodings)
@@ -489,13 +482,10 @@ for encoding_code in encoding_codes:
             plt.ylabel(y_label)
             plt.xlabel(x_label)
             plt.title(title)
-            if encodings[0] == '':
-                plt.legend(['BehaVerify',])
-            else:
-                plt.legend(encodings)
+            plt.legend(encodings)
             plt.tight_layout()
             plt.savefig(PATH_DIRECTION + group_name + '/processed_data/pictures/' + encoding_code + '/' + file_name + '_' + file_end + '.png', bbox_inches = 'tight')
-            print(PATH_DIRECTION + group_name + '/processed_data/pictures/' + encoding_code + '/' + file_name + '_' + file_end + '.png')
+
             plt.clf()
 
         # for i in range(len(encodings)):

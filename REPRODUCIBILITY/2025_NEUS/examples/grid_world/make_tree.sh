@@ -8,7 +8,7 @@ modes=("table" "fixed 140 48" "fixed 100 35" "float 140")
 network_dir="./networks"
 
 # Template file
-template="template.tree"
+template="./template.tree"
 
 # Output directory for generated files
 output_dir="./tree"

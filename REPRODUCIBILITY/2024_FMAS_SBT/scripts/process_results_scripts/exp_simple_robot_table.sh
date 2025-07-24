@@ -20,8 +20,8 @@ mkdir "${path_name}/processed_data"
 mkdir "${path_name}/processed_data/tables"
 mkdir "${path_name}/processed_data/pictures"
 #encoding_groups=("all" "internal" "core" "aut" "func" "opt")
-encoding_groups=("opt")
-# encoding_groups=("simple_robot")
+#encoding_groups=("opt")
+encoding_groups=("simple_robot")
 for encoding_group in "${encoding_groups[@]}"; do
     mkdir "${path_name}/processed_data/tables/${encoding_group}"
     mkdir "${path_name}/processed_data/pictures/${encoding_group}"

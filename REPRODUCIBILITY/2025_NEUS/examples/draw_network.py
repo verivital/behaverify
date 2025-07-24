@@ -98,7 +98,9 @@ def draw_grid(file_name, network_file, end_x, end_y, x_size, y_size):
                 raise RuntimeError("what")
             draw.line([(center_x, center_y), (dir_x, dir_y)], fill = COLORS['d'], width = line_size)
             draw.line([(arrow_1_x, arrow_1_y), (dir_x, dir_y), (arrow_2_x, arrow_2_y)], fill = COLORS['d'], width = line_size)
-    image.save(file_name.replace('.txt', '.png').replace('obstacles', 'map_network'))
+    network_name = network_file.split('/')[-1]
+    network_name = network_name.split('.')[0]
+    image.save(file_name.replace('.txt', '.png').replace('obstacles', 'map_network' + network_name + '__' + str(end_x) + '_' + str(end_y)))
 
 #file_name, network_file, end_x, end_y, x_size, y_size
 draw_grid(sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4]), int(sys.argv[5]), int(sys.argv[6]))
