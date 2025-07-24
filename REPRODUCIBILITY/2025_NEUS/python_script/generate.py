@@ -7,7 +7,7 @@ def generate(write_location):
     client = docker.from_env()
     behaverify = client.containers.get(CONTAINER_NAME)
     behaverify.start()
-    command = TEST_DIR + '/' + USER + '.sh ' + TEST_DIR + ' ' + BEHAVERIFY_VENV + ' ' + RESULTS_VENV
+    command = TEST_DIR + '/' + USER + '.sh ' + TEST_DIR + ' ' + BEHAVERIFY_VENV
     serene_exec(behaverify, command, 'Results Script', True)
     copy_out_of(behaverify, TEST_DIR + '/examples', write_location + '.tar')
 

@@ -42,10 +42,8 @@ RUN echo $USER > /home/$USER/user.txt
 RUN python3 -m venv /home/$USER/python_venvs/behaverify
 RUN /home/$USER/python_venvs/behaverify/bin/python3 -m pip install --upgrade pip
 RUN /home/$USER/python_venvs/behaverify/bin/python3 -m pip install -r /home/$USER/behaverify/REPRODUCIBILITY/$VENUE/requirements/core.txt
-RUN python3 -m venv /home/$USER/python_venvs/results
-RUN /home/$USER/python_venvs/results/bin/python3 -m pip install --upgrade pip
-RUN /home/$USER/python_venvs/results/bin/python3 -m pip install -r /home/$USER/behaverify/REPRODUCIBILITY/$VENUE/requirements/drawing.txt
-RUN /home/$USER/python_venvs/results/bin/python3 -m pip install -r /home/$USER/behaverify/REPRODUCIBILITY/$VENUE/requirements/graphing.txt
+RUN /home/$USER/python_venvs/behaverify/bin/python3 -m pip install -r /home/$USER/behaverify/REPRODUCIBILITY/$VENUE/requirements/drawing.txt
+RUN /home/$USER/python_venvs/behaverify/bin/python3 -m pip install -r /home/$USER/behaverify/REPRODUCIBILITY/$VENUE/requirements/graphing.txt
 
 WORKDIR /home/$USER
 
