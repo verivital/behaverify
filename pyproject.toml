@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools >= 80.9.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "behaverify"
+version = "0.0.1"
+authors = [
+  { name="Serena Serafina Serbinowska", email="serena.service.email@proton.me" }
+]
+description = "A tool for formally verification of behavior trees"
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers = []
+license = "MIT"
+license-files = ["LICEN[CS]E*"]
+dependencies = [
+  "py-trees>=2.2.3",
+  "textX>=4.1.0",
+  "onnx>=1.18.0",
+  "onnxruntime>=1.22.1",
+  "graphviz>=0.20.3",
+  "pillow>=11.1.0",
+  "pandas>=2.2.3",
+  "Jinja2>=3.1.5",
+  "matplotlib>=3.10.0"
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"behaverify" = ["haskell_files/*.hs", "metamodel/*.tx", "tick_overwrite/*.py", "tikz_files/*.tex"]

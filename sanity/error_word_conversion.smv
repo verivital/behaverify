@@ -1,5 +1,0 @@
-MODULE main
-    VAR
-	var : signed word[5];
-    ASSIGN
-	var := signed word[5](2);

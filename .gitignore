@@ -41,3 +41,4 @@ REPRODUCIBILITY/**/python/**
 REPRODUCIBILITY/**/haskell/**
 REPRODUCIBILITY/**/dense_fixed/**
 REPRODUCIBILITY/**/sparse_random/**
+src/behaverify.egg-info/

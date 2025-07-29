@@ -1,2 +1,0 @@
-LTLSPEC G (execute.active -> blackboard.battery_reading >= blackboard.battery_threshold);
-LTLSPEC G (execute.active -> blackboard.battery_reading_stage_1 >= blackboard.battery_threshold);
