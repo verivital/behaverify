@@ -7,6 +7,7 @@ from behaverify.dsl_to_haskell import dsl_to_haskell
 from behaverify.dsl_to_latex import dsl_to_latex
 from behaverify.dsl_to_nuxmv import dsl_to_nuxmv
 from behaverify.dsl_to_python import dsl_to_python
+from behaverify.counter_trace import counter_trace
 
 def main():
     metamodel_file = None
@@ -101,6 +102,17 @@ def main():
         arg_parser.add_argument('--no_checks', action = 'store_true')
         args = arg_parser.parse_args()
         dsl_to_python(metamodel_file, args.model_file, args.name, args.location, args.serene_print, args.max_iter, args.no_var_print, args.py_tree_print, args.recursion_limit, args.safe_assignment, args.no_checks)
+    elif args.mode == 'trace':
+        arg_parser = argparse.ArgumentParser()
+        arg_parser.add_argument('mode')
+        arg_parser.add_argument('model_file')
+        arg_parser.add_argument('trace_file')
+        arg_parser.add_argument('location')
+        arg_parser.add_argument('name')
+        arg_parser.add_argument('--do_not_trim', action = 'store_true')
+        arg_parser.add_argument('--recursion_limit', type = int, default = 0)
+        args = arg_parser.parse_args()
+        counter_trace(metamodel_file, args.model_file, args.trace_file, args.location, args.do_not_trim, args.recursion_limit)
     else:
         print('Unknown mode. Modes are haskell, latex, nuxmv, or python. Exiting')
 

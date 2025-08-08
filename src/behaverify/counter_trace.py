@@ -181,7 +181,7 @@ def get_root_from_BehaVerify_json(nodes):
             return node
     raise ValueError('No node without a parent')
 
-def main(metamodel_file, model_file, trace_file, output_folder, var_detailed_nodes = False):
+def counter_trace(metamodel_file, model_file, trace_file, output_folder, var_detailed_nodes = False, do_not_trim = False, recursion_limit = 0):
     def import_dsl():
         nonlocal nodes, root_node_name, variables
         if not os.path.isfile(model_file):
@@ -194,9 +194,9 @@ def main(metamodel_file, model_file, trace_file, output_folder, var_detailed_nod
                 output_file = None,
                 keep_stage_0 = True,
                 keep_last_stage = True,
-                do_not_trim = True,
+                do_not_trim = do_not_trim,
                 behave_only = False,
-                recursion_limit = 0,
+                recursion_limit = recursion_limit,
                 return_values = True,
                 skip_grammar_check = True,
                 record_times = None
@@ -270,5 +270,7 @@ if __name__ == '__main__':
     arg_parser.add_argument('model_file')
     arg_parser.add_argument('trace_file')
     arg_parser.add_argument('output_folder')
+    arg_parser.add_argument('--do_not_trim', action = 'store_true')
+    arg_parser.add_argument('--recursion_limit', type = int, default = 0)
     args = arg_parser.parse_args()
-    main(args.metamodel_file, args.model_file, args.trace_file, args.output_folder)
+    counter_trace(args.metamodel_file, args.model_file, args.trace_file, args.output_folder, args.do_not_trim, args.recursion_limit)
