@@ -4,8 +4,8 @@ It is used to convert .tree files to tikz.
 It contains a variety of utility functions.
 
 depends on:
-tikz_files/end.tex
-tikz_files/start.tex
+data/tikz_files/end.tex
+data/tikz_files/start.tex
 
 Author: Serena Serafina Serbinowska
 Last Edit: 2025-04-22
@@ -808,12 +808,12 @@ def dsl_to_latex(metamodel_file, model_file, output_file, insert_only, recursion
             end_location = None
             start_location = None
             try:
-                end_location = files('behaverify').joinpath('tikz_files', 'end.tex')
-                start_location = files('behaverify').joinpath('tikz_files', 'start.tex')
+                end_location = files('behaverify').joinpath('data', 'tikz_files', 'end.tex')
+                start_location = files('behaverify').joinpath('data', 'tikz_files', 'start.tex')
             except ModuleNotFoundError:
                 print('did not find module; attempted to find files directly')
-                end_location = os.path.dirname(os.path.realpath(__file__)) + '/tikz_files/end.tex'
-                start_location = os.path.dirname(os.path.realpath(__file__)) + '/tikz_files/start.tex'
+                end_location = os.path.dirname(os.path.realpath(__file__)) + '/data/tikz_files/end.tex'
+                start_location = os.path.dirname(os.path.realpath(__file__)) + '/data/tikz_files/start.tex'
             with open(start_location, 'r', encoding = 'utf-8') as start_file:
                 start = start_file.read()
             with open(end_location, 'r', encoding = 'utf-8') as end_file:

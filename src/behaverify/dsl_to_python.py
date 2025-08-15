@@ -1327,9 +1327,9 @@ def dsl_to_python(metamodel_file, model_file, main_name, write_location, serene_
         if serene_print:
             overwrite_location = None
             try:
-                overwrite_location = files('behaverify').joinpath('tick_overwrite', 'tick_overwrite.py')
+                overwrite_location = files('behaverify').joinpath('data', 'tick_overwrite', 'tick_overwrite.py')
             except ModuleNotFoundError:
-                overwrite_location = os.path.dirname(os.path.realpath(__file__)) + '/tick_overwrite/tick_overwrite.py'
+                overwrite_location = os.path.dirname(os.path.realpath(__file__)) + '/data/tick_overwrite/tick_overwrite.py'
                 print('did not find module; attempted to find files directly')
             with open(overwrite_location, 'r', encoding = 'utf-8') as read_file:
                 return_string += read_file.read()

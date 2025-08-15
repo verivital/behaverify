@@ -23,7 +23,7 @@ CODES = {
 }
 
 
-def draw_grid(file_name, network_file, end_x, end_y, x_size, y_size):
+def draw_grid(file_name, network_file, end_x, end_y, x_size, y_size, write_file = None):
     grid = create_grid(file_name, 0, x_size - 1)
     circle_mode = (grid[end_x][end_y] == 1)
     grid[end_x][end_y] = 'g'
@@ -100,7 +100,10 @@ def draw_grid(file_name, network_file, end_x, end_y, x_size, y_size):
                 raise RuntimeError("what")
             draw.line([(center_x, center_y), (dir_x, dir_y)], fill = COLORS['d'], width = line_size)
             draw.line([(arrow_1_x, arrow_1_y), (dir_x, dir_y), (arrow_2_x, arrow_2_y)], fill = COLORS['d'], width = line_size)
-    image.save(file_name.replace('.txt', '.png').replace('obstacles', 'map_network'))
+    if write_file is None:
+        image.save(file_name.replace('.txt', '.png').replace('obstacles', 'map_network'))
+    else:
+        image.save(write_file)
 
 #file_name, network_file, end_x, end_y, x_size, y_size
 if __name__ == '__main__':

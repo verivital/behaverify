@@ -1,47 +1,59 @@
 import sys
 from behaverify.grid_world_draw.draw_output import create_grid_from_states, draw_grid, draw_grid_line, create_gif
 
-def handle_file(file_name, output_name, x_size, y_size):
+
+def handle_file(file_name, output_name, x_size, y_size, stage = -1):
     with open(file_name, 'r', encoding = 'utf-8') as input_file:
-        list_of_states = []
+        list_of_states = [{}]
         started = False
+        vals = {}
         for line in input_file.readlines():
             if 'State' in line:
-                list_of_states.append({})
+                vals = {'x_d' : -1, 'y_d' : -1, 'x_g' : -1, 'y_g' : -1}
+                if len(list_of_states[-1]) != 0:
+                    list_of_states.append({})
                 started = True
             elif not started:
                 continue
-            elif 'x_d' in line:
-                list_of_states[-1]['x_d'] = int(line.split(':')[1].strip())
-            elif 'y_d' in line:
-                list_of_states[-1]['y_d'] = int(line.split(':')[1].strip())
-            elif 'x_g' in line:
-                list_of_states[-1]['x_g'] = int(line.split(':')[1].strip())
-            elif 'y_g' in line:
-                list_of_states[-1]['y_g'] = int(line.split(':')[1].strip())
+            elif 'x_d_stage_' in line:
+                stage_num = int(((line.split('=')[0]).split('_')[-1]).strip())
+                if vals['x_d'] < stage_num and (stage < 0 or stage_num < stage):
+                    list_of_states[-1]['x_d'] = int(line.split('=')[1].strip())
+                    vals['x_d'] = stage_num
+            elif 'y_d_stage_' in line:
+                stage_num = int(((line.split('=')[0]).split('_')[-1]).strip())
+                if vals['y_d'] < stage_num and (stage < 0 or stage_num < stage):
+                    list_of_states[-1]['y_d'] = int(line.split('=')[1].strip())
+                    vals['y_d'] = stage_num
+            elif 'x_g_stage_' in line:
+                stage_num = int(((line.split('=')[0]).split('_')[-1]).strip())
+                if vals['x_g'] < stage_num and (stage < 0 or stage_num < stage):
+                    list_of_states[-1]['x_g'] = int(line.split('=')[1].strip())
+                    vals['x_g'] = stage_num
+            elif 'y_g_stage_' in line:
+                stage_num = int(((line.split('=')[0]).split('_')[-1]).strip())
+                if vals['y_g'] < stage_num and (stage < 0 or stage_num < stage):
+                    list_of_states[-1]['y_g'] = int(line.split('=')[1].strip())
+                    vals['y_g'] = stage_num
+            elif 'node' in line:
+                continue
+            elif 'status' in line:
+                continue
+            elif 'active' in line:
+                continue
             elif 'obstacles' in line:
                 key = 'obstacles'
                 if key not in list_of_states[-1]:
                     list_of_states[-1][key] = {}
-                (_, right) = line.split(':')
-                right = right.replace('[', '').replace(']', '')
-                for (index, val) in enumerate(right.split(',')):
-                    val = int(val.strip())
-                    list_of_states[-1][key][index] = val
+                (left, right) = line.split('=')
+                list_of_states[-1][key][int(left.rsplit('_', 1)[1].strip())] = int(right.strip())
             elif 'obstacle_sizes' in line:
                 key = 'obstacle_sizes'
                 if key not in list_of_states[-1]:
                     list_of_states[-1][key] = {}
-                (_, right) = line.split(':')
-                right = right.replace('[', '').replace(']', '')
-                for (index, val) in enumerate(right.split(',')):
-                    val = int(val.strip())
-                    list_of_states[-1][key][index] = val
+                (left, right) = line.split('=')
+                list_of_states[-1][key][int(left.rsplit('_', 1)[1].strip())] = int(right.strip())
         previous_states = list_of_states[0]
-        if 'obstacles' not in previous_states:
-            previous_states['obstacles'] = []
-        if 'obstacle_sizes' not in previous_states:
-            previous_states['obstacle_sizes'] = []
         index = 0
         for (index, states) in enumerate(list_of_states):
             if 'x_d' not in states:
@@ -70,6 +82,6 @@ def handle_file(file_name, output_name, x_size, y_size):
         create_gif(index, output_name)
     return
 
+#file_name, output_name, x_size, y_size
 if __name__ == '__main__':
-    #file_name, output_name, x_size, y_size
     handle_file(sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4]))

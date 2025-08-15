@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "behaverify"
 version = "0.0.1"
 authors = [
-  { name="Serena Serafina Serbinowska", email="serena.service.email@proton.me" }
+  { name="Serena Serafina Serbinowska", email="serena.serbinowska.work@proton.me" }
 ]
 description = "A tool for formally verification of behavior trees"
 readme = "README.md"
@@ -30,7 +30,7 @@ dependencies = [
 package-dir = {"" = "src"}
 
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["src", "src/grid_world_draw"]
 
 [tool.setuptools.package-data]
-"behaverify" = ["haskell_files/*.hs", "metamodel/*.tx", "tick_overwrite/*.py", "tikz_files/*.tex"]
+"behaverify" = ["data/haskell_files/*.hs", "data/metamodel/*.tx", "data/tick_overwrite/*.py", "data/tikz_files/*.tex"]

@@ -4,7 +4,7 @@ It is used to create Haskell code from BehaVerify DSL for Behavior Trees.
 It contains a variety of utility functions.
 
 Depends on
-haskell_file/BehaviorTreeCore.hs
+data/haskell_file/BehaviorTreeCore.hs
 
 Author: Serena Serafina Serbinowska
 Last Edit: 2024-03-14
@@ -1382,9 +1382,9 @@ def dsl_to_haskell(metamodel_file, model_file, location, output_name, max_iter, 
         os.makedirs(my_location)
     core_location = None
     try:
-        core_location = files('behaverify').joinpath('haskell_files', 'BehaviorTreeCore.hs')
+        core_location = files('behaverify').joinpath('data', 'haskell_files', 'BehaviorTreeCore.hs')
     except ModuleNotFoundError:
-        core_location = os.path.dirname(os.path.realpath(__file__)) + '/haskell_files/BehaviorTreeCore.hs'
+        core_location = os.path.dirname(os.path.realpath(__file__)) + '/data/haskell_files/BehaviorTreeCore.hs'
         print('did not find module; attempted to find files directly')
     shutil.copy(core_location, my_location + 'BehaviorTreeCore.hs')
     with open(my_location + 'SereneRandomizer.hs', 'w', encoding='utf-8') as write_file:

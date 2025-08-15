@@ -57,6 +57,6 @@ tree {
 }
 tick_prerequisite {(True)}
 specifications {
-    CTLSPEC {(always_globally, (always_finally, (and, (eq, x_d at -1, x_g at 0), (eq, y_d at 1, y_g at 0))))}
     CTLSPEC {(always_globally, (exists_finally, (and, (eq, x_d at -1, x_g at 0), (eq, y_d at 1, y_g at 0))))}
+    CTLSPEC {(always_globally, (always_finally, (and, (eq, x_d at -1, x_g at 0), (eq, y_d at 1, y_g at 0))))}
 }

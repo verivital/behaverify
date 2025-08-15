@@ -1,4 +1,4 @@
-configuration {} enumerations {} constants {max_start := 5, max_val := 100}
+configuration {} enumerations {} constants {max_start := 5, max_val := 4000}
 variables {
     variable { bl x VAR [0, max_val]
 	assign{ result{(loop, i, [1, max_start] such_that True, i)}}
