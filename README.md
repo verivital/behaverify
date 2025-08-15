@@ -6,7 +6,7 @@ To recreate tests, see REPRODUCIBILITY.
 
 # References
 
-Serena S. Serbinowska, Diego Manzanas Lopez, Dung Thuy Nguyen and Taylor T. Johnson, Neuro-Symbolic Behavior Trees and Their Verification, 2nd International Conference on Neuro-symbolic Systems (NeuS2025), Philadelphia, Pennsylvania, May 2025. https://neus-2025.github.io/files/papers/paper_56.pdf
+Serena S. Serbinowska, Diego Manzanas Lopez, Dung Thuy Nguyen and Taylor T. Johnson, Neuro-Symbolic Behavior Trees and Their Verification, 2nd International Conference on Neuro-symbolic Systems (NeuS2025), Philadelphia, Pennsylvania, May 2025. https://proceedings.mlr.press/v288/serbinowska25a.html and https://neus-2025.github.io/files/papers/paper_56.pdf
 
 Serena S. Serbinowska, Preston Robinette, Gabor Karsai, Taylor T. Johnson, Formalizing Stateful Behavior Trees, Proceedings Sixth International Workshop on Formal Methods for Autonomous Systems (FMAS2024), Manchester, UK, 11th and 12th of November 2024, Electronic Proceedings in Theoretical Computer Science 411, pp. 201–218. https://dx.doi.org/10.4204/EPTCS.411.14
 
