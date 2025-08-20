@@ -28,7 +28,7 @@ def main():
         if os.path.exists(current_location) and not os.path.isdir(current_location):
             raise FileExistsError('Specified Output Location cannot be used as it exists and is not a folder')
         if os.path.exists(os.path.join(current_location, directory_mode)):
-            raise FileExistsError('Specified Output Location contains an element named nuxmv so the output cannot be written here')
+            raise FileExistsError('Specified Output Location contains an element named ' + directory_mode + ' so the output cannot be written here')
         if not os.path.exists(os.path.join(args.location, directory_mode)):
             os.makedirs(os.path.join(args.location, directory_mode))
 

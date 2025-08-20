@@ -247,9 +247,13 @@ statement:
     'read_environment' '{'
     name = ID
     ('condition_variable' '{'
-    (('(' (constant_index = 'constant_index' | constant_index = '') condition_variable = [variable] ',' index_of = code_statement ')') |
-    (condition_variable = [variable]))
-    '}' ('end_condition_variable')?)?
+      (
+        ('(' (constant_index = 'constant_index' | constant_index = '') condition_variable = [variable] ',' index_of = code_statement ')')
+        |
+        (condition_variable = [variable])
+      )
+      '}' ('end_condition_variable')?
+    )?
     'condition' '{'
     ((non_determinism = 'non_determinism' ',') | (non_determinism = '')) condition = code_statement
     '}' ('end_condition')?

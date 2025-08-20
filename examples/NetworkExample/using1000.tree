@@ -7,7 +7,7 @@ variables {
     variable { env y_d VAR [min_val, max_val] assign{result{min_val}}}
     variable { env x_g VAR [min_val, max_val] assign{result{x_d}}}
     variable { env y_g VAR [min_val, max_val] assign{result{y_d}}}
-    variable { bl net NEURAL classification {'We', 'Ea', 'No', 'So', 'XX'} inputs {x_d, y_d, x_g, y_g}
+    variable { env net NEURAL classification {'We', 'Ea', 'No', 'So', 'XX'} inputs {x_d, y_d, x_g, y_g}
 	config{table}
 	source {
 	    './networks/1000__1000_1.onnx'
@@ -98,11 +98,14 @@ environment_checks {
 	    return_statement {result {running}}
 	}
     } action {NextAct
-	arguments{} local_variables {}read_variables {net} write_variables {new, act}
+	arguments{} local_variables {}read_variables {} write_variables {new, act}
 	initial_values {}
 	update {
 	    variable_statement {new assign{result{False}}}
-	    variable_statement {act assign {result{net}}}
+	    read_environment {
+		read_act condition {True}
+		variable_statement {act assign {result{net}}}
+	    }
 	    return_statement {result { success}}
 	}
     }
