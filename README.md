@@ -76,7 +76,10 @@ For method 1, run the following
 ```
 source /path/to/behaverify_venv/bin/activate
 ```
-Now, the terminal you are using should have (behaverify\_venv) listed prior to your username. The virtual environment has been activated within this terminal. You can now use BehaVerify within this terminal.
+Now, the terminal you are using should have (behaverify\_venv) listed prior to your username. The virtual environment has been activated within this terminal. You can now use BehaVerify within this terminal. Assuming you are in the top level of the repository and followed the installation instructions, this will be
+```
+source ../behaverify_venv/bin/activate
+```
 
 For method 2, you will need to modify each command that follows in the following manner:
 ```
@@ -87,11 +90,16 @@ becomes
 /path/to/behaverify_venv/bin/python3 ...
 ```
 
+Assuming you are in the top level of the repository and followed the installation instructions, this will be
+```
+../behaverify_venv/bin/python3 ...
+```
+
 ### Test Run
 
 Assuming you are in the top level of the BehaVerify repository, please test your installation by running the following command.
 ```
-python3 -m behaverify nuxmv examples/DrunkenDrone/DrunkenDrone.tree ../test --generate --invar --ctl --ltl --simulate 10 --nuxmv_path ../nuXmv 
+python3 -m behaverify nuxmv examples/DrunkenDrone/DrunkenDrone.tree ../behaverify_test --generate --invar --ctl --ltl --simulate 10 --nuxmv_path ../nuXmv 
 ```
 
 Then use
@@ -106,7 +114,7 @@ to view the nuXmv model and verification results, respectively.
 
 ## Examples
 
-We suggest reading the following examples, in order. The files are well documented, and help explain how 
+Please refer to https://github.com/verivital/behaverify/tree/main/tutorial_examples .
 
 # Options
 
@@ -124,8 +132,8 @@ Each of these is explained in a subsection below, and each features an example o
 This mode is used to render a trace from a nuXmv or python execution of a grid world. It is still being developed and functionality is currently limited. Right now, it assumes variables are named in a very specific way, and as such only works with very specific examples. This will be improved in the future.
 
 ```
-python3 -m behaverify nuxmv examples/NetworkExample/using9995.tree ../behaverify_example/ --generate --ctl --nuxmv_path ../nuXmv
-python3 -m behaverify grid nuxmv ../behaverify_example/nuxmv/using9995_output.txt ../behaverify_example/ 10 10
+python3 -m behaverify nuxmv examples/NetworkExample/using9995.tree ../behaverify_example_grid/ --generate --ctl --nuxmv_path ../nuXmv
+python3 -m behaverify grid nuxmv ../behaverify_example/nuxmv/using9995_output.txt ../behaverify_example_grid/ 10 10
 ```
 
 The first command generates a nuXmv model and tries to verify the CTL specification. Since the specification is false, nuXmv produces a countertrace. This countertrace is then fed into the second command to produce images of the counterexample.
@@ -134,34 +142,34 @@ The first command generates a nuXmv model and tries to verify the CTL specificat
 ## Haskell mode
 This mode is used to generate a Haskell implementation of the behavior tree.
 ```
-python3 -m behaverify haskell ./examples/Collatz/collatz.tree ../behaverify_example/
+python3 -m behaverify haskell ./examples/Collatz/collatz.tree ../behaverify_example_haskell/
 ```
 
 ## LaTeX mode
 This mode is used to generate a tikz diagram of the behavior tree.
 ```
-python3 -m behaverify latex ./examples/Collatz/collatz_small.tree ../behaverify_example/collatz_small.tex
+python3 -m behaverify latex ./examples/Collatz/collatz_small.tree ../behaverify_example_latex/collatz_small.tex
 ```
 
 ## nuXmv mode
 This mode is used to generate or run a nuXmv model for verification purposes.
 
 ```
-python3 -m behaverify nuxmv examples/NetworkExample/using1000.tree ../behaverify_example/ --generate --ctl --nuxmv_path ../nuXmv
+python3 -m behaverify nuxmv examples/NetworkExample/using1000.tree ../behaverify_example_nuxmv/ --generate --ctl --nuxmv_path ../nuXmv
 ```
 
 ## Python mode
 This mode is used to generate a Python implemention of the behavior tree.
 ```
-python3 -m behaverify python ./examples/Collatz/collatz.tree ../behaverify_example/
+python3 -m behaverify python ./examples/Collatz/collatz.tree ../behaverify_example_python/
 ```
 
 ## trace mode
 This mode is used to generate a series of images illustrating a trace from nuXmv.
 
 ```
-python3 -m behaverify nuxmv examples/Collatz/collatz.tree ../behaverify_example/ --generate --invar --nuxmv_path ../nuXmv
-python3 -m behaverify trace examples/Collatz/collatz.tree ../behaverify_example/nuxmv/collatz_output.txt ../behaverify_example/
+python3 -m behaverify nuxmv examples/Collatz/collatz.tree ../behaverify_example_trace/ --generate --invar --nuxmv_path ../nuXmv
+python3 -m behaverify trace examples/Collatz/collatz.tree ../behaverify_example_trace/nuxmv/collatz_output.txt ../behaverify_example/
 ```
 
 

@@ -45,8 +45,8 @@
 configuration {} #{You don't need to do anything with configuration}#
 enumerations {} #{You don't need to do anything with enumerations}#
 constants {
-    min_val := -5
-    #{FILL-HERE}#
+    min_val := -5,
+    max_val := 10
     #{Declare an integer constant max_val. Make sure min_val is less than max_val! Constant declarations are comma seperated.}#
 } 
 variables {
@@ -54,8 +54,12 @@ variables {
 	bl #{this is a blackaboard variable}#
 	position #{name of the variable}#
 	VAR #{this variable is stateful}#
-	#{FILL-HERE}#
-	#{fill in the rest! Look at the goal variable for an idea. However, set the starting position to a constant value}#
+	[min_val, max_val] #{variable domain}#
+	assign{
+	    result{
+		0
+	    }
+	}
     }
     variable {
 	env #{this is an environment variable}#
@@ -122,30 +126,29 @@ actions {
 		position
 		assign {
 		    result {
-			(add, position, change)
+			(min, max_val, (max, min_val, (add, position, change)))
 		    }
 		}
 	    }
 	    #{Create a variable statement that updates the value of position by adding change. Look at the environment_update section to see how a variable_statement is written}#
-	    return_statement {success} #{The node returns success}#
+	    return_statement {result{success}} #{The node returns success}#
 	}
     }
 }
 sub_trees {} #{Not used}#
 tree {
-    #{FILL-HERE}#
     #{
 	Create a stree using the following structure
-	                      seq
+	                      sel
 	                /             \
-                 sel1                       sel2
+                 seq1                       seq2
                  /  \                       /  \
 	less_than    moveR      greater_than   moveL
 
-	That is to say, the root should be a sequence named seq.
-	It should have to children, sel1 and sel2, both of which are selectors.
-	Sel1 should have two children, less_than and moveR
-	Sel2 should have two children, greater_than and moveL
+	That is to say, the root should be a selector named sel.
+	It should have to children, seq1 and seq2, both of which are sequences.
+	seq1 should have two children, less_than and moveR
+	seq2 should have two children, greater_than and moveL
 	moveL and moveR should be based on move.
 
 	General format is
@@ -187,20 +190,20 @@ tree {
 	Where c has argument 1 and d and f use the same node template. 
     }#
     composite {
-	seq
-	sequence
+	sel
+	selector
 	children {
 	    composite {
-		sel1
-		selector
+		seq1
+		sequence
 		children {
 		    less_than {}
 		    moveR : move {1}
 		}
 	    }
 	    composite {
-		sel2
-		selector
+		seq2
+		sequence
 		children {
 		    greater_than {}
 		    moveL : move {-1}

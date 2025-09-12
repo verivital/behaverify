@@ -1,6 +1,9 @@
 # Overview
 
+Hello! Thank you for taking an interest in BehaVerify. To get started, please read [Behavior Tree Introduction](#behavior-tree-introduction) to get a basic overview of behavior trees, and then go ahead and try out an example, starting with the line\_drone.tree example. Examples of how to run BehaVerify are found in the main readme.
+
 ### Contents
+TODO: fill this in.
 
 
 ### Abbreviations and definitions
@@ -30,7 +33,32 @@ A behavior tree (BT) is a rooted tree. TODO: fill this in.
 
 For our purposes, a leaf node is a node with no children, a decorator is a node with exactly 1 child, and composite nodes are nodes with 2 or more children. The leaf nodes of a BT are used to check conditions or to do actions, while the composite nodes control which leaf nodes are executed. For now, at least, we will ignore decorator nodes.
 
-The BT does nothing until it receives an external signal, called a tick. When the tick arrives, the root becomes active (starts
+The BT does nothing until it receives an external signal, called a tick. When the tick arrives, the root becomes active (starts executing). In general, traversal through the tree follows a depth first traversal pattern, though composite nodes can 'terminate early' without exploring each child. There are also cases where nodes can be skipped, but we need not worry about that yet. Below we find descriptions of how each node works.
+
+### Node Statuses
+
+TODO: Fill this in.
+
+### Selector
+
+These nodes will execute their children in a left to right order, one at a time. When the first child completes, the child will return one of success, running, or failure (S, R, F). If the child returns S, then the selector has 'selected' a working child, and it returns S. If the child returns R, then the selector returns R. If the child returns F, the selectors continues to search for a child that will return S, and executes the next child.
+
+Thus, a selector node (also known as a fallback node), 'selects' a child or 'falls back' in the case of failure.
+
+### Sequence
+
+These nodes will execute their children in a left to right order, one at a time. When the first child completes, the child will return one of success, running, or failure (S, R, F). If the child returns F, then the sequence has failed and returns F. If the child returns R, then the sequence returns R. If the child returns S, the sequence continues and executes the next child.
+
+Thus, a sequence node executes children in sequence until a failure occurs.
+
+### Action
+
+An action node is a user defined custom leaf node that does something (such as changing the value of a variable).
+
+### Check
+
+A check node is a user defined custom leaf node that checks a condition.
+
 
 ## code vs meta\_code
 In various places we will make a disinction between code and meta_code. meta_code is essentially code that the compiler can fully compute at compile time. E.G. (add, 1, 3) is valid meta_code, but (add, 1, var45) is not (assuming that var45 is some variable). loop variables can be used in meta_code (see loop description below). (Note: sometimes you can use meta_code but not code. However, you can always use meta_code instead of code).

@@ -117,25 +117,26 @@ actions {
 	update {
 	    #{FILL-HERE}#
 	    #{Create a variable statement that updates the value of position by adding change. Look at the environment_update section to see how a variable_statement is written}#
-	    return_statement {success} #{The node returns success}#
+	    return_statement {result{success}} #{The node returns success}#
 	}
     }
 }
 sub_trees {} #{Not used}#
 tree {
     #{FILL-HERE}#
+    
     #{
 	Create a stree using the following structure
-	                      seq
+	                      sel
 	                /             \
-                 sel1                       sel2
+                 seq1                       seq2
                  /  \                       /  \
 	less_than    moveR      greater_than   moveL
 
-	That is to say, the root should be a sequence named seq.
-	It should have to children, sel1 and sel2, both of which are selectors.
-	Sel1 should have two children, less_than and moveR
-	Sel2 should have two children, greater_than and moveL
+	That is to say, the root should be a selector named sel.
+	It should have to children, seq1 and seq2, both of which are sequences.
+	seq1 should have two children, less_than and moveR
+	seq2 should have two children, greater_than and moveL
 	moveL and moveR should be based on move.
 
 	General format is
