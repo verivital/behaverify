@@ -1,0 +1,113 @@
+#{
+    This is the Collatz Example.
+    Take a number. If it is even, divide by 2. Otherwise, multiply by 3 and add 1. The Collatz Conjecture states that you will eventually reach 1 by repeating this process.
+    
+    Unsurprisingly, you are currently reading a comment. Comments are written by starting # { (no space) and ended through a } # (no space). Comments cannot be nested.
+    
+    Some notes:
+    Indentation is optional, but suggested (for clarity).
+    Spacing is suggested, but mostly optional. Thus result{0} and result { 0 } are both acceptable. Spacing between alphanumeric strings is required (i.e. helloworld and hello world are not the same).
+    New lines are always optional, but suggested.
+    If braces get too nested, you can start closing them in a more verbose manner.
+    E.g.
+    composite {...}
+    and
+    composite {...} end_composite
+    are both acceptable.
+    
+    Code:
+    At various points, you will need to specify values. In these cases, we utilize code statements, which generally look as follows
+    CONSTANT | VARIABLE | (func, val1, val2, ... valk)
+    To be clear, this means your code can be a constant, a variable, or a function call.
+    Each val can be another code statement, so nesting is possible. You may always include more parantheses.
+    For instance, to add 7 to a variable x and take the remainder of division by 3, you would do the following
+    (mod, (add, x, 7), 3).
+    See the readme for a list of all supported functions.
+    
+    Sections:
+    These files are split into several sections
+    the sections are as follows
+    configuration - here you can set up various configurations for the tree, such as if neural networks are used.
+    enumerations - here you declare all enumerations to be used
+    constants - here you declare all constants to be used
+    variables - here you declare all variables to be used, and set the initial values
+    environment_update - here you declare how environment variables change over time
+    checks - here you set up check nodes that don't use the environment
+    environment_checks - here you set up check nodes that do use the environment
+    actions - here you set up action nodes
+    sub_trees - subtrees are to help keep the tree readable.
+    tree - here you declare the structure of the tree
+    tick_prerequisite - here you declare a condition that must be met for the tree to tick
+    specifications - here you declare specifications to be met.
+
+
+    each section may be empty, except tick_prerequiste. If you want the tree to tick no matter what, simply have your condition be True.
+}#
+
+configuration {} enumerations {} constants {max_start := 254, max_val := 10000}
+variables {
+    variable { bl x VAR [0, max_val]
+	assign{ result{(loop, i, [1, max_start] such_that True, i)}}
+    }
+    #{
+	Here we've declared a variable x that can take values between 0 and max_val inclusive.
+	max_val is a constant we declared (10000).
+	Furthermore, we will nondeterministically assign a value between 1 and max_start (a constant we declared (254)).
+	In general, 
+    }#
+}
+environment_update {}
+checks {
+    check { a
+	arguments {} read_variables {x} condition{(eq, (mod, x, 2), 0)}
+    }
+}
+environment_checks {}
+actions {
+    action {b
+	arguments {} local_variables{} read_variables{} write_variables{x} initial_values{}
+	update{
+	    variable_statement {x assign{result{(idiv, x, 2)}}}
+	    return_statement{result{success}}
+	}
+    }
+    action { c
+	arguments {} local_variables{} read_variables{} write_variables{x} initial_values{}
+	update{
+	    variable_statement { x assign{
+		    case {(eq, x, 1)} result{(loop, i, [1, max_start] such_that True, i)}
+		    result {x}
+		}
+	    }
+	    return_statement{result{success}}
+	}
+    }
+    action { d
+	arguments {} local_variables{} read_variables{} write_variables{x} initial_values{}
+	update{
+	    variable_statement { x assign{result{(min, max_val, (add, (mult, 3, x), 1))}}}
+	    return_statement{result{success}}
+	}
+    }
+}
+sub_trees {}
+tree {
+    composite {
+	sel
+	selector
+	children {
+	    composite {
+		seq
+		sequence
+		children {
+		    a {}
+		    b {}
+		    c {}
+		}
+	    }
+	    d {}
+	}
+    }	    
+}
+tick_prerequisite {True}
+specifications {INVARSPEC{(lt, x at -1, 4000)}}

@@ -1,0 +1,189 @@
+#{
+
+    This file is intentionally incomplete! Try to complete it. A completed version called line_drone_ans.tree is also included. Search for FILL-HERE to find each instance that needs to be replaced.
+
+    The line drone exists on the integer number line. At any given point, it is at an integer between min_val and max_val (constants, to be set by you). A goal is set for the line drone. It is meant to reach that goal. When the goal is reached, a new goal is generated. You will complete the implementation of this line drone.
+    
+    Unsurprisingly, you are currently reading a comment. Comments are written by starting # { (no space) and ended through a } # (no space). Comments cannot be nested.
+    
+    Some notes:
+    Indentation is optional, but suggested (for clarity).
+    Spacing is suggested, but mostly optional. Thus result{0} and result { 0 } are both acceptable. Spacing between alphanumeric strings is required (i.e. helloworld and hello world are not the same).
+    New lines are always optional, but suggested.
+    If braces get too nested, you can start closing them in a more verbose manner.
+    E.g.
+    composite {...}
+    and
+    composite {...} end_composite
+    are both acceptable.
+    
+    Code:
+    At various points, you will need to specify values. In these cases, we utilize code statements, which generally look as follows
+    CONSTANT | VARIABLE | (func, val1, val2, ... valk)
+    To be clear, this means your code can be a constant, a variable, or a function call.
+    Each val can be another code statement, so nesting is possible. You may always include more parantheses.
+    For instance, to add 7 to a variable x and take the remainder of division by 3, you would do the following
+    (mod, (add, x, 7), 3).
+    See the readme for a list of all supported functions.
+    
+    Sections:
+    These files are split into several sections
+    the sections are as follows
+    configuration - here you can set up various configurations for the tree, such as if neural networks are used.
+    enumerations - here you declare all enumerations to be used
+    constants - here you declare all constants to be used
+    variables - here you declare all variables to be used, and set the initial values
+    environment_update - here you declare how environment variables change over time
+    checks - here you set up check nodes that don't use the environment
+    environment_checks - here you set up check nodes that do use the environment
+    actions - here you set up action nodes
+    sub_trees - subtrees are to help keep the tree readable.
+    tree - here you declare the structure of the tree
+    tick_prerequisite - here you declare a condition that must be met for the tree to tick
+    specifications - here you declare specifications to be met.
+
+
+    each section may be empty, except tick_prerequiste. If you want the tree to tick no matter what, simply have your condition be True.
+}#
+configuration {} #{You don't need to do anything with configuration}#
+enumerations {} #{You don't need to do anything with enumerations}#
+constants {
+    min_val := -5
+    #{FILL-HERE}#
+    #{Declare an integer constant max_val. Make sure min_val is less than max_val! Constant declarations are comma seperated.}#
+} 
+variables {
+    variable {
+	bl #{this is a blackaboard variable}#
+	position #{name of the variable}#
+	VAR #{this variable is stateful}#
+	#{FILL-HERE}#
+	#{fill in the rest! Look at the goal variable for an idea. However, set the starting position to a constant value}#
+    }
+    variable {
+	env #{this is an environment variable}#
+	goal #{name of the variable}#
+	VAR #{this variable is stateful}#
+	[min_val, max_val] #{variable domain}#
+	assign{
+	    result{
+		min_val, max_val #{nondeterministically choose}#
+	    }
+	}
+    }
+}
+
+environment_update {
+    variable_statement {
+	goal #{variable we are updating}#
+	assign {
+	    case {
+		#{FILL-HERE}#
+		#{Fill in a condition here for checking if we reached the goal. Recall that we write functions as (func, val1, val2). eq is the function for equality}#
+	    }
+	    result {
+		#{FILL-HERE}#
+		#{If the condition is met, we assign this value. Since the condition is we reached the goal, we need to set a new goal. Try setting a new goal to reach. To assign nondeterministically, write down multiple values (comma seperated)}#
+	    }
+	    result {
+		#{FILL-HERE}#
+		#{If the condition is not met, do not change the value. Remember that you can write down the variable name to use its value}#
+	    }
+	}
+    }
+}
+
+checks {} #{Nothing to do here}#
+
+environment_checks {
+    environment_check {
+	less_than #{the ID of the node}#
+	arguments {} #{no arguments}#
+	read_variables {position} #{list all blackboard variables that are used}#
+	condition {(lt, position, goal)} #{If the condition is true, node returns success, otherwise failure.}#
+    }
+    #{FILL-HERE}#
+    #{Create another environment check, this one named greater_than. It should check if position is greater than goal}#
+}
+
+actions {
+    action {
+	move #{ID of the action}#
+	arguments {change := INT}
+	local_variables {} #{none}#
+	read_variables {} #{none}#
+	write_variables {position} #{we will update this variable}#
+	initial_values {} #{only applies to local variables, and we have none}#
+	update {
+	    #{FILL-HERE}#
+	    #{Create a variable statement that updates the value of position by adding change. Look at the environment_update section to see how a variable_statement is written}#
+	    return_statement {success} #{The node returns success}#
+	}
+    }
+}
+sub_trees {} #{Not used}#
+tree {
+    #{FILL-HERE}#
+    #{
+	Create a stree using the following structure
+	                      seq
+	                /             \
+                 sel1                       sel2
+                 /  \                       /  \
+	less_than    moveR      greater_than   moveL
+
+	That is to say, the root should be a sequence named seq.
+	It should have to children, sel1 and sel2, both of which are selectors.
+	Sel1 should have two children, less_than and moveR
+	Sel2 should have two children, greater_than and moveL
+	moveL and moveR should be based on move.
+
+	General format is
+	composite {
+	    NODE_NAME
+	    NODE_TYPE
+	    children {
+		...
+	    }
+	}
+	the ... is to be replaced with another node. This ends up being nested in this case.
+	For leaf nodes, there are the following options
+	NODE_ID {ARGUMENTS}
+	NODE_NAME : NODE_ID {ARGUMENTS}
+	If the same node is used multiple times, you must used NODE_NAME : NODE_ID {ARGUMENTS} to avoid naming colisions.
+	If there are no arguments, simply write {}
+
+	Thus, for instance
+	composite {
+	    a
+	    selector
+	    children {
+		composite {
+		    b
+		    sequence {
+			c {1}
+			d : e {}
+		    }
+		    f : e {}
+		}
+	    }
+	}
+	produces the following tree
+	     a
+	    / \
+          b    f
+         /\
+	c  d
+	Where c has argument 1 and d and f use the same node template. 
+    }#
+}
+
+tick_prerequisite {
+    True #{Always tick}# 
+}
+
+specifications {
+    CTLSPEC {
+	(always_globally, (always_finally, (eq, position at -1, goal at 0)))
+    }
+}
