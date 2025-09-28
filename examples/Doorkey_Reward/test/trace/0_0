@@ -1,0 +1,94 @@
+digraph {
+	Root [label=Root fillcolor="#FFA500" fontcolor="#000000" shape=rectangle style=filled]
+	Key_Selector [label=Key_Selector fillcolor="#00FFFF" fontcolor="#000000" shape=octagon style=filled]
+	Root -> Key_Selector
+	Acquire_Key [label=Acquire_Key fillcolor="#C0C0C0" fontcolor="#000000" shape=oval style=filled]
+	Key_Selector -> Acquire_Key
+	Key_Sequence [label=Key_Sequence fillcolor="#FFA500" fontcolor="#000000" shape=rectangle style=filled]
+	Key_Selector -> Key_Sequence
+	GoTo_Key [label=GoTo_Key fillcolor="#C0C0C0" fontcolor="#000000" shape=oval style=filled]
+	Key_Sequence -> GoTo_Key
+	Interact_Key [label=Interact_Key fillcolor="#C0C0C0" fontcolor="#000000" shape=oval style=filled]
+	Key_Sequence -> Interact_Key
+	Door_Selector [label=Door_Selector fillcolor="#00FFFF" fontcolor="#000000" shape=octagon style=filled]
+	Root -> Door_Selector
+	Open_Door [label=Open_Door fillcolor="#C0C0C0" fontcolor="#000000" shape=oval style=filled]
+	Door_Selector -> Open_Door
+	Door_Sequence [label=Door_Sequence fillcolor="#FFA500" fontcolor="#000000" shape=rectangle style=filled]
+	Door_Selector -> Door_Sequence
+	GoTo_Door [label=GoTo_Door fillcolor="#C0C0C0" fontcolor="#000000" shape=oval style=filled]
+	Door_Sequence -> GoTo_Door
+	Interact_Door [label=Interact_Door fillcolor="#C0C0C0" fontcolor="#000000" shape=oval style=filled]
+	Door_Sequence -> Interact_Door
+	Goal_Selector [label=Goal_Selector fillcolor="#00FFFF" fontcolor="#000000" shape=octagon style=filled]
+	Root -> Goal_Selector
+	Reach_Goal [label=Reach_Goal fillcolor="#C0C0C0" fontcolor="#000000" shape=oval style=filled]
+	Goal_Selector -> Reach_Goal
+	Goal_Sequence [label=Goal_Sequence fillcolor="#FFA500" fontcolor="#000000" shape=rectangle style=filled]
+	Goal_Selector -> Goal_Sequence
+	GoTo_Goal [label=GoTo_Goal fillcolor="#C0C0C0" fontcolor="#000000" shape=oval style=filled]
+	Goal_Sequence -> GoTo_Goal
+	Interact_Goal [label=Interact_Goal fillcolor="#C0C0C0" fontcolor="#000000" shape=oval style=filled]
+	Goal_Sequence -> Interact_Goal
+	Acquire_Key_INFO [label="failure
+key_acquired_prior_stage_1 := FALSE
+reward_stage_1 := 0" fontcolor=red shape=plaintext]
+	Acquire_Key -> Acquire_Key_INFO
+	GoTo_Key_INFO [label="success
+near_key_prior_stage_1 := TRUE
+reward_stage_2 := 1" fontcolor=blue shape=plaintext]
+	GoTo_Key -> GoTo_Key_INFO
+	Interact_Key_INFO [label=running fontcolor=black shape=plaintext]
+	Interact_Key -> Interact_Key_INFO
+	Key_Sequence_INFO [label=running fontcolor=black shape=plaintext]
+	Key_Sequence -> Key_Sequence_INFO
+	Key_Selector_INFO [label=running fontcolor=black shape=plaintext]
+	Key_Selector -> Key_Selector_INFO
+	Open_Door_INFO [label="invalid
+door_opened_prior_stage_1 := FALSE
+reward_stage_3 := 1" fontcolor=gray shape=plaintext]
+	Open_Door -> Open_Door_INFO
+	GoTo_Door_INFO [label="invalid
+near_door_prior_stage_1 := FALSE
+reward_stage_4 := 1" fontcolor=gray shape=plaintext]
+	GoTo_Door -> GoTo_Door_INFO
+	Interact_Door_INFO [label=invalid fontcolor=gray shape=plaintext]
+	Interact_Door -> Interact_Door_INFO
+	Door_Sequence_INFO [label=invalid fontcolor=gray shape=plaintext]
+	Door_Sequence -> Door_Sequence_INFO
+	Door_Selector_INFO [label=invalid fontcolor=gray shape=plaintext]
+	Door_Selector -> Door_Selector_INFO
+	Reach_Goal_INFO [label="invalid
+goal_reached_prior_stage_1 := FALSE
+reward_stage_5 := 1" fontcolor=gray shape=plaintext]
+	Reach_Goal -> Reach_Goal_INFO
+	GoTo_Goal_INFO [label="invalid
+near_goal_prior_stage_1 := FALSE
+reward_stage_6 := 1" fontcolor=gray shape=plaintext]
+	GoTo_Goal -> GoTo_Goal_INFO
+	Interact_Goal_INFO [label=invalid fontcolor=gray shape=plaintext]
+	Interact_Goal -> Interact_Goal_INFO
+	Goal_Sequence_INFO [label=invalid fontcolor=gray shape=plaintext]
+	Goal_Sequence -> Goal_Sequence_INFO
+	Goal_Selector_INFO [label=invalid fontcolor=gray shape=plaintext]
+	Goal_Selector -> Goal_Selector_INFO
+	Root_INFO [label=running fontcolor=black shape=plaintext]
+	Root -> Root_INFO
+	MISC_INFO [label="door_opened_prior_stage_0 := FALSE
+door_opened_stage_0 := FALSE
+door_state_stage_0 := locked
+drone_action_stage_0 := move
+drone_passed_door_stage_0 := FALSE
+goal_reached_prior_stage_0 := FALSE
+goal_reached_stage_0 := FALSE
+key_acquired_prior_stage_0 := FALSE
+key_acquired_stage_0 := FALSE
+key_passed_door_stage_0 := FALSE
+near_door_prior_stage_0 := FALSE
+near_door_stage_0 := TRUE
+near_goal_prior_stage_0 := FALSE
+near_goal_stage_0 := FALSE
+near_key_prior_stage_0 := FALSE
+near_key_stage_0 := TRUE
+reward_stage_0 := 0" fontcolor="#000000" shape=note]
+}

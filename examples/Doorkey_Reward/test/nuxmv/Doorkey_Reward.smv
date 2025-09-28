@@ -1,0 +1,363 @@
+MODULE main
+    VAR
+        system : system_module;
+--------------SPECIFICATIONS
+
+INVARSPEC ((system.Root.status = success) <-> (system.reward_stage_6 = 6));
+INVARSPEC (system.reward_stage_6 >= 0);
+INVARSPEC (system.reward_stage_6 <= 6);
+
+--------------END OF SPECIFICATIONS
+
+MODULE system_module
+    CONSTANTS
+        success, failure, running, invalid, move, closed, open, locked, pickup, toggle, drop;
+    DEFINE
+        resume_from_here_in_subtree__Root := -3;
+        Root.active := TRUE;
+        --START OF BLACKBOARD DEFINITIONS
+        reward_stage_1 :=
+            case
+                !(Acquire_Key.active) : reward_stage_0;
+                !(TRUE) : reward_stage_0;
+                (key_acquired_stage_0 & !(key_acquired_prior_stage_0)) : min(10, (reward_stage_0 + 1));
+                (!(key_acquired_stage_0) & key_acquired_prior_stage_0) : max(-1, (reward_stage_0 + -1));
+                TRUE : reward_stage_0;
+            esac;
+        reward_stage_2 :=
+            case
+                !(GoTo_Key.active) : reward_stage_1;
+                !(TRUE) : reward_stage_1;
+                (near_key_stage_0 & !(near_key_prior_stage_0)) : min(10, (reward_stage_1 + 1));
+                (!(near_key_stage_0) & near_key_prior_stage_0) : max(-1, (reward_stage_1 + -1));
+                TRUE : reward_stage_1;
+            esac;
+        reward_stage_3 :=
+            case
+                !(Open_Door.active) : reward_stage_2;
+                !(TRUE) : reward_stage_2;
+                (door_opened_stage_0 & !(door_opened_prior_stage_0)) : min(10, (reward_stage_2 + 1));
+                (!(door_opened_stage_0) & door_opened_prior_stage_0) : max(-1, (reward_stage_2 + -1));
+                TRUE : reward_stage_2;
+            esac;
+        reward_stage_4 :=
+            case
+                !(GoTo_Door.active) : reward_stage_3;
+                !(TRUE) : reward_stage_3;
+                (near_door_stage_0 & !(near_door_prior_stage_0)) : min(10, (reward_stage_3 + 1));
+                (!(near_door_stage_0) & near_door_prior_stage_0) : max(-1, (reward_stage_3 + -1));
+                TRUE : reward_stage_3;
+            esac;
+        reward_stage_5 :=
+            case
+                !(Reach_Goal.active) : reward_stage_4;
+                !(TRUE) : reward_stage_4;
+                (goal_reached_stage_0 & !(goal_reached_prior_stage_0)) : min(10, (reward_stage_4 + 1));
+                (!(goal_reached_stage_0) & goal_reached_prior_stage_0) : max(-1, (reward_stage_4 + -1));
+                TRUE : reward_stage_4;
+            esac;
+        reward_stage_6 :=
+            case
+                !(GoTo_Goal.active) : reward_stage_5;
+                !(TRUE) : reward_stage_5;
+                (near_goal_stage_0 & !(near_goal_prior_stage_0)) : min(10, (reward_stage_5 + 1));
+                (!(near_goal_stage_0) & near_goal_prior_stage_0) : max(-1, (reward_stage_5 + -1));
+                TRUE : reward_stage_5;
+            esac;
+        key_acquired_prior_stage_1 :=
+            case
+                !(Acquire_Key.active) : key_acquired_prior_stage_0;
+                !(TRUE) : key_acquired_prior_stage_0;
+                TRUE : key_acquired_stage_0;
+            esac;
+        near_key_prior_stage_1 :=
+            case
+                !(GoTo_Key.active) : near_key_prior_stage_0;
+                !(TRUE) : near_key_prior_stage_0;
+                TRUE : near_key_stage_0;
+            esac;
+        door_opened_prior_stage_1 :=
+            case
+                !(Open_Door.active) : door_opened_prior_stage_0;
+                !(TRUE) : door_opened_prior_stage_0;
+                TRUE : door_opened_stage_0;
+            esac;
+        near_door_prior_stage_1 :=
+            case
+                !(GoTo_Door.active) : near_door_prior_stage_0;
+                !(TRUE) : near_door_prior_stage_0;
+                TRUE : near_door_stage_0;
+            esac;
+        goal_reached_prior_stage_1 :=
+            case
+                !(Reach_Goal.active) : goal_reached_prior_stage_0;
+                !(TRUE) : goal_reached_prior_stage_0;
+                TRUE : goal_reached_stage_0;
+            esac;
+        near_goal_prior_stage_1 :=
+            case
+                !(GoTo_Goal.active) : near_goal_prior_stage_0;
+                !(TRUE) : near_goal_prior_stage_0;
+                TRUE : near_goal_stage_0;
+            esac;
+        door_opened_stage_0 := (door_state_stage_0 = open);
+        key_passed_door_stage_1 :=
+            case
+                !(Root.active) : key_passed_door_stage_0;
+                key_acquired_stage_0 : drone_passed_door_stage_1;
+                TRUE : key_passed_door_stage_0;
+            esac;
+        --END OF BLACKBOARD DEFINITIONS
+    VAR
+        node_names : define_nodes;
+        Acquire_Key : Acquire_Key_module(key_acquired_prior_stage_1);
+        GoTo_Key : GoTo_Key_module(near_key_prior_stage_1);
+        Interact_Key : running_DEFAULT_module();
+        Key_Sequence : composite_sequence_without_memory_2(GoTo_Key, Interact_Key);
+        Key_Selector : composite_selector_without_memory_2(Acquire_Key, Key_Sequence);
+        Open_Door : Open_Door_module(door_opened_prior_stage_1);
+        GoTo_Door : GoTo_Door_module(near_door_prior_stage_1);
+        Interact_Door : running_DEFAULT_module();
+        Door_Sequence : composite_sequence_without_memory_2(GoTo_Door, Interact_Door);
+        Door_Selector : composite_selector_without_memory_2(Open_Door, Door_Sequence);
+        Reach_Goal : Reach_Goal_module(goal_reached_prior_stage_1);
+        GoTo_Goal : GoTo_Goal_module(near_goal_prior_stage_1);
+        Interact_Goal : running_DEFAULT_module();
+        Goal_Sequence : composite_sequence_without_memory_2(GoTo_Goal, Interact_Goal);
+        Goal_Selector : composite_selector_without_memory_2(Reach_Goal, Goal_Sequence);
+        Root : composite_sequence_without_memory_3(Key_Selector, Door_Selector, Goal_Selector);
+        --START OF BLACKBOARD VARIABLES DECLARATION
+        reward_stage_0 : -1..10;
+        key_acquired_prior_stage_0 : boolean;
+        near_key_prior_stage_0 : boolean;
+        door_opened_prior_stage_0 : boolean;
+        near_door_prior_stage_0 : boolean;
+        goal_reached_prior_stage_0 : boolean;
+        near_goal_prior_stage_0 : boolean;
+        key_acquired_stage_0 : boolean;
+        key_acquired_stage_1 : boolean;
+        near_key_stage_0 : boolean;
+        near_key_stage_1 : boolean;
+        door_state_stage_0 : {locked, open, closed};
+        near_door_stage_0 : boolean;
+        near_door_stage_1 : boolean;
+        goal_reached_stage_0 : boolean;
+        near_goal_stage_0 : boolean;
+        drone_passed_door_stage_0 : boolean;
+        drone_passed_door_stage_1 : boolean;
+        key_passed_door_stage_0 : boolean;
+        drone_action_stage_0 : {move, pickup, toggle, drop};
+        drone_action_stage_1 : {move, pickup, toggle, drop};
+        --END OF BLACKBOARD VARIABLES DECLARATION
+    ASSIGN
+        --START OF BLACKBOARD VARIABLES INITIALIZATION
+        init(reward_stage_0) := 0;
+        init(key_acquired_prior_stage_0) := FALSE;
+        init(near_key_prior_stage_0) := FALSE;
+        init(door_opened_prior_stage_0) := FALSE;
+        init(near_door_prior_stage_0) := FALSE;
+        init(goal_reached_prior_stage_0) := FALSE;
+        init(near_goal_prior_stage_0) := FALSE;
+        init(key_acquired_stage_0) := FALSE;
+        init(near_key_stage_0) := {TRUE, FALSE};
+        init(door_state_stage_0) := locked;
+        init(near_door_stage_0) := {TRUE, FALSE};
+        init(goal_reached_stage_0) := FALSE;
+        init(near_goal_stage_0) := FALSE;
+        init(drone_passed_door_stage_0) := FALSE;
+        init(key_passed_door_stage_0) := FALSE;
+        init(drone_action_stage_0) := {move, pickup, drop, toggle};
+        --END OF BLACKBOARD VARIABLES INITIALIZATION
+        --START OF BLACKBOARD VARIABLES TRANSITION
+        next(reward_stage_0) := reward_stage_6;
+        next(key_acquired_prior_stage_0) := key_acquired_prior_stage_1;
+        next(near_key_prior_stage_0) := near_key_prior_stage_1;
+        next(door_opened_prior_stage_0) := door_opened_prior_stage_1;
+        next(near_door_prior_stage_0) := near_door_prior_stage_1;
+        next(goal_reached_prior_stage_0) := goal_reached_prior_stage_1;
+        next(near_goal_prior_stage_0) := near_goal_prior_stage_1;
+        next(key_acquired_stage_0) := key_acquired_stage_1;
+        key_acquired_stage_1 :=
+            case
+                !(Root.active) : key_acquired_stage_0;
+                (near_key_stage_1 & (drone_action_stage_1 = pickup)) : TRUE;
+                (drone_action_stage_1 = drop) : FALSE;
+                TRUE : {key_acquired_stage_0, FALSE};
+            esac;
+        next(near_key_stage_0) := near_key_stage_1;
+        near_key_stage_1 :=
+            case
+                !(Root.active) : near_key_stage_0;
+                key_acquired_stage_0 : TRUE;
+                ((drone_action_stage_1 = move) & (drone_passed_door_stage_1 = key_passed_door_stage_1)) : {TRUE, FALSE};
+                TRUE : near_key_stage_0;
+            esac;
+        next(door_state_stage_0) :=
+            case
+                !(Root.active) : door_state_stage_0;
+                (near_door_stage_1 & key_acquired_stage_1 & (drone_action_stage_1 != toggle) & (door_state_stage_0 = locked)) : closed;
+                (near_door_stage_1 & key_acquired_stage_1 & (drone_action_stage_1 = toggle) & (door_state_stage_0 = locked)) : open;
+                (near_door_stage_1 & (drone_action_stage_1 = toggle) & (door_state_stage_0 = open)) : closed;
+                (near_door_stage_1 & (drone_action_stage_1 = toggle) & (door_state_stage_0 = closed)) : open;
+                TRUE : door_state_stage_0;
+            esac;
+        next(near_door_stage_0) := near_door_stage_1;
+        near_door_stage_1 :=
+            case
+                !(Root.active) : near_door_stage_0;
+                (drone_action_stage_1 = move) : {TRUE, FALSE};
+                TRUE : near_door_stage_0;
+            esac;
+        next(goal_reached_stage_0) :=
+            case
+                !(Root.active) : goal_reached_stage_0;
+                (near_goal_stage_0 & (drone_action_stage_1 = move)) : {TRUE, FALSE};
+                TRUE : goal_reached_stage_0;
+            esac;
+        next(near_goal_stage_0) :=
+            case
+                !(Root.active) : near_goal_stage_0;
+                (drone_passed_door_stage_1 & (drone_action_stage_1 = move)) : {TRUE, FALSE};
+                TRUE : near_goal_stage_0;
+            esac;
+        next(drone_passed_door_stage_0) := drone_passed_door_stage_1;
+        drone_passed_door_stage_1 :=
+            case
+                !(Root.active) : drone_passed_door_stage_0;
+                ((drone_action_stage_1 = move) & door_opened_stage_0 & near_door_stage_0) : {TRUE, FALSE};
+                TRUE : drone_passed_door_stage_0;
+            esac;
+        next(key_passed_door_stage_0) := key_passed_door_stage_1;
+        next(drone_action_stage_0) := drone_action_stage_1;
+        drone_action_stage_1 :=
+            case
+                !(Root.active) : drone_action_stage_0;
+                TRUE : {move, pickup, drop, toggle};
+            esac;
+        --END OF BLACKBOARD VARIABLES TRANSITION
+
+MODULE define_nodes
+    DEFINE
+        Root := 0;
+        Key_Selector := 1;
+        Acquire_Key := 2;
+        Key_Sequence := 3;
+        GoTo_Key := 4;
+        Interact_Key := 5;
+        Door_Selector := 6;
+        Open_Door := 7;
+        Door_Sequence := 8;
+        GoTo_Door := 9;
+        Interact_Door := 10;
+        Goal_Selector := 11;
+        Reach_Goal := 12;
+        Goal_Sequence := 13;
+        GoTo_Goal := 14;
+        Interact_Goal := 15;
+MODULE composite_sequence_without_memory_2(child_0, child_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                !(child_0.internal_status = success) : child_0.internal_status;
+                !(child_1.internal_status = success) : child_1.internal_status;
+                TRUE : success;
+            esac;
+        child_0.active := active;
+        child_1.active := child_0.status = success;
+MODULE composite_sequence_without_memory_3(child_0, child_1, child_2)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                !(child_0.internal_status = success) : child_0.internal_status;
+                !(child_1.internal_status = success) : child_1.internal_status;
+                !(child_2.internal_status = success) : child_2.internal_status;
+                TRUE : success;
+            esac;
+        child_0.active := active;
+        child_1.active := child_0.status = success;
+        child_2.active := child_1.status = success;
+MODULE composite_selector_without_memory_2(child_0, child_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status :=
+            case
+                !(child_0.internal_status = failure) : child_0.internal_status;
+                !(child_1.internal_status = failure) : child_1.internal_status;
+                TRUE : failure;
+            esac;
+        child_0.active := active;
+        child_1.active := child_0.status = failure;
+MODULE Acquire_Key_module(key_acquired_prior_stage_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := 
+            case
+                key_acquired_prior_stage_1 : success;
+                TRUE : failure;
+            esac;
+MODULE GoTo_Key_module(near_key_prior_stage_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := 
+            case
+                near_key_prior_stage_1 : success;
+                TRUE : running;
+            esac;
+MODULE Open_Door_module(door_opened_prior_stage_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := 
+            case
+                door_opened_prior_stage_1 : success;
+                TRUE : failure;
+            esac;
+MODULE GoTo_Door_module(near_door_prior_stage_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := 
+            case
+                near_door_prior_stage_1 : success;
+                TRUE : running;
+            esac;
+MODULE Reach_Goal_module(goal_reached_prior_stage_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := 
+            case
+                goal_reached_prior_stage_1 : success;
+                TRUE : failure;
+            esac;
+MODULE GoTo_Goal_module(near_goal_prior_stage_1)
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := 
+            case
+                near_goal_prior_stage_1 : success;
+                TRUE : running;
+            esac;
+MODULE running_DEFAULT_module
+    CONSTANTS
+        success, failure, running, invalid;
+    DEFINE
+        status := active ? internal_status : invalid;
+        internal_status := running;

@@ -1,0 +1,255 @@
+*** This is nuXmv 2.1.0 (compiled on Fri Nov 29 13:41:31 2024)
+*** Copyright (c) 2014-2024, Fondazione Bruno Kessler
+*** For more information on nuXmv see https://nuxmv.fbk.eu
+*** or email to <nuxmv@fbk.eu>.
+*** Please report bugs at Please report bugs to <nusmv-users@fbk.eu>
+*** (click on "Login Anonymously" to access)
+*** Alternatively write to <nuxmv@fbk.eu>.
+
+*** This version of nuXmv is linked to NuSMV 2.7.0.
+*** For more information on NuSMV see <http://nusmv.fbk.eu>
+*** or email to <nusmv-users@fbk.eu>.
+*** Copyright (C) 2010-2024, Fondazione Bruno Kessler
+
+*** This version of nuXmv is linked to the CUDD library version 2.4.1
+*** Copyright (c) 1995-2004, Regents of the University of Colorado
+
+*** This version of nuXmv is linked to the MiniSat SAT solver. 
+*** See http://minisat.se/MiniSat.html
+*** Copyright (c) 2003-2006, Niklas Een, Niklas Sorensson
+*** Copyright (c) 2007-2010, Niklas Sorensson
+
+*** This version of nuXmv is linked to MathSAT
+*** Copyright (C) 2009-2019 by Fondazione Bruno Kessler
+*** Copyright (C) 2009-2019 by University of Trento and others
+*** See http://mathsat.fbk.eu
+
+-- invariant (system.Root.status = success <-> system.reward_stage_6 = 6)  is false
+-- as demonstrated by the following execution sequence
+Trace Description: AG alpha Counterexample 
+Trace Type: Counterexample 
+  -> State: 1.1 <-
+    system.reward_stage_0 = 0
+    system.key_acquired_prior_stage_0 = FALSE
+    system.near_key_prior_stage_0 = FALSE
+    system.door_opened_prior_stage_0 = FALSE
+    system.near_door_prior_stage_0 = FALSE
+    system.goal_reached_prior_stage_0 = FALSE
+    system.near_goal_prior_stage_0 = FALSE
+    system.key_acquired_stage_0 = FALSE
+    system.key_acquired_stage_1 = TRUE
+    system.near_key_stage_0 = TRUE
+    system.near_key_stage_1 = TRUE
+    system.door_state_stage_0 = locked
+    system.near_door_stage_0 = TRUE
+    system.near_door_stage_1 = TRUE
+    system.goal_reached_stage_0 = FALSE
+    system.near_goal_stage_0 = FALSE
+    system.drone_passed_door_stage_0 = FALSE
+    system.drone_passed_door_stage_1 = FALSE
+    system.key_passed_door_stage_0 = FALSE
+    system.drone_action_stage_0 = move
+    system.drone_action_stage_1 = pickup
+    system.key_passed_door_stage_1 = FALSE
+    system.door_opened_stage_0 = FALSE
+    system.near_goal_prior_stage_1 = FALSE
+    system.goal_reached_prior_stage_1 = FALSE
+    system.near_door_prior_stage_1 = FALSE
+    system.door_opened_prior_stage_1 = FALSE
+    system.near_key_prior_stage_1 = TRUE
+    system.key_acquired_prior_stage_1 = FALSE
+    system.reward_stage_6 = 1
+    system.reward_stage_5 = 1
+    system.reward_stage_4 = 1
+    system.reward_stage_3 = 1
+    system.reward_stage_2 = 1
+    system.reward_stage_1 = 0
+    system.Root.active = TRUE
+    system.resume_from_here_in_subtree__Root = -3
+    system.node_names.Interact_Goal = 15
+    system.node_names.GoTo_Goal = 14
+    system.node_names.Goal_Sequence = 13
+    system.node_names.Reach_Goal = 12
+    system.node_names.Goal_Selector = 11
+    system.node_names.Interact_Door = 10
+    system.node_names.GoTo_Door = 9
+    system.node_names.Door_Sequence = 8
+    system.node_names.Open_Door = 7
+    system.node_names.Door_Selector = 6
+    system.node_names.Interact_Key = 5
+    system.node_names.GoTo_Key = 4
+    system.node_names.Key_Sequence = 3
+    system.node_names.Acquire_Key = 2
+    system.node_names.Key_Selector = 1
+    system.node_names.Root = 0
+    system.Acquire_Key.internal_status = failure
+    system.Acquire_Key.status = failure
+    system.GoTo_Key.internal_status = success
+    system.GoTo_Key.status = success
+    system.Interact_Key.internal_status = running
+    system.Interact_Key.status = running
+    system.Interact_Key.active = TRUE
+    system.GoTo_Key.active = TRUE
+    system.Key_Sequence.internal_status = running
+    system.Key_Sequence.status = running
+    system.Key_Sequence.active = TRUE
+    system.Acquire_Key.active = TRUE
+    system.Key_Selector.internal_status = running
+    system.Key_Selector.status = running
+    system.Open_Door.internal_status = failure
+    system.Open_Door.status = invalid
+    system.GoTo_Door.internal_status = running
+    system.GoTo_Door.status = invalid
+    system.Interact_Door.internal_status = running
+    system.Interact_Door.status = invalid
+    system.Interact_Door.active = FALSE
+    system.GoTo_Door.active = FALSE
+    system.Door_Sequence.internal_status = running
+    system.Door_Sequence.status = invalid
+    system.Door_Sequence.active = FALSE
+    system.Open_Door.active = FALSE
+    system.Door_Selector.internal_status = running
+    system.Door_Selector.status = invalid
+    system.Reach_Goal.internal_status = failure
+    system.Reach_Goal.status = invalid
+    system.GoTo_Goal.internal_status = running
+    system.GoTo_Goal.status = invalid
+    system.Interact_Goal.internal_status = running
+    system.Interact_Goal.status = invalid
+    system.Interact_Goal.active = FALSE
+    system.GoTo_Goal.active = FALSE
+    system.Goal_Sequence.internal_status = running
+    system.Goal_Sequence.status = invalid
+    system.Goal_Sequence.active = FALSE
+    system.Reach_Goal.active = FALSE
+    system.Goal_Selector.internal_status = running
+    system.Goal_Selector.status = invalid
+    system.Goal_Selector.active = FALSE
+    system.Door_Selector.active = FALSE
+    system.Key_Selector.active = TRUE
+    system.Root.internal_status = running
+    system.Root.status = running
+  -> State: 1.2 <-
+    system.reward_stage_0 = 1
+    system.near_key_prior_stage_0 = TRUE
+    system.key_acquired_stage_0 = TRUE
+    system.key_acquired_stage_1 = FALSE
+    system.door_state_stage_0 = closed
+    system.drone_action_stage_0 = pickup
+    system.drone_action_stage_1 = toggle
+    system.near_door_prior_stage_1 = TRUE
+    system.key_acquired_prior_stage_1 = TRUE
+    system.reward_stage_6 = 3
+    system.reward_stage_5 = 3
+    system.reward_stage_4 = 3
+    system.reward_stage_3 = 2
+    system.reward_stage_2 = 2
+    system.reward_stage_1 = 2
+    system.Acquire_Key.internal_status = success
+    system.Acquire_Key.status = success
+    system.GoTo_Key.status = invalid
+    system.Interact_Key.status = invalid
+    system.Interact_Key.active = FALSE
+    system.GoTo_Key.active = FALSE
+    system.Key_Sequence.status = invalid
+    system.Key_Sequence.active = FALSE
+    system.Key_Selector.internal_status = success
+    system.Key_Selector.status = success
+    system.Open_Door.status = failure
+    system.GoTo_Door.internal_status = success
+    system.GoTo_Door.status = success
+    system.Interact_Door.status = running
+    system.Interact_Door.active = TRUE
+    system.GoTo_Door.active = TRUE
+    system.Door_Sequence.status = running
+    system.Door_Sequence.active = TRUE
+    system.Open_Door.active = TRUE
+    system.Door_Selector.status = running
+    system.Door_Selector.active = TRUE
+  -> State: 1.3 <-
+    system.reward_stage_0 = 3
+    system.key_acquired_prior_stage_0 = TRUE
+    system.near_door_prior_stage_0 = TRUE
+    system.key_acquired_stage_0 = FALSE
+    system.door_state_stage_0 = open
+    system.near_door_stage_1 = FALSE
+    system.drone_passed_door_stage_1 = TRUE
+    system.drone_action_stage_0 = toggle
+    system.drone_action_stage_1 = move
+    system.door_opened_stage_0 = TRUE
+    system.key_acquired_prior_stage_1 = FALSE
+    system.reward_stage_6 = 2
+    system.reward_stage_5 = 2
+    system.reward_stage_4 = 2
+    system.Acquire_Key.internal_status = failure
+    system.Acquire_Key.status = failure
+    system.GoTo_Key.status = success
+    system.Interact_Key.status = running
+    system.Interact_Key.active = TRUE
+    system.GoTo_Key.active = TRUE
+    system.Key_Sequence.status = running
+    system.Key_Sequence.active = TRUE
+    system.Key_Selector.internal_status = running
+    system.Key_Selector.status = running
+    system.Open_Door.status = invalid
+    system.GoTo_Door.status = invalid
+    system.Interact_Door.status = invalid
+    system.Interact_Door.active = FALSE
+    system.GoTo_Door.active = FALSE
+    system.Door_Sequence.status = invalid
+    system.Door_Sequence.active = FALSE
+    system.Open_Door.active = FALSE
+    system.Door_Selector.status = invalid
+    system.Door_Selector.active = FALSE
+  -> State: 1.4 <-
+    system.reward_stage_0 = 2
+    system.key_acquired_prior_stage_0 = FALSE
+    system.near_door_stage_0 = FALSE
+    system.near_door_stage_1 = TRUE
+    system.near_goal_stage_0 = TRUE
+    system.drone_passed_door_stage_0 = TRUE
+    system.drone_action_stage_0 = move
+  -> State: 1.5 <-
+    system.key_acquired_stage_1 = TRUE
+    system.near_door_stage_0 = TRUE
+    system.goal_reached_stage_0 = TRUE
+    system.drone_action_stage_1 = pickup
+  -> State: 1.6 <-
+    system.key_acquired_stage_0 = TRUE
+    system.drone_action_stage_0 = pickup
+    system.key_passed_door_stage_1 = TRUE
+    system.goal_reached_prior_stage_1 = TRUE
+    system.door_opened_prior_stage_1 = TRUE
+    system.key_acquired_prior_stage_1 = TRUE
+    system.reward_stage_6 = 5
+    system.reward_stage_5 = 5
+    system.reward_stage_4 = 4
+    system.reward_stage_3 = 4
+    system.reward_stage_2 = 3
+    system.reward_stage_1 = 3
+    system.Acquire_Key.internal_status = success
+    system.Acquire_Key.status = success
+    system.GoTo_Key.status = invalid
+    system.Interact_Key.status = invalid
+    system.Interact_Key.active = FALSE
+    system.GoTo_Key.active = FALSE
+    system.Key_Sequence.status = invalid
+    system.Key_Sequence.active = FALSE
+    system.Key_Selector.internal_status = success
+    system.Key_Selector.status = success
+    system.Open_Door.internal_status = success
+    system.Open_Door.status = success
+    system.Open_Door.active = TRUE
+    system.Door_Selector.internal_status = success
+    system.Door_Selector.status = success
+    system.Reach_Goal.internal_status = success
+    system.Reach_Goal.status = success
+    system.Reach_Goal.active = TRUE
+    system.Goal_Selector.internal_status = success
+    system.Goal_Selector.status = success
+    system.Goal_Selector.active = TRUE
+    system.Door_Selector.active = TRUE
+    system.Root.internal_status = success
+    system.Root.status = success
+-- invariant system.reward_stage_6 >= 0  is true
+-- invariant system.reward_stage_6 <= 6  is true

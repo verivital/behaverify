@@ -1,0 +1,268 @@
+configuration {}
+enumerations {'locked', 'closed', 'open', 'move', 'pickup', 'drop', 'toggle'}
+constants {min_val := -1, max_val := 10}
+variables {
+    variable { bl reward VAR [min_val, max_val] assign{result{0}}}
+    variable { bl key_acquired_prior VAR BOOLEAN assign{result{False}}}
+    variable { bl near_key_prior VAR BOOLEAN assign{result{False}}}
+    variable { bl door_opened_prior VAR BOOLEAN assign{result{False}}}
+    variable { bl near_door_prior VAR BOOLEAN assign{result{False}}}
+    variable { bl goal_reached_prior VAR BOOLEAN assign{result{False}}}
+    variable { bl near_goal_prior VAR BOOLEAN assign{result{False}}}
+    variable { env key_acquired VAR BOOLEAN assign{result{False}}}
+    variable { env near_key VAR BOOLEAN assign{result{True, False}}}
+    variable { env door_state VAR {'locked', 'closed', 'open'} assign{result{'locked'}}}
+    variable { env near_door VAR BOOLEAN assign{result{True, False}}}
+    variable { env goal_reached VAR BOOLEAN assign{result{False}}}
+    variable { env near_goal VAR BOOLEAN assign{result{False}}}
+    variable { env door_opened DEFINE BOOLEAN assign{result{(eq, door_state, 'open')}}}
+    variable { env drone_passed_door VAR BOOLEAN assign{result{False}}}
+    variable { env key_passed_door VAR BOOLEAN assign{result{False}}}
+    variable { env drone_action VAR {'move', 'pickup', 'drop', 'toggle'} assign{result{'move', 'pickup', 'drop', 'toggle'}}}
+}
+
+environment_update {
+    variable_statement { drone_action assign{result{'move', 'pickup', 'drop', 'toggle'}}}
+    variable_statement { drone_passed_door assign{
+	    case{(and, (eq, drone_action, 'move'), door_opened, near_door)} result{True, False}
+	    result{drone_passed_door}
+	}
+    }
+    variable_statement { key_passed_door assign{
+	    case{key_acquired} result{drone_passed_door}
+	    result{key_passed_door}
+	}
+    }
+    variable_statement { near_key assign{
+	    case{key_acquired} result{True}
+	    case{(and, (eq, drone_action, 'move'), (eq, drone_passed_door, key_passed_door))} result{True, False}
+	    result{near_key}
+	}
+    }
+    variable_statement { key_acquired assign{
+	    case{(and, near_key, (eq, drone_action, 'pickup'))} result{True}
+	    case{(eq, drone_action, 'drop')} result{False}
+	    result{key_acquired, False}
+	}
+    }
+    variable_statement { near_door assign{
+	    case{(eq, drone_action, 'move')} result{True, False}
+	    result{near_door}
+	}
+    }
+    variable_statement { door_state assign{
+	    case{(and, near_door, key_acquired, (neq, drone_action, 'toggle'), (eq, door_state, 'locked'))} result{'closed'}
+	    case{(and, near_door, key_acquired, (eq, drone_action, 'toggle'), (eq, door_state, 'locked'))} result{'open'}
+	    case{(and, near_door, (eq, drone_action, 'toggle'), (eq, door_state, 'open'))} result{'closed'}
+	    case{(and, near_door, (eq, drone_action, 'toggle'), (eq, door_state, 'closed'))} result{'open'}
+	    result{door_state}
+	}
+    }
+    variable_statement { goal_reached assign{
+	    case{(and, near_goal, (eq, drone_action, 'move'))} result{True, False}
+	    result{goal_reached}
+	}
+    }
+    variable_statement { near_goal assign{
+	    case{(and, drone_passed_door, (eq, drone_action, 'move'))} result{True, False}
+	    result{near_goal}
+	}
+    }
+}
+checks {}
+environment_checks {}
+actions {
+    action {
+	Acquire_Key
+	arguments {} local_variables {} read_variables {} write_variables {key_acquired_prior, reward} initial_values{}
+	update {
+	    read_environment {
+		read_key
+		condition {True}
+		variable_statement {
+		    reward
+		    assign {
+			case{(and, key_acquired, (not, key_acquired_prior))} result{(min, max_val, (add, reward, 1))}
+			case{(and, (not, key_acquired), key_acquired_prior)} result{(max, min_val, (add, reward, -1))}
+			result{reward}
+		    }
+		}
+		variable_statement {
+		    key_acquired_prior
+		    assign{result{key_acquired}}
+		}
+	    }
+	    return_statement {case{key_acquired_prior} result{success} result{failure}}
+	}
+    }
+    action {
+	GoTo_Key
+	arguments {} local_variables {} read_variables {} write_variables {near_key_prior, reward} initial_values{}
+	update {
+	    read_environment {
+		read_near_key
+		condition {True}
+		variable_statement {
+		    reward
+		    assign {
+			case{(and, near_key, (not, near_key_prior))} result{(min, max_val, (add, reward, 1))}
+			case{(and, (not, near_key), near_key_prior)} result{(max, min_val, (add, reward, -1))}
+			result{reward}
+		    }
+		}
+		variable_statement {
+		    near_key_prior
+		    assign{result{near_key}}
+		}
+	    }
+	    return_statement {case{near_key_prior} result{success} result{running}}
+	}
+    }
+    action {
+	Interact_Key
+	arguments {} local_variables {} read_variables {} write_variables {} initial_values{}
+	update {return_statement {result{running}}}
+    }
+    action {
+	Open_Door
+	arguments {} local_variables {} read_variables {} write_variables {door_opened_prior, reward} initial_values{}
+	update {
+	    read_environment {
+		read_door
+		condition {True}
+		variable_statement {
+		    reward
+		    assign {
+			case{(and, door_opened, (not, door_opened_prior))} result{(min, max_val, (add, reward, 1))}
+			case{(and, (not, door_opened), door_opened_prior)} result{(max, min_val, (add, reward, -1))}
+			result{reward}
+		    }
+		}
+		variable_statement {
+		    door_opened_prior
+		    assign{result{door_opened}}
+		}
+	    }
+	    return_statement {case{door_opened_prior} result{success} result{failure}}
+	}
+    }
+    action {
+	GoTo_Door
+	arguments {} local_variables {} read_variables {} write_variables {near_door_prior, reward} initial_values{}
+	update {
+	    read_environment {
+		read_near_door
+		condition {True}
+		variable_statement {
+		    reward
+		    assign {
+			case{(and, near_door, (not, near_door_prior))} result{(min, max_val, (add, reward, 1))}
+			case{(and, (not, near_door), near_door_prior)} result{(max, min_val, (add, reward, -1))}
+			result{reward}
+		    }
+		}
+		variable_statement {
+		    near_door_prior
+		    assign{result{near_door}}
+		}
+	    }
+	    return_statement {case{near_door_prior} result{success} result{running}}
+	}
+    }
+    action {
+	Interact_Door
+	arguments {} local_variables {} read_variables {} write_variables {} initial_values{}
+	update {return_statement {result{running}}}
+    }
+    action {
+	Reach_Goal
+	arguments {} local_variables {} read_variables {} write_variables {goal_reached_prior, reward} initial_values{}
+	update {
+	    read_environment {
+		read_goal
+		condition {True}
+		variable_statement {
+		    reward
+		    assign {
+			case{(and, goal_reached, (not, goal_reached_prior))} result{(min, max_val, (add, reward, 1))}
+			case{(and, (not, goal_reached), goal_reached_prior)} result{(max, min_val, (add, reward, -1))}
+			result{reward}
+		    }
+		}
+		variable_statement {
+		    goal_reached_prior
+		    assign{result{goal_reached}}
+		}
+	    }
+	    return_statement {case{goal_reached_prior} result{success} result{failure}}
+	}
+    }
+    action {
+	GoTo_Goal
+	arguments {} local_variables {} read_variables {} write_variables {near_goal_prior, reward} initial_values{}
+	update {
+	    read_environment {
+		read_near_goal
+		condition {True}
+		variable_statement {
+		    reward
+		    assign {
+			case{(and, near_goal, (not, near_goal_prior))} result{(min, max_val, (add, reward, 1))}
+			case{(and, (not, near_goal), near_goal_prior)} result{(max, min_val, (add, reward, -1))}
+			result{reward}
+		    }
+		}
+		variable_statement {
+		    near_goal_prior
+		    assign{result{near_goal}}
+		}
+	    }
+	    return_statement {case{near_goal_prior} result{success} result{running}}
+	}
+    }
+    action {
+	Interact_Goal
+	arguments {} local_variables {} read_variables {} write_variables {} initial_values{}
+	update {return_statement {result{running}}}
+    }
+}
+sub_trees {}
+tree {
+    composite { Root sequence children {
+	    composite { Key_Selector selector children {
+		    Acquire_Key {}
+		    composite { Key_Sequence sequence children {
+			    GoTo_Key {} Interact_Key {}
+			}
+		    }
+		}
+	    }
+	    composite { Door_Selector selector children {
+		    Open_Door {}
+		    composite { Door_Sequence sequence children {
+			    GoTo_Door {} Interact_Door {}
+			}
+		    }
+		}
+	    }
+	    composite { Goal_Selector selector children {
+		    Reach_Goal {}
+		    composite { Goal_Sequence sequence children {
+			    GoTo_Goal {} Interact_Goal {}
+			}
+		    }
+		}
+	    }
+	    
+	}
+    }			
+}
+
+tick_prerequisite {True}
+
+specifications {
+    INVARSPEC {(equivalent, (success, Root), (eq, reward at -1, 6))}
+    INVARSPEC {(equivalent, (goal_reached at 0), (success, Root))}
+    INVARSPEC {(gte, reward at -1, 0)}
+    INVARSPEC {(lte, reward at -1, 6)}
+}

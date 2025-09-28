@@ -12,13 +12,13 @@ from behaverify.grid_world_draw.parse_nuxmv_output import handle_file as grid_wo
 from behaverify.grid_world_draw.parse_python_output import handle_file as grid_world_draw_python_output
 
 def main():
-    def verify_location(directory_mode, current_location):
+    def verify_location(directory_mode, current_location, overwrite):
         '''
         if directory mode is None or False, current_location is a single file where the output will be written.
         Otherwise, current_location is the parent directory of directory mode, which is the directory where the files will be written.
         '''
         if directory_mode is None or (not directory_mode):
-            if os.path.exists(current_location):
+            if os.path.exists(current_location) and not overwrite:
                 raise FileExistsError('The file ' + current_location + ' already exists.')
             if os.path.exists(os.path.dirname(current_location)) and not os.path.isdir(os.path.dirname(current_location)):
                 raise FileExistsError('The parent directory of ' + current_location + ' is not a directory.')
@@ -27,7 +27,7 @@ def main():
             return
         if os.path.exists(current_location) and not os.path.isdir(current_location):
             raise FileExistsError('Specified Output Location cannot be used as it exists and is not a folder')
-        if os.path.exists(os.path.join(current_location, directory_mode)):
+        if os.path.exists(os.path.join(current_location, directory_mode)) and not overwrite:
             raise FileExistsError('Specified Output Location contains an element named ' + directory_mode + ' so the output cannot be written here')
         if not os.path.exists(os.path.join(args.location, directory_mode)):
             os.makedirs(os.path.join(args.location, directory_mode))
@@ -76,9 +76,10 @@ def main():
             arg_parser.add_argument('x_size', type = int)
             arg_parser.add_argument('y_size', type = int)
             arg_parser.add_argument('--stage', type = int, default = -1)
+            arg_parser.add_argument('--overwrite', action = 'store_true')
             args = arg_parser.parse_args()
             verify_input(args.trace_file)
-            verify_location('grid_nuxmv', args.location)
+            verify_location('grid_nuxmv', args.location, args.overwrite)
             grid_world_draw_nuxmv_output(args.trace_file, os.path.join(args.location, 'grid_nuxmv', 'img'), args.x_size, args.y_size, args.stage)
         elif args.submode.lower() == 'python':
             arg_parser = argparse.ArgumentParser()
@@ -88,9 +89,10 @@ def main():
             arg_parser.add_argument('location')
             arg_parser.add_argument('x_size', type = int)
             arg_parser.add_argument('y_size', type = int)
+            arg_parser.add_argument('--overwrite', action = 'store_true')
             args = arg_parser.parse_args()
             verify_input(args.trace_file)
-            verify_location('grid_python', args.location)
+            verify_location('grid_python', args.location, args.overwrite)
             grid_world_draw_python_output(args.trace_file, os.path.join(args.location, 'grid_python', 'img'), args.x_size, args.y_size)
     elif main_mode == 'haskell':
         arg_parser = argparse.ArgumentParser()
@@ -101,9 +103,10 @@ def main():
         arg_parser.add_argument('--max_iter', default = 100)
         arg_parser.add_argument('--recursion_limit', type = int, default = 0)
         arg_parser.add_argument('--no_checks', action = 'store_true')
+        arg_parser.add_argument('--overwrite', action = 'store_true')
         args = arg_parser.parse_args()
         verify_input(args.model_file)
-        verify_location('haskell', args.location)
+        verify_location('haskell', args.location, args.overwrite)
         output_name = args.output_name if args.output_name is not None else os.path.splitext(os.path.basename(args.model_file))[0]
         dsl_to_haskell(metamodel_file, args.model_file, os.path.join(args.location, 'haskell'), output_name, args.max_iter, args.recursion_limit, args.no_checks)
     elif main_mode == 'latex':
@@ -136,17 +139,21 @@ def main():
         arg_parser.add_argument('--recursion_limit', type = int, default = 0)
         arg_parser.add_argument('--no_checks', action = 'store_true')
         arg_parser.add_argument('--record_times', type = str, default = None)
+        arg_parser.add_argument('--use_encoding', type = str, default = None)
+        arg_parser.add_argument('--overwrite', action = 'store_true')
         args = arg_parser.parse_args()
         verify_input(args.model_file)
-        verify_location('nuxmv', args.location)
+        verify_location('nuxmv', args.location, args.overwrite)
         input_file = args.model_file
         # output_file = set_output(args.location, input_file, args.output_name, extra_directory = 'nuxmv', extension = ('.smv' if args.generate else '.txt'))
         output_file = os.path.join(args.location, 'nuxmv', (args.output_name if args.output_name is not None else (os.path.splitext(os.path.basename(input_file))[0] + ('.smv' if args.generate else '.txt'))))
         if args.generate:
-            dsl_to_nuxmv(metamodel_file, args.model_file, output_file, True, args.keep_last_stage, args.do_not_trim, args.behave_only, args.recursion_limit, False, args.no_checks, args.record_times)
+            dsl_to_nuxmv(metamodel_file, args.model_file, output_file, True, args.keep_last_stage, args.do_not_trim, args.behave_only, args.recursion_limit, False, args.no_checks, args.record_times, args.use_encoding)
             input_file = output_file
             output_file = os.path.splitext(input_file)[0] + '_output.txt'
         if any((args.invar, args.ctl, args.ltl, args.simulate > 0)):
+            if args.nuxmv_path is None:
+                raise ValueError('Cannot run nuXmv without a path to nuXmv. Skipping nuXmv execution. Please specify a path to nuXmv next time.')
             command_file = os.path.splitext(input_file)[0] + '_input.txt'
             error_file = os.path.splitext(input_file)[0] + '_error.txt'
             command_string = (
@@ -175,9 +182,10 @@ def main():
         arg_parser.add_argument('--recursion_limit', type = int, default = 0)
         arg_parser.add_argument('--safe_assignment', action = 'store_true')
         arg_parser.add_argument('--no_checks', action = 'store_true')
+        arg_parser.add_argument('--overwrite', action = 'store_true')
         args = arg_parser.parse_args()
         verify_input(args.model_file)
-        verify_location('python', args.location)
+        verify_location('python', args.location, args.overwrite)
         output_name = args.output_name if args.output_name is not None else os.path.splitext(os.path.basename(args.model_file))[0]
         dsl_to_python(metamodel_file, args.model_file, output_name, os.path.join(args.location, 'python'), args.serene_print, args.max_iter, args.no_var_print, args.py_tree_print, args.recursion_limit, args.safe_assignment, args.no_checks)
     elif main_mode == 'trace':
@@ -188,9 +196,10 @@ def main():
         arg_parser.add_argument('location')
         arg_parser.add_argument('--do_not_trim', action = 'store_true')
         arg_parser.add_argument('--recursion_limit', type = int, default = 0)
+        arg_parser.add_argument('--overwrite', action = 'store_true')
         args = arg_parser.parse_args()
         verify_input(args.model_file)
-        verify_location('trace', args.location)
+        verify_location('trace', args.location, args.overwrite)
         # output_name = args.output_name if args.output_name is not None else os.path.splitext(os.path.basename(args.model_file))[0]
         counter_trace(metamodel_file, args.model_file, args.trace_file, os.path.join(args.location, 'trace'), args.do_not_trim, args.recursion_limit)
     else:

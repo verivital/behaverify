@@ -72,12 +72,14 @@ def create_blackboard(nodes, variables, root_node_name):
             for (index, condition_pairs) in indexed_condition_pairs:
                 all_indices.remove(index)
                 return_string += (
-                    indent(indent_level) + surround_start + stage_name + str(stage_num) + '_index_' + str(index) + surround_end + ' :='
+                    #indent(indent_level) + surround_start + stage_name + str(stage_num) + '_index_' + str(index) + surround_end + ' :='
+                    indent(indent_level) + surround_start + '_index_' + str(index) + surround_end + ' :='
                     + write_cases(None, None, condition_pairs, indent_level + 1)
                 )
             for index in all_indices: # default value only applies to indicies not covered by constant index.
                 return_string += (
-                    indent(indent_level) + surround_start + stage_name + str(stage_num) + '_index_' + str(index) + surround_end + ' :='
+                    #indent(indent_level) + surround_start + stage_name + str(stage_num) + '_index_' + str(index) + surround_end + ' :='
+                    indent(indent_level) + surround_start + '_index_' + str(index) + surround_end + ' :='
                     + default_array_cases
                 )
         else:
@@ -108,7 +110,7 @@ def create_blackboard(nodes, variables, root_node_name):
 
     for variable_name in variables:
         variable = variables[variable_name]
-        stage_name = variable_name + '_stage_'
+        stage_name = variable_name # + '_stage_'
         # -----------------------------------
         if variable['array']:
             # array variables handled differently.
@@ -155,51 +157,54 @@ def create_blackboard(nodes, variables, root_node_name):
                     else:
                         print('removal of last stage for array variables not yet implemented.')
                     for index in range(variable['array_size']):
-                        var_string += indent(2) + '' + stage_name + '0_index_' + str(index) + ' : ' + variable['custom_value_range'] + ';' + os.linesep
-                        next_string += indent(2) + 'next(' + stage_name + '0_index_' + str(index) + ') := ' + stage_name + str(len(variable['next_value'])) + '_index_' + str(index) + ';' + os.linesep
+                        #var_string += indent(2) + '' + stage_name + '0_index_' + str(index) + ' : ' + variable['custom_value_range'] + ';' + os.linesep
+                        var_string += indent(2) + '' + stage_name + '_index_' + str(index) + ' : ' + variable['custom_value_range'] + ';' + os.linesep
+                        #next_string += indent(2) + 'next(' + stage_name + '0_index_' + str(index) + ') := ' + stage_name + str(len(variable['next_value'])) + '_index_' + str(index) + ';' + os.linesep
+                        next_string += indent(2) + 'next(' + stage_name + '_index_' + str(index) + ') := ' + stage_name + str(len(variable['next_value'])) + '_index_' + str(index) + ';' + os.linesep
                     (_, constant_index, _, indexed_cond_pairs) = variable['initial_value']
                     init_string += handle_initial_value(constant_index, indexed_cond_pairs, variable['array_size'], 'init', stage_name, 0, default_array_cases[constant_index], 2)
-                    previous_stage = stage_name + '0'
+                    previous_stage = stage_name
                     start_location = 0
-                else:
-                    # define_string += (indent(2) + stage_name + '1 := [' + ', '.join(map(lambda x: stage_name + '1_index_' + str(x), range(variable['array_size']))) + '];' + os.linesep)
-                    for index in range(variable['array_size']):
-                        define_string += indent(2) + stage_name + '0_index_' + str(index) + ' := ' + stage_name + '1_index_' + str(index) + ';' + os.linesep
-                        define_string += indent(2) + 'LINK_TO_PREVIOUS_FINAL_' + variable_name + '_index_' + str(index) + ' := ' + stage_name + str(len(variable['next_value'])) + '_index_' + str(index) + ';' + os.linesep
-                        var_string += indent(2) + '' + stage_name + '1_index_' + str(index) + ' : ' + variable['custom_value_range'] + ';' + os.linesep
-                    (_, constant_index, _, indexed_cond_pairs) = variable['initial_value']
-                    init_string += handle_initial_value(constant_index, indexed_cond_pairs, variable['array_size'], 'init', stage_name, 1, default_array_cases[constant_index], 2)
-                    (node_name, constant_index, non_determinism, indexed_cond_pairs) = variable['next_value'][0]
-                    (active_node_name, _) = get_active_node_name(node_name)
-                    if constant_index:
-                        for (index, condition_pairs) in indexed_cond_pairs:
-                            next_string += (
-                                indent(2) + 'next(' + stage_name + '1_index_' + str(index) + ') :='
-                                + write_cases(active_node_name, 'LINK_TO_PREVIOUS_FINAL_' + variable_name + '_index_' + str(index), condition_pairs, 3)
-                            )
-                    else:
-                        for index in range(variable['array_size']):
-                            next_string += (
-                                indent(2) + 'next(' + stage_name + '1_index_' + str(index) + ') := ' + os.linesep
-                                + indent(3) + 'case' + os.linesep
-                                + indent(4) + 'next(!(' + active_node_name + ')) : LINK_TO_PREVIOUS_FINAL_' + variable_name + '_index_' + str(index) + ';' + os.linesep
-                            )
-                            for (index_expression, condition_pairs) in indexed_cond_pairs:
-                                next_string += (
-                                    indent(4) + str(index) + ' = ' + index_expression + ' :'
-                                    + write_cases(None, None, condition_pairs, 5)
-                                )
-                            next_string += (
-                                indent(4) + 'TRUE : LINK_TO_PREVIOUS_FINAL_' + variable_name + '_index_' + str(index) + ';' + os.linesep
-                                + indent(3) + 'esac;' + os.linesep
-                            )
+                # temporarily disabled, not updating to fix it for this.
+                # else:
+                #     # define_string += (indent(2) + stage_name + '1 := [' + ', '.join(map(lambda x: stage_name + '1_index_' + str(x), range(variable['array_size']))) + '];' + os.linesep)
+                #     for index in range(variable['array_size']):
+                #         #define_string += indent(2) + stage_name + '0_index_' + str(index) + ' := ' + stage_name + '1_index_' + str(index) + ';' + os.linesep
+                #         define_string += indent(2) + stage_name + '_index_' + str(index) + ' := ' + stage_name + '1_index_' + str(index) + ';' + os.linesep
+                #         define_string += indent(2) + 'LINK_TO_PREVIOUS_FINAL_' + variable_name + '_index_' + str(index) + ' := ' + stage_name + str(len(variable['next_value'])) + '_index_' + str(index) + ';' + os.linesep
+                #         var_string += indent(2) + '' + stage_name + '1_index_' + str(index) + ' : ' + variable['custom_value_range'] + ';' + os.linesep
+                #     (_, constant_index, _, indexed_cond_pairs) = variable['initial_value']
+                #     init_string += handle_initial_value(constant_index, indexed_cond_pairs, variable['array_size'], 'init', stage_name, 1, default_array_cases[constant_index], 2)
+                #     (node_name, constant_index, non_determinism, indexed_cond_pairs) = variable['next_value'][0]
+                #     (active_node_name, _) = get_active_node_name(node_name)
+                #     if constant_index:
+                #         for (index, condition_pairs) in indexed_cond_pairs:
+                #             next_string += (
+                #                 indent(2) + 'next(' + stage_name + '1_index_' + str(index) + ') :='
+                #                 + write_cases(active_node_name, 'LINK_TO_PREVIOUS_FINAL_' + variable_name + '_index_' + str(index), condition_pairs, 3)
+                #             )
+                #     else:
+                #         for index in range(variable['array_size']):
+                #             next_string += (
+                #                 indent(2) + 'next(' + stage_name + '1_index_' + str(index) + ') := ' + os.linesep
+                #                 + indent(3) + 'case' + os.linesep
+                #                 + indent(4) + 'next(!(' + active_node_name + ')) : LINK_TO_PREVIOUS_FINAL_' + variable_name + '_index_' + str(index) + ';' + os.linesep
+                #             )
+                #             for (index_expression, condition_pairs) in indexed_cond_pairs:
+                #                 next_string += (
+                #                     indent(4) + str(index) + ' = ' + index_expression + ' :'
+                #                     + write_cases(None, None, condition_pairs, 5)
+                #                 )
+                #             next_string += (
+                #                 indent(4) + 'TRUE : LINK_TO_PREVIOUS_FINAL_' + variable_name + '_index_' + str(index) + ';' + os.linesep
+                #                 + indent(3) + 'esac;' + os.linesep
+                #             )
 
-                    previous_stage = stage_name + '1'
-                    start_location = 1
+                #     previous_stage = stage_name + '1'
+                #     start_location = 1
 
                 for counter in range(start_location, len(variable['next_value'])):
                     stage_num = str(counter + 1)
-                    # define_string += (indent(2) + stage_name + stage_num + ' := [' + ', '.join(map(lambda x: stage_name + stage_num + '_index_' + str(x), range(variable['array_size']))) + '];' + os.linesep)
                     (node_name, constant_index, non_determinism, indexed_cond_pairs) = variable['next_value'][counter]
                     (active_node_name, force_constant) = get_active_node_name(node_name)
                     if constant_index:
@@ -207,24 +212,30 @@ def create_blackboard(nodes, variables, root_node_name):
                         for (index, condition_pairs) in indexed_cond_pairs:
                             indices_to_do.remove(index)
                             if non_determinism[index] and not force_constant:
-                                var_string += indent(2) + stage_name + stage_num + '_index_' + str(index) + ' : ' + variable['custom_value_range'] + ';' + os.linesep
+                                #var_string += indent(2) + stage_name + stage_num + '_index_' + str(index) + ' : ' + variable['custom_value_range'] + ';' + os.linesep
+                                var_string += indent(2) + stage_name + '_index_' + str(index) + ' : ' + variable['custom_value_range'] + ';' + os.linesep
                                 next_string += (
-                                    indent(2) + stage_name + stage_num + '_index_' + str(index) + ' :='
+                                    #indent(2) + stage_name + stage_num + '_index_' + str(index) + ' :='
+                                    indent(2) + stage_name + '_index_' + str(index) + ' :='
                                     + write_cases(active_node_name, previous_stage + '_index_' + str(index), condition_pairs, 3)
                                 )
                             else:
                                 define_string += (
-                                    indent(2) + stage_name + stage_num + '_index_' + str(index) + ' :='
+                                    # indent(2) + stage_name + stage_num + '_index_' + str(index) + ' :='
+                                    indent(2) + stage_name + '_index_' + str(index) + ' :='
                                     + write_cases(active_node_name, previous_stage + '_index_' + str(index), condition_pairs, 3)
                                 )
                         for index in indices_to_do:
-                            define_string += indent(2) + stage_name + stage_num + '_index_' + str(index) + ' := ' + previous_stage + '_index_' + str(index) + ';' + os.linesep
+                            #define_string += indent(2) + stage_name + stage_num + '_index_' + str(index) + ' := ' + previous_stage + '_index_' + str(index) + ';' + os.linesep
+                            define_string += indent(2) + stage_name + '_index_' + str(index) + ' := ' + previous_stage + '_index_' + str(index) + ';' + os.linesep
                     else:
                         if non_determinism and not force_constant:
                             for index in range(variable['array_size']):
-                                var_string += indent(2) + stage_name + stage_num + '_index_' + str(index) + ' : ' + variable['custom_value_range'] + ';' + os.linesep
+                                # var_string += indent(2) + stage_name + stage_num + '_index_' + str(index) + ' : ' + variable['custom_value_range'] + ';' + os.linesep
+                                var_string += indent(2) + stage_name + '_index_' + str(index) + ' : ' + variable['custom_value_range'] + ';' + os.linesep
                                 next_string += (
-                                    indent(2) + stage_name + stage_num + '_index_' + str(index) + ' := ' + os.linesep
+                                    #indent(2) + stage_name + stage_num + '_index_' + str(index) + ' := ' + os.linesep
+                                    indent(2) + stage_name + '_index_' + str(index) + ' := ' + os.linesep
                                     + indent(3) + 'case' + os.linesep
                                     + indent(4) + '!(' + active_node_name + ') : ' + previous_stage + '_index_' + str(index) + ';' + os.linesep
                                 )
@@ -241,7 +252,8 @@ def create_blackboard(nodes, variables, root_node_name):
                         else:
                             for index in range(variable['array_size']):
                                 define_string += (
-                                    indent(2) + stage_name + stage_num + '_index_' + str(index) + ' := ' + os.linesep
+                                    #indent(2) + stage_name + stage_num + '_index_' + str(index) + ' := ' + os.linesep
+                                    indent(2) + stage_name + '_index_' + str(index) + ' := ' + os.linesep
                                     + indent(3) + 'case' + os.linesep
                                     + indent(4) + '!(' + active_node_name + ') : ' + previous_stage + '_index_' + str(index) + ';' + os.linesep
                                 )
@@ -255,7 +267,7 @@ def create_blackboard(nodes, variables, root_node_name):
                                     indent(4) + 'TRUE : ' + previous_stage + '_index_' + str(index) + ';' + os.linesep
                                     + indent(3) + 'esac;' + os.linesep
                                 )
-                    previous_stage = stage_name + stage_num
+                    previous_stage = stage_name
         else:
             # NOT AN ARRAY
             # define are static.
@@ -269,20 +281,24 @@ def create_blackboard(nodes, variables, root_node_name):
                 for existing_definition in variable['existing_definitions']:
                     stage_num = variable['existing_definitions'][existing_definition]
                     temp_string = (
-                        indent(2) + stage_name + str(stage_num) + ' :='
+                        # indent(2) + stage_name + str(stage_num) + ' :='
+                        indent(2) + stage_name + ' :='
                         + write_cases(None, None, condition_pairs, 3)
                     )
                     replacement_dictionary = {
                         'SUBSTITUTE_' + str(index) + '_ME' : sub_var
                         for (index, sub_var) in enumerate(existing_definition)
                     }
-                    replacement_dictionary['SUBSTITUTE_SELF'] = stage_name + str(stage_num)
+                    # replacement_dictionary['SUBSTITUTE_SELF'] = stage_name + str(stage_num)
+                    replacement_dictionary['SUBSTITUTE_SELF'] = stage_name
                     define_string += re.sub(r'(SUBSTITUTE_[0-9]+_ME)|(SUBSTITUTE_SELF)', create_replace_define_placeholders_function(replacement_dictionary), temp_string)
             elif variable['mode'] == 'FROZENVAR' or len(variable['next_value']) == 0:
-                frozenvar_string += indent(2) + '' + stage_name + '0 : ' + variable['custom_value_range'] + ';' + os.linesep
+                #frozenvar_string += indent(2) + '' + stage_name + '0 : ' + variable['custom_value_range'] + ';' + os.linesep
+                frozenvar_string += indent(2) + '' + stage_name + ' : ' + variable['custom_value_range'] + ';' + os.linesep
                 (_, _, condition_pairs) = variable['initial_value']
                 init_string += (
-                    indent(2) + 'init(' + stage_name + '0) :='
+                    #indent(2) + 'init(' + stage_name + '0) :='
+                    indent(2) + 'init(' + stage_name + ') :='
                     + write_cases(None, None, condition_pairs, 3)
                 )
             # --------------------------------
@@ -290,14 +306,17 @@ def create_blackboard(nodes, variables, root_node_name):
             # is actual variable.
             else:
                 if variable['keep_stage_0']:
-                    var_string += indent(2) + '' + stage_name + '0 : ' + variable['custom_value_range'] + ';' + os.linesep
+                    #var_string += indent(2) + '' + stage_name + '0 : ' + variable['custom_value_range'] + ';' + os.linesep
+                    var_string += indent(2) + '' + stage_name + ' : ' + variable['custom_value_range'] + ';' + os.linesep
                     (_, _, condition_pairs) = variable['initial_value']
                     init_string += (
-                        indent(2) + 'init(' + stage_name + '0) :='
+                        # indent(2) + 'init(' + stage_name + '0) :='
+                        indent(2) + 'init(' + stage_name + ') :='
                         + write_cases(None, None, condition_pairs, 3)
                     )
                     if variable['keep_last_stage']:
-                        next_string += indent(2) + 'next(' + stage_name + '0) := ' + stage_name + str(len(variable['next_value'])) + ';' + os.linesep
+                        # next_string += indent(2) + 'next(' + stage_name + '0) := ' + stage_name + str(len(variable['next_value'])) + ';' + os.linesep
+                        next_string += indent(2) + 'next(' + stage_name + ') := ' + stage_name + str(len(variable['next_value'])) + ';' + os.linesep
                         # TODO: explain why this doesn't have the root condition.
                     else:
                         # print('removed last stage for: ' + variable_name)
@@ -306,49 +325,55 @@ def create_blackboard(nodes, variables, root_node_name):
                         (node_name, _, condition_pairs) = variable['next_value'].pop()
                         (active_node_name, _) = get_active_node_name(node_name)
                         next_string += (
-                            indent(2) + 'next(' + stage_name + '0) :='
-                            + write_cases(active_node_name, stage_name + str(len(variable['next_value'])), condition_pairs, 3)
+                            #indent(2) + 'next(' + stage_name + '0) :='
+                            indent(2) + 'next(' + stage_name + ') :='
+                            #+ write_cases(active_node_name, stage_name + str(len(variable['next_value'])), condition_pairs, 3)
+                            + write_cases(active_node_name, stage_name, condition_pairs, 3)
                             # note that we don't need to subtract one from len because pop decreased the len naturally.
                             # thus, if there was only 1 other stage, this would now be empty, and point to ourself, which is what we want.
                         )
-
-                    previous_stage = stage_name + '0'
+                    #previous_stage = stage_name + '0'
+                    previous_stage = stage_name
                     start_location = 0
-                else:
-                    define_string += indent(2) + '' + stage_name + '0 := ' + stage_name + '1;' + os.linesep
-                    define_string += indent(2) + 'LINK_TO_PREVIOUS_FINAL_' + variable_name + ' := ' + stage_name + str(len(variable['next_value'])) + ';' + os.linesep
-                    var_string += indent(2) + '' + stage_name + '1' + ' : ' + variable['custom_value_range'] + ';' + os.linesep
-                    (_, _, condition_pairs) = variable['initial_value']
-                    init_string += (
-                        indent(2) + 'init(' + stage_name + '1) :='
-                        + write_cases(None, None, condition_pairs, 3)
-                    )
-                    (node_name, non_determinism, condition_pairs) = variable['next_value'][0]
-                    (active_node_name, _) = get_active_node_name(node_name)
-                    next_string += (
-                        indent(2) + 'next(' + stage_name + '1) :='
-                        + write_cases(active_node_name, 'LINK_TO_PREVIOUS_FINAL_' + variable_name, condition_pairs, 3)
-                    )
+                # else:
+                #     #define_string += indent(2) + '' + stage_name + '0 := ' + stage_name + '1;' + os.linesep
+                #     define_string += indent(2) + '' + stage_name + ' := ' + stage_name + ';' + os.linesep
+                #     define_string += indent(2) + 'LINK_TO_PREVIOUS_FINAL_' + variable_name + ' := ' + stage_name + str(len(variable['next_value'])) + ';' + os.linesep
+                #     var_string += indent(2) + '' + stage_name + '1' + ' : ' + variable['custom_value_range'] + ';' + os.linesep
+                #     (_, _, condition_pairs) = variable['initial_value']
+                #     init_string += (
+                #         indent(2) + 'init(' + stage_name + '1) :='
+                #         + write_cases(None, None, condition_pairs, 3)
+                #     )
+                #     (node_name, non_determinism, condition_pairs) = variable['next_value'][0]
+                #     (active_node_name, _) = get_active_node_name(node_name)
+                #     next_string += (
+                #         indent(2) + 'next(' + stage_name + '1) :='
+                #         + write_cases(active_node_name, 'LINK_TO_PREVIOUS_FINAL_' + variable_name, condition_pairs, 3)
+                #     )
 
-                    previous_stage = stage_name + '1'
-                    start_location = 1
-
+                #     previous_stage = stage_name + '1'
+                #     start_location = 1
                 for index in range(start_location, len(variable['next_value'])):
                     stage_num = str(index + 1)
                     (node_name, non_determinism, condition_pairs) = variable['next_value'][index]
                     (active_node_name, force_constant) = get_active_node_name(node_name)
                     if non_determinism and not force_constant:
-                        var_string += indent(2) + '' + stage_name + stage_num + ' : ' + variable['custom_value_range'] + ';' + os.linesep
+                        #var_string += indent(2) + '' + stage_name + stage_num + ' : ' + variable['custom_value_range'] + ';' + os.linesep
+                        var_string += indent(2) + '' + stage_name + ' : ' + variable['custom_value_range'] + ';' + os.linesep
                         next_string += (
-                            indent(2) + '' + stage_name + stage_num + ' :='
+                            #indent(2) + '' + stage_name + stage_num + ' :='
+                            indent(2) + '' + stage_name + ' :='
                             + write_cases(active_node_name, previous_stage, condition_pairs, 3)
                         )
                     else:
                         define_string += (
-                            indent(2) + '' + stage_name + stage_num + ' :='
+                            #indent(2) + '' + stage_name + stage_num + ' :='
+                            indent(2) + '' + stage_name + ' :='
                             + write_cases(active_node_name, previous_stage, condition_pairs, 3)
                         )
-                    previous_stage = stage_name + stage_num
+                    #previous_stage = stage_name + stage_num
+                    previous_stage = stage_name
     return (define_string,
             frozenvar_string,
             var_string,

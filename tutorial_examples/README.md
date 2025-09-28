@@ -1,25 +1,26 @@
-# Overview
+#### Overview
 
-Hello! Thank you for taking an interest in BehaVerify. To get started, please read [Behavior Tree Introduction](#behavior-tree-introduction) to get a basic overview of behavior trees, and then go ahead and try out an example, starting with the line\_drone.tree example. Examples of how to run BehaVerify are found in the main readme.
+Hello! Thank you for taking an interest in BehaVerify. To get started, please read [Behavior Tree Introduction](#behavior-tree-introduction) to get a basic overview of behavior trees, and then go ahead and try out an example, starting with the line\_drone.tree example. Examples of how to run BehaVerify are found in the main README.
 
-### Contents
+## Contents
+
 TODO: fill this in.
 
 
-### Abbreviations and definitions
+### Abbreviations and Definitions
 
 
 - active : a node that is currently executing. At most one node is active at a time.
 - tick : An overloaded word. We will use this to mean the external signal that starts the execution of the tree (e.g., when the tick arrives). We will also use it to mean the entire episode of a tree executing. That is to say, a tick (episode) starts when the tick (signal) arrives and ends when the root returns.
 - BT : Behavior Tree
-- composite :
-- decorator :
-- leaf : 
-- action :
-- check :
-- parallel :
-- selector :
-- sequence :
+- composite : a node with two children. One of parallel, selector, or sequence. Used to control which nodes are activated in the tree.
+- decorator : a node with one child. Used to modify the behavior of a child without reimplementing.
+- leaf : a node with no children. Either an action or a check.
+- action : a generalized leaf node. Can return S, F, or R. Can modify variables.
+- check : a specialized leaf node. It checks if a condition holds. If it does, it returns S. Otherwise, it returns F.
+- parallel : Composite node. Exact behavior depends on implementation. PyTrees version does not support true parallelism. Instead, simply executes each child from left to right. Once all children have been executed, returns a status based on a policy.
+- selector : Composite node. Executes children from left to right. 
+- sequence : Composite node. Executes children from left to right. 
 - S : short for success, a status a node can return.
 - R : short for running, a status a node can return.
 - F : short for failure, a status a node can return.
@@ -61,16 +62,16 @@ A check node is a user defined custom leaf node that checks a condition.
 
 
 ## code vs meta\_code
-In various places we will make a disinction between code and meta_code. meta_code is essentially code that the compiler can fully compute at compile time. E.G. (add, 1, 3) is valid meta_code, but (add, 1, var45) is not (assuming that var45 is some variable). loop variables can be used in meta_code (see loop description below). (Note: sometimes you can use meta_code but not code. However, you can always use meta_code instead of code).
-    
+In various places we will make a distinction between code and meta\_code. meta\_code is essentially code that the compiler can fully compute at compile time. E.G. (add, 1, 3) is valid meta\_code, but (add, 1, var45) is not (assuming that var45 is some variable). loop variables can be used in meta\_code (see loop description below). (Note: sometimes you can use meta\_code but not code. However, you can always use meta\_code instead of code).
+
 ## Code
 At various points, you will need to specify values. In these cases, we utilize code statements, which generally look as follows
 ```
 CONSTANT | VARIABLE | (func, val1, val2, ... valk)
 ```
-each val can be another code statement, so nesting is possible. You may always include more parantheses. Below we provide a list of functions that can be used and the requirements.
+each val can be another code statement, so nesting is possible. You may always include more parentheses. Below we provide a list of functions that can be used and the requirements.
 
-1. CTL ONLY FUNCTIONS: exists_globally, exists_next, exists_finally, exists_until, always_globally, always_next, always_finally, always_until 
+1. CTL ONLY FUNCTIONS: exists_globally, exists_next, exists_finally, exists_until, always_globally, always_next, always_finally, always_until
 2. LTL ONLY FUNCTIONS: next, globally, finally, until, release, previous, not_previous_not, historically, once, since, triggered
 3. Boolean functions that can take ltl/ctl specifications as arguments: not, and, or, xor, xnor, implies, equivalent
 4. Comparisons: eq, neq, lte, gte, lt, gt
@@ -82,9 +83,9 @@ each val can be another code statement, so nesting is possible. You may always i
 ```
 (loop, LOOP_VAR, DOMAIN such_that DOMAIN_CONDITION, code)
 ```
-- LOOP_VAR -> name of the loop variable (this must not be a variable declared in the variables section). This variable will only be available inside the loop. The loop variable will go through each value in the DOMAIN that satisifies the DOMAIN_CONDITION
-- DOMAIN -> this can be either [min_val, max_val] or {val1, val2, ...}. Each of min_val, max_val, val1, val2, ... is meta_code (see below). The meta_code for min_val and max_val must resolve to integers, and min_val must be less than or equal to max_val. Each of val1, val2, ... must be of the same type. You may optionally use reverse DOMAIN to reverse the order (e.g. reverse [1, 10] will result in the evaluation order being 10, 9, 8, ..., 1 instead of 1, 2, 3, ... 10.
-- DOMAIN_CONDITION -> meta_code condition that must resolve to a boolean. Can utilize the loop variable. If for a given value of loop variable the condition is true, that value is used. If the condition is false, the value is not used (e.g., [0, 10] such_that (eq, (mod, loop_var, 2), 0) will result in only even numbers being used).
+- LOOP_VAR -> name of the loop variable (this must not be a variable declared in the variables section). This variable will only be available inside the loop. The loop variable will go through each value in the DOMAIN that satisfies the DOMAIN_CONDITION
+- DOMAIN -> this can be either [min_val, max_val] or {val1, val2, ...}. Each of min_val, max_val, val1, val2, ... is meta\_code (see below). The meta\_code for min_val and max_val must resolve to integers, and min_val must be less than or equal to max_val. Each of val1, val2, ... must be of the same type. You may optionally use reverse DOMAIN to reverse the order (e.g. reverse [1, 10] will result in the evaluation order being 10, 9, 8, ..., 1 instead of 1, 2, 3, ... 10.
+- DOMAIN_CONDITION -> meta\_code condition that must resolve to a boolean. Can utilize the loop variable. If for a given value of loop variable the condition is true, that value is used. If the condition is false, the value is not used (e.g., [0, 10] such_that (eq, (mod, loop_var, 2), 0) will result in only even numbers being used).
 - code -> this is code.
 ### Loop EXAMPLES
 ```
@@ -94,7 +95,7 @@ The loop will produce [0, 2, 4, 6, 8, 10]. This will then be treated as inputs t
 ```
 result {(loop, a_loop, {'a', 'b', 'c'} such_that True, a_loop)}
 ```
-Rhe loop will produce ['a', 'b', 'c']. This will be treated as possible values. (note: if you actually wanted this you could simply write result{'a', 'b', 'c'}).
+The loop will produce ['a', 'b', 'c']. This will be treated as possible values. (note: if you actually wanted this you could simply write result{'a', 'b', 'c'}).
 
 In essence, the output of the loop will always be 'flattened'. Loops can thus be nested. E.g.
 ```
@@ -108,7 +109,7 @@ for loop1 in range(0, 10 + 1): # + 1 because python range doesn't include the fi
 		result.append(loop1 * loop2)
 ```
 Note that duplicate values in result are acceptable, but do not 'do' anything (at least in terms of nuXmv). They may affect the probability that a constant is chosen in generated code though.
-    
+
 Finally, note that it is perfectly legal to include that `(add, 1, loop1)` statement in the domain. This is because while loop1 is a variable, it is a loop\_variable. It will not appear in nuXmv. Rather, the compiler will unravel the loop, using each possibly value for the loop, and then place the result of that in nuXmv.
 ### case\_loop
 ```
@@ -133,8 +134,8 @@ for my_loop in filter(lambda x: x % 2 == 0, reversed(range(0, 10 + 1))):
 ```
 (index, TO_INDEX, INDEX_VAL)
 ```
-- TO_INDEX -> this must resolve to an array variable (usually done by just specifying the variable. However, you can use meta_code. E.G, if you created a constant called mode_config = True (or mode_config = False), you could use (if, mode_config, array1, array2) to swap which array is indexed using the config constant).
-- INDEX_VAL -> this must resolve to an integer. If you write this using meta_code, you may add the tag constant_index. This will allow various optimizations to be implemented.
+- TO_INDEX -> this must resolve to an array variable (usually done by just specifying the variable. However, you can use meta\_code. E.G, if you created a constant called mode_config = True (or mode_config = False), you could use (if, mode_config, array1, array2) to swap which array is indexed using the config constant).
+- INDEX_VAL -> this must resolve to an integer. If you write this using meta\_code, you may add the tag constant_index. This will allow various optimizations to be implemented.
 ### index EXAMPLES
 ```
 (add, (loop, loop_var, [0, 10] such_that True, (index, array_var, constant_index loop_var)))
@@ -156,17 +157,17 @@ Boolean negation. Code must resolve to boolean. Code must resolve to exactly 1 b
 ```
 (and, code1, code2, ...)
 ```
-Boolean conjunction. Each code statement must resolve to one or more booleans (e.g., by using a loop you can produce multiple booleans using a single code statement). There must always be at least 2 values produced (though this can be done using a single loop). 
-   
+Boolean conjunction. Each code statement must resolve to one or more booleans (e.g., by using a loop you can produce multiple booleans using a single code statement). There must always be at least 2 values produced (though this can be done using a single loop).
+
 ---
-- or 
+- or
 ```
 (or, code1, code2, ...)
 ```
 Boolean disjunction. Each code statement must resolve to one or more booleans (e.g., by using a loop you can produce multiple booleans using a single code statement). There must always be at least 2 values produced (though this can be done using a single loop).
 
 ---
-- xor 
+- xor
 ```
 (xor, code1, ...)
 ```
@@ -184,84 +185,84 @@ Boolean exclusive nor. Code must resolve to boolean. You can provide as many cod
 ```
 (implies, code1, ...)
 ```
-Boolean implication. Code must resolve to boolean, but can be 
+Boolean implication. Code must resolve to boolean, but can be
 
 ---
-- equivalent 
-    
+- equivalent
+
 ---
-- if 
-    
+- if
+
 ---
-- abs 
-    
+- abs
+
 ---
-- max 
-    
+- max
+
 ---
-- min 
-    
+- min
+
 ---
-- sin 
-    
+- sin
+
 ---
-- cos 
-    
+- cos
+
 ---
-- exp 
-    
+- exp
+
 ---
-- tan 
-    
+- tan
+
 ---
-- ln 
-   
+- ln
+
 ---
-- eq 
-    
+- eq
+
 ---
-- neq 
-    
+- neq
+
 ---
-- lte 
-    
+- lte
+
 ---
-- gte 
-    
+- gte
+
 ---
-    lt 
- 
+- lt
+
 ---
--  gt 
- 
+- gt
+
 ---
--  neg 
- 
+- neg
+
 ---
--  add 
- 
+- add
+
 ---
--  sub 
- 
+- sub
+
 ---
--  mult 
- 
+- mult
+
 ---
--  idiv 
- 
+- idiv
+
 ---
--  mod 
- 
+- mod
+
 ---
--  rdiv 
- 
+- rdiv
+
 ---
--  floor 
- 
+- floor
+
 ---
--  count
-    
+- count
+
 ---
-    
+
 ## meta\_code:
 meta\_code is structured identically to code, but must be capable of being evaluated during compilation. As such, meta\_code cannot rely on variables, but can rely on constants. meta\_code is used in loops (which are unrolled by the compiler) and in other places that must be computed at compile time (e.g., the size of an array).

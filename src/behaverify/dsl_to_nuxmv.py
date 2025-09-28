@@ -13,6 +13,7 @@ import os
 import itertools
 import copy
 from behaverify.behaverify_to_smv import write_smv
+from behaverify.variations.naive.behaverify_to_smv import write_smv as write_smv_naive
 from behaverify.meta_functions import build_meta_func
 from behaverify.meta_functions_neural import build_meta_func as build_meta_func_neural
 from behaverify.check_grammar import validate_model
@@ -46,11 +47,107 @@ except:
 # if the condition is true, then the result is used.
 # the last condition should always be TRUE
 
-def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_last_stage, do_not_trim, behave_only, recursion_limit, return_values, skip_grammar_check, record_times):
+def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_last_stage, do_not_trim, behave_only, recursion_limit, return_values, skip_grammar_check, record_times, variant = None):
     '''
     This method is used to convert the dsl to behaverify.
     '''
+    def variant_code_format_variable(variable, variable_key, misc_args):
+        if variant == 'naive':
+            return variable['name']
+        return format_variable_non_object(variable, variable_key, misc_args)
+    def variant_code_action_code(statement, misc_args, node_name, node, statuses, variable_list):
+        return (
+            None
+            if (len(statement.case_results) == 0 or len(statuses) == 1) else
+            (
+                (
+                    'MODULE ' + node_name + '_module(' + ', '.join(variable_list) + ')' + os.linesep
+                    + indent(1) + 'CONSTANTS' + os.linesep
+                    + indent(2) + 'success, failure, running, invalid;' + os.linesep
+                    + indent(1) + 'DEFINE' + os.linesep
+                    + indent(2) + 'status := active ? internal_status : invalid;' + os.linesep
+                    + indent(2) + 'internal_status := ' + os.linesep
+                    + indent(3) + 'case' + os.linesep
+                    + ('').join([(indent(4) + ''
+                                  + format_code(case_result.condition, misc_args)[0]
+                                  + ' : '
+                                  + case_result.status
+                                  + ';' + os.linesep)
+                                 for case_result in statement.case_results])
+                    + indent(4) + 'TRUE : ' + statement.default_result.status + ';' + os.linesep
+                    + indent(3) + 'esac;' + os.linesep
+                )
+                if variant is None else
+                (
+                    # This is for the Naive encoding.
+                    'MODULE ' + node_name + '_module(' + ', '.join(variable_list) + ')' + os.linesep
+                    + indent(1) + 'CONSTANTS' + os.linesep
+                    + indent(2) + 'success, failure, running, invalid;' + os.linesep
+                    + indent(1) + 'DEFINE' + os.linesep
+                    + indent(2) + 'status :=' + os.linesep
+                    + indent(3) + 'case' + os.linesep
+                    + indent(4) + 'reset : invalid;' + os.linesep
+                    + indent(4) + '!(active) : previous_status;' + os.linesep
+                    + ('').join(
+                        [(indent(4) + ''
+                          + format_code(case_result.condition, misc_args)[0]
+                          + ' : '
+                          + case_result.status
+                          + ';' + os.linesep)
+                         for case_result in statement.case_results]
+                    )
+                    + indent(4) + 'TRUE : ' + statement.default_result.status + ';' + os.linesep
+                    + indent(3) + 'esac;' + os.linesep
+                    + indent(1) + 'VAR' + os.linesep
+                    + indent(2) + 'previous_status : {invalid, ' + ', '.join(x for x in ('success', 'failure', 'running') if node['return_possibilities'][x]) + '};' + os.linesep
+                    + indent(1) + 'ASSIGN' + os.linesep
+                    + indent(2) + 'init(previous_status) := invalid;' + os.linesep
+                    + indent(2) + 'next(previous_status) := status;' + os.linesep
+                )
+            )
+        )
+
+    def variant_code_check_code(condition, misc_args, node_name, node, variable_list):
+        return (
+            (
+                'MODULE ' + node_name + '_module(' + ', '.join(variable_list) + ')' + os.linesep
+                + indent(1) + 'CONSTANTS' + os.linesep
+                + indent(2) + 'success, failure, running, invalid;' + os.linesep
+                + indent(1) + 'DEFINE' + os.linesep
+                + indent(2) + 'status := active ? internal_status : invalid;' + os.linesep
+                + indent(2) + 'internal_status := ('
+                + format_code(condition, misc_args)[0]
+                + ') ? success : failure;' + os.linesep
+            )
+            if variant is None else
+            (
+                # This is for the Naive encoding.
+                'MODULE ' + node_name + '_module(' + ', '.join(variable_list) + ')' + os.linesep
+                + indent(1) + 'CONSTANTS' + os.linesep
+                + indent(2) + 'success, failure, running, invalid;' + os.linesep
+                + indent(1) + 'DEFINE' + os.linesep
+                + indent(2) + 'status :=' + os.linesep
+                + indent(3) + 'case' + os.linesep
+                + indent(4) + 'reset : invalid;' + os.linesep
+                + indent(4) + '!(active) : previous_status;' + os.linesep
+                + indent(4) + format_code(condition, misc_args)[0] + ' : success;' + os.linesep
+                + indent(4) + 'TRUE : failure;' + os.linesep
+                + indent(3) + 'esac;' + os.linesep
+                + indent(1) + 'VAR' + os.linesep
+                + indent(2) + 'previous_status : {invalid, ' + ', '.join(x for x in ('success', 'failure', 'running') if node['return_possibilities'][x]) + '};' + os.linesep
+                + indent(1) + 'ASSIGN' + os.linesep
+                + indent(2) + 'init(previous_status) := invalid;' + os.linesep
+                + indent(2) + 'next(previous_status) := status;' + os.linesep
+            )
+        )
+    def variant_code_write_smv(nodes, behaverify_variables, declared_enumerations, tick_condition, specifications, hyper_mode, output_file, do_not_trim):
+        (
+            write_smv(nodes, behaverify_variables, declared_enumerations, tick_condition, specifications, hyper_mode, output_file, do_not_trim)
+            if variant is None else
+            write_smv_naive(nodes, behaverify_variables, declared_enumerations, tick_condition, specifications, hyper_mode, output_file, do_not_trim)
+        )
     def copy_loop_references(loop_references):
+        '''Basic method for copying loop references'''
         return {
             key : loop_references[key]
             for key in loop_references
@@ -296,7 +393,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
         '''
         variable_key = variable_reference(variable_obj.name, is_local(variable_obj), misc_args['node_name'])
         variable = behaverify_variables[variable_key]
-        return format_variable_non_object(variable, variable_key, misc_args)
+        return variant_code_format_variable(variable, variable_key, misc_args)
 
     def format_variable_non_object(variable, variable_key, misc_args):
         use_stages = misc_args['use_stages']
@@ -585,6 +682,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
                     delayed.append((misc_args['node_name'], argument_pairs, var_update))
             return delayed
 
+
         def handle_return_statement(statement, nodes, misc_args):
             node_name = misc_args['node_name']
             node = nodes[node_name]
@@ -596,36 +694,17 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
             if not (len(statement.case_results) == 0 or len(statuses) == 1):
                 for case_result in statement.case_results:
                     variable_list += find_used_variables(case_result.condition, misc_args)
-            variable_list = sorted(list(set(variable_list)))
-            node['additional_arguments'] = variable_list
-            node['internal_status_module_name'] = (
-                None
+                    variable_list = sorted(list(set(variable_list)))
+                    node['additional_arguments'] = variable_list
+                    node['internal_status_module_name'] = (
+                        None
                 if (len(statement.case_results) == 0 or len(statuses) == 1) else
                 (
                     node_name + '_module'
                 )
-            )
-            node['internal_status_module_code'] = (
-                None
-                if (len(statement.case_results) == 0 or len(statuses) == 1) else
-                (
-                    'MODULE ' + node_name + '_module(' + ', '.join(variable_list) + ')' + os.linesep
-                    + indent(1) + 'CONSTANTS' + os.linesep
-                    + indent(2) + 'success, failure, running, invalid;' + os.linesep
-                    + indent(1) + 'DEFINE' + os.linesep
-                    + indent(2) + 'status := active ? internal_status : invalid;' + os.linesep
-                    + indent(2) + 'internal_status := ' + os.linesep
-                    + indent(3) + 'case' + os.linesep
-                    + ('').join([(indent(4) + ''
-                                  + format_code(case_result.condition, misc_args)[0]
-                                  + ' : '
-                                  + case_result.status
-                                  + ';' + os.linesep)
-                                 for case_result in statement.case_results])
-                    + indent(4) + 'TRUE : ' + statement.default_result.status + ';' + os.linesep
-                    + indent(3) + 'esac;' + os.linesep
-                )
-            )
+                    )
+                    # FIND ME FIND ME
+            node['internal_status_module_code'] = variant_code_action_code(statement, misc_args, node_name, node, statuses, variable_list)
             return
 
         def handle_condition(condition, nodes, misc_args):
@@ -635,16 +714,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
             variable_list = sorted(list(set(variable_list)))
             node['additional_arguments'] = variable_list
             node['internal_status_module_name'] = node_name + '_module'
-            node['internal_status_module_code'] = (
-                'MODULE ' + node_name + '_module(' + ', '.join(variable_list) + ')' + os.linesep
-                + indent(1) + 'CONSTANTS' + os.linesep
-                + indent(2) + 'success, failure, running, invalid;' + os.linesep
-                + indent(1) + 'DEFINE' + os.linesep
-                + indent(2) + 'status := active ? internal_status : invalid;' + os.linesep
-                + indent(2) + 'internal_status := ('
-                + format_code(condition, misc_args)[0]
-                + ') ? success : failure;' + os.linesep
-            )
+            node['internal_status_module_code'] = variant_code_check_code(condition, misc_args, node_name, node, variable_list)
             return
 
         delayed_statements = []
@@ -2006,6 +2076,16 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
         )
 
     def walk_tree(current_node, parent_name = None, node_names = None):
+        '''
+        --
+        return
+        @ node_name : string. the name of root of the current subtree
+        @ node_names : set of all node names seen thus far. (Based on some changes, this should maybe be updated)
+        @ nodes : a dictionary from node_names to node_templates
+        @ local_variables : a list of local variables
+        @ initial_statements : a list of initial_statements
+        @ statements : a list of statements
+        '''
         if node_names is None:
             node_names = set()
         argument_pairs = None
@@ -2160,7 +2240,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
                                 , 'tick_condition' : tick_condition
                                 , 'specifications' : specifications})
     else:
-        write_smv(nodes, behaverify_variables, declared_enumerations, tick_condition, specifications, hyper_mode, output_file, do_not_trim)
+        variant_code_write_smv(nodes, behaverify_variables, declared_enumerations, tick_condition, specifications, hyper_mode, output_file, do_not_trim)
     time_2 = time.time()
     time_str = (
         'part 1: ' + str(time_1 - time_0) + os.linesep
