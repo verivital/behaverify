@@ -8,12 +8,26 @@ version = "0.0.1"
 authors = [
   { name="Serena Serafina Serbinowska", email="serena.serbinowska.work@proton.me" }
 ]
-description = "A tool for formally verification of behavior trees"
+description = "A tool for formal verification of behavior trees"
 readme = "README.md"
 requires-python = ">=3.10"
-classifiers = []
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Software Development :: Quality Assurance",
+]
 license = "MIT"
-license-files = ["LICEN[CS]E*"]
+keywords = ["behavior-trees", "formal-verification", "model-checking", "nuXmv"]
+
 dependencies = [
   "py-trees>=2.2.3",
   "textX>=4.1.0",
@@ -25,6 +39,15 @@ dependencies = [
   "Jinja2>=3.1.5",
   "matplotlib>=3.10.0"
 ]
+
+[project.urls]
+Homepage = "https://github.com/verivital/behaverify"
+Repository = "https://github.com/verivital/behaverify"
+Documentation = "https://github.com/verivital/behaverify"
+"Bug Tracker" = "https://github.com/verivital/behaverify/issues"
+
+[project.scripts]
+behaverify = "behaverify.behaverify:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}

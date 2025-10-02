@@ -1,0 +1,7 @@
+include README.md
+include LICENSE
+include pyproject.toml
+recursive-include src/behaverify/data *
+recursive-include src/grid_world_draw *
+global-exclude __pycache__
+global-exclude *.py[co]
