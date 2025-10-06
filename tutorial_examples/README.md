@@ -1,11 +1,17 @@
 #### Overview
 
-Hello! Thank you for taking an interest in BehaVerify. To get started, please read [Behavior Tree Introduction](#behavior-tree-introduction) to get a basic overview of behavior trees, and then go ahead and try out an example, starting with the line\_drone.tree example. Examples of how to run BehaVerify are found in the main README.
+Hello! Thank you for taking an interest in BehaVerify. This tutorial is meant to help you learn how to make models for BehaVerify. For instructions on actually running BehaVerify, please see the main [README](https://github.com/verivital/behaverify/tree/main).
+
+1. If you are unfamiliar with behavior trees, please read [Behavior Tree Introduction](#behavior-tree-introduction) to get a basic overview of behavior trees.
+2. Go to the [line\_drone.tree](https://github.com/verivital/behaverify/blob/main/tutorial_examples/line_drone.tree) example. This example is fully commented. Please read through it. In several places, you will encounter the string FILL-HERE. This indicates that a portion has intentionally left blank for you to fill in. A completed version of this example can be found at [line\_drone\_ans.tree](https://github.com/verivital/behaverify/blob/main/tutorial_examples/line_drone_ans.tree).
+
 
 ## Contents
 
-TODO: fill this in.
-
+- [Overview](#overview) is a brief explanation of this document
+- [Abbreviations and definitions](#abbreviation-and-definitions) contains various abbreviations and definitions used throughout this readme.
+- [Behavior Tree Introduction](#behavior-tree-introduction) is a brief introduction for behavior trees.
+- [Syntax](#syntax-of-behaverify) contains information about functions and other features of BehaVerify.
 
 ### Abbreviations and Definitions
 
@@ -60,6 +66,8 @@ An action node is a user defined custom leaf node that does something (such as c
 
 A check node is a user defined custom leaf node that checks a condition.
 
+
+# Syntax of BehaVerify
 
 ## code vs meta\_code
 In various places we will make a distinction between code and meta\_code. meta\_code is essentially code that the compiler can fully compute at compile time. E.G. (add, 1, 3) is valid meta\_code, but (add, 1, var45) is not (assuming that var45 is some variable). loop variables can be used in meta\_code (see loop description below). (Note: sometimes you can use meta\_code but not code. However, you can always use meta\_code instead of code).

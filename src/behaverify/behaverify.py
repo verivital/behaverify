@@ -180,7 +180,7 @@ def main(argv=None):
         arg_parser.add_argument('--recursion_limit', type = int, default = 0)
         arg_parser.add_argument('--no_checks', action = 'store_true')
         arg_parser.add_argument('--record_times', type = str, default = None)
-        arg_parser.add_argument('--use_encoding', type = str, default = None)
+        arg_parser.add_argument('--use_encoding', type = str, default = 'fastfowarding')
         arg_parser.add_argument('--overwrite', action = 'store_true')
         args = arg_parser.parse_args(argv)
         verify_input(args.model_file)
@@ -188,6 +188,8 @@ def main(argv=None):
         input_file = args.model_file
         # output_file = set_output(args.location, input_file, args.output_name, extra_directory = 'nuxmv', extension = ('.smv' if args.generate else '.txt'))
         output_file = os.path.join(args.location, 'nuxmv', (args.output_name if args.output_name is not None else (os.path.splitext(os.path.basename(input_file))[0] + ('.smv' if args.generate else '.txt'))))
+        if args.use_encoding.lower() not in ('fastforwarding', 'naive'):
+            raise ValueError('Unknown encoding: ' + args.use_encoding.lower() + '. Encoding must be fastfowarding or naive (case insensitive).')
         if args.generate:
             dsl_to_nuxmv(metamodel_file, args.model_file, output_file, True, args.keep_last_stage, args.do_not_trim, args.behave_only, args.recursion_limit, False, args.no_checks, args.record_times, args.use_encoding)
             input_file = output_file
