@@ -47,14 +47,16 @@ except:
 # if the condition is true, then the result is used.
 # the last condition should always be TRUE
 
-def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_last_stage, do_not_trim, behave_only, recursion_limit, return_values, skip_grammar_check, record_times, variant = None):
+def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_last_stage, do_not_trim, behave_only, recursion_limit, return_values, skip_grammar_check, record_times, variant = 'fastforwarding'):
     '''
     This method is used to convert the dsl to behaverify.
     '''
     def variant_code_format_variable(variable, variable_key, misc_args):
         if variant == 'naive':
             return variable['name']
-        return format_variable_non_object(variable, variable_key, misc_args)
+        if variant == 'fastforwarding':
+            return format_variable_non_object(variable, variable_key, misc_args)
+        raise ValueError('Unknown encoding.')
     def variant_code_action_code(statement, misc_args, node_name, node, statuses, variable_list):
         return (
             None
@@ -77,7 +79,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
                     + indent(4) + 'TRUE : ' + statement.default_result.status + ';' + os.linesep
                     + indent(3) + 'esac;' + os.linesep
                 )
-                if variant is None else
+                if variant == 'fastforwarding' else
                 (
                     # This is for the Naive encoding.
                     'MODULE ' + node_name + '_module(' + ', '.join(variable_list) + ')' + os.linesep
@@ -119,7 +121,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
                 + format_code(condition, misc_args)[0]
                 + ') ? success : failure;' + os.linesep
             )
-            if variant is None else
+            if variant == 'fastfowarding' else
             (
                 # This is for the Naive encoding.
                 'MODULE ' + node_name + '_module(' + ', '.join(variable_list) + ')' + os.linesep
@@ -143,7 +145,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
     def variant_code_write_smv(nodes, behaverify_variables, declared_enumerations, tick_condition, specifications, hyper_mode, output_file, do_not_trim):
         (
             write_smv(nodes, behaverify_variables, declared_enumerations, tick_condition, specifications, hyper_mode, output_file, do_not_trim)
-            if variant is None else
+            if variant == 'fastfowarding' else
             write_smv_naive(nodes, behaverify_variables, declared_enumerations, tick_condition, specifications, hyper_mode, output_file, do_not_trim)
         )
     def copy_loop_references(loop_references):
@@ -2189,6 +2191,8 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
         'environment_check' : create_check,
         'action' : create_action
     }
+    if variant not in ('naive', 'fastfowarding'):
+        raise ValueError('Unknown encoding variant: ' + str(variant))
     array_size_override = {} # this is indexed by variable.name. Yes that is variable.name, not variable_name. It should be indexed by the name associated with the variable object.
     time_0 = time.time()
     (model, variables, constants, declared_enumerations) = validate_model(metamodel_file, model_file, recursion_limit, skip_grammar_check)
