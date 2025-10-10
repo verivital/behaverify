@@ -1,3 +1,12 @@
+'''
+This file is used as the main entry point for BehaVerify.
+It can be used to call the various modes of BehaVerify. If nuXmv has been downloaded, it can also envoke nuXmv.
+For usage details, please consult: https://github.com/verivital/behaverify/blob/main/README.md
+For instructions on how to create a new model, please consult: https://github.com/verivital/behaverify/blob/main/tutorial_examples/README.md
+
+Original Author: Serena Serafina Serbinowska, serena.serbinowska@vanderbilt.edu
+Current Maintainer:
+'''
 import argparse
 import os
 import subprocess
