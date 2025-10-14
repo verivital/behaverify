@@ -3,6 +3,8 @@ This module is for internal use with BehaVerify.
 It is used to convert .tree files to C++ code.
 It contains a variety of utility functions.
 
+depends on:
+tick_overwrite/tick_overwrite.py
 
 
 Author: Serena Serafina Serbinowska
@@ -39,7 +41,7 @@ except:
     ONNX_IMPORTED = False
 
 
-def dsl_to_python(metamodel_file, model_file, main_name, write_location, serene_print, max_iter, no_var_print, py_tree_print, recursion_limit, safe_assignment, no_checks):
+def dsl_to_cpp(metamodel_file, model_file, main_name, write_location, serene_print, max_iter, no_var_print, py_tree_print, recursion_limit, safe_assignment, no_checks):
     '''
     Used to write all the files.
     @metamodel_file ::> points to the file with the metamodel
@@ -57,9 +59,11 @@ def dsl_to_python(metamodel_file, model_file, main_name, write_location, serene_
     # init is a boolean. if true, it means we are initializing. if false, we are not.
     # loc is a location. location can be node, blackboard, or environment. now testing out loc = random? which will use a bit of both.
     def create_misc_args(init, loc, indent_level):
+        # not adjusted, but might not need to be
         return {'init' : init, 'loc' : loc, 'indent_level' : indent_level}
 
     def to_python_type(behaverify_type):
+        # TODO: adjust
         if behaverify_type == 'ENUM':
             return 'str'
         if behaverify_type == 'BOOLEAN':
@@ -71,6 +75,7 @@ def dsl_to_python(metamodel_file, model_file, main_name, write_location, serene_
         raise ValueError(behaverify_type + ' is of an unsupported type. Only ENUM, BOOLEAN, and INT are supported')
 
     def str_conversion(atom_type, atom):
+        # TODO: adjust
         if atom_type in ('VARIABLE', 'NODE'):
             return str(atom)
         if atom_type == 'CONSTANT':
@@ -90,6 +95,7 @@ def dsl_to_python(metamodel_file, model_file, main_name, write_location, serene_
         )
 
     def execute_loop(function_call, to_call, packaged_args, misc_args):
+        # not adjusted, but might not need to be.
         return_vals = []
         all_domain_values = []
         if function_call.min_val is None:
@@ -111,16 +117,20 @@ def dsl_to_python(metamodel_file, model_file, main_name, write_location, serene_
         return return_vals
 
     def execute_code(code):
+        # not adjusted, but might not need to be.
         cur_func = build_meta_func(code)
         return cur_func((constants, loop_references))
 
     def format_function_if(_, function_call, misc_args):
-        return ['(' + format_code(function_call.values[1], misc_args)[0] + ' if ' + format_code(function_call.values[0], misc_args)[0] + ' else ' + format_code(function_call.values[2], misc_args)[0] + ')']
+        # adjusted
+        return ['((' + format_code(function_call.values[0], misc_args)[0] + ') ? ' + format_code(function_call.values[1], misc_args)[0] + ' : ' + format_code(function_call.values[2], misc_args)[0] + ')']
 
     def format_function_loop(_, function_call, misc_args):
+        # not adjusted, but might not need to be.
         return execute_loop(function_call, format_code, function_call.values[0], misc_args)
 
     def format_case_loop_recursive(function_call, misc_args, cond_func, values, index):
+        # adjusted
         if len(values) == index:
             if function_call.loop_variable in loop_references:
                 loop_references.pop(function_call.loop_variable)
@@ -128,9 +138,10 @@ def dsl_to_python(metamodel_file, model_file, main_name, write_location, serene_
         loop_references[function_call.loop_variable] = values[index]
         if not cond_func((constants, loop_references))[0]:
             return format_case_loop_recursive(function_call, misc_args, cond_func, values, index + 1)
-        return ['(' + format_code(function_call.values[0], misc_args)[0] + ' if ' + format_code(function_call.cond_value, misc_args)[0] + ' else ' + format_case_loop_recursive(function_call, misc_args, cond_func, values, index + 1)[0] + ')']
+        return ['((' + format_code(function_call.cond_value, misc_args)[0] + ') ? ' + format_code(function_call.values[0], misc_args)[0] + ' : ' + format_case_loop_recursive(function_call, misc_args, cond_func, values, index + 1)[0] + ')']
 
     def format_function_case_loop(_, function_call, misc_args):
+        # not adjusted, but might not need to be.
         all_domain_values = []
         if function_call.min_val is None:
             for domain_code in function_call.loop_variable_domain:
@@ -146,6 +157,7 @@ def dsl_to_python(metamodel_file, model_file, main_name, write_location, serene_
         return format_case_loop_recursive(function_call, misc_args, cond_func, all_domain_values, 0)
 
     def format_function_before(function_name, function_call, misc_args):
+        # not adujsted, but might not need to be
         return [
             function_name + '('
             + ', '.join([', '.join(format_code(value, misc_args)) for value in function_call.values])
@@ -153,6 +165,7 @@ def dsl_to_python(metamodel_file, model_file, main_name, write_location, serene_
         ]
 
     def format_function_between(function_name, function_call, misc_args):
+        # not adjusted, but might not need to be
         return [
             '('
             + (' ' + function_name + ' ').join([(' ' + function_name + ' ').join(format_code(value, misc_args)) for value in function_call.values])
@@ -160,28 +173,29 @@ def dsl_to_python(metamodel_file, model_file, main_name, write_location, serene_
         ]
 
     def format_function_implies(_, function_call, misc_args):
+        # adjusted
         formatted_values = []
         for value in function_call.values:
             formatted_values.extend(format_code(value, misc_args))
-        return ['(' + '(not ' + formatted_values[0] + ') or ' + formatted_values[1] + ')']
+        return ['(' + '(! ' + formatted_values[0] + ') || ' + formatted_values[1] + ')']
 
     def format_function_division(_, function_call, misc_args):
+        # adjusted, but probably unnecesaary.
         formatted_values = []
         for value in function_call.values:
             formatted_values.extend(format_code(value, misc_args))
-        return ['(int(' + formatted_values[0] + ' / ' + formatted_values[1] + '))']
+        return ['(' + formatted_values[0] + ' / ' + formatted_values[1] + ')']
 
     def format_function_xnor(_, function_call, misc_args):
-        return ['(not (' + function_format['xor'][1](function_format['xor'][0], function_call, misc_args)[0] + '))']
+        # adjusted
+        return ['(!(' + function_format['xor'][1](function_format['xor'][0], function_call, misc_args)[0] + '))']
 
     def format_function_count(_, function_call, misc_args):
-        return [
-            '('
-            + '[' + ', '.join([', '.join(format_code(value, misc_args)) for value in function_call.values]) + '].count(True)'
-            + ')'
-        ]
+        # adjusted
+        return ['(' + ' + '.join([' + '.join(format_code(value, misc_args)) for value in function_call.values]) + ')']
 
     def format_function_index(_, function_call, misc_args):
+        # adjusted
         var_func = build_meta_func(function_call.to_index)
         variable = resolve_potential_reference_no_type(var_func((constants, loop_references))[0], declared_enumerations, {}, variables, constants, loop_references)[1]
         formatted_variable = format_variable_name_only(variable, misc_args)
@@ -195,22 +209,16 @@ def dsl_to_python(metamodel_file, model_file, main_name, write_location, serene_
         return [
             (formatted_variable + '(' + formatted_index + ')')
             if variable.model_as in ('DEFINE', 'NEURAL') and variable.static != 'static' else
-            (
-                formatted_variable + '['
-                + (
-                    ('serene_safe_assignment.index_func(' + formatted_index + ', ' + str(variable_array_size_map[variable.name]) + ')')
-                    if safe_assignment else
-                    formatted_index
-                )
-                + ']'
-            )
+            (formatted_variable + '[' + formatted_index + ']')
         ]
 
     def format_function(code, misc_args):
+        # not adjusted
         (function_name, function_to_call) = function_format[code.function_call.function_name]
         return function_to_call(function_name, code.function_call, misc_args)
 
     def format_variable_name_only(variable, misc_args):
+        # TODO: fix this. Going to have to overhaul this.
         return (
             (
                 ('node.' if is_local(variable) else ('self.' if is_env(variable) else 'self.blackboard.'))
@@ -233,9 +241,11 @@ def dsl_to_python(metamodel_file, model_file, main_name, write_location, serene_
         )
 
     def format_variable(variable, misc_args):
+        # TODO: Fix this.  Going to have to overhaul this.
         return format_variable_name_only(variable, misc_args) + ('()' if variable.model_as in ('DEFINE', 'NEURAL') and variable.static != 'static' else '')
 
     def handle_atom(code, misc_args):
+        # TODO: Fix this. Going to have to overhaul this.
         try:
             (atom_class, atom_type, atom) = handle_constant_or_reference(code.atom, declared_enumerations, {}, variables, constants, loop_references)
         except BTreeException as bt_e:  # this should be an argument.
@@ -247,6 +257,7 @@ def dsl_to_python(metamodel_file, model_file, main_name, write_location, serene_
         return str_conversion(atom_type, atom) if atom_class == 'CONSTANT' else format_variable(atom, misc_args)
 
     def format_code(code, misc_args):
+        # not adjusted, probably fine.
         return (
             [handle_atom(code, misc_args)]
             if code.atom is not None else
@@ -257,11 +268,8 @@ def dsl_to_python(metamodel_file, model_file, main_name, write_location, serene_
             )
         )
 
-    def class_definition(node_name):
-        return 'class ' + node_name + '(py_trees.behaviour.Behaviour):' + os.linesep
-
-    def init_method_check(node):
-        return (indent(1) + 'def __init__(self, name' + ((', ' + ', '.join(map(lambda arg_pair: arg_pair.argument_name, node.arguments))) if len(node.arguments) > 0 else '') + '):' + os.linesep
+    def preamble_method_check(node):
+        return (indent(1) + node.name + '(const std::string& name, const BT::NodeConfiguration& config' + ((', ' + ', '.join(map(lambda arg_pair: arg_pair.argument_name, node.arguments))) if len(node.arguments) > 0 else '') + '):' + os.linesep
                 + ''.join(
                     [
                         (indent(2) + 'self.' + arg_pair.argument_name + ' = ' + arg_pair.argument_name + os.linesep)
@@ -1325,9 +1333,9 @@ def dsl_to_python(metamodel_file, model_file, main_name, write_location, serene_
         if serene_print:
             overwrite_location = None
             try:
-                overwrite_location = files('behaverify').joinpath('tick_overwrite', 'tick_overwrite.py')
+                overwrite_location = files('behaverify').joinpath('data', 'tick_overwrite', 'tick_overwrite.py')
             except ModuleNotFoundError:
-                overwrite_location = os.path.dirname(os.path.realpath(__file__)) + '/tick_overwrite/tick_overwrite.py'
+                overwrite_location = os.path.dirname(os.path.realpath(__file__)) + '/data/tick_overwrite/tick_overwrite.py'
                 print('did not find module; attempted to find files directly')
             with open(overwrite_location, 'r', encoding = 'utf-8') as read_file:
                 return_string += read_file.read()
@@ -1619,4 +1627,4 @@ if __name__ == '__main__':
     arg_parser.add_argument('--safe_assignment', action = 'store_true')
     arg_parser.add_argument('--no_checks', action = 'store_true')
     args = arg_parser.parse_args()
-    dsl_to_python(args.metamodel_file, args.model_file, args.name, args.location, args.serene_print, args.max_iter, args.no_var_print, args.py_tree_print, args.recursion_limit, args.safe_assignment, args.no_checks)
+    dsl_to_cpp(args.metamodel_file, args.model_file, args.name, args.location, args.serene_print, args.max_iter, args.no_var_print, args.py_tree_print, args.recursion_limit, args.safe_assignment, args.no_checks)
