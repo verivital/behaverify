@@ -62,7 +62,7 @@ def dsl_to_cpp(metamodel_file, model_file, main_name, write_location, serene_pri
         # not adjusted, but might not need to be
         return {'init' : init, 'loc' : loc, 'indent_level' : indent_level}
 
-    def to_python_type(behaverify_type):
+    def to_cpp_type(behaverify_type):
         # TODO: adjust
         if behaverify_type == 'ENUM':
             return 'str'
@@ -219,30 +219,34 @@ def dsl_to_cpp(metamodel_file, model_file, main_name, write_location, serene_pri
 
     def format_variable_name_only(variable, misc_args):
         # TODO: fix this. Going to have to overhaul this.
-        return (
-            (
-                ('node.' if is_local(variable) else ('self.' if is_env(variable) else 'self.blackboard.'))
-                if misc_args['loc'] == 'environment' else
-                (
-                    'blackboard_reader.'
-                    if misc_args['loc'] == 'blackboard' else
-                    (
-                        ('self.' + ('' if is_local(variable) else 'blackboard.'))
-                        if misc_args['loc'] == 'node' else
-                        (
-                            ('node.' if is_local(variable) else ('self.environment.' if is_env(variable) else 'self.blackboard.'))
-                            if misc_args['loc'] == 'random' else
-                            'ERROR ERROR ERROR'
-                        )
-                    )
-                )
-            )
-            + variable.name
-        )
+        # currently doing a work around to just assume that we just use the variable name. That's not going to work in the long run, for various reasons, but let's keep it simple for now. Old code commented.
+        # return (
+        #     (
+        #         ('node.' if is_local(variable) else ('self.' if is_env(variable) else 'self.blackboard.'))
+        #         if misc_args['loc'] == 'environment' else
+        #         (
+        #             'blackboard_reader.'
+        #             if misc_args['loc'] == 'blackboard' else
+        #             (
+        #                 ('self.' + ('' if is_local(variable) else 'blackboard.'))
+        #                 if misc_args['loc'] == 'node' else
+        #                 (
+        #                     ('node.' if is_local(variable) else ('self.environment.' if is_env(variable) else 'self.blackboard.'))
+        #                     if misc_args['loc'] == 'random' else
+        #                     'ERROR ERROR ERROR'
+        #                 )
+        #             )
+        #         )
+        #     )
+        #     + variable.name
+        # )
+        return variable.name
 
     def format_variable(variable, misc_args):
         # TODO: Fix this.  Going to have to overhaul this.
-        return format_variable_name_only(variable, misc_args) + ('()' if variable.model_as in ('DEFINE', 'NEURAL') and variable.static != 'static' else '')
+        # return format_variable_name_only(variable, misc_args) + ('()' if variable.model_as in ('DEFINE', 'NEURAL') and variable.static != 'static' else '')
+        # currently doing a work around to just assume that we just use the variable name. That's not going to work in the long run, for various reasons, but let's keep it simple for now. Old code commented.
+        return format_variable_name_only(variable, misc_args)
 
     def handle_atom(code, misc_args):
         # TODO: Fix this. Going to have to overhaul this.
@@ -268,38 +272,46 @@ def dsl_to_cpp(metamodel_file, model_file, main_name, write_location, serene_pri
             )
         )
 
-    def preamble_method_check(node):
-        return (indent(1) + node.name + '(const std::string& name, const BT::NodeConfiguration& config' + ((', ' + ', '.join(map(lambda arg_pair: arg_pair.argument_name, node.arguments))) if len(node.arguments) > 0 else '') + '):' + os.linesep
-                + ''.join(
-                    [
-                        (indent(2) + 'self.' + arg_pair.argument_name + ' = ' + arg_pair.argument_name + os.linesep)
-                        for arg_pair in node.arguments
-                    ]
-                )
-                + indent(2) + 'super(' + node.name + ', self).__init__(name)' + os.linesep
-                + (
-                    (indent(2) + "self.__serene_print__ = 'INVALID'" + os.linesep)
-                    if serene_print else
-                    ''
-                )
-                + indent(2) + 'self.name = name' + os.linesep
-                + indent(2) + 'self.blackboard = self.attach_blackboard_client(name = name)' + os.linesep
-                + ''.join([(indent(2) + 'self.blackboard.register_key(key = (' + "'" + variable.name + "'" + '), access = py_trees.common.Access.READ)' + os.linesep) for variable in node.read_variables])
-                + os.linesep)
+    def make_blackboard_variable(variable, misc_args):
+        # TODO: make this actually work in the general case. Right now, we're just assuming that the variable name will be used.
+        return (
+            (
+                'NOT IMPLEMENTED'
+            )
+            if variable.model_as == 'NEURAL' or (variable.model_as == 'DEFINE' and variable.static != 'static') else
+            (
+                indent(misc_args['indent_level']) + to_cpp_type(variable_type(variable, declared_enumerations, {})) + ' ' + variable.name + ';' + os.linesep
+                + indent(misc_args['indent_level']) + 'if(!getInput("' + variable.name + '", ' + variable.name + ')) { throw BT::RuntimeError(Missing Input: ' + variable.name + '); }'
+            )
+        )
 
-    def update_method_check(node):
-        return (indent(1) + 'def update(self):' + os.linesep
-                + indent(2) + 'return_status = ((py_trees.common.Status.SUCCESS) if ('
-                + format_code(node.condition, create_misc_args(False, 'node', 2))[0]
-                + ') else (py_trees.common.Status.FAILURE))' + os.linesep
-                + (
-                    (indent(2) + "self.__serene_print__ = return_status.value" + os.linesep)
-                    if serene_print else
-                    ''
-                )
-                + indent(2) + 'return return_status' + os.linesep)
+    def check_code(node):
+        # TODO: make this actually work in the general case. Right now, we're just assuming that the variable name will be used.
+        # updating
+        # TODO: this doesn't work if a variable is a define or anything like that.
+        misc_args = create_misc_args(False, 'node', 3)
+        return (
+            ''.join(
+                (os.linesep).join(map(lambda arg_pair: indent(2) + to_cpp_type(arg_pair.argument_type) + ' arg_' + arg_pair.argument_name + ';'))
+            ) + os.linesep
+            + indent(1) + 'public:' + os.linesep
+            + indent(2) + node.name + '(const std::string& name, const BT::NodeConfiguration& config' + ((', ' + ', '.join(map(lambda arg_pair: to_cpp_type(arg_pair.argument_type) + ' arg_' + arg_pair.argument_name, node.arguments))) if len(node.arguments) > 0 else '') + ') : BT::ConditionNode(name, config) {' + os.linesep
+            + (os.linesep).join(map(lambda arg_pair: indent(3) + arg_pair.argument_name + ' = arg_' + arg_pair.argument_name + ';', node.arguments)) + os.linesep
+            + indent(2) + '}' + os.linesep
+            + indent(2) + 'static BT::PortsList providedPorts() {' + os.linesep
+            + indent(3) + 'return {'
+            + (', ').join(map(lambda variable : 'BT::InputPort<' + to_cpp_type(variable_type(variable, declared_enumerations, None)) + '>("' + variable.name + '")', node.read_variables))
+            + indent(3) + '};' + os.linesep
+            + indent(2) + '}' + os.linesep
+            + indent(2) + 'BT::NodeStatus tick() override {' + os.linesep
+            + (os.linesep).join(map(lambda variable : make_blackboard_variable(variable, misc_args), node.read_variables))
+            + os.linesep
+            + indent(misc_args['indent_level']) + 'BT::NodeStatus return_status = ' + format_code(node.condition, misc_args)[0] + ' ? BT::NodeStatus::SUCCESS) : BT::NodeStatus::FAILURE;' + os.linesep
+            + indent(2) + 'return return_status' + os.linesep
+        )
 
     def init_method_environment_check(node):
+        # TODO: Upate this. Not updating this until I confirm things without the environment working.
         return (indent(1) + 'def __init__(self, name, environment' + ((', ' + ', '.join(map(lambda arg_pair: arg_pair.argument_name, node.arguments))) if len(node.arguments) > 0 else '') + '):' + os.linesep
                 + ''.join(
                     [
