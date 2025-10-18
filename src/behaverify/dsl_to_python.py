@@ -873,7 +873,6 @@ def dsl_to_python(metamodel_file, model_file, main_name, write_location, serene_
 
     def update_method_action(node):
         misc_args = create_misc_args(False, 'node', 2)
-        print('yes hello this is node')
         return (indent(1) + 'def update(self):' + os.linesep
                 + ''.join([handle_statement(statement, misc_args) for statement in node.pre_update_statements])
                 + handle_return_statement(node.return_statement, misc_args)
