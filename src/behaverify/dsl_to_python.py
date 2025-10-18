@@ -396,7 +396,7 @@ def dsl_to_python(metamodel_file, model_file, main_name, write_location, serene_
             new_misc_args_3 = create_misc_args(misc_args['init'], misc_args['loc'], 3)
             long_if_name = 'long_if_' + str(long_if_count)
             long_if_count = long_if_count + 1
-            long_if_string = indent(new_misc_args_1['indent_level']) + 'def ' + long_if_name + '(' + ('self, node' if misc_args['loc'] == 'environment' else '') + '):' + os.linesep
+            long_if_string = indent(new_misc_args_1['indent_level']) + 'def ' + long_if_name + '(' + ('self, node' if misc_args['loc'] == 'environment' else ('self' if misc_args['loc'] == 'node' else '')) + '):' + os.linesep
             for case_result in case_results:
                 long_if_string += (
                     indent(new_misc_args_2['indent_level']) + 'if ' + format_code(case_result.condition, new_misc_args_2)[0] + ':' + os.linesep
@@ -404,7 +404,7 @@ def dsl_to_python(metamodel_file, model_file, main_name, write_location, serene_
                 )
             long_if_string += indent(new_misc_args_2['indent_level']) + 'return ' + resolve_variable_nondeterminism(default_result.values, new_misc_args_2) + os.linesep
             long_if_to_write.append(long_if_string)
-            return ('self.' if misc_args['loc'] == 'environment' else '') + long_if_name + '(' + ('node' if misc_args['loc'] == 'environment' else '') + ')'
+            return ('self.' if misc_args['loc'] in ('environment', 'node') else '') + long_if_name + '(' + ('node' if misc_args['loc'] == 'environment' else '') + ')'
         return (
             '(' + os.linesep
             + ''.join(
@@ -873,6 +873,7 @@ def dsl_to_python(metamodel_file, model_file, main_name, write_location, serene_
 
     def update_method_action(node):
         misc_args = create_misc_args(False, 'node', 2)
+        print('yes hello this is node')
         return (indent(1) + 'def update(self):' + os.linesep
                 + ''.join([handle_statement(statement, misc_args) for statement in node.pre_update_statements])
                 + handle_return_statement(node.return_statement, misc_args)
@@ -887,39 +888,46 @@ def dsl_to_python(metamodel_file, model_file, main_name, write_location, serene_
 
     def build_check_node(node):
         nonlocal long_if_to_write
-        long_if_statements = (os.linesep).join(long_if_to_write)
         long_if_to_write = []
-        return (standard_imports
-                + os.linesep + os.linesep
-                + class_definition(node.name)
-                + init_method_check(node)
-                + update_method_check(node)
-                + long_if_statements
-                )
+        return_string = (
+            standard_imports
+            + os.linesep + os.linesep
+            + class_definition(node.name)
+            + init_method_check(node)
+            + update_method_check(node)
+            + (os.linesep).join(long_if_to_write)
+        )
+        long_if_to_write = []
+        return return_string
 
     def build_environment_check_node(node):
         nonlocal long_if_to_write
-        long_if_statements = (os.linesep).join(long_if_to_write)
         long_if_to_write = []
-        return (standard_imports
-                + os.linesep + os.linesep
-                + class_definition(node.name)
-                + init_method_environment_check(node)
-                + update_method_environment_check(node)
-                + long_if_statements
-                )
+        return_string =  (
+            standard_imports
+            + os.linesep + os.linesep
+            + class_definition(node.name)
+            + init_method_environment_check(node)
+            + update_method_environment_check(node)
+            + (os.linesep).join(long_if_to_write)
+        )
+        long_if_to_write = []
+        return return_string
 
     def build_action_node(node):
         nonlocal long_if_to_write
-        long_if_statements = (os.linesep).join(long_if_to_write)
         long_if_to_write = []
-        return (standard_imports
-                + os.linesep + os.linesep
-                + class_definition(node.name)
-                + init_method_action(node)
-                + update_method_action(node)
-                + long_if_statements
-                )
+        return_string = (
+            standard_imports
+            + os.linesep + os.linesep
+            + class_definition(node.name)
+            + init_method_action(node)
+            + update_method_action(node)
+            + os.linesep
+            + (os.linesep).join(long_if_to_write)
+        )
+        long_if_to_write = []
+        return return_string
 
     def walk_tree_recursive(current_node, node_names, running_string, variable_print_info):
         while hasattr(current_node, 'sub_root'):
@@ -1278,6 +1286,8 @@ def dsl_to_python(metamodel_file, model_file, main_name, write_location, serene_
         )
 
     def write_blackboard(model, running_string):
+        nonlocal long_if_to_write
+        long_if_to_write = []
         initial_misc_args = create_misc_args(True, 'blackboard', 1)
         return_string = (
             'from pathlib import Path' + os.linesep
@@ -1320,7 +1330,6 @@ def dsl_to_python(metamodel_file, model_file, main_name, write_location, serene_
                 ]
             )
             + indent(1) + 'return' + os.linesep)
-        nonlocal long_if_to_write
         long_if_statements = (os.linesep).join(long_if_to_write)
         long_if_to_write = []
         return_string += long_if_statements + sub_return_string
@@ -1342,6 +1351,8 @@ def dsl_to_python(metamodel_file, model_file, main_name, write_location, serene_
         return return_string
 
     def write_environment(model):
+        nonlocal long_if_to_write
+        long_if_to_write = []
         def env_handle_environment_check(node):
             misc_args = create_misc_args(False, 'environment', 2)
             return (
@@ -1484,7 +1495,6 @@ def dsl_to_python(metamodel_file, model_file, main_name, write_location, serene_
                     if statement.read_statement is not None else
                     env_handle_write_statement(statement.write_statement)
                 )
-        nonlocal long_if_to_write
         long_if_statements = (os.linesep).join(long_if_to_write)
         long_if_to_write = []
         to_write += long_if_statements

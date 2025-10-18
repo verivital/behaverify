@@ -291,6 +291,7 @@ def dsl_to_cpp(metamodel_file, model_file, main_name, write_location, serene_pri
         # TODO: this doesn't work if a variable is a define or anything like that.
         misc_args = create_misc_args(False, 'node', 3)
         return (
+            'class ' + node.name + ' : public BT::ConditionNode {'
             ''.join(
                 (os.linesep).join(map(lambda arg_pair: indent(2) + to_cpp_type(arg_pair.argument_type) + ' arg_' + arg_pair.argument_name + ';'))
             ) + os.linesep
@@ -907,13 +908,12 @@ def dsl_to_cpp(metamodel_file, model_file, main_name, write_location, serene_pri
         nonlocal long_if_to_write
         long_if_statements = (os.linesep).join(long_if_to_write)
         long_if_to_write = []
-        return (standard_imports
-                + os.linesep + os.linesep
-                + class_definition(node.name)
-                + init_method_check(node)
-                + update_method_check(node)
-                + long_if_statements
-                )
+        return (
+            standard_imports
+            + os.linesep + os.linesep
+            + check_code(node)
+            + long_if_statements
+        )
 
     def build_environment_check_node(node):
         nonlocal long_if_to_write
@@ -1509,21 +1509,22 @@ def dsl_to_cpp(metamodel_file, model_file, main_name, write_location, serene_pri
         return to_write
 
     function_format = {
+        # TODO: check if these are actually correct. They might be somewhat off (specifically the library ones)
         'if' : ('', format_function_if),
         'loop' : ('', format_function_loop),
         'case_loop' : ('', format_function_case_loop),
-        'abs' : ('abs', format_function_before),
-        'max' : ('max', format_function_before),
-        'min' : ('min', format_function_before),
-        'sin' : ('math.sin', format_function_before),
-        'cos' : ('math.cos', format_function_before),
-        'tan' : ('math.tan', format_function_before),
-        'ln' : ('math.log', format_function_before),
-        'not' : ('not ', format_function_before),  # space intentionally added here.
-        'and' : ('and', format_function_between),
-        'or' : ('or', format_function_between),
-        'xor' : ('^', format_function_between),
-        'xnor' : ('xnor', format_function_xnor),
+        'abs' : ('std::abs', format_function_before),
+        'max' : ('std::max', format_function_before), # these might not really be correct?
+        'min' : ('std::min', format_function_before),
+        'sin' : ('std::sin', format_function_before),
+        'cos' : ('std::cos', format_function_before),
+        'tan' : ('std::tan', format_function_before),
+        'ln' : ('std::log', format_function_before),
+        'not' : ('!', format_function_before),  # space intentionally added here.
+        'and' : ('&&', format_function_between),
+        'or' : ('||', format_function_between),
+        'xor' : ('!=', format_function_between),
+        'xnor' : ('==', format_function_xnor),
         'implies' : ('->', format_function_implies),
         'equivalent' : ('==', format_function_between),
         'eq' : ('==', format_function_between),
@@ -1537,17 +1538,21 @@ def dsl_to_cpp(metamodel_file, model_file, main_name, write_location, serene_pri
         'sub' : ('-', format_function_between),
         'mult' : ('*', format_function_between),
         # 'division' : ('//', format_function_between),  # this rounds to negative infinity, we want rounds to 0.
-        'idiv' : ('division', format_function_division),
+        'idiv' : ('/', format_function_division),
         'mod' : ('%', format_function_between),
         'rdiv' : ('/', format_function_between),
         'floor' : ('math.floor', format_function_before),
         'count' : ('count', format_function_count),
         'index' : ('index', format_function_index)
     }
-    standard_imports = ('import py_trees' + os.linesep
-                        + 'import math' + os.linesep
-                        + 'import operator' + os.linesep
-                        + (('import serene_safe_assignment' + os.linesep) if safe_assignment else ''))
+    standard_imports = (
+        '#include <behaviortree_cpp/bt_factory.h>' + os.linesep
+        + '#include <behaviortree_cpp/loggers/bt_cout_logger.h>' + os.linesep
+        + '#include <iostream>' + os.linesep
+        + '#include <random>' + os.linesep
+        + '#include <cmath>' + os.linesep
+        + '#include <algorithm>' + os.linesep
+    )
 
     (model, variables, constants, declared_enumerations) = validate_model(metamodel_file, model_file, recursion_limit, no_checks)
     variable_type_map = {
