@@ -12,6 +12,7 @@ import os
 import subprocess
 from importlib.resources import files
 
+from behaverify.dsl_to_cpp import dsl_to_cpp
 from behaverify.dsl_to_haskell import dsl_to_haskell
 from behaverify.dsl_to_latex import dsl_to_latex
 from behaverify.dsl_to_nuxmv import dsl_to_nuxmv
@@ -101,7 +102,26 @@ def main(argv=None):
     arg_parser.add_argument('mode')
     (args, _) = arg_parser.parse_known_args(argv)
     main_mode = args.mode.lower()
-    if main_mode == 'grid':
+    if main_mode == 'cpp':
+        arg_parser = argparse.ArgumentParser()
+        arg_parser.add_argument('mode')
+        arg_parser.add_argument('model_file')
+        arg_parser.add_argument('location')
+        arg_parser.add_argument('--output_name', type = str, default = None)
+        arg_parser.add_argument('--max_iter', default = 100)
+        arg_parser.add_argument('--no_var_print', action = 'store_true')
+        arg_parser.add_argument('--serene_print', action = 'store_true')
+        arg_parser.add_argument('--py_tree_print', action = 'store_true')
+        arg_parser.add_argument('--recursion_limit', type = int, default = 0)
+        arg_parser.add_argument('--safe_assignment', action = 'store_true')
+        arg_parser.add_argument('--no_checks', action = 'store_true')
+        arg_parser.add_argument('--overwrite', action = 'store_true')
+        args = arg_parser.parse_args(argv)
+        verify_input(args.model_file)
+        verify_location('cpp', args.location, args.overwrite)
+        output_name = args.output_name if args.output_name is not None else os.path.splitext(os.path.basename(args.model_file))[0]
+        dsl_to_cpp(metamodel_file, args.model_file, output_name, os.path.join(args.location, 'cpp'), args.serene_print, args.max_iter, args.no_var_print, args.py_tree_print, args.recursion_limit, args.safe_assignment, args.no_checks)
+    elif main_mode == 'grid':
         arg_parser = argparse.ArgumentParser()
         arg_parser.add_argument('mode')
         arg_parser.add_argument('submode')

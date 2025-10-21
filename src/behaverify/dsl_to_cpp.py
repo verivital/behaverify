@@ -281,35 +281,64 @@ def dsl_to_cpp(metamodel_file, model_file, main_name, write_location, serene_pri
             if variable.model_as == 'NEURAL' or (variable.model_as == 'DEFINE' and variable.static != 'static') else
             (
                 indent(misc_args['indent_level']) + to_cpp_type(variable_type(variable, declared_enumerations, {})) + ' ' + variable.name + ';' + os.linesep
-                + indent(misc_args['indent_level']) + 'if(!getInput("' + variable.name + '", ' + variable.name + ')) { throw BT::RuntimeError(Missing Input: ' + variable.name + '); }'
+                + indent(misc_args['indent_level']) + 'if(!getInput("' + variable.name + '", ' + variable.name + ')) { throw BT::RuntimeError("Missing Input: ' + variable.name + '"); }'
             )
         )
 
-    def check_code(node):
+    def create_check_node_header(node):
+        # TODO: as with check_code
+        # TODO: add longif
+        return (
+            '#ifndef ' + node.name + '_header' + os.linesep
+            + '#define ' + node.name + '_header' + os.linesep
+            + os.linesep
+            + '#include <behaviortree_cpp/bt_factory.h>' + os.linesep
+            + os.linesep
+            + 'class ' + node.name + ' : BT::ConditionNode {' + os.linesep
+            + indent(1) + 'private:' + os.linesep
+            + ''.join(
+                (os.linesep).join(map(lambda arg_pair: indent(2) + to_cpp_type(arg_pair.argument_type) + ' arg_' + arg_pair.argument_name + ';', node.arguments))
+            ) + os.linesep
+            + indent(1) + 'public:' + os.linesep
+            + indent(2) + node.name + '(const std::string& name, const BT::NodeConfiguration& config' + ((', ' + ', '.join(map(lambda arg_pair: to_cpp_type(arg_pair.argument_type) + ' arg_' + arg_pair.argument_name, node.arguments))) if len(node.arguments) > 0 else '') + ') : BT::ConditionNode(name, config);' + os.linesep
+            + indent(2) + 'static BT::PortsList providedPorts();' + os.linesep
+            + indent(2) + 'BT::NodeStatus tick() override;' + os.linesep
+            + '};' + os.linesep
+            + os.linesep
+            + '#endif' + os.linesep
+        )
+
+    def create_check_node_source_code(node):
         # TODO: make this actually work in the general case. Right now, we're just assuming that the variable name will be used.
         # updating
         # TODO: this doesn't work if a variable is a define or anything like that.
-        misc_args = create_misc_args(False, 'node', 3)
-        return (
-            'class ' + node.name + ' : public BT::ConditionNode {'
-            ''.join(
-                (os.linesep).join(map(lambda arg_pair: indent(2) + to_cpp_type(arg_pair.argument_type) + ' arg_' + arg_pair.argument_name + ';'))
-            ) + os.linesep
-            + indent(1) + 'public:' + os.linesep
-            + indent(2) + node.name + '(const std::string& name, const BT::NodeConfiguration& config' + ((', ' + ', '.join(map(lambda arg_pair: to_cpp_type(arg_pair.argument_type) + ' arg_' + arg_pair.argument_name, node.arguments))) if len(node.arguments) > 0 else '') + ') : BT::ConditionNode(name, config) {' + os.linesep
+        nonlocal long_if_to_write
+        long_if_to_write = []
+        misc_args = create_misc_args(False, 'node', 1)
+        return_string = (
+            standard_imports
+            + os.linesep
+            + '#include "' + node.name + '.h"' + os.linesep
+            + os.linesep
+            + node.name + '::' + node.name + '(const std::string& name, const BT::NodeConfiguration& config' + ((', ' + ', '.join(map(lambda arg_pair: to_cpp_type(arg_pair.argument_type) + ' arg_' + arg_pair.argument_name, node.arguments))) if len(node.arguments) > 0 else '') + ') : BT::ConditionNode(name, config) {' + os.linesep
             + (os.linesep).join(map(lambda arg_pair: indent(3) + arg_pair.argument_name + ' = arg_' + arg_pair.argument_name + ';', node.arguments)) + os.linesep
-            + indent(2) + '}' + os.linesep
-            + indent(2) + 'static BT::PortsList providedPorts() {' + os.linesep
-            + indent(3) + 'return {'
-            + (', ').join(map(lambda variable : 'BT::InputPort<' + to_cpp_type(variable_type(variable, declared_enumerations, None)) + '>("' + variable.name + '")', node.read_variables))
-            + indent(3) + '};' + os.linesep
-            + indent(2) + '}' + os.linesep
-            + indent(2) + 'BT::NodeStatus tick() override {' + os.linesep
+            + '}' + os.linesep
+            + os.linesep
+            + 'BT::PortsList ' + node.name + '::providedPorts() {' + os.linesep
+            + indent(1) + 'return {'
+            + (', ').join(map(lambda variable : 'BT::InputPort<' + variable_type_map[variable.name] + '>("' + variable.name + '")', node.read_variables))
+            + '};' + os.linesep
+            + '}' + os.linesep
+            + 'BT::NodeStatus ' + node.name + '::tick() {' + os.linesep
             + (os.linesep).join(map(lambda variable : make_blackboard_variable(variable, misc_args), node.read_variables))
             + os.linesep
-            + indent(misc_args['indent_level']) + 'BT::NodeStatus return_status = ' + format_code(node.condition, misc_args)[0] + ' ? BT::NodeStatus::SUCCESS) : BT::NodeStatus::FAILURE;' + os.linesep
-            + indent(2) + 'return return_status' + os.linesep
+            + indent(misc_args['indent_level']) + 'BT::NodeStatus return_status = ' + format_code(node.condition, misc_args)[0] + ' ? BT::NodeStatus::SUCCESS : BT::NodeStatus::FAILURE;' + os.linesep
+            + indent(misc_args['indent_level']) + 'return return_status;' + os.linesep
+            + '}' + os.linesep
+            + (os.linesep).join(long_if_to_write)
         )
+        long_if_to_write = []
+        return return_string
 
     def init_method_environment_check(node):
         # TODO: Upate this. Not updating this until I confirm things without the environment working.
@@ -382,28 +411,30 @@ def dsl_to_cpp(metamodel_file, model_file, main_name, write_location, serene_pri
             for value in values:
                 formatted_values.extend(format_code(value, misc_args))  # use original misc_args for the correct location. only want the new if we're using randomizer.
             return formatted_values[0]
-        randomizer_name = add_new_randomizer(formatted_values)
-        return (
-            ('blackboard_reader.serene_randomizer.' + randomizer_name + '(None)')
-            if misc_args['loc'] == 'blackboard' else
-            (
-                ('self.blackboard.serene_randomizer.' + randomizer_name + '(node)')
-                if misc_args['loc'] == 'environment' else
-                (
-                    ('self.blackboard.serene_randomizer.' + randomizer_name + '(self)')
-                    if misc_args['loc'] == 'node' else
-                    (
-                        ('self.' + randomizer_name + '(node)')
-                        if misc_args['loc'] == 'random' else
-                        'ERROR ERROR ERROR'
-                    )
-                )
-            )
-        )
+        # randomizer_name = add_new_randomizer(formatted_values)
+        # return (
+        #     ('blackboard_reader.serene_randomizer.' + randomizer_name + '(None)')
+        #     if misc_args['loc'] == 'blackboard' else
+        #     (
+        #         ('self.blackboard.serene_randomizer.' + randomizer_name + '(node)')
+        #         if misc_args['loc'] == 'environment' else
+        #         (
+        #             ('self.blackboard.serene_randomizer.' + randomizer_name + '(self)')
+        #             if misc_args['loc'] == 'node' else
+        #             (
+        #                 ('self.' + randomizer_name + '(node)')
+        #                 if misc_args['loc'] == 'random' else
+        #                 'ERROR ERROR ERROR'
+        #             )
+        #         )
+        #     )
+        # )
+        return ('CHOOSE FROM: {' + ', '.join(formatted_values) + '}')
 
     long_if_count = 0
     long_if_to_write = []
     def handle_assign(assign, misc_args):
+        # TODO: fix long if
         case_results = assign.case_results
         default_result = assign.default_result
         if len(case_results) == 0:
@@ -425,20 +456,15 @@ def dsl_to_cpp(metamodel_file, model_file, main_name, write_location, serene_pri
             long_if_to_write.append(long_if_string)
             return ('self.' if misc_args['loc'] == 'environment' else '') + long_if_name + '(' + ('node' if misc_args['loc'] == 'environment' else '') + ')'
         return (
-            '(' + os.linesep
+            '('
             + ''.join(
                 [
-                    (
-                        indent(misc_args['indent_level'] + 1 + index)
-                        + resolve_variable_nondeterminism(case_result.values, misc_args) + os.linesep
-                        + indent(misc_args['indent_level'] + 1 + index) + 'if ' + format_code(case_result.condition, misc_args)[0] + ' else' + os.linesep
-                        + indent(misc_args['indent_level'] + 1 + index) + '(' + os.linesep
-                     ) for index, case_result in enumerate(case_results)
+                    (format_code(case_result.condition, misc_args)[0] + ' ? ' + resolve_variable_nondeterminism(case_result.values, misc_args) + ' : ' + '(')
+                    for index, case_result in enumerate(case_results)
                 ]
             )
-            + indent(misc_args['indent_level'] + len(case_results) + 1)
-            + resolve_variable_nondeterminism(default_result.values, misc_args) + os.linesep
-            + indent(misc_args['indent_level']) + (')' * (1 + len(case_results)))  # NOTE: no linesep at the end!
+            + resolve_variable_nondeterminism(default_result.values, misc_args)
+            + (')' * (1 + len(case_results)))  # NOTE: no linesep at the end!
         )
 
     def handle_loop_array_index(packed_args, misc_args):
@@ -460,16 +486,15 @@ def dsl_to_cpp(metamodel_file, model_file, main_name, write_location, serene_pri
 
     def variable_assignment(variable, assign_value, misc_args, array_mode):
         # i don't think we should be able to have define variables here.
-        safety_1 = '' if ((variable.model_as == 'DEFINE' and variable.static != 'static') or not safe_assignment) else ('serene_safe_assignment.' + variable.name + '(')
-        safety_2 = '' if ((variable.model_as == 'DEFINE' and variable.static != 'static') or not safe_assignment) else ')'
+        # TODO: fix array update
         return (
             (
-                indent(misc_args['indent_level']) + '__temp_var__ = ' + safety_1 + assign_value + safety_2 + os.linesep
+                indent(misc_args['indent_level']) + '__temp_var__ = ' + assign_value + os.linesep
                 + indent(misc_args['indent_level']) + 'for (index, val) in __temp_var__:' + os.linesep
                 + indent(misc_args['indent_level'] + 1) + format_variable_name_only(variable, misc_args) + '[index] = val' + os.linesep
             )
             if array_mode else
-            (indent(misc_args['indent_level']) + format_variable_name_only(variable, misc_args) + ' = ' + safety_1 + assign_value + safety_2 + os.linesep)
+            (indent(misc_args['indent_level']) + format_variable_name_only(variable, misc_args) + ' = ' + assign_value + ';' + os.linesep)
         )
 
     def handle_variable_statement(variable_statement, misc_args, assign_to_var):
@@ -804,22 +829,28 @@ def dsl_to_cpp(metamodel_file, model_file, main_name, write_location, serene_pri
         )
 
     def format_returns(status_result):
-        return 'py_trees.common.Status.' + status_result.status.upper()
+        # updated
+        return 'BT::NodeStatus::' + status_result.status.upper()
 
     def handle_return_statement(statement, misc_args):
+        # updated
         variable_name = 'return_status'
         if len(statement.case_results) == 0:
-            return indent(misc_args['indent_level']) + variable_name + ' = ' + format_returns(statement.default_result) + os.linesep
+            return indent(misc_args['indent_level']) + variable_name + ' = ' + format_returns(statement.default_result) + ';' + os.linesep
         return (
             (''.join(
                 [
-                    (indent(misc_args['indent_level']) + 'elif ' + format_code(case_result.condition, misc_args)[0] + ':' + os.linesep
-                     + (indent(misc_args['indent_level'] + 1) + variable_name + ' = ' + format_returns(case_result) + os.linesep)
-                     ) for case_result in statement.case_results
+                    (
+                        indent(misc_args['indent_level']) + 'else if ' + format_code(case_result.condition, misc_args)[0] + '{' + os.linesep
+                        + indent(misc_args['indent_level'] + 1) + variable_name + ' = ' + format_returns(case_result) + ';' + os.linesep
+                        + indent(misc_args['indent_level']) + '}' + os.linesep
+                    )
+                    for case_result in statement.case_results
                 ]
-            )).replace('elif', 'if', 1)
-            + indent(misc_args['indent_level']) + 'else:' + os.linesep
-            + indent(misc_args['indent_level'] + 1) + variable_name + ' = ' + format_returns(statement.default_result) + os.linesep
+            )).replace('else if', 'if', 1)
+            + indent(misc_args['indent_level']) + 'else {' + os.linesep
+            + indent(misc_args['indent_level'] + 1) + variable_name + ' = ' + format_returns(statement.default_result) + ';' + os.linesep
+            + indent(misc_args['indent_level']) + '}' + os.linesep
         )
 
     def init_method_action(node):
@@ -904,40 +935,88 @@ def dsl_to_cpp(metamodel_file, model_file, main_name, write_location, serene_pri
                 + indent(2) + 'return return_status' + os.linesep
                 )
 
-    def build_check_node(node):
-        nonlocal long_if_to_write
-        long_if_statements = (os.linesep).join(long_if_to_write)
-        long_if_to_write = []
+    def create_action_node_header(node):
+        # TODO: as with action
+        # TODO: add longif
         return (
-            standard_imports
-            + os.linesep + os.linesep
-            + check_code(node)
-            + long_if_statements
+            '#ifndef ' + node.name + '_header' + os.linesep
+            + '#define ' + node.name + '_header' + os.linesep
+            + os.linesep
+            + '#include <behaviortree_cpp/bt_factory.h>' + os.linesep
+            + os.linesep
+            + 'class ' + node.name + ' : BT::SyncActionNode {' + os.linesep
+            + indent(1) + 'private:' + os.linesep
+            + ''.join(
+                (os.linesep).join(map(lambda arg_pair: indent(2) + to_cpp_type(arg_pair.argument_type) + ' arg_' + arg_pair.argument_name + ';', node.arguments))
+            ) + os.linesep
+            + indent(1) + 'public:' + os.linesep
+            + indent(2) + node.name + '(const std::string& name, const BT::NodeConfiguration& config' + ((', ' + ', '.join(map(lambda arg_pair: to_cpp_type(arg_pair.argument_type) + ' arg_' + arg_pair.argument_name, node.arguments))) if len(node.arguments) > 0 else '') + ') : BT::SyncActionNode(name, config);' + os.linesep
+            + indent(2) + 'static BT::PortsList providedPorts();' + os.linesep
+            + indent(2) + 'BT::NodeStatus tick() override;' + os.linesep
+            + '};' + os.linesep
+            + os.linesep
+            + '#endif' + os.linesep
         )
+
+    def create_action_node_source_code(node):
+        # TODO: make this actually work in the general case. Right now, we're just assuming that the variable name will be used.
+        # updating
+        # TODO: this doesn't work if a variable is a define or anything like that.
+        # TODO: currently assuming sync action node.
+        # TODO: currently doesn't work with local variables.
+        misc_args_init = create_misc_args(True, 'node', 1) # this would, in theory, be used with local variables. I'm ignoring that for now.
+        misc_args = create_misc_args(False, 'node', 1)
+        nonlocal long_if_to_write
+        long_if_to_write = []
+        return_string = (
+            standard_imports
+            + os.linesep
+            + '#include "' + node.name + '.h"' + os.linesep
+            + os.linesep
+            +  node.name + '::' + node.name + '(const std::string& name, const BT::NodeConfiguration& config' + ((', ' + ', '.join(map(lambda arg_pair: to_cpp_type(arg_pair.argument_type) + ' arg_' + arg_pair.argument_name, node.arguments))) if len(node.arguments) > 0 else '') + ') : BT::SyncActionNode(name, config) {' + os.linesep
+            + (os.linesep).join(map(lambda arg_pair: indent(3) + arg_pair.argument_name + ' = arg_' + arg_pair.argument_name + ';', node.arguments)) + os.linesep
+            + '}' + os.linesep
+            + os.linesep
+            + 'BT::PortsList ' + node.name + '::providedPorts() {' + os.linesep
+            + indent(1) + 'return {'
+            + (', ').join(map(lambda variable : 'BT::InputPort<' + variable_type_map[variable.name] + '>("' + variable.name + '")', node.read_variables))
+            + (', ' if len(node.read_variables) > 0 and len(node.write_variables) > 0 else '')
+            + (', ').join(map(lambda variable : 'BT::BidirectionalPort<' + variable_type_map[variable.name] + '>("' + variable.name + '")', node.write_variables))
+            + '};' + os.linesep
+            + '}' + os.linesep
+            + os.linesep
+            + 'BT::NodeStatus ' + node.name + '::tick() {' + os.linesep
+            + indent(misc_args['indent_level']) + 'BT::NodeStatus return_status;' + os.linesep
+            + (os.linesep).join(map(lambda variable : make_blackboard_variable(variable, misc_args), node.read_variables))
+            + (os.linesep).join(map(lambda variable : make_blackboard_variable(variable, misc_args), node.write_variables))
+            + os.linesep
+            + ''.join([handle_statement(statement, misc_args) for statement in node.pre_update_statements])
+            + handle_return_statement(node.return_statement, misc_args)
+            + ''.join([handle_statement(statement, misc_args) for statement in node.post_update_statements])
+            + (os.linesep).join(
+                (indent(misc_args['indent_level']) + 'setOutput("' + variable.name + '", ' + variable.name + ');' + os.linesep)
+                for variable in node.write_variables
+            )
+            + indent(misc_args['indent_level']) + 'return return_status;' + os.linesep
+            + '}' + os.linesep
+            + os.linesep
+            + (os.linesep).join(long_if_to_write)
+        )
+        long_if_to_write = []
+        return return_string
 
     def build_environment_check_node(node):
         nonlocal long_if_to_write
-        long_if_statements = (os.linesep).join(long_if_to_write)
         long_if_to_write = []
-        return (standard_imports
+        return_string = (standard_imports
                 + os.linesep + os.linesep
                 + class_definition(node.name)
                 + init_method_environment_check(node)
                 + update_method_environment_check(node)
-                + long_if_statements
+                + (os.linesep).join(long_if_to_write)
                 )
-
-    def build_action_node(node):
-        nonlocal long_if_to_write
-        long_if_statements = (os.linesep).join(long_if_to_write)
         long_if_to_write = []
-        return (standard_imports
-                + os.linesep + os.linesep
-                + class_definition(node.name)
-                + init_method_action(node)
-                + update_method_action(node)
-                + long_if_statements
-                )
+        return return_string
 
     def walk_tree_recursive(current_node, node_names, running_string, variable_print_info):
         while hasattr(current_node, 'sub_root'):
@@ -1552,11 +1631,12 @@ def dsl_to_cpp(metamodel_file, model_file, main_name, write_location, serene_pri
         + '#include <random>' + os.linesep
         + '#include <cmath>' + os.linesep
         + '#include <algorithm>' + os.linesep
+        + '#include <time.h>' + os.linesep
     )
 
     (model, variables, constants, declared_enumerations) = validate_model(metamodel_file, model_file, recursion_limit, no_checks)
     variable_type_map = {
-        variable.name : to_python_type(variable_type(variable, declared_enumerations, constants))
+        variable.name : to_cpp_type(variable_type(variable, declared_enumerations, constants))
         for variable in model.variables
     }
     variable_array_size_map = {
@@ -1590,7 +1670,7 @@ def dsl_to_cpp(metamodel_file, model_file, main_name, write_location, serene_pri
 
     write_location = write_location + ('' if write_location[-1] == '/' else '/')
 
-    with open(write_location + 'serene_randomizer.py', 'w', encoding = 'utf-8') as write_file:
+    with open(write_location + 'serene_randomizer.cpp', 'w', encoding = 'utf-8') as write_file:
         write_file.write(
             'import random' + os.linesep
             + os.linesep
@@ -1605,27 +1685,27 @@ def dsl_to_cpp(metamodel_file, model_file, main_name, write_location, serene_pri
             + indent(2) + 'return' + os.linesep + os.linesep
         )
 
-    if safe_assignment:
-        with open(write_location + 'serene_safe_assignment.py', 'w', encoding = 'utf-8') as write_file:
-            write_file.write(create_safe_assignment(model))  # checked. No additional information required.
-
     for action in model.action_nodes:
-        with open(write_location + action.name + '_file.py', 'w', encoding = 'utf-8') as write_file:
-            write_file.write(build_action_node(action))
+        with open(write_location + action.name + '.cpp', 'w', encoding = 'utf-8') as write_file:
+            write_file.write(create_action_node_source_code(action))
+        with open(write_location + action.name + '.h', 'w', encoding = 'utf-8') as write_file:
+            write_file.write(create_action_node_header(action))
     for check in model.check_nodes:
-        with open(write_location + check.name + '_file.py', 'w', encoding = 'utf-8') as write_file:
-            write_file.write(build_check_node(check))
+        with open(write_location + check.name + '.cpp', 'w', encoding = 'utf-8') as write_file:
+            write_file.write(create_check_node_source_code(check))
+        with open(write_location + check.name + '.h', 'w', encoding = 'utf-8') as write_file:
+            write_file.write(create_check_node_header(check))
     for environment_check in model.environment_checks:
-        with open(write_location + environment_check.name + '_file.py', 'w', encoding = 'utf-8') as write_file:
+        with open(write_location + environment_check.name + '.cpp', 'w', encoding = 'utf-8') as write_file:
             write_file.write(build_environment_check_node(environment_check))
 
     (root_name, _, running_string, local_print_info) = walk_tree_recursive(model.root, set(), '', {})
 
-    with open(write_location + project_name + '.py', 'w', encoding = 'utf-8') as write_file:
+    with open(write_location + project_name + 'Main.cpp', 'w', encoding = 'utf-8') as write_file:
         write_file.write(write_blackboard(model, running_string))
-    with open(write_location + project_name + '_runner.py', 'w', encoding = 'utf-8') as write_file:
+    with open(write_location + project_name + 'Runner.cpp', 'w', encoding = 'utf-8') as write_file:
         write_file.write(create_runner(list(filter(is_blackboard, model.variables)), list(filter(is_env, model.variables)), local_print_info))
-    with open(write_location + project_environment_name + '.py', 'w', encoding = 'utf-8') as write_file:
+    with open(write_location + project_environment_name + '.cpp', 'w', encoding = 'utf-8') as write_file:
         write_file.write(write_environment(model))
     return
 

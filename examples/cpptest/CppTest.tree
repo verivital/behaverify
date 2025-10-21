@@ -1,0 +1,44 @@
+configuration {
+}
+enumerations {
+}
+
+constants {
+}
+
+variables {
+    variable { bl x VAR [0, 5] assign{result{0}}}
+}
+
+environment_update {
+}
+
+checks {
+    check {
+        TestCheck
+        arguments {}
+        read_variables {x}
+        condition {(lt, 3, x)}
+    }
+}
+
+environment_checks {
+}
+
+actions {
+}
+
+
+sub_trees {
+}
+
+tree {
+    TestCheck {}
+}
+
+tick_prerequisite {
+    True
+}
+
+specifications {
+}
