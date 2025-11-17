@@ -36,7 +36,7 @@ Hello! Thank you for taking an interest in BehaVerify. This tutorial is meant to
 
 # Behavior Tree Introduction
 
-A behavior tree (BT) is a rooted tree. TODO: fill this in.
+A behavior tree (BT) is a rooted tree structure used for decision-making and control flow in autonomous systems, robotics, and game AI. It provides a modular and hierarchical approach to defining complex behaviors by composing simple, reusable components. The tree executes from the root downward, with each node representing either a decision point (composite/decorator) or an action/condition (leaf). Unlike traditional finite state machines, behavior trees offer better scalability, readability, and easier modification of complex behaviors.
 
 For our purposes, a leaf node is a node with no children, a decorator is a node with exactly 1 child, and composite nodes are nodes with 2 or more children. The leaf nodes of a BT are used to check conditions or to do actions, while the composite nodes control which leaf nodes are executed. For now, at least, we will ignore decorator nodes.
 
@@ -44,7 +44,17 @@ The BT does nothing until it receives an external signal, called a tick. When th
 
 ### Node Statuses
 
-TODO: Fill this in.
+Each node in a behavior tree can return one of four statuses during execution:
+
+- **Success (S)**: The node has completed its task successfully. For a check node, this means the condition evaluated to true. For an action node, this means the action was performed successfully. For composite nodes, the meaning depends on the specific type (see below).
+
+- **Running (R)**: The node is still executing and has not yet completed. This status is used for actions that take multiple ticks to complete (e.g., moving to a location, waiting for a sensor reading). When a node returns Running, the tree execution pauses at that node, and on the next tick, execution resumes from that same node.
+
+- **Failure (F)**: The node has failed to complete its task. For a check node, this means the condition evaluated to false. For an action node, this means the action could not be performed. For composite nodes, the meaning depends on the specific type (see below).
+
+- **Invalid (I)**: The initial status of a node before it has been executed or returned a value. This status indicates the node has not yet begun execution in the current tick.
+
+The status values propagate up the tree according to the semantics of each composite node type, allowing complex behaviors to be built from simple components.
 
 ### Selector
 
