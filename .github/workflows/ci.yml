@@ -185,8 +185,8 @@ jobs:
         echo "--- Verification Output ---"
         cat /tmp/collatz_output/nuxmv/collatz_output.txt
 
-        # Check that verification completed
-        if grep -q "specification" /tmp/collatz_output/nuxmv/collatz_output.txt; then
+        # Check that verification completed (nuXmv outputs "invariant" for INVARSPEC)
+        if grep -qE "(invariant|specification)" /tmp/collatz_output/nuxmv/collatz_output.txt; then
           echo "✓ INVAR verification completed successfully via CLI"
         else
           echo "Warning: Could not confirm INVAR verification completed"
@@ -213,8 +213,8 @@ jobs:
         echo "--- Verification Output ---"
         cat /tmp/drone_output/nuxmv/DrunkenDrone_output.txt
 
-        # Check that verification completed
-        if grep -q "specification" /tmp/drone_output/nuxmv/DrunkenDrone_output.txt; then
+        # Check that verification completed (nuXmv outputs "specification" for CTL)
+        if grep -qE "(invariant|specification)" /tmp/drone_output/nuxmv/DrunkenDrone_output.txt; then
           echo "✓ CTL verification completed successfully via CLI"
         else
           echo "Warning: Could not confirm CTL verification completed"
@@ -241,8 +241,8 @@ jobs:
         echo "--- Verification Output ---"
         cat /tmp/tiny_output/nuxmv/tiny_output.txt
 
-        # Check that verification completed
-        if grep -q "specification" /tmp/tiny_output/nuxmv/tiny_output.txt; then
+        # Check that verification completed (nuXmv outputs "invariant" for INVARSPEC)
+        if grep -qE "(invariant|specification)" /tmp/tiny_output/nuxmv/tiny_output.txt; then
           echo "✓ INVAR verification completed successfully via CLI"
         else
           echo "Warning: Could not confirm INVAR verification completed"
