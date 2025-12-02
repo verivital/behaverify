@@ -19,14 +19,14 @@ Hello! Thank you for taking an interest in BehaVerify. This tutorial is meant to
 - active : a node that is currently executing. At most one node is active at a time.
 - tick : An overloaded word. We will use this to mean the external signal that starts the execution of the tree (e.g., when the tick arrives). We will also use it to mean the entire episode of a tree executing. That is to say, a tick (episode) starts when the tick (signal) arrives and ends when the root returns.
 - BT : Behavior Tree
-- composite : a node with two children. One of parallel, selector, or sequence. Used to control which nodes are activated in the tree.
-- decorator : a node with one child. Used to modify the behavior of a child without reimplementing.
+- composite : a node with two or more children. One of parallel, selector, or sequence. Used to control which nodes are activated in the tree.
+- decorator : a node with exactly one child. Used to modify the behavior of a child without reimplementing.
 - leaf : a node with no children. Either an action or a check.
 - action : a generalized leaf node. Can return S, F, or R. Can modify variables.
 - check : a specialized leaf node. It checks if a condition holds. If it does, it returns S. Otherwise, it returns F.
 - parallel : Composite node. Exact behavior depends on implementation. PyTrees version does not support true parallelism. Instead, simply executes each child from left to right. Once all children have been executed, returns a status based on a policy.
-- selector : Composite node. Executes children from left to right. 
-- sequence : Composite node. Executes children from left to right. 
+- selector : Composite node. Executes children from left to right. If any child returns success, the selector returns success. If a child returns running, the selector returns running. If a child returns failure, the selector continues to the next child. If all children return failure, the selector returns failure.
+- sequence : Composite node. Executes children from left to right. If any child returns failure, the sequence returns failure. If a child returns running, the sequence returns running. If a child returns success, the sequence continues to the next child. If all children return success, the sequence returns success. 
 - S : short for success, a status a node can return.
 - R : short for running, a status a node can return.
 - F : short for failure, a status a node can return.
@@ -36,7 +36,7 @@ Hello! Thank you for taking an interest in BehaVerify. This tutorial is meant to
 
 # Behavior Tree Introduction
 
-A behavior tree (BT) is a rooted tree. TODO: fill this in.
+A behavior tree (BT) is a rooted tree structure used for decision-making and control flow in autonomous systems, robotics, and game AI. It provides a modular and hierarchical approach to defining complex behaviors by composing simple, reusable components. The tree executes from the root downward, with each node representing either a decision point (composite/decorator) or an action/condition (leaf). Unlike traditional finite state machines, behavior trees offer better scalability, readability, and easier modification of complex behaviors.
 
 For our purposes, a leaf node is a node with no children, a decorator is a node with exactly 1 child, and composite nodes are nodes with 2 or more children. The leaf nodes of a BT are used to check conditions or to do actions, while the composite nodes control which leaf nodes are executed. For now, at least, we will ignore decorator nodes.
 
@@ -44,7 +44,17 @@ The BT does nothing until it receives an external signal, called a tick. When th
 
 ### Node Statuses
 
-TODO: Fill this in.
+Each node in a behavior tree can return one of four statuses during execution:
+
+- **Success (S)**: The node has completed its task successfully. For a check node, this means the condition evaluated to true. For an action node, this means the action was performed successfully. For composite nodes, the meaning depends on the specific type (see below).
+
+- **Running (R)**: The node is still executing and has not yet completed. This status is used for actions that take multiple ticks to complete (e.g., moving to a location, waiting for a sensor reading). When a node returns Running, the tree execution pauses at that node, and on the next tick, execution resumes from that same node.
+
+- **Failure (F)**: The node has failed to complete its task. For a check node, this means the condition evaluated to false. For an action node, this means the action could not be performed. For composite nodes, the meaning depends on the specific type (see below).
+
+- **Invalid (I)**: The initial status of a node before it has been executed or returned a value. This status indicates the node has not yet begun execution in the current tick.
+
+The status values propagate up the tree according to the semantics of each composite node type, allowing complex behaviors to be built from simple components.
 
 ### Selector
 
@@ -79,13 +89,15 @@ CONSTANT | VARIABLE | (func, val1, val2, ... valk)
 ```
 each val can be another code statement, so nesting is possible. You may always include more parentheses. Below we provide a list of functions that can be used and the requirements.
 
-1. CTL ONLY FUNCTIONS: exists_globally, exists_next, exists_finally, exists_until, always_globally, always_next, always_finally, always_until
-2. LTL ONLY FUNCTIONS: next, globally, finally, until, release, previous, not_previous_not, historically, once, since, triggered
-3. Boolean functions that can take ltl/ctl specifications as arguments: not, and, or, xor, xnor, implies, equivalent
-4. Comparisons: eq, neq, lte, gte, lt, gt
-5. Arithmetic: abs, max, min, neg, add, sub, mult, idiv, mod, rdiv
-6. Misc: if, count, loop, case_loop, index
-7. Functions that don't work well in nuXmv: sin, cos, exp, tan, ln, floor
+1. **CTL ONLY FUNCTIONS:** `exists_globally`, `exists_next`, `exists_finally`, `exists_until`, `always_globally`, `always_next`, `always_finally`, `always_until` - These are Computational Tree Logic operators used only in CTLSPEC specifications for expressing branching-time properties.
+2. **LTL ONLY FUNCTIONS:** `next`, `globally`, `finally`, `until`, `release`, `previous`, `not_previous_not`, `historically`, `once`, `since`, `triggered` - These are Linear Temporal Logic operators used only in LTLSPEC specifications for expressing linear-time properties.
+3. **BOUNDED TEMPORAL FUNCTIONS:** `globally_bounded`, `finally_bounded`, `until_bounded`, `release_bounded`, `historically_bounded`, `once_bounded`, `since_bounded`, `triggered_bounded` - These are bounded temporal operators that accept a time bound `[lower, upper]` to constrain the temporal property to a specific time window.
+4. **STATUS FUNCTIONS (specifications only):** `active`, `success`, `running`, `failure` - These functions query the status of a specific node and are used only in specifications. Syntax: `(status_function, node_name)`. Example: `(success, my_action_node)` checks if `my_action_node` returned success.
+5. **Boolean functions that can take LTL/CTL specifications as arguments:** `not`, `and`, `or`, `xor`, `xnor`, `implies`, `equivalent` - These logical operators can be used with temporal logic formulas.
+6. **Comparisons:** `eq`, `neq`, `lte`, `gte`, `lt`, `gt` - Comparison operators (detailed below).
+7. **Arithmetic:** `abs`, `max`, `min`, `neg`, `add`, `sub`, `mult`, `idiv`, `mod`, `rdiv` - Arithmetic operators (detailed below).
+8. **Misc:** `if`, `count`, `loop`, `case_loop`, `index` - Utility functions (detailed below).
+9. **Functions that don't work well in nuXmv:** `sin`, `cos`, `exp`, `tan`, `ln`, `floor` - These transcendental and floating-point functions are not well-supported by SMV-based model checkers. Use them only when generating Python/Haskell/C++ code.
 
 ### loop
 ```
@@ -191,84 +203,184 @@ Boolean exclusive nor. Code must resolve to boolean. You can provide as many cod
 ---
 - implies
 ```
-(implies, code1, ...)
+(implies, code1, code2, ...)
 ```
-Boolean implication. Code must resolve to boolean, but can be
+Boolean implication (code1 → code2 → ...). Each code statement must resolve to exactly one boolean. Requires at least 2 boolean values. Equivalent to `(or, (not, code1), code2)` for two arguments. With multiple arguments, chains implications left to right.
 
 ---
 - equivalent
+```
+(equivalent, code1, code2, ...)
+```
+Boolean equivalence (code1 ↔ code2 ↔ ...). Each code statement must resolve to exactly one boolean. Requires at least 2 boolean values. Returns true if all values are the same (all true or all false).
 
 ---
 - if
+```
+(if, condition, true_value, false_value)
+```
+Conditional expression (ternary operator). The condition must resolve to a single boolean. If the condition is true, returns true_value; otherwise returns false_value. The true_value and false_value can be of any type but must be compatible. Example: `(if, (lt, x, 0), -1, 1)` returns -1 if x is negative, otherwise 1.
 
 ---
 - abs
+```
+(abs, code)
+```
+Absolute value. Code must resolve to a single numeric value (integer or real). Returns the absolute value of the number. Example: `(abs, -5)` returns 5.
 
 ---
 - max
+```
+(max, code1, code2, ...)
+```
+Maximum value. Each code statement must resolve to one or more numeric values. Requires at least 2 values total. Returns the maximum value among all provided values. Example: `(max, 3, 7, 2)` returns 7.
 
 ---
 - min
+```
+(min, code1, code2, ...)
+```
+Minimum value. Each code statement must resolve to one or more numeric values. Requires at least 2 values total. Returns the minimum value among all provided values. Example: `(min, 3, 7, 2)` returns 2.
 
 ---
 - sin
+```
+(sin, code)
+```
+Sine function. Code must resolve to a single numeric value (angle in radians). Returns the sine of the value. **Note:** This function does not work well in nuXmv models. Use primarily for Python/Haskell/C++ generation.
 
 ---
 - cos
+```
+(cos, code)
+```
+Cosine function. Code must resolve to a single numeric value (angle in radians). Returns the cosine of the value. **Note:** This function does not work well in nuXmv models. Use primarily for Python/Haskell/C++ generation.
 
 ---
 - exp
+```
+(exp, code)
+```
+Exponential function (e^x). Code must resolve to a single numeric value. Returns e raised to the power of the value. **Note:** This function does not work well in nuXmv models. Use primarily for Python/Haskell/C++ generation.
 
 ---
 - tan
+```
+(tan, code)
+```
+Tangent function. Code must resolve to a single numeric value (angle in radians). Returns the tangent of the value. **Note:** This function does not work well in nuXmv models. Use primarily for Python/Haskell/C++ generation.
 
 ---
 - ln
+```
+(ln, code)
+```
+Natural logarithm. Code must resolve to a single positive numeric value. Returns the natural logarithm (base e) of the value. **Note:** This function does not work well in nuXmv models. Use primarily for Python/Haskell/C++ generation.
 
 ---
 - eq
+```
+(eq, code1, code2)
+```
+Equality comparison. Each code statement must resolve to exactly one value of compatible types. Returns true if code1 equals code2, false otherwise. Example: `(eq, x, 5)` returns true if x equals 5.
 
 ---
 - neq
+```
+(neq, code1, code2)
+```
+Inequality comparison. Each code statement must resolve to exactly one value of compatible types. Returns true if code1 does not equal code2, false otherwise. Example: `(neq, x, 5)` returns true if x is not equal to 5.
 
 ---
 - lte
+```
+(lte, code1, code2)
+```
+Less than or equal comparison. Each code statement must resolve to exactly one numeric value. Returns true if code1 is less than or equal to code2. Example: `(lte, x, 10)` returns true if x ≤ 10.
 
 ---
 - gte
+```
+(gte, code1, code2)
+```
+Greater than or equal comparison. Each code statement must resolve to exactly one numeric value. Returns true if code1 is greater than or equal to code2. Example: `(gte, x, 0)` returns true if x ≥ 0.
 
 ---
 - lt
+```
+(lt, code1, code2)
+```
+Less than comparison. Each code statement must resolve to exactly one numeric value. Returns true if code1 is strictly less than code2. Example: `(lt, x, 10)` returns true if x < 10.
 
 ---
 - gt
+```
+(gt, code1, code2)
+```
+Greater than comparison. Each code statement must resolve to exactly one numeric value. Returns true if code1 is strictly greater than code2. Example: `(gt, x, 0)` returns true if x > 0.
 
 ---
 - neg
+```
+(neg, code)
+```
+Negation (arithmetic negative). Code must resolve to a single numeric value. Returns the negative of the value. Example: `(neg, 5)` returns -5, and `(neg, -3)` returns 3.
 
 ---
 - add
+```
+(add, code1, code2, ...)
+```
+Addition. Each code statement must resolve to one or more numeric values. Requires at least 2 values total. Returns the sum of all values. Example: `(add, 1, 2, 3)` returns 6.
 
 ---
 - sub
+```
+(sub, code1, code2)
+```
+Subtraction. Each code statement must resolve to exactly one numeric value. Returns code1 minus code2. Example: `(sub, 10, 3)` returns 7.
 
 ---
 - mult
+```
+(mult, code1, code2, ...)
+```
+Multiplication. Each code statement must resolve to one or more numeric values. Requires at least 2 values total. Returns the product of all values. Example: `(mult, 2, 3, 4)` returns 24.
 
 ---
 - idiv
+```
+(idiv, code1, code2)
+```
+Integer division. Each code statement must resolve to exactly one integer value. Returns the integer quotient of code1 divided by code2 (truncated toward zero). Example: `(idiv, 7, 2)` returns 3.
 
 ---
 - mod
+```
+(mod, code1, code2)
+```
+Modulo (remainder). Each code statement must resolve to exactly one integer value. Returns the remainder when code1 is divided by code2. Example: `(mod, 7, 3)` returns 1.
 
 ---
 - rdiv
+```
+(rdiv, code1, code2)
+```
+Real division. Each code statement must resolve to exactly one numeric value. Returns the real (floating-point) quotient of code1 divided by code2. Example: `(rdiv, 7, 2)` returns 3.5.
 
 ---
 - floor
+```
+(floor, code)
+```
+Floor function. Code must resolve to a single numeric value. Returns the largest integer less than or equal to the value. Example: `(floor, 3.7)` returns 3, `(floor, -2.3)` returns -3. **Note:** This function does not work well in nuXmv models.
 
 ---
 - count
+```
+(count, condition, code1, code2, ...)
+```
+Count function. The condition is a boolean expression that can reference a special variable within the count context. Counts how many of the provided code values satisfy the condition. Returns an integer count. This is an advanced function - consult examples for proper usage.
 
 ---
 
