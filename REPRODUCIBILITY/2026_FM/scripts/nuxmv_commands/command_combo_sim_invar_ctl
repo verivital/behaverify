@@ -1,0 +1,7 @@
+go
+pick_state
+simulate -k 50
+show_traces -v
+check_invar
+check_ctlspec
+quit

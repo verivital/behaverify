@@ -1,0 +1,51 @@
+FROM ubuntu:24.04
+RUN apt-get update -y
+RUN apt-get upgrade -y
+
+# Set the non-root user information
+ARG VENUE=2026_FM
+ARG USER=BehaVerify_$VENUE
+ARG UID=22238
+ARG GID=22238
+
+# Create a non-root user
+RUN groupadd -g $GID $USER \
+    && useradd -u $UID -g $GID -m -s /bin/bash $USER
+
+# Give sudo privileges to the non-root user
+RUN apt-get update && apt-get install -y sudo \
+    && echo "$USER ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/$USER \
+    && chmod 0440 /etc/sudoers.d/$USER
+
+# Set the working directory
+WORKDIR /home/$USER
+
+# Switch to the non-root user
+USER $USER
+
+RUN sudo apt-get install wget git python3 pip python3-venv -y
+RUN sudo apt-get install graphviz -y
+
+# Create directory structure
+RUN mkdir -p /home/$USER/behaverify/REPRODUCIBILITY/$VENUE
+
+# Copy local REPRODUCIBILITY folder (build context should be main behaverify repo)
+# This includes examples, scripts, metamodel, requirements, etc.
+COPY --chown=$USER:$USER REPRODUCIBILITY/$VENUE /home/$USER/behaverify/REPRODUCIBILITY/$VENUE
+
+# Copy latest src/ from main repo to replace REPRODUCIBILITY version
+# This ensures we use the most up-to-date behaverify source code
+COPY --chown=$USER:$USER src /home/$USER/behaverify/REPRODUCIBILITY/$VENUE/src
+
+RUN echo $USER > /home/$USER/user.txt
+
+# Create Python virtual environments
+RUN python3 -m venv /home/$USER/python_venvs/behaverify
+RUN /home/$USER/python_venvs/behaverify/bin/python3 -m pip install --upgrade pip
+RUN /home/$USER/python_venvs/behaverify/bin/python3 -m pip install -r /home/$USER/behaverify/REPRODUCIBILITY/$VENUE/requirements/core.txt
+RUN python3 -m venv /home/$USER/python_venvs/results
+RUN /home/$USER/python_venvs/results/bin/python3 -m pip install --upgrade pip
+RUN /home/$USER/python_venvs/results/bin/python3 -m pip install -r /home/$USER/behaverify/REPRODUCIBILITY/$VENUE/requirements/drawing.txt
+RUN /home/$USER/python_venvs/results/bin/python3 -m pip install -r /home/$USER/behaverify/REPRODUCIBILITY/$VENUE/requirements/graphing.txt
+
+WORKDIR /home/$USER
