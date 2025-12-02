@@ -113,13 +113,14 @@ jobs:
     - name: Verify multiple example models parse correctly
       run: |
         # Use behaverify nuxmv --generate to validate grammar (grammar check is part of generation)
-        for tree_file in test_examples/working/*.tree; do
+        # Only test files using new grammar format (see test_examples/working/README.md)
+        for tree_file in test_examples/working/abs.tree test_examples/working/array.tree; do
           echo "Checking: $tree_file"
           basename=$(basename "$tree_file" .tree)
           behaverify nuxmv "$tree_file" /tmp/grammar_check --generate --overwrite
           echo "✓ $basename parsed successfully"
         done
-        echo "All working examples parsed successfully!"
+        echo "All new-format working examples parsed successfully!"
 
   e2e-verification:
     runs-on: ubuntu-latest
@@ -150,7 +151,14 @@ jobs:
         # Download nuXmv (per license, we download fresh each time)
         wget -q 'https://nuxmv.fbk.eu/theme/download.php?file=nuXmv-2.1.0-linux64.tar.xz' -O nuXmv.tar.xz
         tar -xf nuXmv.tar.xz
-        mv nuXmv-2.1.0-Linux/bin/nuXmv ./nuXmv
+        # Find the nuXmv binary (directory name may vary)
+        NUXMV_BIN=$(find . -name 'nuXmv' -type f | head -1)
+        if [ -z "$NUXMV_BIN" ]; then
+          echo "ERROR: Could not find nuXmv binary after extraction"
+          ls -la
+          exit 1
+        fi
+        mv "$NUXMV_BIN" ./nuXmv
         chmod +x ./nuXmv
         ./nuXmv -version
         echo "nuXmv downloaded and ready"

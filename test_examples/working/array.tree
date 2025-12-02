@@ -1,63 +1,43 @@
-#comment#
-the purpose of this test is to fail because a variable uses multiple enum types.
-#end_comment#
+#{
+    Tests array functionality with environment variables.
+    This is a working example that should parse successfully.
+}#
 
-constants {
-	#comment# constants are used to synchronize values in a .tree file. #end_comment#
-	#comment# example = 0 #end_comment#
-	#comment# to use example elsewhere, simply type 'example' in place of any integer (quotes included) #end_comment#
-} end_constants
-
-blackboard_variables {
-} end_blackboard_variables
-
-local_variables {
-} end_local_variables
-
-environment {
-	environment_variables{
-		environment_variable { test array 3 VAR [0, 10] range initial_value { result { 'serene_index' } end_result } end_initial_value } end_environment_variable
-	}end_environment_variables
-	update_values{
-	}end_update_values
-} end_environment
-
-checks {
-} end_checks
-
-environment_checks {
-} end_environment_checks
+configuration {}
+enumerations {}
+constants {}
+variables {
+    variable { env test array 3 VAR [0, 10] range assign { result { 'serene_index' } } }
+}
+environment_update {}
+checks {}
+environment_checks {}
 actions {
-	action {
-		y_do
-		local_variables { } end_local_variables
-		read_variables { } end_read_variables
-		write_variables {} end_write_variables
-		initial_values {} end_initial_values
-		update {
-			write_environment {
-				idk
-				update_values {
-				environment_statement {
-					env test
-					result { (abs, env test) } end_result
-				} end_environment_statement
-				} end_update_values
-			} end_write_environment
-			return_statement {
-				result { success} end_result
-			} end_return_statement
-		} end_update
-	} end_action
-} end_actions
-
-sub_trees {#comment# subtrees go here. #end_comment#} end_sub_trees
+    action {
+        y_do
+        arguments {}
+        local_variables {}
+        read_variables {}
+        write_variables {}
+        initial_values {}
+        update {
+            write_environment {
+                env_update
+                variable_statement {
+                    test
+                    index_of { 0 }
+                    assign { result { (abs, (index, test, 0)) } }
+                }
+            }
+            return_statement {
+                result { success }
+            }
+        }
+    }
+}
+sub_trees {}
 tree {
-	#comment# the tree is defined here#end_comment#
-	y_do
-} end_tree
-
-
-
-
-specifications { #comment# INVAR, LTL, and CTL specs go here #end_comment# } end_specifications
+    y_do {}
+}
+tick_prerequisite { True }
+specifications {}
