@@ -20,6 +20,10 @@
 - Contingency monitors
 - Temporal logic specifications (LTL, CTL, invariants)
 
+**Platform Support:**
+- Cross-platform: Works on Linux, Windows, and macOS
+- Python 3.10+ required
+
 ---
 
 ## Repository Structure
@@ -38,15 +42,30 @@ behaverify/
 │   │   ├── tikz_files/          # LaTeX TikZ templates
 │   │   └── tick_overwrite/      # Python tick override behavior
 │   ├── monitor/                 # Runtime monitoring code generation
+│   ├── grid_world_draw/         # Grid world trace visualization
 │   └── variations/              # Alternative encodings (naive, etc.)
-├── examples/                    # ~30 example behavior trees
+├── examples/                    # ~100+ example behavior trees
+│   ├── ANSR_*/                  # ANSR examples (neural network integration)
+│   ├── AcasXu*/                 # ACAS X verification examples
+│   ├── Collatz/                 # Collatz conjecture example
+│   ├── DrunkenDrone/            # Drone navigation example
+│   ├── 2025_FMCAD_*/            # FMCAD 2025 paper examples
+│   └── ...                      # Many more domain examples
 ├── test_examples/               # Test models (working & broken)
+│   ├── working/                 # Valid models for regression testing
+│   └── intentionally_broken/    # Invalid models for error testing
 ├── tests/                       # Pytest test suite
-├── tutorial_examples/           # Tutorial materials
+├── tutorial_examples/           # Tutorial materials with commented examples
 ├── REPRODUCIBILITY/             # Research reproducibility (by conference/year)
+│   ├── 2022_SEFM/              # SEFM 2022 paper
+│   ├── 2024_FMAS/              # FMAS 2024 papers
+│   └── 2024_VMCAI/             # VMCAI 2024 paper
 ├── scripts/                     # Build, timing, and testing scripts
 ├── docker/                      # Docker configurations
-└── requirements/                # Dependency files (core, all, drawing, graphing)
+├── demos/                       # Demo materials
+├── READMEs/                     # Additional documentation (GUI PDF, etc.)
+├── TODO.md                      # Comprehensive TODO catalog
+└── pyproject.toml               # Package configuration
 ```
 
 ---
@@ -136,6 +155,7 @@ specifications {
 
 ### Installation & Setup
 
+**Linux/macOS:**
 ```bash
 # Clone repository
 git clone https://github.com/verivital/behaverify
@@ -155,6 +175,25 @@ wget https://nuxmv.fbk.eu/theme/download.php?file=nuXmv-2.1.0-linux64.tar.xz -O 
 tar -xf nuXmv_DL.tar.xz --one-top-level=nuXmv_DL --strip-components 1
 mv nuXmv_DL/bin/nuXmv ../nuXmv
 chmod +x ../nuXmv
+```
+
+**Windows:**
+```powershell
+# Clone repository
+git clone https://github.com/verivital/behaverify
+cd behaverify
+
+# Create virtual environment
+python -m venv ..\behaverify_venv
+..\behaverify_venv\Scripts\activate
+
+# Install package
+pip install -e .              # Editable install for development
+# OR
+pip install -e .[dev]         # Include dev dependencies
+
+# Install nuXmv (download Windows version from https://nuxmv.fbk.eu/)
+# Extract and place nuXmv.exe in accessible location
 ```
 
 ### Running BehaVerify
@@ -256,6 +295,7 @@ pytest tests/test_behaverify.py::test_specific_function
 - `tests/test_e2e_python_generation.py` - End-to-end Python generation
 - `tests/test_programmatic_api.py` - API usage tests
 - `tests/test_full_coverage.py` - Coverage tests
+- `tests/test_additional_coverage.py` - Edge cases, error handling, and DSL features
 - `tests/conftest.py` - Pytest fixtures (temp_dir, temp_file, etc.)
 
 ### Test Examples
@@ -425,31 +465,62 @@ All expressions in `.tree` files use prefix notation:
 (sub, a, b)           # a - b
 (idiv, x, 2)          # x / 2 (integer division)
 (mod, x, 2)           # x % 2
+(neg, x)              # -x
+(abs, x)              # |x|
 
 # Comparison
 (eq, x, 0)            # x == 0
+(neq, x, 0)           # x != 0
 (gt, x, 0)            # x > 0
 (lt, x, max)          # x < max
 (lte, a, b)           # a <= b
+(gte, a, b)           # a >= b
 
 # Logical
 (and, cond1, cond2)   # cond1 && cond2
 (or, cond1, cond2)    # cond1 || cond2
 (not, cond)           # !cond
+(implies, a, b)       # a → b
+(equivalent, a, b)    # a ↔ b
 
-# Temporal (in specifications)
+# Conditional
+(if, cond, t, f)      # cond ? t : f
+
+# Temporal (in LTL specifications)
 (next, expr)          # Next state
-(globally, expr)      # Always holds
-(finally, expr)       # Eventually holds
-(until, expr1, expr2) # Holds until
+(globally, expr)      # Always holds (G)
+(finally, expr)       # Eventually holds (F)
+(until, expr1, expr2) # Holds until (U)
+(release, e1, e2)     # Release operator (R)
+
+# Temporal (in CTL specifications)
+(exists_globally, expr)   # EG
+(exists_finally, expr)    # EF
+(always_globally, expr)   # AG
+(always_finally, expr)    # AF
+
+# Node status (specifications only)
+(success, node_name)  # Node returned success
+(failure, node_name)  # Node returned failure
+(running, node_name)  # Node is running
+(active, node_name)   # Node is active
 
 # Arrays
-(index, array, i)     # array[i]
+(index, array, i)              # array[i]
+(index, array, constant_index i)  # Optimized when i is compile-time known
 
 # Control Flow
 case { condition } result { value }  # If-then-else chains
-loop, i, [start, end] such_that condition, body  # Loops
+(loop, var, [start, end] such_that cond, body)  # Loop construct
+(case_loop, var, domain such_that cond, test, val, default)  # Case loop
 ```
+
+### Meta Code vs. Code
+
+- **code**: Can reference variables, evaluated at runtime
+- **meta_code**: Must be evaluable at compile time (constants, loop variables only)
+- Loop variables can be used in meta_code
+- Use `constant_index` for array indexing optimization when index is known at compile time
 
 ### Error Handling
 
@@ -608,15 +679,24 @@ loop, i, [start, end] such_that condition, body  # Loops
 
 BehaVerify is actively used in academic research. Key publications:
 
-1. **Neuro-Symbolic Behavior Trees** (NeuS 2025)
+1. **Neuro-Symbolic Behavior Trees and Their Verification** (NeuS 2025)
+   - https://proceedings.mlr.press/v288/serbinowska25a.html
 2. **Formalizing Stateful Behavior Trees** (FMAS 2024)
-3. **Verification with Contingency Monitors** (FMAS 2024)
-4. **BehaVerify: Temporal Logic for Behavior Trees** (SEFM 2022)
+   - https://dx.doi.org/10.4204/EPTCS.411.14
+3. **Verification of Behavior Trees with Contingency Monitors** (FMAS 2024)
+   - https://dx.doi.org/10.4204/EPTCS.411.4
+4. **BehaVerify: Verifying Temporal Logic Specifications for Behavior Trees** (SEFM 2022)
+   - https://doi.org/10.1007/978-3-031-17108-6_19
 
 **Reproducibility:**
 - `REPRODUCIBILITY/` contains materials organized by conference/year
 - Includes timing scripts and result processing
 - Ensures research results can be replicated
+
+**TODO Tracking:**
+- See `TODO.md` for a comprehensive catalog of all TODOs in the codebase
+- Organized by priority and module
+- Includes action plan for future development
 
 ---
 
@@ -634,17 +714,23 @@ BehaVerify is actively used in academic research. Key publications:
 ### Key Commands
 
 ```bash
-# Generate and verify
-behaverify nuxmv model.tree output/ --generate --ctl --nuxmv_path ../nuXmv
+# Generate and verify with nuXmv
+behaverify nuxmv model.tree output/ --generate --ctl --ltl --invar --nuxmv_path ../nuXmv
 
-# Generate Python
+# Generate Python implementation
 behaverify python model.tree output/
 
-# Generate C++
+# Generate C++ implementation (BehaviorTree.CPP compatible)
 behaverify cpp model.tree output/
 
-# Generate LaTeX
+# Generate Haskell implementation
+behaverify haskell model.tree output/
+
+# Generate LaTeX/TikZ diagram
 behaverify latex model.tree output/diagram.tex
+
+# Visualize trace from nuXmv output
+behaverify trace model.tree output/nuxmv/model_output.txt output/
 
 # Run tests
 pytest
@@ -699,12 +785,13 @@ pip install -e .[dev]
 
 ## Additional Resources
 
-- **Main README:** `/home/user/behaverify/README.md`
-- **Grammar Documentation:** `/home/user/behaverify/src/behaverify/data/metamodel/README.md`
-- **Tutorial:** `/home/user/behaverify/tutorial_examples/README.md`
-- **Reproducibility:** `/home/user/behaverify/REPRODUCIBILITY/README.md`
-- **GUI Documentation:** `/home/user/behaverify/READMEs/gui_pdf.pdf`
-- **Examples:** `/home/user/behaverify/examples/`
+- **Main README:** `README.md`
+- **Grammar Documentation:** `src/behaverify/data/metamodel/README.md`
+- **Tutorial:** `tutorial_examples/README.md`
+- **TODO Catalog:** `TODO.md`
+- **Reproducibility:** `REPRODUCIBILITY/README.md`
+- **GUI Documentation:** `READMEs/README_BehaVerify_GUI.pdf`
+- **Examples:** `examples/`
 - **GitHub:** https://github.com/verivital/behaverify
 - **nuXmv:** https://nuxmv.fbk.eu/
 
@@ -727,6 +814,7 @@ The codebase is well-structured but complex due to the nature of formal verifica
 
 ---
 
-*Last Updated: 2025-11-17*
+*Last Updated: 2025-12-01*
 *BehaVerify Version: 0.0.1*
 *Repository: https://github.com/verivital/behaverify*
+*Author: Serena Serafina Serbinowska*
