@@ -79,22 +79,22 @@ jobs:
       run: |
         echo "Using CLI: behaverify nuxmv ... --generate"
         behaverify nuxmv \
-          test_examples/working/blueROV_mod.tree \
-          /tmp/bluerov_cli \
+          examples/tiny.tree \
+          /tmp/tiny_cli \
           --generate \
           --recursion_limit 10000 \
           --overwrite
         echo "Generated nuXmv model via CLI:"
-        head -50 /tmp/bluerov_cli/nuxmv/blueROV_mod.smv
+        head -50 /tmp/tiny_cli/nuxmv/tiny.smv
 
     - name: CLI Test - Generate LaTeX visualization via CLI
       run: |
         echo "Using CLI: behaverify latex ..."
         behaverify latex \
-          test_examples/working/blueROV_mod.tree \
-          /tmp/blueROV_mod.tex
+          examples/tiny.tree \
+          /tmp/tiny.tex
         echo "Generated LaTeX file via CLI:"
-        head -30 /tmp/blueROV_mod.tex
+        head -30 /tmp/tiny.tex
 
     - name: CLI Test - Generate Python code via CLI
       run: |
@@ -110,10 +110,12 @@ jobs:
 
     - name: Verify multiple example models parse correctly
       run: |
-        cd src
-        for tree_file in ../test_examples/working/*.tree; do
+        # Use behaverify nuxmv --generate to validate grammar (grammar check is part of generation)
+        for tree_file in test_examples/working/*.tree; do
           echo "Checking: $tree_file"
-          python check_grammar.py behaverify/data/metamodel/behaverify.tx "$tree_file"
+          basename=$(basename "$tree_file" .tree)
+          behaverify nuxmv "$tree_file" /tmp/grammar_check --generate --overwrite
+          echo "✓ $basename parsed successfully"
         done
         echo "All working examples parsed successfully!"
 
@@ -206,15 +208,15 @@ jobs:
           exit 1
         fi
 
-    - name: E2E Test - blueROV_mod via CLI (INVAR specification)
+    - name: E2E Test - tiny via CLI (INVAR specification)
       run: |
-        echo "=== blueROV_mod Example - INVAR Verification via CLI ==="
+        echo "=== tiny Example - INVAR Verification via CLI ==="
         echo "Using: behaverify nuxmv ... --generate --invar --nuxmv_path"
 
         # Run full E2E via CLI entry point
         behaverify nuxmv \
-          test_examples/working/blueROV_mod.tree \
-          /tmp/bluerov_output \
+          examples/tiny.tree \
+          /tmp/tiny_output \
           --generate \
           --invar \
           --nuxmv_path ./nuXmv \
@@ -222,12 +224,12 @@ jobs:
           --overwrite
 
         echo "--- Generated SMV model (first 30 lines) ---"
-        head -30 /tmp/bluerov_output/nuxmv/blueROV_mod.smv
+        head -30 /tmp/tiny_output/nuxmv/tiny.smv
         echo "--- Verification Output ---"
-        cat /tmp/bluerov_output/nuxmv/blueROV_mod_output.txt
+        cat /tmp/tiny_output/nuxmv/tiny_output.txt
 
         # Check that verification completed
-        if grep -q "specification" /tmp/bluerov_output/nuxmv/blueROV_mod_output.txt; then
+        if grep -q "specification" /tmp/tiny_output/nuxmv/tiny_output.txt; then
           echo "✓ INVAR verification completed successfully via CLI"
         else
           echo "Warning: Could not confirm INVAR verification completed"
@@ -243,7 +245,7 @@ jobs:
         echo ""
         echo "1. Collatz (INVAR): behaverify nuxmv --generate --invar"
         echo "2. DrunkenDrone (CTL): behaverify nuxmv --generate --ctl"
-        echo "3. blueROV_mod (INVAR): behaverify nuxmv --generate --invar"
+        echo "3. tiny (INVAR): behaverify nuxmv --generate --invar"
         echo "========================================"
         echo "All end-to-end nuXmv verifications passed via CLI!"
 
