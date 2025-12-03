@@ -62,7 +62,7 @@ def create_nodes(nodes, root_node_name, node_name_to_number, tick_condition):
     @ var_string := a string with variable declarations
     --
     effects
-    purely funcitonal
+    purely functional
     '''
     define_string = (indent(2) + root_node_name + '.active := ' + tick_condition + ';' + os.linesep
                      + ''.join([(indent(2) + PARALLEL_SKIP_STRING + node['name'] + ' := '
