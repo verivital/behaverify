@@ -43,7 +43,7 @@ PARALLEL_SKIP_STRING = 'parallel_skip__'
 
 def create_nodes(nodes, root_node_name, node_name_to_number, tick_condition):
     '''
-    creates strings with neccessary information based on nodes.
+    creates strings with necessary information based on nodes.
     --
     arguments
     @ nodes := dictionary, s -> n
