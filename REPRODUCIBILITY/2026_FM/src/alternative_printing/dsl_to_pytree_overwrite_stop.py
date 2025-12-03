@@ -956,7 +956,7 @@ def write_environment(model, location, const_name):
             + indent(2) + '-- SIDE EFFECTS' + os.linesep
             + indent(2) + 'This method is expected to have no side effects (for the tree).' + os.linesep
             + indent(2) + "'''" + os.linesep
-            + indent(2) + '# below we include an auto generated attempt at implmenting this' + os.linesep
+            + indent(2) + '# below we include an auto generated attempt at implementing this' + os.linesep
             + indent(2) + 'return ' + format_code(node.condition, init_mode = None) + os.linesep
         )
 
