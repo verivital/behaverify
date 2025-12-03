@@ -18,6 +18,17 @@ def create_image_and_container(dockerfile_path, nuxmv_loc, local):
             if not copy_into(behaverify, nuxmv_loc, TEST_DIR + '/'):
                 raise RuntimeError('Failed to copy nuXmv into the container.')
             print('End: Adding nuXmv to container: ' + CONTAINER_NAME)
+            # Extract the tar.xz file if it's an archive
+            import os
+            nuxmv_filename = os.path.basename(nuxmv_loc)
+            if nuxmv_filename.endswith('.tar.xz') or nuxmv_filename.endswith('.tar.gz'):
+                serene_exec(
+                    behaverify,
+                    'tar -xf ' + TEST_DIR + '/' + nuxmv_filename + ' --one-top-level=' + TEST_DIR + '/nuXmv_DL --strip-components 1',
+                    'Extracting nuXmv from local archive.',
+                    True
+                )
+                serene_exec(behaverify, 'mv ' + TEST_DIR + '/nuXmv_DL/bin/nuXmv' + ' ' + TEST_DIR + '/nuXmv', 'Moving nuXmv from extracted location.', True)
         else:
             serene_exec(behaverify, 'wget ' + nuxmv_loc + ' -O ' + HOME_DIR + '/nuXmv_DL.tar.xz', 'Downloading nuXmv from provided URL.', True)
             serene_exec(
