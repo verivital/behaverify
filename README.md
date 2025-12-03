@@ -44,7 +44,7 @@ source ../behaverify_venv/bin/activate
 python3 -m pip install .
 ```
 
-### Explanation of installation
+### Explanation of installation instructions
 
 These four commands are used to download [nuXmv](https://nuxmv.fbk.eu/), extract the file, retrieve the executable, and ensure it is runnable.
 ```
