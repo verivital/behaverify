@@ -212,8 +212,8 @@ class TestUnknownModeCoverage:
         with patch('builtins.print') as mock_print:
             main(['unknown_mode'])
 
-        # Should print unknown mode message
-        mock_print.assert_any_call('Unknown mode. Modes are haskell, latex, nuxmv, or python. Exiting')
+        # Should print unknown mode message (includes all modes: gui, haskell, latex, nuxmv, python, trace)
+        mock_print.assert_any_call('Unknown mode. Modes are gui, haskell, latex, nuxmv, python, or trace. Exiting')
 
 
 class TestMainEntryPoint:

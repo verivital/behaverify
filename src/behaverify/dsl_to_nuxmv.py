@@ -121,7 +121,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
                 + format_code(condition, misc_args)[0]
                 + ') ? success : failure;' + os.linesep
             )
-            if variant == 'fastfowarding' else
+            if variant == 'fastforwarding' else
             (
                 # This is for the Naive encoding.
                 'MODULE ' + node_name + '_module(' + ', '.join(variable_list) + ')' + os.linesep
@@ -145,7 +145,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
     def variant_code_write_smv(nodes, behaverify_variables, declared_enumerations, tick_condition, specifications, hyper_mode, output_file, do_not_trim):
         (
             write_smv(nodes, behaverify_variables, declared_enumerations, tick_condition, specifications, hyper_mode, output_file, do_not_trim)
-            if variant == 'fastfowarding' else
+            if variant == 'fastforwarding' else
             write_smv_naive(nodes, behaverify_variables, declared_enumerations, tick_condition, specifications, hyper_mode, output_file, do_not_trim)
         )
     def copy_loop_references(loop_references):
@@ -2191,7 +2191,7 @@ def dsl_to_nuxmv(metamodel_file, model_file, output_file, keep_stage_0, keep_las
         'environment_check' : create_check,
         'action' : create_action
     }
-    if variant not in ('naive', 'fastfowarding'):
+    if variant not in ('naive', 'fastforwarding'):
         raise ValueError('Unknown encoding variant: ' + str(variant))
     array_size_override = {} # this is indexed by variable.name. Yes that is variable.name, not variable_name. It should be indexed by the name associated with the variable object.
     time_0 = time.time()
