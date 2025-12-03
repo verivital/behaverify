@@ -522,6 +522,8 @@ def write_smv(nodes, variables, declared_enumerations, tick_condition, specifica
     nuxmv_string += module_string
 
     nuxmv_string = remove_stage(nuxmv_string)
+    # Naive encoding has no 'system' sub-module, so remove 'system.' prefix from specifications
+    nuxmv_string = nuxmv_string.replace('system.', '')
 
     if output_file is None:
         print(nuxmv_string)

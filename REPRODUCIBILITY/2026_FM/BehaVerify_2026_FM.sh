@@ -61,4 +61,17 @@ cd "${this_script_location}/examples/MoVe4BT"
 
 $python_results graph_results.py
 
+# Encoding Comparison Experiment (Fastforwarding vs Naive)
+encoding_comparison_min=1
+encoding_comparison_max=10
+encoding_comparison_step=1
+
+cd "${this_script_location}/scripts/build_scripts"
+./exp_encoding_comparison_create.sh $python_behaverify $encoding_comparison_min $encoding_comparison_max $encoding_comparison_step
+cd "${this_script_location}/scripts/encoding_timing_scripts"
+./exp_encoding_comparison_run.sh $encoding_comparison_min $encoding_comparison_max $encoding_comparison_step
+
+cd "${this_script_location}/examples/EncodingComparison"
+$python_results graph_results.py
+
 cd $start_location
