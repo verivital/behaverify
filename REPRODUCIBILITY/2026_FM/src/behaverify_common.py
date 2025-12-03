@@ -812,7 +812,7 @@ def refine_invalid(nodes, node_name):
 
 def create_local_root_to_relevant_list_map(nodes, node_to_local_root_map, nodes_in_order):
     """
-    creates a map from a local root to a lit of relevant nodes
+    creates a map from a local root to a list of relevant nodes
     --
     arguments
     @ nodes -> a map (dictionary) from node_id to node information
