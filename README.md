@@ -2,6 +2,8 @@
 
 BehaVerify is a tool for turning specifications of Behavior Trees into nuXmv models for verification as well as generating Python and Haskell implementations of the specified trees.
 
+**✨ NEW: [HIGHLIGHTS.md](HIGHLIGHTS.md) - Comprehensive showcase of BehaVerify's features, capabilities, and research results with visual demonstrations**
+
 - To recreate tests, see [REPRODUCIBILITY](https://github.com/verivital/behaverify/tree/main/REPRODUCIBILITY).
 - For installation (including explanations and test runs), see [Installation](#installation).
 - For running instructions (including a full list of options and examples), see [Options](#options).

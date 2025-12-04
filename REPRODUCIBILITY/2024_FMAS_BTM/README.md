@@ -750,6 +750,6 @@ If you use this artifact or the BehaVerify BTM framework, please cite:
 
 ---
 
-*Last Updated: 2024-12-04*
+*Last Updated: 2025-12-04*
 *BehaVerify Version: 0.0.1*
 *Artifact Maintainer: Serena Serafina Serbinowska*
