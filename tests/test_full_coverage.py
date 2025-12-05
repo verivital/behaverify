@@ -39,7 +39,7 @@ class TestGridModeCoverage:
 
     def test_grid_network_mode_not_implemented(self):
         """Test that grid network mode raises NotImplementedError."""
-        with pytest.raises(NotImplementedError, match='Soon'):
+        with pytest.raises(NotImplementedError, match='not yet implemented'):
             main(['grid', 'network', 'model.tree', 'trace.txt', './output', 'name'])
 
     @patch('behaverify.behaverify.verify_input')
@@ -96,124 +96,116 @@ class TestNuXmvExecutionCoverage:
     @patch('behaverify.behaverify.verify_location')
     @patch('behaverify.behaverify.dsl_to_nuxmv')
     def test_nuxmv_without_path_raises_error(self, mock_nuxmv, mock_verify_loc, mock_verify_input, temp_dir):
-        """Test that running nuxmv without path raises ValueError."""
+        """Test that running nuxmv without path exits with error."""
         model_file = temp_dir / "test.tree"
         model_file.write_text("dummy")
 
-        with patch('builtins.print'):
-            with pytest.raises(ValueError, match='Cannot run nuXmv without a path to nuXmv'):
-                main(['nuxmv', str(model_file), str(temp_dir), '--generate', '--invar'])
+        with pytest.raises(SystemExit):
+            main(['nuxmv', str(model_file), str(temp_dir), '--generate', '--invar'])
 
     @patch('behaverify.behaverify.verify_input')
     @patch('behaverify.behaverify.verify_location')
     @patch('behaverify.behaverify.dsl_to_nuxmv')
-    @patch('os.path.isfile')
-    @patch('subprocess.run')
+    @patch('behaverify.behaverify.verify_nuxmv_path')
+    @patch('behaverify.behaverify.run_nuxmv')
     @patch('builtins.open', new_callable=mock_open)
-    def test_nuxmv_with_invar(self, mock_file, mock_subprocess, mock_isfile, mock_nuxmv, mock_verify_loc, mock_verify_input, temp_dir):
+    def test_nuxmv_with_invar(self, mock_file, mock_run_nuxmv, mock_verify_nuxmv, mock_nuxmv, mock_verify_loc, mock_verify_input, temp_dir):
         """Test nuxmv mode with --invar flag."""
         model_file = temp_dir / "test.tree"
         model_file.write_text("dummy")
 
-        mock_isfile.return_value = True
+        mock_verify_nuxmv.return_value = '/path/to/nuxmv'
 
         with patch('builtins.print'):
             main(['nuxmv', str(model_file), str(temp_dir), '--generate', '--invar', '--nuxmv_path', '/path/to/nuxmv'])
 
         mock_nuxmv.assert_called_once()
-        # Verify command file was written
-        assert mock_file.called
+        mock_run_nuxmv.assert_called_once()
 
     @patch('behaverify.behaverify.verify_input')
     @patch('behaverify.behaverify.verify_location')
     @patch('behaverify.behaverify.dsl_to_nuxmv')
-    @patch('os.path.isfile')
-    @patch('subprocess.run')
+    @patch('behaverify.behaverify.verify_nuxmv_path')
+    @patch('behaverify.behaverify.run_nuxmv')
     @patch('builtins.open', new_callable=mock_open)
-    def test_nuxmv_with_ctl(self, mock_file, mock_subprocess, mock_isfile, mock_nuxmv, mock_verify_loc, mock_verify_input, temp_dir):
+    def test_nuxmv_with_ctl(self, mock_file, mock_run_nuxmv, mock_verify_nuxmv, mock_nuxmv, mock_verify_loc, mock_verify_input, temp_dir):
         """Test nuxmv mode with --ctl flag."""
         model_file = temp_dir / "test.tree"
         model_file.write_text("dummy")
 
-        mock_isfile.return_value = True
+        mock_verify_nuxmv.return_value = '/path/to/nuxmv'
 
         with patch('builtins.print'):
             main(['nuxmv', str(model_file), str(temp_dir), '--generate', '--ctl', '--nuxmv_path', '/path/to/nuxmv'])
 
         mock_nuxmv.assert_called_once()
-        mock_subprocess.assert_called_once()
+        mock_run_nuxmv.assert_called_once()
 
     @patch('behaverify.behaverify.verify_input')
     @patch('behaverify.behaverify.verify_location')
     @patch('behaverify.behaverify.dsl_to_nuxmv')
-    @patch('os.path.isfile')
-    @patch('subprocess.run')
+    @patch('behaverify.behaverify.verify_nuxmv_path')
+    @patch('behaverify.behaverify.run_nuxmv')
     @patch('builtins.open', new_callable=mock_open)
-    def test_nuxmv_with_ltl(self, mock_file, mock_subprocess, mock_isfile, mock_nuxmv, mock_verify_loc, mock_verify_input, temp_dir):
+    def test_nuxmv_with_ltl(self, mock_file, mock_run_nuxmv, mock_verify_nuxmv, mock_nuxmv, mock_verify_loc, mock_verify_input, temp_dir):
         """Test nuxmv mode with --ltl flag."""
         model_file = temp_dir / "test.tree"
         model_file.write_text("dummy")
 
-        mock_isfile.return_value = True
+        mock_verify_nuxmv.return_value = '/path/to/nuxmv'
 
         with patch('builtins.print'):
             main(['nuxmv', str(model_file), str(temp_dir), '--generate', '--ltl', '--nuxmv_path', '/path/to/nuxmv'])
 
         mock_nuxmv.assert_called_once()
-        mock_subprocess.assert_called_once()
+        mock_run_nuxmv.assert_called_once()
 
     @patch('behaverify.behaverify.verify_input')
     @patch('behaverify.behaverify.verify_location')
     @patch('behaverify.behaverify.dsl_to_nuxmv')
-    @patch('os.path.isfile')
-    @patch('subprocess.run')
+    @patch('behaverify.behaverify.verify_nuxmv_path')
+    @patch('behaverify.behaverify.run_nuxmv')
     @patch('builtins.open', new_callable=mock_open)
-    def test_nuxmv_with_simulate(self, mock_file, mock_subprocess, mock_isfile, mock_nuxmv, mock_verify_loc, mock_verify_input, temp_dir):
+    def test_nuxmv_with_simulate(self, mock_file, mock_run_nuxmv, mock_verify_nuxmv, mock_nuxmv, mock_verify_loc, mock_verify_input, temp_dir):
         """Test nuxmv mode with --simulate flag."""
         model_file = temp_dir / "test.tree"
         model_file.write_text("dummy")
 
-        mock_isfile.return_value = True
+        mock_verify_nuxmv.return_value = '/path/to/nuxmv'
 
         with patch('builtins.print'):
             main(['nuxmv', str(model_file), str(temp_dir), '--generate', '--simulate', '10', '--nuxmv_path', '/path/to/nuxmv'])
 
         mock_nuxmv.assert_called_once()
-        mock_subprocess.assert_called_once()
-        # Verify command string contains simulate
-        written_content = ''.join([call[0][0] for call in mock_file().write.call_args_list if call[0]])
-        assert 'simulate' in written_content or mock_file().write.called
+        mock_run_nuxmv.assert_called_once()
 
     @patch('behaverify.behaverify.verify_input')
     @patch('behaverify.behaverify.verify_location')
     @patch('behaverify.behaverify.dsl_to_nuxmv')
-    @patch('os.path.isfile')
-    @patch('subprocess.run')
+    @patch('behaverify.behaverify.verify_nuxmv_path')
+    @patch('behaverify.behaverify.run_nuxmv')
     @patch('builtins.open', new_callable=mock_open)
-    def test_nuxmv_with_all_checks(self, mock_file, mock_subprocess, mock_isfile, mock_nuxmv, mock_verify_loc, mock_verify_input, temp_dir):
+    def test_nuxmv_with_all_checks(self, mock_file, mock_run_nuxmv, mock_verify_nuxmv, mock_nuxmv, mock_verify_loc, mock_verify_input, temp_dir):
         """Test nuxmv mode with all check flags."""
         model_file = temp_dir / "test.tree"
         model_file.write_text("dummy")
 
-        mock_isfile.return_value = True
+        mock_verify_nuxmv.return_value = '/path/to/nuxmv'
 
         with patch('builtins.print'):
             main(['nuxmv', str(model_file), str(temp_dir), '--generate', '--invar', '--ctl', '--ltl', '--nuxmv_path', '/path/to/nuxmv'])
 
         mock_nuxmv.assert_called_once()
-        mock_subprocess.assert_called_once()
+        mock_run_nuxmv.assert_called_once()
 
 
 class TestUnknownModeCoverage:
     """Test coverage for unknown mode handling."""
 
     def test_unknown_mode_prints_message(self):
-        """Test that unknown mode prints appropriate message."""
-        with patch('builtins.print') as mock_print:
+        """Test that unknown mode exits with error."""
+        with pytest.raises(SystemExit):
             main(['unknown_mode'])
-
-        # Should print unknown mode message (includes all modes: gui, haskell, latex, nuxmv, python, trace)
-        mock_print.assert_any_call('Unknown mode. Modes are gui, haskell, latex, nuxmv, python, or trace. Exiting')
 
 
 class TestMainEntryPoint:

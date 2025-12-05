@@ -26,7 +26,7 @@ class TestVerifyLocation:
 
     def test_verify_location_raises_error_when_file_exists_without_overwrite(self, temp_file):
         """Test that verify_location raises error when file exists and overwrite is False."""
-        with pytest.raises(FileExistsError, match="already exists"):
+        with pytest.raises(SystemExit):
             verify_location(None, str(temp_file), False)
 
     def test_verify_location_allows_existing_file_with_overwrite(self, temp_file):
@@ -38,7 +38,7 @@ class TestVerifyLocation:
         """Test that verify_location raises error when parent exists but is not a directory."""
         # Create a path where parent is a file, not a directory
         invalid_path = str(temp_file) + "/child.txt"
-        with pytest.raises(FileExistsError, match="is not a directory"):
+        with pytest.raises(SystemExit):
             verify_location(None, invalid_path, False)
 
     def test_verify_location_directory_mode_creates_directory(self, temp_dir):
@@ -51,7 +51,7 @@ class TestVerifyLocation:
         """Test that verify_location raises error in directory mode when directory exists."""
         output_dir = temp_dir / "existing_dir"
         output_dir.mkdir()
-        with pytest.raises(FileExistsError, match="contains an element named"):
+        with pytest.raises(SystemExit):
             verify_location("existing_dir", str(temp_dir), False)
 
     def test_verify_location_directory_mode_allows_existing_with_overwrite(self, temp_dir):
@@ -63,7 +63,7 @@ class TestVerifyLocation:
 
     def test_verify_location_directory_mode_raises_error_when_location_is_not_directory(self, temp_file):
         """Test that verify_location raises error when location exists but is a file."""
-        with pytest.raises(FileExistsError, match="cannot be used as it exists and is not a folder"):
+        with pytest.raises(SystemExit):
             verify_location("some_dir", str(temp_file), False)
 
 
@@ -78,10 +78,10 @@ class TestVerifyInput:
     def test_verify_input_raises_error_when_file_does_not_exist(self, temp_dir):
         """Test that verify_input raises error when file doesn't exist."""
         nonexistent_file = temp_dir / "nonexistent.txt"
-        with pytest.raises(FileNotFoundError, match="could not be found"):
+        with pytest.raises(SystemExit):
             verify_input(str(nonexistent_file))
 
     def test_verify_input_raises_error_when_path_is_directory(self, temp_dir):
         """Test that verify_input raises error when path is a directory."""
-        with pytest.raises(FileNotFoundError):
+        with pytest.raises(SystemExit):
             verify_input(str(temp_dir))
