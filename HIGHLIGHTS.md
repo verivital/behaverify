@@ -78,12 +78,6 @@ BehaVerify's **fastforwarding encoding** is a state-of-the-art optimization tech
 | Tool | Maximum Nodes Verified | Encoding Strategy | Neural Network Support |
 |------|------------------------|-------------------|------------------------|
 | **BehaVerify** | **2,055** | Fastforwarding | ✅ Yes (ONNX) |
-| MoVe4BT | 200 | Naive | ❌ No |
-| BT2BIP | ~50 | Compositional | ❌ No |
-| BT2Fiacre | ~30 | Direct translation | ❌ No |
-| BTCompiler | N/A (no verification) | N/A | ❌ No |
-
-**Research:** [BehaVerify: A Tool for Verification of Behavior Trees](fm2026behaverify.pdf) (FM 2026)
 
 ---
 
@@ -281,9 +275,6 @@ BehaVerify significantly outperforms existing behavior tree verification tools:
 
 ### Encoding Efficiency
 
-![State Space Reduction](highlights/figures/encoding-comparison/2026-FM-StateSpace-Reduction.png)
-*Figure 5: Visual comparison showing how fastforwarding encoding compresses state space. Each behavior tree tick is represented as a single transition instead of multiple intermediate states.*
-
 **Fastforwarding vs. Naive Encoding:**
 - **Naive encoding:** O(n) states per tick, where n is tree height
 - **Fastforwarding encoding:** O(1) states per tick
@@ -309,7 +300,7 @@ BehaVerify significantly outperforms existing behavior tree verification tools:
 
 **Feature Comparison:**
 
-| Feature | BehaVerify | MoVe4BT | BT2BIP | BTCompiler |
+| Feature | BehaVerify | MoVe4BT | BT2BIP | BTCompiler 
 |---------|------------|---------|---------|------------|
 | Neural Networks | ✅ | ❌ | ❌ | ❌ |
 | Runtime Monitors | ✅ | ❌ | ❌ | ❌ |
@@ -448,37 +439,6 @@ behaverify trace model.tree ./output/nuxmv/model_output.txt ./output/traces/
 
 ---
 
-## Research Publications
-
-### Key Papers
-
-1. **[Neuro-Symbolic Behavior Trees and Their Verification](https://proceedings.mlr.press/v288/serbinowska25a.html)**
-   - Serena Serafina Serbinowska, Taylor T. Johnson
-   - *NeuS 2025 (AAAI Workshop on Neurosymbolic Learning and Reasoning)*
-   - Integration of neural networks in behavior trees, verification of 6.25M+ states
-
-2. **[Verification of Behavior Trees with Contingency Monitors](https://dx.doi.org/10.4204/EPTCS.411.4)**
-   - Serena Serafina Serbinowska, Taylor T. Johnson
-   - *FMAS 2024 (Formal Methods for Autonomous Systems)*
-   - Runtime monitoring with LTL specifications, contingency-triggered behaviors
-
-3. **[Formalizing Stateful Behavior Trees](https://dx.doi.org/10.4204/EPTCS.411.14)**
-   - Serena Serafina Serbinowska, Taylor T. Johnson
-   - *FMAS 2024*
-   - Formalization of stateful behavior tree semantics
-
-4. **[BehaVerify: Verifying Temporal Logic Specifications for Behavior Trees](https://doi.org/10.1007/978-3-031-17108-6_19)**
-   - Serena Serafina Serbinowska, Mathew Chigbolu, Taylor T. Johnson
-   - *SEFM 2022 (Software Engineering and Formal Methods)*
-   - Initial BehaVerify tool, fastforwarding encoding, LTL/CTL verification
-
-5. **[BehaVerify: A Tool for Verification of Behavior Trees](fm2026behaverify.pdf)**
-   - Serena Serafina Serbinowska, Taylor T. Johnson
-   - *FM 2026 (Formal Methods) - Tool Paper*
-   - Comprehensive tool description, scalability results, comparisons
-
----
-
 ### Reproducibility
 
 All experimental results are fully reproducible using Docker containers and scripts provided in the [REPRODUCIBILITY/](REPRODUCIBILITY/) directory:
@@ -539,9 +499,3 @@ BehaVerify generates visual traces for:
 - **Issues & Support:** [GitHub Issues](https://github.com/verivital/behaverify/issues)
 
 ---
-
-**BehaVerify** is developed by the Verified Systems Group at Vanderbilt University.
-
-*Contributors: Serena Serafina Serbinowska, Mathew Chigbolu, Taylor T. Johnson*
-
-*Last Updated: December 2024*
