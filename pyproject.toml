@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "behaverify"
-version = "0.0.1"
+version = "1.0.0"
 authors = [
   { name="Serena Serafina Serbinowska", email="serena.serbinowska.work@proton.me" }
 ]
@@ -12,7 +12,7 @@ description = "A tool for formal verification of behavior trees"
 readme = "README.md"
 requires-python = ">=3.10"
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
     "Operating System :: OS Independent",
