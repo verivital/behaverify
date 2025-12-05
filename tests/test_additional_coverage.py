@@ -30,33 +30,30 @@ class TestErrorHandling:
 
     def test_verify_input_with_directory_raises_error(self, temp_dir):
         """Test that verify_input raises error when given a directory."""
-        with pytest.raises(FileNotFoundError):
+        with pytest.raises(SystemExit):
             verify_input(str(temp_dir))
 
     def test_verify_input_with_nonexistent_file_raises_error(self, temp_dir):
         """Test that verify_input raises error for nonexistent file."""
         nonexistent = temp_dir / "does_not_exist.tree"
-        with pytest.raises(FileNotFoundError, match="could not be found"):
+        with pytest.raises(SystemExit):
             verify_input(str(nonexistent))
 
     def test_verify_location_parent_as_file_raises_error(self, temp_file):
         """Test that verify_location raises error when parent is a file."""
         invalid_path = str(temp_file) + "/child.txt"
-        with pytest.raises(FileExistsError, match="is not a directory"):
+        with pytest.raises(SystemExit):
             verify_location(None, invalid_path, False)
 
     def test_verify_location_directory_mode_with_file_raises_error(self, temp_file):
         """Test that verify_location raises error when location is file not dir."""
-        with pytest.raises(FileExistsError, match="cannot be used"):
+        with pytest.raises(SystemExit):
             verify_location("some_dir", str(temp_file), False)
 
     def test_main_with_unknown_mode_handles_gracefully(self):
         """Test that main handles unknown modes gracefully."""
-        with patch('builtins.print') as mock_print:
+        with pytest.raises(SystemExit):
             main(['totally_unknown_mode', 'file.tree', './output'])
-
-        # Should print unknown mode message
-        assert any('Unknown mode' in str(call) for call in mock_print.call_args_list)
 
 
 class TestCommandLineArguments:

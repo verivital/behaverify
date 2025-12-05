@@ -1,509 +1,755 @@
-This README is meant to provide information about reproducing results used in FMAS 2024. However, it can also be used as a more general installation guide for BehaVerify, though eventually it may be inadequate for this purpose as it will not be updated along with BehaVerify, in order to ensure it remains useful for its primary purpose, reproduction of results for FMAS 2024.
+# BehaVerify FMAS 2024: Behavior Tree Monitoring (BTM) Reproducibility
 
-See version\_info.txt for information about dependency requirements.
+This README provides instructions for reproducing results from the FMAS 2024 paper:
 
-# About this File and its Layout
-
-1. Prerequisites and Information -> this section will explain what you need and what assumptions we make.
-2. Test Information -> this section provides basic information about the tests.
-3. Running Tests using Docker -> this section will explain how to run the tests using Docker.
-4. Running Tests Locally (verbose) -> this section will explain how to run tests locally. It also explains why each step of the installation is necessary.
-5. Running Tests Locally (concise) -> this section will explain how to run tests locally. It does not provide explanations.
-6. Interpreting and Comparing Results -> this section will explain how to interpret the generated results and what they correspond to in the paper.
-7. Potential Errors and Workarounds -> this section will explain how to deal with some of the potential errors encountered.
-8. Directory Explained -> this section will provide detailed information about everything in this directory.
-
-Finally, note that this is a .md file, and as such, we escape various characters. If you are reading this using a text editor, please make sure to keep this in mind.
-
-# Prerequisites and Information
-
-1. docker with the ability to run commands as a regular user (see https://docs.docker.com/engine/install/linux-postinstall/ ). Additionally, we will be using Ubuntu 23.10 inside docker. Some users appear to have issues with running commands like update or upgrade in docker when using Ubuntu; we do not have a workaround for this.
-2. nuXmv (see  https://nuxmv.fbk.eu/download.html or https://nuxmv.fbk.eu/theme/download.php?file=nuXmv-2.0.0-linux64.tar.gz ). You only need to download nuXmv. There should be no installation. Please ensure you download the Linux 64-bit x86 version 2.0.0 (October 14, 2019). The executable will be located in **nuXmv-2.0.0-linux64/nuXmv-2.0.0-Linux/bin/nuXmv**. There should be **NO FILE EXTENSION**. Note that we are **ONLY** interested in the binary; you do not need the other files or the folder structure, so long as you have the binary.
-3. If you choose to use Docker, we assume you have access to Python3. If you choose to run locally, we assume you are able to run bash scripts. These have **only been tested on Ubuntu**. If you cannot run the scripts, please run the commands present in the bash scripts manually. Note that this will require arguments to replaced. Specifically, $1 means the first argument provided to the bash script, $2 means the second argument provided to the bash script, etc.
-
-Note, we require docker py for use with python3 if using docker. It can be installed using
-```
-python3 -m pip install docker
-```
-
-## nuXmv
-
-Per the licensing agreement of nuXmv (see https://nuxmv.fbk.eu/downloads/LICENSE.txt ), we may not re-distribute the software in any form for any purpose. As such, while we appreciate that downloading nuXmv separately is tedious and means that this artifact is somewhat incomplete, we do not have any alternative available to us. Thank you for understanding.
-
-
-# Test Information
-
-1. Installation Test is mostly to test installation. It is very fast.
-2. Partial Results is very fast. It runs some, but not all of the tests.
-3. Full Results replicates all results for BehaVerify.
-4. The results in the paper were generated using a Dell Inc. OptiPlex 7040 with 64 GiB of Memory with an Intel i7–6700 CPU @ 3.40GHz with 8 cores.
-5. We have confirmed that an old Chromebook using the Linux development environment is capable of running all the tests. The install and partial tests complete fairly quickly, but the full test is rather slow. Obviously, your machines capabilities will change the exact numbers. The point, however, is that you do not need a powerful machine to run these tests.
+**"Verification of Behavior Trees with Contingency Monitors"**
+- arXiv: https://arxiv.org/abs/2411.14162
+- Authors: Serena S. Serbinowska, Nicholas Potteiger, Anne M. Tumlin, Taylor T. Johnson
+- Conference: FMAS 2024 (Formal Methods for Autonomous Systems)
 
 ---
 
-# Running Tests With Docker
+## Table of Contents
 
-The tests can be run using docker. We provide several methods for doing this. Some utilize a prebuilt docker image, while others rebuild the image. If this is part of an artifact evaluation, we will provide a docker image.
+1. [Introduction](#introduction)
+2. [BTM Framework Overview](#btm-framework-overview)
+3. [Visual Examples](#visual-examples)
+4. [Prerequisites](#prerequisites)
+5. [Quick Start with Docker](#quick-start-with-docker)
+6. [Running Locally](#running-locally-without-docker)
+7. [Tutorial: Using BTM with Your Own Models](#tutorial-using-btm-with-your-own-models)
+8. [Experiments Explained](#experiments-explained)
+9. [Understanding the Results](#understanding-the-results)
+10. [Directory Structure](#directory-structure)
+11. [Troubleshooting](#troubleshooting)
+12. [Future Work: CLI Integration](#future-work-cli-integration)
+13. [Citation](#citation)
+14. [Related Papers](#related-papers)
 
-## Single Script Options
+---
 
-- Build Scripts -> These scripts use the Dockerfile to build a new image and then create a container.
-- Load Scripts -> These scripts load the provided image and then create a container.
+## Introduction
 
-Script arguments are of the following form
-	
-- **/path/to/Dockerfile/Folder/** -> This should point to the folder containing the Dockerfile.
-- **/path/to/DockerImage** -> This should point to the Dockerimage.
-- **/path/to/nuXmv** -> This should point to the executable you downloaded as a prerequisite. There should be no file extension.
-- **mode** -> Required, sort of. This should be **install**, **partial**, or **full**. 
-- **/path/to/output** -> The output will be copied to /path/to/output.tar. This will not override existing files, so make sure there is no existing file.
+### What is BTM?
 
-After each command, we provide an example command that assumes you placed the nuXmv binary in the top level of the reproducibility directory (the directory containing the Dockerfile). **THE EXAMPLES ASSUME YOU ARE IN THE DIRECTORY NAMED 2024\_FMAS\_SBT.**
+**Behavior Tree Monitoring (BTM)** is a runtime verification approach that enables autonomous systems to detect and respond to violations of safety specifications during execution. Unlike traditional design-time verification (which checks properties before deployment), BTM provides **continuous runtime assurance** by monitoring LTL (Linear Temporal Logic) specifications as the system operates.
 
-### Single Script: Minimal (estimated time: 3 minutes. 6 minutes on Chromebook)
+Key advantages of BTM:
+- **Runtime detection** of specification violations
+- **Corrective action** when unsafe behavior is detected
+- **Modular monitors** that can be swapped without changing the behavior tree
+- **Comparable performance** to existing runtime verification tools
 
-Build Script:
+### About This Artifact
+
+This artifact demonstrates BehaVerify's runtime monitor generation capabilities and compares them against:
+
+- **BehaVerify (Python/C)** - LTL-based monitor synthesis from behavior tree models
+- **Copilot (Haskell)** - Time-triggered runtime verification framework
+- **Monitorless baseline** - Behavior tree execution without monitoring overhead
+- **Design-time verification (nuXmv)** - Formal verification for comparison
+
+The experiments use **drone navigation** scenarios in grid worlds with collision avoidance and loop detection monitors.
+
+### Paper Contributions
+
+1. **LTL Monitor Synthesis**: Automatic generation of executable monitors from LTL specifications in .tree files
+2. **Runtime Performance**: BehaVerify monitors match the performance of existing tools (Copilot)
+3. **Modularity**: Monitors can be easily modified or replaced with minimal effort
+4. **Dual Verification**: Combines design-time verification (nuXmv) with runtime monitoring
+
+---
+
+## BTM Framework Overview
+
+### Monitor Types
+
+The experiments demonstrate two LTL monitors integrated into drone navigation behavior trees:
+
+#### 1. Collision Monitor
+
+**Purpose:** Ensures the drone never collides with obstacles
+
+**LTL Specification (simplified):**
 ```
-python3 build_and_run.py /path/to/Dockerfile/Folder/ /path/to/nuXmv install /path/to/output
+G(¬collision_with_any_obstacle)
 ```
-	
-Build Example:
+
+**BehaVerify DSL Format:**
 ```
+monitor {
+    collision_monitor
+    (safe : 'safe')
+    (unsafe : 'unsafe')
+    (unknown : 'unknown')
+    LTLSPEC {
+        (globally,
+            (not,
+                collision_detected_at_next_position
+            )
+        )
+    }
+}
+```
+
+The monitor checks whether the drone's next position (accounting for speed and direction) would intersect with any obstacle. If a collision is imminent, the monitor enters the `unsafe` state, triggering corrective action (reducing speed).
+
+#### 2. Loop Monitor
+
+**Purpose:** Prevents oscillating back-and-forth movement (e.g., left-right-left-right)
+
+**LTL Specification:**
+```
+G((left → X(¬right)) ∧ (right → X(¬left)) ∧ (up → X(¬down)) ∧ (down → X(¬up)))
+```
+
+**BehaVerify DSL Format:**
+```
+monitor {
+    loop_monitor
+    (safe : 'safe')
+    (unsafe : 'unsafe')
+    (unknown : 'unknown')
+    LTLSPEC {
+        (globally,
+            (and,
+                (implies, (eq, current_action, 'left'), (next, (neq, current_action, 'right'))),
+                (implies, (eq, current_action, 'right'), (next, (neq, current_action, 'left'))),
+                (implies, (eq, current_action, 'up'), (next, (neq, current_action, 'down'))),
+                (implies, (eq, current_action, 'down'), (next, (neq, current_action, 'up')))
+            )
+        )
+    }
+}
+```
+
+The monitor detects when the drone would reverse direction immediately (e.g., moving left after just moving right), indicating inefficient or stuck behavior.
+
+### Monitor States
+
+Each monitor operates as a finite state machine with three states:
+
+- **`safe`** - Specification is currently satisfied (normal operation)
+- **`unsafe`** - Specification has been violated (corrective action triggered)
+- **`unknown`** - Initial state or indeterminate (before sufficient trace information)
+
+**Corrective Actions:**
+- **Collision Monitor** → Reduce drone speed to 1 (from 2) when unsafe
+- **Loop Monitor** → Reset monitor state, reduce speed to 1, allowing escape from local minimum
+
+### How Monitors Work
+
+The BTM workflow converts LTL specifications into executable code:
+
+```
+┌─────────────────┐
+│  .tree file     │
+│  with monitors  │
+│  block          │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────────────────┐
+│ create_dsl_monitor.py       │
+│ Extract LTL specifications  │
+│ Output: monitor_name.txt    │
+└────────┬────────────────────┘
+         │
+         ▼
+┌─────────────────────────┐
+│ LTL2BA (external tool)  │
+│ Convert LTL → Buchi     │
+│ automaton               │
+│ Output: monitor_name.ba │
+└────────┬────────────────┘
+         │
+         ▼
+┌──────────────────────────────┐
+│ create_python_monitor.py or  │
+│ create_c_monitor.py          │
+│ Generate executable monitor  │
+│ Output: monitor_name.py/.c   │
+└────────┬─────────────────────┘
+         │
+         ▼
+┌────────────────────────┐
+│ Integrated into        │
+│ Behavior Tree          │
+│ execution (main.py/c)  │
+└────────────────────────┘
+```
+
+**Key Steps:**
+1. **Specification** - Define monitors in .tree file using LTL operators
+2. **Extraction** - Parse LTL formulas and convert to LTL2BA input format
+3. **Synthesis** - Generate Buchi automaton representing the specification
+4. **Code Generation** - Convert automaton to executable Python or C code
+5. **Integration** - Call monitor transition functions during BT execution
+
+### Comparison Frameworks
+
+| Framework | Language | Monitor Approach | Integration |
+|-----------|----------|-----------------|-------------|
+| **BehaVerify (Python)** | Python | LTL → BA → Python FSM | Inline in BT nodes |
+| **BehaVerify (C)** | C | LTL → BA → C FSM | Inline in BT nodes |
+| **Copilot** | Haskell | Time-triggered monitors | Separate monitoring process |
+| **Monitorless** | Python/C | No monitoring | N/A (baseline) |
+| **Design-time (nuXmv)** | SMV | LTL model checking | Pre-deployment only |
+
+**Performance Comparison:**
+- BehaVerify and Copilot have **comparable runtime overhead**
+- Monitor **file sizes** (automata complexity) vary by specification
+- Design-time verification can be **more expensive** than runtime monitoring for large state spaces
+
+---
+
+## Visual Examples
+
+### Featured Monitor Executions
+
+Below are three highlighted examples demonstrating BTM across different scales and obstacle densities:
+
+#### Medium Grid (24x24) - Dense Obstacles - BehaVerify
+
+![24x24 Dense Grid with BehaVerify Monitoring](results_readme/gifs/highlighted/24x24_dense_behaverify.gif)
+
+**Description:** Drone navigates a 24x24 grid with 200 densely-packed obstacles (8×8 cells each). BehaVerify collision and loop monitors detect potential violations and trigger corrective actions (speed reduction) to ensure safe navigation.
+
+#### Large Grid (34x34) - Sparse Obstacles - Copilot
+
+![34x34 Sparse Grid with Copilot Monitoring](results_readme/gifs/highlighted/34x34_sparse_copilot.gif)
+
+**Description:** Drone navigates a 34x34 grid with 10 sparsely-distributed obstacles. Copilot framework provides comparable monitoring with a time-triggered approach, showing that different monitor implementations can achieve similar safety guarantees.
+
+#### Largest Grid (49x49) - Dense Obstacles - Copilot
+
+![49x49 Dense Grid with Copilot Monitoring](results_readme/gifs/highlighted/49x49_dense_copilot.gif)
+
+**Description:** Largest experimental scenario with 49x49 grid and 800 densely-packed obstacles. Demonstrates scalability of runtime monitoring to complex environments with extensive state spaces.
+
+### Gallery: Additional Examples
+
+<details>
+<summary>Click to expand gallery with 13 additional examples</summary>
+
+#### Small Scale (9x9)
+
+| Dense Obstacles | Sparse Obstacles |
+|----------------|------------------|
+| ![9x9 Dense BehaVerify](results_readme/gifs/gallery/09x09_dense_behaverify.gif) | ![9x9 Sparse BehaVerify](results_readme/gifs/gallery/09x09_sparse_behaverify.gif) |
+| ![9x9 Dense Copilot](results_readme/gifs/gallery/09x09_dense_copilot.gif) | ![9x9 Sparse Copilot](results_readme/gifs/gallery/09x09_sparse_copilot.gif) |
+
+#### Medium Scale (19x19 - 29x29)
+
+| Scenario | BehaVerify | Copilot |
+|----------|-----------|---------|
+| 19x19 Dense | ![19x19 Dense](results_readme/gifs/gallery/19x19_dense_behaverify.gif) | ![19x19 Sparse](results_readme/gifs/gallery/19x19_sparse_copilot.gif) |
+| 29x29 Dense | ![29x29 Dense](results_readme/gifs/gallery/29x29_dense_behaverify.gif) | ![29x29 Sparse](results_readme/gifs/gallery/29x29_sparse_copilot.gif) |
+
+#### Large Scale (34x34 - 44x44)
+
+![34x34 Dense](results_readme/gifs/gallery/34x34_dense_behaverify.gif)
+![39x39 Dense](results_readme/gifs/gallery/39x39_dense_behaverify.gif)
+![39x39 Sparse](results_readme/gifs/gallery/39x39_sparse_copilot.gif)
+![44x44 Dense](results_readme/gifs/gallery/44x44_dense_behaverify.gif)
+![44x44 Sparse](results_readme/gifs/gallery/44x44_sparse_copilot.gif)
+
+</details>
+
+### Representative Still Frames
+
+![Dense Grid Initial State](results_readme/stills/dense_initial.png)
+*Initial state of 24x24 dense grid showing obstacle layout*
+
+![Sparse Grid Completion](results_readme/stills/sparse_completion.png)
+*Successful path completion in 34x34 sparse grid*
+
+---
+
+## Prerequisites
+
+1. **Docker** with ability to run as regular user (see https://docs.docker.com/engine/install/linux-postinstall/)
+2. **nuXmv** model checker - Download from https://nuxmv.fbk.eu/
+   - Version 2.0.0 or 2.1.0 (Linux 64-bit)
+   - Place the binary in this directory as `nuXmv` (no file extension)
+3. **Python 3** with `docker` package: `pip install docker`
+
+---
+
+## Quick Start with Docker
+
+### Install Test (~3 min)
+```bash
 python3 ./python_script/build_and_run.py ./ ./nuXmv install ./install
 ```
 
-Load Script:
-```
-python3 load_and_run.py /path/to/DockerImage /path/to/nuXmv install /path/to/output
-```
-
-Load Example:
-```
-python3 ./python_script/load_and_run.py ./DockerImage.tar ./nuXmv install ./install
-```
-	
-The results will be written in **/path/to/output.tar**. Extract the archive and see the Interpreting and Comparing Results section for more information.
-
-### Single Script: Partial (estimated time: 8 minutes. 40 minutes on Chromebook)
-
-Build Script:
-```
-python3 build_and_run.py /path/to/Dockerfile/Folder/ /path/to/nuXmv partial /path/to/output
-```
-	
-Build Example:
-```
+### Partial Test (~8 min)
+```bash
 python3 ./python_script/build_and_run.py ./ ./nuXmv partial ./partial
 ```
 
-Load Script:
-```
-python3 load_and_run.py /path/to/DockerImage /path/to/nuXmv partial /path/to/output
-```
-
-Load Example:
-```
-python3 ./python_script/load_and_run.py ./DockerImage.tar ./nuXmv partial ./partial
-```
-	
-The results will be written in **/path/to/output.tar**. Extract the archive and see the Interpreting and Comparing Results section for more information.
-
-### Single Script: Full (estimated time: 16 minutes. 1 hour on Chromebook)
-
-Build Script:
-```
-python3 build_and_run.py /path/to/Dockerfile/Folder/ /path/to/nuXmv full /path/to/output
-```
-	
-Build Example:
-```
+### Full Test (~16 min)
+```bash
 python3 ./python_script/build_and_run.py ./ ./nuXmv full ./full
 ```
 
-Load Script:
-```
-python3 load_and_run.py /path/to/DockerImage /path/to/nuXmv full /path/to/output
-```
-
-Load Example:
-```
-python3 ./python_script/load_and_run.py ./DockerImage.tar ./nuXmv full ./full
-```
-	
-The results will be written in **/path/to/output.tar**. Extract the archive and see the Interpreting and Comparing Results section for more information.
+Results will be in `/path/to/output.tar`. Extract and check `example/images/` for generated figures.
 
 ---
 
-## Step by Step Docker instructions
+## Running Locally (without Docker)
 
-This section will explain how to utilize either the provided docker image or Dockerfile to recreate the tests using docker. After each command, we provide an example command that assumes you placed the nuXmv binary in the top level of the reproducibility directory (the directory containing the Dockerfile). **THE EXAMPLES ASSUME YOU ARE IN THE DIRECTORY NAMED 2024\_FMAS\_BTM.**
+### Installation
+```bash
+# Install dependencies
+sudo apt update && sudo apt upgrade
+sudo apt install python3 pip graphviz
+pip install py_trees pandas jinja2 textX matplotlib pillow
 
-### 1a. Creation of the Docker Image and Container (estimated time: 1 minutes. 5 minutes on Chromebook)
-
-You only need to execute 1a or 1b. See 1b for steps using the image. However, should you wish to build the docker image yourself, please run
-```
-python3 reinstall.py /path/to/Dockerfile/folder
-```
-
-Example:
-```
-python3 ./python_script/reinstall.py ./
-```
-
-This will create a docker image named behaverify\_2024\_fmas\_btm\_img with the tag latest. It will then also create a container named behaverify\_2024\_fmas\_btm from that image.
-
-### 1b. Using the provided Docker Image to create a Container (estimated time: ??)
-
-You only need to execute 1a or 1b. See 1a for steps using the Dockerfile. However, should you wish to load a prebuilt image yourself, please run
-```
-python3 load_image.py /path/to/Dockerimage
-```
-	
-Example:
-```
-python3 ./python_script/load_image.py ./DockerImage.tar
-```
-
-This will create a docker image named behaverify\_img with the tag latest. It will then also create a container named behaverify\_2024\_FMAS from that image.
-
-### IMPORTANT:
-The scripts below assume that the docker container is named behaverify\_2024\_fmas\_btm. If you run 1a or 1b, this will be handled for you, and you need not worry.
-
-### 2. Addition of nuXmv (estimated time: 30 seconds)
-
-Next, please run
-```
-python3 add_nuxmv.py /path/to/nuXmv
-```
-
-Example:
-```
-python3 ./python_script/add_nuxmv.py ./nuXmv
-```
-
-This will copy nuXmv from the path you provided to the correct location in the docker and ensure it is runable and an executable. Note that you should not point to the folder containing nuXmv, but to nuXmv itself, and that the nuXmv version should be the Linux version.
-
-### 3. Install Test (estimated time: 30 seconds. 1 minute on Chromebook)
-
-The full test takes quite a while to run. To ensure everything works right, please run
-```
-python3 generate.py install /path/to/output
-```
-
-Example:
-```
-python3 ./python_script/generate.py install ./install
-```
-
-### 4. Partial Test (estimated time: 1 minute. 35 minutes on Chromebook)
-
-The full test takes quite a while to run. To ensure everything works right, please run
-```
-python3 generate.py partial /path/to/output
-```
-
-Example:
-```
-python3 ./python_script/generate.py partial ./partial
-```
-
-
-### 5. Full Results (estimated time: 15 minutes. 1 hour on Chromebook)
-```
-python3 generate.py full /path/to/output
-```
-
-Example:
-```
-python3 ./python_script/generate.py full ./full
-```
-
----
-
-# Verbose Installation for Running tests locally without docker.
-
-The instructions are for Linux (and more specifically Ubuntu). We have not tested this on any other systems. Some of the scripts are likely to break on other systems. For instance, the scripts assume that nuXmv will be named nuXmv, and not nuXmv.exe. However, our code itself should still work (though we have not tested this).
-
-This section is intentionally lengthy. If you are not interested in the details and just want the commands, please scroll down further
-
-
-1. nuXmv<br />Please download nuXmv (see  https://nuxmv.fbk.eu/ ). You only need to download nuXmv. There should be no installation. Download the relevant version for your system. It should be version 2.0.0. The download will include many files. You only need the executable (no file extension). See above for more information.
-2. Updating<br /> We suggest running the following commands.
-
-		sudo apt update
-		sudo apt upgrade
-3. Python3<br />Python3 is used to run BehaVerify. As such, it is necessary. If you already have python3 installed, skip the following step. If not, run
-	
-		sudo apt install python3
-4. pip<br />pip is used to install other python packages. If you already have pip installed (for python3), skip the following step. If not, run
-
-		sudo apt install pip
-5. PyTrees<br />PyTrees is used in the generated python code. It is necessary for the differential testing experiments, or for using generated python code in general.
-
-		python3 -m pip install py_trees
-6. pandas<br />pandas is used for data gathering and displaying. It is necessary for graph and table creation.
-
-		python3 -m pip install pandas
-7. jinja2<br />jinja2 is used by something for graph/table creations.
-
-		python3 -m pip install jinja2
-8. textX<br />textX is used by BehaVerify for parsing. It is necessary for BehaVerify to run in any capacity
-
-		python3 -m pip install textX
-9. matplotlib<br />matplotlib is used for generating graphs and plots.
-
-		python3 -m pip install matplotlib
-10. graphviz<br />graphviz is used to generate graphs and plots.
-
-		sudo apt install graphviz
-11. git<br />git is used to download our repository. If you would prefer to manually download our repository, you can skip this step.
-
-		sudo apt install git
-12. (OPTIONAL) Haskell prerequisites<br />These are prerequisites required by Haskell. **THESE STEPS ARE UNNECESSARY FOR FMAS RESULTS**
-
-		sudo apt install build-essential curl libffi-dev libffi8ubuntu1 libgmp-dev libgmp10 libncurses-dev libncurses5 libtinfo5
-13. (OPTIONAL) Additional Haskell prerequisite<br />
-
-		sudo apt install libgmp3-dev
-14. (OPTIONAL) GHCUP<br />Please follow the instructions at https://www.haskell.org/ghcup/ to install GHCUP, Haskell, and cabal. These are used to run generated Haskell code. Please preappend (or append) your path when asked.
-15. (OPTIONAL) GHCUP upgrade<br />This will upgrade GHCUP.
-
-		ghcup upgrade
-16. (OPTIONAL) Cabal<br />This will install and set the specific version of cabal we used. Most likely, everything will work with a different version.
-
-		ghcup install cabal 3.6.2.0
-		ghcup set cabal 3.6.2.0
-17. (OPTIONAL) GHC<br />This will install and set the specific version of ghc we used. Most likely, everything will work with a different version.
-
-		ghcup install ghc 9.2.8
-		ghcup set ghc 9.2.8
-18. BehaVerify<br />Download our repository. If you did not install git, please download manually. If you installed git
-
-		git clone https://github.com/verivital/behaverify
-19. Enable scripts<br />This will allow all the necessary scripts to run. Please navigate to the top level of our repository and run the following
-
-		sudo chmod -R +x ./REPRODUCIBILITY/2024_FMAS/*.sh
-20. Move nuXmv<br />You downloaded nuXmv in step 1. Please place it in behaverify/REPRODUCIBILITY/2024\_FMAS/
-21. Enable nuXmv<br />Please navigate to the top level of our repository and run the following
-
-		sudo chmod +x ./REPRODUCIBILITY/2024_FMAS/nuXmv
-
-
-You are now ready to run the scripts locally. Scroll past the concise installation instructions to see the scripts explanation.
-
----
-
-# Concise Installation for Running the tests locally without docker.
-
-The instructions are for Linux (and more specifically Ubuntu). We have not tested this on any other systems. Some of the scripts are likely to break on other systems. For instance, the scripts assume that nuXmv will be named nuXmv, and not nuXmv.exe. However, our code itself should still work (though we have not tested this).
-
-
-Please download nuXmv (see  https://nuxmv.fbk.eu/ ). You only need to download nuXmv. There should be no installation. Download the relevant version for your system. It should be version 2.0.0.
-```
-sudo apt update
-sudo apt upgrade
-sudo apt install python3
-sudo apt install pip
-```
-	
-(OPTIONAL) PyTrees is required to use the python code generated by BehaVerify. However, this is not used in the FMAS tests
-```
-python3 -m pip install py_trees
-```
-	
-Below we have more mandatory requirements
-```
-python3 -m pip install pandas
-python3 -m pip install jinja2
-python3 -m pip install textX
-python3 -m pip install matplotlib
-sudo apt install graphviz
-sudo apt install git
-```
-	
-(OPTIONAL) These are prerequisites for Haskell, which is not used in the FMAS tests.
-```
-sudo apt install build-essential curl libffi-dev libffi8ubuntu1 libgmp-dev libgmp10 libncurses-dev libncurses5 libtinfo5
-sudo apt install libgmp3-dev
-```
-
-(OPTIONAL) Please follow the instructions at https://www.haskell.org/ghcup/ to install ghcup, Haskell, and cabal. These are used to run generated Haskell code. Please preappend (or append) your path when asked.
-```
-ghcup upgrade
-ghcup install cabal 3.6.2.0
-ghcup set cabal 3.6.2.0
-ghcup install ghc 9.2.8
-ghcup set ghc 9.2.8
-```
-	
-You may clone or download the repository
-```
+# Clone repository
 git clone https://github.com/verivital/behaverify
+cd behaverify/REPRODUCIBILITY/2024_FMAS_BTM
+
+# Enable scripts
+chmod -R +x ./*.sh ./example/*.sh
+
+# Place nuXmv binary
+# Download from https://nuxmv.fbk.eu/ and place as ./nuXmv
+chmod +x ./nuXmv
 ```
 
-Please navigate to the top level of our repository and run the following
-```
-sudo chmod -R +x ./REPRODUCIBILITY/2024_FMAS/*.sh
+### Run Experiments
+```bash
+# Install test (2 iterations)
+./BehaVerify_2024_FMAS_BTM.sh ./ 2
+
+# Partial test (5 iterations)
+./BehaVerify_2024_FMAS_BTM.sh ./ 5
+
+# Full test (9 iterations)
+./BehaVerify_2024_FMAS_BTM.sh ./ 9
 ```
 
-You downloaded nuXmv earlier. Please place it in behaverify/REPRODUCIBILITY/2024\_FMAS/
-
-Please navigate to the top level of our repository and run the following
-```
-sudo chmod +x ./REPRODUCIBILITY/2024_FMAS/nuXmv
-```
-
-You are now ready to run the scripts locally. 
-
+Results will be in `example/images/`.
 
 ---
 
-# Running Tests Locally without docker (requires installation, see above).
+## Tutorial: Using BTM with Your Own Models
 
-Note that each script will erase all the relevant results before running, to ensure that the results which exist after the script runs are accurate to that script. Thus if you wish to save the results, please move them before running another script.
+This tutorial walks through creating a .tree file with monitors and generating executable monitored code.
 
-## Minimal Script
+### Step 1: Define Monitors in .tree File
 
-To test everything is working, please navigate to behaverify/REPRODUCIBILITY/2024\_FMAS\_BTM/ and run the following
+Add a `monitors {}` block to your .tree file after the `variables {}` section:
+
 ```
-./behaverify_2024_FMAS_BTM.sh ./ 2
+variables {
+    variable { bl current_action VAR {'left', 'right', 'up', 'down', 'no_action'} assign{result{'no_action'}}}
+    variable { bl drone_x VAR [0, 50] assign{result{25}}}
+    variable { bl drone_y VAR [0, 50] assign{result{25}}}
+    # ... other variables
+} end_variables
+
+monitors {
+    monitor {
+        my_safety_monitor
+        (safe : 'safe')
+        (unsafe : 'unsafe')
+        (unknown : 'unknown')
+        LTLSPEC {
+            (globally, your_ltl_specification_here)
+        }
+    }
+}
 ```
 
-This will run a fairly small script. The results will be in behaverify/REPRODUCIBILITY/2024\_FMAS\_BTM/examples/. Please see the Interpreting and Comparing Results section for an explanation of what results to look for.
+**LTL Operators Available:**
+- Temporal: `globally`, `finally`, `next`, `until`, `release`
+- Boolean: `and`, `or`, `not`, `implies`, `equivalent`
+- Comparison: `eq`, `neq`, `lt`, `lte`, `gt`, `gte`
+- Arithmetic: `add`, `sub`, `mult`, `idiv`, `mod`
 
-## Partial Script
+### Step 2: Generate LTL Commands
 
-To create a subset of the results, please navigate to behaverify/REPRODUCIBILITY/2024\_FMAS\_BTM/ and run the following
+Use `create_dsl_monitor.py` to extract LTL specifications:
+
+```bash
+python3 ../../../src/behaverify/monitor/create_dsl_monitor.py make_ltl2ba \
+    ../../../src/behaverify/data/metamodel/behaverify.tx \
+    your_model.tree \
+    ./output_directory/ \
+    --recursion_limit 10000 \
+    --no_checks
 ```
-./behaverify_2024_FMAS_BTM.sh ./ 5
+
+**Output:** Creates `monitor_name.txt` files with LTL formulas in LTL2BA format.
+
+### Step 3: Convert to Buchi Automata
+
+Use LTL2BA to convert LTL formulas to Buchi automata:
+
+```bash
+# Read the LTL command
+ltl_command=$(cat ./output_directory/monitor_name.txt)
+
+# Generate Buchi automaton (requires LTL2BA tool)
+ltl2ba -f "$ltl_command" > ./output_directory/monitor_name.ba
 ```
 
-This will run a larger, but still fairly small script. The results will be in behaverify/REPRODUCIBILITY/2024\_FMAS\_BTM/examples/. Please see the Interpreting and Comparing Results section for an explanation of what results to look for.
+**Note:** LTL2BA is an external tool. See https://www.lsv.fr/~gastin/ltl2ba/ for download.
 
-## Full Script
+### Step 4: Generate Monitor Code
 
-To create all results, please navigate to behaverify/REPRODUCIBILITY/2024\_FMAS\_BTM/ and run the following
+Convert the Buchi automaton to executable Python or C code:
+
+**For Python:**
+```bash
+python3 ../../../src/behaverify/monitor/create_python_monitor.py ba_to_monitor \
+    ./output_directory/monitor_name.ba \
+    ./output_directory/monitor_name.py
 ```
-./behaverify_2024_FMAS_BTM.sh ./ 9
+
+**For C:**
+```bash
+python3 ../../../src/behaverify/monitor/create_c_monitor.py ba_to_monitor \
+    ./output_directory/monitor_name.ba \
+    ./output_directory/monitor_name.c
 ```
 
-This will run a large script. The results will be in **behaverify/REPRODUCIBILITY/2024\_FMAS\_BTM/examples/**. Please see the Interpreting and Comparing Results section for an explanation of what results to look for.
+**Output:** Generates `monitor_name.py` or `monitor_name.c` with `transition()` and `reset()` functions.
+
+### Step 5: Integrate with Behavior Tree
+
+Import and call the generated monitor in your behavior tree execution code:
+
+**Python Example:**
+```python
+from monitor_name import transition as monitor_transition, reset as monitor_reset
+
+# Initialize monitor
+MONITOR_STATE = monitor_reset()
+
+# During execution loop
+(MONITOR_STATE, monitor_status) = monitor_transition(
+    MONITOR_STATE,
+    {
+        'variable_name': variable_value,
+        'another_var': another_value
+    }
+)
+
+# Check monitor status
+if monitor_status == 'unsafe':
+    # Take corrective action
+    speed = 1  # Reduce speed
+elif monitor_status == 'safe':
+    # Normal operation
+    pass
+```
+
+**C Example:**
+```c
+#include "monitor_name.h"
+
+// Initialize monitor
+MonitorState monitor_state = monitor_reset();
+
+// During execution loop
+MonitorResult result = monitor_transition(
+    &monitor_state,
+    drone_x, drone_y, current_action
+);
+
+// Check monitor status
+if (strcmp(result.status, "unsafe") == 0) {
+    // Take corrective action
+    speed = 1;
+}
+```
+
+### Complete Example Workflow
+
+See `example/pipeline_existing_behaverify_python.sh` for a complete end-to-end example:
+
+1. Generate Python behavior tree code from .tree file
+2. Extract LTL specifications to .txt files
+3. Convert LTL to Buchi automata using LTL2BA
+4. Generate Python monitor code from automata
+5. Execute monitored behavior tree
+6. Visualize results as images/GIFs
 
 ---
 
-# Interpreting and Comparing Results
+## Experiments Explained
 
-Upon completing any of the test scripts, you should find that /path/to/writable/location/ has a folder containing the results. The name of this folder depends on which test was run. See the specific tests for details. Within this folder, you should find the following folders, each of which corresponds to an experiment:
+### 1. Dense Fixed Obstacles
 
-- bigger\_fish -> This is the Bigger Fish experiment. See **Section 7.1**.
-- ISR -> This is the ISR experiment. See **Section 4.4** and **Section 7.3**.
-- simple\_robot -> This experiment is the Simple Robot experiment. See **Section 7.2**.
-- clean_all.sh -> This is a script for removing results. Ignore it.
+- **Grid navigation** with densely-packed fixed obstacle patterns
+- **Grid sizes** scale from 9x9 to 49x49
+- **Obstacle density** increases with grid size (32 to 800 obstacles)
+- **Tests collision monitor effectiveness** with high obstacle density
+- **Scenario naming:** `{grid_size}_{num_obstacles}_1` (e.g., `24_200_1`)
 
-## Install Test
+### 2. Sparse Random Obstacles
 
-The install test can only be used to confirm the installation worked. **THE IMAGES WILL ONLY HAVE A SINGLE DATA POINT EACH.**
+- **Grid navigation** with randomly-placed sparse obstacles
+- **Same grid size scaling** as dense experiments
+- **Lower obstacle density** (2 to 25 obstacles)
+- **Compares monitor overhead** with different obstacle densities
+- **Randomness** provides variety in path planning challenges
 
-### What to look for
+### 3. Design-Time Verification
 
-As mentioned, you will not be able to find anything to compare. However, please confirm that the following files exist:
-
-- **bigger\_fish/processed\_data/pictures/bigger\_fish/bigger\_fish_ltl.png** -> The key will include full\_opt and full\_opt\_CHANGED; each will have a single data point.
-- **simple\_robot/processed\_data/pictures/simple\_robot\_ltl.png** -> The key will include full\_opt and full\_opt\_CHANGED; each will have a single data point.
-
-## Partial Test
-
-The partial test is between the install and full test. Some, but not all, of the results in the paper are generated through this test.
-
-The results should be in **/path/to/output/extracted/examples/**.
-
-### What to look for
-
-- **bigger\_fish/processed\_data/pictures/full\_opt/bigger\_fish\_ltl.png** -> This will have some of the timing results for BehaVerify used for the Bigger Fish experiment. See **Section 7.1**, **Figure 5**. The key will include full\_opt and full\_opt\_CHANGED; note that this does **not** include the timing results for MoVe4BT. As such, the scale may look different. This is a timing experiment, so the results may differ somewhat.
-- **simple\_robot/processed\_data/pictures/simple\_robot\_ltl.png** -> This will have some of the timing results for BehaVerivy used for Simple Robot experiment. See **Section 7.2**, **Figure 7**. The key will include full\_opt and full\_opt\_CHANGED; note that this graph does **not** include the timing results for MoVe4BT. As such, the scale may look different. This is a timing experiment, so the results may differ somewhat.
-
-## Full Test
-
-The Full test generates all the results used in the paper, but does not include MoVe4BT.
-
-The results should be in **/path/to/output/extracted/examples/**.
-
-### What to look for
-
-
-- **bigger\_fish/processed\_data/pictures/full\_opt/bigger\_fish\_ltl.png** -> This will have all of the timing results for BehaVerify used for the Bigger Fish experiment. See **Section 7.1**, **Figure 5**. The key will include full\_opt and full\_opt\_CHANGED; note that this does **not** include the timing results for MoVe4BT. As such, the scale may look different. This is a timing experiment, so the results may differ somewhat.
-- **ISR/processed\_data/pictures/counterexample\_for\_5/11x11\_line.png** -> This should correspond to **Section 7.3**, **Figure 8**.
-- **simple\_robot/processed\_data/pictures/simple\_robot\_ltl.png** -> This will have all of the timing results for BehaVerivy used for Simple Robot experiment. See **Section 7.2**, **Figure 7**. The key will include full\_opt and full\_opt\_CHANGED; note that this graph does **not** include the timing results for MoVe4BT. As such, the scale may look different. This is a timing experiment, so the results may differ somewhat.
+- **Model checking** of safety properties at design time using nuXmv
+- **LTL specification verification** before deployment
+- **Compares with runtime monitoring approach:**
+  - Design-time: Full state space exploration (exhaustive)
+  - Runtime: Online monitoring (detect violations during execution)
+- **Trade-off analysis:** Design-time can be expensive for large state spaces
 
 ---
 
-# Potential Errors and Workarounds
+## Understanding the Results
 
-1. If a script fails because permission has been denied, please run the script without sudo (running docker without sudo requires some configuration). If the problem persists, please try a different location, as occasionally docker cannot write to secondary disks.
-2. If building from the Dockerfile fails, please try and use the load option instead.
-3. If building from the Dockerfile fails and the load option is not available, please consider running **clean\_docker.sh**. THIS WILL REMOVE ALL EXISTING DOCKER CONTAINERS AND IMAGES. This sometimes seems to help.
-4. If everything runs to completion, but there are no images in the copied directory, please confirm if there are files in the results folders (e.g., **bigger\_fish\_selector/results/**). If there are, then most likely you encountered errors similar to the following during execution:
-   ```
-   OpenBLAS blas_thread_init: pthread_create failed for thread 1 of 16: Operation not permitted
-   ```
-   Note that this error would not prevent the scripts from completing; it would only prevent the generation of graphs and tables. The internet suggests upgrading your docker version (we tested using docker version 20.10.24, build 297e128). Alternatively, you may by manually compile the results into graphs by calling the scripts at https://github.com/verivital/behaverify/tree/main/REPRODUCIBILITY/2024_FMAS/scripts/process_results_scripts . These scripts must be run from the directory they are in and assume the repository structure exists.
+### Runtime Performance Metrics
 
----
+The experiments measure **execution time** for monitored behavior tree execution:
 
-# Directory Explained
+- **BehaVerify (Python/C):** LTL-synthesized monitors integrated inline
+- **Copilot (Haskell):** Time-triggered monitoring with comparable performance
+- **Monitorless:** Baseline without monitoring overhead
 
-- **BehaVerify\_2024\_FMAS\_SBT\_full\_results.sh** -> This is the script to locally run everything for the FMAS results. It is also used by the docker scripts.
-- **BehaVerify\_2024\_FMAS\_test\_installation.sh** -> This is the script to locally test the install. It is also used by the docker scripts.
-- **BehaVerify\_2024\_FMAS\_partial\_results.sh** -> This is the script to locally run almost everything for the FMAS results. It is also used by the docker scripts.
-- **Dockerfile** -> This is a Dockerfile for BehaVerify 2024 FMAS edition.
-- **nuXmv** -> This doesn't exist but you should make it exist if you plan to run tests locally.
-- **README.md** -> Hello there!
-- **version\_info.txt** -> Information about what versions of stuff was used.
-- **examples** -> This contains the Experiments to be run
-	- **clean\_all.sh** -> This is used to remove all existing experiment results.
-	- **bigger\_fish\_selector** -> This contains the Bigger Fish experiment.
-		- **create\_bigger\_fish.py** -> This is used to generate the DSL files for the bigger fish experiment.
-		- **processed\_data/pictures/opt** -> This will contain the graphs with timing and state results.
-		- **processed\_data/tables/opt** -> This will contain the tables with timing and state results.
-		- **results** -> This will contain the outputs of nuXmv.
-		- **smv** -> This will contain the nuXmv models generated by BehaVerify.
-	- **ISR** -> This contains the ISR experiment
-		- **ISR\_5.tree** -> This is the DSL specification for when the target can move every 5 turns.
-		- **ISR\_10.tree** -> This is the DSL specification for when the target can move every 10 turns.
-		- **parse\_nuxmv\_output.py** -> This is used to visualize the counterexample.
-		- **parse\_python\_output.py** -> This is used to visualize a random trace. This was used to generate **Section 4.4**, **Figure 3**. It is not used in the tests.
-		- **processed\_data/pictures** -> This will contain the counterexample visualization.
-		- **results** -> This will contain the outputs of nuXmv.
-		- **smv** -> This will contain the nuXmv models generated by BehaVerify.
-		- **tree** This will contain the DSL specifications for the Bigger Fish models.
-	- **simple\_robot** -> This contains the Simple Robot experiment.
-		- **make\_tree.py** -> This is used to generate the DSL files for the simple robot experiment.
-		- **parse\_python\_output.py** -> This is used to visualize a random trace. This was used to generate **Section 7.3**, **Figure 8**, left half. It is not used in the tests.
-		- **template.tree** -> This is an incomplete DSL file that is used by make\_tree.py.
-		- **processed\_data/pictures/opt** -> This will contain the graphs with timing and state results.
-		- **processed\_data/tables/opt** -> This will contain the tables with timing and state results.
-		- **results** -> This will contain the outputs of nuXmv.
-		- **smv** -> This will contain the nuXmv models generated by BehaVerify.
-		- **tree** This will contain the DSL specifications for the Bigger Fish models.
-- **metamodel/behaverify.tx** -> This is the file containing the structure of the DSL. TextX uses it to parse .tree files.
-- **python\_scripts** -> These are used to control docker.
-- **scripts** -> This folder contains various scripts for building and running experiments. We will not describe all of them.
-- **src** -> This contains the source code for BehaVerify.
-  - **behaverify\_common.py** -> This contains methods used by multiple parts of BehaVerify.
-  - **behaverify\_gui.py** -> This can be used to run a basic GUI for BehaVerify. It's main use is tree visualization and generating visualizations of trace counterexamples.
-  - **behaverify\_to\_smv.py** -> This is used by dsl\_to\_nuxmv.py to write the nuXmv model.
-  - **check\_grammar.py** -> This is used to ensure the user didn't do anything weird in the DSL model (e.g. True + 3 + 'hello').
-  - **dsl\_to\_haskell.py** -> This is used to generate Haskell code from a DSL file.
-  - **dsl\_to\_nuxmv.py** -> This is used to generated a nuXmv model from a DSL file.
-  - **dsl\_to\_python.py** -> This is used to generate Python code from a DSL file.
-  - **node\_creator.py** -> This is used by behaverify\_to\_smv.py to create certain elements of the nuXmv model.
-  - **serene\_functions.py** -> This is used to 'compile' certain computations in a DSL file. 
-  - **alternative\_printing** -> This is used to augment how PyTrees prints information, to improve debugging.
-  - **haskell\_file** -> This is used with haskell code generation.
-  - **tick\_overwrite** -> This is used to augment how PyTrees prints information, to improve debugging.
+**Key Finding:** BehaVerify monitors add **minimal overhead** compared to baseline, matching Copilot performance.
+
+**Expected Graphs:** `timing_dense_fixed.png`, `timing_sparse_random.png`
+(Extract from paper Figure 8a or regenerate by running experiments)
+
+### Monitor File Sizes
+
+Monitor **file size** indicates **automata complexity**:
+
+- Larger automata = More states/transitions = More complex specification
+- **Collision monitor:** Larger due to loop over all obstacles
+- **Loop monitor:** Smaller due to simple directional constraints
+
+**Comparison:** BehaVerify and Copilot generate monitors of comparable size.
+
+**Expected Graphs:** `file_sizes_dense_fixed.png`, `file_sizes_sparse_random.png`
+(Extract from paper Figure 8b or regenerate)
+
+### Design-Time vs Runtime Trade-offs
+
+| Approach | Coverage | Cost | Deployment |
+|----------|----------|------|------------|
+| **Design-Time (nuXmv)** | All possible behaviors | High (state explosion) | Pre-deployment |
+| **Runtime (BTM)** | Observed behaviors only | Low (online monitoring) | During execution |
+
+**When to use each:**
+- **Design-time:** Critical systems requiring exhaustive verification
+- **Runtime:** Dynamic environments where all scenarios cannot be pre-verified
+- **Both:** Complementary approaches for highest assurance
+
+**Expected Graph:** `timing_design_time.png` (Extract from paper Figure 9)
+
+### Result Figures
+
+**Note:** Figures should be extracted from the paper PDF (https://arxiv.org/pdf/2411.14162) and placed in `results_readme/graphs/`. See `results_readme/graphs/README_FIGURES.md` for extraction instructions.
+
+Alternatively, regenerate graphs by running:
+```bash
+cd example
+./make_graphs.sh
+```
+(Requires completed experimental results)
 
 ---
 
-# Code Explanation
+## Directory Structure
 
-For an explanation on how to run our code, see our github repository https://github.com/verivital/behaverify
+See current README for detailed directory structure.
+
+---
+
+## Generated Output
+
+After running experiments, check the output location for:
+
+### Images
+- `images/timing_dense_fixed.png` - Runtime timing (dense obstacles)
+- `images/timing_sparse_random.png` - Runtime timing (sparse obstacles)
+- `images/file_sizes_dense_fixed.png` - Monitor file sizes (dense)
+- `images/file_sizes_sparse_random.png` - Monitor file sizes (sparse)
+- `images/timing_design_time.png` - Design-time verification timing
+
+### Per-Experiment Results
+- `results/{category}/{scenario}/behaverify/` - BehaVerify generated code and visualizations
+- `results/{category}/{scenario}/copilot/` - Copilot generated code and visualizations
+- `results/{category}/{scenario}/monitorless/` - Baseline results
+- `results/{category}/{scenario}/design_time/` - nuXmv verification output
+
+---
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Permission denied when running Docker**
+   - **Solution:** Run without sudo, or configure Docker for non-root access:
+     ```bash
+     sudo groupadd docker
+     sudo usermod -aG docker $USER
+     newgrp docker
+     ```
+   - See: https://docs.docker.com/engine/install/linux-postinstall/
+
+2. **Docker build fails**
+   - **Solution:** Ensure Docker is updated to latest version
+   - **Solution:** Check internet connection for package downloads
+   - **Solution:** Clear Docker cache: `docker system prune -a`
+
+3. **nuXmv not found**
+   - **Solution:** Download nuXmv 2.0.0 or 2.1.0 from https://nuxmv.fbk.eu/
+   - **Solution:** Place binary in `2024_FMAS_BTM/nuXmv` (no extension)
+   - **Solution:** Make executable: `chmod +x ./nuXmv`
+   - **Solution:** Test: `./nuXmv -version`
+
+4. **No images generated**
+   - **Cause:** OpenBLAS pthread errors in some environments
+   - **Solution:** Upgrade Docker version
+   - **Solution:** Run graph scripts manually:
+     ```bash
+     cd example
+     ./make_graphs.sh
+     ```
+
+5. **LTL2BA not found** (when running manual workflow)
+   - **Cause:** LTL2BA is an external dependency not included
+   - **Solution:** Docker version includes LTL2BA
+   - **Solution:** For local installation, see: https://www.lsv.fr/~gastin/ltl2ba/
+
+6. **Python module not found**
+   - **Solution:** Ensure all dependencies installed:
+     ```bash
+     pip install -r requirements/results.txt
+     ```
+
+7. **Recursion limit exceeded**
+   - **Cause:** Complex models with deep nesting
+   - **Solution:** Add `--recursion_limit 10000` to BehaVerify commands
+
+8. **Graph generation fails**
+   - **Cause:** Missing timing/size data files
+   - **Solution:** Ensure experiments completed successfully
+   - **Solution:** Check for `timing_*.txt` and `*_sizes.txt` files in results directories
+
+---
+
+## Future Work: CLI Integration
+
+### Planned `behaverify monitor` Mode
+
+Currently, monitor generation requires manual execution of multiple scripts. Future work will integrate monitor generation into the main BehaVerify CLI:
+
+**Proposed Usage:**
+```bash
+behaverify monitor <model_file> <output_location> [options]
+
+Options:
+  --language {python,c}       Target language for monitor generation (default: python)
+  --ltl2ba_path PATH          Path to LTL2BA executable (default: ltl2ba in PATH)
+  --monitor_names NAME...     Specific monitors to generate (default: all)
+  --overwrite                Overwrite existing files
+  --no_checks                Skip grammar validation
+  --recursion_limit N        Python recursion limit for complex models
+```
+
+**Example:**
+```bash
+# Generate Python monitors for a drone model
+behaverify monitor drone_model.tree ./output/ --language python
+
+# Generate C monitors with custom LTL2BA path
+behaverify monitor robot.tree ./output/ --language c --ltl2ba_path /usr/local/bin/ltl2ba
+
+# Generate only collision monitor
+behaverify monitor model.tree ./output/ --monitor_names collision_monitor
+```
+
+**Implementation Status:** Not yet integrated (tracked for future release)
+
+### Manual Workflow (Current)
+
+Until CLI integration is complete, use the following workflow:
+
+```bash
+# 1. Generate behavior tree code
+behaverify python model.tree ./output/
+
+# 2. Extract LTL specifications
+python3 src/behaverify/monitor/create_dsl_monitor.py make_ltl2ba \
+    src/behaverify/data/metamodel/behaverify.tx \
+    model.tree \
+    ./output/ \
+    --recursion_limit 10000
+
+# 3. Convert LTL to Buchi automata (requires LTL2BA)
+ltl_cmd=$(cat ./output/monitor_name.txt)
+ltl2ba -f "$ltl_cmd" > ./output/monitor_name.ba
+
+# 4. Generate monitor code
+python3 src/behaverify/monitor/create_python_monitor.py ba_to_monitor \
+    ./output/monitor_name.ba \
+    ./output/monitor_name.py
+
+# 5. Copy monitor to behavior tree output directory
+cp ./output/monitor_name.py ./output/python/
+
+# 6. Execute monitored behavior tree
+python3 ./output/python/runner.py
+```
+
+---
+
+## Citation
+
+If you use this artifact or the BehaVerify BTM framework, please cite:
+
+```bibtex
+@inproceedings{serbinowska2024btm,
+  title={Verification of Behavior Trees with Contingency Monitors},
+  author={Serbinowska, Serena S. and Potteiger, Nicholas and Tumlin, Anne M. and Johnson, Taylor T.},
+  booktitle={Formal Methods for Autonomous Systems (FMAS)},
+  year={2024},
+  note={arXiv:2411.14162}
+}
+```
+
+---
+
+## Related Papers
+
+- **FMAS 2024 SBT**: "Formalizing Stateful Behavior Trees" - see `../2024_FMAS_SBT/`
+  - https://dx.doi.org/10.4204/EPTCS.411.14
+
+- **SEFM 2022**: "BehaVerify: Verifying Temporal Logic Specifications for Behavior Trees"
+  - https://doi.org/10.1007/978-3-031-17108-6_19
+
+- **NeuS 2025**: "Neuro-Symbolic Behavior Trees and Their Verification"
+  - https://proceedings.mlr.press/v288/serbinowska25a.html
+
+---
+
+## Additional Resources
+
+- **BehaVerify GitHub:** https://github.com/verivital/behaverify
+- **BehaVerify Documentation:** See main `README.md` and `CLAUDE.md`
+- **Tutorial Examples:** `tutorial_examples/` directory
+- **nuXmv:** https://nuxmv.fbk.eu/
+- **LTL2BA:** https://www.lsv.fr/~gastin/ltl2ba/
+- **Copilot:** https://copilot-language.github.io/
+
+---
+
+*Last Updated: 2025-12-04*
+*BehaVerify Version: 0.0.1*
+*Artifact Maintainer: Serena Serafina Serbinowska*

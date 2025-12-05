@@ -84,7 +84,7 @@ class TestPythonMode:
             main(['python', str(model_file), str(temp_dir), '--max_iter', '100', '--overwrite'])
 
         call_args = mock_python.call_args[0]
-        assert call_args[5] == '100'  # max_iter parameter
+        assert call_args[5] == 100  # max_iter parameter (now int)
 
     @patch('behaverify.behaverify.verify_input')
     @patch('behaverify.behaverify.verify_location')

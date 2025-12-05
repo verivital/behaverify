@@ -42,12 +42,9 @@ class TestProgrammaticAPI:
         assert str(output_file) in str(call_args[2])
 
     def test_main_unknown_mode(self, capsys):
-        """Test that unknown mode prints error message."""
-        with patch('builtins.print'):
+        """Test that unknown mode exits with error."""
+        with pytest.raises(SystemExit):
             main(['unknown_mode'])
-
-        # Should handle unknown mode gracefully
-        # (The actual implementation prints a message)
 
     @patch('behaverify.behaverify.verify_input')
     @patch('behaverify.behaverify.verify_location')
@@ -78,8 +75,8 @@ class TestProgrammaticAPI:
         call_args = mock_python.call_args
         # output_name should be 'custom_name'
         assert call_args[0][2] == 'custom_name'
-        # max_iter should be 50
-        assert call_args[0][5] == '50'
+        # max_iter should be 50 (as int)
+        assert call_args[0][5] == 50
 
 
 class TestBackwardCompatibility:
