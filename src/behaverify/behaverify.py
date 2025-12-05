@@ -9,6 +9,7 @@ Current Maintainer:
 '''
 import argparse
 import os
+import re
 import subprocess
 import sys
 from importlib.resources import files
@@ -189,7 +190,91 @@ def verify_nuxmv_path(nuxmv_path):
     return nuxmv_path
 
 
-import re
+def extract_brace_content(text, start_pos):
+    """
+    Extract content between matching braces starting from start_pos.
+    Returns (content, end_pos) or (None, -1) if no match found.
+    """
+    if start_pos >= len(text) or text[start_pos] != '{':
+        return None, -1
+
+    depth = 1
+    pos = start_pos + 1
+    while pos < len(text) and depth > 0:
+        if text[pos] == '{':
+            depth += 1
+        elif text[pos] == '}':
+            depth -= 1
+        pos += 1
+
+    if depth == 0:
+        return text[start_pos + 1:pos - 1], pos
+    return None, -1
+
+
+def parse_dsl_specifications(model_file):
+    """
+    Parse BehaVerify DSL specifications from a .tree file.
+
+    Uses brace-matching to properly handle nested braces in specifications.
+
+    Args:
+        model_file: Path to the .tree file.
+
+    Returns:
+        List of tuples: (spec_type, spec_text)
+    """
+    specs = []
+    try:
+        with open(model_file, 'r', encoding='utf-8') as f:
+            content = f.read()
+
+        # Find the specifications block using brace matching
+        spec_start = content.find('specifications')
+        if spec_start == -1:
+            return specs
+
+        # Find the opening brace after 'specifications'
+        brace_pos = content.find('{', spec_start)
+        if brace_pos == -1:
+            return specs
+
+        spec_block, _ = extract_brace_content(content, brace_pos)
+        if spec_block is None:
+            return specs
+
+        # Find individual specifications using brace matching, preserving order
+        spec_types = ('INVARSPEC', 'CTLSPEC', 'LTLSPEC')
+        pos = 0
+        while pos < len(spec_block):
+            # Find the next spec type
+            next_type = None
+            next_pos = len(spec_block)
+            for stype in spec_types:
+                type_pos = spec_block.find(stype, pos)
+                if type_pos != -1 and type_pos < next_pos:
+                    next_pos = type_pos
+                    next_type = stype
+
+            if next_type is None:
+                break
+
+            # Find the opening brace for this spec
+            brace_start = spec_block.find('{', next_pos)
+            if brace_start == -1:
+                break
+
+            spec_content, end_pos = extract_brace_content(spec_block, brace_start)
+            if spec_content is not None:
+                specs.append((next_type, spec_content.strip()))
+                pos = end_pos
+            else:
+                pos = next_pos + len(next_type)
+
+    except OSError:
+        pass  # If we can't read the file, return empty specs
+
+    return specs
 
 
 def parse_nuxmv_results(output_file):
@@ -225,11 +310,13 @@ def parse_nuxmv_results(output_file):
             if spec_upper.startswith('AG') or spec_upper.startswith('AF') or \
                spec_upper.startswith('EG') or spec_upper.startswith('EF') or \
                spec_upper.startswith('A [') or spec_upper.startswith('E ['):
-                spec_type = 'CTL'
+                spec_type = 'CTLSPEC'
             elif spec_upper.startswith('G ') or spec_upper.startswith('F ') or \
                  spec_upper.startswith('X ') or spec_upper.startswith('U ') or \
                  ' U ' in spec_upper:
-                spec_type = 'LTL'
+                spec_type = 'LTLSPEC'
+            else:
+                spec_type = 'INVARSPEC'
 
             # Check if there's a counterexample following this spec
             has_counterexample = False
@@ -246,13 +333,13 @@ def parse_nuxmv_results(output_file):
     return results
 
 
-def print_verification_summary(output_file, verbose=True):
+def print_verification_summary(output_file, model_file=None):
     """
     Print a summary of nuXmv verification results.
 
     Args:
         output_file: Path to nuXmv output file.
-        verbose: If True, print detailed output.
+        model_file: Optional path to the original .tree file (for DSL specs).
     """
     results = parse_nuxmv_results(output_file)
 
@@ -261,32 +348,40 @@ def print_verification_summary(output_file, verbose=True):
         print(f"Check {output_file} for details.")
         return
 
+    # Parse DSL specifications if model file provided
+    dsl_specs = []
+    if model_file and model_file.endswith('.tree'):
+        dsl_specs = parse_dsl_specifications(model_file)
+
     # Count results
     passed = sum(1 for _, _, r, _ in results if r)
     failed = sum(1 for _, _, r, _ in results if not r)
 
-    print("\n" + "=" * 60)
+    print("\n" + "=" * 70)
     print("VERIFICATION RESULTS")
-    print("=" * 60)
+    print("=" * 70)
 
     for i, (spec_type, spec_text, result, has_ce) in enumerate(results, 1):
         status = "PASS" if result else "FAIL"
         symbol = "[OK]" if result else "[X] "
 
-        # Truncate long specs for display
-        display_spec = spec_text
-        if len(display_spec) > 50:
-            display_spec = display_spec[:47] + "..."
+        print(f"\n{symbol} {spec_type} #{i}: {status}")
 
-        print(f"\n{symbol} {spec_type} Spec #{i}: {status}")
-        print(f"     {display_spec}")
+        # Show DSL specification if available
+        if i <= len(dsl_specs):
+            dsl_type, dsl_text = dsl_specs[i - 1]
+            print(f"     DSL:   {dsl_type} {{{dsl_text}}}")
+
+        # Show full nuXmv specification
+        print(f"     nuXmv: {spec_text}")
+
         if has_ce and not result:
             print("     (counter-example available in output file)")
 
-    print("\n" + "-" * 60)
+    print("\n" + "-" * 70)
     print(f"Summary: {passed} passed, {failed} failed out of {len(results)} specifications")
     print(f"Full results: {output_file}")
-    print("=" * 60)
+    print("=" * 70)
 
 
 def run_nuxmv(nuxmv_path, command_file, input_file, output_file, error_file):
@@ -612,6 +707,8 @@ Examples:
             help='Encoding type: fastforwarding (default) or naive')
         arg_parser.add_argument('--overwrite', action='store_true',
             help='Overwrite existing output files/directories')
+        arg_parser.add_argument('-v', '--verbose', action='store_true',
+            help='Print verification results summary to console')
         args = arg_parser.parse_args(argv)
         verify_input(args.model_file)
         verify_location('nuxmv', args.location, args.overwrite)
@@ -642,6 +739,8 @@ Examples:
             with open(command_file, 'w', encoding = 'utf-8') as command_file_obj:
                 command_file_obj.write(command_string)
             run_nuxmv(nuxmv_path, command_file, input_file, output_file, error_file)
+            if args.verbose:
+                print_verification_summary(output_file, args.model_file)
     elif main_mode == 'python':
         arg_parser = argparse.ArgumentParser(
             prog='behaverify python',
