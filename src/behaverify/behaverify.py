@@ -24,7 +24,7 @@ from behaverify.grid_world_draw.parse_nuxmv_output import handle_file as grid_wo
 from behaverify.grid_world_draw.parse_python_output import handle_file as grid_world_draw_python_output
 from behaverify.behaverify_gui import main as gui_main
 
-__version__ = '0.0.1'
+__version__ = '1.0.0'
 
 
 def error_exit(message, suggestion=None):
