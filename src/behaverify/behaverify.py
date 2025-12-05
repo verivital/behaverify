@@ -143,7 +143,7 @@ def verify_nuxmv_path(nuxmv_path):
         nuxmv_path: Path to the nuXmv executable.
 
     Returns:
-        Normalized path to the nuXmv executable.
+        Absolute path to the nuXmv executable.
     """
     if nuxmv_path is None:
         error_exit(
@@ -152,8 +152,9 @@ def verify_nuxmv_path(nuxmv_path):
             "Download nuXmv from https://nuxmv.fbk.eu/"
         )
 
-    # Normalize path for Windows/Unix
-    nuxmv_path = os.path.normpath(nuxmv_path)
+    # Convert to absolute path to ensure subprocess.run can find the executable
+    # (relative paths like './nuXmv' become 'nuXmv' with normpath, which fails on Linux)
+    nuxmv_path = os.path.abspath(nuxmv_path)
 
     # Check if file exists
     if not os.path.exists(nuxmv_path):
