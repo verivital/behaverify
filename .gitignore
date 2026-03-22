@@ -38,7 +38,7 @@ REPRODUCIBILITY/**/python/**
 REPRODUCIBILITY/**/haskell/**
 REPRODUCIBILITY/**/dense_fixed/**
 REPRODUCIBILITY/**/sparse_random/**
+REPRODUCIBILITY/**/smv/**
 src/behaverify.egg-info/
 build/
 alpha-beta-CROWN/
-REPRODUCIBILITY/2025_NEUS/examples/grid_world/smv
