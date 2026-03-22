@@ -1,0 +1,234 @@
+configuration {
+    #{ Here you specify various configuration options, such as Hypersafety }#
+    neural
+}
+enumerations {
+    #{ here you specify the enumerations used in the model}#
+    'left', 'right', 'up', 'down', 'no_action'
+}
+constants {
+    #{ constants are used to synchronize values in a .tree file. }#
+    #{ example := 0 }#
+    #{ to use example elsewhere, simply type 'example' in place of any integer (quotes included) }#
+    min_val := 0, max_val := 6, number_of_obstacles := 18, max_obstacle_size := 0
+} end_constants
+
+variables {
+    #{ Variable declarations go here.
+	it is suggested, but not required, that the order of declaration be
+	Blackboard, Local, Environment.
+	If variable B depends on variable A, then variable A MUST be declared before B.
+    }#
+    variable { bl current_action VAR {'left', 'right', 'up', 'down', 'no_action'} assign{result{'no_action'}}}
+    variable { bl request_new VAR BOOLEAN assign{result{False}}}
+    variable { env drone_x VAR [min_val, max_val] assign{result{3}}}
+    variable { env drone_y VAR [min_val, max_val] assign{result{0}}}
+    variable { env destination_x VAR [min_val, max_val] assign{result{drone_x}}}
+    variable { env destination_y VAR [min_val, max_val] assign{result{drone_y}}}
+    variable { bl network NEURAL classification {'left', 'right', 'up', 'down', 'no_action'}
+	inputs {drone_x, drone_y, destination_x, destination_y}
+	config {
+	    table
+	}
+	source {
+	    './networks/0996__6_18_0__200_1.onnx'
+	}
+    }
+    #{##########################################}#
+    variable { env obstacles DEFINE INT static array (mult, number_of_obstacles, 2) iterative_assign, index_var
+	condition {(eq, index_var, 0)} assign{result{0}}condition {(eq, index_var, 1)} assign{result{0}}
+condition {(eq, index_var, 2)} assign{result{0}}condition {(eq, index_var, 3)} assign{result{1}}
+condition {(eq, index_var, 4)} assign{result{1}}condition {(eq, index_var, 5)} assign{result{0}}
+condition {(eq, index_var, 6)} assign{result{1}}condition {(eq, index_var, 7)} assign{result{1}}
+condition {(eq, index_var, 8)} assign{result{1}}condition {(eq, index_var, 9)} assign{result{2}}
+condition {(eq, index_var, 10)} assign{result{1}}condition {(eq, index_var, 11)} assign{result{4}}
+condition {(eq, index_var, 12)} assign{result{1}}condition {(eq, index_var, 13)} assign{result{6}}
+condition {(eq, index_var, 14)} assign{result{2}}condition {(eq, index_var, 15)} assign{result{1}}
+condition {(eq, index_var, 16)} assign{result{2}}condition {(eq, index_var, 17)} assign{result{4}}
+condition {(eq, index_var, 18)} assign{result{2}}condition {(eq, index_var, 19)} assign{result{6}}
+condition {(eq, index_var, 20)} assign{result{3}}condition {(eq, index_var, 21)} assign{result{3}}
+condition {(eq, index_var, 22)} assign{result{3}}condition {(eq, index_var, 23)} assign{result{6}}
+condition {(eq, index_var, 24)} assign{result{4}}condition {(eq, index_var, 25)} assign{result{1}}
+condition {(eq, index_var, 26)} assign{result{4}}condition {(eq, index_var, 27)} assign{result{2}}
+condition {(eq, index_var, 28)} assign{result{5}}condition {(eq, index_var, 29)} assign{result{5}}
+condition {(eq, index_var, 30)} assign{result{6}}condition {(eq, index_var, 31)} assign{result{1}}
+condition {(eq, index_var, 32)} assign{result{6}}condition {(eq, index_var, 33)} assign{result{2}}
+condition {(eq, index_var, 34)} assign{result{6}}condition {(eq, index_var, 35)} assign{result{3}}
+	assign{result{0}}
+    }
+    variable { env obstacle_sizes DEFINE INT static array number_of_obstacles iterative_assign, index_var
+condition {(eq, index_var, 0)} assign{result{0}}
+condition {(eq, index_var, 1)} assign{result{0}}
+condition {(eq, index_var, 2)} assign{result{0}}
+condition {(eq, index_var, 3)} assign{result{0}}
+condition {(eq, index_var, 4)} assign{result{0}}
+condition {(eq, index_var, 5)} assign{result{0}}
+condition {(eq, index_var, 6)} assign{result{0}}
+condition {(eq, index_var, 7)} assign{result{0}}
+condition {(eq, index_var, 8)} assign{result{0}}
+condition {(eq, index_var, 9)} assign{result{0}}
+condition {(eq, index_var, 10)} assign{result{0}}
+condition {(eq, index_var, 11)} assign{result{0}}
+condition {(eq, index_var, 12)} assign{result{0}}
+condition {(eq, index_var, 13)} assign{result{0}}
+condition {(eq, index_var, 14)} assign{result{0}}
+condition {(eq, index_var, 15)} assign{result{0}}
+condition {(eq, index_var, 16)} assign{result{0}}
+condition {(eq, index_var, 17)} assign{result{0}}
+	assign{result{0}}
+    }
+} end_variables
+
+environment_update {
+    variable_statement {
+	destination_x
+	assign {
+	    case {request_new} result {(loop, loop_var, [min_val, max_val] such_that True, loop_var)}
+	    result {destination_x}
+	}
+    }
+    variable_statement {
+	destination_y
+	assign {
+	    case{request_new} result {(loop, loop_var, [min_val, max_val] such_that True, loop_var)}
+	    result {destination_y}
+	}
+    }
+    variable_statement {
+	drone_x
+	assign {
+	    case {(eq, current_action, 'left')} result { (max, min_val, (sub, drone_x, 1))}
+	    case {(eq, current_action, 'right')} result { (min, max_val, (add, drone_x, 1))}
+	    result { drone_x}
+	}
+    }
+    variable_statement {
+	drone_y
+	assign {
+	    case {(eq, current_action, 'down')} result { (max, min_val, (sub, drone_y, 1))}
+	    case {(eq, current_action, 'up')} result { (min, max_val, (add, drone_y, 1))}
+	    result { drone_y}
+	}
+    }	    
+} end_environment_update
+
+checks {
+    check {
+	need_destination
+	arguments {}
+	read_variables {destination_x, destination_y, drone_x, drone_y, current_action}
+	condition {
+	    (or,
+		(and, (eq, destination_x, drone_x), (eq, destination_y, drone_y)),
+		(and, (eq, current_action, 'no_action'), (eq, request_new, False))
+	    )
+	}
+    }
+} end_checks
+
+environment_checks {
+} end_environment_checks
+
+actions {
+    action {
+	new_destination
+	arguments{}
+	local_variables {} end_local_variables
+	read_variables {} end_read_variables
+	write_variables {request_new} end_write_variables
+	initial_values {} end_initial_values
+	update {
+	    variable_statement {
+		request_new
+		assign{result{True}}
+	    }
+	    variable_statement {
+		current_action
+		assign {result{'no_action'}}
+	    }
+	    return_statement {
+		result { running} end_result
+	    } end_return_statement
+	} end_update
+    } end_action
+    action {
+	next_action
+	arguments{}
+	local_variables {} end_local_variables
+	read_variables {network} end_read_variables
+	write_variables {request_new, current_action} end_write_variables
+	initial_values {} end_initial_values
+	update {
+	    variable_statement {
+		request_new
+		assign{result{False}}
+	    }
+	    variable_statement {
+		current_action
+		assign {result{network}}
+	    }
+	    return_statement {
+		result { success} end_result
+	    } end_return_statement
+	} end_update
+    } end_action
+} end_actions
+
+sub_trees {#{ subtrees go here. }#} end_sub_trees
+
+tree {
+    composite {
+	drone_control selector
+	children {
+	    composite {
+		destination_sequence sequence
+		children {
+		    need_destination {}
+		    new_destination {}
+		}
+	    }
+	    next_action {}
+	}
+    }
+} end_tree
+
+tick_prerequisite { (True) } end_tick_prerequisite
+
+specifications {
+    INVARSPEC {
+	(not,
+	    (or,
+		(loop, loop_var, [0, (sub, number_of_obstacles, 1)] such_that True,
+		    (and,
+			(lte, drone_x, (index, obstacles, constant_index (mult, loop_var, 2))),
+			(gte, drone_x, (sub, (index, obstacles, constant_index (mult, loop_var, 2)), (index, obstacle_sizes, constant_index loop_var))),
+			(lte, drone_y, (index, obstacles, constant_index (add, (mult, loop_var, 2), 1))),
+			(gte, drone_y, (sub, (index, obstacles, constant_index (add, (mult, loop_var, 2), 1)), (index, obstacle_sizes, constant_index loop_var)))
+		    )
+		)
+	    )
+	)
+    }
+    CTLSPEC {
+	(always_globally,
+	    (
+		(or,
+		    (always_finally,
+			(and,
+			    (eq, drone_x at 1, destination_x at 0),
+			    (eq, drone_y at 1, destination_y at 0)
+			)
+		    ),
+		    (loop, loop_var, [0, (sub, number_of_obstacles, 1)] such_that True,
+			(and,
+			    (lte, destination_x at 0, (index, obstacles, constant_index (mult, loop_var, 2))),
+			    (gte, destination_x at 0, (sub, (index, obstacles, constant_index (mult, loop_var, 2)), (index, obstacle_sizes, constant_index loop_var))),
+			    (lte, destination_y at 0, (index, obstacles, constant_index (add, (mult, loop_var, 2), 1))),
+			    (gte, destination_y at 0, (sub, (index, obstacles, constant_index (add, (mult, loop_var, 2), 1)), (index, obstacle_sizes, constant_index loop_var)))
+			)
+		    )
+		)
+	    )
+	)
+    }
+} end_specifications
