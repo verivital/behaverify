@@ -1,0 +1,405 @@
+configuration {
+    neural
+}
+enumerations {
+    'clear', 'weak_left', 'weak_right', 'strong_left', 'strong_right',
+    'xpyz', 'xnyz', 'xzyp', 'xzyn',
+    'xpyp', 'xpyn', 'xnyp', 'xnyn'
+}
+
+constants {
+    pi := 3.141592653589793238462643,
+    distance_modifier := 40,
+    max_dist := 80000,
+    distance_mean := 19791.091,
+    relative_angle_mean := 0,
+    intersect_angle_mean := 0,
+    speed_own_mean := 650,
+    speed_int_mean := 600,
+    distance_range := 60261,
+    relative_angle_range := 6.28318530718,
+    intersect_angle_range := 6.28318530718,
+    speed_own_range := 1100,
+    speed_int_range := 1200
+    #{
+    min_velocity := 25,
+    max_velcoty := 25,
+    }#
+    #{max_dist := (idiv, 87472, distance_modifier),
+    min_velocity := (idiv, 1145, distance_modifier),
+    max_velcoty := (idiv, 1145, distance_modifier)}#
+}
+
+variables {
+    variable{bl command VAR {'clear', 'weak_left', 'weak_right', 'strong_left', 'strong_right'} assign{result{'clear'}}}
+    #{}#
+    variable{env overflow VAR BOOLEAN assign{result{False}}}
+    #{}#
+    variable{env x_var VAR [(idiv, (mult, max_dist, -1), distance_modifier), (idiv, max_dist, distance_modifer)] assign{result{(idiv, 40000, distance_modifier)}}}
+    variable{env y_var VAR [(idiv, (mult, max_dist, -1), distance_modifier), (idiv, max_dist, distance_modifer)] assign{result{(idiv, 2000, distance_modifier)}}}
+    variable{env x DEFINE INT assign{result{(mult, x_var, distance_modifier)}}}
+    variable{env y DEFINE INT assign{result{(mult, y_var, distance_modifier)}}}
+    variable{env heading_own_var VAR [0, 119] assign{result{0}}}
+    #{variable{env heading_int_var VAR [0, 119] assign{result{40}}}}#
+    variable{env heading_int_var DEFINE INT assign{result{40}}}
+    variable{env heading_own DEFINE INT assign{result{(mult, 3, heading_own_var)}}}
+    variable{env heading_int DEFINE INT assign{result{(mult, 3, heading_int_var)}}}
+    variable{env speed_own_var DEFINE INT assign{result{(idiv, 400, distance_modifier)}}}
+    variable{env speed_int_var DEFINE INT assign{result{(idiv, 600, distance_modifier)}}}
+    variable{env speed_own DEFINE INT assign{result{(mult, speed_own_var, distance_modifier)}}}
+    variable{env speed_int DEFINE INT assign{result{(mult, speed_own_int, distance_modifier)}}}
+    #{variable{env speed_own VAR [min_velocity, max_velocity] assign{result{min_velocity}}}
+    variable{env speed_int VAR [min_velocity, max_velocity] assign{result{min_velocity}}}}#
+    #{}#
+    variable{env velocity_x_own DEFINE INT assign{
+	    REPLACE_VELOCITY_X_OWN
+	}
+    }
+    variable{env velocity_y_own DEFINE INT assign{
+	    REPLACE_VELOCITY_Y_OWN
+	}
+    }
+    variable{env velocity_x_int DEFINE INT assign{
+	    REPLACE_VELOCITY_X_INT
+	}
+    }
+    variable{env velocity_y_int DEFINE INT assign{
+	    REPLACE_VELOCITY_Y_INT
+	}
+    }
+    #{}#
+    variable{env x_pos DEFINE INT assign{result{(if, (gte, x, 0), x, (mult, -1, x))}}}
+    variable{env y_pos DEFINE INT assign{result{(if, (gte, y, 0), y, (mult, -1, y))}}}
+    variable{env distance DEFINE INT assign{
+	    REPLACE_DISTANCE
+	}
+    }
+    variable{env zone DEFINE ENUM assign{
+	    case{(and, (gt, x, 0), (eq, y, 0))} result{'xpyz'}
+	    case{(and, (lt, x, 0), (eq, y, 0))} result{'xnyz'}
+	    case{(and, (eq, x, 0), (gt, y, 0))} result{'xzyp'}
+	    case{(and, (eq, x, 0), (lt, y, 0))} result{'xzyn'}
+	    case{(and, (gt, x, 0), (gt, y, 0))} result{'xpyp'}
+	    case{(and, (gt, x, 0), (lt, y, 0))} result{'xpyn'}
+	    case{(and, (lt, x, 0), (gt, y, 0))} result{'xnyp'}
+	    case{(and, (lt, x, 0), (lt, y, 0))} result{'xnyn'}
+	    result {'xpyp'}
+	}
+    }
+    variable{env arctan_val_xy DEFINE INT assign{
+	    REPLACE_ARCTAN_XY
+	}
+    }
+    variable{env arctan_val_yx DEFINE INT assign{
+	    REPLACE_ARCTAN_YX
+	}
+    }
+    variable{env arctan_val DEFINE INT assign{
+	    case{(eq, zone, 'xpyp')}result{arctan_val_yx}
+	    case{(eq, zone, 'xpyn')}result{arctan_val_xy}
+	    case{(eq, zone, 'xnyp')}result{arctan_val_yx}
+	    case{(eq, zone, 'xnyn')}result{arctan_val_xy}
+	    result {0}
+	}
+    }
+    variable{env relative_angle DEFINE INT assign{
+	    case{(eq, zone, 'xpyz')}result{(sub, 270, heading_own)}
+	    case{(eq, zone, 'xnyz')}result{(sub, 90, heading_own)}
+	    case{(eq, zone, 'xzyp')}result{(sub, 360, heading_own)}
+	    case{(eq, zone, 'xzyn')}result{(sub, 180, heading_own)}
+	    case{(eq, zone, 'xpyp')}result{(add, (sub, 270, heading_own), arctan_val)}
+	    case{(eq, zone, 'xpyn')}result{(add, (sub, 180, heading_own), arctan_val)}
+	    case{(eq, zone, 'xnyp')}result{(sub, (sub, 90, heading_own), arctan_val)}
+	    #{case{(eq, zone, 'xnyn')}}#result{(sub, (sub, 180, heading_own), arctan_val)}
+	}
+    }
+    variable{env intersect_angle DEFINE INT assign{result{(sub, heading_own, heading_int)}}}
+    #{}#
+    variable{env relative_angle_mod DEFINE INT assign{result{(mod, relative_angle, 360)}}}
+    variable{env intersect_angle_mod DEFINE INT assign{result{(mod, intersect_angle, 360)}}}
+    variable{env relative_angle_pos DEFINE INT assign{
+	    result{
+		(if,
+		    (lt, relative_angle_mod, 0),
+		    (add, relative_angle_mod, 360),
+		    relative_angle_mod
+		)
+	    }
+	}
+    }
+    variable{env intersect_angle_pos DEFINE INT assign{
+	    result{
+		(if,
+		    (lt, intersect_angle_mod, 0),
+		    (add, intersect_angle_mod, 360),
+		    intersect_angle_mod
+		)
+	    }
+	}
+    }
+    variable{env relative_angle_adjusted DEFINE INT assign{
+	    result{
+		(if,
+		    (gt, relative_angle_pos, 180),
+		    (sub, relative_angle_pos, 360),
+		    relative_angle_pos
+		)
+	    }
+	}
+    }
+    variable{env intersect_angle_adjusted DEFINE INT assign{
+	    result {
+		(if,
+		    (gt, intersect_angle_pos, 180),
+		    (sub, intersect_angle_pos, 360),
+		    intersect_angle_pos
+		)
+	    }
+	}
+    }
+    #{}#
+    variable{bl network_1_1 NEURAL classification {'clear', 'weak_left', 'weak_right', 'strong_left', 'strong_right'}
+	inputs {
+	    (rdiv, (sub, distance, distance_mean), distance_range),
+	    (rdiv, (sub, (mult, pi, (rdiv, relative_angle_adjusted, 180)), relative_angle_mean), relative_angle_range),
+	    (rdiv, (sub, (mult, pi, (rdiv, intersect_angle_adjusted, 180)), intersect_angle_mean), intersect_angle_range),
+	    (rdiv, (sub, speed_own, speed_own_mean), speed_own_range),
+	    (rdiv, (sub, speed_int, speed_int_mean), speed_int_range)
+	}
+	config {table}
+	source { './networks/ACASXU_run2a_1_1_batch_2000.onnx'}
+    }
+    variable{bl network_2_1 NEURAL classification {'clear', 'weak_left', 'weak_right', 'strong_left', 'strong_right'}
+	inputs {
+	    (rdiv, (sub, distance, distance_mean), distance_range),
+	    (rdiv, (sub, (mult, pi, (rdiv, relative_angle_adjusted, 180)), relative_angle_mean), relative_angle_range),
+	    (rdiv, (sub, (mult, pi, (rdiv, intersect_angle_adjusted, 180)), intersect_angle_mean), intersect_angle_range),
+	    (rdiv, (sub, speed_own, speed_own_mean), speed_own_range),
+	    (rdiv, (sub, speed_int, speed_int_mean), speed_int_range)
+	}
+	config {table}
+	source { './networks/ACASXU_run2a_2_1_batch_2000.onnx'}
+    }
+    variable{bl network_3_1 NEURAL classification {'clear', 'weak_left', 'weak_right', 'strong_left', 'strong_right'}
+	inputs {
+	    (rdiv, (sub, distance, distance_mean), distance_range),
+	    (rdiv, (sub, (mult, pi, (rdiv, relative_angle_adjusted, 180)), relative_angle_mean), relative_angle_range),
+	    (rdiv, (sub, (mult, pi, (rdiv, intersect_angle_adjusted, 180)), intersect_angle_mean), intersect_angle_range),
+	    (rdiv, (sub, speed_own, speed_own_mean), speed_own_range),
+	    (rdiv, (sub, speed_int, speed_int_mean), speed_int_range)
+	}
+	config {table}
+	source { './networks/ACASXU_run2a_3_1_batch_2000.onnx'}
+    }
+    variable{bl network_4_1 NEURAL classification {'clear', 'weak_left', 'weak_right', 'strong_left', 'strong_right'}
+	inputs {
+	    (rdiv, (sub, distance, distance_mean), distance_range),
+	    (rdiv, (sub, (mult, pi, (rdiv, relative_angle_adjusted, 180)), relative_angle_mean), relative_angle_range),
+	    (rdiv, (sub, (mult, pi, (rdiv, intersect_angle_adjusted, 180)), intersect_angle_mean), intersect_angle_range),
+	    (rdiv, (sub, speed_own, speed_own_mean), speed_own_range),
+	    (rdiv, (sub, speed_int, speed_int_mean), speed_int_range)
+	}
+	config {table}
+	source { './networks/ACASXU_run2a_4_1_batch_2000.onnx'}
+    }
+    variable{bl network_5_1 NEURAL classification {'clear', 'weak_left', 'weak_right', 'strong_left', 'strong_right'}
+	inputs {
+	    (rdiv, (sub, distance, distance_mean), distance_range),
+	    (rdiv, (sub, (mult, pi, (rdiv, relative_angle_adjusted, 180)), relative_angle_mean), relative_angle_range),
+	    (rdiv, (sub, (mult, pi, (rdiv, intersect_angle_adjusted, 180)), intersect_angle_mean), intersect_angle_range),
+	    (rdiv, (sub, speed_own, speed_own_mean), speed_own_range),
+	    (rdiv, (sub, speed_int, speed_int_mean), speed_int_range)
+	}
+	config {table}
+	source { './networks/ACASXU_run2a_5_1_batch_2000.onnx'}
+    }
+    #{}#
+    variable{env next_x DEFINE INT assign{result{(add, x, (mult, 2, (sub, velocity_x_int, velocity_x_own)))}}}
+    #{The mult 2 is because we are taking 2 seconds between ticks}#
+    variable{env next_y DEFINE INT assign{result{(add, y, (mult, 2, (sub, velocity_y_int, velocity_y_own)))}}}
+    #{The mult 2 is because we are taking 2 seconds between ticks}#
+}
+
+environment_update {
+    #{int heading}#
+    variable_statement{
+	heading_own_var
+	assign{
+	    case{(eq, command, 'strong_left')}result{(mod, (add, heading_own_var, 2), 120)}
+	    case{(eq, command, 'weak_left')}result{(mod, (add, heading_own_var, 1), 120)}
+	    case{(eq, command, 'weak_right')}result{(mod, (sub, heading_own_var, 1), 120)}
+	    case{(eq, command, 'strong_right')}result{(mod, (sub, heading_own_var, 2), 120)}
+	    result{heading_own_var}
+	}
+    }
+    variable_statement{
+	overflow assign{result{(or, (gte, (abs, next_x), max_dist), (gte, (abs, next_y), max_dist))}}
+    }
+    variable_statement{
+	x_var
+	assign{
+	    result{
+		(idiv, (min, max_dist, (max, (mult, max_dist, -1), next_x)), distance_modifier)
+	    }
+	}
+    }
+    variable_statement{
+	y_var
+	assign{
+	    result{
+		(idiv, (min, max_dist, (max, (mult, max_dist, -1), next_y)), distance_modifier)
+	    }
+	}
+    }
+}
+
+checks {
+    check {
+	compare_val
+	arguments {value := ENUM}
+	read_variables {command}
+	condition {(eq, value, command)}
+    }
+}
+
+environment_checks {
+}
+
+actions {
+    action {
+	call_1_1
+	arguments {}
+	local_variables {}
+	read_variables {network_1_1}
+	write_variables {command}
+	initial_values{}
+	update {
+	    variable_statement{
+		command
+		assign{result{network_1_1}}
+	    }
+	    return_statement{result{success}}
+	}
+    }
+    action {
+	call_2_1
+	arguments {}
+	local_variables {}
+	read_variables {network_2_1}
+	write_variables {command}
+	initial_values{}
+	update {
+	    variable_statement{
+		command
+		assign{result{network_2_1}}
+	    }
+	    return_statement{result{success}}
+	}
+    }
+    action {
+	call_3_1
+	arguments {}
+	local_variables {}
+	read_variables {network_3_1}
+	write_variables {command}
+	initial_values{}
+	update {
+	    variable_statement{
+		command
+		assign{result{network_3_1}}
+	    }
+	    return_statement{result{success}}
+	}
+    }
+    action {
+	call_4_1
+	arguments {}
+	local_variables {}
+	read_variables {network_4_1}
+	write_variables {command}
+	initial_values{}
+	update {
+	    variable_statement{
+		command
+		assign{result{network_4_1}}
+	    }
+	    return_statement{result{success}}
+	}
+    }
+    action {
+	call_5_1
+	arguments {}
+	local_variables {}
+	read_variables {network_5_1}
+	write_variables {command}
+	initial_values{}
+	update {
+	    variable_statement{
+		command
+		assign{result{network_5_1}}
+	    }
+	    return_statement{result{success}}
+	}
+    }
+}
+
+
+sub_trees {
+}
+
+tree {
+    composite {
+	acasxu
+	selector
+	children {
+	    composite {
+		seq_1_1
+		sequence
+		children {
+		    if_was_clear : compare_val {'clear'}
+		    call_1_1 {}
+		}
+	    }
+	    composite {
+		seq_2_1
+		sequence
+		children {
+		    if_was_weak_right : compare_val {'weak_right'}
+		    call_2_1 {}
+		}
+	    }
+	    composite {
+		seq_3_1
+		sequence
+		children {
+		    if_was_weak_left : compare_val {'weak_left'}
+		    call_3_1 {}
+		}
+	    }
+	    composite {
+		seq_4_1
+		sequence
+		children {
+		    if_was_strong_right : compare_val {'strong_right'}
+		    call_4_1 {}
+		}
+	    }
+	    composite {
+		seq_5_1
+		sequence
+		children {
+		    if_was_strong_left : compare_val {'strong_left'}
+		    call_5_1 {}
+		}
+	    }
+	}
+    }	    
+}
+
+tick_prerequisite {
+    (and, (lt, distance, max_dist), (not, overflow))
+}
+
+specifications {
+    INVARSPEC{ (gte, distance, 500)}
+}

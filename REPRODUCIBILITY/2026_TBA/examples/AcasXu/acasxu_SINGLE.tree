@@ -1,0 +1,261 @@
+configuration {
+    neural
+}
+enumerations {
+    'clear', 'weak_left', 'weak_right', 'strong_left', 'strong_right',
+    'xpyz', 'xnyz', 'xzyp', 'xzyn',
+    'xpyp', 'xpyn', 'xnyp', 'xnyn'
+}
+constants {
+    pi := 3.141592653589793238462643,
+    distance_modifier := 100,
+    max_dist := 1000,
+    distance_mean := 19791.091,
+    relative_angle_mean := 0,
+    intersect_angle_mean := 0,
+    speed_own_mean := 650,
+    speed_int_mean := 600,
+    distance_range := 60261,
+    relative_angle_range := 6.28318530718,
+    intersect_angle_range := 6.28318530718,
+    speed_own_range := 1100,
+    speed_int_range := 1200,
+    #{}#
+    d_min := 9975,
+    d_max := 10025,
+    ra_min := -1,
+    ra_max := 1,
+    ia_min := 89,
+    ia_max := 91,
+    so_min := 495,
+    so_max := 500,
+    si_min := 700,
+    si_max := 705
+}
+
+variables {
+    variable{bl command VAR {'clear', 'weak_left', 'weak_right', 'strong_left', 'strong_right'} assign{result{'clear', 'weak_left', 'weak_right', 'strong_left', 'strong_right'}}}
+    #{}#
+    variable{env distance FROZENVAR [d_min, d_max] assign{result{(loop, i, [d_min, d_max] such_that True, i)}}}
+    variable{env relative_angle FROZENVAR [ra_min, ra_max] assign{result{(loop, i, [ra_min, ra_max] such_that True, i)}}}
+    variable{env intersect_angle FROZENVAR [ia_min, ia_max] assign{result{(loop, i, [ia_min, ia_max] such_that True, i)}}}
+    variable{env speed_own FROZENVAR [so_min, so_max] assign{result{(loop, i, [so_min, so_max] such_that True, i)}}}
+    variable{env speed_int FROZENVAR [si_min, si_max] assign{result{(loop, i, [si_min, si_max] such_that True, i)}}}
+    #{}#
+    variable{bl network_1_1 NEURAL classification {'clear', 'weak_left', 'weak_right', 'strong_left', 'strong_right'}
+	inputs {
+	    (rdiv, (sub, distance, distance_mean), distance_range),
+	    (rdiv, (sub, (mult, pi, (rdiv, relative_angle, 180)), relative_angle_mean), relative_angle_range),
+	    (rdiv, (sub, (mult, pi, (rdiv, intersect_angle, 180)), intersect_angle_mean), intersect_angle_range),
+	    (rdiv, (sub, speed_own, speed_own_mean), speed_own_range),
+	    (rdiv, (sub, speed_int, speed_int_mean), speed_int_range)
+	}
+	config {table}
+	source { './networks/ACASXU_run2a_1_1_batch_2000.onnx'}
+    }
+    variable{bl network_2_1 NEURAL classification {'clear', 'weak_left', 'weak_right', 'strong_left', 'strong_right'}
+	inputs {
+	    (rdiv, (sub, distance, distance_mean), distance_range),
+	    (rdiv, (sub, (mult, pi, (rdiv, relative_angle, 180)), relative_angle_mean), relative_angle_range),
+	    (rdiv, (sub, (mult, pi, (rdiv, intersect_angle, 180)), intersect_angle_mean), intersect_angle_range),
+	    (rdiv, (sub, speed_own, speed_own_mean), speed_own_range),
+	    (rdiv, (sub, speed_int, speed_int_mean), speed_int_range)
+	}
+	config {table}
+	source { './networks/ACASXU_run2a_2_1_batch_2000.onnx'}
+    }
+    variable{bl network_3_1 NEURAL classification {'clear', 'weak_left', 'weak_right', 'strong_left', 'strong_right'}
+	inputs {
+	    (rdiv, (sub, distance, distance_mean), distance_range),
+	    (rdiv, (sub, (mult, pi, (rdiv, relative_angle, 180)), relative_angle_mean), relative_angle_range),
+	    (rdiv, (sub, (mult, pi, (rdiv, intersect_angle, 180)), intersect_angle_mean), intersect_angle_range),
+	    (rdiv, (sub, speed_own, speed_own_mean), speed_own_range),
+	    (rdiv, (sub, speed_int, speed_int_mean), speed_int_range)
+	}
+	config {table}
+	source { './networks/ACASXU_run2a_3_1_batch_2000.onnx'}
+    }
+    variable{bl network_4_1 NEURAL classification {'clear', 'weak_left', 'weak_right', 'strong_left', 'strong_right'}
+	inputs {
+	    (rdiv, (sub, distance, distance_mean), distance_range),
+	    (rdiv, (sub, (mult, pi, (rdiv, relative_angle, 180)), relative_angle_mean), relative_angle_range),
+	    (rdiv, (sub, (mult, pi, (rdiv, intersect_angle, 180)), intersect_angle_mean), intersect_angle_range),
+	    (rdiv, (sub, speed_own, speed_own_mean), speed_own_range),
+	    (rdiv, (sub, speed_int, speed_int_mean), speed_int_range)
+	}
+	config {table}
+	source { './networks/ACASXU_run2a_4_1_batch_2000.onnx'}
+    }
+    variable{bl network_5_1 NEURAL classification {'clear', 'weak_left', 'weak_right', 'strong_left', 'strong_right'}
+	inputs {
+	    (rdiv, (sub, distance, distance_mean), distance_range),
+	    (rdiv, (sub, (mult, pi, (rdiv, relative_angle, 180)), relative_angle_mean), relative_angle_range),
+	    (rdiv, (sub, (mult, pi, (rdiv, intersect_angle, 180)), intersect_angle_mean), intersect_angle_range),
+	    (rdiv, (sub, speed_own, speed_own_mean), speed_own_range),
+	    (rdiv, (sub, speed_int, speed_int_mean), speed_int_range)
+	}
+	config {table}
+	source { './networks/ACASXU_run2a_5_1_batch_2000.onnx'}
+    }
+}
+
+environment_update {
+}
+
+checks {
+    check {
+	compare_val
+	arguments {value := ENUM}
+	read_variables {command}
+	condition {(eq, value, command)}
+    }
+}
+
+environment_checks {
+}
+
+actions {
+    action {
+	call_1_1
+	arguments {}
+	local_variables {}
+	read_variables {network_1_1}
+	write_variables {command}
+	initial_values{}
+	update {
+	    variable_statement{
+		command
+		assign{result{network_1_1}}
+	    }
+	    return_statement{result{success}}
+	}
+    }
+    action {
+	call_2_1
+	arguments {}
+	local_variables {}
+	read_variables {network_2_1}
+	write_variables {command}
+	initial_values{}
+	update {
+	    variable_statement{
+		command
+		assign{result{network_2_1}}
+	    }
+	    return_statement{result{success}}
+	}
+    }
+    action {
+	call_3_1
+	arguments {}
+	local_variables {}
+	read_variables {network_3_1}
+	write_variables {command}
+	initial_values{}
+	update {
+	    variable_statement{
+		command
+		assign{result{network_3_1}}
+	    }
+	    return_statement{result{success}}
+	}
+    }
+    action {
+	call_4_1
+	arguments {}
+	local_variables {}
+	read_variables {network_4_1}
+	write_variables {command}
+	initial_values{}
+	update {
+	    variable_statement{
+		command
+		assign{result{network_4_1}}
+	    }
+	    return_statement{result{success}}
+	}
+    }
+    action {
+	call_5_1
+	arguments {}
+	local_variables {}
+	read_variables {network_5_1}
+	write_variables {command}
+	initial_values{}
+	update {
+	    variable_statement{
+		command
+		assign{result{network_5_1}}
+	    }
+	    return_statement{result{success}}
+	}
+    }
+}
+
+
+sub_trees {
+}
+
+tree {
+    composite {
+	acasxu
+	selector
+	children {
+	    composite {
+		seq_1_1
+		sequence
+		children {
+		    if_was_clear : compare_val {'clear'}
+		    call_1_1 {}
+		}
+	    }
+	    composite {
+		seq_2_1
+		sequence
+		children {
+		    if_was_weak_right : compare_val {'weak_right'}
+		    call_2_1 {}
+		}
+	    }
+	    composite {
+		seq_3_1
+		sequence
+		children {
+		    if_was_weak_left : compare_val {'weak_left'}
+		    call_3_1 {}
+		}
+	    }
+	    composite {
+		seq_4_1
+		sequence
+		children {
+		    if_was_strong_right : compare_val {'strong_right'}
+		    call_4_1 {}
+		}
+	    }
+	    composite {
+		seq_5_1
+		sequence
+		children {
+		    if_was_strong_left : compare_val {'strong_left'}
+		    call_5_1 {}
+		}
+	    }
+	}
+    }	    
+}
+
+tick_prerequisite {
+    True
+}
+
+specifications {
+    INVARSPEC{ (implies, (eq, command at 0, 'clear'), (eq, command at -1, 'weak_left'))}
+    INVARSPEC{ (implies, (eq, command at 0, 'weak_right'), (eq, command at -1, 'weak_right'))}
+    INVARSPEC{ (implies, (eq, command at 0, 'weak_left'), (eq, command at -1, 'weak_left'))}
+    INVARSPEC{ (implies, (eq, command at 0, 'strong_right'), (eq, command at -1, 'weak_right'))}
+    INVARSPEC{ (implies, (eq, command at 0, 'strong_left'), (eq, command at -1, 'weak_left'))}
+    #{sanity}#
+    INVARSPEC{ (implies, (eq, command at 0, 'clear'), (eq, command at -1, 'strong_right'))}
+    
+}
