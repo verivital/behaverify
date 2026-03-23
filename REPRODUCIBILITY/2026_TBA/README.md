@@ -1,271 +1,258 @@
-This README is meant to provide information about reproducing results used in NEUS 2025. However, it can also be used as a more general installation guide for BehaVerify, though eventually it may be inadequate for this purpose as it will not be updated along with BehaVerify, in order to ensure it remains useful for its primary purpose, reproduction of results for NEUS 2025.
+# Compositional Verification of Neuro-Symbolic Behavior Trees (NSBTs)
 
-version\_info\_pip.txt contains all python package information for BehaVerify. verion\_info\_pip\_graphs\_only.txt contains all python package information for amking necessary graphs and the like. version\_info\_apt.txt contains all other version information.
+This directory contains the compositional verification pipeline for NSBTs, extending
+the monolithic BehaVerify approach with Assume-Guarantee (A/G) contracts verified via
+alpha-beta-CROWN.
 
-In case you are reading this somewhere outside of the repository, our repository is at https://github.com/verivital/behaverify .
-
-# About this File and its Layout
-
-1. Prerequisites and Information -> this section will explain what you need and what assumptions we make.
-2. Running Tests using Docker -> this section will explain how to run the tests using Docker.
-3. Interpreting and Comparing Results -> this section will explain how to interpret the generated results and what they correspond to in the paper.
-4. Potential Errors and Workarounds -> this section will explain how to deal with some of the potential errors encountered.
-5. Docker Tests with Details -> this section will explain how to run the tests using Docker.
-6. Running Tests Locally (verbose) -> this section will explain how to run tests locally. It also explains why each step of the installation is necessary.
-7. Running Tests Locally (concise) -> this section will explain how to run tests locally. It does not provide explanations.
-
-Finally, note that this is a .md file, and as such, we escape various characters. If you are reading this using a text editor, please make sure to keep this in mind.
-
-# Prerequisites and Information
-
-1. docker with the ability to run commands as a regular user (see https://docs.docker.com/engine/install/linux-postinstall/ ). Additionally, we will be using Ubuntu 24.10 inside docker. Some users appear to have issues with running commands like update or upgrade in docker when using Ubuntu; we do not have a workaround for this.
-2. nuXmv (see  https://nuxmv.fbk.eu/download.html or https://nuxmv.fbk.eu/theme/download.php?file=nuXmv-2.1.0-linux64.tar.xz ). Our script can automatically download nuXmv for you from an appropriate URL. Should an error arise, you will need to download nuXmv. There should be no installation. Please ensure you download the Linux 64-bit x86 version 2.1.0 (November 29, 2024). The executable will be located in **nuXmv-2.1.0-linux64/nuXmv-2.1.0-Linux/bin/nuXmv**. There should be **NO FILE EXTENSION**. Note that we are **ONLY** interested in the binary; you do not need the other files or the folder structure, so long as you have the binary.
-3. If you choose to use Docker, we assume you have access to Python3 and docker-py (see below).
-4. If you choose to run locally, we assume you are able to run bash scripts. These have **only been tested on Linux**. If you cannot run the scripts, please run the commands present in the bash scripts manually. Note that this will require arguments to replaced. Specifically, $1 means the first argument provided to the bash script, $2 means the second argument provided to the bash script, etc.
-
-Note, we require docker py for use with python3 if using docker. It can be installed using
-```
-python3 -m pip install docker
-```
-
-## nuXmv
-
-Per the licensing agreement of nuXmv (see https://nuxmv.fbk.eu/downloads/LICENSE.txt ), we may not re-distribute the software in any form for any purpose. As such, the best we can do is download it from a provided URL.
+Current focus: 1-NN grid world example (7x7 grid, 18 obstacles, 38 contracts).
 
 ---
 
-# Running Tests With Docker
+## Repository Layout
 
-The tests can be run using docker.
-
-Build Script:
 ```
-python3 build_and_run.py /path/to/Dockerfile/Folder/ /path/to/output NUXMV_URL
-```
-	
-Build Example:
-```
-python3 ./python_script/build_and_run.py ./ ./MyOutput 'https://nuxmv.fbk.eu/theme/download.php?file=nuXmv-2.1.0-linux64.tar.xz'
-```
-
-Alternatively, if you have downloaded nuXmv and placed in the same folder:
-```
-python3 ./python_script/build_and_run.py ./ ./MyOutput nuXmv --local
+2026_TBA/
+├── examples/grid_world/
+│   ├── networks/               # ONNX neural network files
+│   ├── contracts/              # Pre-computed A/G contracts (JSON)
+│   ├── tree/                   # .tree DSL files (monolithic, all encodings)
+│   ├── smv/                    # Generated SMV files (gitignored, see below)
+│   ├── results/                # Verification outputs (gitignored)
+│   ├── counter_template.tree   # Template for auto-generating counter trees
+│   ├── run_compositional_pipeline.py  # End-to-end compositional pipeline
+│   ├── verify_contracts.py     # A/G contract verification via CROWN
+│   ├── verify_contracts.yaml   # Config for verify_contracts.py
+│   ├── make_smv.sh             # Generate monolithic SMV files
+│   ├── time_make_smv.sh        # Generate monolithic SMVs with timing
+│   ├── run_smv.sh              # Run nuXmv on monolithic SMVs
+│   └── run_smv_all.sh          # Batch run all encodings
+├── metamodel/                  # BehaVerify TextX grammar
+├── scripts/nuxmv_commands/     # nuXmv command files
+├── src/                        # BehaVerify source (local copy)
+└── nuXmv_DL/bin/nuXmv          # nuXmv binary (not committed, see below)
 ```
 
 ---
 
-# Interpreting and Comparing Results
+## Prerequisites
 
-Suppose you ran
-```
-python3 ./python_script/build_and_run.py ./ ./MyOutput 'https://nuxmv.fbk.eu/theme/download.php?file=nuXmv-2.1.0-linux64.tar.xz'
-```
+### 1. BehaVerify
 
-Then the results will be in **./MyOutput.tar.xz**. There should be 5 folders within this, named **AcasXu**, **AcasXu\_closed\_loop**, **grid\_world**, and **grid\_world\_big**. The other files may safely be ignored.
+Install from the repository root:
 
-- **AcasXu**
-    - **results** - This folder should contain 6 files. The ones named 'timing' will contain the information in table 4 for "translation". The others will contain information about table 4 for "build" and "verification".
-- **AcasXu\_closed\_loop**
-    - **results** - This folder should contain 2 files. The one named 'timing' will contain the information in the "closed loop" paragraph for translation. The other will contain the information in the "closed loop" paragraph for "build" and "verification".
-- **grid\_world**
-    - **images** - This folder should contain 2 folders (see below) and 6 pictures. The pictures correspond to the network pictures in figure 5.
-	- **counter\_ctl/counter\_ctl\_line.png** - Right image in figure 6.
-	- **counter\_invar/counter\_invar\_line.png** - Left image in figure 6.
-- **grid\_world\_big**
-    - **results** - This folder should contain 2 files. The one named 'timing' will contain the information in the "grid world" paragraph for translation. The other will contain the information in the "grid world" paragraph for "build" and "verification".
-
----
-
-# Potential Errors and Workarounds
-
-1. If a script fails because permission has been denied, please run the script without sudo (running docker without sudo requires some configuration). If the problem persists, please try a different location, as occasionally docker cannot write to secondary disks.
-2. Turn off your VPN, if possible.
-3. If everything runs to completion, but there are no images in the copied directory, please confirm if there are files in the results folders. If there are, then most likely you encountered errors similar to the following during execution:
-   ```
-   OpenBLAS blas_thread_init: pthread_create failed for thread 1 of 16: Operation not permitted
-   ```
-   Note that this error would not prevent the scripts from completing; it would only prevent the generation of graphs and tables. The internet suggests upgrading your docker version (we tested using docker version 20.10.24, build 297e128).
-
----
-# Step by Step Docker instructions
-
-This section will explain how to utilize either the provided docker image or Dockerfile to recreate the tests using docker in more detail.
-
-### 1. Creation of the Docker Image and Container
-
-```
-python3 reinstall.py /path/to/Dockerfile/folder NUXMV_URL
+```bash
+pip install -e .
 ```
 
-Example:
-```
-python3 ./python_script/reinstall.py ./ 'https://nuxmv.fbk.eu/theme/download.php?file=nuXmv-2.1.0-linux64.tar.xz'
+Or with dev dependencies:
+
+```bash
+pip install -e .[dev]
 ```
 
-Alternatively, if you have downloaded nuXmv and placed in the same folder:
-```
-python3 ./python_script/reinstall.py ./ nuXmv --local
+### 2. nuXmv 2.1.0
+
+nuXmv cannot be redistributed. Download and place the binary at
+`REPRODUCIBILITY/2026_TBA/nuXmv_DL/bin/nuXmv`:
+
+```bash
+wget https://nuxmv.fbk.eu/theme/download.php?file=nuXmv-2.1.0-linux64.tar.xz -O nuXmv_DL.tar.xz
+tar -xf nuXmv_DL.tar.xz --one-top-level=nuXmv_DL --strip-components 1
+# Move the binary to the expected location:
+mkdir -p REPRODUCIBILITY/2026_TBA/nuXmv_DL/bin
+mv nuXmv_DL/bin/nuXmv REPRODUCIBILITY/2026_TBA/nuXmv_DL/bin/nuXmv
+chmod +x REPRODUCIBILITY/2026_TBA/nuXmv_DL/bin/nuXmv
 ```
 
-This will create a docker image named behaverify\_2025\_fmcad\_img with the tag latest. It will then also create a container named behaverify\_2025\_fmcad from that image. It will also either download nuXmv from the URL or copy it in.
+### 3. alpha-beta-CROWN (only needed to re-verify contracts)
 
-### 2. Reproducing Results
+The pre-computed contracts are already committed in `contracts/`. You only need
+CROWN if you want to re-run contract verification from scratch.
 
-```
-python3 generate.py /path/to/output
-```
+Clone CROWN as a subdirectory:
 
-Example:
-```
-python3 ./python_script/generate.py ./MyOutput
+```bash
+cd REPRODUCIBILITY/2026_TBA
+git clone https://github.com/Verified-Intelligence/alpha-beta-CROWN alpha-beta-CROWN
+pip install -r alpha-beta-CROWN/complete_verifier/requirements/requirements.txt
 ```
 
 ---
 
-# Verbose Installation for Running tests locally without docker.
+## Running the Compositional Pipeline
 
-The instructions are for Linux (and more specifically Ubuntu). We have not tested this on any other systems. Some of the scripts are likely to break on other systems. For instance, the scripts assume that nuXmv will be named nuXmv, and not nuXmv.exe. However, our code itself should still work (though we have not tested this).
+All commands below assume you are in:
 
-This section is intentionally lengthy. If you are not interested in the details and just want the commands, please scroll down further
+```bash
+cd REPRODUCIBILITY/2026_TBA/examples/grid_world
+```
 
+**This is required.** Both `run_compositional_pipeline.py` and `dsl_to_nuxmv.py`
+resolve paths relative to the current working directory. Running from any other
+directory will produce path errors.
 
-1. nuXmv<br />Please download nuXmv (see  https://nuxmv.fbk.eu/ ). You only need to download nuXmv. There should be no installation. Download the relevant version for your system. It should be version 2.0.0. The download will include many files. You only need the executable (no file extension). See above for more information.
-2. Updating<br /> We suggest running the following commands.
+### Quick Start (using pre-computed contracts)
 
-		sudo apt update
-		sudo apt upgrade
-3. Python3<br />Python3 is used to run BehaVerify. As such, it is necessary. If you already have python3 installed, skip the following step. If not, run
-	
-		sudo apt install python3
-4. pip<br />pip is used to install other python packages. If you already have pip installed (for python3), skip the following step. If not, run
+The `contracts/` directory contains pre-computed A/G contracts for all tested
+networks. Use `--skip-contracts` to bypass the CROWN step entirely.
 
-		sudo apt install pip
-5. PyTrees<br />PyTrees is used in the generated python code. It is necessary for the differential testing experiments, or for using generated python code in general.
+```bash
+# Test 1: Unsafe network (0995, ~99.5% accuracy) -- expect INVAR=false
+python run_compositional_pipeline.py \
+    --onnx networks/0995__6_18_0__200_1.onnx \
+    --output results/compositional/0995 \
+    --skip-contracts \
+    --contracts contracts/0995__6_18_0__200_1.json
 
-		python3 -m pip install py_trees
-6. pandas<br />pandas is used for data gathering and displaying. It is necessary for graph and table creation.
+# Test 2: Safe network, 100 neurons -- expect INVAR=true (if all contracts SAT)
+python run_compositional_pipeline.py \
+    --onnx networks/1000__6_18_0__0100_1.onnx \
+    --output results/compositional/1000__0100 \
+    --skip-contracts \
+    --contracts contracts/1000__6_18_0__0100_1.json
 
-		python3 -m pip install pandas
-7. jinja2<br />jinja2 is used by something for graph/table creations.
+# Test 3: Safe network, 300 neurons -- expect INVAR=true (if all contracts SAT)
+python run_compositional_pipeline.py \
+    --onnx networks/1000__6_18_0__0300_1.onnx \
+    --output results/compositional/1000__0300 \
+    --skip-contracts \
+    --contracts contracts/1000__6_18_0__0300_1.json
+```
 
-		python3 -m pip install jinja2
-8. textX<br />textX is used by BehaVerify for parsing. It is necessary for BehaVerify to run in any capacity
+Each run produces a `pipeline_report.json` in the output directory with per-step
+wall time, peak memory, contract counts, and nuXmv verdict.
 
-		python3 -m pip install textX
-9. matplotlib<br />matplotlib is used for generating graphs and plots.
+### Full Pipeline (re-verifying contracts via CROWN)
 
-		python3 -m pip install matplotlib
-10. graphviz<br />graphviz is used to generate graphs and plots.
+To re-run contract verification, edit `verify_contracts.yaml` to point to the
+desired network, then run from `grid_world/`:
 
-		sudo apt install graphviz
-11. git<br />git is used to download our repository. If you would prefer to manually download our repository, you can skip this step.
+```bash
+python verify_contracts.py
+```
 
-		sudo apt install git
-12. (OPTIONAL) Haskell prerequisites<br />These are prerequisites required by Haskell. **THESE STEPS ARE UNNECESSARY FOR FMAS RESULTS**
+Then run the pipeline without `--skip-contracts`:
 
-		sudo apt install build-essential curl libffi-dev libffi8ubuntu1 libgmp-dev libgmp10 libncurses-dev libncurses5 libtinfo5
-13. (OPTIONAL) Additional Haskell prerequisite<br />
-
-		sudo apt install libgmp3-dev
-14. (OPTIONAL) GHCUP<br />Please follow the instructions at https://www.haskell.org/ghcup/ to install GHCUP, Haskell, and cabal. These are used to run generated Haskell code. Please preappend (or append) your path when asked.
-15. (OPTIONAL) GHCUP upgrade<br />This will upgrade GHCUP.
-
-		ghcup upgrade
-16. (OPTIONAL) Cabal<br />This will install and set the specific version of cabal we used. Most likely, everything will work with a different version.
-
-		ghcup install cabal 3.6.2.0
-		ghcup set cabal 3.6.2.0
-17. (OPTIONAL) GHC<br />This will install and set the specific version of ghc we used. Most likely, everything will work with a different version.
-
-		ghcup install ghc 9.2.8
-		ghcup set ghc 9.2.8
-18. BehaVerify<br />Download our repository. If you did not install git, please download manually. If you installed git
-
-		git clone https://github.com/verivital/behaverify
-19. Enable scripts<br />This will allow all the necessary scripts to run. Please navigate to the top level of our repository and run the following
-
-		sudo chmod -R +x ./REPRODUCIBILITY/2025_NEUS/*.sh
-20. Move nuXmv<br />You downloaded nuXmv in step 1. Please place it in behaverify/REPRODUCIBILITY/2025\_NEUS/
-21. Enable nuXmv<br />Please navigate to the top level of our repository and run the following
-
-		sudo chmod +x ./REPRODUCIBILITY/2025_NEUS/nuXmv
-
-
-You are now ready to run the scripts locally. Scroll past the concise installation instructions to see the scripts explanation.
+```bash
+python run_compositional_pipeline.py \
+    --onnx networks/1000__6_18_0__0100_1.onnx \
+    --output results/compositional/1000__0100 \
+    --contracts contracts/1000__6_18_0__0100_1.json
+```
 
 ---
 
-# Concise Installation for Running the tests locally without docker.
+## Running the Monolithic Pipeline (for comparison)
 
-The instructions are for Linux (and more specifically Ubuntu). We have not tested this on any other systems. Some of the scripts are likely to break on other systems. For instance, the scripts assume that nuXmv will be named nuXmv, and not nuXmv.exe. However, our code itself should still work (though we have not tested this).
+### Generate SMV files
 
+```bash
+# With timing (writes results/timing_*.txt per tree):
+./time_make_smv.sh python
 
-Please download nuXmv (see  https://nuxmv.fbk.eu/ ). You only need to download nuXmv. There should be no installation. Download the relevant version for your system. It should be version 2.0.0.
-```
-sudo apt update
-sudo apt upgrade
-sudo apt install python3
-sudo apt install pip
-```
-	
-(OPTIONAL) PyTrees is required to use the python code generated by BehaVerify. However, this is not used in the FMAS tests
-```
-python3 -m pip install py_trees
-```
-	
-Below we have more mandatory requirements
-```
-python3 -m pip install pandas
-python3 -m pip install jinja2
-python3 -m pip install textX
-python3 -m pip install matplotlib
-sudo apt install graphviz
-sudo apt install git
-```
-	
-(OPTIONAL) These are prerequisites for Haskell, which is not used in the FMAS tests.
-```
-sudo apt install build-essential curl libffi-dev libffi8ubuntu1 libgmp-dev libgmp10 libncurses-dev libncurses5 libtinfo5
-sudo apt install libgmp3-dev
+# Without timing:
+./make_smv.sh python
 ```
 
-(OPTIONAL) Please follow the instructions at https://www.haskell.org/ghcup/ to install ghcup, Haskell, and cabal. These are used to run generated Haskell code. Please preappend (or append) your path when asked.
-```
-ghcup upgrade
-ghcup install cabal 3.6.2.0
-ghcup set cabal 3.6.2.0
-ghcup install ghc 9.2.8
-ghcup set ghc 9.2.8
-```
-	
-You may clone or download the repository
-```
-git clone https://github.com/verivital/behaverify
+This generates `smv/` files for all trees in `tree/`. The `smv/` directory is
+gitignored and must be regenerated locally.
+
+### Run nuXmv verification
+
+```bash
+# All 1000-family networks, table encoding, with nuXmv internal timing:
+./run_smv.sh table \
+    "../../nuXmv_DL/bin/nuXmv -source ../../scripts/nuxmv_commands/command_all_invar" \
+    timing_table
+
+# 0995 network (not covered by run_smv.sh -- run manually):
+../../nuXmv_DL/bin/nuXmv \
+    -source ../../scripts/nuxmv_commands/command_all_invar \
+    ./smv/table_0995__6_18_0__200_1.smv \
+    > ./results/timing_table_0995.txt
 ```
 
-Please navigate to the top level of our repository and run the following
-```
-sudo chmod -R +x ./REPRODUCIBILITY/2025_NEUS/*.sh
-```
-
-You downloaded nuXmv earlier. Please place it in behaverify/REPRODUCIBILITY/2025\_NEUS/
-
-Please navigate to the top level of our repository and run the following
-```
-sudo chmod +x ./REPRODUCIBILITY/2025_NEUS/nuXmv
-```
-
-You are now ready to run the scripts locally. 
-
+Results are saved to `results/`. Report **User time** from the nuXmv output for
+verification timing.
 
 ---
 
-# Running Tests Locally without docker (requires installation, see above).
+## Interpreting Results
 
-Note that each script will erase all the relevant results before running, to ensure that the results which exist after the script runs are accurate to that script. Thus if you wish to save the results, please move them before running another script.
+| Field | Meaning |
+|---|---|
+| `steps.contracts.sat` | Number of A/G contracts verified SAT by CROWN |
+| `steps.contracts.timeout` | Contracts that timed out (inconclusive) |
+| `steps.smv_generation.wall_sec` | Time to generate contract-injected SMV |
+| `steps.nuxmv_verification.invarspec` | `"true"` = invariant holds, `"false"` = counterexample found |
+| `verdict` | Combined INVAR + CTL result |
+
+**Important:** If contracts timed out, `invarspec=false` may be a spurious
+counterexample caused by an incomplete abstraction, not a real safety violation.
+The invariant is only meaningful when all 38 contracts are SAT.
+
+For the monolithic results, `User time` in the nuXmv output (from `command_all_invar`)
+is the verification time. SMV generation time is in `results/timing_*.txt` from
+`time_make_smv.sh`.
+
+---
+
+## Common Issues
+
+### "Permission denied" when running `make_smv.sh`
+
+The script requires a Python interpreter as its first argument:
+
+```bash
+./make_smv.sh python          # uses system python
+./make_smv.sh python3         # or explicit python3
+```
+
+Running `./make_smv.sh` without arguments leaves `$python` empty, causing bash
+to try to execute the `.py` file directly.
+
+### Doubled path in ONNX loading (e.g., `.../results/compositional/0995//home/...`)
+
+Both `dsl_to_nuxmv.py` and CROWN join paths via string concatenation, not
+`os.path.join`. Absolute ONNX paths produce doubled slashes. Always use paths
+**relative to the current working directory** (`grid_world/`) or relative to the
+tree file's parent directory. `run_compositional_pipeline.py` handles this
+automatically via `os.path.relpath()`.
+
+### Compositional pipeline gives INVAR=false for a safe network
+
+This means some contracts timed out and the abstraction is too coarse. The SMV
+model allows the NN to make moves it wouldn't actually make, giving nuXmv a
+spurious counterexample. Re-run `verify_contracts.py` with a higher
+`timeout_sec` in `verify_contracts.yaml` to get more SAT contracts.
+
+### `run_smv.sh` only handles the `1000` network family
+
+The script loops over neuron counts `{0100, 0150, 0200, 0250, 0300}` and
+hardcodes the `_1000__6_18_0__0` filename pattern. The `0995` network must be
+run manually (see above).
+
+### nuXmv output has no timing information
+
+Use `command_all_invar` instead of `command_combo_invar_ctl`. The combo command
+does not include nuXmv's internal `time` command between steps.
+
+---
+
+## Network Naming Convention
 
 ```
-./BehaVerify_2025_NEUS ./
+{accuracy}__{grid_rows}_{obstacles}_{obs_size}__{neuron_count}_{run}.onnx
+
+Example: 1000__6_18_0__0300_1.onnx
+  - 1000  = 100.0% training accuracy (1000/1000 correct)
+  - 6     = 6x6 grid (7x7 including borders)
+  - 18    = 18 obstacles
+  - 0     = obstacle size parameter
+  - 0300  = 300 neurons in hidden layer
+  - 1     = run index
 ```
 
+Networks starting with `0995` achieved ~99.5% accuracy and are expected to be
+unsafe (the invariant should fail). Networks starting with `1000` achieved 100%
+accuracy and are expected to be safe.
