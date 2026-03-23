@@ -1,0 +1,32 @@
+# verify_acas_contracts.yaml
+# Configuration for A/G contract verification of the ACAS Xu closed-loop NSBT.
+# See verify_acas_contracts.py for the contract schema and class index mapping.
+#
+# Contracts are pre-computed by generate_acas_contracts.py and stored as a JSON
+# file containing range-based input bounds (nn_input_lower / nn_input_upper).
+# This script just loads them and calls CROWN for each contract.
+
+# Pre-computed contract specs (output of generate_acas_contracts.py).
+contracts_path: "contracts/acas_contract_specs.json"
+
+# Which NN to verify.  network_idx corresponds to the a_prev selector in the tree:
+#   1 = a_prev=clear        (ACASXU_run2a_1_1_batch_2000.onnx)
+#   2 = a_prev=weak_right   (ACASXU_run2a_2_1_batch_2000.onnx)
+#   3 = a_prev=weak_left    (ACASXU_run2a_3_1_batch_2000.onnx)
+#   4 = a_prev=strong_right (ACASXU_run2a_4_1_batch_2000.onnx)
+#   5 = a_prev=strong_left  (ACASXU_run2a_5_1_batch_2000.onnx)
+network_idx: 1
+
+# Number of NN output classes.
+# clear=0, weak_left=1, weak_right=2, strong_left=3, strong_right=4
+num_classes: 5
+
+# Verification parameters
+verification:
+  # BaB timeout in seconds per contract.
+  # ACAS Xu input regions are much smaller than grid-world contracts, so
+  # 30 s is a reasonable starting point (vs 60 s for grid world).
+  timeout_sec: 30
+
+# Output path for verification report (relative to script working directory).
+output_path: "contracts/acas_verified_nn1.json"
