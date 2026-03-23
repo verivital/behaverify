@@ -148,10 +148,17 @@ def save_report(
 # Entry point
 # ---------------------------------------------------------------------------
 
-def run_verification(cfg: dict[str, Any], limit: int | None = None) -> None:
+def run_verification(
+    cfg: dict[str, Any],
+    limit: int | None = None,
+    retry_from: str | None = None,
+    timeout_override: int | None = None,
+) -> None:
     nn_idx      = cfg["network_idx"]
     num_classes = cfg["num_classes"]
-    timeout     = cfg["verification"]["timeout_sec"]
+    if timeout_override is not None:
+        cfg["verification"]["timeout_sec"] = timeout_override
+    timeout = cfg["verification"]["timeout_sec"]
 
     # Load pre-computed contracts and filter to the requested NN
     with open(cfg["contracts_path"], encoding="utf-8") as f:
@@ -163,6 +170,16 @@ def run_verification(cfg: dict[str, Any], limit: int | None = None) -> None:
     if not contracts:
         print(f"No contracts found for network_idx={nn_idx}. Check contracts_path.")
         sys.exit(1)
+
+    # --retry-from: load previous results and retry only TIMEOUT contracts
+    previous_records: dict[int, dict] = {}
+    if retry_from:
+        with open(retry_from, encoding="utf-8") as f:
+            prev = json.load(f)
+        previous_records = {r["id"]: r for r in prev["contracts"]}
+        timeout_ids = {r["id"] for r in prev["contracts"] if r["status"] == "TIMEOUT"}
+        contracts = [c for c in contracts if c["id"] in timeout_ids]
+        print(f"Retry mode: {len(contracts)} TIMEOUT contracts from {retry_from}")
 
     if limit is not None:
         contracts = contracts[:limit]
@@ -176,7 +193,7 @@ def run_verification(cfg: dict[str, Any], limit: int | None = None) -> None:
     print("-" * 80)
 
     crown_config = build_crown_config(cfg)
-    records = []
+    new_records = []
     run_start = time.perf_counter()
 
     for i, contract in enumerate(contracts):
@@ -201,7 +218,7 @@ def run_verification(cfg: dict[str, Any], limit: int | None = None) -> None:
         )
         sys.stdout.flush()
 
-        records.append({
+        new_records.append({
             "id":                     contract["id"],
             "heading_own_var":        contract["heading_own_var"],
             "x_mult":                 contract["x_mult"],
@@ -215,6 +232,19 @@ def run_verification(cfg: dict[str, Any], limit: int | None = None) -> None:
         })
 
     total_wall = time.perf_counter() - run_start
+
+    # Merge with previous results if retrying
+    if retry_from:
+        updated = {r["id"]: r for r in new_records}
+        previous_records.update(updated)
+        # Restore original order
+        records = list(previous_records.values())
+        records.sort(key=lambda r: r["id"])
+        improved = sum(1 for r in new_records if r["status"] == "SAT")
+        print(f"\nRetry improved {improved}/{len(new_records)} contracts to SAT")
+    else:
+        records = new_records
+
     print("-" * 80)
     print_summary(records)
     print(f"Total wall time: {total_wall:.1f}s  ({total_wall/60:.1f} min)")
@@ -233,5 +263,18 @@ if __name__ == "__main__":
         "--limit", type=int, default=None,
         help="Verify only the first N contracts (useful for pilot runs)",
     )
+    parser.add_argument(
+        "--retry-from", default=None, dest="retry_from",
+        help="Path to a previous results JSON; re-verify only TIMEOUT contracts",
+    )
+    parser.add_argument(
+        "--timeout", type=int, default=None,
+        help="Override timeout_sec from YAML for this run",
+    )
     args = parser.parse_args()
-    run_verification(load_config(args.config), limit=args.limit)
+    run_verification(
+        load_config(args.config),
+        limit=args.limit,
+        retry_from=args.retry_from,
+        timeout_override=args.timeout,
+    )
