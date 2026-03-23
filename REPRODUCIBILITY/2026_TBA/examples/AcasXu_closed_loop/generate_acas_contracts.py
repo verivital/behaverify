@@ -1,0 +1,447 @@
+"""
+generate_acas_contracts.py
+
+Enumerate dangerous (state, advisory) pairs for the ACAS Xu closed-loop NSBT and
+produce a JSON contract specification file for CROWN verification.
+
+A contract says: "from any state in input region R, NN_k must NOT output advisory F",
+where R covers all states for which applying F causes distance < 200.
+
+Contract grouping (analogous to the grid-world approach):
+  Fix  : (x_mult, y_mult, heading_own_var)  --  discrete; determines inputs 3/4/5 exactly
+  Range: (x_var, y_var)                     --  bounding box over dangerous values
+
+For each non-empty (heading_own_var, x_mult, y_mult, forbidden_advisory) group:
+  - Compute [lower, upper] bounding box over the NN inputs of all dangerous states
+  - One CROWN call per NN covers all those dangerous states at once
+
+This yields at most 40 headings × 4 sign-quadrants × 5 advisories × 5 NNs = 4,000 contracts,
+but only non-empty groups are emitted (typically a few hundred in practice).
+
+Compare to the per-state approach: 2,830 dangerous pairs × 5 NNs = 14,150 per-point CROWN calls.
+
+Physics model (from acasxu_template_360.tree / environment_update):
+  - heading_own_var updated first (advisory applied)
+  - position (x_var, y_var, x_mult, y_mult) computed using the NEW heading
+  - State domain: x_var,y_var in [0,10], x_mult,y_mult in {-1,1}, heading_own_var in [0,39]
+  - Safety invariant: distance = round(sqrt(x_var^2 + y_var^2)) * 100 >= 200
+
+NN selection (from tree selector):
+  a_prev = 'clear'        -> network_idx=1  (ACASXU_run2a_1_1_batch_2000.onnx)
+  a_prev = 'weak_right'   -> network_idx=2  (ACASXU_run2a_2_1_batch_2000.onnx)
+  a_prev = 'weak_left'    -> network_idx=3  (ACASXU_run2a_3_1_batch_2000.onnx)
+  a_prev = 'strong_right' -> network_idx=4  (ACASXU_run2a_4_1_batch_2000.onnx)
+  a_prev = 'strong_left'  -> network_idx=5  (ACASXU_run2a_5_1_batch_2000.onnx)
+
+NN inputs (normalized, from template):
+  1. (distance - 19791.091) / 60261
+  2. relative_angle_adjusted / 360   [degrees -> normalized]
+  3. intersect_angle_adjusted / 360  [degrees -> normalized; CONSTANT for fixed heading]
+  4. (speed_own - 650) / 1100        [constant: (20-650)/1100]
+  5. (speed_int - 600) / 1200        [constant: (30-600)/1200]
+
+Output: JSON file with range-based contract specs.
+"""
+
+import math
+import json
+import itertools
+import argparse
+from collections import defaultdict
+from pathlib import Path
+
+# ---------------------------------------------------------------------------
+# Constants (from acasxu_template_360.tree)
+# ---------------------------------------------------------------------------
+
+DISTANCE_MODIFIER  = 100
+MAX_DIST           = 1000          # raw distance units (max_dist constant)
+MAX_DIST_VAR       = MAX_DIST // DISTANCE_MODIFIER  # = 10
+SPEED_OWN          = 20
+SPEED_INT          = 30
+SECONDS_PER_UPDATE = 6
+DEGREE_MULTIPLIER  = 9             # 360 / 40 = 9 degrees per heading step
+MAX_HEADING_VAR    = 360 // DEGREE_MULTIPLIER  # = 40  (heading_own_var range [0,39])
+HEADING_INT_VAR    = 225 // DEGREE_MULTIPLIER  # = 25  (heading_int_var is DEFINE = 25)
+HEADING_INT        = HEADING_INT_VAR * DEGREE_MULTIPLIER  # = 225 degrees
+
+SAFETY_THRESHOLD   = 200           # distance must stay >= 200
+
+# NN normalization constants
+DISTANCE_MEAN        = 19791.091
+DISTANCE_RANGE       = 60261.0
+SPEED_OWN_MEAN       = 650.0
+SPEED_OWN_RANGE      = 1100.0
+SPEED_INT_MEAN       = 600.0
+SPEED_INT_RANGE      = 1200.0
+
+# Advisories (enum order from template = class output index)
+ADVISORIES = ['clear', 'weak_left', 'weak_right', 'strong_left', 'strong_right']
+ADV_IDX    = {a: i for i, a in enumerate(ADVISORIES)}
+
+# NN selection: a_prev -> (network_idx, onnx_path)
+# From the tree selector: seq_k_1 checks if_was_<advisory> then call_k_1
+A_PREV_TO_NN = {
+    'clear':        (1, 'networks/ACASXU_run2a_1_1_batch_2000.onnx'),
+    'weak_right':   (2, 'networks/ACASXU_run2a_2_1_batch_2000.onnx'),
+    'weak_left':    (3, 'networks/ACASXU_run2a_3_1_batch_2000.onnx'),
+    'strong_right': (4, 'networks/ACASXU_run2a_4_1_batch_2000.onnx'),
+    'strong_left':  (5, 'networks/ACASXU_run2a_5_1_batch_2000.onnx'),
+}
+
+# Fixed speed inputs (constant across all states)
+_NN_INPUT_SPEED_OWN = (SPEED_OWN - SPEED_OWN_MEAN) / SPEED_OWN_RANGE  # -0.5727...
+_NN_INPUT_SPEED_INT = (SPEED_INT - SPEED_INT_MEAN) / SPEED_INT_RANGE   # -0.4750
+
+# ---------------------------------------------------------------------------
+# Physics functions
+# ---------------------------------------------------------------------------
+
+def _vel_x(heading_degrees: int, speed: int) -> int:
+    return round(math.cos(math.radians(heading_degrees)) * speed)
+
+def _vel_y(heading_degrees: int, speed: int) -> int:
+    return round(math.sin(math.radians(heading_degrees)) * speed)
+
+# Precompute fixed intruder velocities (heading_int = 225 degrees, speed_int = 30)
+_VEL_X_INT = _vel_x(HEADING_INT, SPEED_INT)
+_VEL_Y_INT = _vel_y(HEADING_INT, SPEED_INT)
+
+
+def apply_advisory(heading_own_var: int, advisory: str) -> int:
+    """Return new heading_own_var after applying advisory."""
+    n = MAX_HEADING_VAR
+    if advisory == 'strong_left':
+        return (heading_own_var + 2) % n
+    if advisory == 'weak_left':
+        return (heading_own_var + 1) % n
+    if advisory == 'weak_right':
+        return (n + heading_own_var - 1) % n
+    if advisory == 'strong_right':
+        return (n + heading_own_var - 2) % n
+    return heading_own_var  # clear
+
+
+def compute_distance(x_var: int, y_var: int) -> int:
+    """distance = round(sqrt(x_var^2 + y_var^2)) * DISTANCE_MODIFIER."""
+    return round(math.sqrt(x_var * x_var + y_var * y_var)) * DISTANCE_MODIFIER
+
+
+def simulate_step(
+    x_var: int, y_var: int, x_mult: int, y_mult: int, heading_own_var: int,
+    advisory: str,
+) -> tuple[int, int, int, int, int]:
+    """
+    Simulate one environment_update tick.
+
+    Heading is updated first (per the sequential order in environment_update),
+    then position is computed using the new heading via velocity_x_own / velocity_y_own
+    (DEFINE variables that read heading_own_var after it is updated).
+
+    Returns (next_x_var, next_y_var, next_x_mult, next_y_mult, next_heading_own_var).
+    """
+    new_heading_var = apply_advisory(heading_own_var, advisory)
+    new_heading     = new_heading_var * DEGREE_MULTIPLIER
+
+    vel_x_own = _vel_x(new_heading, SPEED_OWN)
+    vel_y_own = _vel_y(new_heading, SPEED_OWN)
+
+    x = x_var * DISTANCE_MODIFIER
+    y = y_var * DISTANCE_MODIFIER
+
+    next_x = x * x_mult + SECONDS_PER_UPDATE * (_VEL_X_INT - vel_x_own)
+    next_y = y * y_mult + SECONDS_PER_UPDATE * (_VEL_Y_INT - vel_y_own)
+
+    next_x_mult = -1 if next_x < 0 else 1
+    next_y_mult = -1 if next_y < 0 else 1
+    next_x_var  = int(min(MAX_DIST, abs(next_x)) // DISTANCE_MODIFIER)
+    next_y_var  = int(min(MAX_DIST, abs(next_y)) // DISTANCE_MODIFIER)
+
+    return next_x_var, next_y_var, next_x_mult, next_y_mult, new_heading_var
+
+
+# ---------------------------------------------------------------------------
+# Angle computations (matching DSL DEFINE logic)
+# ---------------------------------------------------------------------------
+
+def _arctan_xy(x_var: int, y_var: int) -> int:
+    """round(degrees(atan(x_var / y_var))); 0 when y_var == 0."""
+    return 0 if y_var == 0 else round(math.degrees(math.atan(x_var / y_var)))
+
+
+def _arctan_yx(x_var: int, y_var: int) -> int:
+    """round(degrees(atan(y_var / x_var))); 0 when x_var == 0."""
+    return 0 if x_var == 0 else round(math.degrees(math.atan(y_var / x_var)))
+
+
+def _arctan_val(x_var: int, y_var: int, x_mult: int, y_mult: int) -> int:
+    """
+    Matches arctan_val DEFINE in template:
+      (x_mult=1,  y_mult=1)  -> arctan_yx
+      (x_mult=1,  y_mult=-1) -> arctan_xy
+      (x_mult=-1, y_mult=1)  -> arctan_yx
+      (x_mult=-1, y_mult=-1) -> arctan_xy  [default/last case]
+    """
+    if y_mult == 1:
+        return _arctan_yx(x_var, y_var)
+    return _arctan_xy(x_var, y_var)
+
+
+def _normalize_angle(angle_degrees: int) -> int:
+    """
+    Apply mod/pos/adjusted normalization from the DSL:
+      mod = angle % 360
+      pos = mod if mod >= 0 else mod + 360
+      adjusted = pos - 360 if pos > 180 else pos
+    Returns adjusted angle in [-180, 180].
+    """
+    mod = angle_degrees % 360
+    pos = mod if mod >= 0 else mod + 360
+    return pos - 360 if pos > 180 else pos
+
+
+def compute_relative_angle_adjusted(
+    x_var: int, y_var: int, x_mult: int, y_mult: int, heading_own_var: int
+) -> int:
+    """
+    Matches relative_angle DEFINE + normalization chain in the template.
+    Case priority follows DSL sequential case order (first match wins).
+    """
+    heading_own = heading_own_var * DEGREE_MULTIPLIER
+    x = x_var * DISTANCE_MODIFIER  # only used for == 0 checks
+    y = y_var * DISTANCE_MODIFIER
+
+    av = _arctan_val(x_var, y_var, x_mult, y_mult)
+
+    if x_mult == 1 and y == 0:
+        rel = 270 - heading_own
+    elif x_mult == -1 and y == 0:
+        rel = 90 - heading_own
+    elif x == 0 and y_mult == 1:
+        rel = 360 - heading_own
+    elif x == 0 and y_mult == -1:
+        rel = 180 - heading_own
+    elif x_mult == 1 and y_mult == 1:
+        rel = (270 - heading_own) + av
+    elif x_mult == 1 and y_mult == -1:
+        rel = (180 - heading_own) + av
+    elif x_mult == -1 and y_mult == 1:
+        rel = (90 - heading_own) - av
+    else:  # x_mult == -1 and y_mult == -1
+        rel = (180 - heading_own) - av
+
+    return _normalize_angle(rel)
+
+
+def compute_intersect_angle_adjusted(heading_own_var: int) -> int:
+    """intersect_angle = heading_own - heading_int, then normalized."""
+    heading_own = heading_own_var * DEGREE_MULTIPLIER
+    return _normalize_angle(heading_own - HEADING_INT)
+
+
+def compute_nn_inputs(
+    x_var: int, y_var: int, x_mult: int, y_mult: int, heading_own_var: int
+) -> list[float]:
+    """
+    Compute the 5 normalized NN input values for a given state.
+    Matches the DSL rdiv expressions for network_k_1 variables.
+    """
+    dist    = compute_distance(x_var, y_var)
+    rel_adj = compute_relative_angle_adjusted(x_var, y_var, x_mult, y_mult, heading_own_var)
+    int_adj = compute_intersect_angle_adjusted(heading_own_var)
+
+    return [
+        (dist    - DISTANCE_MEAN)    / DISTANCE_RANGE,   # input 1: distance
+        rel_adj  / 360.0,                                  # input 2: relative angle
+        int_adj  / 360.0,                                  # input 3: intersect angle (CONSTANT for fixed heading)
+        _NN_INPUT_SPEED_OWN,                               # input 4: speed_own (constant)
+        _NN_INPUT_SPEED_INT,                               # input 5: speed_int (constant)
+    ]
+
+
+# ---------------------------------------------------------------------------
+# Dangerous-pair enumeration
+# ---------------------------------------------------------------------------
+
+def enumerate_dangerous_pairs() -> list[dict]:
+    """
+    Return list of (state, forbidden_advisory) dicts for states where
+    current distance >= SAFETY_THRESHOLD and some advisory causes
+    next distance < SAFETY_THRESHOLD.
+    """
+    pairs = []
+    for x_var, y_var, x_mult, y_mult, h in itertools.product(
+        range(MAX_DIST_VAR + 1),  # x_var: 0..10
+        range(MAX_DIST_VAR + 1),  # y_var: 0..10
+        (-1, 1),                  # x_mult
+        (-1, 1),                  # y_mult
+        range(MAX_HEADING_VAR),   # heading_own_var: 0..39
+    ):
+        if compute_distance(x_var, y_var) < SAFETY_THRESHOLD:
+            continue  # already unsafe; invariant already violated
+
+        for advisory in ADVISORIES:
+            nx, ny, _, _, _ = simulate_step(x_var, y_var, x_mult, y_mult, h, advisory)
+            if compute_distance(nx, ny) < SAFETY_THRESHOLD:
+                pairs.append({
+                    'state': {
+                        'x_var': x_var, 'y_var': y_var,
+                        'x_mult': x_mult, 'y_mult': y_mult,
+                        'heading_own_var': h,
+                    },
+                    'forbidden_advisory':     advisory,
+                    'forbidden_advisory_idx': ADV_IDX[advisory],
+                    'nn_inputs': compute_nn_inputs(x_var, y_var, x_mult, y_mult, h),
+                })
+    return pairs
+
+
+# ---------------------------------------------------------------------------
+# Range-based contract grouping
+# ---------------------------------------------------------------------------
+
+def group_range_contracts(pairs: list[dict], eps: float = 1e-4) -> list[dict]:
+    """
+    Group dangerous pairs by (heading_own_var, x_mult, y_mult, forbidden_advisory).
+
+    For each non-empty group, compute a bounding box over the NN inputs of all
+    dangerous states in the group, then emit one contract per NN (a_prev value).
+
+    This is the range-based analog of the grid-world contracts:
+      - Fixed: heading + sign quadrant  (determines inputs 3/4/5 exactly)
+      - Ranged: (x_var, y_var)          (gives bounding box on inputs 1/2)
+
+    Args:
+        pairs: output of enumerate_dangerous_pairs()
+        eps:   small margin added to each side of the bounding box
+
+    Returns:
+        List of range-based contract dicts, one per (group, NN).
+    """
+    # Accumulate inputs and state lists per group
+    groups: dict[tuple, dict] = {}
+    for pair in pairs:
+        s   = pair['state']
+        key = (s['heading_own_var'], s['x_mult'], s['y_mult'], pair['forbidden_advisory'])
+        if key not in groups:
+            groups[key] = {'inputs': [], 'states': []}
+        groups[key]['inputs'].append(pair['nn_inputs'])
+        groups[key]['states'].append([s['x_var'], s['y_var']])
+
+    contracts = []
+    contract_id = 1
+
+    for key in sorted(groups):
+        h, xm, ym, adv = key
+        inp_list = groups[key]['inputs']
+        states   = groups[key]['states']
+        n        = len(inp_list[0])  # = 5
+
+        lower = [min(inp[i] for inp in inp_list) - eps for i in range(n)]
+        upper = [max(inp[i] for inp in inp_list) + eps for i in range(n)]
+
+        # Inputs 3/4/5 are constants for fixed heading; verify the box is tight there
+        # (both bounds should be equal up to 2*eps — just a sanity note, not enforced here)
+
+        sign = lambda v: '+' if v == 1 else '-'
+
+        for a_prev, (nn_idx, onnx) in A_PREV_TO_NN.items():
+            contracts.append({
+                'id':               contract_id,
+                'type':             'range',
+                'heading_own_var':  h,
+                'x_mult':           xm,
+                'y_mult':           ym,
+                'a_prev':           a_prev,
+                'network_idx':      nn_idx,
+                'onnx':             onnx,
+                'nn_input_lower':   lower,
+                'nn_input_upper':   upper,
+                'n_states_covered': len(states),
+                'dangerous_xy':     states,
+                'forbidden_advisory':     adv,
+                'forbidden_advisory_idx': ADV_IDX[adv],
+                'description': (
+                    f"NN_{nn_idx} (a_prev={a_prev}) "
+                    f"h={h} ({sign(xm)},{sign(ym)}) "
+                    f"covers {len(states)} state(s), "
+                    f"must not choose {adv}"
+                ),
+            })
+            contract_id += 1
+
+    return contracts
+
+
+# ---------------------------------------------------------------------------
+# Entry point
+# ---------------------------------------------------------------------------
+
+def main() -> None:
+    parser = argparse.ArgumentParser(
+        description="Generate ACAS Xu A/G contract specs (range-based) for CROWN."
+    )
+    parser.add_argument(
+        '--output', default='contracts/acas_contract_specs.json',
+        help='Output JSON path (default: contracts/acas_contract_specs.json)',
+    )
+    parser.add_argument(
+        '--eps', type=float, default=1e-4,
+        help='Bounding-box margin added to each input dimension (default: 1e-4)',
+    )
+    parser.add_argument(
+        '--dry-run', action='store_true',
+        help='Print counts only; do not write output file',
+    )
+    args = parser.parse_args()
+
+    print("Enumerating dangerous (state, advisory) pairs...")
+    pairs = enumerate_dangerous_pairs()
+    print(f"  {len(pairs)} dangerous pairs across "
+          f"{len({(p['state']['heading_own_var'], p['state']['x_mult'], p['state']['y_mult'], p['forbidden_advisory']) for p in pairs})} "
+          f"(heading, sign, advisory) groups")
+
+    contracts = group_range_contracts(pairs, eps=args.eps)
+    n_groups  = len(contracts) // len(A_PREV_TO_NN)
+    print(f"  {n_groups} non-empty groups x {len(A_PREV_TO_NN)} NNs = {len(contracts)} range contracts")
+    print(f"  (vs {len(pairs) * len(A_PREV_TO_NN)} per-state contracts)")
+
+    if args.dry_run:
+        print("Dry run -- no file written.")
+        return
+
+    output_path = Path(args.output)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    report = {
+        'description': 'ACAS Xu closed-loop A/G contract specs (range-based)',
+        'physics': {
+            'degree_multiplier':    DEGREE_MULTIPLIER,
+            'seconds_per_update':   SECONDS_PER_UPDATE,
+            'speed_own':            SPEED_OWN,
+            'speed_int':            SPEED_INT,
+            'heading_int_degrees':  HEADING_INT,
+            'safety_threshold':     SAFETY_THRESHOLD,
+            'heading_update_order': (
+                'heading updated first (sequential env_update), '
+                'then position computed with new heading'
+            ),
+        },
+        'contract_type': 'range-based: bounding box over (x_var,y_var) for fixed (heading,sign,advisory)',
+        'nn_mapping': {
+            a_prev: {'network_idx': nn_idx, 'onnx': onnx}
+            for a_prev, (nn_idx, onnx) in A_PREV_TO_NN.items()
+        },
+        'total_dangerous_pairs': len(pairs),
+        'total_groups': n_groups,
+        'total_contracts': len(contracts),
+        'contracts': contracts,
+    }
+
+    with open(output_path, 'w', encoding='utf-8') as f:
+        json.dump(report, f, indent=2)
+    print(f"Saved to {output_path}")
+
+
+if __name__ == '__main__':
+    main()
