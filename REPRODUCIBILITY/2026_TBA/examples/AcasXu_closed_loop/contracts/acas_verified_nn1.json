@@ -1,14 +1,14 @@
 {
   "network_idx": 1,
   "onnx_path": "networks/ACASXU_run2a_1_1_batch_2000.onnx",
-  "timestamp": "2026-03-23T02:19:38.353803",
-  "timeout_sec": 30,
-  "total_wall_sec": 6778.209,
+  "timestamp": "2026-03-25T14:11:18.580385",
+  "timeout_sec": 600,
+  "total_wall_sec": 17.294,
   "avg_sat_sec": 0.508,
   "summary": {
     "SAT": 269,
-    "UNSAT": 0,
-    "TIMEOUT": 221,
+    "UNSAT": 221,
+    "TIMEOUT": 0,
     "total": 490
   },
   "contracts": [
@@ -96,8 +96,8 @@
           1
         ]
       ],
-      "wall_sec": 30.067,
-      "status": "TIMEOUT"
+      "wall_sec": 0.582,
+      "status": "UNSAT"
     },
     {
       "id": 16,
@@ -121,8 +121,8 @@
           0
         ]
       ],
-      "wall_sec": 30.019,
-      "status": "TIMEOUT"
+      "wall_sec": 0.01,
+      "status": "UNSAT"
     },
     {
       "id": 21,
@@ -337,8 +337,8 @@
           2
         ]
       ],
-      "wall_sec": 30.065,
-      "status": "TIMEOUT"
+      "wall_sec": 0.017,
+      "status": "UNSAT"
     },
     {
       "id": 41,
@@ -406,8 +406,8 @@
           3
         ]
       ],
-      "wall_sec": 30.098,
-      "status": "TIMEOUT"
+      "wall_sec": 0.008,
+      "status": "UNSAT"
     },
     {
       "id": 46,
@@ -550,8 +550,8 @@
           0
         ]
       ],
-      "wall_sec": 30.018,
-      "status": "TIMEOUT"
+      "wall_sec": 0.022,
+      "status": "UNSAT"
     },
     {
       "id": 66,
@@ -575,8 +575,8 @@
           0
         ]
       ],
-      "wall_sec": 30.094,
-      "status": "TIMEOUT"
+      "wall_sec": 0.009,
+      "status": "UNSAT"
     },
     {
       "id": 71,
@@ -807,8 +807,8 @@
           3
         ]
       ],
-      "wall_sec": 30.057,
-      "status": "TIMEOUT"
+      "wall_sec": 0.017,
+      "status": "UNSAT"
     },
     {
       "id": 91,
@@ -876,8 +876,8 @@
           3
         ]
       ],
-      "wall_sec": 30.028,
-      "status": "TIMEOUT"
+      "wall_sec": 0.009,
+      "status": "UNSAT"
     },
     {
       "id": 96,
@@ -1020,8 +1020,8 @@
           0
         ]
       ],
-      "wall_sec": 30.02,
-      "status": "TIMEOUT"
+      "wall_sec": 0.022,
+      "status": "UNSAT"
     },
     {
       "id": 116,
@@ -1045,8 +1045,8 @@
           0
         ]
       ],
-      "wall_sec": 30.067,
-      "status": "TIMEOUT"
+      "wall_sec": 0.011,
+      "status": "UNSAT"
     },
     {
       "id": 121,
@@ -1277,8 +1277,8 @@
           3
         ]
       ],
-      "wall_sec": 30.036,
-      "status": "TIMEOUT"
+      "wall_sec": 0.021,
+      "status": "UNSAT"
     },
     {
       "id": 141,
@@ -1346,8 +1346,8 @@
           3
         ]
       ],
-      "wall_sec": 30.05,
-      "status": "TIMEOUT"
+      "wall_sec": 0.012,
+      "status": "UNSAT"
     },
     {
       "id": 146,
@@ -1465,8 +1465,8 @@
           0
         ]
       ],
-      "wall_sec": 30.068,
-      "status": "TIMEOUT"
+      "wall_sec": 0.009,
+      "status": "UNSAT"
     },
     {
       "id": 161,
@@ -1490,8 +1490,8 @@
           0
         ]
       ],
-      "wall_sec": 30.042,
-      "status": "TIMEOUT"
+      "wall_sec": 0.027,
+      "status": "UNSAT"
     },
     {
       "id": 166,
@@ -1726,8 +1726,8 @@
           3
         ]
       ],
-      "wall_sec": 30.062,
-      "status": "TIMEOUT"
+      "wall_sec": 0.009,
+      "status": "UNSAT"
     },
     {
       "id": 186,
@@ -1795,8 +1795,8 @@
           3
         ]
       ],
-      "wall_sec": 30.038,
-      "status": "TIMEOUT"
+      "wall_sec": 0.017,
+      "status": "UNSAT"
     },
     {
       "id": 191,
@@ -1939,8 +1939,8 @@
           0
         ]
       ],
-      "wall_sec": 30.059,
-      "status": "TIMEOUT"
+      "wall_sec": 0.009,
+      "status": "UNSAT"
     },
     {
       "id": 211,
@@ -1964,8 +1964,8 @@
           0
         ]
       ],
-      "wall_sec": 30.072,
-      "status": "TIMEOUT"
+      "wall_sec": 0.019,
+      "status": "UNSAT"
     },
     {
       "id": 216,
@@ -2171,8 +2171,8 @@
           3
         ]
       ],
-      "wall_sec": 30.059,
-      "status": "TIMEOUT"
+      "wall_sec": 0.009,
+      "status": "UNSAT"
     },
     {
       "id": 231,
@@ -2244,8 +2244,8 @@
           4
         ]
       ],
-      "wall_sec": 30.059,
-      "status": "TIMEOUT"
+      "wall_sec": 0.022,
+      "status": "UNSAT"
     },
     {
       "id": 236,
@@ -2313,8 +2313,8 @@
           3
         ]
       ],
-      "wall_sec": 30.048,
-      "status": "TIMEOUT"
+      "wall_sec": 0.026,
+      "status": "UNSAT"
     },
     {
       "id": 241,
@@ -2363,8 +2363,8 @@
           4
         ]
       ],
-      "wall_sec": 30.038,
-      "status": "TIMEOUT"
+      "wall_sec": 0.018,
+      "status": "UNSAT"
     },
     {
       "id": 251,
@@ -2388,8 +2388,8 @@
           0
         ]
       ],
-      "wall_sec": 30.056,
-      "status": "TIMEOUT"
+      "wall_sec": 0.008,
+      "status": "UNSAT"
     },
     {
       "id": 256,
@@ -2413,8 +2413,8 @@
           0
         ]
       ],
-      "wall_sec": 30.069,
-      "status": "TIMEOUT"
+      "wall_sec": 0.02,
+      "status": "UNSAT"
     },
     {
       "id": 261,
@@ -2624,8 +2624,8 @@
           3
         ]
       ],
-      "wall_sec": 30.041,
-      "status": "TIMEOUT"
+      "wall_sec": 0.013,
+      "status": "UNSAT"
     },
     {
       "id": 276,
@@ -2693,8 +2693,8 @@
           4
         ]
       ],
-      "wall_sec": 30.064,
-      "status": "TIMEOUT"
+      "wall_sec": 0.023,
+      "status": "UNSAT"
     },
     {
       "id": 281,
@@ -2762,8 +2762,8 @@
           3
         ]
       ],
-      "wall_sec": 30.062,
-      "status": "TIMEOUT"
+      "wall_sec": 0.022,
+      "status": "UNSAT"
     },
     {
       "id": 286,
@@ -2862,8 +2862,8 @@
           0
         ]
       ],
-      "wall_sec": 30.056,
-      "status": "TIMEOUT"
+      "wall_sec": 0.009,
+      "status": "UNSAT"
     },
     {
       "id": 306,
@@ -3069,8 +3069,8 @@
           3
         ]
       ],
-      "wall_sec": 30.018,
-      "status": "TIMEOUT"
+      "wall_sec": 0.01,
+      "status": "UNSAT"
     },
     {
       "id": 321,
@@ -3211,8 +3211,8 @@
           4
         ]
       ],
-      "wall_sec": 30.068,
-      "status": "TIMEOUT"
+      "wall_sec": 0.017,
+      "status": "UNSAT"
     },
     {
       "id": 331,
@@ -3522,8 +3522,8 @@
           4
         ]
       ],
-      "wall_sec": 30.072,
-      "status": "TIMEOUT"
+      "wall_sec": 0.009,
+      "status": "UNSAT"
     },
     {
       "id": 366,
@@ -3660,8 +3660,8 @@
           4
         ]
       ],
-      "wall_sec": 30.083,
-      "status": "TIMEOUT"
+      "wall_sec": 0.023,
+      "status": "UNSAT"
     },
     {
       "id": 376,
@@ -3735,8 +3735,8 @@
           4
         ]
       ],
-      "wall_sec": 30.031,
-      "status": "TIMEOUT"
+      "wall_sec": 0.026,
+      "status": "UNSAT"
     },
     {
       "id": 391,
@@ -3992,8 +3992,8 @@
           4
         ]
       ],
-      "wall_sec": 30.064,
-      "status": "TIMEOUT"
+      "wall_sec": 0.04,
+      "status": "UNSAT"
     },
     {
       "id": 416,
@@ -4130,8 +4130,8 @@
           4
         ]
       ],
-      "wall_sec": 30.084,
-      "status": "TIMEOUT"
+      "wall_sec": 0.101,
+      "status": "UNSAT"
     },
     {
       "id": 426,
@@ -4205,8 +4205,8 @@
           4
         ]
       ],
-      "wall_sec": 30.054,
-      "status": "TIMEOUT"
+      "wall_sec": 0.032,
+      "status": "UNSAT"
     },
     {
       "id": 441,
@@ -4462,8 +4462,8 @@
           4
         ]
       ],
-      "wall_sec": 30.06,
-      "status": "TIMEOUT"
+      "wall_sec": 0.009,
+      "status": "UNSAT"
     },
     {
       "id": 466,
@@ -4600,8 +4600,8 @@
           4
         ]
       ],
-      "wall_sec": 30.06,
-      "status": "TIMEOUT"
+      "wall_sec": 0.017,
+      "status": "UNSAT"
     },
     {
       "id": 476,
@@ -4687,8 +4687,8 @@
           4
         ]
       ],
-      "wall_sec": 30.064,
-      "status": "TIMEOUT"
+      "wall_sec": 0.01,
+      "status": "UNSAT"
     },
     {
       "id": 491,
@@ -4737,8 +4737,8 @@
           4
         ]
       ],
-      "wall_sec": 30.056,
-      "status": "TIMEOUT"
+      "wall_sec": 0.021,
+      "status": "UNSAT"
     },
     {
       "id": 501,
@@ -4928,8 +4928,8 @@
           4
         ]
       ],
-      "wall_sec": 30.049,
-      "status": "TIMEOUT"
+      "wall_sec": 0.008,
+      "status": "UNSAT"
     },
     {
       "id": 516,
@@ -5066,8 +5066,8 @@
           4
         ]
       ],
-      "wall_sec": 30.063,
-      "status": "TIMEOUT"
+      "wall_sec": 0.022,
+      "status": "UNSAT"
     },
     {
       "id": 526,
@@ -5153,8 +5153,8 @@
           4
         ]
       ],
-      "wall_sec": 30.027,
-      "status": "TIMEOUT"
+      "wall_sec": 0.009,
+      "status": "UNSAT"
     },
     {
       "id": 541,
@@ -5215,8 +5215,8 @@
           4
         ]
       ],
-      "wall_sec": 30.026,
-      "status": "TIMEOUT"
+      "wall_sec": 0.022,
+      "status": "UNSAT"
     },
     {
       "id": 551,
@@ -5406,8 +5406,8 @@
           4
         ]
       ],
-      "wall_sec": 30.084,
-      "status": "TIMEOUT"
+      "wall_sec": 0.009,
+      "status": "UNSAT"
     },
     {
       "id": 566,
@@ -5528,8 +5528,8 @@
           4
         ]
       ],
-      "wall_sec": 30.028,
-      "status": "TIMEOUT"
+      "wall_sec": 0.022,
+      "status": "UNSAT"
     },
     {
       "id": 576,
@@ -5627,8 +5627,8 @@
           4
         ]
       ],
-      "wall_sec": 30.014,
-      "status": "TIMEOUT"
+      "wall_sec": 0.012,
+      "status": "UNSAT"
     },
     {
       "id": 591,
@@ -5689,8 +5689,8 @@
           4
         ]
       ],
-      "wall_sec": 30.037,
-      "status": "TIMEOUT"
+      "wall_sec": 0.022,
+      "status": "UNSAT"
     },
     {
       "id": 601,
@@ -5864,8 +5864,8 @@
           4
         ]
       ],
-      "wall_sec": 30.018,
-      "status": "TIMEOUT"
+      "wall_sec": 0.012,
+      "status": "UNSAT"
     },
     {
       "id": 616,
@@ -5986,8 +5986,8 @@
           4
         ]
       ],
-      "wall_sec": 30.026,
-      "status": "TIMEOUT"
+      "wall_sec": 0.018,
+      "status": "UNSAT"
     },
     {
       "id": 626,
@@ -6085,8 +6085,8 @@
           4
         ]
       ],
-      "wall_sec": 30.068,
-      "status": "TIMEOUT"
+      "wall_sec": 0.008,
+      "status": "UNSAT"
     },
     {
       "id": 641,
@@ -6159,8 +6159,8 @@
           4
         ]
       ],
-      "wall_sec": 30.037,
-      "status": "TIMEOUT"
+      "wall_sec": 0.018,
+      "status": "UNSAT"
     },
     {
       "id": 651,
@@ -6212,8 +6212,8 @@
           4
         ]
       ],
-      "wall_sec": 30.025,
-      "status": "TIMEOUT"
+      "wall_sec": 0.029,
+      "status": "UNSAT"
     },
     {
       "id": 656,
@@ -6265,8 +6265,8 @@
           4
         ]
       ],
-      "wall_sec": 30.047,
-      "status": "TIMEOUT"
+      "wall_sec": 0.021,
+      "status": "UNSAT"
     },
     {
       "id": 661,
@@ -6334,8 +6334,8 @@
           4
         ]
       ],
-      "wall_sec": 30.051,
-      "status": "TIMEOUT"
+      "wall_sec": 0.012,
+      "status": "UNSAT"
     },
     {
       "id": 666,
@@ -6387,8 +6387,8 @@
           4
         ]
       ],
-      "wall_sec": 30.021,
-      "status": "TIMEOUT"
+      "wall_sec": 0.025,
+      "status": "UNSAT"
     },
     {
       "id": 671,
@@ -6440,8 +6440,8 @@
           4
         ]
       ],
-      "wall_sec": 30.065,
-      "status": "TIMEOUT"
+      "wall_sec": 0.026,
+      "status": "UNSAT"
     },
     {
       "id": 676,
@@ -6543,8 +6543,8 @@
           4
         ]
       ],
-      "wall_sec": 30.05,
-      "status": "TIMEOUT"
+      "wall_sec": 0.01,
+      "status": "UNSAT"
     },
     {
       "id": 691,
@@ -6617,8 +6617,8 @@
           4
         ]
       ],
-      "wall_sec": 30.062,
-      "status": "TIMEOUT"
+      "wall_sec": 0.021,
+      "status": "UNSAT"
     },
     {
       "id": 701,
@@ -6687,8 +6687,8 @@
           4
         ]
       ],
-      "wall_sec": 30.024,
-      "status": "TIMEOUT"
+      "wall_sec": 0.025,
+      "status": "UNSAT"
     },
     {
       "id": 711,
@@ -6732,8 +6732,8 @@
           3
         ]
       ],
-      "wall_sec": 30.071,
-      "status": "TIMEOUT"
+      "wall_sec": 0.022,
+      "status": "UNSAT"
     },
     {
       "id": 716,
@@ -6785,8 +6785,8 @@
           4
         ]
       ],
-      "wall_sec": 30.068,
-      "status": "TIMEOUT"
+      "wall_sec": 0.011,
+      "status": "UNSAT"
     },
     {
       "id": 721,
@@ -6838,8 +6838,8 @@
           4
         ]
       ],
-      "wall_sec": 30.035,
-      "status": "TIMEOUT"
+      "wall_sec": 0.021,
+      "status": "UNSAT"
     },
     {
       "id": 726,
@@ -6891,8 +6891,8 @@
           4
         ]
       ],
-      "wall_sec": 30.08,
-      "status": "TIMEOUT"
+      "wall_sec": 0.025,
+      "status": "UNSAT"
     },
     {
       "id": 731,
@@ -6994,8 +6994,8 @@
           4
         ]
       ],
-      "wall_sec": 30.044,
-      "status": "TIMEOUT"
+      "wall_sec": 0.008,
+      "status": "UNSAT"
     },
     {
       "id": 746,
@@ -7060,8 +7060,8 @@
           4
         ]
       ],
-      "wall_sec": 30.031,
-      "status": "TIMEOUT"
+      "wall_sec": 0.021,
+      "status": "UNSAT"
     },
     {
       "id": 756,
@@ -7147,8 +7147,8 @@
           4
         ]
       ],
-      "wall_sec": 30.028,
-      "status": "TIMEOUT"
+      "wall_sec": 0.017,
+      "status": "UNSAT"
     },
     {
       "id": 771,
@@ -7192,8 +7192,8 @@
           3
         ]
       ],
-      "wall_sec": 30.039,
-      "status": "TIMEOUT"
+      "wall_sec": 0.021,
+      "status": "UNSAT"
     },
     {
       "id": 776,
@@ -7245,8 +7245,8 @@
           4
         ]
       ],
-      "wall_sec": 30.083,
-      "status": "TIMEOUT"
+      "wall_sec": 0.012,
+      "status": "UNSAT"
     },
     {
       "id": 781,
@@ -7290,8 +7290,8 @@
           3
         ]
       ],
-      "wall_sec": 30.065,
-      "status": "TIMEOUT"
+      "wall_sec": 0.026,
+      "status": "UNSAT"
     },
     {
       "id": 786,
@@ -7343,8 +7343,8 @@
           4
         ]
       ],
-      "wall_sec": 30.091,
-      "status": "TIMEOUT"
+      "wall_sec": 0.017,
+      "status": "UNSAT"
     },
     {
       "id": 791,
@@ -7438,8 +7438,8 @@
           4
         ]
       ],
-      "wall_sec": 30.077,
-      "status": "TIMEOUT"
+      "wall_sec": 0.008,
+      "status": "UNSAT"
     },
     {
       "id": 806,
@@ -7504,8 +7504,8 @@
           4
         ]
       ],
-      "wall_sec": 30.024,
-      "status": "TIMEOUT"
+      "wall_sec": 0.023,
+      "status": "UNSAT"
     },
     {
       "id": 816,
@@ -7600,8 +7600,8 @@
           3
         ]
       ],
-      "wall_sec": 30.034,
-      "status": "TIMEOUT"
+      "wall_sec": 0.051,
+      "status": "UNSAT"
     },
     {
       "id": 836,
@@ -7645,8 +7645,8 @@
           3
         ]
       ],
-      "wall_sec": 30.059,
-      "status": "TIMEOUT"
+      "wall_sec": 0.12,
+      "status": "UNSAT"
     },
     {
       "id": 841,
@@ -7698,8 +7698,8 @@
           4
         ]
       ],
-      "wall_sec": 30.077,
-      "status": "TIMEOUT"
+      "wall_sec": 0.011,
+      "status": "UNSAT"
     },
     {
       "id": 846,
@@ -7743,8 +7743,8 @@
           3
         ]
       ],
-      "wall_sec": 30.021,
-      "status": "TIMEOUT"
+      "wall_sec": 0.048,
+      "status": "UNSAT"
     },
     {
       "id": 851,
@@ -7796,8 +7796,8 @@
           4
         ]
       ],
-      "wall_sec": 30.075,
-      "status": "TIMEOUT"
+      "wall_sec": 0.04,
+      "status": "UNSAT"
     },
     {
       "id": 856,
@@ -7891,8 +7891,8 @@
           4
         ]
       ],
-      "wall_sec": 30.046,
-      "status": "TIMEOUT"
+      "wall_sec": 0.009,
+      "status": "UNSAT"
     },
     {
       "id": 871,
@@ -8062,8 +8062,8 @@
           3
         ]
       ],
-      "wall_sec": 30.014,
-      "status": "TIMEOUT"
+      "wall_sec": 0.019,
+      "status": "UNSAT"
     },
     {
       "id": 906,
@@ -8107,8 +8107,8 @@
           3
         ]
       ],
-      "wall_sec": 30.057,
-      "status": "TIMEOUT"
+      "wall_sec": 1.299,
+      "status": "UNSAT"
     },
     {
       "id": 911,
@@ -8160,8 +8160,8 @@
           4
         ]
       ],
-      "wall_sec": 30.064,
-      "status": "TIMEOUT"
+      "wall_sec": 0.012,
+      "status": "UNSAT"
     },
     {
       "id": 916,
@@ -8205,8 +8205,8 @@
           3
         ]
       ],
-      "wall_sec": 30.017,
-      "status": "TIMEOUT"
+      "wall_sec": 0.022,
+      "status": "UNSAT"
     },
     {
       "id": 921,
@@ -8250,8 +8250,8 @@
           3
         ]
       ],
-      "wall_sec": 30.076,
-      "status": "TIMEOUT"
+      "wall_sec": 0.024,
+      "status": "UNSAT"
     },
     {
       "id": 926,
@@ -8337,8 +8337,8 @@
           3
         ]
       ],
-      "wall_sec": 30.08,
-      "status": "TIMEOUT"
+      "wall_sec": 0.008,
+      "status": "UNSAT"
     },
     {
       "id": 941,
@@ -8395,8 +8395,8 @@
           3
         ]
       ],
-      "wall_sec": 30.034,
-      "status": "TIMEOUT"
+      "wall_sec": 0.02,
+      "status": "UNSAT"
     },
     {
       "id": 951,
@@ -8412,8 +8412,8 @@
           0
         ]
       ],
-      "wall_sec": 30.037,
-      "status": "TIMEOUT"
+      "wall_sec": 0.008,
+      "status": "UNSAT"
     },
     {
       "id": 956,
@@ -8446,8 +8446,8 @@
           0
         ]
       ],
-      "wall_sec": 30.027,
-      "status": "TIMEOUT"
+      "wall_sec": 0.016,
+      "status": "UNSAT"
     },
     {
       "id": 966,
@@ -8525,8 +8525,8 @@
           3
         ]
       ],
-      "wall_sec": 30.04,
-      "status": "TIMEOUT"
+      "wall_sec": 0.016,
+      "status": "UNSAT"
     },
     {
       "id": 981,
@@ -8615,8 +8615,8 @@
           3
         ]
       ],
-      "wall_sec": 30.041,
-      "status": "TIMEOUT"
+      "wall_sec": 0.008,
+      "status": "UNSAT"
     },
     {
       "id": 991,
@@ -8660,8 +8660,8 @@
           3
         ]
       ],
-      "wall_sec": 30.08,
-      "status": "TIMEOUT"
+      "wall_sec": 0.021,
+      "status": "UNSAT"
     },
     {
       "id": 996,
@@ -8705,8 +8705,8 @@
           3
         ]
       ],
-      "wall_sec": 30.087,
-      "status": "TIMEOUT"
+      "wall_sec": 0.021,
+      "status": "UNSAT"
     },
     {
       "id": 1001,
@@ -8734,8 +8734,8 @@
           3
         ]
       ],
-      "wall_sec": 30.064,
-      "status": "TIMEOUT"
+      "wall_sec": 0.018,
+      "status": "UNSAT"
     },
     {
       "id": 1006,
@@ -8792,8 +8792,8 @@
           3
         ]
       ],
-      "wall_sec": 30.047,
-      "status": "TIMEOUT"
+      "wall_sec": 0.064,
+      "status": "UNSAT"
     },
     {
       "id": 1016,
@@ -8850,8 +8850,8 @@
           3
         ]
       ],
-      "wall_sec": 30.061,
-      "status": "TIMEOUT"
+      "wall_sec": 0.101,
+      "status": "UNSAT"
     },
     {
       "id": 1026,
@@ -8867,8 +8867,8 @@
           0
         ]
       ],
-      "wall_sec": 30.041,
-      "status": "TIMEOUT"
+      "wall_sec": 0.047,
+      "status": "UNSAT"
     },
     {
       "id": 1031,
@@ -8935,8 +8935,8 @@
           0
         ]
       ],
-      "wall_sec": 30.066,
-      "status": "TIMEOUT"
+      "wall_sec": 0.015,
+      "status": "UNSAT"
     },
     {
       "id": 1051,
@@ -8980,8 +8980,8 @@
           3
         ]
       ],
-      "wall_sec": 30.073,
-      "status": "TIMEOUT"
+      "wall_sec": 0.021,
+      "status": "UNSAT"
     },
     {
       "id": 1056,
@@ -9070,8 +9070,8 @@
           3
         ]
       ],
-      "wall_sec": 30.089,
-      "status": "TIMEOUT"
+      "wall_sec": 0.017,
+      "status": "UNSAT"
     },
     {
       "id": 1066,
@@ -9115,8 +9115,8 @@
           3
         ]
       ],
-      "wall_sec": 30.032,
-      "status": "TIMEOUT"
+      "wall_sec": 0.021,
+      "status": "UNSAT"
     },
     {
       "id": 1071,
@@ -9160,8 +9160,8 @@
           3
         ]
       ],
-      "wall_sec": 30.066,
-      "status": "TIMEOUT"
+      "wall_sec": 0.026,
+      "status": "UNSAT"
     },
     {
       "id": 1076,
@@ -9189,8 +9189,8 @@
           3
         ]
       ],
-      "wall_sec": 30.06,
-      "status": "TIMEOUT"
+      "wall_sec": 0.008,
+      "status": "UNSAT"
     },
     {
       "id": 1081,
@@ -9210,8 +9210,8 @@
           2
         ]
       ],
-      "wall_sec": 30.076,
-      "status": "TIMEOUT"
+      "wall_sec": 0.021,
+      "status": "UNSAT"
     },
     {
       "id": 1086,
@@ -9239,8 +9239,8 @@
           3
         ]
       ],
-      "wall_sec": 30.027,
-      "status": "TIMEOUT"
+      "wall_sec": 0.018,
+      "status": "UNSAT"
     },
     {
       "id": 1091,
@@ -9268,8 +9268,8 @@
           3
         ]
       ],
-      "wall_sec": 30.032,
-      "status": "TIMEOUT"
+      "wall_sec": 0.017,
+      "status": "UNSAT"
     },
     {
       "id": 1096,
@@ -9297,8 +9297,8 @@
           3
         ]
       ],
-      "wall_sec": 30.021,
-      "status": "TIMEOUT"
+      "wall_sec": 0.017,
+      "status": "UNSAT"
     },
     {
       "id": 1101,
@@ -9386,8 +9386,8 @@
           0
         ]
       ],
-      "wall_sec": 30.076,
-      "status": "TIMEOUT"
+      "wall_sec": 0.009,
+      "status": "UNSAT"
     },
     {
       "id": 1126,
@@ -9431,8 +9431,8 @@
           3
         ]
       ],
-      "wall_sec": 30.077,
-      "status": "TIMEOUT"
+      "wall_sec": 0.021,
+      "status": "UNSAT"
     },
     {
       "id": 1131,
@@ -9509,8 +9509,8 @@
           3
         ]
       ],
-      "wall_sec": 30.017,
-      "status": "TIMEOUT"
+      "wall_sec": 0.024,
+      "status": "UNSAT"
     },
     {
       "id": 1141,
@@ -9554,8 +9554,8 @@
           3
         ]
       ],
-      "wall_sec": 30.021,
-      "status": "TIMEOUT"
+      "wall_sec": 0.021,
+      "status": "UNSAT"
     },
     {
       "id": 1146,
@@ -9599,8 +9599,8 @@
           3
         ]
       ],
-      "wall_sec": 30.053,
-      "status": "TIMEOUT"
+      "wall_sec": 0.012,
+      "status": "UNSAT"
     },
     {
       "id": 1151,
@@ -9628,8 +9628,8 @@
           3
         ]
       ],
-      "wall_sec": 30.04,
-      "status": "TIMEOUT"
+      "wall_sec": 0.012,
+      "status": "UNSAT"
     },
     {
       "id": 1156,
@@ -9649,8 +9649,8 @@
           2
         ]
       ],
-      "wall_sec": 30.072,
-      "status": "TIMEOUT"
+      "wall_sec": 0.021,
+      "status": "UNSAT"
     },
     {
       "id": 1161,
@@ -9678,8 +9678,8 @@
           3
         ]
       ],
-      "wall_sec": 30.022,
-      "status": "TIMEOUT"
+      "wall_sec": 0.025,
+      "status": "UNSAT"
     },
     {
       "id": 1166,
@@ -9699,8 +9699,8 @@
           2
         ]
       ],
-      "wall_sec": 30.032,
-      "status": "TIMEOUT"
+      "wall_sec": 0.018,
+      "status": "UNSAT"
     },
     {
       "id": 1171,
@@ -9728,8 +9728,8 @@
           3
         ]
       ],
-      "wall_sec": 30.094,
-      "status": "TIMEOUT"
+      "wall_sec": 0.016,
+      "status": "UNSAT"
     },
     {
       "id": 1176,
@@ -9804,8 +9804,8 @@
           1
         ]
       ],
-      "wall_sec": 30.056,
-      "status": "TIMEOUT"
+      "wall_sec": 0.009,
+      "status": "UNSAT"
     },
     {
       "id": 1196,
@@ -9821,8 +9821,8 @@
           0
         ]
       ],
-      "wall_sec": 30.024,
-      "status": "TIMEOUT"
+      "wall_sec": 0.009,
+      "status": "UNSAT"
     },
     {
       "id": 1201,
@@ -9866,8 +9866,8 @@
           3
         ]
       ],
-      "wall_sec": 30.086,
-      "status": "TIMEOUT"
+      "wall_sec": 0.022,
+      "status": "UNSAT"
     },
     {
       "id": 1206,
@@ -9944,8 +9944,8 @@
           3
         ]
       ],
-      "wall_sec": 30.051,
-      "status": "TIMEOUT"
+      "wall_sec": 0.028,
+      "status": "UNSAT"
     },
     {
       "id": 1216,
@@ -10022,8 +10022,8 @@
           3
         ]
       ],
-      "wall_sec": 30.023,
-      "status": "TIMEOUT"
+      "wall_sec": 0.009,
+      "status": "UNSAT"
     },
     {
       "id": 1226,
@@ -10043,8 +10043,8 @@
           2
         ]
       ],
-      "wall_sec": 30.076,
-      "status": "TIMEOUT"
+      "wall_sec": 0.009,
+      "status": "UNSAT"
     },
     {
       "id": 1231,
@@ -10064,8 +10064,8 @@
           2
         ]
       ],
-      "wall_sec": 30.087,
-      "status": "TIMEOUT"
+      "wall_sec": 0.018,
+      "status": "UNSAT"
     },
     {
       "id": 1236,
@@ -10093,8 +10093,8 @@
           3
         ]
       ],
-      "wall_sec": 30.051,
-      "status": "TIMEOUT"
+      "wall_sec": 0.017,
+      "status": "UNSAT"
     },
     {
       "id": 1241,
@@ -10114,8 +10114,8 @@
           2
         ]
       ],
-      "wall_sec": 30.028,
-      "status": "TIMEOUT"
+      "wall_sec": 0.018,
+      "status": "UNSAT"
     },
     {
       "id": 1246,
@@ -10143,8 +10143,8 @@
           3
         ]
       ],
-      "wall_sec": 30.047,
-      "status": "TIMEOUT"
+      "wall_sec": 0.09,
+      "status": "UNSAT"
     },
     {
       "id": 1251,
@@ -10223,8 +10223,8 @@
           1
         ]
       ],
-      "wall_sec": 30.054,
-      "status": "TIMEOUT"
+      "wall_sec": 0.009,
+      "status": "UNSAT"
     },
     {
       "id": 1271,
@@ -10273,8 +10273,8 @@
           2
         ]
       ],
-      "wall_sec": 30.056,
-      "status": "TIMEOUT"
+      "wall_sec": 0.018,
+      "status": "UNSAT"
     },
     {
       "id": 1281,
@@ -10351,8 +10351,8 @@
           3
         ]
       ],
-      "wall_sec": 30.068,
-      "status": "TIMEOUT"
+      "wall_sec": 0.032,
+      "status": "UNSAT"
     },
     {
       "id": 1291,
@@ -10384,8 +10384,8 @@
           2
         ]
       ],
-      "wall_sec": 30.07,
-      "status": "TIMEOUT"
+      "wall_sec": 0.035,
+      "status": "UNSAT"
     },
     {
       "id": 1296,
@@ -10429,8 +10429,8 @@
           3
         ]
       ],
-      "wall_sec": 30.054,
-      "status": "TIMEOUT"
+      "wall_sec": 0.095,
+      "status": "UNSAT"
     },
     {
       "id": 1301,
@@ -10450,8 +10450,8 @@
           2
         ]
       ],
-      "wall_sec": 30.066,
-      "status": "TIMEOUT"
+      "wall_sec": 0.016,
+      "status": "UNSAT"
     },
     {
       "id": 1306,
@@ -10500,8 +10500,8 @@
           3
         ]
       ],
-      "wall_sec": 30.034,
-      "status": "TIMEOUT"
+      "wall_sec": 0.048,
+      "status": "UNSAT"
     },
     {
       "id": 1316,
@@ -10584,8 +10584,8 @@
           1
         ]
       ],
-      "wall_sec": 30.05,
-      "status": "TIMEOUT"
+      "wall_sec": 0.009,
+      "status": "UNSAT"
     },
     {
       "id": 1336,
@@ -10622,8 +10622,8 @@
           1
         ]
       ],
-      "wall_sec": 30.012,
-      "status": "TIMEOUT"
+      "wall_sec": 0.021,
+      "status": "UNSAT"
     },
     {
       "id": 1346,
@@ -10676,8 +10676,8 @@
           2
         ]
       ],
-      "wall_sec": 30.055,
-      "status": "TIMEOUT"
+      "wall_sec": 0.019,
+      "status": "UNSAT"
     },
     {
       "id": 1356,
@@ -10754,8 +10754,8 @@
           3
         ]
       ],
-      "wall_sec": 30.061,
-      "status": "TIMEOUT"
+      "wall_sec": 0.017,
+      "status": "UNSAT"
     },
     {
       "id": 1366,
@@ -10787,8 +10787,8 @@
           2
         ]
       ],
-      "wall_sec": 30.039,
-      "status": "TIMEOUT"
+      "wall_sec": 0.008,
+      "status": "UNSAT"
     },
     {
       "id": 1371,
@@ -10841,8 +10841,8 @@
           2
         ]
       ],
-      "wall_sec": 30.036,
-      "status": "TIMEOUT"
+      "wall_sec": 0.011,
+      "status": "UNSAT"
     },
     {
       "id": 1381,
@@ -10967,8 +10967,8 @@
           1
         ]
       ],
-      "wall_sec": 30.03,
-      "status": "TIMEOUT"
+      "wall_sec": 0.01,
+      "status": "UNSAT"
     },
     {
       "id": 1411,
@@ -11063,8 +11063,8 @@
           2
         ]
       ],
-      "wall_sec": 30.07,
-      "status": "TIMEOUT"
+      "wall_sec": 0.017,
+      "status": "UNSAT"
     },
     {
       "id": 1431,
@@ -11096,8 +11096,8 @@
           2
         ]
       ],
-      "wall_sec": 30.028,
-      "status": "TIMEOUT"
+      "wall_sec": 0.008,
+      "status": "UNSAT"
     },
     {
       "id": 1436,
@@ -11162,8 +11162,8 @@
           2
         ]
       ],
-      "wall_sec": 30.024,
-      "status": "TIMEOUT"
+      "wall_sec": 0.019,
+      "status": "UNSAT"
     },
     {
       "id": 1446,
@@ -11216,8 +11216,8 @@
           2
         ]
       ],
-      "wall_sec": 30.033,
-      "status": "TIMEOUT"
+      "wall_sec": 0.008,
+      "status": "UNSAT"
     },
     {
       "id": 1456,
@@ -11258,8 +11258,8 @@
           2
         ]
       ],
-      "wall_sec": 30.031,
-      "status": "TIMEOUT"
+      "wall_sec": 0.021,
+      "status": "UNSAT"
     },
     {
       "id": 1466,
@@ -11342,8 +11342,8 @@
           1
         ]
       ],
-      "wall_sec": 30.048,
-      "status": "TIMEOUT"
+      "wall_sec": 0.008,
+      "status": "UNSAT"
     },
     {
       "id": 1486,
@@ -11438,8 +11438,8 @@
           2
         ]
       ],
-      "wall_sec": 30.047,
-      "status": "TIMEOUT"
+      "wall_sec": 0.021,
+      "status": "UNSAT"
     },
     {
       "id": 1506,
@@ -11471,8 +11471,8 @@
           2
         ]
       ],
-      "wall_sec": 30.071,
-      "status": "TIMEOUT"
+      "wall_sec": 0.008,
+      "status": "UNSAT"
     },
     {
       "id": 1511,
@@ -11591,8 +11591,8 @@
           2
         ]
       ],
-      "wall_sec": 30.075,
-      "status": "TIMEOUT"
+      "wall_sec": 0.009,
+      "status": "UNSAT"
     },
     {
       "id": 1531,
@@ -11717,8 +11717,8 @@
           1
         ]
       ],
-      "wall_sec": 30.046,
-      "status": "TIMEOUT"
+      "wall_sec": 0.008,
+      "status": "UNSAT"
     },
     {
       "id": 1561,
@@ -11813,8 +11813,8 @@
           2
         ]
       ],
-      "wall_sec": 30.04,
-      "status": "TIMEOUT"
+      "wall_sec": 0.02,
+      "status": "UNSAT"
     },
     {
       "id": 1581,
@@ -11846,8 +11846,8 @@
           2
         ]
       ],
-      "wall_sec": 30.093,
-      "status": "TIMEOUT"
+      "wall_sec": 0.008,
+      "status": "UNSAT"
     },
     {
       "id": 1586,
@@ -11966,8 +11966,8 @@
           2
         ]
       ],
-      "wall_sec": 30.082,
-      "status": "TIMEOUT"
+      "wall_sec": 0.017,
+      "status": "UNSAT"
     },
     {
       "id": 1606,
@@ -11983,8 +11983,8 @@
           2
         ]
       ],
-      "wall_sec": 30.036,
-      "status": "TIMEOUT"
+      "wall_sec": 0.008,
+      "status": "UNSAT"
     },
     {
       "id": 1611,
@@ -12096,8 +12096,8 @@
           1
         ]
       ],
-      "wall_sec": 30.082,
-      "status": "TIMEOUT"
+      "wall_sec": 0.008,
+      "status": "UNSAT"
     },
     {
       "id": 1636,
@@ -12237,8 +12237,8 @@
           2
         ]
       ],
-      "wall_sec": 30.046,
-      "status": "TIMEOUT"
+      "wall_sec": 0.008,
+      "status": "UNSAT"
     },
     {
       "id": 1661,
@@ -12357,8 +12357,8 @@
           2
         ]
       ],
-      "wall_sec": 30.055,
-      "status": "TIMEOUT"
+      "wall_sec": 0.022,
+      "status": "UNSAT"
     },
     {
       "id": 1681,
@@ -12374,8 +12374,8 @@
           2
         ]
       ],
-      "wall_sec": 30.069,
-      "status": "TIMEOUT"
+      "wall_sec": 0.012,
+      "status": "UNSAT"
     },
     {
       "id": 1686,
@@ -12483,8 +12483,8 @@
           1
         ]
       ],
-      "wall_sec": 30.069,
-      "status": "TIMEOUT"
+      "wall_sec": 0.009,
+      "status": "UNSAT"
     },
     {
       "id": 1711,
@@ -12632,8 +12632,8 @@
           2
         ]
       ],
-      "wall_sec": 30.032,
-      "status": "TIMEOUT"
+      "wall_sec": 0.008,
+      "status": "UNSAT"
     },
     {
       "id": 1736,
@@ -12777,8 +12777,8 @@
           2
         ]
       ],
-      "wall_sec": 30.061,
-      "status": "TIMEOUT"
+      "wall_sec": 0.008,
+      "status": "UNSAT"
     },
     {
       "id": 1761,
@@ -12894,8 +12894,8 @@
           1
         ]
       ],
-      "wall_sec": 30.081,
-      "status": "TIMEOUT"
+      "wall_sec": 0.009,
+      "status": "UNSAT"
     },
     {
       "id": 1786,
@@ -12944,8 +12944,8 @@
           1
         ]
       ],
-      "wall_sec": 30.059,
-      "status": "TIMEOUT"
+      "wall_sec": 0.023,
+      "status": "UNSAT"
     },
     {
       "id": 1796,
@@ -13055,8 +13055,8 @@
           2
         ]
       ],
-      "wall_sec": 30.025,
-      "status": "TIMEOUT"
+      "wall_sec": 0.01,
+      "status": "UNSAT"
     },
     {
       "id": 1811,
@@ -13200,8 +13200,8 @@
           2
         ]
       ],
-      "wall_sec": 30.054,
-      "status": "TIMEOUT"
+      "wall_sec": 0.009,
+      "status": "UNSAT"
     },
     {
       "id": 1836,
@@ -13313,8 +13313,8 @@
           1
         ]
       ],
-      "wall_sec": 30.036,
-      "status": "TIMEOUT"
+      "wall_sec": 0.019,
+      "status": "UNSAT"
     },
     {
       "id": 1861,
@@ -13363,8 +13363,8 @@
           1
         ]
       ],
-      "wall_sec": 30.075,
-      "status": "TIMEOUT"
+      "wall_sec": 0.011,
+      "status": "UNSAT"
     },
     {
       "id": 1871,
@@ -13392,8 +13392,8 @@
           1
         ]
       ],
-      "wall_sec": 30.023,
-      "status": "TIMEOUT"
+      "wall_sec": 0.611,
+      "status": "UNSAT"
     },
     {
       "id": 1876,
@@ -13482,8 +13482,8 @@
           2
         ]
       ],
-      "wall_sec": 30.067,
-      "status": "TIMEOUT"
+      "wall_sec": 0.009,
+      "status": "UNSAT"
     },
     {
       "id": 1886,
@@ -13639,8 +13639,8 @@
           2
         ]
       ],
-      "wall_sec": 30.064,
-      "status": "TIMEOUT"
+      "wall_sec": 0.008,
+      "status": "UNSAT"
     },
     {
       "id": 1911,
@@ -13748,8 +13748,8 @@
           1
         ]
       ],
-      "wall_sec": 30.034,
-      "status": "TIMEOUT"
+      "wall_sec": 0.021,
+      "status": "UNSAT"
     },
     {
       "id": 1936,
@@ -13777,8 +13777,8 @@
           1
         ]
       ],
-      "wall_sec": 30.057,
-      "status": "TIMEOUT"
+      "wall_sec": 0.023,
+      "status": "UNSAT"
     },
     {
       "id": 1941,
@@ -13806,8 +13806,8 @@
           1
         ]
       ],
-      "wall_sec": 30.02,
-      "status": "TIMEOUT"
+      "wall_sec": 0.008,
+      "status": "UNSAT"
     },
     {
       "id": 1946,
@@ -13835,8 +13835,8 @@
           1
         ]
       ],
-      "wall_sec": 30.037,
-      "status": "TIMEOUT"
+      "wall_sec": 1.271,
+      "status": "UNSAT"
     },
     {
       "id": 1951,
@@ -13925,8 +13925,8 @@
           2
         ]
       ],
-      "wall_sec": 30.027,
-      "status": "TIMEOUT"
+      "wall_sec": 0.008,
+      "status": "UNSAT"
     },
     {
       "id": 1961,
@@ -14094,8 +14094,8 @@
           2
         ]
       ],
-      "wall_sec": 30.031,
-      "status": "TIMEOUT"
+      "wall_sec": 0.008,
+      "status": "UNSAT"
     },
     {
       "id": 1986,
@@ -14203,8 +14203,8 @@
           1
         ]
       ],
-      "wall_sec": 30.05,
-      "status": "TIMEOUT"
+      "wall_sec": 0.021,
+      "status": "UNSAT"
     },
     {
       "id": 2011,
@@ -14232,8 +14232,8 @@
           1
         ]
       ],
-      "wall_sec": 30.066,
-      "status": "TIMEOUT"
+      "wall_sec": 0.026,
+      "status": "UNSAT"
     },
     {
       "id": 2016,
@@ -14261,8 +14261,8 @@
           1
         ]
       ],
-      "wall_sec": 30.059,
-      "status": "TIMEOUT"
+      "wall_sec": 0.008,
+      "status": "UNSAT"
     },
     {
       "id": 2021,
@@ -14380,8 +14380,8 @@
           2
         ]
       ],
-      "wall_sec": 30.045,
-      "status": "TIMEOUT"
+      "wall_sec": 0.008,
+      "status": "UNSAT"
     },
     {
       "id": 2036,
@@ -14470,8 +14470,8 @@
           2
         ]
       ],
-      "wall_sec": 30.04,
-      "status": "TIMEOUT"
+      "wall_sec": 0.023,
+      "status": "UNSAT"
     },
     {
       "id": 2046,
@@ -14678,8 +14678,8 @@
           1
         ]
       ],
-      "wall_sec": 30.036,
-      "status": "TIMEOUT"
+      "wall_sec": 0.04,
+      "status": "UNSAT"
     },
     {
       "id": 2086,
@@ -14707,8 +14707,8 @@
           1
         ]
       ],
-      "wall_sec": 30.082,
-      "status": "TIMEOUT"
+      "wall_sec": 0.039,
+      "status": "UNSAT"
     },
     {
       "id": 2091,
@@ -14834,8 +14834,8 @@
           2
         ]
       ],
-      "wall_sec": 30.027,
-      "status": "TIMEOUT"
+      "wall_sec": 0.095,
+      "status": "UNSAT"
     },
     {
       "id": 2106,
@@ -14879,8 +14879,8 @@
           2
         ]
       ],
-      "wall_sec": 30.057,
-      "status": "TIMEOUT"
+      "wall_sec": 0.041,
+      "status": "UNSAT"
     },
     {
       "id": 2111,
@@ -14924,8 +14924,8 @@
           2
         ]
       ],
-      "wall_sec": 30.061,
-      "status": "TIMEOUT"
+      "wall_sec": 0.01,
+      "status": "UNSAT"
     },
     {
       "id": 2116,
@@ -14969,8 +14969,8 @@
           2
         ]
       ],
-      "wall_sec": 30.041,
-      "status": "TIMEOUT"
+      "wall_sec": 1.288,
+      "status": "UNSAT"
     },
     {
       "id": 2121,
@@ -15115,8 +15115,8 @@
           1
         ]
       ],
-      "wall_sec": 30.077,
-      "status": "TIMEOUT"
+      "wall_sec": 0.023,
+      "status": "UNSAT"
     },
     {
       "id": 2151,
@@ -15152,8 +15152,8 @@
           1
         ]
       ],
-      "wall_sec": 30.077,
-      "status": "TIMEOUT"
+      "wall_sec": 0.009,
+      "status": "UNSAT"
     },
     {
       "id": 2156,
@@ -15279,8 +15279,8 @@
           2
         ]
       ],
-      "wall_sec": 30.07,
-      "status": "TIMEOUT"
+      "wall_sec": 0.022,
+      "status": "UNSAT"
     },
     {
       "id": 2171,
@@ -15324,8 +15324,8 @@
           2
         ]
       ],
-      "wall_sec": 30.02,
-      "status": "TIMEOUT"
+      "wall_sec": 0.024,
+      "status": "UNSAT"
     },
     {
       "id": 2176,
@@ -15377,8 +15377,8 @@
           2
         ]
       ],
-      "wall_sec": 30.073,
-      "status": "TIMEOUT"
+      "wall_sec": 0.012,
+      "status": "UNSAT"
     },
     {
       "id": 2181,
@@ -15559,8 +15559,8 @@
           1
         ]
       ],
-      "wall_sec": 30.061,
-      "status": "TIMEOUT"
+      "wall_sec": 0.022,
+      "status": "UNSAT"
     },
     {
       "id": 2211,
@@ -15596,8 +15596,8 @@
           1
         ]
       ],
-      "wall_sec": 30.066,
-      "status": "TIMEOUT"
+      "wall_sec": 0.017,
+      "status": "UNSAT"
     },
     {
       "id": 2216,
@@ -15625,8 +15625,8 @@
           1
         ]
       ],
-      "wall_sec": 30.043,
-      "status": "TIMEOUT"
+      "wall_sec": 0.008,
+      "status": "UNSAT"
     },
     {
       "id": 2221,
@@ -15731,8 +15731,8 @@
           2
         ]
       ],
-      "wall_sec": 30.028,
-      "status": "TIMEOUT"
+      "wall_sec": 0.021,
+      "status": "UNSAT"
     },
     {
       "id": 2231,
@@ -15776,8 +15776,8 @@
           2
         ]
       ],
-      "wall_sec": 30.056,
-      "status": "TIMEOUT"
+      "wall_sec": 0.025,
+      "status": "UNSAT"
     },
     {
       "id": 2236,
@@ -15829,8 +15829,8 @@
           2
         ]
       ],
-      "wall_sec": 30.068,
-      "status": "TIMEOUT"
+      "wall_sec": 0.008,
+      "status": "UNSAT"
     },
     {
       "id": 2241,
@@ -15994,8 +15994,8 @@
           1
         ]
       ],
-      "wall_sec": 30.079,
-      "status": "TIMEOUT"
+      "wall_sec": 0.02,
+      "status": "UNSAT"
     },
     {
       "id": 2266,
@@ -16031,8 +16031,8 @@
           1
         ]
       ],
-      "wall_sec": 30.019,
-      "status": "TIMEOUT"
+      "wall_sec": 0.021,
+      "status": "UNSAT"
     },
     {
       "id": 2271,
@@ -16068,8 +16068,8 @@
           1
         ]
       ],
-      "wall_sec": 30.078,
-      "status": "TIMEOUT"
+      "wall_sec": 0.008,
+      "status": "UNSAT"
     },
     {
       "id": 2276,
@@ -16174,8 +16174,8 @@
           2
         ]
       ],
-      "wall_sec": 30.065,
-      "status": "TIMEOUT"
+      "wall_sec": 0.016,
+      "status": "UNSAT"
     },
     {
       "id": 2286,
@@ -16219,8 +16219,8 @@
           2
         ]
       ],
-      "wall_sec": 30.032,
-      "status": "TIMEOUT"
+      "wall_sec": 0.017,
+      "status": "UNSAT"
     },
     {
       "id": 2291,
@@ -16272,8 +16272,8 @@
           2
         ]
       ],
-      "wall_sec": 30.064,
-      "status": "TIMEOUT"
+      "wall_sec": 0.01,
+      "status": "UNSAT"
     },
     {
       "id": 2296,
@@ -16424,8 +16424,8 @@
           1
         ]
       ],
-      "wall_sec": 30.029,
-      "status": "TIMEOUT"
+      "wall_sec": 0.047,
+      "status": "UNSAT"
     },
     {
       "id": 2316,
@@ -16461,8 +16461,8 @@
           1
         ]
       ],
-      "wall_sec": 30.026,
-      "status": "TIMEOUT"
+      "wall_sec": 0.118,
+      "status": "UNSAT"
     },
     {
       "id": 2321,
@@ -16498,8 +16498,8 @@
           1
         ]
       ],
-      "wall_sec": 30.073,
-      "status": "TIMEOUT"
+      "wall_sec": 0.018,
+      "status": "UNSAT"
     },
     {
       "id": 2326,
@@ -16620,8 +16620,8 @@
           3
         ]
       ],
-      "wall_sec": 30.083,
-      "status": "TIMEOUT"
+      "wall_sec": 0.028,
+      "status": "UNSAT"
     },
     {
       "id": 2336,
@@ -16673,8 +16673,8 @@
           2
         ]
       ],
-      "wall_sec": 30.082,
-      "status": "TIMEOUT"
+      "wall_sec": 0.009,
+      "status": "UNSAT"
     },
     {
       "id": 2341,
@@ -16726,8 +16726,8 @@
           2
         ]
       ],
-      "wall_sec": 30.063,
-      "status": "TIMEOUT"
+      "wall_sec": 0.03,
+      "status": "UNSAT"
     },
     {
       "id": 2346,
@@ -16878,8 +16878,8 @@
           1
         ]
       ],
-      "wall_sec": 30.061,
-      "status": "TIMEOUT"
+      "wall_sec": 0.023,
+      "status": "UNSAT"
     },
     {
       "id": 2366,
@@ -16903,8 +16903,8 @@
           0
         ]
       ],
-      "wall_sec": 30.089,
-      "status": "TIMEOUT"
+      "wall_sec": 0.013,
+      "status": "UNSAT"
     },
     {
       "id": 2371,
@@ -16940,8 +16940,8 @@
           1
         ]
       ],
-      "wall_sec": 30.06,
-      "status": "TIMEOUT"
+      "wall_sec": 0.022,
+      "status": "UNSAT"
     },
     {
       "id": 2376,
@@ -17062,8 +17062,8 @@
           3
         ]
       ],
-      "wall_sec": 30.063,
-      "status": "TIMEOUT"
+      "wall_sec": 0.023,
+      "status": "UNSAT"
     },
     {
       "id": 2386,
@@ -17115,8 +17115,8 @@
           2
         ]
       ],
-      "wall_sec": 30.093,
-      "status": "TIMEOUT"
+      "wall_sec": 0.021,
+      "status": "UNSAT"
     },
     {
       "id": 2391,
@@ -17184,8 +17184,8 @@
           3
         ]
       ],
-      "wall_sec": 30.098,
-      "status": "TIMEOUT"
+      "wall_sec": 0.012,
+      "status": "UNSAT"
     },
     {
       "id": 2396,
@@ -17237,8 +17237,8 @@
           2
         ]
       ],
-      "wall_sec": 30.048,
-      "status": "TIMEOUT"
+      "wall_sec": 0.029,
+      "status": "UNSAT"
     },
     {
       "id": 2401,
@@ -17324,8 +17324,8 @@
           1
         ]
       ],
-      "wall_sec": 30.061,
-      "status": "TIMEOUT"
+      "wall_sec": 0.027,
+      "status": "UNSAT"
     },
     {
       "id": 2416,
@@ -17349,8 +17349,8 @@
           0
         ]
       ],
-      "wall_sec": 30.048,
-      "status": "TIMEOUT"
+      "wall_sec": 0.012,
+      "status": "UNSAT"
     },
     {
       "id": 2421,
@@ -17577,8 +17577,8 @@
           2
         ]
       ],
-      "wall_sec": 30.019,
-      "status": "TIMEOUT"
+      "wall_sec": 0.025,
+      "status": "UNSAT"
     },
     {
       "id": 2441,
@@ -17646,8 +17646,8 @@
           3
         ]
       ],
-      "wall_sec": 30.04,
-      "status": "TIMEOUT"
+      "wall_sec": 0.009,
+      "status": "UNSAT"
     },
     {
       "id": 2446,
