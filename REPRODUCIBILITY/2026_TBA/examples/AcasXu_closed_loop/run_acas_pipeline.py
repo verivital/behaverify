@@ -47,7 +47,10 @@ import datetime
 import json
 import os
 import re
-import resource
+try:
+    import resource
+except ImportError:
+    resource = None  # Windows: resource module not available
 import subprocess
 import sys
 import time
@@ -79,9 +82,13 @@ SMV_HEADING       = "heading_own_var_stage_0"
 # ---------------------------------------------------------------------------
 
 def _self_rss_kb() -> int:
+    if resource is None:
+        return 0
     return resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
 
 def _children_rss_kb() -> int:
+    if resource is None:
+        return 0
     return resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss
 
 
