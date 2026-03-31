@@ -41,7 +41,7 @@ REPRODUCIBILITY/**/sparse_random/**
 REPRODUCIBILITY/**/smv/**
 src/behaverify.egg-info/
 build/
-alpha-beta-CROWN/.venv/
+alpha-beta-CROWN/
 nuXmv_DL/
 nuXmv_extracted/
 *.7z
