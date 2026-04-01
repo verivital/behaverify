@@ -20,7 +20,8 @@ grid_world/
 ├── results/               # Pipeline reports and PGD analysis
 ├── verify_contracts.py    # A/G contract verification via alpha-beta-CROWN
 ├── verify_contracts.yaml  # Config: grid bounds, EPS, timeout, ONNX path
-├── run_pgd_1000_contracts.sh  # Batch PGD runner for five 100%-accurate NNs
+├── run_pgd_1000_contracts.sh  # Batch PGD runner for five 100%-accurate NNs (PGD enabled)
+├── run_bab_1000_contracts.sh  # Batch BaB-only runner for fair comparison (PGD disabled)
 ├── run_compositional_pipeline.py  # End-to-end compositional pipeline
 ├── counter_template.tree      # Tree template used by run_compositional_pipeline.py
 │                              #   when --tree is not provided (auto-generates a .tree)
@@ -97,6 +98,17 @@ python run_compositional_pipeline.py \
 ```
 
 Results are saved to `contracts/enabled_pgd/<name>_pgd60.json`.
+
+### Batch BaB-only Run (fair comparison, no PGD)
+
+Same networks and 60s timeout as the PGD run, but with `--no-pgd` (BaB only).
+Expect UNSAT contracts to become TIMEOUT — that is the finding.
+
+```bash
+./run_bab_1000_contracts.sh
+```
+
+Results are saved to `contracts/disabled_pgd/<name>.json`.
 
 ---
 

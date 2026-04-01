@@ -133,14 +133,16 @@ def verify_contract(onnx_path: str, cx: int, cy: int, forbidden_d: int, config: 
 
 def build_crown_config(cfg: dict[str, Any]) -> Any:
     """Build the alpha-beta-CROWN solver configuration from loaded YAML config."""
-    return (
+    pgd_order = cfg.get("pgd_order", "before")
+    builder = (
         ConfigBuilder.from_defaults()
         .set(general__device="cpu")
-        .set(attack__pgd_order="before")   # run PGD first to find violations fast
-        .set(attack__pgd_restarts=50)
+        .set(attack__pgd_order=pgd_order)
         .set(bab__timeout=cfg["verification"]["timeout_sec"])
-        ()
     )
+    if pgd_order == "before":
+        builder = builder.set(attack__pgd_restarts=50)
+    return builder()
 
 def result_marker(overall: str) -> str:
     """Return the console marker string for a contract result."""
@@ -219,10 +221,14 @@ if __name__ == "__main__":
                         help="Override onnx_path from YAML")
     parser.add_argument("--output", default=None,
                         help="Override output_path from YAML")
+    parser.add_argument("--no-pgd", action="store_true",
+                        help="Disable PGD attack (BaB only); sets pgd_order=skip")
     args = parser.parse_args()
     cfg = load_config(args.config)
     if args.onnx:
         cfg["onnx_path"] = args.onnx
     if args.output:
         cfg["output_path"] = args.output
+    if args.no_pgd:
+        cfg["pgd_order"] = "skip"
     run_verification(cfg)
