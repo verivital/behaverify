@@ -24,7 +24,6 @@ grid_world/
 ├── run_compositional_pipeline.py  # End-to-end compositional pipeline
 ├── counter_template.tree      # Tree template used by run_compositional_pipeline.py
 │                              #   when --tree is not provided (auto-generates a .tree)
-└── inspect_onnx.py        # Utility for inspecting NN architecture
 ```
 
 ---
