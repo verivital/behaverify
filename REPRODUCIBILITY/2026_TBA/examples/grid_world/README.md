@@ -22,10 +22,8 @@ grid_world/
 ├── verify_contracts.yaml  # Config: grid bounds, EPS, timeout, ONNX path
 ├── run_pgd_1000_contracts.sh  # Batch PGD runner for five 100%-accurate NNs
 ├── run_compositional_pipeline.py  # End-to-end compositional pipeline
-├── template.tree              # Source template for tree generation
 ├── counter_template.tree      # Tree template used by run_compositional_pipeline.py
 │                              #   when --tree is not provided (auto-generates a .tree)
-├── obstacles_6_18_0.txt       # Obstacle positions read by contract generation
 └── inspect_onnx.py        # Utility for inspecting NN architecture
 ```
 
