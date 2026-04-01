@@ -1,0 +1,25 @@
+# pipeline_config.yaml
+# Configuration for run_compositional_pipeline.py.
+# All paths are relative to grid_world/ (the directory containing this file).
+# CLI flags override these values when provided.
+
+# Paths to external tools and artifacts (adjust for your environment).
+paths:
+  nuxmv_bin:        ../../nuXmv_DL/bin/nuXmv
+  nuxmv_cmd:        ../../scripts/nuxmv_commands/command_combo_invar_ctl
+  metamodel:        ../../metamodel/behaverify.tx
+  counter_template: counter_template.tree
+  contracts_config: verify_contracts.yaml
+
+# Arguments passed to dsl_with_contracts_to_nuxmv for the grid-world SMV.
+# These reflect the variable names and action domain declared in counter_template.tree.
+smv:
+  neural_var: network
+  pos_x:      drone_x
+  pos_y:      drone_y
+  domain:
+    - left
+    - right
+    - up
+    - down
+    - no_action
