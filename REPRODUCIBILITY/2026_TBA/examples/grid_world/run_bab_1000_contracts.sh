@@ -25,7 +25,7 @@ for NAME in "${NETWORKS[@]}"; do
     echo "========================================"
     echo "Verifying ${NAME}  [BaB only, no PGD]"
     echo "========================================"
-    python3 verify_contracts.py \
+    python3 verify_grid_world_contracts.py \
         --no-pgd \
         --onnx   "./networks/${NAME}.onnx" \
         --output "./contracts/disabled_pgd/${NAME}.json"

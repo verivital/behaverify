@@ -18,8 +18,9 @@ grid_world/
 │   ├── disabled_pgd/      # BaB-only results (pre-PGD baseline, 4 networks)
 │   └── enabled_pgd/       # PGD-enabled results (SAT/UNSAT, zero timeouts, 5 networks)
 ├── results/               # Pipeline reports and PGD analysis
-├── verify_contracts.py    # A/G contract verification via alpha-beta-CROWN
-├── verify_contracts.yaml  # Config: grid bounds, EPS, timeout, ONNX path
+├── generate_grid_world_contracts.py  # Generate A/G contracts from obstacle config (no CROWN)
+├── verify_grid_world_contracts.py    # Verify contracts via alpha-beta-CROWN
+├── grid_world_config.yaml  # Config: grid bounds, EPS, timeout, ONNX path
 ├── run_pgd_1000_contracts.sh  # Batch PGD runner for five 100%-accurate NNs (PGD enabled)
 ├── run_bab_1000_contracts.sh  # Batch BaB-only runner for fair comparison (PGD disabled)
 ├── run_compositional_pipeline.py  # End-to-end compositional pipeline
@@ -43,7 +44,7 @@ resolve paths relative to the current working directory.
 
 ### Quick Start (using pre-computed contracts)
 
-Note: `--skip-contracts` bypasses `verify_contracts.py` entirely — the pre-computed
+Note: `--skip-contracts` bypasses `verify_grid_world_contracts.py` entirely — the pre-computed
 JSON is used directly. PGD only matters when re-running contract verification from scratch.
 
 ```bash
@@ -77,7 +78,7 @@ wall time, peak memory, contract counts, and nuXmv verdict.
 Re-run contract verification with PGD enabled (recommended):
 
 ```bash
-python verify_contracts.py \
+python verify_grid_world_contracts.py \
     --onnx networks/1000__6_18_0__0100_1.onnx \
     --output contracts/enabled_pgd/1000__6_18_0__0100_1_pgd60.json
 ```
@@ -143,7 +144,7 @@ Two distinct causes — check `steps.contracts` in `pipeline_report.json`:
   forbidden move for some real-valued input in the contract region. This is a real
   finding. See `results/pgd_unsat_report.md`.
 - **TIMEOUT contracts (PGD disabled or timeout too low):** abstraction is incomplete.
-  Re-run with PGD enabled or increase `timeout_sec` in `verify_contracts.yaml`.
+  Re-run with PGD enabled or increase `timeout_sec` in `grid_world_config.yaml`.
 
 ### Doubled path in ONNX loading (e.g., `.../results/compositional/0995//home/...`)
 

@@ -9,7 +9,7 @@ paths:
   nuxmv_cmd:        ../../scripts/nuxmv_commands/command_combo_invar_ctl
   metamodel:        ../../metamodel/behaverify.tx
   counter_template: counter_template.tree
-  contracts_config: verify_contracts.yaml
+  contracts_config: grid_world_config.yaml
 
 # Arguments passed to dsl_with_contracts_to_nuxmv for the grid-world SMV.
 # These reflect the variable names and action domain declared in counter_template.tree.
