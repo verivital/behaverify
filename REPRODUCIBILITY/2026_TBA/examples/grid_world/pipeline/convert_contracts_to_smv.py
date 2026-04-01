@@ -1,5 +1,5 @@
 """
-pipeline.smv — Step 2: .tree + contracts → contract-based nuXmv SMV.
+pipeline.convert_contracts_to_smv — Step 2: .tree + contracts → contract-based nuXmv SMV.
 
 run_smv_generation() calls dsl_with_contracts_to_nuxmv and records metrics.
 The SMV converter arguments (neural_var, pos_x, pos_y, domain) are passed in
@@ -15,7 +15,7 @@ import tracemalloc
 from pathlib import Path
 from typing import Any
 
-from pipeline.utils import self_rss_kb
+from pipeline.resolve_pipeline_paths import self_rss_kb
 
 
 def run_smv_generation(ctx: dict[str, Any], smv_cfg: dict[str, Any]) -> dict[str, Any]:

@@ -1,7 +1,11 @@
 """
-pipeline.contracts — Step 1: A/G contract verification via alpha-beta-CROWN.
+pipeline.wrap_contract_request — Step 1: timing wrapper around A/G contract verification.
 
-run_contracts()  — runs verify_contracts.run_verification() and records metrics.
+Temporary file: will be removed once verify_contracts.py is split into
+generate_grid_world_contracts.py and verify_grid_world_contracts.py. At that
+point, the pipeline will call verify_grid_world_contracts directly.
+
+run_contracts()  — calls verify_contracts.run_verification() and records timing/memory metrics.
 skip_contracts() — loads an existing contracts JSON and returns skipped metrics.
 """
 
@@ -13,7 +17,7 @@ import time
 import tracemalloc
 from typing import Any
 
-from pipeline.utils import self_rss_kb
+from pipeline.resolve_pipeline_paths import self_rss_kb
 
 
 def run_contracts(ctx: dict[str, Any]) -> dict[str, Any]:

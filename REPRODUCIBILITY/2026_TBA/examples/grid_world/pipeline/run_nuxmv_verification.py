@@ -1,8 +1,8 @@
 """
-pipeline.nuxmv — Step 3: nuXmv verification and verdict parsing.
+pipeline.run_nuxmv_verification — Step 3: nuXmv verification and verdict parsing.
 
 run_nuxmv()      — runs nuXmv as a subprocess and returns metrics + verdicts.
-parse_verdicts() — extracts INVARSPEC and CTLSPEC results from nuXmv stdout.
+parse_verdicts() — extracts INVARSPEC and CTLSPEC verdicts from nuXmv stdout.
 """
 
 from __future__ import annotations
@@ -12,7 +12,7 @@ import subprocess
 import time
 from typing import Any
 
-from pipeline.utils import children_rss_kb
+from pipeline.resolve_pipeline_paths import children_rss_kb
 
 
 # nuXmv output patterns

@@ -1,5 +1,5 @@
 """
-pipeline.report — Step 4: JSON report and console summary.
+pipeline.write_pipeline_report — Step 4: JSON report and console summary.
 
 write_report() serialises all per-step metrics to pipeline_report.json and
 prints a formatted summary table to stdout.

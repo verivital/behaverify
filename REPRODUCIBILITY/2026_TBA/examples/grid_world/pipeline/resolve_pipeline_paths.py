@@ -1,5 +1,5 @@
 """
-pipeline.utils — shared helpers and pipeline context setup.
+pipeline.resolve_pipeline_paths — shared memory helpers and pipeline context setup.
 
 setup() resolves all paths, creates the output directory, and optionally
 auto-generates a .tree file from the counter template. It returns a context
