@@ -35,11 +35,11 @@ from pathlib import Path
 
 import yaml
 
-from pipeline.contracts import run_contracts, skip_contracts
-from pipeline.nuxmv     import run_nuxmv
-from pipeline.report    import write_report
-from pipeline.smv       import run_smv_generation
-from pipeline.utils     import setup
+from pipeline.wrap_contract_request    import run_contracts, skip_contracts
+from pipeline.run_nuxmv_verification   import run_nuxmv
+from pipeline.write_pipeline_report    import write_report
+from pipeline.convert_contracts_to_smv import run_smv_generation
+from pipeline.resolve_pipeline_paths   import setup
 
 # ---------------------------------------------------------------------------
 # Configuration
