@@ -27,6 +27,7 @@ Output: JSON file (path set in YAML)
 
 import sys
 import json
+import argparse
 import functools
 import datetime
 from typing import Any
@@ -135,7 +136,8 @@ def build_crown_config(cfg: dict[str, Any]) -> Any:
     return (
         ConfigBuilder.from_defaults()
         .set(general__device="cpu")
-        .set(attack__pgd_order="skip")   # skip PGD, go straight to BaB
+        .set(attack__pgd_order="before")   # run PGD first to find violations fast
+        .set(attack__pgd_restarts=50)
         .set(bab__timeout=cfg["verification"]["timeout_sec"])
         ()
     )
@@ -208,4 +210,19 @@ def run_verification(cfg: dict[str, Any]) -> None:
 
 
 if __name__ == "__main__":
-    run_verification(load_config())
+    parser = argparse.ArgumentParser(
+        description="Verify grid-world A/G contracts via alpha-beta-CROWN."
+    )
+    parser.add_argument("--config", default="verify_contracts.yaml",
+                        help="Path to YAML config (default: verify_contracts.yaml)")
+    parser.add_argument("--onnx", default=None,
+                        help="Override onnx_path from YAML")
+    parser.add_argument("--output", default=None,
+                        help="Override output_path from YAML")
+    args = parser.parse_args()
+    cfg = load_config(args.config)
+    if args.onnx:
+        cfg["onnx_path"] = args.onnx
+    if args.output:
+        cfg["output_path"] = args.output
+    run_verification(cfg)
