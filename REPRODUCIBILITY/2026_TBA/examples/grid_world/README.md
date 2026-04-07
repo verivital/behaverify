@@ -17,6 +17,8 @@ grid_world/
 ├── contracts/
 │   ├── disabled_pgd/      # BaB-only results (pre-PGD baseline, 4 networks)
 │   └── enabled_pgd/       # PGD-enabled results (SAT/UNSAT, zero timeouts, 5 networks)
+├── figures/               # Generated figures and image scripts
+│                          #   See figures/README.md for details.
 ├── results/               # Pipeline reports and PGD analysis
 ├── generate_grid_world_contracts.py  # Generate A/G contracts from obstacle config (no CROWN)
 ├── verify_grid_world_contracts.py    # Verify contracts via alpha-beta-CROWN
