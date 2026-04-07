@@ -46,7 +46,7 @@ def generate_contracts(
 
     Skips source cells that are outside the grid or are themselves obstacles.
     """
-    obstacle_set = set(obstacles)
+    obstacle_set = {tuple(o) for o in obstacles}
     contracts = []
     for (ox, oy) in obstacles:
         for d_idx, (label, dx, dy) in DIRECTIONS.items():

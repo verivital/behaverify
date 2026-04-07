@@ -19,11 +19,7 @@ verification:
   # BaB timeout in seconds per sub-verification.
   timeout_sec: 60
 
-# File paths (relative to the directory where the script is run).
-onnx_path: ./networks/1000__6_18_0__0200_1.onnx
-output_path: ./contracts/1000__6_18_0__0200_1.json
-
-# Obstacle positions [x, y] from template.tree.
+# Obstacle positions [x, y] as declared in counter_template.tree.
 # Stored as a flat array in the DSL (index 2k = x, index 2k+1 = y).
 obstacles:
   - [0, 0]

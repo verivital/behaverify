@@ -238,17 +238,15 @@ if __name__ == "__main__":
     )
     parser.add_argument("--config",  default="grid_world_config.yaml",
                         help="Path to YAML config (default: grid_world_config.yaml)")
-    parser.add_argument("--onnx",    default=None, help="Override onnx_path from YAML")
-    parser.add_argument("--output",  default=None, help="Override output_path from YAML")
+    parser.add_argument("--onnx",    required=True, help="Path to the ONNX network file")
+    parser.add_argument("--output",  required=True, help="Path to write the contracts JSON")
     parser.add_argument("--no-pgd",  action="store_true",
                         help="Disable PGD attack (BaB only); sets pgd_order=skip")
     args = parser.parse_args()
 
     cfg = load_config(args.config)
-    if args.onnx:
-        cfg["onnx_path"] = args.onnx
-    if args.output:
-        cfg["output_path"] = args.output
+    cfg["onnx_path"]   = args.onnx
+    cfg["output_path"] = args.output
     if args.no_pgd:
         cfg["pgd_order"] = "skip"
 
