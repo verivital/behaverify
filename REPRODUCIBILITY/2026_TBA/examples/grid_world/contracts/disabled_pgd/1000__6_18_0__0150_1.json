@@ -1,12 +1,12 @@
 {
-  "onnx_path": "./networks/1000__6_18_0__0100_1.onnx",
-  "timestamp": "2026-04-07T01:33:57.562382",
+  "onnx_path": "./networks/1000__6_18_0__0150_1.onnx",
+  "timestamp": "2026-04-07T01:53:33.163066",
   "mode": "single-call, goal=[0,6]^2, drone EPS=0.001",
   "timeout_sec": 60,
   "summary": {
-    "SAT": 18,
+    "SAT": 19,
     "UNSAT": 0,
-    "TIMEOUT": 20,
+    "TIMEOUT": 19,
     "total": 38
   },
   "contracts": [
@@ -55,7 +55,7 @@
       "forbidden_dir": "We",
       "forbidden_dir_idx": 0,
       "description": "obstacle (1,2)  source (2,2)  forbid We",
-      "status": "TIMEOUT",
+      "status": "SAT",
       "counterexample": null
     },
     {
@@ -151,7 +151,7 @@
       "forbidden_dir": "Ea",
       "forbidden_dir_idx": 1,
       "description": "obstacle (1,6)  source (0,6)  forbid Ea",
-      "status": "TIMEOUT",
+      "status": "SAT",
       "counterexample": null
     },
     {
@@ -231,7 +231,7 @@
       "forbidden_dir": "We",
       "forbidden_dir_idx": 0,
       "description": "obstacle (2,4)  source (3,4)  forbid We",
-      "status": "TIMEOUT",
+      "status": "SAT",
       "counterexample": null
     },
     {
@@ -247,7 +247,7 @@
       "forbidden_dir": "No",
       "forbidden_dir_idx": 2,
       "description": "obstacle (2,4)  source (2,3)  forbid No",
-      "status": "SAT",
+      "status": "TIMEOUT",
       "counterexample": null
     },
     {
@@ -263,7 +263,7 @@
       "forbidden_dir": "So",
       "forbidden_dir_idx": 3,
       "description": "obstacle (2,4)  source (2,5)  forbid So",
-      "status": "SAT",
+      "status": "TIMEOUT",
       "counterexample": null
     },
     {
@@ -375,7 +375,7 @@
       "forbidden_dir": "No",
       "forbidden_dir_idx": 2,
       "description": "obstacle (3,6)  source (3,5)  forbid No",
-      "status": "TIMEOUT",
+      "status": "SAT",
       "counterexample": null
     },
     {
@@ -455,7 +455,7 @@
       "forbidden_dir": "Ea",
       "forbidden_dir_idx": 1,
       "description": "obstacle (4,2)  source (3,2)  forbid Ea",
-      "status": "SAT",
+      "status": "TIMEOUT",
       "counterexample": null
     },
     {

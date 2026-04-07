@@ -61,14 +61,16 @@ def verify_one_contract(
     grid_max: float,
     eps: float,
     crown_config: Any,
-) -> str:
+) -> tuple[str, list[float] | None]:
     """
     Verify one A/G contract with a single CROWN call.
 
     Drone position: [cx-eps, cx+eps] x [cy-eps, cy+eps]  (≈ integer point)
     Goal position:  [grid_min, grid_max]^2                (full continuous range)
 
-    Returns "SAT", "UNSAT", or "TIMEOUT".
+    Returns (status, counterexample) where:
+        status          — "SAT", "UNSAT", or "TIMEOUT"
+        counterexample  — [drone_x, drone_y, goal_x, goal_y] if UNSAT, else None
     """
     x = input_vars((4,))
     lower = torch.tensor([cx - eps, cy - eps, grid_min, grid_min], dtype=torch.float32)
@@ -86,7 +88,21 @@ def verify_one_contract(
         input_constraint=input_constraint, output_constraint=output_constraint,
     )
     result = ABCrownSolver(spec, onnx_path, config=crown_config).solve()
-    return normalize_status(result.status)
+    status = normalize_status(result.status)
+
+    counterexample = None
+    if status == "UNSAT":
+        adv = result.stats.get("attack_examples")
+        if adv is None:
+            adv = result.stats.get("all_adv_candidates")
+        if adv is not None:
+            try:
+                ce = adv.view(-1)[:4].tolist()
+                counterexample = [round(v, 6) for v in ce]
+            except Exception:
+                pass
+
+    return status, counterexample
 
 
 # ---------------------------------------------------------------------------
@@ -183,13 +199,18 @@ def run_verification(cfg: dict[str, Any]) -> dict[str, Any]:
     records = []
     for i, contract in enumerate(contracts):
         cx, cy, d_idx, label, ox, oy, desc = contract
-        status = verify_one_contract(
+        status, counterexample = verify_one_contract(
             cfg["onnx_path"], cx, cy, d_idx,
             num_classes, grid_min, grid_max, eps, crown_config,
         )
         print(f"{i+1:<4} {desc:<45} {status:<10} {result_marker(status)}")
+        if counterexample is not None:
+            gx, gy = counterexample[2], counterexample[3]
+            is_int = abs(gx - round(gx)) < 0.01 and abs(gy - round(gy)) < 0.01
+            print(f"       CE: drone=({counterexample[0]:.4f},{counterexample[1]:.4f}) "
+                  f"goal=({gx:.4f},{gy:.4f})  goal_is_integer={is_int}")
         sys.stdout.flush()
-        records.append({
+        record = {
             "id":               i + 1,
             "obstacle":         [ox, oy],
             "source":           [cx, cy],
@@ -197,7 +218,9 @@ def run_verification(cfg: dict[str, Any]) -> dict[str, Any]:
             "forbidden_dir_idx": d_idx,
             "description":      desc,
             "status":           status,
-        })
+            "counterexample":   counterexample,
+        }
+        records.append(record)
 
     wall_sec  = time.perf_counter() - t0
     rss_after = _self_rss_kb()

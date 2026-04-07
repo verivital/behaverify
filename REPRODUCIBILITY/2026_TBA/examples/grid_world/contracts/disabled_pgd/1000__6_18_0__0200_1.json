@@ -1,8 +1,8 @@
 {
   "onnx_path": "./networks/1000__6_18_0__0200_1.onnx",
-  "timestamp": "2026-03-04T14:51:10.084894",
+  "timestamp": "2026-04-07T02:16:06.007963",
   "mode": "single-call, goal=[0,6]^2, drone EPS=0.001",
-  "timeout_sec": 10,
+  "timeout_sec": 60,
   "summary": {
     "SAT": 16,
     "UNSAT": 0,
@@ -23,7 +23,8 @@
       "forbidden_dir": "So",
       "forbidden_dir_idx": 3,
       "description": "obstacle (0,1)  source (0,2)  forbid So",
-      "status": "SAT"
+      "status": "SAT",
+      "counterexample": null
     },
     {
       "id": 2,
@@ -38,7 +39,8 @@
       "forbidden_dir": "We",
       "forbidden_dir_idx": 0,
       "description": "obstacle (1,0)  source (2,0)  forbid We",
-      "status": "SAT"
+      "status": "SAT",
+      "counterexample": null
     },
     {
       "id": 3,
@@ -53,7 +55,8 @@
       "forbidden_dir": "We",
       "forbidden_dir_idx": 0,
       "description": "obstacle (1,2)  source (2,2)  forbid We",
-      "status": "SAT"
+      "status": "SAT",
+      "counterexample": null
     },
     {
       "id": 4,
@@ -68,7 +71,8 @@
       "forbidden_dir": "Ea",
       "forbidden_dir_idx": 1,
       "description": "obstacle (1,2)  source (0,2)  forbid Ea",
-      "status": "TIMEOUT"
+      "status": "TIMEOUT",
+      "counterexample": null
     },
     {
       "id": 5,
@@ -83,7 +87,8 @@
       "forbidden_dir": "So",
       "forbidden_dir_idx": 3,
       "description": "obstacle (1,2)  source (1,3)  forbid So",
-      "status": "SAT"
+      "status": "SAT",
+      "counterexample": null
     },
     {
       "id": 6,
@@ -98,7 +103,8 @@
       "forbidden_dir": "Ea",
       "forbidden_dir_idx": 1,
       "description": "obstacle (1,4)  source (0,4)  forbid Ea",
-      "status": "TIMEOUT"
+      "status": "TIMEOUT",
+      "counterexample": null
     },
     {
       "id": 7,
@@ -113,7 +119,8 @@
       "forbidden_dir": "No",
       "forbidden_dir_idx": 2,
       "description": "obstacle (1,4)  source (1,3)  forbid No",
-      "status": "SAT"
+      "status": "SAT",
+      "counterexample": null
     },
     {
       "id": 8,
@@ -128,7 +135,8 @@
       "forbidden_dir": "So",
       "forbidden_dir_idx": 3,
       "description": "obstacle (1,4)  source (1,5)  forbid So",
-      "status": "SAT"
+      "status": "SAT",
+      "counterexample": null
     },
     {
       "id": 9,
@@ -143,7 +151,8 @@
       "forbidden_dir": "Ea",
       "forbidden_dir_idx": 1,
       "description": "obstacle (1,6)  source (0,6)  forbid Ea",
-      "status": "SAT"
+      "status": "SAT",
+      "counterexample": null
     },
     {
       "id": 10,
@@ -158,7 +167,8 @@
       "forbidden_dir": "No",
       "forbidden_dir_idx": 2,
       "description": "obstacle (1,6)  source (1,5)  forbid No",
-      "status": "SAT"
+      "status": "SAT",
+      "counterexample": null
     },
     {
       "id": 11,
@@ -173,7 +183,8 @@
       "forbidden_dir": "We",
       "forbidden_dir_idx": 0,
       "description": "obstacle (2,1)  source (3,1)  forbid We",
-      "status": "TIMEOUT"
+      "status": "TIMEOUT",
+      "counterexample": null
     },
     {
       "id": 12,
@@ -188,7 +199,8 @@
       "forbidden_dir": "No",
       "forbidden_dir_idx": 2,
       "description": "obstacle (2,1)  source (2,0)  forbid No",
-      "status": "TIMEOUT"
+      "status": "TIMEOUT",
+      "counterexample": null
     },
     {
       "id": 13,
@@ -203,7 +215,8 @@
       "forbidden_dir": "So",
       "forbidden_dir_idx": 3,
       "description": "obstacle (2,1)  source (2,2)  forbid So",
-      "status": "SAT"
+      "status": "SAT",
+      "counterexample": null
     },
     {
       "id": 14,
@@ -218,7 +231,8 @@
       "forbidden_dir": "We",
       "forbidden_dir_idx": 0,
       "description": "obstacle (2,4)  source (3,4)  forbid We",
-      "status": "TIMEOUT"
+      "status": "TIMEOUT",
+      "counterexample": null
     },
     {
       "id": 15,
@@ -233,7 +247,8 @@
       "forbidden_dir": "No",
       "forbidden_dir_idx": 2,
       "description": "obstacle (2,4)  source (2,3)  forbid No",
-      "status": "TIMEOUT"
+      "status": "TIMEOUT",
+      "counterexample": null
     },
     {
       "id": 16,
@@ -248,7 +263,8 @@
       "forbidden_dir": "So",
       "forbidden_dir_idx": 3,
       "description": "obstacle (2,4)  source (2,5)  forbid So",
-      "status": "TIMEOUT"
+      "status": "TIMEOUT",
+      "counterexample": null
     },
     {
       "id": 17,
@@ -263,7 +279,8 @@
       "forbidden_dir": "No",
       "forbidden_dir_idx": 2,
       "description": "obstacle (2,6)  source (2,5)  forbid No",
-      "status": "SAT"
+      "status": "SAT",
+      "counterexample": null
     },
     {
       "id": 18,
@@ -278,7 +295,8 @@
       "forbidden_dir": "We",
       "forbidden_dir_idx": 0,
       "description": "obstacle (3,3)  source (4,3)  forbid We",
-      "status": "TIMEOUT"
+      "status": "TIMEOUT",
+      "counterexample": null
     },
     {
       "id": 19,
@@ -293,7 +311,8 @@
       "forbidden_dir": "Ea",
       "forbidden_dir_idx": 1,
       "description": "obstacle (3,3)  source (2,3)  forbid Ea",
-      "status": "TIMEOUT"
+      "status": "TIMEOUT",
+      "counterexample": null
     },
     {
       "id": 20,
@@ -308,7 +327,8 @@
       "forbidden_dir": "No",
       "forbidden_dir_idx": 2,
       "description": "obstacle (3,3)  source (3,2)  forbid No",
-      "status": "TIMEOUT"
+      "status": "TIMEOUT",
+      "counterexample": null
     },
     {
       "id": 21,
@@ -323,7 +343,8 @@
       "forbidden_dir": "So",
       "forbidden_dir_idx": 3,
       "description": "obstacle (3,3)  source (3,4)  forbid So",
-      "status": "TIMEOUT"
+      "status": "TIMEOUT",
+      "counterexample": null
     },
     {
       "id": 22,
@@ -338,7 +359,8 @@
       "forbidden_dir": "We",
       "forbidden_dir_idx": 0,
       "description": "obstacle (3,6)  source (4,6)  forbid We",
-      "status": "TIMEOUT"
+      "status": "TIMEOUT",
+      "counterexample": null
     },
     {
       "id": 23,
@@ -353,7 +375,8 @@
       "forbidden_dir": "No",
       "forbidden_dir_idx": 2,
       "description": "obstacle (3,6)  source (3,5)  forbid No",
-      "status": "SAT"
+      "status": "SAT",
+      "counterexample": null
     },
     {
       "id": 24,
@@ -368,7 +391,8 @@
       "forbidden_dir": "We",
       "forbidden_dir_idx": 0,
       "description": "obstacle (4,1)  source (5,1)  forbid We",
-      "status": "SAT"
+      "status": "SAT",
+      "counterexample": null
     },
     {
       "id": 25,
@@ -383,7 +407,8 @@
       "forbidden_dir": "Ea",
       "forbidden_dir_idx": 1,
       "description": "obstacle (4,1)  source (3,1)  forbid Ea",
-      "status": "SAT"
+      "status": "SAT",
+      "counterexample": null
     },
     {
       "id": 26,
@@ -398,7 +423,8 @@
       "forbidden_dir": "No",
       "forbidden_dir_idx": 2,
       "description": "obstacle (4,1)  source (4,0)  forbid No",
-      "status": "TIMEOUT"
+      "status": "TIMEOUT",
+      "counterexample": null
     },
     {
       "id": 27,
@@ -413,7 +439,8 @@
       "forbidden_dir": "We",
       "forbidden_dir_idx": 0,
       "description": "obstacle (4,2)  source (5,2)  forbid We",
-      "status": "SAT"
+      "status": "SAT",
+      "counterexample": null
     },
     {
       "id": 28,
@@ -428,7 +455,8 @@
       "forbidden_dir": "Ea",
       "forbidden_dir_idx": 1,
       "description": "obstacle (4,2)  source (3,2)  forbid Ea",
-      "status": "TIMEOUT"
+      "status": "TIMEOUT",
+      "counterexample": null
     },
     {
       "id": 29,
@@ -443,7 +471,8 @@
       "forbidden_dir": "So",
       "forbidden_dir_idx": 3,
       "description": "obstacle (4,2)  source (4,3)  forbid So",
-      "status": "TIMEOUT"
+      "status": "TIMEOUT",
+      "counterexample": null
     },
     {
       "id": 30,
@@ -458,7 +487,8 @@
       "forbidden_dir": "We",
       "forbidden_dir_idx": 0,
       "description": "obstacle (5,5)  source (6,5)  forbid We",
-      "status": "TIMEOUT"
+      "status": "TIMEOUT",
+      "counterexample": null
     },
     {
       "id": 31,
@@ -473,7 +503,8 @@
       "forbidden_dir": "Ea",
       "forbidden_dir_idx": 1,
       "description": "obstacle (5,5)  source (4,5)  forbid Ea",
-      "status": "TIMEOUT"
+      "status": "TIMEOUT",
+      "counterexample": null
     },
     {
       "id": 32,
@@ -488,7 +519,8 @@
       "forbidden_dir": "No",
       "forbidden_dir_idx": 2,
       "description": "obstacle (5,5)  source (5,4)  forbid No",
-      "status": "TIMEOUT"
+      "status": "TIMEOUT",
+      "counterexample": null
     },
     {
       "id": 33,
@@ -503,7 +535,8 @@
       "forbidden_dir": "So",
       "forbidden_dir_idx": 3,
       "description": "obstacle (5,5)  source (5,6)  forbid So",
-      "status": "TIMEOUT"
+      "status": "TIMEOUT",
+      "counterexample": null
     },
     {
       "id": 34,
@@ -518,7 +551,8 @@
       "forbidden_dir": "Ea",
       "forbidden_dir_idx": 1,
       "description": "obstacle (6,1)  source (5,1)  forbid Ea",
-      "status": "TIMEOUT"
+      "status": "TIMEOUT",
+      "counterexample": null
     },
     {
       "id": 35,
@@ -533,7 +567,8 @@
       "forbidden_dir": "No",
       "forbidden_dir_idx": 2,
       "description": "obstacle (6,1)  source (6,0)  forbid No",
-      "status": "TIMEOUT"
+      "status": "TIMEOUT",
+      "counterexample": null
     },
     {
       "id": 36,
@@ -548,7 +583,8 @@
       "forbidden_dir": "Ea",
       "forbidden_dir_idx": 1,
       "description": "obstacle (6,2)  source (5,2)  forbid Ea",
-      "status": "SAT"
+      "status": "SAT",
+      "counterexample": null
     },
     {
       "id": 37,
@@ -563,7 +599,8 @@
       "forbidden_dir": "Ea",
       "forbidden_dir_idx": 1,
       "description": "obstacle (6,3)  source (5,3)  forbid Ea",
-      "status": "SAT"
+      "status": "SAT",
+      "counterexample": null
     },
     {
       "id": 38,
@@ -578,7 +615,8 @@
       "forbidden_dir": "So",
       "forbidden_dir_idx": 3,
       "description": "obstacle (6,3)  source (6,4)  forbid So",
-      "status": "TIMEOUT"
+      "status": "TIMEOUT",
+      "counterexample": null
     }
   ]
 }
