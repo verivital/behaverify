@@ -12,8 +12,10 @@ Run all commands from `grid_world/` (one level up).
 ```
 figures/
 ├── image_scripts/                     # Scripts that generate figures
-│   └── heatmap_unsat_contracts.py     # Heatmap of avg UNSAT contracts per obstacle
-└── heatmap_unsat_contracts.png        # Generated output
+│   ├── heatmap_unsat_contracts.py     # Heatmap of avg UNSAT contracts per obstacle
+│   └── direction_bias.py              # Bar chart of UNSAT rate by forbidden direction
+├── heatmap_unsat_contracts.png        # Generated output
+└── direction_bias.png                 # Generated output
 ```
 
 ---
@@ -54,3 +56,29 @@ python3 figures/image_scripts/heatmap_unsat_contracts.py \
     --contracts-dir contracts/disabled_pgd/ \
     --output figures/heatmap_unsat_contracts_bab.png
 ```
+
+---
+
+### `direction_bias.png`
+
+A bar chart showing the UNSAT contract rate broken down by forbidden direction
+(West, East, North, South) across all five 100%-accurate networks. Per-network
+rates are overlaid as scatter dots to show consistency across networks.
+
+Key finding: North (58%) and South (60%) show higher UNSAT rates than West (47%)
+and East (52%), suggesting the NN's decision boundary is more prone to continuous-
+domain failures for vertical movements than horizontal ones.
+
+**Generate:**
+
+```bash
+cd REPRODUCIBILITY/2026_TBA/examples/grid_world
+python3 figures/image_scripts/direction_bias.py
+```
+
+**Options:**
+
+| Flag | Default | Description |
+|---|---|---|
+| `--contracts-dir` | `contracts/enabled_pgd/` | Directory of contract JSON files to aggregate |
+| `--output` | `figures/direction_bias.png` | Output image path |
