@@ -6,16 +6,16 @@
 #
 # Usage (from REPRODUCIBILITY/2026_TBA/examples/grid_world/):
 #
-#   ./run_all_pipelines.sh                            # defaults to contracts/enabled_pgd/
-#   ./run_all_pipelines.sh contracts/disabled_pgd/
-#   ./run_all_pipelines.sh contracts/enabled_pgd/
+#   ./run_all_pipelines.sh                            # defaults to contracts/continuous_goals/enabled_pgd/
+#   ./run_all_pipelines.sh contracts/continuous_goals/disabled_pgd/
+#   ./run_all_pipelines.sh contracts/continuous_goals/enabled_pgd/
 #
 # Outputs go to:
 #   results/compositional/<folder_basename>/<network_stem>/pipeline_report.json
 
 set -euo pipefail
 
-CONTRACTS_DIR="${1:-contracts/enabled_pgd}"
+CONTRACTS_DIR="${1:-contracts/continuous_goals/enabled_pgd}"
 FOLDER_NAME="$(basename "${CONTRACTS_DIR}")"
 
 echo "Contracts folder : ${CONTRACTS_DIR}"
