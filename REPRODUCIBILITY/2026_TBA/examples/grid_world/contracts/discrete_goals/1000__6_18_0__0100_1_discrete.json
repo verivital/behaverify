@@ -1,0 +1,622 @@
+{
+  "onnx_path": "./networks/1000__6_18_0__0100_1.onnx",
+  "timestamp": "2026-04-07T15:52:04.379533",
+  "mode": "discrete, 49 integer goals, drone EPS=0.0, goal EPS=0.0, timeout=5.0s per goal",
+  "timeout_sec": 60,
+  "summary": {
+    "SAT": 38,
+    "UNSAT": 0,
+    "TIMEOUT": 0,
+    "total": 38
+  },
+  "contracts": [
+    {
+      "id": 1,
+      "obstacle": [
+        0,
+        1
+      ],
+      "source": [
+        0,
+        2
+      ],
+      "forbidden_dir": "So",
+      "forbidden_dir_idx": 3,
+      "description": "obstacle (0,1)  source (0,2)  forbid So",
+      "status": "SAT",
+      "counterexample": null
+    },
+    {
+      "id": 2,
+      "obstacle": [
+        1,
+        0
+      ],
+      "source": [
+        2,
+        0
+      ],
+      "forbidden_dir": "We",
+      "forbidden_dir_idx": 0,
+      "description": "obstacle (1,0)  source (2,0)  forbid We",
+      "status": "SAT",
+      "counterexample": null
+    },
+    {
+      "id": 3,
+      "obstacle": [
+        1,
+        2
+      ],
+      "source": [
+        2,
+        2
+      ],
+      "forbidden_dir": "We",
+      "forbidden_dir_idx": 0,
+      "description": "obstacle (1,2)  source (2,2)  forbid We",
+      "status": "SAT",
+      "counterexample": null
+    },
+    {
+      "id": 4,
+      "obstacle": [
+        1,
+        2
+      ],
+      "source": [
+        0,
+        2
+      ],
+      "forbidden_dir": "Ea",
+      "forbidden_dir_idx": 1,
+      "description": "obstacle (1,2)  source (0,2)  forbid Ea",
+      "status": "SAT",
+      "counterexample": null
+    },
+    {
+      "id": 5,
+      "obstacle": [
+        1,
+        2
+      ],
+      "source": [
+        1,
+        3
+      ],
+      "forbidden_dir": "So",
+      "forbidden_dir_idx": 3,
+      "description": "obstacle (1,2)  source (1,3)  forbid So",
+      "status": "SAT",
+      "counterexample": null
+    },
+    {
+      "id": 6,
+      "obstacle": [
+        1,
+        4
+      ],
+      "source": [
+        0,
+        4
+      ],
+      "forbidden_dir": "Ea",
+      "forbidden_dir_idx": 1,
+      "description": "obstacle (1,4)  source (0,4)  forbid Ea",
+      "status": "SAT",
+      "counterexample": null
+    },
+    {
+      "id": 7,
+      "obstacle": [
+        1,
+        4
+      ],
+      "source": [
+        1,
+        3
+      ],
+      "forbidden_dir": "No",
+      "forbidden_dir_idx": 2,
+      "description": "obstacle (1,4)  source (1,3)  forbid No",
+      "status": "SAT",
+      "counterexample": null
+    },
+    {
+      "id": 8,
+      "obstacle": [
+        1,
+        4
+      ],
+      "source": [
+        1,
+        5
+      ],
+      "forbidden_dir": "So",
+      "forbidden_dir_idx": 3,
+      "description": "obstacle (1,4)  source (1,5)  forbid So",
+      "status": "SAT",
+      "counterexample": null
+    },
+    {
+      "id": 9,
+      "obstacle": [
+        1,
+        6
+      ],
+      "source": [
+        0,
+        6
+      ],
+      "forbidden_dir": "Ea",
+      "forbidden_dir_idx": 1,
+      "description": "obstacle (1,6)  source (0,6)  forbid Ea",
+      "status": "SAT",
+      "counterexample": null
+    },
+    {
+      "id": 10,
+      "obstacle": [
+        1,
+        6
+      ],
+      "source": [
+        1,
+        5
+      ],
+      "forbidden_dir": "No",
+      "forbidden_dir_idx": 2,
+      "description": "obstacle (1,6)  source (1,5)  forbid No",
+      "status": "SAT",
+      "counterexample": null
+    },
+    {
+      "id": 11,
+      "obstacle": [
+        2,
+        1
+      ],
+      "source": [
+        3,
+        1
+      ],
+      "forbidden_dir": "We",
+      "forbidden_dir_idx": 0,
+      "description": "obstacle (2,1)  source (3,1)  forbid We",
+      "status": "SAT",
+      "counterexample": null
+    },
+    {
+      "id": 12,
+      "obstacle": [
+        2,
+        1
+      ],
+      "source": [
+        2,
+        0
+      ],
+      "forbidden_dir": "No",
+      "forbidden_dir_idx": 2,
+      "description": "obstacle (2,1)  source (2,0)  forbid No",
+      "status": "SAT",
+      "counterexample": null
+    },
+    {
+      "id": 13,
+      "obstacle": [
+        2,
+        1
+      ],
+      "source": [
+        2,
+        2
+      ],
+      "forbidden_dir": "So",
+      "forbidden_dir_idx": 3,
+      "description": "obstacle (2,1)  source (2,2)  forbid So",
+      "status": "SAT",
+      "counterexample": null
+    },
+    {
+      "id": 14,
+      "obstacle": [
+        2,
+        4
+      ],
+      "source": [
+        3,
+        4
+      ],
+      "forbidden_dir": "We",
+      "forbidden_dir_idx": 0,
+      "description": "obstacle (2,4)  source (3,4)  forbid We",
+      "status": "SAT",
+      "counterexample": null
+    },
+    {
+      "id": 15,
+      "obstacle": [
+        2,
+        4
+      ],
+      "source": [
+        2,
+        3
+      ],
+      "forbidden_dir": "No",
+      "forbidden_dir_idx": 2,
+      "description": "obstacle (2,4)  source (2,3)  forbid No",
+      "status": "SAT",
+      "counterexample": null
+    },
+    {
+      "id": 16,
+      "obstacle": [
+        2,
+        4
+      ],
+      "source": [
+        2,
+        5
+      ],
+      "forbidden_dir": "So",
+      "forbidden_dir_idx": 3,
+      "description": "obstacle (2,4)  source (2,5)  forbid So",
+      "status": "SAT",
+      "counterexample": null
+    },
+    {
+      "id": 17,
+      "obstacle": [
+        2,
+        6
+      ],
+      "source": [
+        2,
+        5
+      ],
+      "forbidden_dir": "No",
+      "forbidden_dir_idx": 2,
+      "description": "obstacle (2,6)  source (2,5)  forbid No",
+      "status": "SAT",
+      "counterexample": null
+    },
+    {
+      "id": 18,
+      "obstacle": [
+        3,
+        3
+      ],
+      "source": [
+        4,
+        3
+      ],
+      "forbidden_dir": "We",
+      "forbidden_dir_idx": 0,
+      "description": "obstacle (3,3)  source (4,3)  forbid We",
+      "status": "SAT",
+      "counterexample": null
+    },
+    {
+      "id": 19,
+      "obstacle": [
+        3,
+        3
+      ],
+      "source": [
+        2,
+        3
+      ],
+      "forbidden_dir": "Ea",
+      "forbidden_dir_idx": 1,
+      "description": "obstacle (3,3)  source (2,3)  forbid Ea",
+      "status": "SAT",
+      "counterexample": null
+    },
+    {
+      "id": 20,
+      "obstacle": [
+        3,
+        3
+      ],
+      "source": [
+        3,
+        2
+      ],
+      "forbidden_dir": "No",
+      "forbidden_dir_idx": 2,
+      "description": "obstacle (3,3)  source (3,2)  forbid No",
+      "status": "SAT",
+      "counterexample": null
+    },
+    {
+      "id": 21,
+      "obstacle": [
+        3,
+        3
+      ],
+      "source": [
+        3,
+        4
+      ],
+      "forbidden_dir": "So",
+      "forbidden_dir_idx": 3,
+      "description": "obstacle (3,3)  source (3,4)  forbid So",
+      "status": "SAT",
+      "counterexample": null
+    },
+    {
+      "id": 22,
+      "obstacle": [
+        3,
+        6
+      ],
+      "source": [
+        4,
+        6
+      ],
+      "forbidden_dir": "We",
+      "forbidden_dir_idx": 0,
+      "description": "obstacle (3,6)  source (4,6)  forbid We",
+      "status": "SAT",
+      "counterexample": null
+    },
+    {
+      "id": 23,
+      "obstacle": [
+        3,
+        6
+      ],
+      "source": [
+        3,
+        5
+      ],
+      "forbidden_dir": "No",
+      "forbidden_dir_idx": 2,
+      "description": "obstacle (3,6)  source (3,5)  forbid No",
+      "status": "SAT",
+      "counterexample": null
+    },
+    {
+      "id": 24,
+      "obstacle": [
+        4,
+        1
+      ],
+      "source": [
+        5,
+        1
+      ],
+      "forbidden_dir": "We",
+      "forbidden_dir_idx": 0,
+      "description": "obstacle (4,1)  source (5,1)  forbid We",
+      "status": "SAT",
+      "counterexample": null
+    },
+    {
+      "id": 25,
+      "obstacle": [
+        4,
+        1
+      ],
+      "source": [
+        3,
+        1
+      ],
+      "forbidden_dir": "Ea",
+      "forbidden_dir_idx": 1,
+      "description": "obstacle (4,1)  source (3,1)  forbid Ea",
+      "status": "SAT",
+      "counterexample": null
+    },
+    {
+      "id": 26,
+      "obstacle": [
+        4,
+        1
+      ],
+      "source": [
+        4,
+        0
+      ],
+      "forbidden_dir": "No",
+      "forbidden_dir_idx": 2,
+      "description": "obstacle (4,1)  source (4,0)  forbid No",
+      "status": "SAT",
+      "counterexample": null
+    },
+    {
+      "id": 27,
+      "obstacle": [
+        4,
+        2
+      ],
+      "source": [
+        5,
+        2
+      ],
+      "forbidden_dir": "We",
+      "forbidden_dir_idx": 0,
+      "description": "obstacle (4,2)  source (5,2)  forbid We",
+      "status": "SAT",
+      "counterexample": null
+    },
+    {
+      "id": 28,
+      "obstacle": [
+        4,
+        2
+      ],
+      "source": [
+        3,
+        2
+      ],
+      "forbidden_dir": "Ea",
+      "forbidden_dir_idx": 1,
+      "description": "obstacle (4,2)  source (3,2)  forbid Ea",
+      "status": "SAT",
+      "counterexample": null
+    },
+    {
+      "id": 29,
+      "obstacle": [
+        4,
+        2
+      ],
+      "source": [
+        4,
+        3
+      ],
+      "forbidden_dir": "So",
+      "forbidden_dir_idx": 3,
+      "description": "obstacle (4,2)  source (4,3)  forbid So",
+      "status": "SAT",
+      "counterexample": null
+    },
+    {
+      "id": 30,
+      "obstacle": [
+        5,
+        5
+      ],
+      "source": [
+        6,
+        5
+      ],
+      "forbidden_dir": "We",
+      "forbidden_dir_idx": 0,
+      "description": "obstacle (5,5)  source (6,5)  forbid We",
+      "status": "SAT",
+      "counterexample": null
+    },
+    {
+      "id": 31,
+      "obstacle": [
+        5,
+        5
+      ],
+      "source": [
+        4,
+        5
+      ],
+      "forbidden_dir": "Ea",
+      "forbidden_dir_idx": 1,
+      "description": "obstacle (5,5)  source (4,5)  forbid Ea",
+      "status": "SAT",
+      "counterexample": null
+    },
+    {
+      "id": 32,
+      "obstacle": [
+        5,
+        5
+      ],
+      "source": [
+        5,
+        4
+      ],
+      "forbidden_dir": "No",
+      "forbidden_dir_idx": 2,
+      "description": "obstacle (5,5)  source (5,4)  forbid No",
+      "status": "SAT",
+      "counterexample": null
+    },
+    {
+      "id": 33,
+      "obstacle": [
+        5,
+        5
+      ],
+      "source": [
+        5,
+        6
+      ],
+      "forbidden_dir": "So",
+      "forbidden_dir_idx": 3,
+      "description": "obstacle (5,5)  source (5,6)  forbid So",
+      "status": "SAT",
+      "counterexample": null
+    },
+    {
+      "id": 34,
+      "obstacle": [
+        6,
+        1
+      ],
+      "source": [
+        5,
+        1
+      ],
+      "forbidden_dir": "Ea",
+      "forbidden_dir_idx": 1,
+      "description": "obstacle (6,1)  source (5,1)  forbid Ea",
+      "status": "SAT",
+      "counterexample": null
+    },
+    {
+      "id": 35,
+      "obstacle": [
+        6,
+        1
+      ],
+      "source": [
+        6,
+        0
+      ],
+      "forbidden_dir": "No",
+      "forbidden_dir_idx": 2,
+      "description": "obstacle (6,1)  source (6,0)  forbid No",
+      "status": "SAT",
+      "counterexample": null
+    },
+    {
+      "id": 36,
+      "obstacle": [
+        6,
+        2
+      ],
+      "source": [
+        5,
+        2
+      ],
+      "forbidden_dir": "Ea",
+      "forbidden_dir_idx": 1,
+      "description": "obstacle (6,2)  source (5,2)  forbid Ea",
+      "status": "SAT",
+      "counterexample": null
+    },
+    {
+      "id": 37,
+      "obstacle": [
+        6,
+        3
+      ],
+      "source": [
+        5,
+        3
+      ],
+      "forbidden_dir": "Ea",
+      "forbidden_dir_idx": 1,
+      "description": "obstacle (6,3)  source (5,3)  forbid Ea",
+      "status": "SAT",
+      "counterexample": null
+    },
+    {
+      "id": 38,
+      "obstacle": [
+        6,
+        3
+      ],
+      "source": [
+        6,
+        4
+      ],
+      "forbidden_dir": "So",
+      "forbidden_dir_idx": 3,
+      "description": "obstacle (6,3)  source (6,4)  forbid So",
+      "status": "SAT",
+      "counterexample": null
+    }
+  ]
+}
