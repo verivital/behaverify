@@ -13,7 +13,7 @@ Usage (from REPRODUCIBILITY/2026_TBA/examples/grid_world/):
 
   python run_compositional_pipeline.py \\
       --onnx    networks/1000__6_18_0__0200_1.onnx \\
-      --output  results/compositional/1000__0200 \\
+      --output  results/compositional/continuous_goals/enabled_pgd/1000__0200 \\
       [--tree       path/to/counter.tree]
       [--config     grid_world_config.yaml]
       [--nuxmv      ../../nuXmv_DL/bin/nuXmv]
