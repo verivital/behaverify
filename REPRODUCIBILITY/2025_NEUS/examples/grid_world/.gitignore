@@ -1,0 +1,8 @@
+# Generated .tree files from make_tree.sh / run_monolithic_pipeline.sh
+tree/
+
+# Generated .smv files from make_smv.sh / run_monolithic_pipeline.sh
+smv/
+
+# nuXmv verification output and timing files
+results/
