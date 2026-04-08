@@ -1,1 +1,1 @@
-/home/serena/python_venvs/behaverify/bin/python3 ../../src/dsl_to_nuxmv.py ../../metamodel/behaverify.tx ./tree/table_1000__6_18_0__0300_1.tree ./smv/table_1000__6_18_0__0300_1.smv --no_checks --recursion_limit 10000
+python3 ../../src/dsl_to_nuxmv.py ../../metamodel/behaverify.tx ./tree/table_1000__6_18_0__0300_1.tree ./smv/table_1000__6_18_0__0300_1.smv --no_checks --recursion_limit 10000
