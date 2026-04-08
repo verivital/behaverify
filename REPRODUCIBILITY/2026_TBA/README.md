@@ -18,7 +18,7 @@ Two examples are included:
 │   ├── grid_world/         # 1-NN grid world pipeline (see examples/grid_world/README.md)
 │   └── AcasXu_closed_loop/ # 5-NN ACAS Xu pipeline  (see examples/AcasXu_closed_loop/README.md)
 ├── metamodel/              # Pinned BehaVerify TextX grammar
-├── reports/                # Refactoring and analysis documentation
+├── reports/                # Refactoring logs, session snapshots, and result summaries
 ├── scripts/nuxmv_commands/ # nuXmv command files used by both pipelines
 ├── src/                    # BehaVerify source modules (compositional pipeline only)
 └── nuXmv_DL/               # nuXmv binary (not committed, download separately)
@@ -65,5 +65,5 @@ pip install -r alpha-beta-CROWN/complete_verifier/requirements/requirements.txt
 
 | Example | Description | README |
 |---|---|---|
-| `examples/grid_world/` | 1-NN drone navigation; 38 A/G contracts; PGD reveals UNSAT on continuous inputs | [README](examples/grid_world/README.md) |
+| `examples/grid_world/` | 1-NN drone navigation; 38 A/G contracts; continuous mode (PGD reveals UNSAT on non-integer goals) and discrete mode (eps=0, replicates 2025_NEUS integer-point safety claim compositionally) | [README](examples/grid_world/README.md) |
 | `examples/AcasXu_closed_loop/` | 5-NN closed-loop aircraft avoidance; 490 contracts; 221 TIMEOUT resolved as UNSAT via PGD | [README](examples/AcasXu_closed_loop/README.md) |
