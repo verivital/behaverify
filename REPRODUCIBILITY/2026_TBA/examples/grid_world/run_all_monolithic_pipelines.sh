@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# run_monolithic_pipeline.sh
+# run_all_monolithic_pipelines.sh
 #
 # Monolithic verification pipeline for grid-world NSBTs (table approach only).
 #
@@ -16,7 +16,7 @@
 #
 # Usage (from REPRODUCIBILITY/2026_TBA/examples/grid_world/):
 #
-#   ./run_monolithic_pipeline.sh
+#   ./run_all_monolithic_pipelines.sh
 #
 # Prerequisites:
 #   - BehaVerify installed (pip install -e . from repo root)

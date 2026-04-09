@@ -13,22 +13,37 @@ For setup (BehaVerify, nuXmv, alpha-beta-CROWN), see the
 
 ```
 grid_world/
-├── networks/              # 7 ONNX files (0995, 0996, 1000 x 5 neuron counts)
-├── contracts/
-│   ├── disabled_pgd/      # BaB-only results (pre-PGD baseline, 4 networks)
-│   └── enabled_pgd/       # PGD-enabled results (SAT/UNSAT, zero timeouts, 5 networks)
-├── figures/               # Generated figures and image scripts
-│                          #   See figures/README.md for details.
-├── results/               # Pipeline reports and PGD analysis
-├── generate_grid_world_contracts.py  # Generate A/G contracts from obstacle config (no CROWN)
-├── verify_grid_world_contracts.py    # Verify contracts via alpha-beta-CROWN
-├── grid_world_config.yaml  # Config: grid bounds, EPS, timeout, ONNX path
-├── run_continuous_pgd_1000_contracts.sh  # Batch continuous PGD runner for five 100%-accurate NNs (PGD enabled)
-├── run_continuous_bab_1000_contracts.sh  # Batch continuous BaB-only runner for fair comparison (PGD disabled)
-├── run_compositional_pipeline.py  # End-to-end compositional pipeline
-├── counter_template.tree      # Tree template used by run_compositional_pipeline.py
-│                              #   when --tree is not provided (auto-generates a .tree)
+├── networks/              # 7 ONNX files — see networks/README.md for naming convention
+├── contracts/             # Pre-computed A/G contracts (CROWN output, JSON)
+│   ├── continuous_goals/
+│   │   ├── enabled_pgd/   # PGD-enabled contracts (SAT/UNSAT, zero timeouts)
+│   │   └── disabled_pgd/  # BaB-only contracts (baseline comparison, some timeouts)
+│   └── discrete_goals/    # Discrete contracts (eps=0, replicates 2025_NEUS integer-point check)
+├── results/
+│   ├── compositional/     # Pipeline reports (pipeline_report.json per network per mode)
+│   │   ├── continuous_goals/enabled_pgd/
+│   │   ├── continuous_goals/disabled_pgd/
+│   │   └── discrete_goals/
+│   └── monolithic/        # nuXmv output from the 2025_NEUS table approach
+├── figures/               # Generated figures and scripts — see figures/README.md
+├── pipeline/              # Internal pipeline modules (not for direct use)
+├── generate_grid_world_contracts.py   # Generate contract specs from obstacle config (no CROWN)
+├── verify_grid_world_contracts.py     # Verify contracts via alpha-beta-CROWN
+├── run_compositional_pipeline.py      # Single-network end-to-end compositional pipeline
+├── run_all_compositional_pipelines.sh # Batch: run compositional pipeline for all networks in a contracts folder
+├── run_all_monolithic_pipelines.sh    # Batch: run monolithic pipeline for all 7 networks
+├── grid_world_config.yaml             # CROWN config: grid bounds, EPS, timeout
+├── pipeline_config.yaml               # Pipeline config: paths, nuXmv settings
+└── counter_template.tree              # Tree template for run_compositional_pipeline.py
 ```
+
+> **Why compositional has more output folders than monolithic:**
+> Monolithic verification has one configuration — BehaVerify embeds a lookup table, nuXmv checks it.
+> Compositional verification is configurable: you choose the NN verifier (CROWN with PGD, BaB-only,
+> or other tools), the contract mode (continuous goals or discrete), and the symbolic checker (nuXmv
+> here, but swappable). Each combination produces its own `contracts/` and `results/` subfolder.
+> This is by design: the pipeline separates NN verification from symbolic verification so each step
+> can be tuned or replaced independently.
 
 ---
 
