@@ -23,8 +23,8 @@ grid_world/
 ├── generate_grid_world_contracts.py  # Generate A/G contracts from obstacle config (no CROWN)
 ├── verify_grid_world_contracts.py    # Verify contracts via alpha-beta-CROWN
 ├── grid_world_config.yaml  # Config: grid bounds, EPS, timeout, ONNX path
-├── run_pgd_1000_contracts.sh  # Batch PGD runner for five 100%-accurate NNs (PGD enabled)
-├── run_bab_1000_contracts.sh  # Batch BaB-only runner for fair comparison (PGD disabled)
+├── run_continuous_pgd_1000_contracts.sh  # Batch continuous PGD runner for five 100%-accurate NNs (PGD enabled)
+├── run_continuous_bab_1000_contracts.sh  # Batch continuous BaB-only runner for fair comparison (PGD disabled)
 ├── run_compositional_pipeline.py  # End-to-end compositional pipeline
 ├── counter_template.tree      # Tree template used by run_compositional_pipeline.py
 │                              #   when --tree is not provided (auto-generates a .tree)
@@ -97,10 +97,10 @@ python run_compositional_pipeline.py \
 ### Batch PGD Run (all five 100%-accurate NNs)
 
 ```bash
-./run_pgd_1000_contracts.sh
+./run_continuous_pgd_1000_contracts.sh
 ```
 
-Results are saved to `contracts/enabled_pgd/<name>_pgd60.json`.
+Results are saved to `contracts/continuous_goals/enabled_pgd/<name>_pgd60.json`.
 
 ### Batch BaB-only Run (fair comparison, no PGD)
 
@@ -108,10 +108,40 @@ Same networks and 60s timeout as the PGD run, but with `--no-pgd` (BaB only).
 Expect UNSAT contracts to become TIMEOUT — that is the finding.
 
 ```bash
-./run_bab_1000_contracts.sh
+./run_continuous_bab_1000_contracts.sh
 ```
 
-Results are saved to `contracts/disabled_pgd/<name>.json`.
+Results are saved to `contracts/continuous_goals/disabled_pgd/<name>.json`.
+
+---
+
+## PGD Attacks in Contract Verification
+
+**What PGD is:** Projected Gradient Descent (PGD) is an adversarial attack method. Given
+a neural network and an input region, PGD repeatedly applies gradient steps to search for
+an input in that region that violates the property being checked (e.g., the NN outputs a
+forbidden direction). If PGD finds one, the contract is immediately UNSAT — no further
+search needed. *(Madry et al., "Towards Deep Learning Models Resistant to Adversarial
+Attacks," arXiv:1706.06083, 2017. https://arxiv.org/abs/1706.06083)*
+
+**Why it matters here:** Without PGD, alpha-beta-CROWN falls back entirely to
+Branch-and-Bound (BaB), which exhaustively partitions the input space. BaB is complete
+(always finds a violation if one exists) but slow — it times out on large or hard
+contracts. PGD is fast and incomplete: it may miss violations, but when it succeeds it
+produces a concrete counterexample in seconds.
+
+**Practical effect on results:**
+
+| PGD setting | Contract is hard to verify | Result |
+|-------------|---------------------------|--------|
+| Enabled (`pgd_order=before`) | PGD finds a counterexample | **UNSAT** — genuine violation, fast |
+| Enabled (`pgd_order=before`) | PGD finds no counterexample, BaB finishes | **SAT** — verified safe |
+| Disabled (BaB only) | BaB times out | **TIMEOUT** — inconclusive |
+
+This is why PGD-enabled runs have zero timeouts for these networks: the contracts that
+would time out under BaB-only have genuine counterexamples that PGD finds immediately.
+A TIMEOUT is not "safe" — it means verification was inconclusive. Always prefer
+PGD-enabled results when reporting safety verdicts.
 
 ---
 
