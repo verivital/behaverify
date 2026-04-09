@@ -48,11 +48,13 @@ from generate_grid_world_contracts import generate_contracts, load_config
 DISCRETE_GOAL_DEFAULT_TIMEOUT_SEC: float = 5.0
 
 # Epsilon used for goal bounds in discrete mode.
-# Intentionally tiny (1e-5) so each CROWN call checks an infinitesimally small
-# neighbourhood around the exact integer goal point, matching the 2025_NEUS
-# table approach (which evaluates the NN at exact integer coordinates).
-# Cannot be 0 because alpha-beta-CROWN divides by (upper - lower) in cut_ops.py
-# (lines 319-322) without a zero-guard, which produces inf/NaN at eps=0.
+# Set to 0.0 so each CROWN call checks the exact integer goal point, matching
+# the 2025_NEUS table approach (which evaluates the NN at exact integer coordinates).
+#
+# NOTE: alpha-beta-CROWN divides by (upper - lower) in cut_ops.py (lines 319-322)
+# without a zero-guard. eps=0.0 is safe here in practice because PGD resolves all
+# contracts for 100%-accurate networks before BaB is invoked, so that division is
+# never reached. If you see inf/NaN crashes, fall back to eps=1e-5.
 DISCRETE_GOAL_EPS: float = 0.0
 
 
