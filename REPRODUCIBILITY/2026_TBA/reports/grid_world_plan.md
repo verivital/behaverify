@@ -72,13 +72,13 @@ pending:
 
 ```bash
 cd REPRODUCIBILITY/2026_TBA/examples/grid_world
-./run_bab_1000_contracts.sh
+./run_continuous_bab_1000_contracts.sh
 ```
 
 After run, execute full pipeline comparison:
 
 ```bash
-./run_all_pipelines.sh contracts/disabled_pgd/
+./run_all_compositional_pipelines.sh contracts/continuous_goals/disabled_pgd/
 ```
 
 ### 4b. Discrete goal verification (small grid, not yet started)

@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
-# run_all_pipelines.sh
+# run_all_compositional_pipelines.sh
 #
 # Run the compositional pipeline for every contract JSON in a given folder,
 # using pre-computed contracts (--skip-contracts).
 #
 # Usage (from REPRODUCIBILITY/2026_TBA/examples/grid_world/):
 #
-#   ./run_all_pipelines.sh                                         # defaults to continuous_goals/enabled_pgd
-#   ./run_all_pipelines.sh contracts/continuous_goals/disabled_pgd/
-#   ./run_all_pipelines.sh contracts/continuous_goals/enabled_pgd/
-#   ./run_all_pipelines.sh contracts/discrete_goals/
+#   ./run_all_compositional_pipelines.sh                                         # defaults to continuous_goals/enabled_pgd
+#   ./run_all_compositional_pipelines.sh contracts/continuous_goals/disabled_pgd/
+#   ./run_all_compositional_pipelines.sh contracts/continuous_goals/enabled_pgd/
+#   ./run_all_compositional_pipelines.sh contracts/discrete_goals/
 #
 # Outputs go to:
 #   results/compositional/<relative-path-under-contracts>/<network_stem>/pipeline_report.json

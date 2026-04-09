@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# run_pgd_1000_contracts.sh
+# run_continuous_pgd_1000_contracts.sh
 #
 # Verify A/G contracts for all five 100%-accurate grid-world NNs using
 # alpha-beta-CROWN with PGD attack enabled (pgd_order=before, 50 restarts)
 # and a 60s BaB timeout.
 #
 # Results are saved to contracts/continuous_goals/enabled_pgd/<name>_pgd60.json so original
-# BaB-only results in contracts/disabled_pgd/ are preserved for comparison.
+# BaB-only results in contracts/continuous_goals/disabled_pgd/ are preserved for comparison.
 #
 # Run from:  REPRODUCIBILITY/2026_TBA/examples/grid_world/
 
