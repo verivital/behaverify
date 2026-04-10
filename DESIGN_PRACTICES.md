@@ -5,9 +5,15 @@ code review for the BehaVerify project. When a commit references `DESIGN-XX`, th
 number refers to the principle described here.
 
 **Example commit:**
-> `Refactor DESIGN-15: Revert REPRODUCIBILITY/2025_NEUS to original state by pulling from original upstream repo`
+> `Feature GRID-03: Run PGD attacks for 99.5% and 99.6% accurate NNs`
 
-This means the commit restores an externalized configuration artifact (a `REPRODUCIBILITY/` directory) to a known-good state that is consistent with the principle that reproducibility materials are external to the core tool.
+> `Refactor DESIGN-08: Explain what PGD attacks are and why they are needed for compositional verification`
+
+> `Refactor DESIGN-13: Remove stale references to old files in grid world compositional pipeline`
+
+> `Refactor DESIGN-16: Removed unused template tree file and documented changes to the README`
+
+> `Fix GRID-07: Remove hardcoded paths in 2025_NEUS to allow for reproducibility testing`
 
 ---
 
