@@ -2,12 +2,12 @@
 
 ## Summary
 
-All 221 previously-TIMEOUT contracts for NN_1 (`ACASXU_run2a_1_1_batch_2000.onnx`) are
+All 221 previously-TIMEOUT contracts for NN_1 (`aprev_clear.onnx`) are
 **UNSAT** — the neural network genuinely violates these assume-guarantee contracts.
 
 | Metric | Value |
 |--------|-------|
-| Network | NN_1 (ACASXU_run2a_1_1_batch_2000.onnx) |
+| Network | NN_1 (aprev_clear.onnx) |
 | Total contracts | 490 |
 | SAT (verified safe) | 269 |
 | UNSAT (violated) | 221 |
