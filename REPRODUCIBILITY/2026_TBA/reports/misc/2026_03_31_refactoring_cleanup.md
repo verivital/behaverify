@@ -1,5 +1,7 @@
 # 2026_TBA Refactoring Cleanup Report
 
+**Date:** 2026-03-31
+
 ## Motivation
 
 `2026_TBA` exists to document and reproduce the **compositional verification** approach

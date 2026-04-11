@@ -1,5 +1,7 @@
 # Grid World Contract Verification Report: PGD Attack Results
 
+**Date:** 2026-04-07
+
 ## Summary
 
 All five 100%-accurate grid-world NNs produce a consistent ~50/50 SAT/UNSAT split

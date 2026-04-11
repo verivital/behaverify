@@ -1,5 +1,7 @@
 # ACAS Xu Contract Verification Report: PGD Attack Results
 
+**Date:** 2026-03-31
+
 ## Summary
 
 All 221 previously-TIMEOUT contracts for NN_1 (`aprev_clear.onnx`) are
