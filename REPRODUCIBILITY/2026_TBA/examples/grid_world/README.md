@@ -7,6 +7,9 @@ from the adjacent cell, for all continuous goal positions in [0, 6]².
 For setup (BehaVerify, nuXmv, alpha-beta-CROWN), see the
 [root README](../../README.md).
 
+> **Note:** this pipeline imports BehaVerify from `2026_TBA/src/` directly, not
+> from the installed pip package. See the root README for details.
+
 ---
 
 ## Layout

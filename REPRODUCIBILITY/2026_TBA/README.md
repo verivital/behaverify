@@ -36,6 +36,15 @@ Install from the repository root:
 pip install -e .
 ```
 
+> **Note: this pipeline does NOT use the installed pip package at runtime.**
+> `2026_TBA/src/` contains a local copy of the BehaVerify source, including
+> `dsl_with_contracts_to_nuxmv.py` — a contract injection module that is not
+> part of the published package. All pipeline scripts add `2026_TBA/src/` to
+> `sys.path` and import from there directly. The pip install is only needed for
+> dependencies (textX, py-trees, etc.). If you upgrade the `behaverify` package
+> after cloning, this pipeline may still work, but is not guaranteed to — it was
+> developed against a specific internal version.
+
 ### 2. nuXmv 2.1.0
 
 nuXmv cannot be redistributed. Download and extract into `REPRODUCIBILITY/2026_TBA/`:
