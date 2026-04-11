@@ -10,11 +10,11 @@
 contracts_path: "contracts/acas_contract_specs.json"
 
 # Which NN to verify.  network_idx corresponds to the a_prev selector in the tree:
-#   1 = a_prev=clear        (ACASXU_run2a_1_1_batch_2000.onnx)
-#   2 = a_prev=weak_right   (ACASXU_run2a_2_1_batch_2000.onnx)
-#   3 = a_prev=weak_left    (ACASXU_run2a_3_1_batch_2000.onnx)
-#   4 = a_prev=strong_right (ACASXU_run2a_4_1_batch_2000.onnx)
-#   5 = a_prev=strong_left  (ACASXU_run2a_5_1_batch_2000.onnx)
+#   1 = a_prev=clear        (aprev_clear.onnx)
+#   2 = a_prev=weak_right   (aprev_weak_right.onnx)
+#   3 = a_prev=weak_left    (aprev_weak_left.onnx)
+#   4 = a_prev=strong_right (aprev_strong_right.onnx)
+#   5 = a_prev=strong_left  (aprev_strong_left.onnx)
 network_idx: 1
 
 # Number of NN output classes.

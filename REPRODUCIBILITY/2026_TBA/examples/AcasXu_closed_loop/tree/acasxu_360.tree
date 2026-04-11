@@ -3780,7 +3780,7 @@ variables {
 	    (rdiv, (sub, speed_int, speed_int_mean), speed_int_range)
 	}
 	config {table}
-	source { '../networks/ACASXU_run2a_1_1_batch_2000.onnx'}
+	source { '../networks/aprev_clear.onnx'}
     }
     variable{bl network_2_1 NEURAL classification {'clear', 'weak_left', 'weak_right', 'strong_left', 'strong_right'}
 	inputs {
@@ -3791,7 +3791,7 @@ variables {
 	    (rdiv, (sub, speed_int, speed_int_mean), speed_int_range)
 	}
 	config {table}
-	source { '../networks/ACASXU_run2a_2_1_batch_2000.onnx'}
+	source { '../networks/aprev_weak_right.onnx'}
     }
     variable{bl network_3_1 NEURAL classification {'clear', 'weak_left', 'weak_right', 'strong_left', 'strong_right'}
 	inputs {
@@ -3802,7 +3802,7 @@ variables {
 	    (rdiv, (sub, speed_int, speed_int_mean), speed_int_range)
 	}
 	config {table}
-	source { '../networks/ACASXU_run2a_3_1_batch_2000.onnx'}
+	source { '../networks/aprev_weak_left.onnx'}
     }
     variable{bl network_4_1 NEURAL classification {'clear', 'weak_left', 'weak_right', 'strong_left', 'strong_right'}
 	inputs {
@@ -3813,7 +3813,7 @@ variables {
 	    (rdiv, (sub, speed_int, speed_int_mean), speed_int_range)
 	}
 	config {table}
-	source { '../networks/ACASXU_run2a_4_1_batch_2000.onnx'}
+	source { '../networks/aprev_strong_right.onnx'}
     }
     variable{bl network_5_1 NEURAL classification {'clear', 'weak_left', 'weak_right', 'strong_left', 'strong_right'}
 	inputs {
@@ -3824,7 +3824,7 @@ variables {
 	    (rdiv, (sub, speed_int, speed_int_mean), speed_int_range)
 	}
 	config {table}
-	source { '../networks/ACASXU_run2a_5_1_batch_2000.onnx'}
+	source { '../networks/aprev_strong_left.onnx'}
     }
     #{}#
     variable{env next_x DEFINE INT assign{result{(add, (mult, x, x_mult), (mult, seconds_per_update, (sub, velocity_x_int, velocity_x_own)))}}}

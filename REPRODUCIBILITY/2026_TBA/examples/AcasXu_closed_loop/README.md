@@ -18,11 +18,11 @@ For background, see the NeuS 2025 paper:
 ```
 AcasXu_closed_loop/
 ├── networks/
-│   ├── ACASXU_run2a_1_1_batch_2000.onnx   # NN_1 (a_prev=clear)
-│   ├── ACASXU_run2a_2_1_batch_2000.onnx   # NN_2 (a_prev=weak_right)
-│   ├── ACASXU_run2a_3_1_batch_2000.onnx   # NN_3 (a_prev=weak_left)
-│   ├── ACASXU_run2a_4_1_batch_2000.onnx   # NN_4 (a_prev=strong_right)
-│   └── ACASXU_run2a_5_1_batch_2000.onnx   # NN_5 (a_prev=strong_left)
+│   ├── aprev_clear.onnx   # NN_1 (a_prev=clear)
+│   ├── aprev_weak_right.onnx   # NN_2 (a_prev=weak_right)
+│   ├── aprev_weak_left.onnx   # NN_3 (a_prev=weak_left)
+│   ├── aprev_strong_right.onnx   # NN_4 (a_prev=strong_right)
+│   └── aprev_strong_left.onnx   # NN_5 (a_prev=strong_left)
 ├── contracts/
 │   ├── acas_contract_specs.json            # Pre-computed A/G contract specs
 │   └── acas_verified_nn1.json              # CROWN verification results for NN_1
@@ -95,7 +95,7 @@ pip install -r alpha-beta-CROWN/complete_verifier/requirements/requirements.txt
 ### NN selection
 
 ```
-a_prev = clear        → NN_1  (ACASXU_run2a_1_1_batch_2000.onnx)
+a_prev = clear        → NN_1  (aprev_clear.onnx)
 a_prev = weak_right   → NN_2
 a_prev = weak_left    → NN_3
 a_prev = strong_right → NN_4

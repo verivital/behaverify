@@ -27,11 +27,11 @@ Physics model (from acasxu_template_360.tree / environment_update):
   - Safety invariant: distance = round(sqrt(x_var^2 + y_var^2)) * 100 >= 200
 
 NN selection (from tree selector):
-  a_prev = 'clear'        -> network_idx=1  (ACASXU_run2a_1_1_batch_2000.onnx)
-  a_prev = 'weak_right'   -> network_idx=2  (ACASXU_run2a_2_1_batch_2000.onnx)
-  a_prev = 'weak_left'    -> network_idx=3  (ACASXU_run2a_3_1_batch_2000.onnx)
-  a_prev = 'strong_right' -> network_idx=4  (ACASXU_run2a_4_1_batch_2000.onnx)
-  a_prev = 'strong_left'  -> network_idx=5  (ACASXU_run2a_5_1_batch_2000.onnx)
+  a_prev = 'clear'        -> network_idx=1  (aprev_clear.onnx)
+  a_prev = 'weak_right'   -> network_idx=2  (aprev_weak_right.onnx)
+  a_prev = 'weak_left'    -> network_idx=3  (aprev_weak_left.onnx)
+  a_prev = 'strong_right' -> network_idx=4  (aprev_strong_right.onnx)
+  a_prev = 'strong_left'  -> network_idx=5  (aprev_strong_left.onnx)
 
 NN inputs (normalized, from template):
   1. (distance - 19791.091) / 60261
@@ -82,11 +82,11 @@ ADV_IDX    = {a: i for i, a in enumerate(ADVISORIES)}
 # NN selection: a_prev -> (network_idx, onnx_path)
 # From the tree selector: seq_k_1 checks if_was_<advisory> then call_k_1
 A_PREV_TO_NN = {
-    'clear':        (1, 'networks/ACASXU_run2a_1_1_batch_2000.onnx'),
-    'weak_right':   (2, 'networks/ACASXU_run2a_2_1_batch_2000.onnx'),
-    'weak_left':    (3, 'networks/ACASXU_run2a_3_1_batch_2000.onnx'),
-    'strong_right': (4, 'networks/ACASXU_run2a_4_1_batch_2000.onnx'),
-    'strong_left':  (5, 'networks/ACASXU_run2a_5_1_batch_2000.onnx'),
+    'clear':        (1, 'networks/aprev_clear.onnx'),
+    'weak_right':   (2, 'networks/aprev_weak_right.onnx'),
+    'weak_left':    (3, 'networks/aprev_weak_left.onnx'),
+    'strong_right': (4, 'networks/aprev_strong_right.onnx'),
+    'strong_left':  (5, 'networks/aprev_strong_left.onnx'),
 }
 
 # Fixed speed inputs (constant across all states)

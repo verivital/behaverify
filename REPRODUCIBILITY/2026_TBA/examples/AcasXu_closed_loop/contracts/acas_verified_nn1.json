@@ -1,6 +1,6 @@
 {
   "network_idx": 1,
-  "onnx_path": "networks/ACASXU_run2a_1_1_batch_2000.onnx",
+  "onnx_path": "networks/aprev_clear.onnx",
   "timestamp": "2026-03-25T14:11:18.580385",
   "timeout_sec": 600,
   "total_wall_sec": 17.294,
