@@ -227,7 +227,7 @@ Using pre-computed contracts (skip tree/SMV regeneration):
 ```bash
 python run_acas_pipeline.py \
     --contracts contracts/continuous_goals/enabled_pgd/nn1_crown_results.json \
-    --output    results/compositional/nn1 \
+    --output    results/compositional/continuous_goals/enabled_pgd/nn1 \
     --skip-tree --skip-smv
 ```
 
@@ -236,10 +236,10 @@ Full pipeline (regenerate tree and SMV from scratch):
 ```bash
 python run_acas_pipeline.py \
     --contracts contracts/continuous_goals/enabled_pgd/nn1_crown_results.json \
-    --output    results/compositional/nn1
+    --output    results/compositional/continuous_goals/enabled_pgd/nn1
 ```
 
-Results are written to `results/compositional/nn1/pipeline_report.json`.
+Results are written to `results/compositional/continuous_goals/enabled_pgd/nn1/pipeline_report.json`.
 
 ---
 
@@ -321,7 +321,7 @@ The compositional patched SMV is ~1,600 lines and uses far less memory.
 
 ### `run_acas_pipeline.py` gives `INVARSPEC=None`
 
-Check `results/compositional/nn1/nuxmv_output.txt` for nuXmv error messages.
+Check `results/compositional/continuous_goals/enabled_pgd/nn1/nuxmv_output.txt` for nuXmv error messages.
 Common causes: SMV type errors (see `--skip-smv` flag to reuse a known-good
 base SMV), or missing nuXmv binary.
 

@@ -33,7 +33,7 @@ INVAR format (one per dangerous (state, advisory) pair in each SAT contract):
 Usage (from AcasXu_closed_loop/):
   python run_acas_pipeline.py \\
       --contracts contracts/continuous_goals/enabled_pgd/nn1_crown_results.json \\
-      --output    results/compositional/nn1 \\
+      --output    results/compositional/continuous_goals/enabled_pgd/nn1 \\
       [--nuxmv    ../../../../nuXmv] \\
       [--nuxmv-cmd ../../scripts/nuxmv_commands/command_invar] \\
       [--skip-tree]   # reuse existing tree/acasxu_360.tree
