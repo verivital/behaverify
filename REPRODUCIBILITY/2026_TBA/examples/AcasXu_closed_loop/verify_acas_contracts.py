@@ -271,9 +271,23 @@ if __name__ == "__main__":
         "--timeout", type=int, default=None,
         help="Override timeout_sec from YAML for this run",
     )
+    parser.add_argument(
+        "--network-idx", type=int, default=None, dest="network_idx",
+        help="Override network_idx from YAML (1=clear, 2=weak_right, 3=weak_left, "
+             "4=strong_right, 5=strong_left)",
+    )
+    parser.add_argument(
+        "--output", default=None,
+        help="Override output_path from YAML",
+    )
     args = parser.parse_args()
+    cfg = load_config(args.config)
+    if args.network_idx is not None:
+        cfg["network_idx"] = args.network_idx
+    if args.output is not None:
+        cfg["output_path"] = args.output
     run_verification(
-        load_config(args.config),
+        cfg,
         limit=args.limit,
         retry_from=args.retry_from,
         timeout_override=args.timeout,
