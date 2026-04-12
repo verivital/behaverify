@@ -3974,7 +3974,7 @@ sub_trees {
 
 tree {
     composite {
-	acasxu
+	acas
 	selector
 	children {
 	    composite {

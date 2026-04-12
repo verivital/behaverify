@@ -1,3 +1,28 @@
+"""
+generate_acas_tree.py
+
+Instantiate acas_template_360.tree by filling in pre-computed lookup-table
+expressions for the closed-loop ACAS Xu behavior tree model.
+
+The template contains seven REPLACE_* placeholders, each replaced by a BehaVerify
+DSL `result { (if, ...) }` expression covering all integer (x_mag, y_mag) pairs
+in [0, MAX_DIST / DISTANCE_MODIFIER]²:
+
+  REPLACE_VELOCITY_X_OWN  — ownship x-velocity:  round(cos(heading_own) * SPEED_OWN)
+  REPLACE_VELOCITY_Y_OWN  — ownship y-velocity:  round(sin(heading_own) * SPEED_OWN)
+  REPLACE_VELOCITY_X_INT  — intruder x-velocity: round(cos(heading_int) * SPEED_INT)
+  REPLACE_VELOCITY_Y_INT  — intruder y-velocity: round(sin(heading_int) * SPEED_INT)
+  REPLACE_DISTANCE        — Euclidean distance:  round(sqrt(x_mag² + y_mag²)) * 100
+  REPLACE_ARCTAN_XY       — Rounded arctan(x_mag / y_mag) in degrees
+  REPLACE_ARCTAN_YX       — Rounded arctan(y_mag / x_mag) in degrees
+
+Input:  acas_template_360.tree
+Output: tree/acas_360.tree  (tree/ directory must exist before running)
+
+Usage:
+    python3 generate_acas_tree.py
+"""
+
 import math
 import os
 
@@ -222,7 +247,7 @@ def handle_arctan_v2(x_top):
     ]
     return format_all(arctans, ('x_mag', 'y_mag'))
 
-with open('acasxu_template_360.tree', 'r', encoding='utf-8') as input_file:
+with open('acas_template_360.tree', 'r', encoding='utf-8') as input_file:
     content = input_file.read()
  
 content = content.replace('REPLACE_VELOCITY_X_OWN', handle_velocity(True, True))
@@ -233,5 +258,5 @@ content = content.replace('REPLACE_DISTANCE', handle_distance_v2())
 content = content.replace('REPLACE_ARCTAN_XY', handle_arctan_v2(True))
 content = content.replace('REPLACE_ARCTAN_YX', handle_arctan_v2(False))
 
-with open('./tree/acasxu_360.tree', 'w', encoding = 'utf-8') as output_file:
+with open('./tree/acas_360.tree', 'w', encoding = 'utf-8') as output_file:
     output_file.write(content)

@@ -34,8 +34,8 @@ AcasXu_closed_loop/
 ├── figures/                                # Visualization scripts and outputs
 ├── smv/                                    # Generated base SMV (reused via --skip-smv)
 ├── tree/                                   # Generated tree file (reused via --skip-tree)
-├── acasxu_template_360.tree                # Template for the closed-loop model
-├── handle_360.py                           # Fills in template → tree/acasxu_360.tree
+├── acas_template_360.tree                # Template for the closed-loop model
+├── generate_acas_tree.py                 # Fills in template → tree/acas_360.tree
 ├── generate_acas_contracts.py              # Enumerate dangerous states → contract specs
 ├── verify_acas_contracts.py                # Verify contract specs via CROWN
 ├── verify_acas_contracts_parallel.py       # Parallel retry wrapper for TIMEOUT contracts
@@ -132,7 +132,7 @@ To regenerate the monolithic SMV and re-verify (from this directory):
 
 ```bash
 # 1. Generate tree from template
-python handle_360.py
+python generate_acas_tree.py
 
 # 2. Generate SMV (with timing)
 ./time_command.sh
@@ -140,7 +140,7 @@ python handle_360.py
 # 3. Verify with nuXmv
 ../../../../nuXmv/bin/nuXmv \
     -source ../../scripts/nuxmv_commands/command_all_invar \
-    ./smv/acasxu_360.smv \
+    ./smv/acas_360.smv \
     > results/monolithic_invar.txt
 ```
 
@@ -310,18 +310,18 @@ regenerated after the original verification run (changing contract `id`s), the
 merge will be incorrect. Always regenerate verification results from scratch if
 the spec file changes.
 
-### `handle_360.py` fails with `FileNotFoundError`
+### `generate_acas_tree.py` fails with `FileNotFoundError`
 
 The `tree/` directory must exist before running:
 
 ```bash
 mkdir -p tree smv
-python handle_360.py
+python generate_acas_tree.py
 ```
 
 ### Monolithic SMV takes too long or runs out of memory
 
-The monolithic SMV (`smv/acasxu_360.smv`) is ~9,700 lines and contains 5 full
+The monolithic SMV (`smv/acas_360.smv`) is ~9,700 lines and contains 5 full
 NN lookup tables. nuXmv peak RSS is ~9.6 GB. Ensure at least 12 GB free RAM.
 The compositional patched SMV is ~1,600 lines and uses far less memory.
 

@@ -4,14 +4,14 @@ run_acas_compositional_pipeline.py
 End-to-end compositional verification pipeline for the ACAS Xu 5-NN closed-loop NSBT.
 
 Stages:
-  1. [TREE]     Generate acasxu_360.tree from acasxu_template_360.tree via handle_360.py
+  1. [TREE]     Generate acas_360.tree from acas_template_360.tree via generate_acas_tree.py
   2. [SMV]      Convert .tree → base nuXmv SMV via dsl_to_nuxmv.py
   3. [PATCH]    Replace 5 NN lookup-table DEFINE blocks with non-deterministic VAR +
                 INVAR constraints derived from the verified A/G contracts JSON
   4. [VERIFY]   Run nuXmv to check INVARSPEC (distance >= 200)
   5. [REPORT]   Write JSON report with per-step timing and verdicts
 
-SMV variable structure (from acasxu_360.smv):
+SMV variable structure (from acas_360.smv):
   command_stage_0          -- a_prev (blackboard VAR; which NN was last chosen)
   command_stage_5          -- final NN output after tree execution
   network_k_1_stage_0      -- NN_k lookup-table DEFINE (k = 1..5)
@@ -36,8 +36,8 @@ Usage (from AcasXu_closed_loop/):
       --output    results/compositional/continuous_goals/enabled_pgd/nn1 \\
       [--nuxmv    ../../../../nuXmv] \\
       [--nuxmv-cmd ../../scripts/nuxmv_commands/command_invar] \\
-      [--skip-tree]   # reuse existing tree/acasxu_360.tree
-      [--skip-smv]    # reuse existing smv/acasxu_360.smv
+      [--skip-tree]   # reuse existing tree/acas_360.tree
+      [--skip-smv]    # reuse existing smv/acas_360.smv
 """
 
 from __future__ import annotations
@@ -67,7 +67,7 @@ DEFAULT_SRC       = _HERE / "../../src"
 
 ADVISORIES = ['clear', 'weak_left', 'weak_right', 'strong_left', 'strong_right']
 
-# SMV variable names (from inspecting acasxu_360.smv)
+# SMV variable names (from inspecting acas_360.smv)
 SMV_COMMAND_PREV  = "command_stage_0"    # a_prev
 SMV_COMMAND_FINAL = "command_stage_5"    # NN output after tree
 SMV_X_VAR         = "x_var_stage_0"
@@ -106,21 +106,11 @@ def run_tree_generation(ctx: dict) -> dict:
         return {"wall_sec": 0.0, "skipped": True}
 
     t0 = time.perf_counter()
-    import handle_360 as _h360  # noqa: PLC0415
-    # handle_360 writes directly to ./tree/acasxu_360.tree relative to CWD
-    # ensure CWD is the script directory
-    old_cwd = os.getcwd()
-    os.chdir(_HERE)
-    try:
-        # handle_360.py runs its logic at import-time via the module-level block.
-        # Re-run it by reloading or by calling the subprocess.
-        pass
-    finally:
-        os.chdir(old_cwd)
 
-    # Safer: run as subprocess so module-level code executes cleanly
+    # Run as subprocess so the module-level write logic executes cleanly
+    # (generate_acas_tree.py writes directly to ./tree/acas_360.tree).
     result = subprocess.run(
-        [sys.executable, str(_HERE / "handle_360.py")],
+        [sys.executable, str(_HERE / "generate_acas_tree.py")],
         cwd=str(_HERE),
         capture_output=True,
         text=True,
@@ -129,7 +119,7 @@ def run_tree_generation(ctx: dict) -> dict:
     wall_sec = time.perf_counter() - t0
 
     if result.returncode != 0:
-        print(f"  ERROR: handle_360.py failed:\n{result.stderr}")
+        print(f"  ERROR: generate_acas_tree.py failed:\n{result.stderr}")
         raise RuntimeError("Tree generation failed")
 
     print(f"  Generated {ctx['tree_path']}  ({wall_sec:.1f}s)")
@@ -428,9 +418,9 @@ def main() -> None:
     p.add_argument("--metamodel",  default=str(DEFAULT_METAMODEL),
                    help=f"behaverify.tx path (default: {DEFAULT_METAMODEL})")
     p.add_argument("--skip-tree",  action="store_true",
-                   help="Skip tree generation; reuse tree/acasxu_360.tree if it exists")
+                   help="Skip tree generation; reuse tree/acas_360.tree if it exists")
     p.add_argument("--skip-smv",   action="store_true",
-                   help="Skip base SMV generation; reuse smv/acasxu_360.smv if it exists")
+                   help="Skip base SMV generation; reuse smv/acas_360.smv if it exists")
     args = p.parse_args()
 
     output_dir = Path(args.output).resolve()
@@ -439,9 +429,9 @@ def main() -> None:
     ctx = {
         "contracts_path":  Path(args.contracts).resolve(),
         "spec_path":       Path(args.spec).resolve(),
-        "tree_path":       _HERE / "tree" / "acasxu_360.tree",
-        "base_smv_path":   _HERE / "smv"  / "acasxu_360.smv",
-        "patched_smv_path": output_dir / "acasxu_360_contracts.smv",
+        "tree_path":       _HERE / "tree" / "acas_360.tree",
+        "base_smv_path":   _HERE / "smv"  / "acas_360.smv",
+        "patched_smv_path": output_dir / "acas_360_contracts.smv",
         "nuxmv_out_path":  output_dir / "nuxmv_output.txt",
         "report_path":     output_dir / "pipeline_report.json",
         "metamodel":       Path(args.metamodel).resolve(),

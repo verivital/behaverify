@@ -20,7 +20,7 @@ but only non-empty groups are emitted (typically a few hundred in practice).
 
 Compare to the per-state approach: 2,830 dangerous pairs × 5 NNs = 14,150 per-point CROWN calls.
 
-Physics model (from acasxu_template_360.tree / environment_update):
+Physics model (from acas_template_360.tree / environment_update):
   - heading_own_var updated first (advisory applied)
   - position (x_mag, y_mag, x_sign, y_sign) computed using the NEW heading
   - State domain: x_mag,y_mag in [0,10], x_sign,y_sign in {-1,1}, heading_own_var in [0,39]
@@ -51,7 +51,7 @@ from collections import defaultdict
 from pathlib import Path
 
 # ---------------------------------------------------------------------------
-# Constants (from acasxu_template_360.tree)
+# Constants (from acas_template_360.tree)
 # ---------------------------------------------------------------------------
 
 DISTANCE_MODIFIER  = 100

@@ -122,7 +122,7 @@ read it to set `pgd_order` to `"before"` or `"skip"` accordingly.
 ### 3. Angle computation matching the DSL (LOW risk, pre-verified implicitly)
 
 `compute_relative_angle_adjusted` and `compute_intersect_angle_adjusted` claim to match the
-DEFINE blocks in `acasxu_template_360.tree`. This was not independently verified by tracing
+DEFINE blocks in `acas_template_360.tree`. This was not independently verified by tracing
 through the tree file's case statements side-by-side. The physics simulation was used to generate
 the dangerous pairs, so if these angle functions are wrong, the contract bounding boxes cover the
 wrong NN inputs — contracts would be formally verified but for states that don't correspond to
