@@ -17,27 +17,33 @@ For background, see the NeuS 2025 paper:
 
 ```
 AcasXu_closed_loop/
-├── networks/
-│   ├── aprev_clear.onnx   # NN_1 (a_prev=clear)
-│   ├── aprev_weak_right.onnx   # NN_2 (a_prev=weak_right)
-│   ├── aprev_weak_left.onnx   # NN_3 (a_prev=weak_left)
-│   ├── aprev_strong_right.onnx   # NN_4 (a_prev=strong_right)
-│   └── aprev_strong_left.onnx   # NN_5 (a_prev=strong_left)
+├── networks/                               # 5 ONNX files (see networks/README.md)
 ├── contracts/
-│   ├── acas_contract_specs.json            # Pre-computed A/G contract specs
-│   └── nn1_crown_results.json              # CROWN verification results for NN_1
-├── tree/                                   # Generated .tree file (gitignored)
-├── smv/                                    # Generated base SMV (gitignored)
-├── results/                                # Verification outputs (gitignored)
+│   ├── continuous_goals/
+│   │   ├── acas_contract_specs.json        # Pre-computed A/G contract specs (eps=1e-4)
+│   │   ├── enabled_pgd/
+│   │   │   └── nn1_crown_results.json      # CROWN results for NN_1 (PGD-enabled)
+│   │   └── disabled_pgd/                   # (empty — future runs)
+│   └── discrete_goals/                     # (empty — future eps=0.0 contracts)
+├── results/
+│   └── compositional/
+│       ├── continuous_goals/
+│       │   └── enabled_pgd/
+│       │       └── nn1/                    # Pipeline output for NN_1
+│       └── discrete_goals/                 # (empty — future runs)
+├── figures/                                # Visualization scripts and outputs
+├── smv/                                    # Generated base SMV (reused via --skip-smv)
+├── tree/                                   # Generated tree file (reused via --skip-tree)
 ├── acasxu_template_360.tree                # Template for the closed-loop model
 ├── handle_360.py                           # Fills in template → tree/acasxu_360.tree
 ├── generate_acas_contracts.py              # Enumerate dangerous states → contract specs
 ├── verify_acas_contracts.py                # Verify contract specs via CROWN
+├── verify_acas_contracts_parallel.py       # Parallel retry wrapper for TIMEOUT contracts
 ├── acas_config.yaml                        # Config for verify_acas_contracts.py
-├── run_acas_compositional_pipeline.py      # End-to-end compositional pipeline
+├── run_acas_compositional_pipeline.py      # End-to-end compositional pipeline (single NN)
+├── run_all_continuous_pipelines.sh         # Batch: run pipeline for all NNs
 ├── command.sh                              # Generate monolithic SMV
-├── time_command.sh                         # Generate monolithic SMV with timing
-└── invar.txt                               # Monolithic nuXmv result (committed)
+└── time_command.sh                         # Generate monolithic SMV with timing
 ```
 
 ---
@@ -114,7 +120,7 @@ where `distance = round(sqrt(x_mag² + y_mag²)) × 100`.
 
 ## Monolithic Verification (baseline)
 
-The committed file `invar.txt` contains the monolithic result:
+The monolithic result (from a reference run):
 
 ```
 INVARSPEC: true
@@ -135,7 +141,7 @@ python handle_360.py
 ../../../../nuXmv/bin/nuXmv \
     -source ../../scripts/nuxmv_commands/command_all_invar \
     ./smv/acasxu_360.smv \
-    > invar.txt
+    > results/monolithic_invar.txt
 ```
 
 Use `command_all_invar` (not `command_invar`) to get nuXmv's internal timing.
@@ -263,7 +269,7 @@ SAT. This is the same behavior observed in the grid-world example when fewer tha
 incompleteness, not a real safety violation. If UNSAT contracts appear, the NN
 genuinely violates a contract — investigate those cases first.
 
-The monolithic baseline (`invar.txt`) is `true` in ~49s. A compositional run with
+The monolithic baseline is `true` in ~49s. A compositional run with
 complete contracts should also return `true` in significantly less time (the patched
 SMV has ~1,600 lines vs. ~9,700 for the monolithic model).
 
