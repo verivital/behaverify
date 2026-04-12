@@ -382,8 +382,8 @@ def main() -> None:
         description="Generate ACAS Xu A/G contract specs (range-based) for CROWN."
     )
     parser.add_argument(
-        '--output', default='contracts/acas_contract_specs.json',
-        help='Output JSON path (default: contracts/acas_contract_specs.json)',
+        '--output', default='contracts/continuous_goals/acas_contract_specs.json',
+        help='Output JSON path (default: contracts/continuous_goals/acas_contract_specs.json)',
     )
     parser.add_argument(
         '--eps', type=float, default=1e-4,

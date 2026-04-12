@@ -7,7 +7,7 @@
 # This script just loads them and calls CROWN for each contract.
 
 # Pre-computed contract specs (output of generate_acas_contracts.py).
-contracts_path: "contracts/acas_contract_specs.json"
+contracts_path: "contracts/continuous_goals/acas_contract_specs.json"
 
 # Which NN to verify.  network_idx corresponds to the a_prev selector in the tree:
 #   1 = a_prev=clear        (aprev_clear.onnx)
@@ -29,4 +29,4 @@ verification:
   timeout_sec: 30
 
 # Output path for verification report (relative to script working directory).
-output_path: "contracts/acas_verified_nn1.json"
+output_path: "contracts/continuous_goals/enabled_pgd/nn1_crown_results.json"

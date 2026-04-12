@@ -25,7 +25,7 @@ AcasXu_closed_loop/
 │   └── aprev_strong_left.onnx   # NN_5 (a_prev=strong_left)
 ├── contracts/
 │   ├── acas_contract_specs.json            # Pre-computed A/G contract specs
-│   └── acas_verified_nn1.json              # CROWN verification results for NN_1
+│   └── nn1_crown_results.json              # CROWN verification results for NN_1
 ├── tree/                                   # Generated .tree file (gitignored)
 ├── smv/                                    # Generated base SMV (gitignored)
 ├── results/                                # Verification outputs (gitignored)
@@ -171,12 +171,12 @@ range-based A/G contracts (bounding box over `x_mag`, `y_mag` for fixed
 
 ```bash
 python generate_acas_contracts.py
-# Output: contracts/acas_contract_specs.json
+# Output: contracts/continuous_goals/acas_contract_specs.json
 # Expected: ~490 contracts for NN_1 (one per non-empty heading/sign/advisory group)
 ```
 
 This step is fast (~1 minute) and does not require CROWN. The output is
-already committed in `contracts/acas_contract_specs.json`.
+already committed in `contracts/continuous_goals/acas_contract_specs.json`.
 
 ---
 
@@ -205,13 +205,13 @@ Expected: ~269 SAT, ~221 TIMEOUT, ~113 minutes total.
 
 ```bash
 nohup python verify_acas_contracts.py \
-    --retry-from contracts/acas_verified_nn1.json \
+    --retry-from contracts/continuous_goals/enabled_pgd/nn1_crown_results.json \
     --timeout 60 \
     > results/verify_nn1_retry.log 2>&1 &
 ```
 
 This re-verifies only the TIMEOUT contracts and merges results into
-`contracts/acas_verified_nn1.json`. Worst case: ~3.7 hours.
+`contracts/continuous_goals/enabled_pgd/nn1_crown_results.json`. Worst case: ~3.7 hours.
 
 > **Why two passes?** Contracts either verify in under 1s (large margin) or
 > time out quickly (near the NN's decision boundary). A short initial timeout
@@ -226,7 +226,7 @@ Using pre-computed contracts (skip tree/SMV regeneration):
 
 ```bash
 python run_acas_pipeline.py \
-    --contracts contracts/acas_verified_nn1.json \
+    --contracts contracts/continuous_goals/enabled_pgd/nn1_crown_results.json \
     --output    results/compositional/nn1 \
     --skip-tree --skip-smv
 ```
@@ -235,7 +235,7 @@ Full pipeline (regenerate tree and SMV from scratch):
 
 ```bash
 python run_acas_pipeline.py \
-    --contracts contracts/acas_verified_nn1.json \
+    --contracts contracts/continuous_goals/enabled_pgd/nn1_crown_results.json \
     --output    results/compositional/nn1
 ```
 

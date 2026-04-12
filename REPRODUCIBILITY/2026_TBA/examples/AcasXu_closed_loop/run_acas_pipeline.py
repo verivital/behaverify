@@ -32,7 +32,7 @@ INVAR format (one per dangerous (state, advisory) pair in each SAT contract):
 
 Usage (from AcasXu_closed_loop/):
   python run_acas_pipeline.py \\
-      --contracts contracts/acas_verified_nn1.json \\
+      --contracts contracts/continuous_goals/enabled_pgd/nn1_crown_results.json \\
       --output    results/compositional/nn1 \\
       [--nuxmv    ../../../../nuXmv] \\
       [--nuxmv-cmd ../../scripts/nuxmv_commands/command_invar] \\
@@ -416,9 +416,9 @@ def main() -> None:
         description="End-to-end compositional verification pipeline for ACAS Xu 5-NN NSBT."
     )
     p.add_argument("--contracts",  required=True,
-                   help="Path to verified contracts JSON (e.g. contracts/acas_verified_nn1.json)")
-    p.add_argument("--spec",       default="contracts/acas_contract_specs.json",
-                   help="Path to original contract spec JSON (default: contracts/acas_contract_specs.json)")
+                   help="Path to verified contracts JSON (e.g. contracts/continuous_goals/enabled_pgd/nn1_crown_results.json)")
+    p.add_argument("--spec",       default="contracts/continuous_goals/acas_contract_specs.json",
+                   help="Path to original contract spec JSON (default: contracts/continuous_goals/acas_contract_specs.json)")
     p.add_argument("--output",     required=True,
                    help="Output directory for patched SMV, nuXmv output, and report")
     p.add_argument("--nuxmv",      default=str(DEFAULT_NUXMV),
