@@ -209,7 +209,7 @@ def run_verification(
         wall_sec = time.perf_counter() - t0
 
         sign = lambda v: "+" if v == 1 else "-"
-        quad = f"({sign(contract['x_mult'])},{sign(contract['y_mult'])})"
+        quad = f"({sign(contract['x_sign'])},{sign(contract['y_sign'])})"
 
         print(
             f"{i+1:<5} {contract['heading_own_var']:>7} {quad:>6} "
@@ -221,8 +221,8 @@ def run_verification(
         new_records.append({
             "id":                     contract["id"],
             "heading_own_var":        contract["heading_own_var"],
-            "x_mult":                 contract["x_mult"],
-            "y_mult":                 contract["y_mult"],
+            "x_sign":                 contract["x_sign"],
+            "y_sign":                 contract["y_sign"],
             "forbidden_advisory":     contract["forbidden_advisory"],
             "forbidden_advisory_idx": contract["forbidden_advisory_idx"],
             "n_states_covered":       contract["n_states_covered"],

@@ -2,7 +2,7 @@
 acas_input_region.py
 
 Visualizes a single A/G contract's input region in two views:
-  Left  — Physical state space (x_var, y_var) showing dangerous states and the
+  Left  — Physical state space (x_mag, y_mag) showing dangerous states and the
            safety boundary (distance = 200 ft).
   Right — Normalized NN input space (dim 1: distance, dim 2: relative angle)
            showing the dangerous state points and the CROWN bounding box.
@@ -74,7 +74,7 @@ def select_contract(contracts: list[dict], contract_id: int | None) -> dict:
 
 
 def compute_safe_cells() -> set[tuple[int, int]]:
-    """All (x_var, y_var) with distance >= SAFETY_THRESHOLD."""
+    """All (x_mag, y_mag) with distance >= SAFETY_THRESHOLD."""
     safe = set()
     for x in range(MAX_DIST_VAR + 1):
         for y in range(MAX_DIST_VAR + 1):
@@ -89,13 +89,13 @@ def compute_safe_cells() -> set[tuple[int, int]]:
 # ---------------------------------------------------------------------------
 
 def plot_physical_space(ax: plt.Axes, contract: dict, safe_cells: set) -> None:
-    """Left panel: (x_var, y_var) physical state space."""
-    x_mult = contract["x_mult"]
-    y_mult = contract["y_mult"]
+    """Left panel: (x_mag, y_mag) physical state space."""
+    x_sign = contract["x_sign"]
+    y_sign = contract["y_sign"]
     heading_var = contract["heading_own_var"]
     heading_deg = heading_var * DEGREE_MULTIPLIER
     advisory     = contract["forbidden_advisory"]
-    dangerous_xy = contract["dangerous_xy"]   # list of [x_var, y_var]
+    dangerous_xy = contract["dangerous_xy"]   # list of [x_mag, y_mag]
 
     # Grid background: green = safe, salmon = already unsafe
     for xv in range(MAX_DIST_VAR + 1):
@@ -132,12 +132,12 @@ def plot_physical_space(ax: plt.Axes, contract: dict, safe_cells: set) -> None:
     # Ownship marker at origin (relative coordinate frame)
     ax.scatter(0, 0, s=120, color="#2471a3", marker="^", zorder=6, label="Ownship (origin)")
 
-    sign_x = "+" if x_mult == 1 else "−"
-    sign_y = "+" if y_mult == 1 else "−"
+    sign_x = "+" if x_sign == 1 else "−"
+    sign_y = "+" if y_sign == 1 else "−"
     ax.set_xlim(-0.5, MAX_DIST_VAR + 0.5)
     ax.set_ylim(-0.5, MAX_DIST_VAR + 0.5)
-    ax.set_xlabel("x_var  (× 100 ft)", fontsize=10)
-    ax.set_ylabel("y_var  (× 100 ft)", fontsize=10)
+    ax.set_xlabel("x_mag  (× 100 ft)", fontsize=10)
+    ax.set_ylabel("y_mag  (× 100 ft)", fontsize=10)
     ax.set_title(
         f"Physical state space\n"
         f"heading={heading_deg}°, quadrant=({sign_x},{sign_y}), "
@@ -261,7 +261,7 @@ def main() -> None:
     print(f"Selected contract id={contract['id']}:")
     print(f"  heading_own_var={contract['heading_own_var']}  "
           f"({contract['heading_own_var'] * DEGREE_MULTIPLIER}°)")
-    print(f"  quadrant=({contract['x_mult']:+},{contract['y_mult']:+})")
+    print(f"  quadrant=({contract['x_sign']:+},{contract['y_sign']:+})")
     print(f"  forbidden={contract['forbidden_advisory']}")
     print(f"  n_states_covered={contract['n_states_covered']}")
     print(f"  nn_input_lower={[f'{v:.4f}' for v in contract['nn_input_lower']]}")

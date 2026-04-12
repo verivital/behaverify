@@ -85,8 +85,8 @@ pip install -r alpha-beta-CROWN/complete_verifier/requirements/requirements.txt
 
 | Variable | Domain | Meaning |
 |---|---|---|
-| `x_var`, `y_var` | integers [0, 10] | Position magnitude (× 100 = raw units) |
-| `x_mult`, `y_mult` | {−1, +1} | Position sign (quadrant) |
+| `x_mag`, `y_mag` | integers [0, 10] | Position magnitude (× 100 = raw units) |
+| `x_sign`, `y_sign` | {−1, +1} | Position sign (quadrant) |
 | `heading_own_var` | integers [0, 39] | Ownship heading index (× 9° = degrees) |
 | `command` (a_prev) | 5 advisories | Previous advisory; selects which NN runs |
 
@@ -108,7 +108,7 @@ a_prev = strong_left  → NN_5
 INVARSPEC (distance >= 200)
 ```
 
-where `distance = round(sqrt(x_var² + y_var²)) × 100`.
+where `distance = round(sqrt(x_mag² + y_mag²)) × 100`.
 
 ---
 
@@ -166,7 +166,7 @@ cd REPRODUCIBILITY/2026_TBA/examples/AcasXu_closed_loop
 ### Step 1 — Generate contract specs
 
 This enumerates all dangerous (state, advisory) pairs and groups them into
-range-based A/G contracts (bounding box over `x_var`, `y_var` for fixed
+range-based A/G contracts (bounding box over `x_mag`, `y_mag` for fixed
 `heading_own_var`, sign quadrant, and forbidden advisory).
 
 ```bash
@@ -330,13 +330,13 @@ base SMV), or missing nuXmv binary.
 ## Contract Structure
 
 Contracts are **range-based**: for each non-empty group of
-`(heading_own_var, x_mult, y_mult, forbidden_advisory)`, a single CROWN call
-verifies the property over the bounding box of all dangerous `(x_var, y_var)`
+`(heading_own_var, x_sign, y_sign, forbidden_advisory)`, a single CROWN call
+verifies the property over the bounding box of all dangerous `(x_mag, y_mag)`
 states in that group.
 
 This mirrors the grid-world approach where source position was fixed and goal
-position ranged continuously. Here, `(heading_own_var, x_mult, y_mult)` is fixed
-(determining NN inputs 3–5 exactly) and `(x_var, y_var)` ranges over the dangerous
+position ranged continuously. Here, `(heading_own_var, x_sign, y_sign)` is fixed
+(determining NN inputs 3–5 exactly) and `(x_mag, y_mag)` ranges over the dangerous
 region (determining NN inputs 1–2).
 
 | Grouping | Max contracts per NN | vs. per-state |

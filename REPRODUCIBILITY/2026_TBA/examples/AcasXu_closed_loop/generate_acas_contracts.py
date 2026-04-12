@@ -8,10 +8,10 @@ A contract says: "from any state in input region R, NN_k must NOT output advisor
 where R covers all states for which applying F causes distance < 200.
 
 Contract grouping (analogous to the grid-world approach):
-  Fix  : (x_mult, y_mult, heading_own_var)  --  discrete; determines inputs 3/4/5 exactly
-  Range: (x_var, y_var)                     --  bounding box over dangerous values
+  Fix  : (x_sign, y_sign, heading_own_var)  --  discrete; determines inputs 3/4/5 exactly
+  Range: (x_mag, y_mag)                     --  bounding box over dangerous values
 
-For each non-empty (heading_own_var, x_mult, y_mult, forbidden_advisory) group:
+For each non-empty (heading_own_var, x_sign, y_sign, forbidden_advisory) group:
   - Compute [lower, upper] bounding box over the NN inputs of all dangerous states
   - One CROWN call per NN covers all those dangerous states at once
 
@@ -22,9 +22,9 @@ Compare to the per-state approach: 2,830 dangerous pairs × 5 NNs = 14,150 per-p
 
 Physics model (from acasxu_template_360.tree / environment_update):
   - heading_own_var updated first (advisory applied)
-  - position (x_var, y_var, x_mult, y_mult) computed using the NEW heading
-  - State domain: x_var,y_var in [0,10], x_mult,y_mult in {-1,1}, heading_own_var in [0,39]
-  - Safety invariant: distance = round(sqrt(x_var^2 + y_var^2)) * 100 >= 200
+  - position (x_mag, y_mag, x_sign, y_sign) computed using the NEW heading
+  - State domain: x_mag,y_mag in [0,10], x_sign,y_sign in {-1,1}, heading_own_var in [0,39]
+  - Safety invariant: distance = round(sqrt(x_mag^2 + y_mag^2)) * 100 >= 200
 
 NN selection (from tree selector):
   a_prev = 'clear'        -> network_idx=1  (aprev_clear.onnx)
@@ -122,13 +122,13 @@ def apply_advisory(heading_own_var: int, advisory: str) -> int:
     return heading_own_var  # clear
 
 
-def compute_distance(x_var: int, y_var: int) -> int:
-    """distance = round(sqrt(x_var^2 + y_var^2)) * DISTANCE_MODIFIER."""
-    return round(math.sqrt(x_var * x_var + y_var * y_var)) * DISTANCE_MODIFIER
+def compute_distance(x_mag: int, y_mag: int) -> int:
+    """distance = round(sqrt(x_mag^2 + y_mag^2)) * DISTANCE_MODIFIER."""
+    return round(math.sqrt(x_mag * x_mag + y_mag * y_mag)) * DISTANCE_MODIFIER
 
 
 def simulate_step(
-    x_var: int, y_var: int, x_mult: int, y_mult: int, heading_own_var: int,
+    x_mag: int, y_mag: int, x_sign: int, y_sign: int, heading_own_var: int,
     advisory: str,
 ) -> tuple[int, int, int, int, int]:
     """
@@ -138,7 +138,7 @@ def simulate_step(
     then position is computed using the new heading via velocity_x_own / velocity_y_own
     (DEFINE variables that read heading_own_var after it is updated).
 
-    Returns (next_x_var, next_y_var, next_x_mult, next_y_mult, next_heading_own_var).
+    Returns (next_x_var, next_y_var, next_x_sign, next_y_sign, next_heading_own_var).
     """
     new_heading_var = apply_advisory(heading_own_var, advisory)
     new_heading     = new_heading_var * DEGREE_MULTIPLIER
@@ -146,45 +146,45 @@ def simulate_step(
     vel_x_own = _vel_x(new_heading, SPEED_OWN)
     vel_y_own = _vel_y(new_heading, SPEED_OWN)
 
-    x = x_var * DISTANCE_MODIFIER
-    y = y_var * DISTANCE_MODIFIER
+    x = x_mag * DISTANCE_MODIFIER
+    y = y_mag * DISTANCE_MODIFIER
 
-    next_x = x * x_mult + SECONDS_PER_UPDATE * (_VEL_X_INT - vel_x_own)
-    next_y = y * y_mult + SECONDS_PER_UPDATE * (_VEL_Y_INT - vel_y_own)
+    next_x = x * x_sign + SECONDS_PER_UPDATE * (_VEL_X_INT - vel_x_own)
+    next_y = y * y_sign + SECONDS_PER_UPDATE * (_VEL_Y_INT - vel_y_own)
 
-    next_x_mult = -1 if next_x < 0 else 1
-    next_y_mult = -1 if next_y < 0 else 1
+    next_x_sign = -1 if next_x < 0 else 1
+    next_y_sign = -1 if next_y < 0 else 1
     next_x_var  = int(min(MAX_DIST, abs(next_x)) // DISTANCE_MODIFIER)
     next_y_var  = int(min(MAX_DIST, abs(next_y)) // DISTANCE_MODIFIER)
 
-    return next_x_var, next_y_var, next_x_mult, next_y_mult, new_heading_var
+    return next_x_var, next_y_var, next_x_sign, next_y_sign, new_heading_var
 
 
 # ---------------------------------------------------------------------------
 # Angle computations (matching DSL DEFINE logic)
 # ---------------------------------------------------------------------------
 
-def _arctan_xy(x_var: int, y_var: int) -> int:
-    """round(degrees(atan(x_var / y_var))); 0 when y_var == 0."""
-    return 0 if y_var == 0 else round(math.degrees(math.atan(x_var / y_var)))
+def _arctan_xy(x_mag: int, y_mag: int) -> int:
+    """round(degrees(atan(x_mag / y_mag))); 0 when y_mag == 0."""
+    return 0 if y_mag == 0 else round(math.degrees(math.atan(x_mag / y_mag)))
 
 
-def _arctan_yx(x_var: int, y_var: int) -> int:
-    """round(degrees(atan(y_var / x_var))); 0 when x_var == 0."""
-    return 0 if x_var == 0 else round(math.degrees(math.atan(y_var / x_var)))
+def _arctan_yx(x_mag: int, y_mag: int) -> int:
+    """round(degrees(atan(y_mag / x_mag))); 0 when x_mag == 0."""
+    return 0 if x_mag == 0 else round(math.degrees(math.atan(y_mag / x_mag)))
 
 
-def _arctan_val(x_var: int, y_var: int, x_mult: int, y_mult: int) -> int:
+def _arctan_val(x_mag: int, y_mag: int, x_sign: int, y_sign: int) -> int:
     """
     Matches arctan_val DEFINE in template:
-      (x_mult=1,  y_mult=1)  -> arctan_yx
-      (x_mult=1,  y_mult=-1) -> arctan_xy
-      (x_mult=-1, y_mult=1)  -> arctan_yx
-      (x_mult=-1, y_mult=-1) -> arctan_xy  [default/last case]
+      (x_sign=1,  y_sign=1)  -> arctan_yx
+      (x_sign=1,  y_sign=-1) -> arctan_xy
+      (x_sign=-1, y_sign=1)  -> arctan_yx
+      (x_sign=-1, y_sign=-1) -> arctan_xy  [default/last case]
     """
-    if y_mult == 1:
-        return _arctan_yx(x_var, y_var)
-    return _arctan_xy(x_var, y_var)
+    if y_sign == 1:
+        return _arctan_yx(x_mag, y_mag)
+    return _arctan_xy(x_mag, y_mag)
 
 
 def _normalize_angle(angle_degrees: int) -> int:
@@ -201,33 +201,33 @@ def _normalize_angle(angle_degrees: int) -> int:
 
 
 def compute_relative_angle_adjusted(
-    x_var: int, y_var: int, x_mult: int, y_mult: int, heading_own_var: int
+    x_mag: int, y_mag: int, x_sign: int, y_sign: int, heading_own_var: int
 ) -> int:
     """
     Matches relative_angle DEFINE + normalization chain in the template.
     Case priority follows DSL sequential case order (first match wins).
     """
     heading_own = heading_own_var * DEGREE_MULTIPLIER
-    x = x_var * DISTANCE_MODIFIER  # only used for == 0 checks
-    y = y_var * DISTANCE_MODIFIER
+    x = x_mag * DISTANCE_MODIFIER  # only used for == 0 checks
+    y = y_mag * DISTANCE_MODIFIER
 
-    av = _arctan_val(x_var, y_var, x_mult, y_mult)
+    av = _arctan_val(x_mag, y_mag, x_sign, y_sign)
 
-    if x_mult == 1 and y == 0:
+    if x_sign == 1 and y == 0:
         rel = 270 - heading_own
-    elif x_mult == -1 and y == 0:
+    elif x_sign == -1 and y == 0:
         rel = 90 - heading_own
-    elif x == 0 and y_mult == 1:
+    elif x == 0 and y_sign == 1:
         rel = 360 - heading_own
-    elif x == 0 and y_mult == -1:
+    elif x == 0 and y_sign == -1:
         rel = 180 - heading_own
-    elif x_mult == 1 and y_mult == 1:
+    elif x_sign == 1 and y_sign == 1:
         rel = (270 - heading_own) + av
-    elif x_mult == 1 and y_mult == -1:
+    elif x_sign == 1 and y_sign == -1:
         rel = (180 - heading_own) + av
-    elif x_mult == -1 and y_mult == 1:
+    elif x_sign == -1 and y_sign == 1:
         rel = (90 - heading_own) - av
-    else:  # x_mult == -1 and y_mult == -1
+    else:  # x_sign == -1 and y_sign == -1
         rel = (180 - heading_own) - av
 
     return _normalize_angle(rel)
@@ -240,14 +240,14 @@ def compute_intersect_angle_adjusted(heading_own_var: int) -> int:
 
 
 def compute_nn_inputs(
-    x_var: int, y_var: int, x_mult: int, y_mult: int, heading_own_var: int
+    x_mag: int, y_mag: int, x_sign: int, y_sign: int, heading_own_var: int
 ) -> list[float]:
     """
     Compute the 5 normalized NN input values for a given state.
     Matches the DSL rdiv expressions for network_k_1 variables.
     """
-    dist    = compute_distance(x_var, y_var)
-    rel_adj = compute_relative_angle_adjusted(x_var, y_var, x_mult, y_mult, heading_own_var)
+    dist    = compute_distance(x_mag, y_mag)
+    rel_adj = compute_relative_angle_adjusted(x_mag, y_mag, x_sign, y_sign, heading_own_var)
     int_adj = compute_intersect_angle_adjusted(heading_own_var)
 
     return [
@@ -270,28 +270,28 @@ def enumerate_dangerous_pairs() -> list[dict]:
     next distance < SAFETY_THRESHOLD.
     """
     pairs = []
-    for x_var, y_var, x_mult, y_mult, h in itertools.product(
-        range(MAX_DIST_VAR + 1),  # x_var: 0..10
-        range(MAX_DIST_VAR + 1),  # y_var: 0..10
-        (-1, 1),                  # x_mult
-        (-1, 1),                  # y_mult
+    for x_mag, y_mag, x_sign, y_sign, h in itertools.product(
+        range(MAX_DIST_VAR + 1),  # x_mag: 0..10
+        range(MAX_DIST_VAR + 1),  # y_mag: 0..10
+        (-1, 1),                  # x_sign
+        (-1, 1),                  # y_sign
         range(MAX_HEADING_VAR),   # heading_own_var: 0..39
     ):
-        if compute_distance(x_var, y_var) < SAFETY_THRESHOLD:
+        if compute_distance(x_mag, y_mag) < SAFETY_THRESHOLD:
             continue  # already unsafe; invariant already violated
 
         for advisory in ADVISORIES:
-            nx, ny, _, _, _ = simulate_step(x_var, y_var, x_mult, y_mult, h, advisory)
+            nx, ny, _, _, _ = simulate_step(x_mag, y_mag, x_sign, y_sign, h, advisory)
             if compute_distance(nx, ny) < SAFETY_THRESHOLD:
                 pairs.append({
                     'state': {
-                        'x_var': x_var, 'y_var': y_var,
-                        'x_mult': x_mult, 'y_mult': y_mult,
+                        'x_mag': x_mag, 'y_mag': y_mag,
+                        'x_sign': x_sign, 'y_sign': y_sign,
                         'heading_own_var': h,
                     },
                     'forbidden_advisory':     advisory,
                     'forbidden_advisory_idx': ADV_IDX[advisory],
-                    'nn_inputs': compute_nn_inputs(x_var, y_var, x_mult, y_mult, h),
+                    'nn_inputs': compute_nn_inputs(x_mag, y_mag, x_sign, y_sign, h),
                 })
     return pairs
 
@@ -302,14 +302,14 @@ def enumerate_dangerous_pairs() -> list[dict]:
 
 def group_range_contracts(pairs: list[dict], eps: float = 1e-4) -> list[dict]:
     """
-    Group dangerous pairs by (heading_own_var, x_mult, y_mult, forbidden_advisory).
+    Group dangerous pairs by (heading_own_var, x_sign, y_sign, forbidden_advisory).
 
     For each non-empty group, compute a bounding box over the NN inputs of all
     dangerous states in the group, then emit one contract per NN (a_prev value).
 
     This is the range-based analog of the grid-world contracts:
       - Fixed: heading + sign quadrant  (determines inputs 3/4/5 exactly)
-      - Ranged: (x_var, y_var)          (gives bounding box on inputs 1/2)
+      - Ranged: (x_mag, y_mag)          (gives bounding box on inputs 1/2)
 
     Args:
         pairs: output of enumerate_dangerous_pairs()
@@ -322,11 +322,11 @@ def group_range_contracts(pairs: list[dict], eps: float = 1e-4) -> list[dict]:
     groups: dict[tuple, dict] = {}
     for pair in pairs:
         s   = pair['state']
-        key = (s['heading_own_var'], s['x_mult'], s['y_mult'], pair['forbidden_advisory'])
+        key = (s['heading_own_var'], s['x_sign'], s['y_sign'], pair['forbidden_advisory'])
         if key not in groups:
             groups[key] = {'inputs': [], 'states': []}
         groups[key]['inputs'].append(pair['nn_inputs'])
-        groups[key]['states'].append([s['x_var'], s['y_var']])
+        groups[key]['states'].append([s['x_mag'], s['y_mag']])
 
     contracts = []
     contract_id = 1
@@ -350,8 +350,8 @@ def group_range_contracts(pairs: list[dict], eps: float = 1e-4) -> list[dict]:
                 'id':               contract_id,
                 'type':             'range',
                 'heading_own_var':  h,
-                'x_mult':           xm,
-                'y_mult':           ym,
+                'x_sign':           xm,
+                'y_sign':           ym,
                 'a_prev':           a_prev,
                 'network_idx':      nn_idx,
                 'onnx':             onnx,
@@ -398,7 +398,7 @@ def main() -> None:
     print("Enumerating dangerous (state, advisory) pairs...")
     pairs = enumerate_dangerous_pairs()
     print(f"  {len(pairs)} dangerous pairs across "
-          f"{len({(p['state']['heading_own_var'], p['state']['x_mult'], p['state']['y_mult'], p['forbidden_advisory']) for p in pairs})} "
+          f"{len({(p['state']['heading_own_var'], p['state']['x_sign'], p['state']['y_sign'], p['forbidden_advisory']) for p in pairs})} "
           f"(heading, sign, advisory) groups")
 
     contracts = group_range_contracts(pairs, eps=args.eps)
@@ -427,7 +427,7 @@ def main() -> None:
                 'then position computed with new heading'
             ),
         },
-        'contract_type': 'range-based: bounding box over (x_var,y_var) for fixed (heading,sign,advisory)',
+        'contract_type': 'range-based: bounding box over (x_mag,y_mag) for fixed (heading,sign,advisory)',
         'nn_mapping': {
             a_prev: {'network_idx': nn_idx, 'onnx': onnx}
             for a_prev, (nn_idx, onnx) in A_PREV_TO_NN.items()

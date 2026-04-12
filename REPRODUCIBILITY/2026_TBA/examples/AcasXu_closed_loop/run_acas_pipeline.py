@@ -269,7 +269,7 @@ def _add_command_free_var(smv: str) -> str:
 
 def _build_invar_lines(contracts: list[dict]) -> list[str]:
     """
-    For each SAT contract, enumerate its dangerous (x_var, y_var) states and
+    For each SAT contract, enumerate its dangerous (x_mag, y_mag) states and
     emit one INVAR per state (point constraints — exact state match).
 
     Sound because: CROWN verified the property over the bounding box in NN input
@@ -280,19 +280,19 @@ def _build_invar_lines(contracts: list[dict]) -> list[str]:
     lines = []
     for c in contracts:
         h   = c["heading_own_var"]
-        xm  = c["x_mult"]
-        ym  = c["y_mult"]
+        xm  = c["x_sign"]
+        ym  = c["y_sign"]
         ap  = c["a_prev"]
         fbd = c["forbidden_advisory"]
 
-        for x_var, y_var in c["dangerous_xy"]:
+        for x_mag, y_mag in c["dangerous_xy"]:
             cond = (
                 f"system.{SMV_COMMAND_PREV} = {ap} & "
                 f"system.{SMV_HEADING} = {h} & "
                 f"system.{SMV_X_MULT} = {xm} & "
                 f"system.{SMV_Y_MULT} = {ym} & "
-                f"system.{SMV_X_VAR} = {x_var} & "
-                f"system.{SMV_Y_VAR} = {y_var}"
+                f"system.{SMV_X_VAR} = {x_mag} & "
+                f"system.{SMV_Y_VAR} = {y_mag}"
             )
             lines.append(f"INVAR ({cond}) -> system.{SMV_COMMAND_FINAL} != {fbd};")
     return lines

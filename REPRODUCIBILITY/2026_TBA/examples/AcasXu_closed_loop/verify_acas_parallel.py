@@ -77,13 +77,13 @@ def worker_fn(args_tuple):
         status = "TIMEOUT"
 
     sign = lambda v: "+" if v == 1 else "-"
-    quad = f"({sign(contract_spec['x_mult'])},{sign(contract_spec['y_mult'])})"
+    quad = f"({sign(contract_spec['x_sign'])},{sign(contract_spec['y_sign'])})"
 
     return {
         "id":                     contract_spec["id"],
         "heading_own_var":        contract_spec["heading_own_var"],
-        "x_mult":                 contract_spec["x_mult"],
-        "y_mult":                 contract_spec["y_mult"],
+        "x_sign":                 contract_spec["x_sign"],
+        "y_sign":                 contract_spec["y_sign"],
         "forbidden_advisory":     contract_spec["forbidden_advisory"],
         "forbidden_advisory_idx": forbidden_idx,
         "n_states_covered":       contract_spec["n_states_covered"],

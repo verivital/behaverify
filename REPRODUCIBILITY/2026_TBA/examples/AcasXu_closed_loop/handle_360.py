@@ -196,7 +196,7 @@ def handle_distance_v2():
         for x in range(0, 1 + (MAX_DIST // DISTANCE_MODIFIER))
         for y in range(0, 1 + (MAX_DIST // DISTANCE_MODIFIER))
     ]
-    return format_all(distances, ('x_var', 'y_var'))
+    return format_all(distances, ('x_mag', 'y_mag'))
 
 def handle_arctan_v2(x_top):
     print('handling arctan with ' + str(x_top))
@@ -220,7 +220,7 @@ def handle_arctan_v2(x_top):
         for x in range(0, 1 + (MAX_DIST // DISTANCE_MODIFIER))
         for y in range(0, 1 + (MAX_DIST // DISTANCE_MODIFIER))
     ]
-    return format_all(arctans, ('x_var', 'y_var'))
+    return format_all(arctans, ('x_mag', 'y_mag'))
 
 with open('acasxu_template_360.tree', 'r', encoding='utf-8') as input_file:
     content = input_file.read()
