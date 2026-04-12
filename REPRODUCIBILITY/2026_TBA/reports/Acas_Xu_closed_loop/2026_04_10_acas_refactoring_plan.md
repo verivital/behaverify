@@ -120,7 +120,7 @@ results/
 
 | Current name | New name | Reason |
 |---|---|---|
-| `run_acas_pipeline.py` | `run_compositional_pipeline.py` | Matches grid_world naming |
+| `run_acas_pipeline.py` | `run_acas_compositional_pipeline.py` | Matches grid_world naming |
 | `verify_acas_contracts.yaml` | `acas_config.yaml` | Matches `grid_world_config.yaml` |
 | `verify_acas_parallel.py` | `verify_acas_contracts_parallel.py` | Makes relationship to `verify_acas_contracts.py` explicit |
 
@@ -147,7 +147,7 @@ results/
 
 ### Additions
 - **Add `run_all_continuous_pipelines.sh`** — batch wrapper that runs
-  `run_compositional_pipeline.py` for all 5 NNs using continuous_goals contracts.
+  `run_acas_compositional_pipeline.py` for all 5 NNs using continuous_goals contracts.
   Mirror `run_all_compositional_pipelines.sh` from grid_world. Structure:
   ```bash
   #!/usr/bin/env bash
