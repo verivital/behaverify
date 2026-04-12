@@ -25,11 +25,25 @@ Usage:
 
 import math
 import os
+from pathlib import Path
 
-SPEED_OWN = 20
-SPEED_INT = 30
-MAX_DIST = 1000
-DISTANCE_MODIFIER = 100
+import yaml
+
+# ---------------------------------------------------------------------------
+# Model parameters (single source of truth: acas_model_params.yaml)
+# ---------------------------------------------------------------------------
+
+def _load_params() -> dict:
+    path = Path(__file__).parent / "acas_model_params.yaml"
+    with open(path, encoding="utf-8") as f:
+        return yaml.safe_load(f)
+
+_P = _load_params()
+
+SPEED_OWN         = _P["physics"]["speed_own"]
+SPEED_INT         = _P["physics"]["speed_int"]
+MAX_DIST          = _P["physics"]["max_dist"]
+DISTANCE_MODIFIER = _P["physics"]["distance_modifier"]
 
 def indent(n):
     return (' ' * 4 * n)

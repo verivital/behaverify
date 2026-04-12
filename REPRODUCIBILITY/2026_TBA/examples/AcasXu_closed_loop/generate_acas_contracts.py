@@ -50,44 +50,41 @@ import argparse
 from collections import defaultdict
 from pathlib import Path
 
+import yaml
+
 # ---------------------------------------------------------------------------
-# Constants (from acas_template_360.tree)
+# Model parameters (single source of truth: acas_model_params.yaml)
 # ---------------------------------------------------------------------------
 
-DISTANCE_MODIFIER  = 100
-MAX_DIST           = 1000          # raw distance units (max_dist constant)
-MAX_DIST_VAR       = MAX_DIST // DISTANCE_MODIFIER  # = 10
-SPEED_OWN          = 20
-SPEED_INT          = 30
-SECONDS_PER_UPDATE = 6
-DEGREE_MULTIPLIER  = 9             # 360 / 40 = 9 degrees per heading step
-MAX_HEADING_VAR    = 360 // DEGREE_MULTIPLIER  # = 40  (heading_own_var range [0,39])
-HEADING_INT_VAR    = 225 // DEGREE_MULTIPLIER  # = 25  (heading_int_var is DEFINE = 25)
-HEADING_INT        = HEADING_INT_VAR * DEGREE_MULTIPLIER  # = 225 degrees
+def _load_params() -> dict:
+    path = Path(__file__).parent / "acas_model_params.yaml"
+    with open(path, encoding="utf-8") as f:
+        return yaml.safe_load(f)
 
-SAFETY_THRESHOLD   = 200           # distance must stay >= 200
+_P = _load_params()
 
-# NN normalization constants
-DISTANCE_MEAN        = 19791.091
-DISTANCE_RANGE       = 60261.0
-SPEED_OWN_MEAN       = 650.0
-SPEED_OWN_RANGE      = 1100.0
-SPEED_INT_MEAN       = 600.0
-SPEED_INT_RANGE      = 1200.0
+DISTANCE_MODIFIER  = _P["physics"]["distance_modifier"]
+MAX_DIST           = _P["physics"]["max_dist"]
+MAX_DIST_VAR       = MAX_DIST // DISTANCE_MODIFIER
+SPEED_OWN          = _P["physics"]["speed_own"]
+SPEED_INT          = _P["physics"]["speed_int"]
+SECONDS_PER_UPDATE = _P["physics"]["seconds_per_update"]
+DEGREE_MULTIPLIER  = _P["physics"]["degree_multiplier"]
+MAX_HEADING_VAR    = 360 // DEGREE_MULTIPLIER
+HEADING_INT        = _P["physics"]["heading_int_degrees"]
+HEADING_INT_VAR    = HEADING_INT // DEGREE_MULTIPLIER
+SAFETY_THRESHOLD   = _P["physics"]["safety_threshold"]
 
-# Advisories (enum order from template = class output index)
-ADVISORIES = ['clear', 'weak_left', 'weak_right', 'strong_left', 'strong_right']
-ADV_IDX    = {a: i for i, a in enumerate(ADVISORIES)}
+DISTANCE_MEAN      = _P["nn_normalization"]["distance_mean"]
+DISTANCE_RANGE     = _P["nn_normalization"]["distance_range"]
+SPEED_OWN_MEAN     = _P["nn_normalization"]["speed_own_mean"]
+SPEED_OWN_RANGE    = _P["nn_normalization"]["speed_own_range"]
+SPEED_INT_MEAN     = _P["nn_normalization"]["speed_int_mean"]
+SPEED_INT_RANGE    = _P["nn_normalization"]["speed_int_range"]
 
-# NN selection: a_prev -> (network_idx, onnx_path)
-# From the tree selector: seq_k_1 checks if_was_<advisory> then call_k_1
-A_PREV_TO_NN = {
-    'clear':        (1, 'networks/aprev_clear.onnx'),
-    'weak_right':   (2, 'networks/aprev_weak_right.onnx'),
-    'weak_left':    (3, 'networks/aprev_weak_left.onnx'),
-    'strong_right': (4, 'networks/aprev_strong_right.onnx'),
-    'strong_left':  (5, 'networks/aprev_strong_left.onnx'),
-}
+ADVISORIES   = _P["advisories"]
+ADV_IDX      = {a: i for i, a in enumerate(ADVISORIES)}
+A_PREV_TO_NN = {name: (net["idx"], net["onnx"]) for name, net in _P["networks"].items()}
 
 # Fixed speed inputs (constant across all states)
 _NN_INPUT_SPEED_OWN = (SPEED_OWN - SPEED_OWN_MEAN) / SPEED_OWN_RANGE  # -0.5727...

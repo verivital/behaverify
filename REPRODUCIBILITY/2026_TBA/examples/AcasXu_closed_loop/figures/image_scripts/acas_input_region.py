@@ -27,20 +27,26 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import numpy as np
+import yaml
 
 # ---------------------------------------------------------------------------
-# Constants (must match generate_acas_contracts.py)
+# Model parameters (single source of truth: acas_model_params.yaml)
 # ---------------------------------------------------------------------------
 
-DISTANCE_MODIFIER = 100
-MAX_DIST_VAR      = 10
-SAFETY_THRESHOLD  = 200           # feet
-DEGREE_MULTIPLIER = 9             # degrees per heading step
+def _load_params() -> dict:
+    path = Path(__file__).parent.parent.parent / "acas_model_params.yaml"
+    with open(path, encoding="utf-8") as f:
+        return yaml.safe_load(f)
 
-DISTANCE_MEAN  = 19791.091
-DISTANCE_RANGE = 60261.0
+_P = _load_params()
 
-HEADING_INT = 225   # fixed intruder heading (degrees)
+DISTANCE_MODIFIER = _P["physics"]["distance_modifier"]
+MAX_DIST_VAR      = _P["physics"]["max_dist"] // _P["physics"]["distance_modifier"]
+SAFETY_THRESHOLD  = _P["physics"]["safety_threshold"]
+DEGREE_MULTIPLIER = _P["physics"]["degree_multiplier"]
+DISTANCE_MEAN     = _P["nn_normalization"]["distance_mean"]
+DISTANCE_RANGE    = _P["nn_normalization"]["distance_range"]
+HEADING_INT       = _P["physics"]["heading_int_degrees"]
 
 ADVISORY_LABELS = {
     "clear":        "Clear (CoC)",
