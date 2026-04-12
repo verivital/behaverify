@@ -17,7 +17,7 @@ At each tick, the behavior tree selects which network to run based on the last-i
 advisory, then queries that network for the next advisory.
 
 The `network_idx` (1–5) is used internally as a compact filter key in
-`acas_contract_specs.json` and the verification scripts. It is derived from `a_prev`
+`contract_specs_eps1e4.json` and the verification scripts. It is derived from `a_prev`
 and does not appear in the filename.
 
 ## Legacy naming convention

@@ -20,9 +20,9 @@ AcasXu_closed_loop/
 ├── networks/                               # 5 ONNX files (see networks/README.md)
 ├── contracts/
 │   ├── continuous_goals/
-│   │   ├── acas_contract_specs.json        # Pre-computed A/G contract specs (eps=1e-4)
+│   │   ├── contract_specs_eps1e4.json        # Pre-computed A/G contract specs (eps=1e-4)
 │   │   ├── enabled_pgd/
-│   │   │   └── nn1_crown_results.json      # CROWN results for NN_1 (PGD-enabled)
+│   │   │   └── aprev_clear_crown_results.json      # CROWN results for NN_1 (PGD-enabled)
 │   │   └── disabled_pgd/                   # (empty — future runs)
 │   └── discrete_goals/                     # (empty — future eps=0.0 contracts)
 ├── results/
@@ -177,12 +177,12 @@ range-based A/G contracts (bounding box over `x_mag`, `y_mag` for fixed
 
 ```bash
 python generate_acas_contracts.py
-# Output: contracts/continuous_goals/acas_contract_specs.json
+# Output: contracts/continuous_goals/contract_specs_eps1e4.json
 # Expected: ~490 contracts for NN_1 (one per non-empty heading/sign/advisory group)
 ```
 
 This step is fast (~1 minute) and does not require CROWN. The output is
-already committed in `contracts/continuous_goals/acas_contract_specs.json`.
+already committed in `contracts/continuous_goals/contract_specs_eps1e4.json`.
 
 ---
 
@@ -211,13 +211,13 @@ Expected: ~269 SAT, ~221 TIMEOUT, ~113 minutes total.
 
 ```bash
 nohup python verify_acas_contracts.py \
-    --retry-from contracts/continuous_goals/enabled_pgd/nn1_crown_results.json \
+    --retry-from contracts/continuous_goals/enabled_pgd/aprev_clear_crown_results.json \
     --timeout 60 \
     > results/verify_nn1_retry.log 2>&1 &
 ```
 
 This re-verifies only the TIMEOUT contracts and merges results into
-`contracts/continuous_goals/enabled_pgd/nn1_crown_results.json`. Worst case: ~3.7 hours.
+`contracts/continuous_goals/enabled_pgd/aprev_clear_crown_results.json`. Worst case: ~3.7 hours.
 
 > **Why two passes?** Contracts either verify in under 1s (large margin) or
 > time out quickly (near the NN's decision boundary). A short initial timeout
@@ -232,7 +232,7 @@ Using pre-computed contracts (skip tree/SMV regeneration):
 
 ```bash
 python run_acas_compositional_pipeline.py \
-    --contracts contracts/continuous_goals/enabled_pgd/nn1_crown_results.json \
+    --contracts contracts/continuous_goals/enabled_pgd/aprev_clear_crown_results.json \
     --output    results/compositional/continuous_goals/enabled_pgd/nn1 \
     --skip-tree --skip-smv
 ```
@@ -241,7 +241,7 @@ Full pipeline (regenerate tree and SMV from scratch):
 
 ```bash
 python run_acas_compositional_pipeline.py \
-    --contracts contracts/continuous_goals/enabled_pgd/nn1_crown_results.json \
+    --contracts contracts/continuous_goals/enabled_pgd/aprev_clear_crown_results.json \
     --output    results/compositional/continuous_goals/enabled_pgd/nn1
 ```
 
@@ -305,7 +305,7 @@ with a higher timeout. See the grid-world README for the same pattern.
 
 ### `verify_acas_contracts.py` gives wrong results with `--retry-from`
 
-The retry merges results by contract `id`. If `acas_contract_specs.json` was
+The retry merges results by contract `id`. If `contract_specs_eps1e4.json` was
 regenerated after the original verification run (changing contract `id`s), the
 merge will be incorrect. Always regenerate verification results from scratch if
 the spec file changes.

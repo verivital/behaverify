@@ -7,7 +7,7 @@ Splits TIMEOUT contracts across N worker processes and merges results.
 Usage:
     python verify_acas_contracts_parallel.py \
         --timeout 3600 \
-        --retry-from contracts/continuous_goals/enabled_pgd/nn1_crown_results.json \
+        --retry-from contracts/continuous_goals/enabled_pgd/aprev_clear_crown_results.json \
         --workers 8 \
         --device cpu
 """

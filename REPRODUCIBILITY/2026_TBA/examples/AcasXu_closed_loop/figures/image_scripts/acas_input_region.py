@@ -14,7 +14,7 @@ Usage:
     python3 figures/image_scripts/acas_input_region.py --contract-id 42
 
 Defaults:
-    --specs        ../../contracts/continuous_goals/acas_contract_specs.json
+    --specs        ../../contracts/continuous_goals/contract_specs_eps1e4.json
     --output       ../acas_input_region.png
     --contract-id  (auto: first contract with n_states_covered >= 5)
 """
@@ -238,7 +238,7 @@ def main() -> None:
     )
     parser.add_argument(
         "--specs", type=Path,
-        default=here / "../../contracts/continuous_goals/acas_contract_specs.json",
+        default=here / "../../contracts/continuous_goals/contract_specs_eps1e4.json",
     )
     parser.add_argument(
         "--output", type=Path,

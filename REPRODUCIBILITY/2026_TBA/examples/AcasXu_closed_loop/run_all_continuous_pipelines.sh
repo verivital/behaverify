@@ -31,7 +31,7 @@ echo "Output base      : ${OUTPUT_BASE}/"
 echo ""
 
 for CONTRACT_JSON in "${CONTRACTS_DIR}"/*.json; do
-    # Strip _crown_results suffix so nn1_crown_results.json -> nn1
+    # Strip _crown_results suffix so aprev_clear_crown_results.json -> aprev_clear
     STEM="$(basename "${CONTRACT_JSON}" .json)"
     NN_STEM="${STEM%_crown_results}"
     OUTPUT="${OUTPUT_BASE}/${NN_STEM}"

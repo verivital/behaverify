@@ -46,7 +46,7 @@ python3 figures/image_scripts/acas_input_region.py
 
 | Flag | Default | Description |
 |---|---|---|
-| `--specs` | `contracts/continuous_goals/acas_contract_specs.json` | Contract spec JSON |
+| `--specs` | `contracts/continuous_goals/contract_specs_eps1e4.json` | Contract spec JSON |
 | `--output` | `figures/acas_input_region.png` | Output image path |
 | `--contract-id` | *(auto: first with ≥ 5 states)* | Specific contract id to visualize |
 
@@ -82,8 +82,8 @@ python3 figures/image_scripts/acas_output_property.py
 
 | Flag | Default | Description |
 |---|---|---|
-| `--results` | `contracts/continuous_goals/enabled_pgd/nn1_crown_results.json` | CROWN results JSON for NN_1 |
-| `--specs` | `contracts/continuous_goals/acas_contract_specs.json` | Contract spec JSON (for bounding boxes) |
+| `--results` | `contracts/continuous_goals/enabled_pgd/aprev_clear_crown_results.json` | CROWN results JSON for NN_1 |
+| `--specs` | `contracts/continuous_goals/contract_specs_eps1e4.json` | Contract spec JSON (for bounding boxes) |
 | `--output` | `figures/acas_output_property.png` | Output image path |
 | `--seed` | `42` | RNG seed for reproducible UNSAT sampling |
 | `--n-samples` | `500` | Random inputs sampled when searching for UNSAT witness |

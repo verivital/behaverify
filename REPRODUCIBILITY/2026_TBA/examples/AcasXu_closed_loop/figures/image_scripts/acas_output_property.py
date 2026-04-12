@@ -21,8 +21,8 @@ Usage:
     python3 figures/image_scripts/acas_output_property.py
 
 Defaults:
-    --results    ../../contracts/continuous_goals/enabled_pgd/nn1_crown_results.json
-    --specs      ../../contracts/continuous_goals/acas_contract_specs.json
+    --results    ../../contracts/continuous_goals/enabled_pgd/aprev_clear_crown_results.json
+    --specs      ../../contracts/continuous_goals/contract_specs_eps1e4.json
     --output     ../acas_output_property.png
     --seed       42
     --n-samples  500
@@ -258,11 +258,11 @@ def main() -> None:
     )
     parser.add_argument(
         "--results", type=Path,
-        default=here / "../../contracts/continuous_goals/enabled_pgd/nn1_crown_results.json",
+        default=here / "../../contracts/continuous_goals/enabled_pgd/aprev_clear_crown_results.json",
     )
     parser.add_argument(
         "--specs", type=Path,
-        default=here / "../../contracts/continuous_goals/acas_contract_specs.json",
+        default=here / "../../contracts/continuous_goals/contract_specs_eps1e4.json",
     )
     parser.add_argument(
         "--output", type=Path,
